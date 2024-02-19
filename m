@@ -1,130 +1,135 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB09F3D38C
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Feb 2024 21:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8045044373;
+	Mon, 19 Feb 2024 21:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708376871; cv=none; b=PQ57rymL6EpkAzbyhb6D5LfD2V/QuSxzUHZw+rHZ3jUHhZ+VJJPtBLsn4BFM10npKDtaoi+jGOOGDF4Ucl6IGUREge8+yinEdjDovsYv5v9mCcGf7mzUXdvxl5C9ZIdkBzyJ0IcRJqpZ8IfNnwM1VXTnIzJ2D4QpD4+3BxhsB/4=
+	t=1708379062; cv=none; b=W9u/GaNc5rCn7fis+C+qOlxABmiD0yNg4FAWKj8ZmdcR9h/6S154eZdn19bzZLMT8nPAXr7FDU0IY+PLHCiLf6ZHgx0Bbj8CLo6xw9rAuvgLM6WvwFbHxvOeNentqqeA2P3pakd0IdITVCjws9EhPyQsV2L9DZmMVdJ8u20jAJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708376871; c=relaxed/simple;
-	bh=Wb1EsAOdRQ+TypSlFyHwyJrlgDHcSksuMbbbXKbQxA8=;
+	s=arc-20240116; t=1708379062; c=relaxed/simple;
+	bh=bpJ0wv9PlVnZNDvc2f4B+6xfn1Lp7UM2ganMU6aMIXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOyGfnDzLaiY5+DdnHOaF0wu0ET6WPfhCu86Yu1VtXFuQOOgyczr0jc7cFP01foe+VSEQ4Sh/ERaZTm6RK12QmHbdoaitemn2iuQ0urrdsJusTmL97JiFJI5fStDouYlN2ky5MICdXB34CHRdVDvix/DCP2osWtzn4na6yLbJJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FqGzwUhi; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=DY3KqcMLVrjWO2tyuAlF2541sEuD2Xxq06+F9iVnqtTaVPyDlNf4g3dyszr9YGcFXhs0FBKjqXhBqh6zjBQJc5Bo42rv6lVG7yo9DUSmLexmHrxRn+4DQkrmY6UXWuE5HGcVsv3p4rNo2CPotf7IgwxdhiFxSYGPtcJrC/Ia2kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hoQwQ5/S; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FqGzwUhi"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e09a890341so2383905b3a.3
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Feb 2024 13:07:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hoQwQ5/S"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-33d61d51dd1so436661f8f.3;
+        Mon, 19 Feb 2024 13:44:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708376869; x=1708981669; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708379059; x=1708983859; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=0v4aGJ9LU9dBSomS+ec3dUGjJlpnKfj3hq8T5zymb8w=;
-        b=FqGzwUhij7LMdv6aCDTBzNyV/FOCGQFfjP95A8FhobdSv6sKeSPPDCLt0EpOP+5A7v
-         he2QN+7Cja4kaqwis/BvHSrH1rogQMeJiqOTF2obTVHYwvSjT36FYNYczo9B6v5jW9u6
-         mUiXAUqczrccMdjUkpIa2XerW3AWNebPy4dEk=
+        bh=0+44ib09HgI4yA5359LbPE5CzYSnjiIutZCZDAbH6F8=;
+        b=hoQwQ5/So39zEd0Z/dTxNxda/H3YhqKbJWY4ddO05jG0BpW85lEeq1diRYoBESnqbX
+         Wz9tSWXtY55J9IiFU+tucoyG/nRU3ZD/ccMwa1CcunerHzVZWJYNwjJzW85YZXTBFG5H
+         zFKtFlcXrrk4khEJsa3wC9Y4Fk4sGnhSpwAMC2Z3I7PZbydh1riFg23aWDwuZHy1pk/6
+         zfCLTbmEDUtROMAaIzGMG35uRisMP5agvX/gAqkMZ0y7TDO2xYNwSi5jD1qK9ZLyPM0U
+         QYI3Q3cNLk8ZNTpuJVP6hrbO4KTPyM7USmccQix+D+XkMETVE5GL5s0JVotKMrnJ7TPt
+         QdCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708376869; x=1708981669;
+        d=1e100.net; s=20230601; t=1708379059; x=1708983859;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0v4aGJ9LU9dBSomS+ec3dUGjJlpnKfj3hq8T5zymb8w=;
-        b=a67QElMk540fJl1V7KO8TdkbXgJX9VOdXanIGMZR+FT3KQ00yafK/ER6jJTAmS7JJi
-         CBLggJjMV/WOlDUv5n55izdZjHcVe8ECjsKL2rd0jIsp0xjAPpWZIOhCWE0h8ZGKhBJ+
-         hOzBmzGiGlpakPlOlmgy2AHVFtBS6RSEulpasUhdZcwi2eDvrTSqsR7EPkms6VBrM9m+
-         P/+colbyzAoH+MxlVEbnjPGl6JKr2kiiyYdjk3Zx4+SIvgrdn6ibowZuOGMyS6DUc/d1
-         s1/W3KA3kUbB+xmuz4XqE3qGraxDcBZC073p0/QD62vEYqp4ieCG54zFcFfUhwarkL/z
-         6ALw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGrDFKwra3yXySwb23FtMe5PvbCFQKrzgxw/t7H04FqULzV+VNzxZx0c/MkZfGkPd2e23VY/Xy0l7Sx64wV7IEaqMR99EfIf7Ng9uDWyoDQoH1/I6D
-X-Gm-Message-State: AOJu0YyU4rZ4RSfbpzMzApDlhezjCrTkiXKlT83NX04lYQlsiSkot/Sf
-	L+VLLG3+KuMrhd3njlFMtJd0onFwUaJut7CmuClNYa9+KUF3UD7sMMXrf0JjbA==
-X-Google-Smtp-Source: AGHT+IHbLBW3EDVvJdonxYBkFDS1KzBBkz2Oq6mObdvWo4OQ4squ6PL/TXRDYA61vIonSEErhJiQtw==
-X-Received: by 2002:a05:6a00:812:b0:6e4:6047:fdf3 with SMTP id m18-20020a056a00081200b006e46047fdf3mr4974895pfk.14.1708376869048;
-        Mon, 19 Feb 2024 13:07:49 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id h9-20020a62b409000000b006e448fa3d93sm3401025pfn.174.2024.02.19.13.07.48
+        bh=0+44ib09HgI4yA5359LbPE5CzYSnjiIutZCZDAbH6F8=;
+        b=wM6fppt11634atPH7eD7p3CGPQZtDoA6i15IHlP2yS2g/uR1vtyZf9cJ6UOOrfxGNP
+         6KG9i63IDKCtMbVKPlsbvIT+QG70zDUBZchxJ1ZNxYVqSBlYjSRaL6wtFZQILGlGnIdO
+         C0M7gJpuw/P9fenfwXKRIwpc6z7WXpfhlD2w9xJF8QbI3yo8IE9Jgkk78wMXyUHyJ0r7
+         rSJksiWh5JSBadsSOaZHwcONRllllF3kv8b5ZVLPIkaMXWfR9jqO43N45Sg2CrLuts75
+         zc2ldWwO83rM/Om9g9nEhiCPYItg2+sPRkFuVstRiG4AP+lEnsnRDql4tjh8f0miEus2
+         HppA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlyIsWmQSGig4rBDU+4zJC+ZKINA2XgoXowRpkF9UNzKyn03xt62Z3sYIZ9+ZljGy1flCubzlapha2962muE2e4ka3LyzssQkVKvwaKZYs5l7/pNbIJZmEHM8oaeJk/gsbwiNx6RARw4Li1ddINIFFQG/PvQ==
+X-Gm-Message-State: AOJu0YyMa07VInKOU2WIvBslyu6Fb4KJ3Du0c7ZVmlTWgyxbpC7aZeZT
+	j6pi/1hvoHIXQVxnjcroHxLug4PyApp1e078gmFJXnf/FFjwWcRb
+X-Google-Smtp-Source: AGHT+IE24jpYkzddQvYd2WoOonPeiMtWCEJfMoDmcQDyH/yPi+4VoBGNFnEXLlZmUjcXOoDkLm/RQw==
+X-Received: by 2002:a5d:64a2:0:b0:33d:497c:14d2 with SMTP id m2-20020a5d64a2000000b0033d497c14d2mr4060237wrp.30.1708379058542;
+        Mon, 19 Feb 2024 13:44:18 -0800 (PST)
+Received: from localhost ([2a02:168:59f0:1:6ea:56ff:fe21:bea7])
+        by smtp.gmail.com with ESMTPSA id q4-20020a5d5744000000b0033b47ee01f1sm11379880wrw.49.2024.02.19.13.44.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Feb 2024 13:07:48 -0800 (PST)
-Date: Mon, 19 Feb 2024 13:07:48 -0800
-From: Kees Cook <keescook@chromium.org>
+        Mon, 19 Feb 2024 13:44:18 -0800 (PST)
+Date: Mon, 19 Feb 2024 22:44:13 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
 To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Jorge Lucangeli Obes <jorgelo@chromium.org>,
+	Allen Webb <allenwebb@google.com>,
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>,
 	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Shervin Oloumi <enlightened@chromium.org>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] landlock: Warn once if a Landlock action is requested
- while disabled
-Message-ID: <202402191304.ED03339B@keescook>
-References: <20240219191804.2978911-1-mic@digikod.net>
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+	Michael Kerrisk <mtk@man7.org>
+Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
+Message-ID: <20240219.964bb89b96f8@gnoack.org>
+References: <20240209170612.1638517-1-gnoack@google.com>
+ <20240209170612.1638517-2-gnoack@google.com>
+ <ZcdbbkjlKFJxU_uF@google.com>
+ <20240216.geeCh6keengu@digikod.net>
+ <20240216.phai5oova1Oa@digikod.net>
+ <20240218.a01103783ca4@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240219191804.2978911-1-mic@digikod.net>
+In-Reply-To: <20240218.a01103783ca4@gnoack.org>
 
-On Mon, Feb 19, 2024 at 08:18:04PM +0100, Mickaël Salaün wrote:
-> Because sandboxing can be used as an opportunistic security measure,
-> user space may not log unsupported features.  Let the system
-> administrator know if an application tries to use Landlock but failed
-> because it isn't enabled at boot time.  This may be caused by bootloader
-> configurations with outdated "lsm" kernel's command-line parameter.
+Hello!
+
+On Sun, Feb 18, 2024 at 09:34:39AM +0100, GÃ¼nther Noack wrote:
+> On Fri, Feb 16, 2024 at 04:51:40PM +0100, MickaÃ«l SalaÃ¼n wrote:
+> > On Fri, Feb 16, 2024 at 03:11:18PM +0100, MickaÃ«l SalaÃ¼n wrote:
+> > > What about /proc/*/fd/* ? We can test with open_proc_fd() to make sure
+> > > our assumptions are correct.
+> > 
+> > Actually, these fifo and socket checks (and related optimizations)
+> > should already be handled with is_nouser_or_private() called by
+> > is_access_to_paths_allowed(). Some new dedicated tests should help
+> > though.
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 265885daf3e5 ("landlock: Add syscall implementations")
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
->  security/landlock/syscalls.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
+> I am generally a bit confused about how opening /proc/*/fd/* works.
 > 
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index f0bc50003b46..b5b424819dee 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -33,6 +33,18 @@
->  #include "ruleset.h"
->  #include "setup.h"
->  
-> +static bool is_not_initialized(void)
-> +{
-> +	if (likely(landlock_initialized))
-> +		return false;
-> +
-> +	pr_warn_once(
-> +		"Disabled but requested by user space. "
-> +		"You should enable Landlock at boot time: "
-> +		"https://docs.kernel.org/userspace-api/landlock.html#kernel-support\n");
+> Specifically:
+> 
+> * Do we have to worry about the scenario where the file_open hook gets
+>   called with the same struct file* twice (overwriting the access
+>   rights)?
+> 
+> * I had trouble finding the place in fs/proc/ where the re-opening is
+>   implemented.
+> 
+> Do you happen to understand this in more detail?  At what point do the
+> re-opened files start sharing the same kernel objects?  Is that at the
+> inode level?
 
-Perhaps update this docs to be really explicit with a example, maybe...
+FYI, I figured it out â€”
 
-If `landlock` is not present in `CONFIG_LSM`, you can add it. For
-example, if this was the current config::
+ - every call to open(2) results in a new struct file
+ - the resulting struct file refers to an existing inode
+ - this is not supported for all inode types;
+   a rough categorization happens in inode.c:init_special_inode()
 
-  $ zgrep -h ^CONFIG_LSM= /boot/config-$(uname -r) /proc/config.gz 2>/dev/null
-  CONFIG_LSM="lockdown,yama,integrity,apparmor"
+The open(2) syscall creates a struct file and populates it
+based on the origin fd's underlying inode through the .open function
+in file_operations.
 
-You can boot with::
+The procfs implementation for the lookup is in proc_pid_get_link /
+proc_fd_link on the proc side.  It patches up the current task's
+nameidata struct as a side effect by calling nd_jump_link().
 
-  lsm=landlock,lockdown,yama,integrity,apparmor
+For reference, I described this it in more detail at
+https://blog.gnoack.org/post/proc-fd-is-not-dup/.
 
-
-I *still* wish we had the "+" operator for lsm=. It would be SO much
-easier to say "boot with lsm=+landlock". *shrug*
-
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
+â€”GÃ¼nther
 
 -- 
-Kees Cook
