@@ -1,119 +1,169 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D8E482C1
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 12:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D619783CB0
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 17:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708517013; cv=none; b=D8PHkbOcRY3I3TAxTYEkEaw1VgmsGmnLUaN5wE4M8mG14+kw6YjzJo6Hj3eIDUpZCgBy0qGIEBBiWkAod04obP1Kk1VwxVB/46yYHbzjnfgPLYgSHucyi+fUJiGQFGxXMeM1eq8QcbnihU3eeFHetJwGP+RBfJo7GsXhaFy/36Y=
+	t=1708537246; cv=none; b=DLNDpp8eP5ZaxEQY/ox/+zu9bJwD+S4rTinKQXmvvORFXhBANBeNnd50qZBfXMFyOYKSX6gx2MdVaI2xHPAKGFalRw8zw9NQ3Hg2f+wCn0KIMhX+Bq5fuWf6FVBT4/Lxquy1X4WTSqyAO2BoXjgEWqyzNpE2mTX+cQj8q9AuCco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708517013; c=relaxed/simple;
-	bh=9QYzwrc0486wKCVBNA9kzltE6OKvRCjNeixUMKzjdCA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sNIkleIetdsPPxFZ72+e/phkieikK9cKMgtzxBk/b365TC022cOPXms+5lniraCe90F8rdUXh1yi0thjCo0a6EgLAoNBsABRfrHC0W9OVlsox3U12mMpAyJDbxOEOphsodBKlaiWUjEaDiP6bwNA8oIFNbeo79Vw2SX8Kgxe1l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=goPm5zzH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1708537246; c=relaxed/simple;
+	bh=41Dzm4ure1ovtFSClC4fzEn7Te5wsZV83Nh0sX4POBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lG5Zaewqhl8gYLWHXjWci0okB2fJITqOd0STpj5tuCH/9tVBS/VIVFPLPxBbhtHWcMVLoqZW5eUje4zvJ4SWbKax+1lWTz7CX1CX6JTKRYVoj72wIUnrxb6d31Zsy7uPBnh+d4b1RK79gxs95VSjnYDUJ1ydtiC6tJLmV67bvZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=IwvTFMbR; arc=none smtp.client-ip=66.163.189.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="goPm5zzH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708517011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7Geb+XZVHvAWeEiO9S27iDrccBjAUX9P3SeMqmrHMMI=;
-	b=goPm5zzHPEm72lll+rGwaxT2msoBaP3hCxklR4MXpsZiQ090JUjQykvQ4OqxYwTaXlRLcY
-	Cv0iD+3Z8JvxQclwKPRX8msE6zwQjvsqpybs7VQjxRHaQilmkR42lm53/9C5coqdULMNA+
-	uW6ugsSmKxvxpRrPoUxDS9qIuIZBG6k=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-Wtx-hgXgPOulB9jIYVW02g-1; Wed, 21 Feb 2024 07:03:30 -0500
-X-MC-Unique: Wtx-hgXgPOulB9jIYVW02g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-33d3757a367so224727f8f.0
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 04:03:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708517008; x=1709121808;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Geb+XZVHvAWeEiO9S27iDrccBjAUX9P3SeMqmrHMMI=;
-        b=iWuKGfVUGatiZv7iFTL6CQmcoAjoO9jxu0fStxEiTuyLsccIi9O82rRLFE+nXD/MmN
-         GVBFine4XlpGaV+EP6SPA6Me43ZiHEwGZMyy1+04Q/9uw3wT4aTjD8SkQJvteMENafxZ
-         /srTD9q/N/Bcr1kYCpggH9mN/OE4X9h9A+prXcd8ru0yt/6EsN/kDK7+Nf7nInQi+oC4
-         qMudIRPQzbenNJtGBO16wGotztKUL1KKBVkQYPYjPnPI4fosoEIS1TScnMV1i28c/39m
-         tlrtkv8RvvwN8H+/av73todThCSJkjw5oGYObR6kChdykJS7q7rCr+w0y7QoXuNv8nQy
-         InLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDKn8cCQMy7IjK/ez1H0stEd++xJ+BnXEj2OLRXMa9TV0jfGouVw2Oql8nZVuPTWqRto8JIJVoYHYFDHLJ2VrL20NPGcDBVgViJ5YeYabfgEQEBH10
-X-Gm-Message-State: AOJu0YzdixAtJA+Z5DYzxpElHIViRbiiM2yAUyzaw6Kx2X1rYHn1CP51
-	mFipEG9Desi4qA/t/XlTHAa7Uy79dWWROScugLAJnA9lMmvmFVrMdLMLARlvG5MLxzCmdR9WKbt
-	aklnXCT3zKhIAwX0hE0yCCWr3LzUntK7sUo5KSjvzqcKfGV8TxFZ+1rPPeLWHF1RmdvrDTQkUpV
-	T+MzWzOw==
-X-Received: by 2002:a05:6000:1f09:b0:33b:88a0:a1e9 with SMTP id bv9-20020a0560001f0900b0033b88a0a1e9mr9700672wrb.4.1708517008689;
-        Wed, 21 Feb 2024 04:03:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE8tshSUyaeTgOwlMVlca+hvTKde6ukfXZH9kkw9Irbg8Wjb4ct5W4RFE1ffJtfMmIcgUQZag==
-X-Received: by 2002:a05:6000:1f09:b0:33b:88a0:a1e9 with SMTP id bv9-20020a0560001f0900b0033b88a0a1e9mr9700635wrb.4.1708517008312;
-        Wed, 21 Feb 2024 04:03:28 -0800 (PST)
-Received: from gerbillo.redhat.com (146-241-230-226.dyn.eolo.it. [146.241.230.226])
-        by smtp.gmail.com with ESMTPSA id ck10-20020a5d5e8a000000b0033d4deb2356sm10572869wrb.56.2024.02.21.04.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 04:03:27 -0800 (PST)
-Message-ID: <e0ce5ab05a0fc956ccde61686d7c6c90026e3909.camel@redhat.com>
-Subject: Re: [PATCH net-next v3 00/11] selftests: kselftest_harness: support
- using xfail
-From: Paolo Abeni <pabeni@redhat.com>
-To: shuah@kernel.org
-Cc: netdev@vger.kernel.org, edumazet@google.com, 
-	linux-kselftest@vger.kernel.org, mic@digikod.net, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	jakub@cloudflare.com, Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net
-Date: Wed, 21 Feb 2024 13:03:26 +0100
-In-Reply-To: <20240220192235.2953484-1-kuba@kernel.org>
-References: <20240220192235.2953484-1-kuba@kernel.org>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-User-Agent: Evolution 3.50.3 (3.50.3-1.fc39)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IwvTFMbR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1708537242; bh=2He/rikUMLJD8Chw2vUhaJAvnMzl/6kCA35rYv8BpQQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=IwvTFMbR86y25CIb0xU/G8gPtVKjHtESmwg0URIk+kSAh9O6pAgpKsNK31LlkVl+i6sRcjEaHa3YHON/TgW5IK/A0VQmMSx1QYicPsegexPjm8FUF1aLYbKqgWjpJ3voDQ2so60vEqyHFXaWObHx6h/q9BfhpG3e1dbg5qalVy9SHEoGPmr4l1wrfNDKJKhlFSVPzFGLulInqQGDlJFSdlf8O7m9Rup6GTXTZNpLijdjPA18fr8wQbb9Q5WlqGK4u++3WBwcL7cf5lzJ9e2Xlk6K8B4tvgqsvm1lT+ioVQrZ5guBvLw9fuERbgJ9SNCE7SArBduc+ippXByWDVf3Eg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1708537242; bh=vXX+DB9FqfkwcfYOJd+bkFuMlP3chILaoBebZx9kRuA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=LoGRwIq9Luh+ruNxbXM7v5MS0yC6K5wj9rvurd/xS5VtpQR7rlUlX87Qi9aHsvkqyzBx5FPSQfyplp2X1VCFJzz8rb3yAUq5+qaUJziFiMwsYEQUPRHalv4FwYml+KzYrzEfqykZhXx6qV4tvM4MQezeGKcY4oYyRT8xUGXtNtOWHp7QraCuWbpjSYkzDZyPEY9cAD2R+dHt7Z7+OMkHRLNIPACSSmM1s69tlqMaAl0eYhUZRZb16EtCL8aSAq6BljsaBeSJDcTwpnrz9vJQm8T1UG0Z9l0TZueb7XuTkuE25o2Hjq69kfSS6d8h6WWUddTm/hZ5DskbQXpNpTcrpg==
+X-YMail-OSG: wKCLdUQVM1kG5qrqZA5KvHxv1lCKXEX6pJSBxoRNx91J3xBjMWXSOQGEt3T_rff
+ WIn35zR3w0YnfgA.M6w4pvD8LvDK9mJBCdFNbNjuFtKFSstdh4kS032AUOAAzAjqEiNCpmZ.0P0l
+ YG1p9lwnUd17EYHJjxPO200sTN1MQYfTM3W.OZShfBl0450xw3SmjgzpKsFU90j.LQTKZbw1LKU_
+ ILBmkAhUlLMVNikBWarVSB8vce06AzF6B6YzqLB38uGD1VC3jLIaNrj_Ksy3cN3vLIIz4XUGPOHd
+ Ak_cQ0Qgybt8uYlpq7IDbP6YLzFGMk1Hmp.Tif8iPs9TJVM9M_vdaA3q5uHwDlbXJx9CAUKoYBCq
+ TcW.keHglWY3EzJ8A25O1bU6ipTProODJlDFSMIP_5o6w3m.p6_4dzsx6Y03sZJ6RMtx_XWZ9i4B
+ vosak1VClcVh8y2tAEHpCFANEsE4MC3c_jl.GW6PCQIoQ2eF6DRwghaLGjxlQvRYPnxqaCAOXBvf
+ 8SMHceEOgPir1rkTYM9RMY1h8n1t_x5Jb7rtFchYIL1EBrIMMhuyZIBI3s3w7R7I4_k8722uBOLD
+ xoF79TWPFDUPxPeZN6RNlQm4Gka4S8mljuUgKZp3cuN9WL5INVAInj6EwDZJO.3ml2NazorEoK4F
+ NJkoksz680BW3sF48sDXoqinlx6QLGpCoDTK.uJzgknMnW21OKegDY.o83Be2VYZCy24R.Nw2fdG
+ CoadiL8M6k4vlsS0bQAsaJWxqPAdZNdcH3c1U2bZdw4l.64_oG_COreLJ5fbChf5O8Rhb9LRbk7K
+ Ynx.g2DXv2JmDad8m8izL9jg0TfJeX008h2zlpk.rjgFbPL72IeJAL1eNeefYuMSEnmgSlJdeXPc
+ NrVLUrFiGjFmlftvazVnSO1yZH6N3BfBy5n8tcerAHDOtZ6gkvfiVdJ0t55O.Rn5vkvMY3ZVC6IK
+ NO7PNZDQIG1NCbwCiZnbOe5Z9koWUHox7RKfbQgLrzvqAYhxayoKDw1KOepfDwX8_bX4_i20Mmav
+ i91Z6h7Fckux7tpgLEu6Yg4HsQ9DYLfFUicVfub6mmTTkOqCEY05InveqVa.txXA1CXh.HwyZvzs
+ .ZazuXOyRKf6rH.r6eLxsNQ33bllQ5PvNILlBF9tqP9kAHP5XAdloD5AOfr1SMUQ_Q3bSlNbcl.B
+ duNnAzIpq0m6Rz1B0EueY.uGSeZqpPXecdK.0MoW5qyhF.DfvNMqJI5D4RP4B_WTujYrzwYBHfeA
+ UEeFGdxKfIFTE6RrbNLnOGDzo5iIbMQgq9wguM6qqW1bJKnePWtxrW18mxGmLT5aIln3g7obm7dt
+ h1Cpx5fqjssUiLHbpExBIXLS96XN7W0gW5dynG_Tt_QJCmOglW5Be0AYFCJSFEpdvtJXXwEuSfBt
+ 8jDfW6onyPCeA9jr47raFwgqcPFjrKn6jQVVAp_0iJuRlZkT7tWb3JBI.UONCkJr1G88M08ms_4A
+ R8EIYJocyjUwWCz37ED_IK.n89CmCgA7oZr1SUvyQhtXyda9S0CU1UidtfW88K6Mug17DgcpNDjH
+ xLLsT0y9Ct9x4m217YFN2UGJrTkSZ8fygziNDNHs1UKZQzE0V9mMPv0fIcsHit0OTIk5NfG2JiPu
+ dODV3LA9SQvSVpUSggqTBrKR5mLLjyJ2gRkLDDCC0uTqWXLN6dk8UDxWPYJsB0G6BhtTaPOFloeX
+ Jn9ijk0elXt4JthQl5CEV.14oFOgSvl1WJxysPkgyG2XkCzYZtpuSuCcHfnyFGsRAyfwuSheaVG3
+ acyuHUs1pzEJEyurCJ0BbLKBrwL0ErbF3Qhi4GJC7eQgCsiyKPswoGMiHPT_UcefTZqtroZQCZDA
+ Z28x_9enm7OSgsUEGYExvijXT.K6tbvspHi6QvEfG61eigYvyVasCG5p0ZkA8yqrIwHINqjYlGS9
+ UoxAOyHDvhk9cHdn7A2h2ZtINN7OBbVWzwnG8JFFgkaPyXYMYk.lvBGn_Ycc4abYnsS15LOBEint
+ oogNiskRqO8LaB02neKgofc06OLTn2SEsYIf6epQzlf8fHIqF0fta5V5F3UmkjrIG_kljCzm9Qsy
+ jCjulBJ41i4BhO1pFF1euKtKUxvdf.dofNuyf.Rnp2YqgbfYYrgK_62tvVFyuT5_iKZDRFb9BiuS
+ FJ1yQ81oZ0HGXG2daynMDLxoOt2Id32.JCDFwc9VS7ajYqQFlF3DHBSr.bTKAAmwhr7G4iioprsu
+ 5MNkIjaCuw7m5aeKpdk3gTkbpsboA4a8vZi7wQiIuHWlQDtyOTaZVDLt7Pguxs7K4S0tI87X6KDK
+ 2ZBqjDX25jQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 775f1cf6-5bbe-4b1f-a91b-899bc560bdd5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 21 Feb 2024 17:40:42 +0000
+Received: by hermes--production-gq1-5c57879fdf-bmngc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 632860db9c774db57b89dd52302a9462;
+          Wed, 21 Feb 2024 17:40:41 +0000 (UTC)
+Message-ID: <6455c16e-b840-411e-a64e-7b066c2d9ff1@schaufler-ca.com>
+Date: Wed, 21 Feb 2024 09:40:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: smack: Possible NULL pointer deref in cred_free hook.
+Content-Language: en-US
+To: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ linux-security-module <linux-security-module@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <2fa0a73a-1d03-4937-8599-e4560297af3f@schaufler-ca.com>
+ <f15e4a73-02e1-4758-a8e6-0edd27224c0a@I-love.SAKURA.ne.jp>
+ <757dc423-f914-44b7-98bb-fde5cd42d33b@schaufler-ca.com>
+ <b240a8ad-240a-4bc5-9414-62bd417f0b92@schaufler-ca.com>
+ <CAHC9VhRdqjWa0Zhw==U=kLNiSeYHDWnQyP8Yb4JNtTA7ki1gqw@mail.gmail.com>
+ <8d093ada-995f-4291-9c31-35d9a62525b7@I-love.SAKURA.ne.jp>
+ <6e00373a-a028-4575-b2cf-d4da366c2b6f@schaufler-ca.com>
+ <CAHC9VhT730AxsUv=1=dEn22ABeHJPZ1JA-xwZv6DN54+DiiKQg@mail.gmail.com>
+ <9a816f3b-452e-4d3a-8c45-da49f5461317@schaufler-ca.com>
+ <CAHC9VhRK3L12zgzm4-9eyxdhb8Zp-OrAg0UQxFdc3Qdm2yoTKw@mail.gmail.com>
+ <20240216233154.GA1005338@mail.hallyn.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20240216233154.GA1005338@mail.hallyn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22077 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, 2024-02-20 at 11:22 -0800, Jakub Kicinski wrote:
-> When running selftests for our subsystem in our CI we'd like all
-> tests to pass. Currently some tests use SKIP for cases they
-> expect to fail, because the kselftest_harness limits the return
-> codes to pass/fail/skip.
->=20
-> Clean up and support the use of the full range of ksft exit codes
-> under kselftest_harness.
->=20
-> Merge plan is to put it on top of -rc4 and merge into net-next.
-> That way others should be able to pull the patches without
-> any networking changes.
->=20
-> v2: https://lore.kernel.org/all/20240216002619.1999225-1-kuba@kernel.org/
->  - fix alignment
-> follow up RFC: https://lore.kernel.org/all/20240216004122.2004689-1-kuba@=
-kernel.org/
-> v1: https://lore.kernel.org/all/20240213154416.422739-1-kuba@kernel.org/
+On 2/16/2024 3:31 PM, Serge E. Hallyn wrote:
+> On Thu, Feb 15, 2024 at 10:32:59PM -0500, Paul Moore wrote:
+>> On Thu, Feb 15, 2024 at 7:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 2/15/2024 3:38 PM, Paul Moore wrote:
+>>>> On Wed, Feb 14, 2024 at 7:13 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>> On 2/14/2024 2:15 PM, Tetsuo Handa wrote:
+>>>>>> On 2024/02/15 3:55, Paul Moore wrote:
+>>>>>>>> Ah, but it turns out that the only LSM that can fail in _cred_prepare()
+>>>>>>>> is Smack. Even if smack_cred_prepare() fails it will have called
+>>>>>>>> init_task_smack(), so there isn't *currently* a problem. Should another
+>>>>>>>> LSM have the possibility of failing in whatever_cred_prepare() this
+>>>>>>>> could be an issue.
+>>>>>>> Let's make sure we fix this, even if it isn't a problem with the
+>>>>>>> current code, it is very possible it could become a problem at some
+>>>>>>> point in the future and I don't want to see us get surprised by this
+>>>>>>> then.
+>>>>>>>
+>>>>>> Anyone can built-in an out-of-tree LSM where whatever_cred_prepare() fails.
+>>>>>> An in-tree code that fails if an out-of-tree code (possibly BPF based LSM)
+>>>>>> is added should be considered as a problem with the current code.
+>>>>> Agreed. By the way, this isn't just a Smack problem.
+>>>> I've tried to make this clear on previous issues, but let me say it
+>>>> again: I don't care what individual LSMs are affected, a bug is a bug
+>>>> and we need to fix it.
+>>> Yes, I understand that.
+>>>
+>>>>> You get what looks
+>>>>> like the same failure on an SELinux system if security_prepare_creds() fails
+>>>>> using the suggested "fault injection". It appears that any failure in
+>>>>> security_prepare_creds() has the potential to be fatal.
+>>>> Perhaps I didn't look at the original problem closely enough, but I
+>>>> believe this should only be an issue with LSMs that register a
+>>>> cred_free hook that assumes a valid LSM specific credential
+>>>> initialization.  While SELinux registers a cred_prepare hook, it does
+>>>> not register a cred_free hook.  Or am I missing something?
+>>> Yes, you're missing something. If security_prepare_creds() fails prepare_creds()
+>>> will fail, and the system will lurch to a halt because it can't create a new
+>>> cred. The cred_free hook is a red herring.
+>> Okay, my apologies, I thought the issue was due to one of the LSMs
+>> failing their cred_prepare hook and causing security_cred_free() to be
+>> called for LSMs that hadn't successfully cred_prepare()'d the new
+>> creds.
+>>
+>> However, if I'm understanding you correctly, the issue is that a
+>> failed security_prepare_creds() call can cause both prepare_creds()
+>> and prepare_kernel_cred() to fail, yes?  If that is the case, can
+>> someone explain to me why this is a problem?  Both prepare_creds() and
+>> prepare_kernel_cred() can fail in ways unrelated to the LSM and thus
+>> callers must be prepared to handle a failure in both prepare_cred()
+>> functions.
+> Sure does look that way...
 
-@Shuah: it's not clear to me if you prefer to take this series via the
-kselftests tree or we can take it via the net-next tree. Could you
-please advise?
+I am going to argue that what we have here is an excessively aggressive
+fault injection. Failing in security_prepare_creds() during system
+initialization will prevent any credential transitions, which will
+prevent the system from booting. This is true regardless of why the
+failure occurs.
 
-thanks!
+To prove this to myself I moved the fault injection into
+smack_cred_prepare(), and made it check for a specific Smack label on
+the "old" cred. Failure is returned if the old cred has that label.
+The error condition is handled correctly in this case, with the calling
+process being killed because of -ENOMEM being returned. No other error
+is detected.
 
-Paolo
+In smack_cred_prepare():
 
-p.s. if this was already clarified in the past, I'm sorry: I lost track
-of it.
+	init_task_smack(new_tsp, old_tsp->smk_task, old_tsp->smk_task);
++	if (old_tsp->smk_task == &smack_known_hat)
++		return -ENOMEM;
+
+Then execute:
+
+# (echo '^' > /proc/self/attr/smack/current ; date)
+
+to see the failure being correctly handled.
+
+A similar injection in any LSM will demonstrate the behavior.
+I hope that we can put this "issue" to bed.
 
