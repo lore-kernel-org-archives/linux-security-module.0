@@ -1,65 +1,39 @@
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4A84C86
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 00:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F340C36AF1;
+	Wed, 21 Feb 2024 10:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708476758; cv=none; b=hJ8Tj+lo+lb9chowz3beThkDq724+aACx0RwYqMP1TJ5Zkh7khaUHzRdA/HlnWLY3dG2ILFkJZO1KnqWHCPNQIqjxTf60KomvIfQSCY3Bew5Cf09D4C2c2VgORzkHnW1+UTRw3wQ/xyWXO3PfbgsjiCDhq3V7GbPUIvv1ELaPJc=
+	t=1708512724; cv=none; b=M64wn6LhvdSx6EkKi0Vhdcqop2J4GAFzyFhaVg3tUdolNNIFJ/gyi4OaLh/ESyu4GEBhmNJ/CPIdLJ0Kb/ngsCiYJCv28IGAAP5D8923CxkQg/PS9QPtGplsF8HGK6M/rfDsyIqTgS1HR8P+xmX0u7DHWBSzjSm+3Jd6C2k1mgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708476758; c=relaxed/simple;
-	bh=J92N7oppbKokaymoordlHfEGYpccRePizL+hh7TZ1dg=;
+	s=arc-20240116; t=1708512724; c=relaxed/simple;
+	bh=1x3NEsyd2n0SU0RKb9wgtvD/E48d3dJd2NJAvwfvS80=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFXM0EBLKWHKU/v2p6S4d6pz6q4qoK4mcZCN6dqvPfGdePDvfQcnyBa1gZ7hSLgnt/GIhpLrTDLslsghDvDvZy0XlooeaprTU1B4spsPCaCVMjWp8sKWSdP8YrH58fjZUpFeRS2hVI4dmjvAKDJSqBln7fnpwOFAXaQIFUEl2Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nLeHnXDS; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAfArV+wYv9w1Kbcfl3HYHCGZX9hW2tT2Nh8WteRI4n51NLLeAZx+W/iAWmp/qOA2+OoRpazKe6HisYH1Yau3yY97UrEWPaAh716MRNrplBjKVcJNJzMccBtHqIrcx1yFlTAMNj8p80FwCihIFFkhkjwGtaBsZZnSaoObiYcILs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fe8Kupdo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nLeHnXDS"
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c03b92998eso4835234b6e.3
-        for <linux-security-module@vger.kernel.org>; Tue, 20 Feb 2024 16:52:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708476755; x=1709081555; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R+X3D1ev8b07YP6AkHk335qZFq2tm6Peno4gQaQD+cI=;
-        b=nLeHnXDSkzY9OXSC2jWJtHHRiimsg/sJcZdHgcUYmA5dHoJT586otcHXeGWqXqjr4f
-         ijDM2RHzxgZDdjyL7NYFnVKZxnh2cpNsc+n4+VAwelNtbyQbGr8vwfBA33Zz32vCdWix
-         rOMbdsDUdXEzGH7XbVr2MlNsFHI4q6p+8geCA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708476755; x=1709081555;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R+X3D1ev8b07YP6AkHk335qZFq2tm6Peno4gQaQD+cI=;
-        b=WN0NiHaulS46oMCtnrC0eOenKWypYGVaUUG5QiDmTokEvw41ENO+ukALm/YpILbkdh
-         QczTXRTEOj7+OJvMSU7+lBXglT2SitHo8L8Garne6Q76LZHjlXkiIDqCiVmMGsa+DS1t
-         wc1NK6qLj8DUDhhmfYIHqqEjhyVpYfGtYpmMKYlsCb+xJhWTuyRMhlNCd1+7r4CWyib+
-         DwgSfStqicTOE6ZKqdpXt4oYh9/b2t3EyRWvXNKpeNVnPjuMFVqScSckcVl2u0h5Wt0i
-         iM1tKFfAQxWKoS5YGhhN1rPUDWI5cLZy2sy6aKSfu57mAAFQJpxXCE5v2wVNuwm5E9ts
-         tz4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIdiCHDBX+/8eUwk7XvwXQsOHK3LQo79DJHkALrX/+o4o9Pd7WhThDbKMinymWRsyCvfWJCLZ0aMc0/EobOYgrTmeLT5KxgCy8maSGXeZ1BweHGsNy
-X-Gm-Message-State: AOJu0YwSGEFyXvF+kkAJFeLodVQ347iqWDxubDvGQasTRvm6kcyhqWnY
-	2jI5JqJFKWKlszy0p8KjCThel9gz93+nSUfJ+4iaIDhaSsS02fGzdwZa8KE3jA==
-X-Google-Smtp-Source: AGHT+IHQovIj/E8PPhTSxpkjPpb9Wj6cTXiVUJOisMr+S4qxc/4l1FXONqKBXYMEfc0hZP57LGgaUg==
-X-Received: by 2002:a05:6808:f08:b0:3c1:57a1:bb87 with SMTP id m8-20020a0568080f0800b003c157a1bb87mr7875013oiw.19.1708476755611;
-        Tue, 20 Feb 2024 16:52:35 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id du22-20020a056a002b5600b006e45d5f0645sm5211431pfb.101.2024.02.20.16.52.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 16:52:35 -0800 (PST)
-Date: Tue, 20 Feb 2024 16:52:34 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, mic@digikod.net,
-	linux-security-module@vger.kernel.org, jakub@cloudflare.com
-Subject: Re: [PATCH net-next v3 09/11] selftests: kselftest_harness: let PASS
- / FAIL provide diagnostic
-Message-ID: <202402201652.599B4134C@keescook>
-References: <20240220192235.2953484-1-kuba@kernel.org>
- <20240220192235.2953484-10-kuba@kernel.org>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fe8Kupdo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7A2CC433C7;
+	Wed, 21 Feb 2024 10:52:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1708512723;
+	bh=1x3NEsyd2n0SU0RKb9wgtvD/E48d3dJd2NJAvwfvS80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fe8KupdolBUg9nyNVdHIk0a7gCoiYbBCTePyxHrqQumJgOtRNakRepk+/omfB+Sdj
+	 ifJtDe7j0vZKkJPJrwJsMs7vcChMcooXVWWt2OgI215t47Pg2ud8wrKExlaWqsjgKE
+	 jA5C7iPP1l56a6uazEHlwTPQvZngcE6gysz8Ackw=
+Date: Wed, 21 Feb 2024 11:52:00 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: stable@vger.kernel.org, linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Alfred Piccioni <alpic@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH 5.4,4.19] lsm: new security_file_ioctl_compat() hook
+Message-ID: <2024022148-gallows-ravine-92bd@gregkh>
+References: <20240206012953.114308-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -68,15 +42,45 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240220192235.2953484-10-kuba@kernel.org>
+In-Reply-To: <20240206012953.114308-1-ebiggers@kernel.org>
 
-On Tue, Feb 20, 2024 at 11:22:33AM -0800, Jakub Kicinski wrote:
-> Switch to printing KTAP line for PASS / FAIL with ksft_test_result_code(),
-> this gives us the ability to report diagnostic messages.
+On Mon, Feb 05, 2024 at 05:29:53PM -0800, Eric Biggers wrote:
+> From: Alfred Piccioni <alpic@google.com>
 > 
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> commit f1bb47a31dff6d4b34fb14e99850860ee74bb003 upstream.
+> [Please apply to 5.4-stable and 4.19-stable.  The upstream commit failed
+> to apply to these kernels.  This patch resolves the conflicts.]
+> 
+> Some ioctl commands do not require ioctl permission, but are routed to
+> other permissions such as FILE_GETATTR or FILE_SETATTR. This routing is
+> done by comparing the ioctl cmd to a set of 64-bit flags (FS_IOC_*).
+> 
+> However, if a 32-bit process is running on a 64-bit kernel, it emits
+> 32-bit flags (FS_IOC32_*) for certain ioctl operations. These flags are
+> being checked erroneously, which leads to these ioctl operations being
+> routed to the ioctl permission, rather than the correct file
+> permissions.
+> 
+> This was also noted in a RED-PEN finding from a while back -
+> "/* RED-PEN how should LSM module know it's handling 32bit? */".
+> 
+> This patch introduces a new hook, security_file_ioctl_compat(), that is
+> called from the compat ioctl syscall. All current LSMs have been changed
+> to support this hook.
+> 
+> Reviewing the three places where we are currently using
+> security_file_ioctl(), it appears that only SELinux needs a dedicated
+> compat change; TOMOYO and SMACK appear to be functional without any
+> change.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 0b24dcb7f2f7 ("Revert "selinux: simplify ioctl checking"")
+> Signed-off-by: Alfred Piccioni <alpic@google.com>
+> Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> [PM: subject tweak, line length fixes, and alignment corrections]
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Now queued up, thanks.
 
--- 
-Kees Cook
+greg k-h
