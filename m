@@ -1,98 +1,86 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28B5154425
-	for <linux-security-module@vger.kernel.org>; Tue, 20 Feb 2024 22:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D2B20E3
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 00:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708469834; cv=none; b=cwObVjswuP9IauoAQGEBaEs28UzYua9oXjSbzVGNB7LouuMO+3f0a1WhAk4YwOn6HAqItJO+8eLkReuExROWq4ngQH1WML0gkmyaeOYYSAK4xKKKmiqKnb35a7/7JWTUd5zuJ0N1zIHw1Ad7nsO/yGRfpSL05H6VL+CBaE2XRXw=
+	t=1708476569; cv=none; b=Yw2YW4uI6UReLltHFrZpGK64At4jqRmpi4qYYGir5tEZ8JE/7TYtvpYPGH+H4slDRm7eSaDu4kSmJipWUzp7r1YYVDv3wwCAaHSaytLVyYKV0x2f5zXExbmWSU/qBjxmlNxWrWbVGjqFtdeQr6pvDVXDzX6J0Fk1ESHXC+bLyck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708469834; c=relaxed/simple;
-	bh=0YoTDIJcncc26mTV5po/0I8NONU1TIZscyHen9QSqfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LdXHqGLs9OWJjiPLRdQ/8GwGTxcSyJA56gcprLWthEEePFEzLp8zjoOaHHDSkeRYrexS56iwyvkAtIXnRsXSDUlS+HSSuGuIhbJebZnixCSkIyNG6e737DGRpfgp5fwTNv7vRYmPvdVZKNEWApcoiwI/AtqlXMxFyBjCoqJIMjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RpAGfWLP; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1708476569; c=relaxed/simple;
+	bh=cIRuw18MgK3s3QPYG5bF8HaUdZMx7uHI+euu6IBW8e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhYVqsdz+c5yz0NDKQBvW5iyQKrrRj0QfJA05LlCZ5p00WX1iwCmTJuM5ygi02e0vHMmu/xlKiFaiTzgmsPHHI8iSLBFBkqcGYFlo5N/+cRCwsuOK4wYhUicPnntEkmLMW8rUc3y4j6reLLaDNaPSlID2OPhpGz6svU9PG0/StA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PEo0tGgy; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RpAGfWLP"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dccb1421bdeso5733773276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 20 Feb 2024 14:57:11 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PEo0tGgy"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1db5212e2f6so45004745ad.1
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Feb 2024 16:49:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708469831; x=1709074631; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GJd9Z95KHyUDEhlhjVDF9yk1T1M4Mk1fPdy0+yG5dqM=;
-        b=RpAGfWLPPDa5nT1skE2IjquSvPCpH4XDjqXhHemyIuLz/hdLFGrOI1tMaygPMyiCVs
-         q1vL4So8FLcrldPFKwFwxHFIOlY3Tn9XtYh0dp0OU9mZt1hPj1KBXbigYV7RhBWQ72m3
-         /5oWhtMSkEItzPCnERUndzCdoGbwMpLUX4LwXn+8CwqgLtjgehsJeMbx8stcuhe+DiQq
-         9DTWoLBnlupgUmDPko6bERx8iVPqd/o3z4lCax8zyHitOjbWF5QwbAOx1z9SvZjJtvoX
-         Va9Q7470lI85S94fjTf32AqcWVxq857I6+nq+RDXXdOmVqQUPU2L2VNe4GAXhWQ8FpVE
-         RPAA==
+        d=chromium.org; s=google; t=1708476567; x=1709081367; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l6iZPQkJ9eVozTwMvVtiCWD1JWn1A/ViHwX542hh6CA=;
+        b=PEo0tGgy8iKWLybFGwoJXcTltbGU1p3TqNEKJWGiLDhDlDgH9lkOtyG1WDia8JuaWn
+         wYyDFYqOJHMABYWB2qmfvsNovoNoZ2Mk1kBNMcWffnb2WUtIwSZwMUbOsjBw3tThctWW
+         ibYukAqdeBTArIYb9VgX8sEf/vXlZnbxss/G0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708469831; x=1709074631;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GJd9Z95KHyUDEhlhjVDF9yk1T1M4Mk1fPdy0+yG5dqM=;
-        b=FhHxEpdIZDEJW1QrBSXuylAac+OYyFH8SP5kKE0mxEZ2ictms1xWfKpsVq8kQc0zAO
-         ZDgBe8YrgsSu/dve39+GbN84+kiLN44XhV7RUCUzOx/mshzNdKF6wsrwYyLK0SyQQk/O
-         gNcfiDe5q8QHJ1XEfpyu4XMJr26I8cJgSCzVerQDEqtnBZLWvmZ03azE51XgcQrbdFNZ
-         nPHVviRJ/WEFhin1IaxRVCnrPhxPIaBGWgYvVjE6QoC0PBzwYdN6lFnxYh/t3iPdV1Gw
-         wClQOS+pIijtjj0uU5+VgUNXWakpgcWpKPHfbRY4cpg9KchYORYIIfIIfgO0I/C9v0GE
-         ZGCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnfabUovi5PJi/GywxKc1iAY/Qxoa4C8FUDgbnFIUheCCZGY/4WFdMPQJkEWHBmWLa0WlIDQCi/epYMBnKF9ZGcq+nx8ykgljoeuN9/11D+wPurAhE
-X-Gm-Message-State: AOJu0YwKG9pZZX5LmeEXqJ/sSzdNRVfZDCqq5sWDWxX9ASJVr4nIm/18
-	PuNTGDDdFgPMp1PnBixGHrHlvR41B75IcCus45YxO5Mc4rZWymDzn1Z3E1hBp4eTq7uLccwv2Ve
-	H96/xqwjKW+GPyutdL57EYGpuyHlUCdTii/e/E73fN+t+ico=
-X-Google-Smtp-Source: AGHT+IFHQeTBpph6bd5Wo+fr48nsOpy94ua8Yw9g49gmhGuBFZaV/bAGvI69UADzVdw79h3Ed3LE/pbEkd6/IuyV7L0=
-X-Received: by 2002:a25:ef0d:0:b0:dcd:ad52:6927 with SMTP id
- g13-20020a25ef0d000000b00dcdad526927mr16249258ybd.11.1708469831057; Tue, 20
- Feb 2024 14:57:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708476567; x=1709081367;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l6iZPQkJ9eVozTwMvVtiCWD1JWn1A/ViHwX542hh6CA=;
+        b=ijm3xXuPtiF7VDN8AudKSljL2BQNM3W/pEgAhR/Lds9s5F/z2uZ3HmskaOWXFOli9D
+         QpicYyJNkTJ7W9SnfiSsHQQryL8D6ejVNeZkT5VIJRbFDUvJwBcVLlNcZSbGg18vj1zo
+         yvb/8+gemHXG0Fs+YNApAb/8cvgOpb6gKlwzl7vV4t6bdBCZ8PypaQ8PElmHvBSyKfWP
+         khRllEV+Q9gUg4oHQDvXgaDv7XOfLAQJdDwINjX0FyL5hQ/oNRHtd6VR3JYYISYXnCTh
+         zsoh5COvWOyq+yeyUmup7bMHRcY+YTQEk0wYQMO7KLWqOtOnNRE5Q+adHf4Xc/0Xj8vy
+         3YDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKiMr27lniIgLtpCfkDf0/W4aFluYB/dJJPvsIvnqH3hf0vtgfFG2UDteZznN5Vys0T41qBMaiYojAi7rsbz6pc1hWDRHtTKVRhNVPbKr8Js/J+KzR
+X-Gm-Message-State: AOJu0YzBokP77VVOMLqrI1M8ja7YAKy0N6zHftQo95+wiWyS/sah/FiP
+	fmqL4vcWi5ZWZqM2qoylYoz8/pvFPRc4qmtVfg7mrxm6T9id2K3gsGCaCsgs5A==
+X-Google-Smtp-Source: AGHT+IGrH8eYOJ+QTDt/PHAS3tq4N8QvcVgEEHaffSlr+I8HL+Yj6EPAOIVXls/P99vM+K5FbSBvRA==
+X-Received: by 2002:a17:903:183:b0:1dc:2ee5:3f3a with SMTP id z3-20020a170903018300b001dc2ee53f3amr608581plg.0.1708476566981;
+        Tue, 20 Feb 2024 16:49:26 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id s2-20020a632c02000000b005dc98d9114bsm7242084pgs.43.2024.02.20.16.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Feb 2024 16:49:26 -0800 (PST)
+Date: Tue, 20 Feb 2024 16:49:25 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
+	pabeni@redhat.com, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, mic@digikod.net,
+	linux-security-module@vger.kernel.org, jakub@cloudflare.com
+Subject: Re: [PATCH net-next v3 05/11] selftests: kselftest_harness: use exit
+ code to store skip
+Message-ID: <202402201649.C83025144D@keescook>
+References: <20240220192235.2953484-1-kuba@kernel.org>
+ <20240220192235.2953484-6-kuba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205182506.3569743-1-stefanb@linux.ibm.com> <20240205182506.3569743-3-stefanb@linux.ibm.com>
-In-Reply-To: <20240205182506.3569743-3-stefanb@linux.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 20 Feb 2024 17:57:00 -0500
-Message-ID: <CAHC9VhQeJGjm5VCF84W_u2wRZxHtWPMt_Ku-NqJpXUaA53EtVw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] security: allow finer granularity in permitting
- copy-up of security xattrs
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
-	roberto.sassu@huawei.com, amir73il@gmail.com, brauner@kernel.org, 
-	miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240220192235.2953484-6-kuba@kernel.org>
 
-On Mon, Feb 5, 2024 at 1:25=E2=80=AFPM Stefan Berger <stefanb@linux.ibm.com=
-> wrote:
->
-> Copying up xattrs is solely based on the security xattr name. For finer
-> granularity add a dentry parameter to the security_inode_copy_up_xattr
-> hook definition, allowing decisions to be based on the xattr content as
-> well.
->
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  fs/overlayfs/copy_up.c            | 2 +-
->  include/linux/evm.h               | 5 +++--
->  include/linux/lsm_hook_defs.h     | 3 ++-
->  include/linux/security.h          | 4 ++--
->  security/integrity/evm/evm_main.c | 2 +-
->  security/security.c               | 7 ++++---
->  security/selinux/hooks.c          | 2 +-
->  security/smack/smack_lsm.c        | 2 +-
->  8 files changed, 15 insertions(+), 12 deletions(-)
+On Tue, Feb 20, 2024 at 11:22:29AM -0800, Jakub Kicinski wrote:
+> We always use skip in combination with exit_code being 0
+> (KSFT_PASS). This are basic KSFT / KTAP semantics.
+> Store the right KSFT_* code in exit_code directly.
+> 
+> This makes it easier to support tests reporting other
+> extended KSFT_* codes like XFAIL / XPASS.
+> 
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 
-Acked-by: Paul Moore <paul@paul-moore.com> (LSM,SELinux)
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
---=20
-paul-moore.com
+-- 
+Kees Cook
