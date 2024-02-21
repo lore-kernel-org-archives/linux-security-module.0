@@ -1,67 +1,68 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64D53E470
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 23:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F6612B14D
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 23:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708558726; cv=none; b=Db8Op/13LAHROKOu4EbkI3/IjHifFW5+Nqk2c3r3rQbnVJuV19veT48C2kfSzrddAkONedPTVEofN4oYUEAm7I4rrnYjDyAJjXsfhoxc+JKMy1eYU7+OznGl7hgF1wjOM7mqnDpj1Ej5kjIFCYNsskWlGQQBcbmu9wczw7nonMk=
+	t=1708559037; cv=none; b=U0vlmO57CPSWoofSg5E6vPRds+I3N5puPHEgYwwxGWfWHd8MVIUED5JKc3ArvSkqmXJcuD/vof1hLCcb8+9q1uvYbct05Bod5rxv4BolCI9nFBU5SdFCFHtvRlbtCbZCJ9omkr3dAHJmOg9wulwlexH6jKbsWjl9xdEmGxrnhOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708558726; c=relaxed/simple;
-	bh=VbnWhAoLr3EeawQyolNDrQRXZNQkuXxI4yM52Iy8tIc=;
+	s=arc-20240116; t=1708559037; c=relaxed/simple;
+	bh=jXUi7DaHH/tYkfvmdZwdL5O6ldHOILbUbl8SwoK93vk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFIEuG8fn9J7u3RSCfhTrbPmIfVNUHrF7YD+TkA9D5TxRirnUFKuojnnjUvhZRuxDKQ9sxNv4OkDvZZ4MlmF5/Az90u4P1pa6vwCKZRWv7Hp7em7Z3PsY65zIPXD39ExbkMx6j8WaeuNOkqD/s89gNZaTQ2fWUCBAEn2Tw61Gwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YPmVQ38K; arc=none smtp.client-ip=209.85.219.175
+	 To:Cc:Content-Type; b=rdVik8P8vUeda72Lne9ccyQM6mRWuEL9320JBFdOe974boAWLTOtv6k02K9nx0HH6o+L1pg/pxEdXF0ks+kixWvPRsC6tpK9o8srC+G7AjoIKWmh/oyd6keT6m9oMOB9sj218+oABgl69EAZAEYR5qzYpWUdrRr8LA4O+ipmG70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DMYN6N90; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YPmVQ38K"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcbd1d4904dso8012597276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 15:38:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DMYN6N90"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc236729a2bso6909168276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 15:43:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708558724; x=1709163524; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1708559034; x=1709163834; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qdOxMAkyl5yi4MjXJFORjz39p90zOjZ6/27YgpZJWJY=;
-        b=YPmVQ38KfNBCioWnQH9i31aCO3qWe8g4FexNNDFGDhqNeUuG3XWPmFpEmA9awwJb5A
-         XJMx1A4m8+BVZ1p3XAzZC0zKg0x2+yDBARbViUOghFqUGf+dz8CsnJ5TtGF1E2scHF+n
-         V6duZxQp4Ar9bMK4gSSNOGSTRmg+5RW72XtCgnbZaFQ2Fdd7MiWjHHmP4E3GtBuFibTP
-         IgYgbe2K/n8oF+Bbf6blxarTZldQ732ran3ZxPn05Tb9kRx/ux++hkqS0FRC2yAvwcXG
-         pXLxyhQUGJkLQbYP71i9C14lJBPG5F27nJWtaJSiNcmk2DhBaP2K5piPo2wLFuE4tLYA
-         p1IQ==
+        bh=ozpdHgEMJtLxc8z0f/xCObDDvWnU+f1l4TdamibeEB0=;
+        b=DMYN6N90YpElzCrVcquPcjL+68ZSO5M7iyX1Ysv42qTiwp/rotMVr8o6Mewie3EVWH
+         6VkCYIDs9OZsceV8eT/715SqP5vipSQq8BJm53ev7Jak8bqLfejNRGC60ZEdngFaBjHD
+         yR2Xa+KweEdyCQ1U/IYiFUyc+gff3XevcnQRwIclqaZGPbO7+Gyh/N2bDhHANboRBTfA
+         F/SqCwaEdM3e7maAwCzEolx3GWicHLwuXvWGnzGIKmfCUrRrES38YR7gNI3H2wQklfPE
+         31p2G69/JMdWuV0Uo5dNqkjAX0N7C3gMXqT723vE4AIFKOiqlqkWwlveEk0rhSpt0vd3
+         esLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708558724; x=1709163524;
+        d=1e100.net; s=20230601; t=1708559034; x=1709163834;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qdOxMAkyl5yi4MjXJFORjz39p90zOjZ6/27YgpZJWJY=;
-        b=DBD7nmzSvpZgySnvy0+VmisFitblmPa2EN5daxJ7VVrxkkDNp5M4y/2PQjLSWUvQ7S
-         7bPiESHDJAEmCY9LGRVxaNDz28HpFuOQP/2iscUsv8OJ0XOFGyxZxRUo79CRUEIZzq2M
-         CcMsL5ibcr1c/7n9tS1yLf02PzmcqF/kyhzw0bgTYZ4bvU+6MPNoliGzi32xyICo23K8
-         +yFW2vU+eL4Tr34Yb+Z6PBnb0OZedDQLc4GxTcTaMXa8As7xkFs3zfxmNm62n98vklIn
-         Y4ToVGXCNZywUmmX3+yPSx5Ih2aStnMAMU8sZy57K6nELovaToiac9v36rsKjjF3cYrY
-         kcvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0h6uAF2l6Ep6GBz7yDU8ypcByzcB38WlR4bnz52Wd/rWBPkZhDs8K/nG5DNORYT0OWvsaxmbOgRJeywesjcuIp96r+lFk+bIVlm2AK6a9TeIwMAF5
-X-Gm-Message-State: AOJu0Yyexj2DUyGhIMhb5LYTFnRvUod9QlJ7Z9SdJE2EkJ3s++//Qjnu
-	DVJmiZeBGMhHgyVB8Ve8W8brOYQEcO6KkraWE76vWwSFjGVbA8y9aBoaFlIRJdu/dwGTY5/qECj
-	hrSInpk4tY8IvWfE9QGb34ASmvWfsP0WlOhcj
-X-Google-Smtp-Source: AGHT+IHA2xpXRb1sDUe9q9FIIpvonGFzRGzz6GZyMO19EZeTrYiVFDtuhUjox8KLin5Elu441vcMmgEKrRzPPcEqg0U=
-X-Received: by 2002:a5b:c85:0:b0:dc6:d2d3:a57c with SMTP id
- i5-20020a5b0c85000000b00dc6d2d3a57cmr742866ybq.59.1708558723714; Wed, 21 Feb
- 2024 15:38:43 -0800 (PST)
+        bh=ozpdHgEMJtLxc8z0f/xCObDDvWnU+f1l4TdamibeEB0=;
+        b=USxjFXAklZ5H1o+Mc62nWOWuY67ZP8zrriCY921w4Vr1yMDyxJGVnCejhlyRWmFvwD
+         51Y6b8paWSJ3jp5HZgXv8s9/dmxWfxieg2Q5M+JyczyVRtD5bRKTYcO6T+K+kHWzTKot
+         nXT7E48rqHV6BrXbUuofZ3p65+uYZjzkqsIM0lZYjra07Q1vch2x5fnsXuAPdk5OeEP1
+         iEMTRdbhgEMslOYu27bnCnLIWYyvUAJYs6wflDSlZD0LuXZdkq2aR4w9XiqiAyjZokih
+         gHJDM2fC9p+c19Q3wnUrT/d7iJlxIxoZNCw7Igdy/rOA8akdwmSz2rNskRhMpHhElLGu
+         Rmvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTsBiaTdzgXpLa3JQ/dHWfFcZN3uQ/7x6py0njvfZwQEpMKa5czLtDvTklpBiAs590E6HjQ0Eav96fq0BUj3jaDurKLYpaIG0YGYPucfMWR8NtZqpU
+X-Gm-Message-State: AOJu0Yxpf9A5QpHlZjf1FllkIG5R2l+Q69XsFewmcoZYbaoH/OgKRWV/
+	T19zY4iVx3RIG9RW68S7YdPDvuvnNPsTwybwCAI1nMPoKAY74uyGJcop8rFHcFR/0NW8O7MC/aS
+	fTjsZ3i82+v+YWC7ow9QVmR2PcWS5m+wh4Rck
+X-Google-Smtp-Source: AGHT+IGHrH5g+9KgtuY77JnAmJfeyj21kEZdzhwPpy55HJt0kZAi28H0jeAtPv8SyPEbdcHCUbHgVHOylR1JMSl3Amo=
+X-Received: by 2002:a25:a285:0:b0:dc6:db0c:4ff0 with SMTP id
+ c5-20020a25a285000000b00dc6db0c4ff0mr912234ybi.32.1708559033944; Wed, 21 Feb
+ 2024 15:43:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org> <20240221-idmap-fscap-refactor-v2-12-3039364623bd@kernel.org>
-In-Reply-To: <20240221-idmap-fscap-refactor-v2-12-3039364623bd@kernel.org>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org> <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
+In-Reply-To: <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Feb 2024 18:38:33 -0500
-Message-ID: <CAHC9VhTgHP=3Te4=t6chGte15CA_tMoVjFuzBwh+FxQ6Ri4mQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/25] selinux: add hooks for fscaps operations
+Date: Wed, 21 Feb 2024 18:43:43 -0500
+Message-ID: <CAHC9VhRQ7Xa2_rAjKYA_nkpmfUd9jn2D0SNcb6SjQFg=k8rn=w@mail.gmail.com>
+Subject: Re: [PATCH v2 15/25] security: call evm fscaps hooks from generic
+ security hooks
 To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Eric Paris <eparis@redhat.com>, 
 	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
@@ -80,70 +81,71 @@ Content-Transfer-Encoding: quoted-printable
 On Wed, Feb 21, 2024 at 4:25=E2=80=AFPM Seth Forshee (DigitalOcean)
 <sforshee@kernel.org> wrote:
 >
-> Add hooks for set/get/remove fscaps operations which perform the same
-> checks as the xattr hooks would have done for XATTR_NAME_CAPS.
->
 > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
 > ---
->  security/selinux/hooks.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index a6bf90ace84c..da129a387b34 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3367,6 +3367,29 @@ static int selinux_inode_removexattr(struct mnt_id=
-map *idmap,
->         return -EACCES;
+>  security/security.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+
+First off, you've got to write *something* for the commit description,
+even if it is just a single sentence.
+
+> diff --git a/security/security.c b/security/security.c
+> index 0d210da9862c..f515d8430318 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2365,9 +2365,14 @@ int security_inode_remove_acl(struct mnt_idmap *id=
+map,
+>  int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *de=
+ntry,
+>                               const struct vfs_caps *caps, int flags)
+>  {
+> +       int ret;
+> +
+>         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>                 return 0;
+> -       return call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, fl=
+ags);
+> +       ret =3D call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, f=
+lags);
+> +       if (ret)
+> +               return ret;
+> +       return evm_inode_set_fscaps(idmap, dentry, caps, flags);
 >  }
 >
-> +static int selinux_inode_set_fscaps(struct mnt_idmap *idmap,
-> +                                   struct dentry *dentry,
-> +                                   const struct vfs_caps *caps, int flag=
-s)
-> +{
-> +       return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
-> +}
-
-The selinux_inode_setxattr() code also has a cap_inode_setxattr()
-check which is missing here.  Unless you are handling this somewhere
-else, I would expect the function above to look similar to
-selinux_inode_remove_fscaps(), but obviously tweaked for setting the
-fscaps and not removing them.
-
-> +static int selinux_inode_get_fscaps(struct mnt_idmap *idmap,
-> +                                   struct dentry *dentry)
-> +{
-> +       return dentry_has_perm(current_cred(), dentry, FILE__GETATTR);
-> +}
-> +
-> +static int selinux_inode_remove_fscaps(struct mnt_idmap *idmap,
-> +                                      struct dentry *dentry)
-> +{
-> +       int rc =3D cap_inode_removexattr(idmap, dentry, XATTR_NAME_CAPS);
-> +       if (rc)
-> +               return rc;
-> +
-> +       return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
-> +}
-> +
->  static int selinux_path_notify(const struct path *path, u64 mask,
->                                                 unsigned int obj_type)
->  {
-> @@ -7165,6 +7188,9 @@ static struct security_hook_list selinux_hooks[] __=
-ro_after_init =3D {
->         LSM_HOOK_INIT(inode_set_acl, selinux_inode_set_acl),
->         LSM_HOOK_INIT(inode_get_acl, selinux_inode_get_acl),
->         LSM_HOOK_INIT(inode_remove_acl, selinux_inode_remove_acl),
-> +       LSM_HOOK_INIT(inode_set_fscaps, selinux_inode_set_fscaps),
-> +       LSM_HOOK_INIT(inode_get_fscaps, selinux_inode_get_fscaps),
-> +       LSM_HOOK_INIT(inode_remove_fscaps, selinux_inode_remove_fscaps),
->         LSM_HOOK_INIT(inode_getsecurity, selinux_inode_getsecurity),
->         LSM_HOOK_INIT(inode_setsecurity, selinux_inode_setsecurity),
->         LSM_HOOK_INIT(inode_listsecurity, selinux_inode_listsecurity),
+>  /**
+> @@ -2387,6 +2392,7 @@ void security_inode_post_set_fscaps(struct mnt_idma=
+p *idmap,
+>         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>                 return;
+>         call_void_hook(inode_post_set_fscaps, idmap, dentry, caps, flags)=
+;
+> +       evm_inode_post_set_fscaps(idmap, dentry, caps, flags);
+>  }
 >
-> --
-> 2.43.0
+>  /**
+> @@ -2415,9 +2421,14 @@ int security_inode_get_fscaps(struct mnt_idmap *id=
+map, struct dentry *dentry)
+>   */
+>  int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct dentry =
+*dentry)
+>  {
+> +       int ret;
+> +
+>         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>                 return 0;
+> -       return call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
+> +       ret =3D call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
+> +       if (ret)
+> +               return ret;
+> +       return evm_inode_remove_fscaps(dentry);
+>  }
+
+If you take a look at linux-next or the LSM tree's dev branch you'll
+see that we've gotten rid of the dedicated IMA and EVM hooks,
+promoting both IMA and EVM to "proper" LSMs that leverage the existing
+LSM hook infrastructure.  In this patchset, and moving forward, please
+don't add dedicated IMA/EVM hooks like this, instead register them as
+LSM hook implementations with LSM_HOOK_INIT().
 
 --=20
 paul-moore.com
