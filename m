@@ -1,169 +1,146 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135A9EAE7
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Feb 2024 00:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FA77469;
+	Thu, 22 Feb 2024 06:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708562239; cv=none; b=rcbL/HbOnqVYDAq0Rgdy8DMSizqrGIjvw75hzJ06REKtXKiEVbOOvVP5G2Z6LMwwrezi4zIh+EFkocaI+NLSqmBpdVm3HlQW5VCekdpqI/FiDKwMuS0hq4QesjaXxUSbPUJrnVxwdbtnCrDailo+3csDDk1JEXkcvqgG7tPlmX8=
+	t=1708584122; cv=none; b=AdzckGnBk/d1zlt5hEkwTCecmXQ8aaY356ejBHJ1JavXVYVh0gZtgs9BAYd3PWFSI6ntzMX728StRxAFmxougfXWq2dPdFgqpPfKmnlqFEgCR6KbJXd9/rka44oNsHt87R/OOk9Md7SY4DjOPIS3EqV00aF7GQiBeNmU0aAtjSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708562239; c=relaxed/simple;
-	bh=7DLu0D8bl4lB3TJjeIvbjOxLuBH7rI9+0zdimRyeniw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iBTakZEvUFabN30ypxuvW9fIedOTG8c4/pfVK6Tp5+UiVPYQl3P0IdloiuCruOMgoKiOCz6nLy4C1gPcDqZ9jgTCb48OvP53IT8fqc3a3Hadu4WhpjoUBWLaJAIS8QRo2oTd8wDqW/2uCwKR6XDktyUaYKMev1WxaX0xBJftfHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AWuD0seQ; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1708584122; c=relaxed/simple;
+	bh=J17X2fBxQ1cxsLJfPGVRLC571YnOIdb1/QJy66FmZRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=i2RSPVObxZfo6D52PrHWxIObT+VOI/IwMtcFDhHw+CNdaSjgPVdLkervyWZeuyVzLiMS/qVatr3ZesvCU7hF2KWf8qS2l9kFpf9DhRoga2ON2Psjn+k9GuvvoK1xQ8k8nDBvgYVFxrMJWLUVgFDxQs0GHwAxiUVEzvE1miJbLaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PFGxZum4; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AWuD0seQ"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dc6dcd9124bso1315359276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 16:37:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFGxZum4"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-299e4b352cdso1816715a91.0;
+        Wed, 21 Feb 2024 22:42:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708562235; x=1709167035; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jwPQ5FFRE9HZKwgqe28p5vX79kU4E42ICEiVSyqmmE4=;
-        b=AWuD0seQuxSM2pg0KIzolmz4hQH1C41vVmswetXZTFhY3U9URmpE2Pgb7noqrjhFS0
-         VJk3Sl6DDsdf6yJRWe6gnSmX7JEYNgaVCjwPIvzOOdSCm56/FDqMunkl3DljsKWg3pcF
-         I0z2wtASZJeVNgrB8l6qlNHv1CKzgv7O6GGe8c9usAFQGmJGvXuolkvHh8EtXq+6VFJp
-         /1H2mU21yxv0IShaoj69664uEYmfuDXQTPysbdZeyzHmPZe+H89Zuzk/lLgGlTUBOW1R
-         5PV2VZZtF11n/6oLieojmDAtTLBF2pYFzJxIXlczJcHYGaxDe1x5Yy6r/ufCQWwGqQxT
-         jxew==
+        d=gmail.com; s=20230601; t=1708584120; x=1709188920; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J17X2fBxQ1cxsLJfPGVRLC571YnOIdb1/QJy66FmZRc=;
+        b=PFGxZum4XgxU8gIk6wkbnOSSgEjatcl2/lyGve22z7ts6IyEd/mqP+qEsmhV2P4NeE
+         CCCcXkCltc8KdX/5cyPLZbV7RkAz69gcYy/78QsvXWPQVB7mHweyAdGZ7n8kRIj4x6Z0
+         4F6CC7eNNRMTiyDKNErDCdqoFnmTrKAzkwqPmznwMjVgCKFFXYJzS7uWY9/Xevhlj8Tf
+         SWPkKUv3aF4O/BX1FzwDb0LJ4OTI2fZPRawoBjPVVupdfKLV9PbKx6JfZ6VYu+V1eqma
+         uzQjYTF6TPRnmeNvKfm9zqVYcv0VDbFyX9P35HszfvFMNfNqFTQ5aZKQUNATjxUETsyg
+         fcig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708562235; x=1709167035;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jwPQ5FFRE9HZKwgqe28p5vX79kU4E42ICEiVSyqmmE4=;
-        b=wefWeQM2P+C31isBCocOcBSmV9nZxg8eNpugM2WmDNfsDkmVeeGwk+/Bjvciu0mmwh
-         UHlIF2z7DdSaIeJczAfsYIT5CPABxlcW788Fko7cabNZbKmwfc3qzIvDjSMIWid6VAJo
-         udRSgpBwN0Ihv2tkcvNO1K74R/8MJxDQhCCvhO+/ty93heV2l6H6zLBjVeqFsMQiNvsn
-         /rEaLmLzdr/6DNqo3DL+JXKGDPp5N/lz8ttkKH0TMQyTt126g6vjJp5GLtXT4kqq2kqJ
-         yH0C26zmKi6frQRFhgrse3vufr+IAYvug8ByTdZedWuU1ZpdyQaoV6BJIFBfCS/m8lsJ
-         fx4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUh3Jw3JKKaGiNJUS1LifXq0KBE5VQEyfPYllBI9MqtXP7lYX7bxOekSjnK3oaDThIZLu+xQ1d8iSlEk7le5gySQyi1IlflLZ/XIBY56nUKu86NW9tH
-X-Gm-Message-State: AOJu0YyBFbjfcCOCAtX/1oBOdtLoub0sO9rC/xL+BipVd+EYzQWIfmVR
-	TadsYmQQ+vxMBLu2f0KKFatVLbSHEqykalEYcALk68hHVnxT0+9pPZ3WOCex2l+V5iFQp8RoGW6
-	rCtVlYeseKgyz2YN47b1R+27Dy95RwgYOq8cn
-X-Google-Smtp-Source: AGHT+IGAQ7Reayqcx5n6/kxK9gU1bvXz8FuxziZlj261BGCiV7fv0a2bbFUmVeZ6atHIXCyxpJlOV4CfjUbIVyi2enc=
-X-Received: by 2002:a25:cec1:0:b0:dcc:eb38:199c with SMTP id
- x184-20020a25cec1000000b00dcceb38199cmr971381ybe.56.1708562235099; Wed, 21
- Feb 2024 16:37:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708584120; x=1709188920;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J17X2fBxQ1cxsLJfPGVRLC571YnOIdb1/QJy66FmZRc=;
+        b=ZeLZPHtJnFCCi1iXZsCBhFk5SMJ1G7QWgoy9vW29VN5QcUBV7ze4tqJoPcvydlLFWk
+         rvo/H2cnp4uBVgRcmjJoarMQSPKAjyLk/g3riOVMQhOFQBtxnYPtHtRQaOezvsi1saaJ
+         5kFibiBdeAy1HBPNa/COakl1wqoziLb0pWsWCKNsbLHNh8sU7OqTQ7W0bXIP6ArDBHa7
+         6LTXYOxIVIU3aCUGDMn0vS9PI+6ar7QtJMnTdkLyim2fSTz+xZxSjFo98I8W3D53GD3h
+         1UpHVuEje2Vft+8JKp053O7VrDzbRCQDHx5/g/5arfgwd3Tn0+bYba+l6MZvg/oWEd89
+         hZbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwv+I40K6l6EEU7jEOxysrhZMcuRqDcR/or9lKUlPN9ucZ86qUWqERMatvuhccfC9qyriSVkuviFynEGv4r+uCumF9Nw2dri19sp6T4QXgSCZtubsh
+X-Gm-Message-State: AOJu0YyuVnNWww3fK91ELznLlTf4d9jY/THZ/6QaqNRsHLKDqbhtCz/f
+	T0s3oEms/3L+NgTpVtu17OlxuukjmQBHIIOmul7jko7w0+hxikhh
+X-Google-Smtp-Source: AGHT+IFNdst8YpA7UlBoxrtkXY44+qmfRxyM/UNjZ+zqbHALDY2Qvssh+kpwN8fcAzukd4cx6Nqc7A==
+X-Received: by 2002:a17:90a:bd09:b0:299:281:e1b2 with SMTP id y9-20020a17090abd0900b002990281e1b2mr16365685pjr.30.1708584119879;
+        Wed, 21 Feb 2024 22:41:59 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id bx12-20020a17090af48c00b0029a4089fbf0sm919060pjb.16.2024.02.21.22.41.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Feb 2024 22:41:59 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 4AE3D1830534E; Thu, 22 Feb 2024 13:41:57 +0700 (WIB)
+Date: Thu, 22 Feb 2024 13:41:57 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Security Module Subsystem <linux-security-module@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ali Polatel <alip@chesswob.org>
+Subject: TOCTOU-free exec(), chdir(), open() with O_PATH sandbox emulation
+ support?
+Message-ID: <ZdbstX5p4M_-RjXC@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
- <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
- <CAHC9VhRQ7Xa2_rAjKYA_nkpmfUd9jn2D0SNcb6SjQFg=k8rn=w@mail.gmail.com> <ZdaTPV/Ngd8ed/p5@do-x1extreme>
-In-Reply-To: <ZdaTPV/Ngd8ed/p5@do-x1extreme>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Feb 2024 19:37:04 -0500
-Message-ID: <CAHC9VhS8h-A61b8DzbOBSxSH6WBDZkHBQGuT=DVq1n5gHfx6jA@mail.gmail.com>
-Subject: Re: [PATCH v2 15/25] security: call evm fscaps hooks from generic
- security hooks
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Eric Paris <eparis@redhat.com>, 
-	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MO7InTU0UHS36JK5"
+Content-Disposition: inline
+
+
+--MO7InTU0UHS36JK5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 21, 2024 at 7:20=E2=80=AFPM Seth Forshee (DigitalOcean)
-<sforshee@kernel.org> wrote:
-> On Wed, Feb 21, 2024 at 06:43:43PM -0500, Paul Moore wrote:
-> > On Wed, Feb 21, 2024 at 4:25=E2=80=AFPM Seth Forshee (DigitalOcean)
-> > <sforshee@kernel.org> wrote:
-> > >
-> > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > > ---
-> > >  security/security.c | 15 +++++++++++++--
-> > >  1 file changed, 13 insertions(+), 2 deletions(-)
-> >
-> > First off, you've got to write *something* for the commit description,
-> > even if it is just a single sentence.
-> >
-> > > diff --git a/security/security.c b/security/security.c
-> > > index 0d210da9862c..f515d8430318 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -2365,9 +2365,14 @@ int security_inode_remove_acl(struct mnt_idmap=
- *idmap,
-> > >  int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry=
- *dentry,
-> > >                               const struct vfs_caps *caps, int flags)
-> > >  {
-> > > +       int ret;
-> > > +
-> > >         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > >                 return 0;
-> > > -       return call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps=
-, flags);
-> > > +       ret =3D call_int_hook(inode_set_fscaps, 0, idmap, dentry, cap=
-s, flags);
-> > > +       if (ret)
-> > > +               return ret;
-> > > +       return evm_inode_set_fscaps(idmap, dentry, caps, flags);
-> > >  }
-> > >
-> > >  /**
-> > > @@ -2387,6 +2392,7 @@ void security_inode_post_set_fscaps(struct mnt_=
-idmap *idmap,
-> > >         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > >                 return;
-> > >         call_void_hook(inode_post_set_fscaps, idmap, dentry, caps, fl=
-ags);
-> > > +       evm_inode_post_set_fscaps(idmap, dentry, caps, flags);
-> > >  }
-> > >
-> > >  /**
-> > > @@ -2415,9 +2421,14 @@ int security_inode_get_fscaps(struct mnt_idmap=
- *idmap, struct dentry *dentry)
-> > >   */
-> > >  int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct den=
-try *dentry)
-> > >  {
-> > > +       int ret;
-> > > +
-> > >         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > >                 return 0;
-> > > -       return call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> > > +       ret =3D call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> > > +       if (ret)
-> > > +               return ret;
-> > > +       return evm_inode_remove_fscaps(dentry);
-> > >  }
-> >
-> > If you take a look at linux-next or the LSM tree's dev branch you'll
-> > see that we've gotten rid of the dedicated IMA and EVM hooks,
-> > promoting both IMA and EVM to "proper" LSMs that leverage the existing
-> > LSM hook infrastructure.  In this patchset, and moving forward, please
-> > don't add dedicated IMA/EVM hooks like this, instead register them as
-> > LSM hook implementations with LSM_HOOK_INIT().
->
-> Yeah, I'm aware that work was going on and got applied recently. I've
-> been assuming this change will go in through the vfs tree though, and I
-> wasn't sure how you and Al/Christian would want to handle that
-> dependency between your trees, so I held off on updating based off the
-> LSM tree. I'm happy to update this for the next round though.
+Hi,
 
-Okay, good, I just wanted to make sure you were aware of the changes.
-Since the merge window is only a couple of weeks away I'm guessing
-this isn't something we'll need to worry about in Linus' tree as the
-LSM/IMA/EVM changes are slated to go up during the next merge window
-and I'm guessing this will likely go in after that, targeting the
-following merge window at the earliest.
+Ali Polatel <alip@chesswob.org> opened feature request bug on Bugzilla
+regarding TOCTOU-free sandbox emulation support [1]. He wrote:
+
+> Thanks to the addition of seccomp_addfd, now it is possible to emulate a =
+vast number of system calls to achieve a TOCTOU-free sandbox in userspace. =
+There're however three exceptions to this:
+> 1. exec family calls cannot be emulated so a sandbox disallowing exec cal=
+ls has no choice but to continue the exec call in sandbox process allowing =
+TOCTOU.
+> 2. chdir family calls cannot be emulated so a sandbox disallowing chdir c=
+alls to hide paths has no choice but to continue the chdir call in sandbox =
+process allowing TOCTOU.
+> 3. open calls with the O_PATH flag cannot be emulated (addfd returns EBAD=
+F on o_path fds) again a sandbox disallowing open calls with O_PATH flag to=
+ hide paths has no choice but to continue the open call in sandbox process =
+allowing TOCTOU.
+>=20
+> It'd be awesome for the kernel to provide TOCTOU-free ways to sandbox the=
+se three cases.
+>=20
+> For a bit of context, I am the author of syd, a seccomp and landlock base=
+d application sandbox with support for namespaces, you can read here about =
+why this feature request is relevant and more: http://man.exherbolinux.org/=
+syd.7.html
+>=20
+> To quote the relevant bit from the manual page:
+>> BUGS
+>>=20
+>> In the operation of syd, certain system calls are not fully emulated due=
+ to seccomp(2) limitations, resulting in the sandbox process continuing the=
+se calls directly. These include execve(2), execveat(2) for execution, chdi=
+r(2), fchdir(2) for directory changes, and open(2) operations with O_PATH f=
+lag. Consequently, this behavior exposes vulnerabilities to time-of-check t=
+o time-of-use attacks, allowing for the circumvention of Exec Sandboxing to=
+ execute denylisted paths, the bypass of Stat Sandboxing for unauthorized d=
+irectory access without disclosing directory contents (owing to getdents(2)=
+ call emulation), and the detection of hidden files without revealing file =
+metadata, as stat(2) calls are emulated.
+
+Is the feature request viable/realistic?
+
+Thanks.
+
+[1]: https://bugzilla.kernel.org/show_bug.cgi?id=3D218501
 
 --=20
-paul-moore.com
+An old man doll... just what I always wanted! - Clara
+
+--MO7InTU0UHS36JK5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZdbstAAKCRD2uYlJVVFO
+o6t8AQD79KsszDwGub+XNmsGyw95WsE0YmAkVahpYrYhSOwgFQEAqPBzxT+wpYN+
+0UuCHIC627WdHRuS7KLGWSiFT5IG/Qs=
+=lS1J
+-----END PGP SIGNATURE-----
+
+--MO7InTU0UHS36JK5--
