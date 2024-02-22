@@ -1,149 +1,100 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2423118657;
-	Thu, 22 Feb 2024 18:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C417112D205
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Feb 2024 21:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708624993; cv=none; b=IzrXhhmDI+L9vqSnMHR87INl9r37q0sBKX3P8fY9RDWWPZGrW3MeU/0o4d8CXLJpBNd/9vGHu3ItCZDEeK5Q6/FVa6QfscxQV6ELXyhAlKYRYc3+FIGEuvVMaT5G3qycV7PkxwsSHDA9Z0TfreiNax55Zo2T6Pjp2GJZTiy1tTg=
+	t=1708638745; cv=none; b=AUdDLIFVGgIZUsd1SMsCn49s3utAuj/5jb2zmXku2cRBtbopkO8Wvp/AV0s1AN70Hh6Gm3si61UKUV7QSow+264/37vs3yUsuBSggv9GqsiyHPQVk7w5RMSCdA/utLuES3qVntmsgrMrZdTzB0sOynL4/7f47JbpzkXRCPZ7I/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708624993; c=relaxed/simple;
-	bh=eWIgrng0fomPV+v6ms8u6IZCYZ5GywPfM/uBGfotOyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bcG9OPhom+G6NN+vP9A6BY4bB10E4jKncT4qU3lHcSO0/ZMMr4Z/idaBMX5wD82klVkOYq9iU9mlMQOoxFIili4KiGphZY99rcu9SvqmAquldoMw/cxRqWTwjBMQtyA3zPysQFceh/ROWfFyFqTFhQBL9R6F1vP9wAqqmwPDPeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JyKBbDev; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1708638745; c=relaxed/simple;
+	bh=lnP1NZrl4ujuG8QKHHnD8jKJ9PO0jPr801whPzeYlHU=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=pOSsfDuIfy9aLztmJG0V5agBKSNf7F+aJveeTQTUL9nC3TyXFQdvkTzqXoVKbNH+Q+7bsNGXnrbJ/B7itW1ddkRtR6nw8hRCQ7e3WgDW5yg/cGT6gsFEPseWqaXco2GWjNOxBPraCRVUXlGzb6+ftNniiWSc4maJFF4wHBOcY34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TVs8XNoy; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JyKBbDev"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708624991; x=1740160991;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=eWIgrng0fomPV+v6ms8u6IZCYZ5GywPfM/uBGfotOyI=;
-  b=JyKBbDev1Sd21eLt0tVADK+fBhzTmDtmf99xVkKeZNLCnlawo2B1uYoQ
-   ov1mH7wqLvoeivBEhtR+Kgrdyd/8o16hFRtjLWoOn8WC/oExpaQoq2vDv
-   L0hbl4RvubUYE5wdUfEQ1x/Uqm5Bm6EfT+xgI3eqCRmOzimtpGa5k7XXd
-   mh8+0aeGSkx/5Ht9oGHMsMz6DxUrbXWQq7fechcj+kX1x5fg+qSQtbdTa
-   C7556YEN6oUNvI0sFLj3AUR5fAGBUfzc8uXk9au0QeZkjmR7tNFxVnEVS
-   bRgksN1wNY+9fmhGq6bX8LOioln3asR/hPIhe+PYRQDEQZ10KNvxMKGhA
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10992"; a="3010774"
-X-IronPort-AV: E=Sophos;i="6.06,179,1705392000"; 
-   d="scan'208";a="3010774"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2024 10:03:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,179,1705392000"; 
-   d="scan'208";a="10188836"
-Received: from jwbates1-mobl.amr.corp.intel.com (HELO [10.209.48.22]) ([10.209.48.22])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2024 10:03:05 -0800
-Message-ID: <5de7d665-7047-497b-94fb-76ec2af3c9e2@intel.com>
-Date: Thu, 22 Feb 2024 10:03:03 -0800
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TVs8XNoy"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6861538916cso1777976d6.3
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Feb 2024 13:52:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1708638742; x=1709243542; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=I8ZBrZ/+pFxkY1oFxjpZNMC+wvu9hBcY1b6MYAFWJmI=;
+        b=TVs8XNoyEDL8CN5GCcSqifvILtmmKaE+pNlOp6k5vZUV0pShoU/GqTuA5mEP6VbWd1
+         6He6JAI+gsj+5kKJNxoYl39ZlZQCBXo35K5tG3xBnExD6N2qMDwSTkCS10GIm/TD9tw+
+         Jd02Eh2eKBg7rfugF/izs/hZv6tZB8AIlTId2Z2Vse03D41X39yrrQ3ShoH5WWEBVws8
+         GveEnvDoRmIxxR7x2J1i+9Z4AsVVelYhbHRn9LSCteyFc7Q41qIEEujFuu/RcTX9fc+r
+         IShPgNaub2OpgZ49wnPzAcXXrwaamMp/8/qg1lMMNrjy17kt6t9SnJK6zjASf8GadHGt
+         n3Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708638742; x=1709243542;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I8ZBrZ/+pFxkY1oFxjpZNMC+wvu9hBcY1b6MYAFWJmI=;
+        b=r5D7xx6xC1eJg1/Gy8NqneOCrl7U6Czpi//fc1fEe4eIDiJ00beg8BZWkoq3xc21l3
+         4owm2r5KjIgytYbVyXihDUGAsKtyifCeP0eITZUy3i2+bLT4B78y+gd3wxAgjdAZQDUC
+         lW4h8tI3UnLg0/7AAlRPIc0lGE7mKj0/CpSqoB7fgUMuR3ReYY/wYtftlW1E+GiwV7cS
+         kYdN3kqIc77a494eYjlFN8qDosTRONYVeW7QnVsmtnk2gqURsJwEO5MbCO2mW/hh6khq
+         zqw/y3g7b9fu5RyK8hWhXgjLQfb+RihZS+4UYjVEUFQ6X6mmHKKNXSREp5HrNZ7Dkjbw
+         /+Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmwKXV4rKfw9wOilUSYXdLB7eC1tSGlJ4KniU6J2WlxTmiPKxc2qmvuDEIvigM66BVEe9A5mWDuDetXI3Rtya6xVDvroeTrrF4p1Oj9LfW6G0JzjbO
+X-Gm-Message-State: AOJu0YxvacufLVYAxMgeCnButObkO+DnY0VHZqsgCa7hs+i62EReVnlY
+	0FlEgQYg2lPoi3IK7eBofB6pP8YRnGZlMrB8T3G8BNiKdlwx/0zKLsmgbaR5ug==
+X-Google-Smtp-Source: AGHT+IEpHmEMqK5EW7I4nyXpGk8Yx/n+LjAN6DfyqGeUomkyax6MyFYUHXzta/ywW6EKPUNuUHuJCA==
+X-Received: by 2002:a0c:b681:0:b0:68f:2d21:d62f with SMTP id u1-20020a0cb681000000b0068f2d21d62fmr403459qvd.40.1708638742412;
+        Thu, 22 Feb 2024 13:52:22 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id ob6-20020a0562142f8600b0068c39b7a7cfsm7396689qvb.12.2024.02.22.13.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Feb 2024 13:52:21 -0800 (PST)
+Date: Thu, 22 Feb 2024 16:52:21 -0500
+Message-ID: <539a7320f63cb88914728368f8e96490@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 4/5] sbm: fix up calls to dynamic memory allocators
-Content-Language: en-US
-To: =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
-Cc: Petr Tesarik <petrtesarik@huaweicloud.com>,
- Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Xin Li <xin3.li@intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Kees Cook <keescook@chromium.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Pengfei Xu <pengfei.xu@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ze Gao <zegao2021@gmail.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Brian Gerst <brgerst@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <jroedel@suse.de>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
- Tina Zhang <tina.zhang@intel.com>, Jacob Pan
- <jacob.jun.pan@linux.intel.com>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Roberto Sassu <roberto.sassu@huaweicloud.com>,
- John Johansen <john.johansen@canonical.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org,
- Petr Tesarik <petr.tesarik1@huawei-partners.com>
-References: <fb4a40c7-af9a-406a-95ab-406595f3ffe5@intel.com>
- <20240222131230.635-1-petrtesarik@huaweicloud.com>
- <20240222131230.635-5-petrtesarik@huaweicloud.com>
- <f6135f2c-bc8f-41c3-9c6a-8346d685e4dc@intel.com>
- <20240222185744.509e4958@meshulam.tesarici.cz>
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240222185744.509e4958@meshulam.tesarici.cz>
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] security: use default hook return value in call_int_hook()
+References: <20240130125659.1709410-1-omosnace@redhat.com>
+In-Reply-To: <20240130125659.1709410-1-omosnace@redhat.com>
 
-On 2/22/24 09:57, Petr Tesařík wrote:
-> * Hardware designers are adding (other) hardware security defenses to
->   ring-0 that are not applied to ring-3.
+On Jan 30, 2024 Ondrej Mosnacek <omosnace@redhat.com> wrote:
 > 
->   Could you give an example of these other security defenses, please?
+> Change the definition of call_int_hook() to treat LSM_RET_DEFAULT(...)
+> as the "continue" value instead of 0. To further simplify this macro,
+> also drop the IRC argument and replace it with LSM_RET_DEFAULT(...).
+> 
+> After this the macro can be used in a couple more hooks, where similar
+> logic is currently open-coded. At the same time, some other existing
+> call_int_hook() users now need to be open-coded, but overall it's still
+> a net simplification.
+> 
+> There should be no functional change resulting from this patch.
+> 
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  security/security.c | 525 +++++++++++++++++++-------------------------
+>  1 file changed, 221 insertions(+), 304 deletions(-)
 
-Here's one example:
+Thanks Ondrej.
 
-> https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/data-dependent-prefetcher.html
+Merged into lsm/dev with a fair amount fixups due to merge conflicts
+from the IMA/EVM promotion as well as the tweaks in
+security_inode_copy_up_xattr() that were discussed in the thread.  If
+anyone notices anything odd, please let me know.
 
-"DDP is neither trained by nor triggered by supervisor-mode accesses."
-
-But seriously, this is going to be my last message on this topic.  I
-appreciate your enthusiasm, but I don't see any viable way forward for
-this approach.
+--
+paul-moore.com
