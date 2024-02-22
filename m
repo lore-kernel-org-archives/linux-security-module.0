@@ -1,151 +1,86 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F6612B14D
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 23:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5449928F8
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Feb 2024 00:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708559037; cv=none; b=U0vlmO57CPSWoofSg5E6vPRds+I3N5puPHEgYwwxGWfWHd8MVIUED5JKc3ArvSkqmXJcuD/vof1hLCcb8+9q1uvYbct05Bod5rxv4BolCI9nFBU5SdFCFHtvRlbtCbZCJ9omkr3dAHJmOg9wulwlexH6jKbsWjl9xdEmGxrnhOw=
+	t=1708560219; cv=none; b=p+gJJUNoS6z7Lu9K9G/sPA/S09iPnsyHxzD1gz6PQy6yzyVmC5yKilEctOllAIAt5zONzz4D9A/W7odkmy4auMoXwS7insWv7W0Jgb6oObFr88DLAZ6aznONXcm3GGw5Mhb6he8i71kTtrc0HKJZKADodqONVjSoILO+OyLX7nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708559037; c=relaxed/simple;
-	bh=jXUi7DaHH/tYkfvmdZwdL5O6ldHOILbUbl8SwoK93vk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdVik8P8vUeda72Lne9ccyQM6mRWuEL9320JBFdOe974boAWLTOtv6k02K9nx0HH6o+L1pg/pxEdXF0ks+kixWvPRsC6tpK9o8srC+G7AjoIKWmh/oyd6keT6m9oMOB9sj218+oABgl69EAZAEYR5qzYpWUdrRr8LA4O+ipmG70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DMYN6N90; arc=none smtp.client-ip=209.85.219.172
+	s=arc-20240116; t=1708560219; c=relaxed/simple;
+	bh=CUHAvM9TBOBSGIeXrGaqW9poJoi3l306rHYdGLQmack=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=s9grFne0GtTyN2Q6Um/X/doq2CwkA4gC2Z39sPTEtepi9m6MNk9Xu6EaNxRxdb0mbhuPm4FiC+4Qv/QNoc76hjML+n85EviQc9HVG68llCsyvYiAKeO8cXoyvDPCU4x9nY/Oa0+JyssZF7GBFS98jzdrS4oSEJD+Nc5w7SC3f0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HMjGNXyK; arc=none smtp.client-ip=209.85.210.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DMYN6N90"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc236729a2bso6909168276.0
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 15:43:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HMjGNXyK"
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6e2f12059f4so3615101a34.0
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Feb 2024 16:03:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708559034; x=1709163834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ozpdHgEMJtLxc8z0f/xCObDDvWnU+f1l4TdamibeEB0=;
-        b=DMYN6N90YpElzCrVcquPcjL+68ZSO5M7iyX1Ysv42qTiwp/rotMVr8o6Mewie3EVWH
-         6VkCYIDs9OZsceV8eT/715SqP5vipSQq8BJm53ev7Jak8bqLfejNRGC60ZEdngFaBjHD
-         yR2Xa+KweEdyCQ1U/IYiFUyc+gff3XevcnQRwIclqaZGPbO7+Gyh/N2bDhHANboRBTfA
-         F/SqCwaEdM3e7maAwCzEolx3GWicHLwuXvWGnzGIKmfCUrRrES38YR7gNI3H2wQklfPE
-         31p2G69/JMdWuV0Uo5dNqkjAX0N7C3gMXqT723vE4AIFKOiqlqkWwlveEk0rhSpt0vd3
-         esLw==
+        d=paul-moore.com; s=google; t=1708560215; x=1709165015; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KUJ35hEQ/dpB50QPavQbMY8BuIMgUZWkF4Rx+INF3EA=;
+        b=HMjGNXyKkz8vE+w/qqACWEzKUdKfNMiEOd6/16fLa3Uknj7b+b3TkxuvvfyRHODZF6
+         kwv7BipGGe/dk5CoWf4nbZx1JchXGV26is20bUZt7v0oKPV/LkcQFU+CLvVO27la/140
+         KS93fe/X+V5NrAUunCc10rglAPjltC2kMHFgMi0LwBkE7LZtDBJLIHaSNb91MdBQBxbt
+         CtH551fO1ec9fB1OfvP9qqzL/I0/lFIKrPiLxghGxTFr3CSsKfqzQcxV93wrOQDKf+IC
+         FVya05pooWajPet0UKz+gLfYspckuZAfveYkbm6LpVvikVu60lP9QOE8hmppKsf2+q2x
+         0NzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708559034; x=1709163834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ozpdHgEMJtLxc8z0f/xCObDDvWnU+f1l4TdamibeEB0=;
-        b=USxjFXAklZ5H1o+Mc62nWOWuY67ZP8zrriCY921w4Vr1yMDyxJGVnCejhlyRWmFvwD
-         51Y6b8paWSJ3jp5HZgXv8s9/dmxWfxieg2Q5M+JyczyVRtD5bRKTYcO6T+K+kHWzTKot
-         nXT7E48rqHV6BrXbUuofZ3p65+uYZjzkqsIM0lZYjra07Q1vch2x5fnsXuAPdk5OeEP1
-         iEMTRdbhgEMslOYu27bnCnLIWYyvUAJYs6wflDSlZD0LuXZdkq2aR4w9XiqiAyjZokih
-         gHJDM2fC9p+c19Q3wnUrT/d7iJlxIxoZNCw7Igdy/rOA8akdwmSz2rNskRhMpHhElLGu
-         Rmvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTsBiaTdzgXpLa3JQ/dHWfFcZN3uQ/7x6py0njvfZwQEpMKa5czLtDvTklpBiAs590E6HjQ0Eav96fq0BUj3jaDurKLYpaIG0YGYPucfMWR8NtZqpU
-X-Gm-Message-State: AOJu0Yxpf9A5QpHlZjf1FllkIG5R2l+Q69XsFewmcoZYbaoH/OgKRWV/
-	T19zY4iVx3RIG9RW68S7YdPDvuvnNPsTwybwCAI1nMPoKAY74uyGJcop8rFHcFR/0NW8O7MC/aS
-	fTjsZ3i82+v+YWC7ow9QVmR2PcWS5m+wh4Rck
-X-Google-Smtp-Source: AGHT+IGHrH5g+9KgtuY77JnAmJfeyj21kEZdzhwPpy55HJt0kZAi28H0jeAtPv8SyPEbdcHCUbHgVHOylR1JMSl3Amo=
-X-Received: by 2002:a25:a285:0:b0:dc6:db0c:4ff0 with SMTP id
- c5-20020a25a285000000b00dc6db0c4ff0mr912234ybi.32.1708559033944; Wed, 21 Feb
- 2024 15:43:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708560215; x=1709165015;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KUJ35hEQ/dpB50QPavQbMY8BuIMgUZWkF4Rx+INF3EA=;
+        b=rBX9fqo1P16pZudRSPnJxL7ptxOXJ1lBSZDv2zxyIvQEWUZC1YZnD10oGEF6kbfArF
+         JHjChX2YrSMBmxpIZa5n1ag82gRddle8ZnQ+qdXLrGQeYJ/CEOAQuvPmpkcmEulzjqV7
+         h7z4B2LnEsbHnuOoTcY9uEwFBGwvzL75e03/fKiUIZSkOfRu/c/OGahXCZWROQSbGeH4
+         8Cy7/TLQI6tVcstrm7VRxQS+ffd+8zx3KQdyhUhSckhHK8tRavTTj7EJD/AsAnL0lZNF
+         L6hZyRejkfBfUDHt8+EpDgFfvQMc7clkV20S6rK2CtXZ1eXJwyQnD1wV1Mq5SbcHaswB
+         ynew==
+X-Forwarded-Encrypted: i=1; AJvYcCVn5eEeqSt1Xcmwil3uibgjJgM7flb8OFhdybbOKWTl2aFttFTP8TR2xgekf4w7CtEpp2Sz+rS3hB2k1xDgakdO4Db/pu3BIBrXj5k1ny8KjWp16W4l
+X-Gm-Message-State: AOJu0YwalgzH6/rrm0zd1QDGWgX58DXJdPXQDGpT8Nf2UBF7i+XGtGOE
+	QEa7LBWlXBe0ctOCLl/faXEp8rZV2Lsej4fyxfVuUxyI7MVv3oeL4Z/DbbX71g==
+X-Google-Smtp-Source: AGHT+IHLyOG4MwwtHs06DLmn5fZMM7YdjPSbb/US79bK/6ILGjHlbvPthFQhi3Ojtpg+Ahhrbn6S/A==
+X-Received: by 2002:a9d:4814:0:b0:6e4:3247:8244 with SMTP id c20-20020a9d4814000000b006e432478244mr18197851otf.37.1708560215346;
+        Wed, 21 Feb 2024 16:03:35 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id d9-20020a05622a05c900b0042ddde7c415sm4856546qtb.9.2024.02.21.16.03.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Feb 2024 16:03:34 -0800 (PST)
+Date: Wed, 21 Feb 2024 19:03:34 -0500
+Message-ID: <86532a709c172423ea200c1cabffa9f3@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org> <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
-In-Reply-To: <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Feb 2024 18:43:43 -0500
-Message-ID: <CAHC9VhRQ7Xa2_rAjKYA_nkpmfUd9jn2D0SNcb6SjQFg=k8rn=w@mail.gmail.com>
-Subject: Re: [PATCH v2 15/25] security: call evm fscaps hooks from generic
- security hooks
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Eric Paris <eparis@redhat.com>, 
-	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Pairman Guo <pairmanxlr@gmail.com>
+Cc: jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Pairman Guo <pairmanxlr@gmail.com>
+Subject: Re: [PATCH] LSM: Fix typos in security/security.c comment headers
+References: <20240217133504.4534-1-pairmanxlr@gmail.com>
+In-Reply-To: <20240217133504.4534-1-pairmanxlr@gmail.com>
 
-On Wed, Feb 21, 2024 at 4:25=E2=80=AFPM Seth Forshee (DigitalOcean)
-<sforshee@kernel.org> wrote:
->
-> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+On Feb 17, 2024 Pairman Guo <pairmanxlr@gmail.com> wrote:
+> 
+> This commit fixes several typos in comment headers in security/security.c
+> where "Check is" should be "Check if".
+> 
+> Signed-off-by: Pairman Guo <pairmanxlr@gmail.com>
 > ---
->  security/security.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
+>  security/security.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-First off, you've got to write *something* for the commit description,
-even if it is just a single sentence.
+Merged into lsm/dev, thanks.
 
-> diff --git a/security/security.c b/security/security.c
-> index 0d210da9862c..f515d8430318 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2365,9 +2365,14 @@ int security_inode_remove_acl(struct mnt_idmap *id=
-map,
->  int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *de=
-ntry,
->                               const struct vfs_caps *caps, int flags)
->  {
-> +       int ret;
-> +
->         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->                 return 0;
-> -       return call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, fl=
-ags);
-> +       ret =3D call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, f=
-lags);
-> +       if (ret)
-> +               return ret;
-> +       return evm_inode_set_fscaps(idmap, dentry, caps, flags);
->  }
->
->  /**
-> @@ -2387,6 +2392,7 @@ void security_inode_post_set_fscaps(struct mnt_idma=
-p *idmap,
->         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->                 return;
->         call_void_hook(inode_post_set_fscaps, idmap, dentry, caps, flags)=
-;
-> +       evm_inode_post_set_fscaps(idmap, dentry, caps, flags);
->  }
->
->  /**
-> @@ -2415,9 +2421,14 @@ int security_inode_get_fscaps(struct mnt_idmap *id=
-map, struct dentry *dentry)
->   */
->  int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct dentry =
-*dentry)
->  {
-> +       int ret;
-> +
->         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->                 return 0;
-> -       return call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> +       ret =3D call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> +       if (ret)
-> +               return ret;
-> +       return evm_inode_remove_fscaps(dentry);
->  }
-
-If you take a look at linux-next or the LSM tree's dev branch you'll
-see that we've gotten rid of the dedicated IMA and EVM hooks,
-promoting both IMA and EVM to "proper" LSMs that leverage the existing
-LSM hook infrastructure.  In this patchset, and moving forward, please
-don't add dedicated IMA/EVM hooks like this, instead register them as
-LSM hook implementations with LSM_HOOK_INIT().
-
---=20
+--
 paul-moore.com
