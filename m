@@ -1,112 +1,85 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874B014265C
-	for <linux-security-module@vger.kernel.org>; Fri, 23 Feb 2024 17:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D474384FBB
+	for <linux-security-module@vger.kernel.org>; Fri, 23 Feb 2024 19:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708710539; cv=none; b=VK+hb435xdZsL4uORNta5NzXTqyRNgCS37D36pmIBx3TjWs0xcYWTLGnlCcDnJLhXFFgS3O8CxH793Japn+e5Hfrm/g6xVPiONKXAHHaZMZF+G96gxNvOPP3pAXBuM/FKbaVcRNOXiX3CI2B0GlTG+9G9EPIUsJiCo2n9NUOaTs=
+	t=1708715167; cv=none; b=IzrEXpO9dBpajHMnXZxvHT3LIJP3ZlWTZX/2FUTTq57sGdrOluOHiZeiYpQ2jUUDdV6lIW7I15IJQ9B/QXxbQYlR4qlgbQw7AwIWxMviYt1SYNnePlOQrTxOsKYlxazy+GZQKw8343xFggM9u68m5UT5fsHmLSggPZAXRfD1AA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708710539; c=relaxed/simple;
-	bh=J9CJg+f2XESx0EE8EOWgy7TWOEQmNvNe7CTVEAvMpdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rPCddVq3GEh5DYPeAQOmZ8I2sKaIiSElqQhlpPLIOhm4FQhKHTtERojsBm/PURR8R0Nr8Hr3QN5jtcYjprBGbSWSpIs4zhmjIfRgHJBkL9L1MT3yWJBnhxMATdTm3+5NEp7F3SKUOqV3/gWLZf+geD9Hsa2hAM1Xeg9e8l13nqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PaqJkDVN; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1708715167; c=relaxed/simple;
+	bh=YdGYAHw605VafQ4cjqctlQpaI+zPzB3uwPRkJjOjJFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j/Wm/TnxZ+q7Jp4Ali4Ofj+w5d/gMu4z6FIA7J/2p1wWiXpdZkU79Z1iCcWXK3UqM8Zs24fkueAGj4V3CJrBF26icC1Mtmo4DmX9RzeJH2WMlDNh2PQz9ejoEgaDPnEOXWvbZsU0Jgt3m4VUBLzG8DejKqeR3jbCIEJfV9r1eB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=H9WEYkU4; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PaqJkDVN"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-299372abcfeso875833a91.1
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Feb 2024 09:48:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708710537; x=1709315337; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0xniysJokrJSL4kA+7xMXMFdpfM5voHW8xKXFN/4z3Q=;
-        b=PaqJkDVNUvhAcZHYjyaXXhlR47txCPW5nwh7UvN501VLusznbTi0vhhkvcVwVUe96y
-         hF9onaV6DcaczNiwnv7KhPHQPymZZRCFIjHroVVHqbkLd0KJRfiRo+86fPpFhLQrtQZE
-         gLAV3WtKX9IYx4fP7TZjdHyZMZ5ZsVGOH12c8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708710537; x=1709315337;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0xniysJokrJSL4kA+7xMXMFdpfM5voHW8xKXFN/4z3Q=;
-        b=ku2WRij01T+PS268jiwogjNDCKWvrmwQ74dYKC3NcCehdr8FUbOON4pEmrbRc07hKn
-         tDOp/UIZqam9fFA8twCHzTx1ROLj2x8w0X1kx8TAguaSL6wBgIeQQfbb5HOiqzvv6ig4
-         Es4Nxx8qkE6mlxqf2OH8kr0jO3ob2oN71Af9Z4j/2tSGm2/rNc73Cg7OyKsqTHjYbmC7
-         1EYoBN7hnnqb6PrcrYC6MgBF3VLA+75HPvc4jGBhTDj/KD5XuihN5hFqYzRe4LG/8mdv
-         XUsxAR3p7HzUt5ZiPbjwWFOik9gMVYPNhOs8K9Y7/70BUBAClPBzkVzPizZS10P7LYn2
-         onzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqlzTUjPtiqhY/2zEza4VxvD1H+XNGpC6kNOnD5b2aUEnlp3A1W42/++DO5C0W3v6FqzzRHqBM2EI7R4JIE2i9l1buZ7jb/cSBGG5FtdJX9gMo3nmH
-X-Gm-Message-State: AOJu0YzTO6e/pYM8OfC/NhtDZRt+AfN3VxgtsYErGTocx2AupaExjQMz
-	cNqh7NznHlhf1Ruj5KqzzxExXMgEgSKOPYYcR2OR6DJkznSl8DpSV5U7/AIiYA==
-X-Google-Smtp-Source: AGHT+IHPn7Lo2ZZEfv0egVA1U0588A9KlqO0T0qP4pZBiF5v6f+M7qkLa0yUFIE4yhmkeXZ+FjLDCg==
-X-Received: by 2002:a17:90a:ad97:b0:299:41dd:95c0 with SMTP id s23-20020a17090aad9700b0029941dd95c0mr619373pjq.16.1708710536866;
-        Fri, 23 Feb 2024 09:48:56 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id l14-20020a17090a72ce00b002961a383303sm1742861pjk.14.2024.02.23.09.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 09:48:56 -0800 (PST)
-Date: Fri, 23 Feb 2024 09:48:55 -0800
-From: Kees Cook <keescook@chromium.org>
-To: shuah@kernel.org, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, edumazet@google.com,
-	linux-kselftest@vger.kernel.org, mic@digikod.net,
-	linux-security-module@vger.kernel.org, jakub@cloudflare.com,
-	Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net
-Subject: Re: [PATCH net-next v3 00/11] selftests: kselftest_harness: support
- using xfail
-Message-ID: <202402230947.614061ABBB@keescook>
-References: <20240220192235.2953484-1-kuba@kernel.org>
- <e0ce5ab05a0fc956ccde61686d7c6c90026e3909.camel@redhat.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="H9WEYkU4"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ThKGv49QfzMq2xt;
+	Fri, 23 Feb 2024 20:05:59 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ThKGv0pfYzMpnPc;
+	Fri, 23 Feb 2024 20:05:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1708715159;
+	bh=YdGYAHw605VafQ4cjqctlQpaI+zPzB3uwPRkJjOjJFE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=H9WEYkU4GyTi79yWNsj+FBBwY2I/Zm9vHlkuL2GG+FniECt0mVFOKqZkNHj7g0SR7
+	 1np3Zpre5uRvuBsKC4mPYJ5qluB+Q7MQHE2a6o6JlD2DBpzYmaKjK/DqFEAQxkf9yy
+	 XQrvusHt5juvdNyRutZawD3xEJfECNx2tvu5UI24=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Casey Schaufler <casey@schaufler-ca.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
+Date: Fri, 23 Feb 2024 20:05:46 +0100
+Message-ID: <20240223190546.3329966-2-mic@digikod.net>
+In-Reply-To: <20240223190546.3329966-1-mic@digikod.net>
+References: <20240223190546.3329966-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0ce5ab05a0fc956ccde61686d7c6c90026e3909.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Wed, Feb 21, 2024 at 01:03:26PM +0100, Paolo Abeni wrote:
-> On Tue, 2024-02-20 at 11:22 -0800, Jakub Kicinski wrote:
-> > When running selftests for our subsystem in our CI we'd like all
-> > tests to pass. Currently some tests use SKIP for cases they
-> > expect to fail, because the kselftest_harness limits the return
-> > codes to pass/fail/skip.
-> > 
-> > Clean up and support the use of the full range of ksft exit codes
-> > under kselftest_harness.
-> > 
-> > Merge plan is to put it on top of -rc4 and merge into net-next.
-> > That way others should be able to pull the patches without
-> > any networking changes.
-> > 
-> > v2: https://lore.kernel.org/all/20240216002619.1999225-1-kuba@kernel.org/
-> >  - fix alignment
-> > follow up RFC: https://lore.kernel.org/all/20240216004122.2004689-1-kuba@kernel.org/
-> > v1: https://lore.kernel.org/all/20240213154416.422739-1-kuba@kernel.org/
-> 
-> @Shuah: it's not clear to me if you prefer to take this series via the
-> kselftests tree or we can take it via the net-next tree. Could you
-> please advise?
-> 
-> thanks!
-> 
-> Paolo
-> 
-> p.s. if this was already clarified in the past, I'm sorry: I lost track
-> of it.
+aa_getprocattr() may not initialize the value's pointer in some case.
+As for proc_pid_attr_read(), initialize this pointer to NULL in
+apparmor_getselfattr() to avoid an UAF in the kfree() call.
 
-Given the urgency for net-dev and the lack of conflicts with other
-kselftest changes (AFAICT), I would assume it would be fine to carry
-this in net-dev (especially since the merge window fast approaches).
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: stable@vger.kernel.org
+Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Shuah, any objection?
-
--Kees
-
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 98e1150bee9d..9a3dcaafb5b1 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -784,7 +784,7 @@ static int apparmor_getselfattr(unsigned int attr, struct lsm_ctx __user *lx,
+ 	int error = -ENOENT;
+ 	struct aa_task_ctx *ctx = task_ctx(current);
+ 	struct aa_label *label = NULL;
+-	char *value;
++	char *value = NULL;
+ 
+ 	switch (attr) {
+ 	case LSM_ATTR_CURRENT:
 -- 
-Kees Cook
+2.43.0
+
