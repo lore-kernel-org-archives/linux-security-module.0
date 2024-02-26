@@ -1,118 +1,131 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD93212F392
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 17:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F413540B
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 19:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708967790; cv=none; b=ExIyYUqeTPmMyECUipeApfYxOAJBzWaTspmBeC6YfD7TV7DgArRO/ALR6+TQbO+7qGP24lgNUyWblvKsIy+8BZGca7ZuWCcVVzO8taroFVZzh9sI3RdlLiEWgZVMROnp81ZOLGIQOd/2zVH4dVv1K/jxR2Ts5BiwxLVEzuK8OFc=
+	t=1708974256; cv=none; b=knOnW7D5J0mbsAnouiFKGZQuQchMTD/oLagHD9LfSFFqWwoAw5swM4h88maWg6p+HOK5PHBn+qyMn05WC5drHvhJleHu1GO1Jii27w9L83mElg4qkGoQpl3A3fkNkH4g5HgiwVYfvUaUSd2pPrOTA7vfRibXtoSUcPXhprrDFb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708967790; c=relaxed/simple;
-	bh=oE8hrpoUSR9N67ZJZXv3erGxT2tzDmf9YxuB+DY4Wss=;
+	s=arc-20240116; t=1708974256; c=relaxed/simple;
+	bh=JIqIxUB3Ayzkf/mD0blka6O8DKfFWgrE9WEYSScIHy4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFxszqmXt6Vl70geY0iV4Sq3IWVtQRIQcGU5FTtaJaO5UMgQXkwGwQWxxQ3g0cKIba6gU+EUtmsPSQZheCp5Q3jByvfqYnYi47ZrN7VwxeUPKVQaBZglcWRg4x4lBj/gkXd8yTg/UI9q7LIFeVARbyNP/jce8gdLMItWXr7Sx6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ByQIpJxH; arc=none smtp.client-ip=185.125.25.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBU199Gd8TSC25p/FzS27G0xfChg56Sec2NOzvt/u3Sg+nTgb3Ek0AgnqxthmV2vm1Bd2nk2dcsWZw+AQy/jMTvpj2oOQ6kngRyQZOB3XtlYDGGzRy4WCDOaOvNJ2CAH6CJ7kOU2XhA5c3rM3cc9KMxe+U/07IxTSLkclQj/E3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B3XZR+6t; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ByQIpJxH"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tk6hz36YLzMq1N3;
-	Mon, 26 Feb 2024 18:16:19 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tk6hy5x0KzMpnPs;
-	Mon, 26 Feb 2024 18:16:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1708967779;
-	bh=oE8hrpoUSR9N67ZJZXv3erGxT2tzDmf9YxuB+DY4Wss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ByQIpJxHSGgdthDGkZsHgkIajVMAPN9ctSDwfU4e9sd4231s+G/sTgW6XXXwu0C2a
-	 nv524ywUOinsIC/TRRPPcIrN4c+EcCGNz2TxguG4qEYDgkRNC3W3r+5zwwT5J5JrLr
-	 /3OrmT/Y5n1Dgmtf8zFBK0GmQmpMPXhbi4qYc/2s=
-Date: Mon, 26 Feb 2024 18:16:10 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <keescook@chromium.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Shervin Oloumi <enlightened@chromium.org>, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] landlock: Warn once if a Landlock action is requested
- while disabled
-Message-ID: <20240226.wu2ageiPi6Ch@digikod.net>
-References: <20240219191804.2978911-1-mic@digikod.net>
- <202402191304.ED03339B@keescook>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B3XZR+6t"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1dc0e5b223eso28578845ad.1
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 11:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1708974253; x=1709579053; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rqEaslcv+csbSpF6YQBGR7kuM3sWH8YoMpbM5vrlm2I=;
+        b=B3XZR+6tYaiLmvO0ormzojOJS7q2VNS3VFHyapT0mYeCoLK0DxsW42E/Fyoss/kqcp
+         mLiKMAOlbl9wyTCPu5nS79QgEgum9zDXpFi3SNMTipdU+yE37Q/xZySU6Z2PWb7019Hi
+         5m35Vb5iqfIONp2TiVTpVr5BtosabOcNFViMs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708974253; x=1709579053;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rqEaslcv+csbSpF6YQBGR7kuM3sWH8YoMpbM5vrlm2I=;
+        b=MWAxzNQ0Lzn6Mt7KJkWqSMgr2SZKvAGt5J/6hkMQCj34rl0keGBTuI8VWz0GjzQslW
+         F4Mfl+VtTuuwbijTw8hmQFO93Nz02FSRSvrf7LRkXCSYs38ynQ4jtnlNuLIeBkaZyQeW
+         NZdmOk2qtqjrlxbq8rhEOT3wOpqv3tSVbCbPQmFNL12htN8LuJavwtfaDWoJttdBKnkg
+         DL3oXsPYX9WEJcicq/8XSQ0mKeuYg3fsMho+96inKP5qpgRpdORCOh3q+wB9B2pLHHE+
+         UuOHu0HUjBmyExBMbN0HB44T1sLG/nUM3z5mRA1yGMvyHqIwJ2TycUXa2wXDMglQIuWd
+         sBCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUk98RQJBO1zHcjnbwjn4YqZVXSqSY3QkUrLa6KOGz1MsSOrGvl8pY+5JjsIjQO0nLR5XaiNW/zkl375rMkosbdYBMh6K2IPebI2tBTmGgx34MYaWmU
+X-Gm-Message-State: AOJu0Yz+lFE57bO1Z0uCTV5I8qv+ahfy2VliHDH1+YqmQQcQRUsY8mkd
+	SR9eJVY0eZui/TvCyG39EJxmYCTdsJF3+Hjf/KTJm/NSf3+Fm2rwu3ItjET8Kw==
+X-Google-Smtp-Source: AGHT+IGFFetjjHPW/ivkyZlW9eIrIhfwZbvoWRltu7/bfVEDnv3KZmmFg2wZd+UfH3HTAx1gx80+dA==
+X-Received: by 2002:a17:902:d2cc:b0:1d9:7095:7e3c with SMTP id n12-20020a170902d2cc00b001d970957e3cmr8949703plc.57.1708974253283;
+        Mon, 26 Feb 2024 11:04:13 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id u6-20020a170902b28600b001d8aadaa7easm31822plr.96.2024.02.26.11.04.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 11:04:12 -0800 (PST)
+Date: Mon, 26 Feb 2024 11:04:12 -0800
+From: Kees Cook <keescook@chromium.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	davem@davemloft.net,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Will Drewry <wad@chromium.org>, edumazet@google.com,
+	jakub@cloudflare.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 2/2] selftests/harness: Merge TEST_F_FORK() into TEST_F()
+Message-ID: <202402261102.3BE03F08DF@keescook>
+References: <20240223160259.22c61d1e@kernel.org>
+ <20240226162335.3532920-1-mic@digikod.net>
+ <20240226162335.3532920-3-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202402191304.ED03339B@keescook>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20240226162335.3532920-3-mic@digikod.net>
 
-On Mon, Feb 19, 2024 at 01:07:48PM -0800, Kees Cook wrote:
-> On Mon, Feb 19, 2024 at 08:18:04PM +0100, MickaÃ«l SalaÃ¼n wrote:
-> > Because sandboxing can be used as an opportunistic security measure,
-> > user space may not log unsupported features.  Let the system
-> > administrator know if an application tries to use Landlock but failed
-> > because it isn't enabled at boot time.  This may be caused by bootloader
-> > configurations with outdated "lsm" kernel's command-line parameter.
-> > 
-> > Cc: GÃ¼nther Noack <gnoack@google.com>
-> > Cc: stable@vger.kernel.org
-> > Fixes: 265885daf3e5 ("landlock: Add syscall implementations")
-> > Signed-off-by: MickaÃ«l SalaÃ¼n <mic@digikod.net>
-> > ---
-> >  security/landlock/syscalls.c | 18 +++++++++++++++---
-> >  1 file changed, 15 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> > index f0bc50003b46..b5b424819dee 100644
-> > --- a/security/landlock/syscalls.c
-> > +++ b/security/landlock/syscalls.c
-> > @@ -33,6 +33,18 @@
-> >  #include "ruleset.h"
-> >  #include "setup.h"
-> >  
-> > +static bool is_not_initialized(void)
-> > +{
-> > +	if (likely(landlock_initialized))
-> > +		return false;
-> > +
-> > +	pr_warn_once(
-> > +		"Disabled but requested by user space. "
-> > +		"You should enable Landlock at boot time: "
-> > +		"https://docs.kernel.org/userspace-api/landlock.html#kernel-support\n");
+On Mon, Feb 26, 2024 at 05:23:35PM +0100, Mickaël Salaün wrote:
+> Remplace Landlock-specific TEST_F_FORK() with an improved TEST_F() which
+> brings four related changes:
 > 
-> Perhaps update this docs to be really explicit with a example, maybe...
+> Run TEST_F()'s tests in a grandchild process to make it possible to
+> drop privileges and delegate teardown to the parent.
 > 
-> If `landlock` is not present in `CONFIG_LSM`, you can add it. For
-> example, if this was the current config::
+> Compared to TEST_F_FORK(), simplify handling of the test grandchild
+> process thanks to vfork(2), and makes it generic (e.g. no explicit
+> conversion between exit code and _metadata).
 > 
->   $ zgrep -h ^CONFIG_LSM= /boot/config-$(uname -r) /proc/config.gz 2>/dev/null
->   CONFIG_LSM="lockdown,yama,integrity,apparmor"
+> Compared to TEST_F_FORK(), run teardown even when tests failed with an
+> assert thanks to commit 63e6b2a42342 ("selftests/harness: Run TEARDOWN
+> for ASSERT failures").
 > 
-> You can boot with::
-> 
->   lsm=landlock,lockdown,yama,integrity,apparmor
-> 
+> Simplify the test harness code by removing the no_print and step fields
+> which are not used.  I added this feature just after I made
+> kselftest_harness.h more broadly available but this step counter
+> remained even though it wasn't needed after all. See commit 369130b63178
+> ("selftests: Enhance kselftest_harness.h to print which assert failed").
 
-Indeed, I'll send a dedicated patch and update the link accordingly.
+I'm personally fine dropping the step counter. (I do wonder if that
+removal should be split from the grandchild launching.)
 
+> Replace spaces with tabs in one line of __TEST_F_IMPL().
 > 
-> I *still* wish we had the "+" operator for lsm=. It would be SO much
-> easier to say "boot with lsm=+landlock". *shrug*
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Will Drewry <wad@chromium.org>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
-I guess it's still possible and it would need to be backported to be
-more useful.
+One typo below, but otherwise seems good to me:
 
-> 
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> 
-> -- 
-> Kees Cook
-> 
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+
+> [...]
+>  			_metadata->setup_completed = true; \
+> -			fixture_name##_##test_name(_metadata, &self, variant->data); \
+> +			/* Use the same _metadata. */ \
+> +			child = vfork(); \
+> +			if (child == 0) { \
+> +				fixture_name##_##test_name(_metadata, &self, variant->data); \
+> +				_exit(0); \
+> +			} \
+> +			if (child < 0) { \
+> +				ksft_print_msg("ERROR SPAWNING TEST GANDCHILD\n"); \
+
+typo: GAND -> GRAND
+
+-- 
+Kees Cook
