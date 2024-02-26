@@ -1,53 +1,45 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013C6335C7
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 16:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C4212AAEF;
+	Mon, 26 Feb 2024 16:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708965011; cv=none; b=n7dr3OOQXqc9ndU7xWps3VH9qpnRpGfC1ewp93zIJLFhtxj7Q/pJovjZdhhDsqLH6/TPD6GHN28FcLt0MNPrXxCa+BZ1kZhwIbRRX7PXQyX1SBcczt2tH4Xv4MDopuIFVDrAZPQxoROfuvB+SUBAFqu0J5kRaWiZtu8/9alaICA=
+	t=1708966387; cv=none; b=FNRemwDUZBcKhmhr42Y3uIdVlfRd0ICfTFDL4SUqKfCALYwIm+MGyCogSUiUH9OA1HhxmQwbzvN5Od+Ui1s3cHBVneHMxqSkCNm26V46pYGohSNoQwCOnnwduwd5mREMOuMO3cIOS7aggef50O/Qykn07+VmsVgBxjaki+DL0xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708965011; c=relaxed/simple;
-	bh=olTfBIftIqoEp/VOpd1IMdJpxpy9THNXLqxVEH7X7MA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pEzdy+ifjwpmLy2A/gnHoJC+d898t2QubI7comv2n3ihX70G6dllGM5OU3xcN34FFnWw/cbJ93NDQ0IoS47qAr8oAN67rrF5zHBr7TmpXEPO483X6mPkU6YwcM8uNj5GtRDkKihcaOSc4jf7nwdu5NMZtvGaGJpF+DJLA5DiTxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xZDChlsE; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1708966387; c=relaxed/simple;
+	bh=uvXVPnvYD/yAKKfwAi1xFd+k3dhGavlaDorjhvkq7Gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iVrmI9U6ZiVDGdlXT9TsbSPdJ4mbtHfCsGgI4rqCT6JwKAkMWl6qgtxWRMOhG8Al5EI5Wxd0/89y1apyXKiWwpYX5Zqc9DjqX6Yam7E1uH4h+nAB4UP4PUSbdTP7leCL6TNVmW3Y9g5tDArWDQi5TSjApZsTY0Ro2brhldBMiDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwXAmHKN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xZDChlsE"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tk5XK1qpszMpp1c;
-	Mon, 26 Feb 2024 17:23:45 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tk5XJ2PmTzMpsDh;
-	Mon, 26 Feb 2024 17:23:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1708964625;
-	bh=olTfBIftIqoEp/VOpd1IMdJpxpy9THNXLqxVEH7X7MA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=xZDChlsEztJl/3JzQC3Bn0c7msXOSlb54AMYIWcWZux52vvfqgon1+CEliOtKCA45
-	 eMnXxs1tNnsEop7VQ2Z+0WvzcU5AjBbdkBrocJ4XX8Omt4CKGSH4CrW8ytlWLnOhe8
-	 OfjmD8h155QlFnNOglWeBImQq28ksGZA+KxKIYoI=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Jakub Kicinski <kuba@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Shuah Khan <shuah@kernel.org>,
-	davem@davemloft.net
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Will Drewry <wad@chromium.org>,
-	edumazet@google.com,
-	jakub@cloudflare.com,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 0/2] Merge TEST_F_FORK() into TEST_F()
-Date: Mon, 26 Feb 2024 17:23:33 +0100
-Message-ID: <20240226162335.3532920-1-mic@digikod.net>
-In-Reply-To: <20240223160259.22c61d1e@kernel.org>
-References: <20240223160259.22c61d1e@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwXAmHKN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28803C433C7;
+	Mon, 26 Feb 2024 16:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708966386;
+	bh=uvXVPnvYD/yAKKfwAi1xFd+k3dhGavlaDorjhvkq7Gs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rwXAmHKNONsVopUVRQfWkmT1rzgKqKMz1/k9Ed8mh/S8vYzB0qVwuqpr5mq+7Mrzf
+	 KmTAguLpzq4quLCYIB6riF/275aDXB7kF5Audz99YU+FK1FgoKfvRPW0LKtcSvWea6
+	 BT9bPQfmUjxzPU9a8LGBXHuvmyauccNruCnTs1Z581GfjHbe8B2/ZndtOW9OXoxf4v
+	 RUeDPndZbk33EI0w3KdqXplVCU0GiP8+HMLnofcIcGlCSmSjshX73WNlyZvPuj9GvA
+	 GkBUXKK+KAmsu/SFyT3hSbTo0lnuggAxWaG8LacP15awnBDbQSnWt8mjL88CFhTaQh
+	 aDzZJYYvCMWvQ==
+Date: Mon, 26 Feb 2024 08:53:05 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
+ pabeni@redhat.com, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-security-module@vger.kernel.org, keescook@chromium.org,
+ jakub@cloudflare.com
+Subject: Re: [PATCH net-next v3 00/11] selftests: kselftest_harness: support
+ using xfail
+Message-ID: <20240226085305.67ad776a@kernel.org>
+In-Reply-To: <20240226.Juthoojee3qu@digikod.net>
+References: <20240220192235.2953484-1-kuba@kernel.org>
+	<20240223160259.22c61d1e@kernel.org>
+	<20240226.Juthoojee3qu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -55,26 +47,20 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, 26 Feb 2024 17:27:34 +0100 Micka=C3=ABl Sala=C3=BCn wrote:
+> > would you be able to take a look at those changes? landlock seems to be
+> > the sole user of the "no_print" functionality in the selftest harness.
+> > If the patches look good I'll create a branch based on Linus's tree
+> > so that anyone interested can pull the changes in.. =20
+>=20
+> Hi Jakub,
+>=20
+> I missed your patches before this series.  I just sent two patches to
+> clean things up before you change them.  This should simplify your
+> patches and improve the overall maintenance.  I'd appreciate if you
+> rebase on top of them.
 
-This is a long due cleanup to merge TEST_F_FORK() into TEST_F().
-
-This should simplify Jakub's patches by removing the step counter:
-https://lore.kernel.org/r/20240220192235.2953484-1-kuba@kernel.org
-
-Regards,
-
-Mickaël Salaün (2):
-  selftests/landlock: Redefine TEST_F() as TEST_F_FORK()
-  selftests/harness: Merge TEST_F_FORK() into TEST_F()
-
- tools/testing/selftests/kselftest_harness.h | 56 +++++++++-----------
- tools/testing/selftests/landlock/common.h   | 58 +--------------------
- 2 files changed, 27 insertions(+), 87 deletions(-)
-
--- 
-2.44.0
-
+Nice! vfork() is a bit scary so I'll give people a couple of days to
+review and then post a combined+rebased series.
