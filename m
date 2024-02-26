@@ -1,57 +1,58 @@
 Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB07130AEB
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 19:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6349412F5A4
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 19:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708975358; cv=none; b=DvByam3Y5zQjc6vzVfZOwLvJKE8tb0YEdULDA5dmqBhAkmWOz5eQZBoSfy/wov0ZrGshXi6WzDmne0wwZ2Tz1kGlYbilOifQ5amvoA5eG6vKEbpJkfrR/4tu5Jg3gfOT5+Z/R7XC1a4pSMiYY1tR4fv9zCb28zWmgmodpx2Yp+I=
+	t=1708975476; cv=none; b=WLywmv4JpUYArvPLGv7fuLs+wa8YpX5udmJuZV/AjHOKH9sWH3xt+Caq7Tp9cErmBGkT2NnI2nfx83pyur8DyswoPqxnl0+wOz2NBFOh0tbTa+liMIOfO81rbo+ASCebHcJ9BbdB9RpeHR4osF1raRgDIE48fcpXO6PM35Rn0/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708975358; c=relaxed/simple;
-	bh=MCDjtaRWEF67bT1IdABaJO8kKhnAH/vfBzzPU+hrTKk=;
+	s=arc-20240116; t=1708975476; c=relaxed/simple;
+	bh=THgm6rGLpzdRlqCmuQGYCh3G2e2uZuhgn1thuX7TM28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvkB0ocBHJQjTsFvCV2HUW7uNq3KbEM8gRZ3TNtw9/jdUVBwmEEO4fIMdO1trwoNAXYW/+X3JVUPVozyUS/Lz61u613IeHMjo3gxmTs2Ynhw4006U1Tfgw+FaZSiQZCPr7hCyYY3lBUotyCVz/SSOxHk5ZzjUm92adUPSdWVkTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SuUEgLZv; arc=none smtp.client-ip=209.85.214.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZNdWgwJ69fsDWJL5OOmsCD+2HsHNz7YTvnNxZAdPsG0v/YITUdvfd781k/UaX/q6X2/27grYS26xiAIT5hHcewf6vafuXiVoG9zkIq5ToGsbUOTlDJ6Kp6MCx/A+JpPrwPU9uRN1YkuZXp9+rkuLlqlfqq3myZfFNhfhjCzFxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IDawg6Dh; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SuUEgLZv"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1dba177c596so21809055ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 11:22:36 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IDawg6Dh"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1dc49b00bdbso29721535ad.3
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Feb 2024 11:24:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708975355; x=1709580155; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1708975474; x=1709580274; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=82wd+SSaRsguFcZt+U0NWaZAuP5LxkM0aZkdE6Hnh5c=;
-        b=SuUEgLZvpDNR1cbi6DQiXEsCpA3fNrg6t9rUUEdWz86OkXxeuRvzI5j8UE0mf1x2uH
-         VEpTGnz2tml+LdYLDJduDpfCPM57iKHc7fOe8x2zrEin+x1dn5XqNRvMjvk9opwZSaGP
-         +hjZkxLOrFNMSFwDMashvLPNPlSkSyQeN7kYo=
+        bh=InMne0CIdEUH5H66AFxEIsfbiaQhDQQyahGGSNpAGCM=;
+        b=IDawg6DhM0XUTrV9XNtDtxehkJZRJwGpvO5ptOOXE9onzexPKtwIc1EQvwTOiYXXIu
+         S8+A3bnPp5HmicrtSCh+6mmZ7MeMB+WA/0WQvsTlVdIAruUkqYkfSTxVc4HJMrySEMFp
+         dCIo/mHxl8iSUS620NEsHqSX9wr6vpT6/mQcc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708975355; x=1709580155;
+        d=1e100.net; s=20230601; t=1708975474; x=1709580274;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=82wd+SSaRsguFcZt+U0NWaZAuP5LxkM0aZkdE6Hnh5c=;
-        b=RZZxnwI8DfhHI9LiqJCw0NOPfT6HK2dp/jzs769Mc5tTjaFnslLkOVB3m1hyPaLivp
-         eIbILMnIGS9Ai5he1B9n6OIv13nn6E1sFbQjc79QHTjBbi12KtUIFxmGZXk3LdBJEvag
-         XGKWuYljnCxQ4Si8plXWGdxe8e8+bxlTDFK/bVjlB2N3PyTgwBe2GOdZo4+U+wYXEeUF
-         tFuT2blQkPMsjzxkDR4E/xkF6r1LaUUQJanWWPdktLPk4eOCHcGza/T4lyFrX7cqEcRf
-         r/ahZZQN/QdquqqiQUCe1rIBzeo43uwqJJ2zm6hL7vPaU1/gcZLRWExLbgEIcGNKMWob
-         V27A==
-X-Forwarded-Encrypted: i=1; AJvYcCX7/kUjjOIXJc/jX2LSz4LbENwCbj3YOTx9C+ZI/CxhxmxQR1kqp+iKEiHJQ21Xy5t54/heRRSlXhImJ/TqFmfdYkQAs2IDn1kOK8hYGqjezszSY/RK
-X-Gm-Message-State: AOJu0Yy9Apry670fbO7a0oXP3dI1xDbgI6mfjSPqFabOFJ2bpU2B0QLs
-	zvNAOBA5YO2lpPm61RMv0IYNrQF3bkgi0cvx2ePpSyDe9Y7/XSVM0jOj4eREJQ==
-X-Google-Smtp-Source: AGHT+IGm/d0iXIJdlYC6aDqTkJ0Dek+SnpLbHY0CpSp5qMDbjbKlyiINkhqdePy0H1Q5g6gTwUTYcA==
-X-Received: by 2002:a17:903:4303:b0:1db:9ff1:b59b with SMTP id jz3-20020a170903430300b001db9ff1b59bmr7578787plb.23.1708975355588;
-        Mon, 26 Feb 2024 11:22:35 -0800 (PST)
+        bh=InMne0CIdEUH5H66AFxEIsfbiaQhDQQyahGGSNpAGCM=;
+        b=NmKik96BhhaLjJ8MqRw0T1rAahrALqEvtOihzGrwChneBpWcP9RjkrNDp4f6WqPSAw
+         lN7Ggjc24V57O0SoeoxvPHI/H0tOE27qJecs7uwrJ8MO9fiNeaPhgYOh6ekAico341Jn
+         v5npxEKOUGQEUTCKr0r45u8QLVFghaUcfjLJ7gHU0LwFs/f2OoeaIejbbF21dVG+gDeP
+         QSnRhWC/AkAV+2XyvcLD2IKvEDEjOVycNBaQKYuHVmmGxvli9nZKwPFLSOl9k4dKKCXM
+         Cj4Alvh019Yp1OvCRQ6Nas7fH2WkoU1AzgdBiUBAjBykE2js03uycqeK3qbWC1JTRTWj
+         s0zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeVv6yikR+7usuIC9+bQqvt4ywLjy9YFy2WVaJwT36UWnFPeqNHLuQVS+0SYspn3k3e8jB9p12HN4PKgVhPfED/UJ0Bf2iIGVOU6S8/CVfuQCcD56B
+X-Gm-Message-State: AOJu0Yzh+rpPD5RpMf51zmGlDyVo+nmIDvoMH1UaF+VcduAiunOsIjTp
+	YyDmk0oK7+AKjQVCy8NV22+55AkUC8faIuRUBQDpIS69hLO+nI/8OkKUrQyI7njbzC4R/dDakyI
+	=
+X-Google-Smtp-Source: AGHT+IGuKJW5UHzRannH3J/uDHtHCTUjnDGiC7Kw9nAZoWU+O3ZdeIO5FhWpusWjRzPLtJW8pjElAA==
+X-Received: by 2002:a17:902:e94c:b0:1dc:ada9:bceb with SMTP id b12-20020a170902e94c00b001dcada9bcebmr1895063pll.5.1708975473701;
+        Mon, 26 Feb 2024 11:24:33 -0800 (PST)
 Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id h2-20020a170902748200b001db8f7720e2sm38549pll.288.2024.02.26.11.22.35
+        by smtp.gmail.com with ESMTPSA id u13-20020a170903308d00b001dc2d1bd4d6sm51088plc.77.2024.02.26.11.24.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 11:22:35 -0800 (PST)
-Date: Mon, 26 Feb 2024 11:22:34 -0800
+        Mon, 26 Feb 2024 11:24:33 -0800 (PST)
+Date: Mon, 26 Feb 2024 11:24:32 -0800
 From: Kees Cook <keescook@chromium.org>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>, jannhorn@google.com
+To: Adrian Ratiu <adrian.ratiu@collabora.com>, jannh@google.com
 Cc: Doug Anderson <dianders@chromium.org>,
 	linux-security-module@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -59,9 +60,10 @@ Cc: Doug Anderson <dianders@chromium.org>,
 	Mike Frysinger <vapier@chromium.org>,
 	linux-hardening@vger.kernel.org
 Subject: Re: [PATCH] proc: allow restricting /proc/pid/mem writes
-Message-ID: <202402261110.B8129C002@keescook>
+Message-ID: <202402261123.B2A1D0DE@keescook>
 References: <20240221210626.155534-1-adrian.ratiu@collabora.com>
  <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
+ <202402261110.B8129C002@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -71,7 +73,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
+In-Reply-To: <202402261110.B8129C002@keescook>
+
+[sorry for the duplicate, fixing Jann's email address]
 
 On Mon, Feb 26, 2024 at 09:10:54AM -0800, Doug Anderson wrote:
 > Hi,
