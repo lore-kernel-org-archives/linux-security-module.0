@@ -1,107 +1,134 @@
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C58013665C;
-	Tue, 27 Feb 2024 09:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC049139583
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 11:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709026086; cv=none; b=CvcGLnNor1Mx28u4NG9al8jry6fOmwlVGq8IUYVNtLNP220XxwrQma4bcimMJG+93RXM2QzOOIeYB5Zvwjs4p+tx1wh7wV6OsNfjvY2q52BhA+YsYN5l2Lrr9+u/IsbZfVlfGAns6dZ3qBhsNgmU07Zrm87alhaEqS1xAq6HFPw=
+	t=1709031975; cv=none; b=Bp4bDITXwf/HwQjsT/JY1kzfmDaJC27hn8Uc7tFxanWNpIxKTQgd0tKjvV3k1cgY+opYb5XuRL6wrnZG8eTiEBc4Np0zUc2XT4ztvL4nNOlJhfLRokMxKeJ4QsZlMO+c5c42q9JKH8qK3JGm3LOioD4pmko+xY39cUbDrM6eJxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709026086; c=relaxed/simple;
-	bh=Zbvn6ZhoUbnLmX0A3Zm9N0pbkE8+2Ni+LdZohLEciOM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lrc5fymaRAQOtiTp1H0LU0gT5gVxcvIkA9hEwfFv4AKua7lMX3LhrIM5wc0J2IoVqxG3e6DfY6n1CIyYfzpz170hDU2mRax22clsQ/qDyzdyP0cIkG56Z7l83aRlyJEy9RF+UPFBZDH/iB9Y2xY8VbhPNSflzZqSw8FJayvGfPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4TkX8P0GRQz1b14C;
-	Tue, 27 Feb 2024 17:23:01 +0800 (CST)
-Received: from dggpeml500026.china.huawei.com (unknown [7.185.36.106])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2C8CE1A016B;
-	Tue, 27 Feb 2024 17:27:59 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpeml500026.china.huawei.com
- (7.185.36.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 27 Feb
- 2024 17:27:58 +0800
-From: Zhengchao Shao <shaozhengchao@huawei.com>
-To: <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <paul@paul-moore.com>, <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
-	<shaozhengchao@huawei.com>
-Subject: [PATCH net-next] netlabel: remove impossible return value in netlbl_bitmap_walk
-Date: Tue, 27 Feb 2024 17:36:04 +0800
-Message-ID: <20240227093604.3574241-1-shaozhengchao@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1709031975; c=relaxed/simple;
+	bh=jPUoWxQfL0gN4M9XnMPtb4OVmzxvQ8jhCx4n49IoT7U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BlQE8QYr9exPrETTQaZK86vqrgyy5GZFGAYRuYyhrGntI5UtK7mMnj23oarqBNgF+smlMy9L9egLxGyI9x5doOtiTSH7uUruPPWv4gOdKN9Ha6ZaFQ+s/obaTjQWOFoBpjvOe3VYi2d1QvbseWYfvlQJAMXfTDE05pJWVRG1Pmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=oCw/iF23; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="oCw/iF23"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TkZRL3hQgzfF;
+	Tue, 27 Feb 2024 12:06:06 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TkZRL0Ngrz3k;
+	Tue, 27 Feb 2024 12:06:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709031966;
+	bh=jPUoWxQfL0gN4M9XnMPtb4OVmzxvQ8jhCx4n49IoT7U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oCw/iF23a34Rv0MBwr2Ia6cQ8m8h0jvHC8OAnyauVIncs0HoaFwNz47dPhVBwgEjw
+	 R5yruWwiqbByh+WzDRqxenUS46BMI9ak98EP9PcOxTd4ecJ/LXUlBEDCPa5K9iN5Qt
+	 hb3lJFSu+CT4yjc6FlcRhOYLyM3bfinMCILgyBUg=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Shervin Oloumi <enlightened@chromium.org>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	stable@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH v2 2/2] landlock: Warn once if a Landlock action is requested while disabled
+Date: Tue, 27 Feb 2024 12:05:50 +0100
+Message-ID: <20240227110550.3702236-2-mic@digikod.net>
+In-Reply-To: <20240227110550.3702236-1-mic@digikod.net>
+References: <20240227110550.3702236-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500026.china.huawei.com (7.185.36.106)
+X-Infomaniak-Routing: alpha
 
-Since commit 446fda4f2682 ("[NetLabel]: CIPSOv4 engine"), *bitmap_walk
-function only returns -1. Nearly 18 years have passed, -2 scenes never
-come up, so there's no need to consider it.
+Because sandboxing can be used as an opportunistic security measure,
+user space may not log unsupported features.  Let the system
+administrator know if an application tries to use Landlock but failed
+because it isn't enabled at boot time.  This may be caused by bootloader
+configurations with outdated "lsm" kernel's command-line parameter.
 
-Signed-off-by: Zhengchao Shao <shaozhengchao@huawei.com>
+Cc: stable@vger.kernel.org
+Fixes: 265885daf3e5 ("landlock: Add syscall implementations")
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- net/ipv4/cipso_ipv4.c        | 5 +----
- net/ipv6/calipso.c           | 5 +----
- net/netlabel/netlabel_kapi.c | 2 +-
- 3 files changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index d048aa833293..8b17d83e5fde 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -864,11 +864,8 @@ static int cipso_v4_map_cat_rbm_ntoh(const struct cipso_v4_doi *doi_def,
- 					      net_clen_bits,
- 					      net_spot + 1,
- 					      1);
--		if (net_spot < 0) {
--			if (net_spot == -2)
--				return -EFAULT;
-+		if (net_spot < 0)
- 			return 0;
--		}
+Changes since v1:
+* Add Kees's and Günther's Reviewed-by.
+* Rename is_not_initialized() to not_initialized() and invert the logic,
+  as suggested by Günther.  This is a cosmetic change without global
+  behavioral changed.
+* Update link to point to a new subsection.
+---
+ security/landlock/syscalls.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 898358f57fa0..6788e73b6681 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -33,6 +33,18 @@
+ #include "ruleset.h"
+ #include "setup.h"
  
- 		switch (doi_def->type) {
- 		case CIPSO_V4_MAP_PASS:
-diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
-index 1578ed9e97d8..eb8ee1e9373a 100644
---- a/net/ipv6/calipso.c
-+++ b/net/ipv6/calipso.c
-@@ -657,11 +657,8 @@ static int calipso_map_cat_ntoh(const struct calipso_doi *doi_def,
- 					  net_clen_bits,
- 					  spot + 1,
- 					  1);
--		if (spot < 0) {
--			if (spot == -2)
--				return -EFAULT;
-+		if (spot < 0)
- 			return 0;
--		}
++static bool is_initialized(void)
++{
++	if (likely(landlock_initialized))
++		return true;
++
++	pr_warn_once(
++		"Disabled but requested by user space. "
++		"You should enable Landlock at boot time: "
++		"https://docs.kernel.org/userspace-api/landlock.html#boot-time-configuration\n");
++	return false;
++}
++
+ /**
+  * copy_min_struct_from_user - Safe future-proof argument copying
+  *
+@@ -173,7 +185,7 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+ 	/* Build-time checks. */
+ 	build_check_abi();
  
- 		ret_val = netlbl_catmap_setbit(&secattr->attr.mls.cat,
- 					       spot,
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 7b844581ebee..1ba4f58e1d35 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -876,7 +876,7 @@ int netlbl_catmap_setlong(struct netlbl_lsm_catmap **catmap,
-  * Description:
-  * Starting at @offset, walk the bitmap from left to right until either the
-  * desired bit is found or we reach the end.  Return the bit offset, -1 if
-- * not found, or -2 if error.
-+ * not found.
-  */
- int netlbl_bitmap_walk(const unsigned char *bitmap, u32 bitmap_len,
- 		       u32 offset, u8 state)
+-	if (!landlock_initialized)
++	if (!is_initialized())
+ 		return -EOPNOTSUPP;
+ 
+ 	if (flags) {
+@@ -398,7 +410,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+ 	struct landlock_ruleset *ruleset;
+ 	int err;
+ 
+-	if (!landlock_initialized)
++	if (!is_initialized())
+ 		return -EOPNOTSUPP;
+ 
+ 	/* No flag for now. */
+@@ -458,7 +470,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	struct landlock_cred_security *new_llcred;
+ 	int err;
+ 
+-	if (!landlock_initialized)
++	if (!is_initialized())
+ 		return -EOPNOTSUPP;
+ 
+ 	/*
 -- 
-2.34.1
+2.44.0
 
