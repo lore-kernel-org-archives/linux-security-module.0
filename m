@@ -1,115 +1,79 @@
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B69145FF7
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 16:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187EF1420B3
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 16:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709049697; cv=none; b=Cg4pa2hygB5ZqkE0PaB6hn5d8a4eom8ZpbQ6sdKNGuFBdDrqPzQwDQHhTigHLevQhQa41b1gPVZkD4OffF1972Wfsxd2EuCQ3D9UaTqaApCTZjKwzgKZ0kg1SZJbP5t/BidvKMz7FXc1RtZBqDi28/wA1vNosOzNpMNTIY57GHQ=
+	t=1709049904; cv=none; b=Oz/7ZkY7zYeJ4D2hMP/Mijwc9wF7xt1E69gjYNxbAe3QQBt3bvXVzbxZVgPWWKoEIZSaUoKHFfgotkKb9unWJOnKCZVKXg4pkFUMxjYO+Bv9bNvu+yovRWvdpquv7p4ovFbSg4f3uobAcbr1W/OXrwlYstsHimd2c2yd6k7DTKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709049697; c=relaxed/simple;
-	bh=YcbXQMW6orIGD2J32M5lewwEx24IkTPl43MiFtSywpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h5x2Y8Z7i3Q7cIXSK8Siz0lArxz6El1PsPmf1C2spKiJsgbRZ5MycDhH1x4RasT5tbxpGomJRtv2RBU3LLLBP5gDj7oYHzlhQNelsbR4YLrPRAev75P1z2VM4soMuDNfqGEpR7GIpglhvj8ZLbM6qVNbdbzNe1g/GmWpmoyH160=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I4mwwlWB; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I4mwwlWB"
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c19e1846ecso1415939b6e.2
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 08:01:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1709049695; x=1709654495; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ac+DW6WihzpCoOAFiLjFcHhP6f2iYTwciWP36cUV4HM=;
-        b=I4mwwlWBWiZMVsYyZri+BrABvznzJdfpLDhkf6bWJYaTPX71+h5/owfxnSjWNfpkAY
-         nPAdR0wGWT1lxu/+UQb3/bQyhQWeavbcexWPhORfXfQR6jV0GV5VtR3ENgGtuv7WXUCA
-         la/fYWCwguC0k9foii7UY+o/2LPWd66tZP2LUIEnpfv1m208fqfjrBKVelMIO4mU9P/G
-         2yppWWb5N/tKS4kfxQfQoRWaeK0L5rHiu1aC7I8zhzQ9lE7CNPfetjuk5eVJwmU3KXVB
-         IJhTc2PzPUuylsC0lz9KYnBBhdGFEUzrwK+UEKqtz6nVjEvUcwYdMx1OlyaKC1QPOz7S
-         Vp7g==
+	s=arc-20240116; t=1709049904; c=relaxed/simple;
+	bh=HBH/mlGn1GKuD1rLuQCa/9qkGT6/IzdMQvpWS/cMWy0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=g4rSzJjYPddV7vVfYH3YNeXx0/wpp1AAnV7OnCQ2A0ZeyyUxa2otLxQ1lklFNKoT9CL89d4uVbTwtSDPVT1FMtUe0PUSAhTo+co3cCnWskc9Jkf/QCZdUku0KzJM0fYDGZMwmAF51Ek5UVEMjYGL2Wc17w37qIlUdihI97A0bFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7c7a45b5ec6so326555139f.2
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 08:05:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709049695; x=1709654495;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ac+DW6WihzpCoOAFiLjFcHhP6f2iYTwciWP36cUV4HM=;
-        b=cDcYFvWKCBu6wKqXS9WXlpXzqDpIhJnvgcMQ6wkhXIQJuO+BG4p7BBdh8Uu3W5qvbM
-         QeEvlrWHq49moZhPLkgO0KF01+bs0vPPlTbcvxmitW2pqnqF4gqPRZJ2mHH9mbtmbZky
-         lSW4DJ/g5VDv+xJa7kbo3dX3cM9P+LgchCZXDAVPE/d13/TUPaX+22pZOPzz4DHoAG6E
-         aAagrJU2MpItSKBR68MmWCAnxTkc3xvnvg6RxsKhsapbXBhA36TEYExXpUw7cfmMQYa3
-         RJk56XIjKKlX8weeBr4sRrA/BonG0gYbFLvAwR1YWq6r0kaWFxcN8fIDK0018O+/9kz7
-         Aokg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG68gB/LInYcyUob6Ro6i/yWUCdV6WUGjz8BKB5f5jvqEORYqiSMgFKggMu6/dYp6s6CBMWcNfPndIxFXrRRAk0/91fW2kno9dzd7BATug7kty5kay
-X-Gm-Message-State: AOJu0YyvO/Rg1bh8rV3tdjcM8KWwcSrf/p81pxI8gEZurprx1PxsXeZ9
-	kdAoao5de2LJf+qGhfHiMxCDFTzREkIM/GSjeKYq4pB2EI8w0a/apX80K/vzMH0fpY3mnYFDk6h
-	fMUFUR10VDzlB03LvYj/Ks2KeBK6hf+/iVMYS5PXHH38WwZM=
-X-Google-Smtp-Source: AGHT+IE9MdMFU9x6FoxeTlyyLtbrwrCH54o03/D8XMEA7Si2aBMN5Aya/Dkp9vESrpYl2ue09rzvpreM73e0UemlMqU=
-X-Received: by 2002:a05:6358:5e8c:b0:17b:5d21:e86e with SMTP id
- z12-20020a0563585e8c00b0017b5d21e86emr12410573rwn.3.1709049694861; Tue, 27
- Feb 2024 08:01:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709049902; x=1709654702;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yln7e3X50hPzjP07hatAlBcYIA7D/0apOIsor57CCn4=;
+        b=sXQGqklzkDzeszQlTBQj5dJzMAFzyZuJnntGFR7i81GhekPquShCX3Y4Dap+8d9Jte
+         ytFc2ms/XF5q+IstoRahNFq3JhH8hhLpx5nxEh3kRq2Srr9rbfcZQB7FFNU7bA89qf3T
+         gnKeh3fQCON9NoHnoFLlIPTcOOS7kXv+4I8HqmA5yAZd1Thp/rYYhJ0KRTBVJGmivGq6
+         LEGjOfq48EbyMgNLcajvhmTZnyN7QjzkMQzOiPPvzJDlW1ZIyhY999LWPXHV0XZV51pA
+         2i0YNHVvfsOIWOkYU6SnGfWjDrVz7L3CDnwcqHnfSv4PvDKzBkic8A9XF2irQ+5ch8QG
+         p65A==
+X-Forwarded-Encrypted: i=1; AJvYcCXibbIB6l99FKQ+AZmaRnCnONZmq7qcn/JjwKgVVCQ3J7CUxliaS/n6p1mmy5HxX5rWKZYHmv7vFTjzq9DtekuYfNuwlbDZPLpXHK3vOnljwHTTEVZE
+X-Gm-Message-State: AOJu0YyOa8jZmO3g+UdSILIP62yGnBwWuAUZSGZu7pI9GU8+HWLcFpG8
+	39n26KiUE9aVn2Y2JnQovXKjmfx6Z98vBDueU0TQZEezWF9bYHE4seVmWnQu14CI31EKV8ycUCJ
+	jo9vJ1Wfzg+ZCC6GAWBmDHiQDuGztlsymF16NmaJorAp7jjXbkLlEZ+I=
+X-Google-Smtp-Source: AGHT+IGQrddUrzNg1cM0TuCyUnXm9cGXvL4qtuDHM1W3BsW0ptWD5HvYEy2BneyZBz5v/nqMCzBPdqx+SIOhr4bYRHxVwbUCFvDB
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240223190546.3329966-1-mic@digikod.net> <20240223190546.3329966-2-mic@digikod.net>
- <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com> <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 27 Feb 2024 11:01:24 -0500
-Message-ID: <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	John Johansen <john.johansen@canonical.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+X-Received: by 2002:a05:6638:2710:b0:474:8b40:13fb with SMTP id
+ m16-20020a056638271000b004748b4013fbmr316654jav.6.1709049902417; Tue, 27 Feb
+ 2024 08:05:02 -0800 (PST)
+Date: Tue, 27 Feb 2024 08:05:02 -0800
+In-Reply-To: <0000000000005a9fab05ff484cc4@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000564c5006125f3087@google.com>
+Subject: Re: [syzbot] [lsm?] [reiserfs?] general protection fault in fsnotify_perm
+From: syzbot <syzbot+1d7062c505b34792ef90@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, bpf@vger.kernel.org, brauner@kernel.org, 
+	ivan.orlov0322@gmail.com, jack@suse.cz, jmorris@namei.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	reiserfs-devel@vger.kernel.org, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 26, 2024 at 2:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Fri, Feb 23, 2024 at 4:07=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Fri, Feb 23, 2024 at 2:06=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > aa_getprocattr() may not initialize the value's pointer in some case.
-> > > As for proc_pid_attr_read(), initialize this pointer to NULL in
-> > > apparmor_getselfattr() to avoid an UAF in the kfree() call.
-> > >
-> > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > Cc: John Johansen <john.johansen@canonical.com>
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
-> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > ---
-> > >  security/apparmor/lsm.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > If you like John, I can send this up to Linus with the related SELinux
-> > fix, I would just need an ACK from you.
->
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
->
-> This patch looks good to me, and while we've still got at least two
-> (maybe three?) more weeks before v6.8 is tagged, I think it would be
-> good to get this up to Linus ASAP.  I'll hold off for another day, but
-> if we don't see any comment from John I'll go ahead and merge this and
-> send it up to Linus with the SELinux fix; I'm sure John wouldn't be
-> happy if v6.8 went out the door without this fix.
+syzbot suspects this issue was fixed by commit:
 
-I just merged this into lsm/stable-6.8 and once the automated
-build/test has done it's thing and come back clean I'll send this,
-along with the associated SELinux fix, up to Linus.  Thanks all.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-John, if this commit is problematic please let me know and I'll send a
-fix or a revert.
+    fs: Block writes to mounted block devices
 
---=20
-paul-moore.com
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17eb1102180000
+start commit:   a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=24ce1b2abaee24cc
+dashboard link: https://syzkaller.appspot.com/bug?extid=1d7062c505b34792ef90
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1066cc77280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116850bf280000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
