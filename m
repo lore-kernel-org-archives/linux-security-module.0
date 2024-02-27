@@ -1,91 +1,115 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68777148300
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 15:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B69145FF7
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 16:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709049264; cv=none; b=tggHMoWJ2T/V0lSBt+Gt7xENWLnAJL0eW5S4zKWVg2f3T6u4HXgnU32haY0zcXu0R9idJpxp4+bV+LuQE+1UpfxseTfX9gMxM8B+lt320MrjPOvBK+t8Jh4w+pk2NrTL1tHsVV3bpd6TXnK4ziCZZiIrK4V81536E2psfuXU3Bw=
+	t=1709049697; cv=none; b=Cg4pa2hygB5ZqkE0PaB6hn5d8a4eom8ZpbQ6sdKNGuFBdDrqPzQwDQHhTigHLevQhQa41b1gPVZkD4OffF1972Wfsxd2EuCQ3D9UaTqaApCTZjKwzgKZ0kg1SZJbP5t/BidvKMz7FXc1RtZBqDi28/wA1vNosOzNpMNTIY57GHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709049264; c=relaxed/simple;
-	bh=oq8mUdG/jkS0lSxlKIdzxgum2wxYbcShGcVGCSN2uWM=;
+	s=arc-20240116; t=1709049697; c=relaxed/simple;
+	bh=YcbXQMW6orIGD2J32M5lewwEx24IkTPl43MiFtSywpA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UmzikyaouJc1kE4wtR5Gipj6hCP7qZiQ1HloY50Chd+ywoWJyRS9SU1Q3GY6MFFERPLjm2r4WShD9YSjZR9PkxNZ4h9hgsPbSdyz6+03l27dvDEJd3hQAt5VjVz2mwsTxsaHIOJufndjDcLEvAov67ZA3AzTeBYYhexHc2njFnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KT/goUs3; arc=none smtp.client-ip=209.85.128.171
+	 To:Cc:Content-Type; b=h5x2Y8Z7i3Q7cIXSK8Siz0lArxz6El1PsPmf1C2spKiJsgbRZ5MycDhH1x4RasT5tbxpGomJRtv2RBU3LLLBP5gDj7oYHzlhQNelsbR4YLrPRAev75P1z2VM4soMuDNfqGEpR7GIpglhvj8ZLbM6qVNbdbzNe1g/GmWpmoyH160=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I4mwwlWB; arc=none smtp.client-ip=209.85.167.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KT/goUs3"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6092387bdd0so10562757b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 07:54:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I4mwwlWB"
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c19e1846ecso1415939b6e.2
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 08:01:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1709049261; x=1709654061; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1709049695; x=1709654495; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fYuQmAMRp17o2iSEsObXlVBh4IvpFKiYHuMKIilc630=;
-        b=KT/goUs3G4tkhAzI0sG2QwyBx+hLl2Od3Se2eNjcKekdDmi2OTyO1/aAYWTAfbQsWV
-         UWlvoasjW0ASPMCxC1kgUphitOyxXdtAF8MXhEi1DHwFLLG4VmdTINzANZyxGahPVQlp
-         iW90VUNoV4PkoTrzDIoCwnsXfhrxYBkqRvvTo/c+Drte0qU5laL7I9hBFUpyvLTPMHg/
-         IG+FqnmYBH4Q7kFvcI3wtVVs2wyYMR7MqL7K8PNS8YSeIOnaeZOlembGr4J62TfA+rKr
-         BkaBeV1MlzTOSgefK3LMLsTuQui6jO+s/zKPtQ5VQ2Tzt/rFKEO0lGBsuyInv6HRqEf4
-         yx2g==
+        bh=Ac+DW6WihzpCoOAFiLjFcHhP6f2iYTwciWP36cUV4HM=;
+        b=I4mwwlWBWiZMVsYyZri+BrABvznzJdfpLDhkf6bWJYaTPX71+h5/owfxnSjWNfpkAY
+         nPAdR0wGWT1lxu/+UQb3/bQyhQWeavbcexWPhORfXfQR6jV0GV5VtR3ENgGtuv7WXUCA
+         la/fYWCwguC0k9foii7UY+o/2LPWd66tZP2LUIEnpfv1m208fqfjrBKVelMIO4mU9P/G
+         2yppWWb5N/tKS4kfxQfQoRWaeK0L5rHiu1aC7I8zhzQ9lE7CNPfetjuk5eVJwmU3KXVB
+         IJhTc2PzPUuylsC0lz9KYnBBhdGFEUzrwK+UEKqtz6nVjEvUcwYdMx1OlyaKC1QPOz7S
+         Vp7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709049261; x=1709654061;
+        d=1e100.net; s=20230601; t=1709049695; x=1709654495;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fYuQmAMRp17o2iSEsObXlVBh4IvpFKiYHuMKIilc630=;
-        b=AY2tlng4ZalvyCS6wZjHAfclF9pz0A3QZ7/fdeiVBUD+B/7iYFQPVMRX5toFmtuHIl
-         BnQ1yoPU87OLwdlIZwaNKRJpRYewDTaEfYNKWFA+BFSfbCsH6OrdIKF+hPPhuXhpfxQr
-         0JAK2hKgtP5T/djDpPhmljGAXr1rht7XYydMiKd89wuPu5YAdtOE1XF4EIZdcK4G+esD
-         bzyaCTEYRKoh0Z1ErEgEkKmJucguCktdgNRFT8Wmb0LIIQHxBrlEh2C311Mge0ijsSKd
-         vKHuaoFeed0FsLUvryLqod4nWriDbqC2xN3ik878c+EjP+RUsfRVPmOYGGCgKqiEpCG7
-         DTIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFVJqIA0c3/qtgKp4TBJOmQsm/AW0KmudEkGVd+hBzVmCIRF7NhLMt7N1mRSIHl+XvUNOcuf/MCj3VP1Hnx8luQV5MUJlllDpgCXP8w6hOTxkswg8J
-X-Gm-Message-State: AOJu0Yyu18UAVxuKzSdbiElo7toyNNnRyuhkpeqR0DHUOPFEVvWxxXdP
-	+BkyiB5JIm4kV+UyovFsEhmMS9dpFPUYTWJLH5yoQynJYtusMDqmThvbMPLY1Rq4MvYj/1XY8au
-	DobTmI0Q6DoPN7zlrJDcN/nufoNvvV4Uog4S1
-X-Google-Smtp-Source: AGHT+IF63JmM1ee0bnDzpGok1tjmtP5zb7sX/putD3q/YfGjFjhrbQZXgNVFBvpTSzx7Pyt+wxsNf5D6Y/3UmDUaE7A=
-X-Received: by 2002:a25:aba8:0:b0:dc7:443d:d9da with SMTP id
- v37-20020a25aba8000000b00dc7443dd9damr238618ybi.4.1709049261467; Tue, 27 Feb
- 2024 07:54:21 -0800 (PST)
+        bh=Ac+DW6WihzpCoOAFiLjFcHhP6f2iYTwciWP36cUV4HM=;
+        b=cDcYFvWKCBu6wKqXS9WXlpXzqDpIhJnvgcMQ6wkhXIQJuO+BG4p7BBdh8Uu3W5qvbM
+         QeEvlrWHq49moZhPLkgO0KF01+bs0vPPlTbcvxmitW2pqnqF4gqPRZJ2mHH9mbtmbZky
+         lSW4DJ/g5VDv+xJa7kbo3dX3cM9P+LgchCZXDAVPE/d13/TUPaX+22pZOPzz4DHoAG6E
+         aAagrJU2MpItSKBR68MmWCAnxTkc3xvnvg6RxsKhsapbXBhA36TEYExXpUw7cfmMQYa3
+         RJk56XIjKKlX8weeBr4sRrA/BonG0gYbFLvAwR1YWq6r0kaWFxcN8fIDK0018O+/9kz7
+         Aokg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG68gB/LInYcyUob6Ro6i/yWUCdV6WUGjz8BKB5f5jvqEORYqiSMgFKggMu6/dYp6s6CBMWcNfPndIxFXrRRAk0/91fW2kno9dzd7BATug7kty5kay
+X-Gm-Message-State: AOJu0YyvO/Rg1bh8rV3tdjcM8KWwcSrf/p81pxI8gEZurprx1PxsXeZ9
+	kdAoao5de2LJf+qGhfHiMxCDFTzREkIM/GSjeKYq4pB2EI8w0a/apX80K/vzMH0fpY3mnYFDk6h
+	fMUFUR10VDzlB03LvYj/Ks2KeBK6hf+/iVMYS5PXHH38WwZM=
+X-Google-Smtp-Source: AGHT+IE9MdMFU9x6FoxeTlyyLtbrwrCH54o03/D8XMEA7Si2aBMN5Aya/Dkp9vESrpYl2ue09rzvpreM73e0UemlMqU=
+X-Received: by 2002:a05:6358:5e8c:b0:17b:5d21:e86e with SMTP id
+ z12-20020a0563585e8c00b0017b5d21e86emr12410573rwn.3.1709049694861; Tue, 27
+ Feb 2024 08:01:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240227093604.3574241-1-shaozhengchao@huawei.com>
-In-Reply-To: <20240227093604.3574241-1-shaozhengchao@huawei.com>
+References: <20240223190546.3329966-1-mic@digikod.net> <20240223190546.3329966-2-mic@digikod.net>
+ <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com> <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 27 Feb 2024 10:54:10 -0500
-Message-ID: <CAHC9VhQVdEsvSf0zqOTnduJChcQ+S26N=3vy0x_6n0QDDP04FA@mail.gmail.com>
-Subject: Re: [PATCH net-next] netlabel: remove impossible return value in netlbl_bitmap_walk
-To: Zhengchao Shao <shaozhengchao@huawei.com>
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, weiyongjun1@huawei.com, yuehaibing@huawei.com
+Date: Tue, 27 Feb 2024 11:01:24 -0500
+Message-ID: <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	John Johansen <john.johansen@canonical.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 27, 2024 at 4:28=E2=80=AFAM Zhengchao Shao <shaozhengchao@huawe=
-i.com> wrote:
+On Mon, Feb 26, 2024 at 2:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Fri, Feb 23, 2024 at 4:07=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Fri, Feb 23, 2024 at 2:06=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > aa_getprocattr() may not initialize the value's pointer in some case.
+> > > As for proc_pid_attr_read(), initialize this pointer to NULL in
+> > > apparmor_getselfattr() to avoid an UAF in the kfree() call.
+> > >
+> > > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > > Cc: John Johansen <john.johansen@canonical.com>
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
+> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > ---
+> > >  security/apparmor/lsm.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > If you like John, I can send this up to Linus with the related SELinux
+> > fix, I would just need an ACK from you.
 >
-> Since commit 446fda4f2682 ("[NetLabel]: CIPSOv4 engine"), *bitmap_walk
-> function only returns -1. Nearly 18 years have passed, -2 scenes never
-> come up, so there's no need to consider it.
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 >
-> Signed-off-by: Zhengchao Shao <shaozhengchao@huawei.com>
-> ---
->  net/ipv4/cipso_ipv4.c        | 5 +----
->  net/ipv6/calipso.c           | 5 +----
->  net/netlabel/netlabel_kapi.c | 2 +-
->  3 files changed, 3 insertions(+), 9 deletions(-)
+> This patch looks good to me, and while we've still got at least two
+> (maybe three?) more weeks before v6.8 is tagged, I think it would be
+> good to get this up to Linus ASAP.  I'll hold off for another day, but
+> if we don't see any comment from John I'll go ahead and merge this and
+> send it up to Linus with the SELinux fix; I'm sure John wouldn't be
+> happy if v6.8 went out the door without this fix.
 
-Looks good to me, thanks for the patch.
+I just merged this into lsm/stable-6.8 and once the automated
+build/test has done it's thing and come back clean I'll send this,
+along with the associated SELinux fix, up to Linus.  Thanks all.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+John, if this commit is problematic please let me know and I'll send a
+fix or a revert.
 
 --=20
 paul-moore.com
