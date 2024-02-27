@@ -1,138 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75454145343;
-	Tue, 27 Feb 2024 14:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68777148300
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 15:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709045872; cv=none; b=QrcgrKWhHO/FCgxbhaFyJXx2XewJv/JaA0FIEJNawqYimE5M6YwwpUCSLDI5tEo0wUM3u8iZMsxeepepVDKM5cL8iAIE2g59IK2FaRObYnPSv2F3hIJ9P6TCVq8XbScvDg8B2tou3UaKGsWmBqtM+Ix7ejxusJBg9IBX4SCwbfs=
+	t=1709049264; cv=none; b=tggHMoWJ2T/V0lSBt+Gt7xENWLnAJL0eW5S4zKWVg2f3T6u4HXgnU32haY0zcXu0R9idJpxp4+bV+LuQE+1UpfxseTfX9gMxM8B+lt320MrjPOvBK+t8Jh4w+pk2NrTL1tHsVV3bpd6TXnK4ziCZZiIrK4V81536E2psfuXU3Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709045872; c=relaxed/simple;
-	bh=wmEclif75z08Y7k+kYIcq9r8njHDzniHYzsVWuX5qXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvcEbAN/CYonehRsQzbHPhoEnmFJbVdD71rxtQpTCDz1+LJmal3gxNKQUcW772uVU+78sxbhiBDrvW4ovnhLIqIMUnLFZGCk4nJJzSYjMT4FSeuSoLRY8RTDC/vP7liQk2qd9l1+9nNXNvwzEMLmC4CHOTFaYeGwwn4ci4ruHxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsXgDuZq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709049264; c=relaxed/simple;
+	bh=oq8mUdG/jkS0lSxlKIdzxgum2wxYbcShGcVGCSN2uWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UmzikyaouJc1kE4wtR5Gipj6hCP7qZiQ1HloY50Chd+ywoWJyRS9SU1Q3GY6MFFERPLjm2r4WShD9YSjZR9PkxNZ4h9hgsPbSdyz6+03l27dvDEJd3hQAt5VjVz2mwsTxsaHIOJufndjDcLEvAov67ZA3AzTeBYYhexHc2njFnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KT/goUs3; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsXgDuZq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB6BC433F1;
-	Tue, 27 Feb 2024 14:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709045872;
-	bh=wmEclif75z08Y7k+kYIcq9r8njHDzniHYzsVWuX5qXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tsXgDuZqZaxkgTGkVT4vgZZkifzs/XhauPG/Z8VblgKg3JYBuzgPCH2sN/AOfYAsz
-	 Cizp02wJoy2Js13JQt0E+Zl0HHvCGA3oZPWP9ioF8VBtoICsQTFvdJzNjP0YHkL+jx
-	 ZIEk0/YHOPTJNdkd9MEZU1P/jrlu9PFKFSfTKXyWBhplucxucznwgrqof5c5iGRM/2
-	 tUKDL8CJyGhfVnM/DYhRi1QnqmdGaigiZHrlvcPEAFN5h7QksWvunvY47bRRJDFmc2
-	 IfgbTjgpxKGsD+8Gs+Bdb72wnC6/I2S3F3cVc+DfaWBszVKJLxEdYDxu+6MSCu1WCQ
-	 xKCvkJWQbWn0Q==
-Date: Tue, 27 Feb 2024 08:57:51 -0600
-From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
-	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-	James Morris <jmorris@namei.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
-	selinux@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v2 20/25] ovl: add fscaps handlers
-Message-ID: <Zd34b4Lw9hOHJYr2@do-x1extreme>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
- <20240221-idmap-fscap-refactor-v2-20-3039364623bd@kernel.org>
- <CAOQ4uxjvrFuz2iCiO9dsOnear+qN=M+GFW-eEOZU5uCzBkTwLQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KT/goUs3"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6092387bdd0so10562757b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Feb 2024 07:54:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1709049261; x=1709654061; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYuQmAMRp17o2iSEsObXlVBh4IvpFKiYHuMKIilc630=;
+        b=KT/goUs3G4tkhAzI0sG2QwyBx+hLl2Od3Se2eNjcKekdDmi2OTyO1/aAYWTAfbQsWV
+         UWlvoasjW0ASPMCxC1kgUphitOyxXdtAF8MXhEi1DHwFLLG4VmdTINzANZyxGahPVQlp
+         iW90VUNoV4PkoTrzDIoCwnsXfhrxYBkqRvvTo/c+Drte0qU5laL7I9hBFUpyvLTPMHg/
+         IG+FqnmYBH4Q7kFvcI3wtVVs2wyYMR7MqL7K8PNS8YSeIOnaeZOlembGr4J62TfA+rKr
+         BkaBeV1MlzTOSgefK3LMLsTuQui6jO+s/zKPtQ5VQ2Tzt/rFKEO0lGBsuyInv6HRqEf4
+         yx2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709049261; x=1709654061;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fYuQmAMRp17o2iSEsObXlVBh4IvpFKiYHuMKIilc630=;
+        b=AY2tlng4ZalvyCS6wZjHAfclF9pz0A3QZ7/fdeiVBUD+B/7iYFQPVMRX5toFmtuHIl
+         BnQ1yoPU87OLwdlIZwaNKRJpRYewDTaEfYNKWFA+BFSfbCsH6OrdIKF+hPPhuXhpfxQr
+         0JAK2hKgtP5T/djDpPhmljGAXr1rht7XYydMiKd89wuPu5YAdtOE1XF4EIZdcK4G+esD
+         bzyaCTEYRKoh0Z1ErEgEkKmJucguCktdgNRFT8Wmb0LIIQHxBrlEh2C311Mge0ijsSKd
+         vKHuaoFeed0FsLUvryLqod4nWriDbqC2xN3ik878c+EjP+RUsfRVPmOYGGCgKqiEpCG7
+         DTIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFVJqIA0c3/qtgKp4TBJOmQsm/AW0KmudEkGVd+hBzVmCIRF7NhLMt7N1mRSIHl+XvUNOcuf/MCj3VP1Hnx8luQV5MUJlllDpgCXP8w6hOTxkswg8J
+X-Gm-Message-State: AOJu0Yyu18UAVxuKzSdbiElo7toyNNnRyuhkpeqR0DHUOPFEVvWxxXdP
+	+BkyiB5JIm4kV+UyovFsEhmMS9dpFPUYTWJLH5yoQynJYtusMDqmThvbMPLY1Rq4MvYj/1XY8au
+	DobTmI0Q6DoPN7zlrJDcN/nufoNvvV4Uog4S1
+X-Google-Smtp-Source: AGHT+IF63JmM1ee0bnDzpGok1tjmtP5zb7sX/putD3q/YfGjFjhrbQZXgNVFBvpTSzx7Pyt+wxsNf5D6Y/3UmDUaE7A=
+X-Received: by 2002:a25:aba8:0:b0:dc7:443d:d9da with SMTP id
+ v37-20020a25aba8000000b00dc7443dd9damr238618ybi.4.1709049261467; Tue, 27 Feb
+ 2024 07:54:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjvrFuz2iCiO9dsOnear+qN=M+GFW-eEOZU5uCzBkTwLQ@mail.gmail.com>
+References: <20240227093604.3574241-1-shaozhengchao@huawei.com>
+In-Reply-To: <20240227093604.3574241-1-shaozhengchao@huawei.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 27 Feb 2024 10:54:10 -0500
+Message-ID: <CAHC9VhQVdEsvSf0zqOTnduJChcQ+S26N=3vy0x_6n0QDDP04FA@mail.gmail.com>
+Subject: Re: [PATCH net-next] netlabel: remove impossible return value in netlbl_bitmap_walk
+To: Zhengchao Shao <shaozhengchao@huawei.com>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, weiyongjun1@huawei.com, yuehaibing@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 27, 2024 at 03:28:18PM +0200, Amir Goldstein wrote:
-> > +int ovl_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +                  const struct vfs_caps *caps, int setxattr_flags)
-> > +{
-> > +       int err;
-> > +       struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
-> > +       struct dentry *upperdentry = ovl_dentry_upper(dentry);
-> > +       struct dentry *realdentry = upperdentry ?: ovl_dentry_lower(dentry);
-> > +       const struct cred *old_cred;
-> > +
-> > +       /*
-> > +        * If the fscaps are to be remove from a lower file, check that they
-> > +        * exist before copying up.
-> > +        */
-> 
-> Don't you need to convert -ENODATA to 0 return value in this case?
+On Tue, Feb 27, 2024 at 4:28=E2=80=AFAM Zhengchao Shao <shaozhengchao@huawe=
+i.com> wrote:
+>
+> Since commit 446fda4f2682 ("[NetLabel]: CIPSOv4 engine"), *bitmap_walk
+> function only returns -1. Nearly 18 years have passed, -2 scenes never
+> come up, so there's no need to consider it.
+>
+> Signed-off-by: Zhengchao Shao <shaozhengchao@huawei.com>
+> ---
+>  net/ipv4/cipso_ipv4.c        | 5 +----
+>  net/ipv6/calipso.c           | 5 +----
+>  net/netlabel/netlabel_kapi.c | 2 +-
+>  3 files changed, 3 insertions(+), 9 deletions(-)
 
-Do you mean that trying to remove an xattr that does not exist should
-return 0? Standard behavior is to return -ENODATA in this situation.
+Looks good to me, thanks for the patch.
 
-> 
-> > +       if (!caps && !upperdentry) {
-> > +               struct path realpath;
-> > +               struct vfs_caps lower_caps;
-> > +
-> > +               ovl_path_lower(dentry, &realpath);
-> > +               old_cred = ovl_override_creds(dentry->d_sb);
-> > +               err = vfs_get_fscaps(mnt_idmap(realpath.mnt), realdentry,
-> > +                                    &lower_caps);
-> > +               revert_creds(old_cred);
-> > +               if (err)
-> > +                       goto out;
-> > +       }
-> > +
-> > +       err = ovl_want_write(dentry);
-> > +       if (err)
-> > +               goto out;
-> > +
-> 
-> ovl_want_write() should after ovl_copy_up(), see:
-> 162d06444070 ("ovl: reorder ovl_want_write() after ovl_inode_lock()")
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-Fixed.
-
-> > @@ -758,6 +826,8 @@ static const struct inode_operations ovl_symlink_inode_operations = {
-> >         .get_link       = ovl_get_link,
-> >         .getattr        = ovl_getattr,
-> >         .listxattr      = ovl_listxattr,
-> > +       .get_fscaps     = ovl_get_fscaps,
-> > +       .set_fscaps     = ovl_set_fscaps,
-> >         .update_time    = ovl_update_time,
-> >  };
-> >
-> > @@ -769,6 +839,8 @@ static const struct inode_operations ovl_special_inode_operations = {
-> >         .get_inode_acl  = ovl_get_inode_acl,
-> >         .get_acl        = ovl_get_acl,
-> >         .set_acl        = ovl_set_acl,
-> > +       .get_fscaps     = ovl_get_fscaps,
-> > +       .set_fscaps     = ovl_set_fscaps,
-> >         .update_time    = ovl_update_time,
-> >  };
-> >
-> 
-> 
-> Sorry, I did not understand the explanation why fscaps ops are needed
-> for non regular files. It does not look right to me.
-
-The kernel does not forbid XATTR_NAME_CAPS for non-regular files and
-will internally even try to read them from non-regular files during
-killpriv checks. If we do not add handlers then we will end up using the
-normal ovl xattr handlers, which call vfs_*xattr(). These will return an
-error for fscaps xattrs after this series, which would be a change in
-behavior for overlayfs and make it behave differently from other
-filesystems.
+--=20
+paul-moore.com
