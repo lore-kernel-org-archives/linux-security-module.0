@@ -1,63 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3505257D;
-	Wed, 28 Feb 2024 01:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224B0146015
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Feb 2024 12:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709082159; cv=none; b=NW8kETQVMzFrh+/7HYnHaAp8KlxL7d7d4Bz1oySPn0MFtrZmqw/u8HeiYV0TFDWYKNGv3++lkTZfwXsEapguhJXoy4RNVvQadUMeYYnKWIREWNamxFUnNDbT/mKI79c5QN62EQ8ie5+m5Q8A+jd7kSqD+J5I7O+WAa2bgckYeaU=
+	t=1709124853; cv=none; b=cWo3ykwY6BZVifPaGUPe4KOnarog+B2ISE9HW5ALdQvRbzWSXNNn5rMQpX5/qCaDaj7UkSUqrlarmclDDA1dyHpckS9AdNe0Qf/MRrmVCsc5DnMrHyMub5CWVT6BKLmI6MRi4/Ww+75UsCRZUFntKvdpPic0WO7uXojCyNKMWKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709082159; c=relaxed/simple;
-	bh=WFSWIv5vDLffyaYKsz3/YDBk5T/k2S9cUFTb62ck8b4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=frIPEwhvUXhqz72nVe39g6P5azk0+xfbcnPG6tbuOww8M438/Hx9ma0MEhKOWc5NfQXnNrI8g9wi3w50YK1hfRlV+RFTpcVVa+FrpAJSPR4r1Wb70a/rmIEtzjz7bGPH0njE4f3Al6a9BFLFdOuCJ0ldBIKCt+2mRaFvoo+4pGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1jA8wzu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709124853; c=relaxed/simple;
+	bh=V0Wu/+VTiNjbmF7GguEv6L2WS2ghRGPZ/G5cRniKxG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VbVK7Xojxh00uqSISJxkxtQfdsvPIDvwkYovkoZvdHzN8DdjfVZvfN6MvCxIjDLQ/HKUzHNL1x971xvdwyqxM0gJbV+PC26Sri5tgirtpT4pXj7S6QQW1ATqpPguBrxLX6gMAZIRxsujAmPRb7j7hy0jZJG5b/L/kMbc2WxaeMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1a8zvToH; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1jA8wzu"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 721C3C433F1;
-	Wed, 28 Feb 2024 01:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709082158;
-	bh=WFSWIv5vDLffyaYKsz3/YDBk5T/k2S9cUFTb62ck8b4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=I1jA8wzuepsFc5f8iS0NwhPwV/Dejvyie/wwhXCBJV6SSUZOwve2UQQE+qaRpTT8r
-	 d7hMzuPX0zrLfdW1mdPcfn6xsCDdq1Ym8YYQUI3sTjSDFUpQy7bNjYleUJyRR2c6Dq
-	 Ip8jcGEXzFVxQ1QZkBmYhBq7cEVinfxcQfW/vie6gNGRNIFNHlN7RtNprNZfzpbPln
-	 iUvY1vIgDfYcflxvxMUk41QEDBGxj6lJHxS1Y+iFuLPwItFpkyT/i3zcywHqepsv4B
-	 qpkbAFBw19q3x4DoNdBdMwzUWdeZksiCxx8vyTGSZfp66eLPevpT7yYJwps42Oue3H
-	 NvYDjvcrH2iNQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5EFBDD88FB0;
-	Wed, 28 Feb 2024 01:02:38 +0000 (UTC)
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240227
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <64a1045e4c018f135b78952c2c5ae3e9@paul-moore.com>
-References: <64a1045e4c018f135b78952c2c5ae3e9@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <64a1045e4c018f135b78952c2c5ae3e9@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240227
-X-PR-Tracked-Commit-Id: 6d2fb472ea9ea27f765f10ba65ec73d30f6b7977
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cf1182944c7cc9f1c21a8a44e0d29abe12527412
-Message-Id: <170908215837.19908.9638725340592583135.pr-tracker-bot@kernel.org>
-Date: Wed, 28 Feb 2024 01:02:38 +0000
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1a8zvToH"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TlDnN1M7FzWGr;
+	Wed, 28 Feb 2024 13:54:00 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TlDnM0D2lzMprLN;
+	Wed, 28 Feb 2024 13:53:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709124840;
+	bh=V0Wu/+VTiNjbmF7GguEv6L2WS2ghRGPZ/G5cRniKxG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1a8zvToHqfl9+MEmyAhJmDNVttx5z44Yz6eTRwuZj2eA2ZQbCw5Zr8ESyTAoJF6Q3
+	 b9GHEHRZNZCMtqCZNIA6u7qWe/M0N0waqTV9yZWn2dPSsqHeZEcdT6657QH96gdFFX
+	 pEG24/X6jBNjhnWQpldiXVUneQ26JrS/3q3ueQwA=
+Date: Wed, 28 Feb 2024 13:53:42 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
+Message-ID: <20240228.iuBae3aiS6oo@digikod.net>
+References: <20240223190546.3329966-1-mic@digikod.net>
+ <20240223190546.3329966-2-mic@digikod.net>
+ <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com>
+ <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
+ <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com>
+ <CAHC9VhQL9REbeyP6Lp=0HT=0LryPnAOKAbBF4gH9c=cBbJxaFg@mail.gmail.com>
+ <CAHC9VhR2=bzVqHtcPH7-cSQRBnfphzzBQ4n9agXWMtasK9wh7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhR2=bzVqHtcPH7-cSQRBnfphzzBQ4n9agXWMtasK9wh7Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-The pull request you sent on Tue, 27 Feb 2024 17:57:59 -0500:
+On Tue, Feb 27, 2024 at 05:13:58PM -0500, Paul Moore wrote:
+> On Tue, Feb 27, 2024 at 5:09 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Feb 27, 2024 at 11:01 AM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Mon, Feb 26, 2024 at 2:59 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Fri, Feb 23, 2024 at 4:07 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > > On Fri, Feb 23, 2024 at 2:06 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > aa_getprocattr() may not initialize the value's pointer in some case.
+> > > > > > As for proc_pid_attr_read(), initialize this pointer to NULL in
+> > > > > > apparmor_getselfattr() to avoid an UAF in the kfree() call.
+> > > > > >
+> > > > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > > > > > Cc: John Johansen <john.johansen@canonical.com>
+> > > > > > Cc: Paul Moore <paul@paul-moore.com>
+> > > > > > Cc: stable@vger.kernel.org
+> > > > > > Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
+> > > > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > > > > ---
+> > > > > >  security/apparmor/lsm.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > If you like John, I can send this up to Linus with the related SELinux
+> > > > > fix, I would just need an ACK from you.
+> > > >
+> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > > >
+> > > > This patch looks good to me, and while we've still got at least two
+> > > > (maybe three?) more weeks before v6.8 is tagged, I think it would be
+> > > > good to get this up to Linus ASAP.  I'll hold off for another day, but
+> > > > if we don't see any comment from John I'll go ahead and merge this and
+> > > > send it up to Linus with the SELinux fix; I'm sure John wouldn't be
+> > > > happy if v6.8 went out the door without this fix.
+> > >
+> > > I just merged this into lsm/stable-6.8 and once the automated
+> > > build/test has done it's thing and come back clean I'll send this,
+> > > along with the associated SELinux fix, up to Linus.  Thanks all.
+> >
+> > In off-list discussions with Mickaël today it was noted that this
+> > patch also needs a fixup to the commit description so I've replaced it
+> > with the following:
+> >
+> >   "In apparmor_getselfattr() when an invalid AppArmor
+> >    attribute is requested, or a value hasn't been explicitly
+> >    set for the requested attribute, the label passed to
+> >    aa_put_label() is not properly initialized which can cause
+> >    problems when the pointer value is non-NULL and AppArmor
+> >    attempts to drop a reference on the bogus label object."
+> >
+> > I've updated the commit in lsm/stable-6.8 and I'll be sending it to
+> > Linus shortly.
+> >
+> > > John, if this commit is problematic please let me know and I'll send a
+> > > fix or a revert.
+> 
+> I also just realized that both this patch and the SELinux have the
+> stable kernel marking which shouldn't be necessary as the LSM syscalls
+> are only present in the v6.8-rcX kernels.  I'm going to drop the
+> stable tagging, but leave the 'Fixes:' tag of course.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240227
+Looks good, thanks!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cf1182944c7cc9f1c21a8a44e0d29abe12527412
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> 
+> -- 
+> paul-moore.com
+> 
