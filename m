@@ -1,123 +1,563 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224B0146015
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Feb 2024 12:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA49208C5
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Feb 2024 12:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709124853; cv=none; b=cWo3ykwY6BZVifPaGUPe4KOnarog+B2ISE9HW5ALdQvRbzWSXNNn5rMQpX5/qCaDaj7UkSUqrlarmclDDA1dyHpckS9AdNe0Qf/MRrmVCsc5DnMrHyMub5CWVT6BKLmI6MRi4/Ww+75UsCRZUFntKvdpPic0WO7uXojCyNKMWKU=
+	t=1709125074; cv=none; b=pWuv88Nx7DDmQ3WNXYcBLrf4RfGJykkMkpccgPtXrGhVToaq9M5Nkqqj9lASCoCh3YFCEAdu8BuyPVq7Q3WkPocXX3vAdZdDaf6/LJykq4OwKhXH2aq5xsEf83WiE8bjAXKhb8NfXjvebpgOMIpxrUdpNkQPp+qODAjSJN6j0A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709124853; c=relaxed/simple;
-	bh=V0Wu/+VTiNjbmF7GguEv6L2WS2ghRGPZ/G5cRniKxG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VbVK7Xojxh00uqSISJxkxtQfdsvPIDvwkYovkoZvdHzN8DdjfVZvfN6MvCxIjDLQ/HKUzHNL1x971xvdwyqxM0gJbV+PC26Sri5tgirtpT4pXj7S6QQW1ATqpPguBrxLX6gMAZIRxsujAmPRb7j7hy0jZJG5b/L/kMbc2WxaeMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1a8zvToH; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1709125074; c=relaxed/simple;
+	bh=zDo1OzW4AgnETJN+fRsFFSob0utDNqq7UlQ4KDR5Xek=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Cc:Content-Type; b=VmLH6+uZaerc+tOhMPrh7d7Nm4BpG54G+UVIZD9mBiNCPpNYsW/BmPwYRO2hJA57Oa9tGPWUUq/O52lcpbLPttKmtK6+mXUl7ELL4Dt6ecM9XMipy8BEUQRRY6jxD/HY3dP4zwktkqPlpOJ9j/0+p4rTLvtrxQjonU/naR8Ji3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OuuJHsgZ; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1a8zvToH"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TlDnN1M7FzWGr;
-	Wed, 28 Feb 2024 13:54:00 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TlDnM0D2lzMprLN;
-	Wed, 28 Feb 2024 13:53:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709124840;
-	bh=V0Wu/+VTiNjbmF7GguEv6L2WS2ghRGPZ/G5cRniKxG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1a8zvToHqfl9+MEmyAhJmDNVttx5z44Yz6eTRwuZj2eA2ZQbCw5Zr8ESyTAoJF6Q3
-	 b9GHEHRZNZCMtqCZNIA6u7qWe/M0N0waqTV9yZWn2dPSsqHeZEcdT6657QH96gdFFX
-	 pEG24/X6jBNjhnWQpldiXVUneQ26JrS/3q3ueQwA=
-Date: Wed, 28 Feb 2024 13:53:42 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
-Message-ID: <20240228.iuBae3aiS6oo@digikod.net>
-References: <20240223190546.3329966-1-mic@digikod.net>
- <20240223190546.3329966-2-mic@digikod.net>
- <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com>
- <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
- <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com>
- <CAHC9VhQL9REbeyP6Lp=0HT=0LryPnAOKAbBF4gH9c=cBbJxaFg@mail.gmail.com>
- <CAHC9VhR2=bzVqHtcPH7-cSQRBnfphzzBQ4n9agXWMtasK9wh7Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OuuJHsgZ"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6093a9ac959so13383567b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Feb 2024 04:57:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1709125070; x=1709729870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oqY54rxLnjWhCyCRLfvQRVLRKusznOlKvNW0owLeT7Q=;
+        b=OuuJHsgZMtSzKuFh9g4DxxKlYeHkEhRWLXSK5mIidinJzM/llzgliAJzDH0CJhtEyt
+         RzhKIHodkLUGhLybjpaEUOYXfqkrwcNEvE5rrv/dIb1ucBk7Nm8NgyIfnSQHk6gykVDu
+         e317L2bOm7QhwvPonr4D4YhKL5IYHffDMnTiExXiLx4S+Hnbd2bX3LmMIQrhYBLAxU5R
+         Tse2vSxFIeQAlzGhdYURguxraJD6XQm9Dqyv0KZIsZRGqEl8Bd8hthhbZvzLNKhhu8p3
+         4JwMUVVD07GDruJ8e6IC2bRT7C7m6rz4u4m7MQKU7d0p+uwJKz0gyn4YV7EKxZJyWFnW
+         0BlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709125070; x=1709729870;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oqY54rxLnjWhCyCRLfvQRVLRKusznOlKvNW0owLeT7Q=;
+        b=abQ/JeUhspwHGNzsNZmvRDE+3UE883ET+g1LBKmGgW3xxN14qcGc8r2FVzPww1usV8
+         ZVjBurWV1uICOHEhsYYvRlA+OtaL5wZnSwFTJjlbUCi61MxWzyvuX+ZWVTcPP8jv3DQR
+         oQWsgq4rGwm0EOHXZoxsZcj/PkLKSsHbheMM6SydcHOfACwfXwjXSeDheVyXweLtIyMb
+         9Zl+X/n3PdN1+62llbd6ZIZchL4VxruD0dtn3CPaVjWpV825ADhxfbn2iaHQAMxKCiGM
+         Ufpu8sqU1KEAzBR5wll4bSb5Ej3hfwJ+raJCCFQjBmlHQHQp1YRGBA1wOyv2NVOqZN6r
+         /mTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYRkk+BhFVeBUKKyuB0Hb+kwkaBybuVQQG+PbPWmILuium0wzO3DBbSsgPk5WUyUmhUaFre1Ow62b281fc+2//abLAsUZKeHI19KG8poCZJ2nJGcMG
+X-Gm-Message-State: AOJu0YyLjqmOLjOt7GfUG0HaNRd/EtYervZKGdwZUBCNGO62OiMwYBSH
+	prrS0UKquutHF7pyQjQE2mVprrEHb+iogAIi4UZP0iN0LgTzetgXBPzj57NPwo30PpY0McvCJ/6
+	cvg==
+X-Google-Smtp-Source: AGHT+IEKJ83J/kvGPncQFihK+CF9avrpsVmX6L1EVJOOZe4NFh/07vKdSwxWQ4qMpfpZkFYUK3AzpG6fLjQ=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:81f8:4290:4f71:82e3])
+ (user=gnoack job=sendgmr) by 2002:a0d:e696:0:b0:608:66be:2f71 with SMTP id
+ p144-20020a0de696000000b0060866be2f71mr975790ywe.9.1709125070223; Wed, 28 Feb
+ 2024 04:57:50 -0800 (PST)
+Date: Wed, 28 Feb 2024 13:57:42 +0100
+In-Reply-To: <20240219.chu4Yeegh3oo@digikod.net>
+Message-Id: <Zd8txvjeeXjRdeP-@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhR2=bzVqHtcPH7-cSQRBnfphzzBQ4n9agXWMtasK9wh7Q@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0
+References: <20240209170612.1638517-1-gnoack@google.com> <20240209170612.1638517-2-gnoack@google.com>
+ <20240219.chu4Yeegh3oo@digikod.net>
+Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 27, 2024 at 05:13:58PM -0500, Paul Moore wrote:
-> On Tue, Feb 27, 2024 at 5:09 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Feb 27, 2024 at 11:01 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Mon, Feb 26, 2024 at 2:59 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Fri, Feb 23, 2024 at 4:07 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > > On Fri, Feb 23, 2024 at 2:06 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > aa_getprocattr() may not initialize the value's pointer in some case.
-> > > > > > As for proc_pid_attr_read(), initialize this pointer to NULL in
-> > > > > > apparmor_getselfattr() to avoid an UAF in the kfree() call.
-> > > > > >
-> > > > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > > > > Cc: John Johansen <john.johansen@canonical.com>
-> > > > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > > > Cc: stable@vger.kernel.org
-> > > > > > Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
-> > > > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > > > > ---
-> > > > > >  security/apparmor/lsm.c | 2 +-
-> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > If you like John, I can send this up to Linus with the related SELinux
-> > > > > fix, I would just need an ACK from you.
-> > > >
-> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> > > >
-> > > > This patch looks good to me, and while we've still got at least two
-> > > > (maybe three?) more weeks before v6.8 is tagged, I think it would be
-> > > > good to get this up to Linus ASAP.  I'll hold off for another day, but
-> > > > if we don't see any comment from John I'll go ahead and merge this and
-> > > > send it up to Linus with the SELinux fix; I'm sure John wouldn't be
-> > > > happy if v6.8 went out the door without this fix.
-> > >
-> > > I just merged this into lsm/stable-6.8 and once the automated
-> > > build/test has done it's thing and come back clean I'll send this,
-> > > along with the associated SELinux fix, up to Linus.  Thanks all.
-> >
-> > In off-list discussions with Mickaël today it was noted that this
-> > patch also needs a fixup to the commit description so I've replaced it
-> > with the following:
-> >
-> >   "In apparmor_getselfattr() when an invalid AppArmor
-> >    attribute is requested, or a value hasn't been explicitly
-> >    set for the requested attribute, the label passed to
-> >    aa_put_label() is not properly initialized which can cause
-> >    problems when the pointer value is non-NULL and AppArmor
-> >    attempts to drop a reference on the bogus label object."
-> >
-> > I've updated the commit in lsm/stable-6.8 and I'll be sending it to
-> > Linus shortly.
-> >
-> > > John, if this commit is problematic please let me know and I'll send a
-> > > fix or a revert.
-> 
-> I also just realized that both this patch and the SELinux have the
-> stable kernel marking which shouldn't be necessary as the LSM syscalls
-> are only present in the v6.8-rcX kernels.  I'm going to drop the
-> stable tagging, but leave the 'Fixes:' tag of course.
+Hello Micka=C3=ABl!
 
-Looks good, thanks!
+On Mon, Feb 19, 2024 at 07:34:42PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> Arn, Christian, please take a look at the following RFC patch and the
+> rationale explained here.
+>=20
+> On Fri, Feb 09, 2024 at 06:06:05PM +0100, G=C3=BCnther Noack wrote:
+> > Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
+> > and increments the Landlock ABI version to 5.
+> >=20
+> > Like the truncate right, these rights are associated with a file
+> > descriptor at the time of open(2), and get respected even when the
+> > file descriptor is used outside of the thread which it was originally
+> > opened in.
+> >=20
+> > A newly enabled Landlock policy therefore does not apply to file
+> > descriptors which are already open.
+> >=20
+> > If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
+> > of safe IOCTL commands will be permitted on newly opened files.  The
+> > permitted IOCTLs can be configured through the ruleset in limited ways
+> > now.  (See documentation for details.)
+> >=20
+> > Specifically, when LANDLOCK_ACCESS_FS_IOCTL is handled, granting this
+> > right on a file or directory will *not* permit to do all IOCTL
+> > commands, but only influence the IOCTL commands which are not already
+> > handled through other access rights.  The intent is to keep the groups
+> > of IOCTL commands more fine-grained.
+> >=20
+> > Noteworthy scenarios which require special attention:
+> >=20
+> > TTY devices are often passed into a process from the parent process,
+> > and so a newly enabled Landlock policy does not retroactively apply to
+> > them automatically.  In the past, TTY devices have often supported
+> > IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
+> > letting callers control the TTY input buffer (and simulate
+> > keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
+> > modern kernels though.
+> >=20
+> > Some legitimate file system features, like setting up fscrypt, are
+> > exposed as IOCTL commands on regular files and directories -- users of
+> > Landlock are advised to double check that the sandboxed process does
+> > not need to invoke these IOCTLs.
+>=20
+> I think we really need to allow fscrypt and fs-verity IOCTLs.
+>=20
+> >=20
+> > Known limitations:
+> >=20
+> > The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
+> > over IOCTL commands.  Future work will enable a more fine-grained
+> > access control for IOCTLs.
+> >=20
+> > In the meantime, Landlock users may use path-based restrictions in
+> > combination with their knowledge about the file system layout to
+> > control what IOCTLs can be done.  Mounting file systems with the nodev
+> > option can help to distinguish regular files and devices, and give
+> > guarantees about the affected files, which Landlock alone can not give
+> > yet.
+>=20
+> I had a second though about our current approach, and it looks like we
+> can do simpler, more generic, and with less IOCTL commands specific
+> handling.
+>=20
+> What we didn't take into account is that an IOCTL needs an opened file,
+> which means that the caller must already have been allowed to open this
+> file in read or write mode.
+>=20
+> I think most FS-specific IOCTL commands check access rights (i.e. access
+> mode or required capability), other than implicit ones (at least read or
+> write), when appropriate.  We don't get such guarantee with device
+> drivers.
+>=20
+> The main threat is IOCTLs on character or block devices because their
+> impact may be unknown (if we only look at the IOCTL command, not the
+> backing file), but we should allow IOCTLs on filesystems (e.g. fscrypt,
+> fs-verity, clone extents).  I think we should only implement a
+> LANDLOCK_ACCESS_FS_IOCTL_DEV right, which would be more explicit.  This
+> change would impact the IOCTLs grouping (not required anymore), but
+> we'll still need the list of VFS IOCTLs.
 
-> 
-> -- 
-> paul-moore.com
-> 
+
+I am fine with dropping the IOCTL grouping and going for this simpler appro=
+ach.
+
+This must have been a misunderstanding - I thought you wanted to align the
+access checks in Landlock with the ones done by the kernel already, so that=
+ we
+can reason about it more locally.  But I'm fine with doing it just for devi=
+ce
+files as well, if that is what it takes.  It's definitely simpler.
+
+Before I jump into the implementation, let me paraphrase your proposal to m=
+ake
+sure I understood it correctly:
+
+ * We *only* introduce the LANDLOCK_ACCESS_FS_IOCTL_DEV right.
+
+ * This access right governs the use of nontrivial IOCTL commands on
+   character and block device files.
+
+   * On open()ed files which are not character or block devices,
+     all IOCTL commands keep working.
+
+     This includes pipes and sockets, but also a variety of "anonymous" fil=
+e
+     types which are possibly openable through /proc/self/*/fd/*?
+
+ * The trivial IOCTL commands are identified using the proposed function
+   vfs_masked_device_ioctl().
+
+   * For these commands, the implementations are in fs/ioctl.c, except for
+     FIONREAD, in some cases.  We trust these implementations to check the
+     file's type (dir/regular) and access rights (r/w) correctly.
+
+
+Open questions I have:
+
+* What about files which are neither devices nor regular files or directori=
+es?
+
+  The obvious ones which can be open()ed are pipes, where only FIONREAND an=
+d two
+  harmless-looking watch queue IOCTLs are implemented.
+
+  But then I think that /proc/*/fd/* is a way through which other non-devic=
+e
+  files can become accessible?  What do we do for these?  (I am getting EAC=
+CES
+  when trying to open some anon_inodes that way... is this something we can
+  count on?)
+
+* How did you come up with the list in vfs_masked_device_ioctl()?  I notice=
+ that
+  some of these are from the switch() statement we had before, but not all =
+of
+  them are included.
+
+  I can kind of see that for the fallocate()-like ones and for FIBMAP, beca=
+use
+  these **only** make sense for regular files, and IOCTLs on regular files =
+are
+  permitted anyway.
+
+* What do we do for FIONREAD?  Your patch says that it should be forwarded =
+to
+  device implementations.  But technically, devices can implement all kinds=
+ of
+  surprising behaviour for that.
+
+  If you look at the ioctl implementations of different drivers, you can ve=
+ry
+  quickly find a surprising amount of things that happen completely indepen=
+dent
+  of the IOCTL command.  (Some implementations are acquiring locks and othe=
+r
+  resources before they even check what the cmd value is. - and we would be
+  exposing that if we let devices handle FIONREAD).
+
+
+Please let me know whether I understood you correctly there.
+
+Regarding the implementation notes you left below, I think they mostly deri=
+ve
+from the *_IOCTL_DEV approach in a direct way.
+
+
+> > +static __attribute_const__ access_mask_t
+> > +get_required_ioctl_access(const unsigned int cmd)
+> > +{
+> > +	switch (cmd) {
+> > +	case FIOCLEX:
+> > +	case FIONCLEX:
+> > +	case FIONBIO:
+> > +	case FIOASYNC:
+> > +		/*
+> > +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
+> > +		 * close-on-exec and the file's buffered-IO and async flags.
+> > +		 * These operations are also available through fcntl(2), and are
+> > +		 * unconditionally permitted in Landlock.
+> > +		 */
+> > +		return 0;
+> > +	case FIONREAD:
+> > +	case FIOQSIZE:
+> > +	case FIGETBSZ:
+> > +		/*
+> > +		 * FIONREAD returns the number of bytes available for reading.
+> > +		 * FIONREAD returns the number of immediately readable bytes for
+> > +		 * a file.
+> > +		 *
+> > +		 * FIOQSIZE queries the size of a file or directory.
+> > +		 *
+> > +		 * FIGETBSZ queries the file system's block size for a file or
+> > +		 * directory.
+> > +		 *
+> > +		 * These IOCTL commands are permitted for files which are opened
+> > +		 * with LANDLOCK_ACCESS_FS_READ_DIR,
+> > +		 * LANDLOCK_ACCESS_FS_READ_FILE, or
+> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
+> > +		 */
+>=20
+> Because files or directories can only be opened with
+> LANDLOCK_ACCESS_FS_{READ,WRITE}_{FILE,DIR}, and because IOCTLs can only
+> be sent on a file descriptor, this means that we can always allow these
+> 3 commands (for opened files).
+>=20
+> > +		return LANDLOCK_ACCESS_FS_IOCTL_RW;
+> > +	case FS_IOC_FIEMAP:
+> > +	case FIBMAP:
+> > +		/*
+> > +		 * FS_IOC_FIEMAP and FIBMAP query information about the
+> > +		 * allocation of blocks within a file.  They are permitted for
+> > +		 * files which are opened with LANDLOCK_ACCESS_FS_READ_FILE or
+> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
+> > +		 */
+> > +		fallthrough;
+> > +	case FIDEDUPERANGE:
+> > +	case FICLONE:
+> > +	case FICLONERANGE:
+> > +		/*
+> > +		 * FIDEDUPERANGE, FICLONE and FICLONERANGE make files share
+> > +		 * their underlying storage ("reflink") between source and
+> > +		 * destination FDs, on file systems which support that.
+> > +		 *
+> > +		 * The underlying implementations are already checking whether
+> > +		 * the involved files are opened with the appropriate read/write
+> > +		 * modes.  We rely on this being implemented correctly.
+> > +		 *
+> > +		 * These IOCTLs are permitted for files which are opened with
+> > +		 * LANDLOCK_ACCESS_FS_READ_FILE or
+> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
+> > +		 */
+> > +		fallthrough;
+> > +	case FS_IOC_RESVSP:
+> > +	case FS_IOC_RESVSP64:
+> > +	case FS_IOC_UNRESVSP:
+> > +	case FS_IOC_UNRESVSP64:
+> > +	case FS_IOC_ZERO_RANGE:
+> > +		/*
+> > +		 * These IOCTLs reserve space, or create holes like
+> > +		 * fallocate(2).  We rely on the implementations checking the
+> > +		 * files' read/write modes.
+> > +		 *
+> > +		 * These IOCTLs are permitted for files which are opened with
+> > +		 * LANDLOCK_ACCESS_FS_READ_FILE or
+> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
+> > +		 */
+>=20
+> These 10 commands only make sense on directories, so we could also
+> always allow them on file descriptors.
+
+I imagine that's a typo?  The commands above do make sense on regular files=
+.
+
+
+> > +		return LANDLOCK_ACCESS_FS_IOCTL_RW_FILE;
+> > +	default:
+> > +		/*
+> > +		 * Other commands are guarded by the catch-all access right.
+> > +		 */
+> > +		return LANDLOCK_ACCESS_FS_IOCTL;
+> > +	}
+> > +}
+> > +
+> > +/**
+> > + * expand_ioctl() - Return the dst flags from either the src flag or t=
+he
+> > + * %LANDLOCK_ACCESS_FS_IOCTL flag, depending on whether the
+> > + * %LANDLOCK_ACCESS_FS_IOCTL and src access rights are handled or not.
+> > + *
+> > + * @handled: Handled access rights.
+> > + * @access: The access mask to copy values from.
+> > + * @src: A single access right to copy from in @access.
+> > + * @dst: One or more access rights to copy to.
+> > + *
+> > + * Returns: @dst, or 0.
+> > + */
+> > +static __attribute_const__ access_mask_t
+> > +expand_ioctl(const access_mask_t handled, const access_mask_t access,
+> > +	     const access_mask_t src, const access_mask_t dst)
+> > +{
+> > +	access_mask_t copy_from;
+> > +
+> > +	if (!(handled & LANDLOCK_ACCESS_FS_IOCTL))
+> > +		return 0;
+> > +
+> > +	copy_from =3D (handled & src) ? src : LANDLOCK_ACCESS_FS_IOCTL;
+> > +	if (access & copy_from)
+> > +		return dst;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * landlock_expand_access_fs() - Returns @access with the synthetic IO=
+CTL group
+> > + * flags enabled if necessary.
+> > + *
+> > + * @handled: Handled FS access rights.
+> > + * @access: FS access rights to expand.
+> > + *
+> > + * Returns: @access expanded by the necessary flags for the synthetic =
+IOCTL
+> > + * access rights.
+> > + */
+> > +static __attribute_const__ access_mask_t landlock_expand_access_fs(
+> > +	const access_mask_t handled, const access_mask_t access)
+> > +{
+> > +	return access |
+> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_WRITE_FILE,
+> > +			    LANDLOCK_ACCESS_FS_IOCTL_RW |
+> > +				    LANDLOCK_ACCESS_FS_IOCTL_RW_FILE) |
+> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_FILE,
+> > +			    LANDLOCK_ACCESS_FS_IOCTL_RW |
+> > +				    LANDLOCK_ACCESS_FS_IOCTL_RW_FILE) |
+> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_DIR,
+> > +			    LANDLOCK_ACCESS_FS_IOCTL_RW);
+> > +}
+> > +
+> > +/**
+> > + * landlock_expand_handled_access_fs() - add synthetic IOCTL access ri=
+ghts to an
+> > + * access mask of handled accesses.
+> > + *
+> > + * @handled: The handled accesses of a ruleset that is being created.
+> > + *
+> > + * Returns: @handled, with the bits for the synthetic IOCTL access rig=
+hts set,
+> > + * if %LANDLOCK_ACCESS_FS_IOCTL is handled.
+> > + */
+> > +__attribute_const__ access_mask_t
+> > +landlock_expand_handled_access_fs(const access_mask_t handled)
+> > +{
+> > +	return landlock_expand_access_fs(handled, handled);
+> > +}
+> > +
+> >  /* Ruleset management */
+> > =20
+> >  static struct landlock_object *get_inode_object(struct inode *const in=
+ode)
+> > @@ -148,7 +331,8 @@ static struct landlock_object *get_inode_object(str=
+uct inode *const inode)
+> >  	LANDLOCK_ACCESS_FS_EXECUTE | \
+> >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> > -	LANDLOCK_ACCESS_FS_TRUNCATE)
+> > +	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > +	LANDLOCK_ACCESS_FS_IOCTL)
+> >  /* clang-format on */
+> > =20
+> >  /*
+> > @@ -158,6 +342,7 @@ int landlock_append_fs_rule(struct landlock_ruleset=
+ *const ruleset,
+> >  			    const struct path *const path,
+> >  			    access_mask_t access_rights)
+> >  {
+> > +	access_mask_t handled;
+> >  	int err;
+> >  	struct landlock_id id =3D {
+> >  		.type =3D LANDLOCK_KEY_INODE,
+> > @@ -170,9 +355,11 @@ int landlock_append_fs_rule(struct landlock_rulese=
+t *const ruleset,
+> >  	if (WARN_ON_ONCE(ruleset->num_layers !=3D 1))
+> >  		return -EINVAL;
+> > =20
+> > +	handled =3D landlock_get_fs_access_mask(ruleset, 0);
+> > +	/* Expands the synthetic IOCTL groups. */
+> > +	access_rights |=3D landlock_expand_access_fs(handled, access_rights);
+> >  	/* Transforms relative access rights to absolute ones. */
+> > -	access_rights |=3D LANDLOCK_MASK_ACCESS_FS &
+> > -			 ~landlock_get_fs_access_mask(ruleset, 0);
+> > +	access_rights |=3D LANDLOCK_MASK_ACCESS_FS & ~handled;
+> >  	id.key.object =3D get_inode_object(d_backing_inode(path->dentry));
+> >  	if (IS_ERR(id.key.object))
+> >  		return PTR_ERR(id.key.object);
+> > @@ -1333,7 +1520,9 @@ static int hook_file_open(struct file *const file=
+)
+> >  {
+> >  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+> >  	access_mask_t open_access_request, full_access_request, allowed_acces=
+s;
+> > -	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
+> > +	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE |
+> > +					      LANDLOCK_ACCESS_FS_IOCTL |
+> > +					      IOCTL_GROUPS;
+> >  	const struct landlock_ruleset *const dom =3D get_current_fs_domain();
+> > =20
+> >  	if (!dom)
+>=20
+> We should set optional_access according to the file type before
+> `full_access_request =3D open_access_request | optional_access;`
+>=20
+> const bool is_device =3D S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode)=
+;
+>=20
+> optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
+> if (is_device)
+>     optional_access |=3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
+>=20
+>=20
+> Because LANDLOCK_ACCESS_FS_IOCTL_DEV is dedicated to character or block
+> devices, we may want landlock_add_rule() to only allow this access right
+> to be tied to directories, or character devices, or block devices.  Even
+> if it would be more consistent with constraints on directory-only access
+> rights, I'm not sure about that.
+>=20
+>=20
+> > @@ -1375,6 +1564,16 @@ static int hook_file_open(struct file *const fil=
+e)
+> >  		}
+> >  	}
+> > =20
+> > +	/*
+> > +	 * Named pipes should be treated just like anonymous pipes.
+> > +	 * Therefore, we permit all IOCTLs on them.
+> > +	 */
+> > +	if (S_ISFIFO(file_inode(file)->i_mode)) {
+> > +		allowed_access |=3D LANDLOCK_ACCESS_FS_IOCTL |
+> > +				  LANDLOCK_ACCESS_FS_IOCTL_RW |
+> > +				  LANDLOCK_ACCESS_FS_IOCTL_RW_FILE;
+> > +	}
+>=20
+> Instead of this S_ISFIFO check:
+>=20
+> if (!is_device)
+>     allowed_access |=3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
+>=20
+> > +
+> >  	/*
+> >  	 * For operations on already opened files (i.e. ftruncate()), it is t=
+he
+> >  	 * access rights at the time of open() which decide whether the
+> > @@ -1406,6 +1605,25 @@ static int hook_file_truncate(struct file *const=
+ file)
+> >  	return -EACCES;
+> >  }
+> > =20
+> > +static int hook_file_ioctl(struct file *file, unsigned int cmd,
+> > +			   unsigned long arg)
+> > +{
+> > +	const access_mask_t required_access =3D get_required_ioctl_access(cmd=
+);
+>=20
+> const access_mask_t required_access =3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
+>=20
+>=20
+> > +	const access_mask_t allowed_access =3D
+> > +		landlock_file(file)->allowed_access;
+> > +
+> > +	/*
+> > +	 * It is the access rights at the time of opening the file which
+> > +	 * determine whether IOCTL can be used on the opened file later.
+> > +	 *
+> > +	 * The access right is attached to the opened file in hook_file_open(=
+).
+> > +	 */
+> > +	if ((allowed_access & required_access) =3D=3D required_access)
+> > +		return 0;
+>=20
+> We could then check against the do_vfs_ioctl()'s commands, excluding
+> FIONREAD and file_ioctl()'s commands, to always allow VFS-related
+> commands:
+>=20
+> if (vfs_masked_device_ioctl(cmd))
+>     return 0;
+>=20
+> As a safeguard, we could define vfs_masked_device_ioctl(cmd) in
+> fs/ioctl.c and make it called by do_vfs_ioctl() as a safeguard to make
+> sure we keep an accurate list of VFS IOCTL commands (see next RFC patch).
+
+
+> The compat IOCTL hook must also be implemented.
+
+Thanks!  I can't believe I missed that one.
+
+
+> What do you think? Any better idea?
+
+It seems like a reasonable approach.  I'd like to double check with you tha=
+t we
+are on the same page about it before doing the next implementation step.  (=
+These
+iterations seems cheaper when we do them in English than when we do them in=
+ C.)
+
+Thanks for the review!
+=E2=80=94G=C3=BCnther
