@@ -1,563 +1,286 @@
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA49208C5
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Feb 2024 12:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2455208C6;
+	Wed, 28 Feb 2024 17:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709125074; cv=none; b=pWuv88Nx7DDmQ3WNXYcBLrf4RfGJykkMkpccgPtXrGhVToaq9M5Nkqqj9lASCoCh3YFCEAdu8BuyPVq7Q3WkPocXX3vAdZdDaf6/LJykq4OwKhXH2aq5xsEf83WiE8bjAXKhb8NfXjvebpgOMIpxrUdpNkQPp+qODAjSJN6j0A4=
+	t=1709142440; cv=none; b=PUIp3+hfPuAW+PnYIY3OqDbLVEwc3n0Up+xnE6FyAdEeEV5tDd+nFWIcAC2Q5bAE/LDlPC/atEGj8AWmWRIdmqFutXtfIq3Awyg4iVRyRZgF92AtxT0s5ZmmeVtmXoODF72DkYv1tct/jpbnENTo00bBpk7dTOpLZE2m0OavZJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709125074; c=relaxed/simple;
-	bh=zDo1OzW4AgnETJN+fRsFFSob0utDNqq7UlQ4KDR5Xek=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=VmLH6+uZaerc+tOhMPrh7d7Nm4BpG54G+UVIZD9mBiNCPpNYsW/BmPwYRO2hJA57Oa9tGPWUUq/O52lcpbLPttKmtK6+mXUl7ELL4Dt6ecM9XMipy8BEUQRRY6jxD/HY3dP4zwktkqPlpOJ9j/0+p4rTLvtrxQjonU/naR8Ji3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OuuJHsgZ; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OuuJHsgZ"
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6093a9ac959so13383567b3.3
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Feb 2024 04:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709125070; x=1709729870; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oqY54rxLnjWhCyCRLfvQRVLRKusznOlKvNW0owLeT7Q=;
-        b=OuuJHsgZMtSzKuFh9g4DxxKlYeHkEhRWLXSK5mIidinJzM/llzgliAJzDH0CJhtEyt
-         RzhKIHodkLUGhLybjpaEUOYXfqkrwcNEvE5rrv/dIb1ucBk7Nm8NgyIfnSQHk6gykVDu
-         e317L2bOm7QhwvPonr4D4YhKL5IYHffDMnTiExXiLx4S+Hnbd2bX3LmMIQrhYBLAxU5R
-         Tse2vSxFIeQAlzGhdYURguxraJD6XQm9Dqyv0KZIsZRGqEl8Bd8hthhbZvzLNKhhu8p3
-         4JwMUVVD07GDruJ8e6IC2bRT7C7m6rz4u4m7MQKU7d0p+uwJKz0gyn4YV7EKxZJyWFnW
-         0BlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709125070; x=1709729870;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oqY54rxLnjWhCyCRLfvQRVLRKusznOlKvNW0owLeT7Q=;
-        b=abQ/JeUhspwHGNzsNZmvRDE+3UE883ET+g1LBKmGgW3xxN14qcGc8r2FVzPww1usV8
-         ZVjBurWV1uICOHEhsYYvRlA+OtaL5wZnSwFTJjlbUCi61MxWzyvuX+ZWVTcPP8jv3DQR
-         oQWsgq4rGwm0EOHXZoxsZcj/PkLKSsHbheMM6SydcHOfACwfXwjXSeDheVyXweLtIyMb
-         9Zl+X/n3PdN1+62llbd6ZIZchL4VxruD0dtn3CPaVjWpV825ADhxfbn2iaHQAMxKCiGM
-         Ufpu8sqU1KEAzBR5wll4bSb5Ej3hfwJ+raJCCFQjBmlHQHQp1YRGBA1wOyv2NVOqZN6r
-         /mTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYRkk+BhFVeBUKKyuB0Hb+kwkaBybuVQQG+PbPWmILuium0wzO3DBbSsgPk5WUyUmhUaFre1Ow62b281fc+2//abLAsUZKeHI19KG8poCZJ2nJGcMG
-X-Gm-Message-State: AOJu0YyLjqmOLjOt7GfUG0HaNRd/EtYervZKGdwZUBCNGO62OiMwYBSH
-	prrS0UKquutHF7pyQjQE2mVprrEHb+iogAIi4UZP0iN0LgTzetgXBPzj57NPwo30PpY0McvCJ/6
-	cvg==
-X-Google-Smtp-Source: AGHT+IEKJ83J/kvGPncQFihK+CF9avrpsVmX6L1EVJOOZe4NFh/07vKdSwxWQ4qMpfpZkFYUK3AzpG6fLjQ=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:81f8:4290:4f71:82e3])
- (user=gnoack job=sendgmr) by 2002:a0d:e696:0:b0:608:66be:2f71 with SMTP id
- p144-20020a0de696000000b0060866be2f71mr975790ywe.9.1709125070223; Wed, 28 Feb
- 2024 04:57:50 -0800 (PST)
-Date: Wed, 28 Feb 2024 13:57:42 +0100
-In-Reply-To: <20240219.chu4Yeegh3oo@digikod.net>
-Message-Id: <Zd8txvjeeXjRdeP-@google.com>
+	s=arc-20240116; t=1709142440; c=relaxed/simple;
+	bh=xHvKTOsABz1LDQNy4mHww2CXHcFEll/LFGFThBQaQcc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Vw53GfccyRfqw0IiPLtx8byAWPqh1F3r5akT0VKod5/LiawFY+dV3st4cJOLiKsiyfgDIwkvKy0RFYmSv6JUF2jgGZ5iHWL2FlzIJwpA3F96cVbdLSNRHPejGzIM+oepRBGOA0LEerYx75uLnsPrSPnGYRwEALm8yJRPb6r39iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TlLxd34Hnz9xxS8;
+	Thu, 29 Feb 2024 01:31:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id A89DA140893;
+	Thu, 29 Feb 2024 01:47:05 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwC38SWGcd9lGPZcAw--.40616S2;
+	Wed, 28 Feb 2024 18:47:04 +0100 (CET)
+Message-ID: <e6d1314d46dc4befd78bfa33e2cf3d8572a16009.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 00/13] security: digest_cache LSM
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: corbet@lwn.net, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com,  shuah@kernel.org, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com,  mic@digikod.net
+Cc: linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+ linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
+ petrtesarik@huaweicloud.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Wed, 28 Feb 2024 18:46:43 +0100
+In-Reply-To: <20240209140917.846878-1-roberto.sassu@huaweicloud.com>
+References: <20240209140917.846878-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240209170612.1638517-1-gnoack@google.com> <20240209170612.1638517-2-gnoack@google.com>
- <20240219.chu4Yeegh3oo@digikod.net>
-Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
-	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-CM-TRANSID:GxC2BwC38SWGcd9lGPZcAw--.40616S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3uF1DCFyxCw13Wr4ftry8AFb_yoWDAw17p3
+	97CF15Kws5ZFy7Aw4fA3W29FyFv395KF47Gws7Xr13ZrWYvrnYy3WxCw17Zry3XrW8Xa1I
+	yw47Kr15Ww4DJaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9jb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
+	7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIccxYrVCFb41lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7IUUCeHDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBF1jj5bMmQAAsz
 
-Hello Micka=C3=ABl!
-
-On Mon, Feb 19, 2024 at 07:34:42PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> Arn, Christian, please take a look at the following RFC patch and the
-> rationale explained here.
+On Fri, 2024-02-09 at 15:09 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 >=20
-> On Fri, Feb 09, 2024 at 06:06:05PM +0100, G=C3=BCnther Noack wrote:
-> > Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
-> > and increments the Landlock ABI version to 5.
-> >=20
-> > Like the truncate right, these rights are associated with a file
-> > descriptor at the time of open(2), and get respected even when the
-> > file descriptor is used outside of the thread which it was originally
-> > opened in.
-> >=20
-> > A newly enabled Landlock policy therefore does not apply to file
-> > descriptors which are already open.
-> >=20
-> > If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
-> > of safe IOCTL commands will be permitted on newly opened files.  The
-> > permitted IOCTLs can be configured through the ruleset in limited ways
-> > now.  (See documentation for details.)
-> >=20
-> > Specifically, when LANDLOCK_ACCESS_FS_IOCTL is handled, granting this
-> > right on a file or directory will *not* permit to do all IOCTL
-> > commands, but only influence the IOCTL commands which are not already
-> > handled through other access rights.  The intent is to keep the groups
-> > of IOCTL commands more fine-grained.
-> >=20
-> > Noteworthy scenarios which require special attention:
-> >=20
-> > TTY devices are often passed into a process from the parent process,
-> > and so a newly enabled Landlock policy does not retroactively apply to
-> > them automatically.  In the past, TTY devices have often supported
-> > IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
-> > letting callers control the TTY input buffer (and simulate
-> > keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
-> > modern kernels though.
-> >=20
-> > Some legitimate file system features, like setting up fscrypt, are
-> > exposed as IOCTL commands on regular files and directories -- users of
-> > Landlock are advised to double check that the sandboxed process does
-> > not need to invoke these IOCTLs.
+> Introduce the digest_cache LSM, whose purpose is to deliver reference
+> digest values to integrity providers, such as IMA and IPE, abstracting to
+> them how those digests where extracted from the respective data source.
 >=20
-> I think we really need to allow fscrypt and fs-verity IOCTLs.
+> The major benefit is the ability to use the vaste amount of digests alrea=
+dy
+> provided (and likely signed) by software vendors, without needing them to
+> adapt their format to the one understood by the integrity provider.
 >=20
-> >=20
-> > Known limitations:
-> >=20
-> > The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
-> > over IOCTL commands.  Future work will enable a more fine-grained
-> > access control for IOCTLs.
-> >=20
-> > In the meantime, Landlock users may use path-based restrictions in
-> > combination with their knowledge about the file system layout to
-> > control what IOCTLs can be done.  Mounting file systems with the nodev
-> > option can help to distinguish regular files and devices, and give
-> > guarantees about the affected files, which Landlock alone can not give
-> > yet.
->=20
-> I had a second though about our current approach, and it looks like we
-> can do simpler, more generic, and with less IOCTL commands specific
-> handling.
->=20
-> What we didn't take into account is that an IOCTL needs an opened file,
-> which means that the caller must already have been allowed to open this
-> file in read or write mode.
->=20
-> I think most FS-specific IOCTL commands check access rights (i.e. access
-> mode or required capability), other than implicit ones (at least read or
-> write), when appropriate.  We don't get such guarantee with device
-> drivers.
->=20
-> The main threat is IOCTLs on character or block devices because their
-> impact may be unknown (if we only look at the IOCTL command, not the
-> backing file), but we should allow IOCTLs on filesystems (e.g. fscrypt,
-> fs-verity, clone extents).  I think we should only implement a
-> LANDLOCK_ACCESS_FS_IOCTL_DEV right, which would be more explicit.  This
-> change would impact the IOCTLs grouping (not required anymore), but
-> we'll still need the list of VFS IOCTLs.
-
-
-I am fine with dropping the IOCTL grouping and going for this simpler appro=
-ach.
-
-This must have been a misunderstanding - I thought you wanted to align the
-access checks in Landlock with the ones done by the kernel already, so that=
- we
-can reason about it more locally.  But I'm fine with doing it just for devi=
-ce
-files as well, if that is what it takes.  It's definitely simpler.
-
-Before I jump into the implementation, let me paraphrase your proposal to m=
-ake
-sure I understood it correctly:
-
- * We *only* introduce the LANDLOCK_ACCESS_FS_IOCTL_DEV right.
-
- * This access right governs the use of nontrivial IOCTL commands on
-   character and block device files.
-
-   * On open()ed files which are not character or block devices,
-     all IOCTL commands keep working.
-
-     This includes pipes and sockets, but also a variety of "anonymous" fil=
+> IMA and IPE can immediately interface with the digest_cache LSM and query
+> the digest of an accessed file. If the digest is found, it means that the
+> file is coming from the software vendor and not modified. If not, the fil=
 e
-     types which are possibly openable through /proc/self/*/fd/*?
-
- * The trivial IOCTL commands are identified using the proposed function
-   vfs_masked_device_ioctl().
-
-   * For these commands, the implementations are in fs/ioctl.c, except for
-     FIONREAD, in some cases.  We trust these implementations to check the
-     file's type (dir/regular) and access rights (r/w) correctly.
-
-
-Open questions I have:
-
-* What about files which are neither devices nor regular files or directori=
-es?
-
-  The obvious ones which can be open()ed are pipes, where only FIONREAND an=
-d two
-  harmless-looking watch queue IOCTLs are implemented.
-
-  But then I think that /proc/*/fd/* is a way through which other non-devic=
-e
-  files can become accessible?  What do we do for these?  (I am getting EAC=
-CES
-  when trying to open some anon_inodes that way... is this something we can
-  count on?)
-
-* How did you come up with the list in vfs_masked_device_ioctl()?  I notice=
- that
-  some of these are from the switch() statement we had before, but not all =
-of
-  them are included.
-
-  I can kind of see that for the fallocate()-like ones and for FIBMAP, beca=
-use
-  these **only** make sense for regular files, and IOCTLs on regular files =
-are
-  permitted anyway.
-
-* What do we do for FIONREAD?  Your patch says that it should be forwarded =
-to
-  device implementations.  But technically, devices can implement all kinds=
- of
-  surprising behaviour for that.
-
-  If you look at the ioctl implementations of different drivers, you can ve=
-ry
-  quickly find a surprising amount of things that happen completely indepen=
-dent
-  of the IOCTL command.  (Some implementations are acquiring locks and othe=
-r
-  resources before they even check what the cmd value is. - and we would be
-  exposing that if we let devices handle FIONREAD).
-
-
-Please let me know whether I understood you correctly there.
-
-Regarding the implementation notes you left below, I think they mostly deri=
-ve
-from the *_IOCTL_DEV approach in a direct way.
-
-
-> > +static __attribute_const__ access_mask_t
-> > +get_required_ioctl_access(const unsigned int cmd)
-> > +{
-> > +	switch (cmd) {
-> > +	case FIOCLEX:
-> > +	case FIONCLEX:
-> > +	case FIONBIO:
-> > +	case FIOASYNC:
-> > +		/*
-> > +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
-> > +		 * close-on-exec and the file's buffered-IO and async flags.
-> > +		 * These operations are also available through fcntl(2), and are
-> > +		 * unconditionally permitted in Landlock.
-> > +		 */
-> > +		return 0;
-> > +	case FIONREAD:
-> > +	case FIOQSIZE:
-> > +	case FIGETBSZ:
-> > +		/*
-> > +		 * FIONREAD returns the number of bytes available for reading.
-> > +		 * FIONREAD returns the number of immediately readable bytes for
-> > +		 * a file.
-> > +		 *
-> > +		 * FIOQSIZE queries the size of a file or directory.
-> > +		 *
-> > +		 * FIGETBSZ queries the file system's block size for a file or
-> > +		 * directory.
-> > +		 *
-> > +		 * These IOCTL commands are permitted for files which are opened
-> > +		 * with LANDLOCK_ACCESS_FS_READ_DIR,
-> > +		 * LANDLOCK_ACCESS_FS_READ_FILE, or
-> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
-> > +		 */
+> might have been corrupted. Each integrity provider decides how to handle
+> this situation.
 >=20
-> Because files or directories can only be opened with
-> LANDLOCK_ACCESS_FS_{READ,WRITE}_{FILE,DIR}, and because IOCTLs can only
-> be sent on a file descriptor, this means that we can always allow these
-> 3 commands (for opened files).
->=20
-> > +		return LANDLOCK_ACCESS_FS_IOCTL_RW;
-> > +	case FS_IOC_FIEMAP:
-> > +	case FIBMAP:
-> > +		/*
-> > +		 * FS_IOC_FIEMAP and FIBMAP query information about the
-> > +		 * allocation of blocks within a file.  They are permitted for
-> > +		 * files which are opened with LANDLOCK_ACCESS_FS_READ_FILE or
-> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
-> > +		 */
-> > +		fallthrough;
-> > +	case FIDEDUPERANGE:
-> > +	case FICLONE:
-> > +	case FICLONERANGE:
-> > +		/*
-> > +		 * FIDEDUPERANGE, FICLONE and FICLONERANGE make files share
-> > +		 * their underlying storage ("reflink") between source and
-> > +		 * destination FDs, on file systems which support that.
-> > +		 *
-> > +		 * The underlying implementations are already checking whether
-> > +		 * the involved files are opened with the appropriate read/write
-> > +		 * modes.  We rely on this being implemented correctly.
-> > +		 *
-> > +		 * These IOCTLs are permitted for files which are opened with
-> > +		 * LANDLOCK_ACCESS_FS_READ_FILE or
-> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
-> > +		 */
-> > +		fallthrough;
-> > +	case FS_IOC_RESVSP:
-> > +	case FS_IOC_RESVSP64:
-> > +	case FS_IOC_UNRESVSP:
-> > +	case FS_IOC_UNRESVSP64:
-> > +	case FS_IOC_ZERO_RANGE:
-> > +		/*
-> > +		 * These IOCTLs reserve space, or create holes like
-> > +		 * fallocate(2).  We rely on the implementations checking the
-> > +		 * files' read/write modes.
-> > +		 *
-> > +		 * These IOCTLs are permitted for files which are opened with
-> > +		 * LANDLOCK_ACCESS_FS_READ_FILE or
-> > +		 * LANDLOCK_ACCESS_FS_WRITE_FILE.
-> > +		 */
->=20
-> These 10 commands only make sense on directories, so we could also
-> always allow them on file descriptors.
-
-I imagine that's a typo?  The commands above do make sense on regular files=
-.
-
-
-> > +		return LANDLOCK_ACCESS_FS_IOCTL_RW_FILE;
-> > +	default:
-> > +		/*
-> > +		 * Other commands are guarded by the catch-all access right.
-> > +		 */
-> > +		return LANDLOCK_ACCESS_FS_IOCTL;
-> > +	}
-> > +}
-> > +
-> > +/**
-> > + * expand_ioctl() - Return the dst flags from either the src flag or t=
+> The second major benefit is performance improvement. Since the digest_cac=
 he
-> > + * %LANDLOCK_ACCESS_FS_IOCTL flag, depending on whether the
-> > + * %LANDLOCK_ACCESS_FS_IOCTL and src access rights are handled or not.
-> > + *
-> > + * @handled: Handled access rights.
-> > + * @access: The access mask to copy values from.
-> > + * @src: A single access right to copy from in @access.
-> > + * @dst: One or more access rights to copy to.
-> > + *
-> > + * Returns: @dst, or 0.
-> > + */
-> > +static __attribute_const__ access_mask_t
-> > +expand_ioctl(const access_mask_t handled, const access_mask_t access,
-> > +	     const access_mask_t src, const access_mask_t dst)
-> > +{
-> > +	access_mask_t copy_from;
-> > +
-> > +	if (!(handled & LANDLOCK_ACCESS_FS_IOCTL))
-> > +		return 0;
-> > +
-> > +	copy_from =3D (handled & src) ? src : LANDLOCK_ACCESS_FS_IOCTL;
-> > +	if (access & copy_from)
-> > +		return dst;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * landlock_expand_access_fs() - Returns @access with the synthetic IO=
-CTL group
-> > + * flags enabled if necessary.
-> > + *
-> > + * @handled: Handled FS access rights.
-> > + * @access: FS access rights to expand.
-> > + *
-> > + * Returns: @access expanded by the necessary flags for the synthetic =
-IOCTL
-> > + * access rights.
-> > + */
-> > +static __attribute_const__ access_mask_t landlock_expand_access_fs(
-> > +	const access_mask_t handled, const access_mask_t access)
-> > +{
-> > +	return access |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_WRITE_FILE,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_RW |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_RW_FILE) |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_FILE,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_RW |
-> > +				    LANDLOCK_ACCESS_FS_IOCTL_RW_FILE) |
-> > +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_DIR,
-> > +			    LANDLOCK_ACCESS_FS_IOCTL_RW);
-> > +}
-> > +
-> > +/**
-> > + * landlock_expand_handled_access_fs() - add synthetic IOCTL access ri=
-ghts to an
-> > + * access mask of handled accesses.
-> > + *
-> > + * @handled: The handled accesses of a ruleset that is being created.
-> > + *
-> > + * Returns: @handled, with the bits for the synthetic IOCTL access rig=
-hts set,
-> > + * if %LANDLOCK_ACCESS_FS_IOCTL is handled.
-> > + */
-> > +__attribute_const__ access_mask_t
-> > +landlock_expand_handled_access_fs(const access_mask_t handled)
-> > +{
-> > +	return landlock_expand_access_fs(handled, handled);
-> > +}
-> > +
-> >  /* Ruleset management */
-> > =20
-> >  static struct landlock_object *get_inode_object(struct inode *const in=
-ode)
-> > @@ -148,7 +331,8 @@ static struct landlock_object *get_inode_object(str=
-uct inode *const inode)
-> >  	LANDLOCK_ACCESS_FS_EXECUTE | \
-> >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-> >  	LANDLOCK_ACCESS_FS_READ_FILE | \
-> > -	LANDLOCK_ACCESS_FS_TRUNCATE)
-> > +	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> > +	LANDLOCK_ACCESS_FS_IOCTL)
-> >  /* clang-format on */
-> > =20
-> >  /*
-> > @@ -158,6 +342,7 @@ int landlock_append_fs_rule(struct landlock_ruleset=
- *const ruleset,
-> >  			    const struct path *const path,
-> >  			    access_mask_t access_rights)
-> >  {
-> > +	access_mask_t handled;
-> >  	int err;
-> >  	struct landlock_id id =3D {
-> >  		.type =3D LANDLOCK_KEY_INODE,
-> > @@ -170,9 +355,11 @@ int landlock_append_fs_rule(struct landlock_rulese=
-t *const ruleset,
-> >  	if (WARN_ON_ONCE(ruleset->num_layers !=3D 1))
-> >  		return -EINVAL;
-> > =20
-> > +	handled =3D landlock_get_fs_access_mask(ruleset, 0);
-> > +	/* Expands the synthetic IOCTL groups. */
-> > +	access_rights |=3D landlock_expand_access_fs(handled, access_rights);
-> >  	/* Transforms relative access rights to absolute ones. */
-> > -	access_rights |=3D LANDLOCK_MASK_ACCESS_FS &
-> > -			 ~landlock_get_fs_access_mask(ruleset, 0);
-> > +	access_rights |=3D LANDLOCK_MASK_ACCESS_FS & ~handled;
-> >  	id.key.object =3D get_inode_object(d_backing_inode(path->dentry));
-> >  	if (IS_ERR(id.key.object))
-> >  		return PTR_ERR(id.key.object);
-> > @@ -1333,7 +1520,9 @@ static int hook_file_open(struct file *const file=
-)
-> >  {
-> >  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
-> >  	access_mask_t open_access_request, full_access_request, allowed_acces=
-s;
-> > -	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
-> > +	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE |
-> > +					      LANDLOCK_ACCESS_FS_IOCTL |
-> > +					      IOCTL_GROUPS;
-> >  	const struct landlock_ruleset *const dom =3D get_current_fs_domain();
-> > =20
-> >  	if (!dom)
+> LSM has the ability to extract many digests from a single data source, it
+> means that it has less signatures to verify compared to the approach of
+> verifying individual file signatures (IMA appraisal). Preliminary tests
+> have shown a speedup of IMA appraisal of about 65% for sequential read, a=
+nd
+> 45% for parallel read.
 >=20
-> We should set optional_access according to the file type before
-> `full_access_request =3D open_access_request | optional_access;`
+> This patch set has as prerequisites the file_release LSM hook (to be
+> introduced with the move of IMA/EVM to the LSM infrastructure), and
+> support for PGP keys, which is still unclear how it should be done.
 >=20
-> const bool is_device =3D S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode)=
-;
+> The IMA integration patch set will be introduced separately. Also a PoC
+> based on the current version of IPE can be provided.
+
+Hi everyone
+
+I still hope to receive some comments on this and on the IMA
+integration patch set.
+
+Meanwhile, I built openSUSE Tumbleweed packages with both those patch
+sets (with few changes) and the PGP one (with the parser in kernel
+space).
+
+I also published the first preliminary version of digest-cache-tools
+which contains the tools to manage the digest_cache LSM.
+
+https://github.com/linux-integrity/digest-cache-tools
+
+
+The README should give a pretty good idea on how to configure the
+digest_cache LSM correctly, to do IMA measurement (with predictable
+PCR) and IMA appraisal.
+
+That basically requires to install only the kernel and the digest-
+cache-tools packages (plus dracut, to enable IMA measurement/appraisal
+from the initial ram disk).
+
+Other than that, openSUSE Tumbleweed with these three packages (and no
+other modifications, even in the build infrastructure) is basically
+offering the integrity features that IMA supports.
+
+Roberto
+
+> v2:
+> - Include the TLV parser in this patch set (from user asymmetric keys and
+>   signatures)
+> - Move from IMA and make an independent LSM
+> - Remove IMA-specific stuff from this patch set
+> - Add per algorithm hash table
+> - Expect all digest lists to be in the same directory and allow changing
+>   the default directory
+> - Support digest lookup on directories, when there is no
+>   security.digest_list xattr
+> - Add seq num to digest list file name, to impose ordering on directory
+>   iteration
+> - Add a new data type DIGEST_LIST_ENTRY_DATA for the nested data in the
+>   tlv digest list format
+> - Add the concept of verification data attached to digest caches
+> - Add the reset mechanism to track changes on digest lists and directory
+>   containing the digest lists
+> - Add kernel selftests
 >=20
-> optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
-> if (is_device)
->     optional_access |=3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
->=20
->=20
-> Because LANDLOCK_ACCESS_FS_IOCTL_DEV is dedicated to character or block
-> devices, we may want landlock_add_rule() to only allow this access right
-> to be tied to directories, or character devices, or block devices.  Even
-> if it would be more consistent with constraints on directory-only access
-> rights, I'm not sure about that.
->=20
->=20
-> > @@ -1375,6 +1564,16 @@ static int hook_file_open(struct file *const fil=
-e)
-> >  		}
-> >  	}
-> > =20
-> > +	/*
-> > +	 * Named pipes should be treated just like anonymous pipes.
-> > +	 * Therefore, we permit all IOCTLs on them.
-> > +	 */
-> > +	if (S_ISFIFO(file_inode(file)->i_mode)) {
-> > +		allowed_access |=3D LANDLOCK_ACCESS_FS_IOCTL |
-> > +				  LANDLOCK_ACCESS_FS_IOCTL_RW |
-> > +				  LANDLOCK_ACCESS_FS_IOCTL_RW_FILE;
-> > +	}
->=20
-> Instead of this S_ISFIFO check:
->=20
-> if (!is_device)
->     allowed_access |=3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
->=20
-> > +
-> >  	/*
-> >  	 * For operations on already opened files (i.e. ftruncate()), it is t=
+> v1:
+> - Add documentation in Documentation/security/integrity-digest-cache.rst
+> - Pass the mask of IMA actions to digest_cache_alloc()
+> - Add a reference count to the digest cache
+> - Remove the path parameter from digest_cache_get(), and rely on the
+>   reference count to avoid the digest cache disappearing while being used
+> - Rename the dentry_to_check parameter of digest_cache_get() to dentry
+> - Rename digest_cache_get() to digest_cache_new() and add
+>   digest_cache_get() to set the digest cache in the iint of the inode for
+>   which the digest cache was requested
+> - Add dig_owner and dig_user to the iint, to distinguish from which inode
+>   the digest cache was created from, and which is using it; consequently =
+it
+>   makes the digest cache usable to measure/appraise other digest caches
+>   (support not yet enabled)
+> - Add dig_owner_mutex and dig_user_mutex to serialize accesses to dig_own=
+er
+>   and dig_user until they are initialized
+> - Enforce strong synchronization and make the contenders wait until
+>   dig_owner and dig_user are assigned to the iint the first time
+> - Move checking IMA actions on the digest list earlier, and fail if no
+>   action were performed (digest cache not usable)
+> - Remove digest_cache_put(), not needed anymore with the introduction of
+>   the reference count
+> - Fail immediately in digest_cache_lookup() if the digest algorithm is
+>   not set in the digest cache
+> - Use 64 bit mask for IMA actions on the digest list instead of 8 bit
+> - Return NULL in the inline version of digest_cache_get()
+> - Use list_add_tail() instead of list_add() in the iterator
+> - Copy the digest list path to a separate buffer in digest_cache_iter_dir=
+()
+> - Use digest list parsers verified with Frama-C
+> - Explicitly disable (for now) the possibility in the IMA policy to use t=
 he
-> >  	 * access rights at the time of open() which decide whether the
-> > @@ -1406,6 +1605,25 @@ static int hook_file_truncate(struct file *const=
- file)
-> >  	return -EACCES;
-> >  }
-> > =20
-> > +static int hook_file_ioctl(struct file *file, unsigned int cmd,
-> > +			   unsigned long arg)
-> > +{
-> > +	const access_mask_t required_access =3D get_required_ioctl_access(cmd=
-);
+>   digest cache to measure/appraise other digest lists
+> - Replace exit(<value>) with return <value> in manage_digest_lists.c
 >=20
-> const access_mask_t required_access =3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> Roberto Sassu (13):
+>   lib: Add TLV parser
+>   security: Introduce the digest_cache LSM
+>   digest_cache: Add securityfs interface
+>   digest_cache: Add hash tables and operations
+>   digest_cache: Populate the digest cache from a digest list
+>   digest_cache: Parse tlv digest lists
+>   digest_cache: Parse rpm digest lists
+>   digest_cache: Add management of verification data
+>   digest_cache: Add support for directories
+>   digest cache: Prefetch digest lists if requested
+>   digest_cache: Reset digest cache on file/directory change
+>   selftests/digest_cache: Add selftests for digest_cache LSM
+>   docs: Add documentation of the digest_cache LSM
 >=20
+>  Documentation/security/digest_cache.rst       | 900 ++++++++++++++++++
+>  Documentation/security/index.rst              |   1 +
+>  MAINTAINERS                                   |  16 +
+>  include/linux/digest_cache.h                  |  89 ++
+>  include/linux/kernel_read_file.h              |   1 +
+>  include/linux/tlv_parser.h                    |  28 +
+>  include/uapi/linux/lsm.h                      |   1 +
+>  include/uapi/linux/tlv_digest_list.h          |  72 ++
+>  include/uapi/linux/tlv_parser.h               |  59 ++
+>  include/uapi/linux/xattr.h                    |   6 +
+>  lib/Kconfig                                   |   3 +
+>  lib/Makefile                                  |   3 +
+>  lib/tlv_parser.c                              | 214 +++++
+>  lib/tlv_parser.h                              |  17 +
+>  security/Kconfig                              |  11 +-
+>  security/Makefile                             |   1 +
+>  security/digest_cache/Kconfig                 |  34 +
+>  security/digest_cache/Makefile                |  11 +
+>  security/digest_cache/dir.c                   | 245 +++++
+>  security/digest_cache/htable.c                | 268 ++++++
+>  security/digest_cache/internal.h              | 259 +++++
+>  security/digest_cache/main.c                  | 545 +++++++++++
+>  security/digest_cache/modsig.c                |  66 ++
+>  security/digest_cache/parsers/parsers.h       |  15 +
+>  security/digest_cache/parsers/rpm.c           | 223 +++++
+>  security/digest_cache/parsers/tlv.c           | 299 ++++++
+>  security/digest_cache/populate.c              | 163 ++++
+>  security/digest_cache/reset.c                 | 168 ++++
+>  security/digest_cache/secfs.c                 |  87 ++
+>  security/digest_cache/verif.c                 | 119 +++
+>  security/security.c                           |   3 +-
+>  tools/testing/selftests/Makefile              |   1 +
+>  .../testing/selftests/digest_cache/.gitignore |   3 +
+>  tools/testing/selftests/digest_cache/Makefile |  23 +
+>  .../testing/selftests/digest_cache/all_test.c | 706 ++++++++++++++
+>  tools/testing/selftests/digest_cache/common.c |  79 ++
+>  tools/testing/selftests/digest_cache/common.h | 131 +++
+>  .../selftests/digest_cache/common_user.c      |  47 +
+>  .../selftests/digest_cache/common_user.h      |  17 +
+>  tools/testing/selftests/digest_cache/config   |   1 +
+>  .../selftests/digest_cache/generators.c       | 248 +++++
+>  .../selftests/digest_cache/generators.h       |  19 +
+>  .../selftests/digest_cache/testmod/Makefile   |  16 +
+>  .../selftests/digest_cache/testmod/kern.c     | 499 ++++++++++
+>  .../selftests/lsm/lsm_list_modules_test.c     |   3 +
+>  45 files changed, 5714 insertions(+), 6 deletions(-)
+>  create mode 100644 Documentation/security/digest_cache.rst
+>  create mode 100644 include/linux/digest_cache.h
+>  create mode 100644 include/linux/tlv_parser.h
+>  create mode 100644 include/uapi/linux/tlv_digest_list.h
+>  create mode 100644 include/uapi/linux/tlv_parser.h
+>  create mode 100644 lib/tlv_parser.c
+>  create mode 100644 lib/tlv_parser.h
+>  create mode 100644 security/digest_cache/Kconfig
+>  create mode 100644 security/digest_cache/Makefile
+>  create mode 100644 security/digest_cache/dir.c
+>  create mode 100644 security/digest_cache/htable.c
+>  create mode 100644 security/digest_cache/internal.h
+>  create mode 100644 security/digest_cache/main.c
+>  create mode 100644 security/digest_cache/modsig.c
+>  create mode 100644 security/digest_cache/parsers/parsers.h
+>  create mode 100644 security/digest_cache/parsers/rpm.c
+>  create mode 100644 security/digest_cache/parsers/tlv.c
+>  create mode 100644 security/digest_cache/populate.c
+>  create mode 100644 security/digest_cache/reset.c
+>  create mode 100644 security/digest_cache/secfs.c
+>  create mode 100644 security/digest_cache/verif.c
+>  create mode 100644 tools/testing/selftests/digest_cache/.gitignore
+>  create mode 100644 tools/testing/selftests/digest_cache/Makefile
+>  create mode 100644 tools/testing/selftests/digest_cache/all_test.c
+>  create mode 100644 tools/testing/selftests/digest_cache/common.c
+>  create mode 100644 tools/testing/selftests/digest_cache/common.h
+>  create mode 100644 tools/testing/selftests/digest_cache/common_user.c
+>  create mode 100644 tools/testing/selftests/digest_cache/common_user.h
+>  create mode 100644 tools/testing/selftests/digest_cache/config
+>  create mode 100644 tools/testing/selftests/digest_cache/generators.c
+>  create mode 100644 tools/testing/selftests/digest_cache/generators.h
+>  create mode 100644 tools/testing/selftests/digest_cache/testmod/Makefile
+>  create mode 100644 tools/testing/selftests/digest_cache/testmod/kern.c
 >=20
-> > +	const access_mask_t allowed_access =3D
-> > +		landlock_file(file)->allowed_access;
-> > +
-> > +	/*
-> > +	 * It is the access rights at the time of opening the file which
-> > +	 * determine whether IOCTL can be used on the opened file later.
-> > +	 *
-> > +	 * The access right is attached to the opened file in hook_file_open(=
-).
-> > +	 */
-> > +	if ((allowed_access & required_access) =3D=3D required_access)
-> > +		return 0;
->=20
-> We could then check against the do_vfs_ioctl()'s commands, excluding
-> FIONREAD and file_ioctl()'s commands, to always allow VFS-related
-> commands:
->=20
-> if (vfs_masked_device_ioctl(cmd))
->     return 0;
->=20
-> As a safeguard, we could define vfs_masked_device_ioctl(cmd) in
-> fs/ioctl.c and make it called by do_vfs_ioctl() as a safeguard to make
-> sure we keep an accurate list of VFS IOCTL commands (see next RFC patch).
 
-
-> The compat IOCTL hook must also be implemented.
-
-Thanks!  I can't believe I missed that one.
-
-
-> What do you think? Any better idea?
-
-It seems like a reasonable approach.  I'd like to double check with you tha=
-t we
-are on the same page about it before doing the next implementation step.  (=
-These
-iterations seems cheaper when we do them in English than when we do them in=
- C.)
-
-Thanks for the review!
-=E2=80=94G=C3=BCnther
