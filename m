@@ -1,80 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44156381B0;
-	Thu, 29 Feb 2024 03:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA9E364D8;
+	Thu, 29 Feb 2024 04:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709178630; cv=none; b=XRIutXejTyrvBsQLtwCCUuaG+wkXBZ/Izsj4OXpqyXAlCIAVO/EIj0hjlCDKiH8iimAKjmnxmGGqDgGVPSgCgxLI2Tff07DiIyGoPIsMACWxtPORIouY7D0T0qxuCKcUWXfb/FQOAMjfwo4FkQSalzLNcvsm8IO8Q0ls7JgcFUU=
+	t=1709179288; cv=none; b=FZMkEqOMMWzfDzZrKtoZs0/LD4LwtfSFAJkHCuMGyFdxPam0x3y9hJhmWVQuHcKtmCtON5UCflpP9VpeXwJ2jBgmiSMDrXJEzc4S1yvHB4+kBb+Y4sl/o1raGBxhXFL86AUr5uVgsaF1a0wDN3JGTra3dSRWu/UYcg7E/Dg+pMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709178630; c=relaxed/simple;
-	bh=MfMldXAflkcI5MLIcwyBc7GLJ6N/aXbliB4JGKN3ggc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SDbdZ5BhUAfUkrZZCd/QP++ef7ie+phuKFS9unQ5eLbexEQsdwTOHEpmlEcRHlfDS+AOm2T+BtjTaAHu1yuk/SSHtuEqpfSb34es/VMT+8ouQd49H8IRn4xpBe5pLVlTBUJTyF2aGygxK8jrpZfkXrdSK8OeSjFHt+kXrRYlMJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aET33Ubk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709179288; c=relaxed/simple;
+	bh=jXQXz+PeGueyYtvLDE3yOIBci2d2WEXu0s/u7WCNEZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AXVm8+sd0RB/YFPifLc5fIIgfreezUSap/w/vqXzaLUGlaolZXqEmTdqyt5O4BQ0lwLHxazltDJrnIHD40/vYYXZLSNY5B6YAKD7dbPBvNdiq+BwvZ/4pQV4uNTvL3WGURtM081N3XVq5lYi+5z5g8IkU8RaCJCYqszPZmP0Oqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kuP5Y7E0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aET33Ubk"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C47FDC43141;
-	Thu, 29 Feb 2024 03:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709178629;
-	bh=MfMldXAflkcI5MLIcwyBc7GLJ6N/aXbliB4JGKN3ggc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=aET33UbkB41otkfz7xKnDIKD1L5x0Cm7PqLYPmieEYpIfaetNBka664jXVsru1R6d
-	 1Sm8uKOy7C2RCUou/xB46NNbxy9vpugIufvp/eskM3snDiUAGbOjJCtXtw+jhfaixW
-	 feSaHA8jLd6jFKo/8S7rcNEnfC4/QPt5MQLSZUP/vOsMXD18y4ZfAMd2LuQ8jx6LKG
-	 7FYGvFExbJW7wFZNQRtDshAthqrlHJWglxhXkKwb8IapmKnC3PjkBW34qbJX9EKZyT
-	 YPIsAuYf7QZM0Dc2xLElAqb4Gc48yZaRksgObcxB8DMI61/4gohwalYeIwa1ZRuLta
-	 1BjGPdWF9T2ww==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AAE93D990A9;
-	Thu, 29 Feb 2024 03:50:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kuP5Y7E0"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=IkaDFHzSJFvHKVuhr/vGVExR1dL16usQzaOTDa83SZU=; b=kuP5Y7E0UEVVvoc4oBQW9X5uCp
+	78BOH0TZU/YqS5GDK/mP3UJn1iH7u1777o24iLj1DiLnc+FW2KT1HTnoAZGjH/FLZ5Y5fq+04Dw/a
+	8ARxAHD5MksdRmCRZKP6DTdwpNNS95g8cDLdt3d9P39iOFm8rNjlvcdCOopxiw8KBDKOl8WqcWXJr
+	Y+iuI+pNr6CJ0noV1digXsts+JLu+IsxNjEl9Go0sRwhnsEHfLqi2Ldef34MzZ8HMhkqqKdDNimxU
+	Fi+Wx2Rsx7JeVSNJH+m0ceaasHOXSIAi3QWLUOenkUToasyCVbNPctbeQu/U+2mSk8XWb5+Y4k3Cb
+	290yUPhw==;
+Received: from [50.53.50.0] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rfXbh-0000000Bz2k-2ADm;
+	Thu, 29 Feb 2024 04:01:17 +0000
+Message-ID: <193bd5e5-2263-4e67-b7c6-bb25dc9a6854@infradead.org>
+Date: Wed, 28 Feb 2024 20:01:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] netlabel: remove impossible return value in
- netlbl_bitmap_walk
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <170917862969.28712.6589054034041856945.git-patchwork-notify@kernel.org>
-Date: Thu, 29 Feb 2024 03:50:29 +0000
-References: <20240227093604.3574241-1-shaozhengchao@huawei.com>
-In-Reply-To: <20240227093604.3574241-1-shaozhengchao@huawei.com>
-To: Zhengchao Shao <shaozhengchao@huawei.com>
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com,
- weiyongjun1@huawei.com, yuehaibing@huawei.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v13 17/20] ipe: enable support for fs-verity as a
+ trust provider
+Content-Language: en-US
+To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
+ jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+ axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com,
+ paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1709168102-7677-1-git-send-email-wufan@linux.microsoft.com>
+ <1709168102-7677-18-git-send-email-wufan@linux.microsoft.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <1709168102-7677-18-git-send-email-wufan@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 27 Feb 2024 17:36:04 +0800 you wrote:
-> Since commit 446fda4f2682 ("[NetLabel]: CIPSOv4 engine"), *bitmap_walk
-> function only returns -1. Nearly 18 years have passed, -2 scenes never
-> come up, so there's no need to consider it.
-> 
-> Signed-off-by: Zhengchao Shao <shaozhengchao@huawei.com>
-> ---
->  net/ipv4/cipso_ipv4.c        | 5 +----
->  net/ipv6/calipso.c           | 5 +----
->  net/netlabel/netlabel_kapi.c | 2 +-
->  3 files changed, 3 insertions(+), 9 deletions(-)
+On 2/28/24 16:54, Fan Wu wrote:
+> diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
+> index 7afb1ce0cb99..9dd5c4769d79 100644
+> --- a/security/ipe/Kconfig
+> +++ b/security/ipe/Kconfig
+> @@ -30,6 +30,19 @@ config IPE_PROP_DM_VERITY
+>  	  that was mounted with a signed root-hash or the volume's
+>  	  root hash matches the supplied value in the policy.
+>  
+> +	  If unsure, answer Y.
+> +
+> +config IPE_PROP_FS_VERITY
+> +	bool "Enable property for fs-verity files"
+> +	depends on FS_VERITY && FS_VERITY_BUILTIN_SIGNATURES
+> +	help
+> +	  This option enables the usage of properties "fsverity_signature"
+> +	  and "fsverity_digest". These properties evaluates to TRUE when
+> +	  a file is fsverity enabled and with a signed digest or its
+> +	  diegst matches the supplied value in the policy.
 
-Here is the summary with links:
-  - [net-next] netlabel: remove impossible return value in netlbl_bitmap_walk
-    https://git.kernel.org/netdev/net-next/c/9ff74d77180a
+	  digest
 
-You are awesome, thank you!
+> +
+> +	  if unsure, answer Y.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+#Randy
