@@ -1,93 +1,120 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4255813C9DF;
-	Thu, 29 Feb 2024 19:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED4D13C9CF
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Feb 2024 20:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709236781; cv=none; b=qT9SCO+xHEYYHFYpA4vFqo8Sm/STK3cWt+LPHzRMH/90EQb04UEgNMhZ26A/R2rBSUvGissWSG2MfMW9JxDEOT3CPTSZuh7ENr3U3EJW5We8R6lvxp31nzPPJjlJSp1oDUkmK9EQ6fjUZHlppDQ77WSM64uMKtcUtNb3M09IQv8=
+	t=1709238481; cv=none; b=EIPF1kYCeve5JDKOE+cLJ4DgBIknwNsg4bMLLkEcC2dKCse/kpiHvdhGDHXk9IN74O3Gl6GWwXcS8nvp6UphePR3+78RHE5W9Cpq2rfakxE3cFnm3CRaRO4cLjyfgozLMI3otqc8Al8uWZ9LtJfOvQa6LU7VOon+nzS7sNOGBIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709236781; c=relaxed/simple;
-	bh=1iFRua+KRGwO6LXerMjQRyUEaPugQrsxR57ztwBXH+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MI/qSM61IOCROZ+jbsNSxoaf/s0DmiJbbs31ywe8DhB8kwUffALPy4G6Em/CrlWJewJcRqWu6uwC7C9yYr1jD7/J3EqLXSCMlh1brT+NAFzw8oDXqDzWqeWpFs8RwbH3aUt5klD16rqU2JitQln8DNUXZsHZixFRFxcwu1yFFZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FAEOTZDG; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1709238481; c=relaxed/simple;
+	bh=RDsR4ToFpRNThOky+HJxH98rH88NIDQxJa03Zgfpnqg=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=lGf8HL5fPHOD3yughNON0gdSRV3JvIjiSAphaAbhkzHTlY1jfFNwxvdHoLkimHd/UD5GHCkgRwCQKzpPiCRjl5d37B0RsFuCoNDDy5qok2XmgBEQgOXxcDKBk/+G0kD8BXw1AhoA7f3sfslvm7J9bMdI2IN2YhQLwZBvBpvOXqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=FSbX/ND1; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FAEOTZDG"
-Received: from [10.137.106.151] (unknown [131.107.8.87])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9622C20B74C0;
-	Thu, 29 Feb 2024 11:59:39 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9622C20B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1709236779;
-	bh=G8RefpRZLqdFOepXMPPmDviGVAqIh+9z7ml3Ytz4pAw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FAEOTZDGgg7u1+aNsJy4wgD3dI4ZJ/MMnTMSY55caDEIorrF7oioQY7Fi2LzMWFSN
-	 RaR7XBcH8RrRiU+7ymQEq/w0Gw8ej/+0quxYw1hGfzOqRzW5lj9MAlatW88mfHeiHj
-	 mBTrAGBJg01GEvclsyNBG73rkqgfOzbUVfDuKv4o=
-Message-ID: <a6061c25-1f7d-4954-b5d3-5d21c6d6df82@linux.microsoft.com>
-Date: Thu, 29 Feb 2024 11:59:39 -0800
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="FSbX/ND1"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso205372466b.2
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Feb 2024 12:27:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1709238478; x=1709843278; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=DZcR+0yv09X8AgyLuxWH7iCyYgNb+H9Qm3haz1AXF1E=;
+        b=FSbX/ND1RSFg1XD0nhVbxsljXSGAvGIj+7f0miEmMGL7zcWUNZQWQ70jHggSADRp8J
+         dLMFtqHIQIQwNrMed9Q4DQyGgjsKFnwIDsS/fkD04llSzsm3vlkrgVmU8FBQWOrO4gA7
+         1RndLdKKvOnDHhconknl3unPhTovQuE2x+AP6QS1EJLzXbllR8BvfCorwBWqlHleLXS9
+         419Bhyw2NG6ziPblkL3tIa+8oJQgGq5OBuT5lzWZRYePQQ6ZxCSeMvZI61OFdK4lL38S
+         qnjgbj9cStiA2tvT3fZUcHyv1lCk4Fp0m8iaANld0DcqM+oqCzv8tr3hFg7iMrWMmGQk
+         jMgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709238478; x=1709843278;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DZcR+0yv09X8AgyLuxWH7iCyYgNb+H9Qm3haz1AXF1E=;
+        b=N/SMOMP5kin5IxJXiyMWdSMX48+X2m7dXIL6uJBfkes/6D9U/JMGEOCcWrM+wFlwlk
+         gkQojkhLvHjFcwxWyYeu13cc5YqJxlvUZpWgNk9aOEqrYbwXueJXEwRbSZ1lU+BDZl6j
+         zBrG3XIyangQhDtHbhzPJmkWIpYvlfUgps3zm93h9ogFmQQtXgHcNluI66AGT8wOdSmw
+         TckdHy9QDCqmTb+PmFtOgXxJIBCmnjvDU9qkP+7B4POSo4qUszyoux35/Qy+EywZkMpQ
+         lomUAM8B7q9g9zl+9SXpiDjWvrVjYM5Gh/l+EBlBADUy2gLlPomGlqWci+ABo1DyQ5ZU
+         QtWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7Pf8SvSwUzDPocJsVodOQtQyw8KQ78s01USYTk6wKz1nTIwfXkcQQJ88f4zKXAMZxSdywG0K4DACAr1vrX6AUONTyKxEM4E+vuHntzJstb595T41Y
+X-Gm-Message-State: AOJu0YwTAz7GqVI1P7MMHxyj6Yj8dxPjCZlfAeVPk85ePc3KEtv9IRSg
+	XdXYiR1LP3BVTEAxRPG4n0E4w5Dy19yTO293U7mRv2h1uxihLvZ5uNQ+Ao7phDA=
+X-Google-Smtp-Source: AGHT+IG1YXaMCPYFP4ybh7Rx5xqWqA1BhyLNOKCSuLhH0a9+11clFB7+JHSCwlsHnhgI7bgLYfpXPw==
+X-Received: by 2002:a17:906:3c4e:b0:a44:7209:4c94 with SMTP id i14-20020a1709063c4e00b00a4472094c94mr46779ejg.14.1709238478243;
+        Thu, 29 Feb 2024 12:27:58 -0800 (PST)
+Received: from cloudflare.com (79.184.121.65.ipv4.supernova.orange.pl. [79.184.121.65])
+        by smtp.gmail.com with ESMTPSA id vg9-20020a170907d30900b00a4439b7756bsm1005844ejc.6.2024.02.29.12.27.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Feb 2024 12:27:57 -0800 (PST)
+References: <20240229005920.2407409-1-kuba@kernel.org>
+ <20240229005920.2407409-13-kuba@kernel.org>
+User-agent: mu4e 1.6.10; emacs 29.2
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
+ pabeni@redhat.com, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ mic@digikod.net, linux-security-module@vger.kernel.org,
+ keescook@chromium.org, Marcelo Ricardo Leitner
+ <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>
+Subject: Re: [PATCH v4 12/12] selftests: ip_local_port_range: use XFAIL
+ instead of SKIP
+Date: Thu, 29 Feb 2024 21:19:09 +0100
+In-reply-to: <20240229005920.2407409-13-kuba@kernel.org>
+Message-ID: <871q8vm2wj.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v13 17/20] ipe: enable support for fs-verity as a
- trust provider
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
- tytso@mit.edu, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
- eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org,
- linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1709168102-7677-1-git-send-email-wufan@linux.microsoft.com>
- <1709168102-7677-18-git-send-email-wufan@linux.microsoft.com>
- <20240229044625.GA1946@sol.localdomain>
- <b73e3387-558f-4f40-8741-c6ed7965b25f@linux.microsoft.com>
- <20240229194237.GA1454@sol.localdomain>
-Content-Language: en-CA
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <20240229194237.GA1454@sol.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On Wed, Feb 28, 2024 at 04:59 PM -08, Jakub Kicinski wrote:
+> SCTP does not support IP_LOCAL_PORT_RANGE and we know it,
+> so use XFAIL instead of SKIP.
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> ---
+>  tools/testing/selftests/net/ip_local_port_range.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/testing/selftests/net/ip_local_port_range.c b/tools/testing/selftests/net/ip_local_port_range.c
+> index 6ebd58869a63..193b82745fd8 100644
+> --- a/tools/testing/selftests/net/ip_local_port_range.c
+> +++ b/tools/testing/selftests/net/ip_local_port_range.c
+> @@ -365,9 +365,6 @@ TEST_F(ip_local_port_range, late_bind)
+>  	__u32 range;
+>  	__u16 port;
+>  
+> -	if (variant->so_protocol == IPPROTO_SCTP)
+> -		SKIP(return, "SCTP doesn't support IP_BIND_ADDRESS_NO_PORT");
+> -
+>  	fd = socket(variant->so_domain, variant->so_type, 0);
+>  	ASSERT_GE(fd, 0) TH_LOG("socket failed");
+>  
+> @@ -414,6 +411,9 @@ TEST_F(ip_local_port_range, late_bind)
+>  	ASSERT_TRUE(!err) TH_LOG("close failed");
+>  }
+>  
+> +XFAIL_ADD(ip_local_port_range, ip4_stcp, late_bind);
+> +XFAIL_ADD(ip_local_port_range, ip6_stcp, late_bind);
+> +
+>  TEST_F(ip_local_port_range, get_port_range)
+>  {
+>  	__u16 lo, hi;
 
+[wrt our earlier discussion off-list]
 
-On 2/29/2024 11:42 AM, Eric Biggers wrote:
-> On Thu, Feb 29, 2024 at 10:59:21AM -0800, Fan Wu wrote:
->>>
->>> So IPE is interested in whether a file has an fsverity builtin signature, but it
->>> doesn't care what the signature is or whether it has been checked.  What is the
->>> point?
->>>
->>> - Eric
->>
->> It does make sure the signature is checked. This hook call can only be
->> triggered after fsverity_verify_signature() succeed. Therefore, for files
->> that are marked with the security blob inode_sec->fs_verity_sign as true,
->> they must successfully pass the fsverity_verify_signature() check.
->>
->> Regarding the other question, the current version does not support defining
->> policies to trust files based on the inner content of their signatures
->> because the current patch set is already too large.
->>
->> We plan to introduce new policy grammars to enable the policy to define
->> which certificate of the signature can be trusted after this version is
->> accepted.
-> 
-> Ah, I see, you're relying on the fact that fsverity_verify_signature() verifies
-> the signature (if present) even if fs.verity.require_signatures hasn't been set.
-> That does happen to be its behavior, but this isn't clearly documented since
-> there previously wasn't really a use case for the builtin signatures without
-> setting fs.verity.require_signatures.  Can you please make sure this behavior is
-> documented properly in Documentation/filesystems/fsverity.rst and in function
-> comments?  Otherwise I worry that it could get changed and break your code.
-> 
-> - Eric
+You were right, this test succeeds if I delete SKIP for SCTP.
+Turns out IP_LOCAL_PORT_RANGE works for SCTP out of the box after all.
 
-Thanks for the suggestion. I will add this info in the next version.
--Fan
+What I didn't notice earlier is that sctp_setsockopt() delegates to
+ip_setsockopt() when level != SOL_SCTP.
+
+CC'ing Marcelo & Xin, to confirm that this isn't a problem.
