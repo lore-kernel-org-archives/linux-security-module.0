@@ -1,33 +1,33 @@
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144E64AEEA
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Feb 2024 17:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336AB4AED3;
+	Thu, 29 Feb 2024 17:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709226277; cv=none; b=VoWTQh/lck+/QRqRactJx/pz3WERxJBEp+axjaHUkJWu+JtDNZcRqrgJQ8odpnzbRwJqe2G0XBSvYIq/qMcruTOpAxWTi9Toxr8Qi7M2cdtu8Spgwj1Hf6L7SL4GPcH7sk5ZUrBF9gxdm+ZQfOWiwizUYqhRlCTvWh8accna0nE=
+	t=1709226278; cv=none; b=VBuGjGz5a2Kir9fib8njh/Oo890f5dzPCbDJId2MRecAYhUyjFr7LFQa1Y53AVC1khCbboWX0sgGE4mwoC4UNviJ47BvYeSYYLdNRBLfrE8aIGS8Nye84V9L5nDy2vL7w8k0JwGzn1dJM5wr7PgQbfZ0t07klEdpXxL1k8VJLaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709226277; c=relaxed/simple;
-	bh=jgxgVIds0Uq+q7sp2eMMdlRM5SUWajSTadOwGNRm2Fs=;
+	s=arc-20240116; t=1709226278; c=relaxed/simple;
+	bh=iEMsEf9vHd9/SI1OU/FMhsYF3Xf0RZ6zSUY0txBsePY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pvc0vZSBfoYfnv6iyxaFyhNbS8AkCb3UYEaMIHPyaHATz8nfaa1EdiIk7Zn1JDLA0CNq5A5xtRN6XYAyW2pxn6sVosN+qMyXT2tKYtxxQ9wXduN3Gr81o5UJiFs45x4c101s2Chw51/2a6MFLa18lF/yEHfqu7Oqof6X0v3keZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=O7SkJiHr; arc=none smtp.client-ip=84.16.66.173
+	 MIME-Version:Content-Type; b=hwXAQloKyyVVb20g8mTr26uZoOCkzYuNVyb6C3jcQsAuw72zcZ4LkpJMrSvGlInYAmxmC8GCVkBv3453Hq49hD974EWUz59mvei7IcVtJMvRmVxaOQlvkHJlAxzmcufQZAYPa822Dkxnkpu6OFv4W5tHXTbn5K5RYAt1XQ6YyBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mt5sEYwZ; arc=none smtp.client-ip=84.16.66.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="O7SkJiHr"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TlyJ06NtNz23G;
-	Thu, 29 Feb 2024 18:04:32 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TlyJ01KS6z3c;
-	Thu, 29 Feb 2024 18:04:32 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mt5sEYwZ"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TlyHs3xr2zMrktf;
+	Thu, 29 Feb 2024 18:04:25 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TlyHr5l81zsG;
+	Thu, 29 Feb 2024 18:04:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709226272;
-	bh=jgxgVIds0Uq+q7sp2eMMdlRM5SUWajSTadOwGNRm2Fs=;
+	s=20191114; t=1709226265;
+	bh=iEMsEf9vHd9/SI1OU/FMhsYF3Xf0RZ6zSUY0txBsePY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O7SkJiHrACJveUBYih6KHS2MoK6Y4pu39o0bmrh+/H6EdBfY1u3VZX8uGsKFJXi+a
-	 WByMKyxBUC+h89F9ItJ41Svn8x0gBISiaYBOEAxH4PZonYP3aTFWiPtMTboZgZYUP1
-	 9KoOsvsJogUIH9wR1oxyIDnWxnLfeIr+w9ncsLKQ=
+	b=mt5sEYwZdJqMXsg2RNP3sZk7FXe2d42pQAwMlKqEqVeZoUnZxWKILpymJr3/osTy1
+	 HATdiX6VsrwoP0gD2blvTb19qjeTYzsRp4SafqrsoXPddY8xyBu1Qc8e4S1DueQbzl
+	 Gv250bTvI44E66febWNikJHzk267euM4+x5fW+J8=
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Brendan Higgins <brendanhiggins@google.com>,
 	David Gow <davidgow@google.com>,
@@ -59,9 +59,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-security-module@vger.kernel.org,
 	linux-um@lists.infradead.org,
 	x86@kernel.org
-Subject: [PATCH v1 8/8] kunit: Add tests for faults
-Date: Thu, 29 Feb 2024 18:04:09 +0100
-Message-ID: <20240229170409.365386-9-mic@digikod.net>
+Subject: [PATCH v1 2/8] kunit: Handle thread creation error
+Date: Thu, 29 Feb 2024 18:04:03 +0100
+Message-ID: <20240229170409.365386-3-mic@digikod.net>
 In-Reply-To: <20240229170409.365386-1-mic@digikod.net>
 References: <20240229170409.365386-1-mic@digikod.net>
 Precedence: bulk
@@ -74,18 +74,11 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-The first test checks NULL pointer dereference and make sure it would
-result as a failed test.
-
-The second and third tests check that read-only data is indeed read-only
-and trying to modify it would result as a failed test.
-
-This kunit_x86_fault test suite is marked as skipped when run on a
-non-x86 native architecture.  It is then skipped on UML because such
-test would result to a kernel panic.
-
-Tested with:
-./tools/testing/kunit/kunit.py run --arch x86_64 kunit_x86_fault
+Previously, if a thread creation failed (e.g. -ENOMEM), the function was
+called (kunit_catch_run_case or kunit_catch_run_case_cleanup) without
+marking the test as failed.  Instead, fill try_result with the error
+code returned by kthread_run(), which will mark the test as failed and
+print "internal error occurred...".
 
 Cc: Brendan Higgins <brendanhiggins@google.com>
 Cc: David Gow <davidgow@google.com>
@@ -93,148 +86,21 @@ Cc: Rae Moar <rmoar@google.com>
 Cc: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- lib/kunit/kunit-test.c | 115 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 114 insertions(+), 1 deletion(-)
+ lib/kunit/try-catch.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-index f7980ef236a3..57d8eff00c66 100644
---- a/lib/kunit/kunit-test.c
-+++ b/lib/kunit/kunit-test.c
-@@ -10,6 +10,7 @@
- #include <kunit/test-bug.h>
- 
- #include <linux/device.h>
-+#include <linux/init.h>
- #include <kunit/device.h>
- 
- #include "string-stream.h"
-@@ -109,6 +110,117 @@ static struct kunit_suite kunit_try_catch_test_suite = {
- 	.test_cases = kunit_try_catch_test_cases,
- };
- 
-+#ifdef CONFIG_X86
-+
-+static void kunit_test_null_dereference(void *data)
-+{
-+	struct kunit *test = data;
-+	int *null = NULL;
-+
-+	*null = 0;
-+
-+	KUNIT_FAIL(test, "This line should never be reached\n");
-+}
-+
-+static void kunit_test_fault_null_dereference(struct kunit *test)
-+{
-+	struct kunit_try_catch_test_context *ctx = test->priv;
-+	struct kunit_try_catch *try_catch = ctx->try_catch;
-+
-+	kunit_try_catch_init(try_catch,
-+			     test,
-+			     kunit_test_null_dereference,
-+			     kunit_test_catch);
-+	kunit_try_catch_run(try_catch, test);
-+
-+	KUNIT_EXPECT_EQ(test, try_catch->try_result, -EINTR);
-+	KUNIT_EXPECT_TRUE(test, ctx->function_called);
-+}
-+
-+#if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX)
-+
-+const int test_const = 1;
-+
-+static void kunit_test_const(void *data)
-+{
-+	struct kunit *test = data;
-+	/* Bypasses compiler check. */
-+	int *ptr = (int *)&test_const;
-+
-+	KUNIT_EXPECT_EQ(test, test_const, 1);
-+	*ptr = 2;
-+
-+	KUNIT_FAIL(test, "This line should never be reached\n");
-+}
-+
-+static void kunit_test_fault_const(struct kunit *test)
-+{
-+	struct kunit_try_catch_test_context *ctx = test->priv;
-+	struct kunit_try_catch *try_catch = ctx->try_catch;
-+
-+	kunit_try_catch_init(try_catch, test, kunit_test_const,
-+			     kunit_test_catch);
-+	kunit_try_catch_run(try_catch, test);
-+
-+	KUNIT_EXPECT_EQ(test, test_const, 1);
-+	KUNIT_EXPECT_EQ(test, try_catch->try_result, -EINTR);
-+	KUNIT_EXPECT_TRUE(test, ctx->function_called);
-+}
-+
-+static int test_rodata __ro_after_init = 1;
-+
-+static void kunit_test_rodata(void *data)
-+{
-+	struct kunit *test = data;
-+
-+	KUNIT_EXPECT_EQ(test, test_rodata, 1);
-+	test_rodata = 2;
-+
-+	KUNIT_FAIL(test, "This line should never be reached\n");
-+}
-+
-+static void kunit_test_fault_rodata(struct kunit *test)
-+{
-+	struct kunit_try_catch_test_context *ctx = test->priv;
-+	struct kunit_try_catch *try_catch = ctx->try_catch;
-+
-+	if (!rodata_enabled)
-+		kunit_skip(test, "Strict RWX is not enabled");
-+
-+	kunit_try_catch_init(try_catch, test, kunit_test_rodata,
-+			     kunit_test_catch);
-+	kunit_try_catch_run(try_catch, test);
-+
-+	KUNIT_EXPECT_EQ(test, test_rodata, 1);
-+	KUNIT_EXPECT_EQ(test, try_catch->try_result, -EINTR);
-+	KUNIT_EXPECT_TRUE(test, ctx->function_called);
-+}
-+
-+#else /* defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX) */
-+
-+static void kunit_test_fault_rodata(struct kunit *test)
-+{
-+	kunit_skip(test, "Strict RWX is not supported");
-+}
-+
-+#endif /* defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX) */
-+#endif /* CONFIG_X86 */
-+
-+static struct kunit_case kunit_x86_fault_test_cases[] = {
-+#ifdef CONFIG_X86
-+	KUNIT_CASE(kunit_test_fault_null_dereference),
-+	KUNIT_CASE(kunit_test_fault_const),
-+	KUNIT_CASE(kunit_test_fault_rodata),
-+#endif /* CONFIG_X86 */
-+	{}
-+};
-+
-+static struct kunit_suite kunit_x86_fault_test_suite = {
-+	.name = "kunit_x86_fault",
-+	.init = kunit_try_catch_test_init,
-+	.test_cases = kunit_x86_fault_test_cases,
-+};
-+
- /*
-  * Context for testing test managed resources
-  * is_resource_initialized is used to test arbitrary resources
-@@ -826,6 +938,7 @@ static struct kunit_suite kunit_current_test_suite = {
- 
- kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suite,
- 		  &kunit_log_test_suite, &kunit_status_test_suite,
--		  &kunit_current_test_suite, &kunit_device_test_suite);
-+		  &kunit_current_test_suite, &kunit_device_test_suite,
-+		  &kunit_x86_fault_test_suite);
- 
- MODULE_LICENSE("GPL v2");
+diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
+index f7825991d576..a5cb2ef70a25 100644
+--- a/lib/kunit/try-catch.c
++++ b/lib/kunit/try-catch.c
+@@ -69,6 +69,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
+ 				  try_catch,
+ 				  "kunit_try_catch_thread");
+ 	if (IS_ERR(task_struct)) {
++		try_catch->try_result = PTR_ERR(task_struct);
+ 		try_catch->catch(try_catch->context);
+ 		return;
+ 	}
 -- 
 2.44.0
 
