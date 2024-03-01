@@ -1,104 +1,88 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6128439FC9
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Mar 2024 19:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDB737160
+	for <linux-security-module@vger.kernel.org>; Fri,  1 Mar 2024 19:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709320192; cv=none; b=sgb9eYv5w/jwiOdlpP+M36fL79HgW42zhue3Ec4K/bxs56R1cV5jfb+pTZsMPkoHRkWkPltEFGj4U2XB0m8A57HasT7nCl/pKmZiVXakLhWwyqcKyeys56d/p7UN8F02QsAR7jUCyEyCproc2oVhabwWwqRdWWtDo/xUrhp2PmY=
+	t=1709320501; cv=none; b=gGMXOw/x8RUIIFVI6wwpFUIALaDiocxZrCb4+U0X6f7G+09w/65TmtTfgT24ZoDgGN9QrUB/OmYq+CJMM7LarxFAGWOeg+lw967O6h8C8oCoBkhl3noH6r3u5vjYzBLNaIAexjBH2VZ0xW1RRwbPv6UlHeZwKFMdooA+ln4KO7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709320192; c=relaxed/simple;
-	bh=rjofMt5czWAZ/8UdgmbuNLIMUbqVfuBuDdVqP8nEB2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bu1tOvyBxcQSzCgOFfYng994CU1iyzfeL3yrg1xX7SWg5EeGMfermOa+7XmaL6QGt5G1nk9bugbgFBr4KabSuAJTSw3K0Inyc8yAIBOiNasHLdAOa9l1laf/lQRjVgbOHIjNCcYIsZ+Z++pyEMb+VO2rRl4QMZ15+n/Wx0rcyE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dnzKh2OB; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1709320501; c=relaxed/simple;
+	bh=DoHD+IlZGZGFnoeTiJY7tCzcXTc9M0i8ugtMzjvfO2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Srh5EKDzwP94oQCG3PTFmzA1fYcX+3/h/AdV1jN33B/99OrIWtrawC3O37A9hPSEKbxF/BHFd1bx/o9wfpOo1ZAE4/RVfeyggt4BI5Jlq12M341vX/ftIO3MXog71pXYqlsXEf4OesV5Y1FU4iVDjD3pyt29ZFLgKpE47s2adVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a/B6/TFt; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dnzKh2OB"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tmd1t6YX5zMyYJT;
-	Fri,  1 Mar 2024 20:09:38 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tmd1s45G5zMpnPg;
-	Fri,  1 Mar 2024 20:09:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709320178;
-	bh=rjofMt5czWAZ/8UdgmbuNLIMUbqVfuBuDdVqP8nEB2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dnzKh2OBS0YkrIYpEspkpvDAydMZFIZk4Nh0+Gbx0+8Lk3b671LXi4kdNjVmCBsTZ
-	 Rm7K2WbZWudBEHrEPsAMJOJB+6kHAUx0XE/0mQzOmvZ1EZHpPA5fTAcSzByG999MpW
-	 RTwlsi3ZWspSksJZHRaVH8PWKdKF1bQBjNrpiNAw=
-Date: Fri, 1 Mar 2024 20:09:27 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <keescook@chromium.org>
-Cc: Brendan Higgins <brendanhiggins@google.com>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marco Pagani <marpagan@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Wanpeng Li <wanpengli@tencent.com>, Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v1 5/8] kunit: Handle test faults
-Message-ID: <20240301.EeyeePa2lien@digikod.net>
-References: <20240229170409.365386-1-mic@digikod.net>
- <20240229170409.365386-6-mic@digikod.net>
- <202402291023.071AA58E3@keescook>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a/B6/TFt"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a441d7c6125so318095466b.2
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Mar 2024 11:14:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1709320497; x=1709925297; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b3NhK1nZHCx+JgrAFg4MO5evKGLZk3EUlzp4L7qpvxU=;
+        b=a/B6/TFtNlCUdMeKXfJLX/fNvyIO7tdq8xWf9VOJ+AdMsZodb3veF+XyBCE+4EcBF+
+         JJMr9aznjP05YAyoRMjjnBv9RJb2sk2db/4VB+/T0/qr0vMgsv5Yxjp0cyUohKhnAKuy
+         DFcN/RrKaF2vyl3+XojFB9S1+gz4oTnt6fwEA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709320497; x=1709925297;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b3NhK1nZHCx+JgrAFg4MO5evKGLZk3EUlzp4L7qpvxU=;
+        b=S3ambMqd3v1k0F/BnDOvPT6Zf5rkaKHBKx1uFMHDCFWXrX+S7/9tEC9d6nvbU7mGus
+         ReP10Lq6Z2OHGvIfVuOYnnitbGyMY5ipySRrI1DeXyGYSFTh3UDp+lF+N7CsSvwO0h4Z
+         o3tngTGCOV8dw72nubmxcjxI3r8rjWWUEDSFS8OEvmPYBcXp6E0EEwnR597SFzSWpPIH
+         xvWxhxskscFc7NWobW378+kZsrQmE4oA1aztmz79lCAQPPigg2Yk4fPEtp+kg/Q/LQPR
+         hbY/4Q3MGjtKSuidxsJL+wi0BoVudi6bjKTzCWRFfiAyckEtshJS+GoGbY7UW/m/M51L
+         WmLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoTrYcgw86wuTEdAyiSkosT/tpz+1GfD0Eb8rwjDH341p+mxe9QgAbt0Iu6OdOc5FSUoV0zZHRtg8UjuHRJWLxMTmx5C5O1HslIBBFbJT9tksCdlL7
+X-Gm-Message-State: AOJu0YzZW2EaDugekDJEEgpLlWk21n/jcA3KBlU4CaTMJT/XNhOJBjKo
+	SxwI8nyOeIlwGtjfCtWavlw34q801Ny3pT5wdWPjLvoc8gbcll+fEpOnD8z1ObhtMacRGyubvtM
+	SIbOkSQ==
+X-Google-Smtp-Source: AGHT+IGtGjcJgyM51OP8rwXgZzStN1RNi5VBhhGMPXELGgVjIGYw45o7xvbqrW2oXZrygMruTn/S4Q==
+X-Received: by 2002:a17:907:397:b0:a3e:b188:fcf3 with SMTP id ss23-20020a170907039700b00a3eb188fcf3mr1736072ejb.48.1709320497678;
+        Fri, 01 Mar 2024 11:14:57 -0800 (PST)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id f17-20020a170906049100b00a40f7ed6cb9sm1951168eja.4.2024.03.01.11.14.56
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Mar 2024 11:14:56 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5645960cd56so3784993a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Mar 2024 11:14:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVRN8pFPErJNjmBCfBRYJN7hBVkawN1/LJDCs6UaWeDh9IOrQx2/sdDf7rkm6XWLAXJsestR9/hBhr//2AZLVONJqAqJgkfMKPtXkRagpU5gkL2T2Ot
+X-Received: by 2002:a17:906:6c8b:b0:a44:8daa:684a with SMTP id
+ s11-20020a1709066c8b00b00a448daa684amr1910978ejr.23.1709320496462; Fri, 01
+ Mar 2024 11:14:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202402291023.071AA58E3@keescook>
-X-Infomaniak-Routing: alpha
+References: <CAEkJfYNDspuGxYx5kym8Lvp--D36CMDUErg4rxfWFJuPbbji8g@mail.gmail.com>
+ <70bfa1c9-6790-4537-bdc5-5d633c6ea806@I-love.SAKURA.ne.jp>
+In-Reply-To: <70bfa1c9-6790-4537-bdc5-5d633c6ea806@I-love.SAKURA.ne.jp>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 1 Mar 2024 11:14:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjnYs-jYR-omTJGB-WAH4RQH4b=9NU6N_7foZxjTWK-fQ@mail.gmail.com>
+Message-ID: <CAHk-=wjnYs-jYR-omTJGB-WAH4RQH4b=9NU6N_7foZxjTWK-fQ@mail.gmail.com>
+Subject: Re: [PATCH for 6.8] tomoyo: fix UAF write bug in tomoyo_write_control()
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Sam Sun <samsun1006219@gmail.com>, paul@paul-moore.com, 
+	syzkaller@googlegroups.com, takedakn@nttdata.co.jp, jmorris@namei.org, 
+	serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 29, 2024 at 10:24:19AM -0800, Kees Cook wrote:
-> On Thu, Feb 29, 2024 at 06:04:06PM +0100, Mickaël Salaün wrote:
-> > Previously, when a kernel test thread crashed (e.g. NULL pointer
-> > dereference, general protection fault), the KUnit test hanged for 30
-> > seconds and exited with a timeout error.
-> > 
-> > Fix this issue by waiting on task_struct->vfork_done instead of the
-> > custom kunit_try_catch.try_completion, and track the execution state by
-> > initially setting try_result with -EFAULT and only setting it to 0 if
-> > the test passed.
-> > 
-> > Fix kunit_generic_run_threadfn_adapter() signature by returning 0
-> > instead of calling kthread_complete_and_exit().  Because thread's exit
-> > code is never checked, always set it to 0 to make it clear.
-> > 
-> > Fix the -EINTR error message, which couldn't be reached until now.
-> > 
-> > This is tested with a following patch.
-> > 
-> > Cc: Brendan Higgins <brendanhiggins@google.com>
-> > Cc: David Gow <davidgow@google.com>
-> > Cc: Rae Moar <rmoar@google.com>
-> > Cc: Shuah Khan <skhan@linuxfoundation.org>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> 
-> I assume we can start checking for "intentional" faults now?
+On Fri, 1 Mar 2024 at 05:04, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> I couldn't reproduce this problem in my environment, but I believe
+> this does fix a bug. Linus, can you directly apply to linux.git ?
 
-Yes, but adding dedicated exception handling for such faults would
-probably be cleaner.
+Thanks. Applied,
 
-At least we can now easily write tests as I did with the last patch. The
-only potential issue is that the kernel will still print the related
-warning in logs, but I think it's OK for tests (and maybe something we'd
-like to test too by the way).
-
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> 
-> -- 
-> Kees Cook
-> 
+        Linus
