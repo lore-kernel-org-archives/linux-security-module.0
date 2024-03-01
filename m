@@ -1,142 +1,153 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AD52E842
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Mar 2024 10:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B4A6BFC6;
+	Fri,  1 Mar 2024 11:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709289724; cv=none; b=WVpU6czWfpIf0w3nxH5P5u5K6kEq5UIVZ0aFhooGouwf8mLJTOuPDJbYboQtK8Kz9RS5bfEA4yZH+i+D2uTe2quLqx1nfnKeG2+rXPQKNNkfUq/RZ7C+56aOC8dkMghdIVzOgN/74VA1StQRaf4AzcxaYYtDa5+36PuD6y0VRy0=
+	t=1709291043; cv=none; b=WBYVSDCGdY30qz29pcUwm24q3UEWw2i59/VreB7XvxLS16keiFskEuAIEStnsDVJZdpZiJSGVq5fW6AYteogAF+B7t8DrAvkZsjVqInm8L1z4JYbd2RH9plmEN8+l0+Me4T5JoM6yRmqbFiA4am0X+W2WlrN9V0tGWzHApVE2vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709289724; c=relaxed/simple;
-	bh=MyzEAkBZuIpR892vDJgDwyTBmBXyBAiXWmQvk35TtYY=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=RUYMwRU86IyR0Ps4Poy+68f7icwPoMfqlY9Z2uJ+M6jU4ZAp3KdsRjiIt9LiNKuqtYGIkfy9D8wUxq/AdbYbjZ6cMm6SXgU7eV6tCb/8ZBKCUITlw9MtgHLFmTI5gTszm/jr1lDCB5rkePzck0kM8GBOFwcxf33Gw7q6veGxw4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=S7B+XxgQ; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1709291043; c=relaxed/simple;
+	bh=jNe/Uxf2dtNJ+TSKuJ5UUvXN6Zva3VEg28Sf51IxPB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gWVNGiNaXUHOPk1fvEwlMsECi2BptFm60MX7Gr7bmreioIr1mJEJGv7TG/xk0jnjerWX4naN71CXAmm0P0Usp7tSQUttfxodm3hvbC76Em0xjGIiAGKFrSVTIdfvGNLtFzOwqO7LExT+y7fcBz8vubHsUuw1IEiJsRMG5wkcEJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZHY/nx0l; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="S7B+XxgQ"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-56454c695e6so3321019a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Mar 2024 02:42:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1709289721; x=1709894521; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3FUsAED/lmxCoWoKnQG3JtYsXIKOmckCJxzG1hZ6f9c=;
-        b=S7B+XxgQr4MJMxukZ+TsmEkO0cEaU26VkSsgs6gy7pfebgwfScrzlT/13uHPYF1W6A
-         Jmdgqgc5/1SzAdN20oSUPA2MeaRytnrjezOfODG/orN/dLJ3Q4vHDEC6TlpeXDZECdYu
-         BqZArM7R4VVQZhhW4ylSSJqrGseGMImPgO4Ek3XAFTuRWNU8MkiWamVzAyRgFwisRmLy
-         U5h5bioHIzjrphuXjX9DjK3yhGQl+z7Uf/hI6gVaRQl3Tk/9o+esnWPmT55OsSrq/28x
-         Mm6Ws01btgOOes5LlRE9S17APyLrO04FwB9I0hmjPgWxEq3eeS3Ty5aTLmMQW7j7GnO0
-         iYZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709289721; x=1709894521;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3FUsAED/lmxCoWoKnQG3JtYsXIKOmckCJxzG1hZ6f9c=;
-        b=xLvJISCoqeVdNMCagQPrAZ0FzLrpW5hviluKUURJq/jDJ8+9BbNMsUTFPxNH7Sl/1K
-         j/bpNzhXA/teuVRDBUPCy/wQ0/db8KJkxt6iv1nm9NYe5AFMfF8BYSzI39kkRZL+bqJK
-         RaRQ9peK544eLLSznid7c149JJkfkLbk3/iOoXa7ITpQ9t878ySFU3RntLES4K5cR9Ri
-         Tf6W9broPkiKx2GBLQEOvOsx8QiQof9X1EIk5niJ74keel4AZOsyV2djU9jrOH6XZovy
-         LeSctRWVoPQsDL1AyOwZX8NnsCZOVNnNXS0saouq0ZqJRrzL+00SxPBsK+qZnEr4A4IJ
-         EJcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTorfGXR8g2cq6IC3jPPLIO6YvymnkeNcWbWMyZpv/MyPkw/YL/82Y50EO2GPLu5e/rfaWIf5JTNImsO/IHSpMC2MlAuPtine+AFAP5JQSh/Fk57Mx
-X-Gm-Message-State: AOJu0YyJ9iVOrCDAibzIzvIsC7i/qAEJU98RoVryesrvmxbI0HGQlF5i
-	JgYiMAeti62jskSd9jSF3Ez53qEhF4fOmwazbwmDgWDskEihId0Hdxi/sSl7B8k=
-X-Google-Smtp-Source: AGHT+IFsNGzvNzeIMp+c2vln39bwQZyElm675FddMfJSSFuv8gtyc69SUsSkQMp66ZVqG55y2w4wkw==
-X-Received: by 2002:a05:6402:28af:b0:566:6c13:82fd with SMTP id eg47-20020a05640228af00b005666c1382fdmr884994edb.21.1709289720923;
-        Fri, 01 Mar 2024 02:42:00 -0800 (PST)
-Received: from cloudflare.com (79.184.121.65.ipv4.supernova.orange.pl. [79.184.121.65])
-        by smtp.gmail.com with ESMTPSA id w20-20020a50fa94000000b005668c6837ecsm1421669edr.32.2024.03.01.02.41.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Mar 2024 02:42:00 -0800 (PST)
-References: <20240229005920.2407409-1-kuba@kernel.org>
- <20240229005920.2407409-13-kuba@kernel.org>
- <871q8vm2wj.fsf@cloudflare.com>
- <CADvbK_e+JCeM9cn0Qd7JG5UdSO_-s8w5r0v40E485JevkbH4XQ@mail.gmail.com>
-User-agent: mu4e 1.6.10; emacs 29.2
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Xin Long <lucien.xin@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net,
- netdev@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
- shuah@kernel.org, linux-kselftest@vger.kernel.org, mic@digikod.net,
- linux-security-module@vger.kernel.org, keescook@chromium.org, Marcelo
- Ricardo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: [PATCH v4 12/12] selftests: ip_local_port_range: use XFAIL
- instead of SKIP
-Date: Fri, 01 Mar 2024 11:40:45 +0100
-In-reply-to: <CADvbK_e+JCeM9cn0Qd7JG5UdSO_-s8w5r0v40E485JevkbH4XQ@mail.gmail.com>
-Message-ID: <87wmqmkzd4.fsf@cloudflare.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZHY/nx0l"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709291042; x=1740827042;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jNe/Uxf2dtNJ+TSKuJ5UUvXN6Zva3VEg28Sf51IxPB8=;
+  b=ZHY/nx0lKJB9QddKfvvWu9VcYPZuS6R200BtvyxzRseH63s0wlSjGTjh
+   tZfzGanMGl69mMxRSG5NErjAjTrpLkJeAmmQaknAayu4G3PQEvez25Y38
+   0DeME+M9+2Ij+2AL4LTePn0LqY/RmhXDR60RzhKP6R1f9hfhtN46wnUSC
+   +3ZHlI7QNf4VpSjOj0IB/KcbeBy/yhXU5OZ0de1MRFHysyl/fr6X0ZMNQ
+   z4aSgczXdj7RzMtKVj71Q8W+ig81wt8o+QTTSEuyWUc/TLuqWrJcEPWjS
+   Aj9rS+VmVlbb/ZgD2NSzfNRIyZsmEnZnhAX6nZ9mYwUj3A2uJpqGN/qJ8
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="3986123"
+X-IronPort-AV: E=Sophos;i="6.06,196,1705392000"; 
+   d="scan'208";a="3986123"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 03:04:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,196,1705392000"; 
+   d="scan'208";a="8565542"
+Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 01 Mar 2024 03:03:54 -0800
+Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rg0gA-000Dnj-32;
+	Fri, 01 Mar 2024 11:03:50 +0000
+Date: Fri, 1 Mar 2024 19:03:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>, Kees Cook <keescook@chromium.org>,
+	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Marco Pagani <marpagan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thara Gopinath <tgopinath@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v1 1/8] kunit: Run tests when the kernel is fully setup
+Message-ID: <202403011856.cJe6do38-lkp@intel.com>
+References: <20240229170409.365386-2-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240229170409.365386-2-mic@digikod.net>
 
-On Thu, Feb 29, 2024 at 06:25 PM -05, Xin Long wrote:
-> On Thu, Feb 29, 2024 at 3:27=E2=80=AFPM Jakub Sitnicki <jakub@cloudflare.=
-com> wrote:
->>
->> On Wed, Feb 28, 2024 at 04:59 PM -08, Jakub Kicinski wrote:
->> > SCTP does not support IP_LOCAL_PORT_RANGE and we know it,
->> > so use XFAIL instead of SKIP.
->> >
->> > Reviewed-by: Kees Cook <keescook@chromium.org>
->> > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
->> > ---
->> >  tools/testing/selftests/net/ip_local_port_range.c | 6 +++---
->> >  1 file changed, 3 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/tools/testing/selftests/net/ip_local_port_range.c b/tools=
-/testing/selftests/net/ip_local_port_range.c
->> > index 6ebd58869a63..193b82745fd8 100644
->> > --- a/tools/testing/selftests/net/ip_local_port_range.c
->> > +++ b/tools/testing/selftests/net/ip_local_port_range.c
->> > @@ -365,9 +365,6 @@ TEST_F(ip_local_port_range, late_bind)
->> >       __u32 range;
->> >       __u16 port;
->> >
->> > -     if (variant->so_protocol =3D=3D IPPROTO_SCTP)
->> > -             SKIP(return, "SCTP doesn't support IP_BIND_ADDRESS_NO_PO=
-RT");
->> > -
->> >       fd =3D socket(variant->so_domain, variant->so_type, 0);
->> >       ASSERT_GE(fd, 0) TH_LOG("socket failed");
->> >
->> > @@ -414,6 +411,9 @@ TEST_F(ip_local_port_range, late_bind)
->> >       ASSERT_TRUE(!err) TH_LOG("close failed");
->> >  }
->> >
->> > +XFAIL_ADD(ip_local_port_range, ip4_stcp, late_bind);
->> > +XFAIL_ADD(ip_local_port_range, ip6_stcp, late_bind);
->> > +
->> >  TEST_F(ip_local_port_range, get_port_range)
->> >  {
->> >       __u16 lo, hi;
->>
->> [wrt our earlier discussion off-list]
->>
->> You were right, this test succeeds if I delete SKIP for SCTP.
->> Turns out IP_LOCAL_PORT_RANGE works for SCTP out of the box after all.
->>
->> What I didn't notice earlier is that sctp_setsockopt() delegates to
->> ip_setsockopt() when level !=3D SOL_SCTP.
->>
->> CC'ing Marcelo & Xin, to confirm that this isn't a problem.
-> Yes, SCTP supports ip_local_port_range by calling
-> inet_sk_get_local_port_range() in sctp_get_port(), similar to TCP/UDP.
+Hi Mickaël,
 
-Well, that's embarassing.
+kernel test robot noticed the following build warnings:
 
-I see that I've updated sctp stack to use inet_sk_get_local_port_range()
-in 91d0b78c5177 ("inet: Add IP_LOCAL_PORT_RANGE socket option").
+[auto build test WARNING on d206a76d7d2726f3b096037f2079ce0bd3ba329b]
 
-Thanks for confirming, Xin.
+url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/kunit-Run-tests-when-the-kernel-is-fully-setup/20240301-011020
+base:   d206a76d7d2726f3b096037f2079ce0bd3ba329b
+patch link:    https://lore.kernel.org/r/20240229170409.365386-2-mic%40digikod.net
+patch subject: [PATCH v1 1/8] kunit: Run tests when the kernel is fully setup
+config: s390-defconfig (https://download.01.org/0day-ci/archive/20240301/202403011856.cJe6do38-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 325f51237252e6dab8e4e1ea1fa7acbb4faee1cd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240301/202403011856.cJe6do38-lkp@intel.com/reproduce)
 
-It's clearly an overside on my side. That SKIP in tests should have
-never been there. I will send a fixup.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202403011856.cJe6do38-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from lib/kunit/executor.c:4:
+   In file included from include/kunit/test.h:24:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:173:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2188:
+   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     509 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     516 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     528 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     537 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> lib/kunit/executor.c:18:31: warning: unused variable 'final_suite_set' [-Wunused-variable]
+      18 | static struct kunit_suite_set final_suite_set = {};
+         |                               ^~~~~~~~~~~~~~~
+   6 warnings generated.
+
+
+vim +/final_suite_set +18 lib/kunit/executor.c
+
+    17	
+  > 18	static struct kunit_suite_set final_suite_set = {};
+    19	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
