@@ -1,167 +1,175 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8867E5F483;
-	Fri,  1 Mar 2024 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596B340BE2
+	for <linux-security-module@vger.kernel.org>; Fri,  1 Mar 2024 13:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709299178; cv=none; b=iqx66ydRkqEKhPGhqzq4ObCeQ6MEa++wyLmFu93Bocwgo3q0QAfoX9m1zkAx7ipocwMPYTiBWHpsr10vHQy85vnx2seTTG67QOfsT1wlrUQnCZ7cMEtJbilOcIFUwj2Srfs8yVatPii0u47k2h0VqMvgd4KYHWaMMli1V6AeWG4=
+	t=1709300301; cv=none; b=GcEdQY10MOqU3bk4RA9LSAyyqgIjWAID93G2prQL9Dk9DUdbnVLo5eEIp9Cjc1zJf2q39H7Yi3q/rM6Xol4IPRZFDCWcY/AJaCnOcBkFvg7N772jJkl3wAEJbKks4RliyqagXVi65Zfx1a8h8+h8FaGcOfnrm4SnQgIUWnB71Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709299178; c=relaxed/simple;
-	bh=xRLjt2ZtMD2Q1XzlAIEVwSLp295JjvW6H5VxtRoWhCs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VVz/xu4/nMnhNsDnOFsMpXaoaixfFY9kG67aroeQ+ZoUsWr3H+wi3V8zcu9fHAaL2IC29akD7I5FKrZUygj8oyjvWqFvAUu8n9iovs2jlUYf6F7R0IFYX307NUpJENygt7bbCk5Xy9wHcJZYx7SPpS/6X4ll8RkfiHFBcqvwrww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TmSvw53b9z9y0Nw;
-	Fri,  1 Mar 2024 21:03:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 279D01400D2;
-	Fri,  1 Mar 2024 21:19:32 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwDHACXT1eFlyDx6Aw--.60471S2;
-	Fri, 01 Mar 2024 14:19:31 +0100 (CET)
-Message-ID: <e6f263b25061651e948a881d36bfdff17cfaf1b0.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 14/25] evm: add support for fscaps security hooks
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, Serge Hallyn
- <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Eric Paris
- <eparis@redhat.com>, James Morris <jmorris@namei.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
- Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jonathan Corbet
- <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein
- <amir73il@gmail.com>,  linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,  linux-security-module@vger.kernel.org,
- audit@vger.kernel.org,  selinux@vger.kernel.org,
- linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
- linux-unionfs@vger.kernel.org
-Date: Fri, 01 Mar 2024 14:19:11 +0100
-In-Reply-To: <20240301-zucht-umfeld-9a923a7d070a@brauner>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
-	 <20240221-idmap-fscap-refactor-v2-14-3039364623bd@kernel.org>
-	 <15a69385b49c4f8626f082bc9b957132388414fb.camel@huaweicloud.com>
-	 <20240301-zucht-umfeld-9a923a7d070a@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709300301; c=relaxed/simple;
+	bh=tAp+WUezvA8Fv6XlGanbE5olVA6NnXYV4quUMvi0R44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JX0ns6KUVXL4D/boT3EXTE3I4BO7ju6EAgz5Xloc9GjALwrAPfD59pwju7PRCsaxJwvuxsG5/1Id9eehi2PBPc9ytG+LYbBRxyHgw0J+RBaARbFR3EtjyUhKW5R0jBosZ8ZN7Y/4rggUbmZDes90AB4QCBjO5sT9MI+ZqlKPfsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Dfgs8i5z; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Dfgs8i5z"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TmTgS0wj2z4hW;
+	Fri,  1 Mar 2024 14:38:12 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TmTgQ6NSpzs1d;
+	Fri,  1 Mar 2024 14:38:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709300292;
+	bh=tAp+WUezvA8Fv6XlGanbE5olVA6NnXYV4quUMvi0R44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dfgs8i5zR2T0IiwJZWDDnfytWoZ4oSAsTu1CVq7FD+/Cf7TYlb285FofUKb0iiAT0
+	 G9y/u+7wQemg3qMmZamcLhgDSh9MQ/xZ0gdwZxHV++EHFOfkiLgWJy9FgAzphEVoFG
+	 /CVNnKSDIHvUv7CbPAWK48uIuNH2vPW3jprIr8ms=
+Date: Fri, 1 Mar 2024 14:38:01 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
+Message-ID: <20240301.ahchaeNa6oh5@digikod.net>
+References: <20240209170612.1638517-1-gnoack@google.com>
+ <20240209170612.1638517-2-gnoack@google.com>
+ <20240219.chu4Yeegh3oo@digikod.net>
+ <Zd8txvjeeXjRdeP-@google.com>
+ <20240301.eiGhingai1gi@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwDHACXT1eFlyDx6Aw--.60471S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFWxtFWkCry7XFW5WF1DGFg_yoW5uw18pa
-	y5Ka4SkF4ktF17Jr92yw4qqw40k3yfJay5Grn5J3y8Zwn8JF1fGrWSk3y3ZF9a9rs3G34a
-	vr4Iya47Zwn8ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkmb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6xAYrwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
-	WxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUguHqUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj5rgNgACsz
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240301.eiGhingai1gi@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Fri, 2024-03-01 at 13:54 +0100, Christian Brauner wrote:
-> On Fri, Mar 01, 2024 at 10:19:13AM +0100, Roberto Sassu wrote:
-> > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
-> > > Support the new fscaps security hooks by converting the vfs_caps to r=
-aw
-> > > xattr data and then handling them the same as other xattrs.
-> >=20
-> > Hi Seth
-> >=20
-> > I started looking at this patch set.
-> >=20
-> > The first question I have is if you are also going to update libcap
-> > (and also tar, I guess), since both deal with the raw xattr.
-> >=20
-> > From IMA/EVM perspective (Mimi will add on that), I guess it is
-> > important that files with a signature/HMAC continue to be accessible
-> > after applying this patch set.
-> >=20
-> > Looking at the code, it seems the case (if I understood correctly,
-> > vfs_getxattr_alloc() is still allowed).
-> >=20
-> > To be sure that everything works, it would be really nice if you could
-> > also extend our test suite:
-> >=20
-> > https://github.com/mimizohar/ima-evm-utils/blob/next-testing/tests/port=
-able_signatures.test
-> >=20
-> > and
-> >=20
-> > https://github.com/mimizohar/ima-evm-utils/blob/next-testing/tests/evm_=
-hmac.test
-> >=20
-> >=20
-> > The first test we would need to extend is check_cp_preserve_xattrs,
-> > which basically does a cp -a. We would need to set fscaps in the
-> > origin, copy to the destination, and see if the latter is accessible.
-> >=20
-> > I would also extend:
-> >=20
-> > check_tar_extract_xattrs_different_owner
-> > check_tar_extract_xattrs_same_owner
-> > check_metadata_change
-> > check_evm_revalidate
-> > check_evm_portable_sig_ima_appraisal
-> > check_evm_portable_sig_ima_measurement_list
-> >=20
-> > It should not be too complicated. The purpose would be to exercise your
-> > code below.
-> >=20
-> >=20
-> > Regarding the second test, we would need to extend just check_evm_hmac.
-> >=20
-> >=20
-> > Just realized, before extending the tests, it would be necessary to
-> > modify also evmctl.c, to retrieve fscaps through the new interfaces,
-> > and to let users provide custom fscaps the HMAC or portable signature
-> > is calculated on.
->=20
-> While request for tests are obviously fine they should be added by the
-> respective experts for IMA/EVM in this case. I don't think it's
-> appropriate to expect Seth to do that especially because you seem to
-> imply that you currently don't have any tests for fscaps at all. We're
-> always happy to test things and if that'd be adding new IMA/EVM specific
-> features than it would be something to discuss but really we're
-> refactoring so the fact that you don't have tests we can run is not the
-> fault of this patchset and IMA/EVM is just a small portion of it.=20
+On Fri, Mar 01, 2024 at 01:59:13PM +0100, Mickaël Salaün wrote:
+> On Wed, Feb 28, 2024 at 01:57:42PM +0100, Günther Noack wrote:
+> > Hello Mickaël!
+> > 
+> > On Mon, Feb 19, 2024 at 07:34:42PM +0100, Mickaël Salaün wrote:
+> > > Arn, Christian, please take a look at the following RFC patch and the
+> > > rationale explained here.
+> > > 
+> > > On Fri, Feb 09, 2024 at 06:06:05PM +0100, Günther Noack wrote:
+> > > > Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
+> > > > and increments the Landlock ABI version to 5.
+> > > > 
+> > > > Like the truncate right, these rights are associated with a file
+> > > > descriptor at the time of open(2), and get respected even when the
+> > > > file descriptor is used outside of the thread which it was originally
+> > > > opened in.
+> > > > 
+> > > > A newly enabled Landlock policy therefore does not apply to file
+> > > > descriptors which are already open.
+> > > > 
+> > > > If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
+> > > > of safe IOCTL commands will be permitted on newly opened files.  The
+> > > > permitted IOCTLs can be configured through the ruleset in limited ways
+> > > > now.  (See documentation for details.)
+> > > > 
+> > > > Specifically, when LANDLOCK_ACCESS_FS_IOCTL is handled, granting this
+> > > > right on a file or directory will *not* permit to do all IOCTL
+> > > > commands, but only influence the IOCTL commands which are not already
+> > > > handled through other access rights.  The intent is to keep the groups
+> > > > of IOCTL commands more fine-grained.
+> > > > 
+> > > > Noteworthy scenarios which require special attention:
+> > > > 
+> > > > TTY devices are often passed into a process from the parent process,
+> > > > and so a newly enabled Landlock policy does not retroactively apply to
+> > > > them automatically.  In the past, TTY devices have often supported
+> > > > IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
+> > > > letting callers control the TTY input buffer (and simulate
+> > > > keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
+> > > > modern kernels though.
+> > > > 
+> > > > Some legitimate file system features, like setting up fscrypt, are
+> > > > exposed as IOCTL commands on regular files and directories -- users of
+> > > > Landlock are advised to double check that the sandboxed process does
+> > > > not need to invoke these IOCTLs.
+> > > 
+> > > I think we really need to allow fscrypt and fs-verity IOCTLs.
+> > > 
+> > > > 
+> > > > Known limitations:
+> > > > 
+> > > > The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
+> > > > over IOCTL commands.  Future work will enable a more fine-grained
+> > > > access control for IOCTLs.
+> > > > 
+> > > > In the meantime, Landlock users may use path-based restrictions in
+> > > > combination with their knowledge about the file system layout to
+> > > > control what IOCTLs can be done.  Mounting file systems with the nodev
+> > > > option can help to distinguish regular files and devices, and give
+> > > > guarantees about the affected files, which Landlock alone can not give
+> > > > yet.
+> > > 
+> > > I had a second though about our current approach, and it looks like we
+> > > can do simpler, more generic, and with less IOCTL commands specific
+> > > handling.
+> > > 
+> > > What we didn't take into account is that an IOCTL needs an opened file,
+> > > which means that the caller must already have been allowed to open this
+> > > file in read or write mode.
+> > > 
+> > > I think most FS-specific IOCTL commands check access rights (i.e. access
+> > > mode or required capability), other than implicit ones (at least read or
+> > > write), when appropriate.  We don't get such guarantee with device
+> > > drivers.
+> > > 
+> > > The main threat is IOCTLs on character or block devices because their
+> > > impact may be unknown (if we only look at the IOCTL command, not the
+> > > backing file), but we should allow IOCTLs on filesystems (e.g. fscrypt,
+> > > fs-verity, clone extents).  I think we should only implement a
+> > > LANDLOCK_ACCESS_FS_IOCTL_DEV right, which would be more explicit.  This
+> > > change would impact the IOCTLs grouping (not required anymore), but
+> > > we'll still need the list of VFS IOCTLs.
+> > 
+> > 
+> > I am fine with dropping the IOCTL grouping and going for this simpler approach.
+> > 
+> > This must have been a misunderstanding - I thought you wanted to align the
+> > access checks in Landlock with the ones done by the kernel already, so that we
+> > can reason about it more locally.  But I'm fine with doing it just for device
+> > files as well, if that is what it takes.  It's definitely simpler.
+> 
+> I still think we should align existing Landlock access rights with the VFS IOCTL
+> semantic (i.e. mostly defined in do_vfs_ioctl(), but also in the compat
+> ioctl syscall).  However, according to our investigations and
+> discussions, it looks like the groups we defined should already be
+> enforced by the VFS code, which means we should not need such groups
+> after all.  My last proposal is to still delegate access for VFS IOCTLs
+> to the current Landlock access rights, but it doesn't seem required to
+> add specific access check if we are able to identify these VFS IOCTLs.
 
-Hi Christian
+To say it another way, at least one of the read/write Landlock rights
+are already required to open a file/directory, and according to the new
+get_required_ioctl_access() grouping we can simplifying it further to
+fully rely on the meta "open" access right, and then replace
+get_required_ioctl_access() with the file type and
+vfs_masked_device_ioctl() checks.
 
-I have seen this policy of adding tests in other subsystems (eBPF),
-which in my opinion makes sense, since you want anyway to check that
-you didn't break existing code.
+For now, the only "optional" access right is
+LANDLOCK_ACCESS_FS_TRUNCATE, and I don't think it needs to be tied to
+any VFS IOCTLs.
 
-And yes, I agree that we should have better tests, and a better
-workflow (we are working on improving it).
-
-In this particular case, I was not asking to write a test from scratch,
-that should not be difficult per se, but adding additional commands.
-
-If I got it correctly, even if current tests for fscaps would have
-existed, they would not work anyway, since they would have been based
-on getting/setting the raw xattrs (as far as I know, at least for tar).
-
-Happy to try adding the tests, would appreciate your help to review if
-the tests are done in the correct way.
-
-Thanks
-
-Roberto
-
+Because the IOCTL_DEV access right comes now, future access rights that
+may need to also check IOCTL (e.g. change file attribute) should be much
+simpler to implement.  Indeed, they will only impact VFS IOCTLs which
+would always be allowed with LANDLOCK_ACCESS_FS_IOCTL_DEV.  It should
+then be trivial to add a new control layer for a subset of the VFS
+IOCTLs.
