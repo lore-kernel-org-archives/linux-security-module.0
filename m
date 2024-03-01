@@ -1,153 +1,120 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B4A6BFC6;
-	Fri,  1 Mar 2024 11:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D3E40BE4;
+	Fri,  1 Mar 2024 12:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709291043; cv=none; b=WBYVSDCGdY30qz29pcUwm24q3UEWw2i59/VreB7XvxLS16keiFskEuAIEStnsDVJZdpZiJSGVq5fW6AYteogAF+B7t8DrAvkZsjVqInm8L1z4JYbd2RH9plmEN8+l0+Me4T5JoM6yRmqbFiA4am0X+W2WlrN9V0tGWzHApVE2vk=
+	t=1709297662; cv=none; b=gKQNM4fzlemsDZqxHGnIZDbGpd2btv2u3LGJ1siSrvyIdwpj3tGDuJVGRmrpVA9aSUPc3aQiF9Qr8WZTdYWnL6F0ZDD4JZm4vbZ0hgil2AL+LzHXJdK+vUxMXwIto4T83+AN/rQ+C1xDRzu3ieLRw/zIuKnhhPRRylmMOrRvdmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709291043; c=relaxed/simple;
-	bh=jNe/Uxf2dtNJ+TSKuJ5UUvXN6Zva3VEg28Sf51IxPB8=;
+	s=arc-20240116; t=1709297662; c=relaxed/simple;
+	bh=t89dHoO9bnrvVzN2QBdLQzcy9IB8Yy8zK1DVwzYtJLU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWVNGiNaXUHOPk1fvEwlMsECi2BptFm60MX7Gr7bmreioIr1mJEJGv7TG/xk0jnjerWX4naN71CXAmm0P0Usp7tSQUttfxodm3hvbC76Em0xjGIiAGKFrSVTIdfvGNLtFzOwqO7LExT+y7fcBz8vubHsUuw1IEiJsRMG5wkcEJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZHY/nx0l; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTR9+GXbZjEElDJq7r0SwUuP/RwctYAFTzysvMFkxUNMUsYdW6mZlZ/G03VUNbBbq7vik6FusQDn57kZRSwp/m2EcFDnmu0gKKNctrHmhfFkcpEVFaipGwQlXIXJYiRNVSZNWrIrlxSaSP5VM6O88dqQ8PHV5hXUHgl7FORpnMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOegZl9p; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZHY/nx0l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709291042; x=1740827042;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jNe/Uxf2dtNJ+TSKuJ5UUvXN6Zva3VEg28Sf51IxPB8=;
-  b=ZHY/nx0lKJB9QddKfvvWu9VcYPZuS6R200BtvyxzRseH63s0wlSjGTjh
-   tZfzGanMGl69mMxRSG5NErjAjTrpLkJeAmmQaknAayu4G3PQEvez25Y38
-   0DeME+M9+2Ij+2AL4LTePn0LqY/RmhXDR60RzhKP6R1f9hfhtN46wnUSC
-   +3ZHlI7QNf4VpSjOj0IB/KcbeBy/yhXU5OZ0de1MRFHysyl/fr6X0ZMNQ
-   z4aSgczXdj7RzMtKVj71Q8W+ig81wt8o+QTTSEuyWUc/TLuqWrJcEPWjS
-   Aj9rS+VmVlbb/ZgD2NSzfNRIyZsmEnZnhAX6nZ9mYwUj3A2uJpqGN/qJ8
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10999"; a="3986123"
-X-IronPort-AV: E=Sophos;i="6.06,196,1705392000"; 
-   d="scan'208";a="3986123"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 03:04:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,196,1705392000"; 
-   d="scan'208";a="8565542"
-Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 01 Mar 2024 03:03:54 -0800
-Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rg0gA-000Dnj-32;
-	Fri, 01 Mar 2024 11:03:50 +0000
-Date: Fri, 1 Mar 2024 19:03:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>, Kees Cook <keescook@chromium.org>,
-	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Marco Pagani <marpagan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thara Gopinath <tgopinath@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v1 1/8] kunit: Run tests when the kernel is fully setup
-Message-ID: <202403011856.cJe6do38-lkp@intel.com>
-References: <20240229170409.365386-2-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOegZl9p"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C649FC433C7;
+	Fri,  1 Mar 2024 12:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709297661;
+	bh=t89dHoO9bnrvVzN2QBdLQzcy9IB8Yy8zK1DVwzYtJLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QOegZl9pozxzAbNhZv0jA1i+vi3ItTby1MFSlr85hLGQhHFfLDxrb01Ceft8ywLFL
+	 LZ3cQODIhl86m39/bVdMjbCEGtXEN/QMGOahwbFOylrsu1CQrG61u7Mp9u04yFsgOw
+	 W57pcEh7jkhTp99h8FyYr8ewF5aOeSMjxSVk28NEaFvIINTfHFRoVVsdhKWyvoqgmO
+	 co4E/QYluflcEX5cUQnbbEfUG7q0AkEwjGZrlg6hmhebo54BNR3f+fBHClu3SVGAL/
+	 t6dpupiMJRB0ZDmFBluzhc/umtXAqkNtVyElMzMTlFv7n3rkzHzHcEfhi1TB5X/T0+
+	 7toYd61I6SV/w==
+Date: Fri, 1 Mar 2024 13:54:13 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, 
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, 
+	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v2 14/25] evm: add support for fscaps security hooks
+Message-ID: <20240301-zucht-umfeld-9a923a7d070a@brauner>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+ <20240221-idmap-fscap-refactor-v2-14-3039364623bd@kernel.org>
+ <15a69385b49c4f8626f082bc9b957132388414fb.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240229170409.365386-2-mic@digikod.net>
+In-Reply-To: <15a69385b49c4f8626f082bc9b957132388414fb.camel@huaweicloud.com>
 
-Hi Mickaël,
+On Fri, Mar 01, 2024 at 10:19:13AM +0100, Roberto Sassu wrote:
+> On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
+> > Support the new fscaps security hooks by converting the vfs_caps to raw
+> > xattr data and then handling them the same as other xattrs.
+> 
+> Hi Seth
+> 
+> I started looking at this patch set.
+> 
+> The first question I have is if you are also going to update libcap
+> (and also tar, I guess), since both deal with the raw xattr.
+> 
+> From IMA/EVM perspective (Mimi will add on that), I guess it is
+> important that files with a signature/HMAC continue to be accessible
+> after applying this patch set.
+> 
+> Looking at the code, it seems the case (if I understood correctly,
+> vfs_getxattr_alloc() is still allowed).
+> 
+> To be sure that everything works, it would be really nice if you could
+> also extend our test suite:
+> 
+> https://github.com/mimizohar/ima-evm-utils/blob/next-testing/tests/portable_signatures.test
+> 
+> and
+> 
+> https://github.com/mimizohar/ima-evm-utils/blob/next-testing/tests/evm_hmac.test
+> 
+> 
+> The first test we would need to extend is check_cp_preserve_xattrs,
+> which basically does a cp -a. We would need to set fscaps in the
+> origin, copy to the destination, and see if the latter is accessible.
+> 
+> I would also extend:
+> 
+> check_tar_extract_xattrs_different_owner
+> check_tar_extract_xattrs_same_owner
+> check_metadata_change
+> check_evm_revalidate
+> check_evm_portable_sig_ima_appraisal
+> check_evm_portable_sig_ima_measurement_list
+> 
+> It should not be too complicated. The purpose would be to exercise your
+> code below.
+> 
+> 
+> Regarding the second test, we would need to extend just check_evm_hmac.
+> 
+> 
+> Just realized, before extending the tests, it would be necessary to
+> modify also evmctl.c, to retrieve fscaps through the new interfaces,
+> and to let users provide custom fscaps the HMAC or portable signature
+> is calculated on.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on d206a76d7d2726f3b096037f2079ce0bd3ba329b]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/kunit-Run-tests-when-the-kernel-is-fully-setup/20240301-011020
-base:   d206a76d7d2726f3b096037f2079ce0bd3ba329b
-patch link:    https://lore.kernel.org/r/20240229170409.365386-2-mic%40digikod.net
-patch subject: [PATCH v1 1/8] kunit: Run tests when the kernel is fully setup
-config: s390-defconfig (https://download.01.org/0day-ci/archive/20240301/202403011856.cJe6do38-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 325f51237252e6dab8e4e1ea1fa7acbb4faee1cd)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240301/202403011856.cJe6do38-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202403011856.cJe6do38-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from lib/kunit/executor.c:4:
-   In file included from include/kunit/test.h:24:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2188:
-   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     509 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     516 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     528 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     537 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> lib/kunit/executor.c:18:31: warning: unused variable 'final_suite_set' [-Wunused-variable]
-      18 | static struct kunit_suite_set final_suite_set = {};
-         |                               ^~~~~~~~~~~~~~~
-   6 warnings generated.
-
-
-vim +/final_suite_set +18 lib/kunit/executor.c
-
-    17	
-  > 18	static struct kunit_suite_set final_suite_set = {};
-    19	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+While request for tests are obviously fine they should be added by the
+respective experts for IMA/EVM in this case. I don't think it's
+appropriate to expect Seth to do that especially because you seem to
+imply that you currently don't have any tests for fscaps at all. We're
+always happy to test things and if that'd be adding new IMA/EVM specific
+features than it would be something to discuss but really we're
+refactoring so the fact that you don't have tests we can run is not the
+fault of this patchset and IMA/EVM is just a small portion of it. 
