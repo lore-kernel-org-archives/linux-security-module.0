@@ -1,257 +1,119 @@
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26870CB5
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Mar 2024 13:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F3E442A;
+	Fri,  1 Mar 2024 14:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709300537; cv=none; b=WLHuAa7DKvwzWBsUH3Qp7so299yMfnCzwb4n83ccWAOLsXDEAsanFoJ8upl95Zqsp0xgrAN0+ieDIs/Ab7jbdvGgwNa0UUTt0HKtPS+usBdo4MF72Rug2PbBna+Mh9VVtOYXaE7r00FkAMeaX3CGxuewexTXpdywg6VIcds3B40=
+	t=1709303990; cv=none; b=WGw+yuhpsZRQGYbCWNYjZmJe0IVoqJfR8Bk803izm4apQje9HMhyBJBGYf6Nf8sn2a2oZyUBjW0IxIxFjUQPPbDF7nOd/JDXmVdU4SU8MXxQFHCZ9PZOaOMl9zjJT4dnsJXAssRta7GExRjDjBCWsgbr0Pic0wmCTLcvaVS8jTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709300537; c=relaxed/simple;
-	bh=hiOCYAxLrK/yle5FUJTsTjsTZMa8xWuHi7Oi5k9zdoo=;
+	s=arc-20240116; t=1709303990; c=relaxed/simple;
+	bh=hxhuvMYF4B3Dog5TINXGHY1tM8RGbN4JK+KayqqRuxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AiILWcZqDu5uwomlbMuh1WvfvJt9yhgqX0DLpG8qCdhl8tN2sA1foWpi57ip94MvRoWgG9xApi8EBUQ5HZ662pUEQ/FCwC9+LxMQ5ZhSUGp/spBR6gOQKGmarp1li/b/HdRbX90LdjG4RhX3Alti6i3c9MuzaPklnQzynZDAER4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fFDki6eV; arc=none smtp.client-ip=185.125.25.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/Ga5q6nw+Gke7sHTyVYku08FrGEkcg7liixt0wduQIxopoKc0PMSAfCNHYC1BTyFNNRhTt9tV66hCiMUCPIwz6gG/OppHnnKV7XRvcvYfCGrqW0XsQdGqAlNnj/WjhJYD9O0vPX0NAZHJRyviXB0or4ma2hU8nzElg+vOwEhGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkTYwZHI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fFDki6eV"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TmTm25tK3zKbS;
-	Fri,  1 Mar 2024 14:42:10 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TmTm21DMLzMpnPh;
-	Fri,  1 Mar 2024 14:42:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709300530;
-	bh=hiOCYAxLrK/yle5FUJTsTjsTZMa8xWuHi7Oi5k9zdoo=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkTYwZHI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 676C9C433C7;
+	Fri,  1 Mar 2024 14:39:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709303989;
+	bh=hxhuvMYF4B3Dog5TINXGHY1tM8RGbN4JK+KayqqRuxo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fFDki6eV2aX0WzFDanEnHtaYH8Ifw3/KjOIZzm6L6FW/pVREWXrU96chcrn35eFAH
-	 +fCCCoXvcTpceUJTFIoTpKPUdGCtoyiKC3njsphjbh9/OYpWaZNCpVNg63C5NTSO5D
-	 TiPV16yYZ2qm5mk4UYePJvjHLNb3ooqlVyEUEEgw=
-Date: Fri, 1 Mar 2024 14:42:00 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Message-ID: <20240301.deax4thooPhu@digikod.net>
-References: <20240219.chu4Yeegh3oo@digikod.net>
- <20240219183539.2926165-1-mic@digikod.net>
+	b=YkTYwZHIPbpwdds7MCHekEZIpXeMkc994OXWtMlhE2HLlHz1HRtOqxs0YJJ4pNWKC
+	 PJMC2lMg0K4RYccYFEG5FHLGnOx6ChUfr0h9xGGQ4+cvZfhic8DrWEyFDne1BaV3Rj
+	 3WPvSOBxcctqjKRJqbovZgzTnmPE8Fa7zlPzlx6f0BshJNkd3zjo65vobG/R22s3K7
+	 tdFcaxj31SrPEUz6Eoijz6AedsUpSuXefn86R/846mGnFQ2g4DdyFItnw1hwssRh7O
+	 LboBYFH+1vgzL5Bold2ITr4bGuLtkAtJZ17346ntLqf72vpYtgpOS1fUgExwlgywc/
+	 SwpC/1pignJ6g==
+Date: Fri, 1 Mar 2024 08:39:48 -0600
+From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
+	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+	James Morris <jmorris@namei.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+	selinux@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v2 14/25] evm: add support for fscaps security hooks
+Message-ID: <ZeHotBrI0aYd2HeA@do-x1extreme>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+ <20240221-idmap-fscap-refactor-v2-14-3039364623bd@kernel.org>
+ <15a69385b49c4f8626f082bc9b957132388414fb.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240219183539.2926165-1-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <15a69385b49c4f8626f082bc9b957132388414fb.camel@huaweicloud.com>
 
-Arnd, Christian, are you OK with this approach to identify VFS IOCTLs?
+On Fri, Mar 01, 2024 at 10:19:13AM +0100, Roberto Sassu wrote:
+> On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
+> > Support the new fscaps security hooks by converting the vfs_caps to raw
+> > xattr data and then handling them the same as other xattrs.
+> 
+> Hi Seth
+> 
+> I started looking at this patch set.
+> 
+> The first question I have is if you are also going to update libcap
+> (and also tar, I guess), since both deal with the raw xattr.
 
-If yes, Günther should include it in his next patch series.
+There are no changes needed for userspace; it will still deal with raw
+xattrs. As I mentioned in the cover letter, capabilities tests from
+libcap2, libcap-ng, ltp, and xfstests all pass against this sereies.
+That's with no modifications to userspace.
 
-On Mon, Feb 19, 2024 at 07:35:39PM +0100, Mickaël Salaün wrote:
-> vfs_masks_device_ioctl() and vfs_masks_device_ioctl_compat() are useful
-> to differenciate between device driver IOCTL implementations and
-> filesystem ones.  The goal is to be able to filter well-defined IOCTLs
-> from per-device (i.e. namespaced) IOCTLs and control such access.
+> From IMA/EVM perspective (Mimi will add on that), I guess it is
+> important that files with a signature/HMAC continue to be accessible
+> after applying this patch set.
 > 
-> Add a new ioctl_compat() helper, similar to vfs_ioctl(), to wrap
-> compat_ioctl() calls and handle error conversions.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Günther Noack <gnoack@google.com>
-> ---
->  fs/ioctl.c         | 101 +++++++++++++++++++++++++++++++++++++++++----
->  include/linux/fs.h |  12 ++++++
->  2 files changed, 105 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 76cf22ac97d7..f72c8da47d21 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -763,6 +763,38 @@ static int ioctl_fssetxattr(struct file *file, void __user *argp)
->  	return err;
->  }
->  
-> +/*
-> + * Safeguard to maintain a list of valid IOCTLs handled by do_vfs_ioctl()
-> + * instead of def_blk_fops or def_chr_fops (see init_special_inode).
-> + */
-> +__attribute_const__ bool vfs_masked_device_ioctl(const unsigned int cmd)
-> +{
-> +	switch (cmd) {
-> +	case FIOCLEX:
-> +	case FIONCLEX:
-> +	case FIONBIO:
-> +	case FIOASYNC:
-> +	case FIOQSIZE:
-> +	case FIFREEZE:
-> +	case FITHAW:
-> +	case FS_IOC_FIEMAP:
-> +	case FIGETBSZ:
-> +	case FICLONE:
-> +	case FICLONERANGE:
-> +	case FIDEDUPERANGE:
-> +	/* FIONREAD is forwarded to device implementations. */
-> +	case FS_IOC_GETFLAGS:
-> +	case FS_IOC_SETFLAGS:
-> +	case FS_IOC_FSGETXATTR:
-> +	case FS_IOC_FSSETXATTR:
-> +	/* file_ioctl()'s IOCTLs are forwarded to device implementations. */
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +EXPORT_SYMBOL(vfs_masked_device_ioctl);
-> +
->  /*
->   * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
->   * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-> @@ -858,6 +890,8 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
->  {
->  	struct fd f = fdget(fd);
->  	int error;
-> +	const struct inode *inode;
-> +	bool is_device;
->  
->  	if (!f.file)
->  		return -EBADF;
-> @@ -866,9 +900,18 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
->  	if (error)
->  		goto out;
->  
-> +	inode = file_inode(f.file);
-> +	is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
-> +	if (is_device && !vfs_masked_device_ioctl(cmd)) {
-> +		error = vfs_ioctl(f.file, cmd, arg);
-> +		goto out;
-> +	}
-> +
->  	error = do_vfs_ioctl(f.file, fd, cmd, arg);
-> -	if (error == -ENOIOCTLCMD)
-> +	if (error == -ENOIOCTLCMD) {
-> +		WARN_ON_ONCE(is_device);
->  		error = vfs_ioctl(f.file, cmd, arg);
-> +	}
->  
->  out:
->  	fdput(f);
-> @@ -911,11 +954,49 @@ long compat_ptr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  }
->  EXPORT_SYMBOL(compat_ptr_ioctl);
->  
-> +static long ioctl_compat(struct file *filp, unsigned int cmd,
-> +			 compat_ulong_t arg)
-> +{
-> +	int error = -ENOTTY;
-> +
-> +	if (!filp->f_op->compat_ioctl)
-> +		goto out;
-> +
-> +	error = filp->f_op->compat_ioctl(filp, cmd, arg);
-> +	if (error == -ENOIOCTLCMD)
-> +		error = -ENOTTY;
-> +
-> +out:
-> +	return error;
-> +}
-> +
-> +__attribute_const__ bool vfs_masked_device_ioctl_compat(const unsigned int cmd)
-> +{
-> +	switch (cmd) {
-> +	case FICLONE:
-> +#if defined(CONFIG_X86_64)
-> +	case FS_IOC_RESVSP_32:
-> +	case FS_IOC_RESVSP64_32:
-> +	case FS_IOC_UNRESVSP_32:
-> +	case FS_IOC_UNRESVSP64_32:
-> +	case FS_IOC_ZERO_RANGE_32:
-> +#endif
-> +	case FS_IOC32_GETFLAGS:
-> +	case FS_IOC32_SETFLAGS:
-> +		return true;
-> +	default:
-> +		return vfs_masked_device_ioctl(cmd);
-> +	}
-> +}
-> +EXPORT_SYMBOL(vfs_masked_device_ioctl_compat);
-> +
->  COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
->  		       compat_ulong_t, arg)
->  {
->  	struct fd f = fdget(fd);
->  	int error;
-> +	const struct inode *inode;
-> +	bool is_device;
->  
->  	if (!f.file)
->  		return -EBADF;
-> @@ -924,6 +1005,13 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
->  	if (error)
->  		goto out;
->  
-> +	inode = file_inode(f.file);
-> +	is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
-> +	if (is_device && !vfs_masked_device_ioctl_compat(cmd)) {
-> +		error = ioctl_compat(f.file, cmd, arg);
-> +		goto out;
-> +	}
-> +
->  	switch (cmd) {
->  	/* FICLONE takes an int argument, so don't use compat_ptr() */
->  	case FICLONE:
-> @@ -964,13 +1052,10 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
->  	default:
->  		error = do_vfs_ioctl(f.file, fd, cmd,
->  				     (unsigned long)compat_ptr(arg));
-> -		if (error != -ENOIOCTLCMD)
-> -			break;
-> -
-> -		if (f.file->f_op->compat_ioctl)
-> -			error = f.file->f_op->compat_ioctl(f.file, cmd, arg);
-> -		if (error == -ENOIOCTLCMD)
-> -			error = -ENOTTY;
-> +		if (error == -ENOIOCTLCMD) {
-> +			WARN_ON_ONCE(is_device);
-> +			error = ioctl_compat(f.file, cmd, arg);
-> +		}
->  		break;
->  	}
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index ed5966a70495..b620d0c00e16 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1902,6 +1902,18 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
->  #define compat_ptr_ioctl NULL
->  #endif
->  
-> +extern __attribute_const__ bool vfs_masked_device_ioctl(const unsigned int cmd);
-> +#ifdef CONFIG_COMPAT
-> +extern __attribute_const__ bool
-> +vfs_masked_device_ioctl_compat(const unsigned int cmd);
-> +#else /* CONFIG_COMPAT */
-> +static inline __attribute_const__ bool
-> +vfs_masked_device_ioctl_compat(const unsigned int cmd)
-> +{
-> +	return vfs_masked_device_ioctl(cmd);
-> +}
-> +#endif /* CONFIG_COMPAT */
-> +
->  /*
->   * VFS file helper functions.
->   */
-> -- 
-> 2.43.0
-> 
-> 
+> Looking at the code, it seems the case (if I understood correctly,
+> vfs_getxattr_alloc() is still allowed).
+
+So this is something that would change based on Christian's request to
+stop using the xattr handlers entirely for fscaps as was done for acls.
+I see how this would impact EVM, but we should be able to deal with it.
+
+I am a little curious now about this code in evm_calc_hmac_or_hash():
+
+		size = vfs_getxattr_alloc(&nop_mnt_idmap, dentry, xattr->name,
+					  &xattr_value, xattr_size, GFP_NOFS);
+		if (size == -ENOMEM) {
+			error = -ENOMEM;
+			goto out;
+		}
+		if (size < 0)
+			continue;
+
+		user_space_size = vfs_getxattr(&nop_mnt_idmap, dentry,
+					       xattr->name, NULL, 0);
+		if (user_space_size != size)
+			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
+				 dentry->d_name.name, xattr->name, size,
+				 user_space_size);
+
+Because with the current fscaps code you actually could end up getting
+different sizes from these two interfaces, as vfs_getxattr_alloc() reads
+the xattr directly from disk but vfs_getxattr() goes through
+cap_inode_getsecurity(), which may do conversion between v2 and v3
+formats which are different sizes.
+
+Thanks,
+Seth
