@@ -1,45 +1,60 @@
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F0A3F9FE
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Mar 2024 19:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F271C7E1;
+	Fri,  1 Mar 2024 20:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709322068; cv=none; b=VlCimK3MGHN2j5/uB3M7Jkd93b9fmP1E47tVUm2wfWgKSLMAPckblxFzIhIEPmtCkRnWMsAQHQGz0iF2sFhlOimf8/GOQFxklvPnE1XIsvcVE6J6AiqT0DT5AzEGGSEvPxL/O/oMHS5wk0X8sApli5ReDYqf/uE9PtChmxPewmg=
+	t=1709325833; cv=none; b=Rbeof/Mu+72jo/slQ8qrLYjzimE8XJKaeMvLncdGI+50WG6fKvg2NnOpBBf4IYeWYhHdOeIygI3v2bto2zE8FU9QFuEoDPmK6lSOu+IPMt8naa6y0+5EIcnCFdICDWJb7xxULjYxL1aoK7uGbhhKK8Fka+WF7eFgoy11iJwxC+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709322068; c=relaxed/simple;
-	bh=Zn01zuCUL7jYKmhPGGsYWvoLxWhB+s/jq3mkvb6/ZEo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TBcIebNKwf+2/bzzS5bUnHIWlOWaVrUwosQKd5zfl562A8afFWdlOeqhb0rgg4HNglBX8ruAXsIa1IjnhYIL5zIzWR5g9p9gDh1XqBXxnMClsMGHrcuw1zMAXNN6j3m70x6XigTc36WAIgxN6ivL0BpEo4rb9vGsRT8ovqtfo9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=VDYJfzHt; arc=none smtp.client-ip=84.16.66.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1709325833; c=relaxed/simple;
+	bh=kUyMdHkVkpeJxiyTY9gwfrRpGuWeFO/2yLcwV4ze4PY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eJRpnTlhHr0/POhRK6S128M0PD4l1vnUCVb3a+jkjufx2wCkOfYTLlwqQarJr5piEUVN36gskxrH1KLtR6aS1WKOqFOrId2J1zRiW0JBnv2zMkF+k96aHS43hYOkELuuPiI+KzirBdcTk2TbtfrQx6u16W7I0pC9v2PO4Io01CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J7sdiITJ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="VDYJfzHt"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tmdk22LWYzMwZVM;
-	Fri,  1 Mar 2024 20:40:58 +0100 (CET)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tmdk14tbDzqC6;
-	Fri,  1 Mar 2024 20:40:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709322058;
-	bh=Zn01zuCUL7jYKmhPGGsYWvoLxWhB+s/jq3mkvb6/ZEo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VDYJfzHt2LaPKgpmTPQ8FfoDl4fZMp4bz5zmD1Ri9Q3wHIaKCyhdS3F46fzxcVwa/
-	 mMQvT6uOyUAH/LEQv1+pkW/jjuA8iG8X5UpGLmdao8jrTNR1jjxdSGOet/fXklrBrF
-	 k7nDQJ6iJ7kAszmD1OsNH4oWIl2mNaVVGrUWGqaU=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Rae Moar <rmoar@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J7sdiITJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709325832; x=1740861832;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=kUyMdHkVkpeJxiyTY9gwfrRpGuWeFO/2yLcwV4ze4PY=;
+  b=J7sdiITJ1kAZr8sgz50mVhoWucZdfvkoFsu+OXac+ZYGYPkQFX5OPufN
+   GYcmyMdCwuJePDNkldKBwQ6Phco2fJwTUK2a/EYPGiSOa6dTn5qX5w9/w
+   CROt2hwL/xvur3IU3TOkt5EJb7dPdWtOr06eQ3UiXhTGSTMmZ6lUzvNpT
+   D+4P4zIm2il4OlYlml1+oBehYmh+3/dx5FXGBN/UfMgwIx+r9AaOG4YTA
+   jSKPPtaCV5JYuqmCgCIxKjCPVLwsnronNpJzofoZ/sbagtThIMm4oXZ+O
+   JCuLQ7HKbUTVjG3yx+nnYsf8kbPkClwW+teTUG1nqvpO7nCvbuGsZxFXc
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11000"; a="3808094"
+X-IronPort-AV: E=Sophos;i="6.06,197,1705392000"; 
+   d="scan'208";a="3808094"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2024 12:43:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,197,1705392000"; 
+   d="scan'208";a="8374083"
+Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 01 Mar 2024 12:43:42 -0800
+Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rg9j3-000E5D-2e;
+	Fri, 01 Mar 2024 20:43:32 +0000
+Date: Sat, 2 Mar 2024 04:42:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>, Kees Cook <keescook@chromium.org>,
+	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
 	Alan Maguire <alan.maguire@oracle.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
 	James Morris <jamorris@linux.microsoft.com>,
 	Luis Chamberlain <mcgrof@kernel.org>,
 	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
@@ -51,118 +66,52 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Vitaly Kuznetsov <vkuznets@redhat.com>,
 	Wanpeng Li <wanpengli@tencent.com>,
-	Zahra Tarkhani <ztarkhani@microsoft.com>,
-	kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org
-Subject: [PATCH v2 7/7] kunit: Add tests for fault
-Date: Fri,  1 Mar 2024 20:40:37 +0100
-Message-ID: <20240301194037.532117-8-mic@digikod.net>
-In-Reply-To: <20240301194037.532117-1-mic@digikod.net>
-References: <20240301194037.532117-1-mic@digikod.net>
+	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v1 8/8] kunit: Add tests for faults
+Message-ID: <202403020418.NnNnFElm-lkp@intel.com>
+References: <20240229170409.365386-9-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20240229170409.365386-9-mic@digikod.net>
 
-Add a test case to check NULL pointer dereference and make sure it would
-result as a failed test.
+Hi Micka�l,
 
-The full kunit_fault test suite is marked as skipped when run on UML
-because it would result to a kernel panic.
+kernel test robot noticed the following build warnings:
 
-Tested with:
-./tools/testing/kunit/kunit.py run --arch x86_64 kunit_fault
-./tools/testing/kunit/kunit.py run --arch arm64 \
-  --cross_compile=aarch64-linux-gnu- kunit_fault
+[auto build test WARNING on d206a76d7d2726f3b096037f2079ce0bd3ba329b]
 
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Cc: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240301194037.532117-8-mic@digikod.net
----
+url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/kunit-Run-tests-when-the-kernel-is-fully-setup/20240301-011020
+base:   d206a76d7d2726f3b096037f2079ce0bd3ba329b
+patch link:    https://lore.kernel.org/r/20240229170409.365386-9-mic%40digikod.net
+patch subject: [PATCH v1 8/8] kunit: Add tests for faults
+config: x86_64-randconfig-122-20240301 (https://download.01.org/0day-ci/archive/20240302/202403020418.NnNnFElm-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240302/202403020418.NnNnFElm-lkp@intel.com/reproduce)
 
-Changes since v1:
-* Removed the rodata and const test cases for now.
-* Replace CONFIG_X86 check with !CONFIG_UML, and remove the "_x86"
-  references.
----
- lib/kunit/kunit-test.c | 45 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202403020418.NnNnFElm-lkp@intel.com/
 
-diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-index f7980ef236a3..0fdca5fffaec 100644
---- a/lib/kunit/kunit-test.c
-+++ b/lib/kunit/kunit-test.c
-@@ -109,6 +109,48 @@ static struct kunit_suite kunit_try_catch_test_suite = {
- 	.test_cases = kunit_try_catch_test_cases,
- };
- 
-+#ifndef CONFIG_UML
-+
-+static void kunit_test_null_dereference(void *data)
-+{
-+	struct kunit *test = data;
-+	int *null = NULL;
-+
-+	*null = 0;
-+
-+	KUNIT_FAIL(test, "This line should never be reached\n");
-+}
-+
-+static void kunit_test_fault_null_dereference(struct kunit *test)
-+{
-+	struct kunit_try_catch_test_context *ctx = test->priv;
-+	struct kunit_try_catch *try_catch = ctx->try_catch;
-+
-+	kunit_try_catch_init(try_catch,
-+			     test,
-+			     kunit_test_null_dereference,
-+			     kunit_test_catch);
-+	kunit_try_catch_run(try_catch, test);
-+
-+	KUNIT_EXPECT_EQ(test, try_catch->try_result, -EINTR);
-+	KUNIT_EXPECT_TRUE(test, ctx->function_called);
-+}
-+
-+#endif /* !CONFIG_UML */
-+
-+static struct kunit_case kunit_fault_test_cases[] = {
-+#ifndef CONFIG_UML
-+	KUNIT_CASE(kunit_test_fault_null_dereference),
-+#endif /* !CONFIG_UML */
-+	{}
-+};
-+
-+static struct kunit_suite kunit_fault_test_suite = {
-+	.name = "kunit_fault",
-+	.init = kunit_try_catch_test_init,
-+	.test_cases = kunit_fault_test_cases,
-+};
-+
- /*
-  * Context for testing test managed resources
-  * is_resource_initialized is used to test arbitrary resources
-@@ -826,6 +868,7 @@ static struct kunit_suite kunit_current_test_suite = {
- 
- kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suite,
- 		  &kunit_log_test_suite, &kunit_status_test_suite,
--		  &kunit_current_test_suite, &kunit_device_test_suite);
-+		  &kunit_current_test_suite, &kunit_device_test_suite,
-+		  &kunit_fault_test_suite);
- 
- MODULE_LICENSE("GPL v2");
+sparse warnings: (new ones prefixed by >>)
+>> lib/kunit/kunit-test.c:142:11: sparse: sparse: symbol 'test_const' was not declared. Should it be static?
+
+vim +/test_const +142 lib/kunit/kunit-test.c
+
+   141	
+ > 142	const int test_const = 1;
+   143	
+
 -- 
-2.44.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
