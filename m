@@ -1,421 +1,195 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B713C0C;
-	Fri,  1 Mar 2024 16:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4D739ACB
+	for <linux-security-module@vger.kernel.org>; Fri,  1 Mar 2024 18:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709310691; cv=none; b=HwhHrurFVGXXDKOjgvg24pLZrFX8oZg1spLFpfL7IK8gAySMHodqVWysF5IPg9Fed5VBqN1Y3mljigXOg1Npvs1R21/Dsfk5HO1/SMeIIspFh/xuM32tIQoXAop2WVfDWKkitU0pSK2HEQQUT11IcwKkgKrgF5l9dYfPxVn8ylk=
+	t=1709318133; cv=none; b=NvRzG0Ok7mxSl+l7I5tFQZEu5VWf8zbqAII3APUCSObzFes3W+FiQV0ad9zXU9YzeF+Ufovup6EwF4w/YAr3FjSeKvz3QloJyA0X2dHPz932QhTVJz3wGikKW5m0nJ5bGOamDnuuT44/EenNeP0QJk4+98TiGHzoInExgHjRzwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709310691; c=relaxed/simple;
-	bh=nWJgQGGG70LERlt+zA44EH111JyeJQ52BUWBclarei0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=soHpOREqmSD726CNcmV1C9v8R8r/Nl6izqMMKLCLMjUroiMtSDuN1ps7FOW4Sf5lgUssxo/GtYm2E9Tzd82RCPoYr74gOYcrGY3JqMTndj12BTOPi1tl9RXzXg3O/cWOpQOcSYbhq00qP5tVKwXXVDfdERXoP9E5D7Pb96AQeno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TmY9K4wPQz9ynTB;
-	Sat,  2 Mar 2024 00:15:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 45C0D14059C;
-	Sat,  2 Mar 2024 00:31:16 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCHcyfDAuJl3mZ8Aw--.52713S2;
-	Fri, 01 Mar 2024 17:31:15 +0100 (CET)
-Message-ID: <7633ab5d5359116a602cdc8f85afd2561047960e.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 06/25] capability: provide helpers for converting
- between xattrs and vfs_caps
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, Christian Brauner
- <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Paul Moore
- <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, James Morris
- <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara
- <jack@suse.cz>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej
- Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi
- <miklos@szeredi.hu>,  Amir Goldstein <amir73il@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Date: Fri, 01 Mar 2024 17:30:55 +0100
-In-Reply-To: <20240221-idmap-fscap-refactor-v2-6-3039364623bd@kernel.org>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
-	 <20240221-idmap-fscap-refactor-v2-6-3039364623bd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709318133; c=relaxed/simple;
+	bh=wKERaFJOJQ9cxuvSdSbANjYWDVAz56PvYj3xS16BRsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaghhmfJTB853q59SWyaYoG7TzAZYvXOF9GA5mgoNtJXXQog68OFqllk0DwZ5VuhVJ+l0s0StkT78t01fG8V4W51oojWgjbJmtmaWYLHVNPAmKsCHd/fg8cGJAQATbLFhfDuEdki7x8pomEUZpRWnAcjWXlWBaonDiYBalxl+8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ArHMa97E; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ArHMa97E"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TmcGK0D1kz3x7;
+	Fri,  1 Mar 2024 19:35:21 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TmcGH3bSzzMpnPt;
+	Fri,  1 Mar 2024 19:35:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709318120;
+	bh=wKERaFJOJQ9cxuvSdSbANjYWDVAz56PvYj3xS16BRsg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ArHMa97E3bmeC8RRJHQQqEABcAgbsFck3zopceBxwTCS/tRuYTMKxLHgbtiLTKN70
+	 U64UhvcOAy2iZZlEqxwEXl6WnWJ1aDs8S8fudc9sXKVOwd0Zqkk1N+N4mEJqcPCi4p
+	 elBLzTWStAkXiSKRqMgD5L3fSEZMt/Co8jF5RnB4=
+Date: Fri, 1 Mar 2024 19:35:09 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <20240301.hoohie5EPheH@digikod.net>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net>
+ <0d532558-0c47-4d1c-8b33-b1ff8f4846a5@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwCHcyfDAuJl3mZ8Aw--.52713S2
-X-Coremail-Antispam: 1UD129KBjvJXoWfGrW8ZFW8ArW8tw1DurW7urg_yoWktFykpF
-	yfKr13KF4Iyryagr18Jw4jv34F9FyfAryxXry8C3sYy3Z5Kry2gr1Ik34rAryYkw4kGr18
-	Xa1qkFZ0kF9xAFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
-	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj5rjQwABsG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0d532558-0c47-4d1c-8b33-b1ff8f4846a5@app.fastmail.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
-> To pass around vfs_caps instead of raw xattr data we will need to
-> convert between the two representations near userspace and disk
-> boundaries. We already convert xattrs from disks to vfs_caps, so move
-> that code into a helper, and change get_vfs_caps_from_disk() to use the
-> helper.
->=20
-> When converting vfs_caps to xattrs we have different considerations
-> depending on the destination of the xattr data. For xattrs which will be
-> written to disk we need to reject the xattr if the rootid does not map
-> into the filesystem's user namespace, whereas xattrs read by userspace
-> may need to undergo a conversion from v3 to v2 format when the rootid
-> does not map. So this helper is split into an internal and an external
-> interface. The internal interface does not return an error if the rootid
-> has no mapping in the target user namespace and will be used for
-> conversions targeting userspace. The external interface returns
-> EOVERFLOW if the rootid has no mapping and will be used for all other
-> conversions.
->=20
-> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> ---
->  include/linux/capability.h |  10 ++
->  security/commoncap.c       | 228 +++++++++++++++++++++++++++++++++++----=
-------
->  2 files changed, 187 insertions(+), 51 deletions(-)
->=20
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index eb46d346bbbc..a0893ac4664b 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -209,6 +209,16 @@ static inline bool checkpoint_restore_ns_capable(str=
-uct user_namespace *ns)
->  		ns_capable(ns, CAP_SYS_ADMIN);
->  }
-> =20
-> +/* helpers to convert between xattr and in-kernel representations */
-> +int vfs_caps_from_xattr(struct mnt_idmap *idmap,
-> +			struct user_namespace *src_userns,
-> +			struct vfs_caps *vfs_caps,
-> +			const void *data, size_t size);
-> +ssize_t vfs_caps_to_xattr(struct mnt_idmap *idmap,
-> +			  struct user_namespace *dest_userns,
-> +			  const struct vfs_caps *vfs_caps,
-> +			  void *data, size_t size);
-> +
->  /* audit system wants to get cap info from files as well */
->  int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
->  			   const struct dentry *dentry,
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index a0b5c9740759..7531c9634997 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -619,54 +619,41 @@ static inline int bprm_caps_from_vfs_caps(struct vf=
-s_caps *caps,
->  }
-> =20
->  /**
-> - * get_vfs_caps_from_disk - retrieve vfs caps from disk
-> + * vfs_caps_from_xattr - convert raw caps xattr data to vfs_caps
->   *
-> - * @idmap:	idmap of the mount the inode was found from
-> - * @dentry:	dentry from which @inode is retrieved
-> - * @cpu_caps:	vfs capabilities
-> + * @idmap:      idmap of the mount the inode was found from
-> + * @src_userns: user namespace for ids in xattr data
-> + * @vfs_caps:   destination buffer for vfs_caps data
-> + * @data:       rax xattr caps data
-> + * @size:       size of xattr data
->   *
-> - * Extract the on-exec-apply capability sets for an executable file.
-> + * Converts a raw security.capability xattr into the kernel-internal
-> + * capabilities format.
->   *
-> - * If the inode has been found through an idmapped mount the idmap of
-> - * the vfsmount must be passed through @idmap. This function will then
-> - * take care to map the inode according to @idmap before checking
-> - * permissions. On non-idmapped mounts or if permission checking is to b=
-e
-> - * performed on the raw inode simply pass @nop_mnt_idmap.
-> + * If the xattr is being read or written through an idmapped mount the
-> + * idmap of the vfsmount must be passed through @idmap. This function
-> + * will then take care to map the rootid according to @idmap.
-> + *
-> + * Return: On success, return 0; on error, return < 0.
->   */
-> -int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
-> -			   const struct dentry *dentry,
-> -			   struct vfs_caps *cpu_caps)
-> +int vfs_caps_from_xattr(struct mnt_idmap *idmap,
-> +			struct user_namespace *src_userns,
-> +			struct vfs_caps *vfs_caps,
-> +			const void *data, size_t size)
->  {
-> -	struct inode *inode =3D d_backing_inode(dentry);
->  	__u32 magic_etc;
-> -	int size;
-> -	struct vfs_ns_cap_data data, *nscaps =3D &data;
-> -	struct vfs_cap_data *caps =3D (struct vfs_cap_data *) &data;
-> +	const struct vfs_ns_cap_data *ns_caps =3D data;
-> +	struct vfs_cap_data *caps =3D (struct vfs_cap_data *)ns_caps;
->  	kuid_t rootkuid;
-> -	vfsuid_t rootvfsuid;
-> -	struct user_namespace *fs_ns;
-> -
-> -	memset(cpu_caps, 0, sizeof(struct vfs_caps));
-> -
-> -	if (!inode)
-> -		return -ENODATA;
-> =20
-> -	fs_ns =3D inode->i_sb->s_user_ns;
-> -	size =3D __vfs_getxattr((struct dentry *)dentry, inode,
-> -			      XATTR_NAME_CAPS, &data, XATTR_CAPS_SZ);
-> -	if (size =3D=3D -ENODATA || size =3D=3D -EOPNOTSUPP)
-> -		/* no data, that's ok */
-> -		return -ENODATA;
-> -
-> -	if (size < 0)
-> -		return size;
-> +	memset(vfs_caps, 0, sizeof(*vfs_caps));
-> =20
->  	if (size < sizeof(magic_etc))
->  		return -EINVAL;
-> =20
-> -	cpu_caps->magic_etc =3D magic_etc =3D le32_to_cpu(caps->magic_etc);
-> +	vfs_caps->magic_etc =3D magic_etc =3D le32_to_cpu(caps->magic_etc);
-> =20
-> -	rootkuid =3D make_kuid(fs_ns, 0);
-> +	rootkuid =3D make_kuid(src_userns, 0);
->  	switch (magic_etc & VFS_CAP_REVISION_MASK) {
->  	case VFS_CAP_REVISION_1:
->  		if (size !=3D XATTR_CAPS_SZ_1)
-> @@ -679,39 +666,178 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap=
-,
->  	case VFS_CAP_REVISION_3:
->  		if (size !=3D XATTR_CAPS_SZ_3)
->  			return -EINVAL;
-> -		rootkuid =3D make_kuid(fs_ns, le32_to_cpu(nscaps->rootid));
-> +		rootkuid =3D make_kuid(src_userns, le32_to_cpu(ns_caps->rootid));
->  		break;
-> =20
->  	default:
->  		return -EINVAL;
->  	}
-> =20
-> -	rootvfsuid =3D make_vfsuid(idmap, fs_ns, rootkuid);
-> -	if (!vfsuid_valid(rootvfsuid))
-> -		return -ENODATA;
-> +	vfs_caps->rootid =3D make_vfsuid(idmap, src_userns, rootkuid);
-> +	if (!vfsuid_valid(vfs_caps->rootid))
-> +		return -EOVERFLOW;
-> =20
-> -	/* Limit the caps to the mounter of the filesystem
-> -	 * or the more limited uid specified in the xattr.
-> +	vfs_caps->permitted.val =3D le32_to_cpu(caps->data[0].permitted);
-> +	vfs_caps->inheritable.val =3D le32_to_cpu(caps->data[0].inheritable);
-> +
-> +	/*
-> +	 * Rev1 had just a single 32-bit word, later expanded
-> +	 * to a second one for the high bits
->  	 */
-> -	if (!rootid_owns_currentns(rootvfsuid))
-> -		return -ENODATA;
-> +	if ((magic_etc & VFS_CAP_REVISION_MASK) !=3D VFS_CAP_REVISION_1) {
-> +		vfs_caps->permitted.val +=3D (u64)le32_to_cpu(caps->data[1].permitted)=
- << 32;
-> +		vfs_caps->inheritable.val +=3D (u64)le32_to_cpu(caps->data[1].inherita=
-ble) << 32;
-> +	}
-> +
-> +	vfs_caps->permitted.val &=3D CAP_VALID_MASK;
-> +	vfs_caps->inheritable.val &=3D CAP_VALID_MASK;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Inner implementation of vfs_caps_to_xattr() which does not return an
-> + * error if the rootid does not map into @dest_userns.
-> + */
-> +static ssize_t __vfs_caps_to_xattr(struct mnt_idmap *idmap,
-> +				   struct user_namespace *dest_userns,
-> +				   const struct vfs_caps *vfs_caps,
-> +				   void *data, size_t size)
-> +{
-> +	struct vfs_ns_cap_data *ns_caps =3D data;
-> +	struct vfs_cap_data *caps =3D (struct vfs_cap_data *)ns_caps;
-> +	kuid_t rootkuid;
-> +	uid_t rootid;
-> +
-> +	memset(ns_caps, 0, size);
+On Fri, Mar 01, 2024 at 05:24:52PM +0100, Arnd Bergmann wrote:
+> On Mon, Feb 19, 2024, at 19:35, Mickaël Salaün wrote:
+> > vfs_masks_device_ioctl() and vfs_masks_device_ioctl_compat() are useful
+> > to differenciate between device driver IOCTL implementations and
+> > filesystem ones.  The goal is to be able to filter well-defined IOCTLs
+> > from per-device (i.e. namespaced) IOCTLs and control such access.
+> >
+> > Add a new ioctl_compat() helper, similar to vfs_ioctl(), to wrap
+> > compat_ioctl() calls and handle error conversions.
+> 
+> I'm still a bit confused by what your goal is here. I see
+> the code getting more complex but don't see the payoff in this
+> patch.
 
-size -> sizeof(*ns_caps) (or an equivalent change)
+The main idea is to be able to identify if an IOCTL is handled by a
+device driver (i.e. block or character devices) or not.  This would be
+used at least by Landlock to control such IOCTL (according to the
+char/block device file, which can already be identified) while allowing
+other VFS/FS IOCTLs.
 
-I was zeroing more (the size of the buffer passed to vfs_getxattr()).
+> 
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Günther Noack <gnoack@google.com>
+> 
+> I assume the missing Signed-off-by is intentional while you are
+> still gathering feedback?
 
-Roberto
+No, I sent it too quickly and forgot to add it.
 
-> +
-> +	rootid =3D 0;
-> +	switch (vfs_caps->magic_etc & VFS_CAP_REVISION_MASK) {
-> +	case VFS_CAP_REVISION_1:
-> +		if (size < XATTR_CAPS_SZ_1)
-> +			return -EINVAL;
-> +		size =3D XATTR_CAPS_SZ_1;
-> +		break;
-> +	case VFS_CAP_REVISION_2:
-> +		if (size < XATTR_CAPS_SZ_2)
-> +			return -EINVAL;
-> +		size =3D XATTR_CAPS_SZ_2;
-> +		break;
-> +	case VFS_CAP_REVISION_3:
-> +		if (size < XATTR_CAPS_SZ_3)
-> +			return -EINVAL;
-> +		size =3D XATTR_CAPS_SZ_3;
-> +		rootkuid =3D from_vfsuid(idmap, dest_userns, vfs_caps->rootid);
-> +		rootid =3D from_kuid(dest_userns, rootkuid);
-> +		ns_caps->rootid =3D cpu_to_le32(rootid);
-> +		break;
-> =20
-> -	cpu_caps->permitted.val =3D le32_to_cpu(caps->data[0].permitted);
-> -	cpu_caps->inheritable.val =3D le32_to_cpu(caps->data[0].inheritable);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	caps->magic_etc =3D cpu_to_le32(vfs_caps->magic_etc);
-> +
-> +	caps->data[0].permitted =3D cpu_to_le32(lower_32_bits(vfs_caps->permitt=
-ed.val));
-> +	caps->data[0].inheritable =3D cpu_to_le32(lower_32_bits(vfs_caps->inher=
-itable.val));
-> =20
->  	/*
->  	 * Rev1 had just a single 32-bit word, later expanded
->  	 * to a second one for the high bits
->  	 */
-> -	if ((magic_etc & VFS_CAP_REVISION_MASK) !=3D VFS_CAP_REVISION_1) {
-> -		cpu_caps->permitted.val +=3D (u64)le32_to_cpu(caps->data[1].permitted)=
- << 32;
-> -		cpu_caps->inheritable.val +=3D (u64)le32_to_cpu(caps->data[1].inherita=
-ble) << 32;
-> +	if ((vfs_caps->magic_etc & VFS_CAP_REVISION_MASK) !=3D VFS_CAP_REVISION=
-_1) {
-> +		caps->data[1].permitted =3D
-> +			cpu_to_le32(upper_32_bits(vfs_caps->permitted.val));
-> +		caps->data[1].inheritable =3D
-> +			cpu_to_le32(upper_32_bits(vfs_caps->inheritable.val));
->  	}
-> =20
-> -	cpu_caps->permitted.val &=3D CAP_VALID_MASK;
-> -	cpu_caps->inheritable.val &=3D CAP_VALID_MASK;
-> +	return size;
-> +}
-> +
-> +
-> +/**
-> + * vfs_caps_to_xattr - convert vfs_caps to raw caps xattr data
-> + *
-> + * @idmap:       idmap of the mount the inode was found from
-> + * @dest_userns: user namespace for ids in xattr data
-> + * @vfs_caps:    source vfs_caps data
-> + * @data:        destination buffer for rax xattr caps data
-> + * @size:        size of the @data buffer
-> + *
-> + * Converts a kernel-internal capability into the raw security.capabilit=
-y
-> + * xattr format.
-> + *
-> + * If the xattr is being read or written through an idmapped mount the
-> + * idmap of the vfsmount must be passed through @idmap. This function
-> + * will then take care to map the rootid according to @idmap.
-> + *
-> + * Return: On success, return the size of the xattr data. On error,
-> + * return < 0.
-> + */
-> +ssize_t vfs_caps_to_xattr(struct mnt_idmap *idmap,
-> +			  struct user_namespace *dest_userns,
-> +			  const struct vfs_caps *vfs_caps,
-> +			  void *data, size_t size)
-> +{
-> +	struct vfs_ns_cap_data *caps =3D data;
-> +	int ret;
-> +
-> +	ret =3D __vfs_caps_to_xattr(idmap, dest_userns, vfs_caps, data, size);
-> +	if (ret > 0 &&
-> +	    (vfs_caps->magic_etc & VFS_CAP_REVISION_MASK) =3D=3D VFS_CAP_REVISI=
-ON_3 &&
-> +	     le32_to_cpu(caps->rootid) =3D=3D (uid_t)-1)
-> +		return -EOVERFLOW;
-> +	return ret;
-> +}
-> +
-> +/**
-> + * get_vfs_caps_from_disk - retrieve vfs caps from disk
-> + *
-> + * @idmap:	idmap of the mount the inode was found from
-> + * @dentry:	dentry from which @inode is retrieved
-> + * @cpu_caps:	vfs capabilities
-> + *
-> + * Extract the on-exec-apply capability sets for an executable file.
-> + *
-> + * If the inode has been found through an idmapped mount the idmap of
-> + * the vfsmount must be passed through @idmap. This function will then
-> + * take care to map the inode according to @idmap before checking
-> + * permissions. On non-idmapped mounts or if permission checking is to b=
-e
-> + * performed on the raw inode simply pass @nop_mnt_idmap.
-> + */
-> +int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
-> +			   const struct dentry *dentry,
-> +			   struct vfs_caps *cpu_caps)
-> +{
-> +	struct inode *inode =3D d_backing_inode(dentry);
-> +	int size, ret;
-> +	struct vfs_ns_cap_data data, *nscaps =3D &data;
-> +
-> +	if (!inode)
-> +		return -ENODATA;
-> =20
-> -	cpu_caps->rootid =3D rootvfsuid;
-> +	size =3D __vfs_getxattr((struct dentry *)dentry, inode,
-> +			      XATTR_NAME_CAPS, &data, XATTR_CAPS_SZ);
-> +	if (size =3D=3D -ENODATA || size =3D=3D -EOPNOTSUPP)
-> +		/* no data, that's ok */
-> +		return -ENODATA;
-> +
-> +	if (size < 0)
-> +		return size;
-> +
-> +	ret =3D vfs_caps_from_xattr(idmap, inode->i_sb->s_user_ns,
-> +				  cpu_caps, nscaps, size);
-> +	if (ret =3D=3D -EOVERFLOW)
-> +		return -ENODATA;
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Limit the caps to the mounter of the filesystem
-> +	 * or the more limited uid specified in the xattr.
-> +	 */
-> +	if (!rootid_owns_currentns(cpu_caps->rootid))
-> +		return -ENODATA;
-> =20
->  	return 0;
->  }
->=20
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
+> 
+> > +/*
+> > + * Safeguard to maintain a list of valid IOCTLs handled by 
+> > do_vfs_ioctl()
+> > + * instead of def_blk_fops or def_chr_fops (see init_special_inode).
+> > + */
+> > +__attribute_const__ bool vfs_masked_device_ioctl(const unsigned int 
+> > cmd)
+> > +{
+> > +	switch (cmd) {
+> > +	case FIOCLEX:
+> > +	case FIONCLEX:
+> > +	case FIONBIO:
+> > +	case FIOASYNC:
+> > +	case FIOQSIZE:
+> > +	case FIFREEZE:
+> > +	case FITHAW:
+> > +	case FS_IOC_FIEMAP:
+> > +	case FIGETBSZ:
+> > +	case FICLONE:
+> > +	case FICLONERANGE:
+> > +	case FIDEDUPERANGE:
+> > +	/* FIONREAD is forwarded to device implementations. */
+> > +	case FS_IOC_GETFLAGS:
+> > +	case FS_IOC_SETFLAGS:
+> > +	case FS_IOC_FSGETXATTR:
+> > +	case FS_IOC_FSSETXATTR:
+> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations. */
+> > +		return true;
+> > +	default:
+> > +		return false;
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
+> 
+> It looks like this gets added into the hot path of every
+> ioctl command, which is not ideal, especially when this
+> no longer gets inlined into the caller.
+
+I'm looking for a way to guarantee that the list of IOCTLs in this
+helper will be kept up-to-date. This kind of run time check might be
+too much though. Do you have other suggestions? Do you think a simple
+comment to remind contributors to update this helper would be enough?
+I guess VFS IOCTLs should not be added often, but I'm worried that this
+list could get out of sync...
+
+> 
+> > +	inode = file_inode(f.file);
+> > +	is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
+> > +	if (is_device && !vfs_masked_device_ioctl(cmd)) {
+> > +		error = vfs_ioctl(f.file, cmd, arg);
+> > +		goto out;
+> > +	}
+> 
+> The S_ISBLK() || S_ISCHR() check here looks like it changes
+> behavior, at least for sockets. If that is intentional,
+> it should probably be a separate patch with a detailed
+> explanation.
+
+I don't think this changes the behavior for sockets, and at least that's
+not intentionnal.  This patch should not change the current behavior at
+all.
+
+The path to reach socket IOCTLs goes through a vfs_ioctl() call, which
+is...
+
+> 
+> >  	error = do_vfs_ioctl(f.file, fd, cmd, arg);
+> > -	if (error == -ENOIOCTLCMD)
+> > +	if (error == -ENOIOCTLCMD) {
+> > +		WARN_ON_ONCE(is_device);
+> >  		error = vfs_ioctl(f.file, cmd, arg);
+
+...here!
+
+> > +	}
+> 
+> The WARN_ON_ONCE() looks like it can be triggered from
+> userspace, which is generally a bad idea.
+
+This WARN_ON_ONCE() should never be triggered because if the it is a
+device IOCTL it goes through the previous vfs_ioctl() (for
+device-specific command) call or through this do_vfs_ioctl() call (for
+VFS-specific command).
+
+>  
+> > +extern __attribute_const__ bool vfs_masked_device_ioctl(const unsigned 
+> > int cmd);
+> > +#ifdef CONFIG_COMPAT
+> > +extern __attribute_const__ bool
+> > +vfs_masked_device_ioctl_compat(const unsigned int cmd);
+> > +#else /* CONFIG_COMPAT */
+> > +static inline __attribute_const__ bool
+> > +vfs_masked_device_ioctl_compat(const unsigned int cmd)
+> > +{
+> > +	return vfs_masked_device_ioctl(cmd);
+> > +}
+> > +#endif /* CONFIG_COMPAT */
+> 
+> I don't understand the purpose of the #else path here,
+> this should not be needed.
+
+Correct, this else branch is useless.
+
+> 
+>       Arnd
+> 
