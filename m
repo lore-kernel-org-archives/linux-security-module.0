@@ -1,44 +1,44 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0A05231
-	for <linux-security-module@vger.kernel.org>; Sat,  2 Mar 2024 16:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17941DFF3
+	for <linux-security-module@vger.kernel.org>; Sat,  2 Mar 2024 16:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709396577; cv=none; b=uErJmxucnPAlQK2bZeJha+IBHYS8TM5eX3AqJb9NradwT4of9YwRle2rZq8zlGgOuHia/zvwAgoSD/DU8QfJROdiqW/YTOBKuxbkVwudL95fPSggrMv/78trgYrpCdBXgC3HU9muPeqpdQsfZriEpBTCU8r0n5ubyiGxyOeEsAU=
+	t=1709397444; cv=none; b=GhHt8myz9hJATgC6TeEI9Ox9DbWyM0mCBRuKf08gDSTDbDl7TTuEjlqtp+8LMzLeV9Bxv82mCu+Vkc/WxgK0Ko3dpLymtYZh75VDjjEU0eDgZh5rQ+wz/TVCr1hniW+mS9uOb88gzIMBjQ2uLfmKXWaOdE7o3caAGjV9wwvLaqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709396577; c=relaxed/simple;
-	bh=XURcPi80ktqpwDBSxPxq7g3Gl8HnCoFYrRqz0mcbS8A=;
+	s=arc-20240116; t=1709397444; c=relaxed/simple;
+	bh=9IC3fMEoEfXo3NNBOsCfC/33CDE0noCZBrsTmZNyk4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TV7BLK/08/r5ixNuehcErNZTcGbdtPcRW+lJSOAiqbwGcw5ma4lfsSonydNYR4fgitnrY52LpMzmZlmrLcnK34Ehz9Ka677qp2ONlO3mkpgnHiuT/WF729Om6INizAoQ+v4CKHLYQVkq0jCK+sRoLPLfIcmKi5EhmmJkhBnWijo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.222.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzDvQpev3uHsW6bba0U35NFDiwFNgDvYI9kywWEqXF/LfwgbSDO6tv+UL2/gHDLItP111TiP0hDOAaSp3sp3jwU/ApEe3moH3V0BENbRMhPoRKIw4au+/cCc/qXeNmIvlPeumXNwhJe8DqcxgGK+R+jou05ssFaahdcXuhflJyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-787b0b1deeaso154064485a.3
-        for <linux-security-module@vger.kernel.org>; Sat, 02 Mar 2024 08:22:54 -0800 (PST)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-68f51c5f9baso18153896d6.3
+        for <linux-security-module@vger.kernel.org>; Sat, 02 Mar 2024 08:37:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709396573; x=1710001373;
+        d=1e100.net; s=20230601; t=1709397441; x=1710002241;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9CTJvFhGy1Bzd3KvOdnEpD8D/Edct8dik+Axa8R/H/U=;
-        b=Jz1z/8vwtNOlNMsb2yH4nPmcf95OpUdCK2X/MYtc5RRs/D2z93gAJ3VCrhfO2eoUZf
-         LD6+cTRZ6utjkHNKs/TL4QGRR1Mtwn9kkJvZgAOnjxO7/bWWTip0zbGpK83AjxmtInu7
-         r+OotC/ZCnhflzd+KN8HR7EErTcS+II5lPJqlOnfY7hcJ9DsGnATw8y7KeRMcTHQ7f2H
-         9se8Kw+dSNX15VuzveEFuo4/9jCqj8FJQ7Z1X6ONVW8+cvTPb0Ak1JrcFV6cbYwaeM5d
-         /2SDUMm3zCLgKSRJ7Nd93tTD4U1ZsYYIZcL7iDcc9SXlXOqI6sBh6QGGXiZuM9k9jFBq
-         Rrpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWz3OnV8fj8jzC2giORo2hpz8dRdtphaHRAmsv/IAfovoA1+7YhUV8GJqjtUdpwme1QCbrRWAGWpAiQ9C/efcr1l0fNFxvLwnAs3Bb12knhxCNpSQFD
-X-Gm-Message-State: AOJu0Yw8pwQMJdLiy3Yv3xu2fdGTTWNNvqRCVCVBC7dJ/DHzvwqL7+pI
-	00wcAsdFhnCThq5f7DrSXC4274hz8CJudvdg36LS8Dmr/nyQcgDnmJLIklQGLA==
-X-Google-Smtp-Source: AGHT+IH3W/XkrKR76p3+gwmEVhV4Af7xAoXDhhzOgTPCdCMEIBZjGKC5F+gRt7thhAcDDjvRoB1Eow==
-X-Received: by 2002:a05:620a:1794:b0:788:20a6:518a with SMTP id ay20-20020a05620a179400b0078820a6518amr910312qkb.66.1709396573481;
-        Sat, 02 Mar 2024 08:22:53 -0800 (PST)
+        bh=1bU93HGrxoKEjIsJ9NGLvb4RDQbkWY7Y2iFs9PS//8I=;
+        b=kn1ml5OLq/z0dzzdh2+epQ3Nh13g5AvQSewIPCsSluH29clrANohwgSdSYtQR9h/Qx
+         v08HC2asLaI6ye0b1oUtTe/9HVTHjn+sg1YoWmqBJfHkrtG1pLWaVlGroQZENXz9NOBP
+         GbNi+Ejcx0vof01IyPvZHbwCnWhdXuoTU+4L0CMjkutUj0B7fM0Mceiay3D/rPHuE3dG
+         SAM+T7BFRj0rpQPyga/ktCZCw7gvsf/5cGhhvI5hcG0azl+KNMhRVdmG4nJxWt1UE/8w
+         SIAtAtcSOG5JwJTIDiIKjixP/AXzeUHsP+Xq8AsACW5aguWrrJSo5S10eIok2pBhjWav
+         abMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXA7kBay+rDmqx9wpLhwjMKSzYftXxb2lshXaDtU5eYuv4XfIey4+1XDEi2hPGJrRURS2vqmjTdwYGJRihNBpeVcfza9JRSrkKJGFYgadGvNrbsVkZ
+X-Gm-Message-State: AOJu0YzlOrvgi2Fe3QA1ybrF4Fo5Mq5+oWq39o+bRWhcjPCD9SBmvz9G
+	fb+PGdnPvK3gDLG65+tqXqJLZazNOr+X2kGQ5PfmqxYk5dj1tDhlvSb5pp9z/A==
+X-Google-Smtp-Source: AGHT+IGWfJd4hsp4cquzrMgFaq/8ztZK/NQH0jQErvnt6KcdvzJSodCboJ3PnepuNNUxb0g3iW3fHA==
+X-Received: by 2002:a0c:f885:0:b0:690:4916:4de9 with SMTP id u5-20020a0cf885000000b0069049164de9mr4614368qvn.34.1709397441567;
+        Sat, 02 Mar 2024 08:37:21 -0800 (PST)
 Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
-        by smtp.gmail.com with ESMTPSA id c17-20020a05620a0cf100b007881eb5683fsm280597qkj.2.2024.03.02.08.22.52
+        by smtp.gmail.com with ESMTPSA id ks30-20020a056214311e00b0068ffde5efb0sm3123189qvb.49.2024.03.02.08.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Mar 2024 08:22:53 -0800 (PST)
-Date: Sat, 2 Mar 2024 11:22:50 -0500
+        Sat, 02 Mar 2024 08:37:21 -0800 (PST)
+Date: Sat, 2 Mar 2024 11:37:20 -0500
 From: Mike Snitzer <snitzer@kernel.org>
 To: Fan Wu <wufan@linux.microsoft.com>
 Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
@@ -53,7 +53,7 @@ Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
 	Deven Bowers <deven.desai@linux.microsoft.com>
 Subject: Re: [RFC PATCH v13 14/20] dm verity: consume root hash digest and
  signature data via LSM hook
-Message-ID: <ZeNSWgnKMldcb_jp@redhat.com>
+Message-ID: <ZeNVwBkbw2HlMRfa@redhat.com>
 References: <1709168102-7677-1-git-send-email-wufan@linux.microsoft.com>
  <1709168102-7677-15-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
@@ -165,6 +165,17 @@ Fan Wu <wufan@linux.microsoft.com> wrote:
 >  #include "dm-verity.h"
 >  #include "dm-verity-fec.h"
 >  #include "dm-verity-verify-sig.h"
+
+Why are you including dm-core.h? (DM targets really shouldn't need it).
+
+And from that header:
+
+/*
+ * DM core internal structures used directly by dm.c, dm-rq.c and dm-table.c.
+ * DM targets must _not_ deference a mapped_device or dm_table to directly
+ * access their members!
+ */
+
 > @@ -22,6 +23,9 @@
 >  #include <linux/scatterlist.h>
 >  #include <linux/string.h>
@@ -224,11 +235,6 @@ Fan Wu <wufan@linux.microsoft.com> wrote:
 > +}
 > +#endif /* CONFIG_IPE_PROP_DM_VERITY */
 > +
-
-Please move verity_init_sig() to be at beginning of same #ifdef block
-as verity_free_sig() above.  Also, please add blank lines between
-#ifdef, #else and #endif.
-
 >  /*
 >   * Target parameters:
 >   *	<version>	The current format is version 1.
@@ -260,6 +266,15 @@ as verity_free_sig() above.  Also, please add blank lines between
 > +
 > +	v = ti->private;
 > +	bdev = dm_table_get_md(ti->table)->disk->part0;
+
+Must be for dereferencing mapped_device struct here ^
+
+Please remove the dm-core.h include and use this instead:
+
+struct gendisk *disk = dm_disk(dm_table_get_md(ti->table));
+
+Mike
+
 > +	root_digest.digest = v->root_digest;
 > +	root_digest.digest_len = v->digest_size;
 > +	root_digest.alg = v->alg_name;
@@ -276,8 +291,6 @@ as verity_free_sig() above.  Also, please add blank lines between
 > +}
 > +#endif /* CONFIG_IPE_PROP_DM_VERITY */
 > +
-
-Again, blank line after #ifdef and before #endif
-
-Thanks,
-Mike
+>  static struct target_type verity_target = {
+>  	.name		= "verity",
+>  	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
