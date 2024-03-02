@@ -1,296 +1,327 @@
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17941DFF3
-	for <linux-security-module@vger.kernel.org>; Sat,  2 Mar 2024 16:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F25A44C84
+	for <linux-security-module@vger.kernel.org>; Sat,  2 Mar 2024 22:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709397444; cv=none; b=GhHt8myz9hJATgC6TeEI9Ox9DbWyM0mCBRuKf08gDSTDbDl7TTuEjlqtp+8LMzLeV9Bxv82mCu+Vkc/WxgK0Ko3dpLymtYZh75VDjjEU0eDgZh5rQ+wz/TVCr1hniW+mS9uOb88gzIMBjQ2uLfmKXWaOdE7o3caAGjV9wwvLaqs=
+	t=1709416886; cv=none; b=EM1Oa2B83ERGjMz2usVdy8dmmn0tBpyGVsa+6P+w7WKSv0U/WaNxPGBw28u/VhSeIp/xV+cXfsnD6x/3Jm7SFhyXVfM2CChdYpaNJDS2gZ+hKV3Cmaj+xw1G9IekXx4cVLUYpZyeBhRrvOcZ5JOjL3WBvp3Dsht+H/WhRPJj2Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709397444; c=relaxed/simple;
-	bh=9IC3fMEoEfXo3NNBOsCfC/33CDE0noCZBrsTmZNyk4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzDvQpev3uHsW6bba0U35NFDiwFNgDvYI9kywWEqXF/LfwgbSDO6tv+UL2/gHDLItP111TiP0hDOAaSp3sp3jwU/ApEe3moH3V0BENbRMhPoRKIw4au+/cCc/qXeNmIvlPeumXNwhJe8DqcxgGK+R+jou05ssFaahdcXuhflJyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-68f51c5f9baso18153896d6.3
-        for <linux-security-module@vger.kernel.org>; Sat, 02 Mar 2024 08:37:22 -0800 (PST)
+	s=arc-20240116; t=1709416886; c=relaxed/simple;
+	bh=3EO6ZMy1gTMHAY2uEqHl8r8Jr/qiKttWxT3X05cpCxE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dHmeuRe/ZLRgararhR4GZVb2lTiK8Y2jChsfCJy7SeGkfiBcHANqPL4bswTZdr6c1tZFXcvZX6qdhIJMNiiYgYfko7oMv0Y3roFhONY7m0jzBNKX3pqB7q6Jvtj/nKnRD3LgvcY/nbM9IFJa0R/zQ8wY3Hr5tM46repccdzYhiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3657abf644fso37089545ab.3
+        for <linux-security-module@vger.kernel.org>; Sat, 02 Mar 2024 14:01:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709397441; x=1710002241;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1bU93HGrxoKEjIsJ9NGLvb4RDQbkWY7Y2iFs9PS//8I=;
-        b=kn1ml5OLq/z0dzzdh2+epQ3Nh13g5AvQSewIPCsSluH29clrANohwgSdSYtQR9h/Qx
-         v08HC2asLaI6ye0b1oUtTe/9HVTHjn+sg1YoWmqBJfHkrtG1pLWaVlGroQZENXz9NOBP
-         GbNi+Ejcx0vof01IyPvZHbwCnWhdXuoTU+4L0CMjkutUj0B7fM0Mceiay3D/rPHuE3dG
-         SAM+T7BFRj0rpQPyga/ktCZCw7gvsf/5cGhhvI5hcG0azl+KNMhRVdmG4nJxWt1UE/8w
-         SIAtAtcSOG5JwJTIDiIKjixP/AXzeUHsP+Xq8AsACW5aguWrrJSo5S10eIok2pBhjWav
-         abMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXA7kBay+rDmqx9wpLhwjMKSzYftXxb2lshXaDtU5eYuv4XfIey4+1XDEi2hPGJrRURS2vqmjTdwYGJRihNBpeVcfza9JRSrkKJGFYgadGvNrbsVkZ
-X-Gm-Message-State: AOJu0YzlOrvgi2Fe3QA1ybrF4Fo5Mq5+oWq39o+bRWhcjPCD9SBmvz9G
-	fb+PGdnPvK3gDLG65+tqXqJLZazNOr+X2kGQ5PfmqxYk5dj1tDhlvSb5pp9z/A==
-X-Google-Smtp-Source: AGHT+IGWfJd4hsp4cquzrMgFaq/8ztZK/NQH0jQErvnt6KcdvzJSodCboJ3PnepuNNUxb0g3iW3fHA==
-X-Received: by 2002:a0c:f885:0:b0:690:4916:4de9 with SMTP id u5-20020a0cf885000000b0069049164de9mr4614368qvn.34.1709397441567;
-        Sat, 02 Mar 2024 08:37:21 -0800 (PST)
-Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
-        by smtp.gmail.com with ESMTPSA id ks30-20020a056214311e00b0068ffde5efb0sm3123189qvb.49.2024.03.02.08.37.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Mar 2024 08:37:21 -0800 (PST)
-Date: Sat, 2 Mar 2024 11:37:20 -0500
-From: Mike Snitzer <snitzer@kernel.org>
-To: Fan Wu <wufan@linux.microsoft.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-	serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-	axboe@kernel.dk, agk@redhat.com, eparis@redhat.com,
-	paul@paul-moore.com, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev, audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [RFC PATCH v13 14/20] dm verity: consume root hash digest and
- signature data via LSM hook
-Message-ID: <ZeNVwBkbw2HlMRfa@redhat.com>
-References: <1709168102-7677-1-git-send-email-wufan@linux.microsoft.com>
- <1709168102-7677-15-git-send-email-wufan@linux.microsoft.com>
+        d=1e100.net; s=20230601; t=1709416883; x=1710021683;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q3M34FWobjqPtnWOqzGg30ObKeBgydcgxPiKSeEQiOY=;
+        b=T0almvoveg2BZ9J7CmNUoUe4ONnEddkiFSeu+dJRoZiL8wD4AeyNwrglPJli865dPF
+         mMtGHr1hpaoj3D1+fqCRHWbxfTNsvPCF02uG+kV6bLGdqpVPtAaBxqHYjPbTm4se3nYy
+         Up5fHeORy2qAktFyrIkGZ7p1Y1mvJT2PcUjH38GlZ+IayySA0qUpJuFJaXbW3Gh9cb+k
+         Oz9t+5zCPcBZBvTRih1NDw83jUe9cwVf80KrVWam0jMfO5EujIrqYmIpj6zsK8lk7RTk
+         zaR8CT8RNKcEgdQ0pCB8u7VsVs0saF0CzdrtDApat2suM4Df6R/rFG+PQeUbUHq+smLj
+         a5rw==
+X-Forwarded-Encrypted: i=1; AJvYcCU30/clCWUM0WtMCtMyKwnqZ29KNzWWr1O2oQxYokZrqvaK3OJe5esPK8Ha59WOiyLRc6DsCQ6LValQODaVRCyMR754n1MSwdUOBEYI+rVf8piP7fXv
+X-Gm-Message-State: AOJu0YybfHu8XhGoDLwdhyXmudKHPLqAqERDt0rsDZIIGsF3QAkdErDZ
+	4OmdYsZV3ZY4S6TlT8RG/NZHYbuLJtaCopIt/RvDM4IxCaUWm/lum78dD9UiiwAxpvcxZPHX66l
+	Mjpp5wuvslVA2X9yGJ0y5lIFGMAGH6n2AHPNjILu5FvAO8g4FOP4UKvg=
+X-Google-Smtp-Source: AGHT+IEQa4oolF2z3xz9DIGmao/Pmt+aFKPGyEsZJoydvCaIAj6R2F1hXIyRP3YCclJJNKJtH7jISHo4Fhu+KOHiX0G8NcXA3nz3
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1709168102-7677-15-git-send-email-wufan@linux.microsoft.com>
+X-Received: by 2002:a05:6e02:1a48:b0:365:21f4:7005 with SMTP id
+ u8-20020a056e021a4800b0036521f47005mr348993ilv.4.1709416883620; Sat, 02 Mar
+ 2024 14:01:23 -0800 (PST)
+Date: Sat, 02 Mar 2024 14:01:23 -0800
+In-Reply-To: <0000000000002be12a0611ca7ff8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001f13040612b4a2f4@google.com>
+Subject: Re: [syzbot] [lsm?] [integrity?] KMSAN: uninit-value in ima_add_template_entry
+From: syzbot <syzbot+7bc44a489f0ef0670bd5@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	paul@paul-moore.com, roberto.sassu@huawei.com, roberto.sassu@huaweicloud.com, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 28 2024 at  7:54P -0500,
-Fan Wu <wufan@linux.microsoft.com> wrote:
+syzbot has found a reproducer for the following issue on:
 
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
-> 
-> dm-verity provides a strong guarantee of a block device's integrity. As
-> a generic way to check the integrity of a block device, it provides
-> those integrity guarantees to its higher layers, including the filesystem
-> level.
-> 
-> An LSM that control access to a resource on the system based on the
-> available integrity claims can use this transitive property of
-> dm-verity, by querying the underlying block_device of a particular
-> file.
-> 
-> The digest and signature information need to be stored in the block
-> device to fulfill the next requirement of authorization via LSM policy.
-> This will enable the LSM to perform revocation of devices that are still
-> mounted, prohibiting execution of files that are no longer authorized
-> by the LSM in question.
-> 
-> This patch added two security hook calls in dm-verity to save the
-> dm-verity roothash and the roothash signature to the block device's
-> LSM blobs. The hook calls are depended on CONFIG_IPE_PROP_DM_VERITY,
-> which will be introduced in the next commit.
-> 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> ---
-> v2:
->   + No Changes
-> 
-> v3:
->   + No changes
-> 
-> v4:
->   + No changes
-> 
-> v5:
->   + No changes
-> 
-> v6:
->   + Fix an improper cleanup that can result in
->     a leak
-> 
-> v7:
->   + Squash patch 08/12, 10/12 to [11/16]
->   + Use part0 for block_device, to retrieve the block_device, when
->     calling security_bdev_setsecurity
-> 
-> v8:
->   + Undo squash of 08/12, 10/12 - separating drivers/md/ from
->     security/ & block/
->   + Use common-audit function for dmverity_signature.
->   + Change implementation for storing the dm-verity digest to use the
->     newly introduced dm_verity_digest structure introduced in patch
->     14/20.
->   + Create new structure, dm_verity_digest, containing digest algorithm,
->     size, and digest itself to pass to the LSM layer. V7 was missing the
->     algorithm.
->   + Create an associated public header containing this new structure and
->     the key values for the LSM hook, specific to dm-verity.
->   + Additional information added to commit, discussing the layering of
->     the changes and how the information passed will be used.
-> 
-> v9:
->   + No changes
-> 
-> v10:
->   + No changes
-> 
-> v11:
->   + Add an optional field to save signature
->   + Move the security hook call to the new finalize hook
-> 
-> v12:
->   + No changes
-> 
-> v13:
->   + No changes
-> ---
->  drivers/md/dm-verity-target.c | 71 +++++++++++++++++++++++++++++++++++
->  drivers/md/dm-verity.h        |  6 +++
->  include/linux/dm-verity.h     | 19 ++++++++++
->  3 files changed, 96 insertions(+)
->  create mode 100644 include/linux/dm-verity.h
-> 
-> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-> index a99ef30e45ca..e7bc6afae708 100644
-> --- a/drivers/md/dm-verity-target.c
-> +++ b/drivers/md/dm-verity-target.c
-> @@ -13,6 +13,7 @@
->   * access behavior.
->   */
->  
-> +#include "dm-core.h"
->  #include "dm-verity.h"
->  #include "dm-verity-fec.h"
->  #include "dm-verity-verify-sig.h"
+HEAD commit:    5ad3cb0ed525 Merge tag 'for-v6.8-rc2' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15fdefac180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=80c7a82a572c0de3
+dashboard link: https://syzkaller.appspot.com/bug?extid=7bc44a489f0ef0670bd5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11917b26180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1256096a180000
 
-Why are you including dm-core.h? (DM targets really shouldn't need it).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a148235ac5b1/disk-5ad3cb0e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4b06f4d02ad6/vmlinux-5ad3cb0e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7fff06beed25/bzImage-5ad3cb0e.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/adece4ed9c9c/mount_0.gz
 
-And from that header:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7bc44a489f0ef0670bd5@syzkaller.appspotmail.com
 
-/*
- * DM core internal structures used directly by dm.c, dm-rq.c and dm-table.c.
- * DM targets must _not_ deference a mapped_device or dm_table to directly
- * access their members!
- */
+erofs: (device loop0): mounted with root inode @ nid 36.
+=====================================================
+BUG: KMSAN: uninit-value in ima_add_template_entry+0x52b/0x870 security/integrity/ima/ima_queue.c:172
+ ima_add_template_entry+0x52b/0x870 security/integrity/ima/ima_queue.c:172
+ ima_store_template security/integrity/ima/ima_api.c:122 [inline]
+ ima_store_measurement+0x371/0x8d0 security/integrity/ima/ima_api.c:376
+ process_measurement+0x2c6e/0x3ef0 security/integrity/ima/ima_main.c:367
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-> @@ -22,6 +23,9 @@
->  #include <linux/scatterlist.h>
->  #include <linux/string.h>
->  #include <linux/jump_label.h>
-> +#include <linux/security.h>
-> +#include <linux/dm-verity.h>
-> +#include <crypto/hash_info.h>
->  
->  #define DM_MSG_PREFIX			"verity"
->  
-> @@ -990,6 +994,17 @@ static void verity_io_hints(struct dm_target *ti, struct queue_limits *limits)
->  	blk_limits_io_min(limits, limits->logical_block_size);
->  }
->  
-> +#ifdef CONFIG_IPE_PROP_DM_VERITY
-> +static void verity_free_sig(struct dm_verity *v)
-> +{
-> +	kfree(v->root_digest_sig);
-> +}
-> +#else
-> +static inline void verity_free_sig(struct dm_verity *v)
-> +{
-> +}
-> +#endif /* CONFIG_IPE_PROP_DM_VERITY */
-> +
->  static void verity_dtr(struct dm_target *ti)
->  {
->  	struct dm_verity *v = ti->private;
-> @@ -1008,6 +1023,7 @@ static void verity_dtr(struct dm_target *ti)
->  	kfree(v->salt);
->  	kfree(v->root_digest);
->  	kfree(v->zero_digest);
-> +	verity_free_sig(v);
->  
->  	if (v->tfm)
->  		crypto_free_ahash(v->tfm);
-> @@ -1199,6 +1215,25 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
->  	return r;
->  }
->  
-> +#ifdef CONFIG_IPE_PROP_DM_VERITY
-> +static int verity_init_sig(struct dm_verity *v, const void *sig,
-> +			   size_t sig_size)
-> +{
-> +	v->sig_size = sig_size;
-> +	v->root_digest_sig = kmalloc(v->sig_size, GFP_KERNEL);
-> +	if (!v->root_digest)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +#else
-> +static inline int verity_init_sig(struct dm_verity *v, const void *sig,
-> +				  size_t sig_size)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_IPE_PROP_DM_VERITY */
-> +
->  /*
->   * Target parameters:
->   *	<version>	The current format is version 1.
-> @@ -1407,6 +1442,13 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
->  		ti->error = "Root hash verification failed";
->  		goto bad;
->  	}
-> +
-> +	r = verity_init_sig(v, verify_args.sig, verify_args.sig_size);
-> +	if (r < 0) {
-> +		ti->error = "Cannot allocate root digest signature";
-> +		goto bad;
-> +	}
-> +
->  	v->hash_per_block_bits =
->  		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
->  
-> @@ -1557,6 +1599,32 @@ int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest, unsigned i
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_IPE_PROP_DM_VERITY
-> +static int verity_finalize(struct dm_target *ti)
-> +{
-> +	struct block_device *bdev;
-> +	struct dm_verity_digest root_digest;
-> +	struct dm_verity *v;
-> +	int r;
-> +
-> +	v = ti->private;
-> +	bdev = dm_table_get_md(ti->table)->disk->part0;
+<Zero or more stacks not recorded to save memory>
 
-Must be for dereferencing mapped_device struct here ^
+Uninit was stored to memory at:
+ sha256_transform lib/crypto/sha256.c:117 [inline]
+ sha256_transform_blocks+0x2dbf/0x2e80 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x2fb/0x340 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x37/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x75/0xa0 crypto/shash.c:70
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:496 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1816/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Please remove the dm-core.h include and use this instead:
+Uninit was stored to memory at:
+ sha256_transform lib/crypto/sha256.c:117 [inline]
+ sha256_transform_blocks+0x2dbf/0x2e80 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x2fb/0x340 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x37/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x75/0xa0 crypto/shash.c:70
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:496 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1816/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-struct gendisk *disk = dm_disk(dm_table_get_md(ti->table));
+Uninit was stored to memory at:
+ BLEND_OP lib/crypto/sha256.c:61 [inline]
+ sha256_transform lib/crypto/sha256.c:91 [inline]
+ sha256_transform_blocks+0xf33/0x2e80 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x2fb/0x340 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x37/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x75/0xa0 crypto/shash.c:70
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:496 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1816/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Mike
+Uninit was stored to memory at:
+ BLEND_OP lib/crypto/sha256.c:61 [inline]
+ sha256_transform lib/crypto/sha256.c:92 [inline]
+ sha256_transform_blocks+0xf7d/0x2e80 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x2fb/0x340 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x37/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x75/0xa0 crypto/shash.c:70
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:496 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1816/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-> +	root_digest.digest = v->root_digest;
-> +	root_digest.digest_len = v->digest_size;
-> +	root_digest.alg = v->alg_name;
-> +
-> +	r = security_bdev_setsecurity(bdev, DM_VERITY_ROOTHASH_SEC_NAME, &root_digest,
-> +				      sizeof(root_digest));
-> +	if (r)
-> +		return r;
-> +
-> +	return security_bdev_setsecurity(bdev,
-> +					 DM_VERITY_SIGNATURE_SEC_NAME,
-> +					 v->root_digest_sig,
-> +					 v->sig_size);
-> +}
-> +#endif /* CONFIG_IPE_PROP_DM_VERITY */
-> +
->  static struct target_type verity_target = {
->  	.name		= "verity",
->  	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
+Uninit was stored to memory at:
+ BLEND_OP lib/crypto/sha256.c:61 [inline]
+ sha256_transform lib/crypto/sha256.c:93 [inline]
+ sha256_transform_blocks+0xfb5/0x2e80 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x2fb/0x340 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x37/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x75/0xa0 crypto/shash.c:70
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:496 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1816/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was stored to memory at:
+ LOAD_OP lib/crypto/sha256.c:56 [inline]
+ sha256_transform lib/crypto/sha256.c:82 [inline]
+ sha256_transform_blocks+0x2c35/0x2e80 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x2fb/0x340 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x37/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x75/0xa0 crypto/shash.c:70
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:496 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1816/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_kvec include/linux/iov_iter.h:85 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:251 [inline]
+ iterate_and_advance include/linux/iov_iter.h:271 [inline]
+ _copy_to_iter+0x125a/0x2520 lib/iov_iter.c:186
+ copy_page_to_iter+0x419/0x870 lib/iov_iter.c:381
+ copy_folio_to_iter include/linux/uio.h:181 [inline]
+ filemap_read+0xbf4/0x14d0 mm/filemap.c:2654
+ generic_file_read_iter+0x136/0xad0 mm/filemap.c:2784
+ __kernel_read+0x724/0xce0 fs/read_write.c:434
+ integrity_kernel_read+0x77/0x90 security/integrity/iint.c:221
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:485 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1743/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was created at:
+ __alloc_pages+0x9a6/0xe00 mm/page_alloc.c:4590
+ alloc_pages_mpol+0x62b/0x9d0 mm/mempolicy.c:2133
+ alloc_pages mm/mempolicy.c:2204 [inline]
+ folio_alloc+0x1da/0x380 mm/mempolicy.c:2211
+ filemap_alloc_folio+0xa5/0x430 mm/filemap.c:975
+ page_cache_ra_unbounded+0x2cc/0x960 mm/readahead.c:247
+ do_page_cache_ra mm/readahead.c:299 [inline]
+ page_cache_ra_order+0xe31/0xee0 mm/readahead.c:544
+ ondemand_readahead+0x157d/0x1750 mm/readahead.c:666
+ page_cache_sync_ra+0x724/0x760 mm/readahead.c:693
+ page_cache_sync_readahead include/linux/pagemap.h:1300 [inline]
+ filemap_get_pages+0x4c4/0x2bd0 mm/filemap.c:2498
+ filemap_read+0x59e/0x14d0 mm/filemap.c:2594
+ generic_file_read_iter+0x136/0xad0 mm/filemap.c:2784
+ __kernel_read+0x724/0xce0 fs/read_write.c:434
+ integrity_kernel_read+0x77/0x90 security/integrity/iint.c:221
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:485 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+ ima_calc_file_hash+0x1743/0x3cc0 security/integrity/ima/ima_crypto.c:573
+ ima_collect_measurement+0x44d/0xdd0 security/integrity/ima/ima_api.c:290
+ process_measurement+0x2936/0x3ef0 security/integrity/ima/ima_main.c:359
+ ima_file_check+0xb3/0x100 security/integrity/ima/ima_main.c:557
+ do_open fs/namei.c:3647 [inline]
+ path_openat+0x4d09/0x5ad0 fs/namei.c:3802
+ do_filp_open+0x20d/0x590 fs/namei.c:3829
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_open fs/open.c:1427 [inline]
+ __se_sys_open fs/open.c:1423 [inline]
+ __x64_sys_open+0x275/0x2d0 fs/open.c:1423
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+CPU: 0 PID: 5012 Comm: syz-executor394 Not tainted 6.8.0-rc6-syzkaller-00238-g5ad3cb0ed525 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
+=====================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
