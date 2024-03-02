@@ -1,445 +1,85 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5D514275;
-	Sat,  2 Mar 2024 10:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4A918627
+	for <linux-security-module@vger.kernel.org>; Sat,  2 Mar 2024 16:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709375508; cv=none; b=fOZNE0Q23KT2ACUCJxzMKVrpwvMqzSJwgqHbdQ6ccfbDexKvy9I+Eh1yWKUEuDgox/xRT2PmzB8KJzFwfe13X6k9EIw4J8zyEOtMUSozWgj6xS+4kcAqy9ZmrtqOqViPOPrADY6iA+jTFpNElTESt5h//R+iyxZeo55aw40JXTs=
+	t=1709395291; cv=none; b=Bs1LojGQEFMP47yKxCT8iUwFBrz0ZL1hv/RvZ72ndhPpKrWaGuNgDk0+k49HSQ77rEPUwnlQBri21mhBxMP3vgFTCAkKgYUi/UzBucFAK9fWEophGIP4XaZGoU+IVNdtAi+u1Od8pP23B0eqoRJIUXhcHv17Y/BynZBcEtRDoPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709375508; c=relaxed/simple;
-	bh=beDdbXEFaSG4DXuS5QVb0tO5/w8BENgdJ6p8YrVG+SU=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=OXm5w5KKiM5AkOxYaIBmHbtKaPvI3Qmpy+IXiZKoNIBIfKUbbQxtl42o0cfBugsP0mocWKyUmltre9BtH9/q5zwnEKHnHyWcyDBO+N9jw8iWoksGFHyUSmdtWbNzndxd9rJEwLscQHWLp247cfnKWzDa3lXK/XUsq3Yy0ZBj2/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 9C3A337802F2;
-	Sat,  2 Mar 2024 10:31:37 +0000 (UTC)
-From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
-In-Reply-To: <202403011451.C236A38@keescook>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240301213442.198443-1-adrian.ratiu@collabora.com> <202403011451.C236A38@keescook>
-Date: Sat, 02 Mar 2024 10:31:37 +0000
-Cc: linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Randy Dunlap" <rdunlap@infradead.org>, "Christian Brauner" <brauner@kernel.org>, "Mike Frysinger" <vapier@chromium.org>
-To: "Kees Cook" <keescook@chromium.org>
+	s=arc-20240116; t=1709395291; c=relaxed/simple;
+	bh=LFiAtGjubDWpNLUQxtbJ/E7SHByKNPAdC4jbSr77kCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gbo7frBjrrZjhw3+C/zO5Qh2qadX27AC7q7z9VbIKVDiQtR2rPfGlp/o+q7o8VOkee31q1pbjCygbVZlrKmno5Prb9ra1sgT6xNYx70iuD5TcmXZDFpDsBXvfaDHGpUTmOYgG2uGbSjbD54sSgjbWAzgHqS4CtTkCHy0Dly1rso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-68f9e399c91so24601936d6.2
+        for <linux-security-module@vger.kernel.org>; Sat, 02 Mar 2024 08:01:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709395288; x=1710000088;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XenCVyPUGE/ocH2LizUOZPuh6vZd/WYCNYixpMDiLyI=;
+        b=ktSXyI9oTTwUMexAJNzDeq+QxVx89weWP6m9jpD0pZICVu/ENuswvaoHe7P89h0pTN
+         oquWeIbDiIU2Fe1Yj07Rsm8Fa3MO53adT6iOIX3sMxqYg+AYyuuw7IAeWulsasQn7zAK
+         6F2QbT4bu42yqQJsU7WEx7ULBOfN0lzIAPXAOSxgK0bvT5qddulq0XgITmZ9ojXN1lWF
+         MarsI05OWF2nNqY0CRrJLfkfscWQc56poYzNN6AhZDHBtvLEv+rz3n9ocpfEaeDEdm5T
+         oAl4zotemyrgl0XIeacu75I5N5YBRWom4VhmvCdSAq8aqbjZrtpjl47RaMVX3gSTh+4h
+         98lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3XOMHCjCcdIUWTkzrpKBqR7DkECRwkkvNXj8VjRSsNxZniIA8K+OAqHRtwJTv9O6FJ0M3hS/fK6pqMXYeUJDWISXlnYLseBfUNuI99rpO6mm9HUj5
+X-Gm-Message-State: AOJu0YwKtTk2FyxlRjWcAuhPSAk/61tB/aaiHUR3ed0PyY5tPCYPnOZZ
+	mVtL+s2e+nBHvOv0XqdidUhrfw8ZPO45dMtbFtAp+lCHxU/sQ9oZESh+ssJNjw==
+X-Google-Smtp-Source: AGHT+IGzvxitZoqsBYuFgO2HzG9/T+9mfzbc+Y/oQjpPYffJx1lNgpS1DLq5H2YZNnh++/V9NyR/5Q==
+X-Received: by 2002:a05:6214:57cc:b0:690:6b94:67fb with SMTP id lw12-20020a05621457cc00b006906b9467fbmr9186qvb.21.1709395288340;
+        Sat, 02 Mar 2024 08:01:28 -0800 (PST)
+Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
+        by smtp.gmail.com with ESMTPSA id me19-20020a0562145d1300b0068f85706ecfsm3064940qvb.104.2024.03.02.08.01.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Mar 2024 08:01:27 -0800 (PST)
+Date: Sat, 2 Mar 2024 11:01:25 -0500
+From: Mike Snitzer <snitzer@kernel.org>
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+	serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+	axboe@kernel.dk, agk@redhat.com, eparis@redhat.com,
+	paul@paul-moore.com, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v13 12/20] dm verity: set DM_TARGET_SINGLETON feature
+ flag
+Message-ID: <ZeNNVWxkhki8lX55@redhat.com>
+References: <1709168102-7677-1-git-send-email-wufan@linux.microsoft.com>
+ <1709168102-7677-13-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <158ea-65e30000-105-38e7da00@91796698>
-Subject: =?utf-8?q?Re=3A?= [PATCH v2] =?utf-8?q?proc=3A?= allow restricting 
- /proc/pid/mem writes
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1709168102-7677-13-git-send-email-wufan@linux.microsoft.com>
 
-On Saturday, March 02, 2024 01:55 EET, Kees Cook <keescook@chromium.org=
-> wrote:
+On Wed, Feb 28 2024 at  7:54P -0500,
+Fan Wu <wufan@linux.microsoft.com> wrote:
 
-> On Fri, Mar 01, 2024 at 11:34:42PM +0200, Adrian Ratiu wrote:
-> > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-> > after which it got allowed in commit 198214a7ee50 ("proc: enable
-> > writing to /proc/pid/mem"). Famous last words from that patch:
-> > "no longer a security hazard". :)
-> >=20
-> > Afterwards exploits appeared started causing drama like [1]. The
->=20
-> nit: I think "appeared" can be dropped here.
->=20
-> > /proc/*/mem exploits can be rather sophisticated like [2] which
-> > installed an arbitrary payload from noexec storage into a running
-> > process then exec'd it, which itself could include an ELF loader
-> > to run arbitrary code off noexec storage.
-> >=20
-> > As part of hardening against these types of attacks, distrbutions
-> > can restrict /proc/*/mem to only allow writes when they makes sense=
-,
-> > like in case of debuggers which have ptrace permissions, as they
-> > are able to access memory anyway via PTRACE=5FPOKEDATA and friends.
-> >=20
-> > Dropping the mode bits disables write access for non-root users.
-> > Trying to `chmod` the paths back fails as the kernel rejects it.
-> >=20
-> > For users with CAP=5FDAC=5FOVERRIDE (usually just root) we have to
-> > disable the mem=5Fwrite callback to avoid bypassing the mode bits.
-> >=20
-> > Writes can be used to bypass permissions on memory maps, even if a
-> > memory region is mapped r-x (as is a program's executable pages),
-> > the process can open its own /proc/self/mem file and write to the
-> > pages directly.
-> >=20
-> > Even if seccomp filters block mmap/mprotect calls with W|X perms,
-> > they often cannot block open calls as daemons want to read/write
-> > their own runtime state and seccomp filters cannot check file paths=
-.
-> > Write calls also can't be blocked in general via seccomp.
-> >=20
-> > Since the mem file is part of the dynamic /proc/<pid>/ space, we
-> > can't run chmod once at boot to restrict it (and trying to react
-> > to every process and run chmod doesn't scale, and the kernel no
-> > longer allows chmod on any of these paths).
-> >=20
-> > SELinux could be used with a rule to cover all /proc/*/mem files,
-> > but even then having multiple ways to deny an attack is useful in
-> > case on layer fails.
->=20
-> Everything above here is good to keep in the commit log, but it's all
-> the "background". Please also write here what has been done to addres=
-s
-> the background above it. e.g.:
->=20
-> "Introduce a CONFIG and a =5F=5Fro=5Fafter=5Finit runtime toggle to m=
-ake
-> it so only processes that are already tracing the task to write to
-> /proc/<pid>/mem." etc
->=20
-> >=20
-> > [1] https://lwn.net/Articles/476947/
-> > [2] https://issues.chromium.org/issues/40089045
->=20
-> These can be:
->=20
-> Link: https://lwn.net/Articles/476947/ [1]
-> Link: https://issues.chromium.org/issues/40089045 [2]
->=20
-> > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
-> >=20
-> > Cc: Guenter Roeck <groeck@chromium.org>
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Jann Horn <jannh@google.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Co-developed-by: Mike Frysinger <vapier@chromium.org>
-> > Signed-off-by: Mike Frysinger <vapier@chromium.org>
-> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> > ---
-> > Changes in v2:
-> >  * Added boot time parameter with default kconfig option
-> >  * Moved check earlier in mem=5Fopen() instead of mem=5Fwrite()
-> >  * Simplified implementation branching
-> >  * Removed dependency on CONFIG=5FMEMCG
->=20
-> Can you mention in the commit log what behaviors have been tested wit=
-h
-> this patch? For example, I assume gdb still works with
-> restrict=5Fproc=5Fmem=5Fwrite=3Dy ?
->=20
+> The device-mapper has a flag to mark targets as singleton, which is a
+> required flag for immutable targets. Without this flag, multiple
+> dm-verity targets can be added to a mapped device, which has no
+> practical use cases. Also from dm_table_get_immutable_target(),
+> it documented that "Immutable target is implicitly a singleton".
+> 
+> This patch adds the missing flag, restricting only one
+> dm-verity target per mapped device.
+> 
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-Thanks, I will address all the above commit message feedback in v3.
+FYI, I have picked this one up and staged it in dm-6.9 and linux-next:
+https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-6.9&id=9356fcfe0ac4a8545f9fc32f2e404524e1115ee6
 
-Yes, gdb and gdbserver work with restrict=5Fproc=5Fmem=5Fwrite=3Dy. My =
-testing is
-focused on the correct functioning of GDB and gdbserver (lldb/server us=
-e=20
-ptrace POKEDATA so they work regardless of restrict=5Fproc=5Fmem=5Fwrit=
-e).
-
-This all started from my attempt to fix gdbserver by adding a ptrace fa=
-llback
-in case /proc/pid/mem writes are blocked without any exception, because
-that breaks basic functionality like setting breakpoints.
-
-GDB upstream NAK'ed my ptrace fallback approach because it's doesn't
-work well with their /proc/pid/mem focused design required for non-stop=20
-mode (the default all-stop mode is emulated on top of non-stop), as wel=
-l
-as ptrace peek/poke requiring a live task which can cause memory access
-problems if the ptraced task dies.
-
-Other solutions were considered by GDB upstream, including using the=20
-process=5Fvm=5Fwritev & co, but they respect page permissions and GDB h=
-as
-to write RO pages to set breakpoints.
-
-In the end GDB maintainers directed me to do a proper kernel fix with a=
-n
-exception for tasks already ptracing others, because from a security
-perspective, they can already access tracee memory regardless of
-/proc/pid/mem restrictions, so here we are. :)
-
-> When this is enabled, what =5Fdoes=5F break that people might expect =
-to
-> work?
-
-With the current iteration, all things I tested work as expected. It is=
- rather
-hard to come up with things that break with restrict=5Fproc=5Fmem=5Fwri=
-te=3Dy,
-because other than debuggers and exploits I don't have other use-cases.
-
-Obvious things like "echo >/proc/self/mem" get permission denied, but
-that is expected with restrict=5Fproc=5Fmem=5Fwrite=3Dy, so I wouldn't =
-classify
-it as breakage.
-
-In theory there might be some weird/legacy apps which might break, so
-that is why I suggest we land the mechanism as default off, and later,
-after it gets tested in various distributions, pull the trigger to make=
- it
-default on.
-
->=20
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |  4 ++
-> >  fs/proc/base.c                                | 47 +++++++++++++++=
-+++-
-> >  security/Kconfig                              | 22 +++++++++
-> >  3 files changed, 71 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Docu=
-mentation/admin-guide/kernel-parameters.txt
-> > index 460b97a1d0da..0647e2f54248 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -5618,6 +5618,10 @@
-> >  	reset=5Fdevices	[KNL] Force drivers to reset the underlying devic=
-e
-> >  			during initialization.
-> > =20
-> > +	restrict=5Fproc=5Fmem=5Fwrite=3D [KNL]
->=20
-> Please add here:
->=20
-> 			Format: <bool>
->=20
-
-Ack, will do in v3.
-
-> > +			Enable or disable write access to /proc/*/mem files.
-> > +			Default is SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE=5FDEFAULT=5F=
-ON.
-> > +
-> >  	resume=3D		[SWSUSP]
-> >  			Specify the partition device for software suspend
-> >  			Format:
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 98a031ac2648..92f668191312 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -152,6 +152,30 @@ struct pid=5Fentry {
-> >  		NULL, &proc=5Fpid=5Fattr=5Foperations,	\
-> >  		{ .lsmid =3D LSMID })
-> > =20
-> > +#ifdef CONFIG=5FSECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE
->=20
-> Please drop this CONFIG entirely -- it should be always available for
-> all builds of the kernel. Only CONFIG=5FSECURITY=5FPROC=5FMEM=5FRESTR=
-ICT=5FWRITE=5FDEFAULT=5FON
-> needs to remain.
->=20
-
-Ack, will do in v3.
-
-> > +DEFINE=5FSTATIC=5FKEY=5FMAYBE=5FRO(CONFIG=5FSECURITY=5FPROC=5FMEM=5F=
-RESTRICT=5FWRITE=5FDEFAULT=5FON,
-> > +			   restrict=5Fproc=5Fmem=5Fwrite);
-> > +static int =5F=5Finit early=5Frestrict=5Fproc=5Fmem=5Fwrite(char *=
-buf)
-> > +{
-> > +	int ret;
-> > +	bool bool=5Fresult;
-> > +
-> > +	ret =3D kstrtobool(buf, &bool=5Fresult);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (bool=5Fresult)
-> > +		static=5Fbranch=5Fenable(&restrict=5Fproc=5Fmem=5Fwrite);
-> > +	else
-> > +		static=5Fbranch=5Fdisable(&restrict=5Fproc=5Fmem=5Fwrite);
-> > +	return 0;
-> > +}
-> > +early=5Fparam("restrict=5Fproc=5Fmem=5Fwrite", early=5Frestrict=5F=
-proc=5Fmem=5Fwrite);
-> > +# define PROC=5FPID=5FMEM=5FMODE S=5FIRUSR
-> > +#else
-> > +# define PROC=5FPID=5FMEM=5FMODE (S=5FIRUSR|S=5FIWUSR)
-> > +#endif
->=20
-> PROC=5FPID=5FMEM=5FMODE will need to be a =5F=5Fro=5Fafter=5Finit var=
-iable, set by
-> early=5Frestrict=5Fproc=5Fmem=5Fwrite, otherwise the mode won't chang=
-e based on
-> the runtime setting. e.g.:
->=20
-> #ifdef CONFIG=5FSECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE=5FDEFAULT=5F=
-ON
-> mode=5Ft proc=5Fpid=5Fmem=5Fmode =5F=5Fro=5Fafter=5Finit =3D S=5FIRUS=
-R;
-> #else
-> mode=5Ft proc=5Fpid=5Fmem=5Fmode =5F=5Fro=5Fafter=5Finit =3D (S=5FIRU=
-SR|S=5FIWUSR);
-> #endif
->=20
-> DEFINE=5FSTATIC=5FKEY=5FMAYBE=5FRO(CONFIG=5FSECURITY=5FPROC=5FMEM=5FR=
-ESTRICT=5FWRITE=5FDEFAULT=5FON,
-> 			   restrict=5Fproc=5Fmem=5Fwrite);
-> ...
-> 	if (bool=5Fresult) {
-> 		static=5Fbranch=5Fenable(&restrict=5Fproc=5Fmem=5Fwrite);
-> 		proc=5Fpid=5Fmem=5Fmode =3D S=5FIRUSR;
-> 	} else {
-> 		static=5Fbranch=5Fdisable(&restrict=5Fproc=5Fmem=5Fwrite);
-> 		proc=5Fpid=5Fmem=5Fmode =3D (S=5FIRUSR|S=5FIWUSR);
-> 	}
-> ...
-> 	REG("mem",        proc=5Fpid=5Fmem=5Fmode, proc=5Fmem=5Foperations),
->=20
->=20
-
-Ack, will do in v3.
-
-> > +
-> >  /*
-> >   * Count the number of hardlinks for the pid=5Fentry table, exclud=
-ing the .
-> >   * and .. links.
-> > @@ -829,6 +853,25 @@ static int mem=5Fopen(struct inode *inode, str=
-uct file *file)
-> >  {
-> >  	int ret =3D =5F=5Fmem=5Fopen(inode, file, PTRACE=5FMODE=5FATTACH)=
-;
-> > =20
-> > +#ifdef CONFIG=5FSECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE
->=20
-> Drop this ifdef (as mentioned above).
->=20
-> > +	struct mm=5Fstruct *mm =3D file->private=5Fdata;
-> > +	struct task=5Fstruct *task =3D get=5Fproc=5Ftask(inode);
-> > +
-> > +	if (mm && task) {
-> > +		/* Only allow writes by processes already ptracing the target ta=
-sk */
-> > +		if (file->f=5Fmode & FMODE=5FWRITE &&
-> > +		    static=5Fbranch=5Fmaybe(CONFIG=5FSECURITY=5FPROC=5FMEM=5FRES=
-TRICT=5FWRITE=5FDEFAULT=5FON,
-> > +					&restrict=5Fproc=5Fmem=5Fwrite)) {
->=20
-> Do we need to also do an mm=5Faccess() on the task to verify that the=
- task
-> we're about to check has its mm still matching file->private=5Fdata? =
-The
-> PID can change out from under us (but the mm cannot).
->=20
-
-Likely yes, will look into this for v3.
-
-> > +			rcu=5Fread=5Flock();
-> > +			if (!ptracer=5Fcapable(current, mm->user=5Fns) ||
-> > +			    current !=3D ptrace=5Fparent(task))
->=20
-> If you're just allowing "already ptracing", why include the
-> ptracer=5Fcapable() check?
->=20
-
-It is a very good observation that the check is redundant. :)
-
-It is a remnant from a previous iteration of this patch, from
-when I was proposing solutions to GDB upstream. I left it there
-because it doesn't do much harm to verify capability as well,
-more of a precaution / test invariant than anything else.
-
-I'll remove it in v3 since it might cause confusion.
-
-> > +				ret =3D -EACCES;
-> > +			rcu=5Fread=5Funlock();
-> > +		}
-> > +		put=5Ftask=5Fstruct(task);
-> > +	}
-> > +#endif
-> > +
-> >  	/* OK to pass negative loff=5Ft, we can catch out-of-range */
-> >  	file->f=5Fmode |=3D FMODE=5FUNSIGNED=5FOFFSET;
-> > =20
-> > @@ -3281,7 +3324,7 @@ static const struct pid=5Fentry tgid=5Fbase=5F=
-stuff[] =3D {
-> >  #ifdef CONFIG=5FNUMA
-> >  	REG("numa=5Fmaps",  S=5FIRUGO, proc=5Fpid=5Fnuma=5Fmaps=5Foperati=
-ons),
-> >  #endif
-> > -	REG("mem",        S=5FIRUSR|S=5FIWUSR, proc=5Fmem=5Foperations),
-> > +	REG("mem",        PROC=5FPID=5FMEM=5FMODE, proc=5Fmem=5Foperation=
-s),
-> >  	LNK("cwd",        proc=5Fcwd=5Flink),
-> >  	LNK("root",       proc=5Froot=5Flink),
-> >  	LNK("exe",        proc=5Fexe=5Flink),
-> > @@ -3631,7 +3674,7 @@ static const struct pid=5Fentry tid=5Fbase=5F=
-stuff[] =3D {
-> >  #ifdef CONFIG=5FNUMA
-> >  	REG("numa=5Fmaps", S=5FIRUGO, proc=5Fpid=5Fnuma=5Fmaps=5Foperatio=
-ns),
-> >  #endif
-> > -	REG("mem",       S=5FIRUSR|S=5FIWUSR, proc=5Fmem=5Foperations),
-> > +	REG("mem",       PROC=5FPID=5FMEM=5FMODE, proc=5Fmem=5Foperations=
-),
-> >  	LNK("cwd",       proc=5Fcwd=5Flink),
-> >  	LNK("root",      proc=5Froot=5Flink),
-> >  	LNK("exe",       proc=5Fexe=5Flink),
-> > diff --git a/security/Kconfig b/security/Kconfig
-> > index 412e76f1575d..ffee9e847ed9 100644
-> > --- a/security/Kconfig
-> > +++ b/security/Kconfig
-> > @@ -19,6 +19,28 @@ config SECURITY=5FDMESG=5FRESTRICT
-> > =20
-> >  	  If you are unsure how to answer this question, answer N.
-> > =20
-> > +config SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE
-> > +	bool "Restrict /proc/*/mem write access"
-> > +	default n
-> > +	help
-> > +	  This restricts writes to /proc/<pid>/mem, except when the curre=
-nt
-> > +	  process ptraces the /proc/<pid>/mem task, because a ptracer alr=
-eady
-> > +	  has write access to the tracee memory.
-> > +
-> > +	  Write access to this file allows bypassing memory map permissio=
-ns,
-> > +	  such as modifying read-only code.
-> > +
-> > +	  If you are unsure how to answer this question, answer N.
-> > +
-> > +config SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE=5FDEFAULT=5FON
-> > +	bool "Default state of /proc/*/mem write restriction"
-> > +	depends on SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE
-> > +	default y
-> > +	help
-> > +	  /proc/*/mem write access is controlled by kernel boot param
-> > +	  "restrict=5Fproc=5Fmem=5Fwrite" and this config chooses the def=
-ault
-> > +	  boot state.
->=20
-> As mentioned, I'd say merge the help texts here, but drop
-> SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITE.
->=20
-
-Ack, will do in v3.
-
-> > +
-> >  config SECURITY
-> >  	bool "Enable different security models"
-> >  	depends on SYSFS
-> > --=20
-> > 2.30.2
-> >=20
->=20
-> Thanks for this! I look forward to turning it on. :)
->
-
-Thank you very much for all your feedback!
-It is much appreciated.
-
-I'll wait a few more days before sending v3 to let others
-comment, then address everything.
-=20
-> -Kees
->=20
-> --=20
-> Kees Cook
-
+Mike
