@@ -1,87 +1,159 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC767868F;
-	Mon,  4 Mar 2024 22:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A451C687;
+	Mon,  4 Mar 2024 22:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709590564; cv=none; b=dP4usFVXo1up3TTZ5/TgH96gpZ0+tbgwNLKKDtYvBWrF/I2mBcT2itkbW2Pclro0hDNwnvAz2T81PNU23MDmWU/I1XfMYu883xJZCwGW2ctazWlnou4RHFoqvkMuxukmd1w4J3m67OOgsPmhue1e+e2oB6la9UlsosH/nSltfZk=
+	t=1709590808; cv=none; b=RmeYx7t0rN7MeoV6E2y/1UesQ2MYtiHR4ZCXEuRLpCY5kU4NTdfoGPTCy+lTohcsKbl3hRgYW+/sI2+Ck+6NbJUEhvSxMQW6Tw8pk3cH+o5wPq4EzHEM7UlvWex7regXGZb8xVKZAp2/EfLP7TIg5U68DklRxC07O70iBHPdPyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709590564; c=relaxed/simple;
-	bh=B+/HnwLCpt/nEMTn4HJHKj5QZDdRYTH3xkzZZRrm/f4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=jbyKdr1GfD8fU49/KYdc8axTXi8lrg6T2Ny1Ej72GtMTg4V1LRwkZTEwLBBDujVZQRHz+z6rkPr+a3W5flae5YumsxAJ6yq0aZ0dXtnrcrf4Z3IeHgSAwozGpKTVJCeuLdFNKrL6bK5byC/TVYkXxXkTnxOvhFZRb/8HT1BI4fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBO/PZrh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709590808; c=relaxed/simple;
+	bh=qmXTnNqvGt/oGPfYFvQo/wwd8VyuHl2B3KGyc0VaoqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzliQcHnTbIM81U4eV3u8YgspTXM9D8Bbz9g8sH6TRo+uHP3sJTXLnZTM04YZ06yw19LKRiKBVOojuyaNTvmPFbvJ9XvO8pXANzHPOH9pp4F2j4jp7xOA2raRo4HHc9GGOqVdWWcPiiRGnKLtDQ46O9YmUYJUWij4IBRpDRJ1sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDdYgZaq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBO/PZrh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8818CC433F1;
-	Mon,  4 Mar 2024 22:15:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDdYgZaq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06527C433F1;
+	Mon,  4 Mar 2024 22:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709590564;
-	bh=B+/HnwLCpt/nEMTn4HJHKj5QZDdRYTH3xkzZZRrm/f4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=CBO/PZrhwSGAEynPUUI7ML6hnhaCbGTiiTHzoHmr+9ec0e5SmimPveLrvY4LQv0me
-	 TB2ANRLYFVCnP1MvwrCsp+mQDJo7QhAJrPc4hxwn1sU+PoR7uGdJM4qOf32KyIcpNa
-	 GpI9yQrlW0wk4KF7FwpoaQQrgEvr+j+y8l50ThTjH9InyidHtNRu7R5CglByl39ihI
-	 Q+YumRMidl3W5wFHOEAE2k0WzHfjhjPGIPnEW1yrIeY+qYTpVM7R2Wrf/motGoaWvj
-	 UoYDMRCq/G+kMZ5bjeEEvwaCxFwJSnsmihpqBYVNLd3H/H9+Nwajp4Ly/63l4detSQ
-	 ww8WPT8KJ9qXg==
+	s=k20201202; t=1709590808;
+	bh=qmXTnNqvGt/oGPfYFvQo/wwd8VyuHl2B3KGyc0VaoqM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jDdYgZaqr6a7IMnlvahw8/3PrwYyKa/cGswY9lH/jT+2FZGkibixj8Mr0JylYmB9k
+	 9ypVf3NPzPlJ96nXtKi9kPg89ozUMwpv9J6VyI0n/6CDuy4FHxHI4OrlUQuIUmWF3H
+	 wgF6f3e0Mga+yfwdzvDqo7JDgGLrD0VTVlCUFTFqo9J2/i8ggiTGhKze4RwIgbNZK0
+	 i99nyPC762w8OxNMarTehIneVhKvUcy2xSnW3NvhoJZDpKDziP5o5u9MnaIrg+rR0c
+	 ZcfKG5VA3fLAixREyINZ7S0GBK5Ui7svIu5+mVhPvz6k0dkURJHj7Y1cY2Xm1jIhv7
+	 RhGfTq+11RVvQ==
+Date: Mon, 4 Mar 2024 22:20:03 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
+	pabeni@redhat.com, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, mic@digikod.net,
+	linux-security-module@vger.kernel.org, keescook@chromium.org,
+	jakub@cloudflare.com
+Subject: Re: [PATCH v4 00/12] selftests: kselftest_harness: support using
+ xfail
+Message-ID: <05f7bf89-04a5-4b65-bf59-c19456aeb1f0@sirena.org.uk>
+References: <20240229005920.2407409-1-kuba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hO45sqC4rUaVfCUw"
+Content-Disposition: inline
+In-Reply-To: <20240229005920.2407409-1-kuba@kernel.org>
+X-Cookie: Please come again.
+
+
+--hO45sqC4rUaVfCUw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 05 Mar 2024 00:15:55 +0200
-Message-Id: <CZLB9UXFAHK6.26ET7BAGSFZLB@suppilovahvero>
-Cc: "Shawn Guo" <shawnguo@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "NXP Linux
- Team" <linux-imx@nxp.com>, "Ahmad Fatoum" <a.fatoum@pengutronix.de>, "sigma
- star Kernel Team" <upstream+dcp@sigma-star.at>, "David Howells"
- <dhowells@redhat.com>, "Li Yang" <leoyang.li@nxp.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Catalin Marinas"
- <catalin.marinas@arm.com>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>, "Tejun Heo" <tj@kernel.org>, "Steven Rostedt
- (Google)" <rostedt@goodmis.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linuxppc-dev@lists.ozlabs.org>,
- <linux-security-module@vger.kernel.org>, "Richard Weinberger"
- <richard@nod.at>, "David Oberhollenzer" <david.oberhollenzer@sigma-star.at>
-Subject: Re: [PATCH v5 1/6] crypto: mxs-dcp: Add support for hardware-bound
- keys
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "David Gstir" <david@sigma-star.at>, "Mimi Zohar" <zohar@linux.ibm.com>,
- "James Bottomley" <jejb@linux.ibm.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
-X-Mailer: aerc 0.15.2
-References: <20231215110639.45522-1-david@sigma-star.at>
- <20231215110639.45522-2-david@sigma-star.at>
-In-Reply-To: <20231215110639.45522-2-david@sigma-star.at>
 
-On Fri Dec 15, 2023 at 1:06 PM EET, David Gstir wrote:
-> DCP is capable of performing AES with two hardware-bound keys:
->
-> - The one-time programmable (OTP) key which is burnt via on-chip fuses
-> - The unique key (UK) which is derived from the OTP key
+On Wed, Feb 28, 2024 at 04:59:07PM -0800, Jakub Kicinski wrote:
 
-This is somewhat cryptic explanation for the commmon and reoccuring
-theme of having a fused random seed and a key derivation function.
+> When running selftests for our subsystem in our CI we'd like all
+> tests to pass. Currently some tests use SKIP for cases they
+> expect to fail, because the kselftest_harness limits the return
+> codes to pass/fail/skip. XFAIL which would be a great match
+> here cannot be used.
+>=20
+> Remove the no_print handling and use vfork() to run the test in
+> a different process than the setup. This way we don't need to
+> pass "failing step" via the exit code. Further clean up the exit
+> codes so that we can use all KSFT_* values. Rewrite the result
+> printing to make handling XFAIL/XPASS easier. Support tests
+> declaring combinations of fixture + variant they expect to fail.
 
-I'd just write it is all about.
+This series landed in -next today and has caused breakage on all
+platforms in the ALSA pcmtest-driver test.  When run on systems that
+don't have the driver it needs loaded the test skip but since this
+series was merged skipped tests are logged but then reported back as
+failures:
 
-"DCP is able to derive private keys for a fused random seed, which
-can be referenced by handle but not accessed by the CPU. These keys
-can be used to perform AES encryption."
+# selftests: alsa: test-pcmtest-driver
+# TAP version 13
+# 1..5
+# # Starting 5 tests from 1 test cases.
+# #  RUN           pcmtest.playback ...
+# #      SKIP      Can't read patterns. Probably, module isn't loaded
+# # playback: Test failed
+# #          FAIL  pcmtest.playback
+# not ok 1 pcmtest.playback #  Can't read patterns. Probably, module isn't =
+loaded
+# #  RUN           pcmtest.capture ...
+# #      SKIP      Can't read patterns. Probably, module isn't loaded
+# # capture: Test failed
+# #          FAIL  pcmtest.capture
+# not ok 2 pcmtest.capture #  Can't read patterns. Probably, module isn't l=
+oaded
+# #  RUN           pcmtest.ni_capture ...
+# #      SKIP      Can't read patterns. Probably, module isn't loaded
+# # ni_capture: Test failed
+# #          FAIL  pcmtest.ni_capture
+# not ok 3 pcmtest.ni_capture #  Can't read patterns. Probably, module isn'=
+t loaded
+# #  RUN           pcmtest.ni_playback ...
+# #      SKIP      Can't read patterns. Probably, module isn't loaded
+# # ni_playback: Test failed
+# #          FAIL  pcmtest.ni_playback
+# not ok 4 pcmtest.ni_playback #  Can't read patterns. Probably, module isn=
+'t loaded
+# #  RUN           pcmtest.reset_ioctl ...
+# #      SKIP      Can't read patterns. Probably, module isn't loaded
+# # reset_ioctl: Test failed
+# #          FAIL  pcmtest.reset_ioctl
+# not ok 5 pcmtest.reset_ioctl #  Can't read patterns. Probably, module isn=
+'t loaded
+# # FAILED: 0 / 5 tests passed.
+# # Totals: pass:0 fail:5 xfail:0 xpass:0 skip:0 error:0
 
-My explanation neither includes acronyms OTP and UK and still
-delivers the message so much better. That actually further makes
-it better because less crappy standard consortium terminology is
-always better :-)
+I haven't completely isolated the issue due to some other breakage
+that's making it harder that it should be to test. =20
 
-BR, Jarkko
+A sample full log can be seen at:
+
+   https://lava.sirena.org.uk/scheduler/job/659576#L1349
+
+but there's no more context.  I'm also seeing some breakage in the
+seccomp selftests which also use kselftest-harness:
+
+# #  RUN           TRAP.dfl ...
+# # dfl: Test exited normally instead of by signal (code: 0)
+# #          FAIL  TRAP.dfl
+# not ok 56 TRAP.dfl
+# #  RUN           TRAP.ign ...
+# # ign: Test exited normally instead of by signal (code: 0)
+# #          FAIL  TRAP.ign
+# not ok 57 TRAP.ign
+
+and looks suspiciously like it might also be related.  Again, not
+drilled down fully yet or looked at the code but this series jumps out
+as most likely relevant.
+
+Full log at:
+
+   https://validation.linaro.org/scheduler/job/4046205#L6066
+
+--hO45sqC4rUaVfCUw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmXmSRIACgkQJNaLcl1U
+h9BhQgf/bFLmzfQuUxA6124NIKiqdndv7e/KA0FS32nG+TW6aE1QxkZxEDz8Cw41
+vdfUdr3GmkTmdx+n1H+40+1HFSEiKXG5D1CJ17nsMcCDwIr2xRXNHPevXMuyOep+
+fkhT1DhySxlHwoCMzhSWbwpkU6NVEjM0KnS5RLBjHeClNyrUd/jzNxkJml/INjG/
+H0X2ZzaRHUN+UXj3EKxhnjKECOohoymyuTVsybJkXOgycTZj04vk/0yoQDQ2sjdN
+T35tT0DQCmbHkznSUmT49IyDNdIwQufaqA3bw1M2HjYgyvRy3ir/6XVV5XJVzLUD
+WKoUYhmZFNyt8+SomPIKivgDrnjvOA==
+=PkaD
+-----END PGP SIGNATURE-----
+
+--hO45sqC4rUaVfCUw--
