@@ -1,123 +1,87 @@
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722B179932
-	for <linux-security-module@vger.kernel.org>; Mon,  4 Mar 2024 19:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC767868F;
+	Mon,  4 Mar 2024 22:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709580730; cv=none; b=qCplg6Qi2kvM/EaVRHbeBQLOzdzsa+NoOpqBYp2anNzQMwoYRcwmaRMZ6JMC7jJtHNkvfH+zRtd7EDAxQA+rZMS9SLmwi8PymXcZmrhUVwkrE44JnQb3BqIu3PssiRGL4eSSiXkFAflB/gEkEu9cCTUEPqiSp+JXlmcGbTnRe4A=
+	t=1709590564; cv=none; b=dP4usFVXo1up3TTZ5/TgH96gpZ0+tbgwNLKKDtYvBWrF/I2mBcT2itkbW2Pclro0hDNwnvAz2T81PNU23MDmWU/I1XfMYu883xJZCwGW2ctazWlnou4RHFoqvkMuxukmd1w4J3m67OOgsPmhue1e+e2oB6la9UlsosH/nSltfZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709580730; c=relaxed/simple;
-	bh=uHJy5cR+Cz7GNPm99CUukbZb3URnbaKBlxNZRwj9ETA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8pIbjfmjCQTM3XbwWqy9gZZ/vjVV+nliSL3urSuK1efPQUzL+vpqmre6opoFX3cWZPrubfBPXAJRVF/TaOse7XgiVXfGzL60CeLpbCyogf7X6ln6Z4d9vqFuIbgeJvHh+GUIkSZuPuoT1F+Bel9gF+dNOM/jEXv73aSIhjzuE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nHlxzap5; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1709590564; c=relaxed/simple;
+	bh=B+/HnwLCpt/nEMTn4HJHKj5QZDdRYTH3xkzZZRrm/f4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=jbyKdr1GfD8fU49/KYdc8axTXi8lrg6T2Ny1Ej72GtMTg4V1LRwkZTEwLBBDujVZQRHz+z6rkPr+a3W5flae5YumsxAJ6yq0aZ0dXtnrcrf4Z3IeHgSAwozGpKTVJCeuLdFNKrL6bK5byC/TVYkXxXkTnxOvhFZRb/8HT1BI4fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBO/PZrh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nHlxzap5"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TpTNH1PqrzMvsxB;
-	Mon,  4 Mar 2024 20:31:59 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TpTNG4V1bzMpnPh;
-	Mon,  4 Mar 2024 20:31:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709580719;
-	bh=uHJy5cR+Cz7GNPm99CUukbZb3URnbaKBlxNZRwj9ETA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nHlxzap5dh7Hb3hyvCUhCG7qrZVTOpWrupgbjtYuF4GQSxXlxZw6zm491eJiOx2t6
-	 tlQfTp+fGl+v1Px8ZwbvyG06lURFRrDrGInj0BWmvAipNSvmgne1XxYzGIkNa1xsQl
-	 pbAVmThO6M1BHZLiDBTqIqOyh6mVEid3QuXZJv6s=
-Date: Mon, 4 Mar 2024 20:31:48 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com, 
-	pabeni@redhat.com, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, jakub@cloudflare.com, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Will Drewry <wad@chromium.org>
-Subject: Re: [PATCH v4 02/12] selftests/harness: Merge TEST_F_FORK() into
- TEST_F()
-Message-ID: <20240304.ceje1phaiFei@digikod.net>
-References: <20240229005920.2407409-1-kuba@kernel.org>
- <20240229005920.2407409-3-kuba@kernel.org>
- <20240301.Miem9Kei4eev@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBO/PZrh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8818CC433F1;
+	Mon,  4 Mar 2024 22:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709590564;
+	bh=B+/HnwLCpt/nEMTn4HJHKj5QZDdRYTH3xkzZZRrm/f4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=CBO/PZrhwSGAEynPUUI7ML6hnhaCbGTiiTHzoHmr+9ec0e5SmimPveLrvY4LQv0me
+	 TB2ANRLYFVCnP1MvwrCsp+mQDJo7QhAJrPc4hxwn1sU+PoR7uGdJM4qOf32KyIcpNa
+	 GpI9yQrlW0wk4KF7FwpoaQQrgEvr+j+y8l50ThTjH9InyidHtNRu7R5CglByl39ihI
+	 Q+YumRMidl3W5wFHOEAE2k0WzHfjhjPGIPnEW1yrIeY+qYTpVM7R2Wrf/motGoaWvj
+	 UoYDMRCq/G+kMZ5bjeEEvwaCxFwJSnsmihpqBYVNLd3H/H9+Nwajp4Ly/63l4detSQ
+	 ww8WPT8KJ9qXg==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240301.Miem9Kei4eev@digikod.net>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 05 Mar 2024 00:15:55 +0200
+Message-Id: <CZLB9UXFAHK6.26ET7BAGSFZLB@suppilovahvero>
+Cc: "Shawn Guo" <shawnguo@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "NXP Linux
+ Team" <linux-imx@nxp.com>, "Ahmad Fatoum" <a.fatoum@pengutronix.de>, "sigma
+ star Kernel Team" <upstream+dcp@sigma-star.at>, "David Howells"
+ <dhowells@redhat.com>, "Li Yang" <leoyang.li@nxp.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Randy
+ Dunlap" <rdunlap@infradead.org>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, "Rafael J. Wysocki"
+ <rafael.j.wysocki@intel.com>, "Tejun Heo" <tj@kernel.org>, "Steven Rostedt
+ (Google)" <rostedt@goodmis.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <linux-security-module@vger.kernel.org>, "Richard Weinberger"
+ <richard@nod.at>, "David Oberhollenzer" <david.oberhollenzer@sigma-star.at>
+Subject: Re: [PATCH v5 1/6] crypto: mxs-dcp: Add support for hardware-bound
+ keys
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "David Gstir" <david@sigma-star.at>, "Mimi Zohar" <zohar@linux.ibm.com>,
+ "James Bottomley" <jejb@linux.ibm.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+X-Mailer: aerc 0.15.2
+References: <20231215110639.45522-1-david@sigma-star.at>
+ <20231215110639.45522-2-david@sigma-star.at>
+In-Reply-To: <20231215110639.45522-2-david@sigma-star.at>
 
-On Mon, Mar 04, 2024 at 08:27:50PM +0100, Mickaël Salaün wrote:
-> Testing the whole series, I found that some Landlock tests are flaky
-> starting with this patch.  I tried to not use the longjmp in the
-> grandchild but it didn't change.  I suspect missing volatiles but I
-> didn't find the faulty one(s) yet. :/
-> I'll continue investigating tomorrow but help would be much appreciated!
+On Fri Dec 15, 2023 at 1:06 PM EET, David Gstir wrote:
+> DCP is capable of performing AES with two hardware-bound keys:
+>
+> - The one-time programmable (OTP) key which is burnt via on-chip fuses
+> - The unique key (UK) which is derived from the OTP key
 
-The issue is with the fs_test.c, often starting with this one:
+This is somewhat cryptic explanation for the commmon and reoccuring
+theme of having a fused random seed and a key derivation function.
 
-#  RUN           layout1.relative_chroot_only ...
-# fs_test.c:294:relative_chroot_only:Expected 0 (0) == umount(TMP_DIR) (-1)
-# fs_test.c:296:relative_chroot_only:Expected 0 (0) == remove_path(TMP_DIR) (16)
-# relative_chroot_only: Test failed
-#          FAIL  layout1.relative_chroot_only
+I'd just write it is all about.
 
-...or this one:
+"DCP is able to derive private keys for a fused random seed, which
+can be referenced by handle but not accessed by the CPU. These keys
+can be used to perform AES encryption."
 
-#  RUN           layout3_fs.hostfs.tag_inode_dir_child ...
-# fs_test.c:4707:tag_inode_dir_child:Expected 0 (0) == mkdir(self->dir_path, 0700) (-1)
-# fs_test.c:4709:tag_inode_dir_child:Failed to create directory "tmp/dir": No such file or directory
-# fs_test.c:4724:tag_inode_dir_child:Expected 0 (0) <= fd (-1)
-# fs_test.c:4726:tag_inode_dir_child:Failed to create file "tmp/dir/file": No such file or directory
-# fs_test.c:4729:tag_inode_dir_child:Expected 0 (0) == close(fd) (-1)
-# tag_inode_dir_child: Test failed
-#          FAIL  layout3_fs.hostfs.tag_inode_dir_child
+My explanation neither includes acronyms OTP and UK and still
+delivers the message so much better. That actually further makes
+it better because less crappy standard consortium terminology is
+always better :-)
 
-
-> 
-> 
-> On Wed, Feb 28, 2024 at 04:59:09PM -0800, Jakub Kicinski wrote:
-> > From: Mickaël Salaün <mic@digikod.net>
-> > 
-> > Replace Landlock-specific TEST_F_FORK() with an improved TEST_F() which
-> > brings four related changes:
-> > 
-> > Run TEST_F()'s tests in a grandchild process to make it possible to
-> > drop privileges and delegate teardown to the parent.
-> > 
-> > Compared to TEST_F_FORK(), simplify handling of the test grandchild
-> > process thanks to vfork(2), and makes it generic (e.g. no explicit
-> > conversion between exit code and _metadata).
-> > 
-> > Compared to TEST_F_FORK(), run teardown even when tests failed with an
-> > assert thanks to commit 63e6b2a42342 ("selftests/harness: Run TEARDOWN
-> > for ASSERT failures").
-> > 
-> > Simplify the test harness code by removing the no_print and step fields
-> > which are not used.  I added this feature just after I made
-> > kselftest_harness.h more broadly available but this step counter
-> > remained even though it wasn't needed after all. See commit 369130b63178
-> > ("selftests: Enhance kselftest_harness.h to print which assert failed").
-> > 
-> > Replace spaces with tabs in one line of __TEST_F_IMPL().
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Shuah Khan <shuah@kernel.org>
-> > Cc: Will Drewry <wad@chromium.org>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> > --
-> > v4:
-> >  - GAND -> GRAND
-> >  - init child to 1, otherwise assert in setup triggers a longjmp
-> >    which in turn reads child without it ever getting initialized
-> >    (or being 0, i.e. we mistakenly assume we're in the grandchild)
-> 
-> Good catch!
+BR, Jarkko
