@@ -1,152 +1,113 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA28482DA;
-	Mon,  4 Mar 2024 16:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B08C495F0;
+	Mon,  4 Mar 2024 16:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709569114; cv=none; b=eV+/QlY/IpNUKfjtGk7O4EDSlvQ5MSzuvG5ly9HIhEh3+M0JuiUB1C9nxbTA244ZZxBpESVTXMtbQU+GJPH9GPKHvurzRB27l4LIbktf9EiNFtd5nVZAn4Z9Ju0UqY4s8u77gV/3mK6UD/gttN61nL98dl8UtCGopN0bZ81/Xks=
+	t=1709570219; cv=none; b=FjYv2ciytNIqAqyF5SVPd5YIH5zHCjnVRwEiqNGwgLjJ5Gt5V0+p96hOiXM6BAqZnESVT7R4VOofPhw7fKJ6LMexJN+WwdZAlHO5gOxz8jdfxnzwzTuelHZxALPeyBYEnVq+FPVdRmrk1hM/QdTA12oKkfKOdL/9UO3k5yy0iW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709569114; c=relaxed/simple;
-	bh=vfCt86t5faZJDVibBfvf2Juvf6JHTd3OEradfAtDy3g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A8FZysNVWuXKRY/Ptbw+fgJDy6eDjDAMqxc9ES7rkf4lR400cwkOotEtJjFtOdrOKRPc4Og3S29w+bCQw8jceJO7C2d9R/ql34nlQCceTi8fOrddPHZlsIiGHgQH11bmVuJbWdaZbi3qBtlVmgQ0NU7O6V5BfhOgwKCuW/HfXPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4TpNky4sfvz9y5ZR;
-	Tue,  5 Mar 2024 00:02:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id A67B814066A;
-	Tue,  5 Mar 2024 00:18:17 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD37xg49OVl09+0Aw--.24845S2;
-	Mon, 04 Mar 2024 17:18:16 +0100 (CET)
-Message-ID: <a7124afa6bed2fcadcb66efa08e256828cd6f8ab.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 24/25] commoncap: use vfs fscaps interfaces
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
-  Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, James
- Morris <jmorris@namei.org>,  Alexander Viro <viro@zeniv.linux.org.uk>, Jan
- Kara <jack@suse.cz>, Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,  Casey Schaufler
- <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi
- <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
- selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Date: Mon, 04 Mar 2024 17:17:57 +0100
-In-Reply-To: <ZeXpbOsdRTbLsYe9@do-x1extreme>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
-	 <20240221-idmap-fscap-refactor-v2-24-3039364623bd@kernel.org>
-	 <dcbd9e7869d2fcce69546b53851d694b8ebad54e.camel@huaweicloud.com>
-	 <ZeXpbOsdRTbLsYe9@do-x1extreme>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709570219; c=relaxed/simple;
+	bh=xOyOxEs2LoaPprIcK9amuUKq49ywZ782kUPidDTbhpE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GpSXLv4jN2JMAXLW+Mr9pH+d2ty8bte+S/q3qdOAFu6n5g6J+9erv1W4LFIQEL0WbWUa+uKEa+9i4HwjdPb4oKUvEFjMzSY1bj8dwBkk3ZBXqOY19ZRw8eSEdJBoXBvf40JJBnB5QCU1ONqRDpJQYfV6tRPbs9hIBbAaXrv2gWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYZoXbaS; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYZoXbaS"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-412e795f458so5010535e9.3;
+        Mon, 04 Mar 2024 08:36:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709570216; x=1710175016; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D57LV4PQlM/pc6do6owRfCiEmFwq5OiC/rPbAO2Ui6E=;
+        b=KYZoXbaSMOFw8K/OSrgdGeCZN+jK3CMjmG3/huWGbn7OhCtttDXLiLJsMn22TC4xci
+         kZITrCn6bFzs+YSslxN4Pd913PoyDxDaGYaTpQM5xKlNqg0pV73XrdhrgIM8ExFbQVMW
+         3RKjV55C3Zqet6JkHYbxDvlUDyLyOmTCAvo7Atj2P6Tu42Tsg5EPIe9amOoJDN6nif6U
+         dSIfkH8hN/0wj11q+m1cRJiO/DMtRyA8R9tp84mBxp5tGYNA2Ixf2t/wJSh0dtbHuvK3
+         yQZnet4sNb4eNyR4lAWb0Uy9k2wOfLiYPVUgGkNiqtt0CzvLtWZseb4vgRyJGzrqcOQS
+         6q9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709570216; x=1710175016;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D57LV4PQlM/pc6do6owRfCiEmFwq5OiC/rPbAO2Ui6E=;
+        b=nxVSCwg6/+x+KWpS3xKWjhGpj0BeBZwdDqox7IEv74IsQYfRR0rwFunEVN6/oOZ4bE
+         PdyGEu5klxs306nssZNFWOB2/o0uM6wQTT/OXDkCS7wIi9ZmE3fT3HFhBgNJjETZJcSo
+         THE0HEUefqUh5H9xFV2FWj5Y3U9gv/MieI4h1mV/MKknsq8sCNiLZbqkZy9hOo4YEbud
+         QIDgr5FcsG9FSm62/561UfqsWplv5KRp6Pp76mRfVLaTcngY1wFvcV5d5lQAhXPv297K
+         l2fCXVMYg6fwiLtC8lFsNGT/sOYibZmAofJjWDWy2r9JkB1iow0FwkALmcWt0+7Mk3ZA
+         8Jtg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6oHTicWpSXEinUxJ+njYqS0ATCGFWecSOaNe0rmW+B+3sFrfENy4tIAZiLZgG2OKQqm6Hb/KrZ/AaCSfI4gz4wvG0B2+bWEi6MNSO5dxEhalpf8BqYpuRf2QA6X/qMSa5a689+2Gpb+/hxdqKLxrc+FiS
+X-Gm-Message-State: AOJu0YwoHFBWBiPava60URzV8KRqGZ9wP/RpbmG8rxEAbxcKUWptw9Oe
+	QsZAJNj+vLvTIFeATrs2RgNZQaNhVfAtR4yhYqWYSqgMCE5EWbTJ
+X-Google-Smtp-Source: AGHT+IGwhHmhMCQY5Wj9Ojyw77j2lS7hN7OmHTas5EyAlXpHFn/hpF7T3R90MIEi3AEaS8ApQIaj/g==
+X-Received: by 2002:a05:600c:4f83:b0:412:bef7:317c with SMTP id n3-20020a05600c4f8300b00412bef7317cmr8052982wmq.13.1709570216101;
+        Mon, 04 Mar 2024 08:36:56 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id k4-20020a05600c1c8400b00412e556d4besm2679933wms.48.2024.03.04.08.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Mar 2024 08:36:55 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] apparmor: remove useless static inline function is_deleted
+Date: Mon,  4 Mar 2024 16:36:55 +0000
+Message-Id: <20240304163655.771616-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwD37xg49OVl09+0Aw--.24845S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFyfZrWkCrWxGw4UJw1fZwb_yoW5CrW5pF
-	W3GFnxKr4kXr17Crn7tr4DZa4F9w4fJF47GF97G3y0ywnFkr1ftr4S9347uFy5Cry8Kr45
-	ZF1qya45CrZ8ZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAMBF1jj5r12AAAsP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-03-04 at 09:31 -0600, Seth Forshee (DigitalOcean) wrote:
-> On Mon, Mar 04, 2024 at 11:19:54AM +0100, Roberto Sassu wrote:
-> > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean) wrote:
-> > > Use the vfs interfaces for fetching file capabilities for killpriv
-> > > checks and from get_vfs_caps_from_disk(). While there, update the
-> > > kerneldoc for get_vfs_caps_from_disk() to explain how it is different
-> > > from vfs_get_fscaps_nosec().
-> > >=20
-> > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > > ---
-> > >  security/commoncap.c | 30 +++++++++++++-----------------
-> > >  1 file changed, 13 insertions(+), 17 deletions(-)
-> > >=20
-> > > diff --git a/security/commoncap.c b/security/commoncap.c
-> > > index a0ff7e6092e0..751bb26a06a6 100644
-> > > --- a/security/commoncap.c
-> > > +++ b/security/commoncap.c
-> > > @@ -296,11 +296,12 @@ int cap_capset(struct cred *new,
-> > >   */
-> > >  int cap_inode_need_killpriv(struct dentry *dentry)
-> > >  {
-> > > -	struct inode *inode =3D d_backing_inode(dentry);
-> > > +	struct vfs_caps caps;
-> > >  	int error;
-> > > =20
-> > > -	error =3D __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS, NULL, 0);
-> > > -	return error > 0;
-> > > +	/* Use nop_mnt_idmap for no mapping here as mapping is unimportant =
-*/
-> > > +	error =3D vfs_get_fscaps_nosec(&nop_mnt_idmap, dentry, &caps);
-> > > +	return error =3D=3D 0;
-> > >  }
-> > > =20
-> > >  /**
-> > > @@ -323,7 +324,7 @@ int cap_inode_killpriv(struct mnt_idmap *idmap, s=
-truct dentry *dentry)
-> > >  {
-> > >  	int error;
-> > > =20
-> > > -	error =3D __vfs_removexattr(idmap, dentry, XATTR_NAME_CAPS);
-> > > +	error =3D vfs_remove_fscaps_nosec(idmap, dentry);
-> >=20
-> > Uhm, I see that the change is logically correct... but the original
-> > code was not correct, since the EVM post hook is not called (thus the
-> > HMAC is broken, or an xattr change is allowed on a portable signature
-> > which should be not).
-> >=20
-> > For completeness, the xattr change on a portable signature should not
-> > happen in the first place, so cap_inode_killpriv() would not be called.
-> > However, since EVM allows same value change, we are here.
->=20
-> I really don't understand EVM that well and am pretty hesitant to try an
-> change any of the logic around it. But I'll hazard a thought: should EVM
-> have a inode_need_killpriv hook which returns an error in this
-> situation?
+The inlined function is_deleted is redundant, it is not called at all
+from any function in security/apparmor/file.c and so it can be removed.
 
-Uhm, I think it would not work without modifying
-security_inode_need_killpriv() and the hook definition.
+Cleans up clang scan build warning:
+security/apparmor/file.c:153:20: warning: unused function
+'is_deleted' [-Wunused-function]
 
-Since cap_inode_need_killpriv() returns 1, the loop stops and EVM would
-not be invoked. We would need to continue the loop and let EVM know
-what is the current return value. Then EVM can reject the change.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ security/apparmor/file.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-An alternative way would be to detect that actually we are setting the
-same value for inode metadata, and maybe not returning 1 from
-cap_inode_need_killpriv().
-
-I would prefer the second, since EVM allows same value change and we
-would have an exception if there are fscaps.
-
-This solves only the case of portable signatures. We would need to
-change cap_inode_need_killpriv() anyway to update the HMAC for mutable
-files.
-
-Roberto
+diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+index c03eb7c19f16..d52a5b14dad4 100644
+--- a/security/apparmor/file.c
++++ b/security/apparmor/file.c
+@@ -144,19 +144,6 @@ int aa_audit_file(const struct cred *subj_cred,
+ 	return aa_audit(type, profile, &ad, file_audit_cb);
+ }
+ 
+-/**
+- * is_deleted - test if a file has been completely unlinked
+- * @dentry: dentry of file to test for deletion  (NOT NULL)
+- *
+- * Returns: true if deleted else false
+- */
+-static inline bool is_deleted(struct dentry *dentry)
+-{
+-	if (d_unlinked(dentry) && d_backing_inode(dentry)->i_nlink == 0)
+-		return true;
+-	return false;
+-}
+-
+ static int path_name(const char *op, const struct cred *subj_cred,
+ 		     struct aa_label *label,
+ 		     const struct path *path, int flags, char *buffer,
+-- 
+2.39.2
 
