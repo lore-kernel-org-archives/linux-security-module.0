@@ -1,220 +1,194 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2198BF6;
-	Tue,  5 Mar 2024 16:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C259454
+	for <linux-security-module@vger.kernel.org>; Tue,  5 Mar 2024 16:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709656550; cv=none; b=fUxArBNx+sFLDhasVNBSA9wR/bwdpG8ZAGYvAUGj8W6KaTvw495u0XzDYc0RTHM/6cpWnk01XbgxqrxlYZPEIhhgSrqUOt4TiKvQUhlb33JQydRXtDOmk13NwKyrbaXvKtPBewqQOJBRheYP0l0neEjTmQbP2VkijKls6kkuO1w=
+	t=1709656808; cv=none; b=poqrgH+kOBhc0paK/szJ22DAegxAyj+WqJZtBivHWU5zqFoFDcc4497Ki/hNEIVjOIdosVqVXvrWYxIIqOfy0DBXftgwt2atsfcgOzwD/ldtecMd0hZU+TEosJeOZ0O2jOS+JUof0Lz11u8b/yKMkUTR9NMdJFweAP1ZxQfffEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709656550; c=relaxed/simple;
-	bh=1pdeNcwiI6EsTl0SRaoPJVpuE3CKPxS67A9A0uH3rcw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I/UMJg7S/ufDsWQykburViVdO5hnLTOn6viGfGoEgTAtV7I6/vgZTuMZWFTgQbMY/fD6PKOyFsRH6WR630PugCwhRpxeV0U6n2/2hedT2EOYqOmZKBq/qptqYENwdd18Ah65V89604HRDtclLx/nJDXU0Lzr4p0qoV/rWtJQcKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Tq14K38T3z9y8HV;
-	Wed,  6 Mar 2024 00:20:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 05A921406AE;
-	Wed,  6 Mar 2024 00:35:32 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCnmhPDSedlWlTFAw--.63520S2;
-	Tue, 05 Mar 2024 17:35:31 +0100 (CET)
-Message-ID: <133a912d05fb0790ab3672103a21a4f8bfb70405.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 24/25] commoncap: use vfs fscaps interfaces
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, Serge Hallyn
- <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Eric Paris
- <eparis@redhat.com>, James Morris <jmorris@namei.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
- Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jonathan Corbet
- <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein
- <amir73il@gmail.com>,  linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,  linux-security-module@vger.kernel.org,
- audit@vger.kernel.org,  selinux@vger.kernel.org,
- linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
- linux-unionfs@vger.kernel.org
-Date: Tue, 05 Mar 2024 17:35:11 +0100
-In-Reply-To: <20240305-zyklisch-halluzinationen-98b782666cf8@brauner>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
-	 <20240221-idmap-fscap-refactor-v2-24-3039364623bd@kernel.org>
-	 <dcbd9e7869d2fcce69546b53851d694b8ebad54e.camel@huaweicloud.com>
-	 <ZeXpbOsdRTbLsYe9@do-x1extreme>
-	 <a7124afa6bed2fcadcb66efa08e256828cd6f8ab.camel@huaweicloud.com>
-	 <ZeX9MRhU/EGhHkCY@do-x1extreme>
-	 <20240305-fachjargon-abmontieren-75b1d6c67a83@brauner>
-	 <3098aef3e5f924e5717b4ba4a34817d9f22ec479.camel@huaweicloud.com>
-	 <20240305-zyklisch-halluzinationen-98b782666cf8@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709656808; c=relaxed/simple;
+	bh=gc4Q3iOrHAFdKOGbGBM7S1/lCy9aGir7g3krCSkZWGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eqF3We3r+D9irD0KOHFXCiyceahTWZ7Vh6GIVriWOnRfP0RgY91Ucxsqc8+QUCZ+RL7/XN3DnLnvfhecPKMOFn2jA+dL5u6JYVhYEFTkiY89K6b5SMun6zOmbZS5dOxhy74g38iAQH9/pLu02Cs+ShOD6xm3SSRL6hg58ec0yJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=igNnHsgq; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="igNnHsgq"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tq1WJ213QzdkX;
+	Tue,  5 Mar 2024 17:39:56 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tq1WH2gGnzMpnPf;
+	Tue,  5 Mar 2024 17:39:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709656796;
+	bh=gc4Q3iOrHAFdKOGbGBM7S1/lCy9aGir7g3krCSkZWGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=igNnHsgqEowJBOrTNsY+ydE68SkrUDHOLYhgEDGGVoatyJmOKMt/HhHbzBb1+fYuV
+	 mXHVUHxjzWRG0zTJ5tRmmL98gxWdYNjkEGTco3K/AsI0r+5XPyW1LLw4yBQamPXP1a
+	 zlovfjSoVfJJsmvhKUnUm/DyoVJU/h+Qtkj59YCg=
+Date: Tue, 5 Mar 2024 17:39:44 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	keescook@chromium.org, davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com, 
+	pabeni@redhat.com, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, jakub@cloudflare.com
+Subject: Re: [PATCH v4 00/12] selftests: kselftest_harness: support using
+ xfail
+Message-ID: <20240305.thuo4ahNaeng@digikod.net>
+References: <20240229005920.2407409-1-kuba@kernel.org>
+ <05f7bf89-04a5-4b65-bf59-c19456aeb1f0@sirena.org.uk>
+ <20240304150411.6a9bd50b@kernel.org>
+ <7bb3b635-9fed-47ab-a640-ccac6d283b54@intel.com>
+ <20240305.hoi8ja1eeg4C@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCnmhPDSedlWlTFAw--.63520S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3uw1xCw1xCrWrur1rZwb_yoW7Xw18pF
-	W5GFnrKF4DJr13Cr1xtw1UX3WFy34fJF4UXrn8J3yjyr1qkr1fGr4Syr17uFy5Cr1xtw4Y
-	vF1jyFyfWrn8A3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
-	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
-	cVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0x
-	vE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
-	87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1ebytUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBF1jj5cBhQAAsp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240305.hoi8ja1eeg4C@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Tue, 2024-03-05 at 17:26 +0100, Christian Brauner wrote:
-> On Tue, Mar 05, 2024 at 01:46:56PM +0100, Roberto Sassu wrote:
-> > On Tue, 2024-03-05 at 10:12 +0100, Christian Brauner wrote:
-> > > On Mon, Mar 04, 2024 at 10:56:17AM -0600, Seth Forshee (DigitalOcean)=
- wrote:
-> > > > On Mon, Mar 04, 2024 at 05:17:57PM +0100, Roberto Sassu wrote:
-> > > > > On Mon, 2024-03-04 at 09:31 -0600, Seth Forshee (DigitalOcean) wr=
-ote:
-> > > > > > On Mon, Mar 04, 2024 at 11:19:54AM +0100, Roberto Sassu wrote:
-> > > > > > > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOcean=
-) wrote:
-> > > > > > > > Use the vfs interfaces for fetching file capabilities for k=
-illpriv
-> > > > > > > > checks and from get_vfs_caps_from_disk(). While there, upda=
-te the
-> > > > > > > > kerneldoc for get_vfs_caps_from_disk() to explain how it is=
- different
-> > > > > > > > from vfs_get_fscaps_nosec().
-> > > > > > > >=20
-> > > > > > > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel=
-.org>
-> > > > > > > > ---
-> > > > > > > >  security/commoncap.c | 30 +++++++++++++-----------------
-> > > > > > > >  1 file changed, 13 insertions(+), 17 deletions(-)
-> > > > > > > >=20
-> > > > > > > > diff --git a/security/commoncap.c b/security/commoncap.c
-> > > > > > > > index a0ff7e6092e0..751bb26a06a6 100644
-> > > > > > > > --- a/security/commoncap.c
-> > > > > > > > +++ b/security/commoncap.c
-> > > > > > > > @@ -296,11 +296,12 @@ int cap_capset(struct cred *new,
-> > > > > > > >   */
-> > > > > > > >  int cap_inode_need_killpriv(struct dentry *dentry)
-> > > > > > > >  {
-> > > > > > > > -	struct inode *inode =3D d_backing_inode(dentry);
-> > > > > > > > +	struct vfs_caps caps;
-> > > > > > > >  	int error;
-> > > > > > > > =20
-> > > > > > > > -	error =3D __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS, =
-NULL, 0);
-> > > > > > > > -	return error > 0;
-> > > > > > > > +	/* Use nop_mnt_idmap for no mapping here as mapping is un=
-important */
-> > > > > > > > +	error =3D vfs_get_fscaps_nosec(&nop_mnt_idmap, dentry, &c=
-aps);
-> > > > > > > > +	return error =3D=3D 0;
-> > > > > > > >  }
-> > > > > > > > =20
-> > > > > > > >  /**
-> > > > > > > > @@ -323,7 +324,7 @@ int cap_inode_killpriv(struct mnt_idmap=
- *idmap, struct dentry *dentry)
-> > > > > > > >  {
-> > > > > > > >  	int error;
-> > > > > > > > =20
-> > > > > > > > -	error =3D __vfs_removexattr(idmap, dentry, XATTR_NAME_CAP=
-S);
-> > > > > > > > +	error =3D vfs_remove_fscaps_nosec(idmap, dentry);
-> > > > > > >=20
-> > > > > > > Uhm, I see that the change is logically correct... but the or=
-iginal
-> > > > > > > code was not correct, since the EVM post hook is not called (=
-thus the
-> > > > > > > HMAC is broken, or an xattr change is allowed on a portable s=
-ignature
-> > > > > > > which should be not).
-> > > > > > >=20
-> > > > > > > For completeness, the xattr change on a portable signature sh=
-ould not
-> > > > > > > happen in the first place, so cap_inode_killpriv() would not =
-be called.
-> > > > > > > However, since EVM allows same value change, we are here.
-> > > > > >=20
-> > > > > > I really don't understand EVM that well and am pretty hesitant =
-to try an
-> > > > > > change any of the logic around it. But I'll hazard a thought: s=
-hould EVM
-> > > > > > have a inode_need_killpriv hook which returns an error in this
-> > > > > > situation?
-> > > > >=20
-> > > > > Uhm, I think it would not work without modifying
-> > > > > security_inode_need_killpriv() and the hook definition.
-> > > > >=20
-> > > > > Since cap_inode_need_killpriv() returns 1, the loop stops and EVM=
- would
-> > > > > not be invoked. We would need to continue the loop and let EVM kn=
-ow
-> > > > > what is the current return value. Then EVM can reject the change.
-> > > > >=20
-> > > > > An alternative way would be to detect that actually we are settin=
-g the
-> > > > > same value for inode metadata, and maybe not returning 1 from
-> > > > > cap_inode_need_killpriv().
-> > > > >=20
-> > > > > I would prefer the second, since EVM allows same value change and=
- we
-> > > > > would have an exception if there are fscaps.
-> > > > >=20
-> > > > > This solves only the case of portable signatures. We would need t=
-o
-> > > > > change cap_inode_need_killpriv() anyway to update the HMAC for mu=
-table
-> > > > > files.
-> > > >=20
-> > > > I see. In any case this sounds like a matter for a separate patch
-> > > > series.
-> > >=20
-> > > Agreed.
-> >=20
-> > Christian, how realistic is that we don't kill priv if we are setting
-> > the same owner?
->=20
-> Uhm, I would need to see the wider context of the proposed change. But
-> iiuc then you would be comparing current and new fscaps and if they are
-> identical you don't kill privs? I think that would work. But again, I
-> would need to see the actual context/change to say something meaningful.
+On Tue, Mar 05, 2024 at 05:00:13PM +0100, Mickaël Salaün wrote:
+> On Tue, Mar 05, 2024 at 04:48:06PM +0100, Przemek Kitszel wrote:
+> > On 3/5/24 00:04, Jakub Kicinski wrote:
+> > > On Mon, 4 Mar 2024 22:20:03 +0000 Mark Brown wrote:
+> > > > On Wed, Feb 28, 2024 at 04:59:07PM -0800, Jakub Kicinski wrote:
+> > > > 
+> > > > > When running selftests for our subsystem in our CI we'd like all
+> > > > > tests to pass. Currently some tests use SKIP for cases they
+> > > > > expect to fail, because the kselftest_harness limits the return
+> > > > > codes to pass/fail/skip. XFAIL which would be a great match
+> > > > > here cannot be used.
+> > > > > 
+> > > > > Remove the no_print handling and use vfork() to run the test in
+> > > > > a different process than the setup. This way we don't need to
+> > > > > pass "failing step" via the exit code. Further clean up the exit
+> > > > > codes so that we can use all KSFT_* values. Rewrite the result
+> > > > > printing to make handling XFAIL/XPASS easier. Support tests
+> > > > > declaring combinations of fixture + variant they expect to fail.
+> > > > 
+> > > > This series landed in -next today and has caused breakage on all
+> > > > platforms in the ALSA pcmtest-driver test.  When run on systems that
+> > > > don't have the driver it needs loaded the test skip but since this
+> > > > series was merged skipped tests are logged but then reported back as
+> > > > failures:
+> > > > 
+> > > > # selftests: alsa: test-pcmtest-driver
+> > > > # TAP version 13
+> > > > # 1..5
+> > > > # # Starting 5 tests from 1 test cases.
+> > > > # #  RUN           pcmtest.playback ...
+> > > > # #      SKIP      Can't read patterns. Probably, module isn't loaded
+> > > > # # playback: Test failed
+> > > > # #          FAIL  pcmtest.playback
+> > > > # not ok 1 pcmtest.playback #  Can't read patterns. Probably, module isn't loaded
+> > > > # #  RUN           pcmtest.capture ...
+> > > > # #      SKIP      Can't read patterns. Probably, module isn't loaded
+> > > > # # capture: Test failed
+> > > > # #          FAIL  pcmtest.capture
+> > > > # not ok 2 pcmtest.capture #  Can't read patterns. Probably, module isn't loaded
+> > > > # #  RUN           pcmtest.ni_capture ...
+> > > > # #      SKIP      Can't read patterns. Probably, module isn't loaded
+> > > > # # ni_capture: Test failed
+> > > > # #          FAIL  pcmtest.ni_capture
+> > > > # not ok 3 pcmtest.ni_capture #  Can't read patterns. Probably, module isn't loaded
+> > > > # #  RUN           pcmtest.ni_playback ...
+> > > > # #      SKIP      Can't read patterns. Probably, module isn't loaded
+> > > > # # ni_playback: Test failed
+> > > > # #          FAIL  pcmtest.ni_playback
+> > > > # not ok 4 pcmtest.ni_playback #  Can't read patterns. Probably, module isn't loaded
+> > > > # #  RUN           pcmtest.reset_ioctl ...
+> > > > # #      SKIP      Can't read patterns. Probably, module isn't loaded
+> > > > # # reset_ioctl: Test failed
+> > > > # #          FAIL  pcmtest.reset_ioctl
+> > > > # not ok 5 pcmtest.reset_ioctl #  Can't read patterns. Probably, module isn't loaded
+> > > > # # FAILED: 0 / 5 tests passed.
+> > > > # # Totals: pass:0 fail:5 xfail:0 xpass:0 skip:0 error:0
+> > > > 
+> > > > I haven't completely isolated the issue due to some other breakage
+> > > > that's making it harder that it should be to test.
+> > > > 
+> > > > A sample full log can be seen at:
+> > > > 
+> > > >     https://lava.sirena.org.uk/scheduler/job/659576#L1349
+> > > 
+> > > Thanks! the exit() inside the skip evaded my grep, I'm testing this:
+> > > 
+> > > diff --git a/tools/testing/selftests/alsa/test-pcmtest-driver.c b/tools/testing/selftests/alsa/test-pcmtest-driver.c
+> > > index a52ecd43dbe3..7ab81d6f9e05 100644
+> > > --- a/tools/testing/selftests/alsa/test-pcmtest-driver.c
+> > > +++ b/tools/testing/selftests/alsa/test-pcmtest-driver.c
+> > > @@ -127,11 +127,11 @@ FIXTURE_SETUP(pcmtest) {
+> > >   	int err;
+> > >   	if (geteuid())
+> > > -		SKIP(exit(-1), "This test needs root to run!");
+> > > +		SKIP(exit(KSFT_SKIP), "This test needs root to run!");
+> > >   	err = read_patterns();
+> > >   	if (err)
+> > > -		SKIP(exit(-1), "Can't read patterns. Probably, module isn't loaded");
+> > > +		SKIP(exit(KSFT_SKIP), "Can't read patterns. Probably, module isn't loaded");
+> > >   	card_name = malloc(127);
+> > >   	ASSERT_NE(card_name, NULL);
+> > > diff --git a/tools/testing/selftests/mm/hmm-tests.c b/tools/testing/selftests/mm/hmm-tests.c
+> > > index 20294553a5dd..356ba5f3b68c 100644
+> > > --- a/tools/testing/selftests/mm/hmm-tests.c
+> > > +++ b/tools/testing/selftests/mm/hmm-tests.c
+> > > @@ -138,7 +138,7 @@ FIXTURE_SETUP(hmm)
+> > >   	self->fd = hmm_open(variant->device_number);
+> > >   	if (self->fd < 0 && hmm_is_coherent_type(variant->device_number))
+> > > -		SKIP(exit(0), "DEVICE_COHERENT not available");
+> > > +		SKIP(exit(KSFT_SKIP), "DEVICE_COHERENT not available");
+> > >   	ASSERT_GE(self->fd, 0);
+> > >   }
+> > > @@ -149,7 +149,7 @@ FIXTURE_SETUP(hmm2)
+> > >   	self->fd0 = hmm_open(variant->device_number0);
+> > >   	if (self->fd0 < 0 && hmm_is_coherent_type(variant->device_number0))
+> > > -		SKIP(exit(0), "DEVICE_COHERENT not available");
+> > > +		SKIP(exit(KSFT_SKIP), "DEVICE_COHERENT not available");
+> > >   	ASSERT_GE(self->fd0, 0);
+> > >   	self->fd1 = hmm_open(variant->device_number1);
+> > >   	ASSERT_GE(self->fd1, 0);
+> > > 
+> > > > but there's no more context.  I'm also seeing some breakage in the
+> > > > seccomp selftests which also use kselftest-harness:
+> > > > 
+> > > > # #  RUN           TRAP.dfl ...
+> > > > # # dfl: Test exited normally instead of by signal (code: 0)
+> > > > # #          FAIL  TRAP.dfl
+> > > > # not ok 56 TRAP.dfl
+> > > > # #  RUN           TRAP.ign ...
+> > > > # # ign: Test exited normally instead of by signal (code: 0)
+> > > > # #          FAIL  TRAP.ign
+> > > > # not ok 57 TRAP.ign
+> > > 
+> > > Ugh, I'm guessing vfork() "eats" the signal, IOW grandchild signals,
+> > > child exits? vfork() and signals.. I'd rather leave to Kees || Mickael.
+> > > 
+> > 
+> > Hi, sorry for not trying to reproduce it locally and still commenting,
+> > but my vfork() man page says:
+> > 
+> > | The child must  not  return  from  the current  function  or  call
+> > | exit(3) (which would have the effect of calling exit handlers
+> > | established by the parent process and flushing the parent's stdio(3)
+> > | buffers), but may call _exit(2).
+> > 
+> > And you still have some exit(3) calls.
+> 
+> Correct, exit(3) should be replaced with _exit(2).
 
-Ok, basically a software vendor can ship binaries with a signature over
-file metadata, including UID/GID, etc.
-
-A system can verify the signature through the public key of the
-software vendor.
-
-The problem is if someone (or even tar), executes chown on that binary,
-fscaps are lost. Thus, signature verification will fail from now on.
-
-EVM locks file metadata as soon as signature verification succeeds
-(i.e. metadata are the same of those signed by the software vendor).
-
-EVM locking works if someone is trying to set different metadata. But,
-if I try to chown to the same owner as the one stored in the inode, EVM
-allows it but the capability LSM removes security.capability, thus
-invalidating the signature.
-
-At least, it would be desirable that security.capability is not removed
-when setting the same owner. If the owner is different, EVM will handle
-that.
-
-Roberto
-
+Well, I think we should be good even if some exit(3) calls remain
+because the envirenment in which the vfork() call happen is already
+dedicated to the running test (with flushed stdio, setpgrp() call), see
+__run_test() and the fork() call just before running the
+fixture/test/teardown.  Even if the test configures its own exit
+handlers, they will not be run by its parent because it never calls
+exit(), and the returned function either ends with a call to _exit() or
+a signal.
