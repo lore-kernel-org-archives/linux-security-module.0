@@ -1,94 +1,144 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A966610A1B
-	for <linux-security-module@vger.kernel.org>; Tue,  5 Mar 2024 09:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B1350246;
+	Tue,  5 Mar 2024 09:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709631797; cv=none; b=Nb+/kFa00k9vycN26IiPof8X1GTt0Cg4cHbNaoSR8RKJMxv1EIkMA9dUcwPsqVXwBLFylqZih/60bPtNDwYJbyvbeJW6Ty3r1kPpNi6D+cbhUeIy/aVtl4bowFoMOzfDUHD75A7jSEp3Pio3lq9efQnsW31GMylmHeHeS4jUr1E=
+	t=1709632711; cv=none; b=CZm/byPVCrE7BAz9czEqel7T0PEV9pOn72RCAwPdgNx72Lq6MuvanT6jsnCsYc/WMTAz1GgiDtNEStQc5eJESl0Phh5N48HsrbDRQJzhWaZoMvIiOTuv9uRpBsJm83yz5O3/LwQ9sl0v5vaIRXY5E4VBfCNN580FhH7D+qVouJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709631797; c=relaxed/simple;
-	bh=m15fKz5tn5qjvDx1rmcQ6eNp9BysJTSlwqR2O7YG770=;
+	s=arc-20240116; t=1709632711; c=relaxed/simple;
+	bh=/4mH6blz+OXbyiAZdJXapeZYAAHshdm8yjRhaiNohG4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhOOy5z/qDAKabPyy0j8Qj7zNDkVQ3fCxJyntHFlzuDpBIRgFFAgERprX7KuLa9jXcb/aTDu4ME1kP1IiZhP8WB2cXTMjb+QK4Q5Jcbk5rPX7dFCFEk4H+QZM9F0g1addNkerSe2X+rvCnafVihtLG5JRbgGLopxyd0j9dIl+6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DtHQdQaQ; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gp/aF+TASY7rqHsTMYY146WTc+ex4CyBR4AjTaBkNKT8OF/EIXK1D4NbujjPqzCGUu/muqOfw5FkDUjM3ghMx1rXx9+5qKjJWxYYphrGq+wSUozqsEbQ5DQrp2Nj9ipN/WsRc5I4WhTfqJr5T8ilmhMZES6e/9zJsosBJ2Rv+wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ambo0nUm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DtHQdQaQ"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6e64261e712so154073b3a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Mar 2024 01:43:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709631795; x=1710236595; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qlO9KJY2+Wev5gu1Gmg14kKqRey8tMMcaneA5J7f8gY=;
-        b=DtHQdQaQ5+evETyYfqOPmpmY/FFdEAbc1u2gNSpz7Jolc6Otib+rUIxoNttSO1tqhD
-         Ow/0pxL6Qmh+f1wZizgbUMAXnDo5sqsMZQY2SNszmMHF+gsD2YHoEc7bEpc4SGXiOX4f
-         Dkf0DM9wjAqeK9vhGjihe1kNkgu98OrxquBJ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709631795; x=1710236595;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qlO9KJY2+Wev5gu1Gmg14kKqRey8tMMcaneA5J7f8gY=;
-        b=ACXUIYpaN3avSwK/G3ZztwU7QfbOMK3x60UV6/ypWbmjD1E+S5y6pg+C7yH4e20FUo
-         nbg4+ZQX1HORUF83PAIS60q6hCTbg1Pn+p5ucemkN0pBLFeqXqWSEQgRiuJ6DLWtm3PX
-         KIZ2pbCvO2ItBMpWmw/LNUrc7S6UV0O9KWGxSDncojglzJ76bDF8jXL8a4QiE+iuAfF/
-         a54enpPTnxkDc804+SpKXrLgxZ75fimdsKSyGFUYktoyTKsmOuGMSOprO/MMT3lQqnVr
-         ylV9K004Bk5NM9HJREZxRM8dW+aq7ONA/aMcybExT6J7yiMVt1fdMSy8Hw1Bb3Wg+mXa
-         BrAg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0m7VRuhQs4oOBFKQL6WzxxKxq90/EoFVP2Qe10dWvg87ecWIIJtq5rjshbZhlOZ3LgeIIbs0XhpP3haNNEI/+kPEpTRN97jhXD9Vjec7vi80BW0Cm
-X-Gm-Message-State: AOJu0Yz+GNL+aq3oMXu0IAkYrWK6SsBcKo4bHbdq1fn9PmdESCov812P
-	ahe6ZlJuhyXE2Nz44fYj/G6rjoy1a+jT9bs8ogEmPufjtNKHXioYjeMJG533rQ==
-X-Google-Smtp-Source: AGHT+IEHX7VS98PVmPfQMP1A4xGFPH1JI0XcQyxGUfAbT5ZVpEx99l+bOBaCZ6HcNRkSZQoSe7xP0g==
-X-Received: by 2002:a05:6a20:3941:b0:1a1:50d2:58d6 with SMTP id r1-20020a056a20394100b001a150d258d6mr1266291pzg.23.1709631795159;
-        Tue, 05 Mar 2024 01:43:15 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d10-20020a170902ceca00b001db94dfc2b5sm10089983plg.107.2024.03.05.01.43.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 01:43:14 -0800 (PST)
-Date: Tue, 5 Mar 2024 01:43:14 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, davem@davemloft.net,
-	netdev@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
-	shuah@kernel.org, linux-kselftest@vger.kernel.org, mic@digikod.net,
-	linux-security-module@vger.kernel.org, jakub@cloudflare.com
-Subject: Re: [PATCH v4 00/12] selftests: kselftest_harness: support using
- xfail
-Message-ID: <202403050141.C8B1317C9@keescook>
-References: <20240229005920.2407409-1-kuba@kernel.org>
- <05f7bf89-04a5-4b65-bf59-c19456aeb1f0@sirena.org.uk>
- <20240304150411.6a9bd50b@kernel.org>
- <202403041512.402C08D@keescook>
- <20240304153902.30cd2edd@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ambo0nUm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D4ECC433F1;
+	Tue,  5 Mar 2024 09:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709632711;
+	bh=/4mH6blz+OXbyiAZdJXapeZYAAHshdm8yjRhaiNohG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ambo0nUmKbxaZC2hyphDe3+VrmUQkQMnghESDL91tOcycm/8gzmlrBxbmyuP7owm5
+	 9YdNAqmjdAcc91XJxDV4+GSTpoMBy557B6lF1np0wFkis1b2oUxWzzblBu+PeJbVih
+	 D5UtafeVnQTOaeQnFhjMjm38EswV2h+tuACEpWbiVmiENBzotksuhpGJd6TZQvFwJH
+	 hevskSUIRUI/fA/8aYM6Mdwjoe4fmcKCgs/Ebu9xHYfOgc4U8Rm9CJLxAPnu9jkvSb
+	 Xld6fNHXfA5lIuwIetidOy9YqB3qUZiDx/ZN+bzC5WAfyXcAm7h8wruFJtRjicoy//
+	 ddcLizSRVMCxw==
+Date: Tue, 5 Mar 2024 10:58:25 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
+Message-ID: <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
+ <20240304-zugute-abtragen-d499556390b3@brauner>
+ <202403040943.9545EBE5@keescook>
+ <20240305-attentat-robust-b0da8137b7df@brauner>
+ <202403050134.784D787337@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240304153902.30cd2edd@kernel.org>
+In-Reply-To: <202403050134.784D787337@keescook>
 
-On Mon, Mar 04, 2024 at 03:39:02PM -0800, Jakub Kicinski wrote:
-> On Mon, 4 Mar 2024 15:14:04 -0800 Kees Cook wrote:
-> > > Ugh, I'm guessing vfork() "eats" the signal, IOW grandchild signals,
-> > > child exits? vfork() and signals.. I'd rather leave to Kees || Mickael.  
+On Tue, Mar 05, 2024 at 01:41:29AM -0800, Kees Cook wrote:
+> On Tue, Mar 05, 2024 at 09:59:47AM +0100, Christian Brauner wrote:
+> > > > Uhm, this will break the seccomp notifier, no? So you can't turn on
+> > > > SECURITY_PROC_MEM_RESTRICT_WRITE when you want to use the seccomp
+> > > > notifier to do system call interception and rewrite memory locations of
+> > > > the calling task, no? Which is very much relied upon in various
+> > > > container managers and possibly other security tools.
+> > > > 
+> > > > Which means that you can't turn this on in any of the regular distros.
+> > > 
+> > > FWIW, it's a run-time toggle, but yes, let's make sure this works
+> > > correctly.
+> > > 
+> > > > So you need to either account for the calling task being a seccomp
+> > > > supervisor for the task whose memory it is trying to access or you need
+> > > > to provide a migration path by adding an api that let's caller's perform
+> > > > these writes through the seccomp notifier.
+> > > 
+> > > How do seccomp supervisors that use USER_NOTIF do those kinds of
+> > > memory writes currently? I thought they were actually using ptrace?
+> > > Everything I'm familiar with is just using SECCOMP_IOCTL_NOTIF_ADDFD,
+> > > and not doing fancy memory pokes.
 > > 
-> > Oh no, that does seem bad. Since Mickaël is also seeing weird issues,
-> > can we drop the vfork changes for now?
+> > For example, incus has a seccomp supervisor such that each container
+> > gets it's own goroutine that is responsible for handling system call
+> > interception.
+> > 
+> > If a container is started the container runtime connects to an AF_UNIX
+> > socket to register with the seccomp supervisor. It stays connected until
+> > it stops. Everytime a system call is performed that is registered in the
+> > seccomp notifier filter the container runtime will send a AF_UNIX
+> > message to the seccomp supervisor. This will include the following fds:
+> > 
+> > - the pidfd of the task that performed the system call (we should
+> >   actually replace this with SO_PEERPIDFD now that we have that)
+> > - the fd of the task's memory to /proc/<pid>/mem
+> > 
+> > The seccomp supervisor will then perform the system call interception
+> > including the required memory reads and writes.
 > 
-> Seems doable, but won't be a simple revert. "drop" means we'd need 
-> to bring ->step back. More or less go back to v3.
+> Okay, so the patch would very much break that. Some questions, though:
+> - why not use process_vm_writev()?
 
-I think we have to -- other CIs are now showing the most of seccomp
-failing now. (And I can confirm this now -- I had only tested seccomp
-on earlier versions of the series.)
+Because it's inherently racy as I've explained in an earlier mail in
+this thread. Opening /proc/<pid>/mem we can guard via:
 
--- 
-Kees Cook
+// Assume we hold @pidfd for supervised process
+
+int fd_mem = open("/proc/$pid/mem", O_RDWR);:
+
+if (pidfd_send_signal(pidfd, 0, ...) == 0)
+        write(fd_mem, ...);
+
+But we can't exactly do:
+
+process_vm_writev(pid, WRITE_TO_MEMORY, ...);
+if (pidfd_send_signal(pidfd, 0, ...) == 0)
+        write(fd_mem, ...);
+
+That's always racy. The process might have been reaped before we even
+call pidfd_send_signal() and we're writing to some random process
+memory.
+
+If we wanted to support this we'd need to implement a proposal I had a
+while ago:
+
+#define PROCESS_VM_RW_PIDFD (1 << 0)
+
+process_vm_readv(pidfd,  ..., PROCESS_VM_RW_PIDFD);
+process_vm_writev(pidfd, ..., PROCESS_VM_RW_PIDFD);
+
+which is similar to what we did for waitid(pidfd, P_PIDFD, ...)
+
+That would make it possible to use a pidfd instead of a pid in the two
+system calls. Then we can get rid of the raciness and actually use those
+system calls. As they are now, we can't.
+
+> - does the supervisor depend on FOLL_FORCE?
+
+Since the write handler for /proc/<pid>/mem does raise FOLL_FORCE
+unconditionally it likely would implicitly. But I'm not familiar enough
+with FOLL_FORCE to say for sure.
+
+> Perhaps is is sufficient to block the use of FOLL_FORCE?
+> 
+> I took a look at the Chrome OS exploit, and I _think_ it is depending
+> on the FOLL_FORCE behavior (it searches for a symbol to overwrite that
+> if I'm following correctly is in a read-only region), but some of the
+> binaries don't include source code, so I couldn't easily see what was
+> being injected. Mike or Adrian can you confirm this?
