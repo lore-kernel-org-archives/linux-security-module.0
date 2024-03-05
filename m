@@ -1,140 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F9E1C6AD;
-	Tue,  5 Mar 2024 11:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196E65C91C;
+	Tue,  5 Mar 2024 12:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709636608; cv=none; b=Pyrl6H2zxjTcrU+bL+W2Vy5+cq1mAIIqWYP1CPMFpTCnfhYreHr3T6Qu0bd3Mqwyth0wHR7F1xlqIX13MPuMJsym8tqGCIxA4gnJCjiQ3GkOcTjDahy5YzBUD0KMGde3/wy4N2U8VE3cDGi8/Vst7bOX5hEaMa1Hlo8PV0GVEyg=
+	t=1709641662; cv=none; b=CoxyBGxIrgKQWSEXElZjzYQwGuvcmLQf3ao0Y9EW/JwV60Cvzl4bDqtrwCqrkOB3ozuftPPGLz4fs1W3/NK48gehUqx6hM6+gvCwIbVHE1BAO160giN5J9Fk4Ia8WM0TYlVsvMaV5d762KR1Vs8KWnvgKLkBzv2CfCrHp3fTJuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709636608; c=relaxed/simple;
-	bh=CWsbl+d48blGuvvq/hiJnHb8eCwdGeKP67OqIvqbKVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ot0DIbjPB4Aue9PVlYegehm+sEX+PIvaSejlrfuzk4+wiJLYiW5Nwz7nkDfy2zm/NARMjf6PhG/bcnmjdi7A3K+Xq4u3zgDUFJcrdISkwK/JxBIIv5pOWLjkLnR6ffSIyhZTgaK9yrdv6dZ4y+JZ1tcN+cPJ59cWeez3J9xN3F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvBaNGpK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709641662; c=relaxed/simple;
+	bh=9Hv0NhDd5yJ2rN0EquGuHE0G93tjK43hLajBYWiBYns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eu6sGvcXGS4hHQjfqlInF55v2ugxT6kq4+K7b/YeHcPat5qAMvLVtjYAfIdOoNFu5Tkh52/HmCIxmNkQpeFLMnXQAuq431ZRPl+QQgxOl8/5o86/ud740+JpTGOMJRT+cz0ETqpi3GRV6zcHrv6Hh6fBCVeqFB5TWeQyYVySLW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VtvVEKGh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvBaNGpK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E302C433C7;
-	Tue,  5 Mar 2024 11:03:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtvVEKGh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB8FC43390;
+	Tue,  5 Mar 2024 12:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709636607;
-	bh=CWsbl+d48blGuvvq/hiJnHb8eCwdGeKP67OqIvqbKVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lvBaNGpKF8VbnuFraQMyOVDjcZgCgt9N6u7Ba5VZKyfQsdEyYA0cX5A/9SD8FaRZ3
-	 3XFOhrmT0dsEU6YRaOGcrBWYag06ujtBruRZtZck2CIInZN+Y6rtwkRausBuDEkkOq
-	 JThj5M/gYoFEYO3N4sKpl+6FCQ3mQnIRmBgNN3CFJypU9bkf+2RJvcTX6xW2yAHaNS
-	 PxiQK7rq4fA1xBsKfffbmSYlDrrR/5ze1oF6fWYhYH+Lc/CsLXr1D6cvtzcISCiol+
-	 lngTlZ1QjFCTrGXTrzjh79aPrBY9P2KY2sFxtOYfLlWqBmFoqfvISthONRAyM681sC
-	 kMc+Knqd67ITA==
-Date: Tue, 5 Mar 2024 12:03:21 +0100
+	s=k20201202; t=1709641661;
+	bh=9Hv0NhDd5yJ2rN0EquGuHE0G93tjK43hLajBYWiBYns=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VtvVEKGhn0ktSseMhbKlABxyzsDGI00ZprGz2oNogIMoDbc77/2pwNo2P5YUE8jEs
+	 5pdBQGkgR+9zB37m8ZDXOHGOSMB1V1fVEr7klH6Xe+0ROv6/Eqx5gxKdsmLLjst5Vm
+	 +Xp7QNSZCS/4voxzoc4esVKF92b1PYeFMInK1HNpS5SsdRpu7zDHwf1EijUtlG14sV
+	 5AF93MQV0c8pUKBdp6v0n5Yq8e3feRy5T8S0YfjZTBhOKTXp7Vumicr6EgsUnAt/Fy
+	 cQMJzmgoFU+3tReEwBJg6OmH7zwx4STR5jKh5tBbZDMR21pQLl/m+QLstHw/fSlXy0
+	 wVgqULvZu0bfw==
 From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <keescook@chromium.org>, 
-	Matthew Denton <mpdenton@chromium.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
-	linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Guenter Roeck <groeck@chromium.org>, 
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Mike Frysinger <vapier@chromium.org>
-Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
-Message-ID: <20240305-gremien-faucht-29973b61fb57@brauner>
-References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
- <20240304-zugute-abtragen-d499556390b3@brauner>
- <202403040943.9545EBE5@keescook>
- <20240305-attentat-robust-b0da8137b7df@brauner>
- <202403050134.784D787337@keescook>
- <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Seth Forshee <sforshee@kernel.org>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] xattr: restrict vfs_getxattr_alloc() allocation size
+Date: Tue,  5 Mar 2024 13:27:06 +0100
+Message-ID: <20240305-effekt-luftzug-51913178f6cd@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1232; i=brauner@kernel.org; h=from:subject:message-id; bh=9Hv0NhDd5yJ2rN0EquGuHE0G93tjK43hLajBYWiBYns=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+59/W31H893LfGUGB9MXhRwPefne3Y1d1inio3R18p 6UvKym3o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCL2Xgz/C1f9XX31XhrHpDO6 91IkjJU3Xn3ZWNh7r1D5yP37y72PJDP8U4988NZ/1+bMmByhTf49ht/kPGZ9m1UT1yYyR5/pzEp hPgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 05, 2024 at 10:58:31AM +0100, Christian Brauner wrote:
-> On Tue, Mar 05, 2024 at 01:41:29AM -0800, Kees Cook wrote:
-> > On Tue, Mar 05, 2024 at 09:59:47AM +0100, Christian Brauner wrote:
-> > > > > Uhm, this will break the seccomp notifier, no? So you can't turn on
-> > > > > SECURITY_PROC_MEM_RESTRICT_WRITE when you want to use the seccomp
-> > > > > notifier to do system call interception and rewrite memory locations of
-> > > > > the calling task, no? Which is very much relied upon in various
-> > > > > container managers and possibly other security tools.
-> > > > > 
-> > > > > Which means that you can't turn this on in any of the regular distros.
-> > > > 
-> > > > FWIW, it's a run-time toggle, but yes, let's make sure this works
-> > > > correctly.
-> > > > 
-> > > > > So you need to either account for the calling task being a seccomp
-> > > > > supervisor for the task whose memory it is trying to access or you need
-> > > > > to provide a migration path by adding an api that let's caller's perform
-> > > > > these writes through the seccomp notifier.
-> > > > 
-> > > > How do seccomp supervisors that use USER_NOTIF do those kinds of
-> > > > memory writes currently? I thought they were actually using ptrace?
-> > > > Everything I'm familiar with is just using SECCOMP_IOCTL_NOTIF_ADDFD,
-> > > > and not doing fancy memory pokes.
-> > > 
-> > > For example, incus has a seccomp supervisor such that each container
-> > > gets it's own goroutine that is responsible for handling system call
-> > > interception.
-> > > 
-> > > If a container is started the container runtime connects to an AF_UNIX
-> > > socket to register with the seccomp supervisor. It stays connected until
-> > > it stops. Everytime a system call is performed that is registered in the
-> > > seccomp notifier filter the container runtime will send a AF_UNIX
-> > > message to the seccomp supervisor. This will include the following fds:
-> > > 
-> > > - the pidfd of the task that performed the system call (we should
-> > >   actually replace this with SO_PEERPIDFD now that we have that)
-> > > - the fd of the task's memory to /proc/<pid>/mem
-> > > 
-> > > The seccomp supervisor will then perform the system call interception
-> > > including the required memory reads and writes.
-> > 
-> > Okay, so the patch would very much break that. Some questions, though:
-> > - why not use process_vm_writev()?
-> 
-> Because it's inherently racy as I've explained in an earlier mail in
-> this thread. Opening /proc/<pid>/mem we can guard via:
-> 
-> // Assume we hold @pidfd for supervised process
-> 
-> int fd_mem = open("/proc/$pid/mem", O_RDWR);:
-> 
-> if (pidfd_send_signal(pidfd, 0, ...) == 0)
->         write(fd_mem, ...);
-> 
-> But we can't exactly do:
-> 
-> process_vm_writev(pid, WRITE_TO_MEMORY, ...);
-> if (pidfd_send_signal(pidfd, 0, ...) == 0)
->         write(fd_mem, ...);
-> 
-> That's always racy. The process might have been reaped before we even
-> call pidfd_send_signal() and we're writing to some random process
-> memory.
-> 
-> If we wanted to support this we'd need to implement a proposal I had a
-> while ago:
-> 
-> #define PROCESS_VM_RW_PIDFD (1 << 0)
-> 
-> process_vm_readv(pidfd,  ..., PROCESS_VM_RW_PIDFD);
-> process_vm_writev(pidfd, ..., PROCESS_VM_RW_PIDFD);
-> 
-> which is similar to what we did for waitid(pidfd, P_PIDFD, ...)
-> 
-> That would make it possible to use a pidfd instead of a pid in the two
-> system calls. Then we can get rid of the raciness and actually use those
-> system calls. As they are now, we can't.
+The vfs_getxattr_alloc() interface is a special-purpose in-kernel api
+that does a racy query-size+allocate-buffer+retrieve-data. It is used by
+EVM, IMA, and fscaps to retrieve xattrs. Recently, we've seen issues
+where 9p returned values that amount to allocating about 8000GB worth of
+memory (cf. [1]). That's now fixed in 9p. But vfs_getxattr_alloc() has
+no reason to allow getting xattr values that are larger than
+XATTR_MAX_SIZE as that's the limit we use for setting and getting xattr
+values and nothing currently goes beyond that limit afaict. Let it check
+for that and reject requests that are larger than that.
 
-What btw, is the Linux sandbox on Chromium doing? Did they finally move
-away from SECCOMP_RET_TRAP to SECCOMP_RET_USER_NOTIF? I see:
+Link: https://lore.kernel.org/r/ZeXcQmHWcYvfCR93@do-x1extreme [1]
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/xattr.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-https://issues.chromium.org/issues/40145101
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 09d927603433..a53c930e3018 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -395,6 +395,9 @@ vfs_getxattr_alloc(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	if (error < 0)
+ 		return error;
+ 
++	if (error > XATTR_SIZE_MAX)
++		return -E2BIG;
++
+ 	if (!value || (error > xattr_size)) {
+ 		value = krealloc(*xattr_value, error + 1, flags);
+ 		if (!value)
+-- 
+2.43.0
 
-What ever became of this?
