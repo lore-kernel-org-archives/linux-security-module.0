@@ -1,163 +1,224 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B51C01
-	for <linux-security-module@vger.kernel.org>; Tue,  5 Mar 2024 19:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E26C5C5FD
+	for <linux-security-module@vger.kernel.org>; Tue,  5 Mar 2024 20:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709667497; cv=none; b=BKMOu7FSjQrz1+njAT3WrglMlaNo7zFoe8UTMdp38QaUYVgR9UlveGHUYQI9yymJcK5iPBuRWOfDGliQ+3444I5KOwXMmPSy291lecDFdSYHVV992Cnppp0+7TY+8oGMBauWHFr94g0Ee4sCYoqkQxvwQkmUgFBsvrb5NRhvalE=
+	t=1709669462; cv=none; b=MWldsNpETuhXrPPxwck6uOrI/MJygOUC4uQqBkA6QFn1a+E1OF5FM0TrkHMr8+WnB8QHQv56gBex7XPFYy85adMckI/OBTprWFE7WAMHH+HvJmX89NCNFEQ7jKvXvbJfYe6C7DSYMhNPbl0tIsxvBBILQqrXwUNGFPO6WRRhDsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709667497; c=relaxed/simple;
-	bh=yjCr221DADkA5bNqdiY3x3UI306XYd+UggCeyz1yRHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T5OvWFIrnmUbqjGQ/No8Uh1ToIK8YGh/xgbMmL8p3rps38uXHynFYbh05EDzTNboidT40AlQAVFdBE3TzQ4oMHTMfNB4+AEXoMs6ozAQapFY6vdHFZn32TEXRxcgH0p3hujUEZbI4fle9riAGThecblmL03vLn0XAVb6cBiuV1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dRdSLyFL; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1709669462; c=relaxed/simple;
+	bh=YagDFFA6rbmtQARJcRghj4PIMIy8y9znN8rxiNy6FWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a2ULGDGg9vmgTHNiXWUBhe9hejQgIMAb0PejBV3UBmvoMcZmIXrBBRXxwqc9a3Rr4YJ3ShwwT9HoLWpPwuzimnKBtFqLYrqDVPtFbZ07LvDlb649vXiF+RldtdxP+1cxoGAeRcr76cFsOkurxBI3GdN/5PX7SLJJBmWOLVe10oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=iqRjI1Dy; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dRdSLyFL"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6e627596554so1902982b3a.2
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Mar 2024 11:38:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709667495; x=1710272295; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HA7mlV83NfUZx2uZSPlTtkihc76ZZ9iwfT6eqOr1MbM=;
-        b=dRdSLyFLWUwFE7SkDpzX3lGrbbKJCXv7b25F3N1BSaoWCN4AMTYspJp8sArHg3f5/f
-         WEbQVWXoqKTUVQH5c8n+pQ+q4NY4tjOaLmXs9wCNZ+6wP/3zNegJnX6qwfjukMtDfwb1
-         Qa4yKG0JnV+CBMpQeyUVWCkjnij8/Jwo/AqC4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709667495; x=1710272295;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HA7mlV83NfUZx2uZSPlTtkihc76ZZ9iwfT6eqOr1MbM=;
-        b=lVdYpLnS+deOFa+x1We5xjmjjs0B0bm3FBMuDZB0a+9gsERoTVo0A/nELI3ML9J5+r
-         c1h5K/IC5J4Ra6kpJtg3vebS99VYODqnLQe6Q7O1nvLgnKYRmJzcnxEYOMulq5dFmT6R
-         gW0mcIZInrKQiJwKUSbcU5yHpLxlX+dbjvCVITvKFSqycZb1cGourtAOp2qD1raa01bi
-         /057TbobPgjQSvLvukzFtu8EBUSh7LKrrLksSG9UOOn72tH/MHlV4YQYGOYFZx1+kUXp
-         usZNkbC1AfZy8vbjCbOD5/zV1rlHZRLmOBmbBDMpbmHIlz5/WYfkHBybzV6Usm3oHIE7
-         VmEA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9aO09a+Q+4oT3WjMyAiENL7FHOHe9roP3pDY+cc1GTKObrc0zZmImagcYvsmug7epWD/GyuG0rYUbr3kRpsrsBI0v9e/TUbn2egxaISOLOJ1UDX1t
-X-Gm-Message-State: AOJu0YwLdIx2i8iwcOw9lk/Wpxp58V3ZsBGvNThRcRVWVgdzwmYeD2j+
-	iwNp1H9CwMqTFnfrYHbIQRiIcmuY9MVtnz6OMWPczzZzAWKv34jfzuCPl+ZCyA==
-X-Google-Smtp-Source: AGHT+IHmm9bDdwsC5X6VFNK7Wqa2G5+ysPfNvANktTS1n2VdscWFowLK6SOVTNL9odXB+HtrCQCV2w==
-X-Received: by 2002:a05:6a20:d04e:b0:1a1:e41:979b with SMTP id hv14-20020a056a20d04e00b001a10e41979bmr3227567pzb.41.1709667494966;
-        Tue, 05 Mar 2024 11:38:14 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 11-20020a63104b000000b005d8e30897e4sm9348461pgq.69.2024.03.05.11.38.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 11:38:14 -0800 (PST)
-Date: Tue, 5 Mar 2024 11:38:13 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	kernel@collabora.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Mike Frysinger <vapier@chromium.org>
-Subject: Re: [PATCH v2] proc: allow restricting /proc/pid/mem writes
-Message-ID: <202403051135.708135A8@keescook>
-References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
- <20240304-zugute-abtragen-d499556390b3@brauner>
- <202403040943.9545EBE5@keescook>
- <20240305-attentat-robust-b0da8137b7df@brauner>
- <202403050134.784D787337@keescook>
- <20240305-kontakt-ticken-77fc8f02be1d@brauner>
- <202403050211.86A44769@keescook>
- <20240305-brotkrumen-vorbild-9709ce924d25@brauner>
- <202403051033.9527DD75@keescook>
- <45d98-65e77400-5-31aa8000@248840925>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="iqRjI1Dy"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tq6Bh3hBzzMqFcJ;
+	Tue,  5 Mar 2024 21:10:52 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tq6Bg4Rt6z3W;
+	Tue,  5 Mar 2024 21:10:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709669452;
+	bh=YagDFFA6rbmtQARJcRghj4PIMIy8y9znN8rxiNy6FWo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iqRjI1Dy24DR8Hdurm3d3isbc56yHWvmpEKMfRgZ0QEGyvKHer+cdIGDKvDQeYKas
+	 11oLvI7VsJYOxwcNZUAiNi8sfJJyapxPmMqHGWJCPMgb11x7Wk2vDMQCoG++3Tdt3x
+	 wtP9I51i9h8vpR3tiipkGYG2oxtCb/Z4Pq8eEIls=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: "David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Mark Brown <broonie@kernel.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Will Drewry <wad@chromium.org>,
+	edumazet@google.com,
+	jakub@cloudflare.com,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH] selftests/harness: Fix TEST_F()'s vfork handling
+Date: Tue,  5 Mar 2024 21:10:29 +0100
+Message-ID: <20240305201029.1331333-1-mic@digikod.net>
+In-Reply-To: <20240305.sheeF9yain1O@digikod.net>
+References: <20240305.sheeF9yain1O@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45d98-65e77400-5-31aa8000@248840925>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Tue, Mar 05, 2024 at 07:34:34PM +0000, Adrian Ratiu wrote:
-> On Tuesday, March 05, 2024 20:37 EET, Kees Cook <keescook@chromium.org> wrote:
-> 
-> > On Tue, Mar 05, 2024 at 11:32:04AM +0100, Christian Brauner wrote:
-> > > On Tue, Mar 05, 2024 at 02:12:26AM -0800, Kees Cook wrote:
-> > > > On Tue, Mar 05, 2024 at 10:58:25AM +0100, Christian Brauner wrote:
-> > > > > Since the write handler for /proc/<pid>/mem does raise FOLL_FORCE
-> > > > > unconditionally it likely would implicitly. But I'm not familiar enough
-> > > > > with FOLL_FORCE to say for sure.
-> > > > 
-> > > > I should phrase the question better. :) Is the supervisor writing into
-> > > > read-only regions of the child process?
-> > > 
-> > > Hm... I suspect we don't. Let's take two concrete examples so you can
-> > > tell me.
-> > > 
-> > > Incus intercepts the sysinfo() syscall. It prepares a struct sysinfo
-> > > with cgroup aware values for the supervised process and then does:
-> > > 
-> > > unix.Pwrite(siov.memFd, &sysinfo, sizeof(struct sysinfo), seccomp_data.args[0]))
-> > > 
-> > > It also intercepts some bpf system calls attaching bpf programs for the
-> > > caller. If that fails we update the log buffer for the supervised
-> > > process:
-> > > 
-> > > union bpf_attr attr = {}, new_attr = {};
-> > > 
-> > > // read struct bpf_attr from mem_fd
-> > > ret = pread(mem_fd, &attr, attr_len, req->data.args[1]);
-> > > if (ret < 0)
-> > >         return -errno;
-> > > 
-> > > // Do stuff with attr. Stuff fails. Update log buffer for supervised process:
-> > > if ((new_attr.log_size) > 0 && (pwrite(mem_fd, new_attr.log_buf, new_attr.log_size, attr.log_buf) != new_attr.log_size))
-> > 
-> > This is almost certainly in writable memory (either stack or .data).
-> 
-> Mostly yes, but we can't be certain where it comes from, because
-> SECCOMP_IOCTL_NOTIF_RECV passes any addresses set by the
-> caller to the supervisor process.
-> 
-> It is a kind of "implementation defined" behavior, just like we
-> can't predict what the supervisor will do with the caller mem :)
-> 
-> > 
-> > > But I'm not sure if there are other use-cases that would require this.
-> > 
-> > Maybe this option needs to be per-process (like no_new_privs), and with
-> > a few access levels:
-> > 
-> > - as things are now
-> > - no FOLL_FORCE unless by ptracer
-> > - no writes unless by ptracer
-> > - no FOLL_FORCE ever
-> > - no writes ever
-> > - no reads unless by ptracer
-> > - no reads ever
-> > 
-> > Which feels more like 3 toggles: read, write, FOLL_FORCE. Each set to
-> > "DAC", "ptracer", and "none"?
-> 
-> I really like this approach because it provides a  mechanism
-> with maximum flexibility without imposing a specific policy.
-> 
-> What does DAC mean in this context? My mind jumps to
-> Digital to Analog Converter :)
+Always run fixture setup in the grandchild process, and by default also
+run the teardown in the same process.  However, this change makes it
+possible to run the teardown in a parent process when
+_metadata->teardown_parent is set to true (e.g. in fixture setup).
 
-Ah yes, sorry, this is Discretionary Access Control (which is my
-short-hand for saying "basic file permissions"). But I guess that's kind
-of not really true since the open() access checks are doing a
-"ptrace-able" check in addition to the file perms check.
+Fix TEST_SIGNAL() by forwarding grandchild's signal to its parent.  Fix
+seccomp tests by running the test setup in the parent of the test
+thread, as expected by the related test code.  Fix Landlock tests by
+waiting for the grandchild before processing _metadata.
 
-> Shall I give it a try in v3?
+Use of exit(3) in tests should be OK because the environment in which
+the vfork(2) call happen is already dedicated to the running test (with
+flushed stdio, setpgrp() call), see __run_test() and the call to fork(2)
+just before running the setup/test/teardown.  Even if the test
+configures its own exit handlers, they will not be run by the parent
+because it never calls exit(3), and the test function either ends with a
+call to _exit(2) or a signal.
 
-Yeah, though maybe see if Mike or Jann chime in over the next few days?
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Will Drewry <wad@chromium.org>
+Fixes: 0710a1a73fb4 ("selftests/harness: Merge TEST_F_FORK() into TEST_F()")
+Link: https://lore.kernel.org/r/20240305201029.1331333-1-mic@digikod.net
+---
+ tools/testing/selftests/kselftest_harness.h | 28 +++++++++++++--------
+ tools/testing/selftests/landlock/fs_test.c  | 22 ++++++++--------
+ 2 files changed, 27 insertions(+), 23 deletions(-)
 
--Kees
-
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 634be793ad58..4fd735e48ee7 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -382,29 +382,33 @@
+ 		/* fixture data is alloced, setup, and torn down per call. */ \
+ 		FIXTURE_DATA(fixture_name) self; \
+ 		pid_t child = 1; \
++		int status = 0; \
+ 		memset(&self, 0, sizeof(FIXTURE_DATA(fixture_name))); \
+ 		if (setjmp(_metadata->env) == 0) { \
+-			fixture_name##_setup(_metadata, &self, variant->data); \
+-			/* Let setup failure terminate early. */ \
+-			if (_metadata->exit_code) \
+-				return; \
+-			_metadata->setup_completed = true; \
+ 			/* Use the same _metadata. */ \
+ 			child = vfork(); \
+ 			if (child == 0) { \
++				fixture_name##_setup(_metadata, &self, variant->data); \
++				/* Let setup failure terminate early. */ \
++				if (_metadata->exit_code) \
++					_exit(0); \
++				_metadata->setup_completed = true; \
+ 				fixture_name##_##test_name(_metadata, &self, variant->data); \
+-				_exit(0); \
+-			} \
+-			if (child < 0) { \
++			} else if (child < 0 || child != waitpid(child, &status, 0)) { \
+ 				ksft_print_msg("ERROR SPAWNING TEST GRANDCHILD\n"); \
+ 				_metadata->exit_code = KSFT_FAIL; \
+ 			} \
+ 		} \
+-		if (child == 0) \
+-			/* Child failed and updated the shared _metadata. */ \
++		if (child == 0) { \
++			if (_metadata->setup_completed && !_metadata->teardown_parent) \
++				fixture_name##_teardown(_metadata, &self, variant->data); \
+ 			_exit(0); \
+-		if (_metadata->setup_completed) \
++		} \
++		if (_metadata->setup_completed && _metadata->teardown_parent) \
+ 			fixture_name##_teardown(_metadata, &self, variant->data); \
++		if (!WIFEXITED(status) && WIFSIGNALED(status)) \
++			/* Forward signal to __wait_for_test(). */ \
++			kill(getpid(), WTERMSIG(status)); \
+ 		__test_check_assert(_metadata); \
+ 	} \
+ 	static struct __test_metadata \
+@@ -414,6 +418,7 @@
+ 		.fixture = &_##fixture_name##_fixture_object, \
+ 		.termsig = signal, \
+ 		.timeout = tmout, \
++		.teardown_parent = false, \
+ 	 }; \
+ 	static void __attribute__((constructor)) \
+ 			_register_##fixture_name##_##test_name(void) \
+@@ -873,6 +878,7 @@ struct __test_metadata {
+ 	bool timed_out;	/* did this test timeout instead of exiting? */
+ 	bool aborted;	/* stopped test due to failed ASSERT */
+ 	bool setup_completed; /* did setup finish? */
++	bool teardown_parent; /* run teardown in a parent process */
+ 	jmp_buf env;	/* for exiting out of test early */
+ 	struct __test_results *results;
+ 	struct __test_metadata *prev, *next;
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 98817a14c91b..9a6036fbf289 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -285,6 +285,8 @@ static void prepare_layout_opt(struct __test_metadata *const _metadata,
+ 
+ static void prepare_layout(struct __test_metadata *const _metadata)
+ {
++	_metadata->teardown_parent = true;
++
+ 	prepare_layout_opt(_metadata, &mnt_tmp);
+ }
+ 
+@@ -3861,9 +3863,7 @@ FIXTURE_SETUP(layout1_bind)
+ 
+ FIXTURE_TEARDOWN(layout1_bind)
+ {
+-	set_cap(_metadata, CAP_SYS_ADMIN);
+-	EXPECT_EQ(0, umount(dir_s2d2));
+-	clear_cap(_metadata, CAP_SYS_ADMIN);
++	/* umount(dir_s2d2)) is handled by namespace lifetime. */
+ 
+ 	remove_layout1(_metadata);
+ 
+@@ -4276,9 +4276,8 @@ FIXTURE_TEARDOWN(layout2_overlay)
+ 	EXPECT_EQ(0, remove_path(lower_fl1));
+ 	EXPECT_EQ(0, remove_path(lower_do1_fo2));
+ 	EXPECT_EQ(0, remove_path(lower_fo1));
+-	set_cap(_metadata, CAP_SYS_ADMIN);
+-	EXPECT_EQ(0, umount(LOWER_BASE));
+-	clear_cap(_metadata, CAP_SYS_ADMIN);
++
++	/* umount(LOWER_BASE)) is handled by namespace lifetime. */
+ 	EXPECT_EQ(0, remove_path(LOWER_BASE));
+ 
+ 	EXPECT_EQ(0, remove_path(upper_do1_fu3));
+@@ -4287,14 +4286,11 @@ FIXTURE_TEARDOWN(layout2_overlay)
+ 	EXPECT_EQ(0, remove_path(upper_do1_fo2));
+ 	EXPECT_EQ(0, remove_path(upper_fo1));
+ 	EXPECT_EQ(0, remove_path(UPPER_WORK "/work"));
+-	set_cap(_metadata, CAP_SYS_ADMIN);
+-	EXPECT_EQ(0, umount(UPPER_BASE));
+-	clear_cap(_metadata, CAP_SYS_ADMIN);
++
++	/* umount(UPPER_BASE)) is handled by namespace lifetime. */
+ 	EXPECT_EQ(0, remove_path(UPPER_BASE));
+ 
+-	set_cap(_metadata, CAP_SYS_ADMIN);
+-	EXPECT_EQ(0, umount(MERGE_DATA));
+-	clear_cap(_metadata, CAP_SYS_ADMIN);
++	/* umount(MERGE_DATA)) is handled by namespace lifetime. */
+ 	EXPECT_EQ(0, remove_path(MERGE_DATA));
+ 
+ 	cleanup_layout(_metadata);
+@@ -4691,6 +4687,8 @@ FIXTURE_SETUP(layout3_fs)
+ 		SKIP(return, "this filesystem is not supported (setup)");
+ 	}
+ 
++	_metadata->teardown_parent = true;
++
+ 	slash = strrchr(variant->file_path, '/');
+ 	ASSERT_NE(slash, NULL);
+ 	dir_len = (size_t)slash - (size_t)variant->file_path;
 -- 
-Kees Cook
+2.44.0
+
