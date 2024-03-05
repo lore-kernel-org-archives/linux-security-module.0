@@ -1,78 +1,133 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DFE241E0
-	for <linux-security-module@vger.kernel.org>; Tue,  5 Mar 2024 19:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC301B809;
+	Tue,  5 Mar 2024 19:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709666094; cv=none; b=QggTZ1PPVzxVgW4tLMF3USKlTNYqlKcGwAxCYWGsOjwY9PlFUiZEiMb0dN/41EmmlNrse4x9XJJTWTcd4bam4xS6CD7JDosFrz/xu7NRLWrilDZV9J6Ln/pEYZw7rOtd1iW/iWZHXiF+YM2BB9tYDyOQLQ2CDJlWPdz5T/D5Uv0=
+	t=1709667279; cv=none; b=KL0BTA0dGaMd2Dm7E0iPsqA8Z0JObFWlsRYOMZqe8NehhWZAEnwpaAqQGyelL86XnLd7sGliT5oExGtfjR8SQQaDczVJYqW/VE2p3X8QC56xDF9QL+zaPATL8Lr+W69Hjkz+qOu3HiC5A9tqK3vclWXlmOYeNTG/jJ6/o0vuIW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709666094; c=relaxed/simple;
-	bh=oVcaIR3f/LZgftTQjMVNUrpPr3fRC1Olz5EJlBg50do=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0u2BHPUPoHmRayP0sxMtj9Eog6UEb3tX1l2AGHufDGuya3AO2+B7tiQJFlGvhYXXge5V6J+mFxqxLdPE+euPj5WFphNJqEZu9PFAMxjXm2t2e4R8AM2xVfNPKJbk4lLWQ5uBLtZzyGCbBUA/mE9EO4ALtDC2+MG3bUnqS9S4WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=eyIuCu00; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="eyIuCu00"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tq4xv4FxfzQcx;
-	Tue,  5 Mar 2024 20:14:43 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tq4xt5RWTz3d;
-	Tue,  5 Mar 2024 20:14:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709666083;
-	bh=oVcaIR3f/LZgftTQjMVNUrpPr3fRC1Olz5EJlBg50do=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eyIuCu00U99zo12kkYKyA/lBATCMU/x0cvJGLTgBB24Tl/c7d/JeCO9KYfgcq175c
-	 R+8w8djwLcouyvk4IHF16yPJhZjO4E98tf++0EX5Ilg6365pUm9eAjRqsZIOZ26G9J
-	 mbHQsR0RVGRiuyS6br5vNfn2+/mZJrkGr5xVMOJk=
-Date: Tue, 5 Mar 2024 20:14:32 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, Mark Brown <broonie@kernel.org>, 
-	davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com, pabeni@redhat.com, 
-	shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, jakub@cloudflare.com
-Subject: Re: [PATCH v4 00/12] selftests: kselftest_harness: support using
- xfail
-Message-ID: <20240305.sheeF9yain1O@digikod.net>
-References: <20240229005920.2407409-1-kuba@kernel.org>
- <05f7bf89-04a5-4b65-bf59-c19456aeb1f0@sirena.org.uk>
- <20240304150411.6a9bd50b@kernel.org>
- <202403041512.402C08D@keescook>
- <20240304153902.30cd2edd@kernel.org>
- <202403050141.C8B1317C9@keescook>
- <20240305.phohPh8saa4i@digikod.net>
- <20240305100639.6b040762@kernel.org>
+	s=arc-20240116; t=1709667279; c=relaxed/simple;
+	bh=UdyplhazAm9JcbRu3RQ5VQwxs4WDrQvjdtcSkVIwiPg=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=Cnp/49c4kih4FhSFasio2E1NwnXzURpDkv858iAo29LpFCtTIC8RrfJTvrtUY0lBtjirjH0yM5L+iNHT6zlWMTPKaB0xu7Kxo2Bimwgoxfx4tsI7nadm9eOe4k0DzWwtp+lhsaSF2fnnTDmgYDnlnu073ASb+cKUuUET4BDWzrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 178E8378204B;
+	Tue,  5 Mar 2024 19:34:35 +0000 (UTC)
+From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
+In-Reply-To: <202403051033.9527DD75@keescook>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240301213442.198443-1-adrian.ratiu@collabora.com>
+ <20240304-zugute-abtragen-d499556390b3@brauner>
+ <202403040943.9545EBE5@keescook>
+ <20240305-attentat-robust-b0da8137b7df@brauner>
+ <202403050134.784D787337@keescook>
+ <20240305-kontakt-ticken-77fc8f02be1d@brauner>
+ <202403050211.86A44769@keescook>
+ <20240305-brotkrumen-vorbild-9709ce924d25@brauner> <202403051033.9527DD75@keescook>
+Date: Tue, 05 Mar 2024 19:34:34 +0000
+Cc: "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, kernel@collabora.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Randy Dunlap" <rdunlap@infradead.org>, "Mike Frysinger" <vapier@chromium.org>
+To: "Kees Cook" <keescook@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240305100639.6b040762@kernel.org>
-X-Infomaniak-Routing: alpha
+Message-ID: <45d98-65e77400-5-31aa8000@248840925>
+Subject: =?utf-8?q?Re=3A?= [PATCH v2] =?utf-8?q?proc=3A?= allow restricting 
+ /proc/pid/mem writes
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 05, 2024 at 10:06:39AM -0800, Jakub Kicinski wrote:
-> On Tue, 5 Mar 2024 17:05:51 +0100 Mickaël Salaün wrote:
-> > > I think we have to -- other CIs are now showing the most of seccomp
-> > > failing now. (And I can confirm this now -- I had only tested seccomp
-> > > on earlier versions of the series.)  
-> > 
-> > Sorry for the trouble, I found and fixed the vfork issues.  I tested
-> > with seccomp and Landlock.  You can find a dedicated branch here (with
-> > some Reviewed-by and Acked-by removed because of the changes):
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=kselftest-xfail-fix
-> > 
-> > Jakub, please send a v5 series with this updated patch and your
-> > exit/_exit fixes.
-> 
-> DaveM merged this already, unfortunately. Could send your changes
-> as incremental fixes on top of net-next?
+On Tuesday, March 05, 2024 20:37 EET, Kees Cook <keescook@chromium.org>=
+ wrote:
 
-Ok, I'll send that today.
+> On Tue, Mar 05, 2024 at 11:32:04AM +0100, Christian Brauner wrote:
+> > On Tue, Mar 05, 2024 at 02:12:26AM -0800, Kees Cook wrote:
+> > > On Tue, Mar 05, 2024 at 10:58:25AM +0100, Christian Brauner wrote=
+:
+> > > > Since the write handler for /proc/<pid>/mem does raise FOLL=5FF=
+ORCE
+> > > > unconditionally it likely would implicitly. But I'm not familia=
+r enough
+> > > > with FOLL=5FFORCE to say for sure.
+> > >=20
+> > > I should phrase the question better. :) Is the supervisor writing=
+ into
+> > > read-only regions of the child process?
+> >=20
+> > Hm... I suspect we don't. Let's take two concrete examples so you c=
+an
+> > tell me.
+> >=20
+> > Incus intercepts the sysinfo() syscall. It prepares a struct sysinf=
+o
+> > with cgroup aware values for the supervised process and then does:
+> >=20
+> > unix.Pwrite(siov.memFd, &sysinfo, sizeof(struct sysinfo), seccomp=5F=
+data.args[0]))
+> >=20
+> > It also intercepts some bpf system calls attaching bpf programs for=
+ the
+> > caller. If that fails we update the log buffer for the supervised
+> > process:
+> >=20
+> > union bpf=5Fattr attr =3D {}, new=5Fattr =3D {};
+> >=20
+> > // read struct bpf=5Fattr from mem=5Ffd
+> > ret =3D pread(mem=5Ffd, &attr, attr=5Flen, req->data.args[1]);
+> > if (ret < 0)
+> >         return -errno;
+> >=20
+> > // Do stuff with attr. Stuff fails. Update log buffer for supervise=
+d process:
+> > if ((new=5Fattr.log=5Fsize) > 0 && (pwrite(mem=5Ffd, new=5Fattr.log=
+=5Fbuf, new=5Fattr.log=5Fsize, attr.log=5Fbuf) !=3D new=5Fattr.log=5Fsi=
+ze))
+>=20
+> This is almost certainly in writable memory (either stack or .data).
+
+Mostly yes, but we can't be certain where it comes from, because
+SECCOMP=5FIOCTL=5FNOTIF=5FRECV passes any addresses set by the
+caller to the supervisor process.
+
+It is a kind of "implementation defined" behavior, just like we
+can't predict what the supervisor will do with the caller mem :)
+
+>=20
+> > But I'm not sure if there are other use-cases that would require th=
+is.
+>=20
+> Maybe this option needs to be per-process (like no=5Fnew=5Fprivs), an=
+d with
+> a few access levels:
+>=20
+> - as things are now
+> - no FOLL=5FFORCE unless by ptracer
+> - no writes unless by ptracer
+> - no FOLL=5FFORCE ever
+> - no writes ever
+> - no reads unless by ptracer
+> - no reads ever
+>=20
+> Which feels more like 3 toggles: read, write, FOLL=5FFORCE. Each set =
+to
+> "DAC", "ptracer", and "none"?
+
+I really like this approach because it provides a  mechanism
+with maximum flexibility without imposing a specific policy.
+
+What does DAC mean in this context? My mind jumps to
+Digital to Analog Converter :)
+
+Shall I give it a try in v3?
+
+>=20
+> --=20
+> Kees Cook
+
