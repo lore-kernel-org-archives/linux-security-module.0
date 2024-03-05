@@ -1,86 +1,81 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FB412A149
-	for <linux-security-module@vger.kernel.org>; Tue,  5 Mar 2024 16:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B75D128370;
+	Tue,  5 Mar 2024 16:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709654774; cv=none; b=f/2L77rKURN1J8Tmq3XZdjwwhShjOPxl6UHbeQk83lzWJlq6hoEsYEcK1rWvylv3wXeFlPOsOvaaL7ro/zQqWjUH/lEdHSaQG1yN8Wnv31xHSsANnKZzPB5sB93hjXOVvX/i5ZfR/WK/J8kfvzjYEXmBiGBCFiJpnpnrHRCQ1vc=
+	t=1709655689; cv=none; b=pQRvI9QBd1sAos9fTKA11GBvoXArof2d5MSA2azwvBnY7Vo29Ogx+rYVQXGRp2F3Q5c/U4Cyx530PQRvuGOePOcbqIqYekbUz/9akOm93EGtCGb/WsBTNy8bOJ+r68JzZmaTPno9b2S4sStH4SzZq6jFpvP4rqmYLaW+EVCS7iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709654774; c=relaxed/simple;
-	bh=z5qhYq1wOr3LpvwmDPTLIjklmi92wexHHTkNSwgx3KA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYtf9EBHxXXwxEG4HjczBOV6apIjzpEQ5i7BBEhqfdpbEBjhOLEr7H3x528mLzSPKhlQSwz1POBqOMARyfCxhYE6RErPiX6La40jd9dwx49y6zqeM6JP4SDUzW/Tp3Nz2ejHJvQOwso9zeRqf+Vr/jA0ZmWQxzPnU3qePv9Xq2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ViLNBG4z; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1709655689; c=relaxed/simple;
+	bh=ha9vAefRx5WF0Mib4MgL7Y+0fSYBl+GdeL3CgSqM6T0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j9pnFM/p35tytxMMu8Rl6kX0b+P8G0xKiQ8i9vfP0FLJBhqSgvzLGqVdkz2X3JncGbnPOideedh2GjOzq9l1X7ot0CUNx1199my2aVn8jZuCypZRvH188NHtprcNu89Xc+YfEzG8hQwHXl0C+b6evxoo/PgncOfWsWCy+mBZbZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VO+JouT2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ViLNBG4z"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tq0mC1WqKzQZM;
-	Tue,  5 Mar 2024 17:06:03 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tq0mB45ckz3c;
-	Tue,  5 Mar 2024 17:06:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709654763;
-	bh=z5qhYq1wOr3LpvwmDPTLIjklmi92wexHHTkNSwgx3KA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ViLNBG4zZyHukjR+pPE3Npp+xJMeeEdAtJ5bSJBdhDr0r74HIFUI9xA1A2l28Vz43
-	 tRVTIzqkaR62K7ViMK3MFbC8izVwZI13GRWY1R1Kie/fmkjM9bkMwo6B4b+SX1uitI
-	 m/P1Mm6nPAGLs0zkHr3IRA9oqePot/VUUC/qf3SU=
-Date: Tue, 5 Mar 2024 17:05:51 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com, pabeni@redhat.com, 
-	shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, jakub@cloudflare.com
-Subject: Re: [PATCH v4 00/12] selftests: kselftest_harness: support using
- xfail
-Message-ID: <20240305.phohPh8saa4i@digikod.net>
-References: <20240229005920.2407409-1-kuba@kernel.org>
- <05f7bf89-04a5-4b65-bf59-c19456aeb1f0@sirena.org.uk>
- <20240304150411.6a9bd50b@kernel.org>
- <202403041512.402C08D@keescook>
- <20240304153902.30cd2edd@kernel.org>
- <202403050141.C8B1317C9@keescook>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VO+JouT2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADC8C433F1;
+	Tue,  5 Mar 2024 16:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709655688;
+	bh=ha9vAefRx5WF0Mib4MgL7Y+0fSYBl+GdeL3CgSqM6T0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VO+JouT2eFV8pxh12pAKUcRP+t36fj0DLGTGLq183lAJjoXA5JkJzZHFBhqxDk2/P
+	 l7IxFG9s6SZGqlj9Y6dgWKODO+7+0spgffmpwOKJYZEv0LRfBgTLcZ9j9ywezJO2py
+	 aq+aPA/kSYaXBMFaUSkumuzNrKMCaRgjcQOHWR7PMQYPrtG+A+mG/zBd40E0WUVbjj
+	 1mjG2SE00SCmjrtrHPH9GeGbm4a9MO/nxhXmNMhMj7jXWmEyEDzNc5PPi9RpUdlZDC
+	 OSkEudoMfU8ItUN58/ZsAAQWvzDYmaJfQ/GOut4DtuHI233z6GzkviLmJVfjigTdcJ
+	 Z9VC9/+S1/7Qw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Cc: Seth Forshee <sforshee@kernel.org>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] xattr: restrict vfs_getxattr_alloc() allocation size
+Date: Tue,  5 Mar 2024 17:21:16 +0100
+Message-ID: <20240305-flogen-weiht-b1861cff0d19@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240305-effekt-luftzug-51913178f6cd@brauner>
+References: <20240305-effekt-luftzug-51913178f6cd@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1484; i=brauner@kernel.org; h=from:subject:message-id; bh=ha9vAefRx5WF0Mib4MgL7Y+0fSYBl+GdeL3CgSqM6T0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ+d6tN6nTjXnm5/MSciEUfTWe+2n3o0b6HGp6zXtQ6C 852EX7J2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARjs0M/xP45M/ql9r8mttZ r2zvU5j4UVDo/OzyiBVHXX8yZCjc38XwT32dkWnastOdbuveB9pHXE7fGmp50XVqc/kOy+2my5d M5AUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202403050141.C8B1317C9@keescook>
-X-Infomaniak-Routing: alpha
 
-On Tue, Mar 05, 2024 at 01:43:14AM -0800, Kees Cook wrote:
-> On Mon, Mar 04, 2024 at 03:39:02PM -0800, Jakub Kicinski wrote:
-> > On Mon, 4 Mar 2024 15:14:04 -0800 Kees Cook wrote:
-> > > > Ugh, I'm guessing vfork() "eats" the signal, IOW grandchild signals,
-> > > > child exits? vfork() and signals.. I'd rather leave to Kees || Mickael.  
-> > > 
-> > > Oh no, that does seem bad. Since Mickaël is also seeing weird issues,
-> > > can we drop the vfork changes for now?
-> > 
-> > Seems doable, but won't be a simple revert. "drop" means we'd need 
-> > to bring ->step back. More or less go back to v3.
+On Tue, 05 Mar 2024 13:27:06 +0100, Christian Brauner wrote:
+> The vfs_getxattr_alloc() interface is a special-purpose in-kernel api
+> that does a racy query-size+allocate-buffer+retrieve-data. It is used by
+> EVM, IMA, and fscaps to retrieve xattrs. Recently, we've seen issues
+> where 9p returned values that amount to allocating about 8000GB worth of
+> memory (cf. [1]). That's now fixed in 9p. But vfs_getxattr_alloc() has
+> no reason to allow getting xattr values that are larger than
+> XATTR_MAX_SIZE as that's the limit we use for setting and getting xattr
+> values and nothing currently goes beyond that limit afaict. Let it check
+> for that and reject requests that are larger than that.
 > 
-> I think we have to -- other CIs are now showing the most of seccomp
-> failing now. (And I can confirm this now -- I had only tested seccomp
-> on earlier versions of the series.)
+> [...]
 
-Sorry for the trouble, I found and fixed the vfork issues.  I tested
-with seccomp and Landlock.  You can find a dedicated branch here (with
-some Reviewed-by and Acked-by removed because of the changes):
-https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=kselftest-xfail-fix
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Jakub, please send a v5 series with this updated patch and your
-exit/_exit fixes.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> 
-> -- 
-> Kees Cook
-> 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] xattr: restrict vfs_getxattr_alloc() allocation size
+      https://git.kernel.org/vfs/vfs/c/82a4c8736d72
