@@ -1,288 +1,202 @@
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF341130AC6
-	for <linux-security-module@vger.kernel.org>; Wed,  6 Mar 2024 13:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078D1EF1C;
+	Wed,  6 Mar 2024 15:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709732855; cv=none; b=Olxt1Y69xAP8pxBOGTQRMG36zV/Y73x5W0DEPXL1cvSsCiY0Ajd9anLgQXKLTamX4RYv6c+323kRTtVM+vrVa2egALUJLsdkFKl2FyfXTKXLMyd7QmlKNvIHHS6SJenykvXteeebaSDgBOMx5M1Gm6lbsPSUjTZObnKTrAJbnfY=
+	t=1709738358; cv=none; b=fSSDdPHeXhu8Qhuqn08dQ3nLAxDFxetXfsMa3VD+VzPzHScQhIAZj05CH6XbL4BVdYVNgrm7FrS2BbU2uctwrHue+K7+Oyqc5M4B2rqYBlysYuE+nkxbm45Kfe0p+8IaSSgNj03YZFr7FtUBKEeLgNLX+++wS7yRXdVmYc7LRDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709732855; c=relaxed/simple;
-	bh=euG2eayje2LSWjIyg0xW/mCPVcyU6uIGUqDdjzCBxuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQksVh5+vAq7QZ0uxaVAT4wT75fgIU4sigw/VM/8kYWnul3vpqpx7IxbwpqEv4nc9R8na25YlNBC3rzFH4RS1c/6bA8L2c6Te7EvXSrVlLHgHobeFtktjUN1HjDd61vbYJCMHLo3uFgNKNbUsJuGXQYi8UoPbWZfemAl4yEi8ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cbKBBwnp; arc=none smtp.client-ip=185.125.25.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1709738358; c=relaxed/simple;
+	bh=f+TDSr+XIaHaz0oSQ/iAhi2S0Quq8jl1leb5iAf+fIw=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=EDS7TURrpmutrT5mhok4yswuGJydXUOeN1yOr6CvbFPRYKrpxKmUjK3e+uYl33uvz7e5Bd4DGgM1Xjp4Dd8106XnIgQ03xquKU2GfOBQ+a852h6v0uS/jwxMt4LxPJToOXgtFzv9KjA72WzSt2v7SPOYs7J3BBeXhIzs7krJbkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=clGU/OFl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cy92YTor; arc=none smtp.client-ip=64.147.123.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cbKBBwnp"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TqYdq4m8SzMrkvZ;
-	Wed,  6 Mar 2024 14:47:27 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TqYdp4zQBz3Z;
-	Wed,  6 Mar 2024 14:47:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709732847;
-	bh=euG2eayje2LSWjIyg0xW/mCPVcyU6uIGUqDdjzCBxuE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cbKBBwnpHunbHQMzZUqvltY7KD2XzA4fo5MJmtbFoylMzWnBffSalvrvjTGrJJFqQ
-	 l/NrsZklKi/Mhzh2OeyUkfVUQUac64oAqQp07vXEs7UYz30+ope6GmdR0OMOMjQQ1c
-	 U7UEKK8fGgOKanZfpVNLY6S5uBaBrcQlyUsbpotI=
-Date: Wed, 6 Mar 2024 14:47:13 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Message-ID: <20240306.zoochahX8xai@digikod.net>
-References: <20240219.chu4Yeegh3oo@digikod.net>
- <20240219183539.2926165-1-mic@digikod.net>
- <ZedgzRDQaki2B8nU@google.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="clGU/OFl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cy92YTor"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 9392818000AA;
+	Wed,  6 Mar 2024 10:19:14 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 06 Mar 2024 10:19:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1709738354;
+	 x=1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=
+	clGU/OFlXJz8LTnBqEgcergEqyxHBEV3y3nydnkBKMpNI/AT13HoYi1ENz1sWdAJ
+	SxzrUEXxN4PCybHLnCGoAZch2bzWqhuQMyiSpRx8thRrAV0ELrrqhT0fjIZjnGWg
+	H7XXo3QYuz/hLvtDu3wZjv6o29o0zJRDsZZzsUg3x7Vq++LgNdO7qSRgx8xkEOgW
+	hNlowlxlbKUgeWx5SsfrXuZ812PB5V7HheXxBHhXwweWKIBT9upZyxS6ilYp2WbC
+	hD7Prrlgy8lmjGS1gfkB5gO+v5DhOftAwr9xXHaLFiOeOIQmQ3RCr+j02E+6zNPc
+	G7yTOWj+aPIxnMASUDb8HQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709738354; x=
+	1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=c
+	y92YTorqFHF8gAaKdWzmHu2LFKLjWDqucCxpSbdE0NbLTJF76yj9VSfQF14xXarV
+	KOd5y2VnYF00bJaqUsoHmoHaSs+R2gOGa+RWIq5/YykPjuyeKLYG71lSWRrfpSWK
+	5CyViswlvHiO/sk3KRNO8/Yae/Z/R1YivHcFZgV9dQFanqK+dFFND3tXdG8aco7I
+	22JT5vOBmOr8isUYWKs+91Tts4E3jFq5hOKQCer+5quSP98e04/w2kh6Ebv6lvlE
+	M9QE5lGAzyc7mZRhhmXox+of/8vSUpvBUOls91Jjxv8nT+Cf+KIbHqVbF6ymfeKA
+	KTPjcBPuHwLQD5VKdfOUw==
+X-ME-Sender: <xms:cYnoZf9msN8LDmWA3naC5YVhBcpb-qmRS1rvvdqMOphUSWx1U5WvkA>
+    <xme:cYnoZbsQrxdBOMArkSEhp8e4eM5gVLRwTc_riwurF7WsYws01jNIEXnkW3ekg0GrU
+    BZUhOt-WXN1HyERIvw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledriedugdejvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:cYnoZdB5VuwHy-KKcxtNGkSFnEmZPA_b3Cdv2bmis5dfFkdpxLlOhA>
+    <xmx:cYnoZbcp5kLoHcTz_I1GEb1YJlKLecqEKKugCpXEB66Kd_eQDJ599Q>
+    <xmx:cYnoZUPxcai3hM6xNWn274Ep9xMSCOwdAJ8vhU699xnPNWgYAC0sCw>
+    <xmx:conoZdlCDCa0vUG40g7JY-Ta4YmlNTg1g7eGj7YLQRluDl8eemtXUZ2Ae7A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 52D03B6008F; Wed,  6 Mar 2024 10:19:13 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-208-g3f1d79aedb-fm-20240301.002-g3f1d79ae
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZedgzRDQaki2B8nU@google.com>
-X-Infomaniak-Routing: alpha
+Message-Id: <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+In-Reply-To: <20240306.zoochahX8xai@digikod.net>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+Date: Wed, 06 Mar 2024 16:18:53 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ "Paul Moore" <paul@paul-moore.com>, "Christian Brauner" <brauner@kernel.org>
+Cc: "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
+ "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
+ "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
+ "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 05, 2024 at 07:13:33PM +0100, Günther Noack wrote:
-> Hello!
-> 
-> More questions than answers in this code review, but maybe this discusison will
-> help to get a clearer picture about what we are going for here.
-> 
-> On Mon, Feb 19, 2024 at 07:35:39PM +0100, Mickaël Salaün wrote:
-> > vfs_masks_device_ioctl() and vfs_masks_device_ioctl_compat() are useful
-> > to differenciate between device driver IOCTL implementations and
-> > filesystem ones.  The goal is to be able to filter well-defined IOCTLs
-> > from per-device (i.e. namespaced) IOCTLs and control such access.
-> > 
-> > Add a new ioctl_compat() helper, similar to vfs_ioctl(), to wrap
-> > compat_ioctl() calls and handle error conversions.
-> > 
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Günther Noack <gnoack@google.com>
-> > ---
-> >  fs/ioctl.c         | 101 +++++++++++++++++++++++++++++++++++++++++----
-> >  include/linux/fs.h |  12 ++++++
-> >  2 files changed, 105 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > index 76cf22ac97d7..f72c8da47d21 100644
-> > --- a/fs/ioctl.c
-> > +++ b/fs/ioctl.c
-> > @@ -763,6 +763,38 @@ static int ioctl_fssetxattr(struct file *file, void __user *argp)
-> >  	return err;
-> >  }
-> >  
-> > +/*
-> > + * Safeguard to maintain a list of valid IOCTLs handled by do_vfs_ioctl()
-> > + * instead of def_blk_fops or def_chr_fops (see init_special_inode).
-> > + */
-> > +__attribute_const__ bool vfs_masked_device_ioctl(const unsigned int cmd)
-> > +{
-> > +	switch (cmd) {
-> > +	case FIOCLEX:
-> > +	case FIONCLEX:
-> > +	case FIONBIO:
-> > +	case FIOASYNC:
-> > +	case FIOQSIZE:
-> > +	case FIFREEZE:
-> > +	case FITHAW:
-> > +	case FS_IOC_FIEMAP:
-> > +	case FIGETBSZ:
-> > +	case FICLONE:
-> > +	case FICLONERANGE:
-> > +	case FIDEDUPERANGE:
-> > +	/* FIONREAD is forwarded to device implementations. */
-> > +	case FS_IOC_GETFLAGS:
-> > +	case FS_IOC_SETFLAGS:
-> > +	case FS_IOC_FSGETXATTR:
-> > +	case FS_IOC_FSSETXATTR:
-> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations. */
-> > +		return true;
-> > +	default:
-> > +		return false;
-> > +	}
-> > +}
-> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
-> 
-> [
-> Technical implementation notes about this function: the list of IOCTLs here are
-> the same ones which do_vfs_ioctl() implements directly.
-> 
-> There are only two cases in which do_vfs_ioctl() does more complicated handling:
-> 
-> (1) FIONREAD falls back to the device's ioctl implemenetation.
->     Therefore, we omit FIONREAD in our own list - we do not want to allow that.
-> (2) The default case falls back to the file_ioctl() function, but *only* for
->     S_ISREG() files, so it does not matter for the Landlock case.
-> ]
-> 
-> 
-> ## What we are actually trying to do (?)
-> 
-> Let me try to take a step back and paraphrase what I think we are *actually*
-> trying to do here -- please correct me if I am wrong about that:
-> 
-> I think what we *really* are trying to do is to control from the Landlock LSM
-> whether the filp->f_op->unlocked_ioctl() or filp->f_op->ioctl_compat()
-> operations are getting called for device files.
-> 
-> So in a world where we cared only about correctness, we could create a new LSM
-> hook security_file_vfs_ioctl(), which gets checked just before these two f_op
-> operations get called.  With that, we could permit all IOCTLs that are
-> implemented in fs/ioctl.c, and we could deny all IOCTL commands that are
-> implemented in the device implementation.
-> 
-> I guess the reasons why we are not using that approach are performance, and that
-> it might mess up the LSM hook interface with special cases that only Landlcok
-> needs?  But it seems like it would be easier to reason about..?  Or maybe we can
-> find a middle ground, where we have the existing hook return a special value
-> with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
+On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Tue, Mar 05, 2024 at 07:13:33PM +0100, G=C3=BCnther Noack wrote:
+>> On Mon, Feb 19, 2024 at 07:35:39PM +0100, Micka=C3=ABl Sala=C3=BCn wr=
+ote:
 
-Your security_file_vfs_ioctl() approach is simpler and better, I like
-it!  From a performance point of view it should not change much because
-either an LSM would use the current IOCTL hook or this new one.  Using a
-flag with the current IOCTL hook would be a missed opportunity for
-performance improvements because this hook could be called even if it is
-not needed.
+>> > +	case FS_IOC_FSGETXATTR:
+>> > +	case FS_IOC_FSSETXATTR:
+>> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations.=
+ */
+>> > +		return true;
+>> > +	default:
+>> > +		return false;
+>> > +	}
+>> > +}
+>> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
+>>=20
+>> [
+>> Technical implementation notes about this function: the list of IOCTL=
+s here are
+>> the same ones which do_vfs_ioctl() implements directly.
+>>=20
+>> There are only two cases in which do_vfs_ioctl() does more complicate=
+d handling:
+>>=20
+>> (1) FIONREAD falls back to the device's ioctl implemenetation.
+>>     Therefore, we omit FIONREAD in our own list - we do not want to a=
+llow that.
 
-I don't think it would be worth it to create a new hook for compat and
-non-compat mode because we want to control these IOCTLs the same way for
-now, so it would not have a performance impact, but for consistency with
-the current IOCTL hooks I guess Paul would prefer two new hooks:
-security_file_vfs_ioctl() and security_file_vfs_ioctl_compat()?
+>> (2) The default case falls back to the file_ioctl() function, but *on=
+ly* for
+>>     S_ISREG() files, so it does not matter for the Landlock case.
 
-Another approach would be to split the IOCTL hook into two: one for the
-VFS layer and another for the underlying implementations.  However, it
-looks like a difficult and brittle approach according to the current
-IOCTL implementations.
+How about changing do_vfs_ioctl() to return -ENOIOCTLCMD for
+FIONREAD on special files? That way, the two cases become the
+same.
 
-Arnd, Christian, Paul, are you OK with this new hook proposal?
+>> I guess the reasons why we are not using that approach are performanc=
+e, and that
+>> it might mess up the LSM hook interface with special cases that only =
+Landlcok
+>> needs?  But it seems like it would be easier to reason about..?  Or m=
+aybe we can
+>> find a middle ground, where we have the existing hook return a specia=
+l value
+>> with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
+>
+> Your security_file_vfs_ioctl() approach is simpler and better, I like
+> it!  From a performance point of view it should not change much because
+> either an LSM would use the current IOCTL hook or this new one.  Using=
+ a
+> flag with the current IOCTL hook would be a missed opportunity for
+> performance improvements because this hook could be called even if it =
+is
+> not needed.
+>
+> I don't think it would be worth it to create a new hook for compat and
+> non-compat mode because we want to control these IOCTLs the same way f=
+or
+> now, so it would not have a performance impact, but for consistency wi=
+th
+> the current IOCTL hooks I guess Paul would prefer two new hooks:
+> security_file_vfs_ioctl() and security_file_vfs_ioctl_compat()?
+>
+> Another approach would be to split the IOCTL hook into two: one for the
+> VFS layer and another for the underlying implementations.  However, it
+> looks like a difficult and brittle approach according to the current
+> IOCTL implementations.
+>
+> Arnd, Christian, Paul, are you OK with this new hook proposal?
 
-> 
-> 
-> ## What we implemented
-> 
-> Of course, the existing security_file_ioctl LSM hook works differently, and so
-> with that hook, we need to make our blocking decision purely based on the struct
-> file*, the IOCTL command number and the IOCTL argument.
-> 
-> So in order to make that decision correctly based on that information, we end up
-> listing all the IOCTLs which are directly(!) implemented in do_vfs_ioctl(),
-> because for Landlock, this is the list of IOCTL commands which is safe to permit
-> on device files.  And we need to keep that list in sync with fs/ioctl.c, which
-> is why it ended up in the same place in this commit.
-> 
-> 
-> (Is it maybe possible to check with a KUnit test whether such lists are in sync?
-> It sounds superficially like it should be feasible to create a device file which
-> records whether its ioctl implementation was called.  So we could at least check
-> that the Landlock command list is a subset of the do_vfs_ioctl() one.)
-> 
-> 
-> > +
-> >  /*
-> >   * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
-> >   * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-> > @@ -858,6 +890,8 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
-> >  {
-> >  	struct fd f = fdget(fd);
-> >  	int error;
-> > +	const struct inode *inode;
-> > +	bool is_device;
-> >  
-> >  	if (!f.file)
-> >  		return -EBADF;
-> > @@ -866,9 +900,18 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
-> >  	if (error)
-> >  		goto out;
-> >  
-> > +	inode = file_inode(f.file);
-> > +	is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
-> > +	if (is_device && !vfs_masked_device_ioctl(cmd)) {
-> > +		error = vfs_ioctl(f.file, cmd, arg);
-> > +		goto out;
-> > +	}
-> > +
-> >  	error = do_vfs_ioctl(f.file, fd, cmd, arg);
-> > -	if (error == -ENOIOCTLCMD)
-> > +	if (error == -ENOIOCTLCMD) {
-> > +		WARN_ON_ONCE(is_device);
-> >  		error = vfs_ioctl(f.file, cmd, arg);
-> > +	}
-> 
-> It is not obvious at first that adding this list requires a change to the ioctl
-> syscall implementations.  If I understand this right, the idea is that you want
-> to be 100% sure that we are not calling vfs_ioctl() for the commands in that
-> list.
+I think this sounds better. It would fit more closely into
+the overall structure of the ioctl handlers with their multiple
+levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
+you have the same structure for sockets and blockdev, and
+then additional levels below that and some weirdness for
+things like tty, scsi or cdrom.
 
-Correct
+>> And there is a scenario where this could potentially happen:
+>>=20
+>> do_vfs_ioctl() implements most things like this:
+>>=20
+>> static int do_vfs_ioctl(...) {
+>> 	switch (cmd) {
+>> 	/* many cases like the following: */
+>> 	case FITHAW:
+>> 		return ioctl_fsthaw(filp);
+>> 	/* ... */
+>> 	}
+>> 	return -ENOIOCTLCMD;
+>> }
+>>=20
+>> So I believe the scenario you want to avoid is the one where ioctl_fs=
+thaw() or
+>> one of the other functions return -ENOIOCTLCMD by accident, and where=
+ that will
+>> then make the surrounding syscall implementation fall back to vfs_ioc=
+tl()
+>> despite the cmd being listed as safe for Landlock?  Is that right?
+>
+> Yes
 
-> And there is a scenario where this could potentially happen:
-> 
-> do_vfs_ioctl() implements most things like this:
-> 
-> static int do_vfs_ioctl(...) {
-> 	switch (cmd) {
-> 	/* many cases like the following: */
-> 	case FITHAW:
-> 		return ioctl_fsthaw(filp);
-> 	/* ... */
-> 	}
-> 	return -ENOIOCTLCMD;
-> }
-> 
-> So I believe the scenario you want to avoid is the one where ioctl_fsthaw() or
-> one of the other functions return -ENOIOCTLCMD by accident, and where that will
-> then make the surrounding syscall implementation fall back to vfs_ioctl()
-> despite the cmd being listed as safe for Landlock?  Is that right?
+This does go against the normal structure a bit then, where
+any of the commands is allowed to return -ENOIOCTLCMD specifically
+for the purpose of passing control to the next level of
+callbacks. Having the landlock hook explicitly at the
+place where the callback is entered, as G=C3=BCnther suggested makes
+much more sense to me then.
 
-Yes
-
-> 
-> Looking at do_vfs_ioctl() and its helper functions, I am getting the impression
-> that -ENOIOCTLCMD is only supposed to be returned at the very end of it, but not
-> by any of the helper functions?  If that were the case, we could maybe just as
-> well just solve that problem local to do_vfs_ioctl()?
-> 
-> A bit inelegant maybe, but just to get the idea across:
-> 
-> static int sanitize_enoioctlcmd(int res) {
-> 	if (res == -ENOIOCTLCMD)
-> 		return ENOTTY;
-> 	return res;
-> }
-> 
-> static int do_vfs_ioctl(...) {
-> 	switch (cmd) {
-> 	/* many cases like the following: */
-> 	case FITHAW:
-> 		return sanitize_enoioctlcmd(ioctl_fsthaw(filp));
-> 	/* ... */
-> 	}
-> 	return -ENOIOCTLCMD;
-> }
-> 
-> Would that be better?
-
-I guess so, but a bit more intrusive. Anyway, the new LSM hook would be
-much cleaner and would require less intrusive changes in fs/ioctl.c
-
-The ioctl_compat() helper from this patch could still be useful though.
-
-> 
-> —Günther
-> 
-> 
+      Arnd
