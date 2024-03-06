@@ -1,179 +1,351 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8F81B80F
-	for <linux-security-module@vger.kernel.org>; Wed,  6 Mar 2024 21:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6294E1C6A3;
+	Wed,  6 Mar 2024 23:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709761479; cv=none; b=nP/yVIHsvRBfaurka5vF9SNkiDI3ThaM/gyu8+o9RfLUyyXLpwBNZtzo+uF59pbKNwVXAcPyW+Wiz+2J20eukJr7hWweqPBHovaIQqZNtbpTFVxndtF2Tla0eetgUtPUNZayRbFo4RB61a4F1GVXR33l5Bkd1NEs75GAk7gHzVg=
+	t=1709768094; cv=none; b=N3TiCmFxb8oT7Vc2kMzuA2gDIdROhZgtFluMvsyBXMw3y+B1ln4/y/gXgjb2dKSL6nIp9Y6s0iz1PgGiWmp6kI9c+lPC4gL+tWKwQ1ODnzEAlwGshldhDo0JGJOC9ijf/4It0cbCFxlA7TXzf8/crtc6TU6oDeFTH/fzJofrMmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709761479; c=relaxed/simple;
-	bh=yNaF3aOi4krieU8CScidoOzuFos1k7RPbwb2c+R3EAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hyCPNE2jeHNuB9kYmhPK1SmHw57MyBeeypyKXSXEDUgQCY92zjtqdjFydVSUrYlDnkMF+Pn7SVsSHxUX3k69Hm7udS6LkUZgvJYZD6/mUuWRpThKqZPRT5CHt+rmxJWSWTORcBKbwxMYS5OCYRyaL5n4Xg5ylI9I6b15/eu1HOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GMWRJpPP; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1709768094; c=relaxed/simple;
+	bh=4V3icIloo2hNYIQxpQeW9IzGuZtFcqVqZ9dx3sLjRAk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Jv0bA1KAg2AGvB+5qjPloWNgAuvTf1xgNS2932tQ976PPXtugeyO0jPQ3WFt8y4KRJBbJRvWBr2KNaiczrxAChzQ+E6mwinyxb24DwZLlt1qPCcV9ujpXDOInYMJbVl7RlX7Hkkwwd8d+xvcu9mjMrV+e/1D7pG286I8mNtK7gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=tNykY4Wr; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GMWRJpPP"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-608959cfcbfso2510347b3.3
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2024 13:44:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1709761477; x=1710366277; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TzexKeqTYViWR529/99I1fk8au39z5xjVC/HT3MU//k=;
-        b=GMWRJpPPMthfHkO/3mq37QeOIq2uoWFcOxQyZo0N7MzgVddAZm0Xsmxw+HKiozNpn2
-         kZY5LQ/xQ2QASR+m3Q6zFokh5pS9eI6EZpUXHjHkEQeP/CQSIm9UF0Ue7Bv29J0MjPd5
-         aphzYpGdu/pwM4vaaUnZaE+fpAqbWmO/XENeEfv+fGgZFlcS7J1XVRDOfvHehgOMhC4E
-         Kt+rTdUmIGCCMiRtm42JzXDwrZp+LqMY+cq2/nHQTb9bR8+5IBZOpBOlMBnT3go9AvTV
-         HzpWy8OMSu9DG/R/FJtZ2Npq7DNNMlZigIv+ESvunOP3wY57XBp25Ychcj/BpUXJtAco
-         8ALA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709761477; x=1710366277;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TzexKeqTYViWR529/99I1fk8au39z5xjVC/HT3MU//k=;
-        b=o9t+ktmtY1cjRpF/5Q+vImgxzsTqV8n/ujjGrmUS59qhREP/baKZV5Rq/Rm9W0qrqk
-         Wp2sM0Nmt2K1d8evtsu039OVJmnjfcAi6jdiuydbAqwOJSnNek8bEP2QNlwdTzpZ0f+u
-         dR3M95iXHSChE4J5u8BJ8/kyrvT5Xy/dzLkT7VGEz76D/d/Yuhe1XXVSo6aQYI7iSaik
-         nepx5A1ix7cel3uDyDRgO+2BUDJ9OKJKTnu5GNkq4aiMk+fE1nQbocXQJLN2lWzyLJHq
-         o7ssQDmA1Yma1j1W9L1pWVtrUH6Y0q0RZfI4IFmzqddl//Yh7TT0jKgotLeP4Y4DLOv8
-         faig==
-X-Forwarded-Encrypted: i=1; AJvYcCVz1722af1x4oL3F+wSabtOLAhlkKxzXiq/z1K33ohhw6Xw6UJEZx4uNUDpY74vMHNzPPMWIdM/V3XsmOlCXpKXcNX1TBLGUrG+Rsj+BvYatNH/JwNZ
-X-Gm-Message-State: AOJu0YyYGlXx4OpfI6E0AVp2RooKdRlfUCCPcE91+6UlfXJma/k8bSMe
-	xmBw2suT6elOG0WNbwW7fAnFP7axxbtiYNBmQVki3i60DYu+VUa42K6Su9hn/3XGu1c3BNjPIHl
-	gNgT7mosXfauhjcVYB68T6JKz/dNm9lh6YjTT
-X-Google-Smtp-Source: AGHT+IHiRNoOuP50M05G+2934mcfs5/bOqVRy3BWxHsLB6KirZP8Ll5YoDYeUaTCCUruZFAXGTfcnQL/dVPSyIP0Lgw=
-X-Received: by 2002:a25:5102:0:b0:dc6:d738:1fa6 with SMTP id
- f2-20020a255102000000b00dc6d7381fa6mr12722660ybb.6.1709761476718; Wed, 06 Mar
- 2024 13:44:36 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tNykY4Wr"
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+	id ED6B520B74C1; Wed,  6 Mar 2024 15:34:51 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ED6B520B74C1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1709768091;
+	bh=ZJH59lfxuBoRBOKgvNdXZmHiIWCN3gtjOcQPqtDkRqI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tNykY4WrJNIphgRNp+UUzqx5Kzwsrr/T6LNxDDggcFjT2prLN7AJ4G4JDxAk0Sodg
+	 rU1ePwA1+DaNl2N5APbN86v4eKbBoMF9etPRAbTkxfURlhXlARkYruyAlW6Pgdd7mJ
+	 TtseeTyODRYqcDzDU1MfbYEG7ijb8zupjAe9N0k8=
+From: Fan Wu <wufan@linux.microsoft.com>
+To: corbet@lwn.net,
+	zohar@linux.ibm.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	tytso@mit.edu,
+	ebiggers@kernel.org,
+	axboe@kernel.dk,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>,
+	Fan Wu <wufan@linux.microsoft.com>
+Subject: [RFC PATCH v14 01/19] security: add ipe lsm
+Date: Wed,  6 Mar 2024 15:34:26 -0800
+Message-Id: <1709768084-22539-2-git-send-email-wufan@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
+References: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
-In-Reply-To: <20240306-sandgrube-flora-a61409c2f10c@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 6 Mar 2024 16:44:25 -0500
-Message-ID: <CAHC9VhRSydKRpNQOEeyG1SYZi5r36dSa=auXcbh6srA02eaRdw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-To: Christian Brauner <brauner@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>
-Cc: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, kpsingh@google.com, 
-	jannh@google.com, jolsa@kernel.org, daniel@iogearbox.net, 
-	torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 6, 2024 at 7:14=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
-> On Wed, Mar 06, 2024 at 12:21:28PM +0100, Christian Brauner wrote:
-> > On Wed, Mar 06, 2024 at 07:39:14AM +0000, Matt Bobrowski wrote:
-> > > G'day All,
-> > >
-> > > The original cover letter providing background context and motivating
-> > > factors around the needs for the BPF kfuncs introduced within this
-> > > patch series can be found here [0], so please do reference that if
-> > > need be.
-> > >
-> > > Notably, one of the main contention points within v1 of this patch
-> > > series was that we were effectively leaning on some preexisting
-> > > in-kernel APIs such as get_task_exe_file() and get_mm_exe_file()
-> > > within some of the newly introduced BPF kfuncs. As noted in my
-> > > response here [1] though, I struggle to understand the technical
-> > > reasoning behind why exposing such in-kernel helpers, specifically
-> > > only to BPF LSM program types in the form of BPF kfuncs, is inherentl=
-y
-> > > a terrible idea. So, until someone provides me with a sound technical
-> > > explanation as to why this cannot or should not be done, I'll continu=
-e
-> > > to lean on them. The alternative is to reimplement the necessary
-> > > in-kernel APIs within the BPF kfuncs, but that's just nonsensical IMO=
-.
-> >
-> > You may lean as much as you like. What I've reacted to is that you've
-> > (not you specifically, I'm sure) messed up. You've exposed d_path() to
-> > users  without understanding that it wasn't safe apparently.
-> >
-> > And now we get patches that use the self-inflicted brokeness as an
-> > argument to expose a bunch of other low-level helpers to fix that.
-> >
-> > The fact that it's "just bpf LSM" programs doesn't alleviate any
-> > concerns whatsoever. Not just because that is just an entry vector but
-> > also because we have LSMs induced API abuse that we only ever get to se=
-e
-> > the fallout from when we refactor apis and then it causes pain for the =
-vfs.
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Let's not start throwing stones at the in-tree, native LSM folks;
-instead let's just all admit that it's often a challenge working
-across subsystem lines, but we usually find a way because we all want
-the kernel to move forward.  We've all got our grudges and scars,
-let's not start poking each other with sticks.
+Integrity Policy Enforcement (IPE) is an LSM that provides an
+complimentary approach to Mandatory Access Control than existing LSMs
+today.
 
-> > I'll take another look at the proposed helpers you need as bpf kfuncs
-> > and I'll give my best not to be overly annoyed by all of this. I have n=
-o
-> > intention of not helping you quite the opposite but I'm annoyed that
-> > we're here in the first place.
-> >
-> > What I want is to stop this madness of exposing stuff to users without
-> > fully understanding it's semantics and required guarantees.
->
-> So, looking at this series you're now asking us to expose:
->
-> (1) mmgrab()
-> (2) mmput()
-> (3) fput()
-> (5) get_mm_exe_file()
-> (4) get_task_exe_file()
-> (7) get_task_fs_pwd()
-> (6) get_task_fs_root()
-> (8) path_get()
-> (9) path_put()
->
-> in one go and the justification in all patches amounts to "This is
-> common in some BPF LSM programs".
->
-> So, broken stuff got exposed to users or at least a broken BPF LSM
-> program was written somewhere out there that is susceptible to UAFs
-> becauase you didn't restrict bpf_d_path() to trusted pointer arguments.
-> So you're now scrambling to fix this by asking for a bunch of low-level
-> exports.
->
-> What is the guarantee that you don't end up writing another BPF LSM that
-> abuses these exports in a way that causes even more issues and then
-> someone else comes back asking for the next round of bpf funcs to be
-> exposed to fix it.
->
-> The difference between a regular LSM asking about this and a BPF LSM
-> program is that we can see in the hook implementation what the LSM
-> intends to do with this and we can judge whether that's safe or not.
+Existing LSMs have centered around the concept of access to a resource
+should be controlled by the current user's credentials. IPE's approach,
+is that access to a resource should be controlled by the system's trust
+of a current resource.
 
-I wish things were different, but the current reality is that from a
-practical perspective BPF LSMs are not much different than
-out-of-tree, native LSMs.  There is no requirement, or even
-convention, for BPF LSMs to post their designs, docs, or
-implementations on the LSM list for review like we do with other LSMs;
-maybe it has happened once or twice, but I can't remember the last
-time I saw a serious BPF LSM posted to the LSM list.  Even if someone
-did do The Right Thing with their BPF LSM and proposed it for review
-just like a native LSM, there is no guarantee someone else couldn't
-fork that LSM and do something wrong (intentional or not).
+The basis of this approach is defining a global policy to specify which
+resource can be trusted.
 
-Unless something changes, I'm left to treat BPF LSMs the same as any
-other out-of-tree kernel code: I'm not going to make life difficult
-for a /out-of-tree/BPF/ LSM simply because it is /out-of-tree/BPF/,
-but I'm not going to do anything to negatively impact the current, or
-future, state of the in-tree LSMs simply to appease the
-/out-of-tree/BPF/ LSMs.
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+---
+v2:
+  + Split evaluation loop, access control hooks,
+    and evaluation loop from policy parser and userspace
+    interface to pass mailing list character limit
 
---=20
-paul-moore.com
+v3:
+  + Move ipe_load_properties to patch 04.
+  + Remove useless 0-initializations
+  + Prefix extern variables with ipe_
+  + Remove kernel module parameters, as these are
+    exposed through sysctls.
+  + Add more prose to the IPE base config option
+    help text.
+  + Use GFP_KERNEL for audit_log_start.
+  + Remove unnecessary caching system.
+  + Remove comments from headers
+  + Use rcu_access_pointer for rcu-pointer null check
+  + Remove usage of reqprot; use prot only.
+  + Move policy load and activation audit event to 03/12
+
+v4:
+  + Remove sysctls in favor of securityfs nodes
+  + Re-add kernel module parameters, as these are now
+    exposed through securityfs.
+  + Refactor property audit loop to a separate function.
+
+v5:
+  + fix minor grammatical errors
+  + do not group rule by curly-brace in audit record,
+    reconstruct the exact rule.
+
+v6:
+  + No changes
+
+v7:
+  + Further split lsm creation into a separate commit from the
+    evaluation loop and audit system, for easier review.
+
+  + Introduce the concept of an ipe_context, a scoped way to
+    introduce execution policies, used initially for allowing for
+    kunit tests in isolation.
+
+v8:
+  + Follow lsmname_hook_name convention for lsm hooks.
+  + Move LSM blob accessors to ipe.c and mark LSM blobs as static.
+
+v9:
+  + Remove ipe_context for simplification
+
+v10:
+  + Add github url
+
+v11:
+  + Correct github url
+  + Move ipe before bpf
+
+v12:
+  + Switch to use lsm_id instead of string for lsm name
+
+v13:
+  + No changes
+
+v14:
+  + No changes
+---
+ MAINTAINERS              |  7 +++++++
+ include/uapi/linux/lsm.h |  1 +
+ security/Kconfig         | 11 ++++++-----
+ security/Makefile        |  1 +
+ security/ipe/Kconfig     | 17 +++++++++++++++++
+ security/ipe/Makefile    |  9 +++++++++
+ security/ipe/ipe.c       | 41 ++++++++++++++++++++++++++++++++++++++++
+ security/ipe/ipe.h       | 16 ++++++++++++++++
+ security/security.c      |  3 ++-
+ 9 files changed, 100 insertions(+), 6 deletions(-)
+ create mode 100644 security/ipe/Kconfig
+ create mode 100644 security/ipe/Makefile
+ create mode 100644 security/ipe/ipe.c
+ create mode 100644 security/ipe/ipe.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 13158047f2af..8517011f88ff 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10650,6 +10650,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+ F:	security/integrity/
+ F:	security/integrity/ima/
+ 
++INTEGRITY POLICY ENFORCEMENT (IPE)
++M:	Fan Wu <wufan@linux.microsoft.com>
++L:	linux-security-module@vger.kernel.org
++S:	Supported
++T:	git https://github.com/microsoft/ipe.git
++F:	security/ipe/
++
+ INTEL 810/815 FRAMEBUFFER DRIVER
+ M:	Antonino Daplas <adaplas@gmail.com>
+ L:	linux-fbdev@vger.kernel.org
+diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+index f8aef9ade549..43e2fb32745a 100644
+--- a/include/uapi/linux/lsm.h
++++ b/include/uapi/linux/lsm.h
+@@ -62,6 +62,7 @@ struct lsm_ctx {
+ #define LSM_ID_LOCKDOWN		108
+ #define LSM_ID_BPF		109
+ #define LSM_ID_LANDLOCK		110
++#define LSM_ID_IPE		111
+ 
+ /*
+  * LSM_ATTR_XXX definitions identify different LSM attributes
+diff --git a/security/Kconfig b/security/Kconfig
+index 52c9af08ad35..cc7adfbb6b96 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -194,6 +194,7 @@ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
++source "security/ipe/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
+@@ -233,11 +234,11 @@ endchoice
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+-	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+-	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+-	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
+-	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
++	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,ipe,bpf" if DEFAULT_SECURITY_SMACK
++	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,ipe,bpf" if DEFAULT_SECURITY_APPARMOR
++	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,ipe,bpf" if DEFAULT_SECURITY_TOMOYO
++	default "landlock,lockdown,yama,loadpin,safesetid,ipe,bpf" if DEFAULT_SECURITY_DAC
++	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,ipe,bpf"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list, except for those with order
+diff --git a/security/Makefile b/security/Makefile
+index 59f238490665..cc0982214b84 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
++obj-$(CONFIG_SECURITY_IPE)		+= ipe/
+ 
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
+diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
+new file mode 100644
+index 000000000000..e4875fb04883
+--- /dev/null
++++ b/security/ipe/Kconfig
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Integrity Policy Enforcement (IPE) configuration
++#
++
++menuconfig SECURITY_IPE
++	bool "Integrity Policy Enforcement (IPE)"
++	depends on SECURITY && SECURITYFS
++	select PKCS7_MESSAGE_PARSER
++	select SYSTEM_DATA_VERIFICATION
++	help
++	  This option enables the Integrity Policy Enforcement LSM
++	  allowing users to define a policy to enforce a trust-based access
++	  control. A key feature of IPE is a customizable policy to allow
++	  admins to reconfigure trust requirements on the fly.
++
++	  If unsure, answer N.
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+new file mode 100644
+index 000000000000..f7a80d0f18f8
+--- /dev/null
++++ b/security/ipe/Makefile
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Copyright (C) Microsoft Corporation. All rights reserved.
++#
++# Makefile for building the IPE module as part of the kernel tree.
++#
++
++obj-$(CONFIG_SECURITY_IPE) += \
++	ipe.o \
+diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+new file mode 100644
+index 000000000000..b013aed15e73
+--- /dev/null
++++ b/security/ipe/ipe.c
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++#include <uapi/linux/lsm.h>
++
++#include "ipe.h"
++
++static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
++};
++
++static const struct lsm_id ipe_lsmid = {
++	.name = "ipe",
++	.id = LSM_ID_IPE,
++};
++
++static struct security_hook_list ipe_hooks[] __ro_after_init = {
++};
++
++/**
++ * ipe_init - Entry point of IPE.
++ *
++ * This is called at LSM init, which happens occurs early during kernel
++ * start up. During this phase, IPE registers its hooks and loads the
++ * builtin boot policy.
++ * Return:
++ * * 0		- OK
++ * * -ENOMEM	- Out of memory
++ */
++static int __init ipe_init(void)
++{
++	security_add_hooks(ipe_hooks, ARRAY_SIZE(ipe_hooks), &ipe_lsmid);
++
++	return 0;
++}
++
++DEFINE_LSM(ipe) = {
++	.name = "ipe",
++	.init = ipe_init,
++	.blobs = &ipe_blobs,
++};
+diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
+new file mode 100644
+index 000000000000..a1c68d0fc2e0
+--- /dev/null
++++ b/security/ipe/ipe.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#ifndef _IPE_H
++#define _IPE_H
++
++#ifdef pr_fmt
++#undef pr_fmt
++#endif
++#define pr_fmt(fmt) "IPE: " fmt
++
++#include <linux/lsm_hooks.h>
++
++#endif /* _IPE_H */
+diff --git a/security/security.c b/security/security.c
+index 7035ee35a393..f168bc30a60d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -51,7 +51,8 @@
+ 	(IS_ENABLED(CONFIG_SECURITY_SAFESETID) ? 1 : 0) + \
+ 	(IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM) ? 1 : 0) + \
+ 	(IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0) + \
+-	(IS_ENABLED(CONFIG_SECURITY_LANDLOCK) ? 1 : 0))
++	(IS_ENABLED(CONFIG_SECURITY_LANDLOCK) ? 1 : 0) + \
++	(IS_ENABLED(CONFIG_SECURITY_IPE) ? 1 : 0))
+ 
+ /*
+  * These are descriptions of the reasons that can be passed to the
+-- 
+2.43.1
+
