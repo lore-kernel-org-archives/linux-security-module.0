@@ -1,97 +1,254 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA49E179BF;
-	Wed,  6 Mar 2024 07:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8585C057;
+	Wed,  6 Mar 2024 08:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709710350; cv=none; b=VOLPftvGe2fwkM1q2cSAf0T/sJ1J1n6X/FpQ58BNdGiqSum+iYuWGRITGB6UkLXF3S7qiImsmmE6d2NmCC0kWUGkmgpLUucdozvx2Q6IYspOevOhKaM/vzUHZBFn7/FWpNKfo3mb8Na1zanCwRcjCm1UyRJV08MsqC//+/h+kbk=
+	t=1709713576; cv=none; b=XpVtk8IEmKm6HHMnlh9y8O1SyM5MgQlBVJWF/gI1Yd9fgQqYvJSEHVwOG9GBWCp7fPtH+LrdnoTaraSyf+wxlby0FAPBnHsilTthwh2BvxLohx/wuFEthlrWGlAB5v0Xs7CF4OZffjafSaZ6b+47bZPX2So+WgznxQjbPv5PEaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709710350; c=relaxed/simple;
-	bh=jHtL5/BM5lZdwyQNewndmLOTlA78bq8Zp6YPa9Nivys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUpLQiL/EZ1RwHQEfpAj+oTqRpsv4e67W+8AFtwJvAEQ/HjNm8AzrgpWVyIUqAIVHCjo2s+AOIx8pMcNn+fhFvQIkkeU+XonyuJt+/Vrut3gFmOmFuh2yLnG/Q2rC6M3Yf7dyEto1aU5a921NRG/HHr8f9rnhiMMAItdPhe0Nqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Bnf+pGBR; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Bnf+pGBR"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TqPK35KvxzMqCRH;
-	Wed,  6 Mar 2024 08:32:23 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TqPK31Q2Wz3Y;
-	Wed,  6 Mar 2024 08:32:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709710343;
-	bh=jHtL5/BM5lZdwyQNewndmLOTlA78bq8Zp6YPa9Nivys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bnf+pGBRCM2oQmZ/Ndmfz09ggrMuO8bVAMRpw82pfQYm8+aSp6GxqB3TSue3nay+W
-	 LbcPAM0SW5uwFHuS0amH3R74dYgRrxfTViUtVTsZd3NdniYaJK/CPwjk2X9uYeWxKv
-	 gpBSk7PtlovH39NeEzG8AX8N8Y6VhBfyq7mLTF1o=
-Date: Wed, 6 Mar 2024 08:32:13 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>, 
-	Kees Cook <keescook@chromium.org>, Mark Brown <broonie@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Will Drewry <wad@chromium.org>, edumazet@google.com, 
-	jakub@cloudflare.com, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] selftests/harness: Fix TEST_F()'s vfork handling
-Message-ID: <20240306.aepaGah0tie2@digikod.net>
-References: <20240305.sheeF9yain1O@digikod.net>
- <20240305201029.1331333-1-mic@digikod.net>
- <20240305122554.1e42c423@kernel.org>
- <20240306.Hei7aekahvaj@digikod.net>
+	s=arc-20240116; t=1709713576; c=relaxed/simple;
+	bh=IVbVUMXrP0pWnl6Gqzn7NDcqyyzsIK+2/AJi/qKsKYo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X3tk3uGjUu7Q8MwKc2un65xVgN9VPDb3VJGXsk42NLIXlnvwptnvt7wAvfX7xFG84hL3sXaoLwc6oQRiUrCqad+JNfutBZPMlTIGGmerOz8rUJSiNz/F1e2VFZ2D0oUeskwglbA6qySc0CYzcUV59Px2xB09xGl9SqI+baQLI6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TqQ8z72pQz9xrt5;
+	Wed,  6 Mar 2024 16:10:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 17A50140416;
+	Wed,  6 Mar 2024 16:26:04 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBnoCSIKOhlyTjHAw--.13514S2;
+	Wed, 06 Mar 2024 09:26:03 +0100 (CET)
+Message-ID: <1217017cc1928842abfdb40a7fa50bad8ae5e99f.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 24/25] commoncap: use vfs fscaps interfaces
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Christian Brauner
+ <brauner@kernel.org>,  "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Eric
+ Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Stephen Smalley
+ <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+ Casey Schaufler <casey@schaufler-ca.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi
+ <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
+ selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date: Wed, 06 Mar 2024 09:25:40 +0100
+In-Reply-To: <10773e5b90ec9378cbc69fa9cfeb61a84273edc2.camel@linux.ibm.com>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+	 <20240221-idmap-fscap-refactor-v2-24-3039364623bd@kernel.org>
+	 <dcbd9e7869d2fcce69546b53851d694b8ebad54e.camel@huaweicloud.com>
+	 <ZeXpbOsdRTbLsYe9@do-x1extreme>
+	 <a7124afa6bed2fcadcb66efa08e256828cd6f8ab.camel@huaweicloud.com>
+	 <ZeX9MRhU/EGhHkCY@do-x1extreme>
+	 <20240305-fachjargon-abmontieren-75b1d6c67a83@brauner>
+	 <3098aef3e5f924e5717b4ba4a34817d9f22ec479.camel@huaweicloud.com>
+	 <7058e2f93d16f910336a5380877b14a2e069ee9d.camel@huaweicloud.com>
+	 <10773e5b90ec9378cbc69fa9cfeb61a84273edc2.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240306.Hei7aekahvaj@digikod.net>
-X-Infomaniak-Routing: alpha
+X-CM-TRANSID:GxC2BwBnoCSIKOhlyTjHAw--.13514S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF4kAr4UGFyxXr45GFWfKrg_yoW7ZF1xpr
+	y5GF4UKr4DJr1UJrn7tr1UX3W0y3yfJF4UXrn8G34UAr1qyr13Gr1xCr17uFyDur18Gr1U
+	Zr1jyFy3Wr1UAwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkmb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6xAYrwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
+	WxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUguHqUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5sG0gAAs1
 
-On Wed, Mar 06, 2024 at 08:25:45AM +0100, Mickaël Salaün wrote:
-> On Tue, Mar 05, 2024 at 12:25:54PM -0800, Jakub Kicinski wrote:
-> > On Tue,  5 Mar 2024 21:10:29 +0100 Mickaël Salaün wrote:
-> > > Always run fixture setup in the grandchild process, and by default also
-> > > run the teardown in the same process.  However, this change makes it
-> > > possible to run the teardown in a parent process when
-> > > _metadata->teardown_parent is set to true (e.g. in fixture setup).
-> > > 
-> > > Fix TEST_SIGNAL() by forwarding grandchild's signal to its parent.  Fix
-> > > seccomp tests by running the test setup in the parent of the test
-> > > thread, as expected by the related test code.  Fix Landlock tests by
-> > > waiting for the grandchild before processing _metadata.
-> > > 
-> > > Use of exit(3) in tests should be OK because the environment in which
-> > > the vfork(2) call happen is already dedicated to the running test (with
-> > > flushed stdio, setpgrp() call), see __run_test() and the call to fork(2)
-> > > just before running the setup/test/teardown.  Even if the test
-> > > configures its own exit handlers, they will not be run by the parent
-> > > because it never calls exit(3), and the test function either ends with a
-> > > call to _exit(2) or a signal.
-> > > 
-> > > Cc: David S. Miller <davem@davemloft.net>
-> > > Cc: Günther Noack <gnoack@google.com>
-> > > Cc: Jakub Kicinski <kuba@kernel.org>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Mark Brown <broonie@kernel.org>
-> > > Cc: Shuah Khan <shuah@kernel.org>
-> > > Cc: Will Drewry <wad@chromium.org>
-> > > Fixes: 0710a1a73fb4 ("selftests/harness: Merge TEST_F_FORK() into TEST_F()")
-> > > Link: https://lore.kernel.org/r/20240305201029.1331333-1-mic@digikod.net
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+On Tue, 2024-03-05 at 21:17 -0500, Mimi Zohar wrote:
+> On Tue, 2024-03-05 at 18:11 +0100, Roberto Sassu wrote:
+> > On Tue, 2024-03-05 at 13:46 +0100, Roberto Sassu wrote:
+> > > On Tue, 2024-03-05 at 10:12 +0100, Christian Brauner wrote:
+> > > > On Mon, Mar 04, 2024 at 10:56:17AM -0600, Seth Forshee (DigitalOcea=
+n)
+> > > > wrote:
+> > > > > On Mon, Mar 04, 2024 at 05:17:57PM +0100, Roberto Sassu wrote:
+> > > > > > On Mon, 2024-03-04 at 09:31 -0600, Seth Forshee (DigitalOcean) =
+wrote:
+> > > > > > > On Mon, Mar 04, 2024 at 11:19:54AM +0100, Roberto Sassu wrote=
+:
+> > > > > > > > On Wed, 2024-02-21 at 15:24 -0600, Seth Forshee (DigitalOce=
+an)
+> > > > > > > > wrote:
+> > > > > > > > > Use the vfs interfaces for fetching file capabilities for
+> > > > > > > > > killpriv
+> > > > > > > > > checks and from get_vfs_caps_from_disk(). While there, up=
+date
+> > > > > > > > > the
+> > > > > > > > > kerneldoc for get_vfs_caps_from_disk() to explain how it =
+is
+> > > > > > > > > different
+> > > > > > > > > from vfs_get_fscaps_nosec().
+> > > > > > > > >=20
+> > > > > > > > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kern=
+el.org>
+> > > > > > > > > ---
+> > > > > > > > >  security/commoncap.c | 30 +++++++++++++-----------------
+> > > > > > > > >  1 file changed, 13 insertions(+), 17 deletions(-)
+> > > > > > > > >=20
+> > > > > > > > > diff --git a/security/commoncap.c b/security/commoncap.c
+> > > > > > > > > index a0ff7e6092e0..751bb26a06a6 100644
+> > > > > > > > > --- a/security/commoncap.c
+> > > > > > > > > +++ b/security/commoncap.c
+> > > > > > > > > @@ -296,11 +296,12 @@ int cap_capset(struct cred *new,
+> > > > > > > > >   */
+> > > > > > > > >  int cap_inode_need_killpriv(struct dentry *dentry)
+> > > > > > > > >  {
+> > > > > > > > > -	struct inode *inode =3D d_backing_inode(dentry);
+> > > > > > > > > +	struct vfs_caps caps;
+> > > > > > > > >  	int error;
+> > > > > > > > > =20
+> > > > > > > > > -	error =3D __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS=
+,
+> > > > > > > > > NULL, 0);
+> > > > > > > > > -	return error > 0;
+> > > > > > > > > +	/* Use nop_mnt_idmap for no mapping here as mapping is
+> > > > > > > > > unimportant */
+> > > > > > > > > +	error =3D vfs_get_fscaps_nosec(&nop_mnt_idmap, dentry,
+> > > > > > > > > &caps);
+> > > > > > > > > +	return error =3D=3D 0;
+> > > > > > > > >  }
+> > > > > > > > > =20
+> > > > > > > > >  /**
+> > > > > > > > > @@ -323,7 +324,7 @@ int cap_inode_killpriv(struct mnt_idm=
+ap
+> > > > > > > > > *idmap, struct dentry *dentry)
+> > > > > > > > >  {
+> > > > > > > > >  	int error;
+> > > > > > > > > =20
+> > > > > > > > > -	error =3D __vfs_removexattr(idmap, dentry,
+> > > > > > > > > XATTR_NAME_CAPS);
+> > > > > > > > > +	error =3D vfs_remove_fscaps_nosec(idmap, dentry);
+> > > > > > > >=20
+> > > > > > > > Uhm, I see that the change is logically correct... but the
+> > > > > > > > original
+> > > > > > > > code was not correct, since the EVM post hook is not called=
+ (thus
+> > > > > > > > the
+> > > > > > > > HMAC is broken, or an xattr change is allowed on a portable
+> > > > > > > > signature
+> > > > > > > > which should be not).
+> > > > > > > >=20
+> > > > > > > > For completeness, the xattr change on a portable signature =
+should
+> > > > > > > > not
+> > > > > > > > happen in the first place, so cap_inode_killpriv() would no=
+t be
+> > > > > > > > called.
+> > > > > > > > However, since EVM allows same value change, we are here.
+> > > > > > >=20
+> > > > > > > I really don't understand EVM that well and am pretty hesitan=
+t to
+> > > > > > > try an
+> > > > > > > change any of the logic around it. But I'll hazard a thought:=
+ should
+> > > > > > > EVM
+> > > > > > > have a inode_need_killpriv hook which returns an error in thi=
+s
+> > > > > > > situation?
+> > > > > >=20
+> > > > > > Uhm, I think it would not work without modifying
+> > > > > > security_inode_need_killpriv() and the hook definition.
+> > > > > >=20
+> > > > > > Since cap_inode_need_killpriv() returns 1, the loop stops and E=
+VM
+> > > > > > would
+> > > > > > not be invoked. We would need to continue the loop and let EVM =
+know
+> > > > > > what is the current return value. Then EVM can reject the chang=
+e.
+> > > > > >=20
+> > > > > > An alternative way would be to detect that actually we are sett=
+ing the
+> > > > > > same value for inode metadata, and maybe not returning 1 from
+> > > > > > cap_inode_need_killpriv().
+> > > > > >=20
+> > > > > > I would prefer the second, since EVM allows same value change a=
+nd we
+> > > > > > would have an exception if there are fscaps.
+> > > > > >=20
+> > > > > > This solves only the case of portable signatures. We would need=
+ to
+> > > > > > change cap_inode_need_killpriv() anyway to update the HMAC for =
+mutable
+> > > > > > files.
+> > > > >=20
+> > > > > I see. In any case this sounds like a matter for a separate patch
+> > > > > series.
+> > > >=20
+> > > > Agreed.
+> > >=20
+> > > Christian, how realistic is that we don't kill priv if we are setting
+> > > the same owner?
+> > >=20
+> > > Serge, would we be able to replace __vfs_removexattr() (or now
+> > > vfs_get_fscaps_nosec()) with a security-equivalent alternative?
+> >=20
+> > It seems it is not necessary.
+> >=20
+> > security.capability removal occurs between evm_inode_setattr() and
+> > evm_inode_post_setattr(), after the HMAC has been verified and before
+> > the new HMAC is recalculated (without security.capability).
+> >=20
+> > So, all good.
+> >=20
+> > Christian, Seth, I pushed the kernel and the updated tests (all patches
+> > are WIP):
+> >=20
+> > https://github.com/robertosassu/linux/commits/evm-fscaps-v2/
+>=20
+> Resetting the IMA status flag is insufficient.  The EVM status needs to b=
+e reset
+> as well.  Stefan's "ima: re-evaluate file integrity on file metadata chan=
+ge"
+> patch does something similar for overlay.
 
-Reported-by: Mark Brown <broonie@kernel.org>
+Both the IMA and EVM status are reset. The IMA one is reset based on
+the evm_revalidate_status() call, similarly to ACLs.
 
-> 
-> > 
-> > Your S-o-b is missing. Should be enough if you responded with it.
-> > 
-> > Code LGTM, thanks!
-> > 
+Roberto
+
+> Mimi
+>=20
+> https://lore.kernel.org/linux-integrity/20240223172513.4049959-8-stefanb@=
+linux.ibm.com/
+>=20
+> >=20
+> > https://github.com/robertosassu/ima-evm-utils/commits/evm-fscaps-v2/
+> >=20
+> >=20
+> > The tests are passing:
+> >=20
+> > https://github.com/robertosassu/ima-evm-utils/actions/runs/8159877004/j=
+ob/22305521359
+> >=20
+> > Roberto
+> >=20
+> >=20
+>=20
+
