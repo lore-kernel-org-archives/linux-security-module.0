@@ -1,202 +1,228 @@
-Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078D1EF1C;
-	Wed,  6 Mar 2024 15:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13B813790A
+	for <linux-security-module@vger.kernel.org>; Wed,  6 Mar 2024 16:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709738358; cv=none; b=fSSDdPHeXhu8Qhuqn08dQ3nLAxDFxetXfsMa3VD+VzPzHScQhIAZj05CH6XbL4BVdYVNgrm7FrS2BbU2uctwrHue+K7+Oyqc5M4B2rqYBlysYuE+nkxbm45Kfe0p+8IaSSgNj03YZFr7FtUBKEeLgNLX+++wS7yRXdVmYc7LRDc=
+	t=1709744229; cv=none; b=MTqFYYG/uhnOiozG6z1G/k1Hm2g7heVo83nIQoQ6FSW4IeQ4Y6Ue8sA1GpTtGxYKVWEwcRHpRgXqFK+AWmAWJfxRbFrFc6Dtbe/ENFYvTuc+mtYQgZjl0QeEbENUQwtoVU5OYiFyBgnIXel9DYI4gRbDzxsiaiMg/GAeWdFZR44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709738358; c=relaxed/simple;
-	bh=f+TDSr+XIaHaz0oSQ/iAhi2S0Quq8jl1leb5iAf+fIw=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=EDS7TURrpmutrT5mhok4yswuGJydXUOeN1yOr6CvbFPRYKrpxKmUjK3e+uYl33uvz7e5Bd4DGgM1Xjp4Dd8106XnIgQ03xquKU2GfOBQ+a852h6v0uS/jwxMt4LxPJToOXgtFzv9KjA72WzSt2v7SPOYs7J3BBeXhIzs7krJbkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=clGU/OFl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cy92YTor; arc=none smtp.client-ip=64.147.123.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1709744229; c=relaxed/simple;
+	bh=DB+sDU/M+USWi3IkAkYPXXij67XzJa642gnHaaSiOns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HMCXgtQY9NZjkuQDN7NY581V5XMRMcFgi7jR1ItLFXjQgbqToRTN+uLOwEIgnCV7F9GyV8Oc1OuR1ZgR3CZFm7TB2ds8vR67RtaPJs+fVuFYS926PHUKT2BOLxpLlsZ9HgWXXpy3jfl0LczPhVUANnBYDjOoIjub0npvEmQZ+gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=sV2DtKmZ; arc=none smtp.client-ip=66.163.191.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="clGU/OFl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cy92YTor"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 9392818000AA;
-	Wed,  6 Mar 2024 10:19:14 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 06 Mar 2024 10:19:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1709738354;
-	 x=1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=
-	clGU/OFlXJz8LTnBqEgcergEqyxHBEV3y3nydnkBKMpNI/AT13HoYi1ENz1sWdAJ
-	SxzrUEXxN4PCybHLnCGoAZch2bzWqhuQMyiSpRx8thRrAV0ELrrqhT0fjIZjnGWg
-	H7XXo3QYuz/hLvtDu3wZjv6o29o0zJRDsZZzsUg3x7Vq++LgNdO7qSRgx8xkEOgW
-	hNlowlxlbKUgeWx5SsfrXuZ812PB5V7HheXxBHhXwweWKIBT9upZyxS6ilYp2WbC
-	hD7Prrlgy8lmjGS1gfkB5gO+v5DhOftAwr9xXHaLFiOeOIQmQ3RCr+j02E+6zNPc
-	G7yTOWj+aPIxnMASUDb8HQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709738354; x=
-	1709824754; bh=5z53l5YZyT1JRwcbB0hXCVqeOpp7A9hrbEaesXr4t5k=; b=c
-	y92YTorqFHF8gAaKdWzmHu2LFKLjWDqucCxpSbdE0NbLTJF76yj9VSfQF14xXarV
-	KOd5y2VnYF00bJaqUsoHmoHaSs+R2gOGa+RWIq5/YykPjuyeKLYG71lSWRrfpSWK
-	5CyViswlvHiO/sk3KRNO8/Yae/Z/R1YivHcFZgV9dQFanqK+dFFND3tXdG8aco7I
-	22JT5vOBmOr8isUYWKs+91Tts4E3jFq5hOKQCer+5quSP98e04/w2kh6Ebv6lvlE
-	M9QE5lGAzyc7mZRhhmXox+of/8vSUpvBUOls91Jjxv8nT+Cf+KIbHqVbF6ymfeKA
-	KTPjcBPuHwLQD5VKdfOUw==
-X-ME-Sender: <xms:cYnoZf9msN8LDmWA3naC5YVhBcpb-qmRS1rvvdqMOphUSWx1U5WvkA>
-    <xme:cYnoZbsQrxdBOMArkSEhp8e4eM5gVLRwTc_riwurF7WsYws01jNIEXnkW3ekg0GrU
-    BZUhOt-WXN1HyERIvw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledriedugdejvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:cYnoZdB5VuwHy-KKcxtNGkSFnEmZPA_b3Cdv2bmis5dfFkdpxLlOhA>
-    <xmx:cYnoZbcp5kLoHcTz_I1GEb1YJlKLecqEKKugCpXEB66Kd_eQDJ599Q>
-    <xmx:cYnoZUPxcai3hM6xNWn274Ep9xMSCOwdAJ8vhU699xnPNWgYAC0sCw>
-    <xmx:conoZdlCDCa0vUG40g7JY-Ta4YmlNTg1g7eGj7YLQRluDl8eemtXUZ2Ae7A>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 52D03B6008F; Wed,  6 Mar 2024 10:19:13 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-208-g3f1d79aedb-fm-20240301.002-g3f1d79ae
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sV2DtKmZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1709744225; bh=aNAjDWeJw8zalTZ9wVamqZVMgmFVPK14WsEI1ujAZJI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sV2DtKmZjaL+uTYLBLxqOx9SLTVY6RykUqUdzRvsIYKJ2t2YgZnqcQW5lA3JpTGkyBn4vfHV+dGOn6F6tQHpldS0cAo6Xd+DZ9nzFSEeDGRLNaXbf3jmLJGPgJjmRqS2DKrxUY3+1gqhhjX7haST495VT4tRm/vdcQ+ZRg16T0lC5W17wTKroJyqprEKhXueeHg7nEonxLUrW3ypNNICycWUnItSXBFNurO99CufaynGXpTIQpEJbEJspPxpyCB6B65zY0HnymFvInWbcEftLjOmudFGq2JWgE0tnbJykbFAh915xCIxppVVxipb8BmvwtpH2DPYTESgZDGUbqQw+w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1709744225; bh=hT99byMjlTQzPqMcbNopNL4TqhusiS8HbWUebtdcOX9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ajHZ+N6uNm5s+E/fUSYDSrjRrRo5ah2w+QQHlRMOaQonm/z/xWZ3JSXYKiQUyUXv1kJf9CkiymgOMMuq/ExOYYMMcF36VZaS6mNXpDOwfrvhOYxp1HqeZggwKpzwNuX/lKivRbksdvpp2CPK582aDSWIlcvdcZlB6XsVKFILPrR9q0dqdlNDTaU9HxUJrlZgcU9DrZFGZ74sCImLX06KBUBRYOVJXqsUo1xaScwmQxSceUPBrz0Fds2xp+mHSIGlpnRZq7yTQZiX3yPSWIYwSivQ9Yf5aMCu1WaWjjMuBtebzI1f/HFmzMMAIHYG4KdAB+wQnvVDQspS7anZmaAqZg==
+X-YMail-OSG: bGf.osIVM1kTnWYb0egr0H0.6XCAHkRpE7FKdQE3BTVHCIfehvfwRRIYzVzZbj6
+ TAslbBVQqhpaOCWxumDFKBt8BrKxE0MqJFPqGoek50I6gIy4WAy0VAqEaYZLktXlwULsm.58TOPD
+ Ang.fYwEBq5Q.eUgVV0q._.UYebj3c5Pi4GmFlUHxba1QypBJWodTOUjXp_w7zUGc4Nmq7twr35.
+ 75a5pdJ9u.YZVnOwDH2SOubyCrRb1cXm623Hpud.OGRKnV.FlKAyvpJnZ_raFSAP2ceFrJe6xioj
+ Nb2q3O39QMDK_1DbbFGifYU8o57R8quIcpsY.FKAaBJVzB54.BpYnm8eiciy.s1wGAxOCXgnxrNC
+ CnnJYO.qX68.3lAszqiob1bs5OSxSGlfcZ5S7I9YP6a3wklYlMBWCZkLfrHXV2Tab5PJWTbP9V2w
+ 0KmTxNj6aymcR0T9.S7lc3y8y3gM43ElZWrnq8M5FMmg7v0YArckcr0ehm9lrGpQkgZDRpAJxy0Q
+ m1Vh0ewRIpT_vgqtZjpYn73bCRFFH39YXB9q7j0S4Y7l_hw8bJIVnbt87dNKQQbeQAH9bRTBJYbO
+ RQ1oFoDTyyI0sOzLgqdbjG4xNPbc6pfdbRSP4GNrihv.QaoQrwEpokXlcYAuS74DSbvIoGQfmIU6
+ h8vsdhHpDaSwMz2s3Nq2u5UWYzR6ReKsp713_Hq_bJTgyQmwHy_EsvLym9gNjjU.QY6plPT9ldE9
+ FqGBiSFNkOT53xW0MrCn9iwKxGmodVuSZsEMg3T3QT2azV9sqh0k29doZQ10f0iWRz4FXW5.cq0F
+ Q6X6XqGatQTs.KqH.eFmx8fud7w3UJ2Wh18geOBJbenQivNR4djdmPWZfzAfZP9pm7a_Ttmufrk2
+ 9Hvush5dDpqpmeokFi6k_ZWg7ixtpbS7WhhBZz7GFxk487RmXkwwqR622IKik6QPBgHUu8eSDv3U
+ M_D6x13XlMUuzP1MVpgRzpP6eptmZYeHuDxXQ3wnR8wb5SOqj8Tjaa2WQqP5OgxtvETphl1WKAFS
+ IJv_4Z_Z4HLP1Pw0_kXhUZB3zQRq_XCXU_9UMX.eh2tNrErjXb4tkmDv8HDKE7GJyiVQsAzxYbQk
+ KTvFkdfVpmsxTzl7aBuG9t1cUg7P7BXhDK_XfFLz61eWq9bxFx_ntt.C_b0txNYCG1SzFu70tvJB
+ wSwBFWNNtPizmWRu6OL.GCWP0jjR8WMniItwA2i_7vQLm8pphLeiXWmq49zE5J9e6jlO4TARznU7
+ ZWnbQnv.bYvMbIORhxml_wgeOB_v6VAqM_8_5FJsml7KYemCH2IjJVYJKcWR93aG2MWx2fy9Fuuh
+ igYCdnOpTqrnMmK.wJ14MuzSMVLzx5ziQs1yNCZ9iP7ucDLPtbmnTc.wT5t7hvXlbrOo3UMKrYX6
+ G2v46sjA3FOXVJt3_O8neKpJT1iOiD77NeXC8LjypMAXKijwDd.7kPVb5b_islB.hHvwdCnpaoSM
+ Gb8swX_Cte4.nlEQzllzViLpAflUMxnT6lKH6i3c.PzZjzuslS1Y8MsxRzv5sjhBTOcM2TMboFZf
+ rZLkTVTB3WUSymoVsctVo1cOuihEVDCU_6jC7_MGoo3.FAnWS5ryfbm.9hF_CsP_JmbrbpEBRbNm
+ ZdUU9lcLmEs8_sKkv1j8ldClY60r51VFAcunt7HJO4yX1VvFqPv7pkzya3x_gksv6YX7Wfs_PINm
+ uVtk7pNYHHPr4Om85xLTrWsfztg2q1UZqZ7YAG.5guLVx1NDWqKM8gin2hp37sxxmfR.at3c363d
+ rS0wR0LxESCofSB3JukhBBXL2gI6CzH0epiKIJCOP5_.ah1XMewQTRK.8cBPHS0PXfoEDfnYsKkF
+ beAkXHNUMfSbX25Jk8VZcLy0ONnj9ZlgSip4wxPL5Gmg7xmSZVpAQj.LzAag663p4c.0h1WhamBj
+ 981WxySdIxLZlI22ZQI7m1.ThV4yuMjQqNMzO1xhHBBNe.bdZShrmwW7w3Ad1m2u.r_1frYZPkfO
+ CNIKC3H8e4RBG89NrgB_vNkEliNBpx6dSDhvt0RAjyYnnt6v_636.bg5JgI_8N5SSjhxsycHANUk
+ etm.404j_sfJHOZZjp8_cXEwbHwqrg.t_WZr7toIxuHWiIp0zDcyYZfVNxWIapl.bR3wT36d6f6j
+ qDE507ELgaIfFQ5PIgXnDIs.5MAhFKEQtQETpXa2wN17njfArJl.TS4JS.peP34uILF5m0o051Hb
+ 3.ezG8IJFfS3yrB8I60q.7hvrLZv6LMuiskZCcWSZmtO__qfvRZUD2x6_nbDkPkja.StcqYRBJtj
+ jRESLtrcr
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 8a719fc2-1256-4236-bddd-8849d178ba2e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 6 Mar 2024 16:57:05 +0000
+Received: by hermes--production-gq1-5c57879fdf-kht2b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 58294bfc0cc78b4b24de1cb3e48bb175;
+          Wed, 06 Mar 2024 16:56:59 +0000 (UTC)
+Message-ID: <5c99f987-d359-4366-984f-fe36fcff601b@schaufler-ca.com>
+Date: Wed, 6 Mar 2024 08:56:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
-In-Reply-To: <20240306.zoochahX8xai@digikod.net>
-References: <20240219.chu4Yeegh3oo@digikod.net>
- <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
- <20240306.zoochahX8xai@digikod.net>
-Date: Wed, 06 Mar 2024 16:18:53 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Paul Moore" <paul@paul-moore.com>, "Christian Brauner" <brauner@kernel.org>
-Cc: "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
+ security_audit_rule
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, paul@paul-moore.com,
  linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ mic@digikod.net, linux-integrity@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-2-casey@schaufler-ca.com>
+ <d4cbe23822f7fdac900d1ebd5da9865d8bb96977.camel@huaweicloud.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <d4cbe23822f7fdac900d1ebd5da9865d8bb96977.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22129 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Tue, Mar 05, 2024 at 07:13:33PM +0100, G=C3=BCnther Noack wrote:
->> On Mon, Feb 19, 2024 at 07:35:39PM +0100, Micka=C3=ABl Sala=C3=BCn wr=
-ote:
-
->> > +	case FS_IOC_FSGETXATTR:
->> > +	case FS_IOC_FSSETXATTR:
->> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations.=
- */
->> > +		return true;
->> > +	default:
->> > +		return false;
->> > +	}
->> > +}
->> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
->>=20
->> [
->> Technical implementation notes about this function: the list of IOCTL=
-s here are
->> the same ones which do_vfs_ioctl() implements directly.
->>=20
->> There are only two cases in which do_vfs_ioctl() does more complicate=
-d handling:
->>=20
->> (1) FIONREAD falls back to the device's ioctl implemenetation.
->>     Therefore, we omit FIONREAD in our own list - we do not want to a=
-llow that.
-
->> (2) The default case falls back to the file_ioctl() function, but *on=
-ly* for
->>     S_ISREG() files, so it does not matter for the Landlock case.
-
-How about changing do_vfs_ioctl() to return -ENOIOCTLCMD for
-FIONREAD on special files? That way, the two cases become the
-same.
-
->> I guess the reasons why we are not using that approach are performanc=
-e, and that
->> it might mess up the LSM hook interface with special cases that only =
-Landlcok
->> needs?  But it seems like it would be easier to reason about..?  Or m=
-aybe we can
->> find a middle ground, where we have the existing hook return a specia=
-l value
->> with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
+On 3/6/2024 1:54 AM, Roberto Sassu wrote:
+> On Fri, 2023-12-15 at 14:15 -0800, Casey Schaufler wrote:
+>> Create real functions for the ima_filter_rule interfaces.
+>> These replace #defines that obscure the reuse of audit
+>> interfaces. The new functions are put in security.c because
+>> they use security module registered hooks that we don't
+>> want exported.
+> Beginner question: what makes IMA special, that the audit subsystem
+> does not need an AUDIT_LSM field to do the same that IMA would do?
 >
-> Your security_file_vfs_ioctl() approach is simpler and better, I like
-> it!  From a performance point of view it should not change much because
-> either an LSM would use the current IOCTL hook or this new one.  Using=
- a
-> flag with the current IOCTL hook would be a missed opportunity for
-> performance improvements because this hook could be called even if it =
-is
-> not needed.
->
-> I don't think it would be worth it to create a new hook for compat and
-> non-compat mode because we want to control these IOCTLs the same way f=
-or
-> now, so it would not have a performance impact, but for consistency wi=
-th
-> the current IOCTL hooks I guess Paul would prefer two new hooks:
-> security_file_vfs_ioctl() and security_file_vfs_ioctl_compat()?
->
-> Another approach would be to split the IOCTL hook into two: one for the
-> VFS layer and another for the underlying implementations.  However, it
-> looks like a difficult and brittle approach according to the current
-> IOCTL implementations.
->
-> Arnd, Christian, Paul, are you OK with this new hook proposal?
+> In other words, why can't we add the lsm_id parameter to
+> security_audit_*() functions, so that IMA can just call those?
 
-I think this sounds better. It would fit more closely into
-the overall structure of the ioctl handlers with their multiple
-levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
-you have the same structure for sockets and blockdev, and
-then additional levels below that and some weirdness for
-things like tty, scsi or cdrom.
+I have never liked the reuse of the audit filter functions, especially
+the way that they're hidden behind #define. The assumption that the
+two facilities (audit and IMA) are going to use them the same way, and
+that they will never diverge in their requirements, has always seemed
+questionable.
 
->> And there is a scenario where this could potentially happen:
->>=20
->> do_vfs_ioctl() implements most things like this:
->>=20
->> static int do_vfs_ioctl(...) {
->> 	switch (cmd) {
->> 	/* many cases like the following: */
->> 	case FITHAW:
->> 		return ioctl_fsthaw(filp);
->> 	/* ... */
->> 	}
->> 	return -ENOIOCTLCMD;
->> }
->>=20
->> So I believe the scenario you want to avoid is the one where ioctl_fs=
-thaw() or
->> one of the other functions return -ENOIOCTLCMD by accident, and where=
- that will
->> then make the surrounding syscall implementation fall back to vfs_ioc=
-tl()
->> despite the cmd being listed as safe for Landlock?  Is that right?
+In most cases audit needs an lsmblob rather than a secid+lsm_id pair,
+as there is information required about all the LSMs, not just the one
+actively involved.
+
 >
-> Yes
-
-This does go against the normal structure a bit then, where
-any of the commands is allowed to return -ENOIOCTLCMD specifically
-for the purpose of passing control to the next level of
-callbacks. Having the landlock hook explicitly at the
-place where the callback is entered, as G=C3=BCnther suggested makes
-much more sense to me then.
-
-      Arnd
+> Thanks
+>
+> Roberto
+>
+>> Acked-by: Paul Moore <paul@paul-moore.com>
+>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> To: Mimi Zohar <zohar@linux.ibm.com>
+>> Cc: linux-integrity@vger.kernel.org
+>> ---
+>>  include/linux/security.h     | 24 ++++++++++++++++++++++++
+>>  security/integrity/ima/ima.h | 26 --------------------------
+>>  security/security.c          | 21 +++++++++++++++++++++
+>>  3 files changed, 45 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 750130a7b9dd..4790508818ee 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -2009,6 +2009,30 @@ static inline void security_audit_rule_free(void *lsmrule)
+>>  #endif /* CONFIG_SECURITY */
+>>  #endif /* CONFIG_AUDIT */
+>>  
+>> +#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
+>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
+>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
+>> +void ima_filter_rule_free(void *lsmrule);
+>> +
+>> +#else
+>> +
+>> +static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+>> +					   void **lsmrule)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+>> +					    void *lsmrule)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static inline void ima_filter_rule_free(void *lsmrule)
+>> +{ }
+>> +
+>> +#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
+>> +
+>>  #ifdef CONFIG_SECURITYFS
+>>  
+>>  extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index c29db699c996..560d6104de72 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -420,32 +420,6 @@ static inline void ima_free_modsig(struct modsig *modsig)
+>>  }
+>>  #endif /* CONFIG_IMA_APPRAISE_MODSIG */
+>>  
+>> -/* LSM based policy rules require audit */
+>> -#ifdef CONFIG_IMA_LSM_RULES
+>> -
+>> -#define ima_filter_rule_init security_audit_rule_init
+>> -#define ima_filter_rule_free security_audit_rule_free
+>> -#define ima_filter_rule_match security_audit_rule_match
+>> -
+>> -#else
+>> -
+>> -static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+>> -				       void **lsmrule)
+>> -{
+>> -	return -EINVAL;
+>> -}
+>> -
+>> -static inline void ima_filter_rule_free(void *lsmrule)
+>> -{
+>> -}
+>> -
+>> -static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+>> -					void *lsmrule)
+>> -{
+>> -	return -EINVAL;
+>> -}
+>> -#endif /* CONFIG_IMA_LSM_RULES */
+>> -
+>>  #ifdef	CONFIG_IMA_READ_POLICY
+>>  #define	POLICY_FILE_FLAGS	(S_IWUSR | S_IRUSR)
+>>  #else
+>> diff --git a/security/security.c b/security/security.c
+>> index d7b15ea67c3f..8e5379a76369 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -5350,6 +5350,27 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+>>  }
+>>  #endif /* CONFIG_AUDIT */
+>>  
+>> +#ifdef CONFIG_IMA_LSM_RULES
+>> +/*
+>> + * The integrity subsystem uses the same hooks as
+>> + * the audit subsystem.
+>> + */
+>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
+>> +{
+>> +	return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
+>> +}
+>> +
+>> +void ima_filter_rule_free(void *lsmrule)
+>> +{
+>> +	call_void_hook(audit_rule_free, lsmrule);
+>> +}
+>> +
+>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+>> +{
+>> +	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
+>> +}
+>> +#endif /* CONFIG_IMA_LSM_RULES */
+>> +
+>>  #ifdef CONFIG_BPF_SYSCALL
+>>  /**
+>>   * security_bpf() - Check if the bpf syscall operation is allowed
