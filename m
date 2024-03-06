@@ -1,133 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730D21426B;
-	Wed,  6 Mar 2024 12:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E14F1E519
+	for <linux-security-module@vger.kernel.org>; Wed,  6 Mar 2024 12:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709727232; cv=none; b=lKYu6fFhS1DftmmGN8PXlPG0xPQHNv8bUsShwN208ubnYJFnHx+HBkpewWCBooHxY0WGv8qgBzZHbXHhpDnsMXMWlKZxcC8eoKXeGKY81kw82DVB02EaGonQxtcrFcRZH/ZpPh8Lg8ybkOWM5Cz4LotSt1ECSkklE0BjukrBfk8=
+	t=1709728808; cv=none; b=rGa+FmCtsSUci550arubr7SjlrymwZHo0dAWL8U5DfQXbkmgvs6AcBePFZh5yk3Tsg/uI8si1nIzPjsSf3yRWCDYp9KxJA7TGwNCBTVkDbs22COzA6sWWCqdYw1U0nNzwJJMjp7b61Eu/s2CG3A8No19D8UWW1gFwi551QxZSFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709727232; c=relaxed/simple;
-	bh=ojEffb4COaOPiBzIgQj1CiYFBW+nj8u1CS/gHL+DJT0=;
+	s=arc-20240116; t=1709728808; c=relaxed/simple;
+	bh=s0RgG9vqq135wgTU/3tFpTGeNbkjasrCrM+BcD67+KA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9evhu8JuOoq+hhZSBB6a0+ID4b5UTO0FvYCbvGRFkvGl8HOGf25jKNroQBvWLJlisJKd0415ruCC1UaXj8XsLxTn/EyJTthl2dVnvyUI0YSjJAcJR9g6+P/VSZECvNOCtwQAYzz33d3Hd8WVbbu6H5+NrgajNTrroECsnpD+Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfcAte4d; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=AgoR3xgsvcrJuOlmAwyHTaiyg3HKClHIUqZUHNIGKSduLtxWJRmS4liXTz6VBNZYGi5Ni9oj5Ilyxt59qosqx9QrgOHm+6ZL2KizgKhwqKUDGjtsJtTtHEhv2r5OqtgZbB2CuYHiqeAgpacwJ62FtrBdpO55oUyBuECVlslS6Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aJXYphWX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfcAte4d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3666C433C7;
-	Wed,  6 Mar 2024 12:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709727232;
-	bh=ojEffb4COaOPiBzIgQj1CiYFBW+nj8u1CS/gHL+DJT0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tfcAte4dn72KWdp2vtAuJ+7w8w1YEfRjbOHEnfv78OShc8jeqYfZBlPbSJ+c0CDRW
-	 nuVPUbyq7ooGFt14B//PqZjTSwXo8GBNOfojetZF8/i9S3g2l1/tqeXGItK0VTd/1o
-	 yONoPED4zz9FlbSCedDhk1bF/j7MMDalGXJeP/9GlioZYaI0lXy+1h3129EIL/cVMY
-	 rEbrOqf38PC2hLV6GAaDZs0p1/PE7RhwJ+N5/9g16TIqRrvX7LyRZTZI/E0z6i2NDR
-	 vuv4nP7FC2/Fi6ErWLp8lTbPhmfcoUqyP+Jx/9KjQutV0fk0JkR971KoL1Is8UkmTj
-	 rB3otNY+DhqYw==
-Date: Wed, 6 Mar 2024 13:13:46 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
-	kpsingh@google.com, jannh@google.com, jolsa@kernel.org, daniel@iogearbox.net, 
-	torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-Message-ID: <20240306-sandgrube-flora-a61409c2f10c@brauner>
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aJXYphWX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709728806;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s0RgG9vqq135wgTU/3tFpTGeNbkjasrCrM+BcD67+KA=;
+	b=aJXYphWXfop9UiGl+p0OdRwmjxcbNa/fukz84U12GR9uskK61buoEseqGbiZU1kA0Pddn9
+	S1mfc/p9EW6n0tsBBvwabz01yi25Ib8NzBh+PkkOgrll1PWTdRRSYwn8sB6W4RZEPp5vFO
+	bUfgRxsyUIRqNY5+LGgdA36Au4Pj0yE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-lhMcu8LUMFOeUgdDbchU2g-1; Wed, 06 Mar 2024 07:40:04 -0500
+X-MC-Unique: lhMcu8LUMFOeUgdDbchU2g-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-33d8d208be9so4230600f8f.2
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2024 04:40:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709728803; x=1710333603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s0RgG9vqq135wgTU/3tFpTGeNbkjasrCrM+BcD67+KA=;
+        b=q7WoepZWlTDt8O/LNPERuyJY7WZl+qKLetxdrPqY5CdopDMEPzRoshK1ll8EU0+TJ6
+         3LJ2uMBGcCEAJY87lwOwRsBrOvg8nDkrr6AJvPBSdnHmQPYmOjRr8Hk41lqjnxIfbbl7
+         oSHmdTQvcU/P6khKlcfu/yHXvlZrvcbZs0EZm4+XMq5grT5esDRIpBFOshx/l4vbK6Cm
+         W0iiN2Q1rWSHKLk4JNutNpjvLIDBecfVBzufnhBn8pX+es4USl+HLqBYaU1rVGTTPq10
+         laIB7azYX9WpDfWUttKryynJyNl+CbEO71wJcOf99sF0hBhXaeV6250uJEYwQzylaG3S
+         ETaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8JncC38N2LKki1y1guLjNh3yTuIqPJS4P1tFl132qFd++wkijaazbx5ffymEcA+30jhotu2YTUfHr2JVUC4whZeD07hYWA0Ve+t02vIg8ChiYCKuV
+X-Gm-Message-State: AOJu0YxiEk9yN+eVw/emszxcAoQikCJ2n6tR9SoNGkOc032JeGSm8EJJ
+	omsTEzQaLVLOIAxyqAeFtLzzf98BRPh5Kz6yjalbUo6lx4qXi+7E6L/ps4ZvGgAX6OWQM9uTK6t
+	IpS2GR6jT6FA+wjQUb3vLpcSwX54v5LTKx9nO42tAYCvF7ZF9UDo0Tzzk6HfIKGowFzxXhXG9iQ
+	==
+X-Received: by 2002:a5d:4dc3:0:b0:33e:1a96:2be7 with SMTP id f3-20020a5d4dc3000000b0033e1a962be7mr10229338wru.11.1709728803297;
+        Wed, 06 Mar 2024 04:40:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE+IGBdm6R5QstlgXd6ZKEAdg48EKt2mibrn0E+a72ARgbuLLefhc1N0Jrjhjq8vX7cVKF5Nw==
+X-Received: by 2002:a5d:4dc3:0:b0:33e:1a96:2be7 with SMTP id f3-20020a5d4dc3000000b0033e1a962be7mr10229315wru.11.1709728802693;
+        Wed, 06 Mar 2024 04:40:02 -0800 (PST)
+Received: from localhost ([2a01:e0a:b25:f902::ff])
+        by smtp.gmail.com with ESMTPSA id bt12-20020a056000080c00b0033e3a110d7fsm9196110wrb.71.2024.03.06.04.40.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Mar 2024 04:40:02 -0800 (PST)
+Date: Wed, 6 Mar 2024 13:40:01 +0100
+From: Maxime Ripard <mripard@redhat.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org, 
+	itrymybest80@protonmail.com, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] integrity: eliminate unnecessary "Problem loading
+ X.509 certificate" msg
+Message-ID: <20240306-large-lush-catfish-e75cb2@houat>
+References: <20231227044156.166009-1-coxu@redhat.com>
+ <20240109002429.1129950-1-coxu@redhat.com>
+ <20240306-humongous-nuthatch-of-science-00e58b@houat>
+ <a677a9cd8eda40e5529094ba2a6ad2f7c0c927fa.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2lpkp2cicuwnndoz"
 Content-Disposition: inline
-In-Reply-To: <20240306-flach-tragbar-b2b3c531bf0d@brauner>
+In-Reply-To: <a677a9cd8eda40e5529094ba2a6ad2f7c0c927fa.camel@linux.ibm.com>
 
-On Wed, Mar 06, 2024 at 12:21:28PM +0100, Christian Brauner wrote:
-> On Wed, Mar 06, 2024 at 07:39:14AM +0000, Matt Bobrowski wrote:
-> > G'day All,
-> > 
-> > The original cover letter providing background context and motivating
-> > factors around the needs for the BPF kfuncs introduced within this
-> > patch series can be found here [0], so please do reference that if
-> > need be.
-> > 
-> > Notably, one of the main contention points within v1 of this patch
-> > series was that we were effectively leaning on some preexisting
-> > in-kernel APIs such as get_task_exe_file() and get_mm_exe_file()
-> > within some of the newly introduced BPF kfuncs. As noted in my
-> > response here [1] though, I struggle to understand the technical
-> > reasoning behind why exposing such in-kernel helpers, specifically
-> > only to BPF LSM program types in the form of BPF kfuncs, is inherently
-> > a terrible idea. So, until someone provides me with a sound technical
-> > explanation as to why this cannot or should not be done, I'll continue
-> > to lean on them. The alternative is to reimplement the necessary
-> > in-kernel APIs within the BPF kfuncs, but that's just nonsensical IMO.
-> 
-> You may lean as much as you like. What I've reacted to is that you've
-> (not you specifically, I'm sure) messed up. You've exposed d_path() to
-> users  without understanding that it wasn't safe apparently.
-> 
-> And now we get patches that use the self-inflicted brokeness as an
-> argument to expose a bunch of other low-level helpers to fix that.
-> 
-> The fact that it's "just bpf LSM" programs doesn't alleviate any
-> concerns whatsoever. Not just because that is just an entry vector but
-> also because we have LSMs induced API abuse that we only ever get to see
-> the fallout from when we refactor apis and then it causes pain for the vfs.
-> 
-> I'll take another look at the proposed helpers you need as bpf kfuncs
-> and I'll give my best not to be overly annoyed by all of this. I have no
-> intention of not helping you quite the opposite but I'm annoyed that
-> we're here in the first place.
-> 
-> What I want is to stop this madness of exposing stuff to users without
-> fully understanding it's semantics and required guarantees.
 
-So, looking at this series you're now asking us to expose:
+--2lpkp2cicuwnndoz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-(1) mmgrab()
-(2) mmput()
-(3) fput()
-(5) get_mm_exe_file()
-(4) get_task_exe_file()
-(7) get_task_fs_pwd()
-(6) get_task_fs_root()
-(8) path_get()
-(9) path_put()
+On Wed, Mar 06, 2024 at 06:55:00AM -0500, Mimi Zohar wrote:
+> On Wed, 2024-03-06 at 11:57 +0100, Maxime Ripard wrote:
+> > Hi Dmitry, Eric, James, Mimi, Paul, Serge,
+> >=20
+> > On Tue, Jan 09, 2024 at 08:24:28AM +0800, Coiby Xu wrote:
+> > > Currently when the kernel fails to add a cert to the .machine keyring,
+> > > it will throw an error immediately in the function integrity_add_key.
+> > >=20
+> > > Since the kernel will try adding to the .platform keyring next or thr=
+ow
+> > > an error (in the caller of integrity_add_key i.e. add_to_machine_keyr=
+ing),
+> > > so there is no need to throw an error immediately in integrity_add_ke=
+y.
+> > >=20
+> > > Reported-by: itrymybest80@protonmail.com
+> > > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=3D2239331
+> > > Fixes: d19967764ba8 ("integrity: Introduce a Linux keyring called mac=
+hine")
+> > > Reviewed-by: Eric Snowberg <eric.snowberg@oracle.com>
+> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> >=20
+> > Any chance this patch can be merged? This is breaking (at least) Fedora
+> > at the moment.
+>=20
+> https://git.kernel.org/torvalds/c/29cd507cbec282e13dcf8f38072a100af96b2bb7
 
-in one go and the justification in all patches amounts to "This is
-common in some BPF LSM programs".
+Oh, awesome, we missed it.
 
-So, broken stuff got exposed to users or at least a broken BPF LSM
-program was written somewhere out there that is susceptible to UAFs
-becauase you didn't restrict bpf_d_path() to trusted pointer arguments.
-So you're now scrambling to fix this by asking for a bunch of low-level
-exports.
+Thanks!
+Maxime
 
-What is the guarantee that you don't end up writing another BPF LSM that
-abuses these exports in a way that causes even more issues and then
-someone else comes back asking for the next round of bpf funcs to be
-exposed to fix it.
+--2lpkp2cicuwnndoz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The difference between a regular LSM asking about this and a BPF LSM
-program is that we can see in the hook implementation what the LSM
-intends to do with this and we can judge whether that's safe or not.
+-----BEGIN PGP SIGNATURE-----
 
-Here you're asking us to do this blindfolded. So I feel we can't really
-ACK a series such as this without actually seeing what is intended to be
-done with all these helpers that you want as kfuncs. Not after the
-previous brokenness.
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZehkIQAKCRDj7w1vZxhR
+xY7WAQCnEqMeBo12XOqakTVapFgeJkCAw0LKLelyqoAfjYH10wEAna6Y24H2p/uZ
+IHeuKetyVMuIur4tt+g9va7Xh70iYAk=
+=yOKe
+-----END PGP SIGNATURE-----
 
-In any case, you need separate ACKs from mm for the mmgrab()/mmput()
-kfuncs as well.
+--2lpkp2cicuwnndoz--
 
-Because really, all I see immediately supportable is the addition of a
-safe variant of bpf making use of the trusted pointer argument
-constraint:
-
-[PATCH v2 bpf-next 8/9] bpf: add trusted d_path() based BPF kfunc bpf_path_d_path()
