@@ -1,78 +1,93 @@
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F7C83CB2
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 09:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A82282880
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 09:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709803624; cv=none; b=LGKvHdFKepcN7D/aoyQZ8kq+zbD004DtOxgMWhckMsa0hRwIpdVe1cYP3BWTpQB3F3TcjI0TTiD/wkeI1S7pZZEdldvY5w4rOelp5rKJKg7t+mkfCwnlFYtDVlSlPVs/J2a+2E96/OzgHzM6t9nY2y1/tSb0WjYJW4k16Emg/Ww=
+	t=1709804391; cv=none; b=ozXQfTQBBJLd7Bm7bINq3R6L54DpX7T4oxAuAeIjgxb5aDF+e5T+irv7lMz5xWzQjFzwoln7tCO1n1tm9+N1Y0omOhKes69W4kllfWXmvy6UyBqL6KXmnVfRpl8U2g7zgeQGHgxYAVPWRv/swlzg+SMWy8iw4KxbeQVsVVWQI2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709803624; c=relaxed/simple;
-	bh=zUFafqTJeGxcmc/hlLS6N7jomBCs1Nv+oR8cEWaOQho=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kanl7nKNtcDZJqUrY/sdYMngG6DTGRijJoz+05m/ubFnhE1zbD99cammBPhYzD6RwtOuYHz2/vaO8D3XTVYp9xtnVPwYQy6jq2lVDaVg0grc9f/ZNhJOPWM8B9POfBjcKsqCnPW/y+qoTnHfFQectJNO+2isA4qis+boKsxCGWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c7c9831579so90294939f.0
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 01:27:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709803622; x=1710408422;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NB9RZnkYPt4n1WS3RCfCtIlEr1JDKFgDjIZaAQfJpFs=;
-        b=qXfemCTs315kij78ZSrVuhFkDKMFwDa0OvO+TxaPvrZbSPmcYqMR3RGxAiD3Mkw/Xa
-         fVDUtOxOI/aj6IjgPQeR2YBvZDS65xmi1sEF123kIS/nFXlFok9CnQtPCqPKqYKr7W+L
-         vV/ls1JZ4uAsWH/SxSEJqBbCJVN/wSD+PU1YbL1MAW1UJGfYO4wKjJ1IK2OFeTNwALFk
-         605kymU7xWuk+Af3+8bgf1Z5UYxQlhR5XK7H8qVn/xMYyUPGjQCCH4f3M9gUW7necIsT
-         Md+bFRbdibrGjpvs8l++uW2TKFj1s7Hfjr4EBHbZjGkpllZVpzNSDIaVYlPcYjHvmg5K
-         ib6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVGw8VjfbzdxtVeHQRzFOnHgePIHSBTU84//jKcQa+M5treOcH8luHnLizpFrFy1eoMUa+fYZIX9UO/zEbG7Gg90Q8P1NaGk/xt2gmeyUfcI0zIzSa
-X-Gm-Message-State: AOJu0Yz8IiD4+5fHQu+RvzTNAADjUIYYbr35uTjlR583rNMYQCIflvmU
-	jBpIPivb4yU9TF8nkPkw6yv4inqRy44OmgP2FgVHHK5D3PO9LAy1wDgFf21Vtk99JyhuF2I9Fsk
-	xBkaem6LCZFH29AAvkh1pWLxC5ILqt4LK4EpgyTZ7B5Oqc6Qnpgyy7lw=
-X-Google-Smtp-Source: AGHT+IGOUknSfs/AHY6R3/Cjy4fOCegkxgrx3co2CQHYN42ngoneFYTa92ongzEBgALOXl5ekZ3ITbZDiyeZlEubwImv5mzWt38e
+	s=arc-20240116; t=1709804391; c=relaxed/simple;
+	bh=jw8uTCF83h4SFGpVfkkE0QZ+LL/OBW6abrCDpV0C0og=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f9d6yvGBcihvB+Kr/rQGlSut62+jceyK3ggc6d3qIf/itpbNKrt/7qDEFYXYXdkpxQUPIAWd2Z0+B+k8nwImHdoZCGuanxhhokD/nONzN74IRDWHlYF4Fw8TxIWtxFERUptJqWDWXvSzjoXthc100uQobZZVvk4gtD98vxSI0Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wLwZKtz9; arc=none smtp.client-ip=45.157.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wLwZKtz9"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tr45Q2l9kzMqT72;
+	Thu,  7 Mar 2024 10:39:38 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tr45P3Pc8zMppN4;
+	Thu,  7 Mar 2024 10:39:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709804378;
+	bh=jw8uTCF83h4SFGpVfkkE0QZ+LL/OBW6abrCDpV0C0og=;
+	h=From:To:Cc:Subject:Date:From;
+	b=wLwZKtz9hpaEsOwvB/VuLmZPPyfizfrLdHPyroJeoeq6HDMIh7yxoVrq6H533RMvv
+	 Et0sCaT7I87QSx5nLU4izGlc/I75YnL4rEj7ybvyEKIDHaGn7sRuMKblPYWJdW/t4U
+	 Ww5wimCjn7s/BVZLGgg2pNELbqtgqcQzcrj0pJYY=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH 1/2] landlock: Simplify current_check_access_socket()
+Date: Thu,  7 Mar 2024 10:39:22 +0100
+Message-ID: <20240307093923.1466071-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:6289:b0:476:b3d1:323e with SMTP id
- fh9-20020a056638628900b00476b3d1323emr41882jab.6.1709803622009; Thu, 07 Mar
- 2024 01:27:02 -0800 (PST)
-Date: Thu, 07 Mar 2024 01:27:01 -0800
-In-Reply-To: <000000000000be039005fc540ed7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000869cc706130ead1b@google.com>
-Subject: Re: [syzbot] [reiserfs?] INFO: task hung in flush_old_commits
-From: syzbot <syzbot+0a684c061589dcc30e51@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, jeffm@suse.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, 
-	roberto.sassu@huaweicloud.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-syzbot suspects this issue was fixed by commit:
+Remove the handled_access variable in current_check_access_socket() and
+update access_request instead.  One up-to-date variable avoids picking
+the wrong one.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ security/landlock/net.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-    fs: Block writes to mounted block devices
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index efa1b644a4af..c8bcd29bde09 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -64,12 +64,11 @@ static const struct landlock_ruleset *get_current_net_domain(void)
+ static int current_check_access_socket(struct socket *const sock,
+ 				       struct sockaddr *const address,
+ 				       const int addrlen,
+-				       const access_mask_t access_request)
++				       access_mask_t access_request)
+ {
+ 	__be16 port;
+ 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+ 	const struct landlock_rule *rule;
+-	access_mask_t handled_access;
+ 	struct landlock_id id = {
+ 		.type = LANDLOCK_KEY_NET_PORT,
+ 	};
+@@ -164,9 +163,9 @@ static int current_check_access_socket(struct socket *const sock,
+ 	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+ 
+ 	rule = landlock_find_rule(dom, id);
+-	handled_access = landlock_init_layer_masks(
++	access_request = landlock_init_layer_masks(
+ 		dom, access_request, &layer_masks, LANDLOCK_KEY_NET_PORT);
+-	if (landlock_unmask_layers(rule, handled_access, &layer_masks,
++	if (landlock_unmask_layers(rule, access_request, &layer_masks,
+ 				   ARRAY_SIZE(layer_masks)))
+ 		return 0;
+ 
+-- 
+2.44.0
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152ff3f2180000
-start commit:   421ca22e3138 Merge tag 'nfs-for-6.4-2' of git://git.linux-..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7d8067683055e3f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=0a684c061589dcc30e51
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14312791280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12da8605280000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
