@@ -1,177 +1,156 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9F7137C5A;
-	Thu,  7 Mar 2024 20:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D921386AF
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 20:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709842680; cv=none; b=heFPavcxxNYeoi2CCILAuWJIDF5RQHu5Iz6VCFriKzOKVW7T4ppVzljJhUR1o1AsdNehAEUjIR3Lav/vsFkou45TphVejBSMHWJM6rONhvBKZHc8X5SJsG0IUb5P1ZpT32O3aIZyIJRzZ874KnKWBklP1KYJletDChZdEPFEYMQ=
+	t=1709844058; cv=none; b=K0ukzobtqw013CeP5LGFF4AqLiUAEiqOUIL2QIqh0L8MA97rraAzx1ZyQn+8Iw5XL3BDMFM1rEDOT4awYjBZ3TmojymcSyjmNzfYN8Bi9tqBRJKbBnbPElFBWJ2dUxk6jXwanKLa4kAIyWejq4KMN9YUrJZ8khZtRCDVPc7mZuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709842680; c=relaxed/simple;
-	bh=r/8blkKqYPsCBkHFNYcQBtfslcTcKITOwPP4iW8Ofpk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=Znf96/L66RbkpV0JN6fC1k15+xADtZJeb2uExLYsT7aCvkVg0kfYsScfT3YYkBCiW7vQKONtQgsM4T0HX+XvI6HeDX7MJYmfRl0tOa3dbP/QwPHw8MRO80YpZ/shQfu+5m0mz4cp6MLNfCCEeoz5B7RyQn/K5p/eEHqofCqo4E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=q5E6ACEX; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1709844058; c=relaxed/simple;
+	bh=YD6IOu8nDfIXPN8+ylWv38YcSggQx9dtsVGoEAkBgHk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MyHvkjGg7fQlQCdt7XJU60LFUDQivXv1KMlW0r9CuU3HGb1DHCLamn+I7PPZmRq7cegZIwQZwhSyM/NBkGi7zinxM7vwRvQkftGMuPw1Qp/V/TEqH7MPAqmpcM7VGOQf2+KmW2kmDzw0fmkH8kDcJen5KJob5uIhsuQZPpm0GQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z4r9Uz2N; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="q5E6ACEX"
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 427K2M8n024240;
-	Thu, 7 Mar 2024 20:17:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=ATyzSmY6hc2fJ6cvh377et3WJ2a2h5UtxL9G4l1VoRQ=;
- b=q5E6ACEXgJ9n/+bofQ45jHmMpHLtkGhtLV0cst3vT5nIgTpSfYbZC6VKXl298Mkhw4oH
- 2q6TLgx+QRApD6Md604BGN2ERxMxdWhdRQJATZUGA0hhIUQJk+phHBkWaoltLBtyGiLm
- svcEdbXzyznlzg5MSUTW+7vIL0681EnCyKVSBn4gGaymIc1V5DMHgjEEKG+Sm0aDNo7B
- 92IUOKvdI/GUzIEuTOrPB1OSxewib6zFEUmffkwDd2aHlImnQPOy3BzmUdgpwrsGRitw
- PDips5I7zZgVWZWjs+yK+5vvJTu1Y7JauDFritrsEkgoQvkelKJEmaSE4xyumE9tLgDO FQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wqm8ur7j1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Mar 2024 20:17:11 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 427KEjdu026733;
-	Thu, 7 Mar 2024 20:17:10 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wqm8ur7gx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Mar 2024 20:17:10 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 427IDGK8006063;
-	Thu, 7 Mar 2024 20:17:09 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3wmeetg72m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Mar 2024 20:17:09 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 427KH69H31523288
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Mar 2024 20:17:08 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C44258064;
-	Thu,  7 Mar 2024 20:17:06 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D725258062;
-	Thu,  7 Mar 2024 20:17:03 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.133.222])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Mar 2024 20:17:03 +0000 (GMT)
-Message-ID: <ed5df367582f0c5e212638a12204fd20fd8e46e5.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 4/8] ima: Add digest_cache_measure and
- digest_cache_appraise boot-time policies
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
-        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        wufan@linux.microsoft.com, pbrobinson@gmail.com, zbyszek@in.waw.pl,
-        hch@lst.de, mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
-        dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
-        ppavlu@suse.com, petr.vorel@gmail.com, petrtesarik@huaweicloud.com,
-        mzerqung@0pointer.de, kgold@linux.ibm.com,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date: Thu, 07 Mar 2024 15:17:03 -0500
-In-Reply-To: <20240214143525.2205481-5-roberto.sassu@huaweicloud.com>
-References: <20240214143525.2205481-1-roberto.sassu@huaweicloud.com>
-	 <20240214143525.2205481-5-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z4r9Uz2N"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dbed0710c74so204678276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 12:40:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1709844055; x=1710448855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nma+ITwvfFBde3KRAjXMtI8cs5tBZm/y1uqy7pM4mQk=;
+        b=Z4r9Uz2Nn5AYkcCrrsJ+UOmhb1LnJwaJzVYzeO4pnbjbYryWHdAIEIWAl3cCLNjWNs
+         6NZpuGKqMco5xAGz/EGuqSiQYZiEc6IAFs4l/N5eb1Uyigw462Gp9mbpLg4SdhFjWTRI
+         +ek9yW7FaJ3v+gEqWIuJCLAZWzPhb9S1QsIM4nvWZLYCnusvKwRuThXfg8RoNalmDHzD
+         EOE2U+58Ht8uuePmjPSpXKSr03I1IumJeax9ncUXeOB/jF2SpPWxQj89vmIW1OsFJhWg
+         ulBw2KMGKWKaK3Kwn9sxLcoIZ0sRg5coxvZArliBHC8UuTvpmc0+q/0+W6ZlO9wYXLkI
+         Xisw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709844055; x=1710448855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nma+ITwvfFBde3KRAjXMtI8cs5tBZm/y1uqy7pM4mQk=;
+        b=b4Q00lW4P/xhpm+bCcWPD7DyXkfIX3691Z+tcvYLAenXlgaaCLBILaX59PFD7QdUpJ
+         WL+fPEhkzy/dFA9XDA2DLtaxJilrhKFpumDbtmURQbXY9h3Q33jGFHtwVCann8xe//ur
+         ig5P37KRTTa2zCUJ3QOxVmHr4Dr8yFYTLNMi787Iefhzv/MZZWO4vGmq1oNN+0yUJ9PN
+         Ho2ry5O2d3DvNCfCgnnzHRE8UVyel5bS9Zm/mCqkPnmB5mTzje8cQBRgdT8y+TWXhTLY
+         /5liVVO8pX/AOFbFxezW/V8jY067QId88rihIDxsQE/cV07OD9ridTFAsvZxnSq/M2Km
+         v3Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUksssOwNid+P4qghqmpLsu8MjBDrrNO+QFETe/uJdLfz/qcftt/xJDLt6BYYVKKZqtdvSPPw4OAv3jQ5VSH3Zy7aSe1nHU2nFXrXTo8EoLMkQGH4Rr
+X-Gm-Message-State: AOJu0YwntYtt5N3xnVHEq3oAJY9sxtzSCZ+hnBMW3lvT3wbV2BKyqEkL
+	2SyASgG7wTg8x2KNTwHuZlVBFMUpA9jHdJJR6WkoPhLiCkkrUHGdiAH3TindAj57DZsCMJ1Euph
+	reVinou2Daw7KAb7qLTWbw/7BlsePSSojB+pc
+X-Google-Smtp-Source: AGHT+IFzxd7Js/eAEXV/+jo/EkCE0PXjdYydQEhCI2Sd4NoDikw5vlrFxfqxmRjE8N+c38U3ya0l5c8YYD3sFGcWEFU=
+X-Received: by 2002:a25:fe03:0:b0:dcf:c086:dd43 with SMTP id
+ k3-20020a25fe03000000b00dcfc086dd43mr14711677ybe.14.1709844055470; Thu, 07
+ Mar 2024 12:40:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: TfqGrkqKNzvW7VbgqMWaMNGsy172yF4L
-X-Proofpoint-ORIG-GUID: w_l64ZQrM3m9TfhqJDI21trE_EDpnMAA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-07_15,2024-03-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0 clxscore=1015
- phishscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2403070142
+MIME-Version: 1.0
+References: <20240219.chu4Yeegh3oo@digikod.net> <20240219183539.2926165-1-mic@digikod.net>
+ <ZedgzRDQaki2B8nU@google.com> <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com> <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com> <Zem5tnB7lL-xLjFP@google.com>
+In-Reply-To: <Zem5tnB7lL-xLjFP@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 7 Mar 2024 15:40:44 -0500
+Message-ID: <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-02-14 at 15:35 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Specify the 'digest_cache_measure' boot-time policy with 'ima_policy=' in
-> the kernel command line
+On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.co=
+m> wrote:
+> On Thu, Mar 07, 2024 at 01:21:48PM +0100, Arnd Bergmann wrote:
+> > On Thu, Mar 7, 2024, at 13:15, Christian Brauner wrote:
+> > > On Wed, Mar 06, 2024 at 04:18:53PM +0100, Arnd Bergmann wrote:
+> > >> On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
+> > >> >
+> > >> > Arnd, Christian, Paul, are you OK with this new hook proposal?
+> > >>
+> > >> I think this sounds better. It would fit more closely into
+> > >> the overall structure of the ioctl handlers with their multiple
+> > >> levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
+> > >> you have the same structure for sockets and blockdev, and
+> > >> then additional levels below that and some weirdness for
+> > >> things like tty, scsi or cdrom.
+> > >
+> > > So an additional security hook called from tty, scsi, or cdrom?
+> > > And the original hook is left where it is right now?
+> >
+> > For the moment, I think adding another hook in vfs_ioctl()
+> > and the corresponding compat path would do what Micka=C3=ABl
+> > wants. Beyond that, we could consider having hooks in
+> > socket and block ioctls if needed as they are easy to
+> > filter out based on inode->i_mode.
+> >
+> > The tty/scsi/cdrom hooks would be harder to do, let's assume
+> > for now that we don't need them.
+>
+> Thank you all for the help!
+>
+> Yes, tty/scsi/cdrom are just examples.  We do not need special features f=
+or
+> these for Landlock right now.
+>
+> What I would do is to invoke the new LSM hook in the following two places=
+ in
+> fs/ioctl.c:
+>
+> 1) at the top of vfs_ioctl()
+> 2) at the top of ioctl_compat()
+>
+> (Both of these functions are just invoking the f_op->unlocked_ioctl() and
+> f_op->compat_ioctl() operations with a safeguard for that being a NULL po=
+inter.)
+>
+> The intent is that the new hook gets called everytime before an ioctl is =
+sent to
+> these IOCTL operations in f_op, so that the LSM can distinguish cleanly b=
+etween
+> the "safe" IOCTLs that are implemented fully within fs/ioctl.c and the
+> "potentially unsafe" IOCTLs which are implemented by these hooks (as it i=
+s
+> unrealistic for us to holistically reason about the safety of all possibl=
+e
+> implementations).
+>
+> The alternative approach where we try to do the same based on the existin=
+g LSM
+> IOCTL hook resulted in the patch further up in this mail thread - it invo=
+lves
+> maintaining a list of "safe" IOCTL commands, and it is difficult to guara=
+ntee
+> that these lists of IOCTL commands stay in sync.
 
-The 'built-in' policies may be specified on the boot command line.  Please
-update Subject line, to user the term "built-in" as well as here.
+I need some more convincing as to why we need to introduce these new
+hooks, or even the vfs_masked_device_ioctl() classifier as originally
+proposed at the top of this thread.  I believe I understand why
+Landlock wants this, but I worry that we all might have different
+definitions of a "safe" ioctl list, and encoding a definition into the
+LSM hooks seems like a bad idea to me.
 
->  to add the following rule at the beginning of the
-> IMA policy, before other rules:
+At this point in time, I think I'd rather see LSMs that care about
+ioctls maintaining their own list of "safe" ioctls and after a while
+if it looks like everyone is in agreement (VFS folks, individual LSMs,
+etc.) we can look into either an ioctl classifier or multiple LSM
+ioctl hooks focused on different categories of ioctls.
 
-Comments below...
-
-> 
-> measure func=DIGEST_LIST_CHECK pcr=12
-> 
-> which will measure digest lists into PCR 12 (or the value in
-> CONFIG_IMA_DIGEST_CACHE_MEASURE_PCR_IDX).
-> 
-> 'digest_cache_measure' also adds 'digest_cache=content pcr=12' to the other
-> measure rules, if they have a compatible IMA hook. The PCR value still
-> comes from CONFIG_IMA_DIGEST_CACHE_MEASURE_PCR_IDX.
-> 
-> Specify 'digest_cache_appraise' to add the following rule at the beginning,
-> before other rules:
-> 
-> appraise func=DIGEST_LIST_CHECK appraise_type=imasig|modsig
-> 
-> which will appraise digest lists with IMA signatures or module-style
-> appended signatures.
-> 
-> 'digest_cache_appraise' also adds 'digest_cache=content' to the other
-> appraise rules, if they have a compatible IMA hook.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         | 15 ++++++-
->  security/integrity/ima/Kconfig                | 10 +++++
->  security/integrity/ima/ima_policy.c           | 45 +++++++++++++++++++
->  3 files changed, 69 insertions(+), 1 deletion(-)
-
-[...]
- 
-> @@ -971,6 +1006,16 @@ void __init ima_init_policy(void)
->  {
->  	int build_appraise_entries, arch_entries;
->  
-> +	/*
-> +	 * We need to load digest cache rules at the beginning, to avoid dont_
-> +	 * rules causing ours to not be reached.
-> +	 */
-
-"lockdown" trusts IMA to measure and appraise kernel modules, if the rule
-exists.  Placing the digest_cache first breaks this trust.
-
-From a trusted and secure boot perspective, the architecture specific policy
-rules should not be ignored. Putting the digest_cache before any other rules
-will limit others from being able to use digest_cache.
-
-Instead of putting the digest_cache_{measure,appraise} built-in policies first,
-skip loading the dont_measure_rules.
-
-
-Mimi
-
-> +	if (ima_digest_cache_measure)
-> +		add_rules(&measure_digest_cache_rule, 1, IMA_DEFAULT_POLICY);
-> +
-> +	if (ima_digest_cache_appraise)
-> +		add_rules(&appraise_digest_cache_rule, 1, IMA_DEFAULT_POLICY);
-> +
->  	/* if !ima_policy, we load NO default rules */
->  	if (ima_policy)
->  		add_rules(dont_measure_rules, ARRAY_SIZE(dont_measure_rules),
-
+--=20
+paul-moore.com
