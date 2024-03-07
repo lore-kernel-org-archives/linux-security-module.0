@@ -1,105 +1,141 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BC512AADB;
-	Thu,  7 Mar 2024 12:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D15712C534
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 12:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709814199; cv=none; b=l/vmhALvqDXz2wQRIHU7WgAr7OavW/ilF+TmWPEVV2ZZ2Zw03hhNk22BeNfKj2OlVVtA1bm8T7BDmWyzR+Pq7PpNFebXIRfijzrFXoSU6+vc69gFCgNL/bu9XKrw8J0elymWM7aUEHtiIf4gMp+JsyKlHa76cyilkQuOP/iTQcQ=
+	t=1709816251; cv=none; b=WKrDvrQsaSSH80TQ0FX29NBuj3CRGvYPXuGd5R5juae/EyH6UNMmMTAN/ORQENYrbpafS9UVnqeIdnafrVLwI3JFBESv7XNqeqsh6iURtMhOoenRwYf8yyDq0bbcplbJGaamp7wDHyY4Ui/Hvc+G+I4XhOO74NnSyuhbll5vUvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709814199; c=relaxed/simple;
-	bh=47347CDrcctM5q9XZgq8/xM8yKL2YcYdeT0/hb+myVo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bsJXsEKo8DKwWzf769ANwnzjJzyouVu12lsB/Ys8Gqlm8qzEEnaP8t8Q7YNtnftHc0gWjH+gX6FxS9OQcoyyGugLztxogp05KCcTeqhBAG/wsNAm6NvyUhTZi68lNXDPHTnpr6/M0sQZRpshnrBp3kVnFEgDDYRABN3hxy5W1jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Tr7HG3lf7z9xxml;
-	Thu,  7 Mar 2024 20:03:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id AB30214037C;
-	Thu,  7 Mar 2024 20:23:07 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwA3LxihselliRTjAw--.14417S2;
-	Thu, 07 Mar 2024 13:23:07 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	stable@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Seth Forshee <sforshee@kernel.org>
-Subject: [PATCH] evm: Change vfs_getxattr() with __vfs_getxattr() in evm_calc_hmac_or_hash()
-Date: Thu,  7 Mar 2024 13:22:39 +0100
-Message-Id: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1709816251; c=relaxed/simple;
+	bh=RJdyXZLNvnH8cN9wPXjrAPOlXdC7e8+6kAEh4RhBejE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pmfTTsy2C9H+3cmCLgsnUdyA4+KLsMsCBxrFyzFHD5xo8WuUqCHiD73JX5CIzbonoVWPDM+MR1i7krD5fYfO7TZw/ArjZSkZExvtHwZYszgXY1vCisg64lFOH6SP1zxEkQwwSkOuZWTvYW4YM65lLJ8iikSw4ndALeHiZqFVryw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EAo2UX58; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EAo2UX58"
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a45a90e1661so59672766b.0
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 04:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1709816248; x=1710421048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mBW/1MEz6JNZVrnhcpxVAwMPPAr+vdVKO2wgbn75mCU=;
+        b=EAo2UX58MvMc9Wbtba/wMaNJ5Hq3S/5wWGr/Q/BSzmJAAYbXl6j/jZc7pDC2cD8GF5
+         HWt6Utz/0l5PHLQRDXfDyaMcFxvgg14/UMILZs0ivEJm4ZaikxD7KhaILl3UzaQw8+Mu
+         bDX3y5WTa2n42jdg+DMPyRj/2aBEANwnVNyUxb6Zhant0lnu7gxSDuDU+SK1Aitq7+1N
+         mKmmdrf9YzpNq73NAthR5/Gz7tDkn2o3EdHSv7FZgzkReZ1oruwEU2VkrpK40Pz8fpux
+         kKp/XvjZMV4abeKSn2GkbVI1xIhqMyiQBpi5dmfNHlUNyf08bbJAaldb5oB8S09FCXsW
+         gXXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709816248; x=1710421048;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mBW/1MEz6JNZVrnhcpxVAwMPPAr+vdVKO2wgbn75mCU=;
+        b=gpEEDjA9l7n6ZthrdN6/18FXefSKGOAPdvp68cqu/wMqSR4kYGg1ZVZlWhAmqH/Q81
+         Hbl+dLf9Z8XbuXWjZ6+5a+tOpJModBZ/Abg7yh0kBJRW8dv1h0Lwavzh9lbhjNaC0Ex8
+         38m/Y3jufYJB2ObK9KghzfiE2DoPGxWVOU2RzCga2QJK6cOVEXZXEzICjTt358IfvlDS
+         EW0345lYZShjI9w3Gh5emNgUtDWxpqubaEEXOlS5+V3kaAp6SjsjK4SzwmYQjV+rYKGo
+         h+EQRLjsU4OsJ8fH7+SbfArxdO7bJyJDP+Ouluhg7YklY5mckv5/WY67gHpbSDYAXcy4
+         GrMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtp5n8zG7UxlKf+dhI9ITuffTocUoxL/vL02E11z/wPCArvcS9psYCL0ePkL5HCX27CYR6fAqy9f2mJuPQa2t0+mgDGdI+CB+2ebNUQ8+UV32Mouk5
+X-Gm-Message-State: AOJu0Yy5Mj0waCPk9Oi2k54eu16VIQKLCneDW/+Ff4HUP5aa+lR6BHph
+	mtuamliVMtqBSr0IbjQFtZmro71eJMy8V7Z/d7iySX8Bh2egCXetCuLw7R+J7JD+Z9PG5ztZ03V
+	lpg==
+X-Google-Smtp-Source: AGHT+IHjqHWp2CPC7ca+ld5dxvSKopEz7nwEwKfTKFdzg18uJSgze7bS6XZR5A4/Au9LDR+Ykn2ASs8lcXI=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a17:906:1c4d:b0:a42:ea24:f8b8 with SMTP id
+ l13-20020a1709061c4d00b00a42ea24f8b8mr32093ejg.14.1709816248127; Thu, 07 Mar
+ 2024 04:57:28 -0800 (PST)
+Date: Thu, 7 Mar 2024 13:57:26 +0100
+In-Reply-To: <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwA3LxihselliRTjAw--.14417S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw4rCw4DAr15Jw45JF17trb_yoW8GFykpF
-	W5Ka9rKrn5JryrKas5GF4kAayF93yUXr47KrsxAa4Iv3Z8ZryxZr92qry7uryFvr18trn5
-	J3yqqr1Yyw13A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU8imRUUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj5cVqAABsT
+Mime-Version: 1.0
+References: <20240219.chu4Yeegh3oo@digikod.net> <20240219183539.2926165-1-mic@digikod.net>
+ <ZedgzRDQaki2B8nU@google.com> <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com> <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+Message-ID: <Zem5tnB7lL-xLjFP@google.com>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Thu, Mar 07, 2024 at 01:21:48PM +0100, Arnd Bergmann wrote:
+> On Thu, Mar 7, 2024, at 13:15, Christian Brauner wrote:
+> > On Wed, Mar 06, 2024 at 04:18:53PM +0100, Arnd Bergmann wrote:
+> >> On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
+> >> >
+> >> > Arnd, Christian, Paul, are you OK with this new hook proposal?
+> >>=20
+> >> I think this sounds better. It would fit more closely into
+> >> the overall structure of the ioctl handlers with their multiple
+> >> levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
+> >> you have the same structure for sockets and blockdev, and
+> >> then additional levels below that and some weirdness for
+> >> things like tty, scsi or cdrom.
+> >
+> > So an additional security hook called from tty, scsi, or cdrom?
+> > And the original hook is left where it is right now?
+>=20
+> For the moment, I think adding another hook in vfs_ioctl()
+> and the corresponding compat path would do what Micka=C3=ABl
+> wants. Beyond that, we could consider having hooks in
+> socket and block ioctls if needed as they are easy to
+> filter out based on inode->i_mode.
+>=20
+> The tty/scsi/cdrom hooks would be harder to do, let's assume
+> for now that we don't need them.
 
-Use __vfs_getxattr() instead of vfs_getxattr(), in preparation for
-deprecating using the vfs_ interfaces for retrieving fscaps.
+Thank you all for the help!
 
-__vfs_getxattr() is only used for debugging purposes, to check if kernel
-space and user space see the same xattr value.
+Yes, tty/scsi/cdrom are just examples.  We do not need special features for
+these for Landlock right now.
 
-Cc: stable@vger.kernel.org # 5.14.x
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-Fixes: 907a399de7b0 ("evm: Check xattr size discrepancy between kernel and user")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm_crypto.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+What I would do is to invoke the new LSM hook in the following two places i=
+n
+fs/ioctl.c:
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index b1ffd4cc0b44..168d98c63513 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -278,8 +278,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 		if (size < 0)
- 			continue;
- 
--		user_space_size = vfs_getxattr(&nop_mnt_idmap, dentry,
--					       xattr->name, NULL, 0);
-+		user_space_size = __vfs_getxattr(dentry, inode, xattr->name,
-+						 NULL, 0);
- 		if (user_space_size != size)
- 			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
- 				 dentry->d_name.name, xattr->name, size,
--- 
-2.34.1
+1) at the top of vfs_ioctl()
+2) at the top of ioctl_compat()
 
+(Both of these functions are just invoking the f_op->unlocked_ioctl() and
+f_op->compat_ioctl() operations with a safeguard for that being a NULL poin=
+ter.)
+
+The intent is that the new hook gets called everytime before an ioctl is se=
+nt to
+these IOCTL operations in f_op, so that the LSM can distinguish cleanly bet=
+ween
+the "safe" IOCTLs that are implemented fully within fs/ioctl.c and the
+"potentially unsafe" IOCTLs which are implemented by these hooks (as it is
+unrealistic for us to holistically reason about the safety of all possible
+implementations).
+
+The alternative approach where we try to do the same based on the existing =
+LSM
+IOCTL hook resulted in the patch further up in this mail thread - it involv=
+es
+maintaining a list of "safe" IOCTL commands, and it is difficult to guarant=
+ee
+that these lists of IOCTL commands stay in sync.
+
+Christian, does that make sense in your mind?
+
+Thanks,
+=E2=80=94G=C3=BCnther
