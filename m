@@ -1,46 +1,46 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0138383CB4
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 09:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6900442047
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 09:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709804392; cv=none; b=WhQZiTcFNcBVaT3NxJPOY6X0b+x5YiF00K4Rf+FNVLPslrqhIzSK7hFdc6HNINhCq/z1Ks3IBrPMl0T5JMrLQWHo/bGVO6vGsufOvZIEsze2Rkpq2dyc8EYCH9b0NVK5/7Og7f6m/izdObnk67/8rJE5Mqi/lDk+DZDSZoiUzao=
+	t=1709805150; cv=none; b=vF1eEdnfTepgaqpPw3TWdez0nt3MpiPoE2msEswUB88VN+0DA10nzI97LItSXhzGEN76aD5KHbSE0IT3y5DfyjUhiZggwU/BIZ7mWViIMW4CCXrZUqvySUXe6FezRuSFaIgOCgNehrtcIXaqXmnFjZMP3qM06e/YSebc2zQKUbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709804392; c=relaxed/simple;
-	bh=KluVRBv/19f0IRGPeyv1rPXZYsvrNfNV39euLt5Oi7I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lxbGSPJauPtRucg7ABJp7Sxr5fyVoXDHmhSgvHuE/icsCX75FT1HDveMXhQRQUUyD+3eDMZlVVXrL7+YwmFkn0O6MQfz4dLjZtYvqjjoEUHUqq14zp8MmdGf3reU03o+St1fX6NfMXxJPuOJjvh2D0KKYMBIs6+bMfl1rPk+Uv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yPPXjblG; arc=none smtp.client-ip=185.125.25.11
+	s=arc-20240116; t=1709805150; c=relaxed/simple;
+	bh=JM8NoDgF9XVBdwTusnBP2iVflDk3qzvwdZH/Z7zpmz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RhO3Szezb/olVY0TugsIhYpLteUdxV4kt+crvHNRdw77crNF2fZoyR2kQa4PLP3Z85rnAjVNiHWJ5YkNBZAC4zTQ53hI4YwfRfapdIJ/MG4fLGJ00uhVE1/YbXzwK/rSqUIdHhwIGmCHo8RM6R8Z99Y3J5gZQcinowSMXQVmGMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yYRPEETW; arc=none smtp.client-ip=45.157.188.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yPPXjblG"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tr45R2qsDz15fF;
-	Thu,  7 Mar 2024 10:39:39 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tr45Q6rtjzr1;
-	Thu,  7 Mar 2024 10:39:38 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yYRPEETW"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tr4N22Tzsz1CY0;
+	Thu,  7 Mar 2024 10:52:18 +0100 (CET)
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tr4N13FkTzHTh;
+	Thu,  7 Mar 2024 10:52:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709804379;
-	bh=KluVRBv/19f0IRGPeyv1rPXZYsvrNfNV39euLt5Oi7I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=yPPXjblGjDxz+Oi9NbOFj1XxmtiPFkvsO6TI0jgs/97zDRSLz+CczRcToBOo1JdMq
-	 kJHMAk3wS+LTMfIm8D2RjTZLnmHW6ksU+DXJWcE8AvqZCwZI8GTUtFpOgVe1pHkmpS
-	 CNM3g4RkWdADHe/K0HQwGBHrdPyMbKBUivzqkoVY=
+	s=20191114; t=1709805138;
+	bh=JM8NoDgF9XVBdwTusnBP2iVflDk3qzvwdZH/Z7zpmz8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=yYRPEETWKJNSGjSICEonq68KuR7gZrjZe1sFtdcp++a3Mz3Z51vhUpznrtczkAgq5
+	 OYD/xEPqav6NYDfsGWf6BuDxH3uNQSMabP9O3t7fKhCfC5pr/L4mf3L8t4vaqEUIQz
+	 PRtLouUWqMAomdv+p/DYiTQpJX+LPazvsdoEo+uw=
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+To: Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Jann Horn <jannh@google.com>,
 	Paul Moore <paul@paul-moore.com>
 Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Kees Cook <keescook@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
 	"Serge E . Hallyn" <serge@hallyn.com>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 2/2] landlock: Rename "ptrace" files to "task"
-Date: Thu,  7 Mar 2024 10:39:23 +0100
-Message-ID: <20240307093923.1466071-2-mic@digikod.net>
-In-Reply-To: <20240307093923.1466071-1-mic@digikod.net>
-References: <20240307093923.1466071-1-mic@digikod.net>
+Subject: [PATCH] landlock: Use f_cred in security_file_open() hook
+Date: Thu,  7 Mar 2024 10:52:03 +0100
+Message-ID: <20240307095203.1467189-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,107 +51,71 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-ptrace.[ch] are currently only used for the ptrace LSM hooks but their
-scope will expand with IPCs and audit support.  Rename ptrace.[ch] to
-task.[ch], which better reflect their content.  Similarly, rename
-landlock_add_ptrace_hooks() to landlock_add_task_hooks().  Keep header
-files for now.
+Use landlock_cred(file->f_cred)->domain instead of
+landlock_get_current_domain() in security_file_open() hook
+implementation.
 
+This should not change the current behavior but could avoid potential
+race conditions in case of current task's credentials change.
+
+This will also ensure consistency with upcoming audit support relying on
+file->f_cred.
+
+Add and use a new get_fs_domain() helper to mask non-filesystem domains.
+
+file->f_cred is set by path_openat()/alloc_empty_file()/init_file() just
+before calling security_file_alloc().
+
+Cc: Christian Brauner <brauner@kernel.org>
 Cc: Günther Noack <gnoack@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20240307095203.1467189-1-mic@digikod.net
 ---
- security/landlock/Makefile             | 2 +-
- security/landlock/setup.c              | 4 ++--
- security/landlock/{ptrace.c => task.c} | 4 ++--
- security/landlock/{ptrace.h => task.h} | 8 ++++----
- 4 files changed, 9 insertions(+), 9 deletions(-)
- rename security/landlock/{ptrace.c => task.c} (98%)
- rename security/landlock/{ptrace.h => task.h} (52%)
+ security/landlock/fs.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-index c2e116f2a299..b4538b7cf7d2 100644
---- a/security/landlock/Makefile
-+++ b/security/landlock/Makefile
-@@ -1,6 +1,6 @@
- obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 6f0bf1434a2c..c15559432d3d 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -248,15 +248,18 @@ get_handled_fs_accesses(const struct landlock_ruleset *const domain)
+ 	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+ }
  
- landlock-y := setup.o syscalls.o object.o ruleset.o \
--	cred.o ptrace.o fs.o
-+	cred.o task.o fs.o
- 
- landlock-$(CONFIG_INET) += net.o
-diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-index f6dd33143b7f..28519a45b11f 100644
---- a/security/landlock/setup.c
-+++ b/security/landlock/setup.c
-@@ -14,8 +14,8 @@
- #include "cred.h"
- #include "fs.h"
- #include "net.h"
--#include "ptrace.h"
- #include "setup.h"
-+#include "task.h"
- 
- bool landlock_initialized __ro_after_init = false;
- 
-@@ -34,7 +34,7 @@ const struct lsm_id landlock_lsmid = {
- static int __init landlock_init(void)
+-static const struct landlock_ruleset *get_current_fs_domain(void)
++static const struct landlock_ruleset *
++get_fs_domain(const struct landlock_ruleset *const domain)
  {
- 	landlock_add_cred_hooks();
--	landlock_add_ptrace_hooks();
-+	landlock_add_task_hooks();
- 	landlock_add_fs_hooks();
- 	landlock_add_net_hooks();
- 	landlock_initialized = true;
-diff --git a/security/landlock/ptrace.c b/security/landlock/task.c
-similarity index 98%
-rename from security/landlock/ptrace.c
-rename to security/landlock/task.c
-index 2bfc533d36e4..849f5123610b 100644
---- a/security/landlock/ptrace.c
-+++ b/security/landlock/task.c
-@@ -16,9 +16,9 @@
+-	const struct landlock_ruleset *const dom =
+-		landlock_get_current_domain();
+-
+-	if (!dom || !get_raw_handled_fs_accesses(dom))
++	if (!domain || !get_raw_handled_fs_accesses(domain))
+ 		return NULL;
  
- #include "common.h"
- #include "cred.h"
--#include "ptrace.h"
- #include "ruleset.h"
- #include "setup.h"
-+#include "task.h"
+-	return dom;
++	return domain;
++}
++
++static const struct landlock_ruleset *get_current_fs_domain(void)
++{
++	return get_fs_domain(landlock_get_current_domain());
+ }
  
- /**
-  * domain_scope_le - Checks domain ordering for scoped ptrace
-@@ -113,7 +113,7 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
- };
+ /*
+@@ -1334,7 +1337,8 @@ static int hook_file_open(struct file *const file)
+ 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+ 	access_mask_t open_access_request, full_access_request, allowed_access;
+ 	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
+-	const struct landlock_ruleset *const dom = get_current_fs_domain();
++	const struct landlock_ruleset *const dom =
++		get_fs_domain(landlock_cred(file->f_cred)->domain);
  
--__init void landlock_add_ptrace_hooks(void)
-+__init void landlock_add_task_hooks(void)
- {
- 	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
- 			   &landlock_lsmid);
-diff --git a/security/landlock/ptrace.h b/security/landlock/task.h
-similarity index 52%
-rename from security/landlock/ptrace.h
-rename to security/landlock/task.h
-index 265b220ae3bf..7c00360219a2 100644
---- a/security/landlock/ptrace.h
-+++ b/security/landlock/task.h
-@@ -6,9 +6,9 @@
-  * Copyright © 2019 ANSSI
-  */
- 
--#ifndef _SECURITY_LANDLOCK_PTRACE_H
--#define _SECURITY_LANDLOCK_PTRACE_H
-+#ifndef _SECURITY_LANDLOCK_TASK_H
-+#define _SECURITY_LANDLOCK_TASK_H
- 
--__init void landlock_add_ptrace_hooks(void);
-+__init void landlock_add_task_hooks(void);
- 
--#endif /* _SECURITY_LANDLOCK_PTRACE_H */
-+#endif /* _SECURITY_LANDLOCK_TASK_H */
+ 	if (!dom)
+ 		return 0;
 -- 
 2.44.0
 
