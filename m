@@ -1,126 +1,119 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72E941C65;
-	Thu,  7 Mar 2024 14:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0061DFF7
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 14:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709822205; cv=none; b=g7B2k/su1VDiRVUmy1+yzIa55goG7MeKx7TmEB8iFYpcmSrwdw2BKG85w3IV9vgxO+WXysoM9wPa2n9vegO1WNhNtzc1FrojK3t2is0PZNVXpWVrL+RSZNIsMEX7uGb1P0dmGguogzCsYmnvS3AnBlpNptBmDrQAm2xUkvdJyTA=
+	t=1709822357; cv=none; b=UBX7DyA7i5+GagzixWqrpexljtUv91RMt3nj0dQGtKY1ifrIYlvU0GQhO4BM+d3WLbn7r4nYYuj5e1Tc3xCE6qIa1uyLedAjAoKAcAIMLCWhU5spwbq04x5eip5sgfMwXmasaxQAeLVKZSLTUOvKRhXgc613IKSOYB/Znw1NADo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709822205; c=relaxed/simple;
-	bh=fBgd/xX7Uh3OPchqwmFNdogp9X5rg4dHxjtoKMkjoqU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ehuXXjYUDTO6ExlxOwqnoxybXWhfB9uOBzfQogqlM8jreWd+CT1NA+3avsyHyv7r0k+pZY1hGdbcLCwzmvPahqpk25N8I7R8pIHrDKBV5KAdO6TdoPsW33yBBkRG7p5/DhqW8tutZkv1Vfmoc30o9s8q4a1HdZaAObGwnPqV9y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TrBFK1KkJz9xFrK;
-	Thu,  7 Mar 2024 22:16:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 9CC6B14061B;
-	Thu,  7 Mar 2024 22:36:29 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHvhfi0OllmZnkAw--.17428S2;
-	Thu, 07 Mar 2024 15:36:29 +0100 (CET)
-Message-ID: <5a08af42118541c87ce0b173d03217c3623adce2.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: Change vfs_getxattr() with __vfs_getxattr() in
- evm_calc_hmac_or_hash()
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Seth Forshee <sforshee@kernel.org>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- Roberto Sassu <roberto.sassu@huawei.com>,  stable@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Date: Thu, 07 Mar 2024 15:36:14 +0100
-In-Reply-To: <ZenPtCfh6CyD2xz5@do-x1extreme>
-References: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
-	 <ZenPtCfh6CyD2xz5@do-x1extreme>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709822357; c=relaxed/simple;
+	bh=+dE/Mzf4X3lkhNqdDIXT9zhURf55ZrucbCbcO2MJxd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HCCKlyLf9GnNUQzitwU2qBk8s/U5BY9HFReIyta0KDjZZpVprlAy1zysiaCB/cWnXiaTQEvxoA8wOEoJU+h/gFhYjFas1dTGb4SV9OeQ/aGymS4caQnFc5B4NZ6HSG3zbhgn3XPs51lSMC8QPeZmqXtugpw5zVVc4EJGpPjiaxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qm860GOx; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qm860GOx"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TrBkw3WXqzDyc;
+	Thu,  7 Mar 2024 15:39:04 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TrBkv4dWqzMpnPj;
+	Thu,  7 Mar 2024 15:39:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709822344;
+	bh=+dE/Mzf4X3lkhNqdDIXT9zhURf55ZrucbCbcO2MJxd4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qm860GOxjCckdUCqSPUFyab0YnGgtn5fs72ykYciR/0zQeHNKEDOhMOBNE31TUV2U
+	 yUTQFF21a6HxlBvDdnmFObWM88n9uZ1RELuIq5kvuxTyIWJtKOLrlt6cSFXdTLYnFO
+	 SlK8MFM2RGYK53Dynx24oLMB3VnHCPdukNJJ3eno=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] samples/landlock: Don't error out if a file path cannot be opened
+Date: Thu,  7 Mar 2024 15:38:49 +0100
+Message-ID: <20240307143849.1517218-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDHvhfi0OllmZnkAw--.17428S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KrWkZFyrZryUuw43ZFy3twb_yoW8tr1fpF
-	WYkanrKrn5Jry5Cas5GF4DAayF93y5Xr4jkrsFv340v3ZrXrn7Zr93Wr13uryF9r1xtwn5
-	tw4qqFyYywnxA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj5cYAAAAs3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Thu, 2024-03-07 at 08:31 -0600, Seth Forshee wrote:
-> On Thu, Mar 07, 2024 at 01:22:39PM +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Use __vfs_getxattr() instead of vfs_getxattr(), in preparation for
-> > deprecating using the vfs_ interfaces for retrieving fscaps.
-> >=20
-> > __vfs_getxattr() is only used for debugging purposes, to check if kerne=
-l
-> > space and user space see the same xattr value.
->=20
-> __vfs_getxattr() won't give you the value as seen by userspace though.
-> Userspace goes through vfs_getxattr() -> xattr_getsecurity() ->
-> cap_inode_getsecurity(), which does the conversion to the value
-> userspace sees. __vfs_getxattr() just gives the raw disk data.
->=20
-> I'm also currently working on changes to my fscaps series that will make
-> it so that __vfs_getxattr() also cannot be used to read fscaps xattrs.
-> I'll fix this and other code in EVM which will be broken by that change
-> as part of the next version too.
+Instead of creating a hard error and aborting the sandbox creation,
+accept file path not usable in the LL_FS_RO and LL_FS_RW environment
+variables but only print a warning.  This makes it easier to test, for
+instance with LL_FS_RO="${PATH}:/usr/lib:/lib"
 
-You are right, thank you!
+Print that we are going to execute the command in the sandbox before
+doing so.
 
-Roberto
+Rename "launch" to "execute".
 
-> >=20
-> > Cc: stable@vger.kernel.org # 5.14.x
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > Fixes: 907a399de7b0 ("evm: Check xattr size discrepancy between kernel =
-and user")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/evm/evm_crypto.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/e=
-vm/evm_crypto.c
-> > index b1ffd4cc0b44..168d98c63513 100644
-> > --- a/security/integrity/evm/evm_crypto.c
-> > +++ b/security/integrity/evm/evm_crypto.c
-> > @@ -278,8 +278,8 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
-try,
-> >  		if (size < 0)
-> >  			continue;
-> > =20
-> > -		user_space_size =3D vfs_getxattr(&nop_mnt_idmap, dentry,
-> > -					       xattr->name, NULL, 0);
-> > +		user_space_size =3D __vfs_getxattr(dentry, inode, xattr->name,
-> > +						 NULL, 0);
-> >  		if (user_space_size !=3D size)
-> >  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n"=
-,
-> >  				 dentry->d_name.name, xattr->name, size,
-> > --=20
-> > 2.34.1
-> >=20
+Cc: Günther Noack <gnoack@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ samples/landlock/sandboxer.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index d7323e5526be..22e8c35103ce 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: BSD-3-Clause
+ /*
+- * Simple Landlock sandbox manager able to launch a process restricted by a
++ * Simple Landlock sandbox manager able to execute a process restricted by a
+  * user-defined filesystem access control policy.
+  *
+  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+@@ -121,9 +121,11 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
+ 		if (path_beneath.parent_fd < 0) {
+ 			fprintf(stderr, "Failed to open \"%s\": %s\n",
+ 				path_list[i], strerror(errno));
+-			goto out_free_name;
++			continue;
+ 		}
+ 		if (fstat(path_beneath.parent_fd, &statbuf)) {
++			fprintf(stderr, "Failed to stat \"%s\": %s\n",
++				path_list[i], strerror(errno));
+ 			close(path_beneath.parent_fd);
+ 			goto out_free_name;
+ 		}
+@@ -229,7 +231,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+ 			ENV_TCP_CONNECT_NAME, argv[0]);
+ 		fprintf(stderr,
+-			"Launch a command in a restricted environment.\n\n");
++			"Execute a command in a restricted environment.\n\n");
+ 		fprintf(stderr,
+ 			"Environment variables containing paths and ports "
+ 			"each separated by a colon:\n");
+@@ -250,7 +252,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 			ENV_TCP_CONNECT_NAME);
+ 		fprintf(stderr,
+ 			"\nexample:\n"
+-			"%s=\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
++			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+ 			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+ 			"%s=\"9418\" "
+ 			"%s=\"80:443\" "
+@@ -390,6 +392,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 
+ 	cmd_path = argv[1];
+ 	cmd_argv = argv + 1;
++	fprintf(stderr, "Executing the sandboxed command...\n");
+ 	execvpe(cmd_path, cmd_argv, envp);
+ 	fprintf(stderr, "Failed to execute \"%s\": %s\n", cmd_path,
+ 		strerror(errno));
+-- 
+2.44.0
 
