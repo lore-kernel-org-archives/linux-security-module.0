@@ -1,45 +1,47 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2729584FD2
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 10:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3443D8833;
+	Thu,  7 Mar 2024 12:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709806941; cv=none; b=gq82CFD+leXfjwVMzoFFVzdQN96fBmOxCR/sY/ulZtGHeaPP98St5Xp5fNLf0XOMUiThxa9VReb3TtNza94Kxlrn0rrP89H8vqMY+mTTJA72lM3hJy6COo3SLaET6lNezjZE9O+HHwLZ1pBOCSNMq7DB1gRps5n0VA8EU6eyru4=
+	t=1709813722; cv=none; b=OO5N1zPDQmhmIHTv0oF47cRTiI7d8DmctQok2yUS0OSE5FLCLLfk2nDjvXyCh3+Eq/RhlhmYj8B5vAjxFxBuFNKB9uRg1ADC3K27FTw7sqxf+H6QG0GH1xHqlHJiVK5EFjdVFkAITbBvvuVeb4AttZLgvknh0KIPBeMQ/aed5G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709806941; c=relaxed/simple;
-	bh=3wfPwwhLAgLaMHVJF2tSLdLHhhmhu0GsZ2XZGA/5oOI=;
+	s=arc-20240116; t=1709813722; c=relaxed/simple;
+	bh=TnHFwGPif48Q3J+9erZR9DbQ9KJ5bj5ALNCtUGMsS/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NsmVNIY0rjMK2E+NFAMVAeNbTtRZ3AJ9e5CF5P+UP7iWfgiV7jERh6BohVOEexGCE0rY4PaQXUCF+ANKUpPpSBfbsOR/d8Q5N3baF13DcmbSeU9ATYx4ewmDjWlYWenDZYon1S16aM+/CDXYHCxlYjAH+ZE6mg/3lh/yYKprFwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YzJRhUBi; arc=none smtp.client-ip=185.125.25.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9QZvZyGUzqMaLhTrXyyQn1UfuaS7cRApxfn3WIdfyXYWzH65ab0D53lvBMvLCd7d86/NTswyX85FaHF2rL6IRqnFrvtlWyLQX1fAFv1VuNKSy+jZFtFv8mdT4mTrXP1RgJl+rpdvyip3NKIjtCykwAniDMREOqHHqB/Y4YaFgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNpOS9UV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YzJRhUBi"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tr52S3kpTzMqbGB;
-	Thu,  7 Mar 2024 11:22:08 +0100 (CET)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tr52R5XlPzQVF;
-	Thu,  7 Mar 2024 11:22:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1709806928;
-	bh=3wfPwwhLAgLaMHVJF2tSLdLHhhmhu0GsZ2XZGA/5oOI=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNpOS9UV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBCFCC433F1;
+	Thu,  7 Mar 2024 12:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709813721;
+	bh=TnHFwGPif48Q3J+9erZR9DbQ9KJ5bj5ALNCtUGMsS/M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YzJRhUBimplUlxe27u0ZbbJbY4lpfXMY1nQe/nGbp3tgjFOR5655B0YKGa7vOT0Wc
-	 gyA5oSBrGE6GXO3unN2umndpix5LMhBR6qM9azMdzivkq3+JRDPBCXZ/WjYEOxbosR
-	 2r3kTFP7LpReBITwCp5p+x6KAnaEEnSB/b5Jmums=
-Date: Thu, 7 Mar 2024 11:21:57 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Alejandro Colomar <alx@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Shervin Oloumi <enlightened@chromium.org>, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 1/2] landlock: Extend documentation for kernel support
-Message-ID: <20240307.oxQuab5tho0u@digikod.net>
-References: <20240227110550.3702236-1-mic@digikod.net>
- <Zd4OlL1G3t1D3TgC@google.com>
+	b=fNpOS9UVEQbTRA+rsLunmXcdqEd/vB//bUMt63YL6K+BDMu73+IaWpZbj7jkT3X+E
+	 8GvDO8k8dldVyxZB5cGMGp1PizKrgXY3ZAbF6oGmWItq+rPGwOH7v5D2Hrho3qI/Xk
+	 Eho3PGqqaZwShjoHV4JCJ9ktUxVy2Y65K8Apl/xCEjip+2h8n8QO6JGfv7IQ5lcyW+
+	 L3TrKAQbtZs6HdBqNv7hc0qN0VSS7rvHIY7yyaiyGZxdG33Pw/Qzk+FDIUoEtwqQ7+
+	 /mftdUR37muR34nAoK6ryuCUEsWP5GJr/07oHtMI6RuRTIWTGTZWeXg3/QNIKjsq+f
+	 XW1eL3odDWY2Q==
+Date: Thu, 7 Mar 2024 13:15:16 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net>
+ <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,136 +51,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zd4OlL1G3t1D3TgC@google.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
 
-CCing Alejandro
+On Wed, Mar 06, 2024 at 04:18:53PM +0100, Arnd Bergmann wrote:
+> On Wed, Mar 6, 2024, at 14:47, Mickaël Salaün wrote:
+> > On Tue, Mar 05, 2024 at 07:13:33PM +0100, Günther Noack wrote:
+> >> On Mon, Feb 19, 2024 at 07:35:39PM +0100, Mickaël Salaün wrote:
+> 
+> >> > +	case FS_IOC_FSGETXATTR:
+> >> > +	case FS_IOC_FSSETXATTR:
+> >> > +	/* file_ioctl()'s IOCTLs are forwarded to device implementations. */
+> >> > +		return true;
+> >> > +	default:
+> >> > +		return false;
+> >> > +	}
+> >> > +}
+> >> > +EXPORT_SYMBOL(vfs_masked_device_ioctl);
+> >> 
+> >> [
+> >> Technical implementation notes about this function: the list of IOCTLs here are
+> >> the same ones which do_vfs_ioctl() implements directly.
+> >> 
+> >> There are only two cases in which do_vfs_ioctl() does more complicated handling:
+> >> 
+> >> (1) FIONREAD falls back to the device's ioctl implemenetation.
+> >>     Therefore, we omit FIONREAD in our own list - we do not want to allow that.
+> 
+> >> (2) The default case falls back to the file_ioctl() function, but *only* for
+> >>     S_ISREG() files, so it does not matter for the Landlock case.
+> 
+> How about changing do_vfs_ioctl() to return -ENOIOCTLCMD for
+> FIONREAD on special files? That way, the two cases become the
+> same.
+> 
+> >> I guess the reasons why we are not using that approach are performance, and that
+> >> it might mess up the LSM hook interface with special cases that only Landlcok
+> >> needs?  But it seems like it would be easier to reason about..?  Or maybe we can
+> >> find a middle ground, where we have the existing hook return a special value
+> >> with the meaning "permit this IOCTL, but do not invoke the f_op hook"?
+> >
+> > Your security_file_vfs_ioctl() approach is simpler and better, I like
+> > it!  From a performance point of view it should not change much because
+> > either an LSM would use the current IOCTL hook or this new one.  Using a
+> > flag with the current IOCTL hook would be a missed opportunity for
+> > performance improvements because this hook could be called even if it is
+> > not needed.
+> >
+> > I don't think it would be worth it to create a new hook for compat and
+> > non-compat mode because we want to control these IOCTLs the same way for
+> > now, so it would not have a performance impact, but for consistency with
+> > the current IOCTL hooks I guess Paul would prefer two new hooks:
+> > security_file_vfs_ioctl() and security_file_vfs_ioctl_compat()?
+> >
+> > Another approach would be to split the IOCTL hook into two: one for the
+> > VFS layer and another for the underlying implementations.  However, it
+> > looks like a difficult and brittle approach according to the current
+> > IOCTL implementations.
+> >
+> > Arnd, Christian, Paul, are you OK with this new hook proposal?
+> 
+> I think this sounds better. It would fit more closely into
+> the overall structure of the ioctl handlers with their multiple
+> levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
+> you have the same structure for sockets and blockdev, and
+> then additional levels below that and some weirdness for
+> things like tty, scsi or cdrom.
 
-On Tue, Feb 27, 2024 at 05:32:20PM +0100, Günther Noack wrote:
-> On Tue, Feb 27, 2024 at 12:05:49PM +0100, Mickaël Salaün wrote:
-> > Extend the kernel support section with one subsection for build time
-> > configuration and another for boot time configuration.
-> > 
-> > Extend the boot time subsection with a concrete example.
-> > 
-> > Update the journalctl command to include the boot option.
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> > 
-> > Changes since v1:
-> > * New patch, suggested by Kees Cook.
-> > ---
-> >  Documentation/userspace-api/landlock.rst | 57 +++++++++++++++++++++---
-> >  1 file changed, 51 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> > index 2e3822677061..838cc27db232 100644
-> > --- a/Documentation/userspace-api/landlock.rst
-> > +++ b/Documentation/userspace-api/landlock.rst
-> > +Boot time configuration
-> > +-----------------------
-> > +
-> >  If the running kernel does not have ``landlock`` in ``CONFIG_LSM``, then we can
-> > -still enable it by adding ``lsm=landlock,[...]`` to
-> > +enable Landlock by adding ``lsm=landlock,[...]`` to
-> >  Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
-> >  configuration.
-> 
-> I would suggest: s/thanks to/in/
-
-OK
-
-> 
-> > +For example, if the current built-in configuration is:
-> > +
-> > +.. code-block:: console
-> > +
-> > +    $ zgrep -h "^CONFIG_LSM=" "/boot/config-$(uname -r)" /proc/config.gz 2>/dev/null
-> > +    CONFIG_LSM="lockdown,yama,integrity,apparmor"
-> > +
-> > +...and if the cmdline doesn't contain ``landlock`` either:
-> > +
-> > +.. code-block:: console
-> > +
-> > +    $ sed -n 's/.*\(\<lsm=\S\+\).*/\1/p' /proc/cmdline
-> > +    lsm=lockdown,yama,integrity,apparmor
-> > +
-> > +...we should configure the bootloader to set a cmdline extending the ``lsm``
-> > +list with the ``landlock,`` prefix::
-> 
-> Nit: Is the double colon at the end of this line accidental?
-> (It does not appear before the previous code block.)
-
-The "::" creates an implicit text block with the following text.  For the
-other block I used an explicit code-block, which then doesn't require
-this "::".
-
-> 
-> > +
-> > +  lsm=landlock,lockdown,yama,integrity,apparmor
-> > +
-> > +After a reboot, we can check that Landlock is up and running by looking at
-> > +kernel logs:
-> > +
-> > +.. code-block:: console
-> > +
-> > +    # dmesg | grep landlock || journalctl -kb -g landlock
-> > +    [    0.000000] Command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
-> > +    [    0.000000] Kernel command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
-> > +    [    0.000000] LSM: initializing lsm=lockdown,capability,landlock,yama,integrity,apparmor
-> > +    [    0.000000] landlock: Up and running.
-> > +
-> > +Note that according to the built time kernel configuration,
-> 
-> s/built time/build time/
->                  ^
-
-OK
-
-> 
-> It feels like the phrase "according to" could be slightly more specific here.
-> 
-> To paraphrase Alejandro Colomar, "Note that" is usually redundant.
-> https://lore.kernel.org/all/0aafcdd6-4ac7-8501-c607-9a24a98597d7@gmail.com/
-> 
-> I'd suggest:
-> 
->   The kernel may be configured at build time to always load the ``lockdown`` and
->   ``capability`` LSMs.  In that case, these LSMs will appear at the beginning of
->   the ``LSM: initializing`` log line as well, even if they are not configured in
->   the boot loader.
-
-OK, I integrated your suggestion.  I guess `capability` is not really
-considered an LSM but it would be too confusing and out of scope for an
-user documentation to explain that.
-
-> 
-> > +``lockdown,capability,`` may always stay at the beginning of the ``LSM:
-> > +initializing lsm=`` list even if they are not configured with the bootloader,
-> 
-> Nit: The man pages spell this in two words as "boot loader".
-
-OK, I'll use "boot loader" too.
-
-> 
-> 
-> > +which is OK.
-> > +
-> > +Network support
-> > +---------------
-> > +
-> >  To be able to explicitly allow TCP operations (e.g., adding a network rule with
-> >  ``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support TCP
-> >  (``CONFIG_INET=y``).  Otherwise, sys_landlock_add_rule() returns an
-> > 
-> > base-commit: b4007fd27206c478a4b76e299bddf4a71787f520
-> > -- 
-> > 2.44.0
-> > 
-> 
-> Reviewed-by: Günther Noack <gnoack@google.com>
-
-Thanks!
+So an additional security hook called from tty, scsi, or cdrom?
+And the original hook is left where it is right now?
