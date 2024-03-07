@@ -1,108 +1,177 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0528A51C45
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 20:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A90241E4
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 23:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709844672; cv=none; b=L6J7a+9F0vNqO+et0bHtvPdo0heNemJOZGJGnq1YpBt/MDS9VYysRKGPsjFMeYYwjXLzQ87KQ5k2YMgKwGTK8esJwVmPIQIQgYPBBZ77EHtrCnBqH59+KChbski1ElCHy3gvdQbccIVj5lJS8Ve5arxJnKWp1MP3XitOrj5jfRY=
+	t=1709852948; cv=none; b=JrXx+2G2fDwz7YfBvPiUkS7ptzgmrHEtnweFjMlBtsetIthEq3Ly6PvvVo6TSUuUEHHMVEqwe21BCgymKviqgpp1ZQa66dbdXcQ3AxtwuoQyXgDpkzv1O946+oOX9i/tVSTFsOhGmE7Puoop4f/UxEcuWp3HLwGvKks/mbaLfe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709844672; c=relaxed/simple;
-	bh=u7Y/NG8SjJXNGSItnstrI6/rukzMJzy+yekXdowwXGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUlekXzb4d6e40WKQQc6oyYPxuQm7pnpxvDJj/D1Ro1DwksGjUZNShHiKS2n6SHTIn2SiOzhInhKq4fhZFiBvL5+zzVwjvfQduUOFJb8TNES1bVNcWfz2S5KD3C9C2bVRWI/hqmEayvfutWrH40DXDEJgiHYHgLMUtFpKVFB+sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KlgQVsJp; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1709852948; c=relaxed/simple;
+	bh=aMe+MrIcPrmNT0GgOpdUwuxpZPNyPcWDAZT7ot9Retk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FUTf7YMXkeQNEt/S9hUc+qlTuunJUVVLOeoB/RhaWaP37DGjkTE/WcdSVkT7EFiFKYY8eF59TgJBrDjIVHgNJUheUrqD26/o2K4KCDSZCLN3j4nZWwR5Vh+/A2jrSc1YStrDZU8RzCd0NPjpFBajzBqv/42lEzTAF1F2+kveeko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=PcJN1NmG; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KlgQVsJp"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dcbcea9c261so244055276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 12:51:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="PcJN1NmG"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6e55731af5cso214219b3a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 15:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1709844669; x=1710449469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GiLNl3PvVRA0+tZJXmH2lrS7jOMXZFu6IHJfjoR5u/8=;
-        b=KlgQVsJpaoU/RRAD4ntJDOpRZq4I0H9yZRKehk5EIFzsJi7435yKBsEo6ehoqjYcgL
-         LBvSEc8St5whA7pQfQ+y0cf7HQHM/Hfye3R5KUaIcafBKCgN3UuG2L6rxsaPhwgI30Dp
-         DIDboKoZUORak3smo2f6raN15lSipugFP88Kid9cWOnPuGnyGH6U61tCk4XPIjqShWoG
-         MpigDuUfVf4GY1AZuDyea38jd24aP7oOM4AZoYCPXJzGXogcA8QXRHU7eha46QwbY9g/
-         MyD8g8WpzVkHlvdvCPI3dHG1K+IuVy81Ie/itxyaQLyD8+oHhXPIGG/A5+SPsDEA0KX7
-         HbtA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709852946; x=1710457746; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cE26fS+fxbP0bGtECJ6ak66AlxwxcdDXL020aU+m/ns=;
+        b=PcJN1NmGBQs/UE3oTE+wd7FlN0aThldf/IZHcokvSr/m3LBtlUxiBQVIHfUtpvuJi+
+         eQ5Qsqg805MEEOHvJDDoZ8+6InwUj+sCqiJVgGTzsvZj4d2OqlHkJJ5Vdt2mS3bcTKu+
+         0tLTbt9zekYaJJYhKV2DlZBuYAgsSFIRJORfLkxKQYt0jC5Zek0q9BFEQJn9RndbiBk+
+         0I2/wlPbelKl/+R1KYJJz1czOcrlj3zNwXm2rtvsignkFsWM2icuzllEshTBL1YfKf3w
+         h0TFgILHlcwL3eW9H3yd4qmMIdwQONRnxsHqYkdwRo+L7rITOU30DSMEXcnoqplfk91m
+         HwLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709844669; x=1710449469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GiLNl3PvVRA0+tZJXmH2lrS7jOMXZFu6IHJfjoR5u/8=;
-        b=ZXP5wpKS9C22T8Ltg029nIiqJ+rpIeCgtPSEngQ/iuQ6QXusFkY1VJNSNP9r/lPIua
-         RQXxeIkR57RPaTabuLBqbgUPr0DXsyI9EW2RIqzWnMrP+4y7LaM51bD1JJI+kM1UzBMN
-         cpdwePizrGweX5CyZIq7D8la8CWX+vGoyqwjJMmAyzilAvxQXJMYjqm0XLh0EoJJh9C0
-         p0QZBPcRkD6mcV5Hh6LdOeLKK8QZ+gIbDszeT4sFuEF7eVy7aI1X6g28B2N+dLESdKEh
-         BwMKOU7zygSvW4TzH/kUcGNyGKvOs9CIQj5z6qhyAmobGYUPKpypvjPAtmtUCtGdxILB
-         TpnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/wg3mlLhX22XyMYhugiF59sMwD90ei4VLFTajKC6cNZ/aaTAWkx6KCNuxUcf+nGvfKzLJ/3OcZJzT5L52jn74EEdiv0IhNjwYATEzIj5xKsAs5e3B
-X-Gm-Message-State: AOJu0YyxM0NFiiPWWSDiqigfVqthwJQWiy/l+Ceod++PDXaI31J/azyD
-	6nL+JWiFgHrnhOqnF2MNpKb938PG/LyGssUugx6MfwgI0048mXBChiNVD3uRAI7IQqW0+KK48zy
-	7qqN74lOVaa6e8u2S38cXMOSmWEbOwOO7+ttc
-X-Google-Smtp-Source: AGHT+IFdOq4811A1JsfV2pUrWH4aPW+V27XPXrThh32udqoQTvdjjnprX4glDvrh+sZ0krraTC9bWk2pOpSk01W6NV8=
-X-Received: by 2002:a5b:70a:0:b0:dcf:f525:2b81 with SMTP id
- g10-20020a5b070a000000b00dcff5252b81mr16864727ybq.46.1709844668892; Thu, 07
- Mar 2024 12:51:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1709852946; x=1710457746;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cE26fS+fxbP0bGtECJ6ak66AlxwxcdDXL020aU+m/ns=;
+        b=fCKIe8xf2enovPgB3YOMw7T240UE2phXKs1Rqbz8lK55SS6xDFjYrzRjH+eIdgyv2k
+         rvj6X2mzjs1XZIjLq06/DRahmCXftHnt8nb+bym3dK8QjkD0qvNtZ0kzP6TykF7gd2Z2
+         IKbPJOvCum4N5M0F3MYg6aqcwLKVs55lS72/ykl+Ma4fm6d4XWqzm21BybfydWK9tyP0
+         r9sFj/I71RrJoDcWLhrdqcoPUXkRJ1zql4GqixulmXWEci1KNkGzYt+vXtPTlSDshRiB
+         DQFikzJFbftgZOmFTPxzReVcpeNslh4JfjOUE4430KKgSW08Ku16qL/Hsbrl62q2tVKQ
+         Vjng==
+X-Forwarded-Encrypted: i=1; AJvYcCXCXnFQPTwRkAYe5n9mVRWCzppy2m7mX49KxrHFEVAWdeh6hYSUM9wK0nzukM1xz4/Rpo9BbgVKEdGQZH42qB+ZS9VUcYs/MWNXWQtqbHK09O9aIo02
+X-Gm-Message-State: AOJu0YzwbhtedPcEzYlpiw9Z2i1Eyf2eZ7Hkml+xQPYjx8+XlSQv6Pyo
+	pyE+wzLIvBVqQXat5o9yY8XZg+1iKLxVL+ItiZu6cxSZxqwtw8pVm5r+Btezr8A=
+X-Google-Smtp-Source: AGHT+IEV5Tb6cvCIOyfvwprZ2mjXD9T855LAvXgfGrrF8chsROepjV9aeVqwZsiHVj6Np91eUCtbdg==
+X-Received: by 2002:a05:6a20:9f98:b0:1a1:6735:b8be with SMTP id mm24-20020a056a209f9800b001a16735b8bemr7882829pzb.41.1709852945941;
+        Thu, 07 Mar 2024 15:09:05 -0800 (PST)
+Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
+        by smtp.gmail.com with ESMTPSA id q37-20020a17090a17a800b0029bb1cc2e05sm40193pja.3.2024.03.07.15.09.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Mar 2024 15:09:05 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1riMrG-00GSJi-0L;
+	Fri, 08 Mar 2024 10:09:02 +1100
+Date: Fri, 8 Mar 2024 10:09:02 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Allen Webb <allenwebb@google.com>,
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net>
+ <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
- <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com> <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
-In-Reply-To: <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 7 Mar 2024 15:50:58 -0500
-Message-ID: <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
 
-On Thu, Mar 7, 2024 at 4:55=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> There's one fundamental question here that we'll need an official answer =
-to:
->
-> Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
-> to request access to various helpers in the kernel?
+On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+> On Thu, Mar 7, 2024 at 7:57 AM Günther Noack <gnoack@google.com> wrote:
+> > On Thu, Mar 07, 2024 at 01:21:48PM +0100, Arnd Bergmann wrote:
+> > > On Thu, Mar 7, 2024, at 13:15, Christian Brauner wrote:
+> > > > On Wed, Mar 06, 2024 at 04:18:53PM +0100, Arnd Bergmann wrote:
+> > > >> On Wed, Mar 6, 2024, at 14:47, Mickaël Salaün wrote:
+> > > >> >
+> > > >> > Arnd, Christian, Paul, are you OK with this new hook proposal?
+> > > >>
+> > > >> I think this sounds better. It would fit more closely into
+> > > >> the overall structure of the ioctl handlers with their multiple
+> > > >> levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
+> > > >> you have the same structure for sockets and blockdev, and
+> > > >> then additional levels below that and some weirdness for
+> > > >> things like tty, scsi or cdrom.
+> > > >
+> > > > So an additional security hook called from tty, scsi, or cdrom?
+> > > > And the original hook is left where it is right now?
+> > >
+> > > For the moment, I think adding another hook in vfs_ioctl()
+> > > and the corresponding compat path would do what Mickaël
+> > > wants. Beyond that, we could consider having hooks in
+> > > socket and block ioctls if needed as they are easy to
+> > > filter out based on inode->i_mode.
+> > >
+> > > The tty/scsi/cdrom hooks would be harder to do, let's assume
+> > > for now that we don't need them.
+> >
+> > Thank you all for the help!
+> >
+> > Yes, tty/scsi/cdrom are just examples.  We do not need special features for
+> > these for Landlock right now.
+> >
+> > What I would do is to invoke the new LSM hook in the following two places in
+> > fs/ioctl.c:
+> >
+> > 1) at the top of vfs_ioctl()
+> > 2) at the top of ioctl_compat()
+> >
+> > (Both of these functions are just invoking the f_op->unlocked_ioctl() and
+> > f_op->compat_ioctl() operations with a safeguard for that being a NULL pointer.)
+> >
+> > The intent is that the new hook gets called everytime before an ioctl is sent to
+> > these IOCTL operations in f_op, so that the LSM can distinguish cleanly between
+> > the "safe" IOCTLs that are implemented fully within fs/ioctl.c and the
+> > "potentially unsafe" IOCTLs which are implemented by these hooks (as it is
+> > unrealistic for us to holistically reason about the safety of all possible
+> > implementations).
+> >
+> > The alternative approach where we try to do the same based on the existing LSM
+> > IOCTL hook resulted in the patch further up in this mail thread - it involves
+> > maintaining a list of "safe" IOCTL commands, and it is difficult to guarantee
+> > that these lists of IOCTL commands stay in sync.
+> 
+> I need some more convincing as to why we need to introduce these new
+> hooks, or even the vfs_masked_device_ioctl() classifier as originally
+> proposed at the top of this thread.  I believe I understand why
+> Landlock wants this, but I worry that we all might have different
+> definitions of a "safe" ioctl list, and encoding a definition into the
+> LSM hooks seems like a bad idea to me.
 
-Phrased in a slightly different way, and a bit more generalized: do we
-treat out-of-tree BPF programs the same as we do with out-of-tree
-kernel modules?  I believe that's the real question, and if we answer
-that, we should also have our answer for the internal helper function
-question.
+I have no idea what a "safe" ioctl means here. Subsystems already
+restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+"safe" clearly means something different here.
 
-> Because fundamentally this is what this patchset is asking to be done.
->
-> If the ZFS out-of-tree kernel module were to send us a similar patch
-> series asking us for a list of 9 functions that they'd like us to export
-> what would the answer to that be? It would be "no" - on principle alone.
->
-> So what is different between an out-of-tree BPF LSM program that no one
-> even has ever seen and an out-of-tree kernel module that one can at
-> least look at in Github? Why should we reject requests from the latter
-> but are supposed to accept requests from the former?
->
-> If we say yes to the BPF LSM program requests we would have to say yes
-> to ZFS as well.
+> At this point in time, I think I'd rather see LSMs that care about
+> ioctls maintaining their own list of "safe" ioctls and after a while
+> if it looks like everyone is in agreement (VFS folks, individual LSMs,
+> etc.) we can look into either an ioctl classifier or multiple LSM
+> ioctl hooks focused on different categories of ioctls.
 
---=20
-paul-moore.com
+From the perspective of a VFS and subsystem developer, I really have
+no clue what would make a "safe" ioctl from a LSM perspective, and I
+very much doubt an LSM developer has any clue whether deep, dark
+subsystem ioctls are "safe" to allow, or even what would stop
+working if they decided something was not "safe".
+
+This just seems like a complex recipe for creating unusable and/or
+impossible to configure/secure systems to me.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
