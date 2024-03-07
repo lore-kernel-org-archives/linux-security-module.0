@@ -1,42 +1,45 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154C884FD6;
-	Thu,  7 Mar 2024 10:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2729584FD2
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 10:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709806639; cv=none; b=qeNPMS+7YdXWmi+Xqfn0xIG/GyA0e6b0pcd0y49uXrt+9Vs+z4quWVq+wu/9SFh1cK3gqu9MV3uWTyIHea9E4QGSauPQOGA2bc31lGPEu8KnRrDE8wgTlu+754xNgb11xhpjwxg8LgnWoSchRR2FTZclPXwQ1IDTvb7yMFkI2kk=
+	t=1709806941; cv=none; b=gq82CFD+leXfjwVMzoFFVzdQN96fBmOxCR/sY/ulZtGHeaPP98St5Xp5fNLf0XOMUiThxa9VReb3TtNza94Kxlrn0rrP89H8vqMY+mTTJA72lM3hJy6COo3SLaET6lNezjZE9O+HHwLZ1pBOCSNMq7DB1gRps5n0VA8EU6eyru4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709806639; c=relaxed/simple;
-	bh=dSfsFSg4cADwP8Sk6K+DLBAvbPx8lxXSyAMiQIkTfkE=;
+	s=arc-20240116; t=1709806941; c=relaxed/simple;
+	bh=3wfPwwhLAgLaMHVJF2tSLdLHhhmhu0GsZ2XZGA/5oOI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rl2nTlx81jZIOwU2GiV9k+HdoE1+xVCzKPeCMEPxqU8N5x9MSBAERFCCvH0dg0i9dNxcLJ99B9wPxmSnwoykhUi0lQ2mFwioo4sXgI93Vq7CdSZ3eTB7UTFS6H69hs5oXEaIE8vwpKTe9Tiib9fbjhycyUm6ij6eebhoKVFTMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7TG1tNb; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NsmVNIY0rjMK2E+NFAMVAeNbTtRZ3AJ9e5CF5P+UP7iWfgiV7jERh6BohVOEexGCE0rY4PaQXUCF+ANKUpPpSBfbsOR/d8Q5N3baF13DcmbSeU9ATYx4ewmDjWlYWenDZYon1S16aM+/CDXYHCxlYjAH+ZE6mg/3lh/yYKprFwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YzJRhUBi; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7TG1tNb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2020FC433F1;
-	Thu,  7 Mar 2024 10:17:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709806638;
-	bh=dSfsFSg4cADwP8Sk6K+DLBAvbPx8lxXSyAMiQIkTfkE=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YzJRhUBi"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tr52S3kpTzMqbGB;
+	Thu,  7 Mar 2024 11:22:08 +0100 (CET)
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tr52R5XlPzQVF;
+	Thu,  7 Mar 2024 11:22:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709806928;
+	bh=3wfPwwhLAgLaMHVJF2tSLdLHhhmhu0GsZ2XZGA/5oOI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N7TG1tNbAzTL6AwHzkSDsH/OlOnRcNBf1OD2UTyJFOQZftoRnPLcZDOJI2XNPHQKq
-	 Qh8pQPUphhRBJ2LF2tKooMGUxVShYY2eg5YfkxFZseRBp/n4VcqqSVOG7HtEoPew09
-	 P6O6WIdRaWltEifNpZFxYYqN/6Li5o+8jCymc19DGud2vK7lTHBoFxCHxzoOZmR/MM
-	 tWAqbTFae/nWu+im6xPFvNrrE7agij3gHqESmPV8CqQpg4RqOwK/bYzK8bbW2LqUp1
-	 7Z4OkpoEdijpFTMlW/D6E1hnxZMbxg9DWvRVh9cL1c0qcGSVZcvcyO43MbGGp0Fghn
-	 NeIMHYomjAx8g==
-Date: Thu, 7 Mar 2024 11:17:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jann Horn <jannh@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Kees Cook <keescook@chromium.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] landlock: Use f_cred in security_file_open() hook
-Message-ID: <20240307-fehlten-gewinn-18c93d5fb9e6@brauner>
-References: <20240307095203.1467189-1-mic@digikod.net>
+	b=YzJRhUBimplUlxe27u0ZbbJbY4lpfXMY1nQe/nGbp3tgjFOR5655B0YKGa7vOT0Wc
+	 gyA5oSBrGE6GXO3unN2umndpix5LMhBR6qM9azMdzivkq3+JRDPBCXZ/WjYEOxbosR
+	 2r3kTFP7LpReBITwCp5p+x6KAnaEEnSB/b5Jmums=
+Date: Thu, 7 Mar 2024 11:21:57 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Alejandro Colomar <alx@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Shervin Oloumi <enlightened@chromium.org>, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 1/2] landlock: Extend documentation for kernel support
+Message-ID: <20240307.oxQuab5tho0u@digikod.net>
+References: <20240227110550.3702236-1-mic@digikod.net>
+ <Zd4OlL1G3t1D3TgC@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,78 +49,136 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240307095203.1467189-1-mic@digikod.net>
+In-Reply-To: <Zd4OlL1G3t1D3TgC@google.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Mar 07, 2024 at 10:52:03AM +0100, Mickaël Salaün wrote:
-> Use landlock_cred(file->f_cred)->domain instead of
-> landlock_get_current_domain() in security_file_open() hook
-> implementation.
-> 
-> This should not change the current behavior but could avoid potential
-> race conditions in case of current task's credentials change.
+CCing Alejandro
 
-I have no problem with the patch but I'm curious how that credential
-change could happen behind your back?
+On Tue, Feb 27, 2024 at 05:32:20PM +0100, Günther Noack wrote:
+> On Tue, Feb 27, 2024 at 12:05:49PM +0100, Mickaël Salaün wrote:
+> > Extend the kernel support section with one subsection for build time
+> > configuration and another for boot time configuration.
+> > 
+> > Extend the boot time subsection with a concrete example.
+> > 
+> > Update the journalctl command to include the boot option.
+> > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> > 
+> > Changes since v1:
+> > * New patch, suggested by Kees Cook.
+> > ---
+> >  Documentation/userspace-api/landlock.rst | 57 +++++++++++++++++++++---
+> >  1 file changed, 51 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> > index 2e3822677061..838cc27db232 100644
+> > --- a/Documentation/userspace-api/landlock.rst
+> > +++ b/Documentation/userspace-api/landlock.rst
+> > +Boot time configuration
+> > +-----------------------
+> > +
+> >  If the running kernel does not have ``landlock`` in ``CONFIG_LSM``, then we can
+> > -still enable it by adding ``lsm=landlock,[...]`` to
+> > +enable Landlock by adding ``lsm=landlock,[...]`` to
+> >  Documentation/admin-guide/kernel-parameters.rst thanks to the bootloader
+> >  configuration.
+> 
+> I would suggest: s/thanks to/in/
+
+OK
 
 > 
-> This will also ensure consistency with upcoming audit support relying on
-> file->f_cred.
+> > +For example, if the current built-in configuration is:
+> > +
+> > +.. code-block:: console
+> > +
+> > +    $ zgrep -h "^CONFIG_LSM=" "/boot/config-$(uname -r)" /proc/config.gz 2>/dev/null
+> > +    CONFIG_LSM="lockdown,yama,integrity,apparmor"
+> > +
+> > +...and if the cmdline doesn't contain ``landlock`` either:
+> > +
+> > +.. code-block:: console
+> > +
+> > +    $ sed -n 's/.*\(\<lsm=\S\+\).*/\1/p' /proc/cmdline
+> > +    lsm=lockdown,yama,integrity,apparmor
+> > +
+> > +...we should configure the bootloader to set a cmdline extending the ``lsm``
+> > +list with the ``landlock,`` prefix::
 > 
-> Add and use a new get_fs_domain() helper to mask non-filesystem domains.
+> Nit: Is the double colon at the end of this line accidental?
+> (It does not appear before the previous code block.)
+
+The "::" creates an implicit text block with the following text.  For the
+other block I used an explicit code-block, which then doesn't require
+this "::".
+
 > 
-> file->f_cred is set by path_openat()/alloc_empty_file()/init_file() just
-> before calling security_file_alloc().
+> > +
+> > +  lsm=landlock,lockdown,yama,integrity,apparmor
+> > +
+> > +After a reboot, we can check that Landlock is up and running by looking at
+> > +kernel logs:
+> > +
+> > +.. code-block:: console
+> > +
+> > +    # dmesg | grep landlock || journalctl -kb -g landlock
+> > +    [    0.000000] Command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
+> > +    [    0.000000] Kernel command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
+> > +    [    0.000000] LSM: initializing lsm=lockdown,capability,landlock,yama,integrity,apparmor
+> > +    [    0.000000] landlock: Up and running.
+> > +
+> > +Note that according to the built time kernel configuration,
 > 
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20240307095203.1467189-1-mic@digikod.net
-> ---
->  security/landlock/fs.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
+> s/built time/build time/
+>                  ^
+
+OK
+
 > 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 6f0bf1434a2c..c15559432d3d 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -248,15 +248,18 @@ get_handled_fs_accesses(const struct landlock_ruleset *const domain)
->  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
->  }
->  
-> -static const struct landlock_ruleset *get_current_fs_domain(void)
-> +static const struct landlock_ruleset *
-> +get_fs_domain(const struct landlock_ruleset *const domain)
->  {
-> -	const struct landlock_ruleset *const dom =
-> -		landlock_get_current_domain();
-> -
-> -	if (!dom || !get_raw_handled_fs_accesses(dom))
-> +	if (!domain || !get_raw_handled_fs_accesses(domain))
->  		return NULL;
->  
-> -	return dom;
-> +	return domain;
-> +}
-> +
-> +static const struct landlock_ruleset *get_current_fs_domain(void)
-> +{
-> +	return get_fs_domain(landlock_get_current_domain());
->  }
->  
->  /*
-> @@ -1334,7 +1337,8 @@ static int hook_file_open(struct file *const file)
->  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
->  	access_mask_t open_access_request, full_access_request, allowed_access;
->  	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
-> -	const struct landlock_ruleset *const dom = get_current_fs_domain();
-> +	const struct landlock_ruleset *const dom =
-> +		get_fs_domain(landlock_cred(file->f_cred)->domain);
->  
->  	if (!dom)
->  		return 0;
-> -- 
-> 2.44.0
+> It feels like the phrase "according to" could be slightly more specific here.
 > 
+> To paraphrase Alejandro Colomar, "Note that" is usually redundant.
+> https://lore.kernel.org/all/0aafcdd6-4ac7-8501-c607-9a24a98597d7@gmail.com/
+> 
+> I'd suggest:
+> 
+>   The kernel may be configured at build time to always load the ``lockdown`` and
+>   ``capability`` LSMs.  In that case, these LSMs will appear at the beginning of
+>   the ``LSM: initializing`` log line as well, even if they are not configured in
+>   the boot loader.
+
+OK, I integrated your suggestion.  I guess `capability` is not really
+considered an LSM but it would be too confusing and out of scope for an
+user documentation to explain that.
+
+> 
+> > +``lockdown,capability,`` may always stay at the beginning of the ``LSM:
+> > +initializing lsm=`` list even if they are not configured with the bootloader,
+> 
+> Nit: The man pages spell this in two words as "boot loader".
+
+OK, I'll use "boot loader" too.
+
+> 
+> 
+> > +which is OK.
+> > +
+> > +Network support
+> > +---------------
+> > +
+> >  To be able to explicitly allow TCP operations (e.g., adding a network rule with
+> >  ``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support TCP
+> >  (``CONFIG_INET=y``).  Otherwise, sys_landlock_add_rule() returns an
+> > 
+> > base-commit: b4007fd27206c478a4b76e299bddf4a71787f520
+> > -- 
+> > 2.44.0
+> > 
+> 
+> Reviewed-by: Günther Noack <gnoack@google.com>
+
+Thanks!
