@@ -1,133 +1,157 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A5E12D754;
-	Thu,  7 Mar 2024 15:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7344912D778
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 15:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709823761; cv=none; b=QQfjogkxYlUzatjvNpI69uPo9lLTBh9wRzbVmsXjnWF5AjQNF7/XJum/5WE6aBdLpi3OWgo+V21HNcfkkYN+ht1kpgurRDCvp9kGhFUuUqvqjjnlHujECgM3d93cnpgIMYHxK7KXoveYTFe2B0e9wzUBGENTOQIBpwWKe8IefRg=
+	t=1709824537; cv=none; b=QrltE4SGG0cnekUH9bbZ8jJNpU86YSlCqnrsgOhkrJ6yV7ajQlSFZo620rMTPS8dEcJBqxeeuodZNTkmF1wH2TZNqRpIxPu17NOfAS/J8aZ0vlwic2ZkDmoF/AgVDe3H4YYcAeLHWsr1ZN2nXNsI25n5q1kE3q6SRU6KB+VfDX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709823761; c=relaxed/simple;
-	bh=z3D5M3QBXmwHZtu6oMiapW9tSBhuH61YAr5Zlqn9s4s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PStrwxVB4rm58WmrG7RWSOnauZIaalmG5ljOOqkxzK5gL/wLzJRZTtX0Fk+yKrMTGGNX8u8ly62BIB4q5kV4hI2v59aEhBY2oorgZMOcIvaTl+jXB1BphdsAt6Rz55U0X+l6G2Y/P5a8VmyJjhgOFFWNmpiJYkDQ9VpXmKVaZfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TrBqG42nzz9xxcx;
-	Thu,  7 Mar 2024 22:42:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id E38521400D7;
-	Thu,  7 Mar 2024 23:02:35 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXCxQA1+llg+XkAw--.4752S2;
-	Thu, 07 Mar 2024 16:02:35 +0100 (CET)
-Message-ID: <2dbcd57e3905555b5d966c5403c8f94a307f4990.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: Change vfs_getxattr() with __vfs_getxattr() in
- evm_calc_hmac_or_hash()
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Seth Forshee <sforshee@kernel.org>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- Roberto Sassu <roberto.sassu@huawei.com>,  stable@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Date: Thu, 07 Mar 2024 16:02:20 +0100
-In-Reply-To: <5a08af42118541c87ce0b173d03217c3623adce2.camel@huaweicloud.com>
-References: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
-	 <ZenPtCfh6CyD2xz5@do-x1extreme>
-	 <5a08af42118541c87ce0b173d03217c3623adce2.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1709824537; c=relaxed/simple;
+	bh=pfY9J0g4xyv2pAK6fRjy7mEhcoycH/GOvGuj7q9mSxY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BHo4/nDLTw8DvcUPo/OSQWfCka3wTbF2fi/0EVAetiEvcPd8bHj/clmLBoU6s7/vVfQKeJ+mLMV8aOmNwwYmTdXgwy8nWsKUp2NiSQntb0fDMDX7ibTosdybsTPKSGVfHRWQJni9tTS8vdD/IHODSKtgi2+LYQck8QofJzcRdY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OiwEUdvM; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OiwEUdvM"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-567eb02e45dso914702a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 07:15:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1709824533; x=1710429333; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=njnVJ9Lw8AENvPRhnL3cISikH1G4fJntPjeGIXpieAU=;
+        b=OiwEUdvM3ahyOhx84v313DFCEYBqLuUncxu+deY9P8iDrRs1cMByJuDK2jXkfMOq9B
+         jfuKx51vBPvqAeD+YQH7RNqoaaWuaNVRT4WXVz8skEvbSOQ38H7grggJ1vwMAkWReDB4
+         665Z8nFmevKD7B8wexVOS6pOFFeBm1k46AG8YZOuGEB1Scq7rrvLrh15JMJK6KvjvpgX
+         EjCDYx+mE43PDmbPyCtAK6MZgVdOaKk2esD8N8XKb6+F14x1h1CkRccodkEfnquBAq7y
+         F8kTGmqdyf8hjfb+NoPzyPTiZDDPDe6+Jyz7DeZwsY12y7+DSxxP8Ua3iCGSXXAH1A1U
+         I0Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709824533; x=1710429333;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=njnVJ9Lw8AENvPRhnL3cISikH1G4fJntPjeGIXpieAU=;
+        b=QXA/+0Ea8KAFVJ8xMH+PFUM2WV+EY1KV1Pv+k/GssXdamSjAF5ouKTNCGMEisDz2zR
+         66fPZyP6Zf2LnlRHKrWlS1cXCdWFcfoV20MH7u58CrgvF/qy7uEuHPgeuSeUuQxOgCie
+         c37epH5d60O1XAm02xl03XBO3JoTq6XF1kQ3BDtjslVqygDd1HD705QNSRN7TnRTranz
+         vpfJ1tCZ+eEQumrp0oEWEhTBR1bCBuduCCIUo/3bLDDUX0HsZ3hM0VLOiqxbA3nGYCzr
+         VJvxVCL+TDkGDxzVqE7aqizbPrOz49685AuxMlK/IKMzUMeC7C59EDiTruV3a4WDihFH
+         b1EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+4C6sRrlHSmMfdkQjVE9IQJu55qm+e8eqe0S9btNLZ5cEzi7E5rlWaemmoDjLK6HWl9wHqQjdQV67CK2GALAN1zrBgYcCYrEF1bMuYCPK05NHtYwb
+X-Gm-Message-State: AOJu0YxOpT1FRkXbn1W3DpJlHWM66R2dJZ7y1gg0PKEF1T1oOByRUvYM
+	S384ZFPZgv3CRfE2/NPQsw9Y433PoDExrrqRCbysnRG6SLDq/+jeX/+MvncgUQkNOReZbWwJScJ
+	Dvg==
+X-Google-Smtp-Source: AGHT+IF+EDkDfZT2I31rUYUIOorSZU/di3KvNcdUMx15LLKt0pn31IhCWiOJTAlakdL/5OGrZwgQ6TJoCVk=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6402:4490:b0:566:649c:fb44 with SMTP id
+ er16-20020a056402449000b00566649cfb44mr82edb.1.1709824533350; Thu, 07 Mar
+ 2024 07:15:33 -0800 (PST)
+Date: Thu, 7 Mar 2024 16:15:31 +0100
+In-Reply-To: <20240307143849.1517218-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAXCxQA1+llg+XkAw--.4752S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFy5Aw1fGw4UAr4DZFy7KFg_yoW8KF45pF
-	WYyanFkrn5Xry5C3s5KF4DAayF93yjqrWjkrnFv340v3ZFvrnrZr93Wr13uryF9r1xtwn5
-	tw4qqFyavwnxA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
-	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBF1jj5sZvQAAsE
+Mime-Version: 1.0
+References: <20240307143849.1517218-1-mic@digikod.net>
+Message-ID: <ZenaEzgGLkmwILUO@google.com>
+Subject: Re: [PATCH] samples/landlock: Don't error out if a file path cannot
+ be opened
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-03-07 at 15:36 +0100, Roberto Sassu wrote:
-> On Thu, 2024-03-07 at 08:31 -0600, Seth Forshee wrote:
-> > On Thu, Mar 07, 2024 at 01:22:39PM +0100, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >=20
-> > > Use __vfs_getxattr() instead of vfs_getxattr(), in preparation for
-> > > deprecating using the vfs_ interfaces for retrieving fscaps.
-> > >=20
-> > > __vfs_getxattr() is only used for debugging purposes, to check if ker=
-nel
-> > > space and user space see the same xattr value.
-> >=20
-> > __vfs_getxattr() won't give you the value as seen by userspace though.
-> > Userspace goes through vfs_getxattr() -> xattr_getsecurity() ->
-> > cap_inode_getsecurity(), which does the conversion to the value
-> > userspace sees. __vfs_getxattr() just gives the raw disk data.
-> >=20
-> > I'm also currently working on changes to my fscaps series that will mak=
-e
-> > it so that __vfs_getxattr() also cannot be used to read fscaps xattrs.
-> > I'll fix this and other code in EVM which will be broken by that change
-> > as part of the next version too.
+On Thu, Mar 07, 2024 at 03:38:49PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> Instead of creating a hard error and aborting the sandbox creation,
+> accept file path not usable in the LL_FS_RO and LL_FS_RW environment
+> variables but only print a warning.  This makes it easier to test, for
+> instance with LL_FS_RO=3D"${PATH}:/usr/lib:/lib"
 >=20
-> You are right, thank you!
-
-(Apologies, I should have been more careful).
-
-Roberto
-
-> Roberto
+> Print that we are going to execute the command in the sandbox before
+> doing so.
 >=20
-> > >=20
-> > > Cc: stable@vger.kernel.org # 5.14.x
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > > Fixes: 907a399de7b0 ("evm: Check xattr size discrepancy between kerne=
-l and user")
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  security/integrity/evm/evm_crypto.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity=
-/evm/evm_crypto.c
-> > > index b1ffd4cc0b44..168d98c63513 100644
-> > > --- a/security/integrity/evm/evm_crypto.c
-> > > +++ b/security/integrity/evm/evm_crypto.c
-> > > @@ -278,8 +278,8 @@ static int evm_calc_hmac_or_hash(struct dentry *d=
-entry,
-> > >  		if (size < 0)
-> > >  			continue;
-> > > =20
-> > > -		user_space_size =3D vfs_getxattr(&nop_mnt_idmap, dentry,
-> > > -					       xattr->name, NULL, 0);
-> > > +		user_space_size =3D __vfs_getxattr(dentry, inode, xattr->name,
-> > > +						 NULL, 0);
-> > >  		if (user_space_size !=3D size)
-> > >  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\=
-n",
-> > >  				 dentry->d_name.name, xattr->name, size,
-> > > --=20
-> > > 2.34.1
-> > >=20
+> Rename "launch" to "execute".
+>=20
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>  samples/landlock/sandboxer.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index d7323e5526be..22e8c35103ce 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: BSD-3-Clause
+>  /*
+> - * Simple Landlock sandbox manager able to launch a process restricted b=
+y a
+> + * Simple Landlock sandbox manager able to execute a process restricted =
+by a
+>   * user-defined filesystem access control policy.
 
+Slightly out of scope, but I think it should be "...restricted by user-defi=
+ned
+file system and network access control policies."
+
+>   *
+>   * Copyright =C2=A9 2017-2020 Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> @@ -121,9 +121,11 @@ static int populate_ruleset_fs(const char *const env=
+_var, const int ruleset_fd,
+>  		if (path_beneath.parent_fd < 0) {
+>  			fprintf(stderr, "Failed to open \"%s\": %s\n",
+>  				path_list[i], strerror(errno));
+> -			goto out_free_name;
+> +			continue;
+>  		}
+>  		if (fstat(path_beneath.parent_fd, &statbuf)) {
+> +			fprintf(stderr, "Failed to stat \"%s\": %s\n",
+> +				path_list[i], strerror(errno));
+>  			close(path_beneath.parent_fd);
+>  			goto out_free_name;
+>  		}
+> @@ -229,7 +231,7 @@ int main(const int argc, char *const argv[], char *co=
+nst *const envp)
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+>  			ENV_TCP_CONNECT_NAME, argv[0]);
+>  		fprintf(stderr,
+> -			"Launch a command in a restricted environment.\n\n");
+> +			"Execute a command in a restricted environment.\n\n");
+>  		fprintf(stderr,
+>  			"Environment variables containing paths and ports "
+>  			"each separated by a colon:\n");
+> @@ -250,7 +252,7 @@ int main(const int argc, char *const argv[], char *co=
+nst *const envp)
+>  			ENV_TCP_CONNECT_NAME);
+>  		fprintf(stderr,
+>  			"\nexample:\n"
+> -			"%s=3D\"/bin:/lib:/usr:/proc:/etc:/dev/urandom\" "
+> +			"%s=3D\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>  			"%s=3D\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+>  			"%s=3D\"9418\" "
+>  			"%s=3D\"80:443\" "
+> @@ -390,6 +392,7 @@ int main(const int argc, char *const argv[], char *co=
+nst *const envp)
+> =20
+>  	cmd_path =3D argv[1];
+>  	cmd_argv =3D argv + 1;
+> +	fprintf(stderr, "Executing the sandboxed command...\n");
+>  	execvpe(cmd_path, cmd_argv, envp);
+>  	fprintf(stderr, "Failed to execute \"%s\": %s\n", cmd_path,
+>  		strerror(errno));
+> --=20
+> 2.44.0
+>=20
+
+Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
