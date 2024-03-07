@@ -1,141 +1,100 @@
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D15712C534
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 12:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462501C6AD;
+	Thu,  7 Mar 2024 14:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709816251; cv=none; b=WKrDvrQsaSSH80TQ0FX29NBuj3CRGvYPXuGd5R5juae/EyH6UNMmMTAN/ORQENYrbpafS9UVnqeIdnafrVLwI3JFBESv7XNqeqsh6iURtMhOoenRwYf8yyDq0bbcplbJGaamp7wDHyY4Ui/Hvc+G+I4XhOO74NnSyuhbll5vUvU=
+	t=1709821878; cv=none; b=JLTMofrpG0vu0KdX45+x1wwonHgyZF4IzuzjASSQBXvZRbBVkJH8b6mIjX43wUI8P/TEYgE9WacgZHa7fk/SlnjnIXRzsd322fw8j9QxLnpJJwQVEOeIH91c3KRCRsbrEKbgy9lLTaKLsDxyZ0V//cURJhN2OUsXPMU9tgE8bzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709816251; c=relaxed/simple;
-	bh=RJdyXZLNvnH8cN9wPXjrAPOlXdC7e8+6kAEh4RhBejE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pmfTTsy2C9H+3cmCLgsnUdyA4+KLsMsCBxrFyzFHD5xo8WuUqCHiD73JX5CIzbonoVWPDM+MR1i7krD5fYfO7TZw/ArjZSkZExvtHwZYszgXY1vCisg64lFOH6SP1zxEkQwwSkOuZWTvYW4YM65lLJ8iikSw4ndALeHiZqFVryw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EAo2UX58; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1709821878; c=relaxed/simple;
+	bh=BoCuQpnKvXZmgHfTbdIlDgZOctJUi4njjxRSp+4CH5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGqIl3yr7+IWt1DEOeu9qZRzgggzbrGdPVNsXTsyzP5SHoMcUnVkb7aHoGlpksow2r0lUNbwsc6YM6of17o+JmCO7ieavRXPPo5Grx12tZO2IXM37QclyL8QT164n4JPmp68/8zauH5Dxt0Yi82UuFdlm/3n/tsA3KGaryrOp2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbC0xNQQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EAo2UX58"
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a45a90e1661so59672766b.0
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 04:57:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1709816248; x=1710421048; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mBW/1MEz6JNZVrnhcpxVAwMPPAr+vdVKO2wgbn75mCU=;
-        b=EAo2UX58MvMc9Wbtba/wMaNJ5Hq3S/5wWGr/Q/BSzmJAAYbXl6j/jZc7pDC2cD8GF5
-         HWt6Utz/0l5PHLQRDXfDyaMcFxvgg14/UMILZs0ivEJm4ZaikxD7KhaILl3UzaQw8+Mu
-         bDX3y5WTa2n42jdg+DMPyRj/2aBEANwnVNyUxb6Zhant0lnu7gxSDuDU+SK1Aitq7+1N
-         mKmmdrf9YzpNq73NAthR5/Gz7tDkn2o3EdHSv7FZgzkReZ1oruwEU2VkrpK40Pz8fpux
-         kKp/XvjZMV4abeKSn2GkbVI1xIhqMyiQBpi5dmfNHlUNyf08bbJAaldb5oB8S09FCXsW
-         gXXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709816248; x=1710421048;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mBW/1MEz6JNZVrnhcpxVAwMPPAr+vdVKO2wgbn75mCU=;
-        b=gpEEDjA9l7n6ZthrdN6/18FXefSKGOAPdvp68cqu/wMqSR4kYGg1ZVZlWhAmqH/Q81
-         Hbl+dLf9Z8XbuXWjZ6+5a+tOpJModBZ/Abg7yh0kBJRW8dv1h0Lwavzh9lbhjNaC0Ex8
-         38m/Y3jufYJB2ObK9KghzfiE2DoPGxWVOU2RzCga2QJK6cOVEXZXEzICjTt358IfvlDS
-         EW0345lYZShjI9w3Gh5emNgUtDWxpqubaEEXOlS5+V3kaAp6SjsjK4SzwmYQjV+rYKGo
-         h+EQRLjsU4OsJ8fH7+SbfArxdO7bJyJDP+Ouluhg7YklY5mckv5/WY67gHpbSDYAXcy4
-         GrMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtp5n8zG7UxlKf+dhI9ITuffTocUoxL/vL02E11z/wPCArvcS9psYCL0ePkL5HCX27CYR6fAqy9f2mJuPQa2t0+mgDGdI+CB+2ebNUQ8+UV32Mouk5
-X-Gm-Message-State: AOJu0Yy5Mj0waCPk9Oi2k54eu16VIQKLCneDW/+Ff4HUP5aa+lR6BHph
-	mtuamliVMtqBSr0IbjQFtZmro71eJMy8V7Z/d7iySX8Bh2egCXetCuLw7R+J7JD+Z9PG5ztZ03V
-	lpg==
-X-Google-Smtp-Source: AGHT+IHjqHWp2CPC7ca+ld5dxvSKopEz7nwEwKfTKFdzg18uJSgze7bS6XZR5A4/Au9LDR+Ykn2ASs8lcXI=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a17:906:1c4d:b0:a42:ea24:f8b8 with SMTP id
- l13-20020a1709061c4d00b00a42ea24f8b8mr32093ejg.14.1709816248127; Thu, 07 Mar
- 2024 04:57:28 -0800 (PST)
-Date: Thu, 7 Mar 2024 13:57:26 +0100
-In-Reply-To: <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbC0xNQQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15B7C433C7;
+	Thu,  7 Mar 2024 14:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709821877;
+	bh=BoCuQpnKvXZmgHfTbdIlDgZOctJUi4njjxRSp+4CH5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pbC0xNQQrGejHQ2bitaJqqjSkMc3ngNCgVrKc4lmct9ZugZ4DVuNDalUqhOcmAfoB
+	 6fb3JKk/IYaOyPrqxkA5sNEZYYIpkwxcT8jt1fbFlcadr4RyVWEI9mz0lih8Fp01Kd
+	 uZ6nzAfci7WUsMGdOgDiNZKFx4zD2j3t+FvGKStRleoiz5tPTH83HX5pxO6+P8CTtN
+	 0ujkoGBENcgy6n0Az2w3IC/eH0XBg3+MCgnpnVSsWwHPXBHZ3IAVDv8nm9/bdmBw6C
+	 /YawpO4sw+i+UQ8k7YDcO2dOMO4IJ/r10vfitQxgRLLcadLplEQujRsmwV+RBhqLVR
+	 oMu7jY1yZUVeA==
+Date: Thu, 7 Mar 2024 08:31:16 -0600
+From: Seth Forshee <sforshee@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>, stable@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH] evm: Change vfs_getxattr() with __vfs_getxattr() in
+ evm_calc_hmac_or_hash()
+Message-ID: <ZenPtCfh6CyD2xz5@do-x1extreme>
+References: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240219.chu4Yeegh3oo@digikod.net> <20240219183539.2926165-1-mic@digikod.net>
- <ZedgzRDQaki2B8nU@google.com> <20240306.zoochahX8xai@digikod.net>
- <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com> <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
-Message-ID: <Zem5tnB7lL-xLjFP@google.com>
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240307122240.3560688-1-roberto.sassu@huaweicloud.com>
 
-On Thu, Mar 07, 2024 at 01:21:48PM +0100, Arnd Bergmann wrote:
-> On Thu, Mar 7, 2024, at 13:15, Christian Brauner wrote:
-> > On Wed, Mar 06, 2024 at 04:18:53PM +0100, Arnd Bergmann wrote:
-> >> On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
-> >> >
-> >> > Arnd, Christian, Paul, are you OK with this new hook proposal?
-> >>=20
-> >> I think this sounds better. It would fit more closely into
-> >> the overall structure of the ioctl handlers with their multiple
-> >> levels, where below vfs_ioctl() calling into f_ops->unlocked_ioctl,
-> >> you have the same structure for sockets and blockdev, and
-> >> then additional levels below that and some weirdness for
-> >> things like tty, scsi or cdrom.
-> >
-> > So an additional security hook called from tty, scsi, or cdrom?
-> > And the original hook is left where it is right now?
->=20
-> For the moment, I think adding another hook in vfs_ioctl()
-> and the corresponding compat path would do what Micka=C3=ABl
-> wants. Beyond that, we could consider having hooks in
-> socket and block ioctls if needed as they are easy to
-> filter out based on inode->i_mode.
->=20
-> The tty/scsi/cdrom hooks would be harder to do, let's assume
-> for now that we don't need them.
+On Thu, Mar 07, 2024 at 01:22:39PM +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Use __vfs_getxattr() instead of vfs_getxattr(), in preparation for
+> deprecating using the vfs_ interfaces for retrieving fscaps.
+> 
+> __vfs_getxattr() is only used for debugging purposes, to check if kernel
+> space and user space see the same xattr value.
 
-Thank you all for the help!
+__vfs_getxattr() won't give you the value as seen by userspace though.
+Userspace goes through vfs_getxattr() -> xattr_getsecurity() ->
+cap_inode_getsecurity(), which does the conversion to the value
+userspace sees. __vfs_getxattr() just gives the raw disk data.
 
-Yes, tty/scsi/cdrom are just examples.  We do not need special features for
-these for Landlock right now.
+I'm also currently working on changes to my fscaps series that will make
+it so that __vfs_getxattr() also cannot be used to read fscaps xattrs.
+I'll fix this and other code in EVM which will be broken by that change
+as part of the next version too.
 
-What I would do is to invoke the new LSM hook in the following two places i=
-n
-fs/ioctl.c:
-
-1) at the top of vfs_ioctl()
-2) at the top of ioctl_compat()
-
-(Both of these functions are just invoking the f_op->unlocked_ioctl() and
-f_op->compat_ioctl() operations with a safeguard for that being a NULL poin=
-ter.)
-
-The intent is that the new hook gets called everytime before an ioctl is se=
-nt to
-these IOCTL operations in f_op, so that the LSM can distinguish cleanly bet=
-ween
-the "safe" IOCTLs that are implemented fully within fs/ioctl.c and the
-"potentially unsafe" IOCTLs which are implemented by these hooks (as it is
-unrealistic for us to holistically reason about the safety of all possible
-implementations).
-
-The alternative approach where we try to do the same based on the existing =
-LSM
-IOCTL hook resulted in the patch further up in this mail thread - it involv=
-es
-maintaining a list of "safe" IOCTL commands, and it is difficult to guarant=
-ee
-that these lists of IOCTL commands stay in sync.
-
-Christian, does that make sense in your mind?
-
-Thanks,
-=E2=80=94G=C3=BCnther
+> 
+> Cc: stable@vger.kernel.org # 5.14.x
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> Fixes: 907a399de7b0 ("evm: Check xattr size discrepancy between kernel and user")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/evm/evm_crypto.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index b1ffd4cc0b44..168d98c63513 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -278,8 +278,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>  		if (size < 0)
+>  			continue;
+>  
+> -		user_space_size = vfs_getxattr(&nop_mnt_idmap, dentry,
+> -					       xattr->name, NULL, 0);
+> +		user_space_size = __vfs_getxattr(dentry, inode, xattr->name,
+> +						 NULL, 0);
+>  		if (user_space_size != size)
+>  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
+>  				 dentry->d_name.name, xattr->name, size,
+> -- 
+> 2.34.1
+> 
