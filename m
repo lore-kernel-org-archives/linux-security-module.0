@@ -1,222 +1,202 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E133A53391;
-	Fri,  8 Mar 2024 10:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9B855E62;
+	Fri,  8 Mar 2024 10:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709894166; cv=none; b=i73Y2jeko0AJYgjzLTdtGR+5tXHKdVGdjEPOm2mhoTS/s3R9F+e6hh0SsloY1hV1IqaNEPLKrexN0Dw1CA16cBCXuNpHOwhaBMZWEjPU8217r7O/Ka/U6SnFBWGlnYDgihEEgWFEKY0Sf50rp7HKa0vEJ6skYAxgqNBWOi+dhTw=
+	t=1709894245; cv=none; b=lfOHHMa6kOsSkersil1tIiQT7NdzlnRh1SiNk+OJV8wwTGR0szrfzK6x/OPZTOdMUQzjUccSrkbpHN8QRjNMpqH2c9xgcfkPGnQkj/g7a05VTVTb+aFM2VaYYnkFULgvvaCmuv+4uylOwax+zH8vKXUiJ9fKhTU/Z354q3eM7io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709894166; c=relaxed/simple;
-	bh=QkVpUYeV3CtNb7O8+udH/aZB4OwfinzkvvEEuTNnMFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+rM313RBX7my92R0pBLnMS/h3tgA77tAJpkjtg5WAMX9vHi95G9HyrQ8I9bcDGzK8Ek5haxVGE+lW0cRTmgYNDHg8H14hPOvc8IDB1hHRTs4LygPhlS0dkfqh8qoJlKdbDnOBZ5WMrMNKPHRGunAupBq8gQ7Sr/rmgIrH6EqZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWV6sPna; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWV6sPna"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E63C433F1;
-	Fri,  8 Mar 2024 10:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709894165;
-	bh=QkVpUYeV3CtNb7O8+udH/aZB4OwfinzkvvEEuTNnMFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LWV6sPnaWP9YplC1t/94tZ0sy+b7KIBGbPH7SZg7w22R3lrl43cvJu+W0zOigCh/P
-	 I92ydODnQMf1mYrgkxTwXgQenW748JseAHzrawivMp4Vjm51Da8xToKCz3CWZA3lcc
-	 7C6FhA6xiosVjYQIjGghK3t8ZafGyl4Zo+0wPyzavJr/bZQAW16L62A2I2YFGLyB10
-	 k6XsMFxdvsG2NGZSMHqG38TjUxDw1NKxHpsBaJJViirMn6+z+CKhzDhUY7B03lfl+9
-	 1bFiRYxoOOI3fLPcIrNHQuGmV6J6n52Yu7ECxmB8CNj7AyKhc7LnIoA2wDvxUk0KtU
-	 0fyy0HRt/jeGw==
-Date: Fri, 8 Mar 2024 11:35:59 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-Message-ID: <20240308-kleben-eindecken-73c993fb3ebd@brauner>
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner>
- <20240306-sandgrube-flora-a61409c2f10c@brauner>
- <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
- <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
- <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+	s=arc-20240116; t=1709894245; c=relaxed/simple;
+	bh=MDdQ3beQ1q4madF/M56EEmJ1IyDRizOjzaekKCVL1RY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BAWEHkyH6NN6O3IJr1jDPPoFZePJFKO37JbFYPggA0kksroZHxGzTT3uSRkRdw/U3jCnMeEkjIj3ECKVLe6P4DlnGFcvfZi9C0Ml3O981dEG2cpEbJxNOduB3u/HsUvYopE67hv11JFVtygNEZV8URQZNtM7up/ZW2rTqdYel8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Trhth3TbGz9xrN2;
+	Fri,  8 Mar 2024 18:17:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 59304140558;
+	Fri,  8 Mar 2024 18:37:09 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwBXTBVE6uplNCHyAw--.7639S2;
+	Fri, 08 Mar 2024 11:37:08 +0100 (CET)
+Message-ID: <e10207bd82ee13fb088f9efc12e10a5478b6926d.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH 4/8] ima: Add digest_cache_measure and
+ digest_cache_appraise boot-time policies
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, corbet@lwn.net,
+ dmitry.kasatkin@gmail.com,  eric.snowberg@oracle.com, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ wufan@linux.microsoft.com, pbrobinson@gmail.com, zbyszek@in.waw.pl,
+ hch@lst.de,  mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
+ dhowells@redhat.com,  jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com,
+ petr.vorel@gmail.com,  petrtesarik@huaweicloud.com, mzerqung@0pointer.de,
+ kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Fri, 08 Mar 2024 11:36:48 +0100
+In-Reply-To: <ed5df367582f0c5e212638a12204fd20fd8e46e5.camel@linux.ibm.com>
+References: <20240214143525.2205481-1-roberto.sassu@huaweicloud.com>
+	 <20240214143525.2205481-5-roberto.sassu@huaweicloud.com>
+	 <ed5df367582f0c5e212638a12204fd20fd8e46e5.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+X-CM-TRANSID:LxC2BwBXTBVE6uplNCHyAw--.7639S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw43Ww45WFy3Gr4xKF45ZFb_yoWrCF43pa
+	yDCF1YkFWDur1fAw1ava18ur4Fy39agF43XayUJ345Ars5XFn2k3W8Aa45urWUZw48X3Z2
+	yF4UKr47W34DZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbJ73D
+	UUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBF1jj5shHQABsC
 
-On Thu, Mar 07, 2024 at 07:11:22PM -0800, Alexei Starovoitov wrote:
-> On Thu, Mar 7, 2024 at 1:55 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > > >
-> > > > So, looking at this series you're now asking us to expose:
-> > > >
-> > > > (1) mmgrab()
-> > > > (2) mmput()
-> > > > (3) fput()
-> > > > (5) get_mm_exe_file()
-> > > > (4) get_task_exe_file()
-> > > > (7) get_task_fs_pwd()
-> > > > (6) get_task_fs_root()
-> > > > (8) path_get()
-> > > > (9) path_put()
-> > > >
-> > > > in one go and the justification in all patches amounts to "This is
-> > > > common in some BPF LSM programs".
-> > > >
-> > > > So, broken stuff got exposed to users or at least a broken BPF LSM
-> > > > program was written somewhere out there that is susceptible to UAFs
-> > > > becauase you didn't restrict bpf_d_path() to trusted pointer arguments.
-> > > > So you're now scrambling to fix this by asking for a bunch of low-level
-> > > > exports.
-> > > >
-> > > > What is the guarantee that you don't end up writing another BPF LSM that
-> > > > abuses these exports in a way that causes even more issues and then
-> > > > someone else comes back asking for the next round of bpf funcs to be
-> > > > exposed to fix it.
-> > >
-> > > There is no guarantee.
-> > > We made a safety mistake with bpf_d_path() though
-> > > we restricted it very tight. And that UAF is tricky.
-> > > I'm still amazed how Jann managed to find it.
-> > > We all make mistakes.
-> > > It's not the first one and not going to be the last.
-> > >
-> > > What Matt is doing is an honest effort to fix it
-> > > in the upstream kernel for all bpf users to benefit.
-> > > He could have done it with a kernel module.
-> > > The above "low level" helpers are all either static inline
-> > > in .h or they call EXPORT_SYMBOL[_GPL] or simply inc/dec refcnt.
-> > >
-> > > One can implement such kfuncs in an out of tree kernel module
-> > > and be done with it, but in the bpf community we encourage
-> > > everyone to upstream their work.
-> > >
-> > > So kudos to Matt for working on these patches.
-> > >
-> > > His bpf-lsm use case is not special.
-> > > It just needs a safe way to call d_path.
-> > >
-> > > +SEC("lsm.s/file_open")
-> > > +__failure __msg("R1 must be referenced or trusted")
-> > > +int BPF_PROG(path_d_path_kfunc_untrusted_from_current)
-> > > +{
-> > > +       struct path *pwd;
-> > > +       struct task_struct *current;
-> > > +
-> > > +       current = bpf_get_current_task_btf();
-> > > +       /* Walking a trusted pointer returned from bpf_get_current_task_btf()
-> > > +        * yields and untrusted pointer. */
-> > > +       pwd = &current->fs->pwd;
-> > > +       bpf_path_d_path(pwd, buf, sizeof(buf));
-> > > +       return 0;
-> > > +}
-> > >
-> > > This test checks that such an access pattern is unsafe and
-> > > the verifier will catch it.
-> > >
-> > > To make it safe one needs to do:
-> > >
-> > >   current = bpf_get_current_task_btf();
-> > >   pwd = bpf_get_task_fs_pwd(current);
-> > >   if (!pwd) // error path
-> > >   bpf_path_d_path(pwd, ...);
-> > >   bpf_put_path(pwd);
-> > >
-> > > these are the kfuncs from patch 6.
-> > >
-> > > And notice that they have KF_ACQUIRE and KF_RELEASE flags.
-> > >
-> > > They tell the verifier to recognize that bpf_get_task_fs_pwd()
-> > > kfunc acquires 'struct path *'.
-> > > Meaning that bpf prog cannot just return without releasing it.
-> > >
-> > > The bpf prog cannot use-after-free that 'pwd' either
-> > > after it was released by bpf_put_path(pwd).
-> > >
-> > > The verifier static analysis catches such UAF-s.
-> > > It didn't catch Jann's UAF earlier, because we didn't have
-> > > these kfuncs! Hence the fix is to add such kfuncs with
-> > > acquire/release semantics.
-> > >
-> > > > The difference between a regular LSM asking about this and a BPF LSM
-> > > > program is that we can see in the hook implementation what the LSM
-> > > > intends to do with this and we can judge whether that's safe or not.
-> > >
-> > > See above example.
-> > > The verifier is doing a much better job than humans when it comes
-> > > to safety.
-> > >
-> > > > Here you're asking us to do this blindfolded.
-> > >
-> > > If you don't trust the verifier to enforce safety,
-> > > you shouldn't trust Rust compiler to generate safe code either.
-> > >
-> > > In another reply you've compared kfuncs to EXPORT_SYMBOL_GPL.
-> > > Such analogy is correct to some extent,
-> > > but unlike exported symbols kfuncs are restricted to particular
-> > > program types. They don't accept arbitrary pointers,
-> > > and reference count is enforced as well.
-> > > That's a pretty big difference vs EXPORT_SYMBOL.
-> >
-> > There's one fundamental question here that we'll need an official answer to:
-> >
-> > Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
-> > to request access to various helpers in the kernel?
-> 
-> obviously not.
-> 
-> > Because fundamentally this is what this patchset is asking to be done.
-> 
-> Pardon ?
-> 
-> > If the ZFS out-of-tree kernel module were to send us a similar patch
-> > series asking us for a list of 9 functions that they'd like us to export
-> > what would the answer to that be?
-> 
-> This patch set doesn't request any new EXPORT_SYMBOL.
+On Thu, 2024-03-07 at 15:17 -0500, Mimi Zohar wrote:
+> On Wed, 2024-02-14 at 15:35 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > Specify the 'digest_cache_measure' boot-time policy with 'ima_policy=3D=
+' in
+> > the kernel command line
+>=20
+> The 'built-in' policies may be specified on the boot command line.  Pleas=
+e
+> update Subject line, to user the term "built-in" as well as here.
 
-In order for that out-of-tree BPF LSM program to get similar guarantees
-than an equivalent kernel module we need to export all nine functions
-for BPF. Included in that set are functions that aren't currently even
-exported to modules.
+Ok, will do.
 
-These exports are specifically for an out-of-tree BPF LSM program that
-is not accessible to the public. The question in the other mail stands.
+> >  to add the following rule at the beginning of the
+> > IMA policy, before other rules:
+>=20
+> Comments below...
+>=20
+> >=20
+> > measure func=3DDIGEST_LIST_CHECK pcr=3D12
+> >=20
+> > which will measure digest lists into PCR 12 (or the value in
+> > CONFIG_IMA_DIGEST_CACHE_MEASURE_PCR_IDX).
+> >=20
+> > 'digest_cache_measure' also adds 'digest_cache=3Dcontent pcr=3D12' to t=
+he other
+> > measure rules, if they have a compatible IMA hook. The PCR value still
+> > comes from CONFIG_IMA_DIGEST_CACHE_MEASURE_PCR_IDX.
+> >=20
+> > Specify 'digest_cache_appraise' to add the following rule at the beginn=
+ing,
+> > before other rules:
+> >=20
+> > appraise func=3DDIGEST_LIST_CHECK appraise_type=3Dimasig|modsig
+> >=20
+> > which will appraise digest lists with IMA signatures or module-style
+> > appended signatures.
+> >=20
+> > 'digest_cache_appraise' also adds 'digest_cache=3Dcontent' to the other
+> > appraise rules, if they have a compatible IMA hook.
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         | 15 ++++++-
+> >  security/integrity/ima/Kconfig                | 10 +++++
+> >  security/integrity/ima/ima_policy.c           | 45 +++++++++++++++++++
+> >  3 files changed, 69 insertions(+), 1 deletion(-)
+>=20
+> [...]
+> =20
+> > @@ -971,6 +1006,16 @@ void __init ima_init_policy(void)
+> >  {
+> >  	int build_appraise_entries, arch_entries;
+> > =20
+> > +	/*
+> > +	 * We need to load digest cache rules at the beginning, to avoid dont=
+_
+> > +	 * rules causing ours to not be reached.
+> > +	 */
+>=20
+> "lockdown" trusts IMA to measure and appraise kernel modules, if the rule
+> exists.  Placing the digest_cache first breaks this trust.
 
-> First of all, there is no such thing as get_task_fs_pwd/root
-> in the kernel.
+The new rules don't prevent other rules to be reached, since they are
+'do' and not 'don_t' rules.
 
-Yeah, we'd need specific helpers for a never seen before out-of-tree BPF
-LSM. I don't see how that's different from an out-of-tree kernel module.
+If the kernel reads a file with file ID READING_MODULE, that would
+still be matched by rules with 'func=3DMODULE_CHECK', even if there are
+rules with 'func=3DDIGEST_LIST_CHECK', which will be instead matched when
+there is a kernel read with file ID READING_DIGEST_LIST.
 
-> One can argue that get_mm_exe_file() is not exported,
-> but it's nothing but rcu_lock-wrap plus get_file_rcu()
-> which is EXPORT_SYMBOL.
+We can talk about the rule modification. Speaking of appraising kernel
+modules, setting 'ima_policy=3Ddigest_cache_appraise' in the kernel
+command line would have the effect of changing:
 
-Oh, good spot. That's an accident. get_file_rcu() definitely shouldn't
-be exported. So that'll be removed asap.
+appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig
 
-> Christian,
-> 
-> I understand your irritation with anything bpf related
-> due to our mistake with fd=0, but as I said earlier it was
-> an honest mistake. There was no malicious intent.
-> Time to move on.
+to:
 
-I understand your concern but I'm neither irritated by bpf nor do I hold
-grudges. As I'm writing this bpf's bpffs and token changes are on their
-way into mainline for v6.9 which I reviewed and acked immediately after
-that discussion.
+appraise func=3DDIGEST_LIST_CHECK appraise_type=3Dimasig|modsig
+appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig digest_cache=3Dc=
+ontent
 
-Rest assures that you can move on from that concern. There's no need to
-keep bringing it up in unrelated discussions.
+The effect of this would be that, if the kernel does not have
+security.ima or an appended signature, appraisal will be still
+successful by verifying the signature (in the xattr or appended) of the
+digest list, and looking up the digest of the kernel module in that
+digest list.
+
+> From a trusted and secure boot perspective, the architecture specific pol=
+icy
+> rules should not be ignored.
+
+I'm still missing how the architecture-specific policy would be
+ignored.
+
+> Putting the digest_cache before any other rules
+> will limit others from being able to use digest_cache.
+
+Sorry, didn't understand.
+
+Let me just remark that measuring/appraising a digest list is a
+necessary condition for using the digest cache built from that digest
+list.
+
+Not doing that has the same effect of a negative digest lookup, even if
+that digest was in the digest list.
+
+> Instead of putting the digest_cache_{measure,appraise} built-in policies =
+first,
+> skip loading the dont_measure_rules.
+
+It does not seem a good idea. We still want to avoid
+measurements/appraisal in the pseudo filesystems.
+
+Roberto
+
+> Mimi
+>=20
+> > +	if (ima_digest_cache_measure)
+> > +		add_rules(&measure_digest_cache_rule, 1, IMA_DEFAULT_POLICY);
+> > +
+> > +	if (ima_digest_cache_appraise)
+> > +		add_rules(&appraise_digest_cache_rule, 1, IMA_DEFAULT_POLICY);
+> > +
+> >  	/* if !ima_policy, we load NO default rules */
+> >  	if (ima_policy)
+> >  		add_rules(dont_measure_rules, ARRAY_SIZE(dont_measure_rules),
+
