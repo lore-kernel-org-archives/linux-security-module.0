@@ -1,202 +1,248 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39BD3D988
-	for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2024 23:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BA91CFB5;
+	Fri,  8 Mar 2024 03:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709854539; cv=none; b=DYaSLSsWtw+fxbGe9GLO2YOXYoxYCP6zmIpiEr8va+sQZ1gDUm0AbBAwBK9XgrhgLdmpRcPYSc0Yxd30FESK9xKvwUO443nR1tzcN64lAe5IF/NczFQGko2E/nDVhATx3OYWAHDQjPd2RRM4GZPlVeXPRSB52ClZ90eja51ch84=
+	t=1709867497; cv=none; b=eUOfUhQn89y5J0TDtZtS47jhEmMEuCDIpeF/aneu+d9T4A9Qld1BqiD/1zBGe/4PtkOVwXH5Hsw34fuDUt6NiBWKGIHyYZQd++ktCgNoz6DZu9FPWc3KnD2EswgLQiGxe5sf0R3cDdYiIORqtVZvjj4raT1gmt8pVdQX/xvOZRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709854539; c=relaxed/simple;
-	bh=njY2lknGUPjlZ/Y4D816ZCYT5Nqe46D+l814JgKXZP4=;
+	s=arc-20240116; t=1709867497; c=relaxed/simple;
+	bh=v+fpOFaGE9IVEQFp5dGJ7B7iaCkVYgetZyUtqI6XqrQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ByBgxj/UvUbLMv7Rl/6ye/1jeFnHvKMyA24RZgctZhRrCVbDV7iSdK3HOZz9f8RL0EmynO6SzkMMTJMDMM/UIMxdTv2PZ1p2ZRCwyIt7IwlKLFtphLunlqKHYDGL6E3ngjQHa40uruwOG+NM3vjXNTuTUH8OaCbcB3xikjmR2lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BRGf41P8; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=LMSdn97MWCbXzdzPF1/2ZPQO7FbsBvlKPShVLn/wv42JFN8q+ab30AfPsJEB8fxZfz13TIQMeK4R8bd10wb1TAEguHyazZAK88TXU0wAU4v/dtS2l3UoptD5GCXzFRDkWxFohzVE2pI2QXptKWuiORXOGN12K9yVDDszlXkfa0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFNmvKc9; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BRGf41P8"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dc6d9a8815fso1508131276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 15:35:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFNmvKc9"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a45c006ab82so225032266b.3;
+        Thu, 07 Mar 2024 19:11:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1709854536; x=1710459336; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1709867494; x=1710472294; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hNtL5CD8puTpQSdVaD0jHpw+y7n9IUqqlnVoWEtCBL0=;
-        b=BRGf41P82HsTvkXyo2JNGJj+LB/0rs1SYZIqMsBlWlC7RZmh44lC652HQhSdV+keOd
-         XH4xcPqiGcvXvzV8dpYR05vth5BsmoNcndqgi3wdrm1fPvUoICxsai94UGJMFuyFJDHF
-         pQS5k3afj73Lk5eNQv8XRnKnP7n0AQnkhVUp+IBoc1ClMKlZeH7G1FKH4oGZ8sf7xug1
-         jihrRlDfL9gCD+pjVhl5TTBJXkwoQGhmN0gfn9NlzWnHVmofClPUj/qUKRXnRFQDd5nX
-         C1hXJ+/BlBKS+I9u1QkR878iVFataCO1lXP78+4gBLzTiIWUjEFELaD97x7SmPVlnKzp
-         euEw==
+        bh=Zj6q92htsofy/f5VcV6/t4KrLGQPNiFAadjpchJR4oU=;
+        b=fFNmvKc94+VczUi3OMbZM/WOlaewhV9uIkAo4F7SOtYyLxa2PEg0e25WUaWljlheTG
+         uKLjOVuWvqO33nYS/pK0XMUylR8usjXFcyPMJq8ROD0H8w/H32C88F5HKiPweaxo5gMB
+         RIWz1vLskmDoB6PIfVaws3XH7gkxM+wuNMwLJO03n1ErhlJc6DU5XksJZ8Kq/Co9ssqB
+         H4hSoKHA0UkemvMnM+4hP9H+aVKbg3Poy7ZahW4P13wehc7rz9XNepILcjfME1bgsnrP
+         MPcaSztkBmFwyKiv8CWpuQws2UBFmz/orUUbWsIMH3iCFQ7KtqIn/q6cfuoCGzNwoErS
+         93mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709854536; x=1710459336;
+        d=1e100.net; s=20230601; t=1709867494; x=1710472294;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hNtL5CD8puTpQSdVaD0jHpw+y7n9IUqqlnVoWEtCBL0=;
-        b=WvC/h8ZjfHIEmUtDU8rdsZpgJMCcrV6wZM7EGkMX9jzn9OJWT405TUxhGxqIZ8Y+h5
-         MGZNKZ5x2hut7M+u+HqjuAJkXLH8/ZZFGadMBe/DZajFo+fztgER6QaT+4brov6jvLtn
-         yI2LbRtUnG9uU5YpbCGigxixKZUOCmLyA7RXi1dBWh0MyWmR71B45qJsfjvTU6ZiYI2q
-         1h9TyMnWR+a7o2CZvvQAyg3LOqF4XdZZum/tVXNb8D5lZ4YPXW2e3fXQdwfhpkcZgTcm
-         StsXuhVr2eDF5kD1PxaINIUHeQZj2EQC5VSw1IxtOigQHuzokY/hGqxmJZwIfigEY9LF
-         3/xA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpciZbJ49ASxShekT3wQcHXNcx/uvDiGsWr0iJB5zCCw9zoio3IB2unv+AUFQH0HI1//32bMMem8yY4XBq+96gK6QYAvHGjm5FGv6f7Zhf0+/775Kv
-X-Gm-Message-State: AOJu0YwYzcLcd0EWQ5UYrkygGNU1GIV7vduaBP0uAYWALJDxat5llFHX
-	j94rC7qGuTNqXHdfRFFCe5splwoOTWY1sh2v1oiOgF6l53sXHrwi6Ok4VY66h6XlcyVa1HYph43
-	MhwEKxYcBQ+wqIa/RLA2iHrMCvdvIv/v6WR6k
-X-Google-Smtp-Source: AGHT+IHkLUNDkeGWk2UDprvqJoyAAWj/+UG6z3dHHUumDjNkflGrkgzvjDHpcuCjMGR9LSonnO4t3xhJraJPxjHKlhE=
-X-Received: by 2002:a25:9f81:0:b0:dc6:c510:df6b with SMTP id
- u1-20020a259f81000000b00dc6c510df6bmr17669276ybq.55.1709854536495; Thu, 07
- Mar 2024 15:35:36 -0800 (PST)
+        bh=Zj6q92htsofy/f5VcV6/t4KrLGQPNiFAadjpchJR4oU=;
+        b=hAc1dnKog12gfEF2ldowQ9C+RhfUldkEzf7ymJTfgdnR6tKBSeYjb5pHQ94SlwsrKL
+         SQjBgCrFd7YrMJgiBh9GfLh/5js+Cswzui8II/JXcA0ewQ/5f3i4UdNeSj3kFsHg3E4n
+         MFSm6dYkyrUwuZrOKT9oGKex20CQIGQh4McLrJFwe9IdnoG85FEe0QD3crVv/ze/+wAP
+         G7xgWTsHruqP+zWM54gH2TpBg7WGrOxls7mFDNjD5LWxakyGqDHCS13MTj2qD6v75THy
+         bYIIzIahdCnK9OLcObyL6t51cpzKOAHTy5V+u+qDDoxv15Jt63jHLpWlHDKhhu0tp3SE
+         PVgg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3x6FV3RfRYtBGGOUbjTj6TNjfxcjjvFeWIUBev67qN8Ifq0eY4wvjI8hfND5DJe28pKBN+gn1qh2Sbl0R0ItbJIv1EewSnohaRhvMCoRveVvO2yoESZr2BUHCxKCl9PG0rWzXUh9CVU3elxy34rK894A617z6pyIvipFX37plmq5AN1xLDLeQzw==
+X-Gm-Message-State: AOJu0Yx/Il3tWHi6A4a7UPvQtimr1w61X9zvw0zCzwQj0dFZgNaWkSx9
+	GR0RZTPuEDxqK8/6pGL7HtE/tv8OXA2yog5hqh+MAtpCRIRaNi2YP+vBcv1PfGWfvfEDlEvhesU
+	d1/tAmr98GH4BrjInNXWgilvJlzo=
+X-Google-Smtp-Source: AGHT+IGeKNrA4flz39TyY21Qq+eMtzgSQnDG1XmDYjlybgEaOqh2F/oNtXZp6fFMkAue7HFtuFShEgO4kQ1nU/EueDw=
+X-Received: by 2002:a17:906:5953:b0:a44:b90b:3262 with SMTP id
+ g19-20020a170906595300b00a44b90b3262mr13474080ejr.5.1709867493755; Thu, 07
+ Mar 2024 19:11:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240219.chu4Yeegh3oo@digikod.net> <20240219183539.2926165-1-mic@digikod.net>
- <ZedgzRDQaki2B8nU@google.com> <20240306.zoochahX8xai@digikod.net>
- <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com> <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com> <Zem5tnB7lL-xLjFP@google.com>
- <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com> <ZepJDgvxVkhZ5xYq@dread.disaster.area>
-In-Reply-To: <ZepJDgvxVkhZ5xYq@dread.disaster.area>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 7 Mar 2024 18:35:25 -0500
-Message-ID: <CAHC9VhSMONVsPT0k0kJOaAWQzpx2JCLYYosCX+k9g0PN8NQyMw@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-To: Dave Chinner <david@fromorbit.com>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com> <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
+In-Reply-To: <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 7 Mar 2024 19:11:22 -0800
+Message-ID: <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+To: Christian Brauner <brauner@kernel.org>
+Cc: Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, 
+	Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 7, 2024 at 6:09=E2=80=AFPM Dave Chinner <david@fromorbit.com> w=
-rote:
-> On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
-> > On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@googl=
-e.com> wrote:
-> > > On Thu, Mar 07, 2024 at 01:21:48PM +0100, Arnd Bergmann wrote:
-> > > > On Thu, Mar 7, 2024, at 13:15, Christian Brauner wrote:
-> > > > > On Wed, Mar 06, 2024 at 04:18:53PM +0100, Arnd Bergmann wrote:
-> > > > >> On Wed, Mar 6, 2024, at 14:47, Micka=C3=ABl Sala=C3=BCn wrote:
-> > > > >> >
-> > > > >> > Arnd, Christian, Paul, are you OK with this new hook proposal?
-> > > > >>
-> > > > >> I think this sounds better. It would fit more closely into
-> > > > >> the overall structure of the ioctl handlers with their multiple
-> > > > >> levels, where below vfs_ioctl() calling into f_ops->unlocked_ioc=
-tl,
-> > > > >> you have the same structure for sockets and blockdev, and
-> > > > >> then additional levels below that and some weirdness for
-> > > > >> things like tty, scsi or cdrom.
-> > > > >
-> > > > > So an additional security hook called from tty, scsi, or cdrom?
-> > > > > And the original hook is left where it is right now?
-> > > >
-> > > > For the moment, I think adding another hook in vfs_ioctl()
-> > > > and the corresponding compat path would do what Micka=C3=ABl
-> > > > wants. Beyond that, we could consider having hooks in
-> > > > socket and block ioctls if needed as they are easy to
-> > > > filter out based on inode->i_mode.
-> > > >
-> > > > The tty/scsi/cdrom hooks would be harder to do, let's assume
-> > > > for now that we don't need them.
+On Thu, Mar 7, 2024 at 1:55=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
 > > >
-> > > Thank you all for the help!
+> > > So, looking at this series you're now asking us to expose:
 > > >
-> > > Yes, tty/scsi/cdrom are just examples.  We do not need special featur=
-es for
-> > > these for Landlock right now.
+> > > (1) mmgrab()
+> > > (2) mmput()
+> > > (3) fput()
+> > > (5) get_mm_exe_file()
+> > > (4) get_task_exe_file()
+> > > (7) get_task_fs_pwd()
+> > > (6) get_task_fs_root()
+> > > (8) path_get()
+> > > (9) path_put()
 > > >
-> > > What I would do is to invoke the new LSM hook in the following two pl=
-aces in
-> > > fs/ioctl.c:
+> > > in one go and the justification in all patches amounts to "This is
+> > > common in some BPF LSM programs".
 > > >
-> > > 1) at the top of vfs_ioctl()
-> > > 2) at the top of ioctl_compat()
+> > > So, broken stuff got exposed to users or at least a broken BPF LSM
+> > > program was written somewhere out there that is susceptible to UAFs
+> > > becauase you didn't restrict bpf_d_path() to trusted pointer argument=
+s.
+> > > So you're now scrambling to fix this by asking for a bunch of low-lev=
+el
+> > > exports.
 > > >
-> > > (Both of these functions are just invoking the f_op->unlocked_ioctl()=
- and
-> > > f_op->compat_ioctl() operations with a safeguard for that being a NUL=
-L pointer.)
-> > >
-> > > The intent is that the new hook gets called everytime before an ioctl=
- is sent to
-> > > these IOCTL operations in f_op, so that the LSM can distinguish clean=
-ly between
-> > > the "safe" IOCTLs that are implemented fully within fs/ioctl.c and th=
-e
-> > > "potentially unsafe" IOCTLs which are implemented by these hooks (as =
-it is
-> > > unrealistic for us to holistically reason about the safety of all pos=
-sible
-> > > implementations).
-> > >
-> > > The alternative approach where we try to do the same based on the exi=
-sting LSM
-> > > IOCTL hook resulted in the patch further up in this mail thread - it =
-involves
-> > > maintaining a list of "safe" IOCTL commands, and it is difficult to g=
-uarantee
-> > > that these lists of IOCTL commands stay in sync.
+> > > What is the guarantee that you don't end up writing another BPF LSM t=
+hat
+> > > abuses these exports in a way that causes even more issues and then
+> > > someone else comes back asking for the next round of bpf funcs to be
+> > > exposed to fix it.
 > >
-> > I need some more convincing as to why we need to introduce these new
-> > hooks, or even the vfs_masked_device_ioctl() classifier as originally
-> > proposed at the top of this thread.  I believe I understand why
-> > Landlock wants this, but I worry that we all might have different
-> > definitions of a "safe" ioctl list, and encoding a definition into the
-> > LSM hooks seems like a bad idea to me.
+> > There is no guarantee.
+> > We made a safety mistake with bpf_d_path() though
+> > we restricted it very tight. And that UAF is tricky.
+> > I'm still amazed how Jann managed to find it.
+> > We all make mistakes.
+> > It's not the first one and not going to be the last.
+> >
+> > What Matt is doing is an honest effort to fix it
+> > in the upstream kernel for all bpf users to benefit.
+> > He could have done it with a kernel module.
+> > The above "low level" helpers are all either static inline
+> > in .h or they call EXPORT_SYMBOL[_GPL] or simply inc/dec refcnt.
+> >
+> > One can implement such kfuncs in an out of tree kernel module
+> > and be done with it, but in the bpf community we encourage
+> > everyone to upstream their work.
+> >
+> > So kudos to Matt for working on these patches.
+> >
+> > His bpf-lsm use case is not special.
+> > It just needs a safe way to call d_path.
+> >
+> > +SEC("lsm.s/file_open")
+> > +__failure __msg("R1 must be referenced or trusted")
+> > +int BPF_PROG(path_d_path_kfunc_untrusted_from_current)
+> > +{
+> > +       struct path *pwd;
+> > +       struct task_struct *current;
+> > +
+> > +       current =3D bpf_get_current_task_btf();
+> > +       /* Walking a trusted pointer returned from bpf_get_current_task=
+_btf()
+> > +        * yields and untrusted pointer. */
+> > +       pwd =3D &current->fs->pwd;
+> > +       bpf_path_d_path(pwd, buf, sizeof(buf));
+> > +       return 0;
+> > +}
+> >
+> > This test checks that such an access pattern is unsafe and
+> > the verifier will catch it.
+> >
+> > To make it safe one needs to do:
+> >
+> >   current =3D bpf_get_current_task_btf();
+> >   pwd =3D bpf_get_task_fs_pwd(current);
+> >   if (!pwd) // error path
+> >   bpf_path_d_path(pwd, ...);
+> >   bpf_put_path(pwd);
+> >
+> > these are the kfuncs from patch 6.
+> >
+> > And notice that they have KF_ACQUIRE and KF_RELEASE flags.
+> >
+> > They tell the verifier to recognize that bpf_get_task_fs_pwd()
+> > kfunc acquires 'struct path *'.
+> > Meaning that bpf prog cannot just return without releasing it.
+> >
+> > The bpf prog cannot use-after-free that 'pwd' either
+> > after it was released by bpf_put_path(pwd).
+> >
+> > The verifier static analysis catches such UAF-s.
+> > It didn't catch Jann's UAF earlier, because we didn't have
+> > these kfuncs! Hence the fix is to add such kfuncs with
+> > acquire/release semantics.
+> >
+> > > The difference between a regular LSM asking about this and a BPF LSM
+> > > program is that we can see in the hook implementation what the LSM
+> > > intends to do with this and we can judge whether that's safe or not.
+> >
+> > See above example.
+> > The verifier is doing a much better job than humans when it comes
+> > to safety.
+> >
+> > > Here you're asking us to do this blindfolded.
+> >
+> > If you don't trust the verifier to enforce safety,
+> > you shouldn't trust Rust compiler to generate safe code either.
+> >
+> > In another reply you've compared kfuncs to EXPORT_SYMBOL_GPL.
+> > Such analogy is correct to some extent,
+> > but unlike exported symbols kfuncs are restricted to particular
+> > program types. They don't accept arbitrary pointers,
+> > and reference count is enforced as well.
+> > That's a pretty big difference vs EXPORT_SYMBOL.
 >
-> I have no idea what a "safe" ioctl means here. Subsystems already
-> restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
-> "safe" clearly means something different here.
-
-That's the point I was trying to make.  I'm not sure exactly what
-G=C3=BCnther meant either (I was simply copying his idea of a "safe" ioctl,
-complete with all of the associations around the double quotes), which
-helps underscore the idea that different groups are likely to have
-different ideas of what ioctls they want to allow based on their
-security model, environment, etc.
-
-> > At this point in time, I think I'd rather see LSMs that care about
-> > ioctls maintaining their own list of "safe" ioctls and after a while
-> > if it looks like everyone is in agreement (VFS folks, individual LSMs,
-> > etc.) we can look into either an ioctl classifier or multiple LSM
-> > ioctl hooks focused on different categories of ioctls.
+> There's one fundamental question here that we'll need an official answer =
+to:
 >
-> From the perspective of a VFS and subsystem developer, I really have
-> no clue what would make a "safe" ioctl from a LSM perspective ...
+> Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
+> to request access to various helpers in the kernel?
 
-We also need to keep in mind that we have multiple LSM implementations
-and we need to support different ideas around how to control access to
-ioctls, including which ioctls are "safe" for multiple definitions of
-the word.
+obviously not.
 
-> ... and I
-> very much doubt an LSM developer has any clue whether deep, dark
-> subsystem ioctls are "safe" to allow, or even what would stop
-> working if they decided something was not "safe".
+> Because fundamentally this is what this patchset is asking to be done.
 
-... or for those LSMs with configurable security policies, which
-ioctls are allowed by the LSM's policy developer to fit their
-particular needs.
+Pardon ?
 
-> This just seems like a complex recipe for creating unusable and/or
-> impossible to configure/secure systems to me.
+> If the ZFS out-of-tree kernel module were to send us a similar patch
+> series asking us for a list of 9 functions that they'd like us to export
+> what would the answer to that be?
 
-FWIW, Android has been using the existing LSM ioctl controls for
-several years now to help increase the security of Android devices.
+This patch set doesn't request any new EXPORT_SYMBOL.
+Quoting previous reply:
+"
+ The above "low level" helpers are all either static inline
+ in .h or they call EXPORT_SYMBOL[_GPL] or simply inc/dec refcnt.
+"
 
-https://security.googleblog.com/2016/07/protecting-android-with-more-linux.=
-html
-https://kernsec.org/files/lss2015/vanderstoep.pdf
+Let's look at your list:
 
---=20
-paul-moore.com
+> > > (1) mmgrab()
+> > > (2) mmput()
+> > > (3) fput()
+> > > (5) get_mm_exe_file()
+> > > (4) get_task_exe_file()
+> > > (7) get_task_fs_pwd()
+> > > (6) get_task_fs_root()
+> > > (8) path_get()
+> > > (9) path_put()
+
+First of all, there is no such thing as get_task_fs_pwd/root
+in the kernel.
+
+The hypothetical out-of-tree ZFS can use the rest just fine.
+One can argue that get_mm_exe_file() is not exported,
+but it's nothing but rcu_lock-wrap plus get_file_rcu()
+which is EXPORT_SYMBOL.
+
+kfunc-s in patch 6 wrap get_fs_root/pwd from linux/fs_struct.h
+that calls EXPORT_SYMBOL(path_get).
+
+So upon close examination no new EXPORT_SYMBOL-s were requested.
+
+Christian,
+
+I understand your irritation with anything bpf related
+due to our mistake with fd=3D0, but as I said earlier it was
+an honest mistake. There was no malicious intent.
+Time to move on.
