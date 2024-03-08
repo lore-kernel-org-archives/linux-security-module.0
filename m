@@ -1,113 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BAC54BF1;
-	Fri,  8 Mar 2024 10:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492EC55794
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Mar 2024 11:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709895504; cv=none; b=mWnHKM68XH8PRBMgw6eAibixyqRTv3PJzFiHlMrEZFnJQaxGH42LuFJT/cO98xrzN88Ng4+o7F5GasTjr816J0nCvsXuafcwa+55hNg2EBuptDzCBNBRADOOE4inIquShwMlw24LdyHIE7WC1GN0qQq4Td2t9F5MZYq9pvCQzyI=
+	t=1709895786; cv=none; b=dDUlPpcBbhUIrz9tT2Om71oJ4HRhksaMmj4zTQBXxVgFWGAsFYfj+Rhf9ig0eIFpDkEMs5HnA9jL7vZtFDuo/sYHyNBzIqxSE/qJ4vs3csE5WanNZYHxGhnBh/rbGYuoiTg6PbtQ2y55YTY/h/ogAUrzeqgkF2ORpOPDGr7GSZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709895504; c=relaxed/simple;
-	bh=t+CUSuGz1oswbfA1pD8nv4aLnvXGsLe3pXT7Zvxm/o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZ5EMU4ye5cTT6+6j2suwaeVLtgAPVjGYZHzY7gGL+boORyClNWJp+LwWYGaSGQ1TZw9YcnmEvZRvQC1Sv1UrDL3PP3QfTdF0auFXPcBIU6HjIjjyQq9+/E8tb+WrSDcIyyg4eYhUFPpbNnnDynf/ff7jPESfVVGXbqR8AzsPj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nt/pTjjQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709895786; c=relaxed/simple;
+	bh=ZJKrLL22A7H4JxricotzzoWXArs2LWgdGGY0bhUgfj4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=s9f0wEKSUf4tTcxnDsPflUGwbzqz7itRde3Z581jIFT4zofZELo3erlfmvSjN+6nnmybAiEz1ZokmVqkToKlwd3/122uusDYCcO0Zfd3NLIb7D1I8IaocWBijyLMYlVoriFo5kQOrhFnQOwPJrnVTiN4OkQpKtDwp3YnFBejo88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xAeWWqFG; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nt/pTjjQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13062C433F1;
-	Fri,  8 Mar 2024 10:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709895503;
-	bh=t+CUSuGz1oswbfA1pD8nv4aLnvXGsLe3pXT7Zvxm/o4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nt/pTjjQU4/t3Ui9AfP/dhesu6bAiD8W7/miIsLlhrZSjAlXV7WqES8euFVx1uQD4
-	 +FUUlqnKwoS70h1rnQLHKUE5PWZ+QNxd8mwh+EVmb51Nxl5mdwTs3ZvCTDRHw8jOMl
-	 iaRd79094+RZjPKhlT466/S49+7RXqxpvctoSDlLNMYYtrrXsl6uz5FMtdYa9Bp3BX
-	 UcNjbhTiTDzuoqDuEjGKXGg1DPuGZytR/4O1Lb0+lT1rmW+WU2sKy0tAwUREzm4+L/
-	 Ad52rwEl00CILgMst32JlQY5LS83uve/k+lHCaFiM0Iq8f5oVITi1qkEYvt4MumUcr
-	 ItKmzldvPudgw==
-Date: Fri, 8 Mar 2024 11:58:17 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, 
-	LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-Message-ID: <20240308-diese-kartbahn-7f87d054964b@brauner>
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner>
- <20240306-sandgrube-flora-a61409c2f10c@brauner>
- <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
- <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
- <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
- <CAADnVQLQ8uVaSKx-zth1HTT44T3ZC8C1cyNxxuhPMqywGVV9Pw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xAeWWqFG"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dd0ae66422fso3758309276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Mar 2024 03:03:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1709895784; x=1710500584; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MNJ3BotNWwVrqapBf4UjRIQk6oxTmFA1CYe6YAxf1wg=;
+        b=xAeWWqFG93TUqQNXjs+/enCQoho1xOcYTY9fJmv2Pl2R9gjY9Pmmx/59i42PhsdYwS
+         5qb9FvEmYpZ7mklY7Xvad6GOyW8L1jI1vFg69ymR8RqxK2AYh/zVb4GHnJBBUf+w6grT
+         2y+UT/1VbcXejbuSXMbDM/p80uFE3K42noB//e1NnPuRgTaB+zlZuEHFZkeYNQ5UZuQ9
+         tfR6Lqu4NO8JpGPeGn+VAoNf8l14T/FK0Vz1U8K6M0zDVaBautTjP7O7/XZZTS/u43od
+         dEn1TVSTY9IzZBUGXUHH3DV7xGU1MQXNwBBMNiqID5W8gG5E+UDQGhQdwgf+CQeHj4p3
+         5TBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709895784; x=1710500584;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MNJ3BotNWwVrqapBf4UjRIQk6oxTmFA1CYe6YAxf1wg=;
+        b=dK42z6NaK0TkmNE0cMpUGfyYyUvNWDTG8UJc7fr8JF10Y/AXnCGFR83S/q4uDGMdH0
+         AL1aIHdynoCMMn4x66JjTCust4lxxHmjrCeium9sXzAz2kD358RK/p71wtJsZ2VjvLLa
+         hYbEu6cL889o3PzDIDt31WqUpbfVV+2Zdd6Yw8gfSDxtZPMLJBTDwSdV7glu2E7ysuJh
+         L6aUMZR9B1/8kLc4hELKcGLprbAnL2AuP5kEyPPEJy9HkUouNMjmvSq4SkOeo1Cxd0Oj
+         QHt1OXxSiT/VgPEAo110ZZGNW/2q+adfp3xFIR3n8y2S1PkUNf119RT+IKPsDTxTP5kA
+         zQAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXO3fAXhk2xg21g7wrByhJKxIKvnJ/lhiTCnoyNuuaHtgM9p/f6QFpmH4nA8zlHgofOJbecLFykIobvflqq3b+8hOtn5Aj5qSOOl9oB4J5m4I3p7yd9
+X-Gm-Message-State: AOJu0YzgAptC/MKr/sAr9+r1xdH2kPY+/fUHe6D+wduZ+I5gCs4Vh8r+
+	1ivpEZA/wNEpmaws7V4eMF3BRSM2a1L+KiQjRx4tG5knugMMMFUVI8wesLhrPbJnY2przLOiWjT
+	elg==
+X-Google-Smtp-Source: AGHT+IHGcBZeWomIzIFwBfiOMFlxUFOTFyc9Ir8QWf3t3gN0b20h6ulZiuDs4iuC0WQMN8fZn6ZxBI8oY4E=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:154c:b0:dbd:b4e8:1565 with SMTP id
+ r12-20020a056902154c00b00dbdb4e81565mr1138104ybu.4.1709895784371; Fri, 08 Mar
+ 2024 03:03:04 -0800 (PST)
+Date: Fri, 8 Mar 2024 12:03:01 +0100
+In-Reply-To: <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLQ8uVaSKx-zth1HTT44T3ZC8C1cyNxxuhPMqywGVV9Pw@mail.gmail.com>
+Mime-Version: 1.0
+References: <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net> <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner> <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com> <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area> <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+Message-ID: <ZervrVoHfZzAYZy4@google.com>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Dave Chinner <david@fromorbit.com>, Paul Moore <paul@paul-moore.com>, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 07, 2024 at 07:25:05PM -0800, Alexei Starovoitov wrote:
-> On Thu, Mar 7, 2024 at 12:51 PM Paul Moore <paul@paul-moore.com> wrote:
+On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
+> On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> > On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+> >> On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@goog=
+le.com> wrote:
+> >> I need some more convincing as to why we need to introduce these new
+> >> hooks, or even the vfs_masked_device_ioctl() classifier as originally
+> >> proposed at the top of this thread.  I believe I understand why
+> >> Landlock wants this, but I worry that we all might have different
+> >> definitions of a "safe" ioctl list, and encoding a definition into the
+> >> LSM hooks seems like a bad idea to me.
 > >
-> > On Thu, Mar 7, 2024 at 4:55 AM Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > There's one fundamental question here that we'll need an official answer to:
-> > >
-> > > Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
-> > > to request access to various helpers in the kernel?
-> >
-> > Phrased in a slightly different way, and a bit more generalized: do we
-> > treat out-of-tree BPF programs the same as we do with out-of-tree
-> > kernel modules?  I believe that's the real question, and if we answer
-> > that, we should also have our answer for the internal helper function
-> > question.
-> 
-> From 10k ft view bpf programs may look like kernel modules,
-> but looking closely they are very different.
-> 
-> Modules can read/write any data structure and can call any exported function.
-> All modules fall into two categories GPL or not.
-> While bpf progs are divided by program type.
-> Tracing progs can read any kernel memory safely via probe_read_kernel.
-> Networking prog can read/write packets, but cannot read kernel memory.
-> bpf_lsm programs can be called from lsm hooks and
-> call only kfuncs that were explicitly allowlisted to bpf_lsm prog type.
-> Furthermore kfuncs have acquire/release semantics enforced by
-> the verifier.
-> For example, bpf progs can do bpf_rcu_read_lock() which is
-> a wrapper around rcu_read_lock() and the verifier will make sure
-> that bpf_rcu_read_unlock() is called.
-> Under bpf_rcu_read_lock() bpf programs can dereference __rcu tagged
-> fields and the verifier will track them as rcu protected objects
-> until bpf_rcu_read_unlock().
-> In other words the verifier is doing sparse-on-steroids analysis
-> and enforcing it.
-> Kernel modules are not subject to such enforcement.
-> 
-> One more distinction: 99.9% of bpf features require a GPL-ed bpf program.
-> All kfuncs are GPL only.
+> > I have no idea what a "safe" ioctl means here. Subsystems already
+> > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> > "safe" clearly means something different here.
+>=20
+> That was my problem with the first version as well, but I think
+> drawing the line between "implemented in fs/ioctl.c" and
+> "implemented in a random device driver fops->unlock_ioctl()"
+> seems like a more helpful definition.
 
-While these are certainly all very nice properties it doesn't change the
-core question.
+Yes, sorry for the confusion - that is exactly what I meant to say with "sa=
+fe".:
 
-An out of-tree BPF LSM program is requesting us to add nine vfs helpers
-to the BPF kfunc api. That out-of-tree BPF LSM program is not even
-accessible to the public. There is no meaningful difference to an
-out-of-tree kernel module asking us to add nine functions to the export
-api. The safety properties don't matter for this. Clearly, they didn't
-prevent the previous bpf_d_path() stuff from happening.
+Those are the IOCTL commands implemented in fs/ioctl.c which do not go thro=
+ugh
+f_ops->unlocked_ioctl (or the compat equivalent).
 
-We need rules for how this is supposed to be handled. Unless those rules
-are clearly specified and make sense we shouldn't be adding BPF kfuncs
-based on requests from out-of-tree BPF LSMs that amount to "we need
-this".
+We want to give people a way with Landlock so that they can restrict the us=
+e of
+device-driver implemented IOCTLs, but where they can keep using the bulk of
+more harmless IOCTLs in fs/ioctl.c.
+
+> This won't just protect from calling into drivers that are lacking
+> a CAP_SYS_ADMIN check, but also from those that end up being
+> harmful regardless of the ioctl command code passed into them
+> because of stupid driver bugs.
+
+Exactly -- there is a surprising number of f_ops->unlocked_ioctl implementa=
+tions
+that already run various resource management and locking logic before even
+looking at the command number.  That means that even the command numbers th=
+at
+are not implemented there are executing code in the driver layer, before th=
+e
+IOCTL returns with an error.
+
+So the f_ops->unlocked_ioctl() invocation is in itself increasing the surfa=
+ce of
+exposed functionality, even completely independent of the command number.  =
+Which
+makes the invocation of f_ops->unlocked_ioctl() a security boundary that we
+would like to restrict.
+
+=E2=80=94G=C3=BCnther
