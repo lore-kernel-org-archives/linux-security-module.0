@@ -1,121 +1,126 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACB45C99;
-	Fri,  8 Mar 2024 03:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CE21CFB2;
+	Fri,  8 Mar 2024 07:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709868320; cv=none; b=uBtxMIJd8ueH9aiUxHPnxmAffnZjtSHJdI0/vbQ8lGNuBmrhoqbT6X03A0jbK+QwZiIIM2Y6NIgxvk8XgdxjVkSZbTpGOOkv0WMiUr3toDJxXzDgJxBepYGYCs7emJrBd1Mjr7nazO/zQycUOs5bIYn4q7qg8LFsHNGsRcLykMU=
+	t=1709881433; cv=none; b=bf2BXuE06HQNPDnnfoOGSvNAhcYRv9vgO3we6x5wovHPjzaEZKqM9duA9Rpz4mE1LTNXP+1JzCRpXfeZIl+PvQJj7VStoRSwS3+hl6n1dvCgjF+mBLrTa8vkz70fE6e0ymI9J4lpAkGcZZDrofH013i1pZsp5YmII0Kh3IuFUHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709868320; c=relaxed/simple;
-	bh=ljjWsD0mkDW6S5Z8l+KmzlJNgsYlODKfPIHn5+hvqcY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BcTMxG2QEEMcs/U/O3zSbytPF8xY1bk48Ydok51QIDqvstQ0hc25H7LTJ4pTJyEY1aEph6iTo95K0RLKFxGNdvVJ1DRk3JfNRG7UXZdYrEEu0fDzaHAs9J4RpNM9hrMGJTO4SBC+pTdUJCwlQhaCgKAwDDUqywPngR3Y4Txqdx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBfqqBdb; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709881433; c=relaxed/simple;
+	bh=1uqReeQKbaxkHZhzMByNGKVvUKOgE5HuK7lsF7HGm64=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=dtewXZVlx98J2IP9PijKsNW/4K72XtHq+nms6K4EucQ434ZNgv2OLG0hA3cGfCUO2ee9WTlxxctC/ywy1N1WAdWpAKaUfttstRLiY+X64l1sJPdMw9VOpejteDwv7uzvmlCr+qPqQtsay4EWH3g72MCFkSdO5K/GLQxQwz88e3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=pe4KXeOy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iSZA6nXd; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBfqqBdb"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d2ab9c5e83so14878571fa.2;
-        Thu, 07 Mar 2024 19:25:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709868317; x=1710473117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LPSiClXTZkXxOQQM7cnS4xIuIQY9WF4sDtVpHq+rPH4=;
-        b=nBfqqBdb+53k1lzUHcw+HWgK9LU1RS7wVFOOi5GnVRCNG0u5RU2xLOA4OqgCw4baHx
-         jDjOFxhZkjtwL5iDDX8yyEJCIYCEu4h+Ov4E7YzkpFr9/jQD1X9dwhsrPp9wxinzkxRc
-         46CFQ+SwXYRvrzQRsAmY628IWmqnNKkHmpQ+Xw51OzG3xvS/7YFBel07xH1kZMCj7fme
-         nEbL+tWv5lJwGa9TGqTZX8PMBqBPM5osOGoQBhRMmy23DKUib3Uk004LhIgmcLHrn2m/
-         FrEJRBuo5aY1mmkZrXsm3F4r+/U7086VbgleO8gQ1VX10iblcMmMXIHjbVxPNEzBF95m
-         pN7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709868317; x=1710473117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LPSiClXTZkXxOQQM7cnS4xIuIQY9WF4sDtVpHq+rPH4=;
-        b=KKMSq6FHO9zRAx2Q6n84ctpVQRajkvhB0F+bW7MR2nj4itP+Bm9wCl5quDmC8oaK5+
-         O66B31ezRjCW9VW9yFj901+OfNEIZhvVGfdyjYlRS09b0mfgP9UYe8Y9Q91ul2sXRfPo
-         l5LI/EtqVJShv9KRHAOwN8uH0RKcy+hq/ycO1z4/8wkuqncuEO9496idezrGSq51DeAk
-         xoQk9Kn6E2iCgdzkkEAUVyUpu1y3Nkjcu4pXzzMQN+LxrBW7VdPD057baPVt9D6tVOYK
-         qOQMUu3XnHftwcYbhu2NreeHMMCYcYHN09HtRuaUOdSWzcsv67pW6i8OjKKOQIp3+WQ4
-         cbBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTrAF3J8kkrg6Wmq+zIMgdh3ZeB71bM/+dHBTzGIaK5pCwBvQdF2kJl0IEY8Ghmn/54XAxI3vm7+JvOJ/4AflZjpHspvRkbWAnN3pNbLZdTS9nap4XtD6CITeCOIyEEEXboAeD15VGXmSEAzMNOjeAODPXmC8WnAjmaoF3SXL+9s9bafKZG2pd3Q==
-X-Gm-Message-State: AOJu0YznYp6zAsUa0Bv+PDAcIGgnEu+UlhEMVZTSQXq03SAOvmSB7OlQ
-	aM+q3r/piMJW8QN9sMeKQ72XAChj8OhxytKiE98guQHiswny0sq65YwHKWt8P8Em/pI44t+N+FQ
-	5kPOlpq+Irj7K0d+xnlbNcPr+ghU=
-X-Google-Smtp-Source: AGHT+IFSVbbuqmWwNNTZOd4k0Y+Frt5MCyeYjJjNoXLplH7e4td4X/jthidRHH/iK8DjOzl55b03fcskIUPEJP5DWjE=
-X-Received: by 2002:a05:6512:1250:b0:513:95b6:2e79 with SMTP id
- fb16-20020a056512125000b0051395b62e79mr222993lfb.69.1709868316510; Thu, 07
- Mar 2024 19:25:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="pe4KXeOy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iSZA6nXd"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 1B17E1380174;
+	Fri,  8 Mar 2024 02:03:50 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 08 Mar 2024 02:03:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1709881430;
+	 x=1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=
+	pe4KXeOygKcNKSWM5hmox4pfiU8kPMPCRfR5ZiYJ15j9paKTWuSHhdeRc2mzxNQe
+	8uzRhl7L1HQ5iOir2pUs6IXtuOFPrjpcWzPuJ5iUjsjNbX/UZ0hPm384VU2U3Qxe
+	ZZat52HklxhJQA68qWj+CFNlznMvZIw3KHhL/0PEFDHBjPgyN6fcDmct2sCDXe+x
+	SbHeZC29E5SFOj+MzfdiFgEAAAQVOkw7BrociwvCckRPBg6WMiQ+FovB4U8mqrXq
+	e6ZQXv3n48VFwee1ij6kC1TnQ5wI461NYGRxyYhno68XN02023HPvS6gMZ7FWhW7
+	ArirIcshWkKAoMpi92I0+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709881430; x=
+	1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=i
+	SZA6nXdAfFtih1ngbHWCqk0lZkUKVOd9/bIoUPcFiujle/y3GMSb+sGsy1oBn8Yp
+	3HtkKyFC4a1BdDYFsNcpNf1Yzb+LPC9LYZ6cSXEvJtz7wtE/vKPsGvQkMGhl8HGl
+	aC+DSEQuP5ZxvcJwu6ElJLtAxDtU9iNd3Br64ObiKXrO26KBV1oZS6O47Fan5qSP
+	rO9BSeeZ91rU3pcszszxYyG581Ohx8RMyDpO8IMd6JNoN6avnCv32LP5kSS5v9q9
+	25+RkaM8Zs2Xu8a7tUKux8GF2y7ZsRDKZjOnejJZ65qcKeBKTiC3mUPWGVbDEEmn
+	PaTrh84ICGA7/6osxAKcA==
+X-ME-Sender: <xms:VbjqZe16L7zdiA84zomB94jPsnUEf9tE2jES9hd_CwpKILxmI40tcg>
+    <xme:VbjqZRFhGumC61X13SPXi2hn-cKW4KJHwC7CO_Zr0_uJL4tbboyj9pdM74EvTwN58
+    07BUW_bg0WCN_iWWnA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrieeggddutdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:VbjqZW7yfCRePSqVUT0NUBlr8EnsxhcN7pBZooS2-jmqNt4XRsfGvw>
+    <xmx:VbjqZf14TfEDyIxvH1DoIM2CbXMT80mDgha9H52BpgXBz-votFhgkg>
+    <xmx:VbjqZRGWL4T4ZpuDtXKLKcqUvIUbQhg7HOQrYcQDgHhT4hLaCAJT9A>
+    <xmx:VrjqZQewIHWsqdcebM3l22gYnFxH8VW5T2PzH9KEcs4qbWslz3VqEQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 522C7B6008D; Fri,  8 Mar 2024 02:03:49 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-251-g8332da0bf6-fm-20240305.001-g8332da0b
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
- <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
- <20240307-phosphor-entnahmen-8ef28b782abf@brauner> <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhTbjzS88uU=7Pau7tzsYD+UW5=3TGw2qkqrA5a-GVunrQ@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 7 Mar 2024 19:25:05 -0800
-Message-ID: <CAADnVQLQ8uVaSKx-zth1HTT44T3ZC8C1cyNxxuhPMqywGVV9Pw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+In-Reply-To: <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+References: <20240219.chu4Yeegh3oo@digikod.net>
+ <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+Date: Fri, 08 Mar 2024 08:02:13 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dave Chinner" <david@fromorbit.com>, "Paul Moore" <paul@paul-moore.com>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
+ "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
+ "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
+ "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 7, 2024 at 12:51=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+>> On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@goo=
+gle.com> wrote:
+>> I need some more convincing as to why we need to introduce these new
+>> hooks, or even the vfs_masked_device_ioctl() classifier as originally
+>> proposed at the top of this thread.  I believe I understand why
+>> Landlock wants this, but I worry that we all might have different
+>> definitions of a "safe" ioctl list, and encoding a definition into the
+>> LSM hooks seems like a bad idea to me.
 >
-> On Thu, Mar 7, 2024 at 4:55=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> >
-> > There's one fundamental question here that we'll need an official answe=
-r to:
-> >
-> > Is it ok for an out-of-tree BPF LSM program, that nobody has ever seen
-> > to request access to various helpers in the kernel?
->
-> Phrased in a slightly different way, and a bit more generalized: do we
-> treat out-of-tree BPF programs the same as we do with out-of-tree
-> kernel modules?  I believe that's the real question, and if we answer
-> that, we should also have our answer for the internal helper function
-> question.
+> I have no idea what a "safe" ioctl means here. Subsystems already
+> restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> "safe" clearly means something different here.
 
-From 10k ft view bpf programs may look like kernel modules,
-but looking closely they are very different.
+That was my problem with the first version as well, but I think
+drawing the line between "implemented in fs/ioctl.c" and
+"implemented in a random device driver fops->unlock_ioctl()"
+seems like a more helpful definition.
 
-Modules can read/write any data structure and can call any exported functio=
-n.
-All modules fall into two categories GPL or not.
-While bpf progs are divided by program type.
-Tracing progs can read any kernel memory safely via probe_read_kernel.
-Networking prog can read/write packets, but cannot read kernel memory.
-bpf_lsm programs can be called from lsm hooks and
-call only kfuncs that were explicitly allowlisted to bpf_lsm prog type.
-Furthermore kfuncs have acquire/release semantics enforced by
-the verifier.
-For example, bpf progs can do bpf_rcu_read_lock() which is
-a wrapper around rcu_read_lock() and the verifier will make sure
-that bpf_rcu_read_unlock() is called.
-Under bpf_rcu_read_lock() bpf programs can dereference __rcu tagged
-fields and the verifier will track them as rcu protected objects
-until bpf_rcu_read_unlock().
-In other words the verifier is doing sparse-on-steroids analysis
-and enforcing it.
-Kernel modules are not subject to such enforcement.
+This won't just protect from calling into drivers that are lacking
+a CAP_SYS_ADMIN check, but also from those that end up being
+harmful regardless of the ioctl command code passed into them
+because of stupid driver bugs.
 
-One more distinction: 99.9% of bpf features require a GPL-ed bpf program.
-All kfuncs are GPL only.
+      Arnd
