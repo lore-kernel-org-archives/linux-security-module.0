@@ -1,180 +1,260 @@
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF66E24B2A
-	for <linux-security-module@vger.kernel.org>; Fri,  8 Mar 2024 22:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4949B5FF16
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Mar 2024 22:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709936667; cv=none; b=MAk1unDvK6R7b2lPm869+Tra4bF+eBI/DqHHcBHct5Uf5e+1w/duN/2mjSdiH1yACbZ/hR3YhBHOFlLf1TRmXGkANLsyuVzlMbMJgBmy8NOVyJKoq6szpZrP6DFBf2dE7GrtnvWKe0i9PM5EIybBxeQJGloPf5hsZHJ6xgf0h3Q=
+	t=1709936735; cv=none; b=PbjQDfacR1CncwjzD8LyD7z+0MMxABWXtIYw0IXNEJk4lmNm45Dwur8ossJsV37zY2GOHO0LsRZeclRiU42b0myoU7wNNkdJgL3I/be7dTxEXJYvpcPqxjXgwo1bAMu/uMsRjORDM9Yth30mhZV2UIqwBfhiX4IjCSOIjW4zd/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709936667; c=relaxed/simple;
-	bh=lHKfxuGYf9lMNawlqgOVU6QWY6NK4e+AKPHbRZrlMGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ONBvs3QiPlOKMQ5trmb9s1LfOflGXfjyaS/Eb61Aq+x3GlsEKoh+Hjbd/Hc7FH045ZrjFXw1QLyxPv8mwxLvwU6olo7wdv7+8pMmfgSlKS+rueml9VoH7qOkWlAr/xL8KyF8ww1y9Dx0f74YDRvGh6C4HFb/T3gunFpx15nQO2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=QhTINgcN; arc=none smtp.client-ip=66.163.191.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1709936735; c=relaxed/simple;
+	bh=ClYzY2c7O6M4UuuA/IjpDza63NwIj3PQw2ENCW64gWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xm5DwLXnI+ECaxBWbyMDUm6o9iYkRZi+iNJh0Zqz77UZfzbezh1BrqONaMnVILhmopUaYLGCPg03gGMPj7HLdzWfQiqwVpNvhSFRB2p3vVPmY/IUHxYQeCEafFbJm20x9oNYuYpwGP51f6Mzfb+pbgo5Wwtm7ElevcA+s33m0hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UCsX8nN2; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QhTINgcN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1709936664; bh=T0vPjVSkmHvGqZQ14T0ckUmFLTbT5OBuXXFUZdgcV4w=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QhTINgcNuwXtp/DhK0HlyqRxq506RhR+wp4M643j1wdRCpNqgr8ECOGCSZjiVfQC59vEHMXlqm7/Fg6Q3w5EwE0nt0VyJ9YG0QxBYWRoE/btgX3mU4skbH+JtidVbEmvnokF2Tl6DlLJ1lvQo4DJtOCX9ZfpG1/iJ8y7RoPLxrLhJg7LiGCjHRK+2eA5iaRFw1d9JY7TJBtIZ7nfBbgw26DVx26IYlce+T6U6RPefrD2SMznj9v5snUNU9Si6+x31RLpnUAB6a/S1Nwzsjne65ptEQ5MlF66tULnh6cZ5rIDQuBJePFUlIrOH7++HtSWBbLzYYhkORkIQQJeZLrOFA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1709936664; bh=feN2UsidFGxHPc3jlh8nFDEqhk6we8b80FiUockK6pk=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=QhMxffmi2OvbGT2lU7ydDfYN0vjrV8+heXrufxk6RvzctqddZCO5Nltw0O522VlUN/AJav/EP9TiYcQq8A10IvU4T+7l7viqCmuYZefV90YnCUzByfagdjgQmFAHZYRN4cv/VlpNt9h4unkp13WTvgxsxeDIM4b8lxFLeCykmHZZrbQoKdfFrpba3yzWp4vLsmabUXNbqw2Fv2BObGYDMaPVozJ00UtFSK2HhM+2MbKc09tAsa3SVyy82oPknPnIDvqdzaiy+T4p6cW37RxmtgRDVgbK1RLIWJY6eYCTeegNyj0vlNwFdKDL/R5N+J4WfHQh/d6k3F8yBJjIHfrwaw==
-X-YMail-OSG: zE42bZYVM1kvN4FsVTrIe804oxA3y1i6gH2s7ukeTj3wYeu88oxzngdhm.yvqbJ
- 0xEtA60c3C7_HNv4EgwF18X2e9IH__e2F6zQiDsUQHCdaQ9_QBpccJV9WGMpnWaCxN2rN2jxRnke
- dgx6g7Am7n_F1Wkw__27CVsgIJJYE9C9cWhO50T4NCxp0fXdqtjAwoHRRFuez64RVzp_n94zRyvS
- I3n3VhloDBj53B.2SxbMMfTj1G6N.a4lNw47qaGSVVSiZ5DM3PbkjC_I06w42RtI1k9toYE_x0Pl
- T1xg7ZkIP9UVrNYhERAY80AmyubNuXmwToQrlw3ZmVBOJD_wqaDeMArOojajKPM5cqXto51wQ7zR
- eHYQghqt2PoK9P9jwgMI6XhjpdOfHNMq.h4X8B3ZYdQHDFZzgzqHN6r_l_joy8Ch1wBxTL8OuPCi
- 5jBG5PRt03YW2joaxpAOWoBp0HWiv5pO9Z2rGesSOQ0oexlFR5NHcm2R9hJo8xIe0kxt2enkI42K
- fqq1bWT4qTdDeVyEzDRv1snl50DI1Ajpw8ph7UxOjhQdOK8Zek691ybpQqxhayC1cGz293g5R1On
- DuAgxS2wQU3ilbGXkEReH6R530jUqrImtsB79T8sH6dZ85xV0HxGKHoo0i8W264YUJt_K83t37cq
- ti.B8vRYYoNh3ocxLbRnSwvy.dsDLARlTuVx0YJab.jBahhF_vJmnbjT2bNtvpgLRTwmL.r60a8l
- gkz1ikBZlVuDbWPANpzNYgF294XawwxR4UIhJBRsQdNBCcObq_iKRLsM5cdbWx98KLgg6a1oNeIq
- QhGXAQRtW4WrPBYgqMJQqAT2ERB0bslZCr.psnaFtn7dgqcmchwi8acCTXwYyQ85Pa3azL8S3tvc
- cQw88mQL3tZEBpTSd4dfZ6UoKOixj2CDtEwEwISTT6BQLoZIizeQvuXsF91TvbFKZj6ntY70kdt1
- oPmEUz2YMBv1umr83Ut2E2P0RWJ6mMXWgs5fYY.CbuwgXBsiRf7USDScePeCFCceqKF9c_M4VVbt
- 2FFBhpj2zRHDeH.3ZzOTko.KLUC4eIA0yvqkDC.XeQ2EJqu1KKGDwMnd0J4Kf1oLksoLuj_8G1kr
- fcJ8JtBJqPX71ciOQIXHAjAhFh4eD6FJB.SV91qlygeziIZIAtUMUsFYNA5l.CFwDF45noEQHAfJ
- eA9G8EH8aYn2EMyXVzLDUMvmo_y3tZ44S2i_BePW0ZIkqNq7C50FUdmPEk4r4LY.SWifL2eeXYz.
- 0Z0sP05S_8HFD6biyoRWRosC6p7irZQbrzJb.qRywr.cUtVYlVvFSwyUlQlYJd4qVCsFDnnEN3c7
- vCes4T_SjBiSZNg34N5kEW7.yv9.bvHZue6OTz6xDox7HMs5re_6dJqfjGwvB..GgeK3AFJW4Dar
- vmPX.XpBi.Tjb6cw1O5q.zk8DGhxlt1MVW.KL7slyT0JjaYtw4JYHyXyC7M_JlywAwbrcL8_4kv.
- XQxrBe_YetNkzI629Io.wzrTdGwZY.zGtbUDIaaGlUZia4mcHRCorxox.GAVNU1r9WRknRR4jEL4
- TM7DflrwsnyQBGt2zmTYV3FoUsTw8oG6GiS96dkczxVbgdGRgVilZTnh4N2B440NVkoW9ur4A69z
- OnlkJgL2RMxViUuDsjOEnuiPcJGTIwx0JzWJoC.E6b4VMzmJMfsfEA1n_qFvpmmggaAzQb_yb7CY
- SYjDHptVCXAeGcel1kSchtw4SBUz.lWLM_7Mv3kGHADwpWrsvyZ9B8Oe5sj8EXETP3SNQTDKz98J
- EYZL4jsktTPV5Nb_waLsno5t5WZDZyCgo0Z5QU0IO2Z6CNzVbFGHroGS0SldagyTf6u45_cHxzS6
- qBf1OhuXuYRDg6gqBoOeINlEWI_2jmuyn49yC0u9uJU8fsJwEPHa3OMqL.C7haL7uWfZqi_WS_Et
- vF6lAYFYo6ofaY.xdvX0399RgIJZTq.1i0PPsoCWwDqPHG0CtxfOjM2_Jl.ap35GL.YGIVnUTr_B
- Gq5b28G_2xzNUiy1MQm3mhMWD5pZP43gi31ctCdzw7vDW46de.TVqQ16Gk14.Vclfn4H6tHxQUlZ
- Im98tljyWZG35XA_eteru_Sag_Jzl2digqdNn.J7j.WWsiNsxaD8p437181otpVm32GsJNLxwE.2
- ai4g095mFt9chIrZDJLSWsyYA5S86P6GhEOZOZJA9EmW5gdD3NT1jCJlWOG6TNLgJsca.7yBaTXu
- zsesBpFBbFlr0C6UpmNBj51M_tokmafyFdGE2xd2N9eWVSPZzlPOVuJ6R3IJQT0DFFqbpe.ERF.n
- exfJF3qP159KmtR9BKLo-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 85555eee-e1f8-4db8-be99-7834908b3594
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Fri, 8 Mar 2024 22:24:24 +0000
-Received: by hermes--production-gq1-5c57879fdf-llxbt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2c08ef0d57b63e5959879561bfd6bb1f;
-          Fri, 08 Mar 2024 22:04:04 +0000 (UTC)
-Message-ID: <c0b43c71-455e-4a40-a45b-37fc4a809434@schaufler-ca.com>
-Date: Fri, 8 Mar 2024 14:04:03 -0800
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UCsX8nN2"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dd014003277so2379649276.2
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Mar 2024 14:25:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1709936732; x=1710541532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eXDYSogmsoq5g6Cv2akA/KLSumsnEiQAY1I83GH43XI=;
+        b=UCsX8nN2cqZ7Itjep/J1/u84K9qnNdDPWoUC56LlX09kfHwQ0TvFVI2Sk4HjDP7i5j
+         eDoQr+EhgA/WE5PnjERGyzIZckaYx3zfXDwU7wujhh+C60ELldxW5+U1hxH5HR+d2xY/
+         8D5rKnA1mcmxXeqjcJb7g9n/Jx/nLC5sE2CnKPZ5h0YTVkRc5tOYB0GOoiZ1THAZS1NH
+         Eq6sF+zCm4QFynxMGFdn7M+iT1KXrCIeIHeagyPRt3iKyNyYiS2SkpRcPtTNcLLt0gt0
+         0zB9IsvRM2O74zlLvEjLb4Qub8lEF00X1QuJ8gV+v4kqP1bYDoylSfGc/dRkoXoKF3gS
+         WaFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709936732; x=1710541532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eXDYSogmsoq5g6Cv2akA/KLSumsnEiQAY1I83GH43XI=;
+        b=CZ0TYzocK1c048t1GN1LxJDr9IoCI/qjFVAJxCO3XHqUVi8D2uowNtovbg0svikw5a
+         hxxpw+TDP0uS4hLAbZ+LaCXuiVWigJS1bmJx0G1b7NfjvlHxtNg6j+r7NvRRHow4i6/E
+         WXExgv/vL/24QOT+jE9aJdt8P3V1140WoYsjJgA3qL6wBTJTDObTUL7gvppNK1YE5unl
+         ZKCVuDlcn4OJGGyclO1g3UbtHPiV3A3sELy3H0UMdokNZj3E2jLbbGJlZTO7MkCBravW
+         Rt2Pe/GOfUwxH9cKS9qOJg0n5T31sUOd8TMx9RQBVSv43bUmk4OYH5GrqYaSH8B7F2qH
+         LUgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhVOcMVm7we+IZUP4KR2kRIBUNOSFjChp57Qd9b019SC7UUyM3tJCB9QXK0LwuWopRq93xXRSwDfSaUeHQlo3LU0faAJimQ6TtVYMIr6mlpHAA6/tk
+X-Gm-Message-State: AOJu0Yy9guT6aFLKYC27R9NQaxTLCHNXxTXnCePqYceL1cb5pBgMSm9o
+	G6iqkQSNEIqp5zsvOwEjSozyCgvUnSjIAqPlKBzaqLnGbf/3ZwqfwNwBxPfP5nzt/nhXsVWvfQS
+	3kALPzIRYZiU0r1tK+wSwQ4k7AojmBfS419Uq
+X-Google-Smtp-Source: AGHT+IGeX9v3HNY30ujRGwElgZMAClCvOi1NLZIrAFlEW0MFTfAOqyikN08EZTflRTf3oyXtPr/s1GFblDak9vtZeI0=
+X-Received: by 2002:a25:a483:0:b0:dcc:273e:1613 with SMTP id
+ g3-20020a25a483000000b00dcc273e1613mr316675ybi.40.1709936732132; Fri, 08 Mar
+ 2024 14:25:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Content-Language: en-US
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Paul Moore <paul@paul-moore.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Dave Chinner <david@fromorbit.com>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>,
- Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>,
- Jorge Lucangeli Obes <jorgelo@chromium.org>,
- Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
- Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240306.zoochahX8xai@digikod.net>
- <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
- <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
- <Zem5tnB7lL-xLjFP@google.com>
- <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
- <ZepJDgvxVkhZ5xYq@dread.disaster.area>
- <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
- <20240308.saiheoxai7eT@digikod.net>
- <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
+References: <20240306.zoochahX8xai@digikod.net> <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner> <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com> <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area> <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <20240308.saiheoxai7eT@digikod.net> <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
  <20240308.eeZ1uungeeSa@digikod.net>
-From: Casey Schaufler <casey@schaufler-ca.com>
 In-Reply-To: <20240308.eeZ1uungeeSa@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22129 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 8 Mar 2024 17:25:21 -0500
+Message-ID: <CAHC9VhRnUbu2jRwUhLGboAgus_oFEPyddu=mv-OMLg93HHk17w@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dave Chinner <david@fromorbit.com>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/8/2024 12:12 PM, Mickaël Salaün wrote:
+On Fri, Mar 8, 2024 at 3:12=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
 > On Fri, Mar 08, 2024 at 02:22:58PM -0500, Paul Moore wrote:
->> On Fri, Mar 8, 2024 at 4:29 AM Mickaël Salaün <mic@digikod.net> wrote:
->>> On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
->>>> On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
->>>>> On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
->>>>>> On Thu, Mar 7, 2024 at 7:57 AM Günther Noack <gnoack@google.com> wrote:
->>>>>> I need some more convincing as to why we need to introduce these new
->>>>>> hooks, or even the vfs_masked_device_ioctl() classifier as originally
->>>>>> proposed at the top of this thread.  I believe I understand why
->>>>>> Landlock wants this, but I worry that we all might have different
->>>>>> definitions of a "safe" ioctl list, and encoding a definition into the
->>>>>> LSM hooks seems like a bad idea to me.
->>>>> I have no idea what a "safe" ioctl means here. Subsystems already
->>>>> restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
->>>>> "safe" clearly means something different here.
->>>> That was my problem with the first version as well, but I think
->>>> drawing the line between "implemented in fs/ioctl.c" and
->>>> "implemented in a random device driver fops->unlock_ioctl()"
->>>> seems like a more helpful definition.
->>>>
->>>> This won't just protect from calling into drivers that are lacking
->>>> a CAP_SYS_ADMIN check, but also from those that end up being
->>>> harmful regardless of the ioctl command code passed into them
->>>> because of stupid driver bugs.
->>> Indeed.
->>>
->>> "safe" is definitely not the right word, it is too broad, relative to
->>> use cases and threat models.  There is no "safe" IOCTL.
->>>
->>> Let's replace "safe IOCTL" with "IOCTL always allowed in a Landlock
->>> sandbox".
->> Which is a problem from a LSM perspective as we want to avoid hooks
->> which are tightly bound to a single LSM or security model.  It's okay
->> if a new hook only has a single LSM implementation, but the hook's
->> definition should be such that it is reasonably generalized to support
->> multiple LSM/models.
+> > On Fri, Mar 8, 2024 at 4:29=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@di=
+gikod.net> wrote:
+> > > On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
+> > > > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> > > > > On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+> > > > >> On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoac=
+k@google.com> wrote:
+> > > > >> I need some more convincing as to why we need to introduce these=
+ new
+> > > > >> hooks, or even the vfs_masked_device_ioctl() classifier as origi=
+nally
+> > > > >> proposed at the top of this thread.  I believe I understand why
+> > > > >> Landlock wants this, but I worry that we all might have differen=
+t
+> > > > >> definitions of a "safe" ioctl list, and encoding a definition in=
+to the
+> > > > >> LSM hooks seems like a bad idea to me.
+> > > > >
+> > > > > I have no idea what a "safe" ioctl means here. Subsystems already
+> > > > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, s=
+o
+> > > > > "safe" clearly means something different here.
+> > > >
+> > > > That was my problem with the first version as well, but I think
+> > > > drawing the line between "implemented in fs/ioctl.c" and
+> > > > "implemented in a random device driver fops->unlock_ioctl()"
+> > > > seems like a more helpful definition.
+> > > >
+> > > > This won't just protect from calling into drivers that are lacking
+> > > > a CAP_SYS_ADMIN check, but also from those that end up being
+> > > > harmful regardless of the ioctl command code passed into them
+> > > > because of stupid driver bugs.
+> > >
+> > > Indeed.
+> > >
+> > > "safe" is definitely not the right word, it is too broad, relative to
+> > > use cases and threat models.  There is no "safe" IOCTL.
+> > >
+> > > Let's replace "safe IOCTL" with "IOCTL always allowed in a Landlock
+> > > sandbox".
+> >
+> > Which is a problem from a LSM perspective as we want to avoid hooks
+> > which are tightly bound to a single LSM or security model.  It's okay
+> > if a new hook only has a single LSM implementation, but the hook's
+> > definition should be such that it is reasonably generalized to support
+> > multiple LSM/models.
+>
+> As any new hook, there is a first user.  Obviously this new hook would
+> not be restricted to Landlock, it is a generic approach.  I'm pretty
+> sure a few hooks are only used by one LSM though. ;)
 
-I've been watching this thread with some interest, as one of my side projects
-has been an attempt to address the "CAP_SYS_ADMIN problem", and there looks
-to be a lot of similarity between that and the "ioctl problem". In both cases
-it comes down to a matter of:
-	1. uniquely identifying the action
-	2. providing the information to code that can act upon it
-	3. providing "policy" to determine what to do about it
+Sure, as I said above, it's okay for there to only be a single LSM
+implementation, but the basic idea behind the hook needs to have some
+hope of being generic.  Your "let's redefine a safe ioctl as 'IOCTL
+always allowed in a Landlock sandbox'" doesn't fill me with confidence
+about the hook being generic; who knows, maybe it will be, but in the
+absence of a patch, I'm left with descriptions like those.
 
-My thought for the CAP_SYS_ADMIN case was to provide a new LSM hook
-security_sysadmin() that takes a single parameter which is the action ID.
-I called the action ID a "chit", because it's short and all the good,
-more descriptive words where taken. Calls to cap_able(CAP_SYS_ADMIN) could
-be replaced by calls to security_sysadmin(chit). security_sysadmin() would
-first call cap_able(CAP_SYSADMIN) and, if that succeeded, allow LSMs with
-registered hooks (selinux_sysadmin() etc) the opportunity to disallow the
-operation. I planned to include a small LSM (chits) that would allow the
-operation only if the process had the chit on its chit list. Landlock could
-add policy to deal with chits if so inclined.
+> > > Our assumptions are (in the context of Landlock):
+> > >
+> > > 1. There are IOCTLs tied to file types (e.g. block device with
+> > >    major/minor) that can easily be identified from user space (e.g. w=
+ith
+> > >    the path name and file's metadata).  /dev/* files make sense for u=
+ser
+> > >    space and they scope to a specific use case (with relative
+> > >    privileges).  This category of IOCTLs is implemented in standalone
+> > >    device drivers (for most of them).
+> > >
+> > > 2. Most user space processes should not be denied access to IOCTLs th=
+at
+> > >    are managed by the VFS layer or the underlying filesystem
+> > >    implementations.  For instance, the do_vfs_ioctl()'s ones (e.g.
+> > >    FIOCLEX, FIONREAD) should always be allowed because they may be
+> > >    required to legitimately use files, and for performance and securi=
+ty
+> > >    reasons (e.g. fs-crypt, fsverity implemented at the filesystem lay=
+er).
+> > >    Moreover, these IOCTLs should already check the read/write permiss=
+ion
+> > >    (on the related FD), which is not the case for most block/char dev=
+ice
+> > >    IOCTL.
+> > >
+> > > 3. IOCTLs to pipes and sockets are out of scope.  They should always =
+be
+> > >    allowed for now because they don't directly expose files' data but
+> > >    IPCs instead, and we are focusing on FS access rights for now.
+> > >
+> > > We want to add a new LANDLOCK_ACCESS_FS_IOCTL_DEV right that could ma=
+tch
+> > > on char/block device's specific IOCTLs, but it would not have any imp=
+act
+> > > on other IOCTLs which would then always be allowed (if the sandboxed
+> > > process is allowed to open the file).
+> > >
+> > > Because IOCTLs are implemented in layers and all IOCTLs commands live=
+ in
+> > > the same 32-bit namespace, we need a way to identify the layer
+> > > implemented by block and character devices.  The new LSM hook proposa=
+l
+> > > enables us to cleanly and efficiently identify the char/block device
+> > > IOCTL layer with an additional check on the file type.
+> >
+> > I guess I should wait until there is an actual patch, but as of right
+> > now a VFS ioctl specific LSM hook looks far too limited to me and
+> > isn't something I can support at this point in time.  It's obviously
+> > limited to only a subset of the ioctls, meaning that in order to have
+> > comprehensive coverage we would either need to implement a full range
+> > of subsystem ioctl hooks (ugh), or just use the existing
+> > security_file_ioctl().
+>
+> I think there is a misunderstanding.  The subset of IOCTL commands the
+> new hook will see would be 99% of them (i.e. all except those
+> implemented in fs/ioctl.c).
 
-A generalization of this scheme would be to leave the cap_able(CAP_SYS_ADMIN)
-checks as they are and add an optional security_chit() hook for places where
-additional enforcement information is desired. Adding
+*cough* 99% !=3D 100% *cough*
 
-	security_chit(CHIT_IOCTL_TTY_SOMETHING)
+> Being able to only handle this (big) subset
+> would empower LSMs to control IOCTL commands without collision (e.g. the
+> same command/value may have different meanings according to the
+> implementation/layer), which is not currently possible (without manual
+> tweaking).
+>
+> This proposal is to add a new hook for the layer just beneath the VFS
+> catch-all IOCTL implementation.  This layer can then differentiate
+> between the underlying implementation according to the file properties.
+> There is no need for additional hooks for other layers/subsystems.
 
-to an ioctl would allow any LSM to make policy decisions about that ioctl
-operation. Adding
+I'm not sure how you reconcile less than 100% coverage, the need for a
+generic hook, and the idea that there will not be a need for
+additional hooks.  That still seems like a problem to me.
 
-	security_chit(CHIT_ERASE_TAPE_REGISTERS)
+> The existing security_file_ioctl() hook is useful to catch all IOCTL
+> commands, but it doesn't enable to identify the underlying target and
+> then the semantic of the command.
 
-after a cap_able(CAP_SYS_ADMIN) could appease the driver writer who would
-otherwise be begging for CAP_ERASE_TAPE_REGISTERS. My biggest concern with
-this scheme is the management of chit values, which would have to be kept
-in a uapi header.
+The LSM hook gets the file pointer, the command, and the argument, how
+is a LSM not able to identify the underlying target?
 
-A major advantage of this is that the security_chit() calls would only have
-to be added where someone wants to take advantage of the mechanism. People
-who are happy with CAP_SYS_ADMIN or ioctl as it is don't have to do anything,
-and their code won't get churned for the new world order. The downside is the
-potentially onerous process of deciding if an LSM cares about an action known
-only by its number.
+> Furthermore, as G=C3=BCnther said, an
+> IOCTL call can already do kernel operations without looking at the
+> command, but we would then be able to identify that by looking at the
+> char/block device file for instance.
+>
+> > I understand that this makes things a bit more
+> > complicated for Landlock's initial ioctl implementation, but
+> > considering my thoughts above and the fact that Landlock's ioctl
+> > protections are still evolving I'd rather not add a lot of extra hooks
+> > right now.
+>
+> Without this hook, we'll need to rely on a list of allowed IOCTLs, which
+> will be out-of-sync eventually.  It would be a maintenance burden and an
+> hacky approach.
 
-I have patches close to ready. The chit LSM isn't passing the laugh test quite
-yet, so I'm holding it back for now. I wanted to bring this up before we go too
-far down a more complicated path.
+Welcome to the painful world of a LSM developer, ioctls are not the
+only place where this is a problem, and it should be easy enough to
+watch for changes in the ioctl list and update your favorite LSM
+accordingly.  Honestly, I think that is kinda the right thing anyway,
+I'm skeptical that one could have a generic solution that would
+automatically allow or disallow a new ioctl without potentially
+breaking your favorite LSM's security model.  If a new ioctl is
+introduced it seems like having someone manually review it's impact on
+your LSM would be a good idea.
 
+> We're definitely open to new proposals, but until now this is the best
+> approach we found from a maintenance, performance, and security point of
+> view.
+
+At this point it's probably a good idea to post another RFC patch with
+your revised idea, if nothing else it will help rule out any
+confusion.  While I remain skeptical, perhaps I am misunderstanding
+the design and you'll get my apology and an ACK, but be warned that as
+of right now I'm not convinced.
+
+--
+paul-moore.com
