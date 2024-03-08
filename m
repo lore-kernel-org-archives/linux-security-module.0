@@ -1,126 +1,139 @@
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CE21CFB2;
-	Fri,  8 Mar 2024 07:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40254EB41
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Mar 2024 07:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709881433; cv=none; b=bf2BXuE06HQNPDnnfoOGSvNAhcYRv9vgO3we6x5wovHPjzaEZKqM9duA9Rpz4mE1LTNXP+1JzCRpXfeZIl+PvQJj7VStoRSwS3+hl6n1dvCgjF+mBLrTa8vkz70fE6e0ymI9J4lpAkGcZZDrofH013i1pZsp5YmII0Kh3IuFUHU=
+	t=1709882270; cv=none; b=Uzrr6Nk0jpxfjoqDumJycJGe8mT6PeNnDyBq6Tx90nrkmC/DhydO9fNW/uA97gWi1AY1zWKGnzFMiKoqAul9rQrcNBG6vOneb1FCod9YxyGHZUH+2d7a6nUGK6LOauHbUlVeQn8rgM++Zkmt8rtW7hC2mzJvNw86v2slxR4kfXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709881433; c=relaxed/simple;
-	bh=1uqReeQKbaxkHZhzMByNGKVvUKOgE5HuK7lsF7HGm64=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=dtewXZVlx98J2IP9PijKsNW/4K72XtHq+nms6K4EucQ434ZNgv2OLG0hA3cGfCUO2ee9WTlxxctC/ywy1N1WAdWpAKaUfttstRLiY+X64l1sJPdMw9VOpejteDwv7uzvmlCr+qPqQtsay4EWH3g72MCFkSdO5K/GLQxQwz88e3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=pe4KXeOy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iSZA6nXd; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1709882270; c=relaxed/simple;
+	bh=7YvX8bPEV2BI0BpF/k+pwUbl0NZXlnKf36uLhchuK3c=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=tPadfrWSu7BaGqxISgpa9UB49xdClQArU9wtON9DTVZ+E4drg3rIWXS9gaJncz6FwkUvxVX1TUAw6YxltdEdQQJCGy0W84taBXYk/2b7yzfs7Cy5UVm+598VudYd3Z73+3nPPdsiHR2/rgTcjn30BUSUaPCUM0O74wpgNyNS7D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=wY2EXBE3; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="pe4KXeOy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iSZA6nXd"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 1B17E1380174;
-	Fri,  8 Mar 2024 02:03:50 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 08 Mar 2024 02:03:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1709881430;
-	 x=1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=
-	pe4KXeOygKcNKSWM5hmox4pfiU8kPMPCRfR5ZiYJ15j9paKTWuSHhdeRc2mzxNQe
-	8uzRhl7L1HQ5iOir2pUs6IXtuOFPrjpcWzPuJ5iUjsjNbX/UZ0hPm384VU2U3Qxe
-	ZZat52HklxhJQA68qWj+CFNlznMvZIw3KHhL/0PEFDHBjPgyN6fcDmct2sCDXe+x
-	SbHeZC29E5SFOj+MzfdiFgEAAAQVOkw7BrociwvCckRPBg6WMiQ+FovB4U8mqrXq
-	e6ZQXv3n48VFwee1ij6kC1TnQ5wI461NYGRxyYhno68XN02023HPvS6gMZ7FWhW7
-	ArirIcshWkKAoMpi92I0+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1709881430; x=
-	1709967830; bh=11LkabzuvCJDFPJOJPUUSJoKDOL+7OwgTjYJVM+filQ=; b=i
-	SZA6nXdAfFtih1ngbHWCqk0lZkUKVOd9/bIoUPcFiujle/y3GMSb+sGsy1oBn8Yp
-	3HtkKyFC4a1BdDYFsNcpNf1Yzb+LPC9LYZ6cSXEvJtz7wtE/vKPsGvQkMGhl8HGl
-	aC+DSEQuP5ZxvcJwu6ElJLtAxDtU9iNd3Br64ObiKXrO26KBV1oZS6O47Fan5qSP
-	rO9BSeeZ91rU3pcszszxYyG581Ohx8RMyDpO8IMd6JNoN6avnCv32LP5kSS5v9q9
-	25+RkaM8Zs2Xu8a7tUKux8GF2y7ZsRDKZjOnejJZ65qcKeBKTiC3mUPWGVbDEEmn
-	PaTrh84ICGA7/6osxAKcA==
-X-ME-Sender: <xms:VbjqZe16L7zdiA84zomB94jPsnUEf9tE2jES9hd_CwpKILxmI40tcg>
-    <xme:VbjqZRFhGumC61X13SPXi2hn-cKW4KJHwC7CO_Zr0_uJL4tbboyj9pdM74EvTwN58
-    07BUW_bg0WCN_iWWnA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrieeggddutdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:VbjqZW7yfCRePSqVUT0NUBlr8EnsxhcN7pBZooS2-jmqNt4XRsfGvw>
-    <xmx:VbjqZf14TfEDyIxvH1DoIM2CbXMT80mDgha9H52BpgXBz-votFhgkg>
-    <xmx:VbjqZRGWL4T4ZpuDtXKLKcqUvIUbQhg7HOQrYcQDgHhT4hLaCAJT9A>
-    <xmx:VrjqZQewIHWsqdcebM3l22gYnFxH8VW5T2PzH9KEcs4qbWslz3VqEQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 522C7B6008D; Fri,  8 Mar 2024 02:03:49 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-251-g8332da0bf6-fm-20240305.001-g8332da0b
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="wY2EXBE3"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a45c006ab82so238017666b.3
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2024 23:17:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1709882267; x=1710487067; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7YvX8bPEV2BI0BpF/k+pwUbl0NZXlnKf36uLhchuK3c=;
+        b=wY2EXBE3RgnvRgIRgvNXAu0XaxznWS/lRKYE/yZan4fyg5gNzBdcUrM04WdkGqHVB2
+         mjQZaq4d1yfvCqEuFK90mCV88VaUxF7hXrtsiJjPs70czaeKzim1k14JncL+ocDaEgcn
+         2UMDciaIaSSChda5IM78oSxkGOBtmHfXsGbWkkjYnG+UtJyMITmL+a21fGtdgm1LIFfY
+         hoghNkLCbD0R3yj1h6fMTBEa4p6aP33cgR+h/MHI/v0YR7xWVh+rHKSLoF9D1/xZW6t1
+         p6e3rtX0xTONQuGCN5B5niLgD3J4t9L8WA5FiopdLHuJjKJD31MDladddp3JQPUcIZ2M
+         +I6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709882267; x=1710487067;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7YvX8bPEV2BI0BpF/k+pwUbl0NZXlnKf36uLhchuK3c=;
+        b=C7dcEbnk0A7DSdTZ8xwylJjGGJ8PoYVK+2wKV2of6PzQLZiONw528MpVkdxzmhiByY
+         J0ohFq/T7zd6mOHWCaEhVaOQSlUu05IEjLauqDAlpw7UxO2bHkul4hIfy3WBuliA6Q4u
+         H2kveNjxiQsTB7lkGrsEm6dGIMp6nA9lyC+EQidHjqqeyhOjc0kNrgApjSKY7H9fybRU
+         E4o1v3K7fvRwB3IJDnzV3FGbSQ6x+Zx1G/gAkW9q6AbvwyaB73qsZtc9COaGnHjSvrP6
+         Ftd+1fYwIiiL/PBpB8TF66Aqv2uQCd5IghYyieZ3zay0xmZWFdvK1n6etPimWNF/Sd7k
+         42Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCIcc05aXMSeS5vOz1EXHk0iotG71+gXcFmag3CRfzFduFygnvpEugVjVhgFcx/ihGOK6pCs+NiNMx/hde/smcjC3HWkKijKEJswf/UMTX2Pn9SO92
+X-Gm-Message-State: AOJu0YyTwzd5TIk1xgP5JNGiFplQle9ZtP3g2eQx5UvYaK5cVCQS5jJv
+	sqEaAKFmab55iNrBGH2xgMO+yvBB3EaZJHCDE2jyW08OMAlG32vYgzgp82PQe2E=
+X-Google-Smtp-Source: AGHT+IGiGod9W2YM4YZ6sUKkrNh7qVjymDesOFOXF8mtdCcbqIFTzGM2YQaR07gH4KtP9j0849dGZQ==
+X-Received: by 2002:a17:906:339a:b0:a44:ff95:3911 with SMTP id v26-20020a170906339a00b00a44ff953911mr11831490eja.66.1709882267100;
+        Thu, 07 Mar 2024 23:17:47 -0800 (PST)
+Received: from smtpclient.apple (clnet-p106-198.ikbnet.co.at. [83.175.106.198])
+        by smtp.gmail.com with ESMTPSA id f27-20020a170906085b00b00a44ef54b6b6sm6582541ejd.58.2024.03.07.23.17.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Mar 2024 23:17:46 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
-In-Reply-To: <ZepJDgvxVkhZ5xYq@dread.disaster.area>
-References: <20240219.chu4Yeegh3oo@digikod.net>
- <20240219183539.2926165-1-mic@digikod.net> <ZedgzRDQaki2B8nU@google.com>
- <20240306.zoochahX8xai@digikod.net>
- <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
- <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
- <Zem5tnB7lL-xLjFP@google.com>
- <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
- <ZepJDgvxVkhZ5xYq@dread.disaster.area>
-Date: Fri, 08 Mar 2024 08:02:13 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dave Chinner" <david@fromorbit.com>, "Paul Moore" <paul@paul-moore.com>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Christian Brauner" <brauner@kernel.org>,
- "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Jeff Xu" <jeffxu@google.com>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Content-Type: text/plain;charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.400.31\))
+Subject: Re: [PATCH v6 3/6] KEYS: trusted: Introduce NXP DCP-backed trusted
+ keys
+From: David Gstir <david@sigma-star.at>
+In-Reply-To: <CZNRMR5YZPQO.1QBLW62A6S840@kernel.org>
+Date: Fri, 8 Mar 2024 08:17:35 +0100
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+ James Bottomley <jejb@linux.ibm.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ Shawn Guo <shawnguo@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ NXP Linux Team <linux-imx@nxp.com>,
+ Ahmad Fatoum <a.fatoum@pengutronix.de>,
+ sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+ David Howells <dhowells@redhat.com>,
+ Li Yang <leoyang.li@nxp.com>,
+ Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Tejun Heo <tj@kernel.org>,
+ "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+ linux-doc@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+ "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+ "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org,
+ "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+ Richard Weinberger <richard@nod.at>,
+ David Oberhollenzer <david.oberhollenzer@sigma-star.at>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <655221B7-634C-4493-A781-CF014DFFC8BF@sigma-star.at>
+References: <20240307153842.80033-1-david@sigma-star.at>
+ <20240307153842.80033-4-david@sigma-star.at>
+ <CZNRMR5YZPQO.1QBLW62A6S840@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+X-Mailer: Apple Mail (2.3774.400.31)
 
-On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
-> On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
->> On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoack@goo=
-gle.com> wrote:
->> I need some more convincing as to why we need to introduce these new
->> hooks, or even the vfs_masked_device_ioctl() classifier as originally
->> proposed at the top of this thread.  I believe I understand why
->> Landlock wants this, but I worry that we all might have different
->> definitions of a "safe" ioctl list, and encoding a definition into the
->> LSM hooks seems like a bad idea to me.
->
-> I have no idea what a "safe" ioctl means here. Subsystems already
-> restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
-> "safe" clearly means something different here.
+Hi Jarkko,
 
-That was my problem with the first version as well, but I think
-drawing the line between "implemented in fs/ioctl.c" and
-"implemented in a random device driver fops->unlock_ioctl()"
-seems like a more helpful definition.
+> On 07.03.2024, at 20:30, Jarkko Sakkinen <jarkko@kernel.org> wrote:
 
-This won't just protect from calling into drivers that are lacking
-a CAP_SYS_ADMIN check, but also from those that end up being
-harmful regardless of the ioctl command code passed into them
-because of stupid driver bugs.
+[...]
 
-      Arnd
+>> +
+>> +static int trusted_dcp_init(void)
+>> +{
+>> + int ret;
+>> +
+>> + if (use_otp_key)
+>> + pr_info("Using DCP OTP key\n");
+>> +
+>> + ret =3D test_for_zero_key();
+>> + if (ret) {
+>> + pr_err("Test for zero'ed keys failed: %i\n", ret);
+>=20
+> I'm not sure whether this should err or warn.
+>=20
+> What sort of situations can cause the test the fail (e.g.
+> adversary/interposer, bad configuration etc.).
+
+This occurs when the hardware is not in "secure mode". I.e. it=E2=80=99s =
+a bad configuration issue.
+Once the board is properly configured, this will never trigger again.
+Do you think a warning is better for this then?
+
+Thanks,
+- David
+
