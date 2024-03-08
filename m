@@ -1,139 +1,184 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F7E5B5DD;
-	Fri,  8 Mar 2024 20:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9924C5B5D6
+	for <linux-security-module@vger.kernel.org>; Fri,  8 Mar 2024 20:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709928602; cv=none; b=t5PGfTHxEjIXa21M7EK7WkikqyFJM1fGKGLNSgfY1ODjR0QFyDLoZyRxiDxXQGYRrIGW9eRsPCvbYyOPKr6s1kH0rOaaTcWDjnxAoLj0c2e5qqK7MoG+TN2HsrIJ3buiJy8uexASvtjCn4S761ZP42Rl4/+n67ke20Gyq7mKa2w=
+	t=1709928752; cv=none; b=XO7dhOfltRf1MpXO6cPEYLUJzWciVauLRDO+kaIRgntEbiCn6oeFD6eK6CAZgpZIbHQNRJSaT8ai9Ki6MoqqdzkQTzhOGhuL3B+G/rTDWZC48GBJpODMuuuiC6sQPN+qm9xLXoRdEprBpQ4lVp3emwvSIkUjTWKLrnEPXw96Cb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709928602; c=relaxed/simple;
-	bh=iTxSFJY/6ShsagdMiXSy2Jt9K4yssYnYeQNhQRuHjwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HmmZr3xyU0cctzf76o7iKd8V7FcOAG3guyLGFwLuIlyV+GX1rwWvHIiavm+R52p7aezo4wd+qbCrjq2qeYXCtjvlZDwkXzzHZuvzsuJLq+SUvH37/XpY3BXgnXlzdIXKYzzBWiIvFj9kQ1ZzMUrKDaHluEsLkaGoyH4pOi+HgAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=GmAzMcoq; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1709928752; c=relaxed/simple;
+	bh=556dOT2cRmRT53CXo4Ap57p5yA0li5b4PRDyS7IFRsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ShunOgS2UR6+Ui5CkRovy2cSlMXs8ikKMI1uBRxtVlzDJE5PatYv3UrLpZhBLjrvM4ZhLl8tloeJKs5GGY+YzZUIms5swveXFtdastqc/kwyQXWpOdVZUVV3q3Dp+0iaRc7uyipEdOntBjTZeOBsnJ40hdKfw0QiiU/2BXIc1BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qXO5oOqv; arc=none smtp.client-ip=84.16.66.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="GmAzMcoq"
-Received: from [192.168.192.85] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 99BD33FB5F;
-	Fri,  8 Mar 2024 20:09:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1709928596;
-	bh=yB172oCMy767IdSvZDfI6ar8vCTqvaf/fdrD6SsSrcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=GmAzMcoqYpAN5NQh9m24Kw+W6g0VN80vlS5IZb8OcOnxBEdKiuepKlOS0Xl9F1ll+
-	 SdBMrCSPKfrmEnJvpWkpYGChaUpAa1KdrBe0+upTg3cUNGXhASDjTlqd5gphD09BkH
-	 PvnRwtnyY314XIa6VNpk0RbekdBxc5cdZF5Eu6g2/SBkDO0xGyZT5W/ix9vbMF+6d3
-	 1LweUxh6AoFuC667zNDYZqE07TJ/xCCguQey1Ljilwb/DNJwAQZi7MBHhPajOOP9bC
-	 +5cNehvdkhmOwUyNGvBNZRTf13PHeGoVc8QNzSxFH1g42YOEqNJQBkjM9A37J91HmW
-	 g8Wo7ojFWldrA==
-Message-ID: <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com>
-Date: Fri, 8 Mar 2024 12:09:48 -0800
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qXO5oOqv"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Try4z0KmLznbD;
+	Fri,  8 Mar 2024 21:12:19 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Try4x5pXvz3Y;
+	Fri,  8 Mar 2024 21:12:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1709928738;
+	bh=556dOT2cRmRT53CXo4Ap57p5yA0li5b4PRDyS7IFRsM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qXO5oOqvBsCaRboRctAS7R8vK+HWwKC6Ub8u8YeMeUJ5v12As3CqXifR27p8k350Q
+	 6vSVR7ZtnddLoYD/o5uhaaOnTViMIh7FSNGIqEPzGY8Q06wjeFS1WRBAG1ag7ysKdr
+	 O6BjptWBpv+I/qvznTA+rNu8Y+qS7iDSP7hgT8PY=
+Date: Fri, 8 Mar 2024 21:12:07 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dave Chinner <david@fromorbit.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <20240308.eeZ1uungeeSa@digikod.net>
+References: <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+ <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <20240308.saiheoxai7eT@digikod.net>
+ <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
- and potential solutions
-Content-Language: en-US
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- "Shukla, Santosh" <Santosh.Shukla@amd.com>,
- "Narayan, Ananth" <Ananth.Narayan@amd.com>,
- raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com,
- paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
-References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
- <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
- <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com>
- <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 3/2/24 02:23, Mateusz Guzik wrote:
-> On 2/9/24, John Johansen <john.johansen@canonical.com> wrote:
->> On 2/6/24 20:40, Neeraj Upadhyay wrote:
->>> Gentle ping.
->>>
->>> John,
->>>
->>> Could you please confirm that:
->>>
->>> a. The AppArmor refcount usage described in the RFC is correct?
->>> b. Approach taken to fix the scalability issue is valid/correct?
->>>
->>
->> Hi Neeraj,
->>
->> I know your patchset has been waiting on review for a long time.
->> Unfortunately I have been very, very busy lately. I will try to
->> get to it this weekend, but I can't promise that I will be able
->> to get the review fully done.
->>
+On Fri, Mar 08, 2024 at 02:22:58PM -0500, Paul Moore wrote:
+> On Fri, Mar 8, 2024 at 4:29 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
+> > > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> > > > On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+> > > >> On Thu, Mar 7, 2024 at 7:57 AM Günther Noack <gnoack@google.com> wrote:
+> > > >> I need some more convincing as to why we need to introduce these new
+> > > >> hooks, or even the vfs_masked_device_ioctl() classifier as originally
+> > > >> proposed at the top of this thread.  I believe I understand why
+> > > >> Landlock wants this, but I worry that we all might have different
+> > > >> definitions of a "safe" ioctl list, and encoding a definition into the
+> > > >> LSM hooks seems like a bad idea to me.
+> > > >
+> > > > I have no idea what a "safe" ioctl means here. Subsystems already
+> > > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> > > > "safe" clearly means something different here.
+> > >
+> > > That was my problem with the first version as well, but I think
+> > > drawing the line between "implemented in fs/ioctl.c" and
+> > > "implemented in a random device driver fops->unlock_ioctl()"
+> > > seems like a more helpful definition.
+> > >
+> > > This won't just protect from calling into drivers that are lacking
+> > > a CAP_SYS_ADMIN check, but also from those that end up being
+> > > harmful regardless of the ioctl command code passed into them
+> > > because of stupid driver bugs.
+> >
+> > Indeed.
+> >
+> > "safe" is definitely not the right word, it is too broad, relative to
+> > use cases and threat models.  There is no "safe" IOCTL.
+> >
+> > Let's replace "safe IOCTL" with "IOCTL always allowed in a Landlock
+> > sandbox".
 > 
-> Gentle prod.
+> Which is a problem from a LSM perspective as we want to avoid hooks
+> which are tightly bound to a single LSM or security model.  It's okay
+> if a new hook only has a single LSM implementation, but the hook's
+> definition should be such that it is reasonably generalized to support
+> multiple LSM/models.
+
+As any new hook, there is a first user.  Obviously this new hook would
+not be restricted to Landlock, it is a generic approach.  I'm pretty
+sure a few hooks are only used by one LSM though. ;)
+
 > 
-> Any chances of this getting reviewed in the foreseeable future? Would
-> be a real bummer if the patchset fell through the cracks.
+> > Our assumptions are (in the context of Landlock):
+> >
+> > 1. There are IOCTLs tied to file types (e.g. block device with
+> >    major/minor) that can easily be identified from user space (e.g. with
+> >    the path name and file's metadata).  /dev/* files make sense for user
+> >    space and they scope to a specific use case (with relative
+> >    privileges).  This category of IOCTLs is implemented in standalone
+> >    device drivers (for most of them).
+> >
+> > 2. Most user space processes should not be denied access to IOCTLs that
+> >    are managed by the VFS layer or the underlying filesystem
+> >    implementations.  For instance, the do_vfs_ioctl()'s ones (e.g.
+> >    FIOCLEX, FIONREAD) should always be allowed because they may be
+> >    required to legitimately use files, and for performance and security
+> >    reasons (e.g. fs-crypt, fsverity implemented at the filesystem layer).
+> >    Moreover, these IOCTLs should already check the read/write permission
+> >    (on the related FD), which is not the case for most block/char device
+> >    IOCTL.
+> >
+> > 3. IOCTLs to pipes and sockets are out of scope.  They should always be
+> >    allowed for now because they don't directly expose files' data but
+> >    IPCs instead, and we are focusing on FS access rights for now.
+> >
+> > We want to add a new LANDLOCK_ACCESS_FS_IOCTL_DEV right that could match
+> > on char/block device's specific IOCTLs, but it would not have any impact
+> > on other IOCTLs which would then always be allowed (if the sandboxed
+> > process is allowed to open the file).
+> >
+> > Because IOCTLs are implemented in layers and all IOCTLs commands live in
+> > the same 32-bit namespace, we need a way to identify the layer
+> > implemented by block and character devices.  The new LSM hook proposal
+> > enables us to cleanly and efficiently identify the char/block device
+> > IOCTL layer with an additional check on the file type.
 > 
+> I guess I should wait until there is an actual patch, but as of right
+> now a VFS ioctl specific LSM hook looks far too limited to me and
+> isn't something I can support at this point in time.  It's obviously
+> limited to only a subset of the ioctls, meaning that in order to have
+> comprehensive coverage we would either need to implement a full range
+> of subsystem ioctl hooks (ugh), or just use the existing
+> security_file_ioctl().
 
-yes, sorry I have been unavailable for the last couple of weeks. I am
-now back, I have a rather large backlog to try catching up on but this
-is has an entry on the list.
+I think there is a misunderstanding.  The subset of IOCTL commands the
+new hook will see would be 99% of them (i.e. all except those
+implemented in fs/ioctl.c).  Being able to only handle this (big) subset
+would empower LSMs to control IOCTL commands without collision (e.g. the
+same command/value may have different meanings according to the
+implementation/layer), which is not currently possible (without manual
+tweaking).
 
+This proposal is to add a new hook for the layer just beneath the VFS
+catch-all IOCTL implementation.  This layer can then differentiate
+between the underlying implementation according to the file properties.
+There is no need for additional hooks for other layers/subsystems.
 
+The existing security_file_ioctl() hook is useful to catch all IOCTL
+commands, but it doesn't enable to identify the underlying target and
+then the semantic of the command.  Furthermore, as Günther said, an
+IOCTL call can already do kernel operations without looking at the
+command, but we would then be able to identify that by looking at the
+char/block device file for instance.
+
+> I understand that this makes things a bit more
+> complicated for Landlock's initial ioctl implementation, but
+> considering my thoughts above and the fact that Landlock's ioctl
+> protections are still evolving I'd rather not add a lot of extra hooks
+> right now.
+
+Without this hook, we'll need to rely on a list of allowed IOCTLs, which
+will be out-of-sync eventually.  It would be a maintenance burden and an
+hacky approach.
+
+We're definitely open to new proposals, but until now this is the best
+approach we found from a maintenance, performance, and security point of
+view.
