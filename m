@@ -1,66 +1,67 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB5563B8;
-	Fri,  8 Mar 2024 13:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CD54085D;
+	Fri,  8 Mar 2024 14:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709905593; cv=none; b=H/DXXi6W1kTopeo/OxGe0chgLuNk9dqgvLrlQfG2MXdwL1ztygN+Q0POr9Lrcgxz9oaygGcLnXS285T8dZ0geL05m1D7l4H59oSe7/vpoGwdP7zVPnMsvNidBg9HjVptjDYphgxBF367qWt8hnEM+6eakRnrIURlk/DQbj3mGNw=
+	t=1709907868; cv=none; b=VAteCtlNTmv7C/+hQ69ipcGlozHMLTfSZCUo9mMsaogff8SZkTf0EgjvrmGaXTwNP+nlmqDqUe02iinoDT17Hk8BHoIzqLHfqLp8lSEn/slHJuNtc9X7bC0h/o/Iwxnyn9PZF4GQB9bCmJ5JBaZRYAXuxLg/onarC1PMZGstyFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709905593; c=relaxed/simple;
-	bh=GBFwFYZ4ubg0U+FlRZQiIvGDvUpfu7Sbide83u/wP3Y=;
+	s=arc-20240116; t=1709907868; c=relaxed/simple;
+	bh=vUVkDUD3axpCPicGPFgPYjPzEqrDMjih2pP6FKkcRr4=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=SaTM7Q802kzg1NtMzxOCoorY81LJoRLVvT5GrBwM3tEjOwJke1BB4KENO/xAOIPL8pDreil89LfNoqd4Efv8ilqW50XU1wbPkUh6nFRg8M7RE2ZE44Jgk7mB4lvm0dWPD4RYkPcl7znVrJ4vOjCJ6Q80FE51uWLcTEa2EdDjQJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OR2v33ul; arc=none smtp.client-ip=148.163.156.1
+	 Content-Type:Mime-Version; b=YM6wrrU0BbPaeWQulO6kGsieFH6y3Jew0yyKzGBR1o1A3814Hl7F8SviJpN+WfmCmepj2NhGVp5xSiTah5+/dQcxK4k0koJJ4JzbUP318UDwSC0bv+pjadTBqQwHR+ma/wmPh7TeVy2tQpOQV2mQp5DRee1x4DtJnimoUYbyj7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MIdDJCe8; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OR2v33ul"
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 428DCY5s003316;
-	Fri, 8 Mar 2024 13:45:48 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MIdDJCe8"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 428E3142022572;
+	Fri, 8 Mar 2024 14:23:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=Z9B5en3b/B8IE/ICyxvk/gv4UnKx7MFoXBu5looV+Ug=;
- b=OR2v33ulhloADO1SAtdMFTTD7q/vlaVe6+dY/hXR/u0sBdpvl9ADuzQs8NjKs5nvvZdR
- pIcsQlL+JCY6Z14zdlhX/SLzuTIXT6S+6NJBtkb5/F+OrA1R6RTM+MjYZyq8KZ06uw9l
- 3dxC98FtZQuXsTTFE2k0nctELQZX0Da1WZb04YB+tAYmirWXjuy59twSPDckkASt2uKV
- xvzMEo/HZzoSrenq+tVEKYHTVM51l5Y2dVGJe0YZQSV35FGJ1zZPf/KWiEf8dhEPsMWL
- Ajiv1dAcnI1qzDQqwa4rcIYI+kBpa4Ze5b+YDUk5DOJeqC3GGteqkA+xiHBy98+AiL5j 8A== 
+ bh=Vu/l+DQKZOYkXzuole393h6jwOeq6WLNrYugvlWstEs=;
+ b=MIdDJCe8TloBPSI7ATMg0DqljqO6o+Cj9xE58nwdBQGBUk9O7dmHPcIQRkAQaHBhFf1d
+ irzLoAUAV6rt1IlZ+Kn/IwLQl+LzjE8JdC3226RVZSf3eiyF2Y/zx9pxvmHWV4s06sxd
+ wBmNXN53/5LSDhVgLNJbLZXsWISrff0CMbl0ciQdatgBa53WlHygGCr7whKtGb//op+u
+ uQ5waxxGB7HH/m2LrsYZxS9EanyLwy7RQFKVj+gAI59NASIrW7TPP8W5zsczg0Utu/4m
+ ILE2C+8oM8yEmVFZANuVH4ue+p7V3aRMfFPNfObB/FrMBZbxC3rGYok6F4xs/84tH/KZ XQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wr3brgjt0-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wr43k8dbn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Mar 2024 13:45:48 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 428Djkgk001146;
-	Fri, 8 Mar 2024 13:45:46 GMT
+	Fri, 08 Mar 2024 14:23:21 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 428E5Tiq032050;
+	Fri, 8 Mar 2024 14:23:21 GMT
 Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wr3brgjhs-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wr43k8db5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Mar 2024 13:45:46 +0000
+	Fri, 08 Mar 2024 14:23:20 +0000
 Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 428D1emU024185;
-	Fri, 8 Mar 2024 13:41:32 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wpjwsqxrv-1
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 428D1e1u024185;
+	Fri, 8 Mar 2024 14:23:20 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wpjwsr50t-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Mar 2024 13:41:32 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 428DfUma29819268
+	Fri, 08 Mar 2024 14:23:20 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 428ENHv130147044
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 8 Mar 2024 13:41:32 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 112E45804B;
-	Fri,  8 Mar 2024 13:41:30 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D33EF58055;
-	Fri,  8 Mar 2024 13:41:27 +0000 (GMT)
+	Fri, 8 Mar 2024 14:23:19 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9539A58077;
+	Fri,  8 Mar 2024 14:23:15 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CEC958061;
+	Fri,  8 Mar 2024 14:23:14 +0000 (GMT)
 Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.150.204])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  8 Mar 2024 13:41:27 +0000 (GMT)
-Message-ID: <3e855b6c0892a00743758fc04bfb183cae2a42ef.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 3/8] ima: Add digest_cache policy keyword
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  8 Mar 2024 14:23:14 +0000 (GMT)
+Message-ID: <f1228f212520c66a5f3610627a7e26f736b384c5.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 4/8] ima: Add digest_cache_measure and
+ digest_cache_appraise boot-time policies
 From: Mimi Zohar <zohar@linux.ibm.com>
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
         dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
@@ -73,12 +74,12 @@ Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         ppavlu@suse.com, petr.vorel@gmail.com, petrtesarik@huaweicloud.com,
         mzerqung@0pointer.de, kgold@linux.ibm.com,
         Roberto Sassu <roberto.sassu@huawei.com>
-Date: Fri, 08 Mar 2024 08:41:27 -0500
-In-Reply-To: <71c77bbef487ae3279f0c3f85785bd0c03a4ee8c.camel@huaweicloud.com>
+Date: Fri, 08 Mar 2024 09:23:13 -0500
+In-Reply-To: <e10207bd82ee13fb088f9efc12e10a5478b6926d.camel@huaweicloud.com>
 References: <20240214143525.2205481-1-roberto.sassu@huaweicloud.com>
-	 <20240214143525.2205481-4-roberto.sassu@huaweicloud.com>
-	 <031d4ff2bf0c04df5f4094989b94f7ce3e3e73f6.camel@linux.ibm.com>
-	 <71c77bbef487ae3279f0c3f85785bd0c03a4ee8c.camel@huaweicloud.com>
+	 <20240214143525.2205481-5-roberto.sassu@huaweicloud.com>
+	 <ed5df367582f0c5e212638a12204fd20fd8e46e5.camel@linux.ibm.com>
+	 <e10207bd82ee13fb088f9efc12e10a5478b6926d.camel@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
 Precedence: bulk
@@ -89,107 +90,41 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9w5FCygre4tzblgPXK5_lhRgyHoU6pXT
-X-Proofpoint-GUID: RvHVb4juFytOgR1T2UgdrpVSMY45jGJS
+X-Proofpoint-GUID: sbd1D3lTwHVEAuySFdWdLc-bwqtzp6xI
+X-Proofpoint-ORIG-GUID: HdjBFLw7vZvRLwMeX_MOwurbZ_0YdaAo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-03-08_08,2024-03-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
- suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2403080110
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2403080115
 
-On Fri, 2024-03-08 at 10:05 +0100, Roberto Sassu wrote:
-> On Thu, 2024-03-07 at 14:43 -0500, Mimi Zohar wrote:
-> > On Wed, 2024-02-14 at 15:35 +0100, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > Add the 'digest_cache=' policy keyword, to enable the usage of digest
-> > > caches for specific IMA actions and purposes.
-> > > 
-> > > At the moment, it accepts only 'content' as value, as digest caches can be
-> > > only used only for measurement and appraisal of file content. In the
-> > > future, it might be possible to use them for file metadata too.
+
+> > > @@ -971,6 +1006,16 @@ void __init ima_init_policy(void)
+> > >  {
+> > >  	int build_appraise_entries, arch_entries;
+> > >  
+> > > +	/*
+> > > +	 * We need to load digest cache rules at the beginning, to avoid dont_
+> > > +	 * rules causing ours to not be reached.
+> > > +	 */
 > > 
-> > At least from this patch, it is unclear why 'digest_cache' requires an
-> > option.  
-> > The usage - measure, appraise - is based on 'action'.  From an IMA
-> > perspective,
-> > does the file content make a difference?  And if it did, then file 'data'
-> > would
-> > parallel file 'metadata'.
+> > "lockdown" trusts IMA to measure and appraise kernel modules, if the rule
+> > exists.  Placing the digest_cache first breaks this trust.
 > 
-> I wanted to express the fact that digest caches, if available, can only
-> be used to appraise file data, if there is no metadata (similarly to
-> module-style appended signatures).
-> 
-> That would prevent for example the scenario where appraisal of file
-> data is successful without having verified current metadata, and EVM
-> attaches to the file a valid HMAC on file close, based on the current
-> xattr value (trust at first use).
+> The new rules don't prevent other rules to be reached, since they are
+> 'do' and not 'don_t' rules.
 
-Correct. There's no requirement for 'security.ima' to exist to calculate the EVM
-HMAC.  Before using EVM HMAC, the filesystem needs to be properly labeled by
-walking the filesystem.  The HMAC is calculated based on the existing file
-metadata.  The first use is during a setup stage and subsequently for new files.
+My mistake.  These are just the rules for measuring or appraising the digest
+cache lists themselves, not the actual policy rules for using the digest_cache. 
+This should be fine.
 
-> 
-> An IMA rule with 'digest_cache=metadata' would take a different code
-> path. It would make IMA send to evm_verifyxattr() the calculated file
-> digest (since there is no security.ima), and let EVM calculate and
-> search the digest of file metadata in the digest cache.
+Perhaps update the comment to reflect initramfs usage.
 
-Ok.  So no 'security.evm' either, but a metadata digest cache.
-
-I understand the need to provide EVM with the file hash in this case, but as
-much as possible, IMA and EVM should be independent of each other.
-
-> 
-> I didn't go that far yet, but this is more or less what I would like to
-> do, also based on my old implementation of the IMA Digest Lists
-> extension (which supports file metadata lookup).
-> 
-> > Without having to pass around "digest_cache_mask" would simplify this patch.
-> 
-> We need to pass it anyway, to let process_measurement() know that it
-> can use digest caches. Or we can make 'flags' in ima_iint_cache a u64,
-> and introduce new flags.
-
-It's bad enough that the function parameters change when there's actual data. 
-Yes, please increase the size of 'flags' and introduce new flags.
 
 thanks,
 
 Mimi
-
-> > > The 'digest_cache=' keyword can be specified for the subset of IMA hooks
-> > > listed in ima_digest_cache_func_allowed().
-> > > 
-> > > POLICY_CHECK has been excluded for measurement, because policy changes
-> > > must
-> > > be visible in the IMA measurement list. For appraisal, instead, it might
-> > > be
-> > > useful to load custom policies in the initial ram disk (no security.ima
-> > > xattr).
-> > > 
-> > > Add the digest_cache_mask member to the ima_rule_entry structure, and set
-> > > the flag IMA_DIGEST_CACHE_MEASURE_CONTENT if 'digest_cache=content' was
-> > > specified for a measure rule, IMA_DIGEST_CACHE_APPRAISE_CONTENT for an
-> > > appraise rule.
-> > > 
-> > > Propagate the mask down to ima_match_policy() and ima_get_action(), so
-> > > that
-> > > process_measurement() can make the final decision on whether or not digest
-> > > caches should be used to measure/appraise the file being evaluated.
-> > > 
-> > > Since using digest caches changes the meaning of the IMA measurement list,
-> > > which will include only digest lists and unknown files, enforce specifying
-> > > 'pcr=' with a non-standard value, when 'digest_cache=content' is specified
-> > > in a measure rule.
-> > > 
-> > > This removes the ambiguity on the meaning of the IMA measurement list.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
 
