@@ -1,260 +1,109 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4949B5FF16
-	for <linux-security-module@vger.kernel.org>; Fri,  8 Mar 2024 22:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592F51096F
+	for <linux-security-module@vger.kernel.org>; Sat,  9 Mar 2024 01:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709936735; cv=none; b=PbjQDfacR1CncwjzD8LyD7z+0MMxABWXtIYw0IXNEJk4lmNm45Dwur8ossJsV37zY2GOHO0LsRZeclRiU42b0myoU7wNNkdJgL3I/be7dTxEXJYvpcPqxjXgwo1bAMu/uMsRjORDM9Yth30mhZV2UIqwBfhiX4IjCSOIjW4zd/I=
+	t=1709946871; cv=none; b=ePDB+QA4vBhn/YM68awDqXZbdl+uBz0JTjxV83a2yXpJMYpt7HnkBkMSeFU7RKqqatnqXtp2JwnleCdR1jTyn+ckFeS516VrmL39hBCHAcMrI4+H13sGsWsJELNIAdy7VEay+IEC4Ek6xXWX+3x/e5N1hgRGpR/TmqsVQLH3Oho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709936735; c=relaxed/simple;
-	bh=ClYzY2c7O6M4UuuA/IjpDza63NwIj3PQw2ENCW64gWo=;
+	s=arc-20240116; t=1709946871; c=relaxed/simple;
+	bh=PVSSW/TRZScbGAXptUtzNMhjOI0JAjP3o2LHf4YtFlE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xm5DwLXnI+ECaxBWbyMDUm6o9iYkRZi+iNJh0Zqz77UZfzbezh1BrqONaMnVILhmopUaYLGCPg03gGMPj7HLdzWfQiqwVpNvhSFRB2p3vVPmY/IUHxYQeCEafFbJm20x9oNYuYpwGP51f6Mzfb+pbgo5Wwtm7ElevcA+s33m0hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UCsX8nN2; arc=none smtp.client-ip=209.85.219.180
+	 To:Cc:Content-Type; b=ufZyJZWL/E8Tu+Y7TOfR3POfg4Z1BJh5pv5KpjavKrUSVf1zpgrfueCRsQhj7gboE1uXJEe071keJWfjo8BKsxyXIazCxWhtUFQuNi8Q3c1nYHIKPi9MuptStJezqSLmhJMOy0fcwYo4iAr22NnKANlIsb+M4ouifCYb4ZvvY18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Y1ZITEOE; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UCsX8nN2"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dd014003277so2379649276.2
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Mar 2024 14:25:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Y1ZITEOE"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcc80d6004bso2702180276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Mar 2024 17:14:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1709936732; x=1710541532; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1709946868; x=1710551668; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eXDYSogmsoq5g6Cv2akA/KLSumsnEiQAY1I83GH43XI=;
-        b=UCsX8nN2cqZ7Itjep/J1/u84K9qnNdDPWoUC56LlX09kfHwQ0TvFVI2Sk4HjDP7i5j
-         eDoQr+EhgA/WE5PnjERGyzIZckaYx3zfXDwU7wujhh+C60ELldxW5+U1hxH5HR+d2xY/
-         8D5rKnA1mcmxXeqjcJb7g9n/Jx/nLC5sE2CnKPZ5h0YTVkRc5tOYB0GOoiZ1THAZS1NH
-         Eq6sF+zCm4QFynxMGFdn7M+iT1KXrCIeIHeagyPRt3iKyNyYiS2SkpRcPtTNcLLt0gt0
-         0zB9IsvRM2O74zlLvEjLb4Qub8lEF00X1QuJ8gV+v4kqP1bYDoylSfGc/dRkoXoKF3gS
-         WaFw==
+        bh=KPz2z6DvnJxq/mvZY2AzEM7nepXgQps0sd3FnWYy8AY=;
+        b=Y1ZITEOEQMcPGo0IG+gwiGch8CnQXfEH4HEZKP2VNMxLUEtC0/XKnlmtFb01oTOAoM
+         bUlhF//VTz39WdyQJ4aNxBCGDXS2HHz8fRKSaeXfnzQg/WmzaJdmlHo4tS+0cUaCQBMS
+         pUqke+3r86nVSAScKNFYk/sFgex4OoZh72SHtjI0gIV2MIR72aHwQcSQLpNqlG92Vp3L
+         cdKjHiDqA44uJNzOECaQdtY14Z5kBvXFj6Q7wfZWgwbuYjW9o3QX6cQSt3btbzM7Tak3
+         mE7eNvUokKYai8U35gAQ+n09p7inXwVrvXZLcL7JCci6k5+Q2SDk1+MZ8k25c8zXXXre
+         CZHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709936732; x=1710541532;
+        d=1e100.net; s=20230601; t=1709946868; x=1710551668;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eXDYSogmsoq5g6Cv2akA/KLSumsnEiQAY1I83GH43XI=;
-        b=CZ0TYzocK1c048t1GN1LxJDr9IoCI/qjFVAJxCO3XHqUVi8D2uowNtovbg0svikw5a
-         hxxpw+TDP0uS4hLAbZ+LaCXuiVWigJS1bmJx0G1b7NfjvlHxtNg6j+r7NvRRHow4i6/E
-         WXExgv/vL/24QOT+jE9aJdt8P3V1140WoYsjJgA3qL6wBTJTDObTUL7gvppNK1YE5unl
-         ZKCVuDlcn4OJGGyclO1g3UbtHPiV3A3sELy3H0UMdokNZj3E2jLbbGJlZTO7MkCBravW
-         Rt2Pe/GOfUwxH9cKS9qOJg0n5T31sUOd8TMx9RQBVSv43bUmk4OYH5GrqYaSH8B7F2qH
-         LUgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhVOcMVm7we+IZUP4KR2kRIBUNOSFjChp57Qd9b019SC7UUyM3tJCB9QXK0LwuWopRq93xXRSwDfSaUeHQlo3LU0faAJimQ6TtVYMIr6mlpHAA6/tk
-X-Gm-Message-State: AOJu0Yy9guT6aFLKYC27R9NQaxTLCHNXxTXnCePqYceL1cb5pBgMSm9o
-	G6iqkQSNEIqp5zsvOwEjSozyCgvUnSjIAqPlKBzaqLnGbf/3ZwqfwNwBxPfP5nzt/nhXsVWvfQS
-	3kALPzIRYZiU0r1tK+wSwQ4k7AojmBfS419Uq
-X-Google-Smtp-Source: AGHT+IGeX9v3HNY30ujRGwElgZMAClCvOi1NLZIrAFlEW0MFTfAOqyikN08EZTflRTf3oyXtPr/s1GFblDak9vtZeI0=
-X-Received: by 2002:a25:a483:0:b0:dcc:273e:1613 with SMTP id
- g3-20020a25a483000000b00dcc273e1613mr316675ybi.40.1709936732132; Fri, 08 Mar
- 2024 14:25:32 -0800 (PST)
+        bh=KPz2z6DvnJxq/mvZY2AzEM7nepXgQps0sd3FnWYy8AY=;
+        b=cnVhM7fd1+XoeNvg1Ur7KdaKf6plWT9CaPqiUCr6Iwfj/lC1Im223Y8uczzKom49V9
+         a4tSuFqelfHvnpTZpw+gG7ymfSIJuB8NxK/JHQaIVAuz2Q/+wYPXY3Qj5DkqfndtvDVV
+         Z3ImOwG2k/Y4aWkPvK9AjcIZUV+P0pHc+3RqQslV/HWlNCpS16fwr5ezYgOcl6n0iDNK
+         Jj/XHSan6/inUnPWbwRnVYn5TS6t/sFmxpQQruoigMjgqLJwPLlc/Pg+edLk7CT8f2KR
+         FPze2EDu9NtrsYOJz6cw+LA/deqaQwFphB1ScNXj1QN/azHQ1u9mb1GlzPd9cUHX36PI
+         FBRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgRitkDMc5MjKKs1AOv6G4rCpFR/zxXsHWShJn5rnMtsh7s9l6aac8u/HCCTBOzWJaIMSX73wpq/HhRLeDoolOgDg9soVHmqSQ9NgcJKq7NMgtOD7e
+X-Gm-Message-State: AOJu0YylXhWZBF8EwDr7qaCpdB3oN2OE/uClI0vQ61pQG4q63eUjcXRA
+	nwPjuvyj4tTEoATlxPaXehuL0pN1Gp5TxZGRQQBCaipOyZsqhRCwqZittSOjN1lQyWGwFZh+O0M
+	frKYzpXFiHsNhSEvAlg7a/ITWahhhzT1YVLFo
+X-Google-Smtp-Source: AGHT+IG/iVw0xp4cUGbrbuHW4JP6YIUG2WhfFnWUrnT+aZkEjbYKTgvQfRu4/7uLG7cpfDOqG4dr9VoK5RFcwZhesog=
+X-Received: by 2002:a25:b227:0:b0:dcd:1043:23c with SMTP id
+ i39-20020a25b227000000b00dcd1043023cmr780907ybj.1.1709946868255; Fri, 08 Mar
+ 2024 17:14:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240306.zoochahX8xai@digikod.net> <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
- <20240307-hinspiel-leselust-c505bc441fe5@brauner> <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
- <Zem5tnB7lL-xLjFP@google.com> <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
- <ZepJDgvxVkhZ5xYq@dread.disaster.area> <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
- <20240308.saiheoxai7eT@digikod.net> <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
- <20240308.eeZ1uungeeSa@digikod.net>
-In-Reply-To: <20240308.eeZ1uungeeSa@digikod.net>
+References: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 8 Mar 2024 17:25:21 -0500
-Message-ID: <CAHC9VhRnUbu2jRwUhLGboAgus_oFEPyddu=mv-OMLg93HHk17w@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Dave Chinner <david@fromorbit.com>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Fri, 8 Mar 2024 20:14:17 -0500
+Message-ID: <CAHC9VhQ90Z9HbSJWxNoH20_b92m6_5QWJAJ9ZkSR_1PWUAvCsw@mail.gmail.com>
+Subject: Re: [RFC PATCH v14 00/19] Integrity Policy Enforcement LSM (IPE)
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, 
+	tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, 
+	snitzer@kernel.org, eparis@redhat.com, linux-doc@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org, 
+	dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 8, 2024 at 3:12=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
-> On Fri, Mar 08, 2024 at 02:22:58PM -0500, Paul Moore wrote:
-> > On Fri, Mar 8, 2024 at 4:29=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@di=
-gikod.net> wrote:
-> > > On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
-> > > > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
-> > > > > On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
-> > > > >> On Thu, Mar 7, 2024 at 7:57=E2=80=AFAM G=C3=BCnther Noack <gnoac=
-k@google.com> wrote:
-> > > > >> I need some more convincing as to why we need to introduce these=
- new
-> > > > >> hooks, or even the vfs_masked_device_ioctl() classifier as origi=
-nally
-> > > > >> proposed at the top of this thread.  I believe I understand why
-> > > > >> Landlock wants this, but I worry that we all might have differen=
-t
-> > > > >> definitions of a "safe" ioctl list, and encoding a definition in=
-to the
-> > > > >> LSM hooks seems like a bad idea to me.
-> > > > >
-> > > > > I have no idea what a "safe" ioctl means here. Subsystems already
-> > > > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, s=
-o
-> > > > > "safe" clearly means something different here.
-> > > >
-> > > > That was my problem with the first version as well, but I think
-> > > > drawing the line between "implemented in fs/ioctl.c" and
-> > > > "implemented in a random device driver fops->unlock_ioctl()"
-> > > > seems like a more helpful definition.
-> > > >
-> > > > This won't just protect from calling into drivers that are lacking
-> > > > a CAP_SYS_ADMIN check, but also from those that end up being
-> > > > harmful regardless of the ioctl command code passed into them
-> > > > because of stupid driver bugs.
-> > >
-> > > Indeed.
-> > >
-> > > "safe" is definitely not the right word, it is too broad, relative to
-> > > use cases and threat models.  There is no "safe" IOCTL.
-> > >
-> > > Let's replace "safe IOCTL" with "IOCTL always allowed in a Landlock
-> > > sandbox".
-> >
-> > Which is a problem from a LSM perspective as we want to avoid hooks
-> > which are tightly bound to a single LSM or security model.  It's okay
-> > if a new hook only has a single LSM implementation, but the hook's
-> > definition should be such that it is reasonably generalized to support
-> > multiple LSM/models.
+On Wed, Mar 6, 2024 at 6:34=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> w=
+rote:
 >
-> As any new hook, there is a first user.  Obviously this new hook would
-> not be restricted to Landlock, it is a generic approach.  I'm pretty
-> sure a few hooks are only used by one LSM though. ;)
-
-Sure, as I said above, it's okay for there to only be a single LSM
-implementation, but the basic idea behind the hook needs to have some
-hope of being generic.  Your "let's redefine a safe ioctl as 'IOCTL
-always allowed in a Landlock sandbox'" doesn't fill me with confidence
-about the hook being generic; who knows, maybe it will be, but in the
-absence of a patch, I'm left with descriptions like those.
-
-> > > Our assumptions are (in the context of Landlock):
-> > >
-> > > 1. There are IOCTLs tied to file types (e.g. block device with
-> > >    major/minor) that can easily be identified from user space (e.g. w=
-ith
-> > >    the path name and file's metadata).  /dev/* files make sense for u=
-ser
-> > >    space and they scope to a specific use case (with relative
-> > >    privileges).  This category of IOCTLs is implemented in standalone
-> > >    device drivers (for most of them).
-> > >
-> > > 2. Most user space processes should not be denied access to IOCTLs th=
-at
-> > >    are managed by the VFS layer or the underlying filesystem
-> > >    implementations.  For instance, the do_vfs_ioctl()'s ones (e.g.
-> > >    FIOCLEX, FIONREAD) should always be allowed because they may be
-> > >    required to legitimately use files, and for performance and securi=
-ty
-> > >    reasons (e.g. fs-crypt, fsverity implemented at the filesystem lay=
-er).
-> > >    Moreover, these IOCTLs should already check the read/write permiss=
-ion
-> > >    (on the related FD), which is not the case for most block/char dev=
-ice
-> > >    IOCTL.
-> > >
-> > > 3. IOCTLs to pipes and sockets are out of scope.  They should always =
-be
-> > >    allowed for now because they don't directly expose files' data but
-> > >    IPCs instead, and we are focusing on FS access rights for now.
-> > >
-> > > We want to add a new LANDLOCK_ACCESS_FS_IOCTL_DEV right that could ma=
-tch
-> > > on char/block device's specific IOCTLs, but it would not have any imp=
-act
-> > > on other IOCTLs which would then always be allowed (if the sandboxed
-> > > process is allowed to open the file).
-> > >
-> > > Because IOCTLs are implemented in layers and all IOCTLs commands live=
- in
-> > > the same 32-bit namespace, we need a way to identify the layer
-> > > implemented by block and character devices.  The new LSM hook proposa=
-l
-> > > enables us to cleanly and efficiently identify the char/block device
-> > > IOCTL layer with an additional check on the file type.
-> >
-> > I guess I should wait until there is an actual patch, but as of right
-> > now a VFS ioctl specific LSM hook looks far too limited to me and
-> > isn't something I can support at this point in time.  It's obviously
-> > limited to only a subset of the ioctls, meaning that in order to have
-> > comprehensive coverage we would either need to implement a full range
-> > of subsystem ioctl hooks (ugh), or just use the existing
-> > security_file_ioctl().
+> Overview:
+> ---------
 >
-> I think there is a misunderstanding.  The subset of IOCTL commands the
-> new hook will see would be 99% of them (i.e. all except those
-> implemented in fs/ioctl.c).
-
-*cough* 99% !=3D 100% *cough*
-
-> Being able to only handle this (big) subset
-> would empower LSMs to control IOCTL commands without collision (e.g. the
-> same command/value may have different meanings according to the
-> implementation/layer), which is not currently possible (without manual
-> tweaking).
+> IPE is a Linux Security Module which takes a complimentary approach to
+> access control. Whereas existing mandatory access control mechanisms
+> base their decisions on labels and paths, IPE instead determines
+> whether or not an operation should be allowed based on immutable
+> security properties of the system component the operation is being
+> performed on.
 >
-> This proposal is to add a new hook for the layer just beneath the VFS
-> catch-all IOCTL implementation.  This layer can then differentiate
-> between the underlying implementation according to the file properties.
-> There is no need for additional hooks for other layers/subsystems.
-
-I'm not sure how you reconcile less than 100% coverage, the need for a
-generic hook, and the idea that there will not be a need for
-additional hooks.  That still seems like a problem to me.
-
-> The existing security_file_ioctl() hook is useful to catch all IOCTL
-> commands, but it doesn't enable to identify the underlying target and
-> then the semantic of the command.
-
-The LSM hook gets the file pointer, the command, and the argument, how
-is a LSM not able to identify the underlying target?
-
-> Furthermore, as G=C3=BCnther said, an
-> IOCTL call can already do kernel operations without looking at the
-> command, but we would then be able to identify that by looking at the
-> char/block device file for instance.
+> IPE itself does not mandate how the security property should be
+> evaluated, but relies on an extensible set of external property providers
+> to evaluate the component. IPE makes its decision based on reference
+> values for the selected properties, specified in the IPE policy.
 >
-> > I understand that this makes things a bit more
-> > complicated for Landlock's initial ioctl implementation, but
-> > considering my thoughts above and the fact that Landlock's ioctl
-> > protections are still evolving I'd rather not add a lot of extra hooks
-> > right now.
+> The reference values represent the value that the policy writer and the
+> local system administrator (based on the policy signature) trust for the
+> system to accomplish the desired tasks.
 >
-> Without this hook, we'll need to rely on a list of allowed IOCTLs, which
-> will be out-of-sync eventually.  It would be a maintenance burden and an
-> hacky approach.
+> One such provider is for example dm-verity, which is able to represent
+> the integrity property of a partition (its immutable state) with a digest=
+.
+>
+> IPE is compiled under CONFIG_SECURITY_IPE.
 
-Welcome to the painful world of a LSM developer, ioctls are not the
-only place where this is a problem, and it should be easy enough to
-watch for changes in the ioctl list and update your favorite LSM
-accordingly.  Honestly, I think that is kinda the right thing anyway,
-I'm skeptical that one could have a generic solution that would
-automatically allow or disallow a new ioctl without potentially
-breaking your favorite LSM's security model.  If a new ioctl is
-introduced it seems like having someone manually review it's impact on
-your LSM would be a good idea.
+All of this looks reasonable to me, I see there have been some minor
+spelling/grammar corrections made, but nothing too serious.  If we can
+get ACKs from the fsverity and device-mapper folks I can merge this
+once the upcoming merge window closes in a few weeks.
 
-> We're definitely open to new proposals, but until now this is the best
-> approach we found from a maintenance, performance, and security point of
-> view.
-
-At this point it's probably a good idea to post another RFC patch with
-your revised idea, if nothing else it will help rule out any
-confusion.  While I remain skeptical, perhaps I am misunderstanding
-the design and you'll get my apology and an ACK, but be warned that as
-of right now I'm not convinced.
-
---
+--=20
 paul-moore.com
