@@ -1,56 +1,157 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DD81FA0;
-	Sun, 10 Mar 2024 00:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6646A7EC
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 01:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710032089; cv=none; b=JjbI/FawwkcFIUinEV/RnDiRTlFAdsXyAVhhgwptGnUu+WZO274n6uXhb9Uz66wb5B76P/6j7UxwAul6XJ78SsL4zRoqTu1mQbgwqIRiZ3D7QjH7YYh7bspyE6IURAQCUq6J17jJBMbFEUVLB53T2GYdeu7DRQsGM5fV31wiPNI=
+	t=1710118998; cv=none; b=Zqv/V//S0VD/xpBsawSK/Ez9ybdMEjZM87dYpeFYDjFIlVuWhw1KL1ljIDquemq2U1Yns+QR3ZKl/dl7b8FlwFT7CzGG4MtCVk1ZnigOnE8x9hr6YGjuOdJUJjQs8d/dgnMxdOHnAw5V9nu6ru94dgekLJrWGLNJGtbwIT8MvFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710032089; c=relaxed/simple;
-	bh=G/6KdXu31T1VAui/RJwqf6i/24VbdcZQazuZ9wjU2fQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IVbHGCn0fC0mUZ+GbNTIvps1XZm5+OmcDYTMu7+9xp6eKLJ0y/LGOW5DG5CbRpZeQhl0WNt3d9D6Sy910n8d/rqPm6Esy4eU20f9nxWe8ZZWV1+o+SWJTLNWHioUkB421Dk0B3FJfWAbMEsxpzJXdRW2b1FBJHN4FjqtqP3FLEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 42A0s5Sp087296;
-	Sun, 10 Mar 2024 09:54:05 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
- Sun, 10 Mar 2024 09:54:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 42A0s4lc087293
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 10 Mar 2024 09:54:05 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <f2a9b546-433e-4661-aca9-8c58fdfc5be7@I-love.SAKURA.ne.jp>
-Date: Sun, 10 Mar 2024 09:54:03 +0900
+	s=arc-20240116; t=1710118998; c=relaxed/simple;
+	bh=bTkYO6hpD+ws1aCivbIeq/S/RfBZgTdP0CbxFKJAUg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcY7hMYxJTpUAy2y9SzZm7r671CrcpMHm2Q8teJtr/xQosQU9y8IzmBJySL1WGMXPq/XGMamPq+VX1UKB0U10FgQgVCtLhxM1mec9GfXRHOo7cVCNyg/+yz81115UFz1OwFpLUzYDnBmD+PcVEz8rWJd0gDF/lN1qFyqdCgbqFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bfBxIIZ7; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bfBxIIZ7"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1dd59b95677so17488155ad.1
+        for <linux-security-module@vger.kernel.org>; Sun, 10 Mar 2024 18:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710118997; x=1710723797; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Tb2TjIjGy7NO9Sxv5dfmBqswYG9vWza5A0iKXG81thU=;
+        b=bfBxIIZ7MvlZ3izZbMEcHmyPkXD8WUE696hx8vQBkQQhtv5uxQjZRsTANeGzePS3DD
+         QZQnXj77uAFenaoVxHGIbrs75rPbqQYRWiVfVfAB7luZ6MiGqhpvsTNsxAHNPeTWg2Oy
+         +EokU+NrlTniimyFx/OFoTd9cD0RrgSNO2foNbQ5vBEnxXwWDsk3/NwZ6dFg0ul6cKLj
+         lnmEzyG9agLaF0um1jWFBN4cw+QfAsch7DuYrCJF/Y40utPPlRkITHrOsZ+mOxCdUVS4
+         wQMNANlDdsrb4741b5IuHjtW5qhjU76wbQ695/HmdgjAvsdGm2LNbfwF22OMQgfe2p6V
+         05mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710118997; x=1710723797;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tb2TjIjGy7NO9Sxv5dfmBqswYG9vWza5A0iKXG81thU=;
+        b=mg8S4cICK9BMivahusbXUc9vvNQOGe6/31CywE6H8MWV4MYokuFQnidXEbpbSvi5Bz
+         XRq3H/dFNEmBjjZ6dmlOBlJeFrmFjsUq71nNoCdaUEBsOWi6edvBSpk28qvWu42f78jt
+         2OlvK+pmiyk+BS+8X50+gjxiklNQ4uQXNUezExfEsNE3tPJB+LLU5S/qlwi6lA0mlPWE
+         s+QfTS/g02QUY5E56VCwwtLh8pBS8cGX4+7DmSEv+iWQvCJAI9Xa9GK8b+NnEYxFrR7m
+         3Zi/82UZ68tGRyP5XmyuNLGJ7mAqmI4KzxWzEMoMKiQnm0IwSBOdhDyubWo2ccP3jaeA
+         P53Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX3e0k8rxzFPBLCjwZm37uivIGtXPiydUJuoXTKHoLglKwhzfkX6a4rOQ8H81g9a+nzkA4uLLNcKoJjfyRMVNHwuj54d/WsGSkuHtmYQPIKkLpcAEjj
+X-Gm-Message-State: AOJu0Yx1CCM9frZ1c3ZSNwa0B+fsOSLMB31iNAAQOpJMvbNy6Ae7zTn6
+	X02trx1FO2Ji4WMMprpoSi3yDfLzMRcpZ47kuFZX1Hp2xGD+tek3N6FRjFLtcIc=
+X-Google-Smtp-Source: AGHT+IHVMeGaLNgIl7cGC9cLhsHQQ9Vb1MhzR7xJX9IC8luYpveLWgo56KwgaJD1/3iikbO5Rs1wWQ==
+X-Received: by 2002:a17:902:b782:b0:1dc:b063:34ac with SMTP id e2-20020a170902b78200b001dcb06334acmr4224505pls.21.1710118996512;
+        Sun, 10 Mar 2024 18:03:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
+        by smtp.gmail.com with ESMTPSA id ks13-20020a170903084d00b001dcfc88ccf6sm3314847plb.263.2024.03.10.18.03.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Mar 2024 18:03:15 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rjU4P-000Esf-1n;
+	Mon, 11 Mar 2024 12:03:13 +1100
+Date: Mon, 11 Mar 2024 12:03:13 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Allen Webb <allenwebb@google.com>,
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <Ze5YUUUQqaZsPjql@dread.disaster.area>
+References: <ZedgzRDQaki2B8nU@google.com>
+ <20240306.zoochahX8xai@digikod.net>
+ <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+ <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <ZervrVoHfZzAYZy4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in reiserfs_dirty_inode
-Content-Language: en-US
-To: syzbot <syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, brauner@kernel.org, hdanton@sina.com, jack@suse.cz,
-        jeffm@suse.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        paul@paul-moore.com, reiserfs-devel@vger.kernel.org,
-        roberto.sassu@huawei.com, roberto.sassu@huaweicloud.com,
-        syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com
-References: <000000000000b6989a0613375b88@google.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <000000000000b6989a0613375b88@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZervrVoHfZzAYZy4@google.com>
 
-#syz fix: fs: Block writes to mounted block devices
+On Fri, Mar 08, 2024 at 12:03:01PM +0100, Günther Noack wrote:
+> On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
+> > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> > > On Thu, Mar 07, 2024 at 03:40:44PM -0500, Paul Moore wrote:
+> > >> On Thu, Mar 7, 2024 at 7:57 AM Günther Noack <gnoack@google.com> wrote:
+> > >> I need some more convincing as to why we need to introduce these new
+> > >> hooks, or even the vfs_masked_device_ioctl() classifier as originally
+> > >> proposed at the top of this thread.  I believe I understand why
+> > >> Landlock wants this, but I worry that we all might have different
+> > >> definitions of a "safe" ioctl list, and encoding a definition into the
+> > >> LSM hooks seems like a bad idea to me.
+> > >
+> > > I have no idea what a "safe" ioctl means here. Subsystems already
+> > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> > > "safe" clearly means something different here.
+> > 
+> > That was my problem with the first version as well, but I think
+> > drawing the line between "implemented in fs/ioctl.c" and
+> > "implemented in a random device driver fops->unlock_ioctl()"
+> > seems like a more helpful definition.
+> 
+> Yes, sorry for the confusion - that is exactly what I meant to say with "safe".:
+> 
+> Those are the IOCTL commands implemented in fs/ioctl.c which do not go through
+> f_ops->unlocked_ioctl (or the compat equivalent).
 
+Which means all the ioctls we wrequire for to manage filesystems are
+going to be considered "unsafe" and barred, yes?
+
+That means you'll break basic commands like 'xfs_info' that tell you
+the configuration of the filesystem. It will prevent things like
+online growing and shrinking, online defrag, fstrim, online
+scrubbing and repair, etc will not worki anymore. It will break
+backup utilities like xfsdump, and break -all- the device management
+of btrfs and bcachefs filesystems.
+
+Further, all the setup and management of -VFS functionality- like
+fsverity and fscrypt is actually done at the filesystem level (i.e
+through ->unlocked_ioctl, no do_vfs_ioctl()) so those are all going
+to get broken as well despite them being "vfs features".
+
+Hence from a filesystem perspective, this is a fundamentally
+unworkable definition of "safe".
+
+> We want to give people a way with Landlock so that they can restrict the use of
+> device-driver implemented IOCTLs, but where they can keep using the bulk of
+> more harmless IOCTLs in fs/ioctl.c.
+
+Hah! There's plenty of "harm" that can be done through those ioctls.
+It's the entry point for things like filesystem freeze/thaw, FIEMAP
+(returns physical data location information), file cloning,
+deduplication and per-inode feature manipulation. Lots of this stuff
+is under CAP_SYS_ADMIN because they aren't safe for to be exposed to
+general users...
+
+So, yeah, I don't think this definition of "safe" is actually useful
+in any way. It's arbitrary, and will require both widespread
+whitelisting of ioctls to maintain a useful working system and
+widespread blacklisting to create a secure system....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
