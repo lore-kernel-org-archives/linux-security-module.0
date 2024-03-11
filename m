@@ -1,384 +1,188 @@
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565CD4206B;
-	Mon, 11 Mar 2024 14:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7C24642B;
+	Mon, 11 Mar 2024 14:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710168423; cv=none; b=G0c+v21hVrCJVPPh8YC+nu7RKFKXTy7piWafLukmow9Z7XqlAERNLebYjT7uFO58+gRDByOYZsU8geHdzFLpZXSJyIBourRKQDpt0fzfEZcIKz+ROKlOAwWt/Ru5CZ+3GJtcqO2P5hA2kN8JDSY/YUziK9ceVWZB0dtxXsYKnuw=
+	t=1710168820; cv=none; b=p3xPzi79tAZGUR19J+R2JPoIGasK5cSd3VCMqb5isNcbdTXWb3QhXzYTj7Yi6stATvdjgqhb5uxJ8TI7TTatLOC/ceevQ88qBGgEq2CH26Izr0cUSihMAd6TwTtRC3n8H9Bws1RbBH0cxU5gnUp2NJzzkw0HVlQBOQjn5dMOaD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710168423; c=relaxed/simple;
-	bh=BLrHvxfbt9fUtA65skAta7I5uBq7a6xwCnd8KgeE6Yk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKL+/IDMWevqTqkqjJrwqUdTnRNWja7SAdmVvgcVEPsNa0/YdPNsUDw4LA6WgRJlu0QdbbcjMP6hZo/Zzw7k59t/CcxV1PLeCAzXB6FIT+T8TvfQWuNfcWkP/cfrGFRUcHKcenmxxBgVILoCZ/1+9GgbH2Ci46SGlqIDHoJaofA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CCXtWsAT; arc=none smtp.client-ip=83.166.143.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CCXtWsAT"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ttfk056YJzCqj;
-	Mon, 11 Mar 2024 15:46:48 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ttfjz2ymMzMpphL;
-	Mon, 11 Mar 2024 15:46:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710168408;
-	bh=BLrHvxfbt9fUtA65skAta7I5uBq7a6xwCnd8KgeE6Yk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CCXtWsATNBGJH2bZ0xBu79LmzRBOUK3SuwNrUwhQzE//y8A6DGjvkhtXoPFihu3Xt
-	 2lxm2rm1AS0NPBwx05Hkl2yVWmSsx2z5lBTqcPQ9S7zLt3GP32phyvYYuw5gG03enE
-	 U4evBUYGuJxpp6m5Fa/C36uRksxR+0SMDEmaepLU=
-Date: Mon, 11 Mar 2024 15:46:36 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Alejandro Colomar <alx@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-api@vger.kernel.org
-Subject: Re: [PATCH v10 2/9] landlock: Add IOCTL access right for character
- and block devices
-Message-ID: <20240311.If7ieshaegu2@digikod.net>
-References: <20240309075320.160128-1-gnoack@google.com>
- <20240309075320.160128-3-gnoack@google.com>
+	s=arc-20240116; t=1710168820; c=relaxed/simple;
+	bh=PMoGFhLyp3YjG8q6lz6vCYFDE3yIaeLIe7vPuylvNAw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BsvDsDcRJ5ToRTvEgMQS+IdySl2y8Z49HtkPEx1uEywdlrWw3jy4HlusOUXhYSCk2wzOVhJ1Wpw+sRtfjuap8p+oKdUn5Xi2DP9UmnrnRjm+zP6pGJhlaH48QwLzdsfVrwpEqxBN19Sin6CCZQKAz0unT5Qs7evk7wLRO8aeBWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TtfQr6zsVz9xrMR;
+	Mon, 11 Mar 2024 22:33:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 4A127140496;
+	Mon, 11 Mar 2024 22:53:23 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBnoCTVGu9l72MbBA--.32227S2;
+	Mon, 11 Mar 2024 15:53:22 +0100 (CET)
+Message-ID: <cff886eef84ced5b4dfac1be7572dc8d06b63792.camel@huaweicloud.com>
+Subject: Re: [RFC PATCH v14 05/19] initramfs|security: Add a security hook
+ to do_populate_rootfs()
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
+  jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, 
+ axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com, 
+ paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, 
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ audit@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Mon, 11 Mar 2024 15:53:06 +0100
+In-Reply-To: <1709768084-22539-6-git-send-email-wufan@linux.microsoft.com>
+References: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
+	 <1709768084-22539-6-git-send-email-wufan@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240309075320.160128-3-gnoack@google.com>
-X-Infomaniak-Routing: alpha
+X-CM-TRANSID:GxC2BwBnoCTVGu9l72MbBA--.32227S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxurWxWFW8urW7ury3CrWDXFb_yoW5Kw4DpF
+	Wq9F13GF4kAF47W3yvk3W7Ca1aq395K3W7JrWDu3W8tF1akrn2qr43Kryqkrs7WrW7Ca1I
+	qF4avrW3Cw1Dt3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBF1jj5c4TAAAsH
 
-Adding Alex, Jon and the API ML for interface-related question: file
-type check or not?
-
-
-On Sat, Mar 09, 2024 at 07:53:13AM +0000, Günther Noack wrote:
-> Introduces the LANDLOCK_ACCESS_FS_IOCTL_DEV right
-> and increments the Landlock ABI version to 5.
-> 
-> This access right applies to device-custom IOCTL commands
-> when they are invoked on block or character device files.
-> 
-> Like the truncate right, this right is associated with a file
-> descriptor at the time of open(2), and gets respected even when the
-> file descriptor is used outside of the thread which it was originally
-> opened in.
-> 
-> Therefore, a newly enabled Landlock policy does not apply to file
-> descriptors which are already open.
-> 
-> If the LANDLOCK_ACCESS_FS_IOCTL_DEV right is handled, only a small
-> number of safe IOCTL commands will be permitted on newly opened device
-> files.  These include FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC, as well
-> as other IOCTL commands for regular files which are implemented in
-> fs/ioctl.c.
-> 
-> Noteworthy scenarios which require special attention:
-> 
-> TTY devices are often passed into a process from the parent process,
-> and so a newly enabled Landlock policy does not retroactively apply to
-> them automatically.  In the past, TTY devices have often supported
-> IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
-> letting callers control the TTY input buffer (and simulate
-> keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
-> modern kernels though.
-> 
-> Known limitations:
-> 
-> The LANDLOCK_ACCESS_FS_IOCTL_DEV access right is a coarse-grained
-> control over IOCTL commands.
-> 
-> Landlock users may use path-based restrictions in combination with
-> their knowledge about the file system layout to control what IOCTLs
-> can be done.
-
-A few minor (or not) nitpicks, but overall I really like this series.
-
-> 
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Günther Noack <gnoack@google.com>
+On Wed, 2024-03-06 at 15:34 -0800, Fan Wu wrote:
+> This patch introduces a new hook to notify security system that the
+> content of initramfs has been unpacked into the rootfs.
+>=20
+> Upon receiving this notification, the security system can activate
+> a policy to allow only files that originated from the initramfs to
+> execute or load into kernel during the early stages of booting.
+>=20
+> This approach is crucial for minimizing the attack surface by
+> ensuring that only trusted files from the initramfs are operational
+> in the critical boot phase.
+>=20
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+>=20
 > ---
->  include/uapi/linux/landlock.h                | 35 +++++++++++++-----
->  security/landlock/fs.c                       | 38 ++++++++++++++++++--
->  security/landlock/limits.h                   |  2 +-
->  security/landlock/syscalls.c                 |  8 +++--
->  tools/testing/selftests/landlock/base_test.c |  2 +-
->  tools/testing/selftests/landlock/fs_test.c   |  5 +--
->  6 files changed, 73 insertions(+), 17 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 25c8d7677539..193733d833b1 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -128,7 +128,7 @@ struct landlock_net_port_attr {
->   * files and directories.  Files or directories opened before the sandboxing
->   * are not subject to these restrictions.
->   *
-> - * A file can only receive these access rights:
-> + * The following access rights apply only to files:
->   *
->   * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
->   * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
-> @@ -138,12 +138,13 @@ struct landlock_net_port_attr {
->   * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
->   * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
->   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
-> - *   ``O_TRUNC``. Whether an opened file can be truncated with
-> - *   :manpage:`ftruncate(2)` is determined during :manpage:`open(2)`, in the
-> - *   same way as read and write permissions are checked during
-> - *   :manpage:`open(2)` using %LANDLOCK_ACCESS_FS_READ_FILE and
-> - *   %LANDLOCK_ACCESS_FS_WRITE_FILE. This access right is available since the
-> - *   third version of the Landlock ABI.
-> + *   ``O_TRUNC``.  This access right is available since the third version of the
-> + *   Landlock ABI.
-> + *
-> + * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
-> + * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
-> + * read and write permissions are checked during :manpage:`open(2)` using
-> + * %LANDLOCK_ACCESS_FS_READ_FILE and %LANDLOCK_ACCESS_FS_WRITE_FILE.
->   *
->   * A directory can receive access rights related to files or directories.  The
->   * following access right is applied to the directory itself, and the
-> @@ -198,13 +199,30 @@ struct landlock_net_port_attr {
->   *   If multiple requirements are not met, the ``EACCES`` error code takes
->   *   precedence over ``EXDEV``.
->   *
-> + * The following access right applies both to files and directories:
-> + *
-> + * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on an opened
-> + *   character or block device.
-> + *
-> + *   This access right applies to all `ioctl(2)` commands implemented by device
-> + *   drivers.  However, the following common IOCTL commands continue to be
-> + *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
-> + *
-> + *   ``FIOCLEX``, ``FIONCLEX``, ``FIONBIO``, ``FIOASYNC``, ``FIOQSIZE``,
-> + *   ``FIFREEZE``, ``FITHAW``, ``FS_IOC_FIEMAP``, ``FIGETBSZ``, ``FICLONE``,
-> + *   ``FICLONERANGE``, ``FIDEDUPERANGE``, ``FS_IOC_GETFLAGS``,
-> + *   ``FS_IOC_SETFLAGS``, ``FS_IOC_FSGETXATTR``, ``FS_IOC_FSSETXATTR``
-> + *
-> + *   This access right is available since the fifth version of the Landlock
-> + *   ABI.
-> + *
->   * .. warning::
->   *
->   *   It is currently not possible to restrict some file-related actions
->   *   accessible through these syscall families: :manpage:`chdir(2)`,
->   *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
->   *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
-> - *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
-> + *   :manpage:`fcntl(2)`, :manpage:`access(2)`.
->   *   Future Landlock evolutions will enable to restrict them.
->   */
->  /* clang-format off */
-> @@ -223,6 +241,7 @@ struct landlock_net_port_attr {
->  #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
->  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
->  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
-> +#define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
->  /* clang-format on */
->  
->  /**
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 6f0bf1434a2c..bfa69ea94cf8 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -148,7 +148,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
->  	LANDLOCK_ACCESS_FS_EXECUTE | \
->  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
->  	LANDLOCK_ACCESS_FS_READ_FILE | \
-> -	LANDLOCK_ACCESS_FS_TRUNCATE)
-> +	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> +	LANDLOCK_ACCESS_FS_IOCTL_DEV)
-
-We may want to check the file type to make sure we set the
-LANDLOCK_ACCESS_FS_IOCTL_DEV right on char/block devices only, the same
-way we already check with d_is_dir() [1].  From user space point of
-view, it should not change much because a call to statfs(2) may already
-be in place.  From kernel space point of view it would only be a matter
-of checking the related inode in landlock_append_fs_rule().
-
-Checking for the file type is not strictly necessarily, but I
-implemented the d_is_dir() call and get_path_from_fd() checks to
-encourage/force user space to check the file/directory on which it wants
-to give access to (e.g. and not erroneously grant access to a whole file
-hierarchy rather than a file thanks to statfs(2) information, not the
-Landlock syscall itself).  Applications sandboxing themselves should not
-be surprise that a file descriptor refers to a directory or a file, and
-they should not require additional call to statfs(2).  Another
-motivation was that I think this kind of conservative check would have
-been difficult to implement later (with an option) because of the
-potential user space architectural changes.  Finally, this kind of type
-checking can be silently ignored with help from user space libraries
-when needed.
-
-About the char/block device check, it might also be a good idea for user
-space to check the major/minor numbers to make sure they match
-expectations (i.e. related IOCTL commands).
-
-I'm convinced the get_path_from_fd() checks are good because special
-files are not restricted (and can then be silently ignored without
-impact), whereas a non-special file could still get a valid (super)set
-of access rights (and maybe better follow the principle of least
-astonishment?).  I'm wondering if checking dir/file was the best
-decision, if this is enough, or if we should extend that to char/block
-devices.  Any opinion an that?
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/security/landlock/fs.c?h=v6.8#n166
-
->  /* clang-format on */
->  
->  /*
-> @@ -1332,8 +1333,10 @@ static int hook_file_alloc_security(struct file *const file)
->  static int hook_file_open(struct file *const file)
->  {
->  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
-> -	access_mask_t open_access_request, full_access_request, allowed_access;
-> -	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
-> +	access_mask_t open_access_request, full_access_request, allowed_access,
-> +		optional_access;
-> +	const struct inode *inode = file_inode(file);
-> +	const bool is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
->  	const struct landlock_ruleset *const dom = get_current_fs_domain();
->  
->  	if (!dom)
-> @@ -1350,6 +1353,10 @@ static int hook_file_open(struct file *const file)
->  	 * We look up more access than what we immediately need for open(), so
->  	 * that we can later authorize operations on opened files.
->  	 */
-> +	optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
-> +	if (is_device)
-> +		optional_access |= LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> v1-v11:
+>   + Not present
+>=20
+> v12:
+>   + Introduced
+>=20
+> v13:
+>   + Rename the hook name to initramfs_populated()
+>=20
+> v14:
+>   + No changes
+> ---
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      |  8 ++++++++
+>  init/initramfs.c              |  3 +++
+>  security/security.c           | 10 ++++++++++
+>  4 files changed, 23 insertions(+)
+>=20
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 76458b6d53da..e0f50789a18f 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -425,3 +425,5 @@ LSM_HOOK(int, 0, uring_override_creds, const struct c=
+red *new)
+>  LSM_HOOK(int, 0, uring_sqpoll, void)
+>  LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
+>  #endif /* CONFIG_IO_URING */
 > +
->  	full_access_request = open_access_request | optional_access;
->  
->  	if (is_access_to_paths_allowed(
-> @@ -1406,6 +1413,30 @@ static int hook_file_truncate(struct file *const file)
->  	return -EACCES;
->  }
->  
-> +static int hook_file_vfs_ioctl(struct file *file, unsigned int cmd,
-> +			       unsigned long arg)
+> +LSM_HOOK(void, LSM_RET_VOID, initramfs_populated, void)
+
+I don't know, but why there is no super_block as parameter?
+
+And, wouldn't be better to rely on existing hooks to identify inodes in
+the initial ram disk?
+
+(gdb) p *file->f_path.dentry->d_inode->i_sb->s_type
+$3 =3D {name =3D 0xffffffff826058a9 "rootfs"
+
+That could also help if you want to enforce action based on the
+filesystem name (and why not on the UUID too).
+
+Roberto
+
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index d0eb20f90b26..619e17e59532 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -2167,4 +2167,12 @@ static inline int security_uring_cmd(struct io_uri=
+ng_cmd *ioucmd)
+>  #endif /* CONFIG_SECURITY */
+>  #endif /* CONFIG_IO_URING */
+> =20
+> +#ifdef CONFIG_SECURITY
+> +extern void security_initramfs_populated(void);
+> +#else
+> +static inline void security_initramfs_populated(void)
 > +{
-> +	const struct inode *inode = file_inode(file);
-> +	const bool is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
-> +	access_mask_t required_access, allowed_access;
-> +
-> +	if (!is_device)
-> +		return 0;
-
-We should first check landlock_file(file)->allowed_access as in
-hook_file_truncate() to return as soon as possible for non-sandboxed
-tasks.  Any other computation should be done after that (e.g. with an
-is_device() helper).
-
-> +
-> +	/*
-> +	 * It is the access rights at the time of opening the file which
-> +	 * determine whether IOCTL can be used on the opened file later.
-> +	 *
-> +	 * The access right is attached to the opened file in hook_file_open().
-> +	 */
-> +	required_access = LANDLOCK_ACCESS_FS_IOCTL_DEV;
-> +	allowed_access = landlock_file(file)->allowed_access;
-> +	if ((allowed_access & required_access) == required_access)
-> +		return 0;
-> +
-> +	return -EACCES;
 > +}
+> +#endif /* CONFIG_SECURITY */
 > +
->  static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
->  
-> @@ -1428,6 +1459,7 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
->  	LSM_HOOK_INIT(file_open, hook_file_open),
->  	LSM_HOOK_INIT(file_truncate, hook_file_truncate),
-> +	LSM_HOOK_INIT(file_vfs_ioctl, hook_file_vfs_ioctl),
->  };
->  
->  __init void landlock_add_fs_hooks(void)
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index 93c9c6f91556..20fdb5ff3514 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -18,7 +18,7 @@
->  #define LANDLOCK_MAX_NUM_LAYERS		16
->  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
->  
-> -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_TRUNCATE
-> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_DEV
->  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
->  #define LANDLOCK_SHIFT_ACCESS_FS	0
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index 6788e73b6681..9ae3dfa47443 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -149,7 +149,7 @@ static const struct file_operations ruleset_fops = {
->  	.write = fop_dummy_write,
->  };
->  
-> -#define LANDLOCK_ABI_VERSION 4
-> +#define LANDLOCK_ABI_VERSION 5
->  
->  /**
->   * sys_landlock_create_ruleset - Create a new ruleset
-> @@ -321,7 +321,11 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
->  	if (!path_beneath_attr.allowed_access)
->  		return -ENOMSG;
->  
-> -	/* Checks that allowed_access matches the @ruleset constraints. */
-> +	/*
-> +	 * Checks that allowed_access matches the @ruleset constraints and only
-> +	 * consists of publicly visible access rights (as opposed to synthetic
-> +	 * ones).
-> +	 */
+>  #endif /* ! __LINUX_SECURITY_H */
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index 76deb48c38cb..140619a583ff 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/init_syscalls.h>
+>  #include <linux/task_work.h>
+>  #include <linux/umh.h>
+> +#include <linux/security.h>
+> =20
+>  static __initdata bool csum_present;
+>  static __initdata u32 io_csum;
+> @@ -720,6 +721,8 @@ static void __init do_populate_rootfs(void *unused, a=
+sync_cookie_t cookie)
+>  #endif
+>  	}
+> =20
+> +	security_initramfs_populated();
+> +
+>  done:
+>  	/*
+>  	 * If the initrd region is overlapped with crashkernel reserved region,
+> diff --git a/security/security.c b/security/security.c
+> index f168bc30a60d..26c28db211fd 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5619,3 +5619,13 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd=
+)
+>  	return call_int_hook(uring_cmd, 0, ioucmd);
+>  }
+>  #endif /* CONFIG_IO_URING */
+> +
+> +/**
+> + * security_initramfs_populated() - Notify LSMs that initramfs has been =
+loaded
+> + *
+> + * Tells the LSMs the initramfs has been unpacked into the rootfs.
+> + */
+> +void security_initramfs_populated(void)
+> +{
+> +	call_void_hook(initramfs_populated);
+> +}
 
-This change is not needed anymore.
-
->  	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
->  	if ((path_beneath_attr.allowed_access | mask) != mask)
->  		return -EINVAL;
-> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-> index 646f778dfb1e..d292b419ccba 100644
-> --- a/tools/testing/selftests/landlock/base_test.c
-> +++ b/tools/testing/selftests/landlock/base_test.c
-> @@ -75,7 +75,7 @@ TEST(abi_version)
->  	const struct landlock_ruleset_attr ruleset_attr = {
->  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
->  	};
-> -	ASSERT_EQ(4, landlock_create_ruleset(NULL, 0,
-> +	ASSERT_EQ(5, landlock_create_ruleset(NULL, 0,
->  					     LANDLOCK_CREATE_RULESET_VERSION));
->  
->  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 2d6d9b43d958..0bcbbf594fd7 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -527,9 +527,10 @@ TEST_F_FORK(layout1, inval)
->  	LANDLOCK_ACCESS_FS_EXECUTE | \
->  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
->  	LANDLOCK_ACCESS_FS_READ_FILE | \
-> -	LANDLOCK_ACCESS_FS_TRUNCATE)
-> +	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> +	LANDLOCK_ACCESS_FS_IOCTL_DEV)
->  
-> -#define ACCESS_LAST LANDLOCK_ACCESS_FS_TRUNCATE
-> +#define ACCESS_LAST LANDLOCK_ACCESS_FS_IOCTL_DEV
->  
->  #define ACCESS_ALL ( \
->  	ACCESS_FILE | \
-> -- 
-> 2.44.0.278.ge034bb2e1d-goog
-> 
