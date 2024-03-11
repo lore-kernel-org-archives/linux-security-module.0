@@ -1,192 +1,174 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46A043AAB;
-	Mon, 11 Mar 2024 21:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710192729; cv=fail; b=NF8Fq6e3qshTMeBK3lYtrZQ7IUH/Of5f5YQ9aAQEzPx5zB02M5iQgCBhaAIsQCAX2/UdUPqlzixP3mEMW5BXvzZFd+mK0x+P/0JzDpA6cihIVXiQ672+gKdDmnxR4JwBxgs5NcT4PMaYDF7PQtLZi8r/0/bmJsykaW6FoVXGruw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710192729; c=relaxed/simple;
-	bh=T9LXE2n+5lDlAOfMAt7BWFH9QpW22SinIDGmp1DeejM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aelTKmoz3KUIjb3myUAx6el2O3wlXLXrKJm/slw3L06PkGLe/lZ97X2Hf22HRiQ7g8LvCQGHkLID/ybp0PhfYWwm/F03bDY7/RYJ4VQxXM6ZrvbHpT1VMjoifvXi6wgFxv3HQgjGbSmTIoJM/CRViclC9NnmglVtu5M6UE2JOls=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=HpOZAGDJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MaqxcSeJ; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082A75822B
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 22:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710195154; cv=none; b=DP4W1ETpGfjiPRzRZV6S2xRj/mZqTr7c3WN9O7VGIYrWBo/UtmEPEUIS8ihLZklFRG/J0omTOyLiMxwNGDubZRAbnbOBwS0tXHBSFTiqWGm/xuTGHQrn7YS50OHTePAj2VxBLX1BdrXBxmY2Bx2NXE1EQlekQuATx6BU6pQJsUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710195154; c=relaxed/simple;
+	bh=osu0hSiORSyIZpQ3dd416kqvq4IzeIB1wejEPaBnlik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrnzPDTkFZ3D9es+aFwhmp8JyRM2Ev8VeVxA5qfaJwBMV0tFOrtp042pJkOgdkQQcA8ZhVWXpix2vxlRNcCDNf3eHTOqgJq3L6wtakOHY2aqhGNAR5Mpe4PsGHGHGKr8LlSi46CsASmtfZvdacg3+fHeI8jpDPGNirNSOY/ieys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RTqI2Z48; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HpOZAGDJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MaqxcSeJ"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42BLEqfj013092;
-	Mon, 11 Mar 2024 21:31:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=T9LXE2n+5lDlAOfMAt7BWFH9QpW22SinIDGmp1DeejM=;
- b=HpOZAGDJJltwCjn+L+FL4AiWdW+K58h+No9IaWH+pk+M2Se9Y5eEg8j7fZg+Q7O2a6Xp
- 5pBsHH+IrJV9Drav/Rf1W2y4FbY+5KpHHsafki8ppqhn5dL/5z6JJA2M0IW/m5rzP3rv
- FVVyiM9y2pbe57arr2iui4pr5MquyTDA2OrIZrNlU2nHopkuOU3dv9FK3GiIokn3O5sC
- 0afFa59RTL52zlz7L4pp54eX1OKM5U3u5H0W2CXjNCzWFhXLjpIIc2iVlhCGzArKsZAl
- M6ncuwIEHIO4nH1Wt1rS2HFkvdrxMzrzlke8hCaT0YpH6upjnqWP8wCES0TPOTaZ05t4 KQ== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wrfnbm8mc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 11 Mar 2024 21:31:43 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 42BLKIhu033723;
-	Mon, 11 Mar 2024 21:31:43 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3wre763ka3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 11 Mar 2024 21:31:43 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OwwizsPWzQKLJTUMTLfxSyBbESvUgvXT9rDODiqc0wnwClvL/WnQQakp7/pTik4lGByb3TN/NIb3PadfYktnXgJPa8oAbO75HprozHdDGo9Xc91U7KuCog9kjsqlaXh391/Lz/COZH/HeY7ebPvWwfsHXx0UbyeulZ338HahWk3wiWYLgGKlN/yVKJzKDuhMvXn3xopR/oEhGSJzOSN/MgbLrOvP/9cgn38eGbNgGPMhnpAZUCKjWjmnfroR1/JTrdRPRwtsP7iGaB9sO96l5bf4K2EYazQ/JBvuMy72aoujnjQuNDLsZtbi5V1rBnS4dDT3cg7ep51XVEKCr9i5Dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T9LXE2n+5lDlAOfMAt7BWFH9QpW22SinIDGmp1DeejM=;
- b=lCtWDnAca3JwBnHhn/2l8gjcgfbNp75knkiMzgS9oRAtlCU6gIaoa0JGDWWsvkkZbuxAAxfKuLanXDBEIsKXZfiy6WY6jrWPom/QK1AgkntWgsD8NQn1cxOQSoXiHLTxRCqglCHzN+hYz6BQWvO788Fh4bZq8TUcumG3hGzqc3Hmt4gcwG8sRZddscBNikSXtTLuZM61ls9E2bpRgLqOoR2LMr1LA6OOODyvhZHb2QzmrHMicQrteQoTsjox91VleFEzBJTyFWQ2GNbDMz/dP87001p3xJjMJ5QXDpWhY8bpCFuM2Tu+N+fz19sbSULJfph1krp2w4NRmg1ycAofkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RTqI2Z48"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6e622b46f45so2761701b3a.1
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 15:12:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T9LXE2n+5lDlAOfMAt7BWFH9QpW22SinIDGmp1DeejM=;
- b=MaqxcSeJ5VBBeR9g6UkCbrXG2GA3VT2yAUH1RYnkW6//0d/GmsKSjc3g/YebkeMrp80XXV0tYdbAC0Ytkx64UwshLLjTWyP6McO59rLHg1KzPfh4glC5UcdfnDHYfmusG+ofFu7LSrKPG9EPNeIhaE8+SRQzaq7C67CwxRkvK5g=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by DS0PR10MB6799.namprd10.prod.outlook.com (2603:10b6:8:13f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.35; Mon, 11 Mar
- 2024 21:31:41 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::9ade:bfad:c78e:e1f9]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::9ade:bfad:c78e:e1f9%7]) with mapi id 15.20.7362.035; Mon, 11 Mar 2024
- 21:31:40 +0000
-From: Eric Snowberg <eric.snowberg@oracle.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-CC: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Ard Biesheuvel
-	<ardb@kernel.org>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com"
-	<serge@hallyn.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "mic@digikod.net"
-	<mic@digikod.net>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        "stefanb@linux.ibm.com" <stefanb@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: Re: [PATCH RFC 1/8] certs: Introduce ability to link to a system key
-Thread-Topic: [PATCH RFC 1/8] certs: Introduce ability to link to a system key
-Thread-Index: AQHac8/Wy3kR1DBbWUSwLVt/DZ3pl7Ey6kGAgAAlFQA=
-Date: Mon, 11 Mar 2024 21:31:40 +0000
-Message-ID: <77AE4DEA-9474-44A1-88DC-852523C36797@oracle.com>
-References: <20240311161111.3268190-1-eric.snowberg@oracle.com>
- <20240311161111.3268190-2-eric.snowberg@oracle.com>
- <CZR5W1VPAVJC.2VZOSD53YNT9I@kernel.org>
-In-Reply-To: <CZR5W1VPAVJC.2VZOSD53YNT9I@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3774.400.31)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|DS0PR10MB6799:EE_
-x-ms-office365-filtering-correlation-id: d1e7f02f-efa4-4762-08cf-08dc4212a40e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- jiNstXHj4dyuQKkqYzpQYCpUUYsaxR1tP29EHTYwcl+pPVvSlgSahAXjty1rEVf4Q1lmzPxabsYUY+q/biJfvzsCl6LXpsOxf85SKR2UiwE9XtTENafwqBkdnexXDJCBr6vZFbqDiC7mcc+RuHHHPoIRKdWa2Q+A5Y7OI9llliY5XmCAPPJiaAO3NSjx+JTXOrPAlh2/SZ5Of7HOHFcjMc1be8ekv+dwaVCbrfjgZOrWWGvWg0OBxewtrEeiB7zG5BX+4t9lpToG0XxHtTDdHxnDYX2MiI9qCOy8FKoo623NTC5MAKKrdIs1mfSTEu8jxoF4X9FRuyJtxGQhU4PBCN1vdhen1VcrBrJ10lupB/zsUpNhjwbvhn2TSouNPN7fuNDPEZ5RQkK4E/ryELecY7MacQCNs/Q2KSXZlY13pN5HcgXEroyTXUvplC0982xB1GCzEGmHkv/lTRLeFQGbVef+NlDDz9hd8toSQGNuqL1md72yrkYX9vYU2WyenIuZv0DJMCuuq9hf8s2GecfrwAyx27Oyo4ZkQu1FKo1smlqcIZfMmwO2K/ipGpflLQhlpLaQyKkKSC0jTKOwdSnQk75TF9JCVDWuob7wWc/LqnfzSDJIHCCDT0NFjRWyuG0agNNX/HP8XtfHnNPvKzh3lh9Ac4lOGU0S/N8qTnHGuj+g6iRz6cjM/OSbv4cdL53L7zB1ntbjToMTb8bZKRwE2F4cMpOTJqd4OtRP0fasv04=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?bS96eVF5WHcrall0ZDhtaFZ5VW1YM2tjRE9wcVludFIva25PV1laVzFkcjVH?=
- =?utf-8?B?SHF4Z2FoVFMwaloreGFOaUpKOUpId0RKOWtBM25wNzRjdlJPTmx2Z29uS0Qv?=
- =?utf-8?B?bGwzMXMzY3NmZkc4S09zQkQ0NEdNNjVtdzIwWTlFZk9OYmhCY2VoRnBoa1RE?=
- =?utf-8?B?cGNwSGhWTnY1b1dpRTlnT3g5dCtDWG5KRC9aUVpYQVRNWDduclpTRGZjYXAw?=
- =?utf-8?B?OEZPZHhDZFJncERUblhkWXBoS0I3MTdpOTAxdFlzQWp6cDhUU0NVZXJ5NHJD?=
- =?utf-8?B?a2xnQk50bmloaExpWHMwQXJDcWl1eTNOdFcrZ1UvZDg5OFJkUmFOMTNuNFdL?=
- =?utf-8?B?SFdOSUUySzd1dVFyS3AvNzcra01UNlhEb0ROYWM4WFRxTWZYVVpZQ21oSnpJ?=
- =?utf-8?B?WjhESldCL3RnVnFwRFhhaVNQVi8zTldJMXhsajFwOFUvTHEvL0pxS2xwVVBN?=
- =?utf-8?B?eFBObDVSb0M1RTF6eGNxdGxFZHBhMDJVbnEyQVRaT29aSUZqVlpzQ1RWNkdi?=
- =?utf-8?B?cWJQUTR6aVZYd0NCYWVWZ1I1RUU2c1k3MjdaRFZNUEZZZkFVaFdnTHp6OUJX?=
- =?utf-8?B?MjdVOExkNnFRc3Z0eEYyQ2Z2dHM3NXladjVqdmtrWG1rWGRjTC9RdHFCTVMx?=
- =?utf-8?B?d05xV3FOYXdHeERVazdlKzN0aUR6YXBZbCt6cWhYWHNjUlBGVUFkRjIyTGJ0?=
- =?utf-8?B?Q3h6OEl1bHFCM0RGb3NQeG9VU01TZ1VVbTV3K2txU1ppNlpxOFc4YXp2ZzFp?=
- =?utf-8?B?T1U3QWxGL1M1Mi8xUTZBdGZQZDRoOWhaNnE1bmtWb05iVERHMUU0Ukxnd3pK?=
- =?utf-8?B?V0o0djNiM0wxUXhKc1ltRTVhNDIwR2M2ODNqNmlpcHZ5U0NtcFBIM1NocC9p?=
- =?utf-8?B?TVd1ODNZcTVTY0g0eWZYNUtERk94VDR1WGZWVndGNGh1ZUh2VmpNUmk3ZWgw?=
- =?utf-8?B?dTdYOTBQQS9UYU9Ld1lFZjhVUVlqSnF1aGF2YUladzlFaU93cnhiNHBWZkpy?=
- =?utf-8?B?TlRlamxMSnl3R0xqTzFwNForcjlLdVA0QnV3WEFjTjBTZlE1VjhwYm9TeTF4?=
- =?utf-8?B?VkZCMHo5aC85dVFsYTZCZVlmTlhkb2lObEtxVnRybTEzREhDZUtSUjNMSmd2?=
- =?utf-8?B?MmQ3VU1kQ1V4SVFwb3dPVng3MGw3TkJ5UVQzck9zc091RkU0WmtGOHJsZVBU?=
- =?utf-8?B?KzlCOXNRQlp0OEdsUzI0RHE1OVJNdFRwUW1qekU2UFRtdWl0VlFmWHl5YVI4?=
- =?utf-8?B?d1M2aWtVcUlUMFlSamlXdnlXai9KVWZGUmFkeWZZeUdjeGIzUkswdXBjanNX?=
- =?utf-8?B?SW5XWUROT3pNV1ZpK2xzZmdkMmppUEZwQW9JTVI4Ukg2Y3RNVCtZY3ZaM2J0?=
- =?utf-8?B?blpDOUYxV1JYNlZvUm96OG9oc3BVWkppdUJEcGtkaEhiT2pFbDZDaTU0MVF3?=
- =?utf-8?B?UXZoQ2ZjVklSTW1IejZxU3FVRHhBcC9VVzlPNEMveGJMdm03TEl4TGpaNWJI?=
- =?utf-8?B?K3RsYjZQWGEzZ0ZJbmdSRUY2SXI5cFZVTEc3YlowZkw1OUM0Z0I1LzlIcEs1?=
- =?utf-8?B?dHpTaVFuQkJ6L2RDc3JLRzZlWFMweWcyaGZFQUljQ1kxbkdoZ2txaTZLcGNw?=
- =?utf-8?B?YzErOEdHTkUwZFhITmh6UnBreEYxYkdCSi80K0dDS0MyOHowblZEVGkwS2JZ?=
- =?utf-8?B?UzZ0aE9SSFR0c2lPNFlsRFp0MUU2SDIxNUorTHhZUlFKN1pPMXBnMmtETU9Y?=
- =?utf-8?B?V0JNVmU3cHI4bjZxOXdZbTJmN1V5SnJHYTJ6a1lvdytqZVIxQWpzeWsvTXlz?=
- =?utf-8?B?WHYrVDlrVSt0WVpZN1RyTjV0YjNobGlydlJqM1hzVXA1MlQwK2lTV3VtT25H?=
- =?utf-8?B?U29td3pwbllHWDF0VDNvcVdwZjFvSWVGQlVib214MmtDelNWVmp6Nk1WN3dP?=
- =?utf-8?B?L3dza2pQMzFmS29VWXZGS0xKdlBkd1RGQ2QwWTU4OWxiMGoyME83aFBrdmlS?=
- =?utf-8?B?aTlhRjFsZ2U5WUtacHBLY0svaFZuSGVkYzYvNUNGVUVSYXU0UmxOZTRhVFlk?=
- =?utf-8?B?anp6cWNsRGZSWjhGUnpBYzVUN3hScE1jUTErNFpDMGh4aGtIaWI4SSt6aFhn?=
- =?utf-8?B?ZS9nTVNKTzVLdVJwRGdVQ2FhMmhJbmFMVm5Yc3NndEYyNndMVG0rTkNuSUhq?=
- =?utf-8?B?akE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7613413F89D4034E9B306B755E619592@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710195152; x=1710799952; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tQPLox6coVczJgg0u74CQV/by37pFi2dP23Pejr0Xzo=;
+        b=RTqI2Z48fG/ip5+diNjwq/s+3flD3Zi1Ba+u6B9tUK0U+f4YOtQqVKNXihqAaU7YVl
+         fw8qBk9pLqzudm4ajH6kL0u5vMvZfo01/pfQZDlGAtNgNzqF7ZjOQi4v4/bL3jjagXIa
+         nzNr8hJmnq3HLf61AAfpVz5bnPmE53Fg26iM8FfPEY/enQ+dGUfXmSYO4jkzCE6aHebo
+         zeQ0svAsR2kLl3PfLYvIduGP6lc4969a/lM4ogyClF0btiv0gNaIU9Sa45r7hM38OzR3
+         1P+q62gsHyXyQv+v+WZL0uUoSn8HkjR3b68xKKeJDkXb1bhNfEzOsuyDKkINae9rwcqU
+         YMGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710195152; x=1710799952;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tQPLox6coVczJgg0u74CQV/by37pFi2dP23Pejr0Xzo=;
+        b=E80popbUwFskgNK/NQgnaGW1lEXe2tH1X1SAyZoyJbnILnMC+0yug5LN+bDma1VfjQ
+         rerjrIZomVvlhp0Ks2jjeZVwY67HYeTHeilwNeh29s2hKauCndgX7EYcd3NVx8WrwoZe
+         K7e23joZH4/RvE/QAHK/nEUhgtbfj4cRl/nXXz0H8hFBbd906D3V7AHd8RIyzu5fjTEj
+         FuOO88bb7T+K4tbhDTDiI1bC/FWiBzR5gdQ3X/SUDSQcAe0W7749/9CoWZP6+WdTphJP
+         ECe2tvB3hSYpauTTz+cmX7eSLoTMKQgT0Xji+RNUtA7iECUNAt8uXXFHQ1FpFsPyQe5+
+         dUMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZkMjzhJwAvakyRw4EGRmx+R74TTypgjvlDewmVLtlLi8bg+kfcfWIfg+aDNaUc9+zsGtNzR+7drP3am4HQBDWyuGZTJM+BDlC4DYCe7LhsxyPntMF
+X-Gm-Message-State: AOJu0Yy+5BoEIKdM9fBEjSyCchZi5BfPRfNSpwkcpUf711LhZ0pvS3gp
+	Z/lZ8z/Vi1V60a3yQ9zsvCacXzJNpzSTeeMM1m51eRqUbqlm72aiMGzUxFeKgaQ=
+X-Google-Smtp-Source: AGHT+IHsPrYogruVW4mJKMDgJ2q1LIJp88fe4SdPPockPPpcW/D/vyRq0hbPBBvNUvbjpoP/PYjXNg==
+X-Received: by 2002:a05:6a20:748c:b0:19e:ac58:7b0d with SMTP id p12-20020a056a20748c00b0019eac587b0dmr5917598pzd.5.1710195152095;
+        Mon, 11 Mar 2024 15:12:32 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-47-118.pa.nsw.optusnet.com.au. [49.179.47.118])
+        by smtp.gmail.com with ESMTPSA id a14-20020a62d40e000000b006e6629e6a76sm5055702pfh.137.2024.03.11.15.12.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Mar 2024 15:12:31 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rjnsi-000dQB-1R;
+	Tue, 12 Mar 2024 09:12:28 +1100
+Date: Tue, 12 Mar 2024 09:12:28 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Allen Webb <allenwebb@google.com>,
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <Ze+BzMyBp1vRIDKv@dread.disaster.area>
+References: <263b4463-b520-40b5-b4d7-704e69b5f1b0@app.fastmail.com>
+ <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+ <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <ZervrVoHfZzAYZy4@google.com>
+ <Ze5YUUUQqaZsPjql@dread.disaster.area>
+ <Ze7IbSKzvCYRl2Ox@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	nMq98xchG6QCVcqsbZqU9J4RRjJ8k/2U989bNNYvr5cJ8AostBccBZVEWc7TRK6H9S5o6czjyNa3ilAspCOOFjL9iAOGTlwp4okvui9HnoezVNDz0ZITjIDGGxrhaL6U68JafuWLL/nU8dsVEDfG6lhgeOoTyXMjl2fAit+qMJjvj5hKU5pLHPUDUkp3bhMbBs62dighDtrk8SRcw06gz3NfpxoaywpMeueoQqV307p7/7DBkwG6Wxo3WsMDX/9uY/llGVqM3trOjTd4Y+/wNLG+NwNrzYWZteFfQtL/TV1dlj/3yJplMwejkSbB6kGSrp5GelFdjglDDGNoBXdpbAXbA2PuPZvlUKGaa93VLFScRsPtqNB8aBQfugzwi8P6oARQODyB1hroqI8u26vnsLiKsvzTiMkyTbYJPSXPAJFZlC2V3zmVE/2q3uNKBCRnw07gmVuUNNnyjk9FWB1gmP/1OW4fcH2SVd7y8AvyqoClnQx6XdzOfigYYV+WM6igv5I0FLEq4DnDQTsRYP8ANGg7KueEGMlmf7gb2nzK9an4sT8cW1ubmovtic5/Q79UvpsfUC3iG0ZdfeLl2awg0L1Nzn1Xtu7+WNvZQOENcTI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1e7f02f-efa4-4762-08cf-08dc4212a40e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2024 21:31:40.8627
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WkjCPojDxNrrC4ZxC0RJvy012Z/a9moCTtbc6pQqhqPLbjZv39NFJO4EF96szy9gccjzVk3/GFuriTY+EV1kKETXAoTF+sdEz+lET3ldPHo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6799
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-11_11,2024-03-11_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2403110166
-X-Proofpoint-GUID: 2s_pNXXY8UPko-rEPuBwe0rXIllVOPTG
-X-Proofpoint-ORIG-GUID: 2s_pNXXY8UPko-rEPuBwe0rXIllVOPTG
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Ze7IbSKzvCYRl2Ox@google.com>
 
-DQoNCj4gT24gTWFyIDExLCAyMDI0LCBhdCAxOjE44oCvUE0sIEphcmtrbyBTYWtraW5lbiA8amFy
-a2tvQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiANCj4gT24gTW9uIE1hciAxMSwgMjAyNCBhdCA2OjEx
-IFBNIEVFVCwgRXJpYyBTbm93YmVyZyB3cm90ZToNCj4+ICsgcmV0dXJuIC0xOw0KPiANCj4gTWlz
-c2VkIHRoaXMgb25lOiB3aHkgYSBtYWdpYyBudW1iZXI/DQoNCkdvb2QgcG9pbnQsIEknbGwgY2hh
-bmdlIHRoaXMgdG8gcmV0dXJuIC1FTk9LRVkuICBUaGFua3MuDQoNCg==
+On Mon, Mar 11, 2024 at 10:01:33AM +0100, Günther Noack wrote:
+> On Mon, Mar 11, 2024 at 12:03:13PM +1100, Dave Chinner wrote:
+> > On Fri, Mar 08, 2024 at 12:03:01PM +0100, Günther Noack wrote:
+> > > On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
+> > > > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> > > > > I have no idea what a "safe" ioctl means here. Subsystems already
+> > > > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> > > > > "safe" clearly means something different here.
+> > > > 
+> > > > That was my problem with the first version as well, but I think
+> > > > drawing the line between "implemented in fs/ioctl.c" and
+> > > > "implemented in a random device driver fops->unlock_ioctl()"
+> > > > seems like a more helpful definition.
+> > > 
+> > > Yes, sorry for the confusion - that is exactly what I meant to say with "safe".:
+> > > 
+> > > Those are the IOCTL commands implemented in fs/ioctl.c which do not go through
+> > > f_ops->unlocked_ioctl (or the compat equivalent).
+> > 
+> > Which means all the ioctls we wrequire for to manage filesystems are
+> > going to be considered "unsafe" and barred, yes?
+> > 
+> > That means you'll break basic commands like 'xfs_info' that tell you
+> > the configuration of the filesystem. It will prevent things like
+> > online growing and shrinking, online defrag, fstrim, online
+> > scrubbing and repair, etc will not worki anymore. It will break
+> > backup utilities like xfsdump, and break -all- the device management
+> > of btrfs and bcachefs filesystems.
+> > 
+> > Further, all the setup and management of -VFS functionality- like
+> > fsverity and fscrypt is actually done at the filesystem level (i.e
+> > through ->unlocked_ioctl, no do_vfs_ioctl()) so those are all going
+> > to get broken as well despite them being "vfs features".
+> > 
+> > Hence from a filesystem perspective, this is a fundamentally
+> > unworkable definition of "safe".
+> 
+> As discussed further up in this thread[1], we want to only apply the IOCTL
+> command filtering to block and character devices.  I think this should resolve
+> your concerns about file system specific IOCTLs?  This is implemented in patch
+> V10 going forward[2].
+
+I think you misunderstand. I used filesystem ioctls as an obvious
+counter argument to this "VFS-only ioctls are safe" proposal to show
+that it fundamentally breaks core filesystem boot and management
+interfaces. Operations to prepare filesystems for mount may require
+block device ioctls to be run. i.e. block device ioctls are required
+core boot and management interfaces.
+
+Disallowing ioctls on block devices will break udev rules that set
+up block devices on kernel device instantiation events. It will
+break partitioning tools that need to read/modify/rescan the
+partition table. This will prevent discard, block zeroing and
+*secure erase* operations. It may prevent libblkid from reporting
+optimal device IO parameters to filesystem utilities like mkfs. You
+won't be able to mark block devices as read only.  Management of
+zoned block devices will be impossible.
+
+Then stuff like DM and MD devices (e.g. LVM, RAID, etc) simply won't
+appear on the system because they can't be scanned, configured,
+assembled, etc.
+
+And so on.
+
+The fundamental fact is that system critical block device ioctls are
+implemented by generic infrastructure below the VFS layer. They have
+their own generic ioctl layer - blkdev_ioctl() is equivalent of
+do_vfs_ioctl() for the block layer.  But if we cut off everything
+below ->unlocked_ioctl() at the VFS, then we simply can't run any
+of these generic block device ioctls.
+
+As I said: this proposal is fundamentally unworkable without
+extensive white- and black-listing of individual ioctls in the
+security policies. That's not really a viable situation, because
+we're going to change code and hence likely silently break those
+security policy lists regularly....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
