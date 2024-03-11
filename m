@@ -1,192 +1,154 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A965439AFF;
-	Mon, 11 Mar 2024 18:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EC640847
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 19:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710182066; cv=none; b=lMg9vg6/+kwtMK2lx+l/Pjc2vEn9rYx1JaZU1fPuc15sCGqp+b1G1//7UQhSMVAY9au1dajpDtnpfWHgy/+8zxMHuPUvTbtmqZ12R04SWMP2yiu1DXGbVsRZjz+j5Wj3+Tf0e1So8VLmgD0kj/owR8HT08b4NnfNc7pvitHtP34=
+	t=1710183884; cv=none; b=a3IjYSWaKS7EKiK5iyOHUu6pxF2mW2VeIrYWmT+hb+C4FhNxq6GpfW2alrapH0DRFfGexYIFQ3E6Jb7uGSJ74R+wg4QSRyVdoeOyurv5U/mERSxqbMLSPaX/yflydSKlSimHAknBUVkPZPd2S+cSVmTGSlRCS/H4kZ4zVyHhW2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710182066; c=relaxed/simple;
-	bh=yuuZpbBSCUVSrGY6ZKhBWY/+6yGrO/sdr6mf+50hinw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R5MT0nE4e8Y9r/AbWOY7fdYfZEJDU1dtgGjLZDgr9XCwjvZ8RNkxssTMozF0NbQTL5BtbUTTa5bc/5863v3BDB1XBi+s5pQH9bN4w/ngefv/doDu6oIckLogx4rRGD0x2dS7nt8FksA3k6S0edWC01jbYYeKgRbqDZYMA5znT1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=mFz9z8ar; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1710183884; c=relaxed/simple;
+	bh=a34c1W8UxJqLqwodwsx3ke0IIehjsmsB0sZpvh8qj64=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FCd0UZB7H8vitkAbgAAB9uEL7M7nRXluDWVoRw4NEz8KcoeCrudhiFNlB87awFdhOw7wrxiRKKHIP7biRrHJofy+XMByRjOOA7e9ziTcvoRb9kw9iCtujqvHQp77q1ci7pvtFPPSIlgTlmisPzW+zI8qvIbMQkx+4J0G3e2UWTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fdHFbK8x; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mFz9z8ar"
-Received: from [10.137.106.151] (unknown [131.107.8.87])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1198520B74C0;
-	Mon, 11 Mar 2024 11:34:23 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1198520B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1710182063;
-	bh=RZfhJKtA70RVNfOir8lzr0ciKj5PtunMNDoxTSux7fE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mFz9z8arBOPU8v6pO+Y+J35vQvitl8VqPkIYNZGGSUMjWOwFkbgdsn/fsaTtgIIqj
-	 lm65//Wy3qUMogCm1d3VAgU6qHyzhgARwjBJkoNDAWrpqSE11KxCysxx2ZEwdIUI3b
-	 24ndee37du0KS1BRqLoK1y7EAEhmBpQEWFXCie8w=
-Message-ID: <553f0f09-45b4-4f4b-9b91-b3c2fe5d6030@linux.microsoft.com>
-Date: Mon, 11 Mar 2024 11:34:22 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fdHFbK8x"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dcbf82cdf05so3120918276.2
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 12:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1710183882; x=1710788682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ip6FW2J49TWgHtgl/4Gc7SJljeLMdRFy5mwJ9+2h64Y=;
+        b=fdHFbK8xQ9AvsWL/UtBi7QjibUgrVRSUdEcyV1WWy9iOJOWMKt2uEGDMiGRGMkHVpR
+         Yx/0iOGJ5JkPV+YdUJmOIhIng5277NKRUZ66SWfbyqFIvbP7d88rAQdhZMkiG70oBwI7
+         Dx7Gw+9FIglqn2FeShQAQaP6xL0JtJYaH7z8hhbLgkAVy2tuWMrL/ZzoKJL9icSbRJSR
+         l98k/je7B4BByvcFA9jmbhnDYgjXVoeBm7GmPSdOypwAYfLhWGOMiBSNY8XTP44hEvdS
+         PbBOqfp7/R7YT9DdLBzGK17Nx74IS6EjMgcN0iu92xiBoaXUD9MMZFW/WLnxWycv4hOL
+         mjPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710183882; x=1710788682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ip6FW2J49TWgHtgl/4Gc7SJljeLMdRFy5mwJ9+2h64Y=;
+        b=CxiOtQyx7CcDKRIIc3iuFMDG09+jX0uaws2YoZ/zkkafHrTEvPxKelrSOzvTCz1eu8
+         5vg9LHYetwb16Esb3QWNT2LbdIMWH5mdoty3hzJYue7Xk1tmOCllegkebw4gzAednfMs
+         huOm37QgqM5nAXm9LOC+aisB/kSS0PcvaTyJfp/gpH4jspZpjhqW178kabNOgLx+pkXB
+         604BCckqJUCdIdAT/TF3YEkgzKCVb1gNTkaBRvbVp3E84o9nh1sDCMme3vtW/Gs8820N
+         zgj2oxoo+p5dd8thxRrkK6LFg0XU/bTp4fr85loCsC3ZM7f0EI2AFKf6SUcMc+fps2zq
+         Lg1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOOwQxkYOtL7rDhPD9SoCQfqSyq9UlSNudPXwx279YOUdow7eD2SfCTdxoiPzpqin6xLhDSTMBZdosuO4OY+Tu8NPHPnoPAy4ndfef7I5Q8dXWcPn9
+X-Gm-Message-State: AOJu0YwWizdQRCz13L1uVXZ+a5DUJ3BvXClILiX3TP2vF+ad3MnYA/Z/
+	+OWH1PbBkhkJx5WAKudLiRJpx6cS2AoeQdn71IYzA2zUr6KwdjnBLR3E3UTYwQxKg2yvABUd1Vw
+	TWoAIXk3lgf5Se6WQa96FlOfx71BuQ+KZUMGC
+X-Google-Smtp-Source: AGHT+IFdbQG06mL4djqGnWfaVrxqq+mwF8rQ3ANrX5c4HMRCbMuXtKqYaZ70urXFF7iZEe1k85pBlEuWNtpXZ2J2Eg4=
+X-Received: by 2002:a5b:391:0:b0:dc2:398b:fa08 with SMTP id
+ k17-20020a5b0391000000b00dc2398bfa08mr4965860ybp.31.1710183882181; Mon, 11
+ Mar 2024 12:04:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v14 05/19] initramfs|security: Add a security hook to
- do_populate_rootfs()
-Content-Language: en-CA
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
- zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu,
- ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
- eparis@redhat.com, paul@paul-moore.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- audit@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
- <1709768084-22539-6-git-send-email-wufan@linux.microsoft.com>
- <cff886eef84ced5b4dfac1be7572dc8d06b63792.camel@huaweicloud.com>
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <cff886eef84ced5b4dfac1be7572dc8d06b63792.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com> <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area> <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <20240308.saiheoxai7eT@digikod.net> <CAHC9VhSjMLzfjm8re+3GN4PrAjO2qQW4Rf4o1wLchPDuqD-0Pw@mail.gmail.com>
+ <20240308.eeZ1uungeeSa@digikod.net> <CAHC9VhRnUbu2jRwUhLGboAgus_oFEPyddu=mv-OMLg93HHk17w@mail.gmail.com>
+ <ZewaYKO073V7P6Qy@google.com>
+In-Reply-To: <ZewaYKO073V7P6Qy@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 11 Mar 2024 15:04:31 -0400
+Message-ID: <CAHC9VhR45QyWj5+P67Y6M4BJ98ymLirGr724OEjb+8faLCkUzw@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Arnd Bergmann <arnd@arndb.de>, Dave Chinner <david@fromorbit.com>, 
+	Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 3/11/2024 7:53 AM, Roberto Sassu wrote:
-> On Wed, 2024-03-06 at 15:34 -0800, Fan Wu wrote:
->> This patch introduces a new hook to notify security system that the
->> content of initramfs has been unpacked into the rootfs.
->>
->> Upon receiving this notification, the security system can activate
->> a policy to allow only files that originated from the initramfs to
->> execute or load into kernel during the early stages of booting.
->>
->> This approach is crucial for minimizing the attack surface by
->> ensuring that only trusted files from the initramfs are operational
->> in the critical boot phase.
->>
->> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
->>
->> ---
->> v1-v11:
->>    + Not present
->>
->> v12:
->>    + Introduced
->>
->> v13:
->>    + Rename the hook name to initramfs_populated()
->>
->> v14:
->>    + No changes
->> ---
->>   include/linux/lsm_hook_defs.h |  2 ++
->>   include/linux/security.h      |  8 ++++++++
->>   init/initramfs.c              |  3 +++
->>   security/security.c           | 10 ++++++++++
->>   4 files changed, 23 insertions(+)
->>
->> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->> index 76458b6d53da..e0f50789a18f 100644
->> --- a/include/linux/lsm_hook_defs.h
->> +++ b/include/linux/lsm_hook_defs.h
->> @@ -425,3 +425,5 @@ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
->>   LSM_HOOK(int, 0, uring_sqpoll, void)
->>   LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
->>   #endif /* CONFIG_IO_URING */
->> +
->> +LSM_HOOK(void, LSM_RET_VOID, initramfs_populated, void)
-> 
-> I don't know, but why there is no super_block as parameter?
-> 
-> And, wouldn't be better to rely on existing hooks to identify inodes in
-> the initial ram disk?
-> 
-> (gdb) p *file->f_path.dentry->d_inode->i_sb->s_type
-> $3 = {name = 0xffffffff826058a9 "rootfs"
-> 
-> That could also help if you want to enforce action based on the
-> filesystem name (and why not on the UUID too).
-> 
-> Roberto
+On Sat, Mar 9, 2024 at 3:14=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.co=
+m> wrote:
+> On Fri, Mar 08, 2024 at 05:25:21PM -0500, Paul Moore wrote:
+> > On Fri, Mar 8, 2024 at 3:12=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@di=
+gikod.net> wrote:
+> > > On Fri, Mar 08, 2024 at 02:22:58PM -0500, Paul Moore wrote:
+> > > > On Fri, Mar 8, 2024 at 4:29=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mi=
+c@digikod.net> wrote:
+> > > > > Let's replace "safe IOCTL" with "IOCTL always allowed in a Landlo=
+ck
+> > > > > sandbox".
+> > > >
+> > > > Which is a problem from a LSM perspective as we want to avoid hooks
+> > > > which are tightly bound to a single LSM or security model.  It's ok=
+ay
+> > > > if a new hook only has a single LSM implementation, but the hook's
+> > > > definition should be such that it is reasonably generalized to supp=
+ort
+> > > > multiple LSM/models.
+> > >
+> > > As any new hook, there is a first user.  Obviously this new hook woul=
+d
+> > > not be restricted to Landlock, it is a generic approach.  I'm pretty
+> > > sure a few hooks are only used by one LSM though. ;)
+> >
+> > Sure, as I said above, it's okay for there to only be a single LSM
+> > implementation, but the basic idea behind the hook needs to have some
+> > hope of being generic.  Your "let's redefine a safe ioctl as 'IOCTL
+> > always allowed in a Landlock sandbox'" doesn't fill me with confidence
+> > about the hook being generic; who knows, maybe it will be, but in the
+> > absence of a patch, I'm left with descriptions like those.
 >
-We are not passing any parameter here because when populating the 
-initramfs, the rootfs can be accessed via current->fs->root. In the next 
-patch, we use ipe_sb(current->fs->root.mnt->mnt_sb)->initramfs = true; 
-to mark the initramfs via a security blob.
+> FWIW, the existing IOCTL hook is used in the following places:
+>
+> * TOMOYO: seemingly configurable per IOCTL command?  (I did not dig deepe=
+r)
+> * SELinux: has a hardcoded switch of IOCTL commands, some with special ch=
+ecks.
+>   These are also a subset of the do_vfs_ioctl() commands,
+>   plus KDSKBENT, KDSKBSENT (from ioctl_console(2)).
 
-The hook here is used only to signal that files are unpacked into the 
-rootfs. The hook won't be triggered if initramfs is not enabled.
+One should be careful using the term "hardcoded" here as I believe it
+is misleading in the SELinux case.  SELinux has 11 explicitly defined
+ioctls, with an additional two configurable on a per-policy basis
+depending on the state of the SELinux IOCTL_SKIP_CLOEXEC policy
+capability.  The security policy associated with these explicit ioctl
+checks is not hardcoded into the kernel, it is defined as part of the
+greater SELinux security policy.  One could make an argument that
+FIONBIO and FIOASYNC look a bit hardcoded, but there is some subtlety
+there that is probably not worth exploring further in this context but
+I'm happy to discuss in a different thread if that is helpful.
 
-Regarding the approach of using the filesystem's name attribute to 
-identify files in initramfs, it will treat all files from a filesystem 
-named "rootfs" as initramfs files, which could potentially be exploited 
-by malicious users. For example, an attacker could override the name of 
-an existing filesystem and then load malicious kernel modules from it. 
-The LSM would think the kernel modules are from initramfs and allow 
-them, which is not what we want.
+All the ioctls that are not explicitly defined in the SELinux code,
+are still subject to SELinux policy through both the file/ioctl
+permission and the extended permission (xperm) functionality.  The
+SELinux xperm functionality, when tied to an ioctl operation, allows
+policy developers to allow or deny specific ioctl operations on a
+per-domain basis.
 
-Also, the rootfs is a ramfs, which doesn't have a UUID, so we couldn't 
-use UUID to identify it.
+> * Smack: Decomposes the IOCTL command number to look at the _IOC_WRITE an=
+d
+>   _IOC_READ bits. (This is a known problematic approach, because (1) thes=
+e bits
+>   describe whether the argument is getting read or written, not whether t=
+he
+>   operation is a mutating one, and (2) some IOCTL commands do not adhere =
+to the
+>   convention and don't use these macros)
+>
+> AppArmor does not use the LSM IOCTL hook.
 
--Fan
-
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index d0eb20f90b26..619e17e59532 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -2167,4 +2167,12 @@ static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
->>   #endif /* CONFIG_SECURITY */
->>   #endif /* CONFIG_IO_URING */
->>   
->> +#ifdef CONFIG_SECURITY
->> +extern void security_initramfs_populated(void);
->> +#else
->> +static inline void security_initramfs_populated(void)
->> +{
->> +}
->> +#endif /* CONFIG_SECURITY */
->> +
->>   #endif /* ! __LINUX_SECURITY_H */
->> diff --git a/init/initramfs.c b/init/initramfs.c
->> index 76deb48c38cb..140619a583ff 100644
->> --- a/init/initramfs.c
->> +++ b/init/initramfs.c
->> @@ -18,6 +18,7 @@
->>   #include <linux/init_syscalls.h>
->>   #include <linux/task_work.h>
->>   #include <linux/umh.h>
->> +#include <linux/security.h>
->>   
->>   static __initdata bool csum_present;
->>   static __initdata u32 io_csum;
->> @@ -720,6 +721,8 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
->>   #endif
->>   	}
->>   
->> +	security_initramfs_populated();
->> +
->>   done:
->>   	/*
->>   	 * If the initrd region is overlapped with crashkernel reserved region,
->> diff --git a/security/security.c b/security/security.c
->> index f168bc30a60d..26c28db211fd 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -5619,3 +5619,13 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
->>   	return call_int_hook(uring_cmd, 0, ioucmd);
->>   }
->>   #endif /* CONFIG_IO_URING */
->> +
->> +/**
->> + * security_initramfs_populated() - Notify LSMs that initramfs has been loaded
->> + *
->> + * Tells the LSMs the initramfs has been unpacked into the rootfs.
->> + */
->> +void security_initramfs_populated(void)
->> +{
->> +	call_void_hook(initramfs_populated);
->> +}
+--=20
+paul-moore.com
