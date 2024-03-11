@@ -1,237 +1,230 @@
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9677A57303
-	for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 21:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710192088; cv=none; b=XciDwgVIGb8PTeUeYqecBTA2f0+QlHiZ6mChFp8vpX8l6wk8VrWZYiiilw6YeqNp4OVi5UryfCs8tVMa21AFfcMpCQ4sZ6Ak5ntj/BlMQGVkIez218l0ALp9sBojEpFCQCQJSMlSSvAnd9QVcK5AwLGD5HzjNBqap2b8lOTNbEM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710192088; c=relaxed/simple;
-	bh=A6ntQXftXcfk9NPKtChVN+Afbvy2gvAYMqZPZc9sTXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y0F+0jEFJeAwyilT9dA63Jpt1nBdhSLkesYMw8vFkd0EQYP1pY9v9h5UQtqvn/qudjSU0oAQrjtg7FCxg2BEd2GXGhbrKakSpOr/nYVw8KlfUPWLjvUb0cH4MFQbqT5oaESKPBICy9N5pWgnK5v3e5AzeJkzbP/P+odRBwL90JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fe9JsAcN; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AC656B63;
+	Mon, 11 Mar 2024 21:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710192633; cv=fail; b=l8Wb0Lt+L6A5i7MGTpqzjGC9D2SpXrEZCJuB/kY7WThmO7q2oD9JhIWeIGoWF3EJYVTbaSls5yFfoUA0IZi/9vr0Vpln/Dt9BPOVsZ7WMSGnFxiGSC/7iGa7RPbUmIfSp7lBzGIVb1vldR4SnS5FTpx0NMuB1ZBuhLRy/3e90rI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710192633; c=relaxed/simple;
+	bh=1oo85V7D0DR5LEpf1uC4Vx3vBWcJS0e5C2nV9yktZ/k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q1wB83xgksfaxTM/wBG1qM5+8eMIOx3DeywGQ/2hn7W5qHP8Yb05Ev8xG0zd97FyQxD0tvibPpzrsgcbZ8S0BN/o3skChUnhKroD2UIzZveSW4tQn+xg5bRxeI2ZY6q2rxgzbiVv/lI36No0S/7ia2dic7J6Og9VJIyqdZr6g8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=m5eNXqHA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=FcBTtplG; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fe9JsAcN"
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-42f4de93c31so85001cf.0
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 14:21:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m5eNXqHA";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="FcBTtplG"
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42BLE00b024097;
+	Mon, 11 Mar 2024 21:30:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=1oo85V7D0DR5LEpf1uC4Vx3vBWcJS0e5C2nV9yktZ/k=;
+ b=m5eNXqHA9GVc81dbKhcRKwtpEr4NOeNiA5QfDWEDWCzgKQqgE1fHsN8a1AXQxKDS0lRN
+ vO5i4djwjC/F3BQz5iZIyoXY0hAxFYArca3Cze4BKeIxw3RxmLsu9n/ZBrVx495vXIBF
+ NniOQryIK7ZVNQDrP9mllkQGWIxozvj1N7eyyWvvwRTwZbH+5vt4Cvae4eRVACV7CACj
+ 3O0h8GJTxvd0dFRA7xYFxaes7/+3CZCZ6e0Yaa4xqorU8gvEJBjzh8MNi0GrcmRTBVeq
+ Y4JaXXIVT8n4z5z4RfGJ0SjNEvhwnwBe6zA55ic5+tCJuyt4fHsFDIBEXtFM7ZA8uLpx EA== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wrfcucfex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 11 Mar 2024 21:30:02 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 42BKpKqi009100;
+	Mon, 11 Mar 2024 21:30:01 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3wre7cj8v6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 11 Mar 2024 21:30:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AxviUEnLMrcSImKOxRdie/kzf5/uTkTuhSKO3s4+ID/Im5GU8vk/+bL4wmrB1WfuLnzL+iyk8S9UNa8Tu5eQDBu2JnUgGBdGPRUmgFQ1BYLIcLyrv2EicG8Rt6VkjpYiNb9gmbLA70k+QCYMjwx8hfobK/DVV2Ii1l/Wb/k0DZQlB5teVlXmIj41QU/HIEgi2WZUrJgTDjo6kLzgvXpJsQtjq7wjvj7ztMTtQgCnqHYnKlRy8/5Irpv7v0KMLONSA5dH/CbuNt0TAUxy8tLvhsCAgGecDEHhQHQgM3inhkiCjfEu26O328uEMxNZQK+NRwXTki/g1q4XOMzt/Oilcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1oo85V7D0DR5LEpf1uC4Vx3vBWcJS0e5C2nV9yktZ/k=;
+ b=WBNfhgITkHc0VxOeIWXjCcpc0fKJPnKsrMiqUZnQoM+A4W9aoQjtj2fbFlAAxzO7gX14qkEwAluP38mtJO4QyPj7kq4tx1ILVdKLSifNzsagAoXsSCs5rtIAaNeaAeekZDUocWhFVTVBmHv4//SHASR4f5Lm6Pv6VaiQQ6oFcnLHyP5kZCTmgam9GXS58xemYjw30+trC5zF6g41JnMuQ7S10Cts1uUrYqhzmOTHFWUN+c0lVYzln6vvKG3vJNLIsJbzjpHb3yjgd4hBeoIUd4wMbBWehxIGaPmX+db1jYCulVj5rO4o6BXMZ3TxC5K4ZlQObBMxG27yXLtHpMizpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1710192084; x=1710796884; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TWb2A9iIkGs3AmFlz53bU5Efj9ZUWJhfOe0zRp0tGRc=;
-        b=fe9JsAcNoppnf2NHLwSLwh8xceOCZguLT1vqJQ+vx3TMH5gp7+Py1/+ZZry+jaxZye
-         JHnSqCJuoIbruT0jYmEiG323JHDGZ8R7TVUwotAERoHvoFFlMVgp3dJ5KxXkjIa0EAKg
-         TPJdrO9vzTPwNmTdW1NucQCPjgzu5HccyYZHjQCWA74O4VJ+WJJaiISObYdBZrhlmkzE
-         xjXPvyRTnOluHpoP54BbvKobb0OAaRr9TvbZ48GSe4ZJgKxyx8NC0OQMfYXpkhT2Kuq4
-         mpBNA4XsZVI0Eam65OS7N7erBrL7+lWXvFJm6Tr8yf3M7KiYXs45AjTgcguK0UgXvIsT
-         N9Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710192084; x=1710796884;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TWb2A9iIkGs3AmFlz53bU5Efj9ZUWJhfOe0zRp0tGRc=;
-        b=iAQ9Wn8m/nFsyYBYGfKlVetXFkdqX655mVbdQQNSXtzfWf0VWvdSJPWYCHl+bK4D2Q
-         c5/4X5b+lDSM1Fgmaooc9kmzR13n52PWqONvA/1WvE3ikxsh5iyQ8tzK8oYABYp0xmY2
-         f3ZZv+C5StAfFX0EjiQbRdlzXYsS+ZJ1RadIxwEi9ga0CT4i7pLh/SdVQDxVe9h7AxOc
-         jxka5HGaf7XVT/QmVcSAMfiNQBKH8Y8BXgJp/H7+e13NO73U7L7pHz8QF/ZSE6kPvgHG
-         QLYTXgCBrmeDa+vH7qu5goZ9SXsym0Q9Rkxl1KyqpX+bCWpTa9/ZZibQ9yQMHWpA3sBw
-         xLEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIXT0KuI3E/VIzswI48bj62yE/XztdAniPL2+VZ0NKUqx/Up3im02FoC9MEar1fK2N0ZhqSLeQXnLuAgvF0F3AfLar+yOheqFEY5hbMxqLB7hyKb12
-X-Gm-Message-State: AOJu0YzqPIcNncToeSdjQz1GKLRfrjtqSetEQNvT8AQa6pg8xTdqEzzt
-	qnRQCqR2ecpcBXG8XZDTNcrI3r/GgXP7s8WZ86JPbedHdL3t2++6kVwxtyfYDSaL4g81EaFbFPM
-	yBrNVa+UHX2UnNGUugYyNIOtg5ou9n/n+Bl/8
-X-Google-Smtp-Source: AGHT+IGiw3N/c7EMgtHBYf+GhpaM4BMFpUmbsLp7eZNB/I9uRFUCN7Phn/vKm3/rRq1HFpGOLfkrYTvw5DSVfzOksbM=
-X-Received: by 2002:ac8:748f:0:b0:42f:213a:dc9b with SMTP id
- v15-20020ac8748f000000b0042f213adc9bmr36743qtq.19.1710192084473; Mon, 11 Mar
- 2024 14:21:24 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1oo85V7D0DR5LEpf1uC4Vx3vBWcJS0e5C2nV9yktZ/k=;
+ b=FcBTtplGY2uwIGXHIMTcjISm9gboySc2isoY+mrzmawVlGbvP3fneIqKUodzZX6F8lpqTP9Br+Bh+Re4yuagLSKKufL77dJQ5CfxZhyE6BF8a6fAtAEpjMtIurQUMNLEtMvwLkM5RVE+wUIBPPo1Zno0F/1OTSRYqYWv18auj9k=
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by CO1PR10MB4771.namprd10.prod.outlook.com (2603:10b6:303:95::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.36; Mon, 11 Mar
+ 2024 21:29:59 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::9ade:bfad:c78e:e1f9]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::9ade:bfad:c78e:e1f9%7]) with mapi id 15.20.7362.035; Mon, 11 Mar 2024
+ 21:29:59 +0000
+From: Eric Snowberg <eric.snowberg@oracle.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+CC: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Ard Biesheuvel
+	<ardb@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        James Morris
+	<jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar
+	<zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>,
+        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?=
+	<mic@digikod.net>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        Stefan
+ Berger <stefanb@linux.ibm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/8] certs: Introduce ability to link to a system key
+Thread-Topic: [PATCH RFC 1/8] certs: Introduce ability to link to a system key
+Thread-Index: AQHac8/Wy3kR1DBbWUSwLVt/DZ3pl7Ey6Z+AgAAlPQA=
+Date: Mon, 11 Mar 2024 21:29:59 +0000
+Message-ID: <2163E0AB-77B5-46EA-9987-6C9CC4937E0B@oracle.com>
+References: <20240311161111.3268190-1-eric.snowberg@oracle.com>
+ <20240311161111.3268190-2-eric.snowberg@oracle.com>
+ <CZR5UBHJL9RC.1NA7Q0F10XSJF@kernel.org>
+In-Reply-To: <CZR5UBHJL9RC.1NA7Q0F10XSJF@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3774.400.31)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|CO1PR10MB4771:EE_
+x-ms-office365-filtering-correlation-id: a7531471-a1a1-4856-029d-08dc42126759
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ zYA5DBW/SV0GiF6lGogqRfynVGmhJCJxR8i9vVniy8oLpYQEJgOVdwyEXgxP8DASDv/JG11QkCALbxYnYt7aqj0gbfxEMnHDV4n7APEZkJPnHYG5HZxGJRXpqteD2EwyfLmbSDcTyyemTRRifqkIaFI3EzayoS0+hgnVYi5Q7rkkC58EkMe3ZQHSOD0bs/pxWW6KShlZ0RMDJAK1OqCOeHZND4QnmCB3QuFcFalC2cxjczcPULzany9SAtx579cJuRAX1TCdW1BsnMugMP3XFmQFrow4cGHsm4M49OrzoJQubcKtShMsYiMeBkUuO9kzM4NSm85M/fSdREHCZz0ZJamShLBcByW1icjKHrpyd9Q4ZFO0FC9JeLBHijZwyFoJ/XHIvVssE5R/34hIb6mGkTXtTavurrxYa/vizqu9hpr2zIGAm8exhhtxG7azSG1eOGvO4bC+rZH2TeqEw0B2BxpNMMzgGmhs3mgC2OgjvYKlQhMJhZqLCeTUU4t/QF6Q5vsz0wWtRLJk2xyQEeKpMWMUJCGRwVM+tIzQv5Lp1LSFVPRUzYqhmEPSh6zr5fhJFiZxc/+YLXePSFZ5AbgI4jaS87pmOlSYlpGVdN6AT97yOnLyv8ywWy1RP0+d2nueyrpS+lkGutw2h8tZ/NCYD7XK6TjztWSzrdToH4zqduTUWqZE+gVNHaGskiaZ9o7bnVuhCEu+n5QdHt3SIjSqhVwremdDAgWOfpD+m5Ci1h4=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?L2hNWWkwVUxERVZKLzZrSXQwa2tobGdWOUlnWVhycy8vcnJXclRrS3hyV2Fz?=
+ =?utf-8?B?Q25YK0xHN3kvVVowK2pIZFVGSVVOWU5ISWk2NjFQYWJlNUhBM040MTF3NHdK?=
+ =?utf-8?B?OG9NY21ISlcvTDA3V1BKaUtrQ1NVUEZaY3J3Tm5wNnd0VnlsS0hmbWg4NzQy?=
+ =?utf-8?B?VTZsakFYTnJsK0dXM3JTOG9uWE0xcXZJTkhDR3dBY1pvZzlkWDE5UmdLUE5s?=
+ =?utf-8?B?UGFac1RHdHkwbzN6OFNTK2g3ZWtOdjUvSTcvWU9EdFg4UzNvMFhxMjI1Mk9h?=
+ =?utf-8?B?UlBsMEpQRUVvMGhHeDRvL1dYZTZlVU5rZnpRNTh1SmhMc2MwMnlzOGg4WEQ5?=
+ =?utf-8?B?a2V6T1pMVlBjSFp4ZjFncTVialBxV3AxNzFnWGtnbXBqSlpsTTYwY3NEK0VB?=
+ =?utf-8?B?bjFqdlBueEhxOU1td0d1bWJCNVdMZ1lSMTRzZG51YVpTOHNJVWZSR3h5THFW?=
+ =?utf-8?B?MUF1RTNvZ1RoTm1zMlF6Y0hUYXRnMHlETXRxTkdNR09ZZm00UjJHNlhmdVVk?=
+ =?utf-8?B?NDczakJqNWJ6Sjd1K1BEazB3UUxQWUt1WTYwNVQwdmhNQjVnUGFKTnowOXhj?=
+ =?utf-8?B?ZWJNeExjQ0oxRDBWdTZUU3NlanFlTkx2YVl4WktGRWtRZlIveW0zWGpaNEg0?=
+ =?utf-8?B?Sk9PZXlXN1hDdVcxTUxEQ2tIWjVCWE5QTzZIbXFWYTNUM1RSbXRtZmpCOHB2?=
+ =?utf-8?B?cDNjdlFYdUhOL3ZNenpudTJtR2cxRFg1R3BBS3dJMzBrOTZWWTlJWlhPd25v?=
+ =?utf-8?B?dXY1ZjhkVU1iZTB3U1NEWHNXWE0veVlRZ0lkZHUzSnFEOWlRWkY4bkZ5cGM4?=
+ =?utf-8?B?ck5HQ0daK2dzWWdjREtvYXhEdUFxcWwwZGx5Vmp3a0poandqUWdTb1pPUXlH?=
+ =?utf-8?B?RjBNOUpoUlUySjdRQWxzY3hWWCtpUTVVOFdQck91TlpzTnQyaWpMUVAySmlY?=
+ =?utf-8?B?VW5sZTBXWktrQmRleXYwUkNQTC9nY0VZSk9ZTGJ1YXN6aHIrWEx5amdJQitn?=
+ =?utf-8?B?NmEramJNdWpxZ0hIUkllT0pCSGhITy9CMEdZeThDRWlvV3NLYnF4MHFXbjFE?=
+ =?utf-8?B?dU5MZkJQQWhTeEFibTI1MVNpSTlyYW1XQ0FzTVU2S1cza2JVU25pV3RjaVdV?=
+ =?utf-8?B?WkR6b1RxczZKbi9Cc25EL1dzNk84RUdCSG1EaU5pZ3RoTlNQTHpKa3BzMFg2?=
+ =?utf-8?B?TEVHbVdyWjc5bmtubVNxY0luRTZ3aXVvL2wzNzJPMkRpT25RTEd4OThueFZV?=
+ =?utf-8?B?V2ljaDFZbStiSTF0UUxZcVhST2ZPVTZDbzgySHE5ZEhDRDhodEFDVkR3eldP?=
+ =?utf-8?B?RUFMd1E5NXVYQ3dyOXFCd2hpakhJVnFHeFhLc0lQK3NSbkxkQzRxekcxenhU?=
+ =?utf-8?B?eGY3TXJEbDBXWHI1M2p3YnFVWHBuNncweE5yQVM5eHhTMjVyclNVYWtKZkF6?=
+ =?utf-8?B?ZWt5bW53cW56SloxanFMYTRHVzlxMmh0K0VXRkRkZ1Z4Q1poZ3M4dEdQYkd4?=
+ =?utf-8?B?T1pSaVFOMjNVQXUwUFR4bXNqUm9XamxlVE1TLzd6TmUwYTY0eTZOZ050MTBH?=
+ =?utf-8?B?ZEJXYmgxUTNjcGYreFl6TnBHRHNDUG9DY1kreU50Y3ZrZWgyTE4yZVVINDZs?=
+ =?utf-8?B?YVpicUlFRnJ6RkQwcHlIQ2wwY00vdHNIVUpnQy9MRFgreGQ3djBIbWphNE83?=
+ =?utf-8?B?VE9Xc1hKS0ljelBwY3pMbWw1OHRlM1R5cjZSZnpKU1lBMnM2TGh4TWVPcjR0?=
+ =?utf-8?B?OEFZRFFpcXJJM3lXRzZtVVY0ZEZFdHZuRHJacE13WnhjdllZZ3k1QkFWM084?=
+ =?utf-8?B?TmJwN2Rxbk9RSVl4TmU5OG54WmcwMVJqMXhQU1NLN2FhOEN2WXhSUUZORGh3?=
+ =?utf-8?B?Vy9hQmdsWGNhSWFqaFl0Y2pKYWg4RGdBV09HTjU4NkxHZDEwQmRUUS8xalRB?=
+ =?utf-8?B?alQvZWNCVzJuRGt0eWlhNVFqazB4K1BZTWJYYWxPTVd1RUd0emFQTStYUjhy?=
+ =?utf-8?B?aTlhSTRDZWhqb2JQWXF2b2JxUmVwTjRvOUZUeVF5NndGaHl3Nk00QUxVWUN1?=
+ =?utf-8?B?N3duaUVHTW01eFZTR0gxZGd1TVdtRStWSGMyeS9qYzJ5MVk3dU1pRUF5UTRP?=
+ =?utf-8?B?VUhCK1BEV0NITXpwSjQzTWVRK0ZSbUpVMFdLRTNsTjJBaTB3ZXp2TzRVeUxI?=
+ =?utf-8?B?OUE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0848E653372E854D98EED4F223F7B000@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301194037.532117-1-mic@digikod.net> <20240301194037.532117-5-mic@digikod.net>
-In-Reply-To: <20240301194037.532117-5-mic@digikod.net>
-From: Rae Moar <rmoar@google.com>
-Date: Mon, 11 Mar 2024 17:21:11 -0400
-Message-ID: <CA+GJov7in4o6bXt_JDqeGjjD08yOweiUshesS4cUWTHYfgJAwQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] kunit: Handle test faults
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, 
-	Kees Cook <keescook@chromium.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, James Morris <jamorris@linux.microsoft.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marco Pagani <marpagan@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Thara Gopinath <tgopinath@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-um@lists.infradead.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	Kf9f3SKgKncecYe0biYM7ER9I+Vj8W/Ray4ubG+v3ZgZhQQQNnuXUHT62Rkv9CXOYvTKS4KboXQtbnH8r/nTYQ5NK+FNR2TW14jtl+8bYRSr4LdZQIU/gAGKeelir2H7WP/29/bmG+6JVQxrDuTBt/K+0lpj7BoGlD7ecfIxHaiUzoX15rJ61W57De8IS/LYQjG8Lbp5Nx8BIWKfHHNHj85DH7k6nWht5AUneDJ/P8E9F7ZFoq35FFwj2q8ZPUghnOU48EtGaeU/AMRLpTX9D2mlpTihFhKKXMaqCqXM4+UgcGbhMvQ6vBfsiGJoBA79jJcuMrHAFN1tNZ/Igi5uJdfLTORZtuzhEW2ICQNSpMiBiUTVA1eQ+17uToELmF51w1hn/r6ST/8tWhyJqdBmkTiKjcZxA9Jc9NahHBQxJVGNioiwi7U2LVUMckMvoLijrrYoZAzVgYPrFLy7fFgY+DYB9FjJyjvQABInFk/WVUCxM5kQj/JNBsVFJZwnX81r7mUgZESjR2eOZccfu0/z5V44E/F46Q5oR+vr/YFfpOvy6kLfhirqL1We6SIWwm5SQHowrPlTiTHLoSO/ZDPej2JYzviyM/ykDSPBkeqLgfE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7531471-a1a1-4856-029d-08dc42126759
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2024 21:29:59.0302
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yefWYYOkovxAD8WhLNZ9hQeoTgq9Cca7hjFVPXSlbZi1o+P3jJTynz80asn4QooDiizD2TrqAoH0n6qlz6aUqKPOQasFdUR53f2LMluFgKg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4771
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-11_11,2024-03-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0
+ mlxlogscore=999 bulkscore=0 phishscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2403110166
+X-Proofpoint-ORIG-GUID: 9cEj8ynIaxcECfjcJph9AU06kubQzFQy
+X-Proofpoint-GUID: 9cEj8ynIaxcECfjcJph9AU06kubQzFQy
 
-On Fri, Mar 1, 2024 at 2:40=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> Previously, when a kernel test thread crashed (e.g. NULL pointer
-> dereference, general protection fault), the KUnit test hanged for 30
-> seconds and exited with a timeout error.
->
-> Fix this issue by waiting on task_struct->vfork_done instead of the
-> custom kunit_try_catch.try_completion, and track the execution state by
-> initially setting try_result with -EFAULT and only setting it to 0 if
-
-Hello!
-
-Thanks for your patch! This has been tested and seems pretty good to
-me but I just have a few questions. First, do you mean here "setting
-try_result with -EINTR"  instead?
-
-But happy to add the tested-by.
-
-Tested-by: Rae Moar <rmoar@google.com>
-
-Thanks!
--Rae
-
-> the test passed.
->
-> Fix kunit_generic_run_threadfn_adapter() signature by returning 0
-> instead of calling kthread_complete_and_exit().  Because thread's exit
-> code is never checked, always set it to 0 to make it clear.
->
-> Fix the -EINTR error message, which couldn't be reached until now.
->
-> This is tested with a following patch.
->
-> Cc: Brendan Higgins <brendanhiggins@google.com>
-> Cc: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Cc: Shuah Khan <skhan@linuxfoundation.org>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20240301194037.532117-5-mic@digikod.net
-> ---
->
-> Changes since v1:
-> * Added Kees's Reviewed-by.
-> ---
->  include/kunit/try-catch.h |  3 ---
->  lib/kunit/try-catch.c     | 14 +++++++-------
->  2 files changed, 7 insertions(+), 10 deletions(-)
->
-> diff --git a/include/kunit/try-catch.h b/include/kunit/try-catch.h
-> index c507dd43119d..7c966a1adbd3 100644
-> --- a/include/kunit/try-catch.h
-> +++ b/include/kunit/try-catch.h
-> @@ -14,13 +14,11 @@
->
->  typedef void (*kunit_try_catch_func_t)(void *);
->
-> -struct completion;
->  struct kunit;
->
->  /**
->   * struct kunit_try_catch - provides a generic way to run code which mig=
-ht fail.
->   * @test: The test case that is currently being executed.
-> - * @try_completion: Completion that the control thread waits on while te=
-st runs.
->   * @try_result: Contains any errno obtained while running test case.
->   * @try: The function, the test case, to attempt to run.
->   * @catch: The function called if @try bails out.
-> @@ -46,7 +44,6 @@ struct kunit;
->  struct kunit_try_catch {
->         /* private: internal use only. */
->         struct kunit *test;
-> -       struct completion *try_completion;
->         int try_result;
->         kunit_try_catch_func_t try;
->         kunit_try_catch_func_t catch;
-> diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-> index cab8b24b5d5a..c6ee4db0b3bd 100644
-> --- a/lib/kunit/try-catch.c
-> +++ b/lib/kunit/try-catch.c
-> @@ -18,7 +18,7 @@
->  void __noreturn kunit_try_catch_throw(struct kunit_try_catch *try_catch)
->  {
->         try_catch->try_result =3D -EFAULT;
-> -       kthread_complete_and_exit(try_catch->try_completion, -EFAULT);
-> +       kthread_exit(0);
->  }
->  EXPORT_SYMBOL_GPL(kunit_try_catch_throw);
->
-> @@ -26,9 +26,12 @@ static int kunit_generic_run_threadfn_adapter(void *da=
-ta)
->  {
->         struct kunit_try_catch *try_catch =3D data;
->
-> +       try_catch->try_result =3D -EINTR;
->         try_catch->try(try_catch->context);
-> +       if (try_catch->try_result =3D=3D -EINTR)
-> +               try_catch->try_result =3D 0;
->
-> -       kthread_complete_and_exit(try_catch->try_completion, 0);
-> +       return 0;
-
-Really my only question is why we do not need to still do a
-kthread_exit(0) here? I realize we are not checking the thread's exit
-code but isn't it safer to call kthread_exit(). I'm new to kthread so
-I am not too sure.
-
->  }
->
->  static unsigned long kunit_test_timeout(void)
-> @@ -58,13 +61,11 @@ static unsigned long kunit_test_timeout(void)
->
->  void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *contex=
-t)
->  {
-> -       DECLARE_COMPLETION_ONSTACK(try_completion);
->         struct kunit *test =3D try_catch->test;
->         struct task_struct *task_struct;
->         int exit_code, time_remaining;
->
->         try_catch->context =3D context;
-> -       try_catch->try_completion =3D &try_completion;
->         try_catch->try_result =3D 0;
->         task_struct =3D kthread_create(kunit_generic_run_threadfn_adapter=
-,
->                                      try_catch, "kunit_try_catch_thread")=
-;
-> @@ -75,8 +76,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_ca=
-tch, void *context)
->         }
->         get_task_struct(task_struct);
->         wake_up_process(task_struct);
-> -
-> -       time_remaining =3D wait_for_completion_timeout(&try_completion,
-> +       time_remaining =3D wait_for_completion_timeout(task_struct->vfork=
-_done,
->                                                      kunit_test_timeout()=
-);
->         if (time_remaining =3D=3D 0) {
->                 try_catch->try_result =3D -ETIMEDOUT;
-> @@ -92,7 +92,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_ca=
-tch, void *context)
->         if (exit_code =3D=3D -EFAULT)
->                 try_catch->try_result =3D 0;
->         else if (exit_code =3D=3D -EINTR)
-> -               kunit_err(test, "wake_up_process() was never called\n");
-> +               kunit_err(test, "try faulted\n");
->         else if (exit_code =3D=3D -ETIMEDOUT)
->                 kunit_err(test, "try timed out\n");
->         else if (exit_code)
-> --
-> 2.44.0
->
+DQoNCj4gT24gTWFyIDExLCAyMDI0LCBhdCAxOjE24oCvUE0sIEphcmtrbyBTYWtraW5lbiA8amFy
+a2tvQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiANCj4gT24gTW9uIE1hciAxMSwgMjAyNCBhdCA2OjEx
+IFBNIEVFVCwgRXJpYyBTbm93YmVyZyB3cm90ZToNCj4+IEludHJvZHVjZSBhIG5ldyBmdW5jdGlv
+biB0byBhbGxvdyBhIGtleXJpbmcgdG8gbGluayB0byBhIGtleSBjb250YWluZWQNCj4+IHdpdGhp
+biBvbmUgb2YgdGhlIHN5c3RlbSBrZXlyaW5ncyAoYnVpbHRpbiwgc2Vjb25kYXJ5LCBvciBwbGF0
+Zm9ybSkuDQo+PiBEZXBlbmRpbmcgb24gaG93IHRoZSBrZXJuZWwgaXMgYnVpbHQsIGlmIHRoZSBt
+YWNoaW5lIGtleXJpbmcgaXMNCj4+IGF2YWlsYWJsZSwgaXQgd2lsbCBiZSBjaGVja2VkIGFzIHdl
+bGwsIHNpbmNlIGl0IGlzIGxpbmtlZCB0byB0aGUgc2Vjb25kYXJ5DQo+PiBrZXlyaW5nLiBJZiB0
+aGUgYXN5bW1ldHJpYyBrZXkgaWQgbWF0Y2hlcyBhIGtleSB3aXRoaW4gb25lIG9mIHRoZXNlDQo+
+PiBzeXN0ZW0ga2V5cmluZ3MsIHRoZSBtYXRjaGluZyBrZXkgaXMgbGlua2VkIGludG8gdGhlIHBh
+c3NlZCBpbg0KPj4ga2V5cmluZy4NCj4+IA0KPj4gU2lnbmVkLW9mZi1ieTogRXJpYyBTbm93YmVy
+ZyA8ZXJpYy5zbm93YmVyZ0BvcmFjbGUuY29tPg0KPj4gLS0tDQo+PiBjZXJ0cy9zeXN0ZW1fa2V5
+cmluZy5jICAgICAgICB8IDI5ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+PiBpbmNs
+dWRlL2tleXMvc3lzdGVtX2tleXJpbmcuaCB8ICA3ICsrKysrKy0NCj4+IDIgZmlsZXMgY2hhbmdl
+ZCwgMzUgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPj4gDQo+PiBkaWZmIC0tZ2l0IGEv
+Y2VydHMvc3lzdGVtX2tleXJpbmcuYyBiL2NlcnRzL3N5c3RlbV9rZXlyaW5nLmMNCj4+IGluZGV4
+IDlkZTYxMGJmMWY0Yi4uYjY0N2JlNDlmNmUwIDEwMDY0NA0KPj4gLS0tIGEvY2VydHMvc3lzdGVt
+X2tleXJpbmcuYw0KPj4gKysrIGIvY2VydHMvc3lzdGVtX2tleXJpbmcuYw0KPj4gQEAgLTQyNiwz
+ICs0MjYsMzIgQEAgdm9pZCBfX2luaXQgc2V0X3BsYXRmb3JtX3RydXN0ZWRfa2V5cyhzdHJ1Y3Qg
+a2V5ICprZXlyaW5nKQ0KPj4gcGxhdGZvcm1fdHJ1c3RlZF9rZXlzID0ga2V5cmluZzsNCj4+IH0N
+Cj4+ICNlbmRpZg0KPj4gKw0KPj4gKy8qKg0KPj4gKyAqIHN5c3RlbV9rZXlfbGluayAtIExpbmsg
+dG8gYSBzeXN0ZW0ga2V5DQo+PiArICogQGtleXJpbmc6IFRoZSBrZXlyaW5nIHRvIGxpbmsgaW50
+bw0KPj4gKyAqIEBpZDogVGhlIGFzeW1tZXRyaWMga2V5IGlkIHRvIGxvb2sgZm9yIGluIHRoZSBz
+eXN0ZW0ga2V5cmluZw0KPj4gKyAqLw0KPj4gK2ludCBzeXN0ZW1fa2V5X2xpbmsoc3RydWN0IGtl
+eSAqa2V5cmluZywgc3RydWN0IGFzeW1tZXRyaWNfa2V5X2lkICppZCkNCj4+ICt7DQo+PiArIHN0
+cnVjdCBrZXkgKnRrZXk7DQo+IA0KPiBJJ2Qgc3VnZ2VzdCB0byByZXBsYWNlIHRoaXMgd2l0aCBq
+dXN0ICd0a2V5Jy4gU2luZ2xlIG9ic2N1cmUgY2hhcmFjdGVyDQo+IGRvZXMgbm90IGJyaW5nIGFu
+eSByZWFkYWJpbGl0eSB2YWx1ZS4NCg0KSSBhc3N1bWUgeW91IG1lYW4gcmVwbGFjZSBpdCB3aXRo
+ICJrZXkiPyAgSWYgc28sIHllcywgSSdsbCBjaGFuZ2UgdGhhdCBpbiB0aGUgbmV4dCByb3VuZC4N
+Cg0KPj4gKw0KPj4gKyNpZmRlZiBDT05GSUdfU0VDT05EQVJZX1RSVVNURURfS0VZUklORw0KPj4g
+KyB0a2V5ID0gZmluZF9hc3ltbWV0cmljX2tleShzZWNvbmRhcnlfdHJ1c3RlZF9rZXlzLCBpZCwg
+TlVMTCwgTlVMTCwgZmFsc2UpOw0KPj4gKyNlbHNlDQo+PiArIHRrZXkgPSBmaW5kX2FzeW1tZXRy
+aWNfa2V5KGJ1aWx0aW5fdHJ1c3RlZF9rZXlzLCBpZCwgTlVMTCwgTlVMTCwgZmFsc2UpOw0KPj4g
+KyNlbmRpZg0KPiANCj4gSSdkIGhhdmUganVzdCBzaW5nbGUgY2FsbCBzaXRlIGhlcmUgYW5kIGlu
+c2lkZSBpZmRlZi1zaGVuYW5pZ2FucyBpJ2QNCj4ganVzdCBzZXQgaGVscGVyICJrZXlyaW5nIiB0
+byBwb2ludCB0byB0aGUgYXBwcm9wcmlhdGUga2V5cmluZy4NCg0KSSdsbCBhbHNvIG1ha2UgdGhp
+cyBjaGFuZ2UNCg0KPj4gKyBpZiAoIUlTX0VSUih0a2V5KSkNCj4+ICsgZ290byBmb3VuZDsNCj4+
+ICsNCj4+ICsgdGtleSA9IGZpbmRfYXN5bW1ldHJpY19rZXkocGxhdGZvcm1fdHJ1c3RlZF9rZXlz
+LCBpZCwgTlVMTCwgTlVMTCwgZmFsc2UpOw0KPj4gKw0KPiANCj4gUGxlYXNlIHJlbW92ZSB0aGlz
+IGVtcHR5IGxpbmUgYXMgdGhlIGNoZWNrIGJlbG93IGlzIGFzc29jaWF0ZWQgd2l0aCBpdC4NCg0K
+YW5kIHJlbW92ZSB0aGUgZW1wdHkgbGluZS4gICAgVGhhbmtzLg0KDQo=
