@@ -1,105 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BAB52F82;
-	Mon, 11 Mar 2024 20:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C946B3C482
+	for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 20:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710187648; cv=none; b=A5w1up8yzpky1u/PEFT8k6dnT6lHOVUmvkFEMgn+mOL5Pl03S4XRIoE+gVMxtD5Jcf2Cl1bOt/ScmOHJdARO/XLXceZFo/trIwv7IKVFVntnni+JKfLMzGtdGSWzbFgQwDi+q9vehOiyGdaxeOH7owDlIXyd6txnBSUs9UQDy9A=
+	t=1710190051; cv=none; b=VQSUgC0eaJHFi7K91vkinPJTmi7hDp5GLcgHbCxZtKxNdAH5RUt756WoN90oI+RYlYlbvYdtmfT5G5pPAGMi4bHe4MZcXMnqj8rxLeQzxsgonTzyywsds+30Z770nTJ6/Jjw+85wXxtFNhjlgUqrI4epCS1dcXXEIeO3uMesVZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710187648; c=relaxed/simple;
-	bh=WBtBCCMn2JMwUS5VVGHL+yTt7qkPpG1ZJQA8yWr+M5w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bG6w2vd26Z3a9bPZd5Yu5/LbJz2G/MAXsAP21Sk5WRQrcYLPnk+seuRBTlaseyTIhE12Pi7Hn83Llf/p2S47pB6NkbeTrHANpPuFkxKyQP2rJfjrV5neu4W8eT8Vp+cHS9n7Tl1JUWl1JgIqFI+IofAwvqx+hSQdOIQWbbn2Zro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpKTJnaU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710190051; c=relaxed/simple;
+	bh=tSout2TqFMMn1aVNiQh1eTMMgTL81OOw9wbOBN5R21U=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=tjcE4UJoV0V/ESVt03kt3s7iD/4BtCkIjMpOzhZ5VVUnCguW7fepaqj4UW8QlNMtJvZjVK5rIoGHt9AUrC4yTviYv6Dl2O/OcYa/Hp6JeMv0G5GJswQeqhWvSgoJbOnV7UGhB5THb7cbaBqjlV9SxvRLNyegEohVoYn3PG+HHhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=r7rxotb2; arc=none smtp.client-ip=66.163.189.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpKTJnaU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DBBCC433F1;
-	Mon, 11 Mar 2024 20:07:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710187648;
-	bh=WBtBCCMn2JMwUS5VVGHL+yTt7qkPpG1ZJQA8yWr+M5w=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=qpKTJnaURjnr9qyMxxS06UflehxFUN6v0OqYQKl6DqRi1nweRVVV/ivK1D5TMqyUe
-	 Go3Ar0AuaK6I7kVk1CdNT9w1bSz26h92HPVVGtPkpGcCqw3VXKlZSK1lxVU3tFP1hu
-	 CBoQTBN7JDL2FRIWrHHc8Gu09GGXq5pYvbFPRFJBNc3GXeL54y441hKHV+TmCLqTo+
-	 ViEDNTStK3tlBuz3EG/eoeOvj52RkgMZD13LEiA/dOCeFD8J3qagtJUO2vFm6a2XWp
-	 ZugulwiUUCbthW5vQ8oE9hwGR+oRtQY9o46qnBscOszPbc5RGMAMEMqkv54kJKxdHs
-	 17b+JtrrT6lWg==
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="r7rxotb2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1710190043; bh=R+3yYbDK/b0o/B6YZnnajyfQUTD2GpVdBRpsPhQlXns=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=r7rxotb2Q7UefoQeogvGb/sqCFP1ozvTgiwBx/aGDMkFkmW1dKsmX8nJdD79dTSnqUdwGIQLbDM9xoptEH2z70Xq/RSYitVRziHwBjzkZTAn2Bz26VgQu26QJK+8OFMpYRUpMYYd6ymw7i2q8HgZyX2AXgSfoqotlEBpmomy2LB8ebYI0UNxQWHpHM4HyVBy6jGSS2QjmwtBWlV0k6yUjKHLK/iJ4CRVXx4ZdjEXoJcFmvp+WPHugMqQ/nhTkb5FxUE39UoKPNtsdcx66E3EwYtbU7P00Ro+4jiTTq8eT2PkHbL1ubGmxXZ9I+ePBY4cRJvoKbmkKBoX7AvMoyaU5g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1710190043; bh=/8tcXfGJighrM3waXPPmsADLIMO6dMC1a1lM+jLWWRK=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=PnUXH6iopAn6VVRQiSQVNmtydguMTpgtg0BVCUdLTlDNMOlg8Cz4h3o8Ohp7qSG25B+PeEWBrkezq1X0JUAxlNfCzVvkYlxm+aZ/VoJV0XVYax5r6OuT37JtsonU/8NeA2MyfcS5QR3+k10JhgoJxuk0wzWlvHFA3UMLk3PxBpPsUuE8svjoXVYvSzH6uXkfHXKf31baZaEK1PXdAeR6TgxVpWd4u5ddJK05ZQB0dkI3Eaa/Q9EW1nUCprdUTcBrZPsWzSNNlv9pF4GJSRUxWUIZdCQGpJKCKV39rauy2fUSAJtQaMLnybSYCkr7K5yrvqTgOvFeghYFsDYJw47mwg==
+X-YMail-OSG: 9giBdIsVM1k2TqWuek9tZkaVKqqkQyda.X76UOnNNoALeLsguuIOSwpmj_dfaBa
+ I.1M2TYfDa.tGKQZia_ImbS9D8bNUo7fJEI.NWVggAJW96r11bKugavYyPFo2OGzFxIAdZA2IJPC
+ djVB4Bsz2pmLIa1rvHzBl3KnQQfjbUysB4jCIm6ZkGlb8HLMrQ55geiipbg4Ut_OwMOsYiu0u5Hw
+ LI3Hp0A3GKudeilmXlMEXq5LrMoq4aDK3ehUF9Z7fueKUvuJrRKpvZ.F07UMI8LXc_HlBZSK_.an
+ ZUl_nn97BcQqPI8ytPd8ldrz8TrOXVbgd0Fe25nAw_GDEDb009kryVquaZtHqiuNMu5.9IopDHSX
+ RLkAF.dmWTGL28OKbkW6whqfbmVcqZB.WkW7e8MlUw7W7nDsLJnz1O2iI.noJboK4scAmEFySfkZ
+ s3PwAXnQoR9VdbiRAP3.FscOaw1ghTAsUHaIqeUt3SBmov5ni2rAwqJKkcVzMqir0GS8ZL._yexN
+ _pw_9QI.VPz_I6Jt8ltoLEPV12CMrH8TiXZ0ovOLVunBhICvytN7sIUL4xUlcH3BaQvlV.l8Z_qJ
+ eRBTShWM7fcWJ0Lyouco04bMfZ4.QsVwON9Q.4rgvosO9YbOVS33DI0BK.5rlXxBgI44q3WqlIcy
+ Jr6TM22wkVAHvD_2bzQx1h.koQVMczoYr7rFdr6QwoNcfSmZKeowftUMkUdK.ISE5yyOJGkCG1wt
+ KUVh_Dh5YKGOG0Ym6wpmQgfglV9PmVQmGr4Iexio1hnm58Jd_cOu8y6s4SjCHsx8ZA_NdsgeI5_c
+ nFTWt.k1vvO.rlTwiISM8s17loVSIwp1yGShFpE328PDXLvhlqeJqjwuot6y3hf0l2aE_qxm47Jm
+ VKzzvpFauyCNQ1bOyEiJLuA8z5f16kT3Ebzhvq_6l8N8w8nkEot3xY5FnRpb0e3SGt8IZBnzVY2a
+ 2dKet55DSdDd3b3Fy4gAMzTRDVdkXvVyN3j0DeOUoJWwj3Sdx5xVxXoMUomgWUfnic.TEPa7niZu
+ gtj87cTMxkVyitexEk8eGcb423LW18iL5UOoPeR10Tgg.TXdN4t.xHI3DOHE3lACmPzSNcX47hra
+ seINNPL3EBmZHedhCT0xnkVs8yp_Jn3TF1dlfQe2KHAdbh5cEbbjRIv_Cect6fZvrZry9IGlBOWu
+ aahhpOax9qzawV0oodVIigTS_UdS7jH0eSPXt1nBs4bzjTNQzqDgZyOpLD64R1EmT.arWTA6VuWc
+ yIsHhm1hc_NvXO6H3ZwchJmd1HdnEwutMeHYLTV_QI_f6LqYfdk39lhcLzf8IFo1m3jFGHL4oydW
+ 9qosxyu8KlSrR.aCensB.TUAb2Eap2_WUMt0Xc5TF6qR5NEzQwTO.GCh8weYuUOvZCLSqsguw8Rs
+ ybuFGw6r7u3KhIXb72HAj4Bmk3cGqAFSbiaZwZakqkOZWMWyTYuBM2Pa4o1OVsFDJKPvKNTPmuqk
+ Oj9nws3HnAhM4TD2ue57vqaVcmgxG9qR1m8ub_crTgk9FqDywY_HZE3aTffR4iU.Bgj6rHrTpNOF
+ 7saow24jq7vTqR7xNbo1Umc0nxnQXquNvCww5JgvQz2nl0pUhnKAbeDVp0Us2cMNKrXpiMb92YdO
+ WpjGXDecgKYDfMA2lf9HzjAOOe5C3Nl0CrGwixat2xjHKQKLxmJgtmUMwn41j.3KTJwf4P3Ewx.U
+ i1V8v2CAbWwbvH3oj6nA4YgZGuK__B__lV30vDnlbRSDwjhsMdyQuqPa70qB.ioalTHHzN9DEz8w
+ FR3VS3y5egExvpd4CgL2AWekKJdz40cFUpKTM3XMjgTPA3RXfjgNeqZ6O1fsxxyMhR3CjhhR46zq
+ 0Uf7qNhZNAeyFG03zEK0E37FDzd8KAf_rZVJIn.4gw.89jaGwLZfYeZTEVYbHiMTeMQBjMbuzBPT
+ zypOTL29MBcbdDwb2_RlwERpMzY3HKP5RUgnD9cXWr9544DsFs4HWYNfKwl9XV2232xkWiN8WMj2
+ gpgW0nNSk0jchj00pJo6v4pHhmJHzFKRUoizH.zDZWrDFES1HL0niBhnG.g3Hq8KiEMTPWCKtvOy
+ T1LHZ6yVTx0hwv7ovu03Fqe0LIpxhTToBsahk9cJz971tGJor59FKUwlfoG9chwc5xeG.KrCvglT
+ jHqHkSk9dJ_7ofag5xfVU74Jlmie06sea0UCN9GI8jQzCTCudBp2q9KXV7g3OB1Rf_gw_8_trnxY
+ aVWY3bQqyicZ0Us_8YmQ9lgvHZR_ElFyxMNGaEINJ8FKQCHVHU0lm0Ey1T5GFTW38xnRBonFo17R
+ eFGnL_u51o_fgWtKLBVk-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: b1d92f14-2d7c-4784-b5b9-4c2920e16dc3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Mon, 11 Mar 2024 20:47:23 +0000
+Received: by hermes--production-gq1-5c57879fdf-qprqq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9e979ddbf4eb120d89b6003a87edbfd3;
+          Mon, 11 Mar 2024 20:47:18 +0000 (UTC)
+Message-ID: <5f321246-e0ba-4882-a42d-fe174d593aaf@schaufler-ca.com>
+Date: Mon, 11 Mar 2024 13:47:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ roberto Sassu <roberto.sassu@huaweicloud.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for 6.9
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 11 Mar 2024 22:07:19 +0200
-Message-Id: <CZR6X7KLX6NC.1BH2NHDTNL3C@kernel.org>
-Cc: "Mimi Zohar" <zohar@linux.ibm.com>, "James Bottomley"
- <jejb@linux.ibm.com>, "Herbert Xu" <herbert@gondor.apana.org.au>, "David S.
- Miller" <davem@davemloft.net>, "Shawn Guo" <shawnguo@kernel.org>, "Jonathan
- Corbet" <corbet@lwn.net>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "NXP Linux Team" <linux-imx@nxp.com>, "Ahmad Fatoum"
- <a.fatoum@pengutronix.de>, "sigma star Kernel Team"
- <upstream+dcp@sigma-star.at>, "David Howells" <dhowells@redhat.com>, "Li
- Yang" <leoyang.li@nxp.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Paul E.
- McKenney" <paulmck@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>, "Tejun Heo" <tj@kernel.org>, "Steven Rostedt
- (Google)" <rostedt@goodmis.org>, <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linuxppc-dev@lists.ozlabs.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "Richard Weinberger"
- <richard@nod.at>, "David Oberhollenzer" <david.oberhollenzer@sigma-star.at>
-Subject: Re: [PATCH v6 3/6] KEYS: trusted: Introduce NXP DCP-backed trusted
- keys
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "David Gstir" <david@sigma-star.at>
-X-Mailer: aerc 0.17.0
-References: <20240307153842.80033-1-david@sigma-star.at>
- <20240307153842.80033-4-david@sigma-star.at>
- <CZNRMR5YZPQO.1QBLW62A6S840@kernel.org>
- <655221B7-634C-4493-A781-CF014DFFC8BF@sigma-star.at>
-In-Reply-To: <655221B7-634C-4493-A781-CF014DFFC8BF@sigma-star.at>
+Content-Transfer-Encoding: 7bit
+References: <5f321246-e0ba-4882-a42d-fe174d593aaf.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.22129 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri Mar 8, 2024 at 9:17 AM EET, David Gstir wrote:
-> Hi Jarkko,
->
-> > On 07.03.2024, at 20:30, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> [...]
->
-> >> +
-> >> +static int trusted_dcp_init(void)
-> >> +{
-> >> + int ret;
-> >> +
-> >> + if (use_otp_key)
-> >> + pr_info("Using DCP OTP key\n");
-> >> +
-> >> + ret =3D test_for_zero_key();
-> >> + if (ret) {
-> >> + pr_err("Test for zero'ed keys failed: %i\n", ret);
-> >=20
-> > I'm not sure whether this should err or warn.
-> >=20
-> > What sort of situations can cause the test the fail (e.g.
-> > adversary/interposer, bad configuration etc.).
->
-> This occurs when the hardware is not in "secure mode". I.e. it=E2=80=99s =
-a bad configuration issue.
-> Once the board is properly configured, this will never trigger again.
-> Do you think a warning is better for this then?
+Hello Linus,
 
-Bad configuration is not unexpected configuration so it cannot possibly
-be an error situation as far as Linux is considered. So warning is=20
-appropriate here I'd figure.
+Here is the Smack pull request for v6.9.
 
-BR, Jarkko
+There are 6 patches. One is a simple refactoring to remove
+code duplication. The other five, from Roberto Sassu, correct
+the in-memory inode initialization path used by ramfs in Smack.
+This is necessary for ramfs to correctly handle directory label
+transmutation.
+
+All has been in the next branch and pass all tests.
+
+The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
+
+  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/cschaufler/smack-next tags/Smack-for-6.9
+
+for you to fetch changes up to 69b6d71052b54fb10feba68564ccb41c0f0ce1e9:
+
+  Smack: use init_task_smack() in smack_cred_transfer() (2024-02-14 10:47:06 -0800)
+
+----------------------------------------------------------------
+Smack updates for v6.9.
+
+Improvements to the initialization of in-memory inodes.
+A fix in ramfs to propery ensure the initialization of
+in-memory inodes.
+Removal of duplicated code in smack_cred_transfer().
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+      Smack: use init_task_smack() in smack_cred_transfer()
+
+Roberto Sassu (5):
+      smack: Set SMACK64TRANSMUTE only for dirs in smack_inode_setxattr()
+      smack: Handle SMACK64TRANSMUTE in smack_inode_setsecurity()
+      smack: Always determine inode labels in smack_inode_init_security()
+      smack: Initialize the in-memory inode in smack_inode_init_security()
+      ramfs: Initialize security of in-memory inodes
+
+ fs/ramfs/inode.c           |  32 +++++++++++++-
+ security/smack/smack_lsm.c | 102 +++++++++++++++++++++++++--------------------
+ 2 files changed, 87 insertions(+), 47 deletions(-)
+
