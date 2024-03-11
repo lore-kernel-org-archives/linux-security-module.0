@@ -1,166 +1,163 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E337214271;
-	Mon, 11 Mar 2024 09:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ED03CF79;
+	Mon, 11 Mar 2024 12:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710148357; cv=none; b=LqK2bGfPxqqJX+xmAFF2zhb1j/Q2CqwPAkiJlZbbJUtpZ9GClZEylLrzKGhjOauqV5MvzQadVPWgrWCN3MGqt4/4GPBk8hPZuJ78NOmI5Ney5buHw9mJLT5iaO2AxmZ1/tOcLq0OBM15YeRrKFZMKkL4PUEazQEAZMGSML7ydFM=
+	t=1710158463; cv=none; b=pd6O0ORoY8ti1Ea80OM82+m027NGtm7x8pmul7vRWJE/tUC9ooJZ7flBxQcXGc6mfH6gbcoArlRSccIBgOhvDBW3EM9/bQZ0/RQD6GMfBq/9R/lUC/CrwYqkQn9jrmhZKQRK3J6rMpTRm43jWmwYIwrsvWnW6c0Tnt/74mK5fzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710148357; c=relaxed/simple;
-	bh=mwhr+GeZD2Fwv7OWp5evIy1WT7xupje/d5vp5keqrbc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MQ+TKucdRx86OLfFAqu3D2IKhm/CJ8Lh/AaD39If6WvSanNQA6Q9luK+47VC9ikyLBZW9KvsjdT7qmY85BN+0B85tUZyn5nT7BY2iT3WB/kB1SOGZazQDTwvBxp3Z/VCG9cr8dzvqBzetaCjzXDueKZWwj+6C/kbRyRwv2e8VnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4TtVy01X1Vz9y0kN;
-	Mon, 11 Mar 2024 16:56:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 1EEF5140ED8;
-	Mon, 11 Mar 2024 17:12:15 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCHcibeyu5l0rgXBA--.16486S2;
-	Mon, 11 Mar 2024 10:12:14 +0100 (CET)
-Message-ID: <4bac45ced03f82c2f3775684368e22db5dafea11.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH 8/8] ima: Detect if digest cache changed since last
- measurement/appraisal
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, corbet@lwn.net,
- dmitry.kasatkin@gmail.com,  eric.snowberg@oracle.com, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- wufan@linux.microsoft.com, pbrobinson@gmail.com, zbyszek@in.waw.pl,
- hch@lst.de,  mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
- dhowells@redhat.com,  jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com,
- petr.vorel@gmail.com,  petrtesarik@huaweicloud.com, mzerqung@0pointer.de,
- kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Mon, 11 Mar 2024 10:11:54 +0100
-In-Reply-To: <ddb1c28356fb8a4dcca9bff6dc206802d7981bb8.camel@linux.ibm.com>
-References: <20240214143525.2205481-1-roberto.sassu@huaweicloud.com>
-	 <20240214143525.2205481-9-roberto.sassu@huaweicloud.com>
-	 <ddb1c28356fb8a4dcca9bff6dc206802d7981bb8.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1710158463; c=relaxed/simple;
+	bh=fT5zINPY9j/8xLkIBxSYOgCQjvdqeRAhMKCybJ05TQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iARCfzMdl84Ed6bmmhdngXaXK8XN7C+vtuFqzqai7BhX/aIRcRkAVz1AnkMyQ6wLr342+JQfz5AVqsJaK68dLluXS1NGmXmmrNyrDcLzpFCYKSefs3M/XDriWhNZiZq/sZporTZVlexzow31L5xBVjoeugINQZgVeKFRlYV7IbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=erF5UkB7; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="erF5UkB7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF54C43390;
+	Mon, 11 Mar 2024 12:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710158463;
+	bh=fT5zINPY9j/8xLkIBxSYOgCQjvdqeRAhMKCybJ05TQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=erF5UkB7mbXC3562nUyPVTqJMF6nrNRiMFVstjWEDCm8BoLWdWRnY15085Kr4AWXs
+	 RMRE2RcTXhaF4b3PKCFbThEJuUphxCndNv4Jt7r1SXhXgNXafDw5EUeOb5dDCoBxFS
+	 2BoWl2yKaeWu3ITC/CROdG20SP339bnnMIg/rNR6neR2l5Bj5ZX+70hc4VfHAGGHi3
+	 4C+rHM7m6du+r5xCVRn2v7d+XYtqs9WQi4QsgBb3xhkxxSOkIFD/prTzbybt1uwW+R
+	 AOapPaKus5E12gzrRl7LuL8ZAtHLtzlZlJ43/U1AF2K8aS/Nn+eM6sKizMGaAUz9Cm
+	 v9CfC2TdBzOQg==
+Date: Mon, 11 Mar 2024 13:00:56 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	KP Singh <kpsingh@google.com>, Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+Message-ID: <20240311-geglaubt-kursverfall-500a27578cca@brauner>
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner>
+ <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
+ <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
+ <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+ <20240308-kleben-eindecken-73c993fb3ebd@brauner>
+ <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwCHcibeyu5l0rgXBA--.16486S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF15ury7ArW3WF1rGw43GFg_yoW5XFW7pa
-	93CF1UKF4rZrW3G3W7Aa12vF18trZaqF4xua1Ygw1fArs5Xr9Yyw4rAw1UWry8Cr4UZanF
-	qw4Ygrs8Z3WDZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbJ73D
-	UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBF1jj5szTAABsC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
 
-On Fri, 2024-03-08 at 12:35 -0500, Mimi Zohar wrote:
-> Hi Roberto,
->=20
-> > b/security/integrity/ima/ima_main.c
-> > index a66522a22cbc..e1b2f5737753 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -301,6 +301,15 @@ static int process_measurement(struct file *file, =
-const
-> > struct cred *cred,
-> >  		}
-> >  	}
-> > =20
-> > +	/* Check if digest cache changed since last measurement/appraisal. */
-> > +	if (iint->digest_cache &&
-> > +	    digest_cache_changed(inode, iint->digest_cache)) {
-> > +		iint->flags &=3D ~IMA_DONE_MASK;
-> > +		iint->measured_pcrs =3D 0;
-> > +		digest_cache_put(iint->digest_cache);
-> > +		iint->digest_cache =3D NULL;
-> > +	}
-> > +
-> >  	/* Determine if already appraised/measured based on bitmask
-> >  	 * (IMA_MEASURE, IMA_MEASURED, IMA_XXXX_APPRAISE, IMA_XXXX_APPRAISED,
-> >  	 *  IMA_AUDIT, IMA_AUDITED)
-> > @@ -371,8 +380,15 @@ static int process_measurement(struct file *file, =
-const
-> > struct cred *cred,
-> >  	 * Since we allow IMA policy rules without func=3D, we have to enforc=
-e
-> >  	 * this restriction here.
-> >  	 */
-> > -	if (rc =3D=3D 0 && policy_mask && func !=3D DIGEST_LIST_CHECK)
-> > -		digest_cache =3D digest_cache_get(file_dentry(file));
-> > +	if (rc =3D=3D 0 && policy_mask && func !=3D DIGEST_LIST_CHECK) {
-> > +		if (!iint->digest_cache) {
-> > +			/* Released by ima_iint_free(). */
-> > +			digest_cache =3D digest_cache_get(file_dentry(file));
-> > +			iint->digest_cache =3D digest_cache;
-> > +		} else {
-> > +			digest_cache =3D iint->digest_cache;
-> > +		}
->=20
-> Simple cleanup:
-> 		if (!iint->digest_cache)
-> 			iint->digest_cache =3Ddigest_cache_get(file_dentry(file));
->=20
-> 		digest_cache =3D iint->digest_cache;
+On Fri, Mar 08, 2024 at 05:23:30PM -0800, Alexei Starovoitov wrote:
+> On Fri, Mar 8, 2024 at 2:36 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> >
+> > These exports are specifically for an out-of-tree BPF LSM program that
+> > is not accessible to the public. The question in the other mail stands.
+> 
+> The question was already answered. You just don't like the answer.
+> bpf progs are not equivalent to kernel modules.
+> They have completely different safety and visibility properties.
+> The safety part I already talked about.
+> Sounds like the visibility has to be explained.
+> Kernel modules are opaque binary blobs.
+> bpf programs are fully transparent. The intent is known
+> to the verifier and to anyone with understanding
+> of bpf assembly.
+> Those that cannot read bpf asm can read C source code that is
+> embedded in the bpf program in kernel memory.
+> It's not the same as "llvm-dwarfdump module.ko" on disk.
+> The bpf prog source code is loaded into the kernel
+> at program verification time for debugging and visibility reasons.
+> If there is a verifier bug and bpf manages to crash the kernel
+> vmcore will have relevant lines of program C source code right there.
+> 
+> Hence out-of-tree or in-tree bpf makes no practical difference.
+> The program cannot hide its meaning and doesn't hamper debugging.
+> 
+> Hence adding EXPORT_SYMBOL == Brace for impact!
+> Expect crashes, api misuse and what not.
+> 
+> While adding bpf_kfunc is a nop for kernel development.
+> If kfunc is in the way of code refactoring it can be removed
+> (as we demonstrated several times).
+> A kfunc won't cause headaches for the kernel code it is
+> calling (assuming no verifier bugs).
+> If there is a bug it's on us to fix it as we demonstrated in the past.
+> For example: bpf_probe_read_kernel().
+> It's a wrapper of copy_from_kernel_nofault() and over the years
+> bpf users hit various bugs in copy_from_kernel_nofault(),
+> reported them, and _bpf developers_ fixed them.
+> Though copy_from_kernel_nofault() is as generic as it can get
+> and the same bugs could have been reproduced without bpf
+> we took care of fixing these parts of the kernel.
+> 
+> Look at path_put().
+> It's EXPORT_SYMBOL and any kernel module can easily screw up
+> reference counting, so that sooner or later distro folks
+> will experience debug pains due to out-of-tree drivers.
+> 
+> kfunc that calls path_put() won't have such consequences.
+> The verifier will prevent path_put() on a pointer that wasn't
+> acquired by the same bpf program. No support pains.
+> It's a nop for vfs folks.
+> 
+> > > First of all, there is no such thing as get_task_fs_pwd/root
+> > > in the kernel.
+> >
+> > Yeah, we'd need specific helpers for a never seen before out-of-tree BPF
+> > LSM. I don't see how that's different from an out-of-tree kernel module.
+> 
+> Sorry, but you don't seem to understand what bpf can and cannot do,
+> hence they look similar.
 
-Thanks.
+Maybe. On the other hand you seem to ignore what I'm saying. You
+currently don't have a clear set of rules for when it's ok for someone
+to send patches and request access to bpf kfuncs to implement a new BPF
+program. This patchset very much illustrates this point. The safety
+properties of bpf don't matter for this. And again, your safety
+properties very much didn't protect you from your bpf_d_path() mess.
 
-> > +	}
-> > =20
-> >  	if (digest_cache) {
-> >  		found =3D digest_cache_lookup(file_dentry(file), digest_cache,
-> > @@ -386,8 +402,6 @@ static int process_measurement(struct file *file, c=
-onst
-> > struct cred *cred,
-> >  			if (verif_mask_ptr)
-> >  				allow_mask =3D policy_mask & *verif_mask_ptr;
-> >  		}
-> > -
-> > -		digest_cache_put(digest_cache);
->=20
-> Keeping a reference to the digest_cache list for each file in the iint ca=
-che
-> until the file is re-accessed, might take a while to free.
+We're not even clearly told where and how these helper are supposed to be
+used. That's not ok and will never be ok. As long as there are no clear
+criteria to operate under this is highly problematic. This may be fine
+from a bpf perspective and one can even understand why because that's
+apparently your model or promise to your users. But there's no reason to
+expect the same level of laxness from any of the subsystems you're
+requesting kfuncs from.
 
-Yes, that is the drawback...
+> > > One can argue that get_mm_exe_file() is not exported,
+> > > but it's nothing but rcu_lock-wrap plus get_file_rcu()
+> > > which is EXPORT_SYMBOL.
+> >
+> > Oh, good spot. That's an accident. get_file_rcu() definitely shouldn't
+> > be exported. So that'll be removed asap.
+> 
+> So, just to make a point that
+> "Included in that set are functions that aren't currently even
+> exported to modules"
+> you want to un-export get_file_rcu() ?
 
-> I'm wondering if it necessary to keep a reference to the digest_cache.  O=
-r is it
-> possible to just compare the existing iint->digest_cache pointer with the
-> current digest_cache pointer?
+No. The reason it was exported was because of the drm subsystem and we
+already quite disliked that. But it turned out that's not needed so in
+commit 61d4fb0b349e ("file, i915: fix file reference for
+mmap_singleton()") they were moved away from this helper.
 
-If the pointer value is the same, it does not guarantee that it is the
-same digest cache used for the previous verification. It might have
-been freed and reallocated.
+And then we simply forgot to unexport it.
 
-Maybe, if the digest_cache LSM is able to notify to IMA that the digest
-cache changed, so that IMA resets its flags in the integrity metadata,
-we would not need to pin it.
+A helper such as get_file_rcu() is called on a file object that is
+subject to SLAB_TYPESAFE_BY_RCU semantics where the caller doesn't hold
+a reference. The semantics of that are maybe understood by a couple of
+people in the kernel. There is absolutely no way that any userspace will
+get access to such low-level helpers. They have zero business to be
+involved in the lifetimes of objects on this level just as no module has.
 
-Roberto
-
-> thanks,
->=20
-> Mimi
->=20
-> >  	}
-> > =20
-> >  	if (action & IMA_MEASURE)
->=20
-
+So really, this is an orthogonal cleanup.
