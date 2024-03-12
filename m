@@ -1,55 +1,54 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD797867B
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 10:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCECF56471
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 12:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710241134; cv=none; b=L5U3lhKc0VUs4AXdGvScif02d2fNQsi1QtM8ZYIBS5kyxcp/F3CgYQnGlxu9lCmsAsLfOnXKKdOSKbqq3kWI093+bB/nw7Dhzn5QeDULRjgBgdIKjX1yjSphVjW0Yx2pux9R8Gva9NG3+4xESc3EvVQ2DJ7S9EPmMAswbuX4hVo=
+	t=1710245726; cv=none; b=iG9Ssue6PVoU/+0Dz5ikoBvj9UmslL82jw4I1rM0ukCdApqhw+fzkOGvktCr8Tw7Nn+bs9GkNCKG6tmX7tNw4YXac4xsJjoG3uLVrikrgOfmX4trFOkfd2hCafCELPxK1gd8in0GPskSh0jEnsroV36XA3G1lhgw/jy54PKxkqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710241134; c=relaxed/simple;
-	bh=/XL+H5ypymBBxnsYRmxklN4e8R1zQNOb293Hoqh2vdQ=;
+	s=arc-20240116; t=1710245726; c=relaxed/simple;
+	bh=UIPlBlQ2gSp7viPBKsB16/eqMI1pgjsYrWQKabWN1/s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkxL1GW4Ucy+2fmzylYzW87Q+UeovejVhYEG1EFmMgCXiBGXh14XcwHyH1y4SaiYUwuVAfPU03ZqfiViJsCiE56k4ZXsovbB8idX42bDtjn1vL6CPcLPyEEXTeW1ucRL53N5PqxRcsutvBd5qWW76HzxvI4qkh2Y6YFWs4Tb9/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RPyBcgPu; arc=none smtp.client-ip=45.157.188.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=QyhO/HSB93CzoXfyR1eELI+oqprPpB017/ltxArLg7DqDRfeQShbCIUnFNJo1FBJCpy4aOcc68yNMmZ8QFhgti1MKuEzT2hKU+3r84H+JjaLHleiOt65koUIYEYs+ZGNZ3Wyzo3ihjTRR4glZ2RzILNNZWeS17uMuk+wHyM3d4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AAQtm6hv; arc=none smtp.client-ip=185.125.25.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RPyBcgPu"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tv9cL0YhtzN0T;
-	Tue, 12 Mar 2024 11:58:42 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tv9cJ6T8YzMpnPj;
-	Tue, 12 Mar 2024 11:58:40 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AAQtm6hv"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TvCJf11Fxz3my;
+	Tue, 12 Mar 2024 13:15:14 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TvCJc1dKzzsW;
+	Tue, 12 Mar 2024 13:15:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710241121;
-	bh=/XL+H5ypymBBxnsYRmxklN4e8R1zQNOb293Hoqh2vdQ=;
+	s=20191114; t=1710245714;
+	bh=UIPlBlQ2gSp7viPBKsB16/eqMI1pgjsYrWQKabWN1/s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RPyBcgPuOlwtitUJATAlMsD0ZhHi2WeleQd1w3qOjQMcbx8OFLMbzcM96kiAZu+YO
-	 xlSvFtByD16fuahayK7oKrCQ6miajynwV2rWfR/iUn0fcaB5sS6y+pgPwqAjdDzxaG
-	 HV3TMbnLzOdkq6wx2EwGnJX8+EjbPqjeGfJa/Z3g=
-Date: Tue, 12 Mar 2024 11:58:29 +0100
+	b=AAQtm6hvd8D/0qDhpfGiSpJYAJ7c4ZRRdmzxuwHAMDZ5D0rNCT9rpMwm0n6kBYZLn
+	 MIieECao+whDew4238DUdSRRjeO6cebzxSywIl7f+OXZViuaJ/cEfbfTEn2VgfYZI/
+	 vd+XiTlMZIXWiNScOcBSP9ExwIwlT9QI5LQs6vEU=
+Date: Tue, 12 Mar 2024 13:15:01 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Dave Chinner <david@fromorbit.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>, 
-	Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
-Message-ID: <20240312.te1phaiTieth@digikod.net>
-References: <20240307-hinspiel-leselust-c505bc441fe5@brauner>
- <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
- <Zem5tnB7lL-xLjFP@google.com>
- <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
- <ZepJDgvxVkhZ5xYq@dread.disaster.area>
- <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
- <ZervrVoHfZzAYZy4@google.com>
- <Ze5YUUUQqaZsPjql@dread.disaster.area>
- <Ze7IbSKzvCYRl2Ox@google.com>
- <Ze+BzMyBp1vRIDKv@dread.disaster.area>
+To: Rae Moar <rmoar@google.com>
+Cc: Brendan Higgins <brendanhiggins@google.com>, 
+	David Gow <davidgow@google.com>, Kees Cook <keescook@chromium.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+	James Morris <jamorris@linux.microsoft.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marco Pagani <marpagan@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Thara Gopinath <tgopinath@microsoft.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Wanpeng Li <wanpengli@tencent.com>, Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v2 4/7] kunit: Handle test faults
+Message-ID: <20240312.iuVoThuud2oi@digikod.net>
+References: <20240301194037.532117-1-mic@digikod.net>
+ <20240301194037.532117-5-mic@digikod.net>
+ <CA+GJov7in4o6bXt_JDqeGjjD08yOweiUshesS4cUWTHYfgJAwQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,120 +58,162 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Ze+BzMyBp1vRIDKv@dread.disaster.area>
+In-Reply-To: <CA+GJov7in4o6bXt_JDqeGjjD08yOweiUshesS4cUWTHYfgJAwQ@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Tue, Mar 12, 2024 at 09:12:28AM +1100, Dave Chinner wrote:
-> On Mon, Mar 11, 2024 at 10:01:33AM +0100, Günther Noack wrote:
-> > On Mon, Mar 11, 2024 at 12:03:13PM +1100, Dave Chinner wrote:
-> > > On Fri, Mar 08, 2024 at 12:03:01PM +0100, Günther Noack wrote:
-> > > > On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
-> > > > > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
-> > > > > > I have no idea what a "safe" ioctl means here. Subsystems already
-> > > > > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
-> > > > > > "safe" clearly means something different here.
-> > > > > 
-> > > > > That was my problem with the first version as well, but I think
-> > > > > drawing the line between "implemented in fs/ioctl.c" and
-> > > > > "implemented in a random device driver fops->unlock_ioctl()"
-> > > > > seems like a more helpful definition.
-> > > > 
-> > > > Yes, sorry for the confusion - that is exactly what I meant to say with "safe".:
-> > > > 
-> > > > Those are the IOCTL commands implemented in fs/ioctl.c which do not go through
-> > > > f_ops->unlocked_ioctl (or the compat equivalent).
-> > > 
-> > > Which means all the ioctls we wrequire for to manage filesystems are
-> > > going to be considered "unsafe" and barred, yes?
-> > > 
-> > > That means you'll break basic commands like 'xfs_info' that tell you
-> > > the configuration of the filesystem. It will prevent things like
-> > > online growing and shrinking, online defrag, fstrim, online
-> > > scrubbing and repair, etc will not worki anymore. It will break
-> > > backup utilities like xfsdump, and break -all- the device management
-> > > of btrfs and bcachefs filesystems.
-> > > 
-> > > Further, all the setup and management of -VFS functionality- like
-> > > fsverity and fscrypt is actually done at the filesystem level (i.e
-> > > through ->unlocked_ioctl, no do_vfs_ioctl()) so those are all going
-> > > to get broken as well despite them being "vfs features".
-> > > 
-> > > Hence from a filesystem perspective, this is a fundamentally
-> > > unworkable definition of "safe".
-> > 
-> > As discussed further up in this thread[1], we want to only apply the IOCTL
-> > command filtering to block and character devices.  I think this should resolve
-> > your concerns about file system specific IOCTLs?  This is implemented in patch
-> > V10 going forward[2].
+On Mon, Mar 11, 2024 at 05:21:11PM -0400, Rae Moar wrote:
+> On Fri, Mar 1, 2024 at 2:40 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > Previously, when a kernel test thread crashed (e.g. NULL pointer
+> > dereference, general protection fault), the KUnit test hanged for 30
+> > seconds and exited with a timeout error.
+> >
+> > Fix this issue by waiting on task_struct->vfork_done instead of the
+> > custom kunit_try_catch.try_completion, and track the execution state by
+> > initially setting try_result with -EFAULT and only setting it to 0 if
 > 
-> I think you misunderstand. I used filesystem ioctls as an obvious
-> counter argument to this "VFS-only ioctls are safe" proposal to show
-> that it fundamentally breaks core filesystem boot and management
-> interfaces. Operations to prepare filesystems for mount may require
-> block device ioctls to be run. i.e. block device ioctls are required
-> core boot and management interfaces.
+> Hello!
 > 
-> Disallowing ioctls on block devices will break udev rules that set
-> up block devices on kernel device instantiation events. It will
-> break partitioning tools that need to read/modify/rescan the
-> partition table. This will prevent discard, block zeroing and
-> *secure erase* operations. It may prevent libblkid from reporting
-> optimal device IO parameters to filesystem utilities like mkfs. You
-> won't be able to mark block devices as read only.  Management of
-> zoned block devices will be impossible.
-> 
-> Then stuff like DM and MD devices (e.g. LVM, RAID, etc) simply won't
-> appear on the system because they can't be scanned, configured,
-> assembled, etc.
-> 
-> And so on.
-> 
-> The fundamental fact is that system critical block device ioctls are
-> implemented by generic infrastructure below the VFS layer. They have
-> their own generic ioctl layer - blkdev_ioctl() is equivalent of
-> do_vfs_ioctl() for the block layer.  But if we cut off everything
-> below ->unlocked_ioctl() at the VFS, then we simply can't run any
-> of these generic block device ioctls.
-> 
-> As I said: this proposal is fundamentally unworkable without
-> extensive white- and black-listing of individual ioctls in the
-> security policies. That's not really a viable situation, because
-> we're going to change code and hence likely silently break those
-> security policy lists regularly....
+> Thanks for your patch! This has been tested and seems pretty good to
+> me but I just have a few questions. First, do you mean here "setting
+> try_result with -EINTR"  instead?
 
-Landlock is an optional sandboxing mechanism targeting unprivileged
-users/processes (even if it can of course be used by privileged ones).
-This means that there is no global security policy for the whole system
-(unlike SELinux, AppArmor...).  System administrators that need to
-manage a file system or any block devices would just not sandbox
-themselves.  Moreover, most block devices should only be accessible to
-the root user (which makes root the only one able to send IOCTL commands
-to these block devices).  In a nutshell, processes using boot and
-management interfaces are already privileged and they don't use
-Landlock.  For instance, a landlocked process cannot do any mount
-action, which is documented and it makes sense for the sandboxing use
-case (to avoid sandbox bypass).
+Good catch, I indeed meant -EINTR.
 
-However, it would be interesting to know if unprivileged users can
-request legitimate IOCTL commands on block devices (on a generic
-distro), and if this is required for a common file system use (i.e.
-excluding administration tasks).  I think all required IOCTL for common
-file system use are available through the file system, not block devices,
-but please correct me if I'm wrong.  What is nice with this
-LANDLOCK_ACCESS_FS_IOCTL_DEV approach is that user space can identify
-(with path and dev major/minor) on which device IOCTLs should be
-allowed.  This is simple to understand and the information to identify
-such devices is already well known.  We can also allow IOCTLs on a set
-of devices, e.g. /dev/snd/.
+> 
+> But happy to add the tested-by.
+> 
+> Tested-by: Rae Moar <rmoar@google.com>
+> 
+> Thanks!
+> -Rae
+> 
+> > the test passed.
+> >
+> > Fix kunit_generic_run_threadfn_adapter() signature by returning 0
+> > instead of calling kthread_complete_and_exit().  Because thread's exit
+> > code is never checked, always set it to 0 to make it clear.
+> >
+> > Fix the -EINTR error message, which couldn't be reached until now.
+> >
+> > This is tested with a following patch.
+> >
+> > Cc: Brendan Higgins <brendanhiggins@google.com>
+> > Cc: David Gow <davidgow@google.com>
+> > Cc: Rae Moar <rmoar@google.com>
+> > Cc: Shuah Khan <skhan@linuxfoundation.org>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > Link: https://lore.kernel.org/r/20240301194037.532117-5-mic@digikod.net
+> > ---
+> >
+> > Changes since v1:
+> > * Added Kees's Reviewed-by.
+> > ---
+> >  include/kunit/try-catch.h |  3 ---
+> >  lib/kunit/try-catch.c     | 14 +++++++-------
+> >  2 files changed, 7 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/include/kunit/try-catch.h b/include/kunit/try-catch.h
+> > index c507dd43119d..7c966a1adbd3 100644
+> > --- a/include/kunit/try-catch.h
+> > +++ b/include/kunit/try-catch.h
+> > @@ -14,13 +14,11 @@
+> >
+> >  typedef void (*kunit_try_catch_func_t)(void *);
+> >
+> > -struct completion;
+> >  struct kunit;
+> >
+> >  /**
+> >   * struct kunit_try_catch - provides a generic way to run code which might fail.
+> >   * @test: The test case that is currently being executed.
+> > - * @try_completion: Completion that the control thread waits on while test runs.
+> >   * @try_result: Contains any errno obtained while running test case.
+> >   * @try: The function, the test case, to attempt to run.
+> >   * @catch: The function called if @try bails out.
+> > @@ -46,7 +44,6 @@ struct kunit;
+> >  struct kunit_try_catch {
+> >         /* private: internal use only. */
+> >         struct kunit *test;
+> > -       struct completion *try_completion;
+> >         int try_result;
+> >         kunit_try_catch_func_t try;
+> >         kunit_try_catch_func_t catch;
+> > diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
+> > index cab8b24b5d5a..c6ee4db0b3bd 100644
+> > --- a/lib/kunit/try-catch.c
+> > +++ b/lib/kunit/try-catch.c
+> > @@ -18,7 +18,7 @@
+> >  void __noreturn kunit_try_catch_throw(struct kunit_try_catch *try_catch)
+> >  {
+> >         try_catch->try_result = -EFAULT;
+> > -       kthread_complete_and_exit(try_catch->try_completion, -EFAULT);
+> > +       kthread_exit(0);
+> >  }
+> >  EXPORT_SYMBOL_GPL(kunit_try_catch_throw);
+> >
+> > @@ -26,9 +26,12 @@ static int kunit_generic_run_threadfn_adapter(void *data)
+> >  {
+> >         struct kunit_try_catch *try_catch = data;
+> >
+> > +       try_catch->try_result = -EINTR;
+> >         try_catch->try(try_catch->context);
+> > +       if (try_catch->try_result == -EINTR)
+> > +               try_catch->try_result = 0;
+> >
+> > -       kthread_complete_and_exit(try_catch->try_completion, 0);
+> > +       return 0;
+> 
+> Really my only question is why we do not need to still do a
+> kthread_exit(0) here? I realize we are not checking the thread's exit
+> code but isn't it safer to call kthread_exit(). I'm new to kthread so
+> I am not too sure.
 
-The goal of this patch series is to enable applications to sandbox
-themselves and avoid an attacker (exploiting a bug in this application)
-to send arbitrary IOCTL commands to any devices available to the user
-running this application.  For this sandboxing use case, I think it
-wouldn't be useful to differentiate between blkdev_ioctl()'s commands
-and device-specific commands because we want to either allow all IOCTL
-on a block device or deny most of them (not those handled by
-do_vfs_ioctl(), e.g. FIOCLEX, but that's a detail because of the file
-access rights).  This is a trade off to ease sandboxing while being able
-to limit access to unneeded features (which could potentially be used to
-bypass the sandbox, e.g. TTY's IOCTLs).
+This function is the body of the thread, and as we can see in the
+signature it should return an integer that will then be passed to
+kthread_exit() (by kthread-specific code).  It is then useless to
+directly call kthread_exit() here, and it is cleaner to follow common
+thread function signature.
+
+> 
+> >  }
+> >
+> >  static unsigned long kunit_test_timeout(void)
+> > @@ -58,13 +61,11 @@ static unsigned long kunit_test_timeout(void)
+> >
+> >  void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
+> >  {
+> > -       DECLARE_COMPLETION_ONSTACK(try_completion);
+> >         struct kunit *test = try_catch->test;
+> >         struct task_struct *task_struct;
+> >         int exit_code, time_remaining;
+> >
+> >         try_catch->context = context;
+> > -       try_catch->try_completion = &try_completion;
+> >         try_catch->try_result = 0;
+> >         task_struct = kthread_create(kunit_generic_run_threadfn_adapter,
+> >                                      try_catch, "kunit_try_catch_thread");
+> > @@ -75,8 +76,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
+> >         }
+> >         get_task_struct(task_struct);
+> >         wake_up_process(task_struct);
+> > -
+> > -       time_remaining = wait_for_completion_timeout(&try_completion,
+> > +       time_remaining = wait_for_completion_timeout(task_struct->vfork_done,
+> >                                                      kunit_test_timeout());
+> >         if (time_remaining == 0) {
+> >                 try_catch->try_result = -ETIMEDOUT;
+> > @@ -92,7 +92,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
+> >         if (exit_code == -EFAULT)
+> >                 try_catch->try_result = 0;
+> >         else if (exit_code == -EINTR)
+> > -               kunit_err(test, "wake_up_process() was never called\n");
+> > +               kunit_err(test, "try faulted\n");
+> >         else if (exit_code == -ETIMEDOUT)
+> >                 kunit_err(test, "try timed out\n");
+> >         else if (exit_code)
+> > --
+> > 2.44.0
+> >
+> 
