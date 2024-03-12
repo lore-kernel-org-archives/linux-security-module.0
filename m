@@ -1,77 +1,178 @@
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7086F33994;
-	Tue, 12 Mar 2024 10:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD797867B
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 10:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710238601; cv=none; b=RBBtTWVBPmBmMaSzOCxXPDFk4JI1go7oyFHl7LriGg4R6YRrYaDM+uUwtGNAZTxrJdnNHr5TjgaF2pSEtvztp5vRILCXI41LolHotYFXZZYlvZQNMn5noVjKrZj1pWhbEgYP0ibOZnPPMhO8oaqGrQ6LGSipLPYSNnmS9ESTDHg=
+	t=1710241134; cv=none; b=L5U3lhKc0VUs4AXdGvScif02d2fNQsi1QtM8ZYIBS5kyxcp/F3CgYQnGlxu9lCmsAsLfOnXKKdOSKbqq3kWI093+bB/nw7Dhzn5QeDULRjgBgdIKjX1yjSphVjW0Yx2pux9R8Gva9NG3+4xESc3EvVQ2DJ7S9EPmMAswbuX4hVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710238601; c=relaxed/simple;
-	bh=V8fgbGcwYwbcwGV97uvR0GW9obhuumcbfnTf1wMuuKk=;
+	s=arc-20240116; t=1710241134; c=relaxed/simple;
+	bh=/XL+H5ypymBBxnsYRmxklN4e8R1zQNOb293Hoqh2vdQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVXVv7GHPTQMOVw2YK1607NQY+fVNq4+1LwM2V2lWcJRSrFYdDnUMYitczXEgi+u999eKsi96JEyNXj6bCk+r/xFzgQ5XZuwhK/F1tP2pWQuNDmYgbh+SGD4f0nCnd4RjzieSHIEPfRXCdu+3HRSjJjJx75NqTI/YHjyxGW3BIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id D653372C8F5;
-	Tue, 12 Mar 2024 13:16:30 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id C79B87CCB3A; Tue, 12 Mar 2024 12:16:30 +0200 (IST)
-Date: Tue, 12 Mar 2024 12:16:30 +0200
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH v15 05/11] LSM: Create lsm_list_modules system call
-Message-ID: <20240312101630.GA903@altlinux.org>
-References: <20230912205658.3432-1-casey@schaufler-ca.com>
- <20230912205658.3432-6-casey@schaufler-ca.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BkxL1GW4Ucy+2fmzylYzW87Q+UeovejVhYEG1EFmMgCXiBGXh14XcwHyH1y4SaiYUwuVAfPU03ZqfiViJsCiE56k4ZXsovbB8idX42bDtjn1vL6CPcLPyEEXTeW1ucRL53N5PqxRcsutvBd5qWW76HzxvI4qkh2Y6YFWs4Tb9/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RPyBcgPu; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RPyBcgPu"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tv9cL0YhtzN0T;
+	Tue, 12 Mar 2024 11:58:42 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tv9cJ6T8YzMpnPj;
+	Tue, 12 Mar 2024 11:58:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1710241121;
+	bh=/XL+H5ypymBBxnsYRmxklN4e8R1zQNOb293Hoqh2vdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RPyBcgPuOlwtitUJATAlMsD0ZhHi2WeleQd1w3qOjQMcbx8OFLMbzcM96kiAZu+YO
+	 xlSvFtByD16fuahayK7oKrCQ6miajynwV2rWfR/iUn0fcaB5sS6y+pgPwqAjdDzxaG
+	 HV3TMbnLzOdkq6wx2EwGnJX8+EjbPqjeGfJa/Z3g=
+Date: Tue, 12 Mar 2024 11:58:29 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Dave Chinner <david@fromorbit.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>, 
+	Christian Brauner <brauner@kernel.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: Add vfs_masks_device_ioctl*() helpers
+Message-ID: <20240312.te1phaiTieth@digikod.net>
+References: <20240307-hinspiel-leselust-c505bc441fe5@brauner>
+ <9e6088c2-3805-4063-b40a-bddb71853d6d@app.fastmail.com>
+ <Zem5tnB7lL-xLjFP@google.com>
+ <CAHC9VhT1thow+4fo0qbJoempGu8+nb6_26s16kvVSVVAOWdtsQ@mail.gmail.com>
+ <ZepJDgvxVkhZ5xYq@dread.disaster.area>
+ <32ad85d7-0e9e-45ad-a30b-45e1ce7110b0@app.fastmail.com>
+ <ZervrVoHfZzAYZy4@google.com>
+ <Ze5YUUUQqaZsPjql@dread.disaster.area>
+ <Ze7IbSKzvCYRl2Ox@google.com>
+ <Ze+BzMyBp1vRIDKv@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230912205658.3432-6-casey@schaufler-ca.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Ze+BzMyBp1vRIDKv@dread.disaster.area>
+X-Infomaniak-Routing: alpha
 
-Hi,
+On Tue, Mar 12, 2024 at 09:12:28AM +1100, Dave Chinner wrote:
+> On Mon, Mar 11, 2024 at 10:01:33AM +0100, Günther Noack wrote:
+> > On Mon, Mar 11, 2024 at 12:03:13PM +1100, Dave Chinner wrote:
+> > > On Fri, Mar 08, 2024 at 12:03:01PM +0100, Günther Noack wrote:
+> > > > On Fri, Mar 08, 2024 at 08:02:13AM +0100, Arnd Bergmann wrote:
+> > > > > On Fri, Mar 8, 2024, at 00:09, Dave Chinner wrote:
+> > > > > > I have no idea what a "safe" ioctl means here. Subsystems already
+> > > > > > restrict ioctls that can do damage if misused to CAP_SYS_ADMIN, so
+> > > > > > "safe" clearly means something different here.
+> > > > > 
+> > > > > That was my problem with the first version as well, but I think
+> > > > > drawing the line between "implemented in fs/ioctl.c" and
+> > > > > "implemented in a random device driver fops->unlock_ioctl()"
+> > > > > seems like a more helpful definition.
+> > > > 
+> > > > Yes, sorry for the confusion - that is exactly what I meant to say with "safe".:
+> > > > 
+> > > > Those are the IOCTL commands implemented in fs/ioctl.c which do not go through
+> > > > f_ops->unlocked_ioctl (or the compat equivalent).
+> > > 
+> > > Which means all the ioctls we wrequire for to manage filesystems are
+> > > going to be considered "unsafe" and barred, yes?
+> > > 
+> > > That means you'll break basic commands like 'xfs_info' that tell you
+> > > the configuration of the filesystem. It will prevent things like
+> > > online growing and shrinking, online defrag, fstrim, online
+> > > scrubbing and repair, etc will not worki anymore. It will break
+> > > backup utilities like xfsdump, and break -all- the device management
+> > > of btrfs and bcachefs filesystems.
+> > > 
+> > > Further, all the setup and management of -VFS functionality- like
+> > > fsverity and fscrypt is actually done at the filesystem level (i.e
+> > > through ->unlocked_ioctl, no do_vfs_ioctl()) so those are all going
+> > > to get broken as well despite them being "vfs features".
+> > > 
+> > > Hence from a filesystem perspective, this is a fundamentally
+> > > unworkable definition of "safe".
+> > 
+> > As discussed further up in this thread[1], we want to only apply the IOCTL
+> > command filtering to block and character devices.  I think this should resolve
+> > your concerns about file system specific IOCTLs?  This is implemented in patch
+> > V10 going forward[2].
+> 
+> I think you misunderstand. I used filesystem ioctls as an obvious
+> counter argument to this "VFS-only ioctls are safe" proposal to show
+> that it fundamentally breaks core filesystem boot and management
+> interfaces. Operations to prepare filesystems for mount may require
+> block device ioctls to be run. i.e. block device ioctls are required
+> core boot and management interfaces.
+> 
+> Disallowing ioctls on block devices will break udev rules that set
+> up block devices on kernel device instantiation events. It will
+> break partitioning tools that need to read/modify/rescan the
+> partition table. This will prevent discard, block zeroing and
+> *secure erase* operations. It may prevent libblkid from reporting
+> optimal device IO parameters to filesystem utilities like mkfs. You
+> won't be able to mark block devices as read only.  Management of
+> zoned block devices will be impossible.
+> 
+> Then stuff like DM and MD devices (e.g. LVM, RAID, etc) simply won't
+> appear on the system because they can't be scanned, configured,
+> assembled, etc.
+> 
+> And so on.
+> 
+> The fundamental fact is that system critical block device ioctls are
+> implemented by generic infrastructure below the VFS layer. They have
+> their own generic ioctl layer - blkdev_ioctl() is equivalent of
+> do_vfs_ioctl() for the block layer.  But if we cut off everything
+> below ->unlocked_ioctl() at the VFS, then we simply can't run any
+> of these generic block device ioctls.
+> 
+> As I said: this proposal is fundamentally unworkable without
+> extensive white- and black-listing of individual ioctls in the
+> security policies. That's not really a viable situation, because
+> we're going to change code and hence likely silently break those
+> security policy lists regularly....
 
-On Tue, Sep 12, 2023 at 01:56:50PM -0700, Casey Schaufler wrote:
-[...]
-> --- a/security/lsm_syscalls.c
-> +++ b/security/lsm_syscalls.c
-> @@ -55,3 +55,42 @@ SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, attr, struct lsm_ctx __user *,
->  {
->  	return security_getselfattr(attr, ctx, size, flags);
->  }
-> +
-> +/**
-> + * sys_lsm_list_modules - Return a list of the active security modules
-> + * @ids: the LSM module ids
-> + * @size: pointer to size of @ids, updated on return
-> + * @flags: reserved for future use, must be zero
-> + *
-> + * Returns a list of the active LSM ids. On success this function
-> + * returns the number of @ids array elements. This value may be zero
-> + * if there are no LSMs active. If @size is insufficient to contain
-> + * the return data -E2BIG is returned and @size is set to the minimum
-> + * required size. In all other cases a negative value indicating the
-> + * error is returned.
-> + */
-> +SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, size_t __user *, size,
-> +		u32, flags)
+Landlock is an optional sandboxing mechanism targeting unprivileged
+users/processes (even if it can of course be used by privileged ones).
+This means that there is no global security policy for the whole system
+(unlike SELinux, AppArmor...).  System administrators that need to
+manage a file system or any block devices would just not sandbox
+themselves.  Moreover, most block devices should only be accessible to
+the root user (which makes root the only one able to send IOCTL commands
+to these block devices).  In a nutshell, processes using boot and
+management interfaces are already privileged and they don't use
+Landlock.  For instance, a landlocked process cannot do any mount
+action, which is documented and it makes sense for the sandboxing use
+case (to avoid sandbox bypass).
 
-I'm sorry but the size of userspace size_t is different from the kernel one
-on 32-bit compat architectures.
+However, it would be interesting to know if unprivileged users can
+request legitimate IOCTL commands on block devices (on a generic
+distro), and if this is required for a common file system use (i.e.
+excluding administration tasks).  I think all required IOCTL for common
+file system use are available through the file system, not block devices,
+but please correct me if I'm wrong.  What is nice with this
+LANDLOCK_ACCESS_FS_IOCTL_DEV approach is that user space can identify
+(with path and dev major/minor) on which device IOCTLs should be
+allowed.  This is simple to understand and the information to identify
+such devices is already well known.  We can also allow IOCTLs on a set
+of devices, e.g. /dev/snd/.
 
-Looks like there has to be a COMPAT_SYSCALL_DEFINE3(lsm_list_modules, ...)
-now.  Other two added lsm syscalls also have this issue.
-
-
--- 
-ldv
+The goal of this patch series is to enable applications to sandbox
+themselves and avoid an attacker (exploiting a bug in this application)
+to send arbitrary IOCTL commands to any devices available to the user
+running this application.  For this sandboxing use case, I think it
+wouldn't be useful to differentiate between blkdev_ioctl()'s commands
+and device-specific commands because we want to either allow all IOCTL
+on a block device or deny most of them (not those handled by
+do_vfs_ioctl(), e.g. FIOCLEX, but that's a detail because of the file
+access rights).  This is a trade off to ease sandboxing while being able
+to limit access to unneeded features (which could potentially be used to
+bypass the sandbox, e.g. TTY's IOCTLs).
