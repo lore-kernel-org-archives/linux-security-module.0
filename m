@@ -1,268 +1,113 @@
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2C17AE45
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 12:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2914578298
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 13:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710245766; cv=none; b=g707Gnik55Vu6AH1nCjtnWhJnO1Oi6/Ggdp5R34L3XKepCrso6CHAl/9ECXvQiF2SVlibOZtUZRYbflotciH2Kg2km12rbClQWVIgmukjwxh5M7IW8RPclAiKoa1dShcBvEVxBV72A5bC+Yw5NudkEjYhUKpBA5yEhX/r+3XH9w=
+	t=1710249138; cv=none; b=XYWl3nMCK8YeA15KxkZ5hQmHxJV5XvPFrzciMsK0D6H/FbmaGNaBGg5JtWB4aXncLZQCXS9lJK/X4fHrvWEwBne9zGfQdyeA5EGdTgBg4OPMRs7juS4U4DbHsuEWS8zh9N/4f0h7P15xxoMx597HkuVYKmMJWC2sVL0Vk//m1/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710245766; c=relaxed/simple;
-	bh=toSAL6LOqqiAcHCFf2a7KtT/GkwF4PILGROHmUBWIwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0QSyTfYItHGxtebj/2ADCdkC8858Rd8gAmte6U4y+3bRHaTgzJH0gbRfv6umCxTA+UupkikchShbmnafT5iOHuhnSxRn3+V4+rE8YUKnBImhJfOW8zwxjz241Kopyf2cCJBBqkpSo0eZdS84WTtp416iJZiQvCXmmpfep9UwgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qAo3RkH4; arc=none smtp.client-ip=83.166.143.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1710249138; c=relaxed/simple;
+	bh=5rt+RWbBJPhAUl1uqDwh5UWlve/OPz4PeCvfGqj3MHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e/zlkqerQTb7Qpi6qkoKzvhwiFb2z0A4/v8a2Bev2Qa1oQl/xsJ7jYW4k6R1K5ytQFe+AIIbk80CcNSrpSqHHlQu/r6gsK+SAErWltzVmCv+Znid2etSCIljmdnPBYn8QASeq3iKwb4DtU5gVFoHNHrPj+KoCgRQPTv2bDPwy/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AeF5oxQS; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qAo3RkH4"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TvCKR2dbfzMq0WP;
-	Tue, 12 Mar 2024 13:15:55 +0100 (CET)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TvCKQ0rNKzhRP;
-	Tue, 12 Mar 2024 13:15:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710245755;
-	bh=toSAL6LOqqiAcHCFf2a7KtT/GkwF4PILGROHmUBWIwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qAo3RkH4vnvOXezdBsHKVdull/R1EkYTke/fr8cEyftmemu+MgRBRD/0RcN+EPCaG
-	 EUdqDuICfGoyovJLyRKBQ5wMhZjn3FSHKL9MM4TRX7SU5KCMHkdmzm5XJt5suSvpBx
-	 8B6TWfN5IyjrCbk70Iong7MQSOB1Kknnk8bSCZSo=
-Date: Tue, 12 Mar 2024 13:15:43 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: David Gow <davidgow@google.com>
-Cc: Brendan Higgins <brendanhiggins@google.com>, 
-	Kees Cook <keescook@chromium.org>, Rae Moar <rmoar@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marco Pagani <marpagan@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Wanpeng Li <wanpengli@tencent.com>, Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v2 6/7] kunit: Print last test location on fault
-Message-ID: <20240312.ku4TaiC9uosh@digikod.net>
-References: <20240301194037.532117-1-mic@digikod.net>
- <20240301194037.532117-7-mic@digikod.net>
- <CABVgOSk_vea-LrPwJet6hQ4D3PBQOLVg32nZ_gE4c9kgGDEEnQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AeF5oxQS"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-60a5628ad97so4870597b3.0
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 06:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1710249136; x=1710853936; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xGm6l1YRLh5BPGXSeJhTa5Xkczn4uT6yuT0rED+ytkk=;
+        b=AeF5oxQSugPKh8jPGo1deH2heQlPo67Gx8uPfkXw+A6XRCMxKrmhop4RTi2Raye9w5
+         td3/8L7cAv6COx2n55EwL5JReK1i4P5PPiYypoSIGkwLVHIPPS/nIssVhO6EvVoiSdwa
+         25PWyN9KMeoyTR/gJFW6FP+77dd1uhGAFDEy7I0P298m/ZrujwVNmzfBJ57RnEVJRnz7
+         hFIHzsvn0BzaDpDVS99DEsWFQFKYhVbuQt8C8bZjIr3opLAh5ipZEgkQMXlkanYGp1ue
+         yhcJEtkhHMAz7ALFS6U3xG0xIZj2H6Bi1chBbMLE5wbZkq+AccKzNCXCc5KD/mfWZoRg
+         cqCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710249136; x=1710853936;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xGm6l1YRLh5BPGXSeJhTa5Xkczn4uT6yuT0rED+ytkk=;
+        b=vPXEtwuN3IO66+kbjYJ6ywOQqeiwUk95JKTTMqvHjXdIQZ2ci8VLPrFdqJu5CI+nq/
+         Zs65INKer8VNlxjYyKsaPkHsrduSz4ooymuHfRoEe59h2HDpJa0QCuGYkIT0n6O39p5W
+         LEcA3TR2KDXN4F2lu8iYCgVbKiTvo82Ir+3gzJwdTeai/wsf0vdJUqistFIY4E9DEwUn
+         abTAM5lvriGTLmVQ8IXcH1rQihkHl4H9tAvEYKFqPPvlaent9KiQdytiK4geSollw5hc
+         yBqHiCrqL6yCet1g0MiJdS/ZQmBHIIuJ7FW0z0uQ+wq8QJ9Qdq/W2pjTdOxsXas2gIi1
+         2V2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkh4qW0vb1i9kRIrEdtDOdET34mS/VA5XyaxRakH8NhZkMBSFCcI5S4/doj9b7yOyPyz3JHkPCA9Uhuplx1B0HjvLdc7f9XJVyXrkyjhuuxhgENaXw
+X-Gm-Message-State: AOJu0Yyg8197VM5NZacoRsX3jJxcWUpfKWUF1ZkNnyBQBh9YySV0OQpj
+	wzATfJOAW5d/ja2KEetbPRSf32+ZA3h5dZrloYwLLCABsZYh2/uIK1DQ9muWOyPkeLtrG/I2W44
+	IXP7xq/F4HXrhAxL9/Q0oCpAnzfvrO5uJ6iUQ
+X-Google-Smtp-Source: AGHT+IEdiOBkJ+adeSqv+rNybEPwNkGGa7iFCLcf94f4++BXPp1TK3JUSZqCbU2Yvqne0MvrzB+F7Mt8oGlgCeTEfL8=
+X-Received: by 2002:a05:6902:2841:b0:dcd:b806:7446 with SMTP id
+ ee1-20020a056902284100b00dcdb8067446mr6722695ybb.1.1710249136161; Tue, 12 Mar
+ 2024 06:12:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVgOSk_vea-LrPwJet6hQ4D3PBQOLVg32nZ_gE4c9kgGDEEnQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
+ <1709768084-22539-16-git-send-email-wufan@linux.microsoft.com>
+ <20240312025712.GE1182@sol.localdomain> <20240312030712.GF1182@sol.localdomain>
+In-Reply-To: <20240312030712.GF1182@sol.localdomain>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 12 Mar 2024 09:12:05 -0400
+Message-ID: <CAHC9VhSSWNa1qwZrWtj-ERFjN9QKR7fz17yb9903P_a2k6ewaQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v14 15/19] fsverity: consume builtin signature via LSM hook
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, 
+	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, 
+	agk@redhat.com, snitzer@kernel.org, eparis@redhat.com, 
+	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, 
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 12, 2024 at 12:54:48PM +0800, David Gow wrote:
-> On Sat, 2 Mar 2024 at 03:40, Mickaël Salaün <mic@digikod.net> wrote:
+On Mon, Mar 11, 2024 at 11:07=E2=80=AFPM Eric Biggers <ebiggers@kernel.org>=
+ wrote:
+> On Mon, Mar 11, 2024 at 07:57:12PM -0700, Eric Biggers wrote:
 > >
-> > This helps identify the location of test faults.
+> > As I've said before, this commit message needs some work.  It currently=
+ doesn't
+> > say anything about what the patch actually does.
 > >
-> > Cc: Brendan Higgins <brendanhiggins@google.com>
-> > Cc: David Gow <davidgow@google.com>
-> > Cc: Rae Moar <rmoar@google.com>
-> > Cc: Shuah Khan <skhan@linuxfoundation.org>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20240301194037.532117-7-mic@digikod.net
-> > ---
-> 
-> I like the idea of this, but am a little bit worried about how
-> confusing it might be, given that the location only updates on those
-> particular macros.
-> 
-> Maybe the answer is to make the __KUNIT_SAVE_LOC() macro, or something
-> equivalent, a supported API.
-> 
-> One possibility would be to have a KUNIT_MARKER() macro. If we really
-> wanted to, we could expand it to take a string so we can have a more
-> user-friendly KUNIT_MARKER(test, "parsing packet") description of
-> where things went wrong. Another could be to extend this to use the
-> code tagging framework[1], if that lands.
-> 
-> That being said, I think this is still an improvement without any of
-> those features. I've left a few comments below. Let me know what you
-> think.
+> > BTW, please make sure you're Cc'ing the fsverity mailing list
+> > (fsverity@lists.linux.dev), not fscrypt (linux-fscrypt@vger.kernel.org)=
+.
+>
+> Also, I thought this patch was using a new LSM hook, but I now see that y=
+ou're
+> actually abusing the existing security_inode_setsecurity() LSM hook.  Cur=
+rently
+> that hook is called when an xattr is set.  I don't see any precedent for
+> overloading it for other purposes.
 
-This patch adds opportunistic markers to test code.  Because an uncaught
-fault would be a bug, I think in practice nobody would use
-KUNIT_MARKER() explicitly.  I found _KUNIT_SAVE_LOC() to be useful while
-writing tests or debugging them.  With this patch, it is still possible
-to call KUNIT_SUCCESS() if someone wants to add an explicit mark, and I
-think it would make more sense.
+I'm not really bothered by this, and if it proves to be a problem in
+the future we can swap it for a new hook; we don't include the LSM
+in-kernel API in any stable API guarantees.
 
-> 
-> Cheers,
-> -- David
-> 
-> [1]: https://lwn.net/Articles/906660/
-> >
-> > Changes since v1:
-> > * Added Kees's Reviewed-by.
-> > ---
-> >  include/kunit/test.h  | 24 +++++++++++++++++++++---
-> >  lib/kunit/try-catch.c | 10 +++++++---
-> >  2 files changed, 28 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/include/kunit/test.h b/include/kunit/test.h
-> > index fcb4a4940ace..f3aa66eb0087 100644
-> > --- a/include/kunit/test.h
-> > +++ b/include/kunit/test.h
-> > @@ -301,6 +301,8 @@ struct kunit {
-> >         struct list_head resources; /* Protected by lock. */
-> >
-> >         char status_comment[KUNIT_STATUS_COMMENT_SIZE];
-> > +       /* Saves the last seen test. Useful to help with faults. */
-> > +       struct kunit_loc last_seen;
-> >  };
-> >
-> >  static inline void kunit_set_failure(struct kunit *test)
-> > @@ -567,6 +569,15 @@ void __printf(2, 3) kunit_log_append(struct string_stream *log, const char *fmt,
-> >  #define kunit_err(test, fmt, ...) \
-> >         kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
-> >
-> > +/*
-> > + * Must be called at the beginning of each KUNIT_*_ASSERTION().
-> > + * Cf. KUNIT_CURRENT_LOC.
-> > + */
-> > +#define _KUNIT_SAVE_LOC(test) do {                                            \
-> > +       WRITE_ONCE(test->last_seen.file, __FILE__);                            \
-> > +       WRITE_ONCE(test->last_seen.line, __LINE__);                            \
-> > +} while (0)
-> 
-> Can we get rid of the leading '_', make this public, and document it?
-> If we want to rename it to KUNIT_MARKER() or similar, that might work
-> better, too.
+> This seems problematic, as it means that a
+> request to set an xattr with the name you chose ("fsverity.builtin-sig") =
+will be
+> interpreted by LSMs as the fsverity builtin signature.  A dedicated LSM h=
+ook may
+> be necessary to avoid issues with overloading the existing xattr hook lik=
+e this.
 
-We can do that but I'm not convinced it would be useful.
+Would you be more comfortable if the name was in an IPE related space,
+for example something like "ipe.fsverity-sig"?
 
-> 
-> > +
-> >  /**
-> >   * KUNIT_SUCCEED() - A no-op expectation. Only exists for code clarity.
-> >   * @test: The test context object.
-> > @@ -575,7 +586,7 @@ void __printf(2, 3) kunit_log_append(struct string_stream *log, const char *fmt,
-> >   * words, it does nothing and only exists for code clarity. See
-> >   * KUNIT_EXPECT_TRUE() for more information.
-> >   */
-> > -#define KUNIT_SUCCEED(test) do {} while (0)
-> > +#define KUNIT_SUCCEED(test) _KUNIT_SAVE_LOC(test)
-> >
-> >  void __noreturn __kunit_abort(struct kunit *test);
-> >
-> > @@ -601,14 +612,16 @@ void __kunit_do_failed_assertion(struct kunit *test,
-> >  } while (0)
-> >
-> >
-> > -#define KUNIT_FAIL_ASSERTION(test, assert_type, fmt, ...)                     \
-> > +#define KUNIT_FAIL_ASSERTION(test, assert_type, fmt, ...) do {                \
-> > +       _KUNIT_SAVE_LOC(test);                                                 \
-> >         _KUNIT_FAILED(test,                                                    \
-> >                       assert_type,                                             \
-> >                       kunit_fail_assert,                                       \
-> >                       kunit_fail_assert_format,                                \
-> >                       {},                                                      \
-> >                       fmt,                                                     \
-> > -                     ##__VA_ARGS__)
-> > +                     ##__VA_ARGS__);                                          \
-> > +} while (0)
-> >
-> >  /**
-> >   * KUNIT_FAIL() - Always causes a test to fail when evaluated.
-> > @@ -637,6 +650,7 @@ void __kunit_do_failed_assertion(struct kunit *test,
-> >                               fmt,                                             \
-> >                               ...)                                             \
-> >  do {                                                                          \
-> > +       _KUNIT_SAVE_LOC(test);                                                 \
-> >         if (likely(!!(condition_) == !!expected_true_))                        \
-> >                 break;                                                         \
-> >                                                                                \
-> > @@ -698,6 +712,7 @@ do {                                                                               \
-> >                 .right_text = #right,                                          \
-> >         };                                                                     \
-> >                                                                                \
-> > +       _KUNIT_SAVE_LOC(test);                                                 \
-> >         if (likely(__left op __right))                                         \
-> >                 break;                                                         \
-> >                                                                                \
-> > @@ -758,6 +773,7 @@ do {                                                                               \
-> >                 .right_text = #right,                                          \
-> >         };                                                                     \
-> >                                                                                \
-> > +       _KUNIT_SAVE_LOC(test);                                                 \
-> >         if (likely((__left) && (__right) && (strcmp(__left, __right) op 0)))   \
-> >                 break;                                                         \
-> >                                                                                \
-> > @@ -791,6 +807,7 @@ do {                                                                               \
-> >                 .right_text = #right,                                          \
-> >         };                                                                     \
-> >                                                                                \
-> > +       _KUNIT_SAVE_LOC(test);                                                 \
-> >         if (likely(__left && __right))                                         \
-> >                 if (likely(memcmp(__left, __right, __size) op 0))              \
-> >                         break;                                                 \
-> > @@ -815,6 +832,7 @@ do {                                                                               \
-> >  do {                                                                          \
-> >         const typeof(ptr) __ptr = (ptr);                                       \
-> >                                                                                \
-> > +       _KUNIT_SAVE_LOC(test);                                                 \
-> >         if (!IS_ERR_OR_NULL(__ptr))                                            \
-> >                 break;                                                         \
-> >                                                                                \
-> > diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-> > index c6ee4db0b3bd..2ec21c6918f3 100644
-> > --- a/lib/kunit/try-catch.c
-> > +++ b/lib/kunit/try-catch.c
-> > @@ -91,9 +91,13 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
-> >
-> >         if (exit_code == -EFAULT)
-> >                 try_catch->try_result = 0;
-> > -       else if (exit_code == -EINTR)
-> > -               kunit_err(test, "try faulted\n");
-> > -       else if (exit_code == -ETIMEDOUT)
-> > +       else if (exit_code == -EINTR) {
-> > +               if (test->last_seen.file)
-> > +                       kunit_err(test, "try faulted after %s:%d\n",
-> > +                                 test->last_seen.file, test->last_seen.line);
-> 
-> It's possibly a bit confusing to just say "after file:line",
-> particularly if we then loop or call a function "higher up" in the
-> file. Maybe something like "try faulted: last line seen %s:%d" is
-> clearer.
-
-OK
-
-> 
-> > +               else
-> > +                       kunit_err(test, "try faulted before the first test\n");
-> 
-> I don't like using "test" here, as it introduces ambiguity between
-> "kunit tests" and "assertions/expectations" if we call them both
-> tests. Maybe just "try faulted" here, or "try faulted (no markers
-> seen)" or similar?
-
-I agree that "try faulted" would be enough.  I'm totally OK for you to
-update this patch directly. Please let me know if you'd prefer me to
-send another version with these fixes though.
-
-Do you plan to merge this patches with the v6.9 merge window?
-
-> 
-> 
-> > +       } else if (exit_code == -ETIMEDOUT)
-> >                 kunit_err(test, "try timed out\n");
-> >         else if (exit_code)
-> >                 kunit_err(test, "Unknown error: %d\n", exit_code);
-> > --
-> > 2.44.0
-> >
-
-
+--=20
+paul-moore.com
