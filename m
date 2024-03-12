@@ -1,140 +1,313 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A384D13B28E
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 17:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F001313B792
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 17:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710263205; cv=none; b=moSkCIbUtfRir6Lo0zuYTs5aHTCuf7gFaWbKFVXv1wQcialS6bqNxRHcP2szi4KTkyfv+9pc0eTtKwvaiE5QueMba7QhsNkOYSr+Yk9Mg18DMleLU/WuifxGARdSORtRy91UnmmlrS0Rnub2ysqg7LjBwv2Gu94Zl9COJBsMuN8=
+	t=1710263210; cv=none; b=a+cI+l8gBoxqqOWYgPpHNUa9bHz4Pz+vpxOo17ppeSGd/Wblc0kaQDnwbVOc4pDbJOTyfwJtNjJNnVhSItRHKzE3tNkMF/RR/6rvqytROyJ3nRE+bKtkRNc04mp5X5+TLiLY69e0xWmJM9dtISV93STrlBylYL/IG8nPU7i0GUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710263205; c=relaxed/simple;
-	bh=ODBwrrI/trcFkdEjJ9gJJB5JMu44UNEg7dQLx1OB5rM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DopaOPZqfU7EAvzXloLVpojmqh5wRuEwxpzhRotEuWXgEnDf7VxAB3aKUhZ6hPGe41IS3APlrcDVanRhIythTtYH1MRcN8CKVXcOSheYGNoGjlsf873h7YmXMh0bCNDdnVMvq/9Iow6Qkdsc4tfB0SmWHDSxErXw4FkGDJ5gTN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eisIbU3m; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1710263210; c=relaxed/simple;
+	bh=tp5GJDJhFlsY2bgmgdHUuBDT+vKAUmP0b5/gPSMSm8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEJgljSMXUWMg4slIFGuHd6Mh8jv+6SimSiIbiZVlRSy42ltp1Crf4drQ1imeA9HAlCocUKn339kVDKmCmNbRZBM0xjs3mzuaJC8B5+AFDO3FpjcBXd/7DTuSTqYyaSyZLTFK5RoZFJMrW03xUMjHrx1wuCkjnjq0zV8c6JUYo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eXrvPo4C; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eisIbU3m"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dc74e33fe1bso5285201276.0
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 10:06:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eXrvPo4C"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-56840d872aeso4387109a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 10:06:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710263202; x=1710868002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rm7l+RMSZUqlJJ7DTu0GuXUMEcKHLbKcsHpJaXGfU7Q=;
-        b=eisIbU3mBKRJicxPXBF3Q+rP7hzmR6PNkBd7REayXUtW/xwkGdc0bvLVxCVXpqLLz0
-         RRGm2vsiLEEPhJc4gSiyPUhywCpeBiHSqsqzbUJ72TOOLUqiYQfaAamB8tfdOn8eGzSW
-         yl6zSZERuVtTCr5LO21L1bOTZouaGroQZqYZdoU34CB9aRQDeUc+iCJGPmZOP7bOWPbl
-         g9k0eN2hwJw4uaEilYrbUBYu/Ox84dIqVDerBsdueM9Aw58jdW40LbB02hAyCM9k9BpQ
-         TUU0L9a9wbcDjlhCqjNTDup2jn1Z+kjsYjEA7Hk+++jRxlPv2Uw8SLKw4eKT/MYDTxwo
-         iuWA==
+        d=google.com; s=20230601; t=1710263207; x=1710868007; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zB5OcsqYgooW+2YsYbicutHPTgoP7Ts7AFCJig6ZoKo=;
+        b=eXrvPo4C9sB00275h6/4v4IGJ4TlUUp5o8rlY3gWLjPB1/uG1AZLFA5li7a5cZaGTP
+         dbMKOUWgSAnD39CWIn+9zAKrHjcsbXN7DUSLsc+NDNVj7iBpewn/cQOc43fWLW+JiH1w
+         /5KqKZwF3NyjYirx8TvFsNR4nphHu1cBbMYS/t9fldPzmYnt4nlEgq4xsCRqWp44MWZg
+         1grsME6p56vBhKltx8W7/yjG43tsu61l0ELh6ePL2eBGGVekXqpvSyJZv4HDIkxiHGCr
+         1xKPxH/4AnSDAa42MzNYuPkNpBL3BeRTbU9YuBhe3KsaELWLOl/7jlt8A45Wo2rTjxBg
+         mfNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710263202; x=1710868002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rm7l+RMSZUqlJJ7DTu0GuXUMEcKHLbKcsHpJaXGfU7Q=;
-        b=OTu8A38DbTzjDef8xMxNQyf7op6yufPN4xXwRvqFSAI2J1cH2t2hVgI4xVDgXOh+4S
-         v3DJWt8nuT+v6lZ7XuX0nGSRWKS7eEeHCPxbGt0I+So6bHnouTyIA5fvnjauqBdH6rXF
-         1mpnEke8U2rF4ugo0hJd8TcwMv1KHxMrYLqeV2KPHCCqeGDr6cDixv/sASdfvC2ClK1P
-         7u1F1Pp6wUY3ijB/+JPhKaMipZapUJbEsjlHlmkU3cNl55x17HbnXXVRx1N4Z5vAxxJ1
-         ApUH31mb9FmRL++NNYgAsdKZSFh0X0OtRmWJyvoOhUAaUbQOMrvss3OlnZS4YjyuaiZy
-         +tEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD8a97ef0BMVYehPAGbZNINggEMUfmBg5PoqvhyQuhKtvGff5TxMT0iSjL6B/0lc2/e3xQit/zZeyum9HwBFtiqQlNeamN+0I22iyWTytb50veJ5Fm
-X-Gm-Message-State: AOJu0YxyUZ/3MCUq4TZckViG4gqrD4BHuAabP9MwhMEAW0kqcz3R9q7S
-	sMEnjT/UrwzjHChqib04Kp1H5BDe0MpS0lI97DgheAZ5xJW/+kjCCQrjab/Ws8NKvV3yOj472EK
-	kCzOHt/FWjxSdIvNHUzgaN/4xHY+D6Xq9qaj/
-X-Google-Smtp-Source: AGHT+IGE+VfMAqbVYN41jVn1YyoH5kAy0AKB+zcQZl0WABPOYxYN+EL+RCMyJWkqXwdFHtxZGLeP8pt7ClkhUNY5aic=
-X-Received: by 2002:a25:b227:0:b0:dc7:45d3:ffd0 with SMTP id
- i39-20020a25b227000000b00dc745d3ffd0mr80052ybj.1.1710263202618; Tue, 12 Mar
- 2024 10:06:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710263207; x=1710868007;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zB5OcsqYgooW+2YsYbicutHPTgoP7Ts7AFCJig6ZoKo=;
+        b=QCFPxIZ1nP1CbMi0ysfItNynN3xxunpOyD2qEt1suzeIhE0c22OOu582+RqgH/Eq7D
+         RxmihnHutiNTUKmGMuJ5YPnybmM7hEV15eheOSZSl7MXN//3RdvnqQLzsCLapEK5d24u
+         3tCa6LAOyuIBZrDWqTP9gI3sW6Ksar2a6kSsjazzQkz+pRfcLRHENo+rfOZB8PlYecR3
+         XcrVlSqrwqbFsQRnbqAwRnyU+ZUVTPJUqpqRLA4Yxb7rVpq97JprEjpmvCs9+hyvaHQP
+         lANozErXEp3GFEDp0Ca04c1tpeBqCUKXIpRKKUfFs6t4/SlvEsuy+9B74GInU+oESvHV
+         KI1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWNICmh/br5CXBt2TrlY6gKgr/+ICG3TW80nYiwWL+SMAyLhQLpG6Y3CoCwFI8niR/WSMkPa/1pw68HotKFFAlNRNmbohCz/RDFRE1/foH2R5qOkM9h
+X-Gm-Message-State: AOJu0YwiGzvdfszF2BzPIsDvueCKSsYbdNV8l+g9/RTNYYeJBjywS3e9
+	pn/L52AnOh4gk+CdXlhq1z7qoKmvlYXvUBUpCD/VYMeF7PiCBMUZkvpmMCaD9g==
+X-Google-Smtp-Source: AGHT+IEI+5ZeRxyTNwgNp4mYtKX2fYjiH77MdAHaIh6CM5o8Vto9KrIbDxf7Shq7e5wuKr+g45z/+A==
+X-Received: by 2002:a50:c01b:0:b0:566:43ab:8b78 with SMTP id r27-20020a50c01b000000b0056643ab8b78mr6675907edb.30.1710263206888;
+        Tue, 12 Mar 2024 10:06:46 -0700 (PDT)
+Received: from google.com (12.196.204.35.bc.googleusercontent.com. [35.204.196.12])
+        by smtp.gmail.com with ESMTPSA id d23-20020a056402001700b0056857701bf5sm2379670edu.81.2024.03.12.10.06.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Mar 2024 10:06:46 -0700 (PDT)
+Date: Tue, 12 Mar 2024 17:06:36 +0000
+From: Matt Bobrowski <mattbobrowski@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>,
+	Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm <linux-mm@kvack.org>,
+	LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+Message-ID: <ZfCLnOBDnBp2wcJy@google.com>
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner>
+ <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
+ <20240307-phosphor-entnahmen-8ef28b782abf@brauner>
+ <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+ <20240308-kleben-eindecken-73c993fb3ebd@brauner>
+ <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
+ <20240311-geglaubt-kursverfall-500a27578cca@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230912205658.3432-1-casey@schaufler-ca.com> <20230912205658.3432-6-casey@schaufler-ca.com>
- <20240312101630.GA903@altlinux.org> <CAHC9VhRgjNT2YnVgCqMJnyr227qUjmfrWZ+LBnu_DGxnJZgeKw@mail.gmail.com>
- <f122b3a9-1208-4c0b-9289-73eb070a8337@schaufler-ca.com>
-In-Reply-To: <f122b3a9-1208-4c0b-9289-73eb070a8337@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 12 Mar 2024 13:06:36 -0400
-Message-ID: <CAHC9VhRfwjsGiHXBRcWA6S9+H_kj0vMdQC0gyHr3ZnX-u7KzRQ@mail.gmail.com>
-Subject: Re: [PATCH v15 05/11] LSM: Create lsm_list_modules system call
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: "Dmitry V. Levin" <ldv@strace.io>, linux-security-module@vger.kernel.org, jmorris@namei.org, 
-	serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, 
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, mic@digikod.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240311-geglaubt-kursverfall-500a27578cca@brauner>
 
-On Tue, Mar 12, 2024 at 11:27=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 3/12/2024 6:25 AM, Paul Moore wrote:
-> > On Tue, Mar 12, 2024 at 6:16=E2=80=AFAM Dmitry V. Levin <ldv@strace.io>=
- wrote:
-> >> On Tue, Sep 12, 2023 at 01:56:50PM -0700, Casey Schaufler wrote:
-> >> [...]
-> >>> --- a/security/lsm_syscalls.c
-> >>> +++ b/security/lsm_syscalls.c
-> >>> @@ -55,3 +55,42 @@ SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, a=
-ttr, struct lsm_ctx __user *,
-> >>>  {
-> >>>       return security_getselfattr(attr, ctx, size, flags);
-> >>>  }
-> >>> +
-> >>> +/**
-> >>> + * sys_lsm_list_modules - Return a list of the active security modul=
-es
-> >>> + * @ids: the LSM module ids
-> >>> + * @size: pointer to size of @ids, updated on return
-> >>> + * @flags: reserved for future use, must be zero
-> >>> + *
-> >>> + * Returns a list of the active LSM ids. On success this function
-> >>> + * returns the number of @ids array elements. This value may be zero
-> >>> + * if there are no LSMs active. If @size is insufficient to contain
-> >>> + * the return data -E2BIG is returned and @size is set to the minimu=
-m
-> >>> + * required size. In all other cases a negative value indicating the
-> >>> + * error is returned.
-> >>> + */
-> >>> +SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, size_t __user *=
-, size,
-> >>> +             u32, flags)
-> >> I'm sorry but the size of userspace size_t is different from the kerne=
-l one
-> >> on 32-bit compat architectures.
-> > D'oh, yes, thanks for pointing that out.  It would have been nice to
-> > have caught that before v6.8 was released, but I guess it's better
-> > than later.
-> >
-> >> Looks like there has to be a COMPAT_SYSCALL_DEFINE3(lsm_list_modules, =
-...)
-> >> now.  Other two added lsm syscalls also have this issue.
-> > Considering that Linux v6.8, and by extension these syscalls, are only
-> > a few days old, I think I'd rather see us just modify the syscalls and
-> > avoid the compat baggage.  I'm going to be shocked if anyone has
-> > shifted to using the new syscalls yet, and even if they have (!!),
-> > moving from a "size_t" type to a "u64" should be mostly transparent
-> > for the majority of native 64-bit systems.  Those running the absolute
-> > latest kernels on 32-bit systems with custom or bleeding edge
-> > userspace *may* see a slight hiccup, but I think that user count is in
-> > the single digits, if not zero.
-> >
-> > Let's fix this quickly with /size_t/u64/ in v6.8.1 and avoid the
-> > compat shim if we can.
-> >
-> > Casey, do you have time to put together a patch for this (you should
-> > fix the call chains below the syscalls too)?  If not, please let me
-> > know and I'll get a patch out ASAP.
->
-> Grumble. Yes, I'll get right on it.
+Hey Christian,
 
-Great, thanks Casey.
+On Mon, Mar 11, 2024 at 01:00:56PM +0100, Christian Brauner wrote:
+> On Fri, Mar 08, 2024 at 05:23:30PM -0800, Alexei Starovoitov wrote:
+> > On Fri, Mar 8, 2024 at 2:36 AM Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > >
+> > > These exports are specifically for an out-of-tree BPF LSM program that
+> > > is not accessible to the public. The question in the other mail stands.
+> > 
+> > The question was already answered. You just don't like the answer.
+> > bpf progs are not equivalent to kernel modules.
+> > They have completely different safety and visibility properties.
+> > The safety part I already talked about.
+> > Sounds like the visibility has to be explained.
+> > Kernel modules are opaque binary blobs.
+> > bpf programs are fully transparent. The intent is known
+> > to the verifier and to anyone with understanding
+> > of bpf assembly.
+> > Those that cannot read bpf asm can read C source code that is
+> > embedded in the bpf program in kernel memory.
+> > It's not the same as "llvm-dwarfdump module.ko" on disk.
+> > The bpf prog source code is loaded into the kernel
+> > at program verification time for debugging and visibility reasons.
+> > If there is a verifier bug and bpf manages to crash the kernel
+> > vmcore will have relevant lines of program C source code right there.
+> > 
+> > Hence out-of-tree or in-tree bpf makes no practical difference.
+> > The program cannot hide its meaning and doesn't hamper debugging.
+> > 
+> > Hence adding EXPORT_SYMBOL == Brace for impact!
+> > Expect crashes, api misuse and what not.
+> > 
+> > While adding bpf_kfunc is a nop for kernel development.
+> > If kfunc is in the way of code refactoring it can be removed
+> > (as we demonstrated several times).
+> > A kfunc won't cause headaches for the kernel code it is
+> > calling (assuming no verifier bugs).
+> > If there is a bug it's on us to fix it as we demonstrated in the past.
+> > For example: bpf_probe_read_kernel().
+> > It's a wrapper of copy_from_kernel_nofault() and over the years
+> > bpf users hit various bugs in copy_from_kernel_nofault(),
+> > reported them, and _bpf developers_ fixed them.
+> > Though copy_from_kernel_nofault() is as generic as it can get
+> > and the same bugs could have been reproduced without bpf
+> > we took care of fixing these parts of the kernel.
+> > 
+> > Look at path_put().
+> > It's EXPORT_SYMBOL and any kernel module can easily screw up
+> > reference counting, so that sooner or later distro folks
+> > will experience debug pains due to out-of-tree drivers.
+> > 
+> > kfunc that calls path_put() won't have such consequences.
+> > The verifier will prevent path_put() on a pointer that wasn't
+> > acquired by the same bpf program. No support pains.
+> > It's a nop for vfs folks.
+> > 
+> > > > First of all, there is no such thing as get_task_fs_pwd/root
+> > > > in the kernel.
+> > >
+> > > Yeah, we'd need specific helpers for a never seen before out-of-tree BPF
+> > > LSM. I don't see how that's different from an out-of-tree kernel module.
+> > 
+> > Sorry, but you don't seem to understand what bpf can and cannot do,
+> > hence they look similar.
+> 
+> Maybe. On the other hand you seem to ignore what I'm saying. You
+> currently don't have a clear set of rules for when it's ok for someone
+> to send patches and request access to bpf kfuncs to implement a new BPF
+> program. This patchset very much illustrates this point. The safety
+> properties of bpf don't matter for this. And again, your safety
+> properties very much didn't protect you from your bpf_d_path() mess.
+> 
+> We're not even clearly told where and how these helper are supposed to be
+> used. That's not ok and will never be ok. As long as there are no clear
+> criteria to operate under this is highly problematic. This may be fine
+> from a bpf perspective and one can even understand why because that's
+> apparently your model or promise to your users. But there's no reason to
+> expect the same level of laxness from any of the subsystems you're
+> requesting kfuncs from.
 
---=20
-paul-moore.com
+You raise a completely fair point, and I truly do apologies for the
+lack of context and in depth explanations around the specific
+situations that the proposed BPF kfuncs are intended to be used
+from. Admittedly, that's a failure on my part, and I can completely
+understand why from a maintainers point of view there would be
+reservations around acknowledging requests for adding such invisible
+dependencies.
+
+Now, I'm in a little bit of a tough situation as I'm unable to point
+you to an open-source BPF LSM implementation that intends to make use
+of such newly proposed BPF kfuncs. That's just an unfortunate
+constraint and circumstance that I'm having to deal with, so I'm just
+going to have to provide heavily redacted and incomplete example to
+illustrate how these BPF kfuncs intend to be used from BPF LSM
+programs that I personally work on here at Google. Notably though, the
+contexts that I do share here may obviously be a nonholistic view on
+how these newly introduced BPF kfuncs end up getting used in practice
+by some other completely arbitrary open-source BPF LSM programs.
+
+Anyway, as Alexei had pointed out in one of the prior responses, the
+core motivating factor behind introducing these newly proposed BPF
+kfuncs purely stems from the requirement of needing to call
+bpf_d_path() safely on a struct path from the context of a BPF LSM
+program, specifically within the security_file_open() and
+security_mmap_file() LSM hooks. Now, as noted within the original bug
+report [0], it's currently not considered safe to pluck a struct path
+out from an arbitrary in-kernel data structure, which in our case was
+current->mm->exe_file->f_path, and have it passed to bpf_d_path() from
+the aforementioned LSM hook points, or any other LSM hook point for
+that matter.
+
+So, without using these newly introduced BPF kfuncs, our BPF LSM
+program hanging off security_file_open() looks as follows:
+
+```
+int BPF_PROG(file_open, struct file *file)
+{
+  // Perform a whole bunch of operations on the supplied file argument. This
+  // includes some form of policy evaluation, and if there's a violation against
+  // policy and auditing is enabled, then we eventually call bpf_d_path() on
+  // file->f_path. Calling bpf_d_path() on the file argument isn't problematic
+  // as we have a stable path here as the file argument is reference counted.
+  struct path *target = &file->f_path;
+
+  // ...
+
+  struct task_struct *current = bpf_get_current_task_btf();
+
+  // ...
+  
+  bpf_rcu_read_lock();
+  // Reserve a slot on the BPF ring buffer such that the actor's path can be
+  // passed back to userspace.
+  void *buf = bpf_ringbuf_reserve(&ringbuf, PATH_MAX, 0);
+  if (!buf) {
+    goto unlock;
+  }
+
+  // For contextual purposes when performing an audit we also call bpf_d_path()
+  // on the actor, being current->mm->exe_file->f_path.
+  struct path *actor = &current->mm->exe_file->f_path;
+
+  // Now perform the path resolution on the actor via bpf_d_path().
+  u64 ret = bpf_d_path(actor, buf, PATH_MAX);
+  if (ret > 0) {
+    bpf_ringbuf_submit(buf, BPF_RB_NO_WAKEUP);
+  } else {
+    bpf_ringbuf_discard(buf, 0);
+  }
+
+unlock:
+  bpf_rcu_read_unlock();
+  return 0;
+}
+```
+
+Post landing these BPF kfuncs, the BPF LSM program hanging off
+security_file_open() would be updated to make use of the
+acquire/release BPF kfuncs as below. Here I'm only making use of
+bpf_get_task_exe_file(), but similar usage also extends to
+bpf_get_task_fs_root() and bpf_get_task_fs_pwd().
+
+```
+int BPF_PROG(file_open, struct file *file)
+{
+  // Perform a whole bunch of operations on the supplied file argument. This
+  // includes some form of policy evaluation, and if there's a violation against
+  // policy and auditing is enabled, then we eventually call bpf_path_d_path()
+  // on file->f_path. Calling bpf_path_d_path() on the file argument isn't
+  // problematic as we have a stable path here as the file argument is trusted
+  // and reference counted.
+  struct path *target = &file->f_path;
+
+  // ...
+
+  struct task_struct *current = bpf_get_current_task_btf();
+
+  // ...
+  
+  // Reserve a slot on the BPF ring buffer such that the actor's path can be
+  // passed back to userspace.
+  void *buf = bpf_ringbuf_reserve(&ringbuf, PATH_MAX, 0);
+  if (!buf) {
+    return 0;
+  }
+
+  // For contextual purposes when performing an audit we also call
+  // bpf_path_d_path() on the actor, being current->mm->exe_file->f_path.
+  // Here we're operating on a stable trused and reference counted file,
+  // thanks to bpf_get_task_exe_file().
+  struct file *exe_file = bpf_get_task_exe_file(current);
+  if (!exe_file) {
+    bpf_ringbuf_discard(buf, 0);
+    return 0;
+  }
+
+  // Now perform the path resolution on the actor via bpf_path_d_path(), which
+  // only accepts a trusted struct path.
+  u64 ret = bpf_path_d_path(&exe_file->f_path, buf, PATH_MAX);
+  if (ret > 0) {
+    bpf_ringbuf_submit(buf, BPF_RB_NO_WAKEUP);
+  } else {
+    bpf_ringbuf_discard(buf, 0);
+  }
+
+  // Drop the reference on exe_file.
+  bpf_put_file(exe_file);
+  return 0;
+}
+```
+
+This is rather incredibly straightforward, but the fundamental
+difference between the two implementations is that one allows us to
+work on stable file, whereas the other does not. That's really
+it. Similarly, we do more or less the same for our BPF LSM program
+that hangs off security_mmap_file().
+
+Do you need anything else which illustrates the proposed BPF kfunc
+usage?
+
+[0] https://lore.kernel.org/bpf/CAG48ez0ppjcT=QxU-jtCUfb5xQb3mLr=5FcwddF_VKfEBPs_Dg@mail.gmail.com/
+
+/M
