@@ -1,83 +1,116 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8311386D1;
-	Tue, 12 Mar 2024 18:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15EC139574;
+	Tue, 12 Mar 2024 18:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710267268; cv=none; b=ii6o9wR6T65P0zZx966Y/WiySMhdoCoA7KxmgoB7GTtnGB1N+YrrPLAVdYGNwQPu2x6XKffh8p9ZPig73ta4iIpXSdUKEozS8Wnqr8kPB0LNamzHFAb0BEYmr8VzW/6P88G1OFSD0xGaMbz4v1TRugz/vVEVagC43Ys8q4YlL7M=
+	t=1710268106; cv=none; b=KoIZZFwAGbrcGmFp8hTfsmyRirnFVRNXyq4oltRdLsPSan9iqWOYecnFiMBOS6jt6Qh5hDyOdNkAmQOPIkljQYo5M0wxMBNq1hjtrLaYPQf/LRlUg5ZZlXw17qSN7DIinEcYDf0XS1WK3bO3ijseGj74Y5zANZHr4pv90Ufdkgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710267268; c=relaxed/simple;
-	bh=+Nv8FE2GFtnryYnuFjMt1J6p/3YJi1lq7lWALWFCNLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nbeMscGtO2pS7tzkLpR05Jywxs2MDt5HsSKG67uBqgrwl4Ehq6JI2wWw4RaDB7L/0N06tKjolxDsvWm5BnFVuqFNNSfjfZOGnla4KzcYtlp+fUT8bzOVP6ezKZn64lYFmp0zwAE9KUP+o4o3VMesMnkJzviG+NjUpqCVr96FRv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AwsfC1qr; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AwsfC1qr"
-Received: from [10.137.106.151] (unknown [167.220.2.23])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4696020B74C0;
-	Tue, 12 Mar 2024 11:14:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4696020B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1710267266;
-	bh=7A1zrZAVHXKGttwPdOtLQCc2bRvvqSB12WrZItI5omI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AwsfC1qrQaxGBl/fdJD2faD0hl9FFmeBlCLlRgyTQvlkdWZDaVw25t2K6lGQPegFI
-	 ykP/qN5yTVNTrsLADx0NdOTg2ngKpt+eyntjyybMaNeHjRlIHLVMavUDIz0AnD7mpo
-	 jkZW9SEWeZfy1Nfhg8NaYxMEU0DhvLjCIcb3CkWY=
-Message-ID: <51810153-eb6e-40f7-b5d0-5f72c2f4ee9b@linux.microsoft.com>
-Date: Tue, 12 Mar 2024 11:14:26 -0700
+	s=arc-20240116; t=1710268106; c=relaxed/simple;
+	bh=7EC4IAJJp+c6o0M8iH6pYWKRUgdiQ+sEHXxrJQMhjq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GoXMEa1cWd6VaocL8PUua2Gyn3d5BfMho3XGg8PEMhNzl4cG6WltYTLUMx8iB41sftGA82M5MvwVxvWCxvfg6E6lbsMlmFfmiEZv6UrV+4nQvuqfaze2kfAo2VWZge4ilDodc/LEpVMfTgeV1BLTCONuI0VlHTecSSHfptQrfWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 270A072C8FB;
+	Tue, 12 Mar 2024 21:28:21 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id 1775B7CCB3A; Tue, 12 Mar 2024 20:28:20 +0200 (IST)
+Date: Tue, 12 Mar 2024 20:28:20 +0200
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, mic@digikod.net
+Subject: Re: [PATCH v15 05/11] LSM: Create lsm_list_modules system call
+Message-ID: <20240312182820.GA5122@altlinux.org>
+References: <20230912205658.3432-1-casey@schaufler-ca.com>
+ <20230912205658.3432-6-casey@schaufler-ca.com>
+ <20240312101630.GA903@altlinux.org>
+ <CAHC9VhRgjNT2YnVgCqMJnyr227qUjmfrWZ+LBnu_DGxnJZgeKw@mail.gmail.com>
+ <f122b3a9-1208-4c0b-9289-73eb070a8337@schaufler-ca.com>
+ <CAHC9VhRfwjsGiHXBRcWA6S9+H_kj0vMdQC0gyHr3ZnX-u7KzRQ@mail.gmail.com>
+ <f4f5d993-552b-483a-9a3e-1be99ea48757@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v14 15/19] fsverity: consume builtin signature via LSM
- hook
-Content-Language: en-CA
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
- tytso@mit.edu, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
- eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org,
- linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
- <1709768084-22539-16-git-send-email-wufan@linux.microsoft.com>
- <20240312025712.GE1182@sol.localdomain>
- <20240312030712.GF1182@sol.localdomain>
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <20240312030712.GF1182@sol.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f4f5d993-552b-483a-9a3e-1be99ea48757@schaufler-ca.com>
 
-
-
-On 3/11/2024 8:07 PM, Eric Biggers wrote:
-> On Mon, Mar 11, 2024 at 07:57:12PM -0700, Eric Biggers wrote:
->>
->> As I've said before, this commit message needs some work.  It currently doesn't
->> say anything about what the patch actually does.
->>
->> BTW, please make sure you're Cc'ing the fsverity mailing list
->> (fsverity@lists.linux.dev), not fscrypt (linux-fscrypt@vger.kernel.org).
+On Tue, Mar 12, 2024 at 10:44:38AM -0700, Casey Schaufler wrote:
+> On 3/12/2024 10:06 AM, Paul Moore wrote:
+> > On Tue, Mar 12, 2024 at 11:27 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> On 3/12/2024 6:25 AM, Paul Moore wrote:
+> >>> On Tue, Mar 12, 2024 at 6:16 AM Dmitry V. Levin <ldv@strace.io> wrote:
+> >>>> On Tue, Sep 12, 2023 at 01:56:50PM -0700, Casey Schaufler wrote:
+> >>>> [...]
+> >>>>> --- a/security/lsm_syscalls.c
+> >>>>> +++ b/security/lsm_syscalls.c
+> >>>>> @@ -55,3 +55,42 @@ SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, attr, struct lsm_ctx __user *,
+> >>>>>  {
+> >>>>>       return security_getselfattr(attr, ctx, size, flags);
+> >>>>>  }
+> >>>>> +
+> >>>>> +/**
+> >>>>> + * sys_lsm_list_modules - Return a list of the active security modules
+> >>>>> + * @ids: the LSM module ids
+> >>>>> + * @size: pointer to size of @ids, updated on return
+> >>>>> + * @flags: reserved for future use, must be zero
+> >>>>> + *
+> >>>>> + * Returns a list of the active LSM ids. On success this function
+> >>>>> + * returns the number of @ids array elements. This value may be zero
+> >>>>> + * if there are no LSMs active. If @size is insufficient to contain
+> >>>>> + * the return data -E2BIG is returned and @size is set to the minimum
+> >>>>> + * required size. In all other cases a negative value indicating the
+> >>>>> + * error is returned.
+> >>>>> + */
+> >>>>> +SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, size_t __user *, size,
+> >>>>> +             u32, flags)
+> >>>> I'm sorry but the size of userspace size_t is different from the kernel one
+> >>>> on 32-bit compat architectures.
+> >>> D'oh, yes, thanks for pointing that out.  It would have been nice to
+> >>> have caught that before v6.8 was released, but I guess it's better
+> >>> than later.
+> >>>
+> >>>> Looks like there has to be a COMPAT_SYSCALL_DEFINE3(lsm_list_modules, ..)
+> >>>> now.  Other two added lsm syscalls also have this issue.
+> >>> Considering that Linux v6.8, and by extension these syscalls, are only
+> >>> a few days old, I think I'd rather see us just modify the syscalls and
+> >>> avoid the compat baggage.  I'm going to be shocked if anyone has
+> >>> shifted to using the new syscalls yet, and even if they have (!!),
+> >>> moving from a "size_t" type to a "u64" should be mostly transparent
+> >>> for the majority of native 64-bit systems.  Those running the absolute
+> >>> latest kernels on 32-bit systems with custom or bleeding edge
+> >>> userspace *may* see a slight hiccup, but I think that user count is in
+> >>> the single digits, if not zero.
+> >>>
+> >>> Let's fix this quickly with /size_t/u64/ in v6.8.1 and avoid the
+> >>> compat shim if we can.
+> >>>
+> >>> Casey, do you have time to put together a patch for this (you should
+> >>> fix the call chains below the syscalls too)?  If not, please let me
+> >>> know and I'll get a patch out ASAP.
+> >> Grumble. Yes, I'll get right on it.
+> > Great, thanks Casey.
 > 
-> Also, I thought this patch was using a new LSM hook, but I now see that you're
-> actually abusing the existing security_inode_setsecurity() LSM hook.  Currently
-> that hook is called when an xattr is set.  I don't see any precedent for
-> overloading it for other purposes.  This seems problematic, as it means that a
-> request to set an xattr with the name you chose ("fsverity.builtin-sig") will be
-> interpreted by LSMs as the fsverity builtin signature.  A dedicated LSM hook may
-> be necessary to avoid issues with overloading the existing xattr hook like this.
-> 
-> - Eric
+> Look like lsm_get_self_attr() needs the same change. lsm_set_self_attr()
+> doesn't, need it, but I'm tempted to change it as well for consistency.
+> Thoughts?
 
-Thanks for the suggestion. I found that using 
-security_inode_setsecurity() causes issues with SMACK's 
-inode_setsecurity() hook. I will crate a dedicated new hook like 
-security_inode_setsig() in the next version.
+As lsm_get_self_attr() has the same issue, it needs the same treatment.
 
--Fan
+lsm_set_self_attr() could be left unchanged.  In fact, changing the type
+of syscall arguments from size_t to an explicit 64-bit type would be
+problematic because 32-bit syscalls cannot have 64-bit arguments.
+
+
+-- 
+ldv
