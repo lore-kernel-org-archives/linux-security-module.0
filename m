@@ -1,113 +1,136 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2914578298
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 13:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5548C57873
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 13:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710249138; cv=none; b=XYWl3nMCK8YeA15KxkZ5hQmHxJV5XvPFrzciMsK0D6H/FbmaGNaBGg5JtWB4aXncLZQCXS9lJK/X4fHrvWEwBne9zGfQdyeA5EGdTgBg4OPMRs7juS4U4DbHsuEWS8zh9N/4f0h7P15xxoMx597HkuVYKmMJWC2sVL0Vk//m1/4=
+	t=1710249928; cv=none; b=aNewQXcI+sb61U1WL9kjUXGoTv0SqYGK9p37oOvtY7/BvY+PgtU34oW9uGhaJ2t38tdFwRkb7LQgKfvKYNGBSLsGPy/BXCyuu5Ds1llH8bvm+2qLjL2KiPbJhQHLG3X0tJxnoyfmmZJUzPtFDEc75Exzppo0YBDcSXFyYsntgLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710249138; c=relaxed/simple;
-	bh=5rt+RWbBJPhAUl1uqDwh5UWlve/OPz4PeCvfGqj3MHQ=;
+	s=arc-20240116; t=1710249928; c=relaxed/simple;
+	bh=psGUUbaGpO0STvfivLy6nh3+05iM/5LFBTb9Tiu2sx0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e/zlkqerQTb7Qpi6qkoKzvhwiFb2z0A4/v8a2Bev2Qa1oQl/xsJ7jYW4k6R1K5ytQFe+AIIbk80CcNSrpSqHHlQu/r6gsK+SAErWltzVmCv+Znid2etSCIljmdnPBYn8QASeq3iKwb4DtU5gVFoHNHrPj+KoCgRQPTv2bDPwy/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AeF5oxQS; arc=none smtp.client-ip=209.85.128.177
+	 To:Cc:Content-Type; b=BkIWWAgKhVmBVHyWYSWfxwZ2Vmy0ddEWcCE6tVC4uM6nmOzK8nSE4liuPnrzUlwlHyZc12bjlOagYW1xdMHwHuUlZvMDG5+1P7djwvuKr1lPtH68WQUwhF+JJTa590sP016LISiRZsw2dDAiobFV9Sy/nyFOGZ/nciR7JqPYHE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=P/rzX1/+; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AeF5oxQS"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-60a5628ad97so4870597b3.0
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 06:12:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="P/rzX1/+"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-609fb19ae76so47624687b3.2
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 06:25:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710249136; x=1710853936; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1710249925; x=1710854725; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xGm6l1YRLh5BPGXSeJhTa5Xkczn4uT6yuT0rED+ytkk=;
-        b=AeF5oxQSugPKh8jPGo1deH2heQlPo67Gx8uPfkXw+A6XRCMxKrmhop4RTi2Raye9w5
-         td3/8L7cAv6COx2n55EwL5JReK1i4P5PPiYypoSIGkwLVHIPPS/nIssVhO6EvVoiSdwa
-         25PWyN9KMeoyTR/gJFW6FP+77dd1uhGAFDEy7I0P298m/ZrujwVNmzfBJ57RnEVJRnz7
-         hFIHzsvn0BzaDpDVS99DEsWFQFKYhVbuQt8C8bZjIr3opLAh5ipZEgkQMXlkanYGp1ue
-         yhcJEtkhHMAz7ALFS6U3xG0xIZj2H6Bi1chBbMLE5wbZkq+AccKzNCXCc5KD/mfWZoRg
-         cqCQ==
+        bh=JB/fCkc+DY4m42yOK4XJQgiO/OTJKfXykryTXv2ZIvc=;
+        b=P/rzX1/+8Gsya7WVuz83YmqAKIk/yVcSz+63lCQGDNLXEtCbjZfmJqNyyRAeaCHOXf
+         SyFFdqzMnnmVJpWt2JJOgACTKbW2jacz9YWj6isXiPaOP8opHzJwqxFx9f2+Tq8TSH+6
+         TDUlQRefPZhsKvm5EgYDoNK/TsibUrHaChnFDQZkVAXNOI4bBkr3z4Mlp/uMBHSgF8Kg
+         OBPfpJfXZ5W8jq/cNWT6lnyhZ9BEXFArfSrXw9/3vVRec2VKAHOP/HWtLNfgrltHXtSq
+         fbDyUNeW44TOiwofbMGjbsVxYRjHXhhwpT9PSoYAIh3t2J3Vlk16Jx42AIdlGDfM4ouJ
+         5xow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710249136; x=1710853936;
+        d=1e100.net; s=20230601; t=1710249925; x=1710854725;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xGm6l1YRLh5BPGXSeJhTa5Xkczn4uT6yuT0rED+ytkk=;
-        b=vPXEtwuN3IO66+kbjYJ6ywOQqeiwUk95JKTTMqvHjXdIQZ2ci8VLPrFdqJu5CI+nq/
-         Zs65INKer8VNlxjYyKsaPkHsrduSz4ooymuHfRoEe59h2HDpJa0QCuGYkIT0n6O39p5W
-         LEcA3TR2KDXN4F2lu8iYCgVbKiTvo82Ir+3gzJwdTeai/wsf0vdJUqistFIY4E9DEwUn
-         abTAM5lvriGTLmVQ8IXcH1rQihkHl4H9tAvEYKFqPPvlaent9KiQdytiK4geSollw5hc
-         yBqHiCrqL6yCet1g0MiJdS/ZQmBHIIuJ7FW0z0uQ+wq8QJ9Qdq/W2pjTdOxsXas2gIi1
-         2V2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkh4qW0vb1i9kRIrEdtDOdET34mS/VA5XyaxRakH8NhZkMBSFCcI5S4/doj9b7yOyPyz3JHkPCA9Uhuplx1B0HjvLdc7f9XJVyXrkyjhuuxhgENaXw
-X-Gm-Message-State: AOJu0Yyg8197VM5NZacoRsX3jJxcWUpfKWUF1ZkNnyBQBh9YySV0OQpj
-	wzATfJOAW5d/ja2KEetbPRSf32+ZA3h5dZrloYwLLCABsZYh2/uIK1DQ9muWOyPkeLtrG/I2W44
-	IXP7xq/F4HXrhAxL9/Q0oCpAnzfvrO5uJ6iUQ
-X-Google-Smtp-Source: AGHT+IEdiOBkJ+adeSqv+rNybEPwNkGGa7iFCLcf94f4++BXPp1TK3JUSZqCbU2Yvqne0MvrzB+F7Mt8oGlgCeTEfL8=
-X-Received: by 2002:a05:6902:2841:b0:dcd:b806:7446 with SMTP id
- ee1-20020a056902284100b00dcdb8067446mr6722695ybb.1.1710249136161; Tue, 12 Mar
- 2024 06:12:16 -0700 (PDT)
+        bh=JB/fCkc+DY4m42yOK4XJQgiO/OTJKfXykryTXv2ZIvc=;
+        b=mj11AXpwo4jjRXq1+rB5HobyhIX+lFzgU+lxflU5W7CuZrodXGf9+WvxeTr1TtbAQ7
+         8fVcQoTdP7f7eQB0iOImeEMVQG6jFPWChlZXUHFTcP3qZdSGZbKUgm0mgPj+ct32cVkm
+         qFcJEKmXdXKmVg6KN9V+XHdsDW5vKTlUAiNHsirwfEqtKeHZ/m8Cpg6wT7wHE3Jby6aF
+         gXjydHI1sgQFL4Qz6ynjaDzNsqh5e1s8Ezvu5FtRdh6aFaQXOdaxWcUCj0h4Y13c3CDW
+         RaldUahSZQba5YjeKwTMBWjl6Z5LywOwhQonBKv1nHN1kGV9xeCcRZtGKvvrGK7pQYdy
+         jf1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8wJwU7fS+z8S2aLZfq3vYsFQaEjS2gKRSV7scYH04PKqfPfW83o8SDod3LRLT44rI7fPRi9qbcmtjozeeAloivMHw/AdMQHx4fPfCaF3rPIsI4fAH
+X-Gm-Message-State: AOJu0Yx1mF04uUCg6kPaawRayDJu3sB7ggHej9CnM0g9n+pyJhtcPSt4
+	FgfIZSX7NjTGYY8uztkvEIZH6Ay1JVa3Jya6w57vwWBWH/vZFe6tDgSOjrSXs8tqaVocf+uAaTm
+	no3W8Wlqp3odX8s41SgM3lJrzwGAp0XZx7Npa
+X-Google-Smtp-Source: AGHT+IF1cRnaQFumfUlCRp41/6fgcEMzhcjpf5y7umsfzmg6pOq1H7nSsHfaaBxXD1PgiupfKYVSHQ8j8xk0GqbcK7k=
+X-Received: by 2002:a25:8f8c:0:b0:dc2:41de:b744 with SMTP id
+ u12-20020a258f8c000000b00dc241deb744mr6886137ybl.32.1710249925381; Tue, 12
+ Mar 2024 06:25:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1709768084-22539-1-git-send-email-wufan@linux.microsoft.com>
- <1709768084-22539-16-git-send-email-wufan@linux.microsoft.com>
- <20240312025712.GE1182@sol.localdomain> <20240312030712.GF1182@sol.localdomain>
-In-Reply-To: <20240312030712.GF1182@sol.localdomain>
+References: <20230912205658.3432-1-casey@schaufler-ca.com> <20230912205658.3432-6-casey@schaufler-ca.com>
+ <20240312101630.GA903@altlinux.org>
+In-Reply-To: <20240312101630.GA903@altlinux.org>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 12 Mar 2024 09:12:05 -0400
-Message-ID: <CAHC9VhSSWNa1qwZrWtj-ERFjN9QKR7fz17yb9903P_a2k6ewaQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v14 15/19] fsverity: consume builtin signature via LSM hook
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, 
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, 
-	agk@redhat.com, snitzer@kernel.org, eparis@redhat.com, 
-	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fscrypt@vger.kernel.org, 
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
+Date: Tue, 12 Mar 2024 09:25:14 -0400
+Message-ID: <CAHC9VhRgjNT2YnVgCqMJnyr227qUjmfrWZ+LBnu_DGxnJZgeKw@mail.gmail.com>
+Subject: Re: [PATCH v15 05/11] LSM: Create lsm_list_modules system call
+To: "Dmitry V. Levin" <ldv@strace.io>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, mic@digikod.net
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 11, 2024 at 11:07=E2=80=AFPM Eric Biggers <ebiggers@kernel.org>=
- wrote:
-> On Mon, Mar 11, 2024 at 07:57:12PM -0700, Eric Biggers wrote:
-> >
-> > As I've said before, this commit message needs some work.  It currently=
- doesn't
-> > say anything about what the patch actually does.
-> >
-> > BTW, please make sure you're Cc'ing the fsverity mailing list
-> > (fsverity@lists.linux.dev), not fscrypt (linux-fscrypt@vger.kernel.org)=
-.
+On Tue, Mar 12, 2024 at 6:16=E2=80=AFAM Dmitry V. Levin <ldv@strace.io> wro=
+te:
+> On Tue, Sep 12, 2023 at 01:56:50PM -0700, Casey Schaufler wrote:
+> [...]
+> > --- a/security/lsm_syscalls.c
+> > +++ b/security/lsm_syscalls.c
+> > @@ -55,3 +55,42 @@ SYSCALL_DEFINE4(lsm_get_self_attr, unsigned int, att=
+r, struct lsm_ctx __user *,
+> >  {
+> >       return security_getselfattr(attr, ctx, size, flags);
+> >  }
+> > +
+> > +/**
+> > + * sys_lsm_list_modules - Return a list of the active security modules
+> > + * @ids: the LSM module ids
+> > + * @size: pointer to size of @ids, updated on return
+> > + * @flags: reserved for future use, must be zero
+> > + *
+> > + * Returns a list of the active LSM ids. On success this function
+> > + * returns the number of @ids array elements. This value may be zero
+> > + * if there are no LSMs active. If @size is insufficient to contain
+> > + * the return data -E2BIG is returned and @size is set to the minimum
+> > + * required size. In all other cases a negative value indicating the
+> > + * error is returned.
+> > + */
+> > +SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, size_t __user *, =
+size,
+> > +             u32, flags)
 >
-> Also, I thought this patch was using a new LSM hook, but I now see that y=
-ou're
-> actually abusing the existing security_inode_setsecurity() LSM hook.  Cur=
-rently
-> that hook is called when an xattr is set.  I don't see any precedent for
-> overloading it for other purposes.
+> I'm sorry but the size of userspace size_t is different from the kernel o=
+ne
+> on 32-bit compat architectures.
 
-I'm not really bothered by this, and if it proves to be a problem in
-the future we can swap it for a new hook; we don't include the LSM
-in-kernel API in any stable API guarantees.
+D'oh, yes, thanks for pointing that out.  It would have been nice to
+have caught that before v6.8 was released, but I guess it's better
+than later.
 
-> This seems problematic, as it means that a
-> request to set an xattr with the name you chose ("fsverity.builtin-sig") =
-will be
-> interpreted by LSMs as the fsverity builtin signature.  A dedicated LSM h=
-ook may
-> be necessary to avoid issues with overloading the existing xattr hook lik=
-e this.
+> Looks like there has to be a COMPAT_SYSCALL_DEFINE3(lsm_list_modules, ...=
+)
+> now.  Other two added lsm syscalls also have this issue.
 
-Would you be more comfortable if the name was in an IPE related space,
-for example something like "ipe.fsverity-sig"?
+Considering that Linux v6.8, and by extension these syscalls, are only
+a few days old, I think I'd rather see us just modify the syscalls and
+avoid the compat baggage.  I'm going to be shocked if anyone has
+shifted to using the new syscalls yet, and even if they have (!!),
+moving from a "size_t" type to a "u64" should be mostly transparent
+for the majority of native 64-bit systems.  Those running the absolute
+latest kernels on 32-bit systems with custom or bleeding edge
+userspace *may* see a slight hiccup, but I think that user count is in
+the single digits, if not zero.
+
+Let's fix this quickly with /size_t/u64/ in v6.8.1 and avoid the
+compat shim if we can.
+
+Casey, do you have time to put together a patch for this (you should
+fix the call chains below the syscalls too)?  If not, please let me
+know and I'll get a patch out ASAP.
+
+Thanks all.
 
 --=20
 paul-moore.com
