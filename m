@@ -1,319 +1,297 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CB4C154
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 05:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710219952; cv=none; b=IzB+2aAW4nO4ayiymiTVgC0gydBkCGHsl31pNxESJYbMGKnU/Lnma8aU/1g8r00lHeRVPAj/SmgdCo42XRbFFq08zK0AX+tMwCxk9fFoAgTsZdCq8LNXhZodD7ep1euVHg9hWMd9h+sPJhYCNVY01o1OOxp26/OE/WA/0qOi53I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710219952; c=relaxed/simple;
-	bh=ahmjDRASmT1GsVFsQp2K4Le3kshZFxbSMcLk1E4qeCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TEjHxf/MsR6g/YBsW3UHyHXaHvT/DflSBT5xlGbpgKpaSyCgx0aMGwWvhtUMEkVfJwlffXFC9DwF/h74au1RgBYHD2Zgdgf7SYtKoncUgeHQEZjd3Cq2KCzQWwomtqOCvOB6WjLCIlp6yJQ2ah1ipNziU/DFGe1bGbN0wVUjeXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=31BDIpYo; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B234AEC8;
+	Tue, 12 Mar 2024 06:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710223300; cv=fail; b=qkivq68SvTRgwaj9AQoOrfRYiTRKzXbF8UiuX+G600KcViOpwwkg2N+pbus64jdV4JQl5H0NuFLfILhhKT9Xa0QGc8s1ayJUG1fOQKoEG53H9pBvqLzlW16TyD13QIPrHncUyJEg6CcXT0pnYA5wFsl6uugC8t9fAAKBKrdx0kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710223300; c=relaxed/simple;
+	bh=riKpPX2QeJHixLuAY1PK8Xikn2YbTpGY29yv893tRq8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dV9IZ/LABpn8qpu6C6FP9SkkElyb6xV0+XJxMTS7AA5CiGRX3jN1kL306JgWg3ueXGmV+OrE39rjGFOwgkjvye0kNKhu3Pl0VX7j8kJhcI+5MVsPZktT3G7rHAHEszgYCODN5VP+HmK6OtRO6xLuwP9n56iN/PKyEIR89NcTwdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=Nu6ePbg5; arc=fail smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="31BDIpYo"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-568251882d7so10207a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 22:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1710219949; x=1710824749; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JnBJB5c/+20ieV4/L8XiCWekgUdSTg+ChIwImz3g13c=;
-        b=31BDIpYo7Yh5BPfaADr7sB12S2XdaNDKjyYfFMUwNXS6HK37z76yjlERKILJYbpyiQ
-         d4ZxhjZrpvu1n2LGWN5MMIdjoJQlYaoCTjRN4q0T6QCLmv9jH4IPvsrLbBZJ/Ux+MHtx
-         xQrav5maPI1A8ZCc5DynIJQS3Ypa/1+VpppAcjoN5UYJ/KkScfLKSwGWmIZcVFR2u8Dj
-         Mdcu8mTdJ/2iRc+PUKxBgrMp7GI6VmBRfNbAH7+/GTlFj5TdowSJvV6CX/4AUJ+qUy1M
-         g2H4r5amPcP1bj0n3NSIybpV+BBkX0SuT7V/hhxqxuJFQViQukE6rnbSUnjXUq5O70VA
-         t9gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710219949; x=1710824749;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JnBJB5c/+20ieV4/L8XiCWekgUdSTg+ChIwImz3g13c=;
-        b=gj3wy5YNLifjB33RkrQBUhHJK6KwVVF/R5110s5WNev0hA3vJmRACelV5gNosoNeo8
-         PytkN+KY6NMHEFOurkeLJfzI/31SsviifEzgmSpET/m6xb113sfypMqIJh5DvTqnFwSI
-         QKasiSwrdmflvra+rE1wo+SkP7b9E3rCpFdXI1U58SBiKckZgX3cciPHeOAnFi/VWgz2
-         Ap8CzEdA219trA9P6kJZIeoIZSH2SPpgD+RBGlAx8dfvQVA3abZyxIcKp//OnnJZqFKH
-         9iU2gwyzIxdwiFj+u9/3wM1KEWVetvvtEdokuR9mhwX0WZEKgr8ZNTgRzIgezAlx7Z/s
-         dJ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3IeVZnOUVWs+yR7SRX84Cyd2hFdjMryBSuLzYCXlI24PQ7F4ySCfMrtmc4/HhPucWIEs7Iza6fIAAms/YRjiPAl1AJ/Q3vh+VoRS4N65tKhgQjgBh
-X-Gm-Message-State: AOJu0Yw/5d5MfPjx5k9rbgF9/ILdRNIaKL4aC2xQgi8EZkELiAuJv6E6
-	CFEJMCQwY64NLE5DzOjuZp4XI7V6dv20Vnff38QzY3UQpOUZhyd+7EW+SvIiTZibTW67lWqi8sr
-	1BI7sYvYODxG3o+CM9Ztcbl5YrK+nwze6aC0m
-X-Google-Smtp-Source: AGHT+IGRElbVD0Y6B6qmm2ZO+w6/salLKCB0NWwCiMf7AWYvsPywYoNQYDET87p1th+nlq1sLCVVSvrfXFG40uKoRWg=
-X-Received: by 2002:aa7:c2d9:0:b0:568:5e6c:a3c4 with SMTP id
- m25-20020aa7c2d9000000b005685e6ca3c4mr110847edp.0.1710219948786; Mon, 11 Mar
- 2024 22:05:48 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="Nu6ePbg5"
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42BIWdYb004951;
+	Mon, 11 Mar 2024 23:00:43 -0700
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3wt54n22q3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Mar 2024 23:00:43 -0700 (PDT)
+Received: from m0045849.ppops.net (m0045849.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.24/8.17.1.24) with ESMTP id 42C5u2M3021178;
+	Mon, 11 Mar 2024 23:00:43 -0700
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3wt54n22q0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Mar 2024 23:00:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z189J0PsxrjilTf525KtrTfFaK2JsppgfouNardV2bpTsW4PadPyJM8JZaAmTpAmQXMGBRl/Qd0dHYYyt5DRUJntbsJkz+pAFBIlAdnn4SO5/YDX/qB2BPA2UnIs4dyVdf8TUimsb0srxw3llpZ5nCMP93ZRF2j5Fqp7Uac8VGz4XsJ8eAZ5bEFxf3CAp6FqK1ppEaFNAINhcpGWB6syJtlVj6vDKJajPsu0Q2X5I/1JqVdycVOnVxl5PTjBUsI5tULbL+lwWa62TyJ/P8Kz+v/6CS3gOgHCRibT2+38OwhDzgKQaa+4VQYACMmZEsBWDo/9Fq3hl12u3XM+x0zG0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H3J1egQyqh+N13C/UpntpnTzOMbfIbd19T46uP5Apbo=;
+ b=Oq9wExr4nFAleqYLs44uPqO+9a1PaD4Wm29Ucyv9I/5gjyaTTkh9UN2rI/ozOUEhwAZeqhsGcX/6CXLsJWneAzczx44hF+/2W1iNv+R+lFfabyFty6YCj7dGPfY5lLoonYSzHc4smLw7to0UDpR9w8WifKjtxr3s7uHZi/EjtleJTEWnQ1Qc6uLFKQtZQRcrpmSq5WSPyTg1ew9Do1so/D9OJZJg/y/oRKYfWVSyKL/Tee/I1ocJeeecW82ACPfT7dFvO0XmAG/QGJNggWWUSBWgWcNGSsbtjXflGUv20zTxvPSkyp5I1anpjwi492hZhRNSvI2PAmRzDkNpSTtKVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H3J1egQyqh+N13C/UpntpnTzOMbfIbd19T46uP5Apbo=;
+ b=Nu6ePbg5miuHaxFPbJCt995JET5BDUcu8l2tjm9xJ9mPps7m2G8EyRUYjwWoLHaxz19fP15Pcc5A7pK20tSCihAQUhFsGTj2xJGeeGiC5Ae7aTPhVYPWPpAQnx06Q3TpzWaDP8KZXGgmveQlXfHMLqHY8Yj4iimqEECeVL41F5A=
+Received: from SN7PR18MB5314.namprd18.prod.outlook.com (2603:10b6:806:2ef::8)
+ by SJ0PR18MB3897.namprd18.prod.outlook.com (2603:10b6:a03:2e3::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.35; Tue, 12 Mar
+ 2024 06:00:40 +0000
+Received: from SN7PR18MB5314.namprd18.prod.outlook.com
+ ([fe80::926a:6eb8:6d4b:656a]) by SN7PR18MB5314.namprd18.prod.outlook.com
+ ([fe80::926a:6eb8:6d4b:656a%7]) with mapi id 15.20.7362.035; Tue, 12 Mar 2024
+ 06:00:39 +0000
+From: Bharat Bhushan <bbhushan2@marvell.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>,
+        "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>
+CC: "dhowells@redhat.com" <dhowells@redhat.com>,
+        "dwmw2@infradead.org"
+	<dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au"
+	<herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "jmorris@namei.org"
+	<jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "roberto.sassu@huawei.com"
+	<roberto.sassu@huawei.com>,
+        "dmitry.kasatkin@gmail.com"
+	<dmitry.kasatkin@gmail.com>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        "stefanb@linux.ibm.com"
+	<stefanb@linux.ibm.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "keyrings@vger.kernel.org"
+	<keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org"
+	<linux-efi@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org"
+	<linux-integrity@vger.kernel.org>
+Subject: RE: [EXTERNAL] [PATCH RFC 1/8] certs: Introduce ability to link to a
+ system key
+Thread-Topic: [EXTERNAL] [PATCH RFC 1/8] certs: Introduce ability to link to a
+ system key
+Thread-Index: AQHac9CFMcx0ZAmc50GyYG9txBMctrEznUOQ
+Date: Tue, 12 Mar 2024 06:00:39 +0000
+Message-ID: 
+ <SN7PR18MB5314CEAF1CEDC95B2C874696E32B2@SN7PR18MB5314.namprd18.prod.outlook.com>
+References: <20240311161111.3268190-1-eric.snowberg@oracle.com>
+ <20240311161111.3268190-2-eric.snowberg@oracle.com>
+In-Reply-To: <20240311161111.3268190-2-eric.snowberg@oracle.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR18MB5314:EE_|SJ0PR18MB3897:EE_
+x-ms-office365-filtering-correlation-id: 52229d1a-11ee-457b-08aa-08dc4259beb4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ ZGXAy3vyiCA+Ff5K+2ayApX7RbO16xPcJ1UcAF6A/HHEIOwBkcwiO1kGMkkgptiu5Bc5ZwmkgM68UwbTBDocs57QxTtWbtDCPyP2HocgGoTZVMVXTG2EIyLM+c4cQql96YuRGsaEeErGcbSfdLrsV0sz+AbBd2bXGY8bwYJmpuWm14MoEtPpWl3PF0kB3qsivs6fx4ixncHr5AScC+SdufKPjggcUnE8zCv6wPUHQsg+oNmCjz6tYe/oGUdXl3CZG6BcL88frk1jGC91ZJ83+n3QJahj4/Iq4Y9vBJVOQsHKwZJ7NQGmD8rIiiJMXWyR7fiFHyijjT5GzEu1RmLG8xK26WbMC3hgf70dDoHK53nQf+kgaCVW9RjmTDc2yAv4tigZyJFEr992AQlAyCcBlpPYexpXVu561jE+kNU+I9cki3YjqU9NA43guGevsfOpJXNWHzfDZUL1kpakM6Hgbcj3Phqnn6L5KYacin3R7MjENCntxwrdiuA/OarHnK+xX5MDxFlGXPWThNx7cAqrpeOjMzHcG20HZAe+K9g21xpL99KzqX7VRaoUGMp6tnrcIId464gJca7rIrr6JBlJz7ek/1lboDGFU1D6HeXMbQZOWtocIGOIFRGkjttUGzyz0N3UglBPeOBOLbqgBAjyWeVIKMMOrNAaWYQKbcO6vMA4DKiW/75aUi2U8pShBHCNWwOgY9lYqZoU7rb2JQQXtpe/Ss8wjEhvRjjCf5VO0R0=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR18MB5314.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?vvwAmjHJIU9jPOtUcME4M+nVVuKEbL9C9uXmxm05GE4RIghACxP5OxMW9F0n?=
+ =?us-ascii?Q?5RpwShaBJE+8YX8GYouKkdntLdTM+svZLVp42FwngUHTB7v6htzpI+XrnN26?=
+ =?us-ascii?Q?SDHW/dxUJg3bMJy7w6PV5bRkPhxqyLPwDPE2YRKvmIoKHs8kgSyYHRQMisE+?=
+ =?us-ascii?Q?A4F08KT2oiNGo2nLVY4M3Ceno9QMfs20NTyYLz1dpXk4mQhI23z2SX2rgGj8?=
+ =?us-ascii?Q?FO6pTrbk8gDGEEGxEJCzY14nkY5sJWFZ/yTI2gXrNmtJXsT+orCCTs28k9jF?=
+ =?us-ascii?Q?ZjU2EMzgVI72HSufsZ1ac7lyg2Dy3IiD8/7RUFVKtHCUuVEwFzbBy/RTUMyq?=
+ =?us-ascii?Q?qk5asNFDuJjn5LvHKVEzGLIpzbbTtrJOeP0Zgm562NJQBQVMO/lM+4v4n0PZ?=
+ =?us-ascii?Q?NA0KZBeVT0ilTUiS8DnJ8NKxbkx+JbDpMsH9YJDnbE6/vb8YUl1jnc21X+u/?=
+ =?us-ascii?Q?5RDkabMKx7IaxZajDiryHID/fuli3lIr/J1KInLciP9GvCBPTMjU541sDV5W?=
+ =?us-ascii?Q?Fr5FD09xTNzH0E0iy9r/q99Aq4FDgQABr8uMJ9Y9fSLEO36X7rmWtDN3lMQF?=
+ =?us-ascii?Q?E4s6rFtcCohrbc8WnNFT7zKtXAKnbLLvHaWV4Vmo1ZGAwD8SdFgvozrQI0Uc?=
+ =?us-ascii?Q?DiXLEcFnzvSv4CNBlxsf7QrPV25VpFOzOcV0Q/GwzpVIcOttU1/ht3/lGe9c?=
+ =?us-ascii?Q?Wk6JTv22W/HHsSEw6H9xcs76ciWMJdqRYAUJ5U6aupjohBbnkPphGgN1qywh?=
+ =?us-ascii?Q?OfWnvYEUGc5WBKeltHyss7g5CKgWdDCS+YpwiOKMBLAFgEOmv+ThfoHpsgqP?=
+ =?us-ascii?Q?AjGiI+x2W+wZ7Fc4EqKRVL70f1JBRtGHDlH1i2KXVuhibCq8deVdmIFNEu3f?=
+ =?us-ascii?Q?oCP/kE1v3xfzcajHgP9th0o1span65CYL2Hbzk9/JHE3nW6OVd+INL7fu0/2?=
+ =?us-ascii?Q?Ri4hBVzMAamfm2Cs3pBorsvekrJRfU8nyqfcFueuivOahxmhJiPF2mWNoiBe?=
+ =?us-ascii?Q?iYm1+w8LEx19wi5rZHwaeKd+qBCOoD5adHd3YuwmCPZaYwsewN0PnvPIxJ+q?=
+ =?us-ascii?Q?ZaXo8wLm4Lh06vBFv3et0W9BEdYsQrMX3TQjV+Zkomt0ef6j9j3uGD+vxMV9?=
+ =?us-ascii?Q?PrbYFiCDv3j/QhO5jfwIOeSHGuNIKnSUB0OS8zuhuOcHHBZP1VeLK3JpHvAy?=
+ =?us-ascii?Q?5BocTyFJdXF7SIrWmD7b7Obn4p8cydGRQ3J7cIZLq99RkSdVlL+I86X0dKfy?=
+ =?us-ascii?Q?c+HFJ7nKEZDDtbQzh3nPfNGuU9HGC5jN/ZEnv9SHciZZv1ByL6dnzVMs6qEZ?=
+ =?us-ascii?Q?e2A+iZf8qaEtF4h5yyy4xdJDtaZ3GIA6gUMkS8tRJTG2ei21D741oaZefrLW?=
+ =?us-ascii?Q?mKkkK1cgIYOUFPiedsuGREqZ8NS8tcGZWyE9Ha4ESGg0fhTVPkKsU/iYnGQJ?=
+ =?us-ascii?Q?3fqAJCC5n6lwPUSj/1T/ZZmjSZbLmRKV48qTA8jZ7XYUTasllGZgUTxYVC18?=
+ =?us-ascii?Q?I/6ivJADPpQiPr39WQw8xDYzw+mwWeyVBnTJg/GbimcVCSRTQqtEYeq2jWxc?=
+ =?us-ascii?Q?LRSWmBiJQX7r2mhVhv/aSEiM2jltm/caV04R0ILn?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301194037.532117-1-mic@digikod.net> <20240301194037.532117-5-mic@digikod.net>
-In-Reply-To: <20240301194037.532117-5-mic@digikod.net>
-From: David Gow <davidgow@google.com>
-Date: Tue, 12 Mar 2024 13:05:37 +0800
-Message-ID: <CABVgOSnzaO7EUdSW_xTZd22oc-q_yT9uVoSwTm2jn5pw5pP8Eg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] kunit: Handle test faults
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Brendan Higgins <brendanhiggins@google.com>, Kees Cook <keescook@chromium.org>, 
-	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, James Morris <jamorris@linux.microsoft.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marco Pagani <marpagan@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Thara Gopinath <tgopinath@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-um@lists.infradead.org, x86@kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000907fa806136f9cb8"
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR18MB5314.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52229d1a-11ee-457b-08aa-08dc4259beb4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2024 06:00:39.8614
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: i85vqeRD2nQNT3F1OLgzPHMCdp+r+82/9bi1yAuMbXip0LFpdcxxauI12wH9pugq7PmpEyuJohVI4ZNENiu1vQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR18MB3897
+X-Proofpoint-ORIG-GUID: XU4hx-nmz1y0IemWA1ymkq1jqG2TGdyq
+X-Proofpoint-GUID: 8kOb7gfFbKAlhzoDFl4hz8OfIbUXw5IE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-12_05,2024-03-11_01,2023-05-22_02
 
---000000000000907fa806136f9cb8
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2 Mar 2024 at 03:40, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wro=
-te:
->
-> Previously, when a kernel test thread crashed (e.g. NULL pointer
-> dereference, general protection fault), the KUnit test hanged for 30
-> seconds and exited with a timeout error.
->
-> Fix this issue by waiting on task_struct->vfork_done instead of the
-> custom kunit_try_catch.try_completion, and track the execution state by
-> initially setting try_result with -EFAULT and only setting it to 0 if
-> the test passed.
->
-> Fix kunit_generic_run_threadfn_adapter() signature by returning 0
-> instead of calling kthread_complete_and_exit().  Because thread's exit
-> code is never checked, always set it to 0 to make it clear.
->
-> Fix the -EINTR error message, which couldn't be reached until now.
->
-> This is tested with a following patch.
->
-> Cc: Brendan Higgins <brendanhiggins@google.com>
-> Cc: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Cc: Shuah Khan <skhan@linuxfoundation.org>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20240301194037.532117-5-mic@digikod.net
+
+> -----Original Message-----
+> From: Eric Snowberg <eric.snowberg@oracle.com>
+> Sent: Monday, March 11, 2024 9:41 PM
+> To: linux-security-module@vger.kernel.org
+> Cc: dhowells@redhat.com; dwmw2@infradead.org;
+> herbert@gondor.apana.org.au; davem@davemloft.net; ardb@kernel.org;
+> jarkko@kernel.org; paul@paul-moore.com; jmorris@namei.org;
+> serge@hallyn.com; zohar@linux.ibm.com; roberto.sassu@huawei.com;
+> dmitry.kasatkin@gmail.com; mic@digikod.net; casey@schaufler-ca.com;
+> stefanb@linux.ibm.com; eric.snowberg@oracle.com; linux-
+> kernel@vger.kernel.org; keyrings@vger.kernel.org; linux-
+> crypto@vger.kernel.org; linux-efi@vger.kernel.org; linux-
+> integrity@vger.kernel.org
+> Subject: [EXTERNAL] [PATCH RFC 1/8] certs: Introduce ability to link to a
+> system key
+>=20
+> Prioritize security for external emails: Confirm sender and content safet=
+y
+> before clicking links or opening attachments
+>=20
+> ----------------------------------------------------------------------
+> Introduce a new function to allow a keyring to link to a key contained
+> within one of the system keyrings (builtin, secondary, or platform).
+> Depending on how the kernel is built, if the machine keyring is
+> available, it will be checked as well, since it is linked to the secondar=
+y
+> keyring. If the asymmetric key id matches a key within one of these
+> system keyrings, the matching key is linked into the passed in
+> keyring.
+>=20
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 > ---
-
-This works fine here, and looks good.
-
-The use of task_struct->vfork_done is a bit confusing, as there's no
-documentation (that I could find) about what vfork_done means for
-kthreads. From the code, it looks to just be a copy of
-kthread->exited, which is much more obvious a name.
-
-Would it make sense to either (a) replace this with a call to
-to_kthread(), and kthread->exited, or (b) add a comment explaining
-what vfork_done means here. kthread_stop() itself is using
-to_kthread() and kthread->exited -- even though task_struct is also
-there -- so I'd feel a bit more comfortable with that option.
-
-Otherwise,
-Reviewed-by: David Gow <davidgow@google.com>
-
-Cheers,
--- David
-
->
-> Changes since v1:
-> * Added Kees's Reviewed-by.
-> ---
->  include/kunit/try-catch.h |  3 ---
->  lib/kunit/try-catch.c     | 14 +++++++-------
->  2 files changed, 7 insertions(+), 10 deletions(-)
->
-> diff --git a/include/kunit/try-catch.h b/include/kunit/try-catch.h
-> index c507dd43119d..7c966a1adbd3 100644
-> --- a/include/kunit/try-catch.h
-> +++ b/include/kunit/try-catch.h
-> @@ -14,13 +14,11 @@
->
->  typedef void (*kunit_try_catch_func_t)(void *);
->
-> -struct completion;
->  struct kunit;
->
->  /**
->   * struct kunit_try_catch - provides a generic way to run code which mig=
-ht fail.
->   * @test: The test case that is currently being executed.
-> - * @try_completion: Completion that the control thread waits on while te=
-st runs.
->   * @try_result: Contains any errno obtained while running test case.
->   * @try: The function, the test case, to attempt to run.
->   * @catch: The function called if @try bails out.
-> @@ -46,7 +44,6 @@ struct kunit;
->  struct kunit_try_catch {
->         /* private: internal use only. */
->         struct kunit *test;
-> -       struct completion *try_completion;
->         int try_result;
->         kunit_try_catch_func_t try;
->         kunit_try_catch_func_t catch;
-> diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-> index cab8b24b5d5a..c6ee4db0b3bd 100644
-> --- a/lib/kunit/try-catch.c
-> +++ b/lib/kunit/try-catch.c
-> @@ -18,7 +18,7 @@
->  void __noreturn kunit_try_catch_throw(struct kunit_try_catch *try_catch)
->  {
->         try_catch->try_result =3D -EFAULT;
-> -       kthread_complete_and_exit(try_catch->try_completion, -EFAULT);
-> +       kthread_exit(0);
+>  certs/system_keyring.c        | 29 +++++++++++++++++++++++++++++
+>  include/keys/system_keyring.h |  7 ++++++-
+>  2 files changed, 35 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 9de610bf1f4b..b647be49f6e0 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -426,3 +426,32 @@ void __init set_platform_trusted_keys(struct key
+> *keyring)
+>  	platform_trusted_keys =3D keyring;
 >  }
->  EXPORT_SYMBOL_GPL(kunit_try_catch_throw);
->
-> @@ -26,9 +26,12 @@ static int kunit_generic_run_threadfn_adapter(void *da=
-ta)
->  {
->         struct kunit_try_catch *try_catch =3D data;
->
-> +       try_catch->try_result =3D -EINTR;
->         try_catch->try(try_catch->context);
-> +       if (try_catch->try_result =3D=3D -EINTR)
-> +               try_catch->try_result =3D 0;
->
-> -       kthread_complete_and_exit(try_catch->try_completion, 0);
-> +       return 0;
->  }
->
->  static unsigned long kunit_test_timeout(void)
-> @@ -58,13 +61,11 @@ static unsigned long kunit_test_timeout(void)
->
->  void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *contex=
-t)
->  {
-> -       DECLARE_COMPLETION_ONSTACK(try_completion);
->         struct kunit *test =3D try_catch->test;
->         struct task_struct *task_struct;
->         int exit_code, time_remaining;
->
->         try_catch->context =3D context;
-> -       try_catch->try_completion =3D &try_completion;
->         try_catch->try_result =3D 0;
->         task_struct =3D kthread_create(kunit_generic_run_threadfn_adapter=
-,
->                                      try_catch, "kunit_try_catch_thread")=
-;
-> @@ -75,8 +76,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_ca=
-tch, void *context)
->         }
->         get_task_struct(task_struct);
->         wake_up_process(task_struct);
+>  #endif
+> +
+> +/**
+> + * system_key_link - Link to a system key
+> + * @keyring: The keyring to link into
+> + * @id: The asymmetric key id to look for in the system keyring
+> + */
+> +int system_key_link(struct key *keyring, struct asymmetric_key_id *id)
+> +{
+> +	struct key *tkey;
+> +
+> +#ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+> +	tkey =3D find_asymmetric_key(secondary_trusted_keys, id, NULL, NULL,
+> false);
+> +#else
+> +	tkey =3D find_asymmetric_key(builtin_trusted_keys, id, NULL, NULL,
+> false);
+> +#endif
+> +	if (!IS_ERR(tkey))
+> +		goto found;
+> +
+> +	tkey =3D find_asymmetric_key(platform_trusted_keys, id, NULL, NULL,
+> false);
+> +
+> +	if (!IS_ERR(tkey))
+> +		goto found;
+> +
+> +	return -1;
+
+Please use -ENOKEY.
+
+Thanks
+-Bharat
+
+> +
+> +found:
+> +	key_link(keyring, tkey);
+> +	return 0;
+> +}
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.=
+h
+> index 8365adf842ef..b47ac8e2001a 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -9,6 +9,7 @@
+>  #define _KEYS_SYSTEM_KEYRING_H
+>=20
+>  #include <linux/key.h>
+> +struct asymmetric_key_id;
+>=20
+>  enum blacklist_hash_type {
+>  	/* TBSCertificate hash */
+> @@ -28,7 +29,7 @@ int restrict_link_by_digsig_builtin(struct key
+> *dest_keyring,
+>  				    const union key_payload *payload,
+>  				    struct key *restriction_key);
+>  extern __init int load_module_cert(struct key *keyring);
 > -
-> -       time_remaining =3D wait_for_completion_timeout(&try_completion,
-> +       time_remaining =3D wait_for_completion_timeout(task_struct->vfork=
-_done,
->                                                      kunit_test_timeout()=
-);
->         if (time_remaining =3D=3D 0) {
->                 try_catch->try_result =3D -ETIMEDOUT;
-> @@ -92,7 +92,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_ca=
-tch, void *context)
->         if (exit_code =3D=3D -EFAULT)
->                 try_catch->try_result =3D 0;
->         else if (exit_code =3D=3D -EINTR)
-> -               kunit_err(test, "wake_up_process() was never called\n");
-> +               kunit_err(test, "try faulted\n");
->         else if (exit_code =3D=3D -ETIMEDOUT)
->                 kunit_err(test, "try timed out\n");
->         else if (exit_code)
+> +extern int system_key_link(struct key *keyring, struct asymmetric_key_id
+> *id);
+>  #else
+>  #define restrict_link_by_builtin_trusted restrict_link_reject
+>  #define restrict_link_by_digsig_builtin restrict_link_reject
+> @@ -38,6 +39,10 @@ static inline __init int load_module_cert(struct key
+> *keyring)
+>  	return 0;
+>  }
+>=20
+> +static inline int system_key_link(struct key *keyring, struct asymmetric=
+_key_id
+> *id)
+> +{
+> +	return 0;
+> +}
+>  #endif
+>=20
+>  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
 > --
-> 2.44.0
->
+> 2.39.3
+>=20
 
---000000000000907fa806136f9cb8
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
-dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
-6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
-c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
-I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
-AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
-CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
-AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
-MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
-My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
-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
-7xDrOPfX3COqq162RFg/MFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
-BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
-BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
-Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
-FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
-YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
-AK0lDd6/eSh3qHmXaw1YUfIFy07B25BEcTvWgOdla99gF1O7sOsdYaTz/DFkZI5ghjgaPJCovgla
-mRMfNcxZCfoBtsB7mAS6iOYjuwFOZxi9cv6jhfiON6b89QWdMaPeDddg/F2Q0bxZ9Z2ZEBxyT34G
-wlDp+1p6RAqlDpHifQJW16h5jWIIwYisvm5QyfxQEVc+XH1lt+taSzCfiBT0ZLgjB9Sg+zAo8ys6
-5PHxFaT2a5Td/fj5yJ5hRSrqy/nj/hjT14w3/ZdX5uWg+cus6VjiiR/5qGSZRjHt8JoApD6t6/tg
-ITv8ZEy6ByumbU23nkHTMOzzQSxczHkT+0q10/MxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
-MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
-IFNNSU1FIENBIDIwMjACEAHS+TgZvH/tCq5FcDC0n9IwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIJfI7FFT1hk5kEePurOKEQopyEMAeRpCSPqaHED/OhmeMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDMxMjA1MDU0OVowaQYJKoZIhvcNAQkPMVww
-WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQA7KrbG
-1GQCdjphAh9ZYbU3FD6k+ZQb4U/vtZduRXTlviunKYY7u767bxtj3dSk1V8GNy/r3MMMqpLOoZK4
-HvkmStF3b3Reh+b0qUpRoUcXtSmgmbbyNsxWIk74PQhyOshB152wbRjRGkr1K1u0J0Cfm9HXBjQV
-Il58pJqeb71jRcZgF7UUhiffPnfjyD160gpe0vEsh6mPV+WncXB85rBPYxWeZrI61iD5UdIVPdAW
-pUvKKpvQIjTugbeHa7TM3a+G0YTRAIw4jp8X+FVDlQkXObD5qyWvhnyTs/G9Mp9GERVLI+Foclle
-gUIAJJtr29mJC48jpgKxFE2OFyskpD0g
---000000000000907fa806136f9cb8--
