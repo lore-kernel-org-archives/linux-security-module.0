@@ -1,66 +1,66 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001ABC2E3
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 04:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48863FE46
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2024 04:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710219302; cv=none; b=djW4+WGdxZN32kLjOt+LUzTTNoeh8ZiE/M5G4trm2cCjof0iN8NOwbQhEmANSdFQNDQibpH6dxzZfWZmg6KKswB6CpUEnUVEEAGYO6aqeBBrKezmDYY+KIolzUFfPR+h8px3zPVaYx8B0IFOmu165zjr6ERdPwIqpP8g9d5pyRg=
+	t=1710219311; cv=none; b=bgE/rOooo5+KO+StmjHnyw+WOqlDgU9mloRJx+/WlkBHovITWtYFg7Kp45htvmcqSIT2zJDGN915jJDegVHHs7QNqtj16OdnxLxRvxkZ4a6Yd3uz/d/3BLZOadRBDyIp0+rKwAkrmK55/cxKs/r43yFPWsElwZIzcUG2CJpg3gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710219302; c=relaxed/simple;
-	bh=hlG7nmPn2OzomyWdnfBy7N/DqqYTyo+0QlJU97TIqcw=;
+	s=arc-20240116; t=1710219311; c=relaxed/simple;
+	bh=VuV8a5/BGMLDK0D1Mefxtlr0lBndhQ3IzKd1VcgpIE0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AoV002K1cc/Irti/Zf08D9sj5c+nF4polVI8Mq8U4I7Xf1E5KRO8e9q2VKLHJy3VURIc9qmWCgtLlY8JIV0O1LUm3NdL7wjduMetyjlZMbj+HWRMMN8UGKABsXIEqAoQHJdYqeD1RMa2wTNPHNd0S7fRX0MCJUxfkm7K3wSKGNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FHgVOpRB; arc=none smtp.client-ip=209.85.208.49
+	 To:Cc:Content-Type; b=laZGC6eXWOMIrkaP0Ij4yk4PrgcNV2dS+NF7YvFrnAYr3Fy3CFK7upzDI9Rr1gi0vmy9ECkkYmTOwlaZnt1vD1iYymE0GXWQrz5sHS6hBswjZEv9itiK5K2nV8t4Fpwm1br5u9dWMhw53qwV0Dhqzczz4q6ND/9O7FpsYa3iazc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4ddDQ1Tw; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FHgVOpRB"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5682df7917eso10416a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 21:55:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4ddDQ1Tw"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-568251882d7so10159a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2024 21:55:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1710219299; x=1710824099; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1710219308; x=1710824108; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mqGiKW8xLasgwMmxiysDnFB1/wUABDRCBK+EAmBFH3M=;
-        b=FHgVOpRBmoXidCp/sp/HNDp4Cq13Tfd6qIAheAJ/NfFBiUFtOhtkT/j3GfroY1FJpo
-         DmTyexWw107ETdFVkmLkncJJYHpnIeEviB7dR1zAzkPNdhsDp9iXWdUMgvJsfQFxDdZC
-         iXxM8bULlgCqV5WKNvEPSiF1h/WkA5Dqe4n3uIXZIt+jtJLXf7mGvT9M5qrUoksidiSo
-         B/mNmYsPHv0yEoS6XJDkJ+aSdIbXV86GRNfYNmeKo4sRYRnZ3EjdxLpB9Z44bbDJOso/
-         T12N1ghEjcxDzdIqozQoXiFDpixsV5Hffejkek0F2GAfObzwFfngLM3DL1BLsD2CTSte
-         3Y8A==
+        bh=1mA9n8Z/yGCRAWTuCmvjNvx34dSzP9rz8B+zxsInTck=;
+        b=4ddDQ1Tw2xdMIkNYgHPo3TjwLvkAKWciEO9eJMftX0QCcEFwnvYvbRP+VDfukfyqpx
+         /X2qBqVK3ZO9f6cx3rZp/85x1xKWceoU2942XiDzGZQBmfDL8G06F3S44KbaH9rark05
+         GlQCXK0afOlHfifI3geqgUcd2PR0a8nYB0kohkckgJESe+4ImKLd7zkEQVeqCYkrFOvw
+         wGiDrJBDiAVaYhTOaDriLwtehC2etNaEKZyYjvdekTZF1Yy5SSCsDfvxaEs+77TVzbi4
+         OVykbunXvcHFi0ZBnfpLa1BdS4kxkv7eISAXEKr3sPs8t3KU0WUVCsvwryW64xB6Z7j5
+         WL2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710219299; x=1710824099;
+        d=1e100.net; s=20230601; t=1710219308; x=1710824108;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mqGiKW8xLasgwMmxiysDnFB1/wUABDRCBK+EAmBFH3M=;
-        b=SuJJYpKxuTi7Byte4E85nsuJsfqVlJ/oO6ytsf4ynfyLdFgQ+VJIH9/atRjpH93wSY
-         3Gj2X3Tl5BBgDoMnbTctTzp6mDIz9pcNpfhXN7JjAXwVci9Qo+9l4YPnklmgHVht5acL
-         lcJ81SxTiItmvYEa503Eg0GaiLOD3T482Jf6Ixmsi3Ay2I9KvEkj/dcW3GEkiwpx2iRk
-         n5zqjltq4+IMsdXJoPV3/oGwoDemffC+RAnewhA190lla3cPizJEkjgl3ycrNXgi2/di
-         1K+QODq6QzxHPSgKOU11BsZVToG99ZSam6SM6Wg8QAPqDbwfESjye5iy1eF+4WRW0p+a
-         zCxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOxCpVf1cVXf78e7kUwaaQzxGn2OQ5Pys+aHHeSv3KJjIlVgv6uBHdEvQmUQvnX6NVUVrNjU3yCkR0PUPDvHdRy1YVsl9efWFw9mFkoPaho5p958YU
-X-Gm-Message-State: AOJu0YxIEZsMZ1jLzKY7YblytUL3EkZ93O0KHRo2Mu1YvEIenazkk0Nj
-	2HS0M/Lh2lVjiuPiwwjb2hBYghGqkbNeq4hOK3cu8bZSj75zwxtQ/dYOJA2a8SUTfOZaEh2csNa
-	IRDc3hOnKzhOQGiC+j7AL8e9G7asHqF/b9Hee
-X-Google-Smtp-Source: AGHT+IGCgjnmLuXfBbtP8+gsEcNsHnpGaerHMD0TL6bCnr5fI7d2PETZfJg9TYQYWbglAG2V8+VUVjhiqfuuwWFqwrg=
-X-Received: by 2002:a05:6402:513:b0:568:53c2:2feb with SMTP id
- m19-20020a056402051300b0056853c22febmr52621edv.3.1710219299266; Mon, 11 Mar
- 2024 21:54:59 -0700 (PDT)
+        bh=1mA9n8Z/yGCRAWTuCmvjNvx34dSzP9rz8B+zxsInTck=;
+        b=XeopRUc4Hl9zPb+ZVrfGaB4Sz/uO6fRKjrdqIsqBBc9ydPNz+qdtVV0jVh3J7caaQr
+         efKUG8447uUgLOmObvZ57mSOwocMWrK5ku0he1PuG3WM6klnJom8iO8ScAHoVR8QJV/m
+         N72OY1PIdccEw+BatumtuGu2YR0OaEGcEM/83cVA5tPjMXQgMjgz8iyRa3IWXaVqDp0n
+         wnaiwQYtTOtCY367xddAzLaAfAyonLdZrpRXezL1tUlye0cSu+pGHLGI4vT/KRH2h0gp
+         z8KM2EzY2ohEBg0YkMwByWjuAw/oUmrT8nhAkAEMUFyZ0FHuS41X3kkcxYtH4zkbl2gI
+         xMJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE468gc0GlP7ZSHRBm21xAeR09MPA5jyxZN8qqYu+OFIolKQRhiPAqPw3zCTSHFkD78LXXhnORu4V5Bf3VuVQjhLXeffhrk09rE96MextOqcnRja5W
+X-Gm-Message-State: AOJu0YzfxgT/WZ8OpWZryqp/sAwpI/fcS5beHPeTKYf2PXAOaaonjOAw
+	a9f0kvkdamfZ/L1LXSbMrTgxgRoUqLQZ0JvGVaZx1px43/mri47SyaJCJy9M59jiF/8wry2zTgZ
+	fXHOZvgdrPX/vWIFLoKhZx/4/1YfYYhoZz2tS
+X-Google-Smtp-Source: AGHT+IGU5iSaMuUMD3OWkgCq+HPlwyciThiIOt12D5freNFWYAnSma6L8D3ymybDwqVGF32n/LebfHUfkgbXb3HlaVY=
+X-Received: by 2002:aa7:c2d9:0:b0:568:5e6c:a3c4 with SMTP id
+ m25-20020aa7c2d9000000b005685e6ca3c4mr109961edp.0.1710219308194; Mon, 11 Mar
+ 2024 21:55:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301194037.532117-1-mic@digikod.net> <20240301194037.532117-7-mic@digikod.net>
-In-Reply-To: <20240301194037.532117-7-mic@digikod.net>
+References: <20240301194037.532117-1-mic@digikod.net> <20240301194037.532117-8-mic@digikod.net>
+In-Reply-To: <20240301194037.532117-8-mic@digikod.net>
 From: David Gow <davidgow@google.com>
-Date: Tue, 12 Mar 2024 12:54:48 +0800
-Message-ID: <CABVgOSk_vea-LrPwJet6hQ4D3PBQOLVg32nZ_gE4c9kgGDEEnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] kunit: Print last test location on fault
+Date: Tue, 12 Mar 2024 12:54:57 +0800
+Message-ID: <CABVgOSmq5JhBdis1rDoD3eYQ_dhaWyEjXNfwasL9sWFMwLpjzA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] kunit: Add tests for fault
 To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc: Brendan Higgins <brendanhiggins@google.com>, Kees Cook <keescook@chromium.org>, 
 	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
@@ -77,254 +77,126 @@ Cc: Brendan Higgins <brendanhiggins@google.com>, Kees Cook <keescook@chromium.or
 	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
 	linux-um@lists.infradead.org, x86@kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000d8339106136f7593"
+	boundary="0000000000005ff36a06136f7670"
 
---000000000000d8339106136f7593
+--0000000000005ff36a06136f7670
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Sat, 2 Mar 2024 at 03:40, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wro=
 te:
 >
-> This helps identify the location of test faults.
+> Add a test case to check NULL pointer dereference and make sure it would
+> result as a failed test.
+>
+> The full kunit_fault test suite is marked as skipped when run on UML
+> because it would result to a kernel panic.
+>
+> Tested with:
+> ./tools/testing/kunit/kunit.py run --arch x86_64 kunit_fault
+> ./tools/testing/kunit/kunit.py run --arch arm64 \
+>   --cross_compile=3Daarch64-linux-gnu- kunit_fault
 >
 > Cc: Brendan Higgins <brendanhiggins@google.com>
 > Cc: David Gow <davidgow@google.com>
 > Cc: Rae Moar <rmoar@google.com>
 > Cc: Shuah Khan <skhan@linuxfoundation.org>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20240301194037.532117-7-mic@digikod.net
+> Link: https://lore.kernel.org/r/20240301194037.532117-8-mic@digikod.net
+> ---
+>
+> Changes since v1:
+> * Removed the rodata and const test cases for now.
+> * Replace CONFIG_X86 check with !CONFIG_UML, and remove the "_x86"
+>   references.
 > ---
 
-I like the idea of this, but am a little bit worried about how
-confusing it might be, given that the location only updates on those
-particular macros.
+I think UML _should_ be able to handle this with signal handlers, but
+I tested it and agree that it's broken, so disabling for now makes
+sense.
 
-Maybe the answer is to make the __KUNIT_SAVE_LOC() macro, or something
-equivalent, a supported API.
+In general, I'd prefer to have an empty test which SKIP()s here, but
+since the suite is empty, KUnit does that anyway, so this is fine.
 
-One possibility would be to have a KUNIT_MARKER() macro. If we really
-wanted to, we could expand it to take a string so we can have a more
-user-friendly KUNIT_MARKER(test, "parsing packet") description of
-where things went wrong. Another could be to extend this to use the
-code tagging framework[1], if that lands.
-
-That being said, I think this is still an improvement without any of
-those features. I've left a few comments below. Let me know what you
-think.
+Reviewed-by: David Gow <davidgow@google.com>
 
 Cheers,
 -- David
 
-[1]: https://lwn.net/Articles/906660/
+
+>  lib/kunit/kunit-test.c | 45 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 44 insertions(+), 1 deletion(-)
 >
-> Changes since v1:
-> * Added Kees's Reviewed-by.
-> ---
->  include/kunit/test.h  | 24 +++++++++++++++++++++---
->  lib/kunit/try-catch.c | 10 +++++++---
->  2 files changed, 28 insertions(+), 6 deletions(-)
->
-> diff --git a/include/kunit/test.h b/include/kunit/test.h
-> index fcb4a4940ace..f3aa66eb0087 100644
-> --- a/include/kunit/test.h
-> +++ b/include/kunit/test.h
-> @@ -301,6 +301,8 @@ struct kunit {
->         struct list_head resources; /* Protected by lock. */
->
->         char status_comment[KUNIT_STATUS_COMMENT_SIZE];
-> +       /* Saves the last seen test. Useful to help with faults. */
-> +       struct kunit_loc last_seen;
+> diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
+> index f7980ef236a3..0fdca5fffaec 100644
+> --- a/lib/kunit/kunit-test.c
+> +++ b/lib/kunit/kunit-test.c
+> @@ -109,6 +109,48 @@ static struct kunit_suite kunit_try_catch_test_suite=
+ =3D {
+>         .test_cases =3D kunit_try_catch_test_cases,
 >  };
 >
->  static inline void kunit_set_failure(struct kunit *test)
-> @@ -567,6 +569,15 @@ void __printf(2, 3) kunit_log_append(struct string_s=
-tream *log, const char *fmt,
->  #define kunit_err(test, fmt, ...) \
->         kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
->
-> +/*
-> + * Must be called at the beginning of each KUNIT_*_ASSERTION().
-> + * Cf. KUNIT_CURRENT_LOC.
-> + */
-> +#define _KUNIT_SAVE_LOC(test) do {                                      =
-      \
-> +       WRITE_ONCE(test->last_seen.file, __FILE__);                      =
-      \
-> +       WRITE_ONCE(test->last_seen.line, __LINE__);                      =
-      \
-> +} while (0)
-
-Can we get rid of the leading '_', make this public, and document it?
-If we want to rename it to KUNIT_MARKER() or similar, that might work
-better, too.
-
+> +#ifndef CONFIG_UML
 > +
->  /**
->   * KUNIT_SUCCEED() - A no-op expectation. Only exists for code clarity.
->   * @test: The test context object.
-> @@ -575,7 +586,7 @@ void __printf(2, 3) kunit_log_append(struct string_st=
-ream *log, const char *fmt,
->   * words, it does nothing and only exists for code clarity. See
->   * KUNIT_EXPECT_TRUE() for more information.
->   */
-> -#define KUNIT_SUCCEED(test) do {} while (0)
-> +#define KUNIT_SUCCEED(test) _KUNIT_SAVE_LOC(test)
+> +static void kunit_test_null_dereference(void *data)
+> +{
+> +       struct kunit *test =3D data;
+> +       int *null =3D NULL;
+> +
+> +       *null =3D 0;
+> +
+> +       KUNIT_FAIL(test, "This line should never be reached\n");
+> +}
+> +
+> +static void kunit_test_fault_null_dereference(struct kunit *test)
+> +{
+> +       struct kunit_try_catch_test_context *ctx =3D test->priv;
+> +       struct kunit_try_catch *try_catch =3D ctx->try_catch;
+> +
+> +       kunit_try_catch_init(try_catch,
+> +                            test,
+> +                            kunit_test_null_dereference,
+> +                            kunit_test_catch);
+> +       kunit_try_catch_run(try_catch, test);
+> +
+> +       KUNIT_EXPECT_EQ(test, try_catch->try_result, -EINTR);
+> +       KUNIT_EXPECT_TRUE(test, ctx->function_called);
+> +}
+> +
+> +#endif /* !CONFIG_UML */
+> +
+> +static struct kunit_case kunit_fault_test_cases[] =3D {
+> +#ifndef CONFIG_UML
+> +       KUNIT_CASE(kunit_test_fault_null_dereference),
+> +#endif /* !CONFIG_UML */
+> +       {}
+> +};
+> +
+> +static struct kunit_suite kunit_fault_test_suite =3D {
+> +       .name =3D "kunit_fault",
+> +       .init =3D kunit_try_catch_test_init,
+> +       .test_cases =3D kunit_fault_test_cases,
+> +};
+> +
+>  /*
+>   * Context for testing test managed resources
+>   * is_resource_initialized is used to test arbitrary resources
+> @@ -826,6 +868,7 @@ static struct kunit_suite kunit_current_test_suite =
+=3D {
 >
->  void __noreturn __kunit_abort(struct kunit *test);
+>  kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suit=
+e,
+>                   &kunit_log_test_suite, &kunit_status_test_suite,
+> -                 &kunit_current_test_suite, &kunit_device_test_suite);
+> +                 &kunit_current_test_suite, &kunit_device_test_suite,
+> +                 &kunit_fault_test_suite);
 >
-> @@ -601,14 +612,16 @@ void __kunit_do_failed_assertion(struct kunit *test=
-,
->  } while (0)
->
->
-> -#define KUNIT_FAIL_ASSERTION(test, assert_type, fmt, ...)               =
-      \
-> +#define KUNIT_FAIL_ASSERTION(test, assert_type, fmt, ...) do {          =
-      \
-> +       _KUNIT_SAVE_LOC(test);                                           =
-      \
->         _KUNIT_FAILED(test,                                              =
-      \
->                       assert_type,                                       =
-      \
->                       kunit_fail_assert,                                 =
-      \
->                       kunit_fail_assert_format,                          =
-      \
->                       {},                                                =
-      \
->                       fmt,                                               =
-      \
-> -                     ##__VA_ARGS__)
-> +                     ##__VA_ARGS__);                                    =
-      \
-> +} while (0)
->
->  /**
->   * KUNIT_FAIL() - Always causes a test to fail when evaluated.
-> @@ -637,6 +650,7 @@ void __kunit_do_failed_assertion(struct kunit *test,
->                               fmt,                                       =
-      \
->                               ...)                                       =
-      \
->  do {                                                                    =
-      \
-> +       _KUNIT_SAVE_LOC(test);                                           =
-      \
->         if (likely(!!(condition_) =3D=3D !!expected_true_))              =
-          \
->                 break;                                                   =
-      \
->                                                                          =
-      \
-> @@ -698,6 +712,7 @@ do {                                                 =
-                              \
->                 .right_text =3D #right,                                  =
-        \
->         };                                                               =
-      \
->                                                                          =
-      \
-> +       _KUNIT_SAVE_LOC(test);                                           =
-      \
->         if (likely(__left op __right))                                   =
-      \
->                 break;                                                   =
-      \
->                                                                          =
-      \
-> @@ -758,6 +773,7 @@ do {                                                 =
-                              \
->                 .right_text =3D #right,                                  =
-        \
->         };                                                               =
-      \
->                                                                          =
-      \
-> +       _KUNIT_SAVE_LOC(test);                                           =
-      \
->         if (likely((__left) && (__right) && (strcmp(__left, __right) op 0=
-)))   \
->                 break;                                                   =
-      \
->                                                                          =
-      \
-> @@ -791,6 +807,7 @@ do {                                                 =
-                              \
->                 .right_text =3D #right,                                  =
-        \
->         };                                                               =
-      \
->                                                                          =
-      \
-> +       _KUNIT_SAVE_LOC(test);                                           =
-      \
->         if (likely(__left && __right))                                   =
-      \
->                 if (likely(memcmp(__left, __right, __size) op 0))        =
-      \
->                         break;                                           =
-      \
-> @@ -815,6 +832,7 @@ do {                                                 =
-                              \
->  do {                                                                    =
-      \
->         const typeof(ptr) __ptr =3D (ptr);                               =
-        \
->                                                                          =
-      \
-> +       _KUNIT_SAVE_LOC(test);                                           =
-      \
->         if (!IS_ERR_OR_NULL(__ptr))                                      =
-      \
->                 break;                                                   =
-      \
->                                                                          =
-      \
-> diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-> index c6ee4db0b3bd..2ec21c6918f3 100644
-> --- a/lib/kunit/try-catch.c
-> +++ b/lib/kunit/try-catch.c
-> @@ -91,9 +91,13 @@ void kunit_try_catch_run(struct kunit_try_catch *try_c=
-atch, void *context)
->
->         if (exit_code =3D=3D -EFAULT)
->                 try_catch->try_result =3D 0;
-> -       else if (exit_code =3D=3D -EINTR)
-> -               kunit_err(test, "try faulted\n");
-> -       else if (exit_code =3D=3D -ETIMEDOUT)
-> +       else if (exit_code =3D=3D -EINTR) {
-> +               if (test->last_seen.file)
-> +                       kunit_err(test, "try faulted after %s:%d\n",
-> +                                 test->last_seen.file, test->last_seen.l=
-ine);
-
-It's possibly a bit confusing to just say "after file:line",
-particularly if we then loop or call a function "higher up" in the
-file. Maybe something like "try faulted: last line seen %s:%d" is
-clearer.
-
-> +               else
-> +                       kunit_err(test, "try faulted before the first tes=
-t\n");
-
-I don't like using "test" here, as it introduces ambiguity between
-"kunit tests" and "assertions/expectations" if we call them both
-tests. Maybe just "try faulted" here, or "try faulted (no markers
-seen)" or similar?
-
-
-> +       } else if (exit_code =3D=3D -ETIMEDOUT)
->                 kunit_err(test, "try timed out\n");
->         else if (exit_code)
->                 kunit_err(test, "Unknown error: %d\n", exit_code);
+>  MODULE_LICENSE("GPL v2");
 > --
 > 2.44.0
 >
 
---000000000000d8339106136f7593
+--0000000000005ff36a06136f7670
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -392,13 +264,13 @@ wlDp+1p6RAqlDpHifQJW16h5jWIIwYisvm5QyfxQEVc+XH1lt+taSzCfiBT0ZLgjB9Sg+zAo8ys6
 ITv8ZEy6ByumbU23nkHTMOzzQSxczHkT+0q10/MxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
 MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
 IFNNSU1FIENBIDIwMjACEAHS+TgZvH/tCq5FcDC0n9IwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEIKIxQaGMP0MGQQv30sCV7JG+8TJEF2LhFCr0SVrF3w1xMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDMxMjA0NTQ1OVowaQYJKoZIhvcNAQkPMVww
+hvcNAQkEMSIEIH104oDLt2YJXGY2Th/tOIltj+ysdkZwtuJlBc32SJA0MBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDMxMjA0NTUwOFowaQYJKoZIhvcNAQkPMVww
 WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBqcOvZ
-+Liux9W1tb12ggeaId6JXsPeTZAhIBmwBzIV4i38udiCw02dVZ7NNeovqOuafh99hzt1mA/B2HyX
-stKjNJXSSWaihtILRfRs8S98SCNArgJRKvisDAQPAIs8AWIJjP7n5CuNXhA4zV9IKjyuopuiYxJl
-BQukIJMuMizhLgvlSJ/g+IkUveuWdNedMvq7ZImlIqI1IIYlZGHBRxbz5JD+DtWpoQpSJkZxfHzB
-ojyaOsN7b94fpKp22JdZfZuHYIgny8IVDSmMIcY2FG/aTCSBuMZcjgQYGqj/71fcov5yWQ1jJpMX
-IO2OZHZgc1vg68QRk+P+bNsXwf1middj
---000000000000d8339106136f7593--
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBrXvUN
+G/lKjLxrVJtJuNu0UXjEq4q9AyzPP3ilyTKUn6C2JhGJg23/TCAOvjouYFywkRnygEUjOkA1ZGZO
+jM3lQhXi9GZq6eq/B+3SGs7zQs+lkp6pL3z/iaFRSl4g+Yh5oXMDsw8XeMiFcvbXYuFQ46bEBfxA
+1bITNoyIvKAVKky3fj20sTBCmBcsEvH6JEzv11HE5MtTQmr1d5t4MvDV2clv30x2G27URt9YVmdT
+hiwIHvUiaOPgcwZlx1WSgdmcUA2la0mxbi2ivqN1ttncxmNFn0/s4Vi2GAfT8ePnQihW9np0eOHO
+Mt8DI8UhWtpTHPthmF/9eHcv6tw/iuFd
+--0000000000005ff36a06136f7670--
