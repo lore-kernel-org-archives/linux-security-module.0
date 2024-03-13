@@ -1,109 +1,189 @@
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32864CB47
-	for <linux-security-module@vger.kernel.org>; Wed, 13 Mar 2024 20:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEAB4E1CE;
+	Wed, 13 Mar 2024 21:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710360425; cv=none; b=PMtq10vrA0N8RCBYbgWVmD3vLrVuPVQcd2E/GeMHT8VreKL2JyCXbvPh+ks7Vg2/BYoKjhPOjdK0ddZtqYs+nYJHI1lXGgBRhL2W5c6yZIFdLAQDFLhhlmBVkEG88O9eOekxT480CDNQnvCZCg3f+VB9DuSM864o6g8jzKFhQQo=
+	t=1710363929; cv=none; b=TpUMb+yN41rBy+UYyvVk95KfwaKQR2NcJsLV1zzkgBSB2havicQ+LDpBbV8OcEjldoBOTrgg4YVnd3e6n5ffoDLWzckSLcOubWRdExcMAwhpwyb3mIPpC63GEzYazueZNGEOYDx10TxVL02f+vvIWbczTsJwlkoJUGrHnxNTa5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710360425; c=relaxed/simple;
-	bh=WdJn/2bJPlVRWf/dOWnZCyI2Kvpf9aHz47q/erB5dCg=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=EUB+rOg4M8d0OLeK4pu5h1w5ibCdhUJO8RGsyRi2796InoIBXVfcaD8LEn8mvGDNE1JfIiMbCR9GFAMcRlSpYxNgRE7gCaemVs42TkAT+kti8Y3zXioRQdwiO8nM7o7IpxWcQdqPmRFezgYbrbIm9sfWENszzKcKOXsQjOFTOFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aJGTGZ23; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1710363929; c=relaxed/simple;
+	bh=CH2rZ4PLi2IfM/uHiuMK9LdURXsrNx68tG+esLsv5Bw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kTQpwkcv41Mqlc3oEUFkQOzmC6vt0UoBs0ux66xDsbpvK2urSAb9YUCLq0sluV8V4RAGJStZa09i2+hEKbr92pRrb6xTofPp8r+DudlIVuiFSPkH0r/xdkHINfnQglmJWwL43/cLTp1RUQkP4rdNiuIGrc/sDL4bA7YsXHjhasA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jc+8nY0g; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aJGTGZ23"
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-42edb7a1114so827201cf.1
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Mar 2024 13:07:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jc+8nY0g"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-33e7ae72312so203013f8f.1;
+        Wed, 13 Mar 2024 14:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710360421; x=1710965221; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TaOWCQYhiM9DJgHYIEv5GJLKXhKlFmkTvf/eVZF5clo=;
-        b=aJGTGZ23b/wsfN4YvfvuCU86YOU83NuTbqW8r9WQtbDC13lB80JvrxrGtuYpJE6/oW
-         DalDuUnJDX8IcMQtis9h/25kCj9YlhfZlY8KU+Wml63rYp1JbsO8qwD2JYzvuPpW2HF9
-         qw0xdXSmjh7RZynQfmfQiyrdWwARnFgalOenb3qYz8siDo07+vStincu0DjxrYaJ57IX
-         s+UKaPEV6VtzWgl+RwnPI9tqlD6mw9g90NzGMhwsbNXqTzLSuAiz1/keSKrF3GllvY6b
-         fdNmV2Ahpw80GeCN9MfLXwxBJJsc6eWb+jP7JY1EM/1El9KMtq+iYBwReC86PwYc/N86
-         4FEA==
+        d=gmail.com; s=20230601; t=1710363926; x=1710968726; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yZzVp1B0o1fPUeYOWrqe1Q57q16dmLKhwAmLef5VA14=;
+        b=Jc+8nY0g+HgXorpBon5IbPHDFTq4f4avVkggDJJwl5h13KOUZQu6oMVfm9h/5ve63X
+         inQEginxALP4HZwdofFK4tJr6OEZR3v+VnAxqqIE6tpoLhz/LZmoff4LLldd7ZalLUtj
+         R5/jVBHKpzXKoTwHYHZ6PwcieUykDU8h+f4g1x0zegzklIXVKymBX7I1WkF4MhR3074U
+         0tfjXnXNlkRCH7/10OtZbUVT9kRxJDlUe/sFGEAOvuG2VeRYAvX5F7LxZ8HizC7/fPxB
+         WHtVS3vxLiHsY7Xsq+gRIFwLIVwP4VwZhyXMqM9L66Bzew5cEZeVt3kY2lDXmq4fQSi5
+         uqnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710360421; x=1710965221;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TaOWCQYhiM9DJgHYIEv5GJLKXhKlFmkTvf/eVZF5clo=;
-        b=gFOCTNfIhIRC/CmDdMV4ZOwz7LCJ8pdCa1y18wKLWw1NFzpYb/b5oGM/KlfT5w9Iow
-         fz2MC3oUySyrxF709P1s2uI8/u1N5w6bbG8c7bj5wWWgDMt2eSjmunodRcbFdQ7RA0dk
-         JYoxx89AUMfQXRwn3gjo2eKrrxNHzcbh9EhtPASIWOzuDVdBy6e6q1gHquAvowT8mCEs
-         b5H9t5qSzgqIcZAot6trkmhyxGXVoW9FPrNxILJG4pKg8lADtGl7nA/uh3LlFxfE68On
-         xJSDzcxhgMJZFs8M3IMoOCbeTRiF3aFcTjfXnZTqsRO8b1d8XafthVCCeZg+TdivpYrQ
-         3Rjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbdelEMYbIOZKxeAYo1XSdsgAgv8wmMk4HovETsW2Pe4DG4BX8cNiMb/P57ePhUQcs6uBq676hLOjJjdDBXw5pTTLn3B+kH+tJhJcaABPq5s8AmZtg
-X-Gm-Message-State: AOJu0YxeTp5880Qk34ApbWIUIfdH+RjlF5gi3aXmwjgClVWZt68/7hJ/
-	yhFtLd9ZogIyuzV6kjiyzVO4SLG74gge3l9hn6ZIhkB5sxwzeQErzJ0HoqBVXQ==
-X-Google-Smtp-Source: AGHT+IFxmVIZmlHkW7ctMZiLN7tCNdso6UsKbHz3xwPt7MplNKbQy1ronk5TK63/kW8nTuSGVRemjg==
-X-Received: by 2002:ac8:7d82:0:b0:42e:f47e:43d8 with SMTP id c2-20020ac87d82000000b0042ef47e43d8mr17793281qtd.43.1710360421643;
-        Wed, 13 Mar 2024 13:07:01 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id e17-20020ac85991000000b0042f53f9f8b0sm2357995qte.26.2024.03.13.13.07.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Mar 2024 13:07:01 -0700 (PDT)
-Date: Wed, 13 Mar 2024 16:07:00 -0400
-Message-ID: <ef972e0088964722adffc596d38b0463@paul-moore.com>
+        d=1e100.net; s=20230601; t=1710363926; x=1710968726;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yZzVp1B0o1fPUeYOWrqe1Q57q16dmLKhwAmLef5VA14=;
+        b=cNtSTjnbTtMQ5wkSpGnHMQWL2RRaBR+QpMVJwW9BjXuxwJq3oL1HUi1JDren+Lbx5f
+         BlvL5jt6Y2ss34638on6VqpdThkH/NngmV68QENcQyUoVJOgPz9Yw0Vl3GtwsKePmYWE
+         mMR3SfgDXVc5eVDhlS2OVoVNx9x6UlN/wXO2egibIimdEdB+3CjUjzvv9NEp0XuqPzq/
+         NZR0IW6mYepd5EFdvB8Ca72i4mFXBADbE5+HQ8ORLw9iEv4zBsntfTkyI/J0Cvx/USLO
+         1T+a8SdxBkQq0IAU5iG+zrF3CDpXKbN6gB4/tIF0HhJu6yScJjbqnwdaha6IN5g+4nPK
+         KJdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlyBEQ7s6KWa65C2N4jf68C3wnwB+MaTTy9NJjEtlzXKhV+yeDD075IMphfIVRWp3TNZC4+VLpMNXmQ1ZE/6Fcq824DSOFStIPC4m+Ftf9RMDLC0I8zbDdOOOnX1THzfWYYGluiwzMe/3zRuVDeteNZD9fu+/mqRDu3TWBABv0/Wky1sUh+5fLSw==
+X-Gm-Message-State: AOJu0YyrWTfM8Ady+fVQamnMBRfm7SEdGq/MDnXS+TOj3llSnnF4uHsr
+	xzLuZlaIDPoBkAWaG5oCvH+C3Xz3WIj85S3gNUrF1QrWOCLvYaNDaoDVFz3oZ3Qq0dlTZYvNHwa
+	UPHSH7fj38qunx6AEQJc4Zh4FhBU=
+X-Google-Smtp-Source: AGHT+IFDFscIvQkKhWL6uTHrhCEwdvqJ5pjqZbod6Uv4pkjnS2CrY1wfRH/QplSvK4c2Ab2/TnZ4YDaEDqej2LD7zf8=
+X-Received: by 2002:adf:ffcc:0:b0:33d:2775:1e63 with SMTP id
+ x12-20020adfffcc000000b0033d27751e63mr2732491wrs.41.1710363925428; Wed, 13
+ Mar 2024 14:05:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, "Dmitry V. Levin" <ldv@strace.io>, LSM List <linux-security-module@vger.kernel.org>
-Cc: Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, John Johansen <john.johansen@canonical.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Stephen Smalley <stephen.smalley.work@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH v3] LSM: use 32 bit compatible data types in LSM syscalls.
-References: <da4d181d-16b9-4e0f-a744-ac61702e0b63@schaufler-ca.com>
-In-Reply-To: <da4d181d-16b9-4e0f-a744-ac61702e0b63@schaufler-ca.com>
+MIME-Version: 1.0
+References: <cover.1709675979.git.mattbobrowski@google.com>
+ <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
+ <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
+ <20240307-phosphor-entnahmen-8ef28b782abf@brauner> <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
+ <20240308-kleben-eindecken-73c993fb3ebd@brauner> <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
+ <20240311-geglaubt-kursverfall-500a27578cca@brauner>
+In-Reply-To: <20240311-geglaubt-kursverfall-500a27578cca@brauner>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 13 Mar 2024 14:05:13 -0700
+Message-ID: <CAADnVQLnzrxyUM-EiorEP_qvfmdiSK5Kj1WtGjFoAogygHSvmA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
+To: Christian Brauner <brauner@kernel.org>
+Cc: Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, 
+	Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mar 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> 
-> LSM: use 32 bit compatible data types in LSM syscalls.
-> 
-> Change the size parameters in lsm_list_modules(), lsm_set_self_attr()
-> and lsm_get_self_attr() from size_t to u32. This avoids the need to
-> have different interfaces for 32 and 64 bit systems.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: a04a1198088a: ("LSM: syscalls for current process attributes")
-> Fixes: ad4aff9ec25f: ("LSM: Create lsm_list_modules system call")
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reported-and-reviewed-by: Dmitry V. Levin <ldv@strace.io>
-> ---
->  include/linux/lsm_hook_defs.h                        |  4 ++--
->  include/linux/security.h                             |  8 ++++----
->  security/apparmor/lsm.c                              |  4 ++--
->  security/lsm_syscalls.c                              | 10 +++++-----
->  security/security.c                                  | 12 ++++++------
->  security/selinux/hooks.c                             |  4 ++--
->  security/smack/smack_lsm.c                           |  4 ++--
->  tools/testing/selftests/lsm/common.h                 |  6 +++---
->  tools/testing/selftests/lsm/lsm_get_self_attr_test.c | 10 +++++-----
->  tools/testing/selftests/lsm/lsm_list_modules_test.c  |  8 ++++----
->  tools/testing/selftests/lsm/lsm_set_self_attr_test.c |  6 +++---
->  11 files changed, 38 insertions(+), 38 deletions(-)
+On Mon, Mar 11, 2024 at 5:01=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> > > > One can argue that get_mm_exe_file() is not exported,
+> > > > but it's nothing but rcu_lock-wrap plus get_file_rcu()
+> > > > which is EXPORT_SYMBOL.
+> > >
+> > > Oh, good spot. That's an accident. get_file_rcu() definitely shouldn'=
+t
+> > > be exported. So that'll be removed asap.
+> >
+> > So, just to make a point that
+> > "Included in that set are functions that aren't currently even
+> > exported to modules"
+> > you want to un-export get_file_rcu() ?
+>
+> No. The reason it was exported was because of the drm subsystem and we
+> already quite disliked that. But it turned out that's not needed so in
+> commit 61d4fb0b349e ("file, i915: fix file reference for
+> mmap_singleton()") they were moved away from this helper.
 
-Okay, this looks better, I'm going to merge this into lsm/stable-6.9
-and put it through the usual automated testing as well as a kselftest
-run to make sure everything there is still okay.  Assuming all goes
-well and no one raises any objections, I'll likely send this up to
-Linus tomorrow.
+Arguably that commit 61d4fb0b349e should have had
+Fixes: 0ede61d8589c ("file: convert to SLAB_TYPESAFE_BY_RCU")
+i915 was buggy before you touched it
+and safe_by_rcu exposed the bug.
+I can see why you guys looked at it, saw issues,
+and decided to look away.
+Though your guess in commit 61d4fb0b349e
+"
+    Now, there might be delays until
+    file->f_op->release::singleton_release() is called and
+    i915->gem.mmap_singleton is set to NULL.
+"
+feels unlikely.
+I suspect release() delay cannot be that long to cause rcu stall.
+In the log prior to the splat there are just two mmap related calls
+from selftests in i915_gem_mman_live_selftests():
+i915: Running i915_gem_mman_live_selftests/igt_mmap_offset_exhaustion
+i915: Running i915_gem_mman_live_selftests/igt_mmap
+1st mmap test passed, but 2nd failed.
+So it looks like it's not a race, but an issue with cleanup in that driver.
+And instead of getting to the bottom of the issue
+you've decided to paper over with get_file_active().
+I agree with that trade-off.
+But the bug in i915 is still there and it's probably an UAF.
+get_file_active() is probably operating on a broken 'struct file'
+that got to zero, but somehow it still around
+or it's just a garbage memory and file->f_count
+just happened to be zero.
 
-Thanks everyone!
+My point is that it's not ok to have such double standards.
+On one side you're arguing that we shouldn't introduce kfunc:
++__bpf_kfunc struct file *bpf_get_task_exe_file(struct task_struct *task)
++{
++ return get_task_exe_file(task);
++}
+that cleanly takes ref cnt on task->mm->exe_file and _not_ using lower
+level get_file/get_file_rcu/get_file_active api-s directly which
+are certainly problematic to expose anywhere, since safe_by_rcu
+protocol is delicate.
 
---
-paul-moore.com
+But on the other side there is buggy i915 that does
+questionable dance with get_file_active().
+It's EXPORT_SYMBOL_GPL as well and out of tree driver can
+ruin safe_by_rcu file properties with hard to debug consequences.
+
+> There is absolutely no way that any userspace will
+> get access to such low-level helpers. They have zero business to be
+> involved in the lifetimes of objects on this level just as no module has.
+
+correct, and kfuncs do not give bpf prog to do direct get_file*() access
+because we saw how tricky safe_by_rcu is.
+Hence kfuncs acquire file via get_task_exe_file or get_mm_exe_file
+and release via fput.
+That's the same pattern that security/tomoyo/util.c is doing:
+   exe_file =3D get_mm_exe_file(mm);
+   if (!exe_file)
+        return NULL;
+
+   cp =3D tomoyo_realpath_from_path(&exe_file->f_path);
+   fput(exe_file);
+
+in bpf_lsm case it will be:
+
+   exe_file =3D bpf_get_mm_exe_file(mm);
+   if (!exe_file)
+   // the verifier will enforce that bpf prog has this NULL check here
+   // because we annotate kfunc as:
+BTF_ID_FLAGS(func, bpf_get_mm_exe_file, KF_ACQUIRE | KF_TRUSTED_ARGS |
+KF_RET_NULL)
+
+ bpf_path_d_path(&exe_file->f_path, ...);
+ bpf_put_file(exe_file);
+// and the verifier will enforce that bpf_put_file() is called too.
+// and there is no path out of this bpf program that can take file refcnt
+// without releasing.
+
+So really these kfuncs are a nop from vfs pov.
+If there is a bug in the verifier we will debug it and we will fix it.
+
+You keep saying that bpf_d_path() is a mess.
+Right. It is a mess now and we're fixing it.
+When it was introduced 4 years ago it was safe at that time.
+The unrelated verifier "smartness" made it possible to use it in UAF.
+We found the issue now and we're fixing it.
+Over these years we didn't ask vfs folks to help fix such bugs,
+and not asking for help now.
+You're being cc-ed on the patches to be aware on how we plan to fix
+this bpf_d_path() mess. If you have a viable alternative please suggest.
+As it stands the new kfuncs are clean and safe way to solve this mess.
