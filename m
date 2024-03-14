@@ -1,63 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33323FC0E;
-	Thu, 14 Mar 2024 23:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09572FC02
+	for <linux-security-module@vger.kernel.org>; Thu, 14 Mar 2024 23:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710458042; cv=none; b=fVjTDfWm8QqvYzSVZeAaz87WQntNlfBr9kWahXiCkN750oMX1UNrV0Bf25gTMJzirjreoSXQFqv257MOsjCO9WJ/5Dp1kJTx0m1VP+i8+DRIglLrdN0I289x/t/xjwQP1f0XZPw6WDgFzFvu6Zhq7nJSiJtqjXL8thHX8cdj3f8=
+	t=1710458237; cv=none; b=vFOvXP96V7adPVg7Z57jctsO8N4q19FKgGXbjeKP2wNQg+SfhvmuAyjkIArJRUMsl+TK1KkPI1AguAeugdhArf4qcptWih/327Hjm5WlUL0IB/qe1gC4CHUjS95UMYsFpxumZeq92jabJDPITg1t5a/lbPQJyJy5UrsHM3RyTwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710458042; c=relaxed/simple;
-	bh=4o8gVBNKrxwm+IikKUz9LM1qIFbrzYCFYBqgey5Ji9c=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=imYBw45iN4vKaJci2tJkSGOcJAjuSGx3Nrfkl4uGj8Q7B1bGEvV/23uMubEwHFkg493B8ECraKmaK3qhtBfNxnkbdN988um2X+/y8mYrrJch6JWcd5pjscJ2rHv3hU9UEwiOjurQdu5ecDellkHCui+ba7RqwGRMSPNXFwMyRFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZNXzVTY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710458237; c=relaxed/simple;
+	bh=PSPZw+wHimajiosB/jFZPzF7tlBsNhUEtnL0t2l2UTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O4QfO3BIjIdOm3rHTvcR9N97lW60JRni6kscHDyhlt1k1MG1kkHCiPWP4BN7Epg+y5lupE5jzHLAMg9s0aWrZWy+sjvtgAJYSVVeozrHUtq7Rz4wwBdVJJQdOtPMgnBMR0Wzxng90uEcxrjZ+M3BG9JudPbuaa5z58G3APV4dIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NBfkzSNJ; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZNXzVTY"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1441EC43390;
-	Thu, 14 Mar 2024 23:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710458042;
-	bh=4o8gVBNKrxwm+IikKUz9LM1qIFbrzYCFYBqgey5Ji9c=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=TZNXzVTYQA1N0m8FWj1GgvMNyBbO37OUlTQEuinyi7jLmToHTcRAqjx/RYLc4trLO
-	 DVjAZCV3vUXUkwM2OUq90eARrRksb3pLh3xh2Y5nNSjz2j3M/9SYJESIFvfuQulDYv
-	 c1KCghMnyxjhw1Jpodp3ZyEPaficasLNRRelI/lUtFaAnUbIXcZFeMFqw4X4wYXSCA
-	 TdVaDq9FdCFYYe6QyNbhD8sCUgOcIHSYyc1pJQLaxQ6mszvjtQr/3hHTXc5QXkOHlg
-	 w9uWuE01lKY4F1vdvN+bmQBthnxRkYQBFFlsJDRbqPfADZH0KLgIM69wgNxUWq2jVD
-	 HdSlJZr56lh2Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0BA98D95055;
-	Thu, 14 Mar 2024 23:14:02 +0000 (UTC)
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240314
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <3f2a695a148db9e1daae8c07d9ce5c85@paul-moore.com>
-References: <3f2a695a148db9e1daae8c07d9ce5c85@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <3f2a695a148db9e1daae8c07d9ce5c85@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240314
-X-PR-Tracked-Commit-Id: eaf0e7a3d2711018789e9fdb89191d19aa139c47
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c0a614e82ece41d15b7a66f43ee79f4dbdbc925a
-Message-Id: <171045804204.7563.1098860944707764914.pr-tracker-bot@kernel.org>
-Date: Thu, 14 Mar 2024 23:14:02 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NBfkzSNJ"
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dd02fb9a31cso1304433276.3
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Mar 2024 16:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1710458235; x=1711063035; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8FJHO5YC8w5/nCa0SdcrtkcjPivtz4GqNfWWtZkV020=;
+        b=NBfkzSNJwus7mZn2lQW/cXxce/p1NLtle+EdknzUaRrW6Q+a/GA8NSd3UFJqo69iHs
+         8wu4+Sx0LXtkzaSCWjFAsKAvJUCQ6zrNUi4Zu+1ICoUD/lJZjnvakuYBOu/lhz0yU38Z
+         QdrCW3zu05PZyUZSJtGxuBqm0tZPslIWZt1yzMw1Yy7iuDpM5gbzabqaIVjnlY9idaiU
+         G6wVelT5CqqCyygw3rG/p26WZ57WkeJfEbDUnhZtCaUuogTWW8aggij63mlcv1+Pfwmb
+         4QDfKcNjQE6TI2guMH5k+rh/1KJPu0/zdZ+mJI8D58v/V+fbLWeutgOyRXgd9feTwwdu
+         9VVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710458235; x=1711063035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8FJHO5YC8w5/nCa0SdcrtkcjPivtz4GqNfWWtZkV020=;
+        b=Yt6rghBrz77Tya6cGB5ICg5447VsQB0GyZaRUIHwzax6eF16DLiPiC3s0oTakp2kU2
+         0XKjEtgs2cbpViaf76ZNJn+pmkdv0EGMiiwwBZrks14BYxeQCkUE/kTC3an0yLuyE+AC
+         1QlrWIMdsmhfFBTDdkZ0Cdev0Mb2vlb4QZtqjJ4XAJiFLpcSP+v/PXnjRlPzGjApCpkf
+         9wUlNK2S/k1NKobW5n0YopsiaAI/tWPB7yva82Frxw1SPHCYdEMDhT5wSiJcBW7V/9Q9
+         lxz2fWG30FGkiOyl43h0iJYkwCximu2Lf98dPFq4GJbVepUDSsDLWshZAPNakU7ulVQL
+         vQMw==
+X-Gm-Message-State: AOJu0Yxq55Q81wnv8x0JVM0K8IBVvwGr2Zf78oEkg2pxoo9WH0fvvPOu
+	gkW/aS/PvwRMa/LZa8xRKZSSVjY+WOAMK9KN8Ti9UpY7oLimvPi0/HNL5/lwoQ1s7WGWHRo1Gs0
+	Kcp9oe81ssxS8gJcFg+OtAs0bKPFpb5HoS7KeLx8w1VsPINQ=
+X-Google-Smtp-Source: AGHT+IFonUub0kn+4pEzuRAJ9n1AIEmnrW4hZeaxsDQsnO7+hwiraDkkWgcWmSKNTcDZiKzY/gn6Akg9rQWnFLXuyJs=
+X-Received: by 2002:a05:6902:564:b0:dcc:2f94:591a with SMTP id
+ a4-20020a056902056400b00dcc2f94591amr657211ybt.12.1710458235012; Thu, 14 Mar
+ 2024 16:17:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <3f2a695a148db9e1daae8c07d9ce5c85@paul-moore.com> <CAHk-=wjXK3ZDtCM754mQVWzcZdQd50dBU5Y+AoATWcCGCMWzgg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjXK3ZDtCM754mQVWzcZdQd50dBU5Y+AoATWcCGCMWzgg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 14 Mar 2024 19:17:04 -0400
+Message-ID: <CAHC9VhRJW4k+tpkQSFYp6jeD9fRokGBRhsrNbTxScZ3Y0jJKbQ@mail.gmail.com>
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240314
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Thu, 14 Mar 2024 16:31:05 -0400:
+On Thu, Mar 14, 2024 at 7:05=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, 14 Mar 2024 at 13:31, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > I would like if you could merge these patches, I believe fixing the
+> > syscall signature problem now poses very little risk and will help us
+> > avoid the management overhead of compat syscall variants in the future.
+> > However, I'll understand if you're opposed, just let me know and I'll
+> > get you a compat version of this pull request as soon as we can get
+> > something written/tested/verfified.
+>
+> No, attempting to just fix it after-the-fact in the hopes that nobody
+> actually uses the new system call yet sounds like the right thing to
+> do.
+>
+> 6.8 has been out for just days, and I see it's marked for stable, so
+> hopefully nobody ever even sees the mistake. I can't imagine that the
+> new system call is that eagerly used.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240314
+Thanks, that was our thought too.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c0a614e82ece41d15b7a66f43ee79f4dbdbc925a
+> Famous last wods.
+>
+>                Linus
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--=20
+paul-moore.com
