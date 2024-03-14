@@ -1,125 +1,190 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38ACB18E20
-	for <linux-security-module@vger.kernel.org>; Thu, 14 Mar 2024 15:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC6B7353F;
+	Thu, 14 Mar 2024 15:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710431371; cv=none; b=A2iKZnC76CpJJp9djS3p6Dxp4YzV5kubZRaNIRvxLZX5A0JrhMwj9uMe6TjyaPnWTA68poWC5+W8fOnTLuGkukUUF7/B46XgoLWhCsA9EYpcYRhU6oqOTEXa7NaRluR2JP+6sUAr0KzGUXC+ldccRrNaW56+Mkf6KZh/n/UjRV0=
+	t=1710431664; cv=none; b=oT8c6Knds8w0Y7UTcOBGeUq2Hbc/7MZr7l4NjrWE5AdWCe1KZFmgustnggJb3iBnN6CttvaO+c2YMT4MH+TI3qU5yd+d9kL39sP3r7WoTzIIgPgs/l3S5VKN73iUipKbhvT03GLTDRUTO8i9u4el6wD9a2SpxCWXbiR9BNrmGig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710431371; c=relaxed/simple;
-	bh=EnLejvn1yGLzbpO7xqXAOTpf/d/vM0Y9GRJqkpuQ+qc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=YvA6tBVdycwLgi0Stgw67Eco4PMgNgrmDmOG9uE3VWCD43UxA/8mdGgbbcgNqfjpU4w6RUikW4uMaHel33TvRf4WQ9IfrVYdVNVS5ZraPRfgfT/90MzAVDzKp6xCjrnp7RoNzNl+yu7Ta2GYUyNCXKqzQBM31q8t7Fli5307TR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=U74C0Lf/; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1710431664; c=relaxed/simple;
+	bh=km/3aGcwVNjprkRJ5a9yQcLEWlg19dOOzcQex1nbcDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMY7NUvTtS/agUwjhDvxZX1jeUGXPY9XhMEPV26bEsANTtT4LslycTb4OLnxexMnV68DafSlE30NjfXyoTjRMCzuykS8EeovUIAFNi425hz9wxmDq4ul5tOr1cQhIA7qZfbdnlnaKroQrGMmauTQHvLBr8pf/U0TwWCaw6CoZcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tjLgQCjs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=deiIgmej; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AWTTVirU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aYLQHl+L; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="U74C0Lf/"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcd9e34430cso1090948276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Mar 2024 08:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710431369; x=1711036169; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gNOU8GKW7zz0PbL/9DVHX5LfQTI0aumrTWSRtVQSb74=;
-        b=U74C0Lf/0+oQkynidIjrjv5VEsySV/ypixfl5rMsjO6ftgZzXrrmQbKBUbIpwbKYH8
-         mPG9hiO1FZiVmw32K5+1pEcirNn1F/I8kV1pN/QI5V0J9ZE0idHHgBZ2CO/LUqVgY8HJ
-         GxfPyqyGF6bBJCWiShnQOsJJrp2gaMItPOXiIpPbd9lHmuqXctHIj5tVrhkCSwZfKa3G
-         r8MQjpYXJM7JvsNOdpee7vPP+mnEFNKJUTQ1gU5/uvEpD2LQ/y9aaikCdFzx3+XyP/RJ
-         hOQLMo0Tt5gyRrBkL+YQGrzf5GkeppfRyAL4R5lpIyC3XYEh09XbxTwwOR+mn0W3vF2G
-         0vXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710431369; x=1711036169;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gNOU8GKW7zz0PbL/9DVHX5LfQTI0aumrTWSRtVQSb74=;
-        b=DApQZWMiEfgRhsGEnQX7sH7kLgWRUZXAcYAWlm4T3t0Uay0KpJlzp8g9x7KYxGaJmU
-         zLK5lrnH/BFJ0DBo0gRe1HswYqFb3XxX+dS3n5MOc1iBw+zGQBrLDxpk7QjkACHTGNnv
-         iZxU/MrEhopn677krs3qLkpg0LoAT/p4DOOi+Z344uWg6rp9GSGiVxnIbIMOhkzTSEu6
-         8vfNo5R8NdThh5qxioJvmhChZyeWJbQKgX8jtu0eFWXg30VpJ2vCmKslXdCrAxhOugFP
-         y3aG84zlYM7yMyh7XnxgBr+gxQ0QlXMsUdwD7McFpU1CCebGJr8BpjiCrNT4H5sASnNT
-         0upA==
-X-Gm-Message-State: AOJu0YynE1noTGf5Byq1g+FUwoz47Gn2sA9seJEetjkt6aGMxKroeSOl
-	B5OymaKNUimTnvlzgImAgvFiRsFrV8mBc8lidH6vEdW7rGcSlnL94yofQIqRZz2qbz0nZohbPTV
-	vvTODRIuAOHysG1xDtVbMpXv1JR+NqugMzIIwSJJ9JxbW0S8=
-X-Google-Smtp-Source: AGHT+IEONiT92AApBE4JPCp+KSGdUwK/+stoPbpfv/57SYB87IibSZ+yPbEBk+iISFVeNl/gtI2BhKgBUAUwuCbnnTg=
-X-Received: by 2002:a25:a001:0:b0:dc6:b820:bb45 with SMTP id
- x1-20020a25a001000000b00dc6b820bb45mr1859612ybh.27.1710431368882; Thu, 14 Mar
- 2024 08:49:28 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tjLgQCjs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="deiIgmej";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AWTTVirU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aYLQHl+L"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0A9211F86A;
+	Thu, 14 Mar 2024 15:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710431660; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BT7NUMGMj375LcHUS5Xp8EH29Otg/hkMc0woQNGiIn8=;
+	b=tjLgQCjs4YoblTiknk6v6c925YSD176Y5HwHks5cFNCjarrSHZnNEBosRUXLkYpZuJQDgu
+	+V5LUYgzSuPSn6h8z+ai0PgYyjYuQeJkuTUPS9S4rX5wpZjluyB08UhyDQS7styBkfHrCi
+	sTt5gjYS0TpE5tM880uh41XJrpXOjp8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710431660;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BT7NUMGMj375LcHUS5Xp8EH29Otg/hkMc0woQNGiIn8=;
+	b=deiIgmejfrJ1f/+HDe80GhXDzXeVJZUZmpGB+FgnmxIn0XO8HuDS1CKuV240QgjtijBZCb
+	5jVWmsuSoaoKEzDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1710431658; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BT7NUMGMj375LcHUS5Xp8EH29Otg/hkMc0woQNGiIn8=;
+	b=AWTTVirUlEzlgXbsQ5/f9Ni0hm7MBI1wX/6gYrGxFWSWj6ybNhOifVLrALpsP0LQts1qfJ
+	j3YdTiJh+dEBUQc6RnC4g86+BZft7fVBVnoWCu4AhYRNl7VoMzxaOEucNliSC3wuCrP5MN
+	6a/lRkIjIIkgM/NcuUVenfQDVJGBHBY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1710431658;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BT7NUMGMj375LcHUS5Xp8EH29Otg/hkMc0woQNGiIn8=;
+	b=aYLQHl+LTd9+OOpdnBqccfKM8gwkHbTbLRCQxsonPrvfIziysIshoKCi2gTAW/ZjG0pg4N
+	V8P5o+s9G9SCgMAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F092B1368B;
+	Thu, 14 Mar 2024 15:54:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Myy1Oqkd82V5MwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 14 Mar 2024 15:54:17 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 916D4A07D9; Thu, 14 Mar 2024 16:54:17 +0100 (CET)
+Date: Thu, 14 Mar 2024 16:54:17 +0100
+From: Jan Kara <jack@suse.cz>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: Jan Kara <jack@suse.cz>,
+	syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>,
+	axboe@kernel.dk, brauner@kernel.org, jmorris@namei.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, paul@paul-moore.com,
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: Re: [syzbot] [hfs] general protection fault in tomoyo_check_acl (3)
+Message-ID: <20240314155417.aysvaktvvqxc34zb@quack3>
+References: <000000000000fcfb4a05ffe48213@google.com>
+ <0000000000009e1b00060ea5df51@google.com>
+ <20240111092147.ywwuk4vopsml3plk@quack3>
+ <bbeeb617-6730-4159-80b1-182841925cce@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240314022202.599471-2-paul@paul-moore.com>
-In-Reply-To: <20240314022202.599471-2-paul@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 14 Mar 2024 11:49:18 -0400
-Message-ID: <CAHC9VhTV+daPgFpN_K1Sd-W6m6Vpuk0ZQXgYzymiyXsVYcmESw@mail.gmail.com>
-Subject: Re: [PATCH] lsm: handle the NULL buffer case in lsm_fill_user_ctx()
-To: linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbeeb617-6730-4159-80b1-182841925cce@I-love.SAKURA.ne.jp>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-3.00)[100.00%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=7406f415f386e786];
+	 TAGGED_RCPT(0.00)[28aaddd5a3221d7fd709];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[13];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,suse.com:email,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Flag: NO
 
-On Wed, Mar 13, 2024 at 10:22=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> Passing a NULL buffer into the lsm_get_self_attr() syscall is a valid
-> way to quickly determine the minimum size of the buffer needed to for
-> the syscall to return all of the LSM attributes to the caller.
-> Unfortunately we/I broke that behavior in commit d7cf3412a9f6
-> ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
-> such that it returned an error to the caller; this patch restores the
-> original desired behavior of using the NULL buffer as a quick way to
-> correctly size the attribute buffer.
->
-> Cc: stable@vger.kernel.org
-> Fixes: d7cf3412a9f6 ("lsm: consolidate buffer size handling into lsm_fill=
-_user_ctx()")
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  security/security.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+On Sun 10-03-24 09:52:01, Tetsuo Handa wrote:
+> On 2024/01/11 18:21, Jan Kara wrote:
+> > On Wed 10-01-24 22:44:04, syzbot wrote:
+> >> syzbot suspects this issue was fixed by commit:
+> >>
+> >> commit 6f861765464f43a71462d52026fbddfc858239a5
+> >> Author: Jan Kara <jack@suse.cz>
+> >> Date:   Wed Nov 1 17:43:10 2023 +0000
+> >>
+> >>     fs: Block writes to mounted block devices
+> >>
+> >> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15135c0be80000
+> >> start commit:   a901a3568fd2 Merge tag 'iomap-6.5-merge-1' of git://git.ke..
+> >> git tree:       upstream
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=7406f415f386e786
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=28aaddd5a3221d7fd709
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b5bb80a80000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10193ee7280000
+> >>
+> >> If the result looks correct, please mark the issue as fixed by replying with: 
+> > 
+> > Makes some sense since fs cannot be corrupted by anybody while it is
+> > mounted. I just don't see how the reproducer would be corrupting the
+> > image... Still probably:
+> > 
+> > #syz fix: fs: Block writes to mounted block devices
+> > 
+> > and we'll see if syzbot can find new ways to tickle some similar problem.
+> > 
+> > 								Honza
+> 
+> Since the reproducer is doing open(O_RDWR) before switching loop devices
+> using ioctl(LOOP_SET_FD/LOOP_CLR_FD), I think that that commit converted
+> a run many times, multi threaded program into a run once, single threaded
+> program. That will likely hide all race bugs.
+> 
+> Does that commit also affect open(3) (i.e. open for ioctl only) case?
+> If that commit does not affect open(3) case, the reproducer could continue
+> behaving as run many times, multi threaded program that overwrites
+> filesystem images using ioctl(LOOP_SET_FD/LOOP_CLR_FD), by replacing
+> open(O_RDWR) with open(3) ?
 
-Merged into lsm/stable-6.9, if anyone has any objections please make
-them know soon.
+Hum, that's a good point. I had a look into details how syskaller sets up
+loop devices and indeed it gets broken by CONFIG_BLK_DEV_WRITE_MOUNTED=n.
+Strace confirms that:
 
-> diff --git a/security/security.c b/security/security.c
-> index 5b2e0a15377d..7e118858b545 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -780,7 +780,9 @@ static int lsm_superblock_alloc(struct super_block *s=
-b)
->   * @id: LSM id
->   * @flags: LSM defined flags
->   *
-> - * Fill all of the fields in a userspace lsm_ctx structure.
-> + * Fill all of the fields in a userspace lsm_ctx structure.  If @uctx is=
- NULL
-> + * simply calculate the required size to output via @utc_len and return
-> + * success.
->   *
->   * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
->   * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
-> @@ -799,6 +801,10 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u=
-32 *uctx_len,
->                 goto out;
->         }
->
-> +       /* no buffer - return success/0 and set @uctx_len to the req size=
- */
-> +       if (!uctx)
-> +               goto out;
-> +
->         nctx =3D kzalloc(nctx_len, GFP_KERNEL);
->         if (nctx =3D=3D NULL) {
->                 rc =3D -ENOMEM;
-> --
-> 2.44.0
+openat(AT_FDCWD, "/dev/loop0", O_RDWR)  = 4
+ioctl(4, LOOP_SET_FD, 3)                = 0
+close(3)                                = 0
+mkdir("./file0", 0777)                  = -1 EEXIST (File exists)
+mount("/dev/loop0", "./file0", "reiserfs", 0, "") = -1 EBUSY (Device or resource busy)
+ioctl(4, LOOP_CLR_FD)                   = 0
+close(4)                                = 0
 
---=20
-paul-moore.com
+which explains why syzbot was not able to reproduce some problems for which
+CONFIG_BLK_DEV_WRITE_MOUNTED=n should have made no difference (I wanted to
+have a look into that but other things kept getting higher priority).
+
+It should be easily fixable by opening /dev/loop0 with O_RDONLY instead of
+O_RDWR. Aleksandr?
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
