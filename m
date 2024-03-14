@@ -1,113 +1,165 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0424E2F44
-	for <linux-security-module@vger.kernel.org>; Thu, 14 Mar 2024 02:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D9B4A0F
+	for <linux-security-module@vger.kernel.org>; Thu, 14 Mar 2024 02:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710382932; cv=none; b=dx/NVmo3L041q6lyCpaCyxA6TImOLI9DbzUWEL0MHjAswzycgPkaAwAcer/LApVIMj0gned/FcNz7a7sWc57SjFCUmadplzuGxGuoGXKAMt+8Q3JQUvqfBa90ZtOgsZgZeltxEJFcqC/QjRCXI1zZYF7JrzrsCbIx3LA+ShxXjo=
+	t=1710383124; cv=none; b=Ub4JGGHOs2/gya/yZPgGKVtd8jgTb843f4bx3xQXNXf8f0HkjRss9mxBR+0f3glnei5h2AGp/OpmNfyhswZwrmXxe++J79gYmE8LZi63edUBgnHGlTE86jAYOvcnkoRjeQp1aJJ30PZrB8wKgy3bIuS+8qBGLTIj0MiDyD+XmTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710382932; c=relaxed/simple;
-	bh=gzYLYBCSdybiT9TODRS3cYfNT5J5X5hBJJVe866BgtI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=NrIPYBvB7Xzfu6blF+w/hHcO3IBpUgzly9mgAl2kZ/7nWZme4UULwCiQbbQqzzrbclE5lXXUidgdM1SDD6OZJ2qXBud+Bqwt9iAifM1dLe7Fc5HRfyAB9iPhtB991Ou/v3T7Y60s95bs0AT7mw9g2ULSSlKEp+l517R5BBJzTz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=C3klgbhZ; arc=none smtp.client-ip=209.85.160.181
+	s=arc-20240116; t=1710383124; c=relaxed/simple;
+	bh=PHmfTRRkYa6+3QEXvykncYQCKKUVxK2Ttb/mRSpBw54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PKKhGp7nQS6+pxoz4yOisUF5vcoYOStDR0ZG/BUkDWrlj8pl+8J8IqKobSdjzQZuvGrQkMewCKAanzYghfK3/aJcfIqcg0KlbqNBr2mKXKt4zT4+7G0qKq4RBuW1ZSjfD2+RKS3HX9ZmmpaUaimiiwZyxwOMjwR5Ar94LIudRHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QXkGO1Hk; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="C3klgbhZ"
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-42a35c720b8so1658311cf.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Mar 2024 19:22:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QXkGO1Hk"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dcbc6a6808fso384777276.2
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Mar 2024 19:25:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710382930; x=1710987730; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=23zcR8XhqYMzCd9qbNO7+cFgnDadD2jo5A7YbVvILRc=;
-        b=C3klgbhZXQFAVxMJ5UeoKVMReVDZkyZ93qx2DfolI5iYwU24IGwZYmM2ausHKPE4sD
-         4KNbl9i070a22P+YR7wnd2ynC/C+rDL26ldN1OcTuanjusEBf/n3LMcRHXocySb+NnHS
-         C0ttNjWN7Lbs9ZdkggPF3tJ7gWfKRvIRqdGdaK7FIv2CdHHE2Dzpaz9NshUTFX6Pqrk6
-         CDdPvVHnddY9a1uId+CmUsPzBKfj1vUn0Ps+ucU0cV9NhBdtl1heH4s8hORBCjK3bT0I
-         QvcXf3e+4eNcyLH9GW+wD4aoYXQIXM/BoWtfPS4Cr1t7ZHvc8v0jyHjnDzyyJmclLm7E
-         WB1A==
+        d=paul-moore.com; s=google; t=1710383121; x=1710987921; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K4DNWvDyLPzqbKX5chJvouBSguAJQvQnzDIEEajS5+s=;
+        b=QXkGO1HkrQ2dCi8vDoyLhEMDZjagXYXBXmtsN6u+Iu0tpF3hHI/0LujH4bqZdxr6hR
+         ErUKZGq/0VTmN9BMU8bPnPPcSa7YfiJKUig9c8DBBNOkxkHznHwTE+OgFL9Zm7kCKAXP
+         lkOAFhtMFNKUtd8/dSUPgz6OUcTPUkAan6HHNfmcgEWF66mslWQ/RL+K+TY6KxcPK9Ju
+         tmc584b7Z53bxshjljLnrlwyxUDB1Zg2dOuKVHIvZlfZ4gue6+yTovIvkqB9QovJWZCl
+         si0CFhgtBEBWHZ/KkC7M27DhWTIM6LNQMtLdUm4Vgw8rqTQeixD6x8B5CdY18Je69yL4
+         jV9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710382930; x=1710987730;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=23zcR8XhqYMzCd9qbNO7+cFgnDadD2jo5A7YbVvILRc=;
-        b=vH/E4MF/mwwUzgKfwCbyUUaKEAQH4N7dFpZvunaAGIwp40WXw/TyrB7UQIZifXKpc5
-         2DpL5j05qpGaJanxS+O3x9El+te6Mon2QOQtSHhUFUgnSM6IKkgF0VTMWPaub+IrFxkm
-         gBa0MmP2ue5ctZK/R5diBJstCaG2bg7ep897TI+3B4NnsGK9gE4gGvgmqJecI1HgOlYM
-         9mO0CMOuY2Co9A3JxZnnxUeIAK1rDd433JiaIRW21o5x0sh4+unzMTbN1IqBceUD2ehh
-         ayPk4CsIzlRgoc1Assqb9IdhR5PFZyW4ctJeoBpAu0Zuw3Iy3TynStvCHr5+97QFEuMO
-         kcyQ==
-X-Gm-Message-State: AOJu0YzoyyKmqOES6CYXgv3hDptSPobuEs99cvYhdgC2OlUrlF4HlvRY
-	/GXrZf7eUI2axl9+c18HHoA7UiT5a6Sdt8A5xQxaHsO8bg2C9aT8IMxbGBYK1p6oHtMxLJEj4n8
-	=
-X-Google-Smtp-Source: AGHT+IEddyP0yAEsfZDkLwIUmNbWsdA0yFbr0hY+iNxxr3h9yfYI8bYKFk1NCHovPgL0z9uPJxIwYA==
-X-Received: by 2002:a05:622a:20b:b0:42f:30ec:aa36 with SMTP id b11-20020a05622a020b00b0042f30ecaa36mr513268qtx.45.1710382929775;
-        Wed, 13 Mar 2024 19:22:09 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id g15-20020ac8774f000000b0042ed9576bcesm206141qtu.11.2024.03.13.19.22.09
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Mar 2024 19:22:09 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: linux-security-module@vger.kernel.org
-Subject: [PATCH] lsm: handle the NULL buffer case in lsm_fill_user_ctx()
-Date: Wed, 13 Mar 2024 22:22:03 -0400
-Message-ID: <20240314022202.599471-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.44.0
+        d=1e100.net; s=20230601; t=1710383121; x=1710987921;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K4DNWvDyLPzqbKX5chJvouBSguAJQvQnzDIEEajS5+s=;
+        b=DpwsuhyAhOQmhbGJV6bmZTJ+Y/r18B88ZyELuZLXjeKYHqGamtDP4ECa/1AD7Q+3wy
+         DiEgjwYb2axuejU2IVXBKGVDnSr5WvhmIMc8nPxE7qHFWuBIWgdb4+yPUt81jV4enWpo
+         ZjXKevHxXXZ2vs43YvMNtyzFyA4duc5LBeNRt+VrYpVqGCvLZoaku0SawJAb+67xKyve
+         FWsVMUi+ZJdae2uo5ZKSvIp3iahrkPqmKdUJoKl/yfMR4XXTlmLgpRmo7Q647zZP80ED
+         eBfSgiXxQyL9rWkczgzP+SwwQVJWXBkJFdLHO9iInozztNQU6LwjQ0ItEmxhwm1i3NVW
+         C4og==
+X-Forwarded-Encrypted: i=1; AJvYcCXK2580At4+KdaJN5sISNoLRt4aHFK1PjmPqxQ78SlrPQlygNsvgZolyiCKbzSg35pjA6dcVBVO/HUrB5on04mta40PyCvLMgbJQdCtIp6ENo2zG5QM
+X-Gm-Message-State: AOJu0YxXs8WmEsWlEAt3z8M2s470rZXZ9+PmVQa9c4mSGSx0NJrU+irB
+	mlBLQhcl+//NKzeZVa2/4J09Y4nZ4+2hzKw0OLGL5Xmw05j6JmSlZZTaM1WLwrBAkH+TYen130e
+	hx3dpp4Oq2dCsrSAToTr1hRhaWm/NU+m0qD7KgPxrLPFrnYZRIw==
+X-Google-Smtp-Source: AGHT+IEsVarLQU9mwOayWOcTGW13ALxEq5QxXZXNeaozHAcSEtdGxaGdGSmS0c6k1blKwlww0Pt9gRb56aKe4aH3Uns=
+X-Received: by 2002:a25:d044:0:b0:dc7:6192:c688 with SMTP id
+ h65-20020a25d044000000b00dc76192c688mr387595ybg.65.1710383120859; Wed, 13 Mar
+ 2024 19:25:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1744; i=paul@paul-moore.com; h=from:subject; bh=gzYLYBCSdybiT9TODRS3cYfNT5J5X5hBJJVe866BgtI=; b=kA0DAAgB6iDy2pc3iXMByyZiAGXyX0rI7fOi4Xjup8azpTeJFQqrURDy/918enT1V1KDsSphL okCMwQAAQgAHRYhBEtCqM8H8pnVVJd+7+og8tqXN4lzBQJl8l9KAAoJEOog8tqXN4lzgAUP/1li OsqplmKKhbRpGwE7cUqlp3tEhxaQGOjHD/A7EFkj1LvRS4f0KVagq2DEVKqlcS+rT14oUpbyFJE yHlaXCUzbmQ+kp2/U/jYxIC4zmRHfNSDOdkQOkaDxrObo4i6x56e2j9jyJJmgY+9tVOmK0boiQ5 3YMJ36Smpw+9uleL1FnnAA4Y60ze3r/VZcre5GW7VAG9S3yHfLii9B0mZtIzWNWI8n8nyp2dUCz fa1fGTv17fzyFEgiADUr33zxZdAgjJ2fK1FZbvaO1JGp74z5MeGS7t0OFuzVmtEAjgLltKJzOzl 5zAAWoCXuea/3C6D+cnXtZ5nHyuKta2IV8YZoeBooYNnihXtGXxkAkXqINnkJGfl6xcRK6YPGz9 +hyj7x/SEGx0gA6PNLc72InNuSdWHRGlOYcvY3jRpIAhBrupqBodDYM9hKqlR9+uanPRfSeC8MZ 7qhkOEeFKMZkiedMOvbT95srvW04KD0Ux2zMkQwm4BwBhD+p97vwR/m4qQjFd3rNEiHeqpWhbtW ANd6emK87VH5wdKWrvxNH9cQCcPIjPrcACyUuQGyNicr8/fDTOYqBtYxIWvp6rEUE3CT0Rhn4sc nQpaVUJ6GNZN++g/IyQfyGwonYStD3N0FodN64dYqzFSRkE3kAR/h7Ukh+pden9gnYx3RB/yDM/ 0WCAJ
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+References: <da4d181d-16b9-4e0f-a744-ac61702e0b63@schaufler-ca.com>
+ <ef972e0088964722adffc596d38b0463@paul-moore.com> <CAHC9VhTkvyWpvkejbFf-VJoTvUKVDGxBDYkKFdNrdgq4jy5i_w@mail.gmail.com>
+ <b5ebbb40-0dda-4595-a058-d5c3a6e800df@schaufler-ca.com> <CAHC9VhQyje1KdbXLKhZ3atgDbf2mNHB409BHtNyE_RSBACpB7g@mail.gmail.com>
+In-Reply-To: <CAHC9VhQyje1KdbXLKhZ3atgDbf2mNHB409BHtNyE_RSBACpB7g@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 13 Mar 2024 22:25:09 -0400
+Message-ID: <CAHC9VhTBOCUKva6ctOXx_E7+2nXMjR_eLaogMQNvEBJ4R_71gA@mail.gmail.com>
+Subject: Re: [PATCH v3] LSM: use 32 bit compatible data types in LSM syscalls.
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: "Dmitry V. Levin" <ldv@strace.io>, LSM List <linux-security-module@vger.kernel.org>, 
+	Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, 
+	John Johansen <john.johansen@canonical.com>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Passing a NULL buffer into the lsm_get_self_attr() syscall is a valid
-way to quickly determine the minimum size of the buffer needed to for
-the syscall to return all of the LSM attributes to the caller.
-Unfortunately we/I broke that behavior in commit d7cf3412a9f6
-("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
-such that it returned an error to the caller; this patch restores the
-original desired behavior of using the NULL buffer as a quick way to
-correctly size the attribute buffer.
+On Wed, Mar 13, 2024 at 9:44=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Wed, Mar 13, 2024 at 6:48=E2=80=AFPM Casey Schaufler <casey@schaufler-=
+ca.com> wrote:
+> > On 3/13/2024 3:37 PM, Paul Moore wrote:
+> > > On Wed, Mar 13, 2024 at 4:07=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > >> On Mar 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > >>> LSM: use 32 bit compatible data types in LSM syscalls.
+> > >>>
+> > >>> Change the size parameters in lsm_list_modules(), lsm_set_self_attr=
+()
+> > >>> and lsm_get_self_attr() from size_t to u32. This avoids the need to
+> > >>> have different interfaces for 32 and 64 bit systems.
+> > >>>
+> > >>> Cc: stable@vger.kernel.org
+> > >>> Fixes: a04a1198088a: ("LSM: syscalls for current process attributes=
+")
+> > >>> Fixes: ad4aff9ec25f: ("LSM: Create lsm_list_modules system call")
+> > >>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > >>> Reported-and-reviewed-by: Dmitry V. Levin <ldv@strace.io>
+> > >>> ---
+> > >>>  include/linux/lsm_hook_defs.h                        |  4 ++--
+> > >>>  include/linux/security.h                             |  8 ++++----
+> > >>>  security/apparmor/lsm.c                              |  4 ++--
+> > >>>  security/lsm_syscalls.c                              | 10 +++++---=
+--
+> > >>>  security/security.c                                  | 12 ++++++--=
+----
+> > >>>  security/selinux/hooks.c                             |  4 ++--
+> > >>>  security/smack/smack_lsm.c                           |  4 ++--
+> > >>>  tools/testing/selftests/lsm/common.h                 |  6 +++---
+> > >>>  tools/testing/selftests/lsm/lsm_get_self_attr_test.c | 10 +++++---=
+--
+> > >>>  tools/testing/selftests/lsm/lsm_list_modules_test.c  |  8 ++++----
+> > >>>  tools/testing/selftests/lsm/lsm_set_self_attr_test.c |  6 +++---
+> > >>>  11 files changed, 38 insertions(+), 38 deletions(-)
+> > >> Okay, this looks better, I'm going to merge this into lsm/stable-6.9
+> > >> and put it through the usual automated testing as well as a kselftes=
+t
+> > >> run to make sure everything there is still okay.  Assuming all goes
+> > >> well and no one raises any objections, I'll likely send this up to
+> > >> Linus tomorrow.
+> > >>
+> > >> Thanks everyone!
+> > >
+> > > Unfortunately it looks like we have a kselftest failure (below).  I'm
+> > > pretty sure that this was working at some point, but it's possible I
+> > > missed it when I ran the selftests previously.  I've got to break for
+> > > a personal appt right now, but I'll dig into this later tonight.
+> >
+> > In v2:
+> >
+> > diff --git a/security/security.c b/security/security.c
+> > index 7035ee35a393..a0f9caf89ae1 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -810,7 +810,7 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, =
+size_t *uctx_len,
+> >         nctx->ctx_len =3D val_len;
+> >         memcpy(nctx->ctx, val, val_len);
+> >
+> > -       if (copy_to_user(uctx, nctx, nctx_len))
+> > +       if (uctx && copy_to_user(uctx, nctx, nctx_len))
+> >                 rc =3D -EFAULT;
+> >
+> >  out:
+> >
+> > This addresses the case where NULL is passed in the call to lsm_get_sel=
+f_attr()
+> > to get the buffer size required.
+>
+> Yeah, thanks.  I didn't get a chance to look at the failure before I
+> had to leave, but now that I'm looking at it I agree.  It looks like
+> it used to work prior to d7cf3412a9f6c, but I broke things when I
+> consolidated the processing into lsm_fill_user_ctx() - oops :/
+>
+> I'll start working on the patch right now and post it as soon as it
+> passes testing.
 
-Cc: stable@vger.kernel.org
-Fixes: d7cf3412a9f6 ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/security.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+The patch posted below passes the kselftests and all my other sanity checks=
+:
 
-diff --git a/security/security.c b/security/security.c
-index 5b2e0a15377d..7e118858b545 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -780,7 +780,9 @@ static int lsm_superblock_alloc(struct super_block *sb)
-  * @id: LSM id
-  * @flags: LSM defined flags
-  *
-- * Fill all of the fields in a userspace lsm_ctx structure.
-+ * Fill all of the fields in a userspace lsm_ctx structure.  If @uctx is NULL
-+ * simply calculate the required size to output via @utc_len and return
-+ * success.
-  *
-  * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
-  * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
-@@ -799,6 +801,10 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
- 		goto out;
- 	}
- 
-+	/* no buffer - return success/0 and set @uctx_len to the req size */
-+	if (!uctx)
-+		goto out;
-+
- 	nctx = kzalloc(nctx_len, GFP_KERNEL);
- 	if (nctx == NULL) {
- 		rc = -ENOMEM;
--- 
-2.44.0
+https://lore.kernel.org/linux-security-module/20240314022202.599471-2-paul@=
+paul-moore.com
 
+--=20
+paul-moore.com
