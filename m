@@ -1,164 +1,149 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE473E468
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 17:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43E71B810;
+	Fri, 15 Mar 2024 18:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710522058; cv=none; b=U4Bjd8QO34NlqDWqIWMlfkK8UokFecQF33+fKjPRBgDFZY3pgS7RuGY6tQnM6EKm+b2S+psFIJyzKT9p7ihFLjuR8RpcvjL5xW4wJBJz7q0BmbFuHpz6NAB11b+GQyCNAm+6ZAIOZqrocZHTkdXBzmv4g6GjoxVKyqr+PFP8ia4=
+	t=1710526245; cv=none; b=M6nxZ0FF/+/5ZgYTQBRxgUBt5ClyGglOLub2lsp0c2QH1ku4jLG494bCS77TnI5gyn7fs+yHxjEHC8gv1V7IT2nBpiNkGNK28ueK/946pMM27vL1hV7cuERX40Ldf5/3VZBGPfdG6QzDF5mNKwEBsRubDZWOT/M+lTbX/rsaBAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710522058; c=relaxed/simple;
-	bh=31Tl3Yg+bKjuBUah7xAGOblXnxSzu++EAcBQm6ADnag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaGXLbXKUnmvvqXat2r6v7baqhCXTa4svEias1FDk/p0mTV2m2zvij7dCFrRGsfaE1uCDxMVOo5GSBvJDI80xp/aOQasYfFy3Ip9OFotXPvufB5EcKyxSU/NTgRyJyHyqVL62GjkOr3orCtQ/PZUHp2OD64VIvnFfw5n3HZMovY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 84EE9625; Fri, 15 Mar 2024 12:00:52 -0500 (CDT)
-Date: Fri, 15 Mar 2024 12:00:52 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+	s=arc-20240116; t=1710526245; c=relaxed/simple;
+	bh=qP8nHFMJofHjWsKPWlJWonj+i8kGEwps7Wxqod3/LYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nblBjGYFC9GrASyImke+ymuJOYd3P2VVNVrAsng9wqahATFW2M4E5rObPzxwZXejzuo5u0HrLTxPQp8AqvtpFm2XlpNNUXeFjpexAaizze/UMPSwU5lHJBGIO4d5hu4/yg0jIipsfiBaBcvYIDpAwBJfb3wsob/UEX2fankOkg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=BZpOY7Gf; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="BZpOY7Gf"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-513dbb5a1f9so996466e87.2;
+        Fri, 15 Mar 2024 11:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1710526240; x=1711131040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZ0fcTtTD0fe4SyWRrePksxxOrhm45+SyvujsTCShkE=;
+        b=BZpOY7Gfxc0fq5sCCAMJNife7+wlXKE5RxnxURWpuSrqQd8HGMwmnzcpiGwRw6grru
+         f0D+x1HDGuuGtrYNd/Mb3eAYoGtxcJSizrH9By5B39nWAr6a32RHrKDoGORoWSlezNeL
+         SN0Ha4YCHPFucob969rsICHJSbdPfnFIb+RAsXoxeR5bcBNqEh9BqvHww1S3puBhB4Hi
+         1JY5jrGdytjM8LPsOK7qMLuW0sE9wEncLeE4KVihFmZllU0C0284Z9/xXmtb/MJSwdXT
+         nk/VrMVp3aG5QogGiFhUWvWR8hZE8Bgu8LUViBw9caS0AIp2vw/dnGEZ9yGoWP0wRaJd
+         p8vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710526240; x=1711131040;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uZ0fcTtTD0fe4SyWRrePksxxOrhm45+SyvujsTCShkE=;
+        b=Ij8FE/aUNhpCXw9QZqL7hOkRtwusZzIlIhau0qqLwtHJUPog7oNUggPwtcC4SsdnKY
+         Vay0jPaaFDkKcl4sXdLYDrHy+xETHNhg6tsAJRRIgHgfLEFm/Wa4+xN3GHjtsl9iVnnu
+         x3XTDfHgDbyVbfOs5JF80vVXTd3lqwrs1na53odaHs10MVOyF0vu1Tqvdg6DLztL7/L3
+         V03gqOHwsc1BMWVTF4zZl+4r/wDWJAQnvQTSwn54MPvsvRgJZdaCCtNc4b/NejM843Hf
+         oIg/gneAyhJdDPbkYj3YiQXVvp7MA0/dOiopi27NOLdVu8oMlMHBgTzCd2KOfIGHnhNI
+         BhOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGmhyByAx3lDcMhrvuRWGCTdxKEhR/vsEh5bHHJUk28T7s21BNaOFX49Hr1YL79cfGYvrcmxxt2bTj3IRHmSBjbTgkWO2S72DGScNJ2/oLlI8FXmzW3WDX2vi5tstlj2oCPn1Do6y+xJUe3aeh948J8brw/TD6NM78e8I/KjeVJmOr6Z0=
+X-Gm-Message-State: AOJu0YwRMDMfrqO5YYZ84PVCDSJjCEtu8lUMY2kqJ6NJyKKf/HO7QtAo
+	FY1ygImY3AyCTAVVtrXU719xBjluCaPOZ4FSMTrP28uJTShFF9Ij6qb8vP/cT3WHAQ==
+X-Google-Smtp-Source: AGHT+IEmiwrd4RrzijlKpRPRn/2mZElzaqpXLjQrJS1Vo5fvprxZg222wGzTFeFiS5qSlSXAJenLSA==
+X-Received: by 2002:a19:3850:0:b0:513:c757:33d9 with SMTP id d16-20020a193850000000b00513c75733d9mr3931656lfj.53.1710526239712;
+        Fri, 15 Mar 2024 11:10:39 -0700 (PDT)
+Received: from ddev.DebianHome (dynamic-095-119-217-226.95.119.pool.telefonica.de. [95.119.217.226])
+        by smtp.gmail.com with ESMTPSA id jx11-20020a170906ca4b00b00a46937bc44esm510480ejb.135.2024.03.15.11.10.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Mar 2024 11:10:39 -0700 (PDT)
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+To: linux-security-module@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Khadija Kamran <kamrankhadijadj@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
 	Casey Schaufler <casey@schaufler-ca.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] lsm: handle the NULL buffer case in lsm_fill_user_ctx()
-Message-ID: <20240315170052.GA310015@mail.hallyn.com>
-References: <20240314022202.599471-2-paul@paul-moore.com>
- <20240315150208.GA307433@mail.hallyn.com>
- <7956284d-5687-465d-bbcc-d45435dac42e@schaufler-ca.com>
- <20240315161345.GA309097@mail.hallyn.com>
- <CAHC9VhS245LRsa3DhdkZ-u3+qvroygsyBm2q5mZWkOW8eOKOdQ@mail.gmail.com>
- <20240315162831.GA309358@mail.hallyn.com>
- <CAHC9VhRNG-uxJRTtbRO9o-G6F9JGWWtM8hR_ofFRzrcBRxDcUg@mail.gmail.com>
+	Alexei Starovoitov <ast@kernel.org>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Guillaume Nault <gnault@redhat.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Alfred Piccioni <alpic@google.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [RFC PATCH 2/2] selinux: wire up new execstack LSM hook
+Date: Fri, 15 Mar 2024 19:08:47 +0100
+Message-ID: <20240315181032.645161-1-cgzones@googlemail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRNG-uxJRTtbRO9o-G6F9JGWWtM8hR_ofFRzrcBRxDcUg@mail.gmail.com>
 
-On Fri, Mar 15, 2024 at 12:42:27PM -0400, Paul Moore wrote:
-> On Fri, Mar 15, 2024 at 12:28 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > On Fri, Mar 15, 2024 at 12:19:05PM -0400, Paul Moore wrote:
-> > > On Fri, Mar 15, 2024 at 12:13 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > On Fri, Mar 15, 2024 at 09:08:47AM -0700, Casey Schaufler wrote:
-> > > > > On 3/15/2024 8:02 AM, Serge E. Hallyn wrote:
-> > > > > > On Wed, Mar 13, 2024 at 10:22:03PM -0400, Paul Moore wrote:
-> > > > > >> Passing a NULL buffer into the lsm_get_self_attr() syscall is a valid
-> > > > > >> way to quickly determine the minimum size of the buffer needed to for
-> > > > > >> the syscall to return all of the LSM attributes to the caller.
-> > > > > >> Unfortunately we/I broke that behavior in commit d7cf3412a9f6
-> > > > > >> ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
-> > > > > >> such that it returned an error to the caller; this patch restores the
-> > > > > >> original desired behavior of using the NULL buffer as a quick way to
-> > > > > >> correctly size the attribute buffer.
-> > > > > >>
-> > > > > >> Cc: stable@vger.kernel.org
-> > > > > >> Fixes: d7cf3412a9f6 ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
-> > > > > >> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > > > > >> ---
-> > > > > >>  security/security.c | 8 +++++++-
-> > > > > >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> > > > > >>
-> > > > > >> diff --git a/security/security.c b/security/security.c
-> > > > > >> index 5b2e0a15377d..7e118858b545 100644
-> > > > > >> --- a/security/security.c
-> > > > > >> +++ b/security/security.c
-> > > > > >> @@ -780,7 +780,9 @@ static int lsm_superblock_alloc(struct super_block *sb)
-> > > > > >>   * @id: LSM id
-> > > > > >>   * @flags: LSM defined flags
-> > > > > >>   *
-> > > > > >> - * Fill all of the fields in a userspace lsm_ctx structure.
-> > > > > >> + * Fill all of the fields in a userspace lsm_ctx structure.  If @uctx is NULL
-> > > > > >> + * simply calculate the required size to output via @utc_len and return
-> > > > > >> + * success.
-> > > > > >>   *
-> > > > > >>   * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
-> > > > > >>   * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
-> > > > > >> @@ -799,6 +801,10 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
-> > > > > >>            goto out;
-> > > > > >>    }
-> > > > > >>
-> > > > > >> +  /* no buffer - return success/0 and set @uctx_len to the req size */
-> > > > > >> +  if (!uctx)
-> > > > > >> +          goto out;
-> > > > > > If the user just passes in *uctx_len=0, then they will get -E2BIG
-> > > > > > but still will get the length in *uctx_len.
-> > > > >
-> > > > > Yes.
-> > > > >
-> > > > > > To use it this new way, they have to first set *uctx_len to a
-> > > > > > value larger than nctx_len could possibly be, else they'll...
-> > > > > > still get -E2BIG.
-> > > > >
-> > > > > Not sure I understand the problem. A return of 0 or E2BIG gets the
-> > > > > caller the size.
-> > > >
-> > > > The problem is that there are two ways of doing the same thing, with
-> > > > different behavior.  People are bound to get it wrong at some point,
-> > > > and it's more corner cases to try and maintain (once we start).
-> > >
-> > > I have a different perspective on this, you can supply either a NULL
-> > > buffer and/or a buffer that is too small, including a size of zero,
-> > > and you'll get back an -E2BIG and a minimum buffer size.  What's the
-> > > old wisdom, be conservative in what you send and liberal in what you
-> > > accept?
-> >
-> > But if you pass a NULL uctx, then surely you should send *uctx_len=0.
-> > And that is already handled.
-> 
-> Why should we assume that userspace is always going to behave a
-> certain way?  Userspace is going to do crazy stuff, that's a given, I
-> just want to make sure that we protect ourselves against the really
-> crazy stuff, and if we can do something useful with the moderately
-> crazy stuff I think we should.
-> 
-> > What you are adding is that the user can pass NULL uctx, but a large
-> > uctx_len value.
-> >
-> > Perhaps should change my objection, and say that I would prefer the
-> > comment fix to suggest passing in uctx_len=0 and uctx=NULL, and expect
-> > a -E2BIG.  The NULL check can stay (though I still think it should
-> > return -E2BIG).
-> >
-> > Because with the current comment update, the user may pass in
-> > uctx=NULL, but the actual rv will change between 0 and -E2BIG
-> > depending on the uctx_len they sent in.  Which is whack, since
-> > the incoming value means nothing.
-> 
-> I think that's a desirable behavior, if you pass in a NULL buffer
-> we'll provide you with the required size and return -E2BIG if the size
-> you gave us was too small, and zero/success if the size you provided
-> was adequate.
-> 
-> Maybe I'm being stupid and this really is "whack", but you've got to
-> help me understand what harm can come from the behavior above.
+Perform a process { execstack } check unless virtual memory is marked
+executable by default.
 
-Returning success if uctx==NULL and uctx_len is big enough sends the
-message that this -sending a non-zero length and uctx=NULL is a
-recommended use case.  It should not be a recommended use.
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ security/selinux/hooks.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-If the user wants to find out the size of the buffer, they can already
-do so more reliably in the pre-existing way, passing in a *length=0 (and
-a NULL or random uctx).  I say more reliable, because they can predict
-the function return value in this case: -E2BIG.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index a0fde0641f77..daf901916836 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -113,6 +113,8 @@ struct selinux_state selinux_state;
+ /* SECMARK reference count */
+ static atomic_t selinux_secmark_refcount = ATOMIC_INIT(0);
+ 
++static int default_noexec __ro_after_init;
++
+ #ifdef CONFIG_SECURITY_SELINUX_DEVELOP
+ static int selinux_enforcing_boot __initdata;
+ 
+@@ -2221,6 +2223,18 @@ static int selinux_vm_enough_memory(struct mm_struct *mm, long pages)
+ 	return cap_sys_admin;
+ }
+ 
++static int selinux_vm_execstack(void)
++{
++	u32 sid;
++
++	if (!default_noexec)
++		return 0;
++
++	sid = current_sid();
++	return avc_has_perm(sid, sid, SECCLASS_PROCESS,
++			    PROCESS__EXECSTACK, NULL);
++}
++
+ /* binprm security operations */
+ 
+ static u32 ptrace_parent_sid(void)
+@@ -3767,8 +3781,6 @@ static int selinux_file_ioctl_compat(struct file *file, unsigned int cmd,
+ 	return selinux_file_ioctl(file, cmd, arg);
+ }
+ 
+-static int default_noexec __ro_after_init;
+-
+ static int file_map_prot_check(struct file *file, unsigned long prot, int shared)
+ {
+ 	const struct cred *cred = current_cred();
+@@ -7120,6 +7132,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(quota_on, selinux_quota_on),
+ 	LSM_HOOK_INIT(syslog, selinux_syslog),
+ 	LSM_HOOK_INIT(vm_enough_memory, selinux_vm_enough_memory),
++	LSM_HOOK_INIT(vm_execstack, selinux_vm_execstack),
+ 
+ 	LSM_HOOK_INIT(netlink_send, selinux_netlink_send),
+ 
+-- 
+2.43.0
 
-So the only way uctx==NULL and uctx_len!=0 should happen is by accident,
-and in that case sending back 'success' is misleading.  
-
-> ...  What's the
-> old wisdom, be conservative in what you send and liberal in what you
-> accept?
-
-If you've received garbage, you should let the sender know, rather than
-return 'success' in the hopes that it wasn't important.
-
-But anyway I'll stop here - it doesn't break anything directly, I just
-think it's a bad API with the potential for future harder to spot bugs.
-
--serge
