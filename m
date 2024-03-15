@@ -1,99 +1,92 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B5F24B26;
-	Fri, 15 Mar 2024 12:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB20376E6;
+	Fri, 15 Mar 2024 13:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710507267; cv=none; b=YGhMn57Rn4SQYXQNVtDyq+57hPmIJMhH51zz945yBHY2sB5g8oG+65OoQNfxP0+ASLUi5xBFcOmOCfaunXC3r5g50TdOSVy8oGRM0MPXnXBTbv71NHkHbOZOYaupbkoVRDnU6Omi6f80f7UIS+tLtRdqeafh8QPohwLDLAr3LP0=
+	t=1710509365; cv=none; b=HEurv0IAUwKm1NwsoEJGumBghN5LjZws7Wd5j+h2vSqjOi1BJWgXVj8Jme9mfeJrMN9tT9w7pnHghBqy09E/m+yfgsmf0mPhnRnmPG8ZbZESA64wCcf2Uya1jf952OxOUiq1JajQqhbeGUlhdqWP41QpCXlUErIQEJCSxOKRh0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710507267; c=relaxed/simple;
-	bh=E4oIpGUjcQSTl3JXS+C6RTIuU3+bX3dPPhcam3xldJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UVbJkMgEkkGfJQCfOeQ+FKhuxGLFEDDTqA1PfytWr6dGuTWtH3O/WzpamVtQJVhlAgXK3+e9bqYp4hnkQi89jY/bCyjHT3jaAIeFH7K5bBuT1t3lHAhmDYDwvPZvYQNtno4WRhxgtOHoxRU4GsbBeYMksBUzn9cQey6OMsfL8kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=KCmSqt4G; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	s=arc-20240116; t=1710509365; c=relaxed/simple;
+	bh=Vb6QoET5XlbVi8dY8PNk86MFBYpawiqOsxptI1/cIE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qb+JFPb+tiKOs5e0KalibMd77zDkzr13FNpFStm/7iX4g9Fa4mwnF7FZYHBBZwHFXeekHPvrBbSjjpSyx4E80U/tmfFwszTx9XTDQLcvCZVb18l3+ZwiScbBUKdyd+3axg/t3HSOFjidFtVKjAbvfudo/nM3UuXSeUWrtjXBTm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuuIXcWd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="KCmSqt4G"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-512f892500cso2335411e87.3;
-        Fri, 15 Mar 2024 05:54:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1710507264; x=1711112064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MuxIbiM+wW54yLy6pCcfPUZ6XhpT22cxtXLZoX6Fib0=;
-        b=KCmSqt4GwEN4HF7hVM+gVJRr0R1dU68e5PYqe/moC9xY/FJ8RKA67W332tcB4wLX4M
-         WDcf3iheQ6Xi08nGoELdt3TlJvP4oz/odEARt13Lp8Y0m6MQysPakR3APLgYF4iDeH46
-         Dec9cbHe5oYmLFIcvuCmMlRLrpl2SatDOGRLV/9z2c1qg/X5IOSEMn0JUaubbtgy5iaE
-         E/7snpEmprE6ST/xD472MZErUBp4TVG110BcX+g1uEfGP+ARxsKZtFOYrMWUUISv4m7n
-         gx74Dd6crtBU3s0JchQq5q4tyHlvk7ixEPrMbFLu6UAopqSiG42HGm6HFKCelXBhhw+w
-         hsxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710507264; x=1711112064;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MuxIbiM+wW54yLy6pCcfPUZ6XhpT22cxtXLZoX6Fib0=;
-        b=pzKKwA2tsQHauZPdn0SVHgb8ErzgkFpK1gWv1598X90CXSKSEkpvXqPEHdwEZhRz9T
-         iIPw3WdxJBjASHbv0bCiDGAf5j1nJK+lPwFgsUqghlEzZtKCSee7GE0EM9+XagtGhhcH
-         eRlRToE+9p6tXF1oHBN6hLAQPBt4afpJPzveyZQFtSsJOhy+UkjyJSqYKx2K9rSxaecP
-         isn6062py6wkuS1/ZqHEB6FT/BuxODTpR4H6zBoaQ6gagqwCEtfl3oNHnZH8tDjZd06t
-         LGKljsImivWMP3VrV/VlGZ1I/Fr7v0tF8rsEcNKsCa0R3IYPMSfrtfDeeUzFoctUYbv6
-         EBHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvgfrRHqVwb7mNnRvlsSM/DXpBi9hLy1hhluYj4YlUGzgVuDmWE5wyHhxStTyUEy74jzcPRLg+scrP3so7u1x7ltWnpuWh665cg4Y1
-X-Gm-Message-State: AOJu0YwwtkntOhcdN0sEZpSwUhXXIeNGhMyadgRgpm4/4QRkShAo1e5z
-	5XKhL9gTnqZZDzquxwE7XMtpC4le/lZhA46Vu+kPWLzHsxLcH//3rTJtbdeJwkbkhQ==
-X-Google-Smtp-Source: AGHT+IEipLGp08bHsPqaYMLKMTmQa7twuXnXbiBCI11NzLPgQFcMvL99rM4y7LCVzfirSdXt0hWWMQ==
-X-Received: by 2002:ac2:5b11:0:b0:513:d030:f313 with SMTP id v17-20020ac25b11000000b00513d030f313mr2548364lfn.32.1710507263882;
-        Fri, 15 Mar 2024 05:54:23 -0700 (PDT)
-Received: from ddev.DebianHome (dynamic-095-119-217-226.95.119.pool.telefonica.de. [95.119.217.226])
-        by smtp.gmail.com with ESMTPSA id r13-20020a170906364d00b00a465f8259c3sm1672917ejb.125.2024.03.15.05.54.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 05:54:23 -0700 (PDT)
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-To: linux-security-module@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] yama: document function parameter
-Date: Fri, 15 Mar 2024 13:54:10 +0100
-Message-ID: <20240315125418.273104-2-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240315125418.273104-1-cgzones@googlemail.com>
-References: <20240315125418.273104-1-cgzones@googlemail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuuIXcWd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6122CC433F1;
+	Fri, 15 Mar 2024 13:29:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710509364;
+	bh=Vb6QoET5XlbVi8dY8PNk86MFBYpawiqOsxptI1/cIE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AuuIXcWdjVgqawPveKoDdoZZQGM7YiX17835SOPCU4pqi2cRrbHDlcQEGm5ZyyE0a
+	 wpy82qGfmG/5dNwQ9PmDOaLTFQ3RvoyCQirpcuRrhMjlg+x6vkdUNiTDLNO6VU52vl
+	 a2hnVKTy1b4VcfPqaCkEUN/aEK1i+0xFXvRXpbEVJeFfGxohMFB8n1F//nHNg0lf3P
+	 PhWvMP0ZeelNw8cVsrpXwEeFzKLlg8KrWODtEGN0haPrSFKRju9lrRelW4X4F14Itq
+	 yFTXodGlXL1IZEYa7A261KVUgLmDWUxN5Qv9z6/hTgumIb9xMCAzM+jZrVysm6hq2o
+	 dKkSL4C1vscUw==
+Date: Fri, 15 Mar 2024 14:29:17 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Aleksandr Nogikh <nogikh@google.com>, 
+	syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>, axboe@kernel.dk, jmorris@namei.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [syzbot] [hfs] general protection fault in tomoyo_check_acl (3)
+Message-ID: <20240315-zugerechnet-abserviert-36a416bde350@brauner>
+References: <000000000000fcfb4a05ffe48213@google.com>
+ <0000000000009e1b00060ea5df51@google.com>
+ <20240111092147.ywwuk4vopsml3plk@quack3>
+ <bbeeb617-6730-4159-80b1-182841925cce@I-love.SAKURA.ne.jp>
+ <20240314155417.aysvaktvvqxc34zb@quack3>
+ <CANp29Y6uevNW1SmXi_5muEeruP0TVh9Y9xwhgKO==J3fh8oa=w@mail.gmail.com>
+ <20240314172731.vj4tspj6yudztmxu@quack3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240314172731.vj4tspj6yudztmxu@quack3>
 
-Document the unused function parameter of yama_relation_cleanup() to
-please kernel doc warnings.
+On Thu, Mar 14, 2024 at 06:27:31PM +0100, Jan Kara wrote:
+> Hi Aleksandr,
+> 
+> On Thu 14-03-24 17:21:30, Aleksandr Nogikh wrote:
+> > Yes, the CONFIG_BLK_DEV_WRITE_MOUNTED=n change did indeed break our C
+> > executor code (and therefore our C reproducers). I posted a fix[1]
+> > soon afterwards, but the problem is that syzbot will keep on using old
+> > reproducers for old bugs. Syzkaller descriptions change over time, so
+> > during bisection and patch testing we have to use the exact syzkaller
+> > revision that detected the original bug. All older syzkaller revisions
+> > now neither find nor reproduce fs bugs on newer Linux kernel revisions
+> > with CONFIG_BLK_DEV_WRITE_MOUNTED=n.
+> 
+> I see, thanks for explanation!
+> 
+> > If the stream of such bisection results is already bothering you and
+> > other fs people, a very quick fix could be to ban this commit from the
+> > possible bisection results (it's just a one line change in the syzbot
+> > config). Then such bugs would just get gradually obsoleted by syzbot
+> > without any noise.
+> 
+> It isn't bothering me as such but it results in
+> CONFIG_BLK_DEV_WRITE_MOUNTED=n breaking all fs-related reproducers and thus
+> making it difficult to evaluate whether the reproducer was somehow
+> corrupting the fs image or not. Practically it means closing most
+> fs-related syzbot bugs and (somewhat needlessly) starting over from scratch
+> with search for reproducers. I'm OK with that although it is a bit
+> unfortunate... But I'm pretty sure within a few months syzbot will deliver
+> a healthy portion of new issues :)
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- security/yama/yama_lsm.c | 1 +
- 1 file changed, 1 insertion(+)
+Fwiw, my take on this is that if an active subsystem (responsive to
+syzbot bugs and whatnot) is not able to fix a bug within months given a
+reproducer then it's likely that the reproducer is not all that useful.
 
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 49dc52b454ef..f8e4acd41b72 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -111,6 +111,7 @@ static void report_access(const char *access, struct task_struct *target,
- 
- /**
-  * yama_relation_cleanup - remove invalid entries from the relation list
-+ * @work: unused
-  *
-  */
- static void yama_relation_cleanup(struct work_struct *work)
--- 
-2.43.0
-
+So by closing that issue and we're hopefully getting a better
+reproducer.
