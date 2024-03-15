@@ -1,515 +1,80 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7C03E48E
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 14:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8EF3838C
+	for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 15:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710514786; cv=none; b=MY+6+w50q6EyFYtcwi2TJ0WUhI0LymsF2zJn6EplDM65pAsMhIdU7PpBlL/RxVGyQ11+kjHeoJbp68RtLbv1qp48D/P0VhP53r7MpbhYkscNUaALuZaAwP5970RHiExg476nUx09TfPE1r6esMS/y0y0bECvZ9SsMh9/Ldzo8lY=
+	t=1710515009; cv=none; b=I81Njxvy2FziOth16XePE7H4WNCrzEMvcNeUC1kA8hbSULvIbOqGxHS2vVrOCnG0iM+TJ8ugIFFunlnDCMv0lStUnzfBedLxktZduhuNoU+XhQmlTBMWwIEbpfgzElOfy/8yjf4Iv6xGTcRHy7UA97P2HKBoyf43AXqczZOVaXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710514786; c=relaxed/simple;
-	bh=wo/rwevH6BBPxAwOVWPsa+Y6SrIThf8W4tKxO+X738w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ChxxeIEaIXqoJnOgJ8vnvN92zzhcv0Zlu+YG2lKn7uiz5GSCJopMtk3GGBGB3Szpu5lM2dwXs5EmQezPxOPY1iDtcYRe2L2VzEmklgrxLmd3uQ1PhtuEXMun3MZsadVonggsEC2kieOOzYRCsoX9Lgh21HA/mfRLcPMYQO0PApg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Lyfx3weT; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1710515009; c=relaxed/simple;
+	bh=X2wT/BzxQKN1MciyzH4oQdmRg/MDDXfK0mOlDaA3dS8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s4GNUF/l3JBQUXlAlYj4GTGS7glsfpECLbub6qJg6NIsugAyNlLmN+E2HuJY1p9VB7K5Yzg4pOT64EfMORfAbgFPkGK+oMMTeHYl0xg6OdZmPU7WacMQTrOg7iiA9HlAsIw20TpvHLlh7IWC6LDQ8nflXlEIiJJuEVqmf2j3Opk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=netflix.com; spf=pass smtp.mailfrom=netflix.com; dkim=pass (1024-bit key) header.d=netflix.com header.i=@netflix.com header.b=kEzOciAj; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=netflix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netflix.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Lyfx3weT"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Tx6pr53W6zVyn;
-	Fri, 15 Mar 2024 15:59:32 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Tx6pq5t2vzMpnPs;
-	Fri, 15 Mar 2024 15:59:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710514772;
-	bh=wo/rwevH6BBPxAwOVWPsa+Y6SrIThf8W4tKxO+X738w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Lyfx3weTwSVYSBsYSCVKOZdIsnm/GsUf9IiSMJAWxNdJWw1koe4/C0+1JkKU5HxrZ
-	 7FYN3laSL/4Eokd+jknWDTkA9PlclUo3SqbY1dt3rbggiJ94rwWSoiHqhTLxAMXMpN
-	 C5kHJ21v57VucvhbaWBLqK7FWreH55oi2i+I8UXc=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@chromium.org>,
-	Allen Webb <allenwebb@google.com>,
-	Dmitry Torokhov <dtor@google.com>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <repnop@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	Dave Chinner <david@fromorbit.com>
-Subject: [RFC PATCH] fs: Add an use vfs_get_ioctl_handler()
-Date: Fri, 15 Mar 2024 15:58:38 +0100
-Message-ID: <20240315145848.1844554-1-mic@digikod.net>
-In-Reply-To: <CAHC9VhRojXNSU9zi2BrP8z6JmOmT3DAqGNtinvvz=tL1XhVdyg@mail.gmail.com>
-References: <CAHC9VhRojXNSU9zi2BrP8z6JmOmT3DAqGNtinvvz=tL1XhVdyg@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=netflix.com header.i=@netflix.com header.b="kEzOciAj"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a467322d52eso246386066b.2
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 08:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netflix.com; s=google; t=1710515006; x=1711119806; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X2wT/BzxQKN1MciyzH4oQdmRg/MDDXfK0mOlDaA3dS8=;
+        b=kEzOciAjMA5phAV/00wPYG5sZcTzbhJyA9Yo2E82IIOMsTSH2p7d4JDKqicRbudlGY
+         g4wWMPRzq/lvF25JBhalwacac20xpAEuIVEq9I3T9yhUNNs5Rsj7WvOwmzN4fuYgzOdH
+         veJ4op9RJEK6qhSJvLmpNiGp50NzIQF/Ryfy8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710515006; x=1711119806;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X2wT/BzxQKN1MciyzH4oQdmRg/MDDXfK0mOlDaA3dS8=;
+        b=DBm7l7uHzQjN0g9hXNPD06nmAGnCnzdMDH+YQiGsKpZ7NiivG65aOWXJ2YWk0EkWB4
+         5UO9r2O/prKXl6fCeeUNNyCEZLXwHbGXvSLEfTgbfw302zVHyNykfPaFnYg5EBGmEbR6
+         VJCB0wLLiZWmesRyP2h0EBvlFcFQVHNzc2L3VAhaP44S/r+XurUxRPm9KhuuVJUCi3Yc
+         8yGtl/6u/YnialQKWjKQX/HI13YBqDmljgHLEqFoiPe3CVKMYyp2TL27JVFryI8FALPp
+         aUtLz29DPWIFYRn2qAiwC5xfg58veJHxoMWSQ4SkG9Mn05WG2nHkI7ZFgGCqi60W4WdX
+         VgUA==
+X-Gm-Message-State: AOJu0Yy+AaA4Z0VWHjcSJK0i8gQRHaTDtogzgn9XwD+evDteXlhPHHhp
+	ojtJsYc8amoduMUD9erXv4pgx9xOKu6fMIYmx4IikNSR4mOngaMX1EPdFoY6ft3U5wvW9gFKK42
+	n0E2lWVN3r/UVEjoCe8hXlaAhLvWv9LLNrUEfxw==
+X-Google-Smtp-Source: AGHT+IGWgmfkja/H4b5nneN2aa04dXN3RKuMZKfXyBOXRkigwPhRJyr2zzT1SFedI9QSjahv9+IVHf26dBfqo5+priM=
+X-Received: by 2002:a17:906:b899:b0:a3f:5ad2:1ff0 with SMTP id
+ hb25-20020a170906b89900b00a3f5ad21ff0mr3527043ejb.46.1710515006228; Fri, 15
+ Mar 2024 08:03:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20240315113828.258005-1-cgzones@googlemail.com> <20240315113828.258005-7-cgzones@googlemail.com>
+In-Reply-To: <20240315113828.258005-7-cgzones@googlemail.com>
+From: Tycho Andersen <tandersen@netflix.com>
+Date: Fri, 15 Mar 2024 09:03:14 -0600
+Message-ID: <CABp92JBZXcfNgh=0Np0uH-XtxioqHXL2SeTQQ=Fc7ZeGNuFQjg@mail.gmail.com>
+Subject: Re: [PATCH 07/10] kernel: use new capable_any functionality
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Peng Zhang <zhangpeng.00@bytedance.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a new vfs_get_ioctl_handler() helper to identify if an IOCTL command
-is handled by the first IOCTL layer.  Each IOCTL command is now handled
-by a dedicated function, and all of them use the same signature.
+On Fri, Mar 15, 2024 at 5:39=E2=80=AFAM Christian G=C3=B6ttsche
+<cgzones@googlemail.com> wrote:
+>
+> Use the new added capable_any function in appropriate cases, where a
+> task is required to have any of two capabilities.
+>
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-Apart from the VFS, this helper is also intended to be used by Landlock
-to cleanly categorize VFS IOCTLs and create appropriate security
-policies.
 
-This is an alternative to a first RFC [1] and a proposal for a new LSM
-hook [2].
-
-By dereferencing some pointers only when required, this should also
-slightly improve do_vfs_ioctl().
-
-Remove (double) pointer castings on put_user() calls.
-
-Remove potential double vfs_ioctl() call for FIONREAD.
-
-Fix ioctl_file_clone_range() return type from long to int.
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Link: https://lore.kernel.org/r/20240219183539.2926165-1-mic@digikod.net [1]
-Link: https://lore.kernel.org/r/20240309075320.160128-2-gnoack@google.com [2]
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- fs/ioctl.c         | 213 +++++++++++++++++++++++++++++++--------------
- include/linux/fs.h |   6 ++
- 2 files changed, 155 insertions(+), 64 deletions(-)
-
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 76cf22ac97d7..d2b6691ded16 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -56,8 +56,9 @@ long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- }
- EXPORT_SYMBOL(vfs_ioctl);
- 
--static int ioctl_fibmap(struct file *filp, int __user *p)
-+static int ioctl_fibmap(struct file *filp, unsigned int fd, unsigned long arg)
- {
-+	int __user *p = (void __user *)arg;
- 	struct inode *inode = file_inode(filp);
- 	struct super_block *sb = inode->i_sb;
- 	int error, ur_block;
-@@ -197,11 +198,12 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
- }
- EXPORT_SYMBOL(fiemap_prep);
- 
--static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
-+static int ioctl_fiemap(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	struct fiemap fiemap;
- 	struct fiemap_extent_info fieinfo = { 0, };
- 	struct inode *inode = file_inode(filp);
-+	struct fiemap __user *ufiemap = (void __user *)arg;
- 	int error;
- 
- 	if (!inode->i_op->fiemap)
-@@ -228,6 +230,18 @@ static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
- 	return error;
- }
- 
-+static int ioctl_figetbsz(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(file);
-+	int __user *argp = (void __user *)arg;
-+
-+	/* anon_bdev filesystems may not have a block size */
-+	if (!inode->i_sb->s_blocksize)
-+		return -EINVAL;
-+
-+	return put_user(inode->i_sb->s_blocksize, argp);
-+}
-+
- static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 			     u64 off, u64 olen, u64 destoff)
- {
-@@ -249,9 +263,15 @@ static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 	return ret;
- }
- 
--static long ioctl_file_clone_range(struct file *file,
--				   struct file_clone_range __user *argp)
-+static int ioctl_ficlone(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	return ioctl_file_clone(file, arg, 0, 0, 0);
-+}
-+
-+static int ioctl_file_clone_range(struct file *file, unsigned int fd,
-+				  unsigned long arg)
- {
-+	struct file_clone_range __user *argp = (void __user *)arg;
- 	struct file_clone_range args;
- 
- 	if (copy_from_user(&args, argp, sizeof(args)))
-@@ -292,6 +312,27 @@ static int ioctl_preallocate(struct file *filp, int mode, void __user *argp)
- 			sr.l_len);
- }
- 
-+static int ioctl_resvsp(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *p = (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, 0, p);
-+}
-+
-+static int ioctl_unresvsp(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *p = (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, FALLOC_FL_PUNCH_HOLE, p);
-+}
-+
-+static int ioctl_zero_range(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *p = (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, FALLOC_FL_ZERO_RANGE, p);
-+}
-+
- /* on ia32 l_start is on a 32-bit boundary */
- #if defined CONFIG_COMPAT && defined(CONFIG_X86_64)
- /* just account for different alignment */
-@@ -321,28 +362,41 @@ static int compat_ioctl_preallocate(struct file *file, int mode,
- }
- #endif
- 
--static int file_ioctl(struct file *filp, unsigned int cmd, int __user *p)
-+static ioctl_handler_t file_ioctl(unsigned int cmd)
- {
- 	switch (cmd) {
- 	case FIBMAP:
--		return ioctl_fibmap(filp, p);
-+		return ioctl_fibmap;
- 	case FS_IOC_RESVSP:
- 	case FS_IOC_RESVSP64:
--		return ioctl_preallocate(filp, 0, p);
-+		return ioctl_resvsp;
- 	case FS_IOC_UNRESVSP:
- 	case FS_IOC_UNRESVSP64:
--		return ioctl_preallocate(filp, FALLOC_FL_PUNCH_HOLE, p);
-+		return ioctl_unresvsp;
- 	case FS_IOC_ZERO_RANGE:
--		return ioctl_preallocate(filp, FALLOC_FL_ZERO_RANGE, p);
-+		return ioctl_zero_range;
- 	}
- 
--	return -ENOIOCTLCMD;
-+	return NULL;
-+}
-+
-+static int ioctl_fioclex(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	set_close_on_exec(fd, 1);
-+	return 0;
-+}
-+
-+static int ioctl_fionclex(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	set_close_on_exec(fd, 0);
-+	return 0;
- }
- 
--static int ioctl_fionbio(struct file *filp, int __user *argp)
-+static int ioctl_fionbio(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	unsigned int flag;
- 	int on, error;
-+	int __user *argp = (void __user *)arg;
- 
- 	error = get_user(on, argp);
- 	if (error)
-@@ -362,11 +416,11 @@ static int ioctl_fionbio(struct file *filp, int __user *argp)
- 	return error;
- }
- 
--static int ioctl_fioasync(unsigned int fd, struct file *filp,
--			  int __user *argp)
-+static int ioctl_fioasync(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	unsigned int flag;
- 	int on, error;
-+	int __user *argp = (void __user *)arg;
- 
- 	error = get_user(on, argp);
- 	if (error)
-@@ -384,7 +438,22 @@ static int ioctl_fioasync(unsigned int fd, struct file *filp,
- 	return error < 0 ? error : 0;
- }
- 
--static int ioctl_fsfreeze(struct file *filp)
-+static int ioctl_fioqsize(struct file *file, unsigned int fd, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(file);
-+	void __user *argp = (void __user *)arg;
-+
-+	if (S_ISDIR(inode->i_mode) || S_ISREG(inode->i_mode) ||
-+	    S_ISLNK(inode->i_mode)) {
-+		loff_t res = inode_get_bytes(inode);
-+
-+		return copy_to_user(argp, &res, sizeof(res)) ? -EFAULT : 0;
-+	}
-+
-+	return -ENOTTY;
-+}
-+
-+static int ioctl_fsfreeze(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	struct super_block *sb = file_inode(filp)->i_sb;
- 
-@@ -401,7 +470,7 @@ static int ioctl_fsfreeze(struct file *filp)
- 	return freeze_super(sb, FREEZE_HOLDER_USERSPACE);
- }
- 
--static int ioctl_fsthaw(struct file *filp)
-+static int ioctl_fsthaw(struct file *filp, unsigned int fd, unsigned long arg)
- {
- 	struct super_block *sb = file_inode(filp)->i_sb;
- 
-@@ -414,9 +483,9 @@ static int ioctl_fsthaw(struct file *filp)
- 	return thaw_super(sb, FREEZE_HOLDER_USERSPACE);
- }
- 
--static int ioctl_file_dedupe_range(struct file *file,
--				   struct file_dedupe_range __user *argp)
-+static int ioctl_file_dedupe_range(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	struct file_dedupe_range __user *argp = (void __user *)arg;
- 	struct file_dedupe_range *same = NULL;
- 	int ret;
- 	unsigned long size;
-@@ -454,6 +523,14 @@ static int ioctl_file_dedupe_range(struct file *file,
- 	return ret;
- }
- 
-+static int ioctl_fionread(struct file *filp, unsigned int fd, unsigned long arg)
-+{
-+	int __user *argp = (void __user *)arg;
-+	struct inode *inode = file_inode(filp);
-+
-+	return put_user(i_size_read(inode) - filp->f_pos, argp);
-+}
-+
- /**
-  * fileattr_fill_xflags - initialize fileattr with xflags
-  * @fa:		fileattr pointer
-@@ -702,8 +779,9 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
- }
- EXPORT_SYMBOL(vfs_fileattr_set);
- 
--static int ioctl_getflags(struct file *file, unsigned int __user *argp)
-+static int ioctl_getflags(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	unsigned int __user *argp = (void __user *)arg;
- 	struct fileattr fa = { .flags_valid = true }; /* hint only */
- 	int err;
- 
-@@ -713,8 +791,9 @@ static int ioctl_getflags(struct file *file, unsigned int __user *argp)
- 	return err;
- }
- 
--static int ioctl_setflags(struct file *file, unsigned int __user *argp)
-+static int ioctl_setflags(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	unsigned int __user *argp = (void __user *)arg;
- 	struct mnt_idmap *idmap = file_mnt_idmap(file);
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct fileattr fa;
-@@ -733,8 +812,9 @@ static int ioctl_setflags(struct file *file, unsigned int __user *argp)
- 	return err;
- }
- 
--static int ioctl_fsgetxattr(struct file *file, void __user *argp)
-+static int ioctl_fsgetxattr(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	struct fsxattr __user *argp = (void __user *)arg;
- 	struct fileattr fa = { .fsx_valid = true }; /* hint only */
- 	int err;
- 
-@@ -745,8 +825,9 @@ static int ioctl_fsgetxattr(struct file *file, void __user *argp)
- 	return err;
- }
- 
--static int ioctl_fssetxattr(struct file *file, void __user *argp)
-+static int ioctl_fssetxattr(struct file *file, unsigned int fd, unsigned long arg)
- {
-+	struct fsxattr __user *argp = (void __user *)arg;
- 	struct mnt_idmap *idmap = file_mnt_idmap(file);
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct fileattr fa;
-@@ -764,94 +845,98 @@ static int ioctl_fssetxattr(struct file *file, void __user *argp)
- }
- 
- /*
-- * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
-- * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-+ * Return NULL when no handler exists for @cmd, or the appropriate function
-+ * otherwise.  This means that these handlers should never return -ENOIOCTLCMD.
-  *
-  * When you add any new common ioctls to the switches above and below,
-  * please ensure they have compatible arguments in compat mode.
-  */
--static int do_vfs_ioctl(struct file *filp, unsigned int fd,
--			unsigned int cmd, unsigned long arg)
-+ioctl_handler_t vfs_get_ioctl_handler(struct file *filp, unsigned int cmd)
- {
--	void __user *argp = (void __user *)arg;
--	struct inode *inode = file_inode(filp);
--
- 	switch (cmd) {
- 	case FIOCLEX:
--		set_close_on_exec(fd, 1);
--		return 0;
-+		return ioctl_fioclex;
- 
- 	case FIONCLEX:
--		set_close_on_exec(fd, 0);
--		return 0;
-+		return ioctl_fionclex;
- 
- 	case FIONBIO:
--		return ioctl_fionbio(filp, argp);
-+		return ioctl_fionbio;
- 
- 	case FIOASYNC:
--		return ioctl_fioasync(fd, filp, argp);
-+		return ioctl_fioasync;
- 
- 	case FIOQSIZE:
--		if (S_ISDIR(inode->i_mode) || S_ISREG(inode->i_mode) ||
--		    S_ISLNK(inode->i_mode)) {
--			loff_t res = inode_get_bytes(inode);
--			return copy_to_user(argp, &res, sizeof(res)) ?
--					    -EFAULT : 0;
--		}
--
--		return -ENOTTY;
-+		return ioctl_fioqsize;
- 
- 	case FIFREEZE:
--		return ioctl_fsfreeze(filp);
-+		return ioctl_fsfreeze;
- 
- 	case FITHAW:
--		return ioctl_fsthaw(filp);
-+		return ioctl_fsthaw;
- 
- 	case FS_IOC_FIEMAP:
--		return ioctl_fiemap(filp, argp);
-+		return ioctl_fiemap;
- 
- 	case FIGETBSZ:
--		/* anon_bdev filesystems may not have a block size */
--		if (!inode->i_sb->s_blocksize)
--			return -EINVAL;
--
--		return put_user(inode->i_sb->s_blocksize, (int __user *)argp);
-+		return ioctl_figetbsz;
- 
- 	case FICLONE:
--		return ioctl_file_clone(filp, arg, 0, 0, 0);
-+		return ioctl_ficlone;
- 
- 	case FICLONERANGE:
--		return ioctl_file_clone_range(filp, argp);
-+		return ioctl_file_clone_range;
- 
- 	case FIDEDUPERANGE:
--		return ioctl_file_dedupe_range(filp, argp);
-+		return ioctl_file_dedupe_range;
- 
- 	case FIONREAD:
--		if (!S_ISREG(inode->i_mode))
--			return vfs_ioctl(filp, cmd, arg);
-+		if (!S_ISREG(file_inode(filp)->i_mode))
-+			break;
- 
--		return put_user(i_size_read(inode) - filp->f_pos,
--				(int __user *)argp);
-+		return ioctl_fionread;
- 
- 	case FS_IOC_GETFLAGS:
--		return ioctl_getflags(filp, argp);
-+		return ioctl_getflags;
- 
- 	case FS_IOC_SETFLAGS:
--		return ioctl_setflags(filp, argp);
-+		return ioctl_setflags;
- 
- 	case FS_IOC_FSGETXATTR:
--		return ioctl_fsgetxattr(filp, argp);
-+		return ioctl_fsgetxattr;
- 
- 	case FS_IOC_FSSETXATTR:
--		return ioctl_fssetxattr(filp, argp);
-+		return ioctl_fssetxattr;
- 
- 	default:
--		if (S_ISREG(inode->i_mode))
--			return file_ioctl(filp, cmd, argp);
-+		if (S_ISREG(file_inode(filp)->i_mode))
-+			return file_ioctl(cmd);
- 		break;
- 	}
- 
--	return -ENOIOCTLCMD;
-+	/* Forwards call to vfs_ioctl(filp, cmd, arg) */
-+	return NULL;
-+}
-+
-+/*
-+ * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL()'d.
-+ * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-+ */
-+static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-+			unsigned int cmd, unsigned long arg)
-+{
-+	ioctl_handler_t handler = vfs_get_ioctl_handler(filp, cmd);
-+	int ret;
-+
-+	if (!handler)
-+		return -ENOIOCTLCMD;
-+
-+	ret = (*handler)(filp, fd, arg);
-+	/* Makes sure handle() really handles this command. */
-+	if (WARN_ON_ONCE(ret == -ENOIOCTLCMD))
-+		return -ENOTTY;
-+
-+	return ret;
- }
- 
- SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 1fbc72c5f112..92bf421aae83 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1904,6 +1904,12 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
- #define compat_ptr_ioctl NULL
- #endif
- 
-+typedef int (*ioctl_handler_t)(struct file *file, unsigned int fd,
-+			       unsigned long arg);
-+
-+extern ioctl_handler_t vfs_get_ioctl_handler(struct file *filp,
-+					     unsigned int cmd);
-+
- /*
-  * VFS file helper functions.
-  */
--- 
-2.44.0
-
+Reviewed-by: Tycho Andersen <tandersen@netflix.com>
