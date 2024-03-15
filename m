@@ -1,186 +1,142 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9353D45BE7
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 16:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968CE36102;
+	Fri, 15 Mar 2024 16:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710520961; cv=none; b=WrfN4aDOCgtCwjTj0XwymiV7QslHPficJB6fTUSOuaa6bhPWi75PBr+LKSSWwzOjd7KLa2Tw4FprKrBPySxycW/+7xMSZjb7oOSPq5TBF7sh2k9o1G4Goe55fRzyoYkl6Pml+l90u+jpnBaiVSWwQBBXqtpHUb4qL+an9IMpvfw=
+	t=1710521053; cv=none; b=Fd2mEiyOZY1eAdZ4J1VCRP7+C1j2yfEfGI9TmJM3it1razaOg2aOCCAnG4bDI25Kz6moBL7RW+mvNUczI9aykBucRBmcjmjtFQkRjEbkcVqEcqT86W5P6YINbl+flzRdBEy0CjKgLbh0uNJI8z/19R1KjZ4+PrSurMPhfG4JhP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710520961; c=relaxed/simple;
-	bh=J5oMlEU1U6UfP0jrBeuropat7L7sbrGp2O70JVoMCFo=;
+	s=arc-20240116; t=1710521053; c=relaxed/simple;
+	bh=uzYJp0p7W/KnhEZCybrOQ21iTY+W18Is4IY0juHOSkE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N0IKJfHPn6rZYnxEEt30zfxQXLHwIt4GS79kH602Ir0timhlvkG69qJcIdxhKLuMlfV/LdqGsfNXQbrqM+UKwM5lflpoyicKLv4zy3BSdxArxNRzKUhw21M0MyuYidc4N1VG5FbT0oVqJoAE3A2TASUaZE41OMASamOp2n/n0BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eIVRNs1Q; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=g1prlxNeOl1SaEMVfKy3QsajdKiGX/laZ5FZpGKDgybhIvV2QNRpB8ywI1b0XF/pqC9zj6eTCihFDqaXAd4iJojOmelaG1rxVbYcnQlLCXicCI9wrmT1quqbP3fNxmB/ku96GzJB0vTpwEQtCLvvig9MmE8TqMoXqFQYhmt6bUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNTHxGrQ; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eIVRNs1Q"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dcc73148611so2429748276.3
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 09:42:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNTHxGrQ"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6e6cb0f782bso1903500b3a.1;
+        Fri, 15 Mar 2024 09:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710520958; x=1711125758; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1710521051; x=1711125851; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H07gqoqiHhyXpKdPpOzTJjF2W0vO4lvoWppMqc9TUqs=;
-        b=eIVRNs1QN1BfXHzauS4bEp5v7R2MSZ9EcP3uK5DfvueFicnuiw3kd/a0N83JkzuT0/
-         wcRYSfDogW4UN3F4dKQ6sJ9qzD6d9dvRtsbTNI2kvhg7X4NXtdoi1KGsUH+1UDJDUBVu
-         17krgKb0wQdE61g1KZh5IK6VN+Fr8OkoV5FmITDKWKNOw3T9b/etqJmLx5v8T2hxdsSM
-         TDNsUVYwgLIuZ1tVV/FpH0j9sNrJWp+YWI2tLi4dyzJ9EAJIDJ3TjrgWjZVSP63KxxmE
-         xOH5fQ+gGkhRFEVL9kcIFkRx4Ra5cIE1KLmxR+xjf7AMotUU/4Ytu5j+JqCTZb81hNWD
-         DLnw==
+        bh=EwJBRDQaCHTutZqaHKnSum7/I1i3qkduDrBcDoliYfc=;
+        b=eNTHxGrQmEp1tIgOhZUA3ovkSZ/+aFbKld9qwqhtdSw8cEg053Q09WBiDc11LgyFLq
+         /ufXfmLHFgGzPzpTNgXSSp/J98AAg1C3oBm9Nr5vmN/8ECURb0ngp2zvrBHrC49h/YBY
+         sSeFkdFVDwIcpBqjCjVUKz1s3gjfOiPK6QXMCO9NQhvG0oR1P72f4kmoR2zSFdG2jILX
+         sLXVtLIvTrnvq/0I1jQe0vVcWxKhjE6Xwexj70Ahu/G7SijarZLhMu6fnfdHVfeW8/oq
+         dz1WjFLv5gge14gh/820B8UlkaWar2p6ILTtno7CmxQaS/wrShkpRlej5LoEez8x1ywk
+         ayqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710520958; x=1711125758;
+        d=1e100.net; s=20230601; t=1710521051; x=1711125851;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H07gqoqiHhyXpKdPpOzTJjF2W0vO4lvoWppMqc9TUqs=;
-        b=k1Sw77qKINb1++0DdkqWDelhz0XnNnJf7zTECNQfgJPE5mg0XB8ilP8rtUaarAmqQ6
-         I51jXzn0KSt9+E64tt7AiTxyROMUeiNkFzM2aVM23vHTBLlGtpj306j+XsSc+RomnEKL
-         eS4aEox7nFHi1y2Xijvq1WBunOcNhPNCy4MXp82hhE4pSBcwMsqBjUbfovwcdF1SYsYn
-         Vyqk6LEzlznWme6RQXgKbuQm4lPVksjT9G7SLcLvO44IckOo2JIDpi6ebiIAlEySe+HS
-         eUaIBNpeOm37sQ4bjS8jN6WlYhSGUQfjT0VshyHZkcA5vaQz+kZGIQGDf2iS7f6GIsWZ
-         texg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCi4IJvj4v+4YoMslD/j5DNfX4xrWRcD+rGuBFsbeC3XBZmv7h7PNOtInUUUahH7kY+/49dbamyF1CS17qEqpPNQTi/sVzDRLuRCITCwF8R/paz1/Q
-X-Gm-Message-State: AOJu0YyWPAR34tcR8E7j35nmvBVKSptBzKOYEAQvmvrHXWGL9OaRIl4a
-	1fwjueFPPzh94Z4cvPjGeWK9m5NIrLBTgUnrW2bBnywBHPQBDQZJauOjwmeB6xdNOMMlvK8LSkw
-	MrEsPbwiICxToRD8U9P/JhjLxGIwQIv+1R9NfDckU/lKBZ6w=
-X-Google-Smtp-Source: AGHT+IH4P4eNKAhpo5rcVLOdZL276IDsnMSC0q0I10EAKgS09tCOvxtt00k40cyq6P9b56jSoKq4cZagJdRyTGb7NVQ=
-X-Received: by 2002:a25:ce41:0:b0:dcb:f5f9:c062 with SMTP id
- x62-20020a25ce41000000b00dcbf5f9c062mr5912385ybe.14.1710520958524; Fri, 15
- Mar 2024 09:42:38 -0700 (PDT)
+        bh=EwJBRDQaCHTutZqaHKnSum7/I1i3qkduDrBcDoliYfc=;
+        b=WCo0GM/NETc9yWcGtLsDnjtEpi1TUAnbYSSs9kZ0+5yuYeoArp0VLmSFpBI5b6Uoie
+         wtSGTkg67LMC1OjRd0hTOxCeT2oVAOajZVw6QBONumGLROEt7SKOaSJ18qbqrfhlO2TU
+         hDx8jHSl60tyYFSDlETy1LS/J8FQZaNH76otoI/R6KO2CS5LISRY5ws7MQIwsvI+fZ3k
+         BX4hl2yQTbahZKPe/IjIJ29EJoMlYpSKsy06Dy2lxqragFNt/0d+QtZVuUYstuFGWxiF
+         27FfmHbLJ9RvKKOnDY3XChKSd1l2ck+hPDELyQkB9nzHu0qeQ7n9n1WMrCdnnkMuB9R0
+         mI+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVsaD1ug+5xn49EDRhU3/byBne6dvabhZ9cfonqANTN27Z4wwqvFcZrKoq1a8kORo+PEIe4sWMdXps497LPh87SkWFGhdS58ZbvY1OnZh+v70mDgyq+IhGf73khIVtHmtyH
+X-Gm-Message-State: AOJu0Yy/5d1KheylwLEHXkIbvrxIuRykkqbeeBF4dskZTjcl68d7kM98
+	S4pl3479rHDbzQuPw813/giZm7Q94VXa1NLXFYMQb+AA3AXLiUw/8ROuO9RapjUlKcfCZ0OpwOr
+	O4Ue5dxhw2Ug0mnXdcZPGss65c24=
+X-Google-Smtp-Source: AGHT+IHedFw6/rnqxLl3EQNKEdSQVA1QinZCgy8Dszf5K4o1eAXbYCO4NwhZkS4xmW+SFL4MJ0voUf5oFtTMwlTffm4=
+X-Received: by 2002:a05:6a00:a0c:b0:6e6:6a80:aced with SMTP id
+ p12-20020a056a000a0c00b006e66a80acedmr6809034pfh.32.1710521050796; Fri, 15
+ Mar 2024 09:44:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240314022202.599471-2-paul@paul-moore.com> <20240315150208.GA307433@mail.hallyn.com>
- <7956284d-5687-465d-bbcc-d45435dac42e@schaufler-ca.com> <20240315161345.GA309097@mail.hallyn.com>
- <CAHC9VhS245LRsa3DhdkZ-u3+qvroygsyBm2q5mZWkOW8eOKOdQ@mail.gmail.com> <20240315162831.GA309358@mail.hallyn.com>
-In-Reply-To: <20240315162831.GA309358@mail.hallyn.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 15 Mar 2024 12:42:27 -0400
-Message-ID: <CAHC9VhRNG-uxJRTtbRO9o-G6F9JGWWtM8hR_ofFRzrcBRxDcUg@mail.gmail.com>
-Subject: Re: [PATCH] lsm: handle the NULL buffer case in lsm_fill_user_ctx()
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org
+References: <20240315113828.258005-1-cgzones@googlemail.com> <20240315113828.258005-9-cgzones@googlemail.com>
+In-Reply-To: <20240315113828.258005-9-cgzones@googlemail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 15 Mar 2024 09:43:58 -0700
+Message-ID: <CAEf4Bza0cpQM4Vz-JVDanr6b+LmJPxehcvmxX1++WQwBji9-Pg@mail.gmail.com>
+Subject: Re: [PATCH 09/10] bpf: use new capable_any functionality
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc: linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 15, 2024 at 12:28=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com>=
- wrote:
-> On Fri, Mar 15, 2024 at 12:19:05PM -0400, Paul Moore wrote:
-> > On Fri, Mar 15, 2024 at 12:13=E2=80=AFPM Serge E. Hallyn <serge@hallyn.=
-com> wrote:
-> > > On Fri, Mar 15, 2024 at 09:08:47AM -0700, Casey Schaufler wrote:
-> > > > On 3/15/2024 8:02 AM, Serge E. Hallyn wrote:
-> > > > > On Wed, Mar 13, 2024 at 10:22:03PM -0400, Paul Moore wrote:
-> > > > >> Passing a NULL buffer into the lsm_get_self_attr() syscall is a =
-valid
-> > > > >> way to quickly determine the minimum size of the buffer needed t=
-o for
-> > > > >> the syscall to return all of the LSM attributes to the caller.
-> > > > >> Unfortunately we/I broke that behavior in commit d7cf3412a9f6
-> > > > >> ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()=
-")
-> > > > >> such that it returned an error to the caller; this patch restore=
-s the
-> > > > >> original desired behavior of using the NULL buffer as a quick wa=
-y to
-> > > > >> correctly size the attribute buffer.
-> > > > >>
-> > > > >> Cc: stable@vger.kernel.org
-> > > > >> Fixes: d7cf3412a9f6 ("lsm: consolidate buffer size handling into=
- lsm_fill_user_ctx()")
-> > > > >> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > > > >> ---
-> > > > >>  security/security.c | 8 +++++++-
-> > > > >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> > > > >>
-> > > > >> diff --git a/security/security.c b/security/security.c
-> > > > >> index 5b2e0a15377d..7e118858b545 100644
-> > > > >> --- a/security/security.c
-> > > > >> +++ b/security/security.c
-> > > > >> @@ -780,7 +780,9 @@ static int lsm_superblock_alloc(struct super=
-_block *sb)
-> > > > >>   * @id: LSM id
-> > > > >>   * @flags: LSM defined flags
-> > > > >>   *
-> > > > >> - * Fill all of the fields in a userspace lsm_ctx structure.
-> > > > >> + * Fill all of the fields in a userspace lsm_ctx structure.  If=
- @uctx is NULL
-> > > > >> + * simply calculate the required size to output via @utc_len an=
-d return
-> > > > >> + * success.
-> > > > >>   *
-> > > > >>   * Returns 0 on success, -E2BIG if userspace buffer is not larg=
-e enough,
-> > > > >>   * -EFAULT on a copyout error, -ENOMEM if memory can't be alloc=
-ated.
-> > > > >> @@ -799,6 +801,10 @@ int lsm_fill_user_ctx(struct lsm_ctx __user=
- *uctx, u32 *uctx_len,
-> > > > >>            goto out;
-> > > > >>    }
-> > > > >>
-> > > > >> +  /* no buffer - return success/0 and set @uctx_len to the req =
-size */
-> > > > >> +  if (!uctx)
-> > > > >> +          goto out;
-> > > > > If the user just passes in *uctx_len=3D0, then they will get -E2B=
-IG
-> > > > > but still will get the length in *uctx_len.
-> > > >
-> > > > Yes.
-> > > >
-> > > > > To use it this new way, they have to first set *uctx_len to a
-> > > > > value larger than nctx_len could possibly be, else they'll...
-> > > > > still get -E2BIG.
-> > > >
-> > > > Not sure I understand the problem. A return of 0 or E2BIG gets the
-> > > > caller the size.
-> > >
-> > > The problem is that there are two ways of doing the same thing, with
-> > > different behavior.  People are bound to get it wrong at some point,
-> > > and it's more corner cases to try and maintain (once we start).
-> >
-> > I have a different perspective on this, you can supply either a NULL
-> > buffer and/or a buffer that is too small, including a size of zero,
-> > and you'll get back an -E2BIG and a minimum buffer size.  What's the
-> > old wisdom, be conservative in what you send and liberal in what you
-> > accept?
+On Fri, Mar 15, 2024 at 4:39=E2=80=AFAM Christian G=C3=B6ttsche
+<cgzones@googlemail.com> wrote:
 >
-> But if you pass a NULL uctx, then surely you should send *uctx_len=3D0.
-> And that is already handled.
-
-Why should we assume that userspace is always going to behave a
-certain way?  Userspace is going to do crazy stuff, that's a given, I
-just want to make sure that we protect ourselves against the really
-crazy stuff, and if we can do something useful with the moderately
-crazy stuff I think we should.
-
-> What you are adding is that the user can pass NULL uctx, but a large
-> uctx_len value.
+> Use the new added capable_any function in bpf_token_capable() and
+> bpf_net_capable() implementations.
 >
-> Perhaps should change my objection, and say that I would prefer the
-> comment fix to suggest passing in uctx_len=3D0 and uctx=3DNULL, and expec=
-t
-> a -E2BIG.  The NULL check can stay (though I still think it should
-> return -E2BIG).
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> ---
+> v5:
+>    add patch
+> ---
+>  include/linux/bpf.h  | 2 +-
+>  kernel/bpf/syscall.c | 2 +-
+>  kernel/bpf/token.c   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 >
-> Because with the current comment update, the user may pass in
-> uctx=3DNULL, but the actual rv will change between 0 and -E2BIG
-> depending on the uctx_len they sent in.  Which is whack, since
-> the incoming value means nothing.
 
-I think that's a desirable behavior, if you pass in a NULL buffer
-we'll provide you with the required size and return -E2BIG if the size
-you gave us was too small, and zero/success if the size you provided
-was adequate.
+It's actually a nice readability improvement, thanks!
 
-Maybe I'm being stupid and this really is "whack", but you've got to
-help me understand what harm can come from the behavior above.
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
---=20
-paul-moore.com
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 4f20f62f9d63..bdadf3291bec 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -2701,7 +2701,7 @@ static inline int bpf_obj_get_user(const char __use=
+r *pathname, int flags)
+>
+>  static inline bool bpf_token_capable(const struct bpf_token *token, int =
+cap)
+>  {
+> -       return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS=
+_ADMIN));
+> +       return capable_any(cap, CAP_SYS_ADMIN);
+>  }
+>
+>  static inline void bpf_token_inc(struct bpf_token *token)
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index ae2ff73bde7e..a10e6f77002c 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -1175,7 +1175,7 @@ static int map_check_btf(struct bpf_map *map, struc=
+t bpf_token *token,
+>
+>  static bool bpf_net_capable(void)
+>  {
+> -       return capable(CAP_NET_ADMIN) || capable(CAP_SYS_ADMIN);
+> +       return capable_any(CAP_NET_ADMIN, CAP_SYS_ADMIN);
+>  }
+>
+>  #define BPF_MAP_CREATE_LAST_FIELD map_token_fd
+> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> index d6ccf8d00eab..53f491046a8d 100644
+> --- a/kernel/bpf/token.c
+> +++ b/kernel/bpf/token.c
+> @@ -11,7 +11,7 @@
+>
+>  static bool bpf_ns_capable(struct user_namespace *ns, int cap)
+>  {
+> -       return ns_capable(ns, cap) || (cap !=3D CAP_SYS_ADMIN && ns_capab=
+le(ns, CAP_SYS_ADMIN));
+> +       return ns_capable_any(ns, cap, CAP_SYS_ADMIN);
+>  }
+>
+>  bool bpf_token_capable(const struct bpf_token *token, int cap)
+> --
+> 2.43.0
+>
