@@ -1,120 +1,270 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844C1EB2C
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 20:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B913617984;
+	Fri, 15 Mar 2024 20:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710534175; cv=none; b=DswaeINcyZqENBzFfzCLfM5qPED3ffNrMBA9v3pEpQBZY5px5FQ1gkrAFjHr9izRpRM5cOm81DnwDyjHAdxguHcuZioaJsM+0i+q+8LzjXd1Hd2yyLJK6LWznPbORlqDGllndx/dFVOlarWsS7KdzI0MkagDUCU9NC43sAheytg=
+	t=1710535706; cv=none; b=FePlZtiFjovVthCNE34wDVL3vCHniAp/0QpN+12oauuReCldP8y3gYrnrUP3tZ8QT50fRhRQxjUqxcKGMWWINX0tAj+11acHJf//gogN8EPvYZNnKvoGE2GTxTzuxWu/FtYZW2jo2DE8AyKikiuwxQAv8i3A/rrns9U+DsJTEQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710534175; c=relaxed/simple;
-	bh=xZSS2f2gCT0y1k6tpzS9qV9cCYSPvpyvWSzVNaUjPrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZjFUqtu9zJXfZphpLnhhPg5qDc/6kWYhKs8K/B7aW8mJbfOH/TekASfhjXCx7dBgTaSpEyD1DXoCdKeD2aWAjhSpHklONfEmlv/p9gw5yEh33sqBgWUeJQa0XlFFyQQC17yov53JlLaHSu+kYYEgFKyY4DPq8Ez601YKxgPKMnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XB4ZyyJu; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1710535706; c=relaxed/simple;
+	bh=UQpx8/b/XTKLmVj1eXwhJn/1lYtutU5drdFjuhtFc8Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ux3s/Vbwpai/txTEiy96AlCT1NFSJMeguc46eUleftDi91zqzIq6LkxdPwrA4TAP0GAa4BvdL1neQeYth/ehG29/S7ah5WKpNQEIEw5sukalTfS5hOfAC3A8dW+8yXFDVKb2PLUjiE3ooTg2zgl9B4UMTaTUgjmJ8ehJeRGbDTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=qNDlogzy; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XB4ZyyJu"
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dcd7c526cc0so2391735276.1
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 13:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1710534171; x=1711138971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gBonRzz3p7T5k46qGOTqJyZ8xFk1UhNgPyID6ocUfTs=;
-        b=XB4ZyyJuzM7rgGL5nryd/WaB2TWhPjhRsn4w7PCVt3H4AAt/9gwSMlpzS+ETTG4zmU
-         tB1t/CpAvmJH2R7vGaI40QB+HawuYmGfzx6HnMIs2YcDh0EKwMAMZVRrHspuuezdeOr3
-         5m5N4Fzx71mQtMebd4jhOJ0SgDzSmFgUUzlPPLEBNHFEI+waRxflmbDMCerS2DKWC3gG
-         N3TmrUzhX7j0+Bx1bf+o9v1KWVghOTst1Nd8vaK6rkQJM5rGU9n4yJy6Q6Ff96coSVJm
-         JLXR2uo0jPYN0YNyNGRklgfrHHczlZUkdG9Awt65u4h6124MR5a0ThZ3gviNyhybJ1MV
-         9m8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710534171; x=1711138971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gBonRzz3p7T5k46qGOTqJyZ8xFk1UhNgPyID6ocUfTs=;
-        b=NjeHtHt/TErU4YGPFJaOBW99zUoNnMOH0eO04iLIeC4UyPZw5rC3MWUYASxh2/v8ai
-         kBCDeZ2YeVKyeaaxmUqYK1y8rnN1pnXxhcsaOLQZ04Ev8tA4mqON2kfkBEIelpwCXIU9
-         hZ1Z4VCOqVNVYZUPSylVBxWoe4GjbFNrZwh5f6NV12hnrBZ6q4NdKHFKgxmRIDynj6XN
-         ETQqpvbEbN5/mRxF6rexGaEksGOHFOmviBCVEDffekC25r8dQZn0CCDWD5OK4kM6rScr
-         O80HjrKs6r4kzOqgN8KphM3Wr3aiOrydwiACIINPjLq8bnO8KfzVMcsw/uXeracLHbxz
-         ZQMA==
-X-Gm-Message-State: AOJu0Yxh8aZryu/Ts8rQvpMxE3rKKlm2mq9yw5HdQaCgeECz66dAUgho
-	3CzJp0V/pS2dRPTqL24P8z6WAtdVZOwz4GuKpugrvcT9I9457TkUEq4GF2D0Q9ChLIa6dTtxQZy
-	bb0N/q1uP+zRsBhiOqhP5zt3TiMvZqyEagHDG
-X-Google-Smtp-Source: AGHT+IGSDFt1vIKYhod9g2539+aNN1VmiBEvQparnLMX4WXbzqChdKXl44697jo5nxySNaWvQPnKlRRV0GqAJ8FZpbw=
-X-Received: by 2002:a25:b31b:0:b0:dcb:aa26:50fe with SMTP id
- l27-20020a25b31b000000b00dcbaa2650femr6505753ybj.15.1710534170699; Fri, 15
- Mar 2024 13:22:50 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="qNDlogzy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1710535696;
+	bh=UQpx8/b/XTKLmVj1eXwhJn/1lYtutU5drdFjuhtFc8Q=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qNDlogzyuL5NF8OjRV46+rDUbxyIMtOYZlFLSwLbviicTyfpUQvpFjMhavWRGxMPb
+	 +KLyaJldvQaCaK8bZDu2BzGm/LykYpsCaxYcWdiFuplr9priximfT/xu1KNJzE8mNQ
+	 QUnnlq6A+2zF05g+yrdBYpLqYgXYSWY/mpzB+Yw8=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 00/11] sysctl: treewide: constify ctl_table argument of
+ sysctl handlers
+Date: Fri, 15 Mar 2024 21:47:58 +0100
+Message-Id: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240315181032.645161-1-cgzones@googlemail.com> <20240315181032.645161-2-cgzones@googlemail.com>
-In-Reply-To: <20240315181032.645161-2-cgzones@googlemail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 15 Mar 2024 16:22:39 -0400
-Message-ID: <CAHC9VhRkawYWQN0UY2R68Qn4pRijpXgu97YOr6XPA7Ls0-zQcA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] lsm: introduce new hook security_vm_execstack
-To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc: linux-security-module@vger.kernel.org, 
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Khadija Kamran <kamrankhadijadj@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Alfred Piccioni <alpic@google.com>, John Johansen <john.johansen@canonical.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAP+z9GUC/x2MQQqAIBAAvxJ7bqGUSvpKdFDbakEs3Igi+nvSc
+ WBmHhBKTAJ98UCik4W3mKEuC/CrjQshT5lBVUrXSrUot/gjoN+iHJiNKVBCY7RryNmOTAU53RP
+ NfP3bYXzfDzWhXLJmAAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Kees Cook <keescook@chromium.org>, Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ David Ahern <dsahern@kernel.org>, Simon Horman <horms@verge.net.au>, 
+ Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, 
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, 
+ Luis Chamberlain <mcgrof@kernel.org>, 
+ Joel Granados <j.granados@samsung.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Phillip Potter <phil@philpotter.co.uk>, Theodore Ts'o <tytso@mit.edu>, 
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+ Sudip Mukherjee <sudipm.mukherjee@gmail.com>, 
+ Mark Rutland <mark.rutland@arm.com>, Atish Patra <atishp@atishpatra.org>, 
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Eric Biederman <ebiederm@xmission.com>, 
+ Chandan Babu R <chandan.babu@oracle.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Balbir Singh <bsingharora@gmail.com>, 
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+ Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, 
+ Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+ Daniel Bristot de Oliveira <bristot@redhat.com>, 
+ Valentin Schneider <vschneid@redhat.com>, 
+ Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+ John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+ Roopa Prabhu <roopa@nvidia.com>, Nikolay Aleksandrov <razor@blackwall.org>, 
+ Remi Denis-Courmont <courmisch@gmail.com>, 
+ Allison Henderson <allison.henderson@oracle.com>, 
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, 
+ Xin Long <lucien.xin@gmail.com>, Chuck Lever <chuck.lever@oracle.com>, 
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, 
+ Trond Myklebust <trond.myklebust@hammerspace.com>, 
+ Anna Schumaker <anna@kernel.org>, 
+ John Johansen <john.johansen@canonical.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, 
+ Alexander Popov <alex.popov@linux.com>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
+ lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+ coreteam@netfilter.org, linux-fsdevel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+ linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, kexec@lists.infradead.org, 
+ bridge@lists.linux.dev, linux-rdma@vger.kernel.org, 
+ rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
+ linux-security-module@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=6875;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=UQpx8/b/XTKLmVj1eXwhJn/1lYtutU5drdFjuhtFc8Q=;
+ b=bVuYFtDUnQnTEuvf1YPhVHCMGvQdlkNbjMU3q96YFVTF+/BakIUECyvigrykuveXZ44uroO53
+ +PypwG0ixxgAcYPFaz0HjaUa6FY1M4K7insg4HvI7YV0Uo2rCOzuB/j
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Fri, Mar 15, 2024 at 2:10=E2=80=AFPM Christian G=C3=B6ttsche
-<cgzones@googlemail.com> wrote:
->
-> Add a new hook guarding instantiations of programs with executable
-> stack.  They are being warned about since commit 47a2ebb7f505 ("execve:
-> warn if process starts with executable stack").  Lets give LSMs the
-> ability to control their presence on a per application basis.
->
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> ---
->  fs/exec.c                     |  4 ++++
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/security.h      |  6 ++++++
->  security/security.c           | 13 +++++++++++++
->  4 files changed, 24 insertions(+)
+* Patch 1 is a bugfix for the stack_erasing sysctl handler
+* Patches 2-10 change various helper functions throughout the kernel to
+  be able to handle 'const ctl_table'.
+* Patch 11 changes the signatures of all proc handlers through the tree.
+  Some other signatures are also adapted, for details see the commit
+  message.
 
-Looking at the commit referenced above, I'm guessing the existing
-security_file_mprotect() hook doesn't catch this?
+Only patch 1 changes any code at all.
 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 8cdd5b2dd09c..e6f9e980c6b1 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -829,6 +829,10 @@ int setup_arg_pages(struct linux_binprm *bprm,
->         BUG_ON(prev !=3D vma);
->
->         if (unlikely(vm_flags & VM_EXEC)) {
-> +               ret =3D security_vm_execstack();
-> +               if (ret)
-> +                       goto out_unlock;
-> +
->                 pr_warn_once("process '%pD4' started with executable stac=
-k\n",
->                              bprm->file);
->         }
+The series was compile-tested on top of next-20230315 for
+i386, x86_64, arm, arm64, riscv, loongarch and s390.
 
-Instead of creating a new LSM hook, have you considered calling the
-existing security_file_mprotect() hook?  The existing LSM controls
-there may not be a great fit in this case, but I'd like to hear if
-you've tried that, and if you have, what made you decide a new hook
-was the better option?
+This series was split from my larger series sysctl-const series [0].
+It only focusses on the proc_handlers but is an important step to be
+able to move all static definitions of ctl_table into .rodata.
 
---=20
-paul-moore.com
+[0] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net/
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (11):
+      stackleak: don't modify ctl_table argument
+      cgroup: bpf: constify ctl_table arguments and fields
+      hugetlb: constify ctl_table arguments of utility functions
+      utsname: constify ctl_table arguments of utility function
+      neighbour: constify ctl_table arguments of utility function
+      ipv4/sysctl: constify ctl_table arguments of utility functions
+      ipv6/addrconf: constify ctl_table arguments of utility functions
+      ipv6/ndisc: constify ctl_table arguments of utility function
+      ipvs: constify ctl_table arguments of utility functions
+      sysctl: constify ctl_table arguments of utility function
+      sysctl: treewide: constify the ctl_table argument of handlers
+
+ arch/arm64/kernel/armv8_deprecated.c      |   2 +-
+ arch/arm64/kernel/fpsimd.c                |   2 +-
+ arch/s390/appldata/appldata_base.c        |  10 +--
+ arch/s390/kernel/debug.c                  |   2 +-
+ arch/s390/kernel/topology.c               |   2 +-
+ arch/s390/mm/cmm.c                        |   6 +-
+ arch/x86/kernel/itmt.c                    |   2 +-
+ drivers/cdrom/cdrom.c                     |   6 +-
+ drivers/char/random.c                     |   5 +-
+ drivers/macintosh/mac_hid.c               |   2 +-
+ drivers/net/vrf.c                         |   2 +-
+ drivers/parport/procfs.c                  |  14 ++--
+ drivers/perf/arm_pmuv3.c                  |   6 +-
+ drivers/perf/riscv_pmu_sbi.c              |   2 +-
+ fs/coredump.c                             |   4 +-
+ fs/dcache.c                               |   3 +-
+ fs/drop_caches.c                          |   4 +-
+ fs/exec.c                                 |   6 +-
+ fs/file_table.c                           |   3 +-
+ fs/fs-writeback.c                         |   2 +-
+ fs/inode.c                                |   3 +-
+ fs/pipe.c                                 |   2 +-
+ fs/quota/dquot.c                          |   4 +-
+ fs/xfs/xfs_sysctl.c                       |  33 ++++-----
+ include/linux/filter.h                    |   2 +-
+ include/linux/ftrace.h                    |   4 +-
+ include/linux/mm.h                        |   8 +--
+ include/linux/perf_event.h                |   6 +-
+ include/linux/security.h                  |   2 +-
+ include/linux/sysctl.h                    |  36 +++++-----
+ include/linux/vmstat.h                    |   6 +-
+ include/linux/writeback.h                 |   2 +-
+ include/net/ndisc.h                       |   2 +-
+ include/net/neighbour.h                   |   6 +-
+ include/net/netfilter/nf_hooks_lwtunnel.h |   2 +-
+ ipc/ipc_sysctl.c                          |  14 ++--
+ kernel/bpf/syscall.c                      |   4 +-
+ kernel/delayacct.c                        |   5 +-
+ kernel/events/callchain.c                 |   2 +-
+ kernel/events/core.c                      |   9 ++-
+ kernel/fork.c                             |   2 +-
+ kernel/hung_task.c                        |   7 +-
+ kernel/kexec_core.c                       |   2 +-
+ kernel/kprobes.c                          |   2 +-
+ kernel/latencytop.c                       |   5 +-
+ kernel/pid_namespace.c                    |   4 +-
+ kernel/pid_sysctl.h                       |   2 +-
+ kernel/printk/internal.h                  |   2 +-
+ kernel/printk/printk.c                    |   2 +-
+ kernel/printk/sysctl.c                    |   6 +-
+ kernel/sched/core.c                       |  15 ++--
+ kernel/sched/rt.c                         |  20 +++---
+ kernel/sched/topology.c                   |   6 +-
+ kernel/seccomp.c                          |   7 +-
+ kernel/stackleak.c                        |  12 ++--
+ kernel/sysctl.c                           | 109 ++++++++++++++++--------------
+ kernel/time/timer.c                       |   4 +-
+ kernel/trace/ftrace.c                     |   2 +-
+ kernel/trace/trace.c                      |   2 +-
+ kernel/trace/trace_events_user.c          |   3 +-
+ kernel/trace/trace_stack.c                |   2 +-
+ kernel/umh.c                              |   4 +-
+ kernel/utsname_sysctl.c                   |   6 +-
+ kernel/watchdog.c                         |  15 ++--
+ mm/compaction.c                           |  17 +++--
+ mm/hugetlb.c                              |  20 +++---
+ mm/page-writeback.c                       |  27 +++++---
+ mm/page_alloc.c                           |  43 ++++++++----
+ mm/util.c                                 |  15 ++--
+ mm/vmstat.c                               |   6 +-
+ net/bridge/br_netfilter_hooks.c           |   2 +-
+ net/core/neighbour.c                      |  26 ++++---
+ net/core/sysctl_net_core.c                |  24 ++++---
+ net/ipv4/devinet.c                        |   6 +-
+ net/ipv4/route.c                          |   4 +-
+ net/ipv4/sysctl_net_ipv4.c                |  40 ++++++-----
+ net/ipv6/addrconf.c                       |  38 ++++++-----
+ net/ipv6/ndisc.c                          |   7 +-
+ net/ipv6/route.c                          |   4 +-
+ net/ipv6/sysctl_net_ipv6.c                |   6 +-
+ net/mpls/af_mpls.c                        |   4 +-
+ net/netfilter/ipvs/ip_vs_ctl.c            |  19 +++---
+ net/netfilter/nf_conntrack_standalone.c   |   2 +-
+ net/netfilter/nf_hooks_lwtunnel.c         |   2 +-
+ net/netfilter/nf_log.c                    |   4 +-
+ net/phonet/sysctl.c                       |   2 +-
+ net/rds/tcp.c                             |   4 +-
+ net/sctp/sysctl.c                         |  30 ++++----
+ net/sunrpc/sysctl.c                       |   5 +-
+ net/sunrpc/xprtrdma/svc_rdma.c            |   2 +-
+ security/apparmor/lsm.c                   |   2 +-
+ security/min_addr.c                       |   2 +-
+ security/yama/yama_lsm.c                  |   2 +-
+ 93 files changed, 467 insertions(+), 376 deletions(-)
+---
+base-commit: a1e7655b77e3391b58ac28256789ea45b1685abb
+change-id: 20231226-sysctl-const-handler-883b5eba7e80
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
