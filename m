@@ -1,68 +1,62 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760DA374F8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AFD376F7;
 	Fri, 15 Mar 2024 11:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710502753; cv=none; b=fB2d6dblCSodsQ+TNXJNpu/iWreB4qE9IDdhG2lIQesfcninPAS8lghhVXcPSXWi5G/y/zIKaCoLQ52131If1aWb9WVO+TpTQ8CFOemi5/5wEPyHwzA1w94ibM8fkz5Bh9GrZp+LoHgZitgj6Q/cccHd5sjh4L/RvyOLWXJTTRs=
+	t=1710502754; cv=none; b=a6L+nSYafwF7jXLqPYPGmqVvrJEtOdtERh0iZ3NypvYbNVDC5e51D3ajVhhYiFNmZDcQfHc/3nMoU18cyv4zrhz3eGuBNdMVsCcq50UKLKN7z9zFA77/tBPm6rrBphMfOHd8Glf5t0plsYIm03sdHHAy9PcFNhYFmfuJKeV5pIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710502753; c=relaxed/simple;
-	bh=q188HzvOUC/SWbrcVrOvRopYEaFyTUWDEJRgbVqCiO4=;
+	s=arc-20240116; t=1710502754; c=relaxed/simple;
+	bh=QJAmIMr/R/qhhP5iLDasE89v7Qbj3vjixbDFiOF37Hg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I1HJJ5RUty+aY8gHBKX3MTUgHNz83m5naLib43FivFVnki0hL9IiiSSbVmhlUBudXg2vM777wznyTLbZ8KvU//COKVqbao3pooKyfPfj8+yDLDqOu1c1hNcvToo7IbON2hSWoRsMlQlUBCWSAuRO1FUvQjmA3SXN5Dwzm3/ldHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=febbbb5S; arc=none smtp.client-ip=209.85.208.44
+	 MIME-Version:Content-Type; b=YMpHdYFBblhD/L1XvAIBVoTDk9qOJz/bq31tmeFQa0Z0siM8RnG/bOEhtuuNTxd9IqJjXN8yNTOK6OdIA6wXlmKAYayRzPsD0IhxVAzY1HIvBBVEViNU2JdnPzsHusOhjUsjSvg82qTYGTjsvnO+2c2MBGMFgC/BUAiJPZtAZQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=l2qkCp/V; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="febbbb5S"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-563c595f968so2579136a12.0;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="l2qkCp/V"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5658082d2c4so2671037a12.1;
         Fri, 15 Mar 2024 04:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20230601; t=1710502750; x=1711107550; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cfmF9oVuH/nqtcAZ9ZoTPovZTcMFlC6oTWbI9R5zfGA=;
-        b=febbbb5S6zucEme1c3YDVJghkJzmoxo53V2i8FKe9wvFAw3ovHOIY1VaJ1rXM1FKxF
-         EQ4Xiju5bVy8M11BrOdiy3vUmbspXL2M6zwvc3xBLGvVJqQ6bHvdswXPGvBd9blqHhrL
-         rEmQeU78d9jw0RJtzilfFr8svnEe9YPpBhSLQb8kJC32PBcmRj5Q4TE926YZsWaP4+NB
-         JQZKjPRGnVV+tGM4WvREV8XhWf43E50WOQXFe8ke11kue1PSufxmpEgoANbtstYdNMTV
-         y11Sn17VmZA0dKj7/sidoFrM2A9Laz67lVa+9xOtPd3U7TpuvvcWjf6e1TYU4Bx/sTC2
-         CwFQ==
+        bh=J800dkEvUqC+9b6xP3IWWKhHbamO/WxBgmp71qC+xx0=;
+        b=l2qkCp/VYsITdhK9L0Enp1yzESEd702Rd8DhLJ4vRRmKxG0ibqzWx0Y0ES7ECuXdwN
+         MUol7nlV+0wAUWZ3Etu3d4PXTxx05G7ZWylHC6yanng/6W+RbNfMwrZ22OIEj+IflpYL
+         vZPyJIN49Q8zZzb/AkMMUiRW/zDSH+yQ2nMfxjiHJ9BTKPI9zo3HNvCmg1l/QBoYIuIU
+         Riq6o5L023zjN07/eTzQ4fX6ClrQB4IvRjkKHskcEYR0le8McjyPC4mRLL5kaoY05lfm
+         ATZ1N5YtyNzoQNSy5VIwxhHwBThwPSuewQYx0EMhgeV95NmmIP9eridM7BU66/oSR7V3
+         qtFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1710502750; x=1711107550;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cfmF9oVuH/nqtcAZ9ZoTPovZTcMFlC6oTWbI9R5zfGA=;
-        b=iJYHXdQuvK6x3RW7EJnyreV34G/dgUcEJw3F4TVNC49Vtg0LSau6dTNMajsYkrYDpn
-         JVDmFNBq06eShid3Vj3XMCwBvUi3ZOtClTTDGjB7n8/DXDns9Sz7LtQZ/rsPQyasJFLi
-         wL9/tsNrb54gjg1wjuR9gwI3YxU5BLp/Cn4Y2Wgt53Nju+rx2brG75QfIbZQJRLDfCYe
-         SUMWmAVrZ39p9ak3YXmXqOPlyT5awee/omWFsCOW4enwC9pFhktKOPkhCRSd6agKIefb
-         5LBcXfHORnVvsDdi2EOWs3tB7X5OerpE+g3Y0i9MGxaW/MnDu1XmpZfB2RDMUoQOj96S
-         +VmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy8EFAigHF5YWFoPDslQK6rWEpddaq/43rvIOhxfaJk8BteoAMQ1b0aj/7xVshtYckx+KLHxsCLLGng1c9LvEvBnjaKef/NYTi/Iid07WiAPYoGw8HPp9kEHgqe+Tvcc/G
-X-Gm-Message-State: AOJu0Yx6d9NHFovyx7tYBhYk1Q1ZeXErtVU3hCUbQLFFtECKVjhUBH5T
-	pFHXP5wTRUqHyuQ291n2ImSSfKuipm1ZzqfDObj3QP4I347kdhmwg0VpbfV84qpD6A==
-X-Google-Smtp-Source: AGHT+IGW1uWxdTJiFXfLpY+Fl3cbOeeZ6/+E5blbanUFwgZizbLKEo3Rs6c248+0TJkAzhcIeBzNLQ==
-X-Received: by 2002:aa7:cd58:0:b0:568:260b:e502 with SMTP id v24-20020aa7cd58000000b00568260be502mr2091951edw.13.1710502749840;
-        Fri, 15 Mar 2024 04:39:09 -0700 (PDT)
+        bh=J800dkEvUqC+9b6xP3IWWKhHbamO/WxBgmp71qC+xx0=;
+        b=L1ycpTM7+HK4CJhdxWaYW5KbyJ//7SwRQhI2wJKQdxxdfu8Um2UeZxcqNKb1zk1IYk
+         PasGoOZbvaZKtFqee2h5LsYQHerBiH0IYyvr23YZZq2VFjSGjl1kxe8VKC/qCtnJbP1F
+         c7aoMeL5VTOj+9gL9q7Ai3alMNKlCn7JWLkVxpy+owNqUG5dI9PZSFyJ5lpWo3bDe++0
+         hkncy++iDGCPKvg0oofvY2qo4RmBoY9gKUlXEVa7FjxEcMrOWevCpiziFRP+xBZ4ZYn5
+         v9NxCJqwKcUwlBPTOWDuxdrrXdmliRu9FIuPNg3jsNbYruX5ADBLGYJUkYdW/QJiDclB
+         UyvQ==
+X-Gm-Message-State: AOJu0YzVBs75vVBUSLijYhqpEajS3o2ZpTkS5tbs7F/r3s82wnDr1sA4
+	5e4+rVgyd/MGYmYMMswzK+gGfwxDhMyiM+6HRSHFwh6W4DwjlbrcynLch0NjobvqCA==
+X-Google-Smtp-Source: AGHT+IGYY4/LaoZpt8ijS3sfjpeG9/VcpayZNgfU3V3G2vZHa7AuywD2+rv0mGnp6CsjzdQ0tiZcgQ==
+X-Received: by 2002:a05:6402:5252:b0:568:b418:9d74 with SMTP id t18-20020a056402525200b00568b4189d74mr942705edd.7.1710502750486;
+        Fri, 15 Mar 2024 04:39:10 -0700 (PDT)
 Received: from ddev.DebianHome (dynamic-095-119-217-226.95.119.pool.telefonica.de. [95.119.217.226])
-        by smtp.gmail.com with ESMTPSA id fg3-20020a056402548300b005682f47aea7sm1610024edb.94.2024.03.15.04.39.09
+        by smtp.gmail.com with ESMTPSA id fg3-20020a056402548300b005682f47aea7sm1610024edb.94.2024.03.15.04.39.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 04:39:09 -0700 (PDT)
+        Fri, 15 Mar 2024 04:39:10 -0700 (PDT)
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
 To: linux-security-module@vger.kernel.org
-Cc: Serge Hallyn <serge@hallyn.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	linux-kernel@vger.kernel.org,
-	cocci@inria.fr,
-	bpf@vger.kernel.org
-Subject: [PATCH 10/10] coccinelle: add script for capable_any()
-Date: Fri, 15 Mar 2024 12:37:31 +0100
-Message-ID: <20240315113828.258005-10-cgzones@googlemail.com>
+Cc: bpf@vger.kernel.org
+Subject: [PATCH 00/10] Introduce capable_any()
+Date: Fri, 15 Mar 2024 12:37:32 +0100
+Message-ID: <20240315113828.258005-11-cgzones@googlemail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240315113828.258005-1-cgzones@googlemail.com>
 References: <20240315113828.258005-1-cgzones@googlemail.com>
@@ -75,203 +69,76 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a script to find and replace chained capable() calls with
-capable_any().
-Also find and replace capable_any() calls where CAP_SYS_ADMIN was passed
-as first argument.
+Add the interfaces `capable_any()` and `ns_capable_any()` as an
+alternative to multiple `capable()`/`ns_capable()` calls, like
+`capable_any(CAP_SYS_NICE, CAP_SYS_ADMIN)` instead of
+`capable(CAP_SYS_NICE) || capable(CAP_SYS_ADMIN)`.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
+`capable_any()`/`ns_capable_any()` will in particular generate exactly
+one audit message, either for the left most capability in effect or, if
+the task has none, the first one.
+
+This is especially helpful with regard to SELinux, where each audit
+message about a not allowed capability request will create a denial
+message.  Using this new wrapper with the least invasive capability as
+left most argument (e.g. CAP_SYS_NICE before CAP_SYS_ADMIN) enables
+policy writers to only grant the least invasive one for the particular
+subject instead of both.
+
+v4 discussion:
+https://lore.kernel.org/all/20230511142535.732324-10-cgzones@googlemail.com/
+
+v3 discussion:
+https://patchwork.kernel.org/project/selinux/patch/20220615152623.311223-8-cgzones@googlemail.com/
+
 v5:
-   add patch
----
+  - rename flag to CAP_OPT_NOAUDIT_ONDENY and internal helper to
+    ns_capable_noauditondeny()
+  - add check for identical capabilities passed to simplify bpf call sites
+  - make use in bpf code
+  - add coccinelle script
+v4:
+  - add CAP_OPT_NODENYAUDIT capable flag
+
+Christian Göttsche (10):
+  capability: introduce new capable flag CAP_OPT_NOAUDIT_ONDENY
+  capability: add any wrappers to test for multiple caps with exactly
+    one audit message
+  capability: use new capable_any functionality
+  block: use new capable_any functionality
+  drivers: use new capable_any functionality
+  fs: use new capable_any functionality
+  kernel: use new capable_any functionality
+  net: use new capable_any functionality
+  bpf: use new capable_any functionality
+  coccinelle: add script for capable_any()
+
  MAINTAINERS                              |   1 +
+ block/ioprio.c                           |   9 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c |   3 +-
+ drivers/net/caif/caif_serial.c           |   2 +-
+ drivers/s390/block/dasd_eckd.c           |   2 +-
+ fs/pipe.c                                |   2 +-
+ include/linux/bpf.h                      |   2 +-
+ include/linux/capability.h               |  17 ++-
+ include/linux/security.h                 |   2 +
+ include/net/sock.h                       |   1 +
+ kernel/bpf/syscall.c                     |   2 +-
+ kernel/bpf/token.c                       |   2 +-
+ kernel/capability.c                      |  73 ++++++++++
+ kernel/fork.c                            |   2 +-
+ net/caif/caif_socket.c                   |   2 +-
+ net/core/sock.c                          |  15 ++-
+ net/ieee802154/socket.c                  |   6 +-
+ net/ipv4/ip_sockglue.c                   |   5 +-
+ net/ipv6/ipv6_sockglue.c                 |   3 +-
+ net/unix/af_unix.c                       |   2 +-
  scripts/coccinelle/api/capable_any.cocci | 164 +++++++++++++++++++++++
- 2 files changed, 165 insertions(+)
+ security/apparmor/capability.c           |   8 +-
+ security/selinux/hooks.c                 |  14 +-
+ 23 files changed, 293 insertions(+), 46 deletions(-)
  create mode 100644 scripts/coccinelle/api/capable_any.cocci
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f4d7f7cb7577..32349e4c5f56 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4731,6 +4731,7 @@ S:	Supported
- F:	include/linux/capability.h
- F:	include/uapi/linux/capability.h
- F:	kernel/capability.c
-+F:	scripts/coccinelle/api/capable_any.cocci
- F:	security/commoncap.c
- 
- CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
-diff --git a/scripts/coccinelle/api/capable_any.cocci b/scripts/coccinelle/api/capable_any.cocci
-new file mode 100644
-index 000000000000..83aedd3bf81d
---- /dev/null
-+++ b/scripts/coccinelle/api/capable_any.cocci
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/// Use capable_any rather than chaining capable and order CAP_SYS_ADMIN last
-+///
-+// Confidence: High
-+// Copyright: (C) 2024 Christian Göttsche.
-+// URL: https://coccinelle.gitlabpages.inria.fr/website
-+// Options: --no-includes --include-headers
-+// Keywords: capable, capable_any, ns_capable, ns_capable_any, sockopt_ns_capable, sockopt_ns_capable_any
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+//----------------------------------------------------------
-+//  For patch mode
-+//----------------------------------------------------------
-+
-+@ depends on patch@
-+binary operator op;
-+expression cap1,cap2,E;
-+expression ns;
-+@@
-+
-+(
-+-  capable(cap1) || capable(cap2)
-++  capable_any(cap1, cap2)
-+|
-+-  E op capable(cap1) || capable(cap2)
-++  E op capable_any(cap1, cap2)
-+|
-+-  !capable(cap1) && !capable(cap2)
-++  !capable_any(cap1, cap2)
-+|
-+-  E op !capable(cap1) && !capable(cap2)
-++  E op !capable_any(cap1, cap2)
-+|
-+-  ns_capable(ns, cap1) || ns_capable(ns, cap2)
-++  ns_capable_any(ns, cap1, cap2)
-+|
-+-  E op ns_capable(ns, cap1) || ns_capable(ns, cap2)
-++  E op ns_capable_any(ns, cap1, cap2)
-+|
-+-  !ns_capable(ns, cap1) && !ns_capable(ns, cap2)
-++  !ns_capable_any(ns, cap1, cap2)
-+|
-+-  E op !ns_capable(ns, cap1) && !ns_capable(ns, cap2)
-++  E op !ns_capable_any(ns, cap1, cap2)
-+|
-+-  sockopt_ns_capable(ns, cap1) || sockopt_ns_capable(ns, cap2)
-++  sockopt_ns_capable_any(ns, cap1, cap2)
-+|
-+-  E op sockopt_ns_capable(ns, cap1) || sockopt_ns_capable(ns, cap2)
-++  E op sockopt_ns_capable_any(ns, cap1, cap2)
-+|
-+-  !sockopt_ns_capable(ns, cap1) && !sockopt_ns_capable(ns, cap2)
-++  !sockopt_ns_capable_any(ns, cap1, cap2)
-+|
-+-  E op !sockopt_ns_capable(ns, cap1) && !sockopt_ns_capable(ns, cap2)
-++  E op !sockopt_ns_capable_any(ns, cap1, cap2)
-+)
-+
-+@ depends on patch@
-+identifier func = { capable_any, ns_capable_any, sockopt_ns_capable_any };
-+expression cap;
-+expression ns;
-+@@
-+
-+(
-+-  func(CAP_SYS_ADMIN, cap)
-++  func(cap, CAP_SYS_ADMIN)
-+|
-+-  func(ns, CAP_SYS_ADMIN, cap)
-++  func(ns, cap, CAP_SYS_ADMIN)
-+)
-+
-+//----------------------------------------------------------
-+//  For context mode
-+//----------------------------------------------------------
-+
-+@r1 depends on !patch exists@
-+binary operator op;
-+expression cap1,cap2,E;
-+expression ns;
-+position p1,p2;
-+@@
-+
-+(
-+*  capable@p1(cap1) || capable@p2(cap2)
-+|
-+*  E op capable@p1(cap1) || capable@p2(cap2)
-+|
-+*  !capable@p1(cap1) && !capable@p2(cap2)
-+|
-+*  E op !capable@p1(cap1) && !capable@p2(cap2)
-+|
-+*  ns_capable@p1(ns, cap1) || ns_capable@p2(ns, cap2)
-+|
-+*  E op ns_capable@p1(ns, cap1) || ns_capable@p2(ns, cap2)
-+|
-+*  !ns_capable@p1(ns, cap1) && !ns_capable@p2(ns, cap2)
-+|
-+*  E op !ns_capable@p1(ns, cap1) && !ns_capable@p2(ns, cap2)
-+|
-+*  sockopt_ns_capable@p1(ns, cap1) || sockopt_ns_capable@p2(ns, cap2)
-+|
-+*  E op sockopt_ns_capable@p1(ns, cap1) || sockopt_ns_capable@p2(ns, cap2)
-+|
-+*  !sockopt_ns_capable@p1(ns, cap1) && !sockopt_ns_capable@p2(ns, cap2)
-+|
-+*  E op !sockopt_ns_capable@p1(ns, cap1) && !sockopt_ns_capable@p2(ns, cap2)
-+)
-+
-+@r2 depends on !patch exists@
-+identifier func = { capable_any, ns_capable_any, sockopt_ns_capable_any };
-+expression cap;
-+expression ns;
-+position p;
-+@@
-+
-+(
-+*  func@p(CAP_SYS_ADMIN, cap)
-+|
-+*  func@p(ns, CAP_SYS_ADMIN, cap)
-+)
-+
-+//----------------------------------------------------------
-+//  For org mode
-+//----------------------------------------------------------
-+
-+@script:python depends on org@
-+p1 << r1.p1;
-+p2 << r1.p2;
-+@@
-+
-+cocci.print_main("WARNING opportunity for capable_any",p1)
-+cocci.print_secs("chained capable",p2)
-+
-+@script:python depends on org@
-+p << r2.p;
-+f << r2.func;
-+@@
-+
-+cocci.print_main("WARNING " + f + " arguments should be reordered",p)
-+
-+//----------------------------------------------------------
-+//  For report mode
-+//----------------------------------------------------------
-+
-+@script:python depends on report@
-+p1 << r1.p1;
-+p2 << r1.p2;
-+@@
-+
-+msg = "WARNING opportunity for capable_any (chained capable line %s)" % (p2[0].line)
-+coccilib.report.print_report(p1[0], msg)
-+
-+@script:python depends on report@
-+p << r2.p;
-+f << r2.func;
-+@@
-+
-+msg = "WARNING %s arguments should be reordered" % (f)
-+coccilib.report.print_report(p[0], msg)
 -- 
 2.43.0
 
