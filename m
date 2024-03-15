@@ -1,157 +1,148 @@
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9466345038
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 16:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAC9481A3
+	for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 16:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710519529; cv=none; b=lL9270aiyZUB9Fntwtl/IVgeCgizcoko6UlEjV2Qlkh/9z5nKKGx/PQ9cfQImHdpr0xO2hE//jieNOUqFoQ2/cKw3qeKkJTExpjPhCmBwEd/QcvLTqhI8brzgxP8KqwyfEPq2Qg7tVYw8LtjPX2ewYcVEvwFL5r/o/HrCLNtaEI=
+	t=1710519561; cv=none; b=XFkSMTr4q8raqEOi4gB8wJqUH+JETPlsH3Z4YAgJ/x2ws+9tgB54prLxNG7S5uFQWy89U/ZskxMsrlh4fbONiHJdQpS28Tl0nyX1w8ms0s7Yo0rzXyLaG+4rditB8B3ssN8ECTESpRQFg+HUjYypDQWlC/iymNIMiN9JxSLFJSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710519529; c=relaxed/simple;
-	bh=75AXxxQANuzDeembW/BhToPCRmkUrtvXXjBhPDOQTgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JsFH2/XZtCDs12YKzczjiQJRagsuzSYu/ogVI0dVRUUozOJ6E+gIYDujg53Ysv9y0qwjlGjpiUJwE7HyXS/qWIWHZAsjqNWH4CbqHjRWbkK7lo+dsM5BmwcR1P4LTIxY0WMIQGlo2PDAPjWXeXgM6/9eseCYX7Z4cgEnEyncwdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=mEfY53O5; arc=none smtp.client-ip=66.163.191.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1710519561; c=relaxed/simple;
+	bh=4/DbjDa3e3xF2X1/qXxo7luY0jnFhXgjsvn9dlHTOtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XbORpA9d+2Ed1+bOtX1siQPAtA+peGfB6cuEgjT5bpJ5FK7HFLUMcXJs94yT/e4BlrkNT9J5ADcRz0+Uvi4+AmGTzbcVsJ+nxZMaHAvJLcwY3ZwkhkTm5mbwYcnenwaXyLo6AkCU2NoMh5HkdKV4cr0/XMqjlVRS/3DjnuEIW/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ubbo3NG4; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mEfY53O5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1710519525; bh=zsT01IrB7RrTFtFRFOnn/lUTXR8cW82jQrbDuhCBCzc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=mEfY53O5ApM3wY51mR7fioXOsHnYaZwhBlPD4DzFf0k7SCj2svaEEHwCb8cCZo04aaZaRkqspN4rdZyaHr7znNKnp9IcPWaAfy2BIri4AGRMSYbdONu4mqaXYgyGX3r/RMraTPngLJYcnf6ESEMaNsyecYZGkRV4adGd+cwCd6jc7Yntp25jyaWiZcsZLGeiJWeEUlvPE0JhL3WfmglFip9MOo1LjmVIWAr7ietE58XfO2SQXHbAygLRk4cwvNG6K+vrd4ZiS/1Y4irICzoY72zU4M4uPgcxap2RUq2vtY5dHNckUBn1fwwqLFW6rPZ3M9ZdM/bVV4ZAuZBSC+w24Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1710519525; bh=yDpDT6/7yp5jyHrfAFa90g/aeB12Ayz2ggKHNnN9CbP=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=OWLsf0U5jWHIKlYFO+dMjdlQUf5/9HWcVdQV5+wElAHa4+y6c5Ayb4gBvQec+upDtv6xtfpLjx67Er4vTc6aB67kez8F0aZTj0L+GHvROJj6SwbbkR5SRbU01xfBIrJNxMb1tRLtSSy9fK7Wf8Z4JRAinNEQilx/m98GGXC3HfJNICKw2t8awj6m5Ij4vtNz+kTxuFolxUxqNNRG60i/4Tk23XhsxlDFfzhbkvNYeYiAJBd/2i+CzKArYKe5yGxrjNo8dOMderLv6jeyEAXLUjUGRQcD20TlSN6graIH+/s2YkC4nSDDX4RYiNPVok0LL4YJdJa+0+w0a+94WAbNiw==
-X-YMail-OSG: sBQjSPAVM1lOqDmWLtZkjrhVYNi6s89TS4djAEYGwaX6rOUynq6iksnZ0J6wPR6
- eK39OHHp5wx5uEk3ug7Gex6IqZacomm_pGZfwBgQdlP15q0Y.AsrIgKoG6l09GmA2Tvi2AQM6vfk
- rwTzShYU_IiB3BU2kKfUL_ESP3wwAq7Ymsdz4EY3vJy12lh9j0FVBFaGD7y1ojqm7Hncp0fFwZ8T
- 0ITR7XW37mZhKRUmpv1UVCmujf0MfHf2yiYhJ1USn_2Zlh9_.inDFr9yiVroqa4FeyIB0vbgo19c
- 5p8AcY0hjPRD_2Sqpc.kBHPCAghHyKra_2W4uPPNjivTPVqu752g44Vsiyhkrd2N4.uMWJAdeaGi
- YxwPL1fgDTi9ETi4RowRT_SJUH5q9GeTWFKT2Qx9tabBRdO7.0boLioM9bXwgoa_6bkxy0qGgbgF
- xAhcH5B6IIZJ7cX7JCDbZDEsYd2dNBmhe5cBbUkB..g7Z7jlPnmSGqYpgo9N7Z0n3ps94C_csAAY
- 5PsuU8fUGOB92zGAvO3aFzvb80X.8FOykeoFc_7TKBKDTF8B3_gOZrBqsUkBJxbmGaC7kKiNm0Qr
- JgUx2i6rmoF1KscwwxVtMFo_c8AVhFjCLuK733.ZND7NP_2b27FC.7gAgZYQiO9O5Q6yflxb.pzW
- 4YiKyD4NPvBsMindgYMJR8r9biJyzt_SU3i9Tlawo6_VmqqtvjgLO.10eM793_46SZO1xNnPzFBM
- .6weCm3VMXba8LJHW48snefGSbN4kHjdCfFoGXbvXFVvNjSQbSCzSNCHFD7wm2aCKKdzfbhBp6Hn
- Q3tFXEoDjhCR9Lh4FrTVn_IUxiinisiy.ubN8pXHwVbeq_pL7Av4rA6I65bZCRaHiacwg2WvwU8U
- gKCxVawEfHOr5KCkinu6VuZIw2KD1h3hRnDefiYgd10V.OSXVpWcgRU82TUVMRzuY2mjSMvg2C_u
- ks7IXNoWq.tI_wEVh4CBycOL.xwqw7sG13dzu4GQyxza1tLpbQYHL0GL4CGPjKhfpgl2xMYs0YdM
- 5sTgi3p7xpMFtuv92QUcUogIOZlZ8HHpWL035gttWnd1NeR6DgKttNK.ZW4jjsoWiJSWXSXZpCvb
- 7YIEC98jKFu71IrXB91TWxrRO0K.plERoLDb5TeKezCqdkw_zgvcBDgPh0ZdYbhnOo47PCHnfAvs
- lAe0mYhFGY.KPWsPvOSSEv.NdTe7BXmlgpV2wFurayMLGRIeDHW7gm4ykFLcSQp.IAaTES_iDuTu
- I9jLTzReTcfEn4WMhj5HcVjq5A04AZqJu4XynQuYWpGKXmYe8nL6yQ068nLa8WBVnJVmuvOwGaxJ
- rRR6_ZpOon.68M2Zyk.nTznKmuk.Z7kaLJNrPIBGVD6JPGm1D3QOFRbS48dzqRm2jIUhe3wvGzsa
- b0_VFuMIqIVtny0uMC5GBMW8HIaHzJ44UKt62Osm4swmg5uxe7p5U1fOpATEKErwNA77Xz1GPJW7
- c_BBCzI5KGrUG9zHO8S9RKm5Th_hoaCqWrmetg7BFjGo_G4w2CqljZ4BMuTvjW6ljJfgbYKFY.xo
- FRDv6h6.Z6HqVCHMeWBvAnSXeRYymgiC4BlblgQlZVxZWiRJtTnOybILOY4m7Mvp5kXNtMnq4SC6
- L0EADweueozU8v.nPi_.ZYuzkZjK6vMyBV.Ze_zrYwpC0p7psMoQbBwMZIjxNPg921MVS5RUmdsW
- eJFPph6AoEnXbiFFIDz_CSwsu6UIPIKludwdc1ehXy1AczgiUDq.ZIC8I_SlIynf1tOVW7wSc9y5
- 5E4h9FzDA9kE_KRvp4NJefjhYrCPYhBJTAn334PS11.aVNOgGyThrox0QLrElyR6.s4bSp4MJG6P
- M9dXxh9uGqsuePPABFa6hycrdZaUsNBSxkhbwMPQdngP8Af81TKzuo1gOZhn3ezfBUhHZ.2UAv5u
- eKH4jP51GOHDDw_zs_MQy5cZZ.qC.eCU6eXwqu43INh25Nn5vBMmYxMNi1Kn.eisZg8GQ9LP5nDC
- KpiddAM._Wyq2vbfkWSujnnjlcKwkVPblzf_hAx6rMBRYwtnFKCCSTDLEZEcluY.FIasAJPKLiDt
- 9WubOvZaKCq0Ae4Uu5g5nsX8mD_xn2lZsn78OWkQS7lvlq.NfNQN5jqsLevlqvTBoayNGxLV.5UW
- mHTEFaEM0kMfo7H2P.C2LZWIkmdCVwYngQn6o52RwU.dLTsAbjYi4NuG8kgQovTKxhn2FEDcY_0j
- B46MxGR8uQ23DbKAWC9s7vHoCX6s5nrISXu2fPhAzbLG5R1Cr04KPc0xj720_wqTUsty0pGNg66d
- GNRrLLR0-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: da28cc69-edf9-4aaf-9dab-9294087797a8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Mar 2024 16:18:45 +0000
-Received: by hermes--production-gq1-5c57879fdf-6xjwd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6ec0a6a57a15b5ebdb4c7ec6a674f301;
-          Fri, 15 Mar 2024 16:18:40 +0000 (UTC)
-Message-ID: <736c7fd6-1ce2-448f-8fd1-45f057f2241d@schaufler-ca.com>
-Date: Fri, 15 Mar 2024 09:18:39 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ubbo3NG4"
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dd14d8e7026so2016444276.2
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 09:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1710519556; x=1711124356; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MpqVOPnTA7d3Wx5FtTkXIkNetoNkwXWVCHLT+793scw=;
+        b=Ubbo3NG47UoplUhCT+2wLnKioPhOiC+SKSKie2ECWmjheem6fMuI78pn/Se26tnde4
+         CuRLW8sFCN3F5WH9nmZA0QySdQIUS8v4rFb/chMsGjuSMpGO0r9N8mUlK865PlOUyNdT
+         YRIzew+2T0tR5wVT02aeQI9mlso9B1ZMnJRjsHrjYW1CTtNuaNAJmSitAWM4ljWTcgL6
+         sooLzPY6rU59S0s4e27u43BtoZKRkNplwOWePC2HTOq/BvOnxg9VFkK6zwtot1fFjnDm
+         6LP41LTwV6ynuM7MXhx2V58c5UHdvM5qfqAGQHIOi7Ef4zryCeBilhZxMdylEoYcFgWN
+         3sJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710519556; x=1711124356;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MpqVOPnTA7d3Wx5FtTkXIkNetoNkwXWVCHLT+793scw=;
+        b=Btx5QBSdqtCIwKHfURdmZR9vo0kZOZzzJ9vEPjGCZIqDsfvUWyZNuGzvOy6wrSb9zX
+         zCA7ak6RyYGykNtVSUwua8vZcqiJLLF9OVzR2uv18Fo7HdIJkRz5h2EYtzs2XY/BewzP
+         t5yE7lm64mX1xfPMqKDyvfPv68tKbgRx+ceggJf+7Fsf8X4fzDY7DjokF85KvADDcIvX
+         Pu2byn/0P4l7vPuYDILW2+GJO4bl0+8YYJsgLrvRcDE2ZCwwsZ1Bn0e+K056W5BTdHRE
+         EEc2oDhJUpVW1xvK2ldy3XCh8kzGdTZYtNWzD5gMOre5OQSAd8KQ+hUJyoIjHpcXOnY7
+         Ch+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBR8mzUZG1ybxQ37bXul8PT5ipkgxXD9bQRqWm+C5h+REILRN8Zc2qraLyAGo7svATMRe+Gn0Y4sinQOvk59sn0Z1l8KF8qcl7YsgCiWxqSI8+RtdJ
+X-Gm-Message-State: AOJu0YzBwFK7cDWcUUSXZ6q5v5ZUBPygRWwn9nDUKZRN51eBko4ZrPe1
+	I+X6/ai7LR/mlTA1GwX4YG4T9UJgl0ERSg/63fR5EUQXnBEP0bAC/CveJL864EWaOORPmT9FFOx
+	jUdoP7Hg7QBgviEhupFGx+ZIZ4H/ZaCBRZoxUt5TQa75Hdka5FA==
+X-Google-Smtp-Source: AGHT+IEC2mU7APitabgJ7NuhlgzkegEs6wg/E1S/p4WFYfKx2O8NWmetgFwWpGIjtC71eHm1m2/QZPErbq0ZTyFGsc8=
+X-Received: by 2002:a25:a547:0:b0:dc6:cf96:2956 with SMTP id
+ h65-20020a25a547000000b00dc6cf962956mr5414498ybi.44.1710519555762; Fri, 15
+ Mar 2024 09:19:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20240314022202.599471-2-paul@paul-moore.com> <20240315150208.GA307433@mail.hallyn.com>
+ <7956284d-5687-465d-bbcc-d45435dac42e@schaufler-ca.com> <20240315161345.GA309097@mail.hallyn.com>
+In-Reply-To: <20240315161345.GA309097@mail.hallyn.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 15 Mar 2024 12:19:05 -0400
+Message-ID: <CAHC9VhS245LRsa3DhdkZ-u3+qvroygsyBm2q5mZWkOW8eOKOdQ@mail.gmail.com>
 Subject: Re: [PATCH] lsm: handle the NULL buffer case in lsm_fill_user_ctx()
-Content-Language: en-US
-To: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240314022202.599471-2-paul@paul-moore.com>
- <20240315150208.GA307433@mail.hallyn.com>
- <CAHC9VhRWbiPSrLKaykFJ80p-orvxhifxMvN+emygF6Q2y=hf_A@mail.gmail.com>
- <20240315155503.GA308713@mail.hallyn.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240315155503.GA308713@mail.hallyn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22129 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/15/2024 8:55 AM, Serge E. Hallyn wrote:
-> On Fri, Mar 15, 2024 at 11:18:38AM -0400, Paul Moore wrote:
->> On Fri, Mar 15, 2024 at 11:02 AM Serge E. Hallyn <serge@hallyn.com> wrote:
->>> On Wed, Mar 13, 2024 at 10:22:03PM -0400, Paul Moore wrote:
->>>> Passing a NULL buffer into the lsm_get_self_attr() syscall is a valid
->>>> way to quickly determine the minimum size of the buffer needed to for
->>>> the syscall to return all of the LSM attributes to the caller.
->>>> Unfortunately we/I broke that behavior in commit d7cf3412a9f6
->>>> ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
->>>> such that it returned an error to the caller; this patch restores the
->>>> original desired behavior of using the NULL buffer as a quick way to
->>>> correctly size the attribute buffer.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> Fixes: d7cf3412a9f6 ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
->>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>> ---
->>>>  security/security.c | 8 +++++++-
->>>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/security/security.c b/security/security.c
->>>> index 5b2e0a15377d..7e118858b545 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -780,7 +780,9 @@ static int lsm_superblock_alloc(struct super_block *sb)
->>>>   * @id: LSM id
->>>>   * @flags: LSM defined flags
->>>>   *
->>>> - * Fill all of the fields in a userspace lsm_ctx structure.
->>>> + * Fill all of the fields in a userspace lsm_ctx structure.  If @uctx is NULL
->>>> + * simply calculate the required size to output via @utc_len and return
->>>> + * success.
->>>>   *
->>>>   * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
->>>>   * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
->>>> @@ -799,6 +801,10 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
->>>>               goto out;
->>>>       }
->>>>
->>>> +     /* no buffer - return success/0 and set @uctx_len to the req size */
->>>> +     if (!uctx)
->>>> +             goto out;
->>> If the user just passes in *uctx_len=0, then they will get -E2BIG
->>> but still will get the length in *uctx_len.
->> Right, which is the desired behavior, this patch allows userspace to
->> not have to worry about supplying a buffer if they just want to check
->> the required size, regardless of the value passed in @uctx_len.
-> To be clear - I was saying that is the behavior before your patch.
+On Fri, Mar 15, 2024 at 12:13=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com>=
+ wrote:
+> On Fri, Mar 15, 2024 at 09:08:47AM -0700, Casey Schaufler wrote:
+> > On 3/15/2024 8:02 AM, Serge E. Hallyn wrote:
+> > > On Wed, Mar 13, 2024 at 10:22:03PM -0400, Paul Moore wrote:
+> > >> Passing a NULL buffer into the lsm_get_self_attr() syscall is a vali=
+d
+> > >> way to quickly determine the minimum size of the buffer needed to fo=
+r
+> > >> the syscall to return all of the LSM attributes to the caller.
+> > >> Unfortunately we/I broke that behavior in commit d7cf3412a9f6
+> > >> ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
+> > >> such that it returned an error to the caller; this patch restores th=
+e
+> > >> original desired behavior of using the NULL buffer as a quick way to
+> > >> correctly size the attribute buffer.
+> > >>
+> > >> Cc: stable@vger.kernel.org
+> > >> Fixes: d7cf3412a9f6 ("lsm: consolidate buffer size handling into lsm=
+_fill_user_ctx()")
+> > >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > >> ---
+> > >>  security/security.c | 8 +++++++-
+> > >>  1 file changed, 7 insertions(+), 1 deletion(-)
+> > >>
+> > >> diff --git a/security/security.c b/security/security.c
+> > >> index 5b2e0a15377d..7e118858b545 100644
+> > >> --- a/security/security.c
+> > >> +++ b/security/security.c
+> > >> @@ -780,7 +780,9 @@ static int lsm_superblock_alloc(struct super_blo=
+ck *sb)
+> > >>   * @id: LSM id
+> > >>   * @flags: LSM defined flags
+> > >>   *
+> > >> - * Fill all of the fields in a userspace lsm_ctx structure.
+> > >> + * Fill all of the fields in a userspace lsm_ctx structure.  If @uc=
+tx is NULL
+> > >> + * simply calculate the required size to output via @utc_len and re=
+turn
+> > >> + * success.
+> > >>   *
+> > >>   * Returns 0 on success, -E2BIG if userspace buffer is not large en=
+ough,
+> > >>   * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated=
+.
+> > >> @@ -799,6 +801,10 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uc=
+tx, u32 *uctx_len,
+> > >>            goto out;
+> > >>    }
+> > >>
+> > >> +  /* no buffer - return success/0 and set @uctx_len to the req size=
+ */
+> > >> +  if (!uctx)
+> > >> +          goto out;
+> > > If the user just passes in *uctx_len=3D0, then they will get -E2BIG
+> > > but still will get the length in *uctx_len.
+> >
+> > Yes.
+> >
+> > > To use it this new way, they have to first set *uctx_len to a
+> > > value larger than nctx_len could possibly be, else they'll...
+> > > still get -E2BIG.
+> >
+> > Not sure I understand the problem. A return of 0 or E2BIG gets the
+> > caller the size.
 >
-> (If I'm not wrong)
->
-> This patch changes behavior as follows:
->
-> Before this patch, there was one way for the user to query the required
-> size: send in a length of 0, get back E2BIG and check the *uctx_len you
-> had passed in for the required value.
->
-> After this patch, there are two ways - one resulting in -E2BIG as before,
-> and one requiring uctx_len to be set to a large value *and* uctx to be
-> NULL, getting rc=0 and taking that to mean look at the new uctx_len value.
->
->>> To use it this new way, they have to first set *uctx_len to a
->>> value larger than nctx_len could possibly be, else they'll...
->>> still get -E2BIG.
->> True.
->>
->>> So I'm not sure this patch has value.
->> Oh, but it resolves a kselftest failure in a released kernel, that's
->> worth a *lot* in my mind.
-> Sorry, you didn't mention the test in the commit message.  Which testcase?
+> The problem is that there are two ways of doing the same thing, with
+> different behavior.  People are bound to get it wrong at some point,
+> and it's more corner cases to try and maintain (once we start).
 
-tools/testing/selftests/lsm/lsm_get_self_attr_test.c
+I have a different perspective on this, you can supply either a NULL
+buffer and/or a buffer that is too small, including a size of zero,
+and you'll get back an -E2BIG and a minimum buffer size.  What's the
+old wisdom, be conservative in what you send and liberal in what you
+accept?
 
->
-> -serge
->
+--=20
+paul-moore.com
