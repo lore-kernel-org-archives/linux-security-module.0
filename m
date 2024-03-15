@@ -1,161 +1,151 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0D17BCA;
-	Fri, 15 Mar 2024 20:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB00C548F0;
+	Fri, 15 Mar 2024 21:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710535773; cv=none; b=amUlvm9eDM/aAJkRiwpf1zvY44eeT4MT+w3X0oSpPw6w9E0qam4aGQInc1OJFH2ZeAzzpz2IEBF72kOExIeMCcWTG2pnHWn45Dg0xWI3cEL2+G+bUMFkNd23ollmCjrWCwXLWV3hY6LzPsn4481McKheKQxV1wp+t4bINQNV0/8=
+	t=1710537432; cv=none; b=oSnymNfDzb020l9NOeeXZT/FrhOrWXtzr5hQTU9Lxy+e1dLFV7HRCHno/Kz+mPbymGXc/6Juli3ovfod5FthB69OUQlIuSPuJ7Kst0xEIRlp2MF6+g+XxoNv3lI58Eu7ZL89OY/bTa+JRkuYmojczb0GWHRlq2dX1yerRgtXi0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710535773; c=relaxed/simple;
-	bh=m+K+pCOcUIKDJXVlXdIjxkNCOOD+02kNnAffkd4pv3g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i6qC9iD02Z87/2IJJd+czg4MuFHisoiKHrWXb2imjNSW8p4/AsU6sDgVYn1wI6SlJ+aFZFWUixwibTgI/9PqY3sA1Zu9+dWRtmA/82+FJLEU79uScAlzAuXPNVgH73/jL9jrtOV1UbOBDKC4sEk7yPLwrLq0kIbYl0qX5BV35Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=cb3QOEgY; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	s=arc-20240116; t=1710537432; c=relaxed/simple;
+	bh=hwD/lGz/VzatlOJGLNO2bM+DjLMZEkNqMUkR6QXjBvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EmKZ/0zBU5JIcy+mcbEoRyI53l+J2EZXBMeF7QvaEl212I6eO6XaXzzTzD1M7vbyJI/x3GWnp9sGfPmNeWCeifu46rHWOYi5sKqAFxV7UFXclb3xtAJFcJJ4yZ8NsZaFnPgeCDrkl0cJwadGATnk3jjJk/H0YerOqv6SExCltAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WASBOIO/; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="cb3QOEgY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1710535766;
-	bh=m+K+pCOcUIKDJXVlXdIjxkNCOOD+02kNnAffkd4pv3g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cb3QOEgYhSOo5dBLnXgkMRMxuVv0okcJpfd5edbt3ifxIzXT2zjoDCiC4tGUNCz+W
-	 ljsJju3dsPM4CKYzcJSWsCzYywoPdqBymXenIAOEg6SNhFXLDJy11LIev3CLU+5SiX
-	 5OtXoaPWfNVzSic8h/bjX3Y17XydBQOq3b1+hCAQ=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 15 Mar 2024 21:48:06 +0100
-Subject: [PATCH 08/11] ipv6/ndisc: constify ctl_table arguments of utility
- function
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WASBOIO/"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1dd9b6098aeso19215645ad.0;
+        Fri, 15 Mar 2024 14:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1710537429; x=1711142229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dbw37BmJsQeVdqK1E7BHtnCUQp5XmW43FRTZzRfLqog=;
+        b=WASBOIO/mk8BOl/FGa78H6u+IUALpPqN0Qt30t5ECct3HdZ2wqtwhtbXDrna/n3cGk
+         pjkV2cgD+E4iIS7AWk0dZK4cbRBKGCew5xYlHuZBhU5TDuQGpQxJmbjjgTaRuSiWJcO8
+         1W52bLKcN7cutPxLcPNiE3iaZqCqfdncGMBjnvRPS4uGwcsGvldPD2uhiMUbwgz922cv
+         +kftX/2jr4wZVspG8EM6NeiYBnjCF36rooC3Uv9BIMjcmwYoPSlE2TpqMen9Ea4Us+2j
+         nXnAo7ZLQjBRfdDiFjEEfs/yw0wJ5hUlEipiKTa13lOSUMgpPIQ2L9F01DIfBdVEizyE
+         wQww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710537429; x=1711142229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dbw37BmJsQeVdqK1E7BHtnCUQp5XmW43FRTZzRfLqog=;
+        b=PGDhIhJV4YAlspWfXXC/d5bmOLA7U1z5aOHgzFqMa7UPaQg12iQNGsMHTau5Fg43zY
+         tJFwVfeH8tmEO1j9uhK78PqCACITHBWAEJYY0GFxEYOumkVgH4lv/xR4oX+qvctmXxF/
+         zvBu80oL6k5QngESVgi/IX8PH4u06e5YUEsSxKjnvYjZKdPn8nlsLf32wyTyzKn5EjNS
+         5mnitQd/spRNEZugvyo//rJhG3TdYVcLAXkfMUTbhMozblLG8o9b+BIrNdRjEhGNs8m8
+         y7Bho6R5r0daRuRqL28/5ZlKXzO/AkJ633CTLtCNeGGO/A3zuGomJ+6FddmnuKelmt92
+         KnUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUt5opfCpfN8eT27H5L4ewgTcJdG9ZfmtqSKhC+W6KrBvqntatXtqmdbv0idSB7/CQZadO2Z+LtFlrCJ1tbGP+jslygs74lgwHQWxsxj/Jxs+DgJDRYldMwstjK/m/XdUszVqqE92yT1dyDstEYtE4yuXS68OX3ISHOoRjhTp290Zwt6z8nU0XGbcJxT5TgNYQjpRLbrvtDZi4vfdzVlKUDVETK1Mo=
+X-Gm-Message-State: AOJu0YxkEMw31ZKbxzXmWGOQt2SgtTNAaXZie8deiejH08uOYTdoDbmA
+	2m0JLl78RDINLPjjHNG+Ctc9vMgHgrxO8H/iwZ/s0SndIQs5csEl0IaLLnAZ/oSbvAlnRUL7A5p
+	fuCXdUF2iPoOdZSAdNL3V2SrS+FEAxM+n
+X-Google-Smtp-Source: AGHT+IGbDe8TDqWhW7fOhXA2CHqs3losvmxFx7BFSa9/+mgxC9s6/F3YiXoF2pn+xPEHeBz0lVW6B8iNIstOBbhkgns=
+X-Received: by 2002:a17:902:6e16:b0:1dc:ca1b:279b with SMTP id
+ u22-20020a1709026e1600b001dcca1b279bmr5438447plk.1.1710537428873; Fri, 15 Mar
+ 2024 14:17:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240315-sysctl-const-handler-v1-8-1322ac7cb03d@weissschuh.net>
-References: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
-In-Reply-To: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Kees Cook <keescook@chromium.org>, Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- David Ahern <dsahern@kernel.org>, Simon Horman <horms@verge.net.au>, 
- Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, 
- Jozsef Kadlecsik <kadlec@netfilter.org>, Florian Westphal <fw@strlen.de>, 
- Luis Chamberlain <mcgrof@kernel.org>, 
- Joel Granados <j.granados@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Phillip Potter <phil@philpotter.co.uk>, Theodore Ts'o <tytso@mit.edu>, 
- "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Sudip Mukherjee <sudipm.mukherjee@gmail.com>, 
- Mark Rutland <mark.rutland@arm.com>, Atish Patra <atishp@atishpatra.org>, 
- Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Eric Biederman <ebiederm@xmission.com>, 
- Chandan Babu R <chandan.babu@oracle.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
- Balbir Singh <bsingharora@gmail.com>, 
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
- Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, 
- Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
- Daniel Bristot de Oliveira <bristot@redhat.com>, 
- Valentin Schneider <vschneid@redhat.com>, 
- Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
- John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
- Roopa Prabhu <roopa@nvidia.com>, Nikolay Aleksandrov <razor@blackwall.org>, 
- Remi Denis-Courmont <courmisch@gmail.com>, 
- Allison Henderson <allison.henderson@oracle.com>, 
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, 
- Xin Long <lucien.xin@gmail.com>, Chuck Lever <chuck.lever@oracle.com>, 
- Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, 
- Trond Myklebust <trond.myklebust@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, 
- John Johansen <john.johansen@canonical.com>, 
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>, 
- Alexander Popov <alex.popov@linux.com>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
- lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, 
- coreteam@netfilter.org, linux-fsdevel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
- linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, kexec@lists.infradead.org, 
- bridge@lists.linux.dev, linux-rdma@vger.kernel.org, 
- rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
- linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
- linux-security-module@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1710535695; l=778;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=m+K+pCOcUIKDJXVlXdIjxkNCOOD+02kNnAffkd4pv3g=;
- b=d4zm13k2OQna/NlK3uekXkMo7hwOBupIjvbXHKdSXoSk2DsIK+yuhbmEQr0VAeaARyLv14HqX
- 0Z4woBXtUp1D7/pq8L0Ybaa/TZAKfXvfcMgjftD2Zr5aqWsk6Mdkffo
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20240315113828.258005-1-cgzones@googlemail.com>
+ <20240315113828.258005-2-cgzones@googlemail.com> <CAEf4BzZF0A9qEzmRigHFLQ4vBQshGUQWZVG5L0q2_--kx4=AXA@mail.gmail.com>
+ <0f8291f7-48b1-4be1-8a57-dbad5d0ab28c@kernel.dk>
+In-Reply-To: <0f8291f7-48b1-4be1-8a57-dbad5d0ab28c@kernel.dk>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 15 Mar 2024 14:16:56 -0700
+Message-ID: <CAEf4BzbgQrYDMma=NbW6A-qikA693eSnz9-RwjkF3xPLRE8qqg@mail.gmail.com>
+Subject: Re: [PATCH 02/10] capability: add any wrappers to test for multiple
+ caps with exactly one audit message
+To: Jens Axboe <axboe@kernel.dk>
+Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
+	linux-security-module@vger.kernel.org, linux-block@vger.kernel.org, 
+	Serge Hallyn <serge@hallyn.com>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In a future commit the proc_handlers themselves will change to
-"const struct ctl_table". As a preparation for that adapt the internal
-helper.
+On Fri, Mar 15, 2024 at 11:41=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
+:
+>
+> On 3/15/24 10:45 AM, Andrii Nakryiko wrote:
+> >> +/**
+> >> + * ns_capable_any - Determine if the current task has one of two supe=
+rior capabilities in effect
+> >> + * @ns:  The usernamespace we want the capability in
+> >> + * @cap1: The capabilities to be tested for first
+> >> + * @cap2: The capabilities to be tested for secondly
+> >> + *
+> >> + * Return true if the current task has at least one of the two given =
+superior
+> >> + * capabilities currently available for use, false if not.
+> >> + *
+> >> + * In contrast to or'ing capable() this call will create exactly one =
+audit
+> >> + * message, either for @cap1, if it is granted or both are not permit=
+ted,
+> >> + * or @cap2, if it is granted while the other one is not.
+> >> + *
+> >> + * The capabilities should be ordered from least to most invasive, i.=
+e. CAP_SYS_ADMIN last.
+> >> + *
+> >> + * This sets PF_SUPERPRIV on the task if the capability is available =
+on the
+> >> + * assumption that it's about to be used.
+> >> + */
+> >> +bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
+> >> +{
+> >> +       if (cap1 =3D=3D cap2)
+> >> +               return ns_capable(ns, cap1);
+> >> +
+> >> +       if (ns_capable_noauditondeny(ns, cap1))
+> >> +               return true;
+> >> +
+> >> +       if (ns_capable_noauditondeny(ns, cap2))
+> >> +               return true;
+> >> +
+> >> +       return ns_capable(ns, cap1);
+> >
+> > this will incur an extra capable() check (with all the LSMs involved,
+> > etc), and so for some cases where capability is expected to not be
+> > present, this will be a regression. Is there some way to not redo the
+> > check, but just audit the failure? At this point we do know that cap1
+> > failed before, so might as well just log that.
+>
+> Not sure why that's important - if it's a failure case, and any audit
+> failure should be, then why would we care if that's now doing a bit of
+> extra work?
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- net/ipv6/ndisc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Lack of capability doesn't necessarily mean "failure". E.g., in FUSE
+there are at least few places where the code checks
+capable(CAP_SYS_ADMIN), and based on that decides on some limit values
+or extra checks. So if !capable(CAP_SYS_ADMIN), operation doesn't
+necessarily fail outright, it just has some more restricted resources
+or something.
 
-diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
-index ae134634c323..945d5f5ca039 100644
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1936,7 +1936,7 @@ static struct notifier_block ndisc_netdev_notifier = {
- };
- 
- #ifdef CONFIG_SYSCTL
--static void ndisc_warn_deprecated_sysctl(struct ctl_table *ctl,
-+static void ndisc_warn_deprecated_sysctl(const struct ctl_table *ctl,
- 					 const char *func, const char *dev_name)
- {
- 	static char warncomm[TASK_COMM_LEN];
+Luckily in FUSE's case it's singular capable() check, so capable_any()
+won't incur extra overhead. But I was just wondering if it would be
+possible to avoid this with capable_any() as well, so that no one has
+to do these trade-offs.
 
--- 
-2.44.0
+We also had cases in production of some BPF applications tracing
+cap_capable() calls, so each extra triggering of it would be a bit of
+added overhead, as a general rule.
 
+Having said the above, I do like capable_any() changes (which is why I
+acked BPF side of things).
+
+>
+> I say this not knowing the full picture, as I unhelpfully was only CC'ed
+> on two of the patches... Please don't do that when sending patchsets.
+>
+> --
+> Jens Axboe
+>
