@@ -1,65 +1,68 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AFD376F7;
-	Fri, 15 Mar 2024 11:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDFD24A13;
+	Fri, 15 Mar 2024 12:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710502754; cv=none; b=a6L+nSYafwF7jXLqPYPGmqVvrJEtOdtERh0iZ3NypvYbNVDC5e51D3ajVhhYiFNmZDcQfHc/3nMoU18cyv4zrhz3eGuBNdMVsCcq50UKLKN7z9zFA77/tBPm6rrBphMfOHd8Glf5t0plsYIm03sdHHAy9PcFNhYFmfuJKeV5pIs=
+	t=1710507266; cv=none; b=E27Z2h+f+OHcjjou4fAAFaycPzhBGB1FahTGibdy8ZPIO6pnK1kRjvcaj7vOCLV0uz7NkQxHtOctxFF/+U6A5zBngmXskcoazjJuB92YTuXGCzRATbzUp1dsV1cdiAoLrXO6j79qm9xTeQtVDZ5+6/yTHNR9tyBbCbex+//732Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710502754; c=relaxed/simple;
-	bh=QJAmIMr/R/qhhP5iLDasE89v7Qbj3vjixbDFiOF37Hg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YMpHdYFBblhD/L1XvAIBVoTDk9qOJz/bq31tmeFQa0Z0siM8RnG/bOEhtuuNTxd9IqJjXN8yNTOK6OdIA6wXlmKAYayRzPsD0IhxVAzY1HIvBBVEViNU2JdnPzsHusOhjUsjSvg82qTYGTjsvnO+2c2MBGMFgC/BUAiJPZtAZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=l2qkCp/V; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1710507266; c=relaxed/simple;
+	bh=FnevSE25K+MKKrigHJPozDtqVSkqIjWmYikPIzkANFY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RUWyafnTt5SlS6FpReQPvFYr/c8rOcuSKSm/RQVtL7bGZuIvidqsTGWC8xj9zdR9DwwmzEInxImsIUYZYFOPjlv1BGqAyDWDlvA43kEFYj1Uj/n1UBYLqCXw56cSA6yOIGyATlMYEWc4ZRKeKhJyNWuTt53P1mgyoZiE9U5+zdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Vx1gDAXR; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="l2qkCp/V"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5658082d2c4so2671037a12.1;
-        Fri, 15 Mar 2024 04:39:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Vx1gDAXR"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3ddc13bbb3so577114966b.0;
+        Fri, 15 Mar 2024 05:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1710502750; x=1711107550; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J800dkEvUqC+9b6xP3IWWKhHbamO/WxBgmp71qC+xx0=;
-        b=l2qkCp/VYsITdhK9L0Enp1yzESEd702Rd8DhLJ4vRRmKxG0ibqzWx0Y0ES7ECuXdwN
-         MUol7nlV+0wAUWZ3Etu3d4PXTxx05G7ZWylHC6yanng/6W+RbNfMwrZ22OIEj+IflpYL
-         vZPyJIN49Q8zZzb/AkMMUiRW/zDSH+yQ2nMfxjiHJ9BTKPI9zo3HNvCmg1l/QBoYIuIU
-         Riq6o5L023zjN07/eTzQ4fX6ClrQB4IvRjkKHskcEYR0le8McjyPC4mRLL5kaoY05lfm
-         ATZ1N5YtyNzoQNSy5VIwxhHwBThwPSuewQYx0EMhgeV95NmmIP9eridM7BU66/oSR7V3
-         qtFA==
+        d=googlemail.com; s=20230601; t=1710507263; x=1711112063; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t6FSfZ+VsCTUq+zlGRu8P79wzSbxHSd+irhIrHIaxrM=;
+        b=Vx1gDAXReZqsNcOghdOMUN0OJS8IHRRR8ATY/6p1HPV6DrhK51LjXB5WokF0EPXwYm
+         LbnDjAFcURlajw4x3HjLZ0K7GnZPG1+CXUBgf3Yy9wuAaLqALUpximyJxRsRul5zAGr5
+         j6wmEEchEum2SKky/g8uPIu5YGSf4IbwfOkUAVAvAegK3muiLBrhva42mQcU4IT8H/Yf
+         44WpeEmdWSzxFnctNd55dkWQUzRtIbJEtehu8wmzvtJ97jw2JgcvnEwP6hYmL4ER9Nu6
+         CwR9hXpZNa1Z8vMphPZPTfksFmFokZYp+MbLwc81VuGh4aYxJvItD6mZuNhp7vCVpw1j
+         K+xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710502750; x=1711107550;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J800dkEvUqC+9b6xP3IWWKhHbamO/WxBgmp71qC+xx0=;
-        b=L1ycpTM7+HK4CJhdxWaYW5KbyJ//7SwRQhI2wJKQdxxdfu8Um2UeZxcqNKb1zk1IYk
-         PasGoOZbvaZKtFqee2h5LsYQHerBiH0IYyvr23YZZq2VFjSGjl1kxe8VKC/qCtnJbP1F
-         c7aoMeL5VTOj+9gL9q7Ai3alMNKlCn7JWLkVxpy+owNqUG5dI9PZSFyJ5lpWo3bDe++0
-         hkncy++iDGCPKvg0oofvY2qo4RmBoY9gKUlXEVa7FjxEcMrOWevCpiziFRP+xBZ4ZYn5
-         v9NxCJqwKcUwlBPTOWDuxdrrXdmliRu9FIuPNg3jsNbYruX5ADBLGYJUkYdW/QJiDclB
-         UyvQ==
-X-Gm-Message-State: AOJu0YzVBs75vVBUSLijYhqpEajS3o2ZpTkS5tbs7F/r3s82wnDr1sA4
-	5e4+rVgyd/MGYmYMMswzK+gGfwxDhMyiM+6HRSHFwh6W4DwjlbrcynLch0NjobvqCA==
-X-Google-Smtp-Source: AGHT+IGYY4/LaoZpt8ijS3sfjpeG9/VcpayZNgfU3V3G2vZHa7AuywD2+rv0mGnp6CsjzdQ0tiZcgQ==
-X-Received: by 2002:a05:6402:5252:b0:568:b418:9d74 with SMTP id t18-20020a056402525200b00568b4189d74mr942705edd.7.1710502750486;
-        Fri, 15 Mar 2024 04:39:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710507263; x=1711112063;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t6FSfZ+VsCTUq+zlGRu8P79wzSbxHSd+irhIrHIaxrM=;
+        b=UyDBAeNBGMOuEdYLQ4QUSRTpE+wB61Nups/S1kd9n8jEaXCXY+lrQU3OlZJSSvSXS/
+         zPgn8whmcJG+ecoP2CM2f121rimOhocCxSy1sl63nVxrZP9CEXjVfBkfINwByYd57zBs
+         gsQYEweHyi6xwALQgwcjiTcBjgX2wzwumoNr67X6Y1slIhJlhlZIzk7lTr3W5hpodDgU
+         0efbIGINBNh4rD8w1BbHirkUR9Vo3akgMDq9giGaD/+B5yajODRiA92rTXThOsfkYh09
+         00CAeJi+4vC92WKaFzbDi6dXt20/XPmYc25AcDbu2G046M7MadVPkTOdWyyXfnvzS6Xu
+         pJzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUym4N5bHfQR17xQz0PIWpf709asDN+2ag/VISZjvqLrAv/7c6IhoFV1FKglrhqRDeyvJkNkDfN9w+AonQ5nEZox07sh74f1xvOYNbv
+X-Gm-Message-State: AOJu0Yz0MIAfMMiWmP0UZd2lLELDa/a13hrQaORnQgmZ/ijIRTaG68NQ
+	v948uoQRPWLWYtn4TyTAHCGxjihChcQcWiMjHDmUQclsRtTzvw+vBPZ74UgwdqdVxA==
+X-Google-Smtp-Source: AGHT+IHLRROaqTtOPnbqNrdD84gNMSEFoBbFw3BbdR7qHeWh0+DXv+nUg6CQdXnF0OOXKqTcLD6rtw==
+X-Received: by 2002:a17:906:4fcb:b0:a44:b96:2809 with SMTP id i11-20020a1709064fcb00b00a440b962809mr9735163ejw.24.1710507263026;
+        Fri, 15 Mar 2024 05:54:23 -0700 (PDT)
 Received: from ddev.DebianHome (dynamic-095-119-217-226.95.119.pool.telefonica.de. [95.119.217.226])
-        by smtp.gmail.com with ESMTPSA id fg3-20020a056402548300b005682f47aea7sm1610024edb.94.2024.03.15.04.39.10
+        by smtp.gmail.com with ESMTPSA id r13-20020a170906364d00b00a465f8259c3sm1672917ejb.125.2024.03.15.05.54.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Mar 2024 04:39:10 -0700 (PDT)
+        Fri, 15 Mar 2024 05:54:22 -0700 (PDT)
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
 To: linux-security-module@vger.kernel.org
-Cc: bpf@vger.kernel.org
-Subject: [PATCH 00/10] Introduce capable_any()
-Date: Fri, 15 Mar 2024 12:37:32 +0100
-Message-ID: <20240315113828.258005-11-cgzones@googlemail.com>
+Cc: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	apparmor@lists.ubuntu.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] apparmor: fix typo in kernel doc
+Date: Fri, 15 Mar 2024 13:54:09 +0100
+Message-ID: <20240315125418.273104-1-cgzones@googlemail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240315113828.258005-1-cgzones@googlemail.com>
-References: <20240315113828.258005-1-cgzones@googlemail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,76 +72,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add the interfaces `capable_any()` and `ns_capable_any()` as an
-alternative to multiple `capable()`/`ns_capable()` calls, like
-`capable_any(CAP_SYS_NICE, CAP_SYS_ADMIN)` instead of
-`capable(CAP_SYS_NICE) || capable(CAP_SYS_ADMIN)`.
+Fix the typo in the function documentation to please kernel doc
+warnings.
 
-`capable_any()`/`ns_capable_any()` will in particular generate exactly
-one audit message, either for the left most capability in effect or, if
-the task has none, the first one.
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is especially helpful with regard to SELinux, where each audit
-message about a not allowed capability request will create a denial
-message.  Using this new wrapper with the least invasive capability as
-left most argument (e.g. CAP_SYS_NICE before CAP_SYS_ADMIN) enables
-policy writers to only grant the least invasive one for the particular
-subject instead of both.
-
-v4 discussion:
-https://lore.kernel.org/all/20230511142535.732324-10-cgzones@googlemail.com/
-
-v3 discussion:
-https://patchwork.kernel.org/project/selinux/patch/20220615152623.311223-8-cgzones@googlemail.com/
-
-v5:
-  - rename flag to CAP_OPT_NOAUDIT_ONDENY and internal helper to
-    ns_capable_noauditondeny()
-  - add check for identical capabilities passed to simplify bpf call sites
-  - make use in bpf code
-  - add coccinelle script
-v4:
-  - add CAP_OPT_NODENYAUDIT capable flag
-
-Christian Göttsche (10):
-  capability: introduce new capable flag CAP_OPT_NOAUDIT_ONDENY
-  capability: add any wrappers to test for multiple caps with exactly
-    one audit message
-  capability: use new capable_any functionality
-  block: use new capable_any functionality
-  drivers: use new capable_any functionality
-  fs: use new capable_any functionality
-  kernel: use new capable_any functionality
-  net: use new capable_any functionality
-  bpf: use new capable_any functionality
-  coccinelle: add script for capable_any()
-
- MAINTAINERS                              |   1 +
- block/ioprio.c                           |   9 +-
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c |   3 +-
- drivers/net/caif/caif_serial.c           |   2 +-
- drivers/s390/block/dasd_eckd.c           |   2 +-
- fs/pipe.c                                |   2 +-
- include/linux/bpf.h                      |   2 +-
- include/linux/capability.h               |  17 ++-
- include/linux/security.h                 |   2 +
- include/net/sock.h                       |   1 +
- kernel/bpf/syscall.c                     |   2 +-
- kernel/bpf/token.c                       |   2 +-
- kernel/capability.c                      |  73 ++++++++++
- kernel/fork.c                            |   2 +-
- net/caif/caif_socket.c                   |   2 +-
- net/core/sock.c                          |  15 ++-
- net/ieee802154/socket.c                  |   6 +-
- net/ipv4/ip_sockglue.c                   |   5 +-
- net/ipv6/ipv6_sockglue.c                 |   3 +-
- net/unix/af_unix.c                       |   2 +-
- scripts/coccinelle/api/capable_any.cocci | 164 +++++++++++++++++++++++
- security/apparmor/capability.c           |   8 +-
- security/selinux/hooks.c                 |  14 +-
- 23 files changed, 293 insertions(+), 46 deletions(-)
- create mode 100644 scripts/coccinelle/api/capable_any.cocci
-
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index cef8c466af80..d0485fb0ed63 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1124,7 +1124,7 @@ static int apparmor_socket_create(int family, int type, int protocol, int kern)
+  * @sock: socket that is being setup
+  * @family: family of socket being created
+  * @type: type of the socket
+- * @ptotocol: protocol of the socket
++ * @protocol: protocol of the socket
+  * @kern: socket is a special kernel socket
+  *
+  * Note:
 -- 
 2.43.0
 
