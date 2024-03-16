@@ -1,252 +1,379 @@
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429FB5A0E7;
-	Fri, 15 Mar 2024 23:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FFB2F4A
+	for <linux-security-module@vger.kernel.org>; Sat, 16 Mar 2024 02:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710544323; cv=none; b=i4XKdpyqSI4wXG+dc+ir4Jl4/f/la5ieFVeo92sLJYQnAnJ1vDg7Oy15IKy2kQcDpve3tdoH51jSvaUagc/mUoM+X/+fjMtA0Ljr2wrWiwRi6tOqumQ5fiWjjQNxYCav4sVfRJ1CBVNvC5SKfyFU9RshUMEeYz0793Xb6YK1RjM=
+	t=1710557577; cv=none; b=dxrbge0DR+Gj2eH1xMb2sbIjtPLCYFQ3kNvcnwuU8ZG9WYXdrHZJfrRH9lqhPiqW5ge4datD9jq9GXzMblkippQa7I9ABVCqo8R3Vof4bCqsCTFhk3QIyjSGId21eOjVCKqn5IAOF5QUxekdrl3l/DVXZH3nH4rtnTi1cyF9OVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710544323; c=relaxed/simple;
-	bh=VQpxIo0PRL4MlhjDwV9PLwADMylqIo1qt3PRoZ+zYW8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dmWC0T5h2wLYiN3Ot/Y6B69YooO0zaxDrTj75oDwcI5lDFItqqO1cvY2tfwvCQDWUSwMxXsSoqy1HLXa3Wiwu0+PrvzOgiutdZ+76Jhb6N85cPWEzVsHAYl2r8mhAjlYdex+cvJgWHVO4cxUvavaK97Vv4EUoM88G9+kon86mBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=CYIBjIMZ; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1710557577; c=relaxed/simple;
+	bh=ONoYL4XYOrO/6V38FWRzOpd8quw8P9OYCw818URL5SI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXtySA/M/aI5NLcz73REx43XhUXDzc7aD/Ud76/guosUJbu9O/3688VvOCkenwy3AM1MVL1IMRHuWzoodJQmhaINsNuh7RqUh1Yz0KlfbMCeML0EWf2H1BN/XcwVv4ZYWzyUKD5I5lYYhj3JStbfXw2DGlY6ztj+qj+25nYjeQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=OS38TBQX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="CYIBjIMZ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="OS38TBQX"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1dd955753edso23822915ad.1
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2024 19:52:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1710544321; x=1742080321;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=B4dnSYlWi+5f7Z1pVNEI53jPibTTZHENrkrv7AgPCIg=;
-  b=CYIBjIMZedxnpTM42iSQy1wPnrbdvQURaToagXnoucn4gxMaHkAOkH2P
-   FTxFYWzfP/OAfLKvzXHrOwmytlsrmgQSefqr8Q/C2uq3/ySkN+a6HvKPG
-   2vgAUznirbZYmuXbGVzjg8+J9N0e55atpFV4hUYPr5qhweTvKApJTCqyn
-   0=;
-X-IronPort-AV: E=Sophos;i="6.07,129,1708387200"; 
-   d="scan'208";a="620033953"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2024 23:11:57 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:50026]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.17.84:2525] with esmtp (Farcaster)
- id c630005c-4ede-431c-93cb-c18bfbd6267b; Fri, 15 Mar 2024 23:11:56 +0000 (UTC)
-X-Farcaster-Flow-ID: c630005c-4ede-431c-93cb-c18bfbd6267b
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 15 Mar 2024 23:11:56 +0000
-Received: from 88665a182662.ant.amazon.com (10.106.101.41) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 15 Mar 2024 23:11:51 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <cgzones@googlemail.com>
-CC: <alex.aring@gmail.com>, <alexander@mihalicyn.com>, <bpf@vger.kernel.org>,
-	<daan.j.demeyer@gmail.com>, <davem@davemloft.net>, <dhowells@redhat.com>,
-	<dsahern@kernel.org>, <edumazet@google.com>, <john.fastabend@gmail.com>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <leitao@debian.org>,
-	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<linux-wpan@vger.kernel.org>, <miquel.raynal@bootlin.com>,
-	<mkl@pengutronix.de>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<stefan@datenfreihafen.org>, <wuyun.abel@bytedance.com>
-Subject: Re: [PATCH 08/10] net: use new capable_any functionality
-Date: Fri, 15 Mar 2024 16:11:42 -0700
-Message-ID: <20240315231142.56998-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240315113828.258005-8-cgzones@googlemail.com>
-References: <20240315113828.258005-8-cgzones@googlemail.com>
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1710557573; x=1711162373; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bBoX08MQ+GnGsn3Ys1XDLWs0vSpU6QZ104y6JQ1iJRA=;
+        b=OS38TBQXdJvmCPcBqtVgseCBD92KPMKjZB5CNB1A04ssBRuxFtzhRPn1GciuiaZp/t
+         ZH5bJFCL/HpWMw666xaF9ceynO1+jhCFyauCWBZUGDOD1jkHbl+xoO/jG6Zp360GwjSj
+         i66QeBxSRG87tkQkjPc2WA1M6sUtCwvS7DgrAnPORxwYyGeQf+wuJHESEF51ACE4d88K
+         v4nAXQtE+CrgRNknVt8a/+cuKu8aypzYeDig59JPHUtRYsAH3lqkfrJopeugL+PkOFJP
+         r/+/nAs2w8rmwShkaEIQMuFTq7jUIHueDrkctHW9aB3EK7WEeQJ4EnyrT3UmzNQXv8kk
+         1a+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710557573; x=1711162373;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bBoX08MQ+GnGsn3Ys1XDLWs0vSpU6QZ104y6JQ1iJRA=;
+        b=XsvmeEzf5YfSrugSIZhZATalz9XPEYSfW+83UsLVZHsNjQM9EgL8suMC9c+Gdcb6pW
+         NHRpMT00Klh4ri0ettiJ7AJIuA9jcoIBJ0OK9hYaNSWei2nRo3PiiZj0/QQXuTT5Ob09
+         WhQeW4G4xYceUPAdGoSJIyaUIgfUNEns+fDaN9LkX0mjV5VlAUBbgyQaBZ8Hm8NImwrK
+         kB6/oL1LtEWJrKKfANVd6Haa/xPFmCivCnRojkgDRtAh1W2QzsG92Np+hK7JTMbv0W4u
+         1f8P0so9d7qnVZuZGjN6EbspaxerZ6CI96SpFSPg1ArpIg/OmTHbMSubiAEGbwM2uPJk
+         Nrnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwcaRp/W06bUeoK3mXL4Z+NI1Fh5+rPPSEyQzKafpfjFsZbgtrF/R/d4uknGpo+d9LmEO6Fnv4z4Ue7O8yL0efAmbu8H6fOP2iCmMXhL6dKxoizc94
+X-Gm-Message-State: AOJu0YwxmiioSHzcE7+qltAX65SbKVaDzUddtvXC5bBEM72et0BSDgod
+	Lrr1MYzNIWTpsHUo0JRcYD+XIbhcFqHStgChblAfREaenTLdN9yrOD6jHjJ/DRQ=
+X-Google-Smtp-Source: AGHT+IF+mhHYlAObRzpfXYn3IGnPDczeVjZaH7QVUqvtIq9UdyOULCBCqzY79zAwu/GemLxZ182Fng==
+X-Received: by 2002:a17:903:2446:b0:1dd:9cb3:8f96 with SMTP id l6-20020a170903244600b001dd9cb38f96mr6055795pls.42.1710557572964;
+        Fri, 15 Mar 2024 19:52:52 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-185-123.pa.nsw.optusnet.com.au. [49.180.185.123])
+        by smtp.gmail.com with ESMTPSA id f5-20020a170902684500b001dddbb58d5esm4736209pln.109.2024.03.15.19.52.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Mar 2024 19:52:52 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rlKAC-002Wnj-2F;
+	Sat, 16 Mar 2024 13:52:48 +1100
+Date: Sat, 16 Mar 2024 13:52:48 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>, Simon Horman <horms@verge.net.au>,
+	Julian Anastasov <ja@ssi.bg>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Florian Westphal <fw@strlen.de>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Phillip Potter <phil@philpotter.co.uk>,
+	Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Balbir Singh <bsingharora@gmail.com>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Petr Mladek <pmladek@suse.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, John Stultz <jstultz@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Remi Denis-Courmont <courmisch@gmail.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Alexander Popov <alex.popov@linux.com>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+	lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, linux-fsdevel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kexec@lists.infradead.org,
+	bridge@lists.linux.dev, linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 11/11] sysctl: treewide: constify the ctl_table argument
+ of handlers
+Message-ID: <ZfUJgML8tk6RWqOC@dread.disaster.area>
+References: <20240315-sysctl-const-handler-v1-0-1322ac7cb03d@weissschuh.net>
+ <20240315-sysctl-const-handler-v1-11-1322ac7cb03d@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+In-Reply-To: <20240315-sysctl-const-handler-v1-11-1322ac7cb03d@weissschuh.net>
 
-From: Christian Göttsche <cgzones@googlemail.com>
-Date: Fri, 15 Mar 2024 12:37:29 +0100
-> Use the new added capable_any function in appropriate cases, where a
-> task is required to have any of two capabilities.
+On Fri, Mar 15, 2024 at 09:48:09PM +0100, Thomas Wei�schuh wrote:
+> Adapt the proc_hander function signature to make it clear that handlers
+> are not supposed to modify their ctl_table argument.
 > 
-> Add sock_ns_capable_any() wrapper similar to existing sock_ns_capable()
-> one.
+> This is a prerequisite to moving the static ctl_table structs into
+> .rodata.
+> By migrating all handlers at once a lengthy transition can be avoided.
 > 
-> Reorder CAP_SYS_ADMIN last.
+> The patch was mostly generated by coccinelle with the following script:
 > 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com> (ieee802154 portion)
-> ---
-> v4:
->   - introduce sockopt_ns_capable_any()
-> v3:
->   - rename to capable_any()
->   - make use of ns_capable_any
-> ---
->  include/net/sock.h       |  1 +
->  net/caif/caif_socket.c   |  2 +-
->  net/core/sock.c          | 15 +++++++++------
->  net/ieee802154/socket.c  |  6 ++----
->  net/ipv4/ip_sockglue.c   |  5 +++--
->  net/ipv6/ipv6_sockglue.c |  3 +--
->  net/unix/af_unix.c       |  2 +-
->  7 files changed, 18 insertions(+), 16 deletions(-)
+>     @@
+>     identifier func, ctl, write, buffer, lenp, ppos;
+>     @@
 > 
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index b5e00702acc1..2e64a80c8fca 100644
-> --- a/include/net/sock.h
-> +++ b/include/net/sock.h
-> @@ -1736,6 +1736,7 @@ static inline void unlock_sock_fast(struct sock *sk, bool slow)
->  void sockopt_lock_sock(struct sock *sk);
->  void sockopt_release_sock(struct sock *sk);
->  bool sockopt_ns_capable(struct user_namespace *ns, int cap);
-> +bool sockopt_ns_capable_any(struct user_namespace *ns, int cap1, int cap2);
->  bool sockopt_capable(int cap);
+>     int func(
+>     - struct ctl_table *ctl,
+>     + const struct ctl_table *ctl,
+>       int write, void *buffer, size_t *lenp, loff_t *ppos)
+>     { ... }
+
+Which seems to have screwed up the formatting of the XFS code...
+
+> diff --git a/fs/xfs/xfs_sysctl.c b/fs/xfs/xfs_sysctl.c
+> index a191f6560f98..a3ca192eca79 100644
+> --- a/fs/xfs/xfs_sysctl.c
+> +++ b/fs/xfs/xfs_sysctl.c
+> @@ -10,12 +10,11 @@ static struct ctl_table_header *xfs_table_header;
 >  
->  /* Used by processes to "lock" a socket state, so that
-> diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
-> index 039dfbd367c9..2d811037e378 100644
-> --- a/net/caif/caif_socket.c
-> +++ b/net/caif/caif_socket.c
-> @@ -1026,7 +1026,7 @@ static int caif_create(struct net *net, struct socket *sock, int protocol,
->  		.usersize = sizeof_field(struct caifsock, conn_req.param)
->  	};
->  
-> -	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_NET_ADMIN))
-> +	if (!capable_any(CAP_NET_ADMIN, CAP_SYS_ADMIN))
->  		return -EPERM;
->  	/*
->  	 * The sock->type specifies the socket type to use.
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index 43bf3818c19e..fa9edcc3e23d 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -1077,6 +1077,12 @@ bool sockopt_ns_capable(struct user_namespace *ns, int cap)
->  }
->  EXPORT_SYMBOL(sockopt_ns_capable);
->  
-> +bool sockopt_ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
-> +{
-> +	return has_current_bpf_ctx() || ns_capable_any(ns, cap1, cap2);
-> +}
-> +EXPORT_SYMBOL(sockopt_ns_capable_any);
-> +
->  bool sockopt_capable(int cap)
+>  #ifdef CONFIG_PROC_FS
+>  STATIC int
+> -xfs_stats_clear_proc_handler(
+> -	struct ctl_table	*ctl,
+> -	int			write,
+> -	void			*buffer,
+> -	size_t			*lenp,
+> -	loff_t			*ppos)
+> +xfs_stats_clear_proc_handler(const struct ctl_table *ctl,
+> +			     int			write,
+> +			     void			*buffer,
+> +			     size_t			*lenp,
+> +			     loff_t			*ppos)
+
+... because this doesn't match any format I've ever seen in the
+kernel. The diff for this change shold be just:
+
+@@ -10,7 +10,7 @@ static struct ctl_table_header *xfs_table_header;
+ #ifdef CONFIG_PROC_FS
+ STATIC int
+ xfs_stats_clear_proc_handler(
+-	struct ctl_table	*ctl,
++	const struct ctl_table	*ctl,
+ 	int			write,
+ 	void			*buffer,
+ 	size_t			*lenp,
+
 >  {
->  	return has_current_bpf_ctx() || capable(cap);
-> @@ -1118,8 +1124,7 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
->  	switch (optname) {
->  	case SO_PRIORITY:
->  		if ((val >= 0 && val <= 6) ||
-> -		    sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_RAW) ||
-> -		    sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN)) {
-> +		    sockopt_ns_capable_any(sock_net(sk)->user_ns, CAP_NET_RAW, CAP_NET_ADMIN)) {
->  			sock_set_priority(sk, val);
->  			return 0;
->  		}
-> @@ -1422,8 +1427,7 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
->  		break;
+>  	int		ret, *valp = ctl->data;
 >  
->  	case SO_MARK:
-> -		if (!sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_RAW) &&
-> -		    !sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN)) {
-> +		if (!sockopt_ns_capable_any(sock_net(sk)->user_ns, CAP_NET_RAW, CAP_NET_ADMIN)) {
->  			ret = -EPERM;
->  			break;
->  		}
-> @@ -2813,8 +2817,7 @@ int __sock_cmsg_send(struct sock *sk, struct cmsghdr *cmsg,
->  
->  	switch (cmsg->cmsg_type) {
->  	case SO_MARK:
-> -		if (!ns_capable(sock_net(sk)->user_ns, CAP_NET_RAW) &&
-> -		    !ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN))
-> +		if (!ns_capable_any(sock_net(sk)->user_ns, CAP_NET_RAW, CAP_NET_ADMIN))
->  			return -EPERM;
->  		if (cmsg->cmsg_len != CMSG_LEN(sizeof(u32)))
->  			return -EINVAL;
-> diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
-> index 990a83455dcf..42b3b12eb493 100644
-> --- a/net/ieee802154/socket.c
-> +++ b/net/ieee802154/socket.c
-> @@ -902,8 +902,7 @@ static int dgram_setsockopt(struct sock *sk, int level, int optname,
->  		ro->want_lqi = !!val;
->  		break;
->  	case WPAN_SECURITY:
-> -		if (!ns_capable(net->user_ns, CAP_NET_ADMIN) &&
-> -		    !ns_capable(net->user_ns, CAP_NET_RAW)) {
-> +		if (!ns_capable_any(net->user_ns, CAP_NET_ADMIN, CAP_NET_RAW)) {
-
-IIUC, should CAP_NET_RAW be tested first ?
-
-Then, perhaps you should remove the Reviewed-by tag.
-
-
->  			err = -EPERM;
->  			break;
->  		}
-> @@ -926,8 +925,7 @@ static int dgram_setsockopt(struct sock *sk, int level, int optname,
->  		}
->  		break;
->  	case WPAN_SECURITY_LEVEL:
-> -		if (!ns_capable(net->user_ns, CAP_NET_ADMIN) &&
-> -		    !ns_capable(net->user_ns, CAP_NET_RAW)) {
-> +		if (!ns_capable_any(net->user_ns, CAP_NET_ADMIN, CAP_NET_RAW)) {
-
-Same here.
-
-Thanks!
-
-
->  			err = -EPERM;
->  			break;
->  		}
-> diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-> index cf377377b52d..5a1e5ee20ddd 100644
-> --- a/net/ipv4/ip_sockglue.c
-> +++ b/net/ipv4/ip_sockglue.c
-> @@ -1008,8 +1008,9 @@ int do_ip_setsockopt(struct sock *sk, int level, int optname,
->  		inet_assign_bit(MC_ALL, sk, val);
->  		return 0;
->  	case IP_TRANSPARENT:
-> -		if (!!val && !sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_RAW) &&
-> -		    !sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN))
-> +		if (!!val &&
-> +		    !sockopt_ns_capable_any(sock_net(sk)->user_ns,
-> +					    CAP_NET_RAW, CAP_NET_ADMIN))
->  			return -EPERM;
->  		if (optlen < 1)
->  			return -EINVAL;
-> diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
-> index d4c28ec1bc51..e46b11b5d3dd 100644
-> --- a/net/ipv6/ipv6_sockglue.c
-> +++ b/net/ipv6/ipv6_sockglue.c
-> @@ -773,8 +773,7 @@ int do_ipv6_setsockopt(struct sock *sk, int level, int optname,
->  		break;
->  
->  	case IPV6_TRANSPARENT:
-> -		if (valbool && !sockopt_ns_capable(net->user_ns, CAP_NET_RAW) &&
-> -		    !sockopt_ns_capable(net->user_ns, CAP_NET_ADMIN)) {
-> +		if (valbool && !sockopt_ns_capable_any(net->user_ns, CAP_NET_RAW, CAP_NET_ADMIN)) {
->  			retv = -EPERM;
->  			break;
->  		}
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 5b41e2321209..acc36b2d25d7 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -1783,7 +1783,7 @@ static inline bool too_many_unix_fds(struct task_struct *p)
->  	struct user_struct *user = current_user();
->  
->  	if (unlikely(READ_ONCE(user->unix_inflight) > task_rlimit(p, RLIMIT_NOFILE)))
-> -		return !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN);
-> +		return !capable_any(CAP_SYS_RESOURCE, CAP_SYS_ADMIN);
->  	return false;
+> @@ -30,12 +29,11 @@ xfs_stats_clear_proc_handler(
 >  }
 >  
-> -- 
-> 2.43.0
+>  STATIC int
+> -xfs_panic_mask_proc_handler(
+> -	struct ctl_table	*ctl,
+> -	int			write,
+> -	void			*buffer,
+> -	size_t			*lenp,
+> -	loff_t			*ppos)
+> +xfs_panic_mask_proc_handler(const struct ctl_table *ctl,
+> +			    int			write,
+> +			    void			*buffer,
+> +			    size_t			*lenp,
+> +			    loff_t			*ppos)
+>  {
+>  	int		ret, *valp = ctl->data;
+>  
+> @@ -51,12 +49,11 @@ xfs_panic_mask_proc_handler(
+>  #endif /* CONFIG_PROC_FS */
+>  
+>  STATIC int
+> -xfs_deprecated_dointvec_minmax(
+> -	struct ctl_table	*ctl,
+> -	int			write,
+> -	void			*buffer,
+> -	size_t			*lenp,
+> -	loff_t			*ppos)
+> +xfs_deprecated_dointvec_minmax(const struct ctl_table *ctl,
+> +			       int			write,
+> +			       void			*buffer,
+> +			       size_t			*lenp,
+> +			       loff_t			*ppos)
+>  {
+>  	if (write) {
+>  		printk_ratelimited(KERN_WARNING
+
+And these need fixing as well.
+
+A further quick glance at the patch reveals that there are other
+similar screwed up conversions as well.
+
+> diff --git a/kernel/delayacct.c b/kernel/delayacct.c
+> index 6f0c358e73d8..513791ef573d 100644
+> --- a/kernel/delayacct.c
+> +++ b/kernel/delayacct.c
+> @@ -44,8 +44,9 @@ void delayacct_init(void)
+>  }
+>  
+>  #ifdef CONFIG_PROC_SYSCTL
+> -static int sysctl_delayacct(struct ctl_table *table, int write, void *buffer,
+> -		     size_t *lenp, loff_t *ppos)
+> +static int sysctl_delayacct(const struct ctl_table *table, int write,
+> +			    void *buffer,
+> +			    size_t *lenp, loff_t *ppos)
+>  {
+>  	int state = delayacct_on;
+>  	struct ctl_table t;
+
+Like this.
+
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 724e6d7e128f..e2955e0d9f44 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -450,7 +450,8 @@ static void update_perf_cpu_limits(void)
+>  
+>  static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc);
+>  
+> -int perf_event_max_sample_rate_handler(struct ctl_table *table, int write,
+> +int perf_event_max_sample_rate_handler(const struct ctl_table *table,
+> +				       int write,
+>  				       void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+>  	int ret;
+
+And this.
+
+> @@ -474,8 +475,10 @@ int perf_event_max_sample_rate_handler(struct ctl_table *table, int write,
+>  
+>  int sysctl_perf_cpu_time_max_percent __read_mostly = DEFAULT_CPU_TIME_MAX_PERCENT;
+>  
+> -int perf_cpu_time_max_percent_handler(struct ctl_table *table, int write,
+> -		void *buffer, size_t *lenp, loff_t *ppos)
+> +int perf_cpu_time_max_percent_handler(const struct ctl_table *table,
+> +				      int write,
+> +				      void *buffer, size_t *lenp,
+> +				      loff_t *ppos)
+>  {
+>  	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+>  
+
+And this.
+
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index b2fc2727d654..003f0f5cb111 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -239,9 +239,10 @@ static long hung_timeout_jiffies(unsigned long last_checked,
+>  /*
+>   * Process updating of timeout sysctl
+>   */
+> -static int proc_dohung_task_timeout_secs(struct ctl_table *table, int write,
+> -				  void *buffer,
+> -				  size_t *lenp, loff_t *ppos)
+> +static int proc_dohung_task_timeout_secs(const struct ctl_table *table,
+> +					 int write,
+> +					 void *buffer,
+> +					 size_t *lenp, loff_t *ppos)
+>  {
+>  	int ret;
+>  
+
+And this.
+
+> diff --git a/kernel/latencytop.c b/kernel/latencytop.c
+> index 781249098cb6..0a5c22b19821 100644
+> --- a/kernel/latencytop.c
+> +++ b/kernel/latencytop.c
+> @@ -65,8 +65,9 @@ static struct latency_record latency_record[MAXLR];
+>  int latencytop_enabled;
+>  
+>  #ifdef CONFIG_SYSCTL
+> -static int sysctl_latencytop(struct ctl_table *table, int write, void *buffer,
+> -		size_t *lenp, loff_t *ppos)
+> +static int sysctl_latencytop(const struct ctl_table *table, int write,
+> +			     void *buffer,
+> +			     size_t *lenp, loff_t *ppos)
+>  {
+>  	int err;
+>  
+
+And this.
+
+I could go on, but there are so many examples of this in the patch
+that I think that it needs to be toosed away and regenerated in a
+way that doesn't trash the existing function parameter formatting.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
