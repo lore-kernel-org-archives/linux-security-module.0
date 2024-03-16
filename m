@@ -1,262 +1,171 @@
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D6517722;
-	Sat, 16 Mar 2024 12:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A591C2AC
+	for <linux-security-module@vger.kernel.org>; Sat, 16 Mar 2024 17:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710591616; cv=none; b=YY1g07K9VeX/iKulCqknTsa4bZJF3jJUQ9uiKbkoijPl7PcXHP/yj+O6hwuCVUeU/cwsuPZlEEADa52bxb4qRzhkcM5ZWbsKxN8qkuF74EHFQN0ZNE+FlH5sE40anMIORLZ9zwwvCHVQJws+1WVpytX+5irzsNL7QV+XfnqoZ28=
+	t=1710609451; cv=none; b=bt8RqumKtcIzr+I+jzTxqqVhsdEtnVFw1zD2fva1QjXUH30PRT0Lpbp/7A0F7k7OinRCexCsmwCVnyqhGJgbjMAU6e+QYyWBnwXALr2ir4mP4CSXfaC5POtAMBEz5bkrArGYJ83gkyH1OX7//2gEOEPHk6Uqy+VeW0iEupNp/XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710591616; c=relaxed/simple;
-	bh=IpVvsg5pgqObEzqUtaStyBRmpMlsNmKyhThSkEbN48Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WcrWXPBGh0K6jvTLGcU9q6SPEvIn4MscxrX0BclYVJoSc3LzqJee5pVabaytf28ZkqlsQuO7aIWCTNh0SyycrITfN6fFKcwKP4IzcAyEtEIXQY+c7Tb4ePEXii73+rsTkXmUFyMyxuQG7+cXTmhigb6U/A1PrWzTOD3vPM+saF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TxgDF1JQnz4f3n6c;
-	Sat, 16 Mar 2024 20:19:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id F02791A0199;
-	Sat, 16 Mar 2024 20:20:04 +0800 (CST)
-Received: from k01.huawei.com (unknown [10.67.174.197])
-	by APP1 (Coremail) with SMTP id cCh0CgCXsQpyjvVls7GEHA--.54843S6;
-	Sat, 16 Mar 2024 20:20:04 +0800 (CST)
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-To: bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Florent Revest <revest@chromium.org>,
-	Brendan Jackman <jackmanb@chromium.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Khadija Kamran <kamrankhadijadj@gmail.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Kees Cook <keescook@chromium.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Subject: [PATCH bpf-next 4/5] bpf, lsm: Check bpf lsm hook return values in verifier
-Date: Sat, 16 Mar 2024 20:23:58 +0800
-Message-Id: <20240316122359.1073787-5-xukuohai@huaweicloud.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240316122359.1073787-1-xukuohai@huaweicloud.com>
-References: <20240316122359.1073787-1-xukuohai@huaweicloud.com>
+	s=arc-20240116; t=1710609451; c=relaxed/simple;
+	bh=kxTk/zWbrWQmT2PYOeEcrde+if1JXoN1MgZJTpb862Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dPwIHUuEHAF709bxo6HA/CbEG1NVZtBqNdWMCoonCixwnx7naddb/89bB5MeHDJH3RZ5v37MGY6u4mWXtqPQgmx8uJ0v28cT8FLU8S6sPy/tg7p+dKtVuIwkb590tpNpw/BOEoF3GWDDNmRcRBsq2kaA5hzL7eOsMd7SkoXgw/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=A6EeWpqG; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="A6EeWpqG"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6e6ca65edc9so887072b3a.0
+        for <linux-security-module@vger.kernel.org>; Sat, 16 Mar 2024 10:17:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710609449; x=1711214249; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KwyFsUDC4cYPBKX6IfNABRcCDq2xzgMKMVjZ16s/Y7M=;
+        b=A6EeWpqG+nmbCu0wSHseUQeGvokZdhBMidrggEr0tnxAQeYjRw6WoWlm998jDJoEIx
+         Pi0O3+Rv5R+m2zLvBVYx6Lt5DkOuWuVlsAMn2RmLJ6d+boB92d9OSp0/wKbBQG7e14nu
+         P7atWzkM2tOGL3b30wVOlijUBZrusivefI+VNd/en+TtqjeEUWdgTi/NmGqbumKyPTRM
+         fDs8reh4hGRJqIbi+R4pOAZmBnfvzLoWgBnfCXK8Ss5NVyglvjV/vbS/+BT35W186jQ2
+         8BpMiXasdd3uUSiKtp5xz6POfwFiD9YxKxasaHHoPl5h3pTvLKnGhVNIDbBTBzQrm33Y
+         SP2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710609449; x=1711214249;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwyFsUDC4cYPBKX6IfNABRcCDq2xzgMKMVjZ16s/Y7M=;
+        b=PUTRrpldTkqTRo5nkoEGHkH5EzHANTCtTawzRABNbAsRc2ad4M8+7sCRsSf08HL4bD
+         CbsaIM3D9HUVJaIG/UmIyJ+WRTyDrrUWI8roavk/uURC7LGFosoLUrVA3REAF8zFyYmh
+         L8PaZslaHTGNJ9RWjNAlhoKK96d304Zk7DKwuPVXoYQIvJ4+dL+hodkfx/wqAgAL2ZDH
+         hC1qUOyFHsKz06lzhPWKkNaHY/gkHM69R61zDGpS/hx8aPb/YRlHwV2JHbzEAsC5zaXp
+         LcOnS3ia7cjByNhmnzJOUAvMizYtg8W2R+eIZSBwjv6lsrLK7ghcyUOEcSRRse/rqezy
+         5z2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWo/sO1coVkjjwIhK6QyRNqNxOoGTmcCzT1wWW6SovXEVdUqUv5XpZNz2Qu40FEB6fZE5XFE7sd8qvOOb6WCojXOA70T8tQURP+qogW5VbJI0cGzZ8Q
+X-Gm-Message-State: AOJu0Yy1Iod0YzLJH059RFEAPIXp9/7pG1QoKcAPLicjtO6WLg4XHt3N
+	E76EBReOukQJqUYYYHBJN7OIGjkYvipS1WmxRkC/X78Hw9Di8kADOm0ebbeQeeg=
+X-Google-Smtp-Source: AGHT+IG3DPOFC1jCqg0VsU6zQ3yiocZQTZSrqg+K4gBfn0DXYa5cYs2kvobaBYLoCDVrM0MSeTmAvw==
+X-Received: by 2002:a17:902:d2ce:b0:1df:fbc3:d130 with SMTP id n14-20020a170902d2ce00b001dffbc3d130mr2372826plc.1.1710609448903;
+        Sat, 16 Mar 2024 10:17:28 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id q12-20020a17090311cc00b001db9e12cd62sm6011304plh.10.2024.03.16.10.17.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Mar 2024 10:17:28 -0700 (PDT)
+Message-ID: <4405edd4-f20f-4040-ad67-aca3fcd7eff3@kernel.dk>
+Date: Sat, 16 Mar 2024 11:17:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXsQpyjvVls7GEHA--.54843S6
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr47tFW5Kw48uFyfCFykKrg_yoWxXr4rpF
-	s5GrWkCr40yFWxuFnrtan7ZFyrArW8Wa4Ik34xC34SyFZxXr9YqFyqgryjvr1SkrWkCw1x
-	Cr4jvrZxuw1UZFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAI
-	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2js
-	IEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUFgAwUUUUU
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] capability: add any wrappers to test for multiple
+ caps with exactly one audit message
+Content-Language: en-US
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ linux-security-module@vger.kernel.org, linux-block@vger.kernel.org,
+ Serge Hallyn <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20240315113828.258005-1-cgzones@googlemail.com>
+ <20240315113828.258005-2-cgzones@googlemail.com>
+ <CAEf4BzZF0A9qEzmRigHFLQ4vBQshGUQWZVG5L0q2_--kx4=AXA@mail.gmail.com>
+ <0f8291f7-48b1-4be1-8a57-dbad5d0ab28c@kernel.dk>
+ <CAEf4BzbgQrYDMma=NbW6A-qikA693eSnz9-RwjkF3xPLRE8qqg@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAEf4BzbgQrYDMma=NbW6A-qikA693eSnz9-RwjkF3xPLRE8qqg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Xu Kuohai <xukuohai@huawei.com>
+On 3/15/24 3:16 PM, Andrii Nakryiko wrote:
+> On Fri, Mar 15, 2024 at 11:41?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 3/15/24 10:45 AM, Andrii Nakryiko wrote:
+>>>> +/**
+>>>> + * ns_capable_any - Determine if the current task has one of two superior capabilities in effect
+>>>> + * @ns:  The usernamespace we want the capability in
+>>>> + * @cap1: The capabilities to be tested for first
+>>>> + * @cap2: The capabilities to be tested for secondly
+>>>> + *
+>>>> + * Return true if the current task has at least one of the two given superior
+>>>> + * capabilities currently available for use, false if not.
+>>>> + *
+>>>> + * In contrast to or'ing capable() this call will create exactly one audit
+>>>> + * message, either for @cap1, if it is granted or both are not permitted,
+>>>> + * or @cap2, if it is granted while the other one is not.
+>>>> + *
+>>>> + * The capabilities should be ordered from least to most invasive, i.e. CAP_SYS_ADMIN last.
+>>>> + *
+>>>> + * This sets PF_SUPERPRIV on the task if the capability is available on the
+>>>> + * assumption that it's about to be used.
+>>>> + */
+>>>> +bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
+>>>> +{
+>>>> +       if (cap1 == cap2)
+>>>> +               return ns_capable(ns, cap1);
+>>>> +
+>>>> +       if (ns_capable_noauditondeny(ns, cap1))
+>>>> +               return true;
+>>>> +
+>>>> +       if (ns_capable_noauditondeny(ns, cap2))
+>>>> +               return true;
+>>>> +
+>>>> +       return ns_capable(ns, cap1);
+>>>
+>>> this will incur an extra capable() check (with all the LSMs involved,
+>>> etc), and so for some cases where capability is expected to not be
+>>> present, this will be a regression. Is there some way to not redo the
+>>> check, but just audit the failure? At this point we do know that cap1
+>>> failed before, so might as well just log that.
+>>
+>> Not sure why that's important - if it's a failure case, and any audit
+>> failure should be, then why would we care if that's now doing a bit of
+>> extra work?
+> 
+> Lack of capability doesn't necessarily mean "failure". E.g., in FUSE
+> there are at least few places where the code checks
+> capable(CAP_SYS_ADMIN), and based on that decides on some limit values
+> or extra checks. So if !capable(CAP_SYS_ADMIN), operation doesn't
+> necessarily fail outright, it just has some more restricted resources
+> or something.
+> 
+> Luckily in FUSE's case it's singular capable() check, so capable_any()
+> won't incur extra overhead. But I was just wondering if it would be
+> possible to avoid this with capable_any() as well, so that no one has
+> to do these trade-offs.
 
-A bpf prog returning positive number attached to file_alloc_security hook
-will make kernel panic.
+That's certainly a special and odd case, as most other cases really
+would be of the:
 
-The reason is that the positive number returned by bpf prog is not a
-valid errno, and could not be filtered out with IS_ERR which is used by
-the file system to check errors. As a result, the file system uses this
-positive number as file pointer, causing panic.
+if (capable(SOMETHING))
+	return -EFAUL;
 
-Considering that hook file_alloc_security never returned positive number
-before bpf lsm was introduced, and other bpf lsm hooks may have the same
-problem, this patch adds lsm return value check in bpf verifier to ensure
-no unpredicted values will be returned by lsm bpf prog.
+Might make more sense to special case the FUSE thing then, or provide a
+cheap way for it to do what it needs to do. I really don't think that
+kind of:
 
-Fixes: 520b7aa00d8c ("bpf: lsm: Initialize the BPF LSM hooks")
-Reported-by: Xin Liu <liuxin350@huawei.com>
-Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
----
- include/linux/bpf.h   |  1 +
- kernel/bpf/btf.c      |  5 +++-
- kernel/bpf/verifier.c | 57 +++++++++++++++++++++++++++++++++++++------
- 3 files changed, 55 insertions(+), 8 deletions(-)
+if (capable(SOMETHING))
+	do something since I can
+else
+	bummer, do something else then
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 4f20f62f9d63..aac92857a5a5 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -917,6 +917,7 @@ struct bpf_insn_access_aux {
- 		};
- 	};
- 	struct bpf_verifier_log *log; /* for verbose logs */
-+	bool is_retval; /* is accessing function return value ? */
- };
- 
- static inline void
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 90c4a32d89ff..d593684d80c6 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -6227,8 +6227,11 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
- 
- 	if (arg == nr_args) {
- 		switch (prog->expected_attach_type) {
--		case BPF_LSM_CGROUP:
- 		case BPF_LSM_MAC:
-+			/* mark we are accessing the return value */
-+			info->is_retval = true;
-+			fallthrough;
-+		case BPF_LSM_CGROUP:
- 		case BPF_TRACE_FEXIT:
- 			/* When LSM programs are attached to void LSM hooks
- 			 * they use FEXIT trampolines and when attached to
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 63749ad5ac6b..c3387357bc0d 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2325,6 +2325,25 @@ static void mark_reg_unknown(struct bpf_verifier_env *env,
- 	__mark_reg_unknown(env, regs + regno);
- }
- 
-+static int __mark_reg_s32_range(struct bpf_verifier_env *env,
-+				struct bpf_reg_state *regs,
-+				u32 regno,
-+				s32 s32_min,
-+				s32 s32_max)
-+{
-+	struct bpf_reg_state *reg = regs + regno;
-+
-+	reg->s32_min_value = max_t(s32, reg->s32_min_value, s32_min);
-+	reg->s32_max_value = min_t(s32, reg->s32_max_value, s32_max);
-+
-+	reg->smin_value = max_t(s64, reg->smin_value, s32_min);
-+	reg->smax_value = min_t(s64, reg->smax_value, s32_max);
-+
-+	reg_bounds_sync(reg);
-+
-+	return reg_bounds_sanity_check(env, reg, "s32_range");
-+}
-+
- static void __mark_reg_not_init(const struct bpf_verifier_env *env,
- 				struct bpf_reg_state *reg)
- {
-@@ -5557,11 +5576,12 @@ static int check_packet_access(struct bpf_verifier_env *env, u32 regno, int off,
- /* check access to 'struct bpf_context' fields.  Supports fixed offsets only */
- static int check_ctx_access(struct bpf_verifier_env *env, int insn_idx, int off, int size,
- 			    enum bpf_access_type t, enum bpf_reg_type *reg_type,
--			    struct btf **btf, u32 *btf_id)
-+			    struct btf **btf, u32 *btf_id, bool *is_retval)
- {
- 	struct bpf_insn_access_aux info = {
- 		.reg_type = *reg_type,
- 		.log = &env->log,
-+		.is_retval = false,
- 	};
- 
- 	if (env->ops->is_valid_access &&
-@@ -5574,6 +5594,7 @@ static int check_ctx_access(struct bpf_verifier_env *env, int insn_idx, int off,
- 		 * type of narrower access.
- 		 */
- 		*reg_type = info.reg_type;
-+		*is_retval = info.is_retval;
- 
- 		if (base_type(*reg_type) == PTR_TO_BTF_ID) {
- 			*btf = info.btf;
-@@ -6715,6 +6736,17 @@ static int check_stack_access_within_bounds(
- 	return grow_stack_state(env, state, -min_off /* size */);
- }
- 
-+static bool get_func_retval_range(struct bpf_prog *prog,
-+				  struct bpf_retval_range *range)
-+{
-+	if (prog->type == BPF_PROG_TYPE_LSM &&
-+		prog->expected_attach_type == BPF_LSM_MAC &&
-+		!bpf_lsm_get_retval_range(prog, range)) {
-+		return true;
-+	}
-+	return false;
-+}
-+
- /* check whether memory at (regno + off) is accessible for t = (read | write)
-  * if t==write, value_regno is a register which value is stored into memory
-  * if t==read, value_regno is a register which will receive the value from memory
-@@ -6819,6 +6851,8 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 		if (!err && value_regno >= 0 && (t == BPF_READ || rdonly_mem))
- 			mark_reg_unknown(env, regs, value_regno);
- 	} else if (reg->type == PTR_TO_CTX) {
-+		bool is_retval = false;
-+		struct bpf_retval_range range;
- 		enum bpf_reg_type reg_type = SCALAR_VALUE;
- 		struct btf *btf = NULL;
- 		u32 btf_id = 0;
-@@ -6834,7 +6868,7 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 			return err;
- 
- 		err = check_ctx_access(env, insn_idx, off, size, t, &reg_type, &btf,
--				       &btf_id);
-+				       &btf_id, &is_retval);
- 		if (err)
- 			verbose_linfo(env, insn_idx, "; ");
- 		if (!err && t == BPF_READ && value_regno >= 0) {
-@@ -6843,7 +6877,14 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 			 * case, we know the offset is zero.
- 			 */
- 			if (reg_type == SCALAR_VALUE) {
--				mark_reg_unknown(env, regs, value_regno);
-+				if (is_retval && get_func_retval_range(env->prog, &range)) {
-+					err = __mark_reg_s32_range(env, regs, value_regno,
-+								   range.minval, range.maxval);
-+					if (err)
-+						return err;
-+				} else {
-+					mark_reg_unknown(env, regs, value_regno);
-+				}
- 			} else {
- 				mark_reg_known_zero(env, regs,
- 						    value_regno);
-@@ -15466,10 +15507,12 @@ static int check_return_code(struct bpf_verifier_env *env, int regno, const char
- 
- 	case BPF_PROG_TYPE_LSM:
- 		if (env->prog->expected_attach_type != BPF_LSM_CGROUP) {
--			/* Regular BPF_PROG_TYPE_LSM programs can return
--			 * any value.
--			 */
--			return 0;
-+			/* no range found, any return value is allowed */
-+			if (!get_func_retval_range(env->prog, &range))
-+				return 0;
-+			/* no restricted range, any return value is allowed */
-+			if (range.minval == S32_MIN && range.maxval == S32_MAX)
-+				return 0;
- 		}
- 		if (!env->prog->aux->attach_func_proto->type) {
- 			/* Make sure programs that attach to void
+is a common occurrence.
+
+> We also had cases in production of some BPF applications tracing
+> cap_capable() calls, so each extra triggering of it would be a bit of
+> added overhead, as a general rule.
+> 
+> Having said the above, I do like capable_any() changes (which is why I
+> acked BPF side of things).
+
+Yes, the BPF tracking capable in production is a pain in the butt, as it
+slows down any valid fast path capable checking by a substantial amount.
+We've had to work around that on the block side, unfortunately. These
+are obviously cases where you expect success, and any failure is
+permanent as far as that operation goes.
+
 -- 
-2.30.2
+Jens Axboe
 
