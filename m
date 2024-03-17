@@ -1,171 +1,95 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A591C2AC
-	for <linux-security-module@vger.kernel.org>; Sat, 16 Mar 2024 17:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CABA1D551
+	for <linux-security-module@vger.kernel.org>; Sun, 17 Mar 2024 19:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710609451; cv=none; b=bt8RqumKtcIzr+I+jzTxqqVhsdEtnVFw1zD2fva1QjXUH30PRT0Lpbp/7A0F7k7OinRCexCsmwCVnyqhGJgbjMAU6e+QYyWBnwXALr2ir4mP4CSXfaC5POtAMBEz5bkrArGYJ83gkyH1OX7//2gEOEPHk6Uqy+VeW0iEupNp/XQ=
+	t=1710703268; cv=none; b=uViCj/U2CKfDYixq6zvaThi/5dqKmHR7eHCP/DCsjh+8o6Cah4YpfCSwHngVbTD1Wpsqt6/AORIJrm6x+cnMD1rO58s8RXPj7fUgHkxneT7vIRoQcXT5gUh+DtZgnoh1k6ofg/HP9WzcWZ0eWaVZROFjfI2XLISO8fRwx61uSRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710609451; c=relaxed/simple;
-	bh=kxTk/zWbrWQmT2PYOeEcrde+if1JXoN1MgZJTpb862Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dPwIHUuEHAF709bxo6HA/CbEG1NVZtBqNdWMCoonCixwnx7naddb/89bB5MeHDJH3RZ5v37MGY6u4mWXtqPQgmx8uJ0v28cT8FLU8S6sPy/tg7p+dKtVuIwkb590tpNpw/BOEoF3GWDDNmRcRBsq2kaA5hzL7eOsMd7SkoXgw/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=A6EeWpqG; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1710703268; c=relaxed/simple;
+	bh=pvNZUotQThd7AEclgQlsjocr8sc3DWqZyCZZBZInnYQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q2OMxAiIVb4ro/t2ZZOEyWN7rYnIXpM9F8wQdi6zuvTcyIgwXrv+5FF4592rzj0wQzEtAZRHtb74sBmP6Q5qV+bn8/8N5ONXYx62A80zhwNpaqsUkpCziEGS4+GLWu4D5OzfuntClsFBcQe1vqLRcXY19w5OC/qv1J+o34FxDM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SAfXbhLR; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="A6EeWpqG"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6e6ca65edc9so887072b3a.0
-        for <linux-security-module@vger.kernel.org>; Sat, 16 Mar 2024 10:17:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SAfXbhLR"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dc745927098so3115145276.3
+        for <linux-security-module@vger.kernel.org>; Sun, 17 Mar 2024 12:21:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1710609449; x=1711214249; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KwyFsUDC4cYPBKX6IfNABRcCDq2xzgMKMVjZ16s/Y7M=;
-        b=A6EeWpqG+nmbCu0wSHseUQeGvokZdhBMidrggEr0tnxAQeYjRw6WoWlm998jDJoEIx
-         Pi0O3+Rv5R+m2zLvBVYx6Lt5DkOuWuVlsAMn2RmLJ6d+boB92d9OSp0/wKbBQG7e14nu
-         P7atWzkM2tOGL3b30wVOlijUBZrusivefI+VNd/en+TtqjeEUWdgTi/NmGqbumKyPTRM
-         fDs8reh4hGRJqIbi+R4pOAZmBnfvzLoWgBnfCXK8Ss5NVyglvjV/vbS/+BT35W186jQ2
-         8BpMiXasdd3uUSiKtp5xz6POfwFiD9YxKxasaHHoPl5h3pTvLKnGhVNIDbBTBzQrm33Y
-         SP2g==
+        d=paul-moore.com; s=google; t=1710703264; x=1711308064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F7htIJOT32OYQLLsf66q0tnFZvU1LOUU0DSCAkhOx9A=;
+        b=SAfXbhLR1q03WqHzS5mCF3J4edfER9j9v0pKy3ZFmXFfrOWt4EEYlOdz1pwp4orA+m
+         vTzC8sYlhVZiNZZQ0GC9BhUDrmoywX4sTHJpn+4AUQzKNy+qQstCHYZYoA1GH0V8rftR
+         diRMDpRziY0dospgxQXzoFqxghs/a4//5sO9qtFnEoiX7ce1w7tmkdRuKtDjg0n7MyDI
+         JEDyRjzDG/uBu626VDvueuEfVuUf399mGvOgkge5j+Ig9SyY4FKo1uzFol3AUqC2FVoX
+         7BPESPLjc6rJhkckUXuGF5z9qK+dLTCIvNxTnnwpaTRojd21POSrd8+BisjHueyTaVnf
+         2GwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710609449; x=1711214249;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KwyFsUDC4cYPBKX6IfNABRcCDq2xzgMKMVjZ16s/Y7M=;
-        b=PUTRrpldTkqTRo5nkoEGHkH5EzHANTCtTawzRABNbAsRc2ad4M8+7sCRsSf08HL4bD
-         CbsaIM3D9HUVJaIG/UmIyJ+WRTyDrrUWI8roavk/uURC7LGFosoLUrVA3REAF8zFyYmh
-         L8PaZslaHTGNJ9RWjNAlhoKK96d304Zk7DKwuPVXoYQIvJ4+dL+hodkfx/wqAgAL2ZDH
-         hC1qUOyFHsKz06lzhPWKkNaHY/gkHM69R61zDGpS/hx8aPb/YRlHwV2JHbzEAsC5zaXp
-         LcOnS3ia7cjByNhmnzJOUAvMizYtg8W2R+eIZSBwjv6lsrLK7ghcyUOEcSRRse/rqezy
-         5z2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWo/sO1coVkjjwIhK6QyRNqNxOoGTmcCzT1wWW6SovXEVdUqUv5XpZNz2Qu40FEB6fZE5XFE7sd8qvOOb6WCojXOA70T8tQURP+qogW5VbJI0cGzZ8Q
-X-Gm-Message-State: AOJu0Yy1Iod0YzLJH059RFEAPIXp9/7pG1QoKcAPLicjtO6WLg4XHt3N
-	E76EBReOukQJqUYYYHBJN7OIGjkYvipS1WmxRkC/X78Hw9Di8kADOm0ebbeQeeg=
-X-Google-Smtp-Source: AGHT+IG3DPOFC1jCqg0VsU6zQ3yiocZQTZSrqg+K4gBfn0DXYa5cYs2kvobaBYLoCDVrM0MSeTmAvw==
-X-Received: by 2002:a17:902:d2ce:b0:1df:fbc3:d130 with SMTP id n14-20020a170902d2ce00b001dffbc3d130mr2372826plc.1.1710609448903;
-        Sat, 16 Mar 2024 10:17:28 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id q12-20020a17090311cc00b001db9e12cd62sm6011304plh.10.2024.03.16.10.17.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Mar 2024 10:17:28 -0700 (PDT)
-Message-ID: <4405edd4-f20f-4040-ad67-aca3fcd7eff3@kernel.dk>
-Date: Sat, 16 Mar 2024 11:17:26 -0600
+        d=1e100.net; s=20230601; t=1710703264; x=1711308064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F7htIJOT32OYQLLsf66q0tnFZvU1LOUU0DSCAkhOx9A=;
+        b=g16gxDE5oLbsav+OOagygWlpskdZ8pbYIx5/1XIT5qXu3Gsn9lYB1s4H3VU8a/3OhZ
+         GPksGYBTC1zjsgxVPQD+1VhzEczbRWZxthC7pW0aXmDZFbirBoegkyHIjSMkmgTI4Jqx
+         9NpHexrOP7xoIYOOPmuR09KuUwAYOsLqE3Lfn4WGYLTipS1BQPk8MKzrDqiNSEUTiWZu
+         QNds+5bzpU6Yo0kvA6JjKPK1z6KhV5v9E8vayPjR34CFYw1L+XwHmgYBSOa6kfcZsyg7
+         3zN4ovtQAV5uo2B067CSSCYrM+M+uFaq7TlMNRmtahmCvNq3wYs0P5C16tCXi8yxJUa8
+         eaWw==
+X-Gm-Message-State: AOJu0YxRQoHqlVp8l+uWnKG93oKVnyVMTSx+K0IGEFzD7qw+W/n2U/78
+	LLrfKrNYHtYzOY4cCjsNu+vS5i/NTugcEBqdppAai+zZ94hC/eBuOnJhyirF8E8LLgdXpGBQFgM
+	a21giVVhS5cPE7SFsGd9CCocrxFpCmimK3gHLN5W1ir4bf1U=
+X-Google-Smtp-Source: AGHT+IFgPv5hp9lsca2YSHaRsZggaWrjJrUxcPF4x7aRpDmxZOGQ0aiiVfDQh5Es1n7fBXnWJIFTIfmYdvXiHitThQs=
+X-Received: by 2002:a5b:944:0:b0:dce:1285:e9a5 with SMTP id
+ x4-20020a5b0944000000b00dce1285e9a5mr5576358ybq.11.1710703264574; Sun, 17 Mar
+ 2024 12:21:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] capability: add any wrappers to test for multiple
- caps with exactly one audit message
-Content-Language: en-US
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- linux-security-module@vger.kernel.org, linux-block@vger.kernel.org,
- Serge Hallyn <serge@hallyn.com>, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20240315113828.258005-1-cgzones@googlemail.com>
- <20240315113828.258005-2-cgzones@googlemail.com>
- <CAEf4BzZF0A9qEzmRigHFLQ4vBQshGUQWZVG5L0q2_--kx4=AXA@mail.gmail.com>
- <0f8291f7-48b1-4be1-8a57-dbad5d0ab28c@kernel.dk>
- <CAEf4BzbgQrYDMma=NbW6A-qikA693eSnz9-RwjkF3xPLRE8qqg@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAEf4BzbgQrYDMma=NbW6A-qikA693eSnz9-RwjkF3xPLRE8qqg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240316104714.GA22794@wind.enjellic.com>
+In-Reply-To: <20240316104714.GA22794@wind.enjellic.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 17 Mar 2024 15:20:53 -0400
+Message-ID: <CAHC9VhQC4YvE5LyG76sOsCihBxdrMS8ekLuuOCAAPcLwuwjYdw@mail.gmail.com>
+Subject: Re: TSEM code organization.
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/15/24 3:16 PM, Andrii Nakryiko wrote:
-> On Fri, Mar 15, 2024 at 11:41?AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 3/15/24 10:45 AM, Andrii Nakryiko wrote:
->>>> +/**
->>>> + * ns_capable_any - Determine if the current task has one of two superior capabilities in effect
->>>> + * @ns:  The usernamespace we want the capability in
->>>> + * @cap1: The capabilities to be tested for first
->>>> + * @cap2: The capabilities to be tested for secondly
->>>> + *
->>>> + * Return true if the current task has at least one of the two given superior
->>>> + * capabilities currently available for use, false if not.
->>>> + *
->>>> + * In contrast to or'ing capable() this call will create exactly one audit
->>>> + * message, either for @cap1, if it is granted or both are not permitted,
->>>> + * or @cap2, if it is granted while the other one is not.
->>>> + *
->>>> + * The capabilities should be ordered from least to most invasive, i.e. CAP_SYS_ADMIN last.
->>>> + *
->>>> + * This sets PF_SUPERPRIV on the task if the capability is available on the
->>>> + * assumption that it's about to be used.
->>>> + */
->>>> +bool ns_capable_any(struct user_namespace *ns, int cap1, int cap2)
->>>> +{
->>>> +       if (cap1 == cap2)
->>>> +               return ns_capable(ns, cap1);
->>>> +
->>>> +       if (ns_capable_noauditondeny(ns, cap1))
->>>> +               return true;
->>>> +
->>>> +       if (ns_capable_noauditondeny(ns, cap2))
->>>> +               return true;
->>>> +
->>>> +       return ns_capable(ns, cap1);
->>>
->>> this will incur an extra capable() check (with all the LSMs involved,
->>> etc), and so for some cases where capability is expected to not be
->>> present, this will be a regression. Is there some way to not redo the
->>> check, but just audit the failure? At this point we do know that cap1
->>> failed before, so might as well just log that.
->>
->> Not sure why that's important - if it's a failure case, and any audit
->> failure should be, then why would we care if that's now doing a bit of
->> extra work?
-> 
-> Lack of capability doesn't necessarily mean "failure". E.g., in FUSE
-> there are at least few places where the code checks
-> capable(CAP_SYS_ADMIN), and based on that decides on some limit values
-> or extra checks. So if !capable(CAP_SYS_ADMIN), operation doesn't
-> necessarily fail outright, it just has some more restricted resources
-> or something.
-> 
-> Luckily in FUSE's case it's singular capable() check, so capable_any()
-> won't incur extra overhead. But I was just wondering if it would be
-> possible to avoid this with capable_any() as well, so that no one has
-> to do these trade-offs.
+On Sat, Mar 16, 2024 at 6:47=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
+>
+> Good morning Paul, I hope your weekend is going well or your week is
+> starting well, whenever this e-mail finds you.
+>
+> We've been waiting for the release of 6.8 for the V3 release of TSEM.
+> TSEM seems to be co-habitating with it reasonably well, modulo some
+> atomic structure magazine refill issues we are sorting out that appear
+> to be caused by workqueue scheduling latency differences between this
+> kernel and older kernels, so we are getting ready to push the V3
+> release.
+>
+> Casey has previously raised an issue with the fact that we used a
+> single include file, tsem.h, for all of the entities that are global
+> to the various compilation units.  We placed that file first in the
+> patch series so that it could be referenced for review as the
+> individual compilation units were added ...
 
-That's certainly a special and odd case, as most other cases really
-would be of the:
+Considering that there are still a number of concerns around the
+design of TSEM I wouldn't worry too much about the smaller, easier to
+change implementation details, like header file organization at this
+point in time.  If you've got something that is functional, that
+should be sufficient.  We still need to sort out if the basic design
+and TSEM concepts are acceptable upstream.
 
-if (capable(SOMETHING))
-	return -EFAUL;
-
-Might make more sense to special case the FUSE thing then, or provide a
-cheap way for it to do what it needs to do. I really don't think that
-kind of:
-
-if (capable(SOMETHING))
-	do something since I can
-else
-	bummer, do something else then
-
-is a common occurrence.
-
-> We also had cases in production of some BPF applications tracing
-> cap_capable() calls, so each extra triggering of it would be a bit of
-> added overhead, as a general rule.
-> 
-> Having said the above, I do like capable_any() changes (which is why I
-> acked BPF side of things).
-
-Yes, the BPF tracking capable in production is a pain in the butt, as it
-slows down any valid fast path capable checking by a substantial amount.
-We've had to work around that on the block side, unfortunately. These
-are obviously cases where you expect success, and any failure is
-permanent as far as that operation goes.
-
--- 
-Jens Axboe
-
+--=20
+paul-moore.com
