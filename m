@@ -1,61 +1,51 @@
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB142C6A3
-	for <linux-security-module@vger.kernel.org>; Tue, 19 Mar 2024 17:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B4938DC3
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Mar 2024 18:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710871146; cv=none; b=kb2Wc1EUdOMxn45zwEA3J2wDOiuyxxSO9UBe5C+cR2K3BWiThc2vXmHrah+IPICV/eBTlIlam2rXszsEFNWlumjYXM+TdUagfQH2hBqW977xW/4fec0voZTpAGL4sZqu0POgL51r1Ibbe6JUaNw9eiLFBuZrInCiVckySTk6vh4=
+	t=1710873952; cv=none; b=ied3UEyIYJQlSARM7cnxpE6nzuORl+1YCtSRhu5xo14CEMBlkr9YaOCFRc1ONyvjYj+G/J3AoT2IMKAvGuJ2kmBwfTjQY3wcqz2yZidAuWElfm1fZSSBsOEq5rB/5UcO6ibhjrjlbwtlVGWtkgCQI7oUqmb7QvX0x8UtWmaTbwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710871146; c=relaxed/simple;
-	bh=WOyhpXnZXG2HkYyxUBv9JvKcWajoEnD0Ho6SnidlHsY=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:
-	 References; b=P0Zk6Us2sy58ghHywEBVArh/OWD/cTGniE0kjkW1Cf7uaskPGQNIUB1mxXQKgR77CSNhBz8h612PtMJi/pqaFMJPAt5iJRwg9MazfGxD+n3LzD5b8E8CyUsEtq3t4EEKQglxRkwMZGkooEkd+V2YpkSy+K/k9crINTZrdaz3Khg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=UvfnqR41; arc=none smtp.client-ip=66.163.189.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1710873952; c=relaxed/simple;
+	bh=iYAowg/p3SZt/jzyDoICds4PpBwrKLStcTMZ4bVn/rI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qu/fuIyq9cSKx4UaImKG3OjCicGsB2BWDPXHrzoP9hdlm5WbNsJbDH9qtJTtEGRXzlN/jiKeMxHQtm+m1NVg0MD8HPsCvlB2fH5/oOGGvbpOeZHc8vOBe8Vs0kCEW/FNhtQlKXhHROKvCthC4OknRqRY11nM1DDsVFZkQriXDtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=ohl1YzCB; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UvfnqR41"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1710871138; bh=yAMGXnODg4zpsUzoZYF4fw5Fi5nz+vnB8cdUPCWIK/k=; h=Date:To:From:Subject:References:From:Subject:Reply-To; b=UvfnqR416g8YvLvg3kJm9AB1UdLRx5UJ0l9VhAOqR/KxmrMLNSXFLdzxd1BMF3rFVIaDqschEHtwc3SJyrRIniIa+LASN7tUov0nznEr8N+EdYL7PntTFE7cEHrZK5EirfsGsUturR3B3/M07jYQ2yh01VJb7yn88ecHWyeO2WmIIgnPJf/8xDir3hi36pB+ZhE2PoFffzGrCJ1PRlrQGkrvPsavb9Jq1J1rPRC8JL+gO/KUbPdcs+iPHIZbi5J/M3Ej9SBE74StuvtgD3kh5ikk7tDqFUfzvgJnDsAHVqGS0KR4vEH2ivfkWMXaU4+4T8yMW6HxvDV2q1xPhJP9Mw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1710871138; bh=yMkcFQFNwBJoTy0hDbew8v34vQyqjly17KiNi4j+e5s=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=fpfiOKYuO9nchY1j2z7cqMT2F5FRq7LeBM9kb4IF3QYdvk3UIp6mIQUj7z6lSe3MVm7YfjG+ulupPNUYloX2WOdZj5CMbnmqIOirLQmCvKTw1JjiJQKjTSOXDFZ1t5f3TaAvaAJ0Ar8+qVR66S9Qw45iRfN6eQm+srCSIjVIpJkSnUt0moq9BEDOOfFE1t8uWX6bU2QHXdtO947faoPXcy7Zgl4O0cUmO25SPq8i22D/kab4qlQnDHNYxNmH4HDnVzX3b4EgnKTH7K4BcQ2IIAd3Xvk9kARc+ywwDgTmknNlMQXLGxjQIyY+EEYfdpUnbu7KzMzDUdTCD0ZOdp366g==
-X-YMail-OSG: CYPDwaIVM1mvcxWz9uq6F.ACg02EHerwHRj9I_xes67Xe6XSp33mWzz225kOjlV
- rubX53eLjvSMawxsojv9ADVFSPD.A8z2e0iXtK1ADe3PYVzvd8kzUh5Wg_jCwAnxjr4kRVwFk2BP
- WCL4u2NgMOedgbK8ZemJJSQkpIxcAvl7kePpusbrOKtyNyc8O88yAZNznM0RkB492FNa4j14jNJ4
- 3DPqNskOdcfTdCFcr0v9qF2.RvlSwk57SXWU8Wxp8M7uaLDsHSoeINoRo3JcAWd3epgsTdIbGxLP
- W2ZC3OABcH0gVXoxmA9P2UUBf4b3BDYfIZ5X1fmUIEQYKzJX1QXaPdDzcElHX1rdiZAvNh8kpIIu
- 4tIqt.HcobFnnIOphqMYIsKWpuZbl0EehS77kkMwMN8TUYuxMmAo8HjyI8Ws6CIjW5ZUPvj.ybd0
- FkGfh1polpPLCnjIJ_zRBDm9DDC3wTTi9mP3vDwX5zqCCb8rxW4c3Owg1dyhZVTePGLiWlv.4pfs
- SXx68q6kPB6PGN0wASEO4FUat7_SPfBMymLbof1x3JQs6k2cxGDnYLjjjoOi.QdGxaq1N34IWBwP
- 5FakHywBy1JoD6aRirsX9paKJmxa5ZPq9qZ0OOBU_L3s33Ar9zgFd7cYFZbzGgJ1dwxnrf4W18dF
- sgTiAVAEmAXNS0yyyutBgr6QR.VkW9Q87Elr1Gk_6L671MJYoAFZUVBCgVhkQOaurcxNFLyjJket
- VclNytQcxfkj0PPRKhnYZXDnUgKOFY74bnMo2n4ocPzgQ7.Aa9gEnnDzTVuRcGwcQqwW47T9TzaV
- 9QizbAJlaXTgizU4f_Phrg.AsCI3xyrz9psh5QEMgHDknWEWdxGDNRIN84NUBzGld3bg9Wv.PziA
- IBLzu4G6cKviL5oyhMQwXF2JHhh6TA.EpUWTh.8Dh.kLGHsaoetStBXIKucd53_GlVGMmSR_Eo1H
- mPul8TzLAjgN95RdYAUNmN8qzovwkKNHyR2QHEBqU_GNyunDIF_fnDreAVL7DkIAtWmz4bT3LZaY
- 0Be2sewpS4v4r_c7b08I0oOCF2XIV3e8kAU6qLu1VaawoLNhhiLZssocbY3Suv3rEke5OUL5BXt2
- Zkk.Svasi8fQlRmbFeNvWuUQXZ6w7bmIJ5NM4MVNi3Mjeqcj65YuDBo.DeAdQScsDdlwp3UC3nNM
- yLXOYKm_dDL.fM2EhTLgpRnfrhyNgmvg7kxYyH.ctIoS8982RVG6muXaWHYCjdfHb91nrCZLGi8l
- z1JUDDRAPDosRJy6P3QSHiTlGdvoDiTInj1XZ5KLq6uRLZmJhT_YaW9Bhf5x2DOWzJOjrLGQI4Fq
- 9Rovid0PiTecz73EoHFrZhR7DPnZ1a2pli86kvtBexO.LPhn31FuTH1UFwaLBCq5JMpXQjvNwp52
- m8XCEm4EvakxmlfAgWwM5YDmqAklEx.aIcqEUsjXDBg_q6xKS8udvp3vxrIGVzCGZXn7RDJvfUtD
- YlAK41c.YPmCnAAcvWUCGy2v8AgtwyyEt6cvF6kkzXuUd4Qa367uup8kV8FAUYy_Gy76b.sCnyMM
- t1flipc6W1_ANZTS18d.T3np2evScc3RefRzid.FFENxVaVW9loHComxFAb5YpjiESdoo.cPta6w
- _ipoyPmIqryW0U9VVlyIwIVa5W6LLxQgWNjeCYAuh5kOyueYY0cJteZFmK5kOKXGQqHO_jl3.KJo
- n2TJinWcpXhPcjNkSQrKao6ES1KnKyzYUnAZ5GhpT4X1jm.USNFvTm06GuANp_1i9aW1ii_I2e2Q
- OYVwYUma1pTHbrs1C7ZhLTGGnSfovbjDT7KgFJJ.eTDBScSokt4aXrMx5rOVqlw1CSi78y3XAD7A
- aDB4kDT5MHW92OIvNpXBgOcginMHiOSWtnd9aAp8WzwWcXyYlAurHVxMvnvSYsBJIlNCxDlaq8Uv
- IbCxRShdaQFS_doIHZgULoxAyEQ1.aZuWXTk5PtWZPTPes0B0.cWopPwX7t7bK5sz15fSRl5TmRd
- MoJNZ3iO47IlxUYXBsnEYnSnSy4k2sRomsbaSMLJOAZyq0wvVStwsccXYklJ8bmN.Y9mTF5m7PXU
- O9Cz1MBuCUxVxHplnL0GAhXENkr3CyShz6efVgIja41n7Y07bUDU36mvT2yuG4RIwpx.YD.LH3LO
- RCvfGLrfthwHRyICGIsR7GVhQZIxknkRvBy5OitLU_5B6kiCU4wb38qGt24qY3Mfq8rGpAbrqLrH
- J14oNs8UCS1ImzHfuXPi6FDcfCEY.n_ci4eob0Rvjz03lIITxzv9hq88t
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: fc6d8231-80af-4a9d-851d-1e5b2af22e8c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Tue, 19 Mar 2024 17:58:58 +0000
-Received: by hermes--production-gq1-5c57879fdf-4h5cs (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e78ee299e78406429387b409de7e26b3;
-          Tue, 19 Mar 2024 17:58:55 +0000 (UTC)
-Message-ID: <255cd7ad-332c-473f-8059-3258dad287a7@schaufler-ca.com>
-Date: Tue, 19 Mar 2024 10:58:54 -0700
+	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="ohl1YzCB"
+Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
+	by cmsmtp with ESMTPS
+	id mKBnrb2P1s4yTmeRYro1bf; Tue, 19 Mar 2024 18:44:13 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id meRXrkaY5kpnxmeRXrpdjz; Tue, 19 Mar 2024 18:44:12 +0000
+X-Authority-Analysis: v=2.4 cv=Y4D+sAeN c=1 sm=1 tr=0 ts=65f9dcfc
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=UtBFqMlDG83dypD0sxEoAQ==:17
+ a=IkcTkHD0fZMA:10 a=K6JAEmCyrfEA:10 a=wYkD_t78qR0A:10 a=VwQbUJbxAAAA:8
+ a=d3QQw60kZKcH4I2Fy2IA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ydgYrx4mSNkCluaznyOIwLt873FVEZ38n23EhvbjbYg=; b=ohl1YzCBoSgJM3bZqMkwrinrCd
+	TJXoN2aGs/7ypt907+FfzadI8+O7PJK1DUjo32eRE5j4xShV0YLhFmYCoTfmBqDer5Sg1NmL3wm3M
+	NpXy383Y4hxJSnhzn3rzVIgdCOZAMuj4gTGkoIqp7EU4lJ6DMkimyA3QXrsvHSysto2jtd9zAKDcz
+	aPxOlGudB99Mg7MenOEkXy4fJPqa2uj1r7PK3vWT9YyBsre+ffHApCf2mRkiv6riMCmk7goCqISq8
+	fVZSPJS4FSrYsTjxcQPQVz9MfhnbCmnXaXOKvXFvG23FFYrgWdpnqOG2UWrGySG8KN63Mo5ps1UYB
+	llvAOYTQ==;
+Received: from [201.172.174.229] (port=46584 helo=[192.168.15.10])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1rmeRW-00047P-3C;
+	Tue, 19 Mar 2024 13:44:11 -0500
+Message-ID: <626c234a-64ab-4449-a6d8-faeb24dd0abf@embeddedor.com>
+Date: Tue, 19 Mar 2024 12:44:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -63,129 +53,279 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] integrity: Avoid -Wflex-array-member-not-at-end
+ warnings
 Content-Language: en-US
-To: LSM List <linux-security-module@vger.kernel.org>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: Systemd v254 LSM stacking issue - patch
-Content-Type: text/plain; charset=UTF-8
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ Kees Cook <keescook@chromium.org>
+References: <ZeYKWrXvACBBrAP8@neat>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <ZeYKWrXvACBBrAP8@neat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-References: <255cd7ad-332c-473f-8059-3258dad287a7.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.22129 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.174.229
+X-Source-L: No
+X-Exim-ID: 1rmeRW-00047P-3C
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.10]) [201.172.174.229]:46584
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGYs2KBJqhuyszR7ofc6I1RKElJBQBdk5d0mdIlC9QcI6oSblL2aMkkLOFtzF4nZ0ux6672Zf1o2NAPnW75eOv5dPtR3DniK8Yhs6safcH26VjcirOWJ
+ XsHHjvyboXG9QzalnlyCx5hiwDBgQRyoqSOShzAybnz/UkLleffN0QUvi8BVsAW7hDjivy4inHWCjEuqfGoFcTKBZ8Xjv+StiNIm9lIdFgi2n4ZHDk2LH7z8
 
-Systemd version 254 (included in Fedora 39) has an assertion that
-only one of Smack and SELinux is active. This can make experimenting
-with full LSM stacking frustrating. This patch adds multiple label
-operation support and removes the pesky assertion. It's experimental.
+Hi all,
 
----
- src/basic/label.c       | 48 ++++++++++++++++++++++++++++++++++--------------
- src/core/smack-setup.c  |  2 +-
- src/shared/label-util.c |  2 --
- src/shared/smack-util.c |  2 +-
- 4 files changed, 36 insertions(+), 18 deletions(-)
+Friendly ping: who can take this, please? :)
 
-diff --git a/src/basic/label.c b/src/basic/label.c
-index f134e77589..6827fbbd46 100644
---- a/src/basic/label.c
-+++ b/src/basic/label.c
-@@ -5,26 +5,46 @@
- 
- #include "label.h"
- 
--static const LabelOps *label_ops = NULL;
-+#define POSSIBLE_LABEL_OPS 2 /* SELinux and Smack */
- 
--int label_ops_set(const LabelOps *ops) {
--        if (label_ops)
--                return -EBUSY;
-+static const LabelOps *label_ops[POSSIBLE_LABEL_OPS];
- 
--        label_ops = ops;
--        return 0;
-+int label_ops_set(const LabelOps *ops) {
-+        int i;
-+
-+        for (i = 0; i < POSSIBLE_LABEL_OPS; i++) {
-+                if (!label_ops[i]) {
-+                        label_ops[i] = ops;
-+                        return 0;
-+                }
-+        }
-+        return -EBUSY;
- }
- 
- int label_ops_pre(int dir_fd, const char *path, mode_t mode) {
--        if (!label_ops || !label_ops->pre)
--                return 0;
--
--        return label_ops->pre(dir_fd, path, mode);
-+        int i;
-+        int r;
-+
-+        for (i = 0; i < POSSIBLE_LABEL_OPS; i++) {
-+                if (label_ops[i] && label_ops[i]->pre) {
-+                        r = label_ops[i]->pre(dir_fd, path, mode);
-+                        if (r)
-+                                return r;
-+                }
-+        }
-+        return 0;
- }
- 
- int label_ops_post(int dir_fd, const char *path) {
--        if (!label_ops || !label_ops->post)
--                return 0;
--
--        return label_ops->post(dir_fd, path);
-+        int i;
-+        int r;
-+
-+        for (i = 0; i < POSSIBLE_LABEL_OPS; i++) {
-+                if (label_ops[i] && label_ops[i]->post) {
-+                        r = label_ops[i]->post(dir_fd, path);
-+                        if (r)
-+                                return r;
-+                }
-+        }
-+        return 0;
- }
-diff --git a/src/core/smack-setup.c b/src/core/smack-setup.c
-index bcaa237c8d..b1dbbbc2e8 100644
---- a/src/core/smack-setup.c
-+++ b/src/core/smack-setup.c
-@@ -319,7 +319,7 @@ int mac_smack_setup(bool *loaded_policy) {
-         }
- 
- #if HAVE_SMACK_RUN_LABEL
--        r = write_string_file("/proc/self/attr/current", SMACK_RUN_LABEL, WRITE_STRING_FILE_DISABLE_BUFFER);
-+        r = write_string_file("/proc/self/attr/smack/current", SMACK_RUN_LABEL, WRITE_STRING_FILE_DISABLE_BUFFER);
-         if (r < 0)
-                 log_warning_errno(r, "Failed to set SMACK label \"" SMACK_RUN_LABEL "\" on self: %m");
-         r = write_string_file("/sys/fs/smackfs/ambient", SMACK_RUN_LABEL, WRITE_STRING_FILE_DISABLE_BUFFER);
-diff --git a/src/shared/label-util.c b/src/shared/label-util.c
-index 3316c9ed37..3154818371 100644
---- a/src/shared/label-util.c
-+++ b/src/shared/label-util.c
-@@ -120,8 +120,6 @@ int btrfs_subvol_make_label(const char *path) {
- int mac_init(void) {
-         int r;
- 
--        assert(!(mac_selinux_use() && mac_smack_use()));
--
-         r = mac_selinux_init();
-         if (r < 0)
-                 return r;
-diff --git a/src/shared/smack-util.c b/src/shared/smack-util.c
-index 1f88e724d0..5661428f96 100644
---- a/src/shared/smack-util.c
-+++ b/src/shared/smack-util.c
-@@ -112,7 +112,7 @@ int mac_smack_apply_pid(pid_t pid, const char *label) {
-         if (!mac_smack_use())
-                 return 0;
- 
--        p = procfs_file_alloca(pid, "attr/current");
-+        p = procfs_file_alloca(pid, "attr/smack/current");
-         r = write_string_file(p, label, WRITE_STRING_FILE_DISABLE_BUFFER);
-         if (r < 0)
-                 return r;
+Thanks!
+--
+Gustavo
 
+On 3/4/24 11:52, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
+> ready to enable it globally.
+> 
+> There is currently an object (`hdr)` in `struct ima_max_digest_data`
+> that contains a flexible structure (`struct ima_digest_data`):
+> 
+>   struct ima_max_digest_data {
+> 	struct ima_digest_data hdr;
+>          u8 digest[HASH_MAX_DIGESTSIZE];
+>   } __packed;
+> 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of another struct, we use the `struct_group_tagged()` helper to
+> separate the flexible array from the rest of the members in the flexible
+> structure:
+> 
+> struct ima_digest_data {
+>          struct_group_tagged(ima_digest_data_hdr, hdr,
+> 
+> 	... the rest of the members
+> 
+>          );
+>          u8 digest[];
+> } __packed;
+> 
+> With the change described above, we can now declare an object of the
+> type of the tagged struct, without embedding the flexible array in the
+> middle of another struct:
+> 
+>   struct ima_max_digest_data {
+>          struct ima_digest_data_hdr hdr;
+>          u8 digest[HASH_MAX_DIGESTSIZE];
+>   } __packed;
+> 
+> We also use `container_of()` whenever we need to retrieve a pointer to
+> the flexible structure.
+> 
+> So, with these changes, fix the following warnings:
+> 
+> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   security/integrity/ima/ima_api.c          |  6 ++++--
+>   security/integrity/ima/ima_appraise.c     |  4 +++-
+>   security/integrity/ima/ima_init.c         |  6 ++++--
+>   security/integrity/ima/ima_main.c         |  6 ++++--
+>   security/integrity/ima/ima_template_lib.c | 10 ++++++----
+>   security/integrity/integrity.h            |  4 +++-
+>   6 files changed, 24 insertions(+), 12 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index b37d043d5748..c7c8d1bffb17 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -247,6 +247,8 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+>   	struct inode *real_inode = d_real_inode(file_dentry(file));
+>   	const char *filename = file->f_path.dentry->d_name.name;
+>   	struct ima_max_digest_data hash;
+> +	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
+> +						struct ima_digest_data, hdr);
+>   	struct kstat stat;
+>   	int result = 0;
+>   	int length;
+> @@ -286,9 +288,9 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+>   			result = -ENODATA;
+>   		}
+>   	} else if (buf) {
+> -		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
+> +		result = ima_calc_buffer_hash(buf, size, hash_hdr);
+>   	} else {
+> -		result = ima_calc_file_hash(file, &hash.hdr);
+> +		result = ima_calc_file_hash(file, hash_hdr);
+>   	}
+>   
+>   	if (result && result != -EBADF && result != -EINVAL)
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 3497741caea9..656c709b974f 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -378,7 +378,9 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+>   		}
+>   
+>   		rc = calc_file_id_hash(IMA_VERITY_DIGSIG, iint->ima_hash->algo,
+> -				       iint->ima_hash->digest, &hash.hdr);
+> +				       iint->ima_hash->digest,
+> +				       container_of(&hash.hdr,
+> +					       struct ima_digest_data, hdr));
+>   		if (rc) {
+>   			*cause = "sigv3-hashing-error";
+>   			*status = INTEGRITY_FAIL;
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 393f5c7912d5..4e208239a40e 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -48,12 +48,14 @@ static int __init ima_add_boot_aggregate(void)
+>   	struct ima_event_data event_data = { .iint = iint,
+>   					     .filename = boot_aggregate_name };
+>   	struct ima_max_digest_data hash;
+> +	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
+> +						struct ima_digest_data, hdr);
+>   	int result = -ENOMEM;
+>   	int violation = 0;
+>   
+>   	memset(iint, 0, sizeof(*iint));
+>   	memset(&hash, 0, sizeof(hash));
+> -	iint->ima_hash = &hash.hdr;
+> +	iint->ima_hash = hash_hdr;
+>   	iint->ima_hash->algo = ima_hash_algo;
+>   	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
+>   
+> @@ -70,7 +72,7 @@ static int __init ima_add_boot_aggregate(void)
+>   	 * is not found.
+>   	 */
+>   	if (ima_tpm_chip) {
+> -		result = ima_calc_boot_aggregate(&hash.hdr);
+> +		result = ima_calc_boot_aggregate(hash_hdr);
+>   		if (result < 0) {
+>   			audit_cause = "hashing_error";
+>   			goto err_out;
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index c84e8c55333d..0d3a7c864fd4 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -941,6 +941,8 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
+>   					    .buf_len = size};
+>   	struct ima_template_desc *template;
+>   	struct ima_max_digest_data hash;
+> +	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
+> +						struct ima_digest_data, hdr);
+>   	char digest_hash[IMA_MAX_DIGEST_SIZE];
+>   	int digest_hash_len = hash_digest_size[ima_hash_algo];
+>   	int violation = 0;
+> @@ -979,7 +981,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
+>   	if (!pcr)
+>   		pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+>   
+> -	iint.ima_hash = &hash.hdr;
+> +	iint.ima_hash = hash_hdr;
+>   	iint.ima_hash->algo = ima_hash_algo;
+>   	iint.ima_hash->length = hash_digest_size[ima_hash_algo];
+>   
+> @@ -990,7 +992,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
+>   	}
+>   
+>   	if (buf_hash) {
+> -		memcpy(digest_hash, hash.hdr.digest, digest_hash_len);
+> +		memcpy(digest_hash, hash_hdr->digest, digest_hash_len);
+>   
+>   		ret = ima_calc_buffer_hash(digest_hash, digest_hash_len,
+>   					   iint.ima_hash);
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> index 6cd0add524cd..74198d7619da 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -339,6 +339,8 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
+>   			 struct ima_field_data *field_data)
+>   {
+>   	struct ima_max_digest_data hash;
+> +	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
+> +						struct ima_digest_data, hdr);
+>   	u8 *cur_digest = NULL;
+>   	u32 cur_digestsize = 0;
+>   	struct inode *inode;
+> @@ -358,7 +360,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
+>   	if ((const char *)event_data->filename == boot_aggregate_name) {
+>   		if (ima_tpm_chip) {
+>   			hash.hdr.algo = HASH_ALGO_SHA1;
+> -			result = ima_calc_boot_aggregate(&hash.hdr);
+> +			result = ima_calc_boot_aggregate(hash_hdr);
+>   
+>   			/* algo can change depending on available PCR banks */
+>   			if (!result && hash.hdr.algo != HASH_ALGO_SHA1)
+> @@ -368,7 +370,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
+>   				memset(&hash, 0, sizeof(hash));
+>   		}
+>   
+> -		cur_digest = hash.hdr.digest;
+> +		cur_digest = hash_hdr->digest;
+>   		cur_digestsize = hash_digest_size[HASH_ALGO_SHA1];
+>   		goto out;
+>   	}
+> @@ -379,14 +381,14 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
+>   	inode = file_inode(event_data->file);
+>   	hash.hdr.algo = ima_template_hash_algo_allowed(ima_hash_algo) ?
+>   	    ima_hash_algo : HASH_ALGO_SHA1;
+> -	result = ima_calc_file_hash(event_data->file, &hash.hdr);
+> +	result = ima_calc_file_hash(event_data->file, hash_hdr);
+>   	if (result) {
+>   		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+>   				    event_data->filename, "collect_data",
+>   				    "failed", result, 0);
+>   		return result;
+>   	}
+> -	cur_digest = hash.hdr.digest;
+> +	cur_digest = hash_hdr->digest;
+>   	cur_digestsize = hash.hdr.length;
+>   out:
+>   	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 50d6f798e613..fc1952da02ea 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -44,6 +44,7 @@ struct evm_xattr {
+>   #define IMA_MAX_DIGEST_SIZE	HASH_MAX_DIGESTSIZE
+>   
+>   struct ima_digest_data {
+> +	struct_group_tagged(ima_digest_data_hdr, hdr,
+>   	u8 algo;
+>   	u8 length;
+>   	union {
+> @@ -57,6 +58,7 @@ struct ima_digest_data {
+>   		} ng;
+>   		u8 data[2];
+>   	} xattr;
+> +	);
+>   	u8 digest[];
+>   } __packed;
+>   
+> @@ -65,7 +67,7 @@ struct ima_digest_data {
+>    * with the maximum hash size, define ima_max_digest_data struct.
+>    */
+>   struct ima_max_digest_data {
+> -	struct ima_digest_data hdr;
+> +	struct ima_digest_data_hdr hdr;
+>   	u8 digest[HASH_MAX_DIGESTSIZE];
+>   } __packed;
+>   
