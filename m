@@ -1,141 +1,253 @@
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6634A7E566
-	for <linux-security-module@vger.kernel.org>; Tue, 19 Mar 2024 10:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6961CD13;
+	Tue, 19 Mar 2024 11:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710845739; cv=none; b=qhWyyzL2VS9gL8TZDq+R9gh4LI+WfJ9TjVnX4NmtlFXzLwFMhIXPhNS11b0Of7P+4wN5EKVhOkPkKulHN1k2YJ5tOPXZEkY0QVcu3Wszpo5yE0OE+073xoG2jTJ1SJkgwZRo/LzIJa5Yhz4r2ndbgcmcQHLNH0dNQDw1cqoFGJM=
+	t=1710848421; cv=none; b=VLOrs1xA8ddAa9GisPltFMUzQc4XtuDfursFLVW939m4cD/oxSkUJZso+QpCQG6DDRpUvUKupK4i1uQJj67T4q9GN3yeiqtLJAXbuf+9RwVh26HpxT+g5aqpx78VfDOAtP0vn9r8kw4Fgi5ENQLTZfUAhVKMjDihu7xq+k0PRXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710845739; c=relaxed/simple;
-	bh=cKJ21os4pRSqtvrUL/kk04kO+wQ5E5PRBKkuzOwE6dg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=epsTkMC3gnoDV77GkNOSCJ47qHoTpqfMv5jl7FBBRnxiFyAaf4Fec5qQdDMHqNycWccwJocMW3A3BZoDnvSkVDJ9YCINz9WF3EomZx6RKOLS+qqRmYrzOEkfaLbhh+ESvvJhX6R18OW2K/gJnugr12sn9q68ZIREgCcSSfwW510=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=spEGFIwd; arc=none smtp.client-ip=185.125.25.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1710848421; c=relaxed/simple;
+	bh=8H1N8IVK0aMrxHwTIAJImeJ74R0FI5ahgx9a7aRkzlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ap8sRU5WhOGtsLBMYnlWBjEceirnxBzME7PvF2obaKETXSdfVzP2uNN0huRS9lMYBQWHDXzd8WIAAFh9hY0w9KF6nJLlyJrldkuXFwWFWkHvMfH2/yv/suDegClIcCVHGcWpZk2BSsN9b4SlCzlIM5WDcEkC1vWhMOQdTTbE/EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rr0g4cOT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="spEGFIwd"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TzT4J40WGzM5V;
-	Tue, 19 Mar 2024 11:49:20 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TzT4H6GDBz3g;
-	Tue, 19 Mar 2024 11:49:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710845360;
-	bh=cKJ21os4pRSqtvrUL/kk04kO+wQ5E5PRBKkuzOwE6dg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=spEGFIwdpJZqa7BSkY0tEWGdJ6y+dr8xW4uOSjXPJfpYlV7oa60n5G2Tr9V+zXHUA
-	 wQ4ynSk2F6bNw0s0cuyAzP1aHiagfKAJQwOM4Pc689bnx1sTeClC4WU3tQ3dmsSptW
-	 LcWfKE2iVhbuBtnk8YilUaS6otG9+ivy/ZEJyrlE=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Kees Cook <keescook@chromium.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Marco Pagani <marpagan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thara Gopinath <tgopinath@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Zahra Tarkhani <ztarkhani@microsoft.com>,
-	kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rr0g4cOT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D2CAC43390;
+	Tue, 19 Mar 2024 11:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1710848421;
+	bh=8H1N8IVK0aMrxHwTIAJImeJ74R0FI5ahgx9a7aRkzlI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rr0g4cOTM/CSNGme7kyGe9YRJCgDiU5moZndh7++L++nc2cojq3Ce2hRPMiA1iN/D
+	 hEv/OD8FeLqvCY1YCJCNcmhSvje+Gyoi2993zSyR40lIj6LY4AZDD55M4w9VIs3p7l
+	 ODgW5swUhQQoPf81DpKji4GDxGSvdnCkDxdfyjdjradptmAhw3EUhD1Nq9VVwaYYd8
+	 m71+oBXPUO9QT5uSeqpCUJ76Z208X8JJy1g86iFBrEyvbtIWXOfEH7uSjRddyq6jpR
+	 lS726NFVZn3RntMrxSz8EnN8K+3c4eLPELPWi25qWIo/xJ2o0PpTBDH5NFkCcJNNDD
+	 YWbwuHRvGPGSQ==
+Date: Tue, 19 Mar 2024 12:40:17 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Shervin Oloumi <enlightened@chromium.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org
-Subject: [PATCH v3 2/7] kunit: Fix kthread reference
-Date: Tue, 19 Mar 2024 11:48:52 +0100
-Message-ID: <20240319104857.70783-3-mic@digikod.net>
-In-Reply-To: <20240319104857.70783-1-mic@digikod.net>
-References: <20240319104857.70783-1-mic@digikod.net>
+	Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 1/2] landlock: Extend documentation for kernel support
+Message-ID: <Zfl5oT1amymvxjjL@debian>
+References: <20240227110550.3702236-1-mic@digikod.net>
+ <Zd4OlL1G3t1D3TgC@google.com>
+ <20240307.oxQuab5tho0u@digikod.net>
+ <ZfgOf2dHBVT4WUcp@debian>
+ <20240319.eeb8tajeiPee@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lVXM4NhaC2HReP5T"
+Content-Disposition: inline
+In-Reply-To: <20240319.eeb8tajeiPee@digikod.net>
 
-There is a race condition when a kthread finishes after the deadline and
-before the call to kthread_stop(), which may lead to use after free.
 
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Fixes: adf505457032 ("kunit: fix UAF when run kfence test case test_gfpzero")
-Reviewed-by: David Gow <davidgow@google.com>
-Reviewed-by: Rae Moar <rmoar@google.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240319104857.70783-3-mic@digikod.net
----
+--lVXM4NhaC2HReP5T
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 19 Mar 2024 12:40:17 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Shervin Oloumi <enlightened@chromium.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 1/2] landlock: Extend documentation for kernel support
 
-Changes since v2:
-* Add Fixes tag as suggested by David.
-* Add David's and Rae's Reviewed-by.
+Hi Micka=C3=ABl!
 
-Changes since v1:
-* Add Kees's Reviewed-by.
----
- lib/kunit/try-catch.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+On Tue, Mar 19, 2024 at 11:46:34AM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Mon, Mar 18, 2024 at 10:50:42AM +0100, Alejandro Colomar wrote:
+> > Hi Micka=C3=ABl, G=C3=BCnther,
+> >=20
+> > Sorry for the delay!
+> >=20
+> > On Thu, Mar 07, 2024 at 11:21:57AM +0100, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> > > CCing Alejandro
+> > >=20
+> > > On Tue, Feb 27, 2024 at 05:32:20PM +0100, G=C3=BCnther Noack wrote:
+> > > > On Tue, Feb 27, 2024 at 12:05:49PM +0100, Micka=C3=ABl Sala=C3=BCn =
+wrote:
+> > > > > Extend the kernel support section with one subsection for build t=
+ime
+> > > > > configuration and another for boot time configuration.
+> > > > >=20
+> > > > > Extend the boot time subsection with a concrete example.
+> > > > >=20
+> > > > > Update the journalctl command to include the boot option.
+> > > > >=20
+> > > > > Cc: G=C3=BCnther Noack <gnoack@google.com>
+> > > > > Cc: Kees Cook <keescook@chromium.org>
+> > > > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > > > ---
+> > > > >=20
+> > > > > Changes since v1:
+> > > > > * New patch, suggested by Kees Cook.
+> > > > > ---
+> > > > >  Documentation/userspace-api/landlock.rst | 57 ++++++++++++++++++=
++++---
+> > > > >  1 file changed, 51 insertions(+), 6 deletions(-)
+> >=20
+> > [...]
+> >=20
+> > > > > +
+> > > > > +  lsm=3Dlandlock,lockdown,yama,integrity,apparmor
+> > > > > +
+> > > > > +After a reboot, we can check that Landlock is up and running by =
+looking at
+> > > > > +kernel logs:
+> > > > > +
+> > > > > +.. code-block:: console
+> > > > > +
+> > > > > +    # dmesg | grep landlock || journalctl -kb -g landlock
+> > > > > +    [    0.000000] Command line: [...] lsm=3Dlandlock,lockdown,y=
+ama,integrity,apparmor
+> > > > > +    [    0.000000] Kernel command line: [...] lsm=3Dlandlock,loc=
+kdown,yama,integrity,apparmor
+> > > > > +    [    0.000000] LSM: initializing lsm=3Dlockdown,capability,l=
+andlock,yama,integrity,apparmor
+> > > > > +    [    0.000000] landlock: Up and running.
+> > > > > +
+> > > > > +Note that according to the built time kernel configuration,
+> > > >=20
+> > > > s/built time/build time/
+> > > >                  ^
+> > >=20
+> > > OK
+> >=20
+> > Here, this should actually be "build-time" since it works as an
+> > adjective.
+>=20
+> Thanks Alex but this was already merged:
+> https://git.kernel.org/torvalds/c/35e886e88c803920644c9d3abb45a9ecb7f1e761
+>=20
+> Because I picked G=C3=BCnther's below suggestion, it should be good right?
 
-diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-index a5cb2ef70a25..73f5007f20ea 100644
---- a/lib/kunit/try-catch.c
-+++ b/lib/kunit/try-catch.c
-@@ -11,6 +11,7 @@
- #include <linux/completion.h>
- #include <linux/kernel.h>
- #include <linux/kthread.h>
-+#include <linux/sched/task.h>
- 
- #include "try-catch-impl.h"
- 
-@@ -65,14 +66,15 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
- 	try_catch->context = context;
- 	try_catch->try_completion = &try_completion;
- 	try_catch->try_result = 0;
--	task_struct = kthread_run(kunit_generic_run_threadfn_adapter,
--				  try_catch,
--				  "kunit_try_catch_thread");
-+	task_struct = kthread_create(kunit_generic_run_threadfn_adapter,
-+				     try_catch, "kunit_try_catch_thread");
- 	if (IS_ERR(task_struct)) {
- 		try_catch->try_result = PTR_ERR(task_struct);
- 		try_catch->catch(try_catch->context);
- 		return;
- 	}
-+	get_task_struct(task_struct);
-+	wake_up_process(task_struct);
- 
- 	time_remaining = wait_for_completion_timeout(&try_completion,
- 						     kunit_test_timeout());
-@@ -82,6 +84,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
- 		kthread_stop(task_struct);
- 	}
- 
-+	put_task_struct(task_struct);
- 	exit_code = try_catch->try_result;
- 
- 	if (!exit_code)
--- 
-2.44.0
+Yeah, it's a minor grammar mistake that is widespread elsewhere.  If you
+want to patch it, go ahead, if you want to keep it until next time you
+revise this text, it's not something that will significantly hurt the
+understanding of the text.
 
+See also: <https://www.grammar-monster.com/lessons/hyphens_in_compound_adje=
+ctives.htm>
+
+Have a lovely day!
+Alex
+
+>=20
+> >=20
+> > >=20
+> > > >=20
+> > > > It feels like the phrase "according to" could be slightly more spec=
+ific here.
+> > > >=20
+> > > > To paraphrase Alejandro Colomar, "Note that" is usually redundant.
+> > > > https://lore.kernel.org/all/0aafcdd6-4ac7-8501-c607-9a24a98597d7@gm=
+ail.com/
+> > > >=20
+> > > > I'd suggest:
+> > > >=20
+> > > >   The kernel may be configured at build time to always load the ``l=
+ockdown`` and
+> > > >   ``capability`` LSMs.  In that case, these LSMs will appear at the=
+ beginning of
+> > > >   the ``LSM: initializing`` log line as well, even if they are not =
+configured in
+> > > >   the boot loader.
+> >=20
+> > LGTM
+> >=20
+> > >=20
+> > > OK, I integrated your suggestion.  I guess `capability` is not really
+> > > considered an LSM but it would be too confusing and out of scope for =
+an
+> > > user documentation to explain that.
+> > >=20
+> > > >=20
+> > > > > +``lockdown,capability,`` may always stay at the beginning of the=
+ ``LSM:
+> > > > > +initializing lsm=3D`` list even if they are not configured with =
+the bootloader,
+> > > >=20
+> > > > Nit: The man pages spell this in two words as "boot loader".
+> > >=20
+> > > OK, I'll use "boot loader" too.
+> > >=20
+> > > >=20
+> > > >=20
+> > > > > +which is OK.
+> > > > > +
+> > > > > +Network support
+> > > > > +---------------
+> > > > > +
+> > > > >  To be able to explicitly allow TCP operations (e.g., adding a ne=
+twork rule with
+> > > > >  ``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support TCP
+> > > > >  (``CONFIG_INET=3Dy``).  Otherwise, sys_landlock_add_rule() retur=
+ns an
+> > > > >=20
+> > > > > base-commit: b4007fd27206c478a4b76e299bddf4a71787f520
+> > > > > --=20
+> > > > > 2.44.0
+> > > > >=20
+> > > >=20
+> > > > Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+> > >=20
+> > > Thanks!
+> >=20
+> > Reviewed-by: Alejandro Colomar <alx@kernel.org>
+> >=20
+> > Have a lovely day!
+> > Alex
+> >=20
+> > --=20
+> > <https://www.alejandro-colomar.es/>
+> > Looking for a remote C programming job at the moment.
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+Looking for a remote C programming job at the moment.
+
+--lVXM4NhaC2HReP5T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmX5eaEACgkQnowa+77/
+2zLeYxAAnJTAbKLQYz/5DxQmedRvL+W3k/fnLGakyKe+gmMvXAFsrAPRdPJqx+B/
+IrnjIXRGN9heqRpBuuq8BTxAFfnlapd5zatjGNMxD3f2VhlFjsH5WYj0fDj59+9d
+w8unSYIMyd/pvhxiSl9NvIzu/O7zWPFmDJ+mY+tLVzHkaQmZ/SO2X6U2DRW2d6F2
+25iJujYtmp6hQtANfVzJY7Qmufbp7GB4s83KuKd/IXqExlzLS7sG0H9mxHi0Ii3w
+2OOGZ7lVTk8yCCqAxlr9gNwgbbeHZ55DKPwUobBllhQr4tvbrbE09QXm6WgLK+Hk
+Tgsdw/MsviWRuWUztcSJjnqiEkAwSREB5EZXP/+QQqWCrbiTsdfJoVYvdz4uIUvg
+78/eE6vIW/iSliJe9MnXv8nCH3vJ3QsENV6S3HgeXAx6dlvy2r3gMul5VklSfztR
+4BWP3Usx42rOs33ielFDVPncJFYbFjIaNGvaraa6gWlott6YoYzaLetGK0pnUs78
+gTD1ZECDe2UuQGcoiEEH47U7Hg9uLYnAEfahXpE60kf555p4exQWoXs1r2pMmEzm
+ylWrd2TfmWV15CVCNpR1bK4AgAIiOel5FU+nYjAq9GoBeqThqjbwZlGhGWXY/Nlp
+cnJAH59ziEI8YPqdKq3BRglpzWldmGwCLQXvR1hQuyc1Dq6I6Bc=
+=5omu
+-----END PGP SIGNATURE-----
+
+--lVXM4NhaC2HReP5T--
