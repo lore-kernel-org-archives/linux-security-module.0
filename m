@@ -1,175 +1,115 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1917E11C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88D87D401
 	for <linux-security-module@vger.kernel.org>; Tue, 19 Mar 2024 10:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710845737; cv=none; b=ABHeBxkkO9JR+LHFu+1Bxjz0We1DcjFA6GUNbkmNNZM7od2NxPIdQeutt1mBBnW0pyVuqjAtMdDSLqiMerxgVMfRZoGcWQiSldPaoyaoiHcHqgEcoemtGO/XV7W/EtFl7AjrESyOPOhgwxECd+4ReVgChwjHtGE812r+f7MzOm0=
+	t=1710845737; cv=none; b=SmQFrP9f1hUad7X4x+Tao26lkcV7XL3k7d62KAP+/B5ps0VRGTJTKySMVkw0dLW1+OMkwFnkJ9F1QoGiFiVzWhcJaWBrjHj3agbz1FnP5JbjSRxNwEDuUyzB3nAlckwVrUElIyhMQnj7BQqf6unJKM/VywmJBH6BSAavQ6aLCZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710845737; c=relaxed/simple;
-	bh=fENQjvqNGOJIElMLG83NAteDijrFr0EuoPVi3ck1bAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xyhi7mj8a8Fy87nIPeMeVd7UbWZuyamxfX22/7ka0BW20qra9vdH0w55Rj0sYVcKFlbXkw3aUSOGLrfbFRfQwX3wmbXNEn66xA4doEwIB7FMAVEV5IMMjlg1TP5+2v6n7sTAbkaZsPXJ9khK61rJ7914v79OWOhkmkbWSNv8KgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fLP8aoLq; arc=none smtp.client-ip=45.157.188.11
+	bh=Q4UUhNwYZn+WDcIDuQ7Wlx71SgXa7nFVwqw5oSSibM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GrlWdRxlFiQdZlXaGvREtNOEwtXShXeONCAmc0Af0r7N1sfKj48ABwEbygTKV+YAuiwt1ew4Ahp0vQw6zQP24gAMPr495JHOkUtHODSwoO+35TDJFf7OqhLqPT1rZBYqKJ8/cIWswZUhRXjHxZ83lehFoGcisdVuTyg1yCOz3EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=V4dBTnlY; arc=none smtp.client-ip=45.157.188.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fLP8aoLq"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TzT181pX4zLC8;
-	Tue, 19 Mar 2024 11:46:36 +0100 (CET)
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TzT171j29zlxf;
-	Tue, 19 Mar 2024 11:46:35 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="V4dBTnlY"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TzT4H3R9zzLPZ;
+	Tue, 19 Mar 2024 11:49:19 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4TzT4G4jhgzMppDx;
+	Tue, 19 Mar 2024 11:49:18 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710845196;
-	bh=fENQjvqNGOJIElMLG83NAteDijrFr0EuoPVi3ck1bAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fLP8aoLqfwWxGvgT0LsfcIyzPHD/8iMS/MwlF2Wtg2OuMyi/eTKLveb3Wg61JyEnB
-	 mQEIliTADiOnC6WwkYzT3g9X+1A475sCVJIJp5cPychq2M3DrOG1K3HzN8jyJMRwts
-	 LbZmsVZgHJCVXOPPBUzCe7GF7aM4Znki8SobB/UQ=
-Date: Tue, 19 Mar 2024 11:46:34 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Shervin Oloumi <enlightened@chromium.org>, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 1/2] landlock: Extend documentation for kernel support
-Message-ID: <20240319.eeb8tajeiPee@digikod.net>
-References: <20240227110550.3702236-1-mic@digikod.net>
- <Zd4OlL1G3t1D3TgC@google.com>
- <20240307.oxQuab5tho0u@digikod.net>
- <ZfgOf2dHBVT4WUcp@debian>
+	s=20191114; t=1710845359;
+	bh=Q4UUhNwYZn+WDcIDuQ7Wlx71SgXa7nFVwqw5oSSibM4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=V4dBTnlYd4A0P0aoAur3y3VFlxA+lv/yfODZl4C1bFWuVVA0GCgov/qviWUHjb6d/
+	 98F/txkzdGUiMY6llvijE4GzskZi5hQSsha9ameMP3ioPjx3fWEXZow0TMB9o5NH5f
+	 oHBmuObh1szJXgOfAjs4cGlOOBbBE1WBVoJPtDzo=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Kees Cook <keescook@chromium.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Marco Pagani <marpagan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thara Gopinath <tgopinath@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Zahra Tarkhani <ztarkhani@microsoft.com>,
+	kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	x86@kernel.org
+Subject: [PATCH v3 1/7] kunit: Handle thread creation error
+Date: Tue, 19 Mar 2024 11:48:51 +0100
+Message-ID: <20240319104857.70783-2-mic@digikod.net>
+In-Reply-To: <20240319104857.70783-1-mic@digikod.net>
+References: <20240319104857.70783-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZfgOf2dHBVT4WUcp@debian>
 X-Infomaniak-Routing: alpha
 
-On Mon, Mar 18, 2024 at 10:50:42AM +0100, Alejandro Colomar wrote:
-> Hi Mickaël, Günther,
-> 
-> Sorry for the delay!
-> 
-> On Thu, Mar 07, 2024 at 11:21:57AM +0100, Mickaël Salaün wrote:
-> > CCing Alejandro
-> > 
-> > On Tue, Feb 27, 2024 at 05:32:20PM +0100, Günther Noack wrote:
-> > > On Tue, Feb 27, 2024 at 12:05:49PM +0100, Mickaël Salaün wrote:
-> > > > Extend the kernel support section with one subsection for build time
-> > > > configuration and another for boot time configuration.
-> > > > 
-> > > > Extend the boot time subsection with a concrete example.
-> > > > 
-> > > > Update the journalctl command to include the boot option.
-> > > > 
-> > > > Cc: Günther Noack <gnoack@google.com>
-> > > > Cc: Kees Cook <keescook@chromium.org>
-> > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > > ---
-> > > > 
-> > > > Changes since v1:
-> > > > * New patch, suggested by Kees Cook.
-> > > > ---
-> > > >  Documentation/userspace-api/landlock.rst | 57 +++++++++++++++++++++---
-> > > >  1 file changed, 51 insertions(+), 6 deletions(-)
-> 
-> [...]
-> 
-> > > > +
-> > > > +  lsm=landlock,lockdown,yama,integrity,apparmor
-> > > > +
-> > > > +After a reboot, we can check that Landlock is up and running by looking at
-> > > > +kernel logs:
-> > > > +
-> > > > +.. code-block:: console
-> > > > +
-> > > > +    # dmesg | grep landlock || journalctl -kb -g landlock
-> > > > +    [    0.000000] Command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
-> > > > +    [    0.000000] Kernel command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
-> > > > +    [    0.000000] LSM: initializing lsm=lockdown,capability,landlock,yama,integrity,apparmor
-> > > > +    [    0.000000] landlock: Up and running.
-> > > > +
-> > > > +Note that according to the built time kernel configuration,
-> > > 
-> > > s/built time/build time/
-> > >                  ^
-> > 
-> > OK
-> 
-> Here, this should actually be "build-time" since it works as an
-> adjective.
+Previously, if a thread creation failed (e.g. -ENOMEM), the function was
+called (kunit_catch_run_case or kunit_catch_run_case_cleanup) without
+marking the test as failed.  Instead, fill try_result with the error
+code returned by kthread_run(), which will mark the test as failed and
+print "internal error occurred...".
 
-Thanks Alex but this was already merged:
-https://git.kernel.org/torvalds/c/35e886e88c803920644c9d3abb45a9ecb7f1e761
+Cc: Brendan Higgins <brendanhiggins@google.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Rae Moar <rmoar@google.com>
+Reviewed-by: David Gow <davidgow@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20240319104857.70783-2-mic@digikod.net
+---
 
-Because I picked Günther's below suggestion, it should be good right?
+Changes since v2:
+* Add Rae's and David's Reviewed-by.
 
-> 
-> > 
-> > > 
-> > > It feels like the phrase "according to" could be slightly more specific here.
-> > > 
-> > > To paraphrase Alejandro Colomar, "Note that" is usually redundant.
-> > > https://lore.kernel.org/all/0aafcdd6-4ac7-8501-c607-9a24a98597d7@gmail.com/
-> > > 
-> > > I'd suggest:
-> > > 
-> > >   The kernel may be configured at build time to always load the ``lockdown`` and
-> > >   ``capability`` LSMs.  In that case, these LSMs will appear at the beginning of
-> > >   the ``LSM: initializing`` log line as well, even if they are not configured in
-> > >   the boot loader.
-> 
-> LGTM
-> 
-> > 
-> > OK, I integrated your suggestion.  I guess `capability` is not really
-> > considered an LSM but it would be too confusing and out of scope for an
-> > user documentation to explain that.
-> > 
-> > > 
-> > > > +``lockdown,capability,`` may always stay at the beginning of the ``LSM:
-> > > > +initializing lsm=`` list even if they are not configured with the bootloader,
-> > > 
-> > > Nit: The man pages spell this in two words as "boot loader".
-> > 
-> > OK, I'll use "boot loader" too.
-> > 
-> > > 
-> > > 
-> > > > +which is OK.
-> > > > +
-> > > > +Network support
-> > > > +---------------
-> > > > +
-> > > >  To be able to explicitly allow TCP operations (e.g., adding a network rule with
-> > > >  ``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support TCP
-> > > >  (``CONFIG_INET=y``).  Otherwise, sys_landlock_add_rule() returns an
-> > > > 
-> > > > base-commit: b4007fd27206c478a4b76e299bddf4a71787f520
-> > > > -- 
-> > > > 2.44.0
-> > > > 
-> > > 
-> > > Reviewed-by: Günther Noack <gnoack@google.com>
-> > 
-> > Thanks!
-> 
-> Reviewed-by: Alejandro Colomar <alx@kernel.org>
-> 
-> Have a lovely day!
-> Alex
-> 
-> -- 
-> <https://www.alejandro-colomar.es/>
-> Looking for a remote C programming job at the moment.
+Changes since v1:
+* Add Kees's Reviewed-by.
+---
+ lib/kunit/try-catch.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
+index f7825991d576..a5cb2ef70a25 100644
+--- a/lib/kunit/try-catch.c
++++ b/lib/kunit/try-catch.c
+@@ -69,6 +69,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
+ 				  try_catch,
+ 				  "kunit_try_catch_thread");
+ 	if (IS_ERR(task_struct)) {
++		try_catch->try_result = PTR_ERR(task_struct);
+ 		try_catch->catch(try_catch->context);
+ 		return;
+ 	}
+-- 
+2.44.0
 
