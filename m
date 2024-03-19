@@ -1,171 +1,175 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E285810A;
-	Tue, 19 Mar 2024 10:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1917E11C
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Mar 2024 10:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710845715; cv=none; b=ISooik9cnT1oAn0lxP21lhMWgJWkPmD4KTeGgskXwjuPjur3aptazz5GktiaDZDEs8eWEUjV5GY3oh33RQYh6KTM+knOmUxPHt91fbquhJHjufb++MKQ5cO3pmmM+CAplELzurdJbBw0U+g+2YvNNYgtm+rF93gUqj/xjsNiFME=
+	t=1710845737; cv=none; b=ABHeBxkkO9JR+LHFu+1Bxjz0We1DcjFA6GUNbkmNNZM7od2NxPIdQeutt1mBBnW0pyVuqjAtMdDSLqiMerxgVMfRZoGcWQiSldPaoyaoiHcHqgEcoemtGO/XV7W/EtFl7AjrESyOPOhgwxECd+4ReVgChwjHtGE812r+f7MzOm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710845715; c=relaxed/simple;
-	bh=71EEtOY8haZwTtkTzteQK0uaERkTAj9zbYONX0mzdMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FIXxCaWBvfX2xoVpWzSYCp9VllGlM8YHanBsSnLURvKCrmgdij6ryOKLZt1tQa4c6pZow86Lhn6KhmjmcUrTtoA6ZxIEFnAhAghHLFeI+1Y5CpGGmlf85KOPSZB5J8jy6BMTz6aBBpL1JCtUuJDHPnEuzdjLQTyNteFZZatHAC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UewFEH4i; arc=none smtp.client-ip=185.125.25.8
+	s=arc-20240116; t=1710845737; c=relaxed/simple;
+	bh=fENQjvqNGOJIElMLG83NAteDijrFr0EuoPVi3ck1bAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xyhi7mj8a8Fy87nIPeMeVd7UbWZuyamxfX22/7ka0BW20qra9vdH0w55Rj0sYVcKFlbXkw3aUSOGLrfbFRfQwX3wmbXNEn66xA4doEwIB7FMAVEV5IMMjlg1TP5+2v6n7sTAbkaZsPXJ9khK61rJ7914v79OWOhkmkbWSNv8KgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fLP8aoLq; arc=none smtp.client-ip=45.157.188.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UewFEH4i"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TzT4Q53BnzMq2xZ;
-	Tue, 19 Mar 2024 11:49:26 +0100 (CET)
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TzT4P6PZPzlgm;
-	Tue, 19 Mar 2024 11:49:25 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fLP8aoLq"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4TzT181pX4zLC8;
+	Tue, 19 Mar 2024 11:46:36 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4TzT171j29zlxf;
+	Tue, 19 Mar 2024 11:46:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1710845366;
-	bh=71EEtOY8haZwTtkTzteQK0uaERkTAj9zbYONX0mzdMA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UewFEH4iSrJrSPok5JS56YwvhtiOCFyy6B9GXYlmlHWpW3KWLdiRoId3n+kFBXjMF
-	 etwj9/UZH7Ip6ElZVb89YVw79q7dLm3KuQrZ/8/TT5X81VPhxlKYsM6gBmIBzZv/Vk
-	 NDB2kDMrDI0ThVP+B7S6krYlWLMWDirT6vs4HyD0=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Kees Cook <keescook@chromium.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Marco Pagani <marpagan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thara Gopinath <tgopinath@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Zahra Tarkhani <ztarkhani@microsoft.com>,
-	kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org
-Subject: [PATCH v3 7/7] kunit: Add tests for fault
-Date: Tue, 19 Mar 2024 11:48:57 +0100
-Message-ID: <20240319104857.70783-8-mic@digikod.net>
-In-Reply-To: <20240319104857.70783-1-mic@digikod.net>
-References: <20240319104857.70783-1-mic@digikod.net>
+	s=20191114; t=1710845196;
+	bh=fENQjvqNGOJIElMLG83NAteDijrFr0EuoPVi3ck1bAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fLP8aoLqfwWxGvgT0LsfcIyzPHD/8iMS/MwlF2Wtg2OuMyi/eTKLveb3Wg61JyEnB
+	 mQEIliTADiOnC6WwkYzT3g9X+1A475sCVJIJp5cPychq2M3DrOG1K3HzN8jyJMRwts
+	 LbZmsVZgHJCVXOPPBUzCe7GF7aM4Znki8SobB/UQ=
+Date: Tue, 19 Mar 2024 11:46:34 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Shervin Oloumi <enlightened@chromium.org>, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 1/2] landlock: Extend documentation for kernel support
+Message-ID: <20240319.eeb8tajeiPee@digikod.net>
+References: <20240227110550.3702236-1-mic@digikod.net>
+ <Zd4OlL1G3t1D3TgC@google.com>
+ <20240307.oxQuab5tho0u@digikod.net>
+ <ZfgOf2dHBVT4WUcp@debian>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZfgOf2dHBVT4WUcp@debian>
 X-Infomaniak-Routing: alpha
 
-Add a test case to check NULL pointer dereference and make sure it would
-result as a failed test.
+On Mon, Mar 18, 2024 at 10:50:42AM +0100, Alejandro Colomar wrote:
+> Hi Mickaël, Günther,
+> 
+> Sorry for the delay!
+> 
+> On Thu, Mar 07, 2024 at 11:21:57AM +0100, Mickaël Salaün wrote:
+> > CCing Alejandro
+> > 
+> > On Tue, Feb 27, 2024 at 05:32:20PM +0100, Günther Noack wrote:
+> > > On Tue, Feb 27, 2024 at 12:05:49PM +0100, Mickaël Salaün wrote:
+> > > > Extend the kernel support section with one subsection for build time
+> > > > configuration and another for boot time configuration.
+> > > > 
+> > > > Extend the boot time subsection with a concrete example.
+> > > > 
+> > > > Update the journalctl command to include the boot option.
+> > > > 
+> > > > Cc: Günther Noack <gnoack@google.com>
+> > > > Cc: Kees Cook <keescook@chromium.org>
+> > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > > > ---
+> > > > 
+> > > > Changes since v1:
+> > > > * New patch, suggested by Kees Cook.
+> > > > ---
+> > > >  Documentation/userspace-api/landlock.rst | 57 +++++++++++++++++++++---
+> > > >  1 file changed, 51 insertions(+), 6 deletions(-)
+> 
+> [...]
+> 
+> > > > +
+> > > > +  lsm=landlock,lockdown,yama,integrity,apparmor
+> > > > +
+> > > > +After a reboot, we can check that Landlock is up and running by looking at
+> > > > +kernel logs:
+> > > > +
+> > > > +.. code-block:: console
+> > > > +
+> > > > +    # dmesg | grep landlock || journalctl -kb -g landlock
+> > > > +    [    0.000000] Command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
+> > > > +    [    0.000000] Kernel command line: [...] lsm=landlock,lockdown,yama,integrity,apparmor
+> > > > +    [    0.000000] LSM: initializing lsm=lockdown,capability,landlock,yama,integrity,apparmor
+> > > > +    [    0.000000] landlock: Up and running.
+> > > > +
+> > > > +Note that according to the built time kernel configuration,
+> > > 
+> > > s/built time/build time/
+> > >                  ^
+> > 
+> > OK
+> 
+> Here, this should actually be "build-time" since it works as an
+> adjective.
 
-The full kunit_fault test suite is marked as skipped when run on UML
-because it would result to a kernel panic.
+Thanks Alex but this was already merged:
+https://git.kernel.org/torvalds/c/35e886e88c803920644c9d3abb45a9ecb7f1e761
 
-Tested with:
-./tools/testing/kunit/kunit.py run --arch x86_64 kunit_fault
-./tools/testing/kunit/kunit.py run --arch arm64 \
-  --cross_compile=aarch64-linux-gnu- kunit_fault
+Because I picked Günther's below suggestion, it should be good right?
 
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Reviewed-by: David Gow <davidgow@google.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240319104857.70783-8-mic@digikod.net
----
+> 
+> > 
+> > > 
+> > > It feels like the phrase "according to" could be slightly more specific here.
+> > > 
+> > > To paraphrase Alejandro Colomar, "Note that" is usually redundant.
+> > > https://lore.kernel.org/all/0aafcdd6-4ac7-8501-c607-9a24a98597d7@gmail.com/
+> > > 
+> > > I'd suggest:
+> > > 
+> > >   The kernel may be configured at build time to always load the ``lockdown`` and
+> > >   ``capability`` LSMs.  In that case, these LSMs will appear at the beginning of
+> > >   the ``LSM: initializing`` log line as well, even if they are not configured in
+> > >   the boot loader.
+> 
+> LGTM
+> 
+> > 
+> > OK, I integrated your suggestion.  I guess `capability` is not really
+> > considered an LSM but it would be too confusing and out of scope for an
+> > user documentation to explain that.
+> > 
+> > > 
+> > > > +``lockdown,capability,`` may always stay at the beginning of the ``LSM:
+> > > > +initializing lsm=`` list even if they are not configured with the bootloader,
+> > > 
+> > > Nit: The man pages spell this in two words as "boot loader".
+> > 
+> > OK, I'll use "boot loader" too.
+> > 
+> > > 
+> > > 
+> > > > +which is OK.
+> > > > +
+> > > > +Network support
+> > > > +---------------
+> > > > +
+> > > >  To be able to explicitly allow TCP operations (e.g., adding a network rule with
+> > > >  ``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support TCP
+> > > >  (``CONFIG_INET=y``).  Otherwise, sys_landlock_add_rule() returns an
+> > > > 
+> > > > base-commit: b4007fd27206c478a4b76e299bddf4a71787f520
+> > > > -- 
+> > > > 2.44.0
+> > > > 
+> > > 
+> > > Reviewed-by: Günther Noack <gnoack@google.com>
+> > 
+> > Thanks!
+> 
+> Reviewed-by: Alejandro Colomar <alx@kernel.org>
+> 
+> Have a lovely day!
+> Alex
+> 
+> -- 
+> <https://www.alejandro-colomar.es/>
+> Looking for a remote C programming job at the moment.
 
-Changes since v2:
-* Add David's Reviewed-by.
-
-Changes since v1:
-* Remove the rodata and const test cases for now.
-* Replace CONFIG_X86 check with !CONFIG_UML, and remove the "_x86"
-  references.
----
- lib/kunit/kunit-test.c | 45 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
-
-diff --git a/lib/kunit/kunit-test.c b/lib/kunit/kunit-test.c
-index f7980ef236a3..0fdca5fffaec 100644
---- a/lib/kunit/kunit-test.c
-+++ b/lib/kunit/kunit-test.c
-@@ -109,6 +109,48 @@ static struct kunit_suite kunit_try_catch_test_suite = {
- 	.test_cases = kunit_try_catch_test_cases,
- };
- 
-+#ifndef CONFIG_UML
-+
-+static void kunit_test_null_dereference(void *data)
-+{
-+	struct kunit *test = data;
-+	int *null = NULL;
-+
-+	*null = 0;
-+
-+	KUNIT_FAIL(test, "This line should never be reached\n");
-+}
-+
-+static void kunit_test_fault_null_dereference(struct kunit *test)
-+{
-+	struct kunit_try_catch_test_context *ctx = test->priv;
-+	struct kunit_try_catch *try_catch = ctx->try_catch;
-+
-+	kunit_try_catch_init(try_catch,
-+			     test,
-+			     kunit_test_null_dereference,
-+			     kunit_test_catch);
-+	kunit_try_catch_run(try_catch, test);
-+
-+	KUNIT_EXPECT_EQ(test, try_catch->try_result, -EINTR);
-+	KUNIT_EXPECT_TRUE(test, ctx->function_called);
-+}
-+
-+#endif /* !CONFIG_UML */
-+
-+static struct kunit_case kunit_fault_test_cases[] = {
-+#ifndef CONFIG_UML
-+	KUNIT_CASE(kunit_test_fault_null_dereference),
-+#endif /* !CONFIG_UML */
-+	{}
-+};
-+
-+static struct kunit_suite kunit_fault_test_suite = {
-+	.name = "kunit_fault",
-+	.init = kunit_try_catch_test_init,
-+	.test_cases = kunit_fault_test_cases,
-+};
-+
- /*
-  * Context for testing test managed resources
-  * is_resource_initialized is used to test arbitrary resources
-@@ -826,6 +868,7 @@ static struct kunit_suite kunit_current_test_suite = {
- 
- kunit_test_suites(&kunit_try_catch_test_suite, &kunit_resource_test_suite,
- 		  &kunit_log_test_suite, &kunit_status_test_suite,
--		  &kunit_current_test_suite, &kunit_device_test_suite);
-+		  &kunit_current_test_suite, &kunit_device_test_suite,
-+		  &kunit_fault_test_suite);
- 
- MODULE_LICENSE("GPL v2");
--- 
-2.44.0
 
