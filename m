@@ -1,121 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3FD79E0;
-	Thu, 21 Mar 2024 17:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1413E4A2F
+	for <linux-security-module@vger.kernel.org>; Thu, 21 Mar 2024 23:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711041927; cv=none; b=MDqT6UoiLqk/wN1WQ1KdpMdhqihyZOGCtNURRbC83n2Q3vmmL6QofefPZPh+UFGJ2E+WeZmF/031n0ALV9+x7uLZSvQrxzkw7GcTlXSNGbN0XNCaOw8RBERjEbWcJ/Oa01qlvBdKpU+947CK04FYlvaS4f62VO/amVhSjM2hp4A=
+	t=1711063956; cv=none; b=oVdtAUCLxjmFFPfgcu6NdySXACPqYXBdfF/LG9nlii9uEOQOdJGcdPGMdEp3AVGwr4ws26DkQuiqakKZulzCbKdRrvbyUVT6opVWqHGioDY9LOmVTZw5XIFaS5hmaJKafm7k+3vez8X5s5F2PYyccslHofT447hlJUYZFtlLM5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711041927; c=relaxed/simple;
-	bh=iNXaAGwm6iS6DNKISF6dlrJY5wNVKnpnm8REwy4rDho=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=ZlrxG4ckuZ8goLtQ3Em9Yp1/x2MZLfQKcZBNJJRM1Mb3vNory2jOJCXysSu0vJiZhxeJA0sblwHWyEal53rf1STgifO0GY5glb7rHOIhY0wEzcByhjLfmSBat936BVoHSNLC+bg6+vk5KVlv6Cm5OI7VSc+5oY2gGUDKiB9Amaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQevDAax; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQevDAax"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073E2C433C7;
-	Thu, 21 Mar 2024 17:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711041927;
-	bh=iNXaAGwm6iS6DNKISF6dlrJY5wNVKnpnm8REwy4rDho=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=uQevDAaxSvs1weuPxAVtTq79oE8xNAAlm00KgUZtg+SF0ZCpdazoYqldu4ms40wTI
-	 KdBcq8uWAD47/rKzsT59SMSEtZvXIWGj+5CJdnbpCRBT7JEP/03D/qAdLGr6V1WR1O
-	 tKmQl20Xe9j84FJNztEGGULdS8/DLACS1ZZirVT9+YuBlMkeNH6yshOtZFYcoGOQ7c
-	 I87pEcsouNJ2soJeKDqyYmUarFAbdb9NjQvdlnXKq82l4NPh+I1KSlj5wGFMn4Ze0w
-	 1SfpgXrWpNJ2W3SvSXv2vZ0wLvpr77vGmkJjpJhw4mdXecJniydVNE2PwYSrO+l75f
-	 cX/eY3iu0uHhg==
+	s=arc-20240116; t=1711063956; c=relaxed/simple;
+	bh=/wLVzCvQXT2aAbNZ7UTZiDXqk9Cvi0SPA+rQtM989oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lusuA1utT9H8gcgY16OJ68i9Lwe3cJoBlRyNrLdsPCh59lPRR87wlbqOaK6jlwA68ozjkGdw4t8IZqnNl3+dqKzOsinBS17Gfz/xJzKBCepOp5UdqzAjUnVCGffnlZOsBStZwFoRk5vSRObyV20FvPWNMrjsD97Ujsrvf3KPC10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 42LNVtIs000895;
+	Thu, 21 Mar 2024 18:31:55 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 42LNVsZ5000893;
+	Thu, 21 Mar 2024 18:31:54 -0500
+Date: Thu, 21 Mar 2024 18:31:54 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org
+Subject: Re: LSM/IMA integration denying access to inode_init_security.
+Message-ID: <20240321233154.GA848@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240318093825.GA30817@wind.enjellic.com> <3ae1387eda0da59199e3e7f736d8dd30281b6b9d.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 21 Mar 2024 19:25:21 +0200
-Message-Id: <CZZLQN9CUN2E.5PNZ0C2JHP42@kernel.org>
-To: "Fan Wu" <wufan@linux.microsoft.com>, "Paul Moore"
- <paul@paul-moore.com>, <corbet@lwn.net>, <zohar@linux.ibm.com>,
- <jmorris@namei.org>, <serge@hallyn.com>, <tytso@mit.edu>,
- <ebiggers@kernel.org>, <axboe@kernel.dk>, <agk@redhat.com>,
- <snitzer@kernel.org>, <eparis@redhat.com>
-Cc: <linux-doc@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <fsverity@lists.linux.dev>,
- <linux-block@vger.kernel.org>, <dm-devel@lists.linux.dev>,
- <audit@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC v15 12/21] security: add
- security_bdev_setintegrity() hook
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <1710560151-28904-13-git-send-email-wufan@linux.microsoft.com>
- <f5cf9d285bd5f09bbc3f79b0800d37fc@paul-moore.com>
- <CZYFP5S04YTK.23AJMKWQWVCR8@kernel.org>
- <CZYFR8LEEQB1.8C0J9KCTF8CB@kernel.org>
- <a69805c7-7b8a-44ee-9b32-f9314b5a9763@linux.microsoft.com>
-In-Reply-To: <a69805c7-7b8a-44ee-9b32-f9314b5a9763@linux.microsoft.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ae1387eda0da59199e3e7f736d8dd30281b6b9d.camel@huaweicloud.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 21 Mar 2024 18:31:55 -0500 (CDT)
 
-On Wed Mar 20, 2024 at 10:31 PM EET, Fan Wu wrote:
->
->
-> On 3/20/2024 1:31 AM, Jarkko Sakkinen wrote:
-> > On Wed Mar 20, 2024 at 10:28 AM EET, Jarkko Sakkinen wrote:
-> >> On Wed Mar 20, 2024 at 1:00 AM EET, Paul Moore wrote:
-> >>> On Mar 15, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
-> >>>>
-> >>>> This patch introduces a new hook to save block device's integrity
-> >>>> data. For example, for dm-verity, LSMs can use this hook to save
-> >>>> the roothash signature of a dm-verity into the security blob,
-> >>>> and LSMs can make access decisions based on the data inside
-> >>>> the signature, like the signer certificate.
-> >>>>
-> >>>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> >>>>
-> >>>> --
-> >>>> v1-v14:
-> >>>>    + Not present
-> >>>>
-> >>>> v15:
-> >>>>    + Introduced
-> >>>>
-> >>>> ---
-> >>>>   include/linux/lsm_hook_defs.h |  2 ++
-> >>>>   include/linux/security.h      | 14 ++++++++++++++
-> >>>>   security/security.c           | 28 ++++++++++++++++++++++++++++
-> >>>>   3 files changed, 44 insertions(+)
-> >>>
-> >>> I'm not sure why you made this a separate patch, help?  If there is
-> >>> no significant reason why this is separate, please squash it together
-> >>> with patch 11/21.
-> >>
-> >> Off-topic: it is weird to have *RFC* patch set at v15.
-> >>
-> >> RFC by de-facto is something that can be safely ignored if you don't
-> >> have bandwidth. 15 versions of anything that can be safely ignored
-> >> is by definition spamming :-) I mean just conceptually.
-> >>
-> >> So does the RFC still hold or what the heck is going on with this one?
-> >>
-> >> Haven't followed for some time now...
-> >=20
-> > I mean if this RFC trend continues I'll just put auto-filter for this
-> > thread to put straight to the bin.  There's enough non-RFC patch sets
-> > to review.
-> >=20
-> > BR, Jarkko
->
-> Sorry about the confusion with the RFC tag =E2=80=93 I wasn't fully aware=
- of its=20
-> conventional meaning and how it's perceived in terms of importance and=20
-> urgency. Point taken, and I'll make sure to remove the RFC tag for=20
-> future submissions. Definitely not my intention to clog up the workflow=
-=20
-> or seem like I'm spamming.
+On Mon, Mar 18, 2024 at 11:39:38AM +0100, Roberto Sassu wrote:
+> On Mon, 2024-03-18 at 04:38 -0500, Dr. Greg wrote:
+> > Good morning Paul/Roberto, I hope this note finds your respective
+> > weeks starting well, greetings to the wider security list as well.
+> > 
+> > We ran into an issue, that seems to be secondary to the LSM/IMA
+> > integration, in our TSEM port to the 6.8 kernel that would seem to be
+> > relevant to other or future LSM's.
+> > 
+> > It appears that the IMA/LSM work added the following code to the
+> > security/security.c:security_inode_init_security() function:
+> > 
+> > if (!blob_sizes.lbs_xattr_count)
+> > 	return 0;
+> > 
+> > Which denies access to the hook by an LSM that has registered a
+> > handler for an event but that has not registered the use of extended
+> > attributes through the LSM blob mechanism.  This pre-supposes the
+> > notion that all LSM's that may want to be notified of an inode
+> > instantiation event will be using extended attributes.
+> > 
+> > For example, in TSEM we use this hook to propagate task identity
+> > ownership and inode instance information from the
+> > security_inode_create hook into the TSEM inode security state
+> > information.
+> > 
+> > We 'fixed' the problem by requesting a single extended attribute
+> > allocation for TSEM, but that seems inelegant in the larger picture,
+> > given that a handler that wishes to use the hook in the absence of
+> > extended attributes can use the hook and return EOPNOTSUPP with no ill
+> > effects.
 
-OK cool! Just wanted to point this out also because it already looks
-good enough not to be considered as RFC in my eyes :-) If you keep RFC
-it is by definition "look into if you have the bandwidth but please
-do not take this to mainline". No means to nitpick here...
+> Hi Greg
+> 
+> I agree, it should not be needed.
 
-BR, Jarkko
+Thanks Roberto, I'm glad you tentatively read the situation as we did.
+
+> > We haven't had time to track down the involved code but a cursory
+> > examination would seem to suggest that this also effectively denies
+> > the ability to create an operational BPF hook for this handler.  Given
+> > that BPF is proposed as a mechanism to implement just any arbitrary
+> > security policy, this would seem problematic, if it doesn't already
+> > break current BPF LSM implementations that may have placed a handler
+> > on this event.
+> > 
+> > We could certainly roll a patch for consideration on how to address
+> > this issue if that would be of assistance.  At the very least the
+> > documentation for the function no longer matches its operational
+> > characteristics.
+> 
+> I think the check above was just an optimization, but I agree you might
+> do other tasks, other than just filling the xattrs slot.
+> 
+> For me, it would not be really a problem to modify the code to invoke
+> the inode_init_security hooks with xattrs set to NULL.
+> 
+> I haven't found any counterargument, but will think some more.
+
+Paul, do you have any reflections on this?
+
+If not, we will propose a patch to return the previous behavior.
+
+> > Have a good week.
+> 
+> You too!
+> 
+> Roberto
+
+Thanks for the comments, have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
