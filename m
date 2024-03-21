@@ -1,309 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC04BA56;
-	Thu, 21 Mar 2024 04:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A5F82D86;
+	Thu, 21 Mar 2024 13:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710994270; cv=none; b=fC/tnOq4kREYLEsjoIS8/cnWiPIxnzVBKxuL4ny6oQrKOzjuE+91rETViIkQ+ehd/7Cb72vVdla7Pit7yxkTO0L66lbjySNRDnVrAhpYpzWbUxUPDIAA4G5wuCc1WHrmcdv0Maw2NEJPnydncDADcQa0q1GboNy91BJEuqwG/oI=
+	t=1711029536; cv=none; b=h1dWgUZIeOMbEegUlRd8GNN4ljy145xSQmx4RVAvkdYL/A8cW7uCuMasUoHG73AlxcyEGwzUm6u2++2iFAPtpUKTyKj6kFfJ9RT0WYo91FRSYj8I1ePO/IBifP9slEEPg2CLE9mzJboJdYO7f0LHhQAhv7OugUqT7VAHLMnrt5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710994270; c=relaxed/simple;
-	bh=nUhN6swPTdLBPcD6e634txdLP2fFPv5dfLhySEmjXMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=j0NR/ee31ShhCOQcKTFpaBiVLuQh2NXUNDESn0ppA8GHMoKeYOzcl2UVotTQnsXr7PbSANiM5mvIz1jg4pg6+kGWj8RJHU+pHVaquF50XT2y+3ZfvOE3z9+dJalYw0TlvFYLcdP8Cgg6Lnu79y4IZ9+NFZ0r7yj++RKFvQKV2AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qvvwy3Vc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711029536; c=relaxed/simple;
+	bh=HPFUfXcjh9xUQ2o4yoAZg0WXqjhPAAlp6RwOP/jeKCw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=NVVPyQfmA8140QXfwm73t/7Vn87x08AhDVW/REktBIhFmcbQCUABw4PZnsw0f5YigwPFI3qAfwMV3Pbl4IkfTCqd/jTw4pCOs8aCs1roXAvSpq0csWlpYhsCiePte/EvNxV9c6Z68mFm6oinN5C0s+GLtmHBFZJ5xyfKMXGKJhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rpoAc7mb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvvwy3Vc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9F7C433C7;
-	Thu, 21 Mar 2024 04:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710994269;
-	bh=nUhN6swPTdLBPcD6e634txdLP2fFPv5dfLhySEmjXMQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qvvwy3VcQ2w5PhNPSt/CZb0+WNKfNTTnrpzo3UPN776f7WuJe7SYMHaSZR6svGYJa
-	 biYTZmPzYGqciKCxdG+oQLx0TK3cgFTvJxGxiSJJZuh8HT6UtXZ6SkEgEjctPkQdNk
-	 +cVgwXCxFmX50dkJOW8wK2u3l64W3e86q7IcDA5JqOIw+DXnDoV1iglfmpTFkBYK5y
-	 86fW3iHCqF+pm7kptxh1T9eGWVtQY8GikA5qFjrG+W30oXmyU4Rz4lGyo4cKmxT+H3
-	 lYvFh3jB6EJqQEYxfhYDEkQZvUTNT6dEt2q+8ctNLUHyceaYdFTcBtuYS3l7a6xRie
-	 7Lmr4v6BdjwyA==
-Date: Wed, 20 Mar 2024 22:11:06 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rpoAc7mb"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42LCm5NZ008641;
+	Thu, 21 Mar 2024 13:58:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=eWM4TWj+zZPR08g9wS1AAFFSzeMGDPAIQ+pCPf4MFe0=;
+ b=rpoAc7mbhihYAII22azxL74DzRLCpsm2Tdb9ZCl1uoQskOSiPTjz73hqB+Uf3V34KA4G
+ XRYq8Q0hxbcZbYoiBsx+mZGgS1qdj9/BstSGzEz4TibAnWVUZq61skw28fgj3Vpnz8FL
+ kiwiKgW7fdDqQ5QirKTnykxPXswnedlz9gkV3lvD+2uCEwjZRFmqPEXdWASgsGRHR98c
+ VVy/mG4D/uZkxqYc2npSZk3hhiOez7TK3WA2kN/G8Vb+5+0dY+IsMWUCCQ8GIfPX3e6q
+ S6XzMWG/LvMTY2Zgh2ZkERZi8gmiJz3FxeYlBnxwWuDOiYX/WcAoL2IOODP6qXu4KZ9r +A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x0n6wr8hp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 13:58:38 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 42LDwb3S028244;
+	Thu, 21 Mar 2024 13:58:37 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x0n6wr8h1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 13:58:37 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 42LBM934010083;
+	Thu, 21 Mar 2024 13:58:36 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wxvavah10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 13:58:36 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 42LDwXBK7340662
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Mar 2024 13:58:35 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C5BF85808F;
+	Thu, 21 Mar 2024 13:58:31 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2BF085807C;
+	Thu, 21 Mar 2024 13:58:31 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.40.138])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 21 Mar 2024 13:58:31 +0000 (GMT)
+Message-ID: <267f340e1b309cff2fab01f83a141ee465296907.camel@linux.ibm.com>
+Subject: Re: [PATCH v3][next] integrity: Avoid
+ -Wflex-array-member-not-at-end warnings
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
 Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v3][next] integrity: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <ZfuzWku+ip4fsZrb@neat>
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Date: Thu, 21 Mar 2024 09:58:30 -0400
+In-Reply-To: <ZfuzWku+ip4fsZrb@neat>
+References: <ZfuzWku+ip4fsZrb@neat>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -PQQ-S8rn1ftx9JS2MJlj6S1u3AoIdvq
+X-Proofpoint-ORIG-GUID: ZUNX21kpOw7k7GpDeTPF6HPVVI0NDsN8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-21_10,2024-03-18_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 mlxlogscore=898 spamscore=0
+ phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2403140000 definitions=main-2403210100
 
--Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
-ready to enable it globally.
+On Wed, 2024-03-20 at 22:11 -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
+> ready to enable it globally.
+> 
+> There is currently an object (`hdr)` in `struct ima_max_digest_data`
+> that contains a flexible structure (`struct ima_digest_data`):
+> 
+>  struct ima_max_digest_data {
+> 	struct ima_digest_data hdr;
+>         u8 digest[HASH_MAX_DIGESTSIZE];
+>  } __packed;
+> 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of a struct, we use the `__struct_group()` helper to separate
+> the flexible array from the rest of the members in the flexible
+> structure:
+> 
+> struct ima_digest_data {
+>         __struct_group(ima_digest_data_hdr, hdr, __packed,
+> 
+> 	... the rest of the members
+> 
+>         );
+>         u8 digest[];
+> } __packed;
+> 
+> With the change described above, we can now declare an object of the
+> type of the tagged `struct ima_digest_data_hdr`, without embedding the
+> flexible array in the middle of another struct:
+> 
+>  struct ima_max_digest_data {
+>         struct ima_digest_data_hdr hdr;
+>         u8 digest[HASH_MAX_DIGESTSIZE];
+>  } __packed;
+> 
 
-There is currently an object (`hdr)` in `struct ima_max_digest_data`
-that contains a flexible structure (`struct ima_digest_data`):
+And similarly for 'struct evm_digest'.
 
- struct ima_max_digest_data {
-	struct ima_digest_data hdr;
-        u8 digest[HASH_MAX_DIGESTSIZE];
- } __packed;
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of a struct, we use the `__struct_group()` helper to separate
-the flexible array from the rest of the members in the flexible
-structure:
+> We also use `container_of()` whenever we need to retrieve a pointer to
+> the flexible structure.
+> 
+> So, with these changes, fix the following warnings:
+> 
+> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible
+> array member is not at the end of another structure [-Wflex-array-member-not-
+> at-end]
+> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible
+> array member is not at the end of another structure [-Wflex-array-member-not-
+> at-end]
+> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible
+> array member is not at the end of another structure [-Wflex-array-member-not-
+> at-end]
 
-struct ima_digest_data {
-        __struct_group(ima_digest_data_hdr, hdr, __packed,
+I assume these messages are gone.
 
-	... the rest of the members
+thanks,
 
-        );
-        u8 digest[];
-} __packed;
+Mimi
 
-With the change described above, we can now declare an object of the
-type of the tagged `struct ima_digest_data_hdr`, without embedding the
-flexible array in the middle of another struct:
 
- struct ima_max_digest_data {
-        struct ima_digest_data_hdr hdr;
-        u8 digest[HASH_MAX_DIGESTSIZE];
- } __packed;
-
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure.
-
-So, with these changes, fix the following warnings:
-
-security/integrity/evm/evm.h:45:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/evm/evm.h:45:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/evm/evm.h:45:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v3:
- - struct ima_digest_data is a packed structure. So, to keep things
-   consistent, use the attribute __packed on the tagged struct 
-   ima_digest_data_hdr. For this, we use __struct_group() instead of
-   struct_group_tagged(). Update the changelog text, accordingly.
-
-Changes in v2:
- - Include changes for `struct evm_digest` (Mimi Zohar)
- 
-
- security/integrity/evm/evm.h              |  2 +-
- security/integrity/ima/ima_api.c          |  6 ++++--
- security/integrity/ima/ima_appraise.c     |  4 +++-
- security/integrity/ima/ima_init.c         |  6 ++++--
- security/integrity/ima/ima_main.c         |  6 ++++--
- security/integrity/ima/ima_template_lib.c | 10 ++++++----
- security/integrity/integrity.h            |  4 +++-
- 7 files changed, 25 insertions(+), 13 deletions(-)
-
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index eb1a2c343bd7..72e3341ae6f7 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -61,7 +61,7 @@ extern int evm_hmac_attrs;
- extern struct list_head evm_config_xattrnames;
- 
- struct evm_digest {
--	struct ima_digest_data hdr;
-+	struct ima_digest_data_hdr hdr;
- 	char digest[IMA_MAX_DIGEST_SIZE];
- } __packed;
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index b37d043d5748..c7c8d1bffb17 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -247,6 +247,8 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 	struct inode *real_inode = d_real_inode(file_dentry(file));
- 	const char *filename = file->f_path.dentry->d_name.name;
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	struct kstat stat;
- 	int result = 0;
- 	int length;
-@@ -286,9 +288,9 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 			result = -ENODATA;
- 		}
- 	} else if (buf) {
--		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
-+		result = ima_calc_buffer_hash(buf, size, hash_hdr);
- 	} else {
--		result = ima_calc_file_hash(file, &hash.hdr);
-+		result = ima_calc_file_hash(file, hash_hdr);
- 	}
- 
- 	if (result && result != -EBADF && result != -EINVAL)
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 3497741caea9..656c709b974f 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -378,7 +378,9 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 		}
- 
- 		rc = calc_file_id_hash(IMA_VERITY_DIGSIG, iint->ima_hash->algo,
--				       iint->ima_hash->digest, &hash.hdr);
-+				       iint->ima_hash->digest,
-+				       container_of(&hash.hdr,
-+					       struct ima_digest_data, hdr));
- 		if (rc) {
- 			*cause = "sigv3-hashing-error";
- 			*status = INTEGRITY_FAIL;
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 393f5c7912d5..4e208239a40e 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -48,12 +48,14 @@ static int __init ima_add_boot_aggregate(void)
- 	struct ima_event_data event_data = { .iint = iint,
- 					     .filename = boot_aggregate_name };
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	int result = -ENOMEM;
- 	int violation = 0;
- 
- 	memset(iint, 0, sizeof(*iint));
- 	memset(&hash, 0, sizeof(hash));
--	iint->ima_hash = &hash.hdr;
-+	iint->ima_hash = hash_hdr;
- 	iint->ima_hash->algo = ima_hash_algo;
- 	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
- 
-@@ -70,7 +72,7 @@ static int __init ima_add_boot_aggregate(void)
- 	 * is not found.
- 	 */
- 	if (ima_tpm_chip) {
--		result = ima_calc_boot_aggregate(&hash.hdr);
-+		result = ima_calc_boot_aggregate(hash_hdr);
- 		if (result < 0) {
- 			audit_cause = "hashing_error";
- 			goto err_out;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c84e8c55333d..0d3a7c864fd4 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -941,6 +941,8 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 					    .buf_len = size};
- 	struct ima_template_desc *template;
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	char digest_hash[IMA_MAX_DIGEST_SIZE];
- 	int digest_hash_len = hash_digest_size[ima_hash_algo];
- 	int violation = 0;
-@@ -979,7 +981,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 	if (!pcr)
- 		pcr = CONFIG_IMA_MEASURE_PCR_IDX;
- 
--	iint.ima_hash = &hash.hdr;
-+	iint.ima_hash = hash_hdr;
- 	iint.ima_hash->algo = ima_hash_algo;
- 	iint.ima_hash->length = hash_digest_size[ima_hash_algo];
- 
-@@ -990,7 +992,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 	}
- 
- 	if (buf_hash) {
--		memcpy(digest_hash, hash.hdr.digest, digest_hash_len);
-+		memcpy(digest_hash, hash_hdr->digest, digest_hash_len);
- 
- 		ret = ima_calc_buffer_hash(digest_hash, digest_hash_len,
- 					   iint.ima_hash);
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 6cd0add524cd..74198d7619da 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -339,6 +339,8 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 			 struct ima_field_data *field_data)
- {
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	u8 *cur_digest = NULL;
- 	u32 cur_digestsize = 0;
- 	struct inode *inode;
-@@ -358,7 +360,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	if ((const char *)event_data->filename == boot_aggregate_name) {
- 		if (ima_tpm_chip) {
- 			hash.hdr.algo = HASH_ALGO_SHA1;
--			result = ima_calc_boot_aggregate(&hash.hdr);
-+			result = ima_calc_boot_aggregate(hash_hdr);
- 
- 			/* algo can change depending on available PCR banks */
- 			if (!result && hash.hdr.algo != HASH_ALGO_SHA1)
-@@ -368,7 +370,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 				memset(&hash, 0, sizeof(hash));
- 		}
- 
--		cur_digest = hash.hdr.digest;
-+		cur_digest = hash_hdr->digest;
- 		cur_digestsize = hash_digest_size[HASH_ALGO_SHA1];
- 		goto out;
- 	}
-@@ -379,14 +381,14 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	inode = file_inode(event_data->file);
- 	hash.hdr.algo = ima_template_hash_algo_allowed(ima_hash_algo) ?
- 	    ima_hash_algo : HASH_ALGO_SHA1;
--	result = ima_calc_file_hash(event_data->file, &hash.hdr);
-+	result = ima_calc_file_hash(event_data->file, hash_hdr);
- 	if (result) {
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
- 				    event_data->filename, "collect_data",
- 				    "failed", result, 0);
- 		return result;
- 	}
--	cur_digest = hash.hdr.digest;
-+	cur_digest = hash_hdr->digest;
- 	cur_digestsize = hash.hdr.length;
- out:
- 	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 50d6f798e613..3847a23509f1 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -44,6 +44,7 @@ struct evm_xattr {
- #define IMA_MAX_DIGEST_SIZE	HASH_MAX_DIGESTSIZE
- 
- struct ima_digest_data {
-+	__struct_group(ima_digest_data_hdr, hdr, __packed,
- 	u8 algo;
- 	u8 length;
- 	union {
-@@ -57,6 +58,7 @@ struct ima_digest_data {
- 		} ng;
- 		u8 data[2];
- 	} xattr;
-+	);
- 	u8 digest[];
- } __packed;
- 
-@@ -65,7 +67,7 @@ struct ima_digest_data {
-  * with the maximum hash size, define ima_max_digest_data struct.
-  */
- struct ima_max_digest_data {
--	struct ima_digest_data hdr;
-+	struct ima_digest_data_hdr hdr;
- 	u8 digest[HASH_MAX_DIGESTSIZE];
- } __packed;
- 
--- 
-2.34.1
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> Changes in v3:
+>  - struct ima_digest_data is a packed structure. So, to keep things
+>    consistent, use the attribute __packed on the tagged struct 
+>    ima_digest_data_hdr. For this, we use __struct_group() instead of
+>    struct_group_tagged(). Update the changelog text, accordingly.
+> 
+> Changes in v2:
+>  - Include changes for `struct evm_digest` (Mimi Zohar)
+> 
 
