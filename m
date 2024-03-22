@@ -1,116 +1,156 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1413E4A2F
-	for <linux-security-module@vger.kernel.org>; Thu, 21 Mar 2024 23:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F49B12E56
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 07:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711063956; cv=none; b=oVdtAUCLxjmFFPfgcu6NdySXACPqYXBdfF/LG9nlii9uEOQOdJGcdPGMdEp3AVGwr4ws26DkQuiqakKZulzCbKdRrvbyUVT6opVWqHGioDY9LOmVTZw5XIFaS5hmaJKafm7k+3vez8X5s5F2PYyccslHofT447hlJUYZFtlLM5Y=
+	t=1711093725; cv=none; b=t1qZySDmDbcRP5ahq3bMGPLZVzeAUndYs3Qf20VaLQ1tExsCXX4ZfUHXmZqGxTzqZlaEnSmc2qLBrBZ1Y26ksGHUEWJAVwFZ99sjbzzurifgfe4MYZ1KE2mJ++SFIupToVhnDnEpIEZkfZhHwC/aw8ygGGBDFZ2YZb316LOIHRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711063956; c=relaxed/simple;
-	bh=/wLVzCvQXT2aAbNZ7UTZiDXqk9Cvi0SPA+rQtM989oc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lusuA1utT9H8gcgY16OJ68i9Lwe3cJoBlRyNrLdsPCh59lPRR87wlbqOaK6jlwA68ozjkGdw4t8IZqnNl3+dqKzOsinBS17Gfz/xJzKBCepOp5UdqzAjUnVCGffnlZOsBStZwFoRk5vSRObyV20FvPWNMrjsD97Ujsrvf3KPC10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 42LNVtIs000895;
-	Thu, 21 Mar 2024 18:31:55 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 42LNVsZ5000893;
-	Thu, 21 Mar 2024 18:31:54 -0500
-Date: Thu, 21 Mar 2024 18:31:54 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org
-Subject: Re: LSM/IMA integration denying access to inode_init_security.
-Message-ID: <20240321233154.GA848@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240318093825.GA30817@wind.enjellic.com> <3ae1387eda0da59199e3e7f736d8dd30281b6b9d.camel@huaweicloud.com>
+	s=arc-20240116; t=1711093725; c=relaxed/simple;
+	bh=QFbVBBB5G5qzDlHvX5d3rwWm7GUCbHO+K5Tpyrtfw4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSYopNLBU2+EwQZLFgfPCVht7FmHJ/lIbfYcZ/Hvn94PQXb3a6hLnE5ygjRb2are0vUM9ch/SPqlZLBiREdA7yif+h430x3Xhm1s6m/rUW036pVQBmTAb+t2rSpXDd7yu0Ujifr5LMPJHlTYAUT9/0iXJZACV9R2CBCp3CxYiEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Cr7atj2+; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Cr7atj2+"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V1DwG2wM5zNsx;
+	Fri, 22 Mar 2024 08:48:30 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V1DwF4TbwzMpnPm;
+	Fri, 22 Mar 2024 08:48:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711093710;
+	bh=QFbVBBB5G5qzDlHvX5d3rwWm7GUCbHO+K5Tpyrtfw4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cr7atj2+i8AePXN9uSNpBJy66K22508/oXhry1on575iHZaG8m0vlidfOWmZKellt
+	 724fp1cFivLQO+fNduHf2zSCvgoYHv2JRoVVQ/Wz2KSn7bh/ams3g8V7ebWDXSVlLw
+	 1gDcEh5KdHGKUGXwQ8FyJLb0Etax3rCxyoFgpx5o=
+Date: Fri, 22 Mar 2024 08:48:29 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v10 6/9] selftests/landlock: Test IOCTLs on named pipes
+Message-ID: <20240322.axashie2ooJ1@digikod.net>
+References: <20240309075320.160128-1-gnoack@google.com>
+ <20240309075320.160128-7-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3ae1387eda0da59199e3e7f736d8dd30281b6b9d.camel@huaweicloud.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 21 Mar 2024 18:31:55 -0500 (CDT)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240309075320.160128-7-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Mar 18, 2024 at 11:39:38AM +0100, Roberto Sassu wrote:
-> On Mon, 2024-03-18 at 04:38 -0500, Dr. Greg wrote:
-> > Good morning Paul/Roberto, I hope this note finds your respective
-> > weeks starting well, greetings to the wider security list as well.
-> > 
-> > We ran into an issue, that seems to be secondary to the LSM/IMA
-> > integration, in our TSEM port to the 6.8 kernel that would seem to be
-> > relevant to other or future LSM's.
-> > 
-> > It appears that the IMA/LSM work added the following code to the
-> > security/security.c:security_inode_init_security() function:
-> > 
-> > if (!blob_sizes.lbs_xattr_count)
-> > 	return 0;
-> > 
-> > Which denies access to the hook by an LSM that has registered a
-> > handler for an event but that has not registered the use of extended
-> > attributes through the LSM blob mechanism.  This pre-supposes the
-> > notion that all LSM's that may want to be notified of an inode
-> > instantiation event will be using extended attributes.
-> > 
-> > For example, in TSEM we use this hook to propagate task identity
-> > ownership and inode instance information from the
-> > security_inode_create hook into the TSEM inode security state
-> > information.
-> > 
-> > We 'fixed' the problem by requesting a single extended attribute
-> > allocation for TSEM, but that seems inelegant in the larger picture,
-> > given that a handler that wishes to use the hook in the absence of
-> > extended attributes can use the hook and return EOPNOTSUPP with no ill
-> > effects.
+It might be interesting to create a layout with one file of each type
+and use that for the IOCTL tests.
 
-> Hi Greg
+On Sat, Mar 09, 2024 at 07:53:17AM +0000, Günther Noack wrote:
+> Named pipes should behave like pipes created with pipe(2),
+> so we don't want to restrict IOCTLs on them.
 > 
-> I agree, it should not be needed.
-
-Thanks Roberto, I'm glad you tentatively read the situation as we did.
-
-> > We haven't had time to track down the involved code but a cursory
-> > examination would seem to suggest that this also effectively denies
-> > the ability to create an operational BPF hook for this handler.  Given
-> > that BPF is proposed as a mechanism to implement just any arbitrary
-> > security policy, this would seem problematic, if it doesn't already
-> > break current BPF LSM implementations that may have placed a handler
-> > on this event.
-> > 
-> > We could certainly roll a patch for consideration on how to address
-> > this issue if that would be of assistance.  At the very least the
-> > documentation for the function no longer matches its operational
-> > characteristics.
+> Suggested-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  tools/testing/selftests/landlock/fs_test.c | 61 ++++++++++++++++++----
+>  1 file changed, 52 insertions(+), 9 deletions(-)
 > 
-> I think the check above was just an optimization, but I agree you might
-> do other tasks, other than just filling the xattrs slot.
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 5c47231a722e..d991f44875bc 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -3924,6 +3924,58 @@ TEST_F_FORK(layout1, o_path_ftruncate_and_ioctl)
+>  	ASSERT_EQ(0, close(fd));
+>  }
+>  
+> +static int test_fionread_ioctl(int fd)
+> +{
+> +	size_t sz = 0;
+> +
+> +	if (ioctl(fd, FIONREAD, &sz) < 0 && errno == EACCES)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Named pipes are not governed by the LANDLOCK_ACCESS_FS_IOCTL_DEV right,
+> + * because they are not character or block devices.
+> + */
+> +TEST_F_FORK(layout1, named_pipe_ioctl)
+> +{
+> +	pid_t child_pid;
+> +	int fd, ruleset_fd;
+> +	const char *const path = file1_s1d1;
+> +	const struct landlock_ruleset_attr attr = {
+> +		.handled_access_fs = LANDLOCK_ACCESS_FS_IOCTL_DEV,
+> +	};
+> +
+> +	ASSERT_EQ(0, unlink(path));
+> +	ASSERT_EQ(0, mkfifo(path, 0600));
+> +
+> +	/* Enables Landlock. */
+> +	ruleset_fd = landlock_create_ruleset(&attr, sizeof(attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	/* The child process opens the pipe for writing. */
+> +	child_pid = fork();
+> +	ASSERT_NE(-1, child_pid);
+> +	if (child_pid == 0) {
+
+What is the purpose of this child's code?
+
+> +		fd = open(path, O_WRONLY);
+> +		close(fd);
+> +		exit(0);
+> +	}
+> +
+> +	fd = open(path, O_RDONLY);
+> +	ASSERT_LE(0, fd);
+> +
+> +	/* FIONREAD is implemented by pipefifo_fops. */
+> +	EXPECT_EQ(0, test_fionread_ioctl(fd));
+> +
+> +	ASSERT_EQ(0, close(fd));
+> +	ASSERT_EQ(0, unlink(path));
+> +
+> +	ASSERT_EQ(child_pid, waitpid(child_pid, NULL, 0));
+> +}
+> +
+>  /* clang-format off */
+>  FIXTURE(ioctl) {};
+>  
+> @@ -3997,15 +4049,6 @@ static int test_tcgets_ioctl(int fd)
+>  	return 0;
+>  }
+>  
+> -static int test_fionread_ioctl(int fd)
+> -{
+> -	size_t sz = 0;
+> -
+> -	if (ioctl(fd, FIONREAD, &sz) < 0 && errno == EACCES)
+> -		return errno;
+> -	return 0;
+> -}
+> -
+
+You should add test_fionread_ioctl() at the right place from the start.
+
+>  TEST_F_FORK(ioctl, handle_dir_access_file)
+>  {
+>  	const int flag = 0;
+> -- 
+> 2.44.0.278.ge034bb2e1d-goog
 > 
-> For me, it would not be really a problem to modify the code to invoke
-> the inode_init_security hooks with xattrs set to NULL.
 > 
-> I haven't found any counterargument, but will think some more.
-
-Paul, do you have any reflections on this?
-
-If not, we will propose a patch to return the previous behavior.
-
-> > Have a good week.
-> 
-> You too!
-> 
-> Roberto
-
-Thanks for the comments, have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
