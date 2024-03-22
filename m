@@ -1,57 +1,57 @@
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B37151C4F
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 15:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582144D595
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 15:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711120237; cv=none; b=tOg6bicQrX/6Xg+axXSSYVAfyH+yDZBUJ+IRQeYY7+c392fdvCfyzBaz4sw6IAog0lLQmXvxSNs2+mw62Lzo+YAv2Mj9LP2XemXbStLKM4EoNhxgF2q5Amkl+i9cf29BJldIPRv5tZ/xTQOmMIQg9mu5MCjXnhF/QQdF+pjKCac=
+	t=1711120241; cv=none; b=gH5y/uIGRI+dgJIrwBjCQDxDYY5WV3Fl25YdeKL9Paj4v3YVhGysALVTBZEEqLzNxqcAOH1t7QEol3P67oe6shUwiy4e+sSkmhBJyLc36LFUPOktW9hdJZo19LL5/pcKYlx2fl34298B37dnxMYdJY4EtJerYjNLekF0U5iKUEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711120237; c=relaxed/simple;
-	bh=4Wux5xa/CaSDeSCUYomCmTq0IllWEfYpxAtQo5oE6Es=;
+	s=arc-20240116; t=1711120241; c=relaxed/simple;
+	bh=R63P4N4ut3QWcKBwrsSKNW9gphHCqTPMh/5hYUZu3qs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PeGWqBCSNCyvlEN/wT4Bpuo9SyY6fee0n/eeftoBeN1OmLXcI0H4SMIzNPLivlyGzpedArjPrP37bGnim7hL3BsrIkQYWajoEikP23FoD6Mvo17d9S/W5x0WKT5ZI354+sOCg/8YfhVIGiZlBU8dQ9/YHlY3ucGpUV1jVr5VGZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=peNyGOeC; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=TFtth6Ji+mHGSpQx0samzjJl0fZZzMrKdQOy8VNMkNjqpQdoyk6lqx6vKbjlXAN5F8mVoxhCBM3LDL61EnIVRVPDKawY0rBZSzfNGbMMznFnsScbKt4kFYOH9DfbkwxpYf/jf09xfdlPa2gpY7ES+LwxOA3Q6eVs8TVSN6XaZxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sz9OYgp5; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="peNyGOeC"
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dd0ae66422fso4306798276.0
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 08:10:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sz9OYgp5"
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a46852c2239so161328966b.1
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 08:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711120235; x=1711725035; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1711120238; x=1711725038; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wVuQbOd4o/tS0DiPUw74ee5jBWWOCcrb2jESG2kQjGE=;
-        b=peNyGOeC8vSxwz3XojdjjoNgm5aCiv1hqGFDTPkWg6bH2Ck9Sy9f4ZJ87SG3vaewUS
-         XuFRIjSrBuQBXbIPUFac4xmcsFBczcEwZoJ8+xiH6STg5LKEDpZVqMvNREabJx9KgpH/
-         QUq4o1IM3w6aXpjqC4Lc4EnPhZSiqCAk7UcwCLLhb5l0e0Yy3KJEFy66teZwbCUBr2io
-         btoo1/j47SDxqsHW20OhupR8/M7ZNn+XHHiZLSRFLbRvuVEbeoTWPPH0IV0HErFLUFcY
-         uSQKjYx5yWpguwMNYu8hnAvrxkyC48w74U3i3fPZSTlU1O1rBLXMXShRxPiuiVd0M8KP
-         /aVg==
+        bh=M9xd0irwbkgB8QE4v3yIoFgRxbZM8RilcqJPUwmelvc=;
+        b=Sz9OYgp5515+cpnek6qEzGRbWochr7j6lqrzNOakvmM//iMNqYcGoTrK+KuA3ngkab
+         GBQEBwSq4iuB9ahVMqV9mVKPtNF413I2Hg0HLI5giJXZNUmexJFREzZJqWdZRgYvBcbz
+         ufAqAVIWxWJ4epF01Sj6hSd6lmHEAXGpXXFefro0PTFv03Mlxtwgh1NdAuzdM9pQLi6F
+         lDqX+7Rd87PNALAidlAeNbJEqKG/vTluP0iPEvKa97DNIcNw2M4qF91VZVGb+lukGcrK
+         xupmADQ67KAINzoqQeFjVmAvhBowlO9jXOCv/H6RlLOOGeRfJZ0+jBI6jANDefjf+2gX
+         0DVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711120235; x=1711725035;
+        d=1e100.net; s=20230601; t=1711120238; x=1711725038;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=wVuQbOd4o/tS0DiPUw74ee5jBWWOCcrb2jESG2kQjGE=;
-        b=prd4De6ypKL8/F8G+nTI+ydx4jQctntdxcjXtPDEJ2yATTMe+Pub1tmTDszXswO8gn
-         WeGk52lL977da0BYJvsw/E/DK6FVymT76CWS7dEuM23uFso+CiQjDxgiKp4LSnI2zrZv
-         ZBRfMz6/CG1v9XT/6lDnLnkeJOU31JDs4YvHN5/jtgmfcyfdXduwMZPae64FTQU55xDw
-         AG24XYcSoXxQugkP2GJYUP2sEazyL69CN/vLtnUxrRWlL3aTEZaS3303Xmk9U2PlNrss
-         CdmtPddengOG90V8hOHts27ghai5vTzk6lMbBnYztL29QtdQrjosRrFtJpZhDWSftBZA
-         8ZVg==
-X-Gm-Message-State: AOJu0YyPcCDLrXNy1wOsBbM92azpjfHBnd5dCvEuW9G3tdFytNfFp0Hu
-	B+jR0VDtoTIz1I7z4llLDfCYVxZ1f+U1kR22w5i9hOA10j3VQU+IwU6GKW0YN4iDeAsDrJGL+as
-	yzjtQMFpQoOp8l7N2lAdKPxgifWgssK9gU+R5dExPv4hH1L5UuY4rf0hnAWGd832aM4pEqUom9J
-	Aqpxk37XNpUJYNZ0J7RTU0is2Jt+ibcYLH3pw4me6uS63wVkn+hEqs
-X-Google-Smtp-Source: AGHT+IHdoIRrYCQ5q0Pp2bP8dBRgqXOW6UZEosLGOrjKbm9gVcMoCyJPSj2NcTPjlJog/th1Dcb8QRDIEhE=
+        bh=M9xd0irwbkgB8QE4v3yIoFgRxbZM8RilcqJPUwmelvc=;
+        b=oKydZtUldX0y3xU9JE5+qYoGD8LRYDJowXjJHg1gVK6mxwOjmjvIq98uU4k8jszmOi
+         cAXh3axuq1ZL3VkoKSoFZmVRJBlCYiLSLp8dGAknXm/7j7gdtLG8tNlyEe1HogqqAEub
+         5B5pXDTQZxgdQPr4ZoUbPHCXbAdBZJRV2DxKM4dOOpW47LAPP/un5p+RyPBJC/NX8VEW
+         uydm2uVv7bSVLsfQSoelOpsocEiwtncwCoDf3DEAYJXvjIP6MtM3Fbg20pRGPOBocKeY
+         xab+NAhbY2OrV6tznJu2BHFdWOIbfMoSNr1SR6m6/YdbEsREI1FbZwr8bllEvppruKAg
+         OP4w==
+X-Gm-Message-State: AOJu0YwKRIW9B9tySomAfbOECnQuSFXllSbf9fbxv2IK2Z6V/jjAHvUf
+	6rKcl3AxSEjEww0tPuV6OTGogjP6DQP1o/r7pQlMCouoELG+4SZTouIFxwaZqbedr3S3owj06Q0
+	Yx3cndXV2H8vQ11wzJQT2NAuJiYu/ZDeSLjlPRuWPomtK+KeWALFf1Q8ImDHxyUezF934Hn8d5Q
+	RI7gpJhcJK09Hio9DUltpMgbRGoisrlK5fdgvRFEDbosR95lfra5dd
+X-Google-Smtp-Source: AGHT+IHn7g7WhrbCoj+qwr3+lnHh3Nzxk3BhHeFxtHPYejqb8fDsbQYGnt/pSY23Iu2Eb9T3/kTLwpxNCzo=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6902:1a48:b0:dc2:2e5c:a21d with SMTP id
- cy8-20020a0569021a4800b00dc22e5ca21dmr624303ybb.6.1711120235018; Fri, 22 Mar
- 2024 08:10:35 -0700 (PDT)
-Date: Fri, 22 Mar 2024 15:09:59 +0000
+ (user=gnoack job=sendgmr) by 2002:a17:906:4c4b:b0:a47:31bb:1581 with SMTP id
+ d11-20020a1709064c4b00b00a4731bb1581mr4777ejw.9.1711120237415; Fri, 22 Mar
+ 2024 08:10:37 -0700 (PDT)
+Date: Fri, 22 Mar 2024 15:10:00 +0000
 In-Reply-To: <20240322151002.3653639-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -61,8 +61,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240322151002.3653639-1-gnoack@google.com>
 X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
-Message-ID: <20240322151002.3653639-7-gnoack@google.com>
-Subject: [PATCH v11 6/9] selftests/landlock: Test IOCTLs on named pipes
+Message-ID: <20240322151002.3653639-8-gnoack@google.com>
+Subject: [PATCH v11 7/9] selftests/landlock: Check IOCTL restrictions for
+ named UNIX domain sockets
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -74,39 +75,54 @@ Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Named pipes should behave like pipes created with pipe(2),
-so we don't want to restrict IOCTLs on them.
-
 Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ tools/testing/selftests/landlock/fs_test.c | 51 ++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
 ftests/landlock/fs_test.c
-index dde4673e2df4..d3aaa343f6e4 100644
+index d3aaa343f6e4..2ade195bde56 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3933,6 +3933,49 @@ TEST_F_FORK(layout1, o_path_ftruncate_and_ioctl)
- 	ASSERT_EQ(0, close(fd));
+@@ -20,8 +20,10 @@
+ #include <sys/mount.h>
+ #include <sys/prctl.h>
+ #include <sys/sendfile.h>
++#include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/sysmacros.h>
++#include <sys/un.h>
+ #include <sys/vfs.h>
+ #include <unistd.h>
+=20
+@@ -3976,6 +3978,55 @@ TEST_F_FORK(layout1, named_pipe_ioctl)
+ 	ASSERT_EQ(child_pid, waitpid(child_pid, NULL, 0));
  }
 =20
-+/*
-+ * Named pipes are not governed by the LANDLOCK_ACCESS_FS_IOCTL_DEV right,
-+ * because they are not character or block devices.
-+ */
-+TEST_F_FORK(layout1, named_pipe_ioctl)
++/* For named UNIX domain sockets, no IOCTL restrictions apply. */
++TEST_F_FORK(layout1, named_unix_domain_socket_ioctl)
 +{
-+	pid_t child_pid;
-+	int fd, ruleset_fd;
 +	const char *const path =3D file1_s1d1;
++	int srv_fd, cli_fd, ruleset_fd;
++	socklen_t size;
++	struct sockaddr_un srv_un, cli_un;
 +	const struct landlock_ruleset_attr attr =3D {
 +		.handled_access_fs =3D LANDLOCK_ACCESS_FS_IOCTL_DEV,
 +	};
 +
++	/* Sets up a server */
++	srv_un.sun_family =3D AF_UNIX;
++	strncpy(srv_un.sun_path, path, sizeof(srv_un.sun_path));
++
 +	ASSERT_EQ(0, unlink(path));
-+	ASSERT_EQ(0, mkfifo(path, 0600));
++	ASSERT_LE(0, (srv_fd =3D socket(AF_UNIX, SOCK_STREAM, 0)));
++
++	size =3D offsetof(struct sockaddr_un, sun_path) + strlen(srv_un.sun_path)=
+;
++	ASSERT_EQ(0, bind(srv_fd, (struct sockaddr *)&srv_un, size));
++	ASSERT_EQ(0, listen(srv_fd, 10 /* qlen */));
 +
 +	/* Enables Landlock. */
 +	ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
@@ -114,25 +130,27 @@ index dde4673e2df4..d3aaa343f6e4 100644
 +	enforce_ruleset(_metadata, ruleset_fd);
 +	ASSERT_EQ(0, close(ruleset_fd));
 +
-+	/* The child process opens the pipe for writing. */
-+	child_pid =3D fork();
-+	ASSERT_NE(-1, child_pid);
-+	if (child_pid =3D=3D 0) {
-+		fd =3D open(path, O_WRONLY);
-+		close(fd);
-+		exit(0);
-+	}
++	/* Sets up a client connection to it */
++	cli_un.sun_family =3D AF_UNIX;
 +
-+	fd =3D open(path, O_RDONLY);
-+	ASSERT_LE(0, fd);
++	ASSERT_LE(0, (cli_fd =3D socket(AF_UNIX, SOCK_STREAM, 0)));
 +
-+	/* FIONREAD is implemented by pipefifo_fops. */
-+	EXPECT_EQ(0, test_fionread_ioctl(fd));
++	size =3D offsetof(struct sockaddr_un, sun_path) + strlen(cli_un.sun_path)=
+;
++	ASSERT_EQ(0, bind(cli_fd, (struct sockaddr *)&cli_un, size));
 +
-+	ASSERT_EQ(0, close(fd));
-+	ASSERT_EQ(0, unlink(path));
++	bzero(&cli_un, sizeof(cli_un));
++	cli_un.sun_family =3D AF_UNIX;
++	strncpy(cli_un.sun_path, path, sizeof(cli_un.sun_path));
++	size =3D offsetof(struct sockaddr_un, sun_path) + strlen(cli_un.sun_path)=
+;
 +
-+	ASSERT_EQ(child_pid, waitpid(child_pid, NULL, 0));
++	ASSERT_EQ(0, connect(cli_fd, (struct sockaddr *)&cli_un, size));
++
++	/* FIONREAD and other IOCTLs should not be forbidden. */
++	EXPECT_EQ(0, test_fionread_ioctl(cli_fd));
++
++	ASSERT_EQ(0, close(cli_fd));
 +}
 +
  /* clang-format off */
