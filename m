@@ -1,57 +1,57 @@
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC3A4DA04
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 15:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81BA4E1B3
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 15:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711120226; cv=none; b=ZCJJDC+2YJoTEqx3TEDV67SeY4Fc1HtI+K+MeMfNbJ/7M26nEw3TvJr/zropKDUgigg9vN/zfabFuGd5U8yOtdEvhzzOoMMWmeSNWo9vPtfuixuKz01dGRq6QVSzcdmHlVxYYnViMuPVk2g20Puc3rjuJM4bkt4gK46hvIaG9WQ=
+	t=1711120228; cv=none; b=cM4PJeZuLgV3xyw/MRZoeV51meHo86Q24MfnrORsLzPlEi0DrkxEF8a+UgLwAdR9vxow/hfbusdg2SO46KnPexzg0LGN7MjH5vLIm6+3tSnaddvClw3zOWt1KMxAnkPh45pxaDLgc+9uytDRh5lxHrSMKpneGn+U8oxRw7XQZeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711120226; c=relaxed/simple;
-	bh=+Hidl1ehKUSK8ydVzl55FyxdRreg3sym0kYT+TQBai8=;
+	s=arc-20240116; t=1711120228; c=relaxed/simple;
+	bh=SUlqwgDoB+j6mp3daqLN3lDcVKqBzs5Zdx5JbddS8p8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Rv2xGMa4wmlkYLB2SpwR89hVBeZFjpbnuuCvaiX7j5yZBJg+yl1i24ov48fwWyW4bTWkFUPWodT0e6HS5MJOcIAetob+ysCQOblwNzogtTOJVj2A25q4VFnlBfCt98W6vN+uzSMR+gIhsbsvc+wt28ubg2piQLDBoaHecdldrr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aD2x6u1b; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=rkr9h6Y5xCDJjzxl/aIeB7litNfdwcz79LhaleS/HmUMp8P8oIXL5LDio4zmgxTK9PR76TUTQXl10yWZ+v1K7OMtljrLF40mbX2rDtiuMd8mQ4rakbgOrNmJrluF253eX2l3MQZJ2TTcfSss3NXrLTjQuuf+UuGCAZija3STUCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=quz2UjAZ; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aD2x6u1b"
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-60a20c33f06so29765507b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 08:10:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="quz2UjAZ"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-60ff1816749so37959247b3.3
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 08:10:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711120223; x=1711725023; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1711120226; x=1711725026; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rrMfPjDTmime8VPkqMYXqjoi2kkgDssgVWNi4eoAsFo=;
-        b=aD2x6u1b6VdYdGYiRrVrpmc1iOK2RVDAKOd0pSWe080t8eXDPvpdpSDSF/oAAf4Lwy
-         qZYvTV45HnOxbj9A+PZVkJ0Z7H/NQYnzhNu0Rg5kk8D6KIuRJVEgk7nyaHNcTroduxVV
-         4UdX4pJXlShqVOdbQGe7Nzom8Qbl3cIxuWgSoMKO2EZMJNasrGs9djN4NRXa1tbrHP8o
-         Cb2pqxl/r4X07sH5UVFRjsrcXUBV8BqeVPEURl3Ru++KGo9eLDY7fS0d4uDu8+fMj9Mn
-         GYQWDlDpHd9uJ75nO5LISCdx1o1yJoNqQFNz0IW3MAy2NGh5c/7WpYV7oE17bTWehFb7
-         bhAw==
+        bh=Sz0NfA7QwlgjZXRVL07X3cjKoeJcVAaE+B0NiSWNqrk=;
+        b=quz2UjAZA/PNAlWw/gkt4KKRCuRFaoT9et67P4b8syFevZDR4RZ8z6yxU0IEYg5/wd
+         oTjDRaeOtDxe3x7/VGR3xhesnm7lhynRmop8ePHc9uIms106kg5NEMNEAmXVx+Z6bLO1
+         b5IzWxSICYdkIh3s32hgc2lAS8wnoPHBl2hQluyvxCGiDwkVRVWEJup9VnEXbAiUcPF0
+         3rQYQ6nsv0OFr3ExaSHzFcVzZkTdeRjmc55GOvo/Y8vgMAl5kxJixaBaGlfvJUaWaPuE
+         h/CPUuPFRu2JW+lhl1w9bHZO91e0poZ8hFF2eN7lwzsnZ3nmS2CFD5uJFiQJrSx98G3Y
+         eXEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711120223; x=1711725023;
+        d=1e100.net; s=20230601; t=1711120226; x=1711725026;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=rrMfPjDTmime8VPkqMYXqjoi2kkgDssgVWNi4eoAsFo=;
-        b=QhQOXWRScbTD2ZDMPzLMt/TRz5Hyepfl+FKUOh3gUt8nZ7qj6Ih9GvJQz6xmHBbG32
-         LRZeZHN0woMwHDov09YNZYvDg9OgadwnEcSHwQzJYUYbHF/jyvFa0k7SQFw41Ww9/X5M
-         VEaDIeYnFHFYB2IuX6l+rLIjBzUqoATUzSv1qPtri7Gc5vBQUkwNdomhUKKU6FtAhWGJ
-         bMaTPrqmGJCUnCk+U8y7STQf8iwyPdeWZddzCvBfntr0sv+ZI6kyzbCaYBcmtO08H5V3
-         CL06gBeTbMf2dLY2KcKCAcUAFMbL8jYHsSMQEKmHkjpR26TvdY4JpGvOEbVugVd0LD/B
-         Lbpg==
-X-Gm-Message-State: AOJu0YxE8rGUZhxYymHsqvuHhTzm2/Ut20IZ/MUhb9PePLRR/5QBT07O
-	LCSwxtlnOyyQry3uUvVBTb0hQrI2dR7EnTGAZYFUYwOs+QELhw/RENZkmqY6NruN4lBZN9eSA+d
-	WBTl54Igg1TgL5mEY4NFUijA+DV1x+EJzuTpBezGZ4dhDofsl56YKNBvow0vhqvCw3x9UBCtLkc
-	W3MBDRAKokvPLvqKa4HaaOxJR6VJSHYEhj7Etr3r7cfYiSUoaCruUE
-X-Google-Smtp-Source: AGHT+IGlES/YNQ9UCh4CUNIF73oHCTUaMPNnteBer91iiVVUBqjuPX3EV2H6/jWDpiW9Dn/g7KKRRLWqLIA=
+        bh=Sz0NfA7QwlgjZXRVL07X3cjKoeJcVAaE+B0NiSWNqrk=;
+        b=LTRX2ynkJY3hK2eAD3H1q4QTWYNaem9c0vxYZ4k04LOi+eRHQMQczruSKJltiTBNKU
+         U5ZEKnHvGESdcMyHw7WWo/nFkO3HBAZibCC+Vp+nJnGnqT5c5163C9bthoLfAhGwLqTR
+         aQHzR3BLTEq7CHnSi1ec0hKULP72T47hMHzkZL3cs6mrXWiUH2MANrPJDhT0Q6YLHGHQ
+         SaFEiO6RmOCuvdDXTO/dOUq1x71zaPGArqY5JcKtyv2Mz+7Kh+T+Iot1nvriHQy+86Qs
+         Hz/eVMPtMQxdqZ0mkdRgQjB5LwnyMt+rzu0xpnepL+W8KdpEgfPv/LCrsr4gHqzCD4v8
+         henw==
+X-Gm-Message-State: AOJu0YyKEDZX3VMohrVqEB5qeWMh8CYrMt9/euvu4Z6N2VNG6Jr4GRzJ
+	+iomtzlW2hDbFnZhIL0x2Zcx+mAr+Hfufy9otNiwnpHpGCaIZiAs68S70Vj0bmqHN7on5LMTqSB
+	yOX/90DLIMrGIKXe0wbEFg/NFYSXnjNWW2EE/UXcdenb47mBhr+9kIGIkOVsn2riSuyN/90Spwu
+	0hKwdZmH48q7xM5h+mrsO5FU5eYhZRXjUS68tqPwIMrG84tnpINPD8
+X-Google-Smtp-Source: AGHT+IEVl0nVf2PkeBJWX1+vgaRwh9j+KpSXxFnpu62kxn7SmBtWi+DHOmt41T2f5FKy8GzvDuEOQ7REKGw=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a81:5213:0:b0:610:ee9b:430c with SMTP id
- g19-20020a815213000000b00610ee9b430cmr627465ywb.5.1711120223243; Fri, 22 Mar
- 2024 08:10:23 -0700 (PDT)
-Date: Fri, 22 Mar 2024 15:09:54 +0000
+ (user=gnoack job=sendgmr) by 2002:a05:6902:230a:b0:dcc:6bf0:2eb6 with SMTP id
+ do10-20020a056902230a00b00dcc6bf02eb6mr54487ybb.6.1711120225591; Fri, 22 Mar
+ 2024 08:10:25 -0700 (PDT)
+Date: Fri, 22 Mar 2024 15:09:55 +0000
 In-Reply-To: <20240322151002.3653639-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -61,514 +61,328 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240322151002.3653639-1-gnoack@google.com>
 X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
-Message-ID: <20240322151002.3653639-2-gnoack@google.com>
-Subject: [PATCH v11 1/9] fs: Add and use vfs_get_ioctl_handler()
+Message-ID: <20240322151002.3653639-3-gnoack@google.com>
+Subject: [PATCH v11 2/9] landlock: Add IOCTL access right for character and
+ block devices
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
 Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
 	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
 	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+	linux-fsdevel@vger.kernel.org, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-From: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Introduces the LANDLOCK_ACCESS_FS_IOCTL_DEV right
+and increments the Landlock ABI version to 5.
 
-Add a new vfs_get_ioctl_handler() helper to identify if an IOCTL command
-is handled by the first IOCTL layer.  Each IOCTL command is now handled
-by a dedicated function, and all of them use the same signature.
+This access right applies to device-custom IOCTL commands
+when they are invoked on block or character device files.
 
-Apart from the VFS, this helper is also intended to be used by Landlock
-to cleanly categorize VFS IOCTLs and create appropriate security
-policies.
+Like the truncate right, this right is associated with a file
+descriptor at the time of open(2), and gets respected even when the
+file descriptor is used outside of the thread which it was originally
+opened in.
 
-This is an alternative to a first RFC [1] and a proposal for a new LSM
-hook [2].
+Therefore, a newly enabled Landlock policy does not apply to file
+descriptors which are already open.
 
-By dereferencing some pointers only when required, this should also
-slightly improve do_vfs_ioctl().
+If the LANDLOCK_ACCESS_FS_IOCTL_DEV right is handled, only a small
+number of safe IOCTL commands will be permitted on newly opened device
+files.  These include FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC, as well
+as other IOCTL commands for regular files which are implemented in
+fs/ioctl.c.
 
-Remove (double) pointer castings on put_user() calls.
+Noteworthy scenarios which require special attention:
 
-Remove potential double vfs_ioctl() call for FIONREAD.
+TTY devices are often passed into a process from the parent process,
+and so a newly enabled Landlock policy does not retroactively apply to
+them automatically.  In the past, TTY devices have often supported
+IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
+letting callers control the TTY input buffer (and simulate
+keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
+modern kernels though.
 
-Fix ioctl_file_clone_range() return type from long to int.
+Known limitations:
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: G=C3=BCnther Noack <gnoack@google.com>
+The LANDLOCK_ACCESS_FS_IOCTL_DEV access right is a coarse-grained
+control over IOCTL commands.
+
+Landlock users may use path-based restrictions in combination with
+their knowledge about the file system layout to control what IOCTLs
+can be done.
+
 Cc: Paul Moore <paul@paul-moore.com>
-Link: https://lore.kernel.org/r/20240219183539.2926165-1-mic@digikod.net [1=
-]
-Link: https://lore.kernel.org/r/20240309075320.160128-2-gnoack@google.com [=
-2]
-Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- fs/ioctl.c         | 213 +++++++++++++++++++++++++++++++--------------
- include/linux/fs.h |   6 ++
- 2 files changed, 155 insertions(+), 64 deletions(-)
+ include/uapi/linux/landlock.h                | 35 ++++++++++---
+ security/landlock/fs.c                       | 52 ++++++++++++++++++--
+ security/landlock/limits.h                   |  2 +-
+ security/landlock/syscalls.c                 |  8 ++-
+ tools/testing/selftests/landlock/base_test.c |  2 +-
+ tools/testing/selftests/landlock/fs_test.c   |  5 +-
+ 6 files changed, 87 insertions(+), 17 deletions(-)
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 76cf22ac97d7..d2b6691ded16 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -56,8 +56,9 @@ long vfs_ioctl(struct file *filp, unsigned int cmd, unsig=
-ned long arg)
- }
- EXPORT_SYMBOL(vfs_ioctl);
-=20
--static int ioctl_fibmap(struct file *filp, int __user *p)
-+static int ioctl_fibmap(struct file *filp, unsigned int fd, unsigned long =
-arg)
- {
-+	int __user *p =3D (void __user *)arg;
- 	struct inode *inode =3D file_inode(filp);
- 	struct super_block *sb =3D inode->i_sb;
- 	int error, ur_block;
-@@ -197,11 +198,12 @@ int fiemap_prep(struct inode *inode, struct fiemap_ex=
-tent_info *fieinfo,
- }
- EXPORT_SYMBOL(fiemap_prep);
-=20
--static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
-+static int ioctl_fiemap(struct file *filp, unsigned int fd, unsigned long =
-arg)
- {
- 	struct fiemap fiemap;
- 	struct fiemap_extent_info fieinfo =3D { 0, };
- 	struct inode *inode =3D file_inode(filp);
-+	struct fiemap __user *ufiemap =3D (void __user *)arg;
- 	int error;
-=20
- 	if (!inode->i_op->fiemap)
-@@ -228,6 +230,18 @@ static int ioctl_fiemap(struct file *filp, struct fiem=
-ap __user *ufiemap)
- 	return error;
- }
-=20
-+static int ioctl_figetbsz(struct file *file, unsigned int fd, unsigned lon=
-g arg)
-+{
-+	struct inode *inode =3D file_inode(file);
-+	int __user *argp =3D (void __user *)arg;
-+
-+	/* anon_bdev filesystems may not have a block size */
-+	if (!inode->i_sb->s_blocksize)
-+		return -EINVAL;
-+
-+	return put_user(inode->i_sb->s_blocksize, argp);
-+}
-+
- static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
- 			     u64 off, u64 olen, u64 destoff)
- {
-@@ -249,9 +263,15 @@ static long ioctl_file_clone(struct file *dst_file, un=
-signed long srcfd,
- 	return ret;
- }
-=20
--static long ioctl_file_clone_range(struct file *file,
--				   struct file_clone_range __user *argp)
-+static int ioctl_ficlone(struct file *file, unsigned int fd, unsigned long=
- arg)
-+{
-+	return ioctl_file_clone(file, arg, 0, 0, 0);
-+}
-+
-+static int ioctl_file_clone_range(struct file *file, unsigned int fd,
-+				  unsigned long arg)
- {
-+	struct file_clone_range __user *argp =3D (void __user *)arg;
- 	struct file_clone_range args;
-=20
- 	if (copy_from_user(&args, argp, sizeof(args)))
-@@ -292,6 +312,27 @@ static int ioctl_preallocate(struct file *filp, int mo=
-de, void __user *argp)
- 			sr.l_len);
- }
-=20
-+static int ioctl_resvsp(struct file *filp, unsigned int fd, unsigned long =
-arg)
-+{
-+	int __user *p =3D (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, 0, p);
-+}
-+
-+static int ioctl_unresvsp(struct file *filp, unsigned int fd, unsigned lon=
-g arg)
-+{
-+	int __user *p =3D (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, FALLOC_FL_PUNCH_HOLE, p);
-+}
-+
-+static int ioctl_zero_range(struct file *filp, unsigned int fd, unsigned l=
-ong arg)
-+{
-+	int __user *p =3D (void __user *)arg;
-+
-+	return ioctl_preallocate(filp, FALLOC_FL_ZERO_RANGE, p);
-+}
-+
- /* on ia32 l_start is on a 32-bit boundary */
- #if defined CONFIG_COMPAT && defined(CONFIG_X86_64)
- /* just account for different alignment */
-@@ -321,28 +362,41 @@ static int compat_ioctl_preallocate(struct file *file=
-, int mode,
- }
- #endif
-=20
--static int file_ioctl(struct file *filp, unsigned int cmd, int __user *p)
-+static ioctl_handler_t file_ioctl(unsigned int cmd)
- {
- 	switch (cmd) {
- 	case FIBMAP:
--		return ioctl_fibmap(filp, p);
-+		return ioctl_fibmap;
- 	case FS_IOC_RESVSP:
- 	case FS_IOC_RESVSP64:
--		return ioctl_preallocate(filp, 0, p);
-+		return ioctl_resvsp;
- 	case FS_IOC_UNRESVSP:
- 	case FS_IOC_UNRESVSP64:
--		return ioctl_preallocate(filp, FALLOC_FL_PUNCH_HOLE, p);
-+		return ioctl_unresvsp;
- 	case FS_IOC_ZERO_RANGE:
--		return ioctl_preallocate(filp, FALLOC_FL_ZERO_RANGE, p);
-+		return ioctl_zero_range;
- 	}
-=20
--	return -ENOIOCTLCMD;
-+	return NULL;
-+}
-+
-+static int ioctl_fioclex(struct file *file, unsigned int fd, unsigned long=
- arg)
-+{
-+	set_close_on_exec(fd, 1);
-+	return 0;
-+}
-+
-+static int ioctl_fionclex(struct file *file, unsigned int fd, unsigned lon=
-g arg)
-+{
-+	set_close_on_exec(fd, 0);
-+	return 0;
- }
-=20
--static int ioctl_fionbio(struct file *filp, int __user *argp)
-+static int ioctl_fionbio(struct file *filp, unsigned int fd, unsigned long=
- arg)
- {
- 	unsigned int flag;
- 	int on, error;
-+	int __user *argp =3D (void __user *)arg;
-=20
- 	error =3D get_user(on, argp);
- 	if (error)
-@@ -362,11 +416,11 @@ static int ioctl_fionbio(struct file *filp, int __use=
-r *argp)
- 	return error;
- }
-=20
--static int ioctl_fioasync(unsigned int fd, struct file *filp,
--			  int __user *argp)
-+static int ioctl_fioasync(struct file *filp, unsigned int fd, unsigned lon=
-g arg)
- {
- 	unsigned int flag;
- 	int on, error;
-+	int __user *argp =3D (void __user *)arg;
-=20
- 	error =3D get_user(on, argp);
- 	if (error)
-@@ -384,7 +438,22 @@ static int ioctl_fioasync(unsigned int fd, struct file=
- *filp,
- 	return error < 0 ? error : 0;
- }
-=20
--static int ioctl_fsfreeze(struct file *filp)
-+static int ioctl_fioqsize(struct file *file, unsigned int fd, unsigned lon=
-g arg)
-+{
-+	struct inode *inode =3D file_inode(file);
-+	void __user *argp =3D (void __user *)arg;
-+
-+	if (S_ISDIR(inode->i_mode) || S_ISREG(inode->i_mode) ||
-+	    S_ISLNK(inode->i_mode)) {
-+		loff_t res =3D inode_get_bytes(inode);
-+
-+		return copy_to_user(argp, &res, sizeof(res)) ? -EFAULT : 0;
-+	}
-+
-+	return -ENOTTY;
-+}
-+
-+static int ioctl_fsfreeze(struct file *filp, unsigned int fd, unsigned lon=
-g arg)
- {
- 	struct super_block *sb =3D file_inode(filp)->i_sb;
-=20
-@@ -401,7 +470,7 @@ static int ioctl_fsfreeze(struct file *filp)
- 	return freeze_super(sb, FREEZE_HOLDER_USERSPACE);
- }
-=20
--static int ioctl_fsthaw(struct file *filp)
-+static int ioctl_fsthaw(struct file *filp, unsigned int fd, unsigned long =
-arg)
- {
- 	struct super_block *sb =3D file_inode(filp)->i_sb;
-=20
-@@ -414,9 +483,9 @@ static int ioctl_fsthaw(struct file *filp)
- 	return thaw_super(sb, FREEZE_HOLDER_USERSPACE);
- }
-=20
--static int ioctl_file_dedupe_range(struct file *file,
--				   struct file_dedupe_range __user *argp)
-+static int ioctl_file_dedupe_range(struct file *file, unsigned int fd, uns=
-igned long arg)
- {
-+	struct file_dedupe_range __user *argp =3D (void __user *)arg;
- 	struct file_dedupe_range *same =3D NULL;
- 	int ret;
- 	unsigned long size;
-@@ -454,6 +523,14 @@ static int ioctl_file_dedupe_range(struct file *file,
- 	return ret;
- }
-=20
-+static int ioctl_fionread(struct file *filp, unsigned int fd, unsigned lon=
-g arg)
-+{
-+	int __user *argp =3D (void __user *)arg;
-+	struct inode *inode =3D file_inode(filp);
-+
-+	return put_user(i_size_read(inode) - filp->f_pos, argp);
-+}
-+
- /**
-  * fileattr_fill_xflags - initialize fileattr with xflags
-  * @fa:		fileattr pointer
-@@ -702,8 +779,9 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct de=
-ntry *dentry,
- }
- EXPORT_SYMBOL(vfs_fileattr_set);
-=20
--static int ioctl_getflags(struct file *file, unsigned int __user *argp)
-+static int ioctl_getflags(struct file *file, unsigned int fd, unsigned lon=
-g arg)
- {
-+	unsigned int __user *argp =3D (void __user *)arg;
- 	struct fileattr fa =3D { .flags_valid =3D true }; /* hint only */
- 	int err;
-=20
-@@ -713,8 +791,9 @@ static int ioctl_getflags(struct file *file, unsigned i=
-nt __user *argp)
- 	return err;
- }
-=20
--static int ioctl_setflags(struct file *file, unsigned int __user *argp)
-+static int ioctl_setflags(struct file *file, unsigned int fd, unsigned lon=
-g arg)
- {
-+	unsigned int __user *argp =3D (void __user *)arg;
- 	struct mnt_idmap *idmap =3D file_mnt_idmap(file);
- 	struct dentry *dentry =3D file->f_path.dentry;
- 	struct fileattr fa;
-@@ -733,8 +812,9 @@ static int ioctl_setflags(struct file *file, unsigned i=
-nt __user *argp)
- 	return err;
- }
-=20
--static int ioctl_fsgetxattr(struct file *file, void __user *argp)
-+static int ioctl_fsgetxattr(struct file *file, unsigned int fd, unsigned l=
-ong arg)
- {
-+	struct fsxattr __user *argp =3D (void __user *)arg;
- 	struct fileattr fa =3D { .fsx_valid =3D true }; /* hint only */
- 	int err;
-=20
-@@ -745,8 +825,9 @@ static int ioctl_fsgetxattr(struct file *file, void __u=
-ser *argp)
- 	return err;
- }
-=20
--static int ioctl_fssetxattr(struct file *file, void __user *argp)
-+static int ioctl_fssetxattr(struct file *file, unsigned int fd, unsigned l=
-ong arg)
- {
-+	struct fsxattr __user *argp =3D (void __user *)arg;
- 	struct mnt_idmap *idmap =3D file_mnt_idmap(file);
- 	struct dentry *dentry =3D file->f_path.dentry;
- 	struct fileattr fa;
-@@ -764,94 +845,98 @@ static int ioctl_fssetxattr(struct file *file, void _=
-_user *argp)
- }
-=20
- /*
-- * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL(=
-)'d.
-- * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-+ * Return NULL when no handler exists for @cmd, or the appropriate functio=
-n
-+ * otherwise.  This means that these handlers should never return -ENOIOCT=
-LCMD.
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 25c8d7677539..193733d833b1 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -128,7 +128,7 @@ struct landlock_net_port_attr {
+  * files and directories.  Files or directories opened before the sandboxi=
+ng
+  * are not subject to these restrictions.
   *
-  * When you add any new common ioctls to the switches above and below,
-  * please ensure they have compatible arguments in compat mode.
+- * A file can only receive these access rights:
++ * The following access rights apply only to files:
+  *
+  * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+  * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note t=
+hat
+@@ -138,12 +138,13 @@ struct landlock_net_port_attr {
+  * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+  * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate=
+(2)`,
+  *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` w=
+ith
+- *   ``O_TRUNC``. Whether an opened file can be truncated with
+- *   :manpage:`ftruncate(2)` is determined during :manpage:`open(2)`, in t=
+he
+- *   same way as read and write permissions are checked during
+- *   :manpage:`open(2)` using %LANDLOCK_ACCESS_FS_READ_FILE and
+- *   %LANDLOCK_ACCESS_FS_WRITE_FILE. This access right is available since =
+the
+- *   third version of the Landlock ABI.
++ *   ``O_TRUNC``.  This access right is available since the third version =
+of the
++ *   Landlock ABI.
++ *
++ * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or=
+ used
++ * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same wa=
+y as
++ * read and write permissions are checked during :manpage:`open(2)` using
++ * %LANDLOCK_ACCESS_FS_READ_FILE and %LANDLOCK_ACCESS_FS_WRITE_FILE.
+  *
+  * A directory can receive access rights related to files or directories. =
+ The
+  * following access right is applied to the directory itself, and the
+@@ -198,13 +199,30 @@ struct landlock_net_port_attr {
+  *   If multiple requirements are not met, the ``EACCES`` error code takes
+  *   precedence over ``EXDEV``.
+  *
++ * The following access right applies both to files and directories:
++ *
++ * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on=
+ an opened
++ *   character or block device.
++ *
++ *   This access right applies to all `ioctl(2)` commands implemented by d=
+evice
++ *   drivers.  However, the following common IOCTL commands continue to be
++ *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
++ *
++ *   ``FIOCLEX``, ``FIONCLEX``, ``FIONBIO``, ``FIOASYNC``, ``FIOQSIZE``,
++ *   ``FIFREEZE``, ``FITHAW``, ``FS_IOC_FIEMAP``, ``FIGETBSZ``, ``FICLONE`=
+`,
++ *   ``FICLONERANGE``, ``FIDEDUPERANGE``, ``FS_IOC_GETFLAGS``,
++ *   ``FS_IOC_SETFLAGS``, ``FS_IOC_FSGETXATTR``, ``FS_IOC_FSSETXATTR``
++ *
++ *   This access right is available since the fifth version of the Landloc=
+k
++ *   ABI.
++ *
+  * .. warning::
+  *
+  *   It is currently not possible to restrict some file-related actions
+  *   accessible through these syscall families: :manpage:`chdir(2)`,
+  *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+  *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+- *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
++ *   :manpage:`fcntl(2)`, :manpage:`access(2)`.
+  *   Future Landlock evolutions will enable to restrict them.
   */
--static int do_vfs_ioctl(struct file *filp, unsigned int fd,
--			unsigned int cmd, unsigned long arg)
-+ioctl_handler_t vfs_get_ioctl_handler(struct file *filp, unsigned int cmd)
+ /* clang-format off */
+@@ -223,6 +241,7 @@ struct landlock_net_port_attr {
+ #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
+ #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+ #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
++#define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+ /* clang-format on */
+=20
+ /**
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index c15559432d3d..30b70d38ddcc 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -148,7 +148,8 @@ static struct landlock_object *get_inode_object(struct =
+inode *const inode)
+ 	LANDLOCK_ACCESS_FS_EXECUTE | \
+ 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+ 	LANDLOCK_ACCESS_FS_READ_FILE | \
+-	LANDLOCK_ACCESS_FS_TRUNCATE)
++	LANDLOCK_ACCESS_FS_TRUNCATE | \
++	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+ /* clang-format on */
+=20
+ /*
+@@ -1335,8 +1336,10 @@ static int hook_file_alloc_security(struct file *con=
+st file)
+ static int hook_file_open(struct file *const file)
  {
--	void __user *argp =3D (void __user *)arg;
--	struct inode *inode =3D file_inode(filp);
--
- 	switch (cmd) {
- 	case FIOCLEX:
--		set_close_on_exec(fd, 1);
--		return 0;
-+		return ioctl_fioclex;
+ 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+-	access_mask_t open_access_request, full_access_request, allowed_access;
+-	const access_mask_t optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
++	access_mask_t open_access_request, full_access_request, allowed_access,
++		optional_access;
++	const struct inode *inode =3D file_inode(file);
++	const bool is_device =3D S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode)=
+;
+ 	const struct landlock_ruleset *const dom =3D
+ 		get_fs_domain(landlock_cred(file->f_cred)->domain);
 =20
- 	case FIONCLEX:
--		set_close_on_exec(fd, 0);
--		return 0;
-+		return ioctl_fionclex;
-=20
- 	case FIONBIO:
--		return ioctl_fionbio(filp, argp);
-+		return ioctl_fionbio;
-=20
- 	case FIOASYNC:
--		return ioctl_fioasync(fd, filp, argp);
-+		return ioctl_fioasync;
-=20
- 	case FIOQSIZE:
--		if (S_ISDIR(inode->i_mode) || S_ISREG(inode->i_mode) ||
--		    S_ISLNK(inode->i_mode)) {
--			loff_t res =3D inode_get_bytes(inode);
--			return copy_to_user(argp, &res, sizeof(res)) ?
--					    -EFAULT : 0;
--		}
--
--		return -ENOTTY;
-+		return ioctl_fioqsize;
-=20
- 	case FIFREEZE:
--		return ioctl_fsfreeze(filp);
-+		return ioctl_fsfreeze;
-=20
- 	case FITHAW:
--		return ioctl_fsthaw(filp);
-+		return ioctl_fsthaw;
-=20
- 	case FS_IOC_FIEMAP:
--		return ioctl_fiemap(filp, argp);
-+		return ioctl_fiemap;
-=20
- 	case FIGETBSZ:
--		/* anon_bdev filesystems may not have a block size */
--		if (!inode->i_sb->s_blocksize)
--			return -EINVAL;
--
--		return put_user(inode->i_sb->s_blocksize, (int __user *)argp);
-+		return ioctl_figetbsz;
-=20
- 	case FICLONE:
--		return ioctl_file_clone(filp, arg, 0, 0, 0);
-+		return ioctl_ficlone;
-=20
- 	case FICLONERANGE:
--		return ioctl_file_clone_range(filp, argp);
-+		return ioctl_file_clone_range;
-=20
- 	case FIDEDUPERANGE:
--		return ioctl_file_dedupe_range(filp, argp);
-+		return ioctl_file_dedupe_range;
-=20
- 	case FIONREAD:
--		if (!S_ISREG(inode->i_mode))
--			return vfs_ioctl(filp, cmd, arg);
-+		if (!S_ISREG(file_inode(filp)->i_mode))
-+			break;
-=20
--		return put_user(i_size_read(inode) - filp->f_pos,
--				(int __user *)argp);
-+		return ioctl_fionread;
-=20
- 	case FS_IOC_GETFLAGS:
--		return ioctl_getflags(filp, argp);
-+		return ioctl_getflags;
-=20
- 	case FS_IOC_SETFLAGS:
--		return ioctl_setflags(filp, argp);
-+		return ioctl_setflags;
-=20
- 	case FS_IOC_FSGETXATTR:
--		return ioctl_fsgetxattr(filp, argp);
-+		return ioctl_fsgetxattr;
-=20
- 	case FS_IOC_FSSETXATTR:
--		return ioctl_fssetxattr(filp, argp);
-+		return ioctl_fssetxattr;
-=20
- 	default:
--		if (S_ISREG(inode->i_mode))
--			return file_ioctl(filp, cmd, argp);
-+		if (S_ISREG(file_inode(filp)->i_mode))
-+			return file_ioctl(cmd);
- 		break;
- 	}
-=20
--	return -ENOIOCTLCMD;
-+	/* Forwards call to vfs_ioctl(filp, cmd, arg) */
-+	return NULL;
-+}
+@@ -1354,6 +1357,10 @@ static int hook_file_open(struct file *const file)
+ 	 * We look up more access than what we immediately need for open(), so
+ 	 * that we can later authorize operations on opened files.
+ 	 */
++	optional_access =3D LANDLOCK_ACCESS_FS_TRUNCATE;
++	if (is_device)
++		optional_access |=3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
 +
-+/*
-+ * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBOL(=
-)'d.
-+ * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
-+ */
-+static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-+			unsigned int cmd, unsigned long arg)
-+{
-+	ioctl_handler_t handler =3D vfs_get_ioctl_handler(filp, cmd);
-+	int ret;
-+
-+	if (!handler)
-+		return -ENOIOCTLCMD;
-+
-+	ret =3D (*handler)(filp, fd, arg);
-+	/* Makes sure handle() really handles this command. */
-+	if (WARN_ON_ONCE(ret =3D=3D -ENOIOCTLCMD))
-+		return -ENOTTY;
-+
-+	return ret;
+ 	full_access_request =3D open_access_request | optional_access;
+=20
+ 	if (is_access_to_paths_allowed(
+@@ -1410,6 +1417,43 @@ static int hook_file_truncate(struct file *const fil=
+e)
+ 	return -EACCES;
  }
 =20
- SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long,=
- arg)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 1fbc72c5f112..92bf421aae83 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1904,6 +1904,12 @@ extern long compat_ptr_ioctl(struct file *file, unsi=
-gned int cmd,
- #define compat_ptr_ioctl NULL
- #endif
++static int hook_file_ioctl(struct file *file, unsigned int cmd,
++			   unsigned long arg)
++{
++	const struct inode *inode =3D file_inode(file);
++	const bool is_device =3D S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode)=
+;
++	access_mask_t required_access, allowed_access;
++
++	if (!is_device)
++		return 0;
++
++	/*
++	 * We permit IOCTL commands which have a do_vfs_ioctl handler for the
++	 * given file.
++	 */
++	if (vfs_get_ioctl_handler(file, cmd))
++		return 0;
++
++	/*
++	 * It is the access rights at the time of opening the file which
++	 * determine whether IOCTL can be used on the opened file later.
++	 *
++	 * The access right is attached to the opened file in hook_file_open().
++	 */
++	required_access =3D LANDLOCK_ACCESS_FS_IOCTL_DEV;
++	allowed_access =3D landlock_file(file)->allowed_access;
++	if ((allowed_access & required_access) =3D=3D required_access)
++		return 0;
++
++	return -EACCES;
++}
++
++static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
++				  unsigned long arg)
++{
++	return hook_file_ioctl(file, cmd, arg);
++}
++
+ static struct security_hook_list landlock_hooks[] __ro_after_init =3D {
+ 	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
 =20
-+typedef int (*ioctl_handler_t)(struct file *file, unsigned int fd,
-+			       unsigned long arg);
-+
-+extern ioctl_handler_t vfs_get_ioctl_handler(struct file *filp,
-+					     unsigned int cmd);
-+
- /*
-  * VFS file helper functions.
-  */
+@@ -1432,6 +1476,8 @@ static struct security_hook_list landlock_hooks[] __r=
+o_after_init =3D {
+ 	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
+ 	LSM_HOOK_INIT(file_open, hook_file_open),
+ 	LSM_HOOK_INIT(file_truncate, hook_file_truncate),
++	LSM_HOOK_INIT(file_ioctl, hook_file_ioctl),
++	LSM_HOOK_INIT(file_ioctl_compat, hook_file_ioctl_compat),
+ };
+=20
+ __init void landlock_add_fs_hooks(void)
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 93c9c6f91556..20fdb5ff3514 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -18,7 +18,7 @@
+ #define LANDLOCK_MAX_NUM_LAYERS		16
+ #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+=20
+-#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_TRUNCATE
++#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_DEV
+ #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+ #define LANDLOCK_SHIFT_ACCESS_FS	0
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 6788e73b6681..9ae3dfa47443 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -149,7 +149,7 @@ static const struct file_operations ruleset_fops =3D {
+ 	.write =3D fop_dummy_write,
+ };
+=20
+-#define LANDLOCK_ABI_VERSION 4
++#define LANDLOCK_ABI_VERSION 5
+=20
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+@@ -321,7 +321,11 @@ static int add_rule_path_beneath(struct landlock_rules=
+et *const ruleset,
+ 	if (!path_beneath_attr.allowed_access)
+ 		return -ENOMSG;
+=20
+-	/* Checks that allowed_access matches the @ruleset constraints. */
++	/*
++	 * Checks that allowed_access matches the @ruleset constraints and only
++	 * consists of publicly visible access rights (as opposed to synthetic
++	 * ones).
++	 */
+ 	mask =3D landlock_get_raw_fs_access_mask(ruleset, 0);
+ 	if ((path_beneath_attr.allowed_access | mask) !=3D mask)
+ 		return -EINVAL;
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/s=
+elftests/landlock/base_test.c
+index 646f778dfb1e..d292b419ccba 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -75,7 +75,7 @@ TEST(abi_version)
+ 	const struct landlock_ruleset_attr ruleset_attr =3D {
+ 		.handled_access_fs =3D LANDLOCK_ACCESS_FS_READ_FILE,
+ 	};
+-	ASSERT_EQ(4, landlock_create_ruleset(NULL, 0,
++	ASSERT_EQ(5, landlock_create_ruleset(NULL, 0,
+ 					     LANDLOCK_CREATE_RULESET_VERSION));
+=20
+ 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
+ftests/landlock/fs_test.c
+index 2d6d9b43d958..0bcbbf594fd7 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -527,9 +527,10 @@ TEST_F_FORK(layout1, inval)
+ 	LANDLOCK_ACCESS_FS_EXECUTE | \
+ 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+ 	LANDLOCK_ACCESS_FS_READ_FILE | \
+-	LANDLOCK_ACCESS_FS_TRUNCATE)
++	LANDLOCK_ACCESS_FS_TRUNCATE | \
++	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+=20
+-#define ACCESS_LAST LANDLOCK_ACCESS_FS_TRUNCATE
++#define ACCESS_LAST LANDLOCK_ACCESS_FS_IOCTL_DEV
+=20
+ #define ACCESS_ALL ( \
+ 	ACCESS_FILE | \
 --=20
 2.44.0.396.g6e790dbe36-goog
 
