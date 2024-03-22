@@ -1,191 +1,207 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12F920DD2;
-	Fri, 22 Mar 2024 14:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B549847F6F
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 14:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711116237; cv=none; b=PM7t0QL1d01WVbUCNNEsvtrmCv9HQCxsRSPHOAoF7r69fat3OcjbrMPnE51CEWNDqlZdUuICMAYVTC68MpKpVZqqFlMg9RaNBLwMJ4bEgO/29Cr1iqxcCqlSvwA+yryIQ0KKv82JsepHkR/r7dqunGSp8kEvMjMWrz8LJMBgw8A=
+	t=1711118401; cv=none; b=j7QV3JAdEdwaswI28qOs9Q6NAQQp77GskHCtB+sJmUmzBLmWtEkrB3ItgOO7WY3yo7XuS8u8Xrz9Co3QsXeJO5w63qU/nYiPNGBm0zoAJSUMx2rt9pjk0q4vm/z0WZFHm3ZU2iOMYx0JriuuEDp7bwHkZwuHC8Ny9k7eMii/kg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711116237; c=relaxed/simple;
-	bh=GTwkfSYY8fF/JTgbFZ19PtI5w8z3w4e7RmofZKCLLX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HRcLP46Ls1cyM5u1XacdFBTuL+No+dpnmNJKRSKoTlEVmOfmt0VRDBtaJoRFoLDENNPHMCDvVDr4eG2zrP3vdBOaIuBYm2qLTaL9aDZinhpDB8DJMWv701k4n3pXIZec++OLBt9/BvGTALAKG1NUZvtc7uL2f/5laXm1osxPk4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aEFVnYEn; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1711118401; c=relaxed/simple;
+	bh=M7m9yV9q8q1viUtrYDpgP7bD9ijmQCcD6ZY4tFU6kqs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ni6ht8mVc+OQMVQqs0pBnppKzPBeBRtpwmHIGBY1ki79cWritiOup/q2xomdZS+LTxyMgVZNQzjLU8M1CMjwWrKSKpLuneEKfBc64hlZsVZKPa65OGtSnKEB4U9uDbsvJCJXDOiYhKuP8KdDu2H6HtEnWvcCIzCAehUTVphDqk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z54Ah0dj; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aEFVnYEn"
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42MDrlfG007691;
-	Fri, 22 Mar 2024 14:03:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=8LjoMCe0DGuL79iPsx8E9aBSx33d5vNWq5IDmlmWEHU=;
- b=aEFVnYEnrQo9X9eTn62cMAsHDBd/9O/L+fBvpgxfId66LX1+lwzS3aT00ptCVhGhv4nO
- J6/jHPfzD2DDbINY+8EluYrNxC/M8yfULoAO4e4muViayzwOYgme0kxJ/IhZZKodKnNX
- KzJcBXk7FyYKd3bHmNihaoyfowBMaWwHtCdmZZJK5/3MhGATGldGb29OhnhcRmxbNrk+
- 2rv+JBmK0+Iya2IiDNHhYf7QDiHOMUrzIXr4NJ+F2Ness7X8PFoMRRW02Pmy+61q9As8
- ZWyy7zEDcOBRxKh9LAJZTwEmJd9380VdaIhHvu1xTrpHEVLblcwJq0RuJJKLXKhvKhYF Uw== 
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x1b91033h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Mar 2024 14:03:29 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 42MDh8lM026678;
-	Fri, 22 Mar 2024 14:03:29 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3x0x1756yv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Mar 2024 14:03:29 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 42ME3PZl26411734
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 22 Mar 2024 14:03:27 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7454C58065;
-	Fri, 22 Mar 2024 14:03:25 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 085DD58068;
-	Fri, 22 Mar 2024 14:03:25 +0000 (GMT)
-Received: from sbct-3.bos2.lab (unknown [9.47.158.153])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 22 Mar 2024 14:03:24 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        roberto.sassu@huawei.com, Stefan Berger <stefanb@linux.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] ima: Fix use-after-free on a dentry's dname.name
-Date: Fri, 22 Mar 2024 10:03:12 -0400
-Message-ID: <20240322140312.1804404-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.44.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: i-UhdwlGxaLYS8DRbaBtV0I1H82ZOiJr
-X-Proofpoint-ORIG-GUID: i-UhdwlGxaLYS8DRbaBtV0I1H82ZOiJr
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z54Ah0dj"
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a473ac9d263so8809366b.1
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2024 07:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1711118398; x=1711723198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r/VtsW+/qJuiMTAVZL+Cnz9ytEzKEgAcOHZ3oa+QL2U=;
+        b=z54Ah0dj4cu0+PcuKgUInytYtmwSvQRQ4F8ibGoF3t93BqjAv4RAxV11SYGkxRg1cd
+         +/U2mVqv1sYk2whiZM7KVxTl8ccJkaACmam4AqTnGIrsPeM5XO/pS1h9Uq8jXdORJMfL
+         obGTc5KvjQzOYauIbz81nfYngnzqK45hMoTs4WAKb1VnD7fYtehIyrSSV2/X/V3lOCZ+
+         tfKsXUubXyjYvbsAtU21TyLRLYGs5tqZLGopUUGOP9XEd/GtVbwrhzrUqtlcadNPETLB
+         u0y+O8J0+VvyQDep7EwMcR2vQ/xlIkd363m4S+sPbrHgnCy0WLcH8byVnNBb4qNxllwy
+         3pSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711118398; x=1711723198;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r/VtsW+/qJuiMTAVZL+Cnz9ytEzKEgAcOHZ3oa+QL2U=;
+        b=Y7ddD+2wAawmqOS3ZhQUiSwiRtzWiNpdC96LwnUmMvPopvYqwCihpMHvEsVNPX/U83
+         x8IQN+uZNmGTEexHOoMCYEKjEKHxYVoYWigl6TumtdXbxsPyTcHgY0WkfdXsF+5NRxzF
+         dgoNQJOeXldRWOzhwgHnhc0u6BCQxXR/T4hB2umSkK8U7XjWLcQiLsT7KNhpBjubz9nP
+         G8EX/g5/GFpHmwcoLtBfVPDwz4qyHxupaAheKgQoxChHmfzLuK1TcXAVvr5oA0LghbAf
+         d1sx11cJmflFKe2q55XbjmOkUmVcUleVO7KMPQgRQbfokMyD+xI4pCm8bopK5TuDOSTf
+         OiOw==
+X-Gm-Message-State: AOJu0Ywd0RZjWvipIGbSKt+0K+aFGGH6/g/dVEQ9xcmRGCOkOt2Bw4cj
+	qzq6yxu2nPZR5eIn5QgUxhh8sHssuBOzl35jPcn3WOoU0lOYvMy0whxMvaqLJhQBm4/Djpm4otN
+	xSg==
+X-Google-Smtp-Source: AGHT+IFeINQB2Sle2Lc5d7rpFvqJ16OAKnqUTHVNUPaYB9k0cSsB18JUjEFjHs1bMxWTLSjcIFGX8Cbe+TA=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a17:906:f191:b0:a45:2ebe:2636 with SMTP id
+ gs17-20020a170906f19100b00a452ebe2636mr9264ejb.9.1711118397698; Fri, 22 Mar
+ 2024 07:39:57 -0700 (PDT)
+Date: Fri, 22 Mar 2024 15:39:55 +0100
+In-Reply-To: <20240322.axashie2ooJ1@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-22_08,2024-03-21_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 bulkscore=0 impostorscore=0 phishscore=0 spamscore=0
- mlxscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2403210000 definitions=main-2403220099
+Mime-Version: 1.0
+References: <20240309075320.160128-1-gnoack@google.com> <20240309075320.160128-7-gnoack@google.com>
+ <20240322.axashie2ooJ1@digikod.net>
+Message-ID: <Zf2YO8LHm3Wi4aNu@google.com>
+Subject: Re: [PATCH v10 6/9] selftests/landlock: Test IOCTLs on named pipes
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-->d_name.name can change on rename and the earlier value can be freed;
-there are conditions sufficient to stabilize it (->d_lock on dentry,
-->d_lock on its parent, ->i_rwsem exclusive on the parent's inode,
-rename_lock), but none of those are met at any of the sites. Take a stable
-snapshot of the name instead.
+On Fri, Mar 22, 2024 at 08:48:29AM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> It might be interesting to create a layout with one file of each type
+> and use that for the IOCTL tests.
 
-Link: https://lore.kernel.org/all/20240202182732.GE2087318@ZenIV/
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- security/integrity/ima/ima_api.c          | 16 ++++++++++++----
- security/integrity/ima/ima_template_lib.c | 17 ++++++++++++++---
- 2 files changed, 26 insertions(+), 7 deletions(-)
+We have already written these tests and we can keep them, but I think that =
+we
+only gain little additional confidence from testing non-device files.  The
+implementation is saying pretty directly that IOCTLs are permitted if the f=
+ile
+is not a character or block device, at the top of the file_ioctl hook.  I d=
+on't
+see much value in testing this even more exhaustively and would like to kee=
+p it
+as it is for now.
 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index b37d043d5748..1856981e33df 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -245,8 +245,8 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 	const char *audit_cause = "failed";
- 	struct inode *inode = file_inode(file);
- 	struct inode *real_inode = d_real_inode(file_dentry(file));
--	const char *filename = file->f_path.dentry->d_name.name;
- 	struct ima_max_digest_data hash;
-+	struct name_snapshot filename;
- 	struct kstat stat;
- 	int result = 0;
- 	int length;
-@@ -317,9 +317,13 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 		if (file->f_flags & O_DIRECT)
- 			audit_cause = "failed(directio)";
- 
-+		take_dentry_name_snapshot(&filename, file->f_path.dentry);
-+
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
--				    filename, "collect_data", audit_cause,
--				    result, 0);
-+				    filename.name.name, "collect_data",
-+				    audit_cause, result, 0);
-+
-+		release_dentry_name_snapshot(&filename);
- 	}
- 	return result;
- }
-@@ -432,6 +436,7 @@ void ima_audit_measurement(struct ima_iint_cache *iint,
-  */
- const char *ima_d_path(const struct path *path, char **pathbuf, char *namebuf)
- {
-+	struct name_snapshot filename;
- 	char *pathname = NULL;
- 
- 	*pathbuf = __getname();
-@@ -445,7 +450,10 @@ const char *ima_d_path(const struct path *path, char **pathbuf, char *namebuf)
- 	}
- 
- 	if (!pathname) {
--		strscpy(namebuf, path->dentry->d_name.name, NAME_MAX);
-+		take_dentry_name_snapshot(&filename, path->dentry);
-+		strscpy(namebuf, filename.name.name, NAME_MAX);
-+		release_dentry_name_snapshot(&filename);
-+
- 		pathname = namebuf;
- 	}
- 
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 6cd0add524cd..3b2cb8f1002e 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -483,7 +483,10 @@ static int ima_eventname_init_common(struct ima_event_data *event_data,
- 				     bool size_limit)
- {
- 	const char *cur_filename = NULL;
-+	struct name_snapshot filename;
- 	u32 cur_filename_len = 0;
-+	bool snapshot = false;
-+	int ret;
- 
- 	BUG_ON(event_data->filename == NULL && event_data->file == NULL);
- 
-@@ -496,7 +499,10 @@ static int ima_eventname_init_common(struct ima_event_data *event_data,
- 	}
- 
- 	if (event_data->file) {
--		cur_filename = event_data->file->f_path.dentry->d_name.name;
-+		take_dentry_name_snapshot(&filename,
-+					  event_data->file->f_path.dentry);
-+		snapshot = true;
-+		cur_filename = filename.name.name;
- 		cur_filename_len = strlen(cur_filename);
- 	} else
- 		/*
-@@ -505,8 +511,13 @@ static int ima_eventname_init_common(struct ima_event_data *event_data,
- 		 */
- 		cur_filename_len = IMA_EVENT_NAME_LEN_MAX;
- out:
--	return ima_write_template_field_data(cur_filename, cur_filename_len,
--					     DATA_FMT_STRING, field_data);
-+	ret = ima_write_template_field_data(cur_filename, cur_filename_len,
-+					    DATA_FMT_STRING, field_data);
-+
-+	if (snapshot)
-+		release_dentry_name_snapshot(&filename);
-+
-+	return ret;
- }
- 
- /*
--- 
-2.43.0
 
+> On Sat, Mar 09, 2024 at 07:53:17AM +0000, G=C3=BCnther Noack wrote:
+> > Named pipes should behave like pipes created with pipe(2),
+> > so we don't want to restrict IOCTLs on them.
+> >=20
+> > Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> > ---
+> >  tools/testing/selftests/landlock/fs_test.c | 61 ++++++++++++++++++----
+> >  1 file changed, 52 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing=
+/selftests/landlock/fs_test.c
+> > index 5c47231a722e..d991f44875bc 100644
+> > --- a/tools/testing/selftests/landlock/fs_test.c
+> > +++ b/tools/testing/selftests/landlock/fs_test.c
+> > @@ -3924,6 +3924,58 @@ TEST_F_FORK(layout1, o_path_ftruncate_and_ioctl)
+> >  	ASSERT_EQ(0, close(fd));
+> >  }
+> > =20
+> > +static int test_fionread_ioctl(int fd)
+> > +{
+> > +	size_t sz =3D 0;
+> > +
+> > +	if (ioctl(fd, FIONREAD, &sz) < 0 && errno =3D=3D EACCES)
+> > +		return errno;
+> > +	return 0;
+> > +}
+> > +
+> > +/*
+> > + * Named pipes are not governed by the LANDLOCK_ACCESS_FS_IOCTL_DEV ri=
+ght,
+> > + * because they are not character or block devices.
+> > + */
+> > +TEST_F_FORK(layout1, named_pipe_ioctl)
+> > +{
+> > +	pid_t child_pid;
+> > +	int fd, ruleset_fd;
+> > +	const char *const path =3D file1_s1d1;
+> > +	const struct landlock_ruleset_attr attr =3D {
+> > +		.handled_access_fs =3D LANDLOCK_ACCESS_FS_IOCTL_DEV,
+> > +	};
+> > +
+> > +	ASSERT_EQ(0, unlink(path));
+> > +	ASSERT_EQ(0, mkfifo(path, 0600));
+> > +
+> > +	/* Enables Landlock. */
+> > +	ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
+> > +	ASSERT_LE(0, ruleset_fd);
+> > +	enforce_ruleset(_metadata, ruleset_fd);
+> > +	ASSERT_EQ(0, close(ruleset_fd));
+> > +
+> > +	/* The child process opens the pipe for writing. */
+> > +	child_pid =3D fork();
+> > +	ASSERT_NE(-1, child_pid);
+> > +	if (child_pid =3D=3D 0) {
+>=20
+> What is the purpose of this child's code?
+
+From fifo(7):
+
+  Opening the FIFO blocks until the other end is opened also.
+
+So the child and parent process both wait for the other open to happen.
+
+I suspect I could technically also use O_RDWR here, but that is undefined
+behaviour in POSIX and less conventional code.  (This is described further =
+down,
+also in fifo(7).)
+
+>=20
+> > +		fd =3D open(path, O_WRONLY);
+> > +		close(fd);
+> > +		exit(0);
+> > +	}
+> > +
+> > +	fd =3D open(path, O_RDONLY);
+> > +	ASSERT_LE(0, fd);
+> > +
+> > +	/* FIONREAD is implemented by pipefifo_fops. */
+> > +	EXPECT_EQ(0, test_fionread_ioctl(fd));
+> > +
+> > +	ASSERT_EQ(0, close(fd));
+> > +	ASSERT_EQ(0, unlink(path));
+> > +
+> > +	ASSERT_EQ(child_pid, waitpid(child_pid, NULL, 0));
+> > +}
+> > +
+> >  /* clang-format off */
+> >  FIXTURE(ioctl) {};
+> > =20
+> > @@ -3997,15 +4049,6 @@ static int test_tcgets_ioctl(int fd)
+> >  	return 0;
+> >  }
+> > =20
+> > -static int test_fionread_ioctl(int fd)
+> > -{
+> > -	size_t sz =3D 0;
+> > -
+> > -	if (ioctl(fd, FIONREAD, &sz) < 0 && errno =3D=3D EACCES)
+> > -		return errno;
+> > -	return 0;
+> > -}
+> > -
+>=20
+> You should add test_fionread_ioctl() at the right place from the start.
+
+Fair enough, done.
+
+> >  TEST_F_FORK(ioctl, handle_dir_access_file)
+> >  {
+> >  	const int flag =3D 0;
+> > --=20
+> > 2.44.0.278.ge034bb2e1d-goog
+> >=20
+> >=20
+
+=E2=80=94G=C3=BCnther
