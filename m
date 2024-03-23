@@ -1,129 +1,325 @@
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E771843AAB;
-	Fri, 22 Mar 2024 15:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AA1BE5E
+	for <linux-security-module@vger.kernel.org>; Sat, 23 Mar 2024 07:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711121543; cv=none; b=kuBKLMb2h51FxiEcUBLlunZAfzeYZcEI+ehRCkH/s2yZQDuSIR+e1rBfd3C2lGZay2NpQnkClpsntqk2pMb0L9EmG7g9fNeUkKV2lwucp9ehQ9NhruU0yP7gfAVnoSx0N3fbea40KspIcDxSkJtwT3/jXodv763NEXzntOHAkTs=
+	t=1711179459; cv=none; b=tmT2elAN+usid8Hg9j1AQOCvKoDodm1DKmIQlzYAL0/iwesvu4rOsJ2rASFYADgXGIotc92vbk6DnsGetLvv9hDqR27s+7Xa5U6DX8NISWEZ7YTBZHQ/p1gd5jA9lzX/411F6nbia/d6Ao/PnZyM0GwRsY/lDwUVTuvgscIYPe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711121543; c=relaxed/simple;
-	bh=9TNkZT4dp7ID5qIMMJen1ZJY1/o2ksRE529bNt185EA=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=rRUvFmR6O3olArq1lzd0+ZEYFtfhazuxV3wMsvgIqezhngYSseei/8wMjGlvKy0XSGFodNwKm6TxG4clBkpg2ImxFbf6guTy1FEkCf4+L7G6JaOBGhy8n38tGpG/cT46AtBRhW/G9SXMPcT0xevR/0domB3Usrd9rtgps3tLz+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BmrvXjEn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Dv6sth6y; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1711179459; c=relaxed/simple;
+	bh=QkRL80bOdMgqpupv3lu7jpKBHQfaNnDSAY1aKfu32aI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ew0vZU3g2OiYBDZPnhjSWPIdh0sU8eD5VWToeDIuy1KTJ5GHoCuLzQ1L+mPvg8vNjMh3XNbNN+1aYGZj9Jhy9tl1fg6zUdC+Tt/QAFEtIMarnW3ULEqDWhTPwar5YaWkoqwQtYi/3emEMg4LIGm4ZpKFA0y+0SIzu8NvrYz/lug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oE/gzJ0W; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BmrvXjEn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Dv6sth6y"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id D48CB13800DA;
-	Fri, 22 Mar 2024 11:32:19 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 22 Mar 2024 11:32:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1711121539;
-	 x=1711207939; bh=X5fVNcRghc6AmkKQ9qMZefGfp8+ukNErti+4NvQOZ1Y=; b=
-	BmrvXjEnEFVMR3k6MqJ2rgDbQlgfH3eW5ie+E+r3kuCsJ11bOrVMye3+kRX1X2rB
-	baw3mMc0mHhASY/2EwRDl1hqFJzvs6vxqug0cNU6chAXGZjI5lSXAp5mIpqkTHef
-	Z/T5lSjMSF1rPw4MFvw+54yl/9kx4wgPWqDKGezjkr775cthi7rGv+/5CTSMvEoF
-	utd+/KSJMNOIKkX3et29hbV0kWgbej1M8T2DhDkbzRR/9nVrlpdOt1iihoLcET5L
-	ZmEj9+9+0xz1SOPZxOl2VuQDRT8lhdKaT9qNrJqJRRHE6AGhq5evXjPMb7u217lQ
-	QAkMiqZ0p2WeTUmGux5CiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1711121539; x=
-	1711207939; bh=X5fVNcRghc6AmkKQ9qMZefGfp8+ukNErti+4NvQOZ1Y=; b=D
-	v6sth6yHmlD5Y4Q4ET3Pyv47BM9BHCMEQh6XIXFwH1kCcIXHsEZJdv7YE0zIRSCY
-	yv39RCGyRsuZxcKaSzg6WV03hyps0jLLCJL4xBaSU69M/4nf5bW/r2qdnV7x4nz7
-	PiyOY3bsRP+Qn6pJDOpSISk2NjCndWN/Nv452YLP49Y4ZqAnUvAIVGDbM57FBDvr
-	04MH7QSt9wYkm1TiwxIzGwoIikbrlRkX18dFObAgNfZKG1E3Y03GE7RBEjL1VpDo
-	WrfXjtTT196mNdOzp23r+HQSUE4acnoPz3LAjjxp3/dxmVNdF1P4cKZ4P4KbI/iX
-	AI7itHaaPK/NKR3atChjg==
-X-ME-Sender: <xms:g6T9ZWye7lPHt9eg9xvJlvYdk-_x9MkASRaUiqzgPeH45fCwiFoy3Q>
-    <xme:g6T9ZSSYdBofd27fn1WZ7BDd59XJV1b26w5wtalIkLcBW386GjsVyq_wl1BX-gjrj
-    7jMQsnIewZv5AjINFs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddtvddgudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:g6T9ZYV35XQP0-g4G14IHfr93oAXUQ9vIXgTpXeOU_suK-AWnC7MIQ>
-    <xmx:g6T9ZcjNlLgGx3GpcOqouPBNoX2Edi2E6SHwam0gg2kju9BBfnXL3A>
-    <xmx:g6T9ZYAS4ah1OxZqia_GuWors-RFIo1cdU3XNqnhbPCHrk5dgFl9xQ>
-    <xmx:g6T9ZdJ8Wq2Z67owMJY5aFtiOuV_MKz0ESv3j0zzqs67cLT5NzB2mQ>
-    <xmx:g6T9ZU7_a_JXT7OxQpKqFYnPjk7USqoXrRxRdTZz1hWUUst3HmIOMw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1C9C6B6008D; Fri, 22 Mar 2024 11:32:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-332-gdeb4194079-fm-20240319.002-gdeb41940
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oE/gzJ0W"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-56bb5b9ab89so3028a12.1
+        for <linux-security-module@vger.kernel.org>; Sat, 23 Mar 2024 00:37:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1711179456; x=1711784256; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nzPLpLR38yVh98CflVS3KgFPZ37Wh1RR55emN6t7fVw=;
+        b=oE/gzJ0WtFQcsK2y4EY4jbFCd5ZMANAveIrm2/rp9dZbpYD2GSiuJgSqkIl+iLX1F4
+         7qmw20k/Cood8tElCnZBFDett6l7Zm5GDz/7Hrbk1Q5DdP4dKQWCFSThYcdygxyasdwE
+         YO3TFd/s0UBQb/iIJnLQfDcWE56jNfUoacUo4P46ksVsuXiAZSCGvOdJYISyAYI2Gyfz
+         edrdqDX9JyxeBqL+4cwQ5hwFqR1wHr3DjXaqEr4u2YVVnGWlkX19eXhcObNDJzOOe3TG
+         BPgX04gv4brdV3jJv9flV0B0YGpS3F6FWYu7dmjo2az0jG2ChhcvO/nigPfQ5zrYaY6C
+         Zbqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711179456; x=1711784256;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nzPLpLR38yVh98CflVS3KgFPZ37Wh1RR55emN6t7fVw=;
+        b=PCgmxcuf9v4QCXfSAvv4yuQqP2Ts2yBeC+6vME8il/ZU3A6iWw4tzueJQ4jtVzM7Qc
+         45kk5bvrQO1ElLrbD0gGLSc0B0Q93jaJ5Df+c02c1WtMpoVTtYpRR8ByFuhqcihV2NFS
+         66Sqx7txCi2jDY+wsobuOzAG13iNzUVozJPbAD0+MhyYvyhBJF55FVkFUh74YejTp4gL
+         FcsZS2V3aIaUQpgAGQ6/VIn+JKyGHpXJrfh8/fJudxYkfRCzyXQv/PauLbfYWkvjdkLH
+         6hPBqP/xw4101gimTKcvFkjSvmEesObwcCEAjAk8NX54cnYYH+L0UuKa8mT+CAnp3Imv
+         f/eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA2dkxrvi+iBitrFqIhPSm/+FaXaLJK+L5+TwOm8sPbgHMSjghP2zvMA2+6U1GOcszWynHdMtq4lTu68x4QjjtnglGqE6v2dGjjrAlX3Dsi1I4d2GF
+X-Gm-Message-State: AOJu0YyI8f7zacdgs0LwIxVUn+k3KrbWCMHsvNQmyTFVZbFWCGh0fTFu
+	4OQrQ4guFKIMohcIic22oPeoAX5pz4ev4p7QpU0D4e7DKo8Pyk/7d+vw+3KBCTZcYymufriYAkL
+	THuu0FvcAOMOLrOv6jVLW2yJ71mNob3VWq6E7
+X-Google-Smtp-Source: AGHT+IHoSCOy0iQP/pMF3d7tGchN3NXJm8dNECET/DoxfxKmnGUQPfY7JLX3nKLMol3Kg4hkIRlrgYhoFRIcHE3aVjY=
+X-Received: by 2002:a05:6402:612:b0:56b:fc63:5558 with SMTP id
+ n18-20020a056402061200b0056bfc635558mr8005edv.5.1711179455724; Sat, 23 Mar
+ 2024 00:37:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <32b1164e-9d5f-40c0-9a4e-001b2c9b822f@app.fastmail.com>
-In-Reply-To: <20240322151002.3653639-2-gnoack@google.com>
-References: <20240322151002.3653639-1-gnoack@google.com>
- <20240322151002.3653639-2-gnoack@google.com>
-Date: Fri, 22 Mar 2024 16:31:58 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: "Jeff Xu" <jeffxu@google.com>,
- "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Paul Moore" <paul@paul-moore.com>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- "Christian Brauner" <brauner@kernel.org>
-Subject: Re: [PATCH v11 1/9] fs: Add and use vfs_get_ioctl_handler()
-Content-Type: text/plain;charset=utf-8
+References: <20240319104857.70783-1-mic@digikod.net> <20240319104857.70783-5-mic@digikod.net>
+In-Reply-To: <20240319104857.70783-5-mic@digikod.net>
+From: David Gow <davidgow@google.com>
+Date: Sat, 23 Mar 2024 15:37:21 +0800
+Message-ID: <CABVgOSksVq5_AeObEBZFAezZpiQ41C7ZHWEtRBR_1d2UQQYXbw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/7] kunit: Handle test faults
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Brendan Higgins <brendanhiggins@google.com>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Alan Maguire <alan.maguire@oracle.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+	James Morris <jamorris@linux.microsoft.com>, Kees Cook <keescook@chromium.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marco Pagani <marpagan@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Thara Gopinath <tgopinath@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
+	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-um@lists.infradead.org, x86@kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000a30d2a06144f0390"
+
+--000000000000a30d2a06144f0390
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 22, 2024, at 16:09, G=C3=BCnther Noack wrote:
-> From: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+On Tue, 19 Mar 2024 at 18:49, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wr=
+ote:
 >
-> Add a new vfs_get_ioctl_handler() helper to identify if an IOCTL comma=
-nd
-> is handled by the first IOCTL layer.  Each IOCTL command is now handled
-> by a dedicated function, and all of them use the same signature.
-
-Sorry I didn't already reply the previous time you sent this.
-I don't really like the idea of going through another indirect
-pointer for each of the ioctls here, both because of the
-complexity at the source level, and the potential cost on
-architectures that need heavy barriers around indirect
-function calls.
-=20
-> -static int ioctl_fibmap(struct file *filp, int __user *p)
-> +static int ioctl_fibmap(struct file *filp, unsigned int fd, unsigned=20
-> long arg)
+> Previously, when a kernel test thread crashed (e.g. NULL pointer
+> dereference, general protection fault), the KUnit test hanged for 30
+> seconds and exited with a timeout error.
+>
+> Fix this issue by waiting on task_struct->vfork_done instead of the
+> custom kunit_try_catch.try_completion, and track the execution state by
+> initially setting try_result with -EINTR and only setting it to 0 if
+> the test passed.
+>
+> Fix kunit_generic_run_threadfn_adapter() signature by returning 0
+> instead of calling kthread_complete_and_exit().  Because thread's exit
+> code is never checked, always set it to 0 to make it clear.
+>
+> Fix the -EINTR error message, which couldn't be reached until now.
+>
+> This is tested with a following patch.
+>
+> Cc: Brendan Higgins <brendanhiggins@google.com>
+> Cc: Shuah Khan <skhan@linuxfoundation.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: David Gow <davidgow@google.com>
+> Tested-by: Rae Moar <rmoar@google.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20240319104857.70783-5-mic@digikod.net
+> ---
+>
+> Changes since v2:
+> * s/-EFAULT/-EINTR/ in commit message as spotted by Rae.
+> * Add a comment explaining vfork_done as suggested by David.
+> * Add David's Reviewed-by.
+> * Add Rae's Tested-by.
+>
+> Changes since v1:
+> * Add Kees's Reviewed-by.
+> ---
+>  include/kunit/try-catch.h |  3 ---
+>  lib/kunit/try-catch.c     | 19 ++++++++++++-------
+>  2 files changed, 12 insertions(+), 10 deletions(-)
+>
+> diff --git a/include/kunit/try-catch.h b/include/kunit/try-catch.h
+> index c507dd43119d..7c966a1adbd3 100644
+> --- a/include/kunit/try-catch.h
+> +++ b/include/kunit/try-catch.h
+> @@ -14,13 +14,11 @@
+>
+>  typedef void (*kunit_try_catch_func_t)(void *);
+>
+> -struct completion;
+>  struct kunit;
+>
+>  /**
+>   * struct kunit_try_catch - provides a generic way to run code which mig=
+ht fail.
+>   * @test: The test case that is currently being executed.
+> - * @try_completion: Completion that the control thread waits on while te=
+st runs.
+>   * @try_result: Contains any errno obtained while running test case.
+>   * @try: The function, the test case, to attempt to run.
+>   * @catch: The function called if @try bails out.
+> @@ -46,7 +44,6 @@ struct kunit;
+>  struct kunit_try_catch {
+>         /* private: internal use only. */
+>         struct kunit *test;
+> -       struct completion *try_completion;
+>         int try_result;
+>         kunit_try_catch_func_t try;
+>         kunit_try_catch_func_t catch;
+> diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
+> index cab8b24b5d5a..7a3910dd78a6 100644
+> --- a/lib/kunit/try-catch.c
+> +++ b/lib/kunit/try-catch.c
+> @@ -18,7 +18,7 @@
+>  void __noreturn kunit_try_catch_throw(struct kunit_try_catch *try_catch)
 >  {
-> +	int __user *p =3D (void __user *)arg;
+>         try_catch->try_result =3D -EFAULT;
+> -       kthread_complete_and_exit(try_catch->try_completion, -EFAULT);
+> +       kthread_exit(0);
 
-The new version doesn't seem like an improvement when you
-need the extra type casts here.=20
+It turns out kthread_exit() is not exported, so this doesn't work if
+KUnit is built as a module.
 
-As a completely different approach, would it perhaps be
-sufficient to define security_file_ioctl_compat() in a
-way that it may return a special error code signifying
-"don't call into fops->{unlocked,compat}_ioctl"?
+I think the options we have are:
+- Add EXPORT_SYMBOL(kthread_exit).
+- Keep using out own completion, and kthread_complete_and_exit()
+- try_get_module() before spawning the thread, and use
+module_put_and_kthread_exit().
 
-This way landlock could trivially allow ioctls on e.g.
-normal file systems, sockets and block devices but prevent
-them on character devices it does not trust.
+I think all of these would be okay, but I could've missed something.
 
-      Arnd
+-- David
+
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_try_catch_throw);
+>
+> @@ -26,9 +26,12 @@ static int kunit_generic_run_threadfn_adapter(void *da=
+ta)
+>  {
+>         struct kunit_try_catch *try_catch =3D data;
+>
+> +       try_catch->try_result =3D -EINTR;
+>         try_catch->try(try_catch->context);
+> +       if (try_catch->try_result =3D=3D -EINTR)
+> +               try_catch->try_result =3D 0;
+>
+> -       kthread_complete_and_exit(try_catch->try_completion, 0);
+> +       return 0;
+>  }
+>
+>  static unsigned long kunit_test_timeout(void)
+> @@ -58,13 +61,11 @@ static unsigned long kunit_test_timeout(void)
+>
+>  void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *contex=
+t)
+>  {
+> -       DECLARE_COMPLETION_ONSTACK(try_completion);
+>         struct kunit *test =3D try_catch->test;
+>         struct task_struct *task_struct;
+>         int exit_code, time_remaining;
+>
+>         try_catch->context =3D context;
+> -       try_catch->try_completion =3D &try_completion;
+>         try_catch->try_result =3D 0;
+>         task_struct =3D kthread_create(kunit_generic_run_threadfn_adapter=
+,
+>                                      try_catch, "kunit_try_catch_thread")=
+;
+> @@ -75,8 +76,12 @@ void kunit_try_catch_run(struct kunit_try_catch *try_c=
+atch, void *context)
+>         }
+>         get_task_struct(task_struct);
+>         wake_up_process(task_struct);
+> -
+> -       time_remaining =3D wait_for_completion_timeout(&try_completion,
+> +       /*
+> +        * As for a vfork(2), task_struct->vfork_done (pointing to the
+> +        * underlying kthread->exited) can be used to wait for the end of=
+ a
+> +        * kernel thread.
+> +        */
+> +       time_remaining =3D wait_for_completion_timeout(task_struct->vfork=
+_done,
+>                                                      kunit_test_timeout()=
+);
+>         if (time_remaining =3D=3D 0) {
+>                 try_catch->try_result =3D -ETIMEDOUT;
+> @@ -92,7 +97,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_ca=
+tch, void *context)
+>         if (exit_code =3D=3D -EFAULT)
+>                 try_catch->try_result =3D 0;
+>         else if (exit_code =3D=3D -EINTR)
+> -               kunit_err(test, "wake_up_process() was never called\n");
+> +               kunit_err(test, "try faulted\n");
+>         else if (exit_code =3D=3D -ETIMEDOUT)
+>                 kunit_err(test, "try timed out\n");
+>         else if (exit_code)
+> --
+> 2.44.0
+>
+
+--000000000000a30d2a06144f0390
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+LmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5n
+bG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG9w0BAQsFAAOCAQEANyYcO+9JZYyqQt41
+TMwvFWAw3vLoLOQIfIn48/yea/ekOcParTb0mbhsvVSZ6sGn+txYAZb33wIb1f4wK4xQ7+RUYBfI
+TuTPL7olF9hDpojC2F6Eu8nuEf1XD9qNI8zFd4kfjg4rb+AME0L81WaCL/WhP2kDCnRU4jm6TryB
+CHhZqtxkIvXGPGHjwJJazJBnX5NayIce4fGuUEJ7HkuCthVZ3Rws0UyHSAXesT/0tXATND4mNr1X
+El6adiSQy619ybVERnRi5aDe1PTwE+qNiotEEaeujz1a/+yYaaTY+k+qJcVxi7tbyQ0hi0UB3myM
+A/z2HmGEwO8hx7hDjKmKbDCCA18wggJHoAMCAQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUA
+MEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9vdCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWdu
+MRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEg
+MB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzAR
+BgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4
+Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0EXyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuu
+l9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+JJ5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJ
+pij2aTv2y8gokeWdimFXN6x0FNx04Druci8unPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh
+6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTvriBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti
++w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E
+BTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5NUPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEA
+S0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigHM8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9u
+bG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmUY/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaM
+ld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88
+q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcya5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/f
+hO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/XzCCBOMwggPLoAMCAQICEAHS+TgZvH/tCq5FcDC0
+n9IwDQYJKoZIhvcNAQELBQAwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYt
+c2ExKjAoBgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjMgU01JTUUgQ0EgMjAyMDAeFw0yNDAxMDcx
+MDQ5MDJaFw0yNDA3MDUxMDQ5MDJaMCQxIjAgBgkqhkiG9w0BCQEWE2RhdmlkZ293QGdvb2dsZS5j
+b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDY2jJMFqnyVx9tBZhkuJguTnM4nHJI
+ZGdQAt5hic4KMUR2KbYKHuTQpTNJz6gZ54lsH26D/RS1fawr64fewddmUIPOuRxaecSFexpzGf3J
+Igkjzu54wULNQzFLp1SdF+mPjBSrcULSHBgrsFJqilQcudqXr6wMQsdRHyaEr3orDL9QFYBegYec
+fn7dqwoXKByjhyvs/juYwxoeAiLNR2hGWt4+URursrD4DJXaf13j/c4N+dTMLO3eCwykTBDufzyC
+t6G+O3dSXDzZ2OarW/miZvN/y+QD2ZRe+wl39x2HMo3Fc6Dhz2IWawh7E8p2FvbFSosBxRZyJH38
+84Qr8NSHAgMBAAGjggHfMIIB2zAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1Ud
+DwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFC+LS03D
+7xDrOPfX3COqq162RFg/MFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AK0lDd6/eSh3qHmXaw1YUfIFy07B25BEcTvWgOdla99gF1O7sOsdYaTz/DFkZI5ghjgaPJCovgla
+mRMfNcxZCfoBtsB7mAS6iOYjuwFOZxi9cv6jhfiON6b89QWdMaPeDddg/F2Q0bxZ9Z2ZEBxyT34G
+wlDp+1p6RAqlDpHifQJW16h5jWIIwYisvm5QyfxQEVc+XH1lt+taSzCfiBT0ZLgjB9Sg+zAo8ys6
+5PHxFaT2a5Td/fj5yJ5hRSrqy/nj/hjT14w3/ZdX5uWg+cus6VjiiR/5qGSZRjHt8JoApD6t6/tg
+ITv8ZEy6ByumbU23nkHTMOzzQSxczHkT+0q10/MxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAHS+TgZvH/tCq5FcDC0n9IwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIJvt7h5o12z8IiD0t5jRS/DC8KtWReNf4h1gSZ0qRHv7MBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDMyMzA3MzczNlowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBMTp5b
+Td1xJx+p44tCgJ0yL8S6nZE2lo5pXW1B1GdQtEXo9I2vKE9YysMJlUqVOOvMUtDJp2Kx5yZTqHPM
+GGkVnOZs8j7XrB9/G4FjLNsu/729mAgQe+7+1xYQGSzHuPEfXXj2Yh6DNVg7Vzp3Fnw7WgmNtL2Z
+XnCn0ezoSBk+76eTUX4Sox2U/QsZxeGT2tZNt370NDICs+QqCJMADye7y4balXahUPfOcsCjvV/S
+b5Ok+sXchNr05gJlfldWTsgAgl8IcCsL1duBN/2bU/sU2xR35XZyXQtH/lKVtxLh1fVCg4ne/MaU
+Q7KiSn5c0eY1Q/T3GmPMFYChhCiWnJ2Y
+--000000000000a30d2a06144f0390--
