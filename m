@@ -1,71 +1,123 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4A418638;
-	Sun, 24 Mar 2024 21:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57C23F9E1
+	for <linux-security-module@vger.kernel.org>; Sun, 24 Mar 2024 22:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711314142; cv=none; b=GJ7wvqxLL9NMGQ/M7B3V34lovPtRlf9nRmM7xvZ7MjJaxMG2rSxgHWrXh70oWeY/UyXGffDXW7A9w02ywKChXjHf6z5h1nPg58SoTx36OuvJvcE82uvdhqnuxbNm4NBmgv2j8/Z3olecbGd9UQRIVz0uc+ZL9rZcNJTkRRV7T6I=
+	t=1711319591; cv=none; b=nT1NvyJtvIDoif+3spGh+d93dMtWBFuGDiTrmZGdtUKTAfJaOF+9WCWoG5NeHFkRkXFASoe5aGmFhB/5PO2J8qmeAcQx+rOcA16R/It1MFF1NdKmYpLVuFIyTkNbSo8h2PCdcmI8l/sTLta4vGFXGp3q7XtVhRwJ7N+iScTmO+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711314142; c=relaxed/simple;
-	bh=l9rxcWo8n7TOtxZSo3k1Q8wf0u6AKZ4L/iOYuCud2dg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H9CE25EHolmkrhGBAwOn+UJ1LCYMDQtJqLFW9Y3VXilf8zO54NO/IEUqhcSUWB9pyRyhpEDYZn82jp7Tq2zI0MN3+uJ+7r/xC0NbX8VoVrOg+vMtNo8bHbakG7Xnw5finbrIdWNF5UwZnXSPO0b2zdONjCbGzlRMxKs43KXPVKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=l/ezsWwo; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="l/ezsWwo"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Rklqzi2NdFnhKdqckzxSh7Jo7lIkng9/OlDypgBPKVE=; b=l/ezsWwohAeL9ilP1kNIXmcFtD
-	8ltIjPTDoszoZwRCbSasucKExma1aRzfrFDVjMLZ98C5r5+AuFMx7u30ko1nE5mxdWkgClu09pCaX
-	/+0be2xkFy609vUxRjbfGX0+F3VaXjsTefeXpgUes2Vmr8FW0hwME+VZlyJa3PivGR08aYlRrVwOV
-	JRFeCpeMjKqWAKK8pnJrafg7lcHQ5PcUDewYy9l/rFuCH+BJCO47xaTuYwqU7l9yY2kNi+XhyriGz
-	sesdWau1zj51qkYlNwqjqBsisqT+rUk2zznp2tssEh6DTOmJqky8sS77V37kf+9Y2nmCEOg51xbYC
-	W6Q50xOQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1roUyp-00G2KE-21;
-	Sun, 24 Mar 2024 21:02:11 +0000
-Date: Sun, 24 Mar 2024 21:02:11 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Steve French <smfrench@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	CIFS <linux-cifs@vger.kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Christian Brauner <christian@brauner.io>,
-	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
-Subject: Re: kernel crash in mknod
-Message-ID: <20240324210211.GV538574@ZenIV>
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV>
- <3441a4a1140944f5b418b70f557bca72@huawei.com>
+	s=arc-20240116; t=1711319591; c=relaxed/simple;
+	bh=8zBMnQk/V9WBHUHFdvAFXUZAnoU+jGhda5Pl/lbEmkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KK9TW7AQS+fmGAGf3FcnhI+Y/3adH9fi2Cfar17r32hNkwAnQi/mqNwCJfHT4t+wa3eEC4GiryeRIe9+oOQjySao0Kz3iUu8ECW+cVDus1ovLadXGsiQiQ2toAzePQ0Tlxib0Luhy5jNivdwVyXcW4JZHw+/I3/tKNc+y5unBHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
+Received: from blizzard.enjellic.com (localhost [127.0.0.1])
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 42OMWW2r006259;
+	Sun, 24 Mar 2024 17:32:32 -0500
+Received: (from greg@localhost)
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 42OMWVrU006257;
+	Sun, 24 Mar 2024 17:32:31 -0500
+X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
+From: Greg Wettstein <greg@enjellic.com>
+To: linux-security-module@vger.kernel.org
+Cc: roberto.sassu@huaweicloud.com
+Subject: [PATCH] Do not require attributes for security_inode_init_security.
+Date: Sun, 24 Mar 2024 17:32:31 -0500
+Message-Id: <20240324223231.6249-1-greg@enjellic.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3441a4a1140944f5b418b70f557bca72@huawei.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 24, 2024 at 04:50:24PM +0000, Roberto Sassu wrote:
+The integration of the Integrity Measurement Architecture (IMA)
+into the LSM infrastructure introduced a conditional check that
+denies access to the security_inode_init_security() event handler
+if the LSM extended attribute 'blob' size is 0.
 
-> Also, please update the description of security_path_post_mknod() to say
-> that it is not going to be called for non-regular files.
+This changes the previous behavior of this event handler and
+results in variable behavior of LSM's depending on the LSM boot
+configuration.
 
-If anything, it's rather security_past_create_without_open(), and
-I really wonder where does the equivalent of those actions happen
-if you do close(open("foo", O_CREAT|O_RDWR, 0777)) instead of
-mknod("foo", 0777, 0).  I mean, you can substitute the former
-for the latter, so anything that must be done by the hook in
-mknod(2) would better be covered at some point in hooks within
-open(2)...  Some explanation of the relationship between those
-would be nice.
+Modify the function so that it removes the need for a non-zero
+extended attribute blob size and bypasses the memory allocation
+and freeing that is not needed if the LSM infrastructure is not
+using extended attributes.
+
+Use a break statement to exit the loop that is iterating over the
+defined handlers for this event if a halting error condition is
+generated by one of the invoked LSM handlers.  The checks for how
+to handle cleanup are executed at the end of the loop regardless
+of how the loop terminates.
+
+A two exit label strategy is implemented.  One of the exit
+labels is a target for the no attribute case while the second is
+the target for the case where memory allocated for processing of
+extended attributes needs to be freed.
+
+Signed-off-by: Greg Wettstein <greg@enjellic.com>
+---
+ security/security.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/security/security.c b/security/security.c
+index 7035ee35a393..a0b52b964688 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1717,10 +1717,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
+ 
+-	if (!blob_sizes.lbs_xattr_count)
+-		return 0;
+-
+-	if (initxattrs) {
++	if (blob_sizes.lbs_xattr_count && initxattrs) {
+ 		/* Allocate +1 for EVM and +1 as terminator. */
+ 		new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 2,
+ 				     sizeof(*new_xattrs), GFP_NOFS);
+@@ -1733,7 +1730,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		ret = hp->hook.inode_init_security(inode, dir, qstr, new_xattrs,
+ 						  &xattr_count);
+ 		if (ret && ret != -EOPNOTSUPP)
+-			goto out;
++			break;
+ 		/*
+ 		 * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
+ 		 * means that the LSM is not willing to provide an xattr, not
+@@ -1742,19 +1739,22 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		 */
+ 	}
+ 
+-	/* If initxattrs() is NULL, xattr_count is zero, skip the call. */
+-	if (!xattr_count)
+-		goto out;
++	/* Skip xattr processing if no attributes are in use. */
++	if (!blob_sizes.lbs_xattr_count)
++		goto out2;
++	/* No attrs or an LSM returned an actionable error code. */
++	if (!xattr_count || (ret && ret != -EOPNOTSUPP))
++		goto out1;
+ 
+ 	ret = evm_inode_init_security(inode, dir, qstr, new_xattrs,
+ 				      &xattr_count);
+-	if (ret)
+-		goto out;
+-	ret = initxattrs(inode, new_xattrs, fs_data);
+-out:
++	if (!ret)
++		ret = initxattrs(inode, new_xattrs, fs_data);
++ out1:
+ 	for (; xattr_count > 0; xattr_count--)
+ 		kfree(new_xattrs[xattr_count - 1].value);
+ 	kfree(new_xattrs);
++ out2:
+ 	return (ret == -EOPNOTSUPP) ? 0 : ret;
+ }
+ EXPORT_SYMBOL(security_inode_init_security);
+-- 
+2.39.1
+
