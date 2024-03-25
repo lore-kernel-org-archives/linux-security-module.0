@@ -1,206 +1,101 @@
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9553C6BB29;
-	Mon, 25 Mar 2024 15:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A90E42058;
+	Mon, 25 Mar 2024 16:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711380012; cv=none; b=MG0sUTkQPlQjNKRUsIWzjkBmMOCEY95ZeSYE6G8ojkyMYp4oCISariAYHVgrZ17PVbWJRx/wDWtC26Cn/0/Am8D0IYvfQrTl63QB/MLg3+RsqqSD9Aj7CTDXz8bO59yiPjMVBKH2WTqnr3y1cSOWN7IdNLUhTdyArXgJSjae0p0=
+	t=1711382788; cv=none; b=sJFrT+aXUayJxyHWLd/8iTwF0pm3Mvel61zwZN0ea53WY/7NWmCpZNaXmyA8P022fnIXSoLjHfNLtFcWO8ylD/C+jDJN1Ls4166OkzBNv7xbRdUR6a+axXZn10yr4B3zPg4NZAqwXAShbIyfUR5JsI4w3TpxnMwvpU7YP2UENi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711380012; c=relaxed/simple;
-	bh=oEQlhi8arM5cuE7dBJQ+u+v8GUiKwXIoSASHhFE7MKI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=N8YtQoDs7cVUcPFZ4VC9Fn1rxfluGFJKdk7EmLTY0hjWifMOt/bNhlvdjjwbr/F90btar72Z16ghB7JUkP5TSF2YA0XRZc6N1W2nsXI+QjW8mtjzWjq1TSaVMoYiE3N8VCtQ1NEG8fr7dyZNjGA68rFIvuJDEuzVdJkWWten/uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=RCcQHTY/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bBbIeN9E; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1711382788; c=relaxed/simple;
+	bh=1PB12qwX1m7ibvKTM38Q6edyBz/Zn9xgeMYGi1UalZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VY3X/tNrP2ktAKfZ2pf9r8szIfTlUGgtVdaRWutr9ANfqwlpFdokT62L+8Aw4ZO+mjikN5BlNAUwQjxKsVepJg1Hjg1s13QO+m0re8RKjUiN78oRuPsPGAYDWIGcVoitVUWJL4EV2Th7PoRsD7okcGA7+qEhy/MitqLuI+ux/Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVfZdiPM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="RCcQHTY/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bBbIeN9E"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 966FA13800AD;
-	Mon, 25 Mar 2024 11:20:09 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 25 Mar 2024 11:20:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1711380009;
-	 x=1711466409; bh=g770sXbK9Jbur01w9o0WTRWbVluhYx1p/FD0rMuaRVo=; b=
-	RCcQHTY/jUNJBtskhQ25uUUooukTioOxM3umgzQbbnISKCtD6gTy6bOZms21WM5E
-	egLKMW2rFNvN9Yscsjj3zn88WjYDICdyJBQFCyMWrCrsRTdsmx9DFE63GkZZYkL3
-	Ncs4OIW5ZUtR//TsmIybekG+0U6fMeNF+mOYvNFxfm26e1RsBzDI8EktewAJvk4S
-	+YfmzDNorLSN43H0ymh5m9OogEgFUEAJscHqoyyRiHM1gN13WN/OHyoPFn4FXMz6
-	ltyKtkgsX9vq/mqgiPaYEfT1sDMi8dF0ELY80dVvQfIDgS6lkl3s6TM/aFxUJ97/
-	cb1axyyxXZfvj5ci1Fnh4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1711380009; x=
-	1711466409; bh=g770sXbK9Jbur01w9o0WTRWbVluhYx1p/FD0rMuaRVo=; b=b
-	BbIeN9EaCzfnelICp5g/6F33JNhFWiOuxaf37W1DZsDz3wJ0DqAGG4Up9kcJb7Mk
-	bsJLngFWZgNpM+bnJigKIhAGILIt5/+4hIdzaTgTRT464aP5+bg1IvZ7APUajm4q
-	w/H45wOIo8edO0rmQ7UdtP/Ot2pZ9o57Xy5eEn2vZ4j5b+clgjgEwTRSkI6CqJ50
-	m6kg7hpez6vTuuyjmTasB63Kd2O0qym0EHaNiuk11KgAiXKysj9UQc0gXjlupjMa
-	yyoHGcpX01ppQr1Y64d5ENLzxtnWe08tfYIObnfZaMaERUYAoEoEyjOb+zBmlPsH
-	TBfbWVlCXi7pJRCQzZwqg==
-X-ME-Sender: <xms:KZYBZshei6yJvw5iPfodpCynyDmGPQjZ0G2o1yfX7RW2TODWcMJTig>
-    <xme:KZYBZlAn1cZEkPcnQi0E24-T4lf0NXM8AY8e53faILnlRTC_YWQMarHJtuPShIul4
-    aozlmLTp1IGbXBvF10>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudduuddgudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:KZYBZkH1M79uVAy4nM8giOKB-BL018GMRX6DpWuOLcqVi0WLk7iCkw>
-    <xmx:KZYBZtQ-R9KeyVY6i4FSzI-lfTy2YlfS_DekLXo55KmpHCDdd9fEAw>
-    <xmx:KZYBZpz8e4rurR7obZNBdCCbTgIGGz4oubQFa4tXERwSDLsdcG0b9w>
-    <xmx:KZYBZr5SdQRC1wNJ7DVcreOznqMJv00KPTJ6Cpjzk0iD1x-WL07PhQ>
-    <xmx:KZYBZspzzUg0xkNaKgHrHxJE0LRtvnE2CmOXVYXy4j3tpxXKWb0TjQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 204FAB6008F; Mon, 25 Mar 2024 11:20:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-332-gdeb4194079-fm-20240319.002-gdeb41940
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVfZdiPM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E5BC433F1;
+	Mon, 25 Mar 2024 16:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711382788;
+	bh=1PB12qwX1m7ibvKTM38Q6edyBz/Zn9xgeMYGi1UalZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eVfZdiPMmiCdovQqrgQl0y4VTUefn0+efhOIEy23YjeklTAIaxz2QyVeYn3xIvQ8V
+	 crFQl6aO3LIaA1g91QX7ErXLxDeZBoZZcPpb9ZEz4qXLBsH4u5Q0bHOxb2wV0o/gR5
+	 51aTA9O8xY8yr4CwNZrBczwQ79docEW2zvxtN8R4ZWDfbsA0Q2UPJij3mhKVW/ergS
+	 6WNrdfQARy1iiVkPLXtcdvtSep9r5tzHsjPOr35+S0plnyso7q4bQC62FUtR9G1GB3
+	 3mBjfdh5ZqoPeXbKy7zUkrxG0V4B9HtCwluV8jspZKKNYGAOttiItywQTjLvLoCjuf
+	 juf0P4dlpSPKA==
+Date: Mon, 25 Mar 2024 17:06:22 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Christian Brauner <christian@brauner.io>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Paul Moore <paul@paul-moore.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Subject: Re: kernel crash in mknod
+Message-ID: <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV>
+ <3441a4a1140944f5b418b70f557bca72@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
-In-Reply-To: <20240325134004.4074874-2-gnoack@google.com>
-References: <20240325134004.4074874-1-gnoack@google.com>
- <20240325134004.4074874-2-gnoack@google.com>
-Date: Mon, 25 Mar 2024 16:19:25 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: "Jeff Xu" <jeffxu@google.com>,
- "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Paul Moore" <paul@paul-moore.com>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- "Christian Brauner" <brauner@kernel.org>
-Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for IOCTL
- hooks
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3441a4a1140944f5b418b70f557bca72@huawei.com>
 
-On Mon, Mar 25, 2024, at 14:39, G=C3=BCnther Noack wrote:
-> If security_file_ioctl or security_file_ioctl_compat return
-> ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOCTL
-> command, but only as long as the IOCTL command is implemented directly
-> in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
-> f_ops->compat_ioctl operations, which are defined by the given file.
->
-> The possible return values for security_file_ioctl and
-> security_file_ioctl_compat are now:
->
->  * 0 - to permit the IOCTL
->  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to fall
->    back to the file implementation.
->  * any other error - to forbid the IOCTL and return that error
->
-> This is an alternative to the previously discussed approaches [1] and =
-[2],
-> and implements the proposal from [3].
+On Sun, Mar 24, 2024 at 04:50:24PM +0000, Roberto Sassu wrote:
+> > From: Al Viro [mailto:viro@ftp.linux.org.uk] On Behalf Of Al Viro
+> > Sent: Sunday, March 24, 2024 6:47 AM
+> > On Sun, Mar 24, 2024 at 12:00:15AM -0500, Steve French wrote:
+> > > Anyone else seeing this kernel crash in do_mknodat (I see it with a
+> > > simple "mkfifo" on smb3 mount).  I started seeing this in 6.9-rc (did
+> > > not see it in 6.8).   I did not see it with the 3/12/23 mainline
+> > > (early in the 6.9-rc merge Window) but I do see it in the 3/22 build
+> > > so it looks like the regression was introduced by:
+> > 
+> > 	FWIW, successful ->mknod() is allowed to return 0 and unhash
+> > dentry, rather than bothering with lookups.  So commit in question
+> > is bogus - lack of error does *NOT* mean that you have struct inode
+> > existing, let alone attached to dentry.  That kind of behaviour
+> > used to be common for network filesystems more than just for ->mknod(),
+> > the theory being "if somebody wants to look at it, they can bloody
+> > well pay the cost of lookup after dcache miss".
+> > 
+> > Said that, the language in D/f/vfs.rst is vague as hell and is very easy
+> > to misread in direction of "you must instantiate".
+> > 
+> > Thankfully, there's no counterpart with mkdir - *there* it's not just
+> > possible, it's inevitable in some cases for e.g. nfs.
+> > 
+> > What the hell is that hook doing in non-S_IFREG cases, anyway?  Move it
+> > up and be done with it...
+> 
+> Hi Al
+> 
+> thanks for the patch. Indeed, it was like that before, when instead of
+> an LSM hook there was an IMA call.
 
-Thanks for trying it out, I think this is a good solution
-and I like how the code turned out.
+Could you please start adding lore links into your commit messages for
+all messages that are sent to a mailing list? It really makes tracking
+down the original thread a lot easier.
 
-One small thing that I believe needs some extra changes:
+> However, I thought, since we were promoting it as an LSM hook,
+> we should be as generic possible, and support more usages than
+> what was needed for IMA.
 
-> @@ -967,6 +977,11 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd,=20
-> unsigned int, cmd,
->  		if (error !=3D -ENOIOCTLCMD)
->  			break;
->=20
-> +		if (!use_file_ops) {
-> +			error =3D -EACCES;
-> +			break;
-> +		}
-> +
->  		if (f.file->f_op->compat_ioctl)
->  			error =3D f.file->f_op->compat_ioctl(f.file, cmd, arg);
->  		if (error =3D=3D -ENOIOCTLCMD)
+I'm a bit confused now why this is taking a dentry. Nothing in IMA or
+EVM cares about the dentry for these hooks so it really should have take
+an inode in the first place?
 
-The compat FIONREAD handler now ends up calling ->compat_ioctl()
-where it used to call ->ioctl(). I think this means we need to
-audit every driver that implements its own
-FIONREAD/SIOCINQ/TIOCINQ to make sure it has a working compat
-implementation.
-
-I have done one pass through all such drivers and think the
-change below should be sufficient for all of them, but please
-have another look. Feel free to fold this change into your
-patch. The pipe.c change also fixes an existing bug with=20
-IOC_WATCH_QUEUE_SET_SIZE/IOC_WATCH_QUEUE_SET_FILTER, so that
-may need to be a separate patch and get backported.
-
-    Arnd
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 407b0d87b7c1..2e5b495a5606 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2891,6 +2891,7 @@ static long tty_compat_ioctl(struct file *file, un=
-signed int cmd,
-        int retval =3D -ENOIOCTLCMD;
-=20
-        switch (cmd) {
-+       case TIOCINQ:
-        case TIOCOUTQ:
-        case TIOCSTI:
-        case TIOCGWINSZ:
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 50c8a8596b52..a6ebb351ea4b 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -652,6 +652,14 @@ static long pipe_ioctl(struct file *filp, unsigned =
-int cmd, unsigned long arg)
-        }
- }
-=20
-+static long pipe_compat_ioctl(struct file *filp, unsigned int cmd, unsi=
-gned long arg)
-+{
-+       if (cmd =3D=3D IOC_WATCH_QUEUE_SET_SIZE)
-+               return pipe_ioctl(filp, cmd, arg);
-+
-+       return compat_ptr_ioctl(filp, cmd, arg);
-+}
-+
- /* No kernel lock held - fine */
- static __poll_t
- pipe_poll(struct file *filp, poll_table *wait)
-@@ -1234,6 +1242,7 @@ const struct file_operations pipefifo_fops =3D {
-        .write_iter     =3D pipe_write,
-        .poll           =3D pipe_poll,
-        .unlocked_ioctl =3D pipe_ioctl,
-+       .compat_ioctl   =3D pipe_compat_ioctl,
-        .release        =3D pipe_release,
-        .fasync         =3D pipe_fasync,
-        .splice_write   =3D iter_file_splice_write,
-diff --git a/net/socket.c b/net/socket.c
-index e5f3af49a8b6..bb4fa51fe4ca 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -3496,6 +3496,7 @@ static int compat_sock_ioctl_trans(struct file *fi=
-le, struct socket *sock,
-        case SIOCSARP:
-        case SIOCGARP:
-        case SIOCDARP:
-+       case SIOCINQ:
-        case SIOCOUTQ:
-        case SIOCOUTQNSD:
-        case SIOCATMARK:
+And one minor other question I just realized. Why are some of the new
+hooks called security_path_post_mknod() when they aren't actually taking
+a path in contrast to say
+security_path_{chown,chmod,mknod,chroot,truncate}() that do.
