@@ -1,30 +1,59 @@
-Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57C23F9E1
-	for <linux-security-module@vger.kernel.org>; Sun, 24 Mar 2024 22:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC2C16F907;
+	Mon, 25 Mar 2024 09:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711319591; cv=none; b=nT1NvyJtvIDoif+3spGh+d93dMtWBFuGDiTrmZGdtUKTAfJaOF+9WCWoG5NeHFkRkXFASoe5aGmFhB/5PO2J8qmeAcQx+rOcA16R/It1MFF1NdKmYpLVuFIyTkNbSo8h2PCdcmI8l/sTLta4vGFXGp3q7XtVhRwJ7N+iScTmO+c=
+	t=1711360387; cv=none; b=ksAKqHhlTHEjPcbZ3x9+STBtaKRII2wDqEOeW6ge9aa6I49FKVmI5xxwYGXLvUEY+T9S5N+uXm70FVAXHl3QoyhxRvTJ5YT34RuIJnHcjD04eFgNl2SnpUIz1bHPFZVkDruFfqB6Zp0OHHnLslF+IemLTTkN/JbYDg+W5VOuaIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711319591; c=relaxed/simple;
-	bh=8zBMnQk/V9WBHUHFdvAFXUZAnoU+jGhda5Pl/lbEmkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KK9TW7AQS+fmGAGf3FcnhI+Y/3adH9fi2Cfar17r32hNkwAnQi/mqNwCJfHT4t+wa3eEC4GiryeRIe9+oOQjySao0Kz3iUu8ECW+cVDus1ovLadXGsiQiQ2toAzePQ0Tlxib0Luhy5jNivdwVyXcW4JZHw+/I3/tKNc+y5unBHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
-Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 42OMWW2r006259;
-	Sun, 24 Mar 2024 17:32:32 -0500
-Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 42OMWVrU006257;
-	Sun, 24 Mar 2024 17:32:31 -0500
-X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
-From: Greg Wettstein <greg@enjellic.com>
-To: linux-security-module@vger.kernel.org
-Cc: roberto.sassu@huaweicloud.com
-Subject: [PATCH] Do not require attributes for security_inode_init_security.
-Date: Sun, 24 Mar 2024 17:32:31 -0500
-Message-Id: <20240324223231.6249-1-greg@enjellic.com>
-X-Mailer: git-send-email 2.39.1
+	s=arc-20240116; t=1711360387; c=relaxed/simple;
+	bh=BRHU7i6ymh6GyHXPngMUaIvqxRCDm24qj8ooIdk4dsI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SPwggIbNRoFb2j5bwDMo72izOSd/yEXcbaSCJ1BZ1PzJUW0lVM1AGQv1XhJF+LNZwmwRujIvWrEI9SCVsHSskWVnQLHZI7lVsTeIZcPt2fYeHvmTzcbjKOU1xmXpO8jxk17WP6u2M1sRilgMUoOX9nD96TQUhuMZI2IUedIJnUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4V37XL001Pz4f3jdW;
+	Mon, 25 Mar 2024 17:52:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 279121A017A;
+	Mon, 25 Mar 2024 17:52:56 +0800 (CST)
+Received: from k01.huawei.com (unknown [10.67.174.197])
+	by APP3 (Coremail) with SMTP id _Ch0CgDn9Jx1SQFmHl6fHw--.8953S2;
+	Mon, 25 Mar 2024 17:52:54 +0800 (CST)
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Florent Revest <revest@chromium.org>,
+	Brendan Jackman <jackmanb@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Khadija Kamran <kamrankhadijadj@gmail.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Kees Cook <keescook@chromium.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Subject: [PATCH bpf-next v2 0/7] Add check for bpf lsm return value
+Date: Mon, 25 Mar 2024 17:56:46 +0800
+Message-Id: <20240325095653.1720123-1-xukuohai@huaweicloud.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -32,92 +61,126 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDn9Jx1SQFmHl6fHw--.8953S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr4kKF48tFWxCF1rAry3CFg_yoW7JFW7pr
+	4YqF18Gr4Iqr4UJF18CF4UJr1fJFW7A3WUXryxJr95AF15Gr1DJr18GrWjqrnxJr4Uur17
+	tF9Fqa1rtry8XaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28I
+	cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+	IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI
+	42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
+	IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2
+	z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-The integration of the Integrity Measurement Architecture (IMA)
-into the LSM infrastructure introduced a conditional check that
-denies access to the security_inode_init_security() event handler
-if the LSM extended attribute 'blob' size is 0.
+From: Xu Kuohai <xukuohai@huawei.com>
 
-This changes the previous behavior of this event handler and
-results in variable behavior of LSM's depending on the LSM boot
-configuration.
+A bpf prog returning positive number attached to file_alloc_security hook
+will make kernel panic.
 
-Modify the function so that it removes the need for a non-zero
-extended attribute blob size and bypasses the memory allocation
-and freeing that is not needed if the LSM infrastructure is not
-using extended attributes.
+Here is a panic log:
 
-Use a break statement to exit the loop that is iterating over the
-defined handlers for this event if a halting error condition is
-generated by one of the invoked LSM handlers.  The checks for how
-to handle cleanup are executed at the end of the loop regardless
-of how the loop terminates.
+[  441.235774] BUG: kernel NULL pointer dereference, address: 00000000000009
+[  441.236748] #PF: supervisor write access in kernel mode
+[  441.237429] #PF: error_code(0x0002) - not-present page
+[  441.238119] PGD 800000000b02f067 P4D 800000000b02f067 PUD b031067 PMD 0
+[  441.238990] Oops: 0002 [#1] PREEMPT SMP PTI
+[  441.239546] CPU: 0 PID: 347 Comm: loader Not tainted 6.8.0-rc6-gafe0cbf23373 #22
+[  441.240496] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b4
+[  441.241933] RIP: 0010:alloc_file+0x4b/0x190
+[  441.242485] Code: 8b 04 25 c0 3c 1f 00 48 8b b0 30 0c 00 00 e8 9c fe ff ff 48 3d 00 f0 ff fb
+[  441.244820] RSP: 0018:ffffc90000c67c40 EFLAGS: 00010203
+[  441.245484] RAX: ffff888006a891a0 RBX: ffffffff8223bd00 RCX: 0000000035b08000
+[  441.246391] RDX: ffff88800b95f7b0 RSI: 00000000001fc110 RDI: f089cd0b8088ffff
+[  441.247294] RBP: ffffc90000c67c58 R08: 0000000000000001 R09: 0000000000000001
+[  441.248209] R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+[  441.249108] R13: ffffc90000c67c78 R14: ffffffff8223bd00 R15: fffffffffffffff4
+[  441.250007] FS:  00000000005f3300(0000) GS:ffff88803ec00000(0000) knlGS:0000000000000000
+[  441.251053] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  441.251788] CR2: 00000000000001a9 CR3: 000000000bdc4003 CR4: 0000000000170ef0
+[  441.252688] Call Trace:
+[  441.253011]  <TASK>
+[  441.253296]  ? __die+0x24/0x70
+[  441.253702]  ? page_fault_oops+0x15b/0x480
+[  441.254236]  ? fixup_exception+0x26/0x330
+[  441.254750]  ? exc_page_fault+0x6d/0x1c0
+[  441.255257]  ? asm_exc_page_fault+0x26/0x30
+[  441.255792]  ? alloc_file+0x4b/0x190
+[  441.256257]  alloc_file_pseudo+0x9f/0xf0
+[  441.256760]  __anon_inode_getfile+0x87/0x190
+[  441.257311]  ? lock_release+0x14e/0x3f0
+[  441.257808]  bpf_link_prime+0xe8/0x1d0
+[  441.258315]  bpf_tracing_prog_attach+0x311/0x570
+[  441.258916]  ? __pfx_bpf_lsm_file_alloc_security+0x10/0x10
+[  441.259605]  __sys_bpf+0x1bb7/0x2dc0
+[  441.260070]  __x64_sys_bpf+0x20/0x30
+[  441.260533]  do_syscall_64+0x72/0x140
+[  441.261004]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
+[  441.261643] RIP: 0033:0x4b0349
+[  441.262045] Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 88
+[  441.264355] RSP: 002b:00007fff74daee38 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+[  441.265293] RAX: ffffffffffffffda RBX: 00007fff74daef30 RCX: 00000000004b0349
+[  441.266187] RDX: 0000000000000040 RSI: 00007fff74daee50 RDI: 000000000000001c
+[  441.267114] RBP: 000000000000001b R08: 00000000005ef820 R09: 0000000000000000
+[  441.268018] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
+[  441.268907] R13: 0000000000000004 R14: 00000000005ef018 R15: 00000000004004e8
 
-A two exit label strategy is implemented.  One of the exit
-labels is a target for the no attribute case while the second is
-the target for the case where memory allocated for processing of
-extended attributes needs to be freed.
+The reason is that the positive number returned by bpf prog is not a
+valid errno, and could not be filtered out with IS_ERR which is used by
+the file system to check errors. As a result, the filesystem mistakenly
+uses this random positive number as file pointer, causing panic.
 
-Signed-off-by: Greg Wettstein <greg@enjellic.com>
----
- security/security.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+To fix this issue, there are two schemes:
 
-diff --git a/security/security.c b/security/security.c
-index 7035ee35a393..a0b52b964688 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1717,10 +1717,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return 0;
- 
--	if (!blob_sizes.lbs_xattr_count)
--		return 0;
--
--	if (initxattrs) {
-+	if (blob_sizes.lbs_xattr_count && initxattrs) {
- 		/* Allocate +1 for EVM and +1 as terminator. */
- 		new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 2,
- 				     sizeof(*new_xattrs), GFP_NOFS);
-@@ -1733,7 +1730,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 		ret = hp->hook.inode_init_security(inode, dir, qstr, new_xattrs,
- 						  &xattr_count);
- 		if (ret && ret != -EOPNOTSUPP)
--			goto out;
-+			break;
- 		/*
- 		 * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
- 		 * means that the LSM is not willing to provide an xattr, not
-@@ -1742,19 +1739,22 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 		 */
- 	}
- 
--	/* If initxattrs() is NULL, xattr_count is zero, skip the call. */
--	if (!xattr_count)
--		goto out;
-+	/* Skip xattr processing if no attributes are in use. */
-+	if (!blob_sizes.lbs_xattr_count)
-+		goto out2;
-+	/* No attrs or an LSM returned an actionable error code. */
-+	if (!xattr_count || (ret && ret != -EOPNOTSUPP))
-+		goto out1;
- 
- 	ret = evm_inode_init_security(inode, dir, qstr, new_xattrs,
- 				      &xattr_count);
--	if (ret)
--		goto out;
--	ret = initxattrs(inode, new_xattrs, fs_data);
--out:
-+	if (!ret)
-+		ret = initxattrs(inode, new_xattrs, fs_data);
-+ out1:
- 	for (; xattr_count > 0; xattr_count--)
- 		kfree(new_xattrs[xattr_count - 1].value);
- 	kfree(new_xattrs);
-+ out2:
- 	return (ret == -EOPNOTSUPP) ? 0 : ret;
- }
- EXPORT_SYMBOL(security_inode_init_security);
+1. Modify the calling sites of file_alloc_security to take positive
+   return values as zero.
+
+2. Make the bpf verifier to ensure no unpredicted value returned by
+   lsm bpf prog.
+
+Considering that hook file_alloc_security never returned positive number
+before bpf lsm was introduced, and other lsm hooks may have the same
+problem, scheme 2 is more reasonable.
+
+So this patch set adds lsm return value check in verifier to fix it.
+
+v2:
+fix bpf ci failure
+
+v1:
+https://lore.kernel.org/bpf/20240316122359.1073787-1-xukuohai@huaweicloud.com/
+
+Xu Kuohai (7):
+  bpf, lsm: Annotate lsm hook return integer with new macro LSM_RET_INT
+  bpf, lsm: Add return value range description for lsm hook
+  bpf, lsm: Add function to read lsm hook return value range
+  bpf, lsm: Check bpf lsm hook return values in verifier
+  bpf: Fix compare error in function retval_range_within
+  selftests/bpf: Avoid load failure for token_lsm.c
+  selftests/bpf: Add return value checks and corrections for failed
+    progs
+
+ include/linux/bpf.h                           |   1 +
+ include/linux/bpf_lsm.h                       |   8 +
+ include/linux/lsm_hook_defs.h                 | 433 +++++++++---------
+ include/linux/lsm_hooks.h                     |   6 -
+ kernel/bpf/bpf_lsm.c                          |  66 ++-
+ kernel/bpf/btf.c                              |   5 +-
+ kernel/bpf/verifier.c                         |  59 ++-
+ security/security.c                           |   1 +
+ tools/testing/selftests/bpf/progs/err.h       |  10 +
+ .../selftests/bpf/progs/test_sig_in_xattr.c   |   4 +
+ .../bpf/progs/test_verify_pkcs7_sig.c         |   8 +-
+ tools/testing/selftests/bpf/progs/token_lsm.c |   4 +-
+ .../bpf/progs/verifier_global_subprogs.c      |   7 +-
+ 13 files changed, 376 insertions(+), 236 deletions(-)
+
 -- 
-2.39.1
+2.30.2
 
