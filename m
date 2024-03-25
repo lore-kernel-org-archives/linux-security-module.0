@@ -1,191 +1,131 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CBC67C43
-	for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2024 21:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C040754902;
+	Mon, 25 Mar 2024 21:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711400948; cv=none; b=tac+GeNdr4FNHt/B+4MrEoFnoqz85oFx40tvf5Wawgoiv5R/7UR+8XAzD/Rb/KqriRpfG14eSQDAnwwh3ExTHwe/i/9hwCjRC7GCiIDWbYvTFjFxQu1dqhVl21IXG/AxB0SVDrljHZDZt9+HeFWNp/7mXWa2Xp0d8XyNsxtGywM=
+	t=1711401198; cv=none; b=JQNaNXJuPcDL6dixpKMUTLoSuDhF2gKizTsHruxY8jP82fRzm8bTix56DjH95MovGDePxxdGa+oK0VNrit0/HFl8QTzPvoWC+jXOAH6I+YxAhIYqQqJz5d89DU+o4DyrFP1qKUmyhvGeTsw4s8Xu0ijMeqOrY07C/Fhu1/7eCyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711400948; c=relaxed/simple;
-	bh=QHxLO8nLmdB2FFuOUlYmLDoZj8rVmsKXpvRRaVtwG2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cdGjfcD2acIGXccRnu6S1e63HeVK0NZ0pWnDvjMC2oEdPO4REedAigk8lz+k3W8gbDXyHTK+J/90cZQJp+H7UE6Y7uW49sFMPmi1lVni07B0phS38sEIx6mhouPXocxfOhQrXFTV1Wa4zPa4JG2ujFdHGwf2ne2orHk3B9woyjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dkn3IdHM; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1711401198; c=relaxed/simple;
+	bh=6OPKxj3PY7601FbVQRX2xZAyo/li/QEIqiZMW8rxpJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fvd66WpgZVxZkVjqbJ24OXEfRjiXuXs/5C1UAaweYP3ujbToOKpJGV7noSIp1WGdK7TwLyBYkseRTT8rjc0G5jAySQ9upR6OZDWlBDhZ3/KkYpIrXCi6OxgfP0rz9V4buc7LUMqj99X7I3Azb3LM3RL7Ox+SUgQmJHvcPOtok5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fTGbqxsR; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dkn3IdHM"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-60a15449303so47418927b3.0
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2024 14:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1711400945; x=1712005745; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dvd0vpxYIMiBSH18jkIvFIZ4BeCT3c9KLLiJ6njP8iM=;
-        b=dkn3IdHM9CYWiXzQuu+XeeKMtsBEoASUcpfWl8wg64rXNLlGAccgQeeVLjvrI928nD
-         9uF0kzNS5NK5EdGNusdgn8xtOG8jQHz9MgeKlC1sUG3++QyKPqMJ8FGI6eaVMxC85c3n
-         E64H+zo/VwiCvObaki/G/ofRnR24eelRlggYgZ9BOeS10lFuYWiDmTXhJ5hzpAqer8e2
-         uzFesXhoV0xjVZbofD6Y2IYPj6GSJmpNULuYFTYBzy1mnoJYxIfh3Hk9EduFsqzPC2EO
-         c162xFU8XgPjt7Bu7bLH7U49H2kdb2ULT0RJhxw5RXpy12jeegdpo4vJxmWPbyO/eXJ4
-         bKGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711400945; x=1712005745;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dvd0vpxYIMiBSH18jkIvFIZ4BeCT3c9KLLiJ6njP8iM=;
-        b=Y/JcUZmZ4c87MFSUOBuIBLoFnFvcyVTHyil4qqAor9tfLGUNfwnp+PUEXTUb6luux3
-         Ep63QhuUDz1I3OVVt392Kkk4XgNK5hkqwH66/vCT4B0kWzHXUB45Gt/+GVH5b78juvTi
-         SS455C7CqalmrbyuED2Wbm8rHX2sHwvF6m24aEsAjm+wzEzoGrNYQZXGdOM9L8fPhPxn
-         d5CIYAGRP4t6GqcdNVUw761jQXTplOi/0RDHFfjNfUrcBuZASVnYWkZ0A5xNA48DVFxH
-         NJ+dgiyH/bZvTwM2m6mvi2ty1MaKPqs5uZbVGWejksB8KDR9pdP+xQWi2DeYNpgkGx/d
-         Nbfg==
-X-Gm-Message-State: AOJu0YwTbh5Tljo7Z1i7MHZ8hIpMJP+jAc5BJd4sJJHfVcOYafqJO+E1
-	CiDXHyxMjTyXUM6ZB3omd9QlUyX6S9yIjt+6Lbn4drYCz1w6TCRKL3bPzRJSUyk0FmRGio6f5ZF
-	mrxAz1CnCSLrEEnJQI6HlO5Oy62w49PVP0c7xjJqyv+6AkyiTOA==
-X-Google-Smtp-Source: AGHT+IGcl2/fmqiWpRNTBm48ipQBfmzCwf0ObX4Vdg0bnCBNo56mMtRyh4MtOp2+w+W6FzxmaxUM6sEydtoyjnJZlOQ=
-X-Received: by 2002:a0d:d694:0:b0:60a:16f:4c94 with SMTP id
- y142-20020a0dd694000000b0060a016f4c94mr6268919ywd.17.1711400945346; Mon, 25
- Mar 2024 14:09:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fTGbqxsR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g3Espu9XK22gwjeY8tde1FrtIb6+Pk135nxK84EbhVQ=; b=fTGbqxsRayMH8KFCjNl/wwpDfb
+	9eca37NSbpiMm+/bhx7oopOa6crxJFVkxigNfSx3dXcazK2YtFgN2oFrubYhj9KMcLVxQRa+yqdm/
+	pTyycmwT9haWcP+EulVR2er2L6zc3AelTM9y8MFQHpY8DMv+0oc2SvqfW2uJAT41KKZ291uFztaVW
+	tv7y45Sbsd5qgrIEIx+vcQC5/MDA9anrIAvBY8te0qGMA+Xu/SYMNNSBL++TarHMhgM+59psvml9A
+	NoY3Z29UyppcZYuXRGQH8kE18++Bx66WWsdFCyC8H7dRaGJX+SCe7H3g2tUvMUrlXCM77B6IRyMFB
+	1tq/eBrg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rorcv-00GbYB-2E;
+	Mon, 25 Mar 2024 21:13:05 +0000
+Date: Mon, 25 Mar 2024 21:13:05 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: Steve French <smfrench@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	CIFS <linux-cifs@vger.kernel.org>,
+	Christian Brauner <christian@brauner.io>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Subject: Re: kernel crash in mknod
+Message-ID: <20240325211305.GY538574@ZenIV>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV>
+ <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
+ <CAH2r5muL4NEwLxq_qnPOCTHunLB_vmDA-1jJ152POwBv+aTcXg@mail.gmail.com>
+ <20240325195413.GW538574@ZenIV>
+ <a5d0ee8c54ec2f80cb71cd72e3b4aec3@manguebit.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240324223231.6249-1-greg@enjellic.com>
-In-Reply-To: <20240324223231.6249-1-greg@enjellic.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 25 Mar 2024 17:08:54 -0400
-Message-ID: <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com>
-Subject: Re: [PATCH] Do not require attributes for security_inode_init_security.
-To: Greg Wettstein <greg@enjellic.com>
-Cc: linux-security-module@vger.kernel.org, roberto.sassu@huaweicloud.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5d0ee8c54ec2f80cb71cd72e3b4aec3@manguebit.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Mar 24, 2024 at 6:33=E2=80=AFPM Greg Wettstein <greg@enjellic.com> =
-wrote:
->
-> The integration of the Integrity Measurement Architecture (IMA)
-> into the LSM infrastructure introduced a conditional check that
-> denies access to the security_inode_init_security() event handler
-> if the LSM extended attribute 'blob' size is 0.
->
-> This changes the previous behavior of this event handler and
-> results in variable behavior of LSM's depending on the LSM boot
-> configuration.
->
-> Modify the function so that it removes the need for a non-zero
-> extended attribute blob size and bypasses the memory allocation
-> and freeing that is not needed if the LSM infrastructure is not
-> using extended attributes.
->
-> Use a break statement to exit the loop that is iterating over the
-> defined handlers for this event if a halting error condition is
-> generated by one of the invoked LSM handlers.  The checks for how
-> to handle cleanup are executed at the end of the loop regardless
-> of how the loop terminates.
->
-> A two exit label strategy is implemented.  One of the exit
-> labels is a target for the no attribute case while the second is
-> the target for the case where memory allocated for processing of
-> extended attributes needs to be freed.
->
-> Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> ---
->  security/security.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index 7035ee35a393..a0b52b964688 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1717,10 +1717,7 @@ int security_inode_init_security(struct inode *ino=
-de, struct inode *dir,
->         if (unlikely(IS_PRIVATE(inode)))
->                 return 0;
->
-> -       if (!blob_sizes.lbs_xattr_count)
-> -               return 0;
-> -
-> -       if (initxattrs) {
-> +       if (blob_sizes.lbs_xattr_count && initxattrs) {
->                 /* Allocate +1 for EVM and +1 as terminator. */
->                 new_xattrs =3D kcalloc(blob_sizes.lbs_xattr_count + 2,
->                                      sizeof(*new_xattrs), GFP_NOFS);
-> @@ -1733,7 +1730,7 @@ int security_inode_init_security(struct inode *inod=
-e, struct inode *dir,
->                 ret =3D hp->hook.inode_init_security(inode, dir, qstr, ne=
-w_xattrs,
->                                                   &xattr_count);
->                 if (ret && ret !=3D -EOPNOTSUPP)
-> -                       goto out;
-> +                       break;
->                 /*
->                  * As documented in lsm_hooks.h, -EOPNOTSUPP in this cont=
-ext
->                  * means that the LSM is not willing to provide an xattr,=
- not
-> @@ -1742,19 +1739,22 @@ int security_inode_init_security(struct inode *in=
-ode, struct inode *dir,
->                  */
->         }
->
-> -       /* If initxattrs() is NULL, xattr_count is zero, skip the call. *=
-/
-> -       if (!xattr_count)
-> -               goto out;
-> +       /* Skip xattr processing if no attributes are in use. */
-> +       if (!blob_sizes.lbs_xattr_count)
-> +               goto out2;
-> +       /* No attrs or an LSM returned an actionable error code. */
-> +       if (!xattr_count || (ret && ret !=3D -EOPNOTSUPP))
-> +               goto out1;
->
->         ret =3D evm_inode_init_security(inode, dir, qstr, new_xattrs,
->                                       &xattr_count);
-> -       if (ret)
-> -               goto out;
-> -       ret =3D initxattrs(inode, new_xattrs, fs_data);
-> -out:
-> +       if (!ret)
-> +               ret =3D initxattrs(inode, new_xattrs, fs_data);
-> + out1:
->         for (; xattr_count > 0; xattr_count--)
->                 kfree(new_xattrs[xattr_count - 1].value);
->         kfree(new_xattrs);
-> + out2:
->         return (ret =3D=3D -EOPNOTSUPP) ? 0 : ret;
->  }
->  EXPORT_SYMBOL(security_inode_init_security);
-> --
-> 2.39.1
+On Mon, Mar 25, 2024 at 05:47:16PM -0300, Paulo Alcantara wrote:
+> Al Viro <viro@zeniv.linux.org.uk> writes:
+> 
+> > On Mon, Mar 25, 2024 at 11:26:59AM -0500, Steve French wrote:
+> >
+> >> A loosely related question.  Do I need to change cifs.ko to return the
+> >> pointer to inode on mknod now?  dentry->inode is NULL in the case of mknod
+> >> from cifs.ko (and presumably some other fs as Al noted), unlike mkdir and
+> >> create where it is filled in.   Is there a perf advantage in filling in the
+> >> dentry->inode in the mknod path in the fs or better to leave it as is?  Is
+> >> there a good example to borrow from on this?
+> >
+> > AFAICS, that case in in CIFS is the only instance of ->mknod() that does this
+> > "skip lookups, just unhash and return 0" at the moment.
+> >
+> > What's more, it really had been broken all along for one important case -
+> > AF_UNIX bind(2) with address (== socket pathname) being on the filesystem
+> > in question.
+> 
+> Yes, except that we currently return -EPERM for such cases.  I don't
+> even know if this SFU thing supports sockets.
 
-Looking at this quickly, why does something like the following not work?
+	Sure, but we really want the rules to be reasonably simple and
+"you may leave dentry unhashed negative and return 0, provided that you
+hadn't been asked to create a socket" is anything but ;-)
 
-[WARNING: copy-n-paste patch, likely whitespace damaged]
+> > Note that cifs_sfu_make_node() is the only case in CIFS where that happens -
+> > other codepaths (both in cifs_make_node() and in smb2_make_node()) will
+> > instantiate.  How painful would it be for cifs_sfu_make_node()?
+> > AFAICS, you do open/sync_write/close there; would it be hard to do
+> > an eqiuvalent of fstat and set the inode up?
+> 
+> This should be pretty straightforward as it would only require an extra
+> query info call and then {smb311_posix,cifs}_get_inode_info() ->
+> d_instantiate().  We could even make it a single compound request of
+> open/write/getinfo/close for SMB2+ case.
 
-diff --git a/security/security.c b/security/security.c
-index 7e118858b545..007ce438e636 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1712,10 +1712,7 @@ int security_inode_init_security(struct inode *inode=
-, str
-uct inode *dir,
-       if (unlikely(IS_PRIVATE(inode)))
-               return 0;
+	If that's the case, I believe that we should simply declare that
+->mknod() must instantiate on success and have vfs_mknod() check and
+warn if it hadn't.
 
--       if (!blob_sizes.lbs_xattr_count)
--               return 0;
--
--       if (initxattrs) {
-+       if (initxattrs && blob_sizes.lbs_xattr_count) {
-               /* Allocate +1 as terminator. */
-               new_xattrs =3D kcalloc(blob_sizes.lbs_xattr_count + 1,
-                                    sizeof(*new_xattrs), GFP_NOFS);
+	Rationale:
 
---=20
-paul-moore.com
+1) mknod(2) is usually followed by at least some access to created object.
+Not setting the inode up won't save much anyway.
+2) if some instance of ->mknod() skips setting the inode on success (i.e.
+unhashes the still-negative dentry and returns 0), it can easily be
+converted.  The minimal conversion would be along the lines of turning
+	d_drop(dentry);
+	return 0;
+into
+	d_drop(dentry);
+	d = foofs_lookup(dir, dentry, 0);
+	if (unlikely(d)) {
+		if (!IS_ERR(d)) {
+			dput(d);
+			return -EINVAL;	// weird shit - directory got created somehow
+		}
+		return PTR_ERR(d);
+	}
+	return 0;
+but there almost certainly are cheaper ways to get the inode metadata,
+set the inode up and instantiate the dentry.
+3) currently only on in-kernel instance is that way.
+4) it makes life simpler for the users of vfs_mknod().
+
+	Objections, anyone?
