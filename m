@@ -1,27 +1,27 @@
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD10818AFCA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD16518AFCB;
 	Mon, 25 Mar 2024 09:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711360381; cv=none; b=EkLLTz+K2FoqbBNwTEEmF65Xx1jGf1cMR/Nu6Nsv99iv1BwIOYS1nDyTa8t1Ad/R3FkSjUUQAnfS5Xu4m8mjmX4OTB6r0I/Vj1P0o4/xArDED65GWZbUypxGmBNLPncioLZHacEQHeOTgcKYiqx7dAYLYhQlGM7C8Ao6ZTJaBQ8=
+	t=1711360383; cv=none; b=JuZH3YzRKGegpxlN22s/ZYlVLsxzH//pQ+U9YBtspRkHzrtZgEG92kmRx3dhC6cN8bX0xk5Am9iioYsXv5A67RMf/rFaoj/E1mdLMwyD5Cy9aHT8HcBAeBIcHoQ1EjDlCsA/IlM5bnkskvZx/C9IQw8YqycTPEmLXPuiAAA7XN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711360381; c=relaxed/simple;
-	bh=USl+GS8SjbfAG9TdaFkQ19+FupY8gk0c9UWuJ1wPhLY=;
+	s=arc-20240116; t=1711360383; c=relaxed/simple;
+	bh=FyX/ERQCQzuGwkQ/APOXsrerQ3MtKyEZJXvGv50aRJQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aSc/f+mnRf30PhTiPCX8aYU4r2idoefrFonx72Y8y56WBLluc7t7GCw+MdtdHuMPwKpqIVYX/R72S2yGz68MmXKuTgiijE9TfY0IzuZuSAHp5HtSPDQnlCROeJrl5tDMLwJo/F4e6EmlH89McLDY7IfxyiaFsNS7X5PG5DaQHwk=
+	 MIME-Version; b=tALCMODmbNgGjpnrwOyXTHJZoT4vEUN+Wym60yR0Q/1S6hTDSkdOxNLx7XK868lTHVjBiQ01RoJ8BTTv/OkMX4lBWFsjMh86NaeyvoWhF1iAii0ALmyYeiUVZTvbYR9HnuRN2dPqAPoJB8Lb3ZZFU9JaF1LwknIJtJI1deR7R8w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V37XJ5qh2z4f3nTV;
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4V37XJ6X3Cz4f3nTY;
 	Mon, 25 Mar 2024 17:52:48 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id DB8051A016E;
+	by mail.maildlp.com (Postfix) with ESMTP id 000871A0172;
 	Mon, 25 Mar 2024 17:52:56 +0800 (CST)
 Received: from k01.huawei.com (unknown [10.67.174.197])
-	by APP3 (Coremail) with SMTP id _Ch0CgDn9Jx1SQFmHl6fHw--.8953S8;
+	by APP3 (Coremail) with SMTP id _Ch0CgDn9Jx1SQFmHl6fHw--.8953S9;
 	Mon, 25 Mar 2024 17:52:56 +0800 (CST)
 From: Xu Kuohai <xukuohai@huaweicloud.com>
 To: bpf@vger.kernel.org,
@@ -51,9 +51,9 @@ Cc: Alexei Starovoitov <ast@kernel.org>,
 	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Subject: [PATCH bpf-next v2 6/7] selftests/bpf: Avoid load failure for token_lsm.c
-Date: Mon, 25 Mar 2024 17:56:52 +0800
-Message-Id: <20240325095653.1720123-7-xukuohai@huaweicloud.com>
+Subject: [PATCH bpf-next v2 7/7] selftests/bpf: Add return value checks and corrections for failed progs
+Date: Mon, 25 Mar 2024 17:56:53 +0800
+Message-Id: <20240325095653.1720123-8-xukuohai@huaweicloud.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240325095653.1720123-1-xukuohai@huaweicloud.com>
 References: <20240325095653.1720123-1-xukuohai@huaweicloud.com>
@@ -64,10 +64,10 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDn9Jx1SQFmHl6fHw--.8953S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw1rJr4DJry7XFy7Jr1UJrb_yoW5CF48pF
-	95W3429rWkJFy2kr1xXF13KryYqFs2va17JF1UCry0q3y7Kw4UXry7GFWakF95Grsayrsa
-	vF95XFZ0qr12kaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:_Ch0CgDn9Jx1SQFmHl6fHw--.8953S9
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryxGw1rAr4DAFW7JFyDAwb_yoWrWr4Dpa
+	4kZ3s2kryfKF13Xr1xAr4xXayFgws2qa4UAr4xX347Z3W7Jr97Xr4IgF45Xrn8GrZYvrs3
+	Zay2qrZxZr48Zw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -85,56 +85,121 @@ X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
 From: Xu Kuohai <xukuohai@huawei.com>
 
-The compiler optimized the two bpf progs in token_lsm.c to make return
-value from the bool variable in the "return -1" path, causing an
-unexpected rejection:
-
-0: R1=ctx() R10=fp0
-; int BPF_PROG(bpf_token_capable, struct bpf_token *token, int cap) @ bpf_lsm.c:17
-0: (b7) r6 = 0                        ; R6_w=0
-; if (my_pid == 0 || my_pid != (bpf_get_current_pid_tgid() >> 32)) @ bpf_lsm.c:19
-1: (18) r1 = 0xffffc9000102a000       ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5)
-3: (61) r7 = *(u32 *)(r1 +0)          ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5) R7_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-4: (15) if r7 == 0x0 goto pc+11       ; R7_w=scalar(smin=umin=umin32=1,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-5: (67) r7 <<= 32                     ; R7_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-6: (c7) r7 s>>= 32                    ; R7_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-7: (85) call bpf_get_current_pid_tgid#14      ; R0=scalar()
-8: (77) r0 >>= 32                     ; R0_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-9: (5d) if r0 != r7 goto pc+6         ; R0_w=scalar(smin=smin32=0,smax=umax=umax32=0x7fffffff,var_off=(0x0; 0x7fffffff)) R7=scalar(smin=smin32=0,smax=umax=umax32=0x7fffffff,var_off=(0x0; 0x7fffffff))
-; if (reject_capable) @ bpf_lsm.c:21
-10: (18) r1 = 0xffffc9000102a004      ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5,off=4)
-12: (71) r6 = *(u8 *)(r1 +0)          ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5,off=4) R6_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=255,var_off=(0x0; 0xff))
-;  @ bpf_lsm.c:0
-13: (87) r6 = -r6                     ; R6_w=scalar()
-14: (67) r6 <<= 56                    ; R6_w=scalar(smax=0x7f00000000000000,umax=0xff00000000000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xff00000000000000))
-15: (c7) r6 s>>= 56                   ; R6_w=scalar(smin=smin32=-128,smax=smax32=127)
-; int BPF_PROG(bpf_token_capable, struct bpf_token *token, int cap) @ bpf_lsm.c:17
-16: (bf) r0 = r6                      ; R0_w=scalar(id=1,smin=smin32=-128,smax=smax32=127) R6_w=scalar(id=1,smin=smin32=-128,smax=smax32=127)
-17: (95) exit
-At program exit the register R0 has smin=-128 smax=127 should have been in [-4095, 0]
-
-To avoid this failure, change the variable type from bool to int.
+The return ranges of some lsm test bpf progs can not be inferred by
+the verifier accurately. To avoid erroneous rejections, add explicit
+return value checks and corrections to these progs.
 
 Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
 ---
- tools/testing/selftests/bpf/progs/token_lsm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/bpf/progs/err.h                | 10 ++++++++++
+ tools/testing/selftests/bpf/progs/test_sig_in_xattr.c  |  4 ++++
+ .../selftests/bpf/progs/test_verify_pkcs7_sig.c        |  8 ++++++--
+ .../selftests/bpf/progs/verifier_global_subprogs.c     |  7 ++++++-
+ 4 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/progs/token_lsm.c b/tools/testing/selftests/bpf/progs/token_lsm.c
-index e4d59b6ba743..a6002d073b1b 100644
---- a/tools/testing/selftests/bpf/progs/token_lsm.c
-+++ b/tools/testing/selftests/bpf/progs/token_lsm.c
-@@ -8,8 +8,8 @@
+diff --git a/tools/testing/selftests/bpf/progs/err.h b/tools/testing/selftests/bpf/progs/err.h
+index d66d283d9e59..38529779a236 100644
+--- a/tools/testing/selftests/bpf/progs/err.h
++++ b/tools/testing/selftests/bpf/progs/err.h
+@@ -5,6 +5,16 @@
+ #define MAX_ERRNO 4095
+ #define IS_ERR_VALUE(x) (unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO
+ 
++#define __STR(x) #x
++
++#define set_if_not_errno_or_zero(x, y)			\
++({							\
++	asm volatile ("if %0 s< -4095 goto +1\n"	\
++		      "if %0 s<= 0 goto +1\n"		\
++		      "%0 = " __STR(y) "\n"		\
++		      : "+r"(x));			\
++})
++
+ static inline int IS_ERR_OR_NULL(const void *ptr)
+ {
+ 	return !ptr || IS_ERR_VALUE((unsigned long)ptr);
+diff --git a/tools/testing/selftests/bpf/progs/test_sig_in_xattr.c b/tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
+index 2f0eb1334d65..8ef6b39335b6 100644
+--- a/tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
++++ b/tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
+@@ -6,6 +6,7 @@
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
+ #include "bpf_kfuncs.h"
++#include "err.h"
+ 
  char _license[] SEC("license") = "GPL";
  
- int my_pid;
--bool reject_capable;
--bool reject_cmd;
-+int reject_capable;
-+int reject_cmd;
+@@ -79,5 +80,8 @@ int BPF_PROG(test_file_open, struct file *f)
+ 	ret = bpf_verify_pkcs7_signature(&digest_ptr, &sig_ptr, trusted_keyring);
  
- SEC("lsm/bpf_token_capable")
- int BPF_PROG(token_capable, struct bpf_token *token, int cap)
+ 	bpf_key_put(trusted_keyring);
++
++	set_if_not_errno_or_zero(ret, -EFAULT);
++
+ 	return ret;
+ }
+diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+index f42e9f3831a1..12034a73ee2d 100644
+--- a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
++++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+@@ -11,6 +11,7 @@
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
+ #include "bpf_kfuncs.h"
++#include "err.h"
+ 
+ #define MAX_DATA_SIZE (1024 * 1024)
+ #define MAX_SIG_SIZE 1024
+@@ -55,12 +56,12 @@ int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+ 
+ 	ret = bpf_probe_read_kernel(&value, sizeof(value), &attr->value);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	ret = bpf_copy_from_user(data_val, sizeof(struct data),
+ 				 (void *)(unsigned long)value);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	if (data_val->data_len > sizeof(data_val->data))
+ 		return -EINVAL;
+@@ -84,5 +85,8 @@ int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+ 
+ 	bpf_key_put(trusted_keyring);
+ 
++out:
++	set_if_not_errno_or_zero(ret, -EFAULT);
++
+ 	return ret;
+ }
+diff --git a/tools/testing/selftests/bpf/progs/verifier_global_subprogs.c b/tools/testing/selftests/bpf/progs/verifier_global_subprogs.c
+index baff5ffe9405..5df7a98a4c51 100644
+--- a/tools/testing/selftests/bpf/progs/verifier_global_subprogs.c
++++ b/tools/testing/selftests/bpf/progs/verifier_global_subprogs.c
+@@ -7,6 +7,7 @@
+ #include "bpf_misc.h"
+ #include "xdp_metadata.h"
+ #include "bpf_kfuncs.h"
++#include "err.h"
+ 
+ int arr[1];
+ int unkn_idx;
+@@ -324,7 +325,11 @@ SEC("?lsm/bpf")
+ __success __log_level(2)
+ int BPF_PROG(arg_tag_ctx_lsm)
+ {
+-	return tracing_subprog_void(ctx) + tracing_subprog_u64(ctx);
++	int ret;
++
++	ret = tracing_subprog_void(ctx) + tracing_subprog_u64(ctx);
++	set_if_not_errno_or_zero(ret, -1);
++	return ret;
+ }
+ 
+ SEC("?struct_ops/test_1")
 -- 
 2.30.2
 
