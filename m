@@ -1,57 +1,57 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A5784D3C
-	for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2024 13:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C7F12BEA6
+	for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2024 13:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711374019; cv=none; b=TDtfJfjeFHYOLCcxfxnv1eQRmntdYUbLzPMbDiRJlPD154/eSwfZE0m7YnuewF7EFrdGQP6i5wnclEn5W4y5UUqur9lL92NYNMQUJQwRKYpq2Nvf80T6nd1MvzeQTYcu62yxmLJaA8aWhNWhDGoA7DWC0xmOfVnWd0dNmoKtTzg=
+	t=1711374021; cv=none; b=CurHV0OE/bwLZ7OuubCNS4w4EDCH6IP5NuliuhLu+odP0qCS9ugZvNO0Icltf8RChjYkzQtx4WIJhXQ2Tlq2/bawZYyUWsfAh+NFaCsujNsL5tTGgWf28rGM6OsR7HEdLQdOCwmEu9ZrZ+PtGFCHlZwHzzM9qpHfKyXRSpSfZq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711374019; c=relaxed/simple;
-	bh=Zui2v1od/elMRFrLL3WvczuYkqdRJ607JihPTYWoBxc=;
+	s=arc-20240116; t=1711374021; c=relaxed/simple;
+	bh=Jdal8IKILETTWsojG5pDXheVDyQeR66rUe3RKtiUO/I=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sglr4Lb53Q6g+gfPzWmR433dfIqqH34usKuBFPBOgRf0zb/lL1AriIUgkZciVyOrFyghV6l/oFkJ3iJAViPyHsQFDKWou/ImYX0YfnRryd2Yl5GmyKsSXGnc6SiSH86X9sCdIAQRwLuqHiZDFiH5M/dsSH1cxj9juymd6GcMTlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=upVQwOYC; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=iH9xh2mR2kXZua9E8RZnx60AzatahpyEb0yAfF32i4fqM83eRrFhoHF77691Gds7qPViH7XrmCxkXQ3iY3xrf/FIBVYu5FAGbj3td685w+9ZRcL+tP+894fM5UmdcNQl0KejiMCJnB6x4wFvS5YezBkRYtEX9ovefQOw7AdUZmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jb7vZnjS; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="upVQwOYC"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-60ff1816749so67300037b3.3
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2024 06:40:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jb7vZnjS"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-60a03635590so87233207b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2024 06:40:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711374016; x=1711978816; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1711374018; x=1711978818; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l9e1vLBZyU81CA03W1c5FAr2hW3zhJCc3KJ54WTxEPY=;
-        b=upVQwOYCHj60r700MMuQ+H4NjcBrctqiFMaefibbWetnu7wMf1VJsNxTW7AGxtI2zZ
-         Z3ZvEN8e9D4a7GqWrmXZmB0yb7DWcExdnZJDf4rqedOoVCBdI+fLvexjBDLn2nVgUrRb
-         bwj9RSdayVQG0XEhFvnL5JtY9KpzqlV6XVhMKQGDC/Z8i74opPoMCknPxHGlx23EWO6G
-         X9RlObmneFIsoJbMjgw0nALWycIU2EVbGzG3fM9QKH9PE46Qw93N7H+IRMwJ78eDfqF3
-         LMSFIkQFS+lp3RiMVuKpnwvorAG7EDMPLHm6rOgXnhPG/CKl8fu9p0l3mlyGwxcjKxtf
-         CdZA==
+        bh=qobHCRmb6cXg9TV4MF/PMa0SUI8jbJIaeOrvT83hbEo=;
+        b=Jb7vZnjSP02X1E130s6/cGvsm02xfx2ewtS3Qnvzq0Ul8KtMV9izPfXp5SS2nHM1XD
+         9FkwJSDZTlwip8k/ZZrTgkYWScvkmlYayNsqIg1yoyDPedx89AcAyAEae1StxC/niIES
+         JceMt3MrNGzwCTRMPb3IUNIPn33ZCJfv9NVmcT/YAksVRqpbxZRbYMo3THRx4db8TNEg
+         F0zYDjeN8lMZ0Y/ZsABh4o5kTYASIZEkCtbBhEM3V9TLuLfDv6JxCfSaKSSX+m7HpkrE
+         2iCpPoMRiTT3u7ZYylOj0V1XmTnKGAE27tEN36FXm7Zzoqt3z6tNsuiqPKSRJdStjaE8
+         zjwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711374016; x=1711978816;
+        d=1e100.net; s=20230601; t=1711374018; x=1711978818;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=l9e1vLBZyU81CA03W1c5FAr2hW3zhJCc3KJ54WTxEPY=;
-        b=hNhASdEbNLrjjMpybTt1fALqTlNsm+2st6AjDUGmya879veP9JsYua+5/PkieBpS1d
-         zzxWdJJahALHcnGxRA5MjG3tAEDcZ7zGi5Le8BUeRYv8GXhTSLdrfnaM5YMWeIJ+aLm5
-         BhnSHUyBg+ZFUxC+IxXZoCF5/Dn42HY6THtRZmFNqwrto7NihFspzXODEIADJN/UQb3t
-         LIBf6w7MBuX/JMBAJokEd4jkt9FLsa/NfL1GG0SHzsjT+mUc8WHshpgLhzffuzR8FEJH
-         cPCt0B76f5H44aoNucD+3vGIIks2KMfCU0bC9Uu6YGCB7xVb/+qOWxJrRuLhW2q44yGg
-         SWZg==
-X-Gm-Message-State: AOJu0Yzzv8n1g6C0svQdsWr820V/qZEPJKRzerpeIgiddI93h+WZgNOK
-	xiUqT3MFs7nTEH1vXRugWhb72NwO32skvn0RY8E/fqN570vq8kjdEDeeCJG0WP/AgdPJdZgli8x
-	aLk56tnF/2NVwVmhNlLIV5riGMUQKVUjMXS/VO6JciwuSYrVCGaqAzyJx9IeN1eVgyUXHxSgLyb
-	4uMxUDhKlxTFv/Xmb2/M2/nv/N6w2x2F5tRSfwwnHUoP6SNy6WP4IQ
-X-Google-Smtp-Source: AGHT+IFs4pnYuPT9QeZILMzpw+KH5sZK9Ban54cZz2iTTYwMpWCCK9ZdBEKyXLu08t/akMqVJsacfwv8pOI=
+        bh=qobHCRmb6cXg9TV4MF/PMa0SUI8jbJIaeOrvT83hbEo=;
+        b=J1BPJfQtl9g0p2j61AH6rgdgJ5HYVYYMbh8dbRX6G4BwqtHnDRlHTplcMCtO+ISBBK
+         PDAmIP6EnVSsQmaZJR3opIFu3T0JOKbF4+khpwjrS7fzAQN9OVorbjtvZ4Pga3muafPU
+         oSAAtpv4W0RTwa1LMF3HEx50xS0+mGsj67WYC0W7Q8xMIxxsMWwA/a1s6toWlni9dzlm
+         t8YRxhAYsSg2QqHSd9xirCzKj43/Gd61+DsQW+jX+U+zWqR7uuah/xTMZ+fBcN3w9cQ4
+         Ll+r4YY2XOW2WHMJ/MwlzAjgH+73Xo1iB8YMh1GXSA7lNXMIOY/wmnIRGzBrKuD3kA+R
+         etZA==
+X-Gm-Message-State: AOJu0Yw9pUSSmA44W1O2aiczoIsDt9jav895XruWPr+eWiTX0eaOg8Zh
+	o4VFXXl9rNGFrU9/1Cp1kgVuy+hGXen3LZ64UA8YCDbdg//CFz+MTqTp6vx+yqxfOFYSclFlKAg
+	1sHm9dAnum+BcTcOZFusaZObNUU1RNO3cyNfFNLW9iv48+mw//6U3vFdsSCldty3cSVwOGo0Vad
+	Nx8kfpPhd3Gj4muN2sVZLcqf9q6U2CI43tiLREnOxVq/m60lB3NeLK
+X-Google-Smtp-Source: AGHT+IEdigQlldnlW6O3u3vZKh6579LMgFCjDlkpzU14xq0MVYQt6eWrAigFxnjSi+SF3zfjt5fIZJLHrzc=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a81:4cc9:0:b0:611:e34:5a87 with SMTP id
- z192-20020a814cc9000000b006110e345a87mr1261154ywa.1.1711374016017; Mon, 25
- Mar 2024 06:40:16 -0700 (PDT)
-Date: Mon, 25 Mar 2024 13:39:58 +0000
+ (user=gnoack job=sendgmr) by 2002:a81:a0ce:0:b0:611:3096:bf60 with SMTP id
+ x197-20020a81a0ce000000b006113096bf60mr1940238ywg.7.1711374018427; Mon, 25
+ Mar 2024 06:40:18 -0700 (PDT)
+Date: Mon, 25 Mar 2024 13:39:59 +0000
 In-Reply-To: <20240325134004.4074874-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -61,8 +61,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240325134004.4074874-1-gnoack@google.com>
 X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
-Message-ID: <20240325134004.4074874-4-gnoack@google.com>
-Subject: [PATCH v12 3/9] selftests/landlock: Test IOCTL support
+Message-ID: <20240325134004.4074874-5-gnoack@google.com>
+Subject: [PATCH v12 4/9] selftests/landlock: Test IOCTL with memfds
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -75,321 +75,68 @@ Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Exercises Landlock's IOCTL feature in different combinations of
-handling and permitting the LANDLOCK_ACCESS_FS_IOCTL_DEV right, and in
-different combinations of using files and directories.
+Because the LANDLOCK_ACCESS_FS_IOCTL_DEV right is associated with the
+opened file during open(2), IOCTLs are supposed to work with files
+which are opened by means other than open(2).
 
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 236 ++++++++++++++++++++-
- 1 file changed, 233 insertions(+), 3 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 36 ++++++++++++++++------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
 ftests/landlock/fs_test.c
-index 0bcbbf594fd7..22229fe3e403 100644
+index 22229fe3e403..32a77757462b 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -8,6 +8,7 @@
-  */
-=20
- #define _GNU_SOURCE
-+#include <asm/termbits.h>
- #include <fcntl.h>
- #include <linux/landlock.h>
- #include <linux/magic.h>
-@@ -15,6 +16,7 @@
- #include <stdio.h>
- #include <string.h>
- #include <sys/capability.h>
-+#include <sys/ioctl.h>
- #include <sys/mount.h>
- #include <sys/prctl.h>
- #include <sys/sendfile.h>
-@@ -23,6 +25,12 @@
- #include <sys/vfs.h>
- #include <unistd.h>
-=20
-+/*
-+ * Intentionally included last to work around header conflict.
-+ * See https://sourceware.org/glibc/wiki/Synchronizing_Headers.
-+ */
-+#include <linux/fs.h>
-+
- #include "common.h"
-=20
- #ifndef renameat2
-@@ -735,6 +743,9 @@ static int create_ruleset(struct __test_metadata *const=
- _metadata,
- 	}
-=20
- 	for (i =3D 0; rules[i].path; i++) {
-+		if (!rules[i].access)
-+			continue;
-+
- 		add_path_beneath(_metadata, ruleset_fd, rules[i].access,
- 				 rules[i].path);
- 	}
-@@ -3443,7 +3454,7 @@ TEST_F_FORK(layout1, truncate_unhandled)
- 			      LANDLOCK_ACCESS_FS_WRITE_FILE;
- 	int ruleset_fd;
-=20
--	/* Enable Landlock. */
-+	/* Enables Landlock. */
- 	ruleset_fd =3D create_ruleset(_metadata, handled, rules);
-=20
- 	ASSERT_LE(0, ruleset_fd);
-@@ -3526,7 +3537,7 @@ TEST_F_FORK(layout1, truncate)
- 			      LANDLOCK_ACCESS_FS_TRUNCATE;
- 	int ruleset_fd;
-=20
--	/* Enable Landlock. */
-+	/* Enables Landlock. */
- 	ruleset_fd =3D create_ruleset(_metadata, handled, rules);
-=20
- 	ASSERT_LE(0, ruleset_fd);
-@@ -3752,7 +3763,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
- 	};
- 	int fd, ruleset_fd;
-=20
--	/* Enable Landlock. */
-+	/* Enables Landlock. */
- 	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules);
- 	ASSERT_LE(0, ruleset_fd);
- 	enforce_ruleset(_metadata, ruleset_fd);
-@@ -3829,6 +3840,16 @@ TEST_F_FORK(ftruncate, open_and_ftruncate_in_differe=
-nt_processes)
- 	ASSERT_EQ(0, close(socket_fds[1]));
+@@ -3850,20 +3850,38 @@ static int test_fs_ioc_getflags_ioctl(int fd)
+ 	return 0;
  }
 =20
-+/* Invokes the FS_IOC_GETFLAGS IOCTL and returns its errno or 0. */
-+static int test_fs_ioc_getflags_ioctl(int fd)
-+{
-+	uint32_t flags;
-+
-+	if (ioctl(fd, FS_IOC_GETFLAGS, &flags) < 0)
-+		return errno;
-+	return 0;
-+}
-+
- TEST(memfd_ftruncate)
+-TEST(memfd_ftruncate)
++TEST(memfd_ftruncate_and_ioctl)
  {
- 	int fd;
-@@ -3845,6 +3866,215 @@ TEST(memfd_ftruncate)
- 	ASSERT_EQ(0, close(fd));
+-	int fd;
+-
+-	fd =3D memfd_create("name", MFD_CLOEXEC);
+-	ASSERT_LE(0, fd);
++	const struct landlock_ruleset_attr attr =3D {
++		.handled_access_fs =3D ACCESS_ALL,
++	};
++	int ruleset_fd, fd, i;
+=20
+ 	/*
+-	 * Checks that ftruncate is permitted on file descriptors that are
+-	 * created in ways other than open(2).
++	 * We exercise the same test both with and without Landlock enabled, to
++	 * ensure that it behaves the same in both cases.
+ 	 */
+-	EXPECT_EQ(0, test_ftruncate(fd));
++	for (i =3D 0; i < 2; i++) {
++		/* Creates a new memfd. */
++		fd =3D memfd_create("name", MFD_CLOEXEC);
++		ASSERT_LE(0, fd);
+=20
+-	ASSERT_EQ(0, close(fd));
++		/*
++		 * Checks that operations associated with the opened file
++		 * (ftruncate, ioctl) are permitted on file descriptors that are
++		 * created in ways other than open(2).
++		 */
++		EXPECT_EQ(0, test_ftruncate(fd));
++		EXPECT_EQ(0, test_fs_ioc_getflags_ioctl(fd));
++
++		ASSERT_EQ(0, close(fd));
++
++		/* Enables Landlock. */
++		ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
++		ASSERT_LE(0, ruleset_fd);
++		enforce_ruleset(_metadata, ruleset_fd);
++		ASSERT_EQ(0, close(ruleset_fd));
++	}
  }
 =20
-+static int test_fionread_ioctl(int fd)
-+{
-+	size_t sz =3D 0;
-+
-+	if (ioctl(fd, FIONREAD, &sz) < 0 && errno =3D=3D EACCES)
-+		return errno;
-+	return 0;
-+}
-+
-+/* clang-format off */
-+FIXTURE(ioctl) {};
-+
-+FIXTURE_SETUP(ioctl) {};
-+
-+FIXTURE_TEARDOWN(ioctl) {};
-+/* clang-format on */
-+
-+FIXTURE_VARIANT(ioctl)
-+{
-+	const __u64 handled;
-+	const __u64 allowed;
-+	const mode_t open_mode;
-+	/*
-+	 * TCGETS is used as a characteristic device-specific IOCTL command.
-+	 * The logic is the same for other IOCTL commands as well.
-+	 */
-+	const int expected_tcgets_result; /* terminal device IOCTL */
-+	/*
-+	 * FIONREAD is implemented in fs/ioctl.c for regular files,
-+	 * but we do not blanket-permit it for devices.
-+	 */
-+	const int expected_fionread_result;
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ioctl, handled_i_allowed_none) {
-+	/* clang-format on */
-+	.handled =3D LANDLOCK_ACCESS_FS_IOCTL_DEV,
-+	.allowed =3D 0,
-+	.open_mode =3D O_RDWR,
-+	.expected_tcgets_result =3D EACCES,
-+	.expected_fionread_result =3D EACCES,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ioctl, handled_i_allowed_i) {
-+	/* clang-format on */
-+	.handled =3D LANDLOCK_ACCESS_FS_IOCTL_DEV,
-+	.allowed =3D LANDLOCK_ACCESS_FS_IOCTL_DEV,
-+	.open_mode =3D O_RDWR,
-+	.expected_tcgets_result =3D 0,
-+	.expected_fionread_result =3D 0,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(ioctl, unhandled) {
-+	/* clang-format on */
-+	.handled =3D LANDLOCK_ACCESS_FS_EXECUTE,
-+	.allowed =3D LANDLOCK_ACCESS_FS_EXECUTE,
-+	.open_mode =3D O_RDWR,
-+	.expected_tcgets_result =3D 0,
-+	.expected_fionread_result =3D 0,
-+};
-+
-+static int test_fioqsize_ioctl(int fd)
-+{
-+	size_t sz;
-+
-+	if (ioctl(fd, FIOQSIZE, &sz) < 0)
-+		return errno;
-+	return 0;
-+}
-+
-+static int test_tcgets_ioctl(int fd)
-+{
-+	struct termios info;
-+
-+	if (ioctl(fd, TCGETS, &info) < 0)
-+		return errno;
-+	return 0;
-+}
-+
-+TEST_F_FORK(ioctl, handle_dir_access_file)
-+{
-+	const int flag =3D 0;
-+	const struct rule rules[] =3D {
-+		{
-+			.path =3D "/dev",
-+			.access =3D variant->allowed,
-+		},
-+		{},
-+	};
-+	int file_fd, ruleset_fd;
-+
-+	/* Enables Landlock. */
-+	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	file_fd =3D open("/dev/tty", variant->open_mode);
-+	ASSERT_LE(0, file_fd);
-+
-+	/* Checks that IOCTL commands return the expected errors. */
-+	EXPECT_EQ(variant->expected_tcgets_result, test_tcgets_ioctl(file_fd));
-+	EXPECT_EQ(variant->expected_fionread_result,
-+		  test_fionread_ioctl(file_fd));
-+
-+	/* Checks that unrestrictable commands are unrestricted. */
-+	EXPECT_EQ(0, ioctl(file_fd, FIOCLEX));
-+	EXPECT_EQ(0, ioctl(file_fd, FIONCLEX));
-+	EXPECT_EQ(0, ioctl(file_fd, FIONBIO, &flag));
-+	EXPECT_EQ(0, ioctl(file_fd, FIOASYNC, &flag));
-+	EXPECT_EQ(ENOTTY, test_fioqsize_ioctl(file_fd));
-+
-+	ASSERT_EQ(0, close(file_fd));
-+}
-+
-+TEST_F_FORK(ioctl, handle_dir_access_dir)
-+{
-+	const int flag =3D 0;
-+	const struct rule rules[] =3D {
-+		{
-+			.path =3D "/dev",
-+			.access =3D variant->allowed,
-+		},
-+		{},
-+	};
-+	int dir_fd, ruleset_fd;
-+
-+	/* Enables Landlock. */
-+	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	/*
-+	 * Ignore variant->open_mode for this test, as we intend to open a
-+	 * directory.  If the directory can not be opened, the variant is
-+	 * infeasible to test with an opened directory.
-+	 */
-+	dir_fd =3D open("/dev", O_RDONLY);
-+	if (dir_fd < 0)
-+		return;
-+
-+	/*
-+	 * Checks that IOCTL commands return the expected errors.
-+	 * We do not use the expected values from the fixture here.
-+	 *
-+	 * When using IOCTL on a directory, no Landlock restrictions apply.
-+	 * TCGETS will fail anyway because it is not invoked on a TTY device.
-+	 */
-+	EXPECT_EQ(ENOTTY, test_tcgets_ioctl(dir_fd));
-+	EXPECT_EQ(0, test_fionread_ioctl(dir_fd));
-+
-+	/* Checks that unrestrictable commands are unrestricted. */
-+	EXPECT_EQ(0, ioctl(dir_fd, FIOCLEX));
-+	EXPECT_EQ(0, ioctl(dir_fd, FIONCLEX));
-+	EXPECT_EQ(0, ioctl(dir_fd, FIONBIO, &flag));
-+	EXPECT_EQ(0, ioctl(dir_fd, FIOASYNC, &flag));
-+	EXPECT_EQ(0, test_fioqsize_ioctl(dir_fd));
-+
-+	ASSERT_EQ(0, close(dir_fd));
-+}
-+
-+TEST_F_FORK(ioctl, handle_file_access_file)
-+{
-+	const int flag =3D 0;
-+	const struct rule rules[] =3D {
-+		{
-+			.path =3D "/dev/tty0",
-+			.access =3D variant->allowed,
-+		},
-+		{},
-+	};
-+	int file_fd, ruleset_fd;
-+
-+	if (variant->allowed & LANDLOCK_ACCESS_FS_READ_DIR) {
-+		SKIP(return, "LANDLOCK_ACCESS_FS_READ_DIR "
-+			     "can not be granted on files");
-+	}
-+
-+	/* Enables Landlock. */
-+	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules);
-+	ASSERT_LE(0, ruleset_fd);
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	file_fd =3D open("/dev/tty0", variant->open_mode);
-+	ASSERT_LE(0, file_fd)
-+	{
-+		TH_LOG("Failed to open /dev/tty0: %s", strerror(errno));
-+	}
-+
-+	/* Checks that IOCTL commands return the expected errors. */
-+	EXPECT_EQ(variant->expected_tcgets_result, test_tcgets_ioctl(file_fd));
-+	EXPECT_EQ(variant->expected_fionread_result,
-+		  test_fionread_ioctl(file_fd));
-+
-+	/* Checks that unrestrictable commands are unrestricted. */
-+	EXPECT_EQ(0, ioctl(file_fd, FIOCLEX));
-+	EXPECT_EQ(0, ioctl(file_fd, FIONCLEX));
-+	EXPECT_EQ(0, ioctl(file_fd, FIONBIO, &flag));
-+	EXPECT_EQ(0, ioctl(file_fd, FIOASYNC, &flag));
-+	EXPECT_EQ(ENOTTY, test_fioqsize_ioctl(file_fd));
-+
-+	ASSERT_EQ(0, close(file_fd));
-+}
-+
- /* clang-format off */
- FIXTURE(layout1_bind) {};
- /* clang-format on */
+ static int test_fionread_ioctl(int fd)
 --=20
 2.44.0.396.g6e790dbe36-goog
 
