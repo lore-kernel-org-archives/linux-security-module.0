@@ -1,141 +1,104 @@
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084E473177;
-	Tue, 26 Mar 2024 11:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B2873175
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 12:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711454346; cv=none; b=ILIpfHUUxcBSYzVyRMu92AKrIcFfMpSrZOe2V7FGqKysyL4SZxy76OgXQa6bKSbORMzPxCS1fq+Y1Yk7J/k52ikWteQs3XacP7JS/jgT7frhdo6OsHpPBpcchTwLBbGhzv0ThFBnwhTB+9ILHU36XqIpMZfZYKeqgmAz1JsWZfA=
+	t=1711457601; cv=none; b=YwR5w6hlxBrVzsVzczwDVuBHJQHOMjKksk22p1tsvrs+3iFNd7v+qglRPh1gIN3wsCxdQOOGFbSUgf/y4rSvVQePyUAsUZiIltt8fDCxGxM5wDaXC1CzU3KOLoL3G7lRVcxzMKPl2KoiBA2uXkA4yuM4zq+fhmFLh5IBZ2JVhx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711454346; c=relaxed/simple;
-	bh=Uw0vEDnTywERzPvWbpvw8VnR6iyRSe9qC08om5vrDsg=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=FqPR5K9DPBeywvfuAmoCwL/9lMO+nPPpLjl59IexvNF9fq2svUG7iDI7km/0Rr1w+x+mzPGKBW5amOEHW2eomp8AjEs3Uc6oK7F29KJbfn8ZlN+rD6GMfaip/ByI/ap2xrvpXUAo2+Jy7VkdaMaYpGQ1TPOBrLRpxNWuZWXaeHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=aZkuBp9D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Axh5Y35a; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1711457601; c=relaxed/simple;
+	bh=5XbquQmJKaNfWBjyEtOOSnqsLcETpU6DZOyNLjemzmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z5SRK+SFZ2XEabgIy4+4VjIjTGKXEQ5GGLyXJegcnj+6wikHD047Z3L+zFFIVAQQL5Ww0THQVdLB6v8UP1st7t4fJo5UvDXxXm3UL3xmI/wROub5dcj1K1eaaIcUTJQvasWyHasb+F5AL+z6HMohe9We7fM/1UL28TYhvzIactw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TrSNZXgn; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="aZkuBp9D";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Axh5Y35a"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id EE23211400C8;
-	Tue, 26 Mar 2024 07:59:02 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 26 Mar 2024 07:59:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1711454342;
-	 x=1711540742; bh=HBMjo6bs1TmtqzdrJ6zhWiwvcYl00xxz+dnjWEO4m0I=; b=
-	aZkuBp9D7HxYAbrMrXEPqMTzd1wUuzw3O4reX05HjGJ54i4Fdu75oCqBhQh/8ULQ
-	M3GtjG5GSWwK1bGJbcy+6XUupO5R51jejqaQgajDjTkk+22uAd4E7zmPvlrmPAek
-	FYQw3y8tgrd1Zl2oJ2EuGLLvUWPuOExdfLjjiewKRyyuMIU2cs2Laag90ZknKjRk
-	0tyv4EEJ3Ya/GUwCfxkn2UqZ1GIcOoNsTXqg3OarPpBGYkImLMnhL20kZ4YF3gzn
-	t8pNEJCc1/ro8Db6Qmt9pC0hvOmOs9znf6NB2YMWMQX36vl6hO+xWeKp2qEoyJZw
-	YsxiSGuWXGSDQe2VoKIbLQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1711454342; x=
-	1711540742; bh=HBMjo6bs1TmtqzdrJ6zhWiwvcYl00xxz+dnjWEO4m0I=; b=A
-	xh5Y35aK+8FBX5cTZ2Kw71f9O7OWA0VBf9NuVpET7nWk/trsMsrR8rbVJfNMDa1S
-	ZUJbv2wCMOpuUkgfr5hAvmN1VIbSfWqAztLTSs6pViBpMpRP2/mlG9I7O+PBIMQ7
-	+jQNbB5bET2pVvU4r8poLPPmFkOvY7uIuvxrGDrIVUHAb0pfhZ7EJD6KyeSxjtCj
-	scSiOMgxwEEb3yAf0QXxa1CqcBud3sQPn2pBVdunIBX9JK5LYRC9oAA+yyqwwHgH
-	2jAJlSIE39axUPdoJA2o9ZocGRgwfH79nEqKMbLnhAB+oEINm2ZEg1+6hVHO2EYZ
-	vJ2TW+ZULIqnQwx2RjeUQ==
-X-ME-Sender: <xms:hrgCZrJMkQXLs4iSU7XlY5ityG1A1lbj3RCDr1N_J-DHQa97ZzzTJg>
-    <xme:hrgCZvKv00HeJj9Rx2wMuzI_T4m2730x-AuLqsreyFyYiErfqsExMShOjzTx2iqy2
-    YyBAzZOHfo_bZ_iSwM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddufedgfeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:hrgCZjuurT2rRD4w0wlePJODZf3zQE-ikbrzWDouhxCLT5SCRU-qRA>
-    <xmx:hrgCZkadw1pzCTVhFBvhnIFpxz14GJxCc3iAyB0Irt3DKLlcSFZAfQ>
-    <xmx:hrgCZiafYlH3nHu2zeCNHMEK75nUZ4npKxLoH1GQwNGPn9M3k1fQUQ>
-    <xmx:hrgCZoCD6G06nG22IEezON-nU5ReXuoL6NjpePVvYiAzVFhe0zXKcw>
-    <xmx:hrgCZuRc6EmF_sngx-2EdUPtTzex7BY2xzwbMlSZn4ou6aeUMMLVRQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 668DBB6008D; Tue, 26 Mar 2024 07:59:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-328-gc998c829b7-fm-20240325.002-gc998c829
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TrSNZXgn"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-609f4d8551eso52163607b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 05:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1711457599; x=1712062399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z0BhUuq6w2jcMHo0vnHZWTdWQ7YEJBXZjKotn4i2wHk=;
+        b=TrSNZXgnFF7GvLHr6M+Rgew7GU+Wc6sqwMeSm/E9VbSWkoZE9GMg+Wl71y2gSnuWJI
+         3NFtVETJjLs4IyW9BQR77EzSomQBRFS2IFOkfTYKRG0jNgDUhWWnV30AqBJCNeVmESEq
+         czISs7cXGwoum4ATewhUj9UuAIU1vG32bY7qF+Ww7LB1txAIgVURulRKip8MlfZX0TBj
+         rr7gdsJJ8M/ykHGK+KI164xZ8h3pgemvlntiQy05Zde07NWI178pm1wh5Gu8/PBx/WDq
+         jLvMnhZBmsbSbgOLZpAx3CKkrMaCSZQhW413hzmV/TUd5/ssdMA6/tbShzvdszPIiykJ
+         K0iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711457599; x=1712062399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z0BhUuq6w2jcMHo0vnHZWTdWQ7YEJBXZjKotn4i2wHk=;
+        b=toao5k8yeTF4YAREtaP+BZafEvB7YwSx28BxuxvpgoYQxTQM4hfwCq1tAqAiX4IzBv
+         9dNN+I8QIKJzV0upE2Q1O/B18NqnFT6CatVhSA4GXRQySXa02QmaYbeoJduwofbs/U4V
+         4P99YE5xMccJ+0QYTJ+RG4REf7L6tdne42SLKRKRDLDfGhs1aw6hJq+PEfNW1bbzY4dS
+         8Ef++0tt+USveYWTnU9lm5t2x2odMIQ+/XUqUmOumGWkw5HPlMAGe/7sHdp+lJc6quAC
+         2oPdMVD9dJ+VRl7wBB/QmTwuzaQB4dpvlRINv9IHfUDESxqSaiAGntc/5KHyQKc2q3WE
+         8CfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq12FFrKVz/1xGHhlqm8rAlvBJ/GT+iQ16uGyEVB/g4RFDcEA0UbzgVy+cBmHMqZBbLNSizS+9X0VWo7hnKqpMpuqHHgKLreigKvgyY2HyJig64zBs
+X-Gm-Message-State: AOJu0Ywo5Te0LZK2UW7mVHCMSKI5Ha81YFm6lP9rT6w3AYX6Vv1PK0Tv
+	5zQGiyqm57XifjOQIXsDvgZbYzqPiF572dla4SgqLhHlEP+nT9QPJMaWV8hBBMpOCnvTU2Lt65h
+	Pdp2InWBgKuHe6gFTuuUGbiNbTBbawJn5hE2g
+X-Google-Smtp-Source: AGHT+IH2Oz9Ij0xMEiUnRD6ybquNqgql6Kb2ocAG6nS4ykuQkyqgIotaRGNW/ASQAvSIwgHE/TxrVUinkjCFUqhPnQ8=
+X-Received: by 2002:a05:690c:700f:b0:611:336d:c8f3 with SMTP id
+ jf15-20020a05690c700f00b00611336dc8f3mr801016ywb.24.1711457598719; Tue, 26
+ Mar 2024 05:53:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <b6a2a782-894a-461c-8fc1-9a3669545633@app.fastmail.com>
-In-Reply-To: <20240326.ahyaaPa0ohs6@digikod.net>
-References: <20240325134004.4074874-1-gnoack@google.com>
- <20240325134004.4074874-2-gnoack@google.com>
- <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
- <20240326.pie9eiF2Weis@digikod.net>
- <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
- <20240326.ahyaaPa0ohs6@digikod.net>
-Date: Tue, 26 Mar 2024 12:58:42 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org, "Jeff Xu" <jeffxu@google.com>,
- "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Paul Moore" <paul@paul-moore.com>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- "Christian Brauner" <brauner@kernel.org>
-Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for IOCTL
- hooks
-Content-Type: text/plain;charset=utf-8
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV> <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner> <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
+ <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
+In-Reply-To: <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 26 Mar 2024 08:53:07 -0400
+Message-ID: <CAHC9VhQg6Qhqjs7J+X6wZa+dP4cujcWPJMZONB0SB9aaaGvFDg@mail.gmail.com>
+Subject: Re: kernel crash in mknod
+To: Christian Brauner <brauner@kernel.org>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Steve French <smfrench@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Paulo Alcantara <pc@manguebit.com>, Christian Brauner <christian@brauner.io>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 26, 2024, at 11:10, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Tue, Mar 26, 2024 at 10:33:23AM +0100, Arnd Bergmann wrote:
->> On Tue, Mar 26, 2024, at 09:32, Micka=C3=ABl Sala=C3=BCn wrote:
->> >
->> > This is indeed a simpler solution but unfortunately this doesn't fit
->> > well with the requirements for an access control, especially when we
->> > need to log denied accesses.  Indeed, with this approach, the LSM (=
-or
->> > any other security mechanism) that returns ENOFILEOPS cannot know f=
-or
->> > sure if the related request will allowed or not, and then it cannot
->> > create reliable logs (unlike with EACCES or EPERM).
->>=20
->> Where does the requirement come from specifically, i.e.
->> who is the consumer of that log?
+On Tue, Mar 26, 2024 at 7:40=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> The audit framework may be used by LSMs to log denials.
->
->>=20
->> Even if the log doesn't tell you directly whether the ioctl
->> was ultimately denied, I would think logging the ENOFILEOPS
->> along with the command number is enough to reconstruct what
->> actually happened from reading the log later.
->
-> We could indeed log ENOFILEOPS but that could include a lot of allowed
-> requests and we usually only want unlegitimate access requests to be
-> logged.  Recording all ENOFILEOPS would mean 1/ that logs would be
-> flooded by legitimate requests and 2/ that user space log parsers would
-> need to deduce if a request was allowed or not, which require to know
-> the list of IOCTL commands implemented by fs/ioctl.c, which would defe=
-at
-> the goal of this specific patch.
+> For bigger changes it's also worthwhile if the object that's passed down
+> into the hook-based LSM layer is as specific as possible. If someone
+> does a change that affects lifetime rules of mounts then any hook that
+> takes a struct path argument that's unused means going through each LSM
+> that implements the hook only to find out it's not actually used.
+> Similar for dentry vs inode imho.
 
-Right, makes sense. Unfortunately that means I don't see any
-option that I think is actually better than what we have today,
-but that forces the use of a custom whitelist or extra logic in
-landlock.
+For bigger changes please always ensure that the LSM list, and any
+related LSM implementation lists, are on the To/CC line.  While we
+appreciate Christian's input (and Al's, and all the other VFS devs) on
+VFS matters, there are often other considerations that need to be
+taken into account when discussing LSM related issues.  Generally,
+"specific as possible" is good input, but it isn't the only thing we
+need to worry about, and sometimes other requirements mean that it
+isn't the best choice.  Just as we want the VFS devs involved in
+discussions about VFS related LSM hooks (these new IMA/EVM-related LSM
+hooks were sent to, and reviewed by the VFS folks), I would hope the
+VFS devs would want to include the LSM devs on any LSM related issues
+and would try to avoid speaking on behalf of the LSM devs and
+maintainers.
 
-I didn't really mind having an extra hook for the callbacks
-in addition to the top-level one, but that was already nacked.
-
-      Arnd
+--=20
+paul-moore.com
