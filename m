@@ -1,108 +1,186 @@
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478F66CDB6
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 10:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074474C600
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 10:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711447815; cv=none; b=aohfN9ws67EKfoU46LzSH4Y5X3MD5nWcOemswpPIlKwx52qr5IPJ0VI99GRC9MAmT7Km4Xpwu7yvVuh1sfkHTSeA0nhLFqaPRUs3cpfbG7o09aev5msOuwkPKpiE21IRCZFiaqx9GIu63RFGJCv8Iw0CFE8007K+ckol15mYMXI=
+	t=1711449087; cv=none; b=NvbxTtWQMmqMOZwRsCuBz1aStnGIiN5zp07UCJnRc4GbgwQhifv9gNFuBZo24hQmBs+YaYeokLFDVVm8R32RsF8KrErnS/pBSs6g3eRUmTeQUirxwWcp/4BNVDJs5dWelzihnFcMuwyHkrjXl/mvT/IfMeRBFR6xSiSWM3j+TwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711447815; c=relaxed/simple;
-	bh=fTGzewKK6NNxAEDkXrp9efAnHeqrie/o7hrsmeeKsqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pzp89ZVFDBVOL1rx0RkLmpZ6GgGlQxfVLlE5snEaY1bftHgAJxWnh/Wh1P69h1ol2+5A6PUCuEr9HHp43LMdHFZRTBs3FQwtl5l9G76Ney2YX62/M1IZeXmDL5MOfPWO9dfK6DEmKYcJdEMKZXRGfy3zgoW7raytUnXfaWyYJ84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=scgFueta; arc=none smtp.client-ip=83.166.143.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="scgFueta"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3lst40vqz3ym;
-	Tue, 26 Mar 2024 11:10:10 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3lss3Z0CzMppHg;
-	Tue, 26 Mar 2024 11:10:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711447810;
-	bh=fTGzewKK6NNxAEDkXrp9efAnHeqrie/o7hrsmeeKsqg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=scgFuetaKopx7yXZ8ckjYGk5v82vMMMv0wfnwqTBC1/J2yuLvzcfRDRy6pWsLk6UF
-	 d6CjHexRSYb+gdsjexbDrOPZYnUr2kVq0BHBe8VvDowZsoY2cgipboVYrp+PIWUIEV
-	 g4mzlJUNYgE13NHSuv8BQciPPppBL5iLuR0bsmSs=
-Date: Tue, 26 Mar 2024 11:10:08 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
- IOCTL hooks
-Message-ID: <20240326.ahyaaPa0ohs6@digikod.net>
-References: <20240325134004.4074874-1-gnoack@google.com>
- <20240325134004.4074874-2-gnoack@google.com>
- <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
- <20240326.pie9eiF2Weis@digikod.net>
- <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
+	s=arc-20240116; t=1711449087; c=relaxed/simple;
+	bh=71Oigtobyy7XqTxTfFX4iCbkpJyqzDSBLaRBC3KOytM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RSWcy92yudfMYgLQcsF82jB7b61McJ9NEtUDirNNLTv90EmMPRGm4j/xrqvVTSKUYB5HuLolAqLgMu+ertzVabpcRDIkr5CXahRoLLGFLwdqRLf732H947vJfjnYWj+V0juoaz1Z6FdwC+YKa/ONaQDCDZDC1UHPjLLTJ6qmP/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 42QAUmXp020172;
+	Tue, 26 Mar 2024 05:30:48 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 42QAUlYH020171;
+	Tue, 26 Mar 2024 05:30:47 -0500
+Date: Tue, 26 Mar 2024 05:30:47 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, roberto.sassu@huaweicloud.com
+Subject: Re: [PATCH] Do not require attributes for security_inode_init_security.
+Message-ID: <20240326103047.GA19964@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240324223231.6249-1-greg@enjellic.com> <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 26 Mar 2024 05:30:48 -0500 (CDT)
 
-On Tue, Mar 26, 2024 at 10:33:23AM +0100, Arnd Bergmann wrote:
-> On Tue, Mar 26, 2024, at 09:32, Mickaël Salaün wrote:
-> > On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
-> >> On Mon, Mar 25, 2024, at 14:39, Günther Noack wrote:
-> >> > If security_file_ioctl or security_file_ioctl_compat return
-> >> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOCTL
-> >> > command, but only as long as the IOCTL command is implemented directly
-> >> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
-> >> > f_ops->compat_ioctl operations, which are defined by the given file.
-> >> >
-> >> > The possible return values for security_file_ioctl and
-> >> > security_file_ioctl_compat are now:
-> >> >
-> >> >  * 0 - to permit the IOCTL
-> >> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to fall
-> >> >    back to the file implementation.
-> >> >  * any other error - to forbid the IOCTL and return that error
-> >> >
-> >> > This is an alternative to the previously discussed approaches [1] and [2],
-> >> > and implements the proposal from [3].
-> >> 
-> >> Thanks for trying it out, I think this is a good solution
-> >> and I like how the code turned out.
+On Mon, Mar 25, 2024 at 05:08:54PM -0400, Paul Moore wrote:
+
+Good morning, I hope the week is going well.
+
+> On Sun, Mar 24, 2024 at 6:33???PM Greg Wettstein <greg@enjellic.com> wrote:
 > >
-> > This is indeed a simpler solution but unfortunately this doesn't fit
-> > well with the requirements for an access control, especially when we
-> > need to log denied accesses.  Indeed, with this approach, the LSM (or
-> > any other security mechanism) that returns ENOFILEOPS cannot know for
-> > sure if the related request will allowed or not, and then it cannot
-> > create reliable logs (unlike with EACCES or EPERM).
+> > The integration of the Integrity Measurement Architecture (IMA)
+> > into the LSM infrastructure introduced a conditional check that
+> > denies access to the security_inode_init_security() event handler
+> > if the LSM extended attribute 'blob' size is 0.
+> >
+> > This changes the previous behavior of this event handler and
+> > results in variable behavior of LSM's depending on the LSM boot
+> > configuration.
+> >
+> > Modify the function so that it removes the need for a non-zero
+> > extended attribute blob size and bypasses the memory allocation
+> > and freeing that is not needed if the LSM infrastructure is not
+> > using extended attributes.
+> >
+> > Use a break statement to exit the loop that is iterating over the
+> > defined handlers for this event if a halting error condition is
+> > generated by one of the invoked LSM handlers.  The checks for how
+> > to handle cleanup are executed at the end of the loop regardless
+> > of how the loop terminates.
+> >
+> > A two exit label strategy is implemented.  One of the exit
+> > labels is a target for the no attribute case while the second is
+> > the target for the case where memory allocated for processing of
+> > extended attributes needs to be freed.
+> >
+> > Signed-off-by: Greg Wettstein <greg@enjellic.com>
+> > ---
+> >  security/security.c | 24 ++++++++++++------------
+> >  1 file changed, 12 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/security/security.c b/security/security.c
+> > index 7035ee35a393..a0b52b964688 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -1717,10 +1717,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+> >         if (unlikely(IS_PRIVATE(inode)))
+> >                 return 0;
+> >
+> > -       if (!blob_sizes.lbs_xattr_count)
+> > -               return 0;
+> > -
+> > -       if (initxattrs) {
+> > +       if (blob_sizes.lbs_xattr_count && initxattrs) {
+> >                 /* Allocate +1 for EVM and +1 as terminator. */
+> >                 new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 2,
+> >                                      sizeof(*new_xattrs), GFP_NOFS);
+> > @@ -1733,7 +1730,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+> >                 ret = hp->hook.inode_init_security(inode, dir, qstr, new_xattrs,
+> >                                                   &xattr_count);
+> >                 if (ret && ret != -EOPNOTSUPP)
+> > -                       goto out;
+> > +                       break;
+> >                 /*
+> >                  * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
+> >                  * means that the LSM is not willing to provide an xattr, not
+> > @@ -1742,19 +1739,22 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+> >                  */
+> >         }
+> >
+> > -       /* If initxattrs() is NULL, xattr_count is zero, skip the call. */
+> > -       if (!xattr_count)
+> > -               goto out;
+> > +       /* Skip xattr processing if no attributes are in use. */
+> > +       if (!blob_sizes.lbs_xattr_count)
+> > +               goto out2;
+> > +       /* No attrs or an LSM returned an actionable error code. */
+> > +       if (!xattr_count || (ret && ret != -EOPNOTSUPP))
+> > +               goto out1;
+> >
+> >         ret = evm_inode_init_security(inode, dir, qstr, new_xattrs,
+> >                                       &xattr_count);
+> > -       if (ret)
+> > -               goto out;
+> > -       ret = initxattrs(inode, new_xattrs, fs_data);
+> > -out:
+> > +       if (!ret)
+> > +               ret = initxattrs(inode, new_xattrs, fs_data);
+> > + out1:
+> >         for (; xattr_count > 0; xattr_count--)
+> >                 kfree(new_xattrs[xattr_count - 1].value);
+> >         kfree(new_xattrs);
+> > + out2:
+> >         return (ret == -EOPNOTSUPP) ? 0 : ret;
+> >  }
+> >  EXPORT_SYMBOL(security_inode_init_security);
+> > --
+> > 2.39.1
 > 
-> Where does the requirement come from specifically, i.e.
-> who is the consumer of that log?
-
-The audit framework may be used by LSMs to log denials.
-
+> Looking at this quickly, why does something like the following not work?
 > 
-> Even if the log doesn't tell you directly whether the ioctl
-> was ultimately denied, I would think logging the ENOFILEOPS
-> along with the command number is enough to reconstruct what
-> actually happened from reading the log later.
+> [Warning: copy-n-paste patch, likely whitespace damaged]
+> 
+> diff --git a/security/security.c b/security/security.c
+> index 7e118858b545..007ce438e636 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1712,10 +1712,7 @@ int security_inode_init_security(struct inode *inode, str
+> uct inode *dir,
+>        if (unlikely(IS_PRIVATE(inode)))
+>                return 0;
+> 
+> -       if (!blob_sizes.lbs_xattr_count)
+> -               return 0;
+> -
+> -       if (initxattrs) {
+> +       if (initxattrs && blob_sizes.lbs_xattr_count) {
+>                /* Allocate +1 as terminator. */
+>                new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 1,
+>                                     sizeof(*new_xattrs), GFP_NOFS);
 
-We could indeed log ENOFILEOPS but that could include a lot of allowed
-requests and we usually only want unlegitimate access requests to be
-logged.  Recording all ENOFILEOPS would mean 1/ that logs would be
-flooded by legitimate requests and 2/ that user space log parsers would
-need to deduce if a request was allowed or not, which require to know
-the list of IOCTL commands implemented by fs/ioctl.c, which would defeat
-the goal of this specific patch.
+We ran with something similar to the above for several days of TSEMv3
+testing.
+
+For the patch that we submitted upstream, we elected to take a 'belt
+and suspenders' approach that isolated the 'no attributes' execution
+flow from the flow followed if extended attributes are present.
+
+The approach used doesn't make any difference to us as long as we get
+the functionality of the hook restored.
+
+If you go with the simpler approach, it may be worthwhile to at least
+simplify the handling of the call to the initxattr() function after
+the evm_inode_init_security() call.
+
+It seems simpler and with more clear intent, to use a negated
+conditional check of the 'ret' value from evm_inode_init_security() to
+call the initxattr() function, rather than using the return value to
+jump over the call.
+
+Once again, your choice, no preferences on our part.
+
+> paul-moore.com
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
