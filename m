@@ -1,186 +1,68 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074474C600
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 10:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A215475D;
+	Tue, 26 Mar 2024 11:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711449087; cv=none; b=NvbxTtWQMmqMOZwRsCuBz1aStnGIiN5zp07UCJnRc4GbgwQhifv9gNFuBZo24hQmBs+YaYeokLFDVVm8R32RsF8KrErnS/pBSs6g3eRUmTeQUirxwWcp/4BNVDJs5dWelzihnFcMuwyHkrjXl/mvT/IfMeRBFR6xSiSWM3j+TwA=
+	t=1711453227; cv=none; b=jCaQvjVx3Drdo88I/UTrvHaSCV3WwMsMTJXnutikBm4Gi+noH5fgV0tW03T5q7ZTKLW3+hiZ/YaSfkM0jWwwvGrddEBrR/14Iawp4MIb0hDGrW1D8MeR50boi63daiARFQkdeTKRq4Yk7i/S2xI/F227Uc3ggIchKfLJnHn8FcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711449087; c=relaxed/simple;
-	bh=71Oigtobyy7XqTxTfFX4iCbkpJyqzDSBLaRBC3KOytM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RSWcy92yudfMYgLQcsF82jB7b61McJ9NEtUDirNNLTv90EmMPRGm4j/xrqvVTSKUYB5HuLolAqLgMu+ertzVabpcRDIkr5CXahRoLLGFLwdqRLf732H947vJfjnYWj+V0juoaz1Z6FdwC+YKa/ONaQDCDZDC1UHPjLLTJ6qmP/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 42QAUmXp020172;
-	Tue, 26 Mar 2024 05:30:48 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 42QAUlYH020171;
-	Tue, 26 Mar 2024 05:30:47 -0500
-Date: Tue, 26 Mar 2024 05:30:47 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, roberto.sassu@huaweicloud.com
-Subject: Re: [PATCH] Do not require attributes for security_inode_init_security.
-Message-ID: <20240326103047.GA19964@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240324223231.6249-1-greg@enjellic.com> <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com>
+	s=arc-20240116; t=1711453227; c=relaxed/simple;
+	bh=LamHup0dGZLclxF5hDMENi9cqj4fae/k4ItBnLEbvXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvaCcxB+eDowncwy7b+2Bo8t4pXlD4Wuo0cPzxSCvPESE8iDd8wPWjugrs3hNwZFaHXZUK3ZReAoA8JqR1g2e5VMFyjXzgdOdfLebW8NCgpVszgOlSqOXXoZwQNu60G3u1bf/UhyybZU1e2apSri8l6wWCnvvtUUxaqq/s9r3kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMRE/iI4; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMRE/iI4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D913C433C7;
+	Tue, 26 Mar 2024 11:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711453226;
+	bh=LamHup0dGZLclxF5hDMENi9cqj4fae/k4ItBnLEbvXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AMRE/iI4RJ6vd0APpjPRk1YQHf4J9dTuv4WrqGL8+E1hr7+otCP/sB5gPa7Rf2wgb
+	 IiPE38SuABXhybKzI5dQ/4abJDjcdtLMFsAW68JM0PSqEWKRuomzcmmWP0/lGUolbm
+	 rArt7kRg23507Zdd3jlu/crFMF3b5yXeuWkyQvYQiQNIUWoDz6ERDiNJqumC0KnAgY
+	 X8pOF+Uqvu+K8HbbMcaKcvHgjpoznL00qAuP4DGdCfgsa98ihYMr7lSYXEeaFsaPXu
+	 i0FW42e42lLutB+Qb3CqlrbfFBUjaqAdZS/nSNx+Em/M+fuwezqwvOuUM+8ViviusI
+	 1GMEGdZV2mTHw==
+Date: Tue, 26 Mar 2024 12:40:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Christian Brauner <christian@brauner.io>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Paul Moore <paul@paul-moore.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Subject: Re: kernel crash in mknod
+Message-ID: <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV>
+ <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
+ <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 26 Mar 2024 05:30:48 -0500 (CDT)
+In-Reply-To: <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
 
-On Mon, Mar 25, 2024 at 05:08:54PM -0400, Paul Moore wrote:
+> we can change the parameter of security_path_post_mknod() from
+> dentry to inode?
 
-Good morning, I hope the week is going well.
+If all current callers only operate on the inode then it seems the best
+to only pass the inode. If there's some reason someone later needs a
+dentry the hook can always be changed.
 
-> On Sun, Mar 24, 2024 at 6:33???PM Greg Wettstein <greg@enjellic.com> wrote:
-> >
-> > The integration of the Integrity Measurement Architecture (IMA)
-> > into the LSM infrastructure introduced a conditional check that
-> > denies access to the security_inode_init_security() event handler
-> > if the LSM extended attribute 'blob' size is 0.
-> >
-> > This changes the previous behavior of this event handler and
-> > results in variable behavior of LSM's depending on the LSM boot
-> > configuration.
-> >
-> > Modify the function so that it removes the need for a non-zero
-> > extended attribute blob size and bypasses the memory allocation
-> > and freeing that is not needed if the LSM infrastructure is not
-> > using extended attributes.
-> >
-> > Use a break statement to exit the loop that is iterating over the
-> > defined handlers for this event if a halting error condition is
-> > generated by one of the invoked LSM handlers.  The checks for how
-> > to handle cleanup are executed at the end of the loop regardless
-> > of how the loop terminates.
-> >
-> > A two exit label strategy is implemented.  One of the exit
-> > labels is a target for the no attribute case while the second is
-> > the target for the case where memory allocated for processing of
-> > extended attributes needs to be freed.
-> >
-> > Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> > ---
-> >  security/security.c | 24 ++++++++++++------------
-> >  1 file changed, 12 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/security/security.c b/security/security.c
-> > index 7035ee35a393..a0b52b964688 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -1717,10 +1717,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >         if (unlikely(IS_PRIVATE(inode)))
-> >                 return 0;
-> >
-> > -       if (!blob_sizes.lbs_xattr_count)
-> > -               return 0;
-> > -
-> > -       if (initxattrs) {
-> > +       if (blob_sizes.lbs_xattr_count && initxattrs) {
-> >                 /* Allocate +1 for EVM and +1 as terminator. */
-> >                 new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 2,
-> >                                      sizeof(*new_xattrs), GFP_NOFS);
-> > @@ -1733,7 +1730,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >                 ret = hp->hook.inode_init_security(inode, dir, qstr, new_xattrs,
-> >                                                   &xattr_count);
-> >                 if (ret && ret != -EOPNOTSUPP)
-> > -                       goto out;
-> > +                       break;
-> >                 /*
-> >                  * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
-> >                  * means that the LSM is not willing to provide an xattr, not
-> > @@ -1742,19 +1739,22 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
-> >                  */
-> >         }
-> >
-> > -       /* If initxattrs() is NULL, xattr_count is zero, skip the call. */
-> > -       if (!xattr_count)
-> > -               goto out;
-> > +       /* Skip xattr processing if no attributes are in use. */
-> > +       if (!blob_sizes.lbs_xattr_count)
-> > +               goto out2;
-> > +       /* No attrs or an LSM returned an actionable error code. */
-> > +       if (!xattr_count || (ret && ret != -EOPNOTSUPP))
-> > +               goto out1;
-> >
-> >         ret = evm_inode_init_security(inode, dir, qstr, new_xattrs,
-> >                                       &xattr_count);
-> > -       if (ret)
-> > -               goto out;
-> > -       ret = initxattrs(inode, new_xattrs, fs_data);
-> > -out:
-> > +       if (!ret)
-> > +               ret = initxattrs(inode, new_xattrs, fs_data);
-> > + out1:
-> >         for (; xattr_count > 0; xattr_count--)
-> >                 kfree(new_xattrs[xattr_count - 1].value);
-> >         kfree(new_xattrs);
-> > + out2:
-> >         return (ret == -EOPNOTSUPP) ? 0 : ret;
-> >  }
-> >  EXPORT_SYMBOL(security_inode_init_security);
-> > --
-> > 2.39.1
-> 
-> Looking at this quickly, why does something like the following not work?
-> 
-> [Warning: copy-n-paste patch, likely whitespace damaged]
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 7e118858b545..007ce438e636 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1712,10 +1712,7 @@ int security_inode_init_security(struct inode *inode, str
-> uct inode *dir,
->        if (unlikely(IS_PRIVATE(inode)))
->                return 0;
-> 
-> -       if (!blob_sizes.lbs_xattr_count)
-> -               return 0;
-> -
-> -       if (initxattrs) {
-> +       if (initxattrs && blob_sizes.lbs_xattr_count) {
->                /* Allocate +1 as terminator. */
->                new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 1,
->                                     sizeof(*new_xattrs), GFP_NOFS);
-
-We ran with something similar to the above for several days of TSEMv3
-testing.
-
-For the patch that we submitted upstream, we elected to take a 'belt
-and suspenders' approach that isolated the 'no attributes' execution
-flow from the flow followed if extended attributes are present.
-
-The approach used doesn't make any difference to us as long as we get
-the functionality of the hook restored.
-
-If you go with the simpler approach, it may be worthwhile to at least
-simplify the handling of the call to the initxattr() function after
-the evm_inode_init_security() call.
-
-It seems simpler and with more clear intent, to use a negated
-conditional check of the 'ret' value from evm_inode_init_security() to
-call the initxattr() function, rather than using the return value to
-jump over the call.
-
-Once again, your choice, no preferences on our part.
-
-> paul-moore.com
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+For bigger changes it's also worthwhile if the object that's passed down
+into the hook-based LSM layer is as specific as possible. If someone
+does a change that affects lifetime rules of mounts then any hook that
+takes a struct path argument that's unused means going through each LSM
+that implements the hook only to find out it's not actually used.
+Similar for dentry vs inode imho.
