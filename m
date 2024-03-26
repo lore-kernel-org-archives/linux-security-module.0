@@ -1,121 +1,82 @@
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88655D49D
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 09:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D36487B5;
+	Tue, 26 Mar 2024 09:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711446708; cv=none; b=ugU02Lhco3bntlQOelYxbebYuoQXL6YFAuXK3pR3Ho6SjtN0aHNxuUZyozHmmJHFJKsquEJIrXhO3bHqUm/KNbYb8bn1GN3569voOwmLkgW15eR9n1MkIy9bTEI0rJlWWR0K8u3znCiKDqDv/t2wNgtcAbrriFHlSjSvRq5YUNI=
+	t=1711447047; cv=none; b=tza1WwwpRGgOIMHYEmKEn9XWs8RVtzs5gGEW9InY9G0Tux6BOl6Y2vudov0eAggcTOGuRJE33pl0MmO8UR2tgBjsX3KYj3r6reHdIsctjyO2R9uRZG3iUpWubPsl3+VFBlAeP8/ERWdQ77CcBwzI/Rb4a6rPKx7wnnUV4xBoKrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711446708; c=relaxed/simple;
-	bh=/U6ehYBQXcnrObcNkQuqkpo5gBGsRNrPqQ0nV96fJPs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GXnUpwZv4gbA+BRbatbwSTFjSurqkpqB0tptnZmmJyZsaNw3SmHe+GrEb8tlOOJDilijd46mHVH/4wG2h+PR8tTLisgPZfdaLK+LxWv5Oku8vVtGTZWUuSAeM2opKQwPoqSzS6fn6biGTkDjghvXDcIrBbaOtLfKX7rXvHT2h1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=bK1gxeww; arc=none smtp.client-ip=83.166.143.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="bK1gxeww"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3lSV3Xh4zd0D;
-	Tue, 26 Mar 2024 10:51:38 +0100 (CET)
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3lST4szDz2xp;
-	Tue, 26 Mar 2024 10:51:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711446698;
-	bh=/U6ehYBQXcnrObcNkQuqkpo5gBGsRNrPqQ0nV96fJPs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bK1gxeww/uTEzVNw0ciXTKlhEtagIgU52+cHPMFu9FdI2oNTNKNkmoQEFnGk7Q4K+
-	 r6+VEAFLwq5euuWGBE25RV0OYahm4ocVf//B9IbYwEzfiNU5U409AFdXxeevhCjTmf
-	 UaEXjXohshVp1vqvsMZ5EEvQTKN9FUBxBesB20Xg=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Kees Cook <keescook@chromium.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Marco Pagani <marpagan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thara Gopinath <tgopinath@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Zahra Tarkhani <ztarkhani@microsoft.com>,
-	kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org
-Subject: [PATCH v4 3/7] kunit: Fix timeout message
-Date: Tue, 26 Mar 2024 10:51:14 +0100
-Message-ID: <20240326095118.126696-4-mic@digikod.net>
-In-Reply-To: <20240326095118.126696-1-mic@digikod.net>
-References: <20240326095118.126696-1-mic@digikod.net>
+	s=arc-20240116; t=1711447047; c=relaxed/simple;
+	bh=+oKix8TDa/erex+yEij8/8FaBF30hD83a+heP0Kqg4g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t5Tt5kmEbHF3fDxE7kpDweYHtLQWIRS0/5zvjMfNn0yD+Rxt4HEInACzx8OY7WVPt5zTaKCb5qx9E37u97iloLqRxdtK/1tcLcD2dv7tbi4R465uz2SaZqIKjKXOwz14Xf3X24KDq9W3VVshwwXBweq+j5+KAL3wfyr/P+puaA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4V3lX20SPQzwQ27;
+	Tue, 26 Mar 2024 17:54:42 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 36603140157;
+	Tue, 26 Mar 2024 17:57:21 +0800 (CST)
+Received: from mscphis02103.huawei.com (10.123.65.215) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 26 Mar 2024 17:57:19 +0800
+From: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+To: <mic@digikod.net>
+CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+Subject: [PATCH] samples/landlock: Fix incorrect free in populate_ruleset_net
+Date: Tue, 26 Mar 2024 17:56:25 +0800
+Message-ID: <20240326095625.3576164-1-ivanov.mikhail1@huawei-partners.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain
+X-ClientProxiedBy: mscpeml100003.china.huawei.com (10.199.174.67) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-The exit code is always checked, so let's properly handle the -ETIMEDOUT
-error code.
+Pointer env_port_name changes after strsep(). Memory allocated via
+strdup() will not be freed if landlock_add_rule() returns non-zero value.
 
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: David Gow <davidgow@google.com>
-Reviewed-by: Rae Moar <rmoar@google.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240326095118.126696-4-mic@digikod.net
+Fixes: 5e990dcef12e ("samples/landlock: Support TCP restrictions")
+Signed-off-by: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Reviewed-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 ---
+ samples/landlock/sandboxer.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Changes since v2:
-* Add Rae's and David's Reviewed-by.
-
-Changes since v1:
-* Add Kees's Reviewed-by.
----
- lib/kunit/try-catch.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-index 73f5007f20ea..cab8b24b5d5a 100644
---- a/lib/kunit/try-catch.c
-+++ b/lib/kunit/try-catch.c
-@@ -79,7 +79,6 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
- 	time_remaining = wait_for_completion_timeout(&try_completion,
- 						     kunit_test_timeout());
- 	if (time_remaining == 0) {
--		kunit_err(test, "try timed out\n");
- 		try_catch->try_result = -ETIMEDOUT;
- 		kthread_stop(task_struct);
- 	}
-@@ -94,6 +93,8 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
- 		try_catch->try_result = 0;
- 	else if (exit_code == -EINTR)
- 		kunit_err(test, "wake_up_process() was never called\n");
-+	else if (exit_code == -ETIMEDOUT)
-+		kunit_err(test, "try timed out\n");
- 	else if (exit_code)
- 		kunit_err(test, "Unknown error: %d\n", exit_code);
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index 32e930c853bb..8b8ecd65c28c 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -153,7 +153,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+ 				const __u64 allowed_access)
+ {
+ 	int ret = 1;
+-	char *env_port_name, *strport;
++	char *env_port_name, *env_port_name_next, *strport;
+ 	struct landlock_net_port_attr net_port = {
+ 		.allowed_access = allowed_access,
+ 		.port = 0,
+@@ -165,7 +165,8 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+ 	env_port_name = strdup(env_port_name);
+ 	unsetenv(env_var);
  
+-	while ((strport = strsep(&env_port_name, ENV_DELIMITER))) {
++	env_port_name_next = env_port_name;
++	while ((strport = strsep(&env_port_name_next, ENV_DELIMITER))) {
+ 		net_port.port = atoi(strport);
+ 		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
+ 				      &net_port, 0)) {
 -- 
-2.44.0
+2.34.1
 
