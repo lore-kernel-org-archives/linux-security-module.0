@@ -1,104 +1,218 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B2873175
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 12:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBB874BE8
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 13:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711457601; cv=none; b=YwR5w6hlxBrVzsVzczwDVuBHJQHOMjKksk22p1tsvrs+3iFNd7v+qglRPh1gIN3wsCxdQOOGFbSUgf/y4rSvVQePyUAsUZiIltt8fDCxGxM5wDaXC1CzU3KOLoL3G7lRVcxzMKPl2KoiBA2uXkA4yuM4zq+fhmFLh5IBZ2JVhx8=
+	t=1711458592; cv=none; b=UiTynikZy3Dq3k9HECe0Wd0+TzCTkv/JfDcMfxyQo796sgijkAcFESF5f4RLyWA0ANoaIAlWLUiRKzLiKOugFx1NukkUfPxdFOOlL0zHkUgg0wc+q6CPfaz/F7bILgnLQDEoQaNtQ+dkvQdRtOBab2Wc2y/UXFSXamdTks9Is1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711457601; c=relaxed/simple;
-	bh=5XbquQmJKaNfWBjyEtOOSnqsLcETpU6DZOyNLjemzmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z5SRK+SFZ2XEabgIy4+4VjIjTGKXEQ5GGLyXJegcnj+6wikHD047Z3L+zFFIVAQQL5Ww0THQVdLB6v8UP1st7t4fJo5UvDXxXm3UL3xmI/wROub5dcj1K1eaaIcUTJQvasWyHasb+F5AL+z6HMohe9We7fM/1UL28TYhvzIactw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TrSNZXgn; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1711458592; c=relaxed/simple;
+	bh=ebTObtm0sD8Cer1bCQSS15gzK3xT8Q/69O7Kqc6cJYo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LukfGKaCXn0DAM/UlFqVlKd6eNPVI3zfOh4Xoa0p7CcUaOAioAO5gdoocUfCuI4cYeglDMVezJ6xmdnu9gownu77aJ0dZ2P0XucbI4YMpkYXXklMn999n7+EHG6uIComXk/gGqI7HrMnSXFBrYTvtGSV9fgYMwymxaykesnm1GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hG+b/dpj; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TrSNZXgn"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-609f4d8551eso52163607b3.1
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 05:53:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hG+b/dpj"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-60cd62fa1f9so83246287b3.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 06:09:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1711457599; x=1712062399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z0BhUuq6w2jcMHo0vnHZWTdWQ7YEJBXZjKotn4i2wHk=;
-        b=TrSNZXgnFF7GvLHr6M+Rgew7GU+Wc6sqwMeSm/E9VbSWkoZE9GMg+Wl71y2gSnuWJI
-         3NFtVETJjLs4IyW9BQR77EzSomQBRFS2IFOkfTYKRG0jNgDUhWWnV30AqBJCNeVmESEq
-         czISs7cXGwoum4ATewhUj9UuAIU1vG32bY7qF+Ww7LB1txAIgVURulRKip8MlfZX0TBj
-         rr7gdsJJ8M/ykHGK+KI164xZ8h3pgemvlntiQy05Zde07NWI178pm1wh5Gu8/PBx/WDq
-         jLvMnhZBmsbSbgOLZpAx3CKkrMaCSZQhW413hzmV/TUd5/ssdMA6/tbShzvdszPIiykJ
-         K0iA==
+        d=google.com; s=20230601; t=1711458589; x=1712063389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NzP2CCUVdCYdG6Z2oZuafIfjQL3zpbJlRZ1Y/vZXh6A=;
+        b=hG+b/dpjD4UcBnZR1VnyJBeoIN9kcn4+XU8WSur2F2eA4maVh4mtB5nkF/6VJF5zgz
+         Ax0m0RHsU4mBBezl4GaZruuKFQUdQI2GhggaUkZXI9HQ62cBWc+AVL4fzScQhHIpthBN
+         tjXrrn9f8QTqjQkSAwtjQ/N1Pw5E3TRKLqkMirjG85hacRsSf+HqKO6z4udnVs7soavG
+         3cYr0ABcJGxCHP28UcJwHJ0Z2A/7JtcsZkXrE6L+XVMuDArUbTKQqkmX2JLmSzz78NxO
+         SC0s1kap4t6FYsSSydtddnOTdaQZRmxdk+KI9/nbxcpezdo4pPlQ7MNJ7uqXAE7ld2W+
+         m2TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711457599; x=1712062399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z0BhUuq6w2jcMHo0vnHZWTdWQ7YEJBXZjKotn4i2wHk=;
-        b=toao5k8yeTF4YAREtaP+BZafEvB7YwSx28BxuxvpgoYQxTQM4hfwCq1tAqAiX4IzBv
-         9dNN+I8QIKJzV0upE2Q1O/B18NqnFT6CatVhSA4GXRQySXa02QmaYbeoJduwofbs/U4V
-         4P99YE5xMccJ+0QYTJ+RG4REf7L6tdne42SLKRKRDLDfGhs1aw6hJq+PEfNW1bbzY4dS
-         8Ef++0tt+USveYWTnU9lm5t2x2odMIQ+/XUqUmOumGWkw5HPlMAGe/7sHdp+lJc6quAC
-         2oPdMVD9dJ+VRl7wBB/QmTwuzaQB4dpvlRINv9IHfUDESxqSaiAGntc/5KHyQKc2q3WE
-         8CfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUq12FFrKVz/1xGHhlqm8rAlvBJ/GT+iQ16uGyEVB/g4RFDcEA0UbzgVy+cBmHMqZBbLNSizS+9X0VWo7hnKqpMpuqHHgKLreigKvgyY2HyJig64zBs
-X-Gm-Message-State: AOJu0Ywo5Te0LZK2UW7mVHCMSKI5Ha81YFm6lP9rT6w3AYX6Vv1PK0Tv
-	5zQGiyqm57XifjOQIXsDvgZbYzqPiF572dla4SgqLhHlEP+nT9QPJMaWV8hBBMpOCnvTU2Lt65h
-	Pdp2InWBgKuHe6gFTuuUGbiNbTBbawJn5hE2g
-X-Google-Smtp-Source: AGHT+IH2Oz9Ij0xMEiUnRD6ybquNqgql6Kb2ocAG6nS4ykuQkyqgIotaRGNW/ASQAvSIwgHE/TxrVUinkjCFUqhPnQ8=
-X-Received: by 2002:a05:690c:700f:b0:611:336d:c8f3 with SMTP id
- jf15-20020a05690c700f00b00611336dc8f3mr801016ywb.24.1711457598719; Tue, 26
- Mar 2024 05:53:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711458589; x=1712063389;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NzP2CCUVdCYdG6Z2oZuafIfjQL3zpbJlRZ1Y/vZXh6A=;
+        b=RkVehJmwazuJJ7sRjMj9EcmEtDuGqNGeoeUdeO1fPq9BuHNgeep7hiHbiKjTTlx6IL
+         eOZktt1kUzU0te9JFX6hFnwbwnBL5JZ5RTGqyS1Q6bIwUBSpqe+gsgUIVFIre1kQr59J
+         1PUVZ7Y286C3I9ZcwUjxjqA4lvmrwc2DA5LXmo5n/2Kk3afqu1mRdEr4xYuo2tI5pWcr
+         Z1mYXpRYvU4Weau1yq5vEtUWsGYPR7Q1U8GmkAU4OJbt7qvuYeFP62TMkdY+KtBnX253
+         f6HDs84/xWoUuphDcgvw93rdMmgm6VwVdNIz1mgAmULl88Aedy1fESQE0AXgoSnzkrqS
+         GoAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUF08SlAnzSoBIk9czlQBWQT4gq3eWsvhroIaMcbijqtAP+XWSlECoobSxuzFytnToPi5a6Z6bYaZapf/1q8PM1LAtL63Mb5sBU02n2DsZUPYalMOJQ
+X-Gm-Message-State: AOJu0Yyt8jQnplxJvsHLGUjB/RYmSoWMwqa6kbi96l+JyXJCWxbyZJHJ
+	CDV8aQefNfI4/i7k6dPCPXPnwBmaDlBg8r4crD+07W6PXRYmdDBUkYG0dj5GwodUq1XsG+cDhWy
+	TlA==
+X-Google-Smtp-Source: AGHT+IEUwLWU4LZfecEsq4dTBQYeNqu7eWfbD0LdWXMXrH5wFJBdab+iFQZnjEs0NErmOBTQ4tDm00NQItY=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a81:9a0b:0:b0:611:a424:3c66 with SMTP id
+ r11-20020a819a0b000000b00611a4243c66mr468282ywg.5.1711458589679; Tue, 26 Mar
+ 2024 06:09:49 -0700 (PDT)
+Date: Tue, 26 Mar 2024 14:09:47 +0100
+In-Reply-To: <b6a2a782-894a-461c-8fc1-9a3669545633@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV> <3441a4a1140944f5b418b70f557bca72@huawei.com>
- <20240325-beugen-kraftvoll-1390fd52d59c@brauner> <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
- <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
-In-Reply-To: <20240326-halbkreis-wegstecken-8d5886e54d28@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 26 Mar 2024 08:53:07 -0400
-Message-ID: <CAHC9VhQg6Qhqjs7J+X6wZa+dP4cujcWPJMZONB0SB9aaaGvFDg@mail.gmail.com>
-Subject: Re: kernel crash in mknod
-To: Christian Brauner <brauner@kernel.org>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Steve French <smfrench@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	Paulo Alcantara <pc@manguebit.com>, Christian Brauner <christian@brauner.io>, 
-	Mimi Zohar <zohar@linux.ibm.com>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240325134004.4074874-1-gnoack@google.com> <20240325134004.4074874-2-gnoack@google.com>
+ <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com> <20240326.pie9eiF2Weis@digikod.net>
+ <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com> <20240326.ahyaaPa0ohs6@digikod.net>
+ <b6a2a782-894a-461c-8fc1-9a3669545633@app.fastmail.com>
+Message-ID: <ZgLJG0aN0psur5Z7@google.com>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
+ IOCTL hooks
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, linux-security-module@vger.kernel.org, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 26, 2024 at 7:40=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> For bigger changes it's also worthwhile if the object that's passed down
-> into the hook-based LSM layer is as specific as possible. If someone
-> does a change that affects lifetime rules of mounts then any hook that
-> takes a struct path argument that's unused means going through each LSM
-> that implements the hook only to find out it's not actually used.
-> Similar for dentry vs inode imho.
+On Tue, Mar 26, 2024 at 12:58:42PM +0100, Arnd Bergmann wrote:
+> On Tue, Mar 26, 2024, at 11:10, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On Tue, Mar 26, 2024 at 10:33:23AM +0100, Arnd Bergmann wrote:
+> >> On Tue, Mar 26, 2024, at 09:32, Micka=C3=ABl Sala=C3=BCn wrote:
+> >> >
+> >> > This is indeed a simpler solution but unfortunately this doesn't fit
+> >> > well with the requirements for an access control, especially when we
+> >> > need to log denied accesses.  Indeed, with this approach, the LSM (o=
+r
+> >> > any other security mechanism) that returns ENOFILEOPS cannot know fo=
+r
+> >> > sure if the related request will allowed or not, and then it cannot
+> >> > create reliable logs (unlike with EACCES or EPERM).
+> >>=20
+> >> Where does the requirement come from specifically, i.e.
+> >> who is the consumer of that log?
+> >
+> > The audit framework may be used by LSMs to log denials.
+> >
+> >>=20
+> >> Even if the log doesn't tell you directly whether the ioctl
+> >> was ultimately denied, I would think logging the ENOFILEOPS
+> >> along with the command number is enough to reconstruct what
+> >> actually happened from reading the log later.
+> >
+> > We could indeed log ENOFILEOPS but that could include a lot of allowed
+> > requests and we usually only want unlegitimate access requests to be
+> > logged.  Recording all ENOFILEOPS would mean 1/ that logs would be
+> > flooded by legitimate requests and 2/ that user space log parsers would
+> > need to deduce if a request was allowed or not, which require to know
+> > the list of IOCTL commands implemented by fs/ioctl.c, which would defea=
+t
+> > the goal of this specific patch.
+>=20
+> Right, makes sense. Unfortunately that means I don't see any
+> option that I think is actually better than what we have today,
+> but that forces the use of a custom whitelist or extra logic in
+> landlock.
+>=20
+> I didn't really mind having an extra hook for the callbacks
+> in addition to the top-level one, but that was already nacked.
 
-For bigger changes please always ensure that the LSM list, and any
-related LSM implementation lists, are on the To/CC line.  While we
-appreciate Christian's input (and Al's, and all the other VFS devs) on
-VFS matters, there are often other considerations that need to be
-taken into account when discussing LSM related issues.  Generally,
-"specific as possible" is good input, but it isn't the only thing we
-need to worry about, and sometimes other requirements mean that it
-isn't the best choice.  Just as we want the VFS devs involved in
-discussions about VFS related LSM hooks (these new IMA/EVM-related LSM
-hooks were sent to, and reviewed by the VFS folks), I would hope the
-VFS devs would want to include the LSM devs on any LSM related issues
-and would try to avoid speaking on behalf of the LSM devs and
-maintainers.
+Thank you both for the review!
 
---=20
-paul-moore.com
+I agree, this approach would break logging.
+
+As you both also said, I also think this leads us back to the approach
+where we hardcode the allow-list of permitted IOCTL commands in the
+file_ioctl hook.
+
+I think this approach has the following upsides:
+
+  1. Landlock's (future) audit logging will be able to log exactly
+     which IOCTL commands were denied.
+  2. The allow-list of permitted IOCTL commands can be reasoned about
+     locally and does not accidentally change as a side-effect of a
+     change to the implementation of fs/ioctl.c.
+
+A risk that we have is:
+
+  3. We might miss changes to fs/ioctl.c which we might want to
+     reflect in Landlock.
+
+
+To think about 2 and 3 in more concrete terms, I categorized the
+scenarios in which IOCTL cmd implementations can get added to or
+removed from the do_vfs_ioctl() layer:
+
+  Case A: New cmd added to do_vfs_ioctl layer
+
+    We want to double check whether this cmd should be included in
+    Landlock's allow list.  (Because the command is new, there are no
+    existing users of the IOCTL command, so we can't break anyone and
+    we it probably does not require to be made explicit in Landlock's
+    ABI versioning scheme.)
+
+    =3D=3D> We need to catch these changes early,
+        and should do Landlock-side changes in sync.
+
+  Case B: Existing cmd removed from do_vfs_ioctl layer
+
+    (This case is unlikely, as it would be a backwards-incompatible
+    change in the ioctl interface.)
+
+  Case C: Existing cmd is moved from f_ops->..._ioctl() to do_vfs_ioctl()
+
+    (For regular files, I think this has happened for the XFS
+    "reflink" ioctls before, which became features in other COW file
+    systems as well.)
+
+    If such a change happens for device files (which are in scope for
+    Landlock's IOCTL feature), we should catch these changes.  We
+    should consider whether the affected IOCTL command should be
+    allow-listed.  Strictly speaking, if we allow-list the cmd, which
+    was previously not allow-listed, this would mean that Landlock's
+    DEV_IOCTL feature would have different semantics than before
+    (permitting an additional cmd), and it would potentially be a
+    backwards-incompatible change that need to be made explicit in
+    Landlock's ABI versioning.
+
+  Case D: Existing cmd is moved from do_vfs_ioctl() to f_ops->..._ioctl()
+
+    (This case seems also very unlikely to me because it decentralizes
+    the reasoning about these IOCTL APIs which are currently centrally
+    controlled and must stay backwards compatible.)
+
+
+
+So -- a proposal:
+
+* Keep the original implementation of fs/ioctl.c
+* Implement Landlock's file_ioctl hook with a switch(cmd) where we list
+  the permitted IOCTL commands from do_vfs_ioctl.
+* Make sure Landlock maintainers learn about changes to do_vfs_ioctl():
+  * Put a warning on top of do_vfs_ioctl() to loop in Landlock
+    maintainers
+  * Set up automation to catch such changes?
+
+
+Open questions are:
+
+* Micka=C3=ABl, do you think we should use a more device-file-specific
+  subset of IOCTL commands again, or would you prefer to stick to the
+  full list of all IOCTL commands implemented in do_vfs_ioctl()?
+
+* Regarding automation:
+
+  We could additionally set up some automation to watch changes to
+  do_vfs_ioctl().  Given the low rate of change in that corner, we
+  might get away with extracting the relevant portion of the C file
+  (awk '/^static int do_vfs_ioctl/, /^\}/' fs/ioctl.c) and watching
+  for any changes.  It is brittle, but the rate of changes is low, and
+  reasoning about source code is difficult and error prone as well.
+
+  In an ideal world this could maybe be part of the kernel test
+  suites, but I still have not found the right place where this could
+  be hooked in.  Do you have any thoughts on this?
+
+Thanks,
+=E2=80=94G=C3=BCnther
