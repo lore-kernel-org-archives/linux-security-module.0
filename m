@@ -1,232 +1,126 @@
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871B712D77C
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 14:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BFC13CA8C
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 18:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711463297; cv=none; b=QgexJ1Luoc1NaUNHgh3bBF5q7J84ul2Zs3mRXmy8iUrFCKSXT06wIm6kHpa0SQHQjRFfkjV9WlcRzb+8cD2TD0p+qBKLKcvtMLCa0poj3FWQX6+XT6GmpmO39zHOsIkYXJZxM2DBk/OH63GthZlmYyoun7G2MMmeYx8Otbl3QJk=
+	t=1711479148; cv=none; b=WTAOJkeaNXhcY0vCJNOKzw0AMqH/HAXD3irsj1DXO04xTwByHU2PwwzsFVXHNn9pBmTXTOU95xBhHsH8KPn5NoFzHPSyW2FKMJhg0jBPkrS6EcGUHGxsT8EwFf+dYRX8w6lsXZqhlEQGeG1YTnAzB6RsMGb5A52w6alGGbhQ1lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711463297; c=relaxed/simple;
-	bh=6lmafzCsTWpTvGeu21j779OMA5ZG5ow47Ac1mlpCsqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1Y1TBdVXm8byaekfKubBvXHnTaHqEV59Ak+oatLi42NFDzXViT9Q/6p5CxyRa5Z9zu8ECr9C9Eu7FL98wl9Pzg8fvClMzKfR/b1vk5QaHNDDyCOwlSOwEYtB0CGN8l7/5qsl7yEuMsen7nf/xNO8FPIqq5Fhr2xXXNz30uaJ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0qdbMucO; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1711479148; c=relaxed/simple;
+	bh=gVGL9JKWsT+/jWsd/FheyCcz8K4hp3FIwzMKWZrzr6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kaUoGVSk+DWC+UiMeN1/ISFRhpr5LuPilOlKrI+G5h9drADqrzDHjZqs3VT0V66DVkMFdWbynq75RZNmPSrr2hbSZwPBCZAO8RRblj7H16h6GVRo+bOr27QyXrJ7u9HGLUrL5h1ZpsbHKXT5NgBmuqVH4PjyfjGnFcx/RWyYzzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RVSIHSq9; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0qdbMucO"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3sbZ2sKtzbSS;
-	Tue, 26 Mar 2024 15:28:10 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3sbY0c8Zzr9;
-	Tue, 26 Mar 2024 15:28:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711463290;
-	bh=6lmafzCsTWpTvGeu21j779OMA5ZG5ow47Ac1mlpCsqM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0qdbMucO5xs1uqHka3M9q8VqVDkmiY6Telpoml3gQonVqqniVXWmiR5tN5A7fw42M
-	 A5EJhy/7F+69xZjBrKC0DLVbWHZ7FLqp/NlTTTJb/8EjdWr3XsApKSsPB2+wOxlYND
-	 WTzh6H7MU77zQnsBnu6hv16ulsh/bo6SzrC29YqY=
-Date: Tue, 26 Mar 2024 15:28:08 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-security-module@vger.kernel.org, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
- IOCTL hooks
-Message-ID: <20240326.ooCheem1biV2@digikod.net>
-References: <20240325134004.4074874-1-gnoack@google.com>
- <20240325134004.4074874-2-gnoack@google.com>
- <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
- <20240326.pie9eiF2Weis@digikod.net>
- <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
- <20240326.ahyaaPa0ohs6@digikod.net>
- <b6a2a782-894a-461c-8fc1-9a3669545633@app.fastmail.com>
- <ZgLJG0aN0psur5Z7@google.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RVSIHSq9"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-609f1f97864so67346747b3.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 11:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1711479144; x=1712083944; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gzSSnt/1tuqFAqk72WO9Yx92dcNUcT/slEGP7/aoLdQ=;
+        b=RVSIHSq9ryDRSaY85pv34d9aEzHjPlrYPDOqiZqos5fty8gX8MCkRRjnrAMHYEnnXE
+         TeuuP3w2YtuU2xAcA5rSHvxlqGLddlc6JTUfUMNA+znAY7/ubMX+4UFWwi7wjw7EZgSE
+         OVhgyqr8Af9zEA1qXIpsyl9pWuNCDC3uHmIFsQuUDplbx5TZuI1unE+TBLbpuX0zZta5
+         uuBh1w7sb4hSOqAiJ0XqdDm7tyNdjm0r2uaHITXv4HPI5rN4pUQ2doSLlbNZzQ2gvbE4
+         pUtf2WLC9fBdahPF/fM8spyM8kERhNSUDjWdk/uv6ygVrL1NguS/vQRUKf9eRlK6Eol1
+         07eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711479144; x=1712083944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gzSSnt/1tuqFAqk72WO9Yx92dcNUcT/slEGP7/aoLdQ=;
+        b=Jqw+B+1AlqvlnbjFbYhV9y8SQJoGzGStXo38LhDksEL7AVlphoji8cbhiHBr943m8k
+         7EwJQ0nujL8QbMvF2+bFBnrfTNPEgCPEyHHq31Fhi4nxQ+bN/X8n6tbL7Hts1lbjQr/F
+         09lH58QGGhgIKW4iQQXDAldYkyjh+US2L4TCNLp31xublE4cnLYD+25/ZOX82ngNV/dN
+         s+qcwil+wkmbIeHE5aEmF7yCM2XIDmdjIs2j2CpLkH5GxEjJerikwDrvUxgWqAs1L3FW
+         2HuJN1dCnqFc8cfv1GAf2FQ0pLxqvhyk6cQkqrMlGhERNUnKlq6rVPUdPLcEDHtTWOcc
+         oV1g==
+X-Gm-Message-State: AOJu0Yw5GaWhmlNSKabsvdLXPQOBIGe9kp+smzKHJ3yvwBiNCM1A2Llz
+	flwUykE4c/btNDBmUfpIEt5jPiZ0UKPPBYmANRIQfCF7BHGlIL61dWPqNJglyykhw6E6cUgQGSE
+	1wvLHzN5VybpDyn5LY948/d5bL8PxPfKi0r/r
+X-Google-Smtp-Source: AGHT+IHqdyqNSAGGvJ3X0kEfA8lHzuIhyBNUZQgGjd2oGp2RW2WNuYuDp28MTzBqvtIcA8x9MrW/yUrTte2tCqt9XtY=
+X-Received: by 2002:a81:49c1:0:b0:611:6be5:4fca with SMTP id
+ w184-20020a8149c1000000b006116be54fcamr6905198ywa.6.1711479142547; Tue, 26
+ Mar 2024 11:52:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZgLJG0aN0psur5Z7@google.com>
-X-Infomaniak-Routing: alpha
+References: <20240325134004.4074874-1-gnoack@google.com> <20240325134004.4074874-2-gnoack@google.com>
+In-Reply-To: <20240325134004.4074874-2-gnoack@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 26 Mar 2024 14:52:11 -0400
+Message-ID: <CAHC9VhQJFWYeheR-EqqdfCq0YpvcQX5Scjfgcz1q+jrWg8YsdA@mail.gmail.com>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
+ IOCTL hooks
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 26, 2024 at 02:09:47PM +0100, Günther Noack wrote:
-> On Tue, Mar 26, 2024 at 12:58:42PM +0100, Arnd Bergmann wrote:
-> > On Tue, Mar 26, 2024, at 11:10, Mickaël Salaün wrote:
-> > > On Tue, Mar 26, 2024 at 10:33:23AM +0100, Arnd Bergmann wrote:
-> > >> On Tue, Mar 26, 2024, at 09:32, Mickaël Salaün wrote:
-> > >> >
-> > >> > This is indeed a simpler solution but unfortunately this doesn't fit
-> > >> > well with the requirements for an access control, especially when we
-> > >> > need to log denied accesses.  Indeed, with this approach, the LSM (or
-> > >> > any other security mechanism) that returns ENOFILEOPS cannot know for
-> > >> > sure if the related request will allowed or not, and then it cannot
-> > >> > create reliable logs (unlike with EACCES or EPERM).
-> > >> 
-> > >> Where does the requirement come from specifically, i.e.
-> > >> who is the consumer of that log?
-> > >
-> > > The audit framework may be used by LSMs to log denials.
-> > >
-> > >> 
-> > >> Even if the log doesn't tell you directly whether the ioctl
-> > >> was ultimately denied, I would think logging the ENOFILEOPS
-> > >> along with the command number is enough to reconstruct what
-> > >> actually happened from reading the log later.
-> > >
-> > > We could indeed log ENOFILEOPS but that could include a lot of allowed
-> > > requests and we usually only want unlegitimate access requests to be
-> > > logged.  Recording all ENOFILEOPS would mean 1/ that logs would be
-> > > flooded by legitimate requests and 2/ that user space log parsers would
-> > > need to deduce if a request was allowed or not, which require to know
-> > > the list of IOCTL commands implemented by fs/ioctl.c, which would defeat
-> > > the goal of this specific patch.
-> > 
-> > Right, makes sense. Unfortunately that means I don't see any
-> > option that I think is actually better than what we have today,
-> > but that forces the use of a custom whitelist or extra logic in
-> > landlock.
-> > 
-> > I didn't really mind having an extra hook for the callbacks
-> > in addition to the top-level one, but that was already nacked.
-> 
-> Thank you both for the review!
-> 
-> I agree, this approach would break logging.
-> 
-> As you both also said, I also think this leads us back to the approach
-> where we hardcode the allow-list of permitted IOCTL commands in the
-> file_ioctl hook.
-> 
-> I think this approach has the following upsides:
-> 
->   1. Landlock's (future) audit logging will be able to log exactly
->      which IOCTL commands were denied.
->   2. The allow-list of permitted IOCTL commands can be reasoned about
->      locally and does not accidentally change as a side-effect of a
->      change to the implementation of fs/ioctl.c.
-> 
-> A risk that we have is:
-> 
->   3. We might miss changes to fs/ioctl.c which we might want to
->      reflect in Landlock.
-> 
-> 
-> To think about 2 and 3 in more concrete terms, I categorized the
-> scenarios in which IOCTL cmd implementations can get added to or
-> removed from the do_vfs_ioctl() layer:
-> 
->   Case A: New cmd added to do_vfs_ioctl layer
-> 
->     We want to double check whether this cmd should be included in
->     Landlock's allow list.  (Because the command is new, there are no
->     existing users of the IOCTL command, so we can't break anyone and
->     we it probably does not require to be made explicit in Landlock's
->     ABI versioning scheme.)
-> 
->     ==> We need to catch these changes early,
->         and should do Landlock-side changes in sync.
-> 
->   Case B: Existing cmd removed from do_vfs_ioctl layer
-> 
->     (This case is unlikely, as it would be a backwards-incompatible
->     change in the ioctl interface.)
-> 
->   Case C: Existing cmd is moved from f_ops->..._ioctl() to do_vfs_ioctl()
-> 
->     (For regular files, I think this has happened for the XFS
->     "reflink" ioctls before, which became features in other COW file
->     systems as well.)
-> 
->     If such a change happens for device files (which are in scope for
->     Landlock's IOCTL feature), we should catch these changes.  We
->     should consider whether the affected IOCTL command should be
->     allow-listed.  Strictly speaking, if we allow-list the cmd, which
->     was previously not allow-listed, this would mean that Landlock's
->     DEV_IOCTL feature would have different semantics than before
->     (permitting an additional cmd), and it would potentially be a
->     backwards-incompatible change that need to be made explicit in
->     Landlock's ABI versioning.
-> 
->   Case D: Existing cmd is moved from do_vfs_ioctl() to f_ops->..._ioctl()
-> 
->     (This case seems also very unlikely to me because it decentralizes
->     the reasoning about these IOCTL APIs which are currently centrally
->     controlled and must stay backwards compatible.)
-> 
+On Mon, Mar 25, 2024 at 9:40=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.c=
+om> wrote:
+>
+> If security_file_ioctl or security_file_ioctl_compat return
+> ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOCTL
+> command, but only as long as the IOCTL command is implemented directly
+> in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
+> f_ops->compat_ioctl operations, which are defined by the given file.
+>
+> The possible return values for security_file_ioctl and
+> security_file_ioctl_compat are now:
+>
+>  * 0 - to permit the IOCTL
+>  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to fall
+>    back to the file implementation.
+>  * any other error - to forbid the IOCTL and return that error
 
-Excellent summary! You should put a link to this email in the commit
-message and quickly explain why we ended up here.
+At this point I think this thread has resolved itself, but I wanted to
+add a quick comment for those who may stumble across this in the
+future ... I want to discourage magic return values in the LSM hooks
+as much as possible; they have caused issues in the past and I suspect
+they will continue to do so in the future (although now that we have
+proper function header comments the risk may be slightly lower).  If
+there is absolutely no way around it, then that's okay, but if
+possible I would prefer we stick with the 0:allowed, !0:rejected model
+for the LSM hook return values.
 
-> 
-> 
-> So -- a proposal:
-> 
-> * Keep the original implementation of fs/ioctl.c
-> * Implement Landlock's file_ioctl hook with a switch(cmd) where we list
->   the permitted IOCTL commands from do_vfs_ioctl.
-> * Make sure Landlock maintainers learn about changes to do_vfs_ioctl():
->   * Put a warning on top of do_vfs_ioctl() to loop in Landlock
->     maintainers
+> This is an alternative to the previously discussed approaches [1] and [2]=
+,
+> and implements the proposal from [3].
+>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/20240309075320.160128-2-gnoack@google.com=
+ [1]
+> Link: https://lore.kernel.org/r/20240322151002.3653639-2-gnoack@google.co=
+m/ [2]
+> Link: https://lore.kernel.org/r/32b1164e-9d5f-40c0-9a4e-001b2c9b822f@app.=
+fastmail.com/ [3]
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> ---
+>  fs/ioctl.c               | 25 ++++++++++++++++++++-----
+>  include/linux/security.h |  6 ++++++
+>  security/security.c      | 10 ++++++++--
+>  3 files changed, 34 insertions(+), 7 deletions(-)
 
-Yes please.
-
->   * Set up automation to catch such changes?
-> 
-> 
-> Open questions are:
-> 
-> * Mickaël, do you think we should use a more device-file-specific
->   subset of IOCTL commands again, or would you prefer to stick to the
->   full list of all IOCTL commands implemented in do_vfs_ioctl()?
-
-We should stick to the device-file-specific IOCTL commands [1] but we
-should probably complete the switch-case with commented cases (in the
-same order as in do_vfs_ioctl) to know which one were reviewed (as in
-[1]).  These helpers should now be static and in security/landlock/fs.c
-
-[1] https://lore.kernel.org/r/20240219183539.2926165-1-mic@digikod.net
-
-BTW, there are now two new IOCTL commands (FS_IOC_GETUUID and
-FS_IOC_GETFSSYSFSPATH) masking device-specific IOCTL ones.
-
-> 
-> * Regarding automation:
-> 
->   We could additionally set up some automation to watch changes to
->   do_vfs_ioctl().  Given the low rate of change in that corner, we
->   might get away with extracting the relevant portion of the C file
->   (awk '/^static int do_vfs_ioctl/, /^\}/' fs/ioctl.c) and watching
->   for any changes.  It is brittle, but the rate of changes is low, and
->   reasoning about source code is difficult and error prone as well.
-> 
->   In an ideal world this could maybe be part of the kernel test
->   suites, but I still have not found the right place where this could
->   be hooked in.  Do you have any thoughts on this?
-
-I think this change should be enough for now:
-
-diff --git a/MAINTAINERS b/MAINTAINERS
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12222,6 +12222,7 @@ W:	https://landlock.io
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
- F:	Documentation/security/landlock.rst
- F:	Documentation/userspace-api/landlock.rst
-+F:	fs/ioctl.c
- F:	include/uapi/linux/landlock.h
- F:	samples/landlock/
- F:	security/landlock/
-
-It should be OK considered the number of patches matching this file: a
-subset of https://lore.kernel.org/all/?q=dfn%3Afs%2Fioctl.c
+--=20
+paul-moore.com
