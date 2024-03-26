@@ -1,128 +1,85 @@
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CD96D1B4;
-	Mon, 25 Mar 2024 21:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711402309; cv=pass; b=MquG1fKqgotoeRILD6lqCI3zVJC6wEZQSIH3ereYRbNm5qpxT5XS7uP6iYPL2FuArRRjZ6elpEP7/Am9uA3qtE1Kxqp24QEAhvfXEYUOgMMtYtIhHQTou4/pHcoyedhlF0p3AS999JLH2y/bzfA/NjL0QuyPSGzuvaRg7ngtsc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711402309; c=relaxed/simple;
-	bh=jM8DE0qFFQaJbtgDolpV6bNT0zgeGrR+Odr5JnEP7JE=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=JQMuNHcyea65aNcDmz3BLKlqmbuk/Rr0om96ApenfDZtYdK9XUqwfdUnEzjA3xW4pCM3F1BmcJI2MHFVMrKN3HFAPRu5bRgpbXrnaP6aRHGEbg6dzbHSmxhIR6A3NtbIuaDTR//1mGr3Y2ufzRcxsTZQqyWDxFSf1E94/Xc7uPE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=VaDEcqoR; arc=pass smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C8F1CD1B
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 08:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711441968; cv=none; b=O985Kv7QDvURfvQxsfX6cpTtYmNa5Nn3qSS2FY/VdAR3fNBVqTm3puEaubG9PIEm494KQeKkWJIHe4h+qelJutlHHFcH2orDbsen/2cnfnCrQjcR8FZWVeWO4wUaiSNWnt1iXlFR+Nf8ANxswps/1Xo/JVfOAFk3/stDpSVKWD0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711441968; c=relaxed/simple;
+	bh=lOmMwKNNzagft7kUe3depGA5Xz8mH58kecSmOwBREFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPTE/m5aEQd9qwAwKt8Pi9rgSWsD/Xvw7USR3N63dzyvnAj/qG7blNG5vSm5T9IIPotTHAaB9jCQUen5GiicHJQ0dPaNxsOO9vA+Tw2jtF0A2yDbzQzpWGTqQEwNNF8iiKwIHpNF4JsQQydDy1BQ7I6EfIy2ULME5zoBEUlCpBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UlvZSkZz; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="VaDEcqoR"
-Message-ID: <072a3e1b9f40a44174f0738bf592a528@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1711402305;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mOxBkMuWBbb/HgWApjXW5r8lNYj02xvMJWQoocF0dLg=;
-	b=VaDEcqoR/iQn20ivyB6qKpzWuAhrid8TWvhBgmBTPQtmXjCM9sXby9gHn/MyuwDH3cJKX6
-	792OfXZsOEECPjY/NN7kSH34h2fgOEpUyBopztxqyXx6gjPDmbZsVIBcamEle/lqPgnB5U
-	3dkQ+YX8FOT2OSkbGvJi9ok+Xk0nQDMzF6xe3m0U1OXCd8oi08Zx/q7hzfp0dOBylpu9JS
-	Y/jULULETYvogwV7tdznJdqSnnMUsyvN+JNuLgJIitPZ2jeS7Y2yGAg+Iz6kR1seSv1YYf
-	99qWq4OsxYUKbRJS7T0RPcqk/RN/LuiP0c93696giecqNAx21GzW7mNUJGPSEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1711402305; h=from:from:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mOxBkMuWBbb/HgWApjXW5r8lNYj02xvMJWQoocF0dLg=;
-	b=T7APEAYUuDTM6KUiKx1UI2w1ZudxjgYPPWNbzhAMNyeUmHUUY0il18Pum/kgOO6PJkLNMr
-	R2RmY2eCg7/22pwprXOCJThJArpxU0o2nXdapKnMAkfGR415DegGNF7oSqIjLrv02iCJeX
-	uKqy0mEJmGLs4f2ztE6+0P9CNpcB8QBt345yVqrj4pcXcC+etnJhxpUFpsfgVDQWVGZqIX
-	L/ZK0p1BV1pdbcrAtcaSVfbP659t2UOBAGyT6KJSfqc7WS3xr7NEC6JItR9Y8L1n+Fw54P
-	hK5v5WaDL8c4g/BstbV+5dEuJGXT4B2vvFlC+7iqKHHBfEvBaCAGY+fM3mBgWA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.mailfrom=pc@manguebit.com
-ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1711402305; a=rsa-sha256;
-	cv=none;
-	b=Uj7D4acrZpkcjfPnAjNwrjb2g0SfxqONscDsMCo1DiYUg8KNGGp5v7kzdBrVkdprStS1A8
-	k4FSOeUVYVw1+kGLYLLt6pxzvvjV7PgJzOS7DW6wjquYPXkxdxMgaPQ3fxhBdn5IiSgc6z
-	NpgPOEm06ZuvGs63moGxGsvkQOHcydUbd4igNfXqxXwDbpJHRt4L/iCwM6XnTVBFVN5QHU
-	QRXTGlICiVRo6p/G5gNQrHkPq/Fg9xOJSZQBqn9r0hKVFFBAxKlssdscnXJqCfhrJ5+dFD
-	Tgq8A05S3m2TBek7szKUOmRkcIT0uNBimUpHexjsb/GwAUcDVD+t7tKdfGwTsA==
-From: Paulo Alcantara <pc@manguebit.com>
-To: Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Roberto Sassu
- <roberto.sassu@huawei.com>, LKML <linux-kernel@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS
- <linux-cifs@vger.kernel.org>, Christian Brauner <christian@brauner.io>,
- Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>
-Subject: Re: kernel crash in mknod
-In-Reply-To: <20240325211305.GY538574@ZenIV>
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV>
- <3441a4a1140944f5b418b70f557bca72@huawei.com>
- <20240325-beugen-kraftvoll-1390fd52d59c@brauner>
- <CAH2r5muL4NEwLxq_qnPOCTHunLB_vmDA-1jJ152POwBv+aTcXg@mail.gmail.com>
- <20240325195413.GW538574@ZenIV>
- <a5d0ee8c54ec2f80cb71cd72e3b4aec3@manguebit.com>
- <20240325211305.GY538574@ZenIV>
-Date: Mon, 25 Mar 2024 18:31:42 -0300
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UlvZSkZz"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3jjG3fK7zxrD;
+	Tue, 26 Mar 2024 09:32:34 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3jjF4wJmzMppKw;
+	Tue, 26 Mar 2024 09:32:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711441954;
+	bh=lOmMwKNNzagft7kUe3depGA5Xz8mH58kecSmOwBREFs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UlvZSkZzU4PljVYaMzwHMADOpFQx+TKUD5kwJhtnyC0ec+Q6/TBbRDrV/MULWFwEI
+	 zRLk4WrOva7zZA7k1xhJlyi3OTP0T7OBp9F8pURLYxN4aPLDPI/beRpKs8e6h3PnTR
+	 0ydVsEaGbCtweuVrIDaWOfBXk3tA+YgxB5Oa6QEg=
+Date: Tue, 26 Mar 2024 09:32:33 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
+ IOCTL hooks
+Message-ID: <20240326.pie9eiF2Weis@digikod.net>
+References: <20240325134004.4074874-1-gnoack@google.com>
+ <20240325134004.4074874-2-gnoack@google.com>
+ <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
+X-Infomaniak-Routing: alpha
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
+> On Mon, Mar 25, 2024, at 14:39, Günther Noack wrote:
+> > If security_file_ioctl or security_file_ioctl_compat return
+> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOCTL
+> > command, but only as long as the IOCTL command is implemented directly
+> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
+> > f_ops->compat_ioctl operations, which are defined by the given file.
+> >
+> > The possible return values for security_file_ioctl and
+> > security_file_ioctl_compat are now:
+> >
+> >  * 0 - to permit the IOCTL
+> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to fall
+> >    back to the file implementation.
+> >  * any other error - to forbid the IOCTL and return that error
+> >
+> > This is an alternative to the previously discussed approaches [1] and [2],
+> > and implements the proposal from [3].
+> 
+> Thanks for trying it out, I think this is a good solution
+> and I like how the code turned out.
 
-> On Mon, Mar 25, 2024 at 05:47:16PM -0300, Paulo Alcantara wrote:
->> Al Viro <viro@zeniv.linux.org.uk> writes:
->> 
->> > On Mon, Mar 25, 2024 at 11:26:59AM -0500, Steve French wrote:
->> >
->> >> A loosely related question.  Do I need to change cifs.ko to return the
->> >> pointer to inode on mknod now?  dentry->inode is NULL in the case of mknod
->> >> from cifs.ko (and presumably some other fs as Al noted), unlike mkdir and
->> >> create where it is filled in.   Is there a perf advantage in filling in the
->> >> dentry->inode in the mknod path in the fs or better to leave it as is?  Is
->> >> there a good example to borrow from on this?
->> >
->> > AFAICS, that case in in CIFS is the only instance of ->mknod() that does this
->> > "skip lookups, just unhash and return 0" at the moment.
->> >
->> > What's more, it really had been broken all along for one important case -
->> > AF_UNIX bind(2) with address (== socket pathname) being on the filesystem
->> > in question.
->> 
->> Yes, except that we currently return -EPERM for such cases.  I don't
->> even know if this SFU thing supports sockets.
->
-> 	Sure, but we really want the rules to be reasonably simple and
-> "you may leave dentry unhashed negative and return 0, provided that you
-> hadn't been asked to create a socket" is anything but ;-)
-
-Agreed :-)
-
->> > Note that cifs_sfu_make_node() is the only case in CIFS where that happens -
->> > other codepaths (both in cifs_make_node() and in smb2_make_node()) will
->> > instantiate.  How painful would it be for cifs_sfu_make_node()?
->> > AFAICS, you do open/sync_write/close there; would it be hard to do
->> > an eqiuvalent of fstat and set the inode up?
->> 
->> This should be pretty straightforward as it would only require an extra
->> query info call and then {smb311_posix,cifs}_get_inode_info() ->
->> d_instantiate().  We could even make it a single compound request of
->> open/write/getinfo/close for SMB2+ case.
->
-> 	If that's the case, I believe that we should simply declare that
-> ->mknod() must instantiate on success and have vfs_mknod() check and
-> warn if it hadn't.
-
-LGTM.
-
-Steve, any objections?
+This is indeed a simpler solution but unfortunately this doesn't fit
+well with the requirements for an access control, especially when we
+need to log denied accesses.  Indeed, with this approach, the LSM (or
+any other security mechanism) that returns ENOFILEOPS cannot know for
+sure if the related request will allowed or not, and then it cannot
+create reliable logs (unlike with EACCES or EPERM).
