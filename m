@@ -1,140 +1,115 @@
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51C04CB3D;
-	Tue, 26 Mar 2024 09:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71DD45C18;
+	Tue, 26 Mar 2024 09:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711445626; cv=none; b=qxfN+tmtDTLFBVVlrdkHZfN9ZnBbs56AcwfDbO/QxIvSxJb0Hpnwnztr0elialwF1ThpYX8DIJYfEtk/XzrabOV1XS0ituVHtTHeeTPXtCp5BjlPabgxG9a6oaws0RGc02CkZkfztWnvJtJCHyjd4rlXJLe1l4gYv6G8RDnZH2A=
+	t=1711446703; cv=none; b=YnaIj3zZs3hr6JuxuRUv78TtuRT5tLhtf+h291TM+kRD98SGTkghXG9LYB+zy+GhsM/zA8UdepEuMKuI8V0gLFP8TfrqcyWGWtO9xf2PUVznSgVbESqVMLnTgJsaggjvybhR6mELr+rzncnyszhn+sAMJ6DxkyI0V9IlBvMDz2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711445626; c=relaxed/simple;
-	bh=PwcZCILE8KnaKmeT4xNMUoMd6pvbcIPPx+HA7NUhan8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=e674N0Kp6ippoohKk4MA9C6HD9L+EF7pz84+QSk9HFmlc+Sd2ILOr3OLWie9xLciWgapsmjfBK1Yn3OcTIvKQEnf4trBRvp1+FRS8E/A05IHTA1mLHQHWrw5PXplOhCZKu6LfJswejW5LQTR9i3AN2cQRWk6yssXUEemKWoLYiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f9jagnBp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qyckHF23; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1711446703; c=relaxed/simple;
+	bh=MbcjOzHQWG1uy0/n9TKIvjFVCyBlYV+x35dsmcifwBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ADnopSv3dvArq6I7ARzNIZ6450y7BX4e9ov1LegJL0xsEMEXhG5t14PdreVuExJW7/ES4v+ot6+Q183Ot8vHQ5sHT9HziQPLz6LW0cqqx0ng3kkqDo/O+uDsm9WyFOnobw7I8Ng/8YhIRanaBPMFh/99S7mwdI649nCeH5AHgPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fBz727+u; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f9jagnBp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qyckHF23"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id B7A8013800DF;
-	Tue, 26 Mar 2024 05:33:43 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 26 Mar 2024 05:33:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1711445623;
-	 x=1711532023; bh=0Vu+lialpR+cOIZiodseyUQOl33fRqWzJfGVw61czq4=; b=
-	f9jagnBpYWdPM8wbST8rhgSOKJc0fstUoLu6JeV7dNfGt6jt51GeeAc9h0xPVqzb
-	+Coqe8nxrTb6EWu+InDELoodMCUVJZV/Jw8abIpefgVVlph7kkHAfpGG2n4DmJeI
-	hz4dfMyRsyC/EbYSb1Nmjy6ZBNFcXEqb20o4RPRoKFMGN17gOEsb/2gIWwPh3LKa
-	FHoFAn7ls4FhMT1GXG/nnWCEB4mbNMZn+CHIeRyHfF1lV3JTqkNff7O1sgIt7Pvg
-	s314AgYjpRjbkOG2hkhSNZ6sowq3o8LdYr6g7747m9ovQ3BDVnH1rFFAkM/wkqpI
-	e/GE5fYSsNmVb0KWRau7Rg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1711445623; x=
-	1711532023; bh=0Vu+lialpR+cOIZiodseyUQOl33fRqWzJfGVw61czq4=; b=q
-	yckHF23mIufA4GFuYwTN1tSja2Y23YPwHzxwVGBuzA9XxqCOmsS+tSJY7dUTHGm4
-	IRtocxs/4DTxERgxHkjVSr8EOdO5nUSAUudfVGMAT0YvmOFzCH1u4UMxvMDmxc7K
-	h0MOV4DSmL9JR/lNMkXlbK6dyJx6DE1+EA194wMHFdUTS9GZCzgg7UVe3AT4Bomo
-	4Wk3YCYTPTKo8WuV2qoWMSE5BcxheqxCjDoNILhvf6wEpNncun76D6hdMbwT+eAY
-	QVJww+e2/S2UfHnND8W4+1ONfnAN/tdraz6HN6pgLHJTtfLE1bZc26+QPGb9Qoma
-	ZWoK8l5rGKi7a4iuVCtOg==
-X-ME-Sender: <xms:d5YCZnQfdJfXEGZfV4n9zzDGl7kHHN_Uln45qh_yIFYkPPHeV5vFAg>
-    <xme:d5YCZoy4ma9yZTKH9qYjH9TvwE1r3O4faM6Ds-_r5c4HlEp19q8mXvtc7bb4Qy2jT
-    7z-hnoK-pTp0uxUiCU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddufedgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:d5YCZs2zsWBm6fS7anQWTyZk09rcdLHgINuFvAGFQUd9wWe_z2NyBA>
-    <xmx:d5YCZnAoE5-fArk4DTWLhzicioQPbyWaiES-V3gwh5eElPCKPlQE_Q>
-    <xmx:d5YCZgicAJXr2mOB3lY6de6B5JrzvKIcnJ20Af4eDaUNwdPn0GwExQ>
-    <xmx:d5YCZro7uEWVX8RGali4yKg_uA9f1HkkKyR51uGsPLfWj8xGvc9ZvA>
-    <xmx:d5YCZhZ6emVrmu1cFXc8UgqxX7JjgASKH-8ga9BOk_wvPFmV_Oh98A>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7B217B6008D; Tue, 26 Mar 2024 05:33:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-328-gc998c829b7-fm-20240325.002-gc998c829
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fBz727+u"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3lSS1Zm7zbNt;
+	Tue, 26 Mar 2024 10:51:36 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3lSR3NKGz4GP;
+	Tue, 26 Mar 2024 10:51:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711446696;
+	bh=MbcjOzHQWG1uy0/n9TKIvjFVCyBlYV+x35dsmcifwBY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fBz727+upC4lNytLKeOHMnAeW9WaMrgVWXcJfVYPnUWb22t9Ww5vhNDyxdJAnAxhv
+	 igj2YdVE/+1OWb7R7n3bA+aJ70zrop1OZ2UdY33x4pEFsXptluTlHWnRLlQe4ZMRXt
+	 tKZL08DOySJ2qWzNozt88NRJ+V7sbOqFG2VYsbQA=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Kees Cook <keescook@chromium.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Marco Pagani <marpagan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thara Gopinath <tgopinath@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Zahra Tarkhani <ztarkhani@microsoft.com>,
+	kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	x86@kernel.org
+Subject: [PATCH v4 1/7] kunit: Handle thread creation error
+Date: Tue, 26 Mar 2024 10:51:12 +0100
+Message-ID: <20240326095118.126696-2-mic@digikod.net>
+In-Reply-To: <20240326095118.126696-1-mic@digikod.net>
+References: <20240326095118.126696-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
-In-Reply-To: <20240326.pie9eiF2Weis@digikod.net>
-References: <20240325134004.4074874-1-gnoack@google.com>
- <20240325134004.4074874-2-gnoack@google.com>
- <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
- <20240326.pie9eiF2Weis@digikod.net>
-Date: Tue, 26 Mar 2024 10:33:23 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org, "Jeff Xu" <jeffxu@google.com>,
- "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
- "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
- "Paul Moore" <paul@paul-moore.com>,
- "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
- "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- "Christian Brauner" <brauner@kernel.org>
-Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for IOCTL
- hooks
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Tue, Mar 26, 2024, at 09:32, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
->> On Mon, Mar 25, 2024, at 14:39, G=C3=BCnther Noack wrote:
->> > If security_file_ioctl or security_file_ioctl_compat return
->> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOC=
-TL
->> > command, but only as long as the IOCTL command is implemented direc=
-tly
->> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
->> > f_ops->compat_ioctl operations, which are defined by the given file.
->> >
->> > The possible return values for security_file_ioctl and
->> > security_file_ioctl_compat are now:
->> >
->> >  * 0 - to permit the IOCTL
->> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to f=
-all
->> >    back to the file implementation.
->> >  * any other error - to forbid the IOCTL and return that error
->> >
->> > This is an alternative to the previously discussed approaches [1] a=
-nd [2],
->> > and implements the proposal from [3].
->>=20
->> Thanks for trying it out, I think this is a good solution
->> and I like how the code turned out.
->
-> This is indeed a simpler solution but unfortunately this doesn't fit
-> well with the requirements for an access control, especially when we
-> need to log denied accesses.  Indeed, with this approach, the LSM (or
-> any other security mechanism) that returns ENOFILEOPS cannot know for
-> sure if the related request will allowed or not, and then it cannot
-> create reliable logs (unlike with EACCES or EPERM).
+Previously, if a thread creation failed (e.g. -ENOMEM), the function was
+called (kunit_catch_run_case or kunit_catch_run_case_cleanup) without
+marking the test as failed.  Instead, fill try_result with the error
+code returned by kthread_run(), which will mark the test as failed and
+print "internal error occurred...".
 
-Where does the requirement come from specifically, i.e.
-who is the consumer of that log?
+Cc: Brendan Higgins <brendanhiggins@google.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Rae Moar <rmoar@google.com>
+Reviewed-by: David Gow <davidgow@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20240326095118.126696-2-mic@digikod.net
+---
 
-Even if the log doesn't tell you directly whether the ioctl
-was ultimately denied, I would think logging the ENOFILEOPS
-along with the command number is enough to reconstruct what
-actually happened from reading the log later.
+Changes since v2:
+* Add Rae's and David's Reviewed-by.
 
-     Arnd
+Changes since v1:
+* Add Kees's Reviewed-by.
+---
+ lib/kunit/try-catch.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
+index f7825991d576..a5cb2ef70a25 100644
+--- a/lib/kunit/try-catch.c
++++ b/lib/kunit/try-catch.c
+@@ -69,6 +69,7 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
+ 				  try_catch,
+ 				  "kunit_try_catch_thread");
+ 	if (IS_ERR(task_struct)) {
++		try_catch->try_result = PTR_ERR(task_struct);
+ 		try_catch->catch(try_catch->context);
+ 		return;
+ 	}
+-- 
+2.44.0
+
