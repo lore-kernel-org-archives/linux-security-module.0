@@ -1,224 +1,108 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68595DF23
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 10:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478F66CDB6
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 10:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711447238; cv=none; b=ACb0ymPjbZoNrqlh1Y0V0aN+bdbBZGdxFc0QvY1Qye7qzXLyA3D0RpYP0iclGfeeLjgFagNBuSJHlcNTpG/1/nF7VOh0JjCaQmCFxJxt2HL3//wXBe188CrGf0xiOWBgTIPo2Tyi5smkuLTz+QPkNFWBuXGKt0mPyTYbLGn1J5A=
+	t=1711447815; cv=none; b=aohfN9ws67EKfoU46LzSH4Y5X3MD5nWcOemswpPIlKwx52qr5IPJ0VI99GRC9MAmT7Km4Xpwu7yvVuh1sfkHTSeA0nhLFqaPRUs3cpfbG7o09aev5msOuwkPKpiE21IRCZFiaqx9GIu63RFGJCv8Iw0CFE8007K+ckol15mYMXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711447238; c=relaxed/simple;
-	bh=Sr1caux620dLkN80hIUUGInJ9ZYXWuNl1zRVFNFI4jc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J9Dp3nf81NyIInTtaTDddKHJLtRMIL5UtYYFIWxlBgsxv10e0b+1r7tPQK6JcRDHod9sstBKhpWhbvp1V7b5rUrfbwrokyVEmohLHbKI+Y5yo6xGBa/bbP84Pxn2y3XB2baihqhwufZbwQEc8A63RbEdhz0Ypl4n5bBwz0kW39w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=SFJMlria; arc=none smtp.client-ip=185.125.25.11
+	s=arc-20240116; t=1711447815; c=relaxed/simple;
+	bh=fTGzewKK6NNxAEDkXrp9efAnHeqrie/o7hrsmeeKsqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pzp89ZVFDBVOL1rx0RkLmpZ6GgGlQxfVLlE5snEaY1bftHgAJxWnh/Wh1P69h1ol2+5A6PUCuEr9HHp43LMdHFZRTBs3FQwtl5l9G76Ney2YX62/M1IZeXmDL5MOfPWO9dfK6DEmKYcJdEMKZXRGfy3zgoW7raytUnXfaWyYJ84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=scgFueta; arc=none smtp.client-ip=83.166.143.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="SFJMlria"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3lSY6gXQzcRv;
-	Tue, 26 Mar 2024 10:51:41 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3lSY1h5Dzr0;
-	Tue, 26 Mar 2024 10:51:41 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="scgFueta"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3lst40vqz3ym;
+	Tue, 26 Mar 2024 11:10:10 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3lss3Z0CzMppHg;
+	Tue, 26 Mar 2024 11:10:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711446701;
-	bh=Sr1caux620dLkN80hIUUGInJ9ZYXWuNl1zRVFNFI4jc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SFJMlria6c6WWYrRJJ0FcNpGUywmgumDPj0DYWlW0LkJgDrxSzp0uSpDiR/yjQ2o7
-	 sOTXjL5Us8QjQmNodvT5I2Ma+fgEhmzZzlYwfHuF3kM9G4vt6ybt/BSnKmwIW9WkdK
-	 P7ut+4oKbJdS2QjIvjv/I/42MgDj7m/3PKG1nY90=
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Kees Cook <keescook@chromium.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Marco Pagani <marpagan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thara Gopinath <tgopinath@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Zahra Tarkhani <ztarkhani@microsoft.com>,
-	kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org
-Subject: [PATCH v4 6/7] kunit: Print last test location on fault
-Date: Tue, 26 Mar 2024 10:51:17 +0100
-Message-ID: <20240326095118.126696-7-mic@digikod.net>
-In-Reply-To: <20240326095118.126696-1-mic@digikod.net>
-References: <20240326095118.126696-1-mic@digikod.net>
+	s=20191114; t=1711447810;
+	bh=fTGzewKK6NNxAEDkXrp9efAnHeqrie/o7hrsmeeKsqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=scgFuetaKopx7yXZ8ckjYGk5v82vMMMv0wfnwqTBC1/J2yuLvzcfRDRy6pWsLk6UF
+	 d6CjHexRSYb+gdsjexbDrOPZYnUr2kVq0BHBe8VvDowZsoY2cgipboVYrp+PIWUIEV
+	 g4mzlJUNYgE13NHSuv8BQciPPppBL5iLuR0bsmSs=
+Date: Tue, 26 Mar 2024 11:10:08 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for
+ IOCTL hooks
+Message-ID: <20240326.ahyaaPa0ohs6@digikod.net>
+References: <20240325134004.4074874-1-gnoack@google.com>
+ <20240325134004.4074874-2-gnoack@google.com>
+ <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
+ <20240326.pie9eiF2Weis@digikod.net>
+ <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
 X-Infomaniak-Routing: alpha
 
-This helps identify the location of test faults with opportunistic calls
-to _KUNIT_SAVE_LOC().  This can be useful while writing tests or
-debugging them.  It is possible to call KUNIT_SUCCESS() to explicit save
-last location.
+On Tue, Mar 26, 2024 at 10:33:23AM +0100, Arnd Bergmann wrote:
+> On Tue, Mar 26, 2024, at 09:32, Mickaël Salaün wrote:
+> > On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
+> >> On Mon, Mar 25, 2024, at 14:39, Günther Noack wrote:
+> >> > If security_file_ioctl or security_file_ioctl_compat return
+> >> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOCTL
+> >> > command, but only as long as the IOCTL command is implemented directly
+> >> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
+> >> > f_ops->compat_ioctl operations, which are defined by the given file.
+> >> >
+> >> > The possible return values for security_file_ioctl and
+> >> > security_file_ioctl_compat are now:
+> >> >
+> >> >  * 0 - to permit the IOCTL
+> >> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to fall
+> >> >    back to the file implementation.
+> >> >  * any other error - to forbid the IOCTL and return that error
+> >> >
+> >> > This is an alternative to the previously discussed approaches [1] and [2],
+> >> > and implements the proposal from [3].
+> >> 
+> >> Thanks for trying it out, I think this is a good solution
+> >> and I like how the code turned out.
+> >
+> > This is indeed a simpler solution but unfortunately this doesn't fit
+> > well with the requirements for an access control, especially when we
+> > need to log denied accesses.  Indeed, with this approach, the LSM (or
+> > any other security mechanism) that returns ENOFILEOPS cannot know for
+> > sure if the related request will allowed or not, and then it cannot
+> > create reliable logs (unlike with EACCES or EPERM).
+> 
+> Where does the requirement come from specifically, i.e.
+> who is the consumer of that log?
 
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Cc: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240326095118.126696-7-mic@digikod.net
----
+The audit framework may be used by LSMs to log denials.
 
-Changes since v3:
-* Improve the try-fault error message as suggested by David.
+> 
+> Even if the log doesn't tell you directly whether the ioctl
+> was ultimately denied, I would think logging the ENOFILEOPS
+> along with the command number is enough to reconstruct what
+> actually happened from reading the log later.
 
-Changes since v2:
-* Extend the commit message according to discussion with David.
-
-Changes since v1:
-* Add Kees's Reviewed-by.
----
- include/kunit/test.h  | 24 +++++++++++++++++++++---
- lib/kunit/try-catch.c | 10 +++++++---
- 2 files changed, 28 insertions(+), 6 deletions(-)
-
-diff --git a/include/kunit/test.h b/include/kunit/test.h
-index fcb4a4940ace..f3aa66eb0087 100644
---- a/include/kunit/test.h
-+++ b/include/kunit/test.h
-@@ -301,6 +301,8 @@ struct kunit {
- 	struct list_head resources; /* Protected by lock. */
- 
- 	char status_comment[KUNIT_STATUS_COMMENT_SIZE];
-+	/* Saves the last seen test. Useful to help with faults. */
-+	struct kunit_loc last_seen;
- };
- 
- static inline void kunit_set_failure(struct kunit *test)
-@@ -567,6 +569,15 @@ void __printf(2, 3) kunit_log_append(struct string_stream *log, const char *fmt,
- #define kunit_err(test, fmt, ...) \
- 	kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
- 
-+/*
-+ * Must be called at the beginning of each KUNIT_*_ASSERTION().
-+ * Cf. KUNIT_CURRENT_LOC.
-+ */
-+#define _KUNIT_SAVE_LOC(test) do {					       \
-+	WRITE_ONCE(test->last_seen.file, __FILE__);			       \
-+	WRITE_ONCE(test->last_seen.line, __LINE__);			       \
-+} while (0)
-+
- /**
-  * KUNIT_SUCCEED() - A no-op expectation. Only exists for code clarity.
-  * @test: The test context object.
-@@ -575,7 +586,7 @@ void __printf(2, 3) kunit_log_append(struct string_stream *log, const char *fmt,
-  * words, it does nothing and only exists for code clarity. See
-  * KUNIT_EXPECT_TRUE() for more information.
-  */
--#define KUNIT_SUCCEED(test) do {} while (0)
-+#define KUNIT_SUCCEED(test) _KUNIT_SAVE_LOC(test)
- 
- void __noreturn __kunit_abort(struct kunit *test);
- 
-@@ -601,14 +612,16 @@ void __kunit_do_failed_assertion(struct kunit *test,
- } while (0)
- 
- 
--#define KUNIT_FAIL_ASSERTION(test, assert_type, fmt, ...)		       \
-+#define KUNIT_FAIL_ASSERTION(test, assert_type, fmt, ...) do {		       \
-+	_KUNIT_SAVE_LOC(test);						       \
- 	_KUNIT_FAILED(test,						       \
- 		      assert_type,					       \
- 		      kunit_fail_assert,				       \
- 		      kunit_fail_assert_format,				       \
- 		      {},						       \
- 		      fmt,						       \
--		      ##__VA_ARGS__)
-+		      ##__VA_ARGS__);					       \
-+} while (0)
- 
- /**
-  * KUNIT_FAIL() - Always causes a test to fail when evaluated.
-@@ -637,6 +650,7 @@ void __kunit_do_failed_assertion(struct kunit *test,
- 			      fmt,					       \
- 			      ...)					       \
- do {									       \
-+	_KUNIT_SAVE_LOC(test);						       \
- 	if (likely(!!(condition_) == !!expected_true_))			       \
- 		break;							       \
- 									       \
-@@ -698,6 +712,7 @@ do {									       \
- 		.right_text = #right,					       \
- 	};								       \
- 									       \
-+	_KUNIT_SAVE_LOC(test);						       \
- 	if (likely(__left op __right))					       \
- 		break;							       \
- 									       \
-@@ -758,6 +773,7 @@ do {									       \
- 		.right_text = #right,					       \
- 	};								       \
- 									       \
-+	_KUNIT_SAVE_LOC(test);						       \
- 	if (likely((__left) && (__right) && (strcmp(__left, __right) op 0)))   \
- 		break;							       \
- 									       \
-@@ -791,6 +807,7 @@ do {									       \
- 		.right_text = #right,					       \
- 	};								       \
- 									       \
-+	_KUNIT_SAVE_LOC(test);						       \
- 	if (likely(__left && __right))					       \
- 		if (likely(memcmp(__left, __right, __size) op 0))	       \
- 			break;						       \
-@@ -815,6 +832,7 @@ do {									       \
- do {									       \
- 	const typeof(ptr) __ptr = (ptr);				       \
- 									       \
-+	_KUNIT_SAVE_LOC(test);						       \
- 	if (!IS_ERR_OR_NULL(__ptr))					       \
- 		break;							       \
- 									       \
-diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-index 7a3910dd78a6..fa687278ccc9 100644
---- a/lib/kunit/try-catch.c
-+++ b/lib/kunit/try-catch.c
-@@ -96,9 +96,13 @@ void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
- 
- 	if (exit_code == -EFAULT)
- 		try_catch->try_result = 0;
--	else if (exit_code == -EINTR)
--		kunit_err(test, "try faulted\n");
--	else if (exit_code == -ETIMEDOUT)
-+	else if (exit_code == -EINTR) {
-+		if (test->last_seen.file)
-+			kunit_err(test, "try faulted: last line seen %s:%d\n",
-+				  test->last_seen.file, test->last_seen.line);
-+		else
-+			kunit_err(test, "try faulted\n");
-+	} else if (exit_code == -ETIMEDOUT)
- 		kunit_err(test, "try timed out\n");
- 	else if (exit_code)
- 		kunit_err(test, "Unknown error: %d\n", exit_code);
--- 
-2.44.0
-
+We could indeed log ENOFILEOPS but that could include a lot of allowed
+requests and we usually only want unlegitimate access requests to be
+logged.  Recording all ENOFILEOPS would mean 1/ that logs would be
+flooded by legitimate requests and 2/ that user space log parsers would
+need to deduce if a request was allowed or not, which require to know
+the list of IOCTL commands implemented by fs/ioctl.c, which would defeat
+the goal of this specific patch.
