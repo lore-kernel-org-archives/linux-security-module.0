@@ -1,159 +1,140 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5120554904
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 09:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51C04CB3D;
+	Tue, 26 Mar 2024 09:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711443786; cv=none; b=bWhe022M8vFEhGlTtARcs9pR3tkYV31m5gboxeTzWpFGEN2rke2blA2XWlToOIKDyHVdCjtB+HRDmpFFJbiVWQC4qWxwoNVZItvIK27uTLCYdiXPD4WwhPZyRRbnSy9OWtENW7aaw/sefyan4XEQuuQTZVVvfvvG+QTBLSyF5jg=
+	t=1711445626; cv=none; b=qxfN+tmtDTLFBVVlrdkHZfN9ZnBbs56AcwfDbO/QxIvSxJb0Hpnwnztr0elialwF1ThpYX8DIJYfEtk/XzrabOV1XS0ituVHtTHeeTPXtCp5BjlPabgxG9a6oaws0RGc02CkZkfztWnvJtJCHyjd4rlXJLe1l4gYv6G8RDnZH2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711443786; c=relaxed/simple;
-	bh=aG1FdaTbcKd3XGgGWnmx/xvaQsHHK4Rz/c5f2D3Q9m0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzZbF0BCgfPp9gbg2o+V33Bo3CkWlYfUIFq5rDd7ErTriqILpunHj9E9+d5FdXvDrRfmQGaGKveWZ2xjPyF/BWjahwr7nmN11hkb/mFEwbFr1TTNXqn5WyYGYTmh7EMYZU3DRgh9ZjssQSaOWoHqlcSHyg1J20W5kXev/x69XbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=IZBmrADh; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1711445626; c=relaxed/simple;
+	bh=PwcZCILE8KnaKmeT4xNMUoMd6pvbcIPPx+HA7NUhan8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=e674N0Kp6ippoohKk4MA9C6HD9L+EF7pz84+QSk9HFmlc+Sd2ILOr3OLWie9xLciWgapsmjfBK1Yn3OcTIvKQEnf4trBRvp1+FRS8E/A05IHTA1mLHQHWrw5PXplOhCZKu6LfJswejW5LQTR9i3AN2cQRWk6yssXUEemKWoLYiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f9jagnBp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qyckHF23; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="IZBmrADh"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V3kNF53NkzZBV;
-	Tue, 26 Mar 2024 10:02:53 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V3kND05yKzMppKc;
-	Tue, 26 Mar 2024 10:02:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711443773;
-	bh=aG1FdaTbcKd3XGgGWnmx/xvaQsHHK4Rz/c5f2D3Q9m0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IZBmrADhOaPt+S5+Ai5jbfmQE6NDEfhlQ7oPI5KvdxY6OFxpZqdyc/bT9FtkXBfR6
-	 aF4p1CvP1HyDpI7noNPncdLGg4YV1hCzZZ9kkE16vyFVLnQKlUCxqBlsP+0Vj3fgyL
-	 h1vzPtWDDxEvqYWWo+GxoH+jFFPSjPNKofKIbZeA=
-Date: Tue, 26 Mar 2024 10:02:51 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: David Gow <davidgow@google.com>
-Cc: Brendan Higgins <brendanhiggins@google.com>, 
-	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, James Morris <jamorris@linux.microsoft.com>, 
-	Kees Cook <keescook@chromium.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marco Pagani <marpagan@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Wanpeng Li <wanpengli@tencent.com>, Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v3 4/7] kunit: Handle test faults
-Message-ID: <20240326.ieB8Phit1Ob8@digikod.net>
-References: <20240319104857.70783-1-mic@digikod.net>
- <20240319104857.70783-5-mic@digikod.net>
- <CABVgOSksVq5_AeObEBZFAezZpiQ41C7ZHWEtRBR_1d2UQQYXbw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f9jagnBp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qyckHF23"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B7A8013800DF;
+	Tue, 26 Mar 2024 05:33:43 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 26 Mar 2024 05:33:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1711445623;
+	 x=1711532023; bh=0Vu+lialpR+cOIZiodseyUQOl33fRqWzJfGVw61czq4=; b=
+	f9jagnBpYWdPM8wbST8rhgSOKJc0fstUoLu6JeV7dNfGt6jt51GeeAc9h0xPVqzb
+	+Coqe8nxrTb6EWu+InDELoodMCUVJZV/Jw8abIpefgVVlph7kkHAfpGG2n4DmJeI
+	hz4dfMyRsyC/EbYSb1Nmjy6ZBNFcXEqb20o4RPRoKFMGN17gOEsb/2gIWwPh3LKa
+	FHoFAn7ls4FhMT1GXG/nnWCEB4mbNMZn+CHIeRyHfF1lV3JTqkNff7O1sgIt7Pvg
+	s314AgYjpRjbkOG2hkhSNZ6sowq3o8LdYr6g7747m9ovQ3BDVnH1rFFAkM/wkqpI
+	e/GE5fYSsNmVb0KWRau7Rg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1711445623; x=
+	1711532023; bh=0Vu+lialpR+cOIZiodseyUQOl33fRqWzJfGVw61czq4=; b=q
+	yckHF23mIufA4GFuYwTN1tSja2Y23YPwHzxwVGBuzA9XxqCOmsS+tSJY7dUTHGm4
+	IRtocxs/4DTxERgxHkjVSr8EOdO5nUSAUudfVGMAT0YvmOFzCH1u4UMxvMDmxc7K
+	h0MOV4DSmL9JR/lNMkXlbK6dyJx6DE1+EA194wMHFdUTS9GZCzgg7UVe3AT4Bomo
+	4Wk3YCYTPTKo8WuV2qoWMSE5BcxheqxCjDoNILhvf6wEpNncun76D6hdMbwT+eAY
+	QVJww+e2/S2UfHnND8W4+1ONfnAN/tdraz6HN6pgLHJTtfLE1bZc26+QPGb9Qoma
+	ZWoK8l5rGKi7a4iuVCtOg==
+X-ME-Sender: <xms:d5YCZnQfdJfXEGZfV4n9zzDGl7kHHN_Uln45qh_yIFYkPPHeV5vFAg>
+    <xme:d5YCZoy4ma9yZTKH9qYjH9TvwE1r3O4faM6Ds-_r5c4HlEp19q8mXvtc7bb4Qy2jT
+    7z-hnoK-pTp0uxUiCU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledruddufedgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:d5YCZs2zsWBm6fS7anQWTyZk09rcdLHgINuFvAGFQUd9wWe_z2NyBA>
+    <xmx:d5YCZnAoE5-fArk4DTWLhzicioQPbyWaiES-V3gwh5eElPCKPlQE_Q>
+    <xmx:d5YCZgicAJXr2mOB3lY6de6B5JrzvKIcnJ20Af4eDaUNwdPn0GwExQ>
+    <xmx:d5YCZro7uEWVX8RGali4yKg_uA9f1HkkKyR51uGsPLfWj8xGvc9ZvA>
+    <xmx:d5YCZhZ6emVrmu1cFXc8UgqxX7JjgASKH-8ga9BOk_wvPFmV_Oh98A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7B217B6008D; Tue, 26 Mar 2024 05:33:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-328-gc998c829b7-fm-20240325.002-gc998c829
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVgOSksVq5_AeObEBZFAezZpiQ41C7ZHWEtRBR_1d2UQQYXbw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Message-Id: <83b0f28a-92a5-401a-a7f0-d0b0539fc1e5@app.fastmail.com>
+In-Reply-To: <20240326.pie9eiF2Weis@digikod.net>
+References: <20240325134004.4074874-1-gnoack@google.com>
+ <20240325134004.4074874-2-gnoack@google.com>
+ <80221152-70dd-4749-8231-9bf334ea7160@app.fastmail.com>
+ <20240326.pie9eiF2Weis@digikod.net>
+Date: Tue, 26 Mar 2024 10:33:23 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-security-module@vger.kernel.org, "Jeff Xu" <jeffxu@google.com>,
+ "Jorge Lucangeli Obes" <jorgelo@chromium.org>,
+ "Allen Webb" <allenwebb@google.com>, "Dmitry Torokhov" <dtor@google.com>,
+ "Paul Moore" <paul@paul-moore.com>,
+ "Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>,
+ "Matt Bobrowski" <repnop@google.com>, linux-fsdevel@vger.kernel.org,
+ "Christian Brauner" <brauner@kernel.org>
+Subject: Re: [PATCH v12 1/9] security: Introduce ENOFILEOPS return value for IOCTL
+ hooks
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 23, 2024 at 03:37:21PM +0800, David Gow wrote:
-> On Tue, 19 Mar 2024 at 18:49, Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > Previously, when a kernel test thread crashed (e.g. NULL pointer
-> > dereference, general protection fault), the KUnit test hanged for 30
-> > seconds and exited with a timeout error.
-> >
-> > Fix this issue by waiting on task_struct->vfork_done instead of the
-> > custom kunit_try_catch.try_completion, and track the execution state by
-> > initially setting try_result with -EINTR and only setting it to 0 if
-> > the test passed.
-> >
-> > Fix kunit_generic_run_threadfn_adapter() signature by returning 0
-> > instead of calling kthread_complete_and_exit().  Because thread's exit
-> > code is never checked, always set it to 0 to make it clear.
-> >
-> > Fix the -EINTR error message, which couldn't be reached until now.
-> >
-> > This is tested with a following patch.
-> >
-> > Cc: Brendan Higgins <brendanhiggins@google.com>
-> > Cc: Shuah Khan <skhan@linuxfoundation.org>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Reviewed-by: David Gow <davidgow@google.com>
-> > Tested-by: Rae Moar <rmoar@google.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20240319104857.70783-5-mic@digikod.net
-> > ---
-> >
-> > Changes since v2:
-> > * s/-EFAULT/-EINTR/ in commit message as spotted by Rae.
-> > * Add a comment explaining vfork_done as suggested by David.
-> > * Add David's Reviewed-by.
-> > * Add Rae's Tested-by.
-> >
-> > Changes since v1:
-> > * Add Kees's Reviewed-by.
-> > ---
-> >  include/kunit/try-catch.h |  3 ---
-> >  lib/kunit/try-catch.c     | 19 ++++++++++++-------
-> >  2 files changed, 12 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/include/kunit/try-catch.h b/include/kunit/try-catch.h
-> > index c507dd43119d..7c966a1adbd3 100644
-> > --- a/include/kunit/try-catch.h
-> > +++ b/include/kunit/try-catch.h
-> > @@ -14,13 +14,11 @@
-> >
-> >  typedef void (*kunit_try_catch_func_t)(void *);
-> >
-> > -struct completion;
-> >  struct kunit;
-> >
-> >  /**
-> >   * struct kunit_try_catch - provides a generic way to run code which might fail.
-> >   * @test: The test case that is currently being executed.
-> > - * @try_completion: Completion that the control thread waits on while test runs.
-> >   * @try_result: Contains any errno obtained while running test case.
-> >   * @try: The function, the test case, to attempt to run.
-> >   * @catch: The function called if @try bails out.
-> > @@ -46,7 +44,6 @@ struct kunit;
-> >  struct kunit_try_catch {
-> >         /* private: internal use only. */
-> >         struct kunit *test;
-> > -       struct completion *try_completion;
-> >         int try_result;
-> >         kunit_try_catch_func_t try;
-> >         kunit_try_catch_func_t catch;
-> > diff --git a/lib/kunit/try-catch.c b/lib/kunit/try-catch.c
-> > index cab8b24b5d5a..7a3910dd78a6 100644
-> > --- a/lib/kunit/try-catch.c
-> > +++ b/lib/kunit/try-catch.c
-> > @@ -18,7 +18,7 @@
-> >  void __noreturn kunit_try_catch_throw(struct kunit_try_catch *try_catch)
-> >  {
-> >         try_catch->try_result = -EFAULT;
-> > -       kthread_complete_and_exit(try_catch->try_completion, -EFAULT);
-> > +       kthread_exit(0);
-> 
-> It turns out kthread_exit() is not exported, so this doesn't work if
-> KUnit is built as a module.
-> 
-> I think the options we have are:
-> - Add EXPORT_SYMBOL(kthread_exit).
+On Tue, Mar 26, 2024, at 09:32, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Mon, Mar 25, 2024 at 04:19:25PM +0100, Arnd Bergmann wrote:
+>> On Mon, Mar 25, 2024, at 14:39, G=C3=BCnther Noack wrote:
+>> > If security_file_ioctl or security_file_ioctl_compat return
+>> > ENOFILEOPS, the IOCTL logic in fs/ioctl.c will permit the given IOC=
+TL
+>> > command, but only as long as the IOCTL command is implemented direc=
+tly
+>> > in fs/ioctl.c and does not use the f_ops->unhandled_ioctl or
+>> > f_ops->compat_ioctl operations, which are defined by the given file.
+>> >
+>> > The possible return values for security_file_ioctl and
+>> > security_file_ioctl_compat are now:
+>> >
+>> >  * 0 - to permit the IOCTL
+>> >  * ENOFILEOPS - to permit the IOCTL, but forbid it if it needs to f=
+all
+>> >    back to the file implementation.
+>> >  * any other error - to forbid the IOCTL and return that error
+>> >
+>> > This is an alternative to the previously discussed approaches [1] a=
+nd [2],
+>> > and implements the proposal from [3].
+>>=20
+>> Thanks for trying it out, I think this is a good solution
+>> and I like how the code turned out.
+>
+> This is indeed a simpler solution but unfortunately this doesn't fit
+> well with the requirements for an access control, especially when we
+> need to log denied accesses.  Indeed, with this approach, the LSM (or
+> any other security mechanism) that returns ENOFILEOPS cannot know for
+> sure if the related request will allowed or not, and then it cannot
+> create reliable logs (unlike with EACCES or EPERM).
 
-I'll go this way. This should not be an issue because
-kthread_complete_and_exit() can already (only) call kthread_exit() if
-the completion is NULL, but directly calling kthread_exit() is cleaner.
+Where does the requirement come from specifically, i.e.
+who is the consumer of that log?
 
-> - Keep using out own completion, and kthread_complete_and_exit()
-> - try_get_module() before spawning the thread, and use
-> module_put_and_kthread_exit().
-> 
-> I think all of these would be okay, but I could've missed something.
-> 
-> -- David
+Even if the log doesn't tell you directly whether the ioctl
+was ultimately denied, I would think logging the ENOFILEOPS
+along with the command number is enough to reconstruct what
+actually happened from reading the log later.
+
+     Arnd
