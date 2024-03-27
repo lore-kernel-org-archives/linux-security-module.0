@@ -1,258 +1,161 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B5039840
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 08:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA411FBB
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 09:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711527930; cv=none; b=UgPXFiJTw3rP1SCHoaYskpVkTgO9Ka2zF1kz8nifBdXetExK0iQ7hfKzB68qMKWj09+FwBRD7AEEQ9iLvL/31e2YNsZQwKfbEby+wYqN2Wi50KOb0MfdUMYsCGR8PTrpjjXrui3Uz5Vv24tt5RDcpoPuOKaN2F5GpKq8EN61eKo=
+	t=1711531040; cv=none; b=NnmxZJrD1RBbpAENBrWgdcSCZqrKm+DfKP7oSDBJmr3Aq9GOes7SBUX7u4QwRTb41H0iEWmAJF1apNZmW8/PC7GR29YsMXh3VWHMuPH0U+UqJcDuPTBNd27bERurKCsnDNwCKXpE3qwHl0SKg6nLa2OXFxg4zC4fIWavflZuftQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711527930; c=relaxed/simple;
-	bh=FDOPf3xlGpDAEZuAPeTmAaGWnb+6zG3xNnz2qq7Ohj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bf0BlreQZuOjYKq/aH1u6IilR82upCuEjvw+xIx67uRxYBvtuBEtPLDl0moACXOTZn0Jmw+N3JNWoGpWqecZwiaD5qch5zkQkzooRVbezVu31iT41UIGzJ3JlVFXQjk7XjczTWsVSuVpzty6TdcFZpHCCThzKpEMNDioJFtF/PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=XfvN7Gbh; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="XfvN7Gbh"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4149319511fso2954455e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 01:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1711527925; x=1712132725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=otEyEh5HNjpSjKJb9y7tWHyWPlbFploqEwD1jDd84X0=;
-        b=XfvN7Gbh77ezLOEcJ8eRipMXL7+5qJjKmYm/ORphg7HV0Zr6k29AN3D7cq7v9B2GM2
-         tPbjFpIm/2337sSUvtuMU1LbZAfp3arcsBfnJrSv4ZgNUz5tGDZUsY7fZmv/jsrFRXzl
-         JXHXlFQPCGzDBjY/rhafpZkF8WTd2XaeNiObcl/PRJV0+00RHkgDKfGgIabM7JftFsOn
-         F5Oy9jP1NVcMhbaAKZ8IyMmB4IRzMCqIrcYjQNmXRPiRFLyd3G81MtZ5iKFhAnMLELeq
-         5K1/KXID2vQar9Z4KtaRj+GG4wBjna+9EF/JFO2tt23tBq3B0aJ7KlpgRM/qAmN/ARIo
-         3JFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711527925; x=1712132725;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=otEyEh5HNjpSjKJb9y7tWHyWPlbFploqEwD1jDd84X0=;
-        b=hZ0rknv1s76swscuc8+JFT2fRETA3Atv20VlKdYlWs6FD7WGGlkWrh80vcEHdLk2Ml
-         rTvsIsu53JusA643vWKW9upXVgl7V7MPMzP8NSKeq1LK6idAODgjTkUvRv3x1D0MdEus
-         EB3GQFhUbTzGd5ivSRY3h1bkWbqWes7kzeYy0eTmLXmsGQeyO4EVsw0uWDYZQAaXnH4t
-         LoFVCXNVJgHfgfoyGke+LbS6e0EI2QZOlzYllcPAFMnkpi1h1XDBTXglzhnEIK3frVve
-         H6o0vll+sBKE+UVQkRothqrM5itZL/cjLnNElhOKRQcC3HDIQD3iz6PT07eLmDnDKae6
-         2+Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6mCsMCq+8HwLw86NM8dIIZjzOnSDkkcYuHGre6Wca0f4hTL7Yt+wbset19e0sOcrtzFRpo8/1lwM9WD9D1UNBg76peKtE4tjWqRI2kkZZCmwagwTD
-X-Gm-Message-State: AOJu0Yzf30x1MuDPHt5SPUVKQo1Uq0WsNB9yF8pQs3kbtyxgL7bCG1RO
-	iklC0aAeoyPkzImoZtwIuIfQyRL5JOev2aVxGYp2Z0gTzqOVm+AN6Jc1aa0ofDE=
-X-Google-Smtp-Source: AGHT+IG7wR0nbB0jDKSCAusOIuwb3AuuIwFZ056wKDFtuOvUrA17eWCc0lIQ1zSgLo9xL9Vo01c6zQ==
-X-Received: by 2002:a05:600c:6543:b0:414:8f85:6e50 with SMTP id dn3-20020a05600c654300b004148f856e50mr3234755wmb.19.1711527925056;
-        Wed, 27 Mar 2024 01:25:25 -0700 (PDT)
-Received: from localhost ([82.150.214.1])
-        by smtp.gmail.com with UTF8SMTPSA id u8-20020a05600c19c800b0041478393b8fsm1367979wmq.42.2024.03.27.01.25.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 01:25:24 -0700 (PDT)
-From: David Gstir <david@sigma-star.at>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	James Bottomley <jejb@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: David Gstir <david@sigma-star.at>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-	David Howells <dhowells@redhat.com>,
-	Li Yang <leoyang.li@nxp.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Tejun Heo <tj@kernel.org>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-security-module@vger.kernel.org,
-	Richard Weinberger <richard@nod.at>,
-	David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Subject: [PATCH v7 6/6] docs: trusted-encrypted: add DCP as new trust source
-Date: Wed, 27 Mar 2024 09:24:52 +0100
-Message-ID: <20240327082454.13729-7-david@sigma-star.at>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240327082454.13729-1-david@sigma-star.at>
-References: <20240327082454.13729-1-david@sigma-star.at>
+	s=arc-20240116; t=1711531040; c=relaxed/simple;
+	bh=jUo9+dCsk59c7eopI9XHfHmDktNaIlDvWxp371jYpnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tH3zpt/rhMXXW6m9fww/890YUDiCqr1DgZj5AH88rAwxfF1m9qpge+rtelwY9gIdiuQ6/tz2dcni/Vu2EA4VY2ANNs2PRLcMv1RazQukPR5ZqA2+MTtvV+JSYdiMye2lrNLDTnSEOY6PXEEsKGbbwwwq092/Ap61pFVWTSTia74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 42R9GkC4032510;
+	Wed, 27 Mar 2024 04:16:46 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 42R9Gi63032509;
+	Wed, 27 Mar 2024 04:16:44 -0500
+Date: Wed, 27 Mar 2024 04:16:44 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, roberto.sassu@huaweicloud.com
+Subject: Re: [PATCH] Do not require attributes for security_inode_init_security.
+Message-ID: <20240327091644.GA32347@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240324223231.6249-1-greg@enjellic.com> <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com> <20240326103047.GA19964@wind.enjellic.com> <CAHC9VhQvN43LL-ynV-ZZgR2L8wFfUeq2-SZb5QHh9ZMWtz4C1A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQvN43LL-ynV-ZZgR2L8wFfUeq2-SZb5QHh9ZMWtz4C1A@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 27 Mar 2024 04:16:46 -0500 (CDT)
 
-Update the documentation for trusted and encrypted KEYS with DCP as new
-trust source:
+On Tue, Mar 26, 2024 at 03:12:37PM -0400, Paul Moore wrote:
 
-- Describe security properties of DCP trust source
-- Describe key usage
-- Document blob format
+Good morning to everyone.
 
-Co-developed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Gstir <david@sigma-star.at>
----
- .../security/keys/trusted-encrypted.rst       | 85 +++++++++++++++++++
- 1 file changed, 85 insertions(+)
+> On Tue, Mar 26, 2024 at 6:31???AM Dr. Greg <greg@enjellic.com> wrote:
+> > On Mon, Mar 25, 2024 at 05:08:54PM -0400, Paul Moore wrote:
+> > > On Sun, Mar 24, 2024 at 6:33???PM Greg Wettstein <greg@enjellic.com> wrote:
+> > > >
+> > > > The integration of the Integrity Measurement Architecture (IMA)
+> > > > into the LSM infrastructure introduced a conditional check that
+> > > > denies access to the security_inode_init_security() event handler
+> > > > if the LSM extended attribute 'blob' size is 0.
+> > > >
+> > > > This changes the previous behavior of this event handler and
+> > > > results in variable behavior of LSM's depending on the LSM boot
+> > > > configuration.
+> > > >
+> > > > Modify the function so that it removes the need for a non-zero
+> > > > extended attribute blob size and bypasses the memory allocation
+> > > > and freeing that is not needed if the LSM infrastructure is not
+> > > > using extended attributes.
+> > > >
+> > > > Use a break statement to exit the loop that is iterating over the
+> > > > defined handlers for this event if a halting error condition is
+> > > > generated by one of the invoked LSM handlers.  The checks for how
+> > > > to handle cleanup are executed at the end of the loop regardless
+> > > > of how the loop terminates.
+> > > >
+> > > > A two exit label strategy is implemented.  One of the exit
+> > > > labels is a target for the no attribute case while the second is
+> > > > the target for the case where memory allocated for processing of
+> > > > extended attributes needs to be freed.
+> > > >
+> > > > Signed-off-by: Greg Wettstein <greg@enjellic.com>
+> > > > ---
+> > > >  security/security.c | 24 ++++++++++++------------
+> > > >  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> ...
+> 
+> > > Looking at this quickly, why does something like the following not work?
+> > >
+> > > [Warning: copy-n-paste patch, likely whitespace damaged]
+> > >
+> > > diff --git a/security/security.c b/security/security.c
+> > > index 7e118858b545..007ce438e636 100644
+> > > --- a/security/security.c
+> > > +++ b/security/security.c
+> > > @@ -1712,10 +1712,7 @@ int security_inode_init_security(struct inode *inode, str
+> > > uct inode *dir,
+> > >        if (unlikely(IS_PRIVATE(inode)))
+> > >                return 0;
+> > >
+> > > -       if (!blob_sizes.lbs_xattr_count)
+> > > -               return 0;
+> > > -
+> > > -       if (initxattrs) {
+> > > +       if (initxattrs && blob_sizes.lbs_xattr_count) {
+> > >                /* Allocate +1 as terminator. */
+> > >                new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 1,
+> > >                                     sizeof(*new_xattrs), GFP_NOFS);
+> >
+> > We ran with something similar to the above for several days of TSEMv3
+> > testing.
+> >
+> > For the patch that we submitted upstream, we elected to take a 'belt
+> > and suspenders' approach that isolated the 'no attributes' execution
+> > flow from the flow followed if extended attributes are present.
+> >
+> > The approach used doesn't make any difference to us as long as we get
+> > the functionality of the hook restored.
 
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index e989b9802f92..81fb3540bb20 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -42,6 +42,14 @@ safe.
-          randomly generated and fused into each SoC at manufacturing time.
-          Otherwise, a common fixed test key is used instead.
- 
-+     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+         Rooted to a one-time programmable key (OTP) that is generally burnt
-+         in the on-chip fuses and is accessible to the DCP encryption engine only.
-+         DCP provides two keys that can be used as root of trust: the OTP key
-+         and the UNIQUE key. Default is to use the UNIQUE key, but selecting
-+         the OTP key can be done via a module parameter (dcp_use_otp_key).
-+
-   *  Execution isolation
- 
-      (1) TPM
-@@ -57,6 +65,12 @@ safe.
- 
-          Fixed set of operations running in isolated execution environment.
- 
-+     (4) DCP
-+
-+         Fixed set of cryptographic operations running in isolated execution
-+         environment. Only basic blob key encryption is executed there.
-+         The actual key sealing/unsealing is done on main processor/kernel space.
-+
-   * Optional binding to platform integrity state
- 
-      (1) TPM
-@@ -79,6 +93,11 @@ safe.
-          Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
-          for platform integrity.
- 
-+     (4) DCP
-+
-+         Relies on Secure/Trusted boot process (called HAB by vendor) for
-+         platform integrity.
-+
-   *  Interfaces and APIs
- 
-      (1) TPM
-@@ -94,6 +113,11 @@ safe.
- 
-          Interface is specific to silicon vendor.
- 
-+     (4) DCP
-+
-+         Vendor-specific API that is implemented as part of the DCP crypto driver in
-+         ``drivers/crypto/mxs-dcp.c``.
-+
-   *  Threat model
- 
-      The strength and appropriateness of a particular trust source for a given
-@@ -129,6 +153,13 @@ selected trust source:
-      CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the device
-      is probed.
- 
-+  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+     The DCP hardware device itself does not provide a dedicated RNG interface,
-+     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL do have
-+     a dedicated hardware RNG that is independent from DCP which can be enabled
-+     to back the kernel RNG.
-+
- Users may override this by specifying ``trusted.rng=kernel`` on the kernel
- command-line to override the used RNG with the kernel's random number pool.
- 
-@@ -231,6 +262,19 @@ Usage::
- CAAM-specific format.  The key length for new keys is always in bytes.
- Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
- 
-+Trusted Keys usage: DCP
-+-----------------------
-+
-+Usage::
-+
-+    keyctl add trusted name "new keylen" ring
-+    keyctl add trusted name "load hex_blob" ring
-+    keyctl print keyid
-+
-+"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
-+specific to this DCP key-blob implementation.  The key length for new keys is
-+always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-+
- Encrypted Keys usage
- --------------------
- 
-@@ -426,3 +470,44 @@ string length.
- privkey is the binary representation of TPM2B_PUBLIC excluding the
- initial TPM2B header which can be reconstructed from the ASN.1 octed
- string length.
-+
-+DCP Blob Format
-+---------------
-+
-+The Data Co-Processor (DCP) provides hardware-bound AES keys using its
-+AES encryption engine only. It does not provide direct key sealing/unsealing.
-+To make DCP hardware encryption keys usable as trust source, we define
-+our own custom format that uses a hardware-bound key to secure the sealing
-+key stored in the key blob.
-+
-+Whenever a new trusted key using DCP is generated, we generate a random 128-bit
-+blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are used to
-+encrypt the trusted key payload using AES-128-GCM.
-+
-+The BEK itself is encrypted using the hardware-bound key using the DCP's AES
-+encryption engine with AES-128-ECB. The encrypted BEK, generated nonce,
-+BEK-encrypted payload and authentication tag make up the blob format together
-+with a version number, payload length and authentication tag::
-+
-+    /*
-+     * struct dcp_blob_fmt - DCP BLOB format.
-+     *
-+     * @fmt_version: Format version, currently being %1
-+     * @blob_key: Random AES 128 key which is used to encrypt @payload,
-+     *            @blob_key itself is encrypted with OTP or UNIQUE device key in
-+     *            AES-128-ECB mode by DCP.
-+     * @nonce: Random nonce used for @payload encryption.
-+     * @payload_len: Length of the plain text @payload.
-+     * @payload: The payload itself, encrypted using AES-128-GCM and @blob_key,
-+     *           GCM auth tag of size AES_BLOCK_SIZE is attached at the end of it.
-+     *
-+     * The total size of a DCP BLOB is sizeof(struct dcp_blob_fmt) + @payload_len +
-+     * AES_BLOCK_SIZE.
-+     */
-+    struct dcp_blob_fmt {
-+            __u8 fmt_version;
-+            __u8 blob_key[AES_KEYSIZE_128];
-+            __u8 nonce[AES_KEYSIZE_128];
-+            __le32 payload_len;
-+            __u8 payload[];
-+    } __packed;
--- 
-2.35.3
+> I'd prefer the simpler approach.  I'd likely also prefer we park
+> this patch until it is needed upstream, or am I misunderstanding
+> things and upstream is currently broken without a fix like this?
 
+As of the 6.8 release, a security handler that previously functioned
+in a consistent manner now functions inconsistently depending on the
+LSM stacking configuration that is in effect.
+
+Perhaps more problematically, when the handler does not function
+correctly, there is no indication of that fact passed upward to the
+LSM invoking the handler.  This would cause the LSM to conclude that a
+security relevant action was conducted when it did not actually occur.
+
+I believe we would all universally conclude that having security
+critical infrastructure function in a consistent and reliable manner
+is of benefit, so we should return the previous behavior of the
+handler, particularly since it can be done with a one line fix if that
+is your preference.
+
+If you would be so kind, please put a 'Reported-by:' tag on whatever
+you commit upstream.
+
+> > If you go with the simpler approach, it may be worthwhile to at least
+> > simplify the handling of the call to the initxattr() function after
+> > the evm_inode_init_security() call.
+> 
+> Starting with v6.9-rc1 there is no longer an explicit call to
+> evm_inode_init_security() as it is incorporated into the normal LSM
+> hook processing, e.g. `hp->hook.inode_init_security(...)`.  I'm also
+> not sure we need to worry about the initxattrs() call near the bottom
+> of security_inode_init_security() since in the no
+> @blob.lbs_xattr_count case the @xattr_count variable will also be zero
+> so the initxattrs() call will be skipped.
+> 
+> Or were you talking about something else?
+
+We were discussing something else but it isn't as important as getting
+the security handler fixed, so lets just proceed with that and we can
+call it a day.
+
+> paul-moore.com
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+   The Quixote Project - Flailing at the Travails of Cybersecurity
+		  https://github.com/Quixote-Project
