@@ -1,106 +1,233 @@
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A607D157472
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 13:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A51413A3F7
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 13:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711545073; cv=none; b=AUbmk1ZstR1Zp03AEg4H2IoKpZ1F9qzhb6X+Z4yn3+ujCOugxULNw7tfhoGNNtB8MHhSXwKCyE1wD2UdYSMlwPIxinxBBL8jr+Ppw3WMrwW10OzwYzQt80SJmutqzmOSL3uACZa1Qt7JyHag0809yrJXfHL4a8qPAIN3fSVvlXU=
+	t=1711545195; cv=none; b=KrV9F5O5Rc5MFZ/968+09TTKwMwZxt5ty3zSQKxZTzi9FU/kzka+pB4VLEQagA5io7SLw4zINUWwvFKLFPwzCbZXJ7MCRF2kKgFzS0BTHFU5Mm38ADcZdk39jpG3pcpPftNXgnszJ7fsyfMWThoI4iDae4rv+YPZt9sdjHGtnSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711545073; c=relaxed/simple;
-	bh=DaxfOx5juRgkGT1onoeBml+KzX99DS3H5Kfd98iKnRA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gl3yb5OOL7oqDM81gJ/w8QfR3FTdMCnS4MieSnI9YEgIypbeoj9wwZkcfe+N0CDAhpQ35KWyly7BDFi2bWjacGxKV8b7s8XWnAHhn8HDrJFbbnAhmEoi7mBo57B+6xTMY03fZdF6Sq/STSbnQPUsjWRjd00gXO000LZlVKh/SEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lnTBa5uq; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1711545195; c=relaxed/simple;
+	bh=wsJyPEx2+OHIxwu1PDF8iIUG11MmICqv+9NDlJGjClk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dXzuEMGwjHLT2tmYQ/wtcLuWHZDfPOnOmNNQPvMkEls3LyKhL3MKpF6nTwTJJaBPYwYY7++MEbowHFZE2p5zv85x+avKjBJD+cw8DCqa/9oIoLiMk0NAtzV57LjpEcEo05UKepv/nA/FAHUaECcQReVizMe1qPNWmmV0xLSnhPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ckRe9EAU; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lnTBa5uq"
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a4a356fc0d1so72343766b.3
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 06:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711545069; x=1712149869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JyYxrfp8pIz08BwXl1sIdsAZMNI11A0A6tQ7MGaWE3A=;
-        b=lnTBa5uqfVtfS29tUfP5h5yCrCyZWNqmNSPAdyChw/rok2c8rtAMBOK2Cn4IPjEeQp
-         oMha+GFLF/sJG6ZFG3zUtJeQWtDJ1/RJ1i7H2pqt098wVkHvTpn0/xKmLssZzyhpegVX
-         NShBh+V2YwQ36iTIWcjjJGZyqD/9p2VTYQkxQ6dhhi2UZlNR1o3pecJdGjol2dDAxd+X
-         gIRy/vC1JTB/ZSKJPVkaNd/uI6xowdznOhNEYBjgUha4cCmhF00+qoin47v3fRjCfKFv
-         XjkYXT7uE2+QlHL4FZANl2wiW6Zgm4E58tWR9z/UbyeXvi+MNt2Z/rd1J57C40Vkjax7
-         FbEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711545069; x=1712149869;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JyYxrfp8pIz08BwXl1sIdsAZMNI11A0A6tQ7MGaWE3A=;
-        b=Nh2GjqZzdMFFDE9rJgY1P2/dAJVz+eKZIdd7bsfuAw8/vL40rliWdIVj346Z+2Au6e
-         jI8xHWdRxOBmxaJPTUZmE+4VLUKzSh0qG2AMYH0rYYPOVlMtrGquUe8EKME4X+1G8wQG
-         IAWth6cO0AW3NIDJzm1HId3CUk0NRStNlbHzsgzifQwm+TsCD4Dqr1uwGrBiUGONbB1k
-         qZAo7MuBcETzP5NgkX8xZeo1XS78pQlR1SXcXGYamxMh04Ym0fg/s+woCM5rCfc6PwmI
-         +j2nVai2SLeQW7Md6lk3CnVL3uk2isKEIW/tRWU+ZvDTZvXZSDv6k0jQIG7dDa4WmNf+
-         wBcQ==
-X-Gm-Message-State: AOJu0YwK3BMNkekPcjMayLXqA2h9opGB/MpJ9pmQ+P9Lrh3GVAUpEG1A
-	FX6k9ms0byYqoTvyJSc1THBj3x0CdHAXxAhsou8dB0invKp1jJScl7MsPQEjrfo5hcrfye4Zt8+
-	P6AufJy9G//h4XLHaFY3gqY9pZWtgnG568DPhOvMEDqwg/CbGmDFnlbDaeGw+TssX5ZGQSEb5b7
-	3JSSin1yIgumuu8QP6uhACpdG7RLkcIWcw7mD4Ys07aOSlrRmO8zP0
-X-Google-Smtp-Source: AGHT+IE0fDcnEvDqGJg1fVMOQ6R5gkGljbJZHgo/+asP4z0tgVwIay2ta6riix8G+ncHSOmPx2WqFOJsbtU=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a17:906:a1d0:b0:a47:1499:6de0 with SMTP id
- bx16-20020a170906a1d000b00a4714996de0mr61846ejb.7.1711545068926; Wed, 27 Mar
- 2024 06:11:08 -0700 (PDT)
-Date: Wed, 27 Mar 2024 13:10:40 +0000
-In-Reply-To: <20240327131040.158777-1-gnoack@google.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ckRe9EAU"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V4QGy6bSdzCVP;
+	Wed, 27 Mar 2024 13:00:42 +0100 (CET)
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V4QGx73kmzDJl;
+	Wed, 27 Mar 2024 13:00:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711540842;
+	bh=wsJyPEx2+OHIxwu1PDF8iIUG11MmICqv+9NDlJGjClk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ckRe9EAUoLoeV6FrsJfCbIK0mRmcQrQC/BMWJyAEuPhGLRsiVC5Qlx+Wzl5fzw+XX
+	 CUM2NkPPvQDMwJwZtBmdrwDS16tpVRndjPmTeaCvczBe8xqhxPi9SqRyHEwruemKAX
+	 VY4+FtC8oIeHXLY9GKGGP9owvJh63Tz9cA7IJkVg=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Eric Dumazet <edumazet@google.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Subject: [PATCH v1 1/2] lsm: Check and handle error priority for socket_bind and socket_connect
+Date: Wed, 27 Mar 2024 13:00:33 +0100
+Message-ID: <20240327120036.233641-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240327131040.158777-1-gnoack@google.com>
-X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
-Message-ID: <20240327131040.158777-11-gnoack@google.com>
-Subject: [PATCH v13 10/10] fs/ioctl: Add a comment to keep the logic in sync
- with the Landlock LSM
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-Landlock's IOCTL support needs to partially replicate the list of
-IOCTLs from do_vfs_ioctl().  The list of commands implemented in
-do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
+Because the security_socket_bind and the security_socket_bind hooks are
+called before the network stack, it is easy to introduce error code
+inconsistencies. Instead of adding new checks to current and future
+LSMs, let's fix the related hook instead. The new checks are already
+(partially) implemented by SELinux and Landlock, and it should not
+change user space behavior but improve error code consistency instead.
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+The first check is about the minimal sockaddr length according to the
+address family. This improves the security of the AF_INET and AF_INET6
+sockaddr parsing for current and future LSMs.
+
+The second check is about AF_UNSPEC. This fixes error priority for bind
+on PF_INET6 socket when SELinux (and potentially others) is enabled.
+Indeed, the IPv6 network stack first checks the sockaddr length (-EINVAL
+error) before checking the family (-EAFNOSUPPORT error). See commit
+bbf5a1d0e5d0 ("selinux: Fix error priority for bind with AF_UNSPEC on
+PF_INET6 socket").
+
+The third check is about consistency between socket family and address
+family. Only AF_INET and AF_INET6 are tested (by Landlock tests), so no
+other protocols are checked for now.
+
+These new checks should enable to simplify current LSM implementations,
+but we may want to first land this patch on all stable branches.
+
+A following patch adds new tests improving AF_UNSPEC test coverage for
+Landlock.
+
+Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Fixes: 20510f2f4e2d ("security: Convert LSM into a static interface")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- fs/ioctl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ security/security.c | 96 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 1d5abfdf0f22..661b46125669 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *file, v=
-oid __user *argp)
+diff --git a/security/security.c b/security/security.c
+index 7e118858b545..64fe07a73b14 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -28,7 +28,9 @@
+ #include <linux/xattr.h>
+ #include <linux/msg.h>
+ #include <linux/overflow.h>
++#include <linux/in.h>
+ #include <net/flow.h>
++#include <net/ipv6.h>
+ 
+ /* How many LSMs were built into the kernel? */
+ #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+@@ -4415,6 +4417,82 @@ int security_socket_socketpair(struct socket *socka, struct socket *sockb)
+ }
+ EXPORT_SYMBOL(security_socket_socketpair);
+ 
++static int validate_inet_addr(struct socket *sock, struct sockaddr *address,
++			      int addrlen, bool bind)
++{
++	const int sock_family = sock->sk->sk_family;
++
++	/* Checks for minimal header length to safely read sa_family. */
++	if (addrlen < offsetofend(typeof(*address), sa_family))
++		return -EINVAL;
++
++	/* Only handle inet sockets for now. */
++	switch (sock_family) {
++	case PF_INET:
++	case PF_INET6:
++		break;
++	default:
++		return 0;
++	}
++
++	/* Checks minimal address length for inet sockets. */
++	switch (address->sa_family) {
++	case AF_UNSPEC: {
++		const struct sockaddr_in *sa_in;
++
++		/* Cf. inet_dgram_connect(), __inet_stream_connect() */
++		if (!bind)
++			return 0;
++
++		if (sock_family == PF_INET6) {
++			/* Length check from inet6_bind_sk() */
++			if (addrlen < SIN6_LEN_RFC2133)
++				return -EINVAL;
++
++			/* Family check from __inet6_bind() */
++			goto err_af;
++		}
++
++		/* Length check from inet_bind_sk() */
++		if (addrlen < sizeof(struct sockaddr_in))
++			return -EINVAL;
++
++		sa_in = (struct sockaddr_in *)address;
++		if (sa_in->sin_addr.s_addr != htonl(INADDR_ANY))
++			goto err_af;
++
++		return 0;
++	}
++	case AF_INET:
++		/* Length check from inet_bind_sk() */
++		if (addrlen < sizeof(struct sockaddr_in))
++			return -EINVAL;
++		break;
++	case AF_INET6:
++		/* Length check from inet6_bind_sk() */
++		if (addrlen < SIN6_LEN_RFC2133)
++			return -EINVAL;
++		break;
++	}
++
++	/*
++	 * Checks sa_family consistency to not wrongfully return -EACCES
++	 * instead of -EINVAL.  Valid sa_family changes are only (from AF_INET
++	 * or AF_INET6) to AF_UNSPEC.
++	 */
++	if (address->sa_family != sock_family)
++		return -EINVAL;
++
++	return 0;
++
++err_af:
++	/* SCTP services expect -EINVAL, others -EAFNOSUPPORT. */
++	if (sock->sk->sk_protocol == IPPROTO_SCTP)
++		return -EINVAL;
++
++	return -EAFNOSUPPORT;
++}
++
+ /**
+  * security_socket_bind() - Check if a socket bind operation is allowed
+  * @sock: socket
+@@ -4425,11 +4503,23 @@ EXPORT_SYMBOL(security_socket_socketpair);
+  * and the socket @sock is bound to the address specified in the @address
+  * parameter.
   *
-  * When you add any new common ioctls to the switches above and below,
-  * please ensure they have compatible arguments in compat mode.
++ * For security reasons and to get consistent error code whatever LSM are
++ * enabled, we first do the same sanity checks against sockaddr as the ones
++ * done by the network stack (executed after hook).  Currently only AF_UNSPEC,
++ * AF_INET, and AF_INET6 are handled.  Please add support for other family
++ * specificities when handled by an LSM.
 + *
-+ * The commands which are implemented here should be kept in sync with the=
- IOCTL
-+ * security policies in the Landlock LSM.
+  * Return: Returns 0 if permission is granted.
   */
- static int do_vfs_ioctl(struct file *filp, unsigned int fd,
- 			unsigned int cmd, unsigned long arg)
---=20
-2.44.0.396.g6e790dbe36-goog
+ int security_socket_bind(struct socket *sock,
+ 			 struct sockaddr *address, int addrlen)
+ {
++	int err;
++
++	err = validate_inet_addr(sock, address, addrlen, true);
++	if (err)
++		return err;
++
+ 	return call_int_hook(socket_bind, sock, address, addrlen);
+ }
+ 
+@@ -4447,6 +4537,12 @@ int security_socket_bind(struct socket *sock,
+ int security_socket_connect(struct socket *sock,
+ 			    struct sockaddr *address, int addrlen)
+ {
++	int err;
++
++	err = validate_inet_addr(sock, address, addrlen, false);
++	if (err)
++		return err;
++
+ 	return call_int_hook(socket_connect, sock, address, addrlen);
+ }
+ 
+-- 
+2.44.0
 
