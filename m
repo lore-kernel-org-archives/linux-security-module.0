@@ -1,273 +1,478 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4E6130A4F;
-	Wed, 27 Mar 2024 15:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E5212EBE7
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711554020; cv=none; b=QPqO5Tzan/tlquBK9wxXbB/yEL5oFyrhr3Xpu6KmMRuyfMlKdoUg2UfY8Ij5bLDosrBdTEojuZw0sJDogoq1o84i4pO/tPU3ewhZiH9arapjTi3lacSijn/APF0EAqtp6o8ZGLbGqkB5VxOknIhnN8jjGOJ8EhkVugkEVjPP7xY=
+	t=1711558671; cv=none; b=AQ0bnTq9voJkq5ThBXXgj+7bmt2DIWoQ72zShD7zOv9m5MZwsZLYNum3DD4mubTn6JMBW2rEBD+zIwbLnCx8nwtsV+p+RC6cQCshlMfIKspvN5pcK9EnMvrYQXMhczuIgCIyoPmnqTp+7g75gPCPTsfW3a/Nr0MZNCF2LHnr2CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711554020; c=relaxed/simple;
-	bh=0kU1Y1g7b5S7SzsNPgZKwi7JQaJEmDAsXvKCtpVKdQI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=M6Gjx2Fkdf4IDjFb6WeqHlWtyxmHk1kkAwCmbnBMK/g27QhdQvjnBXEkup1vX8BvLQ4wyFS4Ca5mSfg7y4w5DPc8S7P13v4KcuomMQps6q0yEOjaRA4jxYsExkqDmskyY2PwmYDWZG5hg9Mj6zraIqNrhq/tRoVwwyeTwzUG+Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WevJ7zL2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711558671; c=relaxed/simple;
+	bh=sLXjF2mvEUHTc3SFQuhjAA+H9nXhJB6pxzxKhEF6ZCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SJJ2fCsmllyOVMVMDNyuRJSIZFodr3SuhYtNagrL5nU8ODOOLUHnUV/S7Ts4HIddBLA3YKg4EPBoMlidPAVqA32iV1pRwRrFhP1rhQRcf4wRjimJPyYdTqa3YXOJd47LbWHcp7wt1Jq1uF3D5NKl4OlZoNneQKLAUUNNyVrMSg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ANej7864; arc=none smtp.client-ip=84.16.66.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WevJ7zL2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2B8C433C7;
-	Wed, 27 Mar 2024 15:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711554019;
-	bh=0kU1Y1g7b5S7SzsNPgZKwi7JQaJEmDAsXvKCtpVKdQI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=WevJ7zL2SbneDrByZF4xuhxghlDU0PwsMnc75tQheSw2fbENgrL/WTKvlrn86wr8k
-	 tfwpXXuyIlggJd0lUame2pkRb2yrpEiJkgjALyUJgan0RJLEl3QRdTufbHgc3lNCWm
-	 qWsGQJar+deai9SBnqn5wj2jxTHN/c6htYxJaS7FpeEJfduk7IweGaDdm0zKrVM3Gv
-	 Vj5FfArk0sKufcVVKFNwE+IcwwirRu4Oocz3PhGjflHNyIOqFFOzhzkrtHAwHWtMEM
-	 rlBWmNdj9so1KCAJo28yXf7e4D92yzkmrBOgpCnEl8NWL6h87AG6R2pcw8ayo+W2JU
-	 dJ3K6mIOrX/+Q==
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ANej7864"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V4XsW2gC2zPXN;
+	Wed, 27 Mar 2024 17:57:35 +0100 (CET)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V4XsV3yLQzMppDX;
+	Wed, 27 Mar 2024 17:57:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711558655;
+	bh=sLXjF2mvEUHTc3SFQuhjAA+H9nXhJB6pxzxKhEF6ZCs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ANej7864fLKXBEAc83t+T7XK9Eo6wqWbmqt2rEiZEtrQizZrX1on/kPkKXWsn92FB
+	 UX9geiUYm1l6dD+aFsgxrrRJA6nIi6NbUf0wdavtVcahDS+4ZNV7c/pzWndfAayFYg
+	 itFOgUKCZIkM2S5n243EfwYU43srwWmtsoS1NNys=
+Date: Wed, 27 Mar 2024 17:57:31 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v13 01/10] landlock: Add IOCTL access right for character
+ and block devices
+Message-ID: <20240327.eibaiNgu6lou@digikod.net>
+References: <20240327131040.158777-1-gnoack@google.com>
+ <20240327131040.158777-2-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 27 Mar 2024 17:40:11 +0200
-Message-Id: <D04N9E61QWYB.3IPEEGVPY6V8L@kernel.org>
-Cc: "Shawn Guo" <shawnguo@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "NXP Linux
- Team" <linux-imx@nxp.com>, "Ahmad Fatoum" <a.fatoum@pengutronix.de>, "sigma
- star Kernel Team" <upstream+dcp@sigma-star.at>, "David Howells"
- <dhowells@redhat.com>, "Li Yang" <leoyang.li@nxp.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Catalin Marinas"
- <catalin.marinas@arm.com>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>, "Tejun Heo" <tj@kernel.org>, "Steven Rostedt
- (Google)" <rostedt@goodmis.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linuxppc-dev@lists.ozlabs.org>,
- <linux-security-module@vger.kernel.org>, "Richard Weinberger"
- <richard@nod.at>, "David Oberhollenzer" <david.oberhollenzer@sigma-star.at>
-Subject: Re: [PATCH v7 6/6] docs: trusted-encrypted: add DCP as new trust
- source
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "David Gstir" <david@sigma-star.at>, "Mimi Zohar" <zohar@linux.ibm.com>,
- "James Bottomley" <jejb@linux.ibm.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
-X-Mailer: aerc 0.17.0
-References: <20240327082454.13729-1-david@sigma-star.at>
- <20240327082454.13729-7-david@sigma-star.at>
-In-Reply-To: <20240327082454.13729-7-david@sigma-star.at>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240327131040.158777-2-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Wed Mar 27, 2024 at 10:24 AM EET, David Gstir wrote:
-> Update the documentation for trusted and encrypted KEYS with DCP as new
-> trust source:
->
-> - Describe security properties of DCP trust source
-> - Describe key usage
-> - Document blob format
->
-> Co-developed-by: Richard Weinberger <richard@nod.at>
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-> Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-> Signed-off-by: David Gstir <david@sigma-star.at>
+On Wed, Mar 27, 2024 at 01:10:31PM +0000, Günther Noack wrote:
+> Introduces the LANDLOCK_ACCESS_FS_IOCTL_DEV right
+> and increments the Landlock ABI version to 5.
+> 
+> This access right applies to device-custom IOCTL commands
+> when they are invoked on block or character device files.
+> 
+> Like the truncate right, this right is associated with a file
+> descriptor at the time of open(2), and gets respected even when the
+> file descriptor is used outside of the thread which it was originally
+> opened in.
+> 
+> Therefore, a newly enabled Landlock policy does not apply to file
+> descriptors which are already open.
+> 
+> If the LANDLOCK_ACCESS_FS_IOCTL_DEV right is handled, only a small
+> number of safe IOCTL commands will be permitted on newly opened device
+> files.  These include FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC, as well
+> as other IOCTL commands for regular files which are implemented in
+> fs/ioctl.c.
+> 
+> Noteworthy scenarios which require special attention:
+> 
+> TTY devices are often passed into a process from the parent process,
+> and so a newly enabled Landlock policy does not retroactively apply to
+> them automatically.  In the past, TTY devices have often supported
+> IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
+> letting callers control the TTY input buffer (and simulate
+> keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
+> modern kernels though.
+> 
+> Known limitations:
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL_DEV access right is a coarse-grained
+> control over IOCTL commands.
+> 
+> Landlock users may use path-based restrictions in combination with
+> their knowledge about the file system layout to control what IOCTLs
+> can be done.
+> 
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Günther Noack <gnoack@google.com>
 > ---
->  .../security/keys/trusted-encrypted.rst       | 85 +++++++++++++++++++
->  1 file changed, 85 insertions(+)
->
-> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Document=
-ation/security/keys/trusted-encrypted.rst
-> index e989b9802f92..81fb3540bb20 100644
-> --- a/Documentation/security/keys/trusted-encrypted.rst
-> +++ b/Documentation/security/keys/trusted-encrypted.rst
-> @@ -42,6 +42,14 @@ safe.
->           randomly generated and fused into each SoC at manufacturing tim=
-e.
->           Otherwise, a common fixed test key is used instead.
-> =20
-> +     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs=
-)
-> +
-> +         Rooted to a one-time programmable key (OTP) that is generally b=
-urnt
-> +         in the on-chip fuses and is accessible to the DCP encryption en=
-gine only.
-> +         DCP provides two keys that can be used as root of trust: the OT=
-P key
-> +         and the UNIQUE key. Default is to use the UNIQUE key, but selec=
-ting
-> +         the OTP key can be done via a module parameter (dcp_use_otp_key=
-).
-> +
->    *  Execution isolation
-> =20
->       (1) TPM
-> @@ -57,6 +65,12 @@ safe.
-> =20
->           Fixed set of operations running in isolated execution environme=
-nt.
-> =20
-> +     (4) DCP
-> +
-> +         Fixed set of cryptographic operations running in isolated execu=
-tion
-> +         environment. Only basic blob key encryption is executed there.
-> +         The actual key sealing/unsealing is done on main processor/kern=
-el space.
-> +
->    * Optional binding to platform integrity state
-> =20
->       (1) TPM
-> @@ -79,6 +93,11 @@ safe.
->           Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
->           for platform integrity.
-> =20
-> +     (4) DCP
-> +
-> +         Relies on Secure/Trusted boot process (called HAB by vendor) fo=
-r
-> +         platform integrity.
-> +
->    *  Interfaces and APIs
-> =20
->       (1) TPM
-> @@ -94,6 +113,11 @@ safe.
-> =20
->           Interface is specific to silicon vendor.
-> =20
-> +     (4) DCP
-> +
-> +         Vendor-specific API that is implemented as part of the DCP cryp=
-to driver in
-> +         ``drivers/crypto/mxs-dcp.c``.
-> +
->    *  Threat model
-> =20
->       The strength and appropriateness of a particular trust source for a=
- given
-> @@ -129,6 +153,13 @@ selected trust source:
->       CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the devic=
-e
->       is probed.
-> =20
-> +  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-> +
-> +     The DCP hardware device itself does not provide a dedicated RNG int=
-erface,
-> +     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL =
-do have
-> +     a dedicated hardware RNG that is independent from DCP which can be =
-enabled
-> +     to back the kernel RNG.
-> +
->  Users may override this by specifying ``trusted.rng=3Dkernel`` on the ke=
-rnel
->  command-line to override the used RNG with the kernel's random number po=
-ol.
-> =20
-> @@ -231,6 +262,19 @@ Usage::
->  CAAM-specific format.  The key length for new keys is always in bytes.
->  Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-> =20
-> +Trusted Keys usage: DCP
-> +-----------------------
-> +
-> +Usage::
-> +
-> +    keyctl add trusted name "new keylen" ring
-> +    keyctl add trusted name "load hex_blob" ring
-> +    keyctl print keyid
-> +
-> +"keyctl print" returns an ASCII hex copy of the sealed key, which is in =
-format
-> +specific to this DCP key-blob implementation.  The key length for new ke=
-ys is
-> +always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-> +
->  Encrypted Keys usage
->  --------------------
-> =20
-> @@ -426,3 +470,44 @@ string length.
->  privkey is the binary representation of TPM2B_PUBLIC excluding the
->  initial TPM2B header which can be reconstructed from the ASN.1 octed
->  string length.
-> +
-> +DCP Blob Format
-> +---------------
-> +
-> +The Data Co-Processor (DCP) provides hardware-bound AES keys using its
-> +AES encryption engine only. It does not provide direct key sealing/unsea=
-ling.
-> +To make DCP hardware encryption keys usable as trust source, we define
-> +our own custom format that uses a hardware-bound key to secure the seali=
-ng
-> +key stored in the key blob.
-> +
-> +Whenever a new trusted key using DCP is generated, we generate a random =
-128-bit
-> +blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are used =
-to
-> +encrypt the trusted key payload using AES-128-GCM.
-> +
-> +The BEK itself is encrypted using the hardware-bound key using the DCP's=
- AES
-> +encryption engine with AES-128-ECB. The encrypted BEK, generated nonce,
-> +BEK-encrypted payload and authentication tag make up the blob format tog=
-ether
-> +with a version number, payload length and authentication tag::
-> +
-> +    /*
-> +     * struct dcp_blob_fmt - DCP BLOB format.
-> +     *
-> +     * @fmt_version: Format version, currently being %1
-> +     * @blob_key: Random AES 128 key which is used to encrypt @payload,
-> +     *            @blob_key itself is encrypted with OTP or UNIQUE devic=
-e key in
-> +     *            AES-128-ECB mode by DCP.
-> +     * @nonce: Random nonce used for @payload encryption.
-> +     * @payload_len: Length of the plain text @payload.
-> +     * @payload: The payload itself, encrypted using AES-128-GCM and @bl=
-ob_key,
-> +     *           GCM auth tag of size AES_BLOCK_SIZE is attached at the =
-end of it.
-> +     *
-> +     * The total size of a DCP BLOB is sizeof(struct dcp_blob_fmt) + @pa=
-yload_len +
-> +     * AES_BLOCK_SIZE.
-> +     */
-> +    struct dcp_blob_fmt {
-> +            __u8 fmt_version;
-> +            __u8 blob_key[AES_KEYSIZE_128];
-> +            __u8 nonce[AES_KEYSIZE_128];
-> +            __le32 payload_len;
-> +            __u8 payload[];
-> +    } __packed;
+>  include/uapi/linux/landlock.h                |  33 +++-
+>  security/landlock/fs.c                       | 183 ++++++++++++++++++-
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   8 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+>  6 files changed, 216 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 25c8d7677539..5d90e9799eb5 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -128,7 +128,7 @@ struct landlock_net_port_attr {
+>   * files and directories.  Files or directories opened before the sandboxing
+>   * are not subject to these restrictions.
+>   *
+> - * A file can only receive these access rights:
+> + * The following access rights apply only to files:
+>   *
+>   * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+>   * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
+> @@ -138,12 +138,13 @@ struct landlock_net_port_attr {
+>   * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+>   * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
+>   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+> - *   ``O_TRUNC``. Whether an opened file can be truncated with
+> - *   :manpage:`ftruncate(2)` is determined during :manpage:`open(2)`, in the
+> - *   same way as read and write permissions are checked during
+> - *   :manpage:`open(2)` using %LANDLOCK_ACCESS_FS_READ_FILE and
+> - *   %LANDLOCK_ACCESS_FS_WRITE_FILE. This access right is available since the
+> - *   third version of the Landlock ABI.
+> + *   ``O_TRUNC``.  This access right is available since the third version of the
+> + *   Landlock ABI.
+> + *
+> + * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+> + * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+> + * read and write permissions are checked during :manpage:`open(2)` using
+> + * %LANDLOCK_ACCESS_FS_READ_FILE and %LANDLOCK_ACCESS_FS_WRITE_FILE.
+>   *
+>   * A directory can receive access rights related to files or directories.  The
+>   * following access right is applied to the directory itself, and the
+> @@ -198,13 +199,28 @@ struct landlock_net_port_attr {
+>   *   If multiple requirements are not met, the ``EACCES`` error code takes
+>   *   precedence over ``EXDEV``.
+>   *
+> + * The following access right applies both to files and directories:
+> + *
+> + * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on an opened
+> + *   character or block device.
+> + *
+> + *   This access right applies to all `ioctl(2)` commands implemented by device
 
-I'm thinking here given that you need to replicate the same thing that
-is in the source files. E.g. Documentation/gpu/i915.rst.
+:manpage:`ioctl(2)`
 
-The rationale would so many sources so maybe it would make sense to
-maintain this in the source code.
+> + *   drivers.  However, the following common IOCTL commands continue to be
+> + *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
 
-Also this documents how to generally insert documentation inline:
-https://docs.kernel.org/doc-guide/kernel-doc.html
+This is good but explaining the rationale could help, something like
+this (taking care of not packing lines listing commands to ease review
+when a new command will be added):
 
-I.e. I'm feeling that this is good time to improve scalability so that
-documentation will keep up to date. Also then backend specific patches
-mostly go to their subdirectories and not to Documentation/ subtree
-(or that would be more rare case).
+IOCTL commands targetting file descriptors (``FIOCLEX``, ``FIONCLEX``),
+file descriptions (``FIONBIO``, ``FIOASYNC``),
+file systems (``FIOQSIZE``, ``FS_IOC_FIEMAP``, ``FICLONE``,
+``FICLONERAN``, ``FIDEDUPERANGE``, ``FS_IOC_GETFLAGS``,
+``FS_IOC_SETFLAGS``, ``FS_IOC_FSGETXATTR``, ``FS_IOC_FSSETXATTR``),
+or superblocks (``FIFREEZE``, ``FITHAW``, ``FIGETBSZ``,
+``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``)
+are never denied.  However, such IOCTL commands still require an opened
+file and may not be available on any file type.  Read or write
+permission may be checked by the underlying implementation, as well as
+capabilities.
 
-So a good chance to do more than just a new backend for the benefit
-of the trusted keys subsystem :-)
+> + *
+> + *   ``FIOCLEX``, ``FIONCLEX``, ``FIONBIO``, ``FIOASYNC``, ``FIFREEZE``,
+> + *   ``FITHAW``, ``FIGETBSZ``, ``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``
+> + *
+> + *   This access right is available since the fifth version of the Landlock
+> + *   ABI.
+> + *
+>   * .. warning::
+>   *
+>   *   It is currently not possible to restrict some file-related actions
+>   *   accessible through these syscall families: :manpage:`chdir(2)`,
+>   *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+>   *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> - *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+> + *   :manpage:`fcntl(2)`, :manpage:`access(2)`.
+>   *   Future Landlock evolutions will enable to restrict them.
+>   */
+>  /* clang-format off */
+> @@ -223,6 +239,7 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
+>  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+>  /* clang-format on */
+>  
+>  /**
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c15559432d3d..2ef6c57fa20b 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -7,6 +7,7 @@
+>   * Copyright © 2021-2022 Microsoft Corporation
+>   */
+>  
+> +#include <asm/ioctls.h>
+>  #include <kunit/test.h>
+>  #include <linux/atomic.h>
+>  #include <linux/bitops.h>
+> @@ -14,6 +15,7 @@
+>  #include <linux/compiler_types.h>
+>  #include <linux/dcache.h>
+>  #include <linux/err.h>
+> +#include <linux/falloc.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -29,6 +31,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait_bit.h>
+>  #include <linux/workqueue.h>
+> +#include <uapi/linux/fiemap.h>
+>  #include <uapi/linux/landlock.h>
+>  
+>  #include "common.h"
+> @@ -84,6 +87,141 @@ static const struct landlock_object_underops landlock_fs_underops = {
+>  	.release = release_inode
+>  };
+>  
+> +/* IOCTL helpers */
+> +
+> +/**
+> + * get_required_ioctl_dev_access(): Determine required access rights for IOCTLs
+> + * on device files.
+> + *
+> + * @cmd: The IOCTL command that is supposed to be run.
+> + *
+> + * By default, any IOCTL on a device file requires the
+> + * LANDLOCK_ACCESS_FS_IOCTL_DEV right.  We make exceptions for commands, if:
+> + *
+> + * 1. The command is implemented in fs/ioctl.c's do_vfs_ioctl(),
+> + *    not in f_ops->unlocked_ioctl() or f_ops->compat_ioctl().
+> + *
+> + * 2. The command can be reasonably used on a device file at all.
+> + *
+> + * Any new IOCTL commands that are implemented in fs/ioctl.c's do_vfs_ioctl()
+> + * should be considered for inclusion here.
+> + *
+> + * Returns: The access rights that must be granted on an opened file in order to
+> + * use the given @cmd.
+> + */
+> +static __attribute_const__ access_mask_t
+> +get_required_ioctl_dev_access(const unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	case FIOCLEX:
+> +	case FIONCLEX:
+> +	case FIONBIO:
+> +	case FIOASYNC:
+> +		/*
+> +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
+> +		 * close-on-exec and the file's buffered-IO and async flags.
+> +		 * These operations are also available through fcntl(2), and are
+> +		 * unconditionally permitted in Landlock.
+> +		 */
+> +		return 0;
+> +	case FIOQSIZE:
+> +		/*
+> +		 * FIOQSIZE queries the size of a regular file or directory.
+> +		 *
+> +		 * This IOCTL command only applies to regular files and
+> +		 * directories.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
 
-Also, later on if something is changed e.g. in the above struct you
-don't have to do matching update to the documentation so it will save
-time too (over time).
+This should always be allowed because do_vfs_ioctl() never returns
+-ENOIOCTLCMD for this command.  That's why I wrote
+vfs_masked_device_ioctl() this way [1].  I think it would be easier to
+read and maintain this code with a is_masked_device_ioctl() logic.  Listing
+commands that are not masked makes it difficult to review because
+allowed and denied return codes are interleaved.
 
-BR, Jarkko
+[1] https://lore.kernel.org/r/20240219183539.2926165-1-mic@digikod.net
+
+Your IOCTL command explanation comments are nice and they should be kept
+in is_masked_device_ioctl() (if they mask device IOCTL commands).
+
+> +	case FIFREEZE:
+> +	case FITHAW:
+> +		/*
+> +		 * FIFREEZE and FITHAW freeze and thaw the file system which the
+> +		 * given file belongs to.  Requires CAP_SYS_ADMIN.
+> +		 *
+> +		 * These commands operate on the file system's superblock rather
+> +		 * than on the file itself.  The same operations can also be
+> +		 * done through any other file or directory on the same file
+> +		 * system, so it is safe to permit these.
+> +		 */
+> +		return 0;
+> +	case FS_IOC_FIEMAP:
+> +		/*
+> +		 * FS_IOC_FIEMAP queries information about the allocation of
+> +		 * blocks within a file.
+> +		 *
+> +		 * This IOCTL command only applies to regular files.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+
+Same here.
+
+> +	case FIGETBSZ:
+> +		/*
+> +		 * FIGETBSZ queries the file system's block size for a file or
+> +		 * directory.
+> +		 *
+> +		 * This command operates on the file system's superblock rather
+> +		 * than on the file itself.  The same operation can also be done
+> +		 * through any other file or directory on the same file system,
+> +		 * so it is safe to permit it.
+> +		 */
+> +		return 0;
+> +	case FICLONE:
+> +	case FICLONERANGE:
+> +	case FIDEDUPERANGE:
+> +		/*
+> +		 * FICLONE, FICLONERANGE and FIDEDUPERANGE make files share
+> +		 * their underlying storage ("reflink") between source and
+> +		 * destination FDs, on file systems which support that.
+> +		 *
+> +		 * These IOCTL commands only apply to regular files.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+
+ditto
+
+> +	case FIONREAD:
+> +		/*
+> +		 * FIONREAD returns the number of bytes available for reading.
+> +		 *
+> +		 * We require LANDLOCK_ACCESS_FS_IOCTL_DEV for FIONREAD, because
+> +		 * devices implement it in f_ops->unlocked_ioctl().  The
+> +		 * implementations of this operation have varying quality and
+> +		 * complexity, so it is hard to reason about what they do.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	case FS_IOC_GETFLAGS:
+> +	case FS_IOC_SETFLAGS:
+> +	case FS_IOC_FSGETXATTR:
+> +	case FS_IOC_FSSETXATTR:
+> +		/*
+> +		 * FS_IOC_GETFLAGS, FS_IOC_SETFLAGS, FS_IOC_FSGETXATTR and
+> +		 * FS_IOC_FSSETXATTR do not apply for devices.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	case FS_IOC_GETFSUUID:
+> +	case FS_IOC_GETFSSYSFSPATH:
+> +		/*
+> +		 * FS_IOC_GETFSUUID and FS_IOC_GETFSSYSFSPATH both operate on
+> +		 * the file system superblock, not on the specific file, so
+> +		 * these operations are available through any other file on the
+> +		 * same file system as well.
+> +		 */
+> +		return 0;
+> +	case FIBMAP:
+> +	case FS_IOC_RESVSP:
+> +	case FS_IOC_RESVSP64:
+> +	case FS_IOC_UNRESVSP:
+> +	case FS_IOC_UNRESVSP64:
+> +	case FS_IOC_ZERO_RANGE:
+> +		/*
+> +		 * FIBMAP, FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP,
+> +		 * FS_IOC_UNRESVSP64 and FS_IOC_ZERO_RANGE only apply to regular
+> +		 * files (as implemented in file_ioctl()).
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	default:
+> +		/*
+> +		 * Other commands are guarded by the catch-all access right.
+> +		 */
+> +		return LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +	}
+> +}
+> +
+>  /* Ruleset management */
+>  
+>  static struct landlock_object *get_inode_object(struct inode *const inode)
+> @@ -148,7 +286,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>  	LANDLOCK_ACCESS_FS_EXECUTE | \
+>  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+>  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> -	LANDLOCK_ACCESS_FS_TRUNCATE)
+> +	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> +	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+>  /* clang-format on */
+>  
+>  /*
+> @@ -1335,8 +1474,10 @@ static int hook_file_alloc_security(struct file *const file)
+>  static int hook_file_open(struct file *const file)
+>  {
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+> -	access_mask_t open_access_request, full_access_request, allowed_access;
+> -	const access_mask_t optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
+> +	access_mask_t open_access_request, full_access_request, allowed_access,
+> +		optional_access;
+> +	const struct inode *inode = file_inode(file);
+> +	const bool is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
+>  	const struct landlock_ruleset *const dom =
+>  		get_fs_domain(landlock_cred(file->f_cred)->domain);
+>  
+> @@ -1354,6 +1495,10 @@ static int hook_file_open(struct file *const file)
+>  	 * We look up more access than what we immediately need for open(), so
+>  	 * that we can later authorize operations on opened files.
+>  	 */
+> +	optional_access = LANDLOCK_ACCESS_FS_TRUNCATE;
+> +	if (is_device)
+> +		optional_access |= LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> +
+>  	full_access_request = open_access_request | optional_access;
+>  
+>  	if (is_access_to_paths_allowed(
+> @@ -1410,6 +1555,36 @@ static int hook_file_truncate(struct file *const file)
+>  	return -EACCES;
+>  }
+>  
+> +static int hook_file_ioctl(struct file *file, unsigned int cmd,
+> +			   unsigned long arg)
+> +{
+> +	const struct inode *inode = file_inode(file);
+> +	const bool is_device = S_ISBLK(inode->i_mode) || S_ISCHR(inode->i_mode);
+> +	access_mask_t required_access, allowed_access;
+
+As explained in [2], I'd like not-sandboxed tasks to not have visible
+performance impact because of Landlock:
+
+  We should first check landlock_file(file)->allowed_access as in
+  hook_file_truncate() to return as soon as possible for non-sandboxed
+  tasks.  Any other computation should be done after that (e.g. with an
+  is_device() helper).
+
+[2] https://lore.kernel.org/r/20240311.If7ieshaegu2@digikod.net
+
+This is_device(file) helper should also replace other is_device variables.
+
+
+> +
+> +	if (!is_device)
+> +		return 0;
+> +
+> +	/*
+> +	 * It is the access rights at the time of opening the file which
+> +	 * determine whether IOCTL can be used on the opened file later.
+> +	 *
+> +	 * The access right is attached to the opened file in hook_file_open().
+> +	 */
+> +	required_access = get_required_ioctl_dev_access(cmd);
+> +	allowed_access = landlock_file(file)->allowed_access;
+> +	if ((allowed_access & required_access) == required_access)
+> +		return 0;
+> +
+> +	return -EACCES;
+> +}
+> +
+> +static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+> +				  unsigned long arg)
+> +{
+> +	return hook_file_ioctl(file, cmd, arg);
+
+The compat-specific IOCTL commands are missing (e.g. FS_IOC_RESVSP_32).
+Relying on is_masked_device_ioctl() should make this call OK though.
+
+> +}
+> +
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
+>  
