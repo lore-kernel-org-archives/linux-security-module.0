@@ -1,258 +1,170 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9271C1514FD;
-	Wed, 27 Mar 2024 21:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727CB1534E8;
+	Wed, 27 Mar 2024 23:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711575712; cv=none; b=SyGF6PEmAHbTBTqHyZfkYMCVNwNXaPD0mbG/Vio9ZGcZuGAKlbPodyzjTt8Y6fvBwCgNyZoyJwqU3+H9CE8HAnab6s9d/b8BjIFoH+WjY3qz6Gd3D24KD7+2C3NoU+NA0xwPpQAjTAbOQsGCgoBL7/v9GV1yGrai1fZIMPTnpV8=
+	t=1711581964; cv=none; b=KS+NWwO4JeuZ84WeAsixMfe2T9t3SjLEhS8a6sVIKFo+Rd0NTR5n5FwqKDd5ze4FTNlI+I/HtBHohrZn8gmWLdSbKrR8nu8jUZfbK/eGeUSGOjJAKH3BNJWpQguDufx22WKmoujByUBNGiBNY5XBTK1Q/XCuW2ObwKoR08zKwHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711575712; c=relaxed/simple;
-	bh=jmyWyMGFwOtdmdQNcIkC5X3aKzO5r8vG4Waa5MjtpDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZLXQrTDv4Y/QwkQs9SgAiQJTGDPG/kWhzQFH8ugj+hrcGYQVZ6ZzEx2oi/EGM+UjNEfnop+CTPCzghAPFlqC0z/LUc+qWLG6zypJJAUOb3ZjP8WLIRFqIZOR92o+u9Uwf+W2v5+T/x937GbecOfVWmkcZrifI+ga/NfC1rAsB3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXmyyNGr; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1711581964; c=relaxed/simple;
+	bh=PlZwKOxY2H1fF/5+DcCGrpjUWbv+K7OzN+L2CRgdJgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fc+ebiieNVgKqI7sROZN83i+RiwIs9cE0kZM67WgWoTlbkUk4wDjYLh4/zbkL+ng5MGKSXPm898uYQ3AET5slEzB2RkG44pXtrVh+2TGETi8bhD4JZSR3DwmUNxeoKHVYuEpJZWE/dlPBKNZRiIG7/sybupil54GKekqcwMLwEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVlcRakS; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXmyyNGr"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34005b5927eso141100f8f.1;
-        Wed, 27 Mar 2024 14:41:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVlcRakS"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1e0f0398553so3780995ad.3;
+        Wed, 27 Mar 2024 16:26:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711575709; x=1712180509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QzkPeJjBZryBqMmL4486tp2idMhhYHpknALnqkob6rs=;
-        b=YXmyyNGrE372EMwKscYn+ImMASKT030Pb23kcQqRdrH/X/L1S3Q7OWZa728MhckVKO
-         8D1Jxdmu08QowZ7zuiFs+F9JYPS/lgs0or6iSAib55NkzqrbDsTCeRlBVgiDkv714JaN
-         /ddOHxVD6O+1ESAXC+y9nsCZ9ovxGU1FKgl3SNK/3NTn0DD6/iveHxYiFkUj+3e6cD1U
-         S8SjvqT29XSE4bsVJqhn8u5Mx3JB/mp1fgmjhZ5Hejc6XfkqIFVzZ6aAfXakf8QAbmMP
-         CA0SZEMY4mx+BcIK+rpKMA9f6WqJu8dHofsf+R8XP7UTKclK2GhgTlFYiu9INHfMbZF2
-         Aaag==
+        d=gmail.com; s=20230601; t=1711581963; x=1712186763; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+T12fKZNKy57IbrXvGN5IsMMR+Ds6fYdnTifIne9es8=;
+        b=kVlcRakSMM+FSCq9eq7g3GYBC/1n765WhgdZutycxbHEhoelOC/JOQU9vVaiH1oapL
+         NhqYBrBZNY5/8y+JShfZTGEg+FpUjL2VLl7fhvSHuFp+qCs3gqhS1hgcz6/wvCwfZFyL
+         3orAaUcIJlfIyPO39meW9kjaMT0rFbAjIHmW3xF7scsrWKhbrVYVani5AaifvEg6tIv5
+         qx6CiFWQe5B05WW1Dp7qDGAJyE0maoZjkzuXLefABFNcjL5VOrYtKGwVc9p31tUcJ3WO
+         fUkQ5wvxoX0F8nl2ivXxDSyrPgVS5r47rpRBNnXqs8Rw6eRfZxVEneDay5MzvxzXt86G
+         +STQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711575709; x=1712180509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QzkPeJjBZryBqMmL4486tp2idMhhYHpknALnqkob6rs=;
-        b=Nw0RyJZqljoG4FrX5AmQjLZgbVwQAS0CLqu+gkjy9g853nUDIq3TawIVguSpGbrk1/
-         FHvqRFDX9frDKe+kF53qfQ6UkB6BZeOC566Ww4qmf2Fw2AvZ3HAqN2RPqUUKSZ/zibrl
-         tXUSCT21aqPLskvQdPDX1TY5z1Hxm5k31aDwPIueRKETXqWXA+RfVpADHtOkKH+8gYG7
-         asvvw8VA7weOgJhN+8b0fL5Q+nHwXiF0MfUFG+liIZxbUtD9ctoXBsPXinhqnTCLJQr7
-         fhn/U2l1lUOIW8XFOJbVr1yi+R8aQeEyqkFYlMJn81eCkMGHeo2Oo8W7XC/yKoOf06rb
-         jm0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZKwePwrd2xTq7TdYFy+auUn+Un6zkCw9lDwn4QJtnvfN6LEuYt9JzynvMVheAKbIzTmyJjVTB6JBSBy+XQG3yHX47ZAuNDIeywHMRDJd4cgXCEo++ImRssOnwkL9w6XDQLm9XauRSv75bopEYd3MHMqRbqbg/4xkH4/w1MBPBF1WKmekYEklALA==
-X-Gm-Message-State: AOJu0Yyi6peQyrL3C+dY/XH5NDlUprAi18Da64j1rVHoTlGxMCggYfRl
-	VWTQJeFL9cnO4FRMlt4Sq6aF5bVbTIiI3JRZAefXIL6Fzi9iKzZfWSQ1PjEwLyESasmoG9QjlxP
-	K13MuJB+dgsGNXjBT72DBXEKKrFY=
-X-Google-Smtp-Source: AGHT+IH8bsjkbEPq5nFZa25RNEBMUp4NHKWgJkZvhsLEiO/AS+v/zIitCzEw8DN2gbwGn9LjyHANzGigswDNTFCf8qM=
-X-Received: by 2002:a05:6000:b04:b0:33e:40a3:22c8 with SMTP id
- dj4-20020a0560000b0400b0033e40a322c8mr425338wrb.33.1711575708527; Wed, 27 Mar
- 2024 14:41:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711581963; x=1712186763;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+T12fKZNKy57IbrXvGN5IsMMR+Ds6fYdnTifIne9es8=;
+        b=MF9InQnEWGFatBd/a4V4uYW3ClwDYu1Mnsz4VQtIxO5FuROepTI2LMj831ElIrXFBo
+         SCnGZ/8UjnXdS4/Gq4PCxFJ4l6yhzh1K0EwxEjAnq+oCoSBc8z0Y/25MMUYhgDNvGGWW
+         XqH3KzrsRFPZwnt78GLqlFLcCQJAWYOuh5pGF1Jam6/cCsTVrE4a75uDiHR4fwjPlYpl
+         JYTx92X8r8spQrUdRheG0XLanLFXJT+3dABjN8Oh5Bpf4IaDXgN7yB0hRBVaiJAwGNFw
+         TiE9JFpUbkv4WGOzX0rwibTSmx4Tlt+QwrlDoCIBdaV8pkBlFsvLVi/8gUGCc+KMyb+O
+         FjdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1GjKX+fCX9GfwPJEkZHzHoxYl4NmF+Grq2pE3nqR3jGtijfLdsYSczkZtjswzbvY6bcOwhVOBwbG7yF215Ps09JdIkvAeRPuYQNe+pCHyaiFGoafSbXRWyEb2BO+fjdp8vSkb5IhSzFkTfCphSIZPg6M4
+X-Gm-Message-State: AOJu0YyvXxAIxGRoA+Qa8jETRjlA446h8HaBv9I9B1NW6qso//iZoab9
+	No+B2aoOnH3WRZb7GGxGOaZl9f8btC5782Lex5uz9KP+TQi4xO/7
+X-Google-Smtp-Source: AGHT+IFGmK2mHH1d0ldDTEZLVZxkzXuLt7pevdi4dU+j5vH/TEDCDM75FYmrZOE/gNxmbxDI5S4fpA==
+X-Received: by 2002:a17:902:ecd1:b0:1e0:b287:c1d8 with SMTP id a17-20020a170902ecd100b001e0b287c1d8mr1432604plh.5.1711581962667;
+        Wed, 27 Mar 2024 16:26:02 -0700 (PDT)
+Received: from ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx ([103.6.158.68])
+        by smtp.gmail.com with ESMTPSA id f8-20020a17090274c800b001e1020d4070sm72877plt.307.2024.03.27.16.26.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Mar 2024 16:26:02 -0700 (PDT)
+Date: Thu, 28 Mar 2024 04:55:57 +0530
+From: Ayush Tiwari <ayushtiw0110@gmail.com>
+To: alison.schofield@intel.com, paul@paul-moore.com, mic@digikod.net,
+	fabio.maria.de.francesco@linux.intel.com,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: outreachy@lists.linux.dev, linux-security-module@vger.kernel.org
+Subject: [PATCH] LANDLOCK: use kmem_cache for landlock_object
+Message-ID: <ZgSrBVidW1U6yP+h@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1709675979.git.mattbobrowski@google.com>
- <20240306-flach-tragbar-b2b3c531bf0d@brauner> <20240306-sandgrube-flora-a61409c2f10c@brauner>
- <CAADnVQ+RBV_rJx5LCtCiW-TWZ5DCOPz1V3ga_fc__RmL_6xgOg@mail.gmail.com>
- <20240307-phosphor-entnahmen-8ef28b782abf@brauner> <CAADnVQLMHdL1GfScnG8=0wL6PEC=ACZT3xuuRFrzNJqHKrYvsw@mail.gmail.com>
- <20240308-kleben-eindecken-73c993fb3ebd@brauner> <CAADnVQJVNntnH=DLHwUioe9mEw0FzzdUvmtj3yx8SjL38daeXQ@mail.gmail.com>
- <20240311-geglaubt-kursverfall-500a27578cca@brauner> <CAADnVQLnzrxyUM-EiorEP_qvfmdiSK5Kj1WtGjFoAogygHSvmA@mail.gmail.com>
- <20240318-individual-gekennzeichnet-1658fcb8bf27@brauner>
-In-Reply-To: <20240318-individual-gekennzeichnet-1658fcb8bf27@brauner>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 27 Mar 2024 14:41:36 -0700
-Message-ID: <CAADnVQ+noVorD70rmtESE3MkDHnkQgraNNBCadJ=0x6-nBwhvA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 0/9] add new acquire/release BPF kfuncs
-To: Christian Brauner <brauner@kernel.org>
-Cc: Matt Bobrowski <mattbobrowski@google.com>, bpf <bpf@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@google.com>, 
-	Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm <linux-mm@kvack.org>, LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Mar 18, 2024 at 6:14=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Wed, Mar 13, 2024 at 02:05:13PM -0700, Alexei Starovoitov wrote:
->
-> But this whole polemic just illustrates that you simply didn't bother to
-> understand how the code works. The way you talk about UAF together with
-> SLAB_TYPESAFE_BY_RCU is telling. Please read the code instead of
-> guessing.
+Use kmem_cache replace kzalloc() calls with kmem_cache_zalloc() for
+struct landlock_object and update the related dependencies.
 
-Ok. Fair enough. I've read the code and old threads from Sep-Nov.
-I think the concerns about typesafe_by_rcu made folks believe in
-races that don't exist.
+Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
+---
+ security/landlock/fs.c     |  2 +-
+ security/landlock/object.c | 14 ++++++++++++--
+ security/landlock/object.h |  4 ++++
+ security/landlock/setup.c  |  2 ++
+ 4 files changed, 19 insertions(+), 3 deletions(-)
 
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index fc520a06f9af..227dd67dd902 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -124,7 +124,7 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+ 	if (unlikely(rcu_access_pointer(inode_sec->object))) {
+ 		/* Someone else just created the object, bail out and retry. */
+ 		spin_unlock(&inode->i_lock);
+-		kfree(new_object);
++		kmem_cache_free(landlock_object_cache, new_object);
+ 
+ 		rcu_read_lock();
+ 		goto retry;
+diff --git a/security/landlock/object.c b/security/landlock/object.c
+index 1f50612f0185..df1354215617 100644
+--- a/security/landlock/object.c
++++ b/security/landlock/object.c
+@@ -17,6 +17,15 @@
+ 
+ #include "object.h"
+ 
++struct kmem_cache *landlock_object_cache;
++
++void __init landlock_object_init(void)
++{
++	landlock_object_cache = kmem_cache_create(
++		"landlock_object_cache", sizeof(struct landlock_object), 0,
++		SLAB_PANIC, NULL);
++}
++
+ struct landlock_object *
+ landlock_create_object(const struct landlock_object_underops *const underops,
+ 		       void *const underobj)
+@@ -25,7 +34,8 @@ landlock_create_object(const struct landlock_object_underops *const underops,
+ 
+ 	if (WARN_ON_ONCE(!underops || !underobj))
+ 		return ERR_PTR(-ENOENT);
+-	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
++	new_object =
++		kmem_cache_zalloc(landlock_object_cache, GFP_KERNEL_ACCOUNT);
+ 	if (!new_object)
+ 		return ERR_PTR(-ENOMEM);
+ 	refcount_set(&new_object->usage, 1);
+@@ -62,6 +72,6 @@ void landlock_put_object(struct landlock_object *const object)
+ 		 * @object->underobj to @object (if it still exists).
+ 		 */
+ 		object->underops->release(object);
+-		kfree_rcu(object, rcu_free);
++		kmem_cache_free(landlock_object_cache, object);
+ 	}
+ }
+diff --git a/security/landlock/object.h b/security/landlock/object.h
+index 5f28c35e8aa8..8ba1af3ddc2e 100644
+--- a/security/landlock/object.h
++++ b/security/landlock/object.h
+@@ -13,6 +13,10 @@
+ #include <linux/refcount.h>
+ #include <linux/spinlock.h>
+ 
++extern struct kmem_cache *landlock_object_cache;
++
++void __init landlock_object_init(void);
++
+ struct landlock_object;
+ 
+ /**
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index f6dd33143b7f..a5fca4582ee1 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -16,6 +16,7 @@
+ #include "net.h"
+ #include "ptrace.h"
+ #include "setup.h"
++#include "object.h"
+ 
+ bool landlock_initialized __ro_after_init = false;
+ 
+@@ -33,6 +34,7 @@ const struct lsm_id landlock_lsmid = {
+ 
+ static int __init landlock_init(void)
+ {
++	landlock_object_init();
+ 	landlock_add_cred_hooks();
+ 	landlock_add_ptrace_hooks();
+ 	landlock_add_fs_hooks();
+-- 
+2.40.1
 
-           if (unlikely(!atomic_long_inc_not_zero(&file->f_count)))
-..
-            *  (a) the file ref already went down to zero and the
-            *      file hasn't been reused yet or the file count
-            *      isn't zero but the file has already been reused.
-
-..
-            if (unlikely(file !=3D rcu_dereference_raw(*fdentry)) ||
-
-The first part of the comment is partially incorrect.
-(it's in the wrong place).
-
-The file ref could have been down to zero and not reused yet,
-but it's before atomic_long_inc_not_zero.
-Once the code reaches 2nd check the file guaranteed to be reused
-and it went through init_file(), because that's the only code
-that brings it back from zero.
-This race is ok:
-
-cpu0                                    cpu1
-file =3D rcu_dereference_raw(*fdentry);
-// file->f_count =3D=3D 1
-                                        rcu_assign_pointer(fdt->fd[fd], NUL=
-L);
-                                        fput() // reaches zero
-
-atomic_long_inc_not_zero()
-// will not succeed.
-
-This race is ok too:
-cpu0                                    cpu1
-file =3D rcu_dereference_raw(*fdentry);
-// file->f_count =3D=3D 1
-                                        rcu_assign_pointer(fdt->fd[fd], NUL=
-L);
-
-atomic_long_inc_not_zero()
-// succeeds. f_count =3D=3D 2
-                                        fput() // f_count =3D=3D 1
-
-file !=3D rcu_dereference_raw(*fdentry)
-// will fail
-but it doesn't have to.
-This is a safe race.
-It's no different if cpu0 went through
-these steps including successful last check
-                                        and then cpu1 did close(fd)
-
-The file held by cpu0 is not on the
-path to zero.
-
-Similarly, back then, there was a concern about two parallel __fget_files_r=
-cu()
-where one cpu incremented refcnt, failed some check and didn't do fput yet.
-In this case the file is not on the path to zero either.
-Both cpu-s saw non-zero f_count when they went through atomic_long_inc_not_=
-zero.
-The file is not on the path to be reused.
-
-Now the second part of the comment
-"the file count isn't zero but the file has already been reused"
-is misleading.
-
-The (file !=3D rcu_dereference_raw(*fdentry)) check is racy.
-Another cpu could have replaced that slot right after that check.
-Example:
-cpu0 doing lockless __fget_files_rcu() while cpu1 doing sys_close.
-__fget_files_rcu() will be returning a file that doesn't exist in fdt.
-And it's safe.
-
-This race is possible:
-cpu0                                    cpu1
-file =3D rcu_dereference_raw(*fdentry);
-                                        fput() reaches zero
-                                        file_free
-                                        alloc_empty_file // got same file
-                                        init_file // f_count =3D 1
-atomic_long_inc_not_zero()
-// succeeds. f_count =3D=3D 2
-file !=3D rcu_dereference_raw(*fdentry))
-// preventing a reuse of a file that
-was never in this fdt.
-
-The only value of this check is to make sure that this file
-either _is_ or _was_ at some point in this fdt.
-It's not preventing reuse per-se.
-
-This race is possible:
-cpu0                                    cpu1
-file =3D rcu_dereference_raw(*fdentry);
-                                        fput() reaches zero
-                                        file_free
-                                        alloc_empty_file // got same file
-                                        init_file // f_count =3D 1
-                                        fd_install
-atomic_long_inc_not_zero()
-// succeeds. f_count =3D=3D 2
-file =3D=3D rcu_dereference_raw(*fdentry))
-// success, though the file _was reused_.
-
-I suggest to revise the comment.
-
->
-> You've been provided:
->
-> a) good reasons why the patchset in it's current form isn't acceptable
->    repeated multiple times
-
-We will improve commit logs in the next revision.
-
-> b) support for exporting a variant of bpf_d_path() that is safe to use
-
-good, but bpf_d_path kfunc alone is not useful.
-As Jann noted back in September:
-https://lore.kernel.org/all/CAG48ez2d5CW=3DCDi+fBOU1YqtwHfubN3q6w=3D1LfD+ss=
-+Q1PWHgQ@mail.gmail.com/
-
-The conversion of files to typesafe_by_rcu broke that verifier
-assumption about mm->exe_file and we need kfuncs to safely
-acquire/release file reference to fix that breakage.
-
-> c) a request that all kfunc exports for the vfs will have to be located
->    under fs/, not in kernel/bpf/
-
-we've added kfuncs to
-net/netfilter/, net/xfrm/, net/ipv4/, kernel/cgroup/, drivers/hid/
-because maintainers of those subsystems demonstrated understanding
-of what bpf is doing and what these kfuncs are for.
-
-We can put them in fs/, but you need to demonstrate willingness to
-understand the problem we're solving instead of arguing
-about how hard file typesafe_by_rcu is to understand.
-
-> d) a path on how to move forward with additional kfunc requests:
->    Clear and documented rules when it's ok for someone to come along and
->    request access to bpf kfuncs when it's to be rejected and when it's
->    ok to be supported.
-
-There are ~36500 EXPORT_SYMBOL in the kernel.
-Are there "clear documented rules when it's ok for someone to"
-add or remove them?
-There is a gentleman's agreement that maintainers of subsystems need to
-be cc-ed when new EXPORT_SYMBOL-s are added.
-In this case no new EXPORT_SYMBOLs are requested.
-
-Compare that to 221 bpf helpers (which are uapi, and for the last
-2 years we didn't add a single one) and 151 bpf kfuncs which are
-not uapi as clearly documented in Documentation/bpf/kfuncs.rst
-When developers want to add them they cc bpf@vger and relevant
-subsystems just like we did with netfilter, xfrm, cgroup, hid.
-kfunc deprecation rules are also documented in kfunc.rst
-
-> You repeatedly threatening to go over the heads of people will not make
-> them more amenable to happily integrate with your subsystem.
-
-This is not it. We made our own mistakes with bpf_d_path safety, and now
-file typesafe_by_rcu broke bpf safety assumptions.
-We have to fix it one way or the other.
-It's bpf that got affected by your changes.
-But we don't demand that you fix bpf bits. We're fixing them.
-But you have to provide technical reasons why file acquire/release
-kfuncs are not suitable.
-"Only 3 people understand typesafe_by_rcu" is not it.
