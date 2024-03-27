@@ -1,92 +1,133 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121EE225D9
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 10:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AB6136E02
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 12:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711536336; cv=none; b=UusTLNcU/cIDE+Slh1oMaByzULDVFLXxwSExf04afLSdISuPC0Gik41PHNV69rDBkwABZo4PGTT/808KHrcIfowU64ROu/q5eJvluFZTUHnsFHZ3XK/Ah2jRm9zbvtXufBXCkN+86strblICmmFIdF0T79yYp6WZy8I4ujYa84k=
+	t=1711541293; cv=none; b=iQWMg6AvrJNTw5VEWWwVR9cepA0yEEYibFBa+vIcz+QzL/m486mSvqZfeR9z30eceKXPurvzuxgCgJWCRD7X6IIKP2saVXSQP0VbNmV6WrnuF880z1+2uDtxLjl+Jq2WZ/UZhMUj0SLJtSzEehNkCPHuSgpKUabio7BOlQ2ZZzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711536336; c=relaxed/simple;
-	bh=kuBo0H9J1FjHw4PFXPqSPhmKf3pZMS6EUaNHJSI6FL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhqorS52KR0Ijye6HfReLPi+eU6hljtDreJlqqyJLyBO/DYS6XwI0zCn7VgQVWznxQ7n0ub+AXR7ZBt6bmC86TEIs3PEdfEj0RZqUF4dpkV1NcXCkufvvawpZWj4jBs6zC5guSX0SFKtk7v2tYAp7bW+3Ei79qJVMLUS29M7crs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0Ddi4oL7; arc=none smtp.client-ip=185.125.25.11
+	s=arc-20240116; t=1711541293; c=relaxed/simple;
+	bh=amdXCZoqj2z7s46MEj+Fcv8Tjjs58JdD4tUlu13JbKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QBjzzWs3/W6fjVPz+Km81+kzfXizSrrNYtPR+BEIZV49eJ4dLngVCLLatdJ1lQQwfDK3d6oD9+B6s9MX3d1SZVdgqqYjIjvCxdsPbXsi3WO66QCX9e47tFMur3qXxSVhqLsX8Zg60yeTOQB+eSa839dkU7ibEiAhup9Qzop8lBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=bYVWGxp/; arc=none smtp.client-ip=185.125.25.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0Ddi4oL7"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="bYVWGxp/"
 Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V4Nc21n7dz47F;
-	Wed, 27 Mar 2024 11:45:22 +0100 (CET)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V4Nc15n0jz1Zj;
-	Wed, 27 Mar 2024 11:45:21 +0100 (CET)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V4QGz5HCCzC90;
+	Wed, 27 Mar 2024 13:00:43 +0100 (CET)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V4QGz2KgCz3d;
+	Wed, 27 Mar 2024 13:00:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711536322;
-	bh=kuBo0H9J1FjHw4PFXPqSPhmKf3pZMS6EUaNHJSI6FL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0Ddi4oL7T/YfHlyGBg5FlsaH7n6qfIgkvoIhqiCT3hDhhsbVaGn4hpx/hPPLpdRxJ
-	 hNgnaR/qgf9rD6tkmNgdZ+R9vTRhGjpDA/RwrUPNY9/SEl37uhbtlzgEBcXsTGjoGk
-	 blquta0kc6HceETUP8btVeHlfxdJouVYpQvPgjfA=
-Date: Wed, 27 Mar 2024 11:45:21 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Cc: willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
-	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Subject: Re: [PATCH] samples/landlock: Fix incorrect free in
- populate_ruleset_net
-Message-ID: <20240327.Zoo8Huo0eemo@digikod.net>
-References: <20240326095625.3576164-1-ivanov.mikhail1@huawei-partners.com>
+	s=20191114; t=1711540843;
+	bh=amdXCZoqj2z7s46MEj+Fcv8Tjjs58JdD4tUlu13JbKk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bYVWGxp/o3FfD53NBkQhGzibdQJ9oi+Y+2oU1Lnl5r3xA1bR8f9ECKufh3+EEOAKw
+	 BO3ef5tTZj8ED8woDIKpmODifwsNG1dJJ4Mfk98gywE6+NkrutfBTWtgrpRbYlWsD/
+	 AAuy9OBo87QDRD66LWhAVc6lnAmxBcjs3nsmt+6w=
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Subject: [PATCH v1 2/2] selftests/landlock: Improve AF_UNSPEC tests
+Date: Wed, 27 Mar 2024 13:00:34 +0100
+Message-ID: <20240327120036.233641-2-mic@digikod.net>
+In-Reply-To: <20240327120036.233641-1-mic@digikod.net>
+References: <20240327120036.233641-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240326095625.3576164-1-ivanov.mikhail1@huawei-partners.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-On Tue, Mar 26, 2024 at 05:56:25PM +0800, Ivanov Mikhail wrote:
-> Pointer env_port_name changes after strsep(). Memory allocated via
-> strdup() will not be freed if landlock_add_rule() returns non-zero value.
-> 
-> Fixes: 5e990dcef12e ("samples/landlock: Support TCP restrictions")
-> Signed-off-by: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-> Reviewed-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Test that an IPv6 socket requested to be binded with AF_UNSPEC returns
+-EAFNOSUPPORT if the sockaddr length is valid.
 
-Thanks! Applied to my next branch.
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ tools/testing/selftests/landlock/net_test.c | 37 +++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-> ---
->  samples/landlock/sandboxer.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index 32e930c853bb..8b8ecd65c28c 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -153,7 +153,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  				const __u64 allowed_access)
->  {
->  	int ret = 1;
-> -	char *env_port_name, *strport;
-> +	char *env_port_name, *env_port_name_next, *strport;
->  	struct landlock_net_port_attr net_port = {
->  		.allowed_access = allowed_access,
->  		.port = 0,
-> @@ -165,7 +165,8 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  	env_port_name = strdup(env_port_name);
->  	unsetenv(env_var);
->  
-> -	while ((strport = strsep(&env_port_name, ENV_DELIMITER))) {
-> +	env_port_name_next = env_port_name;
-> +	while ((strport = strsep(&env_port_name_next, ENV_DELIMITER))) {
->  		net_port.port = atoi(strport);
->  		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
->  				      &net_port, 0)) {
-> -- 
-> 2.34.1
-> 
-> 
+diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+index f21cfbbc3638..f15cf565f856 100644
+--- a/tools/testing/selftests/landlock/net_test.c
++++ b/tools/testing/selftests/landlock/net_test.c
+@@ -673,6 +673,7 @@ TEST_F(protocol, bind_unspec)
+ 		.port = self->srv0.port,
+ 	};
+ 	int bind_fd, ret;
++	socklen_t inet_len, inet6_len, unix_len;
+ 
+ 	if (variant->sandbox == TCP_SANDBOX) {
+ 		const int ruleset_fd = landlock_create_ruleset(
+@@ -736,12 +737,48 @@ TEST_F(protocol, bind_unspec)
+ 	if (variant->prot.domain == AF_INET) {
+ 		EXPECT_EQ(-EAFNOSUPPORT, ret);
+ 	} else {
++		/* The sockaddr length is less than SIN6_LEN_RFC2133. */
+ 		EXPECT_EQ(-EINVAL, ret)
+ 		{
+ 			TH_LOG("Wrong bind error: %s", strerror(errno));
+ 		}
+ 	}
+ 	EXPECT_EQ(0, close(bind_fd));
++
++	/* Stores the minimal sockaddr lengths per family. */
++	self->unspec_srv0.protocol.domain = AF_INET;
++	inet_len = get_addrlen(&self->unspec_srv0, true);
++	self->unspec_srv0.protocol.domain = AF_INET6;
++	inet6_len = get_addrlen(&self->unspec_srv0, true);
++	self->unspec_srv0.protocol.domain = AF_UNIX;
++	unix_len = get_addrlen(&self->unspec_srv0, true);
++	self->unspec_srv0.protocol.domain = AF_UNSPEC;
++
++	/* Checks bind with AF_UNSPEC and less than IPv4 sockaddr length. */
++	bind_fd = socket_variant(&self->srv0);
++	ASSERT_LE(0, bind_fd);
++	ret = bind_variant_addrlen(bind_fd, &self->unspec_srv0, inet_len - 1);
++	EXPECT_EQ(-EINVAL, ret);
++	EXPECT_EQ(0, close(bind_fd));
++
++	/* Checks bind with AF_UNSPEC and IPv6 sockaddr length. */
++	bind_fd = socket_variant(&self->srv0);
++	ASSERT_LE(0, bind_fd);
++	ret = bind_variant_addrlen(bind_fd, &self->unspec_srv0, inet6_len);
++	if (variant->prot.domain == AF_INET ||
++	    variant->prot.domain == AF_INET6) {
++		EXPECT_EQ(-EAFNOSUPPORT, ret);
++	} else {
++		EXPECT_EQ(-EINVAL, ret);
++	}
++	EXPECT_EQ(0, close(bind_fd));
++
++	/* Checks bind with AF_UNSPEC and unix sockaddr length. */
++	bind_fd = socket_variant(&self->srv0);
++	ASSERT_LE(0, bind_fd);
++	ret = bind_variant_addrlen(bind_fd, &self->unspec_srv0, unix_len);
++	EXPECT_EQ(-EINVAL, ret);
++	EXPECT_EQ(0, close(bind_fd));
+ }
+ 
+ TEST_F(protocol, connect_unspec)
+-- 
+2.44.0
+
