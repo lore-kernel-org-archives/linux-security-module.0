@@ -1,112 +1,197 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0052F13CFA3
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 19:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214E22CCBA
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 08:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711480731; cv=none; b=hFOJ+2McEVx2b4V0mB98PAI+P729rdXLAE3rSnpISBVmrjNzQY7e1en3lc1Q09nZPSTiPoZMtKEv+f2yFZ3HkGGtl2VnmmM/ENf3FM95TBu78PaG7Y43UpCzYhXbo0a7OQIsHpC/76DFK7rsNx6g6szJIbAD9P34ny0wpQSE51k=
+	t=1711527909; cv=none; b=hNKfN6DNzD4EpMXGoiV0aS1bC0neopXWDCagVv2xhuEj9q+/fDAM/9Xs4fUDzCNftLFn6H3YcgtmbAjWzTTSYHhHslR8kEXsXpa9+3cd3uVPAMxJjL+Xb3b9kgnSoccxc7qYiAwhl4jwD6Py5EWApPyJXPyOcFlV6gi8jdRqEWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711480731; c=relaxed/simple;
-	bh=rIylzLX9J4lI4zws2LlXbhQ7UBlTM78dlQkpCoGuNZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9jkIWvV+4XhZOTmf1WSWV4z3HcXVtexpLHAIlpvLpLgKfRotZ/Nss9TaYn2Z/huxi5sWL0e83krQhLjdpsR5NDAkgknNgLHN7QYRT5LNA8RgmZdy5pIBrlfq2LBqDFHZ/TQlgYFUvteO2tS4I9oDkVzDiKvlfqgkrXgrdoWrN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Dd+KwLFj; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1711527909; c=relaxed/simple;
+	bh=Ze8zK2HY9+0PRvVXT50gi5jYVTJlg7k/wpO4RIzfls4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nQFxN5LsJVSPe2hWBR5T06K7rzKK77EYaD2B2l0GcU1J8HQW2VYuNiT0tuacCR44PEwhAnsgVJXSxFAme263ulJqUzN4r5mRWYuLJzImNk7txFxyTxtV1bi1G1WkQoQSMRbUPHa34vjI0Fzy7czckM1D88OtXSfVaLrOd+o2FUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=gZiImaV+; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Dd+KwLFj"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-609fd5fbe50so65521547b3.0
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2024 12:18:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="gZiImaV+"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d46dd5f222so76036451fa.1
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2024 01:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1711480729; x=1712085529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vYgOqn25gz9ie7H+12IzY1nGkmV5SX8eunsh05XgwQg=;
-        b=Dd+KwLFjuRZAD+4bISi9lY88kQwFwPRI9NXNiCTV6coGU5moFOYV9PfHPv5ndBM4Nt
-         pbsS7dN7DezMKf1xFptgtr+DUggi6aJhAk3nZIg+blx6wgw/RFFd773CH0KSQtKqquQG
-         e0GpWHrUrugJG4o4aOKQBEMp9FxAf9m9D4mhPB3c/rOHN2f4XsWHmPI8AP8ltEGgbocW
-         twGQZuoU6SWNp2gg//d5PoNZaTIITQTkcZuBsq3p+V/oqp3h6ZhuJw7/Y6toUvKRsd6j
-         6GnoIpCyr9Ywgo28HTb9rnUuYWeZXZGF2bZczifK6jxYeoq3l2gFAL/hYnv5MLLEuCuN
-         fmUQ==
+        d=sigma-star.at; s=google; t=1711527904; x=1712132704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jXnPhQZ/7MwqBVH7e72M3iqDK5PHqiK3NcW8fk9T+qY=;
+        b=gZiImaV+WStIGoHn7lC47kIhZg4G3h+FDJrdHrnaQjDzOWa4Fd+HQAQSiWjfA7aNi/
+         teQOtXTFUeTcCQEGDDr0Q6PCZGG+18Szom39b0TfzdEIt5lwFmoweaRENqDpG2nTM81v
+         XaKZMTl+w4VNa99Cpgbokm9OFRpgUA1FhpL5rugcOMwDTLSmwl0X8kFy+aQ1uOtfat/3
+         3cEuDqdIVpVUvCS2alftIm4wERpMh3JuKVZwt37buiqa7SvFuQ5yHHUHkMk2OfJwjE/S
+         x9nuy1l370P8A2uUj6NpBBXXcQj5ydR9yiL2HwXwuHV9P2L6w042mot2x9DHk3oiquQI
+         dmiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711480729; x=1712085529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vYgOqn25gz9ie7H+12IzY1nGkmV5SX8eunsh05XgwQg=;
-        b=k5kCboh3PuBBn23EUbtzkccLCpk89rzn4CD+LXt9Ae8RHYw9f23eySAVz4aoPO+Jei
-         C8QcARB5La8LYIqlVEsi7NzF9O5Y1CKZTeQATS9XjBSDJoy5+W0EyOHQFMkhA9xFDXVy
-         QOJeFSPg5SW12uY5yRPf7/pgxpSwzsXdQixsQW/RqJi+qqJnrgaFjhHNSK8mi165d4Gp
-         y6J/DW/PQadifT2NL+fycMKsDANIicRO+Py5AwQPsmZ3tmhdmY9fsCu+RoW++gBaPRWr
-         2nax/SvVSAYwRdAZvVEY6SJ1Bx7ANZe7BTYob8begZQ3nDsBVmd7cxVegbKEqNvoKMWX
-         uVUw==
-X-Gm-Message-State: AOJu0YzD8HC6zIW5L2gUkXRaXR9x6OlNGLKe1TyMYypLlpwiC4AxyMpd
-	s/y9Rp4VS/SCT8aLqxSTxJvClnruRUQQR2npt5U4lck7dbJaZ0RxngGtxDliXOKlFP+lMJ/Sf1M
-	XvZExXZrtR7kPZRhfpXANvpHdW2QZnKPeBjvebZraz7ti8uE=
-X-Google-Smtp-Source: AGHT+IFc2eIKJ7d4YLg5xPwKn3eSXqib+pnZt/naj67Aoraqg2lZyHWdIy8LStTjQAxLscv6AnlkiFaJa8XuhVWngDg=
-X-Received: by 2002:a25:ac48:0:b0:dd0:2076:4706 with SMTP id
- r8-20020a25ac48000000b00dd020764706mr3510341ybd.31.1711480728958; Tue, 26 Mar
- 2024 12:18:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711527904; x=1712132704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jXnPhQZ/7MwqBVH7e72M3iqDK5PHqiK3NcW8fk9T+qY=;
+        b=KI8kQylDD4idns79MOOfRRntZSZ2mdWuSzzgl+mvIVpD0cpjgR5xrXy8zZtdhopLf6
+         4aI71ozEUvnNtO4ON5PtWWB2LE1UZTOAF3Niv3dCm5kz6wKzmsJR63oLAxzPT7whqLJ4
+         4Qd1MTzgQqLUoIUhjJUdcF4GXphXxUTB3Ux8UJzqLUaNzCKQcQzcopcWjtx3naJ88qSA
+         iUzBMYbhfwqbdxSFrYjFPMVmvr8KUeV8RGwdFuk1lSsRuS7CDS9zh+xouH6SNu2EiPk9
+         Ycq5aX2dUEFyPveQxA92aDiLtMBeV6gz6k+e7+X8SW6hZpE4tHiqr79B3pCVSzMbyf5J
+         fjCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXnhk8YI6ixfgvdSrXo+vk1NOJEYjEQOMuAs/8KeVxiTl5HUQnqKumDoEFEYgbcxdWqMMr1NQDgm+NcYiKUYpUhQcWmHWwENK0S2Ak5/RJujiGT0M7
+X-Gm-Message-State: AOJu0YwFa7XgaQAt5KEPFy76Afk742N0p/k/c52ftQZiyMdl0/nQIviq
+	ceCVKYEKcGp2wPnTC9CX/IPqSWFWcDZV9wuSw/gx0u0mJj3TywwXoXdYVgWDrUI=
+X-Google-Smtp-Source: AGHT+IEWDMVFB/sih4uk6d/ut3w2v5mnLyG+wQLmIUZcFC2ZLVZVl9kZujBi8i5UNu5rg7+ev/+CLw==
+X-Received: by 2002:a2e:a984:0:b0:2d4:170d:245f with SMTP id x4-20020a2ea984000000b002d4170d245fmr2716878ljq.12.1711527904204;
+        Wed, 27 Mar 2024 01:25:04 -0700 (PDT)
+Received: from localhost ([82.150.214.1])
+        by smtp.gmail.com with UTF8SMTPSA id ch9-20020a5d5d09000000b00341c6778171sm9880373wrb.83.2024.03.27.01.25.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Mar 2024 01:25:04 -0700 (PDT)
+From: David Gstir <david@sigma-star.at>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	James Bottomley <jejb@linux.ibm.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: David Gstir <david@sigma-star.at>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+	David Howells <dhowells@redhat.com>,
+	Li Yang <leoyang.li@nxp.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Tejun Heo <tj@kernel.org>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v7 0/6] DCP as trusted keys backend
+Date: Wed, 27 Mar 2024 09:24:46 +0100
+Message-ID: <20240327082454.13729-1-david@sigma-star.at>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240315125418.273104-1-cgzones@googlemail.com>
- <20240315125418.273104-2-cgzones@googlemail.com> <CAHC9VhTOmkpZu-zUEcvWJxLVHwoUnTcPxhBexs1ZKjr_LRKx_w@mail.gmail.com>
-In-Reply-To: <CAHC9VhTOmkpZu-zUEcvWJxLVHwoUnTcPxhBexs1ZKjr_LRKx_w@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 26 Mar 2024 15:18:38 -0400
-Message-ID: <CAHC9VhQZNpz3m-YBrKtuoX1Ve4cPQ3rr3Y1ONjXA0hcsu7RqXQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] yama: document function parameter
-To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc: linux-security-module@vger.kernel.org, Kees Cook <keescook@chromium.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 26, 2024 at 3:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Fri, Mar 15, 2024 at 8:54=E2=80=AFAM Christian G=C3=B6ttsche
-> <cgzones@googlemail.com> wrote:
-> >
-> > Document the unused function parameter of yama_relation_cleanup() to
-> > please kernel doc warnings.
-> >
-> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > ---
-> >  security/yama/yama_lsm.c | 1 +
-> >  1 file changed, 1 insertion(+)
->
-> One small comment below, but otherwise looks okay to me.
->
-> Reviewed-by:
+This is a revival of the previous patch set submitted by Richard Weinberger:
+https://lore.kernel.org/linux-integrity/20210614201620.30451-1-richard@nod.at/
 
-Bah, let's try that again ...
+After having been thoroughly reviewed by Jarkko, it would be great if this
+could go into 6.10. :-)
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+v6 is here (please ignore the incorrect version number in the cover letter):
+https://lore.kernel.org/keyrings/20240307153842.80033-1-david@sigma-star.at/
 
-> > diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-> > index 49dc52b454ef..f8e4acd41b72 100644
-> > --- a/security/yama/yama_lsm.c
-> > +++ b/security/yama/yama_lsm.c
-> > @@ -111,6 +111,7 @@ static void report_access(const char *access, struc=
-t task_struct *target,
-> >
-> >  /**
-> >   * yama_relation_cleanup - remove invalid entries from the relation li=
-st
-> > + * @work: unused
-> >   *
-> >   */
-> >  static void yama_relation_cleanup(struct work_struct *work)
->
-> Should we also take this opportunity to mark the parameter as '__always_u=
-nused'?
+v6 -> v7:
+- Add Reviewed-by from Jarkko Sakkinen for patches #1 and #3
+- Improved commit messages
+- Changed log level for non-trusted/secure mode check from error to warning
+v5 -> v6:
+- Cleaned up coding style and commit messages to make the whole series more
+  coherent as suggested by Jarkko Sakkinen
+- Added Acked-By from Jarkko Sakkinen to patch #4 - thanks!
+- Rebased against next-20240307
+v4 -> v5:
+- Make Kconfig for trust source check scalable as suggested by Jarkko Sakkinen
+- Add Acked-By from Herbert Xu to patch #1 - thanks!
+v3 -> v4:
+- Split changes on MAINTAINERS and documentation into dedicated patches
+- Use more concise wording in commit messages as suggested by Jarkko Sakkinen
+v2 -> v3:
+- Addressed review comments from Jarkko Sakkinen
+v1 -> v2:
+- Revive and rebase to latest version
+- Include review comments from Ahmad Fatoum
 
---=20
-paul-moore.com
+The Data Co-Processor (DCP) is an IP core built into many NXP SoCs such
+as i.mx6ull.
+
+Similar to the CAAM engine used in more powerful SoCs, DCP can AES-
+encrypt/decrypt user data using a unique, never-disclosed,
+device-specific key. Unlike CAAM though, it cannot directly wrap and
+unwrap blobs in hardware. As DCP offers only the bare minimum feature
+set and a blob mechanism needs aid from software. A blob in this case
+is a piece of sensitive data (e.g. a key) that is encrypted and
+authenticated using the device-specific key so that unwrapping can only
+be done on the hardware where the blob was wrapped.
+
+This patch series adds a DCP based, trusted-key backend and is similar
+in spirit to the one by Ahmad Fatoum [0] that does the same for CAAM.
+It is of interest for similar use cases as the CAAM patch set, but for
+lower end devices, where CAAM is not available.
+
+Because constructing and parsing the blob has to happen in software,
+we needed to decide on a blob format and chose the following:
+
+struct dcp_blob_fmt {
+	__u8 fmt_version;
+	__u8 blob_key[AES_KEYSIZE_128];
+	__u8 nonce[AES_KEYSIZE_128];
+	__le32 payload_len;
+	__u8 payload[];
+} __packed;
+
+The `fmt_version` is currently 1.
+
+The encrypted key is stored in the payload area. It is AES-128-GCM
+encrypted using `blob_key` and `nonce`, GCM auth tag is attached at
+the end of the payload (`payload_len` does not include the size of
+the auth tag).
+
+The `blob_key` itself is encrypted in AES-128-ECB mode by DCP using
+the OTP or UNIQUE device key. A new `blob_key` and `nonce` are generated
+randomly, when sealing/exporting the DCP blob.
+
+This patchset was tested with dm-crypt on an i.MX6ULL board.
+
+[0] https://lore.kernel.org/keyrings/20220513145705.2080323-1-a.fatoum@pengutronix.de/
+
+David Gstir (6):
+  crypto: mxs-dcp: Add support for hardware-bound keys
+  KEYS: trusted: improve scalability of trust source config
+  KEYS: trusted: Introduce NXP DCP-backed trusted keys
+  MAINTAINERS: add entry for DCP-based trusted keys
+  docs: document DCP-backed trusted keys kernel params
+  docs: trusted-encrypted: add DCP as new trust source
+
+ .../admin-guide/kernel-parameters.txt         |  13 +
+ .../security/keys/trusted-encrypted.rst       |  85 +++++
+ MAINTAINERS                                   |   9 +
+ drivers/crypto/mxs-dcp.c                      | 104 +++++-
+ include/keys/trusted_dcp.h                    |  11 +
+ include/soc/fsl/dcp.h                         |  20 ++
+ security/keys/trusted-keys/Kconfig            |  18 +-
+ security/keys/trusted-keys/Makefile           |   2 +
+ security/keys/trusted-keys/trusted_core.c     |   6 +-
+ security/keys/trusted-keys/trusted_dcp.c      | 313 ++++++++++++++++++
+ 10 files changed, 567 insertions(+), 14 deletions(-)
+ create mode 100644 include/keys/trusted_dcp.h
+ create mode 100644 include/soc/fsl/dcp.h
+ create mode 100644 security/keys/trusted-keys/trusted_dcp.c
+
+-- 
+2.35.3
+
