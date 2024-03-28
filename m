@@ -1,230 +1,263 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C307A39FCF
-	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 15:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0A5131740;
+	Thu, 28 Mar 2024 15:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711640319; cv=none; b=B04+CuGMUkMmo4mhS4XLm/IcHGyVWokXwkcJ9oogivKVCo0VgqwdTmghFI/RGAJ9vOM+ZB5jZsLU9/3SP9w5ZhEXPyPXEgJsWQl27xHzArVByN1SjZU518OasSsFp4dwFhMbpmLD5eG8TFE6Ke1BFE+Qav/FAd6WS+2lrtwZVgs=
+	t=1711641545; cv=none; b=H5mPKrwSdTH6HWTwbVt1DTYvq8dQbJHKgzap88APujKekGVCEvwz0Pm8sm6sIK3g0CheUdOLkZeml0ULM6dBeZ0mvnBpG8ve7B1ikUXolllg0yqKx4Xnm/pS0CCtnzAjwdJ0wuJtZWEuN7m/nDrU+EHv9RXSHrByiXQz96g5Y7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711640319; c=relaxed/simple;
-	bh=AzP3Ff0ooJ3ARVvtc1usnb3lDhGvOL1E1DxS8juOjp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MB1ITEa9rjK0JE62sx3TDPMD1HVv+OmYL2pnLMWrhW7reElIqzqIp+QO6J7d/VT6ZVwocxURE00desqjnJELHlNDu4cQsJVPMNLvNzWRfAD1gJnyXdyuFvcHRfxp/rcFcfbnShDdOTLRkmaIdOIlruGv81mcQZEtrcBGDZieRtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 42SFc1b5017575;
-	Thu, 28 Mar 2024 10:38:01 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 42SFc07q017574;
-	Thu, 28 Mar 2024 10:38:00 -0500
-Date: Thu, 28 Mar 2024 10:38:00 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, roberto.sassu@huaweicloud.com
-Subject: Re: [PATCH] Do not require attributes for security_inode_init_security.
-Message-ID: <20240328153800.GA17524@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240324223231.6249-1-greg@enjellic.com> <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com> <20240326103047.GA19964@wind.enjellic.com> <CAHC9VhQvN43LL-ynV-ZZgR2L8wFfUeq2-SZb5QHh9ZMWtz4C1A@mail.gmail.com> <20240327091644.GA32347@wind.enjellic.com> <CAHC9VhSjjeBH2CE5i+PK9Zyg661k-ryDbYkoPLtEe-g52DW0Fw@mail.gmail.com>
+	s=arc-20240116; t=1711641545; c=relaxed/simple;
+	bh=qoqinQw63fGFh+6IC/Y5pgVTD9GppSO7nESSrP07adE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fsWGo9rR+5XOCX5Aim42rOLO8ll4CT2hG+ctpve0TvQZimWGtBtjU8IEDauI72eCTqNfDGutXVgwb1IZE4c9SW2pZl44du9FJ8Rx/KRIm4B4R5flC/7vgWLMv1pzdv6C4FqEj44xicl1XmHVbcyDQD5yyqm1VccP3MSIjvtUbDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZeXxNdYd; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeXxNdYd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3262FC433B2;
+	Thu, 28 Mar 2024 15:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711641545;
+	bh=qoqinQw63fGFh+6IC/Y5pgVTD9GppSO7nESSrP07adE=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ZeXxNdYdDpyc+XN31Wm34tBo8zyeQVjgDnJmmZw7SqlPg/zj94JVdBp6iabFK0Gw2
+	 ITV4o/QB4aAtXsNpLjBnbnj2kuDX6I1b1ezlRqufzDzV165JDLOtFPbnIC11FikLCJ
+	 GAqPNRfOsmxNEYDT3tz45gmm0cFTLKOr4n3vjooe/XqU/VyHBpATYmAS+7paJezM2K
+	 9FDJEoWq38AGZ1DKjmwp613+zoL2lGeqIxkb2zRXnwlWVQFL269SZ0hQpir3GsQaC7
+	 Rk1FT4Lf1yvo+YLMWPF194Ct83ik0RLug0gOTvHd5ilV4AMRJk8qEOG7Hqpejk+g3c
+	 sE+IDJ1Ruargg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F760CD1284;
+	Thu, 28 Mar 2024 15:59:05 +0000 (UTC)
+From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
+Subject: [PATCH 0/7] sysctl: Remove sentinel elements from misc directories
+Date: Thu, 28 Mar 2024 16:57:47 +0100
+Message-Id: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSjjeBH2CE5i+PK9Zyg661k-ryDbYkoPLtEe-g52DW0Fw@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 28 Mar 2024 10:38:01 -0500 (CDT)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHuTBWYC/x3MSQqAMAxA0atI1hZqncCriEhoo0acaIoo4t0tL
+ t/i/weEPJNAkzzg6WThfYvI0gTshNtIil00GG0KnRutZhyV3GLD0ntahUK/sliFpsqGEmvnCCH
+ Gh6eBr3/cdu/7AeaEmhloAAAA
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
+ Naoya Horiguchi <naoya.horiguchi@nec.com>, 
+ John Johansen <john.johansen@canonical.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, David Howells <dhowells@redhat.com>, 
+ Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <keescook@chromium.org>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>, 
+ Pavel Begunkov <asml.silence@gmail.com>, 
+ Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>, 
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+ keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, 
+ io-uring@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Joel Granados <j.granados@samsung.com>
+X-Mailer: b4 0.13-dev-2d940
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7724;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=C5ExU42iQIATTNjm61dOO7nRB4VDW70Mylk1Ch/NE2k=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGYFk8MCISRyCsZWM39FGDZLGap6umXikDNpN
+ y/UcPPR1cdsxokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmBZPDAAoJELqXzVK3
+ lkFPlNgL/iKOshbA23YN0uTNsvODr8xCuFjrnb+cdNlPZz3c0ZsZEs5Jf4Nxrtz/mlIPM5CYrgb
+ tLxFHPzllWFljQyXlDt32Y6gBMKvvahcSPUMYzTREmR8avBZLhtO6IfFElpBHSjMWrkXnb0C9Ri
+ PMKWSRBukVgiBwuXHUKP5CqBTyi4HiIRxR7xfZ67tjbUqXdfbYI0+VRHr3eLLxniXJpqrhfzcnE
+ 0V2TanI13+QxTYeLlJPfyaUtoRpA8dD+K0fSpJjqWSSXyMg/iTgIT7LcZA5YHBiD2IkdPBpRoxO
+ SiPAXXa8zmVB3zMHZSQ0Jg5pEtcpkiev1frtqj1lqKsY1UNsRbSIr8hP3CAFbTO8ueuhwNkKo6W
+ E3W+KMVsmBqPCtOPOlDHiYOKMT+7xbeb+UJdmFN9o/cZ3j5KLnp/oEHmEao0VQCY6K4m9vK94UU
+ kMsVPtIH5meae8MuCInGSeeP3ti3V5gT+4o+lm1hKsUJLVQHWrrUSwQjkDWS2DV8z8prsF+g6n5
+ UE=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
+ auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: j.granados@samsung.com
 
-On Wed, Mar 27, 2024 at 11:18:47AM -0400, Paul Moore wrote:
+From: Joel Granados <j.granados@samsung.com>
 
-Good morning to everyone.
+What?
+These commits remove the sentinel element (last empty element) from the
+sysctl arrays of all the files under the "mm/", "security/", "ipc/",
+"init/", "io_uring/", "drivers/perf/" and "crypto/" directories that
+register a sysctl array. The inclusion of [4] to mainline allows the
+removal of sentinel elements without behavioral change. This is safe
+because the sysctl registration code (register_sysctl() and friends) use
+the array size in addition to checking for a sentinel [1].
 
-> On Wed, Mar 27, 2024 at 5:17???AM Dr. Greg <greg@enjellic.com> wrote:
-> > On Tue, Mar 26, 2024 at 03:12:37PM -0400, Paul Moore wrote:
-> > > On Tue, Mar 26, 2024 at 6:31???AM Dr. Greg <greg@enjellic.com> wrote:
-> > > > On Mon, Mar 25, 2024 at 05:08:54PM -0400, Paul Moore wrote:
-> > > > > On Sun, Mar 24, 2024 at 6:33???PM Greg Wettstein <greg@enjellic.com> wrote:
-> > > > > >
-> > > > > > The integration of the Integrity Measurement Architecture (IMA)
-> > > > > > into the LSM infrastructure introduced a conditional check that
-> > > > > > denies access to the security_inode_init_security() event handler
-> > > > > > if the LSM extended attribute 'blob' size is 0.
-> > > > > >
-> > > > > > This changes the previous behavior of this event handler and
-> > > > > > results in variable behavior of LSM's depending on the LSM boot
-> > > > > > configuration.
-> > > > > >
-> > > > > > Modify the function so that it removes the need for a non-zero
-> > > > > > extended attribute blob size and bypasses the memory allocation
-> > > > > > and freeing that is not needed if the LSM infrastructure is not
-> > > > > > using extended attributes.
-> > > > > >
-> > > > > > Use a break statement to exit the loop that is iterating over the
-> > > > > > defined handlers for this event if a halting error condition is
-> > > > > > generated by one of the invoked LSM handlers.  The checks for how
-> > > > > > to handle cleanup are executed at the end of the loop regardless
-> > > > > > of how the loop terminates.
-> > > > > >
-> > > > > > A two exit label strategy is implemented.  One of the exit
-> > > > > > labels is a target for the no attribute case while the second is
-> > > > > > the target for the case where memory allocated for processing of
-> > > > > > extended attributes needs to be freed.
-> > > > > >
-> > > > > > Signed-off-by: Greg Wettstein <greg@enjellic.com>
-> > > > > > ---
-> > > > > >  security/security.c | 24 ++++++++++++------------
-> > > > > >  1 file changed, 12 insertions(+), 12 deletions(-)
-> > >
-> > > ...
-> > >
-> > > > > Looking at this quickly, why does something like the following not work?
-> > > > >
-> > > > > [Warning: copy-n-paste patch, likely whitespace damaged]
-> > > > >
-> > > > > diff --git a/security/security.c b/security/security.c
-> > > > > index 7e118858b545..007ce438e636 100644
-> > > > > --- a/security/security.c
-> > > > > +++ b/security/security.c
-> > > > > @@ -1712,10 +1712,7 @@ int security_inode_init_security(struct inode *inode, str
-> > > > > uct inode *dir,
-> > > > >        if (unlikely(IS_PRIVATE(inode)))
-> > > > >                return 0;
-> > > > >
-> > > > > -       if (!blob_sizes.lbs_xattr_count)
-> > > > > -               return 0;
-> > > > > -
-> > > > > -       if (initxattrs) {
-> > > > > +       if (initxattrs && blob_sizes.lbs_xattr_count) {
-> > > > >                /* Allocate +1 as terminator. */
-> > > > >                new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 1,
-> > > > >                                     sizeof(*new_xattrs), GFP_NOFS);
-> > > >
-> > > > We ran with something similar to the above for several days of TSEMv3
-> > > > testing.
-> > > >
-> > > > For the patch that we submitted upstream, we elected to take a 'belt
-> > > > and suspenders' approach that isolated the 'no attributes' execution
-> > > > flow from the flow followed if extended attributes are present.
-> > > >
-> > > > The approach used doesn't make any difference to us as long as we get
-> > > > the functionality of the hook restored.
-> >
-> > > I'd prefer the simpler approach.  I'd likely also prefer we park
-> > > this patch until it is needed upstream, or am I misunderstanding
-> > > things and upstream is currently broken without a fix like this?
-> >
-> > As of the 6.8 release, a security handler that previously functioned
-> > in a consistent manner now functions inconsistently depending on the
-> > LSM stacking configuration that is in effect.
+Why?
+By removing the sysctl sentinel elements we avoid kernel bloat as
+ctl_table arrays get moved out of kernel/sysctl.c into their own
+respective subsystems. This move was started long ago to avoid merge
+conflicts; the sentinel removal bit came after Mathew Wilcox suggested
+it to avoid bloating the kernel by one element as arrays moved out. This
+patchset will reduce the overall build time size of the kernel and run
+time memory bloat by about ~64 bytes per declared ctl_table array (more
+info here [5]).
 
-> In Linux v6.8[1] only Smack and SELinux provide implementations for
-> the security_inode_init_security() hook, and both also increment the
-> associated lsm_blob_sizes::lbs_xattr_count field.  While the
-> behavior of the hook may have changed, I see no indications of any
-> harm with respect to the standard upstream Linux kernel.  We
-> obviously want to ensure that we work to fix harmful behavior, but I
-> simply don't see that here; convince me there is a problem, send me
-> a patch as we've discussed, and I'll merge it.
+When are we done?
+There are 4 patchest (25 commits [2]) that are still outstanding to
+completely remove the sentinels: files under "net/", files under
+"kernel/" dir, misc dirs (this patchset) and the final set that removes
+the unneeded check for ->procname == NULL.
 
-BPF provides an implementation and would be affected.
+Testing:
+* Ran sysctl selftests (./tools/testing/selftests/sysctl/sysctl.sh)
+* Ran this through 0-day with no errors or warnings
 
-Simply grepping for 'inode_init_security', in the security
-sub-directory of the kernel source tree, will miss the dependency.
+Savings in vmlinux:
+  A total of 64 bytes per sentinel is saved after removal; I measured in
+  x86_64 to give an idea of the aggregated savings. The actual savings
+  will depend on individual kernel configuration.
+    * bloat-o-meter
+        - The "yesall" config saves 963 bytes (bloat-o-meter output [6])
+        - A reduced config [3] saves 452 bytes (bloat-o-meter output [7])
 
-Google initialized the BPF LSM hooks by redefining the LSM_HOOK macro
-before including the include/linux/lsm_hook_defs.h file.  This causes
-all of the LSM event handlers to be defined as BPF LSM hooks but
-doesn't explicitly disclose any of the event handlers by name.
+Savings in allocated memory:
+  None in this set but will occur when the superfluous allocations are
+  removed from proc_sysctl.c. I include it here for context. The
+  estimated savings during boot for config [3] are 6272 bytes. See [8]
+  for how to measure it.
 
-We just checked our documentation on BPF LSM tap points for
-CrowdStrike's Falcon agent, which is a couple of months old by now,
-and don't see them using it, but that is only a small and dated
-sample.
+Comments/feedback greatly appreciated
 
-You probably remember, I believe you were there for an LSM update
-panel, that Alexei Starovoitov commented in his keynote talk at the
-European Linux Security Summit last September, that he estimated 90%
-of the use of the BPF LSM is not publically disclosed.  Given that,
-affecting any functionality, particularly the way this issue does,
-would seem to be imprudent.
+Best
 
-> If we are talking about future code, simply include the change with
-> the associated patchset.
+Joel
 
-Given the dynamics of all this, it would seem to make sense for this
-to be a straight forward fix that would get directed to stable.
+[1] https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/tag/?h=sysctl_remove_empty_elem_v5
+[3] https://gist.github.com/Joelgranados/feaca7af5537156ca9b73aeaec093171
+[4] https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
 
-> If we are talking about out-of-tree code, that's something else.
+[5]
+Links Related to the ctl_table sentinel removal:
+* Good summaries from Luis:
+  https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
+  https://lore.kernel.org/all/ZMFizKFkVxUFtSqa@bombadil.infradead.org/
+* Patches adjusting sysctl register calls:
+  https://lore.kernel.org/all/20230302204612.782387-1-mcgrof@kernel.org/
+  https://lore.kernel.org/all/20230302202826.776286-1-mcgrof@kernel.org/
+* Discussions about expectations and approach
+  https://lore.kernel.org/all/20230321130908.6972-1-frank.li@vivo.com
+  https://lore.kernel.org/all/20220220060626.15885-1-tangmeng@uniontech.com
 
-We understand Linux kernel dynamics pretty well [1], we wouldn't
-advocate for changes to mainline for such initiatives.
+[6]
+add/remove: 0/0 grow/shrink: 0/16 up/down: 0/-963 (-963)
+Function                                     old     new   delta
+setup_mq_sysctls                             502     499      -3
+yama_sysctl_table                            128      64     -64
+vm_page_writeback_sysctls                    512     448     -64
+vm_oom_kill_table                            256     192     -64
+vm_compaction                                320     256     -64
+page_alloc_sysctl_table                      576     512     -64
+mq_sysctls                                   384     320     -64
+memory_failure_table                         192     128     -64
+loadpin_sysctl_table                         128      64     -64
+key_sysctls                                  448     384     -64
+kernel_io_uring_disabled_table               192     128     -64
+kern_do_mounts_initrd_table                  128      64     -64
+ipc_sysctls                                  832     768     -64
+hugetlb_vmemmap_sysctls                      128      64     -64
+hugetlb_table                                320     256     -64
+apparmor_sysctl_table                        256     192     -64
+Total: Before=440605433, After=440604470, chg -0.00%
 
-> [1] In Linux v6.9-rc1 this grows to include EVM, but EVM also provides
-> both a hook implementation and a lbs_xattr_count bump.
+[7]
+add/remove: 0/0 grow/shrink: 0/8 up/down: 0/-452 (-452)
+Function                                     old     new   delta
+setup_ipc_sysctls                            306     302      -4
+vm_page_writeback_sysctls                    512     448     -64
+vm_oom_kill_table                            256     192     -64
+page_alloc_sysctl_table                      384     320     -64
+key_sysctls                                  384     320     -64
+kernel_io_uring_disabled_table               192     128     -64
+ipc_sysctls                                  640     576     -64
+hugetlb_table                                256     192     -64
+Total: Before=8523801, After=8523349, chg -0.01%
 
-BPF initialization, as of 6.8 does not include an xattr request.
+[8]
+To measure the in memory savings apply this on top of this patchset.
 
-> > Perhaps more problematically, when the handler does not function
-> > correctly, there is no indication of that fact passed upward to the
-> > LSM invoking the handler.  This would cause the LSM to conclude that a
-> > security relevant action was conducted when it did not actually occur.
-> >
-> > I believe we would all universally conclude that having security
-> > critical infrastructure function in a consistent and reliable manner
-> > is of benefit, so we should return the previous behavior of the
-> > handler, particularly since it can be done with a one line fix if that
-> > is your preference.
+"
+diff --git i/fs/proc/proc_sysctl.c w/fs/proc/proc_sysctl.c
+index 37cde0efee57..896c498600e8 100644
+--- i/fs/proc/proc_sysctl.c
++++ w/fs/proc/proc_sysctl.c
+@@ -966,6 +966,7 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
+        table[0].procname = new_name;
+        table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+        init_header(&new->header, set->dir.header.root, set, node, table, 1);
++       printk("%ld sysctl saved mem kzalloc\n", sizeof(struct ctl_table));
 
-> You need to demonstrate the harm caused to the upstream Linux kernel,
-> either a proper tagged release in Linus' tree, the current development
-> code in Linus tree, or a subsystem branch/repository.
+        return new;
+ }
+@@ -1189,6 +1190,7 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, s>
+                link_name += len;
+                link++;
+        }
++       printk("%ld sysctl saved mem kzalloc\n", sizeof(struct ctl_table));
+        init_header(links, dir->header.root, dir->header.set, node, link_table,
+                    head->ctl_table_size);
+        links->nreg = nr_entries;
+"
+and then run the following bash script in the kernel:
 
-BPF would be currently affected, including its derivatives, from 6.8
-forward.
+accum=0
+for n in $(dmesg | grep kzalloc | awk '{print $3}') ; do
+    accum=$(calc "$accum + $n")
+done
+echo $accum
 
-> > If you would be so kind, please put a 'Reported-by:' tag on whatever
-> > you commit upstream.
+Signed-off-by: Joel Granados <j.granados@samsung.com>
 
-> As you initially submitted a patch for this, it would be preferable
-> if you would send a patch ... if necessary (see above comments).  Of
-> course if you are unable to do so, and we all agree that a problem
-> in the upstream kernel exists, I can submit a patch with the
-> appropriate credit.
+--
 
-The one-liner is a simple, straight forward and acceptable fix but it
-would not be our preference for fixing it.  Given that, it would
-probably be best to go in under alternate authorship.
+---
+Joel Granados (7):
+      memory: Remove the now superfluous sentinel element from ctl_table array
+      security: Remove the now superfluous sentinel element from ctl_table array
+      crypto: Remove the now superfluous sentinel element from ctl_table array
+      initrd: Remove the now superfluous sentinel element from ctl_table array
+      ipc: Remove the now superfluous sentinel element from ctl_table array
+      io_uring: Remove the now superfluous sentinel elements from ctl_table array
+      drivers: perf: Remove the now superfluous sentinel elements from ctl_table array
 
-> I will mention that bug fixes like this are a great way for new
-> contributors to gain experience working with the upstream Linux
-> kernel; I would encourage you to see this through.  As frustrating
-> as this might be, debates like this are part of the process :)
+ crypto/fips.c                | 1 -
+ drivers/perf/riscv_pmu_sbi.c | 1 -
+ init/do_mounts_initrd.c      | 1 -
+ io_uring/io_uring.c          | 1 -
+ ipc/ipc_sysctl.c             | 1 -
+ ipc/mq_sysctl.c              | 1 -
+ mm/compaction.c              | 1 -
+ mm/hugetlb.c                 | 1 -
+ mm/hugetlb_vmemmap.c         | 1 -
+ mm/memory-failure.c          | 1 -
+ mm/oom_kill.c                | 1 -
+ mm/page-writeback.c          | 1 -
+ mm/page_alloc.c              | 1 -
+ security/apparmor/lsm.c      | 1 -
+ security/keys/sysctl.c       | 1 -
+ security/loadpin/loadpin.c   | 1 -
+ security/yama/yama_lsm.c     | 1 -
+ 17 files changed, 17 deletions(-)
+---
+base-commit: 4cece764965020c22cff7665b18a012006359095
+change-id: 20240320-jag-sysctl_remset_misc-a261f5a7ddea
 
-[1]:
+Best regards,
+-- 
+Joel Granados <j.granados@samsung.com>
 
-With respect to a new contributor gaining experience.  For whatever it
-is worth moving forward, personally, I've been spinning patches for
-the Linux kernel since December of 1991.  So I have a high degree of
-familiarity with respect to the dynamics of Linux kernel development
-and how they have evolved over time.
 
-Personally I also enjoy a substantive background in forensic exchange,
-so debate is not a foreign concept by any means.
-
-Given that a one-liner restores long standing behavior and potentially
-fixes what could be silent corruption of desired security
-functionality, there would seem to be little basis for debate, as
-entertaining as that may be... :-)
-
-> paul-moore.com
-
-Have a good remainder of the day.
-
-As always,
-Dr. Greg
-
-   The Quixote Project - Flailing at the Travails of Cybersecurity
-		  https://github.com/Quixote-Project
