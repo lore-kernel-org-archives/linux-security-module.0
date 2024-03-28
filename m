@@ -1,82 +1,86 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD25D13E6DD
-	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 22:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C87E13B795;
+	Thu, 28 Mar 2024 22:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711663614; cv=none; b=ADVSvWeEw9H+oyVttF78mpNg7OfDOI6nKvYwbnCQodp1oSl7Ana+jTVdR4MJO71NfLNvFPsWeiW3CtTFFBKC7NGcq4t8aTJMK3bc/roS/k6Y8yVCEqtr0Gf7MDJNjxt6/51WvpEaVOdY9wBRIH5skorHUoL0qy20QYeVEwNchH0=
+	t=1711663875; cv=none; b=gYDnPeRwWDAiw010+aaNRme+hUw9d48G4cccWYVNA0UN2lk8KNw/J606svMds958LXcCelqUTE0TID9y/T53FrllDTumrisQFY2YjRFl1iNUNK7nkdtDTFGxzHjNe6Vqdwbgj+q9kUQNyouB+1wUYuyvBXLZzuJFU3m+B+u4pQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711663614; c=relaxed/simple;
-	bh=5AJMO6myigFkuoAXfMA9V6C/wHc4aj530blLJIkgPVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CKO+wsSEn6G2JgUwvFVozb3BndtDnLSto7qFSdcTKaFWE7sVc1R0/FpmGADHg/tUd+N1Msf8YqmXtVBio+p/ZfttXy9fIROicQFyzxICBNOZLhvMze83H/9n5ptqECjx8EC6C/LL0qggBtzVVi+cUPzpNryJG6uevVCDlTMdhNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SnG/rCdZ; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1711663875; c=relaxed/simple;
+	bh=JVuXWZU7ypGWL4ciDE6dFgx2siJQMrXVakqC0WXbnd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WjeDCmuy1zQEgYuBc0cmLt/E+KI2gpzycBQwmosnnTAi1GhqDTKRxyMBaBVgIdj5LgyPaMP4UK4C2itEHA0ipl6v8GxdaIBpg23DCtvsyP8WeEGWkGgoV7m+6ziOAZVXgdApHJGz+vp7swO6jKbWcA/5IzPtklv4RE9Ral8R39o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NbJm49eL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SnG/rCdZ"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6e6b729669bso1305568b3a.3
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 15:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1711663612; x=1712268412; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FawcQ0+/Re5CGM1VyfGak6NYsr/nN1VT9V2EvlsawhQ=;
-        b=SnG/rCdZPSYTqZXyx7kblvvq01NvD8lYu7FQ4biSzbMUZVoZwxV/4dbs0dbEHlxf0r
-         AmC3eDqWf+L4ZjF0wRj3RmCxciZGBB9n++5TpUtz7NjT3TqWa7FK5QejboAeu6R4I8+o
-         A7sEc8xRGVH8CIgdv25hACaKysz3iLmKQs8oo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711663612; x=1712268412;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FawcQ0+/Re5CGM1VyfGak6NYsr/nN1VT9V2EvlsawhQ=;
-        b=vpDGLtPll7/dJxLFVNVdv3MQ9k/fdDSVWJtGuqep5UAMhJinewwDvXYuaW4uQsc2J4
-         u1ofbrp1iNOZ2lZJSvZOMcO6Y2luqIti5pUlHq49ItSaZEsXOOrQ08TSdz9oyAVPco1K
-         BE1/wjzCfHiF3fVCLuxw7uOJcLo3ePN5n5o3y3HNJ3/YUGAPM6PF+o1VsiH8BwZo5zz7
-         NUEE7D0NSGRIe5pHa4C0q3RGo6L41+vaA63uJVUV/K0gxA0m01KBJ+Z47p1onsikvV4n
-         arWWNKmhG2UrouHqzY5VHLxqRAyxcqUldBL05rtu+vqKU4/Xnd/mKxjMRg0+htrJTN02
-         aByA==
-X-Gm-Message-State: AOJu0YxqlhXbp0KEDWzWzXDRCnXqs7qLVn8eAN0Jv7chx2/tuyqSWqXS
-	UBeunTBzwhmqj516WXpp2GbbiJqEGmAsCa66RBSePRvCdNtLQUDExTI8A5gX3A==
-X-Google-Smtp-Source: AGHT+IG28FKoAE9GwUDPDbAhJpDSQvO83TTQaELwCTDF264wtxqHJW3X538E+oFBl7uIp2mx5xeCig==
-X-Received: by 2002:a05:6a00:2d11:b0:6ea:749c:7849 with SMTP id fa17-20020a056a002d1100b006ea749c7849mr707745pfb.13.1711663612175;
-        Thu, 28 Mar 2024 15:06:52 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id g21-20020aa78755000000b006e71aec34a8sm1870864pfo.167.2024.03.28.15.06.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 15:06:51 -0700 (PDT)
-Date: Thu, 28 Mar 2024 15:06:51 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>
-Cc: linux-security-module@vger.kernel.org,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] apparmor: fix typo in kernel doc
-Message-ID: <202403281506.6E7F782@keescook>
-References: <20240315125418.273104-1-cgzones@googlemail.com>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NbJm49eL"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=HnoWopqeEhgUSDrAxtnUhuDZR8QdjUiaKbpLIYgV22M=; b=NbJm49eLsaBJIDmaaGUPIwTP6s
+	RdCdHdp9gJrWgLOyWIaGiU2iEa3h0mDLeFNu8MpWBCcjIt+F1mBI8g082Y+IpFySLM/hEsNJi6SK1
+	JBk39TG18J9OCNVQporM5qOQ71kG0TDUjkZcnc4dAvsUfuM70hJvQAllMyhnggYK0MKVKGnTD8s/J
+	pwz0gob9RjN5DyrV1KCIE79TcNpQT0Fn18OWvlWWNJjye4FkmJFqE0E/qDklUsVta8jWE3bO374Mz
+	wFZ7SPWQCxzZ1K0xUYogPf2vhybumDglajK78Iq4x/BmSLLRdWq0eNniSqEvN8UThtFfomA7d21P3
+	PMZSsxhQ==;
+Received: from [50.53.2.121] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rpxxf-0000000Fs9X-3pVK;
+	Thu, 28 Mar 2024 22:11:04 +0000
+Message-ID: <cde3dc6e-ca77-445e-a4b7-fc21a934999a@infradead.org>
+Date: Thu, 28 Mar 2024 15:11:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240315125418.273104-1-cgzones@googlemail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 01/20] security: add ipe lsm
+Content-Language: en-US
+To: Jarkko Sakkinen <jarkko@kernel.org>, Fan Wu <wufan@linux.microsoft.com>,
+ corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+ tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
+ snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1711657047-10526-1-git-send-email-wufan@linux.microsoft.com>
+ <1711657047-10526-2-git-send-email-wufan@linux.microsoft.com>
+ <D05ODONHFJ9O.3VG0HLFPA1OB0@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <D05ODONHFJ9O.3VG0HLFPA1OB0@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 15, 2024 at 01:54:09PM +0100, Christian Göttsche wrote:
-> Fix the typo in the function documentation to please kernel doc
-> warnings.
+
+
+On 3/28/24 13:45, Jarkko Sakkinen wrote:
+>> +/**
+>> + * ipe_init - Entry point of IPE.
+>> + *
+>> + * This is called at LSM init, which happens occurs early during kernel
+>> + * start up. During this phase, IPE registers its hooks and loads the
+>> + * builtin boot policy.
+>> + * Return:
+>> + * * 0		- OK
+>> + * * -ENOMEM	- Out of memory
+> Just a suggestion:
 > 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> * 0:		OK
+> * -ENOMEM:	Out of memory (OOM)
+> 
+> Rationale being more readable (less convoluted).
+> 
+> And also sort of symmetrical how parameters are formatted in kdoc.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+It needs the " * *" to make a formatted list in the generated output.
+Otherwise the use of '- or ':' as a separator doesn't matter AFAIK.
 
 -- 
-Kees Cook
+#Randy
