@@ -1,183 +1,287 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C061B36AF5;
-	Thu, 28 Mar 2024 20:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AF3137C3A;
+	Thu, 28 Mar 2024 20:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711656426; cv=none; b=PvgRZmfcU6vKRaH312Wy8WkiAM1xWHzqSI1c9M5lpIGsxoIp+1C4e3kWVMNgqNXDXL6/1anhNWBeQo9D5GgJBbPvQKYoyoYN8tHIxQstgvvO2/LKj2E8RoTisScKFu/Ys8VO8e9P9EKCaWVM9dRI2ZZBmJZGToJJTTGc3FmJ0VU=
+	t=1711657051; cv=none; b=AijotCgx+62IE9DAKaATqdHXWimx6kxAVVTN6ebGqaoBhtJ2Yvqpc/OrgkwG9NlXGNwhFEdrg/lSU0bw54Jp3KqiK/aiiE9nD0e6/sF9H6jb5UdLeX30XFlKB1sdClvhcixruTym83qAslkjn6/f+XRKq2QSd73zjcWPPTP0jSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711656426; c=relaxed/simple;
-	bh=icLKc+NlLTA/ubQEiOvaKjJVK9wgarwoGcCMWXJPcBc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UjZdHd2oyJy0YO73ng86PfkVEWuRMeoQTT2vX87xYHK/Xfh8cmGWhAyG6AEUK1undFderXtKfJdWhmLU3InT0Mhd0Vc+TZz1bRz9ciktSuypp15ga8ZS/W/JGsxIXRO0gbcnjUV72tJs/qDJKGqulcUHzd/jxUhwSzi8bCfTZvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFYtKs/u; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1711657051; c=relaxed/simple;
+	bh=N3e8QlGTtZbhSlXaxfGJBmnefjZ9rPmhgCLP5Bu5Xis=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=pCrZ1bvRNuA6bMuVrD+A4hTchf2Xx1aPEaHD46+sA9Inu3Ofw/JBXxW8D1Dc1r27S1RU4poeiVoRvT45XDM9XpISoPR1omZO1v53lYT/54K6Ow41tnUNzoO5sDJw0mWcdFkkJ4t0jkDHkIWYABwoskBA1SzNRtr0xJOS+v8Cteg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OwGALAT3; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFYtKs/u"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1def89f0cfdso19387755ad.0;
-        Thu, 28 Mar 2024 13:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711656424; x=1712261224; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ju6YB3mtZJAi658SXHHBI9fZWuQW9dTBciLAhgrB3UE=;
-        b=kFYtKs/ucG8o6RRLKxf1boVJkKWgvzLMq1AVAKM6hyISH2xSZoiDwFnqyGBhei4rVK
-         8b+7tcaLJtwMyWxVN5oZDql+hJBdzB7+31asQpY9V0c0a17GyhTKjU22u37a7ljiST1O
-         2UqujLY+vFhSDAyg2x+rli3Yu1UclAiLuxfLPEqyqZNP6RWWpIZnbMpqBG9hhwhRjG2P
-         tPgTdElJsCp0sNdjK0keb401N1UGjNPr7O6MgjHCaGTVgUthpB0D/EQ7gMoqFjsa0E4G
-         qCeGo/4GG773VIk2GpGQ6LyoMRYe9xFAWW1mnGTbQPaU6rWNrGx/AXdH8vPkL8jvkJTx
-         Q62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711656424; x=1712261224;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ju6YB3mtZJAi658SXHHBI9fZWuQW9dTBciLAhgrB3UE=;
-        b=dDVkn4xxX/w8ih57EjGPJnnUg7O5oXs/e9u208z/VUC6ehk1EOJvnm+WyToQXWFVs6
-         4m57xdRauq/jbiZ4E42AV70v6rSv1rmICAOetCMO0fR9rYMpD3Mvu7m2YFS1FnV36lS7
-         XcjqWs0cjoHENTE0lbaa+jZLW+/H6HDSpPnaYRrkpGP8+RyNHeP860EFn8KVFnio7m4o
-         U9i94LaaFmF7JPl/zO00r+VdY2dydATP19rdwcmR6mXu4tih49R1z3mvNygUMJz94uBs
-         KUuFJw/SmY0uH3bgZ0eqYh5XvRzbAlU9MHfwAPiBXjR/mgczwxCM8BZ95EoxTGZ7zCH5
-         KnVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfD6pM3JDCFKK6wdcBniMCZFRvdfg5SOflgOnU/2WVX1oljdnejG9LIpIJNhImh6lo84XXaSNQ2o25wETr3VzwsalBA1/EDXXJ6ByxFdfRATvKnPdsEna9+wkSb5ivp78S3HYY4nGnxWq70mmurwo6S1i3
-X-Gm-Message-State: AOJu0YzU924tE98C60E7OYZuA+UmqPhLTFpYbNeFzC/RURtPTPW0olTI
-	Jxm+yiwxmOtz+GGIkQdT/Xe0MqPN4C/iySsMi+Dt4Hmk2cCGT2bB
-X-Google-Smtp-Source: AGHT+IELjcqIv0VORj1EnfKe71QoNIdyIK7nr1/XW2jUVaCl1BtmKXz2XUBexFJEuna+vspNKarKVQ==
-X-Received: by 2002:a17:902:f68e:b0:1e0:c070:b082 with SMTP id l14-20020a170902f68e00b001e0c070b082mr5344722plg.14.1711656423944;
-        Thu, 28 Mar 2024 13:07:03 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.124])
-        by smtp.gmail.com with ESMTPSA id p2-20020a1709027ec200b001e0af9928casm2069031plb.55.2024.03.28.13.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 13:07:03 -0700 (PDT)
-Date: Thu, 28 Mar 2024 14:07:01 -0600
-From: TaheraFahimi <fahimitahera@gmail.com>
-To: outreachy@lists.linux.dev,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] landlock: Add abstract unix socket connect restrictions
-Message-ID: <ZgXN5fi6A1YQKiAQ@tahera-OptiPlex-5000>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OwGALAT3"
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+	id 84C2120E6F0C; Thu, 28 Mar 2024 13:17:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 84C2120E6F0C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1711657048;
+	bh=zuRFpZurjYgprda+7yAHdNj9/B8yBGh0qKCSHCy2DOw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OwGALAT3g3Tn4tp9y8PYsyYcr1VtQ7vyjNt39f28nznVTMUyagsiuZv/aLLnEXWIO
+	 jJ5IBGaSg7InntcEcomkCJXDgl1/qHd1wKQlY1Xm/6Xi8y0VaQ3iHGy0BzV3IyFnbx
+	 bR2CdKU9UHI1WjsiGDO3symo00X07pVX/H9BMSA0=
+From: Fan Wu <wufan@linux.microsoft.com>
+To: corbet@lwn.net,
+	zohar@linux.ibm.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	tytso@mit.edu,
+	ebiggers@kernel.org,
+	axboe@kernel.dk,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	fsverity@lists.linux.dev,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>,
+	Fan Wu <wufan@linux.microsoft.com>
+Subject: [PATCH v16 03/20] ipe: add evaluation loop
+Date: Thu, 28 Mar 2024 13:17:10 -0700
+Message-Id: <1711657047-10526-4-git-send-email-wufan@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1711657047-10526-1-git-send-email-wufan@linux.microsoft.com>
+References: <1711657047-10526-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
-Abstract unix sockets are used for local interprocess communication without
-relying on filesystem. Since landlock has no restriction for connecting to
-a UNIX socket in the abstract namespace, a sandboxed process can connect to
-a socket outside the sandboxed environment. Access to such sockets should
-be scoped the same way ptrace access is limited.
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-For a landlocked process to be allowed to connect to a target process, it
-must have a subset of the target process’s rules (the connecting socket
-must be in a sub-domain of the listening socket). This patch adds a new
-LSM hook for connect function in unix socket with the related access rights.
+IPE must have a centralized function to evaluate incoming callers
+against IPE's policy. This iteration of the policy for against the rules
+for that specific caller is known as the evaluation loop.
 
-Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+
 ---
- security/landlock/task.c | 70 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+v2:
++ Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
 
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index 849f5123610b..7f4155fc6174 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -13,6 +13,7 @@
- #include <linux/lsm_hooks.h>
- #include <linux/rcupdate.h>
- #include <linux/sched.h>
-+#include <net/sock.h>
+v3:
++ Move ipe_load_properties to patch 04.
++ Remove useless 0-initializations Prefix extern variables with ipe_
++ Remove kernel module parameters, as these are exposed through sysctls.
++ Add more prose to the IPE base config option help text.
++ Use GFP_KERNEL for audit_log_start.
++ Remove unnecessary caching system.
++ Remove comments from headers
++ Use rcu_access_pointer for rcu-pointer null check
++ Remove usage of reqprot; use prot only.
++Move policy load and activation audit event to 03/12
+
+v4:
++ Remove sysctls in favor of securityfs nodes
++ Re-add kernel module parameters, as these are now exposed through securityfs.
++ Refactor property audit loop to a separate function.
+
+v5:
++ fix minor grammatical errors
++ do not group rule by curly-brace in audit record,
++ reconstruct the exact rule.
+
+v6:
++ No changes
+
+v7:
++ Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
++ Propagating changes to support the new ipe_context structure in the evaluation loop.
+
+v8:
++ Remove ipe_hook enumeration; hooks can be correlated via syscall record.
+
+v9:
++ Remove ipe_context related code and simplify the evaluation loop.
+
+v10:
++ Split eval part and boot_verified part
+
+v11:
++ Fix code style issues
+
+v12:
++ Correct an rcu_read_unlock usage
++ Add a WARN to unknown op during evaluation
+
+v13:
++ No changes
+
+v14:
++ No changes
+
+v15:
++ No changes
+
+v16:
++ No changes
+---
+ security/ipe/Makefile |   1 +
+ security/ipe/eval.c   | 100 ++++++++++++++++++++++++++++++++++++++++++
+ security/ipe/eval.h   |  24 ++++++++++
+ 3 files changed, 125 insertions(+)
+ create mode 100644 security/ipe/eval.c
+ create mode 100644 security/ipe/eval.h
+
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+index c09aec4904f2..57fe922cf1fc 100644
+--- a/security/ipe/Makefile
++++ b/security/ipe/Makefile
+@@ -6,6 +6,7 @@
+ #
  
- #include "common.h"
- #include "cred.h"
-@@ -108,9 +109,78 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
- 	return task_ptrace(parent, current);
- }
- 
-+static const struct cred *sk_get_cred(struct sock *sk)
+ obj-$(CONFIG_SECURITY_IPE) += \
++	eval.o \
+ 	ipe.o \
+ 	policy.o \
+ 	policy_parser.o \
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+new file mode 100644
+index 000000000000..af56815ed0fa
+--- /dev/null
++++ b/security/ipe/eval.c
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include <linux/fs.h>
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/file.h>
++#include <linux/sched.h>
++#include <linux/rcupdate.h>
++
++#include "ipe.h"
++#include "eval.h"
++#include "policy.h"
++
++struct ipe_policy __rcu *ipe_active_policy;
++
++/**
++ * evaluate_property - Analyze @ctx against a property.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ * @p: Supplies a pointer to the property to be evaluated.
++ *
++ * Return:
++ * * true	- The current @ctx match the @p
++ * * false	- The current @ctx doesn't match the @p
++ */
++static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
++			      struct ipe_prop *p)
 +{
-+	const struct cred *cred = get_cred(sk->sk_peer_cred);
-+
-+	if (!cred)
-+		return NULL;
-+	return cred;
-+}
-+
-+static const struct landlock_ruleset *get_current_sock_domain(void)
-+{
-+	const struct landlock_ruleset *const dom =
-+		landlock_get_current_domain();
-+
-+	if (!dom)
-+		return NULL;
-+
-+	return dom;
-+}
-+
-+static bool unix_sock_is_scoped(struct sock *const sock,
-+				struct sock *const other)
-+{
-+	bool is_scoped = true;
-+
-+	/* get the ruleset of connecting sock*/
-+	const struct landlock_ruleset *const dom_sock =
-+		get_current_sock_domain();
-+
-+	if (!dom_sock)
-+		return true;
-+
-+	/* get credential of listening sock*/
-+	const struct cred *cred_other = sk_get_cred(other);
-+
-+	if (!cred_other)
-+		return true;
-+
-+	/* retrieve the landlock_rulesets*/
-+	const struct landlock_ruleset *dom_parent;
-+
-+	rcu_read_lock();
-+	dom_parent = landlock_cred(cred_other)->domain;
-+	is_scoped = domain_scope_le(dom_parent, dom_sock);
-+	rcu_read_unlock();
-+
-+	return is_scoped;
-+}
-+
-+static int task_unix_stream_connect(struct sock *const sock,
-+				    struct sock *const other,
-+				    struct sock *const newsk)
-+{
-+	if (unix_sock_is_scoped(sock, other))
-+		return 0;
-+	return -EPERM;
++	return false;
 +}
 +
 +/**
-+ * hook_unix_stream_connect
++ * ipe_evaluate_event - Analyze @ctx against the current active policy.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ *
++ * This is the loop where all policy evaluation happens against IPE policy.
++ *
++ * Return:
++ * * 0		- OK
++ * * -EACCES	- @ctx did not pass evaluation.
++ * * !0		- Error
 + */
-+static int hook_unix_stream_connect(struct sock *const sock,
-+				    struct sock *const other,
-+				    struct sock *const newsk)
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
 +{
-+	return task_unix_stream_connect(sock, other, newsk);
-+}
++	bool match = false;
++	enum ipe_action_type action;
++	struct ipe_policy *pol = NULL;
++	const struct ipe_rule *rule = NULL;
++	const struct ipe_op_table *rules = NULL;
++	struct ipe_prop *prop = NULL;
 +
- static struct security_hook_list landlock_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
- 	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
-+	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
- };
- 
- __init void landlock_add_task_hooks(void)
++	rcu_read_lock();
++
++	pol = rcu_dereference(ipe_active_policy);
++	if (!pol) {
++		rcu_read_unlock();
++		return 0;
++	}
++
++	if (ctx->op == IPE_OP_INVALID) {
++		if (pol->parsed->global_default_action == IPE_ACTION_DENY) {
++			rcu_read_unlock();
++			return -EACCES;
++		}
++		if (pol->parsed->global_default_action == IPE_ACTION_INVALID)
++			WARN(1, "no default rule set for unknown op, ALLOW it");
++		rcu_read_unlock();
++		return 0;
++	}
++
++	rules = &pol->parsed->rules[ctx->op];
++
++	list_for_each_entry(rule, &rules->rules, next) {
++		match = true;
++
++		list_for_each_entry(prop, &rule->props, next) {
++			match = evaluate_property(ctx, prop);
++			if (!match)
++				break;
++		}
++
++		if (match)
++			break;
++	}
++
++	if (match)
++		action = rule->action;
++	else if (rules->default_action != IPE_ACTION_INVALID)
++		action = rules->default_action;
++	else
++		action = pol->parsed->global_default_action;
++
++	rcu_read_unlock();
++	if (action == IPE_ACTION_DENY)
++		return -EACCES;
++
++	return 0;
++}
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+new file mode 100644
+index 000000000000..6b434515968f
+--- /dev/null
++++ b/security/ipe/eval.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#ifndef _IPE_EVAL_H
++#define _IPE_EVAL_H
++
++#include <linux/file.h>
++#include <linux/types.h>
++
++#include "policy.h"
++
++extern struct ipe_policy __rcu *ipe_active_policy;
++
++struct ipe_eval_ctx {
++	enum ipe_op_type op;
++
++	const struct file *file;
++};
++
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
++
++#endif /* _IPE_EVAL_H */
 -- 
-2.34.1
+2.44.0
 
