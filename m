@@ -1,113 +1,118 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6037FBC0
-	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 13:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BB47EF0A
+	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 13:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711631041; cv=none; b=gDqe+cdByX8V1tmm1U24DTezGdB2/eSIKjxxB8QdPOocPZxuu9JG5JjFWXrNchvscJ4Nn0v8qdzJnOfdlfSLXUhufyIdocT2BZ6bwXcHH0jDLhOwCJa/UJd3rUNIqETWGLPVXhWmdQr9HLlcM9hitvFwq0wpINspfOxIHRw+32w=
+	t=1711631307; cv=none; b=at+0Ev79Ci5wkC6H3iHVUxVLx2iVn09VzGJ5CXZHOXHsYq9wbvjW2ENVV9RIeO14qbC1sGeYOHn6MoNJCuEugGd6hOb6xflLTPv0BppdBm4yScz0wqzcpjXKT7Sy4wNIsInVENpLbZ8bdofEmAcAeBBRin+46TAI1L0cyZP/jwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711631041; c=relaxed/simple;
-	bh=0V+RuvRGf3jpxS1g7uK7AxOydCxdLV5z/H6WKNFKKl8=;
+	s=arc-20240116; t=1711631307; c=relaxed/simple;
+	bh=Q9iWHX0IPpMbeqcoJRikaJ89gnv80sbp3IhpzuI1ttI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMUDroy4e+NwLJjeUskEv9iX3kmvGcincipBXIcYFUujd9OeiIwUTx+ToSZtWOrwAj7S5RGMKT+brMV4GDCOGh2f5kehULWHcMya6OllHNNOvH8tUWTlsFcXZs0fXu9mohVrtbl0iaS9REB6jezCLz3RlOlhawc98yKNyAY08yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GpCbYrLk; arc=none smtp.client-ip=209.85.161.43
+	 To:Cc:Content-Type; b=fX42AaOXEM+1/n/wN+TQnKJNO83FZ7Q/L94mTX73G0UX+ah4jFE++OsZAkOuTQWj2XcwFb56lEliCkwzIYai/cK6Kx3qTYWLWVLZO1un0V6ZnLP2+gCZXN25FT3eOEdcbrNZ66Vq9n8vnortXXWAXPLrEELVAOAesi/ESN/2Ro4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=StnZw3hT; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GpCbYrLk"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5a4716cfbbcso518308eaf.2
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 06:03:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="StnZw3hT"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-61130dd21c1so10087987b3.2
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 06:08:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1711631039; x=1712235839; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1711631305; x=1712236105; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3XaX3hd7hmwSRaUGNwS3s92AS3tUn8V75RR5Xnstjxs=;
-        b=GpCbYrLkOZz0PqvGumjdTSNlcachVwHWVgD+rWFYNZPKY1e0X3o4bL3imK+oDopbwP
-         UgoQ7TqQ//Kt5fj0m2NqAOnnnB1qavj/eoqsrcsdY4Dx6HUYhsp3WiL8Qal+SzR/cXSZ
-         r+Xi8Sl9ZHIBzGUrEAH9Fze1Z0LDT0JISegoQmJHSFMCMREAXA1NPRYHLYEfbBcoMnIl
-         3izzn3pC5+kkw+bUds40yKL+iLAN9dtHoiPE86Pv2XbcBHCrHvG80MUikNDqxzVwsb34
-         YTitKbnQK4SyWDhDoO+GVxwIBKYZ2U9RMGUCB1NdFRJ/xAb1t7CIndZdNK5CkRZEeMAN
-         ZgQQ==
+        bh=EAwB5SvUtfOc0OQIFY/17yabinsU0l79BDMDWApoFk8=;
+        b=StnZw3hTN81BdznuS1JyepqwYYfxBIzAg5cXgQoH4rvuYG9ID672i7xTjeM3oCIAHU
+         bUzMMHFkt9Wr/GTZU3iTGV6HwKgv2WvpwJanQFu8QYK5TKn4yWliFQ009pWuwAYiuvK2
+         v3PEJ64Y3x6NSy0uZnwEslWREu7eU5pZH/djx9af6m+lC+aQq7kpTEXSUU2BZi2EsgrR
+         R/4Zmp56GwOM8X8lLh4Y6bJl5Tuf3jdBMkEJxvXjTnk+F2MPq/N2grY1dD3AVb2+HZFW
+         iWx0Ytp9n35YvsBTqTD9RFWG7M5fDsyf2TOR8SQtEZKz/TJGaOdF8B+L+PrcMI5hsom1
+         w3wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711631039; x=1712235839;
+        d=1e100.net; s=20230601; t=1711631305; x=1712236105;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3XaX3hd7hmwSRaUGNwS3s92AS3tUn8V75RR5Xnstjxs=;
-        b=cqYWclBkcuBLZCsiFwUVj1bOlPd22NgUQofuJ937SV5prDJX+Ns7EK5WxfDxu/g6z0
-         rHSMLZ6fpxjPDDPEa1YqqUEnSrixuVgCgiSykSCCFuUqklMamPcL3a9u7mT8rsxDhlSR
-         npLiMwc1fg7ZBwPW1kHrpNAJflBTEFNIHIuoAHiPu8/B2ANKHPtT+S+7HQXPYvpmKm0f
-         sa3aPxYzoYF0cdCvP8sDapMqUc1lpPx1fprHCWv913C5oUv6BbFTccEYBvLuQWICoLr7
-         vO9uBEEyBneCzydeRl+WrFrDLPERTyZm4acjq1FFx1K66xVYNsCTkET19k4kZvf5scJk
-         oqVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTsO1ndjOL0DwFTdT+h2kFt0l5F8osNCkrUGGVbbVIK2aVaEsOh2xhPEWCuO/UWn5MrKeEGmzxLWUe34xQy0b0KhhMgqSSIEHrEsiLNcbr1/pQVMjp
-X-Gm-Message-State: AOJu0YzN7UYputNZAr3b5bdsjbVX5cgMc7dBvoWnIGz2KnMj+AvgaOga
-	GvVoagJCKv4cJeaGXncArT2DbPpo/uK6Ml2oW7IHcC9DcAqsb4dL+6hBEbU9AkqEyaQOghI1HUA
-	IvKuL/rOeBO9cl3vtp2fPSUK72rwOrfCfdAXu
-X-Google-Smtp-Source: AGHT+IGAwrK5RVxI1FWdhaGdJk53oz1JIu4utEj/2i2Z5bPasaIK4TuD1PGNGJfhSHVlWdkONFw134Hc6Aj0/tfXdLo=
-X-Received: by 2002:a05:6359:3187:b0:183:6350:bfb7 with SMTP id
- ri7-20020a056359318700b001836350bfb7mr464536rwb.7.1711631038700; Thu, 28 Mar
- 2024 06:03:58 -0700 (PDT)
+        bh=EAwB5SvUtfOc0OQIFY/17yabinsU0l79BDMDWApoFk8=;
+        b=KieUnpc6sHZ0mVeywt0Pw6yea6ATUeMtpjHETc6a6h2Afl5dlzInO49KuH3kvCJYLp
+         VF69d7AH8QnNVhnUr2jXxTEV9bD5HudaDx87TEXw8j7I1uUMKyP9B1pWw1/MkBCF9l8U
+         0jG4aTQqt6Asp4ko4+wGkIDkKh+9gn7c4Y/bdIzkwpbZ9jcYiGJaGnAEIqj/qNx5fV4N
+         QGgqh2AEhz/sdl43fzAG0gSyojzH1y6GrJrQOMWoE3enLM1vcS8w2iMN4Uf7rFrhLUWd
+         8cmdEu3mm2sTiVsvN8ojKMF0OL+zsnMfah8qomLvsMla9k/gJfNuf4Nxky2OCYZ6YeMd
+         tmfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKBl8dMqvUPPRUD8ZjzRu0NkewGdUOf6SWrZsQU7Mm6nLxoTtyLGzDQ2eHX0i6wRBVkQUqOBRNw/6pW0y5BMh9PhmifAJTUs18sqWZuSs8lwMI0vR/
+X-Gm-Message-State: AOJu0YxPQTDpZp5DtFqrw8po9glEwknECykr5liIRzVoRlRfYYU8BPd1
+	2imSHSlxf2RR+6H3iQqo+69gtIGy2xWzajrL6Na9e/JZpg9GOJ73h0evbilRMmyqYxA/8DHNNPl
+	5G4wDdkxm5K6ox1Y4/FM4bbBDKuaHmgmNTmbt
+X-Google-Smtp-Source: AGHT+IEaZ/DWaB9kQfke/Wt9K0JwNig6IYkR1JcE7UM+nBmZeQHmNqKMp6t+dN1gP2Ldf62K+SXrioH8t4S9zT6UhRU=
+X-Received: by 2002:a25:8452:0:b0:dd6:82e2:47d1 with SMTP id
+ r18-20020a258452000000b00dd682e247d1mr2862330ybm.53.1711631305121; Thu, 28
+ Mar 2024 06:08:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
- <20240324054636.GT538574@ZenIV> <3441a4a1140944f5b418b70f557bca72@huawei.com>
- <20240325-beugen-kraftvoll-1390fd52d59c@brauner> <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
- <20240326-halbkreis-wegstecken-8d5886e54d28@brauner> <4a0b28ba-be57-4443-b91e-1a744a0feabf@huaweicloud.com>
- <20240328-raushalten-krass-cb040068bde9@brauner> <4ad908dc-ddc5-492e-8ed4-d304156b5810@huaweicloud.com>
- <20240328-verfrachten-geebnet-19181fb9ad65@brauner>
-In-Reply-To: <20240328-verfrachten-geebnet-19181fb9ad65@brauner>
+References: <20240327131040.158777-1-gnoack@google.com> <20240327131040.158777-11-gnoack@google.com>
+ <20240328.ahgh8EiLahpa@digikod.net>
+In-Reply-To: <20240328.ahgh8EiLahpa@digikod.net>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 28 Mar 2024 09:03:46 -0400
-Message-ID: <CAHC9VhQ_w6uaOAKCj6mx7n7SNjk4d7vcUb3Bd6Wybx_1dA=ttQ@mail.gmail.com>
-Subject: Re: kernel crash in mknod
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, Christian Brauner <brauner@kernel.org>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Steve French <smfrench@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	Paulo Alcantara <pc@manguebit.com>, Christian Brauner <christian@brauner.io>, 
-	Mimi Zohar <zohar@linux.ibm.com>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Date: Thu, 28 Mar 2024 09:08:13 -0400
+Message-ID: <CAHC9VhT0SjH19ToK7=5d5hdkP-ChTpEEaeHbM0=K8ni_ECGQcw@mail.gmail.com>
+Subject: Re: [PATCH v13 10/10] fs/ioctl: Add a comment to keep the logic in
+ sync with the Landlock LSM
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 28, 2024 at 8:07=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> On Thu, Mar 28, 2024 at 01:24:25PM +0200, Roberto Sassu wrote:
-> > Also, consider that the pre hook security_path_mknod() has the dentry a=
-s
-> > parameter. For symmetry, we could keep it in the post hook.
+On Thu, Mar 28, 2024 at 8:11=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> On Wed, Mar 27, 2024 at 01:10:40PM +0000, G=C3=BCnther Noack wrote:
+> > Landlock's IOCTL support needs to partially replicate the list of
+> > IOCTLs from do_vfs_ioctl().  The list of commands implemented in
+> > do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
+> >
+> > Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> > ---
+> >  fs/ioctl.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > index 1d5abfdf0f22..661b46125669 100644
+> > --- a/fs/ioctl.c
+> > +++ b/fs/ioctl.c
+> > @@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *fil=
+e, void __user *argp)
+> >   *
+> >   * When you add any new common ioctls to the switches above and below,
+> >   * please ensure they have compatible arguments in compat mode.
+> > + *
+> > + * The commands which are implemented here should be kept in sync with=
+ the IOCTL
+> > + * security policies in the Landlock LSM.
 >
-> I think that's not that important.
+> Suggestion:
+> "with the Landlock IOCTL security policy defined in security/landlock/fs.=
+c"
 
-It is important to me.  If you change security_path_post_mknod() to
-take an inode, please also change security_path_mknod() to take an
-inode ... actually, looking quickly at the code it looks like at least
-AppArmor and TOMOYO make use of the dentry and not just the associated
-inode.  I didn't dive deeply into either so perhaps they could be
-modified to use an inode instead, but that is a decision I would leave
-up to John and Tetsuo.  While Landlock does make use of the hook, it
-doesn't look like it cares about anything in the dentry.
+We really shouldn't have any comments or code outside of the security/
+directory that reference a specific LSM implementation.  I'm sure
+there are probably a few old comments referring to SELinux, but those
+are bugs as far as I'm concerned (if anyone spots one, please let me
+know or send me a patch!).
 
-With that in mind, unless Christian has a strong argument as to why
-security_path_post_mknod() must change its parameter from a dentry to
-an inode, I would very much prefer to have both hooks continue to take
-a dentry, unless we all decide they can be safely changed to use an
-inode as a parameter.  As the previous IMA/EVM hook took a dentry for
-years, and Christian originally reviewed/OK'd the LSM hook, I'm
-guessing there is not any significant harm in continuing to pass a
-dentry, but if that isn't the case please say so ...
+How about the following?
 
-Of course this doesn't change anything with respect to the necessary
-bugfix and/or the hook name/bikeshedding effort; no objections from me
-on either.
+"The LSM list should also be notified of any command additions or
+changes as specific LSMs may be affected."
 
 --=20
 paul-moore.com
