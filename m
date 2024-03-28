@@ -1,87 +1,108 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EF27EEF0
-	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 12:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57CD7EF0F
+	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 12:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711627879; cv=none; b=VYQLxTNer3BrX0O+Wghho7tTQjG/mK48CuBmJCMzUEPHbrsvbc4xJY4iLWa6MJmjtynPLY33p5Sf97wVoA2Ulr2wfelfnLBShtjNVhduxWcSgvXMisNi8begNhPD2w83IxrJOiiUQ4/V5WklOachR3LkhJlnl7FX0TpTK94tLv4=
+	t=1711629805; cv=none; b=RFD6twyt3T82/36sWCbysfBN9YZ/yNTnyITanhEirYlBcMy9EmywLU+ciQHXN7/WBW+3ASx/St/NFN2Ifi5BeiGyDC/TaW+Ll7/4MTlSlWDPaWAjRptZHBV+zx1MdimAh+kjNrn/DCy7PVQQc7SKfrSlU0B9+z3byn9L/q9i/yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711627879; c=relaxed/simple;
-	bh=Lwg1fmCknR8Ry1SW3M22oRRlcnp37S8ciED/40rgmkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMnbP+bMw45QkRW79A41NPv2qlfeFO5RtnHk9pMTcQaJTkNU35xmFkTcb1x6oYnOoQqspQwSYcxBtMNPMl5+oD5V2HS9asSrl9UQepdF5uejBQ3nCcjF1uniIo3n6Ar5jZujYx9j2MCf93wRNYTylfDWFUNSLOITn3yLqlvANQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=LJzPCpjn; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1711629805; c=relaxed/simple;
+	bh=wCjLEiLhsGuQ94t3e93iJvctAPVhr0te7y+obw6b26g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fxjZr8vxpa9nSSZNKRGs63MD9a+SAyyayyI5NmA3vRXEHokJndYiiTLKzXbQBC5sLo3ywAqT3UH57/s0KUMRh6lfcoVNBloa23SQ2olC3/1VyPYmWD67PXgVIOGZcrRYTlRXABREzPNx8inTW2shOS2IxjnoYZnC1FOcCT1/hUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Hvf5L1Nj; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="LJzPCpjn"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V52Sb0bMRzTcl;
-	Thu, 28 Mar 2024 13:11:11 +0100 (CET)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V52SZ09ymzMpnPg;
-	Thu, 28 Mar 2024 13:11:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711627870;
-	bh=Lwg1fmCknR8Ry1SW3M22oRRlcnp37S8ciED/40rgmkc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LJzPCpjnVdtNhC6IGj0hF26ckJqDOwQ78sc27EX27XxPQfii8VKyDbHy7Jj+dWy9+
-	 dOl1TJyUXHgDbYb/vQehEMpoyYVHGQ3BPtzWIXG3Lb2rq1luUnHAvdVw7nXDa+LW/0
-	 8fdHMmMIxnPEoFSq3CjIAMuZ6Xxe0xGzPSDS9RIE=
-Date: Thu, 28 Mar 2024 13:11:09 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v13 10/10] fs/ioctl: Add a comment to keep the logic in
- sync with the Landlock LSM
-Message-ID: <20240328.ahgh8EiLahpa@digikod.net>
-References: <20240327131040.158777-1-gnoack@google.com>
- <20240327131040.158777-11-gnoack@google.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Hvf5L1Nj"
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dcc80d6004bso872773276.0
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 05:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1711629803; x=1712234603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wCjLEiLhsGuQ94t3e93iJvctAPVhr0te7y+obw6b26g=;
+        b=Hvf5L1NjH4/ykBgdIa5Fxa9+LpTbH2QLO6I6Ik+wPfXD9pU5SOLOmLiJ57FguVH+IW
+         tgYv8SqQSDYj5wp9N08GgrTgGKI6pFWXYV4funDAmXQt1GKrD/s1K20jwUKYELyGSyQE
+         CngzRlMn41zkjUTCfszyPzDEovaa/ghaCFXANuwriEUJ+1ZWrJoiCs8X9aX8jlXG3QgQ
+         wJtH7q64zF/WDtL94P/Veo4cXtPbdogJRNgWCJLmZs5h8tVdB+YssXUf9HUpHLkFA8Pm
+         0zshluFnIv9eRPfWuquK8U/NZB0t7+EYTNLYUm0fzjkS2rvBEU3Q//X4FqoNkxJHmmzi
+         YQcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711629803; x=1712234603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wCjLEiLhsGuQ94t3e93iJvctAPVhr0te7y+obw6b26g=;
+        b=toKtuRkWL/CJzCw43ZVY8nz1ZlZxdADwAOX4fmB+LLVVzMNOc1sHJ0otDl1E/UH6Rh
+         Ez7Ie9SqgWwPi8bUekOdMzYVuQ5Uqi1crRbULKan70SWFyL/8ZsibmST9bDzTD5JXho/
+         A+l2+/NktjZsR+lxgEeQwTgdtKkjfVQ+Zt4FDfQNHxcqswXNIvw3h9UBvH4aG7yN0ak3
+         iDMLP6KqLVEoFof4Jfq16lmAPGqKer88Jbht+fIW5ZrfJC1cAmFAko+p/L4x2U8Q/LVj
+         bEBVZ4A4UcoJaM8ZWZK2Pv8EDgjY9hBsBEyiQ5Iik5P+rUPFPcjA9IEcTbC4ra2XhfJj
+         F35g==
+X-Forwarded-Encrypted: i=1; AJvYcCVVdvD7OaFnJ6w0ORQQ1Wp+DLL/QOHRQgO8txGDVSl+CDako6MjLfaNSKZkDse6szYcdpS18hyaB8yaISI121AZCEmxSRlW4fFcZEU+7WunlnaSsF0v
+X-Gm-Message-State: AOJu0YwmhA7JravMF4zJbkANe0Z+Jfgx3RmqMmgb2omVOoXMc0q3J84f
+	09/pueOCAUQuSCtwWgjlcCfAlJEbsLz+jOp8TJ/uePxHR+k252WDZKgpTK4MBu7Abaasd6SnsF0
+	SqbjEkqq8lz1VX/PEQJL2I6DPDZuJ4UrYuVhD
+X-Google-Smtp-Source: AGHT+IG7Hj+v9FZ9/91AWUqhCMCaVjwUtpSrpHnaDe3Rf5wZSA8LmhBKtZJ4gqRDkx5Ku7FJ96Rn9hqsd+NaW27OoP4=
+X-Received: by 2002:a25:5f50:0:b0:dbd:4578:5891 with SMTP id
+ h16-20020a255f50000000b00dbd45785891mr2423670ybm.65.1711629802827; Thu, 28
+ Mar 2024 05:43:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240327131040.158777-11-gnoack@google.com>
-X-Infomaniak-Routing: alpha
+References: <CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com>
+ <20240324054636.GT538574@ZenIV> <3441a4a1140944f5b418b70f557bca72@huawei.com>
+ <20240325-beugen-kraftvoll-1390fd52d59c@brauner> <cb267d1c7988460094dbe19d1e7bcece@huawei.com>
+ <20240326-halbkreis-wegstecken-8d5886e54d28@brauner> <4a0b28ba-be57-4443-b91e-1a744a0feabf@huaweicloud.com>
+ <20240328-raushalten-krass-cb040068bde9@brauner> <4ad908dc-ddc5-492e-8ed4-d304156b5810@huaweicloud.com>
+In-Reply-To: <4ad908dc-ddc5-492e-8ed4-d304156b5810@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 28 Mar 2024 08:43:10 -0400
+Message-ID: <CAHC9VhR9EL0CQRKpdJ5C9DLnb8YKCNZze+WnpRxn10ZHKCKzPw@mail.gmail.com>
+Subject: Re: kernel crash in mknod
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Steve French <smfrench@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	Paulo Alcantara <pc@manguebit.com>, Christian Brauner <christian@brauner.io>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 27, 2024 at 01:10:40PM +0000, Günther Noack wrote:
-> Landlock's IOCTL support needs to partially replicate the list of
-> IOCTLs from do_vfs_ioctl().  The list of commands implemented in
-> do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
-> 
-> Signed-off-by: Günther Noack <gnoack@google.com>
-> ---
->  fs/ioctl.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 1d5abfdf0f22..661b46125669 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *file, void __user *argp)
->   *
->   * When you add any new common ioctls to the switches above and below,
->   * please ensure they have compatible arguments in compat mode.
-> + *
-> + * The commands which are implemented here should be kept in sync with the IOCTL
-> + * security policies in the Landlock LSM.
+On Thu, Mar 28, 2024 at 7:24=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On 3/28/2024 12:08 PM, Christian Brauner wrote:
 
-Suggestion:
-"with the Landlock IOCTL security policy defined in security/landlock/fs.c"
+...
 
->   */
->  static int do_vfs_ioctl(struct file *filp, unsigned int fd,
->  			unsigned int cmd, unsigned long arg)
-> -- 
-> 2.44.0.396.g6e790dbe36-goog
-> 
-> 
+> > And one another thing I'd like to point out is that the security hook i=
+s
+> > called "security_path_post_mknod()" while the evm and ima hooks are
+> > called evm_post_path_mknod() and ima_post_path_mknod() respectively. In
+> > other words:
+> >
+> > git grep _path_post_mknod() doesn't show the implementers of that hook
+> > which is rather unfortunate. It would be better if the pattern were:
+> >
+> > <specific LSM>_$some_$ordered_$words()
+>
+> I know, yes. Didn't want to change just yet since people familiar with
+> the IMA code know the current function name. I don't see any problem to
+> rename the functions.
+
+I'm sure this is what you are planning Roberto, but just so we are all
+clear on this, please do the simple bugfix to resolve the mknod
+problem and then do the parameter change and the name bikeshedding in
+a separate patch.
+
+--=20
+paul-moore.com
