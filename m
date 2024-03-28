@@ -1,120 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5761327E6;
-	Thu, 28 Mar 2024 15:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E14212A14A
+	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 16:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711641546; cv=none; b=do36iJrDsIsimtaqYC98ot3HFzfzv5p/knBn3YRzLLPW8hlEijTk1cjuQJjTzURqcFgM9Kg+EpMx/wKou+VYvz96wBIOeyb5qKFrjULzqS4UJm4WodxtUAE2PGuk7OFM9GKRnu4Z5tMdV43xw4b4a4D1Zbdv+c1v/uwefIFF5lE=
+	t=1711644243; cv=none; b=tx/lPpRabkGTm5ThBOBA8/QeYpL3ZAUP0MZ6kA3Kz6bjTqZhpZwZoIybtSxRNcKdyL61yKVRtTG7q3u2Od9jxQ/Ar3MzB4EoF2FfWsLjZUUmwSiA6pwlc+nHgM0TCS5LCTQqPr7doZKDzDiCnllUV0+Ae14cv92XUfs6k+jovU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711641546; c=relaxed/simple;
-	bh=43XallgnzSLZhguS4VWitQ2Fcw54C6K2Ncxf6+7BSRI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RtHLcgbgrBp/5JWs2pdZL8AuGuI2YZbyRHs0+F2GZ2dxB1MwuXfYc7vtP+cnMSwwi130hK9zNKdcjqIh9cE9MbvCmKsvoePsQtK0qgoeOUlDhx9fse4fiDOt4VVz0CORh5/TRzUq5nWs4gEsj2Ps9tgQonEhxtNp9W5sgm+5Cbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKgqsRfH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711644243; c=relaxed/simple;
+	bh=+bSrKAtDF5uJe/MOUQh6w++8XZ49Zs92jJVUIiROUZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l77k0haIQ4N8fCkFsqZA3jRH91LIMX3MUjmTBH+zID5JkyLbU8TXsJvwRT1yisVENeAtK89q1NOE/eKGZaisKte7ZnGNOKa8nQpCEA4xJ8Km719FdA3CzmwRMSEtZ0/navwg156mcbFEwKDuu3TLFgnNDD5uI2gdJ9xMKrs3vWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DXOp6IKO; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKgqsRfH"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F74AC43142;
-	Thu, 28 Mar 2024 15:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711641546;
-	bh=43XallgnzSLZhguS4VWitQ2Fcw54C6K2Ncxf6+7BSRI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fKgqsRfHUCx6aBs250bwLQxrFH3Lt/DFlxIi8K/W26txiNrqxJep69UlidZtSxnVn
-	 k7iSc3CfIlmPR0UbHZqUpdqicpM92Ww6KLLDJoV/Qry79ox2BJ1pTf+muRfMeS23BZ
-	 p4i2qIH1mZzObREbjVuGDqhXLNAMEJnhF5aQtvrBlxljhYj0EgbZmcQ0Dp4zfo04Me
-	 C+tPRd7A842f/XiH5yoJ14adYy7E/MbzAGR7hwyIzfLBoLIe+y1x820s9EyNVwrNBO
-	 yN40GaJTPuM2NJdmotsIDLpSQg7ygtHrme3rJNFUudKpg+rfSWF+pZEf5nxlBBQ4AD
-	 uBTUPLvTuJ9ig==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23321CD1283;
-	Thu, 28 Mar 2024 15:59:06 +0000 (UTC)
-From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Thu, 28 Mar 2024 16:57:53 +0100
-Subject: [PATCH 6/7] io_uring: Remove the now superfluous sentinel elements
- from ctl_table array
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DXOp6IKO"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V58WB1Cs4zY8m;
+	Thu, 28 Mar 2024 17:43:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1711644230;
+	bh=+bSrKAtDF5uJe/MOUQh6w++8XZ49Zs92jJVUIiROUZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DXOp6IKO55i6BlFAuMxhPG/l0JvRNaGEgg0nV1UX+hFYw+Xy3yL58Pps5MyuS9PRf
+	 9YqFZhuu9iIisMmS2TGxsOZOkcu8z1JihsOCZBH9Pe9DEkLg6iGTTCcLOx1UA8fisE
+	 iDxv2hytl/l2wyx2AufkXulw49xs5We8HMNXp/RU=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V58W9410hzsB;
+	Thu, 28 Mar 2024 17:43:49 +0100 (CET)
+Date: Thu, 28 Mar 2024 17:43:49 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 10/10] fs/ioctl: Add a comment to keep the logic in
+ sync with the Landlock LSM
+Message-ID: <20240328.mahn4seChaej@digikod.net>
+References: <20240327131040.158777-1-gnoack@google.com>
+ <20240327131040.158777-11-gnoack@google.com>
+ <20240328.ahgh8EiLahpa@digikod.net>
+ <CAHC9VhT0SjH19ToK7=5d5hdkP-ChTpEEaeHbM0=K8ni_ECGQcw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240328-jag-sysctl_remset_misc-v1-6-47c1463b3af2@samsung.com>
-References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
-In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Muchun Song <muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
- Naoya Horiguchi <naoya.horiguchi@nec.com>, 
- John Johansen <john.johansen@canonical.com>, 
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>, David Howells <dhowells@redhat.com>, 
- Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <keescook@chromium.org>, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- "David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>, 
- Pavel Begunkov <asml.silence@gmail.com>, 
- Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>, 
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
- keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, 
- io-uring@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, 
- Joel Granados <j.granados@samsung.com>
-X-Mailer: b4 0.13-dev-2d940
-X-Developer-Signature: v=1; a=openpgp-sha256; l=866;
- i=j.granados@samsung.com; h=from:subject:message-id;
- bh=fE/NZmB4pRzGY5dsPYrxUBO9ZoOr+5OhzOId8tu7QTs=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGYFk8bmxZGot17fJWYqTrmMAyaWIBy9sBUWG
- aHGw/deIYoGrIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmBZPGAAoJELqXzVK3
- lkFPPqgL/j0Ld5LzYavMO9DP8fYz7mNmdGMwclTzF1+obs3fJGdIR8B/yld44GUGxZL131jYcMG
- rHpj3oVP4UfarmvGW9AI2OimEgbMMWPFc1ZmFkY/CrgzinI5TjytwY+i2r2AavTNWRMT7zcLAQf
- Vdq3FZfdbZ+JpLovP5iiwvyb2Cd96kkzD/e4Oa1nyGkxFYPOAxO80j4LDy7GfxL6+9UIIGGFZv4
- DaZKSWK1X2UrZOmVK1qgRXej8kHjlVxhl53AUNyQ+rFa5VbLRO405J68WgjMP32GJMISyVW57h5
- ocoprGgLHRyg4LpPfHIL4yohqv2RIyMpZPgpoTW5dpYZqFRcURac/bVmRZRQx5wpJjjEowDk45c
- H7nH57Hsk+EcGqekPtpXVg4vLZuvXOmv5CConYIlM2ttcTJItblMO8RCNiIqgE21QlZc99oAynV
- a/OGIOEYnrYir1BnHvhD/LINHxzOFzcChPE2iJr9kbQNFsz7wr+soDr8zShfiwcyJ1Ika8nd5s7
- ik=
-X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
- auth_id=70
-X-Original-From: Joel Granados <j.granados@samsung.com>
-Reply-To: j.granados@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT0SjH19ToK7=5d5hdkP-ChTpEEaeHbM0=K8ni_ECGQcw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-From: Joel Granados <j.granados@samsung.com>
+On Thu, Mar 28, 2024 at 09:08:13AM -0400, Paul Moore wrote:
+> On Thu, Mar 28, 2024 at 8:11 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Wed, Mar 27, 2024 at 01:10:40PM +0000, Günther Noack wrote:
+> > > Landlock's IOCTL support needs to partially replicate the list of
+> > > IOCTLs from do_vfs_ioctl().  The list of commands implemented in
+> > > do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
+> > >
+> > > Signed-off-by: Günther Noack <gnoack@google.com>
+> > > ---
+> > >  fs/ioctl.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > > index 1d5abfdf0f22..661b46125669 100644
+> > > --- a/fs/ioctl.c
+> > > +++ b/fs/ioctl.c
+> > > @@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *file, void __user *argp)
+> > >   *
+> > >   * When you add any new common ioctls to the switches above and below,
+> > >   * please ensure they have compatible arguments in compat mode.
+> > > + *
+> > > + * The commands which are implemented here should be kept in sync with the IOCTL
+> > > + * security policies in the Landlock LSM.
+> >
+> > Suggestion:
+> > "with the Landlock IOCTL security policy defined in security/landlock/fs.c"
+> 
+> We really shouldn't have any comments or code outside of the security/
+> directory that reference a specific LSM implementation.  I'm sure
+> there are probably a few old comments referring to SELinux, but those
+> are bugs as far as I'm concerned (if anyone spots one, please let me
+> know or send me a patch!).
+> 
+> How about the following?
+> 
+> "The LSM list should also be notified of any command additions or
 
-This commit comes at the tail end of a greater effort to remove the
-empty elements at the end of the ctl_table arrays (sentinels) which will
-reduce the overall build time size of the kernel and run time memory
-bloat by ~64 bytes per sentinel (further information Link :
-https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+"The LSM mailing list..."
 
-Remove sentinel element from kernel_io_uring_disabled_table
+> changes as specific LSMs may be affected."
 
-Signed-off-by: Joel Granados <j.granados@samsung.com>
----
- io_uring/io_uring.c | 1 -
- 1 file changed, 1 deletion(-)
+Looks good.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 5d4b448fdc50..fe3c93e21e2c 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -169,7 +169,6 @@ static struct ctl_table kernel_io_uring_disabled_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
--	{},
- };
- #endif
- 
-
--- 
-2.43.0
-
-
+> 
+> -- 
+> paul-moore.com
+> 
