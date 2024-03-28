@@ -1,200 +1,245 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F42651AE
-	for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 14:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D56612AAC8;
+	Thu, 28 Mar 2024 15:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711637126; cv=none; b=WCAGWEuJt8MAaR3vCFvwEChVEOFikpdVoB+CnYzbytXZQCFRcgRjZurPq2b4Fuj9eY1p8PwLoRu56TSCnKwWFXkiZTnRRtUhgFwAmnYopwbpgloIoUcwwuPD31p7pMdc6WNcm//IYVBGKg07jodyRg3PDrFj1TCPyA5CfFuuzd4=
+	t=1711638673; cv=none; b=m7VdCmy84JmNHVqagulypSzupsL/bRCsxJfJb/Dgy5r4WpUjzy7V+LrEn4SpMacfVCNNGOlQkG9VxZ9LHrCwg5v/6M/y5Pa0TTY0d1ox8CPNdxUs4LzSHFZxaqNIClFNxO5wlA4V6RizPz56j1BrupPOvSC0M3aE7UWqkajkEgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711637126; c=relaxed/simple;
-	bh=m6ExSO75re8+h+0kqgmc3taw/nhfvJpWp0RzVChKUD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DlyzPO7IS1Xm5VpwL4UIblCSRilzyxCbpR3F7zQOl1mkscJ9VUQXcENrJNolNUClTqFSRFREVVGTCzUj5GDlkagdq53xdY7Od5DcO7FxH+vjETfmZnasq9i7i8TZMHG1IuINRoczMS2MqsSWV/Fj4MnBM4vHqUJcO2WSvyucFtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0RoR5jKm; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0RoR5jKm"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V55tK0jHzzh88;
-	Thu, 28 Mar 2024 15:45:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1711637112;
-	bh=m6ExSO75re8+h+0kqgmc3taw/nhfvJpWp0RzVChKUD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0RoR5jKmSZESMEyzyyfqQCBdDMidK2YEM0S6giPp/MumsJXKnukq6p0yh+n8lBUDh
-	 +Ly2A2jkpU9UJdKMMJ6cjtSIPEwpe4ycoBks2M1+RnFT/H4YsiMgWes0h2Ema/J11K
-	 C0XwLrdz1/Cpkjimu+R6Lc8YtVwHzWf4nOEcEtsg=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4V55tJ47G7zsZc;
-	Thu, 28 Mar 2024 15:45:12 +0100 (CET)
-Date: Thu, 28 Mar 2024 15:45:12 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Ayush Tiwari <ayushtiw0110@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, alison.schofield@intel.com, 
-	fabio.maria.de.francesco@linux.intel.com, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	gregkh@linuxfoundation.org, outreachy@lists.linux.dev, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] LANDLOCK: use kmem_cache for landlock_object
-Message-ID: <20240328.aiPh0phaJ6ai@digikod.net>
-References: <ZgSrBVidW1U6yP+h@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
- <CAHC9VhRYDNoqkbkgdUSg-kYSHVbheD5NtezmVxyRakZ0-DzuSg@mail.gmail.com>
- <ZgUh7cIQIsOgvWpw@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+	s=arc-20240116; t=1711638673; c=relaxed/simple;
+	bh=9ZVtnhzhZd0WftWAsQOgM+6p7f2COBJFMNa2GVUj5eo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Tek0jt6q+keLOTGnRaSbtn/DcYc8EeRuTJg3oD8RGvqJJl95DW3hdn8nd2/w9s6uCSe9p9y2Ys8trwQq7snhIrdlf6m4nFnoUhltRtNIZRwqCQpOtdcERLiIF6pdAWW4VxflqVWKWsc9rDWctkWtbIKzYYi7I6tN+1AbDiu8RuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4V56PM0cjNztQW4;
+	Thu, 28 Mar 2024 23:08:39 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id DC92E1401E0;
+	Thu, 28 Mar 2024 23:11:05 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 28 Mar 2024 23:11:01 +0800
+Message-ID: <bd62ac88-81bc-cee2-639a-a0ca79843265@huawei-partners.com>
+Date: Thu, 28 Mar 2024 18:10:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] lsm: Check and handle error priority for
+ socket_bind and socket_connect
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Paul Moore
+	<paul@paul-moore.com>
+CC: <linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>, Alexey
+ Kodanev <alexey.kodanev@oracle.com>, Eric Dumazet <edumazet@google.com>,
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Konstantin Meskhidze
+	<konstantin.meskhidze@huawei.com>, Muhammad Usama Anjum
+	<usama.anjum@collabora.com>, "Serge E . Hallyn" <serge@hallyn.com>,
+	yusongping <yusongping@huawei.com>, <artem.kuzin@huawei.com>
+References: <20240327120036.233641-1-mic@digikod.net>
+From: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20240327120036.233641-1-mic@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZgUh7cIQIsOgvWpw@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
-X-Infomaniak-Routing: alpha
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-The subject should start with "landlock: Use" instead of "LANDLOCK: use"
 
-On Thu, Mar 28, 2024 at 01:23:17PM +0530, Ayush Tiwari wrote:
-> Hello Paul
-> Thanks a lot for the feedback. Apologies for the mistakes. Could you
-> help me in some places so that I can correct the errors, like:
-> On Wed, Mar 27, 2024 at 07:43:36PM -0400, Paul Moore wrote:
-> > On Wed, Mar 27, 2024 at 7:26 PM Ayush Tiwari <ayushtiw0110@gmail.com> wrote:
-> > >
-> > > Use kmem_cache replace kzalloc() calls with kmem_cache_zalloc() for
-> > > struct landlock_object and update the related dependencies.
-> > >
-> > > Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
-> > > ---
-> > >  security/landlock/fs.c     |  2 +-
-> > >  security/landlock/object.c | 14 ++++++++++++--
-> > >  security/landlock/object.h |  4 ++++
-> > >  security/landlock/setup.c  |  2 ++
-> > >  4 files changed, 19 insertions(+), 3 deletions(-)
-> > 
-> > Hi Ayush,
-> > 
-> > Mickaël has the final say on Landlock patches, but I had a few
-> > comments that I've included below ...
-> > 
-> > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > index fc520a06f9af..227dd67dd902 100644
-> > > --- a/security/landlock/fs.c
-> > > +++ b/security/landlock/fs.c
-> > > @@ -124,7 +124,7 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
-> > >         if (unlikely(rcu_access_pointer(inode_sec->object))) {
-> > >                 /* Someone else just created the object, bail out and retry. */
-> > >                 spin_unlock(&inode->i_lock);
-> > > -               kfree(new_object);
-> > > +               kmem_cache_free(landlock_object_cache, new_object);
-> > 
-> > See my comment below, but you may want to wrap this in a Landlock
-> > object API function.
-> Sure. I will definitely implement this.
-> > 
-> > >                 rcu_read_lock();
-> > >                 goto retry;
-> > > diff --git a/security/landlock/object.c b/security/landlock/object.c
-> > > index 1f50612f0185..df1354215617 100644
-> > > --- a/security/landlock/object.c
-> > > +++ b/security/landlock/object.c
-> > > @@ -17,6 +17,15 @@
-> > >
-> > >  #include "object.h"
-> > >
-> > > +struct kmem_cache *landlock_object_cache;
-> > > +
-> > > +void __init landlock_object_init(void)
-> > > +{
-> > > +       landlock_object_cache = kmem_cache_create(
-> > > +               "landlock_object_cache", sizeof(struct landlock_object), 0,
+On 3/27/2024 3:00 PM, Mickaël Salaün wrote:
+> Because the security_socket_bind and the security_socket_bind hooks are
+> called before the network stack, it is easy to introduce error code
+> inconsistencies. Instead of adding new checks to current and future
+> LSMs, let's fix the related hook instead. The new checks are already
+> (partially) implemented by SELinux and Landlock, and it should not
+> change user space behavior but improve error code consistency instead.
+It would probably be better to allow the network stack to perform such
+checks before calling LSM hooks. This may lead to following improvements:
 
-No need for the "_cache" name suffix.
+1. Fixing extra checks. In the current design, (address)checks are
+    performed both in validate_inet_addr() function and
+    in network stack methods.
 
-> > > +               SLAB_PANIC, NULL);
-> > 
-> > The comments in include/linux/slab.h suggest using the KMEM_CACHE()
-> > macro, instead of kmem_cache_create(), as a best practice for creating
-> > slab caches.
-> > 
-> Sure. Apologies I didn't see that, I tried to implement it from scratch
-> using the reference from linux memory management APIs.
-> > > +}
-> > > +
-> > >  struct landlock_object *
-> > >  landlock_create_object(const struct landlock_object_underops *const underops,
-> > >                        void *const underobj)
-> > > @@ -25,7 +34,8 @@ landlock_create_object(const struct landlock_object_underops *const underops,
-> > >
-> > >         if (WARN_ON_ONCE(!underops || !underobj))
-> > >                 return ERR_PTR(-ENOENT);
-> > > -       new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
-> > > +       new_object =
-> > > +               kmem_cache_zalloc(landlock_object_cache, GFP_KERNEL_ACCOUNT);
-> > 
-> > If the line is too long, you might want to consider splitting the
-> > function parameters like this:
-> > 
-> >   new_object = kmem_cache_zalloc(landlock_object_cache,
-> >                                  GFP_KERNEL_ACCOUNT);
-> > 
-> 
-> Sure. I didn't do as it was below the 100 columns limit, but will
-> definitely implement it.
+2. The network stack can choose which error cases should not be hidden
+    during the LSM access check, and which ones can be.
 
-Please just use clang-format.
+3. LSM will not be responsible for performing all necessary checks
+    for every (necessary) protocol.
 
-> > >         if (!new_object)
-> > >                 return ERR_PTR(-ENOMEM);
-> > >         refcount_set(&new_object->usage, 1);
-> > > @@ -62,6 +72,6 @@ void landlock_put_object(struct landlock_object *const object)
-> > >                  * @object->underobj to @object (if it still exists).
-> > >                  */
-> > >                 object->underops->release(object);
-> > > -               kfree_rcu(object, rcu_free);
-
-Is it safe?
-
-According to commit ae65a5211d90 ("mm/slab: document kfree() as allowed
-for kmem_cache_alloc() objects"), no change should be needed (and it
-must not be backported to kernels older than 6.4 with CONFIG_SLOB). This
-way we can avoid exporting landlock_object_cache.  Please add a note
-about this commit and the related warning in the commit message.
-
-> > > +               kmem_cache_free(landlock_object_cache, object);
-> > >         }
-> > >  }
-> > > diff --git a/security/landlock/object.h b/security/landlock/object.h
-> > > index 5f28c35e8aa8..8ba1af3ddc2e 100644
-> > > --- a/security/landlock/object.h
-> > > +++ b/security/landlock/object.h
-> > > @@ -13,6 +13,10 @@
-> > >  #include <linux/refcount.h>
-> > >  #include <linux/spinlock.h>
-> > >
-> > > +extern struct kmem_cache *landlock_object_cache;
-> > 
-> > This really is a decision for Mickaël, but you may want to make
-> > @landlock_object_cache private to object.c and create functions to
-> > manage it as needed, e.g. put/free operations.
-> > 
-> Okay. I didn't make it private as I was using it in fs.c to use
-> kmem_cache_free, but if this is supposed to be private, I can modify the
-> approach and expose it via some function, not directly exposing
-> landlock_object_cache.
-
-Yes, that would be better.
-
-> > > +void __init landlock_object_init(void);
-> > > +
-> > >  struct landlock_object;
-> > >
-> > >  /**
-> > > diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-> > > index f6dd33143b7f..a5fca4582ee1 100644
-> > 
-> > -- 
-> > paul-moore.com
-> I will make all the changes you mentioned, and as you said, I will
-> wait for Mickael's say.
-
-Agree with Paul and Greg unless commented otherwise. Thanks
+This may result in adding new method to socket->ops.
+>
+> The first check is about the minimal sockaddr length according to the
+> address family. This improves the security of the AF_INET and AF_INET6
+> sockaddr parsing for current and future LSMs.
+>
+> The second check is about AF_UNSPEC. This fixes error priority for bind
+> on PF_INET6 socket when SELinux (and potentially others) is enabled.
+> Indeed, the IPv6 network stack first checks the sockaddr length (-EINVAL
+> error) before checking the family (-EAFNOSUPPORT error). See commit
+> bbf5a1d0e5d0 ("selinux: Fix error priority for bind with AF_UNSPEC on
+> PF_INET6 socket").
+>
+> The third check is about consistency between socket family and address
+> family. Only AF_INET and AF_INET6 are tested (by Landlock tests), so no
+> other protocols are checked for now.
+>
+> These new checks should enable to simplify current LSM implementations,
+> but we may want to first land this patch on all stable branches.
+>
+> A following patch adds new tests improving AF_UNSPEC test coverage for
+> Landlock.
+>
+> Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Fixes: 20510f2f4e2d ("security: Convert LSM into a static interface")
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>   security/security.c | 96 +++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 96 insertions(+)
+>
+> diff --git a/security/security.c b/security/security.c
+> index 7e118858b545..64fe07a73b14 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -28,7 +28,9 @@
+>   #include <linux/xattr.h>
+>   #include <linux/msg.h>
+>   #include <linux/overflow.h>
+> +#include <linux/in.h>
+>   #include <net/flow.h>
+> +#include <net/ipv6.h>
+>   
+>   /* How many LSMs were built into the kernel? */
+>   #define LSM_COUNT (__end_lsm_info - __start_lsm_info)
+> @@ -4415,6 +4417,82 @@ int security_socket_socketpair(struct socket *socka, struct socket *sockb)
+>   }
+>   EXPORT_SYMBOL(security_socket_socketpair);
+>   
+> +static int validate_inet_addr(struct socket *sock, struct sockaddr *address,
+> +			      int addrlen, bool bind)
+> +{
+> +	const int sock_family = sock->sk->sk_family;
+> +
+> +	/* Checks for minimal header length to safely read sa_family. */
+> +	if (addrlen < offsetofend(typeof(*address), sa_family))
+> +		return -EINVAL;
+> +
+> +	/* Only handle inet sockets for now. */
+> +	switch (sock_family) {
+> +	case PF_INET:
+> +	case PF_INET6:
+> +		break;
+> +	default:
+> +		return 0;
+> +	}
+> +
+> +	/* Checks minimal address length for inet sockets. */
+> +	switch (address->sa_family) {
+> +	case AF_UNSPEC: {
+> +		const struct sockaddr_in *sa_in;
+> +
+> +		/* Cf. inet_dgram_connect(), __inet_stream_connect() */
+> +		if (!bind)
+> +			return 0;
+> +
+> +		if (sock_family == PF_INET6) {
+> +			/* Length check from inet6_bind_sk() */
+> +			if (addrlen < SIN6_LEN_RFC2133)
+> +				return -EINVAL;
+> +
+> +			/* Family check from __inet6_bind() */
+> +			goto err_af;
+> +		}
+> +
+> +		/* Length check from inet_bind_sk() */
+> +		if (addrlen < sizeof(struct sockaddr_in))
+> +			return -EINVAL;
+> +
+> +		sa_in = (struct sockaddr_in *)address;
+> +		if (sa_in->sin_addr.s_addr != htonl(INADDR_ANY))
+> +			goto err_af;
+> +
+> +		return 0;
+> +	}
+> +	case AF_INET:
+> +		/* Length check from inet_bind_sk() */
+> +		if (addrlen < sizeof(struct sockaddr_in))
+> +			return -EINVAL;
+> +		break;
+> +	case AF_INET6:
+> +		/* Length check from inet6_bind_sk() */
+> +		if (addrlen < SIN6_LEN_RFC2133)
+> +			return -EINVAL;
+> +		break;
+> +	}
+> +
+> +	/*
+> +	 * Checks sa_family consistency to not wrongfully return -EACCES
+> +	 * instead of -EINVAL.  Valid sa_family changes are only (from AF_INET
+> +	 * or AF_INET6) to AF_UNSPEC.
+> +	 */
+> +	if (address->sa_family != sock_family)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +
+> +err_af:
+> +	/* SCTP services expect -EINVAL, others -EAFNOSUPPORT. */
+> +	if (sock->sk->sk_protocol == IPPROTO_SCTP)
+> +		return -EINVAL;
+> +
+> +	return -EAFNOSUPPORT;
+> +}
+> +
+>   /**
+>    * security_socket_bind() - Check if a socket bind operation is allowed
+>    * @sock: socket
+> @@ -4425,11 +4503,23 @@ EXPORT_SYMBOL(security_socket_socketpair);
+>    * and the socket @sock is bound to the address specified in the @address
+>    * parameter.
+>    *
+> + * For security reasons and to get consistent error code whatever LSM are
+> + * enabled, we first do the same sanity checks against sockaddr as the ones
+> + * done by the network stack (executed after hook).  Currently only AF_UNSPEC,
+> + * AF_INET, and AF_INET6 are handled.  Please add support for other family
+> + * specificities when handled by an LSM.
+> + *
+>    * Return: Returns 0 if permission is granted.
+>    */
+>   int security_socket_bind(struct socket *sock,
+>   			 struct sockaddr *address, int addrlen)
+>   {
+> +	int err;
+> +
+> +	err = validate_inet_addr(sock, address, addrlen, true);
+> +	if (err)
+> +		return err;
+> +
+>   	return call_int_hook(socket_bind, sock, address, addrlen);
+>   }
+>   
+> @@ -4447,6 +4537,12 @@ int security_socket_bind(struct socket *sock,
+>   int security_socket_connect(struct socket *sock,
+>   			    struct sockaddr *address, int addrlen)
+>   {
+> +	int err;
+> +
+> +	err = validate_inet_addr(sock, address, addrlen, false);
+> +	if (err)
+> +		return err;
+> +
+>   	return call_int_hook(socket_connect, sock, address, addrlen);
+>   }
+>   
