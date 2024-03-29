@@ -1,102 +1,93 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724B0A92F;
-	Fri, 29 Mar 2024 01:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC67A1DA4E;
+	Fri, 29 Mar 2024 02:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711674179; cv=none; b=NbVLEteT8D2ty2HSDS8bgAzmLk/kMcobUeLsf4B5Mp96V5QtricgOmKgD0UaLE7jjOlEZYiOWzpDc+GLwGu/QLKsRGobJPyimtTlVrstzpSQno7MuvgSOTDexdW9/s/Gie/5hNCxTaIva89pKiHx8p21Melywrj1ug6NI43sbJ8=
+	t=1711678494; cv=none; b=sr3k9zXa9k6xeWXq64eFC0D0rXXZYYIeqY2OXqBlVW+tVUFfakdVVoPJMtldFib9rOmX3FmTfSv7g33QXYMPCeUxdpkXM1bvWcomjYezm4fJtEnDjJp+G2JPNgxn9MtCOXUQg0Axh6lyeSYUQe+HU5S55WhmtwmxD5xh0oX0kRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711674179; c=relaxed/simple;
-	bh=Dr1VlokoSKaC9y28ynylm4SEPgQMTWxh85ITtu46N1g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XkVfctbHYwUmGxJ06EL6Rj90TXTh2JQbucP1T6bV9THET2i++hhptbwDP0GzuSPRIZJoniuuiSkw7u355sZqQzSnmnYdcjTVhZjx681qBsao2qjrze0UTWGGCdCububSBueDKIC8BMpqxAkM+Fn8NLzWhz/dxTqvqSEzTG0JzpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SF1hv1YA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1711678494; c=relaxed/simple;
+	bh=DhZdQ2iI7Zs+BqDVOGl/HOsjIT1jvsMP+tqZq0VoEFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TC6Fb2P/+Qm2dt5CGRrtaMBwc5Q4xiRx6lKR0TPahHrAqhPR1Lgm4efb4ZTQdAyXZL8lZJ6EoGHLaYuWj06Nm0y2XscFRlbPxvpZomh+JMu8Ggu5hs3+bJKeIxXaikIdSOZ0atSEU/wmgC2aZO5mH39BlG2zi3wKz78OwBMtAf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWvtN2Nc; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SF1hv1YA"
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42SN55oe011440;
-	Fri, 29 Mar 2024 01:02:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=0dY3d4JiA2sDHJ3WMxYQw6Z9eBfTuUH6pqj6z2iebXo=;
- b=SF1hv1YAOIAAAdmL9eYanM4UCYDfi2rpGwOEQiz/g3Y51utt3NpEhxShlMPrbpVrlyUX
- qZgjdeEobiEVbk7khfOQ+7G3mpjFgcpJ52SeQi5tEpN44p0VOqYJ3zaaxylV6viDixIz
- 92KObcOmeq0tKNWQb+FA7++JDLNIJ9oBlLx/8dus6/F4V1M/EQOQa1VkCJwZg8KFB/7/
- FkJm3iUBYP+DT1SxKTmG88FSsKlm4W8ZMQ7hQtzp2X4GVF4vXPF1uC6Nnb7DkuJjpBJs
- YAJa88ntno+vINPjKo9mp6a1ZSPRn48H3C15M35ardusysqBiYHAZUKialJnbUVuEpag 1A== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x5h9h87ku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Mar 2024 01:02:43 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 42SNFbwg025458;
-	Fri, 29 Mar 2024 01:02:41 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3x2awn8wek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Mar 2024 01:02:41 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 42T12c4f63373678
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Mar 2024 01:02:41 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE75958068;
-	Fri, 29 Mar 2024 01:02:38 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 46C7B58061;
-	Fri, 29 Mar 2024 01:02:38 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.90.219])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 29 Mar 2024 01:02:38 +0000 (GMT)
-Message-ID: <36fa018559b8d68ac9d41826148e7d36c1ecf1ab.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fix use-after-free on a dentry's dname.name
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
-        Al Viro
-	 <viro@zeniv.linux.org.uk>
-Date: Thu, 28 Mar 2024 21:02:37 -0400
-In-Reply-To: <20240322140312.1804404-1-stefanb@linux.ibm.com>
-References: <20240322140312.1804404-1-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 1Xy32qb6LKaXx8FmWrzWbFao4CU4K2kd
-X-Proofpoint-ORIG-GUID: 1Xy32qb6LKaXx8FmWrzWbFao4CU4K2kd
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWvtN2Nc"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1def2a1aafaso12171355ad.3;
+        Thu, 28 Mar 2024 19:14:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711678492; x=1712283292; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eHKg/7V7Pl/oLudfM0ileqdKuhPljGzHIMYbgvPiGiA=;
+        b=LWvtN2NcWKtQpPb59VF/GBak8NrRXRB8C2vS40r0fcXG4ktaM6BvoEfA8/DbI8kUVh
+         2BPFAW7hFDf/ZrpR5aTKkrvN9j0WjKis4wM+kF8YJjD+RLdg47OlTeHa++SqOIT6f3z9
+         5Cwum59JJmbxuV80yNR597Kdp6CH8sg2uKWqLCZc+2dfRd7S7mDM1e4T+rVd9DdCM3D1
+         +pCJyKrRQk4Csj7im4SnVHQqxS2RhkOnpUQ0tBu7pW155sB3LqSkbgWbDGxh8JPYgxv/
+         vpS6zqdo1FJc+Y9Wesi+OXNtTPAyRRu3zmj7L1Qa+k3Uce8PuGMwj9vW5wWAtLSbiZ6y
+         AA3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711678492; x=1712283292;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eHKg/7V7Pl/oLudfM0ileqdKuhPljGzHIMYbgvPiGiA=;
+        b=CLNvWdgVfs/Tak/m2IdgfAWRIkvQVQ6mWdxpW38/82dYyq8Qdenc/yV86OPtvr6sRR
+         GMMFmuk4T13AamneyhGQjH5fdWOUT7KN9MGw8tbxreQuQnGuDFIlXseP8+8yawIwAcJk
+         NEMQe92xq8K92oAOnHwhWnYyMr8r17FLfp82lxWyTeCBl2TXz4wb48PWfsRtd8MABzGd
+         jCfBQ5O48KlRyRYmK+I9CPqljlmKP08r4u6uy9h2PpyfMr0LgxM3TiDYjz+XAgHDiNMk
+         eRhT9ZEyzxOFeVxh3lJBBD5aSvdEnO1Y5xIWrP6RIKZfF0yRV5eHYPtzKYgZUYnSl3fR
+         xcWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHHYpVyZ1lMcBzspN16x96gDDNqNcVYvCq9+rCwTUS5BZnUO2gOgW7Hngz1Yaz0OTozleJfxMxVGGvQLg7GxG0M/yK9pu+pq+BVKBsF7eDxfR8PY/86AJROenky+IsxHjjqk3zV8+t1NnmOFJLMVhWVhlG
+X-Gm-Message-State: AOJu0YwI0R2rYHntmZR1uRVp7vwF3Q5AdB4vW+FwoSevIhGAeTMEXwCT
+	EGpbqSLsD09K9Q5/eWnfn68OcKa/1nSa+s8Iy5gwZ++jTr6IkB0R/pfpfccObpo=
+X-Google-Smtp-Source: AGHT+IFvOpFFrQkbmzDEFb/cGsaj4nEqoC3f0kHNWirc2xKMaRHRNGExfwgCVpA/5A/dRRUx2hFrMw==
+X-Received: by 2002:a17:903:1210:b0:1e0:27c8:5c7e with SMTP id l16-20020a170903121000b001e027c85c7emr1375866plh.25.1711678491960;
+        Thu, 28 Mar 2024 19:14:51 -0700 (PDT)
+Received: from ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx ([2401:4900:4e59:88b8:f462:3eea:57c6:a15a])
+        by smtp.gmail.com with ESMTPSA id u2-20020a170902e80200b001e0b5fd3c95sm2342659plg.259.2024.03.28.19.14.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Mar 2024 19:14:51 -0700 (PDT)
+Date: Fri, 29 Mar 2024 07:44:42 +0530
+From: Ayush Tiwari <ayushtiw0110@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: alison.schofield@intel.com, paul@paul-moore.com, mic@digikod.net,
+	fabio.maria.de.francesco@linux.intel.com,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org, outreachy@lists.linux.dev,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] LANDLOCK: use kmem_cache for landlock_object
+Message-ID: <ZgYkEghv7lFK4K4+@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+References: <ZgSrBVidW1U6yP+h@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+ <dfa6ddcb-9a2d-49ac-90b7-bb30b23e32c4@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-28_19,2024-03-28_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- impostorscore=0 suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 bulkscore=0 mlxlogscore=837 priorityscore=1501 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2403210000
- definitions=main-2403290007
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfa6ddcb-9a2d-49ac-90b7-bb30b23e32c4@moroto.mountain>
 
-On Fri, 2024-03-22 at 10:03 -0400, Stefan Berger wrote:
-> ->d_name.name can change on rename and the earlier value can be freed;
-> there are conditions sufficient to stabilize it (->d_lock on dentry,
-> ->d_lock on its parent, ->i_rwsem exclusive on the parent's inode,
-> rename_lock), but none of those are met at any of the sites. Take a stable
-> snapshot of the name instead.
+On Thu, Mar 28, 2024 at 09:39:14AM +0300, Dan Carpenter wrote:
+> On Thu, Mar 28, 2024 at 04:55:57AM +0530, Ayush Tiwari wrote:
+> > Use kmem_cache replace kzalloc() calls with kmem_cache_zalloc() for
+> > struct landlock_object and update the related dependencies.
+> > 
+> > Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
 > 
-> Link: https://lore.kernel.org/all/20240202182732.GE2087318@ZenIV/
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> Is there some advantage to doing this?  You need to re-write the commit
+> message to give us some clue why you are doing this.
+> 
+> regards,
+> dan carpenter
+> 
 
-Thanks, Al, Stefan.
-
-Mimi
+Hello
+Apologies for the errors. I am working on a newer version, instilling
+all the corrections. Thanks for the feedback.
 
