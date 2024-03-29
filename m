@@ -1,234 +1,275 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D48224D1;
-	Fri, 29 Mar 2024 02:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711678791; cv=none; b=Tddl499isusfIGoAW8Dlk2ldf8YuMfgJPkQNI065M6u6gC4/GOmmEfzzU3YpvsY4Pr1vqoJJPR2nD06K+DBiIm01xuAhLZn1pBkQrHdyMGEvcQdhppO8N+gaqrkxsyj3lOMryWJnYpYgxp/Db9DYiShGixEcIg46O36UdzDmOKA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711678791; c=relaxed/simple;
-	bh=pM4r28R4O0XiKgV1w8evOjFQxQQi4y0kqsHq1Ox+cHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGLXGQB6dsupWRolOZRXzx4tmB0FFeLoqTyzROL/KEVd1o1+T0nne204643PT4hO2prYezHQkzuwOXe8TNlAlmKL+NLHjfI+VKGZUTTnC2dLHt/JkOjKzLJb1elwmEHEptPfiCgvPo0Cd0xSlef0MMvfcThdmPx+84VHKQbpyoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQYkeOkp; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F571C691;
+	Fri, 29 Mar 2024 02:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711680189; cv=fail; b=YIujUwBKLHotGIx/JWiIbT+NtyrKKLTAw9PIYZ6v2KUly15+NMzMyeO0YXUtH2j6EuW4GbDMD+VL7yBjR0w8rmLJHaYJVs3tLZAuJ3728acRY0kle49b2AmAxaTsR0D1/qGPyYW4zpfCxVQ6IYXJca8JgGeFIPAqWh3Fo/r5os8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711680189; c=relaxed/simple;
+	bh=xPsUM2eGtelz6uETpbh7bkTi9YMrj2Jo20fvTvdjpiw=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=o/kPTbMIjITZ21XL306nJsBsUZiAkgKay+KgAstFbjgoXhdj+l/igzFYyCU/OMMRQfDVeuyH085yGxEWiVhafMk2gnoPkmrixy/nfgHzEEsoOLl5G5w4nfur2/4BfPA11Eep1coUQR8VEqHIShujoif8yHkCGwnV94V5pVgHQZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qi5/uoF/; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQYkeOkp"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-5cedfc32250so1148246a12.0;
-        Thu, 28 Mar 2024 19:19:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711678788; x=1712283588; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PPnYnYEiLIlR/yOzXCJQfKbBHw7UwGViL9JcBPvqOX8=;
-        b=fQYkeOkpgoaCkSyEvovA46PCbvCxet7KrYzfUWWnkuJjqhiZ0uWScZW+ErNoENyJPA
-         XlqzUm7DoGWTHyrffDPz2t9O9z370fh0A5VGcQ2WmBjpmtknWK5QwrAvoFkOZxuiVGxQ
-         O7xhLLq0c8YZ87AW3Ezq97GJeuj+qei+oa7tG1plnoPQQ/YAyEeBTjrMi0fjJ1BDfv8L
-         AOwAGWrLNxMXNvJHzGjacJ6/k6Xb62AsvPt1HYipQ+iGmPRN6WvqE9JcWwwfafI1FjKp
-         nUoKxsqxpyG0Koo7YBpQmKRu8HaxvhPUvuuYnZqqonBYNDYiVXPiGU9QkwHfL1UiTJXQ
-         3mLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711678788; x=1712283588;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PPnYnYEiLIlR/yOzXCJQfKbBHw7UwGViL9JcBPvqOX8=;
-        b=OyZMBmUP7PYI8oI0P9D7F5VMItWU59NpQJ7CsyMe4UluGBUxi2CaGiLwQ7ncNtb5wX
-         Cu2i3Fcjq0lnPhmcKK5txpJU5wqCn4E+ehn11U4rbtOzuMmKa8ACyUsZxnjqHpWBapJs
-         8P+ddArMma2pLkWQMLGq2VgpunkXL+ws1Px1/nUOuAB1zHub97NfKRxmgbyNgLVnN1Mz
-         9D+DcyJIjyyAP+Gz4JQ7o1sjE9rCvcnTduBE6JGhLB8/Z+4CsE67hZ6K8GHuA0DCHDuG
-         kIFkL/83BsbbWQ5Hr8zQz20dNjMc5/RFgIGd8e2pI5Cm7tdGbM5CatoDrvhYFRnFxzaB
-         KGPw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/pjpVYFS76+1fPd6GHLfBBqM/2WkVNhz2vMmZanTZ51a/aKUBM+X6I8J2PpCCaeLZUWd4jNAUMaBMF2199kwfaD/3/P2ZYMrdglDatnOVvgeBml6MWxHgMjbL0o/mGdnC8dyMLyY6eUWZ4jBhPiqok6YQ
-X-Gm-Message-State: AOJu0YyWqx9KvG4/ZzdlJIRPauAfpM0BRPPeyMI9ppZlY16gwNE3Y1Sg
-	WUUy4UHS1PYHqdkLJ0OZSXjwMpL5ExpVwGxQZHQ3H1HhW4s87IO6
-X-Google-Smtp-Source: AGHT+IHmDTTiLCtRHhuKzloYq78VsTqePUHAKSBRT79w1pCLj1qy1CgzY5cbxg/HuGG561/9pe1BHg==
-X-Received: by 2002:a05:6a21:a5aa:b0:1a3:af03:6b0 with SMTP id gd42-20020a056a21a5aa00b001a3af0306b0mr1141550pzc.7.1711678788468;
-        Thu, 28 Mar 2024 19:19:48 -0700 (PDT)
-Received: from ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx ([2401:4900:4e59:88b8:f462:3eea:57c6:a15a])
-        by smtp.gmail.com with ESMTPSA id d9-20020a170903230900b001e14807c7dfsm2358346plh.86.2024.03.28.19.19.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 19:19:48 -0700 (PDT)
-Date: Fri, 29 Mar 2024 07:49:39 +0530
-From: Ayush Tiwari <ayushtiw0110@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qi5/uoF/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1711680187; x=1743216187;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=xPsUM2eGtelz6uETpbh7bkTi9YMrj2Jo20fvTvdjpiw=;
+  b=Qi5/uoF/r6YsNKZefJUEzV+qjjQ3BGSvr4nWD63jHqJVDI792h9lWQbn
+   feoggCsAjfLpblBJbUpYDzXBGWGzeTROG04fZh5WS/rZ6zabq3Y5OqMWA
+   emso2arY+5tJuI/iBGLzbAquUx5uDizDedBzbvXrSMqr8HHKbQcEKww8l
+   snjuC9zBEMVwy7sD2XxshiiGNU27cESwvHvrPLRTcbxWl5hQ70NwkVpeM
+   J30PbGjhzqxMZyviQUr4ySorFoi7pZ1/wrLsvC6yFnZY3ou2L0nFOLMQ0
+   UMlOGaOYO9vJW7mLe+aGlN/pxhQXTRCz8RB0RESLPxs0P2vkR9N2hjRJh
+   A==;
+X-CSE-ConnectionGUID: XngZ92GMQtGDbD3INqe8dg==
+X-CSE-MsgGUID: RVsbUseWTX2uv2XLjrzDjA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11027"; a="10671217"
+X-IronPort-AV: E=Sophos;i="6.07,162,1708416000"; 
+   d="scan'208";a="10671217"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2024 19:43:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,162,1708416000"; 
+   d="scan'208";a="16808812"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Mar 2024 19:43:06 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 28 Mar 2024 19:43:05 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 28 Mar 2024 19:43:05 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 28 Mar 2024 19:43:05 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 28 Mar 2024 19:43:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M/SG+t76nDPlMdKGOV1M5nc3xDS5VQRrTQYFjHu4NY85gI8dxRKfwXxLayF3lxjXVFouL6QIkKkc2wh4QH4Igt1uqP0LI+AqaKROyzBTF1ikc/H7RyiVfSYrSw+25lMB4xCSZRMGJ5rUvvzcFZaH12+NwgqMLkjRet/SMo2gQoZBJIESGvYc0SLVwlcgDVhVQSkCqo/Ls3zWcrf7X0+sEc3jZ5leBiQcTm4+ObLLyVp1lPD+Zd/87dmaHaXn8wIBx+3VP9YYp5h1WaUUCuhMbqma97HDkpaSSv/TOUSL7YQy/c/VaZbcu1cCZoWOD7D9n27em0D4nRdBIF9Gas+tOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kt+FO5SozjCYlJahjvba7azpiF0n0F/nmL82Bjtx7Qk=;
+ b=BGxsF0xAvg88ql8kM9DH8VieA70uLlm/XfqnJtpIniYz5q0tzMeSLxapuD8m0BiN+Xi2InMV05GjYKYYC8F+uVxbfsIOur5qAl8a9IayQI9sbguCKpoqdlOATw6gru3qXraRm2GMy/iu2KUiceQHnk1bDUUpK/7ASMUOgVSCT/XhRm0phg8scD9j1Z3J/e3NEp7zOTn4dnNIdGqk+bKDggBbgGuFLpJftKUEO+xhEUyMvx9CPzwa+SJagM2szMHavK0PIpsSDMs4yEHdQmgDqeaHcQMn/3eubeoa5Ct4sQXxI+O35fcI1/JAmQMJ7zp/hIZLAuiOL8WfJrZHzvvnzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by MW4PR11MB6714.namprd11.prod.outlook.com (2603:10b6:303:20f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.32; Fri, 29 Mar
+ 2024 02:43:02 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::58dd:99ca:74a6:2e3e]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::58dd:99ca:74a6:2e3e%3]) with mapi id 15.20.7409.031; Fri, 29 Mar 2024
+ 02:43:01 +0000
+Date: Fri, 29 Mar 2024 10:42:51 +0800
+From: kernel test robot <oliver.sang@intel.com>
 To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: paul@paul-moore.com, alison.schofield@intel.com,
-	fabio.maria.de.francesco@linux.intel.com,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, outreachy@lists.linux.dev,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] LANDLOCK: use kmem_cache for landlock_object
-Message-ID: <ZgYlO8jGSH/6KTEe@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
-References: <ZgSrBVidW1U6yP+h@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
- <CAHC9VhRYDNoqkbkgdUSg-kYSHVbheD5NtezmVxyRakZ0-DzuSg@mail.gmail.com>
- <ZgUh7cIQIsOgvWpw@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
- <20240328.aiPh0phaJ6ai@digikod.net>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>, =?iso-8859-1?Q?G=FCnther?= Noack
+	<gnoack@google.com>, Shuah Khan <shuah@kernel.org>, Will Drewry
+	<wad@chromium.org>, Kees Cook <keescook@chromium.org>, Jakub Kicinski
+	<kuba@kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [selftests/harness]  0710a1a73f:
+ kernel-selftests.pidfd.pidfd_setns_test.fail
+Message-ID: <202403291015.1fcfa957-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR06CA0213.apcprd06.prod.outlook.com
+ (2603:1096:4:68::21) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240328.aiPh0phaJ6ai@digikod.net>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MW4PR11MB6714:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vmtGMTr6Xwn9Ep/6Cc7uUomAIoWrf9XAVlR0NA2hDEq8BV/Hn5qGDi/HHX5RC/Ley4wiF4mVByOQWZ0HQdAckN8lri2iYFhdPfSMkm/RcGUUXc+NB6nLfPLJ5RT0sDaq6VqWpuOFgGle2DauF6WTQUibJ9IBhoZB897mnBv2rUyhyfygFH/h+5RYiun69Zwh8x2ngrH8U77vXo/tz6G+7F0cabwEMWt5CePYmjr7ihsvQHIt8ZTb3Okln6MhkB2eoWm/rgWLSLakJCL8ywq+Xt5o6KSmF6nI/W7+rBT5XMUOU6wXUxSu4foBUwi9lF5U+Zz83KjKJmINPeYZ9AxUJh+ZQkuQvLYP7RukHd4l0O/2lZfLnmq05GsvTLgzkZcXbB7FDAlz/ovDHbDU8DLt8V+p0VjwPH9G35j4YAsnRylXWop3s0Yst4o4wNALslrJF4HrxF3kknN6/UE0YRkDAg3X2/FuqBFQeviAQhuj4MvQX1gjq3uKATVLXAhadtMk65fcCaSL0ZXRxXc/tGR3ENw8Bsht5TU+aADY28Gi8OtElXeF/v6uLKudB/CPHO+aSsbxFf0cIFpsL71A/m/Nich8FnXOFkb2N0YEbSfMCaN0CufXpQXb/IEVR0LVXX6S
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(7416005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?y2ZYMm5prznj/nWejske8FqZjnlQ8KD3qSbO+68V7gbe2D15fskTIegDKpcI?=
+ =?us-ascii?Q?2SHrfFCB8oeisbPG+uB+v6m9y0In713LNTtUYNJrZTAvOonSuY6pJ4QqNxVe?=
+ =?us-ascii?Q?sQddxzPx4NhEoH3lveti/nPxxeyxMtwmLW9f9C2qkYPgLTd8Wb0AWuPhoNko?=
+ =?us-ascii?Q?XPJGozX7gD0PIEWbKyydPMUVCAvxY/P8cgaX8je9RBvaeQXefbgd2HrKda3P?=
+ =?us-ascii?Q?AymbMHVRhOXEAr7HEV+Yzse/RUOE/La0MFYZJpoBeQQN3h2T9A+9ip1TTLLX?=
+ =?us-ascii?Q?T8jqRZLK22uTtB7TMnCmIWUp6R4t/YsKSzeA5LPo9g3pYGoum92dC2SU1ILV?=
+ =?us-ascii?Q?8tEvl/si3GxJRt1mZLk/t6cz0ii1YtzwgBQnOfewvXrg8VzbhY575eH4r082?=
+ =?us-ascii?Q?Qjg8HdWHDg3+wSvMfrg0ugYqGDcIq2eLnhlGSmt4o+0gAw6Ry0LfyOOa3KWg?=
+ =?us-ascii?Q?qzIn/cpeYrTtGOVcLewp/pNuXVY6sK+KWNjTjz6YhX+iCjaB3gn+NNWr9oT0?=
+ =?us-ascii?Q?ptIEWYVZBqJ7TGAqlblmtIsqvuzOMp+Qu2/hx35zTpxTsHAmP8cTya66R4ix?=
+ =?us-ascii?Q?wvVGF4gxT2+5Ai/nKPqBQ8zpb0SFaoOc9KBrne16OnyH25kRhQMKKNV8hsRp?=
+ =?us-ascii?Q?/Ug3Cs8EsUN4G/Xc/mK13eTnZj3R/qw3+QMB73g+QJMhJ0VMajInbJCbCLPD?=
+ =?us-ascii?Q?D9zsvKrEIC8aP29ojBmGUu7EvIfY8+wu/xi2P+kPmdC64iEgm24okCrLvaXr?=
+ =?us-ascii?Q?G/zem3AQjiHAajFhobr88Xt6A7yaqsndDZtYVlEd1bIp7/3PYStt658XhEwP?=
+ =?us-ascii?Q?BJu/5iBWzwbweKhloeiAVkPeNnZa9IHMtmPkrxWlaNLxwfUhmo/h6S2Qrhei?=
+ =?us-ascii?Q?J1lqmxbDZljdCeq4wtO/ccB2PMoVamls0xbtsZljp2Otg7i6w5FNFj+tInLN?=
+ =?us-ascii?Q?+UNUlUUwJm1jczaiPa6tPTn31rC17h4zR2Q6wEHhapbSDHApA4K1epdvnOeq?=
+ =?us-ascii?Q?hKVBm8AO9J7jZ822Uq3nlofQu9FirmN61wSYryLYVZf9eWY7XZwiOfq+UZ9g?=
+ =?us-ascii?Q?1l3jQl7ZqCKRr+8pKI5E8LUi5laF8GOfOVz5HDvYFZZnQuwQUIpejvSdkUtb?=
+ =?us-ascii?Q?7exyz9OccQ0ySWw+6eKkte96HeOTCGZfTztTJF6MkC2ke/r3ix0nx7gM4u0j?=
+ =?us-ascii?Q?aT1YjRsxAATvDkm8TVhKItlPlHE0Jai4ktRFitqZZ99h1XmsApninUA+U4yr?=
+ =?us-ascii?Q?rxLS7FSlrFTmKvkJnFIobQf+L3skaEY3L0wRpRXlDok8S1D4mvp5/TfPNAAy?=
+ =?us-ascii?Q?1QPOEUyxyT17d1XRxn0s2My7MjT75oddaaRHJapDniPbDOrXJF9LU6SZJTRy?=
+ =?us-ascii?Q?Hpxheg/LYFfjm4AQu01z5wm0kVrSF4R/c9US4FnZMIOwhV25ZBLMDVa4L5jR?=
+ =?us-ascii?Q?9+V0S1zzDPHcl4zSEECGiAR3Um1woufvy7PCbblnQyC18kH8Ab1NMau0BmYs?=
+ =?us-ascii?Q?XTpHT7G5OWiup+n7WdIhkAfjVYIvf/wo3gVbnxBQy5FJsR6yvXbCYEOwUCZ9?=
+ =?us-ascii?Q?6ALxPnQBgBcL8d4ivgxTHsg3LvAJ6++w4hmxhjrn/k4lt7wBY9NgxCfzXCbu?=
+ =?us-ascii?Q?7g=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4634e923-7739-4ae1-37d0-08dc4f99f336
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Mar 2024 02:43:01.1677
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bjGeTQr9UQ51L5fZsSGu+ySDx4pzljbYmv/iFBs9035EatLWYiDegraoyZjK68FeLHGVBcgTTBLMlp8jonTNOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6714
+X-OriginatorOrg: intel.com
 
-On Thu, Mar 28, 2024 at 03:45:12PM +0100, Mickaël Salaün wrote:
-> The subject should start with "landlock: Use" instead of "LANDLOCK: use"
-> 
-> On Thu, Mar 28, 2024 at 01:23:17PM +0530, Ayush Tiwari wrote:
-> > Hello Paul
-> > Thanks a lot for the feedback. Apologies for the mistakes. Could you
-> > help me in some places so that I can correct the errors, like:
-> > On Wed, Mar 27, 2024 at 07:43:36PM -0400, Paul Moore wrote:
-> > > On Wed, Mar 27, 2024 at 7:26 PM Ayush Tiwari <ayushtiw0110@gmail.com> wrote:
-> > > >
-> > > > Use kmem_cache replace kzalloc() calls with kmem_cache_zalloc() for
-> > > > struct landlock_object and update the related dependencies.
-> > > >
-> > > > Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
-> > > > ---
-> > > >  security/landlock/fs.c     |  2 +-
-> > > >  security/landlock/object.c | 14 ++++++++++++--
-> > > >  security/landlock/object.h |  4 ++++
-> > > >  security/landlock/setup.c  |  2 ++
-> > > >  4 files changed, 19 insertions(+), 3 deletions(-)
-> > > 
-> > > Hi Ayush,
-> > > 
-> > > Mickaël has the final say on Landlock patches, but I had a few
-> > > comments that I've included below ...
-> > > 
-> > > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > > index fc520a06f9af..227dd67dd902 100644
-> > > > --- a/security/landlock/fs.c
-> > > > +++ b/security/landlock/fs.c
-> > > > @@ -124,7 +124,7 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
-> > > >         if (unlikely(rcu_access_pointer(inode_sec->object))) {
-> > > >                 /* Someone else just created the object, bail out and retry. */
-> > > >                 spin_unlock(&inode->i_lock);
-> > > > -               kfree(new_object);
-> > > > +               kmem_cache_free(landlock_object_cache, new_object);
-> > > 
-> > > See my comment below, but you may want to wrap this in a Landlock
-> > > object API function.
-> > Sure. I will definitely implement this.
-> > > 
-> > > >                 rcu_read_lock();
-> > > >                 goto retry;
-> > > > diff --git a/security/landlock/object.c b/security/landlock/object.c
-> > > > index 1f50612f0185..df1354215617 100644
-> > > > --- a/security/landlock/object.c
-> > > > +++ b/security/landlock/object.c
-> > > > @@ -17,6 +17,15 @@
-> > > >
-> > > >  #include "object.h"
-> > > >
-> > > > +struct kmem_cache *landlock_object_cache;
-> > > > +
-> > > > +void __init landlock_object_init(void)
-> > > > +{
-> > > > +       landlock_object_cache = kmem_cache_create(
-> > > > +               "landlock_object_cache", sizeof(struct landlock_object), 0,
-> 
-> No need for the "_cache" name suffix.
-> 
-> > > > +               SLAB_PANIC, NULL);
-> > > 
-> > > The comments in include/linux/slab.h suggest using the KMEM_CACHE()
-> > > macro, instead of kmem_cache_create(), as a best practice for creating
-> > > slab caches.
-> > >
 
-Hello mentors
-I am facing some problem regarding replacing kzalloc with
-kmem_cache_zalloc when using KMEM macro from include/linux/slab.h as for
-kmem_cache_zalloc I will be needing a cache pointer to cache but KMEM macro
-doesn't provide any macro. So is there any way to do this or should I
-not use macro?
-> > Sure. Apologies I didn't see that, I tried to implement it from scratch
-> > using the reference from linux memory management APIs.
-> > > > +}
-> > > > +
-> > > >  struct landlock_object *
-> > > >  landlock_create_object(const struct landlock_object_underops *const underops,
-> > > >                        void *const underobj)
-> > > > @@ -25,7 +34,8 @@ landlock_create_object(const struct landlock_object_underops *const underops,
-> > > >
-> > > >         if (WARN_ON_ONCE(!underops || !underobj))
-> > > >                 return ERR_PTR(-ENOENT);
-> > > > -       new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
-> > > > +       new_object =
-> > > > +               kmem_cache_zalloc(landlock_object_cache, GFP_KERNEL_ACCOUNT);
-> > > 
-> > > If the line is too long, you might want to consider splitting the
-> > > function parameters like this:
-> > > 
-> > >   new_object = kmem_cache_zalloc(landlock_object_cache,
-> > >                                  GFP_KERNEL_ACCOUNT);
-> > > 
-> > 
-> > Sure. I didn't do as it was below the 100 columns limit, but will
-> > definitely implement it.
-> 
-> Please just use clang-format.
-> 
-> > > >         if (!new_object)
-> > > >                 return ERR_PTR(-ENOMEM);
-> > > >         refcount_set(&new_object->usage, 1);
-> > > > @@ -62,6 +72,6 @@ void landlock_put_object(struct landlock_object *const object)
-> > > >                  * @object->underobj to @object (if it still exists).
-> > > >                  */
-> > > >                 object->underops->release(object);
-> > > > -               kfree_rcu(object, rcu_free);
-> 
-> Is it safe?
-> 
-> According to commit ae65a5211d90 ("mm/slab: document kfree() as allowed
-> for kmem_cache_alloc() objects"), no change should be needed (and it
-> must not be backported to kernels older than 6.4 with CONFIG_SLOB). This
-> way we can avoid exporting landlock_object_cache.  Please add a note
-> about this commit and the related warning in the commit message.
-> 
-> > > > +               kmem_cache_free(landlock_object_cache, object);
-> > > >         }
-> > > >  }
-> > > > diff --git a/security/landlock/object.h b/security/landlock/object.h
-> > > > index 5f28c35e8aa8..8ba1af3ddc2e 100644
-> > > > --- a/security/landlock/object.h
-> > > > +++ b/security/landlock/object.h
-> > > > @@ -13,6 +13,10 @@
-> > > >  #include <linux/refcount.h>
-> > > >  #include <linux/spinlock.h>
-> > > >
-> > > > +extern struct kmem_cache *landlock_object_cache;
-> > > 
-> > > This really is a decision for Mickaël, but you may want to make
-> > > @landlock_object_cache private to object.c and create functions to
-> > > manage it as needed, e.g. put/free operations.
-> > > 
-> > Okay. I didn't make it private as I was using it in fs.c to use
-> > kmem_cache_free, but if this is supposed to be private, I can modify the
-> > approach and expose it via some function, not directly exposing
-> > landlock_object_cache.
-> 
-> Yes, that would be better.
-> 
-> > > > +void __init landlock_object_init(void);
-> > > > +
-> > > >  struct landlock_object;
-> > > >
-> > > >  /**
-> > > > diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-> > > > index f6dd33143b7f..a5fca4582ee1 100644
-> > > 
-> > > -- 
-> > > paul-moore.com
-> > I will make all the changes you mentioned, and as you said, I will
-> > wait for Mickael's say.
-> 
-> Agree with Paul and Greg unless commented otherwise. Thanks
+
+Hello,
+
+kernel test robot noticed "kernel-selftests.pidfd.pidfd_setns_test.fail" on:
+
+commit: 0710a1a73fb45033ebb06073e374ab7d44a05f15 ("selftests/harness: Merge TEST_F_FORK() into TEST_F()")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+[test failed on linus/master 4cece764965020c22cff7665b18a012006359095]
+
+in testcase: kernel-selftests
+version: kernel-selftests-x86_64-4306b286-1_20240301
+with following parameters:
+
+	group: pidfd
+
+
+
+compiler: gcc-12
+test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 32G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202403291015.1fcfa957-oliver.sang@intel.com
+
+
+
+# timeout set to 300
+# selftests: pidfd: pidfd_setns_test
+# TAP version 13
+# 1..7
+# # Starting 7 tests from 2 test cases.
+# #  RUN           global.setns_einval ...
+# #            OK  global.setns_einval
+# ok 1 global.setns_einval
+# #  RUN           current_nsset.invalid_flags ...
+# # pidfd_setns_test.c:161:invalid_flags:Expected self->child_pid_exited (0) > 0 (0)
+# #            OK  current_nsset.invalid_flags
+# ok 2 current_nsset.invalid_flags
+# #  RUN           current_nsset.pidfd_exited_child ...
+# # pidfd_setns_test.c:161:pidfd_exited_child:Expected self->child_pid_exited (0) > 0 (0)
+# #            OK  current_nsset.pidfd_exited_child
+# ok 3 current_nsset.pidfd_exited_child
+# #  RUN           current_nsset.pidfd_incremental_setns ...
+# # pidfd_setns_test.c:161:pidfd_incremental_setns:Expected self->child_pid_exited (0) > 0 (0)
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to user namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to mnt namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to pid namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to uts namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to ipc namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to net namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to cgroup namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to pid_for_children namespace of 45423 via pidfd 20
+# # pidfd_setns_test.c:391:pidfd_incremental_setns:Expected setns(self->child_pidfd1, info->flag) (-1) == 0 (0)
+# # pidfd_setns_test.c:392:pidfd_incremental_setns:Too many users - Failed to setns to time namespace of 45423 via pidfd 20
+# # pidfd_incremental_setns: Test terminated by timeout
+# #          FAIL  current_nsset.pidfd_incremental_setns
+# not ok 4 current_nsset.pidfd_incremental_setns
+# #  RUN           current_nsset.nsfd_incremental_setns ...
+# # pidfd_setns_test.c:161:nsfd_incremental_setns:Expected self->child_pid_exited (0) > 0 (0)
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to user namespace of 45524 via nsfd 19
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to mnt namespace of 45524 via nsfd 24
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to pid namespace of 45524 via nsfd 27
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to uts namespace of 45524 via nsfd 30
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to ipc namespace of 45524 via nsfd 33
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to net namespace of 45524 via nsfd 36
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to cgroup namespace of 45524 via nsfd 39
+# # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to pid_for_children namespace of 45524 via nsfd 42
+# # pidfd_setns_test.c:427:nsfd_incremental_setns:Expected setns(self->child_nsfds1[i], info->flag) (-1) == 0 (0)
+# # pidfd_setns_test.c:428:nsfd_incremental_setns:Too many users - Failed to setns to time namespace of 45524 via nsfd 45
+# # nsfd_incremental_setns: Test terminated by timeout
+# #          FAIL  current_nsset.nsfd_incremental_setns
+# not ok 5 current_nsset.nsfd_incremental_setns
+# #  RUN           current_nsset.pidfd_one_shot_setns ...
+# # pidfd_setns_test.c:161:pidfd_one_shot_setns:Expected self->child_pid_exited (0) > 0 (0)
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding user namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding mnt namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding pid namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding uts namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding ipc namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding net namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding cgroup namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding pid_for_children namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding time namespace of 45630 to list of namespaces to attach to
+# # pidfd_setns_test.c:466:pidfd_one_shot_setns:Expected setns(self->child_pidfd1, flags) (-1) == 0 (0)
+# # pidfd_setns_test.c:467:pidfd_one_shot_setns:Too many users - Failed to setns to namespaces of 45630
+# # pidfd_one_shot_setns: Test terminated by timeout
+# #          FAIL  current_nsset.pidfd_one_shot_setns
+# not ok 6 current_nsset.pidfd_one_shot_setns
+# #  RUN           current_nsset.no_foul_play ...
+# # pidfd_setns_test.c:161:no_foul_play:Expected self->child_pid_exited (0) > 0 (0)
+# # pidfd_setns_test.c:506:no_foul_play:Adding user namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:506:no_foul_play:Adding mnt namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:506:no_foul_play:Adding pid namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:506:no_foul_play:Adding uts namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:506:no_foul_play:Adding ipc namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:506:no_foul_play:Adding net namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:506:no_foul_play:Adding cgroup namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:506:no_foul_play:Adding time namespace of 45737 to list of namespaces to attach to
+# # pidfd_setns_test.c:510:no_foul_play:Expected setns(self->child_pidfd1, flags) (-1) == 0 (0)
+# # pidfd_setns_test.c:511:no_foul_play:Too many users - Failed to setns to namespaces of 45737 vid pidfd 20
+# # no_foul_play: Test terminated by timeout
+# #          FAIL  current_nsset.no_foul_play
+# not ok 7 current_nsset.no_foul_play
+# # FAILED: 3 / 7 tests passed.
+# # Totals: pass:3 fail:4 xfail:0 xpass:0 skip:0 error:0
+not ok 7 selftests: pidfd: pidfd_setns_test # exit=1
+make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-8.3-kselftests-0710a1a73fb45033ebb06073e374ab7d44a05f15/tools/testing/selftests/pidfd'
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240329/202403291015.1fcfa957-oliver.sang@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
