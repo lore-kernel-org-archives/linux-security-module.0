@@ -1,156 +1,165 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852F8A5F;
-	Fri, 29 Mar 2024 06:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94CB364BA;
+	Fri, 29 Mar 2024 10:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711693950; cv=none; b=bO0bE+xd2dyjp21N0+tgDHo8RARxdzpoRje1ig2wQIpDr51RiG8ZQ+OvtIlSe2PoPC/J1cvwJiM9o0fhngJpCjx8no+6MnEbhin8y3aS6Fw09Bc8LqohvZzsy6ppSLM6nrKmtO9OTFMl1T8JbwnOv6SzK1UN26A4k6YBadgtbRY=
+	t=1711709801; cv=none; b=s47UREUfTFlby6+5DDPDBItpERALFg+ethFOmdHQ3O3SJk5Ze8+rw9rAbIlrxpgChflWTkbLfEz2YUSDyHMbg89Skb6wINDg+uhiZySNKm1EzLeCzeasNxT4rxhfJhNU1wQIHLXvN7W8rvjls0zMh3D9zN4v4ZBoiE7qBcO2Cog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711693950; c=relaxed/simple;
-	bh=gmr2fGvLS//TG94CAfSgeLtnfySif1Al3X5cocCuKwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+iDmP+0MAHF/gRH8ZbCkw9EDO0Ytn/F3VknIIQlfJiozRnGD/UjsvWOOIfbRjxP/xgM/HtF3dMebWtCSoVowKCcrHBBrlr5ZoINidwsygtEzgAW3fP7SioUoBvTdNwIqJTcZMQp/cfADZZUlWdAhRbghbgRxFBB6hX72PmxId0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZ2x+jpW; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZ2x+jpW"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1e0b213efa3so15859645ad.0;
-        Thu, 28 Mar 2024 23:32:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711693949; x=1712298749; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ndZTDMZkOJjEBIZTkRxOowZw+YYG8BnbmCDk2dhnrRA=;
-        b=RZ2x+jpWsUYpppki59ltJxVmZo8IshWzCeDjgN/b+9xu6y87YW+voOiJVy/KOx/DMB
-         41RKZPwHNIvNEtfRJ8eTpkg9LWAoxiwOez6q2seTZedaN8Qd1Svp0/uUcB1+4y/fnAOD
-         D1oSVnPeRT9m2xi2sv/lvvQuVZZT76FkdCsAvwq+Zy5sUM9PolUOZgEuWFXjUnZtcVgq
-         ZMux27gRbTjBc91UXHySGtfe1hZdqGsh8VTT3jmVJv0AyH72Pp1ZJ90adyQNXLsZykGJ
-         /YT7malO5g9CwTYBGDHbOMDguSwcbpUG0bjo7NBjPRns0W2O8FnxYtIE2Lv0SaYqX0P+
-         zSAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711693949; x=1712298749;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ndZTDMZkOJjEBIZTkRxOowZw+YYG8BnbmCDk2dhnrRA=;
-        b=HvmimAu9EjbcKf3qVbnWP8GgOhUnf07tQ8TGajFP4jRjtaCmcoyRqOIZ/kU/IzGepc
-         jaZhBf4bsgp6tOKGNTJoLU2n02LwbWEJ9CM44YqlKskhzAO+ECkEcnAnPBc4lm0pbUJf
-         NoXwpHI8cGdSRdqGvVYuDbN68OoeGkNgIIEmIi7K+imictJ4mxMTe8WxlcasVHM8neZc
-         6oXx9z8DO+UoYfOt/fULJotFfHKlT4tKXo7hASwjWXB66+SZrDAB/KgVBgpBb5xw62jV
-         ItSaSVPOkKOfLAdfpSPk4L6ffZtgibP5RZW01fr+N+tr22B+o2pG1FSkFrCAWJqEZ+FU
-         cJSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFzbcOXCXZ35SV01URDq2asQSQ+uLAQZyI+ub1FSdEruQdwzC1ovRDN+1S7MgJj/nuz+mVMb2TBK5QM3laByJKkG+1envCf8Hn9ttkfR72n+xfJK6GO6T3bXSJadn5NHxN4SHZ3FzJk7Fv1xg24Hab0qhK
-X-Gm-Message-State: AOJu0YyvvU0GSYT9I5Z562BktwacbwXGlXlxpF/0m4EKTG66waBmg35j
-	A4fyClp7B5q2LkQx5ej2/+a7tIQlUluUJjl4xwRqHNAHMDr7epF5
-X-Google-Smtp-Source: AGHT+IFRmRQDyi7wwRtuc+POHnQVkysYigDwuTM6Oj37xtRf77j8LUvU+FV6uM1zEsYDb2Kum7ldDQ==
-X-Received: by 2002:a17:902:c406:b0:1de:eac5:9294 with SMTP id k6-20020a170902c40600b001deeac59294mr1828172plk.13.1711693948781;
-        Thu, 28 Mar 2024 23:32:28 -0700 (PDT)
-Received: from ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx ([2401:4900:3a8b:cfcd:75f4:f0e2:44ea:221c])
-        by smtp.gmail.com with ESMTPSA id l4-20020a170902f68400b001db8a5ea0a3sm2742058plg.94.2024.03.28.23.32.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Mar 2024 23:32:28 -0700 (PDT)
-Date: Fri, 29 Mar 2024 12:02:16 +0530
-From: Ayush Tiwari <ayushtiw0110@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: paul@paul-moore.com, alison.schofield@intel.com,
-	fabio.maria.de.francesco@linux.intel.com,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, outreachy@lists.linux.dev,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] LANDLOCK: use kmem_cache for landlock_object
-Message-ID: <ZgZgcPxkG1TEVnt6@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
-References: <ZgSrBVidW1U6yP+h@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
- <CAHC9VhRYDNoqkbkgdUSg-kYSHVbheD5NtezmVxyRakZ0-DzuSg@mail.gmail.com>
- <ZgUh7cIQIsOgvWpw@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
- <20240328.aiPh0phaJ6ai@digikod.net>
+	s=arc-20240116; t=1711709801; c=relaxed/simple;
+	bh=wXmD/wTPLUziOZNHo17aLeyr2LXTHIbWqldBHooT3mA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oAY78pFPdDUQ44pwFyD+Yuwk8AFkBbB776IM8U0dKW6E7Z5amMz57ReuqKHcdYnu85n7zt/k3muab/d9IodGWui9GNiajK6q4FPjxcpisfS/kBxd2Z0T3/gftTKl//oXgboef13/3x97pd53g5k19GonpzZbynScu80Ou3+4naE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4V5cPL1clGz9y0km;
+	Fri, 29 Mar 2024 18:40:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 79883140556;
+	Fri, 29 Mar 2024 18:56:23 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDnISZMngZmVsAqBQ--.12203S2;
+	Fri, 29 Mar 2024 11:56:22 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	pc@manguebit.com,
+	christian@brauner.io,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	stable@vger.kernel.org,
+	Steve French <smfrench@gmail.com>
+Subject: [PATCH 1/2] security: Handle dentries without inode in security_path_post_mknod()
+Date: Fri, 29 Mar 2024 11:56:08 +0100
+Message-Id: <20240329105609.1566309-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240328.aiPh0phaJ6ai@digikod.net>
+X-CM-TRANSID:GxC2BwDnISZMngZmVsAqBQ--.12203S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXrWrAFWkCw4fWw45ury8Krg_yoWrXryUpF
+	4rt3WkJr95XFy8Wr18AFy7u3WSkay5WFWUWan5Wa1ayFnxXr1jqrs2vryY9rW5tr4UGryx
+	twnFyrsxAa1qyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUxo7KDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQARBF1jj5vtpQABs3
 
-On Thu, Mar 28, 2024 at 03:45:12PM +0100, Mickaël Salaün wrote:
-> The subject should start with "landlock: Use" instead of "LANDLOCK: use"
-> 
-> On Thu, Mar 28, 2024 at 01:23:17PM +0530, Ayush Tiwari wrote:
-> > Hello Paul
-> > Thanks a lot for the feedback. Apologies for the mistakes. Could you
-> > help me in some places so that I can correct the errors, like:
-> > On Wed, Mar 27, 2024 at 07:43:36PM -0400, Paul Moore wrote:
-> > > On Wed, Mar 27, 2024 at 7:26 PM Ayush Tiwari <ayushtiw0110@gmail.com> wrote:
-> > > >
-> > > > Use kmem_cache replace kzalloc() calls with kmem_cache_zalloc() for
-> > > > struct landlock_object and update the related dependencies.
-> > > >
-> > > > Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
-> > > > ---
-> > > >  security/landlock/fs.c     |  2 +-
-> > > >  security/landlock/object.c | 14 ++++++++++++--
-> > > >  security/landlock/object.h |  4 ++++
-> > > >  security/landlock/setup.c  |  2 ++
-> > > >  4 files changed, 19 insertions(+), 3 deletions(-)
-> > > 
-> > > Hi Ayush,
-> > > 
-> > > Mickaël has the final say on Landlock patches, but I had a few
-> > > comments that I've included below ...
-> > > 
-> > > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > > index fc520a06f9af..227dd67dd902 100644
-> > > > --- a/security/landlock/fs.c
-> > > > +++ b/security/landlock/fs.c
-> > > > @@ -124,7 +124,7 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
-> > > >         if (unlikely(rcu_access_pointer(inode_sec->object))) {
-> > > >                 /* Someone else just created the object, bail out and retry. */
-> > > >                 spin_unlock(&inode->i_lock);
-> > > > -               kfree(new_object);
-> > > > +               kmem_cache_free(landlock_object_cache, new_object);
-> > > 
-> > > See my comment below, but you may want to wrap this in a Landlock
-> > > object API function.
-> > Sure. I will definitely implement this.
-> > > 
-> > > >                 rcu_read_lock();
-> > > >                 goto retry;
-> > > > diff --git a/security/landlock/object.c b/security/landlock/object.c
-> > > > index 1f50612f0185..df1354215617 100644
-> > > > --- a/security/landlock/object.c
-> > > > +++ b/security/landlock/object.c
-> > > > @@ -17,6 +17,15 @@
-> > > >
-> > > >  #include "object.h"
-> > > >
-> > > > +struct kmem_cache *landlock_object_cache;
-> > > > +
-> > > > +void __init landlock_object_init(void)
-> > > > +{
-> > > > +       landlock_object_cache = kmem_cache_create(
-> > > > +               "landlock_object_cache", sizeof(struct landlock_object), 0,
-> 
-> No need for the "_cache" name suffix.
-> 
-> > > > +               SLAB_PANIC, NULL);
-> > > 
-> > > The comments in include/linux/slab.h suggest using the KMEM_CACHE()
-> > > macro, instead of kmem_cache_create(), as a best practice for creating
-> > > slab caches.
-> > > 
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Hello mentors
-I was trying to work on the above suggestion and I am facing some problem
-regarding replacing kzalloc with kmem_cache_zalloc calls when using KMEM
-macro from include/linux/slab.h because for kmem_cache_zalloc I will be
-needing a cache pointer, but KMEM macro doesn't return any such pointer.
-So is there any way to do this using macro or do i have to avoid using
-that macro for this case and use all methods regarding kmem as defined in
-the linux memory management API doc?
+Commit 08abce60d63fi ("security: Introduce path_post_mknod hook")
+introduced security_path_post_mknod(), to replace the IMA-specific call to
+ima_post_path_mknod().
 
-> Agree with Paul and Greg unless commented otherwise. Thanks
+For symmetry with security_path_mknod(), security_path_post_mknod() is
+called after a successful mknod operation, for any file type, rather than
+only for regular files at the time there was the IMA call.
+
+However, as reported by VFS maintainers, successful mknod operation does
+not mean that the dentry always has an inode attached to it (for example,
+not for FIFOs on a SAMBA mount).
+
+If that condition happens, the kernel crashes when
+security_path_post_mknod() attempts to verify if the inode associated to
+the dentry is private.
+
+Add an extra check to first verify if there is an inode attached to the
+dentry, before checking if the inode is private. Also add the same check to
+the current users of the path_post_mknod hook, ima_post_path_mknod() and
+evm_post_path_mknod().
+
+Finally, use the proper helper, d_backing_inode(), to retrieve the inode
+from the dentry in ima_post_path_mknod().
+
+Cc: stable@vger.kernel.org # 6.8.x
+Reported-by: Steve French <smfrench@gmail.com>
+Closes: https://lore.kernel.org/linux-kernel/CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com/
+Fixes: 08abce60d63fi ("security: Introduce path_post_mknod hook")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/evm/evm_main.c | 6 ++++--
+ security/integrity/ima/ima_main.c | 5 +++--
+ security/security.c               | 4 +++-
+ 3 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 81dbade5b9b3..ec1659273fcf 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -1037,11 +1037,13 @@ static void evm_file_release(struct file *file)
+ static void evm_post_path_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+-	struct evm_iint_cache *iint = evm_iint_inode(inode);
++	struct evm_iint_cache *iint;
+ 
+-	if (!S_ISREG(inode->i_mode))
++	/* path_post_mknod hook might pass dentries without attached inode. */
++	if (!inode || !S_ISREG(inode->i_mode))
+ 		return;
+ 
++	iint = evm_iint_inode(inode);
+ 	if (iint)
+ 		iint->flags |= EVM_NEW_FILE;
+ }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c84e8c55333d..afc883e60cf3 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -719,10 +719,11 @@ static void ima_post_create_tmpfile(struct mnt_idmap *idmap,
+ static void ima_post_path_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+ {
+ 	struct ima_iint_cache *iint;
+-	struct inode *inode = dentry->d_inode;
++	struct inode *inode = d_backing_inode(dentry);
+ 	int must_appraise;
+ 
+-	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
++	/* path_post_mknod hook might pass dentries without attached inode. */
++	if (!ima_policy_flag || !inode || !S_ISREG(inode->i_mode))
+ 		return;
+ 
+ 	must_appraise = ima_must_appraise(idmap, inode, MAY_ACCESS,
+diff --git a/security/security.c b/security/security.c
+index 7e118858b545..455f0749e1b0 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1801,7 +1801,9 @@ EXPORT_SYMBOL(security_path_mknod);
+  */
+ void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+ {
+-	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
++	/* Not all dentries have an inode attached after mknod. */
++	if (d_backing_inode(dentry) &&
++	    unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+ 		return;
+ 	call_void_hook(path_post_mknod, idmap, dentry);
+ }
+-- 
+2.34.1
+
