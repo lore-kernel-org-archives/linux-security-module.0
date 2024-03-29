@@ -1,81 +1,102 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D5D101C6
-	for <linux-security-module@vger.kernel.org>; Fri, 29 Mar 2024 00:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724B0A92F;
+	Fri, 29 Mar 2024 01:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711671985; cv=none; b=Eh7RW3pReU+gyUEqp4dHU3dzFocoJ7nvaD0SvUQ8aixVjXFolZb629UzbkIcBYnvXVtNbCA/YPPoBEi0FJsrlSQuerYGt/rdSkYvEiiwUQcHO1hFfJoyHs4y1CPN1GDVdgFssvOUERu2dQlrDFaxkcts9rB6+5MyzCehUONMdO8=
+	t=1711674179; cv=none; b=NbVLEteT8D2ty2HSDS8bgAzmLk/kMcobUeLsf4B5Mp96V5QtricgOmKgD0UaLE7jjOlEZYiOWzpDc+GLwGu/QLKsRGobJPyimtTlVrstzpSQno7MuvgSOTDexdW9/s/Gie/5hNCxTaIva89pKiHx8p21Melywrj1ug6NI43sbJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711671985; c=relaxed/simple;
-	bh=KsljLY9lc3Iy5TvlPc2zk/yv7ZWjkSS4lAxo5jx0LSI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tf1PbfxxPFkWLup10XsoJ0bHddnET9u+vLMkBRdQZwps5T4ensrGfnQA6Xgmns+1mQUKfEbGOE6aSK7WqVgLB6BrRU46CzaxPEdgWgWXBTR+S3NyJY9FZAyDJFdH0GYWMEq8fs9GKCiAWA62gRrynkzSSnqELRP89NgkUqUW110=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bt9eh9o2; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1711674179; c=relaxed/simple;
+	bh=Dr1VlokoSKaC9y28ynylm4SEPgQMTWxh85ITtu46N1g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XkVfctbHYwUmGxJ06EL6Rj90TXTh2JQbucP1T6bV9THET2i++hhptbwDP0GzuSPRIZJoniuuiSkw7u355sZqQzSnmnYdcjTVhZjx681qBsao2qjrze0UTWGGCdCububSBueDKIC8BMpqxAkM+Fn8NLzWhz/dxTqvqSEzTG0JzpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SF1hv1YA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bt9eh9o2"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-609f3ca61e0so16757727b3.3
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2024 17:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1711671982; x=1712276782; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KsljLY9lc3Iy5TvlPc2zk/yv7ZWjkSS4lAxo5jx0LSI=;
-        b=bt9eh9o2VH30Zd6b9jzT/+yU0nf9c4kecAgL6RFQ9CnXCYy7Lu1yjPdm45w8YxB4Jd
-         voujs1O2lzawf8bvaH16S9PQr4gy94GpngAvv0LBa0ql0hbGU5VWtfnDKDX92D0O2B8r
-         K0qyfQ3DtzEBdiI6z1Ym5atsOQSGZgd1b585SHLmHeLPkCPXYGJGJqzqz9N+5Ss/s9tq
-         mckevyVf1OYGgdvno5Cd1pMlzRE98W0yTPvMn8D8jbnmYvSs8hAgInKuPlp/alV8XbN8
-         z9QLUkx4BgJY3hxf00M4MJ0yInqSpLCwOQvO+OepUn/yMUtqIbmXQYXwT1HcNQCo/3Qz
-         JJ4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711671982; x=1712276782;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KsljLY9lc3Iy5TvlPc2zk/yv7ZWjkSS4lAxo5jx0LSI=;
-        b=BwWFkOBMQmLtewd3F0D+qNF1CJ7hlwcXYLBf1nhwjqMUwV7bdxH/fpOEVmmUMxUCqh
-         A25Ur7VadbjeKqCfqKjCo1b12Wb1QPg0eUssOgOyedT5Mp7aWu7GQP0N3Us85EKHvjdd
-         NUcc/9d4F2D15d8f8PFJUqALR1LQX+345BvNMcUOZBbzFpxXLTCCZ3f7UtuqiAdGVrYC
-         HD/CY9Ach3G8QqFzJBc1Dfqouq2pSZSJfk/SjGokDs2VzzJNdoOvuzXHpMgeRYMQkG+w
-         yj3nXe3P3paBD2Ytc+UydcXeVRw+V7wZHmVheyrQjk35GfOyWfa8oKtIMgGfH0Xve8Z8
-         jaPQ==
-X-Gm-Message-State: AOJu0YzePukpiVNFZyPTfcHUbFwK9ODl1R1Lr0eUKXBMEYPBjD5Ezth4
-	wv68JQOr6RCl+JmEk2raI6nTO711+zsf5P09wiQcDcSZQSaVBuNqWywQcd8JKu9H26mrxGGQfsI
-	ZiK+5J2fAnHvH2i8C5gH1K7IDV/lgNxijAcSPDTkW9RThWt4=
-X-Google-Smtp-Source: AGHT+IFEWiB+xhSIdkgvKEIy7OHmDeckb5X3kUfoF7aNXKTFAV2hTiGBmQkLgLVnd/my/oo1O7U+1Z2UyLNJshdAe3w=
-X-Received: by 2002:a0d:d511:0:b0:614:2749:b062 with SMTP id
- x17-20020a0dd511000000b006142749b062mr1064200ywd.36.1711671982475; Thu, 28
- Mar 2024 17:26:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SF1hv1YA"
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42SN55oe011440;
+	Fri, 29 Mar 2024 01:02:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=0dY3d4JiA2sDHJ3WMxYQw6Z9eBfTuUH6pqj6z2iebXo=;
+ b=SF1hv1YAOIAAAdmL9eYanM4UCYDfi2rpGwOEQiz/g3Y51utt3NpEhxShlMPrbpVrlyUX
+ qZgjdeEobiEVbk7khfOQ+7G3mpjFgcpJ52SeQi5tEpN44p0VOqYJ3zaaxylV6viDixIz
+ 92KObcOmeq0tKNWQb+FA7++JDLNIJ9oBlLx/8dus6/F4V1M/EQOQa1VkCJwZg8KFB/7/
+ FkJm3iUBYP+DT1SxKTmG88FSsKlm4W8ZMQ7hQtzp2X4GVF4vXPF1uC6Nnb7DkuJjpBJs
+ YAJa88ntno+vINPjKo9mp6a1ZSPRn48H3C15M35ardusysqBiYHAZUKialJnbUVuEpag 1A== 
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x5h9h87ku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Mar 2024 01:02:43 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 42SNFbwg025458;
+	Fri, 29 Mar 2024 01:02:41 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3x2awn8wek-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Mar 2024 01:02:41 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 42T12c4f63373678
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 29 Mar 2024 01:02:41 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AE75958068;
+	Fri, 29 Mar 2024 01:02:38 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 46C7B58061;
+	Fri, 29 Mar 2024 01:02:38 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.90.219])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 29 Mar 2024 01:02:38 +0000 (GMT)
+Message-ID: <36fa018559b8d68ac9d41826148e7d36c1ecf1ab.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Fix use-after-free on a dentry's dname.name
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Al Viro
+	 <viro@zeniv.linux.org.uk>
+Date: Thu, 28 Mar 2024 21:02:37 -0400
+In-Reply-To: <20240322140312.1804404-1-stefanb@linux.ibm.com>
+References: <20240322140312.1804404-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 1Xy32qb6LKaXx8FmWrzWbFao4CU4K2kd
+X-Proofpoint-ORIG-GUID: 1Xy32qb6LKaXx8FmWrzWbFao4CU4K2kd
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240324223231.6249-1-greg@enjellic.com> <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com>
- <20240326103047.GA19964@wind.enjellic.com> <CAHC9VhQvN43LL-ynV-ZZgR2L8wFfUeq2-SZb5QHh9ZMWtz4C1A@mail.gmail.com>
- <20240327091644.GA32347@wind.enjellic.com> <CAHC9VhSjjeBH2CE5i+PK9Zyg661k-ryDbYkoPLtEe-g52DW0Fw@mail.gmail.com>
- <20240328153800.GA17524@wind.enjellic.com>
-In-Reply-To: <20240328153800.GA17524@wind.enjellic.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 28 Mar 2024 20:26:11 -0400
-Message-ID: <CAHC9VhTwZD7OU9v36HOd28a6jULLJeoQTdNSBYZWSrsY+jf7ZA@mail.gmail.com>
-Subject: Re: [PATCH] Do not require attributes for security_inode_init_security.
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: linux-security-module@vger.kernel.org, roberto.sassu@huaweicloud.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-28_19,2024-03-28_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ impostorscore=0 suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 mlxlogscore=837 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2403210000
+ definitions=main-2403290007
 
-On Thu, Mar 28, 2024 at 11:38=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote=
-:
->
-> BPF provides an implementation and would be affected ...
+On Fri, 2024-03-22 at 10:03 -0400, Stefan Berger wrote:
+> ->d_name.name can change on rename and the earlier value can be freed;
+> there are conditions sufficient to stabilize it (->d_lock on dentry,
+> ->d_lock on its parent, ->i_rwsem exclusive on the parent's inode,
+> rename_lock), but none of those are met at any of the sites. Take a stable
+> snapshot of the name instead.
+> 
+> Link: https://lore.kernel.org/all/20240202182732.GE2087318@ZenIV/
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Casey pretty much summed up my thoughts fairly well, including the
-"Bear poking trimmed" comment, which was worth a good laugh :)
+Thanks, Al, Stefan.
 
---=20
-paul-moore.com
+Mimi
+
