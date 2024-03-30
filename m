@@ -1,112 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632128467;
-	Sat, 30 Mar 2024 16:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9E03A1D3
+	for <linux-security-module@vger.kernel.org>; Sat, 30 Mar 2024 20:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711815142; cv=none; b=Gtg6dPScUZXoP6ABT/VPJ9ZMj+42YNSdiWJpRD65Lv0Uv4af+0zziNhZKUVxqmi+H+I9j3JeLiITN/LUbaGIiKafYB2qs786NUD7Cjmma/MLItz7rGFTYVl3FDQZ88TybXpXy+WaFU060PAJn8yMmiuNDPNN/k1ypirzkbbSjhs=
+	t=1711829697; cv=none; b=gNJYO22uhU3yQS1goucVYMnyDTE7Zsvd0C4+dUev/t3gFqIFoFEF/ymvkJuDfaVF1sGxW0pGBs33HfWww1+7fNFGo6pyU1qwuqTM6Y6+ILoskr6IKnpebQwh5kedwKKfnt93OUSHcbVzh21lg3v+Q7LoGVBhcWyRcVrcRZTsjS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711815142; c=relaxed/simple;
-	bh=7DJY80SqsN2zeO08mKaZocYC36hJgIIyI/nQTHv2yrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZ8dIDYk+3RGNmKnN0spStMzc4+ILXegENLk63pSOJOLI9TgKj3lX2yCGC6qiMw+1j4tS0CpkF2GaKFyt5lg1Z0QUbsdgNbGRVdqQhaU++4iWBBBVd5PWWigLaJAqB5CRAxPSukA/kHibpWvt2VNq1DcAA8PlYLRvKHuRT8bUIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=m5yyjZZx; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="m5yyjZZx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F7DC433F1;
-	Sat, 30 Mar 2024 16:12:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1711815142;
-	bh=7DJY80SqsN2zeO08mKaZocYC36hJgIIyI/nQTHv2yrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m5yyjZZxH/klvWCBqIoRuOHkVpGXYh6HA/sHEABnoAgryF8I8SAM+MGoRMAK/g3wa
-	 VWWANrzP0+SrtPxZLoSYHQv8bDh4Vrjh+L2kYzartfBynhg7AtgOr+N9D32OoW54PM
-	 875jr+Sl46wU5PJ7IIT3IogAgVhpDkaHF968PPPo=
-Date: Sat, 30 Mar 2024 17:12:18 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ayush Tiwari <ayushtiw0110@gmail.com>
-Cc: alison.schofield@intel.com, paul@paul-moore.com, mic@digikod.net,
-	fabio.maria.de.francesco@linux.intel.com,
-	linux-kernel@vger.kernel.org, outreachy@lists.linux.dev,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2] landlock: Use kmem for landlock_object
-Message-ID: <2024033030-tutu-dynamite-47c9@gregkh>
-References: <ZggZi/EFICvb4xTU@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+	s=arc-20240116; t=1711829697; c=relaxed/simple;
+	bh=U+YnV8Y3KTaeUj0Az4reQS6PqtozG4Cc38hO+SYxiRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkIzIXombv2qQPWU+8EuBpg7bNSikYily8F6DcIdjXBkQuIuCPCzxVLsE7evAiqt49hRCWGrHwAFg+wRptcEtd1opQ35MgEOUcJTCY7XvxTQsRP69PD6CzNemGCkKOIrH61uFIN1S4b/dSrrx4yOn5wxsGHzL57us24baE/jsvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 42UKEQUe005483;
+	Sat, 30 Mar 2024 15:14:26 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 42UKEPlA005482;
+	Sat, 30 Mar 2024 15:14:25 -0500
+Date: Sat, 30 Mar 2024 15:14:25 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+        roberto.sassu@huaweicloud.com
+Subject: Re: [PATCH] Do not require attributes for security_inode_init_security.
+Message-ID: <20240330201425.GA5453@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240324223231.6249-1-greg@enjellic.com> <CAHC9VhQ22ef_o_OYue93RZfff70LPuOaCuN7Czv7HiEy346Svw@mail.gmail.com> <20240326103047.GA19964@wind.enjellic.com> <CAHC9VhQvN43LL-ynV-ZZgR2L8wFfUeq2-SZb5QHh9ZMWtz4C1A@mail.gmail.com> <20240327091644.GA32347@wind.enjellic.com> <CAHC9VhSjjeBH2CE5i+PK9Zyg661k-ryDbYkoPLtEe-g52DW0Fw@mail.gmail.com> <20240328153800.GA17524@wind.enjellic.com> <86c7477e-260f-419a-8aea-ea527a344877@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZggZi/EFICvb4xTU@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+In-Reply-To: <86c7477e-260f-419a-8aea-ea527a344877@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 30 Mar 2024 15:14:27 -0500 (CDT)
 
-On Sat, Mar 30, 2024 at 07:24:19PM +0530, Ayush Tiwari wrote:
-> Use kmem_cache replace kzalloc() calls with kmem_cache_zalloc() for
-> struct landlock_object and update the related dependencies to improve
-> memory allocation and deallocation performance.
+On Thu, Mar 28, 2024 at 09:34:39AM -0700, Casey Schaufler wrote:
 
-So it's faster?  Great, what are the measurements?
+Good afternoon, I hope the weekend is going well for everyone.
 
-> This patch does not
-> change kfree() and kfree_rcu() calls because according to kernel commit
-> ae65a5211d90("mm/slab: document kfree() as allowed for
-> kmem_cache_alloc() objects"), starting from kernel 6.4 with
-> CONFIG_SLOB, kfree() is safe to use for such objects.
+> On 3/28/2024 8:38 AM, Dr. Greg wrote:
+> > ...
+> >> In Linux v6.8[1] only Smack and SELinux provide implementations for
+> >> the security_inode_init_security() hook, and both also increment the
+> >> associated lsm_blob_sizes::lbs_xattr_count field.  While the
+> >> behavior of the hook may have changed, I see no indications of any
+> >> harm with respect to the standard upstream Linux kernel.  We
+> >> obviously want to ensure that we work to fix harmful behavior, but I
+> >> simply don't see that here; convince me there is a problem, send me
+> >> a patch as we've discussed, and I'll merge it.
+> > BPF provides an implementation and would be affected.
 
-There is no CONFIG_SLOB anymore so why mention it?
+> BPF has chosen to implement its LSM hooks their own way. As it is
+> impossible for the infrastructure developers to predict what the
+> behavior of those hooks may be, it is unreasonable to constrain them
+> based on hypothetical or rumored use cases.
 
+We were asked to identify a case where upstream could be possibly
+broken by the change in behavior, we did that.
 
+It is now perfectly clear that the LSM maintainers don't consider the
+possibility of breaking upstream BPF to be an issue of concern, no
+doubt an important clarification for everyone moving forward.
 
+> The implementation of BPF precludes its use of LSM blobs that are
+> infrastructure managed. That ought to be obvious. BPF could include
+> a non-zero lbs_xattr_count just in case, and your problem would be
+> solved, but at a cost.
 
-> 
-> Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
-> ---
-> 
-> Changes in v2: Used clang-format and corrected the removal of kfree_rcu.
-> Tried to use KMEM macro but due to lack of cache pointer in that macro,
-> had to explicitly define landlock_object_cache, as done in security.c.
-> 
->  security/landlock/object.c | 12 +++++++++++-
->  security/landlock/object.h |  2 ++
->  security/landlock/setup.c  |  1 +
->  3 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/landlock/object.c b/security/landlock/object.c
-> index 1f50612f0185..cfc367725624 100644
-> --- a/security/landlock/object.c
-> +++ b/security/landlock/object.c
-> @@ -17,6 +17,15 @@
->  
->  #include "object.h"
->  
-> +static struct kmem_cache *landlock_object_cache;
-> +
-> +void __init landlock_object_cache_init(void)
-> +{
-> +	landlock_object_cache = kmem_cache_create(
-> +		"landlock_object_cache", sizeof(struct landlock_object), 0,
-> +		SLAB_PANIC, NULL);
+FWIW, it would not seem unreasonable to assume that an LSM, BPF
+included, may want to be notified of the the instantiation of the
+security state of an inode, regardless of whether or not the LSM is
+using extended attributes.
 
-You really want SLAB_PANIC?  Why?
+> > Bear poking trimmed ...
+> >
+> > [1] In Linux v6.9-rc1 this grows to include EVM, but EVM also provides
+> > both a hook implementation and a lbs_xattr_count bump.
+> > BPF initialization, as of 6.8 does not include an xattr request.
 
-> +}
-> +
->  struct landlock_object *
->  landlock_create_object(const struct landlock_object_underops *const underops,
->  		       void *const underobj)
-> @@ -25,7 +34,8 @@ landlock_create_object(const struct landlock_object_underops *const underops,
->  
->  	if (WARN_ON_ONCE(!underops || !underobj))
->  		return ERR_PTR(-ENOENT);
-> -	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
-> +	new_object =
-> +		kmem_cache_zalloc(landlock_object_cache, GFP_KERNEL_ACCOUNT);
+> Just so. If BPF wants to use the aforementioned interface, it needs to
+> include an xattr request. Just like any other LSM.
 
-Odd indentation, why?
+Requirement so noted.
 
-thanks,
+Have a good week.
 
-greg k-h
+As always,
+Dr. Greg
+
+   The Quixote Project - Flailing at the Travails of Cybersecurity
+		  https://github.com/Quixote-Project
