@@ -1,30 +1,30 @@
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB66A1F93F;
-	Mon,  1 Apr 2024 10:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F8511187;
+	Mon,  1 Apr 2024 10:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711968641; cv=none; b=elXGkQb8/vs2OkC0Rht+PsNS1Ct2yVEiRydwmzDjZKa7XWoHaNUZds785rUmUkQ53me+zaJMI4u1jwXiFCs0VziXzO/nM9PzSdk935BWrF+JSO0SfEWwiVMRjHewiqB8BlwXRWPEP6KCzWB7C9XCv++AnFL5vrFC6YNBEruz5iw=
+	t=1711968641; cv=none; b=HQ9i7MsGaa416h0DdIxZZPirxllOMGsU/5PMO726e/sSLKxznY4rE5HNjCwnbgMGn6l2UsdCVetp6ofbGU1jY1wjBpf0PciY+Xz7k1U9e0St3VPGRMi4lk3v8o4j5NuB7/7ZZQCt2fXJ5qrguZHzEqQpCVx9lvGukVWdVsA4el8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1711968641; c=relaxed/simple;
-	bh=ZCRMC13D2LsYYEKOlzfqHDd6OcHfTFH5pI0jamNb64w=;
+	bh=C1P2z2StaWjNkhoRRMVrlRrsSwlcsIFa5dGqUXmWQcA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oJNSCB6WLmXSi5WWrlSlIz5EAGJid+A6yQiY282JQOgvUiLy4PAVz+pHwu26JNkTwg143xb4q4CrZOnk+SLJ2SWMov6M2Iyfg8ZgYJhmLF25s1WHI8BjXdNvC5YEcl6MYqgN7x/dyUaGT5N5uoPZyFxCkjUGymZ8XbayNteBbk0=
+	 MIME-Version; b=cP6Fdu7/fgqOnCgUK1IW+0a0mXYpM/Taytyur4L0GFaCzYErctA0j69Rg4rj8+jQPvY4Q7KU3Zk4otm4/tRONVqqKVyX0VmwiI1Awwa7074iezR4xaVDsSlR+lO4scYRcNT0zrZpZXqhk3l/xGcTwWTr19yMrfWmhVWKjBi3zdE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 431AoNaZ027683;
-	Mon, 1 Apr 2024 05:50:23 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 431AoQri027698;
+	Mon, 1 Apr 2024 05:50:26 -0500
 Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 431AoN3C027681;
-	Mon, 1 Apr 2024 05:50:23 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 431AoQ0A027696;
+	Mon, 1 Apr 2024 05:50:26 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From: Greg Wettstein <greg@enjellic.com>
 To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jmorris@namei.org
-Subject: [PATCH v3 07/12] Add namespace implementation.
-Date: Mon,  1 Apr 2024 05:50:10 -0500
-Message-Id: <20240401105015.27614-8-greg@enjellic.com>
+Subject: [PATCH v3 10/12] Implement security event mapping.
+Date: Mon,  1 Apr 2024 05:50:13 -0500
+Message-Id: <20240401105015.27614-11-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240401105015.27614-1-greg@enjellic.com>
 References: <20240401105015.27614-1-greg@enjellic.com>
@@ -38,572 +38,1809 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. Greg" <greg@enjellic.com>
 
-The TSEM LSM has its own 'namespace' implementation for
-restricting the scope of a security model that is independent of
-other resource namespaces but which acts in much the same manner.
+The map.c file is responsible for implenting the description of a
+security event into a security state coefficient.  The following
+documentation file, provided with the TSEM implementation,
+contains a description of the generative functions used to create
+the coefficients.
 
-The TSEM control plane is used to signal that a process should
-leave the root security modeling namespace and institute a new
-subordinate modeling namespace.  Process that derive from the
-lead process all contribute security event descriptions to the
-model that is being used to prove the security behavior of the
-namespace.
+Documentation/admin-guide/LSM/tsem.rst
 
-Each modeling domain has a unique numeric identifier that is
-implemented as an unsigned 64 bit value that is incremented each
-time a new security modeling namespace is created.  This
-guarantees that every security modeling namespace will have a
-unique identifier associated with it.   The id value of 0 is
-reserved for the root security modeling namespace.
+The mapping process takes a security event description, that was
+packaged by the event.c file, and uses that description to drive
+the coefficient generation process.
 
-Each modeling domain is designated as either internally or
-externally modeled.  An internally modeled domain has its
-security model implemented by a Trusted Modeling Agent (TMA)
-implementation that is run in the context of the kernel.
-
-Externally modeled domains have a description of the security
-event exported to a trust orchestrator running in userspace.
-That trust orchestrator has an associated Trusted Modeling Agent
-that implements the root of trust for the security namespace.
-
-A process that exports a security event description is scheduled
-away into an interruptible sleep state, with the exception of
-event handlers that are running in atomic context.  The trust
-orchestrator that created the external modeling domain is
-responsible for using the TSEM control plane to wake the process
-up and set the trust status of the process to be trusted or
-untrusted.  The trust orchestrator also has the responsibility of
-addressing the status of a workload that has generated a model
-violating event that occurs in atomic context.
-
-The namespace exists until the last task running in the context
-of the namespace exits.  The resources associated with the
-namespace are released at that time.
+How the parameters are mapped into the coefficients is
+responsible for implementing the security model enforced by the
+internal Trusted Modeling Agent implementation.
 ---
- security/tsem/namespace.c | 515 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 515 insertions(+)
- create mode 100644 security/tsem/namespace.c
+ security/tsem/map.c | 1778 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1778 insertions(+)
+ create mode 100644 security/tsem/map.c
 
-diff --git a/security/tsem/namespace.c b/security/tsem/namespace.c
+diff --git a/security/tsem/map.c b/security/tsem/map.c
 new file mode 100644
-index 000000000000..7aa530e8724d
+index 000000000000..82ce02ad54b6
 --- /dev/null
-+++ b/security/tsem/namespace.c
-@@ -0,0 +1,515 @@
++++ b/security/tsem/map.c
+@@ -0,0 +1,1778 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
 +/*
 + * Copyright (C) 2024 Enjellic Systems Development, LLC
 + * Author: Dr. Greg Wettstein <greg@enjellic.com>
 + *
-+ * This file is responsible for managing the TSEM namespace
-+ * implementation that allows security models to be implemented for
-+ * workloads that are isolated from the root security modeling
-+ * namespace.  The namespaces that TSEM implements are
-+ * non-heirarchical and are at only a single depth below the root
-+ * security modeling namespace.
++ * This file is responsible for mapping the characteristics of
++ * security events into a security state coefficient for the internal
++ * trusted modeling agent implementation.  The primary TSEM
++ * documentation describes the generative functions that are used to
++ * conduct this mapping.
 + *
-+ * Security modeling namespaces are identified by a 64-bit context
-+ * identity with context identity 0 being reserved for the root
-+ * security modeling namespace.
++ * The tsem_map_event() function is called by the tsem_model_event()
++ * to generate the security state coefficients for the internal
++ * modeling implementation.
 + *
-+ * The modeling of a namspace can be done by either an internal
-+ * trusted modeling agent implementation or by a trusted modeling
-+ * agent implementation associated with an external trust
-+ * orchestrator.
-+ *
-+ * This file is responsible for creating and setting up a tsem_context
-+ * structure that defines the modeling context being used by a
-+ * security modeling namespace.  This structure encapsulates
-+ * functionality that is generic to the namespace, such as the
-+ * cryptographic digest function that is used for security coefficient
-+ * mapping.
-+ *
-+ * Information for managing externally modeled namespaces are
-+ * maintained in the tsem_context structure while information for
-+ * internally modeled namespaces is maintained in the tsem_model
-+ * structure.  These structures are populated in the tsem_context
-+ * structure depending on whether or not an internal or externally
-+ * modeled namespace is being created.
-+ *
-+ * A tsem_context structure has a kref structure that is used to track
-+ * the number of uses of a context.  This reference count is
-+ * incremented each time a task is allocated in the context of a
-+ * security modeling namespace and decremented when a task exists.
-+ *
-+ * The release of the last reference to a context causes the structure
-+ * and its embedded structures to be released, thus freeing the
-+ * resources that have been allocated for modeling the namespace.
++ * The other major role of this file is to provide the tsem_map_task()
++ * function that is used to generate the TASK_ID for a process.  This
++ * function is called from the tsem_bprm_committed_creds() function.
 + */
++
++#include <linux/magic.h>
++#include <uapi/linux/prctl.h>
 +
 +#include "tsem.h"
 +
-+static u64 context_id;
-+
-+struct context_key {
-+	struct list_head list;
-+	u64 context_id;
-+	u8 key[HASH_MAX_DIGESTSIZE];
-+};
-+
-+DEFINE_MUTEX(context_id_mutex);
-+LIST_HEAD(context_id_list);
-+
-+static void remove_task_key(u64 context_id)
++static int get_COE_mapping(struct tsem_event *ep, u8 *mapping)
 +{
-+	struct context_key *entry, *tmp_entry;
-+
-+	list_for_each_entry_safe(entry, tmp_entry, &context_id_list, list) {
-+		if (context_id == entry->context_id) {
-+			list_del(&entry->list);
-+			kfree(entry);
-+			break;
-+		}
-+	}
-+}
-+
-+static int generate_task_key(const char *keystr, u64 context_id,
-+			     struct tsem_task *t_ttask,
-+			     struct tsem_task *p_ttask)
-+{
-+	int retn;
-+	bool found_key, valid_key = false;
-+	unsigned int size = tsem_digestsize();
-+	struct context_key *entry;
-+
-+	while (!valid_key) {
-+		get_random_bytes(t_ttask->task_key, size);
-+		retn = tsem_ns_event_key(t_ttask->task_key, keystr,
-+					 p_ttask->task_key);
-+		if (retn)
-+			goto done;
-+
-+		if (list_empty(&context_id_list))
-+			break;
-+
-+		found_key = false;
-+		list_for_each_entry(entry, &context_id_list, list) {
-+			if (!memcmp(entry->key, p_ttask->task_key, size)) {
-+				found_key = true;
-+				break;
-+			}
-+		}
-+		if (!found_key)
-+			valid_key = true;
-+	}
-+
-+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+	if (!entry) {
-+		retn = -ENOMEM;
-+		goto done;
-+	}
-+
-+	entry->context_id = context_id;
-+	memcpy(entry->key, p_ttask->task_key, size);
-+	list_add_tail(&entry->list, &context_id_list);
-+	retn = 0;
-+
-+ done:
-+	return retn;
-+}
-+
-+static struct tsem_external *allocate_external(u64 context_id,
-+					       const char *keystr)
-+{
-+	int retn = -ENOMEM;
-+	char bufr[20 + 1];
-+	struct tsem_external *external;
-+	struct tsem_task *t_ttask = tsem_task(current);
-+	struct tsem_task *p_ttask = tsem_task(current->real_parent);
-+
-+	external = kzalloc(sizeof(*external), GFP_KERNEL);
-+	if (!external)
-+		goto done;
-+
-+	retn = generate_task_key(keystr, context_id, t_ttask, p_ttask);
-+	if (retn)
-+		goto done;
-+
-+	spin_lock_init(&external->export_lock);
-+	INIT_LIST_HEAD(&external->export_list);
-+
-+	init_waitqueue_head(&external->wq);
-+
-+	scnprintf(bufr, sizeof(bufr), "%llu", context_id);
-+	external->dentry = tsem_fs_create_external(bufr);
-+	if (IS_ERR(external->dentry)) {
-+		retn = PTR_ERR(external->dentry);
-+		external->dentry = NULL;
-+	} else
-+		retn = 0;
-+
-+ done:
-+	if (retn) {
-+		memset(t_ttask->task_key, '\0', tsem_digestsize());
-+		memset(p_ttask->task_key, '\0', tsem_digestsize());
-+		kfree(external);
-+		remove_task_key(context_id);
-+		external = ERR_PTR(retn);
-+	} else
-+		p_ttask->tma_for_ns = context_id;
-+
-+	return external;
-+}
-+
-+static struct tsem_external *allocate_export(u64 context_id)
-+{
-+	int retn = -ENOMEM;
-+	char bufr[20 + 1];
-+	struct tsem_external *external;
-+
-+	external = kzalloc(sizeof(*external), GFP_KERNEL);
-+	if (!external)
-+		goto done;
-+
-+	spin_lock_init(&external->export_lock);
-+	INIT_LIST_HEAD(&external->export_list);
-+
-+	init_waitqueue_head(&external->wq);
-+
-+	scnprintf(bufr, sizeof(bufr), "%llu", context_id);
-+	external->dentry = tsem_fs_create_external(bufr);
-+	if (IS_ERR(external->dentry)) {
-+		retn = PTR_ERR(external->dentry);
-+		external->dentry = NULL;
-+	} else
-+		retn = 0;
-+
-+ done:
-+	if (retn) {
-+		kfree(external);
-+		external = ERR_PTR(retn);
-+	}
-+	return external;
-+}
-+
-+static void _release_inode_instances(u64 id, struct tsem_inode *tsip)
-+{
-+	struct tsem_inode_instance *owner, *tmp_owner;
-+
-+	mutex_lock(&tsip->instance_mutex);
-+	list_for_each_entry_safe(owner, tmp_owner, &tsip->instance_list,
-+				 list) {
-+		if (id == owner->creator) {
-+			list_del(&owner->list);
-+			kfree(owner);
-+		}
-+	}
-+	mutex_unlock(&tsip->instance_mutex);
-+}
-+
-+static void wq_put(struct work_struct *work)
-+{
-+	struct tsem_context *ctx;
-+	struct tsem_inode_entry *ie, *tmp_ie;
-+
-+	ctx = container_of(work, struct tsem_context, work);
-+
-+	mutex_lock(&ctx->inode_mutex);
-+	list_for_each_entry_safe(ie, tmp_ie, &ctx->inode_list, list) {
-+		list_del(&ie->list);
-+		_release_inode_instances(ctx->id, ie->tsip);
-+		kfree(ie);
-+	}
-+	mutex_unlock(&ctx->inode_mutex);
-+
-+	if (ctx->external) {
-+		mutex_lock(&context_id_mutex);
-+		remove_task_key(ctx->id);
-+		mutex_unlock(&context_id_mutex);
-+
-+		securityfs_remove(ctx->external->dentry);
-+		tsem_export_magazine_free(ctx->external);
-+		kfree(ctx->external);
-+	} else
-+		tsem_model_free(ctx);
-+
-+	crypto_free_shash(ctx->tfm);
-+	tsem_event_magazine_free(ctx);
-+	kfree(ctx->digestname);
-+	kfree(ctx);
-+}
-+
-+static void ns_free(struct kref *kref)
-+{
-+	struct tsem_context *ctx;
-+
-+	ctx = container_of(kref, struct tsem_context, kref);
-+
-+	INIT_WORK(&ctx->work, wq_put);
-+	if (!queue_work(system_wq, &ctx->work))
-+		WARN_ON_ONCE(1);
-+}
-+
-+/**
-+ * tsem_ns_put() - Release a reference to a modeling context.
-+ * @ctx: A pointer to the TMA context for which a reference is
-+ *	 to be released.
-+ *
-+ * This function is called to release a reference to a TMA modeling
-+ * domain.  The release of the last reference calls the ns_free()
-+ * function that schedules the actual work to release the resources
-+ * associated with the namespace to a workqueue.
-+ */
-+void tsem_ns_put(struct tsem_context *ctx)
-+{
-+	kref_put(&ctx->kref, ns_free);
-+}
-+
-+/**
-+ * tsem_ns_event_key() - Generate TMA authentication key.
-+ * @task_key: A pointer to the buffer containing the task identification
-+ *	      key that was randomly generated for the modeling domain.
-+ * @keystr: A pointer to the buffer containing the TMA authentication key
-+ *	    in ASCII hexadecimal form.
-+ *
-+ * This function generates the authentication key that will be used
-+ * to validate a call by a TMA to set the trust status of the process.
-+ *
-+ * Return: This function returns 0 if the key was properly generated
-+ *	   or a negative value if a hashing error occurred.
-+ */
-+int tsem_ns_event_key(u8 *task_key, const char *keystr, u8 *key)
-+{
-+	bool retn;
-+	u8 tma_key[HASH_MAX_DIGESTSIZE];
++	int retn = 0, size;
++	u8 *p;
 +	SHASH_DESC_ON_STACK(shash, tfm);
-+
-+	retn = hex2bin(tma_key, keystr, tsem_digestsize());
-+	if (retn)
-+		return -EINVAL;
 +
 +	shash->tfm = tsem_digest();
 +	retn = crypto_shash_init(shash);
 +	if (retn)
-+		return retn;
++		goto done;
 +
-+	retn = crypto_shash_update(shash, task_key, tsem_digestsize());
++	p = (u8 *) &ep->COE.uid;
++	size = sizeof(ep->COE.uid);
++	retn = crypto_shash_update(shash, p, size);
 +	if (retn)
-+		return retn;
++		goto done;
 +
-+	return crypto_shash_finup(shash, tma_key, tsem_digestsize(), key);
++	p = (u8 *) &ep->COE.euid;
++	size = sizeof(ep->COE.euid);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) &ep->COE.suid;
++	size = sizeof(ep->COE.suid);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) &ep->COE.gid;
++	size = sizeof(ep->COE.gid);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) &ep->COE.egid;
++	size = sizeof(ep->COE.egid);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) &ep->COE.sgid;
++	size = sizeof(ep->COE.sgid);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) &ep->COE.fsuid;
++	size = sizeof(ep->COE.fsuid);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) &ep->COE.fsgid;
++	size = sizeof(ep->COE.fsgid);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) &ep->COE.capeff;
++	size = sizeof(ep->COE.capeff);
++	retn = crypto_shash_finup(shash, p, size, mapping);
++
++ done:
++	return retn;
 +}
 +
-+static struct crypto_shash *configure_digest(const char *digest,
-+					     char **digestname,
-+					     u8 *zero_digest)
++static int add_u16(struct shash_desc *shash, u16 value)
++{
++	return crypto_shash_update(shash, (char *) &value, sizeof(value));
++}
++
++static int add_u32(struct shash_desc *shash, u32 value)
++{
++	return crypto_shash_update(shash, (char *) &value, sizeof(value));
++}
++
++static int add_u64(struct shash_desc *shash, u64 value)
++{
++	return crypto_shash_update(shash, (char *) &value, sizeof(value));
++}
++
++static int add_str(struct shash_desc *shash, char *str)
++{
++	u32 value;
++	u8 *p;
++	int retn;
++	int size;
++
++	p = (u8 *) &value;
++	value = strlen(str);
++	size = sizeof(value);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) str;
++	size = strlen(str);
++	retn = crypto_shash_update(shash, p, size);
++
++ done:
++	return retn;
++}
++
++static int add_temp_path(struct shash_desc *shash, char *pathname,
++			 u64 instance, u8 *owner)
++{
++	char *p, ch = '\0';
++	int retn;
++
++	p = strrchr(pathname, '/');
++	if (!p)
++		return -EINVAL;
++
++	++p;
++	ch = *p;
++	if (ch)
++		*p = '\0';
++	retn = add_str(shash, pathname);
++	if (ch)
++		*p = ch;
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, instance);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, owner, tsem_digestsize());
++
++ done:
++	return retn;
++}
++
++static int add_path(struct shash_desc *shash, struct tsem_path *path)
 +{
 +	int retn;
-+	struct crypto_shash *tfm;
++
++	if (path->dev) {
++		retn = add_u32(shash, MAJOR(path->dev));
++		if (retn)
++			goto done;
++		retn = add_u32(shash, MINOR(path->dev));
++		if (retn)
++			goto done;
++	}
++
++	if (path->created) {
++		retn = add_temp_path(shash, path->pathname, path->instance,
++				     path->owner);
++	} else
++		retn = add_str(shash, path->pathname);
++
++ done:
++	return retn;
++}
++
++static int add_inode(struct shash_desc *shash, struct tsem_inode_cell *inode)
++{
++	u32 value;
++	u8 *p = (u8 *) &value;
++	int retn;
++	int size = sizeof(value);
++
++	value = inode->uid;
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	value = inode->gid;
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	value = inode->mode;
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	value = inode->s_magic;
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	p = (u8 *) inode->s_id;
++	size = sizeof(inode->s_id);
++	retn = crypto_shash_update(shash, p, size);
++	if (retn)
++		goto done;
++
++	if (inode->s_magic == TMPFS_MAGIC)
++		p = (u8 *) uuid_null.b;
++	else
++		p = (u8 *) inode->s_uuid;
++	size = sizeof(inode->s_uuid);
++	retn = crypto_shash_update(shash, p, size);
++
++ done:
++	return retn;
++}
++
++static int add_dentry(struct shash_desc *shash, struct tsem_dentry *dentry)
++{
++	int retn;
++
++	if (dentry->have_inode)
++		retn = add_inode(shash, &dentry->inode);
++
++	if (dentry->path.dev) {
++		retn = add_u32(shash, MAJOR(dentry->path.dev));
++		if (retn)
++			goto done;
++		retn = add_u32(shash, MINOR(dentry->path.dev));
++		if (retn)
++			goto done;
++	}
++
++	if (dentry->path.created &&
++	    dentry->path.creator == tsem_context(current)->id) {
++		retn = add_temp_path(shash, dentry->path.pathname,
++				     dentry->path.instance,
++				     dentry->path.owner);
++	} else
++		retn = add_str(shash, dentry->path.pathname);
++
++ done:
++	return retn;
++}
++
++static int add_file(struct shash_desc *shash, struct tsem_file_args *args)
++{
++	int retn;
++
++	retn = add_u32(shash, args->out.flags);
++	if (retn)
++		goto done;
++
++	retn = add_inode(shash, &args->out.inode);
++	if (retn)
++		goto done;
++
++	retn = add_path(shash, &args->out.path);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, args->out.digest, tsem_digestsize());
++
++ done:
++	return retn;
++}
++
++static int add_creds(struct shash_desc *shash, struct tsem_COE *cp)
++{
++	int retn;
++
++	retn = add_u32(shash, cp->uid);
++	if (!retn)
++		goto done;
++
++	retn = add_u32(shash, cp->euid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, cp->suid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, cp->gid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, cp->egid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, cp->sgid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, cp->fsuid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, cp->fsgid);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, cp->capeff.value);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, cp->securebits);
++
++ done:
++	return retn;
++}
++
++static int add_socket(struct shash_desc *shash, struct tsem_socket *args)
++{
++	int retn;
++
++	retn = add_u32(shash, args->family);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->type);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->protocol);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, args->owner, sizeof(args->owner));
++
++ done:
++	return retn;
++}
++
++static int add_task(struct shash_desc *shash, u8 *task_id)
++{
++	return crypto_shash_update(shash, task_id, tsem_digestsize());
++}
++
++static int add_ipc_cred(struct shash_desc *shash, struct tsem_ipc_args *args)
++{
++	int retn;
++
++	retn = add_u32(shash, args->out.perm.uid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.perm.gid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.perm.cuid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.perm.cgid);
++	if (retn)
++		goto done;
++
++	retn = add_u16(shash, args->out.perm.mode);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, args->out.owner, tsem_digestsize());
++
++ done:
++	return retn;
++}
++
++static int add_socket_connect_bind(struct shash_desc *shash,
++				   struct tsem_event *ep)
++{
++	int retn;
++	char *p;
++	size_t size;
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	retn = add_socket(shash, &args->out.socka);
++	if (retn)
++		goto done;
++
++	switch (args->out.socka.family) {
++	case AF_INET:
++		retn = add_u16(shash, args->out.ipv4.sin_port);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, args->out.ipv4.sin_addr.s_addr);
++		break;
++
++	case AF_INET6:
++		retn = add_u16(shash, args->out.ipv6.sin6_port);
++		if (retn)
++			goto done;
++
++		p = (u8 *) args->out.ipv6.sin6_addr.in6_u.u6_addr8;
++		size = sizeof(args->out.ipv6.sin6_addr.in6_u.u6_addr8);
++		retn = crypto_shash_update(shash, p, size);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, args->out.ipv6.sin6_flowinfo);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, args->out.ipv6.sin6_scope_id);
++		break;
++
++	case AF_UNIX:
++		p = args->out.path;
++		size = strlen(args->out.path);
++		retn = crypto_shash_update(shash, p, size);
++		break;
++
++	default:
++		p = (u8 *) args->out.mapping;
++		size = tsem_digestsize();
++		retn = crypto_shash_update(shash, p, size);
++		break;
++	}
++
++ done:
++	return retn;
++}
++
++static int add_socket_accept(struct shash_desc *shash, struct tsem_event *ep)
++{
++	char *p;
++	int retn, size;
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	retn = add_socket(shash, &args->out.socka);
++	if (retn)
++		goto done;
++
++	switch (args->out.socka.family) {
++	case AF_INET:
++		retn = add_u16(shash, args->out.ipv4.sin_port);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, args->out.ipv4.sin_addr.s_addr);
++		break;
++
++	case AF_INET6:
++		retn = add_u16(shash, args->out.ipv6.sin6_port);
++		if (retn)
++			goto done;
++
++		p = (u8 *) args->out.ipv6.sin6_addr.in6_u.u6_addr8;
++		size = sizeof(args->out.ipv6.sin6_addr.in6_u.u6_addr8);
++		retn = crypto_shash_update(shash, p, size);
++		break;
++
++	case AF_UNIX:
++		p = args->out.path;
++		size = strlen(args->out.path);
++		retn = crypto_shash_update(shash, p, size);
++		break;
++
++	default:
++		p = args->out.mapping;
++		size = tsem_digestsize();
++		retn = crypto_shash_update(shash, p, size);
++		break;
++	}
++
++ done:
++	return retn;
++}
++
++static int add_socket_msg(struct shash_desc *shash, struct tsem_event *ep)
++{
++	char *p;
++	int size, retn;
++	struct sockaddr_in *ipv4;
++	struct sockaddr_in6 *ipv6;
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	retn = add_socket(shash, &args->out.socka);
++	if (retn)
++		goto done;
++
++	if (!args->out.have_addr)
++		goto done;
++
++	if (args->out.socka.family == AF_INET) {
++		ipv4 = &args->out.ipv4;
++		retn = add_u16(shash, ipv4->sin_port);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ipv4->sin_addr.s_addr);
++		if (retn)
++			goto done;
++	}
++	if (args->out.socka.family == AF_INET6) {
++		ipv6 = &args->out.ipv6;
++		retn = add_u16(shash, ipv6->sin6_port);
++		if (retn)
++			goto done;
++
++		p = (u8 *) &ipv6->sin6_addr.in6_u.u6_addr8;
++		size = sizeof(ipv6->sin6_addr.in6_u.u6_addr8);
++		retn = crypto_shash_update(shash, p, size);
++		if (retn)
++			goto done;
++	}
++
++ done:
++	return retn;
++}
++
++static int add_xattr(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_inode_xattr_args *args = &ep->CELL.inode_xattr;
++
++	retn = add_dentry(shash, &args->out.dentry);
++	if (retn)
++		return retn;
++
++	if (ep->event == TSEM_INODE_LISTXATTR)
++		return 0;
++
++	retn = add_str(shash, args->out.name);
++	if (retn)
++		return retn;
++
++	if (ep->event == TSEM_INODE_GETXATTR ||
++	    ep->event == TSEM_INODE_REMOVEXATTR)
++		return 0;
++
++	retn = crypto_shash_update(shash, args->out.value, args->out.size);
++	if (retn)
++		return retn;
++
++	return add_u32(shash, args->out.flags);
++}
++
++static int add_inode_rename(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	retn = add_inode(shash, &args->out.dir);
++	if (retn)
++		goto done;
++
++	retn = add_dentry(shash, &args->out.dentry);
++	if (retn)
++		goto done;
++
++	retn = add_inode(shash, &args->out.new_dir);
++	if (retn)
++		goto done;
++
++	retn = add_dentry(shash, &args->out.new_dentry);
++
++ done:
++	return retn;
++
++}
++
++static int add_inode_create(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn = 0;
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	retn = add_inode(shash, &args->out.dir);
++	if (retn)
++		goto done;
++
++	retn = add_dentry(shash, &ep->CELL.inode.out.dentry);
++	if (retn)
++		goto done;
++	retn = add_u16(shash, ep->CELL.inode.mode);
++
++ done:
++	return retn;
++}
++
++static int add_sb_umount(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	retn = add_dentry(shash, &args->out.dentry);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->flags);
++
++ done:
++	return retn;
++}
++
++static int add_sb_remount(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	retn = add_dentry(shash, &args->out.dentry);
++	if (retn)
++		goto done;
++
++	retn = add_str(shash, ep->CELL.sb.out.type);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, ep->CELL.sb.flags);
++
++ done:
++	return retn;
++}
++
++static int add_inode_link(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	retn = add_dentry(shash, &args->out.dentry);
++	if (retn)
++		goto done;
++
++	retn = add_inode(shash, &args->out.dir);
++	if (retn)
++		goto done;
++
++	retn = add_dentry(shash, &args->out.new_dentry);
++
++ done:
++	return retn;
++}
++
++static int add_quotactl(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_quota_args *args = &ep->CELL.quota;
++
++	retn = add_u32(shash, args->cmds);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->type);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->id);
++	if (retn)
++		goto done;
++
++	retn = add_dentry(shash, &args->out.dentry);
++	if (retn)
++		goto done;
++
++	retn = add_str(shash, args->out.fstype);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->out.s_flags);
++
++ done:
++	return retn;
++}
++
++static int add_mmap_file(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_mmap_file_args *args = &ep->CELL.mmap_file;
++
++	if (!args->anonymous) {
++		retn = add_file(shash, &args->file);
++		if (retn)
++			goto done;
++	}
++
++	retn = add_u32(shash, args->prot);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->flags);
++
++ done:
++	return retn;
++}
++
++static int add_task_setrlimit(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	retn = add_task(shash, args->target);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->u.resource);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->cur);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->max);
++
++ done:
++	return retn;
++}
++
++static int add_move_path(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	retn = add_path(shash, &args->out.path);
++	if (retn)
++		goto done;
++
++	add_path(shash, &args->out.path2);
++
++ done:
++	return retn;
++}
++
++static int add_task_kill(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	retn = add_task(shash, args->target);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->signal);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->cross_model);
++
++ done:
++	return retn;
++}
++
++static int add_ptrace_access_check(struct shash_desc *shash,
++				   struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	retn = add_task(shash, args->target);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->u.resource);
++
++ done:
++	return retn;
++}
++
++static int add_capget(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_capability_args *args = &ep->CELL.capability;
++
++	retn = add_task(shash, args->target);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->effective.val);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->inheritable.val);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->permitted.val);
++
++ done:
++	return retn;
++}
++
++static int add_capset(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_capability_args *args = &ep->CELL.capability;
++
++	retn = add_u64(shash, args->effective.val);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->inheritable.val);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->permitted.val);
++
++ done:
++	return retn;
++}
++
++static int add_capable(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_capability_args *args = &ep->CELL.capability;
++
++	retn = add_u32(shash, args->cap);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->opts);
++
++ done:
++	return retn;
++}
++
++static int add_key_permission(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_key_args *args = &ep->CELL.key;
++
++	retn = add_u32(shash, args->out.possessed);
++	if (retn)
++		goto done;
++
++	retn = add_u16(shash, args->out.uid);
++	if (retn)
++		goto done;
++
++	retn = add_u16(shash, args->out.gid);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->out.flags);
++	if (retn)
++		goto done;
++
++	retn = add_creds(shash, &args->out.cred);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.perm);
++
++ done:
++	return retn;
++}
++
++static int add_inode_setattr(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_inode_attr_args *args = &ep->CELL.inode_attr;
++
++	retn = add_dentry(shash, &args->out.dentry);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.valid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.mode);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.uid);
++	if (retn)
++		goto done;
++
++	retn = add_u32(shash, args->out.gid);
++	if (retn)
++		goto done;
++
++	retn = add_u64(shash, args->out.size);
++
++ done:
++	return retn;
++}
++
++static int add_bpf(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_bpf_args *args = &ep->CELL.bpf;
++
++	retn = add_u32(shash, args->bpf.cmd);
++	if (!retn)
++		goto done;
++
++	retn = add_u32(shash, args->bpf.size);
++
++ done:
++	return retn;
++}
++
++static int add_bpf_map(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_bpf_args *args = &ep->CELL.bpf;
++
++	retn = add_u32(shash, args->map.map_type);
++	if (!retn)
++		goto done;
++
++	retn = add_u32(shash, args->map.fmode);
++
++ done:
++	return retn;
++}
++
++static int add_bpf_prog(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_bpf_args *args = &ep->CELL.bpf;
++
++	retn = add_u32(shash, args->prog.type);
++	if (!retn)
++		goto done;
++
++	retn = add_u32(shash, args->prog.attach_type);
++
++ done:
++	return retn;
++}
++
++static int add_settime(struct shash_desc *shash, struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_time_args *args = &ep->CELL.time;
++
++	if (args->have_ts) {
++		retn = add_u64(shash, ep->CELL.time.seconds);
++		if (retn)
++			goto done;
++
++		retn = add_u64(shash, ep->CELL.time.nsecs);
++		if (retn)
++			goto done;
++	}
++
++	if (args->have_tz) {
++		retn = add_u32(shash, ep->CELL.time.minuteswest);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.time.dsttime);
++		if (retn)
++			goto done;
++	}
++
++ done:
++	return retn;
++}
++
++static int get_cell_mapping(struct tsem_event *ep, u8 *mapping)
++{
++	int retn = 0, size;
++	u8 *p;
 +	SHASH_DESC_ON_STACK(shash, tfm);
 +
-+	*digestname = kstrdup(digest, GFP_KERNEL);
-+	if (!*digestname)
-+		return ERR_PTR(-ENOMEM);
-+
-+	tfm = crypto_alloc_shash(digest, 0, 0);
-+	if (IS_ERR(tfm))
-+		return tfm;
-+
-+	shash->tfm = tfm;
-+	retn = crypto_shash_digest(shash, NULL, 0, zero_digest);
-+	if (retn) {
-+		crypto_free_shash(tfm);
-+		tfm = NULL;
-+	}
-+
-+	return tfm;
-+}
-+
-+/**
-+ * tsem_ns_create() - Create a TSEM modeling namespace.
-+ * @type:   The type of namespace being created.
-+ * @digest: A null terminated character buffer containing the name
-+ *	    of the hash function that is to be used for the modeling
-+ *	    domain.
-+ * @ns:     The enumeration type that specifies whether the security
-+ *	    event descriptions should reference the initial user
-+ *	    namespace or the current user namespace.
-+ * @key:    A pointer to a null-terminated buffer containing the key
-+ *	    that will be used to authenticate the TMA's ability to set
-+ *	    the trust status of a process.
-+ *
-+ * This function is used to create either an internally or externally
-+ * modeled TSEM namespace.  The type of the namespace to be created
-+ * is specified with the tsem_control_type enumeration value.  A
-+ * request for an internally model namespace causes a new structure to be
-+ * allocated that will hold the description of the security model.
-+ * An externally modeled domain will have a control structure allocated
-+ * that manages the export of security event descriptions to the
-+ * trust orchestrator that is responsible for running the TMA
-+ * implementation.
-+ *
-+ * Return: This function returns 0 if the namespace was created and
-+ *	   a negative error value on error.
-+ */
-+int tsem_ns_create(const enum tsem_control_type type, const char *digest,
-+		   const enum tsem_ns_reference ns, const char *key,
-+		   unsigned int cache_size)
-+{
-+	u8 zero_digest[HASH_MAX_DIGESTSIZE];
-+	char *use_digest;
-+	int retn = -ENOMEM;
-+	u64 new_id;
-+	struct tsem_task *tsk = tsem_task(current);
-+	struct tsem_context *new_ctx;
-+	struct tsem_model *model = NULL;
-+	struct crypto_shash *tfm;
-+
-+	tfm = configure_digest(digest, &use_digest, zero_digest);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	new_ctx = kzalloc(sizeof(*new_ctx), GFP_KERNEL);
-+	if (!new_ctx)
-+		return retn;
-+
-+	mutex_lock(&context_id_mutex);
-+	new_id = context_id + 1;
-+
-+	retn = tsem_event_magazine_allocate(new_ctx, cache_size);
++	shash->tfm = tsem_digest();
++	retn = crypto_shash_init(shash);
 +	if (retn)
 +		goto done;
 +
-+	if (type == TSEM_CONTROL_INTERNAL) {
-+		model = tsem_model_allocate(cache_size);
-+		if (!model)
-+			goto done;
-+		new_ctx->model = model;
-+	}
-+	if (type == TSEM_CONTROL_EXTERNAL) {
-+		if (crypto_shash_digestsize(tfm)*2 != strlen(key)) {
-+			retn = -EINVAL;
-+			goto done;
-+		}
-+
-+		new_ctx->external = allocate_external(new_id, key);
-+		if (IS_ERR(new_ctx->external)) {
-+			retn = PTR_ERR(new_ctx->external);
-+			new_ctx->external = NULL;
-+			goto done;
-+		}
-+
-+		retn = tsem_export_magazine_allocate(new_ctx->external,
-+						     cache_size);
-+		if (retn)
-+			goto done;
-+	}
-+	if (type == TSEM_CONTROL_EXPORT) {
-+		new_ctx->external = allocate_export(new_id);
-+		if (IS_ERR(new_ctx->external)) {
-+			retn = PTR_ERR(new_ctx->external);
-+			new_ctx->external = NULL;
-+			goto done;
-+		}
-+
-+		retn = tsem_export_magazine_allocate(new_ctx->external,
-+						     cache_size);
++	switch (ep->event) {
++	case TSEM_NETLINK_SEND:
++		retn = add_socket(shash, &ep->CELL.socket.out.socka);
 +		if (retn)
 +			goto done;
 +
-+		new_ctx->external->export_only = true;
++		retn = add_u32(shash, ep->CELL.netlink.out.uid);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.netlink.out.gid);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.netlink.out.portid);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.netlink.out.dst_group);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.netlink.out.flags);
++		if (retn)
++			goto done;
++
++		if (ep->CELL.netlink.out.nsid_set) {
++			retn = add_u32(shash, ep->CELL.netlink.out.flags);
++			if (retn)
++				goto done;
++		}
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_IPC_PERMISSION:
++		retn = add_ipc_cred(shash, &ep->CELL.ipc);
++		if (retn)
++			goto done;
++
++		retn = add_u16(shash, ep->CELL.ipc.perm_flag);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SHM_ASSOCIATE:
++	case TSEM_SHM_SHMCTL:
++	case TSEM_SHM_SHMAT:
++	case TSEM_SEM_ASSOCIATE:
++	case TSEM_SEM_SEMCTL:
++	case TSEM_MSG_QUEUE_ASSOCIATE:
++	case TSEM_MSG_QUEUE_MSGCTL:
++		retn = add_ipc_cred(shash, &ep->CELL.ipc);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.ipc.value);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_MSG_QUEUE_MSGRCV:
++		retn = add_ipc_cred(shash, &ep->CELL.ipc);
++		if (retn)
++			goto done;
++
++		p = ep->CELL.ipc.out.target;
++		size = tsem_digestsize();
++		retn = crypto_shash_update(shash, p, size);
++		if (retn)
++			goto done;
++
++		retn = add_u64(shash, ep->CELL.ipc.type);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.ipc.value);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SEM_SEMOP:
++		retn = add_ipc_cred(shash, &ep->CELL.ipc);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.ipc.nsops);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.ipc.value);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_CREATE:
++		retn = add_inode_create(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_MKDIR:
++		retn = add_inode(shash, &ep->CELL.inode.out.dir);
++		if (retn)
++			goto done;
++
++		retn = add_dentry(shash, &ep->CELL.inode.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = add_u16(shash, ep->CELL.inode.mode);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_RMDIR:
++	case TSEM_INODE_UNLINK:
++		retn = add_inode(shash, &ep->CELL.inode.out.dir);
++		if (retn)
++			goto done;
++
++		retn = add_dentry(shash, &ep->CELL.inode.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SYSLOG:
++		retn = add_u32(shash, ep->CELL.value);
++		if (retn)
++			break;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SETTIME:
++		retn = add_settime(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_LINK:
++		retn = add_inode_link(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_SYMLINK:
++		retn = add_inode(shash, &ep->CELL.inode.out.dir);
++		if (retn)
++			goto done;
++
++		retn = add_dentry(shash, &ep->CELL.inode.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = add_str(shash, ep->CELL.inode.out.old_name);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_MKNOD:
++		retn = add_inode(shash, &ep->CELL.inode.out.dir);
++		if (retn)
++			goto done;
++
++		retn = add_dentry(shash, &ep->CELL.inode.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = add_u16(shash, ep->CELL.inode.mode);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.inode.dev);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_RENAME:
++		retn = add_inode_rename(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_KILLPRIV:
++		retn = add_dentry(shash, &ep->CELL.inode.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_FILE_OPEN:
++	case TSEM_BPRM_COMMITTING_CREDS:
++		retn = add_file(shash, &ep->CELL.file);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		if (retn)
++			goto done;
++		break;
++
++	case TSEM_FILE_IOCTL:
++	case TSEM_FILE_LOCK:
++	case TSEM_FILE_FCNTL:
++		retn = add_file(shash, &ep->CELL.file);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.file.cmd);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_FILE_RECEIVE:
++		retn = add_file(shash, &ep->CELL.file);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_MMAP_FILE:
++		retn = add_mmap_file(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_UNIX_STREAM_CONNECT:
++	case TSEM_UNIX_MAY_SEND:
++	case TSEM_SOCKET_SOCKETPAIR:
++		retn = add_socket(shash, &ep->CELL.socket.out.socka);
++		if (retn)
++			goto done;
++
++		retn = add_socket(shash, &ep->CELL.socket.out.sockb);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SOCKET_SENDMSG:
++	case TSEM_SOCKET_RECVMSG:
++		retn = add_socket_msg(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SOCKET_GETSOCKNAME:
++	case TSEM_SOCKET_GETPEERNAME:
++	case TSEM_TUN_DEV_ATTACH_QUEUE:
++		retn = add_socket(shash, &ep->CELL.socket.out.socka);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SOCKET_CREATE:
++		retn = add_u32(shash, ep->CELL.socket.out.socka.family);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.socket.out.socka.type);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.socket.out.socka.protocol);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.socket.out.socka.kern);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SOCKET_CONNECT:
++	case TSEM_SOCKET_BIND:
++		retn = add_socket_connect_bind(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SOCKET_ACCEPT:
++		retn = add_socket_accept(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SOCKET_LISTEN:
++	case TSEM_SOCKET_SHUTDOWN:
++		retn = add_socket(shash, &ep->CELL.socket.out.socka);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.socket.value);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SOCKET_SETSOCKOPT:
++		retn = add_socket(shash, &ep->CELL.socket.out.socka);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.socket.value);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.socket.optname);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_KERNEL_MODULE_REQUEST:
++		retn = add_str(shash, ep->CELL.kernel.out.kmod_name);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_KERNEL_LOAD_DATA:
++		retn = add_u32(shash, ep->CELL.kernel.id);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.kernel.contents);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_KERNEL_READ_FILE:
++		retn = add_file(shash, &ep->CELL.kernel.out.file);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.kernel.id);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.kernel.contents);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_TASK_KILL:
++		retn = add_task_kill(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_PTRACE_ACCESS_CHECK:
++		retn = add_ptrace_access_check(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_PTRACE_TRACEME:
++		retn = add_task(shash, ep->CELL.task_kill.source);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_CAPGET:
++		retn = add_capget(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_CAPSET:
++		retn = add_capset(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_CAPABLE:
++		retn = add_capable(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_TASK_SETPGID:
++		p = ep->CELL.task_kill.target;
++		size = sizeof(ep->CELL.task_kill.target);
++		retn = crypto_shash_update(shash, p, size);
++		if (retn)
++			goto done;
++
++		p = ep->CELL.task_kill.source;
++		size = sizeof(ep->CELL.task_kill.source);
++		retn = crypto_shash_finup(shash, p, size, mapping);
++		break;
++
++	case TSEM_TASK_GETPGID:
++	case TSEM_TASK_GETSID:
++	case TSEM_TASK_GETIOPRIO:
++	case TSEM_TASK_SETSCHEDULER:
++	case TSEM_TASK_GETSCHEDULER:
++		retn = add_task(shash, ep->CELL.task_kill.target);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_TASK_SETNICE:
++	case TSEM_TASK_SETIOPRIO:
++		p = ep->CELL.task_kill.target;
++		size = sizeof(ep->CELL.task_kill.target);
++		retn = crypto_shash_update(shash, p, size);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.task_kill.u.value);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_TASK_PRLIMIT:
++		retn = add_creds(shash, &ep->CELL.task_prlimit.out.cred);
++		if (retn)
++			goto done;
++
++		retn = add_creds(shash, &ep->CELL.task_prlimit.out.tcred);
++		if (retn)
++			goto done;
++
++		retn = add_u32(shash, ep->CELL.task_prlimit.flags);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_TASK_SETRLIMIT:
++		retn = add_task_setrlimit(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_TASK_PRCTL:
++		retn = add_u32(shash, ep->CELL.task_prctl.option);
++		if (retn)
++			goto done;
++
++		if (ep->CELL.task_prctl.option != PR_GET_PDEATHSIG)
++			retn = add_u64(shash, ep->CELL.task_prctl.arg2);
++		else
++			retn = add_u64(shash, 0);
++		if (retn)
++			goto done;
++
++		retn = add_u64(shash, ep->CELL.task_prctl.arg4);
++		if (retn)
++			goto done;
++
++		retn = add_u64(shash, ep->CELL.task_prctl.arg5);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_GETATTR:
++		retn = add_dentry(shash, &ep->CELL.inode_attr.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_SETATTR:
++		retn = add_inode_setattr(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_INODE_SETXATTR:
++	case TSEM_INODE_GETXATTR:
++	case TSEM_INODE_REMOVEXATTR:
++	case TSEM_INODE_LISTXATTR:
++		retn = add_xattr(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_KEY_ALLOC:
++		retn = add_creds(shash, &ep->CELL.key.out.cred);
++		if (retn)
++			goto done;
++
++		retn = add_u64(shash, ep->CELL.key.flags);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_KEY_PERMISSION:
++		retn = add_key_permission(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SB_MOUNT:
++		if (ep->CELL.sb.out.dev_name) {
++			retn = add_str(shash, ep->CELL.sb.out.dev_name);
++			if (retn)
++				goto done;
++		}
++
++		retn = add_path(shash, &ep->CELL.sb.out.path);
++		if (retn)
++			goto done;
++
++		if (ep->CELL.sb.out.type) {
++			retn = add_str(shash, ep->CELL.sb.out.type);
++			if (retn)
++				goto done;
++		}
++
++		retn = add_u64(shash, ep->CELL.sb.flags);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SB_UMOUNT:
++		retn = add_sb_umount(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SB_REMOUNT:
++		retn = add_sb_remount(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SB_STATFS:
++		retn = add_dentry(shash, &ep->CELL.sb.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_SB_PIVOTROOT:
++	case TSEM_MOVE_MOUNT:
++		retn = add_move_path(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_QUOTACTL:
++		retn = add_quotactl(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_QUOTA_ON:
++		retn = add_dentry(shash, &ep->CELL.quota.out.dentry);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_BPF:
++		retn = add_bpf(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_BPF_MAP:
++		retn = add_bpf_map(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	case TSEM_BPF_PROG:
++		retn = add_bpf_prog(shash, ep);
++		if (retn)
++			goto done;
++
++		retn = crypto_shash_final(shash, mapping);
++		break;
++
++	default:
++		p = (u8 *) tsem_names[ep->event];
++		size = strlen(tsem_names[ep->event]);
++		retn = crypto_shash_update(shash, p, size);
++		if (retn)
++			goto done;
++
++		p = tsem_context(current)->zero_digest;
++		size = tsem_digestsize();
++		retn = crypto_shash_finup(shash, p, size, mapping);
++		if (retn)
++			goto done;
++		break;
 +	}
-+
-+
-+	kref_init(&new_ctx->kref);
-+
-+	new_ctx->id = new_id;
-+	new_ctx->tfm = tfm;
-+	new_ctx->digestname = use_digest;
-+	memcpy(new_ctx->zero_digest, zero_digest,
-+	       crypto_shash_digestsize(tfm));
-+
-+	mutex_init(&new_ctx->inode_mutex);
-+	INIT_LIST_HEAD(&new_ctx->inode_list);
-+
-+	if (ns == TSEM_NS_CURRENT)
-+		new_ctx->use_current_ns = true;
-+	memcpy(new_ctx->actions, tsk->context->actions,
-+	       sizeof(new_ctx->actions));
-+	retn = 0;
 +
 + done:
-+	if (retn) {
-+		if (type != TSEM_CONTROL_EXPORT)
-+			remove_task_key(new_id);
-+		crypto_free_shash(tfm);
-+		tsem_event_magazine_free(new_ctx);
-+		kfree(use_digest);
-+		if (new_ctx->external)
-+			tsem_export_magazine_free(new_ctx->external);
-+		kfree(new_ctx->external);
-+		kfree(new_ctx);
-+		kfree(model);
-+	} else {
-+		context_id = new_id;
-+		tsk->context = new_ctx;
-+		if (type == TSEM_CONTROL_EXTERNAL)
-+			retn = tsem_export_aggregate();
-+		if (type == TSEM_CONTROL_INTERNAL)
-+			retn = tsem_model_add_aggregate();
++	if (ep->event == TSEM_INODE_SETXATTR) {
++		kfree(ep->CELL.inode_xattr.out.value);
++		ep->CELL.inode_xattr.out.value = NULL;
 +	}
 +
-+	mutex_unlock(&context_id_mutex);
++	return retn;
++}
++
++static int get_event_mapping(int event, u8 *p_task_id, u8 *task_id,
++			     u8 *COE_id, u8 *cell_id, u8 *mapping)
++{
++	int retn = 0;
++	u32 event_id = (u32) event;
++	SHASH_DESC_ON_STACK(shash, tfm);
++
++	shash->tfm = tsem_digest();
++	retn = crypto_shash_init(shash);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, tsem_names[event_id],
++				   strlen(tsem_names[event_id]));
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, p_task_id, tsem_digestsize());
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, task_id, tsem_digestsize());
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, COE_id, tsem_digestsize());
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_finup(shash, cell_id, tsem_digestsize(), mapping);
++
++ done:
++	return retn;
++}
++
++static int map_event(struct tsem_event *ep, u8 *p_task_id, u8 *task_id,
++		     u8 *event_mapping)
++{
++	int retn;
++	u8 COE_mapping[HASH_MAX_DIGESTSIZE];
++	u8 cell_mapping[HASH_MAX_DIGESTSIZE];
++
++	retn = get_COE_mapping(ep, COE_mapping);
++	if (retn)
++		goto done;
++
++	retn = get_cell_mapping(ep, cell_mapping);
++	if (retn)
++		goto done;
++
++	retn = get_event_mapping(ep->event, p_task_id, task_id, COE_mapping,
++				 cell_mapping, event_mapping);
++ done:
 +	return retn;
 +}
 +
 +/**
-+ * tsem_ns_export_root() - Configure root namespace for export only modeling.
-+ * @magazine_size:  The number of entries to be implemented in the event
-+ *		    cache.
++ * tsem_map_task() - Create the task identity description structure.
++ * @file: A pointer to the file structure defining the executable.
++ * @task_id: Pointer to the buffer that the task id will be copied to.
 + *
-+ * This function is called to setup the root security modeling namespace
-+ * for the export of security event descriptions in tsem_mode=2
-+ * operation.
++ * This function creates the security event state point that will be used
++ * as the task identifier for the generation of security state points
++ * that are created by the process that task identifier is assigned to.
 + *
-+ * Return: This function returns 0 if the setup of the root namespace
-+ *	   for export was successul and a negative error value if
-+ *	   the setup fails.
++ * Return: This function returns 0 if the mapping was successfully
++ *	   created and an error value otherwise.
 + */
-+int tsem_ns_export_root(unsigned int magazine_size)
++int tsem_map_task(struct file *file, u8 *task_id)
 +{
-+	int retn = -ENOMEM;
-+	struct tsem_context *new_ctx;
-+	struct tsem_task *tsk = tsem_task(current);
++	int retn;
++	u8 null_taskid[HASH_MAX_DIGESTSIZE];
++	struct tsem_event *ep;
 +
-+	new_ctx = kzalloc(sizeof(*new_ctx), GFP_KERNEL);
-+	if (!new_ctx)
-+		return retn;
-+	*new_ctx = *tsem_context(current);
++	ep = tsem_event_allocate(TSEM_BPRM_COMMITTING_CREDS, false);
++	if (!ep)
++		return -ENOMEM;
 +
-+	new_ctx->external = allocate_export(tsem_context(current)->id);
-+	if (IS_ERR(new_ctx->external)) {
-+		retn = PTR_ERR(new_ctx->external);
-+		new_ctx->external = NULL;
-+		goto done;
-+	}
-+
-+	retn = tsem_export_magazine_allocate(new_ctx->external, magazine_size);
++	ep->CELL.file.in.file = file;
++	retn = tsem_event_init(ep);
 +	if (retn)
-+		goto done;
++		return retn;
 +
-+	new_ctx->external->export_only = true;
++	memset(null_taskid, '\0', tsem_digestsize());
++	retn = map_event(ep, tsem_task(current)->p_task_id, null_taskid,
++			 task_id);
++	tsem_event_put(ep);
 +
-+ done:
-+	if (retn) {
-+		tsem_event_magazine_free(new_ctx);
-+		if (new_ctx->external)
-+			tsem_export_magazine_free(new_ctx->external);
-+		kfree(new_ctx);
-+	} else {
-+		new_ctx->tfm = tsk->context->tfm;
-+		new_ctx->digestname = tsk->context->digestname;
-+		memcpy(new_ctx->zero_digest, tsk->context->zero_digest,
-+		       crypto_shash_digestsize(tsk->context->tfm));
-+		tsk->context = new_ctx;
-+	}
++	return 0;
++}
 +
-+	return retn;
++/**
++ * tsem_map_event() - Create a security event mapping.
++ * @event: The number of the event to be mapped.
++ * @params: A pointer to the structure containing the event description
++ *	    parameters.
++ *
++ * This function creates a structure to describe a security event
++ * and maps the event into a security state coefficient.
++ *
++ * Return: This function returns a value of zero on success and a negative
++ *	   error code on failure.
++ */
++int tsem_map_event(struct tsem_event *ep)
++{
++	struct tsem_task *task = tsem_task(current);
++
++	return map_event(ep, task->p_task_id, task->task_id, ep->mapping);
 +}
 -- 
 2.39.1
