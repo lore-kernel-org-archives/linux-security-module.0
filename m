@@ -1,46 +1,63 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A4D31A94;
-	Mon,  1 Apr 2024 18:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F154777;
+	Mon,  1 Apr 2024 20:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711996954; cv=none; b=mCRSW0kG65aP/pv9cUuk/YUvwHxffaYqux2nfGoW7a4aaSMCJfmHcRkyP+8CBYlWPb9tsZcq9GHDpnIlJpFYHDOssw6YbNg1IMEqfbeXkHRd7x4ND1sHPfOvvQYEH0OoXZezc7jbIlg+1ztgeXsFMWAU3OhdJXCzdl5d8g90GDs=
+	t=1712002561; cv=none; b=d9THw99lZo+P0WoYmLcXw9QcI68bWg1oRN8Mq4sXKgSZ2/kTJdGaxQLvhNJFITqE3lAOUHyoXqXC3nbRCWG0ZTeaVW2cgmOfTOD0EKkQI3pFROqU+WGMHirut2qi9cKSaoI7poDzLLcZ3EkBKtWSXUg93ex5Yzo5HQmKp/TX6pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711996954; c=relaxed/simple;
-	bh=dwqxGUGTnX38kdEUpATPahVGeG1pIReessVg0QtXNMI=;
+	s=arc-20240116; t=1712002561; c=relaxed/simple;
+	bh=Ttp6HDtuJdCvQVWNwPlua9wZJguDphgClBqkOD6FMlY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rCygH8HXXdibasRVrVZeSswF/fas9uNdRBwilDmVABU8qXfWYaCKCVmEeXr+3pPy1SKVyWlJ8bSHAVmcFi0Q+71977FzXA0hA0tOBDC+IYJXFkimVVaA3DNn1gk0kN+nXG2WVEHSbV/Th6AfiXT+L+SKRQ01HiCW9Edg7/nLvJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLwHG32J; arc=none smtp.client-ip=10.30.226.201
+	 Content-Disposition; b=tM0bR6YnmQCLuukGrbG4J3FMRGR9xQNsCzFvi1kmcY+G4B1TRcI9PROn2WzGrcu3DFdMtFZJk8oN5lPRGdFudiIUPGwAQGwkfXf/s4wF9avvXXmKBo1NkGa/rJjz1SAA+Lz7EkcK36/2iXCcnDx6aObF0Szv3gvXzHLMjf136eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chzUaG2X; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLwHG32J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E179FC433F1;
-	Mon,  1 Apr 2024 18:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711996953;
-	bh=dwqxGUGTnX38kdEUpATPahVGeG1pIReessVg0QtXNMI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HLwHG32J2xiQsfvHaMJtM+ftN7QpgCtJGf60A+m/ur8/ozIRq/EUybEQXecZVEBVW
-	 Utb/S3EC/Sj/WDu5IOJ9yCTxahDYqumRV5AzsFxPpuJSec2i5caDXML6fJVqOeyH5q
-	 pkzZMr9Lm4e3hyWzWxMdLs5qDclAOn1DOoZl2xSN/Mm2AtMdCP6icYByl9KxE3Fnwl
-	 b2JH3JuzEymu0kushsLyqO9brGO01hxVArY5v33MeTWhmiTtOPOgKhsxggMmTPauO3
-	 N+yg2rpbYEXPsqLMh9n4cpYPB7urxmoNMHaiMmj9U1q3O0tAis+IfadldKN+JRIYJe
-	 opojUOncM1LkQ==
-Date: Mon, 1 Apr 2024 12:42:30 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v4][next] integrity: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <ZgsAFhl90kecIR00@neat>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chzUaG2X"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6e709e0c123so3821951b3a.1;
+        Mon, 01 Apr 2024 13:15:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712002542; x=1712607342; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m0mZE1Qz4uRWYwvIOjJ+HtSCn/ealgFF+V09O3RNHQU=;
+        b=chzUaG2XRGVfDVgsw0zlmNfFTeg6ddkdpsMJ0Ef8lFS/7K1EgYIkIeUIMi1dfo9kp7
+         DI7wuBZjw6VwHbaRgPbGKi0/g3YdwxMQByH5I4P1bTrRQElFzIL4ONEycBIrMkaC+Eyc
+         40gwjGzYLhxjkrR0j18eOWwxCQvvrQKKhVg3D2M7S5WWaZ0YQ1tb46PMI7a95zr5LQRc
+         q/VzYG94yn/IUmNckNfN3Nf4aAMGFfdkFmokfUCux6g1cVTlvsgR4Rjd1oJf2XlTZoha
+         7mcpoeVDtov+TBDFo5jU1POiN8YjPmSS0nD33E24Ij17vPg9+W8hxPPmbPnLMPSY0zbt
+         y8nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712002542; x=1712607342;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m0mZE1Qz4uRWYwvIOjJ+HtSCn/ealgFF+V09O3RNHQU=;
+        b=FWQmPQTOGWZdgPvQGnsFgIVi9RDeBeVNY8WoLTMP2iyxHzsyAMck4Qzhe5Hzakm9kR
+         3CurRVL10154BiV6SO/4ZGk1uV1BU/HbWIFwKTxhOJnXs4FHOaM/S2VQpcMjoB1ZRUne
+         dM12SEBur92QIHZCKLt0A9rKhFhT/cAXVoZcT4MuVajBbBC8ekS3VvtlMML3ivXZNwy7
+         wXGvERcKO7GAYpstF7XxqGBFgPItJxrx5ORSlr/zpOjH3niuUpD0BL6MyoBvN5sMdyve
+         I4gwmbMtbX+GACpA05gsJovaJvSlSJNKdx5smlIiYYVSW/WvOL4isbiumhcKjCyNEdg3
+         KFrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhqU0AhGfH88O1pPYort/6VN01u42z2tsrTXfG2GjbS559jzy/DumTnpL5/PAqxnicEMV3ldX3gAw5YhbM3cFce4tnFr4KOjI5XCt4Z0/pj/lcyo4zk0vvyxnlWCljRihuNqoQrza8OrTXMCDZ/MxJTcvz
+X-Gm-Message-State: AOJu0YyCxEuFwZHd8+aWWpBuI+OvsYV1eXGk30GJgZtniQeL5v8/ivJi
+	8kcuEN/dRVzeOxjVQnBdu4M+f1hl7GHsg8MRv3fGWZ+ZrFd8JPJ7
+X-Google-Smtp-Source: AGHT+IGBNe8NFchxXaUZPkrD8mNxkNXOpjHF7nQt7Y2T8RYqtTwMGMHzo2rlsJSXjXBlIN1AD9eU3A==
+X-Received: by 2002:a05:6a00:23ca:b0:6e7:117:c5d5 with SMTP id g10-20020a056a0023ca00b006e70117c5d5mr10588955pfc.23.1712002541865;
+        Mon, 01 Apr 2024 13:15:41 -0700 (PDT)
+Received: from ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx ([2409:40e3:10:ea9b:96f8:7cd5:d274:f9f1])
+        by smtp.gmail.com with ESMTPSA id c2-20020a056a000ac200b006eaf3057352sm5207180pfl.85.2024.04.01.13.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Apr 2024 13:15:41 -0700 (PDT)
+Date: Tue, 2 Apr 2024 01:45:33 +0530
+From: Ayush Tiwari <ayushtiw0110@gmail.com>
+To: alison.schofield@intel.com, paul@paul-moore.com, mic@digikod.net,
+	fabio.maria.de.francesco@linux.intel.com,
+	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Cc: outreachy@lists.linux.dev, linux-security-module@vger.kernel.org
+Subject: [PATCH] landlock: Use kmem for object, rule, and hierarchy structures
+Message-ID: <ZgsV5RuwsiM3WwXG@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,299 +67,150 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
--Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
-ready to enable it globally.
+Use kmem_cache to replace kzalloc() calls with kmem_cache_zalloc() for
+structs landlock_object, landlock_rule and landlock_hierarchy and
+update the related dependencies to improve memory allocation and
+deallocation performance. This patch does not change kfree() and
+kfree_rcu() calls because according to kernel commit
+ae65a5211d90("mm/slab: document kfree() as allowed for
+kmem_cache_alloc() objects"), starting from kernel 6.4, kfree() is
+safe to use for such objects. Use clang-format to format the code
+to the kernel style. /proc/slabinfo shows decrease in
+'ext4_inode_cache' and 'dentry' usage suggesting a significant
+reduction in file system related object and memory allocations and
+increase in kmem_cache and kmalloc usage also indicates more cache
+allocation for objects for efficient memory handling.
 
-There is currently an object (`hdr)` in `struct ima_max_digest_data`
-that contains a flexible structure (`struct ima_digest_data`):
-
- struct ima_max_digest_data {
-	struct ima_digest_data hdr;
-        u8 digest[HASH_MAX_DIGESTSIZE];
- } __packed;
-
-So, in order to avoid ending up with a flexible-array member in the
-middle of a struct, we use the `__struct_group()` helper to separate
-the flexible array from the rest of the members in the flexible
-structure:
-
-struct ima_digest_data {
-        __struct_group(ima_digest_data_hdr, hdr, __packed,
-
-	... the rest of the members
-
-        );
-        u8 digest[];
-} __packed;
-
-And similarly for `struct evm_ima_xattr_data`.
-
-With the change described above, we can now declare an object of the
-type of the tagged `struct ima_digest_data_hdr`, without embedding the
-flexible array in the middle of another struct:
-
- struct ima_max_digest_data {
-        struct ima_digest_data_hdr hdr;
-        u8 digest[HASH_MAX_DIGESTSIZE];
- } __packed;
-
-And similarly for `struct evm_digest` and `struct evm_xattr`.
-
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure.
-
-So, with these changes, fix the following warnings:
-
-security/integrity/evm/evm.h:64:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/evm/../integrity.h:40:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/evm/../integrity.h:68:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/ima/../integrity.h:40:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/ima/../integrity.h:68:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/integrity.h:40:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/integrity.h:68:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/platform_certs/../integrity.h:40:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/integrity/platform_certs/../integrity.h:68:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Link: https://github.com/KSPP/linux/issues/202
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
 ---
-Changes in v4:
- - Update changelog text. (Mimi Zohar)
- - Include changes for `struct evm_ima_xattr_data` and `struct evm_xattr`.
- - Add a couple of code comments.
+ security/landlock/object.c  | 12 +++++++++++-
+ security/landlock/object.h  |  2 ++
+ security/landlock/ruleset.c | 18 +++++++++++++++---
+ security/landlock/ruleset.h |  2 ++
+ security/landlock/setup.c   |  4 ++++
+ 5 files changed, 34 insertions(+), 4 deletions(-)
 
-Changes in v3:
- - struct ima_digest_data is a packed structure. So, to keep things
-   consistent, use the attribute __packed on the tagged struct 
-   ima_digest_data_hdr. For this, we use __struct_group() instead of
-   struct_group_tagged(). Update the changelog text, accordingly.
- - Link: https://lore.kernel.org/linux-hardening/ZfuzWku+ip4fsZrb@neat/ 
-
-Changes in v2:
- - Include changes for `struct evm_digest` (Mimi Zohar)
- - Link: https://lore.kernel.org/linux-hardening/ZfuvoIj+AJHjCdTs@neat/
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/ZeYKWrXvACBBrAP8@neat/
-
- security/integrity/evm/evm.h              |  2 +-
- security/integrity/ima/ima_api.c          |  6 ++++--
- security/integrity/ima/ima_appraise.c     |  4 +++-
- security/integrity/ima/ima_init.c         |  6 ++++--
- security/integrity/ima/ima_main.c         |  6 ++++--
- security/integrity/ima/ima_template_lib.c | 10 ++++++----
- security/integrity/integrity.h            | 12 +++++++++---
- 7 files changed, 31 insertions(+), 15 deletions(-)
-
-diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
-index eb1a2c343bd7..72e3341ae6f7 100644
---- a/security/integrity/evm/evm.h
-+++ b/security/integrity/evm/evm.h
-@@ -61,7 +61,7 @@ extern int evm_hmac_attrs;
- extern struct list_head evm_config_xattrnames;
+diff --git a/security/landlock/object.c b/security/landlock/object.c
+index 1f50612f0185..cfc367725624 100644
+--- a/security/landlock/object.c
++++ b/security/landlock/object.c
+@@ -17,6 +17,15 @@
  
- struct evm_digest {
--	struct ima_digest_data hdr;
-+	struct ima_digest_data_hdr hdr;
- 	char digest[IMA_MAX_DIGEST_SIZE];
- } __packed;
+ #include "object.h"
  
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index b37d043d5748..c7c8d1bffb17 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -247,6 +247,8 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 	struct inode *real_inode = d_real_inode(file_dentry(file));
- 	const char *filename = file->f_path.dentry->d_name.name;
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	struct kstat stat;
- 	int result = 0;
- 	int length;
-@@ -286,9 +288,9 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 			result = -ENODATA;
- 		}
- 	} else if (buf) {
--		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
-+		result = ima_calc_buffer_hash(buf, size, hash_hdr);
- 	} else {
--		result = ima_calc_file_hash(file, &hash.hdr);
-+		result = ima_calc_file_hash(file, hash_hdr);
- 	}
++static struct kmem_cache *landlock_object_cache;
++
++void __init landlock_object_cache_init(void)
++{
++	landlock_object_cache = kmem_cache_create(
++		"landlock_object_cache", sizeof(struct landlock_object), 0,
++		SLAB_PANIC, NULL);
++}
++
+ struct landlock_object *
+ landlock_create_object(const struct landlock_object_underops *const underops,
+ 		       void *const underobj)
+@@ -25,7 +34,8 @@ landlock_create_object(const struct landlock_object_underops *const underops,
  
- 	if (result && result != -EBADF && result != -EINVAL)
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 3497741caea9..656c709b974f 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -378,7 +378,9 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 		}
+ 	if (WARN_ON_ONCE(!underops || !underobj))
+ 		return ERR_PTR(-ENOENT);
+-	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
++	new_object =
++		kmem_cache_zalloc(landlock_object_cache, GFP_KERNEL_ACCOUNT);
+ 	if (!new_object)
+ 		return ERR_PTR(-ENOMEM);
+ 	refcount_set(&new_object->usage, 1);
+diff --git a/security/landlock/object.h b/security/landlock/object.h
+index 5f28c35e8aa8..d9967ef16ec1 100644
+--- a/security/landlock/object.h
++++ b/security/landlock/object.h
+@@ -15,6 +15,8 @@
  
- 		rc = calc_file_id_hash(IMA_VERITY_DIGSIG, iint->ima_hash->algo,
--				       iint->ima_hash->digest, &hash.hdr);
-+				       iint->ima_hash->digest,
-+				       container_of(&hash.hdr,
-+					       struct ima_digest_data, hdr));
- 		if (rc) {
- 			*cause = "sigv3-hashing-error";
- 			*status = INTEGRITY_FAIL;
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 393f5c7912d5..4e208239a40e 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -48,12 +48,14 @@ static int __init ima_add_boot_aggregate(void)
- 	struct ima_event_data event_data = { .iint = iint,
- 					     .filename = boot_aggregate_name };
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	int result = -ENOMEM;
- 	int violation = 0;
+ struct landlock_object;
  
- 	memset(iint, 0, sizeof(*iint));
- 	memset(&hash, 0, sizeof(hash));
--	iint->ima_hash = &hash.hdr;
-+	iint->ima_hash = hash_hdr;
- 	iint->ima_hash->algo = ima_hash_algo;
- 	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
- 
-@@ -70,7 +72,7 @@ static int __init ima_add_boot_aggregate(void)
- 	 * is not found.
- 	 */
- 	if (ima_tpm_chip) {
--		result = ima_calc_boot_aggregate(&hash.hdr);
-+		result = ima_calc_boot_aggregate(hash_hdr);
- 		if (result < 0) {
- 			audit_cause = "hashing_error";
- 			goto err_out;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c84e8c55333d..0d3a7c864fd4 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -941,6 +941,8 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 					    .buf_len = size};
- 	struct ima_template_desc *template;
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	char digest_hash[IMA_MAX_DIGEST_SIZE];
- 	int digest_hash_len = hash_digest_size[ima_hash_algo];
- 	int violation = 0;
-@@ -979,7 +981,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 	if (!pcr)
- 		pcr = CONFIG_IMA_MEASURE_PCR_IDX;
- 
--	iint.ima_hash = &hash.hdr;
-+	iint.ima_hash = hash_hdr;
- 	iint.ima_hash->algo = ima_hash_algo;
- 	iint.ima_hash->length = hash_digest_size[ima_hash_algo];
- 
-@@ -990,7 +992,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 	}
- 
- 	if (buf_hash) {
--		memcpy(digest_hash, hash.hdr.digest, digest_hash_len);
-+		memcpy(digest_hash, hash_hdr->digest, digest_hash_len);
- 
- 		ret = ima_calc_buffer_hash(digest_hash, digest_hash_len,
- 					   iint.ima_hash);
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 6cd0add524cd..74198d7619da 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -339,6 +339,8 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 			 struct ima_field_data *field_data)
- {
- 	struct ima_max_digest_data hash;
-+	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
-+						struct ima_digest_data, hdr);
- 	u8 *cur_digest = NULL;
- 	u32 cur_digestsize = 0;
- 	struct inode *inode;
-@@ -358,7 +360,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	if ((const char *)event_data->filename == boot_aggregate_name) {
- 		if (ima_tpm_chip) {
- 			hash.hdr.algo = HASH_ALGO_SHA1;
--			result = ima_calc_boot_aggregate(&hash.hdr);
-+			result = ima_calc_boot_aggregate(hash_hdr);
- 
- 			/* algo can change depending on available PCR banks */
- 			if (!result && hash.hdr.algo != HASH_ALGO_SHA1)
-@@ -368,7 +370,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 				memset(&hash, 0, sizeof(hash));
- 		}
- 
--		cur_digest = hash.hdr.digest;
-+		cur_digest = hash_hdr->digest;
- 		cur_digestsize = hash_digest_size[HASH_ALGO_SHA1];
- 		goto out;
- 	}
-@@ -379,14 +381,14 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	inode = file_inode(event_data->file);
- 	hash.hdr.algo = ima_template_hash_algo_allowed(ima_hash_algo) ?
- 	    ima_hash_algo : HASH_ALGO_SHA1;
--	result = ima_calc_file_hash(event_data->file, &hash.hdr);
-+	result = ima_calc_file_hash(event_data->file, hash_hdr);
- 	if (result) {
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
- 				    event_data->filename, "collect_data",
- 				    "failed", result, 0);
- 		return result;
- 	}
--	cur_digest = hash.hdr.digest;
-+	cur_digest = hash_hdr->digest;
- 	cur_digestsize = hash.hdr.length;
- out:
- 	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 50d6f798e613..660f76cb69d3 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -31,19 +31,24 @@ enum evm_ima_xattr_type {
- };
- 
- struct evm_ima_xattr_data {
--	u8 type;
-+	/* New members must be added within the __struct_group() macro below. */
-+	__struct_group(evm_ima_xattr_data_hdr, hdr, __packed,
-+		u8 type;
-+	);
- 	u8 data[];
- } __packed;
- 
- /* Only used in the EVM HMAC code. */
- struct evm_xattr {
--	struct evm_ima_xattr_data data;
-+	struct evm_ima_xattr_data_hdr data;
- 	u8 digest[SHA1_DIGEST_SIZE];
- } __packed;
- 
- #define IMA_MAX_DIGEST_SIZE	HASH_MAX_DIGESTSIZE
- 
- struct ima_digest_data {
-+	/* New members must be added within the __struct_group() macro below. */
-+	__struct_group(ima_digest_data_hdr, hdr, __packed,
- 	u8 algo;
- 	u8 length;
- 	union {
-@@ -57,6 +62,7 @@ struct ima_digest_data {
- 		} ng;
- 		u8 data[2];
- 	} xattr;
-+	);
- 	u8 digest[];
- } __packed;
- 
-@@ -65,7 +71,7 @@ struct ima_digest_data {
-  * with the maximum hash size, define ima_max_digest_data struct.
++void __init landlock_object_cache_init(void);
++
+ /**
+  * struct landlock_object_underops - Operations on an underlying object
   */
- struct ima_max_digest_data {
--	struct ima_digest_data hdr;
-+	struct ima_digest_data_hdr hdr;
- 	u8 digest[HASH_MAX_DIGESTSIZE];
- } __packed;
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index e0a5fbf9201a..0f8a9994f5fa 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -24,6 +24,19 @@
+ #include "object.h"
+ #include "ruleset.h"
  
++static struct kmem_cache *landlock_hierarchy_cache;
++static struct kmem_cache *landlock_rule_cache;
++
++void __init landlock_ruleset_cache_init(void)
++{
++	landlock_hierarchy_cache = kmem_cache_create(
++		"landlock_hierarchy_cache", sizeof(struct landlock_hierarchy),
++		0, SLAB_PANIC, NULL);
++	landlock_rule_cache = kmem_cache_create("landlock_rule_cache",
++						sizeof(struct landlock_rule), 0,
++						SLAB_PANIC, NULL);
++}
++
+ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+ {
+ 	struct landlock_ruleset *new_ruleset;
+@@ -112,8 +125,7 @@ create_rule(const struct landlock_id id,
+ 	} else {
+ 		new_num_layers = num_layers;
+ 	}
+-	new_rule = kzalloc(struct_size(new_rule, layers, new_num_layers),
+-			   GFP_KERNEL_ACCOUNT);
++	new_rule = kmem_cache_zalloc(landlock_rule_cache, GFP_KERNEL_ACCOUNT);
+ 	if (!new_rule)
+ 		return ERR_PTR(-ENOMEM);
+ 	RB_CLEAR_NODE(&new_rule->node);
+@@ -559,7 +571,7 @@ landlock_merge_ruleset(struct landlock_ruleset *const parent,
+ 	if (IS_ERR(new_dom))
+ 		return new_dom;
+ 	new_dom->hierarchy =
+-		kzalloc(sizeof(*new_dom->hierarchy), GFP_KERNEL_ACCOUNT);
++		kmem_cache_zalloc(landlock_hierarchy_cache, GFP_KERNEL_ACCOUNT);
+ 	if (!new_dom->hierarchy) {
+ 		err = -ENOMEM;
+ 		goto out_put_dom;
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index c7f1526784fd..f738e8b0cf9b 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -30,6 +30,8 @@
+ 	LANDLOCK_ACCESS_FS_REFER)
+ /* clang-format on */
+ 
++void __init landlock_ruleset_cache_init(void);
++
+ typedef u16 access_mask_t;
+ /* Makes sure all filesystem access rights can be stored. */
+ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index f6dd33143b7f..a4904d00cbe6 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -16,6 +16,8 @@
+ #include "net.h"
+ #include "ptrace.h"
+ #include "setup.h"
++#include "object.h"
++#include "ruleset.h"
+ 
+ bool landlock_initialized __ro_after_init = false;
+ 
+@@ -33,6 +35,8 @@ const struct lsm_id landlock_lsmid = {
+ 
+ static int __init landlock_init(void)
+ {
++	landlock_object_cache_init();
++	landlock_ruleset_cache_init();
+ 	landlock_add_cred_hooks();
+ 	landlock_add_ptrace_hooks();
+ 	landlock_add_fs_hooks();
 -- 
-2.34.1
+2.40.1
 
