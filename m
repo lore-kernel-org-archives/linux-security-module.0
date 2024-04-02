@@ -1,216 +1,220 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F154777;
-	Mon,  1 Apr 2024 20:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4AF945A
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Apr 2024 01:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712002561; cv=none; b=d9THw99lZo+P0WoYmLcXw9QcI68bWg1oRN8Mq4sXKgSZ2/kTJdGaxQLvhNJFITqE3lAOUHyoXqXC3nbRCWG0ZTeaVW2cgmOfTOD0EKkQI3pFROqU+WGMHirut2qi9cKSaoI7poDzLLcZ3EkBKtWSXUg93ex5Yzo5HQmKp/TX6pM=
+	t=1712021207; cv=none; b=XcSa5GjgOxkbKY5VEkaxyBM34Nyz+squZ0Ugm1KzGtWzABVeezIxkuAFa7ZwWAeb8eT1Wvw1EX04/5K6RwX2sVenenf1hM/WQeXVEhaIYEHPORkiCGgIn2DsHsLO76yltR+tE/UcA9Dm855DY/8SH6shc85jag+QncpmOHuZprU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712002561; c=relaxed/simple;
-	bh=Ttp6HDtuJdCvQVWNwPlua9wZJguDphgClBqkOD6FMlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tM0bR6YnmQCLuukGrbG4J3FMRGR9xQNsCzFvi1kmcY+G4B1TRcI9PROn2WzGrcu3DFdMtFZJk8oN5lPRGdFudiIUPGwAQGwkfXf/s4wF9avvXXmKBo1NkGa/rJjz1SAA+Lz7EkcK36/2iXCcnDx6aObF0Szv3gvXzHLMjf136eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chzUaG2X; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1712021207; c=relaxed/simple;
+	bh=aVxgl65qe63F9RG61q5/c/8ucEYTRdx9vtPoLeH3Y2k=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=eAl5JvNWtH2aCbTX0XbpYtFeUAgylisgCdt7rL61buqyQL6aYuhsVC4d+IFUeSTogK+1lwoXArape8+2rLdSmL3+3QQogvqqEEyYOKIqQFEF3DS3FTFmJe7mqxD4bpuZGhCDu522bsoDo/Cu/pbweysBo10nhOI8Npa5HPax1F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Wk/I++s7; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chzUaG2X"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6e709e0c123so3821951b3a.1;
-        Mon, 01 Apr 2024 13:15:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Wk/I++s7"
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-698d68337a8so23153576d6.0
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Apr 2024 18:26:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712002542; x=1712607342; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m0mZE1Qz4uRWYwvIOjJ+HtSCn/ealgFF+V09O3RNHQU=;
-        b=chzUaG2XRGVfDVgsw0zlmNfFTeg6ddkdpsMJ0Ef8lFS/7K1EgYIkIeUIMi1dfo9kp7
-         DI7wuBZjw6VwHbaRgPbGKi0/g3YdwxMQByH5I4P1bTrRQElFzIL4ONEycBIrMkaC+Eyc
-         40gwjGzYLhxjkrR0j18eOWwxCQvvrQKKhVg3D2M7S5WWaZ0YQ1tb46PMI7a95zr5LQRc
-         q/VzYG94yn/IUmNckNfN3Nf4aAMGFfdkFmokfUCux6g1cVTlvsgR4Rjd1oJf2XlTZoha
-         7mcpoeVDtov+TBDFo5jU1POiN8YjPmSS0nD33E24Ij17vPg9+W8hxPPmbPnLMPSY0zbt
-         y8nw==
+        d=paul-moore.com; s=google; t=1712021203; x=1712626003; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=R2O8HEb1FethHT20zhCThThb/BGPO8YtMtgX7GfGVZI=;
+        b=Wk/I++s7wtaQ/2FeEcZ38+tZpZp1W1jPudHa22FhK2Udi6xUU0Le9ilyyu2e5ca56f
+         sZTeM6lKEGBaGNN6qmjKv/gxRA/e9dyIusCcDaQecnFRRuaPBnOTM1f6AwUwx42CHzxJ
+         y9F1LJdJWwMi5lAOcrviZfuMxaFFZkTMFcasPSWmm2+EP1815JEJYvnWVIHaMIutXqC+
+         V+LO/zNlbCsDVTxq9eWDgi3zYUXBfHSstT9HigmwXnzVYxh8lZioolkSoZsEojV1wGGX
+         cmR7yfv2ajFGhqAr2iC9CZNS/dUs0WQY07vlVDXKGDxd2tqQb6v89ncIc/NNvWJcyByx
+         FYhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712002542; x=1712607342;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0mZE1Qz4uRWYwvIOjJ+HtSCn/ealgFF+V09O3RNHQU=;
-        b=FWQmPQTOGWZdgPvQGnsFgIVi9RDeBeVNY8WoLTMP2iyxHzsyAMck4Qzhe5Hzakm9kR
-         3CurRVL10154BiV6SO/4ZGk1uV1BU/HbWIFwKTxhOJnXs4FHOaM/S2VQpcMjoB1ZRUne
-         dM12SEBur92QIHZCKLt0A9rKhFhT/cAXVoZcT4MuVajBbBC8ekS3VvtlMML3ivXZNwy7
-         wXGvERcKO7GAYpstF7XxqGBFgPItJxrx5ORSlr/zpOjH3niuUpD0BL6MyoBvN5sMdyve
-         I4gwmbMtbX+GACpA05gsJovaJvSlSJNKdx5smlIiYYVSW/WvOL4isbiumhcKjCyNEdg3
-         KFrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhqU0AhGfH88O1pPYort/6VN01u42z2tsrTXfG2GjbS559jzy/DumTnpL5/PAqxnicEMV3ldX3gAw5YhbM3cFce4tnFr4KOjI5XCt4Z0/pj/lcyo4zk0vvyxnlWCljRihuNqoQrza8OrTXMCDZ/MxJTcvz
-X-Gm-Message-State: AOJu0YyCxEuFwZHd8+aWWpBuI+OvsYV1eXGk30GJgZtniQeL5v8/ivJi
-	8kcuEN/dRVzeOxjVQnBdu4M+f1hl7GHsg8MRv3fGWZ+ZrFd8JPJ7
-X-Google-Smtp-Source: AGHT+IGBNe8NFchxXaUZPkrD8mNxkNXOpjHF7nQt7Y2T8RYqtTwMGMHzo2rlsJSXjXBlIN1AD9eU3A==
-X-Received: by 2002:a05:6a00:23ca:b0:6e7:117:c5d5 with SMTP id g10-20020a056a0023ca00b006e70117c5d5mr10588955pfc.23.1712002541865;
-        Mon, 01 Apr 2024 13:15:41 -0700 (PDT)
-Received: from ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx ([2409:40e3:10:ea9b:96f8:7cd5:d274:f9f1])
-        by smtp.gmail.com with ESMTPSA id c2-20020a056a000ac200b006eaf3057352sm5207180pfl.85.2024.04.01.13.15.37
+        d=1e100.net; s=20230601; t=1712021203; x=1712626003;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R2O8HEb1FethHT20zhCThThb/BGPO8YtMtgX7GfGVZI=;
+        b=vEKthr/HA3Zlx9wkSEjN+fvz4fNup6RICxcDFnUQOFMzZkobp8V0LIG8w1prEh+ehW
+         7tnI5JAQTMoCajM0iu8H4cV2OlgmwyDBlgMfZ6hj9cZGmsvxcWQ6HkKzz0V0sJGgpHpn
+         kyRqImUEsoMquS9Thif5AIiBUuwcDJkZdNoJI6ICd2uJv+KGU3bwJ4zjc+S9MBoe77NF
+         6pDAmnII5grejjlaDirNECj3ilhSUWiRrev27oqeWxN4WHJpvZuDWlhHOO8l/VUTwr02
+         bnhHsC6W4zVxEWgsSQVhKhmBDnksp94BfZIrFa7ulOY8nQU9+nFofNMvDKEpLt27y5IB
+         q+JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/NJggwi1prepizxsCI+9UMcMSOwSXRy/V42R0JliYJyrpUiLXy9O2JbYlQVMO8S/+TI8+GLWhxBCan3LJBF0Va2y7zo2wUXWUJtH1aMs+MXYbvIz4
+X-Gm-Message-State: AOJu0Ywt05PV+sgznAt+GfuDo1mVOTyVbKMd3rKPyk0xIYOenb+YwwTJ
+	n2wuTOQ4AF5YflnOPvDmWeLMQpOOZJo/IZ1/QQMnP3I1pZ5i2B1+kvgcl9owWg==
+X-Google-Smtp-Source: AGHT+IE++PDnPsCAN5ZlJzJBCsY9VL8rWCNTNagzE8bvtbG+6yPqmGk0WcKC3DLF/KWvtXLzI6otLg==
+X-Received: by 2002:ad4:404f:0:b0:699:1026:c0a4 with SMTP id r15-20020ad4404f000000b006991026c0a4mr2755001qvp.38.1712021202974;
+        Mon, 01 Apr 2024 18:26:42 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id fn3-20020ad45d63000000b00696934de5f7sm4964016qvb.62.2024.04.01.18.26.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Apr 2024 13:15:41 -0700 (PDT)
-Date: Tue, 2 Apr 2024 01:45:33 +0530
-From: Ayush Tiwari <ayushtiw0110@gmail.com>
-To: alison.schofield@intel.com, paul@paul-moore.com, mic@digikod.net,
-	fabio.maria.de.francesco@linux.intel.com,
-	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Cc: outreachy@lists.linux.dev, linux-security-module@vger.kernel.org
-Subject: [PATCH] landlock: Use kmem for object, rule, and hierarchy structures
-Message-ID: <ZgsV5RuwsiM3WwXG@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+        Mon, 01 Apr 2024 18:26:42 -0700 (PDT)
+Date: Mon, 01 Apr 2024 21:26:42 -0400
+Message-ID: <18dfbc23f04422e88993a13ff15b6229@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>, Fan Wu <wufan@linux.microsoft.com>
+Subject: Re: [PATCH v16 11/20] block|security: add LSM blob to block_device
+References: <1711657047-10526-12-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1711657047-10526-12-git-send-email-wufan@linux.microsoft.com>
 
-Use kmem_cache to replace kzalloc() calls with kmem_cache_zalloc() for
-structs landlock_object, landlock_rule and landlock_hierarchy and
-update the related dependencies to improve memory allocation and
-deallocation performance. This patch does not change kfree() and
-kfree_rcu() calls because according to kernel commit
-ae65a5211d90("mm/slab: document kfree() as allowed for
-kmem_cache_alloc() objects"), starting from kernel 6.4, kfree() is
-safe to use for such objects. Use clang-format to format the code
-to the kernel style. /proc/slabinfo shows decrease in
-'ext4_inode_cache' and 'dentry' usage suggesting a significant
-reduction in file system related object and memory allocations and
-increase in kmem_cache and kmalloc usage also indicates more cache
-allocation for objects for efficient memory handling.
+On Mar 28, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
+> 
+> Some block devices have valuable security properties that is only
+> accessible during the creation time.
 
-Signed-off-by: Ayush Tiwari <ayushtiw0110@gmail.com>
----
- security/landlock/object.c  | 12 +++++++++++-
- security/landlock/object.h  |  2 ++
- security/landlock/ruleset.c | 18 +++++++++++++++---
- security/landlock/ruleset.h |  2 ++
- security/landlock/setup.c   |  4 ++++
- 5 files changed, 34 insertions(+), 4 deletions(-)
+You should mention the new hook in the subject line, something like
+the following: "block,lsm: add LSM blob and new LSM hook for block
+devices".
 
-diff --git a/security/landlock/object.c b/security/landlock/object.c
-index 1f50612f0185..cfc367725624 100644
---- a/security/landlock/object.c
-+++ b/security/landlock/object.c
-@@ -17,6 +17,15 @@
- 
- #include "object.h"
- 
-+static struct kmem_cache *landlock_object_cache;
-+
-+void __init landlock_object_cache_init(void)
-+{
-+	landlock_object_cache = kmem_cache_create(
-+		"landlock_object_cache", sizeof(struct landlock_object), 0,
-+		SLAB_PANIC, NULL);
-+}
-+
- struct landlock_object *
- landlock_create_object(const struct landlock_object_underops *const underops,
- 		       void *const underobj)
-@@ -25,7 +34,8 @@ landlock_create_object(const struct landlock_object_underops *const underops,
- 
- 	if (WARN_ON_ONCE(!underops || !underobj))
- 		return ERR_PTR(-ENOENT);
--	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
-+	new_object =
-+		kmem_cache_zalloc(landlock_object_cache, GFP_KERNEL_ACCOUNT);
- 	if (!new_object)
- 		return ERR_PTR(-ENOMEM);
- 	refcount_set(&new_object->usage, 1);
-diff --git a/security/landlock/object.h b/security/landlock/object.h
-index 5f28c35e8aa8..d9967ef16ec1 100644
---- a/security/landlock/object.h
-+++ b/security/landlock/object.h
-@@ -15,6 +15,8 @@
- 
- struct landlock_object;
- 
-+void __init landlock_object_cache_init(void);
-+
- /**
-  * struct landlock_object_underops - Operations on an underlying object
-  */
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index e0a5fbf9201a..0f8a9994f5fa 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -24,6 +24,19 @@
- #include "object.h"
- #include "ruleset.h"
- 
-+static struct kmem_cache *landlock_hierarchy_cache;
-+static struct kmem_cache *landlock_rule_cache;
-+
-+void __init landlock_ruleset_cache_init(void)
-+{
-+	landlock_hierarchy_cache = kmem_cache_create(
-+		"landlock_hierarchy_cache", sizeof(struct landlock_hierarchy),
-+		0, SLAB_PANIC, NULL);
-+	landlock_rule_cache = kmem_cache_create("landlock_rule_cache",
-+						sizeof(struct landlock_rule), 0,
-+						SLAB_PANIC, NULL);
-+}
-+
- static struct landlock_ruleset *create_ruleset(const u32 num_layers)
- {
- 	struct landlock_ruleset *new_ruleset;
-@@ -112,8 +125,7 @@ create_rule(const struct landlock_id id,
- 	} else {
- 		new_num_layers = num_layers;
- 	}
--	new_rule = kzalloc(struct_size(new_rule, layers, new_num_layers),
--			   GFP_KERNEL_ACCOUNT);
-+	new_rule = kmem_cache_zalloc(landlock_rule_cache, GFP_KERNEL_ACCOUNT);
- 	if (!new_rule)
- 		return ERR_PTR(-ENOMEM);
- 	RB_CLEAR_NODE(&new_rule->node);
-@@ -559,7 +571,7 @@ landlock_merge_ruleset(struct landlock_ruleset *const parent,
- 	if (IS_ERR(new_dom))
- 		return new_dom;
- 	new_dom->hierarchy =
--		kzalloc(sizeof(*new_dom->hierarchy), GFP_KERNEL_ACCOUNT);
-+		kmem_cache_zalloc(landlock_hierarchy_cache, GFP_KERNEL_ACCOUNT);
- 	if (!new_dom->hierarchy) {
- 		err = -ENOMEM;
- 		goto out_put_dom;
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index c7f1526784fd..f738e8b0cf9b 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -30,6 +30,8 @@
- 	LANDLOCK_ACCESS_FS_REFER)
- /* clang-format on */
- 
-+void __init landlock_ruleset_cache_init(void);
-+
- typedef u16 access_mask_t;
- /* Makes sure all filesystem access rights can be stored. */
- static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
-diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-index f6dd33143b7f..a4904d00cbe6 100644
---- a/security/landlock/setup.c
-+++ b/security/landlock/setup.c
-@@ -16,6 +16,8 @@
- #include "net.h"
- #include "ptrace.h"
- #include "setup.h"
-+#include "object.h"
-+#include "ruleset.h"
- 
- bool landlock_initialized __ro_after_init = false;
- 
-@@ -33,6 +35,8 @@ const struct lsm_id landlock_lsmid = {
- 
- static int __init landlock_init(void)
- {
-+	landlock_object_cache_init();
-+	landlock_ruleset_cache_init();
- 	landlock_add_cred_hooks();
- 	landlock_add_ptrace_hooks();
- 	landlock_add_fs_hooks();
--- 
-2.40.1
+> For example, when creating a dm-verity block device, the dm-verity's
+> roothash and roothash signature, which are extreme important security
+> metadata, are passed to the kernel. However, the roothash will be saved
+> privately in dm-verity, which prevents the security subsystem to easily
+> access that information. Worse, in the current implementation the
+> roothash signature will be discarded after the verification, making it
+> impossible to utilize the roothash signature by the security subsystem.
+> 
+> With this patch, an LSM blob is added to the block_device structure.
+> This enables the security subsystem to store security-sensitive data
+> related to block devices within the security blob. For example, LSM can
+> use the new LSM blob to save the roothash signature of a dm-verity,
+> and LSM can make access decision based on the data inside the signature,
+> like the signer certificate.
+> 
+> The implementation follows the same approach used for security blobs in
+> other structures like struct file, struct inode, and struct superblock.
+> The initialization of the security blob occurs after the creation of the
+> struct block_device, performed by the security subsystem. Similarly, the
+> security blob is freed by the security subsystem before the struct
+> block_device is deallocated or freed.
+> 
+> This patch also introduces a new hook to save block device's integrity
+> data. For example, for dm-verity, LSMs can use this hook to save
+> the roothash signature of a dm-verity into the security blob,
+> and LSMs can make access decisions based on the data inside
+> the signature, like the signer certificate.
+> 
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> ---
+> v2:
+>   + No Changes
+> 
+> v3:
+>   + Minor style changes from checkpatch --strict
+> 
+> v4:
+>   + No Changes
+> 
+> v5:
+>   + Allow multiple callers to call security_bdev_setsecurity
+> 
+> v6:
+>   + Simplify security_bdev_setsecurity break condition
+> 
+> v7:
+>   + Squash all dm-verity related patches to two patches,
+>     the additions to dm-verity/fs, and the consumption of
+>     the additions.
+> 
+> v8:
+>   + Split dm-verity related patches squashed in v7 to 3 commits based on
+>     topic:
+>       + New LSM hook
+>       + Consumption of hook outside LSM
+>       + Consumption of hook inside LSM.
+> 
+>   + change return of security_bdev_alloc / security_bdev_setsecurity
+>     to LSM_RET_DEFAULT instead of 0.
+> 
+>   + Change return code to -EOPNOTSUPP, bring inline with other
+>     setsecurity hooks.
+> 
+> v9:
+>   + Add Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+>   + Remove unlikely when calling LSM hook
+>   + Make the security field dependent on CONFIG_SECURITY
+> 
+> v10:
+>   + No changes
+> 
+> v11:
+>   + No changes
+> 
+> v12:
+>   + No changes
+> 
+> v13:
+>   + No changes
+> 
+> v14:
+>   + No changes
+> 
+> v15:
+>   + Drop security_bdev_setsecurity() for new hook
+>     security_bdev_setintegrity() in the next commit
+>   + Update call_int_hook() for 260017f
+> 
+> v16:
+>   + Drop Reviewed-by tag for the new changes
+>   + Squash the security_bdev_setintegrity() into this commit
+>   + Rename enum from lsm_intgr_type to lsm_integrity_type
+>   + Switch to use call_int_hook() for bdev_setintegrity()
+>   + Correct comment
+>   + Fix return in security_bdev_alloc()
+> ---
+>  block/bdev.c                  |  7 +++
+>  include/linux/blk_types.h     |  3 ++
+>  include/linux/lsm_hook_defs.h |  5 ++
+>  include/linux/lsm_hooks.h     |  1 +
+>  include/linux/security.h      | 26 ++++++++++
+>  security/security.c           | 89 +++++++++++++++++++++++++++++++++++
+>  6 files changed, 131 insertions(+)
 
+
+
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index f35af7b6cfba..8e646189740e 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1483,6 +1492,23 @@ static inline int lsm_fill_user_ctx(struct lsm_ctx __user *uctx,
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> +
+> +static inline int security_bdev_alloc(struct block_device *bdev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void security_bdev_free(struct block_device *bdev)
+> +{
+> +}
+> +
+> +static inline int security_bdev_setintegrity(struct block_device *bdev,
+> +					     enum lsm_integrity_type, type,
+
+I'm sure by now you've seen the reports about the errant comma ...
+
+> +					     const void *value, size_t size)
+> +{
+> +	return 0;
+> +}
+> +
+>  #endif	/* CONFIG_SECURITY */
+
+--
+paul-moore.com
