@@ -1,119 +1,175 @@
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA060E567
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Apr 2024 01:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC4145007;
+	Tue,  2 Apr 2024 08:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712021210; cv=none; b=sKtc4pvMuVjzjyTmIeZgohcIuxAOxmYVc/6yiqsM2cNVmC3taMGS1paXOdNOfWq5H9I69Yxc9LA/6imSAohA8tDdyBTF84MZq0cX77vz9PIu59JpqB7OaTfovPazn+mNp3jiAUjwdar7BgWWI1dgyJdEfrQ5qugLliGgF62BaZA=
+	t=1712045303; cv=none; b=TzaLfWSJ1tbPd2t5os1i3Ylze4h2V5VVGuSXI4BvZibP4laWC6TpPL6Aw5BhUoYflQj5j3HABbsNuJRscLXVsp+nmis965gh+xN03C0XR1HJfjsUGauinjJ8frV3Eg4jn6OUOJ5FuVNjqy+mP6UvYMwCNDfEiMP5Zi0/o0gN8P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712021210; c=relaxed/simple;
-	bh=WqrYHc1OrW927dxpv9fTrIBfKRqR2NBvDdcY6XIS0bs=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=eIAeD+mGQ4Zwpowl1CTZKQc8QeD+3VeJfYrs4wp35txchmVhQQ/mck7iknw4AH+X6i8EOLmoK/6yINGQPWZ5LwsClhPrfzCtZtr6tJGTA3ghQSeGzZ+YAim4NU/eFRgCzdDsdfakqg+hNdGzeXAPfYhw3GLivUfChyUNfSrfbZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G4lN+Yma; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1712045303; c=relaxed/simple;
+	bh=RvjIoEFCnlt4dJMFpZZIOO4Sc8JyrvCLEP31AeMdHHA=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=MfqIYGMdioJNwzk8TLFu6YB5N1SnNL1t9rSEpS9qiQmY+XLb50vAXTpGean7AL7D0wzMvCxJbkA1JAkUueAFFM3UVDuGKT8P9igbZYCk/slau+/mUMVVI/8GGddsm+BpS9pJobSjnP1WTUsb+L4bU1R2krXbENvS4lqFfivLmF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkMa/rJ3; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G4lN+Yma"
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-432b72c706cso35467171cf.1
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Apr 2024 18:26:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkMa/rJ3"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1e267238375so4451985ad.1;
+        Tue, 02 Apr 2024 01:08:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1712021206; x=1712626006; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hRws9YXLN8yb7zuQUc8CIutzWgp4avkTPI09HZCU6cI=;
-        b=G4lN+Yma1v3mXG/SF+E4Q4Vmtq9IXlAYYEGNzQXsfUcjzmflAs+JTdgx6LMlAIFL9g
-         HDlwt0Akkidq+vZKEYCuIM8jG6PdXrvmlZSZvYvCuuoFw+UXnJWjIQVzVoTaPmseSUjB
-         drYQtYihg223VfBX5smeEnjs9qy+vAJ0lPjCvzSMy/HoNWd/TZEAO8q6QRngJdOnp4EN
-         9xaNBt90oS9blyJa/pJykeOXUxR6rsO8BLXsKDz6q/rxfL+/lA7UkmJHT3RL6kelYr/t
-         eRDPrIDjF8MoOn/FpM4kB5PBwj/pbnZQyNAOl+U0vdT69ZGIZF0SqDAiL/yIpoyYbrEx
-         8StA==
+        d=gmail.com; s=20230601; t=1712045300; x=1712650100; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=cXS4cJz05mC2M6wLT/RtjR7duIEuJE+jEDewfgJLeHk=;
+        b=EkMa/rJ3py4cFd/fEaAzcZ2+G6HzxCuI3V7pr4mdgVDZiXrq97zP4BOJZGT8htwtxP
+         eK3pn3Aupo4LSecgfnH8E+LR4tdF3NparpvnC8yHDsYmEg41oiZWd0zOKcbuoWhBbbiP
+         UqnpRoLnD08eDc6a5xrrrs+V/epQyouqfA2PREPohQosGtqchXpRbXiRUOu6y4o67Lrp
+         ZSnp0WU9CjAV9WkJTFnA5Kc8ltiymFlDzFaV+0doPSxQ1LdbW2qdLpFA4XsPu2mzGrCR
+         eNIV/btpCGYL1qmQbiNJTrXMn3t/cMCmpvNJyQgMvE1tgg1xAJbo9Z4Hu4eFwrgQQnUj
+         IWpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712021206; x=1712626006;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hRws9YXLN8yb7zuQUc8CIutzWgp4avkTPI09HZCU6cI=;
-        b=Q8uxhsjXzc43FSZ4a/FNYIKqv6x9HlsWrJafDbb30z92HvHuqsuK4gAt5wSgnMpRYd
-         cU6iqK/KlwPgQPEBn/IyB+RkHRRIEIp6k29VkS29IsjNAAIBIpmBC36xrDWhW2mHZRpt
-         bPPb6CWu0YQZlB2C4rvE7Xxzc6n/UN0xJaEYOGOyRQyAFiM9zstR0fNecqfitNsax4Rx
-         pE4aNwQD0a5MIIPDIz0kdlxhnapGYqZl3FZ7HXLqr1/Iltm1IeFRJfstWejdiIvmPPRN
-         DyB0um4dr2zKZIvliIQqJCHayXiqqprd49QKEe9IdVwcidh3Du/XpHtm8U/spXvS3QSy
-         UauA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnSU1eNCKgUDf8x/SlkWRXg7r9BpAvVmhHy1W4BKsqRIUC03bKYeSbqfQYMq1ESKeYs9NYkC9qPCYIMI5rh3U2l8Wzf26rvH3gu93gERvvUABXkrbW
-X-Gm-Message-State: AOJu0YxOUw+BNUxx/bpCjSUICsUVOSVsoxztqNaA2KaY6+GyePnovJqQ
-	Qoiw2/tiK9EyYfNuylzF7anbGN7aPL1CB9eovP60q5MmfdyoPn5X655++NznHA==
-X-Google-Smtp-Source: AGHT+IFZ7SasfMMYh5vB3j/xGXqf/TCs4Bcif8z6dD6zV7+EZAG39P9HJEPaE4K4Urz2UW0TPzSDug==
-X-Received: by 2002:a05:622a:4b11:b0:432:de8a:3a8 with SMTP id et17-20020a05622a4b1100b00432de8a03a8mr9661426qtb.18.1712021206548;
-        Mon, 01 Apr 2024 18:26:46 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id fw4-20020a05622a4a8400b00432bcd630c8sm4405470qtb.93.2024.04.01.18.26.46
+        d=1e100.net; s=20230601; t=1712045300; x=1712650100;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cXS4cJz05mC2M6wLT/RtjR7duIEuJE+jEDewfgJLeHk=;
+        b=oMawHz35B9JeCrSRKDNyiOy7+bh+UzWLOtPeAeEnl0T/ZFpndo4LsBCu3+8imQFtUx
+         PUpu2rywi2zV9oLiwA0pmouP+MVYwmsZmsHYVOVh2jbWQR6XlkO18u/PFIE0PXgMwD+k
+         31wSEorsroC4osd0MT/bUj98cq/jVgq8IwMzoGKiVUX0CtJr2tjiQ1Q7cWKnWVuv2IAB
+         y8oXuH+pKtKCfaGtZ5a78EI5wqToI4Qez22fmqq1BK0746y+PQzf9u3A9fThUZYl4eE8
+         C3WH4V19ynFeE/mo/d8jNoKSbdv6bnw9ieRZFhz9R6YFwZNKif+TKwVM+A2fG4t+EyUk
+         LANA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9S+M97rkqVCtvTRhpl/LuiiGvsBmUh0XCNdI42U4CqmIHElR5WWMusFdsQVyr/mP6UzTgOok1srlxBb6rWu3OK3zB1yRMpmwSD+IkJRxAay62KVISy9PILAQNNXvvWXrMJ5hEUpgJFLccLIIAkkAUdj7wSXGL
+X-Gm-Message-State: AOJu0YwXwX7AmKKeTNIxb1xNeBUHqHR9MMWWbp8YDw7fAlCUazEgacJ0
+	PxKlByeTHDPb7uFzWTHxqEPXUdkJUgMZA5dJTfO2RR1EEQVGbRkL
+X-Google-Smtp-Source: AGHT+IE34CFOHQtWBVwkAC+tfxS3OlSnWZqxk6sERGtnE+HKd+m7AK82BE8k/HW5JOx8TzyByc9RTg==
+X-Received: by 2002:a17:902:f68e:b0:1e0:c070:b082 with SMTP id l14-20020a170902f68e00b001e0c070b082mr23405632plg.14.1712045299863;
+        Tue, 02 Apr 2024 01:08:19 -0700 (PDT)
+Received: from [10.0.2.15] ([103.111.134.151])
+        by smtp.gmail.com with ESMTPSA id b15-20020a170902650f00b001dda64281a9sm10575031plk.85.2024.04.02.01.08.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Apr 2024 18:26:46 -0700 (PDT)
-Date: Mon, 01 Apr 2024 21:26:45 -0400
-Message-ID: <7bc35832c837a23773424bdc2255808b@paul-moore.com>
+        Tue, 02 Apr 2024 01:08:19 -0700 (PDT)
+Message-ID: <860c9cadb2fa06c8f10db42ad38405ee19d43a16.camel@gmail.com>
+Subject: Subject: [PATCH] Add test for more file systems in landlock - ext4
+From: Saasha Gupta <saashaa1122@gmail.com>
+To: outreachy@lists.linux.dev, mic@digikod.net, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: alison.schofield@intel.com, paul@paul-moore.com, shuah@kernel.org, 
+	saashaa1122@gmail.com
+Date: Tue, 02 Apr 2024 13:37:44 +0530
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH v16 15/20] security: add security_inode_setintegrity() hook
-References: <1711657047-10526-16-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1711657047-10526-16-git-send-email-wufan@linux.microsoft.com>
+MIME-Version: 1.0
 
-On Mar 28, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
-> 
-> This patch introduces a new hook to save inode's integrity
-> data. For example, for fsverity enabled files, LSMs can use this hook to
-> save the verified fsverity builtin signature into the inode's security
-> blob, and LSMs can make access decisions based on the data inside
-> the signature, like the signer certificate.
-> 
-> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> 
-> --
-> v1-v14:
->   + Not present
-> 
-> v15:
->   + Introduced
-> 
-> v16:
->   + Switch to call_int_hook()
-> 
-> ---
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      | 10 ++++++++++
->  security/security.c           | 20 ++++++++++++++++++++
->  3 files changed, 32 insertions(+)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index b391a7f13053..6f746dfdb28b 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -1020,6 +1023,13 @@ static inline int security_inode_copy_up(struct dentry *src, struct cred **new)
->  	return 0;
->  }
->  
-> +static inline int security_inode_setintegrity(struct inode *inode,
-> +					      enum lsm_integrity_type, type,
+Date: Mon, 2 Apr 2024 19:59:56 +0530
 
-Another bonus comma ...
+RE: This patch is now properly preformatted.
 
-> +					      const void *value, size_t size)
-> +{
-> +	return 0;
-> +}
-> +
+Landlock LSM, a part of the security subsystem, has some tests in place
+for synthetic filesystems such as tmpfs, proc, sysfs, etc. The goal of
+the new issue, and hence this patch is to add tests for non synthetic
+file systems, such as ext4, btrfs, etc
 
---
-paul-moore.com
+This patch adds tests for the ext4 file system. This includes creation
+of a loop device (test-ext4.img) and formating with mkfs.
+
+Signed-off-by: Saasha Gupta <saashaa1122@gmail.com>
+---
+ tools/testing/selftests/landlock/fs_test.c | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
+ftests/landlock/fs_test.c
+index 9a6036fbf..b2f2cd5a5 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -4675,6 +4675,14 @@ FIXTURE_VARIANT_ADD(layout3_fs, hostfs) {
+ 	.cwd_fs_magic =3D HOSTFS_SUPER_MAGIC,
+ };
+=20
++/* Add more filesystems */
++FIXTURE_VARIANT_ADD(layout3_fs, ext4) {
++	.mnt =3D {
++		.type =3D "ext4",
++	},
++	.file_path =3D TMP_DIR "/dir/file",
++};
++
+ FIXTURE_SETUP(layout3_fs)
+ {
+ 	struct stat statbuf;
+@@ -4728,6 +4736,63 @@ FIXTURE_SETUP(layout3_fs)
+ 		self->has_created_file =3D true;
+ 		clear_cap(_metadata, CAP_DAC_OVERRIDE);
+ 	}
++
++	/* Create non synthetic file system - ext4 */
++	if (stat(self->dir_path, &statbuf) !=3D 0) {
++		pid_t pid =3D fork();
++
++		if (pid =3D=3D -1) {
++			perror("Failed to fork");
++			exit(EXIT_FAILURE);
++		} else if (pid =3D=3D 0) {
++			static const fallocate_argv[] =3D { "fallocate", "--length",
++						   "4M", "test-ext4.img",
++						   NULL };
++			execvp(fallocate_argv[0], fallocate_argv);
++			perror("execvp failed");
++			exit(EXIT_FAILURE);
++		} else {
++			int status;
++
++			if (waitpid(pid, &status, 0) =3D=3D -1) {
++				perror("waitpid failed");
++				exit(EXIT_FAILURE);
++			}
++			if (!WIFEXITED(status) || WEXITSTATUS(status) !=3D 0) {
++				TH_LOG(stderr,
++					"Failed to create ext4 filesystem image: fallocate failed\n");
++				exit(EXIT_FAILURE);
++			}
++		}
++	}
++
++	/* Formate and mount non synthetic file system - ext4 */
++	if (stat("mnt", &statbuf) !=3D 0) {
++		pid_t pid =3D fork();
++
++		if (pid =3D=3D -1) {
++			perror("Failed to fork");
++			exit(EXIT_FAILURE);
++		} else if (pid =3D=3D 0) {
++			static const mkfs_argv[] =3D { "mkfs.ext4", "-q",
++					      "test-ext4.img", "mnt", NULL };
++			execvp(mkfs_argv[0], mkfs_argv);
++			perror("execvp failed");
++			exit(EXIT_FAILURE);
++		} else {
++			int status;
++
++			if (waitpid(pid, &status, 0) =3D=3D -1) {
++				perror("waitpid failed");
++				exit(EXIT_FAILURE);
++			}
++			if (!WIFEXITED(status) || WEXITSTATUS(status) !=3D 0) {
++				TH_LOG(stderr,
++					"Failed to format ext4 filesystem image: mkfs.ext4 failed\n");
++				exit(EXIT_FAILURE);
++			}
++		}
++	}
+ }
+=20
+ FIXTURE_TEARDOWN(layout3_fs)
+--=20
+2.44.0
+
+
