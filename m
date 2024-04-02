@@ -1,61 +1,55 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3541315CD4A
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Apr 2024 19:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D0D15D5D2
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Apr 2024 20:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712087870; cv=none; b=mWa1LvY+XDTJBHCxH5osdmK6CbMtQes1WoLj16cwB9QtXGXUtzRR6THeJ/M1Vi71FWWoTYlEQTgrcBU7cibJ0fOBLnYmGXM2Sb/4rpkcsoB9S3Mbdq8teXUMcRjOfpW2fFIlKOBpPALWsb+vFzXEs0ZpxxXQA4k/OzkVRcpM2aU=
+	t=1712089641; cv=none; b=ARTGgQ2pkQdKNb1OIoreoJK9eEF813aHJ1Z83RiNYhtFU5bEnnSSJarL1rok31wG9u0NBVDMdG3qqRRWKnz+WNqtR+N7PWY1hn6mGqhRaMqZxQ4KXBN/R0P5OWtURGgD8KNRoLEQnZxS/+KIkrFmrUtFVD9By3QfnoeD9wm9ujM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712087870; c=relaxed/simple;
-	bh=dktNbJSE4AMUUSXBqDMDbOSzD2AIdHi/2em6bOnXPak=;
+	s=arc-20240116; t=1712089641; c=relaxed/simple;
+	bh=s6ky1gVPxytbtkTyPWNowNTIcdWeLLjvFA3xBxpvjnc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sLV/IfllqhI59XOI03WIRTqk6zmH6Y7+OG7ijEGJR3XJC1c2FljtiTf5xZwcOt3fXD1lSI/vOBTr//UHG32zo7czk1eAI0HPGL9r7iP9fpUHoz3TJ1VcWOmedphCZHTgqAAv/7jAhDB6j7yxKOaNClkXS27qWGMG75RTx0V7QNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LNtqNNSK; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=cz7PdQT3D+QUPTTF5qfHUIsJU7rlsPit6dtJCYNlfJzDnlzc30fw+k85LJrLlRz6i6WXQ6Lg/BBKuVb10JOjIhulH0tRDbJJ+EdV0tDFYC2AbYRHPGiIWi256uKSyOntnXSwwoTmiK2AvTkiyrZI4TMF+bCLwJiWCTi7OSUqQJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BSBlM3Qu; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LNtqNNSK"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-56e030624d1so259459a12.2
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Apr 2024 12:57:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BSBlM3Qu"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-615053a5252so2695317b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Apr 2024 13:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1712087866; x=1712692666; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZSMPyJcLDwQQyPD929o3b508jAKY9ueBln0f3F7O4Q=;
-        b=LNtqNNSK2bxx5ZBmRwBbbisytbYWfxwNUm4pCONxSDiyQA4x40LNM9pwUOlV9l6SBd
-         dq3annfM35j9CkSniihaifFKA/I9XrLJv1LyYi9GqAKPmLaNy4iSI/Xcr8gfRZo5AXsE
-         30yfgTyqewyZ1yQ9OivJubpMkTgvXkjWl0ff8=
+        d=paul-moore.com; s=google; t=1712089637; x=1712694437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sSKiNbrhkKPwkZGF1F1PMoUwyozDNbCp+fEhHpe15Ak=;
+        b=BSBlM3QuaBcafX5e48Xt6lIy+/8kIFhLNsYzsZxBvg40IQQhItenVsiv84y8nZ6/ho
+         a062AwsawfBwmkVfUMsVYUPS2doKAZLrRrB8z66OwCP3C9EicpKubUF5urtcXWfl7JBL
+         9KR5NTtNSQKnAyGWoZt+pRlCoZPf4v7aUKL+1fWz1RrlZs+CQ+2D3rNtD2IC4DqGAtMr
+         Em4tK161TgVH/WQZbRoq98k6MhYyXpDxG+GNfqEtJ6MlFwJUkwXWo4FpRp3IOQdMnfqN
+         fS2CyRXOPbqX1mJw8xkdFL2/+3TwQ4MmJlZiXulnCdthOj+Jyjjep8UaCa8fEBtDRofn
+         eyuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712087866; x=1712692666;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xZSMPyJcLDwQQyPD929o3b508jAKY9ueBln0f3F7O4Q=;
-        b=Uleves3ClcdrX27gXCWF7fa+RXW8yL62rttafo8nQJ07BjTx8RL9kQjPeLdSk3EH3y
-         uMYLV72MaU6EMo6pBnxlZBRDcBz237AUAunRZtIT6xtm4rwAP3B1XtZbnEdNf58B22Dd
-         8Pes8Oz94DMbLnRfLaQu7wDo4n6Nj6Nsh0PP0K5+mkvHjMMbwL0gX3l3uv/4lRmrJSvo
-         9UBH9LTPW26PmodrW0fue/oL+LEY1pgNlqTFAEz4ruqSQ4XXAWd5Qz9Mfk6lQpgXHiPj
-         9JOmBL5TBKq1ccMDCWgOpU7qWmA+2yZCKiFbUvOcorAVi2Sxtg8FHJTKlp0+5EMI1WjP
-         mNvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAzR6j/YmTeRc7gPNS/dHpoGYsErpGfdvXDUHjKQil71DN8ks+apkP7oHe7rJHg758ClGFXmf7Efg+dN6HgBpQvd6oADJiomPSfr6KbCphflHGu7EA
-X-Gm-Message-State: AOJu0YxmMdFitynWaHDWlWjEkbCJMIPFXLZTbn4Bvn80POa63sFMjv/h
-	6nqX8Xxmf5HY9ojWFY2rl/a41Gd+tI2LCQBc3NnJi6NlmlFhnQkBk2b3LFOMD38xK3X3aJjgq1Q
-	Y/aY=
-X-Google-Smtp-Source: AGHT+IGIZHWxNrrnR810INuC/bWIsP5/iggZGN92AwsykjXGHUzNTtxH7/ORIaJTj99AXZfRjNqH0g==
-X-Received: by 2002:a50:955b:0:b0:56d:fdb3:bcc0 with SMTP id v27-20020a50955b000000b0056dfdb3bcc0mr404170eda.11.1712087866517;
-        Tue, 02 Apr 2024 12:57:46 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id g28-20020a056402321c00b0056c1c2b851esm7130822eda.0.2024.04.02.12.57.45
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Apr 2024 12:57:45 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a4a3a5e47baso660221666b.2
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Apr 2024 12:57:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVacj71+UjtTv79ZBPFReX+aboeyVBNY1Bqqy4JBZPcvYeAyMhy/iS9w+qbCChBEP+xmLj11HwtumfZ7Uess8F3be21r6dubBiIfp0p3FYjDZrF7Vhp
-X-Received: by 2002:a17:906:5794:b0:a4e:7b8e:35ae with SMTP id
- k20-20020a170906579400b00a4e7b8e35aemr3749307ejq.38.1712087865212; Tue, 02
- Apr 2024 12:57:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712089637; x=1712694437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sSKiNbrhkKPwkZGF1F1PMoUwyozDNbCp+fEhHpe15Ak=;
+        b=AY9d62TVNjvNb8ez3k6N1c1WHDkW00gHo20NAZ3LYkdwOI6Jj+CUb5rtXXl+KnWdzP
+         9nRc+aFBDEdqgIkHR8427q05G01Vltov+KQiD397FTOh35ZK10ppmNQZigbg4J6VwGIM
+         f1tz9ZHKYxbJbuc2c33vQ3SzCm3nwJd7It2WZn/AmdCn7Zk+VMlI1jl13rViijVF5XsG
+         kSL3UsuNqH8LdfBdqGRWkJWUUP4dtNE3yzPp8oQtZyI27LG4mMzSCZlmsjJvwEdGiCOE
+         MUlUURLA5KiIxzPJFPhdep0Oq0B/4DLIHv/qYmTMnjkfF/0eDUdD54It2SaDS4f2vQH+
+         jeTg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+ulw2NUzEsUimfuzXNYI8LfqJ8YA8FlGYdcJfCspKOFPp6ESVtYj6ErVf9/D+DL0wvfqAKe5ZjKfFj5AB5Fpgm6Be+OCXJrMNyU3OiTxquRHMOrHc
+X-Gm-Message-State: AOJu0YzBE4pnSQmpqFzpEtBnuCl1UM6aj6LBPHPMHJjs8vICrzF/7B8q
+	4auLiwSRDgrrH4TSSBcflfLWeRzlgKb6och6fB1MdG9mDn7q2wIqTs8d13Rlol53Wk1nBS+AyM5
+	3eiJxhcohdSixZgXiGKG78QVLFhizGbwbe0RB
+X-Google-Smtp-Source: AGHT+IG4IkbsE1gFNrj4qmWdvNUvjoza1Bpfb/hZWbk/SPHjZQl2nsTjX9zNjnk0qbmPSNWMHPo5652tpRBGw5tN7M0=
+X-Received: by 2002:a81:9115:0:b0:615:2022:24d5 with SMTP id
+ i21-20020a819115000000b00615202224d5mr547613ywg.2.1712089637626; Tue, 02 Apr
+ 2024 13:27:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,67 +58,46 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240402141145.2685631-1-roberto.sassu@huaweicloud.com> <CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
 In-Reply-To: <CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 2 Apr 2024 12:57:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com>
-Message-ID: <CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 2 Apr 2024 16:27:06 -0400
+Message-ID: <CAHC9VhTt71JUeef5W8LCASKoH8DvstJr+kEZn2wqOaBGSiiprw@mail.gmail.com>
 Subject: Re: [GIT PULL] security changes for v6.9-rc3
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Apr 2024 at 12:39, Linus Torvalds
+On Tue, Apr 2, 2024 at 3:39=E2=80=AFPM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
 
->    void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+...
+
+> But if we really want to do this ("if mknod creates a positive dentry,
+> I won't see it in lookup, so I want to appraise it now"), then we
+> should just deal with this in the generic layer with some hack like
+> this:
+>
+>   --- a/security/security.c
+>   +++ b/security/security.c
+>   @@ -1801,7 +1801,8 @@ EXPORT_SYMBOL(security_path_mknod);
+>     */
+>    void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *=
+dentry)
 >    {
 >   -     if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->   +     struct inode *inode = d_backing_inode(dentry);
+>   +     struct inode *inode =3D d_backing_inode(dentry);
 >   +     if (unlikely(!inode || IS_PRIVATE(inode)))
 >                 return;
 >         call_void_hook(path_post_mknod, idmap, dentry);
+>    }
 
-Hmm. We do have other hooks that get called for this case.
+Other than your snippet wrapping both the inode/NULL and
+inode/IS_PRIVATE checks with an unlikely(), that's what Roberto
+submitted (his patch only wrapped the inode/IS_PRIVATE with unlikely).
 
-For fsnotify_create() we actually have a comment about this:
-
- * fsnotify_create - 'name' was linked in
- *
- * Caller must make sure that dentry->d_name is stable.
- * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
- * ->d_inode later
-
-and audit_inode_child() ends up having a
-
-        if (inode)
-                handle_one(inode);
-
-in it.
-
-So in other cases we do handle the NULL, but it does seem like the
-other cases actually do validaly want to deal with this (ie the
-fsnotify case will say "the directory that mknod was done in was
-changed" even if it doesn't know what the change is.
-
-But for the security case, it really doesn't seem to make much sense
-to check a mknod() that you don't know the result of.
-
-I do wonder if that "!inode" test might also be more specific with
-"d_unhashed(dentry)". But that would only make sense if we moved this
-test from security_path_post_mknod() into the caller itself, ie we
-could possibly do something like this instead (or in addition to):
-
-  -     if (error)
-  -             goto out2;
-  -     security_path_post_mknod(idmap, dentry);
-  +     if (!error && !d_unhashed(dentry))
-  +             security_path_post_mknod(idmap, dentry);
-
-which might also be sensible.
-
-Al? Anybody?
-
-                Linus
+--=20
+paul-moore.com
