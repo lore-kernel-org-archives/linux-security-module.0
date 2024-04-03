@@ -1,150 +1,288 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAD6200D4;
-	Wed,  3 Apr 2024 13:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6865E1487F0;
+	Wed,  3 Apr 2024 13:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712149916; cv=none; b=beMQbl1PE/prIpYLya6B7k1r09SbGf5BRXRrN373xXl4sBHeMSHFsNIxAunx0GTu5DZQaAuZ50P8IgKxVVBZyYg/3BWviY1CzCu1QJpp6I614SzEHqjcT+1+pczGd16bsbSssckTqLcjxJqW2pBgcs5Jdg93932KHQcIKIXp9LQ=
+	t=1712150661; cv=none; b=KuWbjCHQfIDU5gTiIHbiK9Z4VFAmZzt/Ky0MNIjvZ1785KArpIssl4FSQplvicrxcvwnz8PDXRDGNrFflKtuXlxrdgzaqPKIhfIdJMjGJLMbpgM6HqpOdeQycEjOgLPzUEuKpWQJEZ7BrFGDI863U0IfnX3xrEdKWOxjQXI4HRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712149916; c=relaxed/simple;
-	bh=988I3Q8yT1g6WpTi1Ga40N32urlSH2QimLrM2LzfSQs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ht/SOUW5vc9UYTape6IUgbjMMoPbW35ftH9heAPrL+EGJxhx+CzmFyRZQXGe2zEq1wYhaTX0mOPOD06f8q1v1QtUeLRKOJVY2YoHabJryRkhRsMoBu2JD1izGzNxgIaqRu2Pvjw2tyOTUiyyGJr3umGgJRkc2TuDipJ844SCSXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Upl7xRlv; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1712150661; c=relaxed/simple;
+	bh=xJslVArg1gDtzR4Be2/trZQajf4xXSmqhftr6EV1iZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6o6dXUYbKLHQHnuBbFTn8RCb1IyTG4sN+mpN7+E9xg5csC0je+9z5W4+0LdU8xti+tZXznqaS7jgKhamo2w4YUNx2h6oRP91iqcBvmBW7ycjhkE5m/vGsxqdJGw7dN1BmzSv25FjLLhby9Ua6Yc06J+mgfESkHkbY6wgpQwa2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PNa/m0VB; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Upl7xRlv"
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 433CqamI013959;
-	Wed, 3 Apr 2024 13:11:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=cX9BfS1KFfnbnppbxJxElitNCKueMFxijxJrZ6z2zUY=;
- b=Upl7xRlvRndQgXEOukfJD8YvwK8uodvSpontiwuTshTMpllHoYVQIpRAgIV2cHEpF8eL
- wMeO+3N4zGuRYam8thFiH4TYke6zB4CmxU6wxHfdBRUQz+J1b28xIOOtFdtpjLG3aRe2
- hiX1h1hLm4RGqCmnj1jxX8pAFyeVKHllAg5U7iFSCUXkPSB8qULByym6B5I1QICnI3xd
- V3ITFR5yCjMpVUdV77VktwzlX+e2IWuS6MlxIqMhH5rHWe3b/uc8XDCY4ox3D1RNH2qB
- vL/okmm37QDg67D8QXV82a1SyLLbT9qDpuTf0m+xhusxeAujZWsEpgg3++dTsaWWIu4P nw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x97gd01fg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Apr 2024 13:11:18 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 433DBH13013325;
-	Wed, 3 Apr 2024 13:11:17 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x97gd01f5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Apr 2024 13:11:17 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4339sdpA015214;
-	Wed, 3 Apr 2024 13:11:10 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3x6y9m5299-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Apr 2024 13:11:10 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 433DB7Sd393788
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 3 Apr 2024 13:11:09 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C3EA5805B;
-	Wed,  3 Apr 2024 13:11:07 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0A23D58067;
-	Wed,  3 Apr 2024 13:11:06 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.65.3])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  3 Apr 2024 13:11:05 +0000 (GMT)
-Message-ID: <6d3b9d8a5f5a2ca010a5a701d7826e47912fec89.camel@linux.ibm.com>
-Subject: Re: [RESEND][PATCH v3] security: Place security_path_post_mknod()
- where the original IMA call was
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
-        jmorris@namei.org, serge@hallyn.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, pc@manguebit.com,
-        torvalds@linux-foundation.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Steve French <smfrench@gmail.com>
-Date: Wed, 03 Apr 2024 09:11:05 -0400
-In-Reply-To: <20240403090749.2929667-1-roberto.sassu@huaweicloud.com>
-References: <20240403090749.2929667-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: WKsOfMXpW4Ur0rTPFXN01RjMFZxDEYOv
-X-Proofpoint-GUID: grSbjh9SmaV9twxkgVclig21urG8CFOV
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNa/m0VB"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1e293335cdeso5437895ad.3;
+        Wed, 03 Apr 2024 06:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712150659; x=1712755459; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rQsFbEjOTqJq35XSrf9t5tKMfoIw0aZp1GIU7FAGSpw=;
+        b=PNa/m0VBsApuPk3Dcq78bJpiZmKtnw0r+ENvIk11GjAdOFUsonz6TlMzQKLUXgXhOC
+         vhT5opeVqv2TDpdKzoA+PMezM+iNUyNtFk88ixnWf0hDH+1UQqC1dhUXUq2NxyBNgRuB
+         IhAR4KQIorpIt1XePFlswOpWpiza6t2jCDc4ZIlLfq0jEVw5D/PbV2WohdBDq/nW4Dfc
+         EzTNQ8PqzMY3/EGtZptxHFYAA4GcpZZQGfEFdb+EbjGY1Yr/le7hzM0z/VlXgkZlHGjN
+         g0zDP6B6gprMjeUrma62E6Oi1MDKQUS6r88NjZKzMT+fywOW1viDrPTE+XbHdn516rcw
+         JCGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712150659; x=1712755459;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rQsFbEjOTqJq35XSrf9t5tKMfoIw0aZp1GIU7FAGSpw=;
+        b=o4NTtN/5RaX17n1skNmYkeOCnitTpbwtb7P1Pix++//dl9iJVdJ1UDCRHfDjTPwQAA
+         IZL4Ebo2ma4ZxmO96arKeC76KRSGgeA3Uq73f2yDWthAn04n7RUC3qsI715vUkq30mgR
+         Cr7OEIlW3xNw0+hoND8/k+DMoCgxrFQ9gmiqsQa4I2eNRix8Ai7Kd2DtRCkYYxeswXnR
+         sWJ8A2l4A8DQ6qZJ1sJMNNLj9pom2nA6Foj8if+A/JmwmAMiy/lKGYb15k+5aFFa7M+1
+         XKa9TV1aBFfCRKqQ444voSTVLq2q6Ho9rLQGwIw0ho4CFYzlb5fP7WpqIp6Sc+DudDaQ
+         NAhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVv/wpoofPVfT8wkRAeR65fqEkWRtuT/OPXwotPUXeXb0aAQBxGKq/1w/CbobHVMxWd0rfbn/7YnNftlVhNPsCQKZzkw1kDHzv6Mb81+dJ1t5LGNkXa3wEutgJ7bWlpyzmCeSK3PKJxdF+nYHORJ9psdbsDy7TKQxsIpDNCLq+Ax7PIQGcTwdcDVKU3SkYPhc29M+ixHD9SdY2ZUZ3qDGlQ6ytvXG4Bdf8icLTN9t6jLb3ZTNWNiOpSjRXBDglHpwLTDOzB86YvM4yjD87AQLX4CpFrTxZ2RreHG16M9GyFFpWv7AmS5A0=
+X-Gm-Message-State: AOJu0YzvPutI4QK0jVjpM0hZPdNi2/Fo5oBlYyDTzZPGT5msGwAjYS3C
+	I/WkNMDLjGhTy3cupSdZ4n2wOhvmGOJPbUOtWDBzDKwIQofXGuVP
+X-Google-Smtp-Source: AGHT+IFatdNBQSb3VrVYeBX6Z2JShOnIrwB6FOsdyOnRBQXn1pgGepQ/A/buywtE61oYlMx80pUAVQ==
+X-Received: by 2002:a17:902:c94f:b0:1e0:a784:f965 with SMTP id i15-20020a170902c94f00b001e0a784f965mr18876173pla.65.1712150658416;
+        Wed, 03 Apr 2024 06:24:18 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id i15-20020a170902c94f00b001dd02f4c2casm13275916pla.164.2024.04.03.06.24.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Apr 2024 06:24:17 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 9178318108E2D; Wed,  3 Apr 2024 20:24:15 +0700 (WIB)
+Date: Wed, 3 Apr 2024 20:24:15 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: David Gstir <david@sigma-star.at>, Mimi Zohar <zohar@linux.ibm.com>,
+	James Bottomley <jejb@linux.ibm.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Shawn Guo <shawnguo@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+	David Howells <dhowells@redhat.com>, Li Yang <leoyang.li@nxp.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Tejun Heo <tj@kernel.org>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-security-module@vger.kernel.org,
+	Richard Weinberger <richard@nod.at>,
+	David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Subject: Re: [PATCH v8 6/6] docs: trusted-encrypted: add DCP as new trust
+ source
+Message-ID: <Zg1YfyhxO8BwtEfB@archie.me>
+References: <20240403072131.54935-1-david@sigma-star.at>
+ <20240403072131.54935-7-david@sigma-star.at>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-03_12,2024-04-03_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- phishscore=0 mlxscore=0 adultscore=0 suspectscore=0 clxscore=1011
- mlxlogscore=999 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2403210000 definitions=main-2404030091
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="naAkpeAgH+6KHC1j"
+Content-Disposition: inline
+In-Reply-To: <20240403072131.54935-7-david@sigma-star.at>
 
-Hi Roberto,
 
-Subject: -> security: Limit security_path_post_mknod() to regular files
+--naAkpeAgH+6KHC1j
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch description was written for the previous patch version with minor
-changes.  The discussion was more about making LSM hooks more generic than
-currently needed.  The patch description should somehow reflect that discussion.
+On Wed, Apr 03, 2024 at 09:21:22AM +0200, David Gstir wrote:
+> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Document=
+ation/security/keys/trusted-encrypted.rst
+> index e989b9802f92..f4d7e162d5e4 100644
+> --- a/Documentation/security/keys/trusted-encrypted.rst
+> +++ b/Documentation/security/keys/trusted-encrypted.rst
+> @@ -42,6 +42,14 @@ safe.
+>           randomly generated and fused into each SoC at manufacturing tim=
+e.
+>           Otherwise, a common fixed test key is used instead.
+> =20
+> +     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
+> +
+> +         Rooted to a one-time programmable key (OTP) that is generally b=
+urnt
+> +         in the on-chip fuses and is accessible to the DCP encryption en=
+gine only.
+> +         DCP provides two keys that can be used as root of trust: the OT=
+P key
+> +         and the UNIQUE key. Default is to use the UNIQUE key, but selec=
+ting
+> +         the OTP key can be done via a module parameter (dcp_use_otp_key=
+).
+> +
+>    *  Execution isolation
+> =20
+>       (1) TPM
+> @@ -57,6 +65,12 @@ safe.
+> =20
+>           Fixed set of operations running in isolated execution environme=
+nt.
+> =20
+> +     (4) DCP
+> +
+> +         Fixed set of cryptographic operations running in isolated execu=
+tion
+> +         environment. Only basic blob key encryption is executed there.
+> +         The actual key sealing/unsealing is done on main processor/kern=
+el space.
+> +
+>    * Optional binding to platform integrity state
+> =20
+>       (1) TPM
+> @@ -79,6 +93,11 @@ safe.
+>           Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
+>           for platform integrity.
+> =20
+> +     (4) DCP
+> +
+> +         Relies on Secure/Trusted boot process (called HAB by vendor) for
+> +         platform integrity.
+> +
+>    *  Interfaces and APIs
+> =20
+>       (1) TPM
+> @@ -94,6 +113,11 @@ safe.
+> =20
+>           Interface is specific to silicon vendor.
+> =20
+> +     (4) DCP
+> +
+> +         Vendor-specific API that is implemented as part of the DCP cryp=
+to driver in
+> +         ``drivers/crypto/mxs-dcp.c``.
+> +
+>    *  Threat model
+> =20
+>       The strength and appropriateness of a particular trust source for a=
+ given
+> @@ -129,6 +153,13 @@ selected trust source:
+>       CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the device
+>       is probed.
+> =20
+> +  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
+> +
+> +     The DCP hardware device itself does not provide a dedicated RNG int=
+erface,
+> +     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL =
+do have
+> +     a dedicated hardware RNG that is independent from DCP which can be =
+enabled
+> +     to back the kernel RNG.
+> +
+>  Users may override this by specifying ``trusted.rng=3Dkernel`` on the ke=
+rnel
+>  command-line to override the used RNG with the kernel's random number po=
+ol.
+> =20
+> @@ -231,6 +262,19 @@ Usage::
+>  CAAM-specific format.  The key length for new keys is always in bytes.
+>  Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
+> =20
+> +Trusted Keys usage: DCP
+> +-----------------------
+> +
+> +Usage::
+> +
+> +    keyctl add trusted name "new keylen" ring
+> +    keyctl add trusted name "load hex_blob" ring
+> +    keyctl print keyid
+> +
+> +"keyctl print" returns an ASCII hex copy of the sealed key, which is in =
+format
+> +specific to this DCP key-blob implementation.  The key length for new ke=
+ys is
+> +always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
+> +
+>  Encrypted Keys usage
+>  --------------------
+> =20
+> @@ -426,3 +470,12 @@ string length.
+>  privkey is the binary representation of TPM2B_PUBLIC excluding the
+>  initial TPM2B header which can be reconstructed from the ASN.1 octed
+>  string length.
+> +
+> +DCP Blob Format
+> +---------------
+> +
+> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
+> +   :doc: dcp blob format
+> +
+> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
+> +   :identifiers: struct dcp_blob_fmt
+> diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/tru=
+sted-keys/trusted_dcp.c
+> index 16c44aafeab3..b5f81a05be36 100644
+> --- a/security/keys/trusted-keys/trusted_dcp.c
+> +++ b/security/keys/trusted-keys/trusted_dcp.c
+> @@ -19,6 +19,25 @@
+>  #define DCP_BLOB_VERSION 1
+>  #define DCP_BLOB_AUTHLEN 16
+> =20
+> +/**
+> + * DOC: dcp blob format
+> + *
+> + * The Data Co-Processor (DCP) provides hardware-bound AES keys using its
+> + * AES encryption engine only. It does not provide direct key sealing/un=
+sealing.
+> + * To make DCP hardware encryption keys usable as trust source, we define
+> + * our own custom format that uses a hardware-bound key to secure the se=
+aling
+> + * key stored in the key blob.
+> + *
+> + * Whenever a new trusted key using DCP is generated, we generate a rand=
+om 128-bit
+> + * blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are us=
+ed to
+> + * encrypt the trusted key payload using AES-128-GCM.
+> + *
+> + * The BEK itself is encrypted using the hardware-bound key using the DC=
+P's AES
+> + * encryption engine with AES-128-ECB. The encrypted BEK, generated nonc=
+e,
+> + * BEK-encrypted payload and authentication tag make up the blob format =
+together
+> + * with a version number, payload length and authentication tag.
+> + */
+> +
+>  /**
+>   * struct dcp_blob_fmt - DCP BLOB format.
+>   *
 
-On Wed, 2024-04-03 at 11:07 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Commit 08abce60d63f ("security: Introduce path_post_mknod hook")
-> introduced security_path_post_mknod(), to replace the IMA-specific call to
-> ima_post_path_mknod().
-> 
-> For symmetry with security_path_mknod(), security_path_post_mknod() was
-> called after a successful mknod operation, for any file type, rather than
-> only for regular files at the time there was the IMA call.
+The doc LGTM, thanks!
 
--> rather than only for regular files.
-> 
-> However, as reported by VFS maintainers, successful mknod operation does
-> not mean that the dentry always has an inode attached to it (for example,
-> not for FIFOs on a SAMBA mount).
-> 
-> If that condition happens, the kernel crashes when
-> security_path_post_mknod() attempts to verify if the inode associated to
-> the dentry is private.
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-This is an example of why making the LSM hook more generic than needed didn't
-work.  Based on the discussion there is no valid reason for making the hook more
-generic.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-> 
-> Move security_path_post_mknod() where the ima_post_path_mknod() call was,
-> which is obviously correct from IMA/EVM perspective. IMA/EVM are the only
-> in-kernel users, and only need to inspect regular files.
+--naAkpeAgH+6KHC1j
+Content-Type: application/pgp-signature; name="signature.asc"
 
--> Move the security_path_post_mknod() back to the original placement of the
-ima_post_path_mknod(), so that it is only called for regular files.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> Reported-by: Steve French <smfrench@gmail.com>
-> Closes: 
-> https://lore.kernel.org/linux-kernel/CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com/
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Fixes: 08abce60d63f ("security: Introduce path_post_mknod hook")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZg1YegAKCRD2uYlJVVFO
+oyJuAQCZD3vF43N1Kkz1HmEgp7130tCkVQsyOA9E8/KbWap6iAD/QxxL8dI+KNzG
+9SR+i7e0WhL71RpnBvHq6ovdU/G2iAI=
+=lGz1
+-----END PGP SIGNATURE-----
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
+--naAkpeAgH+6KHC1j--
