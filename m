@@ -1,99 +1,47 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798DF5B053
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Apr 2024 07:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFED6EB46;
+	Wed,  3 Apr 2024 07:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712128916; cv=none; b=PTgGeBI1N2N16QIvSlW/agc+OqfoqnxUQZW5c4O+d4jNEnxXZ974IQsiOEpheRxmxr2JVrxStbZSrbBGEARG+gJxaME5N3hoNUDsLGC2FpmpyKd039apR+A3+3cfEGdu4L5Ux/HqpF/p/nWQKWPCs3nS7bMe45yuT80CFmPKZMY=
+	t=1712131081; cv=none; b=Re33JynRRjvtp4WWwKNK79QhFlW3XCrJgsXFYwvoHUGVCl8H/bnOML7Jc8IYsfLmOyJfMsDZczctj362Tysz4/fktFCBpNsp3o/VkcyVoeMVHZEVrqNTrRyj91xwrD/o/yQxYEOBRNxjKsOjqOB91b4T1a8JU+QR3UHwMdVKtgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712128916; c=relaxed/simple;
-	bh=YwCTtSxtOVaFrBMehGFPkK05qlCv/3lFORgK1gDJgN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EVVeDdHryK6Jsl8hqkwhsC1Vz6CeoqE91mwDfy8C28wGwvENYaXC/QWTZF+uXOMIpM/TUCrbAfLZITJ35DFbfElUp/z8VslNZA9ExdsThdtcA5U0c9vJJocVTxG92fi97rDacVOb8Aaw6G3wBkBdQ+mWtbNGXjJQzCW5Uwox7Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=uW854BK8; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="uW854BK8"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4162514dc22so146495e9.2
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2024 00:21:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1712128912; x=1712733712; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ht1KLnNvKBCCICp+Y6JpKOSNrIWAe17k5/lz/+k/t0k=;
-        b=uW854BK8iRab+dLisa+IbHPHJgwWKAKDISQ819SOYm1n3kgAF7WCNlqinyILIpJ2hI
-         TGaQsz83vXduS0LjJAvE/5vDlZjmpGnTcq2/i2obKcAXtecd5iyzhn/HVL0v9CuaIoR+
-         NIgoZQGNZZ6aYzLBkQNOtUajyD5C57G3czNHbSAtIKou8RtsxCbESzp8/Fkm4uPr1h/Q
-         SHfuuM62iVAxN0aybNchd0oj8lS+U3QV9m2sQrQjrDP+VVZJhmR13Fk4FMPhqkHayZUP
-         SXlWNSI6VrBviYkHIBADSh+q2qzJPbK+fVi7zA82Otz95blwYrofBZUHW1ma6NCe7mfC
-         8diA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712128912; x=1712733712;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ht1KLnNvKBCCICp+Y6JpKOSNrIWAe17k5/lz/+k/t0k=;
-        b=boQ+hgnvlj5RPEGb/lLTy63HvPSS785oqzXIBe1jucvQUr6U2T2fZ505WXmmpGIpwG
-         P/SWK9mibjxntqaHstjJM4TYV1QyX+dFvTPxAhxnK5z5yyZ8el30CY2WrUEP0vj6WNjy
-         ods3AV592y7NCf4rX44ixn8gbfaXXboUkU9PzWB1ME1BLNZZwJpri9086kowfURUA1tj
-         ySPbIDC390pgHUeh1Zb9xutTqq0ZND7ILMvbzLYkF840noav3uwHPdXJ/sQlSaWI/779
-         SjkQLxb8kq8bsi3Kb1XXgxSBUFuJvmg40ziHZchbFaXtWvMVk16Y/fIcedNDoyyEgJrO
-         QYTw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6SYnwDaXGzeDNSdmP/zILLOVBnd5+eDt8103TlPzJBUQ/llZSrEN7cKw3dtW7EhckNFqsSjtQwFbQfhb7I7AcaYrz5VZw4ayBVzKgnTRLGPCl+ncY
-X-Gm-Message-State: AOJu0YxZ3io3NKB1KeYPlupJjKvsOT2wmXEgKWS87pcrLN0u4eyllRt3
-	LXSGKPVUt9SI/Xp4g/BkaABSIWDNEMYdoSHIRrYWxbC808zyQI7LV00ct/8MnUs=
-X-Google-Smtp-Source: AGHT+IHxnLJChRG6eyzjNgzPrS0ONsTJ00ZbGMzOG5HnqpNOaErE7IvWFJCS+7/AvipAmrK+4XCdlA==
-X-Received: by 2002:a05:600c:2d06:b0:413:e19:337f with SMTP id x6-20020a05600c2d0600b004130e19337fmr3324441wmf.22.1712128912023;
-        Wed, 03 Apr 2024 00:21:52 -0700 (PDT)
-Received: from localhost ([82.150.214.1])
-        by smtp.gmail.com with UTF8SMTPSA id f11-20020a05600c4e8b00b004154e48bcdesm17187826wmq.14.2024.04.03.00.21.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Apr 2024 00:21:51 -0700 (PDT)
-From: David Gstir <david@sigma-star.at>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	James Bottomley <jejb@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: David Gstir <david@sigma-star.at>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-	David Howells <dhowells@redhat.com>,
-	Li Yang <leoyang.li@nxp.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Tejun Heo <tj@kernel.org>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1712131081; c=relaxed/simple;
+	bh=QgoE+OfmdPvK6VPzB9LV9LayCaBdrKNtJSdxQEmkaI4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LDXBDDPaG8iC6Pqg1RjLsL9rxgAgep9H4zAFGt4Q4yaaKCvpY8AOQR4e3bSmaT43rSB0sg+LIUGBbABzEtxTJJZuXO7js4/sqm/Hi/UHd0j82LDdk9o/8QBH+tU/hQ48bXCsEd3PBmHVOn8csEpyYsggKFpnhatvSvoKOmjuLEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4V8cBr5Jz7z9v7H3;
+	Wed,  3 Apr 2024 15:41:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id A54061404FE;
+	Wed,  3 Apr 2024 15:57:47 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwC3oyfuCw1mPjx7BQ--.30370S2;
+	Wed, 03 Apr 2024 08:57:46 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
 	linux-security-module@vger.kernel.org,
-	Richard Weinberger <richard@nod.at>,
-	David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Subject: [PATCH v8 6/6] docs: trusted-encrypted: add DCP as new trust source
-Date: Wed,  3 Apr 2024 09:21:22 +0200
-Message-ID: <20240403072131.54935-7-david@sigma-star.at>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240403072131.54935-1-david@sigma-star.at>
-References: <20240403072131.54935-1-david@sigma-star.at>
+	linux-cifs@vger.kernel.org,
+	pc@manguebit.com,
+	christian@brauner.io,
+	torvalds@linux-foundation.org,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Steve French <smfrench@gmail.com>
+Subject: [PATCH v3] security: Place security_path_post_mknod() where the original IMA call was
+Date: Wed,  3 Apr 2024 09:57:29 +0200
+Message-Id: <20240403075729.2888084-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -101,157 +49,99 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwC3oyfuCw1mPjx7BQ--.30370S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXrWrXFyUKr4rJFy3trWrKrg_yoW5AF4kpF
+	4rtF1DK34rJFy3WF1kAFy7CFyIvay5WFW5XFsYgr13AF9Igr1YgF1S9ryY9rZ8KrWUtry0
+	va17KrZxXw4UZrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
+	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
+	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0x
+	vE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
+	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj5gK+wACse
 
-Update the documentation for trusted and encrypted KEYS with DCP as new
-trust source:
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-- Describe security properties of DCP trust source
-- Describe key usage
-- Document blob format
+Commit 08abce60d63f ("security: Introduce path_post_mknod hook")
+introduced security_path_post_mknod(), to replace the IMA-specific call to
+ima_post_path_mknod().
 
-Co-developed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Signed-off-by: David Gstir <david@sigma-star.at>
+For symmetry with security_path_mknod(), security_path_post_mknod() was
+called after a successful mknod operation, for any file type, rather than
+only for regular files at the time there was the IMA call.
+
+However, as reported by VFS maintainers, successful mknod operation does
+not mean that the dentry always has an inode attached to it (for example,
+not for FIFOs on a SAMBA mount).
+
+If that condition happens, the kernel crashes when
+security_path_post_mknod() attempts to verify if the inode associated to
+the dentry is private.
+
+Move security_path_post_mknod() where the ima_post_path_mknod() call was,
+which is obviously correct from IMA/EVM perspective. IMA/EVM are the only
+in-kernel users, and only need to inspect regular files.
+
+Reported-by: Steve French <smfrench@gmail.com>
+Closes: https://lore.kernel.org/linux-kernel/CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com/
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 08abce60d63f ("security: Introduce path_post_mknod hook")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- .../security/keys/trusted-encrypted.rst       | 53 +++++++++++++++++++
- security/keys/trusted-keys/trusted_dcp.c      | 19 +++++++
- 2 files changed, 72 insertions(+)
+ fs/namei.c          | 7 ++-----
+ security/security.c | 4 ++--
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index e989b9802f92..f4d7e162d5e4 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -42,6 +42,14 @@ safe.
-          randomly generated and fused into each SoC at manufacturing time.
-          Otherwise, a common fixed test key is used instead.
+diff --git a/fs/namei.c b/fs/namei.c
+index ceb9ddf8dfdd..c5b2a25be7d0 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4050,6 +4050,8 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 		case 0: case S_IFREG:
+ 			error = vfs_create(idmap, path.dentry->d_inode,
+ 					   dentry, mode, true);
++			if (!error)
++				security_path_post_mknod(idmap, dentry);
+ 			break;
+ 		case S_IFCHR: case S_IFBLK:
+ 			error = vfs_mknod(idmap, path.dentry->d_inode,
+@@ -4060,11 +4062,6 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 					  dentry, mode, 0);
+ 			break;
+ 	}
+-
+-	if (error)
+-		goto out2;
+-
+-	security_path_post_mknod(idmap, dentry);
+ out2:
+ 	done_path_create(&path, dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+diff --git a/security/security.c b/security/security.c
+index 7e118858b545..0a9a0ac3f266 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1793,11 +1793,11 @@ int security_path_mknod(const struct path *dir, struct dentry *dentry,
+ EXPORT_SYMBOL(security_path_mknod);
  
-+     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+         Rooted to a one-time programmable key (OTP) that is generally burnt
-+         in the on-chip fuses and is accessible to the DCP encryption engine only.
-+         DCP provides two keys that can be used as root of trust: the OTP key
-+         and the UNIQUE key. Default is to use the UNIQUE key, but selecting
-+         the OTP key can be done via a module parameter (dcp_use_otp_key).
-+
-   *  Execution isolation
- 
-      (1) TPM
-@@ -57,6 +65,12 @@ safe.
- 
-          Fixed set of operations running in isolated execution environment.
- 
-+     (4) DCP
-+
-+         Fixed set of cryptographic operations running in isolated execution
-+         environment. Only basic blob key encryption is executed there.
-+         The actual key sealing/unsealing is done on main processor/kernel space.
-+
-   * Optional binding to platform integrity state
- 
-      (1) TPM
-@@ -79,6 +93,11 @@ safe.
-          Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
-          for platform integrity.
- 
-+     (4) DCP
-+
-+         Relies on Secure/Trusted boot process (called HAB by vendor) for
-+         platform integrity.
-+
-   *  Interfaces and APIs
- 
-      (1) TPM
-@@ -94,6 +113,11 @@ safe.
- 
-          Interface is specific to silicon vendor.
- 
-+     (4) DCP
-+
-+         Vendor-specific API that is implemented as part of the DCP crypto driver in
-+         ``drivers/crypto/mxs-dcp.c``.
-+
-   *  Threat model
- 
-      The strength and appropriateness of a particular trust source for a given
-@@ -129,6 +153,13 @@ selected trust source:
-      CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the device
-      is probed.
- 
-+  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-+
-+     The DCP hardware device itself does not provide a dedicated RNG interface,
-+     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL do have
-+     a dedicated hardware RNG that is independent from DCP which can be enabled
-+     to back the kernel RNG.
-+
- Users may override this by specifying ``trusted.rng=kernel`` on the kernel
- command-line to override the used RNG with the kernel's random number pool.
- 
-@@ -231,6 +262,19 @@ Usage::
- CAAM-specific format.  The key length for new keys is always in bytes.
- Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
- 
-+Trusted Keys usage: DCP
-+-----------------------
-+
-+Usage::
-+
-+    keyctl add trusted name "new keylen" ring
-+    keyctl add trusted name "load hex_blob" ring
-+    keyctl print keyid
-+
-+"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
-+specific to this DCP key-blob implementation.  The key length for new keys is
-+always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-+
- Encrypted Keys usage
- --------------------
- 
-@@ -426,3 +470,12 @@ string length.
- privkey is the binary representation of TPM2B_PUBLIC excluding the
- initial TPM2B header which can be reconstructed from the ASN.1 octed
- string length.
-+
-+DCP Blob Format
-+---------------
-+
-+.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
-+   :doc: dcp blob format
-+
-+.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
-+   :identifiers: struct dcp_blob_fmt
-diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
-index 16c44aafeab3..b5f81a05be36 100644
---- a/security/keys/trusted-keys/trusted_dcp.c
-+++ b/security/keys/trusted-keys/trusted_dcp.c
-@@ -19,6 +19,25 @@
- #define DCP_BLOB_VERSION 1
- #define DCP_BLOB_AUTHLEN 16
- 
-+/**
-+ * DOC: dcp blob format
-+ *
-+ * The Data Co-Processor (DCP) provides hardware-bound AES keys using its
-+ * AES encryption engine only. It does not provide direct key sealing/unsealing.
-+ * To make DCP hardware encryption keys usable as trust source, we define
-+ * our own custom format that uses a hardware-bound key to secure the sealing
-+ * key stored in the key blob.
-+ *
-+ * Whenever a new trusted key using DCP is generated, we generate a random 128-bit
-+ * blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are used to
-+ * encrypt the trusted key payload using AES-128-GCM.
-+ *
-+ * The BEK itself is encrypted using the hardware-bound key using the DCP's AES
-+ * encryption engine with AES-128-ECB. The encrypted BEK, generated nonce,
-+ * BEK-encrypted payload and authentication tag make up the blob format together
-+ * with a version number, payload length and authentication tag.
-+ */
-+
  /**
-  * struct dcp_blob_fmt - DCP BLOB format.
+- * security_path_post_mknod() - Update inode security field after file creation
++ * security_path_post_mknod() - Update inode security after reg file creation
+  * @idmap: idmap of the mount
+  * @dentry: new file
   *
+- * Update inode security field after a file has been created.
++ * Update inode security field after a regular file has been created.
+  */
+ void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+ {
 -- 
-2.35.3
+2.34.1
 
