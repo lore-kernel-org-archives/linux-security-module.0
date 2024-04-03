@@ -1,258 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1675714A4E0;
-	Wed,  3 Apr 2024 15:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540FF14E2E8
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Apr 2024 16:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712159280; cv=none; b=SdBt3zm/tClmgCO0cnZZD3Nr7ZG9R8orDWvDw1P24X5ajibDQhi7qmgu6t5CK8lR5Ava9x2qXr0QXwsX36cDkVKyiHC1aPCYPKHYkGEkynPTvenP31iPAr01WzPgxccxlOH53lM8gb82f6jcP0CwKwasF+Xyw/NzZTJ9uGAsdto=
+	t=1712160947; cv=none; b=S0Iv6CWhjpFYnAE0vjFgMCq8gpwf04STTCSy+aYs09/Z7U0Xn1OgwvdX3O/vpTB9f9kKz52R99K1dLqwZb5XdOhHb1e45tRySCafY0Lkr015F8U4n4tRnwQovsGzZJJH89VqkXka2mrBjrGpckku2Vva1h/udgX6j/2wwnWrfts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712159280; c=relaxed/simple;
-	bh=rrCR4x657hJj+9Z7FfIwTOL0bKqYr1iVATWuKVnBvdc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=IfaYXXHYKBzEF6hzXXR0y75ac5wwXSIeqeBlBf/82IoNYEa8tnAHz4cD+Ckpz9spJLRhlVwqBaFS//MXMIJiodhTaCYkokEofnOdphDXd/Uut2B7WfuGaETPlyXJs+xCyIeGEkun3MkLVROOSsJLxOUvZ7CpLhJbAS2ISxWIU/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYo0Q27d; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712160947; c=relaxed/simple;
+	bh=uatYMX2i3KE1ekQW6bUNQmpadzSHqfrZK0YEKMW1MqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNtTJoBt621zd0E77F3BHHIdX2Gz/JZ3hZqtTuUB96CR7aiFLSyzCPdkrlX98MMZaDhXIKBjBksDqeGH8MQ5CFl+7h9UKoBLBg6BiGA2bLXjMyd9JAV4zn+M3WyyVx/khy6GYlBC3fPbHCMzpLQdDiGASNwgU7TEGtUe2PqzNys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RgOFNIcC; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYo0Q27d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13591C433C7;
-	Wed,  3 Apr 2024 15:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712159279;
-	bh=rrCR4x657hJj+9Z7FfIwTOL0bKqYr1iVATWuKVnBvdc=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RgOFNIcC"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4V8qSn2c4fz9WQ;
+	Wed,  3 Apr 2024 18:09:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1712160569;
+	bh=uatYMX2i3KE1ekQW6bUNQmpadzSHqfrZK0YEKMW1MqQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dYo0Q27dSQQ3Ch8t1bv/4TDEGdVvlFtZiK/Zz2pAtDrV2dGg+D+XOJblloji6lf8f
-	 AT/1G9mjWsRaJTEV3z+NlLz40f+kBk5nFmcrUtgEA41qda5WwW4i8s4RLr/MzdF5zi
-	 YoTjxsD9V0zKYX4yL4N07X1LoysvapSXkS7G6OsnvSJFKJeNikI8cMxk3axKsNBB+y
-	 P6Adfksr8JnIG1LemgmEFRN0C6BpU/ZKYmBXXWJOohD4naX0Imdw+22KIlCXUWOohl
-	 YL80cR6IKID87Ymp816wKnW4iT/VyBYwP0nq6oFeuIpysRTK4u+RGJb+IBGt3Xt9x0
-	 vxIbwg0cDWVFw==
+	b=RgOFNIcCwT0MAtAY9jmDT0imf4WzdbQMHPXwzBjayYtuLO+mCny9g1of/NQw+m/B+
+	 BeZTZ24wyfzfLBkjhXGZqo/2VZQ4++DeKv/VOeAAAeDvfB3GzxzKPozrMqBZ57dWW9
+	 vyJtv8AsACKqNrc8YDjKyeHm/adTcxIbcj60x8a0=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4V8qSm2X6jz4mD;
+	Wed,  3 Apr 2024 18:09:28 +0200 (CEST)
+Date: Wed, 3 Apr 2024 18:09:27 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Ayush Tiwari <ayushtiw0110@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, alison.schofield@intel.com, 
+	paul@paul-moore.com, fabio.maria.de.francesco@linux.intel.com, 
+	linux-kernel@vger.kernel.org, outreachy@lists.linux.dev, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2] landlock: Use kmem for landlock_object
+Message-ID: <20240403.Yiep0aem7wu5@digikod.net>
+References: <ZggZi/EFICvb4xTU@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+ <2024033030-tutu-dynamite-47c9@gregkh>
+ <ZgmETqQr7+W9XtWN@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+ <2024033111-squeezing-linoleum-52a7@gregkh>
+ <ZgmmnLIal3gz55Q+@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Apr 2024 18:47:51 +0300
-Message-Id: <D0ALT2QCUIYB.8NFTE7Z18JKN@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "David Gstir" <david@sigma-star.at>, "Mimi Zohar" <zohar@linux.ibm.com>,
- "James Bottomley" <jejb@linux.ibm.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
-Cc: "Shawn Guo" <shawnguo@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "NXP Linux
- Team" <linux-imx@nxp.com>, "Ahmad Fatoum" <a.fatoum@pengutronix.de>, "sigma
- star Kernel Team" <upstream+dcp@sigma-star.at>, "David Howells"
- <dhowells@redhat.com>, "Li Yang" <leoyang.li@nxp.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Catalin Marinas"
- <catalin.marinas@arm.com>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>, "Tejun Heo" <tj@kernel.org>, "Steven Rostedt
- (Google)" <rostedt@goodmis.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linuxppc-dev@lists.ozlabs.org>,
- <linux-security-module@vger.kernel.org>, "Richard Weinberger"
- <richard@nod.at>, "David Oberhollenzer" <david.oberhollenzer@sigma-star.at>
-Subject: Re: [PATCH v8 6/6] docs: trusted-encrypted: add DCP as new trust
- source
-X-Mailer: aerc 0.17.0
-References: <20240403072131.54935-1-david@sigma-star.at>
- <20240403072131.54935-7-david@sigma-star.at>
-In-Reply-To: <20240403072131.54935-7-david@sigma-star.at>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZgmmnLIal3gz55Q+@ayush-HP-Pavilion-Gaming-Laptop-15-ec0xxx>
+X-Infomaniak-Routing: alpha
 
-On Wed Apr 3, 2024 at 10:21 AM EEST, David Gstir wrote:
-> Update the documentation for trusted and encrypted KEYS with DCP as new
-> trust source:
->
-> - Describe security properties of DCP trust source
-> - Describe key usage
-> - Document blob format
->
-> Co-developed-by: Richard Weinberger <richard@nod.at>
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-> Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-> Signed-off-by: David Gstir <david@sigma-star.at>
-> ---
->  .../security/keys/trusted-encrypted.rst       | 53 +++++++++++++++++++
->  security/keys/trusted-keys/trusted_dcp.c      | 19 +++++++
->  2 files changed, 72 insertions(+)
->
-> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Document=
-ation/security/keys/trusted-encrypted.rst
-> index e989b9802f92..f4d7e162d5e4 100644
-> --- a/Documentation/security/keys/trusted-encrypted.rst
-> +++ b/Documentation/security/keys/trusted-encrypted.rst
-> @@ -42,6 +42,14 @@ safe.
->           randomly generated and fused into each SoC at manufacturing tim=
-e.
->           Otherwise, a common fixed test key is used instead.
-> =20
-> +     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs=
-)
-> +
-> +         Rooted to a one-time programmable key (OTP) that is generally b=
-urnt
-> +         in the on-chip fuses and is accessible to the DCP encryption en=
-gine only.
-> +         DCP provides two keys that can be used as root of trust: the OT=
-P key
-> +         and the UNIQUE key. Default is to use the UNIQUE key, but selec=
-ting
-> +         the OTP key can be done via a module parameter (dcp_use_otp_key=
-).
-> +
->    *  Execution isolation
-> =20
->       (1) TPM
-> @@ -57,6 +65,12 @@ safe.
-> =20
->           Fixed set of operations running in isolated execution environme=
-nt.
-> =20
-> +     (4) DCP
-> +
-> +         Fixed set of cryptographic operations running in isolated execu=
-tion
-> +         environment. Only basic blob key encryption is executed there.
-> +         The actual key sealing/unsealing is done on main processor/kern=
-el space.
-> +
->    * Optional binding to platform integrity state
-> =20
->       (1) TPM
-> @@ -79,6 +93,11 @@ safe.
->           Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
->           for platform integrity.
-> =20
-> +     (4) DCP
-> +
-> +         Relies on Secure/Trusted boot process (called HAB by vendor) fo=
-r
-> +         platform integrity.
-> +
->    *  Interfaces and APIs
-> =20
->       (1) TPM
-> @@ -94,6 +113,11 @@ safe.
-> =20
->           Interface is specific to silicon vendor.
-> =20
-> +     (4) DCP
-> +
-> +         Vendor-specific API that is implemented as part of the DCP cryp=
-to driver in
-> +         ``drivers/crypto/mxs-dcp.c``.
-> +
->    *  Threat model
-> =20
->       The strength and appropriateness of a particular trust source for a=
- given
-> @@ -129,6 +153,13 @@ selected trust source:
->       CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the devic=
-e
->       is probed.
-> =20
-> +  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
-> +
-> +     The DCP hardware device itself does not provide a dedicated RNG int=
-erface,
-> +     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL =
-do have
-> +     a dedicated hardware RNG that is independent from DCP which can be =
-enabled
-> +     to back the kernel RNG.
-> +
->  Users may override this by specifying ``trusted.rng=3Dkernel`` on the ke=
-rnel
->  command-line to override the used RNG with the kernel's random number po=
-ol.
-> =20
-> @@ -231,6 +262,19 @@ Usage::
->  CAAM-specific format.  The key length for new keys is always in bytes.
->  Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-> =20
-> +Trusted Keys usage: DCP
-> +-----------------------
-> +
-> +Usage::
-> +
-> +    keyctl add trusted name "new keylen" ring
-> +    keyctl add trusted name "load hex_blob" ring
-> +    keyctl print keyid
-> +
-> +"keyctl print" returns an ASCII hex copy of the sealed key, which is in =
-format
-> +specific to this DCP key-blob implementation.  The key length for new ke=
-ys is
-> +always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-> +
->  Encrypted Keys usage
->  --------------------
-> =20
-> @@ -426,3 +470,12 @@ string length.
->  privkey is the binary representation of TPM2B_PUBLIC excluding the
->  initial TPM2B header which can be reconstructed from the ASN.1 octed
->  string length.
-> +
-> +DCP Blob Format
-> +---------------
-> +
-> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
-> +   :doc: dcp blob format
-> +
-> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
-> +   :identifiers: struct dcp_blob_fmt
-> diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/tru=
-sted-keys/trusted_dcp.c
-> index 16c44aafeab3..b5f81a05be36 100644
-> --- a/security/keys/trusted-keys/trusted_dcp.c
-> +++ b/security/keys/trusted-keys/trusted_dcp.c
-> @@ -19,6 +19,25 @@
->  #define DCP_BLOB_VERSION 1
->  #define DCP_BLOB_AUTHLEN 16
-> =20
-> +/**
-> + * DOC: dcp blob format
-> + *
-> + * The Data Co-Processor (DCP) provides hardware-bound AES keys using it=
-s
-> + * AES encryption engine only. It does not provide direct key sealing/un=
-sealing.
-> + * To make DCP hardware encryption keys usable as trust source, we defin=
-e
-> + * our own custom format that uses a hardware-bound key to secure the se=
-aling
-> + * key stored in the key blob.
-> + *
-> + * Whenever a new trusted key using DCP is generated, we generate a rand=
-om 128-bit
-> + * blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are us=
-ed to
-> + * encrypt the trusted key payload using AES-128-GCM.
-> + *
-> + * The BEK itself is encrypted using the hardware-bound key using the DC=
-P's AES
-> + * encryption engine with AES-128-ECB. The encrypted BEK, generated nonc=
-e,
-> + * BEK-encrypted payload and authentication tag make up the blob format =
-together
-> + * with a version number, payload length and authentication tag.
-> + */
-> +
->  /**
->   * struct dcp_blob_fmt - DCP BLOB format.
->   *
+On Sun, Mar 31, 2024 at 11:38:28PM +0530, Ayush Tiwari wrote:
+> On Sun, Mar 31, 2024 at 06:54:39PM +0200, Greg KH wrote:
+> > On Sun, Mar 31, 2024 at 09:12:06PM +0530, Ayush Tiwari wrote:
+> > > Hello Greg. Thanks for the feedback.
+> > > On Sat, Mar 30, 2024 at 05:12:18PM +0100, Greg KH wrote:
+> > > > On Sat, Mar 30, 2024 at 07:24:19PM +0530, Ayush Tiwari wrote:
+> > > > > Use kmem_cache replace kzalloc() calls with kmem_cache_zalloc() for
+> > > > > struct landlock_object and update the related dependencies to improve
+> > > > > memory allocation and deallocation performance.
+> > > > 
+> > > > So it's faster?  Great, what are the measurements?
+> > > > 
+> > > Thank you for the feedback. Regarding the performance improvements, I
+> > > realized I should have provided concrete measurements to support the
+> > > claim. The intention behind switching to kmem_cache_zalloc() was to
+> > > optimize memory management efficiency based on general principles.
+> > > Could you suggest some way to get some measurements if possible?
+> > 
+> > If you can not measure the difference, why make the change at all?
+> 
+> Kindly refer to this issue: https://github.com/landlock-lsm/linux/issues/19
+> I have been assigned this issue hence I am focussing on making the
+> changes that have been listed.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+As Greg asked, it would be good know the performance impact of such
+change.  This could be measured by creating a lot of related allocations
+and accessing them in non-sequential order (e.g. adding new rules,
+accessing a related inode while being sandboxed).  I guess there will be
+a lot of noise (because of other subsystems) but it's worth a try.  You
+should look at similar commits and their related threads to see what
+others did.
 
-I can only test that this does not break a machine without the
-hardware feature.
+> > 
+> > Again, you need to prove the need for this change, so far I fail to see
+> > a reason why.
+> > 
+> > > > > +static struct kmem_cache *landlock_object_cache;
+> > > > > +
+> > > > > +void __init landlock_object_cache_init(void)
+> > > > > +{
+> > > > > +	landlock_object_cache = kmem_cache_create(
+> > > > > +		"landlock_object_cache", sizeof(struct landlock_object), 0,
+> > > > > +		SLAB_PANIC, NULL);
+> > > > 
+> > > > You really want SLAB_PANIC?  Why?
+> > > >
+> > > The SLAB_PANIC flag used in kmem_cache_create indicates that if the
+> > > kernel is unable to create the cache, it should panic. The use of
+> > > SLAB_PANIC in the creation of the landlock_object_cache is due to the
+> > > critical nature of this cache for the Landlock LSM's operation. I
+> > > found it to be a good choice to be used. Should I use some other
+> > > altrnative?
+> > 
+> > Is panicing really a good idea?  Why can't you properly recover from
+> > allocation failures?
+> 
+> I am relying on SLAB_PANIC because of the reason I mentioned earlier,
+> and also because it was used in lsm_file_cache that I was asked to look
+> into as reference. I could try to recover from allocation failures but
+> currently my focus is on working on the changes that are listed. I will
+> definitely try to look into it once I am done with all changes.
 
-Is there anyone who could possibly peer test these patches?
+Not being able to create this kmem cache would mean that Landlock would
+not be able to properly run, so we could print a warning and exit the
+Landlock init function.  However, most calls to kmem_cache_create() are
+init calls, and most of them (especially in security/*) set SLAB_PANIC.
+I'm wondering why Landlock should do differently, if others should be
+fixed, and if the extra complexity of handling several
+kmem_cache_create() potential failure is worth it for init handlers?
 
-BR, Jarkko
+> 
+> > > > > +
+> > > > >  struct landlock_object *
+> > > > >  landlock_create_object(const struct landlock_object_underops *const underops,
+> > > > >  		       void *const underobj)
+> > > > > @@ -25,7 +34,8 @@ landlock_create_object(const struct landlock_object_underops *const underops,
+> > > > >  
+> > > > >  	if (WARN_ON_ONCE(!underops || !underobj))
+> > > > >  		return ERR_PTR(-ENOENT);
+> > > > > -	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
+> > > > > +	new_object =
+> > > > > +		kmem_cache_zalloc(landlock_object_cache, GFP_KERNEL_ACCOUNT);
+> > > > 
+> > > > Odd indentation, why?
+> > > > 
+> > > This indentation is due to formatting introduced by running
+> > > clang-format.
+> > 
+> > Why not keep it all on one line?
+> > 
+> I kept it all in one line in v1, but Paul and Mickael asked me to use
+> clang-format, hence it is this way.
+
+Yes, it may looks weird but we format everything with clang-format to
+not waste time discussing about style.
+
+> > thanks,
+> > 
+> > greg k-h
+> 
