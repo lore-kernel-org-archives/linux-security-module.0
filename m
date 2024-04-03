@@ -1,46 +1,47 @@
 Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFED6EB46;
-	Wed,  3 Apr 2024 07:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35292AE7C;
+	Wed,  3 Apr 2024 09:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712131081; cv=none; b=Re33JynRRjvtp4WWwKNK79QhFlW3XCrJgsXFYwvoHUGVCl8H/bnOML7Jc8IYsfLmOyJfMsDZczctj362Tysz4/fktFCBpNsp3o/VkcyVoeMVHZEVrqNTrRyj91xwrD/o/yQxYEOBRNxjKsOjqOB91b4T1a8JU+QR3UHwMdVKtgg=
+	t=1712135413; cv=none; b=JGPiB3c5ra597QZ/MufyY3uloKuipkaxpsI6wXY+qdSPPt2w4phocQLlcS5lseNJKXV8dpQjtdtJKkERotY7Ij6aveeqRA4vRap6utYtm/j4UgkyZvCrn1JuRQ0a4hfsOLPWZ3SRQBzIRqpIrDBNOUpWkveOQIeziCe/zCiKHls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712131081; c=relaxed/simple;
+	s=arc-20240116; t=1712135413; c=relaxed/simple;
 	bh=QgoE+OfmdPvK6VPzB9LV9LayCaBdrKNtJSdxQEmkaI4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LDXBDDPaG8iC6Pqg1RjLsL9rxgAgep9H4zAFGt4Q4yaaKCvpY8AOQR4e3bSmaT43rSB0sg+LIUGBbABzEtxTJJZuXO7js4/sqm/Hi/UHd0j82LDdk9o/8QBH+tU/hQ48bXCsEd3PBmHVOn8csEpyYsggKFpnhatvSvoKOmjuLEU=
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lg6JPW+K4Cxiune1KOo1mvOsIpvKaoRg+CjtJ0EGNyMwcsYSxTefpTsamYzx4fvyv4op3lPRRTtdEGxSnFeRtbDWIZ2j4PWm14VawBRh3WzpzsHI/wOswdorUI1ZnJ55a7XeXB4Er5wZL3H6uXVJeGSSvdXxOAp89ALcBTXr/w8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4V8cBr5Jz7z9v7H3;
-	Wed,  3 Apr 2024 15:41:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id A54061404FE;
-	Wed,  3 Apr 2024 15:57:47 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4V8dp91MfZz9xHvZ;
+	Wed,  3 Apr 2024 16:53:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 8C1FA140412;
+	Wed,  3 Apr 2024 17:09:58 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwC3oyfuCw1mPjx7BQ--.30370S2;
-	Wed, 03 Apr 2024 08:57:46 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwA3LBXYHA1mI_KDBQ--.29734S2;
+	Wed, 03 Apr 2024 10:09:57 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
 	jack@suse.cz,
 	paul@paul-moore.com,
 	jmorris@namei.org,
-	serge@hallyn.com
+	serge@hallyn.com,
+	zohar@linux.ibm.com
 Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-cifs@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
 	pc@manguebit.com,
-	christian@brauner.io,
 	torvalds@linux-foundation.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Steve French <smfrench@gmail.com>
-Subject: [PATCH v3] security: Place security_path_post_mknod() where the original IMA call was
-Date: Wed,  3 Apr 2024 09:57:29 +0200
-Message-Id: <20240403075729.2888084-1-roberto.sassu@huaweicloud.com>
+Subject: [RESEND][PATCH v3] security: Place security_path_post_mknod() where the original IMA call was
+Date: Wed,  3 Apr 2024 11:07:49 +0200
+Message-Id: <20240403090749.2929667-1-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -49,23 +50,23 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwC3oyfuCw1mPjx7BQ--.30370S2
+X-CM-TRANSID:LxC2BwA3LBXYHA1mI_KDBQ--.29734S2
 X-Coremail-Antispam: 1UD129KBjvJXoWxXrWrXFyUKr4rJFy3trWrKrg_yoW5AF4kpF
 	4rtF1DK34rJFy3WF1kAFy7CFyIvay5WFW5XFsYgr13AF9Igr1YgF1S9ryY9rZ8KrWUtry0
 	va17KrZxXw4UZrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
 	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
 	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
 	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
 	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
 	c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
+	026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF
 	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0x
 	vE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj5gK+wACse
+	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj5gMswAAsS
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
