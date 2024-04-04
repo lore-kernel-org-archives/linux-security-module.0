@@ -1,87 +1,132 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6D5156966;
-	Wed,  3 Apr 2024 22:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76229129A90
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Apr 2024 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712182935; cv=none; b=HFDU8GkEKIcncV1G1y7LmwazkAegep7DaxbwZCIua19hBvhe88v9sxb2jsgGQczDbYUm8ewWLBwTRahpaenhOfT/PGfnAXRalUeI7J5btt46m3bwxuHguDb0AkrKVZtNQPUfz5hEzRDdJ7M1vdhuQJXkhMoh6b2wltmGIXzTMGI=
+	t=1712233009; cv=none; b=MVkSKYARFOFdExakp5IcIPEZvZa56UajZAiTeDv/NXX3/oEo1oXQet57MHHhk6r6nSjci9IgHmosGzcbPPEIpoX9DwvUzvqwY8bdYZrCnWfMnVIpPRSvQVf565dX0hOj6pZCL2VJkk3wb0SmhwV8Xc1iyrqDpWU25oYXajRlLFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712182935; c=relaxed/simple;
-	bh=lRXKv8S1N/Sb8QDRVkZH5o2ueko8OCT7uZmrGJAAG6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TL8ketNiAA7eP2oOaYICYbnF/Pgv0nu2/tVDyLxgwRSZWwkWlEYfYWBG0I1PVmHFM2QkWoJ7dKTKNhSCZ0IM0AsKkgpnQOKbvA/DDj9K/MajB0DpS+o7GgiSdMAWKWq5W1RoaqVtbloXJCJ34IAoYzXDcG9L4TQ/m/O3Giojn4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TKiN3enC; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1712233009; c=relaxed/simple;
+	bh=OrnyRAznfz0HaoBMmuRRvJwgEktTbAkUuzxqcJvq3Bo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=W1LD16cUjpLo6BKQt5LG+OYLmDkyOTc2DgDMzTnElEFcU4cVPYXDDJbJNZvz4iOmzYygeomdOEejXlX+0VVFlJ909o8yP2Shf3eksuOEaCvzrvjnwktv8lwlX1LLXvQSuc29JBggIhP0vTeTJVAG5UnPZh5K5we4Lw3ZSOEtVBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMyuzoO7; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TKiN3enC"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lKTHvXKGTsV+tX6aUCiyv6Vo691FyZts8/uGP/UQFRw=; b=TKiN3enC1YTFFL4KXPEO/xna/h
-	imGC6S7z1wcjYi8uk29qLdEvzzmZXfcUSOzP+sPiDsrSj07t899F/JRh2xbgy25bjLA1uoLfbDzZL
-	jhXSNbHYfG19fyau62kCf2qCWqvrbJlpdFSTzTTwPv4m+ipZbRP/YAuMf6H8wquNYoUcWyV9rLo5n
-	SckCIHxavTqy94/mN1aRdCDXtqgxCne9Jb0ahuNeDjAIJkuvxmKpqCbG0d+h5VqM6+Ydfhf2JXVFl
-	xjjcbQNL79Kuhlc6ORc4zcz3p61JeoJaJHaI1OuQP4o4+a8HPdaSXnJeIhJT89qZyJAWRNUMZzqY0
-	GnGyILsA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rs8zO-005Awt-2F;
-	Wed, 03 Apr 2024 22:21:50 +0000
-Date: Wed, 3 Apr 2024 23:21:50 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: brauner@kernel.org, jack@suse.cz, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-integrity@vger.kernel.org, pc@manguebit.com,
-	torvalds@linux-foundation.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Steve French <smfrench@gmail.com>
-Subject: Re: [RESEND][PATCH v3] security: Place security_path_post_mknod()
- where the original IMA call was
-Message-ID: <20240403222150.GL538574@ZenIV>
-References: <20240403090749.2929667-1-roberto.sassu@huaweicloud.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMyuzoO7"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a47385a4379so383555966b.0
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Apr 2024 05:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712233006; x=1712837806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c8AAXdi6UnwgE8mvtF9U8oApK2XyGAr7kUWfIztB0ZU=;
+        b=KMyuzoO7prAziTBJb2veunMRsqOMwbjjP9/EXJwbhCMUyU9wRlGxBOZxmoZiSPnXZl
+         PvAc1J6zxyUtR1bruNnPw6ur7/AidWKQW7PD+weJ7IE/ItequsJ12YD2qb1ZxzUNCIWN
+         hZy2uFViq30uLvuGklJtOsyRVaV6PoWQW+U/jU9ElHS0XeKOWH40pX/MZuYkB8WiBmQg
+         lMZo7AFErq0DiVZTrERgkiyGmTXa9a9Yp10ScHQKyJf5J+oeJ0AAbbApyJaRg2S1huaJ
+         CAqLwaiOYqm0CtcxCOWzXIeTEQoEwU/hLCs/Gtb1hyseHAcInxul2jTDfK/Dzk4+wSKa
+         VIBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712233006; x=1712837806;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c8AAXdi6UnwgE8mvtF9U8oApK2XyGAr7kUWfIztB0ZU=;
+        b=s9vgevzh4bNnKgwrU5qctUG/ARHfpM6z3DMGeZOYNj2IqZOBoEllkT8p4PYvvoRkS9
+         7UoVR88UYaRmzTf08vzD2RNkb5MYOUjbZtCcbLG6zRSl1N5VQhJvlJQCJNn1RW0bOA/s
+         8WbU3kZE4Sy3GTI6PltB32pe14eUKKPOEn+zONPJQGXzRgcPGuOIvTn7ufZu1RXiVkjD
+         dnZ2XXS4+ZCKAcgNlC8MRVcC5Fn3TAYRyKaOxkPNS5Ms0pdb85OexkeMxkiN1dLmBiIe
+         83jhBZcbvW1JqANP2gpELf62+n7NVqc7RCI+YziyoecDNUA+tdKoBg2NVkoDaCEYhdBk
+         30lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1VR7AfAdDB61B1ahvFjZdhpLR7mSksspzI9Hnuthf0A/84/KLwSdXMF+P+8QL0CZTyYU0iugVYIjXHoPUzWxw3S804UXyd6Vzhr+4zEVohwG5n9w1
+X-Gm-Message-State: AOJu0YwGzVFt6TXbLsxx0bUsfc0d3JSQbz8EtmtnvM+6tJm9QkvVanPy
+	IED2EnSMg3t6Ya6HH+jjmoW8BPUjXQJ86tYKO+TZZVjPDF2boVl8
+X-Google-Smtp-Source: AGHT+IHI+m/JUz68f3ZXkP11/1Bukju4pMSINUlPdlcJzyhLnmLRJ29mVu0SsOgQem3HUZoxhIqiuA==
+X-Received: by 2002:a17:906:af0c:b0:a4d:fb90:4a4e with SMTP id lx12-20020a170906af0c00b00a4dfb904a4emr5193795ejb.2.1712233005512;
+        Thu, 04 Apr 2024 05:16:45 -0700 (PDT)
+Received: from ubuntu-focal.zuku.co.ke ([197.237.50.252])
+        by smtp.gmail.com with ESMTPSA id h19-20020a1709060f5300b00a4e30ff4cbcsm7948001ejj.194.2024.04.04.05.16.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Apr 2024 05:16:45 -0700 (PDT)
+From: Dorine Tipo <dorine.a.tipo@gmail.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Dorine Tipo <dorine.a.tipo@gmail.com>,
+	Linux-kernel-mentees-request@lists.linuxfoundation.org,
+	fabio.maria.de.francesco@linux.intel.com,
+	skhan@linuxfoundation.org,
+	outreachy@lists.linux.dev,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>
+Subject: 
+Date: Thu,  4 Apr 2024 12:16:21 +0000
+Message-Id: <20240404121621.9162-1-dorine.a.tipo@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240402.MooNaiJoo2cu@digikod.net>
+References: <20240402.MooNaiJoo2cu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403090749.2929667-1-roberto.sassu@huaweicloud.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 03, 2024 at 11:07:49AM +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Commit 08abce60d63f ("security: Introduce path_post_mknod hook")
-> introduced security_path_post_mknod(), to replace the IMA-specific call to
-> ima_post_path_mknod().
-> 
-> For symmetry with security_path_mknod(), security_path_post_mknod() was
-> called after a successful mknod operation, for any file type, rather than
-> only for regular files at the time there was the IMA call.
-> 
-> However, as reported by VFS maintainers, successful mknod operation does
-> not mean that the dentry always has an inode attached to it (for example,
-> not for FIFOs on a SAMBA mount).
-> 
-> If that condition happens, the kernel crashes when
-> security_path_post_mknod() attempts to verify if the inode associated to
-> the dentry is private.
-> 
-> Move security_path_post_mknod() where the ima_post_path_mknod() call was,
-> which is obviously correct from IMA/EVM perspective. IMA/EVM are the only
-> in-kernel users, and only need to inspect regular files.
-> 
-> Reported-by: Steve French <smfrench@gmail.com>
-> Closes: https://lore.kernel.org/linux-kernel/CAH2r5msAVzxCUHHG8VKrMPUKQHmBpE6K9_vjhgDa1uAvwx4ppw@mail.gmail.com/
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Fixes: 08abce60d63f ("security: Introduce path_post_mknod hook")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3] selftests/landlock: Add tests for io_uring openat access control with Landlock rules
 
-LGTM...
+> What is tested exactly?
+
+The test_ioring_op_openat() function is testing the enforcement of
+Landlock rules for read-only access.
+It's specifically checking whether the Landlock rules correctly allow or
+deny read-only access to the specified file when using the openat system
+call with io_uring. The test does this by preparing a submission queue
+entry for the openat operation with io_uring_prep_openat(), submitting
+this operation to the kernel via io_uring, and then checking the result.
+If the operation is successful, it means that Landlock allowed the read-only
+access as expected. If the operation fails, it means that Landlock correctly
+denied the access.
+
+> +static int test_ioring_op_openat(struct __test_metadata *const _metadata, const __u64 access, const char **paths)
+> +{
+> +     int ruleset_fd;
+> +     int ret;
+> +     struct io_uring ring;
+> +     struct io_uring_sqe *sqe;
+> +
+> +     /* Test Allowed Access */
+> +     const struct rule allowed_rule[] = {
+> +             {
+> +                     .path = paths[0],
+> +                     .access = access,
+> +             },
+> +             {
+> +                     .path = NULL,
+> +             },
+> +     };
+> +
+> +     ruleset_fd = create_ruleset(_metadata, allowed_rule[0].access, allowed_rule);
+> +
+> +     ASSERT_LE(0, ruleset_fd);
+> +
+> +     ret = io_uring_queue_init(32, &ring, 0);
+> +
+> +     ASSERT_EQ(0, ret);
+> +
+> +     /* Test allowed path */
+> +     sqe = io_uring_get_sqe(&ring);
+> +
+> +     /* Prepare SQE  for the openat operation */
+> +     io_uring_prep_openat(sqe, AT_FDCWD, paths[0], O_RDONLY, ruleset_fd);
+
+> Can you please explain what this call to io_uring_prep_openat() do?
+
+io_uring_prep_openat() prepares the submission queue entry for the openat
+system call. In my tests the call to io_uring_prep_openat() is preparing
+an openat operation to open a file at a certain path with read-only access.
+This operation is then submitted to the kernel via io_uring, and the test
+checks whether the operation is allowed or denied based on the define
+Landlock rules.
