@@ -1,105 +1,111 @@
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46437171E47
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Apr 2024 18:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F7A171640
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Apr 2024 18:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712341061; cv=none; b=JP66p2voZ5G/YOERfoiQW02nRdQyvdfbbyTsh0XlGnxjr4WqbdfTA2QHpMp+gmq5oVkSl5pNkp9VyFmUCEY88WJX70efk3rAXl4vDS8Jo4G13j5QMUKhZscv+dbUDODs6kD7uoTfysCg3t53ClPYmn4mtxRjN8iNZcvZlgraakk=
+	t=1712342107; cv=none; b=H987DMQ6mQ9aku/4gIts2EKQP2yZHutUhjj5n4YmpSkTVPyjYDHLs1c2VJ0d+li9Ch1pGoTQp9PlvtI6T8o/WRJupv6IqMm96NcvmMdbA/mBZDvW43kO5Ju47FtN2s36uNrqXQKJ2sLoyg0cAjs4KgNPIEe2zvkeXF8y79bRx9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712341061; c=relaxed/simple;
-	bh=9AkpJlrF5odbZV84lVLCxgA8MjnO8gRUI0F9+okt4N8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpo9SubQyzpkBbt9PpZmN6xhf4xvV6lnXm9UmNpbEpHmfzXkT1Y0GrpJ2IcGhoemkrwnocpTsvnyl4EBeUyW/Q1u4ZiwKT9sRno0tAXVFUdYxb/w17bvTtzHZjL6Lzuc5HIoVsK9Q8cgl37+8rB8lXUdCtV3lgOTMNwEDdMKDIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ATQej8jQ; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1712342107; c=relaxed/simple;
+	bh=6ZjefErhMfmeYuBEs1nM6MSn4jNdNTdaFy6x1mnwXpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iR0IZ9GPmsYYSqgV8zW3FSSL1BEyqI7EMvOWdVHPrxXPPt0aWSJuYvJ69jetgk/Z9pMX4tS8E34Y2K2nlA0ZAwa+IAKcQKI9w/myg/+KHk4vCS/vDK3GUargkJBDr8lQt/8G1GnmLMKL/nqhypA9KP9lciUZeRR1FDeR6Y3JiGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y+5Eg3rt; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ATQej8jQ"
-Date: Fri, 5 Apr 2024 14:17:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1712341056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DRUSRTybuNRB3AfwvsaVKFQldXbDzh1KNiUNcGYtJqc=;
-	b=ATQej8jQu8tuNtAXedkf+i8FuCyCe76gbQonboyja2qc3hoxthjvbOAdkDPsoB4/CJW/yN
-	PWkMVvivlV8A3A2ZPuEhxBRWzcAlXsqDx2voFXfgnCRuRp1Y6gqZtB5FB/xD1pe57cVpGx
-	7OuOUU/cl0625FvM2Iyp+b+MRlbYNV8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Subject: Re: [PATCH v13 01/10] landlock: Add IOCTL access right for character
- and block devices
-Message-ID: <cnwpkeovzbumhprco7q2c2y6zxzmxfpwpwe3tyy6c3gg2szgqd@vfzjaw5v5imr>
-References: <20240327131040.158777-1-gnoack@google.com>
- <20240327131040.158777-2-gnoack@google.com>
- <20240327.eibaiNgu6lou@digikod.net>
- <ZgxOYauBXowTIgx-@google.com>
- <20240403.In2aiweBeir2@digikod.net>
- <ZhAkDW2u3GItsody@google.com>
- <ZhAlXB3PWC4yyU8F@google.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y+5Eg3rt"
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so50722239f.1
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Apr 2024 11:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1712342105; x=1712946905; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qa9OWgSGHy86iFLsGhob6bEBoogAWHpT07UAtRblqpQ=;
+        b=Y+5Eg3rtIe7VMYHiZr4x9lRDOR5iCv6ylQgOlmdxWHA1TFq634s31mPcYCe3pHO50U
+         +y7Ym+WSNMZtaeUSuJYS0UipUs1FPTTt8HyWAhAfYqksxGn7chdP3M579DhWbFOFcWiH
+         ziHV9/x0j8R4Nbfl60wkU5xzg/0E3n4vzq1DA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712342105; x=1712946905;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qa9OWgSGHy86iFLsGhob6bEBoogAWHpT07UAtRblqpQ=;
+        b=FK9atSzJ+b9DHc9h16I+9dfdUg5PNEWDipGKmVxmVtUB0hT6RPdZRQTMcNbOZbImLz
+         mszAi9RmD2h/kXKMCPAXCCGkdMErBh+HqY31dD4O5YtNMuj8447EJXz4v+tjI+3z9AEq
+         Pn6srGvoW3C57mE4P0LVu07c9sdHvVQps9J24plBtoeIg12m0K+YGDl3Z+puU4AS7tzV
+         FyHU1mLeGY/OgVj3uYa2/XKxZx7ButrtbOqeM6284kjzm4slCZm2s17/eAAYhp0rJt5V
+         y+lAnCcBENhk5zTceJYzvVRXQ+lDy0gWxo4SSywIATbYMZSt251RANgTiNYylTzqTUkP
+         Ns0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfO8baExake8NU/1PmrjsFVZT8Z8+SsxOtd6zBEpBdA1unzH6T/KkKUcIlhcglXd48eCRfWJVxSMHeiXspTYr5FDetWHXh2nQhYbfSZZLaNq6ecwc7
+X-Gm-Message-State: AOJu0YzrY0OVpwOtmuhCw9bpaGplGbdk0WGJetJE47vWsRqPKcoHZnGF
+	bjwfqwNYgW+tAQXlEiSsNkVEt/aUiLnvQZqvSwHQkBCasiyDU+3aAlSAkCpWRS4=
+X-Google-Smtp-Source: AGHT+IGtByH7WDW3n0zir30+zDOgj0SA2esTzdcEHOquB4Tj3nh/EzZ8FEfaoZ2efToARrGR3C666w==
+X-Received: by 2002:a92:dd0a:0:b0:36a:d81:6f35 with SMTP id n10-20020a92dd0a000000b0036a0d816f35mr2112409ilm.2.1712342105467;
+        Fri, 05 Apr 2024 11:35:05 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id m15-20020a92c52f000000b003684d4f6b44sm574171ili.4.2024.04.05.11.35.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Apr 2024 11:35:05 -0700 (PDT)
+Message-ID: <040f65b0-5484-47f9-8e43-af5316988c5a@linuxfoundation.org>
+Date: Fri, 5 Apr 2024 12:35:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] Handle faults in KUnit tests
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Brendan Higgins <brendanhiggins@google.com>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ Alan Maguire <alan.maguire@oracle.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Eric W . Biederman" <ebiederm@xmission.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ James Morris <jamorris@linux.microsoft.com>,
+ Kees Cook <keescook@chromium.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+ Marco Pagani <marpagan@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Thara Gopinath <tgopinath@microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>, Zahra Tarkhani <ztarkhani@microsoft.com>,
+ kvm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
+ x86@kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240326095118.126696-1-mic@digikod.net>
+ <60d96894-a146-4ebb-b6d0-e1988a048c64@linuxfoundation.org>
+ <20240405.pahc6aiX9ahx@digikod.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240405.pahc6aiX9ahx@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZhAlXB3PWC4yyU8F@google.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Fri, Apr 05, 2024 at 06:22:52PM +0200, Günther Noack wrote:
-> On Fri, Apr 05, 2024 at 06:17:17PM +0200, Günther Noack wrote:
-> > On Wed, Apr 03, 2024 at 01:15:45PM +0200, Mickaël Salaün wrote:
-> > > On Tue, Apr 02, 2024 at 08:28:49PM +0200, Günther Noack wrote:
-> > > > Can you please clarify how you make up your mind about what should be permitted
-> > > > and what should not?  I have trouble understanding the rationale for the changes
-> > > > that you asked for below, apart from the points that they are harmless and that
-> > > > the return codes should be consistent.
-> > > 
-> > > The rationale is the same: all IOCTL commands that are not
-> > > passed/specific to character or block devices (i.e. IOCTLs defined in
-> > > fs/ioctl.c) are allowed.  vfs_masked_device_ioctl() returns true if the
-> > > IOCTL command is not passed to the related device driver but handled by
-> > > fs/ioctl.c instead (i.e. handled by the VFS layer).
-> > 
-> > Thanks for clarifying -- this makes more sense now.  I traced the cases with
-> > -ENOIOCTLCMD through the code more thoroughly and it is more aligned now with
-> > what you implemented before.  The places where I ended up implementing it
-> > differently to your vfs_masked_device_ioctl() patch are:
-> > 
-> >  * Do not blanket-permit FS_IOC_{GET,SET}{FLAGS,XATTR}.
-> >    They fall back to the device implementation.
-> > 
-> >  * FS_IOC_GETUUID and FS_IOC_GETFSSYSFSPATH are now handled.
-> >    These return -ENOIOCTLCMD from do_vfs_ioctl(), so they do fall back to the
-> >    handlers in struct file_operations, so we can not permit these either.
+On 4/5/24 12:07, Mickaël Salaün wrote:
+> On Fri, Apr 05, 2024 at 10:08:00AM -0600, Shuah Khan wrote:
+>> On 3/26/24 03:51, Mickaël Salaün wrote:
+>>> Hi,
+>>>
+>>> This patch series teaches KUnit to handle kthread faults as errors, and
+>>> it brings a few related fixes and improvements.
+>>>
+>>> Shuah, everything should be OK now, could you please merge this series?
+>>
+>> Please cc linux-kselftest and kunit mailing lists. You got the world cc'ed
+>> except for the important ones. :)
 > 
-> Kent, Amir:
+> Indeed, I don't know how I missed that... Do you want me to send it
+> again?
 > 
-> Is it intentional that the new FS_IOC_GETUUID and FS_IOC_GETFSSYSFSPATH IOCTLs
-> can fall back to a IOCTL implementation in struct file_operations?  I found this
-> remark by Amir which sounded vaguely like it might have been on purpose?  Did I
-> understand that correctly?
-> 
-> https://lore.kernel.org/lkml/CAOQ4uxjvEL4P4vV5SKpHVS5DtOwKpxAn4n4+Kfqawcu+H-MC5g@mail.gmail.com/
-> 
-> Otherwise, I am happy to send a patch to make it non-extensible (the impls in
-> fs/ioctl.c would need to return -ENOTTY).  This would let us reason better about
-> the safety of these IOCTLs for IOCTL security policies enforced by the Landlock
-> LSM. (Some of these file_operations IOCTL implementations do stuff before
-> looking at the cmd number.)
 
-They're not supposed to be extensible - the generic implementations are
-all we need.
+Yes please resend. I will pull these right away.
+
+thanks,
+-- Shuah
+
