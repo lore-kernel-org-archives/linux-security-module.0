@@ -1,170 +1,132 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5881B16D9B3
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Apr 2024 13:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49AA16EC10;
+	Fri,  5 Apr 2024 14:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712325203; cv=none; b=AnH36+0x2NjPsRxyqCVIGY8BehpvLsVBOT6nM4MMD8/W+GqeykEksXaGrrnZkS+IYfjWuIAU/zBukYqqyDWufPyVnvBwpV/isvWju9ST/uOs1mxsFe4JUA9MNE9aP8YGQrrbnm+GOY+xKFCnnVqnRJbQFZSyzHEXKwQMvkpb2/k=
+	t=1712326666; cv=none; b=iQO3O+vS1QW16FiWgLlQOA5b+uVjV4VNVHgm0PQrVes7yTri39Z23C+isirfZKdsfhpsPod6tFYTdacF6OJNygPOy9xHC1a7NA1pP/maUM2Vtk9UwsW5uHEN96TXIzVvZv9EzbbIJtPpbLgGbkX1ivRwKsDc/VzaJivDCIS4r7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712325203; c=relaxed/simple;
-	bh=0BksyQPOyLKGmYa0FEtepwJD1JDHx0EJaEKX0tpkO58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILNjJ+VlLB8IBKPqXxdy3PQKMuWqRYxyrztFyZcGjwLgApzUWdHFVCGTcRcr7E3T/jqTLSK3hHNe+nG/R0c6Z/o1l8DNEniFlda13Yu/vwfRYoxhCkL0f97aIrPyS4eHJFJ70sQqYGpIgqK8z6RjL+lIo4x4UZAX1KC4wLQqvuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aYTVf2I+; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1712326666; c=relaxed/simple;
+	bh=U17liQpywJZqzvfF2s5U5/znHXqwcP4t0v/zYuO1Dyw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=O2C3Fdd4JuRKDfDVYUVLuJUA6NtHPtmiEn0zSyykIMCz3UoJEEtd1OxNBM6wJ1yY/0qtjohabFe4wqgkS/8fWmUczy5LB2Ic4Z7wO+5B0YJCEZIhcSkBC4AYAOhWs7PgSzV7HVPXK7IdS9D4oqZ0ZOCv8sXclXVGHt2pXf93Qds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mB9nqNnv; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aYTVf2I+"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dcc71031680so2202606276.2
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Apr 2024 06:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1712325200; x=1712930000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lAHdE5NFk++ufix28SzhuwWBAI0pKipkj98VJiYe3GU=;
-        b=aYTVf2I+TyRnSSdH8+I/CVMYO1BJa7hB9/v01eKTU4OrNL9qd16Jg0wQfeflZu4I00
-         bJzKgnoYGjlF2wFjjjOIkrUvFIjP/gbka8Ca/nK2NNuY96Fo8i0pVlzBoXDg1TkGWJgh
-         e74bm5LQIwxwotdUhDKtFybHE4VYNE/OXkfP4r8mdYC/WVnYYO2zvp0is9rK/LvGlb1u
-         rNp+xyY2kEDgPEpFHmoCvWu4DRKLOea8E3f1pcxL98WGt6zjQX+gyOrqvrhhCb7mBZhQ
-         NliJCHdvq8o1zOgd+ypWl8ttBwBOiemAKjdJsQE5P4duBu286hd2IUmiV+Z3y72bJNxi
-         hYIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712325200; x=1712930000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lAHdE5NFk++ufix28SzhuwWBAI0pKipkj98VJiYe3GU=;
-        b=w3fMNy9bMg2EdjLpl6n9Rr+w4iMQjHXUrNxwcen3QszrbotpGreUVIM0EcYE9x3S51
-         e/djJIjbs0vXl19hJNTr+YEbDaFQV4mNs1ItJXzTH4+6QeP+eAuYNYj4M4R7WB4FH/+H
-         gcptulUwBsVNamfbO0xL2KNrOwGUB/sq6DD0pMIGsjFWrPk7PCa27Bx7HypuskMA3mbr
-         Htt1b7mRNC99dsSkqT2CmPNb3NDPRlgQfo5E6+zHW2QFtEPHchjetXomgLD98o21SeoT
-         +cWTu+D1bm/mk6LQd8Ut0zRt7sMIaJg7EzBl6al59oSVp4HW7c2rY6sPEnuDBvtzXa2e
-         2aJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYXClzbLA+2YY9woUd8lH5VvysFUivhpHAZ4I71m6ERyHkO1G4lBlrDXJilBy+KLOH9yzgYoGoxXzmkJPnIYoF043b2jrWEKm+wog0Rfogjfj+M6FA
-X-Gm-Message-State: AOJu0YxEJz3yThSmW0LECNLDv7LoGjsOL51Vb2KeRAmXY0oPg6nESN47
-	KmDszl0e7CVDkqJqLXvs0hyRUEYK5aXQ6lyGJQJXARtMb/5/UFfSj4+pQk+Vu2bhFTEHX0gpglH
-	iT/p+6Z0TSo6hFInu/lej4oJQf1cXRt8thR/2
-X-Google-Smtp-Source: AGHT+IH/KRHN+9M5N1gYIB2bCPgMB25x0KPnvuKiHgvgSCGh43Ngn+0mkz51p67LhizDAcBL1UgazcYTNlxqGDPZP2o=
-X-Received: by 2002:a25:f454:0:b0:dcd:b624:3e55 with SMTP id
- p20-20020a25f454000000b00dcdb6243e55mr1115241ybe.54.1712325200128; Fri, 05
- Apr 2024 06:53:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mB9nqNnv"
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 435DQXQ1019047;
+	Fri, 5 Apr 2024 14:17:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=TUmKMDwUoLogS/+j4Uv+vxtiIwsSDaKPFGJe3NunF6E=;
+ b=mB9nqNnvL5wZrOOSOLtYiCq2FgQzVdHBd2HbB6sEW5V1GfXegQsb8l85qMIbgrL6lUyz
+ Kc6GbnG44BOeh5W8I8EPs8pKkyuz5Zbo/XjL8iFaUcSuGpUnayWXomr8MToyiHAug6yw
+ qASbPwRjdS843AhgGkLtP4pg2D3Xzmzl+dR+If6OPt1BqsYCxnxfwjMQjqapkdItYFbf
+ PYqdKx9Lx2YpUHNcxIoUQE2xh01EK9Adw5RdZUMyLStWMoY4m3dsvjWtA8D3jONu4L6d
+ 6ggJsGBgKnbJSG6C2IIr1A5FCI1gFx06+7/sj5+KlVBryAqGYkw2CPkr6cTLPWNO0MnU Jg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xahrur73v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Apr 2024 14:17:14 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 435EHEHT030388;
+	Fri, 5 Apr 2024 14:17:14 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xahrur73s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Apr 2024 14:17:14 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 435CcRkS003612;
+	Fri, 5 Apr 2024 14:17:13 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3x9epyjxgd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 05 Apr 2024 14:17:13 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 435EHBgI20251212
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 5 Apr 2024 14:17:13 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 251125806A;
+	Fri,  5 Apr 2024 14:17:11 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5ABD358052;
+	Fri,  5 Apr 2024 14:17:10 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.142.172])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  5 Apr 2024 14:17:10 +0000 (GMT)
+Message-ID: <cb683a87f9d6942df057567fbf2de57f83bd6546.camel@linux.ibm.com>
+Subject: Re: [PATCH v5][next] integrity: Avoid
+ -Wflex-array-member-not-at-end warnings
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg
+ <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Date: Fri, 05 Apr 2024 10:17:09 -0400
+In-Reply-To: <d6c9a04e-66e3-4010-9a35-fb5efc3f1af0@embeddedor.com>
+References: <Zg7AoOh7CL5ZD/fe@neat>
+	 <27d36ec8e0539c5d6bc760de7305299a2142f9f1.camel@linux.ibm.com>
+	 <b3956fd36307d33ebbf0e4633e0d2389860cf720.camel@linux.ibm.com>
+	 <d6c9a04e-66e3-4010-9a35-fb5efc3f1af0@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240404165404.3805498-1-surenb@google.com> <Zg7dmp5VJkm1nLRM@casper.infradead.org>
- <CAJuCfpHbTCwDERz+Hh+aLZzNdtSFKA+Q7sW-xzvmFmtyHCqROg@mail.gmail.com>
- <CAJuCfpHy5Xo76S7h9rEuA3cQ1pVqurL=wmtQ2cx9-xN1aa_C_A@mail.gmail.com>
- <Zg8qstJNfK07siNn@casper.infradead.org> <jb25mtkveqf63bv74jhynf6ncxmums5s37esveqsv52yurh4z7@5q55ttv34bia>
- <20240404154150.c25ba3a0b98023c8c1eff3a4@linux-foundation.org>
- <jpaw4hdd73ngt7mvtcdryqscivx6m2ic76ikfkcopceb47becp@vox5czt5bec3> <Zg_yHGKpw4HJHdpb@casper.infradead.org>
-In-Reply-To: <Zg_yHGKpw4HJHdpb@casper.infradead.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 5 Apr 2024 06:53:09 -0700
-Message-ID: <CAJuCfpGMSHv7drSu7Veo5CVz3d_Upt8S6Rdx3isi7orct9-uNQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: change inlined allocation helpers to account at
- the call site
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	joro@8bytes.org, will@kernel.org, trond.myklebust@hammerspace.com, 
-	anna@kernel.org, arnd@arndb.de, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, jikos@kernel.org, benjamin.tissoires@redhat.com, 
-	tytso@mit.edu, jack@suse.com, dennis@kernel.org, tj@kernel.org, cl@linux.com, 
-	jakub@cloudflare.com, penberg@kernel.org, rientjes@google.com, 
-	iamjoonsoo.kim@lge.com, vbabka@suse.cz, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mm@kvack.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nTgj8x-mMrz1hQjnt_3Wx53SLRRm0Nm1
+X-Proofpoint-ORIG-GUID: ovnVxbgugPSecIjL19HnDdyRy1Wun-bz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-05_14,2024-04-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=980 impostorscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2404010000 definitions=main-2404050102
 
-On Fri, Apr 5, 2024 at 5:44=E2=80=AFAM Matthew Wilcox <willy@infradead.org>=
- wrote:
->
-> On Thu, Apr 04, 2024 at 07:00:51PM -0400, Kent Overstreet wrote:
-> > On Thu, Apr 04, 2024 at 03:41:50PM -0700, Andrew Morton wrote:
-> > > On Thu, 4 Apr 2024 18:38:39 -0400 Kent Overstreet <kent.overstreet@li=
-nux.dev> wrote:
-> > >
-> > > > On Thu, Apr 04, 2024 at 11:33:22PM +0100, Matthew Wilcox wrote:
-> > > > > On Thu, Apr 04, 2024 at 03:17:43PM -0700, Suren Baghdasaryan wrot=
-e:
-> > > > > > Ironically, checkpatch generates warnings for these type casts:
-> > > > > >
-> > > > > > WARNING: unnecessary cast may hide bugs, see
-> > > > > > http://c-faq.com/malloc/mallocnocast.html
-> > > > > > #425: FILE: include/linux/dma-fence-chain.h:90:
-> > > > > > + ((struct dma_fence_chain *)kmalloc(sizeof(struct dma_fence_ch=
-ain),
-> > > > > > GFP_KERNEL))
-> > > > > >
-> > > > > > I guess I can safely ignore them in this case (since we cast to=
- the
-> > > > > > expected type)?
-> > > > >
-> > > > > I find ignoring checkpatch to be a solid move 99% of the time.
-> > > > >
-> > > > > I really don't like the codetags.  This is so much churn, and it =
-could
-> > > > > all be avoided by just passing in _RET_IP_ or _THIS_IP_ depending=
- on
-> > > > > whether we wanted to profile this function or its caller.  vmallo=
-c
-> > > > > has done it this way since 2008 (OK, using __builtin_return_addre=
-ss())
-> > > > > and lockdep has used _THIS_IP_ / _RET_IP_ since 2006.
-> > > >
-> > > > Except you can't. We've been over this; using that approach for tra=
-cing
-> > > > is one thing, using it for actual accounting isn't workable.
-> > >
-> > > I missed that.  There have been many emails.  Please remind us of the
-> > > reasoning here.
-> >
-> > I think it's on the other people claiming 'oh this would be so easy if
-> > you just do it this other way' to put up some code - or at least more
-> > than hot takes.
->
-> Well, /proc/vmallocinfo exists, and has existed since 2008, so this is
-> slightly more than a "hot take".
->
-> > But, since you asked - one of the main goals of this patchset was to be
-> > fast enough to run in production, and if you do it by return address
-> > then you've added at minimum a hash table lookup to every allocate and
-> > free; if you do that, running it in production is completely out of the
-> > question.
->
-> And yet vmalloc doesn't do that.
->
-> > Besides that - the issues with annotating and tracking the correct
-> > callsite really don't go away, they just shift around a bit. It's true
-> > that the return address approach would be easier initially, but that's
-> > not all we're concerned with; we're concerned with making sure
-> > allocations get accounted to the _correct_ callsite so that we're givin=
-g
-> > numbers that you can trust, and by making things less explicit you make
-> > that harder.
->
-> I'm not convinced that _THIS_IP_ is less precise than a codetag.  They
-> do essentially the same thing, except that codetags embed the source
-> location in the file while _THIS_IP_ requires a tool like faddr2line
-> to decode kernel_clone+0xc0/0x430 into a file + line number.
->
-> > This is all stuff that I've explained before; let's please dial back on
-> > the whining - or I'll just bookmark this for next time...
->
-> Please stop mischaracterising serious thoughtful criticism as whining.
-> I don't understand what value codetags bring over using _THIS_IP_ and
-> _RET_IP_ and you need to explain that.
+On Thu, 2024-04-04 at 18:56 -0600, Gustavo A. R. Silva wrote:
+> > "checkpatch.pl --strict" complains "CHECK: Alignment should match open
+> > parenthesis".  I'll queue the patch, but how about teaching checkpatch.pl to
+> > ignore __struct_group()?
+> 
+> I think this would do it:
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 9c4c4a61bc83..e229b97f17f6 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -3958,7 +3958,7 @@ sub process {
+>                          my $rest = $2;
+> 
+>                          my $pos = pos_last_openparen($rest);
+> -                       if ($pos >= 0) {
+> +                       if ($pos >= 0 && $rest !~
+> /(__)?struct_group(_(tagged|attr))?(\()/) {
+>                                  $line =~ /^(\+| )([ \t]*)/;
+>                                  my $newindent = $2;
+> 
+> I'll send a proper patch. Thanks for the suggestion, Mimi.
 
-The conceptual difference between codetag and _THIS_IP_/_RET_IP_ is
-that codetag injects counters at the call site, so you don't need to
-spend time finding the appropriate counter to operate on during
-allocation.
+Thanks, it works.
+
+Mimi
+
