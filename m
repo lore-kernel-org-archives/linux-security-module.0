@@ -1,132 +1,100 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49AA16EC10;
-	Fri,  5 Apr 2024 14:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FC0171069
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Apr 2024 16:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712326666; cv=none; b=iQO3O+vS1QW16FiWgLlQOA5b+uVjV4VNVHgm0PQrVes7yTri39Z23C+isirfZKdsfhpsPod6tFYTdacF6OJNygPOy9xHC1a7NA1pP/maUM2Vtk9UwsW5uHEN96TXIzVvZv9EzbbIJtPpbLgGbkX1ivRwKsDc/VzaJivDCIS4r7E=
+	t=1712333285; cv=none; b=aOVTri04WnITZP+5KQ6bBEi5tikASQqHOPHE4414VVHChFWlndVtsydWLVWwsy6eI1jdWyd5VhvPt8V/O9GItLoYNaLojZkcZCGNK8nDOhCmbMWU6gLB1rXG7YWEAD5xwxChcIKrdWVNYlI9Bmq19M6chIzSzwYALOM4rAKho/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712326666; c=relaxed/simple;
-	bh=U17liQpywJZqzvfF2s5U5/znHXqwcP4t0v/zYuO1Dyw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=O2C3Fdd4JuRKDfDVYUVLuJUA6NtHPtmiEn0zSyykIMCz3UoJEEtd1OxNBM6wJ1yY/0qtjohabFe4wqgkS/8fWmUczy5LB2Ic4Z7wO+5B0YJCEZIhcSkBC4AYAOhWs7PgSzV7HVPXK7IdS9D4oqZ0ZOCv8sXclXVGHt2pXf93Qds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mB9nqNnv; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1712333285; c=relaxed/simple;
+	bh=WQf37KnE8UstSt4WJHEZVKafftMROgs9kzOlz+UeEzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iU9xSc2Ph05tCbrbBrj3eagAsCqlnmxlqWYp3UFa9kOzRQ1fEB0Ijr9XXxb9kRgzWiJJ5Ec/uW00B84CXyV8HgEKgTDybzvJicMj1TY3sMINFUWFNi5tWEefOfttLl4KRPXxegOim5zZ+sqkdUxzfeKcVwJL610sViAGn8Ay7/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RF1P1tAq; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mB9nqNnv"
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 435DQXQ1019047;
-	Fri, 5 Apr 2024 14:17:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=TUmKMDwUoLogS/+j4Uv+vxtiIwsSDaKPFGJe3NunF6E=;
- b=mB9nqNnvL5wZrOOSOLtYiCq2FgQzVdHBd2HbB6sEW5V1GfXegQsb8l85qMIbgrL6lUyz
- Kc6GbnG44BOeh5W8I8EPs8pKkyuz5Zbo/XjL8iFaUcSuGpUnayWXomr8MToyiHAug6yw
- qASbPwRjdS843AhgGkLtP4pg2D3Xzmzl+dR+If6OPt1BqsYCxnxfwjMQjqapkdItYFbf
- PYqdKx9Lx2YpUHNcxIoUQE2xh01EK9Adw5RdZUMyLStWMoY4m3dsvjWtA8D3jONu4L6d
- 6ggJsGBgKnbJSG6C2IIr1A5FCI1gFx06+7/sj5+KlVBryAqGYkw2CPkr6cTLPWNO0MnU Jg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xahrur73v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Apr 2024 14:17:14 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 435EHEHT030388;
-	Fri, 5 Apr 2024 14:17:14 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xahrur73s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Apr 2024 14:17:14 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 435CcRkS003612;
-	Fri, 5 Apr 2024 14:17:13 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3x9epyjxgd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Apr 2024 14:17:13 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 435EHBgI20251212
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Apr 2024 14:17:13 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 251125806A;
-	Fri,  5 Apr 2024 14:17:11 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5ABD358052;
-	Fri,  5 Apr 2024 14:17:10 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.142.172])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  5 Apr 2024 14:17:10 +0000 (GMT)
-Message-ID: <cb683a87f9d6942df057567fbf2de57f83bd6546.camel@linux.ibm.com>
-Subject: Re: [PATCH v5][next] integrity: Avoid
- -Wflex-array-member-not-at-end warnings
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Gustavo A. R. Silva"
- <gustavoars@kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg
- <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Date: Fri, 05 Apr 2024 10:17:09 -0400
-In-Reply-To: <d6c9a04e-66e3-4010-9a35-fb5efc3f1af0@embeddedor.com>
-References: <Zg7AoOh7CL5ZD/fe@neat>
-	 <27d36ec8e0539c5d6bc760de7305299a2142f9f1.camel@linux.ibm.com>
-	 <b3956fd36307d33ebbf0e4633e0d2389860cf720.camel@linux.ibm.com>
-	 <d6c9a04e-66e3-4010-9a35-fb5efc3f1af0@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RF1P1tAq"
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7cc0e831e11so47670539f.1
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Apr 2024 09:08:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1712333283; x=1712938083; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oAuKDU6QiZ6ML3XGubjP2fNWyg1GAOwTBQh+lV89r38=;
+        b=RF1P1tAqP3quLAouu2FwQVEKMZfuTL/RhbhOTdyP7oTf3gFptlw/NVwiayTL9e2JgE
+         Uk5xCIZssSK6EvgKVWsChs3tfpMRfspjYJqtKqKl4iHHLDiY5viu6FVIaiMcr4D9wkuF
+         ON7QY9G+UxHZZWqbwZbrWIXqrpsywHPYczIOA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712333283; x=1712938083;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oAuKDU6QiZ6ML3XGubjP2fNWyg1GAOwTBQh+lV89r38=;
+        b=c8zJH0DnNTjkG3mrJMrXiHl01VuUKn56xkrl3+Pmn3ETgHZgMYFGkJF/pC1fW4QQXu
+         IDxsuzD7e02gsyKZNFEMYX6h6inp0mqXaFMxJCFh1/9Da04+lPSLaovAwiYNlfdC66Py
+         mHC9GoUrPdb6++69YREvmIudLI3J+Qjb4jCH6ZmOQ4dz1EQS1daU++mjccIVtTjlPIAd
+         cdn64pMBOrbHa7mdH8biynPRulIPqa0BPHge5XBYKzRddoY3GROb/tMDGSu6YLke0q9h
+         mKN4XHJjb6V7kQo7psOz4ncsQs/Vw8e5wcR1rxzC0iENuBorCf4MX79pfjIeHWmKNe0p
+         eOMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeVNk/5dkIoYub7yK5T/G2kVQ8X2HMyrgluUa3BXd6ljTyOJuVBusvUgVxneZcg1/lLKhbh0QbUN8p78eZqS8T0GiswCm8BHbr6Azi7A18dHbGSNK0
+X-Gm-Message-State: AOJu0Yw88MtydPgyA0ejXhAYpAZ3jdYMy/LddZu8W1PZzfiIilvD7V+O
+	LzYxhZVO1nP8gELxqQ2pA5UDsBjPsNS4VExxPqmBQILs4eNqObwo8vEB4JPMmmM=
+X-Google-Smtp-Source: AGHT+IEFSBlsclA6e2FP+b8IjmZLWOus+sNYfoqoIt8htlDfnprRT5+aCUKOtOxFEmmqkr93Xto/Bw==
+X-Received: by 2002:a05:6602:148:b0:7d0:bd2b:43ba with SMTP id v8-20020a056602014800b007d0bd2b43bamr1795873iot.0.1712333282821;
+        Fri, 05 Apr 2024 09:08:02 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id f4-20020a5edf04000000b007cc78dafb96sm578949ioq.7.2024.04.05.09.08.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Apr 2024 09:08:02 -0700 (PDT)
+Message-ID: <60d96894-a146-4ebb-b6d0-e1988a048c64@linuxfoundation.org>
+Date: Fri, 5 Apr 2024 10:08:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: nTgj8x-mMrz1hQjnt_3Wx53SLRRm0Nm1
-X-Proofpoint-ORIG-GUID: ovnVxbgugPSecIjL19HnDdyRy1Wun-bz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-05_14,2024-04-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=980 impostorscore=0
- bulkscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2404050102
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] Handle faults in KUnit tests
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Brendan Higgins <brendanhiggins@google.com>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: Alan Maguire <alan.maguire@oracle.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Eric W . Biederman" <ebiederm@xmission.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ James Morris <jamorris@linux.microsoft.com>,
+ Kees Cook <keescook@chromium.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+ Marco Pagani <marpagan@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Thara Gopinath <tgopinath@microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>, Zahra Tarkhani <ztarkhani@microsoft.com>,
+ kvm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
+ x86@kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240326095118.126696-1-mic@digikod.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240326095118.126696-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-04-04 at 18:56 -0600, Gustavo A. R. Silva wrote:
-> > "checkpatch.pl --strict" complains "CHECK: Alignment should match open
-> > parenthesis".  I'll queue the patch, but how about teaching checkpatch.pl to
-> > ignore __struct_group()?
+On 3/26/24 03:51, Mickaël Salaün wrote:
+> Hi,
 > 
-> I think this would do it:
+> This patch series teaches KUnit to handle kthread faults as errors, and
+> it brings a few related fixes and improvements.
 > 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 9c4c4a61bc83..e229b97f17f6 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -3958,7 +3958,7 @@ sub process {
->                          my $rest = $2;
-> 
->                          my $pos = pos_last_openparen($rest);
-> -                       if ($pos >= 0) {
-> +                       if ($pos >= 0 && $rest !~
-> /(__)?struct_group(_(tagged|attr))?(\()/) {
->                                  $line =~ /^(\+| )([ \t]*)/;
->                                  my $newindent = $2;
-> 
-> I'll send a proper patch. Thanks for the suggestion, Mimi.
+> Shuah, everything should be OK now, could you please merge this series?
 
-Thanks, it works.
+Please cc linux-kselftest and kunit mailing lists. You got the world cc'ed
+except for the important ones. :)
 
-Mimi
-
+thanks,
+-- Shuah
