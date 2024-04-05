@@ -1,53 +1,52 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21988171E54
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Apr 2024 18:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46437171E47
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Apr 2024 18:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712340945; cv=none; b=sqCtcaMJ8X0J7jEiiDguWwqr8OksHnzZbnEQglwM5VGbfn+n1CvdTX81Jr5wu5XvwPTfEGSDC/khGBnoKBgDsurPcPRS1fyZAgcD1e0c0Aiy7VUwKUHsi4U7U6VdBW1jQ3lFZPwV03psLJ9TvJgNZ/NrhrSmkxGo+FPCRsBcBrI=
+	t=1712341061; cv=none; b=JP66p2voZ5G/YOERfoiQW02nRdQyvdfbbyTsh0XlGnxjr4WqbdfTA2QHpMp+gmq5oVkSl5pNkp9VyFmUCEY88WJX70efk3rAXl4vDS8Jo4G13j5QMUKhZscv+dbUDODs6kD7uoTfysCg3t53ClPYmn4mtxRjN8iNZcvZlgraakk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712340945; c=relaxed/simple;
-	bh=kiwUCEjPx78g1bk35VucSw6ptQJmiUDwfINeVgK5ces=;
+	s=arc-20240116; t=1712341061; c=relaxed/simple;
+	bh=9AkpJlrF5odbZV84lVLCxgA8MjnO8gRUI0F9+okt4N8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HAQCFGC+arX/4Dz3fwBdnX+GcPZ11RsVY+vIPivkLUV357Fn1qY3fvT90ytERA/o13gGLqOS/LEIp6ghkUc9x1F40hMecVMfE0bV04e7jjoPWGLCwkpqfrMmPOjITGpT1GY+mWTfSYwkIWKHfCaGLl7xa/o0jibthFN/BFGroRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cyL7wMZ6; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpo9SubQyzpkBbt9PpZmN6xhf4xvV6lnXm9UmNpbEpHmfzXkT1Y0GrpJ2IcGhoemkrwnocpTsvnyl4EBeUyW/Q1u4ZiwKT9sRno0tAXVFUdYxb/w17bvTtzHZjL6Lzuc5HIoVsK9Q8cgl37+8rB8lXUdCtV3lgOTMNwEDdMKDIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ATQej8jQ; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cyL7wMZ6"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VB60H71S8z7Qf;
-	Fri,  5 Apr 2024 20:07:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1712340463;
-	bh=kiwUCEjPx78g1bk35VucSw6ptQJmiUDwfINeVgK5ces=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cyL7wMZ6fGr++bxregCQEm29qB3fuZgv653iTA9GW51TcUaqXfg7KmuPDuTqcUkKe
-	 SfxMZxvEY0inVS2JBEN5QQq9vmLag7zRP8f7AnAnC7axhKSIoC8dmhYmcienEPkhH2
-	 tyIzl9AeQHADN+6Mrz57ceiG7iQq9xIzLG1VEUcM=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VB60G5glFzpnt;
-	Fri,  5 Apr 2024 20:07:42 +0200 (CEST)
-Date: Fri, 5 Apr 2024 20:07:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Brendan Higgins <brendanhiggins@google.com>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Alan Maguire <alan.maguire@oracle.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "Eric W . Biederman" <ebiederm@xmission.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Kees Cook <keescook@chromium.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Marco Pagani <marpagan@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Thara Gopinath <tgopinath@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v4 0/7] Handle faults in KUnit tests
-Message-ID: <20240405.pahc6aiX9ahx@digikod.net>
-References: <20240326095118.126696-1-mic@digikod.net>
- <60d96894-a146-4ebb-b6d0-e1988a048c64@linuxfoundation.org>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ATQej8jQ"
+Date: Fri, 5 Apr 2024 14:17:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1712341056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DRUSRTybuNRB3AfwvsaVKFQldXbDzh1KNiUNcGYtJqc=;
+	b=ATQej8jQu8tuNtAXedkf+i8FuCyCe76gbQonboyja2qc3hoxthjvbOAdkDPsoB4/CJW/yN
+	PWkMVvivlV8A3A2ZPuEhxBRWzcAlXsqDx2voFXfgnCRuRp1Y6gqZtB5FB/xD1pe57cVpGx
+	7OuOUU/cl0625FvM2Iyp+b+MRlbYNV8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Subject: Re: [PATCH v13 01/10] landlock: Add IOCTL access right for character
+ and block devices
+Message-ID: <cnwpkeovzbumhprco7q2c2y6zxzmxfpwpwe3tyy6c3gg2szgqd@vfzjaw5v5imr>
+References: <20240327131040.158777-1-gnoack@google.com>
+ <20240327131040.158777-2-gnoack@google.com>
+ <20240327.eibaiNgu6lou@digikod.net>
+ <ZgxOYauBXowTIgx-@google.com>
+ <20240403.In2aiweBeir2@digikod.net>
+ <ZhAkDW2u3GItsody@google.com>
+ <ZhAlXB3PWC4yyU8F@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -57,25 +56,50 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <60d96894-a146-4ebb-b6d0-e1988a048c64@linuxfoundation.org>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <ZhAlXB3PWC4yyU8F@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Apr 05, 2024 at 10:08:00AM -0600, Shuah Khan wrote:
-> On 3/26/24 03:51, Mickaël Salaün wrote:
-> > Hi,
+On Fri, Apr 05, 2024 at 06:22:52PM +0200, Günther Noack wrote:
+> On Fri, Apr 05, 2024 at 06:17:17PM +0200, Günther Noack wrote:
+> > On Wed, Apr 03, 2024 at 01:15:45PM +0200, Mickaël Salaün wrote:
+> > > On Tue, Apr 02, 2024 at 08:28:49PM +0200, Günther Noack wrote:
+> > > > Can you please clarify how you make up your mind about what should be permitted
+> > > > and what should not?  I have trouble understanding the rationale for the changes
+> > > > that you asked for below, apart from the points that they are harmless and that
+> > > > the return codes should be consistent.
+> > > 
+> > > The rationale is the same: all IOCTL commands that are not
+> > > passed/specific to character or block devices (i.e. IOCTLs defined in
+> > > fs/ioctl.c) are allowed.  vfs_masked_device_ioctl() returns true if the
+> > > IOCTL command is not passed to the related device driver but handled by
+> > > fs/ioctl.c instead (i.e. handled by the VFS layer).
 > > 
-> > This patch series teaches KUnit to handle kthread faults as errors, and
-> > it brings a few related fixes and improvements.
+> > Thanks for clarifying -- this makes more sense now.  I traced the cases with
+> > -ENOIOCTLCMD through the code more thoroughly and it is more aligned now with
+> > what you implemented before.  The places where I ended up implementing it
+> > differently to your vfs_masked_device_ioctl() patch are:
 > > 
-> > Shuah, everything should be OK now, could you please merge this series?
+> >  * Do not blanket-permit FS_IOC_{GET,SET}{FLAGS,XATTR}.
+> >    They fall back to the device implementation.
+> > 
+> >  * FS_IOC_GETUUID and FS_IOC_GETFSSYSFSPATH are now handled.
+> >    These return -ENOIOCTLCMD from do_vfs_ioctl(), so they do fall back to the
+> >    handlers in struct file_operations, so we can not permit these either.
 > 
-> Please cc linux-kselftest and kunit mailing lists. You got the world cc'ed
-> except for the important ones. :)
+> Kent, Amir:
+> 
+> Is it intentional that the new FS_IOC_GETUUID and FS_IOC_GETFSSYSFSPATH IOCTLs
+> can fall back to a IOCTL implementation in struct file_operations?  I found this
+> remark by Amir which sounded vaguely like it might have been on purpose?  Did I
+> understand that correctly?
+> 
+> https://lore.kernel.org/lkml/CAOQ4uxjvEL4P4vV5SKpHVS5DtOwKpxAn4n4+Kfqawcu+H-MC5g@mail.gmail.com/
+> 
+> Otherwise, I am happy to send a patch to make it non-extensible (the impls in
+> fs/ioctl.c would need to return -ENOTTY).  This would let us reason better about
+> the safety of these IOCTLs for IOCTL security policies enforced by the Landlock
+> LSM. (Some of these file_operations IOCTL implementations do stuff before
+> looking at the cmd number.)
 
-Indeed, I don't know how I missed that... Do you want me to send it
-again?
-
-> 
-> thanks,
-> -- Shuah
-> 
+They're not supposed to be extensible - the generic implementations are
+all we need.
