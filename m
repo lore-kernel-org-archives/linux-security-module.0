@@ -1,218 +1,189 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E2D146007
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Apr 2024 19:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6805E146A74
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Apr 2024 21:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712605758; cv=none; b=TaynM46MkM3Nk+9ZjqxJn6nD162xq1QQYAUs3tDjy8KSBRnzUS/lcviBEonQe08VH7240DP67nxWegotYN/bYu4XQOaqq0WnqckIC+/+WObSJ0QmOrfa5NtQbR00ubcizuhshNjTBabvGZv6koatjJQ6Rxvj2G2PYh9k/Sd5Fg8=
+	t=1712612769; cv=none; b=J7sttnrhVK8zW1vXGSQWaF2TefP5cM2upO7wah3S4as/7dBvrhPOvfDmmn+l8E8/nogXZ1Z1Nr/bxdYYU5S6Ey0dO8Jj4buKvNPrlFXOF0v25NuorfwbgAoGMVFj19ToOlhs0ya4xglbYuD0bx6miYxj/Eh3esl5DLkAVKu9H2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712605758; c=relaxed/simple;
-	bh=4VwVkJ15ie8oUnERlTxvN5nffzGsfOJzaRKC0uM48eI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dIle5a88STKvvh7ihjPfkXO43DCW8rFeVBWk1gFeKce3iIMK6eTqaPSq1YV+Nb/LWdRpDDvEm4ic8YG85s1cOdswfbdXlr2eiPP1zcjMWCjgoWa9+3S8FGSn45pjky27Ub1nKKgC0NDR+mfjB28Ht7e8qLcZm1d2UTzJRVyDj6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V6xkBBj6; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1712612769; c=relaxed/simple;
+	bh=9ABO3c0UjVjIYc013WjvRVFngW1d5iZVTdDmCrObzK8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iz9nAhiT71EiVn3u7Pc0UbzL5dfgiRj2jv7LIJbAXLOCu1sjjnGb7otAkhAGXbPsmyFLHqP1kAgGmDy+zd+ZVH3steAv9I439RMCekBed3Gi9ZO5Yo6hj3MA6LfhCd0mSQRNu7sW4bbw4NX4k+pbqeVMVwh3sif0FwImZw1cAqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf7jmwJL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V6xkBBj6"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6150dcdf83fso93761827b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2024 12:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1712605755; x=1713210555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aq405guPa3OPZRO9v26OPDN3Zw9hWnozHgBpKl4FcoU=;
-        b=V6xkBBj6NTxNWgeDgA/cAzKtxzFWOds4KdSwz+0WGaLwxs6aouijdGOMrlKyjTJ55K
-         kRjDKlFmFfcTY7Gna2at7h5FrflV+abRYehoUfLk6iHSkDvWnrS3nXvS++t0/U4Z5pqk
-         QZTgF8cXg/gLMQExZ4dK2fShjJpVhn28jdoIWtPDIIriF8sWaca0MO6u9EDvAPNPzw8J
-         UZ/xuM14IEnxVlv7NE1qNpF2x1+ejU3WPtOscs+O58ECxKGQsglanWV8umqyTt60tzSq
-         J06pleWISRw3GLI7fRDoW1ebAtF7ljwMsvZQRpbPuCEqvUS+Nud0ue70CU4aSajeFP/R
-         8Jqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712605755; x=1713210555;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aq405guPa3OPZRO9v26OPDN3Zw9hWnozHgBpKl4FcoU=;
-        b=qsuVdw7w4GjNDguOM6HKOBu5QMQA6SEgxSbJt1RfBdq2S/FzRaWsLFK7aJ/UjxTYLR
-         r3jEY5JGgjDAZ8etlXnBR371XE6hHOW0S6jrA/aToq4wKJOwO1LXieltGvml4+m1RXof
-         g7JY7cuBH4Z+zO6R2nY5Fpuf9W6TlTYromUD/GaBDyZ8Dd7K2p92QRh0LQBTlzumAl3B
-         4Gvx49/ohhk/Jw95QanejTOCn2LZerjlijwxDu0w4cCy2TZwFl7xivSg9A/gS+GweXpH
-         i9QrZgSkhNd6G3TB3MRQfGYzmKUFaIL7yC8NSBQ8vnrnw67mZe6Kl0Q8kBjJcqt73jH1
-         aAgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIWwF7cNgVE78wsyT6f7Gt6ivPAGTU7JHH1au1CQe00R918mjdFBVe5OXVEUyEXZr5gGgFe21O+uRHPekFuM40pUUtYR6tagHhZUkv7kAO/579z/Hp
-X-Gm-Message-State: AOJu0YxuUZ7hSm2agJGYRmNqfaoQeJl4As16PSEXArPEOI3nM+GmZusD
-	BsujPQfnZbYZkajGMYPUX9KuIE7uSEvr6OwGcitHZ7hszrbJMEAtbyOMf5JKWt4CU+m/AfBUGST
-	UCQ==
-X-Google-Smtp-Source: AGHT+IEOvC2+HFvfUx+HVQIDT3l0tZKQZWg0eCxC+0TeQ/H78hrhDDQEqkf6GmdV35Kdx2aknK+7XH+Xzcw=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6902:100a:b0:dda:ce5f:b4c3 with SMTP id
- w10-20020a056902100a00b00ddace5fb4c3mr3253808ybt.1.1712605755482; Mon, 08 Apr
- 2024 12:49:15 -0700 (PDT)
-Date: Mon, 8 Apr 2024 21:49:13 +0200
-In-Reply-To: <20240408093927.1759381-2-ivanov.mikhail1@huawei-partners.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf7jmwJL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1437EC43609
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Apr 2024 21:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712612769;
+	bh=9ABO3c0UjVjIYc013WjvRVFngW1d5iZVTdDmCrObzK8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Xf7jmwJLDM4TrdEuQtY/sSW0Gg9St5bvMBeGArkzYmZ5ytFfHauaQ/yNYuqrztu0n
+	 uXVPdzx5ZyaQvYzElhCnCf9XZjrUJnePsSEyOs2DqNTfzfqYcfe1TCHLqbRZAY9Tkm
+	 Z5XQLE1r9rVcxBzCzZfd01QyYHN/5bGcdL0EGUYzAe5kpke/jQayrc4xeN+1pLTlRq
+	 lHSxsqDWDLbLKaAElQl+TyMtPkFgFRPYRVwK/qSc0BUWcFpZRUH2nklp9AQHLFEigL
+	 d+n4Cn24448u6/2U4HQtXnge+0tjvpK3hMCbdZCpDpK1CFTwHpbXGzRDO4RHi26uMe
+	 qpyt0RtQGhNDg==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-516d6e23253so3514528e87.1
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2024 14:46:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGPAQsKQyWqfdd+llxhg9jFX/xU9wksli4PvCi8rDc5ERtM7yABjfeicQph2xhFjS0EzE4DB964CoF9kRPA83rQBjUsRCGe1dhS+vMy7WEYPPY3iiK
+X-Gm-Message-State: AOJu0Yx48AskmH0mXv9q7mYM/JnUmly4MXyHbGI36pFrWAYHPF7IG83h
+	VJwbew/giFe8k4aGCXEVbUzOC0oW1pxwv4vy0GWlbPrzJzzUMlr5i0T1JH9OXdRc7LCuj7d0vqY
+	tjIW9x82z1KLI3Bz0usUxz2d8ougRwJhP/tfT
+X-Google-Smtp-Source: AGHT+IHJ+XtD7tDCkZpGl1evOjdhfWeZ4ZrpLRuPzB9DALdbIUfgBBnkIt58/Z758DfdMQoP7wzjIaY3xpjJEH4Azo0=
+X-Received: by 2002:ac2:4c17:0:b0:515:d445:6c13 with SMTP id
+ t23-20020ac24c17000000b00515d4456c13mr6438478lfq.32.1712612767200; Mon, 08
+ Apr 2024 14:46:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com> <20240408093927.1759381-2-ivanov.mikhail1@huawei-partners.com>
-Message-ID: <ZhRKOTmoAOuwkujB@google.com>
-Subject: Re: [RFC PATCH v1 01/10] landlock: Support socket access-control
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240325095653.1720123-1-xukuohai@huaweicloud.com>
+In-Reply-To: <20240325095653.1720123-1-xukuohai@huaweicloud.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Mon, 8 Apr 2024 23:45:56 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ6fZ0mc+A2hJfD4+6EkasrOwy_Ygw=CMg0KZYdm8Fao7A@mail.gmail.com>
+Message-ID: <CACYkzJ6fZ0mc+A2hJfD4+6EkasrOwy_Ygw=CMg0KZYdm8Fao7A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/7] Add check for bpf lsm return value
+To: Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Florent Revest <revest@chromium.org>, Brendan Jackman <jackmanb@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Khadija Kamran <kamrankhadijadj@gmail.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Kees Cook <keescook@chromium.org>, John Johansen <john.johansen@canonical.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello!
+On Mon, Mar 25, 2024 at 10:53=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.co=
+m> wrote:
+>
+> From: Xu Kuohai <xukuohai@huawei.com>
+>
+> A bpf prog returning positive number attached to file_alloc_security hook
+> will make kernel panic.
+>
+> Here is a panic log:
+>
+> [  441.235774] BUG: kernel NULL pointer dereference, address: 00000000000=
+009
+> [  441.236748] #PF: supervisor write access in kernel mode
+> [  441.237429] #PF: error_code(0x0002) - not-present page
+> [  441.238119] PGD 800000000b02f067 P4D 800000000b02f067 PUD b031067 PMD =
+0
+> [  441.238990] Oops: 0002 [#1] PREEMPT SMP PTI
+> [  441.239546] CPU: 0 PID: 347 Comm: loader Not tainted 6.8.0-rc6-gafe0cb=
+f23373 #22
+> [  441.240496] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S rel-1.15.0-0-g2dd4b4
+> [  441.241933] RIP: 0010:alloc_file+0x4b/0x190
+> [  441.242485] Code: 8b 04 25 c0 3c 1f 00 48 8b b0 30 0c 00 00 e8 9c fe f=
+f ff 48 3d 00 f0 ff fb
+> [  441.244820] RSP: 0018:ffffc90000c67c40 EFLAGS: 00010203
+> [  441.245484] RAX: ffff888006a891a0 RBX: ffffffff8223bd00 RCX: 000000003=
+5b08000
+> [  441.246391] RDX: ffff88800b95f7b0 RSI: 00000000001fc110 RDI: f089cd0b8=
+088ffff
+> [  441.247294] RBP: ffffc90000c67c58 R08: 0000000000000001 R09: 000000000=
+0000001
+> [  441.248209] R10: 0000000000000001 R11: 0000000000000001 R12: 000000000=
+0000001
+> [  441.249108] R13: ffffc90000c67c78 R14: ffffffff8223bd00 R15: fffffffff=
+ffffff4
+> [  441.250007] FS:  00000000005f3300(0000) GS:ffff88803ec00000(0000) knlG=
+S:0000000000000000
+> [  441.251053] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  441.251788] CR2: 00000000000001a9 CR3: 000000000bdc4003 CR4: 000000000=
+0170ef0
+> [  441.252688] Call Trace:
+> [  441.253011]  <TASK>
+> [  441.253296]  ? __die+0x24/0x70
+> [  441.253702]  ? page_fault_oops+0x15b/0x480
+> [  441.254236]  ? fixup_exception+0x26/0x330
+> [  441.254750]  ? exc_page_fault+0x6d/0x1c0
+> [  441.255257]  ? asm_exc_page_fault+0x26/0x30
+> [  441.255792]  ? alloc_file+0x4b/0x190
+> [  441.256257]  alloc_file_pseudo+0x9f/0xf0
+> [  441.256760]  __anon_inode_getfile+0x87/0x190
+> [  441.257311]  ? lock_release+0x14e/0x3f0
+> [  441.257808]  bpf_link_prime+0xe8/0x1d0
+> [  441.258315]  bpf_tracing_prog_attach+0x311/0x570
+> [  441.258916]  ? __pfx_bpf_lsm_file_alloc_security+0x10/0x10
+> [  441.259605]  __sys_bpf+0x1bb7/0x2dc0
+> [  441.260070]  __x64_sys_bpf+0x20/0x30
+> [  441.260533]  do_syscall_64+0x72/0x140
+> [  441.261004]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
+> [  441.261643] RIP: 0033:0x4b0349
+> [  441.262045] Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 4=
+8 89 f8 48 89 f7 48 88
+> [  441.264355] RSP: 002b:00007fff74daee38 EFLAGS: 00000246 ORIG_RAX: 0000=
+000000000141
+> [  441.265293] RAX: ffffffffffffffda RBX: 00007fff74daef30 RCX: 000000000=
+04b0349
+> [  441.266187] RDX: 0000000000000040 RSI: 00007fff74daee50 RDI: 000000000=
+000001c
+> [  441.267114] RBP: 000000000000001b R08: 00000000005ef820 R09: 000000000=
+0000000
+> [  441.268018] R10: 0000000000000000 R11: 0000000000000246 R12: 000000000=
+0000004
+> [  441.268907] R13: 0000000000000004 R14: 00000000005ef018 R15: 000000000=
+04004e8
+>
+> The reason is that the positive number returned by bpf prog is not a
+> valid errno, and could not be filtered out with IS_ERR which is used by
+> the file system to check errors. As a result, the filesystem mistakenly
+> uses this random positive number as file pointer, causing panic.
+>
+> To fix this issue, there are two schemes:
+>
+> 1. Modify the calling sites of file_alloc_security to take positive
+>    return values as zero.
+>
+> 2. Make the bpf verifier to ensure no unpredicted value returned by
+>    lsm bpf prog.
+>
+> Considering that hook file_alloc_security never returned positive number
+> before bpf lsm was introduced, and other lsm hooks may have the same
+> problem, scheme 2 is more reasonable.
+>
+> So this patch set adds lsm return value check in verifier to fix it.
+>
+> v2:
+> fix bpf ci failure
+>
+> v1:
+> https://lore.kernel.org/bpf/20240316122359.1073787-1-xukuohai@huaweicloud=
+.com/
+>
+> Xu Kuohai (7):
+>   bpf, lsm: Annotate lsm hook return integer with new macro LSM_RET_INT
+>   bpf, lsm: Add return value range description for lsm hook
+>   bpf, lsm: Add function to read lsm hook return value range
+>   bpf, lsm: Check bpf lsm hook return values in verifier
+>   bpf: Fix compare error in function retval_range_within
+>   selftests/bpf: Avoid load failure for token_lsm.c
+>   selftests/bpf: Add return value checks and corrections for failed
+>     progs
 
-Just zooming in on what I think are the most high level questions here,
-so that we get the more dramatic changes out of the way early, if needed.
+This series does not apply cleanly on any of the following branches:
 
-On Mon, Apr 08, 2024 at 05:39:18PM +0800, Ivanov Mikhail wrote:
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.=
-h
-> index 25c8d7677..8551ade38 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -37,6 +37,13 @@ struct landlock_ruleset_attr {
->  	 * rule explicitly allow them.
->  	 */
->  	__u64 handled_access_net;
-> +
-> +	/**
-> +	 * @handled_access_net: Bitmask of actions (cf. `Socket flags`_)
-                           ^^^
-			   Typo
+bpf-next
+bpf
+linux
+linux-next
+or Paul's lsm branches
 
-> +	 * that is handled by this ruleset and should then be forbidden if no
-> +	 * rule explicitly allow them.
-> +	 */
-> +	__u64 handled_access_socket;
+There are just too many merge conflicts in the lsm_hook_defs.h file.
 
-What is your rationale for introducing and naming this additional field?
-
-I am not convinced that "socket" is the right name to use in this field,
-but it is well possible that I'm missing some context.
-
-* If we introduce this additional field in the landlock_ruleset_attr, which
-  other socket-related operations will go in the remaining 63 bits?  (I'm h=
-aving
-  a hard time coming up with so many of them.)
-
-* Should this have a more general name than "socket", so that other planned
-  features from the bug tracker [1] fit in?
-
-The other alternative is of course to piggy back on the existing
-handled_access_net field, whose name already is pretty generic.
-
-For that, I believe we would need to clarify in struct landlock_net_port_at=
-tr
-which exact values are permitted there.
-
-I imagine you have considered this approach?  Are there more reasons why th=
-is
-was ruled out, which I am overlooking?
-
-[1] https://github.com/orgs/landlock-lsm/projects/1/views/1
-
-
-> @@ -244,4 +277,20 @@ struct landlock_net_port_attr {
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->  /* clang-format on */
-> +
-> +/**
-> + * DOC: socket_acess
-> + *
-> + * Socket flags
-> + * ~~~~~~~~~~~~~~~~
-
-Mega-Nit: This ~~~ underline should only be as long as the text above it ;-=
-)
-You might want to fix it for the "Network Flags" headline as well.
-
-> + *
-> + * These flags enable to restrict a sandboxed process to a set of
-> + * socket-related actions for specific protocols. This is supported
-> + * since the Landlock ABI version 5.
-> + *
-> + * - %LANDLOCK_ACCESS_SOCKET_CREATE: Create a socket
-> + */
-
-
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index c7f152678..f4213db09 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -92,6 +92,12 @@ enum landlock_key_type {
->  	 * node keys.
->  	 */
->  	LANDLOCK_KEY_NET_PORT,
-> +
-> +	/**
-> +	 * @LANDLOCK_KEY_SOCKET: Type of &landlock_ruleset.root_socket's
-> +	 * node keys.
-> +	 */
-> +	LANDLOCK_KEY_SOCKET,
->  };
-> =20
->  /**
-> @@ -177,6 +183,15 @@ struct landlock_ruleset {
->  	struct rb_root root_net_port;
->  #endif /* IS_ENABLED(CONFIG_INET) */
-> =20
-> +	/**
-> +	 * @root_socket: Root of a red-black tree containing &struct
-> +	 * landlock_rule nodes with socket type, described by (domain, type)
-> +	 * pair (see socket(2)). Once a ruleset is tied to a
-> +	 * process (i.e. as a domain), this tree is immutable until @usage
-> +	 * reaches zero.
-> +	 */
-> +	struct rb_root root_socket;
-
-The domain is a value between 0 and 45,
-and the socket type is one of 1, 2, 3, 4, 5, 6, 10.
-
-The bounds of these are defined with AF_MAX (include/linux/socket.h) and
-SOCK_MAX (include/linux/net.h).
-
-Why don't we just combine these two numbers into an index and create a big =
-bit
-vector here, like this:
-
-    socket_type_mask_t socket_domains[AF_MAX];
-
-socket_type_mask_t would need to be typedef'd to u16 and ideally have a sta=
-tic
-check to test that it has more bits than SOCK_MAX.
-
-Then you can look up whether a socket creation is permitted by checking:
-
-    /* assuming appropriate bounds checks */
-    if (dom->socket_domains[domain] & (1 << type)) { /* permitted */ }
-
-and merging the socket_domains of two domains would be a bitwise-AND.
-
-(We can also cram socket_type_mask_t in a u8 but it would require mapping t=
-he
-existing socket types onto a different number space.)
-
-
-As I said before, I am very excited to see this patch.
-
-I think this will unlock a tremendous amount of use cases for many programs=
-,
-especially for programs that do not use networking at all, which can now lo=
-ck
-themselves down to guarantee that with a sandbox.
-
-Thank you very much for looking into it!
-=E2=80=94G=C3=BCnther
+- KP
