@@ -1,95 +1,218 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFDF142E68;
-	Mon,  8 Apr 2024 17:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E2D146007
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Apr 2024 19:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712596172; cv=none; b=StguFbbGqEVLpHufMXfh4Ab6P3E7If4QGGp4sZ9o9bOn/1YN+S7kGH0e+TnW8Sax5WMulyFgGy7fTkBi8mK7RAAZb+FQcsXJ/CmUR4uazrcKgb7euIL72tTn4BvZqswRSiqdpGFWAhe5uYJpfgJo8FcCn6aN993ZT0W5qWYvxlU=
+	t=1712605758; cv=none; b=TaynM46MkM3Nk+9ZjqxJn6nD162xq1QQYAUs3tDjy8KSBRnzUS/lcviBEonQe08VH7240DP67nxWegotYN/bYu4XQOaqq0WnqckIC+/+WObSJ0QmOrfa5NtQbR00ubcizuhshNjTBabvGZv6koatjJQ6Rxvj2G2PYh9k/Sd5Fg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712596172; c=relaxed/simple;
-	bh=FXRh4NT4mgAmM5SWmhxzWE8ppnsO/CEI3gx+kEY5Y88=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Yf4TigOdhc6gLRkrMyyi41KoPsLn5vFcu0DQiAS0Rh2SCCHRdwrkCfdtfBPoQgmMIoVqZRE36wHjez4BWFIv2j0ViPchEXJtzT4A5KT42/2/EqNf6Tu7U7im4onebsq/WrcEK188fkZwMfAb4PjiyHfQjQaD0Eyo6GnLjzsu7Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BB7ijO4Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712605758; c=relaxed/simple;
+	bh=4VwVkJ15ie8oUnERlTxvN5nffzGsfOJzaRKC0uM48eI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dIle5a88STKvvh7ihjPfkXO43DCW8rFeVBWk1gFeKce3iIMK6eTqaPSq1YV+Nb/LWdRpDDvEm4ic8YG85s1cOdswfbdXlr2eiPP1zcjMWCjgoWa9+3S8FGSn45pjky27Ub1nKKgC0NDR+mfjB28Ht7e8qLcZm1d2UTzJRVyDj6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V6xkBBj6; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BB7ijO4Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84DCCC433F1;
-	Mon,  8 Apr 2024 17:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712596172;
-	bh=FXRh4NT4mgAmM5SWmhxzWE8ppnsO/CEI3gx+kEY5Y88=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-	b=BB7ijO4Q3/URZEptPIUEWBlcudWmK2jw7NdXZ6/LpEgJTYcFzY1OXa4ftqrmI+AtG
-	 qNeUCiJCP8WwztAcGqauws/pRzmBxOifz3db2LcOLa+IzGkIOtdD5zhJ668pbaQPVv
-	 98MKQLmLDEPtGCg6P7QG2XLIFJKtHLvfCjdAXsai7gubXYc2LHz2Kl3jN1C80dPWwz
-	 GgiPe14JfOeSVAfxkWBA8T6xjxLoIXlo8p0iEOr8QvH+mjIRzmiZJUl/p8R76FTN6n
-	 vl0+DCm7s6gXbmdry7HK1o6btvU1aOws8RpBhv/SN2A7Pqp3vA/MDk7rj3J8n/7teS
-	 T/xB8/YGgZz2g==
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V6xkBBj6"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6150dcdf83fso93761827b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2024 12:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1712605755; x=1713210555; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aq405guPa3OPZRO9v26OPDN3Zw9hWnozHgBpKl4FcoU=;
+        b=V6xkBBj6NTxNWgeDgA/cAzKtxzFWOds4KdSwz+0WGaLwxs6aouijdGOMrlKyjTJ55K
+         kRjDKlFmFfcTY7Gna2at7h5FrflV+abRYehoUfLk6iHSkDvWnrS3nXvS++t0/U4Z5pqk
+         QZTgF8cXg/gLMQExZ4dK2fShjJpVhn28jdoIWtPDIIriF8sWaca0MO6u9EDvAPNPzw8J
+         UZ/xuM14IEnxVlv7NE1qNpF2x1+ejU3WPtOscs+O58ECxKGQsglanWV8umqyTt60tzSq
+         J06pleWISRw3GLI7fRDoW1ebAtF7ljwMsvZQRpbPuCEqvUS+Nud0ue70CU4aSajeFP/R
+         8Jqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712605755; x=1713210555;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aq405guPa3OPZRO9v26OPDN3Zw9hWnozHgBpKl4FcoU=;
+        b=qsuVdw7w4GjNDguOM6HKOBu5QMQA6SEgxSbJt1RfBdq2S/FzRaWsLFK7aJ/UjxTYLR
+         r3jEY5JGgjDAZ8etlXnBR371XE6hHOW0S6jrA/aToq4wKJOwO1LXieltGvml4+m1RXof
+         g7JY7cuBH4Z+zO6R2nY5Fpuf9W6TlTYromUD/GaBDyZ8Dd7K2p92QRh0LQBTlzumAl3B
+         4Gvx49/ohhk/Jw95QanejTOCn2LZerjlijwxDu0w4cCy2TZwFl7xivSg9A/gS+GweXpH
+         i9QrZgSkhNd6G3TB3MRQfGYzmKUFaIL7yC8NSBQ8vnrnw67mZe6Kl0Q8kBjJcqt73jH1
+         aAgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIWwF7cNgVE78wsyT6f7Gt6ivPAGTU7JHH1au1CQe00R918mjdFBVe5OXVEUyEXZr5gGgFe21O+uRHPekFuM40pUUtYR6tagHhZUkv7kAO/579z/Hp
+X-Gm-Message-State: AOJu0YxuUZ7hSm2agJGYRmNqfaoQeJl4As16PSEXArPEOI3nM+GmZusD
+	BsujPQfnZbYZkajGMYPUX9KuIE7uSEvr6OwGcitHZ7hszrbJMEAtbyOMf5JKWt4CU+m/AfBUGST
+	UCQ==
+X-Google-Smtp-Source: AGHT+IEOvC2+HFvfUx+HVQIDT3l0tZKQZWg0eCxC+0TeQ/H78hrhDDQEqkf6GmdV35Kdx2aknK+7XH+Xzcw=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:100a:b0:dda:ce5f:b4c3 with SMTP id
+ w10-20020a056902100a00b00ddace5fb4c3mr3253808ybt.1.1712605755482; Mon, 08 Apr
+ 2024 12:49:15 -0700 (PDT)
+Date: Mon, 8 Apr 2024 21:49:13 +0200
+In-Reply-To: <20240408093927.1759381-2-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH bpf-next v2 2/7] bpf, lsm: Add return value range
- description for lsm hook
-From: KP Singh <kpsingh@kernel.org>
-In-Reply-To: <20240325095653.1720123-3-xukuohai@huaweicloud.com>
-Date: Mon, 8 Apr 2024 19:09:25 +0200
-Cc: bpf@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>,
- Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>,
- Florent Revest <revest@chromium.org>,
- Brendan Jackman <jackmanb@chromium.org>,
- Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Mime-Version: 1.0
+References: <20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com> <20240408093927.1759381-2-ivanov.mikhail1@huawei-partners.com>
+Message-ID: <ZhRKOTmoAOuwkujB@google.com>
+Subject: Re: [RFC PATCH v1 01/10] landlock: Support socket access-control
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <7FAC6C1E-B0C2-4743-AFF0-0DCC2B331D0A@kernel.org>
-References: <20240325095653.1720123-1-xukuohai@huaweicloud.com>
- <20240325095653.1720123-3-xukuohai@huaweicloud.com>
-To: Xu Kuohai <xukuohai@huaweicloud.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+
+Hello!
+
+Just zooming in on what I think are the most high level questions here,
+so that we get the more dramatic changes out of the way early, if needed.
+
+On Mon, Apr 08, 2024 at 05:39:18PM +0800, Ivanov Mikhail wrote:
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.=
+h
+> index 25c8d7677..8551ade38 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -37,6 +37,13 @@ struct landlock_ruleset_attr {
+>  	 * rule explicitly allow them.
+>  	 */
+>  	__u64 handled_access_net;
+> +
+> +	/**
+> +	 * @handled_access_net: Bitmask of actions (cf. `Socket flags`_)
+                           ^^^
+			   Typo
+
+> +	 * that is handled by this ruleset and should then be forbidden if no
+> +	 * rule explicitly allow them.
+> +	 */
+> +	__u64 handled_access_socket;
+
+What is your rationale for introducing and naming this additional field?
+
+I am not convinced that "socket" is the right name to use in this field,
+but it is well possible that I'm missing some context.
+
+* If we introduce this additional field in the landlock_ruleset_attr, which
+  other socket-related operations will go in the remaining 63 bits?  (I'm h=
+aving
+  a hard time coming up with so many of them.)
+
+* Should this have a more general name than "socket", so that other planned
+  features from the bug tracker [1] fit in?
+
+The other alternative is of course to piggy back on the existing
+handled_access_net field, whose name already is pretty generic.
+
+For that, I believe we would need to clarify in struct landlock_net_port_at=
+tr
+which exact values are permitted there.
+
+I imagine you have considered this approach?  Are there more reasons why th=
+is
+was ruled out, which I am overlooking?
+
+[1] https://github.com/orgs/landlock-lsm/projects/1/views/1
 
 
+> @@ -244,4 +277,20 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  /* clang-format on */
+> +
+> +/**
+> + * DOC: socket_acess
+> + *
+> + * Socket flags
+> + * ~~~~~~~~~~~~~~~~
 
-> On 25 Mar 2024, at 10:56, Xu Kuohai <xukuohai@huaweicloud.com> wrote:
->=20
-> From: Xu Kuohai <xukuohai@huawei.com>
->=20
-> Add return value descriptions for lsm hook.
->=20
-> Two integer ranges are added:
->=20
-> 1. ERRNO: Integer between -MAX_ERRNO and 0, including -MAX_ERRNO and =
-0.
-> 2. ANY: Any integer
+Mega-Nit: This ~~~ underline should only be as long as the text above it ;-=
+)
+You might want to fix it for the "Network Flags" headline as well.
+
+> + *
+> + * These flags enable to restrict a sandboxed process to a set of
+> + * socket-related actions for specific protocols. This is supported
+> + * since the Landlock ABI version 5.
+> + *
+> + * - %LANDLOCK_ACCESS_SOCKET_CREATE: Create a socket
+> + */
 
 
-I think you should merge this patch and the first patch. It's not clear =
-that the first value in this macro is actually used as the default value =
-until one reads the code. I think you also need to make it clear that =
-there is no logical change on the LSM side in the this patch.
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index c7f152678..f4213db09 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -92,6 +92,12 @@ enum landlock_key_type {
+>  	 * node keys.
+>  	 */
+>  	LANDLOCK_KEY_NET_PORT,
+> +
+> +	/**
+> +	 * @LANDLOCK_KEY_SOCKET: Type of &landlock_ruleset.root_socket's
+> +	 * node keys.
+> +	 */
+> +	LANDLOCK_KEY_SOCKET,
+>  };
+> =20
+>  /**
+> @@ -177,6 +183,15 @@ struct landlock_ruleset {
+>  	struct rb_root root_net_port;
+>  #endif /* IS_ENABLED(CONFIG_INET) */
+> =20
+> +	/**
+> +	 * @root_socket: Root of a red-black tree containing &struct
+> +	 * landlock_rule nodes with socket type, described by (domain, type)
+> +	 * pair (see socket(2)). Once a ruleset is tied to a
+> +	 * process (i.e. as a domain), this tree is immutable until @usage
+> +	 * reaches zero.
+> +	 */
+> +	struct rb_root root_socket;
 
-- KP=
+The domain is a value between 0 and 45,
+and the socket type is one of 1, 2, 3, 4, 5, 6, 10.
+
+The bounds of these are defined with AF_MAX (include/linux/socket.h) and
+SOCK_MAX (include/linux/net.h).
+
+Why don't we just combine these two numbers into an index and create a big =
+bit
+vector here, like this:
+
+    socket_type_mask_t socket_domains[AF_MAX];
+
+socket_type_mask_t would need to be typedef'd to u16 and ideally have a sta=
+tic
+check to test that it has more bits than SOCK_MAX.
+
+Then you can look up whether a socket creation is permitted by checking:
+
+    /* assuming appropriate bounds checks */
+    if (dom->socket_domains[domain] & (1 << type)) { /* permitted */ }
+
+and merging the socket_domains of two domains would be a bitwise-AND.
+
+(We can also cram socket_type_mask_t in a u8 but it would require mapping t=
+he
+existing socket types onto a different number space.)
+
+
+As I said before, I am very excited to see this patch.
+
+I think this will unlock a tremendous amount of use cases for many programs=
+,
+especially for programs that do not use networking at all, which can now lo=
+ck
+themselves down to guarantee that with a sandbox.
+
+Thank you very much for looking into it!
+=E2=80=94G=C3=BCnther
