@@ -1,118 +1,133 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165C6155387
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Apr 2024 17:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E346915624E
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Apr 2024 17:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712683384; cv=none; b=Qx+CP3KBNb/k0SfB1Tn92G5zevxxxGV4UcvJ2UJtNAuWaN3TkyjCIK+5NH2HdXyShrzwjFYLVoZVYQ3CtLTHO7uW46YKDSBM6hnObeCwLl6nrozod5sQsFbmUf8mdPvdFSlujywHTf3en2ljMAvjCJkEYpz/5yGAF3iVrCbs+4w=
+	t=1712683692; cv=none; b=G87NTNKfXN0KWLrbSCwBud3Zb/Lw94ZcQi2uwaKjW4ZDRZYDOqvGAbyCtx2l2HjpNPyLRlMkMkntApvbE0Pw6w0pQ030dH9FLl9lUBc1t4ifgahGQD8h3sjhr11oFrXdrTjC5/qD6599SU0koZ4iVV/fqrI/sTpJp+54m3ic64Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712683384; c=relaxed/simple;
-	bh=D6NH/veypjX3visTbwV07IOKhioYsy7e8a4VJvDvwSc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dTDuA0chCXtvYWWW3hZMtEcpALj3Ia65kPAtbABo1PYttU7JrrOYu7XhLLhGeMuFkUTPljR1vsSYDTOKZwYIDOj7S2J+CUE5+v1km4smJJbGLG+Ov2sRr61O5yQddVXvsw7wTKTKu8oobhnXIIaUCfXNfsG+Kd8xXK1Cb4aaEuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cttmha/9; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	s=arc-20240116; t=1712683692; c=relaxed/simple;
+	bh=TPhpU6GJEU734JPKrGvqBheDD6F81x0OYRJ4s8MuK+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qF9b6JOA6CcjlvC3bcHCsl+FiurE3jHKPiuY09VWpTlN+M3zfPJfgXA9fRUtj+bH3N63eCk+xK2i8Asb7Q8YSr3vRh1lWhNvZR2+fQgL9fyFQX2sWybQc2jcuJg+kdPkjZ1LHmmY3E+9qFWxfuKAvt5qdI5ZQX8+93EBlCgzRI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E+vy51t5; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cttmha/9"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d700beb60bso95680981fa.1
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 10:23:01 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E+vy51t5"
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7cc5e664d52so95236539f.0
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 10:28:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1712683380; x=1713288180; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gZQn/VsBmfAUTb4U4oHqfvHtdoT5PpXagKaDAaqxim0=;
-        b=cttmha/9nZDYQ0upSC6KmEnFBAV56gSPLYJW6O8Aqy1h5LbBnCdmK23fmv701Zdfx6
-         vGk9/UqwQaC5/gL7Ml0Nd9DRcA67GRJB4v9x0p3sT3/dZe6rxGnjEWi4pPPI5M/f4XKF
-         coB8VH0Eh5HGvhPfuH8jfXiPpoBMvh5hduveA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712683380; x=1713288180;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=linuxfoundation.org; s=google; t=1712683688; x=1713288488; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gZQn/VsBmfAUTb4U4oHqfvHtdoT5PpXagKaDAaqxim0=;
-        b=l0bFutVA31ytkNeM8IlIWHLfrLMf2VzEXhpJT60L6eP7OxwBVNtO0Zb9yH9FKPu7tX
-         wlYj9n2oknlS7TQUeFbVmm33YqkK6wObgISVsZxyzWlCEzYLBGwd3Plfj7Bv49P5PMDp
-         agBTYo43MNiDR0KB4w2RrRRyiv19F/pRh/FfeAZFUYzk69d6rbOcXnTzpwkpD5GdKNiP
-         GVXwqYU1MZkJUVcryav1psXEuF57B7Ut+wCkHSsm5nTEGEVKWebDHrVR6gCAZSSTisv4
-         NjXWklEoHQX55UqT2GsOJSQnnJZnoVspkbiTEJF2T08B4SAi433B9FJarFaL7cNLN9NV
-         RSFg==
-X-Gm-Message-State: AOJu0YxFx1uo0M7lEmf5Xdf40nM3HhxhNLnEpmqoznueUwabx3N7rTB5
-	3nWM0RQ7cfdUy7WmkOaBnbDWExhTE4Lt4p6Ks45xnhA4MFMOVEjk4EgPYkDUTlKA7hPR33xSM+7
-	YG5jKAw==
-X-Google-Smtp-Source: AGHT+IGuA8Sa58Sz4CTaXSz30kYGL3SnPcBlya3oQo1touClliDnMp3h9drxUkK89SrN1yi6JvFB+w==
-X-Received: by 2002:a2e:9f4a:0:b0:2d6:e148:2463 with SMTP id v10-20020a2e9f4a000000b002d6e1482463mr421870ljk.24.1712683379951;
-        Tue, 09 Apr 2024 10:22:59 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id d10-20020a2eb04a000000b002d875e679aasm1361186ljl.89.2024.04.09.10.22.59
-        for <linux-security-module@vger.kernel.org>
+        bh=bzDpECgxcv/gVK2Eh47txfcjeUm+DcSXrEiDNVslfT0=;
+        b=E+vy51t5hbFKtlPfWz63OAwISfam8JoJQJPF3AsULQlTZX/HvoniDiNyRzbxSMrbZ4
+         mk0VY5pVQ9SrzbabNxxJkimfIKhLT06ENVXFV0HjjURiYtwsvqJdGLxrKYQsqSYYXRWB
+         TAbhQeAzpAwOREQqlwbspbUY82B4xrV390hiU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712683688; x=1713288488;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bzDpECgxcv/gVK2Eh47txfcjeUm+DcSXrEiDNVslfT0=;
+        b=coIMtC6Tb4GkRpgB5YRQrbZT+s4TVrlwAGhlhMtqRLJ3tCAe323p/O51HflJfLOzV4
+         4rNaooNVkQx/sx4qZSHmsC2Gp4He8coUrWMpWAzna10hrnpXpcoFG3uH4GWIag29sJpx
+         5rH1Vq/wPAlfBIJvVYAL7C7TmtEvm/JKVyZcqos1E72wjs5k92hEvtEfIjzD+ik6+SlN
+         Bxr9Ga4SZlwLAGAfozBPw7Zj0eQ1+51Fx71bM8kuNaMDniuU/VZJXLY8MmPcChMtTd/w
+         u+5XzjhqVh5/QPDTaE0k4ajE1M7Fe7zpP6Cxf25WYhHIcCzqKGf5T/lT5iXej7o2KrOB
+         RqWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUY4Pk3/Pp5foTJsTYvdzixDPxm/C9f20U6jyJmWrnw7OMbnC0cJcu+znwDLxQ30+7MAbu3ZLKc2qU1b000ptEuaZZDouLPeLkDDQgN6hBlM3czL50
+X-Gm-Message-State: AOJu0YxfJvId6eyWoZBEo2NAcwKmOxsVJ4AtpQbGKyKLAW+FMbpEp69E
+	8xx4oegVC5/UZSbsb/kRKmVrNt/ycGCO8pjEwGNriqfDKuiaoya6Yz5NDyxHWcw=
+X-Google-Smtp-Source: AGHT+IFk5z8PoAK3T9resPRUq+Mhgn4hfhcghzxIpzPidDvzpWozapI9Iaz2Vi75WE2H0KeSIVTCNQ==
+X-Received: by 2002:a05:6602:3b98:b0:7d5:de5b:1ac2 with SMTP id dm24-20020a0566023b9800b007d5de5b1ac2mr468468iob.2.1712683688027;
+        Tue, 09 Apr 2024 10:28:08 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id cn23-20020a0566383a1700b00482b4a8f07esm35302jab.61.2024.04.09.10.28.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Apr 2024 10:22:59 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2d485886545so103285101fa.2
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 10:22:59 -0700 (PDT)
-X-Received: by 2002:a2e:9f4a:0:b0:2d6:e148:2463 with SMTP id
- v10-20020a2e9f4a000000b002d6e1482463mr421816ljk.24.1712683378788; Tue, 09 Apr
- 2024 10:22:58 -0700 (PDT)
+        Tue, 09 Apr 2024 10:28:07 -0700 (PDT)
+Message-ID: <5a04e40c-daba-4a1d-b5db-f70d2e51c403@linuxfoundation.org>
+Date: Tue, 9 Apr 2024 11:28:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 9 Apr 2024 10:22:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
-Message-ID: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
-Subject: Hardcoded security module suggestion - stop the stacking insanity
-To: Paul Moore <paul@paul-moore.com>, Kees Cook <keescook@chromium.org>, 
-	KP Singh <kpsingh@kernel.org>
-Cc: LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 RESEND 0/7] Handle faults in KUnit tests
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Brendan Higgins <brendanhiggins@google.com>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: Alan Maguire <alan.maguire@oracle.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Eric W . Biederman" <ebiederm@xmission.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ James Morris <jamorris@linux.microsoft.com>,
+ Kees Cook <keescook@chromium.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+ Marco Pagani <marpagan@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Thara Gopinath <tgopinath@microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>, Zahra Tarkhani <ztarkhani@microsoft.com>,
+ kunit-dev@googlegroups.com, kvm@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
+ x86@kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240408074625.65017-1-mic@digikod.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240408074625.65017-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-People, I know there's been LSM work on the whole "multiple layers of
-security modules" for over a decade, and it's been a design decision
-and a target, but I've complained before about the cost of the
-abstraction, and we just had *another* hardware security issue with
-speculated indirect branches go public.
+On 4/8/24 01:46, Mickaël Salaün wrote:
+> Hi,
+> 
+> This patch series teaches KUnit to handle kthread faults as errors, and
+> it brings a few related fixes and improvements.
+> 
+> Shuah, everything should be OK now, could you please merge this series?
+> 
+> All these tests pass (on top of v6.8):
+> ./tools/testing/kunit/kunit.py run --alltests
+> ./tools/testing/kunit/kunit.py run --alltests --arch x86_64
+> ./tools/testing/kunit/kunit.py run --alltests --arch arm64 \
+>    --cross_compile=aarch64-linux-gnu-
+> 
+> I also built and ran KUnit tests as a kernel module.
+> 
+> A new test case check NULL pointer dereference, which wasn't possible
+> before.
+> 
+> This is useful to test current kernel self-protection mechanisms or
+> future ones such as Heki: https://github.com/heki-linux
+> 
+> Previous versions:
+> v3: https://lore.kernel.org/r/20240319104857.70783-1-mic@digikod.net
+> v2: https://lore.kernel.org/r/20240301194037.532117-1-mic@digikod.net
+> v1: https://lore.kernel.org/r/20240229170409.365386-1-mic@digikod.net
+> 
+> Regards,
+> 
+> Mickaël Salaün (7):
+>    kunit: Handle thread creation error
+>    kunit: Fix kthread reference
+>    kunit: Fix timeout message
+>    kunit: Handle test faults
+>    kunit: Fix KUNIT_SUCCESS() calls in iov_iter tests
+>    kunit: Print last test location on fault
+>    kunit: Add tests for fault
+> 
 
-So I say "suggestion" in the subject line, but  really think it needs
-to be more than that: this whole "nested LSM" stuff as a design goal
-just needs to be all rolled back, and the new design target is "one
-LSM, enabled statically at build time, without the need for indirect
-calls".
+Thank you for the resend. Applied to linux-kselftest kunit branch
+for Linux 6.10-rc1.
 
-Because we're now in the situation where the security hooks are
-actually a source of not just horrible performance issues, but also
-actual insecurity. The first indirect branch in the kernel is now
-often the security layer, and the latest
+thanks,
+-- Shuah
 
-One current PoC literally uses security_task_prctl() as the attack vector.
-
-Yes, I realize that the "security" in the LSM name is a bad joke, and
-that to a first level approximation the LSM people don't actually care
-about real security, and that the goal is just "policy".
-
-But dammit, I think we need to put our foot down on this. The
-complexity simply isn't worth it, and the flexibility is of
-questionable actual worth.
-
-So here's a challenge to the LSM people: work on walking back all the
-silly nested security layers.
-
-And yes, I'm aware of the random hacks for turning the indirect branch
-into a series of static direct branches by
-
-   https://lore.kernel.org/bpf/20240207124918.3498756-1-kpsingh@kernel.org/#t
-
-but honestly, this series needs to be turned to 11.
-
-Or rather, it needs to be turned *down* from the current maximum of 11
-nested calls to be something sane. This whole "security layer allows
-any policy at all" has been a fundamental design mistake. It
-absolutely needs to stop, and this "you can nest arbitrarily" needs to
-be walked back.
-
-The whole "add cost and insecurity in order to give people random
-policies" must go. When the LSM *becomes* the attack vector, we need
-to just fix things.
-
-                  Linus
