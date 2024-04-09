@@ -1,126 +1,105 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7E485276
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Apr 2024 18:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0DB156975
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Apr 2024 18:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712685746; cv=none; b=IUy/qe4uLbSGmtJwmGRe17wxKRSu2qA9I6fMqkGuSEAQ7BdmJgRcfgQWbsMYCZb+9U01nwcWo2xRp/L88U1HDzot3ALIpaI5O+fMZdflG5467e0eG4+l+JLAzLRKwzi0UeyjYB8igXB07ctGtl94tAC4C/ssN6q0XWIiWrj4qNc=
+	t=1712687105; cv=none; b=UOOAiYBSF7DEoecnefE9aoMk1jr3qTIhWmzY6tHYgbMorPBraNJYm4wqIgHqFh14i5lnKCAdsSeZbY5i/t9auvxgBSgpmrlFlKY87gtSRYuWjEqxYLEc/zLuJ5Z9tnDPvzJPwraGgw3hCLrrO0WSLBJayQPEOV3M/5O7+5x/x4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712685746; c=relaxed/simple;
-	bh=zPBR6FHUzVb88yfdMV8TqZpEmnE733LQx0Nl1VdnHRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAj3y6IRdbZOnTEetT52m6QsjxB8o3WUvLHciQ0pk02IRoYqkUeFO3/hjmp3XP97Me4ynFnHCO8I+7AL36uzW3mOJDhWZP2D8XF+HLLi80LXK6PCtZ2nCn+80Fz7gH6LRLL8B15/7B1eZfuFHJeIjo7MaI8c3MMsVOR7ORbkXUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J4xjdJ+l; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1712687105; c=relaxed/simple;
+	bh=TnTEVY6GSh34M+Bzz7VmtJbXDhI5rgwhzvIBnQk47So=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wdw4OlZN7OhiFC6WQiHv+AktZY5brz8iOcp0OiTAIKVh4l+t9YdpaKc352lYGp/t5djRZk/xYNTbqMB0CHAE+csfa0vFTYeYX4uPVURIJEOqGhTg15tCvqjVyyy9JrXl6x25Wl1fJK0mOMAAaVNTF3kQRhDphy+7rFumLO49mzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SLjNtE/i; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J4xjdJ+l"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1e4266673bbso21655375ad.2
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 11:02:24 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SLjNtE/i"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a519eae91d1so576198166b.3
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 11:25:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1712685744; x=1713290544; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D9p9W4olTCJLNIY4LFgRiTPMoiQu0jWjisFAK+GzZ+k=;
-        b=J4xjdJ+lUYZMe8NHWX7xPQ3rgURTYdqAWTjFtQUT+Ey22WbJKS7WGKnQUlHzvQVDiy
-         fUs/ARDyaxp3dwXSzJNLjmYKwSYbcqG3RubUY+RhOgPI8tc/BUtp+FKdkqvkOC2nH6tc
-         93Nmi7oYfmcXLnKaQUOUoR94Qi88BiNZpUWHc=
+        d=linux-foundation.org; s=google; t=1712687102; x=1713291902; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lw5DUGs7JS8G4SFB7desIP/FBgPQWEWdQsI36wfeDxo=;
+        b=SLjNtE/iY4EtBSVi487FbI93I81Qprrhuy5Scww7Cz9b3Te2a73Fon7Zg2NVTvnR2k
+         E4RheFjbqS/7rYA10ooVADNAHW35qubBfn9iJCUEi5ETOHd4tvDvldRxb4DJbRix50XR
+         /08l6E5sqqdOxtMUIas1lY35idsoh0hD7XnBs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712685744; x=1713290544;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D9p9W4olTCJLNIY4LFgRiTPMoiQu0jWjisFAK+GzZ+k=;
-        b=UaVpc4K/O6PlY0GpKINezbLZqTUmIleveQRHfbVYnWT6jzMp4ZQ6jxTAzXb5avKKjP
-         ygD6K6UPqO16904ix9b4s+/2EOnolzBk1UmGh3VrnSUplGcJz9SvHIeJ3KKN6B5GP01e
-         dVYwJnx2lXkLWXYUnPGca+amJyX6l/mNrkRlDWLD9xy+SmsFfgD6caUpQe+sWEb518h8
-         MuUgCI+FdVmZKSG5rVt+p0dFndLmZa/tn4AW2fXQqDKvHBhlksNpfM0C7flVWDBoHN6R
-         Ho+Bgv2G/X5+awvzK1RM1glt3fCjt0+5vSNZJMssAAYxt1lU3amM2Ei+aPmXaJNriDj5
-         b6mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjvuonNMppbma/ZdiotFIYMI4o27OVCN40W84QWMs59357p/6paxoOhDnr5OlnyzZsLWo5mJZgHN+mPK+0qH6YSn0msmmBI9FwXi0YPz53asXC2dA3
-X-Gm-Message-State: AOJu0Yz6r0jXDRg2jPalLqU4A3Yb/sSKKdgoP6rXWjeR1buKi8y3B0R3
-	erkEV/E8mfuP8fkjYCe2fNL7XxQpge+g+akkPz+/DDI/royRovmpoiiHxjoWYkpo5v3IFsg7DiY
-	=
-X-Google-Smtp-Source: AGHT+IGopdIid603eguqrNNu1GdD9GXS9yW4mDzXlgXfTQoJ20EcnkQ45prc8FAv+RK8Mfp+xkUSNQ==
-X-Received: by 2002:a17:902:8ec6:b0:1dd:7059:a714 with SMTP id x6-20020a1709028ec600b001dd7059a714mr505020plo.30.1712685743288;
-        Tue, 09 Apr 2024 11:02:23 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id u7-20020a17090341c700b001e2b57a6e22sm9132315ple.305.2024.04.09.11.02.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Apr 2024 11:02:22 -0700 (PDT)
-Date: Tue, 9 Apr 2024 11:02:22 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Moore <paul@paul-moore.com>, KP Singh <kpsingh@kernel.org>,
-	LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: Hardcoded security module suggestion - stop the stacking insanity
-Message-ID: <202404091041.63A1CFC1A@keescook>
-References: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1712687102; x=1713291902;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lw5DUGs7JS8G4SFB7desIP/FBgPQWEWdQsI36wfeDxo=;
+        b=RzEXSgmE3ld0zHfR5/nACXgY3C0o472sMWidq0geYGa+D4sheuR8Jctdl4aMQ5SZ+d
+         hk+IhUb45NJoAYXoaXldhfxycb12u/EemqIMmVNawC5lWQsCdFKOPX83oTiF6ylmsGfW
+         /oOcaItY0G2SU/1oi4n7NEDHJv3tPyEec7Sz7xvuf5nahF0OPvDB7+TQ4lSfwxxwdrj8
+         gjfNJK3OcCKas4lbFyNtU0XqXDPeWsstfr4PUVVzm2vZTphLjf+S+KqSKf5QMfRzYP/f
+         ++w9QCWQVIVL7VCznhl1Yy6i7tSjLcZ4himmOZQnwI27LtnCmC/wU1eqOiaESHN7xJUz
+         Rf+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXacETg075LLw3v7kU9fYLOABgmH7KgOjRKuBvxcYq9vOgjmdCTMFb/9PhmVd6D+JtQvviURh6Zb38MNN7E66ucBbOU8SOehut/Bs8X6ZAujkaosTUs
+X-Gm-Message-State: AOJu0YyEr4vqZMtZfC9E+RRTiaiGM8o7brLpNrnWr7cPA2mCW0Zhd1Ju
+	c+8x+hmT4DjPN73v8xY0ZViqQd4RGRJOuhNOnwsnVPCU4TwroG1ayEmIE+hRHIXQLeTBtKwp7GO
+	FTxlxnQ==
+X-Google-Smtp-Source: AGHT+IHox1t8aEVg8VrEhIhfvZdK3EmGqc8lz0cYVnbhbnKj89c8SzIh5PgEGnQfZXEc6S0B3R50yQ==
+X-Received: by 2002:a17:906:c44f:b0:a46:ec44:477c with SMTP id ck15-20020a170906c44f00b00a46ec44477cmr161834ejb.41.1712687101907;
+        Tue, 09 Apr 2024 11:25:01 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id d9-20020a1709061f4900b00a519054d7ddsm5956436ejk.61.2024.04.09.11.25.01
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Apr 2024 11:25:01 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-56bdf81706aso7887245a12.2
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 11:25:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/JDJ99RFa8JFXYKjrQuWCpFM/Ib84ReLw4ioKwnN10/Jodm9m/acR4XIkb4nirGzoCQ0owSy6NVkGNJponPO3pPpLCycdsE+Y089QoqxKHckPwPvj
+X-Received: by 2002:a17:906:4a16:b0:a51:a288:5af9 with SMTP id
+ w22-20020a1709064a1600b00a51a2885af9mr172847eju.51.1712687101019; Tue, 09 Apr
+ 2024 11:25:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
+References: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
+ <202404091041.63A1CFC1A@keescook>
+In-Reply-To: <202404091041.63A1CFC1A@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 9 Apr 2024 11:24:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whXwcBzFJd65gQ09EGt1yuH6RyuErhOgvJK8pjkAVw07w@mail.gmail.com>
+Message-ID: <CAHk-=whXwcBzFJd65gQ09EGt1yuH6RyuErhOgvJK8pjkAVw07w@mail.gmail.com>
+Subject: Re: Hardcoded security module suggestion - stop the stacking insanity
+To: Kees Cook <keescook@chromium.org>
+Cc: Paul Moore <paul@paul-moore.com>, KP Singh <kpsingh@kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 09, 2024 at 10:22:42AM -0700, Linus Torvalds wrote:
-> People, I know there's been LSM work on the whole "multiple layers of
-> security modules" for over a decade, and it's been a design decision
-> and a target, but I've complained before about the cost of the
-> abstraction, and we just had *another* hardware security issue with
-> speculated indirect branches go public.
+On Tue, 9 Apr 2024 at 11:02, Kees Cook <keescook@chromium.org> wrote:
+>
+> I don't think it's sane to demand that LSM stacking be removed. That's
+> just not the world we live in -- we have specific and large scale needs
+> for the infrastructure that is in place.
 
-There are 2 aspects to the LSM stacking: providing non-overlapping small
-LSMs (e.g. lockdown, LoadPin, Yama, etc) with a "major" LSM (e.g. SELinux
-or AppArmor). This has been needed going back a decade as core kernel
-maintainers did not want to be bothered with all the needed knobs
-touching core kernel internals. (This is not an unreasonable request:
-userspace _does_ need to be able to apply policy at runtime, and this
-goes well beyond standard MAC systems, e.g. LandLock.)
+I think we really need to push back on this all.
 
-The second is providing proper container support for differing "major"
-LSMs, which has been in use for many years now (e.g. running a RedHat
-container using SELinux inside an Ubuntu host using AppArmor). This is
-what is conceptually considered "nesting", but is nothing more than a
-special case of the "non-overlapping" case above.
+The whole stacking is new. There can't be too many users. And it damn
+well can be limited.
 
-The general "LSM stacking" work, while it does add a certain kind of
-complexity, has actually made the many pre-existing manual layering of
-LSMs much more sane and simpler to reason about. Now the security hooks
-are no longer a random sprinkling of calls tossed over the core kernel,
-and are now all singularly well defined. This started years ago with
-pulling the "capabilities" checking into a well-defined LSM, and continued
-from there for things like Yama, and has now finally reached the last,
-and perhaps most historically invasive, LSM: IMA/EVM, which is finally
-now a well defined LSM too.
+Right now that sttaic stacking code is written to allow 11 levels.
 
-I don't think it's sane to demand that LSM stacking be removed. That's
-just not the world we live in -- we have specific and large scale needs
-for the infrastructure that is in place.
+Why? Just because you people cannot agree.
 
-> So I say "suggestion" in the subject line, but  really think it needs
-> to be more than that: this whole "nested LSM" stuff as a design goal
-> just needs to be all rolled back, and the new design target is "one
-> LSM, enabled statically at build time, without the need for indirect
-> calls".
+Stop it.
 
-"One LSM" isn't the same as "no nesting". And "no nesting" is both not
-acceptable given the users of it, and doesn't eliminate LSM "stacking".
-But "without indirect calls" is totally doable.
+> I don't think describing static calls as "random hacks" is very fair;
 
-> And yes, I'm aware of the random hacks for turning the indirect branch
-> into a series of static direct branches by
-> 
->    https://lore.kernel.org/bpf/20240207124918.3498756-1-kpsingh@kernel.org/#t
+Static calls aren't random hacks.
 
-I don't think describing static calls as "random hacks" is very fair;
-it's used pretty extensively in the kernel. Regardless, this series has
-needed to land for well over a year now, even if just for the performance
-benefits.
+But the "up to eleven levens of nesting" and "reorider arbitrarily" IS.
 
--- 
-Kees Cook
+This needs to be *fixed*.
+
+Seriously, what part of "this is now an attack vector" did people not get?
+
+            Linus
