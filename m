@@ -1,98 +1,351 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BB9156860
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Apr 2024 17:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474C0156863;
+	Tue,  9 Apr 2024 17:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712683720; cv=none; b=BfX9hPp4UDwy6seMzuUg2BjbXWHw1ddvTytzUl5zzoqc9bv3Fwhdd9Brt3LGGTGQ/ZfnEndGBRLOwLvfHK5SjJedxQwC7OtbnxxKTz8xDZWBC5hTAzWORM6JRJNETRNmglJKmy41u4AwVXyT9ic35l3DXSVQzb67fEWZx5RpzVc=
+	t=1712685506; cv=none; b=XNQuHjf/pPCjUeFt0tUwH1KCXptr+FiJnDoS3sl/2pvGU2unr6L4pikGt1XNQCoSXnDjhDmTRsZ+P//3xU8txTFQ0kBKGcq8oDtmFJxgTJMC8x1KZsfToEaUzb53cq4E4tcaSYuKsVgWmQg/XrnJEJJmFFwPs9/qo0lmZpcASl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712683720; c=relaxed/simple;
-	bh=eHo/igXZcq8HeXdyeAD2kiUayElbdwtoFad+ENVCRhc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thSPL+MMZTz8is5//9pvqZu88NjB5kxR8up0f164OBDxP77CY9ydFC/Kia10+Eday1zsKr2KhTVNiF7tjLjpNNoI8nZQriRM0V0IFyoJF/vN7afKM1eoBQ5Dw4d4eCyb2ByA5SpWTrngsFdgI7aQxTcoZK0I1RLwC97tXz29gUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1ruFGD-0001dT-16; Tue, 09 Apr 2024 19:27:53 +0200
-Message-ID: <4c6164e5-bcfd-4172-a76e-db989f729a8a@pengutronix.de>
-Date: Tue, 9 Apr 2024 19:27:44 +0200
+	s=arc-20240116; t=1712685506; c=relaxed/simple;
+	bh=UWdi+TN6xIGyQZX90sWax8qyNw488wXoKlGHiiGcybc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fERuZBfWKndqqZ3dMOVcdS/8l/9azMJ1vzx7m8dv7NiK8iGg7+VQ+rLanZaoc69uqJjQJG5H4JAJtgOSiBVU/UYwYISEfKyfP/qmR3T09eP5vAu/n/Va9DyP+ZsNQcmb/WYgoJl04cvEhWMXxH8NyQkM0zqHNWFpLB2MmCsN760=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=f4CYRqGJ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="f4CYRqGJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1712685502;
+	bh=UWdi+TN6xIGyQZX90sWax8qyNw488wXoKlGHiiGcybc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=f4CYRqGJe75VU574Z5+xNKQT1c04p73rXVb2l+xEpBZYIuMaChLCjx7Zdrwp76ROi
+	 LE7tKWN7LLKJKiTVMlg5jamQbBH9Hxbcr93YqH10cMnCuPVIM9Siq6QKoQMLCX9nc9
+	 gLVP/U0MmCU4EZ2DRzaH9J0ClzrVLMgmaQVvbHv5jTTsY7CazdJriIc9OI3ozVNLvL
+	 Fl7rvPer1vD+TXgB8+r/acXZ3g2LcndDPix39qxnIzhBfldHX0DyIBb8m42uqRfgLy
+	 YpkquIoTOYQ9n0cEIGRGwTekgvb8MpRqEo2ZqdFg8A4LNPQgxcQSlBpQycjkhPR4C7
+	 t5OM5q3laxm1w==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aratiu)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 304253780029;
+	Tue,  9 Apr 2024 17:58:21 +0000 (UTC)
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel@collabora.com,
+	gbiv@google.com,
+	ryanbeltran@google.com,
+	inglorion@google.com,
+	ajordanr@google.com,
+	jorgelo@chromium.org,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Guenter Roeck <groeck@chromium.org>,
+	Doug Anderson <dianders@chromium.org>,
+	Kees Cook <keescook@chromium.org>,
+	Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Mike Frysinger <vapier@chromium.org>
+Subject: [PATCH v3 1/2] proc: restrict /proc/pid/mem access via param knobs
+Date: Tue,  9 Apr 2024 20:57:49 +0300
+Message-ID: <20240409175750.206445-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] [PATCH v8 3/6] KEYS: trusted: Introduce NXP DCP-backed
- trusted keys
-Content-Language: en-US
-To: Kshitiz Varshney <kshitiz.varshney@nxp.com>,
- David Gstir <david@sigma-star.at>, Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <jejb@linux.ibm.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- Gaurav Jain <gaurav.jain@nxp.com>, Catalin Marinas
- <catalin.marinas@arm.com>, David Howells <dhowells@redhat.com>,
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Paul Moore <paul@paul-moore.com>,
- Jonathan Corbet <corbet@lwn.net>, Richard Weinberger <richard@nod.at>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- James Morris <jmorris@namei.org>, dl-linux-imx <linux-imx@nxp.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pankaj Gupta <pankaj.gupta@nxp.com>,
- sigma star Kernel Team <upstream+dcp@sigma-star.at>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Li Yang <leoyang.li@nxp.com>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Tejun Heo <tj@kernel.org>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Varun Sethi <V.Sethi@nxp.com>
-References: <20240403072131.54935-1-david@sigma-star.at>
- <20240403072131.54935-4-david@sigma-star.at>
- <DB6PR04MB31904A8EB8B481A530C90CBB8F072@DB6PR04MB3190.eurprd04.prod.outlook.com>
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <DB6PR04MB31904A8EB8B481A530C90CBB8F072@DB6PR04MB3190.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hello Kshitiz,
+Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+after which it got allowed in commit 198214a7ee50 ("proc: enable
+writing to /proc/pid/mem"). Famous last words from that patch:
+"no longer a security hazard". :)
 
-On 09.04.24 12:54, Kshitiz Varshney wrote:
-> Hi David,
->> +       b->fmt_version = DCP_BLOB_VERSION;
->> +       get_random_bytes(b->nonce, AES_KEYSIZE_128);
->> +       get_random_bytes(b->blob_key, AES_KEYSIZE_128);
-> 
-> We can use HWRNG instead of using kernel RNG. Please refer drivers/char/hw_random/imx-rngc.c 
+Afterwards exploits started causing drama like [1]. The exploits
+using /proc/*/mem can be rather sophisticated like [2] which
+installed an arbitrary payload from noexec storage into a running
+process then exec'd it, which itself could include an ELF loader
+to run arbitrary code off noexec storage.
 
-imx-rngc can be enabled and used to seed the kernel entropy pool. Adding
-direct calls into imx-rngc here only introduces duplicated code at no extra
-benefit.
+One of the well-known problems with /proc/*/mem writes is they
+ignore page permissions via FOLL_FORCE, as opposed to writes via
+process_vm_writev which respect page permissions. These writes can
+also be used to bypass mode bits.
 
-Cheers,
-Ahmad
+To harden against these types of attacks, distrbutions might want
+to restrict /proc/pid/mem accesses, either entirely or partially,
+for eg. to restrict FOLL_FORCE usage.
 
+Known valid use-cases which still need these accesses are:
+
+* Debuggers which also have ptrace permissions, so they can access
+memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
+are designed to write /proc/pid/mem for basic functionality.
+
+* Container supervisors using the seccomp notifier to intercept
+syscalls and rewrite memory of calling processes by passing
+around /proc/pid/mem file descriptors.
+
+There might be more, that's why these params default to disabled.
+
+Regarding other mechanisms which can block these accesses:
+
+* seccomp filters can be used to block mmap/mprotect calls with W|X
+perms, but they often can't block open calls as daemons want to
+read/write their runtime state and seccomp filters cannot check
+file paths, so plain write calls can't be easily blocked.
+
+* Since the mem file is part of the dynamic /proc/<pid>/ space, we
+can't run chmod once at boot to restrict it (and trying to react
+to every process and run chmod doesn't scale, and the kernel no
+longer allows chmod on any of these paths).
+
+* SELinux could be used with a rule to cover all /proc/*/mem files,
+but even then having multiple ways to deny an attack is useful in
+case one layer fails.
+
+Thus we introduce three kernel parameters to restrict /proc/*/mem
+access: read, write and foll_force. All three can be independently
+set to the following values:
+
+all     => restrict all access unconditionally.
+ptracer => restrict all access except for ptracer processes.
+
+If left unset, the existing behaviour is preserved, i.e. access
+is governed by basic file permissions.
+
+Examples which can be passed by bootloaders:
+
+restrict_proc_mem_foll_force=all
+restrict_proc_mem_write=ptracer
+restrict_proc_mem_read=ptracer
+
+Each distribution needs to decide what restrictions to apply,
+depending on its use-cases. Embedded systems might want to do
+more, while general-purpouse distros might want a more relaxed
+policy, because for e.g. foll_force=all and write=all both break
+break GDB, so it might be a bit excessive.
+
+Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+
+Link: https://lwn.net/Articles/476947/ [1]
+Link: https://issues.chromium.org/issues/40089045 [2]
+Cc: Guenter Roeck <groeck@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Co-developed-by: Mike Frysinger <vapier@chromium.org>
+Signed-off-by: Mike Frysinger <vapier@chromium.org>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  27 +++++
+ fs/proc/base.c                                | 103 +++++++++++++++++-
+ include/linux/jump_label.h                    |   5 +
+ 3 files changed, 133 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 6e62b8cb19c8d..d7f7db41369c7 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5665,6 +5665,33 @@
+ 	reset_devices	[KNL] Force drivers to reset the underlying device
+ 			during initialization.
+ 
++	restrict_proc_mem_read= [KNL]
++			Format: {all | ptracer}
++			Allows restricting read access to /proc/*/mem files.
++			Depending on restriction level, open for reads return -EACCESS.
++			Can be one of:
++			- 'all' restricts all access unconditionally.
++			- 'ptracer' allows access only for ptracer processes.
++			If not specified, then basic file permissions continue to apply.
++
++	restrict_proc_mem_write= [KNL]
++			Format: {all | ptracer}
++			Allows restricting write access to /proc/*/mem files.
++			Depending on restriction level, open for writes return -EACCESS.
++			Can be one of:
++			- 'all' restricts all access unconditionally.
++			- 'ptracer' allows access only for ptracer processes.
++			If not specified, then basic file permissions continue to apply.
++
++	restrict_proc_mem_foll_force= [KNL]
++			Format: {all | ptracer}
++			Restricts the use of the FOLL_FORCE flag for /proc/*/mem access.
++			If restricted, the FOLL_FORCE flag will not be added to vm accesses.
++			Can be one of:
++			- 'all' restricts all access unconditionally.
++			- 'ptracer' allows access only for ptracer processes.
++			If not specified, FOLL_FORCE is always used.
++
+ 	resume=		[SWSUSP]
+ 			Specify the partition device for software suspend
+ 			Format:
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 18550c071d71c..c733836c42a65 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -152,6 +152,41 @@ struct pid_entry {
+ 		NULL, &proc_pid_attr_operations,	\
+ 		{ .lsmid = LSMID })
+ 
++/*
++ * each restrict_proc_mem_* param controls the following static branches:
++ * key[0] = restrict all writes
++ * key[1] = restrict writes except for ptracers
++ * key[2] = restrict all reads
++ * key[3] = restrict reads except for ptracers
++ * key[4] = restrict all FOLL_FORCE usage
++ * key[5] = restrict FOLL_FORCE usage except for ptracers
++ */
++DEFINE_STATIC_KEY_ARRAY_FALSE_RO(restrict_proc_mem, 6);
++
++static int __init early_restrict_proc_mem(char *buf, int offset)
++{
++	if (!buf)
++		return -EINVAL;
++
++	if (strncmp(buf, "all", 3) == 0)
++		static_branch_enable(&restrict_proc_mem[offset]);
++	else if (strncmp(buf, "ptracer", 7) == 0)
++		static_branch_enable(&restrict_proc_mem[offset + 1]);
++
++	return 0;
++}
++
++#define DEFINE_EARLY_RESTRICT_PROC_MEM(name, offset)			\
++static int __init early_restrict_proc_mem_##name(char *buf)		\
++{									\
++	return early_restrict_proc_mem(buf, offset);			\
++}									\
++early_param("restrict_proc_mem_" #name, early_restrict_proc_mem_##name)
++
++DEFINE_EARLY_RESTRICT_PROC_MEM(write, 0);
++DEFINE_EARLY_RESTRICT_PROC_MEM(read, 2);
++DEFINE_EARLY_RESTRICT_PROC_MEM(foll_force, 4);
++
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+  * and .. links.
+@@ -825,9 +860,58 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+ 	return 0;
+ }
+ 
++static bool __mem_open_current_is_ptracer(struct file *file)
++{
++	struct inode *inode = file_inode(file);
++	struct task_struct *task = get_proc_task(inode);
++	int ret = false;
++
++	if (task) {
++		rcu_read_lock();
++		if (current == ptrace_parent(task))
++			ret = true;
++		rcu_read_unlock();
++		put_task_struct(task);
++	}
++
++	return ret;
++}
++
++static int __mem_open_check_access_restriction(struct file *file)
++{
++	if (file->f_mode & FMODE_WRITE) {
++		/* Deny if writes are unconditionally disabled via param */
++		if (static_branch_unlikely(&restrict_proc_mem[0]))
++			return -EACCES;
++
++		/* Deny if writes are allowed only for ptracers via param */
++		if (static_branch_unlikely(&restrict_proc_mem[1]) &&
++		    !__mem_open_current_is_ptracer(file))
++			return -EACCES;
++
++	} else if (file->f_mode & FMODE_READ) {
++		/* Deny if reads are unconditionally disabled via param */
++		if (static_branch_unlikely(&restrict_proc_mem[2]))
++			return -EACCES;
++
++		/* Deny if reads are allowed only for ptracers via param */
++		if (static_branch_unlikely(&restrict_proc_mem[3]) &&
++		    !__mem_open_current_is_ptracer(file))
++			return -EACCES;
++	}
++
++	return 0;
++}
++
+ static int mem_open(struct inode *inode, struct file *file)
+ {
+-	int ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
++	int ret;
++
++	ret = __mem_open_check_access_restriction(file);
++	if (ret)
++		return ret;
++
++	ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
+ 
+ 	/* OK to pass negative loff_t, we can catch out-of-range */
+ 	file->f_mode |= FMODE_UNSIGNED_OFFSET;
+@@ -835,6 +919,20 @@ static int mem_open(struct inode *inode, struct file *file)
+ 	return ret;
+ }
+ 
++static unsigned int __mem_rw_get_foll_force_flag(struct file *file)
++{
++	/* Deny if FOLL_FORCE is disabled via param */
++	if (static_branch_unlikely(&restrict_proc_mem[4]))
++		return 0;
++
++	/* Deny if FOLL_FORCE is allowed only for ptracers via param */
++	if (static_branch_unlikely(&restrict_proc_mem[5]) &&
++	    !__mem_open_current_is_ptracer(file))
++		return 0;
++
++	return FOLL_FORCE;
++}
++
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 			size_t count, loff_t *ppos, int write)
+ {
+@@ -855,7 +953,8 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
++	flags = (write ? FOLL_WRITE : 0);
++	flags |= __mem_rw_get_foll_force_flag(file);
+ 
+ 	while (count > 0) {
+ 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index f5a2727ca4a9a..ba2460fe878c5 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -398,6 +398,11 @@ struct static_key_false {
+ 		[0 ... (count) - 1] = STATIC_KEY_FALSE_INIT,	\
+ 	}
+ 
++#define DEFINE_STATIC_KEY_ARRAY_FALSE_RO(name, count)		\
++	struct static_key_false name[count] __ro_after_init = {	\
++		[0 ... (count) - 1] = STATIC_KEY_FALSE_INIT,	\
++	}
++
+ #define _DEFINE_STATIC_KEY_1(name)	DEFINE_STATIC_KEY_TRUE(name)
+ #define _DEFINE_STATIC_KEY_0(name)	DEFINE_STATIC_KEY_FALSE(name)
+ #define DEFINE_STATIC_KEY_MAYBE(cfg, name)			\
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.30.2
 
