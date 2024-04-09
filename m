@@ -1,105 +1,118 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0DB156975
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Apr 2024 18:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BE9156C50;
+	Tue,  9 Apr 2024 18:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712687105; cv=none; b=UOOAiYBSF7DEoecnefE9aoMk1jr3qTIhWmzY6tHYgbMorPBraNJYm4wqIgHqFh14i5lnKCAdsSeZbY5i/t9auvxgBSgpmrlFlKY87gtSRYuWjEqxYLEc/zLuJ5Z9tnDPvzJPwraGgw3hCLrrO0WSLBJayQPEOV3M/5O7+5x/x4M=
+	t=1712687265; cv=none; b=OMOOKs/8unFV2P7PX0wDWn84T6ps9p4BisK1QY5LVnq1SfQnlWxgpCP5PPdT5aLH1pPZUCq4N2vVqHs4CkxWCy9bxyew2eo2nu8iqKMYvmPmdbbG97oeZb6718sDlAiguoCi9vU/WbtclxzUHkmSndxGtuDzbmlabvpIE2ROT64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712687105; c=relaxed/simple;
-	bh=TnTEVY6GSh34M+Bzz7VmtJbXDhI5rgwhzvIBnQk47So=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wdw4OlZN7OhiFC6WQiHv+AktZY5brz8iOcp0OiTAIKVh4l+t9YdpaKc352lYGp/t5djRZk/xYNTbqMB0CHAE+csfa0vFTYeYX4uPVURIJEOqGhTg15tCvqjVyyy9JrXl6x25Wl1fJK0mOMAAaVNTF3kQRhDphy+7rFumLO49mzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SLjNtE/i; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SLjNtE/i"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a519eae91d1so576198166b.3
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 11:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1712687102; x=1713291902; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lw5DUGs7JS8G4SFB7desIP/FBgPQWEWdQsI36wfeDxo=;
-        b=SLjNtE/iY4EtBSVi487FbI93I81Qprrhuy5Scww7Cz9b3Te2a73Fon7Zg2NVTvnR2k
-         E4RheFjbqS/7rYA10ooVADNAHW35qubBfn9iJCUEi5ETOHd4tvDvldRxb4DJbRix50XR
-         /08l6E5sqqdOxtMUIas1lY35idsoh0hD7XnBs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712687102; x=1713291902;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lw5DUGs7JS8G4SFB7desIP/FBgPQWEWdQsI36wfeDxo=;
-        b=RzEXSgmE3ld0zHfR5/nACXgY3C0o472sMWidq0geYGa+D4sheuR8Jctdl4aMQ5SZ+d
-         hk+IhUb45NJoAYXoaXldhfxycb12u/EemqIMmVNawC5lWQsCdFKOPX83oTiF6ylmsGfW
-         /oOcaItY0G2SU/1oi4n7NEDHJv3tPyEec7Sz7xvuf5nahF0OPvDB7+TQ4lSfwxxwdrj8
-         gjfNJK3OcCKas4lbFyNtU0XqXDPeWsstfr4PUVVzm2vZTphLjf+S+KqSKf5QMfRzYP/f
-         ++w9QCWQVIVL7VCznhl1Yy6i7tSjLcZ4himmOZQnwI27LtnCmC/wU1eqOiaESHN7xJUz
-         Rf+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXacETg075LLw3v7kU9fYLOABgmH7KgOjRKuBvxcYq9vOgjmdCTMFb/9PhmVd6D+JtQvviURh6Zb38MNN7E66ucBbOU8SOehut/Bs8X6ZAujkaosTUs
-X-Gm-Message-State: AOJu0YyEr4vqZMtZfC9E+RRTiaiGM8o7brLpNrnWr7cPA2mCW0Zhd1Ju
-	c+8x+hmT4DjPN73v8xY0ZViqQd4RGRJOuhNOnwsnVPCU4TwroG1ayEmIE+hRHIXQLeTBtKwp7GO
-	FTxlxnQ==
-X-Google-Smtp-Source: AGHT+IHox1t8aEVg8VrEhIhfvZdK3EmGqc8lz0cYVnbhbnKj89c8SzIh5PgEGnQfZXEc6S0B3R50yQ==
-X-Received: by 2002:a17:906:c44f:b0:a46:ec44:477c with SMTP id ck15-20020a170906c44f00b00a46ec44477cmr161834ejb.41.1712687101907;
-        Tue, 09 Apr 2024 11:25:01 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id d9-20020a1709061f4900b00a519054d7ddsm5956436ejk.61.2024.04.09.11.25.01
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Apr 2024 11:25:01 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-56bdf81706aso7887245a12.2
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 11:25:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/JDJ99RFa8JFXYKjrQuWCpFM/Ib84ReLw4ioKwnN10/Jodm9m/acR4XIkb4nirGzoCQ0owSy6NVkGNJponPO3pPpLCycdsE+Y089QoqxKHckPwPvj
-X-Received: by 2002:a17:906:4a16:b0:a51:a288:5af9 with SMTP id
- w22-20020a1709064a1600b00a51a2885af9mr172847eju.51.1712687101019; Tue, 09 Apr
- 2024 11:25:01 -0700 (PDT)
+	s=arc-20240116; t=1712687265; c=relaxed/simple;
+	bh=+e4o3Key427s9PGCVpm+yJBrEgVTXiMxI86rVYGWrbI=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=UbNlBVbQqJgtgtuqFnH7036xygrCII03Li9HfugCyxLbJ3LiwNJJ6C7dIcOsDSJKhQhtS3nXwXgUtcHyHt3iwUT7FrBVCkdSZam9HVxMwafbtzW6Edr1+B9ePoXIr7ez6rAz+z59Ua4GSdA8xcqAHKuJaB+NbNSMNpY62lsyUfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:38406)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1ruFQF-007Aen-3v; Tue, 09 Apr 2024 11:38:15 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:58962 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1ruFQE-009VSq-7G; Tue, 09 Apr 2024 11:38:14 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Roberto Sassu
+ <roberto.sassu@huaweicloud.com>,  linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-cifs@vger.kernel.org,  linux-kernel@vger.kernel.org,  Roberto Sassu
+ <roberto.sassu@huawei.com>
+References: <20240402141145.2685631-1-roberto.sassu@huaweicloud.com>
+	<CAHk-=wgepVMJCYj9s7J50_Tpb5BWq9buBoF0J5HAa1xjet6B8A@mail.gmail.com>
+	<CAHk-=wjjx3oZ55Uyaw9N_kboHdiScLkXAu05CmPF_p_UhQ-tbw@mail.gmail.com>
+	<20240402210035.GI538574@ZenIV>
+	<CAHC9VhSWiQQ3shgczkNr+xYX6G5PX+LgeP3bsMepnM_cp4Gd4g@mail.gmail.com>
+Date: Tue, 09 Apr 2024 12:37:21 -0500
+In-Reply-To: <CAHC9VhSWiQQ3shgczkNr+xYX6G5PX+LgeP3bsMepnM_cp4Gd4g@mail.gmail.com>
+	(Paul Moore's message of "Tue, 2 Apr 2024 17:36:30 -0400")
+Message-ID: <87le5mxwry.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
- <202404091041.63A1CFC1A@keescook>
-In-Reply-To: <202404091041.63A1CFC1A@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 9 Apr 2024 11:24:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whXwcBzFJd65gQ09EGt1yuH6RyuErhOgvJK8pjkAVw07w@mail.gmail.com>
-Message-ID: <CAHk-=whXwcBzFJd65gQ09EGt1yuH6RyuErhOgvJK8pjkAVw07w@mail.gmail.com>
-Subject: Re: Hardcoded security module suggestion - stop the stacking insanity
-To: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>, KP Singh <kpsingh@kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1ruFQE-009VSq-7G;;;mid=<87le5mxwry.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX19gMkca3jYcuCNyXyTaOnFXicdzcwRWtZ4=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: **
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4480]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  1.0 XMSubMetaSx_00 1+ Sexy Words
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Paul Moore <paul@paul-moore.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 277 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 4.1 (1.5%), b_tie_ro: 2.8 (1.0%), parse: 0.71
+	(0.3%), extract_message_metadata: 8 (3.1%), get_uri_detail_list: 0.70
+	(0.3%), tests_pri_-2000: 6 (2.2%), tests_pri_-1000: 1.97 (0.7%),
+	tests_pri_-950: 1.05 (0.4%), tests_pri_-900: 0.80 (0.3%),
+	tests_pri_-90: 59 (21.3%), check_bayes: 57 (20.7%), b_tokenize: 4.6
+	(1.7%), b_tok_get_all: 6 (2.1%), b_comp_prob: 1.51 (0.5%),
+	b_tok_touch_all: 42 (15.1%), b_finish: 0.87 (0.3%), tests_pri_0: 181
+	(65.3%), check_dkim_signature: 0.37 (0.1%), check_dkim_adsp: 7 (2.6%),
+	poll_dns_idle: 0.53 (0.2%), tests_pri_10: 2.7 (1.0%), tests_pri_500: 9
+	(3.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [GIT PULL] security changes for v6.9-rc3
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 
-On Tue, 9 Apr 2024 at 11:02, Kees Cook <keescook@chromium.org> wrote:
->
-> I don't think it's sane to demand that LSM stacking be removed. That's
-> just not the world we live in -- we have specific and large scale needs
-> for the infrastructure that is in place.
 
-I think we really need to push back on this all.
+Paul Moore <paul@paul-moore.com> writes:
 
-The whole stacking is new. There can't be too many users. And it damn
-well can be limited.
+> I know it's everyone's favorite hobby to bash the LSM and LSM devs,
+> but it's important to note that we don't add hooks without working
+> with the associated subsystem devs to get approval.
 
-Right now that sttaic stacking code is written to allow 11 levels.
+Hah!!!!
 
-Why? Just because you people cannot agree.
+> In the cases
+> where we don't get an explicit ACK, there is an on-list approval, or
+> several ignored on-list attempts over weeks/months/years.  We want to
+> be good neighbors.
 
-Stop it.
+Hah!!!!
 
-> I don't think describing static calls as "random hacks" is very fair;
+You merged a LSM hook that is only good for breaking chrome's sandbox,
+over my expressed objections.  After I tested and verified that
+is what it does.
 
-Static calls aren't random hacks.
+I asked for testing. None was done.  It was claimed that no
+security sensitive code would ever fail to check and deal with
+all return codes, so no testing was necessary.  Then later a
+whole bunch of security sensitive code that didn't was found.
 
-But the "up to eleven levens of nesting" and "reorider arbitrarily" IS.
+The only redeeming grace has been that no-one ever actually uses
+that misbegotten security hook.
 
-This needs to be *fixed*.
+P.S.  Sorry for this off topic rant but sheesh.   At least from
+my perspective you deserve plenty of bashing.
 
-Seriously, what part of "this is now an attack vector" did people not get?
-
-            Linus
+Eric
