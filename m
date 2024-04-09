@@ -1,210 +1,126 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877F4131732;
-	Tue,  9 Apr 2024 17:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7E485276
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Apr 2024 18:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712685507; cv=none; b=XHJKnnBlGkyquKIf+JomrOCLV2sZqRfmJuno0hM9bGcvvl/1v3Lvg7oXB85XF55MGeOwUz4RKXBTBQoS5hf++3a4RLfLgrgWWv8drsMK2cIblO05XocFrUh02NrVRON5dzgz2fmilQCYHtMiO1DduUuqfsfTWDuwXzOKVujGLbs=
+	t=1712685746; cv=none; b=IUy/qe4uLbSGmtJwmGRe17wxKRSu2qA9I6fMqkGuSEAQ7BdmJgRcfgQWbsMYCZb+9U01nwcWo2xRp/L88U1HDzot3ALIpaI5O+fMZdflG5467e0eG4+l+JLAzLRKwzi0UeyjYB8igXB07ctGtl94tAC4C/ssN6q0XWIiWrj4qNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712685507; c=relaxed/simple;
-	bh=AmtWxCZ4F4bQFddgYnhSmlD9kM0A3FWxzkbEkyZ+Mtw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qG1faasW26SyautHN5lhatP/jd0v5ni1tNd6Fj8zmw/JLaq+rw/jFLcZm14EXSGArQaBfUAeTl+/EURsrlX8vY9rzMcEBP1NT+laHuAAafUxSdWOIf14ihXgNqA6/atn6xeu+rKvVUzsZrcV9c8QotbrxVaDsd8CGnEzooWLHZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=xlUx2b7a; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1712685746; c=relaxed/simple;
+	bh=zPBR6FHUzVb88yfdMV8TqZpEmnE733LQx0Nl1VdnHRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAj3y6IRdbZOnTEetT52m6QsjxB8o3WUvLHciQ0pk02IRoYqkUeFO3/hjmp3XP97Me4ynFnHCO8I+7AL36uzW3mOJDhWZP2D8XF+HLLi80LXK6PCtZ2nCn+80Fz7gH6LRLL8B15/7B1eZfuFHJeIjo7MaI8c3MMsVOR7ORbkXUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J4xjdJ+l; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="xlUx2b7a"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1712685503;
-	bh=AmtWxCZ4F4bQFddgYnhSmlD9kM0A3FWxzkbEkyZ+Mtw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=xlUx2b7afVKUYuFgYA+M7Kva1C+VYO4G61wjMXsU8B1dsaHffICXZA4Di8qELpGFT
-	 ifUi6409E73XP2CXtD/bn0DoXbKtuUFLlyieKyepIMIwZoNhR38gu5UGQ2ml7NSXWH
-	 m1Dg6MtAnK85Rr//swHhTt6STb6zZq9nvhvr8A+z/uaUA1o5+/bxWx6vBUNGSl5Wu7
-	 Gty7IQP9iqOJLocCSscFAfdezDWscn+Es5xKOzDvQCXpz9gbOTHv/Er6kqW5geYXyM
-	 hOrY1My8uD+M4qSXW0EyOMC/W38bpKrZbKNYSM1LJ4fMys4dSapOb2HLbzO7BodNWD
-	 zS9BjQjJw4cww==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: aratiu)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8C66C37820EF;
-	Tue,  9 Apr 2024 17:58:22 +0000 (UTC)
-From: Adrian Ratiu <adrian.ratiu@collabora.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kernel@collabora.com,
-	gbiv@google.com,
-	ryanbeltran@google.com,
-	inglorion@google.com,
-	ajordanr@google.com,
-	jorgelo@chromium.org,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Kees Cook <keescook@chromium.org>,
-	Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v3 2/2] proc: add Kconfigs to restrict /proc/pid/mem access
-Date: Tue,  9 Apr 2024 20:57:50 +0300
-Message-ID: <20240409175750.206445-2-adrian.ratiu@collabora.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240409175750.206445-1-adrian.ratiu@collabora.com>
-References: <20240409175750.206445-1-adrian.ratiu@collabora.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J4xjdJ+l"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1e4266673bbso21655375ad.2
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2024 11:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1712685744; x=1713290544; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D9p9W4olTCJLNIY4LFgRiTPMoiQu0jWjisFAK+GzZ+k=;
+        b=J4xjdJ+lUYZMe8NHWX7xPQ3rgURTYdqAWTjFtQUT+Ey22WbJKS7WGKnQUlHzvQVDiy
+         fUs/ARDyaxp3dwXSzJNLjmYKwSYbcqG3RubUY+RhOgPI8tc/BUtp+FKdkqvkOC2nH6tc
+         93Nmi7oYfmcXLnKaQUOUoR94Qi88BiNZpUWHc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712685744; x=1713290544;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D9p9W4olTCJLNIY4LFgRiTPMoiQu0jWjisFAK+GzZ+k=;
+        b=UaVpc4K/O6PlY0GpKINezbLZqTUmIleveQRHfbVYnWT6jzMp4ZQ6jxTAzXb5avKKjP
+         ygD6K6UPqO16904ix9b4s+/2EOnolzBk1UmGh3VrnSUplGcJz9SvHIeJ3KKN6B5GP01e
+         dVYwJnx2lXkLWXYUnPGca+amJyX6l/mNrkRlDWLD9xy+SmsFfgD6caUpQe+sWEb518h8
+         MuUgCI+FdVmZKSG5rVt+p0dFndLmZa/tn4AW2fXQqDKvHBhlksNpfM0C7flVWDBoHN6R
+         Ho+Bgv2G/X5+awvzK1RM1glt3fCjt0+5vSNZJMssAAYxt1lU3amM2Ei+aPmXaJNriDj5
+         b6mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjvuonNMppbma/ZdiotFIYMI4o27OVCN40W84QWMs59357p/6paxoOhDnr5OlnyzZsLWo5mJZgHN+mPK+0qH6YSn0msmmBI9FwXi0YPz53asXC2dA3
+X-Gm-Message-State: AOJu0Yz6r0jXDRg2jPalLqU4A3Yb/sSKKdgoP6rXWjeR1buKi8y3B0R3
+	erkEV/E8mfuP8fkjYCe2fNL7XxQpge+g+akkPz+/DDI/royRovmpoiiHxjoWYkpo5v3IFsg7DiY
+	=
+X-Google-Smtp-Source: AGHT+IGopdIid603eguqrNNu1GdD9GXS9yW4mDzXlgXfTQoJ20EcnkQ45prc8FAv+RK8Mfp+xkUSNQ==
+X-Received: by 2002:a17:902:8ec6:b0:1dd:7059:a714 with SMTP id x6-20020a1709028ec600b001dd7059a714mr505020plo.30.1712685743288;
+        Tue, 09 Apr 2024 11:02:23 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id u7-20020a17090341c700b001e2b57a6e22sm9132315ple.305.2024.04.09.11.02.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Apr 2024 11:02:22 -0700 (PDT)
+Date: Tue, 9 Apr 2024 11:02:22 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Moore <paul@paul-moore.com>, KP Singh <kpsingh@kernel.org>,
+	LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: Hardcoded security module suggestion - stop the stacking insanity
+Message-ID: <202404091041.63A1CFC1A@keescook>
+References: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com>
 
-Some systems might have difficulty changing their bootloaders
-to enable the newly added restrict_proc_mem* params, for e.g.
-remote embedded doing OTA updates, so this provides a set of
-Kconfigs to set /proc/pid/mem restrictions at build-time.
+On Tue, Apr 09, 2024 at 10:22:42AM -0700, Linus Torvalds wrote:
+> People, I know there's been LSM work on the whole "multiple layers of
+> security modules" for over a decade, and it's been a design decision
+> and a target, but I've complained before about the cost of the
+> abstraction, and we just had *another* hardware security issue with
+> speculated indirect branches go public.
 
-The boot params take precedence over the Kconfig values. This
-can be reversed, but doing it this way I think makes sense.
+There are 2 aspects to the LSM stacking: providing non-overlapping small
+LSMs (e.g. lockdown, LoadPin, Yama, etc) with a "major" LSM (e.g. SELinux
+or AppArmor). This has been needed going back a decade as core kernel
+maintainers did not want to be bothered with all the needed knobs
+touching core kernel internals. (This is not an unreasonable request:
+userspace _does_ need to be able to apply policy at runtime, and this
+goes well beyond standard MAC systems, e.g. LandLock.)
 
-Another idea is to have a global bool Kconfig which can enable
-or disable this mechanism in its entirety, however it does not
-seem necessary since all three knobs default to off, the branch
-logic overhead is rather minimal and I assume most of systems
-will want to restrict at least the use of FOLL_FORCE.
+The second is providing proper container support for differing "major"
+LSMs, which has been in use for many years now (e.g. running a RedHat
+container using SELinux inside an Ubuntu host using AppArmor). This is
+what is conceptually considered "nesting", but is nothing more than a
+special case of the "non-overlapping" case above.
 
-Cc: Guenter Roeck <groeck@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
----
- fs/proc/base.c   | 33 +++++++++++++++++++++++++++++++++
- security/Kconfig | 42 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 75 insertions(+)
+The general "LSM stacking" work, while it does add a certain kind of
+complexity, has actually made the many pre-existing manual layering of
+LSMs much more sane and simpler to reason about. Now the security hooks
+are no longer a random sprinkling of calls tossed over the core kernel,
+and are now all singularly well defined. This started years ago with
+pulling the "capabilities" checking into a well-defined LSM, and continued
+from there for things like Yama, and has now finally reached the last,
+and perhaps most historically invasive, LSM: IMA/EVM, which is finally
+now a well defined LSM too.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index c733836c42a65..e8ee848fc4a98 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -889,6 +889,17 @@ static int __mem_open_check_access_restriction(struct file *file)
- 		    !__mem_open_current_is_ptracer(file))
- 			return -EACCES;
- 
-+#ifdef CONFIG_SECURITY_PROC_MEM_WRITE_RESTRICT
-+		/* Deny if writes are unconditionally disabled via Kconfig */
-+		if (!strncmp(CONFIG_SECURITY_PROC_MEM_WRITE_RESTRICT, "all", 3))
-+			return -EACCES;
-+
-+		/* Deny if writes are allowed only for ptracers via Kconfig */
-+		if (!strncmp(CONFIG_SECURITY_PROC_MEM_WRITE_RESTRICT, "ptracer", 7) &&
-+		    !__mem_open_current_is_ptracer(file))
-+			return -EACCES;
-+#endif
-+
- 	} else if (file->f_mode & FMODE_READ) {
- 		/* Deny if reads are unconditionally disabled via param */
- 		if (static_branch_unlikely(&restrict_proc_mem[2]))
-@@ -898,6 +909,17 @@ static int __mem_open_check_access_restriction(struct file *file)
- 		if (static_branch_unlikely(&restrict_proc_mem[3]) &&
- 		    !__mem_open_current_is_ptracer(file))
- 			return -EACCES;
-+
-+#ifdef CONFIG_SECURITY_PROC_MEM_READ_RESTRICT
-+		/* Deny if reads are unconditionally disabled via Kconfig */
-+		if (!strncmp(CONFIG_SECURITY_PROC_MEM_READ_RESTRICT, "all", 3))
-+			return -EACCES;
-+
-+		/* Deny if reads are allowed only for ptracers via Kconfig */
-+		if (!strncmp(CONFIG_SECURITY_PROC_MEM_READ_RESTRICT, "ptracer", 7) &&
-+		    !__mem_open_current_is_ptracer(file))
-+			return -EACCES;
-+#endif
- 	}
- 
- 	return 0;
-@@ -930,6 +952,17 @@ static unsigned int __mem_rw_get_foll_force_flag(struct file *file)
- 	    !__mem_open_current_is_ptracer(file))
- 		return 0;
- 
-+#ifdef CONFIG_SECURITY_PROC_MEM_FOLL_FORCE_RESTRICT
-+	/* Deny if FOLL_FORCE is disabled via Kconfig */
-+	if (!strncmp(CONFIG_SECURITY_PROC_MEM_FOLL_FORCE_RESTRICT, "all", 3))
-+		return 0;
-+
-+	/* Deny if FOLL_FORCE is only allowed for ptracers via Kconfig */
-+	if (!strncmp(CONFIG_SECURITY_PROC_MEM_FOLL_FORCE_RESTRICT, "ptracer", 7) &&
-+	    !__mem_open_current_is_ptracer(file))
-+		return 0;
-+#endif
-+
- 	return FOLL_FORCE;
- }
- 
-diff --git a/security/Kconfig b/security/Kconfig
-index 412e76f1575d0..31a588cedec8d 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -19,6 +19,48 @@ config SECURITY_DMESG_RESTRICT
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+config SECURITY_PROC_MEM_READ_RESTRICT
-+	string "Restrict read access to /proc/*/mem files"
-+	depends on PROC_FS
-+	default "none"
-+	help
-+	  This option allows specifying a restriction level for read access
-+	  to /proc/*/mem files. Can be one of:
-+	  - 'all' restricts all access unconditionally.
-+	  - 'ptracer' allows access only for ptracer processes.
-+
-+	  This can also be set at boot with the "restrict_proc_mem_read=" param.
-+
-+	  If unsure leave empty to continue using basic file permissions.
-+
-+config SECURITY_PROC_MEM_WRITE_RESTRICT
-+	string "Restrict write access to /proc/*/mem files"
-+	depends on PROC_FS
-+	default "none"
-+	help
-+	  This option allows specifying a restriction level for write access
-+	  to /proc/*/mem files. Can be one of:
-+	  - 'all' restricts all access unconditionally.
-+	  - 'ptracer' allows access only for ptracer processes.
-+
-+	  This can also be set at boot with the "restrict_proc_mem_write=" param.
-+
-+	  If unsure leave empty to continue using basic file permissions.
-+
-+config SECURITY_PROC_MEM_FOLL_FORCE_RESTRICT
-+	string "Restrict use of FOLL_FORCE for /proc/*/mem access"
-+	depends on PROC_FS
-+	default ""
-+	help
-+	  This option allows specifying a restriction level for FOLL_FORCE usage
-+	  for /proc/*/mem access. Can be one of:
-+	  - 'all' restricts all access unconditionally.
-+	  - 'ptracer' allows access only for ptracer processes.
-+
-+	  This can also be set at boot with the "restrict_proc_mem_foll_force=" param.
-+
-+	  If unsure leave empty to continue using FOLL_FORCE without restriction.
-+
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
+I don't think it's sane to demand that LSM stacking be removed. That's
+just not the world we live in -- we have specific and large scale needs
+for the infrastructure that is in place.
+
+> So I say "suggestion" in the subject line, but  really think it needs
+> to be more than that: this whole "nested LSM" stuff as a design goal
+> just needs to be all rolled back, and the new design target is "one
+> LSM, enabled statically at build time, without the need for indirect
+> calls".
+
+"One LSM" isn't the same as "no nesting". And "no nesting" is both not
+acceptable given the users of it, and doesn't eliminate LSM "stacking".
+But "without indirect calls" is totally doable.
+
+> And yes, I'm aware of the random hacks for turning the indirect branch
+> into a series of static direct branches by
+> 
+>    https://lore.kernel.org/bpf/20240207124918.3498756-1-kpsingh@kernel.org/#t
+
+I don't think describing static calls as "random hacks" is very fair;
+it's used pretty extensively in the kernel. Regardless, this series has
+needed to land for well over a year now, even if just for the performance
+benefits.
+
 -- 
-2.30.2
-
+Kees Cook
