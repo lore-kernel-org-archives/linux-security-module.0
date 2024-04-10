@@ -1,183 +1,264 @@
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5282BAEC;
-	Wed, 10 Apr 2024 12:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA08912FF7C;
+	Wed, 10 Apr 2024 22:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712752474; cv=none; b=c8R+1VhBramvTNPMizesk5DNwQC49kZkOCfX0lGgOzcKiFqMyT6N9n78cmaVb5fQ9slmhebnHGB3TAjemsMu/PktbnZR5VD4Iwp7AFI76RTTw+/u77Uuuh3pwyyNkSXLvWQUUlo8MM5rsJfivIYx5VoZOQbGj+5zqIajl3qX/4w=
+	t=1712787875; cv=none; b=BHvB4jMX541wEU+94r3nQ8DP02j7ZuAWkBQUHOu2oErtnQPtHPVg7hGFarBWWiYnlDYwGyPjahxVPnDD8BOVbJjcEIEY0Oi3Jrrnx7BQhIlM3oUuSYCMRD/T9M6QYqlGf4PLaHXUyiaoTcnC3ENflXXukClPbhs1KwlBkdjFHWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712752474; c=relaxed/simple;
-	bh=1fRLYc+qyUC59QMhhF13RPBzq0DG7wFbcAZFwFBG7CE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lPq0DILDSCZbPMv5jw3ECitiGyHeONur7ydUOD/yONiyEDSpCUKh0SWPOyyuN61RUB5MRvRh/LUzURHJrS+c/BbZMi2GzzfIMJMWGKy/uvPGh89+ghui0fMJWq20pfGE5Dl/K9HPTPALVllh+Lb+weMnWTyqyvjMU2merZXMxRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VF2MH0441z4f3m76;
-	Wed, 10 Apr 2024 20:34:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A32D31A058D;
-	Wed, 10 Apr 2024 20:34:27 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP4 (Coremail) with SMTP id gCh0CgCH2GpRhxZmaHAjJw--.24979S2;
-	Wed, 10 Apr 2024 20:34:25 +0800 (CST)
-Message-ID: <a7bffa07-4743-4cc5-a763-3dd062f886d4@huaweicloud.com>
-Date: Wed, 10 Apr 2024 20:34:24 +0800
+	s=arc-20240116; t=1712787875; c=relaxed/simple;
+	bh=OkZRHG4OUP0/Mknu1H2qrXOnItaKgi574B2w63UEBQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMVvCVVmbfX68RWFxptsakVqI3KHIADpGfDc5WPcoh3Nc8w7mpVYdipVW+yRjlQUeA8rqDO8cpDDFvNwORchT4tTlr4MwTrO5uyqYk/IK/gD9K++xa9B2f6fTDjswcDnbkHnypwTgIdllOGF147C89Bv64WUaTW7M5OPCy/rcjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+MEdY6q; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+MEdY6q"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5cdbc4334edso4471139a12.3;
+        Wed, 10 Apr 2024 15:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712787873; x=1713392673; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3oArjKw8wsID4rCgeuLIYE0lPG2MnYnaXMSAIhN+7kM=;
+        b=M+MEdY6q1JSEVJ2CM0TCRARTQ4IOOE7RDiBgvzy9CgO3TLi0Z/gsheWiyPzYL1joYp
+         Cg/BM2tpYhwquU/MmUJ3Nqc8MoVpwYlW2aO93ek9AWLUaj5jTCPEVotnBshBigVBbQ+8
+         0Zt0YIBkP6bD82/y/KLDBF4PIq1XMP2yraoA4bBEJf1nATum5lT1FwcUrLRsNZlmkiYJ
+         PfHbdgeWrkRC4Dy+AewxfbcRp1q45D3YzLqeW9YllhsLaDEsCc4GeNaRaR1A2jVGjwwp
+         M4jV13HNAk6yYCUD8b/G4oYenEUF9MDpC5Ziu99yL/CyCK4dDhnSdJGnOz4RK3yqwB1D
+         YT4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712787873; x=1713392673;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3oArjKw8wsID4rCgeuLIYE0lPG2MnYnaXMSAIhN+7kM=;
+        b=G6oVWpKKmw03b7tUgP0PwQzhglmZ49YWz74z/PTxZtlpq9T7FQSBXS+P+U+9c6lbd/
+         iXQ11xUNkrkCYcd3dBsXQBhiDQcv2WOuEr2OeTq1pxwLdFX67iDKrof0lUiUctoGzIER
+         Z4EbUaE9f0dPRw4wa+EQ5jlE/uCZnnzjTUhkcIEjK76BmsDsY9Xy9dSzkvhrJstCdMJz
+         M4Rb4uXCHhS/NcpzaY2TnGpJ7qdPoEz15Hwd5betzMaTcbcElQbZCgMc5W9w6VpijZdp
+         aZFAKW3wzxRCCvPEsnrkSD3HzlagZL64x86CRzWyO7C1VMPqS5CwgEYnbzDA1WYr1OT/
+         e91Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWeqOA1+KISVk3ISBRfgwieJVix83sE4WK6p+mWsmB6lPUPtBIjtMxobhzak77I3WWl1nIvPVUU820bfR3+YRCuoB5ZQ4DsAy3+Xd77m9Swc9zF70kas7qBuR/DbGHhlVS11crOirSnWPEqWKNmtm5BEGmQ4MJiop3r7h4ou9I0Le+givlLGuCvk8rL
+X-Gm-Message-State: AOJu0Yzk2sZEqhUnMBdoqpsbvy8C1SVVfT5lWJzKkAJI0q5JiolxRqxR
+	saJn6u96qiOteIMOdOUqEyNRUGEWngDNRDud2caXEAyAm4Hp4FAV
+X-Google-Smtp-Source: AGHT+IFVnyKFHxzbXF0rWfmn+H6GI+i3o48dP8yMzH2AEvNtJYBPKOB4FqLuIDM0ICI6BEl+/AwPTw==
+X-Received: by 2002:a05:6a20:1585:b0:1a9:4055:6dce with SMTP id h5-20020a056a20158500b001a940556dcemr4693410pzj.58.1712787872754;
+        Wed, 10 Apr 2024 15:24:32 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.124])
+        by smtp.gmail.com with ESMTPSA id ge7-20020a056a00838700b006e567c81d14sm145086pfb.43.2024.04.10.15.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Apr 2024 15:24:32 -0700 (PDT)
+Date: Wed, 10 Apr 2024 16:24:30 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev, netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
+ restrictions
+Message-ID: <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
+ <20240401.ieC2uqua5sha@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 0/7] Add check for bpf lsm return value
-Content-Language: en-US
-To: KP Singh <kpsingh@kernel.org>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Florent Revest <revest@chromium.org>,
- Brendan Jackman <jackmanb@chromium.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>
-References: <20240325095653.1720123-1-xukuohai@huaweicloud.com>
- <CACYkzJ6fZ0mc+A2hJfD4+6EkasrOwy_Ygw=CMg0KZYdm8Fao7A@mail.gmail.com>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <CACYkzJ6fZ0mc+A2hJfD4+6EkasrOwy_Ygw=CMg0KZYdm8Fao7A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH2GpRhxZmaHAjJw--.24979S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry5Ar1ktry7uF15ZrW5KFg_yoW7Jw13pF
-	45tFy8Kr4Iqr1UJF18KF45Jry7tFW7AF1UXr92qr95AF13ur1DJw18Jr429wnxJr4UZry7
-	tFWqqa18tF15WaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6x
-	AIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+In-Reply-To: <20240401.ieC2uqua5sha@digikod.net>
 
-On 4/9/2024 5:45 AM, KP Singh wrote:
-> On Mon, Mar 25, 2024 at 10:53 AM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
->>
->> From: Xu Kuohai <xukuohai@huawei.com>
->>
->> A bpf prog returning positive number attached to file_alloc_security hook
->> will make kernel panic.
->>
->> Here is a panic log:
->>
->> [  441.235774] BUG: kernel NULL pointer dereference, address: 00000000000009
->> [  441.236748] #PF: supervisor write access in kernel mode
->> [  441.237429] #PF: error_code(0x0002) - not-present page
->> [  441.238119] PGD 800000000b02f067 P4D 800000000b02f067 PUD b031067 PMD 0
->> [  441.238990] Oops: 0002 [#1] PREEMPT SMP PTI
->> [  441.239546] CPU: 0 PID: 347 Comm: loader Not tainted 6.8.0-rc6-gafe0cbf23373 #22
->> [  441.240496] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b4
->> [  441.241933] RIP: 0010:alloc_file+0x4b/0x190
->> [  441.242485] Code: 8b 04 25 c0 3c 1f 00 48 8b b0 30 0c 00 00 e8 9c fe ff ff 48 3d 00 f0 ff fb
->> [  441.244820] RSP: 0018:ffffc90000c67c40 EFLAGS: 00010203
->> [  441.245484] RAX: ffff888006a891a0 RBX: ffffffff8223bd00 RCX: 0000000035b08000
->> [  441.246391] RDX: ffff88800b95f7b0 RSI: 00000000001fc110 RDI: f089cd0b8088ffff
->> [  441.247294] RBP: ffffc90000c67c58 R08: 0000000000000001 R09: 0000000000000001
->> [  441.248209] R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
->> [  441.249108] R13: ffffc90000c67c78 R14: ffffffff8223bd00 R15: fffffffffffffff4
->> [  441.250007] FS:  00000000005f3300(0000) GS:ffff88803ec00000(0000) knlGS:0000000000000000
->> [  441.251053] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [  441.251788] CR2: 00000000000001a9 CR3: 000000000bdc4003 CR4: 0000000000170ef0
->> [  441.252688] Call Trace:
->> [  441.253011]  <TASK>
->> [  441.253296]  ? __die+0x24/0x70
->> [  441.253702]  ? page_fault_oops+0x15b/0x480
->> [  441.254236]  ? fixup_exception+0x26/0x330
->> [  441.254750]  ? exc_page_fault+0x6d/0x1c0
->> [  441.255257]  ? asm_exc_page_fault+0x26/0x30
->> [  441.255792]  ? alloc_file+0x4b/0x190
->> [  441.256257]  alloc_file_pseudo+0x9f/0xf0
->> [  441.256760]  __anon_inode_getfile+0x87/0x190
->> [  441.257311]  ? lock_release+0x14e/0x3f0
->> [  441.257808]  bpf_link_prime+0xe8/0x1d0
->> [  441.258315]  bpf_tracing_prog_attach+0x311/0x570
->> [  441.258916]  ? __pfx_bpf_lsm_file_alloc_security+0x10/0x10
->> [  441.259605]  __sys_bpf+0x1bb7/0x2dc0
->> [  441.260070]  __x64_sys_bpf+0x20/0x30
->> [  441.260533]  do_syscall_64+0x72/0x140
->> [  441.261004]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
->> [  441.261643] RIP: 0033:0x4b0349
->> [  441.262045] Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 88
->> [  441.264355] RSP: 002b:00007fff74daee38 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
->> [  441.265293] RAX: ffffffffffffffda RBX: 00007fff74daef30 RCX: 00000000004b0349
->> [  441.266187] RDX: 0000000000000040 RSI: 00007fff74daee50 RDI: 000000000000001c
->> [  441.267114] RBP: 000000000000001b R08: 00000000005ef820 R09: 0000000000000000
->> [  441.268018] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
->> [  441.268907] R13: 0000000000000004 R14: 00000000005ef018 R15: 00000000004004e8
->>
->> The reason is that the positive number returned by bpf prog is not a
->> valid errno, and could not be filtered out with IS_ERR which is used by
->> the file system to check errors. As a result, the filesystem mistakenly
->> uses this random positive number as file pointer, causing panic.
->>
->> To fix this issue, there are two schemes:
->>
->> 1. Modify the calling sites of file_alloc_security to take positive
->>     return values as zero.
->>
->> 2. Make the bpf verifier to ensure no unpredicted value returned by
->>     lsm bpf prog.
->>
->> Considering that hook file_alloc_security never returned positive number
->> before bpf lsm was introduced, and other lsm hooks may have the same
->> problem, scheme 2 is more reasonable.
->>
->> So this patch set adds lsm return value check in verifier to fix it.
->>
->> v2:
->> fix bpf ci failure
->>
->> v1:
->> https://lore.kernel.org/bpf/20240316122359.1073787-1-xukuohai@huaweicloud.com/
->>
->> Xu Kuohai (7):
->>    bpf, lsm: Annotate lsm hook return integer with new macro LSM_RET_INT
->>    bpf, lsm: Add return value range description for lsm hook
->>    bpf, lsm: Add function to read lsm hook return value range
->>    bpf, lsm: Check bpf lsm hook return values in verifier
->>    bpf: Fix compare error in function retval_range_within
->>    selftests/bpf: Avoid load failure for token_lsm.c
->>    selftests/bpf: Add return value checks and corrections for failed
->>      progs
+On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
+> Thanks for this patch.  Please CC the netdev mailing list too, they may
+> be interested by this feature. I also added a few folks that previously
+> showed their interest for this feature.
 > 
-> This series does not apply cleanly on any of the following branches:
+> On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
+> > Abstract unix sockets are used for local interprocess communication without
+> > relying on filesystem. Since landlock has no restriction for connecting to
+> > a UNIX socket in the abstract namespace, a sandboxed process can connect to
+> > a socket outside the sandboxed environment. Access to such sockets should
+> > be scoped the same way ptrace access is limited.
 > 
-> bpf-next
-> bpf
-> linux
-> linux-next
-> or Paul's lsm branches
+> This is good but it would be better to explain that Landlock doesn't
+> currently control abstract unix sockets and that it would make sense for
+> a sandbox.
 > 
-> There are just too many merge conflicts in the lsm_hook_defs.h file.
->
+> 
+> > 
+> > For a landlocked process to be allowed to connect to a target process, it
+> > must have a subset of the target process’s rules (the connecting socket
+> > must be in a sub-domain of the listening socket). This patch adds a new
+> > LSM hook for connect function in unix socket with the related access rights.
+> 
+> Because of compatibility reasons, and because Landlock should be
+> flexible, we need to extend the user space interface.  As explained in
+> the GitHub issue, we need to add a new "scoped" field to the
+> landlock_ruleset_attr struct. This field will optionally contain a
+> LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
+> ruleset will deny any connection from within the sandbox to its parents
+> (i.e. any parent sandbox or not-sandboxed processes).
+Thanks for the feedback. Here is what I understood, please correct me if
+I am wrong. First, I should add another field to the
+landlock_ruleset_attr (a field like handled_access_net, but for the unix
+sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
+LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
 
-Oh, the series is a bit out of date, will rebase to the latest bpf-next branch.
-
-> - KP
-
+> > 
+> > Link to first draft:
+> > 	https://lore.kernel.org/outreachy/20240328.ShoR4Iecei8o@digikod.net/
+> 
+> You can move this sentence in the below changelog.
+> 
+> > 
+> 
+> You can add this:
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> 
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> 
+> Your Git (or email app) configuration doesn't use the same name as here.
+> 
+> Please run ./scripts/checkpatch.pl on this patch and fix the warnings.
+> 
+> > 
+> > ----
+> > Changes in v2:
+> > - Remove wrapper functions, noted by Casey Schaufler <casey@schaufler-ca.com>
+> > ---
+> >  security/landlock/task.c | 40 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 40 insertions(+)
+> > 
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 849f5123610b..67528f87b7de 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/lsm_hooks.h>
+> >  #include <linux/rcupdate.h>
+> >  #include <linux/sched.h>
+> > +#include <net/sock.h>
+> >  
+> >  #include "common.h"
+> >  #include "cred.h"
+> > @@ -108,9 +109,48 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+> >  	return task_ptrace(parent, current);
+> >  }
+> >  
+> > +static bool unix_sock_is_scoped(struct sock *const sock,
+> 
+> For consistency with task_is_scoped(), you can rename this to
+> sock_is_scoped().
+> 
+> > +				struct sock *const other)
+> > +{
+> > +	bool is_scoped = true;
+> > +
+> > +	/* get the ruleset of connecting sock*/
+> 
+> These comments don't help more than the following line, you can remove
+> them.
+> 
+> > +	const struct landlock_ruleset *const dom_sock =
+> 
+> According to the name it looks like the domain of the socket but it is
+> just the domain of the current task. Just "dom" would be clearer and
+> more consistent with security/landlock/fs.c
+> 
+> > +		landlock_get_current_domain();
+> > +
+> > +	if (!dom_sock)
+> > +		return true;
+> > +
+> > +	/* get credential of listening sock*/
+> > +	const struct cred *cred_other = get_cred(other->sk_peer_cred);
+> 
+> We have a get but not a put call, so the credentials will never be
+> freed.  The put call must be called before any return, so you
+> probably need to follow the goto/error pattern.
+> 
+> In the context of these LSM hooks, only unix_listen() sets the "other"
+> socket credential, and unix_listen() is guarded by unix_state_lock()
+> which locks unix_sk(s)->lock .  When security_unix_stream_connect() or
+> security_unix_may_send() are called, unix_sk(s)->lock is locked as well,
+> which protects the credentials against race-conditions (TOCTOU:
+> time-of-check to time-of-use).  We should then make that explicit with
+> this assertion (which also documents it):
+> 
+> lockdep_assert_held(&unix_sk(other)->lock);
+> 
+> In theory it is then not required to call get_cred().  However, because
+> the performance impact should be negligible and to avoid a potential
+> use-after-free (not possible in theory with the current code), it would
+> be safer to still call get/put.  It would be worse to have a
+> use-after-free rather than an access control issue.
+> 
+> Another thing to keep in mind is that for this hook to be
+> race-condition-free, the credential must not change anyway.  A comment
+> should highlight that.
+> 
+> > +
+> > +	if (!cred_other)
+> > +		return true;
+> > +
+> > +	/* retrieve the landlock_rulesets */
+> > +	const struct landlock_ruleset *dom_parent;
+> 
+> All declarations should be at the top of functions.
+> 
+> > +
+> > +	rcu_read_lock();
+> 
+> No need for this RCU lock because the lock is managed by
+> unix_state_lock() in this case.
+> 
+> > +	dom_parent = landlock_cred(cred_other)->domain;
+> > +	is_scoped = domain_scope_le(dom_parent, dom_sock);
+> > +	rcu_read_unlock();
+> > +
+> > +	return is_scoped;
+> > +}
+> > +
+> > +static int hook_unix_stream_connect(struct sock *const sock,
+> > +				    struct sock *const other,
+> > +				    struct sock *const newsk)
+> > +{
+> > +	if (unix_sock_is_scoped(sock, other))
+> > +		return 0;
+> > +	return -EPERM;
+> > +}
+> > +
+> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
+> >  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
+> > +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
+> 
+> Please add a hook for security_unix_may_send() too, it should be quite
+> similar, and simplify the patch's subject accordingly.
+> 
+> You now need to add tests (in a dedicated patch) extending
+> tools/testing/selftests/landlock/ptrace_test.c (I'll rename the file
+> later).
+> 
+> These tests should also check with unnamed and named unix sockets.  I
+> guess the current code doesn't differentiate them and control all kind
+> of unix sockets.  Because they must explicitly be passed, sockets
+> created with socketpair(2) (i.e. unnamed socket) should never be denied.
+> 
+> >  };
+> >  
+> >  __init void landlock_add_task_hooks(void)
+> > -- 
+> > 2.34.1
+> > 
+> > 
