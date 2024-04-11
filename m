@@ -1,249 +1,140 @@
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6B717BCC;
-	Thu, 11 Apr 2024 15:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781F7205E26
+	for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2024 15:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712848607; cv=none; b=HOljhX0Uw/QW4lzQ95QcZH0ZSKKfLydVXuIunkDrxvViK8hQtSzsatM1LN8vHhcpV6EjVcybSSw8si6Heco9XTgVIPNO6pqrwwXD3Cz8zDHzWdrjCee8gXyRNuMR1/EcxxnXPbFjgZZ8tnL3LjbJHHHtGceNaNgqdGTyzYjbHhU=
+	t=1712850297; cv=none; b=PVlYymahxnWBVFTjkcFNOinuy+dnLSJE687L6429e/Bvq8sUjFpa8JUw/ozkoM1eHg7FjxBBUbiEN5UVmr7PGSjvxS6AK/hdTZmidty5gdoxIoagF4RHLLv/yrx1cGo+HP21AWUp7Rinq6X2LUhM/zZEAoFcpSccyPvXIo8vu+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712848607; c=relaxed/simple;
-	bh=eZKeTdoBgCN/voI+FykzvT0PShkqcsMI2dABVoJLjdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=S3W0DH+vEWoV8uuXKvRLhPW0H/h3z7AOGbwYTiGa4dmWwEEZHPK3ajmveflwJcNvydBz8p8UhoxMy/4pUpKG5i6e6OCgMhHarMgdw/PvshTxSCiyy+HZYJowI3SisFVaL5TwKTkfmhW8cZwk939lc17OLprBjtUBJ/p3rF1X6Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VFjsW4M6sz1ymTb;
-	Thu, 11 Apr 2024 23:14:23 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8FF511A0172;
-	Thu, 11 Apr 2024 23:16:40 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 11 Apr 2024 23:16:36 +0800
-Message-ID: <a7e8f467-036c-a3e0-e26b-b5ba966b4e9e@huawei-partners.com>
-Date: Thu, 11 Apr 2024 18:16:31 +0300
+	s=arc-20240116; t=1712850297; c=relaxed/simple;
+	bh=xtg7Q7ENw1mTsh3LmaRrFyTcKHM2yPCcCM954l6BasQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LWuzidkOgfvBCsJStMdRwi4Tqh23CrcZc5qUgbXMKoUGI67NElpZuZZTm7agDTfRGRjgJC30C+NCKRVN7EGaAJ4PzHc6YpLQMenD61sw1UfaspzlSaAQUXHPgXy0zNtNQRZC+Vj9arQ31KHFyk/XiNdMunZ/U70NQOfONbJYvFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hpNiTJ6n; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hpNiTJ6n"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712850295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vQ7P/yP4wYRRxbHEL+IxPjrSaIDrLl5CNIXerpX7QOI=;
+	b=hpNiTJ6n9s20PsUyKhDo9WEwFVd45VLRa/e5ufAL1X2TnMD+PDoV4pTnoiLSnE6iUG1b7p
+	yR4LpjdJtENxfzYl9KWmU7nB3uzy52387wbvcaLGhOX5jYLCGklc1YGmPULA/lmg3If/QH
+	1WmBSUEpzXVFKXaRu/LAEHsFlJe/MNY=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-Z6A_y9w2OWKs4-SBSVrv0g-1; Thu,
+ 11 Apr 2024 11:44:51 -0400
+X-MC-Unique: Z6A_y9w2OWKs4-SBSVrv0g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A0BC33C0ED58;
+	Thu, 11 Apr 2024 15:44:50 +0000 (UTC)
+Received: from dcaratti.users.ipa.redhat.com (unknown [10.45.225.181])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 4AE003C21;
+	Thu, 11 Apr 2024 15:44:49 +0000 (UTC)
+From: Davide Caratti <dcaratti@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: xmu@redhat.com,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH net] netlabel: fix RCU annotation for IPv4 options on socket creation
+Date: Thu, 11 Apr 2024 17:44:06 +0200
+Message-ID: <d1d6a20f5090829629df76809fc5d25d055be49a.1712849802.git.dcaratti@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 01/10] landlock: Support socket access-control
-Content-Language: ru
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
-	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com>
- <20240408093927.1759381-2-ivanov.mikhail1@huawei-partners.com>
- <ZhRKOTmoAOuwkujB@google.com>
-From: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZhRKOTmoAOuwkujB@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-Hello! Big thanks for your review and ideas :)
+Xiumei reports the following splat when netlabel and TCP socket are used:
 
-P.S.: Sorry, previous mail was rejected by linux mailboxes
-due to HTML formatting.
+ =============================
+ WARNING: suspicious RCU usage
+ 6.9.0-rc2+ #637 Not tainted
+ -----------------------------
+ net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
 
-4/8/2024 10:49 PM, Günther Noack wrote:
-> Hello!
-> 
-> Just zooming in on what I think are the most high level questions here,
-> so that we get the more dramatic changes out of the way early, if needed.
-> 
-> On Mon, Apr 08, 2024 at 05:39:18PM +0800, Ivanov Mikhail wrote:
->> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
->> index 25c8d7677..8551ade38 100644
->> --- a/include/uapi/linux/landlock.h
->> +++ b/include/uapi/linux/landlock.h
->> @@ -37,6 +37,13 @@ struct landlock_ruleset_attr {
->>   	 * rule explicitly allow them.
->>   	 */
->>   	__u64 handled_access_net;
->> +
->> +	/**
->> +	 * @handled_access_net: Bitmask of actions (cf. `Socket flags`_)
->                             ^^^
-> 			   Typo
->
+ other info that might help us debug this:
 
-Thanks, will be fixed.
+ rcu_scheduler_active = 2, debug_locks = 1
+ 1 lock held by ncat/23333:
+  #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setattr+0x25/0x1b0
 
->> +	 * that is handled by this ruleset and should then be forbidden if no
->> +	 * rule explicitly allow them.
->> +	 */
->> +	__u64 handled_access_socket;
-> 
-> What is your rationale for introducing and naming this additional field?
-> 
-> I am not convinced that "socket" is the right name to use in this field,
-> but it is well possible that I'm missing some context.
-> 
-> * If we introduce this additional field in the landlock_ruleset_attr, which
->    other socket-related operations will go in the remaining 63 bits?  (I'm having
->    a hard time coming up with so many of them.)
+ stack backtrace:
+ CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
+ Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  07/26/2013
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0xa9/0xc0
+  lockdep_rcu_suspicious+0x117/0x190
+  cipso_v4_sock_setattr+0x1ab/0x1b0
+  netlbl_sock_setattr+0x13e/0x1b0
+  selinux_netlbl_socket_post_create+0x3f/0x80
+  selinux_socket_post_create+0x1a0/0x460
+  security_socket_post_create+0x42/0x60
+  __sock_create+0x342/0x3a0
+  __sys_socket_create.part.22+0x42/0x70
+  __sys_socket+0x37/0xb0
+  __x64_sys_socket+0x16/0x20
+  do_syscall_64+0x96/0x180
+  ? do_user_addr_fault+0x68d/0xa30
+  ? exc_page_fault+0x171/0x280
+  ? asm_exc_page_fault+0x22/0x30
+  entry_SYSCALL_64_after_hwframe+0x71/0x79
+ RIP: 0033:0x7fbc0ca3fc1b
+ Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
+ RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
+ RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
+ RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
+ RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
+ R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
+ R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
+  </TASK>
 
-If i understood correctly Mickaël suggested saving some space for
-actions related not only to creating sockets, but also to sending
-and receiving socket FDs from another processes, marking pre-sandboxed
-sockets as allowed or denied after sandboxing [2]. This may be necessary
-in order to achieve complete isolation of the sandbox, which will be
-able to create, receive and send sockets of specific protocols.
+The current implementation of cipso_v4_sock_setattr() replaces IP options
+under the assumption that the caller holds the socket lock; however, such
+assumption is not true, nor needed, in selinux_socket_post_create() hook.
 
-In future this field may become more generic by including rules for
-other entities with similar actions (e.g. files, pipes).
+Using rcu_dereference_check() instead of rcu_dereference_protected() will
+avoid the reported splat for the netlbl_sock_setattr() case, and preserve
+the legitimate check when the caller is netlbl_conn_setattr().
 
-I think it is good approach, but we should discuss this design before
-generalizing the name. For now `handled_access_socket` can be a good
-name for actions related to accessing specific sockets (protocols).
-What do you think?
+Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Suggested-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+---
+ net/ipv4/cipso_ipv4.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-[2] 
-https://lore.kernel.org/all/b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net/
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index 8b17d83e5fde..1d0c2a905078 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1876,8 +1876,10 @@ int cipso_v4_sock_setattr(struct sock *sk,
+ 
+ 	sk_inet = inet_sk(sk);
+ 
+-	old = rcu_dereference_protected(sk_inet->inet_opt,
+-					lockdep_sock_is_held(sk));
++	/* caller either holds rcu_read_lock() (on socket creation)
++	 * or socket lock (in all other cases). */
++	old = rcu_dereference_check(sk_inet->inet_opt,
++				    lockdep_sock_is_held(sk));
+ 	if (inet_test_bit(IS_ICSK, sk)) {
+ 		sk_conn = inet_csk(sk);
+ 		if (old)
+-- 
+2.44.0
 
-> 
-> * Should this have a more general name than "socket", so that other planned
->    features from the bug tracker [1] fit in?
-
-I have not found any similar features for our case. Do you have any in
-mind?
-
-> 
-> The other alternative is of course to piggy back on the existing
-> handled_access_net field, whose name already is pretty generic.
-> 
-> For that, I believe we would need to clarify in struct landlock_net_port_attr
-> which exact values are permitted there.
-> 
-> I imagine you have considered this approach?  Are there more reasons why this
-> was ruled out, which I am overlooking?
-> 
-> [1] https://github.com/orgs/landlock-lsm/projects/1/views/1
-> 
->
-
-Currently `handled_access_net` stands for restricting actions for
-specific network protocols by port values: LANDLOCK_ACCESS_NET_BIND_TCP,
-LANDLOCK_ACCESS_NET_SEND_UDP (possibly will be added with UDP feature
-[3]).
-
-I dont think that complicating semantics with adding fields for
-socket_create()-like actions would fit well here. Purpose of current
-patch is to restrict usage of unwanted protocols, not to add logic
-to restrict their actions. In addition, it is worth considering that we
-want to restrict not only network protocols (e.g. Bluetooth).
-
-[3] https://github.com/landlock-lsm/linux/issues/1
-
->> @@ -244,4 +277,20 @@ struct landlock_net_port_attr {
->>   #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->>   #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->>   /* clang-format on */
->> +
->> +/**
->> + * DOC: socket_acess
->> + *
->> + * Socket flags
->> + * ~~~~~~~~~~~~~~~~
-> 
-> Mega-Nit: This ~~~ underline should only be as long as the text above it ;-)
-> You might want to fix it for the "Network Flags" headline as well.
-> 
-
-Ofc, thanks!
-
->> + *
->> + * These flags enable to restrict a sandboxed process to a set of
->> + * socket-related actions for specific protocols. This is supported
->> + * since the Landlock ABI version 5.
->> + *
->> + * - %LANDLOCK_ACCESS_SOCKET_CREATE: Create a socket
->> + */
-> 
-> 
->> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
->> index c7f152678..f4213db09 100644
->> --- a/security/landlock/ruleset.h
->> +++ b/security/landlock/ruleset.h
->> @@ -92,6 +92,12 @@ enum landlock_key_type {
->>   	 * node keys.
->>   	 */
->>   	LANDLOCK_KEY_NET_PORT,
->> +
->> +	/**
->> +	 * @LANDLOCK_KEY_SOCKET: Type of &landlock_ruleset.root_socket's
->> +	 * node keys.
->> +	 */
->> +	LANDLOCK_KEY_SOCKET,
->>   };
->>   
->>   /**
->> @@ -177,6 +183,15 @@ struct landlock_ruleset {
->>   	struct rb_root root_net_port;
->>   #endif /* IS_ENABLED(CONFIG_INET) */
->>   
->> +	/**
->> +	 * @root_socket: Root of a red-black tree containing &struct
->> +	 * landlock_rule nodes with socket type, described by (domain, type)
->> +	 * pair (see socket(2)). Once a ruleset is tied to a
->> +	 * process (i.e. as a domain), this tree is immutable until @usage
->> +	 * reaches zero.
->> +	 */
->> +	struct rb_root root_socket;
-> 
-> The domain is a value between 0 and 45,
-> and the socket type is one of 1, 2, 3, 4, 5, 6, 10.
-> 
-> The bounds of these are defined with AF_MAX (include/linux/socket.h) and
-> SOCK_MAX (include/linux/net.h).
-> 
-> Why don't we just combine these two numbers into an index and create a big bit
-> vector here, like this:
-> 
->      socket_type_mask_t socket_domains[AF_MAX];
-> 
-> socket_type_mask_t would need to be typedef'd to u16 and ideally have a static
-> check to test that it has more bits than SOCK_MAX.
-> 
-> Then you can look up whether a socket creation is permitted by checking:
-> 
->      /* assuming appropriate bounds checks */
->      if (dom->socket_domains[domain] & (1 << type)) { /* permitted */ }
-> 
-> and merging the socket_domains of two domains would be a bitwise-AND.
-> 
-> (We can also cram socket_type_mask_t in a u8 but it would require mapping the
-> existing socket types onto a different number space.)
-> 
-
-I chose rbtree based on the current storage implementation in fs,net and
-decided to leave the implementation of better variants in a separate
-patch, which should redesign the entire storage system in Landlock
-(e.g. implementation of a hashtable for storing rules by FDs,
-port values) [4].
-
-Do you think that it is bad idea and more appropriate storage for socket
-rules(e.g. what you suggested) should be implemented by current patch?
-
-[4] https://github.com/landlock-lsm/linux/issues/1
-
-> 
-> As I said before, I am very excited to see this patch.
-> 
-> I think this will unlock a tremendous amount of use cases for many programs,
-> especially for programs that do not use networking at all, which can now lock
-> themselves down to guarantee that with a sandbox.
-> 
-> Thank you very much for looking into it!
-> —Günther
