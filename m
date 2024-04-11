@@ -1,157 +1,146 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83624149E1A
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2024 10:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4131514B081;
+	Thu, 11 Apr 2024 12:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712831668; cv=none; b=q+GMRf4MG30vkdrvwbQ7YCGLI6E+z4pKexPHknZlSFkap5Ue21X9wJEPV4130SwJ4yqr07S2S+6l5nE5eEqgmdG4RpFkTZtGGpd6vTTB5eG4seT43yTE8ayG4OKVxE3xCslzbjkfk4YdlYZ+9P68yZWV+vQ6Aw+KDTxLjBJ0wms=
+	t=1712838291; cv=none; b=OhKEliQh0tT4BDcSXOGeJn7StG5npMz8ZgxmjUlQQu9Gzn7GCfGa4hIidmZXWK1wyfnrMA3Hr0p9m6HYgPqDXn3qRX7xJSk4oF21+RQsFGKF0Ded0Aa4i6f0Z4y4aeCXCAmvDPVnFgtGBxFLypyJtq1qaxsIo82PTPChWAf+OBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712831668; c=relaxed/simple;
-	bh=9HnffcfMQhvCbYJQG+oZtImYwtDH+HMsjF1GHC12VOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCCEusOj3oZDu8APdBJnKtek+kqIrAy4r68HGVh/U5nMbtwQTB+gVzWrIJJlMwh+VEgl4WnpnkoQzpvVHGJtp9juBUjYpSijT81x95HPs+Enx5VJncHbHQUCTtRdpx0x+6sFngCsMm3lJFWDwEJDALE9X/7Z0Lz/Y9PSNjV5/tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 43BAXqvb011937;
-	Thu, 11 Apr 2024 05:33:53 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 43BAXq1H011936;
-	Thu, 11 Apr 2024 05:33:52 -0500
-Date: Thu, 11 Apr 2024 05:33:52 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
-        KP Singh <kpsingh@kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: Hardcoded security module suggestion - stop the stacking insanity
-Message-ID: <20240411103351.GA11734@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <CAHk-=wh+_xXpnHfUv=FwGWcce4XwqwKvtq7LcxK6WKmbf4eGGA@mail.gmail.com> <202404091041.63A1CFC1A@keescook> <CAHk-=whXwcBzFJd65gQ09EGt1yuH6RyuErhOgvJK8pjkAVw07w@mail.gmail.com>
+	s=arc-20240116; t=1712838291; c=relaxed/simple;
+	bh=BwmI/VbTX1EvQiXLo6C/T9uCgo1d+R0nC9W0fag6FO8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PdohCG0IuVSKtgI+Ow8K5+d0x1HMdhL/6JJw13Cmi+XKYCiKhkMDHU5UuR2t17UbT6onSGlfBji4Yv5O1/CYaRBRyv2jYggm4rsLp8heQnenNlek4soWknij9z3daaX2qRkjJ20ZzcphPbfVGXIroERMbVlyRItrWnP/SFZU+J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VFf5g1nCLz4f3kGC;
+	Thu, 11 Apr 2024 20:24:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 20E461A0DB7;
+	Thu, 11 Apr 2024 20:24:46 +0800 (CST)
+Received: from k01.huawei.com (unknown [10.67.174.197])
+	by APP4 (Coremail) with SMTP id gCh0CgA3h2mJ1hdmZ5R_Jw--.23051S6;
+	Thu, 11 Apr 2024 20:24:45 +0800 (CST)
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+To: bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Brendan Jackman <jackmanb@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Khadija Kamran <kamrankhadijadj@gmail.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Kees Cook <keescook@chromium.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Subject: [PATCH bpf-next v3 04/11] bpf, lsm: Add bpf lsm disabled hook list
+Date: Thu, 11 Apr 2024 20:27:45 +0800
+Message-Id: <20240411122752.2873562-5-xukuohai@huaweicloud.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
+References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whXwcBzFJd65gQ09EGt1yuH6RyuErhOgvJK8pjkAVw07w@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 11 Apr 2024 05:33:53 -0500 (CDT)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3h2mJ1hdmZ5R_Jw--.23051S6
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFyfWry7KF1fKF1fKFyxAFb_yoW8CrWDpa
+	yfJryYk34Fvw4a93Z8tFs5urW5Jr4vqanrK3W7Jw1Yyr40vr1kX3WjkrsI9r9xuFyUJwn3
+	Kr4jgF1Ygry2vaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
+	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
+	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAI
+	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+	IEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUFgAwUUUUU
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-On Tue, Apr 09, 2024 at 11:24:44AM -0700, Linus Torvalds wrote:
+From: Xu Kuohai <xukuohai@huawei.com>
 
-Good morning, I hope the week is winding down well for everyone.
+Add a disabled hooks list for bpf lsm. progs being attached to the
+listed hooks will be rejected by the verifier.
 
-> On Tue, 9 Apr 2024 at 11:02, Kees Cook <keescook@chromium.org> wrote:
-> >
-> > I don't think it's sane to demand that LSM stacking be removed. That's
-> > just not the world we live in -- we have specific and large scale needs
-> > for the infrastructure that is in place.
-> 
-> I think we really need to push back on this all.
-> 
-> The whole stacking is new. There can't be too many users. And it damn
-> well can be limited.
-> 
-> Right now that sttaic stacking code is written to allow 11 levels.
-> 
-> Why? Just because you people cannot agree.
-> 
-> Stop it.
+Suggested-by: KP Singh <kpsingh@kernel.org>
+Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+---
+ kernel/bpf/bpf_lsm.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-Kees' response is well taken.  There is about as much chance of
-everyone agreeing on what type of security control to implement as
-there is on the one file system or text editor that everyone should
-use.
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+index 4e1a4a333000..7f5648b404f2 100644
+--- a/kernel/bpf/bpf_lsm.c
++++ b/kernel/bpf/bpf_lsm.c
+@@ -68,6 +68,12 @@ BTF_SET_START(bpf_lsm_hooks)
+ #undef LSM_HOOK
+ BTF_SET_END(bpf_lsm_hooks)
+ 
++BTF_SET_START(bpf_lsm_disabled_hooks)
++BTF_ID(func, bpf_lsm_getprocattr)
++BTF_ID(func, bpf_lsm_setprocattr)
++BTF_ID(func, bpf_lsm_ismaclabel)
++BTF_SET_END(bpf_lsm_disabled_hooks)
++
+ /* List of LSM hooks that should operate on 'current' cgroup regardless
+  * of function signature.
+  */
+@@ -129,15 +135,25 @@ void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
+ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+ 			const struct bpf_prog *prog)
+ {
++	u32 btf_id = prog->aux->attach_btf_id;
++	const char *func_name = prog->aux->attach_func_name;
++
+ 	if (!prog->gpl_compatible) {
+ 		bpf_log(vlog,
+ 			"LSM programs must have a GPL compatible license\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	if (!btf_id_set_contains(&bpf_lsm_hooks, prog->aux->attach_btf_id)) {
++	if (btf_id_set_contains(&bpf_lsm_disabled_hooks, btf_id)) {
++		bpf_log(vlog,
++			"attach_btf_id %u points to disabled bpf lsm hook %s\n",
++			btf_id, func_name);
++		return -EINVAL;
++	}
++
++	if (!btf_id_set_contains(&bpf_lsm_hooks, btf_id)) {
+ 		bpf_log(vlog, "attach_btf_id %u points to wrong type name %s\n",
+-			prog->aux->attach_btf_id, prog->aux->attach_func_name);
++			btf_id, func_name);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.30.2
 
-We are also rapidly racing into an environment where there are going
-to be multiple and potentially industry specific mandated security
-controls, particularly as Linux takes over the critical infrastructure
-control market.
-
-> > I don't think describing static calls as "random hacks" is very fair;
-> 
-> Static calls aren't random hacks.
-> 
-> But the "up to eleven levens of nesting" and "reorider arbitrarily" IS.
-> 
-> This needs to be *fixed*.
-> 
-> Seriously, what part of "this is now an attack vector" did people
-> not get?
-
-I don't believe there is any active disagreement with respect to the
-need to eliminate an attack vector and the performance impacts of
-indirect branching.
-
-Doing so is going to raise a number of issues, many of which will
-determine whether or not Linux will be in a position to support the
-security development that will be required moving forward.
-
-The one LSM that rules all paradigm is fine, but that LSM needs to be
-able to support multiple and diverse security policies or models.  We
-are in the situation we are in now because our security architecture
-required a separate LSM for each type of security policy/model that
-there was a desire to implement.
-
-From a technical perspective, this leaves us in a situation where
-multiple security architectures are simultaneously active, with users
-left to reason as to what security behavior results from the union of
-the respective controls.  Specific LSM ordering ends up being demanded
-because LSM's either want to be first, before another, after another
-or at the end and the issues go on and on.
-
-Most fundamentally limiting, we are left in a situation where anyone
-with a technical requirement, or interest, in using Linux as a
-platform for security development needs to get an LSM accepted into
-the mainline kernel.  A requirement that is problematic if not
-completely unrealistic.
-
-The static branch patches are going to codify this latter requirement.
-If we don't have an effective technical solution, it will end up
-impairing the future usability of Linux from a security perspective.
-
-There needs to be an 'LSM' architecture that allows a security policy
-to be implemented for a process hierarchy, just like we do for all
-other resource namespaces.  Platform owners are then free to select
-whether they want to implement multiple orthogonal security controls
-or lock the platform into a single control of their choosing.
-
-This seems consistent with the history of Linux and free software
-being about choice and the ability to use a system as one chooses to.
-
-This isn't to suggest that infrastructural controls, such as
-capabilities, would not be simultaneously active with more
-comprehensive model or policy based controls.
-
-LSM's based on loadable modules were rejected because it wasn't
-possible to do that safely, ie. race free.  This issue goes away if a
-model/policy is available for a process hierarchy to subscribe to,
-before the use of the control method is engaged.  That being said, a
-model/policy configurable LSM doesn't need to require loadable modules
-but we use that as a metaphor that everyone understands.
-
-There may be an inclination to shout BPF but the following should be
-taken into consideration:
-
-https://lore.kernel.org/linux-security-module/CAHC9VhRruSLET+aOhCt7WKucWNBE_qLCYV3won+p10XOjLLiHQ@mail.gmail.com/T/#m4cbae6c1d8371e7994a57700dcbcab03bf9d1146
-
-BPF is an extremely useful adjunctive technology.  However, achieving
-something of the status of a major security control engine will end up
-necessitating the development and introduction of a collection of
-kfuncs, a barrier not unlike the introduction of a new LSM.
-
->             Linus
-
-FWIW, we didn't come by these impressions from the cheap seats and we
-will leave our motivations for composing this note at that.
-
-Have a good remainder of the week.
-
-As always,
-Dr. Greg
-
-   The Quixote Project - Flailing at the Travails of Cybersecurity
-		  https://github.com/Quixote-Project
