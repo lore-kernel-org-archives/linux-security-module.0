@@ -1,28 +1,28 @@
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412B314B06E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A7D14BF8D;
 	Thu, 11 Apr 2024 12:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712838293; cv=none; b=chcwoKJXE9BDxE8IeNOHWWqEX1/BWNROBkO3xTsBvM0rWERNwWOI98UiadD0x+jukhWGp+Rrmg2QsuZbquaa8ZqvrK4MqnwT0uYuQPQAHFd8yfonD35GlgsUygZ0Li0fxPFq73gYWFeiMArD5XLiWeNU6aUbLS7NQwFpJpvGBjA=
+	t=1712838293; cv=none; b=IokiAOj4tcQHlMS/jLg8r1Cjwki+LgepEu2ApLuTNpOPRaQAOiLKuH4Iy8IFXhIVSuZJG8PTLAOPIK5pK/3Y8RVL5h4DyuXf9f1kFyook8G4YWuziOE0NLkmgELg1vU6YkXx9BvOh6+JqXwm8vigyN+FN8JgsM1IIjBepFnjvy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712838293; c=relaxed/simple;
-	bh=BssR8dDzws4osV8Y9+DTD++TFdwizYDvxCmfB8HI6ms=;
+	bh=ZQyaL0WiOmapKU1DLJG24/f7k4kwX7jk601/QooCOVQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZpoHMCePja+bUTYigP1ZchYQXoWmY95mvzZbLHC4mDt9jxfYnxW+27m3+DMpW0ZyMsTnxxxogSadCrJKhuVC1gEclK0fCeEUMS3t6B/R6TOA6KK+6UgAhGZH8E+pA6zWzQoE2M5G6Un3jmVCVPjBBMvTSNpvzwSsrHk+6rdm0/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	 MIME-Version; b=TM/Adt/ffnhcBdckxntWOWcbhqGaqpcqLY3s4S1LQA4MVn/AoLxGlEYtnyl31AgY2VQnL5Pdh46y5Gc0LvfKNlQrL7IjExGr/IVELvswfwGacR+6yo2MxEmraRUbjNYoaSgpl3PWRB+F60cLsuBCTGN126qDLhdgxiQm/5d4yiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VFf5g0szsz4f3kFb;
-	Thu, 11 Apr 2024 20:24:39 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VFf5d5zgjz4f3n6D;
+	Thu, 11 Apr 2024 20:24:37 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 004061A0568;
-	Thu, 11 Apr 2024 20:24:45 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 7EB501A0572;
+	Thu, 11 Apr 2024 20:24:46 +0800 (CST)
 Received: from k01.huawei.com (unknown [10.67.174.197])
-	by APP4 (Coremail) with SMTP id gCh0CgA3h2mJ1hdmZ5R_Jw--.23051S5;
-	Thu, 11 Apr 2024 20:24:45 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgA3h2mJ1hdmZ5R_Jw--.23051S9;
+	Thu, 11 Apr 2024 20:24:46 +0800 (CST)
 From: Xu Kuohai <xukuohai@huaweicloud.com>
 To: bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
@@ -53,9 +53,9 @@ Cc: Alexei Starovoitov <ast@kernel.org>,
 	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Subject: [PATCH bpf-next v3 03/11] bpf, lsm: Check bpf lsm hook return values in verifier
-Date: Thu, 11 Apr 2024 20:27:44 +0800
-Message-Id: <20240411122752.2873562-4-xukuohai@huaweicloud.com>
+Subject: [PATCH bpf-next v3 07/11] bpf: Fix a false rejection caused by AND operation
+Date: Thu, 11 Apr 2024 20:27:48 +0800
+Message-Id: <20240411122752.2873562-8-xukuohai@huaweicloud.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
 References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
@@ -66,199 +66,131 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3h2mJ1hdmZ5R_Jw--.23051S5
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr47tFW5Kw4fJw1rArWUArb_yoWxXr4rpF
-	s5G34kAr40yFW7uFnrtan7ZFyrArW8Wa4Ik34xC34SyFZxXr9YqFyqgryjvr1SkrWkCw1x
-	Cr4jqrZ8uw1UAFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-TRANSID:gCh0CgA3h2mJ1hdmZ5R_Jw--.23051S9
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr48KF48ZFy3JFy3Cr13XFb_yoWrZFWkpr
+	W5Wrn09r4kZrWxuwnFvan8Ar95tF48Za18JasrA340vry3KF45tr1UKryUJ3sxJrs5Jw4S
+	qFnrX3y7Kw4UGaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
+	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
+	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAI
+	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+	IEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUFgAwUUUUU
 X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
 From: Xu Kuohai <xukuohai@huawei.com>
 
-A bpf prog returning positive number attached to file_alloc_security hook
-will make kernel panic.
+With lsm return value check, the no-alu32 version test_libbpf_get_fd_by_id_opts
+is rejected by the verifier, and the log says:
 
-The reason is that the positive number returned by bpf prog is not a
-valid errno, and could not be filtered out with IS_ERR which is used by
-the file system to check errors. As a result, the file system uses this
-positive number as file pointer, causing panic.
+  0: R1=ctx() R10=fp0
+  ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
+  0: (b7) r0 = 0                        ; R0_w=0
+  1: (79) r2 = *(u64 *)(r1 +0)
+  func 'bpf_lsm_bpf_map' arg0 has btf_id 916 type STRUCT 'bpf_map'
+  2: R1=ctx() R2_w=trusted_ptr_bpf_map()
+  ; if (map != (struct bpf_map *)&data_input) @ test_libbpf_get_fd_by_id_opts.c:29
+  2: (18) r3 = 0xffff9742c0951a00       ; R3_w=map_ptr(map=data_input,ks=4,vs=4)
+  4: (5d) if r2 != r3 goto pc+4         ; R2_w=trusted_ptr_bpf_map() R3_w=map_ptr(map=data_input,ks=4,vs=4)
+  ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
+  5: (79) r0 = *(u64 *)(r1 +8)          ; R0_w=scalar() R1=ctx()
+  ; if (fmode & FMODE_WRITE) @ test_libbpf_get_fd_by_id_opts.c:32
+  6: (67) r0 <<= 62                     ; R0_w=scalar(smax=0x4000000000000000,umax=0xc000000000000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xc000000000000000))
+  7: (c7) r0 s>>= 63                    ; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
+  ;  @ test_libbpf_get_fd_by_id_opts.c:0
+  8: (57) r0 &= -13                     ; R0_w=scalar(smax=0x7ffffffffffffff3,umax=0xfffffffffffffff3,smax32=0x7ffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
+  ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
+  9: (95) exit
 
-Considering that hook file_alloc_security never returned positive number
-before bpf lsm was introduced, and other bpf lsm hooks may have the same
-problem, this patch adds lsm return value check in bpf verifier to ensure
-no unpredicted values will be returned by lsm bpf prog.
+And here is the C code of the prog.
 
-Fixes: 520b7aa00d8c ("bpf: lsm: Initialize the BPF LSM hooks")
-Reported-by: Xin Liu <liuxin350@huawei.com>
+SEC("lsm/bpf_map")
+int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode)
+{
+	if (map != (struct bpf_map *)&data_input)
+		return 0;
+
+	if (fmode & FMODE_WRITE)
+		return -EACCES;
+
+	return 0;
+}
+
+It is clear that the prog can only return either 0 or -EACCESS, and both
+values are legal.
+
+So why is it rejected by the verifier?
+
+The verifier log shows that the second if and return value setting
+statements in the prog is optimized to bitwise operations "r0 s>>= 63"
+and "r0 &= -13". The verifier correctly deduces that the the value of
+r0 is in the range [-1, 0] after verifing instruction "r0 s>>= 63".
+But when the verifier proceeds to verify instruction "r0 &= -13", it
+fails to deduce the correct value range of r0.
+
+7: (c7) r0 s>>= 63                    ; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
+8: (57) r0 &= -13                     ; R0_w=scalar(smax=0x7ffffffffffffff3,umax=0xfffffffffffffff3,smax32=0x7ffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
+
+So why the verifier fails to deduce the result of 'r0 &= -13'?
+
+The verifier uses tnum to track values, and the two ranges "[-1, 0]" and
+"[0, -1ULL]" are encoded to the same tnum. When verifing instruction
+"r0 &= -13", the verifier erroneously deduces the result from
+"[0, -1ULL] AND -13", which is out of the expected return range
+[-4095, 0].
+
+To fix it, this patch simply adds a special SCALAR32 case for the
+verifier. That is, when the source operand of the AND instruction is
+a constant and the destination operand changes from negative to
+non-negative and falls in range [-256, 256], deduce the result range
+by enumerating all possible AND results.
+
 Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
 ---
- include/linux/bpf.h   |  1 +
- kernel/bpf/btf.c      |  5 +++-
- kernel/bpf/verifier.c | 57 +++++++++++++++++++++++++++++++++++++------
- 3 files changed, 55 insertions(+), 8 deletions(-)
+ kernel/bpf/verifier.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 5034c1b4ded7..7aedb4827a94 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -917,6 +917,7 @@ struct bpf_insn_access_aux {
- 		};
- 	};
- 	struct bpf_verifier_log *log; /* for verbose logs */
-+	bool is_retval; /* is accessing function return value ? */
- };
- 
- static inline void
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 90c4a32d89ff..d593684d80c6 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -6227,8 +6227,11 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
- 
- 	if (arg == nr_args) {
- 		switch (prog->expected_attach_type) {
--		case BPF_LSM_CGROUP:
- 		case BPF_LSM_MAC:
-+			/* mark we are accessing the return value */
-+			info->is_retval = true;
-+			fallthrough;
-+		case BPF_LSM_CGROUP:
- 		case BPF_TRACE_FEXIT:
- 			/* When LSM programs are attached to void LSM hooks
- 			 * they use FEXIT trampolines and when attached to
 diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2aad6d90550f..05c7c5f2bec0 100644
+index 5393d576c76f..62e259f18f35 100644
 --- a/kernel/bpf/verifier.c
 +++ b/kernel/bpf/verifier.c
-@@ -2321,6 +2321,25 @@ static void mark_reg_unknown(struct bpf_verifier_env *env,
- 	__mark_reg_unknown(env, regs + regno);
- }
+@@ -13369,6 +13369,29 @@ static void scalar32_min_max_and(struct bpf_reg_state *dst_reg,
+ 		return;
+ 	}
  
-+static int __mark_reg_s32_range(struct bpf_verifier_env *env,
-+				struct bpf_reg_state *regs,
-+				u32 regno,
-+				s32 s32_min,
-+				s32 s32_max)
-+{
-+	struct bpf_reg_state *reg = regs + regno;
-+
-+	reg->s32_min_value = max_t(s32, reg->s32_min_value, s32_min);
-+	reg->s32_max_value = min_t(s32, reg->s32_max_value, s32_max);
-+
-+	reg->smin_value = max_t(s64, reg->smin_value, s32_min);
-+	reg->smax_value = min_t(s64, reg->smax_value, s32_max);
-+
-+	reg_bounds_sync(reg);
-+
-+	return reg_bounds_sanity_check(env, reg, "s32_range");
-+}
-+
- static void __mark_reg_not_init(const struct bpf_verifier_env *env,
- 				struct bpf_reg_state *reg)
- {
-@@ -5555,11 +5574,12 @@ static int check_packet_access(struct bpf_verifier_env *env, u32 regno, int off,
- /* check access to 'struct bpf_context' fields.  Supports fixed offsets only */
- static int check_ctx_access(struct bpf_verifier_env *env, int insn_idx, int off, int size,
- 			    enum bpf_access_type t, enum bpf_reg_type *reg_type,
--			    struct btf **btf, u32 *btf_id)
-+			    struct btf **btf, u32 *btf_id, bool *is_retval)
- {
- 	struct bpf_insn_access_aux info = {
- 		.reg_type = *reg_type,
- 		.log = &env->log,
-+		.is_retval = false,
- 	};
- 
- 	if (env->ops->is_valid_access &&
-@@ -5572,6 +5592,7 @@ static int check_ctx_access(struct bpf_verifier_env *env, int insn_idx, int off,
- 		 * type of narrower access.
- 		 */
- 		*reg_type = info.reg_type;
-+		*is_retval = info.is_retval;
- 
- 		if (base_type(*reg_type) == PTR_TO_BTF_ID) {
- 			*btf = info.btf;
-@@ -6725,6 +6746,17 @@ static int check_stack_access_within_bounds(
- 	return grow_stack_state(env, state, -min_off /* size */);
- }
- 
-+static bool get_func_retval_range(struct bpf_prog *prog,
-+				  struct bpf_retval_range *range)
-+{
-+	if (prog->type == BPF_PROG_TYPE_LSM &&
-+		prog->expected_attach_type == BPF_LSM_MAC &&
-+		!bpf_lsm_get_retval_range(prog, range)) {
-+		return true;
++	if (src_known &&
++		dst_reg->s32_min_value < 0 && dst_reg->s32_min_value >= -256 &&
++		dst_reg->s32_max_value >= 0 && dst_reg->s32_max_value <= 256 &&
++		dst_reg->s32_min_value == dst_reg->smin_value &&
++		dst_reg->s32_max_value == dst_reg->smax_value) {
++		s32 s32_min = S32_MAX;
++		s32 s32_max = S32_MIN;
++		s32 v = dst_reg->s32_min_value;
++		while (v <= dst_reg->s32_max_value) {
++			s32 w = (v & src_reg->s32_min_value);
++			if (w < s32_min)
++				s32_min = w;
++			if (w > s32_max)
++				s32_max = w;
++			v++;
++		}
++		dst_reg->s32_min_value = s32_min;
++		dst_reg->s32_max_value = s32_max;
++		dst_reg->u32_min_value = var32_off.value;
++		dst_reg->u32_max_value = min(dst_reg->u32_max_value, umax_val);
++		return;
 +	}
-+	return false;
-+}
 +
- /* check whether memory at (regno + off) is accessible for t = (read | write)
-  * if t==write, value_regno is a register which value is stored into memory
-  * if t==read, value_regno is a register which will receive the value from memory
-@@ -6829,6 +6861,8 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 		if (!err && value_regno >= 0 && (t == BPF_READ || rdonly_mem))
- 			mark_reg_unknown(env, regs, value_regno);
- 	} else if (reg->type == PTR_TO_CTX) {
-+		bool is_retval = false;
-+		struct bpf_retval_range range;
- 		enum bpf_reg_type reg_type = SCALAR_VALUE;
- 		struct btf *btf = NULL;
- 		u32 btf_id = 0;
-@@ -6844,7 +6878,7 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 			return err;
- 
- 		err = check_ctx_access(env, insn_idx, off, size, t, &reg_type, &btf,
--				       &btf_id);
-+				       &btf_id, &is_retval);
- 		if (err)
- 			verbose_linfo(env, insn_idx, "; ");
- 		if (!err && t == BPF_READ && value_regno >= 0) {
-@@ -6853,7 +6887,14 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 			 * case, we know the offset is zero.
- 			 */
- 			if (reg_type == SCALAR_VALUE) {
--				mark_reg_unknown(env, regs, value_regno);
-+				if (is_retval && get_func_retval_range(env->prog, &range)) {
-+					err = __mark_reg_s32_range(env, regs, value_regno,
-+								   range.minval, range.maxval);
-+					if (err)
-+						return err;
-+				} else {
-+					mark_reg_unknown(env, regs, value_regno);
-+				}
- 			} else {
- 				mark_reg_known_zero(env, regs,
- 						    value_regno);
-@@ -15492,10 +15533,12 @@ static int check_return_code(struct bpf_verifier_env *env, int regno, const char
- 
- 	case BPF_PROG_TYPE_LSM:
- 		if (env->prog->expected_attach_type != BPF_LSM_CGROUP) {
--			/* Regular BPF_PROG_TYPE_LSM programs can return
--			 * any value.
--			 */
--			return 0;
-+			/* no range found, any return value is allowed */
-+			if (!get_func_retval_range(env->prog, &range))
-+				return 0;
-+			/* no restricted range, any return value is allowed */
-+			if (range.minval == S32_MIN && range.maxval == S32_MAX)
-+				return 0;
- 		}
- 		if (!env->prog->aux->attach_func_proto->type) {
- 			/* Make sure programs that attach to void
+ 	/* We get our minimum from the var_off, since that's inherently
+ 	 * bitwise.  Our maximum is the minimum of the operands' maxima.
+ 	 */
 -- 
 2.30.2
 
