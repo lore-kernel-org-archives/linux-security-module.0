@@ -1,184 +1,727 @@
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50468524B8
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2024 18:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.207
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECB7374F6;
+	Thu, 11 Apr 2024 18:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712859117; cv=none; b=aCe/ESFeBNWeeqMn75kL9Dm+twkqkf2pfcqM+VY7I+uOm1ripEpeKRmU3E5cLcDVv0XcHwbEMiEKxEKRlz+EheCftbtAHUjWkeNCKkoHr2YMTwH+7WKi/18huNy8AR+L1gIrZK9j5wzmekXWGjXUVOsRRnAUvv2e9k+iwHCcoKI=
+	t=1712859221; cv=none; b=JviZkvYryzXTyKjMaOBUOVqI+ygp+RzrKzK28zMLu0JLInmTmuOwCrF9Y8Sc74JHIYIErj2TiqRc5mQS5QeKg6jA+LmZHZMzUUnYUeuwvVsNj2KCXy4zmMtNNjAQj7twUTOWbuzJrfFQK0DPSDjlD9Elznil3/nj8S0u7k2rLAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712859117; c=relaxed/simple;
-	bh=fxPGFgU/Gu2qIVD0v9icj6p4EvCNjr+aVsx0KWv6sUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QhPyr+GWMLcP2xCl/izlH+TstAoNT25aWkfgI6aChMQ9Vl/5Lt+rkqnyGtXcOPv69OEEkflKIM4+k6dI+EcVK1xSgUIqFx4UziXW+ZOHAw5bwXnjBlPDyurGqWPpV0BEQrrRK8BlDKaITYuuDYjlVcKT5PS7dewqFtJxnzeHypQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=mb+JV3Ot; arc=none smtp.client-ip=66.163.184.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mb+JV3Ot"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1712859114; bh=AGUc3CpWvu4nY2pvBQl69xwBdaatN3iBx4KaC1OEhbw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=mb+JV3OtpfxfJNfLl/xNACY+WGqqmbYMGejp43fznztQ/MKFzmdm21Q8vZK7blDgPFlF2Kyomb584th2piJTlQZ8fPc0ovyyv99fQ7EqWu22Xh8e4BSo4OhXa3WU3xTukBkNSOFtQ/J8ElQtdTD1GNS4Y6/iKayzDLVuHZz8iABolIeH8nVELMwtwJ417xZsOiXwxscNYLQtbMoZZK5HYGsArsRqzMa5RUClmT7Lv20GmyoWZgvHlLf1eTLyyoUq92cCCAtSdrscxYdgQ/rWDSAH9q7C/z7YYl/ClbOGAggR8Hvr4Xj8x05qwqZ58ERJCF0dFws+4qKW7x27L0HO5Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1712859114; bh=DFEjal08h3AzoF8gd2ZGOyDL8MNwD8hmafuV84aia58=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=S3MnOUfndoK7LfTT37NCTP47F92/dibJDqzHVCcgiO6P+wDR8QJYfbjXDIsjPdgC/cLp85wcR7EoqtGwniBGaUVxD5cvCgSrNdX/yBZO4hQmQxnqPE7I/QUTQOhUtQmiEvpDsJm7QXJ+WpU8vL7Rl4qewnTVZREVsaKndPKC5WBR1tfR2sgE3WL8V0aUBdKc25vp8dudSf+9KGL/x2u4elrSRxaIgoJqeWHXYth7qcrXI7ET6B2XAf/AFyt259Sys0FzPFqxvdWZCsWw1viyMz+3wwm/wxPfrNPz6ArPnJ4WXOWWIlQ/Ze/i1plhvPPnmf3PH5C8/BTqzEetZqmxZw==
-X-YMail-OSG: 1NwZvv8VM1kGAtH3_9Rp_yc2ie9NwQxjEEHjxnClEOBT4YR0WAQtBAzygTjZ1J_
- .YYSWvzcUIkhF_9XFwMQKP9yPzjmnxKjt_cRn7itx_VbkCcMcYF63gSD6iD.PZU4RxV4xoz2DrJ_
- LsJq2o7X1V2Ie8rfpoPnjvvbjgjzunpf0dEfrH2RmkkXIMDp_fJgWH0CEWyNDdNTEZAdw3LXbkh4
- xjdLRUbjT5d5szUvv3GZ9ikORmMI2lakdOxdMAD.8FsD2Cbb1TrlBVoSM3rq5aZm.0CuUpDwLie7
- k0aa4EmaIEQNBajuZ7l3kL8pkHt5EK8OBYOZ7ZwivEedSsofud0tBKub0VTfuIYxZK9mMnm7c6j5
- Z6tIEuV3__yEzCLhXDdw1qL.tBTsTJyVwHfBtb1fkkd1WMCI9bYg5__CroN7D_2IZAyNaSXaFXow
- VOi7qE7puEFCp30y8odDnjQLLYtbyEbehg7D4.DfVTuuzzMHie7cylODFAHX.4rieex0MU6txvPJ
- Gn7mkeJ.2C1rs6q2id26lMoVcvJsDrtPt9YcftAnCgmkr780VDGVshY3sBt1OrAKKDIvdVOxax9C
- bxmQeaOq3O5M.XudO4ZGRnBhKuk23Iol7A63zkURin3rTcIk71XEBun0r0Jro2CNEkpcsL7zlUXf
- wVCauJJ1BJ49z6fT37BJbi3pnX.GwEgt_QPJWo6DNGyZHTRVo4hif26swB9y542oOPvuSDr9t4WP
- Lp.jCzfX5Z_MZWLbVzXfgVYjsIl2mhQREhkdYViptX_QTqJQBABUzlIgnhPCFUQWOsyk0m5Gd.6o
- PYdrdMAViu.oTkncMd2EwClfRpl.Pv6qb0WErlf2xS005MOWT1KYR0YvppjyYkJvzJ.yLCuphKnR
- NVcSrSSxmr_qTUC1PCM5DUJZ7zhLIBN4odgMMRfZPsRKDH_KsPnicxpTlBirLCafNWD3tMkBKR2i
- SFp4e7ZBdfjcNnUwo4Avzsyi2bL7LpY88QNVZLLlievyXN86oU17Tw0uiG5aS59NRLbjM5mGWkr8
- Png5rVzMUlfrhy4P4grEG61va4QkrxMTYnQbx0KsKZlWUTyj6kmNB6VP4Rb_poJalKMJJKPLz5WK
- ww7F_Jj75ZldUxcAAx884lo.cIbaa4MLo2q1ekUSRjl3lIERa1cOVWVb3wOUvOBmqZQ3HqSA.7Ki
- bZXtiD0gxv26vZk.5GBFrdBtStMRsNsnryDgYKFR_AgnqJsy0Zai9AzeU7XU6XZPnRWYQtpi2wfP
- n29fm5.5KxA2FT4U.vMKSWHu0B0iGn3S.UheS4nzMN5mtfWd689MhBXeOke6P66h9tx2oaD5O5sy
- z4xVBShoxIAA4kq897Mv02XmAaEpyzVJIcAE8ve.BL5hgawui9x.8mAfnyl1caZnzBJ9TAhFf7vg
- PJH5R_Fn95WzkvNDDgrXGaoxD_UkOz4h_qFoip2SEBGm0K1FOaKhyc58.iCCq.1nIWCxLRKXI863
- XdI4auymj8uQxCHQIDbit5OEsXq2BUGJ1BjvjBvbgyrkmTqc4zDMkbNSPLxu6Li13yqWefrU63eP
- 5mlfLojEme62JbBmclToor8SVyN_wb1ZJWErtwOr82nS10jb88DgG3lrUrprStUX8vf1N.HD3OWR
- YsEEydrAblX_QzBDF1A.K6BcRyhU3vHXorLmZnJjpheT9qbnwGa6wd6S_kHyeO.3YoQGY0K_rWGs
- MZqQpcTjUE_CsXnk2OzcnWbGLRwPQeNBB708zOwF1cr0o1y8elsQ6izv48m9t4jwsN3T41UbTrMF
- d9Jwh_QD7SLzMtEi7sVT6Z8mCNqxVkuz3Ro9tG8BMOHZO5g.nmH4nrGBlWab2A79dkuHG.epgaOI
- Yr.k.1yWqT1kHOOzyAN_Ls8jS9LWU7LqShP85EgctevP8BCWVdbhAa4hPwO.olVjFi_XA9xDHB8.
- xwRnHz.l49JPHszdcSSIoaABXd9Q_BOv5psrmbW7zB9IFkAugQG.i3vL7HdQ3prJF8tHlnHyI83J
- 3OVvuAaMTEyVO4pycRDl60WMm8f0BfANbPimZo7hfZlNfc1y0FgZu30scTQhq08v.spinpt6_Fdj
- 0ZeI7hH07_7CZcDI2lv7UhLTobvkLP_YA6v3KmsMMlkxggsuThj_3UujjeJ947dN5ExPjvIekq_0
- utpj4cVCerxCkAfjrAnBGJMNCFpW_u3DaeXLJnHtaFd55UK5Eo4arSO43vuzY567IOxGRkEtzDoc
- tkxs_.zf72FKKfSJD8vxA5bzHK8mQ4p2hFjU3lx_RdHU4cc1i4Llgx1WzObz4qkPECdyO_gDannz
- RxwaOKfQ0OMo-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 495ae28c-051c-43fb-a631-2503446a3863
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Thu, 11 Apr 2024 18:11:54 +0000
-Received: by hermes--production-gq1-5c57879fdf-p26ct (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 64e4e756082c99b2a120a94c12d83224;
-          Thu, 11 Apr 2024 17:41:27 +0000 (UTC)
-Message-ID: <a76d497c-5d87-4d00-a0f4-147b3f747bf5@schaufler-ca.com>
-Date: Thu, 11 Apr 2024 10:41:24 -0700
+	s=arc-20240116; t=1712859221; c=relaxed/simple;
+	bh=GQQfvGSWOqQfMYrm5fR/28TFtxeUHfEIp53brblj9og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6y/3cVbBGWjV+yCBBbWC3YNog6IhIE9hLCw0jafWA0h5NsP0KLtCJs0jJoDZI5UqhjbiFqfTVpoIwIg9qiYg9g4sRE1k28+ULDelFQTA+G0rH/1lxpRgbNuKSLepOvOYeZy5ocjGfQzfUvhHEmpU4/bPg48b45EXrFDA4Auo6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 43BIDMgI018526;
+	Thu, 11 Apr 2024 13:13:22 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 43BIDLjk018525;
+	Thu, 11 Apr 2024 13:13:21 -0500
+Date: Thu, 11 Apr 2024 13:13:21 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Greg Wettstein <greg@enjellic.com>, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH v3 04/12] Add primary TSEM implementation file.
+Message-ID: <20240411181321.GA18451@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240401105015.27614-1-greg@enjellic.com> <20240401105015.27614-5-greg@enjellic.com> <42c5489c-5e5c-4648-b370-cbc14e86dbbc@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] netlabel: fix RCU annotation for IPv4 options on
- socket creation
-To: Eric Dumazet <edumazet@google.com>, Davide Caratti <dcaratti@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, xmu@redhat.com,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <d1d6a20f5090829629df76809fc5d25d055be49a.1712849802.git.dcaratti@redhat.com>
- <CANn89iLyMv2JjEGRoAWb51TpxuMb5iCPb8dvTAmdJoZvx4=2LA@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CANn89iLyMv2JjEGRoAWb51TpxuMb5iCPb8dvTAmdJoZvx4=2LA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22205 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42c5489c-5e5c-4648-b370-cbc14e86dbbc@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 11 Apr 2024 13:13:22 -0500 (CDT)
 
-On 4/11/2024 8:56 AM, Eric Dumazet wrote:
-> On Thu, Apr 11, 2024 at 5:44 PM Davide Caratti <dcaratti@redhat.com> wrote:
->> Xiumei reports the following splat when netlabel and TCP socket are used:
->>
->>  =============================
->>  WARNING: suspicious RCU usage
->>  6.9.0-rc2+ #637 Not tainted
->>  -----------------------------
->>  net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
->>
->>  other info that might help us debug this:
->>
->>  rcu_scheduler_active = 2, debug_locks = 1
->>  1 lock held by ncat/23333:
->>   #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setattr+0x25/0x1b0
->>
->>  stack backtrace:
->>  CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
->>  Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  07/26/2013
->>  Call Trace:
->>   <TASK>
->>   dump_stack_lvl+0xa9/0xc0
->>   lockdep_rcu_suspicious+0x117/0x190
->>   cipso_v4_sock_setattr+0x1ab/0x1b0
->>   netlbl_sock_setattr+0x13e/0x1b0
->>   selinux_netlbl_socket_post_create+0x3f/0x80
->>   selinux_socket_post_create+0x1a0/0x460
->>   security_socket_post_create+0x42/0x60
->>   __sock_create+0x342/0x3a0
->>   __sys_socket_create.part.22+0x42/0x70
->>   __sys_socket+0x37/0xb0
->>   __x64_sys_socket+0x16/0x20
->>   do_syscall_64+0x96/0x180
->>   ? do_user_addr_fault+0x68d/0xa30
->>   ? exc_page_fault+0x171/0x280
->>   ? asm_exc_page_fault+0x22/0x30
->>   entry_SYSCALL_64_after_hwframe+0x71/0x79
->>  RIP: 0033:0x7fbc0ca3fc1b
->>  Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
->>  RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
->>  RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
->>  RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
->>  RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
->>  R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
->>  R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
->>   </TASK>
->>
->> The current implementation of cipso_v4_sock_setattr() replaces IP options
->> under the assumption that the caller holds the socket lock; however, such
->> assumption is not true, nor needed, in selinux_socket_post_create() hook.
->>
->> Using rcu_dereference_check() instead of rcu_dereference_protected() will
->> avoid the reported splat for the netlbl_sock_setattr() case, and preserve
->> the legitimate check when the caller is netlbl_conn_setattr().
->>
->> Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
->> Reported-by: Xiumei Mu <xmu@redhat.com>
->> Suggested-by: Paolo Abeni <pabeni@redhat.com>
->> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+On Tue, Apr 02, 2024 at 02:15:18PM -0700, Casey Schaufler wrote:
 
-Please be sure to verify that this is appropriate for all users of netlabel.
-SELinux is not the only user of netlabel.
+Good morning, I hope the day is going well.
 
->> ---
->>  net/ipv4/cipso_ipv4.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
->> index 8b17d83e5fde..1d0c2a905078 100644
->> --- a/net/ipv4/cipso_ipv4.c
->> +++ b/net/ipv4/cipso_ipv4.c
->> @@ -1876,8 +1876,10 @@ int cipso_v4_sock_setattr(struct sock *sk,
->>
->>         sk_inet = inet_sk(sk);
->>
->> -       old = rcu_dereference_protected(sk_inet->inet_opt,
->> -                                       lockdep_sock_is_held(sk));
->> +       /* caller either holds rcu_read_lock() (on socket creation)
->> +        * or socket lock (in all other cases). */
->> +       old = rcu_dereference_check(sk_inet->inet_opt,
->> +                                   lockdep_sock_is_held(sk));
->>         if (inet_test_bit(IS_ICSK, sk)) {
->>                 sk_conn = inet_csk(sk);
->>                 if (old)
->> --
->> 2.44.0
->>
-> OK, but rcu_read_lock() being held (incidentally by the caller) here
-> is not protecting the write operation,
-> so this looks wrong IMO.
+> On 4/1/2024 3:50 AM, Greg Wettstein wrote:
+> > From: "Dr. Greg" <greg@enjellic.com>
+> >
+> > The tsem.c file is the 'master' file in the TSEM implementation.
+> > It is responsible for initializing the LSM and providing
+> > the implementation of the security event handlers.
+> > ---
+> >  security/tsem/tsem.c | 2422 ++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 2422 insertions(+)
+> >  create mode 100644 security/tsem/tsem.c
+> >
+> > diff --git a/security/tsem/tsem.c b/security/tsem/tsem.c
+> > new file mode 100644
+> > index 000000000000..876ef1fa8012
+> > --- /dev/null
+> > +++ b/security/tsem/tsem.c
+> > @@ -0,0 +1,2422 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +/*
+> > + * Copyright (C) 2024 Enjellic Systems Development, LLC
+> > + * Author: Dr. Greg Wettstein <greg@enjellic.com>
+> > + *
+> > + * This file is the primary implementation file for the tsem LSM.
+> > + *
+> > + * It implements initialization and setup functions that interpret
+> > + * kernel command-line arguments and prepares TSEM for operation.
+> > + *
+> > + * In addition it contains all of the TSEM specific security event
+> > + * handlers that are responsible for handling the LSM events that TSEM
+> > + * models.
+> > + *
+> > + * Each TSEM event handler calls the tsem_allocate_event() function to
+> > + * allocate a structure that will be used to describe the event.  The
+> > + * CELL union of this structure contains various structures that are
+> > + * used to hold these parameters.
+> > + *
+> > + * Since the event characterization parameters need to be retained for
+> > + * the lifetime of the tsem_event structure that is allocated.  In the
+> > + * case of internally modeled namespaces this lifespan is the lifetime
+> > + * of the security modeling namespace.  In the case of externally
+> > + * modeled namespaces, the lifespan is until the security event
+> > + * description is exported to an external trust orchestrator.
+> > + *
+> > + * In order to support this model, the event description structures
+> > + * are typically composed of a union over 'in' and 'out' structures.
+> > + * The 'in' structures are used to hold arguments to the event handler
+> > + * that may only be relevant for the duration of the call.  These
+> > + * values are translated into members of the 'out' structure that
+> > + * retain the values until the end of the lifetime of the tsem_event
+> > + * structure.
+> > + *
+> > + * Each TSEM event handler is responsible for allocating a tsem_event
+> > + * structure and populating the appropriate CELL structure with the
+> > + * input characteristics of the event.  The dispatch_event() function
+> > + * is called to handle the modeling of the event.  This function
+> > + * returns the permission value that is returned as the result of the
+> > + * LSM event handler.
+> > + *
+> > + * The dispatch_event() calls the tsem_event_init() function that is
+> > + * responsible for translating the input parameters into values that
+> > + * will be retained for the lifetime of the security event
+> > + * description.  The populated event description is then dispatched to
+> > + * either the tsem_model_event() or the tsem_export_event() for
+> > + * modeling by either the internal TMA or by a TMA associated with an
+> > + * external trust orchestrator.
+
+> I'm not in favor of this level of indirection. Funneling all the LSM
+> hooks into a dispatcher that fans out to a 1 to 1 (or near enough it
+> doesn't make a difference) set of event handlers is just wasteful of
+> resources.
+
+You may have written that based on the documentation and before you
+got to the dispatch_event() function, here it is for the benefit of
+everyone following along at home:
+
+static int dispatch_event(struct tsem_event *ep)
+{
+	int retn = 0;
+	struct tsem_context *ctx = tsem_context(current);
+
+	retn = tsem_event_init(ep);
+	if (retn)
+		return retn;
+
+	if (unlikely(tsem_task_untrusted(current)))
+		return untrusted_task(ep);
+
+	if (!ctx->external)
+		retn = tsem_model_event(ep);
+	else
+		retn = tsem_export_event(ep);
+
+	tsem_event_put(ep);
+	return retn;
+}
+
+We didn't implement a separate function in order to implement the
+fanout, we implemented a separate dispatch function to consolidate
+common functionality so that we didn't have to replicate it 86 times.
+
+Would you advocate that we cut and paste the above into every handler?
+
+We have no objections to doing so but issues about code size and the
+like have been raised previously.
+
+> > + */
+> > +
+> > +#define LOCKED true
+> > +#define NOLOCK false
+
+> As you have these constants defined the first would indicate that a
+> lock is set, whereas the second indicates there is not a lock.  You
+> should either pair LOCKED with UNLOCKED or LOCK with NOLOCK.  Or
+> better yet, name your variables such that "true" and "false" are
+> reasonable descriptions of their states.
+
+We will change the constants to LOCK and NOLOCK, makes more sense.
+
+> > +
+> > +#include <linux/magic.h>
+> > +#include <linux/mman.h>
+> > +#include <linux/binfmts.h>
+> > +#include <linux/bpf.h>
+> > +#include <linux/mount.h>
+> > +#include <linux/security.h>
+> > +
+> > +#include "tsem.h"
+> > +
+> > +static const struct lsm_id tsem_lsmid = {
+> > +	.name = "tsem",
+> > +	.id = LSM_ID_TSEM,
+> > +};
+> > +
+> > +struct lsm_blob_sizes tsem_blob_sizes __ro_after_init = {
+> > +	.lbs_task = sizeof(struct tsem_task),
+> > +	.lbs_inode = sizeof(struct tsem_inode),
+> > +	.lbs_ipc = sizeof(struct tsem_ipc),
+> > +	.lbs_xattr_count = 1
+> > +};
+> > +
+> > +enum tsem_action_type tsem_root_actions[TSEM_EVENT_CNT] = {
+> > +	TSEM_ACTION_EPERM	/* Undefined. */
+> > +};
+> > +
+> > +static atomic64_t task_instance;
+> > +
+> > +static struct tsem_model root_model = {
+> > +	.point_lock = __SPIN_LOCK_INITIALIZER(root_model.point_lock),
+> > +	.point_list = LIST_HEAD_INIT(root_model.point_list),
+> > +	.point_end_mutex = __MUTEX_INITIALIZER(root_model.point_end_mutex),
+> > +
+> > +	.trajectory_lock = __SPIN_LOCK_INITIALIZER(root_model.trajectory_lock),
+> > +	.trajectory_list = LIST_HEAD_INIT(root_model.trajectory_list),
+> > +	.trajectory_end_mutex = __MUTEX_INITIALIZER(root_model.trajectory_end_mutex),
+> > +
+> > +	.forensics_lock = __SPIN_LOCK_INITIALIZER(root_model.forensics_lock),
+> > +	.forensics_list = LIST_HEAD_INIT(root_model.forensics_list),
+> > +	.forensics_end_mutex = __MUTEX_INITIALIZER(root_model.forensics_end_mutex),
+> > +
+> > +	.pseudonym_mutex = __MUTEX_INITIALIZER(root_model.pseudonym_mutex),
+> > +	.pseudonym_list = LIST_HEAD_INIT(root_model.pseudonym_list),
+> > +
+> > +	.mount_mutex = __MUTEX_INITIALIZER(root_model.mount_mutex),
+> > +	.mount_list = LIST_HEAD_INIT(root_model.mount_list)
+> > +};
+> > +
+> > +static struct tsem_context root_context;
+> > +
+> > +DEFINE_STATIC_KEY_TRUE(tsem_not_ready);
+> > +
+> > +static bool tsem_available __ro_after_init;
+> > +
+> > +static unsigned int magazine_size __ro_after_init = TSEM_ROOT_MAGAZINE_SIZE;
+> > +
+> > +static enum mode_type {
+> > +	FULL_MODELING,
+> > +	NO_ROOT_MODELING,
+> > +	EXPORT_ONLY
+> > +} tsem_mode __ro_after_init;
+> > +
+> > +static char *default_hash_function __ro_after_init;
+> > +
+> > +const char * const tsem_names[TSEM_EVENT_CNT] = {
+> > +	"undefined",
+> > +	"bprm_committed_creds",
+> > +	"task_kill",
+> > +	"task_setpgid",
+> > +	"task_getpgid",
+> > +	"task_getsid",
+> > +	"task_setnice",
+> > +	"task_setioprio",
+> > +	"task_getioprio",
+> > +	"task_prlimit",
+> > +	"task_setrlimit",
+> > +	"task_setscheduler",
+> > +	"task_getscheduler",
+> > +	"task_prctl",
+> > +	"file_open",
+> > +	"mmap_file",
+> > +	"file_ioctl",
+> > +	"file_lock",
+> > +	"file_fcntl",
+> > +	"file_receive",
+> > +	"unix_stream_connect",
+> > +	"unix_may_send",
+> > +	"socket_create",
+> > +	"socket_connect",
+> > +	"socket_bind",
+> > +	"socket_accept",
+> > +	"socket_listen",
+> > +	"socket_socketpair",
+> > +	"socket_sendmsg",
+> > +	"socket_recvmsg",
+> > +	"socket_getsockname",
+> > +	"socket_getpeername",
+> > +	"socket_setsockopt",
+> > +	"socket_shutdown",
+> > +	"ptrace_traceme",
+> > +	"kernel_module_request",
+> > +	"kernel_load_data",
+> > +	"kernel_read_file",
+> > +	"sb_mount",
+> > +	"sb_umount",
+> > +	"sb_remount",
+> > +	"sb_pivotroot",
+> > +	"sb_statfs",
+> > +	"move_mount",
+> > +	"shm_associate",
+> > +	"shm_shmctl",
+> > +	"shm_shmat",
+> > +	"sem_associate",
+> > +	"sem_semctl",
+> > +	"sem_semop",
+> > +	"syslog",
+> > +	"settime",
+> > +	"quotactl",
+> > +	"quota_on",
+> > +	"msg_queue_associate",
+> > +	"msg_queue_msgctl",
+> > +	"msg_queue_msgsnd",
+> > +	"msg_queue_msgrcv",
+> > +	"ipc_permission",
+> > +	"key_alloc",
+> > +	"key_permission",
+> > +	"netlink_send",
+> > +	"inode_create",
+> > +	"inode_link",
+> > +	"inode_unlink",
+> > +	"inode_symlink",
+> > +	"inode_mkdir",
+> > +	"inode_rmdir",
+> > +	"inode_mknod",
+> > +	"inode_rename",
+> > +	"inode_setattr",
+> > +	"inode_getattr",
+> > +	"inode_setxattr",
+> > +	"inode_getxattr",
+> > +	"inode_listxattr",
+> > +	"inode_removexattr",
+> > +	"inode_killpriv",
+> > +	"tun_dev_create",
+> > +	"tun_dev_attach_queue",
+> > +	"tun_dev_attach",
+> > +	"tun_dev_open",
+> > +	"bpf",
+> > +	"bpf_map",
+> > +	"bpf_prog",
+> > +	"ptrace_access_check",
+> > +	"capable",
+> > +	"capget",
+> > +	"capset"
+> > +};
+
+> You can't seriously be counting on this being a mapping to tsem
+> event numbers, with the event numbers being defined
+> elsewhere. You'll never be able to keep them in sync. You probably
+> want a structure here, with entries like
 >
-> Whenever we can not ensure a mutex/spinlock is held, we usually use
-> rcu_dereference_protected(XXX, 1),
-> and a comment might simply explain the reason we assert it is protected.
->
-> (We also could add a new boolean parameter, set to true or false
-> depending on the caller)
->
-> old = rcu_dereference_protected(sk_inet->inet_opt, from_socket_creation ||
->
->             lockdep_sock_is_held(sk));
->
+> 	{ "hook_name",	TSEM_EVENT_HOOK_NAME },
+
+It is clumsy but it doesn't seem like there is a good fix for the
+issue, other than documentation.
+
+The tsem_event_type enumeration constants are used to index the array
+of event names, so it doesn't seem like including the event type as
+part of a structure, in that array, buys us much, we would never have
+a purpose for referencing the type value in the array.
+
+We will place the enumerated event name as a comment alongside each
+event name.  We will also stick a comment on both the enumerated type
+and the description name indicating the requirement that if one
+changes the other needs to change as well.
+
+> > +
+> > +static const unsigned long pseudo_filesystems[] = {
+> > +	PROC_SUPER_MAGIC,
+> > +	SYSFS_MAGIC,
+> > +	DEBUGFS_MAGIC,
+> > +	TMPFS_MAGIC,
+> > +	DEVPTS_SUPER_MAGIC,
+> > +	BINFMTFS_MAGIC,
+> > +	SECURITYFS_MAGIC,
+> > +	SELINUX_MAGIC,
+> > +	SMACK_MAGIC,
+> > +	CGROUP_SUPER_MAGIC,
+> > +	CGROUP2_SUPER_MAGIC,
+> > +	NSFS_MAGIC,
+> > +	EFIVARFS_MAGIC
+> > +};
+> > +
+> > +static int __init set_magazine_size(char *magazine_value)
+> > +{
+> > +	if (kstrtouint(magazine_value, 0, &magazine_size))
+> > +		pr_warn("tsem: Failed to parse root cache size.\n");
+> > +
+> > +	if (!magazine_size) {
+> > +		pr_warn("tsem: Forcing non-zero cache size.\n");
+> > +		magazine_size = TSEM_ROOT_MAGAZINE_SIZE;
+> > +	}
+> > +
+> > +	pr_info("tsem: Setting default root cache size to %u.\n",
+> > +		magazine_size);
+> > +	return 1;
+> > +}
+> > +__setup("tsem_cache=", set_magazine_size);
+> > +
+
+> Why isn't this a void function?
+
+Change:
+static int __init set_magazine_size(char *magazine_value)
+To:
+static void __init set_magazine_size(char *magazine_value)
+
+And delete 'return 1';
+
+Then:
+
+make security/tsem/tsem.o
+  CALL    scripts/checksyscalls.sh
+  Descend objtool
+  INSTALL libsubcmd_headers
+  CC      security/tsem/tsem.o
+In file included from ./include/linux/printk.h:6,
+                 from ./include/asm-generic/bug.h:22,
+                 from ./arch/x86/include/asm/bug.h:87,
+                 from ./include/linux/bug.h:5,
+                 from ./include/linux/mmdebug.h:5,
+                 from ./include/linux/mm.h:6,
+                 from ./include/linux/mman.h:5,
+                 from security/tsem/tsem.c:56:
+security/tsem/tsem.c:238:24: error: initialization of 'int (*)(char *)' from incompatible pointer type 'void (*)(char *)' [-Werror=incompatible-pointer-types]
+  238 | __setup("tsem_cache=", set_magazine_size);
+      |                        ^~~~~~~~~~~~~~~~~
+./include/linux/init.h:343:32: note: in definition of macro '__setup_param'
+  343 |   = { __setup_str_##unique_id, fn, early }
+      |                                ^~
+security/tsem/tsem.c:238:1: note: in expansion of macro '__setup'
+  238 | __setup("tsem_cache=", set_magazine_size);
+      | ^~~~~~~
+security/tsem/tsem.c:238:24: note: (near initialization for '__setup_set_magazine_size.setup_func')
+  238 | __setup("tsem_cache=", set_magazine_size);
+      |                        ^~~~~~~~~~~~~~~~~
+./include/linux/init.h:343:32: note: in definition of macro '__setup_param'
+  343 |   = { __setup_str_##unique_id, fn, early }
+      |                                ^~
+security/tsem/tsem.c:238:1: note: in expansion of macro '__setup'
+  238 | __setup("tsem_cache=", set_magazine_size);
+      | ^~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [security/tsem/tsem.o] Error 1
+make[3]: *** [security/tsem] Error 2
+make[2]: *** [security] Error 2
+make[1]: *** [.] Error 2
+make: *** [__sub-make] Error 2
+
+Compilation exited abnormally with code 2 at Wed Apr 10 12:12:46
+
+> > +static int __init set_modeling_mode(char *mode_value)
+> > +{
+> > +	unsigned long mode = 0;
+> > +
+> > +	if (kstrtoul(mode_value, 0, &mode)) {
+> > +		pr_warn("tsem: Failed to parse modeling mode.\n");
+> > +		return 1;
+> > +	}
+> > +
+> > +	if (mode == 1)
+> > +		tsem_mode = NO_ROOT_MODELING;
+> > +	else if (mode == 2)
+> > +		tsem_mode = EXPORT_ONLY;
+> > +	else
+> > +		pr_warn("tsem: Unknown mode specified.\n");
+> > +}
+> > +__setup("tsem_mode=", set_modeling_mode);
+> > +
+
+> If you're ever going to have additional "modes" you probably want a
+> switch() rather than cascading if()s.  You seem generally aggressive
+> with defining meaningful constants.  It seems out of character that
+> you're using integer mode values instead of TSEM_MODE_CLOCKWISE and
+> TSEM_MODE_WIDDERSHINS, or whatever the modes are.
+
+After thinking a bit, the following may simplify things even more,
+with the addition of NO_MODE to the mode_type enumeration.
+
+static int __init set_modeling_mode(char *mode_value)
+{
+	unsigned long mode = 0;
+
+	if (kstrtoul(mode_value, 0, &mode)) {
+		pr_warn("tsem: Failed to parse modeling mode.\n");
+		return 1;
+	}
+
+	if (mode >= NO_MODE)
+		pr_warn("tsem: Unknown mode specified.\n");
+	else
+		tsem_mode = mode;
+	return 1;
+}
+
+> Repeating myself the once. If a function can only ever return
+> one value it should be a void function.
+
+It would appear, from above, that the __setup() macro assumes a value
+returning function.
+
+> > +static int __init set_default_hash_function(char *hash_function)
+> > +{
+> > +
+> > +	default_hash_function = hash_function;
+> > +	return 1;
+> > +}
+> > +__setup("tsem_digest=", set_default_hash_function);
+> > +
+> > +static bool bypass_event(void)
+> > +{
+> > +	if (tsem_mode == NO_ROOT_MODELING && !tsem_context(current)->id)
+> > +		return true;
+> > +	return false;
+> > +}
+> > +
+> > +static bool pseudo_filesystem(struct inode *inode)
+> > +{
+> > +	unsigned int lp;
+> > +
+> > +	for (lp = 0; lp < ARRAY_SIZE(pseudo_filesystems); ++lp)
+> > +		if (inode->i_sb->s_magic == pseudo_filesystems[lp])
+> > +			return true;
+> > +	return false;
+> > +}
+> > +
+> > +static int untrusted_task(struct tsem_event *ep)
+> > +{
+> > +	int retn = 0;
+> > +	struct tsem_context *ctx = tsem_context(current);
+> > +
+> > +	if (ctx->external) {
+> > +		retn = tsem_export_action(ep->event, ep->locked);
+> > +		if (retn)
+> > +			return retn;
+> > +	} else
+> > +		pr_warn("Untrusted event %s: model_ns=%lld, comm=%s, pid=%d\n",
+> > +			tsem_names[ep->event], ctx->id, current->comm,
+> > +			task_pid_nr(current));
+> > +
+> > +	if (ctx->actions[ep->event] == TSEM_ACTION_EPERM)
+> > +		retn = -EPERM;
+> > +	return retn;
+> > +}
+> > +
+> > +static int dispatch_event(struct tsem_event *ep)
+> > +{
+> > +	int retn = 0;
+> > +	struct tsem_context *ctx = tsem_context(current);
+> > +
+> > +	retn = tsem_event_init(ep);
+> > +	if (retn)
+> > +		return retn;
+> > +
+> > +	if (unlikely(tsem_task_untrusted(current)))
+> > +		return untrusted_task(ep);
+> > +
+> > +	if (!ctx->external)
+> > +		retn = tsem_model_event(ep);
+> > +	else
+> > +		retn = tsem_export_event(ep);
+> > +
+> > +	tsem_event_put(ep);
+> > +	return retn;
+> > +}
+> > +
+> > +static int tsem_file_open(struct file *file)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	struct tsem_event *ep;
+> > +
+> > +	if (static_branch_unlikely(&tsem_not_ready))
+> > +		return 0;
+> > +	if (bypass_event())
+> > +		return 0;
+> > +	if (unlikely(tsem_inode(inode)->status == TSEM_INODE_CONTROL_PLANE)) {
+> > +		if (capable(CAP_MAC_ADMIN))
+> > +			return 0;
+> > +		else
+> > +			return -EPERM;
+> > +	}
+> > +
+> > +	if (!S_ISREG(inode->i_mode))
+> > +		return 0;
+> > +	if (tsem_inode(inode)->status == TSEM_INODE_COLLECTING)
+> > +		return 0;
+> > +
+> > +	ep = tsem_event_allocate(TSEM_FILE_OPEN, NOLOCK);
+> > +	if (!ep)
+> > +		return -ENOMEM;
+> > +
+> > +	ep->CELL.file.in.file = file;
+> > +	ep->CELL.file.in.pseudo_file = pseudo_filesystem(inode);
+> > +
+> > +	return dispatch_event(ep);
+> > +}
+> > +
+> > +static int tsem_mmap_file(struct file *file, unsigned long prot,
+> > +			  unsigned long flags, unsigned long extra)
+> > +{
+> > +	struct inode *inode = NULL;
+> > +	struct tsem_event *ep;
+> > +
+> > +	if (static_branch_unlikely(&tsem_not_ready))
+> > +		return 0;
+> > +	if (bypass_event())
+> > +		return 0;
+> > +
+> > +	if (!file && !(prot & PROT_EXEC))
+> > +		return 0;
+> > +	if (file) {
+> > +		inode = file_inode(file);
+> > +		if (!S_ISREG(inode->i_mode))
+> > +			return 0;
+> > +		if (pseudo_filesystem(inode))
+> > +			return 0;
+> > +	}
+> > +
+> > +	ep = tsem_event_allocate(TSEM_MMAP_FILE, NOLOCK);
+> > +	if (!ep)
+> > +		return -ENOMEM;
+> > +
+> > +	ep->CELL.mmap_file.anonymous = file == NULL ? 1 : 0;
+> > +	ep->CELL.mmap_file.file.in.file = file;
+> > +	ep->CELL.mmap_file.prot = prot;
+> > +	ep->CELL.mmap_file.flags = flags;
+> > +
+> > +	return dispatch_event(ep);
+> > +}
+> > +
+> > +static int tsem_file_ioctl(struct file *file, unsigned int cmd,
+> > +			   unsigned long arg)
+> > +{
+> > +	struct tsem_event *ep;
+> > +
+> > +	if (bypass_event())
+> > +		return 0;
+> > +
+> > +	ep = tsem_event_allocate(TSEM_FILE_IOCTL, NOLOCK);
+> > +	if (!ep)
+> > +		return -ENOMEM;
+> > +
+> > +	ep->CELL.file.cmd = cmd;
+> > +	ep->CELL.file.in.file = file;
+> > +	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
+> > +
+> > +	return dispatch_event(ep);
+> > +}
+> > +
+> > +static int tsem_file_lock(struct file *file, unsigned int cmd)
+> > +{
+> > +	struct tsem_event *ep;
+> > +
+> > +	if (bypass_event())
+> > +		return 0;
+> > +
+> > +	ep = tsem_event_allocate(TSEM_FILE_LOCK, NOLOCK);
+> > +	if (!ep)
+> > +		return -ENOMEM;
+> > +
+> > +	ep->CELL.file.cmd = cmd;
+> > +	ep->CELL.file.in.file = file;
+> > +	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
+> > +
+> > +	return dispatch_event(ep);
+> > +}
+> > +
+> > +static int tsem_file_fcntl(struct file *file, unsigned int cmd,
+> > +			   unsigned long arg)
+> > +{
+> > +	struct tsem_event *ep;
+> > +
+> > +	if (static_branch_unlikely(&tsem_not_ready))
+> > +		return 0;
+> > +	if (bypass_event())
+> > +		return 0;
+> > +
+> > +	ep = tsem_event_allocate(TSEM_FILE_FCNTL, NOLOCK);
+> > +	if (!ep)
+> > +		return -ENOMEM;
+> > +
+> > +	ep->CELL.file.cmd = cmd;
+> > +	ep->CELL.file.in.file = file;
+> > +	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
+> > +
+> > +	return dispatch_event(ep);
+> > +}
+> > +
+> > +static int tsem_file_receive(struct file *file)
+> > +{
+> > +	struct tsem_event *ep;
+> > +
+> > +	if (bypass_event())
+> > +		return 0;
+> > +
+> > +	ep = tsem_event_allocate(TSEM_FILE_RECEIVE, NOLOCK);
+> > +	if (!ep)
+> > +		return -ENOMEM;
+> > +
+> > +	ep->CELL.file.in.file = file;
+> > +	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
+> > +
+> > +	return dispatch_event(ep);
+> > +}
+> > +
+> > +static int tsem_task_alloc(struct task_struct *new, unsigned long flags)
+> > +{
+> > +	struct tsem_task *old_task = tsem_task(current);
+> > +	struct tsem_task *new_task = tsem_task(new);
+> > +
+> > +	new_task->instance = old_task->instance;
+> > +	new_task->p_instance = old_task->instance;
+> > +
+> > +	new_task->trust_status = old_task->trust_status;
+> > +	new_task->context = old_task->context;
+> > +	memcpy(new_task->task_id, old_task->task_id, HASH_MAX_DIGESTSIZE);
+> > +	memcpy(new_task->p_task_id, old_task->task_id, HASH_MAX_DIGESTSIZE);
+> > +
+> > +	if (!new_task->context->id)
+> > +		return 0;
+> > +
+> > +	kref_get(&new_task->context->kref);
+> > +	memcpy(new_task->task_key, old_task->task_key, HASH_MAX_DIGESTSIZE);
+> > +	return 0;
+> > +}
+> > +
+> > +static void tsem_task_free(struct task_struct *task)
+> > +{
+> > +	struct tsem_context *ctx = tsem_context(task);
+> > +
+> > +	if (!ctx->id)
+> > +		return;
+> > +	tsem_ns_put(ctx);
+
+> 	if (ctx->id)
+> 		tsem_ne_put(ctx);
+> 
+> One less line of code.
+
+Good catch, we usually try to spot those opportunities.
+
+... [ code lacking review comments removed ] ...
+
+Again, thank you for the comments, we appreciate them.
+
+Have a good remainder of the week.
+
+As always,
+Dr. Greg
+
+   The Quixote Project - Flailing at the Travails of Cybersecurity
+		  https://github.com/Quixote-Project
+
+
