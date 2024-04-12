@@ -1,151 +1,283 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBBE13BC34
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2024 15:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C50148301
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2024 15:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712936300; cv=none; b=Nuu2Yj7h204VGn4zIHLnxkwKyMNNIiQCjfVsgy7P4Rth1bvQMp2OSbO7CJOvGcgI3z74d9FjV3td6aM0fxiTwMUQqKvAF17WlbJBq4458saK3yE6USoRMmyBBhFdp2q6Sgq9m6lAg6Yo2CZTW7LunsICMLHc605Lz09bxTgNoGs=
+	t=1712936505; cv=none; b=MaANittcOphYnWFASA4z280rSP1sqdMSi11OYCHikklzzwuPIZClroxX1ai0yEirtyCmV2+/R0PeNiELtA8ovC+Sh1rdFD0XPUku+T+7zznoDQP+p9tRuXEaHDXceIN+t3EL5/4qPWW783CUl2WhEfOafrc4LjdJdYHMKcECk4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712936300; c=relaxed/simple;
-	bh=feaXepO6mCcRDgHe5YC62zkfeh1WyMJRpN3oTbKTR1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KpG6KpvQm66aZ8WmXSpLopMDs/8mokJ9EHIxWKoiKGP6nYcX/a3L9hEIVMSVsyDZqG9eQoppAwxsGMFuKG5lZlQXLj6RnB4JIjoBiyZhLjPf4kbpb6aMnfoWjpTK+wFsKuXHFFXQykb0/rLkBg11s4sqxai068rLlKTRnO1GFvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DOQiydPs; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1712936505; c=relaxed/simple;
+	bh=ltpldv20m8mKDyTh2QLhHxncVLR3ocLNjfeoAoBCP4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axvylgm1KiPokRAOWreNB7xeEc7o4rIGS/3mSKqrkhXIvIWOyor0hlNIuxhixb4MQ53Ql7lco4eLgAciVhWAcZgGtzLvA8c/03nBX6b8+SoiKdoxwUrFstlL82EAqPb/dTmwClJetw+5z1CPOeLfQKMEsnEHy5RaDeiEbC4V8Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qpuJWG1p; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DOQiydPs"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-61587aa956eso9831717b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2024 08:38:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1712936296; x=1713541096; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fRsLhmspJrGAlI8VzBOaMngZDHCKYEewxjKZbuVmGJo=;
-        b=DOQiydPs5heo40A6ZpiHcdhwTS2mfVMwVFTusHpDOVfUJlNTlV/O4PgS7NDNiPY2Te
-         /v1II6WyRg/jGTbgXpKkEW/QEcnMMekUkhrGMMCT8pggwC4RxuE16t6oZEGQxX951wk0
-         O7cyBFvwlQHR//l7ajRA4hi6pLARioULhEN663Bm5g1T3FsEOPuKGRl9f5Lk1utUuGPD
-         k5x883XPAUF/9h22YnxZmea/FlNoOCqwY3MFNOhDEcOBdB8L5pZyN8epT4MVkfiRUQoe
-         2JPPdQ15eubsW4hrHrPSEiN0w3HLtTQq3Q/H0REpgIivj0P/HNIfVzzvqMb/NpiELeIF
-         cR0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712936296; x=1713541096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fRsLhmspJrGAlI8VzBOaMngZDHCKYEewxjKZbuVmGJo=;
-        b=LoU/RTRPL26O1SdRbqMnfwsQRbA90s1F9l7MHjl//S+FQDPffALcstdGNFf9VaZqGl
-         v4nvC2+BuJeMrVzTIxnq9uzCZ+/Yz9kGbO55GgJ1UAYVcWOUlf+QALkW7TXAKljyHRPJ
-         qGagaSGnEXSS5wc1ZVN0fXm3w9YPXy3IKwq1cVJU/pA7SY+iGCZAEKe9Bhq0Mq+2Kwp+
-         MDvlt9ihCstG+E9jH9nSYK7oH/lnqWQmfG0j4IFT7Ne136YY/V3UoHXWW8Fv6kNh57//
-         SLQdidPvbGgSawyv/MwVDd3pOVGfnfAERomvX2gEp5Awy722m1F8dxHxa2Ry1Aax0pzb
-         62Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU++tsWa1XehbnxNDZ2CNcEYJ+lqYHGBZqxh/TIKyLknAEI9BabOJse+ciIgqUKokn8LRh3SsEf6GfdUSpQWvWy4GwQ1YB/SkCfSFGU3LQDYJRXa92f
-X-Gm-Message-State: AOJu0Yxx83MVbGCaMxJIK4iZSGjpH6mkNewGv1N456bT8/cLGEMFtvY0
-	74rfrg/7fREED/NQU0YI1Eggb9wScdpVwBvV1rTOhbECoZDDmigmbhISF+mQFkiX+4oFCOCof8w
-	5FbaJvzBc3OkNZ4xLhmI752lDpM7uGutDeEVU
-X-Google-Smtp-Source: AGHT+IHGk9GUlGOTcnEZDYfJjj7QEfDwKDa2s/bpxEAk9fg7DLcA+nzBug9hzKR0y9xbh9qoLjYXcchA/vnqHeA8iEg=
-X-Received: by 2002:a0d:d4ca:0:b0:615:f53:64de with SMTP id
- w193-20020a0dd4ca000000b006150f5364demr2773367ywd.29.1712936295896; Fri, 12
- Apr 2024 08:38:15 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qpuJWG1p"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VGLQW2n4DzHmL;
+	Fri, 12 Apr 2024 17:41:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1712936499;
+	bh=ltpldv20m8mKDyTh2QLhHxncVLR3ocLNjfeoAoBCP4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qpuJWG1pkRY9dDvX0IxIKZF+uILKHVp697FDqEsGjnBtWdby0B3rPNMngoQmMDFTp
+	 jjcDmnxCE2h72y/v+C+dutuuAjNBrfRy62OPxH2Q1pxbgYfKkRHVmV2w3Jvbx36dh0
+	 oV5DRTUdt+5VGU+GTC5pCxsTHTn6sbT8auNMYWOw=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VGLQV5zqkzsWV;
+	Fri, 12 Apr 2024 17:41:38 +0200 (CEST)
+Date: Fri, 12 Apr 2024 17:41:38 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Subject: Re: [RFC PATCH v1 01/10] landlock: Support socket access-control
+Message-ID: <20240412.VeKuuY4ohG6e@digikod.net>
+References: <20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com>
+ <20240408093927.1759381-2-ivanov.mikhail1@huawei-partners.com>
+ <ZhRKOTmoAOuwkujB@google.com>
+ <a7e8f467-036c-a3e0-e26b-b5ba966b4e9e@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240207124918.3498756-4-kpsingh@kernel.org> <a6689b0b5564461b829a18379eb3e83f@paul-moore.com>
- <492036A7-4944-4225-B045-3C2F79DBEA31@kernel.org>
-In-Reply-To: <492036A7-4944-4225-B045-3C2F79DBEA31@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 12 Apr 2024 11:39:02 -0400
-Message-ID: <CAHC9VhTN-H1m01BZ2Z_W_roTEeUGf-k=_YmOb-12ZNJ_996foA@mail.gmail.com>
-Subject: Re: [PATCH v9 3/4] security: Replace indirect LSM hook calls with
- static calls
-To: KP Singh <kpsingh@kernel.org>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Kees Cook <keescook@chromium.org>, Casey Schaufler <casey@schaufler-ca.com>, song@kernel.org, 
-	daniel@iogearbox.net, ast@kernel.org, pabeni@redhat.com, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a7e8f467-036c-a3e0-e26b-b5ba966b4e9e@huawei-partners.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Apr 11, 2024 at 3:12=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
-:
-> > On 11 Apr 2024, at 02:38, Paul Moore <paul@paul-moore.com> wrote:
-> > On Feb  7, 2024 KP Singh <kpsingh@kernel.org> wrote:
-> >>
-> >> LSM hooks are currently invoked from a linked list as indirect calls
-> >> which are invoked using retpolines as a mitigation for speculative
-> >> attacks (Branch History / Target injection) and add extra overhead whi=
-ch
-> >> is especially bad in kernel hot paths:
+Thanks Ivanov, this looks really good!  Let me some time to review the
+rest.
 
-...
+You can add this tag to the commit message (as reference and
+documentation):
+Closes: https://github.com/landlock-lsm/linux/issues/6
 
-> > Beyond that, let's find a way to use static calls in the LSM hooks
-> > which don't use the call_{int,void}_hook() macros.  If we're going to d=
-o
-> > this to help close some attack vectors, let's make sure we do the
-> > conversion everywhere.
->
-> This is surely doable, We can unroll the loop individually in these separ=
-ate hooks. It would need separate
->
-> LSM_LOOP_UNROLL(__CALL_STATIC_xfrm_state_pol_flow_match, x, xp file)
->
-> Would you be okay if we do it in a follow up series? These are special ho=
-oks and I don't want to introduce any subtle logical bugs when fixing poten=
-tial speculative side channels (Which could be fixed with retpolines, prope=
-r flushing at privilege changes etc).
+On Thu, Apr 11, 2024 at 06:16:31PM +0300, Ivanov Mikhail wrote:
+> Hello! Big thanks for your review and ideas :)
+> 
+> P.S.: Sorry, previous mail was rejected by linux mailboxes
+> due to HTML formatting.
+> 
+> 4/8/2024 10:49 PM, Günther Noack wrote:
+> > Hello!
+> > 
+> > Just zooming in on what I think are the most high level questions here,
+> > so that we get the more dramatic changes out of the way early, if needed.
+> > 
+> > On Mon, Apr 08, 2024 at 05:39:18PM +0800, Ivanov Mikhail wrote:
+> > > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > > index 25c8d7677..8551ade38 100644
+> > > --- a/include/uapi/linux/landlock.h
+> > > +++ b/include/uapi/linux/landlock.h
+> > > @@ -37,6 +37,13 @@ struct landlock_ruleset_attr {
+> > >   	 * rule explicitly allow them.
+> > >   	 */
+> > >   	__u64 handled_access_net;
+> > > +
+> > > +	/**
+> > > +	 * @handled_access_net: Bitmask of actions (cf. `Socket flags`_)
+> >                             ^^^
+> > 			   Typo
+> > 
+> 
+> Thanks, will be fixed.
+> 
+> > > +	 * that is handled by this ruleset and should then be forbidden if no
+> > > +	 * rule explicitly allow them.
+> > > +	 */
+> > > +	__u64 handled_access_socket;
+> > 
+> > What is your rationale for introducing and naming this additional field?
+> > 
+> > I am not convinced that "socket" is the right name to use in this field,
+> > but it is well possible that I'm missing some context.
+> > 
+> > * If we introduce this additional field in the landlock_ruleset_attr, which
+> >    other socket-related operations will go in the remaining 63 bits?  (I'm having
+> >    a hard time coming up with so many of them.)
+> 
+> If i understood correctly Mickaël suggested saving some space for
+> actions related not only to creating sockets, but also to sending
+> and receiving socket FDs from another processes, marking pre-sandboxed
+> sockets as allowed or denied after sandboxing [2]. This may be necessary
+> in order to achieve complete isolation of the sandbox, which will be
+> able to create, receive and send sockets of specific protocols.
+> 
+> In future this field may become more generic by including rules for
+> other entities with similar actions (e.g. files, pipes).
 
-I'm okay if you want to do it in a separate patch, but I would like to
-see it included in the same patchset.  The good news is that recent
-commits have significantly reduced the number of cases where we aren't
-using the macros.
+I think it would make sense to have one field per file kind (not
+necessarily type) because not all actions would make sense.
 
-> >> @@ -846,29 +906,41 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uct=
-x, size_t *uctx_len,
-> >>  * call_int_hook:
-> >>  * This is a hook that returns a value.
-> >>  */
-> >> +#define __CALL_STATIC_VOID(NUM, HOOK, ...)      \
-> >> +do {      \
-> >> + if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) { =
-   \
-> >
-> > I'm not a fan of the likely()/unlikely() style markings/macros in cases
-> > like this as it can vary tremendously.  Drop the likely()/unlikely()
-> > checks and just do a static_call().
-> >
->
-> These are actually not the the classical likely, unlikely macros which ar=
-e just hints to the compiler:
->
-> #define likely(x) __builtin_expect(!!(x), 1)
-> #define unlikely(x) __builtin_expect(!!(x), 0
->
->
-> but a part of the static keys API which generates jump tables and the cod=
-e generated depends on the (default state, likelyhood). It could have been =
-named better, all we need is to have a jump table so that we can optimize t=
-his extra branch in hotpaths, in one direction.
->
->    https://www.kernel.org/doc/Documentation/static-keys.txt
->
->
-> If you want I can put this behind a macro:
->
->
-> #define LSM_HOOK_ACTIVE(HOOK, NUM) static_branch_unlikely(&SECURITY_HOOK_=
-ACTIVE_KEY(HOOK, NUM)
->
-> the static_branch_likely / static_branch_unlikey actually does not matter=
- much here, because without this we have a conditional branch and an extra =
-load.
+> 
+> I think it is good approach, but we should discuss this design before
+> generalizing the name. For now `handled_access_socket` can be a good
+> name for actions related to accessing specific sockets (protocols).
+> What do you think?
 
-Fair enough, leave it as-is.  Thanks for the explanation.
+I'm OK with this name for now unless someone has a better proposition.
 
---=20
-paul-moore.com
+> 
+> [2]
+> https://lore.kernel.org/all/b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net/
+> 
+> > 
+> > * Should this have a more general name than "socket", so that other planned
+> >    features from the bug tracker [1] fit in?
+> 
+> I have not found any similar features for our case. Do you have any in
+> mind?
+> 
+> > 
+> > The other alternative is of course to piggy back on the existing
+> > handled_access_net field, whose name already is pretty generic.
+
+handled_access_net is indeed quite generic, but the question is: would
+this new access right make sense for the net_port rule?  In the case of
+socket creation, this is not the case because we don't know at this time
+which port will be used.
+
+> > 
+> > For that, I believe we would need to clarify in struct landlock_net_port_attr
+> > which exact values are permitted there.
+
+Potentially anything that would be possible to check against a port.
+
+> > 
+> > I imagine you have considered this approach?  Are there more reasons why this
+> > was ruled out, which I am overlooking?
+> > 
+> > [1] https://github.com/orgs/landlock-lsm/projects/1/views/1
+> > 
+> > 
+> 
+> Currently `handled_access_net` stands for restricting actions for
+> specific network protocols by port values: LANDLOCK_ACCESS_NET_BIND_TCP,
+> LANDLOCK_ACCESS_NET_SEND_UDP (possibly will be added with UDP feature
+> [3]).
+> 
+> I dont think that complicating semantics with adding fields for
+> socket_create()-like actions would fit well here. Purpose of current
+> patch is to restrict usage of unwanted protocols, not to add logic
+> to restrict their actions. In addition, it is worth considering that we
+> want to restrict not only network protocols (e.g. Bluetooth).
+
+Correct.  It's worth it mentionning this rationale in the patch
+description.
+
+> 
+> [3] https://github.com/landlock-lsm/linux/issues/1
+> 
+> > > @@ -244,4 +277,20 @@ struct landlock_net_port_attr {
+> > >   #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> > >   #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> > >   /* clang-format on */
+> > > +
+> > > +/**
+> > > + * DOC: socket_acess
+> > > + *
+> > > + * Socket flags
+> > > + * ~~~~~~~~~~~~~~~~
+> > 
+> > Mega-Nit: This ~~~ underline should only be as long as the text above it ;-)
+> > You might want to fix it for the "Network Flags" headline as well.
+> > 
+> 
+> Ofc, thanks!
+> 
+> > > + *
+> > > + * These flags enable to restrict a sandboxed process to a set of
+> > > + * socket-related actions for specific protocols. This is supported
+> > > + * since the Landlock ABI version 5.
+> > > + *
+> > > + * - %LANDLOCK_ACCESS_SOCKET_CREATE: Create a socket
+> > > + */
+> > 
+> > 
+> > > diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> > > index c7f152678..f4213db09 100644
+> > > --- a/security/landlock/ruleset.h
+> > > +++ b/security/landlock/ruleset.h
+> > > @@ -92,6 +92,12 @@ enum landlock_key_type {
+> > >   	 * node keys.
+> > >   	 */
+> > >   	LANDLOCK_KEY_NET_PORT,
+> > > +
+> > > +	/**
+> > > +	 * @LANDLOCK_KEY_SOCKET: Type of &landlock_ruleset.root_socket's
+> > > +	 * node keys.
+> > > +	 */
+> > > +	LANDLOCK_KEY_SOCKET,
+> > >   };
+> > >   /**
+> > > @@ -177,6 +183,15 @@ struct landlock_ruleset {
+> > >   	struct rb_root root_net_port;
+> > >   #endif /* IS_ENABLED(CONFIG_INET) */
+> > > +	/**
+> > > +	 * @root_socket: Root of a red-black tree containing &struct
+> > > +	 * landlock_rule nodes with socket type, described by (domain, type)
+> > > +	 * pair (see socket(2)). Once a ruleset is tied to a
+> > > +	 * process (i.e. as a domain), this tree is immutable until @usage
+> > > +	 * reaches zero.
+> > > +	 */
+> > > +	struct rb_root root_socket;
+> > 
+> > The domain is a value between 0 and 45,
+> > and the socket type is one of 1, 2, 3, 4, 5, 6, 10.
+> > 
+> > The bounds of these are defined with AF_MAX (include/linux/socket.h) and
+> > SOCK_MAX (include/linux/net.h).
+> > 
+> > Why don't we just combine these two numbers into an index and create a big bit
+> > vector here, like this:
+> > 
+> >      socket_type_mask_t socket_domains[AF_MAX];
+> > 
+> > socket_type_mask_t would need to be typedef'd to u16 and ideally have a static
+> > check to test that it has more bits than SOCK_MAX.
+> > 
+> > Then you can look up whether a socket creation is permitted by checking:
+> > 
+> >      /* assuming appropriate bounds checks */
+> >      if (dom->socket_domains[domain] & (1 << type)) { /* permitted */ }
+> > 
+> > and merging the socket_domains of two domains would be a bitwise-AND.
+> > 
+> > (We can also cram socket_type_mask_t in a u8 but it would require mapping the
+> > existing socket types onto a different number space.)
+> > 
+> 
+> I chose rbtree based on the current storage implementation in fs,net and
+> decided to leave the implementation of better variants in a separate
+> patch, which should redesign the entire storage system in Landlock
+> (e.g. implementation of a hashtable for storing rules by FDs,
+> port values) [4].
+> 
+> Do you think that it is bad idea and more appropriate storage for socket
+> rules(e.g. what you suggested) should be implemented by current patch?
+
+Günther's suggestion would be a good optimization, but I agree that it
+should be part of another series.  We also need to keep in mind that the
+layer level should be known for audit and debugging reasons.
+
+> 
+> [4] https://github.com/landlock-lsm/linux/issues/1
+> 
+> > 
+> > As I said before, I am very excited to see this patch.
+> > 
+> > I think this will unlock a tremendous amount of use cases for many programs,
+> > especially for programs that do not use networking at all, which can now lock
+> > themselves down to guarantee that with a sandbox.
+> > 
+> > Thank you very much for looking into it!
+
+Same :)
