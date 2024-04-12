@@ -1,138 +1,392 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A014153E14
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2024 08:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FFD147C9D
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2024 15:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712912040; cv=none; b=iW96gce3ku0NeuZU29HKLdGPscFdD3GOdtvOSJzWxtcNPc+xcQ72nQFw3KeiSHdu36catAe6X+EVt0xP1A5XSo4O0sm215pPX9LWz8o4T3QalU1ogOTt01g5JfwtOi5RZw7U2osNlIAea1ac2qf9UtA/dFeQYSHLWGBei1pYSy0=
+	t=1712935038; cv=none; b=ZzNlHkJfuOExC98c7Ex1P7+MXdI48Ndy1HlvtOpeAcFoDHspDqX34SX5Car/H4YC8r/6gkI7r7cgTHlS/VFydk38Mex8a7zX4SGs4rijlS+QJlHo+4CYHdJhdoD6a4whMTL18feNmm43T8gZycfYwd/IK3faJ9+YXF1N/qiqCx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712912040; c=relaxed/simple;
-	bh=Rm+Jhy2CPEMYHiZu4p8My94JcsMyZsaQrqOVLaEHKfU=;
+	s=arc-20240116; t=1712935038; c=relaxed/simple;
+	bh=+0KStpb7b5a8X8lEEZqVzAXPx047W+cfVXYsAnt1oSo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VyvYqy6stsjCvXAtMLrwUnshTpnzXG3geWa55DyxndWJZSgTCy7wuFgFGfKXIYUoNdXS6HJjQFT0PNKGLnegFQAW+y9sfGn4EfGcPAZYLOEIk0oMWW7J3FdRjH5xdrcUDZJDd+Tl2Rche3sMwIgwWWKb8gNK2boAK9TPHGDe7bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NhvAawsX; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVomLMPw3UfuFuC+5nMyF6pG5MPJk6h/h4PwRR7KdK/QHyjs2F352UteQr648GoiQle0D6d6NIuuPLMz9CbyxKekyrnX3SfDIst7vkUFz4Y2TQTEsOFNmzGGTiSv+KqpDPMGBIwlZbPmUQ4tm+wSVXmTmteKRvIGy6THNg5b3Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=joUN0210; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NhvAawsX"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d6ff0422a2so7142371fa.2
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2024 01:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1712912036; x=1713516836; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9HCv5WXEXkcM3e4s9GxwuVLanaiJtfT2xDBOPBy8Ztg=;
-        b=NhvAawsXAsmL6+8taXeMueUTUfIHzdon+4e/rTZ6ouZTW+kmC81lcsWljfmwwHOZZg
-         xjpPpXq+oboTBP7LL2PBd0+Q0TogBbcOdveJSXUtoh6RybXjPcOvPwGR5c69VP1dm8DB
-         C6WdVZBXfO9tDFEIB6BnME05LPMCOFiPW6N0Qi8VNukFV4tC5vvnffESY5PN+mBA8BNt
-         QdG4K0ZPIH+tHDk2PFsG2D3etLwI7PP6+E6qD8pyGHRANcKfJtJbf+tp4xPbAeiRRpqT
-         hNgvqw24AzWDQdINb+cUAJ0vVr07db/EiyTOcNfXBvLeD+uqvArd1Oylj1bdGpCl9Gks
-         /DbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712912036; x=1713516836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9HCv5WXEXkcM3e4s9GxwuVLanaiJtfT2xDBOPBy8Ztg=;
-        b=afhSQQRvOhi4FZw3L9y7wV7yYJUQ8FA0wXfEN5t/KwEEb0otAyY4HyHO0hRuhUcVZy
-         KRK9wYesNUvb10kPazy0I/iWdJVmvFid9y8bE6H1rDW8ruzdxe9eGSyi24yHO71mG1Kr
-         bxkYePUsTsdFrfJ7T3jQ38eNBjytObYpux2Zc7hRbYnkU3d9mt1/1fmpS2tfdYVfjCJQ
-         q04elu/0MYhN/lGUXEsBF8KLSRuxmNSMCPYGEjVyl3aZWLSYdj6bCJdZaQ7YYL/ugtbI
-         5aaaXtMCIS2PyLQabuZHfUxgq0XwVUgh2kTfhpCsHNy5vUvWu/85MqE5z/QH5jd394fZ
-         S04Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXOHYM90UXKBRNdGwvUfKP1+vMVRlujpECkfD3sYSP3c7SPODj98bTPuuuuESmBlj1CQ8ouZwHfe5yoNfE7nuubYRRqyoDTaXoICr1QRJM50jeYaqAu
-X-Gm-Message-State: AOJu0Yyk9llUz1E42AfQumaBD4tSogI9BI6544L2UcnJqiF9RmyAyg8Q
-	6MFdafwI6QMyzugOrNWQih1qxqXERWvmSh/fmP8m0g1RHbBRhbfpq5kkMxAgsHk=
-X-Google-Smtp-Source: AGHT+IFSyvhmvV600yckuR3RXXhnT/HiMaiPPbLP9Bpktx86rW2y3WG1OuM9vSWWo5pDGj5dTLztzA==
-X-Received: by 2002:a05:651c:205c:b0:2d9:eb66:6d39 with SMTP id t28-20020a05651c205c00b002d9eb666d39mr1130573ljo.19.1712912035823;
-        Fri, 12 Apr 2024 01:53:55 -0700 (PDT)
-Received: from u94a ([2401:e180:8863:5c39:2e5:46b1:443c:b5c1])
-        by smtp.gmail.com with ESMTPSA id z184-20020a6265c1000000b006ed4c430acesm2522658pfb.40.2024.04.12.01.53.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Apr 2024 01:53:55 -0700 (PDT)
-Date: Fri, 12 Apr 2024 16:53:35 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: Xu Kuohai <xukuohai@huaweicloud.com>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Dave Thaler <dthaler1968@googlemail.com>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Brendan Jackman <jackmanb@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Khadija Kamran <kamrankhadijadj@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	John Johansen <john.johansen@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>, 
-	bpf@ietf.org, David Vernet <void@manifault.com>
-Subject: Re: [PATCH bpf-next v3 06/11] bpf: Fix compare error in function
- retval_range_within
-Message-ID: <m3pwq4fhoh4pecl5mahz7fhjiav4atebtbr22jfk4eqqq5hiya@g3vsc2zqlcy6>
-References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
- <20240411122752.2873562-7-xukuohai@huaweicloud.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="joUN0210"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VGKt65DstzB00;
+	Fri, 12 Apr 2024 17:17:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1712935022;
+	bh=+0KStpb7b5a8X8lEEZqVzAXPx047W+cfVXYsAnt1oSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=joUN0210VKBZ6myOBUpY+lc7TkAWOTz+tCIkO0bePS64Um1xmA00qjhPdv63RdXY5
+	 YaP93LS15IX8hrmAfa7xulAx0CJX2l9e2f+DifsVATNHiCeYsBNnMekebDPIlh+IHX
+	 pbvzh7RCfoJoTZMNH5XfsJ4dqMtPxjDxBXiZa5Ms=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VGKt40rWPz5Ff;
+	Fri, 12 Apr 2024 17:17:00 +0200 (CEST)
+Date: Fri, 12 Apr 2024 17:16:59 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v14 02/12] landlock: Add IOCTL access right for character
+ and block devices
+Message-ID: <20240412.autaiv1NiRiX@digikod.net>
+References: <20240405214040.101396-1-gnoack@google.com>
+ <20240405214040.101396-3-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240411122752.2873562-7-xukuohai@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240405214040.101396-3-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Apr 11, 2024 at 08:27:47PM +0800, Xu Kuohai wrote:
-> [...]
-> 24: (b4) w0 = -1                      ; R0_w=0xffffffff
-> ; int BPF_PROG(test_int_hook, struct vm_area_struct *vma, @ lsm.c:89
-> 25: (95) exit
-> At program exit the register R0 has smin=4294967295 smax=4294967295 should have been in [-4095, 0]
+I like this patch very much! This patch series is in linux-next and I
+don't expect it to change much. Just a few comments below and for test
+patches.
+
+The only remaining question is: should we allow non-device files to
+receive the LANDLOCK_ACCESS_FS_IOCTL_DEV right?
+
+On Fri, Apr 05, 2024 at 09:40:30PM +0000, Günther Noack wrote:
+> Introduces the LANDLOCK_ACCESS_FS_IOCTL_DEV right
+> and increments the Landlock ABI version to 5.
 > 
-> It can be seen that instruction "w0 = -1" zero extended -1 to 64-bit
-> register r0, setting both smin and smax values of r0 to 4294967295.
-> This resulted in a false reject when r0 was checked with range [-4095, 0].
+> This access right applies to device-custom IOCTL commands
+> when they are invoked on block or character device files.
 > 
-> Given bpf_retval_range is a 32-bit range, this patch fixes it by
-> changing the compare between r0 and return range from 64-bit
-> operation to 32-bit operation.
+> Like the truncate right, this right is associated with a file
+> descriptor at the time of open(2), and gets respected even when the
+> file descriptor is used outside of the thread which it was originally
+> opened in.
 > 
-> Fixes: 8fa4ecd49b81 ("bpf: enforce exact retval range on subprog/callback exit")
-> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+> Therefore, a newly enabled Landlock policy does not apply to file
+> descriptors which are already open.
+> 
+> If the LANDLOCK_ACCESS_FS_IOCTL_DEV right is handled, only a small
+> number of safe IOCTL commands will be permitted on newly opened device
+> files.  These include FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC, as well
+> as other IOCTL commands for regular files which are implemented in
+> fs/ioctl.c.
+> 
+> Noteworthy scenarios which require special attention:
+> 
+> TTY devices are often passed into a process from the parent process,
+> and so a newly enabled Landlock policy does not retroactively apply to
+> them automatically.  In the past, TTY devices have often supported
+> IOCTL commands like TIOCSTI and some TIOCLINUX subcommands, which were
+> letting callers control the TTY input buffer (and simulate
+> keypresses).  This should be restricted to CAP_SYS_ADMIN programs on
+> modern kernels though.
+> 
+> Known limitations:
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL_DEV access right is a coarse-grained
+> control over IOCTL commands.
+> 
+> Landlock users may use path-based restrictions in combination with
+> their knowledge about the file system layout to control what IOCTLs
+> can be done.
+> 
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Günther Noack <gnoack@google.com>
 > ---
->  kernel/bpf/verifier.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  include/uapi/linux/landlock.h                |  38 +++-
+>  security/landlock/fs.c                       | 221 ++++++++++++++++++-
+
+You contributed a lot and you may want to add a copyright in this file.
+
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   8 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+>  6 files changed, 259 insertions(+), 17 deletions(-)
 > 
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 05c7c5f2bec0..5393d576c76f 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -9879,7 +9879,7 @@ static bool in_rbtree_lock_required_cb(struct bpf_verifier_env *env)
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 25c8d7677539..68625e728f43 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -128,7 +128,7 @@ struct landlock_net_port_attr {
+>   * files and directories.  Files or directories opened before the sandboxing
+>   * are not subject to these restrictions.
+>   *
+> - * A file can only receive these access rights:
+> + * The following access rights apply only to files:
+>   *
+>   * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
+>   * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
+> @@ -138,12 +138,13 @@ struct landlock_net_port_attr {
+>   * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
+>   * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
+>   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+> - *   ``O_TRUNC``. Whether an opened file can be truncated with
+> - *   :manpage:`ftruncate(2)` is determined during :manpage:`open(2)`, in the
+> - *   same way as read and write permissions are checked during
+> - *   :manpage:`open(2)` using %LANDLOCK_ACCESS_FS_READ_FILE and
+> - *   %LANDLOCK_ACCESS_FS_WRITE_FILE. This access right is available since the
+> - *   third version of the Landlock ABI.
+> + *   ``O_TRUNC``.  This access right is available since the third version of the
+> + *   Landlock ABI.
+> + *
+> + * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+> + * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+> + * read and write permissions are checked during :manpage:`open(2)` using
+> + * %LANDLOCK_ACCESS_FS_READ_FILE and %LANDLOCK_ACCESS_FS_WRITE_FILE.
+>   *
+>   * A directory can receive access rights related to files or directories.  The
+>   * following access right is applied to the directory itself, and the
+> @@ -198,13 +199,33 @@ struct landlock_net_port_attr {
+>   *   If multiple requirements are not met, the ``EACCES`` error code takes
+>   *   precedence over ``EXDEV``.
+>   *
+> + * The following access right applies both to files and directories:
+> + *
+> + * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on an opened
+> + *   character or block device.
+> + *
+> + *   This access right applies to all `ioctl(2)` commands implemented by device
+> + *   drivers.  However, the following common IOCTL commands continue to be
+> + *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
+> + *
+> + *   * IOCTL commands targeting file descriptors (``FIOCLEX``, ``FIONCLEX``),
+> + *   * IOCTL commands targeting file descriptions (``FIONBIO``, ``FIOASYNC``),
+> + *   * IOCTL commands targeting file systems (``FIFREEZE``, ``FITHAW``,
+> + *     ``FIGETBSZ``, ``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``)
+> + *   * Some IOCTL commands which do not make sense when used with devices, but
+> + *     whose implementations are safe and return the right error codes
+> + *     (``FS_IOC_FIEMAP``, ``FICLONE``, ``FICLONERANGE``, ``FIDEDUPERANGE``)
+> + *
+> + *   This access right is available since the fifth version of the Landlock
+> + *   ABI.
+> + *
+>   * .. warning::
+>   *
+>   *   It is currently not possible to restrict some file-related actions
+>   *   accessible through these syscall families: :manpage:`chdir(2)`,
+>   *   :manpage:`stat(2)`, :manpage:`flock(2)`, :manpage:`chmod(2)`,
+>   *   :manpage:`chown(2)`, :manpage:`setxattr(2)`, :manpage:`utime(2)`,
+> - *   :manpage:`ioctl(2)`, :manpage:`fcntl(2)`, :manpage:`access(2)`.
+> + *   :manpage:`fcntl(2)`, :manpage:`access(2)`.
+>   *   Future Landlock evolutions will enable to restrict them.
+>   */
+>  /* clang-format off */
+> @@ -223,6 +244,7 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_MAKE_SYM			(1ULL << 12)
+>  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+> +#define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+>  /* clang-format on */
 >  
->  static bool retval_range_within(struct bpf_retval_range range, const struct bpf_reg_state *reg)
->  {
-> -	return range.minval <= reg->smin_value && reg->smax_value <= range.maxval;
-> +	return range.minval <= reg->s32_min_value && reg->s32_max_value <= range.maxval;
+>  /**
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c15559432d3d..b0857541d5e0 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -7,6 +7,7 @@
+>   * Copyright © 2021-2022 Microsoft Corporation
+>   */
+>  
+> +#include <asm/ioctls.h>
+>  #include <kunit/test.h>
+>  #include <linux/atomic.h>
+>  #include <linux/bitops.h>
+> @@ -14,6 +15,7 @@
+>  #include <linux/compiler_types.h>
+>  #include <linux/dcache.h>
+>  #include <linux/err.h>
+> +#include <linux/falloc.h>
+>  #include <linux/fs.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -29,6 +31,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait_bit.h>
+>  #include <linux/workqueue.h>
+> +#include <uapi/linux/fiemap.h>
+>  #include <uapi/linux/landlock.h>
+>  
+>  #include "common.h"
+> @@ -84,6 +87,158 @@ static const struct landlock_object_underops landlock_fs_underops = {
+>  	.release = release_inode
+>  };
+>  
+> +/* IOCTL helpers */
+> +
+> +/**
+> + * is_masked_device_ioctl(): Determine whether an IOCTL command is always
+> + * permitted with Landlock for device files.  These commands can not be
+> + * restricted on device files by enforcing a Landlock policy.
+> + *
+> + * @cmd: The IOCTL command that is supposed to be run.
+> + *
+> + * By default, any IOCTL on a device file requires the
+> + * LANDLOCK_ACCESS_FS_IOCTL_DEV right.  However, we blanket-permit some
+> + * commands, if:
+> + *
+> + * 1. The command is implemented in fs/ioctl.c's do_vfs_ioctl(),
+> + *    not in f_ops->unlocked_ioctl() or f_ops->compat_ioctl().
+> + *
+> + * 2. The command is harmless when invoked on devices.
+> + *
+> + * We also permit commands that do not make sense for devices, but where the
+> + * do_vfs_ioctl() implementation returns a more conventional error code.
+> + *
+> + * Any new IOCTL commands that are implemented in fs/ioctl.c's do_vfs_ioctl()
+> + * should be considered for inclusion here.
+> + *
+> + * Returns: true if the IOCTL @cmd can not be restricted with Landlock for
+> + * device files.
+> + */
 
-Logic-wise LGTM
+Great documentation!
 
-While the status-quo is that the return value is always truncated to
-32-bit, looking back there was an attempt to use 64-bit return value for
-bpf_prog_run[1] (not merged due to issue on 32-bit architectures). Also
-from the reading of BPF standardization ABI it would be inferred that
-return value is in 64-bit range:
+> +static __attribute_const__ bool is_masked_device_ioctl(const unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	/*
+> +	 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
+> +	 * close-on-exec and the file's buffered-IO and async flags.  These
+> +	 * operations are also available through fcntl(2), and are
+> +	 * unconditionally permitted in Landlock.
+> +	 */
+> +	case FIOCLEX:
+> +	case FIONCLEX:
+> +	case FIONBIO:
+> +	case FIOASYNC:
+> +	/*
+> +	 * FIOQSIZE queries the size of a regular file, directory, or link.
+> +	 *
+> +	 * We still permit it, because it always returns -ENOTTY for
+> +	 * other file types.
+> +	 */
+> +	case FIOQSIZE:
+> +	/*
+> +	 * FIFREEZE and FITHAW freeze and thaw the file system which the
+> +	 * given file belongs to.  Requires CAP_SYS_ADMIN.
+> +	 *
+> +	 * These commands operate on the file system's superblock rather
+> +	 * than on the file itself.  The same operations can also be
+> +	 * done through any other file or directory on the same file
+> +	 * system, so it is safe to permit these.
+> +	 */
+> +	case FIFREEZE:
+> +	case FITHAW:
+> +	/*
+> +	 * FS_IOC_FIEMAP queries information about the allocation of
+> +	 * blocks within a file.
+> +	 *
+> +	 * This IOCTL command only makes sense for regular files and is
+> +	 * not implemented by devices. It is harmless to permit.
+> +	 */
+> +	case FS_IOC_FIEMAP:
+> +	/*
+> +	 * FIGETBSZ queries the file system's block size for a file or
+> +	 * directory.
+> +	 *
+> +	 * This command operates on the file system's superblock rather
+> +	 * than on the file itself.  The same operation can also be done
+> +	 * through any other file or directory on the same file system,
+> +	 * so it is safe to permit it.
+> +	 */
+> +	case FIGETBSZ:
+> +	/*
+> +	 * FICLONE, FICLONERANGE and FIDEDUPERANGE make files share
+> +	 * their underlying storage ("reflink") between source and
+> +	 * destination FDs, on file systems which support that.
+> +	 *
+> +	 * These IOCTL commands only apply to regular files
+> +	 * and are harmless to permit for device files.
+> +	 */
+> +	case FICLONE:
+> +	case FICLONERANGE:
+> +	case FIDEDUPERANGE:
 
-  BPF has 10 general purpose registers and a read-only frame pointer register,
-  all of which are 64-bits wide.
-  
-  The BPF calling convention is defined as:
-  
-  * R0: return value from function calls, and exit value for BPF programs
-  ...
+> +	/*
+> +	 * FIONREAD, FS_IOC_GETFLAGS, FS_IOC_SETFLAGS, FS_IOC_FSGETXATTR and
+> +	 * FS_IOC_FSSETXATTR are forwarded to device implementations.
+> +	 */
 
-So add relevant people into the thread for opinions.
+The above comment should be better near the file_ioctl() one.
 
-1: https://lore.kernel.org/bpf/20221115193911.u6prvskdzr5jevni@apollo/
+> +
+> +	/*
+> +	 * FS_IOC_GETFSUUID and FS_IOC_GETFSSYSFSPATH both operate on
+> +	 * the file system superblock, not on the specific file, so
+> +	 * these operations are available through any other file on the
+> +	 * same file system as well.
+> +	 */
+> +	case FS_IOC_GETFSUUID:
+> +	case FS_IOC_GETFSSYSFSPATH:
+> +		return true;
+> +
+> +	/*
+> +	 * file_ioctl() commands (FIBMAP, FS_IOC_RESVSP, FS_IOC_RESVSP64,
+> +	 * FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64 and FS_IOC_ZERO_RANGE) are
+> +	 * forwarded to device implementations, so not permitted.
+> +	 */
+> +
+> +	/* Other commands are guarded by the access right. */
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +/*
+> + * is_masked_device_ioctl_compat - same as the helper above, but checking the
+> + * "compat" IOCTL commands.
+> + *
+> + * The IOCTL commands with special handling in compat-mode should behave the
+> + * same as their non-compat counterparts.
+> + */
+> +static __attribute_const__ bool
+> +is_masked_device_ioctl_compat(const unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	/* FICLONE is permitted, same as in the non-compat variant. */
+> +	case FICLONE:
+> +		return true;
+
+A new line before and after if/endif would be good.
+
+> +#if defined(CONFIG_X86_64)
+> +	/*
+> +	 * FS_IOC_RESVSP_32, FS_IOC_RESVSP64_32, FS_IOC_UNRESVSP_32,
+> +	 * FS_IOC_UNRESVSP64_32, FS_IOC_ZERO_RANGE_32: not blanket-permitted,
+> +	 * for consistency with their non-compat variants.
+> +	 */
+> +	case FS_IOC_RESVSP_32:
+> +	case FS_IOC_RESVSP64_32:
+> +	case FS_IOC_UNRESVSP_32:
+> +	case FS_IOC_UNRESVSP64_32:
+> +	case FS_IOC_ZERO_RANGE_32:
+> +#endif
+> +	/*
+> +	 * FS_IOC32_GETFLAGS, FS_IOC32_SETFLAGS are forwarded to their device
+> +	 * implementations.
+> +	 */
+> +	case FS_IOC32_GETFLAGS:
+> +	case FS_IOC32_SETFLAGS:
+> +		return false;
+> +	default:
+> +		return is_masked_device_ioctl(cmd);
+> +	}
+> +}
+> +
+>  /* Ruleset management */
+>  
+>  static struct landlock_object *get_inode_object(struct inode *const inode)
