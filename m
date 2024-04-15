@@ -1,96 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826261D52B;
-	Mon, 15 Apr 2024 15:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AB97F7DD
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2024 16:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713196068; cv=none; b=RAB57pIYW++bK1jMcfCgf4qrkjgzf2tFXXjPRwy74sNGlDNN0kUP7e8D3hsgAJ7QO+B27qao22It+yw5CslnM57zMOZr1jpigc+lxwnE8H8Ixx/kwow54Upx1cJAlj0X0zfM/F2eHSsE3ODcGDVXvpxO/hIJkm7LGGe/5E1M8vc=
+	t=1713197203; cv=none; b=cJZBXYq5xSziEkBIW/df1mre6p4RaOhjjW7BY2JNymvY/fVN66eGiuwyHIvUYPJiJVX6dNxf7J2dqZrDY0STKETEfbejGSh2IT4+uDihukjjgYsQVl/d73GMdARNow/UgZGdCMLlcw9zFyGAaMyYdlQ5rCCfIFe52VdfLoaJD/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713196068; c=relaxed/simple;
-	bh=LyrtEuKV9ZvjtcoP/1RDmpRdxB6ZNTui6MpsvktmFoY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=p271IIFct1Wgts6AlWOthj2PH1w2lJ32pJ01Wv4NEt1Sw7r8hKgJq30+eWOoT3thK1RN9uXPgFJ5z0gqRMldC4Y/MLA2HByKhOWe6y4WfpoV8ponjaolmSjoVQTm+SSxDAIHPrJDRUPXP1ab2PzGrexeOVxIC5SEQUVx9nEQfWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAZigk2V; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713197203; c=relaxed/simple;
+	bh=TbkoZcrC73ReILBlLCzDk8hBya5REumqV3/XGRD0RBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjUBuLajDNfRct5bt91ipaFyORcZ286du7hreCQnYxWxY63A/SOr85qGZ0ZP37f9+jQWTG9DIQvohY9SZ1BqjIkemiIUuCSzlW3a+3TLaCRI3O0iocDdsQ0jkJpUvA4pwOfxuBw8FEBFPfLco8ip3ok0gVoHP+ASHJsiS8/VpNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O8xv1am3; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAZigk2V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12A81C113CC;
-	Mon, 15 Apr 2024 15:47:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713196068;
-	bh=LyrtEuKV9ZvjtcoP/1RDmpRdxB6ZNTui6MpsvktmFoY=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-	b=eAZigk2VmOcYYwmk1M4lmTsnXRdGmuopR/nxEQK9WOtoGFxWyf/8tHVoYRHZ/UbYf
-	 4Fi1qcDgoXWeB50UAuo8+bZiVgdS2oPN75X6qPNhm18MVkUmKo8Q56tX5GEnUs0pgN
-	 G8ZqYbCAES0dDhZyesP6H0p0N9xCETb/iH6c8IE2ghw2y+lRiRrYqGhh8sFL2h3+Lu
-	 Iv+iAWkQ7H20TKDYDl+SH5kzeVhV8dypOe2OnLUcWEuWmCt3av1kPZ+EbaAjuOLFvp
-	 kQ6E+9bCHtyPLag6tFmUlnaN8MTotQZFFh3MCyc3JGjImoM877KS6caHfOOKG1k6wH
-	 KZ0tcocFCto8A==
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8xv1am3"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-5bdbe2de25fso2829460a12.3
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2024 09:06:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1713197200; x=1713802000; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W9YkT2PBxlsTiQpc9k80Xb2w2qGzzlQLFXvx15ENFSo=;
+        b=O8xv1am3Lk+DQ59W9cNWa2OG2Fks5PZkZcv6Z6Pfi7Uv5Oy1Av7RnTmnxj3FUYOm5V
+         yx4o1he5W90asuV36XyOe0antbXBxeK6gi/EVqhCphP56lqegAsztJrs5wGp912uqAFQ
+         L131duRGarDG1vumEdOdHiU0czbOW9+JxRfTA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713197200; x=1713802000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W9YkT2PBxlsTiQpc9k80Xb2w2qGzzlQLFXvx15ENFSo=;
+        b=IGFSz45y9vHTcCfoRi/3wMWk3oIaxJDuyK0GbKZOgjptwPkWT/QmndjIpV/YGG0OLS
+         utT1D22B4guZevgvz1WG4FDxyv/CIEfjJ18OLaZWvkGoyJjoRe8wvILxNBxPssNhx3rH
+         lUlLhPAzNRJ2ZXd7TTZBnhwsTBcZk+RZzbgLynJuZAGPZwfN2R1oaMBGUakzZUmXsHQO
+         XO5WE1tQpF7ZYDUlyZdbONPrpEkfXzW8IE7knfCiZdlwVBwbD6SudqZcHAaHgIl43xw/
+         vKktnjD094hZXJDcy6KjSkTa/Hpx5Wn1X56C1oYklqqgbJBJinTjOYo6kYNi5tJFsLL7
+         Aplw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtN7Zrwr3F7/PMlXmbtMYHUL+0/yUrhuXq4yZNtNVMFyvIqRY20xRsYAP2LVMsB3qhNPi8YzOWndUk94N9hUX9HFYZY57pJl3sdzAjypmuEQfq6K1t
+X-Gm-Message-State: AOJu0Yyu1ORJIAFh2X3tbuWE5E8I9OJkl+hXlcz0NHPYpchTI8D2ecZn
+	vGs/XSe8aatSG8HuHc5OIwumU2hK2vU0wpA7Kf7igFqrzkr1HRbnXRpLII6h+w==
+X-Google-Smtp-Source: AGHT+IEOd/x1N/CPtx25Nf+PUqf1rfZqa2mTy1XxaxcS7HXEzP+ucQDv/NhrafY/fDlqqKtbbV3LWA==
+X-Received: by 2002:a17:90b:3d3:b0:2a5:ba9d:a06b with SMTP id go19-20020a17090b03d300b002a5ba9da06bmr10113697pjb.5.1713197200332;
+        Mon, 15 Apr 2024 09:06:40 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id l6-20020a17090a49c600b002a46b925e99sm8796108pjm.18.2024.04.15.09.06.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Apr 2024 09:06:39 -0700 (PDT)
+Date: Mon, 15 Apr 2024 09:06:39 -0700
+From: Kees Cook <keescook@chromium.org>
+To: j.granados@samsung.com
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <naoya.horiguchi@nec.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/7] security: Remove the now superfluous sentinel
+ element from ctl_table array
+Message-ID: <202404150906.C37D8D9DA1@keescook>
+References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
+ <20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [kpsingh:static_calls] [security] 9e15595ed0:
- Kernel_panic-not_syncing:lsm_static_call_init-Ran_out_of_static_slots
-From: KP Singh <kpsingh@kernel.org>
-In-Reply-To: <CACYkzJ4G7hO0DNSBy4wpJG1PSgNkifuYcfOeTTpyVBtBtWvQSg@mail.gmail.com>
-Date: Mon, 15 Apr 2024 17:47:43 +0200
-Cc: Andrii Nakryiko <andrii@kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Kees Cook <keescook@chromium.org>,
- Song Liu <song@kernel.org>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- kernel test robot <oliver.sang@intel.com>,
- linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- lkp@intel.com,
- oe-lkp@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A9568514-FCB3-4715-9794-696383B2B7E8@kernel.org>
-References: <202404151225.ce542e38-lkp@intel.com>
- <757538DA-07A4-4332-BAFA-B864BFD06A76@kernel.org>
- <30876b80-c437-4916-b982-97c1a95c0747@I-love.SAKURA.ne.jp>
- <CAHC9VhS=hQuvv+Sw6cc2HwzcLApO7Rc3dAnqHytyzBpC1rokFA@mail.gmail.com>
- <CACYkzJ4G7hO0DNSBy4wpJG1PSgNkifuYcfOeTTpyVBtBtWvQSg@mail.gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
 
+On Thu, Mar 28, 2024 at 04:57:49PM +0100, Joel Granados via B4 Relay wrote:
+> From: Joel Granados <j.granados@samsung.com>
+> 
+> This commit comes at the tail end of a greater effort to remove the
+> empty elements at the end of the ctl_table arrays (sentinels) which will
+> reduce the overall build time size of the kernel and run time memory
+> bloat by ~64 bytes per sentinel (further information Link :
+> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> 
+> Remove the sentinel from all files under security/ that register a
+> sysctl table.
+> 
+> Signed-off-by: Joel Granados <j.granados@samsung.com>
 
+Acked-by: Kees Cook <keescook@chromium.org> # loadpin & yama
 
-> On 15 Apr 2024, at 17:34, KP Singh <kpsingh@kernel.org> wrote:
->=20
->=20
->=20
-> On Mon, 15 Apr 2024 at 16:23, Paul Moore <paul@paul-moore.com> wrote:
-> On Mon, Apr 15, 2024 at 9:21=E2=80=AFAM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > On 2024/04/15 17:26, KP Singh wrote:
-> > > This seems like an odd config which does not enable STATIC_CALL, I =
-am going to
-> > > make CONFIG_SECURITY depend on CONFIG_STATIC_CALL and make the =
-dependency explicit.
-> >
-> > If CONFIG_SECURITY depends on CONFIG_STATIC_CALL, architectures =
-which do not
-> > support CONFIG_STATIC_CALL can no longer use LSM ? That sounds a bad =
-dependency.
->=20
-> Agreed.  If the arch doesn't support static calls we need a fallback
-> solution for the LSM that is no worse than what we have now, and
-> preferably would still solve the issue of the BPF hooks active even
-> where this is no BPF program attached.
-
-Actually I take it back, when CONFIG_STATIC_CALL is not available, the =
-implementation falls back to an indirect call. This crash is unrelated, =
-I will debug further and post back.
-
-- KP
-
->=20
-> --=20
-> paul-moore.com
-
+-- 
+Kees Cook
