@@ -1,75 +1,96 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B50B2119;
-	Mon, 15 Apr 2024 14:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826261D52B;
+	Mon, 15 Apr 2024 15:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713192990; cv=none; b=K1zQpoiLPCUAOMJoVOEfCJgiheQxGJhnnTPgERA0FlFmGhiiWYkBtXQbyfbrTVByf6bYfO5RPSDetHF2lRtHLxQSCx7THsClecTOKonjls1ytl/Tz4u0svNXJ9VkroPPJjYuqExiTDeOpcVbzgudCBRyzsie0TYxqKct9smYi2U=
+	t=1713196068; cv=none; b=RAB57pIYW++bK1jMcfCgf4qrkjgzf2tFXXjPRwy74sNGlDNN0kUP7e8D3hsgAJ7QO+B27qao22It+yw5CslnM57zMOZr1jpigc+lxwnE8H8Ixx/kwow54Upx1cJAlj0X0zfM/F2eHSsE3ODcGDVXvpxO/hIJkm7LGGe/5E1M8vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713192990; c=relaxed/simple;
-	bh=/mvT0EDWyKl1LlJVsDqLsYJZ3bKhS9o6DCyFrjILGz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c+/bD4rjy0/gOOgGqkFGIwIMAD2Eymhf+YorS2kdHcQHJ5SXmwY9us/82UWP3mtVt5p9EX/SkB6Gw0P0o2JbHAxiDQ2LzbZ8VLI7khY/95Ld7ZFwdhKGfdb03QXw37V+7Q0xEiZEaMWWESpCR19iDXG238bdUhNsu2l1Pk4vLYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PEgd9GAE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1713196068; c=relaxed/simple;
+	bh=LyrtEuKV9ZvjtcoP/1RDmpRdxB6ZNTui6MpsvktmFoY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=p271IIFct1Wgts6AlWOthj2PH1w2lJ32pJ01Wv4NEt1Sw7r8hKgJq30+eWOoT3thK1RN9uXPgFJ5z0gqRMldC4Y/MLA2HByKhOWe6y4WfpoV8ponjaolmSjoVQTm+SSxDAIHPrJDRUPXP1ab2PzGrexeOVxIC5SEQUVx9nEQfWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAZigk2V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PEgd9GAE"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=rSYz6ltDs8l3GpHsJ/BNWBnXGvHDJcVElTYrkRgq2hM=; b=PEgd9GAEOSK8jC+Q0K+Ai2oK2K
-	ExbXvP+V+x9B7nHBgxud3TaOYOIy9C8rQk3bulN65+YLSbnA/IzFGchEKzw8a0ruwr2eRMzuIsKw6
-	2nBUzrYjQsk2tPaPavs8/sCArkepf5xZW9R0U8EYT4SoL1PqT27hmYa2ZhgwamTYMANJTBN3AGF/8
-	PWjYVfJ3h3sjLfCw2UMqynzWUsHi0p1hxHnxIrA5vfJILn/QKfFic8c2Wsr038SOe55C08W/st6lB
-	QGQp/r/E0diq89k0udzMPfodXjo/kZ/Vkbmntrz8wFf3mV22PiW4DuMLztUyomxJaYvzv1rb9KBuM
-	UbjQzQeQ==;
-Received: from [50.53.2.121] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwNkq-00000008mEB-0FKk;
-	Mon, 15 Apr 2024 14:56:20 +0000
-Message-ID: <a2266217-c3ad-4bb2-8188-498a2c8ae36c@infradead.org>
-Date: Mon, 15 Apr 2024 07:56:16 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAZigk2V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12A81C113CC;
+	Mon, 15 Apr 2024 15:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713196068;
+	bh=LyrtEuKV9ZvjtcoP/1RDmpRdxB6ZNTui6MpsvktmFoY=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
+	b=eAZigk2VmOcYYwmk1M4lmTsnXRdGmuopR/nxEQK9WOtoGFxWyf/8tHVoYRHZ/UbYf
+	 4Fi1qcDgoXWeB50UAuo8+bZiVgdS2oPN75X6qPNhm18MVkUmKo8Q56tX5GEnUs0pgN
+	 G8ZqYbCAES0dDhZyesP6H0p0N9xCETb/iH6c8IE2ghw2y+lRiRrYqGhh8sFL2h3+Lu
+	 Iv+iAWkQ7H20TKDYDl+SH5kzeVhV8dypOe2OnLUcWEuWmCt3av1kPZ+EbaAjuOLFvp
+	 kQ6E+9bCHtyPLag6tFmUlnaN8MTotQZFFh3MCyc3JGjImoM877KS6caHfOOKG1k6wH
+	 KZ0tcocFCto8A==
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 20/21] Documentation: add ipe documentation
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Fan Wu <wufan@linux.microsoft.com>,
- corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
- tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
- snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- audit@vger.kernel.org, linux-kernel@vger.kernel.org,
- Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1712969764-31039-1-git-send-email-wufan@linux.microsoft.com>
- <1712969764-31039-21-git-send-email-wufan@linux.microsoft.com>
- <Zh0Zh3-xraVl85Lm@archie.me>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <Zh0Zh3-xraVl85Lm@archie.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [kpsingh:static_calls] [security] 9e15595ed0:
+ Kernel_panic-not_syncing:lsm_static_call_init-Ran_out_of_static_slots
+From: KP Singh <kpsingh@kernel.org>
+In-Reply-To: <CACYkzJ4G7hO0DNSBy4wpJG1PSgNkifuYcfOeTTpyVBtBtWvQSg@mail.gmail.com>
+Date: Mon, 15 Apr 2024 17:47:43 +0200
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Kees Cook <keescook@chromium.org>,
+ Song Liu <song@kernel.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ kernel test robot <oliver.sang@intel.com>,
+ linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ lkp@intel.com,
+ oe-lkp@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A9568514-FCB3-4715-9794-696383B2B7E8@kernel.org>
+References: <202404151225.ce542e38-lkp@intel.com>
+ <757538DA-07A4-4332-BAFA-B864BFD06A76@kernel.org>
+ <30876b80-c437-4916-b982-97c1a95c0747@I-love.SAKURA.ne.jp>
+ <CAHC9VhS=hQuvv+Sw6cc2HwzcLApO7Rc3dAnqHytyzBpC1rokFA@mail.gmail.com>
+ <CACYkzJ4G7hO0DNSBy4wpJG1PSgNkifuYcfOeTTpyVBtBtWvQSg@mail.gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
 
-On 4/15/24 5:11 AM, Bagas Sanjaya wrote:
-> The doc LGTM, thanks!
-> 
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Hi,
-Please see netiquette, section "Trim replies".
-Thanks.
+> On 15 Apr 2024, at 17:34, KP Singh <kpsingh@kernel.org> wrote:
+>=20
+>=20
+>=20
+> On Mon, 15 Apr 2024 at 16:23, Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Apr 15, 2024 at 9:21=E2=80=AFAM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > On 2024/04/15 17:26, KP Singh wrote:
+> > > This seems like an odd config which does not enable STATIC_CALL, I =
+am going to
+> > > make CONFIG_SECURITY depend on CONFIG_STATIC_CALL and make the =
+dependency explicit.
+> >
+> > If CONFIG_SECURITY depends on CONFIG_STATIC_CALL, architectures =
+which do not
+> > support CONFIG_STATIC_CALL can no longer use LSM ? That sounds a bad =
+dependency.
+>=20
+> Agreed.  If the arch doesn't support static calls we need a fallback
+> solution for the LSM that is no worse than what we have now, and
+> preferably would still solve the issue of the BPF hooks active even
+> where this is no BPF program attached.
 
+Actually I take it back, when CONFIG_STATIC_CALL is not available, the =
+implementation falls back to an indirect call. This crash is unrelated, =
+I will debug further and post back.
 
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+- KP
+
+>=20
+> --=20
+> paul-moore.com
+
