@@ -1,85 +1,102 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210D6823CE;
-	Mon, 15 Apr 2024 21:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AF2823CE;
+	Mon, 15 Apr 2024 21:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713215282; cv=none; b=U5Tw0PakOdzk5FYRso9Q83sh9T+TmgbJ6ukC6mSGI1a5pf/56HpmjSNLHplAlns5WEslIXqvXcCm6EirczlLAQZkpzNSLY6m0IIGidwyw433JjSKd00mgFCoX+TFWz5laf1y7+ru9b5PD9MKCypEVV5lSf/6+U526R5Fwb9bHEI=
+	t=1713217153; cv=none; b=jPHo7/V7iM1+zUnCyYofMeJyolFdVuiuNTzKCHxBUwKZJ/XzAEA4NO8Cz8IlcKS3g/TU+CAsEIG2Sxzn9GkAkOUMc+JHzRuQZ/UMbZ0NI5aLVLUDVwChwL0zn828Pcldgaofx4kCE9nNN/lNMpiqrQOe2hZVghs0EC8LS21sanQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713215282; c=relaxed/simple;
-	bh=TJCFkjZfjstSqTosq2ofApmwxwcsMnKCELg9tffipXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B82P15maPpSE57AzApg6QAC6Fbab0j2ozNqXxsE8D4OpysdbEynggBmo3Ny5vIfrgRRf5VIDyEOnMb/IryKCfJy6YIaYereH3ShBDC2XagYc1vjv4goLUy+L+vkxlRuAGf9Ruk+qVSPz9CpZDHJkf9jEBDNdxcRNo9ISmbb/fVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gIQ+xICP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1713217153; c=relaxed/simple;
+	bh=humnfQnPK1rgJcqy6II8SICWwJj6C/MQ8EAQtW605Dg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pGxhiMn1aW+tnmYpl4gf+SGalCv6L3HJaPYZ4R+IvB5y77qbQKpHt7vYUOh15GB/BzleeZ+jEF+UsknolSZeU9jUY8Rc45qJP9jHHudyQf1aFwCggPURwVmKDI2eefkZGc3I1qwYr0+41/gEduIIM4fR9jA+je0FHIQj6+hbF+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSjxWS+5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gIQ+xICP"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=7+q5a4BFZOQ0nlwK9E3zO3DsPMAmGY9bri/gwPhuncQ=; b=gIQ+xICPtGPVXjX3/kXMEd3bNj
-	/YeR1j2Gj3QOsMBAqM9PLeuQnZVGqdwqlpSlIpfGUnx68Cywwdd04syLRbWGXZlHLsfdIu1EeLU7H
-	9YDDhNW15+gcofUs2psqkJaJdUarmJuAtcKaYHn3fAWYOfK3YwVu6WGQW2xPJObiwaqZ718LKlh9v
-	N07yL1LzBZzTW9NwAdCNFDW/A/Ye1fSf/onmNDQR52y85OsOG/kRWuhVbajPUx8NnQGSoLEEdoXRC
-	jwooLpl7PRhgSFwfuE1JxjYd8ua8dy1v5OF28kcJWNvVDDO8GVi8lV8uHqCYj8W7+no8qJUujWD5C
-	B/cTLbOA==;
-Received: from [50.53.2.121] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rwTYH-00000009v3H-3nHt;
-	Mon, 15 Apr 2024 21:07:47 +0000
-Message-ID: <805af99c-4c78-4f2c-a15b-de69a4b8da99@infradead.org>
-Date: Mon, 15 Apr 2024 14:07:42 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSjxWS+5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DD7C32781;
+	Mon, 15 Apr 2024 21:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713217153;
+	bh=humnfQnPK1rgJcqy6II8SICWwJj6C/MQ8EAQtW605Dg=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
+	b=RSjxWS+5reZxNnia7nWR2CzOBEb3jwK3ue6UExkY463XUI8u7q8u+BUOmtKBL8LXW
+	 0lW196ngBfwPLQYcUL5pQ+3Bz3HOkiij1wvAzBmv7pmskZyGBwf12j/fGpfKRZs8Rg
+	 oJj1LPzMCpuF/cg7febxdf49DcXjn5RYUKYlFnTKJndqq/6OPRvOke/NI8XiOfIFTF
+	 OO0tw0vlcpXpXgB8iByqXAXnMO6HxEyN6eeJbHkF9gOvdxTo8u8tj0dG3K4qqiOXZ9
+	 meLJSCxLmgMVBSilETegwUoAfXO7Rid6FdbZfJFpQE+wzNWP4nz0CzksQ+ecis+cBv
+	 oePcbnlfT6LkA==
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/14] lib: Add TLV parser
-To: Jarkko Sakkinen <jarkko@kernel.org>,
- Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, mic@digikod.net
-Cc: linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
- pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
- pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
- jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com,
- mzerqung@0pointer.de, kgold@linux.ibm.com,
- Roberto Sassu <roberto.sassu@huawei.com>
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <20240415142436.2545003-2-roberto.sassu@huaweicloud.com>
- <D0KXTHHYLSX6.1IDLSEIVS9PA5@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <D0KXTHHYLSX6.1IDLSEIVS9PA5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [kpsingh:static_calls] [security] 9e15595ed0:
+ Kernel_panic-not_syncing:lsm_static_call_init-Ran_out_of_static_slots
+From: KP Singh <kpsingh@kernel.org>
+In-Reply-To: <0a4ebcd2-7772-4832-885d-221e0c6f6c04@schaufler-ca.com>
+Date: Mon, 15 Apr 2024 23:39:08 +0200
+Cc: Paul Moore <paul@paul-moore.com>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Kees Cook <keescook@chromium.org>,
+ Song Liu <song@kernel.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ kernel test robot <oliver.sang@intel.com>,
+ linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ lkp@intel.com,
+ oe-lkp@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <11DA2A00-28F4-44F8-BBA7-012400FE1050@kernel.org>
+References: <202404151225.ce542e38-lkp@intel.com>
+ <757538DA-07A4-4332-BAFA-B864BFD06A76@kernel.org>
+ <30876b80-c437-4916-b982-97c1a95c0747@I-love.SAKURA.ne.jp>
+ <CAHC9VhS=hQuvv+Sw6cc2HwzcLApO7Rc3dAnqHytyzBpC1rokFA@mail.gmail.com>
+ <CACYkzJ4G7hO0DNSBy4wpJG1PSgNkifuYcfOeTTpyVBtBtWvQSg@mail.gmail.com>
+ <A9568514-FCB3-4715-9794-696383B2B7E8@kernel.org>
+ <CD57788C-C9D6-4BA8-8352-90EBB6600D39@kernel.org>
+ <0a4ebcd2-7772-4832-885d-221e0c6f6c04@schaufler-ca.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
 
 
-On 4/15/24 12:19 PM, Jarkko Sakkinen wrote:
-> On Mon Apr 15, 2024 at 5:24 PM EEST, Roberto Sassu wrote:
->> From: Roberto Sassu <roberto.sassu@huawei.com>
->>
->> Add a parser of a generic TLV format:
-> 
-> What is TLV?
+> On 15 Apr 2024, at 22:54, Casey Schaufler <casey@schaufler-ca.com> =
+wrote:
+>=20
+> On 4/15/2024 1:42 PM, KP Singh wrote:
+>>=20
+>>> On 15 Apr 2024, at 17:47, KP Singh <kpsingh@kernel.org> wrote:
+>>>=20
+>>>=20
+>> [...]
+>>=20
+>>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>>> On 2024/04/15 17:26, KP Singh wrote:
+>>>>>> This seems like an odd config which does not enable STATIC_CALL, =
+I am going to
+>>>>>> make CONFIG_SECURITY depend on CONFIG_STATIC_CALL and make the =
+dependency explicit.
+>>>>> If CONFIG_SECURITY depends on CONFIG_STATIC_CALL, architectures =
+which do not
+>>>>> support CONFIG_STATIC_CALL can no longer use LSM ? That sounds a =
+bad dependency.
+>>>> Agreed.  If the arch doesn't support static calls we need a =
+fallback
+>>>> solution for the LSM that is no worse than what we have now, and
+>>>> preferably would still solve the issue of the BPF hooks active even
+>>>> where this is no BPF program attached.
+>>> Actually I take it back, when CONFIG_STATIC_CALL is not available, =
+the implementation falls back to an indirect call. This crash is =
+unrelated, I will debug further and post back.
+>> Apparently, when I smoke tested, I had CONFIG_IMA disabled so did not =
+hit the bug. Well, now IMA is an LSM, so the following fixes it:
+>=20
+> You'll want CONFIG_EVM as well, I bet.
 
-type-length-value
+Indeed, thanks Casey!
 
-i.e., a descriptor that contains a value.
 
-IIUC.
-
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
