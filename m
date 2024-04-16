@@ -1,70 +1,74 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBAA12C7FB
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2024 15:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A24F130ADA
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2024 15:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713281362; cv=none; b=IucGhvNYxlZScBdia+E1xs1gGxtT4WcYq69Oos2qMaFEhz9beEkvEQQOXgIwoBYhshhZ5ec3EaPkJsDCavO8kWwCHy8Fd/Um4/zYHxlGb7H4qKc7i+HZMepTJWMmtSln6wuOmDUnukEpQ3QVYpts82hUqtKrKFvf6ELL/gerYwI=
+	t=1713281368; cv=none; b=q4Rfk+/mmRIISQrx7h3F6FM5GRRknCl8TRgMKEe2IEVdH6LgDLPKfSCWjkwBHZ4gNdyQ+90VmBSukvKv6S9ho4b9hiAY2XNm0JvKHDNfmE41MqNx5oXrFX+kmHKc9z8zqCdCt9kCqCKuW8BNA4VeZrRLWyzrkMBj/h1gTpKIUxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713281362; c=relaxed/simple;
-	bh=81l9LahQytujb7cMyosnjzKZfq+r5bccBitCOg1Cmxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KpbVG8ahiDEWj1PnkLKAiBP4SFhr8wRPMNHBikdxOsh4XGsh0JFCblAIQq18GEoZ2y3+xOwaeb/94QO6VedbA09Cm1aq9hXM4SWMtLrV+Tn7cLzJbUbn1YFgzxp4b1Z91z0uGrvWVF3Wj3vfMkC2z2Lbd3TlQlCZ5s+WcHJsLBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hhzfpJ2b; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1713281368; c=relaxed/simple;
+	bh=QVMyCi85OBTLwvKYhGqmV8c15nSsfnt8Qk+CafeDfY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YvX/DLtd0sqO8BaYb3uSBU6MWv7wMsh8UI1QKzvyCOiYcouoXGh8I+81s5I/tJ0Ji6nwawBflat2rnSI0CedlBOdak6hgygDDsZqS2IQandKsk749my6G5ICQe62Lt4aHYNaXnGzOQneLQWYmj5QmUnp5xWmjMdxp88H2QpFaU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdQfa1YM; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hhzfpJ2b"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdQfa1YM"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713281359;
+	s=mimecast20190719; t=1713281366;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MxeNWUp9JUwY9cuS12LnzHtAblKzNIcTzbXO97988qc=;
-	b=hhzfpJ2bc37Vx3wMfvCWxwZNf6hhuzBhWbrQsTKKbnyryt61Y6BpaRRv8rofWeedb9RAiW
-	tA8RTCFU4Mcpb0/Ny3gsS85q66OLpfedhVU5E8vFqNzCcrh9IVCTrqy4ZwSufp+tIbEDFN
-	aS0G6n3gzoeaZ/TMeZOZ7FvJzPH9a4w=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6P0LUfI2AvXIK+dBsLwCwt18efQKG/JZH1UkFxx8/Z0=;
+	b=bdQfa1YMDeBTgz1cJ5uZArtVbQJ3ObA3wrHzNS27BK7sh0hlGXFPUN5PrItP89A0QUYA5n
+	/f8U2eVlCe+w8yIPyzotbDeAZJcLsuhMxgY5MVhjSNx9E1qtRAbyU5QJIreCUCDNDc0dDS
+	NDkYut3osqzYiP7KKmOJCbPwOWtm4oY=
 Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
  [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-116-h88hBsQ5Oaq-ilEoi53PXg-1; Tue, 16 Apr 2024 11:29:18 -0400
-X-MC-Unique: h88hBsQ5Oaq-ilEoi53PXg-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2d884b718f1so41097351fa.0
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2024 08:29:18 -0700 (PDT)
+ us-mta-99-dTT1JMRkMn22hVN3YgYGNQ-1; Tue, 16 Apr 2024 11:29:24 -0400
+X-MC-Unique: dTT1JMRkMn22hVN3YgYGNQ-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2d86787efa3so38210831fa.1
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2024 08:29:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713281357; x=1713886157;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MxeNWUp9JUwY9cuS12LnzHtAblKzNIcTzbXO97988qc=;
-        b=TjbghG9/JzhbLt+Ssy9YLXj5CDkq59GQox2rozDKhPNt2ICg6Mh4eKAKuwdDwqGz/p
-         kyjMs3QFc3xknhiiwF8ertSSaM2D4kuvLstN23LM6m1LAdICI8lZY1oWys+9Efz+IDYb
-         mM5cFC4IYPxz8IfgeVPCNhsTQEwpqvqn0aOdwQOay7cpomwXQgCSDFb8dPat1S104P+A
-         baSsmTtPVDTWYzItV4aDQHV3qpSJPt+wm0wc4uKsaW/jIoq3O6DzGb+KqGpbqSIadwoA
-         TiuVnP5+kLdT2KPEOAVp/VmhXra0RjE+quOwumgjxOlasR5IfUssQ+cVW4r9bf5+8VOT
-         XY7w==
-X-Forwarded-Encrypted: i=1; AJvYcCW0RfaPXCX1tSNyb9aOZRtAgqEGuWrslh0g9W2CIqfr09LZ5AXcPbNbrHgKzx8k6iTkPl2F9P0l1VHCUvfsWGGph8xkmVwMKzrCu7GWA/i0ERZrILfJ
-X-Gm-Message-State: AOJu0Yx8qcQoREOcJwFMOOhneC/jLaFEPzQbt9BhBjDFhvUxCS04TY0a
-	y43M+lL2l64HP2Sfbp2/xXrp1mYx25oh9nfRaDoE0tjNjeUt8sO5fDJYSnY76te18+tS4I3D9PK
-	fqNyPVpMnlZzxDbt4UzB4ALKjpOQkLHpIrbmStnNl1Qr6dyunq5/i5aZiKJop6gpX2ftHVjoRyg
-	==
-X-Received: by 2002:a2e:b8c4:0:b0:2d8:10d3:1a0b with SMTP id s4-20020a2eb8c4000000b002d810d31a0bmr10016691ljp.39.1713281357088;
-        Tue, 16 Apr 2024 08:29:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEa0/Mtd7fT8GMCt99FDYYrsTJTdiHZDQfVgiPIlVTRCX5bZs8q+LO8aep+PkaKfMhdbxmpjQ==
-X-Received: by 2002:a2e:b8c4:0:b0:2d8:10d3:1a0b with SMTP id s4-20020a2eb8c4000000b002d810d31a0bmr10016667ljp.39.1713281356669;
-        Tue, 16 Apr 2024 08:29:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713281362; x=1713886162;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6P0LUfI2AvXIK+dBsLwCwt18efQKG/JZH1UkFxx8/Z0=;
+        b=PHU+oQq0RH6rdZN8cSPuRLRZnURbhSLjRa3oonX94UygCGIGKrS2fmty2gq0JKzGDw
+         6tcxxATbCqK0e+GJ4z0ZfCgUNmvpZ8zteAvNuDPKHT+5Ek8QlPuVwuNqt1ZCOr14/jZv
+         TUEHVxzr+D/Zg5USYnMmoVL/ymQgOAdyk4/Ud20DnXZlEl7ruTWmrLLVE2DZTSJsrkaO
+         ZfvecZnhQyYgAig+/kG8ldzyLrMhRZhjy1HDJaCBpLzmSXj7iSyO3rX2JaDUGJRYJcq8
+         Cn0zYpqU25AdhbH/DbMi5Trb20BwIoyDkYz78twCMpQYuqZME18O13LiXIynvWyV0qNN
+         TxWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgVBHJedTcWxepqkksFwZTKv8oRgOTikGTqOLNfv355/a5rM4NMpumSoLvHr9xwF2RYGocwLkpEvz7cZ8zJxIL9i8Afriw2BsHm6oAaTpiuXDhVG1Y
+X-Gm-Message-State: AOJu0YyA6hG82GjYyQSgGguocgru0FHxfpyyTyTCh2LxbgCVw6ZLr1T0
+	C1KaJYkOp/VLj4Bn1tDmWu9hS1oGKAmm134QmafulFD0rTR36dr4evYvwXyvITthY0VvSc0rJvk
+	wirvnDG09FR3Y8B4FXIw4xuv/JB+fflAPMzPqRFaUiPrb2+bqEhA7dCvkupnPgJwH4rKBUYIy2a
+	FhV5o99w==
+X-Received: by 2002:a2e:97d4:0:b0:2d8:41c5:ad64 with SMTP id m20-20020a2e97d4000000b002d841c5ad64mr9406574ljj.13.1713281361925;
+        Tue, 16 Apr 2024 08:29:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDl2Y27sra8V2YK8ZMhrGngTVobwwtW2ufTsiynugk1zfPTqIBdnQGj7iThjBSBtPGRZSZyQ==
+X-Received: by 2002:a2e:97d4:0:b0:2d8:41c5:ad64 with SMTP id m20-20020a2e97d4000000b002d841c5ad64mr9406558ljj.13.1713281361472;
+        Tue, 16 Apr 2024 08:29:21 -0700 (PDT)
 Received: from localhost.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id m11-20020a05600c4f4b00b0041816c3049csm14695155wmq.11.2024.04.16.08.29.14
+        by smtp.gmail.com with ESMTPSA id m11-20020a05600c4f4b00b0041816c3049csm14695155wmq.11.2024.04.16.08.29.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Apr 2024 08:29:14 -0700 (PDT)
+        Tue, 16 Apr 2024 08:29:16 -0700 (PDT)
 From: Ondrej Mosnacek <omosnace@redhat.com>
 To: Paul Moore <paul@paul-moore.com>
 Cc: netdev@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove the CIPSO options
-Date: Tue, 16 Apr 2024 17:29:11 +0200
-Message-ID: <20240416152913.1527166-1-omosnace@redhat.com>
+Subject: [PATCH 1/2] cipso: fix total option length computation
+Date: Tue, 16 Apr 2024 17:29:12 +0200
+Message-ID: <20240416152913.1527166-2-omosnace@redhat.com>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240416152913.1527166-1-omosnace@redhat.com>
+References: <20240416152913.1527166-1-omosnace@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,21 +80,51 @@ X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="US-ASCII"; x-default=true
 
-This series aims to improve cipso_v4_skbuff_delattr() to fully
-remove the CIPSO options instead of just clearing them with NOPs.
-That is implemented in the second patch, while the first patch is
-a bugfix for cipso_v4_delopt() that the second patch depends on.
+As evident from the definition of ip_options_get(), the IP option
+IPOPT_END is used to pad the IP option data array, not IPOPT_NOP. Yet
+the loop that walks the IP options to determine the total IP options
+length in cipso_v4_delopt() doesn't take it into account.
 
-Tested using selinux-testsuite a TMT/Beakerlib test from this PR:
-https://src.fedoraproject.org/tests/selinux/pull-request/488
+Fix it by recognizing the IPOPT_END value as the end of actual options.
+Also add safety checks in case the options are invalid/corrupted.
 
-Ondrej Mosnacek (2):
-  cipso: fix total option length computation
-  cipso: make cipso_v4_skbuff_delattr() fully remove the CIPSO options
+Fixes: 014ab19a69c3 ("selinux: Set socket NetLabel based on connection endpoint")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ net/ipv4/cipso_ipv4.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
- net/ipv4/cipso_ipv4.c | 80 +++++++++++++++++++++++++++++++------------
- 1 file changed, 59 insertions(+), 21 deletions(-)
-
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index 8b17d83e5fde4..75b5e3c35f9bf 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -2012,12 +2012,21 @@ static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
+ 		 * from there we can determine the new total option length */
+ 		iter = 0;
+ 		optlen_new = 0;
+-		while (iter < opt->opt.optlen)
+-			if (opt->opt.__data[iter] != IPOPT_NOP) {
+-				iter += opt->opt.__data[iter + 1];
+-				optlen_new = iter;
+-			} else
++		while (iter < opt->opt.optlen) {
++			if (opt->opt.__data[iter] == IPOPT_END) {
++				break;
++			} else if (opt->opt.__data[iter] == IPOPT_NOP) {
+ 				iter++;
++			} else {
++				if (WARN_ON(opt->opt.__data[iter + 1] < 2))
++					iter += 2;
++				else
++					iter += opt->opt.__data[iter + 1];
++				optlen_new = iter;
++			}
++		}
++		if (WARN_ON(optlen_new > opt->opt.optlen))
++			optlen_new = opt->opt.optlen;
+ 		hdr_delta = opt->opt.optlen;
+ 		opt->opt.optlen = (optlen_new + 3) & ~3;
+ 		hdr_delta -= opt->opt.optlen;
 -- 
 2.44.0
 
