@@ -1,2215 +1,1113 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518981E87F;
-	Tue, 16 Apr 2024 10:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB8412CDB2;
+	Tue, 16 Apr 2024 13:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713263994; cv=none; b=hBzga2ds92f2AOGRJbQQxzNXrwhbPikujoHHSBFF9gDq14sQYLTpq11oqIsTT5cKzTiAiu15U0TgjaN5PoQFwpdaH9I1YUgAeTCnYWZ91TWpG58wcEnp/9SOC/iGDfelXOT4cE5DJ33HIFT8qnMN+xUApFi4JeotaPzK0JDnWjI=
+	t=1713275757; cv=none; b=LrnDkV84QBUEEvAsNmBZRT1mIqq0bAGWgW30TiILHNmS3GPas1s3KQoxkHQH7sRXYX4FZIje//t2frDhqYLlWZJks3hvppZI+epuuGgtJdRCNN08maWtd6QaZfhWeRMCQhPfn1ms+ASP7tNa1384dkNl4q3FhpdeyRCmvk/qG90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713263994; c=relaxed/simple;
-	bh=sbe9UX1Kj4uaJOuAtpLmGLNd4chFvnEPEFIM+L6zayA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hqg0mwJTUrASKd3za2g730Z0lV27DUTc9utxD7n5cvN2ZlKzqCu0Ao557sdoc//odA2iuOpn/So14Zc6jK06FN22IykerpuTIOZ3HkG+Q9O39pHo+G4M3IKMpokb3pKTRAlE7G4qIWrnIXVFqMPpwCjSNneuaMUNNRJgfJxuq/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VJg4D3PJVz9v7Hd;
-	Tue, 16 Apr 2024 18:18:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 2384F140627;
-	Tue, 16 Apr 2024 18:39:37 +0800 (CST)
-Received: from [10.81.220.53] (unknown [10.81.220.53])
-	by APP2 (Coremail) with SMTP id GxC2BwBnUydSVR5mtzlUBg--.12168S2;
-	Tue, 16 Apr 2024 11:39:35 +0100 (CET)
-Message-ID: <15080708-e2f6-4d9d-b347-5939179aa96f@huaweicloud.com>
-Date: Tue, 16 Apr 2024 12:39:11 +0200
+	s=arc-20240116; t=1713275757; c=relaxed/simple;
+	bh=PZMDF08NZ/CEG7c+hAV1JQtBfqNUDB5b6QM7aBV6M8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gCLku5iYETw+ZwSJr3u3ML6htDm0QYJy0Z0OCwATjHsqkJPF1cZh0pvj7Ta9CDK3oSbup3vS1o35EOnOyT9+SeciqLj/45tV6Imri5OAXB9z8OsBSPZ/d2jYBTcB6E5xk8aV4daHujcR+CsPxbD+pBhSiho9D7FqVqeSRlR1ujQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PrBFH7Ff; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/uX8Px8p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PrBFH7Ff; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/uX8Px8p; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PrBFH7Ff";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/uX8Px8p";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PrBFH7Ff";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/uX8Px8p"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 593C337BC6;
+	Tue, 16 Apr 2024 13:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1713275752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L/n3iPopAe9FbTV5rXIeDd3PGXaTl8QeOBpHbbctfl4=;
+	b=PrBFH7FfpR5Z/MYQ4uIUlM/BEKiok2Z0vdetj9qC+BHPOx6L3HQwa2aK9llY69i2MXwx6P
+	pbdSL0PA2ph8KLYLbXdm2ngPc66hYO5AObP5t0Hm+5AI6OfTNhGjoV+Sw1xr0FsQTI4dy6
+	G1WddM+lwZbDYF/iUo1hrWNeleWvrFM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1713275752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L/n3iPopAe9FbTV5rXIeDd3PGXaTl8QeOBpHbbctfl4=;
+	b=/uX8Px8pfMSmVdiPu96v/zeC3WTqTBnubko4PYTM93XFNCtBHSj+bPG1nwGhHuqHV3EcMW
+	5+sgGOGQ8avtnuBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1713275752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L/n3iPopAe9FbTV5rXIeDd3PGXaTl8QeOBpHbbctfl4=;
+	b=PrBFH7FfpR5Z/MYQ4uIUlM/BEKiok2Z0vdetj9qC+BHPOx6L3HQwa2aK9llY69i2MXwx6P
+	pbdSL0PA2ph8KLYLbXdm2ngPc66hYO5AObP5t0Hm+5AI6OfTNhGjoV+Sw1xr0FsQTI4dy6
+	G1WddM+lwZbDYF/iUo1hrWNeleWvrFM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1713275752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L/n3iPopAe9FbTV5rXIeDd3PGXaTl8QeOBpHbbctfl4=;
+	b=/uX8Px8pfMSmVdiPu96v/zeC3WTqTBnubko4PYTM93XFNCtBHSj+bPG1nwGhHuqHV3EcMW
+	5+sgGOGQ8avtnuBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3AC9213931;
+	Tue, 16 Apr 2024 13:55:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F9BVDmiDHmZIZAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 16 Apr 2024 13:55:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CCF6BA082E; Tue, 16 Apr 2024 15:55:51 +0200 (CEST)
+Date: Tue, 16 Apr 2024 15:55:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, jack@suse.cz,
+	joro@8bytes.org, will@kernel.org, trond.myklebust@hammerspace.com,
+	anna@kernel.org, arnd@arndb.de, herbert@gondor.apana.org.au,
+	davem@davemloft.net, jikos@kernel.org,
+	benjamin.tissoires@redhat.com, tytso@mit.edu, jack@suse.com,
+	dennis@kernel.org, tj@kernel.org, cl@linux.com,
+	jakub@cloudflare.com, penberg@kernel.org, rientjes@google.com,
+	iamjoonsoo.kim@lge.com, vbabka@suse.cz, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+	linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org,
+	bpf@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kent.overstreet@linux.dev
+Subject: Re: [PATCH v2 1/1] mm: change inlined allocation helpers to account
+ at the call site
+Message-ID: <20240416135551.jc2q5ps2cylsr44s@quack3>
+References: <20240415020731.1152108-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/14] selftests/digest_cache: Add selftests for
- digest_cache LSM
-To: Jarkko Sakkinen <jarkko@kernel.org>, corbet@lwn.net, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, akpm@linux-foundation.org,
- shuah@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- mic@digikod.net
-Cc: linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
- pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
- pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
- jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com,
- mzerqung@0pointer.de, kgold@linux.ibm.com,
- Roberto Sassu <roberto.sassu@huawei.com>
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <20240415142436.2545003-14-roberto.sassu@huaweicloud.com>
- <D0KYF52LBLF1.2II4T4NWD3G6U@kernel.org>
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <D0KYF52LBLF1.2II4T4NWD3G6U@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwBnUydSVR5mtzlUBg--.12168S2
-X-Coremail-Antispam: 1UD129KBjvAXoWDJw47tw1UCw1fXFy7Zr1kXwb_yoWxZrykAo
-	Zagr4xJw4xGr17Cr4kCFyftayYkw1Yq3y7JayrJ39FqF15Ka4jk3WkKw45AF45WFyrtFyD
-	ZF1xXw1avrW8trs3n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUYn7kC6x804xWl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
-	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
-	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
-	CaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28I
-	cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
-	IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41l
-	IxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	CI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
-	x4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUrLvKUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBF1jj5x9JwABs8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240415020731.1152108-1-surenb@google.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[40];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLj6phwcdhphrxdye3znxh4wb5)];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
 
-On 4/15/2024 9:47 PM, Jarkko Sakkinen wrote:
-> On Mon Apr 15, 2024 at 5:24 PM EEST, Roberto Sassu wrote:
->> From: Roberto Sassu <roberto.sassu@huawei.com>
->>
->> Add tests to verify the correctness of the digest_cache LSM, in all_test.c.
->>
->> Add the kernel module digest_cache_kern.ko, to let all_test call the API
->> of the digest_cache LSM through the newly introduced digest_cache_test file
->> in securityfs.
->>
->> Test coverage information:
->>
->> File 'security/digest_cache/notifier.c'
->> Lines executed:100.00% of 31
->> File 'security/digest_cache/reset.c'
->> Lines executed:98.36% of 61
->> File 'security/digest_cache/main.c'
->> Lines executed:90.29% of 206
->> File 'security/digest_cache/modsig.c'
->> Lines executed:42.86% of 21
->> File 'security/digest_cache/htable.c'
->> Lines executed:93.02% of 86
->> File 'security/digest_cache/populate.c'
->> Lines executed:92.86% of 56
->> File 'security/digest_cache/verif.c'
->> Lines executed:89.74% of 39
->> File 'security/digest_cache/dir.c'
->> Lines executed:90.62% of 96
->> File 'security/digest_cache/secfs.c'
->> Lines executed:57.14% of 21
->> File 'security/digest_cache/parsers/tlv.c'
->> Lines executed:79.75% of 79
->> File 'security/digest_cache/parsers/rpm.c'
->> Lines executed:88.46% of 78
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   MAINTAINERS                                   |   1 +
->>   tools/testing/selftests/Makefile              |   1 +
->>   .../testing/selftests/digest_cache/.gitignore |   3 +
->>   tools/testing/selftests/digest_cache/Makefile |  24 +
->>   .../testing/selftests/digest_cache/all_test.c | 815 ++++++++++++++++++
->>   tools/testing/selftests/digest_cache/common.c |  78 ++
->>   tools/testing/selftests/digest_cache/common.h | 135 +++
->>   .../selftests/digest_cache/common_user.c      |  47 +
->>   .../selftests/digest_cache/common_user.h      |  17 +
->>   tools/testing/selftests/digest_cache/config   |   1 +
->>   .../selftests/digest_cache/generators.c       | 248 ++++++
->>   .../selftests/digest_cache/generators.h       |  19 +
->>   .../selftests/digest_cache/testmod/Makefile   |  16 +
->>   .../selftests/digest_cache/testmod/kern.c     | 564 ++++++++++++
->>   14 files changed, 1969 insertions(+)
->>   create mode 100644 tools/testing/selftests/digest_cache/.gitignore
->>   create mode 100644 tools/testing/selftests/digest_cache/Makefile
->>   create mode 100644 tools/testing/selftests/digest_cache/all_test.c
->>   create mode 100644 tools/testing/selftests/digest_cache/common.c
->>   create mode 100644 tools/testing/selftests/digest_cache/common.h
->>   create mode 100644 tools/testing/selftests/digest_cache/common_user.c
->>   create mode 100644 tools/testing/selftests/digest_cache/common_user.h
->>   create mode 100644 tools/testing/selftests/digest_cache/config
->>   create mode 100644 tools/testing/selftests/digest_cache/generators.c
->>   create mode 100644 tools/testing/selftests/digest_cache/generators.h
->>   create mode 100644 tools/testing/selftests/digest_cache/testmod/Makefile
->>   create mode 100644 tools/testing/selftests/digest_cache/testmod/kern.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 72801a88449c..d7f700da009e 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -6198,6 +6198,7 @@ M:	Roberto Sassu <roberto.sassu@huawei.com>
->>   L:	linux-security-module@vger.kernel.org
->>   S:	Maintained
->>   F:	security/digest_cache/
->> +F:	tools/testing/selftests/digest_cache/
->>   
-> A common convetion is to have one patch with MAINTAINERS update in the
-> tail. This is now sprinkled to multiple patches which is not good.
-
-Ok.
-
-Thanks
-
-Roberto
-
->>   DIGITEQ AUTOMOTIVE MGB4 V4L2 DRIVER
->>   M:	Martin Tuma <martin.tuma@digiteqautomotive.com>
->> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
->> index 15b6a111c3be..3c5965a62d28 100644
->> --- a/tools/testing/selftests/Makefile
->> +++ b/tools/testing/selftests/Makefile
->> @@ -13,6 +13,7 @@ TARGETS += core
->>   TARGETS += cpufreq
->>   TARGETS += cpu-hotplug
->>   TARGETS += damon
->> +TARGETS += digest_cache
->>   TARGETS += dmabuf-heaps
->>   TARGETS += drivers/dma-buf
->>   TARGETS += drivers/s390x/uvdevice
->> diff --git a/tools/testing/selftests/digest_cache/.gitignore b/tools/testing/selftests/digest_cache/.gitignore
->> new file mode 100644
->> index 000000000000..392096e18f4e
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/.gitignore
->> @@ -0,0 +1,3 @@
->> +/*.mod
->> +/*_test
->> +/*.ko
->> diff --git a/tools/testing/selftests/digest_cache/Makefile b/tools/testing/selftests/digest_cache/Makefile
->> new file mode 100644
->> index 000000000000..6b1e0d3c08cf
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/Makefile
->> @@ -0,0 +1,24 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +TEST_GEN_PROGS_EXTENDED = digest_cache_kern.ko
->> +TEST_GEN_PROGS := all_test
->> +
->> +$(OUTPUT)/%.ko: $(wildcard common.[ch]) testmod/Makefile testmod/kern.c
->> +	$(call msg,MOD,,$@)
->> +	$(Q)$(MAKE) -C testmod
->> +	$(Q)cp testmod/digest_cache_kern.ko $@
->> +
->> +LOCAL_HDRS += common.h common_user.h generators.h
->> +CFLAGS += -ggdb -Wall -Wextra $(KHDR_INCLUDES)
->> +
->> +OVERRIDE_TARGETS := 1
->> +override define CLEAN
->> +	$(call msg,CLEAN)
->> +	$(Q)$(MAKE) -C testmod clean
->> +	rm -Rf $(TEST_GEN_PROGS)
->> +	rm -Rf $(OUTPUT)/common.o $(OUTPUT)/common_user.o $(OUTPUT)/generators.o
->> +	rm -Rf $(OUTPUT)/common.mod
->> +endef
->> +
->> +include ../lib.mk
->> +
->> +$(OUTPUT)/all_test: common.c common.h common_user.c common_user.h generators.c
->> diff --git a/tools/testing/selftests/digest_cache/all_test.c b/tools/testing/selftests/digest_cache/all_test.c
->> new file mode 100644
->> index 000000000000..9f45e522c43c
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/all_test.c
->> @@ -0,0 +1,815 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Implement the tests of the digest_cache LSM.
->> + */
->> +
->> +#include <errno.h>
->> +#include <fcntl.h>
->> +#include <string.h>
->> +#include <stdlib.h>
->> +#include <unistd.h>
->> +#include <limits.h>
->> +#include <fts.h>
->> +#include <sys/types.h>
->> +#include <sys/stat.h>
->> +#include <sys/xattr.h>
->> +#include <sys/syscall.h>
->> +#include <linux/module.h>
->> +
->> +#include "generators.h"
->> +
->> +#include "../kselftest_harness.h"
->> +#include "../../../../include/uapi/linux/xattr.h"
->> +
->> +#define BASE_DIR_TEMPLATE "/tmp/digest_cache_test_dirXXXXXX"
->> +#define DIGEST_LISTS_SUBDIR "digest_lists"
->> +#define NUM_DIGEST_LISTS_PREFETCH MAX_WORKS
->> +
->> +FIXTURE(shared_data) {
->> +	char base_dir[sizeof(BASE_DIR_TEMPLATE)];
->> +	char digest_lists_dir[sizeof(BASE_DIR_TEMPLATE) +
->> +			      sizeof(DIGEST_LISTS_SUBDIR)];
->> +	int base_dirfd, digest_lists_dirfd, kernfd, pathfd, cmd_len;
->> +	int notify_inodesfd;
->> +};
->> +
->> +FIXTURE_SETUP(shared_data)
->> +{
->> +	char cmd[1024];
->> +	int fd, i, cmd_len;
->> +
->> +	/* Create the base directory. */
->> +	snprintf(self->base_dir, sizeof(self->base_dir), BASE_DIR_TEMPLATE);
->> +	ASSERT_NE(NULL, mkdtemp(self->base_dir));
->> +
->> +	/* Open base directory. */
->> +	self->base_dirfd = open(self->base_dir, O_RDONLY | O_DIRECTORY);
->> +	ASSERT_NE(-1, self->base_dirfd);
->> +
->> +	/* Create the digest_lists subdirectory. */
->> +	snprintf(self->digest_lists_dir, sizeof(self->digest_lists_dir),
->> +		 "%s/%s", self->base_dir, DIGEST_LISTS_SUBDIR);
->> +	ASSERT_EQ(0, mkdirat(self->base_dirfd, DIGEST_LISTS_SUBDIR, 0600));
->> +	self->digest_lists_dirfd = openat(self->base_dirfd, DIGEST_LISTS_SUBDIR,
->> +					  O_RDONLY | O_DIRECTORY);
->> +	ASSERT_NE(-1, self->digest_lists_dirfd);
->> +
->> +	fd = open("digest_cache_kern.ko", O_RDONLY);
->> +	ASSERT_LT(0, fd);
->> +
->> +	ASSERT_EQ(0, syscall(SYS_finit_module, fd, "", 0));
->> +	close(fd);
->> +
->> +	/* Open kernel test interface. */
->> +	self->kernfd = open(DIGEST_CACHE_TEST_INTERFACE, O_RDWR, 0600);
->> +	ASSERT_NE(-1, self->kernfd);
->> +
->> +	/* Open kernel notify inodes interface. */
->> +	self->notify_inodesfd = open(DIGEST_CACHE_NOTIFY_INODES_INTERFACE,
->> +				     O_RDWR, 0600);
->> +	ASSERT_NE(-1, self->notify_inodesfd);
->> +
->> +	/* Open kernel digest list path interface. */
->> +	self->pathfd = open(DIGEST_CACHE_PATH_INTERFACE, O_RDWR, 0600);
->> +	ASSERT_NE(-1, self->pathfd);
->> +
->> +	/* Write the path of the digest lists directory. */
->> +	ASSERT_LT(0, write(self->pathfd, self->digest_lists_dir,
->> +			   strlen(self->digest_lists_dir)));
->> +
->> +	/* Ensure that no verifier is enabled at the beginning of a test. */
->> +	for (i = 0; i < VERIF__LAST; i++) {
->> +		cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s",
->> +				   commands_str[DIGEST_CACHE_DISABLE_VERIF],
->> +				   verifs_str[i]);
->> +		ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +	}
->> +}
->> +
->> +FIXTURE_TEARDOWN(shared_data)
->> +{
->> +	FTS *fts = NULL;
->> +	FTSENT *ftsent;
->> +	int fts_flags = (FTS_PHYSICAL | FTS_COMFOLLOW | FTS_NOCHDIR | FTS_XDEV);
->> +	char *paths[2] = { self->base_dir, NULL };
->> +	char cmd[1024];
->> +	int cmd_len;
->> +
->> +	/* Close digest_lists subdirectory. */
->> +	close(self->digest_lists_dirfd);
->> +
->> +	/* Close base directory. */
->> +	close(self->base_dirfd);
->> +
->> +	/* Delete files and directories. */
->> +	fts = fts_open(paths, fts_flags, NULL);
->> +	if (fts) {
->> +		while ((ftsent = fts_read(fts)) != NULL) {
->> +			switch (ftsent->fts_info) {
->> +			case FTS_DP:
->> +				rmdir(ftsent->fts_accpath);
->> +				break;
->> +			case FTS_F:
->> +			case FTS_SL:
->> +			case FTS_SLNONE:
->> +			case FTS_DEFAULT:
->> +				unlink(ftsent->fts_accpath);
->> +				break;
->> +			default:
->> +				break;
->> +			}
->> +		}
->> +	}
->> +
->> +	/* Release digest cache reference, if the test was interrupted. */
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s",
->> +			   commands_str[DIGEST_CACHE_PUT]);
->> +	write(self->kernfd, cmd, cmd_len);
->> +
->> +	/* Close kernel notify inodes interface. */
->> +	close(self->notify_inodesfd);
->> +
->> +	/* Close kernel test interface. */
->> +	close(self->kernfd);
->> +
->> +	/* Close kernel digest list path interface. */
->> +	close(self->pathfd);
->> +
->> +	syscall(SYS_delete_module, "digest_cache_kern", 0);
->> +}
->> +
->> +static int query_test(int kernfd, char *base_dir, char *filename,
->> +		      enum hash_algo algo, int start_number, int num_digests)
->> +{
->> +	u8 digest[MAX_DIGEST_SIZE] = { 0 };
->> +	char digest_str[MAX_DIGEST_SIZE * 2 + 1] = { 0 };
->> +	int digest_len = hash_digest_size[algo];
->> +	char cmd[1024];
->> +	int ret, i, cmd_len;
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s/%s",
->> +			   commands_str[DIGEST_CACHE_GET], base_dir, filename);
->> +	ret = write(kernfd, cmd, cmd_len);
->> +	if (ret != cmd_len)
->> +		return -errno;
->> +
->> +	ret = 0;
->> +
->> +	*(u32 *)digest = start_number;
->> +
->> +	for (i = 0; i < num_digests; i++) {
->> +		bin2hex(digest_str, digest, digest_len);
->> +
->> +		cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s/%s|%s:%s",
->> +				   commands_str[DIGEST_CACHE_LOOKUP], base_dir,
->> +				   filename, hash_algo_name[algo], digest_str);
->> +		ret = write(kernfd, cmd, cmd_len);
->> +		if (ret != cmd_len) {
->> +			ret = -errno;
->> +			goto out;
->> +		} else {
->> +			ret = 0;
->> +		}
->> +
->> +		(*(u32 *)digest)++;
->> +	}
->> +out:
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s",
->> +			   commands_str[DIGEST_CACHE_PUT]);
->> +	write(kernfd, cmd, cmd_len);
->> +	return ret;
->> +}
->> +
->> +static enum pgp_algos get_pgp_algo(enum hash_algo algo)
->> +{
->> +	unsigned long i;
->> +
->> +	for (i = DIGEST_ALGO_MD5; i < ARRAY_SIZE(pgp_algo_mapping); i++)
->> +		if (pgp_algo_mapping[i] == algo)
->> +			return i;
->> +
->> +	return DIGEST_ALGO_SHA224 + 1;
->> +}
->> +
->> +static void test_parser(struct _test_data_shared_data *self,
->> +			struct __test_metadata *_metadata,
->> +			char *digest_list_filename, char *filename,
->> +			enum hash_algo algo, int start_number, int num_digests,
->> +			unsigned int failure)
->> +{
->> +	int expected_ret = (failure) ? -ENOENT : 0;
->> +
->> +	if (!strncmp(digest_list_filename, "tlv-", 4)) {
->> +		ASSERT_EQ(0, gen_tlv_list(self->digest_lists_dirfd,
->> +					  digest_list_filename, algo,
->> +					  start_number, num_digests,
->> +					  (enum tlv_failures)failure));
->> +	} else if (!strncmp(digest_list_filename, "rpm-", 4)) {
->> +		enum pgp_algos pgp_algo = get_pgp_algo(algo);
->> +
->> +		if (pgp_algo == DIGEST_ALGO_SHA224 + 1)
->> +			return;
->> +
->> +		ASSERT_EQ(0, gen_rpm_list(self->digest_lists_dirfd,
->> +					  digest_list_filename, algo, pgp_algo,
->> +					  start_number, num_digests,
->> +					  (enum rpm_failures)failure));
->> +	}
->> +
->> +	ASSERT_EQ(0, create_file(self->base_dirfd, filename,
->> +				 digest_list_filename));
->> +	ASSERT_EQ(expected_ret, query_test(self->kernfd, self->base_dir,
->> +					   filename, algo, start_number,
->> +					   num_digests));
->> +
->> +	unlinkat(self->digest_lists_dirfd, digest_list_filename, 0);
->> +	unlinkat(self->base_dirfd, filename, 0);
->> +}
->> +
->> +/*
->> + * Verify that the tlv digest list parser returns success on well-formatted
->> + * digest lists, for each defined hash algorithm.
->> + */
->> +TEST_F(shared_data, tlv_parser_ok)
->> +{
->> +	enum hash_algo algo;
->> +
->> +	/* Test every known algorithm. */
->> +	for (algo = 0; algo < HASH_ALGO__LAST; algo++)
->> +		test_parser(self, _metadata, "tlv-digest_list", "file", algo,
->> +			    0, 5, TLV_NO_FAILURE);
->> +}
->> +
->> +/*
->> + * Verify that the tlv digest list parser returns failure on invalid digest
->> + * lists.
->> + */
->> +TEST_F(shared_data, tlv_parser_error)
->> +{
->> +	enum tlv_failures failure;
->> +
->> +	/* Test every failure. */
->> +	for (failure = 0; failure < TLV_FAILURE__LAST; failure++)
->> +		test_parser(self, _metadata, "tlv-digest_list", "file",
->> +			    HASH_ALGO_SHA224, 0, 1, failure);
->> +}
->> +
->> +/*
->> + * Verify that the rpm digest list parser returns success on well-formatted
->> + * digest lists, for each defined hash algorithm.
->> + */
->> +TEST_F(shared_data, rpm_parser_ok)
->> +{
->> +	enum hash_algo algo;
->> +
->> +	/* Test every known algorithm. */
->> +	for (algo = 0; algo < HASH_ALGO__LAST; algo++)
->> +		test_parser(self, _metadata, "rpm-digest_list", "file", algo,
->> +			    0, 5, RPM_NO_FAILURE);
->> +}
->> +
->> +/*
->> + * Verify that the rpm digest list parser returns failure on invalid digest
->> + * lists.
->> + */
->> +TEST_F(shared_data, rpm_parser_error)
->> +{
->> +	enum rpm_failures failure;
->> +
->> +	/* Test every failure. */
->> +	for (failure = 0; failure < RPM_FAILURE__LAST; failure++)
->> +		test_parser(self, _metadata, "rpm-digest_list", "file",
->> +			    HASH_ALGO_SHA224, 0, 1, failure);
->> +}
->> +
->> +static void test_default_path(struct _test_data_shared_data *self,
->> +			      struct __test_metadata *_metadata, bool file)
->> +{
->> +	char path[PATH_MAX];
->> +	size_t path_len;
->> +
->> +	if (file) {
->> +		path_len = snprintf(path, sizeof(path),
->> +				    "%s/%s/tlv-digest_list", self->base_dir,
->> +				    DIGEST_LISTS_SUBDIR);
->> +		ASSERT_LT(0, write(self->pathfd, path, path_len));
->> +	}
->> +
->> +	ASSERT_EQ(0, gen_tlv_list(self->digest_lists_dirfd, "tlv-digest_list",
->> +				  HASH_ALGO_SHA1, 0, 1, TLV_NO_FAILURE));
->> +
->> +	ASSERT_EQ(0, create_file(self->base_dirfd, "file", NULL));
->> +
->> +	ASSERT_EQ(0, query_test(self->kernfd, self->base_dir, "file",
->> +				HASH_ALGO_SHA1, 0, 1));
->> +}
->> +
->> +/*
->> + * Verify that the digest cache created from the default path (regular file)
->> + * can be retrieved and used for lookup.
->> + */
->> +TEST_F(shared_data, default_path_file)
->> +{
->> +	test_default_path(self, _metadata, true);
->> +}
->> +
->> +/*
->> + * Verify that the digest cache created from the default path (directory)
->> + * can be retrieved and used for lookup.
->> + */
->> +TEST_F(shared_data, default_path_dir)
->> +{
->> +	test_default_path(self, _metadata, false);
->> +}
->> +
->> +static void notify_inode_init(struct _test_data_shared_data *self,
->> +			      struct __test_metadata *_metadata)
->> +{
->> +	/* Clear buffer. */
->> +	ASSERT_EQ(1, write(self->notify_inodesfd, "1", 1));
->> +}
->> +
->> +static void notify_inodes_check(struct _test_data_shared_data *self,
->> +				struct __test_metadata *_metadata,
->> +				char *filenames)
->> +{
->> +	char notify_inodes_buf[1024] = { 0 };
->> +	char notify_inodes_buf_kernel[1024] = { 0 };
->> +	char *filename, *filenames_copy, *buf_ptr = notify_inodes_buf;
->> +	struct stat st;
->> +	int fd;
->> +
->> +	ASSERT_LT(0, read(self->notify_inodesfd, notify_inodes_buf_kernel,
->> +			  sizeof(notify_inodes_buf_kernel)));
->> +
->> +	filenames_copy = strdup(filenames);
->> +	ASSERT_NE(NULL, filenames_copy);
->> +
->> +	while ((filename = strsep(&filenames_copy, ","))) {
->> +		fd = openat(self->base_dirfd, filename, O_RDONLY);
->> +		ASSERT_NE(-1, fd);
->> +		ASSERT_EQ(0, fstat(fd, &st));
->> +		close(fd);
->> +
->> +		buf_ptr += snprintf(buf_ptr,
->> +				    sizeof(notify_inodes_buf) -
->> +				    (buf_ptr - notify_inodes_buf), "%s%lu",
->> +				    notify_inodes_buf[0] ? "," : "", st.st_ino);
->> +	}
->> +
->> +	free(filenames_copy);
->> +
->> +	ASSERT_EQ(0, strcmp(notify_inodes_buf, notify_inodes_buf_kernel));
->> +}
->> +
->> +static void test_file_changes(struct _test_data_shared_data *self,
->> +			      struct __test_metadata *_metadata,
->> +			      enum file_changes change)
->> +{
->> +	char digest_list_filename[] = "tlv-digest_list";
->> +	char digest_list_filename_new[] = "tlv-digest_list6";
->> +	char digest_list_filename_xattr[] = "tlv-digest_list7";
->> +	char digest_list_path[sizeof(self->digest_lists_dir) +
->> +			      sizeof(digest_list_filename)];
->> +	int fd;
->> +
->> +	ASSERT_EQ(0, gen_tlv_list(self->digest_lists_dirfd,
->> +				  digest_list_filename, HASH_ALGO_SHA1, 0, 1,
->> +				  TLV_NO_FAILURE));
->> +
->> +	ASSERT_EQ(0, create_file(self->base_dirfd, "file",
->> +				 digest_list_filename));
->> +
->> +	ASSERT_EQ(0, query_test(self->kernfd, self->base_dir, "file",
->> +				HASH_ALGO_SHA1, 0, 1));
->> +
->> +	notify_inode_init(self, _metadata);
->> +
->> +	switch (change) {
->> +	case FILE_WRITE:
->> +		fd = openat(self->digest_lists_dirfd, digest_list_filename,
->> +			    O_WRONLY);
->> +		ASSERT_NE(-1, fd);
->> +
->> +		ASSERT_EQ(4, write(fd, "1234", 4));
->> +		close(fd);
->> +		break;
->> +	case FILE_TRUNCATE:
->> +		snprintf(digest_list_path, sizeof(digest_list_path),
->> +			 "%s/%s", self->digest_lists_dir, digest_list_filename);
->> +		ASSERT_EQ(0, truncate(digest_list_path, 4));
->> +		break;
->> +	case FILE_FTRUNCATE:
->> +		fd = openat(self->digest_lists_dirfd, digest_list_filename,
->> +			    O_WRONLY);
->> +		ASSERT_NE(-1, fd);
->> +		ASSERT_EQ(0, ftruncate(fd, 4));
->> +		close(fd);
->> +		break;
->> +	case FILE_UNLINK:
->> +		ASSERT_EQ(0, unlinkat(self->digest_lists_dirfd,
->> +				      digest_list_filename, 0));
->> +		break;
->> +	case FILE_RENAME:
->> +		ASSERT_EQ(0, renameat(self->digest_lists_dirfd,
->> +				      digest_list_filename,
->> +				      self->digest_lists_dirfd,
->> +				      digest_list_filename_new));
->> +		break;
->> +	case FILE_SETXATTR:
->> +		fd = openat(self->base_dirfd, "file", O_WRONLY);
->> +		ASSERT_NE(-1, fd);
->> +
->> +		ASSERT_EQ(0, fsetxattr(fd, XATTR_NAME_DIGEST_LIST,
->> +				       digest_list_filename_xattr,
->> +				       strlen(digest_list_filename_xattr) + 1,
->> +				       0));
->> +		close(fd);
->> +		break;
->> +	case FILE_REMOVEXATTR:
->> +		fd = openat(self->base_dirfd, "file", O_WRONLY);
->> +		ASSERT_NE(-1, fd);
->> +
->> +		ASSERT_EQ(0, fremovexattr(fd, XATTR_NAME_DIGEST_LIST));
->> +		close(fd);
->> +
->> +		/*
->> +		 * Removing security.digest_list does not cause a failure,
->> +		 * the digest can be still retrieved via directory lookup.
->> +		 */
->> +		ASSERT_EQ(0, query_test(self->kernfd, self->base_dir, "file",
->> +					HASH_ALGO_SHA1, 0, 1));
->> +
->> +		notify_inodes_check(self, _metadata, "file");
->> +		return;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	ASSERT_NE(0, query_test(self->kernfd, self->base_dir, "file",
->> +				HASH_ALGO_SHA1, 0, 1));
->> +
->> +	notify_inodes_check(self, _metadata, "file");
->> +}
->> +
->> +/*
->> + * Verify that operations on a digest list cause a reset of the digest cache,
->> + * and that the digest is not found in the invalid/missing digest list.
->> + */
->> +TEST_F(shared_data, file_reset)
->> +{
->> +	enum file_changes change;
->> +
->> +	/* Test for every file change. */
->> +	for (change = 0; change < FILE_CHANGE__LAST; change++)
->> +		test_file_changes(self, _metadata, change);
->> +}
->> +
->> +static void query_test_with_failures(struct _test_data_shared_data *self,
->> +				     struct __test_metadata *_metadata,
->> +				     int start_number, int num_digests,
->> +				     int *removed, int num_removed)
->> +{
->> +	int i, j, expected_ret;
->> +
->> +	for (i = start_number; i < start_number + num_digests; i++) {
->> +		expected_ret = 0;
->> +
->> +		for (j = 0; j < num_removed; j++) {
->> +			if (removed[j] == i) {
->> +				expected_ret = -ENOENT;
->> +				break;
->> +			}
->> +		}
->> +
->> +		ASSERT_EQ(expected_ret, query_test(self->kernfd, self->base_dir,
->> +						   "file", HASH_ALGO_SHA1, i,
->> +						   1));
->> +	}
->> +}
->> +
->> +/*
->> + * Verify that changes in the digest list directory are monitored and that
->> + * a digest cannot be found if the respective digest list file has been moved
->> + * away from the directory, and that a digest can be found if the respective
->> + * digest list has been moved/created in the directory.
->> + */
->> +TEST_F(shared_data, dir_reset)
->> +{
->> +	char digest_list_filename[NAME_MAX + 1];
->> +	int i, removed[10];
->> +
->> +	for (i = 0; i < 10; i++) {
->> +		snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +			 "tlv-digest_list%d", i);
->> +		ASSERT_EQ(0, gen_tlv_list(self->digest_lists_dirfd,
->> +					  digest_list_filename, HASH_ALGO_SHA1,
->> +					  i, 1, TLV_NO_FAILURE));
->> +	}
->> +
->> +	ASSERT_EQ(0, create_file(self->base_dirfd, "file", NULL));
->> +	/* The second file is to have duplicate notifications (file and dir). */
->> +	ASSERT_EQ(0, create_file(self->base_dirfd, "file2",
->> +				 "tlv-digest_list7"));
->> +	/* The query adds file2 inode to the file digest cache notif. list. */
->> +	ASSERT_NE(0, query_test(self->kernfd, self->base_dir, "file2",
->> +				HASH_ALGO_SHA1, 0, 1));
->> +
->> +	query_test_with_failures(self, _metadata, 0, 10, removed, 0);
->> +
->> +	notify_inode_init(self, _metadata);
->> +	ASSERT_EQ(0, unlinkat(self->digest_lists_dirfd, "tlv-digest_list7", 0));
->> +	/* File notification comes before directory notification. */
->> +	notify_inodes_check(self, _metadata, "file2,file");
->> +
->> +	removed[0] = 7;
->> +
->> +	query_test_with_failures(self, _metadata, 0, 10, removed, 1);
->> +
->> +	notify_inode_init(self, _metadata);
->> +	ASSERT_EQ(0, renameat(self->digest_lists_dirfd, "tlv-digest_list6",
->> +			      self->base_dirfd, "tlv-digest_list6"));
->> +	notify_inodes_check(self, _metadata, "file");
->> +
->> +	removed[1] = 6;
->> +
->> +	query_test_with_failures(self, _metadata, 0, 10, removed, 2);
->> +
->> +	notify_inode_init(self, _metadata);
->> +	ASSERT_EQ(0, renameat(self->base_dirfd, "tlv-digest_list6",
->> +			      self->digest_lists_dirfd, "tlv-digest_list6"));
->> +	notify_inodes_check(self, _metadata, "file");
->> +
->> +	query_test_with_failures(self, _metadata, 0, 10, removed, 1);
->> +
->> +	notify_inode_init(self, _metadata);
->> +	ASSERT_EQ(0, gen_tlv_list(self->digest_lists_dirfd, "tlv-digest_list10",
->> +				  HASH_ALGO_SHA1, 10, 1, TLV_NO_FAILURE));
->> +	notify_inodes_check(self, _metadata, "file");
->> +
->> +	query_test_with_failures(self, _metadata, 0, 11, removed, 1);
->> +}
->> +
->> +static void _check_verif_data(struct _test_data_shared_data *self,
->> +			      struct __test_metadata *_metadata,
->> +			      char *digest_list_filename, int num,
->> +			      enum hash_algo algo, bool check_dir)
->> +{
->> +	char digest_list_filename_kernel[NAME_MAX + 1];
->> +	char cmd[1024], number[20];
->> +	u8 digest[MAX_DIGEST_SIZE] = { 0 };
->> +	char digest_str[MAX_DIGEST_SIZE * 2 + 1] = { 0 };
->> +	int len, cmd_len;
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s/file",
->> +			   commands_str[DIGEST_CACHE_GET], self->base_dir);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	/*
->> +	 * If a directory digest cache was requested, we need to do a lookup,
->> +	 * to make the kernel module retrieve verification data from the digest
->> +	 * cache of the directory entry.
->> +	 */
->> +	if (check_dir) {
->> +		*(u32 *)digest = num;
->> +
->> +		bin2hex(digest_str, digest, hash_digest_size[algo]);
->> +
->> +		cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s/file|%s:%s",
->> +				   commands_str[DIGEST_CACHE_LOOKUP],
->> +				   self->base_dir, hash_algo_name[algo],
->> +				   digest_str);
->> +		ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +	}
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s",
->> +			   commands_str[DIGEST_CACHE_SET_VERIF],
->> +			   verifs_str[VERIF_FILENAMES]);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	ASSERT_LT(0, read(self->kernfd, digest_list_filename_kernel,
->> +			  sizeof(digest_list_filename_kernel)));
->> +	ASSERT_EQ(0, strcmp(digest_list_filename, digest_list_filename_kernel));
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s",
->> +			   commands_str[DIGEST_CACHE_SET_VERIF],
->> +			   verifs_str[VERIF_NUMBER]);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	len = read(self->kernfd, number, sizeof(number) - 1);
->> +	ASSERT_LT(0, len);
->> +	number[len] = '\0';
->> +	ASSERT_EQ(num, atoi(number));
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s",
->> +			   commands_str[DIGEST_CACHE_PUT]);
->> +	write(self->kernfd, cmd, cmd_len);
->> +}
->> +
->> +static void check_verif_data(struct _test_data_shared_data *self,
->> +			     struct __test_metadata *_metadata)
->> +{
->> +	char digest_list_filename[NAME_MAX + 1];
->> +	char cmd[1024];
->> +	int i, cmd_len;
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s",
->> +			   commands_str[DIGEST_CACHE_ENABLE_VERIF],
->> +			   verifs_str[VERIF_FILENAMES]);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s",
->> +			   commands_str[DIGEST_CACHE_ENABLE_VERIF],
->> +			   verifs_str[VERIF_NUMBER]);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	/*
->> +	 * Reverse order is intentional, so that directory entries are created
->> +	 * in the opposite order as when they are searched (when prefetching is
->> +	 * requested).
->> +	 */
->> +	for (i = 10; i >= 0; i--) {
->> +		snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +			 "%d-tlv-digest_list%d", i, i);
->> +		ASSERT_EQ(0, gen_tlv_list(self->digest_lists_dirfd,
->> +					  digest_list_filename, HASH_ALGO_SHA1,
->> +					  i, 1, TLV_NO_FAILURE));
->> +
->> +		ASSERT_EQ(0, create_file(self->base_dirfd, "file",
->> +					 digest_list_filename));
->> +
->> +		_check_verif_data(self, _metadata, digest_list_filename, i,
->> +				  HASH_ALGO_SHA1, false);
->> +
->> +		ASSERT_EQ(0, unlinkat(self->base_dirfd, "file", 0));
->> +	}
->> +
->> +	ASSERT_EQ(0, create_file(self->base_dirfd, "file", NULL));
->> +
->> +	for (i = 0; i < 11; i++) {
->> +		snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +			 "%d-tlv-digest_list%d", i, i);
->> +		_check_verif_data(self, _metadata, digest_list_filename, i,
->> +				  HASH_ALGO_SHA1, true);
->> +	}
->> +
->> +	ASSERT_EQ(0, unlinkat(self->base_dirfd, "file", 0));
->> +}
->> +
->> +/*
->> + * Verify that the correct verification data can be retrieved from the digest
->> + * caches (without digest list prefetching).
->> + */
->> +TEST_F(shared_data, verif_data_no_prefetch)
->> +{
->> +	check_verif_data(self, _metadata);
->> +}
->> +
->> +/*
->> + * Verify that the correct verification data can be retrieved from the digest
->> + * caches (with digest list prefetching).
->> + */
->> +TEST_F(shared_data, verif_data_prefetch)
->> +{
->> +	ASSERT_EQ(0, lsetxattr(self->base_dir, XATTR_NAME_DIG_PREFETCH,
->> +			       "1", 1, 0));
->> +
->> +	check_verif_data(self, _metadata);
->> +}
->> +
->> +static void check_prefetch_list(struct _test_data_shared_data *self,
->> +				struct __test_metadata *_metadata,
->> +				int start_number, int end_number)
->> +{
->> +	char digest_list_filename[NAME_MAX + 1], filename[NAME_MAX + 1];
->> +	char digest_lists[1024], digest_lists_kernel[1024] = { 0 };
->> +	char cmd[1024];
->> +	int i, cmd_len;
->> +
->> +	snprintf(filename, sizeof(filename), "file%d", end_number);
->> +	snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +		 "%d-tlv-digest_list%d", end_number, end_number);
->> +	ASSERT_EQ(0, create_file(self->base_dirfd, filename,
->> +				 digest_list_filename));
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s/%s",
->> +			   commands_str[DIGEST_CACHE_GET], self->base_dir,
->> +			   filename);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	ASSERT_LT(0, read(self->kernfd, digest_lists, sizeof(digest_lists)));
->> +
->> +	for (i = start_number; i <= end_number; i++) {
->> +		if (digest_lists_kernel[0])
->> +			strcat(digest_lists_kernel, ",");
->> +
->> +		snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +			 "%d-tlv-digest_list%d", i, i);
->> +		strcat(digest_lists_kernel, digest_list_filename);
->> +	}
->> +
->> +	ASSERT_EQ(0, strcmp(digest_lists, digest_lists_kernel));
->> +
->> +	ASSERT_EQ(0, unlinkat(self->base_dirfd, filename, 0));
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s",
->> +			   commands_str[DIGEST_CACHE_PUT]);
->> +	write(self->kernfd, cmd, cmd_len);
->> +}
->> +
->> +static void check_prefetch_list_async(struct _test_data_shared_data *self,
->> +				      struct __test_metadata *_metadata)
->> +{
->> +	char digest_list_filename[NAME_MAX + 1], filename[NAME_MAX + 1];
->> +	char digest_lists[1024], digest_lists_kernel[1024] = { 0 };
->> +	char cmd[1024];
->> +	int i, cmd_len;
->> +
->> +	for (i = 0; i < NUM_DIGEST_LISTS_PREFETCH; i++) {
->> +		snprintf(filename, sizeof(filename), "file%d",
->> +			 NUM_DIGEST_LISTS_PREFETCH - 1 - i);
->> +		snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +			 "%d-tlv-digest_list%d", i, i);
->> +		ASSERT_EQ(0, create_file(self->base_dirfd, filename,
->> +					 digest_list_filename));
->> +	}
->> +
->> +	/* Do batch of get/put to test the kernel for concurrent requests. */
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s/file|%d|%d",
->> +			   commands_str[DIGEST_CACHE_GET_PUT_ASYNC],
->> +			   self->base_dir, 0, NUM_DIGEST_LISTS_PREFETCH - 1);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	ASSERT_LT(0, read(self->kernfd, digest_lists, sizeof(digest_lists)));
->> +
->> +	for (i = 0; i < NUM_DIGEST_LISTS_PREFETCH; i++) {
->> +		if (digest_lists_kernel[0])
->> +			strcat(digest_lists_kernel, ",");
->> +
->> +		snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +			 "%d-tlv-digest_list%d", i, i);
->> +		strcat(digest_lists_kernel, digest_list_filename);
->> +	}
->> +
->> +	ASSERT_EQ(0, strcmp(digest_lists, digest_lists_kernel));
->> +}
->> +
->> +static void prepare_prefetch(struct _test_data_shared_data *self,
->> +			     struct __test_metadata *_metadata)
->> +{
->> +	char digest_list_filename[NAME_MAX + 1];
->> +	char cmd[1024];
->> +	int i, cmd_len;
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s",
->> +			   commands_str[DIGEST_CACHE_ENABLE_VERIF],
->> +			   verifs_str[VERIF_PREFETCH]);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	cmd_len = snprintf(cmd, sizeof(cmd), "%s|%s",
->> +			   commands_str[DIGEST_CACHE_SET_VERIF],
->> +			   verifs_str[VERIF_PREFETCH]);
->> +	ASSERT_EQ(cmd_len, write(self->kernfd, cmd, cmd_len));
->> +
->> +	for (i = NUM_DIGEST_LISTS_PREFETCH - 1; i >= 0; i--) {
->> +		snprintf(digest_list_filename, sizeof(digest_list_filename),
->> +			 "%d-tlv-digest_list%d", i, i);
->> +		ASSERT_EQ(0, gen_tlv_list(self->digest_lists_dirfd,
->> +					  digest_list_filename, HASH_ALGO_SHA1,
->> +					  i, 1, TLV_NO_FAILURE));
->> +	}
->> +
->> +	ASSERT_EQ(0, fsetxattr(self->digest_lists_dirfd,
->> +			       XATTR_NAME_DIG_PREFETCH, "1", 1, 0));
->> +}
->> +
->> +/*
->> + * Verify that digest lists are prefetched when requested, in the correct order
->> + * (synchronous version).
->> + */
->> +TEST_F(shared_data, prefetch_sync)
->> +{
->> +	int i;
->> +
->> +	prepare_prefetch(self, _metadata);
->> +
->> +	for (i = 2; i < NUM_DIGEST_LISTS_PREFETCH; i += 3)
->> +		check_prefetch_list(self, _metadata, i - 2, i);
->> +}
->> +
->> +/*
->> + * Verify that digest lists are prefetched when requested, in the correct order
->> + * (asynchronous version).
->> + */
->> +TEST_F(shared_data, prefetch_async)
->> +{
->> +	prepare_prefetch(self, _metadata);
->> +
->> +	check_prefetch_list_async(self, _metadata);
->> +}
->> +
->> +TEST_HARNESS_MAIN
->> diff --git a/tools/testing/selftests/digest_cache/common.c b/tools/testing/selftests/digest_cache/common.c
->> new file mode 100644
->> index 000000000000..2123f7d937ce
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/common.c
->> @@ -0,0 +1,78 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Add common code for testing the digest_cache LSM.
->> + */
->> +
->> +#include "common.h"
->> +
->> +const char *commands_str[DIGEST_CACHE__LAST] = {
->> +	[DIGEST_CACHE_GET] = "get",
->> +	[DIGEST_CACHE_LOOKUP] = "lookup",
->> +	[DIGEST_CACHE_PUT] = "put",
->> +	[DIGEST_CACHE_ENABLE_VERIF] = "enable_verif",
->> +	[DIGEST_CACHE_DISABLE_VERIF] = "disable_verif",
->> +	[DIGEST_CACHE_SET_VERIF] = "set_verif",
->> +	[DIGEST_CACHE_GET_PUT_ASYNC] = "get_put_async",
->> +};
->> +
->> +const char *const hash_algo_name[HASH_ALGO__LAST] = {
->> +	[HASH_ALGO_MD4]		= "md4",
->> +	[HASH_ALGO_MD5]		= "md5",
->> +	[HASH_ALGO_SHA1]	= "sha1",
->> +	[HASH_ALGO_RIPE_MD_160]	= "rmd160",
->> +	[HASH_ALGO_SHA256]	= "sha256",
->> +	[HASH_ALGO_SHA384]	= "sha384",
->> +	[HASH_ALGO_SHA512]	= "sha512",
->> +	[HASH_ALGO_SHA224]	= "sha224",
->> +	[HASH_ALGO_RIPE_MD_128]	= "rmd128",
->> +	[HASH_ALGO_RIPE_MD_256]	= "rmd256",
->> +	[HASH_ALGO_RIPE_MD_320]	= "rmd320",
->> +	[HASH_ALGO_WP_256]	= "wp256",
->> +	[HASH_ALGO_WP_384]	= "wp384",
->> +	[HASH_ALGO_WP_512]	= "wp512",
->> +	[HASH_ALGO_TGR_128]	= "tgr128",
->> +	[HASH_ALGO_TGR_160]	= "tgr160",
->> +	[HASH_ALGO_TGR_192]	= "tgr192",
->> +	[HASH_ALGO_SM3_256]	= "sm3",
->> +	[HASH_ALGO_STREEBOG_256] = "streebog256",
->> +	[HASH_ALGO_STREEBOG_512] = "streebog512",
->> +	[HASH_ALGO_SHA3_256]    = "sha3-256",
->> +	[HASH_ALGO_SHA3_384]    = "sha3-384",
->> +	[HASH_ALGO_SHA3_512]    = "sha3-512",
->> +};
->> +
->> +const int hash_digest_size[HASH_ALGO__LAST] = {
->> +	[HASH_ALGO_MD4]		= MD5_DIGEST_SIZE,
->> +	[HASH_ALGO_MD5]		= MD5_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA1]	= SHA1_DIGEST_SIZE,
->> +	[HASH_ALGO_RIPE_MD_160]	= RMD160_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA256]	= SHA256_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA384]	= SHA384_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA512]	= SHA512_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA224]	= SHA224_DIGEST_SIZE,
->> +	[HASH_ALGO_RIPE_MD_128]	= RMD128_DIGEST_SIZE,
->> +	[HASH_ALGO_RIPE_MD_256]	= RMD256_DIGEST_SIZE,
->> +	[HASH_ALGO_RIPE_MD_320]	= RMD320_DIGEST_SIZE,
->> +	[HASH_ALGO_WP_256]	= WP256_DIGEST_SIZE,
->> +	[HASH_ALGO_WP_384]	= WP384_DIGEST_SIZE,
->> +	[HASH_ALGO_WP_512]	= WP512_DIGEST_SIZE,
->> +	[HASH_ALGO_TGR_128]	= TGR128_DIGEST_SIZE,
->> +	[HASH_ALGO_TGR_160]	= TGR160_DIGEST_SIZE,
->> +	[HASH_ALGO_TGR_192]	= TGR192_DIGEST_SIZE,
->> +	[HASH_ALGO_SM3_256]	= SM3256_DIGEST_SIZE,
->> +	[HASH_ALGO_STREEBOG_256] = STREEBOG256_DIGEST_SIZE,
->> +	[HASH_ALGO_STREEBOG_512] = STREEBOG512_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA3_256]    = SHA3_256_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA3_384]    = SHA3_384_DIGEST_SIZE,
->> +	[HASH_ALGO_SHA3_512]    = SHA3_512_DIGEST_SIZE,
->> +};
->> +
->> +const char *verifs_str[] = {
->> +	[VERIF_FILENAMES] = "filenames",
->> +	[VERIF_NUMBER] = "number",
->> +	[VERIF_PREFETCH] = "prefetch",
->> +};
->> diff --git a/tools/testing/selftests/digest_cache/common.h b/tools/testing/selftests/digest_cache/common.h
->> new file mode 100644
->> index 000000000000..e52e4b137807
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/common.h
->> @@ -0,0 +1,135 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Header of common.c.
->> + */
->> +
->> +#ifndef _COMMON_H
->> +#define _COMMON_H
->> +#include <linux/types.h>
->> +
->> +#include "../../../../include/uapi/linux/hash_info.h"
->> +
->> +#define MD5_DIGEST_SIZE 16
->> +#define SHA1_DIGEST_SIZE 20
->> +#define RMD160_DIGEST_SIZE 20
->> +#define SHA256_DIGEST_SIZE 32
->> +#define SHA384_DIGEST_SIZE 48
->> +#define SHA512_DIGEST_SIZE 64
->> +#define SHA224_DIGEST_SIZE 28
->> +#define RMD128_DIGEST_SIZE 16
->> +#define RMD256_DIGEST_SIZE 32
->> +#define RMD320_DIGEST_SIZE 40
->> +#define WP256_DIGEST_SIZE 32
->> +#define WP384_DIGEST_SIZE 48
->> +#define WP512_DIGEST_SIZE 64
->> +#define TGR128_DIGEST_SIZE 16
->> +#define TGR160_DIGEST_SIZE 20
->> +#define TGR192_DIGEST_SIZE 24
->> +#define SM3256_DIGEST_SIZE 32
->> +#define STREEBOG256_DIGEST_SIZE 32
->> +#define STREEBOG512_DIGEST_SIZE 64
->> +#define SHA3_224_DIGEST_SIZE	(224 / 8)
->> +#define SHA3_256_DIGEST_SIZE	(256 / 8)
->> +#define SHA3_384_DIGEST_SIZE	(384 / 8)
->> +#define SHA3_512_DIGEST_SIZE	(512 / 8)
->> +
->> +#define DIGEST_CACHE_TEST_INTERFACE "/sys/kernel/security/digest_cache_test"
->> +#define DIGEST_CACHE_PATH_INTERFACE "/sys/kernel/security/digest_cache_path"
->> +#define DIGEST_CACHE_NOTIFY_INODES_INTERFACE  \
->> +	"/sys/kernel/security/digest_cache_notify_inodes"
->> +#define MAX_DIGEST_SIZE 64
->> +
->> +#define RPMTAG_FILEDIGESTS 1035
->> +#define RPMTAG_FILEDIGESTALGO 5011
->> +
->> +#define RPM_INT32_TYPE 4
->> +#define RPM_STRING_ARRAY_TYPE 8
->> +
->> +#define MAX_WORKS 21
->> +
->> +typedef __u8 u8;
->> +typedef __u16 u16;
->> +typedef __u32 u32;
->> +typedef __s32 s32;
->> +typedef __u64 u64;
->> +
->> +enum commands {
->> +	DIGEST_CACHE_GET,		// args: <path>
->> +	DIGEST_CACHE_LOOKUP,		// args: <algo>|<digest>
->> +	DIGEST_CACHE_PUT,		// args:
->> +	DIGEST_CACHE_ENABLE_VERIF,	// args: <verif name>
->> +	DIGEST_CACHE_DISABLE_VERIF,	// args: <verif name>
->> +	DIGEST_CACHE_SET_VERIF,		// args: <verif name>
->> +	DIGEST_CACHE_GET_PUT_ASYNC,	// args: <path>|<start#>|<end#>
->> +	DIGEST_CACHE__LAST,
->> +};
->> +
->> +enum tlv_failures { TLV_NO_FAILURE,
->> +		    TLV_FAILURE_ALGO_LEN,
->> +		    TLV_FAILURE_HDR_LEN,
->> +		    TLV_FAILURE_ALGO_MISMATCH,
->> +		    TLV_FAILURE_NUM_DIGESTS,
->> +		    TLV_FAILURE__LAST
->> +};
->> +
->> +enum rpm_failures { RPM_NO_FAILURE,
->> +		    RPM_FAILURE_WRONG_MAGIC,
->> +		    RPM_FAILURE_BAD_DATA_OFFSET,
->> +		    RPM_FAILURE_WRONG_TAGS,
->> +		    RPM_FAILURE_WRONG_DIGEST_COUNT,
->> +		    RPM_FAILURE_DIGEST_WRONG_TYPE,
->> +		    RPM_FAILURE__LAST
->> +};
->> +
->> +enum file_changes { FILE_WRITE,
->> +		    FILE_TRUNCATE,
->> +		    FILE_FTRUNCATE,
->> +		    FILE_UNLINK,
->> +		    FILE_RENAME,
->> +		    FILE_SETXATTR,
->> +		    FILE_REMOVEXATTR,
->> +		    FILE_CHANGE__LAST
->> +};
->> +
->> +enum VERIFS {
->> +	VERIF_FILENAMES,
->> +	VERIF_NUMBER,
->> +	VERIF_PREFETCH,
->> +	VERIF__LAST
->> +};
->> +
->> +enum pgp_algos {
->> +	DIGEST_ALGO_MD5		=  1,
->> +	DIGEST_ALGO_SHA1	=  2,
->> +	DIGEST_ALGO_RMD160	=  3,
->> +	/* 4, 5, 6, and 7 are reserved. */
->> +	DIGEST_ALGO_SHA256	=  8,
->> +	DIGEST_ALGO_SHA384	=  9,
->> +	DIGEST_ALGO_SHA512	= 10,
->> +	DIGEST_ALGO_SHA224	= 11,
->> +};
->> +
->> +struct rpm_hdr {
->> +	u32 magic;
->> +	u32 reserved;
->> +	u32 tags;
->> +	u32 datasize;
->> +} __attribute__ ((__packed__));
->> +
->> +struct rpm_entryinfo {
->> +	s32 tag;
->> +	u32 type;
->> +	s32 offset;
->> +	u32 count;
->> +} __attribute__ ((__packed__));
->> +
->> +extern const char *commands_str[DIGEST_CACHE__LAST];
->> +extern const char *const hash_algo_name[HASH_ALGO__LAST];
->> +extern const int hash_digest_size[HASH_ALGO__LAST];
->> +extern const char *verifs_str[VERIF__LAST];
->> +
->> +#endif /* _COMMON_H */
->> diff --git a/tools/testing/selftests/digest_cache/common_user.c b/tools/testing/selftests/digest_cache/common_user.c
->> new file mode 100644
->> index 000000000000..1bacadad6b6a
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/common_user.c
->> @@ -0,0 +1,47 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Add common code in user space for testing the digest_cache LSM.
->> + */
->> +
->> +#include <stddef.h>
->> +
->> +#include "common_user.h"
->> +
->> +static const char hex_asc[] = "0123456789abcdef";
->> +
->> +#define hex_asc_lo(x)   hex_asc[((x) & 0x0f)]
->> +#define hex_asc_hi(x)   hex_asc[((x) & 0xf0) >> 4]
->> +
->> +const enum hash_algo pgp_algo_mapping[DIGEST_ALGO_SHA224 + 1] = {
->> +	[DIGEST_ALGO_MD5]	= HASH_ALGO_MD5,
->> +	[DIGEST_ALGO_SHA1]	= HASH_ALGO_SHA1,
->> +	[DIGEST_ALGO_RMD160]	= HASH_ALGO_RIPE_MD_160,
->> +	[4]			= HASH_ALGO__LAST,
->> +	[5]			= HASH_ALGO__LAST,
->> +	[6]			= HASH_ALGO__LAST,
->> +	[7]			= HASH_ALGO__LAST,
->> +	[DIGEST_ALGO_SHA256]	= HASH_ALGO_SHA256,
->> +	[DIGEST_ALGO_SHA384]	= HASH_ALGO_SHA384,
->> +	[DIGEST_ALGO_SHA512]	= HASH_ALGO_SHA512,
->> +	[DIGEST_ALGO_SHA224]	= HASH_ALGO_SHA224,
->> +};
->> +
->> +static inline char *hex_byte_pack(char *buf, unsigned char byte)
->> +{
->> +	*buf++ = hex_asc_hi(byte);
->> +	*buf++ = hex_asc_lo(byte);
->> +	return buf;
->> +}
->> +
->> +char *bin2hex(char *dst, const void *src, size_t count)
->> +{
->> +	const unsigned char *_src = src;
->> +
->> +	while (count--)
->> +		dst = hex_byte_pack(dst, *_src++);
->> +	return dst;
->> +}
->> diff --git a/tools/testing/selftests/digest_cache/common_user.h b/tools/testing/selftests/digest_cache/common_user.h
->> new file mode 100644
->> index 000000000000..4eef52cc5c27
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/common_user.h
->> @@ -0,0 +1,17 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Header of common_user.c.
->> + */
->> +
->> +#include <linux/types.h>
->> +#include <stddef.h>
->> +
->> +#include "common.h"
->> +
->> +extern const enum hash_algo pgp_algo_mapping[DIGEST_ALGO_SHA224 + 1];
->> +
->> +char *bin2hex(char *dst, const void *src, size_t count);
->> diff --git a/tools/testing/selftests/digest_cache/config b/tools/testing/selftests/digest_cache/config
->> new file mode 100644
->> index 000000000000..075a06cc4f8e
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/config
->> @@ -0,0 +1 @@
->> +CONFIG_SECURITY_DIGEST_CACHE=y
->> diff --git a/tools/testing/selftests/digest_cache/generators.c b/tools/testing/selftests/digest_cache/generators.c
->> new file mode 100644
->> index 000000000000..c7791a3589f2
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/generators.c
->> @@ -0,0 +1,248 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Generate digest lists for testing.
->> + */
->> +
->> +#include <stddef.h>
->> +#include <fcntl.h>
->> +#include <errno.h>
->> +#include <limits.h>
->> +#include <string.h>
->> +#include <unistd.h>
->> +#include <sys/xattr.h>
->> +#include <asm/byteorder.h>
->> +
->> +#include "generators.h"
->> +#include "../../../../include/uapi/linux/hash_info.h"
->> +#include "../../../../include/uapi/linux/xattr.h"
->> +#include "../../../../include/uapi/linux/tlv_digest_list.h"
->> +#include "../../../../include/uapi/linux/tlv_parser.h"
->> +
->> +int gen_tlv_list(int temp_dirfd, char *digest_list_filename,
->> +		 enum hash_algo algo, int start_number, int num_digests,
->> +		 enum tlv_failures failure)
->> +{
->> +	u64 _algo = __cpu_to_be64(algo);
->> +	u8 digest[MAX_DIGEST_SIZE] = { 0 };
->> +	int digest_len = hash_digest_size[algo];
->> +	int digest_len_to_copy = digest_len;
->> +	int ret, fd, i;
->> +
->> +	struct tlv_data_entry algo_entry = {
->> +		.field = __cpu_to_be64(DIGEST_LIST_ALGO),
->> +		.length = __cpu_to_be64(sizeof(_algo)),
->> +	};
->> +
->> +	struct tlv_data_entry entry_digest = {
->> +		.field = __cpu_to_be64(DIGEST_LIST_ENTRY_DIGEST),
->> +		.length = __cpu_to_be64(digest_len),
->> +	};
->> +
->> +	struct tlv_hdr entry_hdr = {
->> +		.data_type = __cpu_to_be64(DIGEST_LIST_ENTRY_DATA),
->> +		._reserved = 0,
->> +		.num_entries = __cpu_to_be64(1),
->> +		.total_len = __cpu_to_be64(sizeof(entry_digest) + digest_len),
->> +	};
->> +
->> +	struct tlv_data_entry entry_entry = {
->> +		.field = __cpu_to_be64(DIGEST_LIST_ENTRY),
->> +		.length = __cpu_to_be64(sizeof(entry_hdr) +
->> +					__be64_to_cpu(entry_hdr.total_len)),
->> +	};
->> +
->> +	struct tlv_hdr hdr = {
->> +		.data_type = __cpu_to_be64(DIGEST_LIST_FILE),
->> +		._reserved = 0,
->> +		.num_entries = __cpu_to_be64(1 + num_digests),
->> +		.total_len = __cpu_to_be64(sizeof(algo_entry) +
->> +					   __be64_to_cpu(algo_entry.length) +
->> +					   num_digests * (sizeof(entry_entry) +
->> +					   __be64_to_cpu(entry_entry.length)))
->> +	};
->> +
->> +	switch (failure) {
->> +	case TLV_FAILURE_ALGO_LEN:
->> +		algo_entry.length = algo_entry.length / 2;
->> +		break;
->> +	case TLV_FAILURE_HDR_LEN:
->> +		hdr.total_len--;
->> +		break;
->> +	case TLV_FAILURE_ALGO_MISMATCH:
->> +		_algo = __cpu_to_be64(algo - 1);
->> +		break;
->> +	case TLV_FAILURE_NUM_DIGESTS:
->> +		num_digests = 0;
->> +		break;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	fd = openat(temp_dirfd, digest_list_filename,
->> +		    O_WRONLY | O_CREAT | O_TRUNC, 0600);
->> +	if (fd == -1)
->> +		return -errno;
->> +
->> +	ret = write(fd, (u8 *)&hdr, sizeof(hdr));
->> +	if (ret != sizeof(hdr))
->> +		return -errno;
->> +
->> +	ret = write(fd, (u8 *)&algo_entry, sizeof(algo_entry));
->> +	if (ret != sizeof(algo_entry))
->> +		return -errno;
->> +
->> +	ret = write(fd, (u8 *)&_algo, sizeof(_algo));
->> +	if (ret != sizeof(_algo))
->> +		return -errno;
->> +
->> +	*(u32 *)digest = start_number;
->> +
->> +	for (i = 0; i < num_digests; i++) {
->> +		ret = write(fd, (u8 *)&entry_entry, sizeof(entry_entry));
->> +		if (ret != sizeof(entry_entry))
->> +			return -errno;
->> +
->> +		ret = write(fd, (u8 *)&entry_hdr, sizeof(entry_hdr));
->> +		if (ret != sizeof(entry_hdr))
->> +			return -errno;
->> +
->> +		ret = write(fd, (u8 *)&entry_digest, sizeof(entry_digest));
->> +		if (ret != sizeof(entry_digest))
->> +			return -errno;
->> +
->> +		ret = write(fd, digest, digest_len_to_copy);
->> +		if (ret != digest_len_to_copy)
->> +			return -errno;
->> +
->> +		(*(u32 *)digest)++;
->> +	}
->> +
->> +	close(fd);
->> +	return 0;
->> +}
->> +
->> +int gen_rpm_list(int temp_dirfd, char *digest_list_filename,
->> +		 enum hash_algo algo, enum pgp_algos pgp_algo, int start_number,
->> +		 int num_digests, enum rpm_failures failure)
->> +{
->> +	u32 _pgp_algo = __cpu_to_be32(pgp_algo);
->> +	u8 digest[MAX_DIGEST_SIZE] = { 0 };
->> +	char digest_str[MAX_DIGEST_SIZE * 2 + 1];
->> +	struct rpm_hdr hdr;
->> +	struct rpm_entryinfo algo_entry, digest_entry;
->> +	int digest_len = hash_digest_size[algo];
->> +	int ret, fd, d_len, i;
->> +
->> +	d_len = hash_digest_size[algo] * 2 + 1;
->> +
->> +	hdr.magic = __cpu_to_be32(0x8eade801);
->> +	hdr.reserved = 0;
->> +	hdr.tags = __cpu_to_be32(1);
->> +
->> +	/*
->> +	 * Skip the algo section, to ensure that the parser recognizes MD5 as
->> +	 * the default hash algorithm.
->> +	 */
->> +	if (algo != HASH_ALGO_MD5)
->> +		hdr.tags = __cpu_to_be32(2);
->> +
->> +	hdr.datasize = __cpu_to_be32(d_len * num_digests);
->> +
->> +	if (algo != HASH_ALGO_MD5)
->> +		hdr.datasize = __cpu_to_be32(sizeof(u32) + d_len * num_digests);
->> +
->> +	digest_entry.tag = __cpu_to_be32(RPMTAG_FILEDIGESTS);
->> +	digest_entry.type = __cpu_to_be32(RPM_STRING_ARRAY_TYPE);
->> +	digest_entry.offset = 0;
->> +	digest_entry.count = __cpu_to_be32(num_digests);
->> +
->> +	algo_entry.tag = __cpu_to_be32(RPMTAG_FILEDIGESTALGO);
->> +	algo_entry.type = __cpu_to_be32(RPM_INT32_TYPE);
->> +	algo_entry.offset = __cpu_to_be32(d_len * num_digests);
->> +	algo_entry.count = __cpu_to_be32(1);
->> +
->> +	switch (failure) {
->> +	case RPM_FAILURE_WRONG_MAGIC:
->> +		hdr.magic++;
->> +		break;
->> +	case RPM_FAILURE_BAD_DATA_OFFSET:
->> +		algo_entry.offset = __cpu_to_be32(UINT_MAX);
->> +		break;
->> +	case RPM_FAILURE_WRONG_TAGS:
->> +		hdr.tags = __cpu_to_be32(2 + 10);
->> +		break;
->> +	case RPM_FAILURE_WRONG_DIGEST_COUNT:
->> +		/* We need to go beyond the algorithm, to fail. */
->> +		digest_entry.count = __cpu_to_be32(num_digests + 5);
->> +		break;
->> +	case RPM_FAILURE_DIGEST_WRONG_TYPE:
->> +		digest_entry.type = __cpu_to_be32(RPM_INT32_TYPE);
->> +		break;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	fd = openat(temp_dirfd, digest_list_filename,
->> +		    O_WRONLY | O_CREAT | O_TRUNC, 0600);
->> +	if (fd == -1)
->> +		return -errno;
->> +
->> +	ret = write(fd, (u8 *)&hdr, sizeof(hdr));
->> +	if (ret != sizeof(hdr))
->> +		return -errno;
->> +
->> +	if (algo != HASH_ALGO_MD5) {
->> +		ret = write(fd, (u8 *)&algo_entry, sizeof(algo_entry));
->> +		if (ret != sizeof(algo_entry))
->> +			return -errno;
->> +	}
->> +
->> +	ret = write(fd, (u8 *)&digest_entry, sizeof(digest_entry));
->> +	if (ret != sizeof(digest_entry))
->> +		return -errno;
->> +
->> +	*(u32 *)digest = start_number;
->> +
->> +	for (i = 0; i < num_digests; i++) {
->> +		bin2hex(digest_str, digest, digest_len);
->> +
->> +		ret = write(fd, (u8 *)digest_str, d_len);
->> +		if (ret != d_len)
->> +			return -errno;
->> +
->> +		(*(u32 *)digest)++;
->> +	}
->> +
->> +	if (algo != HASH_ALGO_MD5) {
->> +		ret = write(fd, (u8 *)&_pgp_algo, sizeof(_pgp_algo));
->> +		if (ret != sizeof(_pgp_algo))
->> +			return -errno;
->> +	}
->> +
->> +	close(fd);
->> +	return 0;
->> +}
->> +
->> +int create_file(int temp_dirfd, char *filename, char *digest_list_filename)
->> +{
->> +	int ret = 0, fd;
->> +
->> +	fd = openat(temp_dirfd, filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
->> +	if (fd == -1)
->> +		return -errno;
->> +
->> +	if (!digest_list_filename)
->> +		goto out;
->> +
->> +	ret = fsetxattr(fd, XATTR_NAME_DIGEST_LIST, digest_list_filename,
->> +			strlen(digest_list_filename) + 1, 0);
->> +	if (ret == -1)
->> +		ret = -errno;
->> +out:
->> +	close(fd);
->> +	return ret;
->> +}
->> diff --git a/tools/testing/selftests/digest_cache/generators.h b/tools/testing/selftests/digest_cache/generators.h
->> new file mode 100644
->> index 000000000000..1c83e531b799
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/generators.h
->> @@ -0,0 +1,19 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Header of generators.c.
->> + */
->> +
->> +#include "common.h"
->> +#include "common_user.h"
->> +
->> +int gen_tlv_list(int temp_dirfd, char *digest_list_filename,
->> +		 enum hash_algo algo, int start_number, int num_digests,
->> +		 enum tlv_failures failure);
->> +int gen_rpm_list(int temp_dirfd, char *digest_list_filename,
->> +		 enum hash_algo algo, enum pgp_algos pgp_algo, int start_number,
->> +		 int num_digests, enum rpm_failures failure);
->> +int create_file(int temp_dirfd, char *filename, char *digest_list_filename);
->> diff --git a/tools/testing/selftests/digest_cache/testmod/Makefile b/tools/testing/selftests/digest_cache/testmod/Makefile
->> new file mode 100644
->> index 000000000000..1ba1c7f08658
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/testmod/Makefile
->> @@ -0,0 +1,16 @@
->> +KDIR ?= ../../../../..
->> +
->> +MODULES = digest_cache_kern.ko
->> +
->> +obj-m += digest_cache_kern.o
->> +
->> +digest_cache_kern-y := kern.o ../common.o
->> +
->> +all:
->> +	+$(Q)$(MAKE) -C $(KDIR) M=$$PWD modules
->> +
->> +clean:
->> +	+$(Q)$(MAKE) -C $(KDIR) M=$$PWD clean
->> +
->> +install: all
->> +	+$(Q)$(MAKE) -C $(KDIR) M=$$PWD modules_install
->> diff --git a/tools/testing/selftests/digest_cache/testmod/kern.c b/tools/testing/selftests/digest_cache/testmod/kern.c
->> new file mode 100644
->> index 000000000000..7215ef638e66
->> --- /dev/null
->> +++ b/tools/testing/selftests/digest_cache/testmod/kern.c
->> @@ -0,0 +1,564 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
->> + *
->> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
->> + *
->> + * Implement the kernel module to interact with the digest_cache LSM.
->> + */
->> +
->> +#define pr_fmt(fmt) "DIGEST CACHE TEST: "fmt
->> +#include <linux/module.h>
->> +#include <linux/namei.h>
->> +#include <linux/security.h>
->> +#include <linux/dynamic_debug.h>
->> +#include <linux/digest_cache.h>
->> +#include <linux/kprobes.h>
->> +#include <linux/cpu.h>
->> +#include <linux/kernel_read_file.h>
->> +#include <crypto/hash_info.h>
->> +
->> +#include "../common.h"
->> +
->> +struct verif {
->> +	int (*update)(struct file *file);
->> +	ssize_t (*read)(struct file *file, char __user *buf, size_t datalen,
->> +			loff_t *ppos);
->> +	bool enabled;
->> +};
->> +
->> +struct read_work {
->> +	struct work_struct work;
->> +	char *path_str;
->> +	int ret;
->> +};
->> +
->> +static struct dentry *test, *notify_inodes;
->> +static struct digest_cache *digest_cache;
->> +static digest_cache_found_t found;
->> +static int cur_verif_index;
->> +static u8 prefetch_buf[4096];
->> +static u8 notify_inodes_buf[4096];
->> +static struct read_work w[MAX_WORKS];
->> +
->> +static int filenames_update(struct file *file)
->> +{
->> +	char *filename = (char *)file->f_path.dentry->d_name.name;
->> +
->> +	return digest_cache_verif_set(file, "filenames", filename,
->> +				      strlen(filename) + 1);
->> +}
->> +
->> +static int number_update(struct file *file)
->> +{
->> +	const char *filename = file_dentry(file)->d_name.name;
->> +	size_t filename_len = strlen(filename);
->> +	u64 number = U64_MAX;
->> +	int ret;
->> +
->> +	while (filename_len) {
->> +		if (filename[filename_len - 1] < '0' ||
->> +		    filename[filename_len - 1] > '9')
->> +			break;
->> +
->> +		filename_len--;
->> +	}
->> +
->> +	ret = kstrtoull(filename + filename_len, 10, &number);
->> +	if (ret < 0) {
->> +		pr_debug("Failed to convert filename %s into number\n",
->> +			 file_dentry(file)->d_name.name);
->> +		return ret;
->> +	}
->> +
->> +	return digest_cache_verif_set(file, "number", &number, sizeof(number));
->> +}
->> +
->> +static ssize_t filenames_read(struct file *file, char __user *buf,
->> +			      size_t datalen, loff_t *ppos)
->> +{
->> +	loff_t _ppos = 0;
->> +	char *filenames_list;
->> +
->> +	filenames_list = digest_cache_verif_get(found ?
->> +				digest_cache_from_found_t(found) : digest_cache,
->> +				verifs_str[VERIF_FILENAMES]);
->> +	if (!filenames_list)
->> +		return -ENOENT;
->> +
->> +	return simple_read_from_buffer(buf, datalen, &_ppos, filenames_list,
->> +				       strlen(filenames_list) + 1);
->> +}
->> +
->> +static ssize_t number_read(struct file *file, char __user *buf, size_t datalen,
->> +			   loff_t *ppos)
->> +{
->> +	loff_t _ppos = 0;
->> +	u64 *number;
->> +	char temp[20];
->> +	ssize_t len;
->> +
->> +	number = digest_cache_verif_get(found ?
->> +					digest_cache_from_found_t(found) :
->> +					digest_cache, verifs_str[VERIF_NUMBER]);
->> +	if (!number)
->> +		return -ENOENT;
->> +
->> +	len = snprintf(temp, sizeof(temp), "%llu", *number);
->> +
->> +	return simple_read_from_buffer(buf, datalen, &_ppos, temp, len);
->> +}
->> +
->> +static int prefetch_update(struct file *file)
->> +{
->> +	char *filename = (char *)file->f_path.dentry->d_name.name;
->> +	char *start_ptr = prefetch_buf, *end_ptr;
->> +	int ret;
->> +
->> +	ret = digest_cache_verif_set(file, "probe_digest_cache", "1", 1);
->> +	if (!ret) {
->> +		/* Don't include duplicates of requested digest lists. */
->> +		while ((end_ptr = strchrnul(start_ptr, ','))) {
->> +			if (end_ptr > start_ptr &&
->> +			    !strncmp(start_ptr, filename, end_ptr - start_ptr))
->> +				return 0;
->> +
->> +			if (!*end_ptr)
->> +				break;
->> +
->> +			start_ptr = end_ptr + 1;
->> +		}
->> +	}
->> +
->> +	if (prefetch_buf[0])
->> +		strlcat(prefetch_buf, ",", sizeof(prefetch_buf));
->> +
->> +	strlcat(prefetch_buf, filename, sizeof(prefetch_buf));
->> +	return 0;
->> +}
->> +
->> +static ssize_t prefetch_read(struct file *file, char __user *buf,
->> +			     size_t datalen, loff_t *ppos)
->> +{
->> +	loff_t _ppos = 0;
->> +	ssize_t ret;
->> +
->> +	ret = simple_read_from_buffer(buf, datalen, &_ppos, prefetch_buf,
->> +				       strlen(prefetch_buf) + 1);
->> +	memset(prefetch_buf, 0, sizeof(prefetch_buf));
->> +	return ret;
->> +}
->> +
->> +static int test_digest_cache_change(struct notifier_block *nb,
->> +				    unsigned long event, void *data)
->> +{
->> +	struct digest_cache_event_data *event_data = data;
->> +	char i_ino_str[10];
->> +
->> +	if (event != DIGEST_CACHE_RESET)
->> +		return NOTIFY_DONE;
->> +
->> +	if (notify_inodes_buf[0])
->> +		strlcat(notify_inodes_buf, ",", sizeof(notify_inodes_buf));
->> +
->> +	snprintf(i_ino_str, sizeof(i_ino_str), "%lu", event_data->inode->i_ino);
->> +	strlcat(notify_inodes_buf, i_ino_str, sizeof(notify_inodes_buf));
->> +	return 0;
->> +}
->> +
->> +static struct notifier_block digest_cache_notifier = {
->> +	.notifier_call = test_digest_cache_change,
->> +};
->> +
->> +static ssize_t write_notify_inodes(struct file *file, const char __user *buf,
->> +			     size_t datalen, loff_t *ppos)
->> +{
->> +	memset(notify_inodes_buf, 0, sizeof(notify_inodes_buf));
->> +	return datalen;
->> +}
->> +
->> +static ssize_t read_notify_inodes(struct file *file, char __user *buf,
->> +				  size_t datalen, loff_t *ppos)
->> +{
->> +	loff_t _ppos = 0;
->> +
->> +	return simple_read_from_buffer(buf, datalen, &_ppos, notify_inodes_buf,
->> +				       strlen(notify_inodes_buf) + 1);
->> +}
->> +
->> +static struct verif verifs_methods[] = {
->> +	[VERIF_FILENAMES] = { .update = filenames_update,
->> +			      .read = filenames_read },
->> +	[VERIF_NUMBER] = { .update = number_update, .read = number_read },
->> +	[VERIF_PREFETCH] = { .update = prefetch_update, .read = prefetch_read },
->> +};
->> +
->> +static void digest_cache_get_put_work(struct work_struct *work)
->> +{
->> +	struct read_work *w = container_of(work, struct read_work, work);
->> +	struct digest_cache *digest_cache;
->> +	struct path path;
->> +
->> +	w->ret = kern_path(w->path_str, 0, &path);
->> +	if (w->ret < 0)
->> +		return;
->> +
->> +	digest_cache = digest_cache_get(path.dentry);
->> +
->> +	path_put(&path);
->> +
->> +	if (!digest_cache) {
->> +		w->ret = -ENOENT;
->> +		return;
->> +	}
->> +
->> +	digest_cache_put(digest_cache);
->> +	w->ret = 0;
->> +}
->> +
->> +static int digest_cache_get_put_async(char *path_str, int start_number,
->> +				      int end_number)
->> +{
->> +	int ret = 0, i;
->> +
->> +	cpus_read_lock();
->> +	for (i = start_number; i <= end_number; i++) {
->> +		w[i].path_str = kasprintf(GFP_KERNEL, "%s%u", path_str, i);
->> +		if (!w[i].path_str) {
->> +			ret = -ENOMEM;
->> +			break;
->> +		}
->> +
->> +		INIT_WORK_ONSTACK(&w[i].work, digest_cache_get_put_work);
->> +		schedule_work_on(i % num_online_cpus(), &w[i].work);
->> +	}
->> +	cpus_read_unlock();
->> +
->> +	for (i = start_number; i <= end_number; i++) {
->> +		if (!w[i].path_str)
->> +			continue;
->> +
->> +		flush_work(&w[i].work);
->> +		destroy_work_on_stack(&w[i].work);
->> +		kfree(w[i].path_str);
->> +		w[i].path_str = NULL;
->> +		if (!ret)
->> +			ret = w[i].ret;
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +static ssize_t write_request(struct file *file, const char __user *buf,
->> +			     size_t datalen, loff_t *ppos)
->> +{
->> +	char *data, *data_ptr, *cmd_str, *path_str, *algo_str, *digest_str;
->> +	char *verif_name_str, *start_number_str, *end_number_str;
->> +	u8 digest[64];
->> +	struct path path;
->> +	int ret, cmd, algo, verif_index, start_number, end_number;
->> +
->> +	data = memdup_user_nul(buf, datalen);
->> +	if (IS_ERR(data))
->> +		return PTR_ERR(data);
->> +
->> +	data_ptr = data;
->> +
->> +	cmd_str = strsep(&data_ptr, "|");
->> +	if (!cmd_str) {
->> +		pr_debug("No command\n");
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	cmd = match_string(commands_str, DIGEST_CACHE__LAST, cmd_str);
->> +	if (cmd < 0) {
->> +		pr_err("Unknown command %s\n", cmd_str);
->> +		ret = -ENOENT;
->> +		goto out;
->> +	}
->> +
->> +	switch (cmd) {
->> +	case DIGEST_CACHE_GET:
->> +		found = 0UL;
->> +
->> +		path_str = strsep(&data_ptr, "|");
->> +		if (!path_str) {
->> +			pr_debug("No path\n");
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		ret = kern_path(path_str, 0, &path);
->> +		if (ret < 0) {
->> +			pr_debug("Cannot find file %s\n", path_str);
->> +			goto out;
->> +		}
->> +
->> +		if (digest_cache) {
->> +			pr_debug("Digest cache exists, doing a put\n");
->> +			digest_cache_put(digest_cache);
->> +		}
->> +
->> +		digest_cache = digest_cache_get(path.dentry);
->> +		ret = digest_cache ? 0 : -ENOENT;
->> +		pr_debug("digest cache get %s, ret: %d\n", path_str, ret);
->> +		path_put(&path);
->> +		break;
->> +	case DIGEST_CACHE_LOOKUP:
->> +		if (!digest_cache) {
->> +			pr_debug("No digest cache\n");
->> +			ret = -ENOENT;
->> +			goto out;
->> +		}
->> +
->> +		path_str = strsep(&data_ptr, "|");
->> +		if (!path_str) {
->> +			pr_debug("No path\n");
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		algo_str = strsep(&data_ptr, ":");
->> +		digest_str = data_ptr;
->> +
->> +		if (!algo_str || !digest_str) {
->> +			pr_debug("No algo or digest\n");
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		algo = match_string(hash_algo_name, HASH_ALGO__LAST, algo_str);
->> +		if (algo < 0) {
->> +			pr_err("Unknown algorithm %s", algo_str);
->> +			ret = -ENOENT;
->> +			goto out;
->> +		}
->> +
->> +		ret = hex2bin(digest, digest_str, hash_digest_size[algo]);
->> +		if (ret < 0) {
->> +			pr_debug("Invalid digest %s\n", digest_str);
->> +			goto out;
->> +		}
->> +
->> +		ret = kern_path(path_str, 0, &path);
->> +		if (ret < 0) {
->> +			pr_debug("Cannot find file %s\n", path_str);
->> +			goto out;
->> +		}
->> +
->> +		ret = -ENOENT;
->> +
->> +		found = digest_cache_lookup(path.dentry, digest_cache, digest,
->> +					    algo);
->> +		path_put(&path);
->> +		if (found)
->> +			ret = 0;
->> +
->> +		pr_debug("%s:%s lookup %s, ret: %d\n", algo_str, digest_str,
->> +			 path_str, ret);
->> +		break;
->> +	case DIGEST_CACHE_PUT:
->> +		if (digest_cache) {
->> +			digest_cache_put(digest_cache);
->> +			digest_cache = NULL;
->> +		}
->> +		ret = 0;
->> +		pr_debug("digest cache put, ret: %d\n", ret);
->> +		break;
->> +	case DIGEST_CACHE_ENABLE_VERIF:
->> +	case DIGEST_CACHE_DISABLE_VERIF:
->> +		memset(prefetch_buf, 0, sizeof(prefetch_buf));
->> +		fallthrough;
->> +	case DIGEST_CACHE_SET_VERIF:
->> +		verif_name_str = strsep(&data_ptr, "|");
->> +		if (!verif_name_str) {
->> +			pr_debug("No verifier name\n");
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		verif_index = match_string(verifs_str, ARRAY_SIZE(verifs_str),
->> +					   verif_name_str);
->> +		if (verif_index < 0) {
->> +			pr_err("Unknown verifier name %s\n", verif_name_str);
->> +			ret = -ENOENT;
->> +			goto out;
->> +		}
->> +
->> +		if (cmd == DIGEST_CACHE_ENABLE_VERIF)
->> +			verifs_methods[verif_index].enabled = true;
->> +		else if (cmd == DIGEST_CACHE_DISABLE_VERIF)
->> +			verifs_methods[verif_index].enabled = false;
->> +		else
->> +			cur_verif_index = verif_index;
->> +
->> +		ret = 0;
->> +		pr_debug("digest cache %s %s, ret: %d\n", cmd_str,
->> +			 verif_name_str, ret);
->> +		break;
->> +	case DIGEST_CACHE_GET_PUT_ASYNC:
->> +		path_str = strsep(&data_ptr, "|");
->> +		if (!path_str) {
->> +			pr_debug("No path\n");
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		start_number_str = strsep(&data_ptr, "|");
->> +		if (!start_number_str) {
->> +			pr_debug("No start number\n");
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		ret = kstrtoint(start_number_str, 10, &start_number);
->> +		if (ret < 0) {
->> +			pr_debug("Invalid start number %s\n", start_number_str);
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		end_number_str = strsep(&data_ptr, "|");
->> +		if (!end_number_str) {
->> +			pr_debug("No end number\n");
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		ret = kstrtoint(end_number_str, 10, &end_number);
->> +		if (ret < 0) {
->> +			pr_debug("Invalid end number %s\n", end_number_str);
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		if (end_number - start_number >= MAX_WORKS) {
->> +			pr_debug("Too many works (%d), max %d\n",
->> +				 end_number - start_number, MAX_WORKS - 1);
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		ret = digest_cache_get_put_async(path_str, start_number,
->> +						 end_number);
->> +		pr_debug("digest cache %s on %s, start: %d, end: %d, ret: %d\n",
->> +			 cmd_str, path_str, start_number, end_number, ret);
->> +		break;
->> +	default:
->> +		ret = -EINVAL;
->> +		break;
->> +	}
->> +out:
->> +	kfree(data);
->> +	return ret ?: datalen;
->> +}
->> +
->> +static ssize_t read_request(struct file *file, char __user *buf, size_t datalen,
->> +			    loff_t *ppos)
->> +{
->> +	return verifs_methods[cur_verif_index].read(file, buf, datalen, ppos);
->> +}
->> +
->> +static const struct file_operations digest_cache_test_ops = {
->> +	.open = generic_file_open,
->> +	.write = write_request,
->> +	.read = read_request,
->> +	.llseek = generic_file_llseek,
->> +};
->> +
->> +static const struct file_operations digest_cache_notify_inodes_ops = {
->> +	.open = generic_file_open,
->> +	.write = write_notify_inodes,
->> +	.read = read_notify_inodes,
->> +	.llseek = generic_file_llseek,
->> +};
->> +
->> +static int __kprobes kernel_post_read_file_hook(struct kprobe *p,
->> +						struct pt_regs *regs)
->> +{
->> +#ifdef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
->> +	struct file *file = (struct file *)regs_get_kernel_argument(regs, 0);
->> +	enum kernel_read_file_id id = regs_get_kernel_argument(regs, 3);
->> +#else
->> +	struct file *file = NULL;
->> +	enum kernel_read_file_id id = READING_UNKNOWN;
->> +#endif
->> +	int ret, i;
->> +
->> +	if (id != READING_DIGEST_LIST)
->> +		return 0;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(verifs_methods); i++) {
->> +		if (!verifs_methods[i].enabled)
->> +			continue;
->> +
->> +		ret = verifs_methods[i].update(file);
->> +		if (ret < 0)
->> +			return 0;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static struct kprobe kp = {
->> +	.symbol_name = "security_kernel_post_read_file",
->> +};
->> +
->> +static int __init digest_cache_test_init(void)
->> +{
->> +	int ret;
->> +
->> +	kp.pre_handler = kernel_post_read_file_hook;
->> +
->> +	ret = register_kprobe(&kp);
->> +	if (ret < 0) {
->> +		pr_err("register_kprobe failed, returned %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	test = securityfs_create_file("digest_cache_test", 0660, NULL, NULL,
->> +				      &digest_cache_test_ops);
->> +	if (IS_ERR(test)) {
->> +		ret = PTR_ERR(test);
->> +		goto out_kprobe;
->> +	}
->> +
->> +	notify_inodes = securityfs_create_file("digest_cache_notify_inodes",
->> +					       0660, NULL, NULL,
->> +					       &digest_cache_notify_inodes_ops);
->> +	if (IS_ERR(notify_inodes)) {
->> +		ret = PTR_ERR(notify_inodes);
->> +		goto out_test;
->> +	}
->> +
->> +	ret = digest_cache_register_notifier(&digest_cache_notifier);
->> +	if (ret < 0)
->> +		goto out_notify_inodes;
->> +
->> +	return 0;
->> +
->> +out_notify_inodes:
->> +	securityfs_remove(notify_inodes);
->> +out_test:
->> +	securityfs_remove(test);
->> +out_kprobe:
->> +	unregister_kprobe(&kp);
->> +	return ret;
->> +}
->> +
->> +static void __exit digest_cache_test_fini(void)
->> +{
->> +	if (digest_cache)
->> +		digest_cache_put(digest_cache);
->> +
->> +	digest_cache_unregister_notifier(&digest_cache_notifier);
->> +	securityfs_remove(notify_inodes);
->> +	securityfs_remove(test);
->> +	unregister_kprobe(&kp);
->> +	pr_debug("kprobe at %p unregistered\n", kp.addr);
->> +}
->> +
->> +module_init(digest_cache_test_init);
->> +module_exit(digest_cache_test_fini);
->> +MODULE_LICENSE("GPL");
+On Sun 14-04-24 19:07:31, Suren Baghdasaryan wrote:
+> Main goal of memory allocation profiling patchset is to provide accounting
+> that is cheap enough to run in production. To achieve that we inject
+> counters using codetags at the allocation call sites to account every time
+> allocation is made. This injection allows us to perform accounting
+> efficiently because injected counters are immediately available as opposed
+> to the alternative methods, such as using _RET_IP_, which would require
+> counter lookup and appropriate locking that makes accounting much more
+> expensive. This method requires all allocation functions to inject
+> separate counters at their call sites so that their callers can be
+> individually accounted. Counter injection is implemented by allocation
+> hooks which should wrap all allocation functions.
 > 
+> Inlined functions which perform allocations but do not use allocation
+> hooks are directly charged for the allocations they perform. In most
+> cases these functions are just specialized allocation wrappers used
+> from multiple places to allocate objects of a specific type. It would
+> be more useful to do the accounting at their call sites instead.
+> Instrument these helpers to do accounting at the call site. Simple
+> inlined allocation wrappers are converted directly into macros. More
+> complex allocators or allocators with documentation are converted into
+> _noprof versions and allocation hooks are added. This allows memory
+> allocation profiling mechanism to charge allocations to the callers
+> of these functions.
 > 
-> BR, Jarkko
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
+Feel free to add:
+
+Acked-by: Jan Kara <jack@suse.cz>
+
+for the jbd2 bits.
+
+								Honza
+
+> ---
+> Changes since v1 [1]:
+> - Added explicit type casts in macro replacements to force type checks,
+> per Matthew Wilcox
+> - Expanded the changelog to explain the reasons codetags are used and
+> this change is neeed, per Jan Kara
+> 
+> [1] https://lore.kernel.org/all/20240404165404.3805498-1-surenb@google.com/
+> 
+>  drivers/iommu/amd/amd_iommu.h           |  5 ++--
+>  fs/nfs/iostat.h                         |  5 +---
+>  include/acpi/platform/aclinuxex.h       | 19 +++++---------
+>  include/asm-generic/pgalloc.h           | 35 +++++++++++++++----------
+>  include/crypto/hash.h                   |  7 ++---
+>  include/crypto/internal/acompress.h     |  5 ++--
+>  include/crypto/skcipher.h               |  7 ++---
+>  include/linux/bpf.h                     | 33 ++++++-----------------
+>  include/linux/bpfptr.h                  |  5 ++--
+>  include/linux/dma-fence-chain.h         |  6 ++---
+>  include/linux/hid_bpf.h                 |  6 ++---
+>  include/linux/jbd2.h                    | 12 +++------
+>  include/linux/mm.h                      |  5 ++--
+>  include/linux/mm_types.h                |  5 ++--
+>  include/linux/percpu.h                  |  3 +++
+>  include/linux/ptr_ring.h                | 28 +++++++++++---------
+>  include/linux/skb_array.h               | 19 ++++++++------
+>  include/linux/skbuff.h                  | 20 ++++++--------
+>  include/linux/skmsg.h                   |  8 +++---
+>  include/linux/slab.h                    |  5 ++++
+>  include/linux/sockptr.h                 | 10 ++++---
+>  include/net/netlabel.h                  | 16 ++++++-----
+>  include/net/netlink.h                   |  5 ++--
+>  include/net/request_sock.h              |  5 ++--
+>  include/net/tcx.h                       |  5 ++--
+>  net/sunrpc/auth_gss/auth_gss_internal.h |  6 +++--
+>  26 files changed, 142 insertions(+), 143 deletions(-)
+> 
+> diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
+> index f482aab420f7..52575ba9a141 100644
+> --- a/drivers/iommu/amd/amd_iommu.h
+> +++ b/drivers/iommu/amd/amd_iommu.h
+> @@ -134,13 +134,14 @@ static inline int get_pci_sbdf_id(struct pci_dev *pdev)
+>  	return PCI_SEG_DEVID_TO_SBDF(seg, devid);
+>  }
+>  
+> -static inline void *alloc_pgtable_page(int nid, gfp_t gfp)
+> +static inline void *alloc_pgtable_page_noprof(int nid, gfp_t gfp)
+>  {
+>  	struct page *page;
+>  
+> -	page = alloc_pages_node(nid, gfp | __GFP_ZERO, 0);
+> +	page = alloc_pages_node_noprof(nid, gfp | __GFP_ZERO, 0);
+>  	return page ? page_address(page) : NULL;
+>  }
+> +#define alloc_pgtable_page(...)	alloc_hooks(alloc_pgtable_page_noprof(__VA_ARGS__))
+>  
+>  /*
+>   * This must be called after device probe completes. During probe
+> diff --git a/fs/nfs/iostat.h b/fs/nfs/iostat.h
+> index 5aa776b5a3e7..b17a9eb9b148 100644
+> --- a/fs/nfs/iostat.h
+> +++ b/fs/nfs/iostat.h
+> @@ -46,10 +46,7 @@ static inline void nfs_add_stats(const struct inode *inode,
+>  	nfs_add_server_stats(NFS_SERVER(inode), stat, addend);
+>  }
+>  
+> -static inline struct nfs_iostats __percpu *nfs_alloc_iostats(void)
+> -{
+> -	return alloc_percpu(struct nfs_iostats);
+> -}
+> +#define nfs_alloc_iostats()	alloc_percpu(struct nfs_iostats)
+>  
+>  static inline void nfs_free_iostats(struct nfs_iostats __percpu *stats)
+>  {
+> diff --git a/include/acpi/platform/aclinuxex.h b/include/acpi/platform/aclinuxex.h
+> index 600d4e2641da..62cac266a1c8 100644
+> --- a/include/acpi/platform/aclinuxex.h
+> +++ b/include/acpi/platform/aclinuxex.h
+> @@ -47,26 +47,19 @@ acpi_status acpi_os_terminate(void);
+>   * However, boot has  (system_state != SYSTEM_RUNNING)
+>   * to quiet __might_sleep() in kmalloc() and resume does not.
+>   */
+> -static inline void *acpi_os_allocate(acpi_size size)
+> -{
+> -	return kmalloc(size, irqs_disabled()? GFP_ATOMIC : GFP_KERNEL);
+> -}
+> +#define acpi_os_allocate(_size)	\
+> +		kmalloc(_size, irqs_disabled() ? GFP_ATOMIC : GFP_KERNEL)
+>  
+> -static inline void *acpi_os_allocate_zeroed(acpi_size size)
+> -{
+> -	return kzalloc(size, irqs_disabled()? GFP_ATOMIC : GFP_KERNEL);
+> -}
+> +#define acpi_os_allocate_zeroed(_size)	\
+> +		kzalloc(_size, irqs_disabled() ? GFP_ATOMIC : GFP_KERNEL)
+>  
+>  static inline void acpi_os_free(void *memory)
+>  {
+>  	kfree(memory);
+>  }
+>  
+> -static inline void *acpi_os_acquire_object(acpi_cache_t * cache)
+> -{
+> -	return kmem_cache_zalloc(cache,
+> -				 irqs_disabled()? GFP_ATOMIC : GFP_KERNEL);
+> -}
+> +#define acpi_os_acquire_object(_cache)	\
+> +		kmem_cache_zalloc(_cache, irqs_disabled() ? GFP_ATOMIC : GFP_KERNEL)
+>  
+>  static inline acpi_thread_id acpi_os_get_thread_id(void)
+>  {
+> diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
+> index 879e5f8aa5e9..7c48f5fbf8aa 100644
+> --- a/include/asm-generic/pgalloc.h
+> +++ b/include/asm-generic/pgalloc.h
+> @@ -16,15 +16,16 @@
+>   *
+>   * Return: pointer to the allocated memory or %NULL on error
+>   */
+> -static inline pte_t *__pte_alloc_one_kernel(struct mm_struct *mm)
+> +static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
+>  {
+> -	struct ptdesc *ptdesc = pagetable_alloc(GFP_PGTABLE_KERNEL &
+> +	struct ptdesc *ptdesc = pagetable_alloc_noprof(GFP_PGTABLE_KERNEL &
+>  			~__GFP_HIGHMEM, 0);
+>  
+>  	if (!ptdesc)
+>  		return NULL;
+>  	return ptdesc_address(ptdesc);
+>  }
+> +#define __pte_alloc_one_kernel(...)	alloc_hooks(__pte_alloc_one_kernel_noprof(__VA_ARGS__))
+>  
+>  #ifndef __HAVE_ARCH_PTE_ALLOC_ONE_KERNEL
+>  /**
+> @@ -33,10 +34,11 @@ static inline pte_t *__pte_alloc_one_kernel(struct mm_struct *mm)
+>   *
+>   * Return: pointer to the allocated memory or %NULL on error
+>   */
+> -static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+> +static inline pte_t *pte_alloc_one_kernel_noprof(struct mm_struct *mm)
+>  {
+> -	return __pte_alloc_one_kernel(mm);
+> +	return __pte_alloc_one_kernel_noprof(mm);
+>  }
+> +#define pte_alloc_one_kernel(...)	alloc_hooks(pte_alloc_one_kernel_noprof(__VA_ARGS__))
+>  #endif
+>  
+>  /**
+> @@ -61,11 +63,11 @@ static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+>   *
+>   * Return: `struct page` referencing the ptdesc or %NULL on error
+>   */
+> -static inline pgtable_t __pte_alloc_one(struct mm_struct *mm, gfp_t gfp)
+> +static inline pgtable_t __pte_alloc_one_noprof(struct mm_struct *mm, gfp_t gfp)
+>  {
+>  	struct ptdesc *ptdesc;
+>  
+> -	ptdesc = pagetable_alloc(gfp, 0);
+> +	ptdesc = pagetable_alloc_noprof(gfp, 0);
+>  	if (!ptdesc)
+>  		return NULL;
+>  	if (!pagetable_pte_ctor(ptdesc)) {
+> @@ -75,6 +77,7 @@ static inline pgtable_t __pte_alloc_one(struct mm_struct *mm, gfp_t gfp)
+>  
+>  	return ptdesc_page(ptdesc);
+>  }
+> +#define __pte_alloc_one(...)	alloc_hooks(__pte_alloc_one_noprof(__VA_ARGS__))
+>  
+>  #ifndef __HAVE_ARCH_PTE_ALLOC_ONE
+>  /**
+> @@ -85,10 +88,11 @@ static inline pgtable_t __pte_alloc_one(struct mm_struct *mm, gfp_t gfp)
+>   *
+>   * Return: `struct page` referencing the ptdesc or %NULL on error
+>   */
+> -static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
+> +static inline pgtable_t pte_alloc_one_noprof(struct mm_struct *mm)
+>  {
+> -	return __pte_alloc_one(mm, GFP_PGTABLE_USER);
+> +	return __pte_alloc_one_noprof(mm, GFP_PGTABLE_USER);
+>  }
+> +#define pte_alloc_one(...)	alloc_hooks(pte_alloc_one_noprof(__VA_ARGS__))
+>  #endif
+>  
+>  /*
+> @@ -124,14 +128,14 @@ static inline void pte_free(struct mm_struct *mm, struct page *pte_page)
+>   *
+>   * Return: pointer to the allocated memory or %NULL on error
+>   */
+> -static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+> +static inline pmd_t *pmd_alloc_one_noprof(struct mm_struct *mm, unsigned long addr)
+>  {
+>  	struct ptdesc *ptdesc;
+>  	gfp_t gfp = GFP_PGTABLE_USER;
+>  
+>  	if (mm == &init_mm)
+>  		gfp = GFP_PGTABLE_KERNEL;
+> -	ptdesc = pagetable_alloc(gfp, 0);
+> +	ptdesc = pagetable_alloc_noprof(gfp, 0);
+>  	if (!ptdesc)
+>  		return NULL;
+>  	if (!pagetable_pmd_ctor(ptdesc)) {
+> @@ -140,6 +144,7 @@ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+>  	}
+>  	return ptdesc_address(ptdesc);
+>  }
+> +#define pmd_alloc_one(...)	alloc_hooks(pmd_alloc_one_noprof(__VA_ARGS__))
+>  #endif
+>  
+>  #ifndef __HAVE_ARCH_PMD_FREE
+> @@ -157,7 +162,7 @@ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
+>  
+>  #if CONFIG_PGTABLE_LEVELS > 3
+>  
+> -static inline pud_t *__pud_alloc_one(struct mm_struct *mm, unsigned long addr)
+> +static inline pud_t *__pud_alloc_one_noprof(struct mm_struct *mm, unsigned long addr)
+>  {
+>  	gfp_t gfp = GFP_PGTABLE_USER;
+>  	struct ptdesc *ptdesc;
+> @@ -166,13 +171,14 @@ static inline pud_t *__pud_alloc_one(struct mm_struct *mm, unsigned long addr)
+>  		gfp = GFP_PGTABLE_KERNEL;
+>  	gfp &= ~__GFP_HIGHMEM;
+>  
+> -	ptdesc = pagetable_alloc(gfp, 0);
+> +	ptdesc = pagetable_alloc_noprof(gfp, 0);
+>  	if (!ptdesc)
+>  		return NULL;
+>  
+>  	pagetable_pud_ctor(ptdesc);
+>  	return ptdesc_address(ptdesc);
+>  }
+> +#define __pud_alloc_one(...)	alloc_hooks(__pud_alloc_one_noprof(__VA_ARGS__))
+>  
+>  #ifndef __HAVE_ARCH_PUD_ALLOC_ONE
+>  /**
+> @@ -184,10 +190,11 @@ static inline pud_t *__pud_alloc_one(struct mm_struct *mm, unsigned long addr)
+>   *
+>   * Return: pointer to the allocated memory or %NULL on error
+>   */
+> -static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long addr)
+> +static inline pud_t *pud_alloc_one_noprof(struct mm_struct *mm, unsigned long addr)
+>  {
+> -	return __pud_alloc_one(mm, addr);
+> +	return __pud_alloc_one_noprof(mm, addr);
+>  }
+> +#define pud_alloc_one(...)	alloc_hooks(pud_alloc_one_noprof(__VA_ARGS__))
+>  #endif
+>  
+>  static inline void __pud_free(struct mm_struct *mm, pud_t *pud)
+> diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+> index 5d61f576cfc8..e5181cc9b7c5 100644
+> --- a/include/crypto/hash.h
+> +++ b/include/crypto/hash.h
+> @@ -578,19 +578,20 @@ static inline void ahash_request_set_tfm(struct ahash_request *req,
+>   *
+>   * Return: allocated request handle in case of success, or NULL if out of memory
+>   */
+> -static inline struct ahash_request *ahash_request_alloc(
+> +static inline struct ahash_request *ahash_request_alloc_noprof(
+>  	struct crypto_ahash *tfm, gfp_t gfp)
+>  {
+>  	struct ahash_request *req;
+>  
+> -	req = kmalloc(sizeof(struct ahash_request) +
+> -		      crypto_ahash_reqsize(tfm), gfp);
+> +	req = kmalloc_noprof(sizeof(struct ahash_request) +
+> +			     crypto_ahash_reqsize(tfm), gfp);
+>  
+>  	if (likely(req))
+>  		ahash_request_set_tfm(req, tfm);
+>  
+>  	return req;
+>  }
+> +#define ahash_request_alloc(...)	alloc_hooks(ahash_request_alloc_noprof(__VA_ARGS__))
+>  
+>  /**
+>   * ahash_request_free() - zeroize and free the request data structure
+> diff --git a/include/crypto/internal/acompress.h b/include/crypto/internal/acompress.h
+> index 4ac46bafba9d..2a67793f52ad 100644
+> --- a/include/crypto/internal/acompress.h
+> +++ b/include/crypto/internal/acompress.h
+> @@ -69,15 +69,16 @@ static inline void acomp_request_complete(struct acomp_req *req,
+>  	crypto_request_complete(&req->base, err);
+>  }
+>  
+> -static inline struct acomp_req *__acomp_request_alloc(struct crypto_acomp *tfm)
+> +static inline struct acomp_req *__acomp_request_alloc_noprof(struct crypto_acomp *tfm)
+>  {
+>  	struct acomp_req *req;
+>  
+> -	req = kzalloc(sizeof(*req) + crypto_acomp_reqsize(tfm), GFP_KERNEL);
+> +	req = kzalloc_noprof(sizeof(*req) + crypto_acomp_reqsize(tfm), GFP_KERNEL);
+>  	if (likely(req))
+>  		acomp_request_set_tfm(req, tfm);
+>  	return req;
+>  }
+> +#define __acomp_request_alloc(...)	alloc_hooks(__acomp_request_alloc_noprof(__VA_ARGS__))
+>  
+>  static inline void __acomp_request_free(struct acomp_req *req)
+>  {
+> diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+> index c8857d7bdb37..6c5330e316b0 100644
+> --- a/include/crypto/skcipher.h
+> +++ b/include/crypto/skcipher.h
+> @@ -861,19 +861,20 @@ static inline struct skcipher_request *skcipher_request_cast(
+>   *
+>   * Return: allocated request handle in case of success, or NULL if out of memory
+>   */
+> -static inline struct skcipher_request *skcipher_request_alloc(
+> +static inline struct skcipher_request *skcipher_request_alloc_noprof(
+>  	struct crypto_skcipher *tfm, gfp_t gfp)
+>  {
+>  	struct skcipher_request *req;
+>  
+> -	req = kmalloc(sizeof(struct skcipher_request) +
+> -		      crypto_skcipher_reqsize(tfm), gfp);
+> +	req = kmalloc_noprof(sizeof(struct skcipher_request) +
+> +			     crypto_skcipher_reqsize(tfm), gfp);
+>  
+>  	if (likely(req))
+>  		skcipher_request_set_tfm(req, tfm);
+>  
+>  	return req;
+>  }
+> +#define skcipher_request_alloc(...)	alloc_hooks(skcipher_request_alloc_noprof(__VA_ARGS__))
+>  
+>  /**
+>   * skcipher_request_free() - zeroize and free request data structure
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 4f20f62f9d63..a63fa48ab80d 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -2230,31 +2230,14 @@ void *bpf_map_kvcalloc(struct bpf_map *map, size_t n, size_t size,
+>  void __percpu *bpf_map_alloc_percpu(const struct bpf_map *map, size_t size,
+>  				    size_t align, gfp_t flags);
+>  #else
+> -static inline void *
+> -bpf_map_kmalloc_node(const struct bpf_map *map, size_t size, gfp_t flags,
+> -		     int node)
+> -{
+> -	return kmalloc_node(size, flags, node);
+> -}
+> -
+> -static inline void *
+> -bpf_map_kzalloc(const struct bpf_map *map, size_t size, gfp_t flags)
+> -{
+> -	return kzalloc(size, flags);
+> -}
+> -
+> -static inline void *
+> -bpf_map_kvcalloc(struct bpf_map *map, size_t n, size_t size, gfp_t flags)
+> -{
+> -	return kvcalloc(n, size, flags);
+> -}
+> -
+> -static inline void __percpu *
+> -bpf_map_alloc_percpu(const struct bpf_map *map, size_t size, size_t align,
+> -		     gfp_t flags)
+> -{
+> -	return __alloc_percpu_gfp(size, align, flags);
+> -}
+> +#define bpf_map_kmalloc_node(_map, _size, _flags, _node)	\
+> +		kmalloc_node(_size, _flags, _node)
+> +#define bpf_map_kzalloc(_map, _size, _flags)			\
+> +		kzalloc(_size, _flags)
+> +#define bpf_map_kvcalloc(_map, _n, _size, _flags)		\
+> +		kvcalloc(_n, _size, _flags)
+> +#define bpf_map_alloc_percpu(_map, _size, _align, _flags)	\
+> +		__alloc_percpu_gfp(_size, _align, _flags)
+>  #endif
+>  
+>  static inline int
+> diff --git a/include/linux/bpfptr.h b/include/linux/bpfptr.h
+> index 79b2f78eec1a..1af241525a17 100644
+> --- a/include/linux/bpfptr.h
+> +++ b/include/linux/bpfptr.h
+> @@ -65,9 +65,9 @@ static inline int copy_to_bpfptr_offset(bpfptr_t dst, size_t offset,
+>  	return copy_to_sockptr_offset((sockptr_t) dst, offset, src, size);
+>  }
+>  
+> -static inline void *kvmemdup_bpfptr(bpfptr_t src, size_t len)
+> +static inline void *kvmemdup_bpfptr_noprof(bpfptr_t src, size_t len)
+>  {
+> -	void *p = kvmalloc(len, GFP_USER | __GFP_NOWARN);
+> +	void *p = kvmalloc_noprof(len, GFP_USER | __GFP_NOWARN);
+>  
+>  	if (!p)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -77,6 +77,7 @@ static inline void *kvmemdup_bpfptr(bpfptr_t src, size_t len)
+>  	}
+>  	return p;
+>  }
+> +#define kvmemdup_bpfptr(...)	alloc_hooks(kvmemdup_bpfptr_noprof(__VA_ARGS__))
+>  
+>  static inline long strncpy_from_bpfptr(char *dst, bpfptr_t src, size_t count)
+>  {
+> diff --git a/include/linux/dma-fence-chain.h b/include/linux/dma-fence-chain.h
+> index 4bdf0b96da28..ad9e2506c2f4 100644
+> --- a/include/linux/dma-fence-chain.h
+> +++ b/include/linux/dma-fence-chain.h
+> @@ -86,10 +86,8 @@ dma_fence_chain_contained(struct dma_fence *fence)
+>   *
+>   * Returns a new struct dma_fence_chain object or NULL on failure.
+>   */
+> -static inline struct dma_fence_chain *dma_fence_chain_alloc(void)
+> -{
+> -	return kmalloc(sizeof(struct dma_fence_chain), GFP_KERNEL);
+> -};
+> +#define dma_fence_chain_alloc()	\
+> +		((struct dma_fence_chain *)kmalloc(sizeof(struct dma_fence_chain), GFP_KERNEL))
+>  
+>  /**
+>   * dma_fence_chain_free
+> diff --git a/include/linux/hid_bpf.h b/include/linux/hid_bpf.h
+> index 7118ac28d468..ca70eeb6393e 100644
+> --- a/include/linux/hid_bpf.h
+> +++ b/include/linux/hid_bpf.h
+> @@ -149,10 +149,8 @@ static inline int hid_bpf_connect_device(struct hid_device *hdev) { return 0; }
+>  static inline void hid_bpf_disconnect_device(struct hid_device *hdev) {}
+>  static inline void hid_bpf_destroy_device(struct hid_device *hid) {}
+>  static inline void hid_bpf_device_init(struct hid_device *hid) {}
+> -static inline u8 *call_hid_bpf_rdesc_fixup(struct hid_device *hdev, u8 *rdesc, unsigned int *size)
+> -{
+> -	return kmemdup(rdesc, *size, GFP_KERNEL);
+> -}
+> +#define call_hid_bpf_rdesc_fixup(_hdev, _rdesc, _size)	\
+> +		((u8 *)kmemdup(_rdesc, *(_size), GFP_KERNEL))
+>  
+>  #endif /* CONFIG_HID_BPF */
+>  
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 971f3e826e15..9512fe332668 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -1586,10 +1586,8 @@ void jbd2_journal_put_journal_head(struct journal_head *jh);
+>   */
+>  extern struct kmem_cache *jbd2_handle_cache;
+>  
+> -static inline handle_t *jbd2_alloc_handle(gfp_t gfp_flags)
+> -{
+> -	return kmem_cache_zalloc(jbd2_handle_cache, gfp_flags);
+> -}
+> +#define jbd2_alloc_handle(_gfp_flags)	\
+> +		((handle_t *)kmem_cache_zalloc(jbd2_handle_cache, _gfp_flags))
+>  
+>  static inline void jbd2_free_handle(handle_t *handle)
+>  {
+> @@ -1602,10 +1600,8 @@ static inline void jbd2_free_handle(handle_t *handle)
+>   */
+>  extern struct kmem_cache *jbd2_inode_cache;
+>  
+> -static inline struct jbd2_inode *jbd2_alloc_inode(gfp_t gfp_flags)
+> -{
+> -	return kmem_cache_alloc(jbd2_inode_cache, gfp_flags);
+> -}
+> +#define jbd2_alloc_inode(_gfp_flags)	\
+> +		((struct jbd2_inode *)kmem_cache_alloc(jbd2_inode_cache, _gfp_flags))
+>  
+>  static inline void jbd2_free_inode(struct jbd2_inode *jinode)
+>  {
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 07c73451d42f..d261e45bb29b 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2899,12 +2899,13 @@ static inline bool pagetable_is_reserved(struct ptdesc *pt)
+>   *
+>   * Return: The ptdesc describing the allocated page tables.
+>   */
+> -static inline struct ptdesc *pagetable_alloc(gfp_t gfp, unsigned int order)
+> +static inline struct ptdesc *pagetable_alloc_noprof(gfp_t gfp, unsigned int order)
+>  {
+> -	struct page *page = alloc_pages(gfp | __GFP_COMP, order);
+> +	struct page *page = alloc_pages_noprof(gfp | __GFP_COMP, order);
+>  
+>  	return page_ptdesc(page);
+>  }
+> +#define pagetable_alloc(...)	alloc_hooks(pagetable_alloc_noprof(__VA_ARGS__))
+>  
+>  /**
+>   * pagetable_free - Free pagetables
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index c432add95913..db0adf5721cc 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -1167,14 +1167,15 @@ static inline void mm_init_cid(struct mm_struct *mm)
+>  	cpumask_clear(mm_cidmask(mm));
+>  }
+>  
+> -static inline int mm_alloc_cid(struct mm_struct *mm)
+> +static inline int mm_alloc_cid_noprof(struct mm_struct *mm)
+>  {
+> -	mm->pcpu_cid = alloc_percpu(struct mm_cid);
+> +	mm->pcpu_cid = alloc_percpu_noprof(struct mm_cid);
+>  	if (!mm->pcpu_cid)
+>  		return -ENOMEM;
+>  	mm_init_cid(mm);
+>  	return 0;
+>  }
+> +#define mm_alloc_cid(...)	alloc_hooks(mm_alloc_cid_noprof(__VA_ARGS__))
+>  
+>  static inline void mm_destroy_cid(struct mm_struct *mm)
+>  {
+> diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+> index 13a82f11e4fd..03053de557cf 100644
+> --- a/include/linux/percpu.h
+> +++ b/include/linux/percpu.h
+> @@ -151,6 +151,9 @@ extern size_t pcpu_alloc_size(void __percpu *__pdata);
+>  #define alloc_percpu(type)						\
+>  	(typeof(type) __percpu *)__alloc_percpu(sizeof(type),		\
+>  						__alignof__(type))
+> +#define alloc_percpu_noprof(type)					\
+> +	((typeof(type) __percpu *)pcpu_alloc_noprof(sizeof(type),	\
+> +					__alignof__(type), false, GFP_KERNEL))
+>  
+>  extern void free_percpu(void __percpu *__pdata);
+>  
+> diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> index 808f9d3ee546..fd037c127bb0 100644
+> --- a/include/linux/ptr_ring.h
+> +++ b/include/linux/ptr_ring.h
+> @@ -464,11 +464,11 @@ static inline int ptr_ring_consume_batched_bh(struct ptr_ring *r,
+>  /* Not all gfp_t flags (besides GFP_KERNEL) are allowed. See
+>   * documentation for vmalloc for which of them are legal.
+>   */
+> -static inline void **__ptr_ring_init_queue_alloc(unsigned int size, gfp_t gfp)
+> +static inline void **__ptr_ring_init_queue_alloc_noprof(unsigned int size, gfp_t gfp)
+>  {
+>  	if (size > KMALLOC_MAX_SIZE / sizeof(void *))
+>  		return NULL;
+> -	return kvmalloc_array(size, sizeof(void *), gfp | __GFP_ZERO);
+> +	return kvmalloc_array_noprof(size, sizeof(void *), gfp | __GFP_ZERO);
+>  }
+>  
+>  static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
+> @@ -484,9 +484,9 @@ static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
+>  		r->batch = 1;
+>  }
+>  
+> -static inline int ptr_ring_init(struct ptr_ring *r, int size, gfp_t gfp)
+> +static inline int ptr_ring_init_noprof(struct ptr_ring *r, int size, gfp_t gfp)
+>  {
+> -	r->queue = __ptr_ring_init_queue_alloc(size, gfp);
+> +	r->queue = __ptr_ring_init_queue_alloc_noprof(size, gfp);
+>  	if (!r->queue)
+>  		return -ENOMEM;
+>  
+> @@ -497,6 +497,7 @@ static inline int ptr_ring_init(struct ptr_ring *r, int size, gfp_t gfp)
+>  
+>  	return 0;
+>  }
+> +#define ptr_ring_init(...)	alloc_hooks(ptr_ring_init_noprof(__VA_ARGS__))
+>  
+>  /*
+>   * Return entries into ring. Destroy entries that don't fit.
+> @@ -587,11 +588,11 @@ static inline void **__ptr_ring_swap_queue(struct ptr_ring *r, void **queue,
+>   * In particular if you consume ring in interrupt or BH context, you must
+>   * disable interrupts/BH when doing so.
+>   */
+> -static inline int ptr_ring_resize(struct ptr_ring *r, int size, gfp_t gfp,
+> +static inline int ptr_ring_resize_noprof(struct ptr_ring *r, int size, gfp_t gfp,
+>  				  void (*destroy)(void *))
+>  {
+>  	unsigned long flags;
+> -	void **queue = __ptr_ring_init_queue_alloc(size, gfp);
+> +	void **queue = __ptr_ring_init_queue_alloc_noprof(size, gfp);
+>  	void **old;
+>  
+>  	if (!queue)
+> @@ -609,6 +610,7 @@ static inline int ptr_ring_resize(struct ptr_ring *r, int size, gfp_t gfp,
+>  
+>  	return 0;
+>  }
+> +#define ptr_ring_resize(...)	alloc_hooks(ptr_ring_resize_noprof(__VA_ARGS__))
+>  
+>  /*
+>   * Note: producer lock is nested within consumer lock, so if you
+> @@ -616,21 +618,21 @@ static inline int ptr_ring_resize(struct ptr_ring *r, int size, gfp_t gfp,
+>   * In particular if you consume ring in interrupt or BH context, you must
+>   * disable interrupts/BH when doing so.
+>   */
+> -static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
+> -					   unsigned int nrings,
+> -					   int size,
+> -					   gfp_t gfp, void (*destroy)(void *))
+> +static inline int ptr_ring_resize_multiple_noprof(struct ptr_ring **rings,
+> +						  unsigned int nrings,
+> +						  int size,
+> +						  gfp_t gfp, void (*destroy)(void *))
+>  {
+>  	unsigned long flags;
+>  	void ***queues;
+>  	int i;
+>  
+> -	queues = kmalloc_array(nrings, sizeof(*queues), gfp);
+> +	queues = kmalloc_array_noprof(nrings, sizeof(*queues), gfp);
+>  	if (!queues)
+>  		goto noqueues;
+>  
+>  	for (i = 0; i < nrings; ++i) {
+> -		queues[i] = __ptr_ring_init_queue_alloc(size, gfp);
+> +		queues[i] = __ptr_ring_init_queue_alloc_noprof(size, gfp);
+>  		if (!queues[i])
+>  			goto nomem;
+>  	}
+> @@ -660,6 +662,8 @@ static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
+>  noqueues:
+>  	return -ENOMEM;
+>  }
+> +#define ptr_ring_resize_multiple(...) \
+> +		alloc_hooks(ptr_ring_resize_multiple_noprof(__VA_ARGS__))
+>  
+>  static inline void ptr_ring_cleanup(struct ptr_ring *r, void (*destroy)(void *))
+>  {
+> diff --git a/include/linux/skb_array.h b/include/linux/skb_array.h
+> index e2d45b7cb619..926496c9cc9c 100644
+> --- a/include/linux/skb_array.h
+> +++ b/include/linux/skb_array.h
+> @@ -177,10 +177,11 @@ static inline int skb_array_peek_len_any(struct skb_array *a)
+>  	return PTR_RING_PEEK_CALL_ANY(&a->ring, __skb_array_len_with_tag);
+>  }
+>  
+> -static inline int skb_array_init(struct skb_array *a, int size, gfp_t gfp)
+> +static inline int skb_array_init_noprof(struct skb_array *a, int size, gfp_t gfp)
+>  {
+> -	return ptr_ring_init(&a->ring, size, gfp);
+> +	return ptr_ring_init_noprof(&a->ring, size, gfp);
+>  }
+> +#define skb_array_init(...)	alloc_hooks(skb_array_init_noprof(__VA_ARGS__))
+>  
+>  static void __skb_array_destroy_skb(void *ptr)
+>  {
+> @@ -198,15 +199,17 @@ static inline int skb_array_resize(struct skb_array *a, int size, gfp_t gfp)
+>  	return ptr_ring_resize(&a->ring, size, gfp, __skb_array_destroy_skb);
+>  }
+>  
+> -static inline int skb_array_resize_multiple(struct skb_array **rings,
+> -					    int nrings, unsigned int size,
+> -					    gfp_t gfp)
+> +static inline int skb_array_resize_multiple_noprof(struct skb_array **rings,
+> +						   int nrings, unsigned int size,
+> +						   gfp_t gfp)
+>  {
+>  	BUILD_BUG_ON(offsetof(struct skb_array, ring));
+> -	return ptr_ring_resize_multiple((struct ptr_ring **)rings,
+> -					nrings, size, gfp,
+> -					__skb_array_destroy_skb);
+> +	return ptr_ring_resize_multiple_noprof((struct ptr_ring **)rings,
+> +					       nrings, size, gfp,
+> +					       __skb_array_destroy_skb);
+>  }
+> +#define skb_array_resize_multiple(...)	\
+> +		alloc_hooks(skb_array_resize_multiple_noprof(__VA_ARGS__))
+>  
+>  static inline void skb_array_cleanup(struct skb_array *a)
+>  {
+> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+> index 9d24aec064e8..b72920c9887b 100644
+> --- a/include/linux/skbuff.h
+> +++ b/include/linux/skbuff.h
+> @@ -3371,7 +3371,7 @@ void __napi_kfree_skb(struct sk_buff *skb, enum skb_drop_reason reason);
+>   *
+>   * %NULL is returned if there is no free memory.
+>  */
+> -static inline struct page *__dev_alloc_pages(gfp_t gfp_mask,
+> +static inline struct page *__dev_alloc_pages_noprof(gfp_t gfp_mask,
+>  					     unsigned int order)
+>  {
+>  	/* This piece of code contains several assumptions.
+> @@ -3384,13 +3384,11 @@ static inline struct page *__dev_alloc_pages(gfp_t gfp_mask,
+>  	 */
+>  	gfp_mask |= __GFP_COMP | __GFP_MEMALLOC;
+>  
+> -	return alloc_pages_node(NUMA_NO_NODE, gfp_mask, order);
+> +	return alloc_pages_node_noprof(NUMA_NO_NODE, gfp_mask, order);
+>  }
+> +#define __dev_alloc_pages(...)	alloc_hooks(__dev_alloc_pages_noprof(__VA_ARGS__))
+>  
+> -static inline struct page *dev_alloc_pages(unsigned int order)
+> -{
+> -	return __dev_alloc_pages(GFP_ATOMIC | __GFP_NOWARN, order);
+> -}
+> +#define dev_alloc_pages(_order) __dev_alloc_pages(GFP_ATOMIC | __GFP_NOWARN, _order)
+>  
+>  /**
+>   * __dev_alloc_page - allocate a page for network Rx
+> @@ -3400,15 +3398,13 @@ static inline struct page *dev_alloc_pages(unsigned int order)
+>   *
+>   * %NULL is returned if there is no free memory.
+>   */
+> -static inline struct page *__dev_alloc_page(gfp_t gfp_mask)
+> +static inline struct page *__dev_alloc_page_noprof(gfp_t gfp_mask)
+>  {
+> -	return __dev_alloc_pages(gfp_mask, 0);
+> +	return __dev_alloc_pages_noprof(gfp_mask, 0);
+>  }
+> +#define __dev_alloc_page(...)	alloc_hooks(__dev_alloc_page_noprof(__VA_ARGS__))
+>  
+> -static inline struct page *dev_alloc_page(void)
+> -{
+> -	return dev_alloc_pages(0);
+> -}
+> +#define dev_alloc_page()	dev_alloc_pages(0)
+>  
+>  /**
+>   * dev_page_is_reusable - check whether a page can be reused for network Rx
+> diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
+> index e65ec3fd2799..78efc5b20284 100644
+> --- a/include/linux/skmsg.h
+> +++ b/include/linux/skmsg.h
+> @@ -410,11 +410,9 @@ void sk_psock_stop_verdict(struct sock *sk, struct sk_psock *psock);
+>  int sk_psock_msg_verdict(struct sock *sk, struct sk_psock *psock,
+>  			 struct sk_msg *msg);
+>  
+> -static inline struct sk_psock_link *sk_psock_init_link(void)
+> -{
+> -	return kzalloc(sizeof(struct sk_psock_link),
+> -		       GFP_ATOMIC | __GFP_NOWARN);
+> -}
+> +#define sk_psock_init_link()	\
+> +		((struct sk_psock_link *)kzalloc(sizeof(struct sk_psock_link),	\
+> +						 GFP_ATOMIC | __GFP_NOWARN))
+>  
+>  static inline void sk_psock_free_link(struct sk_psock_link *link)
+>  {
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index c0be1cd03cf6..4cc37ef22aae 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -744,6 +744,9 @@ void *kmalloc_node_track_caller_noprof(size_t size, gfp_t flags, int node,
+>   */
+>  #define kmalloc_track_caller(...)		kmalloc_node_track_caller(__VA_ARGS__, NUMA_NO_NODE)
+>  
+> +#define kmalloc_track_caller_noprof(...)	\
+> +		kmalloc_node_track_caller_noprof(__VA_ARGS__, NUMA_NO_NODE, _RET_IP_)
+> +
+>  static inline __alloc_size(1, 2) void *kmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags,
+>  							  int node)
+>  {
+> @@ -781,6 +784,7 @@ extern void *kvmalloc_node_noprof(size_t size, gfp_t flags, int node) __alloc_si
+>  #define kvmalloc_node(...)			alloc_hooks(kvmalloc_node_noprof(__VA_ARGS__))
+>  
+>  #define kvmalloc(_size, _flags)			kvmalloc_node(_size, _flags, NUMA_NO_NODE)
+> +#define kvmalloc_noprof(_size, _flags)		kvmalloc_node_noprof(_size, _flags, NUMA_NO_NODE)
+>  #define kvzalloc(_size, _flags)			kvmalloc(_size, _flags|__GFP_ZERO)
+>  
+>  #define kvzalloc_node(_size, _flags, _node)	kvmalloc_node(_size, _flags|__GFP_ZERO, _node)
+> @@ -797,6 +801,7 @@ static inline __alloc_size(1, 2) void *kvmalloc_array_noprof(size_t n, size_t si
+>  
+>  #define kvmalloc_array(...)			alloc_hooks(kvmalloc_array_noprof(__VA_ARGS__))
+>  #define kvcalloc(_n, _size, _flags)		kvmalloc_array(_n, _size, _flags|__GFP_ZERO)
+> +#define kvcalloc_noprof(_n, _size, _flags)	kvmalloc_array_noprof(_n, _size, _flags|__GFP_ZERO)
+>  
+>  extern void *kvrealloc_noprof(const void *p, size_t oldsize, size_t newsize, gfp_t flags)
+>  		      __realloc_size(3);
+> diff --git a/include/linux/sockptr.h b/include/linux/sockptr.h
+> index 307961b41541..ba703b22e7d8 100644
+> --- a/include/linux/sockptr.h
+> +++ b/include/linux/sockptr.h
+> @@ -92,9 +92,9 @@ static inline int copy_to_sockptr(sockptr_t dst, const void *src, size_t size)
+>  	return copy_to_sockptr_offset(dst, 0, src, size);
+>  }
+>  
+> -static inline void *memdup_sockptr(sockptr_t src, size_t len)
+> +static inline void *memdup_sockptr_noprof(sockptr_t src, size_t len)
+>  {
+> -	void *p = kmalloc_track_caller(len, GFP_USER | __GFP_NOWARN);
+> +	void *p = kmalloc_track_caller_noprof(len, GFP_USER | __GFP_NOWARN);
+>  
+>  	if (!p)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -104,10 +104,11 @@ static inline void *memdup_sockptr(sockptr_t src, size_t len)
+>  	}
+>  	return p;
+>  }
+> +#define memdup_sockptr(...)	alloc_hooks(memdup_sockptr_noprof(__VA_ARGS__))
+>  
+> -static inline void *memdup_sockptr_nul(sockptr_t src, size_t len)
+> +static inline void *memdup_sockptr_nul_noprof(sockptr_t src, size_t len)
+>  {
+> -	char *p = kmalloc_track_caller(len + 1, GFP_KERNEL);
+> +	char *p = kmalloc_track_caller_noprof(len + 1, GFP_KERNEL);
+>  
+>  	if (!p)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -118,6 +119,7 @@ static inline void *memdup_sockptr_nul(sockptr_t src, size_t len)
+>  	p[len] = '\0';
+>  	return p;
+>  }
+> +#define memdup_sockptr_nul(...)	alloc_hooks(memdup_sockptr_nul_noprof(__VA_ARGS__))
+>  
+>  static inline long strncpy_from_sockptr(char *dst, sockptr_t src, size_t count)
+>  {
+> diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+> index f3ab0b8a4b18..c31bd96dafdb 100644
+> --- a/include/net/netlabel.h
+> +++ b/include/net/netlabel.h
+> @@ -274,15 +274,17 @@ struct netlbl_calipso_ops {
+>   * on success, NULL on failure.
+>   *
+>   */
+> -static inline struct netlbl_lsm_cache *netlbl_secattr_cache_alloc(gfp_t flags)
+> +static inline struct netlbl_lsm_cache *netlbl_secattr_cache_alloc_noprof(gfp_t flags)
+>  {
+>  	struct netlbl_lsm_cache *cache;
+>  
+> -	cache = kzalloc(sizeof(*cache), flags);
+> +	cache = kzalloc_noprof(sizeof(*cache), flags);
+>  	if (cache)
+>  		refcount_set(&cache->refcount, 1);
+>  	return cache;
+>  }
+> +#define netlbl_secattr_cache_alloc(...)	\
+> +		alloc_hooks(netlbl_secattr_cache_alloc_noprof(__VA_ARGS__))
+>  
+>  /**
+>   * netlbl_secattr_cache_free - Frees a netlbl_lsm_cache struct
+> @@ -311,10 +313,11 @@ static inline void netlbl_secattr_cache_free(struct netlbl_lsm_cache *cache)
+>   * on failure.
+>   *
+>   */
+> -static inline struct netlbl_lsm_catmap *netlbl_catmap_alloc(gfp_t flags)
+> +static inline struct netlbl_lsm_catmap *netlbl_catmap_alloc_noprof(gfp_t flags)
+>  {
+> -	return kzalloc(sizeof(struct netlbl_lsm_catmap), flags);
+> +	return kzalloc_noprof(sizeof(struct netlbl_lsm_catmap), flags);
+>  }
+> +#define netlbl_catmap_alloc(...)	alloc_hooks(netlbl_catmap_alloc_noprof(__VA_ARGS__))
+>  
+>  /**
+>   * netlbl_catmap_free - Free a LSM secattr catmap
+> @@ -376,10 +379,11 @@ static inline void netlbl_secattr_destroy(struct netlbl_lsm_secattr *secattr)
+>   * pointer on success, or NULL on failure.
+>   *
+>   */
+> -static inline struct netlbl_lsm_secattr *netlbl_secattr_alloc(gfp_t flags)
+> +static inline struct netlbl_lsm_secattr *netlbl_secattr_alloc_noprof(gfp_t flags)
+>  {
+> -	return kzalloc(sizeof(struct netlbl_lsm_secattr), flags);
+> +	return kzalloc_noprof(sizeof(struct netlbl_lsm_secattr), flags);
+>  }
+> +#define netlbl_secattr_alloc(...)	alloc_hooks(netlbl_secattr_alloc_noprof(__VA_ARGS__))
+>  
+>  /**
+>   * netlbl_secattr_free - Frees a netlbl_lsm_secattr struct
+> diff --git a/include/net/netlink.h b/include/net/netlink.h
+> index c19ff921b661..972b5484fa6f 100644
+> --- a/include/net/netlink.h
+> +++ b/include/net/netlink.h
+> @@ -1891,10 +1891,11 @@ static inline struct nla_bitfield32 nla_get_bitfield32(const struct nlattr *nla)
+>   * @src: netlink attribute to duplicate from
+>   * @gfp: GFP mask
+>   */
+> -static inline void *nla_memdup(const struct nlattr *src, gfp_t gfp)
+> +static inline void *nla_memdup_noprof(const struct nlattr *src, gfp_t gfp)
+>  {
+> -	return kmemdup(nla_data(src), nla_len(src), gfp);
+> +	return kmemdup_noprof(nla_data(src), nla_len(src), gfp);
+>  }
+> +#define nla_memdup(...)	alloc_hooks(nla_memdup_noprof(__VA_ARGS__))
+>  
+>  /**
+>   * nla_nest_start_noflag - Start a new level of nested attributes
+> diff --git a/include/net/request_sock.h b/include/net/request_sock.h
+> index 004e651e6067..29495c331d20 100644
+> --- a/include/net/request_sock.h
+> +++ b/include/net/request_sock.h
+> @@ -127,12 +127,12 @@ static inline struct sock *skb_steal_sock(struct sk_buff *skb,
+>  }
+>  
+>  static inline struct request_sock *
+> -reqsk_alloc(const struct request_sock_ops *ops, struct sock *sk_listener,
+> +reqsk_alloc_noprof(const struct request_sock_ops *ops, struct sock *sk_listener,
+>  	    bool attach_listener)
+>  {
+>  	struct request_sock *req;
+>  
+> -	req = kmem_cache_alloc(ops->slab, GFP_ATOMIC | __GFP_NOWARN);
+> +	req = kmem_cache_alloc_noprof(ops->slab, GFP_ATOMIC | __GFP_NOWARN);
+>  	if (!req)
+>  		return NULL;
+>  	req->rsk_listener = NULL;
+> @@ -157,6 +157,7 @@ reqsk_alloc(const struct request_sock_ops *ops, struct sock *sk_listener,
+>  
+>  	return req;
+>  }
+> +#define reqsk_alloc(...)	alloc_hooks(reqsk_alloc_noprof(__VA_ARGS__))
+>  
+>  static inline void __reqsk_free(struct request_sock *req)
+>  {
+> diff --git a/include/net/tcx.h b/include/net/tcx.h
+> index 04be9377785d..72a3e75e539f 100644
+> --- a/include/net/tcx.h
+> +++ b/include/net/tcx.h
+> @@ -75,9 +75,9 @@ tcx_entry_fetch(struct net_device *dev, bool ingress)
+>  		return rcu_dereference_rtnl(dev->tcx_egress);
+>  }
+>  
+> -static inline struct bpf_mprog_entry *tcx_entry_create(void)
+> +static inline struct bpf_mprog_entry *tcx_entry_create_noprof(void)
+>  {
+> -	struct tcx_entry *tcx = kzalloc(sizeof(*tcx), GFP_KERNEL);
+> +	struct tcx_entry *tcx = kzalloc_noprof(sizeof(*tcx), GFP_KERNEL);
+>  
+>  	if (tcx) {
+>  		bpf_mprog_bundle_init(&tcx->bundle);
+> @@ -85,6 +85,7 @@ static inline struct bpf_mprog_entry *tcx_entry_create(void)
+>  	}
+>  	return NULL;
+>  }
+> +#define tcx_entry_create(...)	alloc_hooks(tcx_entry_create_noprof(__VA_ARGS__))
+>  
+>  static inline void tcx_entry_free(struct bpf_mprog_entry *entry)
+>  {
+> diff --git a/net/sunrpc/auth_gss/auth_gss_internal.h b/net/sunrpc/auth_gss/auth_gss_internal.h
+> index c53b329092d4..4ebc1b7043d9 100644
+> --- a/net/sunrpc/auth_gss/auth_gss_internal.h
+> +++ b/net/sunrpc/auth_gss/auth_gss_internal.h
+> @@ -23,7 +23,7 @@ simple_get_bytes(const void *p, const void *end, void *res, size_t len)
+>  }
+>  
+>  static inline const void *
+> -simple_get_netobj(const void *p, const void *end, struct xdr_netobj *dest)
+> +simple_get_netobj_noprof(const void *p, const void *end, struct xdr_netobj *dest)
+>  {
+>  	const void *q;
+>  	unsigned int len;
+> @@ -35,7 +35,7 @@ simple_get_netobj(const void *p, const void *end, struct xdr_netobj *dest)
+>  	if (unlikely(q > end || q < p))
+>  		return ERR_PTR(-EFAULT);
+>  	if (len) {
+> -		dest->data = kmemdup(p, len, GFP_KERNEL);
+> +		dest->data = kmemdup_noprof(p, len, GFP_KERNEL);
+>  		if (unlikely(dest->data == NULL))
+>  			return ERR_PTR(-ENOMEM);
+>  	} else
+> @@ -43,3 +43,5 @@ simple_get_netobj(const void *p, const void *end, struct xdr_netobj *dest)
+>  	dest->len = len;
+>  	return q;
+>  }
+> +
+> +#define simple_get_netobj(...)	alloc_hooks(simple_get_netobj_noprof(__VA_ARGS__))
+> 
+> base-commit: 3aec6b2b34e219898883d1e9ea7e911b4d3762a9
+> -- 
+> 2.44.0.683.g7961c838ac-goog
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
