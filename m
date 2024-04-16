@@ -1,198 +1,277 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889CD8665B;
-	Tue, 16 Apr 2024 08:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2969B1272AA;
+	Tue, 16 Apr 2024 10:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713255235; cv=none; b=Bo/VO32gKEp/cQNXWiOm70qcDMlA02cenALcE6z6l2oQq1bn8M0loXAOsQkcvLLCNhQWf17j2nMruLHfHxedMt9sENrLUe+88n6R+ELmzat6/l3rncBx3nfmmZW4llL3weF7YqcnQo00IlGcIvPC165G7yKRDcrCuTVElOAvP8o=
+	t=1713262584; cv=none; b=m4bZ0cJPfqO4cRAvhIySDSwuV4rIQvzZOt+yCMsxS1EKMtPoYq5HBjTijBphSmaFwdCXLMOMJ/7bsOIWL00g5D5e1nY/yV3r1puYQYpwrMo/sGkT8VhAThDUigfnk2gd5Hk0BrLEShMrip5MCj5eIDJGjU2q+122eQwZSrxG96g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713255235; c=relaxed/simple;
-	bh=YqgOG9P2hP+Vazd20A7MBz6h2MRJHFt4LF2ghAPYO2E=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=k21OssrUmmuuo1y9eotbeHsjvdyJUkxEdiQ8UBShV4sw94s4UGOCFhnw3oRXRtKujCnYTzPAnMxWjwin+unHVYl5rbHJhOdR3sAQDpGbgV1dwEHq2/ggtoCBQIfO1cnPytLQtA6087WaK6+RbW28B0PjgLxiZYE6KpZ8mvaF6hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DjfBfnCe; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DjfBfnCe"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240416081348euoutp01e986ae0c0420cbaa6fc619f69deca38c~GtI2QdGVB1646716467euoutp01L;
-	Tue, 16 Apr 2024 08:13:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240416081348euoutp01e986ae0c0420cbaa6fc619f69deca38c~GtI2QdGVB1646716467euoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1713255228;
-	bh=bIsb30PZaSLB5OiZcM1+QbJIYYQGcYX6Ld4HuDawoik=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=DjfBfnCeczMwC9VGzREMUcny6hjKUIOJoo9UY/piJvcw7sh4r6U0qajsOpPBvf5/a
-	 Am3tENqHGcwHVkdAyNnMNbfN0nb5zgR2HXcAz+cdr5eruKji3XZlXhuBFe53cTSFKr
-	 W7mDC4fAmyjv0YJa7FWCt6cSAqXOWsc+9rtiMLp4=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240416081348eucas1p21cb60b08f416405e6a309e4ef595fa28~GtI1_WOdJ1606116061eucas1p26;
-	Tue, 16 Apr 2024 08:13:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id D9.06.09620.B333E166; Tue, 16
-	Apr 2024 09:13:47 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240416081347eucas1p2328252cc35f468c42c0954eaa09d59eb~GtI1f3yuF1895218952eucas1p2U;
-	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240416081347eusmtrp140e4080a0a0dac1890e78f8bb14248ff~GtI1dsrEb2457724577eusmtrp1W;
-	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-a1-661e333b54e0
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 18.75.09010.B333E166; Tue, 16
-	Apr 2024 09:13:47 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240416081347eusmtip12c7c7c247154a41e8dc385754f42215a~GtI1M5Wo13269232692eusmtip1G;
-	Tue, 16 Apr 2024 08:13:47 +0000 (GMT)
-Received: from localhost (106.210.248.128) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 16 Apr 2024 09:13:46 +0100
-Date: Tue, 16 Apr 2024 09:53:36 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Paul Moore <paul@paul-moore.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, Muchun Song
-	<muchun.song@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
-	<naoya.horiguchi@nec.com>, John Johansen <john.johansen@canonical.com>,
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Kees Cook <keescook@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>, Pavel
-	Begunkov <asml.silence@gmail.com>, Atish Patra <atishp@atishpatra.org>, Anup
-	Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Luis
-	Chamberlain <mcgrof@kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-	<keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<io-uring@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/7] security: Remove the now superfluous sentinel
- element from ctl_table array
-Message-ID: <20240416075336.stuemtkatjdz4rqe@joelS2.panther.com>
+	s=arc-20240116; t=1713262584; c=relaxed/simple;
+	bh=f0FsJk9FNilNAUik9wYD4dFl/kdk/i7363GF9x1B79g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T9USGeIo6W4xvrIMRsnKW1m45JGQtyHnDlwOG2oGUjydL6dEBqX2c5q6+ra+oboVaC2bvxbfHnqQuwfeK1w1G1c15g1GLoyyOQan6x5nHmMKlGJD6DDmLvqI6kVaLOlEaMN2RkJUVqTXL4l00l0OOEZ8jTXtBBq+vv7GmO1kTrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VJffD242mz9xGhN;
+	Tue, 16 Apr 2024 17:59:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 440B1140444;
+	Tue, 16 Apr 2024 18:16:18 +0800 (CST)
+Received: from [10.45.159.171] (unknown [10.45.159.171])
+	by APP1 (Coremail) with SMTP id LxC2BwC3qhPcTx5m7FtbBg--.13343S2;
+	Tue, 16 Apr 2024 11:16:17 +0100 (CET)
+Message-ID: <d50530db-4a5e-4f58-997f-82090797398b@huaweicloud.com>
+Date: Tue, 16 Apr 2024 12:15:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="zfniyufgrrisfuqi"
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT1ykCKnijSbsgPXO9o-5_LHAtSm=q=cdQ8N9QH+WA+tw@mail.gmail.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WTfVBUVRjGO/eevXdBgctHcUCzXKQUFGyIPKOSMCrdP/zDoqYxJnODKzDC
-	wuyKkdEItNIuH4Igs7au8ikou4EtsCpiEQlCIggkrMQugW7Fp8iHRNtgbBfL/vs97/s8M897
-	Zo6QdHlCeQpjJIc5qUQcK6LsoaFloWPTtoA1Bzf/2rcFa6p1FJZPTQpwnVVN49SWIgHWVBoA
-	VnSEYq0ph8KaTjnEk2lWiDNHV+PJ4x0Q5y3kAlxVXUrg1tnjFG7PjMN1A2kUVs6fh1h/v1eA
-	B80LBG643gZxT72GwmbdEwE2zMgpPJU1TOHzfV0ENuZaAC6/OgRxV2ojwCM9WSROVzvhn/NU
-	EHfe6aCxfCAweC2rO6cDbK/iG8gWWNshq07JptgzKV2QHR8ZgWztxXsE+4Nilmavqk00a2j0
-	Znuv7WPlNyYEbM/tRFZfqaRY/XQezbaetsK9Hh/Yb4/kYmOOcFL/Nw/YR2dOyImEbKeka3Ny
-	IgVMr8wAdkLEvI7qzUoyA9gLXZgLAPW1DVO8mAWoK/Ux5MUMQH+11hBPI/ON3TS/qABo4Pb3
-	1L+umeIbAl7UAVSY3QJtEch4o0nDCGljitmIOscH/mE3Zh0qtVQDG5NMoR1q/jrGxq4Mh+aV
-	nZSNHZhgpMo9KeDZGbV99QDy/iR0vfn+EguXeBWqWBTa0I55G/2RxfBFvVDacJmA58/Rj7X9
-	hK0aYk6tQKbC9OXFLpR71wh5dkWjN2tpnlejW/lZkA/kA/Td4hTNCy1A5alzy2+xDcl/erCc
-	CEE5f+oEthaIcUTGCWe+pyPKM6hIfuyAFOkuvPsVpDWPw1zgpX7mMvUzl6n/u4zHDai63v9/
-	U5vZF5UXj5E8B6GqqoewCNCVwJ1LlMVFcbIACfeJn0wcJ0uURPlFxMfpwdK/uLV4c+4KuDD6
-	yK8JEELQBNYthYcvae8ATyiJl3AiNwe564sHXRwixZ8e5aTxH0kTYzlZE1glhCJ3B+/IlzgX
-	Jkp8mDvEcQmc9OmWENp5phDvzEZt3Kr9bZNkopjMnJ0ym77ITl5vfW775SBL6bHwiApLWdDY
-	LxEPvUK6Q5nPRkP0ycSXDW2qoaEwUcKezYPRRSWPj5xs1pcwZFpTXfDLpNZpPGil4/r3usL0
-	SBYWSM1EtkV/23k3y/joqNKDe0twdj51Q8jg1v72feFKY8GhAxMnnqeNSWaf0/kvSKpMOwfm
-	h/yDfUtO0GyY3bvuY9M71vQrM1pnYk7VuJ/dD+5d7rAPf0M4new4/THrI67Z0uMbVBX1amhE
-	Q5/zlWiPvTpF/Ic7QsMvWQJ81Wuz2/cPZ2pWuDlfVHkk7vp99zFloDWnSEmY4lRJBbsrFf5N
-	ZcXv7+kWQVm0+DUfUioT/w3sC6XnkgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WSbUxTVxiAc3pvb1szxl0p41iVQQXNYBRaKB6QEseSefWHDMiybMBYA7eA
-	0hb74cY2F8TCgGJWiAbXNcKGhYEEhEAjc4sMFxSElo+AcxQWUDBFRJxExAqs0C0z2b/nvB/P
-	++bkZWNcM8Fn5yq1tFopyxMQ2/Bb6zcmw/ZH+ssjOs74IXNrM4H0S4tM1OkysdCp3lomMjdZ
-	ASq1vYsuTX5DILNdj6PFIheODPM70WKxDUdVq0aAWlrrGOjmcjGBBgwK1OkoIlDZigVH7XfH
-	mejPqVUG+vmXPhyN/mQm0FTzBhNZn+gJtFQxQyDL7WEG+t04C1B91zSOhk91A+QcrcBQickb
-	TVRV48g+ZGMhvUNyIJBqvtAMqPHSNpw65xrAKVPhGYL6rnAYpxacTpzqaLzDoK6XLrOoLtMk
-	i7J2B1PjVz+k9L89ZFKjgzqqvamMoNr/qmJRN8+78Pe2fySMU6t0WjogR6XRSgWpIiQWimKQ
-	UBwVIxRF7kuPFUsE4fFxWXRe7glaHR7/iTDn/rVFLN/g/VlXDa8QLL1SDjhsSEbBle4RVjnY
-	xuaSFgBLr/YRnsRO2LY8xvSwD3wxXk54ih4DOL1mwjyPTgAnvl7GN6twMhguWp3YJhPkW9C+
-	4NhiHhkE62ZbwWYDRtZw4IOuwS2tD0nDlTL71jgv8gCsNlYyPdZ6DLZ1FgJP4jXY9+29rQkY
-	eQL2N/e4rWw374AN6+xN5JBJ8FkF6dl0NyyaufjP1ifhk7U5YAQ+ppdEppdEpv9EnvBe+OLC
-	yP/DobD++weYh6WwpeURXgtYTYBH6zSKbIVGLNTIFBqdMluYqVK0A/dpWntXO66AxvnHwh7A
-	YIMeEOTunLl8aQjwcaVKSQt4XnqfXXKuV5as4HNarcpQ6/JoTQ+QuH+xEuP7Zqrcd67UZoii
-	IySiqOiYCElMdKTAz+tQfqmMS2bLtPQxms6n1f/2MdgcfiGjZuRgdpyjsvaN7csnMx3Pn6XP
-	cVPuWn9th0cXDtZZshpe95N4BdhW9xy22YPjGMf0az8MKnM+vciXPsJ2DIWNpHGS/phZOU7a
-	05PW/davBDSk7sl2vb+voqVE0ZtQHHtt/5Gze2efHr8/JZYaePKVRE7o6YxkueOGI7ZoY+rj
-	8FjX00NBIe8UXLeGGjZWv8q99eVt//w034LGkqW0DNv0wFD887bilIcVvBFHSpOxNbkkskr2
-	BU8eVkl3wMRX55x3TGNs/5AsnU9CdbX6vNXCCowXefu+3S8/fMTCT3pzgnfUeU6qTZQuGO71
-	X07OEvYOnN7N25UwJk6dPzv945T5g0ABrsmRiUIwtUb2Ny6p+ksvBAAA
-X-CMS-MailID: 20240416081347eucas1p2328252cc35f468c42c0954eaa09d59eb
-X-Msg-Generator: CA
-X-RootMTR: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483
-References: <20240328-jag-sysctl_remset_misc-v1-0-47c1463b3af2@samsung.com>
-	<CGME20240328155911eucas1p23472e0c6505ca73df5c76fe019fdd483@eucas1p2.samsung.com>
-	<20240328-jag-sysctl_remset_misc-v1-2-47c1463b3af2@samsung.com>
-	<20240415134406.5l6ygkl55yvioxgs@joelS2.panther.com>
-	<CAHC9VhTE+85xLytWD8LYrmdV8xcXdi-Tygy5fVvokaLCfk9bUQ@mail.gmail.com>
-	<CAHC9VhT1ykCKnijSbsgPXO9o-5_LHAtSm=q=cdQ8N9QH+WA+tw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/14] digest_cache: Add securityfs interface
+To: Jarkko Sakkinen <jarkko@kernel.org>, corbet@lwn.net, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, akpm@linux-foundation.org,
+ shuah@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ mic@digikod.net
+Cc: linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com,
+ mzerqung@0pointer.de, kgold@linux.ibm.com,
+ Roberto Sassu <roberto.sassu@huawei.com>
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+ <20240415142436.2545003-4-roberto.sassu@huaweicloud.com>
+ <D0KY3YSZCLTG.24OGZPYS4AKDY@kernel.org>
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <D0KY3YSZCLTG.24OGZPYS4AKDY@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwC3qhPcTx5m7FtbBg--.13343S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xry7GryUCr43WFWDXF45trb_yoW3JFy5p3
+	9Fk3WUKr4xZF13Awn2y3W7CF1Sg398KF47Cr4DW343AFZxuwnYva40yr1UuryUXr4UZa4I
+	yr4j9r13Xr4qqaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
+	CF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOlksDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBF1jj5x85wACs+
 
---zfniyufgrrisfuqi
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 4/15/2024 9:32 PM, Jarkko Sakkinen wrote:
+> On Mon Apr 15, 2024 at 5:24 PM EEST, Roberto Sassu wrote:
+>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>
+>> Add the digest_cache_path file in securityfs, to let root change/read the
+>> default path (file or directory) from where digest lists are looked up.
+>>
+>> An RW semaphore prevents the default path from changing while
+>> digest_list_new() and read_default_path() are executed, so that those read
+>> a stable value. Multiple digest_list_new() and read_default_path() calls,
+>> instead, can be done in parallel, since they are the readers.
+>>
+>> Changing the default path does not affect digest caches created with the
+>> old path.
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> ---
+>>   security/digest_cache/Kconfig    |  4 ++
+>>   security/digest_cache/Makefile   |  2 +-
+>>   security/digest_cache/internal.h |  1 +
+>>   security/digest_cache/main.c     | 10 +++-
+>>   security/digest_cache/secfs.c    | 87 ++++++++++++++++++++++++++++++++
+>>   5 files changed, 102 insertions(+), 2 deletions(-)
+>>   create mode 100644 security/digest_cache/secfs.c
+>>
+>> diff --git a/security/digest_cache/Kconfig b/security/digest_cache/Kconfig
+>> index e53fbf0779d6..dfabe5d6e3ca 100644
+>> --- a/security/digest_cache/Kconfig
+>> +++ b/security/digest_cache/Kconfig
+>> @@ -14,3 +14,7 @@ config DIGEST_LIST_DEFAULT_PATH
+>>   	default "/etc/digest_lists"
+>>   	help
+>>   	  Default directory where digest_cache LSM expects to find digest lists.
+>> +
+>> +	  It can be changed at run-time, by writing the new path to the
+>> +	  securityfs interface. Digest caches created with the old path are
+>> +	  not affected by the change.
+>> diff --git a/security/digest_cache/Makefile b/security/digest_cache/Makefile
+>> index 48848c41253e..1330655e33b1 100644
+>> --- a/security/digest_cache/Makefile
+>> +++ b/security/digest_cache/Makefile
+>> @@ -4,4 +4,4 @@
+>>   
+>>   obj-$(CONFIG_SECURITY_DIGEST_CACHE) += digest_cache.o
+>>   
+>> -digest_cache-y := main.o
+>> +digest_cache-y := main.o secfs.o
+>> diff --git a/security/digest_cache/internal.h b/security/digest_cache/internal.h
+>> index 5f04844af3a5..bbf5eefe5c82 100644
+>> --- a/security/digest_cache/internal.h
+>> +++ b/security/digest_cache/internal.h
+>> @@ -49,6 +49,7 @@ struct digest_cache_security {
+>>   
+>>   extern struct lsm_blob_sizes digest_cache_blob_sizes;
+>>   extern char *default_path_str;
+>> +extern struct rw_semaphore default_path_sem;
+>>   
+>>   static inline struct digest_cache_security *
+>>   digest_cache_get_security(const struct inode *inode)
+>> diff --git a/security/digest_cache/main.c b/security/digest_cache/main.c
+>> index 14dba8915e99..661c8d106791 100644
+>> --- a/security/digest_cache/main.c
+>> +++ b/security/digest_cache/main.c
+>> @@ -18,6 +18,9 @@ static struct kmem_cache *digest_cache_cache __read_mostly;
+>>   
+>>   char *default_path_str = CONFIG_DIGEST_LIST_DEFAULT_PATH;
+>>   
+>> +/* Protects default_path_str. */
+>> +struct rw_semaphore default_path_sem;
+>> +
+>>   /**
+>>    * digest_cache_alloc_init - Allocate and initialize a new digest cache
+>>    * @path_str: Path string of the digest list
+>> @@ -274,9 +277,12 @@ struct digest_cache *digest_cache_get(struct dentry *dentry)
+>>   
+>>   	/* Serialize accesses to inode for which the digest cache is used. */
+>>   	mutex_lock(&dig_sec->dig_user_mutex);
+>> -	if (!dig_sec->dig_user)
+>> +	if (!dig_sec->dig_user) {
+>> +		down_read(&default_path_sem);
+>>   		/* Consume extra reference from digest_cache_create(). */
+>>   		dig_sec->dig_user = digest_cache_new(dentry);
+>> +		up_read(&default_path_sem);
+>> +	}
+>>   
+>>   	if (dig_sec->dig_user)
+>>   		/* Increment ref. count for reference returned to the caller. */
+>> @@ -386,6 +392,8 @@ static const struct lsm_id digest_cache_lsmid = {
+>>    */
+>>   static int __init digest_cache_init(void)
+>>   {
+>> +	init_rwsem(&default_path_sem);
+>> +
+>>   	digest_cache_cache = kmem_cache_create("digest_cache_cache",
+>>   					       sizeof(struct digest_cache),
+>>   					       0, SLAB_PANIC,
+>> diff --git a/security/digest_cache/secfs.c b/security/digest_cache/secfs.c
+>> new file mode 100644
+>> index 000000000000..d3a37bf3588e
+>> --- /dev/null
+>> +++ b/security/digest_cache/secfs.c
+>> @@ -0,0 +1,87 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
+>> + *
+>> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+>> + *
+>> + * Implement the securityfs interface of the digest_cache LSM.
+>> + */
+>> +
+>> +#define pr_fmt(fmt) "DIGEST CACHE: "fmt
+>> +#include <linux/security.h>
+>> +
+>> +#include "internal.h"
+>> +
+>> +static struct dentry *default_path_dentry;
+>> +
+>> +/**
+>> + * write_default_path - Write default path
+>> + * @file: File descriptor of the securityfs file
+>> + * @buf: User space buffer
+>> + * @datalen: Amount of data to write
+>> + * @ppos: Current position in the file
+>> + *
+>> + * This function sets the new default path where digest lists can be found.
+>> + * Can be either a regular file or a directory.
+>> + *
+>> + * Return: Length of path written on success, a POSIX error code otherwise.
+>> + */
+>> +static ssize_t write_default_path(struct file *file, const char __user *buf,
+>> +				  size_t datalen, loff_t *ppos)
+>> +{
+>> +	char *new_default_path_str;
+>> +
+>> +	new_default_path_str = memdup_user_nul(buf, datalen);
+>> +	if (IS_ERR(new_default_path_str))
+>> +		return PTR_ERR(new_default_path_str);
+>> +
+>> +	down_write(&default_path_sem);
+>> +	kfree_const(default_path_str);
+>> +	default_path_str = new_default_path_str;
+>> +	up_write(&default_path_sem);
+>> +	return datalen;
+>> +}
+>> +
+>> +/**
+>> + * read_default_path - Read default path
+>> + * @file: File descriptor of the securityfs file
+>> + * @buf: User space buffer
+>> + * @datalen: Amount of data to read
+>> + * @ppos: Current position in the file
+>> + *
+>> + * This function returns the current default path where digest lists can be
+>> + * found. Can be either a regular file or a directory.
+>> + *
+>> + * Return: Length of path read on success, a POSIX error code otherwise.
+>> + */
+>> +static ssize_t read_default_path(struct file *file, char __user *buf,
+>> +				 size_t datalen, loff_t *ppos)
+>> +{
+>> +	int ret;
+>> +
+>> +	down_read(&default_path_sem);
+>> +	ret = simple_read_from_buffer(buf, datalen, ppos, default_path_str,
+>> +				      strlen(default_path_str) + 1);
+>> +	up_read(&default_path_sem);
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct file_operations default_path_ops = {
+>> +	.open = generic_file_open,
+>> +	.write = write_default_path,
+>> +	.read = read_default_path,
+>> +	.llseek = generic_file_llseek,
+>> +};
+>> +
+>> +static int __init digest_cache_path_init(void)
+>> +{
+>> +	default_path_dentry = securityfs_create_file("digest_cache_path", 0660,
+>> +						     NULL, NULL,
+>> +						     &default_path_ops);
+>> +	if (IS_ERR(default_path_dentry))
+>> +		return -EFAULT;
+> 
+> Nit: when overwriting error value with another error value it would be
+> best to document it with an inline comment. Otherwise, it is fine.
 
-On Mon, Apr 15, 2024 at 03:02:43PM -0400, Paul Moore wrote:
-> On Mon, Apr 15, 2024 at 10:17=E2=80=AFAM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > On Mon, Apr 15, 2024 at 9:44=E2=80=AFAM Joel Granados <j.granados@samsu=
-ng.com> wrote:
-> > >
-> > > Hey
-> > >
-> > > This is the only patch that I have not seen added to the next tree.
-> > > I'll put this in the sysctl-next
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log=
-/?h=3Dsysctl-next
-> > > for testing. Please let me know if It is lined up to be upstream thro=
-ugh
-> > > another path.
-> >
-> > I was hoping to see some ACKs from the associated LSM maintainers, but
-> > it's minor enough I'll go ahead and pull it into the lsm/dev tree this
-> > week.  I'll send a note later when I do the merge.
->=20
-> ... and now it's merged, it should be in the next cut of the
-> linux-next tree.  Thanks!
+Seems to make sense to return the right error. Will check why this one 
+(I probably took from somewhere).
 
-Awesome. I'll remove it from sysctl-next then to avoid any potential
-crashes.
+Thanks
 
-Thx
+Roberto
 
---=20
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +late_initcall(digest_cache_path_init);
+> 
+> 
+> BR, Jarkko
 
-Joel Granados
-
---zfniyufgrrisfuqi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmYeLoAACgkQupfNUreW
-QU+Ongv9G1IzPsRmO5Fp8LNQGL3RVW2HEJRFRdhkpCF3CIV4X8DYxzsnolosycOY
-2BNak77S7o9TcL6MXnhQXS2tS8WNNdo1Yk9lpBb7Y1YlZhkjpXgaVj0lhoJiLskG
-tuFbgn+QlMbWUmTPbHcX5Y0ZMp/zA28aWtUEY7b3UD1o7RzOvio6Im7IchVCl3Mw
-xFsdxWtgzXO4dEsrwNg8RczshBE2lKLAiHAo5l8/EOw0bvdl8EtWP4wHnDlIWnkQ
-p6Ms7mmp/iSOogETWZ9pxejUaZvcnX1mL2TBTAKnsqw9/JNA5vOjgdrP1O37DEs1
-iUIVKlY8UqoUBYskAzCfwJFe5O5Unl4Y/hzWTTu0Vq75ZfkD9RN09R/ZUem1NxrZ
-5rZ5yYTloIANF7PhUkTmYQKqoNInjtY1m3VUdw9rypOjJQ80cdwOOpYdE5xMS1O9
-g+Ad9WDVhpCWhCsjONZ+GrRodtRsMlzOpQEd5HRqFWD8ciyCtWbcHgCBCffWLU0D
-R6qovg//
-=QO0O
------END PGP SIGNATURE-----
-
---zfniyufgrrisfuqi--
