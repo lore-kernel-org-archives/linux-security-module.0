@@ -1,258 +1,124 @@
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049112D60A
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2024 18:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B758C13A258;
+	Wed, 17 Apr 2024 10:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713292793; cv=none; b=Ax0mJ7qGFLSjwrTC+vp4A8D70LDBeKjRjdZehz4PI+aXRUHequiimAPg1F3hhoqJMturhfnspDUdiTzh7L2Ca/kqKOhEl72Pl3KV15r1fvPE7iYugRmGERMnIsrmdHNct65yUjyYdLrsE0HEYcXd9w+TB2cbBjdrAIs84fvKob0=
+	t=1713348342; cv=none; b=aKotXkkS9xCcP0POe5Kk0jopAB7BOFPVzZQjBY5ItccajdNy7IPztNuyUrw+3d8oFv4JcGlXSkTzt6NOmq6P9+yMLtVbVzIZZXlO9N9EuEGG5kSFsU0V9bik0qNB8++Zkksa4e1mH7s7eL4PjnzNqLWTNS1pm7Sr1vzzFS5qKtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713292793; c=relaxed/simple;
-	bh=ZWQjKoriKGbaxG5QPy2UjVQJqUkPupFZhQDotdU5zUA=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=abQVKeN5S1TRXA8Qc9cw9ylFLdVLof9h4peE8S4VAmGm96l+43RQXE3eJx9UgEvLjjB/p3L8ml5idU7FCDgIPOs/WL7EQflA89HPT5pzr3Sfq9OSjc/JiDjtq1ZqrXycw83UH9/C8M4y9W7rwmJbLygJ6v3lHfQakuN5efaIlLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DGKSTbzt; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1713348342; c=relaxed/simple;
+	bh=1gRmg87JIr+AbQO3Esc+cHkCY63QUm02iWl6ErooOoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1gfO8ucyMfydlTHUFuf9SDLrFAoOZtjhQTv9e5gmJ0MS085w7yKlIvYGQM0CH3QHioEMnV8t4QcSG0PHBqo5XXIysRhL3KK8ee57DyzH8JykzQcBsQVJWdAXRlcUk7wutKUgbASxupaZd8yiGqEocxZFgAJ5kU99suoVpVtCpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAzs3ZuR; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DGKSTbzt"
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-36b31df33a7so2082565ab.2
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2024 11:39:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAzs3ZuR"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5d8b887bb0cso4045939a12.2;
+        Wed, 17 Apr 2024 03:05:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1713292791; x=1713897591; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=X2o10/ExXSMAnSbsKEbn/5ielT8o7fiwU/kV99vM2Zs=;
-        b=DGKSTbzt+zJCo8D946lFgJPzj75YMwu7e+AYvxnxJyrAHWNOVQXYtiz/0SSa/L12/O
-         Edq8IhHPPdWHU8Gq+BtkKYzJKb7k84noryhqI0DIYBlbba1uyYGWTer/k3LVcOHmB+Ez
-         mMr44rGwj/s3GbcHAB2yBI7CCrG3JTLaAS6srNsYjLGfe8vwgaMgI2s2u2jLD/v2arP5
-         MlUvrnsIEOEuS4Ro1jxaRcCCgtp/BoVG5AgkNDmb/dCRN1Ne2o2iQlE01bRri27wzka6
-         iCUMz28YSRYbXtLb7nxdu4sQ5XOYbJeK5NgyFmgcjU7F320VjF/rgQtvuaw6WE74LzwT
-         8jlw==
+        d=gmail.com; s=20230601; t=1713348340; x=1713953140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1gRmg87JIr+AbQO3Esc+cHkCY63QUm02iWl6ErooOoI=;
+        b=AAzs3ZuRJX7XDEU/S31apMVw0w4s7Q7KO0FdVCxGcPYSQYxeRSY28pC1eu3Nrio5c1
+         /8hlCKRtkZAgyv8u2ZkQRGfxaZJMq1OWpJiBVcvOqdTd2WBLQIZ2kjfFBum4N2R8Isih
+         f2SkFV+0ugaXXipJ2Nlmu4lZAs98Uu7pgtHxn5StoZ+osrPawfSsDoFTHgEoyq2Tt6Q8
+         NRjLJNg4pvoJ5WApc/OPQ4IAFhbQ7RH2Kz3RT5CY8e2rwsQ/E1wXGXRIyVxPAPyHxqu0
+         xXjLmG+nWpVe8EKo2OzaEGE6HiF4EW+wqWYp7nr6UxxOhqD0p14pNRRYbP31JFxGWdYJ
+         BuPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713292791; x=1713897591;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X2o10/ExXSMAnSbsKEbn/5ielT8o7fiwU/kV99vM2Zs=;
-        b=kP9j7F2cJj/LXnbje+BR75dEIZLDWajdxoFNy8ZyDxu8CLYlwOiWofkfpT+tREq5Ps
-         TaFUBkerwizEFye6FHy97Y5s0TQGfmmh6ppyKtckATtTjjGmfVrqK95O/Dr0CnS3JlPA
-         OteiRXzPnsR9SmZs81hHqGBw6gkIbBhRlIPaFFvO5+jE0/xob5wCU2U19FYNbq9CndXc
-         ptrtEcQtMsaQip7J4G1SNojJmb2ecOX0B9P2IYkwVQ5PDE8Zk+nIPWtUwlP+fRO4KiAX
-         rIWUpYwrrxyTCNm+EKcRSxf13z7IhPbE8Jzcy6eiZSA1isaXxTKZLtLI8ll86Wxy6u35
-         8qlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIy0VRhsb30OATGpknRKSD53+5ddeUmKjc5qnZ6ufFxsjKXIkz3iU6JLEJ3fs0QxbyXgHFPLxGdyO4pX3X3f6FpkWpClrzmCp7xx3zZNLToXam5yp9
-X-Gm-Message-State: AOJu0Yzbs/ACZx8eGvW0Z8Cq1DMrrfare2goJX6IvmIc2E1raANNFzdb
-	Euso35ZclameRzHUrdCFsNltUGpi4xFfw9Z5aB4RhoD2N9PbJI95Bpy/r/MUmA==
-X-Google-Smtp-Source: AGHT+IE5KeN7lukHwtt5xBFWdRPOPlCRjO3wUGQf4nosFtmr2FiCT28HDESIIDM5M6nps0aF/G8spQ==
-X-Received: by 2002:a05:6e02:1a68:b0:36a:1a1b:53c9 with SMTP id w8-20020a056e021a6800b0036a1a1b53c9mr16277246ilv.27.1713292791178;
-        Tue, 16 Apr 2024 11:39:51 -0700 (PDT)
-Received: from localhost ([75.104.108.48])
-        by smtp.gmail.com with ESMTPSA id j14-20020a056e02014e00b00369ed0636a8sm3373806ilr.19.2024.04.16.11.39.49
+        d=1e100.net; s=20230601; t=1713348340; x=1713953140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1gRmg87JIr+AbQO3Esc+cHkCY63QUm02iWl6ErooOoI=;
+        b=iIRsi31AfcqzDKUNNO6o9d3ib8xGzePLs9voX9qMDY78+WB0gtQYpo7kXPOBnw2WTm
+         YzYRwT+Oo0gI3yiO4xGWx6DR+eU0urjiDqvVEdgaDP/jcMcgDaLBdIH6/wDsRP3KCpgl
+         Pz+utAPk2ispxU0TLWkBdG2f4Y4/LM1n+AfVbxPPAGTpgEf9i0JxbOqcd4fZCsMHsSE0
+         pmro/RaRuyLVSEcdLlg9r7LgoRzpd4G5HWENm4VxUvcuRbrI2iiRiJTACsZIVfN12aSC
+         5gZk7AoirKe21tUqOoK9HMtPad2H4a5jwUjYz7cl5xmXvftqdXkjqWsHFMN08st5+AzW
+         qHEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7IS6j45Gfqpkz+GTYOT1w1GCNrANLl/xhNlogdKJkw3K3EqUqgFKkc2TgQcow4QdjzjHAuB5G3fNaypVxqolnIJrRwppo7MhG2zZs9+/T/Nbl7SXr3Y2gQvvWRjUjEaiFSkIs1YjlyYKaPbKoSs+JVjxeDE6jhEgRQPQzpZbQHKVI10sX1XjmInTqEUNM70jCiOsLvZiLojjq55CPA52TGCgxr5GK93NyY2kPva240GtdGqkSCf2ItMR1qGvwAKhKpy4rGF4SeQ==
+X-Gm-Message-State: AOJu0Yy7solfZwT8Xrej9ZNsZNk0qeXZSEkViORqFlj1vWa7k1MVELAA
+	SlxwR+1FqfC8+ES8QkGdUbyMlj4fEsK0Id+6u0iD26wAp++h3IEJ
+X-Google-Smtp-Source: AGHT+IHoSQwgWNaYYN9PHfJ92Leu3dCSJnPJtoI+4IJ8iitgaNIncK7hpg/lzzZCpwVd83QGt3/Z2Q==
+X-Received: by 2002:a17:90a:108:b0:2aa:7057:437b with SMTP id b8-20020a17090a010800b002aa7057437bmr6040509pjb.16.1713348339921;
+        Wed, 17 Apr 2024 03:05:39 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id t12-20020a17090a5d8c00b002a474e2d7d8sm1019325pji.15.2024.04.17.03.05.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Apr 2024 11:39:50 -0700 (PDT)
-Date: Tue, 16 Apr 2024 14:39:45 -0400
-Message-ID: <085faf37b4728d7c11b05f204b0d9ad6@paul-moore.com>
+        Wed, 17 Apr 2024 03:05:38 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 1682E18462BA0; Wed, 17 Apr 2024 17:05:35 +0700 (WIB)
+Date: Wed, 17 Apr 2024 17:05:35 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+	Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
+	zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+	tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
+	snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [PATCH v17 20/21] Documentation: add ipe documentation
+Message-ID: <Zh-e7945DM6f2u9T@archie.me>
+References: <1712969764-31039-1-git-send-email-wufan@linux.microsoft.com>
+ <1712969764-31039-21-git-send-email-wufan@linux.microsoft.com>
+ <Zh0Zh3-xraVl85Lm@archie.me>
+ <a2266217-c3ad-4bb2-8188-498a2c8ae36c@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 2/2] cipso: make cipso_v4_skbuff_delattr() fully remove the  CIPSO options
-References: <20240416152913.1527166-3-omosnace@redhat.com>
-In-Reply-To: <20240416152913.1527166-3-omosnace@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0nWDRmFxn5oWDUvp"
+Content-Disposition: inline
+In-Reply-To: <a2266217-c3ad-4bb2-8188-498a2c8ae36c@infradead.org>
 
-On Apr 16, 2024 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> 
-> As the comment in this function says, the code currently just clears the
-> CIPSO part with IPOPT_NOP, rather than removing it completely and
-> trimming the packet. This is inconsistent with the other
-> cipso_v4_*_delattr() functions and with CALIPSO (IPv6).
 
-This sentence above implies an equality in handling between those three
-cases that doesn't exist.  IPv6 has a radically different approach to
-IP options, comparisions between the two aren't really valid.  Similarly,
-how we manage IPv4 options on sockets (req or otherwise) is pretty
-different from how we manage them on packets, and that is intentional.
+--0nWDRmFxn5oWDUvp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Drop the above sentence, or provide a more detailed explanation of the
-three aproaches explaining when they can be compared and when they
-shouldn't be compared.
+On Mon, Apr 15, 2024 at 07:56:16AM -0700, Randy Dunlap wrote:
+>=20
+> On 4/15/24 5:11 AM, Bagas Sanjaya wrote:
+> > The doc LGTM, thanks!
+> >=20
+> > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+>=20
+> Hi,
+> Please see netiquette, section "Trim replies".
+> Thanks.
+>=20
+>=20
+> --=20
+> #Randy
+> https://people.kernel.org/tglx/notes-about-netiquette
+> https://subspace.kernel.org/etiquette.html
 
-> Implement the proper option removal to make it consistent and producing
-> more optimal IP packets when there are CIPSO options set.
->
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  net/ipv4/cipso_ipv4.c | 89 ++++++++++++++++++++++++++++---------------
->  1 file changed, 59 insertions(+), 30 deletions(-)
+Thanks for the tip!
 
-Outside of the SELinux test suite, what testing have you done when you
-have a Linux box forwarding between a CIPSO network segment and an
-unlabeled segment?  I'm specifically interested in stream based protocols
-such as TCP.  Also, do the rest of the netfilter callbacks handle it okay
-if the skb changes size in one of the callbacks?  Granted it has been
-*years* since this code was written (decades?), but if I recall
-correctly, at the time it was a big no-no to change the skb size in a
-netfilter callback.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index 75b5e3c35f9bf..c08c6d0262ba8 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -1810,6 +1810,34 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
->  	return CIPSO_V4_HDR_LEN + ret_val;
->  }
->  
-> +static int cipso_v4_get_actual_opt_len(const unsigned char *data, int len)
-> +{
-> +	int iter = 0, optlen = 0;
-> +
-> +	/* determining the new total option length is tricky because of
-> +	 * the padding necessary, the only thing i can think to do at
-> +	 * this point is walk the options one-by-one, skipping the
-> +	 * padding at the end to determine the actual option size and
-> +	 * from there we can determine the new total option length
-> +	 */
-> +	while (iter < len) {
-> +		if (data[iter] == IPOPT_END) {
-> +			break;
-> +		} else if (data[iter] == IPOPT_NOP) {
-> +			iter++;
-> +		} else {
-> +			if (WARN_ON(data[iter + 1] < 2))
-> +				iter += 2;
-> +			else
-> +				iter += data[iter + 1];
-> +			optlen = iter;
-> +		}
-> +	}
-> +	if (WARN_ON(optlen > len))
-> +		optlen = len;
-> +	return optlen;
-> +}
+--0nWDRmFxn5oWDUvp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See my comments in patch 1/2; they apply here.
+-----BEGIN PGP SIGNATURE-----
 
->  /**
->   * cipso_v4_sock_setattr - Add a CIPSO option to a socket
->   * @sk: the socket
-> @@ -1985,7 +2013,6 @@ static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
->  		u8 cipso_len;
->  		u8 cipso_off;
->  		unsigned char *cipso_ptr;
-> -		int iter;
->  		int optlen_new;
->  
->  		cipso_off = opt->opt.cipso - sizeof(struct iphdr);
-> @@ -2005,28 +2032,8 @@ static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
->  		memmove(cipso_ptr, cipso_ptr + cipso_len,
->  			opt->opt.optlen - cipso_off - cipso_len);
->  
-> -		/* determining the new total option length is tricky because of
-> -		 * the padding necessary, the only thing i can think to do at
-> -		 * this point is walk the options one-by-one, skipping the
-> -		 * padding at the end to determine the actual option size and
-> -		 * from there we can determine the new total option length */
-> -		iter = 0;
-> -		optlen_new = 0;
-> -		while (iter < opt->opt.optlen) {
-> -			if (opt->opt.__data[iter] == IPOPT_END) {
-> -				break;
-> -			} else if (opt->opt.__data[iter] == IPOPT_NOP) {
-> -				iter++;
-> -			} else {
-> -				if (WARN_ON(opt->opt.__data[iter + 1] < 2))
-> -					iter += 2;
-> -				else
-> -					iter += opt->opt.__data[iter + 1];
-> -				optlen_new = iter;
-> -			}
-> -		}
-> -		if (WARN_ON(optlen_new > opt->opt.optlen))
-> -			optlen_new = opt->opt.optlen;
-> +		optlen_new = cipso_v4_get_actual_opt_len(opt->opt.__data,
-> +							 opt->opt.optlen);
->  		hdr_delta = opt->opt.optlen;
->  		opt->opt.optlen = (optlen_new + 3) & ~3;
->  		hdr_delta -= opt->opt.optlen;
-> @@ -2246,7 +2253,8 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb,
->   */
->  int cipso_v4_skbuff_delattr(struct sk_buff *skb)
->  {
-> -	int ret_val;
-> +	int ret_val, cipso_len, hdr_len_actual, new_hdr_len_actual, new_hdr_len,
-> +	    hdr_len_delta;
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZh+e6wAKCRD2uYlJVVFO
+o4TXAPwN11FytsnDX/+gFpUvWYFc3CxPaaA7sJCuHF5qVYQtGAEA6GP0hs+AljG4
+tOsfo209C7he+IJJJUnxDpScnZoh/wc=
+=jvcJ
+-----END PGP SIGNATURE-----
 
-Please keep line lengths under 80-chars whenever possible.  I know Linus
-relaxed that requirement a while ago, but I still find the 80-char limit
-to be a positive thing.
-
->  	struct iphdr *iph;
->  	struct ip_options *opt = &IPCB(skb)->opt;
->  	unsigned char *cipso_ptr;
-> @@ -2259,16 +2267,37 @@ int cipso_v4_skbuff_delattr(struct sk_buff *skb)
->  	if (ret_val < 0)
->  		return ret_val;
->  
-> -	/* the easiest thing to do is just replace the cipso option with noop
-> -	 * options since we don't change the size of the packet, although we
-> -	 * still need to recalculate the checksum */
-
-Unless you can guarantee that the length change isn't going to have
-any adverse effects (even then I would want to know why you are so
-confident), I'd feel a lot more comfortable sticking with a
-preserve-the-size-and-fill approach.  If you want to change that from
-_NOP to _END, I'd be okay with that.
-
-(and if you are talking to who I think you are talking to, I'm guessing
-the _NOP to _END swap would likely solve their problem)
-
->  	iph = ip_hdr(skb);
->  	cipso_ptr = (unsigned char *)iph + opt->cipso;
-> -	memset(cipso_ptr, IPOPT_NOOP, cipso_ptr[1]);
-> +	cipso_len = cipso_ptr[1];
-> +
-> +	hdr_len_actual = sizeof(struct iphdr) +
-> +			 cipso_v4_get_actual_opt_len((unsigned char *)(iph + 1),
-> +						     opt->optlen);
-> +	new_hdr_len_actual = hdr_len_actual - cipso_len;
-> +	new_hdr_len = (new_hdr_len_actual + 3) & ~3;
-> +	hdr_len_delta = (iph->ihl << 2) - new_hdr_len;
-> +
-> +	/* 1. shift any options after CIPSO to the left */
-> +	memmove(cipso_ptr, cipso_ptr + cipso_len,
-> +		new_hdr_len_actual - opt->cipso);
-> +	/* 2. move the whole IP header to its new place */
-> +	memmove((unsigned char *)iph + hdr_len_delta, iph, new_hdr_len_actual);
-> +	/* 3. adjust the skb layout */
-> +	skb_pull(skb, hdr_len_delta);
-> +	skb_reset_network_header(skb);
-> +	iph = ip_hdr(skb);
-> +	/* 4. re-fill new padding with IPOPT_END (may now be longer) */
-> +	memset((unsigned char *)iph + new_hdr_len_actual, IPOPT_END,
-> +	       new_hdr_len - new_hdr_len_actual);
-> +	opt->optlen -= hdr_len_delta;
->  	opt->cipso = 0;
->  	opt->is_changed = 1;
-> -
-> +	if (hdr_len_delta != 0) {
-> +		iph->ihl = new_hdr_len >> 2;
-> +		iph_set_totlen(iph, skb->len);
-> +	}
->  	ip_send_check(iph);
->  
->  	return 0;
-> -- 
-> 2.44.0
-
---
-paul-moore.com
+--0nWDRmFxn5oWDUvp--
