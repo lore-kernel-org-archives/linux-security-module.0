@@ -1,105 +1,90 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC881725;
-	Fri, 19 Apr 2024 11:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F0C85938
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 14:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713525505; cv=none; b=XLfaIs6WvSlB72tNCUgdoYlU6ENAn2fYlkAj5llL/6ZIZJrFSkBfP3iXGbbtvJfDbFRTf+Vn9YZGCo6U1bj9VoBiZ77SIPwNmrT7Fiu7gMsZUjgDwy/UBfMjpOJ+T93IQPenEb3IzD9fa7ZMhe+GmzZ3odKeNoxzVKQsXq2vUkU=
+	t=1713535597; cv=none; b=rSjNCRXB0SYKfikZ+zk77/StP6Wrrt4uliFnsX42z/LcHOBfas4oao0+Oxx5T47r5rbJt1fXuHKflIGrYTEWFj+pZvwbc3iQkVp8/bijy/IqMxVgGY8al6byCWNS5Lne7QW9xkn7ubh/VjS38YplSzmg/E25wzsTrKBj0D7AGXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713525505; c=relaxed/simple;
-	bh=4S0ijTuOG1XfPNB7vzzLF7bgqgJf2hetvsXjMkXUk+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k0F3LCuoKY61KpYoXeoEUz+X0j6AFC92kJCWLaoruORmOhaMiKqs01jRwTLMD2AoVGx92Bdhm9/d7jzlVKHleckpPVZI+IwLi5i6oBMN7Q8YotBZRZYkSaO4Ndd+TBRMYNq7gkajgZoS3TtokIX8Imj7OGZYCrHNmiwajMDE4AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov+mWThE; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713535597; c=relaxed/simple;
+	bh=fZ1XlMMUpy10Gwas/CKc6QVK5m8lEX+IdBFYOy1ekGs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IHAImGUWuWoRAzZ6CS+dK4qfB0Ql1zCObNFYUD9D+M3uMUXvzl/2swkdAnRMl9tK3qh4/2OgjDuDvIakDLE2pLv1HPB3/9LVq/Sp1auZORbd1TM9cKRtww4rhK9OsuuP6CF71LTzIoaoZIHjzCICFuRGc7hd+LrNQPbiZKGnB3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VWKK7rbt; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov+mWThE"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6eddff25e4eso1576687b3a.3;
-        Fri, 19 Apr 2024 04:18:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VWKK7rbt"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-571bdbb3bd5so796990a12.2
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 07:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713525504; x=1714130304; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OyBuv5kBEYfUc16aLXP76ZXaynrNdrlIh1WL3rQFBdw=;
-        b=Ov+mWThE8IvrN65xo3/FOfZavMaJHKs3T3gm4+NbfMEjWCOGu5bHbtzCHiqniBTvMW
-         QC9H477bCfFlhhGsrTUQUVSR86+2bDVHtUiTq977no0Ou9dgW4RO0pf8D+mtBbWzInfj
-         iPasmg4oiCd+ICUpIfst6gfRVNe4qANSq0X5OwHAOK9I3eSOM8vV7NfeGbRSCuo9W8oE
-         YBGJW0m2zz4ynzAlAlo2N//FH2f9o5qEeQojD1bSfP7rQWcecJNJvtkV2dS7ea6f0OST
-         keLK8U4s3/1F+xxe2BhVIUmhRqdCOT47nDl7NKdXWRlZiu1B/YcoSEIQaxMFfHkYHQ4e
-         7T5w==
+        d=google.com; s=20230601; t=1713535595; x=1714140395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DDP9lixGtE5tEgwyR0XACy/HYxzizAJIPGzf/ZO8AOI=;
+        b=VWKK7rbt7fQe6DNUYBpS9K+X2McHutVfC4Zzy70KXblcvbkxEjDD634mezMj+yesog
+         pn6n6oGEGiIURAYJczhxI4m+WjrzXeVspurpCgt1NhpG7WLdlnEIs7AfpGg/FMBID7m2
+         3J6h+wuZYqo2Zbhk57q4uRikWkwPv1xB094tK9gO/dQMPQTZoIMHCp0HVWQaRDmAwJNP
+         Wqp07QYQTcu2HeUj+gbI1orLVvgOqdAh8WrEzzDzPhufRgnSAuLjSH0S42E+YRH68i94
+         6mkg5pRXhBQOyZjhRtOiQW4bFU6YEkeqo42cqrZrwS/sNLafsC98s3uyoE4waw6Xm/rP
+         cULg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713525504; x=1714130304;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OyBuv5kBEYfUc16aLXP76ZXaynrNdrlIh1WL3rQFBdw=;
-        b=P6xbUFUiPcV1a9/2mXLx1ZrPwldug+Om1IKM4fYQnsfn+9w7YTWkmhOoIR7GLZpI8K
-         iZUaq/YIsMJxu4IBMzjr5BuCq1B33u39fp5sYx8Fn1X9XKNzfJnmd9Z/Fbx4oh6uP4aU
-         SblXOysuqDhbz9GjRS+P+/VPtiaww/3p53MxOOnYvyFDvOTYHMFqMHkkBTvJdUYZ+q+z
-         eAGDdUf2IOJlliURYe/AgxCsGIR4zcUYZM0zJU9vdc77xri3VidAsgwJ9wExAKnybbXL
-         OaU4eMK2tYqSeUbYeuzh7OLyAkXpkBJEjjUL1oEhy99IeKGxz1JEknLh5kzUJmlK4IJv
-         ERXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnVqKXKIcKadQb6OH504E7z4RpSxJw9UGcshX1Z2xQY/mukm/dJLgX6gAYnMSHdVRqY8SpPeEv4+PtSCPuuci+vEBuiuw6cRzqhW22RxUUK3NvkOz/28kxoF+XkYKGmkD/UHr2a2DAOfOmw2hzGqPg9NbGfsf7kp/QvFzPdAfbiP8E/mhsazCjGVnm9/PE7rDKGRVrAk7QDDYMaxXhL0KLIIhDm9FURQWXpFjsuE8NlbK72S3gdZn9/M1DYPQv
-X-Gm-Message-State: AOJu0Yy4JpBOyw1ByM+8VA44hHAPUVZMPtLtuCXsJlXk3x3gZfXfHkAj
-	sm+pFBPrc02nfV6+QxNUML0Ep6GI+xxRGpqQ5HDRvA2JOqEo2w5T
-X-Google-Smtp-Source: AGHT+IGrIiXTpCilLzBmkpvZQgTccBG7XaieqrHNhkdG0tln9wJXWvgEsCFL2ljmjKXvjnyamvrgcQ==
-X-Received: by 2002:a05:6a21:168b:b0:1ac:423b:7c7a with SMTP id np11-20020a056a21168b00b001ac423b7c7amr1456490pzb.21.1713525503827;
-        Fri, 19 Apr 2024 04:18:23 -0700 (PDT)
-Received: from [192.168.0.107] ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id k17-20020a170902c41100b001e00285b727sm3104974plk.294.2024.04.19.04.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Apr 2024 04:18:23 -0700 (PDT)
-Message-ID: <fe361a16-1536-4c92-894a-0b24258384bf@gmail.com>
-Date: Fri, 19 Apr 2024 18:18:12 +0700
+        d=1e100.net; s=20230601; t=1713535595; x=1714140395;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DDP9lixGtE5tEgwyR0XACy/HYxzizAJIPGzf/ZO8AOI=;
+        b=mO0Fgb6yTJTLh+/UkHhkYk2tm1hMGc95wyAEor/STMJSSYrM2TCVeHl2ZM/c8SS4jR
+         IZ8sLFx8eWzRDqY1STWN1h6RxxAEo8j1XE80LiyJK7i2vvnft8SJOWkju8BldOCnpxwZ
+         NMl5Y0oRf9mQFTwZqNXgksYGQwc/mtQcModg8WGMjqbM59uUsrxFdsfflUfQ1Pyp9ZnM
+         Mw7Lm5G1+feZGM7bJj2TI5SoZB1/lYKoeIhbaENpLCn21mjF1v5Wx1DQlVRL4vjLey+6
+         Q4X5+dqy3Ya5otSvzva49pDky/kIuEarPWRepObwcsYHKy/Y7wgb0J3tRiRwtQxuvT3f
+         TNKg==
+X-Gm-Message-State: AOJu0YwnO4F2Mz08Oqk4nt2n5spzNz5I+rliDeBYe3ttVYGMIyVNXuLf
+	OAJj6ImbWVKGIGPnAzxFDmFo2RTNVBqijPetAhIfBPvHsExB9qHkfHlXK04AVq4LBhYi3FRzo4n
+	wCA==
+X-Google-Smtp-Source: AGHT+IF3bk2/TSR5machUXRDV7nlSBsyqT6EzRnkyazFWlLiXKdBdw1iKyaKa2d9UlgLQZek2sRUa/XOCtw=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6402:4581:b0:571:c126:57e3 with SMTP id
+ ig1-20020a056402458100b00571c12657e3mr2676edb.5.1713535594615; Fri, 19 Apr
+ 2024 07:06:34 -0700 (PDT)
+Date: Fri, 19 Apr 2024 16:06:32 +0200
+In-Reply-To: <20240418.haet6ahfieH2@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Roberto Sassu <roberto.sassu@huawei.com>,
- Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet <corbet@lwn.net>,
- paul <paul@paul-moore.com>, jmorris <jmorris@namei.org>,
- serge <serge@hallyn.com>, akpm <akpm@linux-foundation.org>,
- shuah <shuah@kernel.org>, "mcoquelin.stm32" <mcoquelin.stm32@gmail.com>,
- "alexandre.torgue" <alexandre.torgue@foss.st.com>, mic <mic@digikod.net>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
- linux-doc <linux-doc@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-kselftest <linux-kselftest@vger.kernel.org>, bpf
- <bpf@vger.kernel.org>, zohar <zohar@linux.ibm.com>,
- "dmitry.kasatkin" <dmitry.kasatkin@gmail.com>,
- linux-integrity <linux-integrity@vger.kernel.org>,
- wufan <wufan@linux.microsoft.com>, pbrobinson <pbrobinson@gmail.com>,
- zbyszek <zbyszek@in.waw.pl>, hch <hch@lst.de>, mjg59 <mjg59@srcf.ucam.org>,
- pmatilai <pmatilai@redhat.com>, jannh <jannh@google.com>,
- dhowells <dhowells@redhat.com>, jikos <jikos@kernel.org>,
- mkoutny <mkoutny@suse.com>, ppavlu <ppavlu@suse.com>,
- "petr.vorel" <petr.vorel@gmail.com>, mzerqung <mzerqung@0pointer.de>,
- kgold <kgold@linux.ibm.com>
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <Zh4DQ7RGxtWCam8K@archie.me>
- <66201cd2.df0a0220.a8ad5.6fbaSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Language: en-US
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <66201cd2.df0a0220.a8ad5.6fbaSMTPIN_ADDED_BROKEN@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240405214040.101396-1-gnoack@google.com> <20240405214040.101396-4-gnoack@google.com>
+ <20240418.haet6ahfieH2@digikod.net>
+Message-ID: <ZiJ6aNlF3PTJWKCH@google.com>
+Subject: Re: [PATCH v14 03/12] selftests/landlock: Test IOCTL support
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/18/24 02:02, Roberto Sassu wrote:
-> 
-> 72374d71c315
-> 
-> Roberto
-> 
+On Thu, Apr 18, 2024 at 10:44:00PM -0700, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Apr 05, 2024 at 09:40:31PM +0000, G=C3=BCnther Noack wrote:
+> > +/* Invokes the FS_IOC_GETFLAGS IOCTL and returns its errno or 0. */
+> > +static int test_fs_ioc_getflags_ioctl(int fd)
+> > +{
+> > +	uint32_t flags;
+> > +
+> > +	if (ioctl(fd, FS_IOC_GETFLAGS, &flags) < 0)
+> > +		return errno;
+> > +	return 0;
+> > +}
+>=20
+> test_fs_ioc_getflags_ioctl() should be moved to the next patch where it
+> is used.
 
-Still FTA (fail to apply), unfortunately.
-
--- 
-An old man doll... just what I always wanted! - Clara
-
+Thanks, done.
