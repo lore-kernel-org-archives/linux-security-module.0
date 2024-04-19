@@ -1,67 +1,68 @@
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F0C85938
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 14:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A62712F376
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 14:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713535597; cv=none; b=rSjNCRXB0SYKfikZ+zk77/StP6Wrrt4uliFnsX42z/LcHOBfas4oao0+Oxx5T47r5rbJt1fXuHKflIGrYTEWFj+pZvwbc3iQkVp8/bijy/IqMxVgGY8al6byCWNS5Lne7QW9xkn7ubh/VjS38YplSzmg/E25wzsTrKBj0D7AGXY=
+	t=1713538203; cv=none; b=OPUldpFfqtHPx/IDf9JaqRMzYMfLs8RO5dhc6aV27q63i40i8+k2qSgfB37FhE83PVnH/kwD+Gbuz3M63OTp1k8b6zZiB+KaZZJ2D+tE6gWvJ/wkcaisV1dr4ywqH+vb6uULcjiMHs0K4tJ33NmQaLlpJlmZuzxZFKV70ijvcag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713535597; c=relaxed/simple;
-	bh=fZ1XlMMUpy10Gwas/CKc6QVK5m8lEX+IdBFYOy1ekGs=;
+	s=arc-20240116; t=1713538203; c=relaxed/simple;
+	bh=I6EPAm2xm2kzZeOJpt+Oi8HGH0alo1KhTYBnKt9ikZI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IHAImGUWuWoRAzZ6CS+dK4qfB0Ql1zCObNFYUD9D+M3uMUXvzl/2swkdAnRMl9tK3qh4/2OgjDuDvIakDLE2pLv1HPB3/9LVq/Sp1auZORbd1TM9cKRtww4rhK9OsuuP6CF71LTzIoaoZIHjzCICFuRGc7hd+LrNQPbiZKGnB3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VWKK7rbt; arc=none smtp.client-ip=209.85.208.73
+	 To:Cc:Content-Type; b=ZT9vPGUOqLSLZ00hZOgYywAFptVR/is5AvbPfxpy5YXsXsU9c3+Qwyuu8IYqFofGPsV8twn3tqbys2tb+YLESEeC9oNv9mFSoEPpzzFrFzveReIWvzX5E2rsYzwVoCxwQ4zu9QzCzkYF+nGD5x8mbEtfgaufLNMRt0IvOHf9TYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N7DbZJmg; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VWKK7rbt"
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-571bdbb3bd5so796990a12.2
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 07:06:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N7DbZJmg"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-617bd0cf61fso43774117b3.3
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 07:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1713535595; x=1714140395; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1713538201; x=1714143001; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DDP9lixGtE5tEgwyR0XACy/HYxzizAJIPGzf/ZO8AOI=;
-        b=VWKK7rbt7fQe6DNUYBpS9K+X2McHutVfC4Zzy70KXblcvbkxEjDD634mezMj+yesog
-         pn6n6oGEGiIURAYJczhxI4m+WjrzXeVspurpCgt1NhpG7WLdlnEIs7AfpGg/FMBID7m2
-         3J6h+wuZYqo2Zbhk57q4uRikWkwPv1xB094tK9gO/dQMPQTZoIMHCp0HVWQaRDmAwJNP
-         Wqp07QYQTcu2HeUj+gbI1orLVvgOqdAh8WrEzzDzPhufRgnSAuLjSH0S42E+YRH68i94
-         6mkg5pRXhBQOyZjhRtOiQW4bFU6YEkeqo42cqrZrwS/sNLafsC98s3uyoE4waw6Xm/rP
-         cULg==
+        bh=3VHIBkqb8woaG3ld/bc1X6RgbFYc9DEdyv044t35jrM=;
+        b=N7DbZJmguXGvgiUZzwSPHJOzGGWBGGXiql8Gq3dcTbpGg8m51dHYqE+x/AiO+YKpx6
+         VyDRtLeiR7D0UGRvbx3FJwmMKslTHex3Q0x6VvLVoqQmm99qKj9Y1/Vr2ckJXO3y6IQV
+         2306mWwwm6wBidgZoitI0Tp3VDB7QqPSg6mD301Gs6AJUuZ6btYskpIWeQg+YIEWc/vp
+         pS2TYz1mB7TSqIAShzg0QAjJFXYTBcjML9P6clXSWNBVc0gpIWAHD+TzYD1tG4dCrtDz
+         3Fn1lyiS/6BnFzpXU4vTjRAZBFwifXqnSqZXdbNOs9moF1z7fkc7dvRaS1dFNJYc1GWG
+         dGKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713535595; x=1714140395;
+        d=1e100.net; s=20230601; t=1713538201; x=1714143001;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=DDP9lixGtE5tEgwyR0XACy/HYxzizAJIPGzf/ZO8AOI=;
-        b=mO0Fgb6yTJTLh+/UkHhkYk2tm1hMGc95wyAEor/STMJSSYrM2TCVeHl2ZM/c8SS4jR
-         IZ8sLFx8eWzRDqY1STWN1h6RxxAEo8j1XE80LiyJK7i2vvnft8SJOWkju8BldOCnpxwZ
-         NMl5Y0oRf9mQFTwZqNXgksYGQwc/mtQcModg8WGMjqbM59uUsrxFdsfflUfQ1Pyp9ZnM
-         Mw7Lm5G1+feZGM7bJj2TI5SoZB1/lYKoeIhbaENpLCn21mjF1v5Wx1DQlVRL4vjLey+6
-         Q4X5+dqy3Ya5otSvzva49pDky/kIuEarPWRepObwcsYHKy/Y7wgb0J3tRiRwtQxuvT3f
-         TNKg==
-X-Gm-Message-State: AOJu0YwnO4F2Mz08Oqk4nt2n5spzNz5I+rliDeBYe3ttVYGMIyVNXuLf
-	OAJj6ImbWVKGIGPnAzxFDmFo2RTNVBqijPetAhIfBPvHsExB9qHkfHlXK04AVq4LBhYi3FRzo4n
-	wCA==
-X-Google-Smtp-Source: AGHT+IF3bk2/TSR5machUXRDV7nlSBsyqT6EzRnkyazFWlLiXKdBdw1iKyaKa2d9UlgLQZek2sRUa/XOCtw=
+        bh=3VHIBkqb8woaG3ld/bc1X6RgbFYc9DEdyv044t35jrM=;
+        b=my7YoOZKi8j9TlvlJp13ni9D6W86fLJrdaOqBnbn5FsBO2v+6H1kfmAIP3zaQi3P2i
+         7GDRCJJo+vjlDZ7aiq2meeqca4manspwbP/heAfsHHO9VVq6sE8NBKAXGuASqCi6DAdH
+         mPXuupHdt37rp1KQzTGN2sLU9SxXOUaMpPuhsZ1XXaqtYUl14IQkUxS3SLYwHFuql6ns
+         +D+5G/5ezLM5hl5l/vP1JUPHe8UzFga40EIlkJrDia0Soxfl43k/ImoHJhtbvLwg6Z0q
+         m6xggIsmAAzmTbCzdNympgQAIuSyQ+UswT3YdEHrbjHauA9iuco4Tp9Cn5l/q9JrqeFr
+         KhlQ==
+X-Gm-Message-State: AOJu0YwE/xbPdl1uQohn2g1dz2kTWk1phr6FYFx2O9ng5bqmVOSdi0VE
+	ZO0Va9UOVU88PWUMasT/ignwr5YarskXAYg2gFiyXnvmWhJQGeg3IbTJG221e5MgnnE/8j6yf0Z
+	/dg==
+X-Google-Smtp-Source: AGHT+IF6awNiBQP8kFq9Mj3mq9oCz487eMAzONJjENkdGCDZF6zTUFwQz/hn6DifchohbB3P8QMKYzAu1d0=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6402:4581:b0:571:c126:57e3 with SMTP id
- ig1-20020a056402458100b00571c12657e3mr2676edb.5.1713535594615; Fri, 19 Apr
- 2024 07:06:34 -0700 (PDT)
-Date: Fri, 19 Apr 2024 16:06:32 +0200
-In-Reply-To: <20240418.haet6ahfieH2@digikod.net>
+ (user=gnoack job=sendgmr) by 2002:a05:690c:f06:b0:618:8ec2:ccb0 with SMTP id
+ dc6-20020a05690c0f0600b006188ec2ccb0mr563196ywb.7.1713538201416; Fri, 19 Apr
+ 2024 07:50:01 -0700 (PDT)
+Date: Fri, 19 Apr 2024 16:49:58 +0200
+In-Reply-To: <20240418.dezuw1Ohg0ca@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240405214040.101396-1-gnoack@google.com> <20240405214040.101396-4-gnoack@google.com>
- <20240418.haet6ahfieH2@digikod.net>
-Message-ID: <ZiJ6aNlF3PTJWKCH@google.com>
-Subject: Re: [PATCH v14 03/12] selftests/landlock: Test IOCTL support
+References: <20240405214040.101396-1-gnoack@google.com> <20240405214040.101396-9-gnoack@google.com>
+ <20240412.soo4theeseeY@digikod.net> <ZiEQXXXJnSiHrK1R@google.com> <20240418.dezuw1Ohg0ca@digikod.net>
+Message-ID: <ZiKElubaXYAsYq4q@google.com>
+Subject: Re: [PATCH v14 08/12] selftests/landlock: Exhaustive test for the
+ IOCTL allow-list
 From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
 To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
 Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
@@ -72,19 +73,22 @@ Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 18, 2024 at 10:44:00PM -0700, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Apr 05, 2024 at 09:40:31PM +0000, G=C3=BCnther Noack wrote:
-> > +/* Invokes the FS_IOC_GETFLAGS IOCTL and returns its errno or 0. */
-> > +static int test_fs_ioc_getflags_ioctl(int fd)
-> > +{
-> > +	uint32_t flags;
-> > +
-> > +	if (ioctl(fd, FS_IOC_GETFLAGS, &flags) < 0)
-> > +		return errno;
-> > +	return 0;
-> > +}
+On Thu, Apr 18, 2024 at 10:44:43PM -0700, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Thu, Apr 18, 2024 at 02:21:49PM +0200, G=C3=BCnther Noack wrote:
+> > I spotted an additional problem with FICLONERANGE -- when we pass a
+> > zero-initialized buffer to that IOCTL, it'll interpret some of these ze=
+ros
+> > to refer to file descriptor 0 (stdin)... and what that means is not
+> > controlled by the test - the error code can change depending on what th=
+at
+> > FD is.  (I don't want to start filling in all these structs individuall=
+y.)
 >=20
-> test_fs_ioc_getflags_ioctl() should be moved to the next patch where it
-> is used.
+> I'm OK with your approach as long as the tests are deterministic,
+> whatever FD 0 is (or not), and as long at they don't have an impact on
+> FD 0.  To make it more generic and to avoid side effects, I think we
+> should (always) close FD 0 in ioctl_error() (and explain the reason).
 
-Thanks, done.
+Done, good idea.
+
+=E2=80=94G=C3=BCnther
