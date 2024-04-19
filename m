@@ -1,57 +1,57 @@
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE7D130E5C
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 16:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1BD130AED
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 16:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713543099; cv=none; b=EytncOdGhiWjc/QeQHoblaY2S+PCrXpMXCNsnhZcbrijEvw/XofXXsCw8BWnUIsbij/3A7oW6FWGdx5Mwl1YnLHI3paPTxtF2ykRrN1mPkJqMLN24w8rL3Z06ZtolR/vhjf7jvfh+auowL8SEVbDgEaeAKAeCVr5GsFHLdyizWo=
+	t=1713543103; cv=none; b=SiYbtBgPSRKOopfElBYF1hIgZUkXyDgB5TFLwWJnn13HcF0427Dmu1+g/9MGpDkTwIcN+MzzpBExb0GrENE3Qx2lT0e4RZxpxga2GNFoBru/o9b/6uGcuyE9+GWUta1BiTHPpur3dajkOtvvZWHv+l2vcJPJJdxhrVhRX7eAOF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713543099; c=relaxed/simple;
-	bh=7d/RbSKpR3aY4FL0pO6CN0tfxMLVWk8XhMdOS8y3ssM=;
+	s=arc-20240116; t=1713543103; c=relaxed/simple;
+	bh=r5UNgUM78q5XLuj5NMQgb9HQbedr3JCHVW3UzlU0A0c=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kbxoX0QjVWC5VMC48z57jbvQRMZY3P6izPjXClpzOilGzovuBxnzyxSfKBRN1LncgpLrZWRGtbgZgp0dTAsGLNEbmXAbVktAejmKwczGM/KT/aRD+ttwh9pqhOk6uEWiCxoNcXrcwTe6dtCM9LqsRz2dd6dgjmMiX4vkSF1/EvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EGztUAzk; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=T+qQmZ6rCYMD5kuG36m/2zMwdWUYokUie1Nf3iNxmgO96MTE+G4Ix0ueDOX0dUprbZ+pKq0Z4fqiLBkF9gTRUYLhfas8pEUXIjHjMsVWYJsqYNBkPBI381TTlr9ilLx8uGp+PSnBCoNm2G7u4Tx9frO/x8QaU9r88B0jzOExv6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ghliW+mr; arc=none smtp.client-ip=209.85.208.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EGztUAzk"
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61ab19438a3so40137727b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 09:11:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ghliW+mr"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-56e678f6d81so3243826a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 09:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1713543097; x=1714147897; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1713543099; x=1714147899; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=stVtFYF+LnL18YF8nyIqbl9KBod0cDeM8+x9sNLHztU=;
-        b=EGztUAzkPmn0kRVGsbhCyJlf2yIN5mPUe+B2O4y2JEuLIlH6xspnmcy8eCowBEyBf4
-         vc3Bc/oGtvxy6r8XE2Wx4m+E5PMyuD3Ox4YgoD9RsYMf/7jzIph/3KdRah880PBiyCMt
-         rsffNQ3cz+EIColnoTGyb/vPyiWhdRblzFL/7fZPxPTt+TUQl9liboTn/qxIimL2SKY8
-         iGYs/hUlHd6bR4fwYbxTMRSpcCIWWLBEHtuS+nYMNA/EpHKUD1X7mVcOVa3d6umEN4Ck
-         AiF4YAiJnfzeq7Ic2fHa5zGm2hHS3oqTabV44n9vLmIpBZfVAF+WT3an8mi8qiwD0C5p
-         KRDQ==
+        bh=6J5az365xK+ZzeSMyv+LbNjMTEu5kjOKEeh883eiHPw=;
+        b=ghliW+mrI6gp5GPUugW2/3vuYipLaCVWr6n8+suqnNhu3olQtd6fm99VRP5LB8QmWG
+         QV51VN5Tb1MRuQU2C75XH1b+EwYA72aweJRxB/UAbmf59H1gbFC1JFyjqD+ZEpUIctK3
+         LISsn1TUWpSNS/47M6JtL1m7EZ1vglQbOXiyMkWKuQ/q75gEsDY9TgkftPVxU4lB4Xif
+         /hqJl0wfzKfNKKwSvQKbnfl3y6NSMOT2Cm6XujVj4+c3T0PcWMtblXnX40UI1qKURDw8
+         7We5taMl77ZLMCK4viLGpwNHYilMWAGwUBa83/AUqIGSKY1ICKBbdI4sdF1s6oRyz5Jg
+         eHMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713543097; x=1714147897;
+        d=1e100.net; s=20230601; t=1713543099; x=1714147899;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=stVtFYF+LnL18YF8nyIqbl9KBod0cDeM8+x9sNLHztU=;
-        b=lk1fo7cWXLLTV3AR/cc/xd75AAp5+RCPBoFH03hqqVdMS1tFoX6SzsU3X8bs4Fhsm3
-         KqAvUW4k9Se+1wyZLYH9TQRSUpbjEjITMkEjdkmklzU/uxsQ2oDbzffPWBl1HLaJuQ7v
-         P/6tsFTo2+6tqkMiXEqnEBmylTndF+ORGAqGaWVA33GerwiYX5/CkOtYIsinhs/Vvc40
-         ULGggkHf66T832TfUtkjcFTE2DzDDkFScQm9u3esP/bY3OZ+VQFJF4sV8iRM1gAT/tGF
-         IoAXUnXXOQXkJO/xH4N16nTG+aegT9TAY99xUcHyfZJAvEKh8iFkvPs2bxhh00lftcOb
-         yCcw==
-X-Gm-Message-State: AOJu0Yxssgv/iIQyuHZz5APPwu0SygEFp/xJzeZF/zm4PhqB3x72BvT7
-	tUkEryTjxZpfFzk7zeBmRy3m5wLFQ7LhvEg4h/F90MFTOKL+NPfIklN55dhsbPXHVVcYfpqOSIR
-	YvlbO5dChaILo3A6XRPhRy0KXiBfxae4zHME9/4KTsAbWs+j28E18zohUb9XIZaJFA1j6+zKlWl
-	VixSIuCxHU1CXLEY2SO2mclsoO/EjOtXPdEzgr+khE8APBzjIMVXs+
-X-Google-Smtp-Source: AGHT+IGI4BKwr0cL9YRBOG+ryUuic3GjJcK5yIXcHug+feKSxxoAvlNyZs29Z2yD3lwOvXRwrx+qf8GMrIc=
+        bh=6J5az365xK+ZzeSMyv+LbNjMTEu5kjOKEeh883eiHPw=;
+        b=F4djXfWXdGmesNrJ/zlOTUd6zs+bdDc4O7bja/obFEDSZJhSBk/qPrkXqcAcTheGoS
+         350ocr9bioCzNMXhcmiYS0Tk7wBbiZPzo4MZ2zWS2Ic08dkZM75ahIH8DyrK+Eeraydf
+         2hpEpMqI7b1tneKSkBJAFhqU4CZEIOYpSQ3yRUcQ2j+0+tCh0bWFe00dQGWVC89AaKkY
+         yLHs0gRklmrobrYuirOE2GGYB4iLh2uuUS7GsrEJSPFDQ5CUbIirSWBV5s9PxNuUXgUa
+         TfHSns7ORKPa34O5wIHtRjJp9FXsUxM6/Bf6JmiclOsyOR/mKXcCSRs2OqgufLG7AU2I
+         K9dw==
+X-Gm-Message-State: AOJu0YxpWh3wvW2B8vj09KOFKr17ZIAa54pE/+0QvUS6Wt/j6cRuxrs1
+	iTUCfZSGS57YCkQVUsjbiBz7Aj7h3TMmb1eRHnJ/yB7Rxv9CynRo9foQqBhS3fT2ihIqK3E2B4f
+	9q5tZ0DdelD8iXZaqJDUQvxr4NlAtQDVwzyrf3+NEPl7mz9kQrwNzpnbBhdMjB2cUgboyiarO51
+	EYbN18VGeMngZh0yL1PqYehcOXZs6ypT29Ts0aXPucYlcAebKIHea/
+X-Google-Smtp-Source: AGHT+IHisJXB+GsHOnfXBzfhkwHJ+2ZKhxXdPCwJnSFv+hBOjspSP9l3J/lisVR8sJ4EglnuqSdIBajCuW4=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a81:9e4b:0:b0:618:91c3:c8e2 with SMTP id
- n11-20020a819e4b000000b0061891c3c8e2mr520711ywj.1.1713543097028; Fri, 19 Apr
- 2024 09:11:37 -0700 (PDT)
-Date: Fri, 19 Apr 2024 16:11:14 +0000
+ (user=gnoack job=sendgmr) by 2002:aa7:d654:0:b0:571:d7c8:9d5f with SMTP id
+ v20-20020aa7d654000000b00571d7c89d5fmr1918edr.3.1713543099468; Fri, 19 Apr
+ 2024 09:11:39 -0700 (PDT)
+Date: Fri, 19 Apr 2024 16:11:15 +0000
 In-Reply-To: <20240419161122.2023765-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -61,8 +61,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240419161122.2023765-1-gnoack@google.com>
 X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
-Message-ID: <20240419161122.2023765-4-gnoack@google.com>
-Subject: [PATCH v15 03/11] selftests/landlock: Test IOCTL with memfds
+Message-ID: <20240419161122.2023765-5-gnoack@google.com>
+Subject: [PATCH v15 04/11] selftests/landlock: Test ioctl(2) and ftruncate(2)
+ with open(O_PATH)
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -75,78 +76,69 @@ Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Because the LANDLOCK_ACCESS_FS_IOCTL_DEV right is associated with the
-opened file during open(2), IOCTLs are supposed to work with files
-which are opened by means other than open(2).
+ioctl(2) and ftruncate(2) operations on files opened with O_PATH
+should always return EBADF, independent of the
+LANDLOCK_ACCESS_FS_TRUNCATE and LANDLOCK_ACCESS_FS_IOCTL_DEV access
+rights in that file hierarchy.
 
+Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 44 ++++++++++++++++++----
- 1 file changed, 36 insertions(+), 8 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
 ftests/landlock/fs_test.c
-index cb1382a887c9..6967e02ba3cb 100644
+index 6967e02ba3cb..2cfda6af71ab 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3842,20 +3842,48 @@ TEST_F_FORK(ftruncate, open_and_ftruncate_in_differ=
-ent_processes)
- 	ASSERT_EQ(0, close(socket_fds[1]));
+@@ -3895,6 +3895,46 @@ static int test_fionread_ioctl(int fd)
+ 	return 0;
  }
 =20
--TEST(memfd_ftruncate)
-+/* Invokes the FS_IOC_GETFLAGS IOCTL and returns its errno or 0. */
-+static int test_fs_ioc_getflags_ioctl(int fd)
- {
--	int fd;
-+	uint32_t flags;
-+
-+	if (ioctl(fd, FS_IOC_GETFLAGS, &flags) < 0)
-+		return errno;
-+	return 0;
-+}
-=20
--	fd =3D memfd_create("name", MFD_CLOEXEC);
--	ASSERT_LE(0, fd);
-+TEST(memfd_ftruncate_and_ioctl)
++TEST_F_FORK(layout1, o_path_ftruncate_and_ioctl)
 +{
 +	const struct landlock_ruleset_attr attr =3D {
 +		.handled_access_fs =3D ACCESS_ALL,
 +	};
-+	int ruleset_fd, fd, i;
-=20
- 	/*
--	 * Checks that ftruncate is permitted on file descriptors that are
--	 * created in ways other than open(2).
-+	 * We exercise the same test both with and without Landlock enabled, to
-+	 * ensure that it behaves the same in both cases.
- 	 */
--	EXPECT_EQ(0, test_ftruncate(fd));
-+	for (i =3D 0; i < 2; i++) {
-+		/* Creates a new memfd. */
-+		fd =3D memfd_create("name", MFD_CLOEXEC);
-+		ASSERT_LE(0, fd);
-=20
--	ASSERT_EQ(0, close(fd));
-+		/*
-+		 * Checks that operations associated with the opened file
-+		 * (ftruncate, ioctl) are permitted on file descriptors that are
-+		 * created in ways other than open(2).
-+		 */
-+		EXPECT_EQ(0, test_ftruncate(fd));
-+		EXPECT_EQ(0, test_fs_ioc_getflags_ioctl(fd));
++	int ruleset_fd, fd;
 +
-+		ASSERT_EQ(0, close(fd));
++	/*
++	 * Checks that for files opened with O_PATH, both ioctl(2) and
++	 * ftruncate(2) yield EBADF, as it is documented in open(2) for the
++	 * O_PATH flag.
++	 */
++	fd =3D open(dir_s1d1, O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, fd);
 +
-+		/* Enables Landlock. */
-+		ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
-+		ASSERT_LE(0, ruleset_fd);
-+		enforce_ruleset(_metadata, ruleset_fd);
-+		ASSERT_EQ(0, close(ruleset_fd));
-+	}
- }
++	EXPECT_EQ(EBADF, test_ftruncate(fd));
++	EXPECT_EQ(EBADF, test_fs_ioc_getflags_ioctl(fd));
++
++	ASSERT_EQ(0, close(fd));
++
++	/* Enables Landlock. */
++	ruleset_fd =3D landlock_create_ruleset(&attr, sizeof(attr), 0);
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	ASSERT_EQ(0, close(ruleset_fd));
++
++	/*
++	 * Checks that after enabling Landlock,
++	 * - the file can still be opened with O_PATH
++	 * - both ioctl and truncate still yield EBADF (not EACCES).
++	 */
++	fd =3D open(dir_s1d1, O_PATH | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++
++	EXPECT_EQ(EBADF, test_ftruncate(fd));
++	EXPECT_EQ(EBADF, test_fs_ioc_getflags_ioctl(fd));
++
++	ASSERT_EQ(0, close(fd));
++}
++
+ /* clang-format off */
+ FIXTURE(ioctl) {};
 =20
- static int test_fionread_ioctl(int fd)
 --=20
 2.44.0.769.g3c40516874-goog
 
