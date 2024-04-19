@@ -1,57 +1,57 @@
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFCC13172D
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 16:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B3F1311BF
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 16:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713543117; cv=none; b=AtCT0dTHiR3wwRzzP/D5e1JjqnnxxbEWFjthZ7AwK58l9pPDj3LAjTWEp2t5FBMdzTHlgwXrebz6/c6+bHuTK90nMkGQJa7547bEJkEsWQqQaAkIHrP0L1dt/0Qqpgkj31Y8zaWcGK4u4D8oCzHZa7pgUK+e7oum6Q1YpgJM14w=
+	t=1713543121; cv=none; b=VhKf7llhE37Lu2hnL4Y15xNa0qtBk4fJsDA0hTXmdjuqW7aukLrPbnpXtIOMoXN8YTJ8UWmD2IABQo9/lWI0Fd0KL4HMez6WS3pVZTKtmykA8ee8UF+GjukHmRnMey2QyGAcLpRFrcRXeOrAY4iXdYkqD02AouoVsHU7GVY8/a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713543117; c=relaxed/simple;
-	bh=JGHfnorzKyjPYbTCQHV6WC4mgXFe8OWcyk7jdOEJxuY=;
+	s=arc-20240116; t=1713543121; c=relaxed/simple;
+	bh=8Sbz6xPy4d51xqBFXjUr7rr4WXtoUD0T6JNeQh6Hv+s=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=akIWGelKu2Jkck/+RonC8mL1PhlWi6l26vj/yzsGthgrSIVqaXNVnW8lVaMqrca1FoO2lxGFPOZBEsmmShHIlVYR9jVyyeGCRFHs8Au7x1OUX/959hX2kDNl79dWL7fBnPMM52pwOGQ85kSmx2eQFgZtbcS8TqvNELoXuFqN0Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q6DfJIPm; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=jRKXLMzV1Ck3TWZLG8JhQVwCPt7GNei3Zkt6/qBcS+28lcf4BI1KfaY4JjqhuDOYdrksisnfZbtwFuX8ntiE6SezPJ6WexMpu5ZThvw62Ro4hBuVpnZrnCec6P1x0NDDPCbfSbpUAyRAq+ueg4StPz4U2cu3cpeXWZUmqDJAJVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4LK2No8l; arc=none smtp.client-ip=209.85.218.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q6DfJIPm"
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61b36187e6bso8713587b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 09:11:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4LK2No8l"
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a5568b24531so167069866b.1
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 09:11:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1713543115; x=1714147915; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1713543118; x=1714147918; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KCoDsQ7XD45afcaMZJLZHwcegiMaHQmobdPwX+hCXpE=;
-        b=Q6DfJIPmvK8xHj01v0jhyPIw4NpvVCJEmE++BpuKANXlSNM87cFdbNPk2A0lRlhcCF
-         8olfdpXt/+2PVuZjGH7xDn6g23VS9giCEhqMifRfv7I6BBhiaGwafWlPd77VhuxV1gCw
-         QJOtXCIO2gE0ud9kV4/PG6DMDbSMCOFQ4c19MkkPTXMvvFvLp3rQera0nB+wx6xnXTU1
-         gKYueedtl8BDPDmfbU6F9SrSL/iHMlYXTwMpTBG8ArB6svtG6gNDWD64nUh6bg5Apl3Y
-         3e8ob4FudBOZoJE7liQj+q7TM19kGclwfOxw0+egurWlFGChD66gvOGoOToluNSSPExx
-         ScIg==
+        bh=uYJ1G6THEcze8HV6qNPokLaKgVvE2KbB4dc/k79IC8Q=;
+        b=4LK2No8loMrTom6nTOt5Upwto8B+/3gWA4nfb6XfjTaj1MMf3bg7wUsZ0SrSRpGGea
+         i/mXaNJkzbxSuiWPh5VIK5l76pVasaY0kHba8GfTK+CtB8Qak/0xoA8cdG7BdrlTLYLB
+         kr8edCqt+MLM+YT07m+z0POlwYNXF4L8ofnfXZy4u0wGBGFbaZhTGHAtjPAC8ngZTQev
+         lhVRDIn4VDRFDZJVHsqo0mDaJYnnUVuVZzgjbgma9R/BSlg2Ejkf9OQVtDHKEGFbve+j
+         FeCnO4Yk328RqRLDIwAtBf2ysBICS948Cafi9LVmemwfEniLBAhHgtwEbbS7eTRhb/Yz
+         4PkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713543115; x=1714147915;
+        d=1e100.net; s=20230601; t=1713543118; x=1714147918;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=KCoDsQ7XD45afcaMZJLZHwcegiMaHQmobdPwX+hCXpE=;
-        b=FKj3AB5a3kegSN4K7znkoN844gl0k14mDci4qRqVMw3VI22Xs9pkSKHJwchSJRUFlE
-         X6SVr5f7X+ILFDs31phdodhStPl9NaTT4NEiW539ZsEX2kXuP5pzXif9omQH160kS3+p
-         LL2FAcbb7LcJVQXpKWLW+n6HoPwscVJ9E2KfmaFbCIHZ3pki6/W9gc1lQovg8VcU/Ady
-         O433oc1ELhD1reQKkaUmQcxJrB5lBOYOPyLd7w5f/I6hB61dz/Y+YO1DJFv87wzX5v44
-         Mbe0rE8DJ9+7cRXk4V0gdee88fzL5sW3RoJBPwdyntQxNhJYXhcy8PDNN+tNt/b+jTB4
-         ajeg==
-X-Gm-Message-State: AOJu0Yys9Zu1O7Z9SQnWVVsWiU/TSAYOiFmZgINrvE+5ogzHtuHR55Vh
-	MjkQTIuVTyjJ0nT1G9PkPpII5XeMURD0SUY6wMIewoc0eUz1Ay/YUvRUgnkvdKwVhFoYbORNuQ3
-	fAjkvVCRT+6jud/IKPD6NYx8NELQR/ALMWtZrPmtpXML2n/l8CfXUbUkvDRLM6t71H4c+nKjOZ4
-	RZn+E96S4hsy7BT1Ixejpz0cmnVOZORFQ//AsOut6ur7tAwkmlgcCY
-X-Google-Smtp-Source: AGHT+IGDj7hCCHr63zw4z/0pItHtM9agU4Yatj8GBpkc9lMWNVcckNPIVAM4if8OXD8TF/ChBL9OUINVabg=
+        bh=uYJ1G6THEcze8HV6qNPokLaKgVvE2KbB4dc/k79IC8Q=;
+        b=pMj1gsGG9o9qwIUOoXzh+ynk+dF+bZq+rG7wziE1Y+tl2GYLwX4zEOO+EaVbxIWChl
+         zFK5UCpEq8Jno7bmDxO9uneUkQ8aAX26lGWE6c3WyErstOLdw7k+PSRJOy94Fm05ZEXZ
+         85WFpT0dRAi5pbUcx7wVhis1fex5zxu58WObd5CyfpoUS3fiyvBV7WZslx0AIyxKS7lA
+         OkHwiWpfjLxOQOf0B1J69eK4TX3y4CM9KGJwel2PXKrRMBez87rtNFG7rJtVe8kkUMab
+         JfZ4J7fA07g8Rg1HgT29cX2YFtbLOEvQQor9tmdb8sk1s+x/+Q3xcy2g3rpPiOuGH3Eg
+         qIDg==
+X-Gm-Message-State: AOJu0YyxmM8VDsjvOhpcsR+bOJvRVjX7we/8wd90WKB3RjbHxoQkcbq1
+	DA94+cdZdtLwlpAJsfd5er/SP/Su+MfWdyJema3tcdt/po7ttPvDRstrCOzuP5/+PlJn6EVncuu
+	RZI0uvMH5b23KtRam634gQacpK72aP0pEmyPC2ir8Ezh0B4qQkBznLTWLDQL6mCuHozcuZym5Nq
+	RNSBTGU1oFa/s8CCtqiFwpva3plJdg1/SsdjZaF7ks8FYuzigBsIx9
+X-Google-Smtp-Source: AGHT+IHuqJ6fDnXePgWibwQg8qrPjCoaQNWEKwLlyy2KbeP1gomSkjsl8Zno26ZWu1ih/CLcKUSmw/5lUOY=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a25:2606:0:b0:de4:6b9f:1b2f with SMTP id
- m6-20020a252606000000b00de46b9f1b2fmr1068950ybm.6.1713543115010; Fri, 19 Apr
- 2024 09:11:55 -0700 (PDT)
-Date: Fri, 19 Apr 2024 16:11:21 +0000
+ (user=gnoack job=sendgmr) by 2002:a05:6402:5408:b0:56e:480f:c98c with SMTP id
+ ev8-20020a056402540800b0056e480fc98cmr3192edb.5.1713543117257; Fri, 19 Apr
+ 2024 09:11:57 -0700 (PDT)
+Date: Fri, 19 Apr 2024 16:11:22 +0000
 In-Reply-To: <20240419161122.2023765-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -61,9 +61,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240419161122.2023765-1-gnoack@google.com>
 X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
-Message-ID: <20240419161122.2023765-11-gnoack@google.com>
-Subject: [PATCH v15 10/11] MAINTAINERS: Notify Landlock maintainers about
- changes to fs/ioctl.c
+Message-ID: <20240419161122.2023765-12-gnoack@google.com>
+Subject: [PATCH v15 11/11] fs/ioctl: Add a comment to keep the logic in sync
+ with LSM policies
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -76,27 +76,33 @@ Cc: Jeff Xu <jeffxu@google.com>, Arnd Bergmann <arnd@arndb.de>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Landlock needs to track changes to do_vfs_ioctl() when new IOCTL
-implementations are added to it.
+Landlock's IOCTL support needs to partially replicate the list of
+IOCTLs from do_vfs_ioctl().  The list of commands implemented in
+do_vfs_ioctl() should be kept in sync with Landlock's IOCTL policies.
 
+Suggested-by: Paul Moore <paul@paul-moore.com>
 Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ioctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aa3b947fb080..c95dabf4ecc9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12222,6 +12222,7 @@ W:	https://landlock.io
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
- F:	Documentation/security/landlock.rst
- F:	Documentation/userspace-api/landlock.rst
-+F:	fs/ioctl.c
- F:	include/uapi/linux/landlock.h
- F:	samples/landlock/
- F:	security/landlock/
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index fb0628e680c4..64776891120c 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -796,6 +796,9 @@ static int ioctl_get_fs_sysfs_path(struct file *file, v=
+oid __user *argp)
+  *
+  * When you add any new common ioctls to the switches above and below,
+  * please ensure they have compatible arguments in compat mode.
++ *
++ * The LSM mailing list should also be notified of any command additions o=
+r
++ * changes, as specific LSMs may be affected.
+  */
+ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
+ 			unsigned int cmd, unsigned long arg)
 --=20
 2.44.0.769.g3c40516874-goog
 
