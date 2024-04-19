@@ -1,160 +1,105 @@
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785C779F9
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Apr 2024 05:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DC881725;
+	Fri, 19 Apr 2024 11:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713505993; cv=none; b=X8utvy+lvfUrU1e4vkDmFCbr9+CbfQuww5yoVe5IiLNx3b9RuDygN/WlZKRKeoMTDSx3YXV0V1KAE7P7Yrb/7yo+0G1oqSv4UtB3dSVMC0vw6aApodJVVeIilFrwLfk1y8obH8ioNwXkJi/yc02Hpe6sdPE1HZM9KsTV7AexUFY=
+	t=1713525505; cv=none; b=XLfaIs6WvSlB72tNCUgdoYlU6ENAn2fYlkAj5llL/6ZIZJrFSkBfP3iXGbbtvJfDbFRTf+Vn9YZGCo6U1bj9VoBiZ77SIPwNmrT7Fiu7gMsZUjgDwy/UBfMjpOJ+T93IQPenEb3IzD9fa7ZMhe+GmzZ3odKeNoxzVKQsXq2vUkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713505993; c=relaxed/simple;
-	bh=HiOBK7WUQ6+SjYvixQuMMDXV3kp8/XrvDxzSXfPw2e4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfOd+K/NB5eftDAY84V09It5xepDfFV+n2eMZos78BBKpphthrXZ+wiXOcTm1+EznkiYVvgF1Lcs94nHFC0oVa5vm/R11f6MUvN3seP1LDT8+J8S20cZYiDef25ZoZ6lhXzfjK0J3PioDbggrqq4mvJnJItCaixLCVAT7keXPmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vLuEm5IE; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1713525505; c=relaxed/simple;
+	bh=4S0ijTuOG1XfPNB7vzzLF7bgqgJf2hetvsXjMkXUk+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k0F3LCuoKY61KpYoXeoEUz+X0j6AFC92kJCWLaoruORmOhaMiKqs01jRwTLMD2AoVGx92Bdhm9/d7jzlVKHleckpPVZI+IwLi5i6oBMN7Q8YotBZRZYkSaO4Ndd+TBRMYNq7gkajgZoS3TtokIX8Imj7OGZYCrHNmiwajMDE4AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov+mWThE; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vLuEm5IE"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VLNrX5w6Pz6VR;
-	Fri, 19 Apr 2024 07:44:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1713505484;
-	bh=HiOBK7WUQ6+SjYvixQuMMDXV3kp8/XrvDxzSXfPw2e4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vLuEm5IEN4ZwdMSRY+qfI8nywAqenJEHNxsREsunn8OYHlsPeuSY2EbdDw7VamVJl
-	 ckAAXqyCP9c7V+YSET8Nf10PXDEG3G8mDjrhs24itI6QqM8zi+YHyBvXNqTXcTdRrJ
-	 vayIGh5++qKhXZk2MKhIXR5ApiVPXpHyn3HTRbKg=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VLNrX1TNxz1TD;
-	Fri, 19 Apr 2024 07:44:44 +0200 (CEST)
-Date: Thu, 18 Apr 2024 22:44:43 -0700
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 08/12] selftests/landlock: Exhaustive test for the
- IOCTL allow-list
-Message-ID: <20240418.dezuw1Ohg0ca@digikod.net>
-References: <20240405214040.101396-1-gnoack@google.com>
- <20240405214040.101396-9-gnoack@google.com>
- <20240412.soo4theeseeY@digikod.net>
- <ZiEQXXXJnSiHrK1R@google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov+mWThE"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6eddff25e4eso1576687b3a.3;
+        Fri, 19 Apr 2024 04:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713525504; x=1714130304; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OyBuv5kBEYfUc16aLXP76ZXaynrNdrlIh1WL3rQFBdw=;
+        b=Ov+mWThE8IvrN65xo3/FOfZavMaJHKs3T3gm4+NbfMEjWCOGu5bHbtzCHiqniBTvMW
+         QC9H477bCfFlhhGsrTUQUVSR86+2bDVHtUiTq977no0Ou9dgW4RO0pf8D+mtBbWzInfj
+         iPasmg4oiCd+ICUpIfst6gfRVNe4qANSq0X5OwHAOK9I3eSOM8vV7NfeGbRSCuo9W8oE
+         YBGJW0m2zz4ynzAlAlo2N//FH2f9o5qEeQojD1bSfP7rQWcecJNJvtkV2dS7ea6f0OST
+         keLK8U4s3/1F+xxe2BhVIUmhRqdCOT47nDl7NKdXWRlZiu1B/YcoSEIQaxMFfHkYHQ4e
+         7T5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713525504; x=1714130304;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OyBuv5kBEYfUc16aLXP76ZXaynrNdrlIh1WL3rQFBdw=;
+        b=P6xbUFUiPcV1a9/2mXLx1ZrPwldug+Om1IKM4fYQnsfn+9w7YTWkmhOoIR7GLZpI8K
+         iZUaq/YIsMJxu4IBMzjr5BuCq1B33u39fp5sYx8Fn1X9XKNzfJnmd9Z/Fbx4oh6uP4aU
+         SblXOysuqDhbz9GjRS+P+/VPtiaww/3p53MxOOnYvyFDvOTYHMFqMHkkBTvJdUYZ+q+z
+         eAGDdUf2IOJlliURYe/AgxCsGIR4zcUYZM0zJU9vdc77xri3VidAsgwJ9wExAKnybbXL
+         OaU4eMK2tYqSeUbYeuzh7OLyAkXpkBJEjjUL1oEhy99IeKGxz1JEknLh5kzUJmlK4IJv
+         ERXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnVqKXKIcKadQb6OH504E7z4RpSxJw9UGcshX1Z2xQY/mukm/dJLgX6gAYnMSHdVRqY8SpPeEv4+PtSCPuuci+vEBuiuw6cRzqhW22RxUUK3NvkOz/28kxoF+XkYKGmkD/UHr2a2DAOfOmw2hzGqPg9NbGfsf7kp/QvFzPdAfbiP8E/mhsazCjGVnm9/PE7rDKGRVrAk7QDDYMaxXhL0KLIIhDm9FURQWXpFjsuE8NlbK72S3gdZn9/M1DYPQv
+X-Gm-Message-State: AOJu0Yy4JpBOyw1ByM+8VA44hHAPUVZMPtLtuCXsJlXk3x3gZfXfHkAj
+	sm+pFBPrc02nfV6+QxNUML0Ep6GI+xxRGpqQ5HDRvA2JOqEo2w5T
+X-Google-Smtp-Source: AGHT+IGrIiXTpCilLzBmkpvZQgTccBG7XaieqrHNhkdG0tln9wJXWvgEsCFL2ljmjKXvjnyamvrgcQ==
+X-Received: by 2002:a05:6a21:168b:b0:1ac:423b:7c7a with SMTP id np11-20020a056a21168b00b001ac423b7c7amr1456490pzb.21.1713525503827;
+        Fri, 19 Apr 2024 04:18:23 -0700 (PDT)
+Received: from [192.168.0.107] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id k17-20020a170902c41100b001e00285b727sm3104974plk.294.2024.04.19.04.18.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Apr 2024 04:18:23 -0700 (PDT)
+Message-ID: <fe361a16-1536-4c92-894a-0b24258384bf@gmail.com>
+Date: Fri, 19 Apr 2024 18:18:12 +0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZiEQXXXJnSiHrK1R@google.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
+To: Roberto Sassu <roberto.sassu@huawei.com>,
+ Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet <corbet@lwn.net>,
+ paul <paul@paul-moore.com>, jmorris <jmorris@namei.org>,
+ serge <serge@hallyn.com>, akpm <akpm@linux-foundation.org>,
+ shuah <shuah@kernel.org>, "mcoquelin.stm32" <mcoquelin.stm32@gmail.com>,
+ "alexandre.torgue" <alexandre.torgue@foss.st.com>, mic <mic@digikod.net>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+ linux-doc <linux-doc@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-kselftest <linux-kselftest@vger.kernel.org>, bpf
+ <bpf@vger.kernel.org>, zohar <zohar@linux.ibm.com>,
+ "dmitry.kasatkin" <dmitry.kasatkin@gmail.com>,
+ linux-integrity <linux-integrity@vger.kernel.org>,
+ wufan <wufan@linux.microsoft.com>, pbrobinson <pbrobinson@gmail.com>,
+ zbyszek <zbyszek@in.waw.pl>, hch <hch@lst.de>, mjg59 <mjg59@srcf.ucam.org>,
+ pmatilai <pmatilai@redhat.com>, jannh <jannh@google.com>,
+ dhowells <dhowells@redhat.com>, jikos <jikos@kernel.org>,
+ mkoutny <mkoutny@suse.com>, ppavlu <ppavlu@suse.com>,
+ "petr.vorel" <petr.vorel@gmail.com>, mzerqung <mzerqung@0pointer.de>,
+ kgold <kgold@linux.ibm.com>
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+ <Zh4DQ7RGxtWCam8K@archie.me>
+ <66201cd2.df0a0220.a8ad5.6fbaSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <66201cd2.df0a0220.a8ad5.6fbaSMTPIN_ADDED_BROKEN@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 18, 2024 at 02:21:49PM +0200, Günther Noack wrote:
-> On Fri, Apr 12, 2024 at 05:18:06PM +0200, Mickaël Salaün wrote:
-> > On Fri, Apr 05, 2024 at 09:40:36PM +0000, Günther Noack wrote:
-> > > +static int ioctl_error(int fd, unsigned int cmd)
-> > > +{
-> > > +	char buf[1024]; /* sufficiently large */
-> > 
-> > Could we shrink a bit this buffer?
+On 4/18/24 02:02, Roberto Sassu wrote:
 > 
-> Shrunk to 128.
+> 72374d71c315
 > 
-> I'm also zeroing the buffer now, which was missing before,
-> to make the behaviour deterministic.
+> Roberto
 > 
-> 
-> > > +	int res = ioctl(fd, cmd, &buf);
-> > > +
-> > > +	if (res < 0)
-> > > +		return errno;
-> > > +
-> > > +	return 0;
-> > > +}
-> 
-> 
-> > > +TEST_F_FORK(layout1, blanket_permitted_ioctls)
-> > > +{
-> > > +   [...]
-> > > +	/*
-> > > +	 * Checks permitted commands.
-> > > +	 * These ones may return errors, but should not be blocked by Landlock.
-> > > +	 */
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIOCLEX));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIONCLEX));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIONBIO));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIOASYNC));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIOQSIZE));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIFREEZE));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FITHAW));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FS_IOC_FIEMAP));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIGETBSZ));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FICLONE));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FICLONERANGE));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FIDEDUPERANGE));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FS_IOC_GETFSUUID));
-> > > +	EXPECT_NE(EACCES, ioctl_error(fd, FS_IOC_GETFSSYSFSPATH));
-> > 
-> > Could we check for ENOTTY instead of !EACCES? /dev/null should be pretty
-> > stable.
-> 
-> The expected results are all over the place, unfortunately.
-> When I tried it, I got this:
-> 
->         EXPECT_EQ(0, ioctl_error(fd, FIOCLEX));
->         EXPECT_EQ(0, ioctl_error(fd, FIONCLEX));
->         EXPECT_EQ(0, ioctl_error(fd, FIONBIO));
->         EXPECT_EQ(0, ioctl_error(fd, FIOASYNC));
->         EXPECT_EQ(ENOTTY, ioctl_error(fd, FIOQSIZE));
->         EXPECT_EQ(EPERM, ioctl_error(fd, FIFREEZE));
->         EXPECT_EQ(EPERM, ioctl_error(fd, FITHAW));
->         EXPECT_EQ(EOPNOTSUPP, ioctl_error(fd, FS_IOC_FIEMAP));
->         EXPECT_EQ(0, ioctl_error(fd, FIGETBSZ));
->         EXPECT_EQ(EBADF, ioctl_error(fd, FICLONE));
->         EXPECT_EQ(EXDEV, ioctl_error(fd, FICLONERANGE));  // <----
->         EXPECT_EQ(EINVAL, ioctl_error(fd, FIDEDUPERANGE));
->         EXPECT_EQ(0, ioctl_error(fd, FS_IOC_GETFSUUID));
->         EXPECT_EQ(ENOTTY, ioctl_error(fd, FS_IOC_GETFSSYSFSPATH));
-> 
-> I find this difficult to read and it distracts from the main point, which
-> is that we got past the Landlock check which would have returned an EACCES.
 
-OK
+Still FTA (fail to apply), unfortunately.
 
-> 
-> I spotted an additional problem with FICLONERANGE -- when we pass a
-> zero-initialized buffer to that IOCTL, it'll interpret some of these zeros
-> to refer to file descriptor 0 (stdin)... and what that means is not
-> controlled by the test - the error code can change depending on what that
-> FD is.  (I don't want to start filling in all these structs individually.)
+-- 
+An old man doll... just what I always wanted! - Clara
 
-I'm OK with your approach as long as the tests are deterministic,
-whatever FD 0 is (or not), and as long at they don't have an impact on
-FD 0.  To make it more generic and to avoid side effects, I think we
-should (always) close FD 0 in ioctl_error() (and explain the reason).
-
-> 
-> The only thing that really matters to us is that the result is not EACCES
-> (==> we have gotten past the Landlock policy check).  Testing the exact
-> behaviour of all of these IOCTLs is maybe stepping too much on the turf of
-> these IOCTL implementations and making the test more brittle towards
-> cahnges unrelated to Landlock than they need to be [1].
-> 
-> So, if you are OK with that, I would prefer to keep these checks using
-> EXPECT_NE(EACCES, ...).
-
-Yes, it looks good.
-
-> 
-> —Günther
-> 
-> [1] https://abseil.io/resources/swe-book/html/ch12.html has a discussion on
->     why to avoid brittle tests (written about Google, but applicable here
->     as well, IMHO)
-> 
