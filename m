@@ -1,101 +1,126 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B4664D;
-	Fri, 19 Apr 2024 23:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1626964D;
+	Fri, 19 Apr 2024 23:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713569418; cv=none; b=VchaxWl1QOf8ul7RqeRNRslfbfPUQ3OhzfYTodDUNOB9Wf/g9AuCNnK4MVejr/is80Fb9wIWrli6bAvlKREropYW8GnrPKQ4FXxkeXQZlI3cZwB/p6Cm16Foo1gi/nCuoUChiNkX+gbJEy65CLqXvrR7UZqIGiLLUEfkz8nuWkA=
+	t=1713569886; cv=none; b=BZT9061clg/7o1uCm5lb54LWNLgL4hT6Y4U/XiOkIDG0ER8MLIhM7m+fRlQRF1moydXyiGYXFJvL7w6PF4Ufd2FzAdf4Om79HPHeeDV+YN/ilzHHV0V13BGrUIT9IShhQf5+ZyjlEe+5C9gpqnSlRiwQDI4hRrKbWy3ogZrC2fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713569418; c=relaxed/simple;
-	bh=qZkLWvAWlgCjjdU0qNRhZCkRLi0oUlD656x5rum5Qvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZwN8Skbss+GkXy2+jhSECD9w8EZiTVsIhANEIU77atxd5mYNAXxdFVxAPfKYemOAoOhhb6b2TS5Y5Cvqgh9l0vKkGGHwrSZX4VPkL1Ov+uPkJmZN8bXDi3ashebRvd0bQU9zHXRUbbSHwxq2jdMRvte7nBjhkx8slJxDl+6bK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VLr6h0Nn9z9ttCp;
-	Sat, 20 Apr 2024 07:13:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 2163D140B21;
-	Sat, 20 Apr 2024 07:30:03 +0800 (CST)
-Received: from [10.81.201.160] (unknown [10.81.201.160])
-	by APP2 (Coremail) with SMTP id GxC2BwBHgCRh_iJmFsaOBg--.38143S2;
-	Sat, 20 Apr 2024 00:30:02 +0100 (CET)
-Message-ID: <8a47707d-f1ba-4eb5-b516-d689ad42a168@huaweicloud.com>
-Date: Fri, 19 Apr 2024 16:29:32 -0700
+	s=arc-20240116; t=1713569886; c=relaxed/simple;
+	bh=YASXITkV2ASgRJeSKmQR9SchGIqfz5jdQ411YQ+n2KQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XAMsUOdy31dmHplq+3x+ZFbtf7EqZ8qL/7aNZCfqz6ugPbJbQirWn9gT+97mrBxCM4z4Ql8vguNOI8vveL9kpuNGIb2MMaiJEBxeVxeJmnzQvrwpUczccBPpTZ7BC+UNw7RpMDs96RBBGn2+QlfTeAB+5xRkXuIbnSG34Ug47rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMqJXs3a; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMqJXs3a"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5d81b08d6f2so1890230a12.0;
+        Fri, 19 Apr 2024 16:38:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713569884; x=1714174684; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+Gwf216v3KsZJ4qYiZY7FSP0+gRY5Pp5+VIKVDcURGo=;
+        b=aMqJXs3aJCXUjSloLPP43Y8B9V/skGAWey7uaqCjERqtyLEcXNT4wKxKooa51jFG36
+         egTGvL6C2XTFF649LbY8OiY/vaFNXH80oTPhbeXNeU9X5Y+4nzCrdmm36+T5+iqMsFm6
+         FjYR8HPVw1ncqFuZNGc9u4oZ5Py7szNOpC064ufC6YAEsjcqIGSCY78zu46BSO8JcHIz
+         9tOQTWbztvYF3iUQP7q++Vf9lXx7G+gAPHOFhxnn+9OtXfi3kFhIkFjrgIeDAuMVdv9h
+         kjjYL3idwOa8JjOId1f84knb4KwhKyFsOsAfkR7BTfvImOf9TQd9JkrHUs4dXW1asJzi
+         Yazg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713569884; x=1714174684;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Gwf216v3KsZJ4qYiZY7FSP0+gRY5Pp5+VIKVDcURGo=;
+        b=dFqBcg8LS2a74xYV1lVIzdXaaACVfemPy1hZhOK2IuHSdEXmvFkyBegaAyPVplQ4kU
+         oeBZ5vAR9yq6iGhjuBWpjNMNlbjsuSu8FhjjxbQiQYDJVKZi/o9IbMsHtWsEHtyCmvKP
+         Qm2f/rFCD8qpXG3VNnUPftMefWvCCSCZG/MFqbMLt+sUTGyYmkSGeydomy5dKXnRAZlX
+         pH8/3wNBzku7W79TnhmBZe0+F84VETTE76vYAxfcHNHNLJ/wruxnfrEY3Fpk0drnsP6K
+         Hu64RrVT4m+ki1OZSbW301xG5u/lNkWH4bgZLOIevFc3/1JDB9FYJdZpV5Xc+PG8wqcF
+         +F9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWOsudlFklr1r53tPyT4IOVWz8SN+wPAcLIRLudUZ4xYRpVWyBYUDARtk1l+68sAY8Wod5bfkEHPVJ//+SIPgdkNbC2LtkMMjE4JG0mCtNfQiKfrOA2ciTeuijiKI7n2uJwG20Zhay4TDBuN6fWE8nnTI3d8egiVXqkJgfrDngnOZhiKwFYvwwabLAxJ0JxydJgnNPHZY2R6Eq6Y+vvOIGEW7uHYUM1hBKAbNDACZm9FLtOMYxXF7kWlBlUzH5tXChR1/HZIRpS
+X-Gm-Message-State: AOJu0YwvnNLQXAonkMwKSN//NFsAty+R1x8X1Jzmmq9EYY1t9rJcoqiU
+	g9t7fo2KsoBNhVceYNiwQGgeBOhWPLh091zE6QbK3KRMdiFyfgvc
+X-Google-Smtp-Source: AGHT+IEhgR3QjGKkzYQX0nCs1qVhmVHFCFFjDZfmUk9cI+PUJECL3IHXfzZjmkA8FR3ezYxS5oYc7g==
+X-Received: by 2002:a05:6a20:12ce:b0:1a9:c4ca:dc74 with SMTP id v14-20020a056a2012ce00b001a9c4cadc74mr4557459pzg.5.1713569884211;
+        Fri, 19 Apr 2024 16:38:04 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id gl17-20020a17090b121100b002a2c905158asm2438010pjb.46.2024.04.19.16.38.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Apr 2024 16:38:03 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 19 Apr 2024 16:38:01 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Kees Cook <keescook@chromium.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Marco Pagani <marpagan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thara Gopinath <tgopinath@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 7/7] kunit: Add tests for fault
+Message-ID: <b70332b0-3e55-4375-935f-35ef3167a151@roeck-us.net>
+References: <20240319104857.70783-1-mic@digikod.net>
+ <20240319104857.70783-8-mic@digikod.net>
+ <928249cc-e027-4f7f-b43f-502f99a1ea63@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, corbet <corbet@lwn.net>,
- paul <paul@paul-moore.com>, jmorris <jmorris@namei.org>,
- serge <serge@hallyn.com>, akpm <akpm@linux-foundation.org>,
- shuah <shuah@kernel.org>, "mcoquelin.stm32" <mcoquelin.stm32@gmail.com>,
- "alexandre.torgue" <alexandre.torgue@foss.st.com>, mic <mic@digikod.net>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
- linux-doc <linux-doc@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-kselftest <linux-kselftest@vger.kernel.org>, bpf
- <bpf@vger.kernel.org>, zohar <zohar@linux.ibm.com>,
- "dmitry.kasatkin" <dmitry.kasatkin@gmail.com>,
- linux-integrity <linux-integrity@vger.kernel.org>,
- wufan <wufan@linux.microsoft.com>, pbrobinson <pbrobinson@gmail.com>,
- zbyszek <zbyszek@in.waw.pl>, hch <hch@lst.de>, mjg59 <mjg59@srcf.ucam.org>,
- pmatilai <pmatilai@redhat.com>, jannh <jannh@google.com>,
- dhowells <dhowells@redhat.com>, jikos <jikos@kernel.org>,
- mkoutny <mkoutny@suse.com>, ppavlu <ppavlu@suse.com>,
- "petr.vorel" <petr.vorel@gmail.com>, mzerqung <mzerqung@0pointer.de>,
- kgold <kgold@linux.ibm.com>
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <Zh4DQ7RGxtWCam8K@archie.me>
- <66201cd2.df0a0220.a8ad5.6fbaSMTPIN_ADDED_BROKEN@mx.google.com>
- <fe361a16-1536-4c92-894a-0b24258384bf@gmail.com>
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <fe361a16-1536-4c92-894a-0b24258384bf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwBHgCRh_iJmFsaOBg--.38143S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYj7kC6x804xWl14x267AKxVWrJVCq3wAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjc
-	xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7
-	UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBF1jj5iejAAAsv
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <928249cc-e027-4f7f-b43f-502f99a1ea63@roeck-us.net>
 
-On 4/19/2024 4:18 AM, Bagas Sanjaya wrote:
-> On 4/18/24 02:02, Roberto Sassu wrote:
->>
->> 72374d71c315
->>
->> Roberto
->>
+On Fri, Apr 19, 2024 at 03:33:49PM -0700, Guenter Roeck wrote:
+> Hi,
 > 
-> Still FTA (fail to apply), unfortunately.
+> On Tue, Mar 19, 2024 at 11:48:57AM +0100, Mickaël Salaün wrote:
+> > Add a test case to check NULL pointer dereference and make sure it would
+> > result as a failed test.
+> > 
+> > The full kunit_fault test suite is marked as skipped when run on UML
+> > because it would result to a kernel panic.
+> > 
+> > Tested with:
+> > ./tools/testing/kunit/kunit.py run --arch x86_64 kunit_fault
+> > ./tools/testing/kunit/kunit.py run --arch arm64 \
+> >   --cross_compile=aarch64-linux-gnu- kunit_fault
+> > 
+> 
+> What is the rationale for adding those tests unconditionally whenever
+> CONFIG_KUNIT_TEST is enabled ? This completely messes up my test system
+> because it concludes that it is pointless to continue testing
+> after the "Unable to handle kernel NULL pointer dereference" backtrace.
+> At the same time, it is all or nothing, meaning I can not disable
+> it but still run other kunit tests.
+> 
 
-Sorry, looks like I didn't regenerate the patches after rebasing to the 
-latest kernel. The current ones are still based on 6.8-rc3, but they 
-still require some additional patches that I picked up.
+Oh, never mind. I just disabled CONFIG_KUNIT_TEST in my test bed
+to "solve" the problem. I'll take that as one of those "unintended
+consequences" items: Instead of more tests, there are fewer.
 
-Will send the new version with Jarkko suggestions implemented.
-
-Thanks
-
-Roberto
-
-
+Guenter
