@@ -1,320 +1,119 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1B21F954;
-	Fri, 19 Apr 2024 20:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC2884FCE;
+	Fri, 19 Apr 2024 22:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713557437; cv=none; b=RBZX7U8vErAeTow9K4ATicaLawTc5XC+qYzTdij2i5gpfqMQJla/VDX2NKquE+eHNVcK7wFwDvJBTCZT+6rARHSSYOa/fviw/xipp7dVIvAB4xILuqoWHFfHuHmsJYJoogdZ1qY9Sbp55N/U+i4YoRIFCZyv3mVKE1qmnIKjFhA=
+	t=1713566031; cv=none; b=G+JpwCBvFW/BW4ciiglFpiCA20fL7fENB0Bv/z9Wa8igiy/wcSKLQVv7ikrmBKnR3O+OwUg7xjDvnpRJlVh+E4XYK3wz6wFcptn5f3JV3gl/lGCGurDrk9RRjo04H4l1e+Kg65XUIKZmBuolYu5GcepjAld62FYS/+1QtUzgJSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713557437; c=relaxed/simple;
-	bh=ni415vXBSQWpxHe1qmv5NC8IZZQ/8VhKbkgw8RHVt20=;
+	s=arc-20240116; t=1713566031; c=relaxed/simple;
+	bh=xGwEhGJ3/O7MuoC3DWoEHmTJl0/fQhja8kxeNtaw8rY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOxVh3LWFUh/QS2ZcjJ0OZBGZPrgA0JThPizfFLgXMYVoxsEvyWf+xtlfgrMTQi1U1QX4exoLfzWvNC+U+2fKfFSvtU2Pvu/DcWctco2bLx1HWKRtMh5EovQtObkTGmjjUyr34IDi5/YtSELgQtRvwifiGysy5hzA8nOeiD58nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=jJDRjB6h; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCnymFzRfrVM9xU1vd3HE3JYvoTKAdytSK0NHaJp/1u6H5XfG0FA03olWuSlhhuST2rW+gw2HpVDINvC8eHiTjLkUl/kMugiw2yoghQtumtKflon+17SaYo9oJI969Q4tSpdw6rPPLWu3NTI4xJA9rQWf8DNZ6FjyFunJpX4eG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCkMY6iL; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="jJDRjB6h"
-Date: Fri, 19 Apr 2024 23:01:10 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1713556871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAdcR3T0V7JcxVXoeeTyJ39EbDgLKFV2olueuASaQ9Y=;
-	b=jJDRjB6h4NzzcxMljJYYa1PsI5ExoTfIrt0m4No5jVaNOWHVPf2USdZKZTCYLQPuIdpfnA
-	91brI4cegABsQa6HljAjr4nhHsKZEbM4Mab4TAkaY7uz0nu8uydyBGs46cVmv+3nLxhYT4
-	kzV4ygqlKUxXOytErs2mPPwFu5kvA98=
-From: Andrey Kalachev <kalachev@swemel.ru>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>,
-	andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-	daniel@iogearbox.net, jmorris@namei.org, john.fastabend@gmail.com,
-	kafai@fb.com, kpsingh@chromium.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	serge@hallyn.com, songliubraving@fb.com,
-	syzkaller-bugs@googlegroups.com, yhs@fb.com, miklos@szeredi.hu,
-	linux-unionfs@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: general protection fault in security_inode_getattr
-Message-ID: <ZiLNhuh0v1F9+lns@ural>
-References: <0000000000008caae305ab9a5318@google.com>
- <ZgrwugCEDH2fLJXK@ural>
- <CAOQ4uxj4E1_iDn9oeP71sbs01RNs5LojDpuPdvwHyYc55fKHHQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCkMY6iL"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e5c7d087e1so23207325ad.0;
+        Fri, 19 Apr 2024 15:33:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713566029; x=1714170829; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TO5By6VnNS1IaJWTkgMBtokxedo0r6Z5DxfCvgc5tPg=;
+        b=NCkMY6iLpub/8UpUOubUZurTD3u/ZIPMqKlS96sKrmX/s47KtTeBaCtXEWzCJb6/fT
+         a18VjKYZ2oF+qiU8DOA+n6RZ+NO3YA30jOAgWIkmuiz89CMahEK3oTQ7WCH7JxvyDGuj
+         Vxv8merS9xJCM5TW7vElgY7ptw+avBNUKN58LA8rGj5nEuuGeCQuM0qawzyXjYedLiOI
+         mPzIkP3LwouGOd2NcFDN4TUvMxuc++4U4Gwg10jCdv9EkBuE1hm1c5lxKs76hGay4aTC
+         PTt3ty35nprnw7GdlhOTzhWu1Be7NpkXmS2mdbL5cu+TT65fho1YkEIc8vLUuxcieM7T
+         WY3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713566029; x=1714170829;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TO5By6VnNS1IaJWTkgMBtokxedo0r6Z5DxfCvgc5tPg=;
+        b=N/3NP9T8jeJDaHTiEnlbOWfc5aL85SC8YraR0IUkkzlwtJnU0XMc0miPyDFVBz1+Zd
+         yh8qgSYounJ8es86NT4CpRO9a6pqP1sCPX7FxXiG2dxV/uJA5qAT6nXnEqZTYxdxLEnf
+         F7u2a+Jk7uewxbkaMJrPTN5Iz5cN5QWrsz1JdGkB6102EtDCXnbIx66EiznYdNTacmuJ
+         eXy2qcc6sWNYfHLwasPnTUUf/C3Nq9yMQRJizCMay5MPC61/S3S2eTKywevd7tDzLxht
+         JipuTPleO308KnkRKa1AWzdqt1yu8RGFvpW7monlTJRps7fSG9naNsVoULauEXVLtmnl
+         Q4jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTeSKNNfDk/3CA8djVur058udizXXq1epX2Hclg7SraKWGlUYM1oXMUtesbW/LT2o096ITjk9WYTlZQpXolD81UWvhslHi7H482ZWUdSxHG40X3f0jwx5ZH6N8CguuBxcVz0u/qNfJyWOAFx6vRN3WzQUOq4LV+/EBbluhGFSWGyxnDePX9fvOq9Y5fvVgE7vDYDMkPbEbIQIyl+mlXVSMAMVTc/jIbSYe4TptU0WOwxoLRYcwpl9aVH8vhB2C+BaKi8RP0wdg
+X-Gm-Message-State: AOJu0Yypl4e7YehDfQxO5JLM93agQPE2reeHfuYAOCXcuHYEtOwQ5RzD
+	ZKrKJmkY8sBiSujHQ1PkC85H4sM0LBZb1nOJCaYax5NUiM81dgtb
+X-Google-Smtp-Source: AGHT+IG3CF+k9p5pj5EbJuozYcjKdiyPH05OIZbYUOjlkQ2/OvmQOXy9/eTRwDRZ+3SD1f2/CoqXMQ==
+X-Received: by 2002:a17:902:ea05:b0:1e8:9054:1019 with SMTP id s5-20020a170902ea0500b001e890541019mr4551953plg.54.1713566029186;
+        Fri, 19 Apr 2024 15:33:49 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id ba5-20020a170902720500b001e2b4f513e1sm3867179plb.106.2024.04.19.15.33.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Apr 2024 15:33:48 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 19 Apr 2024 15:33:46 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Kees Cook <keescook@chromium.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Marco Pagani <marpagan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thara Gopinath <tgopinath@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Zahra Tarkhani <ztarkhani@microsoft.com>, kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v3 7/7] kunit: Add tests for fault
+Message-ID: <928249cc-e027-4f7f-b43f-502f99a1ea63@roeck-us.net>
+References: <20240319104857.70783-1-mic@digikod.net>
+ <20240319104857.70783-8-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="cXhKTs48z7E85Dwm"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj4E1_iDn9oeP71sbs01RNs5LojDpuPdvwHyYc55fKHHQ@mail.gmail.com>
+In-Reply-To: <20240319104857.70783-8-mic@digikod.net>
 
+Hi,
 
---cXhKTs48z7E85Dwm
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+On Tue, Mar 19, 2024 at 11:48:57AM +0100, Mickaël Salaün wrote:
+> Add a test case to check NULL pointer dereference and make sure it would
+> result as a failed test.
+> 
+> The full kunit_fault test suite is marked as skipped when run on UML
+> because it would result to a kernel panic.
+> 
+> Tested with:
+> ./tools/testing/kunit/kunit.py run --arch x86_64 kunit_fault
+> ./tools/testing/kunit/kunit.py run --arch arm64 \
+>   --cross_compile=aarch64-linux-gnu- kunit_fault
+> 
 
-On Tue, Apr 02, 2024 at 07:01:57PM +0300, Amir Goldstein wrote:
->On Mon, Apr 1, 2024 at 8:43â€¯PM Andrey Kalachev <kalachev@swemel.ru> wrote:
->>
->> On Wed, Jul 29, 2020 at 01:23:18PM -0700, syzbot wrote:
->> >Hello,
->> >
->> >syzbot found the following issue on:
->> >
->> >HEAD commit:    92ed3019 Linux 5.8-rc7
->> >git tree:       upstream
->> >console output: https://syzkaller.appspot.com/x/log.txt?x=140003ac900000
->> >kernel config:  https://syzkaller.appspot.com/x/.config?x=84f076779e989e69
->> >dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
->> >compiler:       gcc (GCC) 10.1.0-syz 20200507
->> >
->> >Unfortunately, I don't have any reproducer for this issue yet.
->> >
->> >IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> >Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
->> >
->> >general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] PREEMPT SMP KASAN
->> >KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
->> >CPU: 0 PID: 9214 Comm: syz-executor.3 Not tainted 5.8.0-rc7-syzkaller #0
->> >Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> >RIP: 0010:d_backing_inode include/linux/dcache.h:549 [inline]
->> >RIP: 0010:security_inode_getattr+0x46/0x140 security/security.c:1276
->> >Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 04 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 60 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
->> >RSP: 0018:ffffc9000d41f638 EFLAGS: 00010206
->> >RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc9000f539000
->> >RDX: 000000000000000c RSI: ffffffff8354f8ee RDI: 0000000000000060
->> >RBP: ffffc9000d41f810 R08: 0000000000000001 R09: ffff88804edc2dc8
->> >R10: 0000000000000000 R11: 00000000000ebc58 R12: ffff888089f10170
->> >R13: ffffc9000d41f810 R14: 00000000000007ff R15: 0000000000000000
->> >FS:  00007f3599717700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
->> >CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >CR2: 0000001b2c12c000 CR3: 0000000099919000 CR4: 00000000001406f0
->> >DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> >DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> >Call Trace:
->> > vfs_getattr+0x22/0x60 fs/stat.c:121
->> > ovl_copy_up_one+0x13b/0x1870 fs/overlayfs/copy_up.c:850
->> > ovl_copy_up_flags+0x14b/0x1d0 fs/overlayfs/copy_up.c:931
->> > ovl_maybe_copy_up+0x140/0x190 fs/overlayfs/copy_up.c:963
->> > ovl_open+0xba/0x270 fs/overlayfs/file.c:147
->> > do_dentry_open+0x501/0x1290 fs/open.c:828
->> > do_open fs/namei.c:3243 [inline]
->> > path_openat+0x1bb9/0x2750 fs/namei.c:3360
->> > do_filp_open+0x17e/0x3c0 fs/namei.c:3387
->> > file_open_name+0x290/0x400 fs/open.c:1124
->> > acct_on+0x78/0x770 kernel/acct.c:207
->> > __do_sys_acct kernel/acct.c:286 [inline]
->> > __se_sys_acct kernel/acct.c:273 [inline]
->> > __x64_sys_acct+0xab/0x1f0 kernel/acct.c:273
->> > do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:384
->> > entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> >RIP: 0033:0x45c369
->> >Code: 8d b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->> >RSP: 002b:00007f3599716c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a3
->> >RAX: ffffffffffffffda RBX: 0000000000000700 RCX: 000000000045c369
->> >RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000440
->> >RBP: 000000000078bf30 R08: 0000000000000000 R09: 0000000000000000
->> >R10: 0000000000000000 R11: 0000000000000246 R12: 000000000078bf0c
->> >R13: 00007ffda41ffbef R14: 00007f35997179c0 R15: 000000000078bf0c
->> >Modules linked in:
->> >---[ end trace d1398a63985d3915 ]---
->> >RIP: 0010:d_backing_inode include/linux/dcache.h:549 [inline]
->> >RIP: 0010:security_inode_getattr+0x46/0x140 security/security.c:1276
->> >Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 04 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 60 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
->> >RSP: 0018:ffffc9000d41f638 EFLAGS: 00010206
->> >RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc9000f539000
->> >RDX: 000000000000000c RSI: ffffffff8354f8ee RDI: 0000000000000060
->> >RBP: ffffc9000d41f810 R08: 0000000000000001 R09: ffff88804edc2dc8
->> >R10: 0000000000000000 R11: 00000000000ebc58 R12: ffff888089f10170
->> >R13: ffffc9000d41f810 R14: 00000000000007ff R15: 0000000000000000
->> >FS:  00007f3599717700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
->> >CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >CR2: 0000000020000440 CR3: 0000000099919000 CR4: 00000000001406f0
->> >DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> >DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> >
->> >
->> >---
->> >This report is generated by a bot. It may contain errors.
->> >See https://goo.gl/tpsmEJ for more information about syzbot.
->> >syzbot engineers can be reached at syzkaller@googlegroups.com.
->> >
->> >syzbot will keep track of this issue. See:
->> >https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->>
->> Hello,
->>
->> I've found that the bug fixed by commit:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0af950f57fefabab628f1963af881e6b9bfe7f38
->> merged with mainline here:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?id=be3c213150dc4370ef211a78d78457ff166eba4e
->>
->> Kernel release 6.5 include the fixed code.
->>
->> Hence, the stable kernels up to 6.5 still affected.
->> I've got early version (4.19.139) from syzbot report, here is the first time when been reported.
->> Maybe previous versions are also affected, I haven't checked it.
->>
->> I've only deal with stable 5.10 and 6.1, here I can confirm the issue.
->>
->> The tracing results showed that GPF caused by the dentry shared between two processes.
->> Suppose we have a regular file `A` onto lower overlayfs layer, metacopy=on.
->> P1 execute link syscall ( `A` link to `B`), P2 do open `B`.
->>
->>    P1          P2
->>
->>    sys_link
->>                sys_open
->>                  ovl_lookup B -- lookup non existent `B`, alloc `B` dentry
->>                    ovl_alloc_entry -- non existent file, zero filled ovl_entry
->>
->>      ovl_link -- link A to B, use same dentry `B`, dentry associated with
->>      `A`, lower layer file now.
->>
->>    sys_link -- return to userspace, zero filled ovl_entry `B` untouched
->>
->>                      ovl_open B, reuse the same dentry `B`
->>                        ovl_copy_up_one
->>                          ovl_path_lower
->>                            ovl_numlower(oe) -- return 0, numlower in zero filled ovl_entry `oe`
->>                          ovl_path_lower -- return zero filled `struct path`
->>                          vfs_getattr(struct path, ..)
->>                            security_inode_getattr(struct path, ...)
->>                              d_backing_inode(path->dentry) -- NULL dereference, GPF
->>
->> Stable kernel v6.1 can be easy fixed by 4 mainline commits transfer:
->>
->> 0af950f57fef ovl: move ovl_entry into ovl_inode
->> 163db0da3515 ovl: factor out ovl_free_entry() and ovl_stack_*() helpers
->> 5522c9c7cbd2 ovl: use ovl_numlower() and ovl_lowerstack() accessors
->> a6ff2bc0be17 ovl: use OVL_E() and OVL_E_FLAGS() accessors
->>
->> Just commit 5522c9c7cbd2 has conflict caused by
->> 4609e1f18e19c ("fs: port ->permission() to pass mnt_idmap").
->> It is enough to change mnt_idmap() call to mnt_user_ns(),
->> in the rejected hunk.
->
->Hi Andrey,
->
->I don't have time to review this backport series, but in my memory,
->these few commits were part of a much larger refactoring and
->I am almost positive that there are fix commits that mention
->Fixes: 0af950f57fef ("ovl: move ovl_entry into ovl_inode") in upstream kernel.
->
->If you do want to backport overlayfs changes to stable kernels, you should
->specify how you tested them and that should include at least running
->the latest fstests overlayfs tests.
->
->Thanks,
->Amir.
+What is the rationale for adding those tests unconditionally whenever
+CONFIG_KUNIT_TEST is enabled ? This completely messes up my test system
+because it concludes that it is pointless to continue testing
+after the "Unable to handle kernel NULL pointer dereference" backtrace.
+At the same time, it is all or nothing, meaning I can not disable
+it but still run other kunit tests.
 
-Hi Amir,
-
-I gave up the idea of making backports series of upstream patches, I just did what Hillf Danton suggested here:
-
-https://groups.google.com/g/syzkaller-bugs/c/xDcxFKSppfE/m/b38Tv7LoAAAJ .
-
-This looks like a more universal solution, suitable for previous kernel versions, especially since the likelihood of such an error occurring is quite low.
-
-I did regression testing with xfstests-dev + unionmount-testsuite on version 5.10.208 and found no additional failures.
-
-Please take a look at the attached patch.
-
-Thanks,
-Andrey. 
-
---cXhKTs48z7E85Dwm
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-ovl-fix-general-protection-fault-in-security_inode_g.patch"
-
-From: Andrey Kalachev <kalachev@swemel.ru>
-Date: Fri, 19 Apr 2024 20:55:10 +0300
-Subject: [PATCH] ovl: fix general protection fault in security_inode_getattr
-
-general protection fault caused by dentry shared between two processes.
-Suppose we have a regular file `A` onto lower overlayfs layer, metacopy=on.
-
-Process P1 execute link syscall ( `A` link to `B`), P2 do open `B`.
-
-P1         |  P2
------------+--------------
-sys_link   |
-           | sys_open
-           |   ovl_lookup B      (1)
-           |     ovl_alloc_entry (2)
-           |
-  ovl_link |                     (3)
-           |
-           |
-sys_link   |                     (4)
-           |
-           |     ovl_open B      (5)
-           |       ovl_copy_up_one
-           |         ovl_path_lower
-           |           ovl_numlower(oe) (6)
-           |         ovl_path_lower     (7)
-           |           vfs_getattr(struct path, ..)
-           |             security_inode_getattr(struct path, ...)
-           |               d_backing_inode(path->dentry)
-
-(1) P2 call ovl_lookup B, lookup non existent file `B`,
-       new `B` dentry allocated.
-(2) P2 call ovl_alloc_entry() in `non existent file` context,
-       return zero filled ovl_entry.
-(3) P1 make hardlink A -> B,
-       now `B` dentry associated with lower layer file `A`.
-(4) P1 return to userspace from `sys_link`,
-       leave ovl_entry `B` unchanged (zeros).
-(5) P2 continue open file behind dentry `B`.
-(6) P2 ovl_numlower(oe) return 0,
-       taken from zero filled ovl_entry `oe`
-(7) P2 ovl_path_lower() return zero filled `struct path`, due numlower=0.
-(8) P2 NULL dereference in d_backing_inode()
-
-Since release v6.5 `ovl_entry` associated with inode and placed into
-the `struct ovl_inode_params`.
-
-Issue fixed at:
-commit 0af950f57fef ("ovl: move ovl_entry into ovl_inode")
-
-Solution, proposed by Hillf Danton, most common and suitable for
-stable kernels before v6.5. The patch code is based on it.
-
-Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/lkml/0000000000008caae305ab9a5318@google.com
-Link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
-Signed-off-by: Andrey Kalachev <kalachev@swemel.ru>
----
- fs/overlayfs/copy_up.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 65ac504595ba..b7352c43b673 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -879,6 +879,13 @@ static int ovl_copy_up_one(struct dentry *parent, struct dentry *dentry,
- 		return -EROFS;
- 
- 	ovl_path_lower(dentry, &ctx.lowerpath);
-+
-+	if (unlikely(!ctx.lowerpath.dentry)) {
-+		/* syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com */
-+		pr_err("prevention GPF in security_inode_getattr()\n");
-+		return -EIO;
-+	}
-+
- 	err = vfs_getattr(&ctx.lowerpath, &ctx.stat,
- 			  STATX_BASIC_STATS, AT_STATX_SYNC_AS_STAT);
- 	if (err)
--- 
-2.30.2
-
-
---cXhKTs48z7E85Dwm--
+Guenter
