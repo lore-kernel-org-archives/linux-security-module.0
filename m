@@ -1,73 +1,74 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3201E1EF1E
-	for <linux-security-module@vger.kernel.org>; Sat, 20 Apr 2024 18:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2BF39FF7
+	for <linux-security-module@vger.kernel.org>; Sat, 20 Apr 2024 18:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713636190; cv=none; b=kI/umDGVnBrvjfXEjTHMw59BU+pMcY/PM7Yy4/Cl0nrPhhlamp8a1KzcKKMeoa9xvK6MTPJuwAjUWpmLlyI677cUVh/bgeROaUDk+lTOMX2ZW4flhBKE9fniTFwN7Xgfbt14TbDRtNq+0p98g4LyvpkWNBtrJjvDNhs6s2ZsLAk=
+	t=1713636372; cv=none; b=fELA0NFkZdFBKBDsOh0uWC+DEUQIvWKjmGbBBzconwfhlZSL3zY7ZS9VhnWVo/bePOX2d6EUXQEuuX0se+bB1ocywqZeI2u9A05TrC+Cy+GsCahemNd7vp8nmobZiUWqLFejxLJATF/fjWx6BiMiNJbGqr3fd+Y9zwpdk6bqjnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713636190; c=relaxed/simple;
-	bh=XD8kIuycNDgPcM0zNdB13KVRClY5a3l1yHaX8uhAPqo=;
+	s=arc-20240116; t=1713636372; c=relaxed/simple;
+	bh=BlUmaU5cCzdfHYaIDu1dOY26l+Y9HZW2UwF8EAjxQ3I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y1iR4YcV6F5u0LuIZba0QCXL6Gd7jg90FNTKBD98RiebiL4BawazSXjgs0GKs79C7imnPnenbMjsMJgQrDQRGC/RbsSTBgpFELnFwuN+Np8kqxuFXY96n93DXcCyFFammahVcAEvJ0iXT1w46hoq/jUb7sKhZp/nPVtXirRe85g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P2ezNuv1; arc=none smtp.client-ip=209.85.218.44
+	 To:Cc:Content-Type; b=rjI2vgZrHbOi8iBAm6gdOGfC9hG3BdffBNj74zwB4UdKIIVm13gez5kS2yHv5D/FAIGoBnc6h2dOv65SR0picS4vgsgvtKJO4htbAY2VdoB8+PWwM0+nec4lBrDkJDkVEUoG6R6IFLyD7Ihs1Sw3p0MIoLWm6w84Okb190WUCYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hjgGdUu3; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P2ezNuv1"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a526d381d2fso724302266b.0
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Apr 2024 11:03:07 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hjgGdUu3"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-516d1ecaf25so4037096e87.2
+        for <linux-security-module@vger.kernel.org>; Sat, 20 Apr 2024 11:06:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1713636186; x=1714240986; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1713636369; x=1714241169; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sqXoO3+h8rGnOZ9lr24FquhSup/PaoI+NzZzYVQGgdM=;
-        b=P2ezNuv1z2gsBck//Cj3gPi+oyxMQHRKkHNoqx2wiIeuOflkn+k5qlVEXkAUQn7QeV
-         UDst2+TFQBIQnpwDDKu51+3ogGs5/CWOOc8VkrYpBuGnVlgnVtGJNgcsaajc8A38hvoi
-         A0mWkQqpG7/eJ4U779PDMQhKxpAuIY0aJIKA0=
+        bh=9q4d+5HJT9JoCSnjfVAkQZ3NFNLdknjcESdIWM7gPdU=;
+        b=hjgGdUu3beaYsUZ9BCmAGD3/1ekEG/+7InKyG8F/b0NHMBCwcuqKW2hXFWn7onKJDI
+         J4FNg91RcZIABf9HN8WEuMyMn/1BM5jnOKUVNKY/TmMBktOHX2uezqlqENsOHoAiDdPe
+         8mzsNd/0ckAuS4E1eG3QuVRKvnFQZgCEtM4Ks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713636186; x=1714240986;
+        d=1e100.net; s=20230601; t=1713636369; x=1714241169;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sqXoO3+h8rGnOZ9lr24FquhSup/PaoI+NzZzYVQGgdM=;
-        b=n/A1H3b3+3lUch+Ot4GGCKA+zMMv9br+sHKbAhRl4jvktJKju8tQq2hMpnyoOkFqCy
-         +u4pZON6y8kesovoqGXT0PsSGSJFXIUzOKDE25i0glN+8/qzpR/b/PEaYfdvhxuBht5v
-         xDdmy3m9jMF0Cbi+a8Zd9kErfmQMLSrvWiqNZbmqIzp9eRzefUxv120VCjvfs6l8A2jl
-         cztOdI6JPC62OD8dHz2HGRFYHQUeWw+vOLAktgt4OIY0YES7RTTUrli4hetg/Wnx44cy
-         9HDgo2unGTsFI4TCdLBy1entz83L7mVmRTJW7mZjAGIFg4C7iVGIEAf63nTxdeOZtPV8
-         6ESg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3oHVJhXA7HowgphwCRaZAQoucf9s41ZPcsQZ7AcbsM6zdXMnedg4UVVT1VBUruHxOISkR/yVxsPOJ9ITzWxaaMS/oUMHVbMYrZ/1g3fStJh+VXbHl
-X-Gm-Message-State: AOJu0Yw9VskCB4moZb/OT5OexN3P01a4qN9G5py+KVhYjtGl8JhCuNZ3
-	tAn0TeSV93dyPPio9eidQeAPAen2QVkYH0xNvi2PbSseXy8Hz5Mn7DuLPUi0owIio3VdWQpShq5
-	et68=
-X-Google-Smtp-Source: AGHT+IFB4q+kJV3klHNwrdKUxa1+ZEyr6Gy53nVIWuTG6OM5recIWF3RtD1bvsOuUskpHYO9vHQgDQ==
-X-Received: by 2002:a17:906:2c06:b0:a52:4246:be8d with SMTP id e6-20020a1709062c0600b00a524246be8dmr5576904ejh.18.1713636186418;
-        Sat, 20 Apr 2024 11:03:06 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id cd9-20020a170906b34900b00a5264576138sm3638308ejb.35.2024.04.20.11.03.05
+        bh=9q4d+5HJT9JoCSnjfVAkQZ3NFNLdknjcESdIWM7gPdU=;
+        b=GYnp171tFAPdv0t5UwQ5vCv7qyJRBnG8hlTc13jrWgGBNEntC5jEQUdqMc5ZKgl4rM
+         8Y0gXhLOqU/7vL5olJg56ssM6ZDT6NrlzDS1Zs+JUZNlsSimltTZKohzDwpE70u+1S6i
+         p13PekAAM+WBUjFjpWxOoo7DnQA1DUPWBuf7nvfuJBzXekh+5+XrXpNTkUeCJLKqlets
+         eHcDUTTLa+9RJy6T+jOFGSttHexlixbe2jMwbf7UJHBGOflPc6MhmA/OXPfrpOArNIk1
+         PVb8XPn/7dhPp8RhbWrBZbqU64u6EWs7BTuZFshhHB7T0oUNf/b+VHzsjnrj9fPu+kQ2
+         Ei2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVEJLLM7afqlMZmWVvXDcCEnqwOkqPZMNgZTtnCdfPcnZ/eA5poV2p6S7e/TcsbU5moSrwYmyBT7HawUyuR+DzjvVaqCHG7Ad5sD53gc6U9RKa38mnj
+X-Gm-Message-State: AOJu0YxFfJnUVMBcbcvpaxlCpjhj5afUxlH7NbjxGqoujV5RKx2y07vx
+	SFlJENPxieSNJihzZArAWqUT26EkM4CLrDVLnTGDrvrx/1nFvcsMvGi/tyoDkcT//t3tXWqe4Iu
+	FBkps4Q==
+X-Google-Smtp-Source: AGHT+IF03rpO/XtcCj9Gm0KUUKSoPL9BPXH1m0CpopMpi4ELQ0MpVBzR7sK2YdeYOctsk8pfQ0v3/Q==
+X-Received: by 2002:ac2:5990:0:b0:519:1503:9566 with SMTP id w16-20020ac25990000000b0051915039566mr3235856lfn.56.1713636368728;
+        Sat, 20 Apr 2024 11:06:08 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id i7-20020a0565123e0700b0051b00322bc0sm52821lfv.151.2024.04.20.11.05.52
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Apr 2024 11:03:05 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56e78970853so6608066a12.0
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Apr 2024 11:03:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXQXccBhHTsev8izyamBzF0/FKerwPdBPv2q/FV1344CRH7VyV2CBHK5BCB62VWAL5nW4zUjWWKPjm1zx+kfYqTXCsJPFI9+e/qCRVzgIOkmWWj9OiP
-X-Received: by 2002:a17:906:5d5:b0:a52:4bde:4999 with SMTP id
- t21-20020a17090605d500b00a524bde4999mr4978012ejt.31.1713636184639; Sat, 20
- Apr 2024 11:03:04 -0700 (PDT)
+        Sat, 20 Apr 2024 11:06:08 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51ae315bb20so870284e87.1
+        for <linux-security-module@vger.kernel.org>; Sat, 20 Apr 2024 11:05:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXe/eS5U0W8WVvbIH1D2HaJeIW0FjkWfFEttBOzr+uV43iYATW1t1dEinc4cJoC2WDxK8d3qxzBQcH/hWcIpXO63NUFWjs9FRMvczLAAgFfVag6TgVq
+X-Received: by 2002:a05:6512:78e:b0:51a:bebb:690c with SMTP id
+ x14-20020a056512078e00b0051abebb690cmr2860885lfr.12.1713636351915; Sat, 20
+ Apr 2024 11:05:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e696e720-0cd3-4505-8469-a94815b39467@I-love.SAKURA.ne.jp> <CAHk-=wjEZvnn51dhhLqBKUd=cuFhbYA47_OyfUOPB-0zKToL7Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wjEZvnn51dhhLqBKUd=cuFhbYA47_OyfUOPB-0zKToL7Q@mail.gmail.com>
+References: <e696e720-0cd3-4505-8469-a94815b39467@I-love.SAKURA.ne.jp>
+ <CAHk-=wjEZvnn51dhhLqBKUd=cuFhbYA47_OyfUOPB-0zKToL7Q@mail.gmail.com> <CAHk-=wjzqaqcicTtWfBtXyytJs1nqjJNved2JFsLVsVLYgVkuQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjzqaqcicTtWfBtXyytJs1nqjJNved2JFsLVsVLYgVkuQ@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 20 Apr 2024 11:02:48 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjzqaqcicTtWfBtXyytJs1nqjJNved2JFsLVsVLYgVkuQ@mail.gmail.com>
-Message-ID: <CAHk-=wjzqaqcicTtWfBtXyytJs1nqjJNved2JFsLVsVLYgVkuQ@mail.gmail.com>
+Date: Sat, 20 Apr 2024 11:05:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjW3PdOZ7PJ+RHUKRc8SqQhcWXCACOvmwBkKUKABHKqwg@mail.gmail.com>
+Message-ID: <CAHk-=wjW3PdOZ7PJ+RHUKRc8SqQhcWXCACOvmwBkKUKABHKqwg@mail.gmail.com>
 Subject: Re: [PATCH v2] tty: n_gsm: restrict tty devices to attach
 To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
@@ -76,31 +77,16 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kerne
 	linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 20 Apr 2024 at 10:34, Linus Torvalds
+On Sat, 20 Apr 2024 at 11:02, Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> Alternatively, we could go the opposite way, and have some flag in the
-> line discipline that says "I can be a console", and just check that in
-> tty_set_ldisc() for the console.
+> Most other normal tty devices just expect ->write() to be called in
+> normal process context, so if we do a line discipline flag, it would
+                                        ^^^^^^^^^^^^^^^^^^^^
+> have to be something like "I'm ok with being called with interrupts
+> disabled", and then the n_gsm ->open function would just check that.
 
-Actually, I take that back. It's not /dev/console that is the problem,
-that just happened to be the one oops I looked at.
+Not line discipline - it would be a 'struct tty_operations' flag
+saying 'my ->write() function is ok with atomic context".
 
-Most other normal tty devices just expect ->write() to be called in
-normal process context, so if we do a line discipline flag, it would
-have to be something like "I'm ok with being called with interrupts
-disabled", and then the n_gsm ->open function would just check that.
-
-So it would end up being just another form of that
-
-  +     if (tty->ops->set_serial == NULL)
-  +             return -EINVAL;
-
-check - but maybe more explicit and prettier.
-
-Because a real serial driver might not be ok with it either, if it
-uses a semaphore or something.
-
-Whatever. I think the 'set_serial' test would at least be an improvement.
-
-            Linus
+             Linus
