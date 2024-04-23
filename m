@@ -1,118 +1,101 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913855FDA6;
-	Tue, 23 Apr 2024 15:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080E21C2A1
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2024 16:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713886041; cv=none; b=ekKg7wh+X+G6v7J1goi6ejO+I43k3Fg54InkNtjkYNtacq1sfjnZC2amYaFaYRrV9pcL9+FQE2aS6Z4sEnjiIZlvAQi3VMzE+Js1B/pZYv/sidBK0VdZYSUM4n00lkWbYqEVXWeRjNo8SOI00I8dOLyRcO9/JtDHiD/NkaFsPdg=
+	t=1713890252; cv=none; b=YB1Da+C0nBcGVFJjpd8CrVMC4KJfSXz4OFo54R+UbomTAHkp2sqOU0bCYIx6EqEx8R0DCC/kEkRzK+x/4kVng66o0wU2csFB/A1jzk9HeTcUkh3ijvadgqWFndxr47cJ9mV4XB+52zbLE+LK8vc+nfAlTOfgpBnbxWBIZcpBQyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713886041; c=relaxed/simple;
-	bh=60Zp/ibynXRNPZ4CWH9Dw8Mps9vbwWnEax5EHe6s0w0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixRe6GADjDFcyckCxZZdNvpsZTWMlEANeMgu5dvbx00BzSLxGWbhRoT2JSUuecIcZP0Yhk6PS3GjhhhTjRxkkBx7pa7qjPSkxjv5LMp0NRZbifzH56ABfCV+T9hoLqrgzOBv4pPET/pqiBYe1+MpQlssca/mVoa18a+yI8eK16Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 43NFQsgp083980;
-	Wed, 24 Apr 2024 00:26:54 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
- Wed, 24 Apr 2024 00:26:54 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 43NFQsoT083976
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 24 Apr 2024 00:26:54 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <563ec0ed-a851-450b-aed6-986f6ea324ca@I-love.SAKURA.ne.jp>
-Date: Wed, 24 Apr 2024 00:26:53 +0900
+	s=arc-20240116; t=1713890252; c=relaxed/simple;
+	bh=bVqr/UHJsQYfjpIFdbjqCtbPtG1Cdn8rAp1ojwEtgqg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OjFdJLCbVvXdC/qhQoearoE+0x/4GaIwJpf5M5REkAtMYcSawohsVYoLCSfUo8xEfS7JIliqS/Xf9h8xgC5hMnimuYLmjdnPrDY+NObsgBred24VrD1JFrNI/wUzAGSsLbvW3h+eVAglhO2WAo1ANVvDIpDiztXrFQ21qiY1tAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VDN4tGw7; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VDN4tGw7"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5193363d255so7834713e87.3
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2024 09:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1713890249; x=1714495049; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xlPNa3LQZABLSUUaNRkv4uhiNmomWFCxtHuSkH0weN8=;
+        b=VDN4tGw7YfKGmooKf1kYsYcMQoe6WEhVySlL1pXpQOxiLrJi6tJfE+r7f9DhBikRZz
+         syiGQWrRGkhaU5q/kkJpQKZMoXRxW/Uzzte6ymzq0gfK7+Om8jR4IlGrS/vLQI1fdMIU
+         hBN9DYIkunPzyRkiCE7Apk9kSlEkb2wVVyZ2Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713890249; x=1714495049;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xlPNa3LQZABLSUUaNRkv4uhiNmomWFCxtHuSkH0weN8=;
+        b=qJY+Xl7q9dtnE1fGn2DReOxam1jh7SFHz1T0Y/LqcdNAgarOj1yiYsaVRn8+RF+68n
+         vOAHnJifndOkT8/tcQKuzP+XyILMjL5d+lcSS8vayLCJk+rV26BOb94WOzNzt9KirZKu
+         hwDO+ZYF9KkINFm+4MxRSO1elQFpr1Ib2ME94LDNfT0jykkgmGCkXmgS3n3qWOoSRKrT
+         3tIyrKjooHWw9aBesosut8tNdzyN8OMSw8ll4EwOcJQKwyIvHAeB62gLgtbMj2lMMHxV
+         43DtoUtoXUqHss3v+Ugc8TG74zYAwDhNF4djMYRf+MMnI75Bj4QF1gm8dthAeRsfQUc1
+         KH5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOk1xglNA9QI3xA9bHF13f3z5EEot89YnznCCavEtsUUzbXiHKQ2Usebq5Jqx5U1A5m9olXLp6ehVY3dr3CGCldTZE7hIChtKQYBP5opJ7yGZ0O4/f
+X-Gm-Message-State: AOJu0Yxg+UjD1+/AyTeKk4VjPvuhCMy/5Njlmx+S8FwLZYKnr6JvGUAO
+	v2GLrWHgeTqdz1jaJgAIvhKI3bEvY0gLGGcfRi0VotNnV3y5nM7HcyrJy1L2TFO15uY6Tmug/v4
+	s+ZwfXg==
+X-Google-Smtp-Source: AGHT+IEsCgckTaAhfFQfhM4Jg9O9j3v109dY3lAWFK2g1WXtwqMlWPiL0WRPGVgBPlTYv0xRPlpnJw==
+X-Received: by 2002:a19:914d:0:b0:516:c696:9078 with SMTP id y13-20020a19914d000000b00516c6969078mr40743lfj.50.1713890248926;
+        Tue, 23 Apr 2024 09:37:28 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id s23-20020a056512203700b00518c86b3eb7sm2076034lfs.80.2024.04.23.09.37.28
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Apr 2024 09:37:28 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51b09c3a111so4131735e87.1
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Apr 2024 09:37:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWDg5hfxMVmt2acKn3syaDTro+P+cR+7llaUPwGkRAT7zW6N8iLTk2MnDqBtMl2S3Pf90FaN108aq8ByJ2F7lBQTuvh9sTCWaOjsC8fddNIgOrw0uac
+X-Received: by 2002:a05:6512:3a93:b0:51b:14f9:3f1d with SMTP id
+ q19-20020a0565123a9300b0051b14f93f1dmr64343lfu.30.1713890248006; Tue, 23 Apr
+ 2024 09:37:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] tty: n_gsm: restrict tty devices to attach
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        "Starke, Daniel" <daniel.starke@siemens.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
 References: <e696e720-0cd3-4505-8469-a94815b39467@I-love.SAKURA.ne.jp>
  <CAHk-=wjEZvnn51dhhLqBKUd=cuFhbYA47_OyfUOPB-0zKToL7Q@mail.gmail.com>
  <CAHk-=wjzqaqcicTtWfBtXyytJs1nqjJNved2JFsLVsVLYgVkuQ@mail.gmail.com>
  <CAHk-=wjW3PdOZ7PJ+RHUKRc8SqQhcWXCACOvmwBkKUKABHKqwg@mail.gmail.com>
  <6103a212-f84f-4dad-9d33-a18235bd970a@I-love.SAKURA.ne.jp>
  <CAHk-=wgjZ0DJgeo5Sk-Kc5vw8TXGuxXftPV79Wv221ncstk1tA@mail.gmail.com>
- <CAHk-=wg+hJ9Y8AKjp9qD7E_-pgBFdWGLiqzi1qth8LNpuST1cA@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHk-=wg+hJ9Y8AKjp9qD7E_-pgBFdWGLiqzi1qth8LNpuST1cA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <CAHk-=wg+hJ9Y8AKjp9qD7E_-pgBFdWGLiqzi1qth8LNpuST1cA@mail.gmail.com> <563ec0ed-a851-450b-aed6-986f6ea324ca@I-love.SAKURA.ne.jp>
+In-Reply-To: <563ec0ed-a851-450b-aed6-986f6ea324ca@I-love.SAKURA.ne.jp>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 23 Apr 2024 09:37:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wge_xT33zVY21rk4Le5xyPitiSFYL=qJ5NNwF-F79PJDg@mail.gmail.com>
+Message-ID: <CAHk-=wge_xT33zVY21rk4Le5xyPitiSFYL=qJ5NNwF-F79PJDg@mail.gmail.com>
+Subject: Re: [PATCH v2] tty: n_gsm: restrict tty devices to attach
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Starke, Daniel" <daniel.starke@siemens.com>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/04/22 1:04, Linus Torvalds wrote:
->> Now, your 'struct tty_operations' flag saying 'my ->write() function is OK with
->> atomic context' is expected to be set to all drivers.
-> 
-> I'm not convinced. The only thing I know is that the comment in
-> question is wrong, and has been wrong for over a decade (and honestly,
-> probably pretty much forever).
-> 
-> So how confident are we that other tty write functions are ok?
-> 
-> Also, since you think that only con_write() has a problem, why the
-> heck are you then testing for ptys etc? From a quick check, the
-> pty->ops->write() function is fine.
+On Tue, 23 Apr 2024 at 08:26, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2024/04/22 1:04, Linus Torvalds wrote:
+> >
+> > Actually, another option would be to just return an error at 'set_ldisc()' time.
+>
+> This patch works for me. You can propose a formal patch.
 
-I tried to make deny-listing as close as allow-listing. But it seems that
-ipw_write() in drivers/tty/ipwireless/tty.c (e.g. /dev/ttyIPWp0 ) does
-sleep as well as con_write() in drivers/tty/vt/vt.c .
+Ok, I wrote a commit message, added your tested-by, and sent it out
 
-I couldn't judge serial_write() in drivers/usb/serial/usb-serial.c (e.g.
-/dev/ttyUSB0 ). But since device number for /dev/ttyIPWp0 is assigned
-dynamically, we can't rely on major/minor for detecting /dev/ttyIPWp0 from
-gsmld_open() side.
+    https://lore.kernel.org/all/20240423163339.59780-1-torvalds@linux-foundation.org/
 
-That is, we need to handle this problem from "struct tty_operations" side
-(like I initially tried).
+let's see if anybody has better ideas, but that patch at least looks
+palatable to me.
 
-
-
-On 2024/04/22 2:18, Linus Torvalds wrote:
-> On Sun, 21 Apr 2024 at 09:04, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> The only option is to *mark* the ones that are atomic. Which was my suggestion.
-
-Since majority of "struct tty_operations"->write() seems to be atomic,
-I prefer updating only ones which cannot be atomic.
-
-> 
-> Actually, another option would be to just return an error at 'set_ldisc()' time.
-> 
-> Sadly, the actual "tty->ops->set_ldisc()" function not only returns
-> 'void' (easy enough to change - there aren't that many of them), but
-> it's called too late after the old ldisc has already been dropped.
-> It's basically a "inform tty about new ldisc" and is not useful for a
-> "is this ok"?
-> 
-> But we could trivially add a "ldisc_ok()" function, and have the vt
-> driver say "I only accept N_TTY".
-> 
-> Something like this ENTIRELY UNTESTED patch.
-> 
-> Again - this is untested, and maybe there are other tty drivers that
-> have issues with the stranger line disciplines, but this at least
-> seems simple and fairly easy to explain why we do what we do..
-
-This patch works for me. You can propose a formal patch.
-
+                  Linus
