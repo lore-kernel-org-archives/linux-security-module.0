@@ -1,420 +1,303 @@
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5670D18EA5;
-	Wed, 24 Apr 2024 02:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B9115EFA8
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Apr 2024 14:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713925561; cv=none; b=qkpkVqyP5cpBVfqynHNpQAxYbtkTITd6KArAEmihPihEwy106w8WhKib666rNGhyUDPDKxMq/iJdOg9em8NbMucejWat6tZSyg3Jb3Wy1+0SstLML/T8KqWjVyjH+K3IBR7QrokOB3nWFigKR37exWIHp0R4zbf9RuBkskswsqA=
+	t=1713969891; cv=none; b=q30IQ78mdM8tsfAh/XrJbeDpW7wk7tsvbM5Ln12ExEqZ70ExgTkjgqc/wN2d/prDlSN3fx7nzQCRIukCKXzu4iLXjAIM7puQhknktIBkH962D4x0M6P+P6Alv2OK5WoF9AOFOzkNu1icvYTMq+SibfdNwzKamqNwGK1pzyhs+mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713925561; c=relaxed/simple;
-	bh=12cvGeFyW2C9I9L9KGqgi5E9+U9Fuod25024OOQY9N8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oe8iF2CaO3qCuJPzvktnu9XP7trCdDUprguZvW+h2Ya8acMwBKC8wacdBVLFbMtfL6I9ovns5TIRVgX5GtILo7S2r0vz1AVXKUzerwv7sqihGzyyeU2iDx/DEBVWKiJQ0uUBeTiUb6fGDTBAYs46JzcNXxR693uKMH/EPsXMQgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VPNBj3qcVz4f3l88;
-	Wed, 24 Apr 2024 10:25:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 5D9CC1A11D9;
-	Wed, 24 Apr 2024 10:25:54 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP3 (Coremail) with SMTP id _Ch0CgC3to6vbShmyUSNKg--.2911S2;
-	Wed, 24 Apr 2024 10:25:52 +0800 (CST)
-Message-ID: <576c7c44-d1b4-42c8-8b6e-2e6b93d7547a@huaweicloud.com>
-Date: Wed, 24 Apr 2024 10:25:51 +0800
+	s=arc-20240116; t=1713969891; c=relaxed/simple;
+	bh=Dr1D4PaXamE/fIZxI8QttBJ1cqsmT4bukST/8+H2VR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sM6aV5gb7qp+mhqdMoLvpMDR04VdtnSDdDcDcQ3XTMIOfCH1CUTIVPgSB0UkuhSpeeKz1J/j/KAOv3P8alTuG5pNWQPDp1dXEgj1MYEYNopShb3ljPepJAM3gt1Twd97PP+ndAXA4mtmXOIVVh+KKHyN3QxTg2sxNmDvVqR0pWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z5vosQ7v; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z5vosQ7v"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713969888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+cGJzC2OaKPh6LL2uCOEsdlII7AYYeru1YEcJ8JSrZQ=;
+	b=Z5vosQ7vSUg/DMArbicpFTzhNxTrG5EtHLHKDardJLbVBKH6Co5XyE4uY7tsNoouSLLTlF
+	1rYT8l6bTyrAZecYCyXBHg/s+uNapBtYvYHgigwF/UoytZYUFh9UCgUl6I7+vKJHgIlSZ/
+	YPQa58fdusVDr88FPs8OyNlHMkV25DM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-tNeyp0BJNQ-2WbKSCjDXeQ-1; Wed, 24 Apr 2024 10:44:45 -0400
+X-MC-Unique: tNeyp0BJNQ-2WbKSCjDXeQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9C1C8811002;
+	Wed, 24 Apr 2024 14:44:44 +0000 (UTC)
+Received: from dcaratti.users.ipa.redhat.com (unknown [10.45.225.242])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id BC93B200E290;
+	Wed, 24 Apr 2024 14:44:42 +0000 (UTC)
+From: Davide Caratti <dcaratti@redhat.com>
+To: Paul Moore <paul@paul-moore.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Xiumei Mu <xmu@redhat.com>
+Subject: [PATCH net v2] netlabel: fix RCU annotation for IPv4 options on socket creation
+Date: Wed, 24 Apr 2024 16:43:40 +0200
+Message-ID: <c1ba274b19f6d1399636d018333d14a032d05454.1713967592.git.dcaratti@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 07/11] bpf: Fix a false rejection caused by
- AND operation
-Content-Language: en-US
-To: Yonghong Song <yonghong.song@linux.dev>,
- Xu Kuohai <xukuohai@huaweicloud.com>, Eduard Zingerman <eddyz87@gmail.com>,
- bpf@vger.kernel.org, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
- Brendan Jackman <jackmanb@chromium.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>
-References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
- <20240411122752.2873562-8-xukuohai@huaweicloud.com>
- <e62e2971301ca7f2e9eb74fc500c520285cad8f5.camel@gmail.com>
- <f80991aa-3a49-451a-9a82-ac57982dcb28@huaweicloud.com>
- <bdc84c6c-7415-4b84-a883-1988cb5f77d1@linux.dev>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <bdc84c6c-7415-4b84-a883-1988cb5f77d1@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgC3to6vbShmyUSNKg--.2911S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3uFyfXr48WF1fAr4xuryrCrg_yoW8Wr4DCo
-	WFgr47Aw4FqF18GF1qy34qqr1Yg3W7Grn7JryUJFnxGF1jvw4UX348JrW5JayaqF18Wr1D
-	C347tr95AFyUJFn3n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUYz7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
-	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
-	x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
-	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoj
-	jgUUUUU
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On 4/24/2024 5:55 AM, Yonghong Song wrote:
-> 
-> On 4/20/24 1:33 AM, Xu Kuohai wrote:
->> On 4/20/2024 7:00 AM, Eduard Zingerman wrote:
->>> On Thu, 2024-04-11 at 20:27 +0800, Xu Kuohai wrote:
->>>> From: Xu Kuohai <xukuohai@huawei.com>
->>>>
->>>> With lsm return value check, the no-alu32 version test_libbpf_get_fd_by_id_opts
->>>> is rejected by the verifier, and the log says:
->>>>
->>>>    0: R1=ctx() R10=fp0
->>>>    ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
->>>>    0: (b7) r0 = 0                        ; R0_w=0
->>>>    1: (79) r2 = *(u64 *)(r1 +0)
->>>>    func 'bpf_lsm_bpf_map' arg0 has btf_id 916 type STRUCT 'bpf_map'
->>>>    2: R1=ctx() R2_w=trusted_ptr_bpf_map()
->>>>    ; if (map != (struct bpf_map *)&data_input) @ test_libbpf_get_fd_by_id_opts.c:29
->>>>    2: (18) r3 = 0xffff9742c0951a00       ; R3_w=map_ptr(map=data_input,ks=4,vs=4)
->>>>    4: (5d) if r2 != r3 goto pc+4         ; R2_w=trusted_ptr_bpf_map() R3_w=map_ptr(map=data_input,ks=4,vs=4)
->>>>    ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
->>>>    5: (79) r0 = *(u64 *)(r1 +8)          ; R0_w=scalar() R1=ctx()
->>>>    ; if (fmode & FMODE_WRITE) @ test_libbpf_get_fd_by_id_opts.c:32
->>>>    6: (67) r0 <<= 62                     ; R0_w=scalar(smax=0x4000000000000000,umax=0xc000000000000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xc000000000000000))
->>>>    7: (c7) r0 s>>= 63                    ; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
->>>>    ;  @ test_libbpf_get_fd_by_id_opts.c:0
->>>>    8: (57) r0 &= -13                     ; R0_w=scalar(smax=0x7ffffffffffffff3,umax=0xfffffffffffffff3,smax32=0x7ffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
->>>>    ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
->>>>    9: (95) exit
->>>>
->>>> And here is the C code of the prog.
->>>>
->>>> SEC("lsm/bpf_map")
->>>> int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode)
->>>> {
->>>>     if (map != (struct bpf_map *)&data_input)
->>>>         return 0;
->>>>
->>>>     if (fmode & FMODE_WRITE)
->>>>         return -EACCES;
->>>>
->>>>     return 0;
->>>> }
->>>>
->>>> It is clear that the prog can only return either 0 or -EACCESS, and both
->>>> values are legal.
->>>>
->>>> So why is it rejected by the verifier?
->>>>
->>>> The verifier log shows that the second if and return value setting
->>>> statements in the prog is optimized to bitwise operations "r0 s>>= 63"
->>>> and "r0 &= -13". The verifier correctly deduces that the the value of
->>>> r0 is in the range [-1, 0] after verifing instruction "r0 s>>= 63".
->>>> But when the verifier proceeds to verify instruction "r0 &= -13", it
->>>> fails to deduce the correct value range of r0.
->>>>
->>>> 7: (c7) r0 s>>= 63                    ; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
->>>> 8: (57) r0 &= -13                     ; R0_w=scalar(smax=0x7ffffffffffffff3,umax=0xfffffffffffffff3,smax32=0x7ffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
->>>>
->>>> So why the verifier fails to deduce the result of 'r0 &= -13'?
->>>>
->>>> The verifier uses tnum to track values, and the two ranges "[-1, 0]" and
->>>> "[0, -1ULL]" are encoded to the same tnum. When verifing instruction
->>>> "r0 &= -13", the verifier erroneously deduces the result from
->>>> "[0, -1ULL] AND -13", which is out of the expected return range
->>>> [-4095, 0].
->>>>
->>>> To fix it, this patch simply adds a special SCALAR32 case for the
->>>> verifier. That is, when the source operand of the AND instruction is
->>>> a constant and the destination operand changes from negative to
->>>> non-negative and falls in range [-256, 256], deduce the result range
->>>> by enumerating all possible AND results.
->>>>
->>>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
->>>> ---
->>>
->>> Hello,
->>>
->>> Sorry for the delay, I had to think about this issue a bit.
->>> I found the clang transformation that generates the pattern this patch
->>> tries to handle.
->>> It is located in DAGCombiner::SimplifySelectCC() method (see [1]).
->>> The transformation happens as a part of DAG to DAG rewrites
->>> (LLVM uses several internal representations:
->>>   - generic optimizer uses LLVM IR, most of the work is done
->>>     using this representation;
->>>   - before instruction selection IR is converted to Selection DAG,
->>>     some optimizations are applied at this stage,
->>>     all such optimizations are a set of pattern replacements;
->>>   - Selection DAG is converted to machine code, some optimizations
->>>     are applied at the machine code level).
->>>
->>> Full pattern is described as follows:
->>>
->>>    // fold (select_cc seteq (and x, y), 0, 0, A) -> (and (sra (shl x)) A)
->>>    // where y is has a single bit set.
->>>    // A plaintext description would be, we can turn the SELECT_CC into an AND
->>>    // when the condition can be materialized as an all-ones register.  Any
->>>    // single bit-test can be materialized as an all-ones register with
->>>    // shift-left and shift-right-arith.
->>>
->>> For this particular test case the DAG is converted as follows:
->>>
->>>                      .---------------- lhs         The meaning of this select_cc is:
->>>                      |        .------- rhs         `lhs == rhs ? true value : false value`
->>>                      |        | .----- true value
->>>                      |        | |  .-- false value
->>>                      v        v v  v
->>>    (select_cc seteq (and X 2) 0 0 -13)
->>>                            ^
->>> ->                        '---------------.
->>>    (and (sra (sll X 62) 63)                |
->>>         -13)                               |
->>>                                            |
->>> Before pattern is applied, it checks that second 'and' operand has
->>> only one bit set, (which is true for '2').
->>>
->>> The pattern itself generates logical shift left / arithmetic shift
->>> right pair, that ensures that result is either all ones (-1) or all
->>> zeros (0). Hence, applying 'and' to shifts result and false value
->>> generates a correct result.
->>>
->>
->> Thanks for your detailed and invaluable explanation!
-> 
-> Thanks Eduard for detailed explanation. It looks like we could
-> resolve this issue without adding too much complexity to verifier.
-> Also, this code pattern above seems generic enough to be worthwhile
-> with verifier change.
-> 
-> Kuohai, please added detailed explanation (as described by Eduard)
-> in the commit message.
->
+Xiumei reports the following splat when netlabel and TCP socket are used:
 
-Sure, already added, the commit message and the change now is like this:
+ =============================
+ WARNING: suspicious RCU usage
+ 6.9.0-rc2+ #637 Not tainted
+ -----------------------------
+ net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
 
+ other info that might help us debug this:
+
+ rcu_scheduler_active = 2, debug_locks = 1
+ 1 lock held by ncat/23333:
+  #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setattr+0x25/0x1b0
+
+ stack backtrace:
+ CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
+ Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  07/26/2013
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0xa9/0xc0
+  lockdep_rcu_suspicious+0x117/0x190
+  cipso_v4_sock_setattr+0x1ab/0x1b0
+  netlbl_sock_setattr+0x13e/0x1b0
+  selinux_netlbl_socket_post_create+0x3f/0x80
+  selinux_socket_post_create+0x1a0/0x460
+  security_socket_post_create+0x42/0x60
+  __sock_create+0x342/0x3a0
+  __sys_socket_create.part.22+0x42/0x70
+  __sys_socket+0x37/0xb0
+  __x64_sys_socket+0x16/0x20
+  do_syscall_64+0x96/0x180
+  ? do_user_addr_fault+0x68d/0xa30
+  ? exc_page_fault+0x171/0x280
+  ? asm_exc_page_fault+0x22/0x30
+  entry_SYSCALL_64_after_hwframe+0x71/0x79
+ RIP: 0033:0x7fbc0ca3fc1b
+ Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
+ RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
+ RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
+ RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
+ RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
+
+R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
+ R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
+  </TASK>
+
+The current implementation of cipso_v4_sock_setattr() replaces IP options
+under the assumption that the caller holds the socket lock; however, such
+assumption is not true, nor needed, in selinux_socket_post_create() hook.
+
+Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
+condition, except selinux_socket_post_create() _ where such condition can
+safely be set as true even without holding the socket lock.
+While at it: use rcu_replace_pointer() instead of open coding, and remove
+useless NULL check of 'old' before kfree_rcu(old, ...).
+
+v2:
+ - pass lockdep_sock_is_held() through a boolean variable in the stack
+   (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
+ - use rcu_replace_pointer() instead of rcu_dereference_protected() +
+   rcu_assign_pointer()
+ - remove NULL check of 'old' before kfree_rcu()
+
+Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
 ---
+ include/net/cipso_ipv4.h     |  6 ++++--
+ include/net/netlabel.h       |  6 ++++--
+ net/ipv4/cipso_ipv4.c        | 13 ++++++-------
+ net/netlabel/netlabel_kapi.c |  9 ++++++---
+ security/selinux/netlabel.c  |  5 ++++-
+ security/smack/smack_lsm.c   |  3 ++-
+ 6 files changed, 26 insertions(+), 16 deletions(-)
 
-     bpf: Fix a false rejection caused by AND operation
-
-     With lsm return value check, the no-alu32 version test_libbpf_get_fd_by_id_opts
-     is rejected by the verifier, and the log says:
-
-     0: R1=ctx() R10=fp0
-     ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
-     0: (b7) r0 = 0                        ; R0_w=0
-     1: (79) r2 = *(u64 *)(r1 +0)
-     func 'bpf_lsm_bpf_map' arg0 has btf_id 916 type STRUCT 'bpf_map'
-     2: R1=ctx() R2_w=trusted_ptr_bpf_map()
-     ; if (map != (struct bpf_map *)&data_input) @ test_libbpf_get_fd_by_id_opts.c:29
-     2: (18) r3 = 0xffff9742c0951a00       ; R3_w=map_ptr(map=data_input,ks=4,vs=4)
-     4: (5d) if r2 != r3 goto pc+4         ; R2_w=trusted_ptr_bpf_map() R3_w=map_ptr(map=data_input,ks=4,vs=4)
-     ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
-     5: (79) r0 = *(u64 *)(r1 +8)          ; R0_w=scalar() R1=ctx()
-     ; if (fmode & FMODE_WRITE) @ test_libbpf_get_fd_by_id_opts.c:32
-     6: (67) r0 <<= 62                     ; R0_w=scalar(smax=0x4000000000000000,umax=0xc000000000000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xc000000000000000))
-     7: (c7) r0 s>>= 63                    ; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
-     ;  @ test_libbpf_get_fd_by_id_opts.c:0
-     8: (57) r0 &= -13                     ; R0_w=scalar(smax=0x7ffffffffffffff3,umax=0xfffffffffffffff3,smax32=0x7ffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
-     ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
-     9: (95) exit
-
-     And here is the C code of the prog.
-
-     SEC("lsm/bpf_map")
-     int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode)
-     {
-         if (map != (struct bpf_map *)&data_input)
-                 return 0;
-
-         if (fmode & FMODE_WRITE)
-                 return -EACCES;
-
-         return 0;
-     }
-
-     It is clear that the prog can only return either 0 or -EACCESS, and both
-     values are legal.
-
-     So why is it rejected by the verifier?
-
-     The verifier log shows that the second if and return value setting
-     statements in the prog is optimized to bitwise operations "r0 s>>= 63"
-     and "r0 &= -13". The verifier correctly deduces that the the value of
-     r0 is in the range [-1, 0] after verifing instruction "r0 s>>= 63".
-     But when the verifier proceeds to verify instruction "r0 &= -13", it
-     fails to deduce the correct value range of r0.
-
-     7: (c7) r0 s>>= 63                    ; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
-     8: (57) r0 &= -13                     ; R0_w=scalar(smax=0x7ffffffffffffff3,umax=0xfffffffffffffff3,smax32=0x7ffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
-
-     So why the verifier fails to deduce the result of 'r0 &= -13'?
-
-     The verifier uses tnum to track values, and the two ranges "[-1, 0]" and
-     "[0, -1ULL]" are encoded to the same tnum. When verifing instruction
-     "r0 &= -13", the verifier erroneously deduces the result from
-     "[0, -1ULL] AND -13", which is out of the expected return range
-     [-4095, 0].
-
-     As explained by Eduard in [0], the clang transformation that generates this
-     pattern is located in DAGCombiner::SimplifySelectCC() method (see [1]).
-
-     The transformation happens as a part of DAG to DAG rewrites
-     (LLVM uses several internal representations:
-      - generic optimizer uses LLVM IR, most of the work is done
-        using this representation;
-      - before instruction selection IR is converted to Selection DAG,
-        some optimizations are applied at this stage,
-        all such optimizations are a set of pattern replacements;
-      - Selection DAG is converted to machine code, some optimizations
-        are applied at the machine code level).
-
-     Full pattern is described as follows:
-
-       // fold (select_cc seteq (and x, y), 0, 0, A) -> (and (sra (shl x)) A)
-       // where y is has a single bit set.
-       // A plaintext description would be, we can turn the SELECT_CC into an AND
-       // when the condition can be materialized as an all-ones register.  Any
-       // single bit-test can be materialized as an all-ones register with
-       // shift-left and shift-right-arith.
-
-     For this particular test case the DAG is converted as follows:
-
-                         .---------------- lhs         The meaning of this select_cc is:
-                         |        .------- rhs         `lhs == rhs ? true value : false value`
-                         |        | .----- true value
-                         |        | |  .-- false value
-                         v        v v  v
-       (select_cc seteq (and X 2) 0 0 -13)
-                               ^
-     ->                        '---------------.
-       (and (sra (sll X 62) 63)                |
-            -13)                               |
-                                               |
-     Before pattern is applied, it checks that second 'and' operand has
-     only one bit set, (which is true for '2').
-
-     The pattern itself generates logical shift left / arithmetic shift
-     right pair, that ensures that result is either all ones (-1) or all
-     zeros (0). Hence, applying 'and' to shifts result and false value
-     generates a correct result.
-
-     As suggested by Eduard, this patch makes a special case for source
-     or destination register of '&=' operation being in range [-1, 0].
-
-     Meaning that one of the '&=' operands is either:
-     - all ones, in which case the counterpart is the result of the operation;
-     - all zeros, in which case zero is the result of the operation.
-
-     And MIN and MAX values could be derived based on above two observations.
-
-     [0] https://lore.kernel.org/bpf/e62e2971301ca7f2e9eb74fc500c520285cad8f5.camel@gmail.com/
-     [1] https://github.com/llvm/llvm-project/blob/4523a267829c807f3fc8fab8e5e9613985a51565/llvm/lib/CodeGen/SelectionDAG/DAGCombiner.cpp
-
-     Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
-     Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 640747b53745..30c551d39329 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -13374,6 +13374,24 @@ static void scalar32_min_max_and(struct bpf_reg_state *dst_reg,
-         dst_reg->u32_min_value = var32_off.value;
-         dst_reg->u32_max_value = min(dst_reg->u32_max_value, umax_val);
-
-+       /* Special case: src_reg is known and dst_reg is in range [-1, 0] */
-+       if (src_known &&
-+               dst_reg->s32_min_value == -1 && dst_reg->s32_max_value == 0 &&
-+               dst_reg->smin_value == -1 && dst_reg->smax_value == 0) {
-+               dst_reg->s32_min_value = min_t(s32, src_reg->s32_min_value, 0);
-+               dst_reg->s32_max_value = max_t(s32, src_reg->s32_min_value, 0);
-+               return;
-+       }
-+
-+       /* Special case: dst_reg is known and src_reg is in range [-1, 0] */
-+       if (dst_known &&
-+               src_reg->s32_min_value == -1 && src_reg->s32_max_value == 0 &&
-+               src_reg->smin_value == -1 && src_reg->smax_value == 0) {
-+               dst_reg->s32_min_value = min_t(s32, dst_reg->s32_min_value, 0);
-+               dst_reg->s32_max_value = max_t(s32, dst_reg->s32_min_value, 0);
-+               return;
-+       }
-+
-         /* Safe to set s32 bounds by casting u32 result into s32 when u32
-          * doesn't cross sign boundary. Otherwise set s32 bounds to unbounded.
-          */
-@@ -13404,6 +13422,24 @@ static void scalar_min_max_and(struct bpf_reg_state *dst_reg,
-         dst_reg->umin_value = dst_reg->var_off.value;
-         dst_reg->umax_value = min(dst_reg->umax_value, umax_val);
-
-+       /* Special case: src_reg is known and dst_reg is in range [-1, 0] */
-+       if (src_known &&
-+               dst_reg->smin_value == -1 && dst_reg->smax_value == 0 &&
-+               dst_reg->s32_min_value == -1 && dst_reg->s32_max_value == 0) {
-+               dst_reg->smin_value = min_t(s64, src_reg->smin_value, 0);
-+               dst_reg->smax_value = max_t(s64, src_reg->smin_value, 0);
-+               return;
-+       }
-+
-+       /* Special case: dst_reg is known and src_reg is in range [-1, 0] */
-+       if (dst_known &&
-+               src_reg->smin_value == -1 && src_reg->smax_value == 0 &&
-+               src_reg->s32_min_value == -1 && src_reg->s32_max_value == 0) {
-+               dst_reg->smin_value = min_t(s64, dst_reg->smin_value, 0);
-+               dst_reg->smax_value = max_t(s64, dst_reg->smin_value, 0);
-+               return;
-+       }
-+
-         /* Safe to set s64 bounds by casting u64 result into s64 when u64
-          * doesn't cross sign boundary. Otherwise set s64 bounds to unbounded.
-          */
-
->>
->>> In my opinion the approach taken by this patch is sub-optimal:
->>> - 512 iterations is too much;
->>> - this does not cover all code that could be generated by the above
->>>    mentioned LLVM transformation
->>>    (e.g. second 'and' operand could be 1 << 16).
->>>
->>> Instead, I suggest to make a special case for source or dst register
->>> of '&=' operation being in range [-1,0].
->>> Meaning that one of the '&=' operands is either:
->>> - all ones, in which case the counterpart is the result of the operation;
->>> - all zeros, in which case zero is the result of the operation;
->>> - derive MIN and MAX values based on above two observations.
->>>
->>
->> Totally agree, I'll cook a new patch as you suggested.
->>
->>> [1] https://github.com/llvm/llvm-project/blob/4523a267829c807f3fc8fab8e5e9613985a51565/llvm/lib/CodeGen/SelectionDAG/DAGCombiner.cpp#L5391
->>>
->>> Best regards,
->>> Eduard
->>
->>
-> 
+diff --git a/include/net/cipso_ipv4.h b/include/net/cipso_ipv4.h
+index 53dd7d988a2d..5f8193a9808c 100644
+--- a/include/net/cipso_ipv4.h
++++ b/include/net/cipso_ipv4.h
+@@ -183,7 +183,8 @@ int cipso_v4_getattr(const unsigned char *cipso,
+ 		     struct netlbl_lsm_secattr *secattr);
+ int cipso_v4_sock_setattr(struct sock *sk,
+ 			  const struct cipso_v4_doi *doi_def,
+-			  const struct netlbl_lsm_secattr *secattr);
++			  const struct netlbl_lsm_secattr *secattr,
++			  bool slock_held);
+ void cipso_v4_sock_delattr(struct sock *sk);
+ int cipso_v4_sock_getattr(struct sock *sk, struct netlbl_lsm_secattr *secattr);
+ int cipso_v4_req_setattr(struct request_sock *req,
+@@ -214,7 +215,8 @@ static inline int cipso_v4_getattr(const unsigned char *cipso,
+ 
+ static inline int cipso_v4_sock_setattr(struct sock *sk,
+ 				      const struct cipso_v4_doi *doi_def,
+-				      const struct netlbl_lsm_secattr *secattr)
++				      const struct netlbl_lsm_secattr *secattr,
++				      bool slock_held)
+ {
+ 	return -ENOSYS;
+ }
+diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+index f3ab0b8a4b18..6f098b618461 100644
+--- a/include/net/netlabel.h
++++ b/include/net/netlabel.h
+@@ -470,7 +470,8 @@ void netlbl_bitmap_setbit(unsigned char *bitmap, u32 bit, u8 state);
+ int netlbl_enabled(void);
+ int netlbl_sock_setattr(struct sock *sk,
+ 			u16 family,
+-			const struct netlbl_lsm_secattr *secattr);
++			const struct netlbl_lsm_secattr *secattr,
++			bool slock_held);
+ void netlbl_sock_delattr(struct sock *sk);
+ int netlbl_sock_getattr(struct sock *sk,
+ 			struct netlbl_lsm_secattr *secattr);
+@@ -614,7 +615,8 @@ static inline int netlbl_enabled(void)
+ }
+ static inline int netlbl_sock_setattr(struct sock *sk,
+ 				      u16 family,
+-				      const struct netlbl_lsm_secattr *secattr)
++				      const struct netlbl_lsm_secattr *secattr,
++				      bool slock_held)
+ {
+ 	return -ENOSYS;
+ }
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index 8b17d83e5fde..c4ac704cbcc2 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1815,6 +1815,7 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
+  * @sk: the socket
+  * @doi_def: the CIPSO DOI to use
+  * @secattr: the specific security attributes of the socket
++ * @slock_held: true if caller holds the socket lock
+  *
+  * Description:
+  * Set the CIPSO option on the given socket using the DOI definition and
+@@ -1826,7 +1827,8 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
+  */
+ int cipso_v4_sock_setattr(struct sock *sk,
+ 			  const struct cipso_v4_doi *doi_def,
+-			  const struct netlbl_lsm_secattr *secattr)
++			  const struct netlbl_lsm_secattr *secattr,
++			  bool slock_held)
+ {
+ 	int ret_val = -EPERM;
+ 	unsigned char *buf = NULL;
+@@ -1876,18 +1878,15 @@ int cipso_v4_sock_setattr(struct sock *sk,
+ 
+ 	sk_inet = inet_sk(sk);
+ 
+-	old = rcu_dereference_protected(sk_inet->inet_opt,
+-					lockdep_sock_is_held(sk));
++	old = rcu_replace_pointer(sk_inet->inet_opt, opt, slock_held);
+ 	if (inet_test_bit(IS_ICSK, sk)) {
+ 		sk_conn = inet_csk(sk);
+ 		if (old)
+ 			sk_conn->icsk_ext_hdr_len -= old->opt.optlen;
+-		sk_conn->icsk_ext_hdr_len += opt->opt.optlen;
++		sk_conn->icsk_ext_hdr_len += opt_len;
+ 		sk_conn->icsk_sync_mss(sk, sk_conn->icsk_pmtu_cookie);
+ 	}
+-	rcu_assign_pointer(sk_inet->inet_opt, opt);
+-	if (old)
+-		kfree_rcu(old, rcu);
++	kfree_rcu(old, rcu);
+ 
+ 	return 0;
+ 
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 1ba4f58e1d35..0083749705c4 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -965,6 +965,7 @@ int netlbl_enabled(void)
+  * @sk: the socket to label
+  * @family: protocol family
+  * @secattr: the security attributes
++ * @slock_held: true if caller holds the socket lock
+  *
+  * Description:
+  * Attach the correct label to the given socket using the security attributes
+@@ -977,7 +978,8 @@ int netlbl_enabled(void)
+  */
+ int netlbl_sock_setattr(struct sock *sk,
+ 			u16 family,
+-			const struct netlbl_lsm_secattr *secattr)
++			const struct netlbl_lsm_secattr *secattr,
++			bool slock_held)
+ {
+ 	int ret_val;
+ 	struct netlbl_dom_map *dom_entry;
+@@ -997,7 +999,7 @@ int netlbl_sock_setattr(struct sock *sk,
+ 		case NETLBL_NLTYPE_CIPSOV4:
+ 			ret_val = cipso_v4_sock_setattr(sk,
+ 							dom_entry->def.cipso,
+-							secattr);
++							secattr, slock_held);
+ 			break;
+ 		case NETLBL_NLTYPE_UNLABELED:
+ 			ret_val = 0;
+@@ -1126,7 +1128,8 @@ int netlbl_conn_setattr(struct sock *sk,
+ 		switch (entry->type) {
+ 		case NETLBL_NLTYPE_CIPSOV4:
+ 			ret_val = cipso_v4_sock_setattr(sk,
+-							entry->cipso, secattr);
++							entry->cipso, secattr,
++							lockdep_sock_is_held(sk));
+ 			break;
+ 		case NETLBL_NLTYPE_UNLABELED:
+ 			/* just delete the protocols we support for right now
+diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
+index 8f182800e412..55885634e880 100644
+--- a/security/selinux/netlabel.c
++++ b/security/selinux/netlabel.c
+@@ -402,7 +402,10 @@ int selinux_netlbl_socket_post_create(struct sock *sk, u16 family)
+ 	secattr = selinux_netlbl_sock_genattr(sk);
+ 	if (secattr == NULL)
+ 		return -ENOMEM;
+-	rc = netlbl_sock_setattr(sk, family, secattr);
++	/* On socket creation, replacement of IP options is safe even if
++	 * the caller does not hold the socket lock.
++	 */
++	rc = netlbl_sock_setattr(sk, family, secattr, true);
+ 	switch (rc) {
+ 	case 0:
+ 		sksec->nlbl_state = NLBL_LABELED;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 146667937811..1ab2125d352d 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2565,7 +2565,8 @@ static int smack_netlbl_add(struct sock *sk)
+ 	local_bh_disable();
+ 	bh_lock_sock_nested(sk);
+ 
+-	rc = netlbl_sock_setattr(sk, sk->sk_family, &skp->smk_netlabel);
++	rc = netlbl_sock_setattr(sk, sk->sk_family, &skp->smk_netlabel,
++				 lockdep_sock_is_held(sk));
+ 	switch (rc) {
+ 	case 0:
+ 		ssp->smk_state = SMK_NETLBL_LABELED;
+-- 
+2.44.0
 
