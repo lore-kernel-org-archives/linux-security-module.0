@@ -1,116 +1,212 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D89C18EAB;
-	Thu, 25 Apr 2024 20:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA2112C7F7
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 21:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714077298; cv=none; b=YjbEIPA5ZQ3mGIn4jdMOZR4+KmHM+0oRUPUnWZlndMqz4cHzuTq4wbqEqyidD8Wo+gES6PwThNWpgy1vywzWZml8GTmNNOoDxpVeO54OF86YwWY8zYysI5rizDQGXGidhOtF2Tblp9A/ml/c+AENXNWw1WNowVwt/4NvLs+d6Is=
+	t=1714078900; cv=none; b=oKvwwfrElnAXPsIu1hKF4QBIMG/eLueTes2wqEfyYG3IdChRMy7ThWyIjvkOUN4oeDrTnNnuc6v7ndKE5xYdHQarlm9I8kl/orpDSLyPE4YSM6NMhLx5o8WmV/gVHYFYz2D9sB8Z3atv5AkhCAvqTZ4OmzMg+hloTwMZMdyWnQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714077298; c=relaxed/simple;
-	bh=bZqtcMhFx7TDPaIgrLqyfpl0/OfmMPAKopBgZDQprIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDTYRMm3ZJvyyo+JHX4346bHXwQk4zKH+Px/X2onJEJ5G1ZTJY86z5gwgO4Pk/C8HdqIMEKVQcbYl9VYu/L8H9xGbpqj2BAgVmHgk20Tn0rsKhomwQ+zr/X2wdCYjeJUrJTGjactRQqDGjQMSVbKVAG5nDnHLmEojx579uWTEWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Z+gqGa8P; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	s=arc-20240116; t=1714078900; c=relaxed/simple;
+	bh=bi6tTdZm8ODbcuOduzGa1ERUaCo+bFyLKRsaMStMaUs=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=p+Q2wCVMuPUg9JnmaFUuisrrxV2ZU/9dYpY0vjsAlDgTKU08ZYwc20z0T/b6M6UXXQsKPWOrW3+glXahT0HNEHF5GEBm6T0U4huVSUN1nCjizNvo4Jvwtpp6dg7ON6PZa0Bp3YztOQryYofuL0R9c9qWTRXMEpv7+AhnxH/5Rok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=X00i172Q; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Z+gqGa8P"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1714077293;
-	bh=bZqtcMhFx7TDPaIgrLqyfpl0/OfmMPAKopBgZDQprIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+gqGa8PD+3BrRxF+Exe+s/+n1FrcsSYPFeQUrvoT2UUvEiGsEXMDYuXjYQJDYiRJ
-	 9/0fJxtI2lDBLEHhkegO15rObvRhgIuWQMhE+D085PPIsVKHmI/z9Zz6qr7xUxUgOg
-	 gdOVIytSYg1zquf83mxdxD8VyvGj7mHBMGjmlG8k=
-Date: Thu, 25 Apr 2024 22:34:52 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Eric Dumazet <edumazet@google.com>, 
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
-	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
-Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
- of sysctl handlers
-Message-ID: <d11f875e-4fb5-46dd-a412-84818208c575@t-8ch.de>
-References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
- <CGME20240425031241eucas1p1fb0790e0d03ccbe4fca2b5f6da83d6db@eucas1p1.samsung.com>
- <20240424201234.3cc2b509@kernel.org>
- <20240425110412.2n5d27smecfncsfa@joelS2.panther.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="X00i172Q"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-78edc3ad5fdso136264685a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 14:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1714078898; x=1714683698; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aOPBXjAr7bA8ZbQoSogAAAqU2GLn9V4a97bYFy2/Yqg=;
+        b=X00i172Qn8Q/n6uzD6Z74aPvqdXWAHTh9sfG30HVHW2/sEz3EYF1EDQn21pGhW2tZn
+         Che+EOkKvcKTqrvIlsXegG3HWdmhDbJ6IqfQY6E2IsW7QsLmY0eHlIxLFF9oHkNXUkAY
+         HODmbdVkjTbINdK6u/JjqY+jRvCU9TjKXVhf84l0nIuJa9K+0WvI9Cu8ThakldO04+vQ
+         lMq8h0PZAYsjaLBIxfHUPN88U8WpWlD7WEf3s9/iB9+lEeLYT6/4ljJh8emGsvbvbsHO
+         uh4UO9m+7FTdAyPabrv9MSJmCXVY/G+OCW/939EmfAI5Y3MObrHoi4BmO+V+pzApxkWU
+         wfdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714078898; x=1714683698;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aOPBXjAr7bA8ZbQoSogAAAqU2GLn9V4a97bYFy2/Yqg=;
+        b=Q+hVY3BPGb/qmZLYoUTZ5flhpALIACnS879VZ+LR+w6BumE2RCSTxn2vtJ6/MQ6bp7
+         CECTSnePs/qlkyHtfqIXEVsoRsQthzTImQkUPArFygEXyzwrtuwrvry3Sj+1A8TRfdtx
+         1TnPVZf0NiRhAMm9z+z82Z5h64em1amxT2Lia07fdHUL/2A5MueHTXLCx4W5oeicFKuw
+         EUzJZrZGCUaUjcqix7f5wJYBXZuhZ2pv/Bawqrit/Ti4qE5I+q3xRkGSQGerVvKMY3LU
+         r0L/KMI/etbTa1eWGhTWKQcLBvLPtMpWbUy2wiEq7ogVigJUydFIvprQ9I5FkLES7gJY
+         EgzQ==
+X-Gm-Message-State: AOJu0YzeuCmt+4VttvcGCPmH53Dn4X8XjW0q585NjO/f1hKLd4HxbgJh
+	R2TkJ3ggWMI47xqJK9x0T95B5chDr4lIPX82yHCRTFMqRdsZ6AMBR7rHcqVJ/+OUNLgWbs3l6rg
+	=
+X-Google-Smtp-Source: AGHT+IE7OTRE50eLvfVa1xG4lybp6Q7Od2V1GbZuTecWBu1/r4AgbQlzwRolyaBj4t8Ezb2H6vSuEg==
+X-Received: by 2002:a05:620a:450d:b0:790:a960:28f4 with SMTP id t13-20020a05620a450d00b00790a96028f4mr715658qkp.25.1714078897594;
+        Thu, 25 Apr 2024 14:01:37 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id h19-20020a05620a245300b0078ebe12976dsm7354692qkn.19.2024.04.25.14.01.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Apr 2024 14:01:37 -0700 (PDT)
+Date: Thu, 25 Apr 2024 17:01:36 -0400
+Message-ID: <b6f94a1fd73d464e1da169e929109c3c@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240425110412.2n5d27smecfncsfa@joelS2.panther.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Davide Caratti <dcaratti@redhat.com>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, netdev@vger.kernel.org, Xiumei Mu <xmu@redhat.com>
+Subject: Re: [PATCH v2] netlabel: fix RCU annotation for IPv4 options on socket  creation
+References: <c1ba274b19f6d1399636d018333d14a032d05454.1713967592.git.dcaratti@redhat.com>
+In-Reply-To: <c1ba274b19f6d1399636d018333d14a032d05454.1713967592.git.dcaratti@redhat.com>
 
-Hi Joel,
-
-On 2024-04-25 13:04:12+0000, Joel Granados wrote:
-> On Wed, Apr 24, 2024 at 08:12:34PM -0700, Jakub Kicinski wrote:
-> > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
-> > > The series was split from my larger series sysctl-const series [0].
-> > > It only focusses on the proc_handlers but is an important step to be
-> > > able to move all static definitions of ctl_table into .rodata.
-> > 
-> > Split this per subsystem, please.
-> It is tricky to do that because it changes the first argument (ctl*) to
-> const in the proc_handler function type defined in sysclt.h:
-> "
-> -typedef int proc_handler(struct ctl_table *ctl, int write, void *buffer,
-> +typedef int proc_handler(const struct ctl_table *ctl, int write, void *buffer,
->                 size_t *lenp, loff_t *ppos);
-> "
-> This means that all the proc_handlers need to change at the same time.
+On Apr 24, 2024 Davide Caratti <dcaratti@redhat.com> wrote:
 > 
-> However, there is an alternative way to do this that allows chunking. We
-> first define the proc_handler as a void pointer (casting it where it is
-> being used) [1]. Then we could do the constification by subsystem (like
-> Jakub proposes). Finally we can "revert the void pointer change so we
-> don't have one size fit all pointer as our proc_handler [2].
+> Xiumei reports the following splat when netlabel and TCP socket are used:
 > 
-> Here are some comments about the alternative:
-> 1. We would need to make the first argument const in all the derived
->    proc_handlers [3] 
-> 2. There would be no undefined behavior for two reasons:
->    2.1. There is no case where we change the first argument. We know
->         this because there are no compile errors after we make it const.
->    2.2. We would always go from non-const to const. This is the case
->         because all the stuff that is unchanged in non-const.
-> 3. If the idea sticks, it should go into mainline as one patchset. I
->    would not like to have a void* proc_handler in a kernel release.
-> 4. I think this is a "win/win" solution were the constification goes
->    through and it is divided in such a way that it is reviewable.
+>  =============================
+>  WARNING: suspicious RCU usage
+>  6.9.0-rc2+ #637 Not tainted
+>  -----------------------------
+>  net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
 > 
-> I would really like to hear what ppl think about this "heretic"
-> alternative. @Thomas, @Luis, @Kees @Jakub?
+>  other info that might help us debug this:
+> 
+>  rcu_scheduler_active = 2, debug_locks = 1
+>  1 lock held by ncat/23333:
+>   #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setattr+0x25/0x1b0
+> 
+>  stack backtrace:
+>  CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
+>  Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  07/26/2013
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0xa9/0xc0
+>   lockdep_rcu_suspicious+0x117/0x190
+>   cipso_v4_sock_setattr+0x1ab/0x1b0
+>   netlbl_sock_setattr+0x13e/0x1b0
+>   selinux_netlbl_socket_post_create+0x3f/0x80
+>   selinux_socket_post_create+0x1a0/0x460
+>   security_socket_post_create+0x42/0x60
+>   __sock_create+0x342/0x3a0
+>   __sys_socket_create.part.22+0x42/0x70
+>   __sys_socket+0x37/0xb0
+>   __x64_sys_socket+0x16/0x20
+>   do_syscall_64+0x96/0x180
+>   ? do_user_addr_fault+0x68d/0xa30
+>   ? exc_page_fault+0x171/0x280
+>   ? asm_exc_page_fault+0x22/0x30
+>   entry_SYSCALL_64_after_hwframe+0x71/0x79
+>  RIP: 0033:0x7fbc0ca3fc1b
+>  Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
+>  RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
+>  RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
+>  RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
+>  RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
+> 
+> R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
+>  R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
+>   </TASK>
+> 
+> The current implementation of cipso_v4_sock_setattr() replaces IP options
+> under the assumption that the caller holds the socket lock; however, such
+> assumption is not true, nor needed, in selinux_socket_post_create() hook.
+> 
+> Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
+> condition, except selinux_socket_post_create() _ where such condition can
+> safely be set as true even without holding the socket lock.
+> While at it: use rcu_replace_pointer() instead of open coding, and remove
+> useless NULL check of 'old' before kfree_rcu(old, ...).
+> 
+> v2:
+>  - pass lockdep_sock_is_held() through a boolean variable in the stack
+>    (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
+>  - use rcu_replace_pointer() instead of rcu_dereference_protected() +
+>    rcu_assign_pointer()
+>  - remove NULL check of 'old' before kfree_rcu()
+> 
+> Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
+> Reported-by: Xiumei Mu <xmu@redhat.com>
+> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+> ---
+>  include/net/cipso_ipv4.h     |  6 ++++--
+>  include/net/netlabel.h       |  6 ++++--
+>  net/ipv4/cipso_ipv4.c        | 13 ++++++-------
+>  net/netlabel/netlabel_kapi.c |  9 ++++++---
+>  security/selinux/netlabel.c  |  5 ++++-
+>  security/smack/smack_lsm.c   |  3 ++-
+>  6 files changed, 26 insertions(+), 16 deletions(-)
 
-Thanks for that alternative, I'm not a big fan though.
+...
 
-Besides the wonky syntax, Control Flow Integrity should trap on
-this construct. Functions are called through different pointers than
-their actual types which is exactly what CFI is meant to prevent.
+> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> index 8b17d83e5fde..c4ac704cbcc2 100644
+> --- a/net/ipv4/cipso_ipv4.c
+> +++ b/net/ipv4/cipso_ipv4.c
+> @@ -1815,6 +1815,7 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
+>   * @sk: the socket
+>   * @doi_def: the CIPSO DOI to use
+>   * @secattr: the specific security attributes of the socket
+> + * @slock_held: true if caller holds the socket lock
+>   *
+>   * Description:
+>   * Set the CIPSO option on the given socket using the DOI definition and
+> @@ -1826,7 +1827,8 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
+>   */
+>  int cipso_v4_sock_setattr(struct sock *sk,
+>  			  const struct cipso_v4_doi *doi_def,
+> -			  const struct netlbl_lsm_secattr *secattr)
+> +			  const struct netlbl_lsm_secattr *secattr,
+> +			  bool slock_held)
 
-Maybe people find it easier to review when using
-"--word-diff" and/or "-U0" with git diff/show.
-There is really nothing going an besides adding a few "const"s.
+This is a nitpicky bikeshedding remark, but "slock_held" sounds really
+awkward to me, something like "sk_locked" sounds much better.
 
-But if the consensus prefers this solution, I'll be happy to adopt it.
+>  {
+>  	int ret_val = -EPERM;
+>  	unsigned char *buf = NULL;
+> @@ -1876,18 +1878,15 @@ int cipso_v4_sock_setattr(struct sock *sk,
+>  
+>  	sk_inet = inet_sk(sk);
+>  
+> -	old = rcu_dereference_protected(sk_inet->inet_opt,
+> -					lockdep_sock_is_held(sk));
+> +	old = rcu_replace_pointer(sk_inet->inet_opt, opt, slock_held);
+>  	if (inet_test_bit(IS_ICSK, sk)) {
+>  		sk_conn = inet_csk(sk);
+>  		if (old)
+>  			sk_conn->icsk_ext_hdr_len -= old->opt.optlen;
+> -		sk_conn->icsk_ext_hdr_len += opt->opt.optlen;
+> +		sk_conn->icsk_ext_hdr_len += opt_len;
+>  		sk_conn->icsk_sync_mss(sk, sk_conn->icsk_pmtu_cookie);
+>  	}
+> -	rcu_assign_pointer(sk_inet->inet_opt, opt);
+> -	if (old)
+> -		kfree_rcu(old, rcu);
+> +	kfree_rcu(old, rcu);
 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/commit/?h=jag/constfy_treewide_alternative&id=4a383503b1ea650d4e12c1f5838974e879f5aa6f
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/commit/?h=jag/constfy_treewide_alternative&id=a3be65973d27ec2933b9e81e1bec60be3a9b460d
-> [3] proc_dostring, proc_dobool, proc_dointvec....
+Thanks for sticking with this and posting a v2.
 
+These changes look okay to me, but considering the 'Fixes:' tag and the
+RCU splat it is reasonable to expect that this is going to be backported
+to the various stable trees.  With that in mind, I think we should try
+to keep the immediate fix as simple as possible, saving the other
+changes for a separate patch.  This means sticking with
+rcu_dereference_protected() and omitting the opt_len optimization; both
+can be done in a second patch without the 'Fixes:' marking.
 
-Thomas
+Unless I missing something and those changes are somehow part of the
+fix?
+
+--
+paul-moore.com
