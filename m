@@ -1,189 +1,204 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C8C14EC42
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 17:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971C7153801;
+	Thu, 25 Apr 2024 20:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714067405; cv=none; b=fkVKwnrYewAwZ85GWTXuf6F3cCZDoxr4cOOXCYhgyVeOyVGgmhiyHP9DlTAkOy9GSG1mgjYxlW/WsOMJtgCNRWAgBulHKB2Bf8SwSYZkrU0p3gXiGF4CtlL4IdCBRwIVC85ff0mS1oLCMQKiWIo63LQedEifdzuAVgg2Z1U6auY=
+	t=1714076641; cv=none; b=pqDImpkrU10LEOOWQvYk9uo6AeVgU/uWSy9GXqZ/NTGQ8HVHGLTTudczVzXlFoEG+iQ+d0CJ7vdwh2C0pld4Oq/G9mse8vgskJrXZicMXaUGeGOp7UZ+qjOt1D/aDEKsm00umoyif/CdYA+CL8a99quBf2HchDVdW94dRreI+7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714067405; c=relaxed/simple;
-	bh=Wcp+Os6j8PSxfC/nvGvMV2CKI+zcJnPAX63EWSKy9zQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BG7YqvWjPRduOTV9pbzBkAHSGt2GXmnYqkzoG1O26W6af4xlu+fTRQ6cm17GIarVGbWxnCzRkQQfS42dml/dak5ObUh1EuHicJUd4STiUHzgB/sNZF7YT6JS9Qqhy+9uPIO9Yy8DJ/ie6e0lCmsB05AMEfsdXn/2In1iOXG0/1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=SjUUi0IJ; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1714076641; c=relaxed/simple;
+	bh=08WPogXj9ccCunrIcH7Gsf5VsfCJT+2vSloyAfgVOpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E6vxXiPbziu6LLIrSQOLXQjR7psCrTHUwvCdyOA4VPVg4m6W2ukEofQhfb4Z+abiBZErrbWpJ8E6dmpRkk3h6nLGQMgDMg4DxRWNCjF41lDOxKG0Gm/v1t/bL2KD9F/SnnVo6regPER9wdfvcI29bQB88MTy4x/SoyETGgcDcGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QzRFHDNM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="SjUUi0IJ"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VQNfW00KyzB2p;
-	Thu, 25 Apr 2024 19:49:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1714067394;
-	bh=Wcp+Os6j8PSxfC/nvGvMV2CKI+zcJnPAX63EWSKy9zQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SjUUi0IJOshpQJ9nZ56s7gT/r7Qb/c12WMGE5uDH6WhD3GXyz/oolIi7D2oxL/05R
-	 KBERmBy12eBABcWlzrPlKqCgOrfX/3Z4EudkMwQXRT57q0P9ODnE6NDxbRmnW67Tlf
-	 dLNcDx63I2XuiJKdzqBA6S1yAm81UU/zQGl+WHSY=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VQNfT6fSQzBnF;
-	Thu, 25 Apr 2024 19:49:53 +0200 (CEST)
-Date: Thu, 25 Apr 2024 19:49:52 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: kernel test robot <oliver.sang@intel.com>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Shuah Khan <shuah@kernel.org>, Will Drewry <wad@chromium.org>, 
-	Kees Cook <keescook@chromium.org>, Jakub Kicinski <kuba@kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [linus:master] [selftests/harness]  0710a1a73f:
- kernel-selftests.pidfd.pidfd_setns_test.fail
-Message-ID: <20240425.Oofoi5oghoo6@digikod.net>
-References: <202403291015.1fcfa957-oliver.sang@intel.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QzRFHDNM"
+Received: from [10.137.106.151] (unknown [167.220.2.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E234E20FD4CE;
+	Thu, 25 Apr 2024 13:23:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E234E20FD4CE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1714076638;
+	bh=Ut792Bm4cIOYNOqotGiFt26HJ/65wP94SVse6cZs0cU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QzRFHDNMdopqkGKA5TUBtW0Vrr3/py/nBJLRMF/wnzbWNulqxJ+g+rYqSg6zSRn4u
+	 yqOzz8YbPOQKDxvZ8OnHbTca+U6PA2Jycw+u/5fF4Z6Qg6OF0aUBky68HRJfknZSPc
+	 F2+OF3hzpfon+VEwQmF4/xiOd8H7SpBuHHnSPphQ=
+Message-ID: <6cf278b3-32f2-4665-be8d-ea6605f4318b@linux.microsoft.com>
+Date: Thu, 25 Apr 2024 13:23:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202403291015.1fcfa957-oliver.sang@intel.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 13/21] dm verity: consume root hash digest and expose
+ signature data via LSM hook
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+ tytso@mit.edu, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+ eparis@redhat.com, paul@paul-moore.com, linux-doc@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ fsverity@lists.linux.dev, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, audit@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1712969764-31039-1-git-send-email-wufan@linux.microsoft.com>
+ <1712969764-31039-14-git-send-email-wufan@linux.microsoft.com>
+ <20240425035647.GC1401@sol.localdomain>
+Content-Language: en-CA
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <20240425035647.GC1401@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-FYI, I'm working on this issue.
 
-Regards,
- Mickaël
 
-On Fri, Mar 29, 2024 at 10:42:51AM +0800, kernel test robot wrote:
+On 4/24/2024 8:56 PM, Eric Biggers wrote:
+> On Fri, Apr 12, 2024 at 05:55:56PM -0700, Fan Wu wrote:
+>> dm verity: consume root hash digest and expose signature data via LSM hook
 > 
+> As in the fsverity patch, nothing is being "consumed" here.  This patch adds a
+> supplier, not a consumer.  I think you mean something like: expose root digest
+> and signature to LSMs.
 > 
-> Hello,
+Thanks for the suggestion.
+
+>> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+>> index bb5da66da4c1..fbb83c6fd99c 100644
+>> --- a/drivers/md/dm-verity-target.c
+>> +++ b/drivers/md/dm-verity-target.c
+>> @@ -22,6 +22,8 @@
+>>   #include <linux/scatterlist.h>
+>>   #include <linux/string.h>
+>>   #include <linux/jump_label.h>
+>> +#include <linux/security.h>
+>> +#include <linux/dm-verity.h>
+>>   
+>>   #define DM_MSG_PREFIX			"verity"
+>>   
+>> @@ -1017,6 +1019,38 @@ static void verity_io_hints(struct dm_target *ti, struct queue_limits *limits)
+>>   	blk_limits_io_min(limits, limits->logical_block_size);
+>>   }
+>>   
+>> +#ifdef CONFIG_SECURITY
+>> +
+>> +static int verity_init_sig(struct dm_verity *v, const void *sig,
+>> +			   size_t sig_size)
+>> +{
+>> +	v->sig_size = sig_size;
+>> +	v->root_digest_sig = kmemdup(sig, v->sig_size, GFP_KERNEL);
+>> +	if (!v->root_digest)
+>> +		return -ENOMEM;
 > 
-> kernel test robot noticed "kernel-selftests.pidfd.pidfd_setns_test.fail" on:
+> root_digest_sig, not root_digest
 > 
-> commit: 0710a1a73fb45033ebb06073e374ab7d44a05f15 ("selftests/harness: Merge TEST_F_FORK() into TEST_F()")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+Thanks for pointing out!
+
+>> +#ifdef CONFIG_SECURITY
+>> +
+>> +static int verity_finalize(struct dm_target *ti)
+>> +{
+>> +	struct block_device *bdev;
+>> +	struct dm_verity_digest root_digest;
+>> +	struct dm_verity *v;
+>> +	int r;
+>> +
+>> +	v = ti->private;
+>> +	bdev = dm_disk(dm_table_get_md(ti->table))->part0;
+>> +	root_digest.digest = v->root_digest;
+>> +	root_digest.digest_len = v->digest_size;
+>> +	root_digest.alg = v->alg_name;
+>> +
+>> +	r = security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, &root_digest,
+>> +				       sizeof(root_digest));
+>> +	if (r)
+>> +		return r;
+>> +
+>> +	r = security_bdev_setintegrity(bdev,
+>> +				       LSM_INT_DMVERITY_SIG_VALID,
+>> +				       v->root_digest_sig,
+>> +				       v->sig_size);
 > 
-> [test failed on linus/master 4cece764965020c22cff7665b18a012006359095]
+> The signature is only checked if CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y, whereas
+> this code is built whenever CONFIG_SECURITY=y.
 > 
-> in testcase: kernel-selftests
-> version: kernel-selftests-x86_64-4306b286-1_20240301
-> with following parameters:
+> So this seems like the same issue that has turned up elsewhere in the IPE
+> patchset, where IPE is (apparently) happy with any signature, even one that
+> hasn't been checked...
 > 
-> 	group: pidfd
+
+Yes I do agree the second hook call should better depend on 
+CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y.
+
+However, the current implementation does not happy with any signature.
+
+In case of CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y, any signature 
+provided to dm-verity will be checked against the configured keyring, 
+the hook call won't be reached if the check failed. In case of no 
+signature is provided and !DM_VERITY_IS_SIG_FORCE_ENABLED(), the hook 
+will be called with signature value NULL.
+
+In case of CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=n, signature won't be 
+accepted by dm-verity. In addition, the whole support of dm-verity will 
+be disabled for IPE because CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=n.
+
+>> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+>> index 20b1bcf03474..89e862f0cdf6 100644
+>> --- a/drivers/md/dm-verity.h
+>> +++ b/drivers/md/dm-verity.h
+>> @@ -43,6 +43,9 @@ struct dm_verity {
+>>   	u8 *root_digest;	/* digest of the root block */
+>>   	u8 *salt;		/* salt: its size is salt_size */
+>>   	u8 *zero_digest;	/* digest for a zero block */
+>> +#ifdef CONFIG_SECURITY
+>> +	u8 *root_digest_sig;	/* digest signature of the root block */
+>> +#endif /* CONFIG_SECURITY */
 > 
+> No, it's not a signature of the root block, at least not directly.  It's a
+> signature of the root digest (the digest of the root block).
 > 
+>> diff --git a/include/linux/dm-verity.h b/include/linux/dm-verity.h
+>> new file mode 100644
+>> index 000000000000..a799a8043d85
+>> --- /dev/null
+>> +++ b/include/linux/dm-verity.h
+>> @@ -0,0 +1,12 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +#ifndef _LINUX_DM_VERITY_H
+>> +#define _LINUX_DM_VERITY_H
+>> +
+>> +struct dm_verity_digest {
+>> +	const char *alg;
+>> +	const u8 *digest;
+>> +	size_t digest_len;
+>> +};
+>> +
+>> +#endif /* _LINUX_DM_VERITY_H */
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index ac0985641611..9e46b13a356c 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -84,7 +84,8 @@ enum lsm_event {
+>>   };
+>>   
+>>   enum lsm_integrity_type {
+>> -	__LSM_INT_MAX
+>> +	LSM_INT_DMVERITY_SIG_VALID,
+>> +	LSM_INT_DMVERITY_ROOTHASH,
+>>   };
 > 
-> compiler: gcc-12
-> test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 32G memory
+> Shouldn't struct dm_verity_digest be defined next to LSM_INT_DMVERITY_ROOTHASH?
+> It's the struct that's associated with it.
 > 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> It seems weird to create a brand new header <linux/dm-verity.h> that just
+> contains this one LSM related definition, when there's already a header for the
+> LSM definitions that even includes the related value LSM_INT_DMVERITY_ROOTHASH.
 > 
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202403291015.1fcfa957-oliver.sang@intel.com
-> 
-> 
-> 
-> # timeout set to 300
-> # selftests: pidfd: pidfd_setns_test
-> # TAP version 13
-> # 1..7
-> # # Starting 7 tests from 2 test cases.
-> # #  RUN           global.setns_einval ...
-> # #            OK  global.setns_einval
-> # ok 1 global.setns_einval
-> # #  RUN           current_nsset.invalid_flags ...
-> # # pidfd_setns_test.c:161:invalid_flags:Expected self->child_pid_exited (0) > 0 (0)
-> # #            OK  current_nsset.invalid_flags
-> # ok 2 current_nsset.invalid_flags
-> # #  RUN           current_nsset.pidfd_exited_child ...
-> # # pidfd_setns_test.c:161:pidfd_exited_child:Expected self->child_pid_exited (0) > 0 (0)
-> # #            OK  current_nsset.pidfd_exited_child
-> # ok 3 current_nsset.pidfd_exited_child
-> # #  RUN           current_nsset.pidfd_incremental_setns ...
-> # # pidfd_setns_test.c:161:pidfd_incremental_setns:Expected self->child_pid_exited (0) > 0 (0)
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to user namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to mnt namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to pid namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to uts namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to ipc namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to net namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to cgroup namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:408:pidfd_incremental_setns:Managed to correctly setns to pid_for_children namespace of 45423 via pidfd 20
-> # # pidfd_setns_test.c:391:pidfd_incremental_setns:Expected setns(self->child_pidfd1, info->flag) (-1) == 0 (0)
-> # # pidfd_setns_test.c:392:pidfd_incremental_setns:Too many users - Failed to setns to time namespace of 45423 via pidfd 20
-> # # pidfd_incremental_setns: Test terminated by timeout
-> # #          FAIL  current_nsset.pidfd_incremental_setns
-> # not ok 4 current_nsset.pidfd_incremental_setns
-> # #  RUN           current_nsset.nsfd_incremental_setns ...
-> # # pidfd_setns_test.c:161:nsfd_incremental_setns:Expected self->child_pid_exited (0) > 0 (0)
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to user namespace of 45524 via nsfd 19
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to mnt namespace of 45524 via nsfd 24
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to pid namespace of 45524 via nsfd 27
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to uts namespace of 45524 via nsfd 30
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to ipc namespace of 45524 via nsfd 33
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to net namespace of 45524 via nsfd 36
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to cgroup namespace of 45524 via nsfd 39
-> # # pidfd_setns_test.c:444:nsfd_incremental_setns:Managed to correctly setns to pid_for_children namespace of 45524 via nsfd 42
-> # # pidfd_setns_test.c:427:nsfd_incremental_setns:Expected setns(self->child_nsfds1[i], info->flag) (-1) == 0 (0)
-> # # pidfd_setns_test.c:428:nsfd_incremental_setns:Too many users - Failed to setns to time namespace of 45524 via nsfd 45
-> # # nsfd_incremental_setns: Test terminated by timeout
-> # #          FAIL  current_nsset.nsfd_incremental_setns
-> # not ok 5 current_nsset.nsfd_incremental_setns
-> # #  RUN           current_nsset.pidfd_one_shot_setns ...
-> # # pidfd_setns_test.c:161:pidfd_one_shot_setns:Expected self->child_pid_exited (0) > 0 (0)
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding user namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding mnt namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding pid namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding uts namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding ipc namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding net namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding cgroup namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding pid_for_children namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:462:pidfd_one_shot_setns:Adding time namespace of 45630 to list of namespaces to attach to
-> # # pidfd_setns_test.c:466:pidfd_one_shot_setns:Expected setns(self->child_pidfd1, flags) (-1) == 0 (0)
-> # # pidfd_setns_test.c:467:pidfd_one_shot_setns:Too many users - Failed to setns to namespaces of 45630
-> # # pidfd_one_shot_setns: Test terminated by timeout
-> # #          FAIL  current_nsset.pidfd_one_shot_setns
-> # not ok 6 current_nsset.pidfd_one_shot_setns
-> # #  RUN           current_nsset.no_foul_play ...
-> # # pidfd_setns_test.c:161:no_foul_play:Expected self->child_pid_exited (0) > 0 (0)
-> # # pidfd_setns_test.c:506:no_foul_play:Adding user namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:506:no_foul_play:Adding mnt namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:506:no_foul_play:Adding pid namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:506:no_foul_play:Adding uts namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:506:no_foul_play:Adding ipc namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:506:no_foul_play:Adding net namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:506:no_foul_play:Adding cgroup namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:506:no_foul_play:Adding time namespace of 45737 to list of namespaces to attach to
-> # # pidfd_setns_test.c:510:no_foul_play:Expected setns(self->child_pidfd1, flags) (-1) == 0 (0)
-> # # pidfd_setns_test.c:511:no_foul_play:Too many users - Failed to setns to namespaces of 45737 vid pidfd 20
-> # # no_foul_play: Test terminated by timeout
-> # #          FAIL  current_nsset.no_foul_play
-> # not ok 7 current_nsset.no_foul_play
-> # # FAILED: 3 / 7 tests passed.
-> # # Totals: pass:3 fail:4 xfail:0 xpass:0 skip:0 error:0
-> not ok 7 selftests: pidfd: pidfd_setns_test # exit=1
-> make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-8.3-kselftests-0710a1a73fb45033ebb06073e374ab7d44a05f15/tools/testing/selftests/pidfd'
-> 
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240329/202403291015.1fcfa957-oliver.sang@intel.com
-> 
-> 
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-> 
-> 
+> - Eric
+
+Yes they can just be in the same header. Thanks for the suggestion.
+
+-Fan
