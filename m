@@ -1,161 +1,224 @@
 Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7879337143
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 21:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1D8AD2D
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 21:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714079755; cv=none; b=dJjJXsMS4tFox4MxiyJDmvzDYHI/HiygTPH7xZBiSWP5L0/m9Zs1AuuPo/UQLsGHMFZR2+CjdOyoF/Mr1K4fWTmlDl1BcrS9UAX8X+J8/cZx4pERe7ofm9MESBPlH015zn+yjjwD8pnzhNAQVN6Ltz4Di20IUNUWhA/7UMnasx8=
+	t=1714081696; cv=none; b=BxABKTttbk+P8U7Tzvt5yde2hodP3Ccm8pVIr5klGXiCu+/Orzjmrz3pgLs1wx1BAyvn/z0wPMzqaTxUWlSjkhq9tT/k/32Miv5jsqbJjhyw5m7cgQfnzzH/gK4B+qDvWmpNl/BauTubaYLzFZljkHtGErogQDsER8TdJh3L0mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714079755; c=relaxed/simple;
-	bh=/FFmdsR9O9Fym31s3IonpaadQSALFxi+gkgXELQJDnA=;
+	s=arc-20240116; t=1714081696; c=relaxed/simple;
+	bh=HJg0cGhpBNZi9fVDLR0DXpRwaOUMbDJZc6PmILsq55o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k+pqIrdKLTErK+HUGBJOAprMffqs4mtKL8b6IbGjcIdUxyNf5hTqlGg++7rdPy30M3zm4zFlTKzmbkT2dD3/UpLMJj9q2lZ7PZbB5w2TdMYEQy+C7r5m89r2J0Lyg6CDSLXcFY1RLUfbZnZZ6c8YPOfFHHqqpXi5TdXaxZu9qX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZojpZkhq; arc=none smtp.client-ip=209.85.128.176
+	 To:Cc:Content-Type; b=tiNFtdp4xOMYcRWmEyu+Q3MvQyh4/dYRbTZ2k3rEGPuPadvMLw2R6IRVqvzpW/NW+6xuexfgJn98VhlDcbXLYHCeZIc9PCDSkgX6TFDhvdp1lGvI3td2LjiHvYHRZn78PoUfj85uZXtIJa1HOBhl4dvFSxrooQCXjRb7LdSwhIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=E/QJxbgO; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZojpZkhq"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-617e42a3f94so16441477b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 14:15:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="E/QJxbgO"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-61b68644ab4so15197267b3.0
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 14:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1714079752; x=1714684552; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1714081693; x=1714686493; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=blHg8bPgQUhKFHhF3jugQx9VV2zZlze7Lx295xv8KO8=;
-        b=ZojpZkhq/yy3e12S1EdvW7NZ1HQqwDsjipNIlBAwkZHQBp3wL6s4Ak7nUpEXQiX8Ah
-         ypZ4D/HjUCmVnLg6/oCHHFLbibbB8os3U2eQUCtn+mrnSNaahEvJxfx2rMMW2/TTMSF+
-         I8TzsJEaz3bJNQAVZQoWnFBYA7kz4tGsyHVyWk73o98IxKhctpcdIPR7lnWruDCcO7Jw
-         ackP23FAux8skycWtVUt+fd8u8u89H6eUFhALRLfXWEmoT+B+XybtWgjNJtm0uP0QGwR
-         8K5U3KhTPOTyAvfrcb2eF8ljc67XdxM18J96xaevr9amVnqwVaoelPwS74TjZtw8/Mga
-         Dw9w==
+        bh=yd8C63tt6stlpov3/fL8YKfcsYUe9baS0DiJGEcUnjI=;
+        b=E/QJxbgOiJNFpYWdb5UcHBXLqDKzyUVaCM9vW+O0d2dWlmoOIl4a1FEKNxe/Cm/db8
+         LFjdCwwqhvdtiBMrQ4jo8pdb4wgffWrOL5e/sOCAp4u7TCQhFMDZD5mmE8z+wsXCMN8x
+         fW+oA9O4iThHatImhzPN9lVLGL7FfacVFRDt2QwXSyComG5lYjUzvNtxsR9QeaKYmJZE
+         ea7yELGEtxNiU0Zd2ct3v4FRcGFM064OkKTt5fPxvAAmAVVZqQQMS0AUzNtoCxamdnvV
+         xutoQ4EKJGcuU8zj5PITYuMyGo/Tt59ZqWFI/uVIg4OoOFLF2Hvhq23t6VA0tWtUbFnv
+         4c1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714079752; x=1714684552;
+        d=1e100.net; s=20230601; t=1714081693; x=1714686493;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=blHg8bPgQUhKFHhF3jugQx9VV2zZlze7Lx295xv8KO8=;
-        b=KckZm/oIprkIpV7G7mJV89+EXGWeNqXBcxG5fO1zS+sePof5IhrjDzxKaVW9b+qZLw
-         fybNKw4Do3+f2ZQWDhjda09u5tQhMWEvJfpmfyPOm3gUVMGZlB+EIKjEE1yNsfvQNbyn
-         JhBj1PSac5Jp6JBBDGJOOw8v/NPDfiRExdDG+FkDY+pDswi//KFeWBfKX6kLR81SCFA6
-         dMkYlg3t7WitW1TQ3UEAWScWCp6OTzP2fZNgmMIVWPwua7blxRVms+Jk8Fm/HBcdmInr
-         Zzh/JPhLRMcpzGu5Yf9t3aRHNcwKRqQU8mLhJQ0Hry/oQibTW8/qiv2xIPN4j2c1iupR
-         +hgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKT1XSDM2+ieJi/MSokKmzNuBGcLiLhC2OTuCGAt4hP/vRShjaQ/ihPR0h+7LedZgWZu6SvmB8zxImiBoTOKDRYHcjajObCwCtwR5XesH9bX3+mMPz
-X-Gm-Message-State: AOJu0YwfS8BW8SRo/vM3mHBK2Fw50UdQ4ggwsosGwoVAK1GU4qFg2KJ1
-	3tt7djveMY/aDfzaL0vCQH//b0V5IgzRq8OdrJ2k56Z11JdzxZJ1cDzjKHKsBW4aXolUufSJw9d
-	eyFg8HWAqc06jgpGVnwR8tH3uW5FSZYZXrK4O
-X-Google-Smtp-Source: AGHT+IFMG9abgUnUOH42JDmyak5//G7o2zxfCzKspMlLs8dzKSAWFr7GjM1qAAC+DwceIip9znmuHzM0W7zyN3KgmQg=
-X-Received: by 2002:a05:690c:6803:b0:61b:df5:7876 with SMTP id
- id3-20020a05690c680300b0061b0df57876mr803329ywb.6.1714079752424; Thu, 25 Apr
- 2024 14:15:52 -0700 (PDT)
+        bh=yd8C63tt6stlpov3/fL8YKfcsYUe9baS0DiJGEcUnjI=;
+        b=U6sEIv15Q8EpUlLBydVqsQHMnUpYbMQkkltDAyhnrPcW1ATW2d9djsY4VPKfsf+3ZJ
+         kfYWpFZs4ATjfsn2RFtvdrIwcrT9Uv7K9fNdm18bUGstKWuiqSH2KzNgPkUBFLIIkUQz
+         XrqIv6eQNelmIFKOTf048jjNdXF5XqDTcoiqxzWYRduz1B68XDtPYbX79QS+pss16n+w
+         8gUt+Rn6HAuJ8pIHG7C3Sf8nqyN3IYPNWz7wjAtkGkznLVR5OLGIx635s/bmnQd7iIgp
+         dUitKn4rBYlbRjHMoku6nkaB60AQl2MMhA2MqZPfg8UtStwelLvaArQXAX/g8c/GIfw5
+         HytA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhvN8d2fsG/bOlFFXOCgHtb/zgsAptcLtQ5JVi/zC/InbqXH66GZL6WcYbUTcXjiczcmo7KIuyQGHDVTVOszlnl/hCQIgf+JbPWid4u5BaZ61FD6Fp
+X-Gm-Message-State: AOJu0YwmWh4JlP/Hi6ZpLltnHS6ThGhdKv+JRphtwSIIFoaEQYUwatZd
+	rBhTJFuS1/5B74lfUTCce+3jNRSmWtc+qDmgMAOVNAfKPgp8b9dAq43dczdS6E/+zxwKEaepq5x
+	BvizzxmIIrZi6KjwDTlfqEMRUpj9PpIpkTeAU45aK6VtAKnR1og==
+X-Google-Smtp-Source: AGHT+IHf4OpEW7qGGSsxWPSm0VhLu2xaGbfnSvi2TOrrqAHZ7xdUrh68WndEoVMVBmlMwIWaBdLhbEreZTvnIgeH1+w=
+X-Received: by 2002:a05:690c:6105:b0:61b:1b51:371f with SMTP id
+ hi5-20020a05690c610500b0061b1b51371fmr997604ywb.12.1714081693285; Thu, 25 Apr
+ 2024 14:48:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240416152913.1527166-2-omosnace@redhat.com> <0a814ce3acdea2c07cef6f7c31008e19@paul-moore.com>
- <CAFqZXNvsumcLSKKRGzvUDmz=6WYfw3a0tG43juBjnUTdbfsDsw@mail.gmail.com>
-In-Reply-To: <CAFqZXNvsumcLSKKRGzvUDmz=6WYfw3a0tG43juBjnUTdbfsDsw@mail.gmail.com>
+References: <20240416152913.1527166-3-omosnace@redhat.com> <085faf37b4728d7c11b05f204b0d9ad6@paul-moore.com>
+ <CAFqZXNvm6T9pdWmExgmuODaNupMu3zSfYyb0gebn5AwmJ+86oQ@mail.gmail.com>
+In-Reply-To: <CAFqZXNvm6T9pdWmExgmuODaNupMu3zSfYyb0gebn5AwmJ+86oQ@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 25 Apr 2024 17:15:41 -0400
-Message-ID: <CAHC9VhRdcMS6WQ1QJD1h+YbNGh0x=Ex-+MvKLSaVqaPdfuZueQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cipso: fix total option length computation
+Date: Thu, 25 Apr 2024 17:48:02 -0400
+Message-ID: <CAHC9VhTxhcSDfYCK95UsuZixMSRNFtTGkDvBWjpagHw6328PMQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cipso: make cipso_v4_skbuff_delattr() fully remove
+ the CIPSO options
 To: Ondrej Mosnacek <omosnace@redhat.com>
 Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 17, 2024 at 8:49=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
+On Wed, Apr 17, 2024 at 9:03=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
 m> wrote:
 > On Tue, Apr 16, 2024 at 8:39=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
 wrote:
 > > On Apr 16, 2024 Ondrej Mosnacek <omosnace@redhat.com> wrote:
 > > >
-> > > As evident from the definition of ip_options_get(), the IP option
-> > > IPOPT_END is used to pad the IP option data array, not IPOPT_NOP. Yet
-> > > the loop that walks the IP options to determine the total IP options
-> > > length in cipso_v4_delopt() doesn't take it into account.
+> > > As the comment in this function says, the code currently just clears =
+the
+> > > CIPSO part with IPOPT_NOP, rather than removing it completely and
+> > > trimming the packet. This is inconsistent with the other
+> > > cipso_v4_*_delattr() functions and with CALIPSO (IPv6).
+> >
+> > This sentence above implies an equality in handling between those three
+> > cases that doesn't exist.  IPv6 has a radically different approach to
+> > IP options, comparisions between the two aren't really valid.
+>
+> I don't think it's that radically different.
+
+They are very different in my mind.  The IPv4 vs IPv6 option format
+and handling should be fairly obvious and I'm sure there are plenty of
+things written that describe the differences and motivations in
+excruciating detail so I'm not going to bother trying to do that here;
+as usual, Google is your friend.  I will admit that the skbuff vs
+socket-based labeling differences are a bit more subtle, but I believe
+if you look at how the packets are labeled in the two approaches as
+well as how they are managed and hooked into the LSMs you will start
+to get a better idea.  If that doesn't convince you that these three
+cases are significantly different, I'm not sure what else I can say
+other than we have a difference of opinion.  Regardless, I stand by my
+original comment that I don't like the text you chose and would like
+you to remove or change it.
+
+> > > Implement the proper option removal to make it consistent and produci=
+ng
+> > > more optimal IP packets when there are CIPSO options set.
 > > >
-> > > Fix it by recognizing the IPOPT_END value as the end of actual option=
-s.
-> > > Also add safety checks in case the options are invalid/corrupted.
-> > >
-> > > Fixes: 014ab19a69c3 ("selinux: Set socket NetLabel based on connectio=
-n endpoint")
 > > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 > > > ---
-> > >  net/ipv4/cipso_ipv4.c | 19 ++++++++++++++-----
-> > >  1 file changed, 14 insertions(+), 5 deletions(-)
+> > >  net/ipv4/cipso_ipv4.c | 89 ++++++++++++++++++++++++++++-------------=
+--
+> > >  1 file changed, 59 insertions(+), 30 deletions(-)
+> >
+> > Outside of the SELinux test suite, what testing have you done when you
+> > have a Linux box forwarding between a CIPSO network segment and an
+> > unlabeled segment?  I'm specifically interested in stream based protoco=
+ls
+> > such as TCP.  Also, do the rest of the netfilter callbacks handle it ok=
+ay
+> > if the skb changes size in one of the callbacks?  Granted it has been
+> > *years* since this code was written (decades?), but if I recall
+> > correctly, at the time it was a big no-no to change the skb size in a
+> > netfilter callback.
+>
+> I didn't test that, TBH. But all of cipso_v4_skbuff_setattr(),
+> calipso_skbuff_setattr(), and calipso_skbuff_delattr() already do
+> skb_push()/skb_pull(), so they would all be broken if that is (still?)
+> true. And this new cipso_v4_skbuff_delattr() doesn't do anything
+> w.r.t. the skb and the IP header that those wouldn't do already.
+
+Fair point on skbuff size changes in netfilter and
+cipso_v4_skbuff_setattr(), that wasn't part of the original
+NetLabel/CIPSO support and I forgot about that aspect.  On the other
+hand, I believe cipso_v4_skbuff_delattr() was part of the original
+work and used the NOOP hack both to preserve the packet length in the
+netfilter chain and to help ensure a consistent IP header overhead on
+both sides of a forwarding CIPSO<->unlabeled labeling/access control
+system.  Which brings me around to the reason why I asked about
+testing; I think we need to confirm that nothing bad happens to
+bidirectional stream-based connections, e.g. TCP, when crossing over a
+CIPSO/unlabeled network boundary and the IP overhead changes.  It's
+probably okay, but I would like to see that you've tested it with a
+couple different client OSes and everything works as expected.
+
+> [...]
+> > > @@ -2246,7 +2253,8 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb=
+,
+> > >   */
+> > >  int cipso_v4_skbuff_delattr(struct sk_buff *skb)
+> > >  {
+> > > -     int ret_val;
+> > > +     int ret_val, cipso_len, hdr_len_actual, new_hdr_len_actual, new=
+_hdr_len,
+> > > +         hdr_len_delta;
+> >
+> > Please keep line lengths under 80-chars whenever possible.  I know Linu=
+s
+> > relaxed that requirement a while ago, but I still find the 80-char limi=
+t
+> > to be a positive thing.
+>
+> I believe the line is exactly 80 characters, so still within the
+> limit. Or is it < 80 instead of <=3D 80? Does it really matter?
+
+I thought I saw it wrap on my terminal when reviewing the code, maybe
+it was just the newlink wrapping that I saw.  As long as it is <=3D 80
+I'm okay with it.
+
+> >
+> > >       struct iphdr *iph;
+> > >       struct ip_options *opt =3D &IPCB(skb)->opt;
+> > >       unsigned char *cipso_ptr;
+> > > @@ -2259,16 +2267,37 @@ int cipso_v4_skbuff_delattr(struct sk_buff *s=
+kb)
+> > >       if (ret_val < 0)
+> > >               return ret_val;
 > > >
-> > > diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> > > index 8b17d83e5fde4..75b5e3c35f9bf 100644
-> > > --- a/net/ipv4/cipso_ipv4.c
-> > > +++ b/net/ipv4/cipso_ipv4.c
-> > > @@ -2012,12 +2012,21 @@ static int cipso_v4_delopt(struct ip_options_=
-rcu __rcu **opt_ptr)
-> > >                * from there we can determine the new total option len=
-gth */
-> > >               iter =3D 0;
-> > >               optlen_new =3D 0;
-> > > -             while (iter < opt->opt.optlen)
-> > > -                     if (opt->opt.__data[iter] !=3D IPOPT_NOP) {
-> > > -                             iter +=3D opt->opt.__data[iter + 1];
-> > > -                             optlen_new =3D iter;
-> > > -                     } else
-> > > +             while (iter < opt->opt.optlen) {
-> > > +                     if (opt->opt.__data[iter] =3D=3D IPOPT_END) {
-> > > +                             break;
-> > > +                     } else if (opt->opt.__data[iter] =3D=3D IPOPT_N=
-OP) {
-> > >                               iter++;
-> > > +                     } else {
-> > > +                             if (WARN_ON(opt->opt.__data[iter + 1] <=
- 2))
-> > > +                                     iter +=3D 2;
-> > > +                             else
-> > > +                                     iter +=3D opt->opt.__data[iter =
-+ 1];
-> > > +                             optlen_new =3D iter;
+> > > -     /* the easiest thing to do is just replace the cipso option wit=
+h noop
+> > > -      * options since we don't change the size of the packet, althou=
+gh we
+> > > -      * still need to recalculate the checksum */
 > >
-> > I worry that WARN_ON(), especially in conjunction with the one below,
-> > could generate a lot of noise on the console and system logs, let's
-> > be a bit more selective about what we check and report on.  Presumably
-> > the options have already gone through a basic sanity check so there
-> > shouldn't be anything too scary in there.
+> > Unless you can guarantee that the length change isn't going to have
+> > any adverse effects (even then I would want to know why you are so
+> > confident), I'd feel a lot more comfortable sticking with a
+> > preserve-the-size-and-fill approach.  If you want to change that from
+> > _NOP to _END, I'd be okay with that.
 > >
-> >   if (opt =3D=3D IPOPT_END) {
-> >     /* ... */
-> >   } else if (opt =3D=3D IPOPT_NOP) {
-> >     /* ... */
-> >   } else {
-> >     iter +=3D opt[iter + 1];
-> >     optlen_new =3D iter;
-> >   }
+> > (and if you are talking to who I think you are talking to, I'm guessing
+> > the _NOP to _END swap would likely solve their problem)
 >
-> How about turning it to WARN_ON_ONCE() instead? It's actually the
-> better choice in this case (alerts to a possible kernel bug, not to an
-> event that would need to be logged every time), I just used WARN_ON()
-> instinctively and didn't think of the _ONCE variant.
-
-I'd really prefer to not have the WARN_ON(), even the _ONCE() variant.
-We're seeing more and more discussion about avoiding the use of
-WARN_ON() similar to the current BUG_ON() guidelines.
-
-> > > +                     }
-> > > +             }
-> > > +             if (WARN_ON(optlen_new > opt->opt.optlen))
-> > > +                     optlen_new =3D opt->opt.optlen;
-> >
-> > This is also probably not really necessary, but it bothers me less.
+> So, to reveal all the cards, the issue that has prompted me to send
+> this patch is that a user may have a router configured to drop packets
+> containing any IP options [1][2] and may expect a Linux host with
+> NetLabel configured as unlabeled for a target IP address to
+> output/forward packets without IP options if CIPSO was the only option
+> present before NetLabel processing (such that it can then pass through
+> the strict router(s)).
 >
-> I would convert this one to WARN_ON_ONCE() as well, or drop both if
-> you still don't like either of them to be there.
+> Padding with IPOPT_END *might* solve this particular case, but I'm not
+> sure if the routers would really interpret such padding as "no
+> options"... I'll try to ask the reporter to test such a patch and
+> we'll see. But still, I don't yet see a convincing reason to not go
+> all the way and make sure we send optimally-sized packets here.
 
-My preference would be to drop both, although as I said earlier this
-last one bothers me less.
+I'm about 99.5% certain we are talking about the same reporter,
+although I was missing the detail about an intermediate
+switching/routing node; the problem report I saw was that there was
+simply a black-box device on the network that was dropping packets due
+to the presence of NOOP options.  IMO, the original RFCs are a little
+too vague in this area, but it doesn't really matter if an
+intermediate node is dropping the packets.
+
+> Side note: We could only clear CIPSO with IPOPT_END if it's the last
+> option in the header ...
+
+Obviously, I kinda assumed anyone following along would understand that.
+
+> ... but that limitation doesn't really matter for
+> the use case described above.
 
 --=20
 paul-moore.com
