@@ -1,89 +1,77 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265FC6CDA5;
-	Thu, 25 Apr 2024 07:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32B484FD0
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Apr 2024 10:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714029040; cv=none; b=uZlhU/LfITufdr6wUyubmn7V68w/ZlTtzgNBBFxXy8bUwO01JD1et/nSI0mp7VLDgueIne3fITim+YnlqFAhs+pEgdNN6rxk/Zj2zxO9lJq1zbr3218wWdisDtRsno2+CyirAzvAvpVOwdFPn2Nmhvjdz3kt18Hz7V5BGdSQI2o=
+	t=1714039249; cv=none; b=fPBjRg2Vue456a8s1gdh2s1EpXZQc2NN5+rlc8z+Sko5xPdMD2nhKgIAG4L+dccGfmVitnzCJa37VIul4QPOd4825Pt8m1Dk/AdK35kjCHZw2h31h6K//3DTc1gvH1muBR9imGnhuuevjykE6YnKRPmvs3n7tNYcaSddvAC1pW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714029040; c=relaxed/simple;
-	bh=rmNCwj/QZXocvFu/SV+UsAbq1yc1Onrw5e/MM6tpI4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gieOt1pLr+D0qMK4OYcfBKCyFuFyZJ7Do7RWMt3ayutKnlctUSr2Giaov9NdiRm4Za70PQzA3qkWCBKWf1/H9AA4Nu5ldrBgQ/XdgGVcB+r1Ht+ee3gDsTp/K9jbn607DyqrWZKqMU3wvsVD4YOAM1Fwrm2yuESrIdV3F2KqHVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=MmasBUph; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	s=arc-20240116; t=1714039249; c=relaxed/simple;
+	bh=hWMLyN7uK3gysN1YWIaf+Zxg9Lv6ljiK1vi+Jet7OSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lN4QZ1oVxCFJYNXi3BZR46jFxM57smeweF8a290X6eB+b+li005Td3Mdo8l4+7clNL+g8FQXELK8birla5GMvEL9XPHP2HstJ+xvGaqKsIUlqs10q+5tMDNT1er8+3xXcrl8kEkbtGF+mncaclbDE5REIKbmJaGaykMHHNzQSuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yBOdJcW7; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="MmasBUph"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1714029027;
-	bh=rmNCwj/QZXocvFu/SV+UsAbq1yc1Onrw5e/MM6tpI4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MmasBUphC0hDmcDselWsqNDchcFNLbtyyIXYaTEfQv4BLOsVbY80KeyHb5BvHn9uV
-	 mXfX+53b9fklgAHnv4JHOlIL0SSIIXm5AmCALLJVlcCrmQacW/Cc+9xB5aBl8A7Dwb
-	 B9LRLV8RKBn3hp3tvoCofURazzoY7NMe3hrGTd84=
-Date: Thu, 25 Apr 2024 09:10:27 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, 
-	Joel Granados <j.granados@samsung.com>, Kees Cook <keescook@chromium.org>, 
-	Eric Dumazet <edumazet@google.com>, Dave Chinner <david@fromorbit.com>, 
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	kexec@lists.infradead.org, linux-hardening@vger.kernel.org, bridge@lists.linux.dev, 
-	lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, 
-	linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
-Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
- of sysctl handlers
-Message-ID: <9e657181-866a-4626-82d0-e0030051b003@t-8ch.de>
-References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
- <20240424201234.3cc2b509@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yBOdJcW7"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VQ9PW2PpnzxXd;
+	Thu, 25 Apr 2024 11:22:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1714036975;
+	bh=hWMLyN7uK3gysN1YWIaf+Zxg9Lv6ljiK1vi+Jet7OSs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=yBOdJcW7ZUSQX0UplevNzR5NSqrSvKzT6jSCp4jm0rMGyOviBzqxQSPPqiJRbyRo/
+	 xLHcW8s4CHqW4ZVRS1KAlozxy8oIjN7Sye5+varUhNurHSl0Kj6zYRwuZTJIgElJGO
+	 kak6bJ2V30zCLHHr02wq9xiKJ4IjlYx+dUg5C4z0=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VQ9PV10dKzTZ4;
+	Thu, 25 Apr 2024 11:22:54 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	James Morris <jmorris@namei.org>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Subject: [PATCH] =?UTF-8?q?MAINTAINER:=20Add=20G=C3=BCnther=20Noack=20as?= =?UTF-8?q?=20Landlock=20reviewer?=
+Date: Thu, 25 Apr 2024 11:21:21 +0200
+Message-ID: <20240425092126.975830-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240424201234.3cc2b509@kernel.org>
+X-Infomaniak-Routing: alpha
 
-On 2024-04-24 20:12:34+0000, Jakub Kicinski wrote:
-> On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
-> > The series was split from my larger series sysctl-const series [0].
-> > It only focusses on the proc_handlers but is an important step to be
-> > able to move all static definitions of ctl_table into .rodata.
-> 
-> Split this per subsystem, please.
+Günther is a major contributor to Landlock, both on the kernel and user
+space sides, and he is already reviewing Landlock changes.  Thanks!
 
-Unfortunately this would introduce an enormous amount of code churn.
+Cc: Günther Noack <gnoack@google.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-The function prototypes for each callback have to stay consistent.
-So a another callback member ("proc_handler_new") is needed and users
-would be migrated to it gradually.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c95dabf4ecc9..6a84cccbb6d1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12216,6 +12216,7 @@ F:	net/l3mdev
+ 
+ LANDLOCK SECURITY MODULE
+ M:	Mickaël Salaün <mic@digikod.net>
++R:	Günther Noack <gnoack@google.com>
+ L:	linux-security-module@vger.kernel.org
+ S:	Supported
+ W:	https://landlock.io
+-- 
+2.44.0
 
-But then *all* definitions of "struct ctl_table" throughout the tree need to
-be touched.
-In contrast, the proposed series only needs to change the handler
-implementations, not their usage sites.
-
-There are many, many more usage sites than handler implementations.
-
-Especially, as the majority of sysctl tables use the standard handlers
-(proc_dostring, proc_dobool, ...) and are not affected by the proposed
-aproach at all.
-
-And then we would have introduced a new handler name "proc_handler_new"
-and maybe have to do the whole thing again to rename it back to
-the original and well-known "proc_handler".
-
-
-Of course if somebody has a better aproach, I'm all ears.
-
-
-Thomas
