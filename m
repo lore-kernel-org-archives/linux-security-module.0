@@ -1,143 +1,103 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DD93C062
-	for <linux-security-module@vger.kernel.org>; Fri, 26 Apr 2024 23:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38483376EC;
+	Sat, 27 Apr 2024 07:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714173398; cv=none; b=BrFOZjROvwz7QHM5KFrvOwIFL++NkBuAqn58L+vsL+Y4KteSJGZE1gZBukG1aX0wyAjr8bRsBSCSDlfCXp7Qh2AVa4XDelklM2IIVuXUe/ucSuo5FWP+xEYnGTzkI/atXA+GXRmJvEATg96roXJM1dBtd0a1bcFZtnZzmx3PMBE=
+	t=1714203652; cv=none; b=UY1otfYt7LzaThluwcz4PqDrjfBzo61C7gJOuXywvhysJTpledZs9sAClSmpGbrhWsVaDYCRzEAtXTdjuME8dCcDRfEm/qFUQdGYxefw2bjVfD7emapmOtWMAuF3jXo1Vh2z/rLwUjLjEWcjSxcwFcRw3oXQR2lrYtRkq1/TDEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714173398; c=relaxed/simple;
-	bh=7AjVYx3bCX4Fww04LykaNFtcTPbI6xC5fT6cTYYHebs=;
+	s=arc-20240116; t=1714203652; c=relaxed/simple;
+	bh=CzgUKxV1DiRGrX9zQXzZL6Gotui8EXJUqYQ3eQT9fT4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxp7NM62wTt0YhguFFAXzl1YnihI561viKQgQ5GAmSHpphDVkHXBZyRgAmUfQcUOij/hJEpieO4TYEBNrmjSC48MwE9/7PkKjfijiTjlx6qkwH9XgjfH15frgdbioKLMzljRxQ7/7aGKhL//9hx94B1ix1V9y2H6kocCQRUanHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Z8E1dV9m; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=EldON3TuhubwZAoNWjdObGunaICbj7oTMsx5nhciB0CMEiZ76f/cBRB9AJTeoRbsLyAv6WPgwpS4WlNdUhZ8IP6in0Aflo7GIy7d0cFxduAzBPcQ9JYnLlP5wI90lnkBr/+olVU+D5IPfDqqastftUc2DBKBdaTuhXzRdhnLui4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gEqEbcAY; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z8E1dV9m"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6ed32341906so2660849b3a.1
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Apr 2024 16:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1714173396; x=1714778196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=opWos3IruaB/4qZIdM96XOJaiq9zI0XzG7sSYPn525M=;
-        b=Z8E1dV9mb3tTWT4KgQ8DL2hwBRk2TNIKp9LkJT1hOTmjEC5zKyq87plkvcRt5CdQIK
-         b1IerMfAci6GPtSJP1VARkdGceH+2i4KBjLWGHi7awh7SwvQo8cn+Rgh3pzfx4jh7AlM
-         9jkyqXu4x/Py7bmXZvQ8dXO9B5HS7zYV9qUpo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714173396; x=1714778196;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=opWos3IruaB/4qZIdM96XOJaiq9zI0XzG7sSYPn525M=;
-        b=Wby/LAmR2fmpX1F+arcVbVoU1FXdq2jnUWsR5M7lUF+IFhTvg9C192d6CiNYyViMR+
-         ySkBtycFaTznnldTu2QNhSA1cpVSrEAv7lQJNYvQfR//SSyt8Ty0O2Zo13aWi2OxfkPC
-         551tqAF2/ewmH0oWHfEjpcqyjL7iXmZhgp5I+toUPOSd7/H/CkgAvyJGOi9zwhZv+nAZ
-         nfnYzaNjnpisI4/0kkzGNwDbgyjB6EoF3jqz/lPDcjpZwPa1pCbXQETgxPxa5VJMKhKc
-         rtrNeZdktkZALTqZvwzYpXmpkcL2WqLEgIrAoTg7D0jOgJ7kbSleEt+KyNQEy48YkgRT
-         TqKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlioAt4EoKVpcgw0oOjU/nsTJW6MYRuCSSq9l+HWjJSSdhaJ49fRK51JNfdROBkwZ20gh3U1MkS3VmleblWIToFBbDJkDvErq46/KVPbsIJpi6UMZ1
-X-Gm-Message-State: AOJu0YzxiuLeqeOa9rRe7BPcQvpTZawpHblpV55RRAkt2jtBxKQAXwhU
-	EM6TUXJm3jmtXguGER7N5N/GpbafV/Xse+TsnjLcLSFVU4OiW6plKa8EzK08Vw==
-X-Google-Smtp-Source: AGHT+IEUZubJL4QUSK6pyzCdpuqFqY/W/ty9RvrLZCDN36NO8wZyv7NW/a7U0iQN/0uUIh4tnO/xbw==
-X-Received: by 2002:a05:6a20:d48c:b0:1ae:a5bf:341b with SMTP id im12-20020a056a20d48c00b001aea5bf341bmr2506303pzb.6.1714173396083;
-        Fri, 26 Apr 2024 16:16:36 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id s3-20020a056a00194300b006e6ae26625asm15345740pfk.68.2024.04.26.16.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 16:16:35 -0700 (PDT)
-Date: Fri, 26 Apr 2024 16:16:34 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com,
-	ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com,
-	jorgelo@chromium.org, Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 2/2] proc: add Kconfigs to restrict /proc/pid/mem
- access
-Message-ID: <202404261611.958FEB4@keescook>
-References: <20240409175750.206445-1-adrian.ratiu@collabora.com>
- <20240409175750.206445-2-adrian.ratiu@collabora.com>
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gEqEbcAY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1714203646;
+	bh=CzgUKxV1DiRGrX9zQXzZL6Gotui8EXJUqYQ3eQT9fT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gEqEbcAYbNH1Cl76LGX0IqteTFz6QZM2G7WkdPY5ve6JFJe7QvQdYePk2UkJVcvTR
+	 6u5FIHxh7+/FsU6vrbi0R0NpqVH+T4CvlFrv7BQ8Kzndu1PmGsnulYTnxUn5nJrEUi
+	 e3WiuV0em4CHQ+eAmWIJfWacyiMhggB7HEWeZqN8=
+Date: Sat, 27 Apr 2024 09:40:43 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Jakub Kicinski <kuba@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>
+Cc: Kees Cook <keescook@chromium.org>, Eric Dumazet <edumazet@google.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <38a87a0f-02c7-4072-9342-8f6697ea1a17@t-8ch.de>
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <20240424201234.3cc2b509@kernel.org>
+ <9e657181-866a-4626-82d0-e0030051b003@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240409175750.206445-2-adrian.ratiu@collabora.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e657181-866a-4626-82d0-e0030051b003@t-8ch.de>
 
-On Tue, Apr 09, 2024 at 08:57:50PM +0300, Adrian Ratiu wrote:
-> Some systems might have difficulty changing their bootloaders
-> to enable the newly added restrict_proc_mem* params, for e.g.
-> remote embedded doing OTA updates, so this provides a set of
-> Kconfigs to set /proc/pid/mem restrictions at build-time.
+On 2024-04-25 09:10:27+0000, Thomas Weißschuh wrote:
+> On 2024-04-24 20:12:34+0000, Jakub Kicinski wrote:
+> > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
+> > > The series was split from my larger series sysctl-const series [0].
+> > > It only focusses on the proc_handlers but is an important step to be
+> > > able to move all static definitions of ctl_table into .rodata.
+> > 
+> > Split this per subsystem, please.
 > 
-> The boot params take precedence over the Kconfig values. This
-> can be reversed, but doing it this way I think makes sense.
+> Unfortunately this would introduce an enormous amount of code churn.
 > 
-> Another idea is to have a global bool Kconfig which can enable
-> or disable this mechanism in its entirety, however it does not
-> seem necessary since all three knobs default to off, the branch
-> logic overhead is rather minimal and I assume most of systems
-> will want to restrict at least the use of FOLL_FORCE.
+> The function prototypes for each callback have to stay consistent.
+> So a another callback member ("proc_handler_new") is needed and users
+> would be migrated to it gradually.
 > 
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> ---
->  fs/proc/base.c   | 33 +++++++++++++++++++++++++++++++++
->  security/Kconfig | 42 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 75 insertions(+)
+> But then *all* definitions of "struct ctl_table" throughout the tree need to
+> be touched.
+> In contrast, the proposed series only needs to change the handler
+> implementations, not their usage sites.
 > 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index c733836c42a65..e8ee848fc4a98 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -889,6 +889,17 @@ static int __mem_open_check_access_restriction(struct file *file)
->  		    !__mem_open_current_is_ptracer(file))
->  			return -EACCES;
->  
-> +#ifdef CONFIG_SECURITY_PROC_MEM_WRITE_RESTRICT
+> There are many, many more usage sites than handler implementations.
+> 
+> Especially, as the majority of sysctl tables use the standard handlers
+> (proc_dostring, proc_dobool, ...) and are not affected by the proposed
+> aproach at all.
+> 
+> And then we would have introduced a new handler name "proc_handler_new"
+> and maybe have to do the whole thing again to rename it back to
+> the original and well-known "proc_handler".
 
-No, please. :)
+This aproach could be optimized by only migrating the usages of the
+custom handler implementations to "proc_handler_new".
+After this we could move over the core handlers and "proc_handler" in
+one small patch that does not need to touch the usages sites.
 
-Just use use the _MAYBE/_maybe variants of the static branch DECLAREs and
-branches, and make Kconfigs for:
+Afterwards all non-core usages would be migrated back from
+"proc_handler_new" to "proc_handler" and the _new variant could be
+dropped again.
 
-CONFIG_PROC_MEM_RESTRICT_READ_DEFAULT
-CONFIG_PROC_MEM_RESTRICT_WRITE_DEFAULT
-CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT
+It would still be more than twice the churn of my current patch.
+And these patches would be more complex than the current
+"just add a bunch of consts, nothing else".
 
-Like:
-
-DECLARE_STATIC_KEY_MAYBE(CONFIG_PROC_MEM_RESTRICT_READ_DEFAULT, proc_mem_restrict_read);
-
-and then later:
-
-	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_READ_DEFAULT,
-				&proc_mem_restrict_read))
-		...
+Personally I still prefer the original aproach.
 
 
-Then all builds of the kernel will have it available, but system
-builders who want it enabled by default will get a slightly more
-optimized "if".
-
--Kees
-
--- 
-Kees Cook
+Thomas
