@@ -1,30 +1,62 @@
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D4D1BC40;
-	Sun, 28 Apr 2024 15:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D3171B4C
+	for <linux-security-module@vger.kernel.org>; Sun, 28 Apr 2024 17:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714317351; cv=none; b=kZU5hNlnzF3/rzsEFWfLFmqIzy/7XPTjzOU1c2CV0V/eo3KwUGM/0nnB/azYMYHuO+VPkquXkBD/B64yRmI7xj2V+xnGgYZmjVHDl1n1rbyoICVFmm0mQ6mygnxtoV0wgdGiUxMx1VLMrHMODpu+hkqB88cCob9m/yPQ+fdqKWM=
+	t=1714324224; cv=none; b=uO74BJLd3jemi3izva8+dwYuJDto6FmQ9hcv1YI1dt9VtHuGrJSoS/x2zprWNkvs/2aOTLX797HV5HCuUQPsuiG0aamiUPeb21I1GQwzXrRrT6BLFQ48o7vqOoTxCQWbKkXYq58WDmWJeYqOrVjw0sFWndWa5aQeiaTay4dE1dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714317351; c=relaxed/simple;
-	bh=ufQehwoOP8I5WnKH2epn1XxVgLfPaCl2twGWpKmEu7U=;
+	s=arc-20240116; t=1714324224; c=relaxed/simple;
+	bh=xk0X2ITBRgqtBY1M/c8x83mB7LlqCKtIYGLpUQE1HQc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YpSZUZxvYnNfdEYEpSL81xAWFi7UWE9uPnBQ72WSiLoUqJX3O1U505Yatc3gBTFbUQj3RmHEny+8PFL8yQixWRqq033577lVbp2eWr8yE0uJAerCDG6vlbhGzewKQmzaSiPcq1LWuM6MmT6HIfEPfQWy8/zMBTJhjG3Pjb+42I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VS956682Bz4f3jkC;
-	Sun, 28 Apr 2024 23:15:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CEC8E1A0179;
-	Sun, 28 Apr 2024 23:15:43 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP4 (Coremail) with SMTP id gCh0CgDXTnEcaC5mZeugLQ--.61138S2;
-	Sun, 28 Apr 2024 23:15:41 +0800 (CST)
-Message-ID: <4fbce978-9687-48a9-be2a-1c4d76790f7d@huaweicloud.com>
-Date: Sun, 28 Apr 2024 23:15:40 +0800
+	 In-Reply-To:Content-Type; b=gbFf4Wcuq9JbQRiFKTucFRGa4DavxNOwdpAmpJL+6Igyq54StbEsYTGst3e2Icj/k/CuWvatc6fxR5OMkZ6+eHnl6Aoz1ztOMVEf+D1AR7APqxKOyLtcYhYpcNfmGEPTOfjdQsWesflNuActemUNz6By0LZac0toX6QC6uP1vVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=A2zXrLZt; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="A2zXrLZt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1714324221; bh=R2Nu2YXwPdA9mlPNSzZZ/2DzKV5DgggcguVQGLUE1kU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=A2zXrLZtStcPWXvEI4n6wIE0UctDo89ajVYsOfCjuk3ewxLVXujH0KgOp72jsFOA6lrvTwq3FUx2XM7mDgz5UZQFeSwLVBQWCJghj0Ok6d3I8h3p39o+leceT0acqDcG68vfZ3ZLcWq7zBnQKsUhCpOC1mpdlYgYLzzxYVxB3WY/fthyLsKqlGfwWOQvdXd6vUHJt8MGvQ166V1B6qPwefhwk6kzMhO8Xa7Z4Vam14gf6xpdQ6fpXUauqSjjOBF39KQ/8GTXv7HnthPGutJObOgm8Hd+/AbUseO4D4bPBX2np3X9DCNXMkWer1bdd59DBVb3RsriEz5Vs1JtYZsBAA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1714324221; bh=bsg5Xq+cmNgHr5GRRHoztZWtkPEV+a6ev2qwmpkZtEn=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=dH5BqjjX1mnjiklPTMTtIDx3HS1X9zEjMkanMLioeMc9DgELeecaTgPAT1Xy6bK8roif9rQjfIQyN8kASkopYO4jTQYR9LY36o7nC2lgYaV8lhKHgGQQczEeNch6lLLJeiGUvdGUqJqnWEN1rhsBpkwi4QN+Vss+06urYlY2lNjAtCl1VgCFbsEy8grq2XQoJMooKXPG6XX1WFpmnhWh8vsnqgk1RrkdoMAf3k6TN6ER+f6GIKZCNdG2RaoV3vOsBPG45T53gbQ+V54tCVEZnRU6OXsMwUKDNSUObZ4UkLNKlVStPMUR5fKjPhzDgoYrBE7ZU9SQjRL6cnz3t3cCPA==
+X-YMail-OSG: WuBuhocVM1nJnyLuH3eyEV7YKubzkw9B5EYf8k86R12pBlo60Y0R91FFWupYmiq
+ E0iTYmKzimXPwXO5PIgUhy5taV222AkBXnjTj_4N7NLsVqIMY2eBGGBnXtLA_X.Gz.X9WIBTreQA
+ TNZsA9BxKtMbSqBpXtPsX8WyJwYELuLuWC64t5PdFTDx_2sUSune9.d9vjVQxWkHK92drAxyWDZt
+ xV7m9VjH7E9I3vo41NgJTqjI7AiyS4zbWJOOrbvXosjI.N2Ygd5xv0Zbn7Sut2xcLpZ1vWJhz8jK
+ NSPDeBg.rDtxh11nKtmyIja0d6ku.ZZ_awvZ19zn52JhM5b1qErJb.zw4wWyr.n7SleBB4n5UfzX
+ n4KPU4lqoTZSreWb8OGZS60RVLub3fW8H.5GOqPRQcPFoNPZ4fk1qE3t0Dixxht7lq8eW.gxQrgx
+ _qBbzIDWTq9Dloy2YjvJvbOd7HiRA4Z4242yh5.GC2.v9pdwfnFDZVb6lsaNxWsmHmklPSxAWJHm
+ 0Xum7pPeyN9WPaKlYIKzXjbEik0dtrnLriA3I.l.JysFPxKPN.kogg7wI8I88wFnZWJhr9138Y2c
+ NjlEKqkYP2IDiRBAlSeJKIzV9g9vmYKURe3SdbMe_aumG53PjsTRpJA0RBD6DGLB.uC3lXwvkeyV
+ ghsgL9pSypsf5kGuFQoOzdNKgyioXVGHGsQsqe7AEbU1ZX9MiseHPkQsUbCxMPV1B1pPLK5AOGmK
+ RGJtSn_9v3ZF8eSfhUxAZBTE9nSKaF9QHRSR25WSotyFwfKJxzTPRXTTwgdikQBwDwutVIFZDmfI
+ xFHp7HwihP7NwVh4oVY9vY4uB.aqWhayuUPy9WNQcbDvamfWdYeeXwZlvWnYGea9fnBtHLxMTYoL
+ rod2k8vN1xpsRf_CU8CH4RF9h74lYcVvT14OALcHqVQsq4dV..gWzVkuZq0yBTams90YictAaBRp
+ Y56CBTht8Jr9QMEtXW9T_u3unptjAWHkyGxG4bkN3YHy0ax09nCgDRSRa.zFoWiiZl70Rka8x.vu
+ diVMRsaLSTX8wxqpqyfGrM1xMWJFx8AwNSUb8Icl4rSKW2dFC5g.X_vu4wAfjzVXnzqVa54wPNm1
+ .TYfC8jxp9Cm6E_fAR.E0RqIjNOca3yXJX1cwcKs6DkhyZQV5PDqoZ.JkYJHGgNqEjo.k3KPUkcj
+ vwhVkos_I27bPHJ3gl.MZTokLO8h0ALhnYfLATI3C0WXpVC95KjHgKZ_XeYarQCxe0ejASjuijIn
+ hQ3XV4ygTuHJRGIffXZ2TtCY2nzoefoRY94rhEatexd8lwEsUTWfZoQX7oIIDZYPJBvj2DULvVA6
+ Hg3NgINqtoi_5Zr_lIW_N1STq_EILtCmsB1BXz2dX0mgaohjtuViQg0E7CUQKzCnyHAcGTdRGH9s
+ G1Qy_ouETDiQuTxszSiSCK3BKrpDztHajcg_zKWA9zcAoniYmfModNp92hqBUygL2ihC4NbYV4qY
+ ZlfQqmvWW17krzMsuGXH4r9HBSypnEL.a5OJLVBXoEv6VBTYHvE3KeFHdEhHFrRV.gTpZuROX22M
+ Hbn1etz_ORxw00L9m8P77gRYR4kaADdce5w6wqi4EaKNYL_4DLlpLpUrntcx3APM8xSVXXyeaN5r
+ bcCgYZrMcqJF48JrHHg__NfykgqXqrybfHGPSmndvTJcG6ui24t98yYidqOAicy2izgDlJe05mMg
+ k1f4gxP3Xalp5vBgE3V7er.N9cuUYzk2M0HVEuU8gIcznMabaHfEIEBr91Ra0bdrJNhmLQeEQqgt
+ Mst2gf6hujs0CRFKO8wRduve4e5cER1DwRCN3z0.AvffLTY7X5hEZx23bnzSGUKCFbraKnF7KXTo
+ rG3FUuYlgb1I9isFW_l8iXpVZ3KAWo7e7YJI3rnetQoLdWoKLyyynHaPP6SrxIgse3EZs6V0Mp2J
+ YzkBemFiYvwfIpnfKQFUjTy78asLEIaZfzCbD.9d4c4H2_UmfsKKmMGMwnXHbXQfHjBZVIDr5FXq
+ .fIKGlI82mcLseXxrLlPe5AbYotx1ngd3YrTG4ErvRWYI4yN8feh.QyJF4gW4VT0De7AS4ZfGAjK
+ Z1KLTO98RuP_pVspHNtP4E2B8CJCisj1R5IlWeaiyFi3YvbaSQlh4G9TvYQKx81ForZHaBR_oQK.
+ Y5AIKLkU3cuZsUSzM4kU8eSWcOZcDCjn8T3rczeLgj7HobPh.9qh.2o4nyfYCCvZwljNwj3gd5m2
+ jm.9dDXcOSd5ctD3WHZpRRTVCWwILZGrqeijYdkYebZSGHAb81aJiqrSgQozwjwbwMVL1Y0yYTse
+ ztN9FQw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 6700f865-cc25-48e2-a20b-2d0b1ce55013
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Sun, 28 Apr 2024 17:10:21 +0000
+Received: by hermes--production-gq1-59c575df44-ftslf (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d52c73b08ca2e7f397be816e324af8bc;
+          Sun, 28 Apr 2024 16:39:56 +0000 (UTC)
+Message-ID: <314b8900-a539-41cd-af60-48bf7bd05b87@schaufler-ca.com>
+Date: Sun, 28 Apr 2024 09:39:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -32,275 +64,327 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 07/11] bpf: Fix a false rejection caused by
- AND operation
+Subject: Re: [PATCH v2] ima: Avoid blocking in RCU read-side critical section
+To: GUO Zihua <guozihua@huawei.com>, zohar@linux.ibm.com,
+ roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, stephen.smalley.work@gmail.com
+Cc: eric.snowberg@oracle.com, omosnace@redhat.com,
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+ LSM List <linux-security-module@vger.kernel.org>
+References: <20240428091045.85513-1-guozihua@huawei.com>
 Content-Language: en-US
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
- Brendan Jackman <jackmanb@chromium.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>
-References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
- <20240411122752.2873562-8-xukuohai@huaweicloud.com>
- <e62e2971301ca7f2e9eb74fc500c520285cad8f5.camel@gmail.com>
- <f80991aa-3a49-451a-9a82-ac57982dcb28@huaweicloud.com>
- <bdc84c6c-7415-4b84-a883-1988cb5f77d1@linux.dev>
- <576c7c44-d1b4-42c8-8b6e-2e6b93d7547a@huaweicloud.com>
- <CAEf4BzZTzftrOCFsfBd81sHDBpmNK+4Jefqa3SSS6NiuncO0tQ@mail.gmail.com>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <CAEf4BzZTzftrOCFsfBd81sHDBpmNK+4Jefqa3SSS6NiuncO0tQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXTnEcaC5mZeugLQ--.61138S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr4Uuw43XF4fuw13WrWfXwb_yoWfCFy5pF
-	Z8JFnFvr4kZ3yUZw1qqw4DArZYqF18JF18u34kA34IyrnFqFy5tr13KFyjkF9xArs7Cr4f
-	XF13WrW7tw4qqrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20240428091045.85513-1-guozihua@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22256 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 4/27/2024 4:36 AM, Andrii Nakryiko wrote:
-> On Tue, Apr 23, 2024 at 7:26 PM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
->>
->> On 4/24/2024 5:55 AM, Yonghong Song wrote:
->>>
->>> On 4/20/24 1:33 AM, Xu Kuohai wrote:
->>>> On 4/20/2024 7:00 AM, Eduard Zingerman wrote:
->>>>> On Thu, 2024-04-11 at 20:27 +0800, Xu Kuohai wrote:
->>>>>> From: Xu Kuohai <xukuohai@huawei.com>
->>>>>>
->>>>>> With lsm return value check, the no-alu32 version test_libbpf_get_fd_by_id_opts
->>>>>> is rejected by the verifier, and the log says:
->>>>>>
->>>>>>     0: R1=ctx() R10=fp0
->>>>>>     ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
->>>>>>     0: (b7) r0 = 0                        ; R0_w=0
->>>>>>     1: (79) r2 = *(u64 *)(r1 +0)
->>>>>>     func 'bpf_lsm_bpf_map' arg0 has btf_id 916 type STRUCT 'bpf_map'
->>>>>>     2: R1=ctx() R2_w=trusted_ptr_bpf_map()
->>>>>>     ; if (map != (struct bpf_map *)&data_input) @ test_libbpf_get_fd_by_id_opts.c:29
->>>>>>     2: (18) r3 = 0xffff9742c0951a00       ; R3_w=map_ptr(map=data_input,ks=4,vs=4)
->>>>>>     4: (5d) if r2 != r3 goto pc+4         ; R2_w=trusted_ptr_bpf_map() R3_w=map_ptr(map=data_input,ks=4,vs=4)
->>>>>>     ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
->>>>>>     5: (79) r0 = *(u64 *)(r1 +8)          ; R0_w=scalar() R1=ctx()
->>>>>>     ; if (fmode & FMODE_WRITE) @ test_libbpf_get_fd_by_id_opts.c:32
->>>>>>     6: (67) r0 <<= 62                     ; R0_w=scalar(smax=0x4000000000000000,umax=0xc000000000000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xc000000000000000))
->>>>>>     7: (c7) r0 s>>= 63                    ; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
->>>>>>     ;  @ test_libbpf_get_fd_by_id_opts.c:0
->>>>>>     8: (57) r0 &= -13                     ; R0_w=scalar(smax=0x7ffffffffffffff3,umax=0xfffffffffffffff3,smax32=0x7ffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
->>>>>>     ; int BPF_PROG(check_access, struct bpf_map *map, fmode_t fmode) @ test_libbpf_get_fd_by_id_opts.c:27
->>>>>>     9: (95) exit
-> 
-> [...]
-> 
->>
->>       As suggested by Eduard, this patch makes a special case for source
->>       or destination register of '&=' operation being in range [-1, 0].
->>
->>       Meaning that one of the '&=' operands is either:
->>       - all ones, in which case the counterpart is the result of the operation;
->>       - all zeros, in which case zero is the result of the operation.
->>
->>       And MIN and MAX values could be derived based on above two observations.
->>
->>       [0] https://lore.kernel.org/bpf/e62e2971301ca7f2e9eb74fc500c520285cad8f5.camel@gmail.com/
->>       [1] https://github.com/llvm/llvm-project/blob/4523a267829c807f3fc8fab8e5e9613985a51565/llvm/lib/CodeGen/SelectionDAG/DAGCombiner.cpp
->>
->>       Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
->>       Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
->>
->> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->> index 640747b53745..30c551d39329 100644
->> --- a/kernel/bpf/verifier.c
->> +++ b/kernel/bpf/verifier.c
->> @@ -13374,6 +13374,24 @@ static void scalar32_min_max_and(struct bpf_reg_state *dst_reg,
->>           dst_reg->u32_min_value = var32_off.value;
->>           dst_reg->u32_max_value = min(dst_reg->u32_max_value, umax_val);
->>
->> +       /* Special case: src_reg is known and dst_reg is in range [-1, 0] */
->> +       if (src_known &&
->> +               dst_reg->s32_min_value == -1 && dst_reg->s32_max_value == 0 &&
->> +               dst_reg->smin_value == -1 && dst_reg->smax_value == 0) {
-> 
-> please keep if () condition aligned across multiple lines, it's super
-> confusing this way
+On 4/28/2024 2:10 AM, GUO Zihua wrote:
+> A panic happens in ima_match_policy:
+
+You need to add linux-security-module@vger.kernel.org to your CC list.
+
 >
-
-OK, will update the align style
-
->> +               dst_reg->s32_min_value = min_t(s32, src_reg->s32_min_value, 0);
->> +               dst_reg->s32_max_value = max_t(s32, src_reg->s32_min_value, 0);
-> 
-> do we need to update tnum parts as well (or reset and re-derive, probably)?
-> 
-> btw, can't we support src being a range here? the idea is that dst_reg
-> either all ones or all zeros. For and it means that it either stays
-> all zero, or will be *exactly equal* to src, right? So I think the
-> logic would be:
-> 
-> a) if [s32_min, s32_max] is on the same side of zero, then resulting
-> range would be [min(s32_min, 0), max(s32_max, 0)], just like you have
-> here
-> 
-> b) if [s32_min, s32_max] contains zero, then resulting range will be
-> exactly [s32_min, s32_max]
-> 
-> Or did I make a mistake above?
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
+> PGD 42f873067 P4D 0
+> Oops: 0000 [#1] SMP NOPTI
+> CPU: 5 PID: 1286325 Comm: kubeletmonit.sh Kdump: loaded Tainted: P
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+> RIP: 0010:ima_match_policy+0x84/0x450
+> Code: 49 89 fc 41 89 cf 31 ed 89 44 24 14 eb 1c 44 39 7b 18 74 26 41 83 ff 05 74 20 48 8b 1b 48 3b 1d f2 b9 f4 00 0f 84 9c 01 00 00 <44> 85 73 10 74 ea 44 8b 6b 14 41 f6 c5 01 75 d4 41 f6 c5 02 74 0f
+> RSP: 0018:ff71570009e07a80 EFLAGS: 00010207
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000200
+> RDX: ffffffffad8dc7c0 RSI: 0000000024924925 RDI: ff3e27850dea2000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffffabfce739
+> R10: ff3e27810cc42400 R11: 0000000000000000 R12: ff3e2781825ef970
+> R13: 00000000ff3e2785 R14: 000000000000000c R15: 0000000000000001
+> FS:  00007f5195b51740(0000) GS:ff3e278b12d40000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000010 CR3: 0000000626d24002 CR4: 0000000000361ee0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  ima_get_action+0x22/0x30
+>  process_measurement+0xb0/0x830
+>  ? page_add_file_rmap+0x15/0x170
+>  ? alloc_set_pte+0x269/0x4c0
+>  ? prep_new_page+0x81/0x140
+>  ? simple_xattr_get+0x75/0xa0
+>  ? selinux_file_open+0x9d/0xf0
+>  ima_file_check+0x64/0x90
+>  path_openat+0x571/0x1720
+>  do_filp_open+0x9b/0x110
+>  ? page_counter_try_charge+0x57/0xc0
+>  ? files_cgroup_alloc_fd+0x38/0x60
+>  ? __alloc_fd+0xd4/0x250
+>  ? do_sys_open+0x1bd/0x250
+>  do_sys_open+0x1bd/0x250
+>  do_syscall_64+0x5d/0x1d0
+>  entry_SYSCALL_64_after_hwframe+0x65/0xca
 >
-
-Totally agree, the AND of any set with the range [-1,0] is equivalent
-to adding number 0 to the set!
-
-Based on this observation, I've rewritten the patch as follows.
-
-diff --git a/include/linux/tnum.h b/include/linux/tnum.h
-index 3c13240077b8..5e795d728b9f 100644
---- a/include/linux/tnum.h
-+++ b/include/linux/tnum.h
-@@ -52,6 +52,9 @@ struct tnum tnum_mul(struct tnum a, struct tnum b);
-  /* Return a tnum representing numbers satisfying both @a and @b */
-  struct tnum tnum_intersect(struct tnum a, struct tnum b);
-
-+/* Return a tnum representing numbers satisfying either @a or @b */
-+struct tnum tnum_union(struct tnum a, struct tnum b);
-+
-  /* Return @a with all but the lowest @size bytes cleared */
-  struct tnum tnum_cast(struct tnum a, u8 size);
-
-diff --git a/kernel/bpf/tnum.c b/kernel/bpf/tnum.c
-index 9dbc31b25e3d..9d4480a683ca 100644
---- a/kernel/bpf/tnum.c
-+++ b/kernel/bpf/tnum.c
-@@ -150,6 +150,29 @@ struct tnum tnum_intersect(struct tnum a, struct tnum b)
-         return TNUM(v & ~mu, mu);
-  }
-
-+/*
-+ * Each bit has 3 states: unkown, known 0, known 1. If using x to represent
-+ * unknown state, the result of the union of two bits is as follows:
-+ *
-+ *         | x    0    1
-+ *    -----+------------
-+ *     x   | x    x    x
-+ *     0   | x    0    x
-+ *     1   | x    x    1
-+ *
-+ * For tnum a and b, only the bits that are both known 0 or known 1 in a
-+ * and b are known in the result of union a and b.
-+ */
-+struct tnum tnum_union(struct tnum a, struct tnum b)
-+{
-+       u64 v0, v1, mu;
-+
-+       mu = a.mask | b.mask; // unkown bits either in a or b
-+       v1 = (a.value & b.value) & ~mu; // "known 1" bits in both a and b
-+       v0 = (~a.value & ~b.value) & ~mu; // "known 0" bits in both a and b
-+       return TNUM(v1, mu | ~(v0 | v1));
-+}
-+
-  struct tnum tnum_cast(struct tnum a, u8 size)
-  {
-         a.value &= (1ULL << (size * 8)) - 1;
-  {
-         a.value &= (1ULL << (size * 8)) - 1;
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 8f0f2e21699e..b69c89bc5cfc 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -13478,6 +13478,28 @@ static void scalar32_min_max_and(struct bpf_reg_state *dst_reg,
-                 return;
-         }
-
-+       /* Special case: dst_reg is in range [-1, 0] */
-+       if (dst_reg->s32_min_value == -1 && dst_reg->s32_max_value == 0) {
-+               var32_off = tnum_union(src_reg->var_off, tnum_const(0));
-+               dst_reg->var_off = tnum_with_subreg(dst_reg->var_off, var32_off);
-+               dst_reg->u32_min_value = var32_off.value;
-+               dst_reg->u32_max_value = min(dst_reg->u32_max_value, umax_val);
-+               dst_reg->s32_min_value = min_t(s32, src_reg->s32_min_value, 0);
-+               dst_reg->s32_max_value = max_t(s32, src_reg->s32_max_value, 0);
-+               return;
-+       }
-+
-+       /* Special case: src_reg is in range [-1, 0] */
-+       if (src_reg->s32_min_value == -1 && src_reg->s32_max_value == 0) {
-+               var32_off = tnum_union(dst_reg->var_off, tnum_const(0));
-+               dst_reg->var_off = tnum_with_subreg(dst_reg->var_off, var32_off);
-+               dst_reg->u32_min_value = var32_off.value;
-+               dst_reg->u32_max_value = min(dst_reg->u32_max_value, umax_val);
-+               dst_reg->s32_min_value = min_t(s32, dst_reg->s32_min_value, 0);
-+               dst_reg->s32_max_value = max_t(s32, dst_reg->s32_max_value, 0);
-+               return;
-+       }
-+
-         /* We get our minimum from the var_off, since that's inherently
-          * bitwise.  Our maximum is the minimum of the operands' maxima.
-          */
-@@ -13508,6 +13530,26 @@ static void scalar_min_max_and(struct bpf_reg_state *dst_reg,
-                 return;
-         }
-
-+       /* Special case: dst_reg is in range [-1, 0] */
-+       if (dst_reg->smin_value == -1 && dst_reg->smax_value == 0) {
-+               dst_reg->var_off = tnum_union(src_reg->var_off, tnum_const(0));
-+               dst_reg->umin_value = dst_reg->var_off.value;
-+               dst_reg->umax_value = min(dst_reg->umax_value, umax_val);
-+               dst_reg->smin_value = min_t(s64, src_reg->smin_value, 0);
-+               dst_reg->smax_value = max_t(s64, src_reg->smax_value, 0);
-+               return;
-+       }
-+
-+       /* Special case: src_reg is in range [-1, 0] */
-+       if (src_reg->smin_value == -1 && src_reg->smax_value == 0) {
-+               dst_reg->var_off = tnum_union(dst_reg->var_off, tnum_const(0));
-+               dst_reg->umin_value = dst_reg->var_off.value;
-+               dst_reg->umax_value = min(dst_reg->umax_value, umax_val);
-+               dst_reg->smin_value = min_t(s64, dst_reg->smin_value, 0);
-+               dst_reg->smax_value = max_t(s64, dst_reg->smax_value, 0);
-+               return;
-+       }
-+
-
->> +               return;
->> +       }
->> +
->> +       /* Special case: dst_reg is known and src_reg is in range [-1, 0] */
->> +       if (dst_known &&
->> +               src_reg->s32_min_value == -1 && src_reg->s32_max_value == 0 &&
->> +               src_reg->smin_value == -1 && src_reg->smax_value == 0) {
->> +               dst_reg->s32_min_value = min_t(s32, dst_reg->s32_min_value, 0);
->> +               dst_reg->s32_max_value = max_t(s32, dst_reg->s32_min_value, 0);
->> +               return;
->> +       }
->> +
->>           /* Safe to set s32 bounds by casting u32 result into s32 when u32
->>            * doesn't cross sign boundary. Otherwise set s32 bounds to unbounded.
->>            */
-> 
-> [...]
-> 
-
+> Commit c7423dbdbc9e ("ima: Handle -ESTALE returned by
+> ima_filter_rule_match()") introduced call to ima_lsm_copy_rule within a
+> RCU read-side critical section which contains kmalloc with GFP_KERNEL.
+> This implies a possible sleep and violates limitations of RCU read-side
+> critical sections on non-PREEMPT systems.
+>
+> Sleeping within RCU read-side critical section might cause
+> synchronize_rcu() returning early and break RCU protection, allowing a
+> UAF to happen.
+>
+> The root cause of this issue could be described as follows:
+> |	Thread A	|	Thread B	|
+> |			|ima_match_policy	|
+> |			|  rcu_read_lock	|
+> |ima_lsm_update_rule	|			|
+> |  synchronize_rcu	|			|
+> |			|    kmalloc(GFP_KERNEL)|
+> |			|      sleep		|
+> ==> synchronize_rcu returns early
+> |  kfree(entry)		|			|
+> |			|    entry = entry->next|
+> ==> UAF happens and entry now becomes NULL (or could be anything).
+> |			|    entry->action	|
+> ==> Accessing entry might cause panic.
+>
+> To fix this issue, we are converting all kmalloc that is called within
+> RCU read-side critical section to use GFP_ATOMIC.
+>
+> Fixes: c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: GUO Zihua <guozihua@huawei.com>
+> ---
+>
+> v2:
+>   Changed the audit_rule_init security hook to accept a new GFP flag, as
+> per Stephen's suggestion.
+>
+> ---
+>  include/linux/lsm_hook_defs.h       | 2 +-
+>  include/linux/security.h            | 5 +++--
+>  kernel/auditfilter.c                | 5 +++--
+>  security/apparmor/audit.c           | 6 +++---
+>  security/apparmor/include/audit.h   | 2 +-
+>  security/integrity/ima/ima_policy.c | 8 +++++---
+>  security/security.c                 | 6 ++++--
+>  security/selinux/include/audit.h    | 4 +++-
+>  security/selinux/ss/services.c      | 5 +++--
+>  security/smack/smack_lsm.c          | 3 ++-
+>  10 files changed, 28 insertions(+), 18 deletions(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 334e00efbde4..7e539f6f8c67 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -412,7 +412,7 @@ LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
+>  
+>  #ifdef CONFIG_AUDIT
+>  LSM_HOOK(int, 0, audit_rule_init, u32 field, u32 op, char *rulestr,
+> -	 void **lsmrule)
+> +	 void **lsmrule, gfp_t gfp)
+>  LSM_HOOK(int, 0, audit_rule_known, struct audit_krule *krule)
+>  LSM_HOOK(int, 0, audit_rule_match, u32 secid, u32 field, u32 op, void *lsmrule)
+>  LSM_HOOK(void, LSM_RET_VOID, audit_rule_free, void *lsmrule)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 41a8f667bdfa..5122e3ad83b1 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -2048,7 +2048,8 @@ static inline void security_key_post_create_or_update(struct key *keyring,
+>  
+>  #ifdef CONFIG_AUDIT
+>  #ifdef CONFIG_SECURITY
+> -int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
+> +int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
+> +			     gfp_t gfp);
+>  int security_audit_rule_known(struct audit_krule *krule);
+>  int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
+>  void security_audit_rule_free(void *lsmrule);
+> @@ -2056,7 +2057,7 @@ void security_audit_rule_free(void *lsmrule);
+>  #else
+>  
+>  static inline int security_audit_rule_init(u32 field, u32 op, char *rulestr,
+> -					   void **lsmrule)
+> +					   void **lsmrule, gfp_t gfp)
+>  {
+>  	return 0;
+>  }
+> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> index be8c680121e4..d6ef4f4f9cba 100644
+> --- a/kernel/auditfilter.c
+> +++ b/kernel/auditfilter.c
+> @@ -529,7 +529,8 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
+>  			entry->rule.buflen += f_val;
+>  			f->lsm_str = str;
+>  			err = security_audit_rule_init(f->type, f->op, str,
+> -						       (void **)&f->lsm_rule);
+> +						       (void **)&f->lsm_rule,
+> +						       GFP_KERNEL);
+>  			/* Keep currently invalid fields around in case they
+>  			 * become valid after a policy reload. */
+>  			if (err == -EINVAL) {
+> @@ -799,7 +800,7 @@ static inline int audit_dupe_lsm_field(struct audit_field *df,
+>  
+>  	/* our own (refreshed) copy of lsm_rule */
+>  	ret = security_audit_rule_init(df->type, df->op, df->lsm_str,
+> -				       (void **)&df->lsm_rule);
+> +				       (void **)&df->lsm_rule, GFP_KERNEL);
+>  	/* Keep currently invalid fields around in case they
+>  	 * become valid after a policy reload. */
+>  	if (ret == -EINVAL) {
+> diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+> index 45beb1c5f747..6b5181c668b5 100644
+> --- a/security/apparmor/audit.c
+> +++ b/security/apparmor/audit.c
+> @@ -217,7 +217,7 @@ void aa_audit_rule_free(void *vrule)
+>  	}
+>  }
+>  
+> -int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+> +int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule, gfp_t gfp)
+>  {
+>  	struct aa_audit_rule *rule;
+>  
+> @@ -230,14 +230,14 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+>  		return -EINVAL;
+>  	}
+>  
+> -	rule = kzalloc(sizeof(struct aa_audit_rule), GFP_KERNEL);
+> +	rule = kzalloc(sizeof(struct aa_audit_rule), gfp);
+>  
+>  	if (!rule)
+>  		return -ENOMEM;
+>  
+>  	/* Currently rules are treated as coming from the root ns */
+>  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+> -				     GFP_KERNEL, true, false);
+> +				     gfp, true, false);
+>  	if (IS_ERR(rule->label)) {
+>  		int err = PTR_ERR(rule->label);
+>  		aa_audit_rule_free(rule);
+> diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
+> index acbb03b9bd25..0c8cc86b417b 100644
+> --- a/security/apparmor/include/audit.h
+> +++ b/security/apparmor/include/audit.h
+> @@ -200,7 +200,7 @@ static inline int complain_error(int error)
+>  }
+>  
+>  void aa_audit_rule_free(void *vrule);
+> -int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule);
+> +int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule, gfp_t gfp);
+>  int aa_audit_rule_known(struct audit_krule *rule);
+>  int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule);
+>  
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index c0556907c2e6..216ffe388ce5 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -410,7 +410,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+>  	 * Immutable elements are copied over as pointers and data; only
+>  	 * lsm rules can change
+>  	 */
+> -	nentry = kmemdup(entry, sizeof(*nentry), GFP_KERNEL);
+> +	nentry = kmemdup(entry, sizeof(*nentry), GFP_ATOMIC);
+>  	if (!nentry)
+>  		return NULL;
+>  
+> @@ -425,7 +425,8 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+>  
+>  		ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
+>  				     nentry->lsm[i].args_p,
+> -				     &nentry->lsm[i].rule);
+> +				     &nentry->lsm[i].rule,
+> +				     GFP_ATOMIC);
+>  		if (!nentry->lsm[i].rule)
+>  			pr_warn("rule for LSM \'%s\' is undefined\n",
+>  				nentry->lsm[i].args_p);
+> @@ -1140,7 +1141,8 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+>  	entry->lsm[lsm_rule].type = audit_type;
+>  	result = ima_filter_rule_init(entry->lsm[lsm_rule].type, Audit_equal,
+>  				      entry->lsm[lsm_rule].args_p,
+> -				      &entry->lsm[lsm_rule].rule);
+> +				      &entry->lsm[lsm_rule].rule,
+> +				      GFP_KERNEL);
+>  	if (!entry->lsm[lsm_rule].rule) {
+>  		pr_warn("rule for LSM \'%s\' is undefined\n",
+>  			entry->lsm[lsm_rule].args_p);
+> diff --git a/security/security.c b/security/security.c
+> index 0a9a0ac3f266..4fd3c839353e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5331,15 +5331,17 @@ void security_key_post_create_or_update(struct key *keyring, struct key *key,
+>   * @op: rule operator
+>   * @rulestr: rule context
+>   * @lsmrule: receive buffer for audit rule struct
+> + * @gfp: GFP flag used for kmalloc
+>   *
+>   * Allocate and initialize an LSM audit rule structure.
+>   *
+>   * Return: Return 0 if @lsmrule has been successfully set, -EINVAL in case of
+>   *         an invalid rule.
+>   */
+> -int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
+> +int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
+> +			     gfp_t gfp)
+>  {
+> -	return call_int_hook(audit_rule_init, field, op, rulestr, lsmrule);
+> +	return call_int_hook(audit_rule_init, field, op, rulestr, lsmrule, gfp);
+>  }
+>  
+>  /**
+> diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
+> index 52aca71210b4..29c7d4c86f6d 100644
+> --- a/security/selinux/include/audit.h
+> +++ b/security/selinux/include/audit.h
+> @@ -21,12 +21,14 @@
+>   *	@op: the operator the rule uses
+>   *	@rulestr: the text "target" of the rule
+>   *	@rule: pointer to the new rule structure returned via this
+> + *	@gfp: GFP flag used for kmalloc
+>   *
+>   *	Returns 0 if successful, -errno if not.  On success, the rule structure
+>   *	will be allocated internally.  The caller must free this structure with
+>   *	selinux_audit_rule_free() after use.
+>   */
+> -int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **rule);
+> +int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **rule,
+> +			    gfp_t gfp);
+>  
+>  /**
+>   *	selinux_audit_rule_free - free an selinux audit rule structure.
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index e88b1b6c4adb..ded250e525e9 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -3508,7 +3508,8 @@ void selinux_audit_rule_free(void *vrule)
+>  	}
+>  }
+>  
+> -int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+> +int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule,
+> +			    gfp_t gfp)
+>  {
+>  	struct selinux_state *state = &selinux_state;
+>  	struct selinux_policy *policy;
+> @@ -3549,7 +3550,7 @@ int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+>  		return -EINVAL;
+>  	}
+>  
+> -	tmprule = kzalloc(sizeof(struct selinux_audit_rule), GFP_KERNEL);
+> +	tmprule = kzalloc(sizeof(struct selinux_audit_rule), gfp);
+>  	if (!tmprule)
+>  		return -ENOMEM;
+>  	context_init(&tmprule->au_ctxt);
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 146667937811..a4943628d75a 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4696,7 +4696,8 @@ static int smack_post_notification(const struct cred *w_cred,
+>   * Prepare to audit cases where (@field @op @rulestr) is true.
+>   * The label to be audited is created if necessay.
+>   */
+> -static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+> +static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule,
+> +				 gfp_t gfp)
+>  {
+>  	struct smack_known *skp;
+>  	char **rule = (char **)vrule;
