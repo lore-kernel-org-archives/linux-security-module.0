@@ -1,151 +1,378 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBBC29421
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 10:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BF74E1CA
+	for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 11:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714385434; cv=none; b=UdlUP9rkFENmMW6sjk3f+52JaU9jwJfwO5OCCE2+t7fj/qDgLjf5hX7t6GUL2Cg4wznpjquC7WlgKw1ZQiaH6q54WBBOTadSNS8Fwkpz/uLTkzU6q5m+Pg6es3ZC8DL7rS7beDEGiB5txNbCrowvFwdn4vnRHTmaMxGy2StU42o=
+	t=1714390521; cv=none; b=hvf1ADS9mmKysmOYLNQ4M8tLIelzRIbOGSlXEuNgCnYiyjNzfFxJf069H6OlbFX5TkXMCBdYQ1V0QtI1IZu4HWWSN/A1ED2b4nCaW/xuM3dyKuC8HncVbGLwMqcRSYWfPL15Xo+TccGjhwH12X9U8hiteFinmaQ3KBlP9aViIFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714385434; c=relaxed/simple;
-	bh=xQ7hNCE0DNOP4U41pP3s0ClJGxIz6zSi+Jgjtu12jcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=TPEHVTRBjmRNPoLbZ9NEkwQspnkV62p5H1XR6k0XJcPdhLa20wHDS0JJAWb5p9631+IH7uQ7MmSx3GrOGPDzNWW2sxVbYYDC779WH+f/5qkYX3tHJbqwRaIbt102A0oBaLb4irTJ3cwMK5tWjXXu6xIPNwvtvV+ZwkmTrh1UkJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jPa4eoP0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1714390521; c=relaxed/simple;
+	bh=vAhtXuwNFG+GZ7D8ebLoJFvhPq1//2wzkcaCoqzZqvU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=e29YDkJ7XK1N343FEqJ2vpSdEgmTuU35OURDset9X46ZUudcKIYJHkJkXYHjjmmhM1b1YMAW5YrExXzT92OFj+13LXQrdDuINz2Rdbf9CpS2jIxNhnec4ND/B4jcoHBXwUTjGTLXLD0owEuA7nECuLHfMg9sl72f+gw89UY0M8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=Y2/ZO4/b; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jPa4eoP0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714385432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yrFSV+enroO5/Kb8/GKX96Hz0vjFPPsWJvTVuF9uIxc=;
-	b=jPa4eoP0E/NegVsPaF+d+vy+tvP1EtHAt2VAkl5jvU0YgojLqIz+L87/4Cahy6aeMRm9vK
-	TfaokII+1r/nbOkXsprwhAi3xsOwN3dgjQCEaBtauhNftcniWxarVpDLxmKltxATT1BYas
-	9RFmuOyI8BHhotjCSQpZXMQY0ePoCp4=
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
- [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-cyzpw45oPrS2KvuIu5NO-Q-1; Mon, 29 Apr 2024 06:10:30 -0400
-X-MC-Unique: cyzpw45oPrS2KvuIu5NO-Q-1
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-6ee1421ce19so1780302a34.3
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 03:10:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714385430; x=1714990230;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="Y2/ZO4/b"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2dac77cdf43so55135671fa.2
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 04:35:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1714390517; x=1714995317; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yrFSV+enroO5/Kb8/GKX96Hz0vjFPPsWJvTVuF9uIxc=;
-        b=D23REpKMikjXxkxrtHkKRQ3qYlzLnQhJl1XUnKex/7jg/NVYvQw9kMHwTvTENtFpHu
-         0HkRTQLxxu65fxyzJ43SVCtEv4yE0PEsoiq3718r9oErBNJ8WmDIn2oQTL7tXxvm27bn
-         SfWXF/N696Wegg7t0SsQ44bRTOT93oVUrAnvp/Pc0pMGSNoSit8gul+xroxjVaVdJkKm
-         dxe3i80Jt92SYR9krSISdoKQZzHlahDvkAd8eGD+j+pgZArY0FJ1NMVdg1TlfL3apThW
-         4tSw/io5EQomwR4p8IQYgkixMVIHlAlacYbUHxNGcxt3VxLZWKmVAG98u4yYMUM7VzfY
-         1PSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUPAPedXB+nJinkKSWP1PIS+v5CKwpPs7MuOd3KO43Ax8Zq2ra5E30jkD7SQoe0pJTa4jApsd+75uHi6LqBQfkArP7f0UY55mzONZTzFQGjTk3lJbq
-X-Gm-Message-State: AOJu0Yy/pFBCtitPBW2ra2gexXrfEOBhBPPVSB2TnExU0RvVaF5PPWl8
-	stkWNTj6wRd0TUCpzAo6mI5Jn2UCnS1xMEC2svI7vF+zPioLi6CnSNGbvS+dbuyjV1CBU5Nw4a3
-	pQyIVnzZBFLyEyuTAKSES/UiczGSteAATs3Sb6X+S5DFkSM1bG67CX0MXDFrHBgrUdosP3ThsQw
-	==
-X-Received: by 2002:a9d:7991:0:b0:6ee:2ca2:4370 with SMTP id h17-20020a9d7991000000b006ee2ca24370mr2789815otm.15.1714385429719;
-        Mon, 29 Apr 2024 03:10:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrvfVsOcM4emYdUYKViS3N6+afe+LNkfiEGNb0K0Zlc2Ov17BGL5mY6doHoVFVADHAZxJpjw==
-X-Received: by 2002:a9d:7991:0:b0:6ee:2ca2:4370 with SMTP id h17-20020a9d7991000000b006ee2ca24370mr2789795otm.15.1714385429234;
-        Mon, 29 Apr 2024 03:10:29 -0700 (PDT)
-Received: from localhost ([2a01:e11:1007:ea0:8374:5c74:dd98:a7b2])
-        by smtp.gmail.com with ESMTPSA id t3-20020a05620a034300b0078ef13a3d9csm10354459qkm.39.2024.04.29.03.10.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 03:10:28 -0700 (PDT)
-Date: Mon, 29 Apr 2024 12:10:27 +0200
-From: Davide Caratti <dcaratti@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	Xiumei Mu <xmu@redhat.com>
-Subject: Re: [PATCH v2] netlabel: fix RCU annotation for IPv4 options on
- socket  creation
-Message-ID: <Zi9yE099IYtqhCzN@dcaratti.users.ipa.redhat.com>
-References: <c1ba274b19f6d1399636d018333d14a032d05454.1713967592.git.dcaratti@redhat.com>
- <b6f94a1fd73d464e1da169e929109c3c@paul-moore.com>
+        bh=FfGzQB1xZB8xBXRUtcLsXtsSVhNRLi0+5fwIT5ItXxQ=;
+        b=Y2/ZO4/biFVkDlLdxSioJm42UrudnhZkdk4ses2t4OaWrN05Gev8/n+dd2Fau20vdN
+         8XBfyoRICezlwLe0nQjawGoCViUZB/c7TSg4HWEbvfvgahhGmAHLS3vnjCxp2i8Hir3s
+         wWxlbVL9ssGrBiwQwZNborK7nJE+rCZysCadpXiAWu/Q3t93N34c86SIfnde3FXk7QUG
+         0qg4fLIQyzQGdHOxhaAM+5/wTI5iJFcayexV6vT4DQCE0uuUHzI6XmOdC+YJJa8Pqb/L
+         bxLN0K+wrknWiZR4in/LSnjzdMC1pYfCbtwtpp73L7dyQRIMQDm2ekW18FtfHslwAa6J
+         tOfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714390517; x=1714995317;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FfGzQB1xZB8xBXRUtcLsXtsSVhNRLi0+5fwIT5ItXxQ=;
+        b=i5uYACwD4VMDNz4M5SwO7KO0FkiCcs6prHJ2KdTeNdXi0+DPM1RcfxZ72o8timRsNW
+         s8+7lK1MvO3B2cdSd6YfxlxR6IWcAy9OSQrFqH51WK2JISI5CDk7ppcDL3ZJakNfjast
+         nKmCfPPhXpSjy5ThFctGu7iT7QJErAGjAETZ24R8yvxcmDDepbHoBptEzslTck9ZK8Gd
+         4HmjvsWrsAJ0uYeqcaS1ZXBSCtYBjRCJAz7JY1D4eBgt81tt0c2nUAQlS1W77/qDGsMg
+         5682sEmSz5Tt3II65roIbNuxyYjatmhX4LdjuqDg11YCkXM1nskjaJ6XWdQgjuFWLRTv
+         IQGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDzgkeonsqD0k9EDGbmrNXPVikcCHnLOkLDp/9TpqFvtkRfBjKbX4uPG2RAcKd3fNdKDJlICp9NNo9jmibc+WAeJLIJPUp5r7D6AhRvD9RNgu5UCsz
+X-Gm-Message-State: AOJu0YwfOwnVNutyf7MDF/zc1VDRuyGnSCwpUEz1GrzjTKyHykceIzzs
+	Ltt/meeyvRM9/7wb/5gKVN6u1cRiRCkf95A+RzbfTldzUQMYJyN2J4Lfe5qJl0w=
+X-Google-Smtp-Source: AGHT+IGw2Ek0i5lSqjv/2CHs1TiQwOEm213t8IkDWkoV+quS2g6sI4vXDerOpOiRvHBEgiO62ZzKtw==
+X-Received: by 2002:a2e:968b:0:b0:2d8:63a2:50d2 with SMTP id q11-20020a2e968b000000b002d863a250d2mr6603309lji.6.1714390516956;
+        Mon, 29 Apr 2024 04:35:16 -0700 (PDT)
+Received: from smtpclient.apple ([82.150.214.1])
+        by smtp.gmail.com with ESMTPSA id b8-20020adfe308000000b003436a3cae6dsm29249925wrj.98.2024.04.29.04.35.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Apr 2024 04:35:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <b6f94a1fd73d464e1da169e929109c3c@paul-moore.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [EXT] [PATCH v8 6/6] docs: trusted-encrypted: add DCP as new
+ trust source
+From: David Gstir <david@sigma-star.at>
+In-Reply-To: <DB6PR04MB3190F6B78FF3760EBCC14E758F072@DB6PR04MB3190.eurprd04.prod.outlook.com>
+Date: Mon, 29 Apr 2024 13:35:04 +0200
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+ Mimi Zohar <zohar@linux.ibm.com>,
+ James Bottomley <jejb@linux.ibm.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ Shawn Guo <shawnguo@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ dl-linux-imx <linux-imx@nxp.com>,
+ Ahmad Fatoum <a.fatoum@pengutronix.de>,
+ sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+ David Howells <dhowells@redhat.com>,
+ Li Yang <leoyang.li@nxp.com>,
+ Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Tejun Heo <tj@kernel.org>,
+ "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+ "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+ "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+ Richard Weinberger <richard@nod.at>,
+ David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
+ Varun Sethi <V.Sethi@nxp.com>,
+ Gaurav Jain <gaurav.jain@nxp.com>,
+ Pankaj Gupta <pankaj.gupta@nxp.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7783BAE9-87DA-4DD5-ADFA-15A9B55EEF39@sigma-star.at>
+References: <20240403072131.54935-1-david@sigma-star.at>
+ <20240403072131.54935-7-david@sigma-star.at>
+ <D0ALT2QCUIYB.8NFTE7Z18JKN@kernel.org>
+ <DB6PR04MB3190F6B78FF3760EBCC14E758F072@DB6PR04MB3190.eurprd04.prod.outlook.com>
+To: Kshitiz Varshney <kshitiz.varshney@nxp.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-hello Paul, thanks for reviewing!
+Hi Kshitiz,
 
-On Thu, Apr 25, 2024 at 05:01:36PM -0400, Paul Moore wrote:
-> On Apr 24, 2024 Davide Caratti <dcaratti@redhat.com> wrote:
-> >
+> On 09.04.2024, at 11:48, Kshitiz Varshney <kshitiz.varshney@nxp.com> =
+wrote:
+>=20
+> Hi Jarkko,
+>=20
+>=20
+>> -----Original Message-----
+>> From: Jarkko Sakkinen <jarkko@kernel.org>
+>> Sent: Wednesday, April 3, 2024 9:18 PM
+>> To: David Gstir <david@sigma-star.at>; Mimi Zohar =
+<zohar@linux.ibm.com>;
+>> James Bottomley <jejb@linux.ibm.com>; Herbert Xu
+>> <herbert@gondor.apana.org.au>; David S. Miller <davem@davemloft.net>
+>> Cc: Shawn Guo <shawnguo@kernel.org>; Jonathan Corbet
+>> <corbet@lwn.net>; Sascha Hauer <s.hauer@pengutronix.de>; Pengutronix
+>> Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+>> <festevam@gmail.com>; dl-linux-imx <linux-imx@nxp.com>; Ahmad Fatoum
+>> <a.fatoum@pengutronix.de>; sigma star Kernel Team
+>> <upstream+dcp@sigma-star.at>; David Howells <dhowells@redhat.com>; Li
+>> Yang <leoyang.li@nxp.com>; Paul Moore <paul@paul-moore.com>; James
+>> Morris <jmorris@namei.org>; Serge E. Hallyn <serge@hallyn.com>; Paul =
+E.
+>> McKenney <paulmck@kernel.org>; Randy Dunlap <rdunlap@infradead.org>;
+>> Catalin Marinas <catalin.marinas@arm.com>; Rafael J. Wysocki
+>> <rafael.j.wysocki@intel.com>; Tejun Heo <tj@kernel.org>; Steven =
+Rostedt
+>> (Google) <rostedt@goodmis.org>; linux-doc@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-integrity@vger.kernel.org;
+>> keyrings@vger.kernel.org; linux-crypto@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org; =
+linux-security-
+>> module@vger.kernel.org; Richard Weinberger <richard@nod.at>; David
+>> Oberhollenzer <david.oberhollenzer@sigma-star.at>
+>> Subject: [EXT] Re: [PATCH v8 6/6] docs: trusted-encrypted: add DCP as =
+new
+>> trust source
+>>=20
+>> Caution: This is an external email. Please take care when clicking =
+links or
+>> opening attachments. When in doubt, report the message using the =
+'Report
+>> this email' button
+>>=20
+>>=20
+>> On Wed Apr 3, 2024 at 10:21 AM EEST, David Gstir wrote:
+>>> Update the documentation for trusted and encrypted KEYS with DCP as
+>>> new trust source:
+>>>=20
+>>> - Describe security properties of DCP trust source
+>>> - Describe key usage
+>>> - Document blob format
+>>>=20
+>>> Co-developed-by: Richard Weinberger <richard@nod.at>
+>>> Signed-off-by: Richard Weinberger <richard@nod.at>
+>>> Co-developed-by: David Oberhollenzer
+>>> <david.oberhollenzer@sigma-star.at>
+>>> Signed-off-by: David Oberhollenzer =
+<david.oberhollenzer@sigma-star.at>
+>>> Signed-off-by: David Gstir <david@sigma-star.at>
+>>> ---
+>>> .../security/keys/trusted-encrypted.rst       | 53 =
++++++++++++++++++++
+>>> security/keys/trusted-keys/trusted_dcp.c      | 19 +++++++
+>>> 2 files changed, 72 insertions(+)
+>>>=20
+>>> diff --git a/Documentation/security/keys/trusted-encrypted.rst
+>>> b/Documentation/security/keys/trusted-encrypted.rst
+>>> index e989b9802f92..f4d7e162d5e4 100644
+>>> --- a/Documentation/security/keys/trusted-encrypted.rst
+>>> +++ b/Documentation/security/keys/trusted-encrypted.rst
+>>> @@ -42,6 +42,14 @@ safe.
+>>>          randomly generated and fused into each SoC at manufacturing =
+time.
+>>>          Otherwise, a common fixed test key is used instead.
+>>>=20
+>>> +     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX
+>>> + SoCs)
+>>> +
+>>> +         Rooted to a one-time programmable key (OTP) that is =
+generally
+>> burnt
+>>> +         in the on-chip fuses and is accessible to the DCP =
+encryption engine
+>> only.
+>>> +         DCP provides two keys that can be used as root of trust: =
+the OTP
+>> key
+>>> +         and the UNIQUE key. Default is to use the UNIQUE key, but =
+selecting
+>>> +         the OTP key can be done via a module parameter
+>> (dcp_use_otp_key).
+>>> +
+>>>   *  Execution isolation
+>>>=20
+>>>      (1) TPM
+>>> @@ -57,6 +65,12 @@ safe.
+>>>=20
+>>>          Fixed set of operations running in isolated execution =
+environment.
+>>>=20
+>>> +     (4) DCP
+>>> +
+>>> +         Fixed set of cryptographic operations running in isolated =
+execution
+>>> +         environment. Only basic blob key encryption is executed =
+there.
+>>> +         The actual key sealing/unsealing is done on main =
+processor/kernel
+>> space.
+>>> +
+>>>   * Optional binding to platform integrity state
+>>>=20
+>>>      (1) TPM
+>>> @@ -79,6 +93,11 @@ safe.
+>>>          Relies on the High Assurance Boot (HAB) mechanism of NXP =
+SoCs
+>>>          for platform integrity.
+>>>=20
+>>> +     (4) DCP
+>>> +
+>>> +         Relies on Secure/Trusted boot process (called HAB by =
+vendor) for
+>>> +         platform integrity.
+>>> +
+>>>   *  Interfaces and APIs
+>>>=20
+>>>      (1) TPM
+>>> @@ -94,6 +113,11 @@ safe.
+>>>=20
+>>>          Interface is specific to silicon vendor.
+>>>=20
+>>> +     (4) DCP
+>>> +
+>>> +         Vendor-specific API that is implemented as part of the DCP =
+crypto
+>> driver in
+>>> +         ``drivers/crypto/mxs-dcp.c``.
+>>> +
+>>>   *  Threat model
+>>>=20
+>>>      The strength and appropriateness of a particular trust source
+>>> for a given @@ -129,6 +153,13 @@ selected trust source:
+>>>      CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure
+>> the device
+>>>      is probed.
+>>>=20
+>>> +  *  DCP (Data Co-Processor: crypto accelerator of various i.MX =
+SoCs)
+>>> +
+>>> +     The DCP hardware device itself does not provide a dedicated =
+RNG
+>> interface,
+>>> +     so the kernel default RNG is used. SoCs with DCP like the =
+i.MX6ULL do
+>> have
+>>> +     a dedicated hardware RNG that is independent from DCP which =
+can be
+>> enabled
+>>> +     to back the kernel RNG.
+>>> +
+>>> Users may override this by specifying ``trusted.rng=3Dkernel`` on =
+the
+>>> kernel  command-line to override the used RNG with the kernel's =
+random
+>> number pool.
+>>>=20
+>>> @@ -231,6 +262,19 @@ Usage::
+>>> CAAM-specific format.  The key length for new keys is always in =
+bytes.
+>>> Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
+>>>=20
+>>> +Trusted Keys usage: DCP
+>>> +-----------------------
+>>> +
+>>> +Usage::
+>>> +
+>>> +    keyctl add trusted name "new keylen" ring
+>>> +    keyctl add trusted name "load hex_blob" ring
+>>> +    keyctl print keyid
+>>> +
+>>> +"keyctl print" returns an ASCII hex copy of the sealed key, which =
+is
+>>> +in format specific to this DCP key-blob implementation.  The key
+>>> +length for new keys is always in bytes. Trusted Keys can be 32 - =
+128 bytes
+>> (256 - 1024 bits).
+>>> +
+>>> Encrypted Keys usage
+>>> --------------------
+>>>=20
+>>> @@ -426,3 +470,12 @@ string length.
+>>> privkey is the binary representation of TPM2B_PUBLIC excluding the
+>>> initial TPM2B header which can be reconstructed from the ASN.1 octed
+>>> string length.
+>>> +
+>>> +DCP Blob Format
+>>> +---------------
+>>> +
+>>> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
+>>> +   :doc: dcp blob format
+>>> +
+>>> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
+>>> +   :identifiers: struct dcp_blob_fmt
+>>> diff --git a/security/keys/trusted-keys/trusted_dcp.c
+>>> b/security/keys/trusted-keys/trusted_dcp.c
+>>> index 16c44aafeab3..b5f81a05be36 100644
+>>> --- a/security/keys/trusted-keys/trusted_dcp.c
+>>> +++ b/security/keys/trusted-keys/trusted_dcp.c
+>>> @@ -19,6 +19,25 @@
+>>> #define DCP_BLOB_VERSION 1
+>>> #define DCP_BLOB_AUTHLEN 16
+>>>=20
+>>> +/**
+>>> + * DOC: dcp blob format
+>>> + *
+>>> + * The Data Co-Processor (DCP) provides hardware-bound AES keys =
+using
+>>> +its
+>>> + * AES encryption engine only. It does not provide direct key
+>> sealing/unsealing.
+>>> + * To make DCP hardware encryption keys usable as trust source, we
+>>> +define
+>>> + * our own custom format that uses a hardware-bound key to secure =
+the
+>>> +sealing
+>>> + * key stored in the key blob.
+>>> + *
+>>> + * Whenever a new trusted key using DCP is generated, we generate a
+>>> +random 128-bit
+>>> + * blob encryption key (BEK) and 128-bit nonce. The BEK and nonce =
+are
+>>> +used to
+>>> + * encrypt the trusted key payload using AES-128-GCM.
+>>> + *
+>>> + * The BEK itself is encrypted using the hardware-bound key using =
+the
+>>> +DCP's AES
+>>> + * encryption engine with AES-128-ECB. The encrypted BEK, generated
+>>> +nonce,
+>>> + * BEK-encrypted payload and authentication tag make up the blob
+>>> +format together
+>>> + * with a version number, payload length and authentication tag.
+>>> + */
+>>> +
+>>> /**
+>>>  * struct dcp_blob_fmt - DCP BLOB format.
+>>>  *
+>>=20
+>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>=20
+>> I can only test that this does not break a machine without the =
+hardware
+>> feature.
+>>=20
+>> Is there anyone who could possibly peer test these patches?
+> I am already working on testing this patchset on i.MX6 platform.
 
-[...]
- 
-> > @@ -1826,7 +1827,8 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
-> >   */
-> >  int cipso_v4_sock_setattr(struct sock *sk,
-> >  			  const struct cipso_v4_doi *doi_def,
-> > -			  const struct netlbl_lsm_secattr *secattr)
-> > +			  const struct netlbl_lsm_secattr *secattr,
-> > +			  bool slock_held)
-> 
-> This is a nitpicky bikeshedding remark, but "slock_held" sounds really
-> awkward to me, something like "sk_locked" sounds much better.
+Did you get around to testing this?
+I=E2=80=99d greatly appreciate a Tested-by for this. :-)
 
-ok, will fix that in v3.
-
-[...]
-
-> > @@ -1876,18 +1878,15 @@ int cipso_v4_sock_setattr(struct sock *sk,
-> >  
-> >  	sk_inet = inet_sk(sk);
-> >  
-> > -	old = rcu_dereference_protected(sk_inet->inet_opt,
-> > -					lockdep_sock_is_held(sk));
-> > +	old = rcu_replace_pointer(sk_inet->inet_opt, opt, slock_held);
-> >  	if (inet_test_bit(IS_ICSK, sk)) {
-> >  		sk_conn = inet_csk(sk);
-> >  		if (old)
-> >  			sk_conn->icsk_ext_hdr_len -= old->opt.optlen;
-> > -		sk_conn->icsk_ext_hdr_len += opt->opt.optlen;
-> > +		sk_conn->icsk_ext_hdr_len += opt_len;
-> >  		sk_conn->icsk_sync_mss(sk, sk_conn->icsk_pmtu_cookie);
-> >  	}
-> > -	rcu_assign_pointer(sk_inet->inet_opt, opt);
-> > -	if (old)
-> > -		kfree_rcu(old, rcu);
-> > +	kfree_rcu(old, rcu);
-> 
-> Thanks for sticking with this and posting a v2.
-> 
-> These changes look okay to me, but considering the 'Fixes:' tag and the
-> RCU splat it is reasonable to expect that this is going to be backported
-> to the various stable trees.  With that in mind, I think we should try
-> to keep the immediate fix as simple as possible, saving the other
-> changes for a separate patch.  This means sticking with
-> rcu_dereference_protected() and omitting the opt_len optimization; both
-> can be done in a second patch without the 'Fixes:' marking.
-> 
-> Unless I missing something and those changes are somehow part of the
-> fix?
-
-just checked, rcu_replace_pointer() can be used also in the oldest LTS
-but I'm not sure if kfree_rcu(NULL, ...) is ok. I agree to keep
-rcu_dereference_protected(), and the useless NULL check - I will
-follow-up with another patch (targeting net-next), after this one is
-merged.
-
---
-davide
+Thanks!
+BR, David
 
