@@ -1,63 +1,63 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CED839FD;
-	Mon, 29 Apr 2024 21:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F1B177992;
+	Mon, 29 Apr 2024 22:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714427793; cv=none; b=XAk0jp9vHp/wet/MXQpu2Z7cxQvBEjBAJQfKHkCepvDKev84IKjaEV2yaxOcF18xP3hz5hTkAmN9q+cxfw5z0Tjqe8AdNiuV6MJCJ/SwmKmyV+DeGDPLKgi3VuWfkidbdQSCWSXmsbkEacNBEFGaA695ezvtH0Ttao5DR1pbICM=
+	t=1714429109; cv=none; b=IWb92Bg3N8jO9TYcdYOAIffiI1XROjKczPlh2NGDXUoMxwZ2QWdyMIgy8w8uPvbsyd4v6tU39F3sOcI9kSmL8ztwMOOyXRAQBJGitr4acNDQ4UBskVkPfCQp+hzzwOa0C1CUCJg8c9WL9scUpU9+a/00kMSbHJVdNyoS61nVkyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714427793; c=relaxed/simple;
-	bh=am4+itAOCsFWmLVUS820IjilpCRE0cvu94HIBmVO/MQ=;
+	s=arc-20240116; t=1714429109; c=relaxed/simple;
+	bh=5FQU/EVBfp8zquoet4tZvLNoTnExuvFfr0UFGN2zj48=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gjxo3b+KLPN1LhrLgAHGlDjVaHn8AqvKr8UqI4vdzoAsPmYssm9VEpmKdrVZQXMDqzaqrpQna4rSt8s0ojGSfcwydh628OsPBYtnq7yEQq9g4Zwsa3nfBs8Kc6DQeiNZ/vyc9sjnREOc373cqd3R0D54M+X/a82gexrmf0dxMEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NDr9VtuG; arc=none smtp.client-ip=209.85.214.180
+	 Content-Type:MIME-Version; b=XZUmsSEzOwL2HCC7khYytlm51dT0XtYb3QlY0Cjv2vVfp3BWVzJBh76iun3nriUgUzcQJYKLDKI8LjgkwltPm2Y/y5tjpM1I+FOg8x7rLP1b08Ic/tfzqsPjYyPVZBj/B5Ot0txbfk+OKOTyS3ZKRNL+L3JcpBO7FA9OlKhTB4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWCVms9M; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NDr9VtuG"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1eac92f7c74so39101855ad.3;
-        Mon, 29 Apr 2024 14:56:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWCVms9M"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f28bb6d747so4289520b3a.3;
+        Mon, 29 Apr 2024 15:18:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714427792; x=1715032592; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1714429107; x=1715033907; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=i7bXCe/YvCxFvkBBJ8m97pmDQILaMFM/X+inNUSset8=;
-        b=NDr9VtuGFOSMdCJ001PP7fIWiC8EUHh1f2FS+azzUm1Jraxn1DWRbaOLnyUtW2P65g
-         hL3j02w/Oe+heYfpCsON90OKDOyZmtQTGlJE86/jjZH3Sv+X6HXhDQlJH6Q2LXX1O1my
-         Ki39APJytyJc2bRlFo2KB6KSNWP4LymrmZm8z9/w8M/csKWV+xfjKlEM8/Kwbt+L+N1w
-         jng2jIsIVyfpE/yW6L2PDhexM3BownHceBJLFlgpQzTp8RttpQrF8Rfn8skXS5cpLt6N
-         f0nYzQNNV58qhlBa6A03RwiE7l/sxe2V0gHt43G/vuHnBlidMXCC93YT0Ad1BsVc97qf
-         +nBA==
+        bh=cr2+1Q7+k8stldRGJ4hycgrJdY6zIBRip1L2M8qYXwY=;
+        b=OWCVms9MIpsvaFyP0PdePw6QJOIzGvc0uyLOvGdqYs9gnSUuXvDhbX81RFlrx9LRqY
+         Zab2301H03sb3DSCSW5H9UfnbYresdMFmuhOGk7VmuZt3RrbKc3bOBthZq/PUM+76f3P
+         5pE6l5Ae8F4wkBrwcq2F1VRN2TjOJ0Bgh5cJMKH5mEZZ9MLrbTZUH7qAen3wekUkwc1P
+         t4LnyqrH7I71oCvLJM5IhXjfp7QpHfaOCMwrYIJxZ+avHkPW/KD0l73VBiNeJOvaIXdX
+         C7oPp6k+Igj3eNn3jP5lct0ugk6ATIQqTVOoYskEUT3o7fGicKM4fEQtIKQmP/QP681J
+         iYCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714427792; x=1715032592;
+        d=1e100.net; s=20230601; t=1714429107; x=1715033907;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=i7bXCe/YvCxFvkBBJ8m97pmDQILaMFM/X+inNUSset8=;
-        b=FO1hwkLWxo7l5DgCRMIpmunvfqTZQetGWHtp946o9MEJgDb7HYgorGNosEBsmQOJOu
-         lx+S/xRq2RHHTSI+g8OqODA3i7d7uxKF9E6lQd1ba9u5WW9OIub/Sc9m2tKreNt5f0Rw
-         LnL2t6S+PBFzqq/GVLGqRwwJgm5ukW44NYkFpPDBdgPTcSZ0a031Q1Cur8Jh7/NcpX5+
-         c4UKUnHzt/DvCQf45C3gVSnADdeT1mOY3oBufJovSvM1k9gmWM2FdqMnjSnuAi9kKWYK
-         AlbeXSQdemvRBgWbrx2jbM33GiSBVIDBzh/0xo1O9DTlls1ou1+Ux8rdAIHVc23adh94
-         DYXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWh01MSSuChHjxBeEvqRqt6SXMcG3/iYJwurUQJ3y2A08v6yQsU4Mjp7PFnZfPTR7UUQt5E1c7jpGHyihNMWPKMcz33h5aKulaVwREsId2gD6OtN3Crf4Pv4hKchWbzIsiKn0f5wG7Irz+gcB2HXYQ52VIEkOGDN9xuioPu2HrnYAmqS87K+zVP1tXZNxy3GXPmTvYjtyoXnr7o1gD/ySTw6NMo
-X-Gm-Message-State: AOJu0Yzu0CklIei7jNGUe7/uiIlU6DzzcG47t9N298cxjhWRA5OJMpae
-	l30AFNQHxP8SyE/LMxLZTQgCUYvye70h5F+OidQjPvmnzR2T1ALO
-X-Google-Smtp-Source: AGHT+IHtggBkBzSjyuDn31+gpM33RSYq80DiZmUcGs/2XB9HLD/7CgQU5Kyef1r9KxBY5X22he9HJQ==
-X-Received: by 2002:a17:903:32d2:b0:1ea:9585:a1d7 with SMTP id i18-20020a17090332d200b001ea9585a1d7mr1166964plr.37.1714427791634;
-        Mon, 29 Apr 2024 14:56:31 -0700 (PDT)
+        bh=cr2+1Q7+k8stldRGJ4hycgrJdY6zIBRip1L2M8qYXwY=;
+        b=Zf4++BWxf+T/y2nQ1tXiWc7Vb1WkS6A2E/1mkrweLxX4ZCjKraK8B0qpP1hLXvQzi+
+         IuREJDcVLWRuElHBCwNIOK/oGQJInJhDdEvnOzXUHAOEi8lwvaKe8N+cDHBZUQxAn2JT
+         bd//+D9oTxVokUPXqEusW1oTIuq81kfLBQzbkun8u+sWA2FWFCWXkQZVOtSpll3GG6ID
+         xC8Se2dHrV6gzO7Ek/kLTEjguCrxpe2HvFXOFLZnmINByt8ADz/5/yQU38xhTS8/7tHv
+         n6c1EWDwAUO0nSgNKDijLFx61qfuRzWd1CJvxCKBnQ3LxIL6ZVqwqlIKRn/g8bzsnSdk
+         cDHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNGfrB06PVQtIVaGSHOh7BSJxYusHArsLCEUQLcFdGlCfyXgwm5IjlTS5nXgz4Nmzl64hCxO/vDBO0unlOl6A/gntAJ4AmbsxA+z9e2KtVKPYciEJBZ1GV/t/lAYax0gs/mCqtoozasgpbaK5QdQhWXjQVXoEB/DB1nzcdB5JOBgt3vHWNVmBBAPwVF8AeTMxvgmKpA5na/zLDqsqRTK+hJA0E
+X-Gm-Message-State: AOJu0YxxMvMwknqWxniMCTRsO38AXi4UvrNs0oXcWdrMqa9NYVofzZDV
+	rVN0RSyr5o/6qtTerZ0XEZQZpf3ddxr6ThA566/afI8stmD5yhUT
+X-Google-Smtp-Source: AGHT+IHvde4/0TGU/WUi9Kdh6ZHDst/sN3GUbM0YW3YIX7JtqLVGN2Xr200x9TnGFz8idAwJn1lntQ==
+X-Received: by 2002:a05:6a00:1901:b0:6ea:bdbc:614 with SMTP id y1-20020a056a00190100b006eabdbc0614mr12833423pfi.13.1714429107532;
+        Mon, 29 Apr 2024 15:18:27 -0700 (PDT)
 Received: from ?IPv6:2604:3d08:9880:5900:a18e:a67:fdb6:1a18? ([2604:3d08:9880:5900:a18e:a67:fdb6:1a18])
-        by smtp.gmail.com with ESMTPSA id w8-20020a170902a70800b001dd82855d47sm20823504plq.265.2024.04.29.14.56.29
+        by smtp.gmail.com with ESMTPSA id z8-20020a056a00240800b006ecf6417a9bsm19724998pfh.29.2024.04.29.15.18.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 14:56:30 -0700 (PDT)
-Message-ID: <864981e25f0cab42df65f9fedcb06be23badc85b.camel@gmail.com>
+        Mon, 29 Apr 2024 15:18:26 -0700 (PDT)
+Message-ID: <7cf8b58011156af99816391d3afd5c52e48ea8b7.camel@gmail.com>
 Subject: Re: [PATCH bpf-next v3 07/11] bpf: Fix a false rejection caused by
  AND operation
 From: Eduard Zingerman <eddyz87@gmail.com>
-To: Xu Kuohai <xukuohai@huaweicloud.com>, Andrii Nakryiko
-	 <andrii.nakryiko@gmail.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Xu Kuohai
+	 <xukuohai@huaweicloud.com>, Edward Cree <ecree.xilinx@gmail.com>
 Cc: Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org, 
  netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
@@ -74,8 +74,8 @@ Cc: Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org,
  <john.johansen@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
  Roberto Sassu <roberto.sassu@huawei.com>, Shung-Hsi Yu
  <shung-hsi.yu@suse.com>
-Date: Mon, 29 Apr 2024 14:56:29 -0700
-In-Reply-To: <4fbce978-9687-48a9-be2a-1c4d76790f7d@huaweicloud.com>
+Date: Mon, 29 Apr 2024 15:18:25 -0700
+In-Reply-To: <CAEf4BzZb38EemdD8ahX4Px3vWCp=ani6vcX71Z-1_MLeATNjwQ@mail.gmail.com>
 References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
 	 <20240411122752.2873562-8-xukuohai@huaweicloud.com>
 	 <e62e2971301ca7f2e9eb74fc500c520285cad8f5.camel@gmail.com>
@@ -84,6 +84,7 @@ References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
 	 <576c7c44-d1b4-42c8-8b6e-2e6b93d7547a@huaweicloud.com>
 	 <CAEf4BzZTzftrOCFsfBd81sHDBpmNK+4Jefqa3SSS6NiuncO0tQ@mail.gmail.com>
 	 <4fbce978-9687-48a9-be2a-1c4d76790f7d@huaweicloud.com>
+	 <CAEf4BzZb38EemdD8ahX4Px3vWCp=ani6vcX71Z-1_MLeATNjwQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2 
@@ -94,61 +95,68 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Sun, 2024-04-28 at 23:15 +0800, Xu Kuohai wrote:
+On Mon, 2024-04-29 at 13:58 -0700, Andrii Nakryiko wrote:
 
 [...]
 
-> diff --git a/kernel/bpf/tnum.c b/kernel/bpf/tnum.c
-> index 9dbc31b25e3d..9d4480a683ca 100644
-> --- a/kernel/bpf/tnum.c
-> +++ b/kernel/bpf/tnum.c
-> @@ -150,6 +150,29 @@ struct tnum tnum_intersect(struct tnum a, struct tnu=
-m b)
->          return TNUM(v & ~mu, mu);
->   }
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 8f0f2e21699e..b69c89bc5cfc 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -13478,6 +13478,28 @@ static void scalar32_min_max_and(struct bpf_re=
+g_state *dst_reg,
+> >                  return;
+> >          }
+> >=20
+> > +       /* Special case: dst_reg is in range [-1, 0] */
+> > +       if (dst_reg->s32_min_value =3D=3D -1 && dst_reg->s32_max_value =
+=3D=3D 0) {
+> > +               var32_off =3D tnum_union(src_reg->var_off, tnum_const(0=
+));
+> > +               dst_reg->var_off =3D tnum_with_subreg(dst_reg->var_off,=
+ var32_off);
+> > +               dst_reg->u32_min_value =3D var32_off.value;
+> > +               dst_reg->u32_max_value =3D min(dst_reg->u32_max_value, =
+umax_val);
 >=20
-> +/*
-> + * Each bit has 3 states: unkown, known 0, known 1. If using x to repres=
-ent
-> + * unknown state, the result of the union of two bits is as follows:
-> + *
-> + *         | x    0    1
-> + *    -----+------------
-> + *     x   | x    x    x
-> + *     0   | x    0    x
-> + *     1   | x    x    1
-> + *
-> + * For tnum a and b, only the bits that are both known 0 or known 1 in a
-> + * and b are known in the result of union a and b.
-> + */
-> +struct tnum tnum_union(struct tnum a, struct tnum b)
-> +{
-> +       u64 v0, v1, mu;
-> +
-> +       mu =3D a.mask | b.mask; // unkown bits either in a or b
-> +       v1 =3D (a.value & b.value) & ~mu; // "known 1" bits in both a and=
- b
-> +       v0 =3D (~a.value & ~b.value) & ~mu; // "known 0" bits in both a a=
-nd b
-> +       return TNUM(v1, mu | ~(v0 | v1));
-> +}
-> +
+> can you explain the logic behing u32 min/max updates, especially that
+> we use completely different values for min/max and it's not clear why
+> u32_min <=3D u32_max invariant will always hold. Same below
 
-Zero would be represented as {.value=3D0,.mask=3D0}, suppose 'b' is zero:
+I agree with Andrii here.
+It appears that dst_reg.{min,max} fields should be set as
+{min(src.min, 0), max(src.max, 0)} for both signed and unsigned cases.
+Wdyt?
 
-1. mu =3D a.mask | 0;                     2. mu =3D a.mask;
-   v1 =3D (a.value & 0) & ~mu;               v1 =3D 0;
-   v0 =3D (~a.value & ~0) & ~mu;             v0 =3D ~a.value & ~mu;
-   return TNUM(v1, mu | ~(v0 | v1));       return TNUM(v1, mu | ~(v0 | v1))=
-;
+>=20
+> > +               dst_reg->s32_min_value =3D min_t(s32, src_reg->s32_min_=
+value, 0);
+> > +               dst_reg->s32_max_value =3D max_t(s32, src_reg->s32_max_=
+value, 0);
+> > +               return;
+> > +       }
+> > +
+> > +       /* Special case: src_reg is in range [-1, 0] */
+> > +       if (src_reg->s32_min_value =3D=3D -1 && src_reg->s32_max_value =
+=3D=3D 0) {
+> > +               var32_off =3D tnum_union(dst_reg->var_off, tnum_const(0=
+));
+> > +               dst_reg->var_off =3D tnum_with_subreg(dst_reg->var_off,=
+ var32_off);
+> > +               dst_reg->u32_min_value =3D var32_off.value;
+> > +               dst_reg->u32_max_value =3D min(dst_reg->u32_max_value, =
+umax_val);
+> > +               dst_reg->s32_min_value =3D min_t(s32, dst_reg->s32_min_=
+value, 0);
+> > +               dst_reg->s32_max_value =3D max_t(s32, dst_reg->s32_max_=
+value, 0);
+> > +               return;
+> > +       }
+> > +
+> >          /* We get our minimum from the var_off, since that's inherentl=
+y
+> >           * bitwise.  Our maximum is the minimum of the operands' maxim=
+a.
+> >           */
 
-3. v1 =3D 0;                              4. v1 =3D 0;
-   v0 =3D ~a.value & ~a.mask;                v0 =3D ~a.value & ~a.mask;
-   return TNUM(v1, a.mask | ~(v0 | v1));   return TNUM(0, a.mask | ~(~a.val=
-ue & ~a.mask));
-
-5. return TNUM(0, a.mask | a.value)
-
-So ultimately this says that for 1's that we knew
-we no longer know if those are 1's.
-Which seems to make sense.
+[...]
