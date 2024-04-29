@@ -1,147 +1,151 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B7CEAC2;
-	Mon, 29 Apr 2024 09:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBBC29421
+	for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 10:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714384117; cv=none; b=et4LcncpJLClI7XZP4GAY+YrXhU0IHVny5ZndivIfXoSyUhm6Hkt/CUAfqnqm0Z6znZoV8X6zMD14tvTY8JTmiGBBFsHkd9UjrdvOjfynNrR/HOa5UV2IsdowUSPQ5dVQBGBU7Hq1wCfSa7hgDrvtKJA7Dza6oJ+7e0xCUPEQic=
+	t=1714385434; cv=none; b=UdlUP9rkFENmMW6sjk3f+52JaU9jwJfwO5OCCE2+t7fj/qDgLjf5hX7t6GUL2Cg4wznpjquC7WlgKw1ZQiaH6q54WBBOTadSNS8Fwkpz/uLTkzU6q5m+Pg6es3ZC8DL7rS7beDEGiB5txNbCrowvFwdn4vnRHTmaMxGy2StU42o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714384117; c=relaxed/simple;
-	bh=eOQoFD2Q1RfOcsu5iO/K4iGBJCStR6G+ZsM+imLU3t4=;
+	s=arc-20240116; t=1714385434; c=relaxed/simple;
+	bh=xQ7hNCE0DNOP4U41pP3s0ClJGxIz6zSi+Jgjtu12jcc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHlOSVCRZv8lmIgFhso1S12E/Dr61l2VU/aTPZf4gjg2fg+HXs0HnJQf/w1h9/a4dnOXS3tpyNZdknwiuh9Ggl2X/4VYA8IOnvWPl808vjn6iEsau1aV0ouD5tDMq/vTMpV5BZ9+HbJFmaUJl4ISFay+mBBHXH4aUdTwTQF6/Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Kg9UUvOf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	 In-Reply-To:Content-Type:Content-Disposition; b=TPEHVTRBjmRNPoLbZ9NEkwQspnkV62p5H1XR6k0XJcPdhLa20wHDS0JJAWb5p9631+IH7uQ7MmSx3GrOGPDzNWW2sxVbYYDC779WH+f/5qkYX3tHJbqwRaIbt102A0oBaLb4irTJ3cwMK5tWjXXu6xIPNwvtvV+ZwkmTrh1UkJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jPa4eoP0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Kg9UUvOf"
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43T9WcRr023175;
-	Mon, 29 Apr 2024 09:47:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=pp1;
- bh=Kn2/uMMJ4m7IZDO8WlgsPqO7vUsAlVouDdMvBgTuG6Q=;
- b=Kg9UUvOfIY+q0ndE7ZECmZZUdA61ZCkJRFtD9wLCjYzo6fe8LGiqgmj/OaQd5I/iEeGT
- h1W12UFRvhBs0Ojrxq2EVahg4SwzhBVbMh+nl7Xnt0KphpPc+1K4uJnLB1ltR+O9/J8Y
- xH2aBPNbeoLf7rIVjTmAK85pN4JRaPC9PScCooRYa7ChiJY29YfixJaL//aFd9303wQR
- GZQxdsEVeB2nF62y0IT3RUjuxSeOIjIAGLlEpPQHiihzSala+ltUzs1I4eJF+yCxcsu9
- xwGFkZf6AwHS79UZe7yymFDc9jL+Zte2Za8lJWgzOlYfHYZrwUSEHHijG4bCs204Im4A kw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xt90jg0v6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Apr 2024 09:47:55 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 43T9ltmx016519;
-	Mon, 29 Apr 2024 09:47:55 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xt90jg0v5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Apr 2024 09:47:54 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 43T7DaXf001450;
-	Mon, 29 Apr 2024 09:47:53 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xsbptppem-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Apr 2024 09:47:53 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 43T9loYx26542522
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 29 Apr 2024 09:47:52 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0556520040;
-	Mon, 29 Apr 2024 09:47:50 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B4E6220043;
-	Mon, 29 Apr 2024 09:47:48 +0000 (GMT)
-Received: from osiris (unknown [9.171.12.101])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 29 Apr 2024 09:47:48 +0000 (GMT)
-Date: Mon, 29 Apr 2024 11:47:47 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-        Joel Granados <j.granados@samsung.com>,
-        Kees Cook <keescook@chromium.org>, Eric Dumazet <edumazet@google.com>,
-        Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        kexec@lists.infradead.org, linux-hardening@vger.kernel.org,
-        bridge@lists.linux.dev, lvs-devel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-sctp@vger.kernel.org, linux-nfs@vger.kernel.org,
-        apparmor@lists.ubuntu.com
-Subject: Re: [PATCH v3 11/11] sysctl: treewide: constify the ctl_table
- argument of handlers
-Message-ID: <20240429094747.29046-G-hca@linux.ibm.com>
-References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
- <20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jPa4eoP0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1714385432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yrFSV+enroO5/Kb8/GKX96Hz0vjFPPsWJvTVuF9uIxc=;
+	b=jPa4eoP0E/NegVsPaF+d+vy+tvP1EtHAt2VAkl5jvU0YgojLqIz+L87/4Cahy6aeMRm9vK
+	TfaokII+1r/nbOkXsprwhAi3xsOwN3dgjQCEaBtauhNftcniWxarVpDLxmKltxATT1BYas
+	9RFmuOyI8BHhotjCSQpZXMQY0ePoCp4=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-177-cyzpw45oPrS2KvuIu5NO-Q-1; Mon, 29 Apr 2024 06:10:30 -0400
+X-MC-Unique: cyzpw45oPrS2KvuIu5NO-Q-1
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-6ee1421ce19so1780302a34.3
+        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 03:10:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714385430; x=1714990230;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yrFSV+enroO5/Kb8/GKX96Hz0vjFPPsWJvTVuF9uIxc=;
+        b=D23REpKMikjXxkxrtHkKRQ3qYlzLnQhJl1XUnKex/7jg/NVYvQw9kMHwTvTENtFpHu
+         0HkRTQLxxu65fxyzJ43SVCtEv4yE0PEsoiq3718r9oErBNJ8WmDIn2oQTL7tXxvm27bn
+         SfWXF/N696Wegg7t0SsQ44bRTOT93oVUrAnvp/Pc0pMGSNoSit8gul+xroxjVaVdJkKm
+         dxe3i80Jt92SYR9krSISdoKQZzHlahDvkAd8eGD+j+pgZArY0FJ1NMVdg1TlfL3apThW
+         4tSw/io5EQomwR4p8IQYgkixMVIHlAlacYbUHxNGcxt3VxLZWKmVAG98u4yYMUM7VzfY
+         1PSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUPAPedXB+nJinkKSWP1PIS+v5CKwpPs7MuOd3KO43Ax8Zq2ra5E30jkD7SQoe0pJTa4jApsd+75uHi6LqBQfkArP7f0UY55mzONZTzFQGjTk3lJbq
+X-Gm-Message-State: AOJu0Yy/pFBCtitPBW2ra2gexXrfEOBhBPPVSB2TnExU0RvVaF5PPWl8
+	stkWNTj6wRd0TUCpzAo6mI5Jn2UCnS1xMEC2svI7vF+zPioLi6CnSNGbvS+dbuyjV1CBU5Nw4a3
+	pQyIVnzZBFLyEyuTAKSES/UiczGSteAATs3Sb6X+S5DFkSM1bG67CX0MXDFrHBgrUdosP3ThsQw
+	==
+X-Received: by 2002:a9d:7991:0:b0:6ee:2ca2:4370 with SMTP id h17-20020a9d7991000000b006ee2ca24370mr2789815otm.15.1714385429719;
+        Mon, 29 Apr 2024 03:10:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHrvfVsOcM4emYdUYKViS3N6+afe+LNkfiEGNb0K0Zlc2Ov17BGL5mY6doHoVFVADHAZxJpjw==
+X-Received: by 2002:a9d:7991:0:b0:6ee:2ca2:4370 with SMTP id h17-20020a9d7991000000b006ee2ca24370mr2789795otm.15.1714385429234;
+        Mon, 29 Apr 2024 03:10:29 -0700 (PDT)
+Received: from localhost ([2a01:e11:1007:ea0:8374:5c74:dd98:a7b2])
+        by smtp.gmail.com with ESMTPSA id t3-20020a05620a034300b0078ef13a3d9csm10354459qkm.39.2024.04.29.03.10.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Apr 2024 03:10:28 -0700 (PDT)
+Date: Mon, 29 Apr 2024 12:10:27 +0200
+From: Davide Caratti <dcaratti@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+	Xiumei Mu <xmu@redhat.com>
+Subject: Re: [PATCH v2] netlabel: fix RCU annotation for IPv4 options on
+ socket  creation
+Message-ID: <Zi9yE099IYtqhCzN@dcaratti.users.ipa.redhat.com>
+References: <c1ba274b19f6d1399636d018333d14a032d05454.1713967592.git.dcaratti@redhat.com>
+ <b6f94a1fd73d464e1da169e929109c3c@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <b6f94a1fd73d464e1da169e929109c3c@paul-moore.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: dsJabyKjD5wmo-a4UVf9qexuuOQkOoCK
-X-Proofpoint-GUID: 7SlQVN0HjcUbQBl5eVSaH1VEy2oE_0-m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-04-29_07,2024-04-26_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 clxscore=1011 mlxscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2404290061
 
-On Tue, Apr 23, 2024 at 09:54:46AM +0200, Thomas Weiﬂschuh wrote:
-> Adapt the proc_hander function signature to make it clear that handlers
-> are not supposed to modify their ctl_table argument.
-> 
-> This is a prerequisite to moving the static ctl_table structs into
-> rodata.
-> By migrating all handlers at once a lengthy transition can be avoided.
-> 
-> The patch was mostly generated by coccinelle with the following script:
-> 
->     @@
->     identifier func, ctl, write, buffer, lenp, ppos;
->     @@
-> 
->     int func(
->     - struct ctl_table *ctl,
->     + const struct ctl_table *ctl,
->       int write, void *buffer, size_t *lenp, loff_t *ppos)
->     { ... }
-> 
-> In addition to the scripted changes some other changes are done:
-> 
-> * the typedef proc_handler is adapted
-> 
-> * the prototypes of non-static handler are adapted
-> 
-> * kernel/seccomp.c:{read,write}_actions_logged() and
->   kernel/watchdog.c:proc_watchdog_common() are adapted as they need to
->   adapted together with the handlers for type-consistency reasons
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+hello Paul, thanks for reviewing!
 
-...
+On Thu, Apr 25, 2024 at 05:01:36PM -0400, Paul Moore wrote:
+> On Apr 24, 2024 Davide Caratti <dcaratti@redhat.com> wrote:
+> >
 
->  arch/s390/appldata/appldata_base.c        | 10 ++---
->  arch/s390/kernel/debug.c                  |  2 +-
->  arch/s390/kernel/topology.c               |  2 +-
->  arch/s390/mm/cmm.c                        |  6 +--
+[...]
+ 
+> > @@ -1826,7 +1827,8 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
+> >   */
+> >  int cipso_v4_sock_setattr(struct sock *sk,
+> >  			  const struct cipso_v4_doi *doi_def,
+> > -			  const struct netlbl_lsm_secattr *secattr)
+> > +			  const struct netlbl_lsm_secattr *secattr,
+> > +			  bool slock_held)
+> 
+> This is a nitpicky bikeshedding remark, but "slock_held" sounds really
+> awkward to me, something like "sk_locked" sounds much better.
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
+ok, will fix that in v3.
+
+[...]
+
+> > @@ -1876,18 +1878,15 @@ int cipso_v4_sock_setattr(struct sock *sk,
+> >  
+> >  	sk_inet = inet_sk(sk);
+> >  
+> > -	old = rcu_dereference_protected(sk_inet->inet_opt,
+> > -					lockdep_sock_is_held(sk));
+> > +	old = rcu_replace_pointer(sk_inet->inet_opt, opt, slock_held);
+> >  	if (inet_test_bit(IS_ICSK, sk)) {
+> >  		sk_conn = inet_csk(sk);
+> >  		if (old)
+> >  			sk_conn->icsk_ext_hdr_len -= old->opt.optlen;
+> > -		sk_conn->icsk_ext_hdr_len += opt->opt.optlen;
+> > +		sk_conn->icsk_ext_hdr_len += opt_len;
+> >  		sk_conn->icsk_sync_mss(sk, sk_conn->icsk_pmtu_cookie);
+> >  	}
+> > -	rcu_assign_pointer(sk_inet->inet_opt, opt);
+> > -	if (old)
+> > -		kfree_rcu(old, rcu);
+> > +	kfree_rcu(old, rcu);
+> 
+> Thanks for sticking with this and posting a v2.
+> 
+> These changes look okay to me, but considering the 'Fixes:' tag and the
+> RCU splat it is reasonable to expect that this is going to be backported
+> to the various stable trees.  With that in mind, I think we should try
+> to keep the immediate fix as simple as possible, saving the other
+> changes for a separate patch.  This means sticking with
+> rcu_dereference_protected() and omitting the opt_len optimization; both
+> can be done in a second patch without the 'Fixes:' marking.
+> 
+> Unless I missing something and those changes are somehow part of the
+> fix?
+
+just checked, rcu_replace_pointer() can be used also in the oldest LTS
+but I'm not sure if kfree_rcu(NULL, ...) is ok. I agree to keep
+rcu_dereference_protected(), and the useless NULL check - I will
+follow-up with another patch (targeting net-next), after this one is
+merged.
+
+--
+davide
+
