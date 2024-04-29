@@ -1,378 +1,133 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BF74E1CA
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 11:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA173D56D
+	for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 14:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714390521; cv=none; b=hvf1ADS9mmKysmOYLNQ4M8tLIelzRIbOGSlXEuNgCnYiyjNzfFxJf069H6OlbFX5TkXMCBdYQ1V0QtI1IZu4HWWSN/A1ED2b4nCaW/xuM3dyKuC8HncVbGLwMqcRSYWfPL15Xo+TccGjhwH12X9U8hiteFinmaQ3KBlP9aViIFM=
+	t=1714401987; cv=none; b=XCP3eX/GckI+z5FlpeCpO36+GTF1Llbvg0Rsqs9w2Lbo0FlZBrpXlZn6/EmSEESmCpD0KMwiDKKfgTxJt4OA0rcfaEcvtu7gPnHZNP+2oHLz5q32nlCCTm9XLhmfOR3J68HSFDTLF3vlS6lFuwMt2YbfKgbN+kv5+LVl6sWygms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714390521; c=relaxed/simple;
-	bh=vAhtXuwNFG+GZ7D8ebLoJFvhPq1//2wzkcaCoqzZqvU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=e29YDkJ7XK1N343FEqJ2vpSdEgmTuU35OURDset9X46ZUudcKIYJHkJkXYHjjmmhM1b1YMAW5YrExXzT92OFj+13LXQrdDuINz2Rdbf9CpS2jIxNhnec4ND/B4jcoHBXwUTjGTLXLD0owEuA7nECuLHfMg9sl72f+gw89UY0M8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=Y2/ZO4/b; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+	s=arc-20240116; t=1714401987; c=relaxed/simple;
+	bh=ZPYXNWtZgVhgJXwEodlMEK1xGAdzBeNDB4Dn1jTvHBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QN6zJMcNoduGMPd93JR95oWzVmVsS7JbCx2/aOC6s7KLBisTkjo/3kzM1XTxAVYKK0b57obvxKQpaXo0P0QWxOb0qQO40nT4sChIp4q7TaANSX6QDG7Xny+PAiZmTEFobhSIakwI9XhxA8JckDV3yQZISgLvqP4wY6++xxLvg7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1vmX3/lo; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="Y2/ZO4/b"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2dac77cdf43so55135671fa.2
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Apr 2024 04:35:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1714390517; x=1714995317; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FfGzQB1xZB8xBXRUtcLsXtsSVhNRLi0+5fwIT5ItXxQ=;
-        b=Y2/ZO4/biFVkDlLdxSioJm42UrudnhZkdk4ses2t4OaWrN05Gev8/n+dd2Fau20vdN
-         8XBfyoRICezlwLe0nQjawGoCViUZB/c7TSg4HWEbvfvgahhGmAHLS3vnjCxp2i8Hir3s
-         wWxlbVL9ssGrBiwQwZNborK7nJE+rCZysCadpXiAWu/Q3t93N34c86SIfnde3FXk7QUG
-         0qg4fLIQyzQGdHOxhaAM+5/wTI5iJFcayexV6vT4DQCE0uuUHzI6XmOdC+YJJa8Pqb/L
-         bxLN0K+wrknWiZR4in/LSnjzdMC1pYfCbtwtpp73L7dyQRIMQDm2ekW18FtfHslwAa6J
-         tOfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714390517; x=1714995317;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FfGzQB1xZB8xBXRUtcLsXtsSVhNRLi0+5fwIT5ItXxQ=;
-        b=i5uYACwD4VMDNz4M5SwO7KO0FkiCcs6prHJ2KdTeNdXi0+DPM1RcfxZ72o8timRsNW
-         s8+7lK1MvO3B2cdSd6YfxlxR6IWcAy9OSQrFqH51WK2JISI5CDk7ppcDL3ZJakNfjast
-         nKmCfPPhXpSjy5ThFctGu7iT7QJErAGjAETZ24R8yvxcmDDepbHoBptEzslTck9ZK8Gd
-         4HmjvsWrsAJ0uYeqcaS1ZXBSCtYBjRCJAz7JY1D4eBgt81tt0c2nUAQlS1W77/qDGsMg
-         5682sEmSz5Tt3II65roIbNuxyYjatmhX4LdjuqDg11YCkXM1nskjaJ6XWdQgjuFWLRTv
-         IQGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDzgkeonsqD0k9EDGbmrNXPVikcCHnLOkLDp/9TpqFvtkRfBjKbX4uPG2RAcKd3fNdKDJlICp9NNo9jmibc+WAeJLIJPUp5r7D6AhRvD9RNgu5UCsz
-X-Gm-Message-State: AOJu0YwfOwnVNutyf7MDF/zc1VDRuyGnSCwpUEz1GrzjTKyHykceIzzs
-	Ltt/meeyvRM9/7wb/5gKVN6u1cRiRCkf95A+RzbfTldzUQMYJyN2J4Lfe5qJl0w=
-X-Google-Smtp-Source: AGHT+IGw2Ek0i5lSqjv/2CHs1TiQwOEm213t8IkDWkoV+quS2g6sI4vXDerOpOiRvHBEgiO62ZzKtw==
-X-Received: by 2002:a2e:968b:0:b0:2d8:63a2:50d2 with SMTP id q11-20020a2e968b000000b002d863a250d2mr6603309lji.6.1714390516956;
-        Mon, 29 Apr 2024 04:35:16 -0700 (PDT)
-Received: from smtpclient.apple ([82.150.214.1])
-        by smtp.gmail.com with ESMTPSA id b8-20020adfe308000000b003436a3cae6dsm29249925wrj.98.2024.04.29.04.35.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2024 04:35:16 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1vmX3/lo"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VSmNs2sPczCVc;
+	Mon, 29 Apr 2024 16:46:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1714401981;
+	bh=ZPYXNWtZgVhgJXwEodlMEK1xGAdzBeNDB4Dn1jTvHBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1vmX3/lolLE2GryXLD5Hs8sDa+5RkY9f+2t2tMX3X8Sj73JCWdcxofA58YW4Ca/x/
+	 G5gOzMcK9hwKO/RRz0XkLpWUG23sL0s4+Uto2tnBN5meKCF/5xBuQP/nelUmAC0726
+	 TRgZvxv62ryr6+PsJDP9ESy1la6P8WDOtIptXfK0=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VSmNr6DWfzFnV;
+	Mon, 29 Apr 2024 16:46:20 +0200 (CEST)
+Date: Mon, 29 Apr 2024 16:46:19 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Ubisectech Sirius <bugreport@ubisectech.com>
+Cc: linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-security-module <linux-security-module@vger.kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: =?utf-8?B?5Zue5aSN77yaV0FSTklO?= =?utf-8?Q?G?= in
+ current_check_refer_path
+Message-ID: <20240429.ieR4Ajeitee5@digikod.net>
+References: <c426821d-8380-46c4-a494-7008bbd7dd13.bugreport@ubisectech.com>
+ <20240429.Iyohkaimiep1@digikod.net>
+ <d36cf38a-a22a-44ec-b606-b58ccc559a47.bugreport@ubisectech.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [EXT] [PATCH v8 6/6] docs: trusted-encrypted: add DCP as new
- trust source
-From: David Gstir <david@sigma-star.at>
-In-Reply-To: <DB6PR04MB3190F6B78FF3760EBCC14E758F072@DB6PR04MB3190.eurprd04.prod.outlook.com>
-Date: Mon, 29 Apr 2024 13:35:04 +0200
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
- Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <jejb@linux.ibm.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- Shawn Guo <shawnguo@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- dl-linux-imx <linux-imx@nxp.com>,
- Ahmad Fatoum <a.fatoum@pengutronix.de>,
- sigma star Kernel Team <upstream+dcp@sigma-star.at>,
- David Howells <dhowells@redhat.com>,
- Li Yang <leoyang.li@nxp.com>,
- Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Tejun Heo <tj@kernel.org>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
- Richard Weinberger <richard@nod.at>,
- David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
- Varun Sethi <V.Sethi@nxp.com>,
- Gaurav Jain <gaurav.jain@nxp.com>,
- Pankaj Gupta <pankaj.gupta@nxp.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7783BAE9-87DA-4DD5-ADFA-15A9B55EEF39@sigma-star.at>
-References: <20240403072131.54935-1-david@sigma-star.at>
- <20240403072131.54935-7-david@sigma-star.at>
- <D0ALT2QCUIYB.8NFTE7Z18JKN@kernel.org>
- <DB6PR04MB3190F6B78FF3760EBCC14E758F072@DB6PR04MB3190.eurprd04.prod.outlook.com>
-To: Kshitiz Varshney <kshitiz.varshney@nxp.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d36cf38a-a22a-44ec-b606-b58ccc559a47.bugreport@ubisectech.com>
+X-Infomaniak-Routing: alpha
 
-Hi Kshitiz,
+On Mon, Apr 29, 2024 at 05:16:57PM +0800, Ubisectech Sirius wrote:
+> > Hello,
+> 
+> > Thanks for the report.  Could you please provide a reproducer?
+> 
+> > Regards,
+> > Mickaël
+> 
+> Hi.
+>   The Poc file has seed to you as attachment.
 
-> On 09.04.2024, at 11:48, Kshitiz Varshney <kshitiz.varshney@nxp.com> =
-wrote:
->=20
-> Hi Jarkko,
->=20
->=20
->> -----Original Message-----
->> From: Jarkko Sakkinen <jarkko@kernel.org>
->> Sent: Wednesday, April 3, 2024 9:18 PM
->> To: David Gstir <david@sigma-star.at>; Mimi Zohar =
-<zohar@linux.ibm.com>;
->> James Bottomley <jejb@linux.ibm.com>; Herbert Xu
->> <herbert@gondor.apana.org.au>; David S. Miller <davem@davemloft.net>
->> Cc: Shawn Guo <shawnguo@kernel.org>; Jonathan Corbet
->> <corbet@lwn.net>; Sascha Hauer <s.hauer@pengutronix.de>; Pengutronix
->> Kernel Team <kernel@pengutronix.de>; Fabio Estevam
->> <festevam@gmail.com>; dl-linux-imx <linux-imx@nxp.com>; Ahmad Fatoum
->> <a.fatoum@pengutronix.de>; sigma star Kernel Team
->> <upstream+dcp@sigma-star.at>; David Howells <dhowells@redhat.com>; Li
->> Yang <leoyang.li@nxp.com>; Paul Moore <paul@paul-moore.com>; James
->> Morris <jmorris@namei.org>; Serge E. Hallyn <serge@hallyn.com>; Paul =
-E.
->> McKenney <paulmck@kernel.org>; Randy Dunlap <rdunlap@infradead.org>;
->> Catalin Marinas <catalin.marinas@arm.com>; Rafael J. Wysocki
->> <rafael.j.wysocki@intel.com>; Tejun Heo <tj@kernel.org>; Steven =
-Rostedt
->> (Google) <rostedt@goodmis.org>; linux-doc@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-integrity@vger.kernel.org;
->> keyrings@vger.kernel.org; linux-crypto@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org; =
-linux-security-
->> module@vger.kernel.org; Richard Weinberger <richard@nod.at>; David
->> Oberhollenzer <david.oberhollenzer@sigma-star.at>
->> Subject: [EXT] Re: [PATCH v8 6/6] docs: trusted-encrypted: add DCP as =
-new
->> trust source
->>=20
->> Caution: This is an external email. Please take care when clicking =
-links or
->> opening attachments. When in doubt, report the message using the =
-'Report
->> this email' button
->>=20
->>=20
->> On Wed Apr 3, 2024 at 10:21 AM EEST, David Gstir wrote:
->>> Update the documentation for trusted and encrypted KEYS with DCP as
->>> new trust source:
->>>=20
->>> - Describe security properties of DCP trust source
->>> - Describe key usage
->>> - Document blob format
->>>=20
->>> Co-developed-by: Richard Weinberger <richard@nod.at>
->>> Signed-off-by: Richard Weinberger <richard@nod.at>
->>> Co-developed-by: David Oberhollenzer
->>> <david.oberhollenzer@sigma-star.at>
->>> Signed-off-by: David Oberhollenzer =
-<david.oberhollenzer@sigma-star.at>
->>> Signed-off-by: David Gstir <david@sigma-star.at>
->>> ---
->>> .../security/keys/trusted-encrypted.rst       | 53 =
-+++++++++++++++++++
->>> security/keys/trusted-keys/trusted_dcp.c      | 19 +++++++
->>> 2 files changed, 72 insertions(+)
->>>=20
->>> diff --git a/Documentation/security/keys/trusted-encrypted.rst
->>> b/Documentation/security/keys/trusted-encrypted.rst
->>> index e989b9802f92..f4d7e162d5e4 100644
->>> --- a/Documentation/security/keys/trusted-encrypted.rst
->>> +++ b/Documentation/security/keys/trusted-encrypted.rst
->>> @@ -42,6 +42,14 @@ safe.
->>>          randomly generated and fused into each SoC at manufacturing =
-time.
->>>          Otherwise, a common fixed test key is used instead.
->>>=20
->>> +     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX
->>> + SoCs)
->>> +
->>> +         Rooted to a one-time programmable key (OTP) that is =
-generally
->> burnt
->>> +         in the on-chip fuses and is accessible to the DCP =
-encryption engine
->> only.
->>> +         DCP provides two keys that can be used as root of trust: =
-the OTP
->> key
->>> +         and the UNIQUE key. Default is to use the UNIQUE key, but =
-selecting
->>> +         the OTP key can be done via a module parameter
->> (dcp_use_otp_key).
->>> +
->>>   *  Execution isolation
->>>=20
->>>      (1) TPM
->>> @@ -57,6 +65,12 @@ safe.
->>>=20
->>>          Fixed set of operations running in isolated execution =
-environment.
->>>=20
->>> +     (4) DCP
->>> +
->>> +         Fixed set of cryptographic operations running in isolated =
-execution
->>> +         environment. Only basic blob key encryption is executed =
-there.
->>> +         The actual key sealing/unsealing is done on main =
-processor/kernel
->> space.
->>> +
->>>   * Optional binding to platform integrity state
->>>=20
->>>      (1) TPM
->>> @@ -79,6 +93,11 @@ safe.
->>>          Relies on the High Assurance Boot (HAB) mechanism of NXP =
-SoCs
->>>          for platform integrity.
->>>=20
->>> +     (4) DCP
->>> +
->>> +         Relies on Secure/Trusted boot process (called HAB by =
-vendor) for
->>> +         platform integrity.
->>> +
->>>   *  Interfaces and APIs
->>>=20
->>>      (1) TPM
->>> @@ -94,6 +113,11 @@ safe.
->>>=20
->>>          Interface is specific to silicon vendor.
->>>=20
->>> +     (4) DCP
->>> +
->>> +         Vendor-specific API that is implemented as part of the DCP =
-crypto
->> driver in
->>> +         ``drivers/crypto/mxs-dcp.c``.
->>> +
->>>   *  Threat model
->>>=20
->>>      The strength and appropriateness of a particular trust source
->>> for a given @@ -129,6 +153,13 @@ selected trust source:
->>>      CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure
->> the device
->>>      is probed.
->>>=20
->>> +  *  DCP (Data Co-Processor: crypto accelerator of various i.MX =
-SoCs)
->>> +
->>> +     The DCP hardware device itself does not provide a dedicated =
-RNG
->> interface,
->>> +     so the kernel default RNG is used. SoCs with DCP like the =
-i.MX6ULL do
->> have
->>> +     a dedicated hardware RNG that is independent from DCP which =
-can be
->> enabled
->>> +     to back the kernel RNG.
->>> +
->>> Users may override this by specifying ``trusted.rng=3Dkernel`` on =
-the
->>> kernel  command-line to override the used RNG with the kernel's =
-random
->> number pool.
->>>=20
->>> @@ -231,6 +262,19 @@ Usage::
->>> CAAM-specific format.  The key length for new keys is always in =
-bytes.
->>> Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
->>>=20
->>> +Trusted Keys usage: DCP
->>> +-----------------------
->>> +
->>> +Usage::
->>> +
->>> +    keyctl add trusted name "new keylen" ring
->>> +    keyctl add trusted name "load hex_blob" ring
->>> +    keyctl print keyid
->>> +
->>> +"keyctl print" returns an ASCII hex copy of the sealed key, which =
-is
->>> +in format specific to this DCP key-blob implementation.  The key
->>> +length for new keys is always in bytes. Trusted Keys can be 32 - =
-128 bytes
->> (256 - 1024 bits).
->>> +
->>> Encrypted Keys usage
->>> --------------------
->>>=20
->>> @@ -426,3 +470,12 @@ string length.
->>> privkey is the binary representation of TPM2B_PUBLIC excluding the
->>> initial TPM2B header which can be reconstructed from the ASN.1 octed
->>> string length.
->>> +
->>> +DCP Blob Format
->>> +---------------
->>> +
->>> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
->>> +   :doc: dcp blob format
->>> +
->>> +.. kernel-doc:: security/keys/trusted-keys/trusted_dcp.c
->>> +   :identifiers: struct dcp_blob_fmt
->>> diff --git a/security/keys/trusted-keys/trusted_dcp.c
->>> b/security/keys/trusted-keys/trusted_dcp.c
->>> index 16c44aafeab3..b5f81a05be36 100644
->>> --- a/security/keys/trusted-keys/trusted_dcp.c
->>> +++ b/security/keys/trusted-keys/trusted_dcp.c
->>> @@ -19,6 +19,25 @@
->>> #define DCP_BLOB_VERSION 1
->>> #define DCP_BLOB_AUTHLEN 16
->>>=20
->>> +/**
->>> + * DOC: dcp blob format
->>> + *
->>> + * The Data Co-Processor (DCP) provides hardware-bound AES keys =
-using
->>> +its
->>> + * AES encryption engine only. It does not provide direct key
->> sealing/unsealing.
->>> + * To make DCP hardware encryption keys usable as trust source, we
->>> +define
->>> + * our own custom format that uses a hardware-bound key to secure =
-the
->>> +sealing
->>> + * key stored in the key blob.
->>> + *
->>> + * Whenever a new trusted key using DCP is generated, we generate a
->>> +random 128-bit
->>> + * blob encryption key (BEK) and 128-bit nonce. The BEK and nonce =
-are
->>> +used to
->>> + * encrypt the trusted key payload using AES-128-GCM.
->>> + *
->>> + * The BEK itself is encrypted using the hardware-bound key using =
-the
->>> +DCP's AES
->>> + * encryption engine with AES-128-ECB. The encrypted BEK, generated
->>> +nonce,
->>> + * BEK-encrypted payload and authentication tag make up the blob
->>> +format together
->>> + * with a version number, payload length and authentication tag.
->>> + */
->>> +
->>> /**
->>>  * struct dcp_blob_fmt - DCP BLOB format.
->>>  *
->>=20
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->>=20
->> I can only test that this does not break a machine without the =
-hardware
->> feature.
->>=20
->> Is there anyone who could possibly peer test these patches?
-> I am already working on testing this patchset on i.MX6 platform.
+Indeed, but could you please trim down the file. There are 650 lines,
+most of them are irrelevant.
 
-Did you get around to testing this?
-I=E2=80=99d greatly appreciate a Tested-by for this. :-)
+> 
+> > On Sun, Apr 28, 2024 at 10:47:02AM +0800, Ubisectech Sirius wrote:
+> >> Hello.
+> >> We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec. Recently, our team has discovered a issue in Linux kernel 6.7. Attached to the email were a PoC file of the issue.
+> >> 
+> >> Stack dump:
+> >> 
+> > > loop3: detected capacity change from 0 to 1024
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 30368 at security/landlock/fs.c:598 get_mode_access security/landlock/fs.c:598 [inline]
+> > > WARNING: CPU: 0 PID: 30368 at security/landlock/fs.c:598 get_mode_access security/landlock/fs.c:578 [inline]
+> > > WARNING: CPU: 0 PID: 30368 at security/landlock/fs.c:598 current_check_refer_path+0x955/0xa60 security/landlock/fs.c:758
+> > > Modules linked in:
+> > > CPU: 0 PID: 30368 Comm: syz-executor.3 Not tainted 6.7.0 #2
+> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> > > RIP: 0010:get_mode_access security/landlock/fs.c:598 [inline]
+> > > RIP: 0010:get_mode_access security/landlock/fs.c:578 [inline]
+> > > RIP: 0010:current_check_refer_path+0x955/0xa60 security/landlock/fs.c:758
+> > > Code: e9 76 fb ff ff 41 bc fe ff ff ff e9 6b fb ff ff e8 00 99 77 fd 90 0f 0b 90 41 bc f3 ff ff ff e9 57 fb ff ff e8 ec 98 77 fd 90 <0f> 0b 90 31 db e9 86 f9 ff ff bb 00 08 00 00 e9 7c f9 ff ff 41 ba
+> > > RSP: 0018:ffffc90001fb7ba0 EFLAGS: 00010212
+> > > RAX: 0000000000000bc5 RBX: ffff88805feeb7b0 RCX: ffffc90006e15000
+> > > RDX: 0000000000040000 RSI: ffffffff84125d64 RDI: 0000000000000003
+> > > RBP: ffff8880123c5608 R08: 0000000000000003 R09: 000000000000c000
+> > > R10: 000000000000f000 R11: 0000000000000000 R12: ffff88805d32fc00
+> > > R13: ffff8880123c5608 R14: 0000000000000000 R15: 0000000000000001
+> > > FS:  00007fd70c4d8640(0000) GS:ffff88802c600000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 0000001b2c136000 CR3: 000000005b2a0000 CR4: 0000000000750ef0
+> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > PKRU: 55555554
+> > > Call Trace:
+> > >  <TASK>
+> > >  security_path_rename+0x124/0x230 security/security.c:1828
+> > >  do_renameat2+0x9f6/0xd30 fs/namei.c:4983
+> > >  __do_sys_rename fs/namei.c:5042 [inline]
+> > >  __se_sys_rename fs/namei.c:5040 [inline]
+> > >  __x64_sys_rename+0x81/0xa0 fs/namei.c:5040
+> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >  do_syscall_64+0x43/0x120 arch/x86/entry/common.c:83
+> > >  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> > > RIP: 0033:0x7fd70b6900ed
+> > > Code: c3 e8 97 2b 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> > > RSP: 002b:00007fd70c4d8028 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+> > > RAX: ffffffffffffffda RBX: 00007fd70b7cbf80 RCX: 00007fd70b6900ed
+> >>  RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000020000100
+> > > RBP: 00007fd70b6f14a6 R08: 0000000000000000 R09: 0000000000000000
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> > > R13: 000000000000000b R14: 00007fd70b7cbf80 R15: 00007fd70c4b8000
+> > >  </TASK>
+> > > 
+> > > Thank you for taking the time to read this email and we look forward to working with you further.
+> > > 
+> > > 
+> > > 
+> > > 
+> > > 
+> > > 
+> > 
+> > 
+> > 
+> 
+> 
 
-Thanks!
-BR, David
 
