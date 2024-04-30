@@ -1,149 +1,283 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6408F13D605
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Apr 2024 12:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC9942AA5
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Apr 2024 13:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714478644; cv=none; b=hpIDb4BdP6NKpQClvX9h9fdcJPrj0sfJKVflEfZG+uYmfcZrggyVYjnqe+gqf07qcjN2qxODg5sWvpUm5y32WQjFOEh/kybwg94GZ5MoCBm8/0R1LkZBJngy80pnCHagRQ7ai0TIr5zJlJPf5pJOEnohzF9d9BMcRR6M9Oso4zQ=
+	t=1714484204; cv=none; b=eRocmSy8fdrACRujtO8tVozb7WZpYIJEaz8nZIpqejqDXmDC1n/TfHkaeM9A/i2ok2vsV6SBGkZ1bYXBgLpic+jCAFH2h9e3tzihAGzcSuM+uLVWXrsc66Y4P1uUsQCg50a/EFrLw7qr/q84pJvO4sTEjtplGgqYBR02lk3v/sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714478644; c=relaxed/simple;
-	bh=roFKNV9068c4FWvmmLYomBY2V974jx//R1VbbE7RHEQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Sunrw+TOa19zi3m78agLBAH/ljsw7F1bshaCLYGjLoZCrHFU/sODM7UdUQWLjvEYEH4jLXyWM0ltxa0bIX1AO10A4XYMP5KozlP7sIMaNRgr/Q4hgJo92d8g7MLmwr//Xiw0LaQoYNujLQwPn1vBz/hHlDARtUICjGfphsvQGGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=Nq/aijsV; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+	s=arc-20240116; t=1714484204; c=relaxed/simple;
+	bh=Ht7HNLm5kaquAR3oK1qW8ocro1DDSWKUd9H3i4ybEOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTC0d03AtUfB3R2ulvWHxd2ZRUoceUWi/WmCEpbslO2Edi3CIb3wYIqtTo1m278ghgAWMhXy6BBP+bw6WO/TworyVYk1zZfSvqrqMQb3h+C25ogiymkrGtxY0Jptf3BQ5cTI9iXj8X0TgrtskP+dSWg+0FhV5hlkfU2docx5UGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qLUt/of9; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="Nq/aijsV"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5709cb80b03so5723020a12.2
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Apr 2024 05:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1714478640; x=1715083440; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=roFKNV9068c4FWvmmLYomBY2V974jx//R1VbbE7RHEQ=;
-        b=Nq/aijsVflufUR/fb+CglXvuOngNJKtzyCPtx2uXFNTQNQ5MT2XnhS2xTdgkK9J0yR
-         97zpS3wRjN+YvAMuXKAR8ZrqL1xpfCiA2B19EnI1bTH33NNruCXJkmAaKqZsFosz9ecI
-         piW2flTAHqCYCccis+ztO6ow+VZ+jSt7LBAPzStYl+21vdvG+CbY2d0rxvzYRazWHlBG
-         iz4EA+PLOOYYVYzlpwrJDwsAjXa9HQeBw2Jx0sLpEPPvInIz2Hy+9zh35tmps9v9Vf+w
-         FZq4Y+iKZGc3IqFyOSHh/25EYNRLGijytXvlRzSk37F4j3+xLIQvFmkhxexiaIRUwyjZ
-         eVrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714478640; x=1715083440;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=roFKNV9068c4FWvmmLYomBY2V974jx//R1VbbE7RHEQ=;
-        b=uGj8GmEHwbo4+Ul0bbkIjzfjDTFSsWreCVeB3QlpaIA15peYVZGPrCs35KkmvXMQMv
-         3utGV+AYiblYZzymz1nZrvmGjeOi4WOpcM7rRjzQZ9pLdywDnp6dGnxrK+gM/8waDW9r
-         BSrx6X544mbUZ2mZrBqOht8+QYAtQ77GsZLLX9IduW26E6V4gfVc+Chq/n/nGRuKwFOi
-         VwQE7B+TnLVWjddzU/evbtks7GM19KDtsfSv3UF3hchB8jG75ppdyhxF6eH2dD7gCESV
-         OjLF99nP3J5CUTXKxtjDJszBXYYbc4R68Bnwzja7gcobBanIc2tnd/2Rsq8hl96vpugr
-         JaDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFxV8cb6bFZ6/CB4UuDMB00zmf8/3CB4z0hq7rsvNr3cKeT7yGdKxyxYz36AP2GHjOpCby1DwJemL2PN4UT7W4NjrVl1LBkq/XLq44sHZwQzySkwRa
-X-Gm-Message-State: AOJu0YzzmM/Tb+NJx39iKWkbLI/l/Nzm1bw2xFfF93yvaEOC6af6VXiz
-	A5cNxzFgVEJHLdBaKEu4PoxuEXNgPDLYTRGENNG6Pyl+v74Xq2udjuwafJq6SZM=
-X-Google-Smtp-Source: AGHT+IFOJa95c5L3PLcuPC8+myscInn7v7yIygmTBp6T6UQW/vkzzT0D2o5eQO+OLj8DOz8EVMoqXQ==
-X-Received: by 2002:a50:bb0d:0:b0:572:5bc3:3871 with SMTP id y13-20020a50bb0d000000b005725bc33871mr1684440ede.10.1714478640578;
-        Tue, 30 Apr 2024 05:04:00 -0700 (PDT)
-Received: from smtpclient.apple (clnet-p106-198.ikbnet.co.at. [83.175.106.198])
-        by smtp.gmail.com with ESMTPSA id j17-20020aa7c0d1000000b005729c4c2501sm433685edp.24.2024.04.30.05.03.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Apr 2024 05:04:00 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qLUt/of9"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VTLnn6D1gzgYs;
+	Tue, 30 Apr 2024 15:36:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1714484189;
+	bh=Ht7HNLm5kaquAR3oK1qW8ocro1DDSWKUd9H3i4ybEOQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qLUt/of9TegrevasuZ1ZZ//CxRv68TJMT5zVXStwYeTbg5L4OiQ6srmzmOlPBLaI+
+	 uXUXueh/t6p8XwG8Os7UudmZvO5oSY8P0tUzThEH6Jf3SnObNY1yOWBiy0ZIAtd9dy
+	 YEMVfUxQBG6tuf6bIrBa0SW/unvM3uoBS3H6RrVI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VTLnn22qLz10y;
+	Tue, 30 Apr 2024 15:36:28 +0200 (CEST)
+Date: Tue, 30 Apr 2024 15:36:28 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
+Message-ID: <20240425.Soot5eNeexol@digikod.net>
+References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
+ <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [EXT] [PATCH v8 6/6] docs: trusted-encrypted: add DCP as new
- trust source
-From: David Gstir <david@sigma-star.at>
-In-Reply-To: <DB6PR04MB319062F2A19A250BA22C12D48F1A2@DB6PR04MB3190.eurprd04.prod.outlook.com>
-Date: Tue, 30 Apr 2024 14:03:48 +0200
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <jejb@linux.ibm.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- Kshitiz Varshney <kshitiz.varshney@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- dl-linux-imx <linux-imx@nxp.com>,
- Ahmad Fatoum <a.fatoum@pengutronix.de>,
- sigma star Kernel Team <upstream+dcp@sigma-star.at>,
- David Howells <dhowells@redhat.com>,
- Li Yang <leoyang.li@nxp.com>,
- Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Tejun Heo <tj@kernel.org>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
- Richard Weinberger <richard@nod.at>,
- David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
- Varun Sethi <V.Sethi@nxp.com>,
- Gaurav Jain <gaurav.jain@nxp.com>,
- Pankaj Gupta <pankaj.gupta@nxp.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DB9357A7-0B20-4E57-AF66-3DD0F55ED538@sigma-star.at>
-References: <20240403072131.54935-1-david@sigma-star.at>
- <20240403072131.54935-7-david@sigma-star.at>
- <D0ALT2QCUIYB.8NFTE7Z18JKN@kernel.org>
- <DB6PR04MB3190F6B78FF3760EBCC14E758F072@DB6PR04MB3190.eurprd04.prod.outlook.com>
- <7783BAE9-87DA-4DD5-ADFA-15A9B55EEF39@sigma-star.at>
- <DB6PR04MB319062F2A19A250BA22C12D48F1A2@DB6PR04MB3190.eurprd04.prod.outlook.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
+X-Infomaniak-Routing: alpha
 
-Hi Jarkko,
+On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
+> Make hook for socket_listen(). It will check that the socket protocol is
+> TCP, and if the socket's local port number is 0 (which means,
+> that listen(2) was called without any previous bind(2) call),
+> then listen(2) call will be legitimate only if there is a rule for bind(2)
+> allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is not
+> supported by the sandbox).
 
-> On 30.04.2024, at 13:48, Kshitiz Varshney <kshitiz.varshney@nxp.com> =
-wrote:
->=20
-> Hi David,
->=20
->> -----Original Message-----
->> From: David Gstir <david@sigma-star.at>
->> Sent: Monday, April 29, 2024 5:05 PM
->> To: Kshitiz Varshney <kshitiz.varshney@nxp.com>
+Thanks for this patch and sorry for the late full review.  The code is
+good overall.
+
+We should either consider this patch as a fix or add a new flag/access
+right to Landlock syscalls for compatibility reason.  I think this
+should be a fix.  Calling listen(2) without a previous call to bind(2)
+is a corner case that we should properly handle.  The commit message
+should make that explicit and highlight the goal of the patch: first
+explain why, and then how.
+
+We also need to update the user documentation to explain that
+LANDLOCK_ACCESS_NET_BIND_TCP also handles this case.
+
+> 
+> Create a new check_access_socket() function to prevent useless copy paste.
+> It should be called by hook handlers after they perform special checks and
+> calculate socket port value.
+
+You can add this tag:
+Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+
+> 
+> Signed-off-by: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+> Reviewed-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> ---
+>  security/landlock/net.c | 104 +++++++++++++++++++++++++++++++++-------
+>  1 file changed, 88 insertions(+), 16 deletions(-)
+> 
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index c8bcd29bde09..c6ae4092cfd6 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/net.h>
+>  #include <linux/socket.h>
+>  #include <net/ipv6.h>
+> +#include <net/tcp.h>
+>  
+>  #include "common.h"
+>  #include "cred.h"
+> @@ -61,17 +62,36 @@ static const struct landlock_ruleset *get_current_net_domain(void)
+>  	return dom;
+>  }
+>  
+> -static int current_check_access_socket(struct socket *const sock,
+> -				       struct sockaddr *const address,
+> -				       const int addrlen,
+> -				       access_mask_t access_request)
+> +static int check_access_socket(const struct landlock_ruleset *const dom,
+> +			  __be16 port,
+> +			  access_mask_t access_request)
+
+Please format all patches with clang-format.
+
+>  {
+> -	__be16 port;
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+>  	const struct landlock_rule *rule;
+>  	struct landlock_id id = {
+>  		.type = LANDLOCK_KEY_NET_PORT,
+>  	};
+> +
+> +	id.key.data = (__force uintptr_t)port;
+> +	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+> +
+> +	rule = landlock_find_rule(dom, id);
+> +	access_request = landlock_init_layer_masks(
+> +		dom, access_request, &layer_masks, LANDLOCK_KEY_NET_PORT);
+> +
+> +	if (landlock_unmask_layers(rule, access_request, &layer_masks,
+> +				   ARRAY_SIZE(layer_masks)))
+> +		return 0;
+> +
+> +	return -EACCES;
+> +}
+
+This check_access_socket() refactoring should be in a dedicated patch.
+
+> +
+> +static int current_check_access_socket(struct socket *const sock,
+> +				       struct sockaddr *const address,
+> +				       const int addrlen,
+> +				       access_mask_t access_request)
+> +{
+> +	__be16 port;
+>  	const struct landlock_ruleset *const dom = get_current_net_domain();
+>  
+>  	if (!dom)
+> @@ -159,17 +179,7 @@ static int current_check_access_socket(struct socket *const sock,
+>  			return -EINVAL;
+>  	}
+>  
+> -	id.key.data = (__force uintptr_t)port;
+> -	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+> -
+> -	rule = landlock_find_rule(dom, id);
+> -	access_request = landlock_init_layer_masks(
+> -		dom, access_request, &layer_masks, LANDLOCK_KEY_NET_PORT);
+> -	if (landlock_unmask_layers(rule, access_request, &layer_masks,
+> -				   ARRAY_SIZE(layer_masks)))
+> -		return 0;
+> -
+> -	return -EACCES;
+> +	return check_access_socket(dom, port, access_request);
+>  }
+>  
+>  static int hook_socket_bind(struct socket *const sock,
+> @@ -187,9 +197,71 @@ static int hook_socket_connect(struct socket *const sock,
+>  					   LANDLOCK_ACCESS_NET_CONNECT_TCP);
+>  }
+>  
+> +/*
+> + * Check that socket state and attributes are correct for listen.
+> + * It is required to not wrongfully return -EACCES instead of -EINVAL.
+> + */
+> +static int check_tcp_socket_can_listen(struct socket *const sock)
+> +{
+> +	struct sock *sk = sock->sk;
+> +	unsigned char cur_sk_state = sk->sk_state;
+> +	const struct inet_connection_sock *icsk;
+> +
+> +	/* Allow only unconnected TCP socket to listen(cf. inet_listen). */
+
+nit: Missing space.
+
+The other comments in Landlock are written with the third person
+(in theory everywhere): "Allows..."
+
+> +	if (sock->state != SS_UNCONNECTED)
+> +		return -EINVAL;
+> +
+> +	/* Check sock state consistency. */
+
+Can you explain exactly what is going on here (in the comment)? Linking
+to a kernel function would help.
+
+> +	if (!((1 << cur_sk_state) & (TCPF_CLOSE | TCPF_LISTEN)))
+> +		return -EINVAL;
+> +
+> +	/* Sockets can listen only if ULP control hook has clone method. */
+
+What is ULP?
+
+> +	icsk = inet_csk(sk);
+> +	if (icsk->icsk_ulp_ops && !icsk->icsk_ulp_ops->clone)
+> +		return -EINVAL;
+
+Can you please add tests covering all these error cases?
+
+> +	return 0;
+> +}
+> +
+> +static int hook_socket_listen(struct socket *const sock,
+> +			  const int backlog)
+> +{
+> +	int err;
+> +	int family;
+> +	const struct landlock_ruleset *const dom = get_current_net_domain();
+> +
+> +	if (!dom)
+> +		return 0;
+> +	if (WARN_ON_ONCE(dom->num_layers < 1))
+> +		return -EACCES;
+> +
+> +	/*
+> +	 * listen() on a TCP socket without pre-binding is allowed only
+> +	 * if binding to port 0 is allowed.
+> +	 */
+
+This comment should be just before the inet_sk(sock->sk)->inet_num
+check.
+
+> +	family = sock->sk->__sk_common.skc_family;
+> +
+> +	if (family == AF_INET || family == AF_INET6) {
+
+This would make the code simpler:
+
+if (family != AF_INET && family != AF_INET6)
+	return 0;
 
 
->>=20
->> Did you get around to testing this?
->> I=E2=80=99d greatly appreciate a Tested-by for this. :-)
->>=20
->> Thanks!
->> BR, David
->=20
-> Currently, I am bit busy with other priority activities. It will take =
-time to test this patch set.
+What would be the effect of listen() on an AF_UNSPEC socket?
 
-How should we proceed here?
-Do we have to miss another release cycle, because of a Tested-by?
+> +		/* Checks if it's a (potential) TCP socket. */
+> +		if (sock->type != SOCK_STREAM)
+> +			return 0;
 
-If any bugs pop up I=E2=80=99ll happily fix them, but at the moment it =
-appears to be more of a formality.
-IMHO the patch set itself is rather small and has been thoroughly =
-reviewed to ensure that any huge
-issues would already have been caught by now.
+As for current_check_access_socket() this kind of check should be at the
+beginning of the function (before the family check) to exit early and
+simplify code.
 
-Thanks!
-BR, David=
+> +
+> +		/* Socket is alredy binded to some port. */
+
+This kind of spelling issue can be found by scripts/checkpatch.pl
+
+> +		if (inet_sk(sock->sk)->inet_num != 0)
+
+Why do we want to allow listen() on any socket that is binded?
+
+> +			return 0;
+> +
+> +		err = check_tcp_socket_can_listen(sock);
+> +		if (unlikely(err))
+> +			return err;
+> +
+> +		return check_access_socket(dom, 0, LANDLOCK_ACCESS_NET_BIND_TCP);
+> +	}
+> +	return 0;
+> +}
+> +
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(socket_bind, hook_socket_bind),
+>  	LSM_HOOK_INIT(socket_connect, hook_socket_connect),
+> +	LSM_HOOK_INIT(socket_listen, hook_socket_listen),
+>  };
+>  
+>  __init void landlock_add_net_hooks(void)
+> -- 
+> 2.34.1
+> 
+> 
