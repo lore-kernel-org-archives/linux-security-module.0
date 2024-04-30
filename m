@@ -1,47 +1,45 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8C7157460
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Apr 2024 15:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00281802CE
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Apr 2024 16:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714490697; cv=none; b=jwWth3zYgo1fgsc976PFi0xWKUvwnea6ot5szOkai4qI7WFzoEOyNSKTbgdVfrBaSwqy4OxI//ECCA0Nw+HQ7NyEexAXa7cQAPzjYGDn6v7K43ijVzCEpGHyojyBJPFKHZ9RZA81TwG+7RmPwMgm7S4x3N/e2r0mLMnbVwL95bs=
+	t=1714495946; cv=none; b=Xf6RZuxmMYAhyJHYwMUzglpGotbzxo1sJt/aBfLZazL1BjHVwKIggv6ctoYQqcP/1aUIxrZ221GFb/SwGJbIv+dpW//6vSRg8BIUkmO5JLUh7VvpO174qCb+lDnLPRLZWa0wiGYzqvx1i5B7JyJhpQLGR2G94RxmR3mimtl4XOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714490697; c=relaxed/simple;
-	bh=o9tw+r7HiK2cyxfIdnEKxzsdQ/OTiilNikfU3NSHVe0=;
+	s=arc-20240116; t=1714495946; c=relaxed/simple;
+	bh=JSh9G8B/hhE3cjcRgoAQVV5csCa5MBscKddNaCVOwYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/RpTHoB3FkvZijBkQuloy4wAihSUkyM7PQvIfwH9wlbfPKz51eYK02bNZg4+1k4KZhxi9wUCbb3QhZqXSV93n2MZXjiGQg7jZl2zatzVmk5S1O1x4Tb8B1+a6IgUsewfGBo1wqqTMn7h68+hcjTSLLVGtbtsukajZD1Jj01xuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dCJFfiu8; arc=none smtp.client-ip=84.16.66.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ap2yWYZWIUQOgjBUJkeyw2Aw7JPCao7B4VT5F7nFJlm+J/OUpmVsG/Q9MCB5zNlG5eFL16zXAh0k2IF74jgwz5R4qsZphaekWSxz8RZF82EX+G/UQ/N2FZ+dmx248pkZAydmvwbEKW4P2RXsCLf9Edm8yTS0GEILnJ5n0H8+hVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wu87VAyq; arc=none smtp.client-ip=185.125.25.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dCJFfiu8"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VTPBl21DwzwK5;
-	Tue, 30 Apr 2024 17:24:47 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wu87VAyq"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VTR7f6JW2zjL8;
+	Tue, 30 Apr 2024 18:52:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1714490687;
-	bh=o9tw+r7HiK2cyxfIdnEKxzsdQ/OTiilNikfU3NSHVe0=;
+	s=20191114; t=1714495934;
+	bh=JSh9G8B/hhE3cjcRgoAQVV5csCa5MBscKddNaCVOwYU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dCJFfiu8WGMiQ53xbHZ1FW9HOnnmCs2WrkKqstQM5CEf2ab5pQQD3GVv0pmnZJhDL
-	 8iD3bq+qImade0+0Vrdhs95JQMZcSwWLhABsB10SZlyjgeIzvySVt3evyecmyS2MXX
-	 wTmyf48w/uMNYgOBvz59alNnwDz6EJDyGZ02RIDg=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VTPBk2xCtzhtX;
-	Tue, 30 Apr 2024 17:24:46 +0200 (CEST)
-Date: Tue, 30 Apr 2024 17:24:45 +0200
+	b=wu87VAyqG0g9pzocG398PQkwDaP655Xc+z/wpf4zOlnDGW0A0K2bm2AE8B0KLPoGP
+	 sBQoBn33iKNf5j1X5p2x54+sYDzhyynFDJGwFTgdU7R1AS/HgyTxfk+jLObEqedf98
+	 avJFepZnA9omeMZ2MTRFkm3hPRu1RLTQZQ15xybo=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VTR7d44DkzNRV;
+	Tue, 30 Apr 2024 18:52:13 +0200 (CEST)
+Date: Tue, 30 Apr 2024 18:52:12 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, outreachy@lists.linux.dev, netdev@vger.kernel.org, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Jann Horn <jannh@google.com>, 
+To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
 	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
- restrictions
-Message-ID: <20240411.ahgeefeiNg4i@digikod.net>
-References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
- <20240401.ieC2uqua5sha@digikod.net>
- <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
+Message-ID: <20240430.beicheugee5T@digikod.net>
+References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
+ <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
+ <20240425.Soot5eNeexol@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,85 +49,50 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+In-Reply-To: <20240425.Soot5eNeexol@digikod.net>
 X-Infomaniak-Routing: alpha
 
-On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
-> On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
-> > Thanks for this patch.  Please CC the netdev mailing list too, they may
-> > be interested by this feature. I also added a few folks that previously
-> > showed their interest for this feature.
+On Tue, Apr 30, 2024 at 03:36:30PM +0200, Mickaël Salaün wrote:
+> On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
+> > Make hook for socket_listen(). It will check that the socket protocol is
+> > TCP, and if the socket's local port number is 0 (which means,
+> > that listen(2) was called without any previous bind(2) call),
+> > then listen(2) call will be legitimate only if there is a rule for bind(2)
+> > allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is not
+> > supported by the sandbox).
+> 
+> Thanks for this patch and sorry for the late full review.  The code is
+> good overall.
+> 
+> We should either consider this patch as a fix or add a new flag/access
+> right to Landlock syscalls for compatibility reason.  I think this
+> should be a fix.  Calling listen(2) without a previous call to bind(2)
+> is a corner case that we should properly handle.  The commit message
+> should make that explicit and highlight the goal of the patch: first
+> explain why, and then how.
+> 
+> We also need to update the user documentation to explain that
+> LANDLOCK_ACCESS_NET_BIND_TCP also handles this case.
+> 
 > > 
-> > On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
-> > > Abstract unix sockets are used for local interprocess communication without
-> > > relying on filesystem. Since landlock has no restriction for connecting to
-> > > a UNIX socket in the abstract namespace, a sandboxed process can connect to
-> > > a socket outside the sandboxed environment. Access to such sockets should
-> > > be scoped the same way ptrace access is limited.
+> > Create a new check_access_socket() function to prevent useless copy paste.
+> > It should be called by hook handlers after they perform special checks and
+> > calculate socket port value.
+> 
+> You can add this tag:
+> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+> 
 > > 
-> > This is good but it would be better to explain that Landlock doesn't
-> > currently control abstract unix sockets and that it would make sense for
-> > a sandbox.
-> > 
-> > 
-> > > 
-> > > For a landlocked process to be allowed to connect to a target process, it
-> > > must have a subset of the target process’s rules (the connecting socket
-> > > must be in a sub-domain of the listening socket). This patch adds a new
-> > > LSM hook for connect function in unix socket with the related access rights.
-> > 
-> > Because of compatibility reasons, and because Landlock should be
-> > flexible, we need to extend the user space interface.  As explained in
-> > the GitHub issue, we need to add a new "scoped" field to the
-> > landlock_ruleset_attr struct. This field will optionally contain a
-> > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
-> > ruleset will deny any connection from within the sandbox to its parents
-> > (i.e. any parent sandbox or not-sandboxed processes).
+> > Signed-off-by: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+> > Reviewed-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> > ---
+> >  security/landlock/net.c | 104 +++++++++++++++++++++++++++++++++-------
+> >  1 file changed, 88 insertions(+), 16 deletions(-)
 
-> Thanks for the feedback. Here is what I understood, please correct me if
-> I am wrong. First, I should add another field to the
-> landlock_ruleset_attr (a field like handled_access_net, but for the unix
-> sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
-> LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
 
-That was the initial idea, but after thinking more about it and talking
-with some users, I now think we can get a more generic interface.
+> > +		if (inet_sk(sock->sk)->inet_num != 0)
+> 
+> Why do we want to allow listen() on any socket that is binded?
 
-Because unix sockets, signals, and other IPCs are fully controlled by
-the kernel (contrary to inet sockets that get out of the system), we can
-add ingress and egress control according to the source and the
-destination.
-
-To control the direction we could add an
-LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE and a
-LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND rights (these names are a bit
-long but at least explicit).  To control the source and destination, it
-makes sense to use Landlock domain (i.e. sandboxes):
-LANDLOCK_DOMAIN_HIERARCHY_PARENT, LANDLOCK_DOMAIN_HIERARCHY_SELF, and
-LANDLOCK_DOMAIN_HIERARCHY_CHILD.  This could be used by extending the
-landlock_ruleset_attr type and adding a new
-landlock_domain_hierarchy_attr type:
-
-struct landlock_ruleset_attr ruleset_attr = {
-  .handled_access_dom = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
-                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
-}
-
-// Allows sending data to and receiving data from processes in the same
-// domain or a child domain, through abstract unix sockets.
-struct landlock_domain_hierarchy_attr dom_attr = {
-  .allowed_access = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
-                    LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
-  .relationship = LANDLOCK_DOMAIN_HIERARCHY_SELF | \
-                  LANDLOCK_DOMAIN_HIERARCHY_CHILD,
-};
-
-It should also work with other kind of IPCs:
-* LANDLOCK_ACCESS_DOM_UNIX_PATHNAME_RECEIVE/SEND (signal)
-* LANDLOCK_ACCESS_DOM_SIGNAL_RECEIVE/SEND (signal)
-* LANDLOCK_ACCESS_DOM_XSI_RECEIVE/SEND (XSI message queue)
-* LANDLOCK_ACCESS_DOM_MQ_RECEIVE/SEND (POSIX message queue)
-* LANDLOCK_ACCESS_DOM_PTRACE_RECEIVE/SEND (ptrace, which would be
-  limited)
-
-What do you think?
+Please ignore this comment. I was initially thinking about a new access
+right, which would be good to have anyway, but with another series.
