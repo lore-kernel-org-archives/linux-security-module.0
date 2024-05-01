@@ -1,129 +1,92 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D620812F5A9
-	for <linux-security-module@vger.kernel.org>; Wed,  1 May 2024 16:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3810312FB3E
+	for <linux-security-module@vger.kernel.org>; Wed,  1 May 2024 16:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714579360; cv=none; b=jShKWp8P354vnmS8ijjf0PZ/tKIabBuqqm/30u/QCSQQPA8QKz+2QDhpbYQEatg48W68MRk+p9GlSxIn1FllSIu20X1RQneHtJ7MVhii4v58w+N9AvxdLbNQVuIzWFQmcF3wvDABxSFiFZ6uFU0jelO+iLytNv3Q5uTgrGiUH/Y=
+	t=1714579657; cv=none; b=GUaTrKweUVJ8Nv4DYxRx1ck8eGyBoAt90T5YNY7E4PqKs+4t5NUk7LZHP+cIW5UhWhZIpetWYaqu3q5x8R64ofu6Uot6eVDDpEMr8adfX+KEsk1cur7XWJ0wyomu9VUtKIjsFG3CZfcRaN/Qee89B80mz1RoZvM8VyVUU1yRtLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714579360; c=relaxed/simple;
-	bh=GIg0qqxY8IGXzYWeoYuXFScFx99CyexVXC/du3NFi4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dS7bbog0U+XSFWcy+UuK4hidJ3ih8qvbVtfz6j8rcKAb0OMLn2rBLNyw+bqS+C7kscQnyOADKfwI0V9SwVjBWp8YX3e6EzwqY/oqqPcIw4UWYjfdIyeU8gtq724MkZ8Ga0DcaxO4wG4WdcN1SANOiIjrcyzqn/PHM2KmPjkBv5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=P1YcI/de; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1714579657; c=relaxed/simple;
+	bh=dRXa4bw+GATtxw0bRfM1WzfRnRgWnofvYBW/yVCFBMU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=NQ46mGSPciz/SczFSIunLlixf5W4mv4Gy3J0f5roOCQ3m1GbR5ogpzjv9N7sGuZnVEHseI9SDPBweKqZLD807s8dkDYVnrEKnCX2xpmI4tUB4vi+VdvPAbDzVPo9TeBPZ1pF+cMB9Nd42NQ3jZOwexARJuVoXW+6EkbelqX46QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LwVSzVKP; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="P1YcI/de"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-617e42a3f94so75015367b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 01 May 2024 09:02:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LwVSzVKP"
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7906776e17aso502324885a.2
+        for <linux-security-module@vger.kernel.org>; Wed, 01 May 2024 09:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1714579357; x=1715184157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cuTSwyg4Duor6hNxagd4NLjWGY2C1Kh2NptH/U7fxFA=;
-        b=P1YcI/dem4TRC4j5+FEOVVmy1k7Gt8gMWaFa6DR/9SVJeRjicoNaEQCQVMzn1oNHBD
-         z0Dp8S6oBaPuxUEkhALGNvzdBHH0JrqKliWUoscGUAzGRGUp/e081f7qNDokqODU7uv/
-         kYmCgiUJ/pMKp8EMeba/cDuDhEmbM7IcK2Ijk1NaflsxBqhQkSSkOy4QsFQjIJKl9zzr
-         yz9A6wXnlqR84x+ayJ3AJ5YbdrEovDtmmHXOfI8OH1HdK17+3dI2FZLiUlaEszLexg9w
-         ITtukCHBAu5jgQMhxyIDEIfiHcRciLu3OuHmC5ZMHQXm87dEKE/YAtz77jH7reGs1ZXa
-         o56A==
+        d=paul-moore.com; s=google; t=1714579655; x=1715184455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xr5rU3ocbYfiYtig96UWUYPMJaWC0247tB/Z3CcHCvY=;
+        b=LwVSzVKPBEuXhCB9sczewjUHjTl+bnf7L1NQSTHxEuA2XdN9qVTgheGBCCsW1+3fs+
+         hoWFjuzm23+oLGoPbAWxdm50I1VDUYFqTUWr9TCkoJIq6DJaD8TcTeaky9nR/th1xsdb
+         qgN8QpUyzg1MG2q2ZfS55ay/dbPeKGSw+jNKz2JoB+lhpVynzMfNJvP6+FetBWhlsc3q
+         71K2coamgReDn6zAG296/GHE5M5lUH8unhWdH4r91UE/zeUP94fMi73OFmaqqRh8RRoz
+         s729GyWWcdVBk1Kd9vYL90kpvqcKzzUQpWrywCO5JBDrF25jivL2kEbQDBvmGXnEh/Nl
+         8K9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714579357; x=1715184157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cuTSwyg4Duor6hNxagd4NLjWGY2C1Kh2NptH/U7fxFA=;
-        b=ujOkShzr+q9/SnkyvH9A8cTiDHpB5flVXYnWY9swuGc3FKaipzQdBVVYiXTYUDfIpg
-         qaRovjOE6UTlgxDKvopPfZqpKI93Nn5nG7kxXE7lK85SC0MnfovZ2oHHZMHtG3sGik+5
-         9XSFTNbbubMSf2dKBTuP3Jnr3u42tKj4540WMUx3toyptsjFS+IDh1BxMSIAtJ86Bc2G
-         UlTMdrhVgrXpV7KY4rhVrfPFKiWP6s7XHvYTPXOrn7qtpqsmnNBndNhlUNcCTgZPDSxi
-         cbCToagWtqUziikEAkSIMWl47yAIFYEgHFuZ8pXjwfmlovIRI6xkgm7e93JTcxBlU9Jo
-         EWhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUS4TmqT2SbhQ7RWOZHzCf/0+BMcnz+s7pJ5IYqSmQIURovcl2iI2y8PpxS5vDihEaXbVM83T93fMTlbtPyvDnweqDXg2+6IRMjmKl8llXkGPEgFvrc
-X-Gm-Message-State: AOJu0YwLCJJCDyQINS47d3vSNR67tH1dRxQvvzm7sHVdaWXIGh+F/ySE
-	+gWGhzDUU/hYeofF0lkKQhJCbp7TodLCU1zKbbMqmwG353/xnWfJVvTcdEDIBDA9loLLoAnhe9H
-	Axn0dZu18dFedCsV9Ayk7GKYxLI+K+j94HMj2
-X-Google-Smtp-Source: AGHT+IH43KKvgq5pfK+zLJrg5zNUpKsT1cly8y7M41qu+UjyduRLJHzscgOqbVjTe8DbGTiF22UP57FY9wim6c+i6ZY=
-X-Received: by 2002:a05:690c:3586:b0:61a:edf1:da55 with SMTP id
- fr6-20020a05690c358600b0061aedf1da55mr2907562ywb.47.1714579356786; Wed, 01
- May 2024 09:02:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714579655; x=1715184455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xr5rU3ocbYfiYtig96UWUYPMJaWC0247tB/Z3CcHCvY=;
+        b=Causof245B09B5iyJ42q0qKYsN+j6P2GC/SRUc4F+xyCIhqEKwZpNH3Z2tg23frvZB
+         6nO/ogNVL2NbhRegoWk0hTaef498GVXvu7pcatoKbUdiCLCypG1K+tyj1GXHaz56Kedy
+         rq5JE+gqlhYF4bLANZCsUT5ncREYf/WaZshIRb2mFYbwA4nFMcRzWf6NsFJ7QP8Ao3Zf
+         EynIlwiaHdmK/cux5z0xHfIiii2LZAuKD0tXAKY6UPWtGpTP++jPAahTEM4VfDoP7BHQ
+         9O0sukF1bCybKJwSZoq8ufN5iLR2meazp6jdz88y/94OF3KHMVJ0g3RCm0EVeh7lEZBT
+         /1wg==
+X-Gm-Message-State: AOJu0Ywl+L21jBYjaO1Z2ojKTcgd0IRhhiPQv5h61iRRFSPwgr/2+XtY
+	XnQyH5abFGoTyaI6/nuYExVUd53SL+kaNWb+e7at4FnGveD9W+DwrdCqZE4EKe5ggwQ17NOzULQ
+	=
+X-Google-Smtp-Source: AGHT+IHidFKNZyq9CC2VpN9w5ehXO037jXkq1Hwr7bh6hegIPAkX6Gw2CIoBK6zIaGwdTH0K61z9RA==
+X-Received: by 2002:a05:620a:2491:b0:790:eb01:ebb6 with SMTP id i17-20020a05620a249100b00790eb01ebb6mr3192197qkn.42.1714579654969;
+        Wed, 01 May 2024 09:07:34 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id p2-20020ae9f302000000b0079088fca179sm7267281qkg.76.2024.05.01.09.07.34
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 May 2024 09:07:34 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: update the LSM file list
+Date: Wed,  1 May 2024 12:07:26 -0400
+Message-ID: <20240501160725.12027-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240429114636.123395-1-fuzhen5@huawei.com>
-In-Reply-To: <20240429114636.123395-1-fuzhen5@huawei.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 1 May 2024 12:02:25 -0400
-Message-ID: <CAHC9VhTCFOCE0E-en3HnNkPVRumzWRPcrJMF-=dxke53dOv1Gg@mail.gmail.com>
-Subject: Re: [PATCH -next] lsm: fix default return value for inode_set(remove)xattr
-To: felix <fuzhen5@huawei.com>, linux-security-module@vger.kernel.org
-Cc: casey@schaufler-ca.com, roberto.sassu@huawei.com, stefanb@linux.ibm.com, 
-	zohar@linux.ibm.com, kamrankhadijadj@gmail.com, andrii@kernel.org, 
-	omosnace@redhat.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	xiujianfeng@huawei.com, wangweiyang2@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=769; i=paul@paul-moore.com; h=from:subject; bh=dRXa4bw+GATtxw0bRfM1WzfRnRgWnofvYBW/yVCFBMU=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBmMmi9gHSbfAi9vHeBGARj8ha8tVc9tIcw8JLs7 xDb+CdgUsiJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZjJovQAKCRDqIPLalzeJ c6i0EAC3NH62Ehb/jxLT4NQuMiB+La4UKZWy1rnrjmYHlXPrBFhE2zjUG9h5AThkE08xASIn7Lt WTRhJ/frT9sKEL9YaKN7vD2TpsuCPO1E61Nk8K2u5V5H2pLeWMRxto6c2+Za4RoKQlWsDF3XvXP 86MdD3mZhxR4Frr+bT91VYWMGHJIKNA1gjnrwmq+g4XLDiaGvALYfSVDzraMCu+9hxz/Z1PNvyg 3aSlnzvN8cW006cnGrCka4tIeV2EBgfp7im4F2nJYUAm79fhnWSeDXHnBschGoqNE7SoksbJUrD bI4zrW7G+3bmxFLk0KlHfVOCVZ+dLqPRoNS0Wo2UEivOXQCZwU8FCHjblK99enM4zGF3nhDwVAr HZdLkE0ElMy00i08/wRn7oiAjRT1CB5G61voQyPqhgt5tq5sv5i8DL1bjMVNL+DiCRdDTFOzhMD ClBs/R0R0Ccae87AuuP6ieGJAecG1UEC8iwxGWFg64/vE8vVlGuc3FVu7g0FEAPjfKLh3QHHiEf F6uTBhwWwzWvXby4EjrDPVMUW4cvbkN8PXXcvjoyCW2YMUtiOjVLAGqf5ZXyPh9Wnd2WEhre7TN oCBKnnd/DEFvaZcFMokyCN5LL3AhGggxve+LHHKuxotbPRikRQoexFh6XsiiDNfRn8cbc64oXsR cpYV+Xta8AsNiNA==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 29, 2024 at 7:47=E2=80=AFAM felix <fuzhen5@huawei.com> wrote:
->
-> From: Felix Fu <fuzhen5@huawei.com>
->
-> The return value of security_inode_set(remove)xattr should
-> be 1. If it return 0, cap_inode_setxattr would not be
-> executed when no lsm exist, which is not what we expected,
-> any user could set some security.* xattr for a file.
->
-> Before commit 260017f31a8c ("lsm: use default hook return
-> value in call_int_hook()") was approved, this issue would
-> still happened when lsm only include bpf, because bpf_lsm_
-> inode_setxattr return 0 by default which cause cap_inode_set
-> xattr to be not executed.
->
-> Fixes: 260017f31a8c ("lsm: use default hook return value in call_int_hook=
-()")
-> Signed-off-by: Felix Fu <fuzhen5@huawei.com>
-> ---
->  include/linux/lsm_hook_defs.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+The LSM entry was missing a number of files under include/.
 
-Adding the LSM list as that is the important list for this patch.  I'm
-also just realizing we don't include lsm_hook_defs.h in the LSM
-MAINTAINERS entry, I'll submit a patch for that shortly.
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
-h
-> index f804b76cde44..9c768b954264 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -144,14 +144,14 @@ LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *i=
-dmap, struct dentry *dentry,
->  LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap=
-,
->          struct dentry *dentry, int ia_valid)
->  LSM_HOOK(int, 0, inode_getattr, const struct path *path)
-> -LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
-> +LSM_HOOK(int, 1, inode_setxattr, struct mnt_idmap *idmap,
->          struct dentry *dentry, const char *name, const void *value,
->          size_t size, int flags)
->  LSM_HOOK(void, LSM_RET_VOID, inode_post_setxattr, struct dentry *dentry,
->          const char *name, const void *value, size_t size, int flags)
->  LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name=
-)
->  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> -LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> +LSM_HOOK(int, 1, inode_removexattr, struct mnt_idmap *idmap,
->          struct dentry *dentry, const char *name)
->  LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dent=
-ry,
->          const char *name)
-> --
-> 2.34.1
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aa3b947fb080..fa55c4f4c732 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19818,6 +19818,9 @@ Q:	https://patchwork.kernel.org/project/linux-security-module/list
+ B:	mailto:linux-security-module@vger.kernel.org
+ P:	https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
++F:	include/linux/lsm_audit.h
++F:	include/linux/lsm_hook_defs.h
++F:	include/linux/lsm_hooks.h
+ F:	include/uapi/linux/lsm.h
+ F:	security/
+ F:	tools/testing/selftests/lsm/
+-- 
+2.45.0
 
---=20
-paul-moore.com
