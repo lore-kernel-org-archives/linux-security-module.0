@@ -1,128 +1,177 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3275181BAB
-	for <linux-security-module@vger.kernel.org>; Thu,  2 May 2024 21:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C008462;
+	Thu,  2 May 2024 22:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714684553; cv=none; b=d6VE+ccvq2Vi/1jL1whQ8KVUeVVLF+uvP4azpGk2K4hMQfWdMvizLm8BNAtpx+3z2BTZKQ58c1Eq/stPoIB/O1rnDZRMLTnqQSNpn4GwM97MCl/Tn1PSxzVETvkTiUvzOl/WDg94oqNBnGcF96YeHcw1rYP5/jDefc+5+ubBlAM=
+	t=1714689288; cv=none; b=hNmQhGKs2vgge+GO65xyv1Dj2f9h2lxd8tLSGn0dvj35yts3FLOLcRB7cS0yYxBvG4WSnAEuhthQ8vBfWzgzuLqzh6n04Bph91RLt+SsYH71DEr7DXZH4xGjGXCZCtIM8HxWqaXernSH2Xwi/OKUMwtCdDuCl1e537dQ6iEebcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714684553; c=relaxed/simple;
-	bh=W8Q5bXKOZUKtuPudohNxres0JDqyULeUWiZldw1kbLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6gG9Pg/LYDuP8uXwuHsIjKoOzf2qDbv9rtZXo5TAgW8ol4dDQ9p0el+kRaVFhhSG++UKhfFpEx+rLsq6msxzWGBQX7xsDqi8Z8DqnzxptaUItx/zdbzXG6zn2xBSZQlR1RKGCVvaC/ILUAtDf9q2fAVsTjpiUN1vjqa/vfdPns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AavzbeBd; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1714689288; c=relaxed/simple;
+	bh=YA45pVuZxp2RA0fd/vUvVfJbao2NkHscxPlRveTOCO4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XpsIk5GITcxDaq7TnW6vMRUmjDFSaXkyrhSEKTLuK1iKYQHHMQexhk87exgPkGcw4h907/fEHuS/+Yb3fjcv2N6vtQNv6M53XBwU/C6jMfOC0ZskOmqnbvSpMFQHxscPn9ya8bOgAq7vyBRvVH6HE94HUKNIhbTw00L1Ud+lMCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/K2b98e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AavzbeBd"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VVmhv40Z4zPgv;
-	Thu,  2 May 2024 23:07:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1714684031;
-	bh=W8Q5bXKOZUKtuPudohNxres0JDqyULeUWiZldw1kbLk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AavzbeBd1JzJy9ac2M35nOFcEwjk3UPv+jtBfdHt6P0+Ts+gEYQTJBX/xpj42vfpP
-	 iSIUeSyyGwnHplQdEQujtEUvgeftsRNs3v4DfQFLbnYoh1d0uxDQPwU1IFho5+ZThh
-	 WtJv7oYLIWMvoRuexkTcHD0XxXT3Hz4qnKUV422w=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VVmht4Kgjzt3M;
-	Thu,  2 May 2024 23:07:10 +0200 (CEST)
-Date: Thu, 2 May 2024 23:07:10 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Kees Cook <keescook@chromium.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com, 
-	pabeni@redhat.com, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, jakub@cloudflare.com, kvm@vger.kernel.org
-Subject: Re: [PATCH v4 00/12] selftests: kselftest_harness: support using
- xfail
-Message-ID: <20240502.iwu8buoQuah1@digikod.net>
-References: <20240229005920.2407409-1-kuba@kernel.org>
- <05f7bf89-04a5-4b65-bf59-c19456aeb1f0@sirena.org.uk>
- <20240304150411.6a9bd50b@kernel.org>
- <202403041512.402C08D@keescook>
- <20240304153902.30cd2edd@kernel.org>
- <202403050141.C8B1317C9@keescook>
- <20240305.phohPh8saa4i@digikod.net>
- <ZjPelW6-AbtYvslu@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/K2b98e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A41EC113CC;
+	Thu,  2 May 2024 22:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714689288;
+	bh=YA45pVuZxp2RA0fd/vUvVfJbao2NkHscxPlRveTOCO4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Z/K2b98e04YHxRv6PuSeIxmvQ/RZZLkw9tcffrKVIaT9Uaz+zlCtJ/5M9CpIL1pqe
+	 xAh1X5pNCca+uNUaKt2OD8PAvstKmh88cAnAq68Ns//iosWb+DGxjCDCw51HL6mCk8
+	 U5jy3Vn1KNIcydNOWdd2zgN3KuJODEeREwq4K+RbSEedxfa6NjJ4sBvj8j5v0py4Pn
+	 m1JtWKTQesHRqcpcdGfWJiXL685aWTi+oTg5MmCP+jsA9K6+Y5iW2Z7t09y+xONb/g
+	 x/gXROVB5oMMQDWiPwKCfM5F9O0WbuMFEKrpXDebUrMLPOppU6lb0X0iNbHWcM40TJ
+	 F4Sxom2G1f9GA==
+Message-ID: <70273db57aa4b6df43ae1f73e6bf3b80abf0c599.camel@kernel.org>
+Subject: Re: [PATCH v2] nfsd: set security label during create operations
+From: Jeffrey Layton <jlayton@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>,
+ selinux@vger.kernel.org,  linux-nfs@vger.kernel.org,
+ chuck.lever@oracle.com, neilb@suse.de
+Cc: paul@paul-moore.com, omosnace@redhat.com, 
+	linux-security-module@vger.kernel.org
+Date: Thu, 02 May 2024 18:34:46 -0400
+In-Reply-To: <20240502195800.3252-1-stephen.smalley.work@gmail.com>
+References: <20240502195800.3252-1-stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0 (3.52.0-1.fc40app1) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjPelW6-AbtYvslu@google.com>
-X-Infomaniak-Routing: alpha
 
-On Thu, May 02, 2024 at 11:42:29AM GMT, Sean Christopherson wrote:
-> +kvm
-> 
-> On Tue, Mar 05, 2024, Mickaël Salaün wrote:
-> > On Tue, Mar 05, 2024 at 01:43:14AM -0800, Kees Cook wrote:
-> > > On Mon, Mar 04, 2024 at 03:39:02PM -0800, Jakub Kicinski wrote:
-> > > > On Mon, 4 Mar 2024 15:14:04 -0800 Kees Cook wrote:
-> > > > > > Ugh, I'm guessing vfork() "eats" the signal, IOW grandchild signals,
-> > > > > > child exits? vfork() and signals.. I'd rather leave to Kees || Mickael.  
-> > > > > 
-> > > > > Oh no, that does seem bad. Since Mickaël is also seeing weird issues,
-> > > > > can we drop the vfork changes for now?
-> > > > 
-> > > > Seems doable, but won't be a simple revert. "drop" means we'd need 
-> > > > to bring ->step back. More or less go back to v3.
-> > > 
-> > > I think we have to -- other CIs are now showing the most of seccomp
-> > > failing now. (And I can confirm this now -- I had only tested seccomp
-> > > on earlier versions of the series.)
-> > 
-> > Sorry for the trouble, I found and fixed the vfork issues.
-> 
-> Heh, you found and fixed _some of_ the vfork issues.  This whole mess completely
-> breaks existing tests that use TEST_F() and exit() with non-zero values to
-> indicate failure, including failures that occur during FIXTURE_SETUP().
-> 
-> E.g. all of the KVM selftests that use KVM_ONE_VCPU_TEST() are broken and will
-> always show all tests as passing.
-> 
-> The below gets things working for KVM selftests again, but (a) I have no idea if
-> it's a complete fix, (b) I don't know if it will break other users of the harness,
-> and (c) I don't understand why spawning a grandchild is the default behavior, i.e.
-> why usage that has zero need of separating teardown from setup+run is subjected to
-> the complexity of the handful of tests that do.
+On Thu, 2024-05-02 at 15:58 -0400, Stephen Smalley wrote:
+> When security labeling is enabled, the client can pass a file security
+> label as part of a create operation for the new file, similar to mode
+> and other attributes. At present, the security label is received by nfsd
+> and passed down to nfsd_create_setattr(), but nfsd_setattr() is never
+> called and therefore the label is never set on the new file. I couldn't
+> tell if this has always been broken or broke at some point in time. Looki=
+ng
+> at nfsd_setattr() I am uncertain as to whether the same issue presents fo=
+r
+> file ACLs and therefore requires a similar fix for those. I am not overly
+> confident that this is the right solution.
+>=20
+> An alternative approach would be to introduce a new LSM hook to set the
+> "create SID" of the current task prior to the actual file creation, which
+> would atomically label the new inode at creation time. This would be bett=
+er
+> for SELinux and a similar approach has been used previously
+> (see security_dentry_create_files_as) but perhaps not usable by other LSM=
+s.
+>=20
+> Reproducer:
+> 1. Install a Linux distro with SELinux - Fedora is easiest
+> 2. git clone https://github.com/SELinuxProject/selinux-testsuite
+> 3. Install the requisite dependencies per selinux-testsuite/README.md
+> 4. Run something like the following script:
+> MOUNT=3D$HOME/selinux-testsuite
+> sudo systemctl start nfs-server
+> sudo exportfs -o rw,no_root_squash,security_label localhost:$MOUNT
+> sudo mkdir -p /mnt/selinux-testsuite
+> sudo mount -t nfs -o vers=3D4.2 localhost:$MOUNT /mnt/selinux-testsuite
+> pushd /mnt/selinux-testsuite/
+> sudo make -C policy load
+> pushd tests/filesystem
+> sudo runcon -t test_filesystem_t ./create_file -f trans_test_file \
+> 	-e test_filesystem_filetranscon_t -v
+> sudo rm -f trans_test_file
+> popd
+> sudo make -C policy unload
+> popd
+> sudo umount /mnt/selinux-testsuite
+> sudo exportfs -u localhost:$MOUNT
+> sudo rmdir /mnt/selinux-testsuite
+> sudo systemctl stop nfs-server
+>=20
+> Expected output:
+> <eliding noise from commands run prior to or after the test itself>
+> Process context:
+> 	unconfined_u:unconfined_r:test_filesystem_t:s0-s0:c0.c1023
+> Created file: trans_test_file
+> File context: unconfined_u:object_r:test_filesystem_filetranscon_t:s0
+> File context is correct
+>=20
+> Actual output:
+> <eliding noise from commands run prior to or after the test itself>
+> Process context:
+> 	unconfined_u:unconfined_r:test_filesystem_t:s0-s0:c0.c1023
+> Created file: trans_test_file
+> File context: system_u:object_r:test_file_t:s0
+> File context error, expected:
+> 	test_filesystem_filetranscon_t
+> got:
+> 	test_file_t
+>=20
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+> v2 introduces a nfsd_attrs_valid() helper and uses it as suggested by
+> Jeffrey Layton <jlayton@kernel.org>.
+>=20
+>  fs/nfsd/nfsproc.c | 2 +-
+>  fs/nfsd/vfs.c     | 2 +-
+>  fs/nfsd/vfs.h     | 8 ++++++++
+>  3 files changed, 10 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/nfsd/nfsproc.c b/fs/nfsd/nfsproc.c
+> index 36370b957b63..3e438159f561 100644
+> --- a/fs/nfsd/nfsproc.c
+> +++ b/fs/nfsd/nfsproc.c
+> @@ -389,7 +389,7 @@ nfsd_proc_create(struct svc_rqst *rqstp)
+>  		 * open(..., O_CREAT|O_TRUNC|O_WRONLY).
+>  		 */
+>  		attr->ia_valid &=3D ATTR_SIZE;
+> -		if (attr->ia_valid)
+> +		if (nfsd_attrs_valid(attr))
+>  			resp->status =3D nfsd_setattr(rqstp, newfhp, &attrs,
+>  						    NULL);
+>  	}
 
-Thanks for the fix.  I think it covers almost all cases.  I'd handle the
-same way the remaining _exit() though.  The grandchild changes was a
-long due patch from the time I added kselftest_harness.h and forked the
-TEST_F() macro.  I'll send a new patch series with this fix.
+This function is for NFSv2, which doesn't support any inode attributes
+that aren't represented in ia_valid. We could leave this as-is, but
+this is fine too.
 
-> 
-> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-> index 4fd735e48ee7..24e95828976f 100644
-> --- a/tools/testing/selftests/kselftest_harness.h
-> +++ b/tools/testing/selftests/kselftest_harness.h
-> @@ -391,7 +391,7 @@
->                                 fixture_name##_setup(_metadata, &self, variant->data); \
->                                 /* Let setup failure terminate early. */ \
->                                 if (_metadata->exit_code) \
-> -                                       _exit(0); \
-> +                                       _exit(_metadata->exit_code); \
->                                 _metadata->setup_completed = true; \
->                                 fixture_name##_##test_name(_metadata, &self, variant->data); \
->                         } else if (child < 0 || child != waitpid(child, &status, 0)) { \
-> @@ -406,8 +406,10 @@
->                 } \
->                 if (_metadata->setup_completed && _metadata->teardown_parent) \
->                         fixture_name##_teardown(_metadata, &self, variant->data); \
-> -               if (!WIFEXITED(status) && WIFSIGNALED(status)) \
-> -                       /* Forward signal to __wait_for_test(). */ \
-> +               /* Forward exit codes and signals to __wait_for_test(). */ \
-> +               if (WIFEXITED(status)) \
-> +                       _exit(WEXITSTATUS(status)); \
-> +               else if (WIFSIGNALED(status)) \
->                         kill(getpid(), WTERMSIG(status)); \
->                 __test_check_assert(_metadata); \
->         } \
-> 
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 2e41eb4c3cec..29b1f3613800 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1422,7 +1422,7 @@ nfsd_create_setattr(struct svc_rqst *rqstp, struct =
+svc_fh *fhp,
+>  	 * Callers expect new file metadata to be committed even
+>  	 * if the attributes have not changed.
+>  	 */
+> -	if (iap->ia_valid)
+> +	if (nfsd_attrs_valid(attrs))
+>  		status =3D nfsd_setattr(rqstp, resfhp, attrs, NULL);
+>  	else
+>  		status =3D nfserrno(commit_metadata(resfhp));
+> diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
+> index c60fdb6200fd..57cd70062048 100644
+> --- a/fs/nfsd/vfs.h
+> +++ b/fs/nfsd/vfs.h
+> @@ -60,6 +60,14 @@ static inline void nfsd_attrs_free(struct nfsd_attrs *=
+attrs)
+>  	posix_acl_release(attrs->na_dpacl);
+>  }
+> =20
+> +static inline bool nfsd_attrs_valid(struct nfsd_attrs *attrs)
+> +{
+> +	struct iattr *iap =3D attrs->na_iattr;
+> +
+> +	return (iap->ia_valid || (attrs->na_seclabel &&
+> +		attrs->na_seclabel->len));
+> +}
+> +
+>  __be32		nfserrno (int errno);
+>  int		nfsd_cross_mnt(struct svc_rqst *rqstp, struct dentry **dpp,
+>  		                struct svc_export **expp);
+
+Reviewed-by: Jeffrey Layton <jlayton@kernel.org>
