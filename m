@@ -1,157 +1,300 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA08013B593;
-	Fri,  3 May 2024 17:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5937D82C88;
+	Fri,  3 May 2024 22:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714757511; cv=none; b=PWu6CAzctSvX32glWmxRdywHcZI8m2Pofa59a90N5MbkjH6XmxfhL9/Ah3iJBVg6Eqwq7U8EDepbFNfx+4XAQT0jJKOwHHW1SBGHk9Oj0hy99ArdUFIXNLKiuZZw21YqFKvd54FzOnkKlR68PwdO+ZRxQ4/ZZmGGP6lPG3Ll9ZY=
+	t=1714775556; cv=none; b=PiSaX8uU0lpalNDCgAMFimB/ydEJ80L7mzb6u5hGjYRWv/GHr9ajtEQfHRSB5uhN6qufRZpYEz6IjZw0o9OCDBv6ITierT1m2FcHGq8uFZeDOZiCIsS18eGbf2V1y051w5DA9pmwdiMGwChe7Y2xiURnht3DQhXve49gPb3tQC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714757511; c=relaxed/simple;
-	bh=NA8Lb6bNRP/z+eXkOqMJbaWB5ZBHyOdDEvk7/px99vE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Txh4cZtuM+F9KYoUA8zevIK3v+IBrb9Ygbniyvs05WsPqvayOrJN8l5zzfRNbzNMU8v7Peylb0hw+u0A3wZM5R5t3nF/7/1qFYbRVzqpBDma6kDlwN/AhrB8pp7w2rCYGYYAZXc64vEZEVzDEm6zIRcyopFtY6QpVe38ltO47Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ymaer843; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714775556; c=relaxed/simple;
+	bh=0v1Zo4qQhCF7cuYTLut+HMo3yAsxmP/yI/WQ69PCOmE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=QyloGsJRScd5Odydx3c0sl3M+nyY9ZCofJM68XY3+rOlebw4lgfp0oR/nbvWwQLpPkKaHcYmHYGHG6z9m1gTm2gz7frblMUvR1tTQFsCK58aoJ9jh2BSDokPcTf4Hznro+CkbnS3Kb5QC+5BMppez43kpLMjAhsSQOIwivX/vHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=q2o+8Itj; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ymaer843"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE06C116B1;
-	Fri,  3 May 2024 17:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714757511;
-	bh=NA8Lb6bNRP/z+eXkOqMJbaWB5ZBHyOdDEvk7/px99vE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Ymaer8435Ebdaect7lbFLXNBCiCR7vefJwiSLtATML7X7AB9Y42zxiCxjCi8i0uhl
-	 x4Ofqfee+0612S+XyoA8TMbb6bHWc5IKCWo8mboFDL//wPCgSBay1iONOqgvEIaD2/
-	 kWwkzsOmrVo4QvTGrx+3u4sZqDjVvbggmV2fgWIFt2sSGc6R9pnT5UKI50WAvfD4ss
-	 lUxVGlbu5FVlZPX7HHPCA+YNZksr5qOAk+2SSbllflaBk2Pt+510BOOAF9VnvjufuH
-	 0AODC+0ZUQCZIZbi+xockPgylcSkKIhBloGpqLn9CC5sxrQSD+NlOIXiWrmYnSxYCm
-	 ClyFqNcJKehaw==
-Message-ID: <53810d77218a7a67fc35f5977584664d54d0e575.camel@kernel.org>
-Subject: Re: [PATCH v3] nfsd: set security label during create operations
-From: Jeffrey Layton <jlayton@kernel.org>
-To: Stephen Smalley <stephen.smalley.work@gmail.com>,
- selinux@vger.kernel.org,  linux-nfs@vger.kernel.org,
- chuck.lever@oracle.com, neilb@suse.de
-Cc: paul@paul-moore.com, omosnace@redhat.com, 
-	linux-security-module@vger.kernel.org
-Date: Fri, 03 May 2024 13:31:49 -0400
-In-Reply-To: <20240503130905.16823-1-stephen.smalley.work@gmail.com>
-References: <20240503130905.16823-1-stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.0 (3.52.0-1.fc40app1) 
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="q2o+8Itj"
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+	id E34DB20B2C86; Fri,  3 May 2024 15:32:32 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E34DB20B2C86
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1714775552;
+	bh=tyU1fdZY/WjFMXTyscqC7UlqchwkgkYLBYHiiOkh8ng=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=q2o+8Itjt3Iw4RNaLXn124tIpN4Jn8ECRCP67LWRLozL6m9fn6+00bOWvbmPsIFlM
+	 Nd5i/458FGhk2lF9zwIlOCJDjv0hZzbVb/uOJAF4UlkzYgOhVo5wte3FvfiVi98PGT
+	 gmwSzVVKs5xs92mzLt/VaikyM+6gxhvte2JPCq2A=
+From: Fan Wu <wufan@linux.microsoft.com>
+To: corbet@lwn.net,
+	zohar@linux.ibm.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	tytso@mit.edu,
+	ebiggers@kernel.org,
+	axboe@kernel.dk,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	fsverity@lists.linux.dev,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>,
+	Fan Wu <wufan@linux.microsoft.com>
+Subject: [PATCH v18 03/21] ipe: add evaluation loop
+Date: Fri,  3 May 2024 15:32:13 -0700
+Message-Id: <1714775551-22384-4-git-send-email-wufan@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-On Fri, 2024-05-03 at 09:09 -0400, Stephen Smalley wrote:
-> When security labeling is enabled, the client can pass a file security
-> label as part of a create operation for the new file, similar to mode
-> and other attributes. At present, the security label is received by nfsd
-> and passed down to nfsd_create_setattr(), but nfsd_setattr() is never
-> called and therefore the label is never set on the new file. This bug
-> may have been introduced on or around commit d6a97d3f589a ("NFSD:
-> add security label to struct nfsd_attrs"). Looking at nfsd_setattr()
-> I am uncertain as to whether the same issue presents for
-> file ACLs and therefore requires a similar fix for those.
->=20
-> An alternative approach would be to introduce a new LSM hook to set the
-> "create SID" of the current task prior to the actual file creation, which
-> would atomically label the new inode at creation time. This would be bett=
-er
-> for SELinux and a similar approach has been used previously
-> (see security_dentry_create_files_as) but perhaps not usable by other LSM=
-s.
->=20
-> Reproducer:
-> 1. Install a Linux distro with SELinux - Fedora is easiest
-> 2. git clone https://github.com/SELinuxProject/selinux-testsuite
-> 3. Install the requisite dependencies per selinux-testsuite/README.md
-> 4. Run something like the following script:
-> MOUNT=3D$HOME/selinux-testsuite
-> sudo systemctl start nfs-server
-> sudo exportfs -o rw,no_root_squash,security_label localhost:$MOUNT
-> sudo mkdir -p /mnt/selinux-testsuite
-> sudo mount -t nfs -o vers=3D4.2 localhost:$MOUNT /mnt/selinux-testsuite
-> pushd /mnt/selinux-testsuite/
-> sudo make -C policy load
-> pushd tests/filesystem
-> sudo runcon -t test_filesystem_t ./create_file -f trans_test_file \
-> 	-e test_filesystem_filetranscon_t -v
-> sudo rm -f trans_test_file
-> popd
-> sudo make -C policy unload
-> popd
-> sudo umount /mnt/selinux-testsuite
-> sudo exportfs -u localhost:$MOUNT
-> sudo rmdir /mnt/selinux-testsuite
-> sudo systemctl stop nfs-server
->=20
-> Expected output:
-> <eliding noise from commands run prior to or after the test itself>
-> Process context:
-> 	unconfined_u:unconfined_r:test_filesystem_t:s0-s0:c0.c1023
-> Created file: trans_test_file
-> File context: unconfined_u:object_r:test_filesystem_filetranscon_t:s0
-> File context is correct
->=20
-> Actual output:
-> <eliding noise from commands run prior to or after the test itself>
-> Process context:
-> 	unconfined_u:unconfined_r:test_filesystem_t:s0-s0:c0.c1023
-> Created file: trans_test_file
-> File context: system_u:object_r:test_file_t:s0
-> File context error, expected:
-> 	test_filesystem_filetranscon_t
-> got:
-> 	test_file_t
->=20
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
-> v3 removes the erroneous and unnecessary change to NFSv2 and updates the
-> description to note the possible origin of the bug. I did not add a=20
-> Fixes tag however as I have not yet tried confirming that.
->=20
->  fs/nfsd/vfs.c | 2 +-
->  fs/nfsd/vfs.h | 8 ++++++++
->  2 files changed, 9 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index 2e41eb4c3cec..29b1f3613800 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1422,7 +1422,7 @@ nfsd_create_setattr(struct svc_rqst *rqstp, struct =
-svc_fh *fhp,
->  	 * Callers expect new file metadata to be committed even
->  	 * if the attributes have not changed.
->  	 */
-> -	if (iap->ia_valid)
-> +	if (nfsd_attrs_valid(attrs))
->  		status =3D nfsd_setattr(rqstp, resfhp, attrs, NULL);
->  	else
->  		status =3D nfserrno(commit_metadata(resfhp));
-> diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-> index c60fdb6200fd..57cd70062048 100644
-> --- a/fs/nfsd/vfs.h
-> +++ b/fs/nfsd/vfs.h
-> @@ -60,6 +60,14 @@ static inline void nfsd_attrs_free(struct nfsd_attrs *=
-attrs)
->  	posix_acl_release(attrs->na_dpacl);
->  }
-> =20
-> +static inline bool nfsd_attrs_valid(struct nfsd_attrs *attrs)
-> +{
-> +	struct iattr *iap =3D attrs->na_iattr;
-> +
-> +	return (iap->ia_valid || (attrs->na_seclabel &&
-> +		attrs->na_seclabel->len));
-> +}
-> +
->  __be32		nfserrno (int errno);
->  int		nfsd_cross_mnt(struct svc_rqst *rqstp, struct dentry **dpp,
->  		                struct svc_export **expp);
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Introduce a core evaluation function in IPE that will be triggered by
+various security hooks (e.g., mmap, bprm_check, kexec). This function
+systematically assesses actions against the defined IPE policy, by
+iterating over rules specific to the action being taken. This critical
+addition enables IPE to enforce its security policies effectively,
+ensuring that actions intercepted by these hooks are scrutinized for policy
+compliance before they are allowed to proceed.
+
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+
+---
+v2:
++ Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
+
+v3:
++ Move ipe_load_properties to patch 04.
++ Remove useless 0-initializations Prefix extern variables with ipe_
++ Remove kernel module parameters, as these are exposed through sysctls.
++ Add more prose to the IPE base config option help text.
++ Use GFP_KERNEL for audit_log_start.
++ Remove unnecessary caching system.
++ Remove comments from headers
++ Use rcu_access_pointer for rcu-pointer null check
++ Remove usage of reqprot; use prot only.
++Move policy load and activation audit event to 03/12
+
+v4:
++ Remove sysctls in favor of securityfs nodes
++ Re-add kernel module parameters, as these are now exposed through securityfs.
++ Refactor property audit loop to a separate function.
+
+v5:
++ fix minor grammatical errors
++ do not group rule by curly-brace in audit record,
++ reconstruct the exact rule.
+
+v6:
++ No changes
+
+v7:
++ Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
++ Propagating changes to support the new ipe_context structure in the evaluation loop.
+
+v8:
++ Remove ipe_hook enumeration; hooks can be correlated via syscall record.
+
+v9:
++ Remove ipe_context related code and simplify the evaluation loop.
+
+v10:
++ Split eval part and boot_verified part
+
+v11:
++ Fix code style issues
+
+v12:
++ Correct an rcu_read_unlock usage
++ Add a WARN to unknown op during evaluation
+
+v13:
++ No changes
+
+v14:
++ No changes
+
+v15:
++ No changes
+
+v16:
++ No changes
+
+v17:
++ Add years to license header
++ Fix code and documentation style issues
+
+v18:
++ No changes
+---
+ security/ipe/Makefile |   1 +
+ security/ipe/eval.c   | 102 ++++++++++++++++++++++++++++++++++++++++++
+ security/ipe/eval.h   |  24 ++++++++++
+ 3 files changed, 127 insertions(+)
+ create mode 100644 security/ipe/eval.c
+ create mode 100644 security/ipe/eval.h
+
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+index 3093de1afd3e..4cc17eb92060 100644
+--- a/security/ipe/Makefile
++++ b/security/ipe/Makefile
+@@ -6,6 +6,7 @@
+ #
+ 
+ obj-$(CONFIG_SECURITY_IPE) += \
++	eval.o \
+ 	ipe.o \
+ 	policy.o \
+ 	policy_parser.o \
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+new file mode 100644
+index 000000000000..41331afdef7c
+--- /dev/null
++++ b/security/ipe/eval.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
++ */
++
++#include <linux/fs.h>
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/file.h>
++#include <linux/sched.h>
++#include <linux/rcupdate.h>
++
++#include "ipe.h"
++#include "eval.h"
++#include "policy.h"
++
++struct ipe_policy __rcu *ipe_active_policy;
++
++/**
++ * evaluate_property() - Analyze @ctx against a rule property.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ * @p: Supplies a pointer to the property to be evaluated.
++ *
++ * This is a placeholder. The actual function will be introduced in the
++ * latter commits.
++ *
++ * Return:
++ * * %true	- The current @ctx match the @p
++ * * %false	- The current @ctx doesn't match the @p
++ */
++static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
++			      struct ipe_prop *p)
++{
++	return false;
++}
++
++/**
++ * ipe_evaluate_event() - Analyze @ctx against the current active policy.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ *
++ * This is the loop where all policy evaluation happens against IPE policy.
++ *
++ * Return:
++ * * %0		- Success
++ * * %-EACCES	- @ctx did not pass evaluation
++ */
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
++{
++	const struct ipe_op_table *rules = NULL;
++	const struct ipe_rule *rule = NULL;
++	struct ipe_policy *pol = NULL;
++	struct ipe_prop *prop = NULL;
++	enum ipe_action_type action;
++	bool match = false;
++
++	rcu_read_lock();
++
++	pol = rcu_dereference(ipe_active_policy);
++	if (!pol) {
++		rcu_read_unlock();
++		return 0;
++	}
++
++	if (ctx->op == IPE_OP_INVALID) {
++		if (pol->parsed->global_default_action == IPE_ACTION_DENY) {
++			rcu_read_unlock();
++			return -EACCES;
++		}
++		if (pol->parsed->global_default_action == IPE_ACTION_INVALID)
++			WARN(1, "no default rule set for unknown op, ALLOW it");
++		rcu_read_unlock();
++		return 0;
++	}
++
++	rules = &pol->parsed->rules[ctx->op];
++
++	list_for_each_entry(rule, &rules->rules, next) {
++		match = true;
++
++		list_for_each_entry(prop, &rule->props, next) {
++			match = evaluate_property(ctx, prop);
++			if (!match)
++				break;
++		}
++
++		if (match)
++			break;
++	}
++
++	if (match)
++		action = rule->action;
++	else if (rules->default_action != IPE_ACTION_INVALID)
++		action = rules->default_action;
++	else
++		action = pol->parsed->global_default_action;
++
++	rcu_read_unlock();
++	if (action == IPE_ACTION_DENY)
++		return -EACCES;
++
++	return 0;
++}
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+new file mode 100644
+index 000000000000..b137f2107852
+--- /dev/null
++++ b/security/ipe/eval.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
++ */
++
++#ifndef _IPE_EVAL_H
++#define _IPE_EVAL_H
++
++#include <linux/file.h>
++#include <linux/types.h>
++
++#include "policy.h"
++
++extern struct ipe_policy __rcu *ipe_active_policy;
++
++struct ipe_eval_ctx {
++	enum ipe_op_type op;
++
++	const struct file *file;
++};
++
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
++
++#endif /* _IPE_EVAL_H */
+-- 
+2.44.0
+
