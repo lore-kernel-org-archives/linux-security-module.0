@@ -1,365 +1,308 @@
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6F0BE4F
-	for <linux-security-module@vger.kernel.org>; Fri,  3 May 2024 00:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE98146D75;
+	Fri,  3 May 2024 07:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714697941; cv=none; b=f9SSCERK+R8WlyAJYRXrAY1gzO0C7vgWLq8hn37mS66sbvVa6P03ze9DGUlIGLnHJ4hoEjwkcWfcDok6OBrQZJqrjt0r1P+yuMqKzr47S1SJmbQMv/5JffC4W2XSrb5GothG5Yviz83AmZed49Cj+BgRgiWXyBjaFx/y6uXU1Cg=
+	t=1714721543; cv=none; b=jbtp55EXT70Nsu7Nr15U/IGwVr6cPcktwtyCUCsopzctodCYUdM8nPYjYfiB2f7dJTWXnCEO67HfzcQ4Uah+MVxjoTGP1rJIcwhvKFjbDvLzHW2OnwXXevJ0NxY4fdz+9CwPYhlNOPithTI5U6z2XAmd7UlefanFft7tL/efhHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714697941; c=relaxed/simple;
-	bh=/EYdu4J5Yrr+nX8xFUhcXqsJTgMA3B+MT9nsk8PHUVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=et1/Y11uSiD9O/+FmyZPabWgucZq8luFy/eGRo5vqfM7alom7Xc8SVNSTxs3RtXWhhKEJZm6+XhCtP0Ti0ZUtjU9I3O6/wy/enTwbpeUZ0zj8gyurBEWYIjiFrjMRwTE4EZinlgFkO2UWjWToiDq23IZ+ftN8RlZdt9Br8NaSeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YSve/i9D; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1714721543; c=relaxed/simple;
+	bh=/wcCtlIeTh13HBwXdEzU1rj1/fGksM+XmZoNKBcCYSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJr0kFY5991dOZXcHWx2CAJv/HoWKravE/UEDyzzcKAYxJb8BHESa/f2rlJOUPugUTa4XZsu73Wh+GQ/ymcZIGpeWzwAtdpGjowdS9HoIsZHDWxIUbeSKZLbpi2qvrSy8JeuZkwAT1WhwtWnj54n5q8db6adKDb8HgJ0vHn+AWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kt22eiuZ; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YSve/i9D"
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3c86560e96eso2792329b6e.0
-        for <linux-security-module@vger.kernel.org>; Thu, 02 May 2024 17:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1714697938; x=1715302738; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=y9D4+n+3a1WWKT287lWZ6oJ8Q/WS8JryuqbqGEFZEBs=;
-        b=YSve/i9D56ji1H4xKE4AfysBjQLUR7Ky35dcyXgTuWxOHBjfhewHwIZjVza6NIFd8L
-         iYYUpSQ7jsiVyGgjQ2hMvuUFxjw9sNeXMua8HtR5c52VZlPKnkJrFL/ZAc8HmbzqCuye
-         tbEFApcwr8K5V5EyPPqAvx+TyIHdRlr6qvUKH9U2FoE9z8R5DRUFxZsWRxI7My8GQzex
-         llaxkvz6kgDwE87nkJRQDqokQ9oBN0Oh8juhqMpgoDC/ZRyVb8pXTMd1buBe2yRYZz/5
-         voirMwH8rRRoITnabnz8hPk7M4Ea9R61q978k0FpLckliqNvCr/RpTtpDb1XFamo26lz
-         SMRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714697938; x=1715302738;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y9D4+n+3a1WWKT287lWZ6oJ8Q/WS8JryuqbqGEFZEBs=;
-        b=B7KGVUyzb63d8gi0YLiBS2N5cL+YQWASQdPpwGz9hwhfluBl1Oosc8+UDUm062yMlH
-         TBQVWuOsJ5gGpepeITO1mOUWnUaDlevPjWYvEQYikN8SYE/CgFQK1g4PV2O+d4TI1aPy
-         6ihL/oPywVnP+ztrL0gOoDdHD7OyfNlOaM5Dma0/mLZ5vEXeJkAMPdlnv8/33lF3t444
-         YpRRS5clzD6TzHSQtCKA5Hg8BvWwoHAB2FQH9QpVYg2paEAZ+8tuKy1HL+z1Dz9/+MW6
-         v0NriNw2f+RmZJXyYyRGrOI9su4bZV5qRXaWzs57DnIb1UdOxjLQ9ErBfqyn9NEV0gL1
-         AaaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxGw45ZEUfH26LG7V2nCrKCsS3iJdrYxHt0uimUD7a9OLsFzPJZx49wRnEPXw40QFKQHW7A0na0HSgIYntzE7rN13PYphsC0v8chQVSfafwAX4XwjQ
-X-Gm-Message-State: AOJu0YwG7mkq3mtsDAOe8/FqYOYUnnVju/eCmJBO9P5eCEhV2+rS2WyI
-	57IAOGb+6m/i0b55tzTFe0JVdeV4KQ4Jwqezgd+zym3KmuVV2m93dH6RCORYJTtnc0I1jJKYfG4
-	=
-X-Google-Smtp-Source: AGHT+IElcc9QEkTiy4t+ELMgojkNZAKs4dF7A6+ccl4lQRtYNFPZxtu7vQpaoucJRRs2DRST7uFDvA==
-X-Received: by 2002:a05:6808:3186:b0:3c8:624d:35d3 with SMTP id cd6-20020a056808318600b003c8624d35d3mr2123719oib.54.1714697937620;
-        Thu, 02 May 2024 17:58:57 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id k9-20020a056214024900b006a0fbcab221sm775476qvt.3.2024.05.02.17.58.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 May 2024 17:58:57 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: selinux@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: Ondrej Mosnacek <omosnace@redhat.com>,
-	Felix Fu <fuzhen5@huawei.com>,
-	Casey Schaufler <casey@schaufler-ca.com>
-Subject: [RFC PATCH] lsm: fixup the inode xattr capability handling
-Date: Thu,  2 May 2024 20:58:51 -0400
-Message-ID: <20240503005850.466144-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.45.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kt22eiuZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1714721541; x=1746257541;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/wcCtlIeTh13HBwXdEzU1rj1/fGksM+XmZoNKBcCYSo=;
+  b=kt22eiuZ6+ds2JBRoQ7mGJopa8AcMpg3jwC5JQmvmhMrZPtI/QGLqbX2
+   faRv49PPggOEPFiKROkOowOc/3Zyol+OXJ3IK2aicy6xLaS3SpUQ0d6+f
+   IY/3pgCeR9RY6heAQ8+4utQXJkqMd8j8aZN+DUs3qxeR2ik9BCtNth4Dw
+   bnMvCR3O2Dgg8pTtJSMmRvPjhk3jw+aAK4LJc7f+mMnCW/03VMjxhDPf+
+   ubv0BTGpyLuqAgGbS2IQJ71Vr4x2XUQ2U0SdEZn87Ez5CjPgQFNVrPx6n
+   lvAOQzG0l7S1+8zQSzuC2i2Sv7AjhFx8hyAZielV1nU+BoOhw/2egKtLQ
+   w==;
+X-CSE-ConnectionGUID: SUDwi7S0QTG55l1pZwJPtw==
+X-CSE-MsgGUID: FbSl0SrfQbqc9piuYv6iXw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11062"; a="10683878"
+X-IronPort-AV: E=Sophos;i="6.07,247,1708416000"; 
+   d="scan'208";a="10683878"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 May 2024 00:32:21 -0700
+X-CSE-ConnectionGUID: TX93ohRkRRiCu459xhKfhg==
+X-CSE-MsgGUID: 5PVBgaKZT4aJm9cZbdWpyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,247,1708416000"; 
+   d="scan'208";a="27353333"
+Received: from lkp-server01.sh.intel.com (HELO e434dd42e5a1) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 03 May 2024 00:32:18 -0700
+Received: from kbuild by e434dd42e5a1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s2nOx-000BQF-3C;
+	Fri, 03 May 2024 07:32:15 +0000
+Date: Fri, 3 May 2024 15:31:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>,
+	selinux@vger.kernel.org, linux-nfs@vger.kernel.org,
+	chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de
+Cc: oe-kbuild-all@lists.linux.dev, paul@paul-moore.com, omosnace@redhat.com,
+	linux-security-module@vger.kernel.org,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v2] nfsd: set security label during create operations
+Message-ID: <202405031516.kghPPWFt-lkp@intel.com>
+References: <20240502195800.3252-1-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13087; i=paul@paul-moore.com; h=from:subject; bh=/EYdu4J5Yrr+nX8xFUhcXqsJTgMA3B+MT9nsk8PHUVE=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBmNDbKzzOytPXK7wXHf4PAan3tVzmEYvutcWUUd 4CdBWfbYvmJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZjQ2ygAKCRDqIPLalzeJ c5eaEADA4CScLy9wcojfkkfg7FifjOMlB0P2XRT+MwbyfO6dEsclY2Q4YBNHXYIVT9jCVcAGxqH wvoxvQl2+OeaGruJnzPWzUZwnqhSkZ2xkrUczjY0nPqNU7kfdJtOSzsl+FrD4h8vnAplNWncjB+ MXld/Nn18bg/n9RKjNfAQ/AhowkgE8TPgTIfEdKOAm7dHQWbcbVfCgfMtQvM2/UkMnBNX9Wbe4E wHHSXxvdaBagOVbMoOR6qgKT31htr5eJhTqrON89e8VuHKp2o/SDdozWVr2rTW5oF2YFby7mRsT ggfFRdlXZSJ9SVUX39xgkrdIm+BXXC1oPMxnaMY9U89vQkOrcaTmhe76tv7/RBW92NyHJHgNI4H ZJV9RWrHMaKx7q8GvEmouJLe47n43/teIlAcTPPUi7Cbk+JFfKDMr75qrMajw9WDS56tVTJAvqF CUDTqvok/1FoDzd4JeiDwR1QppPK0aYL5RayR+Zo6xuKhe1u7lgDwt1kol3f/CRyZoXWdYWyR4X xJCWsQ/brTtM5hwlufNHRMaLpVyKnDyx6YN4c6DGzw26l4/JCcbFU9QoG4k8MOgke1+wuYbV2PV POTvCsspSNnrBGcD+JHmtAaOXQbBp1/QL5L+QfwJqs4f1PnKPTtknwXEfqNnK7khe3cC7b57lzU unMilVId2qjz9nA==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502195800.3252-1-stephen.smalley.work@gmail.com>
 
-The current security_inode_setxattr() and security_inode_removexattr()
-hooks rely on individual LSMs to either call into the associated
-capability hooks (cap_inode_setxattr() or cap_inode_removexattr()), or
-return a magic value of 1 to indicate that the LSM layer itself should
-perform the capability checks.  Unfortunately, with the default return
-value for these LSM hooks being 0, an individual LSM hook returning a
-1 will cause the LSM hook processing to exit early, potentially
-skipping a LSM.  Thankfully, with the exception of the BPF LSM, none
-of the LSMs which currently register inode xattr hooks should end up
-returning a value of 1, and in the BPF LSM case, with the BPF LSM hooks
-executing last there should be no real harm in stopping processing of
-the LSM hooks.  However, the reliance on the individual LSMs to either
-call the capability hooks themselves, or signal the LSM with a return
-value of 1, is fragile and relies on a specific set of LSMs being
-enabled.  This patch is an effort to resolve, or minimize, these
-issues.
+Hi Stephen,
 
-Before we discuss the solution, there are a few observations and
-considerations that we need to take into account:
-* BPF LSM registers an implementation for every LSM hook, and that
-  implementation simply returns the hook's default return value, a
-  0 in this case.  We want to ensure that the default BPF LSM behavior
-  results in the capability checks being called.
-* SELinux and Smack do not expect the traditional capability checks
-  to be applied to the xattrs that they "own".
-* SELinux and Smack are currently written in such a way that the
-  xattr capability checks happen before any additional LSM specific
-  access control checks.  SELinux does apply SELinux specific access
-  controls to all xattrs, even those not "owned" by SELinux.
-* IMA and EVM also register xattr hooks but assume that the LSM layer
-  and specific LSMs have already authorized the basic xattr operation.
+kernel test robot noticed the following build errors:
 
-In order to ensure we perform the capability based access controls
-before the individual LSM access controls, perform only one capability
-access control check for each operation, and clarify the logic around
-applying the capability controls, we need a mechanism to determine if
-any of the enabled LSMs "own" a particular xattr and want to take
-responsibility for controlling access to that xattr.  The solution in
-this patch is to create a new LSM hook, 'inode_xattr_skipcap', that is
-not exported to the rest of the kernel via a security_XXX() function,
-but is used by the LSM layer to determine if a LSM wants to control
-access to a given xattr and avoid the traditional capability controls.
-Registering an inode_xattr_skipcap hook is optional, if a LSM declines
-to register an implementation, or uses an implementation that simply
-returns the default value (0), there is no effect as the LSM continues
-to enforce the capability based controls (unless another LSM takes
-ownership of the xattr).  If none of the LSMs signal that the
-capability checks should be skipped, the capability check is performed
-and if access is granted the individual LSM xattr access control hooks
-are executed, keeping with the DAC-before-LSM convention.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.9-rc6 next-20240502]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- include/linux/lsm_hook_defs.h |  1 +
- security/security.c           | 70 ++++++++++++++++++++++++-----------
- security/selinux/hooks.c      | 28 ++++++++++----
- security/smack/smack_lsm.c    | 31 +++++++++++++++-
- 4 files changed, 98 insertions(+), 32 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Stephen-Smalley/nfsd-set-security-label-during-create-operations/20240503-040242
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240502195800.3252-1-stephen.smalley.work%40gmail.com
+patch subject: [PATCH v2] nfsd: set security label during create operations
+config: arm64-randconfig-r123-20240503 (https://download.01.org/0day-ci/archive/20240503/202405031516.kghPPWFt-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 37ae4ad0eef338776c7e2cffb3896153d43dcd90)
+reproduce: (https://download.01.org/0day-ci/archive/20240503/202405031516.kghPPWFt-lkp@intel.com/reproduce)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 334e00efbde4..6e54dae3256b 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -144,6 +144,7 @@ LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
- LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, int ia_valid)
- LSM_HOOK(int, 0, inode_getattr, const struct path *path)
-+LSM_HOOK(int, 0, inode_xattr_skipcap, const char *name)
- LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, const char *name, const void *value,
- 	 size_t size, int flags)
-diff --git a/security/security.c b/security/security.c
-index 7e118858b545..1f5c68e2a62a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2278,7 +2278,20 @@ int security_inode_getattr(const struct path *path)
-  * @size: size of xattr value
-  * @flags: flags
-  *
-- * Check permission before setting the extended attributes.
-+ * This hook performs the desired permission checks before setting the extended
-+ * attributes (xattrs) on @dentry.  It is important to note that we have some
-+ * additional logic before the main LSM implementation calls to detect if we
-+ * need to perform an additional capability check at the LSM layer.
-+ *
-+ * Normally we enforce a capability check prior to executing the various LSM
-+ * hook implementations, but if a LSM wants to avoid this capability check,
-+ * it can register a 'inode_xattr_skipcap' hook and return a value of 1 for
-+ * xattrs that it wants to avoid the capability check, leaving the LSM fully
-+ * responsible for enforcing the access control for the specific xattr.  If all
-+ * of the enabled LSMs refrain from registering a 'inode_xattr_skipcap' hook,
-+ * or return a 0 (the default return value), the capability check is still
-+ * performed.  If no 'inode_xattr_skipcap' hooks are registered the capability
-+ * check is performed.
-  *
-  * Return: Returns 0 if permission is granted.
-  */
-@@ -2286,20 +2299,20 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
- 			    struct dentry *dentry, const char *name,
- 			    const void *value, size_t size, int flags)
- {
--	int ret;
-+	int rc;
- 
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	/*
--	 * SELinux and Smack integrate the cap call,
--	 * so assume that all LSMs supplying this call do so.
--	 */
--	ret = call_int_hook(inode_setxattr, idmap, dentry, name, value, size,
--			    flags);
- 
--	if (ret == 1)
--		ret = cap_inode_setxattr(dentry, name, value, size, flags);
--	return ret;
-+	/* enforce the capability checks at the lsm layer, if needed */
-+	if (!call_int_hook(inode_xattr_skipcap, name)) {
-+		rc = cap_inode_setxattr(dentry, name, value, size, flags);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return call_int_hook(inode_setxattr, idmap, dentry, name, value, size,
-+			     flags);
- }
- 
- /**
-@@ -2452,26 +2465,39 @@ int security_inode_listxattr(struct dentry *dentry)
-  * @dentry: file
-  * @name: xattr name
-  *
-- * Check permission before removing the extended attribute identified by @name
-- * for @dentry.
-+ * This hook performs the desired permission checks before setting the extended
-+ * attributes (xattrs) on @dentry.  It is important to note that we have some
-+ * additional logic before the main LSM implementation calls to detect if we
-+ * need to perform an additional capability check at the LSM layer.
-+ *
-+ * Normally we enforce a capability check prior to executing the various LSM
-+ * hook implementations, but if a LSM wants to avoid this capability check,
-+ * it can register a 'inode_xattr_skipcap' hook and return a value of 1 for
-+ * xattrs that it wants to avoid the capability check, leaving the LSM fully
-+ * responsible for enforcing the access control for the specific xattr.  If all
-+ * of the enabled LSMs refrain from registering a 'inode_xattr_skipcap' hook,
-+ * or return a 0 (the default return value), the capability check is still
-+ * performed.  If no 'inode_xattr_skipcap' hooks are registered the capability
-+ * check is performed.
-  *
-  * Return: Returns 0 if permission is granted.
-  */
- int security_inode_removexattr(struct mnt_idmap *idmap,
- 			       struct dentry *dentry, const char *name)
- {
--	int ret;
-+	int rc;
- 
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	/*
--	 * SELinux and Smack integrate the cap call,
--	 * so assume that all LSMs supplying this call do so.
--	 */
--	ret = call_int_hook(inode_removexattr, idmap, dentry, name);
--	if (ret == 1)
--		ret = cap_inode_removexattr(idmap, dentry, name);
--	return ret;
-+
-+	/* enforce the capability checks at the lsm layer, if needed */
-+	if (!call_int_hook(inode_xattr_skipcap, name)) {
-+		rc = cap_inode_removexattr(idmap, dentry, name);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return call_int_hook(inode_removexattr, idmap, dentry, name);
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3448454c82d0..7be385ebf09b 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3181,6 +3181,23 @@ static bool has_cap_mac_admin(bool audit)
- 	return true;
- }
- 
-+/**
-+ * selinux_inode_xattr_skipcap - Skip the xattr capability checks?
-+ * @name: name of the xattr
-+ *
-+ * Returns 1 to indicate that SELinux "owns" the access control rights to xattrs
-+ * named @name; the LSM layer should avoid enforcing any traditional
-+ * capability based access controls on this xattr.  Returns 0 to indicate that
-+ * SELinux does not "own" the access control rights to xattrs named @name and is
-+ * deferring to the LSM layer for further access controls, including capability
-+ * based controls.
-+ */
-+static int selinux_inode_xattr_skipcap(const char *name)
-+{
-+	/* require capability check if not a selinux xattr */
-+	return !strcmp(name, XATTR_NAME_SELINUX);
-+}
-+
- static int selinux_inode_setxattr(struct mnt_idmap *idmap,
- 				  struct dentry *dentry, const char *name,
- 				  const void *value, size_t size, int flags)
-@@ -3192,15 +3209,9 @@ static int selinux_inode_setxattr(struct mnt_idmap *idmap,
- 	u32 newsid, sid = current_sid();
- 	int rc = 0;
- 
--	if (strcmp(name, XATTR_NAME_SELINUX)) {
--		rc = cap_inode_setxattr(dentry, name, value, size, flags);
--		if (rc)
--			return rc;
--
--		/* Not an attribute we recognize, so just check the
--		   ordinary setattr permission. */
-+	/* if not a selinux xattr, only check the ordinary setattr perm */
-+	if (strcmp(name, XATTR_NAME_SELINUX))
- 		return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
--	}
- 
- 	if (!selinux_initialized())
- 		return (inode_owner_or_capable(idmap, inode) ? 0 : -EPERM);
-@@ -7185,6 +7196,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(inode_permission, selinux_inode_permission),
- 	LSM_HOOK_INIT(inode_setattr, selinux_inode_setattr),
- 	LSM_HOOK_INIT(inode_getattr, selinux_inode_getattr),
-+	LSM_HOOK_INIT(inode_xattr_skipcap, selinux_inode_xattr_skipcap),
- 	LSM_HOOK_INIT(inode_setxattr, selinux_inode_setxattr),
- 	LSM_HOOK_INIT(inode_post_setxattr, selinux_inode_post_setxattr),
- 	LSM_HOOK_INIT(inode_getxattr, selinux_inode_getxattr),
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 146667937811..6e37df0465a4 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1282,6 +1282,33 @@ static int smack_inode_getattr(const struct path *path)
- 	return rc;
- }
- 
-+/**
-+ * smack_inode_xattr_skipcap - Skip the xattr capability checks?
-+ * @name: name of the xattr
-+ *
-+ * Returns 1 to indicate that Smack "owns" the access control rights to xattrs
-+ * named @name; the LSM layer should avoid enforcing any traditional
-+ * capability based access controls on this xattr.  Returns 0 to indicate that
-+ * Smack does not "own" the access control rights to xattrs named @name and is
-+ * deferring to the LSM layer for further access controls, including capability
-+ * based controls.
-+ */
-+static int smack_inode_xattr_skipcap(const char *name)
-+{
-+	if (strncmp(name, XATTR_SMACK_SUFFIX, strlen(XATTR_SMACK_SUFFIX)))
-+		return 0;
-+
-+	if (strcmp(name, XATTR_NAME_SMACK) == 0 ||
-+	    strcmp(name, XATTR_NAME_SMACKIPIN) == 0 ||
-+	    strcmp(name, XATTR_NAME_SMACKIPOUT) == 0 ||
-+	    strcmp(name, XATTR_NAME_SMACKEXEC) == 0 ||
-+	    strcmp(name, XATTR_NAME_SMACKMMAP) == 0 ||
-+	    strcmp(name, XATTR_NAME_SMACKTRANSMUTE) == 0)
-+		return 1;
-+
-+	return 0;
-+}
-+
- /**
-  * smack_inode_setxattr - Smack check for setting xattrs
-  * @idmap: idmap of the mount
-@@ -1325,8 +1352,7 @@ static int smack_inode_setxattr(struct mnt_idmap *idmap,
- 		    size != TRANS_TRUE_SIZE ||
- 		    strncmp(value, TRANS_TRUE, TRANS_TRUE_SIZE) != 0)
- 			rc = -EINVAL;
--	} else
--		rc = cap_inode_setxattr(dentry, name, value, size, flags);
-+	}
- 
- 	if (check_priv && !smack_privileged(CAP_MAC_ADMIN))
- 		rc = -EPERM;
-@@ -5050,6 +5076,7 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(inode_permission, smack_inode_permission),
- 	LSM_HOOK_INIT(inode_setattr, smack_inode_setattr),
- 	LSM_HOOK_INIT(inode_getattr, smack_inode_getattr),
-+	LSM_HOOK_INIT(inode_xattr_skipcap, smack_inode_xattr_skipcap),
- 	LSM_HOOK_INIT(inode_setxattr, smack_inode_setxattr),
- 	LSM_HOOK_INIT(inode_post_setxattr, smack_inode_post_setxattr),
- 	LSM_HOOK_INIT(inode_getxattr, smack_inode_getxattr),
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405031516.kghPPWFt-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from fs/nfsd/nfsproc.c:10:
+   In file included from fs/nfsd/cache.h:12:
+   In file included from include/linux/sunrpc/svc.h:17:
+   In file included from include/linux/sunrpc/xdr.h:17:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2210:
+   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     509 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     516 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     528 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     537 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> fs/nfsd/nfsproc.c:392:24: error: incompatible pointer types passing 'struct iattr *' to parameter of type 'struct nfsd_attrs *' [-Werror,-Wincompatible-pointer-types]
+     392 |                 if (nfsd_attrs_valid(attr))
+         |                                      ^~~~
+   fs/nfsd/vfs.h:63:56: note: passing argument to parameter 'attrs' here
+      63 | static inline bool nfsd_attrs_valid(struct nfsd_attrs *attrs)
+         |                                                        ^
+   5 warnings and 1 error generated.
+
+
+vim +392 fs/nfsd/nfsproc.c
+
+   240	
+   241	/*
+   242	 * CREATE processing is complicated. The keyword here is `overloaded.'
+   243	 * The parent directory is kept locked between the check for existence
+   244	 * and the actual create() call in compliance with VFS protocols.
+   245	 * N.B. After this call _both_ argp->fh and resp->fh need an fh_put
+   246	 */
+   247	static __be32
+   248	nfsd_proc_create(struct svc_rqst *rqstp)
+   249	{
+   250		struct nfsd_createargs *argp = rqstp->rq_argp;
+   251		struct nfsd_diropres *resp = rqstp->rq_resp;
+   252		svc_fh		*dirfhp = &argp->fh;
+   253		svc_fh		*newfhp = &resp->fh;
+   254		struct iattr	*attr = &argp->attrs;
+   255		struct nfsd_attrs attrs = {
+   256			.na_iattr	= attr,
+   257		};
+   258		struct inode	*inode;
+   259		struct dentry	*dchild;
+   260		int		type, mode;
+   261		int		hosterr;
+   262		dev_t		rdev = 0, wanted = new_decode_dev(attr->ia_size);
+   263	
+   264		dprintk("nfsd: CREATE   %s %.*s\n",
+   265			SVCFH_fmt(dirfhp), argp->len, argp->name);
+   266	
+   267		/* First verify the parent file handle */
+   268		resp->status = fh_verify(rqstp, dirfhp, S_IFDIR, NFSD_MAY_EXEC);
+   269		if (resp->status != nfs_ok)
+   270			goto done; /* must fh_put dirfhp even on error */
+   271	
+   272		/* Check for NFSD_MAY_WRITE in nfsd_create if necessary */
+   273	
+   274		resp->status = nfserr_exist;
+   275		if (isdotent(argp->name, argp->len))
+   276			goto done;
+   277		hosterr = fh_want_write(dirfhp);
+   278		if (hosterr) {
+   279			resp->status = nfserrno(hosterr);
+   280			goto done;
+   281		}
+   282	
+   283		inode_lock_nested(dirfhp->fh_dentry->d_inode, I_MUTEX_PARENT);
+   284		dchild = lookup_one_len(argp->name, dirfhp->fh_dentry, argp->len);
+   285		if (IS_ERR(dchild)) {
+   286			resp->status = nfserrno(PTR_ERR(dchild));
+   287			goto out_unlock;
+   288		}
+   289		fh_init(newfhp, NFS_FHSIZE);
+   290		resp->status = fh_compose(newfhp, dirfhp->fh_export, dchild, dirfhp);
+   291		if (!resp->status && d_really_is_negative(dchild))
+   292			resp->status = nfserr_noent;
+   293		dput(dchild);
+   294		if (resp->status) {
+   295			if (resp->status != nfserr_noent)
+   296				goto out_unlock;
+   297			/*
+   298			 * If the new file handle wasn't verified, we can't tell
+   299			 * whether the file exists or not. Time to bail ...
+   300			 */
+   301			resp->status = nfserr_acces;
+   302			if (!newfhp->fh_dentry) {
+   303				printk(KERN_WARNING 
+   304					"nfsd_proc_create: file handle not verified\n");
+   305				goto out_unlock;
+   306			}
+   307		}
+   308	
+   309		inode = d_inode(newfhp->fh_dentry);
+   310	
+   311		/* Unfudge the mode bits */
+   312		if (attr->ia_valid & ATTR_MODE) {
+   313			type = attr->ia_mode & S_IFMT;
+   314			mode = attr->ia_mode & ~S_IFMT;
+   315			if (!type) {
+   316				/* no type, so if target exists, assume same as that,
+   317				 * else assume a file */
+   318				if (inode) {
+   319					type = inode->i_mode & S_IFMT;
+   320					switch(type) {
+   321					case S_IFCHR:
+   322					case S_IFBLK:
+   323						/* reserve rdev for later checking */
+   324						rdev = inode->i_rdev;
+   325						attr->ia_valid |= ATTR_SIZE;
+   326	
+   327						fallthrough;
+   328					case S_IFIFO:
+   329						/* this is probably a permission check..
+   330						 * at least IRIX implements perm checking on
+   331						 *   echo thing > device-special-file-or-pipe
+   332						 * by doing a CREATE with type==0
+   333						 */
+   334						resp->status = nfsd_permission(rqstp,
+   335									 newfhp->fh_export,
+   336									 newfhp->fh_dentry,
+   337									 NFSD_MAY_WRITE|NFSD_MAY_LOCAL_ACCESS);
+   338						if (resp->status && resp->status != nfserr_rofs)
+   339							goto out_unlock;
+   340					}
+   341				} else
+   342					type = S_IFREG;
+   343			}
+   344		} else if (inode) {
+   345			type = inode->i_mode & S_IFMT;
+   346			mode = inode->i_mode & ~S_IFMT;
+   347		} else {
+   348			type = S_IFREG;
+   349			mode = 0;	/* ??? */
+   350		}
+   351	
+   352		attr->ia_valid |= ATTR_MODE;
+   353		attr->ia_mode = mode;
+   354	
+   355		/* Special treatment for non-regular files according to the
+   356		 * gospel of sun micro
+   357		 */
+   358		if (type != S_IFREG) {
+   359			if (type != S_IFBLK && type != S_IFCHR) {
+   360				rdev = 0;
+   361			} else if (type == S_IFCHR && !(attr->ia_valid & ATTR_SIZE)) {
+   362				/* If you think you've seen the worst, grok this. */
+   363				type = S_IFIFO;
+   364			} else {
+   365				/* Okay, char or block special */
+   366				if (!rdev)
+   367					rdev = wanted;
+   368			}
+   369	
+   370			/* we've used the SIZE information, so discard it */
+   371			attr->ia_valid &= ~ATTR_SIZE;
+   372	
+   373			/* Make sure the type and device matches */
+   374			resp->status = nfserr_exist;
+   375			if (inode && inode_wrong_type(inode, type))
+   376				goto out_unlock;
+   377		}
+   378	
+   379		resp->status = nfs_ok;
+   380		if (!inode) {
+   381			/* File doesn't exist. Create it and set attrs */
+   382			resp->status = nfsd_create_locked(rqstp, dirfhp, &attrs, type,
+   383							  rdev, newfhp);
+   384		} else if (type == S_IFREG) {
+   385			dprintk("nfsd:   existing %s, valid=%x, size=%ld\n",
+   386				argp->name, attr->ia_valid, (long) attr->ia_size);
+   387			/* File already exists. We ignore all attributes except
+   388			 * size, so that creat() behaves exactly like
+   389			 * open(..., O_CREAT|O_TRUNC|O_WRONLY).
+   390			 */
+   391			attr->ia_valid &= ATTR_SIZE;
+ > 392			if (nfsd_attrs_valid(attr))
+   393				resp->status = nfsd_setattr(rqstp, newfhp, &attrs,
+   394							    NULL);
+   395		}
+   396	
+   397	out_unlock:
+   398		inode_unlock(dirfhp->fh_dentry->d_inode);
+   399		fh_drop_write(dirfhp);
+   400	done:
+   401		fh_put(dirfhp);
+   402		if (resp->status != nfs_ok)
+   403			goto out;
+   404		resp->status = fh_getattr(&resp->fh, &resp->stat);
+   405	out:
+   406		return rpc_success;
+   407	}
+   408	
+
 -- 
-2.45.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
