@@ -1,389 +1,361 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0F214F62;
-	Fri,  3 May 2024 09:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F76F14D2BC;
+	Fri,  3 May 2024 09:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714727029; cv=none; b=TDRL4EknNrGXbQ6QjtvmwpCKLyslIu7ZAmooBe+3ewAu4NtSHr2sykMGt9gdhj9zwYRhcfVH0VW5E3hWkfFuU9lP3PpAufU4knwCr451STs+P+h9Uw6FoAzVRUtBhJFEH5JlOB9sGXJqfoUv5Dfn50FH9VfyZILCDIgLKD30yWM=
+	t=1714730284; cv=none; b=cNOYjHQStLJmTzNt09eEauS4pxtyJ+dc7+UtUBtS7BSGZ261J3JA0p9q5XYELUWbEPa4g+Z+caohxgzKkGxFewGhjLS+qktlJEk1AGkWgawdtmd7apJnZpbUvbM0k4FqSRmLzf3tHDIpCssA7b+S25uG/PKEoLRZ3udquAQ392Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714727029; c=relaxed/simple;
-	bh=H4OwBwwEJLoUrKgErNPAJ4aWKXfqp1/GW2h+1cPY6mY=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=LELIdvB94u4VG7Xl+VUb+dOAlJzdIImPOiWg1ONIISGco6uNrDnbtN5vQuS2LAJ/NRfJUIRebhYvF6BE23O6h6qdT/UUemv/kqLLeDooaSN6kwrjugPZgWSH3yX8qfUt6xL4WSNKVgbgrCFU8Y2NquZSNlxFAkDNfVMKlyJMboY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hNizHVdn; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1714730284; c=relaxed/simple;
+	bh=f8Mn/L/rPRgscXzOJ4TK13C7rdziWCwow2p/jHjIwJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ixS8mChSbTcwJXZ2G3I/3Ixwh/CuyWn20xluJX2l0q/D077N/85mx2isnrskHMBDwEHGbWAARZxY5dV/IyJe5ldWCZ0EOJ2JuSdKlZO/Uje+SDxP2w3AJZH8qd8IyKqvcq/F0/qE3a/oAMEBtBj0IBg442c11uzomjAjYgAUdK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYY7lLlo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hNizHVdn"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240503090338euoutp0194b4a66649b9801585df2f01f69d5a50~L7yOBYBSa0516505165euoutp01e;
-	Fri,  3 May 2024 09:03:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240503090338euoutp0194b4a66649b9801585df2f01f69d5a50~L7yOBYBSa0516505165euoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1714727018;
-	bh=5DfAXm0BybfL0wB90HdoJ2+ecXzl3T3phLFwP9QlX+o=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=hNizHVdn9K9XbhBNhn1nDSO/5KZUNj2XoxMSsTacSd3jPs0o0drSRiC4H6bkslwSW
-	 B/QSvO9HwlzhFW4zaHFyGSJ5H6nnh83o7MAyLAhqznaRM1mK98m5CnfxgNvbZnC8qx
-	 hsrB//hR8ZhJR5rlu9tY5Zsijl1EM085ggZXO+JQ=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240503090338eucas1p1622ca105c87c20c6bbe96b62943fe717~L7yNnz7IW1025710257eucas1p1p;
-	Fri,  3 May 2024 09:03:38 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 2A.F6.09624.A68A4366; Fri,  3
-	May 2024 10:03:38 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240503090337eucas1p17add844fd822fa0889270ae9e12ca4d0~L7yM6N_nm1858018580eucas1p1z;
-	Fri,  3 May 2024 09:03:37 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240503090337eusmtrp2e33e44757c1c281d7e60e444934cfff9~L7yM4xFdH1141911419eusmtrp2R;
-	Fri,  3 May 2024 09:03:37 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-4f-6634a86abd4b
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id DB.59.08810.968A4366; Fri,  3
-	May 2024 10:03:37 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240503090337eusmtip245d74ecfb1a665d8dac0f5363231e909~L7yMjDsdX1588515885eusmtip2r;
-	Fri,  3 May 2024 09:03:37 +0000 (GMT)
-Received: from localhost (106.210.248.112) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 3 May 2024 10:03:36 +0100
-Date: Fri, 3 May 2024 11:03:32 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
-	Eric Dumazet <edumazet@google.com>, Dave Chinner <david@fromorbit.com>,
-	<linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-mm@kvack.org>, <linux-security-module@vger.kernel.org>,
-	<bpf@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-xfs@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<coreteam@netfilter.org>, <kexec@lists.infradead.org>,
-	<linux-hardening@vger.kernel.org>, <bridge@lists.linux.dev>,
-	<lvs-devel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<rds-devel@oss.oracle.com>, <linux-sctp@vger.kernel.org>,
-	<linux-nfs@vger.kernel.org>, <apparmor@lists.ubuntu.com>
-Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
- of sysctl handlers
-Message-ID: <20240503090332.irkiwn73dgznjflz@joelS2.panther.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYY7lLlo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0249C116B1;
+	Fri,  3 May 2024 09:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714730283;
+	bh=f8Mn/L/rPRgscXzOJ4TK13C7rdziWCwow2p/jHjIwJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BYY7lLlogB03mbGSB3SgN+WPEjR3akhQYsqOL/HAjXxgEOk1biLm7Gy4WYyr12fQF
+	 1lG/DTrRz7WofC8yDi/4cYNplVMGXjuIkuJV7kRYFydEm+vzIC74uwoYa8qZ4RSZtX
+	 Jf3+olxTYdYiKQh2ghqGXScHeUQaw/sjqLWqVl4uc6Kjk3TgESTReef9kcoQkgu1L3
+	 CrirGXZxlKJQIdgmLFcuez6Xyri0pGyzHhKRJQOO/NWXOUpSsZ4q1d/FfvhIS3KCyD
+	 8+Et9wTVudLQiYemszcf74rgyEa4hsYqZLwMQ982eXTmfcjnsqTbZlg35mxT3Hncir
+	 MMy3qXrsZaQww==
+Date: Fri, 3 May 2024 11:57:56 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, 
+	ajordanr@google.com, jorgelo@chromium.org, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v3 1/2] proc: restrict /proc/pid/mem access via param
+ knobs
+Message-ID: <20240503-nulltarif-karten-82213463dedc@brauner>
+References: <20240409175750.206445-1-adrian.ratiu@collabora.com>
+ <202404261544.1EAD63D@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="pu6elde4hy573vso"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA2VSfUxTVxzNfe/1vVe24mvp5AZkZIiayIcQWbzZKrC4Px4hM5PMLPLHRjOe
-	4KBFW2DqdOJEFHBbBVEpX2UiMnDFFKhURLFjRcABG8SgwzI+SkBwQIsCq8Isj80l++/8fuec
-	e8+5uTQueUh60fuUqZxKKU/2I90Io2WxK+jzqrC9IUNmD3TcohMgR2sbiYyXcjH0wnQKR/UW
-	K0A2yzCF7uUqUFPnUwwZRu4L0M3mdgKV1i4C1HujmETWq8sC1NPSKUB9DXoCjZm/IZDRkUki
-	TfkJHNl0kwI0c2aYRK21vxDoxvNGCjkXxjDknF8SoBNldhz1a2wAWXRrkUbfQaCuOocg0oct
-	yviVYDu+h6zOkMYaqrNJ1mDPo9i6imPseF0hYLsvlgP2fv8gwT5x3sXYnsopknUY3mS/y7VQ
-	H4pi3WTxXPK+dE61JTzOLdFp+53cX/Txwe7BnRmgKzIHCGnIhME7lmtkDnCjJUwVgCPTdwA/
-	zAE4N/ktcKkkjAPAWze/ygH0iuPHOU9ecwXAyXsj+L+a8Uev80Q9gDWjfwhcBMH4w7qJbMyF
-	SSYQdk8NrBikjAz+8MxBuTDOFFCw6HqcC3swcbD+cv7KxSImElr1TQSPxbC9cJRwhcCZg3Bo
-	IZaH3vDKEu1SCJkPYFbFNMEXWw9br5dQPD4KO+ofYq5okJlxg+bZUcAT78MzDXwcyHjAx231
-	q4Z1cNlUtmrIB/D20gzFDzUAVh5/ivGqd2Fm3+iq4z1o7X4A+Bdyh/1PxHwvd5hnvIDzaxE8
-	nSXh1RthjXWK0ID12v80075qpn3VTLtyTiDUNdnJ/60DYGX5JM7j7VCvnyZ0gKoGnlyaWpHA
-	qUOV3BfBarlCnaZMCP4sRWEAL79851KbvRGUPJ4NNgOMBmbg/9I8fK2mB3gRyhQl5ycVBeRv
-	3SsRxcsPHeZUKZ+q0pI5tRl404Sfp2hDvC8nYRLkqVwSx+3nVP+wGC30ysDSCwPswc2nK7SJ
-	u46EjoZI18i6djc81wszz+8oGTq/uaSpb+sBQ4nBMeAYxCxHt/w82WOq0J9rEAu/jL1Iz8dE
-	ptnz9kTQittJBedyNeiyqSV5g8mnWi3rLDwy5/A1/8aG9RbtpDZVuTuXo7F37k6cahf31Ebs
-	ic4wmiOTZLNXLxXj0nZpcdCScxf3SX/42fbyRXHjuvE3os5ub342sM2my/bxpeThu/Heqbe8
-	s5ix0sAHZTXzh4YOX1g4kBdi++kYFYSZQv862TlRUNsijSqNDjhpWBO+rFnruWnbeNzbSoX7
-	xhfuMfiOMLEs97WCr4MiokI+umV8FAPT/0xs809K9SPUifLQzbhKLf8bTKfE620EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsVy+t/xe7qZK0zSDH7sl7VoPLaA1eLzkeNs
-	FtsWdzNZ/N3Zzmyx5dg9Rounxx6xW5zpzrXYffork8Wmx9dYLfbsPcliMW/9T0aLy7vmsFnc
-	W/Of1eLCgdOsFle2rmOxeHaol8Vi2+cWNosJC5uZLZ4ueM1q8aHnEZvFkfVnWSx2/dnBbvH7
-	xzMmi9/f/7FaNM//xGxxY8JTRotjC8QsJqw7xWJxbvNnVgdZj9kNF1k8Ti2S8FiwqdRj06pO
-	No9Nnyaxe2xeUu/xYvNMRo/zMxYyely7cZ/F4+3vE0weF5a9YfP4vEnOo7/7GHsAb5SeTVF+
-	aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexpz+v0wFM8Mr
-	Ph6+xNrAeMahi5GDQ0LARGLtF/EuRi4OIYGljBI3+n6ydDFyAsVlJDZ+ucoKYQtL/LnWxQZR
-	9JFR4tebn8wQzhZGietnD4F1sAioSGx+2ckEYrMJ6Eicf3OHGcQWEbCRWPntMzuIzSwwlV1i
-	9vYEEFtYIEFiy9LJjCA2r4CDxL11u1kghi5glJjevhYqIShxcuYTFpBTmQXKJN7fNoYwpSWW
-	/+MAqeAU8JVoW/Ie6mhliSPb57JD2LUSn/8+Y5zAKDwLyaBZCINmIQyaBXablsSNfy+ZMIS1
-	JZYtfM0MYdtKrFv3nmUBI/sqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwHS37djPzTsY5736
-	qHeIkYmD8RCjClDnow2rLzBKseTl56UqifBqTzZOE+JNSaysSi3Kjy8qzUktPsRoCgzDicxS
-	osn5wEScVxJvaGZgamhiZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXANH3uY4E0
-	2xYBo9Mirv0ldwM2JeXqPak55K24q+zrxBohrh2WGfamDnIvAq2vLWOefW1xx/xL/75ENCX9
-	vqot8bXk/BKxn6F9nTImM+a53WtI2Xgg3tez4H/e1kWOlx5e8/WsP/e1yuuIcl/Z/wLbadY8
-	KiufaMxeF5jCvf62Uu03kYK5wRGfjrzc92dKt2DT2pBb3qeD5d7cEz/wpqLi2sLZNb+7lkZM
-	n+Ie5awmssqS9+w9mbNLU2RnBT5VsBSSrBRo3iWV/Wb3rR8mMzi+2SzRU5f6N7MyzCXp4P/d
-	yaIWaeGfHbVicn6JfVP4Uf55nj6jjUNn7tegOU2nuZ60PNqZxc/sn/6VMT1xt32vEktxRqKh
-	FnNRcSIAsZFFMwwEAAA=
-X-CMS-MailID: 20240503090337eucas1p17add844fd822fa0889270ae9e12ca4d0
-X-Msg-Generator: CA
-X-RootMTR: 20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803
-References: <CGME20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803@eucas1p2.samsung.com>
-	<20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+In-Reply-To: <202404261544.1EAD63D@keescook>
 
---pu6elde4hy573vso
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Apr 26, 2024 at 04:10:49PM -0700, Kees Cook wrote:
+> On Tue, Apr 09, 2024 at 08:57:49PM +0300, Adrian Ratiu wrote:
+> > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> > after which it got allowed in commit 198214a7ee50 ("proc: enable
+> > writing to /proc/pid/mem"). Famous last words from that patch:
+> > "no longer a security hazard". :)
+> > 
+> > Afterwards exploits started causing drama like [1]. The exploits
+> > using /proc/*/mem can be rather sophisticated like [2] which
+> > installed an arbitrary payload from noexec storage into a running
+> > process then exec'd it, which itself could include an ELF loader
+> > to run arbitrary code off noexec storage.
+> > 
+> > One of the well-known problems with /proc/*/mem writes is they
+> > ignore page permissions via FOLL_FORCE, as opposed to writes via
+> > process_vm_writev which respect page permissions. These writes can
+> > also be used to bypass mode bits.
+> > 
+> > To harden against these types of attacks, distrbutions might want
+> > to restrict /proc/pid/mem accesses, either entirely or partially,
+> > for eg. to restrict FOLL_FORCE usage.
+> > 
+> > Known valid use-cases which still need these accesses are:
+> > 
+> > * Debuggers which also have ptrace permissions, so they can access
+> > memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
+> > are designed to write /proc/pid/mem for basic functionality.
+> > 
+> > * Container supervisors using the seccomp notifier to intercept
+> > syscalls and rewrite memory of calling processes by passing
+> > around /proc/pid/mem file descriptors.
+> > 
+> > There might be more, that's why these params default to disabled.
+> > 
+> > Regarding other mechanisms which can block these accesses:
+> > 
+> > * seccomp filters can be used to block mmap/mprotect calls with W|X
+> > perms, but they often can't block open calls as daemons want to
+> > read/write their runtime state and seccomp filters cannot check
+> > file paths, so plain write calls can't be easily blocked.
+> > 
+> > * Since the mem file is part of the dynamic /proc/<pid>/ space, we
+> > can't run chmod once at boot to restrict it (and trying to react
+> > to every process and run chmod doesn't scale, and the kernel no
+> > longer allows chmod on any of these paths).
+> > 
+> > * SELinux could be used with a rule to cover all /proc/*/mem files,
+> > but even then having multiple ways to deny an attack is useful in
+> > case one layer fails.
+> > 
+> > Thus we introduce three kernel parameters to restrict /proc/*/mem
+> > access: read, write and foll_force. All three can be independently
+> > set to the following values:
+> > 
+> > all     => restrict all access unconditionally.
+> > ptracer => restrict all access except for ptracer processes.
+> > 
+> > If left unset, the existing behaviour is preserved, i.e. access
+> > is governed by basic file permissions.
+> > 
+> > Examples which can be passed by bootloaders:
+> > 
+> > restrict_proc_mem_foll_force=all
+> > restrict_proc_mem_write=ptracer
+> > restrict_proc_mem_read=ptracer
+> > 
+> > Each distribution needs to decide what restrictions to apply,
+> > depending on its use-cases. Embedded systems might want to do
+> > more, while general-purpouse distros might want a more relaxed
+> > policy, because for e.g. foll_force=all and write=all both break
+> > break GDB, so it might be a bit excessive.
+> > 
+> > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+> 
+> Thanks for this new version!
+> 
+> > 
+> > Link: https://lwn.net/Articles/476947/ [1]
+> > Link: https://issues.chromium.org/issues/40089045 [2]
+> > Cc: Guenter Roeck <groeck@chromium.org>
+> > Cc: Doug Anderson <dianders@chromium.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Co-developed-by: Mike Frysinger <vapier@chromium.org>
+> > Signed-off-by: Mike Frysinger <vapier@chromium.org>
+> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  27 +++++
+> >  fs/proc/base.c                                | 103 +++++++++++++++++-
+> >  include/linux/jump_label.h                    |   5 +
+> >  3 files changed, 133 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 6e62b8cb19c8d..d7f7db41369c7 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -5665,6 +5665,33 @@
+> >  	reset_devices	[KNL] Force drivers to reset the underlying device
+> >  			during initialization.
+> >  
+> > +	restrict_proc_mem_read= [KNL]
+> > +			Format: {all | ptracer}
+> > +			Allows restricting read access to /proc/*/mem files.
+> > +			Depending on restriction level, open for reads return -EACCESS.
+> > +			Can be one of:
+> > +			- 'all' restricts all access unconditionally.
+> > +			- 'ptracer' allows access only for ptracer processes.
+> > +			If not specified, then basic file permissions continue to apply.
+> > +
+> > +	restrict_proc_mem_write= [KNL]
+> > +			Format: {all | ptracer}
+> > +			Allows restricting write access to /proc/*/mem files.
+> > +			Depending on restriction level, open for writes return -EACCESS.
+> > +			Can be one of:
+> > +			- 'all' restricts all access unconditionally.
+> > +			- 'ptracer' allows access only for ptracer processes.
+> > +			If not specified, then basic file permissions continue to apply.
+> > +
+> > +	restrict_proc_mem_foll_force= [KNL]
+> > +			Format: {all | ptracer}
+> > +			Restricts the use of the FOLL_FORCE flag for /proc/*/mem access.
+> > +			If restricted, the FOLL_FORCE flag will not be added to vm accesses.
+> > +			Can be one of:
+> > +			- 'all' restricts all access unconditionally.
+> > +			- 'ptracer' allows access only for ptracer processes.
+> > +			If not specified, FOLL_FORCE is always used.
+> 
+> bike shedding: I wonder if this should be a fake namespace (adding a dot
+> just to break it up for reading more easily), and have words reordered
+> to the kernel's more common subject-verb-object: proc_mem.restrict_read=...
+> 
+> > +
+> >  	resume=		[SWSUSP]
+> >  			Specify the partition device for software suspend
+> >  			Format:
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index 18550c071d71c..c733836c42a65 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -152,6 +152,41 @@ struct pid_entry {
+> >  		NULL, &proc_pid_attr_operations,	\
+> >  		{ .lsmid = LSMID })
+> >  
+> > +/*
+> > + * each restrict_proc_mem_* param controls the following static branches:
+> > + * key[0] = restrict all writes
+> > + * key[1] = restrict writes except for ptracers
+> > + * key[2] = restrict all reads
+> > + * key[3] = restrict reads except for ptracers
+> > + * key[4] = restrict all FOLL_FORCE usage
+> > + * key[5] = restrict FOLL_FORCE usage except for ptracers
+> > + */
+> > +DEFINE_STATIC_KEY_ARRAY_FALSE_RO(restrict_proc_mem, 6);
+> 
+> So, I don't like having open-coded numbers. And I'm not sure there's a
+> benefit to stuffing these all into an array? So:
+> 
+> DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_read);
+> DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_write);
+> DEFINE_STATIC_KEY_FALSE_RO(proc_mem_restrict_foll_force);
+> 
+> > +
+> > +static int __init early_restrict_proc_mem(char *buf, int offset)
+> > +{
+> > +	if (!buf)
+> > +		return -EINVAL;
+> > +
+> > +	if (strncmp(buf, "all", 3) == 0)
+> 
+> I'd use strcmp() to get exact matches. That way "allalksdjflas" doesn't
+> match. :)
+> 
+> > +		static_branch_enable(&restrict_proc_mem[offset]);
+> > +	else if (strncmp(buf, "ptracer", 7) == 0)
+> > +		static_branch_enable(&restrict_proc_mem[offset + 1]);
+> > +
+> > +	return 0;
+> > +}
+> 
+> Then don't bother with a common helper since you've got a macro, and
+> it'll all get tossed after __init anyway.
+> 
+> > +
+> > +#define DEFINE_EARLY_RESTRICT_PROC_MEM(name, offset)			\
+> > +static int __init early_restrict_proc_mem_##name(char *buf)		\
+> > +{									\
+> > +	return early_restrict_proc_mem(buf, offset);			\
+> > +}									\
+> > +early_param("restrict_proc_mem_" #name, early_restrict_proc_mem_##name)
+> > +
+> > +DEFINE_EARLY_RESTRICT_PROC_MEM(write, 0);
+> > +DEFINE_EARLY_RESTRICT_PROC_MEM(read, 2);
+> > +DEFINE_EARLY_RESTRICT_PROC_MEM(foll_force, 4);
+> 
+> #define DEFINE_EARLY_PROC_MEM_RESTRICT(name)				\
+> static int __init early_proc_mem_restrict_##name(char *buf)		\
+> {									\
+> 	if (!buf)							\
+> 		return -EINVAL;						\
+> 									\
+> 	if (strcmp(buf, "all") == 0)					\
+> 		static_branch_enable(&proc_mem_restrict_##name);	\
+> 	else if (strcmp(buf, "ptracer") == 0)				\
+> 		static_branch_enable(&proc_mem_restrict_##name);	\
+> 									\
+> 	return 0;							\
+> }									\
+> early_param("proc_mem_restrict_" #name, early_proc_mem_restrict_##name)
+> 
+> 
+> > +
+> >  /*
+> >   * Count the number of hardlinks for the pid_entry table, excluding the .
+> >   * and .. links.
+> > @@ -825,9 +860,58 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+> >  	return 0;
+> >  }
+> >  
+> > +static bool __mem_open_current_is_ptracer(struct file *file)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	struct task_struct *task = get_proc_task(inode);
+> > +	int ret = false;
+> > +
+> > +	if (task) {
+> > +		rcu_read_lock();
+> > +		if (current == ptrace_parent(task))
+> > +			ret = true;
+> > +		rcu_read_unlock();
+> > +		put_task_struct(task);
+> > +	}
+> 
+> This creates a ToCToU race between this check (which releases the task)
+> and the later memopen which make get a different task (and mm).
+> 
+> To deal with this, I think you need to add a new mode flag for
+> proc_mem_open(), and add the checking there.
+> 
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int __mem_open_check_access_restriction(struct file *file)
+> > +{
+> > +	if (file->f_mode & FMODE_WRITE) {
+> > +		/* Deny if writes are unconditionally disabled via param */
+> > +		if (static_branch_unlikely(&restrict_proc_mem[0]))
+> > +			return -EACCES;
+> > +
+> > +		/* Deny if writes are allowed only for ptracers via param */
+> > +		if (static_branch_unlikely(&restrict_proc_mem[1]) &&
+> > +		    !__mem_open_current_is_ptracer(file))
+> > +			return -EACCES;
+> > +
+> > +	} else if (file->f_mode & FMODE_READ) {
+> 
+> I think this "else" means that O_RDWR opens will only check the write
+> flag, so drop the "else".
+> 
+> > +		/* Deny if reads are unconditionally disabled via param */
+> > +		if (static_branch_unlikely(&restrict_proc_mem[2]))
+> > +			return -EACCES;
+> > +
+> > +		/* Deny if reads are allowed only for ptracers via param */
+> > +		if (static_branch_unlikely(&restrict_proc_mem[3]) &&
+> > +		    !__mem_open_current_is_ptracer(file))
+> > +			return -EACCES;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int mem_open(struct inode *inode, struct file *file)
+> >  {
+> > -	int ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
+> > +	int ret;
+> > +
+> > +	ret = __mem_open_check_access_restriction(file);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
+> >  
+> >  	/* OK to pass negative loff_t, we can catch out-of-range */
+> >  	file->f_mode |= FMODE_UNSIGNED_OFFSET;
+> > @@ -835,6 +919,20 @@ static int mem_open(struct inode *inode, struct file *file)
+> >  	return ret;
+> >  }
+> >  
+> > +static unsigned int __mem_rw_get_foll_force_flag(struct file *file)
+> > +{
+> > +	/* Deny if FOLL_FORCE is disabled via param */
+> > +	if (static_branch_unlikely(&restrict_proc_mem[4]))
+> > +		return 0;
+> > +
+> > +	/* Deny if FOLL_FORCE is allowed only for ptracers via param */
+> > +	if (static_branch_unlikely(&restrict_proc_mem[5]) &&
+> > +	    !__mem_open_current_is_ptracer(file))
+> 
+> This is like the ToCToU: the task may have changed out from under us
+> between the open the read/write.
 
-Hey Thomas
-
-Here is my feedback for your outstanding constification patches [1] and [2].
-
-# You need to split the patch
-The answer that you got from Jakub in the network subsystem is very clear a=
-nd
-baring a change of heart from the network folks, this will go in as but as a
-split patchset. Please split it considering the following:
-1. Create a different patchset for drivers/,  fs/, kernel/, net, and a
-   miscellaneous that includes whatever does not fit into the others.
-2. Consider that this might take several releases.
-3. Consider the following sufix for the interim function name "_const". Lik=
-e in
-   kfree_const. Please not "_new".
-4. Please publish the final result somewhere. This is important so someone =
-can
-   take over in case you need to stop.
-5. Consistently mention the motivation in your cover letters. I specify more
-   further down in "#Motivation".
-6. Also mention that this is part of a bigger effort (like you did in your
-   original cover letters). I would include [3,4,5,6]
-7. Include a way to show what made it into .rodata. I specify more further =
-down
-   in "#Show the move".
-
-# Motivation
-As I read it, the motivation for these constification efforts are:
-1. It provides increased safety: Having things in .rodata section reduces t=
-he
-   attack surface. This is especially relevant for structures that have fun=
-ction
-   pointers (like ctl_table); having these in .rodata means that these poin=
-ters
-   always point to the "intended" function and cannot be changed.
-2. Compiler optimizations: This was just a comment in the patchsets that I =
-have
-   mentioned ([3,4,5]). Do you know what optimizations specifically? Does it
-   have to do with enhancing locality for the data in .rodata? Do you have =
-other
-   specific optimizations in mind?
-3. Readability: because it is easier to know up-front that data is not supp=
-osed
-   to change or its obvious that a function is re-entrant. Actually a lot o=
-f the
-   readability reasons is about knowing things "up-front".
-As we move forward with the constification in sysctl, please include a more
-detailed motivation in all your cover letters. This helps maintainers (that
-don't have the context) understand what you are trying to do. It does not n=
-eed
-to be my three points, but it should be more than just "put things into
-=2Erodata". Please tell me if I have missed anything in the motivation.
-
-# Show the move
-I created [8] because there is no easy way to validate which objects made it
-into .rodata. I ran [8] for your Dec 2nd patcheset [7] and there are less in
-=2Erodata than I expected (the results are in [9]) Why is that? Is it somet=
-hing
-that has not been posted to the lists yet?=20
-
-Best
-
-[1] https://lore.kernel.org/all/20240423-sysctl-const-handler-v3-0-e0beccb8=
-36e2@weissschuh.net/
-[2] https://lore.kernel.org/all/20240418-sysctl-const-table-arg-v2-1-4012ab=
-c31311@weissschuh.net
-[3] [PATCH v2 00/14] ASoC: Constify local snd_sof_dsp_ops
-    https://lore.kernel.org/all/20240426-n-const-ops-var-v2-0-e553fe67ae82@=
-kernel.org
-[4] [PATCH v2 00/19] backlight: Constify lcd_ops
-    https://lore.kernel.org/all/20240424-video-backlight-lcd-ops-v2-0-1aaa8=
-2b07bc6@kernel.org
-[5] [PATCH 1/4] iommu: constify pointer to bus_type
-    https://lore.kernel.org/all/20240216144027.185959-1-krzysztof.kozlowski=
-@linaro.org
-[6] [PATCH 00/29] const xattr tables
-    https://lore.kernel.org/all/20230930050033.41174-1-wedsonaf@gmail.com
-[7] https://lore.kernel.org/all/20231204-const-sysctl-v2-0-7a5060b11447@wei=
-ssschuh.net/
-
-[8]
-    #!/usr/bin/python3
-
-    import subprocess
-    import re
-
-    def exec_cmd( cmd ):
-        try:
-            result =3D subprocess.run(cmd, shell=3DTrue, text=3DTrue, check=
-=3DTrue, capture_output=3DTrue)
-            output_lines =3D result.stdout.splitlines()
-            return output_lines
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return []
-
-    def remove_tokens_re(lines, regex_patterns, uniq =3D True):
-        filtered_lines =3D []
-        seen_lines =3D set()
-        regexes =3D [re.compile(pattern) for pattern in regex_patterns]
-
-        for line in lines:
-            for regex in regexes:
-                line =3D regex.sub('', line)  # Replace matches with empty =
-string
-
-            if uniq:
-                if line not in seen_lines:
-                    seen_lines.add(line)
-                    filtered_lines.append(line)
-            else:
-                    filtered_lines.append(line)
-
-        return filtered_lines
-
-    def filter_in_lines(lines, regex_patterns):
-        filtered_lines =3D []
-        regexes =3D [re.compile(pattern) for pattern in regex_patterns]
-
-        for line in lines:
-            if any(regex.search(line) for regex in regexes):
-                filtered_lines.append(line)
-
-        return filtered_lines
-
-    cmd =3D "git grep 'static \(const \)\?struct ctl_table '"
-    regex_patterns =3D ['[\}]*;$', ' =3D \{', '\[.*\]', '.*\.(c|h):[ \t]*st=
-atic (const )?struct ctl_table ']
-    ctl_table_structs =3D remove_tokens_re(exec_cmd( cmd ), regex_patterns)
-
-    cmd =3D "readelf -X -Ws build/vmlinux"
-    regex_patterns =3D ['.*OBJECT.*']
-    output_lines =3D filter_in_lines(exec_cmd( cmd ), regex_patterns);
-
-    regex_patterns =3D ['^.*OBJECT', '[ \t]+[A-Z]+[ \t]+[A-Z]+.*\(.*\)[ \t]=
-+']
-    obj_elems =3D remove_tokens_re( output_lines, regex_patterns, uniq=3DFa=
-lse)
-
-    regex_patterns =3D ['^.*\(', '\)[ ]+.*$']
-    sec_names =3D remove_tokens_re( output_lines, regex_patterns, uniq=3DFa=
-lse)
-
-    for i in range(len(sec_names)):
-        obj_name =3D obj_elems[i]
-        if obj_name in ctl_table_structs:
-            print ("section: {}\t\tobj_name : {}". format(sec_names[i], obj=
-_name))
-
-[9]
-    section: .rodata                obj_name : kern_table
-    section: .rodata                obj_name : sysctl_mount_point
-    section: .rodata                obj_name : addrconf_sysctl
-    section: .rodata                obj_name : ax25_param_table
-    section: .rodata                obj_name : mpls_table
-    section: .rodata                obj_name : mpls_dev_table
-    section: .data          obj_name : sld_sysctls
-    section: .data          obj_name : kern_panic_table
-    section: .data          obj_name : kern_exit_table
-    section: .data          obj_name : vm_table
-    section: .data          obj_name : signal_debug_table
-    section: .data          obj_name : usermodehelper_table
-    section: .data          obj_name : kern_reboot_table
-    section: .data          obj_name : user_table
-    section: .bss           obj_name : sched_core_sysctls
-    section: .data          obj_name : sched_fair_sysctls
-    section: .data          obj_name : sched_rt_sysctls
-    section: .data          obj_name : sched_dl_sysctls
-    section: .data          obj_name : printk_sysctls
-    section: .data          obj_name : pid_ns_ctl_table_vm
-    section: .data          obj_name : seccomp_sysctl_table
-    section: .data          obj_name : uts_kern_table
-    section: .data          obj_name : vm_oom_kill_table
-    section: .data          obj_name : vm_page_writeback_sysctls
-    section: .data          obj_name : page_alloc_sysctl_table
-    section: .data          obj_name : hugetlb_table
-    section: .data          obj_name : fs_stat_sysctls
-    section: .data          obj_name : fs_exec_sysctls
-    section: .data          obj_name : fs_pipe_sysctls
-    section: .data          obj_name : namei_sysctls
-    section: .data          obj_name : fs_dcache_sysctls
-    section: .data          obj_name : inodes_sysctls
-    section: .data          obj_name : fs_namespace_sysctls
-    section: .data          obj_name : dnotify_sysctls
-    section: .data          obj_name : inotify_table
-    section: .data          obj_name : epoll_table
-    section: .data          obj_name : aio_sysctls
-    section: .data          obj_name : locks_sysctls
-    section: .data          obj_name : coredump_sysctls
-    section: .data          obj_name : fs_shared_sysctls
-    section: .data          obj_name : fs_dqstats_table
-    section: .data          obj_name : root_table
-    section: .data          obj_name : pty_table
-    section: .data          obj_name : xfs_table
-    section: .data          obj_name : ipc_sysctls
-    section: .data          obj_name : key_sysctls
-    section: .data          obj_name : kernel_io_uring_disabled_table
-    section: .data          obj_name : tty_table
-    section: .data          obj_name : random_table
-    section: .data          obj_name : scsi_table
-    section: .data          obj_name : iwcm_ctl_table
-    section: .data          obj_name : net_core_table
-    section: .data          obj_name : netns_core_table
-    section: .bss           obj_name : nf_log_sysctl_table
-    section: .data          obj_name : nf_log_sysctl_ftable
-    section: .data          obj_name : vs_vars
-    section: .data          obj_name : vs_vars_table
-    section: .data          obj_name : ipv4_route_netns_table
-    section: .data          obj_name : ipv4_route_table
-    section: .data          obj_name : ip4_frags_ns_ctl_table
-    section: .data          obj_name : ip4_frags_ctl_table
-    section: .data          obj_name : ctl_forward_entry
-    section: .data          obj_name : ipv4_table
-    section: .data          obj_name : ipv4_net_table
-    section: .data          obj_name : unix_table
-    section: .data          obj_name : ipv6_route_table_template
-    section: .data          obj_name : ipv6_icmp_table_template
-    section: .data          obj_name : ip6_frags_ns_ctl_table
-    section: .data          obj_name : ip6_frags_ctl_table
-    section: .data          obj_name : ipv6_table_template
-    section: .data          obj_name : ipv6_rotable
-    section: .data          obj_name : sctp_net_table
-    section: .data          obj_name : sctp_table
-    section: .data          obj_name : smc_table
-    section: .data          obj_name : lowpan_frags_ns_ctl_table
-    section: .data          obj_name : lowpan_frags_ctl_table
-
---
-
-Joel Granados
-
---pu6elde4hy573vso
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmY0qGMACgkQupfNUreW
-QU9meQwAhSiWxhtL9djecqOkREsAyj1iIrA1uEV4NTghMsTyhC1r83HyDUEWGOJo
-fTZ8jrYwxeDy9qnd5vC+hEYgx/tBWXv+79vssjd28m2Mn4DogQlWABKsPJlPw/8R
-IB9dau7hME9YLSiZQaKoL8DuqnQ4jvdN/zvWcuYHl2s/jF+qzsI3DT4Dy98S1Sr8
-63rSYg/sulLme7ov/3gAQ3ceSPYlLRUfYdWLlGkUYT2iIjcBIybKotaKGkERq8xL
-Z2PcPpWj15gYh6Ewd0GL7AMq2M/dSGYYxPIbv0Mnjpe5AV5HzGZ06MUg4Tt11p1z
-5Fchr0Hg24b2UYcx4mjbsDCy/OyF2oA8cjjj79ODXcgpsVxWX8GZdcFh/gNmsPw5
-dKZyo4v1ZSvDmu8uDCcaV92GLelxc2YfGHYEfbE+hhJR0YaAukrL8mfqPJIanYv+
-zzIuChlVlLB5xoY0CT3XgLo8NJrc/ERnY8JibAauNNLQvTjHV/tbd0UknFQQC4XL
-gDaMqz5j
-=1R4C
------END PGP SIGNATURE-----
-
---pu6elde4hy573vso--
+But why would you care? As long as the task is the ptracer it doesn't
+really matter afaict.
