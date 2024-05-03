@@ -1,171 +1,226 @@
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E680153833
-	for <linux-security-module@vger.kernel.org>; Fri,  3 May 2024 14:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F1415444E;
+	Fri,  3 May 2024 14:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714745006; cv=none; b=M6THVfIUc30z5qC2q0rvKoToOLfmPHfr84kizgmRXQEYhEM15bg//PF5F5+drn25tLHw184oFnVp71Wc9JmC9RI+eXwJcHZAEdKXNi8IgvDICIynRCynyCla11jFgjgghimw1O6pmqy6IvMTOqwvhPFDY5w/PR2z6BAoZ5gPc48=
+	t=1714745385; cv=none; b=mUVWfdVt0zYaR0o2/SbDplsl3eIToZqAKv+V/l2tox9igjNvNhu+YAjaf2+P4MUCwHgCM+BXRW1fvxmc2bckq1D2TW1uElLHlBiRqqtsP58W8hwu+a4nok4u5MmGUqCX33zQUrnNGkxMWqHUh7iJNJ2B2nvMqmI1lDR6LBR4Pxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714745006; c=relaxed/simple;
-	bh=7+85l5gtG9BMCJsXUhbIe6mJsJUfD1GuV0eeYeZs6G4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aknvO5d0OYGjHnKYS0/jL8qhYjColjANUz5MahX3IX/zc6paRCE8NmKIzLTK8rUSxzZgT76nMysszOpT6nwTsQ/xPFyO6Pl9qhWxOzpp8QTZculAvEULj35Miyx3FNk7nq+3VIRhaxoBY0wb/DQw4WN6AjFXfWTMtLeV6x9DWCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bF95IclE; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1714745385; c=relaxed/simple;
+	bh=+fi7fUfomErHHAmvDww2p/WTBqGy/yFZDfIKZxnytjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCdPlKyCDCaJhJaOwA2p1JSxq4VuaZLqvkDZ1bf5bPxs0s+fVuu+J0ErRRJkTUSueX9Ozh8KROPOdICNpBkkA0BfOXwwJ1uBH/IrSLWigC6wpebd33UiFahRV/Z+4aHBbfG/UsiIoZw2Vs6tTQ0nRUb/EjIJuxDYXdq9/FKLSJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=KM4XIarb; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bF95IclE"
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6b26783b4so13077164276.0
-        for <linux-security-module@vger.kernel.org>; Fri, 03 May 2024 07:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1714745003; x=1715349803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a136SOKV90n/XcmvCvD6zgQKrJ5kR/Q+OhiUt3FbOiE=;
-        b=bF95IclEvfWouhYNKzZo185b+kPSyCvdGhAB/HcI3+gO2u9Qva5QKOI9UBojc23RSD
-         3WlhbYeb4zIlpbVbo8f9PY7DxRJJudohJPnX2n1XLiNQDHV4G186oTFYIcocjbp6LMNn
-         f5sqSxaeMVBY1Oc6xRzM07z6tp6F8RKRESK0YIOpgdwQ66olItMpU7P0n80OypPETIRe
-         mW4NZDMte/3F62OIBfeyn0WkvoByQZE28QNUpa9VJA8+zGwd7msbErV3T4NvqnYa+obz
-         +WuDcfYnv1Re348zODbiUSpkIhCls7/DV5i1LlId6gsKr9yKQKG9He6E2TvG3hCMPCuO
-         juPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714745003; x=1715349803;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a136SOKV90n/XcmvCvD6zgQKrJ5kR/Q+OhiUt3FbOiE=;
-        b=C2em2vMUt+8DFG+hBYVFH7DHSxSGt20e021M52pCvKpZgzZM0gLIUqKkzixG/aBc+l
-         0Dxd8vi4cFJXYlyvf9CiJK6O824zdbiJbzKJBHZ4Dcl6cjkXYvC4Vu01ohxNVRhOVR5e
-         Ru7w07FeUYCC193vx8mO6ZK2WhjT7W7Y8GdMEiFItmQzFM29TX/Et9nhciZq0F2bBKT+
-         0TDUryNecYXgbxXjkBEgb/eTmeROlWMOG3GY9D7yS7xM1m/7Dri3ljBlrTjelm64O4Ed
-         whYPtDllNoH5H31xhdG1ustiRvAnEerAhV/yrote4Tzv7TF0waK+unOU3T1k49hBZsWD
-         jt3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVplhcple5zF0FlNbeEoZmcDNcICpgstamYJgvSmGR3wvAOySZ1h/2QBK6frbie1dZLjvtss53l8uvJke8AePTj1XLtiLyEPMrrHk05RaZgnZ1H4qxs
-X-Gm-Message-State: AOJu0Yy7jGqf2sMfjkIXZOOU9LS4YgCJpsGbq8PgG1coeKbZ7Ml1pOuL
-	fHARF4W8v5Ec3VlwZzlWJxMFe23xvMDMMrJddRgxlmw3OBf8QCNZIPU4ekcNA/NXCjM+/9OXsv5
-	2ew==
-X-Google-Smtp-Source: AGHT+IG8Se+FDx3icVQiBS8y3Ql+XygTIGhFwTldpFeLgMxDQJNLd2QsRcCHI+DmhaCm9MeTHgIbmJIbKcw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1201:b0:de6:141a:b0de with SMTP id
- s1-20020a056902120100b00de6141ab0demr337561ybu.10.1714745003300; Fri, 03 May
- 2024 07:03:23 -0700 (PDT)
-Date: Fri, 3 May 2024 07:03:21 -0700
-In-Reply-To: <20240503131910.307630-4-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="KM4XIarb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1714745381;
+	bh=+fi7fUfomErHHAmvDww2p/WTBqGy/yFZDfIKZxnytjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KM4XIarbWLiqP+rTdHhYP4ADp2FfBPZJESIvebE/x46r3wpaPNaKYYJ8DjRuiR4XK
+	 lgnUuJtE42KneR0ACxiqLQ5uJD/S7BK84VwhVwYe9egEdoAzvtQwKV4FeMNTpP6GjL
+	 22eK/o3npUywdzgLbvtpx7d4AZBFjdzVsbPnc49I=
+Date: Fri, 3 May 2024 16:09:40 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Eric Dumazet <edumazet@google.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <4cda5d2d-dd92-44ef-9e7b-7b780ec795ab@t-8ch.de>
+References: <CGME20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803@eucas1p2.samsung.com>
+ <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <20240503090332.irkiwn73dgznjflz@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240503131910.307630-1-mic@digikod.net> <20240503131910.307630-4-mic@digikod.net>
-Message-ID: <ZjTuqV-AxQQRWwUW@google.com>
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-From: Sean Christopherson <seanjc@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
-	Angelina Vu <angelinavu@linux.microsoft.com>, 
-	Anna Trikalinou <atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
-	Forrest Yuan Yu <yuanyu@google.com>, James Gowans <jgowans@amazon.com>, 
-	James Morris <jamorris@linux.microsoft.com>, John Andersen <john.s.andersen@intel.com>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>, 
-	"Mihai =?utf-8?B?RG9uyJt1?=" <mdontu@bitdefender.com>, 
-	"=?utf-8?B?TmljdciZb3IgQ8OuyJt1?=" <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, 
-	Will Deacon <will@kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
-	"=?utf-8?Q?=C8=98tefan_=C8=98icleru?=" <ssicleru@bitdefender.com>, dev@lists.cloudhypervisor.org, 
-	kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, 
-	virtualization@lists.linux-foundation.org, x86@kernel.org, 
-	xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503090332.irkiwn73dgznjflz@joelS2.panther.com>
 
-On Fri, May 03, 2024, Micka=C3=ABl Sala=C3=BCn wrote:
-> Add an interface for user space to be notified about guests' Heki policy
-> and related violations.
->=20
-> Extend the KVM_ENABLE_CAP IOCTL with KVM_CAP_HEKI_CONFIGURE and
-> KVM_CAP_HEKI_DENIAL. Each one takes a bitmask as first argument that can
-> contains KVM_HEKI_EXIT_REASON_CR0 and KVM_HEKI_EXIT_REASON_CR4. The
-> returned value is the bitmask of known Heki exit reasons, for now:
-> KVM_HEKI_EXIT_REASON_CR0 and KVM_HEKI_EXIT_REASON_CR4.
->=20
-> If KVM_CAP_HEKI_CONFIGURE is set, a VM exit will be triggered for each
-> KVM_HC_LOCK_CR_UPDATE hypercalls according to the requested control
-> register. This enables to enlighten the VMM with the guest
-> auto-restrictions.
->=20
-> If KVM_CAP_HEKI_DENIAL is set, a VM exit will be triggered for each
-> pinned CR violation. This enables the VMM to react to a policy
-> violation.
->=20
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Cc: Wanpeng Li <wanpengli@tencent.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20240503131910.307630-4-mic@digikod.net
-> ---
->=20
-> Changes since v1:
-> * New patch. Making user space aware of Heki properties was requested by
->   Sean Christopherson.
+Hey Joel,
 
-No, I suggested having userspace _control_ the pinning[*], not merely be no=
-tified
-of pinning.
+On 2024-05-03 11:03:32+0000, Joel Granados wrote:
+> Here is my feedback for your outstanding constification patches [1] and [2].
 
- : IMO, manipulation of protections, both for memory (this patch) and CPU s=
-tate
- : (control registers in the next patch) should come from userspace.  I hav=
-e no
- : objection to KVM providing plumbing if necessary, but I think userspace =
-needs to
- : to have full control over the actual state.
- :=20
- : One of the things that caused Intel's control register pinning series to=
- stall
- : out was how to handle edge cases like kexec() and reboot.  Deferring to =
-userspace
- : means the kernel doesn't need to define policy, e.g. when to unprotect m=
-emory,
- : and avoids questions like "should userspace be able to overwrite pinned =
-control
- : registers".
- :=20
- : And like the confidential VM use case, keeping userspace in the loop is =
-a big
- : beneifit, e.g. the guest can't circumvent protections by coercing usersp=
-ace into
- : writing to protected memory.
+Thanks!
 
-I stand by that suggestion, because I don't see a sane way to handle things=
- like
-kexec() and reboot without having a _much_ more sophisticated policy than w=
-ould
-ever be acceptable in KVM.
+> # You need to split the patch
+> The answer that you got from Jakub in the network subsystem is very clear and
+> baring a change of heart from the network folks, this will go in as but as a
+> split patchset. Please split it considering the following:
+> 1. Create a different patchset for drivers/,  fs/, kernel/, net, and a
+>    miscellaneous that includes whatever does not fit into the others.
+> 2. Consider that this might take several releases.
+> 3. Consider the following sufix for the interim function name "_const". Like in
+>    kfree_const. Please not "_new".
 
-I think that can be done without KVM having any awareness of CR pinning wha=
-tsoever.
-E.g. userspace just needs to ability to intercept CR writes and inject #GPs=
-.  Off
-the cuff, I suspect the uAPI could look very similar to MSR filtering.  E.g=
-. I bet
-userspace could enforce MSR pinning without any new KVM uAPI at all.
+Ack. "_new" was an intentionally unacceptable placeholder.
 
-[*] https://lore.kernel.org/all/ZFUyhPuhtMbYdJ76@google.com
+> 4. Please publish the final result somewhere. This is important so someone can
+>    take over in case you need to stop.
+
+Will do. Both for each single series and a combination of all of them.
+
+> 5. Consistently mention the motivation in your cover letters. I specify more
+>    further down in "#Motivation".
+> 6. Also mention that this is part of a bigger effort (like you did in your
+>    original cover letters). I would include [3,4,5,6]
+> 7. Include a way to show what made it into .rodata. I specify more further down
+>    in "#Show the move".
+> 
+> # Motivation
+> As I read it, the motivation for these constification efforts are:
+> 1. It provides increased safety: Having things in .rodata section reduces the
+>    attack surface. This is especially relevant for structures that have function
+>    pointers (like ctl_table); having these in .rodata means that these pointers
+>    always point to the "intended" function and cannot be changed.
+> 2. Compiler optimizations: This was just a comment in the patchsets that I have
+>    mentioned ([3,4,5]). Do you know what optimizations specifically? Does it
+>    have to do with enhancing locality for the data in .rodata? Do you have other
+>    specific optimizations in mind?
+
+I don't know about anything that would make it faster.
+It's more about safety and transmission of intent to API users,
+especially callback implementers.
+
+> 3. Readability: because it is easier to know up-front that data is not supposed
+>    to change or its obvious that a function is re-entrant. Actually a lot of the
+>    readability reasons is about knowing things "up-front".
+> As we move forward with the constification in sysctl, please include a more
+> detailed motivation in all your cover letters. This helps maintainers (that
+> don't have the context) understand what you are trying to do. It does not need
+> to be my three points, but it should be more than just "put things into
+> .rodata". Please tell me if I have missed anything in the motivation.
+
+Will do.
+
+> # Show the move
+> I created [8] because there is no easy way to validate which objects made it
+> into .rodata. I ran [8] for your Dec 2nd patcheset [7] and there are less in
+> .rodata than I expected (the results are in [9]) Why is that? Is it something
+> that has not been posted to the lists yet? 
+
+Constifying the APIs only *allows* the actual table to be constified
+themselves.
+Then each table definition will have to be touched and "const" added.
+
+See patches 17 and 18 in [7] for two examples.
+
+Some tables in net/ are already "const" as the static definitions are
+never registered themselves but only their copies are.
+
+This seems to explain your findings.
+
+> Best
+
+Thanks!
+
+> [1] https://lore.kernel.org/all/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
+> [2] https://lore.kernel.org/all/20240418-sysctl-const-table-arg-v2-1-4012abc31311@weissschuh.net
+> [3] [PATCH v2 00/14] ASoC: Constify local snd_sof_dsp_ops
+>     https://lore.kernel.org/all/20240426-n-const-ops-var-v2-0-e553fe67ae82@kernel.org
+> [4] [PATCH v2 00/19] backlight: Constify lcd_ops
+>     https://lore.kernel.org/all/20240424-video-backlight-lcd-ops-v2-0-1aaa82b07bc6@kernel.org
+> [5] [PATCH 1/4] iommu: constify pointer to bus_type
+>     https://lore.kernel.org/all/20240216144027.185959-1-krzysztof.kozlowski@linaro.org
+> [6] [PATCH 00/29] const xattr tables
+>     https://lore.kernel.org/all/20230930050033.41174-1-wedsonaf@gmail.com
+> [7] https://lore.kernel.org/all/20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net/
+> 
+> [8]
+
+[snip]
+
+> [9]
+>     section: .rodata                obj_name : kern_table
+>     section: .rodata                obj_name : sysctl_mount_point
+>     section: .rodata                obj_name : addrconf_sysctl
+>     section: .rodata                obj_name : ax25_param_table
+>     section: .rodata                obj_name : mpls_table
+>     section: .rodata                obj_name : mpls_dev_table
+>     section: .data          obj_name : sld_sysctls
+>     section: .data          obj_name : kern_panic_table
+>     section: .data          obj_name : kern_exit_table
+>     section: .data          obj_name : vm_table
+>     section: .data          obj_name : signal_debug_table
+>     section: .data          obj_name : usermodehelper_table
+>     section: .data          obj_name : kern_reboot_table
+>     section: .data          obj_name : user_table
+>     section: .bss           obj_name : sched_core_sysctls
+>     section: .data          obj_name : sched_fair_sysctls
+>     section: .data          obj_name : sched_rt_sysctls
+>     section: .data          obj_name : sched_dl_sysctls
+>     section: .data          obj_name : printk_sysctls
+>     section: .data          obj_name : pid_ns_ctl_table_vm
+>     section: .data          obj_name : seccomp_sysctl_table
+>     section: .data          obj_name : uts_kern_table
+>     section: .data          obj_name : vm_oom_kill_table
+>     section: .data          obj_name : vm_page_writeback_sysctls
+>     section: .data          obj_name : page_alloc_sysctl_table
+>     section: .data          obj_name : hugetlb_table
+>     section: .data          obj_name : fs_stat_sysctls
+>     section: .data          obj_name : fs_exec_sysctls
+>     section: .data          obj_name : fs_pipe_sysctls
+>     section: .data          obj_name : namei_sysctls
+>     section: .data          obj_name : fs_dcache_sysctls
+>     section: .data          obj_name : inodes_sysctls
+>     section: .data          obj_name : fs_namespace_sysctls
+>     section: .data          obj_name : dnotify_sysctls
+>     section: .data          obj_name : inotify_table
+>     section: .data          obj_name : epoll_table
+>     section: .data          obj_name : aio_sysctls
+>     section: .data          obj_name : locks_sysctls
+>     section: .data          obj_name : coredump_sysctls
+>     section: .data          obj_name : fs_shared_sysctls
+>     section: .data          obj_name : fs_dqstats_table
+>     section: .data          obj_name : root_table
+>     section: .data          obj_name : pty_table
+>     section: .data          obj_name : xfs_table
+>     section: .data          obj_name : ipc_sysctls
+>     section: .data          obj_name : key_sysctls
+>     section: .data          obj_name : kernel_io_uring_disabled_table
+>     section: .data          obj_name : tty_table
+>     section: .data          obj_name : random_table
+>     section: .data          obj_name : scsi_table
+>     section: .data          obj_name : iwcm_ctl_table
+>     section: .data          obj_name : net_core_table
+>     section: .data          obj_name : netns_core_table
+>     section: .bss           obj_name : nf_log_sysctl_table
+>     section: .data          obj_name : nf_log_sysctl_ftable
+>     section: .data          obj_name : vs_vars
+>     section: .data          obj_name : vs_vars_table
+>     section: .data          obj_name : ipv4_route_netns_table
+>     section: .data          obj_name : ipv4_route_table
+>     section: .data          obj_name : ip4_frags_ns_ctl_table
+>     section: .data          obj_name : ip4_frags_ctl_table
+>     section: .data          obj_name : ctl_forward_entry
+>     section: .data          obj_name : ipv4_table
+>     section: .data          obj_name : ipv4_net_table
+>     section: .data          obj_name : unix_table
+>     section: .data          obj_name : ipv6_route_table_template
+>     section: .data          obj_name : ipv6_icmp_table_template
+>     section: .data          obj_name : ip6_frags_ns_ctl_table
+>     section: .data          obj_name : ip6_frags_ctl_table
+>     section: .data          obj_name : ipv6_table_template
+>     section: .data          obj_name : ipv6_rotable
+>     section: .data          obj_name : sctp_net_table
+>     section: .data          obj_name : sctp_table
+>     section: .data          obj_name : smc_table
+>     section: .data          obj_name : lowpan_frags_ns_ctl_table
+>     section: .data          obj_name : lowpan_frags_ctl_table
