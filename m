@@ -1,262 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BAB3B297
-	for <linux-security-module@vger.kernel.org>; Sun,  5 May 2024 16:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E2D63A5;
+	Sun,  5 May 2024 22:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714926334; cv=none; b=CCWFtfVwkSXvzm7D+37Eg8on5Olo9VlmUYVe/Zm+enr/B0jSGDRH0Cbxomu8b89rLQDFep7Id9Ihz7pInS58S60Vbbke5uiqt7Uw2dhn/mKj1vBO+/geWOptOioiiUxEa+rz6nFVmk1JOOqmjcIsrVdis4AB8p6xiH2oIK6nHtw=
+	t=1714948775; cv=none; b=PBe+YDDduHVVGYD20B25aZoz6IudZ3dGpYMtMdXcLojGogZFDE4beWALPdup3UY/hzRN5gT069KDY8hkGmGFj5/fH18maTaYwPHSKDK0a9jGLlrJZL3CgUyISDnOmSvNredI6rn+0DscGpslZ2YwRQ6Xt4B4rRlLZHV4jo3OY3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714926334; c=relaxed/simple;
-	bh=s4JftUNg3BpOtCSPERy+H+sdZvOj4cNBfHhsrGnpQ5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tly00TyKskrBZBKBH8zTPuEMX9ZN273G7gjC+Z4QmoaGz+Zv4ULx2pWkDs7+7ter+tKZC4p4L0d6rxnHnnSjyDRgo+RzfQOzUz5T8pPvAN0L32DTZyiGaaoPyWsa55YZm917G0CN9bvdErWgYHj2fd5WIwRfBQ+kO1IlcPWYmds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZcmSy3I; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714948775; c=relaxed/simple;
+	bh=msCXC6FXGfqOt4+YBWsjlLnrZNao9NIJfJB292l8HCM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=MCJL9ygHTrv9S8yGdU0uD/a6u8iTmloQAvdHhCob9HCGEKbbewQFoKKwyBHA+brqoC13pcpKOHmfe/ywDPaCrE2VeUBxTxGY3fAeNMsWGTUqQw4BCPhd0lpPdYEBz4V+TtlDR5otN3+0iiJamt2WJG7Ej0GQj0sI71zLOCiWyow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QtS1v1Me; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZcmSy3I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF09BC4AF66
-	for <linux-security-module@vger.kernel.org>; Sun,  5 May 2024 16:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714926333;
-	bh=s4JftUNg3BpOtCSPERy+H+sdZvOj4cNBfHhsrGnpQ5k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CZcmSy3I7isqA9FYDSbRX/daPRnvBPGziE13VOlRAmHLHcfCqPG7ocGMUSUaCUvXY
-	 U0oWFjU0jupjLkntO+S17Y1o7KejQnIsV/5vaEfUbenqx+NEKTGbmJFJ0Wy9mGJBPi
-	 xCgoMz4l0JQ3Nd1YMG89jLJSUvSUi171kFpf2T52ylpAJqHYfpwsr/mY4xquugI/8W
-	 kN1A5rH8PSthsoWXdPl2iq58fepFG2pLaix3d1cQMz4qxSJIxLigUMv3yHiLkxIcc/
-	 QRiRb28qcNLrByEd3qRHNZAmueGm5r3yPmrQf4zN9u2yU2B1ZwSI+/6YaZTjoASTWs
-	 6BenR6AcPa1ew==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e367c2457fso2392241fa.2
-        for <linux-security-module@vger.kernel.org>; Sun, 05 May 2024 09:25:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKfUgGEUJyl9MSul0Rim0XBTCGFXDXs6ijvwsEU7fmg3Ckd/w2Jc9EirYJXmrz9aQbtU8ApM7hhjMiRA5pX66Akul1qvyfDDJyTobnRIANaWnCF2iT
-X-Gm-Message-State: AOJu0Yyhd5YgjXGgEz3ZZa62HjnOaLdVq/ZmVNidisSBQvjoh3KSdUJ5
-	ukPpnKGp+xobfQk18D1CgDx9Md/8u+oojUz3tnWwnq7rHX68zZ359P4sZCWpu96huScGBmbPtHq
-	NXTW8Xb/DwjmP0dxi0hU0SXZRe30J88CxiwDG
-X-Google-Smtp-Source: AGHT+IEEVG67tO/tn1sBqCzOgaT8k3fp83nxBCm9TvwgV/3jnxLgHNJGPhUr9Z6mMjHtFeA0kXzlyum2f1IKpy7Xoh0=
-X-Received: by 2002:a2e:a0d2:0:b0:2db:a9c9:4c5e with SMTP id
- f18-20020a2ea0d2000000b002dba9c94c5emr7652441ljm.21.1714926331931; Sun, 05
- May 2024 09:25:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QtS1v1Me"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 445MTQZW018412;
+	Sun, 5 May 2024 22:39:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=pN4
+	SsWcLrBu42o1mEuYtcoxgTa4sqbLDWl+4lNo8NLY=; b=QtS1v1Meie3ys0H7NEN
+	paYgHgtnTXjzx2l7vGDUvy1EPG152OwVPOdxX3NKC13W+MemMLNlSzL4/VPLLiOt
+	wSoM65iw3wHAF6lReiwAdL30NfSqJ+bG49cCzW670YBdi6f3o7tgkUibqzARU8o7
+	5Dzx7T2VwUovafNQ2IRqIHGypQUsUqH/BkKt32H0W+6jv+usJjVLk1kV96mbKx6x
+	FcRXJCUm2rluZclrZvNIvOggQd0ryDZcSOXDKSpN1yYPU7HtNk61Mcw9ogseeTJl
+	KkEvf8Wtl7DB/n58mIC7i8U2moob85+kI3/HccU1y+e0xMuDCjy6OznFrFqrlidI
+	hDw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xwcbpj8rt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 05 May 2024 22:39:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 445MdJne011415
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 5 May 2024 22:39:19 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 5 May 2024
+ 15:39:18 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 5 May 2024 15:39:17 -0700
+Subject: [PATCH] apparmor: fix apparmor_socket_post_create() kernel-doc
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240207124918.3498756-5-kpsingh@kernel.org> <f7e8a16b0815d9d901e019934d684c5f@paul-moore.com>
-In-Reply-To: <f7e8a16b0815d9d901e019934d684c5f@paul-moore.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Sun, 5 May 2024 18:25:05 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7Pn+hA0yT0UeZEuwSr+ryytw5--Q0nUb+G+fWY5QMhRA@mail.gmail.com>
-Message-ID: <CACYkzJ7Pn+hA0yT0UeZEuwSr+ryytw5--Q0nUb+G+fWY5QMhRA@mail.gmail.com>
-Subject: Re: [PATCH v9 4/4] bpf: Only enable BPF LSM hooks when an LSM program
- is attached
-To: Paul Moore <paul@paul-moore.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org, 
-	daniel@iogearbox.net, ast@kernel.org, pabeni@redhat.com, andrii@kernel.org, 
-	Jiri Olsa <jolsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240505-apparmor_socket_post_create-kdoc-v1-1-1fd88e546e92@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJQKOGYC/x3NQQrCMBBA0auUWRuIxRD1KiJhOhltKE3CTChC6
+ d2NLt/m/x2UJbHCfdhBeEuaSu44nwagGfObTYrdMNrxYp11BmtFWYsELbRwC7VoCySMjc0SC5n
+ rzZPH6KK1HnqmCr/S5794PLsnVDaTYKb5F15RGwscxxfbsfYCiwAAAA==
+To: John Johansen <john.johansen@canonical.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>
+CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aK6l2xpoyo5uGV8PABLUO-CrPkQcv4cv
+X-Proofpoint-GUID: aK6l2xpoyo5uGV8PABLUO-CrPkQcv4cv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1011,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-05_14,2024-05-03_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 clxscore=1011 spamscore=0
+ mlxlogscore=903 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2404010003 definitions=main-2405050093
 
-On Thu, Apr 11, 2024 at 2:38=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Feb  7, 2024 KP Singh <kpsingh@kernel.org> wrote:
-> >
-> > BPF LSM hooks have side-effects (even when a default value is returned)=
-,
-> > as some hooks end up behaving differently due to the very presence of
-> > the hook.
-> >
-> > The static keys guarding the BPF LSM hooks are disabled by default and
-> > enabled only when a BPF program is attached implementing the hook
-> > logic. This avoids the issue of the side-effects and also the minor
-> > overhead associated with the empty callback.
-> >
-> > security_file_ioctl:
-> >    0xffffffff818f0e30 <+0>:   endbr64
-> >    0xffffffff818f0e34 <+4>:   nopl   0x0(%rax,%rax,1)
-> >    0xffffffff818f0e39 <+9>:   push   %rbp
-> >    0xffffffff818f0e3a <+10>:  push   %r14
-> >    0xffffffff818f0e3c <+12>:  push   %rbx
-> >    0xffffffff818f0e3d <+13>:  mov    %rdx,%rbx
-> >    0xffffffff818f0e40 <+16>:  mov    %esi,%ebp
-> >    0xffffffff818f0e42 <+18>:  mov    %rdi,%r14
-> >    0xffffffff818f0e45 <+21>:  jmp    0xffffffff818f0e57 <security_file_=
-ioctl+39>
-> >                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
-^^^^^^^^^
-> >
-> >    Static key enabled for SELinux
-> >
-> >    0xffffffff818f0e47 <+23>:  xchg   %ax,%ax
-> >                               ^^^^^^^^^^^^^^
-> >
-> >    Static key disabled for BPF. This gets patched when a BPF LSM progra=
-m
-> >    is attached
-> >
-> >    0xffffffff818f0e49 <+25>:  xor    %eax,%eax
-> >    0xffffffff818f0e4b <+27>:  xchg   %ax,%ax
-> >    0xffffffff818f0e4d <+29>:  pop    %rbx
-> >    0xffffffff818f0e4e <+30>:  pop    %r14
-> >    0xffffffff818f0e50 <+32>:  pop    %rbp
-> >    0xffffffff818f0e51 <+33>:  cs jmp 0xffffffff82c00000 <__x86_return_t=
-hunk>
-> >    0xffffffff818f0e57 <+39>:  endbr64
-> >    0xffffffff818f0e5b <+43>:  mov    %r14,%rdi
-> >    0xffffffff818f0e5e <+46>:  mov    %ebp,%esi
-> >    0xffffffff818f0e60 <+48>:  mov    %rbx,%rdx
-> >    0xffffffff818f0e63 <+51>:  call   0xffffffff819033c0 <selinux_file_i=
-octl>
-> >    0xffffffff818f0e68 <+56>:  test   %eax,%eax
-> >    0xffffffff818f0e6a <+58>:  jne    0xffffffff818f0e4d <security_file_=
-ioctl+29>
-> >    0xffffffff818f0e6c <+60>:  jmp    0xffffffff818f0e47 <security_file_=
-ioctl+23>
-> >    0xffffffff818f0e6e <+62>:  endbr64
-> >    0xffffffff818f0e72 <+66>:  mov    %r14,%rdi
-> >    0xffffffff818f0e75 <+69>:  mov    %ebp,%esi
-> >    0xffffffff818f0e77 <+71>:  mov    %rbx,%rdx
-> >    0xffffffff818f0e7a <+74>:  call   0xffffffff8141e3b0 <bpf_lsm_file_i=
-octl>
-> >    0xffffffff818f0e7f <+79>:  test   %eax,%eax
-> >    0xffffffff818f0e81 <+81>:  jne    0xffffffff818f0e4d <security_file_=
-ioctl+29>
-> >    0xffffffff818f0e83 <+83>:  jmp    0xffffffff818f0e49 <security_file_=
-ioctl+25>
-> >    0xffffffff818f0e85 <+85>:  endbr64
-> >    0xffffffff818f0e89 <+89>:  mov    %r14,%rdi
-> >    0xffffffff818f0e8c <+92>:  mov    %ebp,%esi
-> >    0xffffffff818f0e8e <+94>:  mov    %rbx,%rdx
-> >    0xffffffff818f0e91 <+97>:  pop    %rbx
-> >    0xffffffff818f0e92 <+98>:  pop    %r14
-> >    0xffffffff818f0e94 <+100>: pop    %rbp
-> >    0xffffffff818f0e95 <+101>: ret
-> >
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Acked-by: Song Liu <song@kernel.org>
-> > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > ---
-> >  include/linux/bpf_lsm.h   |  5 +++++
-> >  include/linux/lsm_hooks.h | 13 ++++++++++++-
-> >  kernel/bpf/trampoline.c   | 24 ++++++++++++++++++++++++
-> >  security/bpf/hooks.c      | 25 ++++++++++++++++++++++++-
-> >  security/security.c       |  3 ++-
-> >  5 files changed, 67 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> > index 1de7ece5d36d..5bbc31ac948c 100644
-> > --- a/include/linux/bpf_lsm.h
-> > +++ b/include/linux/bpf_lsm.h
-> > @@ -29,6 +29,7 @@ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog=
-,
-> >
-> >  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
-> >  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
-> > +void bpf_lsm_toggle_hook(void *addr, bool value);
-> >
-> >  static inline struct bpf_storage_blob *bpf_inode(
-> >       const struct inode *inode)
-> > @@ -78,6 +79,10 @@ static inline void bpf_lsm_find_cgroup_shim(const st=
-ruct bpf_prog *prog,
-> >  {
-> >  }
-> >
-> > +static inline void bpf_lsm_toggle_hook(void *addr, bool value)
-> > +{
-> > +}
-> > +
-> >  #endif /* CONFIG_BPF_LSM */
-> >
-> >  #endif /* _LINUX_BPF_LSM_H */
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index ba63d8b54448..e95f0a5cb409 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -110,11 +110,14 @@ struct lsm_id {
-> >   * @scalls: The beginning of the array of static calls assigned to thi=
-s hook.
-> >   * @hook: The callback for the hook.
-> >   * @lsm: The name of the lsm that owns this hook.
-> > + * @default_state: The state of the LSM hook when initialized. If set =
-to false,
-> > + * the static key guarding the hook will be set to disabled.
-> >   */
-> >  struct security_hook_list {
-> >       struct lsm_static_call  *scalls;
-> >       union security_list_options     hook;
-> >       const struct lsm_id             *lsmid;
-> > +     bool                            default_enabled;
->
-> Ugh.  We've already got an lsm_static_call::active field, I don't want
-> to see another enable/active/etc. flag unless there is absolutely no way
-> this works otherwise.
+make C=1 reports:
 
-The field default_enabled is used at the time of initialization. The
-lsm_static_call::active is a static key which we really cannot use at
-initialization time from the various LSMs directly. I don't see a way
-out of this one IMHO.
+security/apparmor/lsm.c:1138: warning: Function parameter or struct member 'protocol' not described in 'apparmor_socket_post_create'
 
->
-> >  } __randomize_layout;
-> >
-> >  /*
-> > @@ -164,7 +167,15 @@ static inline struct xattr *lsm_get_xattr_slot(str=
-uct xattr *xattrs,
-> >  #define LSM_HOOK_INIT(NAME, CALLBACK)                        \
-> >       {                                               \
-> >               .scalls =3D static_calls_table.NAME,      \
-> > -             .hook =3D { .NAME =3D CALLBACK }            \
-> > +             .hook =3D { .NAME =3D CALLBACK },           \
-> > +             .default_enabled =3D true                 \
-> > +     }
-> > +
-> > +#define LSM_HOOK_INIT_DISABLED(NAME, CALLBACK)               \
-> > +     {                                               \
-> > +             .scalls =3D static_calls_table.NAME,      \
-> > +             .hook =3D { .NAME =3D CALLBACK },           \
+Fix this by correcting the misspelling of 'protocol'.
 
-[...]
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-               static_branch_disable(scalls->active);
-> > +             }
-> > +     }
-> > +}
->
-> More ugh.  If we're going to solve things this way, let's make it a
-> proper LSM interface and not a BPF LSM specific hack; I *really* don't
-> want to see individual LSMs managing the lsm_static_call or
-> security_hook_list entries.
->
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index cef8c466af80..d0485fb0ed63 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1124,7 +1124,7 @@ static int apparmor_socket_create(int family, int type, int protocol, int kern)
+  * @sock: socket that is being setup
+  * @family: family of socket being created
+  * @type: type of the socket
+- * @ptotocol: protocol of the socket
++ * @protocol: protocol of the socket
+  * @kern: socket is a special kernel socket
+  *
+  * Note:
 
-Fair, and that makes the implementation much simpler too. I created a
-security_hook_toggle function in security.c which implements this
-functionality.
+---
+base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
+change-id: 20240505-apparmor_socket_post_create-kdoc-897c7ad5d007
 
-- KP
-
-> > diff --git a/security/security.c b/security/security.c
-> > index e05d2157c95a..40d83da87f68 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -406,7 +406,8 @@ static void __init lsm_static_call_init(struct secu=
-rity_hook_list *hl)
-> >                       __static_call_update(scall->key, scall->trampolin=
-e,
-> >                                            hl->hook.lsm_callback);
-> >                       scall->hl =3D hl;
-> > -                     static_branch_enable(scall->active);
-> > +                     if (hl->default_enabled)
-> > +                             static_branch_enable(scall->active);
-> >                       return;
-> >               }
-> >               scall++;
-> > --
-> > 2.43.0.594.gd9cf4e227d-goog
->
-> --
-> paul-moore.com
