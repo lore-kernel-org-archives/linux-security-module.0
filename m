@@ -1,258 +1,262 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5A1191;
-	Sun,  5 May 2024 00:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BAB3B297
+	for <linux-security-module@vger.kernel.org>; Sun,  5 May 2024 16:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714868128; cv=none; b=QWPqPf0AiwM0RGGoHtzFnquY8FmI2YeWd0+B/31bzLXqaqrhBuf43WJJl0Dch4eUVpuf4xe34iPPS2eAiezd7J/GMvOUkQY06GALOjtNC/Kcg1G4F4Wp/XSDvse4uAcUE1ZbUBpEjdnlGW4vPGyowZ2KA2LNgKBP7EPqPWWqHwA=
+	t=1714926334; cv=none; b=CCWFtfVwkSXvzm7D+37Eg8on5Olo9VlmUYVe/Zm+enr/B0jSGDRH0Cbxomu8b89rLQDFep7Id9Ihz7pInS58S60Vbbke5uiqt7Uw2dhn/mKj1vBO+/geWOptOioiiUxEa+rz6nFVmk1JOOqmjcIsrVdis4AB8p6xiH2oIK6nHtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714868128; c=relaxed/simple;
-	bh=Us12kLS2/JZzE9OjnNQSSWjgW41q/1qK+0tYJ109430=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xe12wYUL5AuwOiFg2pJpBydk7OATwXAsRIZqOb/Dbyiss3czJWpWzf3gaP+f8mfYfeGgXKTzwPYbVTAasSrQYoofUWq5LYEcjN/A5Y5of3KeTimj7xjdMOdBNnENt2OEdHYq527VR9TzYIp4mFTHKxXWKUZV3ky8+nY8c0Vv9Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0uFbkB6; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714926334; c=relaxed/simple;
+	bh=s4JftUNg3BpOtCSPERy+H+sdZvOj4cNBfHhsrGnpQ5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tly00TyKskrBZBKBH8zTPuEMX9ZN273G7gjC+Z4QmoaGz+Zv4ULx2pWkDs7+7ter+tKZC4p4L0d6rxnHnnSjyDRgo+RzfQOzUz5T8pPvAN0L32DTZyiGaaoPyWsa55YZm917G0CN9bvdErWgYHj2fd5WIwRfBQ+kO1IlcPWYmds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZcmSy3I; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0uFbkB6"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ec4dd8525cso6328525ad.3;
-        Sat, 04 May 2024 17:15:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714868125; x=1715472925; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgS8JoAt6F27d1bbCvSCcX4fIE1TnZzCg1FmdDqGcZI=;
-        b=N0uFbkB6jlEaPVaOkdFzQg50wGVyjtKlAT3sTV6Q1wl8d6l6Xslb0jv8uf3R25h8Vb
-         tQsr+pzftUPFvfauxRNFUWxeHVqk+2/GkzR9xk1MCJ60cyEGTpv32mcpuKmD1kc8Egbz
-         vsm3zfxNnG7vFZf4HXCFb0hKVEchgUQIZgj0R+ssWzz6zCkwcJIf3GEb0ykNOHMclFrw
-         ThB3bpYZgAWRIuwMHUsR/WMYdJyhtIeQyLQ9NVkZQXg5aQNda0gEHC/JY1L7FQPD7euN
-         hJPdS6nDAlq1RFpXrT9XKI7x2/9TN5HjBBZeRWkk9CUam2mffol8nXHPOsBcoDYtnCpN
-         slsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714868125; x=1715472925;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wgS8JoAt6F27d1bbCvSCcX4fIE1TnZzCg1FmdDqGcZI=;
-        b=wKFsWS6sAadDXIujg0o/v1q1dSOqM5tVT4I8jlEtWrIK73hknDfP9422oPMfkDrVZD
-         eqGtCiXx4GamW5aKQvXKCjSKsDhFLfKoJYlM50aEWUnqyPQrt6LZxA+uaRIuwipm2Knz
-         AU0r85HdkcFOEzi3OJnvbAlwvqN4nrmGZjEtwqXC64U55TszEn9c5QCDvtbDryFK1RSI
-         5NiXHK1o7btqB4oPD6wJLNVcLBuU77Stu4cRnOQ7cXqR84qS6fhPEuqRjGR5XPwKeYR2
-         iq37+Zf0IeZZtdK1LgAyx7KnLvKtYw0Bs5ataG1S/4hERgAHvpA4IuPodqCfM3Fsvnpr
-         Fc9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWEjhnFrI5QyOCG09iEPWqDmGN1fyBoYOR3i4aKKWfKPgfv77Rqfi224NjfrpQIxy1MkX0Fp5XHtR+fzyQwkvq6VBTnOXeBvF9dgsavW3M5HMGE1HdjQu21OrDe5ZWf1HEgWDnBHQG9AC3NVnzW0eXmi/cFqpvBv2lliq8pw1Ewjek8aEU++fOfj68OmCAfNnIuinkFZHmRdQuVsBDfBZQ4ICsfrHsZOBwGv+shx1Fqp5q6ugtDTTsGEEEl1D8l8oqptgyEcXCSLg==
-X-Gm-Message-State: AOJu0Yw5aS/Ye9GcDBg/BwHHL/jmFCtqhaLCCEcuvlVve1FlkFzsjKQl
-	On3koFLDz39sSniWvUSRXDETmx4SpWV1/Im/nsHC7BJL0h8fOKAf
-X-Google-Smtp-Source: AGHT+IEuepOKmbUX0nP6tkkmgH/wJcdmWEBFxatponT+7JHJdiSXjE9CQIyDOyyrEvUleV3UtJK/YA==
-X-Received: by 2002:a17:903:2403:b0:1e5:8175:4968 with SMTP id e3-20020a170903240300b001e581754968mr5632206plo.9.1714868124735;
-        Sat, 04 May 2024 17:15:24 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id ld14-20020a170902face00b001e0c568ae8fsm5583101plb.192.2024.05.04.17.15.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 May 2024 17:15:24 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 133A9184947D8; Sun, 05 May 2024 07:15:18 +0700 (WIB)
-Date: Sun, 5 May 2024 07:15:18 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu,
-	ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
-	snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v18 20/21] Documentation: add ipe documentation
-Message-ID: <ZjbPlk8ZwFZwdqJJ@archie.me>
-References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
- <1714775551-22384-21-git-send-email-wufan@linux.microsoft.com>
- <ZjXsBjAFs-qp9xY4@archie.me>
- <ab7054cd-affd-47c3-bd98-2cf47d6a6376@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZcmSy3I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF09BC4AF66
+	for <linux-security-module@vger.kernel.org>; Sun,  5 May 2024 16:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714926333;
+	bh=s4JftUNg3BpOtCSPERy+H+sdZvOj4cNBfHhsrGnpQ5k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CZcmSy3I7isqA9FYDSbRX/daPRnvBPGziE13VOlRAmHLHcfCqPG7ocGMUSUaCUvXY
+	 U0oWFjU0jupjLkntO+S17Y1o7KejQnIsV/5vaEfUbenqx+NEKTGbmJFJ0Wy9mGJBPi
+	 xCgoMz4l0JQ3Nd1YMG89jLJSUvSUi171kFpf2T52ylpAJqHYfpwsr/mY4xquugI/8W
+	 kN1A5rH8PSthsoWXdPl2iq58fepFG2pLaix3d1cQMz4qxSJIxLigUMv3yHiLkxIcc/
+	 QRiRb28qcNLrByEd3qRHNZAmueGm5r3yPmrQf4zN9u2yU2B1ZwSI+/6YaZTjoASTWs
+	 6BenR6AcPa1ew==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e367c2457fso2392241fa.2
+        for <linux-security-module@vger.kernel.org>; Sun, 05 May 2024 09:25:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKfUgGEUJyl9MSul0Rim0XBTCGFXDXs6ijvwsEU7fmg3Ckd/w2Jc9EirYJXmrz9aQbtU8ApM7hhjMiRA5pX66Akul1qvyfDDJyTobnRIANaWnCF2iT
+X-Gm-Message-State: AOJu0Yyhd5YgjXGgEz3ZZa62HjnOaLdVq/ZmVNidisSBQvjoh3KSdUJ5
+	ukPpnKGp+xobfQk18D1CgDx9Md/8u+oojUz3tnWwnq7rHX68zZ359P4sZCWpu96huScGBmbPtHq
+	NXTW8Xb/DwjmP0dxi0hU0SXZRe30J88CxiwDG
+X-Google-Smtp-Source: AGHT+IEEVG67tO/tn1sBqCzOgaT8k3fp83nxBCm9TvwgV/3jnxLgHNJGPhUr9Z6mMjHtFeA0kXzlyum2f1IKpy7Xoh0=
+X-Received: by 2002:a2e:a0d2:0:b0:2db:a9c9:4c5e with SMTP id
+ f18-20020a2ea0d2000000b002dba9c94c5emr7652441ljm.21.1714926331931; Sun, 05
+ May 2024 09:25:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="InlbHezzGTuEcuIT"
-Content-Disposition: inline
-In-Reply-To: <ab7054cd-affd-47c3-bd98-2cf47d6a6376@linux.microsoft.com>
-
-
---InlbHezzGTuEcuIT
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240207124918.3498756-5-kpsingh@kernel.org> <f7e8a16b0815d9d901e019934d684c5f@paul-moore.com>
+In-Reply-To: <f7e8a16b0815d9d901e019934d684c5f@paul-moore.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Sun, 5 May 2024 18:25:05 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7Pn+hA0yT0UeZEuwSr+ryytw5--Q0nUb+G+fWY5QMhRA@mail.gmail.com>
+Message-ID: <CACYkzJ7Pn+hA0yT0UeZEuwSr+ryytw5--Q0nUb+G+fWY5QMhRA@mail.gmail.com>
+Subject: Re: [PATCH v9 4/4] bpf: Only enable BPF LSM hooks when an LSM program
+ is attached
+To: Paul Moore <paul@paul-moore.com>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	keescook@chromium.org, casey@schaufler-ca.com, song@kernel.org, 
+	daniel@iogearbox.net, ast@kernel.org, pabeni@redhat.com, andrii@kernel.org, 
+	Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 04, 2024 at 01:13:16PM -0700, Fan Wu wrote:
->=20
->=20
-> On 5/4/2024 1:04 AM, Bagas Sanjaya wrote:
-> > On Fri, May 03, 2024 at 03:32:30PM -0700, Fan Wu wrote:
-> > > +IPE does not mitigate threats arising from malicious but authorized
-> > > +developers (with access to a signing certificate), or compromised
-> > > +developer tools used by them (i.e. return-oriented programming attac=
-ks).
-> > > +Additionally, IPE draws hard security boundary between userspace and
-> > > +kernelspace. As a result, IPE does not provide any protections again=
-st a
-> > > +kernel level exploit, and a kernel-level exploit can disable or tamp=
-er
-> > > +with IPE's protections.
-> >=20
-> > So how to mitigate kernel-level exploits then?
-> >=20
-> One possible way is to use hypervisor to protect the kernel integrity.
-> https://github.com/heki-linux is one project on this direction. Perhaps I
-> should also add this link to the doc.
+On Thu, Apr 11, 2024 at 2:38=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Feb  7, 2024 KP Singh <kpsingh@kernel.org> wrote:
+> >
+> > BPF LSM hooks have side-effects (even when a default value is returned)=
+,
+> > as some hooks end up behaving differently due to the very presence of
+> > the hook.
+> >
+> > The static keys guarding the BPF LSM hooks are disabled by default and
+> > enabled only when a BPF program is attached implementing the hook
+> > logic. This avoids the issue of the side-effects and also the minor
+> > overhead associated with the empty callback.
+> >
+> > security_file_ioctl:
+> >    0xffffffff818f0e30 <+0>:   endbr64
+> >    0xffffffff818f0e34 <+4>:   nopl   0x0(%rax,%rax,1)
+> >    0xffffffff818f0e39 <+9>:   push   %rbp
+> >    0xffffffff818f0e3a <+10>:  push   %r14
+> >    0xffffffff818f0e3c <+12>:  push   %rbx
+> >    0xffffffff818f0e3d <+13>:  mov    %rdx,%rbx
+> >    0xffffffff818f0e40 <+16>:  mov    %esi,%ebp
+> >    0xffffffff818f0e42 <+18>:  mov    %rdi,%r14
+> >    0xffffffff818f0e45 <+21>:  jmp    0xffffffff818f0e57 <security_file_=
+ioctl+39>
+> >                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
+^^^^^^^^^
+> >
+> >    Static key enabled for SELinux
+> >
+> >    0xffffffff818f0e47 <+23>:  xchg   %ax,%ax
+> >                               ^^^^^^^^^^^^^^
+> >
+> >    Static key disabled for BPF. This gets patched when a BPF LSM progra=
+m
+> >    is attached
+> >
+> >    0xffffffff818f0e49 <+25>:  xor    %eax,%eax
+> >    0xffffffff818f0e4b <+27>:  xchg   %ax,%ax
+> >    0xffffffff818f0e4d <+29>:  pop    %rbx
+> >    0xffffffff818f0e4e <+30>:  pop    %r14
+> >    0xffffffff818f0e50 <+32>:  pop    %rbp
+> >    0xffffffff818f0e51 <+33>:  cs jmp 0xffffffff82c00000 <__x86_return_t=
+hunk>
+> >    0xffffffff818f0e57 <+39>:  endbr64
+> >    0xffffffff818f0e5b <+43>:  mov    %r14,%rdi
+> >    0xffffffff818f0e5e <+46>:  mov    %ebp,%esi
+> >    0xffffffff818f0e60 <+48>:  mov    %rbx,%rdx
+> >    0xffffffff818f0e63 <+51>:  call   0xffffffff819033c0 <selinux_file_i=
+octl>
+> >    0xffffffff818f0e68 <+56>:  test   %eax,%eax
+> >    0xffffffff818f0e6a <+58>:  jne    0xffffffff818f0e4d <security_file_=
+ioctl+29>
+> >    0xffffffff818f0e6c <+60>:  jmp    0xffffffff818f0e47 <security_file_=
+ioctl+23>
+> >    0xffffffff818f0e6e <+62>:  endbr64
+> >    0xffffffff818f0e72 <+66>:  mov    %r14,%rdi
+> >    0xffffffff818f0e75 <+69>:  mov    %ebp,%esi
+> >    0xffffffff818f0e77 <+71>:  mov    %rbx,%rdx
+> >    0xffffffff818f0e7a <+74>:  call   0xffffffff8141e3b0 <bpf_lsm_file_i=
+octl>
+> >    0xffffffff818f0e7f <+79>:  test   %eax,%eax
+> >    0xffffffff818f0e81 <+81>:  jne    0xffffffff818f0e4d <security_file_=
+ioctl+29>
+> >    0xffffffff818f0e83 <+83>:  jmp    0xffffffff818f0e49 <security_file_=
+ioctl+25>
+> >    0xffffffff818f0e85 <+85>:  endbr64
+> >    0xffffffff818f0e89 <+89>:  mov    %r14,%rdi
+> >    0xffffffff818f0e8c <+92>:  mov    %ebp,%esi
+> >    0xffffffff818f0e8e <+94>:  mov    %rbx,%rdx
+> >    0xffffffff818f0e91 <+97>:  pop    %rbx
+> >    0xffffffff818f0e92 <+98>:  pop    %r14
+> >    0xffffffff818f0e94 <+100>: pop    %rbp
+> >    0xffffffff818f0e95 <+101>: ret
+> >
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Acked-by: Song Liu <song@kernel.org>
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  include/linux/bpf_lsm.h   |  5 +++++
+> >  include/linux/lsm_hooks.h | 13 ++++++++++++-
+> >  kernel/bpf/trampoline.c   | 24 ++++++++++++++++++++++++
+> >  security/bpf/hooks.c      | 25 ++++++++++++++++++++++++-
+> >  security/security.c       |  3 ++-
+> >  5 files changed, 67 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> > index 1de7ece5d36d..5bbc31ac948c 100644
+> > --- a/include/linux/bpf_lsm.h
+> > +++ b/include/linux/bpf_lsm.h
+> > @@ -29,6 +29,7 @@ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog=
+,
+> >
+> >  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
+> >  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
+> > +void bpf_lsm_toggle_hook(void *addr, bool value);
+> >
+> >  static inline struct bpf_storage_blob *bpf_inode(
+> >       const struct inode *inode)
+> > @@ -78,6 +79,10 @@ static inline void bpf_lsm_find_cgroup_shim(const st=
+ruct bpf_prog *prog,
+> >  {
+> >  }
+> >
+> > +static inline void bpf_lsm_toggle_hook(void *addr, bool value)
+> > +{
+> > +}
+> > +
+> >  #endif /* CONFIG_BPF_LSM */
+> >
+> >  #endif /* _LINUX_BPF_LSM_H */
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index ba63d8b54448..e95f0a5cb409 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -110,11 +110,14 @@ struct lsm_id {
+> >   * @scalls: The beginning of the array of static calls assigned to thi=
+s hook.
+> >   * @hook: The callback for the hook.
+> >   * @lsm: The name of the lsm that owns this hook.
+> > + * @default_state: The state of the LSM hook when initialized. If set =
+to false,
+> > + * the static key guarding the hook will be set to disabled.
+> >   */
+> >  struct security_hook_list {
+> >       struct lsm_static_call  *scalls;
+> >       union security_list_options     hook;
+> >       const struct lsm_id             *lsmid;
+> > +     bool                            default_enabled;
+>
+> Ugh.  We've already got an lsm_static_call::active field, I don't want
+> to see another enable/active/etc. flag unless there is absolutely no way
+> this works otherwise.
 
-OK.
+The field default_enabled is used at the time of initialization. The
+lsm_static_call::active is a static key which we really cannot use at
+initialization time from the various LSMs directly. I don't see a way
+out of this one IMHO.
 
->=20
-> > > +Allow only initramfs
-> > > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > <snipped>...
-> > > +Allow any signed and validated dm-verity volume and the initramfs
-> > > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > <snipped>...
-> >=20
-> > htmldocs build reports new warnings:
-> >=20
-> > Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too=
- short.
-> >=20
-> > Allow any signed and validated dm-verity volume and the initramfs
-> > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > Documentation/admin-guide/LSM/ipe.rst:694: WARNING: Title underline too=
- short.
-> >=20
-> > Allow any signed and validated dm-verity volume and the initramfs
-> > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > Documentation/arch/x86/resctrl.rst:577: WARNING: Title underline too sh=
-ort.
-> >=20
-> > I have to match these sections underline length:
-> >=20
-> > ---- >8 ----
-> > diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admi=
-n-guide/LSM/ipe.rst
-> > index 1a3bf1d8aa23f0..a47e14e024a90d 100644
-> > --- a/Documentation/admin-guide/LSM/ipe.rst
-> > +++ b/Documentation/admin-guide/LSM/ipe.rst
-> > @@ -681,7 +681,7 @@ Allow all
-> >      DEFAULT action=3DALLOW
-> >   Allow only initramfs
-> > -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > +~~~~~~~~~~~~~~~~~~~~
-> >   ::
-> > @@ -691,7 +691,7 @@ Allow only initramfs
-> >      op=3DEXECUTE boot_verified=3DTRUE action=3DALLOW
-> >   Allow any signed and validated dm-verity volume and the initramfs
-> > -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   ::
-> > @@ -725,7 +725,7 @@ Allow only a specific dm-verity volume
-> >      op=3DEXECUTE dmverity_roothash=3Dsha256:401fcec5944823ae12f62726e8=
-184407a5fa9599783f030dec146938 action=3DALLOW
-> >   Allow any fs-verity file with a valid built-in signature
-> > -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   ::
-> > @@ -735,7 +735,7 @@ Allow any fs-verity file with a valid built-in sign=
-ature
-> >      op=3DEXECUTE fsverity_signature=3DTRUE action=3DALLOW
-> >   Allow execution of a specific fs-verity file
-> > -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   ::
-> >=20
-> > > +Additional Information
-> > > +----------------------
-> > > +
-> > > +- `Github Repository <https://github.com/microsoft/ipe>`_
-> > > +- Documentation/security/ipe.rst
-> >=20
-> > Link title to both this admin-side and developer docs can be added for
-> > disambiguation (to avoid confusion on readers):
-> >=20
-> > ---- >8 ----
-> > diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admi=
-n-guide/LSM/ipe.rst
-> > index a47e14e024a90d..25b17e11559149 100644
-> > --- a/Documentation/admin-guide/LSM/ipe.rst
-> > +++ b/Documentation/admin-guide/LSM/ipe.rst
-> > @@ -7,7 +7,8 @@ Integrity Policy Enforcement (IPE)
-> >      This is the documentation for admins, system builders, or individu=
-als
-> >      attempting to use IPE. If you're looking for more developer-focused
-> > -   documentation about IPE please see Documentation/security/ipe.rst
-> > +   documentation about IPE please see :doc:`the design docs
-> > +   </security/ipe>`.
-> >   Overview
-> >   --------
-> > @@ -748,7 +749,7 @@ Additional Information
-> >   ----------------------
-> >   - `Github Repository <https://github.com/microsoft/ipe>`_
-> > -- Documentation/security/ipe.rst
-> > +- :doc:`Developer and design docs for IPE </security/ipe>`
-> >   FAQ
-> >   ---
-> > diff --git a/Documentation/security/ipe.rst b/Documentation/security/ip=
-e.rst
-> > index 07e3632241285d..fd1b1a852d2165 100644
-> > --- a/Documentation/security/ipe.rst
-> > +++ b/Documentation/security/ipe.rst
-> > @@ -7,7 +7,7 @@ Integrity Policy Enforcement (IPE) - Kernel Documentati=
-on
-> >      This is documentation targeted at developers, instead of administr=
-ators.
-> >      If you're looking for documentation on the usage of IPE, please see
-> > -   Documentation/admin-guide/LSM/ipe.rst
-> > +   `IPE admin guide </admin-guide/LSM/ipe.rst>`_.
-> >   Historical Motivation
-> >   ---------------------
-> >=20
-> > Thanks.
-> >=20
->=20
-> My apologies for these format issues and thanks for the suggestions. I wi=
-ll
-> fix them.
+>
+> >  } __randomize_layout;
+> >
+> >  /*
+> > @@ -164,7 +167,15 @@ static inline struct xattr *lsm_get_xattr_slot(str=
+uct xattr *xattrs,
+> >  #define LSM_HOOK_INIT(NAME, CALLBACK)                        \
+> >       {                                               \
+> >               .scalls =3D static_calls_table.NAME,      \
+> > -             .hook =3D { .NAME =3D CALLBACK }            \
+> > +             .hook =3D { .NAME =3D CALLBACK },           \
+> > +             .default_enabled =3D true                 \
+> > +     }
+> > +
+> > +#define LSM_HOOK_INIT_DISABLED(NAME, CALLBACK)               \
+> > +     {                                               \
+> > +             .scalls =3D static_calls_table.NAME,      \
+> > +             .hook =3D { .NAME =3D CALLBACK },           \
 
-Oh, I forgot to also add :doc: directive for the last reference link:
+[...]
 
----- >8 ----
-diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
-index fd1b1a852d2165..aa2e64d4119f3e 100644
---- a/Documentation/security/ipe.rst
-+++ b/Documentation/security/ipe.rst
-@@ -7,7 +7,7 @@ Integrity Policy Enforcement (IPE) - Kernel Documentation
-=20
-    This is documentation targeted at developers, instead of administrators.
-    If you're looking for documentation on the usage of IPE, please see
--   `IPE admin guide </admin-guide/LSM/ipe.rst>`_.
-+   :doc:`IPE admin guide </admin-guide/LSM/ipe>`.
-=20
- Historical Motivation
- ---------------------
+               static_branch_disable(scalls->active);
+> > +             }
+> > +     }
+> > +}
+>
+> More ugh.  If we're going to solve things this way, let's make it a
+> proper LSM interface and not a BPF LSM specific hack; I *really* don't
+> want to see individual LSMs managing the lsm_static_call or
+> security_hook_list entries.
+>
 
-Thanks.
+Fair, and that makes the implementation much simpler too. I created a
+security_hook_toggle function in security.c which implements this
+functionality.
 
---=20
-An old man doll... just what I always wanted! - Clara
+- KP
 
---InlbHezzGTuEcuIT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjbPjgAKCRD2uYlJVVFO
-o8HPAQDxhozqHxPAtlb/vByqFj4O4DT+qZVm5PvJcv9tnq0aCQD7BQbQr6wEPrYZ
-0lIMQIcpVMj+XdMBtixikEDTadIDHQI=
-=mp4a
------END PGP SIGNATURE-----
-
---InlbHezzGTuEcuIT--
+> > diff --git a/security/security.c b/security/security.c
+> > index e05d2157c95a..40d83da87f68 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -406,7 +406,8 @@ static void __init lsm_static_call_init(struct secu=
+rity_hook_list *hl)
+> >                       __static_call_update(scall->key, scall->trampolin=
+e,
+> >                                            hl->hook.lsm_callback);
+> >                       scall->hl =3D hl;
+> > -                     static_branch_enable(scall->active);
+> > +                     if (hl->default_enabled)
+> > +                             static_branch_enable(scall->active);
+> >                       return;
+> >               }
+> >               scall++;
+> > --
+> > 2.43.0.594.gd9cf4e227d-goog
+>
+> --
+> paul-moore.com
