@@ -1,147 +1,87 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E202D158862
-	for <linux-security-module@vger.kernel.org>; Mon,  6 May 2024 17:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA7B15B137
+	for <linux-security-module@vger.kernel.org>; Mon,  6 May 2024 20:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715017828; cv=none; b=AV7GaMVRHyHQ4vDW7fKC8Dj4umn13kQrEyvUlINDKGfKTeANHw8tscss4nDDkwW2QIrdPxMOGi7HpZCsxspSveTVk63yyAbyA+TklY2doTaFL7zsNrSpUpsokFQ+FeVemmiIyFRYPqpyduDkj38T9ow8yi9gEQPNPORJJHHHc3k=
+	t=1715028731; cv=none; b=MeDlNDX8UwJgj+sn4pKchlz475m0fVJXwewidpZqVFda58T0Omm7AuiKDPG+ciM5nQx/SSvbFycQ1Juzl3hSSqQ8jcJPd+Rc/ZvwxqHzaHaMIbi51lnC5RB9/Wane3crYJwJnk+ehqzP+ap434CZg0JhvgjoNKyTDRk8OoGbuvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715017828; c=relaxed/simple;
-	bh=FeafhCaExu57qsacTj62dWRUdrBXKjPBuLT9vOLipXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jdu8XkO1LiHazEJXwd5YOw5yyLTeinGhTna2ojn+0qvVuxIGA2IDazHi9u6vjwQo4esWWqHnmq1FmdPLtzjHtetzDchlTYZk0HGjmr2uRsCvsh238b7q1cfPLTMJjLVcH9RvAeBW/RMRGC4hrBGEZmOP7b4OVUdjZ4RZA0d2XZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mGwJTwDH; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1715028731; c=relaxed/simple;
+	bh=yCMlnDHuNBx/qGNlq8EvYeBs5TQNlNp2+Evuv2MUEr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JBX1gVIgDkKxaf1JOMw9VlX9ABavT87O1RFBaoh6bDw74GJLmXrRsO+nKDmtCG/N2sj46kpBENRFA9J9Vo3II4D/21iAV+o3yTIJds57BSWiUS/ZbkLvp+kF/oJC+VUvrc/rI9HUiH0bd6r0gxl6LWHx/cf/oNaL2NxqPO3m4cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Gt8MPEO2; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mGwJTwDH"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VY87s1JrnzP8k;
-	Mon,  6 May 2024 19:50:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1715017816;
-	bh=FeafhCaExu57qsacTj62dWRUdrBXKjPBuLT9vOLipXU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mGwJTwDHmCYyRVABfvivVlR645+s55YE3ikqtGU8J06uhEpc53bUE7Ls8lVECmSJY
-	 ZoGZR6nkUaCWIF86rf6UUOQ30vsnFTU+oyKVa5juk1cYq6aZPMMxOD7Adtf6s6Qe8Z
-	 /vj4j5MGtH+BC89lqOLDnwO6/+q161VQ+b28m63o=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VY87p5F0GzB95;
-	Mon,  6 May 2024 19:50:14 +0200 (CEST)
-Date: Mon, 6 May 2024 19:50:13 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
-	Angelina Vu <angelinavu@linux.microsoft.com>, Anna Trikalinou <atrikalinou@microsoft.com>, 
-	Chao Peng <chao.p.peng@linux.intel.com>, Forrest Yuan Yu <yuanyu@google.com>, 
-	James Gowans <jgowans@amazon.com>, James Morris <jamorris@linux.microsoft.com>, 
-	John Andersen <john.s.andersen@intel.com>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Marian Rotariu <marian.c.rotariu@gmail.com>, Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>, 
-	=?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, 
-	Yu Zhang <yu.c.zhang@linux.intel.com>, =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>, 
-	dev@lists.cloudhypervisor.org, kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org, 
-	x86@kernel.org, xen-devel@lists.xenproject.org
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-Message-ID: <20240506.ohwe7eewu0oB@digikod.net>
-References: <20240503131910.307630-1-mic@digikod.net>
- <20240503131910.307630-4-mic@digikod.net>
- <ZjTuqV-AxQQRWwUW@google.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Gt8MPEO2"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62036051972so26670057b3.1
+        for <linux-security-module@vger.kernel.org>; Mon, 06 May 2024 13:52:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1715028729; x=1715633529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O0aJldxObbqmwqRdokwOXsjkINM3Yq1p+ZO6p6LLpxY=;
+        b=Gt8MPEO2qHWJ2stCzOWna5dNZ1O0qOonRuibtrYqYbsgnNpr6Z05meLxSTGs/5FdIi
+         I+SA65HrZOv/ZBQYoV8kJsawBf73kqZsVlMGmUAd2g3DokCdr4p+BAAK+f2+2juR1r75
+         3LOlc9/LS35Mz1h+vcJdWpxa8J8uxq4jFHA5YIrg+oHW96CUk6Ji14iu3WnD/apHPFDK
+         1kq/gibn2HNy3ET38RIBMFfbd5JB+2eyi6Hb+ocztnXapRNcpRNGzRO0uk1T6uNQ4COn
+         9enHzHigD3tumB6hmwu3q3d8uyFqisoK7B1ozmutjePwpkdHOenNJWSLAtb6bUBHu+oB
+         ZGTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715028729; x=1715633529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O0aJldxObbqmwqRdokwOXsjkINM3Yq1p+ZO6p6LLpxY=;
+        b=QwTSXc6tStKmfa69Ug54s4M2L4M5fkMukzOoiJMrymoEcszKuGLopqjV46evRSNJ/t
+         5pri1D/w8/vxR9hhvE1yZ+NPt6/pKYN5PAOcG8wIigbz3ObsrInKZQdHTjjNh5ZH+h6v
+         Vc/RTF5SWKr1JyvbEzg2Lx/6xxVd5rJVLfKTotc7otFNLUGjJgCJE5h2tDEUeog5iqIM
+         uwv+cqXKpK3XeR+0mdmnOIMxhD7uaOvPGnEpIrFa9ReeAyF5KM6ZcNcns5VJTsPqdqDz
+         5Tud6lQ0yoRXQASmTukZgu5bZi6f4dIpyL1q/hkLIl8yvbVXQx6oUiI9GKvZUv0Do7AE
+         H0EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWkOppNk7oy/YCPx3dYqEA1A9L1mHEPiMpHlsOdWN550TfufLEfd2H6KT9rdXJRxoEAzRoh3/NjSVpCDKVzm0RFG1cFtF5g3RdQz5g57TTZHUOofWu
+X-Gm-Message-State: AOJu0Ywbsj/S+lrLf6NNI7xqXTD2ZmSTe3t2mQMEHmIWAYemr+621k1X
+	AkawtyaUKl/UjEI/r/saKi9T+9eZc0KKMH7h6XZLlodB/HzfR9YO0LHwwQo+xA6uBgpJxKIX0Hj
+	GkOltOsgHcFJzQGvIJ39P2UvvnvUyuoO+Ees4sYrW1KLKKVk=
+X-Google-Smtp-Source: AGHT+IGGFF3TGiRUMqSCC2WlHp4ApQwoT7T5/bWXwE/yklkvddWz3a47WbLGzgAyNG5Ymg5QfgMiGuECEknHhVdfwc0=
+X-Received: by 2002:a0d:ccd1:0:b0:61b:33c8:7bcd with SMTP id
+ o200-20020a0dccd1000000b0061b33c87bcdmr10805724ywd.21.1715028729248; Mon, 06
+ May 2024 13:52:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjTuqV-AxQQRWwUW@google.com>
-X-Infomaniak-Routing: alpha
+References: <20240503005850.466144-2-paul@paul-moore.com> <06dc0e21-f44b-48c0-8552-9840147facfc@schaufler-ca.com>
+ <CAHC9VhQUW42aicyiMAVaSEsCR-G8E+uVZJVCXodDv8obC3V0VA@mail.gmail.com>
+ <18c63d96-d574-4ce2-8fd3-7755d2da6c74@schaufler-ca.com> <CAHC9VhQcUrxxejcJP9m5SwyN8D=Y0rOiF7=w6SQR4=fF=nBNDw@mail.gmail.com>
+In-Reply-To: <CAHC9VhQcUrxxejcJP9m5SwyN8D=Y0rOiF7=w6SQR4=fF=nBNDw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 6 May 2024 16:51:58 -0400
+Message-ID: <CAHC9VhRdwgorXdBt7jUuQ7tLNbtCggGrbrhxw-Um7aCmk0JgmQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] lsm: fixup the inode xattr capability handling
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Felix Fu <fuzhen5@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 03, 2024 at 07:03:21AM GMT, Sean Christopherson wrote:
-> On Fri, May 03, 2024, Mickaël Salaün wrote:
-> > Add an interface for user space to be notified about guests' Heki policy
-> > and related violations.
-> > 
-> > Extend the KVM_ENABLE_CAP IOCTL with KVM_CAP_HEKI_CONFIGURE and
-> > KVM_CAP_HEKI_DENIAL. Each one takes a bitmask as first argument that can
-> > contains KVM_HEKI_EXIT_REASON_CR0 and KVM_HEKI_EXIT_REASON_CR4. The
-> > returned value is the bitmask of known Heki exit reasons, for now:
-> > KVM_HEKI_EXIT_REASON_CR0 and KVM_HEKI_EXIT_REASON_CR4.
-> > 
-> > If KVM_CAP_HEKI_CONFIGURE is set, a VM exit will be triggered for each
-> > KVM_HC_LOCK_CR_UPDATE hypercalls according to the requested control
-> > register. This enables to enlighten the VMM with the guest
-> > auto-restrictions.
-> > 
-> > If KVM_CAP_HEKI_DENIAL is set, a VM exit will be triggered for each
-> > pinned CR violation. This enables the VMM to react to a policy
-> > violation.
-> > 
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: H. Peter Anvin <hpa@zytor.com>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Sean Christopherson <seanjc@google.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > Cc: Wanpeng Li <wanpengli@tencent.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20240503131910.307630-4-mic@digikod.net
-> > ---
-> > 
-> > Changes since v1:
-> > * New patch. Making user space aware of Heki properties was requested by
-> >   Sean Christopherson.
-> 
-> No, I suggested having userspace _control_ the pinning[*], not merely be notified
-> of pinning.
-> 
->  : IMO, manipulation of protections, both for memory (this patch) and CPU state
->  : (control registers in the next patch) should come from userspace.  I have no
->  : objection to KVM providing plumbing if necessary, but I think userspace needs to
->  : to have full control over the actual state.
->  : 
->  : One of the things that caused Intel's control register pinning series to stall
->  : out was how to handle edge cases like kexec() and reboot.  Deferring to userspace
->  : means the kernel doesn't need to define policy, e.g. when to unprotect memory,
->  : and avoids questions like "should userspace be able to overwrite pinned control
->  : registers".
->  : 
->  : And like the confidential VM use case, keeping userspace in the loop is a big
->  : beneifit, e.g. the guest can't circumvent protections by coercing userspace into
->  : writing to protected memory.
-> 
-> I stand by that suggestion, because I don't see a sane way to handle things like
-> kexec() and reboot without having a _much_ more sophisticated policy than would
-> ever be acceptable in KVM.
-> 
-> I think that can be done without KVM having any awareness of CR pinning whatsoever.
-> E.g. userspace just needs to ability to intercept CR writes and inject #GPs.  Off
-> the cuff, I suspect the uAPI could look very similar to MSR filtering.  E.g. I bet
-> userspace could enforce MSR pinning without any new KVM uAPI at all.
-> 
-> [*] https://lore.kernel.org/all/ZFUyhPuhtMbYdJ76@google.com
+On Fri, May 3, 2024 at 12:26=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> I also need to track down the appropriate commits for the 'Fixes:'
+> tag(s); I'm not entirely convinced that some of the other patches were
+> targeting the proper commit ...
 
-OK, I had concern about the control not directly coming from the guest,
-especially in the case of pKVM and confidential computing, but I get you
-point.  It should indeed be quite similar to the MSR filtering on the
-userspace side, except that we need another interface for the guest to
-request such change (i.e. self-protection).
+Looking at this again, I'm not sure we can easily narrow this down to
+one or two commits as the current flawed situation is really the
+result of a lot of things.  If I had to pick two may be the addition
+of the BPF LSM and the introduction of the LSM hook macros?  I think
+this patch may just get a stable tag without an explicit set of
+'Fixes', which should be okay.
 
-Would it be OK to keep this new KVM_HC_LOCK_CR_UPDATE hypercall but
-forward the request to userspace with a VM exit instead?  That would
-also enable userspace to get the request and directly configure the CR
-pinning with the same VM exit.
+--=20
+paul-moore.com
