@@ -1,253 +1,97 @@
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079E316ABC1
-	for <linux-security-module@vger.kernel.org>; Tue,  7 May 2024 16:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD0B16D9CA
+	for <linux-security-module@vger.kernel.org>; Tue,  7 May 2024 19:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715098570; cv=none; b=qt1d+acNdcNbic9b7IM2tuQI565pNJOrCyLDqiG5RDCdhEzx6FmyOA9wg+uLwZrEaKg9B1bOgLZvvFB/jTvZjZkWOvGGCbmluZAdQVlMinEGKTCa+KaZ/XlnT4UgeQPRFX82xoDiJZmnP1PK6RlW0a6TFYEWUWh2Y9+tr+xEdlo=
+	t=1715109483; cv=none; b=tMbiUkOdkM55y8qmjbOttHtcDHrcAlHRQ4VE2hXaATKFdbIwHFiq/qNx6SgBkkeUCHCfwPRbcBcOB4sul0huIo3YHYMV6rp2hQAMhF7IL6u5ll35KM7634j1vLL9I62BYeuasx8FXgew9rDBwoGpYkQdDqj+AbtUvMJRJXTGnCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715098570; c=relaxed/simple;
-	bh=n4oL9QdCVInqGhf/IejBHhOJycGpmskHhXQcPvV0+5w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lK7yvi5kPSvrZUUq8UDGGX7XKALDLx10+Re5sc7zNVdBzuZp3VWlibN9xlX3aqY1RLy6QvovRqjgeJil5cDPatPZT+4a4bQuWBiiU+xzPjvUF+XZf3CkmKTjVuq3sg1kBk+APJe8Voc1sziPOFjaLy9UMwaO8LbmA9PKchVL8j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uMeGXue2; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1715109483; c=relaxed/simple;
+	bh=gJG2RhP5yjo+VUpaj6pMQlkab5QI2HJRpPvMeNdy28c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NVgBKpbzLbEX/qSUpdya39aeBXO+brHLutS02ct0ImWG02+3YLuo3RfZ042B7d2IvRQMhHn74Iba3muvXwMYNdo0ZzYli1AorOn7OxKLXrNd4JbOzercNRRnDJgIf5zMqrAvvYNWABxsZ9L/LyFlxNNOqHsb5gIRKRYsPwIp5bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bUCJ2sIU; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uMeGXue2"
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6b26783b4so4331424276.0
-        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2024 09:16:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bUCJ2sIU"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-61bed738438so37979147b3.2
+        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2024 12:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715098568; x=1715703368; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IWxS0mCdKrqU6bVOz4n3NTmQy0CRO7Urzkw5a/fWZlQ=;
-        b=uMeGXue2xAiO8uSusy505x4973sRuVnPct94e5Cm2OQalOkV7vjyNrPO67Zr/vC7wP
-         YpAyg4pYPeVIBfb++egKABY8H7nYzv47k9KyfxJf8SkimcuHBDCvgo2iciZr8k6yDQ3H
-         +sKHpl9zwTVagTolmTyDNn0QDXKvkrI6sH0AIyyN9r1kMI2Sm0AiY630D1Dwuo3Nvlyv
-         eskfWdD3kraqjff94Bi5xRxWpwSQpf499jXnWgRxk9897sxPdyz5hz057kUh6sRrP//3
-         auAcQscoQb2UY63/ImrOfBvfYOSoNzdQRAeSPhuFJUkFZ4VV3m5OwkDiiOMMo/STzzRb
-         94sw==
+        d=paul-moore.com; s=google; t=1715109480; x=1715714280; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RkUnJY0EFDu9PZambZs1IeCNxuSIB/aK1oktUOoldtY=;
+        b=bUCJ2sIUiNaWigwdUVTOmpH5p7brYDKQmax8OPLuBgx256LQr9kpl/c+WaND+L+kLC
+         GXf7aVlYDkZLXHI4ZWDfIszdBOg3Sc97ng3xKLhRPvPDT+geLQgiI2CrHlYynGRQOUtb
+         XBgBB9X+dL5NQE9QS9S2UWdFk96DFoqBGn0J/jLgqJZVhVUVeadPTbHKrgmaL3w2AJKz
+         v/kjeLqf3m2bjWmgDJp8xXWQAaY/YRcgyo77MX//OjRH2fAtfYjRTcitt+bmHKBL6d9/
+         2awKbvwKksINC4R2c1Nr96ZyE8tLoSkOyn/pUo3ReIXXdCOXXnXNhKl4RUerwzCvnYnQ
+         sSBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715098568; x=1715703368;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IWxS0mCdKrqU6bVOz4n3NTmQy0CRO7Urzkw5a/fWZlQ=;
-        b=lFm70GQvXihdy6OWCp3a9ry61pSyhaU8Y2EiglnXxxFz7sTgn5lyrw4AHd/PFUsJkk
-         S/5j25BXxfIawo+YHSL5ObXrMDpUIB+x6mJKdOC81uEDKcqcKgQc2wY/+RDA8OMQQJNf
-         Azl6PsZUZ++zkE4JBA7PCJ5afsWI9GZAvQH6ogf50yOeUE4VQ7h8vhtkcrSWjDT16fzj
-         e/I0Zj41J3TcrBYtOV07QcqRtqF0ZDz2p48TiCw/dYB+YjoSxLmGN98nCoQicfwi/8Rk
-         PWApxGSuWP0jCPfZPJhBn/ww4dOJx0Ba8nRaU7oBiJtjr36dxe1RusIvI47hXkisG3zh
-         JSeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWY648GCv1XzolN2/SmcakQLkuA5AGMrZGOd/asd3o6gIIGauBJ4e69aFSmoMfJC+RCCl2rMlAmfWAvHZH/d4eABmPMeOQk89sNRkWPhvr3Mv0qBV1t
-X-Gm-Message-State: AOJu0YxJ8aJhgyAx7QJ9lrefZqBZ2vP6AV9O3Yw6JEl97Cv9CghXtnS7
-	xG6uO85LNgs9J2ok7ikqMNdIKFf9MRO3m++hsoEn6VbxxzUyUXLlMSGxowNq/DqWf0Fv8JTcUAV
-	b1g==
-X-Google-Smtp-Source: AGHT+IEEPkTwPJaOTGouRKDc7DVHMnqTRjb0yesgQ4YUUdFhPv8WpJzXBwRvcXmUBR39ssSE6I5KsNiqYrA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:707:b0:dbe:30cd:8fcb with SMTP id
- 3f1490d57ef6-debb9c0032emr11950276.0.1715098567940; Tue, 07 May 2024 09:16:07
- -0700 (PDT)
-Date: Tue, 7 May 2024 09:16:06 -0700
-In-Reply-To: <20240507.ieghomae0UoC@digikod.net>
+        d=1e100.net; s=20230601; t=1715109480; x=1715714280;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RkUnJY0EFDu9PZambZs1IeCNxuSIB/aK1oktUOoldtY=;
+        b=JKNhKzI2AI7+X/z2sI5Q88kzsco+jYMIZDXqxPcq1HYjT/Q+ONFevCBDJPH3MM0IPn
+         +Fvw1ybChKIqKzReZ9rWAvl8xcRqnIDNufakKU5D2MYuwfkTXeTttFPBZKBNFTLDWAMU
+         GyUBtddTGEmz3Sc2IA4n8Z9ozgsJKIfKDpYZShPfNJADPMr6phr8/G1P6iUHCCgcdxyf
+         vs7D3xu+m4FL/IIfbv5xVHP9SzHtKxpxhV2ZCGCpJOqZ0uEjLBd6r5JAdYxCpfKD+R0I
+         0CxXUgOXfH+LCpluqzwgblbpcVmhtyZxfRk8nyVtoS3b8NV1u57jAnL2A0oD4zpPMwFD
+         LGag==
+X-Forwarded-Encrypted: i=1; AJvYcCUKz3gj8cP0Amaco9rsOU0f7rzswsK8g9SWJ8vGj0B2kLpZx/tXMHwkK/txW5JuvvuawXVqBchNnhiPzovanKzW+nbrX/hlZm3CqJhsxXKTnEsBGroZ
+X-Gm-Message-State: AOJu0Yz3iwCt8LtU5Y/Nt9nOG+oVv5gmijDScnLOkXtzug1MNtadrzAv
+	sZ4IHo0KSXxPED4i35caGH5m+uhnT5L1IxPK9hClecoWkd/CX9tk+RkyUahPxldupo3fV1mzQy4
+	5XwXnpoiMa/Rf0DViTGA59ZQfxhhp8KMOmmst
+X-Google-Smtp-Source: AGHT+IHFh6fuPBDaALHcRGT86x6XUd5Gly/WjOFrrTl9D0oTiWSCEWhjSAxd+tkJ7qiDY205bvSs1K21OSV+FoXwzUQ=
+X-Received: by 2002:a0d:c803:0:b0:610:cd34:439e with SMTP id
+ 00721157ae682-620862f530dmr6343667b3.49.1715109480658; Tue, 07 May 2024
+ 12:18:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240503131910.307630-1-mic@digikod.net> <20240503131910.307630-4-mic@digikod.net>
- <ZjTuqV-AxQQRWwUW@google.com> <20240506.ohwe7eewu0oB@digikod.net>
- <ZjmFPZd5q_hEBdBz@google.com> <20240507.ieghomae0UoC@digikod.net>
-Message-ID: <ZjpTxt-Bxia3bRwB@google.com>
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-From: Sean Christopherson <seanjc@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
-	Angelina Vu <angelinavu@linux.microsoft.com>, 
-	Anna Trikalinou <atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
-	Forrest Yuan Yu <yuanyu@google.com>, James Gowans <jgowans@amazon.com>, 
-	James Morris <jamorris@linux.microsoft.com>, John Andersen <john.s.andersen@intel.com>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>, 
-	"Mihai =?utf-8?B?RG9uyJt1?=" <mdontu@bitdefender.com>, 
-	"=?utf-8?B?TmljdciZb3IgQ8OuyJt1?=" <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
-	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, 
-	Will Deacon <will@kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
-	"=?utf-8?Q?=C8=98tefan_=C8=98icleru?=" <ssicleru@bitdefender.com>, dev@lists.cloudhypervisor.org, 
-	kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, 
-	virtualization@lists.linux-foundation.org, x86@kernel.org, 
-	xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240503005850.466144-2-paul@paul-moore.com> <06dc0e21-f44b-48c0-8552-9840147facfc@schaufler-ca.com>
+ <CAHC9VhQUW42aicyiMAVaSEsCR-G8E+uVZJVCXodDv8obC3V0VA@mail.gmail.com>
+ <18c63d96-d574-4ce2-8fd3-7755d2da6c74@schaufler-ca.com> <CAHC9VhQcUrxxejcJP9m5SwyN8D=Y0rOiF7=w6SQR4=fF=nBNDw@mail.gmail.com>
+ <CAHC9VhRdwgorXdBt7jUuQ7tLNbtCggGrbrhxw-Um7aCmk0JgmQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRdwgorXdBt7jUuQ7tLNbtCggGrbrhxw-Um7aCmk0JgmQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 7 May 2024 15:17:49 -0400
+Message-ID: <CAHC9VhQUi8vo+gZ0OXYXGSbLpuSaCaNx+7CzXw0eAJyQ48X80w@mail.gmail.com>
+Subject: Re: [RFC PATCH] lsm: fixup the inode xattr capability handling
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Felix Fu <fuzhen5@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024, Micka=C3=ABl Sala=C3=BCn wrote:
-> > Actually, potential bad/crazy idea.  Why does the _host_ need to define=
- policy?
-> > Linux already knows what assets it wants to (un)protect and when.  What=
-'s missing
-> > is a way for the guest kernel to effectively deprivilege and re-authent=
-icate
-> > itself as needed.  We've been tossing around the idea of paired VMs+vCP=
-Us to
-> > support VTLs and SEV's VMPLs, what if we usurped/piggybacked those idea=
-s, with a
-> > bit of pKVM mixed in?
-> >=20
-> > Borrowing VTL terminology, where VTL0 is the least privileged, userspac=
-e launches
-> > the VM at VTL0.  At some point, the guest triggers the deprivileging se=
-quence and
-> > userspace creates VTL1.  Userpace also provides a way for VTL0 restrict=
- access to
-> > its memory, e.g. to effectively make the page tables for the kernel's d=
-irect map
-> > writable only from VTL1, to make kernel text RO (or XO), etc.  And VTL0=
- could then
-> > also completely remove its access to code that changes CR0/CR4.
-> >=20
-> > It would obviously require a _lot_ more upfront work, e.g. to isolate t=
-he kernel
-> > text that modifies CR0/CR4 so that it can be removed from VTL0, but tha=
-t should
-> > be doable with annotations, e.g. tag relevant functions with __magic or=
- whatever,
-> > throw them in a dedicated section, and then free/protect the section(s)=
- at the
-> > appropriate time.
-> >=20
-> > KVM would likely need to provide the ability to switch VTLs (or whateve=
-r they get
-> > called), and host userspace would need to provide a decent amount of th=
-e backend
-> > mechanisms and "core" policies, e.g. to manage VTL0 memory, teardown (t=
-urn off?)
-> > VTL1 on kexec(), etc.  But everything else could live in the guest kern=
-el itself.
-> > E.g. to have CR pinning play nice with kexec(), toss the relevant kexec=
-() code into
-> > VTL1.  That way VTL1 can verify the kexec() target and tear itself down=
- before
-> > jumping into the new kernel.=20
-> >=20
-> > This is very off the cuff and have-wavy, e.g. I don't have much of an i=
-dea what
-> > it would take to harden kernel text patching, but keeping the policy in=
- the guest
-> > seems like it'd make everything more tractable than trying to define an=
- ABI
-> > between Linux and a VMM that is rich and flexible enough to support all=
- the
-> > fancy things Linux does (and will do in the future).
->=20
-> Yes, we agree that the guest needs to manage its own policy.  That's why
-> we implemented Heki for KVM this way, but without VTLs because KVM
-> doesn't support them.
->=20
-> To sum up, is the VTL approach the only one that would be acceptable for
-> KVM? =20
+On Mon, May 6, 2024 at 4:51=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Fri, May 3, 2024 at 12:26=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > I also need to track down the appropriate commits for the 'Fixes:'
+> > tag(s); I'm not entirely convinced that some of the other patches were
+> > targeting the proper commit ...
+>
+> Looking at this again, I'm not sure we can easily narrow this down to
+> one or two commits as the current flawed situation is really the
+> result of a lot of things.  If I had to pick two may be the addition
+> of the BPF LSM and the introduction of the LSM hook macros?  I think
+> this patch may just get a stable tag without an explicit set of
+> 'Fixes', which should be okay.
 
-Heh, that's not a question you want to be asking.  You're effectively askin=
-g me
-to make an authorative, "final" decision on a topic which I am only passing=
-ly
-familiar with.
+I merged this patch, with Casey's ACK and a stable tag, into
+lsm/dev-staging.  Assuming no issues are uncovered during testing, or
+mentioned on-list, I'll plan to merge this into lsm/dev after the
+upcoming merge window closes; I'll send another note when that
+happens.
 
-But since you asked it... :-)  Probably?
-
-I see a lot of advantages to a VTL/VSM-like approach:
-
- 1. Provides Linux-as-a guest the flexibility it needs to meaningfully adva=
-nce
-    its security, with the least amount of policy built into the guest/host=
- ABI.
-
- 2. Largely decouples guest policy from the host, i.e. should allow the gue=
-st to
-    evolve/update it's policy without needing to coordinate changes with th=
-e host.
-
- 3. The KVM implementation can be generic enough to be reusable for other f=
-eatures.
-
- 4. Other groups are already working on VTL-like support in KVM, e.g. for V=
-SM
-    itself, and potentially for VMPL/SVSM support.
-
-IMO, #2 is a *huge* selling point.  Not having to coordinate changes across
-multiple code bases and/or organizations and/or maintainers is a big win fo=
-r
-velocity, long term maintenance, and probably the very viability of HEKI.
-
-Providing the guest with the tools to define and implement its own policy m=
-eans
-end users don't have to way for some third party, e.g. CSPs, to deploy the
-accompanying host-side changes, because there are no host-side changes.
-
-And encapsulating everything in the guest drastically reduces the friction =
-with
-changes in the kernel that interact with hardening, both from a technical a=
-nd a
-social perspective.  I.e. giving the kernel (near) complete control over it=
-s
-destiny minimizes the number of moving parts, and will be far, far easier t=
-o sell
-to maintainers.  I would expect maintainers to react much more favorably to=
- being
-handed tools to harden the kernel, as opposed to being presented a set of A=
-PIs
-that can be used to make the kernel compliant with _someone else's_ vision =
-of
-what kernel hardening should look like.
-
-E.g. imagine a new feature comes along that requires overriding CR0/CR4 pin=
-ning
-in a way that doesn't fit into existing policy.  If the VMM is involved in
-defining/enforcing the CR pinning policy, then supporting said new feature =
-would
-require new guest/host ABI and an updated host VMM in order to make the new
-feature compatible with HEKI.  Inevitably, even if everything goes smoothly=
- from
-an upstreaming perspective, that will result in guests that have to choose =
-between
-HEKI and new feature X, because there is zero chance that all hosts that ru=
-n Linux
-as a guest will be updated in advance of new feature X being deployed.
-
-And if/when things don't go smoothly, odds are very good that kernel mainta=
-iners
-will eventually tire of having to coordinate and negotiate with QEMU and ot=
-her
-VMMs, and will become resistant to continuing to support/extend HEKI.
-
-> If yes, that would indeed require a *lot* of work for something we're not
-> sure will be accepted later on.
-
-Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM s=
-upport
-is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible t=
-o
-design KVM support such that much of the development load can be shared bet=
-ween
-the projects.  And having 2+ use cases for a feature (set) makes it _much_ =
-more
-likely that the feature(s) will be accepted.
-
-And similar to what Paolo said regarding HEKI not having a complete story, =
-I
-don't see a clear line of sight for landing host-defined policy enforcement=
-, as
-there are many open, non-trivial questions that need answers. I.e. upstream=
-ing
-HEKI in its current form is also far from a done deal, and isn't guaranteed=
- to
-be substantially less work when all is said and done.
+--=20
+paul-moore.com
