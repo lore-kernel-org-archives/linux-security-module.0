@@ -1,172 +1,253 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE11161313;
-	Tue,  7 May 2024 16:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079E316ABC1
+	for <linux-security-module@vger.kernel.org>; Tue,  7 May 2024 16:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715098379; cv=none; b=opS4y6jzX/cjYpB1e8Nfww7Z5K3UXj9PO18SzBjV0TwQ3tyUQG68GrFa77dmUKG+o0C+UENet+arVv20wpUNm+Wmq66IwaZ6myRB8BkmtIRM7FNT7clN9M86q3OKdbiclFBsjygrX37oHYeOoBB+GCpsXP6hot0fgjos7cGL+OE=
+	t=1715098570; cv=none; b=qt1d+acNdcNbic9b7IM2tuQI565pNJOrCyLDqiG5RDCdhEzx6FmyOA9wg+uLwZrEaKg9B1bOgLZvvFB/jTvZjZkWOvGGCbmluZAdQVlMinEGKTCa+KaZ/XlnT4UgeQPRFX82xoDiJZmnP1PK6RlW0a6TFYEWUWh2Y9+tr+xEdlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715098379; c=relaxed/simple;
-	bh=bbTDWh66UED1QLhPAXsQ6AZkQ2EoBcMaONnv7YCq/hY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e8sv4lQIpZHzwIwGyCcHtZZSSQt4oIxVb6tURkKjMNVYe0vi7yoR+f+tTRjM40ttwbzsWWXL5pxgjKFaSQBlmxE/YPkPmB8E63KcNQkvrbwCoL1QBfpErRmrK2jmWxaJYUUTEO04LQW35BVumKtxi/f41keySFxxs0SvCugEjEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJx8au/+; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715098570; c=relaxed/simple;
+	bh=n4oL9QdCVInqGhf/IejBHhOJycGpmskHhXQcPvV0+5w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lK7yvi5kPSvrZUUq8UDGGX7XKALDLx10+Re5sc7zNVdBzuZp3VWlibN9xlX3aqY1RLy6QvovRqjgeJil5cDPatPZT+4a4bQuWBiiU+xzPjvUF+XZf3CkmKTjVuq3sg1kBk+APJe8Voc1sziPOFjaLy9UMwaO8LbmA9PKchVL8j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uMeGXue2; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJx8au/+"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2b432be5e80so2247874a91.1;
-        Tue, 07 May 2024 09:12:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uMeGXue2"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6b26783b4so4331424276.0
+        for <linux-security-module@vger.kernel.org>; Tue, 07 May 2024 09:16:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715098377; x=1715703177; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=PKiNs+Eyb9Bn48MccDEqrFWd4i9lupG2qQOeAxxeZro=;
-        b=kJx8au/+9pf5edTeIh3vn80HqFcFiz4BDSq439Al6yD5J1IH6rmdY6GUo+tu6Sx8Kz
-         14wrqATnDjsRXqEJR3VP1i44l6uN6m9lU1MxPwHsJfWxsLhU4HpF0V/KZlnsTngSQUiD
-         iP3E0mVKAYKEzebdvvZQa96ckO5U/LQCaxzOiFgG0AFGW21Bal6dzQ6s04lFh6mqiUO7
-         mSLnjXCN9XdobGp5VwGets5etRCjdJl1H7ZuyFZodYrZF0Y4JqslgKRCWc11jdn2gl2c
-         ImRYy6TubfruHpj4GnRkwnRFF1OdoNOUGJjGBjuNLXJslYfsr2fGjR5I0W5m8eq4qeha
-         AqnQ==
+        d=google.com; s=20230601; t=1715098568; x=1715703368; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IWxS0mCdKrqU6bVOz4n3NTmQy0CRO7Urzkw5a/fWZlQ=;
+        b=uMeGXue2xAiO8uSusy505x4973sRuVnPct94e5Cm2OQalOkV7vjyNrPO67Zr/vC7wP
+         YpAyg4pYPeVIBfb++egKABY8H7nYzv47k9KyfxJf8SkimcuHBDCvgo2iciZr8k6yDQ3H
+         +sKHpl9zwTVagTolmTyDNn0QDXKvkrI6sH0AIyyN9r1kMI2Sm0AiY630D1Dwuo3Nvlyv
+         eskfWdD3kraqjff94Bi5xRxWpwSQpf499jXnWgRxk9897sxPdyz5hz057kUh6sRrP//3
+         auAcQscoQb2UY63/ImrOfBvfYOSoNzdQRAeSPhuFJUkFZ4VV3m5OwkDiiOMMo/STzzRb
+         94sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715098377; x=1715703177;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PKiNs+Eyb9Bn48MccDEqrFWd4i9lupG2qQOeAxxeZro=;
-        b=nz+VcN4JF94ksqtyOvn3WOaExzbJJU4SMOQZYWQWwyyzNmOqesBOWF+2g+nnKQZGDv
-         vvkVW9oTSQ3qit1MBnXKzZfk974Dg2spcobPKZSE97sQRc1/WCnKPGeRFWDrzP2tIm7F
-         tt59XOWcXE5Ch1nmz96w7Lm+YEJ7JZXkIVKcF9WdB/Q0y+SXdBSV7wM/13jL10q+votu
-         0DnWm/45Hkn/ll77OGnBb5KkSB+m+mLu6l0GNq3J3ktORCg33jzJ1Mhquvi2e8Hv/4W0
-         lyVReLsG8Amea80Xe7TwAAoHkBzyc0WvL1/zQFSmfVdz6306HtnTrQeN0vBzUQHeqJDQ
-         zJIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPT31nhcKcLrpPGCNzQj+8GotCisJIYrMsj92uABiIFdjgKidGwUGDq3Vd9NgKiv7rAVgC+17TaUec1OBnmjsq4rvuZb/cpDMufAO9WGOix7LBkjYhhUmZUBz6E2ji0SCkLzsb2IyQHMYcq+XG93SquHCt
-X-Gm-Message-State: AOJu0YxoC3fPqxSneE9SnINUjTnIgvuzEUXbAHnJOSAyTZTfHiVrY0Sf
-	qrIiWvK14EPhN5FuNWAQB9JTYU2cGU8yvOyVTyb9v9zSBsosKCjxXmGXWA==
-X-Google-Smtp-Source: AGHT+IEuuYCIffhrOC39efKRS9JKHBE+xaSPvS4I2ZB91kuyZJ0uPufzOcOoMgDhL3tqMFR7dFh1Bw==
-X-Received: by 2002:a17:90a:ab12:b0:2b2:9855:2836 with SMTP id 98e67ed59e1d1-2b616be1f64mr5304a91.34.1715098377109;
-        Tue, 07 May 2024 09:12:57 -0700 (PDT)
-Received: from SYSOS.. ([115.178.65.130])
-        by smtp.gmail.com with ESMTPSA id o9-20020a17090a744900b002b1cad4fd97sm10038382pjk.25.2024.05.07.09.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 09:12:56 -0700 (PDT)
-Sender: Leesoo Ahn <yisooan.dev@gmail.com>
-From: Leesoo Ahn <lsahn@ooseel.net>
-X-Google-Original-From: Leesoo Ahn <lsahn@wewakecorp.com>
-To: lsahn@wewakecorp.com
-Cc: Leesoo Ahn <lsahn@ooseel.net>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: fix possible NULL pointer dereference
-Date: Wed,  8 May 2024 01:12:29 +0900
-Message-Id: <20240507161229.4175603-1-lsahn@wewakecorp.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1715098568; x=1715703368;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IWxS0mCdKrqU6bVOz4n3NTmQy0CRO7Urzkw5a/fWZlQ=;
+        b=lFm70GQvXihdy6OWCp3a9ry61pSyhaU8Y2EiglnXxxFz7sTgn5lyrw4AHd/PFUsJkk
+         S/5j25BXxfIawo+YHSL5ObXrMDpUIB+x6mJKdOC81uEDKcqcKgQc2wY/+RDA8OMQQJNf
+         Azl6PsZUZ++zkE4JBA7PCJ5afsWI9GZAvQH6ogf50yOeUE4VQ7h8vhtkcrSWjDT16fzj
+         e/I0Zj41J3TcrBYtOV07QcqRtqF0ZDz2p48TiCw/dYB+YjoSxLmGN98nCoQicfwi/8Rk
+         PWApxGSuWP0jCPfZPJhBn/ww4dOJx0Ba8nRaU7oBiJtjr36dxe1RusIvI47hXkisG3zh
+         JSeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWY648GCv1XzolN2/SmcakQLkuA5AGMrZGOd/asd3o6gIIGauBJ4e69aFSmoMfJC+RCCl2rMlAmfWAvHZH/d4eABmPMeOQk89sNRkWPhvr3Mv0qBV1t
+X-Gm-Message-State: AOJu0YxJ8aJhgyAx7QJ9lrefZqBZ2vP6AV9O3Yw6JEl97Cv9CghXtnS7
+	xG6uO85LNgs9J2ok7ikqMNdIKFf9MRO3m++hsoEn6VbxxzUyUXLlMSGxowNq/DqWf0Fv8JTcUAV
+	b1g==
+X-Google-Smtp-Source: AGHT+IEEPkTwPJaOTGouRKDc7DVHMnqTRjb0yesgQ4YUUdFhPv8WpJzXBwRvcXmUBR39ssSE6I5KsNiqYrA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:707:b0:dbe:30cd:8fcb with SMTP id
+ 3f1490d57ef6-debb9c0032emr11950276.0.1715098567940; Tue, 07 May 2024 09:16:07
+ -0700 (PDT)
+Date: Tue, 7 May 2024 09:16:06 -0700
+In-Reply-To: <20240507.ieghomae0UoC@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240503131910.307630-1-mic@digikod.net> <20240503131910.307630-4-mic@digikod.net>
+ <ZjTuqV-AxQQRWwUW@google.com> <20240506.ohwe7eewu0oB@digikod.net>
+ <ZjmFPZd5q_hEBdBz@google.com> <20240507.ieghomae0UoC@digikod.net>
+Message-ID: <ZjpTxt-Bxia3bRwB@google.com>
+Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
+ configuration and violation
+From: Sean Christopherson <seanjc@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
+	Angelina Vu <angelinavu@linux.microsoft.com>, 
+	Anna Trikalinou <atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Forrest Yuan Yu <yuanyu@google.com>, James Gowans <jgowans@amazon.com>, 
+	James Morris <jamorris@linux.microsoft.com>, John Andersen <john.s.andersen@intel.com>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>, 
+	"Mihai =?utf-8?B?RG9uyJt1?=" <mdontu@bitdefender.com>, 
+	"=?utf-8?B?TmljdciZb3IgQ8OuyJt1?=" <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, 
+	Will Deacon <will@kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	"=?utf-8?Q?=C8=98tefan_=C8=98icleru?=" <ssicleru@bitdefender.com>, dev@lists.cloudhypervisor.org, 
+	kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, 
+	virtualization@lists.linux-foundation.org, x86@kernel.org, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-profile->parent->dents[AAFS_PROF_DIR] could be NULL only if its parent is made
-from __create_missing_ancestors(..) and 'ent->old' is NULL in
-aa_replace_profiles(..).
-In that case, it must return an error code and the code, -ENOENT represents
-its state that the path of its parent is not existed yet.
+On Tue, May 07, 2024, Micka=C3=ABl Sala=C3=BCn wrote:
+> > Actually, potential bad/crazy idea.  Why does the _host_ need to define=
+ policy?
+> > Linux already knows what assets it wants to (un)protect and when.  What=
+'s missing
+> > is a way for the guest kernel to effectively deprivilege and re-authent=
+icate
+> > itself as needed.  We've been tossing around the idea of paired VMs+vCP=
+Us to
+> > support VTLs and SEV's VMPLs, what if we usurped/piggybacked those idea=
+s, with a
+> > bit of pKVM mixed in?
+> >=20
+> > Borrowing VTL terminology, where VTL0 is the least privileged, userspac=
+e launches
+> > the VM at VTL0.  At some point, the guest triggers the deprivileging se=
+quence and
+> > userspace creates VTL1.  Userpace also provides a way for VTL0 restrict=
+ access to
+> > its memory, e.g. to effectively make the page tables for the kernel's d=
+irect map
+> > writable only from VTL1, to make kernel text RO (or XO), etc.  And VTL0=
+ could then
+> > also completely remove its access to code that changes CR0/CR4.
+> >=20
+> > It would obviously require a _lot_ more upfront work, e.g. to isolate t=
+he kernel
+> > text that modifies CR0/CR4 so that it can be removed from VTL0, but tha=
+t should
+> > be doable with annotations, e.g. tag relevant functions with __magic or=
+ whatever,
+> > throw them in a dedicated section, and then free/protect the section(s)=
+ at the
+> > appropriate time.
+> >=20
+> > KVM would likely need to provide the ability to switch VTLs (or whateve=
+r they get
+> > called), and host userspace would need to provide a decent amount of th=
+e backend
+> > mechanisms and "core" policies, e.g. to manage VTL0 memory, teardown (t=
+urn off?)
+> > VTL1 on kexec(), etc.  But everything else could live in the guest kern=
+el itself.
+> > E.g. to have CR pinning play nice with kexec(), toss the relevant kexec=
+() code into
+> > VTL1.  That way VTL1 can verify the kexec() target and tear itself down=
+ before
+> > jumping into the new kernel.=20
+> >=20
+> > This is very off the cuff and have-wavy, e.g. I don't have much of an i=
+dea what
+> > it would take to harden kernel text patching, but keeping the policy in=
+ the guest
+> > seems like it'd make everything more tractable than trying to define an=
+ ABI
+> > between Linux and a VMM that is rich and flexible enough to support all=
+ the
+> > fancy things Linux does (and will do in the future).
+>=20
+> Yes, we agree that the guest needs to manage its own policy.  That's why
+> we implemented Heki for KVM this way, but without VTLs because KVM
+> doesn't support them.
+>=20
+> To sum up, is the VTL approach the only one that would be acceptable for
+> KVM? =20
 
-BUG: kernel NULL pointer dereference, address: 0000000000000030
-PGD 0 P4D 0
-PREEMPT SMP PTI
-CPU: 4 PID: 3362 Comm: apparmor_parser Not tainted 6.8.0-24-generic #24
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:aafs_create.constprop.0+0x7f/0x130
-Code: 4c 63 e0 48 83 c4 18 4c 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9 45 31 d2 c3 cc cc cc cc <4d> 8b 55 30 4d 8d ba a0 00 00 00 4c 89 55 c0 4c 89 ff e8 7a 6a ae
-RSP: 0018:ffffc9000b2c7c98 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 00000000000041ed RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000b2c7cd8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82baac10
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007be9f22cf740(0000) GS:ffff88817bc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000030 CR3: 0000000134b08000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- ? show_regs+0x6d/0x80
- ? __die+0x24/0x80
- ? page_fault_oops+0x99/0x1b0
- ? kernelmode_fixup_or_oops+0xb2/0x140
- ? __bad_area_nosemaphore+0x1a5/0x2c0
- ? find_vma+0x34/0x60
- ? bad_area_nosemaphore+0x16/0x30
- ? do_user_addr_fault+0x2a2/0x6b0
- ? exc_page_fault+0x83/0x1b0
- ? asm_exc_page_fault+0x27/0x30
- ? aafs_create.constprop.0+0x7f/0x130
- ? aafs_create.constprop.0+0x51/0x130
- __aafs_profile_mkdir+0x3d6/0x480
- aa_replace_profiles+0x83f/0x1270
- policy_update+0xe3/0x180
- profile_load+0xbc/0x150
- ? rw_verify_area+0x47/0x140
- vfs_write+0x100/0x480
- ? __x64_sys_openat+0x55/0xa0
- ? syscall_exit_to_user_mode+0x86/0x260
- ksys_write+0x73/0x100
- __x64_sys_write+0x19/0x30
- x64_sys_call+0x7e/0x25c0
- do_syscall_64+0x7f/0x180
- entry_SYSCALL_64_after_hwframe+0x78/0x80
-RIP: 0033:0x7be9f211c574
-Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-RSP: 002b:00007ffd26f2b8c8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00005d504415e200 RCX: 00007be9f211c574
-RDX: 0000000000001fc1 RSI: 00005d504418bc80 RDI: 0000000000000004
-RBP: 0000000000001fc1 R08: 0000000000001fc1 R09: 0000000080000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00005d504418bc80
-R13: 0000000000000004 R14: 00007ffd26f2b9b0 R15: 00007ffd26f2ba30
- </TASK>
-Modules linked in: snd_seq_dummy snd_hrtimer qrtr snd_hda_codec_generic snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq snd_seq_device i2c_i801 snd_timer i2c_smbus qxl snd soundcore drm_ttm_helper lpc_ich ttm joydev input_leds serio_raw mac_hid binfmt_misc msr parport_pc ppdev lp parport efi_pstore nfnetlink dmi_sysfs qemu_fw_cfg ip_tables x_tables autofs4 hid_generic usbhid hid ahci libahci psmouse virtio_rng xhci_pci xhci_pci_renesas
-CR2: 0000000000000030
----[ end trace 0000000000000000 ]---
-RIP: 0010:aafs_create.constprop.0+0x7f/0x130
-Code: 4c 63 e0 48 83 c4 18 4c 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9 45 31 d2 c3 cc cc cc cc <4d> 8b 55 30 4d 8d ba a0 00 00 00 4c 89 55 c0 4c 89 ff e8 7a 6a ae
-RSP: 0018:ffffc9000b2c7c98 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 00000000000041ed RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000b2c7cd8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82baac10
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007be9f22cf740(0000) GS:ffff88817bc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000030 CR3: 0000000134b08000 CR4: 00000000000006f0
+Heh, that's not a question you want to be asking.  You're effectively askin=
+g me
+to make an authorative, "final" decision on a topic which I am only passing=
+ly
+familiar with.
 
-Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
----
- security/apparmor/apparmorfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+But since you asked it... :-)  Probably?
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index bcfea073e3f2..01b923d97a44 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -1692,6 +1692,10 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
- 		struct aa_profile *p;
- 		p = aa_deref_parent(profile);
- 		dent = prof_dir(p);
-+		if (!dent) {
-+			error = -ENOENT;
-+			goto fail2;
-+		}
- 		/* adding to parent that previously didn't have children */
- 		dent = aafs_create_dir("profiles", dent);
- 		if (IS_ERR(dent))
--- 
-2.34.1
+I see a lot of advantages to a VTL/VSM-like approach:
 
+ 1. Provides Linux-as-a guest the flexibility it needs to meaningfully adva=
+nce
+    its security, with the least amount of policy built into the guest/host=
+ ABI.
+
+ 2. Largely decouples guest policy from the host, i.e. should allow the gue=
+st to
+    evolve/update it's policy without needing to coordinate changes with th=
+e host.
+
+ 3. The KVM implementation can be generic enough to be reusable for other f=
+eatures.
+
+ 4. Other groups are already working on VTL-like support in KVM, e.g. for V=
+SM
+    itself, and potentially for VMPL/SVSM support.
+
+IMO, #2 is a *huge* selling point.  Not having to coordinate changes across
+multiple code bases and/or organizations and/or maintainers is a big win fo=
+r
+velocity, long term maintenance, and probably the very viability of HEKI.
+
+Providing the guest with the tools to define and implement its own policy m=
+eans
+end users don't have to way for some third party, e.g. CSPs, to deploy the
+accompanying host-side changes, because there are no host-side changes.
+
+And encapsulating everything in the guest drastically reduces the friction =
+with
+changes in the kernel that interact with hardening, both from a technical a=
+nd a
+social perspective.  I.e. giving the kernel (near) complete control over it=
+s
+destiny minimizes the number of moving parts, and will be far, far easier t=
+o sell
+to maintainers.  I would expect maintainers to react much more favorably to=
+ being
+handed tools to harden the kernel, as opposed to being presented a set of A=
+PIs
+that can be used to make the kernel compliant with _someone else's_ vision =
+of
+what kernel hardening should look like.
+
+E.g. imagine a new feature comes along that requires overriding CR0/CR4 pin=
+ning
+in a way that doesn't fit into existing policy.  If the VMM is involved in
+defining/enforcing the CR pinning policy, then supporting said new feature =
+would
+require new guest/host ABI and an updated host VMM in order to make the new
+feature compatible with HEKI.  Inevitably, even if everything goes smoothly=
+ from
+an upstreaming perspective, that will result in guests that have to choose =
+between
+HEKI and new feature X, because there is zero chance that all hosts that ru=
+n Linux
+as a guest will be updated in advance of new feature X being deployed.
+
+And if/when things don't go smoothly, odds are very good that kernel mainta=
+iners
+will eventually tire of having to coordinate and negotiate with QEMU and ot=
+her
+VMMs, and will become resistant to continuing to support/extend HEKI.
+
+> If yes, that would indeed require a *lot* of work for something we're not
+> sure will be accepted later on.
+
+Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM s=
+upport
+is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible t=
+o
+design KVM support such that much of the development load can be shared bet=
+ween
+the projects.  And having 2+ use cases for a feature (set) makes it _much_ =
+more
+likely that the feature(s) will be accepted.
+
+And similar to what Paolo said regarding HEKI not having a complete story, =
+I
+don't see a clear line of sight for landing host-defined policy enforcement=
+, as
+there are many open, non-trivial questions that need answers. I.e. upstream=
+ing
+HEKI in its current form is also far from a done deal, and isn't guaranteed=
+ to
+be substantially less work when all is said and done.
