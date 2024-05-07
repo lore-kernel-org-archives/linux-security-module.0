@@ -1,164 +1,387 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B93415B963
-	for <linux-security-module@vger.kernel.org>; Mon,  6 May 2024 21:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A77A3FEF;
+	Tue,  7 May 2024 01:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715029985; cv=none; b=uPmpMVjMoBF9I4ces/kO8kSPS4bQAYG9XpgLKdRcqcB88u+FXxqGUQ13PKL0cVFtdxqLNyC2i5yvgzPDB2RrnOTEAMCZIVwhTvcoTQbyIZR1hsP0XNEFYNbxBQZ1Mmxp3V5bLRxDcOafK/YwMh2ISwPOx/NnqvLDQEZu+tikqI4=
+	t=1715045447; cv=none; b=rH8v7z5xN3jy9567mPELhIsSp7MxzZZcvV5BXgY5GNA3YDk73VCOTQeJ9OuFatQdhCEFtG3TUMhstp8jMdjdRSrRk+aiCuKx7qsgzyauHqumrHj/Pvoqhm03pC7pXOcnZKDH3K+nA6DqJZ2jPjH5hMblBUUtwU046M+s1yWAdPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715029985; c=relaxed/simple;
-	bh=SY+8UM6Ya3LN5CVLnLFC3F0TWkfazInPoDky4RbxaSU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PmVrlDvcJ/El1d9cEYt3U+B/e91IjqDZUQ2nI+QDyrB/aXoJ44Xa5SxUG8wVifsv5CR6rLvU8q7H4cj0TzEnyWX2p/8chVSSVgJ/X5V+etD6Y1lWqwctTl7h4+HcOGL2cmREXFhXdg1zIF/7t3LDiu38CwPG/VYJkLNVZ0f2rj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e5vvRgLI; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e5vvRgLI"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61be74097cbso25973937b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 06 May 2024 14:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715029981; x=1715634781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q+v8LBEop2fdOZEDDkjilbFKI0qO+TSZpOXL+kjzb20=;
-        b=e5vvRgLIwWntAzSHhyagX+HCajeSg8WNU92DzJujuKaM0RoGX4adDgz+o71/KdTaYa
-         5YnZyhl6Sjo93/MQa+w1GRA8aOBGtmgiYRh7iHUdeZfQyByUPf/e5HUh1/fhwKfsZHPl
-         71nNT2X95/QnCTiIMkUwsmBMMLikhVgj5kMkQoU5kQRDjaxZC+ir9qILT15brr/WcFhe
-         SBbYG8Q9ubh9qeHu4lm4T+7JqCp9r7NRsuAclNtvSOB9jugS5rYM1wlaplb1Js2GMtoM
-         sViMfchBL517CHZMNjJix1dJKASo5VPmdV1vIPI5CAlRAV/vkMpd3CGsEyPnv954aE+m
-         b25g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715029981; x=1715634781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q+v8LBEop2fdOZEDDkjilbFKI0qO+TSZpOXL+kjzb20=;
-        b=JavE2hJxJ1dAHSQBKKCzFIfCos7RlAHkj9W7/o7Lz5CgX82lScR67EFYrW8M4a41jC
-         3ctAhXHZ8v6BtDbcF1ZMBItIIKmkuDSAesIu9PSzjIXjheCvof37hpxrmQQSaCkxb1Ym
-         SXdUJ1Z8KELJicHT6YfhpqkNoqKXIew+DMlrODqGRAlEgXCIWesiJYnO5IvvUBJ7IrF9
-         Q+6GczMkWVN0oFPlc8MphMABdkLEL9Ly/YuN153pk9DENW4BTFai+c0/tVRdn7t5JtDb
-         WFOYk6QwgQaYb/GBg5x96Uscfzd88uQoXe+qPn7syjwY0zCJ0BkKj4K/auoWw9HIvK2X
-         rKyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUMkZ1W7H2/8P2PJS/zJ+eM5ES7hSDvoaMHkhssww4MKfixE0X+6k5hM5iQG57ygoreKgwgBEtOi5O7DxMpFh1N4vbvPuFnBDuhiMnV0F+jdhYzH86
-X-Gm-Message-State: AOJu0YywRpREjEpMWsOrS1XgENyD3aKqXg3k5vPO/EciN3utk+G/f/S4
-	1d/uAg7XezQ2DGmZKYglSOiTehoMbwnkvkjP+Dnhoh9k3wXqGXElxxQzNBDlT3wdfsAoqzEsz3I
-	yPD9UryyPHBoQ75eaNoZ1wbRRU0d3Yn8SAMOYvIIBCsH6ghk=
-X-Google-Smtp-Source: AGHT+IFSaqJzaRnYDFR7/BKMMg8f+lw74iFjuNIE8o2jF/QSE2uVjujwEMoDA9VmfqVD0+I5pOnzm67RlrsP7pIWVxw=
-X-Received: by 2002:a81:92c1:0:b0:618:ce10:2fcd with SMTP id
- j184-20020a8192c1000000b00618ce102fcdmr11718174ywg.26.1715029981015; Mon, 06
- May 2024 14:13:01 -0700 (PDT)
+	s=arc-20240116; t=1715045447; c=relaxed/simple;
+	bh=vTR+7Ev1n6Ut/NiVz/OpkbVt/mSHV1j/X8zkduWP2Ag=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rd59ZIfHmSwVF/Nlnia19kYlBYSEw/YmgiRWHCBiWQAlrVande6uOO6Ba/RtLM50zPCCYMwLi8mUtNgf4uYnoSG5zBiteCe8wmaIfOXtSPOj5Yz617D7h9woD5nvalpjxeMQVt4uJIRwV4JNNi9qyO44AzGZiS03+kTl2TEHbx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VYLHL0ctfz1j19V;
+	Tue,  7 May 2024 09:27:26 +0800 (CST)
+Received: from dggpemm500024.china.huawei.com (unknown [7.185.36.203])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C6F41403D1;
+	Tue,  7 May 2024 09:30:41 +0800 (CST)
+Received: from huawei.com (10.67.174.60) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 7 May
+ 2024 09:30:40 +0800
+From: GUO Zihua <guozihua@huawei.com>
+To: <paul@paul-moore.com>, <john.johansen@canonical.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>, <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
+	<dmitry.kasatkin@gmail.com>, <stephen.smalley.work@gmail.com>,
+	<casey@schaufler-ca.com>, <eparis@redhat.com>
+CC: <eric.snowberg@oracle.com>, <omosnace@redhat.com>,
+	<audit@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
+	<linux-security-module@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+	<selinux@vger.kernel.org>
+Subject: [PATCH v3] ima: Avoid blocking in RCU read-side critical section
+Date: Tue, 7 May 2024 01:25:41 +0000
+Message-ID: <20240507012541.796421-1-guozihua@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ce1a2b59831d74cf8395501f1138923bb842dbce.1714992251.git.dcaratti@redhat.com>
-In-Reply-To: <ce1a2b59831d74cf8395501f1138923bb842dbce.1714992251.git.dcaratti@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 6 May 2024 17:12:50 -0400
-Message-ID: <CAHC9VhQMr9tinpb=Fsgx6B0JKP0L0VYusdPha_RnMH6EWVpztg@mail.gmail.com>
-Subject: Re: [PATCH net v3] netlabel: fix RCU annotation for IPv4 options on
- socket creation
-To: Davide Caratti <dcaratti@redhat.com>
-Cc: casey@schaufler-ca.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, xmu@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
 
-On Mon, May 6, 2024 at 6:45=E2=80=AFAM Davide Caratti <dcaratti@redhat.com>=
- wrote:
->
-> Xiumei reports the following splat when netlabel and TCP socket are used:
->
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->  WARNING: suspicious RCU usage
->  6.9.0-rc2+ #637 Not tainted
->  -----------------------------
->  net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
->
->  other info that might help us debug this:
->
->  rcu_scheduler_active =3D 2, debug_locks =3D 1
->  1 lock held by ncat/23333:
->   #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setat=
-tr+0x25/0x1b0
->
->  stack backtrace:
->  CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
->  Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  =
-07/26/2013
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0xa9/0xc0
->   lockdep_rcu_suspicious+0x117/0x190
->   cipso_v4_sock_setattr+0x1ab/0x1b0
->   netlbl_sock_setattr+0x13e/0x1b0
->   selinux_netlbl_socket_post_create+0x3f/0x80
->   selinux_socket_post_create+0x1a0/0x460
->   security_socket_post_create+0x42/0x60
->   __sock_create+0x342/0x3a0
->   __sys_socket_create.part.22+0x42/0x70
->   __sys_socket+0x37/0xb0
->   __x64_sys_socket+0x16/0x20
->   do_syscall_64+0x96/0x180
->   ? do_user_addr_fault+0x68d/0xa30
->   ? exc_page_fault+0x171/0x280
->   ? asm_exc_page_fault+0x22/0x30
->   entry_SYSCALL_64_after_hwframe+0x71/0x79
->  RIP: 0033:0x7fbc0ca3fc1b
->  Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e =
-0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 f=
-f ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
->  RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
->  RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
->  RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
->  RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
->
-> R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
->  R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
->   </TASK>
->
-> The current implementation of cipso_v4_sock_setattr() replaces IP options
-> under the assumption that the caller holds the socket lock; however, such
-> assumption is not true, nor needed, in selinux_socket_post_create() hook.
->
-> Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
-> condition, except selinux_socket_post_create() _ where such condition can
-> safely be set as true even without holding the socket lock.
->
-> v3:
->  - rename variable to 'sk_locked' (thanks Paul Moore)
->  - keep rcu_replace_pointer() open-coded and re-add NULL check of 'old',
->    these two changes will be posted in another patch (thanks Paul Moore)
->
-> v2:
->  - pass lockdep_sock_is_held() through a boolean variable in the stack
->    (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
->  - use rcu_replace_pointer() instead of rcu_dereference_protected() +
->    rcu_assign_pointer()
->  - remove NULL check of 'old' before kfree_rcu()
->
-> Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
-> Reported-by: Xiumei Mu <xmu@redhat.com>
-> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-> ---
->  include/net/cipso_ipv4.h     | 6 ++++--
->  include/net/netlabel.h       | 6 ++++--
->  net/ipv4/cipso_ipv4.c        | 7 ++++---
->  net/netlabel/netlabel_kapi.c | 9 ++++++---
->  security/selinux/netlabel.c  | 5 ++++-
->  security/smack/smack_lsm.c   | 3 ++-
->  6 files changed, 24 insertions(+), 12 deletions(-)
+A panic happens in ima_match_policy:
 
-Looks good to me, thanks Davide.
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
+PGD 42f873067 P4D 0
+Oops: 0000 [#1] SMP NOPTI
+CPU: 5 PID: 1286325 Comm: kubeletmonit.sh Kdump: loaded Tainted: P
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+RIP: 0010:ima_match_policy+0x84/0x450
+Code: 49 89 fc 41 89 cf 31 ed 89 44 24 14 eb 1c 44 39 7b 18 74 26 41 83 ff 05 74 20 48 8b 1b 48 3b 1d f2 b9 f4 00 0f 84 9c 01 00 00 <44> 85 73 10 74 ea 44 8b 6b 14 41 f6 c5 01 75 d4 41 f6 c5 02 74 0f
+RSP: 0018:ff71570009e07a80 EFLAGS: 00010207
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000200
+RDX: ffffffffad8dc7c0 RSI: 0000000024924925 RDI: ff3e27850dea2000
+RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffffabfce739
+R10: ff3e27810cc42400 R11: 0000000000000000 R12: ff3e2781825ef970
+R13: 00000000ff3e2785 R14: 000000000000000c R15: 0000000000000001
+FS:  00007f5195b51740(0000) GS:ff3e278b12d40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000010 CR3: 0000000626d24002 CR4: 0000000000361ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ima_get_action+0x22/0x30
+ process_measurement+0xb0/0x830
+ ? page_add_file_rmap+0x15/0x170
+ ? alloc_set_pte+0x269/0x4c0
+ ? prep_new_page+0x81/0x140
+ ? simple_xattr_get+0x75/0xa0
+ ? selinux_file_open+0x9d/0xf0
+ ima_file_check+0x64/0x90
+ path_openat+0x571/0x1720
+ do_filp_open+0x9b/0x110
+ ? page_counter_try_charge+0x57/0xc0
+ ? files_cgroup_alloc_fd+0x38/0x60
+ ? __alloc_fd+0xd4/0x250
+ ? do_sys_open+0x1bd/0x250
+ do_sys_open+0x1bd/0x250
+ do_syscall_64+0x5d/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x65/0xca
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Commit c7423dbdbc9e ("ima: Handle -ESTALE returned by
+ima_filter_rule_match()") introduced call to ima_lsm_copy_rule within a
+RCU read-side critical section which contains kmalloc with GFP_KERNEL.
+This implies a possible sleep and violates limitations of RCU read-side
+critical sections on non-PREEMPT systems.
 
---=20
-paul-moore.com
+Sleeping within RCU read-side critical section might cause
+synchronize_rcu() returning early and break RCU protection, allowing a
+UAF to happen.
+
+The root cause of this issue could be described as follows:
+|	Thread A	|	Thread B	|
+|			|ima_match_policy	|
+|			|  rcu_read_lock	|
+|ima_lsm_update_rule	|			|
+|  synchronize_rcu	|			|
+|			|    kmalloc(GFP_KERNEL)|
+|			|      sleep		|
+==> synchronize_rcu returns early
+|  kfree(entry)		|			|
+|			|    entry = entry->next|
+==> UAF happens and entry now becomes NULL (or could be anything).
+|			|    entry->action	|
+==> Accessing entry might cause panic.
+
+To fix this issue, we are converting all kmalloc that is called within
+RCU read-side critical section to use GFP_ATOMIC.
+
+Fixes: c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
+Cc: stable@vger.kernel.org
+Signed-off-by: GUO Zihua <guozihua@huawei.com>
+---
+
+v3:
+  ima_lsm_copy_rule takes a GFP flag as input as well.
+v2:
+  Changed the audit_rule_init security hook to accept a new GFP flag, as
+per Stephen's suggestion.
+
+---
+ include/linux/lsm_hook_defs.h       |  2 +-
+ include/linux/security.h            |  5 +++--
+ kernel/auditfilter.c                |  5 +++--
+ security/apparmor/audit.c           |  6 +++---
+ security/apparmor/include/audit.h   |  2 +-
+ security/integrity/ima/ima_policy.c | 15 +++++++++------
+ security/security.c                 |  6 ++++--
+ security/selinux/include/audit.h    |  4 +++-
+ security/selinux/ss/services.c      |  5 +++--
+ security/smack/smack_lsm.c          |  3 ++-
+ 10 files changed, 32 insertions(+), 21 deletions(-)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 334e00efbde4..7e539f6f8c67 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -412,7 +412,7 @@ LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
+ 
+ #ifdef CONFIG_AUDIT
+ LSM_HOOK(int, 0, audit_rule_init, u32 field, u32 op, char *rulestr,
+-	 void **lsmrule)
++	 void **lsmrule, gfp_t gfp)
+ LSM_HOOK(int, 0, audit_rule_known, struct audit_krule *krule)
+ LSM_HOOK(int, 0, audit_rule_match, u32 secid, u32 field, u32 op, void *lsmrule)
+ LSM_HOOK(void, LSM_RET_VOID, audit_rule_free, void *lsmrule)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 41a8f667bdfa..5122e3ad83b1 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2048,7 +2048,8 @@ static inline void security_key_post_create_or_update(struct key *keyring,
+ 
+ #ifdef CONFIG_AUDIT
+ #ifdef CONFIG_SECURITY
+-int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
++int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
++			     gfp_t gfp);
+ int security_audit_rule_known(struct audit_krule *krule);
+ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
+ void security_audit_rule_free(void *lsmrule);
+@@ -2056,7 +2057,7 @@ void security_audit_rule_free(void *lsmrule);
+ #else
+ 
+ static inline int security_audit_rule_init(u32 field, u32 op, char *rulestr,
+-					   void **lsmrule)
++					   void **lsmrule, gfp_t gfp)
+ {
+ 	return 0;
+ }
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index be8c680121e4..d6ef4f4f9cba 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -529,7 +529,8 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
+ 			entry->rule.buflen += f_val;
+ 			f->lsm_str = str;
+ 			err = security_audit_rule_init(f->type, f->op, str,
+-						       (void **)&f->lsm_rule);
++						       (void **)&f->lsm_rule,
++						       GFP_KERNEL);
+ 			/* Keep currently invalid fields around in case they
+ 			 * become valid after a policy reload. */
+ 			if (err == -EINVAL) {
+@@ -799,7 +800,7 @@ static inline int audit_dupe_lsm_field(struct audit_field *df,
+ 
+ 	/* our own (refreshed) copy of lsm_rule */
+ 	ret = security_audit_rule_init(df->type, df->op, df->lsm_str,
+-				       (void **)&df->lsm_rule);
++				       (void **)&df->lsm_rule, GFP_KERNEL);
+ 	/* Keep currently invalid fields around in case they
+ 	 * become valid after a policy reload. */
+ 	if (ret == -EINVAL) {
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 45beb1c5f747..6b5181c668b5 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -217,7 +217,7 @@ void aa_audit_rule_free(void *vrule)
+ 	}
+ }
+ 
+-int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
++int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule, gfp_t gfp)
+ {
+ 	struct aa_audit_rule *rule;
+ 
+@@ -230,14 +230,14 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ 		return -EINVAL;
+ 	}
+ 
+-	rule = kzalloc(sizeof(struct aa_audit_rule), GFP_KERNEL);
++	rule = kzalloc(sizeof(struct aa_audit_rule), gfp);
+ 
+ 	if (!rule)
+ 		return -ENOMEM;
+ 
+ 	/* Currently rules are treated as coming from the root ns */
+ 	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
+-				     GFP_KERNEL, true, false);
++				     gfp, true, false);
+ 	if (IS_ERR(rule->label)) {
+ 		int err = PTR_ERR(rule->label);
+ 		aa_audit_rule_free(rule);
+diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
+index acbb03b9bd25..0c8cc86b417b 100644
+--- a/security/apparmor/include/audit.h
++++ b/security/apparmor/include/audit.h
+@@ -200,7 +200,7 @@ static inline int complain_error(int error)
+ }
+ 
+ void aa_audit_rule_free(void *vrule);
+-int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule);
++int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule, gfp_t gfp);
+ int aa_audit_rule_known(struct audit_krule *rule);
+ int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule);
+ 
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index c0556907c2e6..09da8e639239 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -401,7 +401,8 @@ static void ima_free_rule(struct ima_rule_entry *entry)
+ 	kfree(entry);
+ }
+ 
+-static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
++static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry,
++						gfp_t gfp)
+ {
+ 	struct ima_rule_entry *nentry;
+ 	int i;
+@@ -410,7 +411,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 	 * Immutable elements are copied over as pointers and data; only
+ 	 * lsm rules can change
+ 	 */
+-	nentry = kmemdup(entry, sizeof(*nentry), GFP_KERNEL);
++	nentry = kmemdup(entry, sizeof(*nentry), gfp);
+ 	if (!nentry)
+ 		return NULL;
+ 
+@@ -425,7 +426,8 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 
+ 		ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
+ 				     nentry->lsm[i].args_p,
+-				     &nentry->lsm[i].rule);
++				     &nentry->lsm[i].rule,
++				     gfp);
+ 		if (!nentry->lsm[i].rule)
+ 			pr_warn("rule for LSM \'%s\' is undefined\n",
+ 				nentry->lsm[i].args_p);
+@@ -438,7 +440,7 @@ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
+ 	int i;
+ 	struct ima_rule_entry *nentry;
+ 
+-	nentry = ima_lsm_copy_rule(entry);
++	nentry = ima_lsm_copy_rule(entry, GFP_KERNEL);
+ 	if (!nentry)
+ 		return -ENOMEM;
+ 
+@@ -664,7 +666,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+ 		}
+ 
+ 		if (rc == -ESTALE && !rule_reinitialized) {
+-			lsm_rule = ima_lsm_copy_rule(rule);
++			lsm_rule = ima_lsm_copy_rule(rule, GFP_ATOMIC);
+ 			if (lsm_rule) {
+ 				rule_reinitialized = true;
+ 				goto retry;
+@@ -1140,7 +1142,8 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+ 	entry->lsm[lsm_rule].type = audit_type;
+ 	result = ima_filter_rule_init(entry->lsm[lsm_rule].type, Audit_equal,
+ 				      entry->lsm[lsm_rule].args_p,
+-				      &entry->lsm[lsm_rule].rule);
++				      &entry->lsm[lsm_rule].rule,
++				      GFP_KERNEL);
+ 	if (!entry->lsm[lsm_rule].rule) {
+ 		pr_warn("rule for LSM \'%s\' is undefined\n",
+ 			entry->lsm[lsm_rule].args_p);
+diff --git a/security/security.c b/security/security.c
+index 0a9a0ac3f266..4fd3c839353e 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5331,15 +5331,17 @@ void security_key_post_create_or_update(struct key *keyring, struct key *key,
+  * @op: rule operator
+  * @rulestr: rule context
+  * @lsmrule: receive buffer for audit rule struct
++ * @gfp: GFP flag used for kmalloc
+  *
+  * Allocate and initialize an LSM audit rule structure.
+  *
+  * Return: Return 0 if @lsmrule has been successfully set, -EINVAL in case of
+  *         an invalid rule.
+  */
+-int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
++int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
++			     gfp_t gfp)
+ {
+-	return call_int_hook(audit_rule_init, field, op, rulestr, lsmrule);
++	return call_int_hook(audit_rule_init, field, op, rulestr, lsmrule, gfp);
+ }
+ 
+ /**
+diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
+index 52aca71210b4..29c7d4c86f6d 100644
+--- a/security/selinux/include/audit.h
++++ b/security/selinux/include/audit.h
+@@ -21,12 +21,14 @@
+  *	@op: the operator the rule uses
+  *	@rulestr: the text "target" of the rule
+  *	@rule: pointer to the new rule structure returned via this
++ *	@gfp: GFP flag used for kmalloc
+  *
+  *	Returns 0 if successful, -errno if not.  On success, the rule structure
+  *	will be allocated internally.  The caller must free this structure with
+  *	selinux_audit_rule_free() after use.
+  */
+-int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **rule);
++int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **rule,
++			    gfp_t gfp);
+ 
+ /**
+  *	selinux_audit_rule_free - free an selinux audit rule structure.
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index e88b1b6c4adb..ded250e525e9 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -3508,7 +3508,8 @@ void selinux_audit_rule_free(void *vrule)
+ 	}
+ }
+ 
+-int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
++int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule,
++			    gfp_t gfp)
+ {
+ 	struct selinux_state *state = &selinux_state;
+ 	struct selinux_policy *policy;
+@@ -3549,7 +3550,7 @@ int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
+ 		return -EINVAL;
+ 	}
+ 
+-	tmprule = kzalloc(sizeof(struct selinux_audit_rule), GFP_KERNEL);
++	tmprule = kzalloc(sizeof(struct selinux_audit_rule), gfp);
+ 	if (!tmprule)
+ 		return -ENOMEM;
+ 	context_init(&tmprule->au_ctxt);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 146667937811..a4943628d75a 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4696,7 +4696,8 @@ static int smack_post_notification(const struct cred *w_cred,
+  * Prepare to audit cases where (@field @op @rulestr) is true.
+  * The label to be audited is created if necessay.
+  */
+-static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
++static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule,
++				 gfp_t gfp)
+ {
+ 	struct smack_known *skp;
+ 	char **rule = (char **)vrule;
+-- 
+2.34.1
+
