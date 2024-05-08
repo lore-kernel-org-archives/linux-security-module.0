@@ -1,46 +1,44 @@
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8939B80C16
-	for <linux-security-module@vger.kernel.org>; Wed,  8 May 2024 10:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F4D8061B
+	for <linux-security-module@vger.kernel.org>; Wed,  8 May 2024 10:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715164769; cv=none; b=B2quI+Vr9aBRIlWLWb0ci5A3mEeCtX4y6lLm2WXIaOgovOfkbSjDJWipugGaRXkgxKDlv4UvEBMtioUYh0oxHEnG8NDvvEkd43NoJecGNFkrjOJSPPPU2wXNdcsQp2vE0QdX+2hpKds1Xfsea53CgEjXLOu2YxgQ8GTiv6ZkGRk=
+	t=1715164856; cv=none; b=f4CyWfq+uK6hnCmVFALQ0iBQvQY8+28NZEgQYkAUAZy0qHGXwQv8KWkPmjVXXgWTUAcbjIFABOB+2rY5N4HpLfLhnydpk1IKzFXpPzuIriO5wtOXflw0MWo6MHuyXjM3XVIyUEqdCz87ZuO3RITSRbwT2tSVUJCvHNF0T5FSGXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715164769; c=relaxed/simple;
-	bh=lSJXVR5Br9K8S0SHmR21C5ZC8aKk/4QjhdL4XnVcQJc=;
+	s=arc-20240116; t=1715164856; c=relaxed/simple;
+	bh=ZCXb1sdxL/8mV0mV9MJ01YSyUWOouZBH9HhnL55No9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ipM9XMqdWxsZhBuGXiLxGS2u9Wgqwk94gExrT6C/4H6WMxijoYkCKP+MUf7E9r9hyd7STl843gE3y2OZYuvv8F47mptLCTdpN+jX6GLbZkPaQKaKOoEPI+3lkYQFhYbb/29SSDmanl+Qec1lVV2oZ3qAJ9IsE60G9i2ACzDj6sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vhHECUvW; arc=none smtp.client-ip=84.16.66.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5Q3ez++/lAYIQDd/ZwwJtPLdoBF/TeT08T6pzvlyJxhxm/DRVwYJhUrxomMJWI9930HIf4sO/nnM7tzaoDCSdhGO0dTyJuTwjDxS2fO4NTgPHj/y/VWxeVnW7sG51MOI35PmNaYmrjMTT94Bxm5ppSLWO2+FiqnzNa0Iy5Bmqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fIihOAvP; arc=none smtp.client-ip=45.157.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vhHECUvW"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VZBTc4zrnzLCp;
-	Wed,  8 May 2024 12:39:16 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fIihOAvP"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VZBWK2sXMzG09;
+	Wed,  8 May 2024 12:40:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1715164756;
-	bh=lSJXVR5Br9K8S0SHmR21C5ZC8aKk/4QjhdL4XnVcQJc=;
+	s=20191114; t=1715164845;
+	bh=ZCXb1sdxL/8mV0mV9MJ01YSyUWOouZBH9HhnL55No9M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vhHECUvWwkjaWzZQKTGHrRbbVWIX7CYliG0amjiDJmvWswCVPLsTz0hAm3pGnGDqG
-	 DhSg0Yoz5N6334UsYUJuqE78fKbhMdR5ijg2SZF+fqoTw6DESH1CDyU7XC4VVdQAW7
-	 +KZ0WeoDTZQxoC4qh9KW9B8RWHnnrok+0P3fJTWQ=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VZBTb4ZG0zPqK;
-	Wed,  8 May 2024 12:39:15 +0200 (CEST)
-Date: Wed, 8 May 2024 12:38:58 +0200
+	b=fIihOAvPO0LQ0h4YsPMnVyWoJCakZS5mXOyEgUWHfazDAILsSLixvkWXYFiibHu3N
+	 52VuhjUdnCtkE8WKYoZpdmYSzX2oYL2tANMFJ1xaa8vEvfAADuM3eaS8hgJyA9D6tl
+	 6xJbU5lL6MtiQE424DK1MSPoovRiUV83ox9n+w2Q=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VZBWJ0x07zhq1;
+	Wed,  8 May 2024 12:40:44 +0200 (CEST)
+Date: Wed, 8 May 2024 12:40:43 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Subject: Re: [RFC PATCH v1 03/10] selftests/landlock: Create 'create' test
-Message-ID: <20240508.Kiqueira8The@digikod.net>
-References: <20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com>
- <20240408093927.1759381-4-ivanov.mikhail1@huawei-partners.com>
- <ZhPsWKSRrqDiulrg@google.com>
- <9a8b71c6-f72c-7ec0-adee-5828dc41cf44@huawei-partners.com>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v15 00/11] Landlock: IOCTL support
+Message-ID: <20240508.lei6Oyaiy8So@digikod.net>
+References: <20240419161122.2023765-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,336 +48,467 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9a8b71c6-f72c-7ec0-adee-5828dc41cf44@huawei-partners.com>
+In-Reply-To: <20240419161122.2023765-1-gnoack@google.com>
 X-Infomaniak-Routing: alpha
 
-On Thu, Apr 11, 2024 at 06:58:34PM +0300, Ivanov Mikhail wrote:
+This patch series has been in -next for some time now.  I just added
+some tiny cosmetic fixes and a missing (on some distros) C header file.
+I plan to send it for v6.10 but I'll probably rebase it again because of
+kselftest changes.
+
+It is noteworthy that test coverage dropped by 1.5%: from 92.4% to 90.9%
+.  This is due to the tests not covering the IOCTL compat code.  It
+would be good to find a way to cover this case, probably building 32-bit
+test binary stubs (to avoid depending on 32-bit libraries).
+
+Thanks again!
+
+ Mickaël
+
+
+On Fri, Apr 19, 2024 at 04:11:11PM +0000, Günther Noack wrote:
+> Hello!
 > 
-> 4/8/2024 4:08 PM, Günther Noack wrote:
-> > Hello!
-> > 
-> > I am very happy to see this patch set, this is a very valuable feature, IMHO! :)
-> > 
-> > Regarding the subject of this patch:
-> > 
-> >    [RFC PATCH v1 03/10] selftests/landlock: Create 'create' test
-> >                                                     ^^^^^^
-> > 
-> > This was probably meant to say "socket"?
+> These patches add simple ioctl(2) support to Landlock.
 > 
-> I wanted each such patch to have the name of the test that this patch
-> adds (without specifying the fixture, since this is not necessary
-> information, which only complicates the name). I think
+> Objective
+> ~~~~~~~~~
 > 
->     [RFC PATCH v1 03/10] selftests/landlock: Add 'create' test
->                                              ~~~
-> renaming should be fine.
-
-
-Maybe something like this?
-"selftests/landlock: Add protocol.create to socket tests"
-
-
+> Make ioctl(2) requests for device files restrictable with Landlock,
+> in a way that is useful for real-world applications.
 > 
-> > 
-> > (In my mind, it is a good call to put the test in a separate file -
-> > the existing test files have grown too large already.)
-> > 
-> > 
-> > On Mon, Apr 08, 2024 at 05:39:20PM +0800, Ivanov Mikhail wrote:
-> > > Initiate socket_test.c selftests. Add protocol fixture for tests
-> > > with changeable domain/type values. Only most common variants of
-> > > protocols (like ipv4-tcp,ipv6-udp, unix) were added.
-> > > Add simple socket access right checking test.
-> > > 
-> > > Signed-off-by: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-> > > Reviewed-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> > > ---
-> > >   .../testing/selftests/landlock/socket_test.c  | 197 ++++++++++++++++++
-> > >   1 file changed, 197 insertions(+)
-> > >   create mode 100644 tools/testing/selftests/landlock/socket_test.c
-> > > 
-> > > diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
-> > > new file mode 100644
-> > > index 000000000..525f4f7df
-> > > --- /dev/null
-> > > +++ b/tools/testing/selftests/landlock/socket_test.c
-> > > @@ -0,0 +1,197 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Landlock tests - Socket
-> > > + *
-> > > + * Copyright © 2024 Huawei Tech. Co., Ltd.
-> > > + */
-> > > +
-> > > +#define _GNU_SOURCE
-> > > +
-> > > +#include <errno.h>
-> > > +#include <linux/landlock.h>
-> > > +#include <sched.h>
-> > > +#include <string.h>
-> > > +#include <sys/prctl.h>
-> > > +#include <sys/socket.h>
-> > > +
-> > > +#include "common.h"
-> > > +
-> > > +/* clang-format off */
-> > > +
-> > > +#define ACCESS_LAST LANDLOCK_ACCESS_SOCKET_CREATE
-> > > +
-> > > +#define ACCESS_ALL ( \
-> > > +	LANDLOCK_ACCESS_SOCKET_CREATE)
-> > > +
-> > > +/* clang-format on */
-> > > +
-> > > +struct protocol_variant {
-> > > +	int domain;
-> > > +	int type;
-> > > +};
-> > > +
-> > > +struct service_fixture {
-> > > +	struct protocol_variant protocol;
-> > > +};
-> > > +
-> > > +static void setup_namespace(struct __test_metadata *const _metadata)
-> > > +{
-> > > +	set_cap(_metadata, CAP_SYS_ADMIN);
-> > > +	ASSERT_EQ(0, unshare(CLONE_NEWNET));
-> > > +	clear_cap(_metadata, CAP_SYS_ADMIN);
-> > > +}
-> > > +
-> > > +static int socket_variant(const struct service_fixture *const srv)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	ret = socket(srv->protocol.domain, srv->protocol.type | SOCK_CLOEXEC,
-> > > +			 0);
-> > > +	if (ret < 0)
-> > > +		return -errno;
-> > > +	return ret;
-> > > +}
-> > 
-> > This helper is mostly concerned with mapping the error code.
-> > 
-> > In the fs_test.c, we have dealt with such use cases with helpers like
-> > test_open_rel() and test_open().  These helpers attempt to open the file, take
-> > the same arguments as open(2), but instead of returning the opened fd, they only
-> > return 0 or errno.  Do you think this would be an option here?
-> > 
-> > Then you could write your tests as
-> > 
-> >    ASSERT_EQ(EACCES, test_socket(p->domain, p->type, 0));
-> > 
-> > and the test would (a) more obviously map to socket(2), and (b) keep relevant
-> > information like the expected error code at the top level of the test.
-> > 
+> Proposed approach
+> ~~~~~~~~~~~~~~~~~
 > 
-> I thought that `socket_variant()` would be suitable for future tests
-> where sockets can be used after creation (e.g. for sending FDs). But
-> until then, it's really better to replace it with what you suggested.
-
-You can move common code/helpers from net_test.c to common.h (with a
-dedicated patch) to avoid duplicating code.
-
+> Introduce the LANDLOCK_ACCESS_FS_IOCTL_DEV right, which restricts the
+> use of ioctl(2) on block and character devices.
 > 
-> > > +
-> > > +FIXTURE(protocol)
-> > > +{
-> > > +	struct service_fixture srv0;
-> > > +};
-> > > +
-> > > +FIXTURE_VARIANT(protocol)
-> > > +{
-> > > +	const struct protocol_variant protocol;
-> > > +};
-> > > +
-> > > +FIXTURE_SETUP(protocol)
-> > > +{
-> > > +	disable_caps(_metadata);
-> > > +	self->srv0.protocol = variant->protocol;
-> > > +	setup_namespace(_metadata);
-> > > +};
-> > > +
-> > > +FIXTURE_TEARDOWN(protocol)
-> > > +{
-> > > +}
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(protocol, unspec) {
-> > > +	/* clang-format on */
-> > > +	.protocol = {
-> > > +		.domain = AF_UNSPEC,
-> > > +		.type = SOCK_STREAM,
-> > > +	},
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(protocol, unix_stream) {
-> > > +	/* clang-format on */
-> > > +	.protocol = {
-> > > +		.domain = AF_UNIX,
-> > > +		.type = SOCK_STREAM,
-> > > +	},
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(protocol, unix_dgram) {
-> > > +	/* clang-format on */
-> > > +	.protocol = {
-> > > +		.domain = AF_UNIX,
-> > > +		.type = SOCK_DGRAM,
-> > > +	},
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(protocol, ipv4_tcp) {
-> > > +	/* clang-format on */
-> > > +	.protocol = {
-> > > +		.domain = AF_INET,
-> > > +		.type = SOCK_STREAM,
-> > > +	},
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(protocol, ipv4_udp) {
-> > > +	/* clang-format on */
-> > > +	.protocol = {
-> > > +		.domain = AF_INET,
-> > > +		.type = SOCK_DGRAM,
-> > > +	},
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(protocol, ipv6_tcp) {
-> > > +	/* clang-format on */
-> > > +	.protocol = {
-> > > +		.domain = AF_INET6,
-> > > +		.type = SOCK_STREAM,
-> > > +	},
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(protocol, ipv6_udp) {
-> > > +	/* clang-format on */
-> > > +	.protocol = {
-> > > +		.domain = AF_INET6,
-> > > +		.type = SOCK_DGRAM,
-> > > +	},
-> > > +};
-> > > +
-> > > +static void test_socket_create(struct __test_metadata *const _metadata,
-> > > +				  const struct service_fixture *const srv,
-> > > +				  const bool deny_create)
-> > > +{
-> > > +	int fd;
-> > > +
-> > > +	fd = socket_variant(srv);
-> > > +	if (srv->protocol.domain == AF_UNSPEC) {
-> > > +		EXPECT_EQ(fd, -EAFNOSUPPORT);
-> > > +	} else if (deny_create) {
-> > > +		EXPECT_EQ(fd, -EACCES);
-
-The deny_create argument/check should not be in this helper but in the
-caller.
-
-> > > +	} else {
-> > > +		EXPECT_LE(0, fd)
-
-This should be an ASSERT because the following code using fd would make
-no sense if executed.
-
-> > > +		{
-> > > +			TH_LOG("Failed to create socket: %s", strerror(errno));
-> > > +		}
-> > > +		EXPECT_EQ(0, close(fd));
-> > > +	}
-> > > +}
-> > 
-> > This is slightly too much logic in a test helper, for my taste,
-> > and the meaning of the true/false argument in the main test below
-> > is not very obvious.
-> > 
-> > Extending the idea from above, if test_socket() was simpler, would it
-> > be possible to turn these fixtures into something shorter like this:
-> > 
-> >    ASSERT_EQ(EAFNOSUPPORT, test_socket(AF_UNSPEC, SOCK_STREAM, 0));
-> >    ASSERT_EQ(EACCES, test_socket(AF_UNIX, SOCK_STREAM, 0));
-> >    ASSERT_EQ(EACCES, test_socket(AF_UNIX, SOCK_DGRAM, 0));
-> >    ASSERT_EQ(EACCES, test_socket(AF_INET, SOCK_STREAM, 0));
-> >    // etc.
-
-I'd prefer that too.
-
-> > 
-> > Would that make the tests easier to write, to list out the table of
-> > expected values aspect like that, rather than in a fixture?
-> > 
-> > 
+> We attach the this access right to opened file descriptors, as we
+> already do for LANDLOCK_ACCESS_FS_TRUNCATE.
 > 
-> Initially, I conceived this function as an entity that allows to
-> separate the logic associated with the tested methods or usecases from
-> the logic of configuring the state of the Landlock ruleset in the
-> sandbox.
+> If LANDLOCK_ACCESS_FS_IOCTL_DEV is handled (restricted in the
+> ruleset), the LANDLOCK_ACCESS_FS_IOCTL_DEV right governs the use of
+> all device-specific IOCTL commands.  We make exceptions for common and
+> known-harmless IOCTL commands such as FIOCLEX, FIONCLEX, FIONBIO and
+> FIOASYNC, as well as other IOCTL commands which are implemented in
+> fs/ioctl.c.  A full list of these IOCTL commands is listed in the
+> documentation.
 > 
-> But at the moment, `test_socket_create()` is obviously a wrapper over
-> socket(2). So for now it's worth removing unnecessary logic.
+> I believe that this approach works for the majority of use cases, and
+> offers a good trade-off between complexity of the Landlock API and
+> implementation and flexibility when the feature is used.
 > 
-> But i don't think it's worth removing the fixtures here:
+> Current limitations
+> ~~~~~~~~~~~~~~~~~~~
 > 
->   * in my opinion, the design of the fixtures is quite convenient.
->     It allows you to separate the definition of the object under test
->     from the test case. E.g. test protocol.create checks the ability of
->     Landlock to restrict the creation of a socket of a certain type,
->     rather than the ability to restrict creation of UNIX, TCP, UDP...
+> With this patch set, ioctl(2) requests can *not* be filtered based on
+> file type, device number (dev_t) or on the ioctl(2) request number.
+> 
+> On the initial RFC patch set [1], we have reached consensus to start
+> with this simpler coarse-grained approach, and build additional IOCTL
+> restriction capabilities on top in subsequent steps.
+> 
+> [1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net/
+> 
+> Notable implications of this approach
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * A processes' existing open file descriptors stay unaffected
+>   when a process enables Landlock.
+> 
+>   This means that in common scenarios, where the terminal file
+>   descriptor is inherited from the parent process, the terminal's
+>   IOCTLs (ioctl_tty(2)) continue to work.
+> 
+> * ioctl(2) continues to be available for file descriptors for
+>   non-device files.  Example: Network sockets, memfd_create(2),
+>   regular files and directories.
+> 
+> Examples
+> ~~~~~~~~
+> 
+> Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+> 
+>   LL_FS_RO=/ LL_FS_RW=. ./sandboxer /bin/bash
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL_DEV right is part of the "read-write"
+> rights here, so we expect that newly opened device files outside of
+> $HOME don't work with most IOCTL commands.
+> 
+>   * "stty" works: It probes terminal properties
+> 
+>   * "stty </dev/tty" fails: /dev/tty can be reopened, but the IOCTL is
+>     denied.
+> 
+>   * "eject" fails: ioctls to use CD-ROM drive are denied.
+> 
+>   * "ls /dev" works: It uses ioctl to get the terminal size for
+>     columnar layout
+> 
+>   * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
+>     attempts to reopen /dev/tty.)
+> 
+> Unaffected IOCTL commands
+> ~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> To decide which IOCTL commands should be blanket-permitted, we went
+> through the list of IOCTL commands which are handled directly in
+> fs/ioctl.c and looked at them individually to understand what they are
+> about.
+> 
+> The following commands are permitted by Landlock unconditionally:
+> 
+>  * FIOCLEX, FIONCLEX - these work on the file descriptor and
+>    manipulate the close-on-exec flag (also available through
+>    fcntl(2) with F_SETFD)
+>  * FIONBIO, FIOASYNC - these work on the struct file and enable
+>    nonblocking-IO and async flags (also available through
+>    fcntl(2) with F_SETFL)
+> 
+> The following commands are also unconditionally permitted by Landlock, because
+> they are really operating on the file system's superblock, rather than on the
+> file itself (the same funcionality is also available from any other file on the
+> same file system):
+> 
+>  * FIFREEZE, FITHAW - work on superblock(!) to freeze/thaw the file
+>    system. Requires CAP_SYS_ADMIN.
+>  * FIGETBSZ - get file system blocksize
+>  * FS_IOC_GETFSUUID, FS_IOC_GETFSSYSFSPATH - getting file system properties
+> 
+> Notably, the command FIONREAD is *not* blanket-permitted,
+> because it would be a device-specific implementation.
+> 
+> Detailed reasoning about each IOCTL command from fs/ioctl.c is in
+> get_required_ioctl_dev_access() in security/landlock/fs.c.
+> 
+> 
+> Related Work
+> ~~~~~~~~~~~~
+> 
+> OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file
+> descriptor which is used.  The implementers maintain multiple
+> allow-lists of predefined ioctl(2) operations required for different
+> application domains such as "audio", "bpf", "tty" and "inet".
+> 
+> OpenBSD does not guarantee backwards compatibility to the same extent
+> as Linux does, so it's easier for them to update these lists in later
+> versions.  It might not be a feasible approach for Linux though.
+> 
+> [2] https://man.openbsd.org/OpenBSD-7.4/pledge.2
+> 
+> 
+> Implementation Rationale
+> ~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> A main constraint of this implementation is that the blanket-permitted
+> IOCTL commands for device files should never dispatch to the
+> device-specific implementations in f_ops->unlocked_ioctl() and
+> f_ops->compat_ioctl().
+> 
+> There are many implementations of these f_ops operations and they are
+> too scattered across the kernel to give strong guarantees about them.
+> Additionally, some existing implementations do work before even
+> checking whether they support the cmd number which was passed to them.
+> 
+> 
+> In this implementation, we are listing the blanket-permitted IOCTL
+> commands in the Landlock implementation, mirroring a subset of the
+> IOCTL commands which are directly implemented in do_vfs_ioctl() in
+> fs/ioctl.c.  The trade-off is that the Landlock LSM needs to track
+> future developments in fs/ioctl.c to keep up to date with that, in
+> particular when new IOCTL commands are introduced there, or when they
+> are moved there from the f_ops implementations.
+> 
+> We mitigate this risk in this patch set by adding fs/ioctl.c to the
+> paths that are relevant to Landlock in the MAINTAINERS file.
+> 
+> The trade-off is discussed in more detail in [3].
+> 
+> 
+> Previous versions of this patch set have used different implementation
+> approaches to guarantee the main constraint above, which we have
+> dismissed due to the following reasons:
+> 
+> * V10: Introduced a new LSM hook file_vfs_ioctl, which gets invoked
+>   just before the call to f_ops->unlocked_ioctl().
+> 
+>   Not done, because it would have created an avoidable overlap between
+>   the file_ioctl and file_vfs_ioctl LSM hooks [4].
+> 
+> * V11: Introduced an indirection layer in fs/ioctl.c, so that Landlock
+>   could figure out the list of IOCTL commands which are handled by
+>   do_vfs_ioctl().
+> 
+>   Not done due to additional indirection and possible performance
+>   impact in fs/ioctl.c [5]
+> 
+> * V12: Introduced a special error code to be returned from the
+>   file_ioctl hook, and matching logic that would disallow the call to
+>   f_ops->unlocked_ioctl() in case that this error code is returned.
+> 
+>   Not done due because this approach would conflict with Landlock's
+>   planned audit logging [6] and because LSM hooks with special error
+>   codes are generally discouraged and have lead to problems in the
+>   past [7].
+> 
+> Thanks to Arnd Bergmann, Christian Brauner, Kent Overstreet, Mickaël Salaün and
+> Paul Moore for guiding this implementation on the right track!
+> 
+> [3] https://lore.kernel.org/all/ZgLJG0aN0psur5Z7@google.com/
+> [4] https://lore.kernel.org/all/CAHC9VhRojXNSU9zi2BrP8z6JmOmT3DAqGNtinvvz=tL1XhVdyg@mail.gmail.com/
+> [5] https://lore.kernel.org/all/32b1164e-9d5f-40c0-9a4e-001b2c9b822f@app.fastmail.com
+> [6] https://lore.kernel.org/all/20240326.ahyaaPa0ohs6@digikod.net
+> [7] https://lore.kernel.org/all/CAHC9VhQJFWYeheR-EqqdfCq0YpvcQX5Scjfgcz1q+jrWg8YsdA@mail.gmail.com/
+> 
+> 
+> Changes
+> ~~~~~~~
+> 
+> V15:
+>  * Drop the commit about FS_IOC_GETFSUUID / FS_IOC_GETFSSYSFSPATH --
+>    it is already assumed as a prerequisite now.
+>  * security/landlock/fs.c:
+>    * Add copyright notice for my contributions (also for the truncate
+>      patch set)
+>  * Tests:
+>    * In commit "Test IOCTL support":
+>      * Test with /dev/zero instead of /dev/tty
+>      * Check only FIONREAD instead of both FIONREAD and TCGETS
+>      * Remove a now-unused SKIP()
+>    * In test for Named UNIX Domain Sockets:
+>      * Do not inline variable assignments in ASSERT() usages
+>    * In commit "Exhaustive test for the IOCTL allow-list":
+>      * Make IOCTL results deterministic:
+>        * Zero the input buffer
+>        * Close FD 0 for the ioctl() call, to avoid accidentally using it
+>  * Cosmetic changes and cleanups
+>    * Remove a leftover mention of "synthetic" access rights
+>    * Fix docstring format for is_masked_device_ioctl()
+>    * Newline and comment ordering cleanups as discussed in v14 review
+> 
+> V14:
+>  * Revise which IOCTLs are permitted.
+>    It is almost the same as the vfs_masked_device_ioctl() hooks from
+>    https://lore.kernel.org/all/20240219183539.2926165-1-mic@digikod.net/,
+>    with the following differences:
+>    * Added cases for FS_IOC_GETFSUUID and FS_IOC_GETFSSYSFSPATH
+>    * Do not blanket-permit FS_IOC_{GET,SET}{FLAGS,XATTR}.
+>      They fall back to the device implementation.
+>  * fs/ioctl:
+>    * Small prerequisite change so that FS_IOC_GETFSUUID and
+>      FS_IOC_GETFSSYSFSPATH do not fall back to the device implementation.
+>    * Slightly rephrase wording in the warning above do_vfs_ioctl().
+>  * Implement compat handler
+>  * Improve UAPI header documentation
+>  * Code structure
+>    * Change helper function style to return a boolean
+>    * Reorder structure of the IOCTL hooks (much cleaner now -- thanks for the
+>      hint, Mickaël!)
+>    * Extract is_device() helper
+> 
+> V13:
+>  * Using the existing file_ioctl hook and a hardcoded list of IOCTL commands.
+>    (See the section on implementation rationale above.)
+>  * Add support for FS_IOC_GETFSUUID, FS_IOC_GETFSSYSFSPATH.
+>    
+> V12:
+>  * Rebased on Arnd's proposal:
+>    https://lore.kernel.org/all/32b1164e-9d5f-40c0-9a4e-001b2c9b822f@app.fastmail.com/
+>    This means that:
+>    * the IOCTL security hooks can return a special value ENOFILEOPS,
+>      which is treated specially in fs/ioctl.c to permit the IOCTL,
+>      but only as long as it does not call f_ops->unlocked_ioctl or
+>      f_ops->compat_ioctl.
+>  * The only change compared to V11 is commit 1, as well as a small
+>    adaptation in the commit 2 (The Landlock implementation needs to
+>    return the new special value).  The tests and documentation commits
+>    are exactly the same as before.
+> 
+> V11:
+>  * Rebased on Mickaël's proposal to refactor fs/ioctl.c:
+>    https://lore.kernel.org/all/20240315145848.1844554-1-mic@digikod.net/
+>    This means that:
+>    * we do not add the file_vfs_ioctl() hook as in V10
+>    * we add vfs_get_ioctl_handler() instead, so that Landlock
+>      can query which of the IOCTL commands in handled in do_vfs_ioctl()
+> 
+>    That proposal is used here unmodified (except for minor typos in the commit
+>    description).
+>  * Use the hook_ioctl_compat LSM hook as well.
+> 
+> V10:
+>  * Major change: only restrict IOCTL invocations on device files
+>    * Rename access right to LANDLOCK_ACCESS_FS_IOCTL_DEV
+>    * Remove the notion of synthetic access rights and IOCTL right groups
+>  * Introduce a new LSM hook file_vfs_ioctl, which gets invoked just
+>    before the call to f_ops->unlocked_ioctl()
+>  * Documentation
+>    * Various complications were removed or simplified:
+>      * Suggestion to mount file systems as nodev is not needed any more,
+>        as Landlock already lets users distinguish device files.
+>      * Remarks about fscrypt were removed.  The fscrypt-related IOCTLs only
+>        applied to regular files and directories, so this patch does not affect
+>        them any more.
+>      * Various documentation of the IOCTL grouping approach was removed,
+>        as it's not needed any more.
+> 
+> V9:
+>  * in “landlock: Add IOCTL access right”:
+>    * Change IOCTL group names and grouping as discussed with Mickaël.
+>      This makes the grouping coarser, and we occasionally rely on the
+>      underlying implementation to perform the appropriate read/write
+>      checks.
+>      * Group IOCTL_RW (one of READ_FILE, WRITE_FILE or READ_DIR):
+>        FIONREAD, FIOQSIZE, FIGETBSZ
+>      * Group IOCTL_RWF (one of READ_FILE or WRITE_FILE):
+>        FS_IOC_FIEMAP, FIBMAP, FIDEDUPERANGE, FICLONE, FICLONERANGE,
+>        FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64,
+>        FS_IOC_ZERO_RANGE
+>    * Excempt pipe file descriptors from IOCTL restrictions,
+>      even for named pipes which are opened from the file system.
+>      This is to be consistent with anonymous pipes created with pipe(2).
+>      As discussed in https://lore.kernel.org/r/ZP7lxmXklksadvz+@google.com
+>    * Document rationale for the IOCTL grouping in the code
+>    * Use __attribute_const__
+>    * Rename required_ioctl_access() to get_required_ioctl_access()
+>  * Selftests
+>    * Simplify IOCTL test fixtures as a result of simpler grouping.
+>    * Test that IOCTLs are permitted on named pipe FDs.
+>    * Test that IOCTLs are permitted on named Unix Domain Socket FDs.
+>    * Work around compilation issue with old GCC / glibc.
+>      https://sourceware.org/glibc/wiki/Synchronizing_Headers
+>      Thanks to Huyadi <hu.yadi@h3c.com>, who pointed this out in
+>      https://lore.kernel.org/all/f25be6663bcc4608adf630509f045a76@h3c.com/
+>      and Mickaël, who fixed it through #include reordering.
+>  * Documentation changes
+>    * Reword "IOCTL commands" section a bit
+>    * s/permit/allow/
+>    * s/access right/right/, if preceded by LANDLOCK_ACCESS_FS_*
+>    * s/IOCTL/FS_IOCTL/ in ASCII table
+>    * Update IOCTL grouping documentation in header file
+>  * Removed a few of the earlier commits in this patch set,
+>    which have already been merged.
+> 
+> V8:
+>  * Documentation changes
+>    * userspace-api/landlock.rst:
+>      * Add an extra paragraph about how the IOCTL right combines
+>        when used with other access rights.
+>      * Explain better the circumstances under which passing of
+>        file descriptors between different Landlock domains can happen
+>    * limits.h: Add comment to explain public vs internal FS access rights
+>    * Add a paragraph in the commit to explain better why the IOCTL
+>      right works as it does
+> 
+> V7:
+>  * in “landlock: Add IOCTL access right”:
+>    * Make IOCTL_GROUPS a #define so that static_assert works even on
+>      old compilers (bug reported by Intel about PowerPC GCC9 config)
+>    * Adapt indentation of IOCTL_GROUPS definition
+>    * Add missing dots in kernel-doc comments.
+>  * in “landlock: Remove remaining "inline" modifiers in .c files”:
+>    * explain reasoning in commit message
+> 
+> V6:
+>  * Implementation:
+>    * Check that only publicly visible access rights can be used when adding a
+>      rule (rather than the synthetic ones).  Thanks Mickaël for spotting that!
+>    * Move all functionality related to IOCTL groups and synthetic access rights
+>      into the same place at the top of fs.c
+>    * Move kernel doc to the .c file in one instance
+>    * Smaller code style issues (upcase IOCTL, vardecl at block start)
+>    * Remove inline modifier from functions in .c files
+>  * Tests:
+>    * use SKIP
+>    * Rename 'fd' to dir_fd and file_fd where appropriate
+>    * Remove duplicate "ioctl" mentions from test names
+>    * Rename "permitted" to "allowed", in ioctl and ftruncate tests
+>    * Do not add rules if access is 0, in test helper
+> 
+> V5:
+>  * Implementation:
+>    * move IOCTL group expansion logic into fs.c (implementation suggested by
+>      mic)
+>    * rename IOCTL_CMD_G* constants to LANDLOCK_ACCESS_FS_IOCTL_GROUP*
+>    * fs.c: create ioctl_groups constant
+>    * add "const" to some variables
+>  * Formatting and docstring fixes (including wrong kernel-doc format)
+>  * samples/landlock: fix ABI version and fallback attribute (mic)
+>  * Documentation
+>    * move header documentation changes into the implementation commit
+>    * spell out how FIFREEZE, FITHAW and attribute-manipulation ioctls from
+>      fs/ioctl.c are handled
+>    * change ABI 4 to ABI 5 in some missing places
+> 
+> V4:
+>  * use "synthetic" IOCTL access rights, as previously discussed
+>  * testing changes
+>    * use a large fixture-based test, for more exhaustive coverage,
+>      and replace some of the earlier tests with it
+>  * rebased on mic-next
+> 
+> V3:
+>  * always permit the IOCTL commands FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC and
+>    FIONREAD, independent of LANDLOCK_ACCESS_FS_IOCTL
+>  * increment ABI version in the same commit where the feature is introduced
+>  * testing changes
+>    * use FIOQSIZE instead of TTY IOCTL commands
+>      (FIOQSIZE works with regular files, directories and memfds)
+>    * run the memfd test with both Landlock enabled and disabled
+>    * add a test for the always-permitted IOCTL commands
+> 
+> V2:
+>  * rebased on mic-next
+>  * added documentation
+>  * exercise ioctl(2) in the memfd test
+>  * test: Use layout0 for the test
+> 
+> ---
+> 
+> V1: https://lore.kernel.org/all/20230502171755.9788-1-gnoack3000@gmail.com/
+> V2: https://lore.kernel.org/all/20230623144329.136541-1-gnoack@google.com/
+> V3: https://lore.kernel.org/all/20230814172816.3907299-1-gnoack@google.com/
+> V4: https://lore.kernel.org/all/20231103155717.78042-1-gnoack@google.com/
+> V5: https://lore.kernel.org/all/20231117154920.1706371-1-gnoack@google.com/
+> V6: https://lore.kernel.org/all/20231124173026.3257122-1-gnoack@google.com/
+> V7: https://lore.kernel.org/all/20231201143042.3276833-1-gnoack@google.com/
+> V8: https://lore.kernel.org/all/20231208155121.1943775-1-gnoack@google.com/
+> V9: https://lore.kernel.org/all/20240209170612.1638517-1-gnoack@google.com/
+> V10: https://lore.kernel.org/all/20240309075320.160128-1-gnoack@google.com/
+> V11: https://lore.kernel.org/all/20240322151002.3653639-1-gnoack@google.com/
+> V12: https://lore.kernel.org/all/20240325134004.4074874-1-gnoack@google.com/
+> V13: https://lore.kernel.org/all/20240327131040.158777-1-gnoack@google.com/
+> V14: https://lore.kernel.org/all/20240405214040.101396-1-gnoack@google.com/
+> 
+> Günther Noack (11):
+>   landlock: Add IOCTL access right for character and block devices
+>   selftests/landlock: Test IOCTL support
+>   selftests/landlock: Test IOCTL with memfds
+>   selftests/landlock: Test ioctl(2) and ftruncate(2) with open(O_PATH)
+>   selftests/landlock: Test IOCTLs on named pipes
+>   selftests/landlock: Check IOCTL restrictions for named UNIX domain
 >     sockets
-
-I'm not sure to understand, but we need to have positive and negative
-tests, potentially in separate TEST_F().
-
+>   selftests/landlock: Exhaustive test for the IOCTL allow-list
+>   samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL_DEV
+>   landlock: Document IOCTL support
+>   MAINTAINERS: Notify Landlock maintainers about changes to fs/ioctl.c
+>   fs/ioctl: Add a comment to keep the logic in sync with LSM policies
 > 
->   * with adding more tests, it may be necessary to check all protocols
->     in each of them
+>  Documentation/userspace-api/landlock.rst     |  76 ++-
+>  MAINTAINERS                                  |   1 +
+>  fs/ioctl.c                                   |   3 +
+>  include/uapi/linux/landlock.h                |  38 +-
+>  samples/landlock/sandboxer.c                 |  13 +-
+>  security/landlock/fs.c                       | 225 ++++++++-
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   2 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   | 486 ++++++++++++++++++-
+>  10 files changed, 805 insertions(+), 43 deletions(-)
 > 
-> AF_UNSPEC should be removed from fixture variant to separate test,
-> though.
-
-Or you can add a new field to mark it as such.
-
-A test should check that AF_UNSPEC cannot be restricted though.
-
 > 
-> > > +
-> > > +TEST_F(protocol, create)
-> > > +{
-> > > +	const struct landlock_ruleset_attr ruleset_attr = {
-> > > +		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
-> > > +	};
-> > > +	const struct landlock_socket_attr create_socket_attr = {
-> > > +		.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
-> > > +		.domain = self->srv0.protocol.domain,
-> > > +		.type = self->srv0.protocol.type,
-> > > +	};
-> > > +
-> > > +	int ruleset_fd;
-> > > +
-> > > +	/* Allowed create */
-> > > +	ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-> > > +							sizeof(ruleset_attr), 0);
-> > > +	ASSERT_LE(0, ruleset_fd);
-> > > +
-> > > +	ASSERT_EQ(0,
-> > > +			landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
-> > > +					&create_socket_attr, 0));
-> > 
-> > The indentation looks wrong?  We run clang-format on Landlock files.
-> > 
-> >    clang-format -i security/landlock/*.[ch] \
-> >    	include/uapi/linux/landlock.h \
-> >    	tools/testing/selftests/landlock/*.[ch]
-> > 
+> base-commit: fe611b72031cc211a96cf0b3b58838953950cb13
+> -- 
+> 2.44.0.769.g3c40516874-goog
 > 
-> Thanks! I'll fix indentation in the patch.
-
-Please fix formatting in all patches.
-
-You should have enough for a second patch series. :)
+> 
