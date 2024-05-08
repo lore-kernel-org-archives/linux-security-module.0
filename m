@@ -1,514 +1,215 @@
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F4D8061B
-	for <linux-security-module@vger.kernel.org>; Wed,  8 May 2024 10:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D506882C6B;
+	Wed,  8 May 2024 11:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715164856; cv=none; b=f4CyWfq+uK6hnCmVFALQ0iBQvQY8+28NZEgQYkAUAZy0qHGXwQv8KWkPmjVXXgWTUAcbjIFABOB+2rY5N4HpLfLhnydpk1IKzFXpPzuIriO5wtOXflw0MWo6MHuyXjM3XVIyUEqdCz87ZuO3RITSRbwT2tSVUJCvHNF0T5FSGXg=
+	t=1715168450; cv=none; b=ffMMPGQL5nfF0JWtJTVQZvlSvCfmqeqkQGYucynwYstoNNB9w/EIUBMsxLhfDi7VcbAlf/ZH+84TvFFy4ULU2st2szICL17AYcxypGIMM39RznZ8RJXtHE3nVaX/V/nwRn9JGAijaOBEfrqYTD13jvGvu8iXd/3DaPh7cjrai+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715164856; c=relaxed/simple;
-	bh=ZCXb1sdxL/8mV0mV9MJ01YSyUWOouZBH9HhnL55No9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5Q3ez++/lAYIQDd/ZwwJtPLdoBF/TeT08T6pzvlyJxhxm/DRVwYJhUrxomMJWI9930HIf4sO/nnM7tzaoDCSdhGO0dTyJuTwjDxS2fO4NTgPHj/y/VWxeVnW7sG51MOI35PmNaYmrjMTT94Bxm5ppSLWO2+FiqnzNa0Iy5Bmqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fIihOAvP; arc=none smtp.client-ip=45.157.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1715168450; c=relaxed/simple;
+	bh=VYbyN92+PJMbs2AKtNDJEqVxdaaDoCupy0qED/4tmIk=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=MKRxFlfnBDCObZvqU/nzNrN8leRpvE1oyrPhS7OKzO3uUx8lklwbK/CEF/+mG7OFY2Sj3y0Qd50QaHVbMjPsu2fJ179JArJ/gOPB7LAVgF8EW2TqTyzEUXiaWWPu+l+ObEOCxFr3wR+hI/EpHNOUxE2RwlEBGkVQg4sntOp4rtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ARf9yryb; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fIihOAvP"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VZBWK2sXMzG09;
-	Wed,  8 May 2024 12:40:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1715164845;
-	bh=ZCXb1sdxL/8mV0mV9MJ01YSyUWOouZBH9HhnL55No9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fIihOAvPO0LQ0h4YsPMnVyWoJCakZS5mXOyEgUWHfazDAILsSLixvkWXYFiibHu3N
-	 52VuhjUdnCtkE8WKYoZpdmYSzX2oYL2tANMFJ1xaa8vEvfAADuM3eaS8hgJyA9D6tl
-	 6xJbU5lL6MtiQE424DK1MSPoovRiUV83ox9n+w2Q=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VZBWJ0x07zhq1;
-	Wed,  8 May 2024 12:40:44 +0200 (CEST)
-Date: Wed, 8 May 2024 12:40:43 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
-	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v15 00/11] Landlock: IOCTL support
-Message-ID: <20240508.lei6Oyaiy8So@digikod.net>
-References: <20240419161122.2023765-1-gnoack@google.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ARf9yryb"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240508114046euoutp01c37f593f2a27b20f7d0fd2731027a54b~NgJ1CqoWY2038520385euoutp01U;
+	Wed,  8 May 2024 11:40:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240508114046euoutp01c37f593f2a27b20f7d0fd2731027a54b~NgJ1CqoWY2038520385euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715168446;
+	bh=gtbGdnHi+Sywm4GJEWUqxx3nEyjlhODfQVe10fNojck=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ARf9yrybjupqwXRiQSE0Q+Tc1VlSDD++6M71TuY+w8UkpabWpt+Bd8asmIwK5/S1b
+	 p9DuAfcc4CfOwakhdbcNO5XJRUC3eEs2nIyv98AaKJUjgJCQxVPiTUPHlm8FXtoUrm
+	 DraRLqHwAMzxsVBDEVDoUEvhrhA8MTbEvMJRkiJc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240508114045eucas1p2008b107d5bc84df1055d3c8f6f665522~NgJ00-QmY1758717587eucas1p26;
+	Wed,  8 May 2024 11:40:45 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id DE.2B.09875.DB46B366; Wed,  8
+	May 2024 12:40:45 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240508114044eucas1p1bafa4ded49711d101a6ec02ee4cb497d~NgJ0CfQx03085530855eucas1p1l;
+	Wed,  8 May 2024 11:40:44 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240508114044eusmtrp12f636116d09000caf814157fd2f0936e~NgJ0BWWL81100011000eusmtrp10;
+	Wed,  8 May 2024 11:40:44 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-36-663b64bda894
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 77.0C.09010.CB46B366; Wed,  8
+	May 2024 12:40:44 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240508114044eusmtip2fa7284d181f2b50d0064e9cbaa2aaf8d~NgJz0FG2t1990419904eusmtip2H;
+	Wed,  8 May 2024 11:40:44 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 8 May 2024 12:40:43 +0100
+Date: Wed, 8 May 2024 13:40:38 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+	Eric Dumazet <edumazet@google.com>, Dave Chinner <david@fromorbit.com>,
+	<linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-mm@kvack.org>, <linux-security-module@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-xfs@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<coreteam@netfilter.org>, <kexec@lists.infradead.org>,
+	<linux-hardening@vger.kernel.org>, <bridge@lists.linux.dev>,
+	<lvs-devel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<rds-devel@oss.oracle.com>, <linux-sctp@vger.kernel.org>,
+	<linux-nfs@vger.kernel.org>, <apparmor@lists.ubuntu.com>
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <20240508114038.vnx2hchpxeimuqz2@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="t6g7ogcm2uwc3jep"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240419161122.2023765-1-gnoack@google.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <4cda5d2d-dd92-44ef-9e7b-7b780ec795ab@t-8ch.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WSfUxTVxjGc+5XS7fipYiegGAoaNzcyocyTsSBRJ03/rEsBjMDy2wdF3RC
+	q21RtuisgeH4UgQNFgwrVMBJC1hqBTajI1CkTMCprNsQAhTcBCNSOkZAWJuLm8n++z3PeZ43
+	75scPi56TPnzD8nVrFIuSxNTAsJinet591ZyTEp4lVaMTlt1JHK2d1LIos/H0MuWMzgyWwcB
+	GrOO8NBP+eno+24Xhkyj/ST64VYXgSoa5gB60HqZQoOGJRL13ekm0cMb9QQabyskkMWZTaGi
+	yiwcjekmSDRVMEKh9oZ7BGpdaOah+b/HMTQ/u0iirG+ncWQvGgPIqluFiuptBOppcpLbAply
+	zX2CsVVBRmfKYEzXcinGNF3MY5qunGL+aNICpvdSJWD67UME82z+Lsb01UxSjNMUxJzLt/I+
+	EiYKtiazaYeOscqwWKng4PSFAexIuV9mdn+sBtz3yQNefEhvhjnTLjIPCPgi+iqAo84XOCdm
+	3EI3BTjhBNBZXUq9qvSU3Vt+qAXQUN5H/psa6phY7psAtLWNuWN8PkGHwmHjek+bot+BvZMD
+	uIdX0lvhd385eR7G6Ys8WH5T6mFfWgrN1SXAw0J6G5wrHCE59oFdWgfB5TNh652bpGc8TgfA
+	2kW+x/Zyj/z5bDvBLRoMXfrBZT4JbebfMM9qkJ4SwJahYcrThfQOWDCygcv4wqedZh7Ha2B3
+	SQHB5UsAvL04xeNEHYA1p10Yl4qB2Q8dy414ONj7K+CGekP7Mx9uT29YbCnFOVsIv8kRcen1
+	sG5wkigCIWWvXVb22mVl/13G2RJov3iB+p+9EdZUTuAcvw/r658TOsC7BlazGar0VFYVKWeP
+	S1SydFWGPFXymSLdBNy/vnuxc6YZ1D59IWkDGB+0gVB3eaSxrg/4E3KFnBWvFHaciU4RCZNl
+	X3zJKhX7lRlprKoNBPAJ8WrhuuS1rIhOlanZwyx7hFW+esX4Xv4abBcTU0HtS9keFxRtb9V4
+	gzy/4vCrzXvWGQP2tigchsadvwc/YCQr3tR/kNGcULLFJbNej0saVhSr/tSYy6IS5pJc1rip
+	2X0Vvn7SVd7BupCciPEfN+dvtEc2RvvqE4+GSXbcNQaIwn5xfE7R8dnHonJHd+//uPxE4IzX
+	E7XPrKZ6bdBugzr2uu3ABrKr9FH8Jn1y5NfanQWZ2BNacbSmpoqQrnje8WiXhH2r/Y0c4+1A
+	Z3dIw8ntVnWkUVCq3LKwlGTXai491hjAV2vGXi5VHd4UTg6cyPrkrLa/028hlIhi+i6fMxbe
+	YGsT3pvtsFkSA04NHDhuTsj9MMJRev7TKw4xoTooi3gbV6pk/wAtwQFpcAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNKsWRmVeSWpSXmKPExsVy+t/xe7p7UqzTDM5cMLJoPLaA1eLzkeNs
+	FtsWdzNZ/N3Zzmyx5dg9Rounxx6xW5zpzrXYffork8Wmx9dYLfbsPcliMW/9T0aLy7vmsFnc
+	W/Of1eLCgdOsFle2rmOxeHaol8Vi2+cWNosJC5uZLZ4ueM1q8aHnEZvFkfVnWSx2/dnBbvH7
+	xzMmi9/f/7FaNM//xGxxY8JTRotjC8QsJqw7xWJxbvNnVgdZj9kNF1k8Ti2S8FiwqdRj06pO
+	No9Nnyaxe2xeUu/xYvNMRo/zMxYyely7cZ/F4+3vE0weF5a9YfP4vEnOo7/7GHsAb5SeTVF+
+	aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexuEXE9gKZopW
+	PD7WztzAeF6wi5GTQ0LAROLcrLOMXYxcHEICSxkllk6bzwSRkJHY+OUqK4QtLPHnWhcbRNFH
+	RokXG9cxQzibGCX2TdwE5HBwsAioSDxcqwbSwCagI3H+zR1mEFtEwEZi5bfP7CA2s8BUdonZ
+	2xNAbGGBBIktSyczgti8Ag4SP3sfsULM7GSS2H73FFRCUOLkzCcsEM1lEpuXzmcF2cUsIC2x
+	/B8HSJgTaP6lviMsEIcqSnxdfA/KrpX4/PcZ4wRG4VlIJs1CMmkWwiSIsI7Ezq132DCEtSWW
+	LXzNDGHbSqxb955lASP7KkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMCUt+3Yzy07GFe++qh3
+	iJGJg/EQowpQ56MNqy8wSrHk5eelKonwHm03TxPiTUmsrEotyo8vKs1JLT7EaAoMxInMUqLJ
+	+cBknFcSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fEwSnVwLRXjfWeXbv/
+	21OMW8McPK51fmtbYLsovVerk2O1TEjn2fWSxz8eWOETlWmeVlS8tYVf+Nit5JO3/DZ8eZ1p
+	wL9ll9gp72/TxZadjf8Q6X4wj72pTP3U0QuKj22vGZdy5t2+u39/zELOi0c+71pYJ3fzgkSf
+	xoYtlaF1vi+uN2xeUSC5xfKMf59VVu+jrc63e8KbbRZwc0q+Ttgvs9qupyNmTjO/Wfzu6m3T
+	59doib3buXTm0yfX9k4Km7HwS+HHA1ukpEyileXTGEwnnZxq+/zqsvUGHNb/kzcxGW85cDaI
+	592LvTUOP1ymHSq8V8strvt6W9vL2k0iMsX7vk491H1GY0ZMh4vPk9il685ccExSYinOSDTU
+	Yi4qTgQA//bFNQ4EAAA=
+X-CMS-MailID: 20240508114044eucas1p1bafa4ded49711d101a6ec02ee4cb497d
+X-Msg-Generator: CA
+X-RootMTR: 20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803
+References: <CGME20240423075608eucas1p265e7c90f3efd6995cb240b3d2688b803@eucas1p2.samsung.com>
+	<20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+	<20240503090332.irkiwn73dgznjflz@joelS2.panther.com>
+	<4cda5d2d-dd92-44ef-9e7b-7b780ec795ab@t-8ch.de>
 
-This patch series has been in -next for some time now.  I just added
-some tiny cosmetic fixes and a missing (on some distros) C header file.
-I plan to send it for v6.10 but I'll probably rebase it again because of
-kselftest changes.
+--t6g7ogcm2uwc3jep
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It is noteworthy that test coverage dropped by 1.5%: from 92.4% to 90.9%
-.  This is due to the tests not covering the IOCTL compat code.  It
-would be good to find a way to cover this case, probably building 32-bit
-test binary stubs (to avoid depending on 32-bit libraries).
+On Fri, May 03, 2024 at 04:09:40PM +0200, Thomas Wei=DFschuh wrote:
+> Hey Joel,
+>=20
+=2E..
+> > # Motivation
+> > As I read it, the motivation for these constification efforts are:
+> > 1. It provides increased safety: Having things in .rodata section reduc=
+es the
+> >    attack surface. This is especially relevant for structures that have=
+ function
+> >    pointers (like ctl_table); having these in .rodata means that these =
+pointers
+> >    always point to the "intended" function and cannot be changed.
+> > 2. Compiler optimizations: This was just a comment in the patchsets tha=
+t I have
+> >    mentioned ([3,4,5]). Do you know what optimizations specifically? Do=
+es it
+> >    have to do with enhancing locality for the data in .rodata? Do you h=
+ave other
+> >    specific optimizations in mind?
+>=20
+> I don't know about anything that would make it faster.
+> It's more about safety and transmission of intent to API users,
+> especially callback implementers.
+Noted.
 
-Thanks again!
+=2E..
+> > # Show the move
+> > I created [8] because there is no easy way to validate which objects ma=
+de it
+> > into .rodata. I ran [8] for your Dec 2nd patcheset [7] and there are le=
+ss in
+> > .rodata than I expected (the results are in [9]) Why is that? Is it som=
+ething
+> > that has not been posted to the lists yet?=20
+>=20
+> Constifying the APIs only *allows* the actual table to be constified
+> themselves.
+> Then each table definition will have to be touched and "const" added.
+That is what I thought. thx for clarifying.
 
- Mickaël
+>=20
+> See patches 17 and 18 in [7] for two examples.
+>=20
+> Some tables in net/ are already "const" as the static definitions are
+> never registered themselves but only their copies are.
+>=20
+=2E..
 
+best
 
-On Fri, Apr 19, 2024 at 04:11:11PM +0000, Günther Noack wrote:
-> Hello!
-> 
-> These patches add simple ioctl(2) support to Landlock.
-> 
-> Objective
-> ~~~~~~~~~
-> 
-> Make ioctl(2) requests for device files restrictable with Landlock,
-> in a way that is useful for real-world applications.
-> 
-> Proposed approach
-> ~~~~~~~~~~~~~~~~~
-> 
-> Introduce the LANDLOCK_ACCESS_FS_IOCTL_DEV right, which restricts the
-> use of ioctl(2) on block and character devices.
-> 
-> We attach the this access right to opened file descriptors, as we
-> already do for LANDLOCK_ACCESS_FS_TRUNCATE.
-> 
-> If LANDLOCK_ACCESS_FS_IOCTL_DEV is handled (restricted in the
-> ruleset), the LANDLOCK_ACCESS_FS_IOCTL_DEV right governs the use of
-> all device-specific IOCTL commands.  We make exceptions for common and
-> known-harmless IOCTL commands such as FIOCLEX, FIONCLEX, FIONBIO and
-> FIOASYNC, as well as other IOCTL commands which are implemented in
-> fs/ioctl.c.  A full list of these IOCTL commands is listed in the
-> documentation.
-> 
-> I believe that this approach works for the majority of use cases, and
-> offers a good trade-off between complexity of the Landlock API and
-> implementation and flexibility when the feature is used.
-> 
-> Current limitations
-> ~~~~~~~~~~~~~~~~~~~
-> 
-> With this patch set, ioctl(2) requests can *not* be filtered based on
-> file type, device number (dev_t) or on the ioctl(2) request number.
-> 
-> On the initial RFC patch set [1], we have reached consensus to start
-> with this simpler coarse-grained approach, and build additional IOCTL
-> restriction capabilities on top in subsequent steps.
-> 
-> [1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net/
-> 
-> Notable implications of this approach
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> * A processes' existing open file descriptors stay unaffected
->   when a process enables Landlock.
-> 
->   This means that in common scenarios, where the terminal file
->   descriptor is inherited from the parent process, the terminal's
->   IOCTLs (ioctl_tty(2)) continue to work.
-> 
-> * ioctl(2) continues to be available for file descriptors for
->   non-device files.  Example: Network sockets, memfd_create(2),
->   regular files and directories.
-> 
-> Examples
-> ~~~~~~~~
-> 
-> Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
-> 
->   LL_FS_RO=/ LL_FS_RW=. ./sandboxer /bin/bash
-> 
-> The LANDLOCK_ACCESS_FS_IOCTL_DEV right is part of the "read-write"
-> rights here, so we expect that newly opened device files outside of
-> $HOME don't work with most IOCTL commands.
-> 
->   * "stty" works: It probes terminal properties
-> 
->   * "stty </dev/tty" fails: /dev/tty can be reopened, but the IOCTL is
->     denied.
-> 
->   * "eject" fails: ioctls to use CD-ROM drive are denied.
-> 
->   * "ls /dev" works: It uses ioctl to get the terminal size for
->     columnar layout
-> 
->   * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
->     attempts to reopen /dev/tty.)
-> 
-> Unaffected IOCTL commands
-> ~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> To decide which IOCTL commands should be blanket-permitted, we went
-> through the list of IOCTL commands which are handled directly in
-> fs/ioctl.c and looked at them individually to understand what they are
-> about.
-> 
-> The following commands are permitted by Landlock unconditionally:
-> 
->  * FIOCLEX, FIONCLEX - these work on the file descriptor and
->    manipulate the close-on-exec flag (also available through
->    fcntl(2) with F_SETFD)
->  * FIONBIO, FIOASYNC - these work on the struct file and enable
->    nonblocking-IO and async flags (also available through
->    fcntl(2) with F_SETFL)
-> 
-> The following commands are also unconditionally permitted by Landlock, because
-> they are really operating on the file system's superblock, rather than on the
-> file itself (the same funcionality is also available from any other file on the
-> same file system):
-> 
->  * FIFREEZE, FITHAW - work on superblock(!) to freeze/thaw the file
->    system. Requires CAP_SYS_ADMIN.
->  * FIGETBSZ - get file system blocksize
->  * FS_IOC_GETFSUUID, FS_IOC_GETFSSYSFSPATH - getting file system properties
-> 
-> Notably, the command FIONREAD is *not* blanket-permitted,
-> because it would be a device-specific implementation.
-> 
-> Detailed reasoning about each IOCTL command from fs/ioctl.c is in
-> get_required_ioctl_dev_access() in security/landlock/fs.c.
-> 
-> 
-> Related Work
-> ~~~~~~~~~~~~
-> 
-> OpenBSD's pledge(2) [2] restricts ioctl(2) independent of the file
-> descriptor which is used.  The implementers maintain multiple
-> allow-lists of predefined ioctl(2) operations required for different
-> application domains such as "audio", "bpf", "tty" and "inet".
-> 
-> OpenBSD does not guarantee backwards compatibility to the same extent
-> as Linux does, so it's easier for them to update these lists in later
-> versions.  It might not be a feasible approach for Linux though.
-> 
-> [2] https://man.openbsd.org/OpenBSD-7.4/pledge.2
-> 
-> 
-> Implementation Rationale
-> ~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> A main constraint of this implementation is that the blanket-permitted
-> IOCTL commands for device files should never dispatch to the
-> device-specific implementations in f_ops->unlocked_ioctl() and
-> f_ops->compat_ioctl().
-> 
-> There are many implementations of these f_ops operations and they are
-> too scattered across the kernel to give strong guarantees about them.
-> Additionally, some existing implementations do work before even
-> checking whether they support the cmd number which was passed to them.
-> 
-> 
-> In this implementation, we are listing the blanket-permitted IOCTL
-> commands in the Landlock implementation, mirroring a subset of the
-> IOCTL commands which are directly implemented in do_vfs_ioctl() in
-> fs/ioctl.c.  The trade-off is that the Landlock LSM needs to track
-> future developments in fs/ioctl.c to keep up to date with that, in
-> particular when new IOCTL commands are introduced there, or when they
-> are moved there from the f_ops implementations.
-> 
-> We mitigate this risk in this patch set by adding fs/ioctl.c to the
-> paths that are relevant to Landlock in the MAINTAINERS file.
-> 
-> The trade-off is discussed in more detail in [3].
-> 
-> 
-> Previous versions of this patch set have used different implementation
-> approaches to guarantee the main constraint above, which we have
-> dismissed due to the following reasons:
-> 
-> * V10: Introduced a new LSM hook file_vfs_ioctl, which gets invoked
->   just before the call to f_ops->unlocked_ioctl().
-> 
->   Not done, because it would have created an avoidable overlap between
->   the file_ioctl and file_vfs_ioctl LSM hooks [4].
-> 
-> * V11: Introduced an indirection layer in fs/ioctl.c, so that Landlock
->   could figure out the list of IOCTL commands which are handled by
->   do_vfs_ioctl().
-> 
->   Not done due to additional indirection and possible performance
->   impact in fs/ioctl.c [5]
-> 
-> * V12: Introduced a special error code to be returned from the
->   file_ioctl hook, and matching logic that would disallow the call to
->   f_ops->unlocked_ioctl() in case that this error code is returned.
-> 
->   Not done due because this approach would conflict with Landlock's
->   planned audit logging [6] and because LSM hooks with special error
->   codes are generally discouraged and have lead to problems in the
->   past [7].
-> 
-> Thanks to Arnd Bergmann, Christian Brauner, Kent Overstreet, Mickaël Salaün and
-> Paul Moore for guiding this implementation on the right track!
-> 
-> [3] https://lore.kernel.org/all/ZgLJG0aN0psur5Z7@google.com/
-> [4] https://lore.kernel.org/all/CAHC9VhRojXNSU9zi2BrP8z6JmOmT3DAqGNtinvvz=tL1XhVdyg@mail.gmail.com/
-> [5] https://lore.kernel.org/all/32b1164e-9d5f-40c0-9a4e-001b2c9b822f@app.fastmail.com
-> [6] https://lore.kernel.org/all/20240326.ahyaaPa0ohs6@digikod.net
-> [7] https://lore.kernel.org/all/CAHC9VhQJFWYeheR-EqqdfCq0YpvcQX5Scjfgcz1q+jrWg8YsdA@mail.gmail.com/
-> 
-> 
-> Changes
-> ~~~~~~~
-> 
-> V15:
->  * Drop the commit about FS_IOC_GETFSUUID / FS_IOC_GETFSSYSFSPATH --
->    it is already assumed as a prerequisite now.
->  * security/landlock/fs.c:
->    * Add copyright notice for my contributions (also for the truncate
->      patch set)
->  * Tests:
->    * In commit "Test IOCTL support":
->      * Test with /dev/zero instead of /dev/tty
->      * Check only FIONREAD instead of both FIONREAD and TCGETS
->      * Remove a now-unused SKIP()
->    * In test for Named UNIX Domain Sockets:
->      * Do not inline variable assignments in ASSERT() usages
->    * In commit "Exhaustive test for the IOCTL allow-list":
->      * Make IOCTL results deterministic:
->        * Zero the input buffer
->        * Close FD 0 for the ioctl() call, to avoid accidentally using it
->  * Cosmetic changes and cleanups
->    * Remove a leftover mention of "synthetic" access rights
->    * Fix docstring format for is_masked_device_ioctl()
->    * Newline and comment ordering cleanups as discussed in v14 review
-> 
-> V14:
->  * Revise which IOCTLs are permitted.
->    It is almost the same as the vfs_masked_device_ioctl() hooks from
->    https://lore.kernel.org/all/20240219183539.2926165-1-mic@digikod.net/,
->    with the following differences:
->    * Added cases for FS_IOC_GETFSUUID and FS_IOC_GETFSSYSFSPATH
->    * Do not blanket-permit FS_IOC_{GET,SET}{FLAGS,XATTR}.
->      They fall back to the device implementation.
->  * fs/ioctl:
->    * Small prerequisite change so that FS_IOC_GETFSUUID and
->      FS_IOC_GETFSSYSFSPATH do not fall back to the device implementation.
->    * Slightly rephrase wording in the warning above do_vfs_ioctl().
->  * Implement compat handler
->  * Improve UAPI header documentation
->  * Code structure
->    * Change helper function style to return a boolean
->    * Reorder structure of the IOCTL hooks (much cleaner now -- thanks for the
->      hint, Mickaël!)
->    * Extract is_device() helper
-> 
-> V13:
->  * Using the existing file_ioctl hook and a hardcoded list of IOCTL commands.
->    (See the section on implementation rationale above.)
->  * Add support for FS_IOC_GETFSUUID, FS_IOC_GETFSSYSFSPATH.
->    
-> V12:
->  * Rebased on Arnd's proposal:
->    https://lore.kernel.org/all/32b1164e-9d5f-40c0-9a4e-001b2c9b822f@app.fastmail.com/
->    This means that:
->    * the IOCTL security hooks can return a special value ENOFILEOPS,
->      which is treated specially in fs/ioctl.c to permit the IOCTL,
->      but only as long as it does not call f_ops->unlocked_ioctl or
->      f_ops->compat_ioctl.
->  * The only change compared to V11 is commit 1, as well as a small
->    adaptation in the commit 2 (The Landlock implementation needs to
->    return the new special value).  The tests and documentation commits
->    are exactly the same as before.
-> 
-> V11:
->  * Rebased on Mickaël's proposal to refactor fs/ioctl.c:
->    https://lore.kernel.org/all/20240315145848.1844554-1-mic@digikod.net/
->    This means that:
->    * we do not add the file_vfs_ioctl() hook as in V10
->    * we add vfs_get_ioctl_handler() instead, so that Landlock
->      can query which of the IOCTL commands in handled in do_vfs_ioctl()
-> 
->    That proposal is used here unmodified (except for minor typos in the commit
->    description).
->  * Use the hook_ioctl_compat LSM hook as well.
-> 
-> V10:
->  * Major change: only restrict IOCTL invocations on device files
->    * Rename access right to LANDLOCK_ACCESS_FS_IOCTL_DEV
->    * Remove the notion of synthetic access rights and IOCTL right groups
->  * Introduce a new LSM hook file_vfs_ioctl, which gets invoked just
->    before the call to f_ops->unlocked_ioctl()
->  * Documentation
->    * Various complications were removed or simplified:
->      * Suggestion to mount file systems as nodev is not needed any more,
->        as Landlock already lets users distinguish device files.
->      * Remarks about fscrypt were removed.  The fscrypt-related IOCTLs only
->        applied to regular files and directories, so this patch does not affect
->        them any more.
->      * Various documentation of the IOCTL grouping approach was removed,
->        as it's not needed any more.
-> 
-> V9:
->  * in “landlock: Add IOCTL access right”:
->    * Change IOCTL group names and grouping as discussed with Mickaël.
->      This makes the grouping coarser, and we occasionally rely on the
->      underlying implementation to perform the appropriate read/write
->      checks.
->      * Group IOCTL_RW (one of READ_FILE, WRITE_FILE or READ_DIR):
->        FIONREAD, FIOQSIZE, FIGETBSZ
->      * Group IOCTL_RWF (one of READ_FILE or WRITE_FILE):
->        FS_IOC_FIEMAP, FIBMAP, FIDEDUPERANGE, FICLONE, FICLONERANGE,
->        FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64,
->        FS_IOC_ZERO_RANGE
->    * Excempt pipe file descriptors from IOCTL restrictions,
->      even for named pipes which are opened from the file system.
->      This is to be consistent with anonymous pipes created with pipe(2).
->      As discussed in https://lore.kernel.org/r/ZP7lxmXklksadvz+@google.com
->    * Document rationale for the IOCTL grouping in the code
->    * Use __attribute_const__
->    * Rename required_ioctl_access() to get_required_ioctl_access()
->  * Selftests
->    * Simplify IOCTL test fixtures as a result of simpler grouping.
->    * Test that IOCTLs are permitted on named pipe FDs.
->    * Test that IOCTLs are permitted on named Unix Domain Socket FDs.
->    * Work around compilation issue with old GCC / glibc.
->      https://sourceware.org/glibc/wiki/Synchronizing_Headers
->      Thanks to Huyadi <hu.yadi@h3c.com>, who pointed this out in
->      https://lore.kernel.org/all/f25be6663bcc4608adf630509f045a76@h3c.com/
->      and Mickaël, who fixed it through #include reordering.
->  * Documentation changes
->    * Reword "IOCTL commands" section a bit
->    * s/permit/allow/
->    * s/access right/right/, if preceded by LANDLOCK_ACCESS_FS_*
->    * s/IOCTL/FS_IOCTL/ in ASCII table
->    * Update IOCTL grouping documentation in header file
->  * Removed a few of the earlier commits in this patch set,
->    which have already been merged.
-> 
-> V8:
->  * Documentation changes
->    * userspace-api/landlock.rst:
->      * Add an extra paragraph about how the IOCTL right combines
->        when used with other access rights.
->      * Explain better the circumstances under which passing of
->        file descriptors between different Landlock domains can happen
->    * limits.h: Add comment to explain public vs internal FS access rights
->    * Add a paragraph in the commit to explain better why the IOCTL
->      right works as it does
-> 
-> V7:
->  * in “landlock: Add IOCTL access right”:
->    * Make IOCTL_GROUPS a #define so that static_assert works even on
->      old compilers (bug reported by Intel about PowerPC GCC9 config)
->    * Adapt indentation of IOCTL_GROUPS definition
->    * Add missing dots in kernel-doc comments.
->  * in “landlock: Remove remaining "inline" modifiers in .c files”:
->    * explain reasoning in commit message
-> 
-> V6:
->  * Implementation:
->    * Check that only publicly visible access rights can be used when adding a
->      rule (rather than the synthetic ones).  Thanks Mickaël for spotting that!
->    * Move all functionality related to IOCTL groups and synthetic access rights
->      into the same place at the top of fs.c
->    * Move kernel doc to the .c file in one instance
->    * Smaller code style issues (upcase IOCTL, vardecl at block start)
->    * Remove inline modifier from functions in .c files
->  * Tests:
->    * use SKIP
->    * Rename 'fd' to dir_fd and file_fd where appropriate
->    * Remove duplicate "ioctl" mentions from test names
->    * Rename "permitted" to "allowed", in ioctl and ftruncate tests
->    * Do not add rules if access is 0, in test helper
-> 
-> V5:
->  * Implementation:
->    * move IOCTL group expansion logic into fs.c (implementation suggested by
->      mic)
->    * rename IOCTL_CMD_G* constants to LANDLOCK_ACCESS_FS_IOCTL_GROUP*
->    * fs.c: create ioctl_groups constant
->    * add "const" to some variables
->  * Formatting and docstring fixes (including wrong kernel-doc format)
->  * samples/landlock: fix ABI version and fallback attribute (mic)
->  * Documentation
->    * move header documentation changes into the implementation commit
->    * spell out how FIFREEZE, FITHAW and attribute-manipulation ioctls from
->      fs/ioctl.c are handled
->    * change ABI 4 to ABI 5 in some missing places
-> 
-> V4:
->  * use "synthetic" IOCTL access rights, as previously discussed
->  * testing changes
->    * use a large fixture-based test, for more exhaustive coverage,
->      and replace some of the earlier tests with it
->  * rebased on mic-next
-> 
-> V3:
->  * always permit the IOCTL commands FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC and
->    FIONREAD, independent of LANDLOCK_ACCESS_FS_IOCTL
->  * increment ABI version in the same commit where the feature is introduced
->  * testing changes
->    * use FIOQSIZE instead of TTY IOCTL commands
->      (FIOQSIZE works with regular files, directories and memfds)
->    * run the memfd test with both Landlock enabled and disabled
->    * add a test for the always-permitted IOCTL commands
-> 
-> V2:
->  * rebased on mic-next
->  * added documentation
->  * exercise ioctl(2) in the memfd test
->  * test: Use layout0 for the test
-> 
-> ---
-> 
-> V1: https://lore.kernel.org/all/20230502171755.9788-1-gnoack3000@gmail.com/
-> V2: https://lore.kernel.org/all/20230623144329.136541-1-gnoack@google.com/
-> V3: https://lore.kernel.org/all/20230814172816.3907299-1-gnoack@google.com/
-> V4: https://lore.kernel.org/all/20231103155717.78042-1-gnoack@google.com/
-> V5: https://lore.kernel.org/all/20231117154920.1706371-1-gnoack@google.com/
-> V6: https://lore.kernel.org/all/20231124173026.3257122-1-gnoack@google.com/
-> V7: https://lore.kernel.org/all/20231201143042.3276833-1-gnoack@google.com/
-> V8: https://lore.kernel.org/all/20231208155121.1943775-1-gnoack@google.com/
-> V9: https://lore.kernel.org/all/20240209170612.1638517-1-gnoack@google.com/
-> V10: https://lore.kernel.org/all/20240309075320.160128-1-gnoack@google.com/
-> V11: https://lore.kernel.org/all/20240322151002.3653639-1-gnoack@google.com/
-> V12: https://lore.kernel.org/all/20240325134004.4074874-1-gnoack@google.com/
-> V13: https://lore.kernel.org/all/20240327131040.158777-1-gnoack@google.com/
-> V14: https://lore.kernel.org/all/20240405214040.101396-1-gnoack@google.com/
-> 
-> Günther Noack (11):
->   landlock: Add IOCTL access right for character and block devices
->   selftests/landlock: Test IOCTL support
->   selftests/landlock: Test IOCTL with memfds
->   selftests/landlock: Test ioctl(2) and ftruncate(2) with open(O_PATH)
->   selftests/landlock: Test IOCTLs on named pipes
->   selftests/landlock: Check IOCTL restrictions for named UNIX domain
->     sockets
->   selftests/landlock: Exhaustive test for the IOCTL allow-list
->   samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL_DEV
->   landlock: Document IOCTL support
->   MAINTAINERS: Notify Landlock maintainers about changes to fs/ioctl.c
->   fs/ioctl: Add a comment to keep the logic in sync with LSM policies
-> 
->  Documentation/userspace-api/landlock.rst     |  76 ++-
->  MAINTAINERS                                  |   1 +
->  fs/ioctl.c                                   |   3 +
->  include/uapi/linux/landlock.h                |  38 +-
->  samples/landlock/sandboxer.c                 |  13 +-
->  security/landlock/fs.c                       | 225 ++++++++-
->  security/landlock/limits.h                   |   2 +-
->  security/landlock/syscalls.c                 |   2 +-
->  tools/testing/selftests/landlock/base_test.c |   2 +-
->  tools/testing/selftests/landlock/fs_test.c   | 486 ++++++++++++++++++-
->  10 files changed, 805 insertions(+), 43 deletions(-)
-> 
-> 
-> base-commit: fe611b72031cc211a96cf0b3b58838953950cb13
-> -- 
-> 2.44.0.769.g3c40516874-goog
-> 
-> 
+--=20
+
+Joel Granados
+
+--t6g7ogcm2uwc3jep
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmY7ZLUACgkQupfNUreW
+QU8gUgv+JUZin5OAF3NMj7s3DmErLOcek/iw2Q4tXtrCSrstF9AEp1KJR4h7cMPe
+Nh/NrY7roszof3ADLw9QcvijqtC2/YxQqtu+PqVfRYn15Tv7/eFIYRElCTK3Xdxj
+xMkZb9Afo5tMvUqCXLuy7hsa5GxNrpk5wLv3OEQnaOQPriuI0fAdMxQEFZXtRFst
+ZNvVqOVbGzH5fZhv6YS21SHWAIbki2fKfu9etPSftEhi5TQ60KT0GfnNLhonPMES
+3q2s+Ox+m8zkKdpI8YZK/KYO7u7qM2aEGCcKQejM4cdJs8Ii0VVQT5lwyEipveYM
+5d+sAYm/dF/FfZ6ocaC7REDrCC2P3+IxskN73CNRhwkkiUBSzXu52QdTzaAUF09Z
+azXiYxq/FpInFPHbBRWHRoeLkknyIlNmKUvVW+H6EHoMxgio7Pn2ERgGo4on6m8Z
+DX/ExB4ksH+M9m8Mw5niW9tzCilWV1c6EvwQ+9FlNY0szADvScD0Ocv3M0FVfvcx
+BVIXt1UD
+=UpYq
+-----END PGP SIGNATURE-----
+
+--t6g7ogcm2uwc3jep--
