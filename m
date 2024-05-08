@@ -1,175 +1,150 @@
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4E1128829
-	for <linux-security-module@vger.kernel.org>; Wed,  8 May 2024 19:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA423130AFC
+	for <linux-security-module@vger.kernel.org>; Wed,  8 May 2024 20:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715196743; cv=none; b=YPXYl0z8Fj7XOKmwp5cz5oMgeUUBKr0VYOnHSF++Vdo1uzzRIHrqoEjOyBsx/Y8kPpuezlqAknCGiRZ1TE3c4T1af5ruXIx8ErmlMMJV0O3JDsqVj8wjwQa4dw7dMwVFS8q37g8Qy0E/jq8VtfyujGrYo2ZwneWC1ynlBllNsEc=
+	t=1715200093; cv=none; b=XlSrFiWEpdeBG4hnxPJupGBOLHhSsMsvC259kBw6l6qOU1TXvCvbmsyXWmdi5D2vHXWZWA08eyKAI9GB5zefE/HjvWJw3NcrZP2uGfXWW6fkzbAipeAmIb4EoTboH3ob2nSnYrxaGChra8a2pQojl/zsej7UDi7XuxzVF4kLwts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715196743; c=relaxed/simple;
-	bh=+ySXkYc5QiwkJ0CeVRZu0/kwBzu8zL6y7flU962u6hw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T82eGijV58u4xYY6aLQGAY3u4y9zv32hY2bodyxDtb+n2WZYQ8E+BLBVshC0HVknGeuU/8cjkzQtsHsbt8d2LIyiji4YAi4qSD6C6DQydZQtD5+vfCYLFT9DnRrBrOtg1N0vLOqUS2olCiM8UehFP1t+07cicCeQpxwRZ9eRhrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-36c6ad47565so1444155ab.0
-        for <linux-security-module@vger.kernel.org>; Wed, 08 May 2024 12:32:21 -0700 (PDT)
+	s=arc-20240116; t=1715200093; c=relaxed/simple;
+	bh=o2NLQhPztuDZ4rTiTDFMEINRFzrqOs93EXYAp0RXtiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JBhMpzWwXLohbGC/mBZziO6YIq2/mDEegbPyolgD8CeM5vPdHUrfL9bJvNmnG6eNvVSb/4CufGfdVBarfEG3y6BtmT7ve1j6wXkGN3GgYwUCHwCuYXs6Nb8gztBm4IrG/AzyUsD+L6zS+x3UNMBgsqHgwKWDF13m80NUN5UY9SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NyX9IHCr; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NyX9IHCr"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso3802a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 08 May 2024 13:28:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715200088; x=1715804888; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxBCT1ZV/EGWLKjxVs7FXcKu7sqjJfkKsVJ1w+mU1+0=;
+        b=NyX9IHCrSC9Je83Z/MnO8GwYzmpBLZE12Oh7P0WFKvTalU2Ciei+SR4yfrdbmQXps+
+         uWt/vjgQ+p0u6FKAcDDdqRciXtxpn1eAn1RRbxJrfD7/D6dUWWiyHNmgyOHtkeETq02t
+         YGSf7tHygxWbjyaDE4tFQH/tNyN+kiFydGC4Sf/vS3eO7m6sUlailV45R5eKKxcUYq0J
+         aW/UI7mnxqPAUJ+IEgeMuC8o5GtFG8x1++zBxQVDeD5vc9pjheIIRF7IN7vbtVWA/fD2
+         KDdFmbJEMXi4XdMUBM8YFeX7KpKa9V5dExWXQepqMrbkr5Fy3psYGVyoCv4bI3hNGEoQ
+         uD6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715196741; x=1715801541;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=io8+fYOvzjtMLOZbcmfcrk1vBoRPVdoezfG7Q0K1kV0=;
-        b=l3bpPiQgZ+Ijohw94BX2S3D5RoK5GhRVhoDaY5BXem0IUQ4YQR7iBNSn7Vq4idTDq/
-         a11hy+YnpJSe/pcjEvk3nN3HOhcq7tvEgdnuGgSrqVj877K08IDhCeLCWkwnJK8sHfmF
-         zEbc9NldoTLs7kko4QQUQib15btvkG/eGIy5+PvK3DAR2JYSfXds7rjRDsAQPAD0r+p9
-         N9g2Xx5N1FKBp2RTWRoz2zZn8Vb1pgZZB+dn5LA4gJbuSDhAZFd4532nIaFX+4PON4bA
-         1yihlSpGLCg/rHFoowYZeSeSb2ux1whsEqFOuvn7bIzrMbnHaj0Q11a71lHL4IbBmd41
-         hoqw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ZxPeTPZ9sa9KNInexBlfJQ7PDYzbYke8aIj5mMW1TlYhpqT+gpzFMssW2THIaaXUqU4PaMkwhicShes+RClSyNbUKYjjrjcMWulT/2ZTpGpsD1BX
-X-Gm-Message-State: AOJu0YwtaJnc1xAYYkiR9tc0xo/xk9YZeV5CquTVKpiyiiB5bQA8IlDr
-	ooSlPaTlw9ZwI0IC4rQS11/RHsZpAQNTldozchRv3hlYCEDwXDDSdvZw873s80xMrU7Y/j6Fgub
-	TzUwRwItGl/JZDcwSTn0jizSLWUHYlag0zqGGPpNnoc9WoKQfNJFoqf0=
-X-Google-Smtp-Source: AGHT+IFF/ZEHm61uwGpMLqTumNcisBXc9baf1FbQ4sZFLvhtQCBQvcV1Gvt9UXF/OBsFZUNYeljvYXXepgrnK2C55XMPOpPQGVut
+        d=1e100.net; s=20230601; t=1715200088; x=1715804888;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VxBCT1ZV/EGWLKjxVs7FXcKu7sqjJfkKsVJ1w+mU1+0=;
+        b=bSrTVuEW/hznCc7nUkJB37ifQI60YSmhv9XlHg+WSPW/35BcK9gV44DwJob62ASXcL
+         tMYqPAnzUxxY5vCsODZPOYkUwKhAfVLr2szvHmcCnj3aNlFwz8El5HcfrJnpCgP8T62S
+         xOf8e0essfN4cIi6dG77K0sfViVgf5PK9H3hahnyLG9bzeiJ4O9PIt4CoyYoITyGvAJi
+         vPRbTkWBOD/0XykSieHhXnKeVDOxezImQd02WdQUHNHGl6qyalrn50SmkQ0Mp88Y1+BE
+         pKcBSutZ0ijoofqJG+zFZXp95TWUKx7Rgq3voZiZVEeRaxjLY26hjEhMNYgM2dxP8o6x
+         KhXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwY4YM7WnO8i6EjN057pM9DDKXT1RN34VJN0kokRx5iPb9v7KQmu4zZRyiatOPxFFO5uutP5wjBq94JGDqIjD9hLMqpetvvw751E26GQHaua1/q1/e
+X-Gm-Message-State: AOJu0YxYHi2DAV/k5hPxYQ/LZAnGTh4JQ8lKg3tYKp/0gberEvbimLmd
+	fmnzDxr9C1t14wdyyyQy6Dyca+qdUZOmkYzRtDdBZRqzphsEFUbLBF1NadofUa3ue088L6rRi7C
+	IG3myITs8lz3APGIHB4sF8EN0GTLGoL4K7vc6
+X-Google-Smtp-Source: AGHT+IG0Nkg3RjjAAyj+n+Ew0xyy8RnKsH20og6+OrFEWYycNhxXEo9VK176FECewK/2EQxZ5XFepnMJQqWDZY6gYdE=
+X-Received: by 2002:a05:6402:228b:b0:572:a33d:437f with SMTP id
+ 4fb4d7f45d1cf-573341614e1mr44879a12.2.1715200087751; Wed, 08 May 2024
+ 13:28:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1d:b0:36b:fbab:9f14 with SMTP id
- e9e14a558f8ab-36caecdd2cemr1572725ab.1.1715196740936; Wed, 08 May 2024
- 12:32:20 -0700 (PDT)
-Date: Wed, 08 May 2024 12:32:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000076ba3b0617f65cc8@google.com>
-Subject: [syzbot] [lsm?] general protection fault in hook_inode_free_security
-From: syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>
-To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, mic@digikod.net, paul@paul-moore.com, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+References: <20240507214254.2787305-1-edliaw@google.com> <20240507214254.2787305-5-edliaw@google.com>
+ <ZjuEILj0SZRuTL9I@google.com>
+In-Reply-To: <ZjuEILj0SZRuTL9I@google.com>
+From: Edward Liaw <edliaw@google.com>
+Date: Wed, 8 May 2024 13:27:39 -0700
+Message-ID: <CAG4es9VWuY4Z5HoU_SQCDaSrDC0s1knDfGvLNEa1YxhC0RZ2ZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] selftests: Drop define _GNU_SOURCE
+To: Sean Christopherson <seanjc@google.com>
+Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	David Hildenbrand <david@redhat.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Seth Forshee <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>, 
+	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, May 8, 2024 at 6:54=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Tue, May 07, 2024, Edward Liaw wrote:
+> > _GNU_SOURCE is provided by KHDR_INCLUDES, so it should be dropped to
+> > prevent _GNU_SOURCE redefined warnings.
+>
+> ...
+>
+> > diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/te=
+sting/selftests/x86/test_syscall_vdso.c
+> > index 8965c311bd65..5cd13279bba5 100644
+> > --- a/tools/testing/selftests/x86/test_syscall_vdso.c
+> > +++ b/tools/testing/selftests/x86/test_syscall_vdso.c
+> > @@ -8,10 +8,6 @@
+> >   * Can be built statically:
+> >   * gcc -Os -Wall -static -m32 test_syscall_vdso.c thunks_32.S
+> >   */
+> > -#undef _GNU_SOURCE
+> > -#define _GNU_SOURCE 1
+> > -#undef __USE_GNU
+> > -#define __USE_GNU 1
+>
+> AFAICT, manually defining __USE_GNU is frowned upon, so I'm guessing the =
+__USE_GNU
+> stuff is just the result of misguided copy+paste.  But it would be nice t=
+o get
+> confirmation that this test isn't doing something clever.  Or at the very=
+ least,
+> explain the removal of __USE_GNU in the changelog.
 
-syzbot found the following issue on:
-
-HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
-dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
-CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
-Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
-RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
-RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
-RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
-R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
-R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- security_inode_free+0x4a/0xd0 security/security.c:1613
- __destroy_inode+0x2d9/0x650 fs/inode.c:286
- destroy_inode fs/inode.c:309 [inline]
- evict+0x521/0x630 fs/inode.c:682
- dispose_list fs/inode.c:700 [inline]
- evict_inodes+0x5f9/0x690 fs/inode.c:750
- generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
- kill_block_super+0x44/0x90 fs/super.c:1675
- deactivate_locked_super+0xc6/0x130 fs/super.c:472
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
- task_work_run+0x251/0x310 kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xa1b/0x27e0 kernel/exit.c:878
- do_group_exit+0x207/0x2c0 kernel/exit.c:1027
- __do_sys_exit_group kernel/exit.c:1038 [inline]
- __se_sys_exit_group kernel/exit.c:1036 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f731567dd69
-Code: Unable to access opcode bytes at 0x7f731567dd3f.
-RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
-R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
-Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
-RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
-RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
-RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
-R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
-R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555587f03978 CR3: 0000000049876000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	8a fd                	mov    %ch,%bh
-   2:	48 8b 1b             	mov    (%rbx),%rbx
-   5:	48 c7 c0 c4 4e d5 8d 	mov    $0xffffffff8dd54ec4,%rax
-   c:	48 c1 e8 03          	shr    $0x3,%rax
-  10:	42 0f b6 04 30       	movzbl (%rax,%r14,1),%eax
-  15:	84 c0                	test   %al,%al
-  17:	75 3e                	jne    0x57
-  19:	48 63 05 33 59 65 09 	movslq 0x9655933(%rip),%rax        # 0x9655953
-  20:	48 01 c3             	add    %rax,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 66 be 8a fd       	call   0xfd8abe9f
-  39:	48 83 3b 00          	cmpq   $0x0,(%rbx)
-  3d:	75 0d                	jne    0x4c
-  3f:	e8                   	.byte 0xe8
+It looks like test_syscall_vdso, test_FCMOV, test_FCOMI, and
+test_FISTTP don't actually use any GNU extensions.  I'll add that to
+the commit message.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+> >  #include <unistd.h>
+> >  #include <stdlib.h>
+> >  #include <string.h>
