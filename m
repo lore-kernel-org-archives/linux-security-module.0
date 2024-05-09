@@ -1,55 +1,55 @@
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492C786274
-	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 20:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F305D13D528
+	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 20:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284961; cv=none; b=LMFx5hK9pBF8A/HRyU3BGAAEyPJvn4AKXFi5sLu3krQWBlMbaItRxRCBC3HB3hCa2BSC8bIjBcY2Meo05Cy08l144yEW3hOMb2baBVX5dBgYBBWyjBZ8D6lH20EZyViAuGdf/XNEvZfy0PBGhxRn7SdffN83Sbrvfio3y4HOf7I=
+	t=1715284962; cv=none; b=te3Zfu1N+UPibqHli9PS3KytLlXUZq5ayUPA5m6V7jNN61+zYKj6e8Uzmd57ozV1buCDo2nuNzKYi/wcydf5IMCN/tXzcBaR9JK207hfxUrVklwzZblC67JUbmfxDnPrH1e2AW9IpUh9bKsFLiC6xbERzLWoPclZg782wqiB1gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284961; c=relaxed/simple;
-	bh=/9vwnuAyvi91y2uSnuLiMaiQd5Ahh45VY/a5f9GscLE=;
+	s=arc-20240116; t=1715284962; c=relaxed/simple;
+	bh=3599aDO6WJ8pRytY2emWkuJQ2LbOev5tgOUVnN1o3YU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SymumQ4JtjesxiREnwjunl2WErX9L2lPflxbKWE+LbZvGFTnI62I+JVpaHIKa1sGOCTObAVqZIVNnE1nvomL7aPSMhbYffBzgqDiYm7AKRwU/GrH7x242cS/OO63lqNi/5AbE3CmWQfN4+wcqeFe/kaCmqUDkqzzMm4zI20TU/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A3GL6N16; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=s/Yxue1xj3TOH4XaXMihHA71iJfqPbk02H3amXBCJsYzBQDU7xZfDfkjPfgV3ZIpxcGdJbdTN6aEcI4aoW1BiZm09mcnjD4WW23ENi28fCscwi4Xu060ZkOH9c0MCtfZifmleNf1XRFOGSS1EhrO8ELvS3o3/3QcKEO/4ugpnM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VP9NXZHO; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A3GL6N16"
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6ef9edf9910so1233722b3a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 13:02:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VP9NXZHO"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-620a2321b0fso14044597b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 13:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715284958; x=1715889758; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715284960; x=1715889760; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DPiHkbkAxiDemq7vdknRjzinKT3RlTMEgeWMqs4n0oo=;
-        b=A3GL6N16+6PTVDRkJAsRs1xnvxyzm9jwDfimhXYAcEfdmTQ/+dpDYyjeU9P2UR37ot
-         tIaZFB9br+vm4WEWTzXQ9aISYYJUb5bgfiS4nK6OnCWtXwQRhpfrJYDae5DFFP4j0Rqy
-         XhXO8VYbNkmRIq//3QGaC7S5axh+jZOCPIiGL8CWvNzPgAiRshPGpIp2XhAxMauoqFo8
-         KY7Dr2EnAP/LO/UPE4sXqaPadHx2VGiua+Nbk0QAGp4CZ8P5sBWSzvh2l8/RKD06Jm5g
-         TVNPPiguYIgT0MrRAytTu+0yk5HGzLyHECxHjDltiKr+qVmqCJ8kU4CmKM8Qjt7NjuwK
-         E6NQ==
+        bh=bektZwrY6X7Dpw89yPQbwlH2LMGiwkQluDbu3J3hz3c=;
+        b=VP9NXZHOn4RE5Mu2gsDIWp6kxBYsJvV9xB9KBtPK7AmWtCmHkqK5OIHzDRolFQyp+L
+         OQMzXGvg04+dPiMYx7yTfs9NSEwSA/rlNkZEuSoD842nES54GAjhsGxQK9RrIqa4+MLG
+         QNJstqKmsNRKNy5zz+kqzoJG4tQfOgozlMgU9Z04RCa4nVAGNU51OJumyoEJOgdxHh9/
+         xdxgU6Lbjpb5UTEGPcKJP+g4qJeTCcWRhvabaaLgZinDFZ2XgoSGspFjBUb9LMlhrN12
+         epI68ShXT6/8IfnYitLdNhZXy4fLNJDVqq0+qOIpxfMOOuEcGDBmw4IraM2kuf1ZV1v+
+         D2Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715284958; x=1715889758;
+        d=1e100.net; s=20230601; t=1715284960; x=1715889760;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DPiHkbkAxiDemq7vdknRjzinKT3RlTMEgeWMqs4n0oo=;
-        b=N5gdBESDx7PC7yyiR1JlWn5Px9Yu0gdXh41Nw3XdiQYHyW/lvevcOWpGe7i1mhJ4Sq
-         lYHVRrfrHc9MH/bLeBgQIp6kL+sHqhO819K/kw+rKSnHP6eBw/wN1cWkC9MRQWwOelL7
-         QARakcCn4TrFCbyYzaHSoBK++YePxfHNMMZtuGchYe0tkm25Pa0TooGEc96wFQg9oZ1G
-         Z+LqXXs41JCzV9Qbcd7iLrFxFq7/rrYCW9606IqkqavCifuDtqvqz1XaNzA/ED8zzK7G
-         nk2M8UcV3Q2x17soy72jqDpJR+oXMJRr7gJUoGgP3Wsh1KAkU/RtraMuAavHzG6n3WP8
-         YUpw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9fzEEFSC3xDwrfB91c0ShXMflalQDRT+ZuW316EcDJpqi1yjzBB0XorH65LNFvo2x61OvG6TVy45q4sIah454H6xVs3X1pNG/mEM7A11pmG+3eBBI
-X-Gm-Message-State: AOJu0Ywj+qXhzbfZ5Bi4yiIj+Fl55J+GjU1gdx5aUbOdI48Mc5Yn33x7
-	DYpTh5a3SqHQUt0ALxZJcrbFhP3Z9/T8OlWoW4DgcCirNmy9Jj6NCtZz2ILAIq4b/Fnar3/8iuX
-	Zzw==
-X-Google-Smtp-Source: AGHT+IGoK8O3he9Tolhv65HCy5YUInUJLazil2ujEfyYVh+VJPWDieG1i2TzTgKR1zjjwuDOnft4JUJqf8c=
+        bh=bektZwrY6X7Dpw89yPQbwlH2LMGiwkQluDbu3J3hz3c=;
+        b=Gpd7Ezn5o5QuyaABVDiUrcTt/52CCiiba/9pcMia5VjX/Q/2jBDQH+GTC0+09pxL4u
+         /2PiilgzK5ppTOZ+P70vTGCGiEzeyR1l7RE/gZsaBxoFiF3X5fIDxWFSxoaGuExQVdrI
+         73OdOIbVwNB3DZG4ISgawYfNrOc1B/k69KdlDkj6CBKZR2YjA4d+gqfp61F237yjAdR+
+         p38ar8sXH+KeDxW/jaVKqHR0oOiSMJZ0wfCT03jucTdMN/ypTNmM9HefC2gGfhqX7vSr
+         oZMZNekklmXgFS8Z6DsxANu9hwvknT3dL22Nmkkf6nQ2QStJdcVK0c4V5zgyLxkyooBl
+         QvDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMFx/MSesqgTrR1nYQjF32cw4P+wW7OEZsq4MpQ99s3OZ4ePdFKr8eIcdry76CBGmn1R4TEjs3HJ5UyZNPSIBRSDFPN/cDPMYC18UnKDUkznP9KDMu
+X-Gm-Message-State: AOJu0Yx+1k8LRGPvet6/QfBm8kdg0MUn4SkuN6aJFNlUfx7vb/eOmAIm
+	ptUUbB8+/WNZqMZar8zX56uoYucQcNarhp3WNM4pESBbA3Ru8Vjj/7Z+Hsx7T4U003j9VGeVYuu
+	Grg==
+X-Google-Smtp-Source: AGHT+IHEPIgVySZLbvq9qgme/sMXplcMjKtrRTfWsK6m+jYlUbK8Q8RcqLUbNvwspV02hcVRppHAU40NpqM=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:6a00:4b56:b0:6f4:9fc7:d21e with SMTP id
- d2e1a72fcca58-6f4e03d2940mr7848b3a.5.1715284957597; Thu, 09 May 2024 13:02:37
+ (user=edliaw job=sendgmr) by 2002:a25:db81:0:b0:deb:88f1:7d3b with SMTP id
+ 3f1490d57ef6-dee4f32dbd2mr64276276.4.1715284959917; Thu, 09 May 2024 13:02:39
  -0700 (PDT)
-Date: Thu,  9 May 2024 19:58:29 +0000
+Date: Thu,  9 May 2024 19:58:30 +0000
 In-Reply-To: <20240509200022.253089-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240509200022.253089-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240509200022.253089-38-edliaw@google.com>
-Subject: [PATCH v3 37/68] selftests/net: Drop define _GNU_SOURCE
+Message-ID: <20240509200022.253089-39-edliaw@google.com>
+Subject: [PATCH v3 38/68] selftests/net: Drop duplicate -D_GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -69,546 +69,36 @@ To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
 	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
 	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
 	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>, 
-	Jozsef Kadlecsik <kadlec@netfilter.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Edward Liaw <edliaw@google.com>
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
 Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, 
-	mptcp@lists.linux.dev, netfilter-devel@vger.kernel.org, 
-	coreteam@netfilter.org
+	kernel-team@android.com, Edward Liaw <edliaw@google.com>, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
+	John Hubbard <jhubbard@nvidia.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 
-_GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
-redefinition warnings.
+-D_GNU_SOURCE can be de-duplicated here, as it is added by lib.mk.
 
-Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/net/af_unix/diag_uid.c               | 2 --
- tools/testing/selftests/net/af_unix/scm_pidfd.c              | 1 -
- tools/testing/selftests/net/af_unix/scm_rights.c             | 1 -
- tools/testing/selftests/net/af_unix/unix_connect.c           | 2 --
- tools/testing/selftests/net/csum.c                           | 3 ---
- tools/testing/selftests/net/gro.c                            | 3 ---
- tools/testing/selftests/net/ip_defrag.c                      | 3 ---
- tools/testing/selftests/net/ipsec.c                          | 3 ---
- tools/testing/selftests/net/ipv6_flowlabel.c                 | 3 ---
- tools/testing/selftests/net/ipv6_flowlabel_mgr.c             | 3 ---
- tools/testing/selftests/net/mptcp/mptcp_connect.c            | 3 ---
- tools/testing/selftests/net/mptcp/mptcp_inq.c                | 3 ---
- tools/testing/selftests/net/mptcp/mptcp_sockopt.c            | 3 ---
- tools/testing/selftests/net/msg_zerocopy.c                   | 3 ---
- tools/testing/selftests/net/netfilter/audit_logread.c        | 2 --
- tools/testing/selftests/net/netfilter/conntrack_dump_flush.c | 3 ---
- tools/testing/selftests/net/nettest.c                        | 2 --
- tools/testing/selftests/net/psock_fanout.c                   | 3 ---
- tools/testing/selftests/net/psock_snd.c                      | 3 ---
- tools/testing/selftests/net/reuseport_addr_any.c             | 3 ---
- tools/testing/selftests/net/reuseport_bpf_cpu.c              | 3 ---
- tools/testing/selftests/net/reuseport_bpf_numa.c             | 3 ---
- tools/testing/selftests/net/reuseport_dualstack.c            | 3 ---
- tools/testing/selftests/net/so_incoming_cpu.c                | 1 -
- tools/testing/selftests/net/so_netns_cookie.c                | 1 -
- tools/testing/selftests/net/so_txtime.c                      | 3 ---
- tools/testing/selftests/net/tap.c                            | 3 ---
- tools/testing/selftests/net/tcp_fastopen_backup_key.c        | 1 -
- tools/testing/selftests/net/tcp_inq.c                        | 2 --
- tools/testing/selftests/net/tcp_mmap.c                       | 1 -
- tools/testing/selftests/net/tls.c                            | 3 ---
- tools/testing/selftests/net/toeplitz.c                       | 3 ---
- tools/testing/selftests/net/tun.c                            | 3 ---
- tools/testing/selftests/net/txring_overwrite.c               | 3 ---
- tools/testing/selftests/net/txtimestamp.c                    | 3 ---
- tools/testing/selftests/net/udpgso.c                         | 3 ---
- tools/testing/selftests/net/udpgso_bench_rx.c                | 3 ---
- tools/testing/selftests/net/udpgso_bench_tx.c                | 3 ---
- 38 files changed, 97 deletions(-)
+ tools/testing/selftests/net/tcp_ao/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/net/af_unix/diag_uid.c b/tools/testing/selftests/net/af_unix/diag_uid.c
-index 79a3dd75590e..279d0c5f70d3 100644
---- a/tools/testing/selftests/net/af_unix/diag_uid.c
-+++ b/tools/testing/selftests/net/af_unix/diag_uid.c
-@@ -1,7 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright Amazon.com Inc. or its affiliates. */
--
--#define _GNU_SOURCE
- #include <sched.h>
+diff --git a/tools/testing/selftests/net/tcp_ao/Makefile b/tools/testing/selftests/net/tcp_ao/Makefile
+index 522d991e310e..c608b1ec02e6 100644
+--- a/tools/testing/selftests/net/tcp_ao/Makefile
++++ b/tools/testing/selftests/net/tcp_ao/Makefile
+@@ -26,7 +26,7 @@ LIB	:= $(LIBDIR)/libaotst.a
+ LDLIBS	+= $(LIB) -pthread
+ LIBDEPS	:= lib/aolib.h Makefile
  
- #include <unistd.h>
-diff --git a/tools/testing/selftests/net/af_unix/scm_pidfd.c b/tools/testing/selftests/net/af_unix/scm_pidfd.c
-index 7e534594167e..2986b8cd0418 100644
---- a/tools/testing/selftests/net/af_unix/scm_pidfd.c
-+++ b/tools/testing/selftests/net/af_unix/scm_pidfd.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0 OR MIT
--#define _GNU_SOURCE
- #include <error.h>
- #include <limits.h>
- #include <stddef.h>
-diff --git a/tools/testing/selftests/net/af_unix/scm_rights.c b/tools/testing/selftests/net/af_unix/scm_rights.c
-index bab606c9f1eb..146a8d7a8cd9 100644
---- a/tools/testing/selftests/net/af_unix/scm_rights.c
-+++ b/tools/testing/selftests/net/af_unix/scm_rights.c
-@@ -1,6 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright Amazon.com Inc. or its affiliates. */
--#define _GNU_SOURCE
- #include <sched.h>
+-CFLAGS	:= -Wall -O2 -g -D_GNU_SOURCE -fno-strict-aliasing
++CFLAGS	:= -Wall -O2 -g -fno-strict-aliasing
+ CFLAGS	+= $(KHDR_INCLUDES)
+ CFLAGS	+= -iquote ./lib/ -I ../../../../include/
  
- #include <stdio.h>
-diff --git a/tools/testing/selftests/net/af_unix/unix_connect.c b/tools/testing/selftests/net/af_unix/unix_connect.c
-index d799fd8f5c7c..34e816862cc7 100644
---- a/tools/testing/selftests/net/af_unix/unix_connect.c
-+++ b/tools/testing/selftests/net/af_unix/unix_connect.c
-@@ -1,6 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
- #include <sched.h>
- 
- #include <stddef.h>
-diff --git a/tools/testing/selftests/net/csum.c b/tools/testing/selftests/net/csum.c
-index b9f3fc3c3426..28f8241b8567 100644
---- a/tools/testing/selftests/net/csum.c
-+++ b/tools/testing/selftests/net/csum.c
-@@ -58,9 +58,6 @@
-  * different seed for each run (and logs this for reproducibility). It
-  * is advised to enable this for extra coverage in continuous testing.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <asm/byteorder.h>
- #include <errno.h>
-diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
-index 6038b96ecee8..dd370c88af1e 100644
---- a/tools/testing/selftests/net/gro.c
-+++ b/tools/testing/selftests/net/gro.c
-@@ -34,9 +34,6 @@
-  * flakiness is to be expected.
-  *
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/ip_defrag.c b/tools/testing/selftests/net/ip_defrag.c
-index f9ed749fd8c7..80c9e567a3d8 100644
---- a/tools/testing/selftests/net/ip_defrag.c
-+++ b/tools/testing/selftests/net/ip_defrag.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/ipsec.c b/tools/testing/selftests/net/ipsec.c
-index be4a30a0d02a..04aa06d26b09 100644
---- a/tools/testing/selftests/net/ipsec.c
-+++ b/tools/testing/selftests/net/ipsec.c
-@@ -3,9 +3,6 @@
-  * ipsec.c - Check xfrm on veth inside a net-ns.
-  * Copyright (c) 2018 Dmitry Safonov
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <asm/types.h>
- #include <errno.h>
-diff --git a/tools/testing/selftests/net/ipv6_flowlabel.c b/tools/testing/selftests/net/ipv6_flowlabel.c
-index 708a9822259d..b7e0c3c02e20 100644
---- a/tools/testing/selftests/net/ipv6_flowlabel.c
-+++ b/tools/testing/selftests/net/ipv6_flowlabel.c
-@@ -1,8 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Test IPV6_FLOWINFO cmsg on send and recv */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <asm/byteorder.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/ipv6_flowlabel_mgr.c b/tools/testing/selftests/net/ipv6_flowlabel_mgr.c
-index af95b48acea9..ebd219ba386e 100644
---- a/tools/testing/selftests/net/ipv6_flowlabel_mgr.c
-+++ b/tools/testing/selftests/net/ipv6_flowlabel_mgr.c
-@@ -1,8 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Test IPV6_FLOWINFO_MGR */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <error.h>
- #include <errno.h>
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_connect.c b/tools/testing/selftests/net/mptcp/mptcp_connect.c
-index d2043ec3bf6d..ea93030ed3ec 100644
---- a/tools/testing/selftests/net/mptcp/mptcp_connect.c
-+++ b/tools/testing/selftests/net/mptcp/mptcp_connect.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <errno.h>
- #include <limits.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_inq.c b/tools/testing/selftests/net/mptcp/mptcp_inq.c
-index 218aac467321..c5bf873d76c2 100644
---- a/tools/testing/selftests/net/mptcp/mptcp_inq.c
-+++ b/tools/testing/selftests/net/mptcp/mptcp_inq.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <assert.h>
- #include <errno.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_sockopt.c b/tools/testing/selftests/net/mptcp/mptcp_sockopt.c
-index 926b0be87c99..7203ca9900e9 100644
---- a/tools/testing/selftests/net/mptcp/mptcp_sockopt.c
-+++ b/tools/testing/selftests/net/mptcp/mptcp_sockopt.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <assert.h>
- #include <errno.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/msg_zerocopy.c b/tools/testing/selftests/net/msg_zerocopy.c
-index bdc03a2097e8..9278bf585c80 100644
---- a/tools/testing/selftests/net/msg_zerocopy.c
-+++ b/tools/testing/selftests/net/msg_zerocopy.c
-@@ -24,9 +24,6 @@
-  * the kernel queues completions on the error queue for all zerocopy
-  * transfers.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <error.h>
- #include <errno.h>
-diff --git a/tools/testing/selftests/net/netfilter/audit_logread.c b/tools/testing/selftests/net/netfilter/audit_logread.c
-index a0a880fc2d9d..0b3dddab1c52 100644
---- a/tools/testing/selftests/net/netfilter/audit_logread.c
-+++ b/tools/testing/selftests/net/netfilter/audit_logread.c
-@@ -1,6 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <poll.h>
-diff --git a/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c b/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c
-index bd9317bf5ada..fb6c5d1b6f63 100644
---- a/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c
-+++ b/tools/testing/selftests/net/netfilter/conntrack_dump_flush.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <time.h>
- #include <libmnl/libmnl.h>
- #include <netinet/ip.h>
-diff --git a/tools/testing/selftests/net/nettest.c b/tools/testing/selftests/net/nettest.c
-index cd8a58097448..88e1d3b2ddf1 100644
---- a/tools/testing/selftests/net/nettest.c
-+++ b/tools/testing/selftests/net/nettest.c
-@@ -3,8 +3,6 @@
-  *
-  * Copyright (c) 2013-2019 David Ahern <dsahern@gmail.com>. All rights reserved.
-  */
--
--#define _GNU_SOURCE
- #include <features.h>
- #include <sys/types.h>
- #include <sys/ioctl.h>
-diff --git a/tools/testing/selftests/net/psock_fanout.c b/tools/testing/selftests/net/psock_fanout.c
-index 1a736f700be4..5b2d34440ae9 100644
---- a/tools/testing/selftests/net/psock_fanout.c
-+++ b/tools/testing/selftests/net/psock_fanout.c
-@@ -26,9 +26,6 @@
-  * Todo:
-  * - functionality: PACKET_FANOUT_FLAG_DEFRAG
-  */
--
--#define _GNU_SOURCE		/* for sched_setaffinity */
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/psock_snd.c b/tools/testing/selftests/net/psock_snd.c
-index edf1e6f80d41..2f29b513e18f 100644
---- a/tools/testing/selftests/net/psock_snd.c
-+++ b/tools/testing/selftests/net/psock_snd.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/reuseport_addr_any.c b/tools/testing/selftests/net/reuseport_addr_any.c
-index b8475cb29be7..9ee6ece52865 100644
---- a/tools/testing/selftests/net/reuseport_addr_any.c
-+++ b/tools/testing/selftests/net/reuseport_addr_any.c
-@@ -3,9 +3,6 @@
- /* Test that sockets listening on a specific address are preferred
-  * over sockets listening on addr_any.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/reuseport_bpf_cpu.c b/tools/testing/selftests/net/reuseport_bpf_cpu.c
-index 2d646174729f..e93e38cfb2a8 100644
---- a/tools/testing/selftests/net/reuseport_bpf_cpu.c
-+++ b/tools/testing/selftests/net/reuseport_bpf_cpu.c
-@@ -11,9 +11,6 @@
-  * This entire process is done for several different core id permutations
-  * and for each IPv4/IPv6 and TCP/UDP combination.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/reuseport_bpf_numa.c b/tools/testing/selftests/net/reuseport_bpf_numa.c
-index c9ba36aa688e..502fdb9ce770 100644
---- a/tools/testing/selftests/net/reuseport_bpf_numa.c
-+++ b/tools/testing/selftests/net/reuseport_bpf_numa.c
-@@ -3,9 +3,6 @@
-  * Test functionality of BPF filters with SO_REUSEPORT. Same test as
-  * in reuseport_bpf_cpu, only as one socket per NUMA node.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/reuseport_dualstack.c b/tools/testing/selftests/net/reuseport_dualstack.c
-index fb7a59ed759e..d3c3d3f39f8f 100644
---- a/tools/testing/selftests/net/reuseport_dualstack.c
-+++ b/tools/testing/selftests/net/reuseport_dualstack.c
-@@ -10,9 +10,6 @@
-  * This test creates these mixed AF_INET/AF_INET6 sockets and asserts the
-  * AF_INET preference for v4 packets.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/so_incoming_cpu.c b/tools/testing/selftests/net/so_incoming_cpu.c
-index e9fa14e10732..95bd0cdc3253 100644
---- a/tools/testing/selftests/net/so_incoming_cpu.c
-+++ b/tools/testing/selftests/net/so_incoming_cpu.c
-@@ -1,6 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright Amazon.com Inc. or its affiliates. */
--#define _GNU_SOURCE
- #include <sched.h>
- 
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/so_netns_cookie.c b/tools/testing/selftests/net/so_netns_cookie.c
-index b39e87e967cd..18532d564f79 100644
---- a/tools/testing/selftests/net/so_netns_cookie.c
-+++ b/tools/testing/selftests/net/so_netns_cookie.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--#define _GNU_SOURCE
- #include <sched.h>
- #include <unistd.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/net/so_txtime.c b/tools/testing/selftests/net/so_txtime.c
-index 8457b7ccbc09..011a24af9786 100644
---- a/tools/testing/selftests/net/so_txtime.c
-+++ b/tools/testing/selftests/net/so_txtime.c
-@@ -9,9 +9,6 @@
-  * the expected stream. Sender will read transmit timestamps from the error
-  * queue. The streams can differ due to out-of-order delivery and drops.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <error.h>
- #include <errno.h>
-diff --git a/tools/testing/selftests/net/tap.c b/tools/testing/selftests/net/tap.c
-index 247c3b3ac1c9..fa78b92d9740 100644
---- a/tools/testing/selftests/net/tap.c
-+++ b/tools/testing/selftests/net/tap.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <errno.h>
- #include <fcntl.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/net/tcp_fastopen_backup_key.c b/tools/testing/selftests/net/tcp_fastopen_backup_key.c
-index c1cb0c75156a..d30f89bb944c 100644
---- a/tools/testing/selftests/net/tcp_fastopen_backup_key.c
-+++ b/tools/testing/selftests/net/tcp_fastopen_backup_key.c
-@@ -12,7 +12,6 @@
-  * there are no cases in which a cookie is not accepted by verifying
-  * that TcpExtTCPFastOpenPassiveFail remains 0.
-  */
--#define _GNU_SOURCE
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/tcp_inq.c b/tools/testing/selftests/net/tcp_inq.c
-index bd6a9c7a3e8a..71ee145f151e 100644
---- a/tools/testing/selftests/net/tcp_inq.c
-+++ b/tools/testing/selftests/net/tcp_inq.c
-@@ -5,8 +5,6 @@
-  *
-  * Simple example on how to use TCP_INQ and TCP_CM_INQ.
-  */
--#define _GNU_SOURCE
--
- #include <error.h>
- #include <netinet/in.h>
- #include <netinet/tcp.h>
-diff --git a/tools/testing/selftests/net/tcp_mmap.c b/tools/testing/selftests/net/tcp_mmap.c
-index 4fcce5150850..72d5f1207ee0 100644
---- a/tools/testing/selftests/net/tcp_mmap.c
-+++ b/tools/testing/selftests/net/tcp_mmap.c
-@@ -46,7 +46,6 @@
-  * received 32768 MB (99.9939 % mmap'ed) in 7.43764 s, 36.9577 Gbit
-  *   cpu usage user:0.035 sys:3.467, 106.873 usec per MB, 65530 c-switches
-  */
--#define _GNU_SOURCE
- #include <pthread.h>
- #include <sys/types.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/tls.c b/tools/testing/selftests/net/tls.c
-index f27a12d2a2c9..6dbad97d1d0a 100644
---- a/tools/testing/selftests/net/tls.c
-+++ b/tools/testing/selftests/net/tls.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/toeplitz.c b/tools/testing/selftests/net/toeplitz.c
-index 9ba03164d73a..e2d739892ce4 100644
---- a/tools/testing/selftests/net/toeplitz.c
-+++ b/tools/testing/selftests/net/toeplitz.c
-@@ -20,9 +20,6 @@
-  * 5. Compute the cpu that RPS should select based on rx_hash and $rps_bitmap
-  * 6. Compare the cpus from 4 and 5
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/tun.c b/tools/testing/selftests/net/tun.c
-index fa83918b62d1..a64dcfb242c1 100644
---- a/tools/testing/selftests/net/tun.c
-+++ b/tools/testing/selftests/net/tun.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <errno.h>
- #include <fcntl.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/net/txring_overwrite.c b/tools/testing/selftests/net/txring_overwrite.c
-index 7d9ea039450a..96972e0110a0 100644
---- a/tools/testing/selftests/net/txring_overwrite.c
-+++ b/tools/testing/selftests/net/txring_overwrite.c
-@@ -4,9 +4,6 @@
-  * Verify that consecutive sends over packet tx_ring are mirrored
-  * with their original content intact.
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <assert.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/txtimestamp.c b/tools/testing/selftests/net/txtimestamp.c
-index ec60a16c9307..33dba9e90dea 100644
---- a/tools/testing/selftests/net/txtimestamp.c
-+++ b/tools/testing/selftests/net/txtimestamp.c
-@@ -16,9 +16,6 @@
-  * This test requires a dummy TCP server.
-  * A simple `nc6 [-u] -l -p $DESTPORT` will do
-  */
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <asm/types.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/udpgso.c b/tools/testing/selftests/net/udpgso.c
-index 85b3baa3f7f3..9dc1026a033a 100644
---- a/tools/testing/selftests/net/udpgso.c
-+++ b/tools/testing/selftests/net/udpgso.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <stddef.h>
- #include <arpa/inet.h>
- #include <error.h>
-diff --git a/tools/testing/selftests/net/udpgso_bench_rx.c b/tools/testing/selftests/net/udpgso_bench_rx.c
-index 1cbadd267c96..999df1236320 100644
---- a/tools/testing/selftests/net/udpgso_bench_rx.c
-+++ b/tools/testing/selftests/net/udpgso_bench_rx.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <error.h>
- #include <errno.h>
-diff --git a/tools/testing/selftests/net/udpgso_bench_tx.c b/tools/testing/selftests/net/udpgso_bench_tx.c
-index 477392715a9a..d7632993b354 100644
---- a/tools/testing/selftests/net/udpgso_bench_tx.c
-+++ b/tools/testing/selftests/net/udpgso_bench_tx.c
-@@ -1,7 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
--
- #include <arpa/inet.h>
- #include <errno.h>
- #include <error.h>
 -- 
 2.45.0.118.g7fe29c98d7-goog
 
