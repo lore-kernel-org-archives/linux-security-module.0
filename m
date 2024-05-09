@@ -1,168 +1,139 @@
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FD63BBE3
-	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 14:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21C0156C2
+	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 17:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715265429; cv=none; b=gXaoIQOAOMLM86XR44dejphdQNhwpFdpMsayVUEF/JlXRP0ko6wYZu0MAbGHy3UTZJMoNFwRmcO5gdeEp8DlJP/h5DwCZkVlWirtDqrwAlsx5qXBAUIPDsAEQTbSFxy7Ag7fTpMIMWVeVaM+H16QOgCkD2LhOyPim1iXUsEwV04=
+	t=1715274442; cv=none; b=TYUmbUwi+gZvo25/TkZCr6RWyyKySAWtvTrNsJCn5wgIpPzgP5xMLw1WR8bP2a3Zl0HF0a4JVPB28F3WTa3zyMTeoHh/UvPU6C1DVcAuqcktSiV8tGGZlYWeKV0uo+3hqBxLQbziN/vpG28U1xLfNP/EjA1TTIYx7UBtQIWx16o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715265429; c=relaxed/simple;
-	bh=rX2HhaPr9XjslEz/iELt3o8cY4WdThK1YOL4qhZC7cc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GBMESImrkE8IsgQwideId97B0DSpt46TVdl6nki6afp4d6DCOYOofMTHzegyTy5G7pk86wWzs8hr5wN5ePObeAwaVrwhYqc9t1jK1If+HNAsokC2wl9/tG1dWncyRXFh2CHFQjwHC8dE8nzE+opeG62pSOfYiYp4YTfvuDhb+AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NTo7eWSD; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1715274442; c=relaxed/simple;
+	bh=JTqRwvs7ATnblMDzbI8kYx5IrTBxMWNprcLAXd5ODXg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pZrXb7GkbblKb6VNWvtflnrB31xyjC7Vw2uK8ohGtQO030PUnVHic1X9tY5qY/ZsetzFz3GKayDF95l3TlTDur3eijq3Jit8i1X3nEZdaBw5ZXNRMAzyu9FJhd9xto2GNnny0+rUlvORBY00aemg8pLpw3FNIW093uGYQJ+OoeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GvpKdYu1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NTo7eWSD"
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7da55194b31so7378239f.3
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 07:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1715265427; x=1715870227; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qhunxhR/OF2icvm3HmEsNbbwCxzb74IsXbKxDT8qkPs=;
-        b=NTo7eWSDMbAgSOT7CINCmQClTKuqqKFXzf8sF9h8V2D/TL6uzIk6kNIRhOOZdzEMTW
-         mJ9+zmh148SCPZPrjx1yCxIGvBo6MHnlbazDh1HqKyqkHbDHYDUog3Z/huvB7M1KruTH
-         G4D/ZyTmCb4BjkMlKuDOLN5gYiVRGa28cjD1M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715265427; x=1715870227;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qhunxhR/OF2icvm3HmEsNbbwCxzb74IsXbKxDT8qkPs=;
-        b=Q/9lmwKInnXCrtdQm4Zmo76I5iYAR+oECb3+veYpLKSsUUwvzwrBPpdr0xcuoysURW
-         6kGFPLOOjFisjXm4PPb34gqauqkrVnX/dpwfKqNBJCmhOZgyNkJtZnjQvBCX/8N0fncj
-         YD42mzUH9XBSgh03+U0UbEC36Ns7TVrUacfHkGD3Mk3UHr92ky2KlOvSn7kXbkBjs5jo
-         quzRV/CXdyuQF5TdUUOjp1wSaIE8vKgMdfmlRVDBf9SAY15Ve3uDWVxdzv4HI4FcQM7Q
-         fevMeltuDrwZIli8qGez55aSp2Kl98ZaGOBDXPNmJFf/ZeyBNiplLOpEAEadGxNK0j9Y
-         kuow==
-X-Forwarded-Encrypted: i=1; AJvYcCURkxCWU7YAknucV3cBcyK0/iE84KwO24pufq0xrqMnLQ6lpG7SgD87ooz6WDQz0kHoSR3+nJ2j4XoBDtPcrn2lm3vKip/yeSkt5lBIVpRnhSDp/YoH
-X-Gm-Message-State: AOJu0YxnYoOmrypUngKc2SVMEm3IX4QjIoX/V7C68JeNvHZk3ViaCrg7
-	0Uq4MwtyoT/ZlFT8612COmOkM0cDUxjYc31PVGWNyX4glSI2VyH8g7WNljHW+Bc=
-X-Google-Smtp-Source: AGHT+IFLPV3hTUAqtiZSXFMZ3nZtJrVA8/PdzJcN3v/yjJF832scb22cGE7mYooNXziODVFLnPMOaA==
-X-Received: by 2002:a6b:e618:0:b0:7e1:86e1:cd46 with SMTP id ca18e2360f4ac-7e18fd9a35cmr655432839f.2.1715265426750;
-        Thu, 09 May 2024 07:37:06 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893703c0c8sm386684173.48.2024.05.09.07.37.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 07:37:06 -0700 (PDT)
-Message-ID: <946ae22f-a4af-448a-92e1-60afb6ed9261@linuxfoundation.org>
-Date: Thu, 9 May 2024 08:37:03 -0600
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GvpKdYu1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715274439;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Ca9Pf11lzbP4jlatyhKofM52bEPeu8vNmdS1FsH4a8=;
+	b=GvpKdYu10fnHDW/pAoyK20EECRTJN/Yec8Sow2na6ca6Jc0DaUwN+Rqcd9dAwzM34sF2Nr
+	pb9GzTIbh/vMFHEhBxGN4T6FJVQ28pnUuYGyYScmpFQG3HifUkBUXmOstiOWHkHpwdtvSD
+	ymBkaQTaKH7QV3JuzvR3zdMZNMbVkP8=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-182-Y19FXQdzO2eI8S9NubSUHw-1; Thu,
+ 09 May 2024 13:07:16 -0400
+X-MC-Unique: Y19FXQdzO2eI8S9NubSUHw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 71A903802292;
+	Thu,  9 May 2024 17:07:14 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id CB1CB1169588;
+	Thu,  9 May 2024 17:07:13 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id A5F3A30C1B8F; Thu,  9 May 2024 17:07:13 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 9F5133E683;
+	Thu,  9 May 2024 19:07:13 +0200 (CEST)
+Date: Thu, 9 May 2024 19:07:13 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Fan Wu <wufan@linux.microsoft.com>
+cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, 
+    tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, 
+    snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com, 
+    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+    linux-block@vger.kernel.org, dm-devel@lists.linux.dev, 
+    audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v18 12/21] dm: add finalize hook to target_type
+In-Reply-To: <212b02a8-f5f0-4433-a726-1639dda61790@linux.microsoft.com>
+Message-ID: <bc9aa053-20a6-eaa-cbe4-344f340242b@redhat.com>
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com> <1714775551-22384-13-git-send-email-wufan@linux.microsoft.com> <aa767961-5e3-2ceb-1a1e-ff66a8eed649@redhat.com> <212b02a8-f5f0-4433-a726-1639dda61790@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
-To: Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Christian Brauner <brauner@kernel.org>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>,
- Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Andrew Morton <akpm@linux-foundation.org>, Seth Forshee
- <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
- <afaerber@suse.de>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-sound@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-input@vger.kernel.org, iommu@lists.linux.dev, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
- linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
- linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240507214254.2787305-1-edliaw@google.com>
- <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
- <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On 5/9/24 00:13, Edward Liaw wrote:
-> On Wed, May 8, 2024 at 4:10 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> On 5/7/24 15:38, Edward Liaw wrote:
->>> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
->>> asprintf into kselftest_harness.h, which is a GNU extension and needs
->>> _GNU_SOURCE to either be defined prior to including headers or with the
->>> -D_GNU_SOURCE flag passed to the compiler.
->>>
->>> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
->>> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
->>> location.  Remove #define _GNU_SOURCE from source code to resolve
->>> redefinition warnings.
->>>
->>> Edward Liaw (5):
->>>     selftests: Compile kselftest headers with -D_GNU_SOURCE
->>>     selftests/sgx: Include KHDR_INCLUDES in Makefile
->>
->> I appled patches 1/5 and 2.5 - The rest need to be split up.
->>
->>>     selftests: Include KHDR_INCLUDES in Makefile
->>>     selftests: Drop define _GNU_SOURCE
->>>     selftests: Drop duplicate -D_GNU_SOURCE
->>>
->>
->> Please split these patches pwe test directory. Otherwise it will
->> cause merge conflicts which can be hard to resolve.
+
+
+On Wed, 8 May 2024, Fan Wu wrote:
+
 > 
-> Hi Shuah,
-> Sean asked that I rebase the patches on linux-next, and I will need to
-> remove additional _GNU_SOURCE defines.  Should I send an unsplit v3 to
-> be reviewed, then split it afterwards?  I'm concerned that it will be
-> difficult to review with ~70 patches once split.
+> 
+> On 5/8/2024 10:17 AM, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Fri, 3 May 2024, Fan Wu wrote:
+> > 
+> >> This patch adds a target finalize hook.
+> >>
+> >> The hook is triggered just before activating an inactive table of a
+> >> mapped device. If it returns an error the __bind get cancelled.
+> >>
+> >> The dm-verity target will use this hook to attach the dm-verity's
+> >> roothash metadata to the block_device struct of the mapped device.
+> >>
+> >> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> > 
+> > Hi
+> > 
+> > Why not use the preresume callback?
+> > 
+> > Is there some reason why do we need a new callback instead of using the
+> > existing one?
+> > 
+> > Mikulas
+> Thanks for the suggestion.
+> 
+> Mike suggested the new finalize() callback. I think the reason for not using
+> the preresume() callback is that there are multiple points that can fail
+> before activating an inactive table of a mapped device which can potentially
+> lead to inconsistent state.
+> 
+> In our specific case, we are trying to associate dm-verity's roothash metadata
+> with the block_device struct of the mapped device inside the callback.
+> 
+> If we use the preresume() callback for the work and an error occurs between
+> the callback and the table activation, this leave the block_device struct in
+> an inconsistent state.
 
-Please send them split - it will be easier to review and apply. You
-might as well wait until the merge window is done. I don't think
-anybody would have time to review now since merge window starts
-next week.
+The preresume callback is the final GO/NO-GO decision point. If all the 
+targets return zero in their preresume callback, then there's no turning 
+back and the table will be activated.
 
+> This is because now the block device contains the roothash metadata of it's
+> inactive table due to the preresume() callback, but the activation failed so
+> the mapped device is still using the old table.
+> 
+> The new finalize() callback guarantees that the callback happens just before
+> the table activation, thus avoiding the inconsistency.
 
-thanks,
--- Shuah
+In your patch, it doesn't guarantee that.
+
+do_resume calls dm_swap_table, dm_swap_table calls __bind, __bind calls 
+ti->type->finalize. Then we go back to do_resume and call dm_resume which 
+calls __dm_resume which calls dm_table_resume_targets which calls the 
+preresume callback on all the targets. If some of them fails, it returns a 
+failure (despite the fact that ti->type->finalize succeeded), if all of 
+them succeed, it calls the resume callback on all of them.
+
+So, it seems that the preresume callback provides the guarantee that you 
+looking for.
+
+> -Fan
+
+Mikulas
+
