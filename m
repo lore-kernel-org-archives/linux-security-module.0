@@ -1,169 +1,200 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399E2770FE;
-	Thu,  9 May 2024 18:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC12F7EF1D
+	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 19:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715278820; cv=none; b=FMnsZIY44/vqA75SH/j64Qx9W8BkojnH0OKF/6pHkqu+PSJXJZw3KgOwzamhxeDDDd2UoJjPJ4El4zKeCoTPZXmZo4wYuCKbM9qDoCzMro2p7Q2N6LhcUDD4xBfWsG0O9b66ynchtn0OhjY2aPSdQzdUIauiyXuQhEJW2oA0v74=
+	t=1715282030; cv=none; b=n7BABw9rNNlmsSCGMH0QNSRU2U5cYTQ59KW/YvuNK2Q3IaQPGNO+ks+X4mt7mDewrpG2pf5rlmaX64W9J79dfl0KEOLMzz/lVTZ03gASGD/pTUFLGtkQ094q7r5CGzlSMx2rT4DRcha2aNwCE82YMm9Rzk0u9cwUJmx1dDrLJKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715278820; c=relaxed/simple;
-	bh=JCJaK6QpOrmmUJdi/1h2/P/m5VnuJoQJ8ijlBJBZs2E=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E8cxY7+zC++X+urFqgMQxq9ZHtP3Hq7NmNm/UjICxXOYm1BDbRQBrLLrvkcx4eevo3SS4zdA7JPsxuskc651xjxDmubUe41XgC+ZoOYcC5nW0OBgZSnXB0PfR7hC1vsJ14nkqv5QoQeYiiGCoshy1wqB//9TaELbAy9RKwmTkVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y0vwhbgp; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1715282030; c=relaxed/simple;
+	bh=1G0QDR8JUJFyxaGNVbL1UI3DtGhHUGbyrMYHlnXXzhc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fXtKhle6CJb8q8b2wnjlRy7GxhNYOtR1k7Zl+y6ID0rbgCtWQLY3oj5mz/0oSvHwvK1MksjMVZDyaRbmj+P3d6oPbiyCS+74SNKp99zeb+Mkm+9WPOhDL7bVur59UstqvIZoNwdibsJp2+/eCBAapq6gse4yVlmvzp38wE61+Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HhPg85s/; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y0vwhbgp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715278815;
-	bh=JCJaK6QpOrmmUJdi/1h2/P/m5VnuJoQJ8ijlBJBZs2E=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Y0vwhbgpxSGiErJBlZANaCoV14K1sUaA4F/ooMPA8bO48t72Fpno5DrnfALIMJiFY
-	 oMSvCEfOkwdTnfzldtNTgWgnNeYnX0lnmSBwYV+uUcXI50biIzPUgTSdbJDAk9h9/N
-	 bVUTOACTMW2U5cMSjfFt9b0R/BiIAN1Kzg0OIMCCtoqr8O1bj2D1Led/rtVGtGTVC8
-	 kz3S35qqjR2mswHsIzoVynyPqK+vGV6uTv4IAVR+VARRqE/hZwUo8M6kQ1/zzNJO7N
-	 IQqLkWeZKdjhwuxngilpfTAlT58QqNdElQbuZGDixBXFgx76yRt8hchoMtP4P0BWps
-	 4uG5Wxt7oOVIg==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3ED82378214F;
-	Thu,  9 May 2024 18:19:55 +0000 (UTC)
-Message-ID: <57f47bc1-972c-45b5-81ef-d8269dcadebb@collabora.com>
-Date: Thu, 9 May 2024 23:20:19 +0500
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HhPg85s/"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-620314aa1d7so13410817b3.2
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 12:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1715282027; x=1715886827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P5+CpfPTydUeT3vKTfUos21UxKzlhAl+5pqEA8g6EMk=;
+        b=HhPg85s/v6Htcvh2B2b1drMbpAeC4qjPAA6iOVP+p25cuKi5Ty4uiBb2rzA4ONOb4A
+         dRMdG71gWQek6x0b9arUEuiUAakh2nfTV+YPcbhd6DGk8kDi73XEnzrAIkGyxHPnHztT
+         1wyXrHNmXDWOyYwfLU1/g+5EEhNkPZYM7ssrC7O7tk2sZpQuSvwCzH030tL61Fgu3zdh
+         BiwXGTq6CUYu4IE51Sp4g/UUYAyGOzia1JACLf82EkmrJRi3/MnskyEE9XLe0TArZRDH
+         WnuXHHzGLjAP91P5dtNTo+P0bhIIi1LGmSnGxr2pMm6cizkkPd8H7pF4cnw7jgS4lUud
+         Dumg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715282027; x=1715886827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P5+CpfPTydUeT3vKTfUos21UxKzlhAl+5pqEA8g6EMk=;
+        b=ovLOearF9y+lGb0xV1z7qfNLzB7s2c5XgtEFpxU01CHzPKz8tjvHk/G4jDFh7EhJbl
+         Q+VEBu60tf5MFJZEPyHPYCBxM2u0isIo6NLEesowhuMRKhcwfDppi5BwxFU3PkNnixQp
+         9Vx7OtnG1yR6eC7/VRGtmi7yFwcbGAGfrAEHXSC7iwfjsCWepsTJL+0J/Sw6DCvMh0/G
+         L6sqXBZJWUXDvlSIEYWeMGK9mN8tGPstwpJbzRzCrSWJjNf8U1mFXJe+he0yws4vrmtt
+         RDZZJYLgvooml8nkb3e87tOWaPagtsv8GvXxh8QVvHab8d58SfMNy48UAtU/Ai4RYxqB
+         1A1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZsc4uygmLGRorxHV/wyX0b3mXmxtxo1q9E6UDinRSbqcKKe63CXEHtXWkvLdhAVvxwndfT0QY1mdegZ0QJQ20YucbVPxE7HIAPmpPHCiOXWLYq0q0
+X-Gm-Message-State: AOJu0YxZooLRHG4BAnUnDdRGnqYO13EjGgrqzZy17CmBECX7MxoHIZ1P
+	lBLGCmKiNOaYOVfLU1FHWLQAEXUrfSuCHKJ2k6fjZIc2eSA/nDXHwAaBTbjFQgmjV3wllRgbryW
+	pWM9TLGN2yGuPooHtDHHJwDc5TnxZxKybigSL
+X-Google-Smtp-Source: AGHT+IHUWBa+ghPEnr1ieJmvlpKHqw0gEV0F6yX4442fyzIAt9aMggaDcKmU/XZYYhXknN1mpz1tA24TgG24v/jaGhg=
+X-Received: by 2002:a05:690c:b1b:b0:61b:e62e:8fad with SMTP id
+ 00721157ae682-622affb59b1mr5628747b3.21.1715282027468; Thu, 09 May 2024
+ 12:13:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, shuah@kernel.org,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Christian Brauner
- <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <keescook@chromium.org>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>,
- Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Andrew Morton <akpm@linux-foundation.org>, Seth Forshee
- <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
- <afaerber@suse.de>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-team@android.com,
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev,
- kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
- linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
- linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
-To: Edward Liaw <edliaw@google.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240507214254.2787305-1-edliaw@google.com>
- <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
- <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
- <946ae22f-a4af-448a-92e1-60afb6ed9261@linuxfoundation.org>
- <CAG4es9V2CcBJr0josSoGNsD+ZPQ6vasVXh_Hc_j88oeSqn__yQ@mail.gmail.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CAG4es9V2CcBJr0josSoGNsD+ZPQ6vasVXh_Hc_j88oeSqn__yQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <262f71a207e8cedd388bd89d17ef16155eb2acee.1715248275.git.dcaratti@redhat.com>
+In-Reply-To: <262f71a207e8cedd388bd89d17ef16155eb2acee.1715248275.git.dcaratti@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 9 May 2024 15:13:36 -0400
+Message-ID: <CAHC9VhQEa+6BQs-9jT4JR64nDGio8FbAG5smPaq8E3gi=H1SLg@mail.gmail.com>
+Subject: Re: [PATCH net v4] netlabel: fix RCU annotation for IPv4 options on
+ socket creation
+To: Davide Caratti <dcaratti@redhat.com>
+Cc: netdev@vger.kernel.org, casey@schaufler-ca.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, linux-security-module@vger.kernel.org, 
+	pabeni@redhat.com, xmu@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/9/24 10:45 PM, Edward Liaw wrote:
-> On Thu, May 9, 2024 at 7:37 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> On 5/9/24 00:13, Edward Liaw wrote:
->>> On Wed, May 8, 2024 at 4:10 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>>>
->>>> On 5/7/24 15:38, Edward Liaw wrote:
->>>>> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
->>>>> asprintf into kselftest_harness.h, which is a GNU extension and needs
->>>>> _GNU_SOURCE to either be defined prior to including headers or with the
->>>>> -D_GNU_SOURCE flag passed to the compiler.
->>>>>
->>>>> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
->>>>> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
->>>>> location.  Remove #define _GNU_SOURCE from source code to resolve
->>>>> redefinition warnings.
->>>>>
->>>>> Edward Liaw (5):
->>>>>     selftests: Compile kselftest headers with -D_GNU_SOURCE
->>>>>     selftests/sgx: Include KHDR_INCLUDES in Makefile
->>>>
->>>> I appled patches 1/5 and 2.5 - The rest need to be split up.
->>>>
->>>>>     selftests: Include KHDR_INCLUDES in Makefile
->>>>>     selftests: Drop define _GNU_SOURCE
->>>>>     selftests: Drop duplicate -D_GNU_SOURCE
->>>>>
->>>>
->>>> Please split these patches pwe test directory. Otherwise it will
->>>> cause merge conflicts which can be hard to resolve.
->>>
->>> Hi Shuah,
->>> Sean asked that I rebase the patches on linux-next, and I will need to
->>> remove additional _GNU_SOURCE defines.  Should I send an unsplit v3 to
->>> be reviewed, then split it afterwards?  I'm concerned that it will be
->>> difficult to review with ~70 patches once split.
->>
->> Please send them split - it will be easier to review and apply. You
->> might as well wait until the merge window is done. I don't think
->> anybody would have time to review now since merge window starts
->> next week.
-> 
-> Sorry, I have them split already; is it ok if I send them now?  I will
-> be on leave soon and may not be able to get back to it in a while.
-Feel free to send the patches. There is no restriction on that.
+On Thu, May 9, 2024 at 6:36=E2=80=AFAM Davide Caratti <dcaratti@redhat.com>=
+ wrote:
+>
+> Xiumei reports the following splat when netlabel and TCP socket are used:
+>
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>  WARNING: suspicious RCU usage
+>  6.9.0-rc2+ #637 Not tainted
+>  -----------------------------
+>  net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
+>
+>  other info that might help us debug this:
+>
+>  rcu_scheduler_active =3D 2, debug_locks =3D 1
+>  1 lock held by ncat/23333:
+>   #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setat=
+tr+0x25/0x1b0
+>
+>  stack backtrace:
+>  CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
+>  Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  =
+07/26/2013
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0xa9/0xc0
+>   lockdep_rcu_suspicious+0x117/0x190
+>   cipso_v4_sock_setattr+0x1ab/0x1b0
+>   netlbl_sock_setattr+0x13e/0x1b0
+>   selinux_netlbl_socket_post_create+0x3f/0x80
+>   selinux_socket_post_create+0x1a0/0x460
+>   security_socket_post_create+0x42/0x60
+>   __sock_create+0x342/0x3a0
+>   __sys_socket_create.part.22+0x42/0x70
+>   __sys_socket+0x37/0xb0
+>   __x64_sys_socket+0x16/0x20
+>   do_syscall_64+0x96/0x180
+>   ? do_user_addr_fault+0x68d/0xa30
+>   ? exc_page_fault+0x171/0x280
+>   ? asm_exc_page_fault+0x22/0x30
+>   entry_SYSCALL_64_after_hwframe+0x71/0x79
+>  RIP: 0033:0x7fbc0ca3fc1b
+>  Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e =
+0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 f=
+f ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
+>  RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
+>  RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
+>  RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
+>  RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
+>
+> R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
+>  R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
+>   </TASK>
+>
+> The current implementation of cipso_v4_sock_setattr() replaces IP options
+> under the assumption that the caller holds the socket lock; however, such
+> assumption is not true, nor needed, in selinux_socket_post_create() hook.
+>
+> Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
+> condition, except selinux_socket_post_create() _ where such condition can
+> safely be set as true even without holding the socket lock.
+>
+> v4:
+>  - fix build when CONFIG_LOCKDEP is unset (thanks kernel test robot)
+>
+> v3:
+>  - rename variable to 'sk_locked' (thanks Paul Moore)
+>  - keep rcu_replace_pointer() open-coded and re-add NULL check of 'old',
+>    these two changes will be posted in another patch (thanks Paul Moore)
+>
+> v2:
+>  - pass lockdep_sock_is_held() through a boolean variable in the stack
+>    (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
+>  - use rcu_replace_pointer() instead of rcu_dereference_protected() +
+>    rcu_assign_pointer()
+>  - remove NULL check of 'old' before kfree_rcu()
+>
+> Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
+> Reported-by: Xiumei Mu <xmu@redhat.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+> ---
+>  include/net/cipso_ipv4.h     |  6 ++++--
+>  include/net/netlabel.h       | 12 ++++++++++--
+>  net/ipv4/cipso_ipv4.c        |  7 ++++---
+>  net/netlabel/netlabel_kapi.c | 26 +++++++++++++++++++++++---
+>  security/selinux/netlabel.c  |  5 ++++-
+>  security/smack/smack_lsm.c   |  3 ++-
+>  6 files changed, 47 insertions(+), 12 deletions(-)
 
-> 
-> Thanks,
-> Edward
-> 
->>
->>
->> thanks,
->> -- Shuah
-> 
+...
 
--- 
-BR,
-Muhammad Usama Anjum
+> +/**
+> + * netlbl_sk_lock_check - Check if the socket lock has been acquired.
+> + * @sk: the socket to check
+> + *
+> + * Description: check if @sk is locked. Returns true if socket @sk is lo=
+cked
+> + * or if lock debugging is disabled at runtime or compile-time
+> + *
+> + */
+> +bool netlbl_sk_lock_check(struct sock *sk)
+> +{
+> +#ifdef CONFIG_LOCKDEP
+> +       if (debug_locks)
+> +               return lockdep_sock_is_held(sk);
+> +#endif
+> +       return true;
+> +}
+
+It might be cleaner to do this:
+
+#ifdef CONFIG_LOCKDEP
+bool netlbl_sk_lock_check(sk)
+{
+  if (debug_locks)
+    return lockdep_sock_is_held(sk);
+  return true;
+}
+#else
+bool netlbl_sk_lock_check(sk)
+{
+  return true;
+}
+#endif
+
+--=20
+paul-moore.com
