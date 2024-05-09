@@ -1,343 +1,168 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A422684A34
-	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 10:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FD63BBE3
+	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 14:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251013; cv=none; b=XJ/0Vs7ufE/bScEbD3JcnfGRrjdn/ai7AaaQ0pvMfu7b31szY4MPSxBfBINZVBUh9O13iHRNqhrVz83C+RoxwBSqokR8T6Nq/GOJP+iDAOKxtECxThaxMkotJSPn/y+FhLPckhMTlyQcRtA28/Nte6t09dd68kPXWuEUI1+YWxc=
+	t=1715265429; cv=none; b=gXaoIQOAOMLM86XR44dejphdQNhwpFdpMsayVUEF/JlXRP0ko6wYZu0MAbGHy3UTZJMoNFwRmcO5gdeEp8DlJP/h5DwCZkVlWirtDqrwAlsx5qXBAUIPDsAEQTbSFxy7Ag7fTpMIMWVeVaM+H16QOgCkD2LhOyPim1iXUsEwV04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251013; c=relaxed/simple;
-	bh=HBDZwzRGeQnsIpiARlnK4c9lly2wfAMLwYCqSmUF43o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qeQZ3jx/oxt37YWZM+7bALjf1+Z7Jvgs4uoxmZrO13LE5x507LAsq/hjA8BP6eNMnB0gsIcfSB4itKxmSNDEINvB4HorY8pLxi9pQbkQE8XhKQa1nW2q255jV4qReb0X4qrG4lwjGDnbldlNVZ425kJYHIGgoF5GqIiNRizrZsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ch6m/viA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1715265429; c=relaxed/simple;
+	bh=rX2HhaPr9XjslEz/iELt3o8cY4WdThK1YOL4qhZC7cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GBMESImrkE8IsgQwideId97B0DSpt46TVdl6nki6afp4d6DCOYOofMTHzegyTy5G7pk86wWzs8hr5wN5ePObeAwaVrwhYqc9t1jK1If+HNAsokC2wl9/tG1dWncyRXFh2CHFQjwHC8dE8nzE+opeG62pSOfYiYp4YTfvuDhb+AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NTo7eWSD; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ch6m/viA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715251010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jLIz1Jbxti8NJft3YZRGOY+N8ghcPjRasffwEVjRfb4=;
-	b=ch6m/viAuFdOU+l2JC5dp5HAND8SczHUHpYWL8wTP6RLH0lUk32R3Gi7NuiPzFFblWvoAd
-	wLG3mTlB6HdS1P8WchgMyrqmqO5OPGvF+WPeBoEtuTOjqKZ3JVmzjTwzEvoSxnWXviIjhQ
-	O/bjnhuLJ4i/Q3xLoHpVO/TSVzwltG8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-574-As0XE-8nN32WyKnX_e-r1Q-1; Thu, 09 May 2024 06:36:47 -0400
-X-MC-Unique: As0XE-8nN32WyKnX_e-r1Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0345881227E;
-	Thu,  9 May 2024 10:36:47 +0000 (UTC)
-Received: from dcaratti.users.ipa.redhat.com (unknown [10.45.225.109])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id CDB7E1C008B9;
-	Thu,  9 May 2024 10:36:44 +0000 (UTC)
-From: Davide Caratti <dcaratti@redhat.com>
-To: netdev@vger.kernel.org
-Cc: casey@schaufler-ca.com,
-	davem@davemloft.net,
-	dcaratti@redhat.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-security-module@vger.kernel.org,
-	pabeni@redhat.com,
-	paul@paul-moore.com,
-	xmu@redhat.com
-Subject: [PATCH net v4] netlabel: fix RCU annotation for IPv4 options on socket creation
-Date: Thu,  9 May 2024 12:07:05 +0200
-Message-ID: <262f71a207e8cedd388bd89d17ef16155eb2acee.1715248275.git.dcaratti@redhat.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NTo7eWSD"
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7da55194b31so7378239f.3
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 07:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1715265427; x=1715870227; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qhunxhR/OF2icvm3HmEsNbbwCxzb74IsXbKxDT8qkPs=;
+        b=NTo7eWSDMbAgSOT7CINCmQClTKuqqKFXzf8sF9h8V2D/TL6uzIk6kNIRhOOZdzEMTW
+         mJ9+zmh148SCPZPrjx1yCxIGvBo6MHnlbazDh1HqKyqkHbDHYDUog3Z/huvB7M1KruTH
+         G4D/ZyTmCb4BjkMlKuDOLN5gYiVRGa28cjD1M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715265427; x=1715870227;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhunxhR/OF2icvm3HmEsNbbwCxzb74IsXbKxDT8qkPs=;
+        b=Q/9lmwKInnXCrtdQm4Zmo76I5iYAR+oECb3+veYpLKSsUUwvzwrBPpdr0xcuoysURW
+         6kGFPLOOjFisjXm4PPb34gqauqkrVnX/dpwfKqNBJCmhOZgyNkJtZnjQvBCX/8N0fncj
+         YD42mzUH9XBSgh03+U0UbEC36Ns7TVrUacfHkGD3Mk3UHr92ky2KlOvSn7kXbkBjs5jo
+         quzRV/CXdyuQF5TdUUOjp1wSaIE8vKgMdfmlRVDBf9SAY15Ve3uDWVxdzv4HI4FcQM7Q
+         fevMeltuDrwZIli8qGez55aSp2Kl98ZaGOBDXPNmJFf/ZeyBNiplLOpEAEadGxNK0j9Y
+         kuow==
+X-Forwarded-Encrypted: i=1; AJvYcCURkxCWU7YAknucV3cBcyK0/iE84KwO24pufq0xrqMnLQ6lpG7SgD87ooz6WDQz0kHoSR3+nJ2j4XoBDtPcrn2lm3vKip/yeSkt5lBIVpRnhSDp/YoH
+X-Gm-Message-State: AOJu0YxnYoOmrypUngKc2SVMEm3IX4QjIoX/V7C68JeNvHZk3ViaCrg7
+	0Uq4MwtyoT/ZlFT8612COmOkM0cDUxjYc31PVGWNyX4glSI2VyH8g7WNljHW+Bc=
+X-Google-Smtp-Source: AGHT+IFLPV3hTUAqtiZSXFMZ3nZtJrVA8/PdzJcN3v/yjJF832scb22cGE7mYooNXziODVFLnPMOaA==
+X-Received: by 2002:a6b:e618:0:b0:7e1:86e1:cd46 with SMTP id ca18e2360f4ac-7e18fd9a35cmr655432839f.2.1715265426750;
+        Thu, 09 May 2024 07:37:06 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893703c0c8sm386684173.48.2024.05.09.07.37.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 07:37:06 -0700 (PDT)
+Message-ID: <946ae22f-a4af-448a-92e1-60afb6ed9261@linuxfoundation.org>
+Date: Thu, 9 May 2024 08:37:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>,
+ Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ David Hildenbrand <david@redhat.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Seth Forshee
+ <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
+ <afaerber@suse.de>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>,
+ Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Fenghua Yu <fenghua.yu@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, linux-sound@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-input@vger.kernel.org, iommu@lists.linux.dev, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
+ linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240507214254.2787305-1-edliaw@google.com>
+ <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
+ <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-Xiumei reports the following splat when netlabel and TCP socket are used:
+On 5/9/24 00:13, Edward Liaw wrote:
+> On Wed, May 8, 2024 at 4:10 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 5/7/24 15:38, Edward Liaw wrote:
+>>> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+>>> asprintf into kselftest_harness.h, which is a GNU extension and needs
+>>> _GNU_SOURCE to either be defined prior to including headers or with the
+>>> -D_GNU_SOURCE flag passed to the compiler.
+>>>
+>>> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+>>> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+>>> location.  Remove #define _GNU_SOURCE from source code to resolve
+>>> redefinition warnings.
+>>>
+>>> Edward Liaw (5):
+>>>     selftests: Compile kselftest headers with -D_GNU_SOURCE
+>>>     selftests/sgx: Include KHDR_INCLUDES in Makefile
+>>
+>> I appled patches 1/5 and 2.5 - The rest need to be split up.
+>>
+>>>     selftests: Include KHDR_INCLUDES in Makefile
+>>>     selftests: Drop define _GNU_SOURCE
+>>>     selftests: Drop duplicate -D_GNU_SOURCE
+>>>
+>>
+>> Please split these patches pwe test directory. Otherwise it will
+>> cause merge conflicts which can be hard to resolve.
+> 
+> Hi Shuah,
+> Sean asked that I rebase the patches on linux-next, and I will need to
+> remove additional _GNU_SOURCE defines.  Should I send an unsplit v3 to
+> be reviewed, then split it afterwards?  I'm concerned that it will be
+> difficult to review with ~70 patches once split.
 
- =============================
- WARNING: suspicious RCU usage
- 6.9.0-rc2+ #637 Not tainted
- -----------------------------
- net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
+Please send them split - it will be easier to review and apply. You
+might as well wait until the merge window is done. I don't think
+anybody would have time to review now since merge window starts
+next week.
 
- other info that might help us debug this:
 
- rcu_scheduler_active = 2, debug_locks = 1
- 1 lock held by ncat/23333:
-  #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setattr+0x25/0x1b0
-
- stack backtrace:
- CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
- Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  07/26/2013
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0xa9/0xc0
-  lockdep_rcu_suspicious+0x117/0x190
-  cipso_v4_sock_setattr+0x1ab/0x1b0
-  netlbl_sock_setattr+0x13e/0x1b0
-  selinux_netlbl_socket_post_create+0x3f/0x80
-  selinux_socket_post_create+0x1a0/0x460
-  security_socket_post_create+0x42/0x60
-  __sock_create+0x342/0x3a0
-  __sys_socket_create.part.22+0x42/0x70
-  __sys_socket+0x37/0xb0
-  __x64_sys_socket+0x16/0x20
-  do_syscall_64+0x96/0x180
-  ? do_user_addr_fault+0x68d/0xa30
-  ? exc_page_fault+0x171/0x280
-  ? asm_exc_page_fault+0x22/0x30
-  entry_SYSCALL_64_after_hwframe+0x71/0x79
- RIP: 0033:0x7fbc0ca3fc1b
- Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
- RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
- RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
- RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
- RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
-
-R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
- R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
-  </TASK>
-
-The current implementation of cipso_v4_sock_setattr() replaces IP options
-under the assumption that the caller holds the socket lock; however, such
-assumption is not true, nor needed, in selinux_socket_post_create() hook.
-
-Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
-condition, except selinux_socket_post_create() _ where such condition can
-safely be set as true even without holding the socket lock.
-
-v4:
- - fix build when CONFIG_LOCKDEP is unset (thanks kernel test robot)
-
-v3:
- - rename variable to 'sk_locked' (thanks Paul Moore)
- - keep rcu_replace_pointer() open-coded and re-add NULL check of 'old',
-   these two changes will be posted in another patch (thanks Paul Moore)
-
-v2:
- - pass lockdep_sock_is_held() through a boolean variable in the stack
-   (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
- - use rcu_replace_pointer() instead of rcu_dereference_protected() +
-   rcu_assign_pointer()
- - remove NULL check of 'old' before kfree_rcu()
-
-Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
-Reported-by: Xiumei Mu <xmu@redhat.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
----
- include/net/cipso_ipv4.h     |  6 ++++--
- include/net/netlabel.h       | 12 ++++++++++--
- net/ipv4/cipso_ipv4.c        |  7 ++++---
- net/netlabel/netlabel_kapi.c | 26 +++++++++++++++++++++++---
- security/selinux/netlabel.c  |  5 ++++-
- security/smack/smack_lsm.c   |  3 ++-
- 6 files changed, 47 insertions(+), 12 deletions(-)
-
-diff --git a/include/net/cipso_ipv4.h b/include/net/cipso_ipv4.h
-index 53dd7d988a2d..c9111bb2f59b 100644
---- a/include/net/cipso_ipv4.h
-+++ b/include/net/cipso_ipv4.h
-@@ -183,7 +183,8 @@ int cipso_v4_getattr(const unsigned char *cipso,
- 		     struct netlbl_lsm_secattr *secattr);
- int cipso_v4_sock_setattr(struct sock *sk,
- 			  const struct cipso_v4_doi *doi_def,
--			  const struct netlbl_lsm_secattr *secattr);
-+			  const struct netlbl_lsm_secattr *secattr,
-+			  bool sk_locked);
- void cipso_v4_sock_delattr(struct sock *sk);
- int cipso_v4_sock_getattr(struct sock *sk, struct netlbl_lsm_secattr *secattr);
- int cipso_v4_req_setattr(struct request_sock *req,
-@@ -214,7 +215,8 @@ static inline int cipso_v4_getattr(const unsigned char *cipso,
- 
- static inline int cipso_v4_sock_setattr(struct sock *sk,
- 				      const struct cipso_v4_doi *doi_def,
--				      const struct netlbl_lsm_secattr *secattr)
-+				      const struct netlbl_lsm_secattr *secattr,
-+				      bool sk_locked)
- {
- 	return -ENOSYS;
- }
-diff --git a/include/net/netlabel.h b/include/net/netlabel.h
-index f3ab0b8a4b18..2133ad723fc1 100644
---- a/include/net/netlabel.h
-+++ b/include/net/netlabel.h
-@@ -470,7 +470,8 @@ void netlbl_bitmap_setbit(unsigned char *bitmap, u32 bit, u8 state);
- int netlbl_enabled(void);
- int netlbl_sock_setattr(struct sock *sk,
- 			u16 family,
--			const struct netlbl_lsm_secattr *secattr);
-+			const struct netlbl_lsm_secattr *secattr,
-+			bool sk_locked);
- void netlbl_sock_delattr(struct sock *sk);
- int netlbl_sock_getattr(struct sock *sk,
- 			struct netlbl_lsm_secattr *secattr);
-@@ -487,6 +488,7 @@ int netlbl_skbuff_getattr(const struct sk_buff *skb,
- 			  u16 family,
- 			  struct netlbl_lsm_secattr *secattr);
- void netlbl_skbuff_err(struct sk_buff *skb, u16 family, int error, int gateway);
-+bool netlbl_sk_lock_check(struct sock *sk);
- 
- /*
-  * LSM label mapping cache operations
-@@ -614,7 +616,8 @@ static inline int netlbl_enabled(void)
- }
- static inline int netlbl_sock_setattr(struct sock *sk,
- 				      u16 family,
--				      const struct netlbl_lsm_secattr *secattr)
-+				      const struct netlbl_lsm_secattr *secattr,
-+				      bool sk_locked)
- {
- 	return -ENOSYS;
- }
-@@ -673,6 +676,11 @@ static inline struct audit_buffer *netlbl_audit_start(int type,
- {
- 	return NULL;
- }
-+
-+static inline bool netlbl_sk_lock_check(struct sock *sk)
-+{
-+	return true;
-+}
- #endif /* CONFIG_NETLABEL */
- 
- const struct netlbl_calipso_ops *
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 8b17d83e5fde..dd6d46015058 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1815,6 +1815,7 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
-  * @sk: the socket
-  * @doi_def: the CIPSO DOI to use
-  * @secattr: the specific security attributes of the socket
-+ * @sk_locked: true if caller holds the socket lock
-  *
-  * Description:
-  * Set the CIPSO option on the given socket using the DOI definition and
-@@ -1826,7 +1827,8 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
-  */
- int cipso_v4_sock_setattr(struct sock *sk,
- 			  const struct cipso_v4_doi *doi_def,
--			  const struct netlbl_lsm_secattr *secattr)
-+			  const struct netlbl_lsm_secattr *secattr,
-+			  bool sk_locked)
- {
- 	int ret_val = -EPERM;
- 	unsigned char *buf = NULL;
-@@ -1876,8 +1878,7 @@ int cipso_v4_sock_setattr(struct sock *sk,
- 
- 	sk_inet = inet_sk(sk);
- 
--	old = rcu_dereference_protected(sk_inet->inet_opt,
--					lockdep_sock_is_held(sk));
-+	old = rcu_dereference_protected(sk_inet->inet_opt, sk_locked);
- 	if (inet_test_bit(IS_ICSK, sk)) {
- 		sk_conn = inet_csk(sk);
- 		if (old)
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 1ba4f58e1d35..371158b22ec6 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -965,6 +965,7 @@ int netlbl_enabled(void)
-  * @sk: the socket to label
-  * @family: protocol family
-  * @secattr: the security attributes
-+ * @sk_locked: true if caller holds the socket lock
-  *
-  * Description:
-  * Attach the correct label to the given socket using the security attributes
-@@ -977,7 +978,8 @@ int netlbl_enabled(void)
-  */
- int netlbl_sock_setattr(struct sock *sk,
- 			u16 family,
--			const struct netlbl_lsm_secattr *secattr)
-+			const struct netlbl_lsm_secattr *secattr,
-+			bool sk_locked)
- {
- 	int ret_val;
- 	struct netlbl_dom_map *dom_entry;
-@@ -997,7 +999,7 @@ int netlbl_sock_setattr(struct sock *sk,
- 		case NETLBL_NLTYPE_CIPSOV4:
- 			ret_val = cipso_v4_sock_setattr(sk,
- 							dom_entry->def.cipso,
--							secattr);
-+							secattr, sk_locked);
- 			break;
- 		case NETLBL_NLTYPE_UNLABELED:
- 			ret_val = 0;
-@@ -1090,6 +1092,23 @@ int netlbl_sock_getattr(struct sock *sk,
- 	return ret_val;
- }
- 
-+/**
-+ * netlbl_sk_lock_check - Check if the socket lock has been acquired.
-+ * @sk: the socket to check
-+ *
-+ * Description: check if @sk is locked. Returns true if socket @sk is locked
-+ * or if lock debugging is disabled at runtime or compile-time
-+ *
-+ */
-+bool netlbl_sk_lock_check(struct sock *sk)
-+{
-+#ifdef CONFIG_LOCKDEP
-+	if (debug_locks)
-+		return lockdep_sock_is_held(sk);
-+#endif
-+	return true;
-+}
-+
- /**
-  * netlbl_conn_setattr - Label a connected socket using the correct protocol
-  * @sk: the socket to label
-@@ -1126,7 +1145,8 @@ int netlbl_conn_setattr(struct sock *sk,
- 		switch (entry->type) {
- 		case NETLBL_NLTYPE_CIPSOV4:
- 			ret_val = cipso_v4_sock_setattr(sk,
--							entry->cipso, secattr);
-+							entry->cipso, secattr,
-+							netlbl_sk_lock_check(sk));
- 			break;
- 		case NETLBL_NLTYPE_UNLABELED:
- 			/* just delete the protocols we support for right now
-diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
-index 8f182800e412..55885634e880 100644
---- a/security/selinux/netlabel.c
-+++ b/security/selinux/netlabel.c
-@@ -402,7 +402,10 @@ int selinux_netlbl_socket_post_create(struct sock *sk, u16 family)
- 	secattr = selinux_netlbl_sock_genattr(sk);
- 	if (secattr == NULL)
- 		return -ENOMEM;
--	rc = netlbl_sock_setattr(sk, family, secattr);
-+	/* On socket creation, replacement of IP options is safe even if
-+	 * the caller does not hold the socket lock.
-+	 */
-+	rc = netlbl_sock_setattr(sk, family, secattr, true);
- 	switch (rc) {
- 	case 0:
- 		sksec->nlbl_state = NLBL_LABELED;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 146667937811..efeac8365ad0 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2565,7 +2565,8 @@ static int smack_netlbl_add(struct sock *sk)
- 	local_bh_disable();
- 	bh_lock_sock_nested(sk);
- 
--	rc = netlbl_sock_setattr(sk, sk->sk_family, &skp->smk_netlabel);
-+	rc = netlbl_sock_setattr(sk, sk->sk_family, &skp->smk_netlabel,
-+				 netlbl_sk_lock_check(sk));
- 	switch (rc) {
- 	case 0:
- 		ssp->smk_state = SMK_NETLBL_LABELED;
--- 
-2.44.0
-
+thanks,
+-- Shuah
