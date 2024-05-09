@@ -1,55 +1,55 @@
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3379913AD2F
-	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 20:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A7513B595
+	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 20:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284930; cv=none; b=KEKyCuwEaDyCLVHD3YvfaDbSdmUXegvKp8efK9fA47PGwkD0uJSN+H/x9MHQTIQtib3z2yXsSr90RHYEc02UuYZ/xP/p9FVfYQa0sV8RMgYwDzal1dv8AZnaBYoqyDDZWI7oJuaW2nWJhcAQt3d45dhbA8luQ9GWGtvgJrhV0Tg=
+	t=1715284933; cv=none; b=UYfVhW3uNTzafvN31pfzDwr3XgC3ik6knd/2hNf0TF3232FPn8OadFvYVEwhtY54yzFy7Ww1N1GXOB6/vAIlWoI4kgVaRU6OnqtaRDWtSWjtGeki3V4c4c36/1e1sPHxhmCVVKlkst3vdoVhicBEshcfwgjygt67bj3KSUsAep4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284930; c=relaxed/simple;
-	bh=16xQFZUemPEW+OmTRE/3AJIID4VuLDiTh8Uti+95Avc=;
+	s=arc-20240116; t=1715284933; c=relaxed/simple;
+	bh=1oD6rsCbKsoe54EZCuc1n9pRR8DgtE1IGKQNEvkXKtM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pSoCoMUkwjvATake1DZ4IKNP/c4BhpY3MB/3qn6EsFYtJYKxm8LwiSgydMJnPoXHKmFukiDFA/AaHwoDwfggcXguGBjzhuyaV7lHhhBZNfbyd/FQWJij2luuvU8e0qXL9zGR8u8kne72u+Hsr3NoW8wsEfzfO76oo6/Smfhkn94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XBVVxbVp; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=O1j43tOPwtFQ04t8Eb+UtLWlzJYJLCCUNvT/CW3GN506dgdqDXv0MLjXlJdv86crlj0TvJpBm6280pHaQTxpZHn9ks9svjZ4afI2sPwlIjvx8X3rRSm23J2h18IQHh6t2kzXko/kWOV8J/2YTA/xMxeRbsh9MbsTIUISck9w1sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gH35k+fZ; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XBVVxbVp"
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de60cd96bf3so2833803276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 13:02:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gH35k+fZ"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61dfa4090c1so18220757b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 13:02:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715284928; x=1715889728; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715284931; x=1715889731; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ld4la0VxD3l5sUUAGJ4Eky+q6o3Kf635llpLjU0Q2ns=;
-        b=XBVVxbVp0tDi1eejJVKANr+8xaxS/RZuT7cPK9azYrwtike+1VH1jwViW/jBCCJLsZ
-         hupPKaiadKuVDG9F61e2VC7dz2WWlo1OJ0xyC3AZv/ehIs9gj7HSyrsnO+AKhQDAq8FI
-         +0zVDs+SkVvFSnP86mwJg2loLZnsQjj6DrXYNwjXw5zCPhGFjOSbMKNxvI8QqP8c0oaH
-         p5EQxr+oR2Qcz16c1EdviPH3wsgHREVRBM4YMZRAgpS8P0Squ52ocsQQeVXgt3ozvZtd
-         LON1xSoAlM3uF+AtUiqyCkFCkd8BIZOP4/5H/FBtStBt6D8UzjR/IebYtdq88C0B3BqC
-         QYwQ==
+        bh=Di7Erv/XRsHV/bMQeC6cRhGef1PHcLc0ShAwyYHpOVU=;
+        b=gH35k+fZ5X08AAt3ku0oVG4cOeN2lgs8ixLSce21it1ll/jZ6oJlEfFcrTFE2bxscI
+         aIgShzwUdJh4B4fzU7FnnIlwVKsOBTLSXD3VduBbghfFhgigQeN34/AOJnGDv52GPfBp
+         3UwPAmDBMeW1FgyqNfN9W6C+1qtBaWg1cJhZN59rQN9Qlzfpks+VGPHhaWYK1wNrcowg
+         aRBQxtC7GVPNz+5sN1Pccfxu5ueBEyGFJb1XgpNIEJGUT2aue9Yeh8s2iecl3Xd9mY/x
+         2ntoJjJ+xVGEhO5h/fWeFMz6UkdQ3qg7g/fJbfIS0mZ57qkkTNF2SPoy73ygO8F0+5Sf
+         1RAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715284928; x=1715889728;
+        d=1e100.net; s=20230601; t=1715284931; x=1715889731;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ld4la0VxD3l5sUUAGJ4Eky+q6o3Kf635llpLjU0Q2ns=;
-        b=mrP9SjjI2Uj41pds6TxrM2fL5AOIBSVUl1/NqPN2sVRl5f1dpDHQ1uuniRErrfYtU4
-         0JMVTtvMQcT1AXF3sqOdFII9trOb37YlOQp6kLK75rqS7EB21TnJTSSKitPCoUS8hk3r
-         aSf9/OR+LVYcTeeYhxjv0q/Ndx3lHKkVcv7vgNOCnCwG2TCsbTavW0nHKKboMWlQrkYL
-         TVfL/UFD6MjLxkOBP2Ndr10c/322ZGUfOwjkyi+YPXdgtlFR91vRHXbNSLlVlulRrtIn
-         fhD7HU28s7KOjsYqapawZ7me/k6bBMMiHnJbctdPl0lMzWsIgbVlhwM7ndrg/L6QOkk7
-         lPxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEzn8/TGcSkgOc7lu7eOF5dzB1INPMOmCjuTECHWl22ERwa1mT6JZi6ipjXznmLV8K0Pxx4a7qJLPr2x6BGV7aGzEdUlJCP4OrAuMxGKPnVIZ+AKk1
-X-Gm-Message-State: AOJu0YzZ7YhYf0e4w4xdQDdp4crOtwOe87BqIEH3RqXZ693qQJzMkq3w
-	BgTb5FoAfyYhsUWact55Xg8w0AST0X6lvwB8kvA492RK0Tf0bDUNzxBrcsB1jED0L6OvfpqnMfX
-	AXQ==
-X-Google-Smtp-Source: AGHT+IH7mCutPVAsCyjnUwqjavBhEaHc72uO0KGnsx9I5mIx6c+B/OzfNxUabcxwf0ME6yuKTrwEQgs1qvI=
+        bh=Di7Erv/XRsHV/bMQeC6cRhGef1PHcLc0ShAwyYHpOVU=;
+        b=MSneicoh2YUyIPotxAutw04s804vZwuQBTRNCicaCliiSaqOQVnW6WOP/iBUZan3Zo
+         v9iZzyRrITYNIvTphh5gINAu4hY/Cu+EI0GGKngXecLmpggJVNvbaI/lEDu0Ys3vPxKO
+         46VVfT1w/3kHRSoGHo6dxCSIHrlSDd39u1Q9XKXYwrm1cCly+Tg/AXtbUf7w/7YVMLPP
+         w2SbzRUvXDc3A3IsbMM1Nd5kbpGe18XBi29vSPek7JzwfTq4Y8tNz6WE1xlAGD+gPjmx
+         PMVylHT2iio0+I2jXTjc6azxvMeb1a7IjiTTIJkJAyfBc6U4KfqBNJ2/faMd/ZZJeZNG
+         FtpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTcdFmiJuA8D/C2gWMSgYcem2SNKb/9jqr3OSuPlW9JzjwiuHTZ6nVi/RLBD9kmf4BMIw7KkLrA6kL0l/i0EFxq1HV8/QA+d+tKgtTs8Kv1Mm+sETI
+X-Gm-Message-State: AOJu0YzM40VYKe5EXjgmWdDCuywqdUk/lN2p3XT2rJCfgNBDvM8K9m4z
+	AGQTUlf+PmTQGv/vG2kpeozTww/A1ZmwKIXfbE6SYz7hrO6JRj8jaIUQkoc9p/U9fIsuaN7PkkD
+	pjw==
+X-Google-Smtp-Source: AGHT+IGzNz2UjieyVL+13PppSOIoCCWtRL0jFRrJh3a18AgOw9IEjMhpDthMiXvHB10Rx4IrrNB28zpbHTM=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:6902:2b03:b0:dd9:20c1:85b6 with SMTP id
- 3f1490d57ef6-dee4e48f302mr225691276.2.1715284928394; Thu, 09 May 2024
- 13:02:08 -0700 (PDT)
-Date: Thu,  9 May 2024 19:58:21 +0000
+ (user=edliaw job=sendgmr) by 2002:a05:690c:6d0c:b0:61b:e6a8:a8a with SMTP id
+ 00721157ae682-622affeb280mr1228217b3.6.1715284931252; Thu, 09 May 2024
+ 13:02:11 -0700 (PDT)
+Date: Thu,  9 May 2024 19:58:22 +0000
 In-Reply-To: <20240509200022.253089-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240509200022.253089-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240509200022.253089-30-edliaw@google.com>
-Subject: [PATCH v3 29/68] selftests/membarrier: Drop define _GNU_SOURCE
+Message-ID: <20240509200022.253089-31-edliaw@google.com>
+Subject: [PATCH v3 30/68] selftests/memfd: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -69,8 +69,8 @@ To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
 	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
 	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
 	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Edward Liaw <edliaw@google.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
+	Edward Liaw <edliaw@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
 	kernel-team@android.com, linux-security-module@vger.kernel.org, 
 	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
@@ -85,41 +85,44 @@ Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/membarrier/membarrier_test_impl.h        | 1 -
- .../testing/selftests/membarrier/membarrier_test_multi_thread.c  | 1 -
- .../testing/selftests/membarrier/membarrier_test_single_thread.c | 1 -
- 3 files changed, 3 deletions(-)
+ tools/testing/selftests/memfd/common.c     | 1 -
+ tools/testing/selftests/memfd/fuse_test.c  | 2 --
+ tools/testing/selftests/memfd/memfd_test.c | 1 -
+ 3 files changed, 4 deletions(-)
 
-diff --git a/tools/testing/selftests/membarrier/membarrier_test_impl.h b/tools/testing/selftests/membarrier/membarrier_test_impl.h
-index af89855adb7b..a8a60b6271a5 100644
---- a/tools/testing/selftests/membarrier/membarrier_test_impl.h
-+++ b/tools/testing/selftests/membarrier/membarrier_test_impl.h
-@@ -1,5 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#define _GNU_SOURCE
- #include <linux/membarrier.h>
- #include <syscall.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c b/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c
-index 4e14dba81234..c00f380b2757 100644
---- a/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c
-+++ b/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c
+diff --git a/tools/testing/selftests/memfd/common.c b/tools/testing/selftests/memfd/common.c
+index 8eb3d75f6e60..879d4f4c66fa 100644
+--- a/tools/testing/selftests/memfd/common.c
++++ b/tools/testing/selftests/memfd/common.c
 @@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
 -#define _GNU_SOURCE
- #include <linux/membarrier.h>
- #include <syscall.h>
+ #define __EXPORTED_HEADERS__
+ 
  #include <stdio.h>
-diff --git a/tools/testing/selftests/membarrier/membarrier_test_single_thread.c b/tools/testing/selftests/membarrier/membarrier_test_single_thread.c
-index fa3f1d6c37a0..c399fbad8efd 100644
---- a/tools/testing/selftests/membarrier/membarrier_test_single_thread.c
-+++ b/tools/testing/selftests/membarrier/membarrier_test_single_thread.c
+diff --git a/tools/testing/selftests/memfd/fuse_test.c b/tools/testing/selftests/memfd/fuse_test.c
+index dbc171a3806d..e35c6909f0bb 100644
+--- a/tools/testing/selftests/memfd/fuse_test.c
++++ b/tools/testing/selftests/memfd/fuse_test.c
+@@ -12,8 +12,6 @@
+  * the read() syscall with our memory-mapped memfd object as receive buffer to
+  * force the kernel to write into our memfd object.
+  */
+-
+-#define _GNU_SOURCE
+ #define __EXPORTED_HEADERS__
+ 
+ #include <errno.h>
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index 95af2d78fd31..ee019b57bb98 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
 @@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
 -#define _GNU_SOURCE
- #include <linux/membarrier.h>
- #include <syscall.h>
- #include <stdio.h>
+ #define __EXPORTED_HEADERS__
+ 
+ #include <errno.h>
 -- 
 2.45.0.118.g7fe29c98d7-goog
 
