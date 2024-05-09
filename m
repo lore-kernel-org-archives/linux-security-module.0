@@ -1,200 +1,494 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC12F7EF1D
-	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 19:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D376C7F7CC
+	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 20:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715282030; cv=none; b=n7BABw9rNNlmsSCGMH0QNSRU2U5cYTQ59KW/YvuNK2Q3IaQPGNO+ks+X4mt7mDewrpG2pf5rlmaX64W9J79dfl0KEOLMzz/lVTZ03gASGD/pTUFLGtkQ094q7r5CGzlSMx2rT4DRcha2aNwCE82YMm9Rzk0u9cwUJmx1dDrLJKs=
+	t=1715284844; cv=none; b=rRQsj39jqvDiwmwO1BrZ3CofGjk+3m3ZKNreraLtVFuVP17v1/nnzG7MO0a1g1DC4Zk0ranB4vbUeqlaa9y2IG35DrYxhiNzkH2NnGZHv9HmtQqVWU6mAltBrfgCFnJXNV+15kGkBt52Vvb0b7AAUuGc3jpIG/zLeDCt6OAyLNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715282030; c=relaxed/simple;
-	bh=1G0QDR8JUJFyxaGNVbL1UI3DtGhHUGbyrMYHlnXXzhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXtKhle6CJb8q8b2wnjlRy7GxhNYOtR1k7Zl+y6ID0rbgCtWQLY3oj5mz/0oSvHwvK1MksjMVZDyaRbmj+P3d6oPbiyCS+74SNKp99zeb+Mkm+9WPOhDL7bVur59UstqvIZoNwdibsJp2+/eCBAapq6gse4yVlmvzp38wE61+Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HhPg85s/; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1715284844; c=relaxed/simple;
+	bh=250B3OFFdrfwOHOTW6gbI5OwJ2n0bFOmxzJ4UbIdIuA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CsrwdAAvBcZ+WceIsQKkwcSbyYUSElKTCVoKYQV4Fe4w3DdnUEqXW0pMF0ZaUK/RpLcOebPzpCyFCo0atNzHPwEqJ9xT2hdN1PWSkE+jfdve8R8Uh6AEIHoasunlT7pq8dnDvdDzC1Y661OauxDrwbTHQh9RANUmzHjqfDLVQeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fs9V8TEb; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HhPg85s/"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-620314aa1d7so13410817b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 12:13:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fs9V8TEb"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de60cd96bf3so2830075276.0
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 13:00:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715282027; x=1715886827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P5+CpfPTydUeT3vKTfUos21UxKzlhAl+5pqEA8g6EMk=;
-        b=HhPg85s/v6Htcvh2B2b1drMbpAeC4qjPAA6iOVP+p25cuKi5Ty4uiBb2rzA4ONOb4A
-         dRMdG71gWQek6x0b9arUEuiUAakh2nfTV+YPcbhd6DGk8kDi73XEnzrAIkGyxHPnHztT
-         1wyXrHNmXDWOyYwfLU1/g+5EEhNkPZYM7ssrC7O7tk2sZpQuSvwCzH030tL61Fgu3zdh
-         BiwXGTq6CUYu4IE51Sp4g/UUYAyGOzia1JACLf82EkmrJRi3/MnskyEE9XLe0TArZRDH
-         WnuXHHzGLjAP91P5dtNTo+P0bhIIi1LGmSnGxr2pMm6cizkkPd8H7pF4cnw7jgS4lUud
-         Dumg==
+        d=google.com; s=20230601; t=1715284841; x=1715889641; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BiQaAHv48LNkLl6IKhKIG+TFd091T8JM9L1cZXvhgHc=;
+        b=fs9V8TEbtnKOPt/8AFLLDZkcavdaVS5hHKgFlHOD6Ud+vfcJr++UwJ4dLqDaA3TnQ0
+         9Z1s1ZUy5P1gDJJ+c5aqLcT47cPtPzDnnBF9CzRTEkv65VCoyj7eABpIFrAFvBi8ZVbp
+         PHn8Yy9MFSMSi13X9Ysd3K3yULV7B+mUpoXlYtuZ1UQoVqn38Tr/dr4mMBzgLUgcm1wW
+         kuS1Ux+V1F1wL9W8Y3NTHyHbDkLQ5RgJCkbuS2phpL+zDxEAyp3ii2fmwiMZXmnyggND
+         wrSv1V/FDsW3lDLV+JWBWF69RCW3M5YuDwtRIVPbrpkEMqPTYIjrkS56miJHkbrim/0v
+         hUvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715282027; x=1715886827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P5+CpfPTydUeT3vKTfUos21UxKzlhAl+5pqEA8g6EMk=;
-        b=ovLOearF9y+lGb0xV1z7qfNLzB7s2c5XgtEFpxU01CHzPKz8tjvHk/G4jDFh7EhJbl
-         Q+VEBu60tf5MFJZEPyHPYCBxM2u0isIo6NLEesowhuMRKhcwfDppi5BwxFU3PkNnixQp
-         9Vx7OtnG1yR6eC7/VRGtmi7yFwcbGAGfrAEHXSC7iwfjsCWepsTJL+0J/Sw6DCvMh0/G
-         L6sqXBZJWUXDvlSIEYWeMGK9mN8tGPstwpJbzRzCrSWJjNf8U1mFXJe+he0yws4vrmtt
-         RDZZJYLgvooml8nkb3e87tOWaPagtsv8GvXxh8QVvHab8d58SfMNy48UAtU/Ai4RYxqB
-         1A1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZsc4uygmLGRorxHV/wyX0b3mXmxtxo1q9E6UDinRSbqcKKe63CXEHtXWkvLdhAVvxwndfT0QY1mdegZ0QJQ20YucbVPxE7HIAPmpPHCiOXWLYq0q0
-X-Gm-Message-State: AOJu0YxZooLRHG4BAnUnDdRGnqYO13EjGgrqzZy17CmBECX7MxoHIZ1P
-	lBLGCmKiNOaYOVfLU1FHWLQAEXUrfSuCHKJ2k6fjZIc2eSA/nDXHwAaBTbjFQgmjV3wllRgbryW
-	pWM9TLGN2yGuPooHtDHHJwDc5TnxZxKybigSL
-X-Google-Smtp-Source: AGHT+IHUWBa+ghPEnr1ieJmvlpKHqw0gEV0F6yX4442fyzIAt9aMggaDcKmU/XZYYhXknN1mpz1tA24TgG24v/jaGhg=
-X-Received: by 2002:a05:690c:b1b:b0:61b:e62e:8fad with SMTP id
- 00721157ae682-622affb59b1mr5628747b3.21.1715282027468; Thu, 09 May 2024
- 12:13:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715284841; x=1715889641;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BiQaAHv48LNkLl6IKhKIG+TFd091T8JM9L1cZXvhgHc=;
+        b=kn0IxF7eQfMsn3pVWN3pOb0dERUjQNU4/dbd3cyGgk/Mwd8cy+zyIEXikgC1EAoRKF
+         lJpOOfm++HdSKO8v4PmxdvHR6xCEJLprqAcA4Y+DB9JomA1oK03PqSyOYiTC2aKlS8ik
+         JmsTeH/BNoc/WmFbPl6u1ZCvik49sPxmZGtge2fZN9ZFGExJc6mHo944sqZ04BxT8kyd
+         GcEABFp+bmey1k8WzwASYW2x754Em6HDGjWXZScWvieWfSJKoFZi7cnN8plTsniXXYYX
+         8xYlE61hamcqaGwl5zoGbaxa1P/kuA0mnt8IecccfyYMK7aXx7sylyC6UKm+VQy4qVYr
+         zCIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULWtg0HX08oLH/4Gajk62NepljxVlTuZ1ro8eZ+/ZqUMQ5kMWOq/aWRpfbdQtDgFjyNt0YAqV8Pm5Vi7/HisVUd+VxGh7P1iCbsc7cU54trUWVyBbE
+X-Gm-Message-State: AOJu0Yx19stcIgGPsK88m9t2COD6M/Ip1M05jgSkON8oq8BBISuQh7Ov
+	xT9cFmlKWiZX7uI3yH30QRFATnSj7ZLOXJKd6aFZwJQIq+H6ZIQIeOAYzkGyQBJhf2jLYtRQVxQ
+	lxw==
+X-Google-Smtp-Source: AGHT+IG32nWVWyDPupjVMEK6n3N1N+aMGl5P1P8w84uzKmBtJyMVqaNfyadCWNQkLoCFctCi7ZQ+FRrhQSk=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a05:6902:150d:b0:dc6:e884:2342 with SMTP id
+ 3f1490d57ef6-dee4e5a1043mr214884276.5.1715284840940; Thu, 09 May 2024
+ 13:00:40 -0700 (PDT)
+Date: Thu,  9 May 2024 19:57:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <262f71a207e8cedd388bd89d17ef16155eb2acee.1715248275.git.dcaratti@redhat.com>
-In-Reply-To: <262f71a207e8cedd388bd89d17ef16155eb2acee.1715248275.git.dcaratti@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 9 May 2024 15:13:36 -0400
-Message-ID: <CAHC9VhQEa+6BQs-9jT4JR64nDGio8FbAG5smPaq8E3gi=H1SLg@mail.gmail.com>
-Subject: Re: [PATCH net v4] netlabel: fix RCU annotation for IPv4 options on
- socket creation
-To: Davide Caratti <dcaratti@redhat.com>
-Cc: netdev@vger.kernel.org, casey@schaufler-ca.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-security-module@vger.kernel.org, 
-	pabeni@redhat.com, xmu@redhat.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
+Message-ID: <20240509200022.253089-1-edliaw@google.com>
+Subject: [PATCH v3 00/68] Define _GNU_SOURCE for sources using
+From: Edward Liaw <edliaw@google.com>
+To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, Edward Liaw <edliaw@google.com>, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 9, 2024 at 6:36=E2=80=AFAM Davide Caratti <dcaratti@redhat.com>=
- wrote:
->
-> Xiumei reports the following splat when netlabel and TCP socket are used:
->
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->  WARNING: suspicious RCU usage
->  6.9.0-rc2+ #637 Not tainted
->  -----------------------------
->  net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
->
->  other info that might help us debug this:
->
->  rcu_scheduler_active =3D 2, debug_locks =3D 1
->  1 lock held by ncat/23333:
->   #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setat=
-tr+0x25/0x1b0
->
->  stack backtrace:
->  CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
->  Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  =
-07/26/2013
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0xa9/0xc0
->   lockdep_rcu_suspicious+0x117/0x190
->   cipso_v4_sock_setattr+0x1ab/0x1b0
->   netlbl_sock_setattr+0x13e/0x1b0
->   selinux_netlbl_socket_post_create+0x3f/0x80
->   selinux_socket_post_create+0x1a0/0x460
->   security_socket_post_create+0x42/0x60
->   __sock_create+0x342/0x3a0
->   __sys_socket_create.part.22+0x42/0x70
->   __sys_socket+0x37/0xb0
->   __x64_sys_socket+0x16/0x20
->   do_syscall_64+0x96/0x180
->   ? do_user_addr_fault+0x68d/0xa30
->   ? exc_page_fault+0x171/0x280
->   ? asm_exc_page_fault+0x22/0x30
->   entry_SYSCALL_64_after_hwframe+0x71/0x79
->  RIP: 0033:0x7fbc0ca3fc1b
->  Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e =
-0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 f=
-f ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
->  RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
->  RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
->  RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
->  RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
->
-> R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
->  R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
->   </TASK>
->
-> The current implementation of cipso_v4_sock_setattr() replaces IP options
-> under the assumption that the caller holds the socket lock; however, such
-> assumption is not true, nor needed, in selinux_socket_post_create() hook.
->
-> Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
-> condition, except selinux_socket_post_create() _ where such condition can
-> safely be set as true even without holding the socket lock.
->
-> v4:
->  - fix build when CONFIG_LOCKDEP is unset (thanks kernel test robot)
->
-> v3:
->  - rename variable to 'sk_locked' (thanks Paul Moore)
->  - keep rcu_replace_pointer() open-coded and re-add NULL check of 'old',
->    these two changes will be posted in another patch (thanks Paul Moore)
->
-> v2:
->  - pass lockdep_sock_is_held() through a boolean variable in the stack
->    (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
->  - use rcu_replace_pointer() instead of rcu_dereference_protected() +
->    rcu_assign_pointer()
->  - remove NULL check of 'old' before kfree_rcu()
->
-> Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
-> Reported-by: Xiumei Mu <xmu@redhat.com>
-> Acked-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-> ---
->  include/net/cipso_ipv4.h     |  6 ++++--
->  include/net/netlabel.h       | 12 ++++++++++--
->  net/ipv4/cipso_ipv4.c        |  7 ++++---
->  net/netlabel/netlabel_kapi.c | 26 +++++++++++++++++++++++---
->  security/selinux/netlabel.c  |  5 ++++-
->  security/smack/smack_lsm.c   |  3 ++-
->  6 files changed, 47 insertions(+), 12 deletions(-)
+Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+redefinitions of _GNU_SOURCE from source code.
 
-...
+809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+asprintf into kselftest_harness.h, which is a GNU extension and needs
+_GNU_SOURCE to either be defined prior to including headers or with the
+-D_GNU_SOURCE flag passed to the compiler.
 
-> +/**
-> + * netlbl_sk_lock_check - Check if the socket lock has been acquired.
-> + * @sk: the socket to check
-> + *
-> + * Description: check if @sk is locked. Returns true if socket @sk is lo=
-cked
-> + * or if lock debugging is disabled at runtime or compile-time
-> + *
-> + */
-> +bool netlbl_sk_lock_check(struct sock *sk)
-> +{
-> +#ifdef CONFIG_LOCKDEP
-> +       if (debug_locks)
-> +               return lockdep_sock_is_held(sk);
-> +#endif
-> +       return true;
-> +}
+v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+v2: https://lore.kernel.org/linux-kselftest/20240507214254.2787305-1-edliaw@google.com/
+ - Add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+   location.
+ - Remove #define _GNU_SOURCE from source code to resolve redefinition
+   warnings.
+v3:
+ - Rebase onto linux-next.
+ - Split patches by directory.
+ - Add -D_GNU_SOURCE directly to CFLAGS in lib.mk.
+ - Delete additional _GNU_SOURCE definitions from source code in
+   linux-next.
+ - Delete additional -D_GNU_SOURCE flags from Makefiles.
 
-It might be cleaner to do this:
+Edward Liaw (68):
+  selftests: Compile kselftest headers with -D_GNU_SOURCE
+  selftests/sgx: Include KHDR_INCLUDES in Makefile
+  selftests: Compile with -D_GNU_SOURCE when including lib.mk
+  selftests/arm64: Drop define _GNU_SOURCE
+  selftests/arm64: Drop duplicate -D_GNU_SOURCE
+  selftests/bpf: Drop define _GNU_SOURCE
+  selftests/breakpoints: Drop define _GNU_SOURCE
+  selftests/cachestat: Drop define _GNU_SOURCE
+  selftests/capabilities: Drop define _GNU_SOURCE
+  selftests/cgroup: Drop define _GNU_SOURCE
+  selftests/clone3: Drop define _GNU_SOURCE
+  selftests/core: Drop define _GNU_SOURCE
+  selftests/damon: Drop define _GNU_SOURCE
+  selftests/drivers: Drop define _GNU_SOURCE
+  selftests/exec: Drop duplicate -D_GNU_SOURCE
+  selftests/fchmodat2: Drop define _GNU_SOURCE
+  selftests/filelock: Drop define _GNU_SOURCE
+  selftests/filesystems: Drop define _GNU_SOURCE
+  selftests/firmware: Drop define _GNU_SOURCE
+  selftests/fpu: Drop define _GNU_SOURCE
+  selftests/futex: Drop define _GNU_SOURCE
+  selftests/futex: Drop duplicate -D_GNU_SOURCE
+  selftests/intel_pstate: Drop duplicate -D_GNU_SOURCE
+  selftests/iommu: Drop duplicate -D_GNU_SOURCE
+  selftests/ipc: Drop define _GNU_SOURCE
+  selftests/kcmp: Drop define _GNU_SOURCE
+  selftests/landlock: Drop define _GNU_SOURCE
+  selftests/lsm: Drop define _GNU_SOURCE
+  selftests/membarrier: Drop define _GNU_SOURCE
+  selftests/memfd: Drop define _GNU_SOURCE
+  selftests/mincore: Drop define _GNU_SOURCE
+  selftests/mm: Drop define _GNU_SOURCE
+  selftests/mount: Drop define _GNU_SOURCE
+  selftests/mount_setattr: Drop define _GNU_SOURCE
+  selftests/move_mount_set_group: Drop define _GNU_SOURCE
+  selftests/mqueue: Drop define _GNU_SOURCE
+  selftests/net: Drop define _GNU_SOURCE
+  selftests/net: Drop duplicate -D_GNU_SOURCE
+  selftests/nolibc: Drop define _GNU_SOURCE
+  selftests/nsfs: Drop define _GNU_SOURCE
+  selftests/openat2: Drop define _GNU_SOURCE
+  selftests/perf_events: Drop define _GNU_SOURCE
+  selftests/pid_namespace: Drop define _GNU_SOURCE
+  selftests/pidfd: Drop define _GNU_SOURCE
+  selftests/ptrace: Drop define _GNU_SOURCE
+  selftests/powerpc: Drop define _GNU_SOURCE
+  selftests/proc: Drop define _GNU_SOURCE
+  selftests/proc: Drop duplicate -D_GNU_SOURCE
+  selftests/ptp: Drop define _GNU_SOURCE
+  selftests/resctrl: Drop duplicate -D_GNU_SOURCE
+  selftests/riscv: Drop define _GNU_SOURCE
+  selftests/riscv: Drop duplicate -D_GNU_SOURCE
+  selftests/rlimits: Drop define _GNU_SOURCE
+  selftests/rseq: Drop define _GNU_SOURCE
+  selftests/safesetid: Drop define _GNU_SOURCE
+  selftests/sched: Drop define _GNU_SOURCE
+  selftests/seccomp: Drop define _GNU_SOURCE
+  selftests/sigaltstack: Drop define _GNU_SOURCE
+  selftests/splice: Drop define _GNU_SOURCE
+  selftests/syscall_user_dispatch: Drop define _GNU_SOURCE
+  selftests/thermal: Drop define _GNU_SOURCE
+  selftests/timens: Drop define _GNU_SOURCE
+  selftests/tmpfs: Drop duplicate -D_GNU_SOURCE
+  selftests/uevent: Drop define _GNU_SOURCE
+  selftests/user_events: Drop define _GNU_SOURCE
+  selftests/vDSO: Drop define _GNU_SOURCE
+  selftests/wireguard: Drop define _GNU_SOURCE
+  selftests/x86: Drop define _GNU_SOURCE
 
-#ifdef CONFIG_LOCKDEP
-bool netlbl_sk_lock_check(sk)
-{
-  if (debug_locks)
-    return lockdep_sock_is_held(sk);
-  return true;
-}
-#else
-bool netlbl_sk_lock_check(sk)
-{
-  return true;
-}
-#endif
+ tools/testing/selftests/arm64/fp/fp-ptrace.c                  | 3 ---
+ tools/testing/selftests/arm64/fp/fp-stress.c                  | 2 --
+ tools/testing/selftests/arm64/fp/vlset.c                      | 1 -
+ tools/testing/selftests/arm64/mte/check_buffer_fill.c         | 3 ---
+ tools/testing/selftests/arm64/mte/check_child_memory.c        | 3 ---
+ tools/testing/selftests/arm64/mte/check_gcr_el1_cswitch.c     | 3 ---
+ tools/testing/selftests/arm64/mte/check_ksm_options.c         | 3 ---
+ tools/testing/selftests/arm64/mte/check_mmap_options.c        | 3 ---
+ tools/testing/selftests/arm64/mte/check_tags_inclusion.c      | 3 ---
+ tools/testing/selftests/arm64/mte/check_user_mem.c            | 3 ---
+ tools/testing/selftests/arm64/pauth/pac.c                     | 3 ---
+ tools/testing/selftests/arm64/signal/Makefile                 | 2 +-
+ tools/testing/selftests/bpf/bench.c                           | 1 -
+ tools/testing/selftests/bpf/benchs/bench_trigger.c            | 1 -
+ tools/testing/selftests/bpf/cgroup_helpers.c                  | 1 -
+ tools/testing/selftests/bpf/map_tests/task_storage_map.c      | 1 -
+ tools/testing/selftests/bpf/network_helpers.c                 | 2 --
+ tools/testing/selftests/bpf/prog_tests/bind_perm.c            | 1 -
+ tools/testing/selftests/bpf/prog_tests/bpf_cookie.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/bpf_iter_setsockopt.c  | 1 -
+ tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c      | 1 -
+ tools/testing/selftests/bpf/prog_tests/btf_endian.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/btf_skc_cls_ingress.c  | 2 --
+ tools/testing/selftests/bpf/prog_tests/cgrp_kfunc.c           | 2 --
+ tools/testing/selftests/bpf/prog_tests/cgrp_local_storage.c   | 2 --
+ tools/testing/selftests/bpf/prog_tests/cls_redirect.c         | 3 ---
+ tools/testing/selftests/bpf/prog_tests/connect_ping.c         | 2 --
+ tools/testing/selftests/bpf/prog_tests/core_retro.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/d_path.c               | 1 -
+ tools/testing/selftests/bpf/prog_tests/deny_namespace.c       | 1 -
+ tools/testing/selftests/bpf/prog_tests/fexit_sleep.c          | 1 -
+ .../selftests/bpf/prog_tests/flow_dissector_reattach.c        | 2 --
+ tools/testing/selftests/bpf/prog_tests/get_stack_raw_tp.c     | 1 -
+ tools/testing/selftests/bpf/prog_tests/htab_reuse.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/htab_update.c          | 1 -
+ tools/testing/selftests/bpf/prog_tests/map_in_map.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/ns_current_pid_tgid.c  | 2 --
+ tools/testing/selftests/bpf/prog_tests/perf_branches.c        | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_buffer.c          | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_event_stackmap.c  | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_link.c            | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_skip.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/preempted_bpf_ma_op.c  | 1 -
+ tools/testing/selftests/bpf/prog_tests/rcu_read_lock.c        | 2 --
+ tools/testing/selftests/bpf/prog_tests/reg_bounds.c           | 2 --
+ tools/testing/selftests/bpf/prog_tests/ringbuf.c              | 1 -
+ tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c        | 1 -
+ tools/testing/selftests/bpf/prog_tests/setget_sockopt.c       | 2 --
+ tools/testing/selftests/bpf/prog_tests/sk_assign.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/sk_lookup.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/sock_fields.c          | 2 --
+ tools/testing/selftests/bpf/prog_tests/task_kfunc.c           | 2 --
+ tools/testing/selftests/bpf/prog_tests/task_local_storage.c   | 2 --
+ tools/testing/selftests/bpf/prog_tests/task_pt_regs.c         | 1 -
+ tools/testing/selftests/bpf/prog_tests/tcp_custom_syncookie.c | 2 --
+ tools/testing/selftests/bpf/prog_tests/tcp_hdr_options.c      | 2 --
+ tools/testing/selftests/bpf/prog_tests/test_bpf_ma.c          | 1 -
+ .../testing/selftests/bpf/prog_tests/test_bpf_syscall_macro.c | 1 -
+ tools/testing/selftests/bpf/prog_tests/test_bpffs.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/test_overhead.c        | 1 -
+ tools/testing/selftests/bpf/prog_tests/token.c                | 1 -
+ tools/testing/selftests/bpf/prog_tests/trace_ext.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/trampoline_count.c     | 1 -
+ tools/testing/selftests/bpf/prog_tests/user_ringbuf.c         | 2 --
+ tools/testing/selftests/bpf/prog_tests/xdp_bonding.c          | 2 --
+ tools/testing/selftests/bpf/prog_tests/xdp_synproxy.c         | 2 --
+ tools/testing/selftests/bpf/test_flow_dissector.c             | 3 ---
+ tools/testing/selftests/bpf/test_lru_map.c                    | 1 -
+ tools/testing/selftests/bpf/test_progs.c                      | 1 -
+ tools/testing/selftests/bpf/test_sock_addr.c                  | 3 ---
+ tools/testing/selftests/bpf/test_tcpnotify_user.c             | 1 -
+ tools/testing/selftests/bpf/veristat.c                        | 1 -
+ tools/testing/selftests/bpf/xskxceiver.c                      | 2 --
+ tools/testing/selftests/breakpoints/breakpoint_test_arm64.c   | 3 ---
+ tools/testing/selftests/breakpoints/step_after_suspend_test.c | 3 ---
+ tools/testing/selftests/cachestat/test_cachestat.c            | 2 --
+ tools/testing/selftests/capabilities/test_execve.c            | 2 --
+ tools/testing/selftests/cgroup/cgroup_util.c                  | 3 ---
+ tools/testing/selftests/cgroup/test_core.c                    | 2 --
+ tools/testing/selftests/cgroup/test_cpu.c                     | 2 --
+ tools/testing/selftests/cgroup/test_hugetlb_memcg.c           | 2 --
+ tools/testing/selftests/cgroup/test_kmem.c                    | 2 --
+ tools/testing/selftests/cgroup/test_memcontrol.c              | 2 --
+ tools/testing/selftests/cgroup/test_zswap.c                   | 2 --
+ tools/testing/selftests/clone3/clone3.c                       | 2 --
+ .../testing/selftests/clone3/clone3_cap_checkpoint_restore.c  | 2 --
+ tools/testing/selftests/clone3/clone3_clear_sighand.c         | 2 --
+ tools/testing/selftests/clone3/clone3_selftests.h             | 1 -
+ tools/testing/selftests/clone3/clone3_set_tid.c               | 2 --
+ tools/testing/selftests/core/close_range_test.c               | 2 --
+ tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c   | 3 ---
+ .../damon/debugfs_target_ids_read_before_terminate_race.c     | 2 --
+ tools/testing/selftests/drivers/dma-buf/udmabuf.c             | 1 -
+ tools/testing/selftests/exec/Makefile                         | 1 -
+ tools/testing/selftests/fchmodat2/fchmodat2_test.c            | 2 --
+ tools/testing/selftests/filelock/ofdlocks.c                   | 2 --
+ tools/testing/selftests/filesystems/binderfs/binderfs_test.c  | 2 --
+ tools/testing/selftests/filesystems/devpts_pts.c              | 1 -
+ tools/testing/selftests/filesystems/dnotify_test.c            | 1 -
+ tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c | 2 --
+ tools/testing/selftests/filesystems/eventfd/eventfd_test.c    | 2 --
+ tools/testing/selftests/filesystems/fat/rename_exchange.c     | 2 --
+ tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c   | 2 --
+ .../testing/selftests/filesystems/statmount/statmount_test.c  | 3 ---
+ tools/testing/selftests/firmware/fw_namespace.c               | 1 -
+ tools/testing/selftests/fpu/test_fpu.c                        | 2 --
+ tools/testing/selftests/futex/functional/Makefile             | 2 +-
+ tools/testing/selftests/futex/functional/futex_requeue_pi.c   | 3 ---
+ tools/testing/selftests/intel_pstate/Makefile                 | 2 +-
+ tools/testing/selftests/iommu/Makefile                        | 2 --
+ tools/testing/selftests/ipc/msgque.c                          | 1 -
+ tools/testing/selftests/kcmp/kcmp_test.c                      | 2 --
+ tools/testing/selftests/kselftest_harness.h                   | 2 +-
+ tools/testing/selftests/landlock/base_test.c                  | 2 --
+ tools/testing/selftests/landlock/fs_test.c                    | 2 --
+ tools/testing/selftests/landlock/net_test.c                   | 2 --
+ tools/testing/selftests/landlock/ptrace_test.c                | 2 --
+ tools/testing/selftests/lib.mk                                | 3 +++
+ tools/testing/selftests/lsm/common.c                          | 2 --
+ tools/testing/selftests/lsm/lsm_get_self_attr_test.c          | 2 --
+ tools/testing/selftests/lsm/lsm_list_modules_test.c           | 2 --
+ tools/testing/selftests/lsm/lsm_set_self_attr_test.c          | 2 --
+ tools/testing/selftests/membarrier/membarrier_test_impl.h     | 1 -
+ .../selftests/membarrier/membarrier_test_multi_thread.c       | 1 -
+ .../selftests/membarrier/membarrier_test_single_thread.c      | 1 -
+ tools/testing/selftests/memfd/common.c                        | 1 -
+ tools/testing/selftests/memfd/fuse_test.c                     | 2 --
+ tools/testing/selftests/memfd/memfd_test.c                    | 1 -
+ tools/testing/selftests/mincore/mincore_selftest.c            | 3 ---
+ tools/testing/selftests/mm/cow.c                              | 1 -
+ tools/testing/selftests/mm/gup_longterm.c                     | 1 -
+ tools/testing/selftests/mm/hugepage-mmap.c                    | 1 -
+ tools/testing/selftests/mm/hugepage-mremap.c                  | 2 --
+ tools/testing/selftests/mm/hugetlb-madvise.c                  | 2 --
+ tools/testing/selftests/mm/hugetlb-read-hwpoison.c            | 2 --
+ tools/testing/selftests/mm/khugepaged.c                       | 1 -
+ tools/testing/selftests/mm/ksm_functional_tests.c             | 1 -
+ tools/testing/selftests/mm/madv_populate.c                    | 1 -
+ tools/testing/selftests/mm/map_populate.c                     | 2 --
+ tools/testing/selftests/mm/mdwe_test.c                        | 1 -
+ tools/testing/selftests/mm/memfd_secret.c                     | 2 --
+ tools/testing/selftests/mm/mlock2-tests.c                     | 1 -
+ tools/testing/selftests/mm/mrelease_test.c                    | 1 -
+ tools/testing/selftests/mm/mremap_dontunmap.c                 | 1 -
+ tools/testing/selftests/mm/mremap_test.c                      | 2 --
+ tools/testing/selftests/mm/mseal_test.c                       | 1 -
+ tools/testing/selftests/mm/pagemap_ioctl.c                    | 1 -
+ tools/testing/selftests/mm/pkey-helpers.h                     | 1 -
+ tools/testing/selftests/mm/protection_keys.c                  | 1 -
+ tools/testing/selftests/mm/seal_elf.c                         | 1 -
+ tools/testing/selftests/mm/split_huge_page_test.c             | 2 --
+ tools/testing/selftests/mm/thuge-gen.c                        | 2 --
+ tools/testing/selftests/mm/uffd-common.h                      | 1 -
+ tools/testing/selftests/mount/nosymfollow-test.c              | 1 -
+ tools/testing/selftests/mount/unprivileged-remount-test.c     | 1 -
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c    | 1 -
+ .../move_mount_set_group/move_mount_set_group_test.c          | 1 -
+ tools/testing/selftests/mqueue/mq_perf_tests.c                | 1 -
+ tools/testing/selftests/net/af_unix/diag_uid.c                | 2 --
+ tools/testing/selftests/net/af_unix/scm_pidfd.c               | 1 -
+ tools/testing/selftests/net/af_unix/scm_rights.c              | 1 -
+ tools/testing/selftests/net/af_unix/unix_connect.c            | 2 --
+ tools/testing/selftests/net/csum.c                            | 3 ---
+ tools/testing/selftests/net/gro.c                             | 3 ---
+ tools/testing/selftests/net/ip_defrag.c                       | 3 ---
+ tools/testing/selftests/net/ipsec.c                           | 3 ---
+ tools/testing/selftests/net/ipv6_flowlabel.c                  | 3 ---
+ tools/testing/selftests/net/ipv6_flowlabel_mgr.c              | 3 ---
+ tools/testing/selftests/net/mptcp/mptcp_connect.c             | 3 ---
+ tools/testing/selftests/net/mptcp/mptcp_inq.c                 | 3 ---
+ tools/testing/selftests/net/mptcp/mptcp_sockopt.c             | 3 ---
+ tools/testing/selftests/net/msg_zerocopy.c                    | 3 ---
+ tools/testing/selftests/net/netfilter/audit_logread.c         | 2 --
+ tools/testing/selftests/net/netfilter/conntrack_dump_flush.c  | 3 ---
+ tools/testing/selftests/net/nettest.c                         | 2 --
+ tools/testing/selftests/net/psock_fanout.c                    | 3 ---
+ tools/testing/selftests/net/psock_snd.c                       | 3 ---
+ tools/testing/selftests/net/reuseport_addr_any.c              | 3 ---
+ tools/testing/selftests/net/reuseport_bpf_cpu.c               | 3 ---
+ tools/testing/selftests/net/reuseport_bpf_numa.c              | 3 ---
+ tools/testing/selftests/net/reuseport_dualstack.c             | 3 ---
+ tools/testing/selftests/net/so_incoming_cpu.c                 | 1 -
+ tools/testing/selftests/net/so_netns_cookie.c                 | 1 -
+ tools/testing/selftests/net/so_txtime.c                       | 3 ---
+ tools/testing/selftests/net/tap.c                             | 3 ---
+ tools/testing/selftests/net/tcp_ao/Makefile                   | 2 +-
+ tools/testing/selftests/net/tcp_fastopen_backup_key.c         | 1 -
+ tools/testing/selftests/net/tcp_inq.c                         | 2 --
+ tools/testing/selftests/net/tcp_mmap.c                        | 1 -
+ tools/testing/selftests/net/tls.c                             | 3 ---
+ tools/testing/selftests/net/toeplitz.c                        | 3 ---
+ tools/testing/selftests/net/tun.c                             | 3 ---
+ tools/testing/selftests/net/txring_overwrite.c                | 3 ---
+ tools/testing/selftests/net/txtimestamp.c                     | 3 ---
+ tools/testing/selftests/net/udpgso.c                          | 3 ---
+ tools/testing/selftests/net/udpgso_bench_rx.c                 | 3 ---
+ tools/testing/selftests/net/udpgso_bench_tx.c                 | 3 ---
+ tools/testing/selftests/nolibc/nolibc-test.c                  | 2 --
+ tools/testing/selftests/nsfs/owner.c                          | 1 -
+ tools/testing/selftests/nsfs/pidns.c                          | 1 -
+ tools/testing/selftests/openat2/helpers.c                     | 2 --
+ tools/testing/selftests/openat2/helpers.h                     | 1 -
+ tools/testing/selftests/openat2/openat2_test.c                | 2 --
+ tools/testing/selftests/openat2/rename_attack_test.c          | 2 --
+ tools/testing/selftests/openat2/resolve_test.c                | 2 --
+ tools/testing/selftests/perf_events/remove_on_exec.c          | 2 --
+ tools/testing/selftests/perf_events/sigtrap_threads.c         | 2 --
+ tools/testing/selftests/perf_events/watermark_signal.c        | 2 --
+ tools/testing/selftests/pid_namespace/regression_enomem.c     | 1 -
+ tools/testing/selftests/pidfd/pidfd.h                         | 1 -
+ tools/testing/selftests/pidfd/pidfd_fdinfo_test.c             | 2 --
+ tools/testing/selftests/pidfd/pidfd_getfd_test.c              | 2 --
+ tools/testing/selftests/pidfd/pidfd_open_test.c               | 2 --
+ tools/testing/selftests/pidfd/pidfd_poll_test.c               | 2 --
+ tools/testing/selftests/pidfd/pidfd_setns_test.c              | 2 --
+ tools/testing/selftests/pidfd/pidfd_test.c                    | 2 --
+ tools/testing/selftests/pidfd/pidfd_wait.c                    | 2 --
+ tools/testing/selftests/powerpc/benchmarks/context_switch.c   | 2 --
+ tools/testing/selftests/powerpc/benchmarks/exec_target.c      | 2 --
+ tools/testing/selftests/powerpc/benchmarks/fork.c             | 2 --
+ tools/testing/selftests/powerpc/benchmarks/futex_bench.c      | 3 ---
+ tools/testing/selftests/powerpc/dexcr/hashchk_test.c          | 3 ---
+ tools/testing/selftests/powerpc/dscr/dscr_default_test.c      | 3 ---
+ tools/testing/selftests/powerpc/dscr/dscr_explicit_test.c     | 3 ---
+ tools/testing/selftests/powerpc/dscr/dscr_sysfs_thread_test.c | 1 -
+ tools/testing/selftests/powerpc/mm/exec_prot.c                | 2 --
+ tools/testing/selftests/powerpc/mm/pkey_exec_prot.c           | 2 --
+ tools/testing/selftests/powerpc/mm/pkey_siginfo.c             | 2 --
+ tools/testing/selftests/powerpc/mm/tlbie_test.c               | 2 --
+ tools/testing/selftests/powerpc/papr_vpd/papr_vpd.c           | 1 -
+ tools/testing/selftests/powerpc/pmu/count_instructions.c      | 3 ---
+ tools/testing/selftests/powerpc/pmu/count_stcx_fail.c         | 3 ---
+ tools/testing/selftests/powerpc/pmu/ebb/ebb.c                 | 3 ---
+ .../selftests/powerpc/pmu/ebb/instruction_count_test.c        | 3 ---
+ tools/testing/selftests/powerpc/pmu/event.c                   | 2 --
+ tools/testing/selftests/powerpc/pmu/lib.c                     | 3 ---
+ tools/testing/selftests/powerpc/pmu/per_event_excludes.c      | 3 ---
+ tools/testing/selftests/powerpc/ptrace/perf-hwbreak.c         | 3 ---
+ tools/testing/selftests/powerpc/ptrace/ptrace-syscall.c       | 2 --
+ .../testing/selftests/powerpc/signal/sig_sc_double_restart.c  | 1 -
+ tools/testing/selftests/powerpc/signal/sigreturn_kernel.c     | 3 ---
+ tools/testing/selftests/powerpc/signal/sigreturn_vdso.c       | 3 ---
+ tools/testing/selftests/powerpc/syscalls/ipc_unmuxed.c        | 2 --
+ tools/testing/selftests/powerpc/tm/tm-exec.c                  | 2 --
+ tools/testing/selftests/powerpc/tm/tm-poison.c                | 2 --
+ .../testing/selftests/powerpc/tm/tm-signal-context-force-tm.c | 2 --
+ tools/testing/selftests/powerpc/tm/tm-signal-sigreturn-nt.c   | 2 --
+ tools/testing/selftests/powerpc/tm/tm-tmspr.c                 | 2 --
+ tools/testing/selftests/powerpc/tm/tm-trap.c                  | 2 --
+ tools/testing/selftests/powerpc/tm/tm-unavailable.c           | 2 --
+ tools/testing/selftests/powerpc/utils.c                       | 3 ---
+ tools/testing/selftests/proc/Makefile                         | 1 -
+ tools/testing/selftests/proc/proc-empty-vm.c                  | 3 ---
+ tools/testing/selftests/ptp/testptp.c                         | 1 -
+ tools/testing/selftests/ptrace/get_set_sud.c                  | 1 -
+ tools/testing/selftests/ptrace/peeksiginfo.c                  | 1 -
+ tools/testing/selftests/resctrl/Makefile                      | 2 +-
+ tools/testing/selftests/riscv/hwprobe/cbo.c                   | 1 -
+ tools/testing/selftests/riscv/hwprobe/which-cpus.c            | 1 -
+ tools/testing/selftests/riscv/mm/Makefile                     | 2 +-
+ tools/testing/selftests/rlimits/rlimits-per-userns.c          | 1 -
+ tools/testing/selftests/rseq/basic_percpu_ops_test.c          | 1 -
+ tools/testing/selftests/rseq/basic_test.c                     | 2 --
+ tools/testing/selftests/rseq/param_test.c                     | 1 -
+ tools/testing/selftests/rseq/rseq.c                           | 2 --
+ tools/testing/selftests/safesetid/safesetid-test.c            | 1 -
+ tools/testing/selftests/sched/cs_prctl_test.c                 | 2 --
+ tools/testing/selftests/seccomp/seccomp_benchmark.c           | 1 -
+ tools/testing/selftests/seccomp/seccomp_bpf.c                 | 2 --
+ tools/testing/selftests/sgx/Makefile                          | 2 +-
+ tools/testing/selftests/sgx/sigstruct.c                       | 1 -
+ tools/testing/selftests/sigaltstack/sas.c                     | 2 --
+ tools/testing/selftests/splice/default_file_splice_read.c     | 1 -
+ tools/testing/selftests/splice/splice_read.c                  | 1 -
+ tools/testing/selftests/syscall_user_dispatch/sud_benchmark.c | 2 --
+ tools/testing/selftests/syscall_user_dispatch/sud_test.c      | 2 --
+ .../selftests/thermal/intel/power_floor/power_floor_test.c    | 3 ---
+ .../thermal/intel/workload_hint/workload_hint_test.c          | 3 ---
+ tools/testing/selftests/timens/clock_nanosleep.c              | 1 -
+ tools/testing/selftests/timens/exec.c                         | 1 -
+ tools/testing/selftests/timens/futex.c                        | 1 -
+ tools/testing/selftests/timens/gettime_perf.c                 | 1 -
+ tools/testing/selftests/timens/procfs.c                       | 1 -
+ tools/testing/selftests/timens/timens.c                       | 1 -
+ tools/testing/selftests/timens/timer.c                        | 1 -
+ tools/testing/selftests/timens/timerfd.c                      | 1 -
+ tools/testing/selftests/timens/vfork_exec.c                   | 1 -
+ tools/testing/selftests/tmpfs/Makefile                        | 1 -
+ tools/testing/selftests/uevent/uevent_filtering.c             | 2 --
+ tools/testing/selftests/user_events/abi_test.c                | 2 --
+ tools/testing/selftests/vDSO/vdso_test_abi.c                  | 1 -
+ tools/testing/selftests/vDSO/vdso_test_clock_getres.c         | 2 --
+ tools/testing/selftests/vDSO/vdso_test_correctness.c          | 3 ---
+ tools/testing/selftests/wireguard/qemu/init.c                 | 2 --
+ tools/testing/selftests/x86/amx.c                             | 2 --
+ tools/testing/selftests/x86/check_initial_reg_state.c         | 3 ---
+ tools/testing/selftests/x86/corrupt_xstate_header.c           | 3 ---
+ tools/testing/selftests/x86/entry_from_vm86.c                 | 3 ---
+ tools/testing/selftests/x86/fsgsbase.c                        | 2 --
+ tools/testing/selftests/x86/fsgsbase_restore.c                | 2 --
+ tools/testing/selftests/x86/ioperm.c                          | 2 --
+ tools/testing/selftests/x86/iopl.c                            | 2 --
+ tools/testing/selftests/x86/lam.c                             | 1 -
+ tools/testing/selftests/x86/ldt_gdt.c                         | 2 --
+ tools/testing/selftests/x86/mov_ss_trap.c                     | 2 --
+ tools/testing/selftests/x86/nx_stack.c                        | 2 --
+ tools/testing/selftests/x86/ptrace_syscall.c                  | 2 --
+ tools/testing/selftests/x86/sigaltstack.c                     | 2 --
+ tools/testing/selftests/x86/sigreturn.c                       | 3 ---
+ tools/testing/selftests/x86/single_step_syscall.c             | 3 ---
+ tools/testing/selftests/x86/syscall_arg_fault.c               | 3 ---
+ tools/testing/selftests/x86/syscall_numbering.c               | 3 ---
+ tools/testing/selftests/x86/sysret_rip.c                      | 3 ---
+ tools/testing/selftests/x86/sysret_ss_attrs.c                 | 3 ---
+ tools/testing/selftests/x86/test_FCMOV.c                      | 4 ----
+ tools/testing/selftests/x86/test_FCOMI.c                      | 4 ----
+ tools/testing/selftests/x86/test_FISTTP.c                     | 4 ----
+ tools/testing/selftests/x86/test_mremap_vdso.c                | 1 -
+ tools/testing/selftests/x86/test_shadow_stack.c               | 3 ---
+ tools/testing/selftests/x86/test_syscall_vdso.c               | 4 ----
+ tools/testing/selftests/x86/test_vsyscall.c                   | 3 ---
+ tools/testing/selftests/x86/unwind_vdso.c                     | 3 ---
+ tools/testing/selftests/x86/vdso_restorer.c                   | 3 ---
+ 323 files changed, 11 insertions(+), 611 deletions(-)
 
---=20
-paul-moore.com
+--
+2.45.0.118.g7fe29c98d7-goog
+
