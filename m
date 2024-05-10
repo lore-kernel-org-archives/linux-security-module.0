@@ -1,62 +1,62 @@
 Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9382A172793
-	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 16:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21491101DB
+	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 16:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715357638; cv=none; b=hCRzbMIS93PxsMd4s4CUIpVGo12O+VaApnkFEg9z22qFhqlOGoKRs5lNhvAysGSQvkDWQ3gKlJ8XD68+SmmR8RKnxwbTGXXjm1i96YdBlsJInXFBVsqGREFDtcH19RXB9HA7QtqsN6uKZDSTbyhXNpV47GjhpzsZED5M8g7Rr0s=
+	t=1715359663; cv=none; b=UGYHSUB7yqav0E70ucK5jmwd02FdAmrdI8WC9EFdm52jOszBSRHp3u3aWZdvrTOLx7iGhR6vD6ujAelcBP+bxIcsipH50HLaeoa+tMQw6nMaQU9O/2fjoCUg/9jqgRJYnw8u1CIgzUiDzLtneTJS5AcW54EDTzKwPj0rrlCv0+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715357638; c=relaxed/simple;
-	bh=lmSNSAVlJwC8QWoty9fKmUYXYzVZj7r5V6/K2NnIdno=;
+	s=arc-20240116; t=1715359663; c=relaxed/simple;
+	bh=W6GeWHlPCwE5MhjXRcxJ+3YcZWzGFuF32W13U92QquU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aMbELow+J3vqk/nPvlOwa6EurTlJm+Ht880UjOf3wI5czvARd/FY5xvJUwBICa2gOx68/Y7VRa12VTc0ELsBg/5g3p+f5UnPX5RbhEdLNLP7Cj4VGkN6Oq87/D9YAbDYleGZ0kGQv6GlouAelCwKr9/dRKquQJW/HKQZl9O5Ado=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=nfrAli8N; arc=none smtp.client-ip=66.163.184.207
+	 In-Reply-To:Content-Type; b=D2OGOzcj7RgLYPAeP82QZELkSDYtjgtaogwzsLKvL6tkugLD9fQP48ADMOAZnHaduqEH/lZwW4abOk6KxCT6o+0uIRUMO4rEuPZ4rUoYlB+TQPRtCA+/29/D0ynuObCAP1OJv1s2AQt8XSDWbf488Lkn/ABqYbKWRzDADYCjnh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=MrFGm8HR; arc=none smtp.client-ip=66.163.184.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="nfrAli8N"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715357629; bh=5XLR3EBIw7lnb+rS4VHbbSWXnZMKPca6mkXy6uJeRl0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=nfrAli8NpoW+fkV10wu7KJqbkbBhYlnxiAoEpFay5l5z75QA/MQ4sLLDLe8FOFk2v5Se60280Z2eWM/HGFTYRJ07innQAceMG6fYXYNMoLdGHUsLQ1Z5dAhbkE/RdhdMhp/LHxFNOBo2SNNOnZhbu9DnHjt0OI8cd7T49Fk8exG+spMrvZp/TUKzFUk7TVgp9DHdy+WcTniVPCS3NbJ9Uylyz0nIJJ5jx9EHnVLPhA/YWmEbYIq0Bmli5RinZGjfZ+UU313EPMPTQAYvn2pB831gY5A7uN9rrktgkjHc/B+ItqOV6PXNIh3f/Xiw/eO56rFo5Vdtb3/P73ErlMdIrw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715357629; bh=sKN0qk8u0Swv6xdltUFXmmDqCp2rYZI49JGdejf82i2=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Nl13V5ctImlglRShU0bw3Xj3f2AdNGIQC6/zph0sAuadLI4sV2VYmOQ+xfyvipfiYVj2nXdYDFXWrLlM0xLIMfS/C3MA3ItWXNgS0+N/H6WLYH4rvMpLMzkjrB6p2VfCEX7uwL6IlOMNjNd+tiB7JwHY+aFbg/uxzlRGCCTiOeX2mUDOqAOj1dkFgyEd30SBhr3Ytjxs1/dYEHV5HaJUCcqcDT4oUHpyzuEvSunHYyY/dpoX+q1cQQJ/afZmCpd9W33qCMeRRFmOMIgBikIg94rwUbqqpetlDVhvzOFj1lHgBZj0t+2ceoGAOrzwoyTd5rHXUJJVf/Q4pHp/zRTGIQ==
-X-YMail-OSG: Ep84enYVM1m97efRhU0mCN47dvxkYOn7JUfDjtvVVjAdiTsxOBNf88JJF9AmFcc
- hI6vNrBiJiaOalDLLw__7crwoAaiZ0NH8yjgwZ00KzYIX4rLLbMFuyxhb74OR1DMDuvpaNZhilNC
- gaiRsgeHft0_8svpEXgPw1WS33GIjxWXfOelsF1rkPrlK3M1zVS1gH_g9Ac2VhTm_RUDQi.NLQEx
- EKWHoA3ADUyLmasKVchAbzLJQc_WV7Wp5lj9Wl65GBruxQrax3wLgi5Wk29.iUHeTM0b.BR.x59i
- LioXbQF6dlph4GE4YjWwEglYPFPQfZwJxAEuEQewiStfkfB0tLPwnYSsxwEXEmQ49rdB8U4pMNCy
- bke1RDANnleAf1yIclyBBUzVkPQsTYFMCxwvrZOCb3cy6ujEb4_meMV9wf83UB6ja6mCjvkiWXCm
- UL3oeyyRTIk8oqUJJ1Tsjo6TU9Y7c5DYrY8Hnu28Sg9hJE4z6v26xAeKJnnQD2AMJU8f_1xMSF_.
- cF77rh6eeeDShKNkk43g5tiNrokyTftRo2.M8V0c034JFy6IN4U7uy0i.ODUH5X8kH_tOxRwZUnq
- 9UTrnllFtpNBWyANOYlea1tkovHV3pMivn0zyR9Io4UdusOQxZQU6UEZQF3gHlS3kwlwfkOcBN7H
- tynq9PIG9MBJxBUwIReTzyO_vMJuYWVrFNJU4vx_9ouCVwwnxKrnxv66BwFZ7velqqrAbDPR.3yo
- WIMYPl6.MVazyTPZyMMzoCGZA0JJlIqVIu73sSAMe70jlY3eQ13fAIrKRYSNfT_w8sKq_mMgD2ER
- WsEPBRZNcKTIuGWPyVUCTqnCptNJKwLaOuJ6B836UdgAwo8AowD0LACQfTDABVZTuinaU.4d.a_9
- 02YFeF8Cr7nOmOILFzzU7S8RRJ1KIJo46COqn7JW04KvS3MjHne4C0Qko5_Wljcy6wDi8vDpzQWY
- ELtbgDO3_aY2Y.mBTk9pOk65l.we.gXHEKAZi.UV.5jzpJO3.3SxNaXmp82ABCGNbeNsO_iQOtJM
- Y6DJ4itb5PGNLNrOACfPZ2IVh9fI96CcIgUpNhtHHsDrkaelmOKXosiTUM_HctqVu1DL0VEotWnA
- 8MASgmwxycLpHMz0kmRqRP6lEAbtckKN5Vddlq2zg5EF1EEHwML9rrsxTOHo3M5BdhbBrxZkHRtI
- xZoMu2C9oHUu7R0WFGpIJnq5v8ANMQkoMXUWN3a5zH2SywHlK3xaG2dbLw.tgrLDHmhLX0eaRe5r
- OipvNiFu_g7scytsomdtp6.ryy2ximrUHSjLVXCpvspwXo7JaRSTpmtcipZjhqa4UEgNUjqxSTHj
- I.4_lhEjjHVKTs.BtPSi3zzDf1vaGHnevwoAdB409CjkCyldRzC4V9w7LhDqVe83VaFKW6ROUoyw
- yDUb3WruGcY1wox9_KANqK9MAwegzEcssVstIxgSq01y2i8ld_281.5w0Xb4rDJTMB1VeN5nE1Lw
- haFrR1QrOwAtni0KlCercX6BOXYTbdDC8.RsEadv..Rdjn_UWK7S_i5zwM3YYW2hFVyxA4Jf..0I
- YvDjTesQF8lOg9mRojPdQxYE4QEjh28rdOCJldLp6nBxxKCRHoms9ZtrJ7e3POvo3EmQ6ZerAqwb
- _8aZZDCivVBnqsI_tT5kzmZ2_83g8Hut.mlaSPaJwF7tRGaay2R.WR_VJYZe7rPRS2nR305kvR87
- 6CqEsuuMkEM9JHTujOL3iCs4R2tj1xzJVAcnkfhKGk.5uEw0A8muEFZji2aOc4sX3Era2Tqmr3zG
- V9aVLFyo8_FPHxGzsTwLUEmMeCQyhDdUGKdZvl7lbmVPWGVFmqDwVGBW6nICZjrBI8oDNtnjB8pL
- ka1GN9QBSHRFiEAMrqvY6EX.mlIWrF5BtJpqrR_6GojBpqgdFqgbFF2kT5ke4oXon.saY26savU3
- aI.KvL_tttASa3ztDWLlmA53SUGpMxidiO442yZLDtiP_zdEoLWwoFOdF_RlJDRJuZuWPvkFuBVZ
- b1UDVaHksEaa9A5Jl9tXI2lQTDdjXoFK0ZSVdzS7RiuxX0rhundqe3ZHZDbFL6WrOmQGEpZokoTi
- iWH2dICoAd_d9iLgM3ScyNGwcmtgRbZfSaUINufauyTwZMHHblJt5fnccsftqYHilCEflzkjWFeT
- XyxHb_FhICO.muHjvk7QYI2T.j7Xy85cvuAk3GkENQxVlZlsoM_OKU7sO96gmVFWH68z_lOUmzPP
- ftscVCDcW47zroXiW22SBBYFSKnggTjOeHEyyFxDRO_j4Y88Uq9iFl7dJhkw1vHlPRaUhBqD5wls
- ymwQtzIqnAnrnRVw-
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MrFGm8HR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715359660; bh=6JC4c7M9zN+e9IcLHOfZPWVSXDalQGIAS82BEuAAnE4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=MrFGm8HRVWJ1OS98DX9d08dVFRpFjL87Hb/MREt3lqldjr3RhPWatLjSxfDbn5+TYkH+uSgswAGXEE5b7+qrdsD6v1xcvUAupRcDHUtr4HoM/NuXdWA9AgAGBfvAzSVzefhbHLp1/S1m6QVZSf+BIag/3KOqine9hg12qm72lIhRgFl31nnI5H2htorjsmexe7L28lZWVYm2s5Iyq6NRdUE1YKWHEtQA0I6SRTRsgDNnDxwlLXu8KFpArhdzW/D5crRuILpz9lFCxnOdXsJVy1W2KxtQCExn0Lhc2EzvgPCJNM9NJTGZpkzLnghVtiOWsrwcpD8OjdP7MAyFoUPEAA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715359660; bh=wogl3bYj0c0VBJaR5J46RWr7A58LX/OyYDljNah8Gsi=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jQLNEzEeSq7HnE0AntmP09e8IKLVcHG2dxaVz1SLHx66Nx9jdCGYW5q0njxlX8LV1qGNR6iFxwpLmGgD2qyzaBIIXpgaFYJwA325K8YA6K4QUd8dRN6J3p918QKQf8RVjwoH0pk4xhEcaqd6+8h1MuBGESJP1XhlplnZ5vtGTgG9kRqV8cHstFy2GFt4aEVWRYgGA5epn7+Fvkm+0wfDnetJzmoKi4gBCSpPhl1/piGdGxGMUA0aOzbl8y6xp5x2jFBzLl3PaEGTXpYkq3/2hbdC9PCxAFUnPHLZHlOyMHJswDkT7uwLwjBwbeEPlqtMJsvXzkNSZT7rYnZGf9EE8A==
+X-YMail-OSG: tSPF1TMVM1kN67GXFncnlW3dSEKLo6EPqX.CEix5Vct8cX6D3GLwWcAwc49VpyI
+ WH4ebIPY92bbXo7qQoGK1nPm2sr4RbosoA3i3.IASHQjarc5iAEXy3DJdWoso9cxJILJQWuvKMj2
+ vzzt11caVF7sbTpbqZUYYqetQGPXXVin.3hMp04LHWnXZOihG8U9la.cNTNZ56148sLmRsdUSLBJ
+ p06O1pcYfHbC4HsaHLdwWa1xf9NgNuRkjBnCG45yQaBwJR7T1vpLMRIySi7KoJ9V_rNZecgL3zrm
+ Z96riAxsiqRk_b_1R4G9Gkq.MYw9KiNVOjnXRwFGl3h5E_lE1X_15OrkjQ0Dpv8.UA6fOErY.Yfm
+ iqDARLkieoRxEjbWjSzHo2aQcN483IBcgBXnZI2bIP46RhoA.eo6cd7gSGgZrIEvv2iSnaR0.iZH
+ q7qaNg7fHwus9PGyiTmpEwwEo55N7zWck40RNL0rXRNLzOs9BfHSW_cikuBh162Jbit2XQdfV8m0
+ 663Jg_M77gp9MdwtOKICvqxrIK5NQ2_fThuaph7Wl.tH0hVFaTk2gp.ED56tMYOTt89DJsdmg6EJ
+ FbW_3cS7YVNuQ3ArhM5eeBn3X2KA5HBO3Y9Ua9dDxDi57MuNWETgf0fag63H.H0Zd.6Gd0nU_3OH
+ zvuVajFCTCrq3Z7CzAVsgiZd536BFYC_VZ0zMUZvEXE1C5xDdpiekodrIzU5ONNqwZo6s1JvGavH
+ NXzhp9bQU1vXJzeMOvl2NqdsUnZeaW0Ch6pC.x56tIHj2fqQ54YYIABdPpEL_zxKbLWdHDZOiUbV
+ ZGLLF4XQkffGToJZmTmrnCawxC7cNedKMy0FptEIaCBnvmVOuNfDKftXfL7EboTZGH5U7ZqhDSvB
+ W07.BdlDFLn2QBR9sykZ2DsvZajk9nrkB7ao4_MGXTtoYJkV7i1cwySePSuws.LrPm5Ai3N9y_g0
+ ADpvOAxySDzOWRW5GlFKMzpolIgtyzBNomhl6GshZc10ANS0ihzdf4fvx44SRxXP7sl8lWnCpFp9
+ FhFjr4kZQkITUNXM5LbVPkNwjYILFsFWxG5MpTa0lBKEYuxWkPCsD9MquolsFam1.Jf1VhnY7quq
+ 8sAA8.Avj5GCu0JammBYYIvfnW_G8dRZbt3UV.xEapx.ZD8qdEj9o5h6zvgnsJQy4A4h2RzmAywh
+ meUza7T9HMaCIuh3wYIVVsQxEQMIUWeyYgSvV6eJbFrRTY3NFEX2FwDVhagQoJOgOt.r032MYtKX
+ rx8pLAcZXfylAsnXz9mJurQiVbhQiAXIIbP4VxTnGtvlcxOA8IwxcQHfME0qFN5YWBzrjMz3MFH2
+ gwygagnWs5KWlG4lTuweg.Z.izGnSQ72bj6yec5fTH49UQLyPgxwBXzugX3DGLdEKb6wUwEkuc9M
+ .b4ZiNT0JkVdVmRobYkcRIaLVzVWqzwl7A.ZyWIESzpmL1iNt2w6TH4UdDqrNeUnIqyrKPV4hiZk
+ SrY0Zv57iQTUx.CW98coSoqgw_Nq2H.UZ_TFhhcLIxcrUXz45qMNn3aqxNDbURylZ6WHZ58IcyhO
+ V4KJGaW9flBviMoOM13ITlqtg9MRU1easbzWVJP.sgop8p5jEOQYpoXcU6LAJXj8mrIwh7KgRyxd
+ xToNoi3YAFYGAqS.wEpnd5_KNAgdW3iTyWkmbsXy8le0_BWNXqYK7VT6VOKSbyqEaEQcf1lL5Xro
+ xuioIsgSjKMhm9RU.BepwNKJRJyDGqHaGw2lELWsWrUocML7RWeYwaH6TOIxEs0KP6HeMHrpBMdW
+ Eyf3EEYNrr26xaLFB0xAXX5UvzGca2aGVkUdNRXIY7F4H8t2.MQqiox8m7V_b_P5VozfhpmwfVHZ
+ 2pqsdi7ZYYJobYtHH7nGmGhjD1rYhLNTn5duM7xvpVq7Q9VVo2vASa9VomhkTC.bLFU9D1338BZN
+ mbO0Oidy5V2DpNaa2USEazhXXoCu3xirnMYpvKGby9ye2JQaiJotirYmNo8ANju.CCxEPxpuIF68
+ 7bI7sYoQ3PdRSLyhxMzVycBotDgpAeJnpMO28eNr9AaU0rRDSUgSI0vfm.KsZ0sPpjXJDfDc2Doy
+ cuzA_H1FG7NR.qsomCXH7eN5Uyl5ZbkAG8aQROSZkQGLAeO5KCS04l53MWC5GINXIuZ9QZj6abYz
+ SM_uTzsl0k7rS5vvKNi1W9kcxJYb1hRarIN0nppiXC9QiFPsCV7ISgYMqFmYimKsmxMRq7LrZZ1m
+ fmglWQI21pMRrfkl4ydBudTh96NylxSDTtQv8ky1e650bl4o5wwTrSpxT89OI.LBm9ISPFi303xF
+ Ykyh0qCagI7n3jEwANw--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4da128df-6383-41b0-9cfe-6ee715233a39
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 May 2024 16:13:49 +0000
-Received: by hermes--production-gq1-59c575df44-94tst (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 38847c749197c2be6fcf3efbf6fd4091;
-          Fri, 10 May 2024 16:03:38 +0000 (UTC)
-Message-ID: <a46c9c3f-9fec-43b0-8d21-e6ed1e42ee67@schaufler-ca.com>
-Date: Fri, 10 May 2024 09:03:35 -0700
+X-Sonic-ID: 617abb55-02ae-491b-b856-8f59c7024a06
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Fri, 10 May 2024 16:47:40 +0000
+Received: by hermes--production-gq1-59c575df44-f4snh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0ff3e2b4d3d5ba5569bd0a7619da345f;
+          Fri, 10 May 2024 16:47:34 +0000 (UTC)
+Message-ID: <a4d3a0dd-2ef9-4fbc-bf72-fa6cd84231d8@schaufler-ca.com>
+Date: Fri, 10 May 2024 09:47:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,360 +64,194 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ima: Avoid blocking in RCU read-side critical section
-To: GUO Zihua <guozihua@huawei.com>, paul@paul-moore.com,
- john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
- zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- stephen.smalley.work@gmail.com, eparis@redhat.com
-Cc: eric.snowberg@oracle.com, omosnace@redhat.com, audit@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+Subject: Re: [PATCH v11 2/5] security: Count the LSMs enabled at compile time
+To: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org
+Cc: ast@kernel.org, paul@paul-moore.com, andrii@kernel.org,
+ keescook@chromium.org, daniel@iogearbox.net, renauld@google.com,
+ revest@chromium.org, song@kernel.org, Kui-Feng Lee <sinquersw@gmail.com>,
  Casey Schaufler <casey@schaufler-ca.com>
-References: <20240507012541.796421-1-guozihua@huawei.com>
+References: <20240509201421.905965-1-kpsingh@kernel.org>
+ <20240509201421.905965-3-kpsingh@kernel.org>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240507012541.796421-1-guozihua@huawei.com>
+In-Reply-To: <20240509201421.905965-3-kpsingh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.22321 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 5/6/2024 6:25 PM, GUO Zihua wrote:
-> A panic happens in ima_match_policy:
+On 5/9/2024 1:14 PM, KP Singh wrote:
+> These macros are a clever trick to determine a count of the number of
+> LSMs that are enabled in the config to ascertain the maximum number of
+> static calls that need to be configured per LSM hook.
 >
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
-> PGD 42f873067 P4D 0
-> Oops: 0000 [#1] SMP NOPTI
-> CPU: 5 PID: 1286325 Comm: kubeletmonit.sh Kdump: loaded Tainted: P
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-> RIP: 0010:ima_match_policy+0x84/0x450
-> Code: 49 89 fc 41 89 cf 31 ed 89 44 24 14 eb 1c 44 39 7b 18 74 26 41 83 ff 05 74 20 48 8b 1b 48 3b 1d f2 b9 f4 00 0f 84 9c 01 00 00 <44> 85 73 10 74 ea 44 8b 6b 14 41 f6 c5 01 75 d4 41 f6 c5 02 74 0f
-> RSP: 0018:ff71570009e07a80 EFLAGS: 00010207
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000200
-> RDX: ffffffffad8dc7c0 RSI: 0000000024924925 RDI: ff3e27850dea2000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffffabfce739
-> R10: ff3e27810cc42400 R11: 0000000000000000 R12: ff3e2781825ef970
-> R13: 00000000ff3e2785 R14: 000000000000000c R15: 0000000000000001
-> FS:  00007f5195b51740(0000) GS:ff3e278b12d40000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000010 CR3: 0000000626d24002 CR4: 0000000000361ee0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  ima_get_action+0x22/0x30
->  process_measurement+0xb0/0x830
->  ? page_add_file_rmap+0x15/0x170
->  ? alloc_set_pte+0x269/0x4c0
->  ? prep_new_page+0x81/0x140
->  ? simple_xattr_get+0x75/0xa0
->  ? selinux_file_open+0x9d/0xf0
->  ima_file_check+0x64/0x90
->  path_openat+0x571/0x1720
->  do_filp_open+0x9b/0x110
->  ? page_counter_try_charge+0x57/0xc0
->  ? files_cgroup_alloc_fd+0x38/0x60
->  ? __alloc_fd+0xd4/0x250
->  ? do_sys_open+0x1bd/0x250
->  do_sys_open+0x1bd/0x250
->  do_syscall_64+0x5d/0x1d0
->  entry_SYSCALL_64_after_hwframe+0x65/0xca
+> Without this one would need to generate static calls for the total
+> number of LSMs in the kernel (even if they are not compiled) times the
+> number of LSM hooks which ends up being quite wasteful.
 >
-> Commit c7423dbdbc9e ("ima: Handle -ESTALE returned by
-> ima_filter_rule_match()") introduced call to ima_lsm_copy_rule within a
-> RCU read-side critical section which contains kmalloc with GFP_KERNEL.
-> This implies a possible sleep and violates limitations of RCU read-side
-> critical sections on non-PREEMPT systems.
->
-> Sleeping within RCU read-side critical section might cause
-> synchronize_rcu() returning early and break RCU protection, allowing a
-> UAF to happen.
->
-> The root cause of this issue could be described as follows:
-> |	Thread A	|	Thread B	|
-> |			|ima_match_policy	|
-> |			|  rcu_read_lock	|
-> |ima_lsm_update_rule	|			|
-> |  synchronize_rcu	|			|
-> |			|    kmalloc(GFP_KERNEL)|
-> |			|      sleep		|
-> ==> synchronize_rcu returns early
-> |  kfree(entry)		|			|
-> |			|    entry = entry->next|
-> ==> UAF happens and entry now becomes NULL (or could be anything).
-> |			|    entry->action	|
-> ==> Accessing entry might cause panic.
->
-> To fix this issue, we are converting all kmalloc that is called within
-> RCU read-side critical section to use GFP_ATOMIC.
->
-> Fixes: c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: GUO Zihua <guozihua@huawei.com>
+> Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
+> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+> Acked-by: Song Liu <song@kernel.org>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
 
-Looks fine from the Smack perspective.
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
 > ---
+>  include/linux/args.h      |   6 +-
+>  include/linux/lsm_count.h | 128 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 131 insertions(+), 3 deletions(-)
+>  create mode 100644 include/linux/lsm_count.h
 >
-> v3:
->   ima_lsm_copy_rule takes a GFP flag as input as well.
-> v2:
->   Changed the audit_rule_init security hook to accept a new GFP flag, as
-> per Stephen's suggestion.
->
-> ---
->  include/linux/lsm_hook_defs.h       |  2 +-
->  include/linux/security.h            |  5 +++--
->  kernel/auditfilter.c                |  5 +++--
->  security/apparmor/audit.c           |  6 +++---
->  security/apparmor/include/audit.h   |  2 +-
->  security/integrity/ima/ima_policy.c | 15 +++++++++------
->  security/security.c                 |  6 ++++--
->  security/selinux/include/audit.h    |  4 +++-
->  security/selinux/ss/services.c      |  5 +++--
->  security/smack/smack_lsm.c          |  3 ++-
->  10 files changed, 32 insertions(+), 21 deletions(-)
->
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 334e00efbde4..7e539f6f8c67 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -412,7 +412,7 @@ LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
->  
->  #ifdef CONFIG_AUDIT
->  LSM_HOOK(int, 0, audit_rule_init, u32 field, u32 op, char *rulestr,
-> -	 void **lsmrule)
-> +	 void **lsmrule, gfp_t gfp)
->  LSM_HOOK(int, 0, audit_rule_known, struct audit_krule *krule)
->  LSM_HOOK(int, 0, audit_rule_match, u32 secid, u32 field, u32 op, void *lsmrule)
->  LSM_HOOK(void, LSM_RET_VOID, audit_rule_free, void *lsmrule)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 41a8f667bdfa..5122e3ad83b1 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -2048,7 +2048,8 @@ static inline void security_key_post_create_or_update(struct key *keyring,
->  
->  #ifdef CONFIG_AUDIT
->  #ifdef CONFIG_SECURITY
-> -int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
-> +int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
-> +			     gfp_t gfp);
->  int security_audit_rule_known(struct audit_krule *krule);
->  int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
->  void security_audit_rule_free(void *lsmrule);
-> @@ -2056,7 +2057,7 @@ void security_audit_rule_free(void *lsmrule);
->  #else
->  
->  static inline int security_audit_rule_init(u32 field, u32 op, char *rulestr,
-> -					   void **lsmrule)
-> +					   void **lsmrule, gfp_t gfp)
->  {
->  	return 0;
->  }
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index be8c680121e4..d6ef4f4f9cba 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -529,7 +529,8 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
->  			entry->rule.buflen += f_val;
->  			f->lsm_str = str;
->  			err = security_audit_rule_init(f->type, f->op, str,
-> -						       (void **)&f->lsm_rule);
-> +						       (void **)&f->lsm_rule,
-> +						       GFP_KERNEL);
->  			/* Keep currently invalid fields around in case they
->  			 * become valid after a policy reload. */
->  			if (err == -EINVAL) {
-> @@ -799,7 +800,7 @@ static inline int audit_dupe_lsm_field(struct audit_field *df,
->  
->  	/* our own (refreshed) copy of lsm_rule */
->  	ret = security_audit_rule_init(df->type, df->op, df->lsm_str,
-> -				       (void **)&df->lsm_rule);
-> +				       (void **)&df->lsm_rule, GFP_KERNEL);
->  	/* Keep currently invalid fields around in case they
->  	 * become valid after a policy reload. */
->  	if (ret == -EINVAL) {
-> diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
-> index 45beb1c5f747..6b5181c668b5 100644
-> --- a/security/apparmor/audit.c
-> +++ b/security/apparmor/audit.c
-> @@ -217,7 +217,7 @@ void aa_audit_rule_free(void *vrule)
->  	}
->  }
->  
-> -int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
-> +int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule, gfp_t gfp)
->  {
->  	struct aa_audit_rule *rule;
->  
-> @@ -230,14 +230,14 @@ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
->  		return -EINVAL;
->  	}
->  
-> -	rule = kzalloc(sizeof(struct aa_audit_rule), GFP_KERNEL);
-> +	rule = kzalloc(sizeof(struct aa_audit_rule), gfp);
->  
->  	if (!rule)
->  		return -ENOMEM;
->  
->  	/* Currently rules are treated as coming from the root ns */
->  	rule->label = aa_label_parse(&root_ns->unconfined->label, rulestr,
-> -				     GFP_KERNEL, true, false);
-> +				     gfp, true, false);
->  	if (IS_ERR(rule->label)) {
->  		int err = PTR_ERR(rule->label);
->  		aa_audit_rule_free(rule);
-> diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
-> index acbb03b9bd25..0c8cc86b417b 100644
-> --- a/security/apparmor/include/audit.h
-> +++ b/security/apparmor/include/audit.h
-> @@ -200,7 +200,7 @@ static inline int complain_error(int error)
->  }
->  
->  void aa_audit_rule_free(void *vrule);
-> -int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule);
-> +int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule, gfp_t gfp);
->  int aa_audit_rule_known(struct audit_krule *rule);
->  int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule);
->  
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index c0556907c2e6..09da8e639239 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -401,7 +401,8 @@ static void ima_free_rule(struct ima_rule_entry *entry)
->  	kfree(entry);
->  }
->  
-> -static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
-> +static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry,
-> +						gfp_t gfp)
->  {
->  	struct ima_rule_entry *nentry;
->  	int i;
-> @@ -410,7 +411,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
->  	 * Immutable elements are copied over as pointers and data; only
->  	 * lsm rules can change
->  	 */
-> -	nentry = kmemdup(entry, sizeof(*nentry), GFP_KERNEL);
-> +	nentry = kmemdup(entry, sizeof(*nentry), gfp);
->  	if (!nentry)
->  		return NULL;
->  
-> @@ -425,7 +426,8 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
->  
->  		ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
->  				     nentry->lsm[i].args_p,
-> -				     &nentry->lsm[i].rule);
-> +				     &nentry->lsm[i].rule,
-> +				     gfp);
->  		if (!nentry->lsm[i].rule)
->  			pr_warn("rule for LSM \'%s\' is undefined\n",
->  				nentry->lsm[i].args_p);
-> @@ -438,7 +440,7 @@ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
->  	int i;
->  	struct ima_rule_entry *nentry;
->  
-> -	nentry = ima_lsm_copy_rule(entry);
-> +	nentry = ima_lsm_copy_rule(entry, GFP_KERNEL);
->  	if (!nentry)
->  		return -ENOMEM;
->  
-> @@ -664,7 +666,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
->  		}
->  
->  		if (rc == -ESTALE && !rule_reinitialized) {
-> -			lsm_rule = ima_lsm_copy_rule(rule);
-> +			lsm_rule = ima_lsm_copy_rule(rule, GFP_ATOMIC);
->  			if (lsm_rule) {
->  				rule_reinitialized = true;
->  				goto retry;
-> @@ -1140,7 +1142,8 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
->  	entry->lsm[lsm_rule].type = audit_type;
->  	result = ima_filter_rule_init(entry->lsm[lsm_rule].type, Audit_equal,
->  				      entry->lsm[lsm_rule].args_p,
-> -				      &entry->lsm[lsm_rule].rule);
-> +				      &entry->lsm[lsm_rule].rule,
-> +				      GFP_KERNEL);
->  	if (!entry->lsm[lsm_rule].rule) {
->  		pr_warn("rule for LSM \'%s\' is undefined\n",
->  			entry->lsm[lsm_rule].args_p);
-> diff --git a/security/security.c b/security/security.c
-> index 0a9a0ac3f266..4fd3c839353e 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -5331,15 +5331,17 @@ void security_key_post_create_or_update(struct key *keyring, struct key *key,
->   * @op: rule operator
->   * @rulestr: rule context
->   * @lsmrule: receive buffer for audit rule struct
-> + * @gfp: GFP flag used for kmalloc
->   *
->   * Allocate and initialize an LSM audit rule structure.
->   *
->   * Return: Return 0 if @lsmrule has been successfully set, -EINVAL in case of
->   *         an invalid rule.
+> diff --git a/include/linux/args.h b/include/linux/args.h
+> index 8ff60a54eb7d..2e8e65d975c7 100644
+> --- a/include/linux/args.h
+> +++ b/include/linux/args.h
+> @@ -17,9 +17,9 @@
+>   * that as _n.
 >   */
-> -int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
-> +int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
-> +			     gfp_t gfp)
->  {
-> -	return call_int_hook(audit_rule_init, field, op, rulestr, lsmrule);
-> +	return call_int_hook(audit_rule_init, field, op, rulestr, lsmrule, gfp);
->  }
 >  
->  /**
-> diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
-> index 52aca71210b4..29c7d4c86f6d 100644
-> --- a/security/selinux/include/audit.h
-> +++ b/security/selinux/include/audit.h
-> @@ -21,12 +21,14 @@
->   *	@op: the operator the rule uses
->   *	@rulestr: the text "target" of the rule
->   *	@rule: pointer to the new rule structure returned via this
-> + *	@gfp: GFP flag used for kmalloc
->   *
->   *	Returns 0 if successful, -errno if not.  On success, the rule structure
->   *	will be allocated internally.  The caller must free this structure with
->   *	selinux_audit_rule_free() after use.
->   */
-> -int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **rule);
-> +int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **rule,
-> +			    gfp_t gfp);
+> -/* This counts to 12. Any more, it will return 13th argument. */
+> -#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _n, X...) _n
+> -#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+> +/* This counts to 15. Any more, it will return 16th argument. */
+> +#define __COUNT_ARGS(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _n, X...) _n
+> +#define COUNT_ARGS(X...) __COUNT_ARGS(, ##X, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 >  
->  /**
->   *	selinux_audit_rule_free - free an selinux audit rule structure.
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-> index e88b1b6c4adb..ded250e525e9 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -3508,7 +3508,8 @@ void selinux_audit_rule_free(void *vrule)
->  	}
->  }
->  
-> -int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
-> +int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule,
-> +			    gfp_t gfp)
->  {
->  	struct selinux_state *state = &selinux_state;
->  	struct selinux_policy *policy;
-> @@ -3549,7 +3550,7 @@ int selinux_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
->  		return -EINVAL;
->  	}
->  
-> -	tmprule = kzalloc(sizeof(struct selinux_audit_rule), GFP_KERNEL);
-> +	tmprule = kzalloc(sizeof(struct selinux_audit_rule), gfp);
->  	if (!tmprule)
->  		return -ENOMEM;
->  	context_init(&tmprule->au_ctxt);
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 146667937811..a4943628d75a 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4696,7 +4696,8 @@ static int smack_post_notification(const struct cred *w_cred,
->   * Prepare to audit cases where (@field @op @rulestr) is true.
->   * The label to be audited is created if necessay.
->   */
-> -static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
-> +static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule,
-> +				 gfp_t gfp)
->  {
->  	struct smack_known *skp;
->  	char **rule = (char **)vrule;
+>  /* Concatenate two parameters, but allow them to be expanded beforehand. */
+>  #define __CONCAT(a, b) a ## b
+> diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
+> new file mode 100644
+> index 000000000000..73c7cc81349b
+> --- /dev/null
+> +++ b/include/linux/lsm_count.h
+> @@ -0,0 +1,128 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * Copyright (C) 2023 Google LLC.
+> + */
+> +
+> +#ifndef __LINUX_LSM_COUNT_H
+> +#define __LINUX_LSM_COUNT_H
+> +
+> +#include <linux/args.h>
+> +
+> +#ifdef CONFIG_SECURITY
+> +
+> +/*
+> + * Macros to count the number of LSMs enabled in the kernel at compile time.
+> + */
+> +
+> +/*
+> + * Capabilities is enabled when CONFIG_SECURITY is enabled.
+> + */
+> +#if IS_ENABLED(CONFIG_SECURITY)
+> +#define CAPABILITIES_ENABLED 1,
+> +#else
+> +#define CAPABILITIES_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_SELINUX)
+> +#define SELINUX_ENABLED 1,
+> +#else
+> +#define SELINUX_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_SMACK)
+> +#define SMACK_ENABLED 1,
+> +#else
+> +#define SMACK_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_APPARMOR)
+> +#define APPARMOR_ENABLED 1,
+> +#else
+> +#define APPARMOR_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_TOMOYO)
+> +#define TOMOYO_ENABLED 1,
+> +#else
+> +#define TOMOYO_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_YAMA)
+> +#define YAMA_ENABLED 1,
+> +#else
+> +#define YAMA_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_LOADPIN)
+> +#define LOADPIN_ENABLED 1,
+> +#else
+> +#define LOADPIN_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_LOCKDOWN_LSM)
+> +#define LOCKDOWN_ENABLED 1,
+> +#else
+> +#define LOCKDOWN_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_SAFESETID)
+> +#define SAFESETID_ENABLED 1,
+> +#else
+> +#define SAFESETID_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_BPF_LSM)
+> +#define BPF_LSM_ENABLED 1,
+> +#else
+> +#define BPF_LSM_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_SECURITY_LANDLOCK)
+> +#define LANDLOCK_ENABLED 1,
+> +#else
+> +#define LANDLOCK_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_IMA)
+> +#define IMA_ENABLED 1,
+> +#else
+> +#define IMA_ENABLED
+> +#endif
+> +
+> +#if IS_ENABLED(CONFIG_EVM)
+> +#define EVM_ENABLED 1,
+> +#else
+> +#define EVM_ENABLED
+> +#endif
+> +
+> +/*
+> + *  There is a trailing comma that we need to be accounted for. This is done by
+> + *  using a skipped argument in __COUNT_LSMS
+> + */
+> +#define __COUNT_LSMS(skipped_arg, args...) COUNT_ARGS(args...)
+> +#define COUNT_LSMS(args...) __COUNT_LSMS(args)
+> +
+> +#define MAX_LSM_COUNT			\
+> +	COUNT_LSMS(			\
+> +		CAPABILITIES_ENABLED	\
+> +		SELINUX_ENABLED		\
+> +		SMACK_ENABLED		\
+> +		APPARMOR_ENABLED	\
+> +		TOMOYO_ENABLED		\
+> +		YAMA_ENABLED		\
+> +		LOADPIN_ENABLED		\
+> +		LOCKDOWN_ENABLED	\
+> +		SAFESETID_ENABLED	\
+> +		BPF_LSM_ENABLED		\
+> +		LANDLOCK_ENABLED	\
+> +		IMA_ENABLED		\
+> +		EVM_ENABLED)
+> +
+> +#else
+> +
+> +#define MAX_LSM_COUNT 0
+> +
+> +#endif /* CONFIG_SECURITY */
+> +
+> +#endif  /* __LINUX_LSM_COUNT_H */
