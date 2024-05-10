@@ -1,55 +1,55 @@
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97905EE80
-	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 00:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA0B7E77B
+	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 00:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715299796; cv=none; b=BZZ2zoVfEuMQXtBDPOszyXePZc4j2yO8rHVpmsahwErtxSvVahn/sd4/K5MYG/IojX8KYWRel+FjZMUarG2cjkASyY0jj1N79mTT63l8Bew1BLBTTbNN4LZOEWgkEZemEDKu2d0+8oYcHOd3EZKuS5kY9RcgQhDjRUhsMiYXSIQ=
+	t=1715299798; cv=none; b=lKSMofc5wZITcPX06DZSCkNtgGae8wCKLXl4WcBx1+qAZ8cmm9UN/fOMXWOfFwCBv2Uz1sLGz9qhdDV8L7T/iMLsyJNGLwcnI5mzvuZjfRb4DZ8sPSW8tpb3a6tkBns+I7sB3lpdENL9L6DRVVLhOkhbxmMAJeuoiZdW6ngvVYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715299796; c=relaxed/simple;
-	bh=D55ymEmgXz4iQWm3Fzu/fcCDdwZBDQDEGkYQNfW5/Uk=;
+	s=arc-20240116; t=1715299798; c=relaxed/simple;
+	bh=V5E1tGxcFwiW0subypybbxNT7JLINL25XN24Yfq1TaA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=F50rd6+XuGvkwefyR8XKuoIHPRNhrJ/Gdsz9WTJpIVC1KMnX/S5aoLoqjPGzNgPKevpwtyKruvxsUbem4koNUSsiTP3iWu610FPM8dJJKgr5TG0ZHPqjX1RDz70iPwlJGefFvaoIbaf8tlh1dZbdjkfPSXMez3BmM/Sp/ZAmE0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ay3IRznw; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=T7vlSGVSlSpb170oCewcLQAPdIc2mAVlIGh6oVFOFmUgWlcgaSzyBYTVxtR8fSrNBu7n7eNvtjJ3cQPxuicT5O3SrcWLO6NmdXnsRyDpp4AX38Ti3sXKxZJ6+um/LMWxOQQa2+Dr5USCrhM7nRSXgFgJ+lqOY7wOctTWwSLyipY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nbAZndvI; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ay3IRznw"
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6b26845cdso2032510276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 17:09:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nbAZndvI"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2b2a06c0caeso1433452a91.1
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 17:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715299794; x=1715904594; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715299796; x=1715904596; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Woyjqf1Jf+ZN0ROzD4LFadIcncJKJRyNekxOoKd72k4=;
-        b=Ay3IRznwGFhgxtGCjnICCOsViXPNdWB++bN8DfrIE474kunmXPCLjx8FV26xlIB+gF
-         ZHsY3hqN8UMW50wvnOn02NjHkYtYchsAZTs0awdlmckaHYmww49P9wDUkWe4sEMoEfv4
-         Asia5amP/3zPhsG0cAsLPSAd7Tj0AsSBk447LymUZCsGctFWRSVa7h9esBLMIqqG8iqQ
-         a1PwmpW1UtBeMA49KPXwd/ahbr8kMIwuRiTkWA4MEkt7/6g4Y9M3mExRChHPQrDfPBJ0
-         w9Bl0J2YHx4c5G1eEhB0EYadiUsBcISzyqJQfCjyj7LSaWTooFkAqhep6dxmLsEwjjLP
-         RMFQ==
+        bh=1J+0R5KvELlP/aPzu5FkXVeIoXQ70u+fel7H+7dT5J4=;
+        b=nbAZndvIIkOSf2tLXqw14CLOybidung1WptYz5Mkp+wIPJ0WufJHynSFMZXE0a2UbU
+         6BWquCKC2gQDrxytumhxSvruuy/v8LwzmLE+olKikTnFSKAabOJtDceDQArEyuoMc9bL
+         xHLj85ClQEpL4k/DKPMlGmXpRtnJadmW8Cgtboqe17jVXjsW/kdEzONZCAIRAkDBVmN/
+         LOZD6Vs/VIfTx+wPHrHJX3VRFPO5Lr+ukfDtiahvICE9Q8rw/WxsTeOlezFEj0CILMwT
+         PU18tfna5Zk6fUsvXChKXCGq4PRU7jWW/zRns8oHsH4TlpVfWk5Dn91Itu9NrxYfRUEG
+         yQ+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715299794; x=1715904594;
+        d=1e100.net; s=20230601; t=1715299796; x=1715904596;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Woyjqf1Jf+ZN0ROzD4LFadIcncJKJRyNekxOoKd72k4=;
-        b=b6vNf8wUHJSvfsAHd2hD+FD82ewrIeO+ZcLAAgb5XH1ka7vkPLd4Dbp7s6JzVWHyqp
-         UCobcoWBwZ4Pney0Dd9iYgKiWfadI0t7/GndN5eFLfteIQu0YJuiLoCB88PnUE/HmSNh
-         FiSvSEDhWbfC4v84Xa25qTUTOUqwkcIpRigEPHSIPgibDF6ovNY2TwbaY9Xm8p43Ysxv
-         CzjNC0pnFtlGP7EPoWD0KtCdClNMVT1wfu9X8kNB3+B4gIRjCjanU5jnFe3QmfEXoH/R
-         lul7Z6lwinqnsist1WD4hzcCYpOA7b52Xt3/svBiDuwREBbxU7mfOPVjIs4lb8BFpwrG
-         c28Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWX8XW/5To++9IqbPpPKd1IaUi+YFTRXDiAgUJruxK0rbt5Xe4kWAlYoSArJX6D0SGVTQGeOuIkLEdAeNwA0j5zttW6tVgZy3JSwdb33f2GK8c6kXp+
-X-Gm-Message-State: AOJu0YxgzsYhsszy113riiraX3JtMbbxUls+mSUJFR2trfaDwkpsN85P
-	tYhNQnXF1aqqtwT2AD3QtNCrGNqgiYP7Qz11BGwovH4G7T3mtl/cfSH1mLRLcyGQ8DHeGBytyvE
-	MdQ==
-X-Google-Smtp-Source: AGHT+IFaj6bmAeTVTIliFBtquFibuZcld7R/X60oTVpmTPySBxzB4mvpPMdxa4luEXPujDJe9yOplutTGtY=
+        bh=1J+0R5KvELlP/aPzu5FkXVeIoXQ70u+fel7H+7dT5J4=;
+        b=PPJBHydK/JzJE9+E5JPbhLmeUjfIRFP3CLm5bJm4Fw30SUt8xFRuPi9lKM7SvP8Q7o
+         7uQj515jCGwqfCE1ZeyardjLxEFkUYGz7YfzQdPH+c1p8uPpy+YdHEehRI+Guc6ih7fk
+         FZCGi0HqVN+oPFPmDoSSL6OVqJ8qojxEg+V1cNJC6JeUU4QJ6XSrngi7sdMcKGmGSJT3
+         YYoY+rKNLwJOeiyOwJpXm1QDsFc9vW4RKN+pqdGG6qtQ/n1PzKIZXQggbVhPfeqRRWl5
+         mFZOx0gsRp1K4+gEmdx/DRngMQ8DIVbDnFRtak5M9UP8w5nQzu0O+w/L+4hg9ZfZtK6S
+         CK5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Pqz92dg6hQxPBUlYmkFy7nKPytWLc/s+NcxH4u32sygnRlyWBqVJFDnOpsR4YUhp5hyCsuSjmGhRz2v+ntJ93oWzlrPWFxaSR3uNYL3fLqd1QpgR
+X-Gm-Message-State: AOJu0YyiXBcShizMmX691pnCA1BpbjZ9AShHrvcgSiSxQemo97YUsTWc
+	DP1IdJsYwewgVaCY4cWIhcnkafEIDSDmQFst+9pMexduRD0UFZV6hcIjveIxJhuNV72IIrWQNte
+	O+w==
+X-Google-Smtp-Source: AGHT+IExd15gsRZwvkH+bNW5BEjwyjUFQ6oCfGLx0KBF9mW/GpX2KB2/zfHBHHKo03HMcQ/Fo0GVALLRwzg=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:6902:1205:b0:deb:9c81:7a81 with SMTP id
- 3f1490d57ef6-dee4f36f045mr285525276.10.1715299794053; Thu, 09 May 2024
- 17:09:54 -0700 (PDT)
-Date: Fri, 10 May 2024 00:06:34 +0000
+ (user=edliaw job=sendgmr) by 2002:a17:902:d4cd:b0:1e2:6b74:2bc6 with SMTP id
+ d9443c01a7336-1ef433cef41mr38795ad.0.1715299796044; Thu, 09 May 2024 17:09:56
+ -0700 (PDT)
+Date: Fri, 10 May 2024 00:06:35 +0000
 In-Reply-To: <20240510000842.410729-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240510000842.410729-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240510000842.410729-18-edliaw@google.com>
-Subject: [PATCH v4 17/66] selftests/firmware: Drop define _GNU_SOURCE
+Message-ID: <20240510000842.410729-19-edliaw@google.com>
+Subject: [PATCH v4 18/66] selftests/fpu: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -80,21 +80,22 @@ redefinition warnings.
 
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/firmware/fw_namespace.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/testing/selftests/fpu/test_fpu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/tools/testing/selftests/firmware/fw_namespace.c b/tools/testing/selftests/firmware/fw_namespace.c
-index 04757dc7e546..c16c185753ad 100644
---- a/tools/testing/selftests/firmware/fw_namespace.c
-+++ b/tools/testing/selftests/firmware/fw_namespace.c
-@@ -2,7 +2,6 @@
- /* Test triggering of loading of firmware from different mount
-  * namespaces. Expect firmware to be always loaded from the mount
-  * namespace of PID 1. */
+diff --git a/tools/testing/selftests/fpu/test_fpu.c b/tools/testing/selftests/fpu/test_fpu.c
+index 200238522a9d..53a7fef839e7 100644
+--- a/tools/testing/selftests/fpu/test_fpu.c
++++ b/tools/testing/selftests/fpu/test_fpu.c
+@@ -4,8 +4,6 @@
+  * module to perform floating point operations in the kernel. The control
+  * register value should be independent between kernel and user mode.
+  */
+-
 -#define _GNU_SOURCE
+ #include <stdio.h>
  #include <errno.h>
- #include <fcntl.h>
- #include <sched.h>
+ #include <string.h>
 -- 
 2.45.0.118.g7fe29c98d7-goog
 
