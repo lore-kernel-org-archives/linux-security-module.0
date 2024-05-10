@@ -1,55 +1,55 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B57313FD7B
-	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 00:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B981A1420D7
+	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 00:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715299925; cv=none; b=bvPVZ44FKtVNnd3dkgvdIb8fqoNivNjUm9q5mhT+euq07N9x+fXsoc49bJxkI56ZJMCKNEFbDHQPQmER3FI5QIf+3Enaly93KkIr00j9BQ+RC9qUFeUr70rt6WsHqSqtjBWVT43c8syfMgqUutviLWayhOeJfJsRbuGP6f0POww=
+	t=1715299928; cv=none; b=ntaknQxRK5HSCxIL8583+Um1VMdqwUn42ip0R+ywpeLkKuEVl/GAev6DjG/UFdCrkXwaDzvQIj9uu4hImLFM8Z+z9lR6SCV2dh7GKtoGw/JR9fgWiC6YqxZ5R/p7wJ1r+NUxylf7ZyPI73HZ/ArOb/yQBZ7zZlQP/qxZKAQC3YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715299925; c=relaxed/simple;
-	bh=3eJI5zSrDuIzjnrtml0eoF0GxHt+dGhxWnDnqgmi7+E=;
+	s=arc-20240116; t=1715299928; c=relaxed/simple;
+	bh=cY1yLjDVOZyUKN7zy3cH0I6yfDbGKSufrusCzHder2E=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TKaDy1OWFTw4HbTVSrngJFFR6iWx8H+QdYdYl4P2qICZIE48xyumIKomis+5DFmolPYOyp4F98pHKKt/WXhNQyPBhyuuOlOG2IBHZAXGVnN4LGyO4MBzX0tzDnzxuYd8oLUJOM6LQRtZjW84LbIfeasnV2S3RbquvSrzpaRZ/B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wZyOpCWS; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=fnFbboppEjm0ph7HiX8p95S1+JDhaO0wmwVbPIDBZ7TEEDDUrKXi6WkTAWq0VTCyKdtdM44LKUe2fih07TBIJo9VNSjtl5pJ6PPNu2WGZXPCRAyXEt4/ekCJa/14AOaDCCNECAhMEZl+/BRX5nK+e75ZEmJUOy9xLPjUksq6zNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EAtmuD9W; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wZyOpCWS"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2b29f4af4e4so1270110a91.1
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 17:12:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EAtmuD9W"
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f452eb2108so1205104b3a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 17:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715299924; x=1715904724; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715299926; x=1715904726; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AuBb56Ya/JVHt3ZPygn0bw49ZbbB/FQ8kpaCbLZgiyk=;
-        b=wZyOpCWSM3WHSJbn8sAaw/WuEzI1DaK6M/RaXSSQroIRnVDlLc+s30ZCoxG54pylQ2
-         1KI01vnfWorfbKiC5B/Tgv8/wy4mlBZ3TVVX7zR1JRDW1wC/bet3UzTOaATdd0izyZBm
-         UWCH+OzypJY1oKVZZDCBO0E8rPw/1t01Bh45bQ4eezMk71syvGhh3hdvPndU7uulAyuL
-         oF/cLbhEeHfjMzvL8oh0Ovij/iWJeX34AWTFz0foQG/Et7ml5UwR0pEJctwt/NgNy8MQ
-         zs+9hYS7nUaYXERBR+RZDzymxmDi/iAdcArRfxbbOOM0UgmT8P4VlK31nhTbi7sf66Nr
-         HwGQ==
+        bh=1+/kjO6igpY5Z9IiOKAmMz8PNt+9Eolw6t7DBSMXgDQ=;
+        b=EAtmuD9WCSKsTAnkTmM1crXLqjyHlaYH7cg8jF9zWPnpcoKSaJa5NQ8TpIX4K+ZdEO
+         djjWGkIe9TQfNArCNwaDQSzEK2DhQHaGEy7qIZqN9Yf2ibkx3jFgQcuLFCEOTZD/cfSI
+         8GQC07RRQnBFEWEqtPi/zxLmO0GbvgT+if54SKdS50NbXZ5FNqLniKAOuG75X0esoOIP
+         maDV9Jg6AQul8dMw7tKBpsJZ7AzoNLzEKC3NYnctIgzmzFyfz15OmPIy+ob2jt2EC4at
+         FOQHtWdbjel7Qqhqzj2mG3iJINrPj9xA1yXuAEgPlPQhntyenYijZJEindY2AnYn3akP
+         FdXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715299924; x=1715904724;
+        d=1e100.net; s=20230601; t=1715299926; x=1715904726;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AuBb56Ya/JVHt3ZPygn0bw49ZbbB/FQ8kpaCbLZgiyk=;
-        b=JAYBZr71FiKTzEItk2AJeNeeetvTQzSAo/VCblHhwuhAEJZ9VOipH6y39buU2tj7By
-         a4h2op03s5QRpX8eu7/fHx2kkVZaZsM8nMiLz8JfTpzLGwF7K1NongSmSUCu3TQc+6hr
-         t5KQ4q4a3+GyUPJiqPgoDrd/nasP2i1/B6NyfwC/ANVijmG2jjH3SLqePYPUv/eBb9Vr
-         uExs0zYO7eXx7Z8LvbDS7V6lUgR+Tbv4b0LnEzrn7B2UJFgUwCUmtU8XHAKJCwsKvUmp
-         lkLUaFu+KyBNp9neNrV9t3xPa3NB8tS+y2WAH7e6xvd7YmAcGMbgKa7v8pLQ4vypIh/d
-         p9ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUwqawp1lZUin7zsw/ReMK4Ss8/Ouzn2iYKEwBIkyzjrArgE946sa/ARnTnI4wX/CLiwuCyEDcj6BF/87hNoFF++uU4xLVKiekK+Ri2QKkO3YMooYw7
-X-Gm-Message-State: AOJu0YxVy58C5H3T5cxnWmbDtPM4QlTpKUyiCCWPG7NXT0rr75cdiHtS
-	5lFXSk3mmyQJmyphml9khb/T7sp6Gpgxak2Oh08SbJxwPgm4IAAhoUYLThWj7jnR7Xw81sy5QFp
-	Njg==
-X-Google-Smtp-Source: AGHT+IGDiT6r5MtSiTKtFOeh1TnvuA8iW3sg04Hs0Mp2HYr3hoUvchEofnYDdFYeElPPK8QwfKXlxZAkHMU=
+        bh=1+/kjO6igpY5Z9IiOKAmMz8PNt+9Eolw6t7DBSMXgDQ=;
+        b=Jg8rB2lEjea2A0dSXJgYMupl+GVAMF6ixPK1UQbOf5kwtfzVV/64zG4G9ib5SDecLI
+         myN7z/wNHomzS/sRIzO1DrKbr4LXbfj+uRWmqLrEgrUC8TnK+9uNzh2bYNIeVyIvT9yB
+         KnXM82pk+zSJinbwUOtn2Hb5euGDlNVrXLD07Y2nRTQS+1hZmwuaM8VAOOsj8BDN1N9B
+         T4MF2yzBCwbsZQYWKfPKT7pJCo7fm4jnXXPLe8pcuCCOAR9fWOlsSGcbmyGtJGlUQAsA
+         cv5LW/r0bYQj7WHk3tOkju5Zbbte7KUeikA/keYsLRwBtSl1OMZBFm5Pnjo4Q3MJCxp4
+         aRWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFpR6aKPuwPcUA0krRy91uNm/ciIo0XIgyGHkVMaElIL14KsGIS5V5NLaMlAY/42gHZaOHFYJ3a2fUkAsaA3dF39VqC+XBwye2LvbbWWxkOAVLUVN+
+X-Gm-Message-State: AOJu0YxAoQToldB4wdjktA7ER3fAYlT21AQ3DbNCpKvju1B03jyZI9JD
+	5hgTrC+XD1TJOm7sP3CwMxIRKco9IM1/Y9R7RNZL10NSXC33Ii7yp2F9gxuMfWKD8BKCe8FDlva
+	22g==
+X-Google-Smtp-Source: AGHT+IFqVJhwpwwqiHXuwXmYYl8rNoTCx5/ixsGah9it9PhH2pp2rnYEYGHSA0lrqROCVxUa7NHIESir2HY=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a17:903:32d1:b0:1ea:2838:e164 with SMTP id
- d9443c01a7336-1ef43c0cafdmr333715ad.2.1715299923621; Thu, 09 May 2024
- 17:12:03 -0700 (PDT)
-Date: Fri, 10 May 2024 00:07:20 +0000
+ (user=edliaw job=sendgmr) by 2002:a05:6a00:3992:b0:6ea:dfc1:b79 with SMTP id
+ d2e1a72fcca58-6f4df42b865mr83743b3a.2.1715299926061; Thu, 09 May 2024
+ 17:12:06 -0700 (PDT)
+Date: Fri, 10 May 2024 00:07:21 +0000
 In-Reply-To: <20240510000842.410729-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240510000842.410729-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240510000842.410729-64-edliaw@google.com>
-Subject: [PATCH v4 63/66] selftests/user_events: Drop define _GNU_SOURCE
+Message-ID: <20240510000842.410729-65-edliaw@google.com>
+Subject: [PATCH v4 64/66] selftests/vDSO: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -72,33 +72,58 @@ To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
 Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
 	kernel-team@android.com, Edward Liaw <edliaw@google.com>, 
 	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
-	John Hubbard <jhubbard@nvidia.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
 redefinition warnings.
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/user_events/abi_test.c | 2 --
- 1 file changed, 2 deletions(-)
+ tools/testing/selftests/vDSO/vdso_test_abi.c          | 1 -
+ tools/testing/selftests/vDSO/vdso_test_clock_getres.c | 2 --
+ tools/testing/selftests/vDSO/vdso_test_correctness.c  | 3 ---
+ 3 files changed, 6 deletions(-)
 
-diff --git a/tools/testing/selftests/user_events/abi_test.c b/tools/testing/selftests/user_events/abi_test.c
-index 7288a05136ba..a1f156dbbd56 100644
---- a/tools/testing/selftests/user_events/abi_test.c
-+++ b/tools/testing/selftests/user_events/abi_test.c
-@@ -4,8 +4,6 @@
-  *
-  * Copyright (c) 2022 Beau Belgrave <beaub@linux.microsoft.com>
+diff --git a/tools/testing/selftests/vDSO/vdso_test_abi.c b/tools/testing/selftests/vDSO/vdso_test_abi.c
+index 96d32fd65b42..fb01e6ffb9a0 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_abi.c
++++ b/tools/testing/selftests/vDSO/vdso_test_abi.c
+@@ -14,7 +14,6 @@
+ #include <time.h>
+ #include <sys/auxv.h>
+ #include <sys/time.h>
+-#define _GNU_SOURCE
+ #include <unistd.h>
+ #include <sys/syscall.h>
+ 
+diff --git a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+index 38d46a8bf7cb..f0adb906c8bd 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
++++ b/tools/testing/selftests/vDSO/vdso_test_clock_getres.c
+@@ -10,8 +10,6 @@
+  * Power (32-bit and 64-bit), S390x (32-bit and 64-bit).
+  * Might work on other architectures.
   */
 -
 -#define _GNU_SOURCE
- #include <sched.h>
- 
- #include <errno.h>
+ #include <elf.h>
+ #include <err.h>
+ #include <fcntl.h>
+diff --git a/tools/testing/selftests/vDSO/vdso_test_correctness.c b/tools/testing/selftests/vDSO/vdso_test_correctness.c
+index e691a3cf1491..c435b7a5b38d 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_correctness.c
++++ b/tools/testing/selftests/vDSO/vdso_test_correctness.c
+@@ -3,9 +3,6 @@
+  * ldt_gdt.c - Test cases for LDT and GDT access
+  * Copyright (c) 2011-2015 Andrew Lutomirski
+  */
+-
+-#define _GNU_SOURCE
+-
+ #include <stdio.h>
+ #include <sys/time.h>
+ #include <time.h>
 -- 
 2.45.0.118.g7fe29c98d7-goog
 
