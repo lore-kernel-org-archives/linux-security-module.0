@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A0171670;
-	Fri, 10 May 2024 15:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEAE17109C;
+	Fri, 10 May 2024 15:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356004; cv=none; b=uy0735e1JnCBbkruIHQf15IxniNKQMKigChB8N13ncAVq1NU3cw7KcPclOtSxqbIWXpgBY09i1sPHkqYlf7tyPBth+r3VJJ0jmqnM6Nan/mH+fjaIa7SjOEmBz84vAraO9HRglcRhZhgae1W8A8ywhBDO1S84H5ZoZKgeciCVro=
+	t=1715356517; cv=none; b=WWmoeAloM9r0RE5I+442gHZYsHbH31Z/HsanJ915gqbXjhuPXQH4bp63Jf05didZIaGGkYtoB/Dw0MhD5CGnh4Gc9SPM9JzuimODzdnSx7yZE3+ityfAH4UbJ7NVORy9D5uo5MSVH9vFTla8aHJQcXw2MAWS73EVWAsO81ipw30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356004; c=relaxed/simple;
-	bh=5mXhnCqJ2AHPpTx22stP2AT18mivdzg6/hVWBtafrx8=;
+	s=arc-20240116; t=1715356517; c=relaxed/simple;
+	bh=Jrj2DyJRqG76aBOxLOm189GZPuRh/HuTFAeWgh7fcV0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SSza75xwrWTzGV1RisEitppi80RRMmXzRL+NpeFJYpCJiBMJaoNuUCPQ+e93fAEuymxtgEBVUz8nZJ66hFUg0wGWsKvbbO2fopPRe4gjoa3iUL/u9XZQ7YkVe+OsgW0QMhTMuIOsrf7yn47RNed99ygbWYI84V9tyYPyCPtjLRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WRelRGEX; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=bfarmKjEusA0wT6RAJFPF+Cnv15RFtsRyI9ecqKZDlWW+D0tktMkzhP2jHnmgfBL2HK2f5MKzV4pX7Y49RziGYYC4EWbidkNhz1NyWerMF9XiKPTMWYAfXgHgClm5Ond+Vry+R/mNQpwCcJTwk+y/SpoCjy1Oiizg4z8rWGzjno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ggwRa0pP; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WRelRGEX"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ggwRa0pP"
 Received: from [10.8.193.2] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C236F4113A;
-	Fri, 10 May 2024 15:46:29 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C20FF40ECA;
+	Fri, 10 May 2024 15:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715355992;
-	bh=h2pF02eYY0Wz11xpxaBf2EA2zHqbk7efV7XetK4ocVA=;
+	s=20210705; t=1715356514;
+	bh=tl8AnWWrSgt1zz4k+eJz/bsBBbsTiTc/jmd/0XwIRCY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=WRelRGEX+uRRfdNqHPs+onuWy1HucK7ZuhhwzlPelgo/0N4O800IhzFV7ITUqNUOh
-	 ysf2vOuwcYwHL5BxhY97q64zUE9mYvcEoscZndRAuqBi73Ouk2CBFiNMt7C1JmURnz
-	 XuDUbKzO+WMpteaP59Q5YcUSVNhH+AzO4z9AebZHn8+tY//AvoXxrPGR/oWRSSoxI8
-	 gMNsN+nD0gXgx7T+f40utUfvsVIWJpHTjXu7AlOT7NXXZgXjbMTMjGgj3z3lh8ueBT
-	 4fyDJ2owKXHLxqSBZV+ZyHJDNmb1Rb8zou0OiQzPNLCNtFDUHMFhNL981Bf6pBTsjQ
-	 SIw6T+OGD7f7A==
-Message-ID: <6200bc6e-6903-4a01-a3d9-74f90c6de2b7@canonical.com>
-Date: Fri, 10 May 2024 08:46:25 -0700
+	b=ggwRa0pPCEI4fskDcmidkFFzwkQB+w4Ukf+DuGwVmSljt42G5xPcpmgdMp+dHvOY5
+	 DNaXIXz/+3zbaXm35k+3FuFZDdVT8Kr/9ojX0AqnokDSzPBNUurzgrB59bPcL7wyPL
+	 7X8pPFStW1H36/G6UapTrTpgD7tYT5jWISwLlUeut6W+Mf+oa2IHbaO1Ya7o0yfzR8
+	 sjn6b0wVOvqFzLgEZU9R4GNYSSOttSYRb7eXIOICFW2DFtYv751NUykE4VU3RK4Q8H
+	 O528lifDV3Ebvz6fstPXdtLhIfbwTP/f8RhInJFJWiSQMsiXLC04sv6Au3nKzLqP5F
+	 xsaYeRFwLu1ng==
+Message-ID: <771cf26b-071f-490c-9335-d8c78c2bb189@canonical.com>
+Date: Fri, 10 May 2024 08:55:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,14 +42,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] apparmor: remove useless static inline function
- is_deleted
-To: Colin Ian King <colin.i.king@gmail.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+Subject: Re: [PATCH 2/2] apparmor: fix typo in kernel doc
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
  linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240304163655.771616-1-colin.i.king@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Kees Cook <keescook@chromium.org>,
+ apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org
+References: <20240315125418.273104-1-cgzones@googlemail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -95,50 +94,35 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20240304163655.771616-1-colin.i.king@gmail.com>
+In-Reply-To: <20240315125418.273104-1-cgzones@googlemail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/4/24 08:36, Colin Ian King wrote:
-> The inlined function is_deleted is redundant, it is not called at all
-> from any function in security/apparmor/file.c and so it can be removed.
+On 3/15/24 05:54, Christian Göttsche wrote:
+> Fix the typo in the function documentation to please kernel doc
+> warnings.
 > 
-> Cleans up clang scan build warning:
-> security/apparmor/file.c:153:20: warning: unused function
-> 'is_deleted' [-Wunused-function]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 
-Acked-by: John Johansen <john.johanse@canonical.com>
+Acked-by: John Johansen <john.johansen@canonical.com>
 
 I have pulled this into my tree
 
 > ---
->   security/apparmor/file.c | 13 -------------
->   1 file changed, 13 deletions(-)
+>   security/apparmor/lsm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-> index c03eb7c19f16..d52a5b14dad4 100644
-> --- a/security/apparmor/file.c
-> +++ b/security/apparmor/file.c
-> @@ -144,19 +144,6 @@ int aa_audit_file(const struct cred *subj_cred,
->   	return aa_audit(type, profile, &ad, file_audit_cb);
->   }
->   
-> -/**
-> - * is_deleted - test if a file has been completely unlinked
-> - * @dentry: dentry of file to test for deletion  (NOT NULL)
-> - *
-> - * Returns: true if deleted else false
-> - */
-> -static inline bool is_deleted(struct dentry *dentry)
-> -{
-> -	if (d_unlinked(dentry) && d_backing_inode(dentry)->i_nlink == 0)
-> -		return true;
-> -	return false;
-> -}
-> -
->   static int path_name(const char *op, const struct cred *subj_cred,
->   		     struct aa_label *label,
->   		     const struct path *path, int flags, char *buffer,
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index cef8c466af80..d0485fb0ed63 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1124,7 +1124,7 @@ static int apparmor_socket_create(int family, int type, int protocol, int kern)
+>    * @sock: socket that is being setup
+>    * @family: family of socket being created
+>    * @type: type of the socket
+> - * @ptotocol: protocol of the socket
+> + * @protocol: protocol of the socket
+>    * @kern: socket is a special kernel socket
+>    *
+>    * Note:
 
