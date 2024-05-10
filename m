@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE278F4EB;
-	Fri, 10 May 2024 16:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448FB171648;
+	Fri, 10 May 2024 16:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356863; cv=none; b=bHBaaA3AFuv8pDr4vDQcyVGsHlcQXAkazGhi5FVUZhXw2HuLtCD3Z67aHUHxzV6DXaz7OKwqxVS9K1dZEsYgRrptE/PmAAQqt83BmiUKNOxhfi55lCHP0VEUqnM7MMzBa5kgR1axPMmm4pgMivy9AW9ct11XI8iyf+4RewivqZE=
+	t=1715357414; cv=none; b=ki51NPNhxilju1UvB4soqx6AYl2v5ggbUAJlxoVHrzkvAonHQG/QnX8rec5pqVNt/UL8Tw2REsVn6WBtl9RUoio7KFoUcgT/fAXxIZXc2o5W9mgJO06B1B88GzodeMNxqEgOm3M+57REG7ZLmGX7TzH1GrVI05FBe6bP508E5d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356863; c=relaxed/simple;
-	bh=6oJIOwz7s/7cV31BhrDMsv2hBP3g/dno31tfKfTOzn0=;
+	s=arc-20240116; t=1715357414; c=relaxed/simple;
+	bh=sJkSoIYsMgVLugxKHGmrUMUikx/KOPtmGSW1VK5xJPs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OcnaRXwPm27vVVieDkPmKrNoccEuRVTwBi/Tw7L/kFxONDmFpKFMZHxvlFScN1YM9w3HyxT4uLKtEdCOBvw2B7dFekSSM7htOEFO4vSm0sF/ofsl/pTCQOZSex+TqmbDO1ECiTnt5YLR6SzVa8gU7cRr5SGtCDPtL0NndiTzTl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=QNvVkq4Z; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=HMxattJ8aD3WMftsN0Yu2NwsSDKzmDHRUW/u1Hj3sTfOsItO5IifxeHWM58xC49b2uvO1syeUov6UgmiU824jO3taOch9f1+ZeEhHDa12CNLpYmxZ4s/+1mq30yzcVs1f/bf7PvVTKI+8Wn7v4UG7CoyP+yrk/bdzs66TVgVHUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=NT3Xf77F; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="QNvVkq4Z"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="NT3Xf77F"
 Received: from [10.8.193.2] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9DE493F61C;
-	Fri, 10 May 2024 16:00:55 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 4A02041D96;
+	Fri, 10 May 2024 16:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715356858;
-	bh=rzLYhCpYA/kYpMQ6NlE0AQIA4o1/VwVmKnxl57bcHbE=;
+	s=20210705; t=1715357410;
+	bh=tYT0vaoGgD7nyqVmqjNAAmm6y89hogcsUK6Tq7LqzP0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=QNvVkq4ZB2Nk67IjVF0pDxfxVkpl10UsVN0YakCameBjMfbhwGyerhCbAJApZpeLh
-	 cqJWDD/51dLpaPSH9dl+Irb9PtxBMxircn1fWwXxVSozqe37tFUMG9mp/upfxVRQ01
-	 HoHBpuGtyFk+dgVGf/CafOvGkYak0d70sNKJUMvm6qEvWQiC4xfGjgxGBi+RJbDuNk
-	 GUorEsy7n+5PE5sfH/8d5b8ZCUR2APHLK0YpVbbhhhjB1lz1y0cH55pz7GkwMEjxLO
-	 Hkr9smJ2zGsd3b4InsHISiCvRefJ8NRGxib3KYKpSafdQ+3VAv+5CGCMqNsY+tAbRz
-	 /KKfxQGcrmFKw==
-Message-ID: <5fd1866c-0985-4da6-b820-21a62abb3170@canonical.com>
-Date: Fri, 10 May 2024 09:00:51 -0700
+	b=NT3Xf77FVrjr68YXYs2EWcmUHktLkeW5tFmC5Jl9WJKThrcW5ZlTuKNhjspUnr5d4
+	 InGVyef+6wGsmCv9ifhZOc0IiK5a01kZsBmu6wrYvXXoQ4cPfeN2BAThB/JKH68kPx
+	 E2u0CbOzhmW47iRT2Ammjxswo/106bUOSUoRyd99voYTICM9twq2VIfZllNAKvpKUD
+	 s8WRXficY5urxMIwuI9q+dnB7VLoYsCdWYPv7UOGgneL7eZuBnE4gWCAlT/RL0neL4
+	 OCaeXIgHZeUq7+cAcFXR4UVe4wJHyj65Z1RSU2qH0pToXHPh3UjsCJ2DqVOkKudiSw
+	 TY2pM+n9NCvGQ==
+Message-ID: <147b0637-7423-4abc-b7fe-3d8da2c1e57c@canonical.com>
+Date: Fri, 10 May 2024 09:10:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,12 +42,18 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix possible NULL pointer dereference
-To: Leesoo Ahn <lsahn@ooseel.net>, lsahn@wewakecorp.com
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240507161229.4175603-1-lsahn@wewakecorp.com>
+Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
+To: Paul Moore <paul@paul-moore.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, James Morris
+ <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240223190546.3329966-1-mic@digikod.net>
+ <20240223190546.3329966-2-mic@digikod.net>
+ <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com>
+ <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
+ <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -93,107 +99,50 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20240507161229.4175603-1-lsahn@wewakecorp.com>
+In-Reply-To: <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/7/24 09:12, Leesoo Ahn wrote:
-> profile->parent->dents[AAFS_PROF_DIR] could be NULL only if its parent is made
-> from __create_missing_ancestors(..) and 'ent->old' is NULL in
-> aa_replace_profiles(..).
-> In that case, it must return an error code and the code, -ENOENT represents
-> its state that the path of its parent is not existed yet.
+On 2/27/24 08:01, Paul Moore wrote:
+> On Mon, Feb 26, 2024 at 2:59 PM Paul Moore <paul@paul-moore.com> wrote:
+>> On Fri, Feb 23, 2024 at 4:07 PM Paul Moore <paul@paul-moore.com> wrote:
+>>> On Fri, Feb 23, 2024 at 2:06 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>>
+>>>> aa_getprocattr() may not initialize the value's pointer in some case.
+>>>> As for proc_pid_attr_read(), initialize this pointer to NULL in
+>>>> apparmor_getselfattr() to avoid an UAF in the kfree() call.
+>>>>
+>>>> Cc: Casey Schaufler <casey@schaufler-ca.com>
+>>>> Cc: John Johansen <john.johansen@canonical.com>
+>>>> Cc: Paul Moore <paul@paul-moore.com>
+>>>> Cc: stable@vger.kernel.org
+>>>> Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
+>>>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>>>> ---
+>>>>   security/apparmor/lsm.c | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> If you like John, I can send this up to Linus with the related SELinux
+>>> fix, I would just need an ACK from you.
+>>
+>> Reviewed-by: Paul Moore <paul@paul-moore.com>
+>>
+>> This patch looks good to me, and while we've still got at least two
+>> (maybe three?) more weeks before v6.8 is tagged, I think it would be
+>> good to get this up to Linus ASAP.  I'll hold off for another day, but
+>> if we don't see any comment from John I'll go ahead and merge this and
+>> send it up to Linus with the SELinux fix; I'm sure John wouldn't be
+>> happy if v6.8 went out the door without this fix.
 > 
-> BUG: kernel NULL pointer dereference, address: 0000000000000030
-> PGD 0 P4D 0
-> PREEMPT SMP PTI
-> CPU: 4 PID: 3362 Comm: apparmor_parser Not tainted 6.8.0-24-generic #24
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 04/01/2014
-> RIP: 0010:aafs_create.constprop.0+0x7f/0x130
-> Code: 4c 63 e0 48 83 c4 18 4c 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9 45 31 d2 c3 cc cc cc cc <4d> 8b 55 30 4d 8d ba a0 00 00 00 4c 89 55 c0 4c 89 ff e8 7a 6a ae
-> RSP: 0018:ffffc9000b2c7c98 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 00000000000041ed RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc9000b2c7cd8 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82baac10
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> FS:  00007be9f22cf740(0000) GS:ffff88817bc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000030 CR3: 0000000134b08000 CR4: 00000000000006f0
-> Call Trace:
->   <TASK>
->   ? show_regs+0x6d/0x80
->   ? __die+0x24/0x80
->   ? page_fault_oops+0x99/0x1b0
->   ? kernelmode_fixup_or_oops+0xb2/0x140
->   ? __bad_area_nosemaphore+0x1a5/0x2c0
->   ? find_vma+0x34/0x60
->   ? bad_area_nosemaphore+0x16/0x30
->   ? do_user_addr_fault+0x2a2/0x6b0
->   ? exc_page_fault+0x83/0x1b0
->   ? asm_exc_page_fault+0x27/0x30
->   ? aafs_create.constprop.0+0x7f/0x130
->   ? aafs_create.constprop.0+0x51/0x130
->   __aafs_profile_mkdir+0x3d6/0x480
->   aa_replace_profiles+0x83f/0x1270
->   policy_update+0xe3/0x180
->   profile_load+0xbc/0x150
->   ? rw_verify_area+0x47/0x140
->   vfs_write+0x100/0x480
->   ? __x64_sys_openat+0x55/0xa0
->   ? syscall_exit_to_user_mode+0x86/0x260
->   ksys_write+0x73/0x100
->   __x64_sys_write+0x19/0x30
->   x64_sys_call+0x7e/0x25c0
->   do_syscall_64+0x7f/0x180
->   entry_SYSCALL_64_after_hwframe+0x78/0x80
-> RIP: 0033:0x7be9f211c574
-> Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-> RSP: 002b:00007ffd26f2b8c8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00005d504415e200 RCX: 00007be9f211c574
-> RDX: 0000000000001fc1 RSI: 00005d504418bc80 RDI: 0000000000000004
-> RBP: 0000000000001fc1 R08: 0000000000001fc1 R09: 0000000080000000
-> R10: 0000000000000000 R11: 0000000000000202 R12: 00005d504418bc80
-> R13: 0000000000000004 R14: 00007ffd26f2b9b0 R15: 00007ffd26f2ba30
->   </TASK>
-> Modules linked in: snd_seq_dummy snd_hrtimer qrtr snd_hda_codec_generic snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq snd_seq_device i2c_i801 snd_timer i2c_smbus qxl snd soundcore drm_ttm_helper lpc_ich ttm joydev input_leds serio_raw mac_hid binfmt_misc msr parport_pc ppdev lp parport efi_pstore nfnetlink dmi_sysfs qemu_fw_cfg ip_tables x_tables autofs4 hid_generic usbhid hid ahci libahci psmouse virtio_rng xhci_pci xhci_pci_renesas
-> CR2: 0000000000000030
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:aafs_create.constprop.0+0x7f/0x130
-> Code: 4c 63 e0 48 83 c4 18 4c 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9 45 31 d2 c3 cc cc cc cc <4d> 8b 55 30 4d 8d ba a0 00 00 00 4c 89 55 c0 4c 89 ff e8 7a 6a ae
-> RSP: 0018:ffffc9000b2c7c98 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 00000000000041ed RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc9000b2c7cd8 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82baac10
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> FS:  00007be9f22cf740(0000) GS:ffff88817bc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000030 CR3: 0000000134b08000 CR4: 00000000000006f0
+> I just merged this into lsm/stable-6.8 and once the automated
+> build/test has done it's thing and come back clean I'll send this,
+> along with the associated SELinux fix, up to Linus.  Thanks all.
 > 
-> Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I have pulled this into my tree
-
-> ---
->   security/apparmor/apparmorfs.c | 4 ++++
->   1 file changed, 4 insertions(+)
+> John, if this commit is problematic please let me know and I'll send a
+> fix or a revert.
 > 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index bcfea073e3f2..01b923d97a44 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -1692,6 +1692,10 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
->   		struct aa_profile *p;
->   		p = aa_deref_parent(profile);
->   		dent = prof_dir(p);
-> +		if (!dent) {
-> +			error = -ENOENT;
-> +			goto fail2;
-> +		}
->   		/* adding to parent that previously didn't have children */
->   		dent = aafs_create_dir("profiles", dent);
->   		if (IS_ERR(dent))
+
+sorry, I am still trying to dig out of my backlog. This is good, you can
+certainly have my ACK, I know its already in tree so no point in adding
+it there but wanted to just make sure its on list
 
