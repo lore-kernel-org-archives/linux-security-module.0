@@ -1,176 +1,150 @@
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6E35339E
-	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 13:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC52612D219;
+	Fri, 10 May 2024 15:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715347702; cv=none; b=HbJNEY4tuKGpqxfVTH0b9V8mDkKM7RdBMhz1Tit3uUn43TRMjdw28fN08CUldsZdlGB37P+Vixu4d50fdnnoJwCV4MMFCfSyUIwvP3ouwOuiZbLciw7c+ujEmPDvS+SQPt8jVrUFzdcycmP9KzvGsOSnsyNCf6cSsx4uoe7ieOw=
+	t=1715355400; cv=none; b=ezcR4iF4Xdb6CgjhmImfOHcQpsLt08cCLqQkd9y/jSNEhq4PCqAZNlLebXKOLHnvs+W0QmehnovQUfBye8TRqPqLfsXuzJ/9AjPJk+S3JI13/p3MeMMd3BWN+devhZ+N/Jhb8U/jPw4+v3qvVbBke5AlPCVpByaBL4M9of3jkWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715347702; c=relaxed/simple;
-	bh=EGfMHM/e17V+TY+MO2iQIR8Vb263lScsvwNmu7geQ/U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uVnFOacXfkCt4MagPM8rPSfBxUAN66OvES9aUwQRfyOndmBffb8mjmb7dTkCHbZkDkG7k6bhM9zFFq94k4Wiy2YyhDZPVmwyXNmGj9IzZaoUxLfpFQIRNxa/TLp6fQSy9gLfFaoIbKN61OMduKKhjI1XzNvCUbufc1gzgfWXUn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1849aee8cso212289539f.1
-        for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 06:28:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715347700; x=1715952500;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TSQQY9/6Se3eHqOviSCpoULuEJvdI1rJKRpLPKQqSqs=;
-        b=YPVFUCa4XLkbj5B12adJWCiAxepPO3iLPcN25k0BJyD1SubhwqNfISkRSzGWD4+ysG
-         OQapV0K2VOSOxKJ7h/Ia1QwZ1nLfh3UDFa8nE/hYjzpge+m76CjAWjlmc5tr7InB2GvN
-         BvH25Nr+8qMLYvmvbY+rwndyGCFGuxy7cRelfoPetQBqOyaSG6EyA/uY8QqgtfTp8wMT
-         LtVp8Vx7/T0URFr0HJcTOkhX1YIQuZ0B+yFJfHMrp1W/QH/9n0CbvCcPADELv/7ceWbd
-         DlWU27ujQSGbdxv3UAe69eDrA2Gn7LIGmp0zxBWQgi6VKSWbeV7b7iGRPxMjcsvBP3Ig
-         EEKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsYbmhwOpIiat89zl0qNiPD3qQGs+lJeLxWau0OeWRVCGy94GeVTEev+Fs9FJOIPKQiORIlfw/ntJAvzEBRecgc7VkfUDUNJDThO1J2nHamujefXzP
-X-Gm-Message-State: AOJu0Yzdrt4QyZTM6M7wO4Fp4/QIf9f1lu9PaVIxy5UmISeeNLwQCLU+
-	bK6m/XX8WpPlTw4StRgAsHzKj/4F83S/jC/l2ltABOSh4aFI31zJJ0ErnBqA0Gx5tMQ7Sh7mXeM
-	VIAMYgZu9WsBYBGRw3w7tDKStydpCaHjtmsxO/GEuxwr73h4orMy9Y/c=
-X-Google-Smtp-Source: AGHT+IGJExUYxPd8CAMlcFIKliveeAPDQDmtcHqv89Yk0eRnA0U9mdSOPqI9n4OdirQM58m7o0JcYEebkVFXSk/X+fJJM5SrBQRp
+	s=arc-20240116; t=1715355400; c=relaxed/simple;
+	bh=QMfpkQludxXhsugxZyOrTb2FWc/qFIHL73MvV9noS3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vn7wlpc82yDFb0aKRtrzUPeqr+/av+TKh0FQtTRx6D7rZhyVZKNh/xhNvQw2ORTkzLkqgARphxoihktZtQ8LM1SRPD7yjt6NWlhqyhg16ZIjvR82z4ar81PCBGKZEB7iihEN67N9ctAUoFKRVKcMfqOK9GQM4MJejA2PBikwgzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=It/JJGnK; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="It/JJGnK"
+Received: from [10.55.0.156] (unknown [149.11.192.251])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A48743F771;
+	Fri, 10 May 2024 15:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715355390;
+	bh=u+GdyKh268Fb5UNHxMTYeYVWSxNUeJD1XDf2/qYIsHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=It/JJGnKiNcCB8/dhxUAG6BEooni4KMs2jbNd50Py2pgLNg5u0rpR/wVt6ahI/9AX
+	 a1d5RJCEE2U+nzbxK6LDfZA/xoLOP2Ref8heo2Fw0Tkyj+atIsnoT2NiusLMIT3Rlt
+	 9Nz7JjmnloFAhcEaP2WkCGcZ7zh5HZdxFdiKx4+Xm8NjbUlC9C8yyDYYMrbDCP65xZ
+	 8A/3ltjfBo/0kqTeDb9zkdZAMzNTk3NgmFPDsVbwfMiWatgZAdA7qCTb/ttLfB5FGo
+	 Hn5ywXiJcTOfoVvkJfsNPEmuE9MXFXHTBoY2ddFWtM8tacN5c5RJxrzYYtzAOzXPcV
+	 odfQZurmqijWg==
+Message-ID: <2a9553a9-47b9-4eb9-ae55-a77bdd14e8c4@canonical.com>
+Date: Fri, 10 May 2024 08:36:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8523:b0:488:59cc:eb41 with SMTP id
- 8926c6da1cb9f-48959eb6a06mr177842173.3.1715347700133; Fri, 10 May 2024
- 06:28:20 -0700 (PDT)
-Date: Fri, 10 May 2024 06:28:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000553d3f0618198200@google.com>
-Subject: [syzbot] [lsm?] WARNING in collect_domain_accesses
-From: syzbot <syzbot+bf4903dc7e12b18ebc87@syzkaller.appspotmail.com>
-To: gnoack3000@gmail.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, llvm@lists.linux.dev, mic@digikod.net, 
-	nathan@kernel.org, ndesaulniers@google.com, paul@paul-moore.com, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com, trix@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: use kvfree_sensitive to free data->data
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, William Hua
+ <william.hua@canonical.com>, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+ stable@vger.kernel.org
+References: <20240201142450.30510-1-pchelkin@ispras.ru>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20240201142450.30510-1-pchelkin@ispras.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 2/1/24 06:24, Fedor Pchelkin wrote:
+> Inside unpack_profile() data->data is allocated using kvmemdup() so it
+> should be freed with the corresponding kvfree_sensitive().
+> 
+> Also add missing data->data release for rhashtable insertion failure path
+> in unpack_profile().
+> 
+> Found by Linux Verification Center (linuxtesting.org).
+> 
+> Fixes: e025be0f26d5 ("apparmor: support querying extended trusted helper extra data")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-syzbot found the following issue on:
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git..=
-.
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D13b36604980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6d14c12b661fb43
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbf4903dc7e12b18eb=
-c87
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D100235b898000=
-0
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10d57c5c980000
+I have pulled this into my tree
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/580d5c8a46be/disk-=
-45db3ab7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9f8c7366d3dc/vmlinux-=
-45db3ab7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3207c810f03e/bzI=
-mage-45db3ab7.xz
+> ---
+>   security/apparmor/policy.c        | 2 +-
+>   security/apparmor/policy_unpack.c | 1 +
+>   2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+> index 957654d253dd..14df15e35695 100644
+> --- a/security/apparmor/policy.c
+> +++ b/security/apparmor/policy.c
+> @@ -225,7 +225,7 @@ static void aa_free_data(void *ptr, void *arg)
+>   {
+>   	struct aa_data *data = ptr;
+>   
+> -	kfree_sensitive(data->data);
+> +	kvfree_sensitive(data->data, data->size);
+>   	kfree_sensitive(data->key);
+>   	kfree_sensitive(data);
+>   }
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index 5e578ef0ddff..75452acd0e35 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -1071,6 +1071,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+>   
+>   			if (rhashtable_insert_fast(profile->data, &data->head,
+>   						   profile->data->p)) {
+> +				kvfree_sensitive(data->data, data->size);
+>   				kfree_sensitive(data->key);
+>   				kfree_sensitive(data);
+>   				info = "failed to insert data to table";
 
-The issue was bisected to:
-
-commit 55e55920bbe3ccf516022c51f5527e7d026b8f1d
-Author: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-Date:   Wed Aug 31 20:38:40 2022 +0000
-
-    landlock: Fix file reparenting without explicit LANDLOCK_ACCESS_FS_REFE=
-R
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D109badd49800=
-00
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D129badd49800=
-00
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D149badd4980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+bf4903dc7e12b18ebc87@syzkaller.appspotmail.com
-Fixes: 55e55920bbe3 ("landlock: Fix file reparenting without explicit LANDL=
-OCK_ACCESS_FS_REFER")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5081 at security/landlock/fs.c:880 collect_domain_acce=
-sses+0x251/0x2b0 security/landlock/fs.c:880
-Modules linked in:
-CPU: 0 PID: 5081 Comm: syz-executor216 Not tainted 6.9.0-rc7-syzkaller-0005=
-6-g45db3ab70092 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
-gle 04/02/2024
-RIP: 0010:collect_domain_accesses+0x251/0x2b0 security/landlock/fs.c:880
-Code: e8 b4 e0 a1 fd eb 08 e8 bd c2 25 fd 40 b5 01 89 e8 48 83 c4 08 5b 41 =
-5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 a0 c2 25 fd 90 <0f> 0b 90 31 ed 4=
-9 89 df eb c9 e8 90 c2 25 fd 90 0f 0b 90 eb cd 44
-RSP: 0018:ffffc900035f7ba0 EFLAGS: 00010293
-RAX: ffffffff847045e0 RBX: ffff88801d6be178 RCX: ffff88801fc28000
-RDX: 0000000000000000 RSI: 0000000000003fff RDI: ffff88801d6be1c8
-RBP: 0000000000000000 R08: ffffffff846fccdb R09: 1ffffffff1f51f15
-R10: dffffc0000000000 R11: fffffbfff1f51f16 R12: ffffc900035f7c80
-R13: 0000000000003fff R14: ffff88807f4542f0 R15: ffff88801d6be178
-FS:  000055555cfaa380(0000) GS:ffff8880b9400000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066c7e0 CR3: 000000002c1b4000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- current_check_refer_path+0x9b6/0xe70 security/landlock/fs.c:1001
- security_path_link+0xc5/0x120 security/security.c:1894
- do_linkat+0x2db/0x760 fs/namei.c:4673
- __do_sys_linkat fs/namei.c:4704 [inline]
- __se_sys_linkat fs/namei.c:4701 [inline]
- __x64_sys_linkat+0xdd/0xf0 fs/namei.c:4701
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7eff2d2bb329
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 =
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff f=
-f 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff0aacff18 EFLAGS: 00000246 ORIG_RAX: 0000000000000109
-RAX: ffffffffffffffda RBX: 00007fff0aad00e8 RCX: 00007eff2d2bb329
-RDX: 00000000ffffff9c RSI: 0000000020000000 RDI: 00000000ffffff9c
-RBP: 00007eff2d32e610 R08: 0000000000000000 R09: 00007fff0aad00e8
-R10: 0000000020000700 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff0aad00d8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
-n
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
