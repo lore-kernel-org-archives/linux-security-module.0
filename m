@@ -1,124 +1,105 @@
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B1E165FA1;
-	Fri, 10 May 2024 10:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC7D129E7A;
+	Fri, 10 May 2024 13:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715335641; cv=none; b=bB1ROzI4dfQL0U4edS1Qxwg45C7JViyl64cNCUx+amD/mYDmJby2Do3b3LDp/yZ7+/RdH9UxlZV/Jl8dlH5TqMCIxxnAkbIVlDwalRp8bIDnadTxn+i382ez770oEwSZBPse/ja0Av6+9o/kJcBTKWRv/79USlViMGOfRNMabos=
+	t=1715347427; cv=none; b=CwjVv3cWtfhzut6sq+Dvk8W90v+55AfRTM6Q0teYmMeHcZviCvVB3m3IFk5R84TRNhHzJRoYrORBY8Voc0OxxtiBE6Z8ZYaUimeP62yvgokjDgSIH/WCRqZsSREqOPeBWBNPR01P/yOt0DY8U8O+QYM6P0nLWeifwfOUDg3QC8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715335641; c=relaxed/simple;
-	bh=ifYU/c+8V7OWSd9aaCKHF7gpCqv7cSdHzl7rv5oFs0w=;
-	h=MIME-Version:Content-Type:Date:Message-ID:Subject:From:To:CC:
-	 References:In-Reply-To; b=YhNoo8dTXzI9xhXo434xheWu7y4cS7i46GNXu0iiHxPXUSUY7ZXD0de3TW9tkr0v2CS3bUfmEbWOQgbzdg///Smde2sdMBcVKDhNw0j4Q5ULgB9mgbi2QCG+V48aYCICsRfil+6CRAIL8DIgaVtQRfEBNgL8imKn3XwtEtAVSUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=u8uF0CBu; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+	s=arc-20240116; t=1715347427; c=relaxed/simple;
+	bh=QOfNmHJaxWSvaeChuVTWYm97k8EwY+/Ds6fY7S3tHG0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jrIORtPb26F7UzfAr9xpG1Vw+gWbfqX1dE2K42wop4ONOFum7o6GOe/7P1OAc02G3fLQnK+uRR3md3peyfu5Abj81Ir4yoluB9LiY9sGiBzphW+9oioL4CTr+KOPrda8J1gkGlH/vf5pJlL1yTwgB8s7i+2DGxTMLWUzb8WlCGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNxMq7yf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="u8uF0CBu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1715335639; x=1746871639;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   subject:from:to:cc:references:in-reply-to;
-  bh=ODj1UcfgLsilkOJ93AaBzpY+nLn2txKitmtJHEr2EDY=;
-  b=u8uF0CBug7c8zCvsxafKEvq0CDaBFQOMRdoDAtvAPf0o9JmSmUYIrbcd
-   8TMqV3Ny4NIBTlnCoa1vEds+0gHqP9iuyEqAQUw1JfywNJof5GxrLbPYe
-   iCLegTlVnHLZbVrZQVmWEj9Hxdln8O6Wz8aY2aLdaYMWupiifYGtj3XcQ
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.08,150,1712620800"; 
-   d="scan'208";a="88359429"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:07:15 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:54770]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.131:2525] with esmtp (Farcaster)
- id 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5; Fri, 10 May 2024 10:07:14 +0000 (UTC)
-X-Farcaster-Flow-ID: 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 10 May 2024 10:07:13 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Fri, 10 May
- 2024 10:07:03 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNxMq7yf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5F5C113CC;
+	Fri, 10 May 2024 13:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715347427;
+	bh=QOfNmHJaxWSvaeChuVTWYm97k8EwY+/Ds6fY7S3tHG0=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
+	b=oNxMq7yfT5qla44ObK4W/cm54NqR+cbX0qJMQDqk4RTboCuabz/5h63mQaQeTlh8Y
+	 17EimdMwNPm1TT3iZCpp/UDQAePNJwZZ35oko6ACx2slPyVWx7JlIZ9RigHvCKYveD
+	 eJbALWiOnp+8Z2rWu+drtxFQnOtOyhMCPAis9xeAXZU9o85zAjad3NHRcgNwwV6hvU
+	 qpapanK9A2gyvTuq/k88LahJQJX/XqvlrlKAE8Xf1OJPZJw8G0w0T5r50IRRaplH5S
+	 zholKMXpqY9hMzahWviVCrEI3k7VBiYCU/YTWINZYZl4oQr/KmhqlJkk1jbao4cVP8
+	 8bMW/xcfA1Ldg==
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH bpf-next v10 5/5] bpf: Only enable BPF LSM hooks when an
+ LSM program is attached
+From: KP Singh <kpsingh@kernel.org>
+In-Reply-To: <CAHC9VhS6hckf+xzhPn9gNQfFDiQhiGyJuzGVNXB=ZAr=8Af37w@mail.gmail.com>
+Date: Fri, 10 May 2024 09:23:43 -0400
+Cc: Kees Cook <keescook@chromium.org>,
+ linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org,
+ Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ jackmanb@google.com,
+ renauld@google.com,
+ casey@schaufler-ca.com,
+ song@kernel.org,
+ revest@chromium.org
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 10 May 2024 10:07:00 +0000
-Message-ID: <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com>
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Sean Christopherson <seanjc@google.com>,
-	=?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Kees
- Cook" <keescook@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>, Rick P Edgecombe
-	<rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, Angelina Vu
-	<angelinavu@linux.microsoft.com>, Anna Trikalinou
-	<atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>,
-	"Forrest Yuan Yu" <yuanyu@google.com>, James Gowans <jgowans@amazon.com>,
-	James Morris <jamorris@linux.microsoft.com>, John Andersen
-	<john.s.andersen@intel.com>, "Madhavan T . Venkataraman"
-	<madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>,
-	=?utf-8?q?Mihai_Don=C8=9Bu?= <mdontu@bitdefender.com>,
-	=?utf-8?q?Nicu=C8=99or_C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>, Thara
- Gopinath <tgopinath@microsoft.com>, "Trilok Soni" <quic_tsoni@quicinc.com>,
-	Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, Yu Zhang
-	<yu.c.zhang@linux.intel.com>, =?utf-8?q?=C8=98tefan_=C8=98icleru?=
-	<ssicleru@bitdefender.com>, <dev@lists.cloudhypervisor.org>,
-	<kvm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-	<linux-hyperv@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <qemu-devel@nongnu.org>,
-	<virtualization@lists.linux-foundation.org>, <x86@kernel.org>,
-	<xen-devel@lists.xenproject.org>
-X-Mailer: aerc 0.16.0-127-gec0f4a50cf77
-References: <20240503131910.307630-1-mic@digikod.net>
- <20240503131910.307630-4-mic@digikod.net> <ZjTuqV-AxQQRWwUW@google.com>
- <20240506.ohwe7eewu0oB@digikod.net> <ZjmFPZd5q_hEBdBz@google.com>
- <20240507.ieghomae0UoC@digikod.net> <ZjpTxt-Bxia3bRwB@google.com>
-In-Reply-To: <ZjpTxt-Bxia3bRwB@google.com>
-X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+Message-Id: <D58AC87E-E5AC-435D-8A06-F0FFB328FF35@kernel.org>
+References: <20240507221045.551537-1-kpsingh@kernel.org>
+ <20240507221045.551537-6-kpsingh@kernel.org> <202405071653.2C761D80@keescook>
+ <CAHC9VhTWB+zL-cqNGFOfW_LsPHp3=ddoHkjUTq+NoSj7BdRvmw@mail.gmail.com>
+ <0E524496-74E4-4419-8FE5-7675BD1834C0@kernel.org>
+ <CAHC9VhS6hckf+xzhPn9gNQfFDiQhiGyJuzGVNXB=ZAr=8Af37w@mail.gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Tue May 7, 2024 at 4:16 PM UTC, Sean Christopherson wrote:
-> > If yes, that would indeed require a *lot* of work for something we're n=
-ot
-> > sure will be accepted later on.
->
-> Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM=
- support
-> is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible=
- to
-> design KVM support such that much of the development load can be shared b=
-etween
-> the projects.  And having 2+ use cases for a feature (set) makes it _much=
-_ more
-> likely that the feature(s) will be accepted.
 
-Since Sean mentioned our VSM efforts, a small update. We were able to
-validate the concept of one KVM VM per VTL as discussed in LPC. Right
-now only for single CPU guests, but are in the late stages of bringing
-up MP support. The resulting KVM code is small, and most will be
-uncontroversial (I hope). If other obligations allow it, we plan on
-having something suitable for review in the coming months.
 
-Our implementation aims to implement all the VSM spec necessary to run
-with Microsoft Credential Guard. But note that some aspects necessary
-for HVCI are not covered, especially the ones that depend on MBEC
-support, or some categories of secure intercepts.
+> On 9 May 2024, at 16:24, Paul Moore <paul@paul-moore.com> wrote:
+>=20
+> On Wed, May 8, 2024 at 3:00=E2=80=AFAM KP Singh <kpsingh@kernel.org> =
+wrote:
+>> One idea here is that only LSM hooks with default_state =3D false can =
+be toggled.
+>>=20
+>> This would also any ROPs that try to abuse this function. Maybe we =
+can call "default_disabled" .toggleable (or dynamic)
+>>=20
+>> and change the corresponding LSM_INIT_TOGGLEABLE. Kees, Paul, this =
+may be a fair middle ground?
+>=20
+> Seems reasonable to me, although I think it's worth respinning to get
+> a proper look at it in context.  Some naming bikeshedding below ...
+>=20
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index 4bd1d47bb9dc..5c0918ed6b80 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -117,7 +117,7 @@ struct security_hook_list {
+>>        struct lsm_static_call  *scalls;
+>>        union security_list_options     hook;
+>>        const struct lsm_id             *lsmid;
+>> -       bool                            default_enabled;
+>> +       bool                            toggleable;
+>> } __randomize_layout;
+>=20
+> How about inverting the boolean and using something like 'fixed'
+> instead of 'toggleable'?
+>=20
 
-Development happens
-https://github.com/vianpl/{linux,qemu,kvm-unit-tests} and the vsm-next
-branch, but I'd advice against looking into it until we add some order
-to the rework. Regardless, feel free to get in touch.
+I would prefer not changing the all the other LSM_HOOK_INIT calls as we =
+change the default behaviour then. How about calling it "dynamic"=20
 
-Nicolas
+LSM_HOOK_INIT_DYNAMIC and call the boolean dynamic
+
+- KP
+
+> --=20
+> paul-moore.com
+
