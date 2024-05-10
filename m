@@ -1,175 +1,165 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04DA12CDB6
-	for <linux-security-module@vger.kernel.org>; Thu,  9 May 2024 22:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EB01391
+	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 00:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715295547; cv=none; b=c/oMKJlQUJE18gFxuicyBrJkLg2Kn9fuY8tiXhJOBILko6JTsNufi62qa/Y27dyB9HGjBQhYbbmhrk/lD8PjYMvoJXZUq5tcZG//sCEG0sJtMBe7SmrmBxP0dahorbebho4M9WreJN3hevv0VXb7u2lrXJ3lT+nktQMUxuZSGjM=
+	t=1715299322; cv=none; b=T/JR/HlkCWLAqS6Y7WCe5IpJD+UJNFshjEtuDrFAHTAGHrrjfFo3plqwaa2ZSs92FQct5q+Lm9k49YDdU6tdIjak9IA0I6PUXlI+UOP/VXy9K0E695bF/6kCmt1NRaiRTgtjxmWWj3wVDx4eCpA6V1Ft5w7mVEtUf0HcK0woNzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715295547; c=relaxed/simple;
-	bh=6jtL8Tq51/6D1tJuPGm0Kl2FshQGs9RlrJmrJmmfe3k=;
+	s=arc-20240116; t=1715299322; c=relaxed/simple;
+	bh=OlAITSwVfVGwfbVP8ZkkJm+w/eV7SN9Ioh/iFkWSAaM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/1w3XL7lDqNmfeIha/6NBqDrtZO1CdVqLf8i+RsVR/0jzrXKQ1h8zHWFYwB/AwIG1ooaIoHT+xn1FjZ0lUzWzCb/Lfu92rWw6tyFqr0x3vXk0vQ25oVivLiIg9u58q+Wk6IJZ6VMUVSXeaVgc1Z/XjA7+hmHea69JMSDuQse90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GnVVXoFT; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=pJmXJxyKAh/kwlXP/Pr8WkUBEcOzX8LmUdQSZu/Y/cqaC5nvXdEOt+nIn8hxSkH/Wcfvxxk3KkuLsW3B2hIHV8m/e9B/fjuEtDa/v7iG9LmzjOaSau7mCX3I2MASjU6wVb0HSFhSquUw+ioikFE2XEXUm83qBbJ09ksNaQKUtls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RHyJUuvm; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GnVVXoFT"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso7092a12.0
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 15:59:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RHyJUuvm"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-de603e3072dso1697810276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 17:02:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715295543; x=1715900343; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1715299320; x=1715904120; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y1vau91hxBMnWZHVkH054+8jTk5Pa/DNJnVVz4HmL40=;
-        b=GnVVXoFTnT9ZaLKRqrF5ZXsK5zLuCheZZudzfOfQi6gPm4n/QETZ0sOWxLxh6r2rI3
-         19GJlhsoj4X8j8Mf+3s5N1nPAjBqLy8ZY3ZKy7xF7WdQW6DbeJ+NlKQDS0JhVDm1TBX+
-         42JSiTnJT7j92d6kYrn+r4lXLmkzT5yyHur7dYOnOiFnt72q04xYHC2Z7hs/sglbHtAo
-         t91eN8KfbbmQpegOG9igaBDtPz9IQ/r58mhcbZj/RUwNUAe1eV8CRGKlqnIQNX/K0p66
-         JaJlhYBFctMhUWtiyWjkXIhqWg+B4mBUyzMh6hcgaCz5NHxqBzUA9gA+CcLQL++rZg/N
-         MO+g==
+        bh=5CcBKlmciLpmvNHCsy7hLP5Lu9KrCDmkSJsbPPcO9nI=;
+        b=RHyJUuvmxgglJQt5oHNUcyONhDWEl6fVIoRo9ze3BIK0bxoPSX3p6y3vYELmNBovaj
+         NiKh+6ugldjcpeQueoy9x5bAbZvo2bYQ2c6ROjHNkk1dTejagIqDhWTLJ14NwJKNnZcl
+         nJUX36m6Kh8j+0BHepT0wftrVmrX4OuoCdPdg9grI4AOejIgBytvZxhcVr18GOQHPH2X
+         +O0/V/rRE2WG9+Lv9FR7N3tR0PQ19VcjBEgqEFQHRb9xW6h+Ls5GPaXz5KygLHsx4Ok3
+         K7j2v1kaJdK2UEpV6FW8tue/ENkdrhJv85JILwtr2Pwf1VjDg6mSxhFZKWVjx+MHkMls
+         kkFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715295543; x=1715900343;
+        d=1e100.net; s=20230601; t=1715299320; x=1715904120;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y1vau91hxBMnWZHVkH054+8jTk5Pa/DNJnVVz4HmL40=;
-        b=v1dVDqqhiFrUd9SeI5LL6M56NsOLTOqYL6u+tzTfEQJXt78fd/+dAauTD/w+HtVX//
-         36zG3gEhCqjRm4jYU3hrAZXU4uFvcUXTXzOAfeZjuGfu3dEC+xRgLyga1bOTajNWmIip
-         iIP2zfiF8hV6yLparNQjStYf8Qk6LGyzxoU2GhwXM/9reMDC8QxXxzWnEdqfwUceyKqT
-         2coPnjY3u3FHnEfps1Z7w/Ojdo8ryOpURmFdeOd6nyB3cbAopkKahRAYyZQW+IE6JHyv
-         E7NtPwnx/jo/rkxJEUBLvtaehEG181oL5hO4/LY28ArAaDGQNm+lnVMRU5LrPsBoTJSg
-         4c+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXr3rZM7bFAyRfA3YncIus3IaDb4CzIH4+Db7/IhwqOcMEZkJ/L7HPF8NXGclZTob4Jk8vrgxyXABCUN/4HKNsivLr1VLripx0VC7geg/m5+l7Q5Ec2
-X-Gm-Message-State: AOJu0YxzV4P/rSbPz74QsuhxHfmuayhF2vLNPSkYrOhIkFgmbmUxDsyj
-	O6uHLWT76WZfwSRA+nusRVWLvcGSFK4nLSz8AFu/86SvqoQ4rGa4frGYbQ1I1634chJqtcqTQR1
-	hjEjGQrUWGHfJCjykZXHsdJCYKZBUULpAj6OQ
-X-Google-Smtp-Source: AGHT+IHuVFTFisfvrt55ub+8UO4+Id1LOVWeasU97gGretbq/QA6WW4CiikvBa7AfpTXmMMad1SbRPJ/2IdczDaT84s=
-X-Received: by 2002:a50:8d84:0:b0:572:e6fb:ab07 with SMTP id
- 4fb4d7f45d1cf-5735203906fmr30811a12.7.1715295542981; Thu, 09 May 2024
- 15:59:02 -0700 (PDT)
+        bh=5CcBKlmciLpmvNHCsy7hLP5Lu9KrCDmkSJsbPPcO9nI=;
+        b=syJVPcEFGhp59HqOCi2EC/hNqarlosKGObk88FxdZTrMGopi6S36+38K+4bCKedJoP
+         VP9moTUVDJUeGKXlPVaE16b2PY55vIGcMi+s4g3SA7+W2e3VUTFAPy9fHSR1uHLlMB3p
+         HUP6vzTYFAMHzAyO2b8qYrqLyZBxbO5Dsud6PSmdxZ0k0bcVLwLr/vjfWDAPk5YKTMJ3
+         6sqzVuyPvGdTSqdJXdbNbnghVGIy6Zwy5aJdHf57c+GdoJvmEcWid1D3qEBYq2jOgVjF
+         ySMtpn0ISmFRxPdqHLIGPaFFCGUna7gJ4GgY+c+TN550RS7Jujtbbj2mG9k7Cjf07dvX
+         NsEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7Y01vBd1aiIl0yOq2w2y5fqoq9K0Ki8tP/sOFlgYpN3rfJn41seBHeNBeQLBV5oWL30UvxEnrsNLqQI5TEa3cFMl1nTqcRyWyay/em52FWMRZ2D++
+X-Gm-Message-State: AOJu0Ywfx06PZ9Df3Xo619+LHGJ2DaJkJGHxNfQBPz81I6SVTFjTX660
+	feT4OCbrDE5ID3lhlT/DQNv9yg/7EDl3gAV5IhDLslkYU7IPIhum3wdr0XVLgrtUuMrasEh6V5q
+	3IfXaJNB1cgQcq5l6kCW/ukljTeUp6wWEOSqj
+X-Google-Smtp-Source: AGHT+IE18PXcU1Zk0HonLutuj4iXiCiY3rmdMI/HJHdA3NXYauV2mPvHIlo4wNvQLCqg/6HjtJ/weA7nVqy+dwfsn5k=
+X-Received: by 2002:a25:8109:0:b0:dcd:3663:b5e5 with SMTP id
+ 3f1490d57ef6-dee4f2e38eemr984971276.25.1715299320168; Thu, 09 May 2024
+ 17:02:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509200022.253089-1-edliaw@google.com> <20240509200022.253089-4-edliaw@google.com>
- <0e196143-c0bf-4d70-9735-7e6d9a69ea8f@nvidia.com>
-In-Reply-To: <0e196143-c0bf-4d70-9735-7e6d9a69ea8f@nvidia.com>
-From: Edward Liaw <edliaw@google.com>
-Date: Thu, 9 May 2024 15:58:35 -0700
-Message-ID: <CAG4es9Xv0Pwst+b0mre2g+QkBGoQS0cWj4xizRt+cHFJ0BTDaQ@mail.gmail.com>
-Subject: Re: [PATCH v3 03/68] selftests: Compile with -D_GNU_SOURCE when
- including lib.mk
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: shuah@kernel.org, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+References: <00000000000076ba3b0617f65cc8@google.com>
+In-Reply-To: <00000000000076ba3b0617f65cc8@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 9 May 2024 20:01:49 -0400
+Message-ID: <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in hook_inode_free_security
+To: syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>
+Cc: jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, mic@digikod.net, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 9, 2024 at 2:25=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> w=
-rote:
+On Wed, May 8, 2024 at 3:32=E2=80=AFPM syzbot
+<syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
 >
-> On 5/9/24 12:57 PM, Edward Liaw wrote:
-> > lib.mk will add -D_GNU_SOURCE to CFLAGS by default.  This will make it
-> > unnecessary to add #define _GNU_SOURCE in the source code.
-> >
-> > Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
-> > Suggested-by: John Hubbard <jhubbard@nvidia.com>
-> > Signed-off-by: Edward Liaw <edliaw@google.com>
-> > ---
-> >   tools/testing/selftests/Makefile | 4 ++--
-> >   tools/testing/selftests/lib.mk   | 5 ++++-
-> >   2 files changed, 6 insertions(+), 3 deletions(-)
-> >
+> Hello,
 >
-> Hi Edward,
+> syzbot found the following issue on:
 >
-> This looks good, with one small refactoring opportunity remaining, though=
-:
+> HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.ker=
+n..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D14a4676098000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6d14c12b661fb=
+43
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D5446fbf332b0602=
+ede0b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
 >
-> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests=
-/Makefile
-> > index f0431e6cb67e..9039f3709aff 100644
-> > --- a/tools/testing/selftests/Makefile
-> > +++ b/tools/testing/selftests/Makefile
-> > @@ -170,11 +170,11 @@ ifneq ($(KBUILD_OUTPUT),)
-> >     # $(realpath ...) resolves symlinks
-> >     abs_objtree :=3D $(realpath $(abs_objtree))
-> >     BUILD :=3D $(abs_objtree)/kselftest
-> > -  KHDR_INCLUDES :=3D -D_GNU_SOURCE -isystem ${abs_objtree}/usr/include
-> > +  KHDR_INCLUDES :=3D -isystem ${abs_objtree}/usr/include
-> >   else
-> >     BUILD :=3D $(CURDIR)
-> >     abs_srctree :=3D $(shell cd $(top_srcdir) && pwd)
-> > -  KHDR_INCLUDES :=3D -D_GNU_SOURCE -isystem ${abs_srctree}/usr/include
-> > +  KHDR_INCLUDES :=3D -isystem ${abs_srctree}/usr/include
+> Unfortunately, I don't have any reproducer for this issue yet.
 >
-> As mentioned in [1] (but there are a lot of patches to manage here, and
-> I think it got overlooked), you could factor out the duplicated
-> -D_GNU_SOURCE items into a single place:
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/dis=
+k-dccb07f2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinu=
+x-dccb07f2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/b=
+zImage-dccb07f2.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+>
+> general protection fault, probably for non-canonical address 0xdffffc018f=
+62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000=
+c7b17a8af]
+> CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-000=
+12-gdccb07f2914c #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 04/02/2024
+> RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
 
-Hi John,
-Here I'm reverting the change I made to the Makefile in patch 1/68,
-since -D_GNU_SOURCE is being added directly to CFLAGS now, I didn't
-think it was necessary to add it to KHDR_INCLUDES anymore.  I would
-have merged the two patches together, but since the first and second
-patches from v2 were already merged, I thought I should leave them in
-the series.
+Possibly a Landlock issue, Micka=C3=ABl?
 
-Thanks,
-Edward
+> Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c=
+0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00=
+ 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> Call Trace:
+>  <TASK>
+>  security_inode_free+0x4a/0xd0 security/security.c:1613
+>  __destroy_inode+0x2d9/0x650 fs/inode.c:286
+>  destroy_inode fs/inode.c:309 [inline]
+>  evict+0x521/0x630 fs/inode.c:682
+>  dispose_list fs/inode.c:700 [inline]
+>  evict_inodes+0x5f9/0x690 fs/inode.c:750
+>  generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+>  kill_block_super+0x44/0x90 fs/super.c:1675
+>  deactivate_locked_super+0xc6/0x130 fs/super.c:472
+>  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+>  task_work_run+0x251/0x310 kernel/task_work.c:180
+>  exit_task_work include/linux/task_work.h:38 [inline]
+>  do_exit+0xa1b/0x27e0 kernel/exit.c:878
+>  do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+>  __do_sys_exit_group kernel/exit.c:1038 [inline]
+>  __se_sys_exit_group kernel/exit.c:1036 [inline]
+>  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f731567dd69
+> Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
 
->
-> [1]
-> https://lore.kernel.org/all/ac8c217e-4109-4ca7-a7dd-fc4fc8b0a4de@nvidia.c=
-om/
->
-> thanks,
-> --
-> John Hubbard
-> NVIDIA
->
-> >     DEFAULT_INSTALL_HDR_PATH :=3D 1
-> >   endif
-> >
-> > diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/l=
-ib.mk
-> > index 3023e0e2f58f..e782f4c96aee 100644
-> > --- a/tools/testing/selftests/lib.mk
-> > +++ b/tools/testing/selftests/lib.mk
-> > @@ -67,7 +67,7 @@ MAKEFLAGS +=3D --no-print-directory
-> >   endif
-> >
-> >   ifeq ($(KHDR_INCLUDES),)
-> > -KHDR_INCLUDES :=3D -D_GNU_SOURCE -isystem $(top_srcdir)/usr/include
-> > +KHDR_INCLUDES :=3D -isystem $(top_srcdir)/usr/include
-> >   endif
-> >
-> >   # In order to use newer items that haven't yet been added to the user=
-'s system
-> > @@ -188,6 +188,9 @@ endef
-> >   clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
-> >       $(CLEAN)
-> >
-> > +# Build with _GNU_SOURCE by default
-> > +CFLAGS +=3D -D_GNU_SOURCE
-> > +
-> >   # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
-> >   # make USERCFLAGS=3D-Werror USERLDFLAGS=3D-static
-> >   CFLAGS +=3D $(USERCFLAGS)
->
->
+--=20
+paul-moore.com
