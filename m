@@ -1,55 +1,55 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA50613E41D
-	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 00:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4658513F001
+	for <linux-security-module@vger.kernel.org>; Fri, 10 May 2024 00:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715299916; cv=none; b=e5PLNMO3HKPO91rsJudPM2ruq57twA3pwcfxXxZJqaLI6xWARDbsRmxF/JfEZyTcSRbwY1gXbE0PnSEa0928gdRKDjhSW5W75SRLqtrJtcDIMIwNsk2JigOY8QetZIEFBu4rKokxyCRW1LT6ziN5ho3nDfBiH5nf+To+1IS636E=
+	t=1715299918; cv=none; b=VLrhsiTNKXlW+p42VmzkaBCL2dj/oQE+AGKooEE22sQrVYyLYmAgaShg5t38zH8xNNULLx8tE5lcLnOqV+AdPqWuHhxDTkLQi8EkXkU0ZsHreTaC336s7rWbALt+/VG20NtAh5Nk2NaeCrtXDvHDfP1j2vMh5pJRCG0HfUSpPGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715299916; c=relaxed/simple;
-	bh=rMNorx6Mlr6OQN4TSpHpbSA76EDTMc0K90CNZBa5pHc=;
+	s=arc-20240116; t=1715299918; c=relaxed/simple;
+	bh=3mf9ubp2IjLBV/7FQEFzZTh+exmau0QfS0swO/EUef0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lErSymGPIGZkDJyfOiScQ+qGu0u4wZkjEGsBllQWAB44t48qFzefu9SUmNqp6PQeF/t+Bi3EbJvq4HLgBn/QccptiQ7i/F3FPstgDMmLjIee2tP+gvGlbDj7Vq1RiwSxvqGWdPTFpFhlDsCjWT5lwwvpUq/mOqN1MlxYSJ1NWIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R9oz5zaY; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=M4w92FfDphynW9RJUvJ8E3eDAmYgSYFIvqzO5HJyW202pudk0jxmgtjxoPuoe7BwC/y0Haas0map0F5vm22KMnFbkTSVCrgr0sPUYweO44Q8TljF8KHb9zh6xKIQ79H+xUmBqJfaPP1tHzQOF8daan+D5oY/1MEkuQIOlLcrYtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pcyRJtaD; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R9oz5zaY"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2b4348fb84bso1261482a91.3
-        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 17:11:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pcyRJtaD"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-61a9f6c869dso1246765a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 09 May 2024 17:11:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715299913; x=1715904713; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715299917; x=1715904717; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvPt4Tl0MuZvjLcVUnKyQWY6SnsFvSQcdBrwWAVVIiI=;
-        b=R9oz5zaYIRG7wZFD0dyE/lqJWplTqmAyTtF2seDIAjqkgZ6TABy+n5/DkEqbYZKczp
-         7Ko9b04Tcu54dOC+gVUl2p8P+K5O3lwzvU+Ri34m7BdFuaUjhBbKLr7jtoTDxwmUh/O+
-         EKu/yP9/EekzcQGSgIkk6tRXdvUDnAwyLVR9H7N50UbXV0OoJY+l2XMVHAU2NCoKXs9D
-         lPd06KRUOd0InkkXlKozbh9khFYdrLAC8neOou6d3YSVD/YFJEP/EaARjRrQ30IUMA+b
-         r/DIgoxZfw4eukTlWz+m/GRvrMWGAWWkaL/EAPF8wF9YvN9/EP17yMzl4b28RC7WgLt5
-         faTA==
+        bh=SRNRq1qF8bny7SXtkZUZA1yyodfV/k2JiC2RYv7Zcwo=;
+        b=pcyRJtaD+MBfpyQUNaCSLKmDFpXBKSWrB28+Hi76wFvyUPSTZ+B/FPmmUbk7L+Xv1s
+         RXxllBMSm5M+lNt/nks0YMAnyw/z3bjYSegwORhZfNyS/LVih1gbt7dNZqlWm+3QWJv1
+         L22EloVEXKXVtAaBUKA4BIgvQKOrfH5etrD+uXCPzmwlcZQXZFOIVl1RuOvI0/3sv4fk
+         DA4NjjTEjXSmqmGnp9Q5onvYV6zZ98mwlU+27/y2Bb2EqxeLL4uCYwoLVLvnrneLgE4F
+         3E5ETPUziS7YTBtBtJXCgu0R75W5R4Q6UgYqHyFshxTNV+CA4rIJokOXHC2G9/+rQCWw
+         ICtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715299913; x=1715904713;
+        d=1e100.net; s=20230601; t=1715299917; x=1715904717;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvPt4Tl0MuZvjLcVUnKyQWY6SnsFvSQcdBrwWAVVIiI=;
-        b=of33KDyqNSMNsnKIk9UZNXw4OGqaDjRb/H+M2IGZH4MyCtAzKmUXmVAPjxks2sknzJ
-         oScqagHG1rkLhVhaeph2dEwlEZD9VJU9x6ZhjsgW5/BVbzITMqbA6+NrSgrSfGsqRXHN
-         nIqsbEaIy/amoMonqqXtpy3R9U/Gpuz5tOJY/3h+OcOTE9GVSSE0zAm07l5GQTXp99oM
-         xGEStijtduGtluLLIuu6H7Xh6cuadR5/Mgd7z7q7gDYvJN9KAIRobqKStuIYIQEhHTAF
-         xW0iKxogafBEzbrq/Vp3xy6qhP4skRcH2I5uYgY0305JEV21v7GEd/gdG1N2RCs2Z3CL
-         5vvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWd3FwsOSLWgxealbqlno+QTSzDU7tBLN0MgTpl+m3uk7hJ3W7wT6Bi1F6tKnNBS///OQ4tu5+yz/zVn5gOe7BfLg4kTtxw6OuEJYLMzMiVE0RuvGUh
-X-Gm-Message-State: AOJu0YxyVOdSsByTMUETxupA3uepmXmeQOw+DEpO+X9CcBqqP9nAbA4f
-	DhEP2zs/Sg6KKpr0qOrpBNBt/bLc/sQpq1pDBafTgNTQ6rBnDqYDrGi/wDvkJz9jUxYl+9d4IG4
-	ldg==
-X-Google-Smtp-Source: AGHT+IGZ2aOBDdexFnrNtN3LwFkzh8EwXSY2R5YkN1xQaKaoqKI0IvKyYvyqXpWGkRSifj5tD5YyyT57Tro=
+        bh=SRNRq1qF8bny7SXtkZUZA1yyodfV/k2JiC2RYv7Zcwo=;
+        b=j5ufEU4EHaOYKP5bZwfujhXn1hALBoOLyvO3m+X54JX7Jkgnnb5TjuarbvMzIdL84H
+         O2gYPF++X3lCbQEoD4lWSF9bSgPSz9NfeKOjogEqAetYmasv5aNHhQmYEBd8JdFdyJYq
+         52db0d5Ge7bQb6k/zQFC1ep0ccWnAj4hB05VB2aUeBGm1ceAHRWrrEgKIbCJ9QjSrGOX
+         QcPnB7eoqWoBsrsQ+YBLfa0CkQF4Iy/38Vx1/5rALOMg0xRnxmsBlzZdVAbMXOXNVgk9
+         Wd8yNbrTrJPqle4GN2h5oj1NomSpacmbIQ7UwhGf8LPpWNxQgH5dSi9Dr32BJb++fn6G
+         0UaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQh4bADBcfjhPkgsqYjHg6YkAGVcSG5rGMqV/dGo70YzgjRF+Hg0PKFsBb8TOJ7Rx3HMbsUlue2LcUqkY7TavdvyzWAOlj4EjN0Jzj/4OPxr4Xg5xZ
+X-Gm-Message-State: AOJu0Yx0iZrL1ODNiXkkHFEr+DILhUDUKfiXMpa68wv6h1e4e3KDFTs7
+	a0+qCJwlh7n+bRxPXDgSpi6L5h1k9oIsNKfYrnWKV90vjWP4vmysaX7U9DGSdFGZm1NFkwv1Amw
+	w8w==
+X-Google-Smtp-Source: AGHT+IHJ/Z8yTZVEty1N/QdZrLUX087HrMPb2W/aoyS4qCIrsBTTBdEKswueVBWbPmwhLdiVqvZ/UOq9Jdo=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a17:90a:e00d:b0:2b4:346f:9a75 with SMTP id
- 98e67ed59e1d1-2b6cceb662fmr2747a91.6.1715299913222; Thu, 09 May 2024 17:11:53
+ (user=edliaw job=sendgmr) by 2002:a05:6a02:503:b0:623:2c3c:ab09 with SMTP id
+ 41be03b00d2f7-6373451a8bdmr2786a12.0.1715299916621; Thu, 09 May 2024 17:11:56
  -0700 (PDT)
-Date: Fri, 10 May 2024 00:07:16 +0000
+Date: Fri, 10 May 2024 00:07:17 +0000
 In-Reply-To: <20240510000842.410729-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240510000842.410729-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240510000842.410729-60-edliaw@google.com>
-Subject: [PATCH v4 59/66] selftests/thermal: Drop define _GNU_SOURCE
+Message-ID: <20240510000842.410729-61-edliaw@google.com>
+Subject: [PATCH v4 60/66] selftests/timens: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -80,34 +80,107 @@ redefinition warnings.
 
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- .../selftests/thermal/intel/power_floor/power_floor_test.c     | 3 ---
- .../selftests/thermal/intel/workload_hint/workload_hint_test.c | 3 ---
- 2 files changed, 6 deletions(-)
+ tools/testing/selftests/timens/clock_nanosleep.c | 1 -
+ tools/testing/selftests/timens/exec.c            | 1 -
+ tools/testing/selftests/timens/futex.c           | 1 -
+ tools/testing/selftests/timens/gettime_perf.c    | 1 -
+ tools/testing/selftests/timens/procfs.c          | 1 -
+ tools/testing/selftests/timens/timens.c          | 1 -
+ tools/testing/selftests/timens/timer.c           | 1 -
+ tools/testing/selftests/timens/timerfd.c         | 1 -
+ tools/testing/selftests/timens/vfork_exec.c      | 1 -
+ 9 files changed, 9 deletions(-)
 
-diff --git a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-index 0326b39a11b9..ce98ab045ae9 100644
---- a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-+++ b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-@@ -1,7 +1,4 @@
+diff --git a/tools/testing/selftests/timens/clock_nanosleep.c b/tools/testing/selftests/timens/clock_nanosleep.c
+index 72d41b955fb2..5608f2b519e1 100644
+--- a/tools/testing/selftests/timens/clock_nanosleep.c
++++ b/tools/testing/selftests/timens/clock_nanosleep.c
+@@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
--
 -#define _GNU_SOURCE
--
- #include <stdio.h>
- #include <string.h>
- #include <stdlib.h>
-diff --git a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-index 217c3a641c53..5153d42754d6 100644
---- a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-+++ b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-@@ -1,7 +1,4 @@
+ #include <sched.h>
+ 
+ #include <sys/timerfd.h>
+diff --git a/tools/testing/selftests/timens/exec.c b/tools/testing/selftests/timens/exec.c
+index e40dc5be2f66..7f718a3bb043 100644
+--- a/tools/testing/selftests/timens/exec.c
++++ b/tools/testing/selftests/timens/exec.c
+@@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
--
 -#define _GNU_SOURCE
--
- #include <stdio.h>
- #include <string.h>
- #include <stdlib.h>
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sched.h>
+diff --git a/tools/testing/selftests/timens/futex.c b/tools/testing/selftests/timens/futex.c
+index 6b2b9264e851..0a5a81939220 100644
+--- a/tools/testing/selftests/timens/futex.c
++++ b/tools/testing/selftests/timens/futex.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sched.h>
+ 
+ #include <linux/unistd.h>
+diff --git a/tools/testing/selftests/timens/gettime_perf.c b/tools/testing/selftests/timens/gettime_perf.c
+index 6b13dc277724..9fe6690edd2a 100644
+--- a/tools/testing/selftests/timens/gettime_perf.c
++++ b/tools/testing/selftests/timens/gettime_perf.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <errno.h>
+diff --git a/tools/testing/selftests/timens/procfs.c b/tools/testing/selftests/timens/procfs.c
+index 1833ca97eb24..7bc389b05799 100644
+--- a/tools/testing/selftests/timens/procfs.c
++++ b/tools/testing/selftests/timens/procfs.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <math.h>
+diff --git a/tools/testing/selftests/timens/timens.c b/tools/testing/selftests/timens/timens.c
+index 387220791a05..7941a43155a8 100644
+--- a/tools/testing/selftests/timens/timens.c
++++ b/tools/testing/selftests/timens/timens.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sched.h>
+diff --git a/tools/testing/selftests/timens/timer.c b/tools/testing/selftests/timens/timer.c
+index 5e7f0051bd7b..378e058359c1 100644
+--- a/tools/testing/selftests/timens/timer.c
++++ b/tools/testing/selftests/timens/timer.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sched.h>
+ 
+ #include <sys/syscall.h>
+diff --git a/tools/testing/selftests/timens/timerfd.c b/tools/testing/selftests/timens/timerfd.c
+index 9edd43d6b2c1..807edb9d83c9 100644
+--- a/tools/testing/selftests/timens/timerfd.c
++++ b/tools/testing/selftests/timens/timerfd.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sched.h>
+ 
+ #include <sys/timerfd.h>
+diff --git a/tools/testing/selftests/timens/vfork_exec.c b/tools/testing/selftests/timens/vfork_exec.c
+index beb7614941fb..675c6a8b2eed 100644
+--- a/tools/testing/selftests/timens/vfork_exec.c
++++ b/tools/testing/selftests/timens/vfork_exec.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sched.h>
 -- 
 2.45.0.118.g7fe29c98d7-goog
 
