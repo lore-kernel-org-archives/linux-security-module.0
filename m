@@ -1,82 +1,124 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F119F9C9;
-	Fri, 10 May 2024 06:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B1E165FA1;
+	Fri, 10 May 2024 10:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715324293; cv=none; b=SzmC2VjVkGIzzMc6qvNH1l+x5qIlTEqyb/eFHzxsqNnjcYM7AHMNrTr8r9pSvMsmONnATxJG76SBcfDNH7X+dLPNeLxj+JVUgnCrYzcE6Cx6YC+20wNHnVKB5W0+TOitL/0qlpUp3t6R5y9xYk1o2zrROu2s3FXRGujMJtANgLc=
+	t=1715335641; cv=none; b=bB1ROzI4dfQL0U4edS1Qxwg45C7JViyl64cNCUx+amD/mYDmJby2Do3b3LDp/yZ7+/RdH9UxlZV/Jl8dlH5TqMCIxxnAkbIVlDwalRp8bIDnadTxn+i382ez770oEwSZBPse/ja0Av6+9o/kJcBTKWRv/79USlViMGOfRNMabos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715324293; c=relaxed/simple;
-	bh=ze4zdjo0fbz33aF2z7EukPA4jLCJ45hoe9ptXCI2FWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UxyRiQt7ZD6H2dfXVd065zwmac1fMRkGIoOR372z8Epszb2NAcojqaf+YVKZKugyEKlqZmi9IsRdMmJ8eSlFuGsx9KZn9IuzndHHiRvaX8TO6k7HQsRObdR1nSOsrhRPqFF2OuH8cBi5yml29wg8pWqGniW3bKlQoRL+8CKn5R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=LoPMsBkp; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	s=arc-20240116; t=1715335641; c=relaxed/simple;
+	bh=ifYU/c+8V7OWSd9aaCKHF7gpCqv7cSdHzl7rv5oFs0w=;
+	h=MIME-Version:Content-Type:Date:Message-ID:Subject:From:To:CC:
+	 References:In-Reply-To; b=YhNoo8dTXzI9xhXo434xheWu7y4cS7i46GNXu0iiHxPXUSUY7ZXD0de3TW9tkr0v2CS3bUfmEbWOQgbzdg///Smde2sdMBcVKDhNw0j4Q5ULgB9mgbi2QCG+V48aYCICsRfil+6CRAIL8DIgaVtQRfEBNgL8imKn3XwtEtAVSUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=u8uF0CBu; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="LoPMsBkp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715324286;
-	bh=ze4zdjo0fbz33aF2z7EukPA4jLCJ45hoe9ptXCI2FWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LoPMsBkp+4SADwS6jrdQNBJGi7DCW73il17aUnDwIa1oyXji8Q/4pc/iKFIzJLY/c
-	 Q+z//3FFDHszb0g6PtGL5I026GJFKPn+JmHgnAvadcY419eX/foh0ynFGckgalFFOq
-	 HLg577n8fZ8bMgT8eQfvMVA4UfdUCoQF6nttbLmM=
-Date: Fri, 10 May 2024 08:58:05 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Willy Tarreau <w@1wt.eu>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v4 37/66] selftests/nolibc: Drop define _GNU_SOURCE
-Message-ID: <b2ed9fed-0263-405d-9e5a-71c49421619a@t-8ch.de>
-References: <20240510000842.410729-1-edliaw@google.com>
- <20240510000842.410729-38-edliaw@google.com>
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="u8uF0CBu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1715335639; x=1746871639;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   subject:from:to:cc:references:in-reply-to;
+  bh=ODj1UcfgLsilkOJ93AaBzpY+nLn2txKitmtJHEr2EDY=;
+  b=u8uF0CBug7c8zCvsxafKEvq0CDaBFQOMRdoDAtvAPf0o9JmSmUYIrbcd
+   8TMqV3Ny4NIBTlnCoa1vEds+0gHqP9iuyEqAQUw1JfywNJof5GxrLbPYe
+   iCLegTlVnHLZbVrZQVmWEj9Hxdln8O6Wz8aY2aLdaYMWupiifYGtj3XcQ
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.08,150,1712620800"; 
+   d="scan'208";a="88359429"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:07:15 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:54770]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.131:2525] with esmtp (Farcaster)
+ id 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5; Fri, 10 May 2024 10:07:14 +0000 (UTC)
+X-Farcaster-Flow-ID: 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 10 May 2024 10:07:13 +0000
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Fri, 10 May
+ 2024 10:07:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510000842.410729-38-edliaw@google.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 10 May 2024 10:07:00 +0000
+Message-ID: <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com>
+Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
+ configuration and violation
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+To: Sean Christopherson <seanjc@google.com>,
+	=?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+CC: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Kees
+ Cook" <keescook@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>, Rick P Edgecombe
+	<rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, Angelina Vu
+	<angelinavu@linux.microsoft.com>, Anna Trikalinou
+	<atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>,
+	"Forrest Yuan Yu" <yuanyu@google.com>, James Gowans <jgowans@amazon.com>,
+	James Morris <jamorris@linux.microsoft.com>, John Andersen
+	<john.s.andersen@intel.com>, "Madhavan T . Venkataraman"
+	<madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>,
+	=?utf-8?q?Mihai_Don=C8=9Bu?= <mdontu@bitdefender.com>,
+	=?utf-8?q?Nicu=C8=99or_C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>, Thara
+ Gopinath <tgopinath@microsoft.com>, "Trilok Soni" <quic_tsoni@quicinc.com>,
+	Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, Yu Zhang
+	<yu.c.zhang@linux.intel.com>, =?utf-8?q?=C8=98tefan_=C8=98icleru?=
+	<ssicleru@bitdefender.com>, <dev@lists.cloudhypervisor.org>,
+	<kvm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+	<linux-hyperv@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <qemu-devel@nongnu.org>,
+	<virtualization@lists.linux-foundation.org>, <x86@kernel.org>,
+	<xen-devel@lists.xenproject.org>
+X-Mailer: aerc 0.16.0-127-gec0f4a50cf77
+References: <20240503131910.307630-1-mic@digikod.net>
+ <20240503131910.307630-4-mic@digikod.net> <ZjTuqV-AxQQRWwUW@google.com>
+ <20240506.ohwe7eewu0oB@digikod.net> <ZjmFPZd5q_hEBdBz@google.com>
+ <20240507.ieghomae0UoC@digikod.net> <ZjpTxt-Bxia3bRwB@google.com>
+In-Reply-To: <ZjpTxt-Bxia3bRwB@google.com>
+X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-Hi Edward,
+On Tue May 7, 2024 at 4:16 PM UTC, Sean Christopherson wrote:
+> > If yes, that would indeed require a *lot* of work for something we're n=
+ot
+> > sure will be accepted later on.
+>
+> Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM=
+ support
+> is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible=
+ to
+> design KVM support such that much of the development load can be shared b=
+etween
+> the projects.  And having 2+ use cases for a feature (set) makes it _much=
+_ more
+> likely that the feature(s) will be accepted.
 
-On 2024-05-10 00:06:54+0000, Edward Liaw wrote:
-> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
-> redefinition warnings.
+Since Sean mentioned our VSM efforts, a small update. We were able to
+validate the concept of one KVM VM per VTL as discussed in LPC. Right
+now only for single CPU guests, but are in the late stages of bringing
+up MP support. The resulting KVM code is small, and most will be
+uncontroversial (I hope). If other obligations allow it, we plan on
+having something suitable for review in the coming months.
 
-The nolibc tests do not use lib.mk.
+Our implementation aims to implement all the VSM spec necessary to run
+with Microsoft Credential Guard. But note that some aspects necessary
+for HVCI are not covered, especially the ones that depend on MBEC
+support, or some categories of secure intercepts.
 
-This change breaks "make libc-test", please drop it.
+Development happens
+https://github.com/vianpl/{linux,qemu,kvm-unit-tests} and the vsm-next
+branch, but I'd advice against looking into it until we add some order
+to the rework. Regardless, feel free to get in touch.
 
-> Signed-off-by: Edward Liaw <edliaw@google.com>
-> ---
->  tools/testing/selftests/nolibc/nolibc-test.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> index 94bb6e11c16f..a28813f4367f 100644
-> --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> @@ -1,6 +1,4 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> -
-> -#define _GNU_SOURCE
->  #define _LARGEFILE64_SOURCE
->  
->  /* libc-specific include files
-> -- 
-> 2.45.0.118.g7fe29c98d7-goog
-
-Thomas
+Nicolas
