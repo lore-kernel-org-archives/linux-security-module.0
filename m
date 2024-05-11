@@ -1,103 +1,99 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4915B2E644;
-	Sat, 11 May 2024 03:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4881537F5;
+	Sat, 11 May 2024 09:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715397757; cv=none; b=feJ97wxfqhVWKsMPEX28+BWFEizfPzrpt0RiUkxiZmgoeq9ic9BkJTfFSUnPa63E2qYOw/ryxfZYKDiUt5msYkS44Dy2DQD6xGJFs3n2rHVB0aGK4w2B5ZuSX2tm7/1MEQKefz6sp2+KZ0qDyLFMCIBpIE/p7r8U18Xt4AO9yAk=
+	t=1715421082; cv=none; b=hLo1qT7TB6M1I8MXvU4U+q0teDCMTaCT99oP1yXheShClDSEGn2rV4ifefhv/3YO/abP38hBCCzsrcUyArpwKnQONTKXI+RKoIC5VnIahkTw2jq+NK27hcZa61JpOAkVP9bVP1kkw5WYYrGcgCI9k/9+0OPBDERqK0u0+BHgsmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715397757; c=relaxed/simple;
-	bh=h84WJ7H+w15XmJ2O66TOYlk/zKdLB2pIjpHeUK0wgBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iGGk03uLvW1QTh/WxJmK0Cewzjk9iEQTKtvsLXP6GX72we4zuO13COVJ9kT9d2+3/b95M3h5b8K+gHEiJ/gINM2KkVaMnbHO1cu6q2zyyCj/tCHikSxIKvLXWq8RW/Xk2QFmH44L/aNKOnoaka0FZ8YPFqld1KBfrQHpaYs3DPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N14iFgO+; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715421082; c=relaxed/simple;
+	bh=0cJX+ofKilB0YeAddG2Rk34Tcb84daQhOHXhdzx0r3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1Emcb0fYYhIyfj4HDg32a0cLUnd3pWmx0p1eqTDOa+K/dtsGx99nPG6i9Fnxbq0yaMHPghGHN9HnmxE2ySH1nZngEn/mRlDZzJNH3K/XDH5c5MvQZU32BFzpay9cqLlH3U8f6hk+0mwpcNA7zgH/xGNpjc1jvhT2QfLm9mOL2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=k56XE3N3; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N14iFgO+"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2b12b52fbe0so2057575a91.0;
-        Fri, 10 May 2024 20:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715397754; x=1716002554; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uMB81L/0jjAxWQ09aWZO4NxBHzsdYbHe8XIc7QrtT1U=;
-        b=N14iFgO+o2KJmYRrIocCbJOO+ahyzuuEXPzXep+paiUlqnT7rEGtvYgEFjFNJWm94N
-         tZMLfuvyVVS3IV4h73dk+DEnN7Ekrf+5nmvCEtiNLu1lOrbEuSOZQyq76QemggDLsKvT
-         41wK+1wgwiDu1tbpobD9QNJyAlTccgrBmlwd8i1olrme1PfW4dPbNCQekROtZe6UWgAj
-         Uy9pTXUvL84XrFeZUtpP10D4cK6V7W2oK71tF4qt8KCJo1Rs5MIweP00AxXbg+OJK2dd
-         EE+MgHPks5Aj3/D3oRQdR4F9ZZqrEdEVVf+KdHOMao+cPd6KdbrXThJf5MlI9HWU1sGq
-         7ShA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715397754; x=1716002554;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uMB81L/0jjAxWQ09aWZO4NxBHzsdYbHe8XIc7QrtT1U=;
-        b=n9KBeGG6GRlBGxDrA2x+Ftn8yfgL1VA2bg1qYubbmEhw6bxx8jhkU7/UWBkb4mKSO5
-         CasPn3+p/xvUOptKcLuLZQdz9UmRDQ1Zu6Z4P+2jpp92amyQn1L5ERuxjhaDFVmgwIbj
-         ZEOqFiZWJjLE04FkTMohdJx5Ls86YXg5QM4N2xJQXH7LVLBSI2sL2/gARhuhGJ5t5eON
-         Zj4xkaDK4MWEwC3B66swrATCjlf6GFoIDXHV2IRI72xlD0lVO9ycPA5ASMj2fXc7+7Cs
-         9Z5NJd0QLtohSN13W6YQSMzKZqWDInIFAKCNNQGdBfPJGmQoBfU2JlbsX04Rlg3i7Yla
-         ONrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlRQOuv3RIKSEOBMYQXOCGgH3vUntRLX20bGU4UmYm4OWw3HdGU1ocd8aYzKi1C8KS1T6zS2gSAGk3++PNOmoKGwLMiebsHS+a0OzTxuQF67ETxEIYjj7efJ4b3NAaJ/Q2FQfkGtLX5bCptvGnT5WTS6JfdqIPwVL9eu0uf6oHRqdXJCsNVR9kkXCpzVA=
-X-Gm-Message-State: AOJu0Yye8z4INSAnnAZpImCTL0IJp/Ul0+u8k7H+JZYEHoOfbaybsRfn
-	GxICAntBQy0KheVUXyGI8+JnerjuYtFaMAFQd+BG+fGSd31jIRIOQFIh6fZ0
-X-Google-Smtp-Source: AGHT+IHfescNvFV9wlrE33urRclbhE1c8q8C0H9oiBiwGCf40u0JXrBpAK0bHD8nRWhhgwtTMs5CRg==
-X-Received: by 2002:a17:90a:dc82:b0:2b5:6e92:1096 with SMTP id 98e67ed59e1d1-2b6cc87abadmr4579606a91.28.1715397754463;
-        Fri, 10 May 2024 20:22:34 -0700 (PDT)
-Received: from localhost.localdomain ([114.111.24.234])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d18basm39877875ad.57.2024.05.10.20.22.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 20:22:34 -0700 (PDT)
-From: Yusong Gao <a869920004@gmail.com>
-To: jarkko@kernel.org,
-	zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	trivial@kernel.org
-Subject: [PATCH] integrity: Update comment for load_moklist_certs()
-Date: Sat, 11 May 2024 03:22:24 +0000
-Message-Id: <20240511032224.818418-1-a869920004@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="k56XE3N3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715421078;
+	bh=0cJX+ofKilB0YeAddG2Rk34Tcb84daQhOHXhdzx0r3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k56XE3N3d4pgs8RXOwLSnRLB27sLWUfITEgcvrDMjZdmJPa/Ir6S6oi9PpE553jPt
+	 sb7k+FxSLFp8Odclpb2t4vqVdgVnPhAwWUDBH9QwI80jAM7LA7gxjkMhJ80aDoR2yw
+	 DUA3ugAMpnt1Nr9pHpMHzjCRdAMZeTMxIBsCjZb8=
+Date: Sat, 11 May 2024 11:51:18 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Kees Cook <keescook@chromium.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>, Eric Dumazet <edumazet@google.com>, 
+	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-xfs@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kexec@lists.infradead.org, 
+	linux-hardening@vger.kernel.org, bridge@lists.linux.dev, lvs-devel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <8d1daa64-3746-46a3-b696-127a70cdf7e7@t-8ch.de>
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+ <20240424201234.3cc2b509@kernel.org>
+ <202405080959.104A73A914@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <202405080959.104A73A914@keescook>
 
-After commit 45fcd5e521cd ("integrity: add new keyring handler for
-mok keys"), the comment about load_moklist_certs() is out-of-date.
-Change keyring name from platform to machine.
+Hi Kees,
 
-Signed-off-by: Yusong Gao <a869920004@gmail.com>
----
- security/integrity/platform_certs/load_uefi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2024-05-08 10:11:35+0000, Kees Cook wrote:
+> On Wed, Apr 24, 2024 at 08:12:34PM -0700, Jakub Kicinski wrote:
+> > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Weißschuh wrote:
+> > > The series was split from my larger series sysctl-const series [0].
+> > > It only focusses on the proc_handlers but is an important step to be
+> > > able to move all static definitions of ctl_table into .rodata.
+> > 
+> > Split this per subsystem, please.
+> 
+> I've done a few painful API transitions before, and I don't think the
+> complexity of these changes needs a per-subsystem constification pass. I
+> think this series is the right approach, but that patch 11 will need
+> coordination with Linus. We regularly do system-wide prototype changes
+> like this right at the end of the merge window before -rc1 comes out.
 
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index d1fdd113450a..e954776d3cfb 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -97,7 +97,7 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
-  * load_moklist_certs() - Load MokList certs
-  *
-  * Load the certs contained in the UEFI MokListRT database into the
-- * platform trusted keyring.
-+ * machine keyring.
-  *
-  * This routine checks the EFI MOK config table first. If and only if
-  * that fails, this routine uses the MokListRT ordinary UEFI variable.
--- 
-2.34.1
+That sounds good.
 
+> The requirements are pretty simple: it needs to be a obvious changes
+> (this certainly is) and as close to 100% mechanical as possible. I think
+> patch 11 easily qualifies. Linus should be able to run the same Coccinelle
+> script and get nearly the same results, etc. And all the other changes
+> need to have landed. This change also has no "silent failure" conditions:
+> anything mismatched will immediately stand out.
+
+Unfortunately coccinelle alone is not sufficient, as some helpers with
+different prototypes are called by handlers and themselves are calling
+handler and therefore need to change in the same commit.
+But if I add a diff for those on top of the coccinelle script to the
+changelog it should be obvious.
+
+> So, have patches 1-10 go via their respective subsystems, and once all
+> of those are in Linus's tree, send patch 11 as a stand-alone PR.
+
+Ack, I'll do that with the cover letter information requested by Joel.
+
+> (From patch 11, it looks like the seccomp read/write function changes
+> could be split out? I'll do that now...)
+
+Thanks!
+
+Thomas
