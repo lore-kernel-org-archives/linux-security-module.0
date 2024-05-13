@@ -1,103 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA0A2E631;
-	Mon, 13 May 2024 18:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3586D4206A
+	for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 19:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715625328; cv=none; b=IYby7TbTNFjVUhBQwADROvk27K64T2+oqbvGONBjLv5NwkrIwaYfrENOckQ8s3yLJh/THXs46pGck7WZvWNuFEYOvkSRfXU52Sj94VIoBsogU2sus8foGr08SzybwF7q+6qdbqYRFXv/fNFiIOJA6e2hL3DAz7Ps3pNXCsUJK4M=
+	t=1715626896; cv=none; b=P/KqX5altidu+giFCJLlWpGqhGyqVAYB0MoDd82n6KcGfZqW0q3BYoNUp0QAhfQCMMCTAKtwH/hfpFP/zlUxqOx66bMfrRrRHwuUW4MV+nRQ8fFdMesXOdoS1gEizzYENGxBGCOeQyLD4XxDL8JFwOIaYxl6OHhpl/z2GdfO6xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715625328; c=relaxed/simple;
-	bh=YKbPkKlqAwoRaNZqki6fpfGRkig5wtpfRBksExN/W+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GyEn7lw523Mjm3Sf1bd5N0EHQrexyruyxNfoM/BYPjTmgG7Gs6jwbgWSHSRt26O1vPCYBWHe2ZufXgxZ5337Py3OyYXI4/Wfe4kswyNKIZmV5vusSTW64ovuFGaiFuo+XCSDygThhL37V+DE6/9u/v2WWAibnKLO1Mkbw0PkeA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdUm4mLd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715626896; c=relaxed/simple;
+	bh=ixoeKydcfDxDp9l8VxDd8/Lo0R50toRCOrZzUO6iIoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNyPWMsquG9U/HqnpRoMdeb8jNzS1BGKa5C5loj1BCNYDT98vVePI/2+oqCQjW/9Cnz2K76LCSmBqKktnUgYXVTROCQ5VAAeDJPmNb8NLlKRpO3hvFukDtOogcGN00el+OfgNGpXS+kqmFlDPhW049oJvne5go7Rv+aXH/HgVLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=khGdRp6x; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdUm4mLd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3E4C113CC;
-	Mon, 13 May 2024 18:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715625328;
-	bh=YKbPkKlqAwoRaNZqki6fpfGRkig5wtpfRBksExN/W+4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kdUm4mLdt6zonDi2uj1fC/4yvUuFv7+8Yf1ocwHVZVTXuoGnZ1WetV+VPrITiJ00/
-	 0ArlywI8B0iDrEvkfZaMVc+Gd6cDtnD3nnlD2sT3ut3tfJ+gjzgtRXlvI0DhQ2N1Wb
-	 yRcv/KFQUloyZ6eDmhGQlKxZHP/TVwagCOVArll6rUlUWcaz2yxxjgcnvtwxkOtG8C
-	 4M1v47TFLU8EKmW9BDwdDkzpn29CqRZoCnXbFJH3G4t9zDP2r98iHWvQhPHHLPF9Qf
-	 ckas1s2zW6jNAP0wWeqNsNxt90ijUwYzEuz92SyUmAkM6vhY/naqjDZhZQfi9rX6eG
-	 9BobUVT2+XpDg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] KEYS: trusted: Do not use WARN when encode fails
-Date: Mon, 13 May 2024 21:35:17 +0300
-Message-ID: <20240513183518.10922-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="khGdRp6x"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f44bcbaae7so4246228b3a.2
+        for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 12:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715626894; x=1716231694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hIo+xJMGqulgfYxJlVNZdIs5O+IlDFivYbvME+JTurQ=;
+        b=khGdRp6xcedMPqUkdjBCXK4sdSPqJmU6vARYFj6Cj5Eq4eIXBzQiLY70ZHPcGgXbMk
+         bmyzIRWU9xWv7mFCcZXVry6+DKdUldjy0UDRs7CBzo/WZ52pmfJTzHaPpLt8fF2t+qHR
+         oTflnLjoMTywzMbSWV/FgJA4eXosN+giu3QeY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715626894; x=1716231694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hIo+xJMGqulgfYxJlVNZdIs5O+IlDFivYbvME+JTurQ=;
+        b=V5GtDRbM6CSRS6qAhi1q3egRuxRjTrm7g6KOc1G+cAckqoC9fdG6CJUUpACIGOHkZt
+         yc53JUIF0SpSTflW6bBSnsjcuCSa0jp5l2000LpWmhoswbGDd0rvm5URVJEeAehnIpJW
+         /w4+lq49kEQp7EgpMn8N1OrKsFN6oyRH9MgUVz4qhVCPXMLvKyXOPaHNwXalYoOqrF+s
+         spS6jUiMSZ5Df6QPChjeucsHa+ftt3+8tVYUBg/LlLMBhNZsxhP5dXjelUvzBjTzDf5M
+         EBWhqgfp3bS0sfChxf598PFElYxfx1waphc4QbW74Ao+2lgqWggxN1hmxuV00CZP3R3j
+         4UgQ==
+X-Gm-Message-State: AOJu0Yy06Ki5nU3DsZ1fIzJLWwhgvO0t13NadoNm7IVXxy+kwPaPUugg
+	FM+MDI+bztMwArixZuDk8owO8VbmJPY2AHHrxCuZZOgP2DODU7wzstH+ZrUkcw==
+X-Google-Smtp-Source: AGHT+IHLLlqHpsImBJBeiowPCBQfnTvm1nsNSIHdpywN+PvsZO8TvuDaxpXhDa9p8QQIqvhj9BXDMQ==
+X-Received: by 2002:a05:6a20:de95:b0:1a6:b689:8c29 with SMTP id adf61e73a8af0-1afde225151mr8650429637.61.1715626894512;
+        Mon, 13 May 2024 12:01:34 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a819e7sm7714864b3a.56.2024.05.13.12.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 12:01:33 -0700 (PDT)
+Date: Mon, 13 May 2024 12:01:33 -0700
+From: Kees Cook <keescook@chromium.org>
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	ast@kernel.org, paul@paul-moore.com, casey@schaufler-ca.com,
+	andrii@kernel.org, daniel@iogearbox.net, renauld@google.com,
+	revest@chromium.org, song@kernel.org
+Subject: Re: [PATCH v11 4/5] security: Update non standard hooks to use
+ static calls
+Message-ID: <202405131201.8B145A5C1C@keescook>
+References: <20240509201421.905965-1-kpsingh@kernel.org>
+ <20240509201421.905965-5-kpsingh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509201421.905965-5-kpsingh@kernel.org>
 
-Error on asn1_encode_sequence() is handled with a WARN incorrectly
-because:
+On Thu, May 09, 2024 at 10:14:20PM +0200, KP Singh wrote:
+> There are some LSM hooks which do not use the common pattern followed
+> by other LSM hooks and thus cannot use call_{int, void}_hook macros and
+> instead use lsm_for_each_hook macro which still results in indirect
+> call.
+> 
+> There is one additional generalizable pattern where a hook matching an
+> lsmid is called and the indirect calls for these are addressed with the
+> newly added call_hook_with_lsmid macro which internally uses an
+> implementation similar to call_int_hook but has an additional check that
+> matches the lsmid.
+> 
+> For the generic case the lsm_for_each_hook macro is updated to accept
+> logic before and after the invocation of the LSM hook (static call) in
+> the unrolled loop.
+> 
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
 
-1. asn1_encode_sequence() is not an internal function (located
-   in lib/asn1_encode.c).
-2. Location on known, which makes the stack trace useless.
-3. Results a crash if panic_on_warn is set.
+I think this will give us the flexibility we need!
 
-It is also noteworthy that the use of WARN is undocumented, and it
-should be avoided unless there is carefully considered rationale to use
-it, which is now non-existent.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Replace WARN with pr_err, and print the return value instead, which is
-only useful piece of information (and was not printed).
-
-Cc: stable@vger.kernel.org # v5.13+
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/trusted-keys/trusted_tpm2.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index c8d8fdefbd8d..e31fe53822a1 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -39,6 +39,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	u8 *end_work = scratch + SCRATCH_SIZE;
- 	u8 *priv, *pub;
- 	u16 priv_len, pub_len;
-+	int ret;
- 
- 	priv_len = get_unaligned_be16(src) + 2;
- 	priv = src;
-@@ -80,8 +81,11 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	work1 = payload->blob;
- 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
- 				     scratch, work - scratch);
--	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
--		return PTR_ERR(work1);
-+	if (IS_ERR(work1)) {
-+		ret = PTR_ERR(work1);
-+		pr_err("ASN.1 encode error %d\n", ret);
-+		return ret;
-+	}
- 
- 	return work1 - payload->blob;
- }
 -- 
-2.45.0
-
+Kees Cook
