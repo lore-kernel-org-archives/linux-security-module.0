@@ -1,130 +1,175 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B234C74
-	for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 14:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59BE155386
+	for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 16:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715612292; cv=none; b=vF48Bj0O5/nWFMD55miw1MsVsTxOb8XyXnHQpSUs+I4pRlpdS6T3nzh2jyCwbizr/I6MHwfJS3DKRm/PrhzG2tDj1WzF2JjiAIdZEtt3ggo+JgJ/TvmZhloYwS+vDvayaObBeUNCTgyuLV9nhPH6aZc8PtA0UhstBUKgw6EjGyE=
+	t=1715617653; cv=none; b=qSu8hwte3y9mNuZknKtrWjG2W/x+Tm7mJezMGb6MC9I2c/0iTHBwcxtChwDYqgvaGvK04DQEqg8M7CaYknuSrjp3viLyyKr0FNRvKQgT55koAZCxj4KbcHw0xGfJTH7IsuN3z6SDBryhfuWfFFAuUyNecO12qeav3PI0GrXiR5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715612292; c=relaxed/simple;
-	bh=j9bZZti+9FQ+7r5shz9bNfaDhSYxfYzTp3+5PA+YT2Y=;
+	s=arc-20240116; t=1715617653; c=relaxed/simple;
+	bh=qLT4uwVVob5AkmWCScwVksGNuuWgGHV65B2AVyETctw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KhXqnRa6Q49+xy3qpyG7+BzYsXFBvcHRs6laTuvnb4xzTfi4BI51mH0aBfy5YpAThd/ckGq5VKWT0tlRoFz1mmsqCM0EXm+H0UFYoti0h77jvIZZpO/v11hyu0tqbTP1ZXKDyEji1UzbV5fzha1meteE+yBS3ULAZ+8TbqUAtr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MlxoQiCX; arc=none smtp.client-ip=209.85.219.173
+	 To:Cc:Content-Type; b=GfOebwPphTPBPlyTSMx9ASac4xMTJRiukLh+Jd+sULI6AcCvSx+c/ZLYmY9iBmW10Lmjq+oPIgMPtgXyKQiTmHsQTnz6aOvAyHOGpXgFmEXuRtkxmsYY2+JJD685tiYQ5Mfo0tPneQ3UTE0+rXKlqCDR/OLra0mKM6B2LPo9VUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EtLJxLqi; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MlxoQiCX"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dbed0710c74so3747776276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 07:58:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EtLJxLqi"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-de45dba15feso4442876276.3
+        for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 09:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715612288; x=1716217088; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1715617651; x=1716222451; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7M0SyizaRAHUtRPojEicOMbmKA68tXqqO+2+to/w/2k=;
-        b=MlxoQiCXSbrfMPXkGp2CySc5KaQkGq4Lb35ptU6hanGbEN0eefxIMEFmO8kqSY/z31
-         1hZSAoZtQLSjl+3E4S3icY0v9aT++r/mSboTlo537FdpEFrEXAuCkI7fYDMwptNvwT8m
-         XcI7BmZHgPJAdZQWN0xpyRG6Yae44SqlOS1OhzXaO/vZ/XYjQ83q7fmCfowOP4TwC2EN
-         38aCZX2r1aAwtdqGpUWpqu3fPBUWxku4JHE2zoIyCb4Mrn04fVauh8/OOoflfoOEkrwS
-         VO+KKuN+QhvyJgAb5E5e1ki7klFsPz3CE2rs6b+i3hvQCZ8McPk1UgJtWIrniTkBicDv
-         7J1Q==
+        bh=ItbWsDmlfW8ru/6uKfBUbAiq+b9kQ7JUZehCR4zTOiY=;
+        b=EtLJxLqifaYI8M9w4HedvvjjNyjVpJgJKwHyY9/KdDk2LuuMmcEpRwak2W23Gg5tKg
+         H/yzL7+l3Jg8wHnQ9jIWG0UITznceZ9pWKNYaj+WWW8SRhTsgds7Zm7XTJDOq75Hdfry
+         v9YhJPd53M0mp4viWdM8eCF9Vxnnttv8Bqj6Tw/aFine8TqyH6SWV5835mG6Fqsq26KV
+         DoE6jFkJ7Fs/iGYdg+AQe1ruKOmkMT6OJRuY/2aaByHukRlsiuDg4yHyTYkGaH+pcVPc
+         Xa9K9xa9d1K++V2/GgVj39b/WO76n4DrKApmIpCuc4wuZK2fWbXfzHrya3l5mLwFAhC3
+         vhMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715612288; x=1716217088;
+        d=1e100.net; s=20230601; t=1715617651; x=1716222451;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7M0SyizaRAHUtRPojEicOMbmKA68tXqqO+2+to/w/2k=;
-        b=EGf6+e+kmRsgHRjLvC+nE9ziePAh7QXoK3uY4l0j9irsMbMvECrGnHarx+anxn1+Px
-         +cVWm8RuWOEJmtEo9RANdLRn99qyWA6TU2M+muzgeHGY2VrUumKJBObOcRholJeYK5ZA
-         nV16AkPpu67FjJpe71g/osGjQJmeBE6pcgzMR3miavamCDdkpXj2RUSqhR4NPzOxuZnt
-         7+IBkM/wqR/P+ccJp5JMCpdDOP8hRPSBcw4L1s7sdcxiqEkf0PbvS7bw7TNKogAKLvZt
-         bZiW/SD8hB0B6yN4AVMUnFhjom0HXgNebUr785HO8V6vcoepXCtz8tBd9F6aFonyRaas
-         Bwkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgRRwtfjMHbvoglZukMPaulFIvFLwltNyTFtxdGUZdCr0GsoU2AIiqD2g64iJDu+lnmkd72O6LgvqwehPSArYC77ZppjhyfptHrAWrj+s28BI5a91H
-X-Gm-Message-State: AOJu0YxhkUk0g5BKJLg2IMW5ow0PV4of4oawTUjSKU6qksFNRSQqP/Xm
-	M8qQXOSedG1RgakZyGAVOp0eCzO/+cM4zUdEEqVbIOqk3VlkbdYYQBGU53MgWQHR2sVju/g2ELX
-	W80aNEd1tsEbTc9azkhooZoJCxlVk3X6g/OeLzoeOpFchU70=
-X-Google-Smtp-Source: AGHT+IHDwN+8pFFHqgzAJfSHa/ND4FCnNNX1ClwsHGCc0PzWIetjNmGPFOImdjRGWe9tJ4iyY/v+WvT8iIXTHbiGQJ4=
-X-Received: by 2002:a25:53c7:0:b0:de5:5b9c:4452 with SMTP id
- 3f1490d57ef6-dee4f319277mr8718086276.21.1715612288420; Mon, 13 May 2024
- 07:58:08 -0700 (PDT)
+        bh=ItbWsDmlfW8ru/6uKfBUbAiq+b9kQ7JUZehCR4zTOiY=;
+        b=jK6Dt7lfFbyj2nfv43QglH/icWjh2KCtrWqntVHQQ4emGvaE8zLiwKUQkNUMj+NsaS
+         jss8sSrwI8IHv+DsolPcjdGlQEszfGehZ36B5RdwjLeXxqrSTbZ2hYyill0U0SyGq87l
+         jnUxoFs/uRCZHzlr+eeAGGP8oJWhqeqzWl1XRkA+g78Ks7528HyhNKPni3Rf9iyVJ3BO
+         W4LzI6O9Lg48zZaqZ8TI1yFj1ynnG5U99V5OO6o01xCAWv6i8neaJdWQe8tifezCIJvi
+         u5LGoTYz0RQCEhHdATB2IIf1Y7JjlwGi1i0xFm7BkjZqGQPvhiMl3xLYHDg4DshNYJ71
+         jcPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUltHwE8ep5ovmfug76+nath/2Wtb79EUhgWDBA2V0ha/VLuqOwf3VW4jiXF+NCsFrQmdKsbvEH03404TKgZ0EVYceHu1lHgCXqaBGB99smKjw5OH5x
+X-Gm-Message-State: AOJu0YxuMZzO/fqmidOzIRgEeT8Cz2XiaC4AsswZIjrC2yUTb4CIiiqd
+	ckFznJ2mnCF5YmkrWWetNs+mMVBbsQNVr/GC9jXIdGMBJr7qovdLfRBRVFun2AJ/u8vkAkVLN6f
+	OCOQWudWxnRge4pViowdUXFuqn1K39py8sVQH
+X-Google-Smtp-Source: AGHT+IERvBVcwh5CfAI+o7tfZ3iHNyHpMBO+lpa8+hSaKNfFMg7LUrHPWT9j+dS24Q4jZzQEVByPRq4AXSxgaGusRuM=
+X-Received: by 2002:a25:9f84:0:b0:dd0:bb34:1e77 with SMTP id
+ 3f1490d57ef6-dee4f332e5bmr7647100276.53.1715617650895; Mon, 13 May 2024
+ 09:27:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240223190546.3329966-1-mic@digikod.net> <20240223190546.3329966-2-mic@digikod.net>
- <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com>
- <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
- <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com> <147b0637-7423-4abc-b7fe-3d8da2c1e57c@canonical.com>
-In-Reply-To: <147b0637-7423-4abc-b7fe-3d8da2c1e57c@canonical.com>
+References: <f4260d000a3a55b9e8b6a3b4e3fffc7da9f82d41.1715359817.git.dcaratti@redhat.com>
+In-Reply-To: <f4260d000a3a55b9e8b6a3b4e3fffc7da9f82d41.1715359817.git.dcaratti@redhat.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 13 May 2024 10:57:57 -0400
-Message-ID: <CAHC9VhRbHKkdtAC4JWFbWpj=T3MG7wPhH1EHhJomKu+pU6oCQA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
-To: John Johansen <john.johansen@canonical.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Date: Mon, 13 May 2024 12:27:20 -0400
+Message-ID: <CAHC9VhTH2zgA8tYMr4d6o3SicDAGDpE+3NwN9vP=6DpEFLObxg@mail.gmail.com>
+Subject: Re: [PATCH net v5] netlabel: fix RCU annotation for IPv4 options on
+ socket creation
+To: Davide Caratti <dcaratti@redhat.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, Xiumei Mu <xmu@redhat.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 12:10=E2=80=AFPM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 2/27/24 08:01, Paul Moore wrote:
-> > On Mon, Feb 26, 2024 at 2:59=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+On Fri, May 10, 2024 at 1:19=E2=80=AFPM Davide Caratti <dcaratti@redhat.com=
 > wrote:
-> >> On Fri, Feb 23, 2024 at 4:07=E2=80=AFPM Paul Moore <paul@paul-moore.co=
-m> wrote:
-> >>> On Fri, Feb 23, 2024 at 2:06=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
-@digikod.net> wrote:
-> >>>>
-> >>>> aa_getprocattr() may not initialize the value's pointer in some case=
-.
-> >>>> As for proc_pid_attr_read(), initialize this pointer to NULL in
-> >>>> apparmor_getselfattr() to avoid an UAF in the kfree() call.
-> >>>>
-> >>>> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> >>>> Cc: John Johansen <john.johansen@canonical.com>
-> >>>> Cc: Paul Moore <paul@paul-moore.com>
-> >>>> Cc: stable@vger.kernel.org
-> >>>> Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
-> >>>> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> >>>> ---
-> >>>>   security/apparmor/lsm.c | 2 +-
-> >>>>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> If you like John, I can send this up to Linus with the related SELinu=
-x
-> >>> fix, I would just need an ACK from you.
-> >>
-> >> Reviewed-by: Paul Moore <paul@paul-moore.com>
-> >>
-> >> This patch looks good to me, and while we've still got at least two
-> >> (maybe three?) more weeks before v6.8 is tagged, I think it would be
-> >> good to get this up to Linus ASAP.  I'll hold off for another day, but
-> >> if we don't see any comment from John I'll go ahead and merge this and
-> >> send it up to Linus with the SELinux fix; I'm sure John wouldn't be
-> >> happy if v6.8 went out the door without this fix.
-> >
-> > I just merged this into lsm/stable-6.8 and once the automated
-> > build/test has done it's thing and come back clean I'll send this,
-> > along with the associated SELinux fix, up to Linus.  Thanks all.
-> >
-> > John, if this commit is problematic please let me know and I'll send a
-> > fix or a revert.
 >
-> sorry, I am still trying to dig out of my backlog. This is good, you can
-> certainly have my ACK, I know its already in tree so no point in adding
-> it there but wanted to just make sure its on list
+> Xiumei reports the following splat when netlabel and TCP socket are used:
+>
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>  WARNING: suspicious RCU usage
+>  6.9.0-rc2+ #637 Not tainted
+>  -----------------------------
+>  net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
+>
+>  other info that might help us debug this:
+>
+>  rcu_scheduler_active =3D 2, debug_locks =3D 1
+>  1 lock held by ncat/23333:
+>   #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setat=
+tr+0x25/0x1b0
+>
+>  stack backtrace:
+>  CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
+>  Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  =
+07/26/2013
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0xa9/0xc0
+>   lockdep_rcu_suspicious+0x117/0x190
+>   cipso_v4_sock_setattr+0x1ab/0x1b0
+>   netlbl_sock_setattr+0x13e/0x1b0
+>   selinux_netlbl_socket_post_create+0x3f/0x80
+>   selinux_socket_post_create+0x1a0/0x460
+>   security_socket_post_create+0x42/0x60
+>   __sock_create+0x342/0x3a0
+>   __sys_socket_create.part.22+0x42/0x70
+>   __sys_socket+0x37/0xb0
+>   __x64_sys_socket+0x16/0x20
+>   do_syscall_64+0x96/0x180
+>   ? do_user_addr_fault+0x68d/0xa30
+>   ? exc_page_fault+0x171/0x280
+>   ? asm_exc_page_fault+0x22/0x30
+>   entry_SYSCALL_64_after_hwframe+0x71/0x79
+>  RIP: 0033:0x7fbc0ca3fc1b
+>  Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e =
+0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 f=
+f ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
+>  RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
+>  RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
+>  RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
+>  RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
+>
+> R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
+>  R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
+>   </TASK>
+>
+> The current implementation of cipso_v4_sock_setattr() replaces IP options
+> under the assumption that the caller holds the socket lock; however, such
+> assumption is not true, nor needed, in selinux_socket_post_create() hook.
+>
+> Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
+> condition, except selinux_socket_post_create() _ where such condition can
+> safely be set as true even without holding the socket lock.
+>
+> v5:
+>  - fix kernel-doc
+>  - adjust #idfefs around prototype of netlbl_sk_lock_check() (thanks Paul=
+ Moore)
+>
+> v4:
+>  - fix build when CONFIG_LOCKDEP is unset (thanks kernel test robot)
+>
+> v3:
+>  - rename variable to 'sk_locked' (thanks Paul Moore)
+>  - keep rcu_replace_pointer() open-coded and re-add NULL check of 'old',
+>    these two changes will be posted in another patch (thanks Paul Moore)
+>
+> v2:
+>  - pass lockdep_sock_is_held() through a boolean variable in the stack
+>    (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
+>  - use rcu_replace_pointer() instead of rcu_dereference_protected() +
+>    rcu_assign_pointer()
+>  - remove NULL check of 'old' before kfree_rcu()
+>
+> Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
+> Reported-by: Xiumei Mu <xmu@redhat.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+> ---
+>  include/net/cipso_ipv4.h     |  6 ++++--
+>  include/net/netlabel.h       | 12 ++++++++++--
+>  net/ipv4/cipso_ipv4.c        |  7 ++++---
+>  net/netlabel/netlabel_kapi.c | 31 ++++++++++++++++++++++++++++---
+>  security/selinux/netlabel.c  |  5 ++++-
+>  security/smack/smack_lsm.c   |  3 ++-
+>  6 files changed, 52 insertions(+), 12 deletions(-)
 
-No worries, reviews are still appreciated; just because a patch has
-made its way up to Linus is no guarantee there isn't something wrong
-with it ;)
+Thanks Davide.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --=20
 paul-moore.com
