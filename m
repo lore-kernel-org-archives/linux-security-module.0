@@ -1,192 +1,130 @@
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CC414F120;
-	Mon, 13 May 2024 12:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B234C74
+	for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 14:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715602734; cv=none; b=Q7ACV6/lKusf7e+E20+i6qclb9nys0oSLLpxQBkuSgO3sgQpjD4mPjFx/IqCmMUA3GCNiGB+zE9ATihZjUW6Ql5sMgodysTLR+39shVVQUf0gOh66UkeiGtgAOqQoJfzOjUtzJGRoOFYxgqgwwFX8xza/wNrcUXsu7SR1shQHTE=
+	t=1715612292; cv=none; b=vF48Bj0O5/nWFMD55miw1MsVsTxOb8XyXnHQpSUs+I4pRlpdS6T3nzh2jyCwbizr/I6MHwfJS3DKRm/PrhzG2tDj1WzF2JjiAIdZEtt3ggo+JgJ/TvmZhloYwS+vDvayaObBeUNCTgyuLV9nhPH6aZc8PtA0UhstBUKgw6EjGyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715602734; c=relaxed/simple;
-	bh=SrdN7bp3GCGn0BQxbzXtwzf6R0uqeQKv+xbDU3kLob0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mosoKBAFPb3EqwNBWIxuSF1GmcK4oC08a/eApEYvftdS+WEQf70C1Al0V3kaY9OofAzteZgPW+qbu99iB4UsOUs+we9x6GIyX1xOzl08yIhhiN0TOsNF9jARPaLLm2go0A/XtD/PbjSWTRZnTyn2CJWwCKjqXWtlP/RC53Zu794=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VdJMy25NyzkXWr;
-	Mon, 13 May 2024 20:15:10 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id EE432180060;
-	Mon, 13 May 2024 20:18:41 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 13 May 2024 20:18:37 +0800
-Message-ID: <2a278e4b-89c4-4fc5-173e-b62978299b28@huawei-partners.com>
-Date: Mon, 13 May 2024 15:18:32 +0300
+	s=arc-20240116; t=1715612292; c=relaxed/simple;
+	bh=j9bZZti+9FQ+7r5shz9bNfaDhSYxfYzTp3+5PA+YT2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KhXqnRa6Q49+xy3qpyG7+BzYsXFBvcHRs6laTuvnb4xzTfi4BI51mH0aBfy5YpAThd/ckGq5VKWT0tlRoFz1mmsqCM0EXm+H0UFYoti0h77jvIZZpO/v11hyu0tqbTP1ZXKDyEji1UzbV5fzha1meteE+yBS3ULAZ+8TbqUAtr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MlxoQiCX; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MlxoQiCX"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dbed0710c74so3747776276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 07:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1715612288; x=1716217088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7M0SyizaRAHUtRPojEicOMbmKA68tXqqO+2+to/w/2k=;
+        b=MlxoQiCXSbrfMPXkGp2CySc5KaQkGq4Lb35ptU6hanGbEN0eefxIMEFmO8kqSY/z31
+         1hZSAoZtQLSjl+3E4S3icY0v9aT++r/mSboTlo537FdpEFrEXAuCkI7fYDMwptNvwT8m
+         XcI7BmZHgPJAdZQWN0xpyRG6Yae44SqlOS1OhzXaO/vZ/XYjQ83q7fmCfowOP4TwC2EN
+         38aCZX2r1aAwtdqGpUWpqu3fPBUWxku4JHE2zoIyCb4Mrn04fVauh8/OOoflfoOEkrwS
+         VO+KKuN+QhvyJgAb5E5e1ki7klFsPz3CE2rs6b+i3hvQCZ8McPk1UgJtWIrniTkBicDv
+         7J1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715612288; x=1716217088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7M0SyizaRAHUtRPojEicOMbmKA68tXqqO+2+to/w/2k=;
+        b=EGf6+e+kmRsgHRjLvC+nE9ziePAh7QXoK3uY4l0j9irsMbMvECrGnHarx+anxn1+Px
+         +cVWm8RuWOEJmtEo9RANdLRn99qyWA6TU2M+muzgeHGY2VrUumKJBObOcRholJeYK5ZA
+         nV16AkPpu67FjJpe71g/osGjQJmeBE6pcgzMR3miavamCDdkpXj2RUSqhR4NPzOxuZnt
+         7+IBkM/wqR/P+ccJp5JMCpdDOP8hRPSBcw4L1s7sdcxiqEkf0PbvS7bw7TNKogAKLvZt
+         bZiW/SD8hB0B6yN4AVMUnFhjom0HXgNebUr785HO8V6vcoepXCtz8tBd9F6aFonyRaas
+         Bwkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgRRwtfjMHbvoglZukMPaulFIvFLwltNyTFtxdGUZdCr0GsoU2AIiqD2g64iJDu+lnmkd72O6LgvqwehPSArYC77ZppjhyfptHrAWrj+s28BI5a91H
+X-Gm-Message-State: AOJu0YxhkUk0g5BKJLg2IMW5ow0PV4of4oawTUjSKU6qksFNRSQqP/Xm
+	M8qQXOSedG1RgakZyGAVOp0eCzO/+cM4zUdEEqVbIOqk3VlkbdYYQBGU53MgWQHR2sVju/g2ELX
+	W80aNEd1tsEbTc9azkhooZoJCxlVk3X6g/OeLzoeOpFchU70=
+X-Google-Smtp-Source: AGHT+IHDwN+8pFFHqgzAJfSHa/ND4FCnNNX1ClwsHGCc0PzWIetjNmGPFOImdjRGWe9tJ4iyY/v+WvT8iIXTHbiGQJ4=
+X-Received: by 2002:a25:53c7:0:b0:de5:5b9c:4452 with SMTP id
+ 3f1490d57ef6-dee4f319277mr8718086276.21.1715612288420; Mon, 13 May 2024
+ 07:58:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] selftests/landlock: Create 'listen_zero',
- 'deny_listen_zero' tests
-Content-Language: ru
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>,
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
- <20240408094747.1761850-3-ivanov.mikhail1@huawei-partners.com>
- <20240430.ohruCa7giToo@digikod.net>
-From: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <20240430.ohruCa7giToo@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+References: <20240223190546.3329966-1-mic@digikod.net> <20240223190546.3329966-2-mic@digikod.net>
+ <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com>
+ <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
+ <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com> <147b0637-7423-4abc-b7fe-3d8da2c1e57c@canonical.com>
+In-Reply-To: <147b0637-7423-4abc-b7fe-3d8da2c1e57c@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 13 May 2024 10:57:57 -0400
+Message-ID: <CAHC9VhRbHKkdtAC4JWFbWpj=T3MG7wPhH1EHhJomKu+pU6oCQA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
+To: John Johansen <john.johansen@canonical.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 10, 2024 at 12:10=E2=80=AFPM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 2/27/24 08:01, Paul Moore wrote:
+> > On Mon, Feb 26, 2024 at 2:59=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> >> On Fri, Feb 23, 2024 at 4:07=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> >>> On Fri, Feb 23, 2024 at 2:06=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
+@digikod.net> wrote:
+> >>>>
+> >>>> aa_getprocattr() may not initialize the value's pointer in some case=
+.
+> >>>> As for proc_pid_attr_read(), initialize this pointer to NULL in
+> >>>> apparmor_getselfattr() to avoid an UAF in the kfree() call.
+> >>>>
+> >>>> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> >>>> Cc: John Johansen <john.johansen@canonical.com>
+> >>>> Cc: Paul Moore <paul@paul-moore.com>
+> >>>> Cc: stable@vger.kernel.org
+> >>>> Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
+> >>>> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> >>>> ---
+> >>>>   security/apparmor/lsm.c | 2 +-
+> >>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> If you like John, I can send this up to Linus with the related SELinu=
+x
+> >>> fix, I would just need an ACK from you.
+> >>
+> >> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> >>
+> >> This patch looks good to me, and while we've still got at least two
+> >> (maybe three?) more weeks before v6.8 is tagged, I think it would be
+> >> good to get this up to Linus ASAP.  I'll hold off for another day, but
+> >> if we don't see any comment from John I'll go ahead and merge this and
+> >> send it up to Linus with the SELinux fix; I'm sure John wouldn't be
+> >> happy if v6.8 went out the door without this fix.
+> >
+> > I just merged this into lsm/stable-6.8 and once the automated
+> > build/test has done it's thing and come back clean I'll send this,
+> > along with the associated SELinux fix, up to Linus.  Thanks all.
+> >
+> > John, if this commit is problematic please let me know and I'll send a
+> > fix or a revert.
+>
+> sorry, I am still trying to dig out of my backlog. This is good, you can
+> certainly have my ACK, I know its already in tree so no point in adding
+> it there but wanted to just make sure its on list
 
+No worries, reviews are still appreciated; just because a patch has
+made its way up to Linus is no guarantee there isn't something wrong
+with it ;)
 
-4/30/2024 4:36 PM, Mickaël Salaün wrote:
-> The subject should be something like:
-> "selftests/landlock: Test listening on socket without binding"
-
-thanks, will be fixed.
-
-> 
-> On Mon, Apr 08, 2024 at 05:47:47PM +0800, Ivanov Mikhail wrote:
->> Suggested code test scenarios where listen(2) call without explicit
->> bind(2) is allowed and forbidden.
->>
->> Signed-off-by: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
->> Reviewed-by: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
->> ---
->>   tools/testing/selftests/landlock/net_test.c | 89 +++++++++++++++++++++
->>   1 file changed, 89 insertions(+)
->>
->> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
->> index 936cfc879f1d..6d6b5aef387f 100644
->> --- a/tools/testing/selftests/landlock/net_test.c
->> +++ b/tools/testing/selftests/landlock/net_test.c
->> @@ -1714,6 +1714,95 @@ TEST_F(port_specific, bind_connect_zero)
->>   	EXPECT_EQ(0, close(bind_fd));
->>   }
->>   
->> +TEST_F(port_specific, listen_zero)
->> +{
->> +	int listen_fd, connect_fd;
->> +	uint16_t port;
->> +
->> +	/* Adds a rule layer with bind actions. */
->> +	if (variant->sandbox == TCP_SANDBOX) {
->> +		const struct landlock_ruleset_attr ruleset_attr = {
->> +			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
->> +		};
->> +		const struct landlock_net_port_attr tcp_bind_zero = {
->> +			.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
->> +			.port = 0,
->> +		};
->> +		int ruleset_fd;
->> +
->> +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
->> +						     sizeof(ruleset_attr), 0);
->> +		ASSERT_LE(0, ruleset_fd);
->> +
->> +		/* Checks zero port value on bind action. */
->> +		EXPECT_EQ(0,
->> +			  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
->> +					    &tcp_bind_zero, 0));
->> +
->> +		enforce_ruleset(_metadata, ruleset_fd);
->> +		EXPECT_EQ(0, close(ruleset_fd));
->> +	}
->> +
->> +	listen_fd = socket_variant(&self->srv0);
->> +	ASSERT_LE(0, listen_fd);
->> +
->> +	connect_fd = socket_variant(&self->srv0);
->> +	ASSERT_LE(0, listen_fd);
->> +	/*
->> +	 * Allow listen(2) to select a random port for the socket,
->> +	 * since bind(2) wasn't called.
->> +	 */
->> +	EXPECT_EQ(0, listen(listen_fd, backlog));
->> +
->> +	/* Sets binded (by listen(2)) port for both protocol families. */
->> +	port = get_binded_port(listen_fd, &variant->prot);
->> +	EXPECT_NE(0, port);
->> +	set_port(&self->srv0, port);
->> +
->> +	/* Connects on the binded port. */
->> +	EXPECT_EQ(0, connect_variant(connect_fd, &self->srv0));
->> +
->> +	EXPECT_EQ(0, close(listen_fd));
->> +	EXPECT_EQ(0, close(connect_fd));
->> +}
->> +
->> +TEST_F(port_specific, deny_listen_zero)
->> +{
->> +	int listen_fd, ret;
->> +
->> +	/* Adds a rule layer with bind actions. */
->> +	if (variant->sandbox == TCP_SANDBOX) {
->> +		const struct landlock_ruleset_attr ruleset_attr = {
->> +			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
->> +		};
->> +		int ruleset_fd;
->> +
->> +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
->> +						     sizeof(ruleset_attr), 0);
->> +		ASSERT_LE(0, ruleset_fd);
->> +
->> +		/* Forbid binding to any port. */
->> +		enforce_ruleset(_metadata, ruleset_fd);
->> +		EXPECT_EQ(0, close(ruleset_fd));
->> +	}
->> +
->> +	listen_fd = socket_variant(&self->srv0);
->> +	ASSERT_LE(0, listen_fd);
->> +	/*
-> 
-> nit: Extra space
-
-will be fixed
-
-> 
->> +	 * Check that listen(2) call is prohibited without first calling bind(2).
-> 
-> This should fit in 80 columns.
-
-will be fixed
-
-> 
->> +	 */
->> +	ret = listen(listen_fd, backlog);
->> +	if (is_restricted(&variant->prot, variant->sandbox)) {
->> +		/* Denied by Landlock. */
->> +		EXPECT_NE(0, ret);
->> +		EXPECT_EQ(EACCES, errno);
->> +	} else {
->> +		EXPECT_EQ(0, ret);
->> +	}
->> +
->> +	EXPECT_EQ(0, close(listen_fd));
->> +}
-> 
-> These tests look good!
-> 
->> +
->>   TEST_F(port_specific, bind_connect_1023)
->>   {
->>   	int bind_fd, connect_fd, ret;
->> -- 
->> 2.34.1
->>
->>
+--=20
+paul-moore.com
