@@ -1,175 +1,109 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59BE155386
-	for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 16:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758041AACA;
+	Mon, 13 May 2024 17:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715617653; cv=none; b=qSu8hwte3y9mNuZknKtrWjG2W/x+Tm7mJezMGb6MC9I2c/0iTHBwcxtChwDYqgvaGvK04DQEqg8M7CaYknuSrjp3viLyyKr0FNRvKQgT55koAZCxj4KbcHw0xGfJTH7IsuN3z6SDBryhfuWfFFAuUyNecO12qeav3PI0GrXiR5k=
+	t=1715619777; cv=none; b=CbiDaYYRPGhcKHN5dwpndEw+vbWXKCHNOP9848JYfnNtDctcwNSNxbvFeqZOAPwR+Tzev7fycZYuJGpiV5fasIFyV8mwLFZWYNuIaDcyGoeLlNhjRuTyq7ADbXPqDNPBL6wQWTikB0PfhOF0PLqLgTT8J7+12ZtHsrrOz4nwhWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715617653; c=relaxed/simple;
-	bh=qLT4uwVVob5AkmWCScwVksGNuuWgGHV65B2AVyETctw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GfOebwPphTPBPlyTSMx9ASac4xMTJRiukLh+Jd+sULI6AcCvSx+c/ZLYmY9iBmW10Lmjq+oPIgMPtgXyKQiTmHsQTnz6aOvAyHOGpXgFmEXuRtkxmsYY2+JJD685tiYQ5Mfo0tPneQ3UTE0+rXKlqCDR/OLra0mKM6B2LPo9VUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EtLJxLqi; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1715619777; c=relaxed/simple;
+	bh=DudJ0M1t2xOJsupOhUhG4zVCuTfRl0L4ezlISHkVcho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rW5YsYvCky4ywSsR072+8mYUmPaGEiq7r9XzUS8PJs9WXRlnd1ZWhgIkrKNAZvcSS5sNhymyD5UXne7rl0sV/djUgTiQR5JmqsuPjtpnP2fJAXOE7cVt6hcRRSGrvDHBAbG6S/VdJbyP/tuTuGMM4tOz0Ia3SOZemrjt0QXhC9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iNHmFR6J; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EtLJxLqi"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-de45dba15feso4442876276.3
-        for <linux-security-module@vger.kernel.org>; Mon, 13 May 2024 09:27:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iNHmFR6J"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ecddf96313so39548135ad.2;
+        Mon, 13 May 2024 10:02:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715617651; x=1716222451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ItbWsDmlfW8ru/6uKfBUbAiq+b9kQ7JUZehCR4zTOiY=;
-        b=EtLJxLqifaYI8M9w4HedvvjjNyjVpJgJKwHyY9/KdDk2LuuMmcEpRwak2W23Gg5tKg
-         H/yzL7+l3Jg8wHnQ9jIWG0UITznceZ9pWKNYaj+WWW8SRhTsgds7Zm7XTJDOq75Hdfry
-         v9YhJPd53M0mp4viWdM8eCF9Vxnnttv8Bqj6Tw/aFine8TqyH6SWV5835mG6Fqsq26KV
-         DoE6jFkJ7Fs/iGYdg+AQe1ruKOmkMT6OJRuY/2aaByHukRlsiuDg4yHyTYkGaH+pcVPc
-         Xa9K9xa9d1K++V2/GgVj39b/WO76n4DrKApmIpCuc4wuZK2fWbXfzHrya3l5mLwFAhC3
-         vhMQ==
+        d=gmail.com; s=20230601; t=1715619776; x=1716224576; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d7/MyNyoBm5MjfWHxVQeY2+je7QIeNePW0nfv/5L5Eg=;
+        b=iNHmFR6JwShIHjz1goVo/Q48CO/gztaxRHszXGK0DVDbzCPdo6Fo85T3kj9ta6PvOI
+         /3JiBsXe2JHoHGVX2pAGiNdL5iW4r9C2MBHlMGsN0760tA3VrWOlGViVgppIJUrsaujq
+         IAwMl3IytFaQZ71QvwyB4AvekJQbaRU5kPMVZXAifbDEzSw6K1nWo95hPjgnQVWHYC1I
+         tqCr9SOC8KharvPLv0eO2XoPCJtKPK/7ny/V1N2CzvPTIRfiu5gkuoADOHfpOen/Dic6
+         ZygLBeJAEOsCFK+KBk1k02LH5KOEZGAng7dRfaqNZNOJeiP5aNs84qfSV9/EEVBMC6A4
+         sx9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715617651; x=1716222451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715619776; x=1716224576;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ItbWsDmlfW8ru/6uKfBUbAiq+b9kQ7JUZehCR4zTOiY=;
-        b=jK6Dt7lfFbyj2nfv43QglH/icWjh2KCtrWqntVHQQ4emGvaE8zLiwKUQkNUMj+NsaS
-         jss8sSrwI8IHv+DsolPcjdGlQEszfGehZ36B5RdwjLeXxqrSTbZ2hYyill0U0SyGq87l
-         jnUxoFs/uRCZHzlr+eeAGGP8oJWhqeqzWl1XRkA+g78Ks7528HyhNKPni3Rf9iyVJ3BO
-         W4LzI6O9Lg48zZaqZ8TI1yFj1ynnG5U99V5OO6o01xCAWv6i8neaJdWQe8tifezCIJvi
-         u5LGoTYz0RQCEhHdATB2IIf1Y7JjlwGi1i0xFm7BkjZqGQPvhiMl3xLYHDg4DshNYJ71
-         jcPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUltHwE8ep5ovmfug76+nath/2Wtb79EUhgWDBA2V0ha/VLuqOwf3VW4jiXF+NCsFrQmdKsbvEH03404TKgZ0EVYceHu1lHgCXqaBGB99smKjw5OH5x
-X-Gm-Message-State: AOJu0YxuMZzO/fqmidOzIRgEeT8Cz2XiaC4AsswZIjrC2yUTb4CIiiqd
-	ckFznJ2mnCF5YmkrWWetNs+mMVBbsQNVr/GC9jXIdGMBJr7qovdLfRBRVFun2AJ/u8vkAkVLN6f
-	OCOQWudWxnRge4pViowdUXFuqn1K39py8sVQH
-X-Google-Smtp-Source: AGHT+IERvBVcwh5CfAI+o7tfZ3iHNyHpMBO+lpa8+hSaKNfFMg7LUrHPWT9j+dS24Q4jZzQEVByPRq4AXSxgaGusRuM=
-X-Received: by 2002:a25:9f84:0:b0:dd0:bb34:1e77 with SMTP id
- 3f1490d57ef6-dee4f332e5bmr7647100276.53.1715617650895; Mon, 13 May 2024
- 09:27:30 -0700 (PDT)
+        bh=d7/MyNyoBm5MjfWHxVQeY2+je7QIeNePW0nfv/5L5Eg=;
+        b=ghBusnqF8V9ZGzlJwyPyJMQ4kLjRiGlwlpuNSdh/o++9wGiF+Gey/oeeLqSdKVEP/q
+         QnMkq4kd3HTxvQCYuZZJ7J3Oz7lVZVETQmdzG5tCNWLExBN1M/ZxGlfzH3YRxDwJ2oCd
+         Y1rY+AQEVT0PgezTA6odTCeNG1ATORC3DpZjEZRUSCZYuOs0reT0T02RmIQNysEPCq5U
+         FgQkvMZvg2iSaAMbhIoX1sFyt0J9aL9A8iFfuUrol4qVBQ0cWvD7Eg1hvNijp+gNZLET
+         UAidNy7byilFz+NcKlYl/rlHFxDjHff+f6WeeL0YaNrE0IzWxUrDHk/nVJTjhAQKCXQe
+         F5bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrhpzgNY8KvkJMXX4UaEsvBpve1XpreHn2OVk1f9D7TlF2I5KT5Nr93afHsYgloW7g7/Que8dWcopYT2nYv7ALe0QJpwgH5du6M7dtYjUUpMTQjZC4Nd69eje/PX3VBKCEdd2rbyMwqeX7D5YENnxgv2pKDf9VBo7zsgfeFV4Jb0U7OV4q1c44MTIN44IGrxjVfIlxd6+Ktgt23LupbgEnVQFrVRpdZA3ozgrYiha2qcpvf0gAYGjxmV6jjxZkqETvre5W0vVkvlQeaHc2mNVLtcO/yPfcT/qkeQ==
+X-Gm-Message-State: AOJu0Yzvq+HysE8Tm+eUClf5Ish+57rOQWzClvRYysvrFdL+pFLhDB+/
+	0jRiLcG/oC6UefWO8Rhk30bW6C8saY/7i7fIuQ/ji9u3NRa7HXh0
+X-Google-Smtp-Source: AGHT+IHwOZA/yfEnvU1uj/wTKNnpTSmBPcCl0ixyY9k7PieEC1uOAPdzdzFf5e1FfRz7aoujiXiBYA==
+X-Received: by 2002:a17:902:e945:b0:1eb:77ed:8fba with SMTP id d9443c01a7336-1ef43d1242dmr182253905ad.17.1715619775677;
+        Mon, 13 May 2024 10:02:55 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30b17sm81794325ad.143.2024.05.13.10.02.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 10:02:55 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 13 May 2024 07:02:54 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+	bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 08/66] selftests/cgroup: Drop define _GNU_SOURCE
+Message-ID: <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
+References: <20240510000842.410729-1-edliaw@google.com>
+ <20240510000842.410729-9-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f4260d000a3a55b9e8b6a3b4e3fffc7da9f82d41.1715359817.git.dcaratti@redhat.com>
-In-Reply-To: <f4260d000a3a55b9e8b6a3b4e3fffc7da9f82d41.1715359817.git.dcaratti@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 13 May 2024 12:27:20 -0400
-Message-ID: <CAHC9VhTH2zgA8tYMr4d6o3SicDAGDpE+3NwN9vP=6DpEFLObxg@mail.gmail.com>
-Subject: Re: [PATCH net v5] netlabel: fix RCU annotation for IPv4 options on
- socket creation
-To: Davide Caratti <dcaratti@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, Xiumei Mu <xmu@redhat.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510000842.410729-9-edliaw@google.com>
 
-On Fri, May 10, 2024 at 1:19=E2=80=AFPM Davide Caratti <dcaratti@redhat.com=
-> wrote:
->
-> Xiumei reports the following splat when netlabel and TCP socket are used:
->
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->  WARNING: suspicious RCU usage
->  6.9.0-rc2+ #637 Not tainted
->  -----------------------------
->  net/ipv4/cipso_ipv4.c:1880 suspicious rcu_dereference_protected() usage!
->
->  other info that might help us debug this:
->
->  rcu_scheduler_active =3D 2, debug_locks =3D 1
->  1 lock held by ncat/23333:
->   #0: ffffffff906030c0 (rcu_read_lock){....}-{1:2}, at: netlbl_sock_setat=
-tr+0x25/0x1b0
->
->  stack backtrace:
->  CPU: 11 PID: 23333 Comm: ncat Kdump: loaded Not tainted 6.9.0-rc2+ #637
->  Hardware name: Supermicro SYS-6027R-72RF/X9DRH-7TF/7F/iTF/iF, BIOS 3.0  =
-07/26/2013
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0xa9/0xc0
->   lockdep_rcu_suspicious+0x117/0x190
->   cipso_v4_sock_setattr+0x1ab/0x1b0
->   netlbl_sock_setattr+0x13e/0x1b0
->   selinux_netlbl_socket_post_create+0x3f/0x80
->   selinux_socket_post_create+0x1a0/0x460
->   security_socket_post_create+0x42/0x60
->   __sock_create+0x342/0x3a0
->   __sys_socket_create.part.22+0x42/0x70
->   __sys_socket+0x37/0xb0
->   __x64_sys_socket+0x16/0x20
->   do_syscall_64+0x96/0x180
->   ? do_user_addr_fault+0x68d/0xa30
->   ? exc_page_fault+0x171/0x280
->   ? asm_exc_page_fault+0x22/0x30
->   entry_SYSCALL_64_after_hwframe+0x71/0x79
->  RIP: 0033:0x7fbc0ca3fc1b
->  Code: 73 01 c3 48 8b 0d 05 f2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e =
-0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 29 00 00 00 0f 05 <48> 3d 01 f0 f=
-f ff 73 01 c3 48 8b 0d d5 f1 1b 00 f7 d8 64 89 01 48
->  RSP: 002b:00007fff18635208 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
->  RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbc0ca3fc1b
->  RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
->  RBP: 000055d24f80f8a0 R08: 0000000000000003 R09: 0000000000000001
->
-> R10: 0000000000020000 R11: 0000000000000246 R12: 000055d24f80f8a0
->  R13: 0000000000000000 R14: 000055d24f80fb88 R15: 0000000000000000
->   </TASK>
->
-> The current implementation of cipso_v4_sock_setattr() replaces IP options
-> under the assumption that the caller holds the socket lock; however, such
-> assumption is not true, nor needed, in selinux_socket_post_create() hook.
->
-> Let all callers of cipso_v4_sock_setattr() specify the "socket lock held"
-> condition, except selinux_socket_post_create() _ where such condition can
-> safely be set as true even without holding the socket lock.
->
-> v5:
->  - fix kernel-doc
->  - adjust #idfefs around prototype of netlbl_sk_lock_check() (thanks Paul=
- Moore)
->
-> v4:
->  - fix build when CONFIG_LOCKDEP is unset (thanks kernel test robot)
->
-> v3:
->  - rename variable to 'sk_locked' (thanks Paul Moore)
->  - keep rcu_replace_pointer() open-coded and re-add NULL check of 'old',
->    these two changes will be posted in another patch (thanks Paul Moore)
->
-> v2:
->  - pass lockdep_sock_is_held() through a boolean variable in the stack
->    (thanks Eric Dumazet, Paul Moore, Casey Schaufler)
->  - use rcu_replace_pointer() instead of rcu_dereference_protected() +
->    rcu_assign_pointer()
->  - remove NULL check of 'old' before kfree_rcu()
->
-> Fixes: f6d8bd051c39 ("inet: add RCU protection to inet->opt")
-> Reported-by: Xiumei Mu <xmu@redhat.com>
-> Acked-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-> ---
->  include/net/cipso_ipv4.h     |  6 ++++--
->  include/net/netlabel.h       | 12 ++++++++++--
->  net/ipv4/cipso_ipv4.c        |  7 ++++---
->  net/netlabel/netlabel_kapi.c | 31 ++++++++++++++++++++++++++++---
->  security/selinux/netlabel.c  |  5 ++++-
->  security/smack/smack_lsm.c   |  3 ++-
->  6 files changed, 52 insertions(+), 12 deletions(-)
+On Fri, May 10, 2024 at 12:06:25AM +0000, Edward Liaw wrote:
+> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+> redefinition warnings.
+> 
+> Signed-off-by: Edward Liaw <edliaw@google.com>
 
-Thanks Davide.
+Applied to cgroup/for-6.10.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Thanks.
 
---=20
-paul-moore.com
+-- 
+tejun
