@@ -1,117 +1,103 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4CB181333
-	for <linux-security-module@vger.kernel.org>; Tue, 14 May 2024 19:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE5F181D08
+	for <linux-security-module@vger.kernel.org>; Tue, 14 May 2024 22:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715716515; cv=none; b=YbLbbMXA4llht6L8g6uq8p7imnfP+QejlUoA2FbTdBkXcADRk83+kKoXWRy7oHuXerk79tY+9dT3Xb5JEK7wx+9HQFU0DC2GTjz2OpLgXDYNrY2r6hjbh+NFQNgTvIGFq2e2h07DS5CO7xjP7CsVD4FDO7BXcmcREIqfWav3tEo=
+	t=1715726924; cv=none; b=HhidQTdSh2hxWdBwvij4C7WUs6k6AMWPz5ThqYnUiR6asJ1zvpW2ixrqw0Hopv0gSrLo8X8BLk+m9kxmslpyXS/OYV6fZmAMsKJRSE+SW/x5nEa+/biKG/tCN70NBtsotod/Osm+bFMxKAdQOmfqv6bmxrV2cuCUmMz0ouwVLmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715716515; c=relaxed/simple;
-	bh=Tn7ggDBZ467fewog7X29iTchxNr3w1imZ5QlMHFp0v0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fNZS3q2vcDyN33xgpAzS7P9SCSYzG4TYfn9tEiGVIJqAgysWkevX14uivGQVLPSuDijYQugb9/7zvb+wdfPQ+LqkbayzQN3ggNOZTzsvVLrdz3qRJ5hI/A3sqQWdusSqtGmzZDIajRo3ZjPWqjYi6D/JHfL+yL43Vit4QNwSDsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BQ5nTcrJ; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1715726924; c=relaxed/simple;
+	bh=J7vPh0ZbPIZnc4W98FXR0VGHZuZYhbZC2ygC3LT6oBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KYUKys9hb+RxOuLYddc6AiYMWXuNtZ2OAOquI0GxK8af3Ic/beO++QTnQ0EdGcjMeM2X6hnR+cDsUb3WuaXrBzGpKW9Wo/TBJ6cqVoJv0So2mjXdBrPjxddX4YtscA5K8doSxDnQm1YrRi52rDtXvN+cgbDF/KBxvwYfer07x1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KFjZjbH9; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BQ5nTcrJ"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dbed0710c74so5193130276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 14 May 2024 12:55:13 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KFjZjbH9"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b4952a1aecso4187092a91.3
+        for <linux-security-module@vger.kernel.org>; Tue, 14 May 2024 15:48:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715716512; x=1716321312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I5DfaKSvWBjSuruH8QpkzwqbDWxyqIe8ntp5STBjhPE=;
-        b=BQ5nTcrJeiDGmJPbk+0RbPTElKvyqninC22tbUnOXLGS1LGq1NMiBlKd/vEdzgWmX3
-         J6CyOwcl5ivwV579DFEK3+TPJNedRbX5ta4rufuEGc9PXSFysi/1ahLWwCZ145ht6Uyl
-         Bw6LPtcCw4jhHWxePof5VARvVKrO7Gny5IjBXAEBH3jl2fhWU277pEPsN/aRwtFOao6H
-         alRLOYOxC3Mw4O3SYM24cutTSjj6riCyqehsqMkh76Ix8NCPvVfYnaoGWhA3ar0CMRBO
-         uOblc/Ql1V5KS6OL2dGv81/5AuDDrkYhB4Q5bH42HhK8obCcNSuLZXmuVzWWpy725Av5
-         SDxw==
+        d=chromium.org; s=google; t=1715726922; x=1716331722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7dEnatMats0sY9eR6iWDX8uys8lNwT71usJDglUkjFU=;
+        b=KFjZjbH9kgedpzd8DWp/husbn61V/lNXNlDfKResCDliU+375dKCXPSW7C7pVTdZDO
+         rAkDqVZBrtUl57x31u6v0OqIwuN1ZQqlRsL9yzkGwSvYTqlWHYb1LV1k9kqSXYRtgiIA
+         RaIbX3wvbub0PumdCh1Qu/OmgEMBc/w++qe20=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715716512; x=1716321312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I5DfaKSvWBjSuruH8QpkzwqbDWxyqIe8ntp5STBjhPE=;
-        b=w2Kvnm2EmUxIlGs/lIBM3JP9PBqbB35bi2IFweqrX+KHaNFMIFKu5PpMH52CLYkftO
-         rpy5MK30UTnEPBOCF5xbRKMPDi3NPB3DBTv2sqkEBJGc3/auF2Lg7MgasBDkCoc1P98P
-         FkbXN4IbmKNqOaxAPhgBZwv01v6AWXhTIiYo04JNRnl+BhMgxyhTgX1raVWbl7TncdHf
-         thGnAp/vL2M9LAZof5RvzLA4IMBCX11dISEZDKLcjvAbUgHe1f61PjfuGVa3IcQO/bGp
-         ZrKi92m4nOnUJQhKJ5wgCIwYEAGQF0rVWlocY0qehGoT+GaXlTYSWgRQRkB+ajyedJ65
-         VDmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzxmQi8vXpBmJ2miVgLR660d4/mNL9jPpmN11+Lypk7OvTstZRskZssKku9l2JGsgC/PkRoCT/AkJCInq05ptkoVeo10IoRVPVoZL9fuOzxoTXO3uP
-X-Gm-Message-State: AOJu0YzNuH/QB11Y5gq7CFwvNhu3fIcvVlyz9Ek4hFQZ95kN7WAB9mjq
-	e4m3XdoAZnvSNs/wz3Wfvs6IHyPjxLdH1Nov2g3miUHuT898SjexRn33gtlGMiA42/iGn+cMqIQ
-	oiN6pj37fGUMkR+RcsuuHcJCSvITVYyCa9FAG
-X-Google-Smtp-Source: AGHT+IGVq5mRXTNrK/KaBwurMBldLnV/6qJN5uwTdGazOX6+s8bWL81rsv23lU+ZbyujJVMk8Qdjk3/8J+Z+jQ3+QZk=
-X-Received: by 2002:a25:ad50:0:b0:de4:619a:fbd with SMTP id
- 3f1490d57ef6-dee4f2f6cb8mr13359322276.9.1715716512499; Tue, 14 May 2024
- 12:55:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715726922; x=1716331722;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7dEnatMats0sY9eR6iWDX8uys8lNwT71usJDglUkjFU=;
+        b=MhN9589UFUystH8UVeNEUJ7yRxl5X0W5rwCMO7RI2mUHKr6e+VCtE4zVgCrw9GTeJr
+         D5FPQtHcGCDWFzjTwaDfQCJu3O93HYJ4E5II9E5BXT0TSaKeadMD8x6/D3n9onZQSCR3
+         mWNOsZd/PLe6Du76oHVgeQRPcO5Pw7SEgcO04imJAFjYka2Q/0lP/zcGHoPbCQpT88mx
+         dlJI+CRtDJedb6L9F00e5pou3RAXVdkLTYpSz4Kj7bXQMOhvDhfsH3/H+l4swaiiHfNj
+         2+hx7oBngV7HK+N3a1zNXd+iKfiQGIG0C8T04VYEV3MLP8DFQusmukIOsD3tSRPofEJF
+         vOdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNLzWo84VoMJJEA6xeZnzipdgIL3HUHmvBu+T3QG6rrHnnIiXobZuK9fGzHF4/4wYZCpJkwT6kJ04pA0itcb679SH0r/DlxXh4awzLewgZs7NczZxO
+X-Gm-Message-State: AOJu0YxT8TvYsmmN0zb01SZBBUg39He8F9z+L6Iqo1hHyhmnbKCq64yd
+	AQQuxyMymT9Jj+oWTTO6/DlxJbJYQxOCYrkUzqENcnRq7+XrpMmH3rJLz7+LKA==
+X-Google-Smtp-Source: AGHT+IFNYthq6sGRj5beJQGDuOSDHf6eMfI+iPOay6PKYPk2IVvOV/nkNwPHeh6QcabowUJdNEzJDA==
+X-Received: by 2002:a17:90a:aa12:b0:2b1:6686:dd7b with SMTP id 98e67ed59e1d1-2b6ccb7e416mr12324060a91.33.1715726922083;
+        Tue, 14 May 2024 15:48:42 -0700 (PDT)
+Received: from localhost (4.198.125.34.bc.googleusercontent.com. [34.125.198.4])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2b671782d89sm10230359a91.55.2024.05.14.15.48.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 15:48:41 -0700 (PDT)
+From: Stephen Boyd <swboyd@chromium.org>
+To: Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-security-module@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>
+Subject: [PATCH] loadpin: Prevent SECURITY_LOADPIN_ENFORCE=y without module decompression
+Date: Tue, 14 May 2024 15:48:38 -0700
+Message-ID: <20240514224839.2526112-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com> <1714775551-22384-17-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1714775551-22384-17-git-send-email-wufan@linux.microsoft.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 14 May 2024 15:55:01 -0400
-Message-ID: <CAHC9VhTK4WS6BOXqLJ4sNKXR9a17gT3vXJUBc1F11cZ_QaOYBA@mail.gmail.com>
-Subject: Re: [PATCH v18 16/21] fsverity: expose verified fsverity built-in
- signatures to LSMs
-To: ebiggers@kernel.org
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, 
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, 
-	agk@redhat.com, snitzer@kernel.org, eparis@redhat.com, 
-	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 3, 2024 at 6:32=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> w=
-rote:
->
-> This patch enhances fsverity's capabilities to support both integrity and
-> authenticity protection by introducing the exposure of built-in
-> signatures through a new LSM hook. This functionality allows LSMs,
-> e.g. IPE, to enforce policies based on the authenticity and integrity of
-> files, specifically focusing on built-in fsverity signatures. It enables
-> a policy enforcement layer within LSMs for fsverity, offering granular
-> control over the usage of authenticity claims. For instance, a policy
-> could be established to permit the execution of all files with verified
-> built-in fsverity signatures while restricting kernel module loading
-> from specified fsverity files via fsverity digests.
->
-> The introduction of a security_inode_setintegrity() hook call within
-> fsverity's workflow ensures that the verified built-in signature of a fil=
-e
-> is exposed to LSMs. This enables LSMs to recognize and label fsverity fil=
-es
-> that contain a verified built-in fsverity signature. This hook is invoked
-> subsequent to the fsverity_verify_signature() process, guaranteeing the
-> signature's verification against fsverity's keyring. This mechanism is
-> crucial for maintaining system security, as it operates in kernel space,
-> effectively thwarting attempts by malicious binaries to bypass user space
-> stack interactions.
->
-> The second to last commit in this patch set will add a link to the IPE
-> documentation in fsverity.rst.
->
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+If modules are built compressed, and LoadPin is enforcing by default, we
+must have in-kernel module decompression enabled (MODULE_DECOMPRESS).
+Modules will fail to load without decompression built into the kernel
+because they'll be blocked by LoadPin. Add a depends on clause to
+prevent this combination.
 
-Eric, are you okay with the fs-verity patches in v18?  If so, it would
-be nice to get your ACK on this patch at the very least.
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ security/loadpin/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-While it looks like there may be a need for an additional respin to
-address some new/different feedback from the device-mapper folks, that
-shouldn't affect the fs-verity portions of the patchset.
+diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+index 6724eaba3d36..8c22171088a7 100644
+--- a/security/loadpin/Kconfig
++++ b/security/loadpin/Kconfig
+@@ -14,6 +14,9 @@ config SECURITY_LOADPIN
+ config SECURITY_LOADPIN_ENFORCE
+ 	bool "Enforce LoadPin at boot"
+ 	depends on SECURITY_LOADPIN
++	# Module compression breaks LoadPin unless modules are decompressed in
++	# the kernel.
++	depends on MODULE_COMPRESS_NONE || MODULE_DECOMPRESS
+ 	help
+ 	  If selected, LoadPin will enforce pinning at boot. If not
+ 	  selected, it can be enabled at boot with the kernel parameter
 
---=20
-paul-moore.com
+base-commit: 4cece764965020c22cff7665b18a012006359095
+-- 
+https://chromeos.dev
+
