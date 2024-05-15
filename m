@@ -1,63 +1,126 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1068800;
-	Wed, 15 May 2024 16:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F5B13AF2;
+	Wed, 15 May 2024 16:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715790910; cv=none; b=GKVzKODwFaCN10WRGCCbMMb1fFKvS8WVeQ61Zy4zGY89pLOxrf1bMv4B7I1axeCvOaZS4KqNkUR0K3SAOGX9jGdtehVj37shoOaNF/bPz+WpqvFnL8M1/RyVtH0df/sBBRx1r5SrBSMmRVOJzOs9obdVyZ442ExgpSZQqXP/iCY=
+	t=1715791491; cv=none; b=EjTWFCWlFDAXRirLP6whSINycJI8xjEui8zsVjub6K6NMKBhjMa5sSLbG8jxzoHApFlo676Yn24vqEvk2VKrvMgO1wvQsnue3ZdvBJDLolsUnK27odmFRSZNdfOBEzNBok6Pw2R6+nxKhZuBgWIB4gf1bHn24sSZEjarAFDYRLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715790910; c=relaxed/simple;
-	bh=4NBKgO2nFP2kOn6mDUc+hOhOTVmSGCSV4LJv6X+02JE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EzJq15OlkeURo8btd7+71k5JfAyOSRGaRzVgu50i378bc7A5VFcdY9ZfIlepPmPippRlUtKszT9UIdhPsFV/LiHzfqRWfIW7f4AXegNnS+0X2LRT0Xuelb9lcAXAkEqgrn82u7s4PmdZVl7STYhz45pZJZ54gzkaoocTcddHNcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCO4W6rB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715791491; c=relaxed/simple;
+	bh=NAsBTPyo6hkTeQEmu1aBJfk7Pm+0tCxNTqj/qhS7Liw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=UM+LbMvYauM8Ga/+dkX13wbTtZWB1V3OQEgrgtD1ZBQZ9yCxV7r056oDxa/k+bDgJX33ox/ovZp3Nf/V5emBLwAIDrFw0DE38B+mh8DgeIATmAVreAPBOPru6h8+qvm91bLInWX/v4jE70hQhZkw6dAkyzhvrlJM3f8Amer0r/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZKaXVY6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCO4W6rB"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B161AC2BD11;
-	Wed, 15 May 2024 16:35:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZKaXVY6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED8CC116B1;
+	Wed, 15 May 2024 16:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715790910;
-	bh=4NBKgO2nFP2kOn6mDUc+hOhOTVmSGCSV4LJv6X+02JE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=SCO4W6rBuubbkdczP55VwTPpdcnJwR39Q0vDB1MP7nx/jmM75syoRCYDg/uvO2Zcb
-	 gkF0LyFG7LgqNpdLm6I4gLDXQWoysTtj5e9yJZ3cD7cthdw7GS82xfzKGn61nSLYTl
-	 teiJVNY0EgJK1tdU312/xCJnLVatehBs6xAEB1/Hg/u56aE69ew97BREMnpkqu3VvS
-	 kO2Pz3HUhNFzhywPzDjSSbrrUu0pRIZa/7VVo3LJPajzv5psVP7T+zgZ3uU0CLOPZW
-	 59+jdAps+UrY61CA/H4hVlqlJNxSb5N6RrCT7wtKFnywVubqy4WnwF6bMwa8Zjay7+
-	 Ddvj7bDqB80Rg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AA0F0C433A2;
-	Wed, 15 May 2024 16:35:10 +0000 (UTC)
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240513
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <eb9e94532b792619e4161de6c0a397db@paul-moore.com>
-References: <eb9e94532b792619e4161de6c0a397db@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <eb9e94532b792619e4161de6c0a397db@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240513
-X-PR-Tracked-Commit-Id: dd80c7465029dd0671e6f9fc2678ae0fbdf785ac
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4cd4e4b88100a33d96ec4f83bdb0e4e754e24c97
-Message-Id: <171579091069.28973.11955824806721421850.pr-tracker-bot@kernel.org>
-Date: Wed, 15 May 2024 16:35:10 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1715791490;
+	bh=NAsBTPyo6hkTeQEmu1aBJfk7Pm+0tCxNTqj/qhS7Liw=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
+	b=OZKaXVY6REI80VZEVknh4j6x8QfSMh3R7uFq+UBvvGzD16sRg8LDdR2J/NEfVLDqd
+	 BkXq0KH4h8yhIq3QaqJMDSptbteQmyKbqOfLFgaf83t/iXooqIUMavplWNaqXQWfdO
+	 6b94cx4KpscuLLhFa2UPHkfHrr/EEbiGUUNAxsImvEFTM6u9nEQMNzkwvDzu5vLJ20
+	 q3DSnosKu3QrPlBuASmjPsubHaReQM6mwnNuAHyRkNrDQWUO4gY74+Fxke6huqjxDT
+	 GvjOWsFou3x/5T3FxuU8qShG+DsrayII8ACY1DckCEavl12t/6rQOQ0hK9SbhACN9Y
+	 vEEW3ajBihPVA==
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH bpf-next v10 5/5] bpf: Only enable BPF LSM hooks when an
+ LSM program is attached
+From: KP Singh <kpsingh@kernel.org>
+In-Reply-To: <CACYkzJ4wH258JZMN4gqSs-BxU1QgeHMJ2U=bouYf+xLUW8+ttw@mail.gmail.com>
+Date: Wed, 15 May 2024 10:44:49 -0600
+Cc: Kees Cook <keescook@chromium.org>,
+ linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org,
+ Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ jackmanb@google.com,
+ renauld@google.com,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Song Liu <song@kernel.org>,
+ revest@chromium.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <EFEB4187-0F14-41BD-B145-319CBE22701E@kernel.org>
+References: <20240507221045.551537-1-kpsingh@kernel.org>
+ <20240507221045.551537-6-kpsingh@kernel.org> <202405071653.2C761D80@keescook>
+ <CAHC9VhTWB+zL-cqNGFOfW_LsPHp3=ddoHkjUTq+NoSj7BdRvmw@mail.gmail.com>
+ <0E524496-74E4-4419-8FE5-7675BD1834C0@kernel.org>
+ <CAHC9VhS6hckf+xzhPn9gNQfFDiQhiGyJuzGVNXB=ZAr=8Af37w@mail.gmail.com>
+ <D58AC87E-E5AC-435D-8A06-F0FFB328FF35@kernel.org>
+ <CACYkzJ4wH258JZMN4gqSs-BxU1QgeHMJ2U=bouYf+xLUW8+ttw@mail.gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-The pull request you sent on Mon, 13 May 2024 15:47:12 -0400:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20240513
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4cd4e4b88100a33d96ec4f83bdb0e4e754e24c97
+> On 15 May 2024, at 10:08, KP Singh <kpsingh@kernel.org> wrote:
+>=20
+> On Fri, May 10, 2024 at 7:23=E2=80=AFAM KP Singh <kpsingh@kernel.org> =
+wrote:
+>>=20
+>>=20
+>>=20
+>>> On 9 May 2024, at 16:24, Paul Moore <paul@paul-moore.com> wrote:
+>>>=20
+>>> On Wed, May 8, 2024 at 3:00=E2=80=AFAM KP Singh <kpsingh@kernel.org> =
+wrote:
+>>>> One idea here is that only LSM hooks with default_state =3D false =
+can be toggled.
+>>>>=20
+>>>> This would also any ROPs that try to abuse this function. Maybe we =
+can call "default_disabled" .toggleable (or dynamic)
+>>>>=20
+>>>> and change the corresponding LSM_INIT_TOGGLEABLE. Kees, Paul, this =
+may be a fair middle ground?
+>>>=20
+>>> Seems reasonable to me, although I think it's worth respinning to =
+get
+>>> a proper look at it in context.  Some naming bikeshedding below ...
+>>>=20
+>>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>>> index 4bd1d47bb9dc..5c0918ed6b80 100644
+>>>> --- a/include/linux/lsm_hooks.h
+>>>> +++ b/include/linux/lsm_hooks.h
+>>>> @@ -117,7 +117,7 @@ struct security_hook_list {
+>>>>       struct lsm_static_call  *scalls;
+>>>>       union security_list_options     hook;
+>>>>       const struct lsm_id             *lsmid;
+>>>> -       bool                            default_enabled;
+>>>> +       bool                            toggleable;
+>>>> } __randomize_layout;
+>>>=20
+>>> How about inverting the boolean and using something like 'fixed'
+>>> instead of 'toggleable'?
+>>>=20
+>>=20
+>> I would prefer not changing the all the other LSM_HOOK_INIT calls as =
+we change the default behaviour then. How about calling it "dynamic"
+>>=20
+>> LSM_HOOK_INIT_DYNAMIC and call the boolean dynamic
+>>=20
+>=20
+> Paul, others, any preferences here?
 
-Thank you!
+I will throw another in the mix, LSM_HOOK_RUNTIME which captures the =
+nature nicely. (i.e. these hooks are enabled / disabled at runtime). =
+Thoughts?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>=20
+> - KP
+>=20
+>> - KP
+>>=20
+>>> --
+>>> paul-moore.com
+
+
