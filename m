@@ -1,160 +1,146 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09CF57CA1;
-	Wed, 15 May 2024 14:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB93B155747
+	for <linux-security-module@vger.kernel.org>; Wed, 15 May 2024 15:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715784735; cv=none; b=jLMt2wi+zdKyBgi4AxhygTN2js48GWdle0DpmqQFlaUlCGkhpUIPKwrpBF4XJK7YjuzJr+ifQB+0s6/NnxhJt9SoHqj8tXWD9K/UVJCLT0A9YQIGZ8wfWYlcrn+n/NuNxUcTUhFHuKtOygWS725hyyW+vqUqdAQKIP1YhAotZzY=
+	t=1715785990; cv=none; b=bmexT46AgpGLf856mJTqMTxLwy7zHQJCFnEzR1iuZS2iOaHFZQAxhj8q+aNKMluB9BqQxafonZWGxTxCz86dnpAqpxuy9r+VBL9OZf+MV1nbpM8NdlcvhraxwJNJX9y1r4VHJqQmtZabh7TgPblTW82eT4Yj40S/ALFyutlJWaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715784735; c=relaxed/simple;
-	bh=mfIWBKjyaGtpfqqPaQXhJaL2BgJixSHpCSI3TbRvwWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M7YJ+iwphaq7YBo3IOdqUpXVEvbCGywiODP01VOu1zVSZTUCkGPkAKwk6+uIC4gx4n7NOjCjPhYQ1I3XhgetiTvk/ldNiO5APUagl0w6MAv7xTE0KT1iPZYA1hG1YwHzxhk5Q+FdCZ0o6dH5K/CGy2Yw0r9+RaQdRU3zxi8o/Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZZV665u; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715785990; c=relaxed/simple;
+	bh=n0QOdD+SpsYotZ9b+xanZmnLBPWLimCdwNcb4m/JVXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjPM2WIc0wy843da6Vf6RscDNxlw3iFX8OGB6QR/xV2bjZs+tjKQZmpWyze4B4T/NxKtnKVkpRm/6OH6NEyQxNTQ1SxBGNi4zp8BckLsT4qZfRky1d3BI991G5Xb9vYsT5fuFGyJpSOnGapxPjylOMKUkPZ7WMARUcwkr1BSK5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TUsiHWub; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZZV665u"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ecd9a81966so55610655ad.0;
-        Wed, 15 May 2024 07:52:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715784733; x=1716389533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dyd4g9Mj6udeAMgwbujT15lk0egPi/YMbqByHib0kUE=;
-        b=hZZV665uFO7NGWa8XzZ7KyohlwJnBkLZEn9AYcxgf2Dig8RqjKANpwtkT0nxS/vH15
-         ov+hSoVD3YX5EitLuOJYvhBvh9pwP9Ds4oefJmJwel9bQYStcSqOfBt00EU0qjOrof4L
-         v24MW+Q7zBLvKvYKHRcvaMntW03OzkWJ2pH63B6iqO5aNTmjyP0yBEn6C7SvXe/HC0RO
-         sv0cRIvbbKbqcfX4EAq7ofkfLHf9rXqnWMlAGuVOp4dVib/isJ85/jaex06TApnY20ho
-         WogOPNVbkmkw3r8ST7304lBrRI6y0XLynDpPyhCL3XJuQA3vD9YJbhOvYb6RkZPEw/oO
-         yuWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715784733; x=1716389533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dyd4g9Mj6udeAMgwbujT15lk0egPi/YMbqByHib0kUE=;
-        b=j4zd3lmuv9wvaU2vJXe8le/StFvKaTNQO9plHr+Inku+sxzLu+CTuXLYPHhvpUvBVt
-         3kGm3LQTd2kVPgTh0y0URHKH/J/gs9Pqv4bzLiu/aSCVrCly1f1yTEUWsftOTAiQHeBi
-         lpgSc0gBWZdPvWdA/3PQynz37jSSw+iu+Ilf2tFxRfz9gMC8bjc8L3OYf3lK2/KukEop
-         O9KmEEr2wIdRuyYou5BDFxuA7FMvUtHVi0FmvrT6hzIlqROxeevFNLa4XL+zF7zZtMv9
-         cOTsMWzMoF8eu45e9Bh+BnTf1RSk9qMrauWrNIrr9MVxIdej4miTCTxJynR9COqrOq3c
-         knnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrJMij3OtFpBlfedza+IsFjmQrVoYvFWu9EV194uDEc6cHcoouaEAGbAm+2MUL+Bve8rPL3ngvS+OMSEMsb9HEqVieLniZS6RpuG+tW/ABy6dTHoeZ7hXxPXKNJNfxvItUtt9bWO1U37b6X9nscQOT
-X-Gm-Message-State: AOJu0YwMylmvCT/XdTsRqbffuugfm/rZ65pGvVmU8ZAE4NKLEujRlJX7
-	orespycBLzc9l+y//vgv0oo3TibTndcf32culf9ENTF67qxEmM4KtvpyAdmXBxUd8sIsactvwuj
-	Io+XWic6mn9bYX+IukVzpajdxJD4=
-X-Google-Smtp-Source: AGHT+IEBX22RX9w1vE00S9nBou9S9ivxyjpVGwDAKjzpwjQAP1/Pb2AKyIRA1BYuB73/SpuaEfwQls/e50YW11bQYuk=
-X-Received: by 2002:a17:902:d2d0:b0:1e4:59a2:d7c1 with SMTP id
- d9443c01a7336-1eefa58c6ebmr289967395ad.33.1715784733009; Wed, 15 May 2024
- 07:52:13 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TUsiHWub"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VfcDB32QkzFTD;
+	Wed, 15 May 2024 17:12:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1715785978;
+	bh=fCsa5lJbd81Eipq/9Z1C96riVQgzKEgtzEDbLLHWw+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TUsiHWubeauFlnSjCw/GxrtcTDQhOWN81Xvnumk+B8Na/7xS97/9qjjyxE2V9bfOJ
+	 YtCWtgdhCm/T201MI7CZLeWHsLkoSLTR8Y0GvDT6OagPrHJMLbfC/ReMv0XxDVcxRv
+	 1qr97WQzL2dXrFbJRcWRIOCrTFL1NGetSxDrGm3U=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VfcD86WmKzFJm;
+	Wed, 15 May 2024 17:12:56 +0200 (CEST)
+Date: Wed, 15 May 2024 17:12:56 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>
+Cc: syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240515.Yoo5chaiNai9@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503130905.16823-1-stephen.smalley.work@gmail.com> <171497439414.9775.6998904788791406674@noble.neil.brown.name>
-In-Reply-To: <171497439414.9775.6998904788791406674@noble.neil.brown.name>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Wed, 15 May 2024 10:52:01 -0400
-Message-ID: <CAEjxPJ6DTNY3p9MmdV0K1A7No7joczGTeOe26Q4wr6yujk9zKA@mail.gmail.com>
-Subject: Re: [PATCH v3] nfsd: set security label during create operations
-To: NeilBrown <neilb@suse.de>
-Cc: selinux@vger.kernel.org, linux-nfs@vger.kernel.org, chuck.lever@oracle.com, 
-	jlayton@kernel.org, paul@paul-moore.com, omosnace@redhat.com, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, May 6, 2024 at 1:46=E2=80=AFAM NeilBrown <neilb@suse.de> wrote:
->
-> On Fri, 03 May 2024, Stephen Smalley wrote:
-> > When security labeling is enabled, the client can pass a file security
-> > label as part of a create operation for the new file, similar to mode
-> > and other attributes. At present, the security label is received by nfs=
-d
-> > and passed down to nfsd_create_setattr(), but nfsd_setattr() is never
-> > called and therefore the label is never set on the new file. This bug
-> > may have been introduced on or around commit d6a97d3f589a ("NFSD:
-> > add security label to struct nfsd_attrs"). Looking at nfsd_setattr()
-> > I am uncertain as to whether the same issue presents for
-> > file ACLs and therefore requires a similar fix for those.
+On Thu, May 09, 2024 at 08:01:49PM -0400, Paul Moore wrote:
+> On Wed, May 8, 2024 at 3:32 PM syzbot
+> <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
 > >
-> > An alternative approach would be to introduce a new LSM hook to set the
-> > "create SID" of the current task prior to the actual file creation, whi=
-ch
-> > would atomically label the new inode at creation time. This would be be=
-tter
-> > for SELinux and a similar approach has been used previously
-> > (see security_dentry_create_files_as) but perhaps not usable by other L=
-SMs.
+> > Hello,
 > >
-> > Reproducer:
-> > 1. Install a Linux distro with SELinux - Fedora is easiest
-> > 2. git clone https://github.com/SELinuxProject/selinux-testsuite
-> > 3. Install the requisite dependencies per selinux-testsuite/README.md
-> > 4. Run something like the following script:
-> > MOUNT=3D$HOME/selinux-testsuite
-> > sudo systemctl start nfs-server
-> > sudo exportfs -o rw,no_root_squash,security_label localhost:$MOUNT
-> > sudo mkdir -p /mnt/selinux-testsuite
-> > sudo mount -t nfs -o vers=3D4.2 localhost:$MOUNT /mnt/selinux-testsuite
-> > pushd /mnt/selinux-testsuite/
-> > sudo make -C policy load
-> > pushd tests/filesystem
-> > sudo runcon -t test_filesystem_t ./create_file -f trans_test_file \
-> >       -e test_filesystem_filetranscon_t -v
-> > sudo rm -f trans_test_file
-> > popd
-> > sudo make -C policy unload
-> > popd
-> > sudo umount /mnt/selinux-testsuite
-> > sudo exportfs -u localhost:$MOUNT
-> > sudo rmdir /mnt/selinux-testsuite
-> > sudo systemctl stop nfs-server
+> > syzbot found the following issue on:
 > >
-> > Expected output:
-> > <eliding noise from commands run prior to or after the test itself>
-> > Process context:
-> >       unconfined_u:unconfined_r:test_filesystem_t:s0-s0:c0.c1023
-> > Created file: trans_test_file
-> > File context: unconfined_u:object_r:test_filesystem_filetranscon_t:s0
-> > File context is correct
+> > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > >
-> > Actual output:
-> > <eliding noise from commands run prior to or after the test itself>
-> > Process context:
-> >       unconfined_u:unconfined_r:test_filesystem_t:s0-s0:c0.c1023
-> > Created file: trans_test_file
-> > File context: system_u:object_r:test_file_t:s0
-> > File context error, expected:
-> >       test_filesystem_filetranscon_t
-> > got:
-> >       test_file_t
+> > Unfortunately, I don't have any reproducer for this issue yet.
 > >
-> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > ---
-> > v3 removes the erroneous and unnecessary change to NFSv2 and updates th=
-e
-> > description to note the possible origin of the bug. I did not add a
-> > Fixes tag however as I have not yet tried confirming that.
->
-> I think this bug has always been present - since label support was
-> added.
-> Commit d6a97d3f589a ("NFSD: add security label to struct nfsd_attrs")
-> should have fixed it, but was missing the extra test that you provide.
->
-> So
-> Fixes: 0c71b7ed5de8 ("nfsd: introduce file_cache_mutex")
-> might be appropriate - it fixes the patch, though not a bug introduced
-> by the patch.
->
-> Thanks for this patch!
-> Reviewed-by: NeilBrown <neilb@suse.de>
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+> >
+> > general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
+> > CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> > RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
+> 
+> Possibly a Landlock issue, Mickaël?
 
-FWIW, I finally got around to testing Linux v5.14 and it did pass
-these NFS tests so this was a regression. I haven't been able to
-bisect yet.
+It looks like security_inode_free() is called two times on the same
+inode.  This could happen if an inode labeled by Landlock is put
+concurrently with release_inode() for a closed ruleset or with
+hook_sb_delete().  I didn't find any race condition that could lead to
+two calls to iput() though.  Could WRITE_ONCE(object->underobj, NULL)
+change anything even if object->lock is locked?
+
+A bit unrelated but looking at the SELinux code, I see that selinux_inode()
+checks `!inode->i_security`.  In which case could this happen?
+
+> 
+> > Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> > RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> > RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> > RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> > RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> > R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> > R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> > FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> > Call Trace:
+> >  <TASK>
+> >  security_inode_free+0x4a/0xd0 security/security.c:1613
+> >  __destroy_inode+0x2d9/0x650 fs/inode.c:286
+> >  destroy_inode fs/inode.c:309 [inline]
+> >  evict+0x521/0x630 fs/inode.c:682
+> >  dispose_list fs/inode.c:700 [inline]
+> >  evict_inodes+0x5f9/0x690 fs/inode.c:750
+> >  generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+> >  kill_block_super+0x44/0x90 fs/super.c:1675
+> >  deactivate_locked_super+0xc6/0x130 fs/super.c:472
+> >  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+> >  task_work_run+0x251/0x310 kernel/task_work.c:180
+> >  exit_task_work include/linux/task_work.h:38 [inline]
+> >  do_exit+0xa1b/0x27e0 kernel/exit.c:878
+> >  do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+> >  __do_sys_exit_group kernel/exit.c:1038 [inline]
+> >  __se_sys_exit_group kernel/exit.c:1036 [inline]
+> >  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f731567dd69
+> > Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> > RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> > R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+> >  </TASK>
+> > Modules linked in:
+> > ---[ end trace 0000000000000000 ]---
+> 
+> -- 
+> paul-moore.com
+> 
