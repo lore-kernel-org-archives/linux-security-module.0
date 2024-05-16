@@ -1,56 +1,56 @@
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D941914D449
-	for <linux-security-module@vger.kernel.org>; Thu, 16 May 2024 15:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CB914D435
+	for <linux-security-module@vger.kernel.org>; Thu, 16 May 2024 15:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715874611; cv=none; b=KHSn++bAwPojznOBNavmySKeEfJBQJac+Qw5bCLPuhsr3mMhElmiKuj3hDdzkQoJtsf7tQYSrlUvJXbmhBhfYYgxzgSdLxufPm5Fro/tZzLSU90qjRfogZ49qcwGpk+DwMzavs+bRWwwEb7xX0AfwqPTI84cQmnWBXCAIab62oo=
+	t=1715874907; cv=none; b=tEqFY15/kwO3pUtNgz2z/Ew0nFU+sJ2+kTwBrdEJJMKoWEGp60qDkLL8XSoTS4WTcObi0shmgisF4++sCB1bG6Il7gXc9OQjr1+cKY89M3dGRfOYReADA3dXFeyyteYnwhJa66Ei345fEbsWlvqg5TggcBIttPedGMsse3RCggw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715874611; c=relaxed/simple;
-	bh=C2S+Wcg1T1bDn7HdR6vfDNd7hPYvGbP2fXOfs5dd6ZU=;
+	s=arc-20240116; t=1715874907; c=relaxed/simple;
+	bh=nN00p+BB6G3oXDgct+EBmEwHz4fIJMGD6RriYL6RGhY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g0OOtrb8t1tqBhdjDGuQAqeQ75s+EnlJVTI7iPkAuHWr1geJ4TC8dXwTRRRTGXU2cNZE4d3+K44fV0EMK8Ryy+BvP61Tscd0k3mzTNaYd4XpF0faOpwElHKYnIvi6RaIJEoI+8NM7v+n53OIIU3ymhku3OR6ygUJcspb0rGQ6ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KygvtkIO; arc=none smtp.client-ip=209.85.166.49
+	 In-Reply-To:Content-Type; b=ZP5yAL/tWQ9uQkwUg9LbJQnG48CjNABu1J+LWvP5irWBVBYzzsxqJ/XFlZ3eWAk3fCn19qKI9czCT4pgbyJHizDpQhEpXiaoImnr4PF+5BFsNPYzXRBKHVq2RMkS16chiwKZ5YXl3Ub1rAHh+xSBWf9bGAw75heDJBldEWHA36I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=g2MMtuiR; arc=none smtp.client-ip=209.85.166.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KygvtkIO"
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7e1fb2a81fdso5154139f.1
-        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2024 08:50:09 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="g2MMtuiR"
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e195fd1d8eso6552939f.0
+        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2024 08:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1715874609; x=1716479409; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1715874905; x=1716479705; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=P+iK/FVhZ4HUNEOzdTMBxIyNYiEbX2AZzsfqmN9W/BY=;
-        b=KygvtkIOUT6biaordQ3w+WUwvxASyMz+pLz1DE35nNfEcMRVZuxGNLdnzw+5wWRTwm
-         yyHTTtqgNTEzM6KudcdfQC2/D8IuNtsWcLtH5kaymoUzF2tLZUA8cuP4HP+1v/IULPzU
-         083xnHcDCF3WUP/jSfZqSpJT+xHb8fEuCsJtI=
+        bh=Ab4/9SXReNXDQjfL5I+PFsnXsCfrtKWnsASearG9QQU=;
+        b=g2MMtuiRfR8eHXbLO01GoAyMEOgBmWwpF20hCztLiCp2zPTkPtmpSjvaUsPZUBsfaA
+         BGotKNuX3/E07EZ4cDdg2Fb8ZTArNUIS2XHGHS0OgLdveMuodH/vKu9T6QCsARjYGgDE
+         MLB5r4wc2CdpXcSXJQ0+NxE+SkJjRejGqo1fo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715874609; x=1716479409;
+        d=1e100.net; s=20230601; t=1715874905; x=1716479705;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P+iK/FVhZ4HUNEOzdTMBxIyNYiEbX2AZzsfqmN9W/BY=;
-        b=kNQAoToWK9fFEwuMG5ReeI6mOlGFWcHQSj9mc86Q9UwnAOUyxSC788rh+VMhhxxhRu
-         dzBHvpylr5c3X7w4dND6HJeTVVNfF032j0oI9zrXT9eYso0fAY0fDTQln/VeBegD9GY3
-         /PB1IvX9+W5h7iGuGPKHDTU0vnS1c4ETKK3eES39NhGbvhFprhDhHWm/qov2euajwROz
-         RhyY+JMuhJRpJd0l5xYxFZexcoke5gyoV5725HGEEyHcXAsFv3J7iQ74ZSaIEMAY5Kja
-         leDiAHmyrKYYppmMeNKGMwe0/jVZgpKcO0m5KiQTTh8SprwwLc7+CMqPrv2MnlA17B7b
-         PqAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmP5WmC8P/xh0hfhl3GAOgNRj8d7rsKZcIUKPI8wep+ZSenNo7yOZjlDz/Y69ayHOzPvEkARCa5i3d6MFZR6059sWsOwRNylckKVSlvEQLl20BCWYX
-X-Gm-Message-State: AOJu0Yyr/Ycj6EntUHL1gzV5fzE10WLJ4h1yH8HO68AObFEzGsp9U5Dm
-	F42at02DxScsx1CO641jKPKtGfevg+h2mpslgpxg8gk7jyaDqz2miXF1FpGtPyc=
-X-Google-Smtp-Source: AGHT+IFJbIeUVLI7ISOMfUKtjb3QlrF6+MESxVkubwkrIwTVWoi4y8+3A4qy7lb3Ntw2ajnuWMf8Hw==
-X-Received: by 2002:a05:6602:59e:b0:7d9:eeb8:ddeb with SMTP id ca18e2360f4ac-7e1b5202ae8mr1886131739f.2.1715874608958;
-        Thu, 16 May 2024 08:50:08 -0700 (PDT)
+        bh=Ab4/9SXReNXDQjfL5I+PFsnXsCfrtKWnsASearG9QQU=;
+        b=QYWjUYDY/+hwZJYSPSXzyt4Wvw1F1XTYsRnbmNMTYX+cEyhlTlpbWgGfycdYdBwQvP
+         l1uWzJ50xXPGjmloh5bk8fkonBCsC6FU+yMvaqKSv5Ae5fLT5moXyRAH/grOIv6/ehtz
+         HMPsdFb3sbOJlvthle7RHp88Yjzz9Yd0WB3ewRa9FMO8WDjwwoo0/ce+EJEHAFIM66q0
+         g2WSaCaDUzh2YyDVq6hzwoFaDjQjdcd8Uc9gDFLKs+vIdnsr6uqxlbstdh9E2yE0hF3V
+         CUMNKWPjd0Vd1Rqzl+7Tmv6j7YEIrs9ly4JbH96K63hQUaUItiZT2dqIVG8IMqyZ5maZ
+         vCIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3BtqrL+QIbGsA6FeFHk7lP7PYzOUx3H+1H1tOY+545EDdxBhZe1sPRPNofXAQtz3Q0geeYl+ar9vch+AncIhbES3TGfJffC0/VVzM7goTdCGyd+Wn
+X-Gm-Message-State: AOJu0YzQRiF3lFlW7JN3Zys0OKRnFQ5xrpAXVHICM7jjJG5UuYklZ8p7
+	Ar36cDogyajHGjLnx+wwKdkJdEUwlIQqXbVZ2RmHo2ukf1kykjmLJzS93WsuFUY=
+X-Google-Smtp-Source: AGHT+IFkrQ63gFwV/5y3qWi0SsRylHli+g/GXjCSjbCIbAnwmlot3x2PILn1QDwIRhTHEUwb7pHpvA==
+X-Received: by 2002:a6b:d203:0:b0:7e1:8bc8:8228 with SMTP id ca18e2360f4ac-7e1b501f23dmr1984498939f.0.1715874905028;
+        Thu, 16 May 2024 08:55:05 -0700 (PDT)
 Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376de185sm4147976173.150.2024.05.16.08.50.07
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e20378a041sm127028439f.26.2024.05.16.08.55.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 May 2024 08:50:08 -0700 (PDT)
-Message-ID: <bec3f30e-fc9a-45e2-b6ea-d739b2a2d019@linuxfoundation.org>
-Date: Thu, 16 May 2024 09:50:06 -0600
+        Thu, 16 May 2024 08:55:04 -0700 (PDT)
+Message-ID: <bf762b3d-4776-4041-864f-03094a9bea66@linuxfoundation.org>
+Date: Thu, 16 May 2024 09:55:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -58,9 +58,9 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/66] selftests/cgroup: Drop define _GNU_SOURCE
-To: Tejun Heo <tj@kernel.org>, Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+Subject: Re: [PATCH v4 00/66] Define _GNU_SOURCE for sources using
+To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
  =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
  Christian Brauner <brauner@kernel.org>,
  Richard Cochran <richardcochran@gmail.com>,
@@ -69,43 +69,54 @@ Cc: shuah@kernel.org, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
  Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
  "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
  Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Zefan Li
- <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Muchun Song <muchun.song@linux.dev>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>,
- Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ John Fastabend <john.fastabend@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
  kernel-team@android.com, linux-security-module@vger.kernel.org,
  netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
- bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
- Shuah Khan <skhan@linuxfoundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
+ bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
 References: <20240510000842.410729-1-edliaw@google.com>
- <20240510000842.410729-9-edliaw@google.com>
- <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
+In-Reply-To: <20240510000842.410729-1-edliaw@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/13/24 11:02, Tejun Heo wrote:
-> On Fri, May 10, 2024 at 12:06:25AM +0000, Edward Liaw wrote:
->> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
->> redefinition warnings.
->>
->> Signed-off-by: Edward Liaw <edliaw@google.com>
+On 5/9/24 18:06, Edward Liaw wrote:
+> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+> redefinitions of _GNU_SOURCE from source code.
 > 
-> Applied to cgroup/for-6.10.
+> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> asprintf into kselftest_harness.h, which is a GNU extension and needs
+> _GNU_SOURCE to either be defined prior to including headers or with the
+> -D_GNU_SOURCE flag passed to the compiler.
 > 
-> Thanks.
-> 
+> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+> v2: https://lore.kernel.org/linux-kselftest/20240507214254.2787305-1-edliaw@google.com/
+>   - Add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+>     location.
+>   - Remove #define _GNU_SOURCE from source code to resolve redefinition
+>     warnings.
+> v3: https://lore.kernel.org/linux-kselftest/20240509200022.253089-1-edliaw@google.com/
+>   - Rebase onto linux-next 20240508.
+>   - Split patches by directory.
+>   - Add -D_GNU_SOURCE directly to CFLAGS in lib.mk.
+>   - Delete additional _GNU_SOURCE definitions from source code in
+>     linux-next.
+>   - Delete additional -D_GNU_SOURCE flags from Makefiles.
+> v4:
+>   - Rebase onto linux-next 20240509.
+>   - Remove Fixes tag from patches that drop _GNU_SOURCE definition.
+>   - Restore space between comment and includes for selftests/damon.
+> > Edward Liaw (66):
+>    selftests: Compile with -D_GNU_SOURCE when including lib.mk
 
-Hi Tejun,
+This above change is causing some build problems - I didn't
+notice them when I tested on linux-next. However some problems
+are seen by Mark. He sent in a fix for ALSA and a change to
+descalate build warn.
 
-Please don't include this in your PR to Linus. This patch series needs
-to go together as it is causing several build warns and some errors.
+Please don't apply these for 6.10 for now. I will take all
+of these together.
 
 thanks,
 -- Shuah
