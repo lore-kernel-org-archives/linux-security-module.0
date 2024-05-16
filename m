@@ -1,105 +1,111 @@
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609C114A4D7;
-	Thu, 16 May 2024 14:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D941914D449
+	for <linux-security-module@vger.kernel.org>; Thu, 16 May 2024 15:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715868155; cv=none; b=myLHs5mYp6MgpDzAe8VH6zQngntsWttLAgAmp6HuH6JrE6xkzIdtZqzWjhd7J4IflSf5m3Swp65UNCBvQ3knF8WtwVsFlsSQnHAjnRJmcMQvu8GpCFfbpUUbs3aMATNA77CeLVBFSCGPAPgIzFP3OO0xcxAoPdu8HCerulpyqQQ=
+	t=1715874611; cv=none; b=KHSn++bAwPojznOBNavmySKeEfJBQJac+Qw5bCLPuhsr3mMhElmiKuj3hDdzkQoJtsf7tQYSrlUvJXbmhBhfYYgxzgSdLxufPm5Fro/tZzLSU90qjRfogZ49qcwGpk+DwMzavs+bRWwwEb7xX0AfwqPTI84cQmnWBXCAIab62oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715868155; c=relaxed/simple;
-	bh=PII+OyY3HRsFOpjW5l++XBk5W4fZ/zADl3BCmJlUORM=;
-	h=Subject:MIME-Version:Content-Type:Date:Message-ID:CC:From:To:
-	 References:In-Reply-To; b=VOtslJur2zmnM700pOzHZn1PZXRU5uA3i3yp/+ipWYQicF1BGlVkJRv8Oqfqjtn8jwW0CTbHt1wTPHOfPou7A3M08NkaEKXKvSGF7qNNUer8hzTZ5SE5AY/lfNN5OgjJ9x7dKbMHf5fzxYDYP9mmtx1UDdwFg0lFkkzykvPke24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=k+OJX8QB; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+	s=arc-20240116; t=1715874611; c=relaxed/simple;
+	bh=C2S+Wcg1T1bDn7HdR6vfDNd7hPYvGbP2fXOfs5dd6ZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g0OOtrb8t1tqBhdjDGuQAqeQ75s+EnlJVTI7iPkAuHWr1geJ4TC8dXwTRRRTGXU2cNZE4d3+K44fV0EMK8Ryy+BvP61Tscd0k3mzTNaYd4XpF0faOpwElHKYnIvi6RaIJEoI+8NM7v+n53OIIU3ymhku3OR6ygUJcspb0rGQ6ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KygvtkIO; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="k+OJX8QB"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KygvtkIO"
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7e1fb2a81fdso5154139f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 16 May 2024 08:50:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1715868154; x=1747404154;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   cc:from:to:references:in-reply-to:subject;
-  bh=PII+OyY3HRsFOpjW5l++XBk5W4fZ/zADl3BCmJlUORM=;
-  b=k+OJX8QBKhlhXLL+yP7jzjxSe2kwEGUIlf1RVVo8QLlDuet++05n1dC7
-   dwhyvpEbW+sLKcnNuXJDwX9Dp1D1vS6zEXehHOJDcwbUoiDoTf/1MKlFU
-   esPMfQq5KW/aAQJWLPNk5j+/JXm0kvAxHpvRtIW0QAvZOHvajT8m1wCpz
-   k=;
-X-IronPort-AV: E=Sophos;i="6.08,164,1712620800"; 
-   d="scan'208";a="419475431"
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2024 14:02:24 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.17.79:61258]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.38.98:2525] with esmtp (Farcaster)
- id 669cf238-0252-433a-b5ae-10131f992275; Thu, 16 May 2024 14:02:23 +0000 (UTC)
-X-Farcaster-Flow-ID: 669cf238-0252-433a-b5ae-10131f992275
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Thu, 16 May 2024 14:02:23 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Thu, 16 May
- 2024 14:02:12 +0000
+        d=linuxfoundation.org; s=google; t=1715874609; x=1716479409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P+iK/FVhZ4HUNEOzdTMBxIyNYiEbX2AZzsfqmN9W/BY=;
+        b=KygvtkIOUT6biaordQ3w+WUwvxASyMz+pLz1DE35nNfEcMRVZuxGNLdnzw+5wWRTwm
+         yyHTTtqgNTEzM6KudcdfQC2/D8IuNtsWcLtH5kaymoUzF2tLZUA8cuP4HP+1v/IULPzU
+         083xnHcDCF3WUP/jSfZqSpJT+xHb8fEuCsJtI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715874609; x=1716479409;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P+iK/FVhZ4HUNEOzdTMBxIyNYiEbX2AZzsfqmN9W/BY=;
+        b=kNQAoToWK9fFEwuMG5ReeI6mOlGFWcHQSj9mc86Q9UwnAOUyxSC788rh+VMhhxxhRu
+         dzBHvpylr5c3X7w4dND6HJeTVVNfF032j0oI9zrXT9eYso0fAY0fDTQln/VeBegD9GY3
+         /PB1IvX9+W5h7iGuGPKHDTU0vnS1c4ETKK3eES39NhGbvhFprhDhHWm/qov2euajwROz
+         RhyY+JMuhJRpJd0l5xYxFZexcoke5gyoV5725HGEEyHcXAsFv3J7iQ74ZSaIEMAY5Kja
+         leDiAHmyrKYYppmMeNKGMwe0/jVZgpKcO0m5KiQTTh8SprwwLc7+CMqPrv2MnlA17B7b
+         PqAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmP5WmC8P/xh0hfhl3GAOgNRj8d7rsKZcIUKPI8wep+ZSenNo7yOZjlDz/Y69ayHOzPvEkARCa5i3d6MFZR6059sWsOwRNylckKVSlvEQLl20BCWYX
+X-Gm-Message-State: AOJu0Yyr/Ycj6EntUHL1gzV5fzE10WLJ4h1yH8HO68AObFEzGsp9U5Dm
+	F42at02DxScsx1CO641jKPKtGfevg+h2mpslgpxg8gk7jyaDqz2miXF1FpGtPyc=
+X-Google-Smtp-Source: AGHT+IFJbIeUVLI7ISOMfUKtjb3QlrF6+MESxVkubwkrIwTVWoi4y8+3A4qy7lb3Ntw2ajnuWMf8Hw==
+X-Received: by 2002:a05:6602:59e:b0:7d9:eeb8:ddeb with SMTP id ca18e2360f4ac-7e1b5202ae8mr1886131739f.2.1715874608958;
+        Thu, 16 May 2024 08:50:08 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376de185sm4147976173.150.2024.05.16.08.50.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 May 2024 08:50:08 -0700 (PDT)
+Message-ID: <bec3f30e-fc9a-45e2-b6ea-d739b2a2d019@linuxfoundation.org>
+Date: Thu, 16 May 2024 09:50:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 16 May 2024 14:02:09 +0000
-Message-ID: <D1B4HKJAJG21.2DH9F3E1Q6J9L@amazon.com>
-CC: Sean Christopherson <seanjc@google.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "Vitaly
- Kuznetsov" <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, "Rick P
- Edgecombe" <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>,
-	Angelina Vu <angelinavu@linux.microsoft.com>, Anna Trikalinou
-	<atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>,
-	"Forrest Yuan Yu" <yuanyu@google.com>, James Gowans <jgowans@amazon.com>,
-	James Morris <jamorris@linux.microsoft.com>, John Andersen
-	<john.s.andersen@intel.com>, "Madhavan T . Venkataraman"
-	<madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>,
-	=?utf-8?q?Mihai_Don=C8=9Bu?= <mdontu@bitdefender.com>,
-	=?utf-8?q?Nicu=C8=99or_C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>, Thara
- Gopinath <tgopinath@microsoft.com>, "Trilok Soni" <quic_tsoni@quicinc.com>,
-	Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, Yu Zhang
-	<yu.c.zhang@linux.intel.com>, =?utf-8?q?=C8=98tefan_=C8=98icleru?=
-	<ssicleru@bitdefender.com>, <dev@lists.cloudhypervisor.org>,
-	<kvm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-	<linux-hyperv@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <qemu-devel@nongnu.org>,
-	<virtualization@lists.linux-foundation.org>, <x86@kernel.org>,
-	<xen-devel@lists.xenproject.org>
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-X-Mailer: aerc 0.17.0-129-gd582ac682cdf-dirty
-References: <20240503131910.307630-1-mic@digikod.net>
- <20240503131910.307630-4-mic@digikod.net> <ZjTuqV-AxQQRWwUW@google.com>
- <20240506.ohwe7eewu0oB@digikod.net> <ZjmFPZd5q_hEBdBz@google.com>
- <20240507.ieghomae0UoC@digikod.net> <ZjpTxt-Bxia3bRwB@google.com>
- <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com> <20240514.mai3Ahdoo2qu@digikod.net>
-In-Reply-To: <20240514.mai3Ahdoo2qu@digikod.net>
-X-ClientProxiedBy: EX19D046UWA001.ant.amazon.com (10.13.139.112) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/66] selftests/cgroup: Drop define _GNU_SOURCE
+To: Tejun Heo <tj@kernel.org>, Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Zefan Li
+ <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Muchun Song <muchun.song@linux.dev>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>,
+ Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, linux-security-module@vger.kernel.org,
+ netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+ bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240510000842.410729-1-edliaw@google.com>
+ <20240510000842.410729-9-edliaw@google.com>
+ <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue May 14, 2024 at 12:23 PM UTC, Micka=C3=ABl Sala=C3=BCn wrote:
-> > Development happens
-> > https://github.com/vianpl/{linux,qemu,kvm-unit-tests} and the vsm-next
-> > branch, but I'd advice against looking into it until we add some order
-> > to the rework. Regardless, feel free to get in touch.
->
-> Thanks for the update.
->
-> Could we schedule a PUCK meeting to synchronize and help each other?
-> What about June 12?
+On 5/13/24 11:02, Tejun Heo wrote:
+> On Fri, May 10, 2024 at 12:06:25AM +0000, Edward Liaw wrote:
+>> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+>> redefinition warnings.
+>>
+>> Signed-off-by: Edward Liaw <edliaw@google.com>
+> 
+> Applied to cgroup/for-6.10.
+> 
+> Thanks.
+> 
 
-Sounds great! June 12th works for me.
+Hi Tejun,
 
-Nicolas
+Please don't include this in your PR to Linus. This patch series needs
+to go together as it is causing several build warns and some errors.
+
+thanks,
+-- Shuah
