@@ -1,118 +1,113 @@
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AADD14E2CC;
-	Thu, 16 May 2024 13:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E85145A13
+	for <linux-security-module@vger.kernel.org>; Thu, 16 May 2024 13:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715866246; cv=none; b=FsRwvX+bv89EZgN9wz4gBSpMV/l2Q+PUcQR99wReMhbuh55Pp4GSecjF0vjmKsIlcLEYi7ynv1DUqrdMlkTHQFX3ueru8ZwWzFVgUlsrjUe0efPtgEIuPiPElRBdYpf6xFu3kNbU6+JLPODueTUox7ABbqCzxJZeS5AZ/WP4XSM=
+	t=1715866555; cv=none; b=krdXt3OU+601nvUdJcZG+MlME+vjPrVp03aF4/k6XjSuwo48/95ACf4Hz6pp1qo+rstYZQa4rjLCKqYXkZW5wIDleyBRHQ5Qxbs7/KYGIzgUdddDvaQQidc5vGdAo+2LJChCYYagbSegoGPBxCRVs7jpXvkUJp2eXG9drHu32JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715866246; c=relaxed/simple;
-	bh=69YmzG7HlmyFpdfSNhi6JvNROFFTperfLVWxTG48xks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDOJ9nFJ+zUnpQsY+UEqUWtm+kyHEiuGz9T0rGc5uOoyHsVfuuLgFcM6MDubPhv5BDJ+f0EJdqmXoF66GeOppHHXp0wpQHi89w+FtyRMCMTucXqwQw4PU3WC4UODe9hhpJFrj44YXeNqzhonZAb8EGJIXI7+nSPr3+2LtAyNkqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net; spf=pass smtp.mailfrom=benboeckel.net; dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b=Ulgo0/uJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CMPaTGX3; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=benboeckel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=benboeckel.net
+	s=arc-20240116; t=1715866555; c=relaxed/simple;
+	bh=B+YQIsWwKDS2kXk4dBcyryjLpZFGQQdjRWPllppP1HA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L3VVk1K3ewkFU3nxwcNvCenf5QYQ7rFyEDCCGvFek6tfoQmn3REYDPDp6GKl+NLlDIbtFGPRH4LYEfJylde4EnPtU+VpUqXuRGKrtOLdbKnCbmXf9VO5FIIdAFnHVCii8Px4Td/2r8EsAVmkAnqU/VX8FAoo9htqnYL0aL9FBks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OIbMra9Y; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=benboeckel.net header.i=@benboeckel.net header.b="Ulgo0/uJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CMPaTGX3"
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id A2B621140163;
-	Thu, 16 May 2024 09:30:43 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 16 May 2024 09:30:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1715866243; x=
-	1715952643; bh=srNyWoS8gHl7ihHI55zXs+WUoGWk3Nt7F0kqPAoVUgo=; b=U
-	lgo0/uJOxneabXt0AO0W3Um5NvHMW3NQiBpDz8F3oMLNvhLBfqo7vCO8H4n/7irr
-	agpY5/XrkIACg6iTAWjOFv5euU8S6F474qhXpW0LgfCCuPWiRn28CRkygS7YwBgf
-	7Hu7DbqU7i39PcQUwYqqOOABn+QucgKolm4j0FvsrVF27q3vcPrEk4oWgGmXN79I
-	qDQqq4Jxy8loVaiv63zw/CBWMGGAuj4eipGBRfNggJhuPoqzeVCn36NPNZNy2cFd
-	1pLQiXcD2b2DUpJW9h7E0TipvGbKcsp9eJrvPpTBfCvK6EF+Ou4zB3v4NuRQ5CXe
-	eKAjoiSg925auwaFUn0vw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715866243; x=1715952643; bh=srNyWoS8gHl7ihHI55zXs+WUoGWk
-	3Nt7F0kqPAoVUgo=; b=CMPaTGX36RAvpWpuLUdskxeKMOkh8NSmRhKj7qJy/FO0
-	0hbdZDmwxRDRvehUreDUTjxmGVUcOTPAwglbSQfYawQX3JP32EEGe1xYkXbAVTq1
-	N/H6BsWu9+QC+dJEOVNCUed1g/C6VZWArsC1kO8w0NZ8xyjZudDNAukXJC/UKrF0
-	ngYh1kefeAg6loSLmgk6zJpalYB53lM1eJi/4L6CEhKmyebHjnb1nODNuPJxSQqJ
-	SmFOnOFqg37E7AkKtBAr2ryALsRN7gMJI/NcPWEhe/zcyzEhGtX8a/u44jMCiNuA
-	kUwAGKAMAN3wjuvdvPDjWrYfzJ5i4VVp8Y4HDP15uw==
-X-ME-Sender: <xms:gQpGZnnPscjJflIkLrGofT2-Dvm0xkBHgMpOoUoOj77wTVnsAhQ_DA>
-    <xme:gQpGZq0onq26fCD5nXCJVGsp4y_wKTqcDudN0rnZjpd2F0OvAuJJYXPgi1MQsgbuS
-    o4vtRtuElhcqLsqD-4>
-X-ME-Received: <xmr:gQpGZtoXv4FK_6IOr7oSTq9lhfSWKCxN18O_2wuXGv-jA18Uc-wuTeHCltMo5ZDJTwIvndnQNr4686xw9xhLS2ZLX-7YbbzpsrUz>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehuddgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghn
-    uceuohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrth
-    htvghrnhepffelgeffveelkeffkeehiefgtdeluedvtdfghfdtvdefgfejheffudeuveek
-    vddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    gvsegsvghnsghovggtkhgvlhdrnhgvth
-X-ME-Proxy: <xmx:ggpGZvlvpjtSb_TmrALGRHYZdhaWLs-zxbFoBzNxHJVoSXWJkWKEeQ>
-    <xmx:ggpGZl0nR1LnPmlWKoaPNhTEAoO5CytJyReBzV1nb4b-BaUb79L4og>
-    <xmx:ggpGZuvsS2YxGDuTeEtF6n8k4Sr-AVOji0EqVFsNqK7WPzwivAn67Q>
-    <xmx:ggpGZpWTcGqpLW9ijjbtsqcd8ln0xc-DXgh4fTgVfZ8Vcc3bbvYpiw>
-    <xmx:gwpGZmHPE40il4HXpuoPKONGo7DBMWBXMShW5T8oNWMVLbwrKSJoZQLW>
-Feedback-ID: iffc1478b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 May 2024 09:30:41 -0400 (EDT)
-Date: Thu, 16 May 2024 09:30:40 -0400
-From: Ben Boeckel <me@benboeckel.net>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-Message-ID: <ZkYKgNltq2hlBzbx@farprobe>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OIbMra9Y"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Vg9pp3lDpzK21;
+	Thu, 16 May 2024 15:26:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1715865986;
+	bh=r3mi6lzal3IHo9WDD7iyS0/n1GYGenLY2na/Gr2Y/iU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OIbMra9YBi61V+j1Qta2E0xgwjLiMVB1YL6K/fu/RN26n8aiw+vTL4IA8IaxVMDsw
+	 fd+ZK4SQ/X7m3q2uuRD9e7yJF8MpWouhEl4uevz5jmXuhsBd+9G//kLYjOPFWHQUP/
+	 7czlu7NjU6vzfXFLwEIH3vWxon3cml3j94vRVhPY=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Vg9pn4vFDzrbk;
+	Thu, 16 May 2024 15:26:25 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [GIT PULL] Landlock updates for v6.10
+Date: Thu, 16 May 2024 15:26:24 +0200
+Message-ID: <20240516132624.1536065-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240516092213.6799-1-jcalmels@3xx0.net>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Thu, May 16, 2024 at 02:22:02 -0700, Jonathan Calmels wrote:
-> Jonathan Calmels (3):
->   capabilities: user namespace capabilities
->   capabilities: add securebit for strict userns caps
->   capabilities: add cap userns sysctl mask
-> 
->  fs/proc/array.c                 |  9 ++++
->  include/linux/cred.h            |  3 ++
->  include/linux/securebits.h      |  1 +
->  include/linux/user_namespace.h  |  7 +++
->  include/uapi/linux/prctl.h      |  7 +++
->  include/uapi/linux/securebits.h | 11 ++++-
->  kernel/cred.c                   |  3 ++
->  kernel/sysctl.c                 | 10 ++++
->  kernel/umh.c                    | 16 +++++++
->  kernel/user_namespace.c         | 83 ++++++++++++++++++++++++++++++---
->  security/commoncap.c            | 59 +++++++++++++++++++++++
->  security/keys/process_keys.c    |  3 ++
->  12 files changed, 204 insertions(+), 8 deletions(-)
+Hi Linus,
 
-I note a lack of any changes to `Documentation/` which seems quite
-glaring for something with such a userspace visibility aspect to it.
+This PR mainly brings IOCTL control to Landlock, contributed by Günther Noack.
+This also adds him as a Landlock reviewer, and fixes an issue in the sample.
 
---Ben
+Please pull these changes for v6.10-rc1.  This commit merged cleanly with your
+master branch.  The kernel code has been tested in the latest linux-next
+releases for a few weeks, but I rebased it on v6.9 to avoid a merge conflict
+because of the recent Kselftest fixes.
+
+syzkaller has also been patched to know about this new access right.
+
+Regards,
+ Mickaël
+
+--
+The following changes since commit a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6:
+
+  Linux 6.9 (2024-05-12 14:12:29 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.10-rc1
+
+for you to fetch changes up to 5bf9e57e634bd72a97b4b12c87186fc052a6a116:
+
+  MAINTAINERS: Add Günther Noack as Landlock reviewer (2024-05-13 06:58:36 +0200)
+
+----------------------------------------------------------------
+Landlock updates for v6.10-rc1
+
+----------------------------------------------------------------
+Günther Noack (11):
+      landlock: Add IOCTL access right for character and block devices
+      selftests/landlock: Test IOCTL support
+      selftests/landlock: Test IOCTL with memfds
+      selftests/landlock: Test ioctl(2) and ftruncate(2) with open(O_PATH)
+      selftests/landlock: Test IOCTLs on named pipes
+      selftests/landlock: Check IOCTL restrictions for named UNIX domain sockets
+      selftests/landlock: Exhaustive test for the IOCTL allow-list
+      samples/landlock: Add support for LANDLOCK_ACCESS_FS_IOCTL_DEV
+      landlock: Document IOCTL support
+      MAINTAINERS: Notify Landlock maintainers about changes to fs/ioctl.c
+      fs/ioctl: Add a comment to keep the logic in sync with LSM policies
+
+Ivanov Mikhail (1):
+      samples/landlock: Fix incorrect free in populate_ruleset_net
+
+Mickaël Salaün (1):
+      MAINTAINERS: Add Günther Noack as Landlock reviewer
+
+ Documentation/userspace-api/landlock.rst     |  78 ++++-
+ MAINTAINERS                                  |   2 +
+ fs/ioctl.c                                   |   3 +
+ include/uapi/linux/landlock.h                |  38 ++-
+ samples/landlock/sandboxer.c                 |  18 +-
+ security/landlock/fs.c                       | 225 ++++++++++++-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 487 ++++++++++++++++++++++++++-
+ 10 files changed, 811 insertions(+), 46 deletions(-)
