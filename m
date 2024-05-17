@@ -1,120 +1,191 @@
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1723665194;
-	Fri, 17 May 2024 14:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FAB12CD8A;
+	Fri, 17 May 2024 15:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715957981; cv=none; b=FRUEjW8s85prfks01xROpmRw0aaoG/OLMgWl4vUnLjI8sRrIPhO4YYtev7aP1Mc5K1flBEDg01BAAXROkT6bNBIv+9p4TRCM7qIFvWjphc4c3aZDdi49adIv3Coj+x6dj2k6PG9mjT+G+IZ4C9PESiZBA4GIo1GKVUHjP3F1Bc4=
+	t=1715959396; cv=none; b=fRz5pZuVVYjDpsI7/Lqu19P31Ovl5SaW3VILN5z0tYj9cBEHQtuMo4+B6mLJgUgogOasiph+yGSkjcyFAj+VGnMB/12SMhIf//IZPl4TI5mF4WMnXpXSCfnPH023qPfYkWuW3ljx8pvwFpCM+XfpBT1p6ppqv3qDv4f/AG2BliE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715957981; c=relaxed/simple;
-	bh=avilw900f6d/x8c9K8ZiuzFANTi4g2LTrG2nEouV5+A=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=AMxUw1V68VZCn8y1DvJP1Q4FhhHkDBsD+jnxQ/GqdmErol+DU1lXqGV5Jxu/iYbpEHre4JfZjN8kwe83qQJahkmnFx1RLjNrPM8uD9S1upzShSZDQOLWxOwMnSpzOw+jE8rPZQj8FcW8LJ+o+BgfycbiH1BKnqV0wMCBW3ou11s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:51178)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1s7yTv-00G0Ui-NK; Fri, 17 May 2024 08:22:47 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:32812 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1s7yTu-00FFhy-O4; Fri, 17 May 2024 08:22:47 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org,  Luis Chamberlain <mcgrof@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Joel Granados <j.granados@samsung.com>,  Serge
- Hallyn <serge@hallyn.com>,  Paul Moore <paul@paul-moore.com>,  James
- Morris <jmorris@namei.org>,  David Howells <dhowells@redhat.com>,  Jarkko
- Sakkinen <jarkko@kernel.org>,  containers@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  keyrings@vger.kernel.org
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
-	<20240516092213.6799-2-jcalmels@3xx0.net>
-	<878r08brmp.fsf@email.froward.int.ebiederm.org>
-	<xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
-Date: Fri, 17 May 2024 09:22:23 -0500
-In-Reply-To: <xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
-	(Jonathan Calmels's message of "Fri, 17 May 2024 04:55:03 -0700")
-Message-ID: <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715959396; c=relaxed/simple;
+	bh=Aqm4rQ6fA8zQGRPRwRDXUfKfXuyDD8WlVYGYuORG9Wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVLECtVgFUNqIoy+BIsnBnZu+3bFA+OWfCxSUZ3hUoIMEsiCjS3wBZytrS+cOqaRAL8OSGaBKph63j6PcbcBwj93xYIePbEio16rMaWEgH4VblFSBgAxV3gzuha9F7Wfo8Lddc5BfY+YAfqOSqv3c/dO07GP/O0P4ghxf7N/irQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xXlPCMC9; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xXlPCMC9"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VgrLr2Dc0z16SX;
+	Fri, 17 May 2024 17:23:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1715959380;
+	bh=18SA0w9qbc0hJ2jDLC8bwCABDXE6nCN3mQ4dHgHlO+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xXlPCMC9HunO9Izxd3uzCt2OUKk1mxHPVCsiYkc5xTl8XCN4SX/9DbNPeMsSYIq1I
+	 i+hSC5SoMk9DgNzjoR6wSSL0rLIUklkok77QVCHit5BrPzOy20jfdtQ5rewXLouvIH
+	 sP9XFEteDF2Hmvxr9/CUuzsLX6EWivhL+zXm2eA0=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VgrLq4yyMzgvX;
+	Fri, 17 May 2024 17:22:59 +0200 (CEST)
+Date: Fri, 17 May 2024 17:22:45 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
+	Eric Dumazet <edumazet@google.com>
+Cc: willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
+Message-ID: <20240517.EeHizaR1gie7@digikod.net>
+References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
+ <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
+ <20240425.Soot5eNeexol@digikod.net>
+ <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1s7yTu-00FFhy-O4;;;mid=<87jzjsa57k.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18IkHUj49fRJqM7REx3ND8lhM0yvX7TxF4=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: *
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4999]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Jonathan Calmels <jcalmels@3xx0.net>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.05 (0.0%),
-	signal_user_changed: 11 (3.0%), b_tie_ro: 10 (2.6%), parse: 0.86
-	(0.2%), extract_message_metadata: 19 (5.2%), get_uri_detail_list: 1.95
-	(0.5%), tests_pri_-2000: 15 (4.2%), tests_pri_-1000: 2.9 (0.8%),
-	tests_pri_-950: 1.21 (0.3%), tests_pri_-900: 1.01 (0.3%),
-	tests_pri_-90: 70 (19.1%), check_bayes: 68 (18.6%), b_tokenize: 7
-	(2.0%), b_tok_get_all: 6 (1.7%), b_comp_prob: 2.2 (0.6%),
-	b_tok_touch_all: 49 (13.5%), b_finish: 0.87 (0.2%), tests_pri_0: 231
-	(63.4%), check_dkim_signature: 0.52 (0.1%), check_dkim_adsp: 2.4
-	(0.7%), poll_dns_idle: 0.44 (0.1%), tests_pri_10: 2.1 (0.6%),
-	tests_pri_500: 7 (2.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
+X-Infomaniak-Routing: alpha
 
-Jonathan Calmels <jcalmels@3xx0.net> writes:
+On Mon, May 13, 2024 at 03:15:50PM +0300, Ivanov Mikhail wrote:
+> 
+> 
+> 4/30/2024 4:36 PM, Mickaël Salaün wrote:
+> > On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
+> > > Make hook for socket_listen(). It will check that the socket protocol is
+> > > TCP, and if the socket's local port number is 0 (which means,
+> > > that listen(2) was called without any previous bind(2) call),
+> > > then listen(2) call will be legitimate only if there is a rule for bind(2)
+> > > allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is not
+> > > supported by the sandbox).
+> > 
+> > Thanks for this patch and sorry for the late full review.  The code is
+> > good overall.
+> > 
+> > We should either consider this patch as a fix or add a new flag/access
+> > right to Landlock syscalls for compatibility reason.  I think this
+> > should be a fix.  Calling listen(2) without a previous call to bind(2)
+> > is a corner case that we should properly handle.  The commit message
+> > should make that explicit and highlight the goal of the patch: first
+> > explain why, and then how.
+> 
+> Yeap, this is fix-patch. I have covered motivation and proposed solution
+> in cover letter. Do you have any suggestions on how i can improve this?
 
-> On Fri, May 17, 2024 at 06:32:46AM GMT, Eric W. Biederman wrote:
->> 
->> Pointers please?
->> 
->> That sentence sounds about 5 years out of date.
->
-> The link referenced is from last year.
-> Here are some others often cited by distributions:
->
-> https://nvd.nist.gov/vuln/detail/CVE-2022-0185
-> https://nvd.nist.gov/vuln/detail/CVE-2022-1015
-> https://nvd.nist.gov/vuln/detail/CVE-2022-2078
-> https://nvd.nist.gov/vuln/detail/CVE-2022-24122
-> https://nvd.nist.gov/vuln/detail/CVE-2022-25636
->
-> Recent thread discussing this too:
-> https://seclists.org/oss-sec/2024/q2/128
+You can start this commit message with the same description as in the
+cover letter.
 
-My apologies perhaps I trimmed too much.
+[...]
 
-I know that user namespaces enlarge the attack surface.
-How much and how serious could be debated but for unprivileged
-users the attack surface is undoubtedly enlarged.
+> > 
+> > > +	if (!((1 << cur_sk_state) & (TCPF_CLOSE | TCPF_LISTEN)))
+> > > +		return -EINVAL;
+> > > +
+> > > +	/* Sockets can listen only if ULP control hook has clone method. */
+> > 
+> > What is ULP?
+> 
+> ULP (Upper Layer Protocol) stands for protocols which are higher than
+> transport protocol in OSI model. Linux has an infrastructure that
+> allows TCP sockets to support logic of some ULP (e.g. TLS ULP). [1]
 
-As I read your introduction you were justifying the introduction
-of a new security mechanism with the observation that distributions
-were carrying distribution specific patches.
+OK, you can extend the comment with this information, but no need for
+the links.
 
-To the best of my knowledge distribution specific patches and
-distributions disabling user namespaces have been gone for quite a
-while.  So if that has changed recently I would like to know.
+> 
+> There is a patch that prevents ULP sockets from listening
+> if corresponding ULP implementation in linux doesn't have a clone
+> method. [2]
+> 
+> Landlock shouldn't return EACCES for ULP sockets that cannot listen
+> due to some ULP restrictions.
 
-Thank you,
-Eric
+Looks good.
 
+> 
+> [1]
+> https://lore.kernel.org/all/20170524162646.GA24128@davejwatson-mba.local/
+> [2] https://lore.kernel.org/all/4b80c3d1dbe3d0ab072f80450c202d9bc88b4b03.1672740602.git.pabeni@redhat.com/
+> 
+> > 
+> > > +	icsk = inet_csk(sk);
+> > > +	if (icsk->icsk_ulp_ops && !icsk->icsk_ulp_ops->clone)
+> > > +		return -EINVAL;
+> > 
+> > Can you please add tests covering all these error cases?
+> 
+> Yeap, i'll add a test for first check.
+> 
+> I have not found a way to trigger the second check from userspace.
+> Since socket wasn't binded to any port, this means that it cannot
+> be part of a TCP connection in any state, so it has to be in TCPF_CLOSE
 
+If you're sure this cannot be triggered from user space, you can wrap
+the test with WARN_ON_ONCE(), but we need to be careful.  I'd like to
+get the point of view of kernel network expert though.
+
+Eric, is this assumption correct?
+
+> state. Nevertheless i think that this check is required:
+> 
+> * for consistency with inet stack (see __inet_listen_sk())
+> 
+> * i have not found any restrictions connected with sock locking
+>   for TCP-like protocols, so listen(2) can be called after
+>   sk->sk_prot->connect() method will change sock state in
+>   __inet_stream_connect() (e.g. to TCP_SYN_SENT). In that case this
+>   check may be required.
+> 
+> What do you think?
+
+This looks good, but we need to explain this rationale in comments, with
+explicit mention of network stack functions.
+
+> Btw this hook on socket_listen() should be fixed in
+> order to not check socket that is already in TCP_LISTEN state. Calling
+> listen(2) only changes backlog value, so landlock shouldn't do anything
+> in this case.
+> 
+> I'm not sure about ULP checking. I thought of adding test that creates
+> espintcp ULP (net/xfrm/expintcp.c) socket and tries to listen on it.
+> Since espintcp doesn't have clone method ULP check will be triggered.
+> Problem is that kernel doesnt support this ULP module by default and it
+> should be configured with CONFIG_XFRM_ESPINTCP option enabled. I think
+> that selftests shouldn't depend on specific kernel configuration to be
+> fully executed, so probably we should just skip this. What do you think?
+
+Testing with espintcp makes sense for this clone case.  I hope it would
+not require too much boilerplate code though.  We can and should add all
+the required kernel option in tools/testing/selftests/landlock/config,
+and we should not restrict tests to default kernel options, quite the
+contrary if it makes sense.
+
+[...]
+
+> > 
+> > > +	family = sock->sk->__sk_common.skc_family;
+> > > +
+> > > +	if (family == AF_INET || family == AF_INET6) {
+> > 
+> > This would make the code simpler:
+> > 
+> > if (family != AF_INET && family != AF_INET6)
+> > 	return 0;
+> 
+> indeed, will be fixed.
+> 
+> > 
+> > 
+> > What would be the effect of listen() on an AF_UNSPEC socket?
+> 
+> AF_UNSPEC is a family type that only addresses can use.
+> Socket itself can only be AF_INET or AF_INET6 in TCP.
+
+Indeed, it is worth mentioning in a comment.
