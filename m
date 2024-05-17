@@ -1,48 +1,85 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from wflow2-smtp.messagingengine.com (wflow2-smtp.messagingengine.com [64.147.123.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A448479
-	for <linux-security-module@vger.kernel.org>; Fri, 17 May 2024 15:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3852B13DDCA;
+	Fri, 17 May 2024 17:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715959492; cv=none; b=MObm4HQnbQlmQAmYY8KhuD1rQaVcaryNzbkUe/iLRCsfXzXuJ6hNhYGE86WvX1GnogURJ53A9KMlIpBn/30VNYuDfwBkDrOpvKA+CXgQpgn4fxP3lMu4S4TSEwis9Jj0dFW0OMxsisY9jJYi9qrqtAhtKcCHkbVMsWgPkcwXwSo=
+	t=1715968648; cv=none; b=nIrom0Z2xz7JRQxQxCl5TtU2iuO1Edqt/bKFh/QoeQvFMCtIO3qKv9vmxnso8cVJjcGVrhU1m8bIaxyY+fDE85jWnuX1IroS2yZZQbbFGOMZ5sROoMRecAtNBr7lL2Bk26prs7TYD+0bl5O45Iw4FszoWLkWZ1cJ+kpcEnXC5Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715959492; c=relaxed/simple;
-	bh=cUMkYnXb2sVcgkJHzzstVudL5onkuBflFC5M66AkkAo=;
+	s=arc-20240116; t=1715968648; c=relaxed/simple;
+	bh=I2w45PghcaqjI+y7WfkIeFOVTyWdnhXIf4c8rZ8OaJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzZntYegMGJ0RGP2Hl6LKU4I/pQPbgWR2z3a+o9LIlYVt/roFQCSNEW1bmmXjhWHCcOh4l4kwN7gwZ6MWVHxIR8bSNVqgA6Hdj6thwhoDldy8zkrFanaWawvlMdJZXLTQX6q3aOEvoxOZBA5c6l0F/r4gXbG87aW4YLxvk8yozE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ueqelzg1; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=KnIDRhrQfP7T8N2nKCGyXi5RNUnz8pF8ACH3RTkFbJOnbzG1phL52NNPOnJf+O6B8W0HELQ/VhVgFAoG3Z779J1FvSFStRrul9eepvTX6R5VyC9SHHxFPpECA+wSFgvVDVnYKXAtiV4vib4eGQ6HgICwMZWY8YRFPaHWttBtfu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=uMfGVJkU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TDNEW63p; arc=none smtp.client-ip=64.147.123.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ueqelzg1"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VgrNl6JJbz13M3;
-	Fri, 17 May 2024 17:24:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1715959479;
-	bh=8cODBbaV2wOKAiX030YC9XoVHmqVf2+m2ed+C0a8c+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ueqelzg19343f69VenrcasMFnBmalWOXY0aHal5RLHRC3JZaZNw/mA+RojjzK//oI
-	 2fqXEesvnQJpgmXflhkK8FMJqhX18qIrlJtCTCiPqyD5u1zFUkjgcgxaF24m5BO1z8
-	 r4r09+By6TmkuJgehvJPvua7gSEdlisBPA2vXqm8=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VgrNl30d9zsjt;
-	Fri, 17 May 2024 17:24:39 +0200 (CEST)
-Date: Fri, 17 May 2024 17:24:41 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Subject: Re: [RFC PATCH v1 03/10] selftests/landlock: Create 'create' test
-Message-ID: <20240517.Wieciequ2iec@digikod.net>
-References: <20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com>
- <20240408093927.1759381-4-ivanov.mikhail1@huawei-partners.com>
- <ZhPsWKSRrqDiulrg@google.com>
- <9a8b71c6-f72c-7ec0-adee-5828dc41cf44@huawei-partners.com>
- <20240508.Kiqueira8The@digikod.net>
- <986f11a9-1426-a87d-c43e-a86380305a21@huawei-partners.com>
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="uMfGVJkU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TDNEW63p"
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailflow.west.internal (Postfix) with ESMTP id 7886D2CC010B;
+	Fri, 17 May 2024 13:57:25 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Fri, 17 May 2024 13:57:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1715968645; x=1715972245; bh=DG6bdjmTz4
+	bBiRVx5vRqnyJGZODkSyHM0WPBKPD11vg=; b=uMfGVJkUQVRfm1T4SuQfg81+Vd
+	5+EwSSzA1veRwFXODlGOsYMfbC5e9PDXupLK9HyaH/xalBd1s2kzVUiWMT2yQzvw
+	hwRQ1fjYhfph5jS6R/35a6KtY34plcZMeR9Ze6xsvaXAZmSVgYgDUo2CD8pKLFPo
+	Xy/T7Yx76YZjEUvdKWTQ/L8b+RH71BSELaxN8E1DA4gdeovy8JQ/GaJdIRS7/+JU
+	nOR9kD+ElEjP9xlmH0WurtQuTo73SZegb2IizZ8K96HXLon2ZWd8yjQxXX9/jyWV
+	LYzWnUzZv2IlDZ6c/LFUuMihTF52VWHKB3S26Kahi3BE/rYv+w/AkiBW4sjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	i76614979.fm3; t=1715968645; x=1715972245; bh=DG6bdjmTz4bBiRVx5v
+	RqnyJGZODkSyHM0WPBKPD11vg=; b=TDNEW63pXqb2VU0CcKW4l1HzhcHIdknUB/
+	pz14lQW13kC6oa25PaUJ3EtzVqxHTnNRnTjcdfH+8czm5HMuaNUoZJNfrrzALEjj
+	BhXP3yluNNAc75YUSlp2g1JKsDbzm4O1ZNjegjBzQEutxAV2qwhBA+PiVAl2qSTD
+	wcvi2l7YIS6ZSe/e860AJvkLBo69+YWUv9s79bv4P/X0XeFjuMU/7FXm6jZHziD5
+	dV8pUspsjHJiSbf/yF1J/558iKeCjLZNiZRLmWuEOFh+rxdDTbikzjB/nf4RuUcS
+	9zUWeQhZVMpSt+DZfp2vzbU8AQQhAgnJoJrumNrLMdK5EsRfgtng==
+X-ME-Sender: <xms:hJpHZgt-DnLYAP4XfCB3f4QDQ4JOhbJ0kjv4C7wIKndVKYrK6cgIIQ>
+    <xme:hJpHZteog5l-85Pkdhrlk26_ZDbUVd1ZBbQGP0nfgODF4pJa5auMVRXbP8aJJU3Up
+    NcIi4mMySIixXSafOo>
+X-ME-Received: <xmr:hJpHZrxlVLZZGOGFQfKZBifYj11s-ibw1SC9sayyin6qUTgQyif-0J2hn7vqmYdM9hEJR-MQ_giyQTDryczmkrI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehgedgvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
+    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
+    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
+    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
+X-ME-Proxy: <xmx:hJpHZjOliYt1B30kBgmlLYDz3U_k0ILR04enLwlswHtl81Hc9_tOOw>
+    <xmx:hJpHZg_tTtVt17uZ85S7l8qt2ezP1HcqKp8HG_d_HTVqD7c6KaT-Cg>
+    <xmx:hJpHZrUFUcj0c_VL6ZrIN41Q8tSZ2WWCOA-aRCVfDXmGeifvQPDOGA>
+    <xmx:hJpHZpedGcEgWYQAWwY_aGP7jCPuyq_4VonVfo014ODZjsk29EXztw>
+    <xmx:hZpHZrUx1OlgTMngfhQPqJ-LWsX64N4U3yZMVc9MloMg7FfoIwLl0U3_>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 May 2024 13:57:22 -0400 (EDT)
+Date: Fri, 17 May 2024 11:02:23 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: brauner@kernel.org, Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Joel Granados <j.granados@samsung.com>, 
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+Message-ID: <mya7cjq5yzf4xc53un65zia2bwp45mbrt5ys67mgr4azn3phet@o54svegibxze>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-2-jcalmels@3xx0.net>
+ <878r08brmp.fsf@email.froward.int.ebiederm.org>
+ <xv52m5xu5tgwpckkcvyjvefbvockmb7g7fvhlky5yjs2i2jhsp@dcuovgkys4eh>
+ <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,73 +88,45 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <986f11a9-1426-a87d-c43e-a86380305a21@huawei-partners.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <87jzjsa57k.fsf@email.froward.int.ebiederm.org>
 
-On Thu, May 16, 2024 at 04:54:58PM +0300, Ivanov Mikhail wrote:
+> > On Fri, May 17, 2024 at 06:32:46AM GMT, Eric W. Biederman wrote:
+> As I read your introduction you were justifying the introduction
+> of a new security mechanism with the observation that distributions
+> were carrying distribution specific patches.
 > 
-> 
-> 5/8/2024 1:38 PM, Mickaël Salaün wrote:
-> > On Thu, Apr 11, 2024 at 06:58:34PM +0300, Ivanov Mikhail wrote:
-> > > 
-> > > 4/8/2024 4:08 PM, Günther Noack wrote:
+> To the best of my knowledge distribution specific patches and
+> distributions disabling user namespaces have been gone for quite a
+> while.  So if that has changed recently I would like to know.
 
+On the top of my head:
 
-> > > > > +		{
-> > > > > +			TH_LOG("Failed to create socket: %s", strerror(errno));
-> > > > > +		}
-> > > > > +		EXPECT_EQ(0, close(fd));
-> > > > > +	}
-> > > > > +}
-> > > > 
-> > > > This is slightly too much logic in a test helper, for my taste,
-> > > > and the meaning of the true/false argument in the main test below
-> > > > is not very obvious.
-> > > > 
-> > > > Extending the idea from above, if test_socket() was simpler, would it
-> > > > be possible to turn these fixtures into something shorter like this:
-> > > > 
-> > > >     ASSERT_EQ(EAFNOSUPPORT, test_socket(AF_UNSPEC, SOCK_STREAM, 0));
-> > > >     ASSERT_EQ(EACCES, test_socket(AF_UNIX, SOCK_STREAM, 0));
-> > > >     ASSERT_EQ(EACCES, test_socket(AF_UNIX, SOCK_DGRAM, 0));
-> > > >     ASSERT_EQ(EACCES, test_socket(AF_INET, SOCK_STREAM, 0));
-> > > >     // etc.
-> > 
-> > I'd prefer that too.
-> > 
-> > > > 
-> > > > Would that make the tests easier to write, to list out the table of
-> > > > expected values aspect like that, rather than in a fixture?
-> > > > 
-> > > > 
-> > > 
-> > > Initially, I conceived this function as an entity that allows to
-> > > separate the logic associated with the tested methods or usecases from
-> > > the logic of configuring the state of the Landlock ruleset in the
-> > > sandbox.
-> > > 
-> > > But at the moment, `test_socket_create()` is obviously a wrapper over
-> > > socket(2). So for now it's worth removing unnecessary logic.
-> > > 
-> > > But i don't think it's worth removing the fixtures here:
-> > > 
-> > >    * in my opinion, the design of the fixtures is quite convenient.
-> > >      It allows you to separate the definition of the object under test
-> > >      from the test case. E.g. test protocol.create checks the ability of
-> > >      Landlock to restrict the creation of a socket of a certain type,
-> > >      rather than the ability to restrict creation of UNIX, TCP, UDP...
-> > >      sockets
-> > 
-> > I'm not sure to understand, but we need to have positive and negative
-> > tests, potentially in separate TEST_F().
-> 
-> I mean we can use fixtures in order to not add ASSERT_EQ for
-> each protocol, as suggested by Günther. It's gonna look like this:
-> 
->      ASSERT_EQ(EAFNOSUPPORT, test_socket(&self->unspec_srv0));
->      ASSERT_EQ(EACCES, test_socket(&self->srv0));
-> 
-> I think it would make the test easier to read, don't you think so?
+- RHEL based:
+  namespace.unpriv_enable
+  user_namespace.enable
 
-Yes, this looks good.
+- Arch/Debian based:
+  kernel.unprivileged_userns_clone
+
+- Ubuntu based:
+  kernel.apparmor_restrict_unprivileged_userns
+
+I'm not sure which exact version those apply to, but it's definitely
+still out there.
+
+The observation is that while you can disable namespaces today, in
+practice it breaks userspace in various ways. Hence, being able to
+control capabilities is a better way to approach it.
+
+For example, today's big hammer to prevent CAP_NET_ADMIN in userns:
+
+# sysctl -qw user.max_net_namespaces=0
+
+$ unshare -U -r -n ip tuntap add mode tap tap0 && echo OK
+unshare: unshare failed: No space left on device
+
+With patch, this becomes manageable:
+
+# capsh --drop=cap_net_admin --secbits=$((1 << 8)) --user=$USER -- \
+        -c 'unshare -U -r -n ip tuntap add mode tap tap0 && echo OK'
+ioctl(TUNSETIFF): Operation not permitted
