@@ -1,182 +1,197 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wflow5-smtp.messagingengine.com (wflow5-smtp.messagingengine.com [64.147.123.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958DB7E76D
-	for <linux-security-module@vger.kernel.org>; Fri, 17 May 2024 19:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BC13211;
+	Sat, 18 May 2024 03:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715975373; cv=none; b=JtTgjnKIlajLXFF/UnGlq2WV2oWd3m5QICx09ka6tS9SxmNKGCVyP0rjKNrS3k4bxfMghkU3MDHs06CHpz6fWnmTJHtSfVRlny+Yjm+/cwDOlk3Lm4q1Mq/L0hCnwkWVuzJoQpCV/PO4Y6XtZSVtrMZxRbpZWQg0C/kuFwIC4r4=
+	t=1716003950; cv=none; b=SXj4QSo2lWFgbOuj9L8GnX+fvMwPmjygZ12lAFs9VxdSqXOpsiV3vk/+mK760xGUqUCUOctaT9DGluhvEk1zyDWaJsmprjita4YbJzcIXi9Te50iN3MR+6j1483vUOM6tQ7dgIlMC1UdocAcOKkw4JvB318KlgMHUkgijUvKj2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715975373; c=relaxed/simple;
-	bh=0Nj9blmMrWvEhhubnCEXkUK1i7CFuX4cqPmXYCzyIdk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WiX/6jAA+3pqRGeFXI5HZ+6eDoJ7zTgHX+yuMu+N67tRK0uTrOueIE2NYbi0iUFfwAGKHiO09HtzeXoYlXoMDRTu7Ln4gwOR9AUvb0h2ZHm2uiIXHAYc+g3BP7u2E/Z/gh0AkKCpPVre7LmshDpYEkN33KXLeZXZvUthVULMnXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Vxz8rqh7; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1716003950; c=relaxed/simple;
+	bh=H1m1BdyUYMgwN+gwfrLcTxNjvn3olpd7tI3HsAPsK+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bS7y5mr2ACtbU38SayLK6U/WGHzICjsUu++giDHk+9PlQ7R88cQRfq4M62fd86Ve7MrldQjESWOHWtdKrAGPzYBpBHRaFsY9NB5ZLqwlbnBS+cCycy5XCrjgljJ2uP6xX8JuuAdt2HvntSL0r+onGOkUwlQAIR6+3tHZBrRCXVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=PfbwnRX1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XVmcKXT6; arc=none smtp.client-ip=64.147.123.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Vxz8rqh7"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc236729a2bso516899276.0
-        for <linux-security-module@vger.kernel.org>; Fri, 17 May 2024 12:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715975369; x=1716580169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JmvDTTyodSI+XcZWsqtuztFtBkxRRSCDo7mvxANpGII=;
-        b=Vxz8rqh7KMqrKxU74+U0hW8bZJ9rP40hTN3BHU3eRSO0qY5UK0m0HZPRVv5hXrCT7L
-         7jWpbmTCEymmvS+dSpDPR/oIBO27baMMzyVDiI3UKkOq0GtCfOzMpm3IDOapfG4tfqhf
-         MpfJ7kDu7GhttL0OsKedh21UQ4ETL8uiRGL4JW5NAH1u8XmSMBFrsrEglZlVvs27O3bT
-         Napk+zY7SAur6mvnzoT+018k0BTgTsEIjN+9cPX+L9tjt7145+EBdTxegKToVM7pcxVV
-         fKDKTOdTh2QbquOQb4jbsIGiXcYqPPed2c4+zNpRol8pYCjMn7nVkd4ee7/CtobQ3gbt
-         SceA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715975369; x=1716580169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JmvDTTyodSI+XcZWsqtuztFtBkxRRSCDo7mvxANpGII=;
-        b=ArkKGJ2dedQQLRTu4fHYzXscNN/UXJxQqYeXocU+53IUjAGUFQpFf6V4cKdn9Sgytc
-         O6aD1RlvTIqL/uyF2yIs2jU48ZXSlbDdSxe2nHz8ZKgKNjx+yRPQchYnHXYhkvtlfwUJ
-         L0M+1W70jr/jYayDeb+sYFJl2mLk4vo0AQwfeVEaCbDgNc7ik5TYmIKvF/va6sJ2cxKP
-         rRzT8qmevDWROsxybfG6fBniRumbYeVtcGeM3L8T4mZREsD7jral+h8LGGEixBAD7sXf
-         ZwbyfnkdxZvfXS3YPT9oKJCbp2kwgmy8bhS8zHoIcfSWmgui2fK0xfLpQaKLGSv9nzwc
-         TvKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqqj90VuRGpvl6alTwqtyCzK3TumBiFtFgFX3s+pdme149oaHDG8JihO88uXNInEA79xZWPS/B+GEkruW3dAHvQ/va9PaNZRijXN+/F+iDdekB/HcN
-X-Gm-Message-State: AOJu0YwJNLXqAc4G9CEpdCzvkj48WTsu9W33aa7F09QIy16Ik4ktVYPP
-	xYunR8GLlyWBKhatIQuOaCk/dlVs6PewFjGI84AJwhK4cflYj0BlYWEWPPSH3lARO/vLtcgeXnQ
-	u1sPsd2//d2sqNx3XILkuHD4s2lqqOkwrerxj
-X-Google-Smtp-Source: AGHT+IGsbsPMcf3m5f0KQ15GNTX2j9tpXVG7G1p7z67oOrcrMhtINgtZb6Sxeaci+6rPQE0x8ecT306KbYePzgEv8X0=
-X-Received: by 2002:a05:6902:311:b0:dd0:97e8:74e6 with SMTP id
- 3f1490d57ef6-dee4f387774mr23316256276.55.1715975369546; Fri, 17 May 2024
- 12:49:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="PfbwnRX1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XVmcKXT6"
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailflow.west.internal (Postfix) with ESMTP id 5A6EC2CC01C3;
+	Fri, 17 May 2024 23:45:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Fri, 17 May 2024 23:45:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1716003945;
+	 x=1716007545; bh=mN/nOIaCP/p4knGv1KO/mi3cVs62suSyg3pHjkgg3xs=; b=
+	PfbwnRX1H7+B0eEZM5atZ3/BupSoiPRP2QN1Fzdl8460Zh+KtowYd6kx6xEHiMUd
+	tGG4Z9Q8lYvH1SS9Vjh7mmocTg78KO9rU2Nn+L2eyabVn7waMpoEZHQAiXhgcU93
+	tyudGA8LyQrtbAO4dy7WIyoYKE1tHn3bOfiGJqM/Oc2QSDeWIx3oZIjKMK9DjKAI
+	sZqMbOe/Ewev3G8h8GONdtU8E2aJ/NlrW1NNo3AwrxT/6f/5jMdRVYVKT0u28KKB
+	nm9EqDaoJK97qW+mHQEY90pg1INCGPIc5YLZx0/weFvne5tRVFEZ4ACU8zXHxbZJ
+	09S3wHDkE1hHBpRjMJGAfQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=i76614979.fm3; t=
+	1716003945; x=1716007545; bh=mN/nOIaCP/p4knGv1KO/mi3cVs62suSyg3p
+	Hjkgg3xs=; b=XVmcKXT6/Uqc/axLHs/Be2s4ob1FeombGH2tcHDZ4LoR4ubGMzU
+	Nobhx7kyD7uJHoukOgow3HZP/Rgo3Ee1m3nCY0jxQOsm7e2+B6iTCH2iFfwu2OQ0
+	60qzffYuMQQ50fgjpHmJGuMmHNkosMsTLlne8uxRJJP2aJWRADbRTz8zeec6Z2bR
+	rtqwJ13Y2QFbWcsR8DJZFLBKNaIjToiK7bCgUcV/ai1uznq0RwHaiUr3VDiMKHJv
+	NPALjmjTkBNi7rpO0M53C5lVoAAf5ZjssKMLwb2t9KsQPxSovb48Yr2zbqkrrTjC
+	eeAffoxIq5K4388i8cAUJDDxXGycVKDYP5w==
+X-ME-Sender: <xms:aCRIZkYjbS2FMAEw_56pJYTKqDblmgVDVmJJXAz-SzHrzSRE5uGwng>
+    <xme:aCRIZvYEp-Wq5-1gwv2N33xPGI4PtHUHIWkZvIND1VLoajzOAKolQkiyezAPhpEGT
+    L3PgvQwTWH8sI7bJUw>
+X-ME-Received: <xmr:aCRIZu94urRFq1J7-RSFtqJUJmKlBjY8Z8Wxf5mPVNPmwBRiZaqlF4X8OT6zeKD8P_TfYpFI39vfj9f7YNIOIZ4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdehhedgjeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
+    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpeehleehvedtuedvffffgeegvedvleeufefgheduleefueejtddt
+    jeejffdujeeuffenucffohhmrghinhepphgrmhgptggrphdrshhonecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhgtrghlmhgvlhhsseefgiig
+    tddrnhgvth
+X-ME-Proxy: <xmx:aCRIZuqjQ38gW3pwfIL1G8-7-rh6DFFJNQ9iuEiC3TZII5cVJtgRhg>
+    <xmx:aCRIZvrKDDlaEws4P910ZoLdIVpRhU3oRK9ed-KWeyv2KAwWxZX-Xw>
+    <xmx:aCRIZsSkLTSVZM8QhagW-Zyy_Md8NVSRbNCp28ZIBOB6qptmSabKNA>
+    <xmx:aCRIZvrQxIi--iEzxtuhMKH8MZxAvqY7HCyQJuBytasQkSDkOS8UWA>
+    <xmx:aSRIZo4u2r5-Hc0KR70eTsNpDM2lUCAZgHdSGbts-1zWNoxWBwlhf72a>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 May 2024 23:45:42 -0400 (EDT)
+Date: Fri, 17 May 2024 20:50:44 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: John Johansen <john.johansen@canonical.com>
+Cc: brauner@kernel.org, ebiederm@xmission.com, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 1/3] capabilities: user namespace capabilities
+Message-ID: <txmrzwf2kr6devb5iqghctgvtbccjaspf44entk4fopjbaet2j@zqdfxiy6y6ej>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-2-jcalmels@3xx0.net>
+ <641a34bd-e702-4f02-968e-4f71e0957af1@canonical.com>
+ <jwuknxmitht42ghsy6nkoegotte5kxi67fh6cbei7o5w3bv5jy@eyphufkqwaap>
+ <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240416152913.1527166-3-omosnace@redhat.com> <085faf37b4728d7c11b05f204b0d9ad6@paul-moore.com>
- <CAFqZXNvm6T9pdWmExgmuODaNupMu3zSfYyb0gebn5AwmJ+86oQ@mail.gmail.com>
- <CAHC9VhTxhcSDfYCK95UsuZixMSRNFtTGkDvBWjpagHw6328PMQ@mail.gmail.com> <CAFqZXNurJZ-q64gxh54YhoO_GZeFzxXE0Yta_X-DqF_CcRSvRA@mail.gmail.com>
-In-Reply-To: <CAFqZXNurJZ-q64gxh54YhoO_GZeFzxXE0Yta_X-DqF_CcRSvRA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 17 May 2024 15:49:18 -0400
-Message-ID: <CAHC9VhRjDn3yihw8fpmweWynE9nmcqaCCspM_SpM7ujUnqoGDw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cipso: make cipso_v4_skbuff_delattr() fully remove
- the CIPSO options
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <be62b80f-2e86-4cbc-82ce-c9f62098ef60@canonical.com>
 
-On Tue, May 14, 2024 at 7:29=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
-m> wrote:
-> On Thu, Apr 25, 2024 at 11:48=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> >
-> > On Wed, Apr 17, 2024 at 9:03=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
-t.com> wrote:
-> > > On Tue, Apr 16, 2024 at 8:39=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > > On Apr 16, 2024 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > > >
-> > > > > As the comment in this function says, the code currently just cle=
-ars the
-> > > > > CIPSO part with IPOPT_NOP, rather than removing it completely and
-> > > > > trimming the packet. This is inconsistent with the other
-> > > > > cipso_v4_*_delattr() functions and with CALIPSO (IPv6).
-> > > >
-> > > > This sentence above implies an equality in handling between those t=
-hree
-> > > > cases that doesn't exist.  IPv6 has a radically different approach =
-to
-> > > > IP options, comparisions between the two aren't really valid.
-> > >
-> > > I don't think it's that radically different.
-> >
-> > They are very different in my mind.  The IPv4 vs IPv6 option format
-> > and handling should be fairly obvious and I'm sure there are plenty of
-> > things written that describe the differences and motivations in
-> > excruciating detail so I'm not going to bother trying to do that here;
-> > as usual, Google is your friend.  I will admit that the skbuff vs
-> > socket-based labeling differences are a bit more subtle, but I believe
-> > if you look at how the packets are labeled in the two approaches as
-> > well as how they are managed and hooked into the LSMs you will start
-> > to get a better idea.  If that doesn't convince you that these three
-> > cases are significantly different, I'm not sure what else I can say
-> > other than we have a difference of opinion.  Regardless, I stand by my
-> > original comment that I don't like the text you chose and would like
-> > you to remove or change it.
->
-> Ok, I amended this part for v2 to hopefully better express what I'm
-> alluding to. I also added a paragraph about the routers dropping
-> packets with IP options, which explains the motivation better, anyway.
+On Fri, May 17, 2024 at 04:59:41AM GMT, John Johansen wrote:
+> On 5/17/24 03:51, Jonathan Calmels wrote:
+> > This new capability set would be a universal thing that could be
+> > leveraged today without modification to userspace. Moreover, it’s a
+> > simple framework that can be extended.
+> 
+> I would argue that is a problem. Userspace has to change for this to be
+> secure. Is it an improvement over the current state yes.
 
-Okay, I'll refrain from further comment until I see the v2 patch.
+Well, yes and no. With those patches, I can lock down things today on my
+system and I don't need to change anything.
 
-> I tried to test what you describe - hopefully I got close enough:
->
-> My test setup has 3 VMs (running Fedora 39 from the stock qcow2 image)
-> A, B, and R, connected via separate links as A <--> R <--> B, where R
-> acts as a router between A and B (net.ipv4.ip_forward is set to 1 on
-> R, and the appropriate routes are set on A, B, R).
->
-> The A <--> R link has subnet 10.123.123.0/24, A having address
-> 10.123.123.2 and R having 10.123.123.1.
-> The B <--> R link has subnet 10.123.124.0/24, B having address
-> 10.123.124.2 and R having 10.123.124.1.
->
-> The links are implemented as GRE tunnels over the main network that is
-> shared between the VMs.
->
-> Netlabel configuration on A:
-> netlabelctl cipsov4 add pass doi:16 tags:5
-> netlabelctl map del default
-> netlabelctl map add default address:0.0.0.0/0 protocol:unlbl
-> netlabelctl map add default address:::/0 protocol:unlbl
-> netlabelctl map add default address:10.123.123.0/24 protocol:cipsov4,16
-> netlabelctl map add default address:10.123.124.0/24 protocol:cipsov4,16
->
-> Netlabel configuration on R:
-> netlabelctl cipsov4 add pass doi:16 tags:5
-> netlabelctl map del default
-> netlabelctl map add default address:0.0.0.0/0 protocol:unlbl
-> netlabelctl map add default address:::/0 protocol:unlbl
-> netlabelctl map add default address:10.123.123.0/24 protocol:cipsov4,16
->
-> B has no netlabel configured.
->
-> (I.e. A tries to send CIPSO-labeled packets to B, but R treats the
-> 10.123.124.0/24 network as unlabeled, so should strip/add the CIPSO
-> label when forwarding between A and B.)
->
-> A basic TCP connection worked just fine in both directions with and
-> without these patches applied (I installed the patched kernel on all
-> machines, though it should only matter on machine R). I ignored the
-> actual labels/CIPSO content - i.e. I didn't change the default SELinux
-> policy and put SELinux into permissive mode on machines A and R.
->
-> Capturing the packets on R showed the following IP option content
-> without the patches:
-> A -> R: CIPSO
-> R -> B: NOPs
-> B -> R: (empty)
-> R -> A: CIPSO
->
-> With the patches this changed to:
-> A -> R: CIPSO
-> R -> B: (empty)
-> B -> R: (empty)
-> R -> A: CIPSO
->
-> Is this convincing enough or do you have different scenarios in mind?
+For example I can decide that none of my rootless containers started
+under SSH will get CAP_NET_ADMIN:
 
-Thanks for verifying your patch, the methodology looks good to me, but
-as I mentioned in my previous email I would feel much better if you
-verified this with a different client OS/stack.  Do you have access to
-Windows/MacOS/BSD/non-Linux system you could use in place of B in your
-test above?
+# echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
+# echo "!cap_net_admin $USER"     >> /etc/security/capability.conf
+# capsh --secbits=$((1 << 8)) -- -c /usr/sbin/sshd
 
---=20
-paul-moore.com
+$ ssh localhost 'unshare -r capsh --current'
+Current: =ep cap_net_admin-ep
+Current IAB: !cap_net_admin
+
+Or I can decide than I don't ever want CAP_SYS_RAWIO in my namespaces:
+
+# sysctl -w cap_bound_userns_mask=0x1fffffdffff
+
+This doesn't require changes to userspace.
+Now, granted if you want to have finer-grained controls, it will require
+*some* changes in *some* places (e.g. adding new systemd property like
+UserNSSet=).
+
+> > Well that’s the thing, from past conversations, there is a lot of
+> > disagreement about restricting namespaces. By restricting the
+> > capabilities granted by namespaces instead, we’re actually treating the
+> > root cause of most concerns.
+> > 
+> no disagreement there. This is actually Ubuntu's posture with user namespaces
+> atm. Where the user namespace is allowed but the capabilities within it
+> are denied.
+> 
+> It does however when not handled correctly result in some very odd failures
+> and would be easier to debug if the use of user namespaces were just
+> cleanly denied.
+
+Yes but as we established it depends on the use case, both are not
+mutually exclusive.
+
+> its not so much the capabilities set as the inheritable part that is
+> problematic. Yes I am well aware of where that is required but I question
+> that capabilities provides the needed controls here.
+
+Again, I'm not opposed to doing this with LSMs. I just think both could
+work well together. We already do that with standard capabilities vs
+LSMs, both have their strength and weaknesses.
+
+It's always a tradeoff, do you want a setting that's universal and
+coarse, or do you want one that's tailored to specific things but less
+ubiquitous.
+
+It's also a tradeoff on usability. If this doesn't get used in practice,
+then there is no point.
+I would argue that even though capabilities are complicated, they are
+more widely understood than LSMs. Are capabilities insufficient in
+certain scenarios, absolutely, and that's usually where LSMs come in.
+
+> > This is possible with the security bit introduced in the second patch.
+> > The idea of having those separate is that a service which has dropped
+> > its capabilities can still create a fully privileged user namespace.
+> 
+> yes, which is the problem. Not that we don't do that with say setuid
+> applications, but the difference is that they were known to be doing
+> something dangerous and took measures around that.
+> 
+> We are starting from a different posture here. Where applications have
+> assumed that user namespaces where safe and no measures were needed.
+> Tools like unshare and bwrap if set to allow user namespaces in their
+> fcaps will allow exploits a trivial by-pass.
+
+Agreed, but we can't really walk back this decision unfortunately.
+At least with this patch series system administrators have the ability
+to limit such tools.
+
+> What I was trying to get at is two points.
+> 1. The written description wasn't clear enough, leaving room for
+>    ambiguity.
+> 2. That I quest that the behavior should be allowed given the
+>    current set of tools that use user namespaces. It reduces exploit
+>    codes ability to directly use unprivileged user namespaces but
+>    makes it all to easy to by-pass the restriction because of the
+>    behavior of the current tool set. ie. user space has to change.
+
+> But again, I believe the fcaps behavior is wrong, because of the state of
+> current software. If this had been a proposal where there was no existing
+> software infrastructure I would be starting from a different stance.
+
+As mentioned above, userspace doesn't necessarily have to change. I'm
+also not sure what you mean by easy to by-pass? If I mask off some
+capabilities system wide or in a given process tree, I know for a fact
+that no namespace will ever get those capabilities.
