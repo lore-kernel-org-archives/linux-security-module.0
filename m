@@ -1,218 +1,139 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CC6DDAB;
-	Mon, 20 May 2024 03:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F79A6BFA2
+	for <linux-security-module@vger.kernel.org>; Mon, 20 May 2024 12:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716176313; cv=none; b=eCWXWahg7upRoQ5DlWDxXS3o0jG4QY8nXGKozSytBi5O9+epauA8URmmF/FkWS2uxhGwamMEIomL2SqfMrxqTLe+0WPpmR3seKEDJTCbP5QdKoJ4qcA0RPNfnkiQ3+X+oi27CvtkNPXqTfr0UK8dkRJY1zpx4wORcVh2ctWIBYg=
+	t=1716208284; cv=none; b=BbLLetlHOR5riqJjZ2b2OKCq1go0xNHmGc4iZC5x76bQBh6BGneDcPIgEL4z9z3zSOAjAXOpxTHluI0KdJD6sQhqd78WfXTYCC5mqZaS0Rlqa7s07XcQgKG47DQ0FWqiwJi4Bir1Yji4cvageXZf6LebbYKj5siflJwXi/dMkeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716176313; c=relaxed/simple;
-	bh=J/8eSJxWNcuvgo9lHIasRKrxSlhP5goxP0wEgoAeBEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jTKWyflqlYf/ZMtebQ3mYeK1oBzyCOZ1MRWZ6HZmObbAzMqEEkbonCoY72lhRNBczKMeR1TGZf84kiMKl4szStcb6VHMFhhtzAIaD7o+WgkjDil1vvrC3+a2WPXVJ2iJstuT/vXeW6fAxn1NtPVYsC+mdkc8XmetbEFvC7LGeUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 8E72A176A; Sun, 19 May 2024 22:38:29 -0500 (CDT)
-Date: Sun, 19 May 2024 22:38:29 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Joel Granados <j.granados@samsung.com>,
-	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-Message-ID: <20240520033829.GB1816262@mail.hallyn.com>
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net>
+	s=arc-20240116; t=1716208284; c=relaxed/simple;
+	bh=ce6oru7LPD9lbhzZfnzBKS2IPT8JY+sTsV2gMVxtYCk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XGbwYWti34lRGg1rdcMZFtuUlMNwZHZ82mEB9dUNf41MpEnC7hBubJ6WXRhf3keT8lpznLAekHlIvPLMwA3l0OvRVI0DefP0LqH9R3/bwGPJZX3NWCjEHjGkdipu4rucEjeaQpIKeSCig0w2Q4l6AIk+TB3+yANEAGSWcDtLcgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFP1hM52; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFP1hM52"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716208281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9xxq06coPp2aoGXiJwR3/gZ9zYxOiYsiplvRA2+0uqY=;
+	b=HFP1hM526Bj4ww30PVw945Te/GG7f4bYD0Ec3xBImzXXA7BDRFQSZbHCAxgFhgbGGbQ9Ze
+	KqYspKEfjm1mdJI4Cou3r59EwNXUYDUyHSmVEBhtT5fd7YL+A5UtHQ5BY9UMVfGBT3txIR
+	yl1gBiAr9FpM6htqR2y6jEHJaZ1W5FU=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-604-6Z3kB0usO7OYs13PWUSzNQ-1; Mon,
+ 20 May 2024 08:31:18 -0400
+X-MC-Unique: 6Z3kB0usO7OYs13PWUSzNQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 848A73C0C2C4;
+	Mon, 20 May 2024 12:31:17 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 1BA0B40C6EB7;
+	Mon, 20 May 2024 12:31:17 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id E330530C1C33; Mon, 20 May 2024 12:31:16 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id E05EF3FB52;
+	Mon, 20 May 2024 14:31:16 +0200 (CEST)
+Date: Mon, 20 May 2024 14:31:16 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Fan Wu <wufan@linux.microsoft.com>
+cc: Mike Snitzer <snitzer@kernel.org>, corbet@lwn.net, zohar@linux.ibm.com, 
+    jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, 
+    axboe@kernel.dk, agk@redhat.com, eparis@redhat.com, paul@paul-moore.com, 
+    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+    linux-block@vger.kernel.org, dm-devel@lists.linux.dev, 
+    audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v18 12/21] dm: add finalize hook to target_type
+In-Reply-To: <234910c1-40c3-4489-94ab-6e9a5f00d93e@linux.microsoft.com>
+Message-ID: <889a7880-8336-a44a-bea4-a4c81c5e5cce@redhat.com>
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com> <1714775551-22384-13-git-send-email-wufan@linux.microsoft.com> <aa767961-5e3-2ceb-1a1e-ff66a8eed649@redhat.com> <212b02a8-f5f0-4433-a726-1639dda61790@linux.microsoft.com>
+ <bc9aa053-20a6-eaa-cbe4-344f340242b@redhat.com> <234910c1-40c3-4489-94ab-6e9a5f00d93e@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516092213.6799-4-jcalmels@3xx0.net>
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Thu, May 16, 2024 at 02:22:05AM -0700, Jonathan Calmels wrote:
-> This patch adds a new system-wide userns capability mask designed to mask
-> off capabilities in user namespaces.
-> 
-> This mask is controlled through a sysctl and can be set early in the boot
-> process or on the kernel command line to exclude known capabilities from
-> ever being gained in namespaces. Once set, it can be further restricted to
-> exert dynamic policies on the system (e.g. ward off a potential exploit).
-> 
-> Changing this mask requires privileges over CAP_SYS_ADMIN and CAP_SETPCAP
-> in the initial user namespace.
-> 
-> Example:
-> 
->     # sysctl -qw kernel.cap_userns_mask=0x1fffffdffff && \
->       unshare -r grep Cap /proc/self/status
->     CapInh: 0000000000000000
->     CapPrm: 000001fffffdffff
->     CapEff: 000001fffffdffff
->     CapBnd: 000001fffffdffff
->     CapAmb: 0000000000000000
->     CapUNs: 000001fffffdffff
-> 
-> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-> ---
->  include/linux/user_namespace.h |  7 ++++
->  kernel/sysctl.c                | 10 ++++++
->  kernel/user_namespace.c        | 66 ++++++++++++++++++++++++++++++++++
->  3 files changed, 83 insertions(+)
+On Fri, 17 May 2024, Fan Wu wrote:
+
+> > So, it seems that the preresume callback provides the guarantee that you
+> > looking for.
+> > 
+> >> -Fan
+> > 
+> > Mikulas
 > 
-> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-> index 6030a8235617..e3478bd54ee5 100644
-> --- a/include/linux/user_namespace.h
-> +++ b/include/linux/user_namespace.h
-> @@ -2,6 +2,7 @@
->  #ifndef _LINUX_USER_NAMESPACE_H
->  #define _LINUX_USER_NAMESPACE_H
->  
-> +#include <linux/capability.h>
->  #include <linux/kref.h>
->  #include <linux/nsproxy.h>
->  #include <linux/ns_common.h>
-> @@ -14,6 +15,12 @@
->  #define UID_GID_MAP_MAX_BASE_EXTENTS 5
->  #define UID_GID_MAP_MAX_EXTENTS 340
->  
-> +#ifdef CONFIG_SYSCTL
-> +extern kernel_cap_t cap_userns_mask;
-> +int proc_cap_userns_handler(struct ctl_table *table, int write,
-> +			    void *buffer, size_t *lenp, loff_t *ppos);
-> +#endif
-> +
->  struct uid_gid_extent {
->  	u32 first;
->  	u32 lower_first;
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 81cc974913bb..1546eebd6aea 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -62,6 +62,7 @@
->  #include <linux/sched/sysctl.h>
->  #include <linux/mount.h>
->  #include <linux/userfaultfd_k.h>
-> +#include <linux/user_namespace.h>
->  #include <linux/pid.h>
->  
->  #include "../lib/kstrtox.h"
-> @@ -1846,6 +1847,15 @@ static struct ctl_table kern_table[] = {
->  		.mode		= 0444,
->  		.proc_handler	= proc_dointvec,
->  	},
-> +#ifdef CONFIG_USER_NS
-> +	{
-> +		.procname	= "cap_userns_mask",
-> +		.data		= &cap_userns_mask,
-> +		.maxlen		= sizeof(kernel_cap_t),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_cap_userns_handler,
-> +	},
-> +#endif
->  #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
->  	{
->  		.procname       = "unknown_nmi_panic",
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 53848e2b68cd..e0cf606e9140 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -26,6 +26,66 @@
->  static struct kmem_cache *user_ns_cachep __ro_after_init;
->  static DEFINE_MUTEX(userns_state_mutex);
->  
-> +#ifdef CONFIG_SYSCTL
-> +static DEFINE_SPINLOCK(cap_userns_lock);
-> +kernel_cap_t cap_userns_mask = CAP_FULL_SET;
-> +
-> +int proc_cap_userns_handler(struct ctl_table *table, int write,
-> +			    void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	struct ctl_table t;
-> +	unsigned long mask_array[2];
-> +	kernel_cap_t new_mask, *mask;
-> +	int err;
-> +
-> +	if (write && (!capable(CAP_SETPCAP) ||
-> +		      !capable(CAP_SYS_ADMIN)))
-> +		return -EPERM;
-> +
-> +	/*
-> +	 * convert from the global kernel_cap_t to the ulong array to print to
-> +	 * userspace if this is a read.
-> +	 *
-> +	 * capabilities are exposed as one 64-bit value or two 32-bit values
-> +	 * depending on the architecture
-> +	 */
-> +	mask = table->data;
-> +	spin_lock(&cap_userns_lock);
-> +	mask_array[0] = (unsigned long) mask->val;
-> +#if BITS_PER_LONG != 64
-> +	mask_array[1] = mask->val >> BITS_PER_LONG;
-> +#endif
-> +	spin_unlock(&cap_userns_lock);
-> +
-> +	t = *table;
-> +	t.data = &mask_array;
-> +
-> +	/*
-> +	 * actually read or write and array of ulongs from userspace.  Remember
-> +	 * these are least significant bits first
-> +	 */
-> +	err = proc_doulongvec_minmax(&t, write, buffer, lenp, ppos);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	new_mask.val = mask_array[0];
-> +#if BITS_PER_LONG != 64
-> +	new_mask.val += (u64)mask_array[1] << BITS_PER_LONG;
-> +#endif
-> +
-> +	/*
-> +	 * Drop everything not in the new_mask (but don't add things)
-> +	 */
-> +	if (write) {
-> +		spin_lock(&cap_userns_lock);
-> +		*mask = cap_intersect(*mask, new_mask);
-> +		spin_unlock(&cap_userns_lock);
-> +	}
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->  static bool new_idmap_permitted(const struct file *file,
->  				struct user_namespace *ns, int cap_setid,
->  				struct uid_gid_map *map);
-> @@ -46,6 +106,12 @@ static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
->  	/* Limit userns capabilities to our parent's bounding set. */
->  	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
->  		cred->cap_userns = cap_intersect(cred->cap_userns, cred->cap_bset);
-> +#ifdef CONFIG_SYSCTL
-> +	/* Mask off userns capabilities that are not permitted by the system-wide mask. */
-> +	spin_lock(&cap_userns_lock);
-> +	cred->cap_userns = cap_intersect(cred->cap_userns, cap_userns_mask);
-> +	spin_unlock(&cap_userns_lock);
-> +#endif
->  
->  	/* Start with the capabilities defined in the userns set. */
->  	cred->cap_bset = cred->cap_userns;
-> -- 
-> 2.45.0
+> Thanks for the info. I have tested and verified that the preresume() hook can
+> also work for our case.
 > 
+> From the source code
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/md/dm-ioctl.c#n1149,
+> the whole resume process appears to be:
+> 
+> 1. Check if there is a new map for the device. If so, attempt to activate the
+> new map using dm_swap_table() (where the finalize() callback occurs).
+> 
+> 2. Check if the device is suspended. If so, use dm_resume() (where the
+> preresume() callback occurs) to resume the device.
+> 
+> 3. If a new map is activated, use dm_table_destroy() to destroy the old map.
+> 
+> For our case:
+> 
+> - Using the finalize() callback, the metadata of the dm-verity target inside
+> the table is attached to the mapped device every time a new table is
+> activated.
+> - Using the preresume() callback, the same metadata is attached every time the
+> device resumes from suspension.
+> 
+> If I understand the code correctly, resuming from suspension is a necessary
+> step for loading a new mapping table. Thus, the preresume() callback covers
+> all conditions where the finalize() callback would be triggered.
+
+Yes.
+
+> However, the preresume() callback can also be triggered when the device 
+> resumes from suspension without loading a new table, in which case there 
+> is no new metadata in the table to attach to the mapped device.
+
+Yes.
+
+> In the scenario where the finalize() callback succeeds but the preresume()
+> callback fails, it seems the device will remain in a suspended state, the
+> newly activated table will be kept, and the old table will be destroyed, so it
+> seems there is no inconsistency using finalize() even preresume() potentially
+> fails.
+
+What does your security module do when the verification of the dm-verity 
+hash fails? Does it halt the whole system? Does it destroy just the 
+failing dm device? Or does it attempt to recover somehow from this 
+situation?
+
+> I believe both the finalize() callback proposed by Mike and the preresume()
+> callback suggested by Mikulas can work for our case. I am fine with either
+> approach, but I would like to know which one is preferred by the maintainers
+> and would appreciate an ACK for the chosen approach.
+> 
+> -Fan
+
+I would prefer preresume - we shouldn't add new callbacks unless it's 
+necessary.
+
+Mikulas
+
