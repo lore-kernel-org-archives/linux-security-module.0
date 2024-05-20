@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A572A13956B;
-	Mon, 20 May 2024 18:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FEC13959D;
+	Mon, 20 May 2024 18:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716230865; cv=none; b=Sv5BC/pRcIAfF5xrPTLrp+FMrf8Fv4ND+yd3vnSjoMHA+yu/BPJQo6GnDPd3CbPHQqO8z02MuTWPVquhgcOnPvgE4k3YlHSZoLQo1NiRAlcZUd0wie+RHl08LC8AUp+oMvyraIUxeDvMYSxLjsStWbKcB+/743mpbDTvBdfwpCY=
+	t=1716230878; cv=none; b=Qj3SmYlr7RHV4qloRFqRMC1rkeMvfM3Y5swKuylVBaq6k3IgYzWVMSH9IaBLw5Iaj4wfjPNandaAN7OHQyD+v4TnHrmWrPT5EFcMMBB4fh2tXrNNw/Issci7f9Xgz4uWOi7kpv80xItEwIs3yXthcpCycD3wWSu433oPQBlCARI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716230865; c=relaxed/simple;
-	bh=xy+V7XL2mntIN1Y8Vq4nuU/5Bbmt5vykHQ/6P1bi5xo=;
+	s=arc-20240116; t=1716230878; c=relaxed/simple;
+	bh=F6Xn1EXhFriSXKfBhL3SFmqyZo5V1tJcbXwtUzXlWUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ALfZJFcLaFvLzaTc1uIO9qR2LtkgVitKxpx1rclypZ1qKqq7dRMEugXu3YJVRrPaGvQCWk+zVa9u/nulkyATfRD1MmNL8qfNzP5VlL+LD8OxefYo3wtgIkkFnZnYcExxqVGQPdQLXY+4d22eqMn/eGMfnkpw/EGhLKHEpGWcjVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ie2aK56F; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=u9sjok/Uk3Y0NCRLciqQfKNL1NWB3nIspq9xuS07EOcPykx35CovEN0HEGe5UALuC1A4bNjNseIPI8BKIoqPOp/kLPvgH9eywdFVEuZle6jsLAoNbn7MZ/PGoZqc7fh5Cl1TwkuG2BeDOaBaNdktVj83DAiri3fT4zH2UvuvWzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GS9BODE7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ie2aK56F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2036EC2BD10;
-	Mon, 20 May 2024 18:47:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GS9BODE7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C270C4AF07;
+	Mon, 20 May 2024 18:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716230865;
-	bh=xy+V7XL2mntIN1Y8Vq4nuU/5Bbmt5vykHQ/6P1bi5xo=;
+	s=k20201202; t=1716230877;
+	bh=F6Xn1EXhFriSXKfBhL3SFmqyZo5V1tJcbXwtUzXlWUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ie2aK56FFOTsPMlGUzRljAEw5ofaCi6G4XaANyyX/yn0Ql39Xrybwgu08LHc+qN0P
-	 Wu/JEQ+207GGVaZeDKST1nSCl2DYObYMpI801nDZJ8s7Eozzc7lRb0XujZuRvyMX3N
-	 tImYiV3nlM1j/A8KnYNTtJA1rhAJqfrm+GwVh/2x0gEoZT1UJMc3D7Y0vfqvd2y0bh
-	 NyYtw92P1Hxey33GApmQBF25McLm7PL8lEyjAKGgEj5+4k/riuWgXxbhrsggImkkQM
-	 Q/ba8vfOEyuwAW8GFe77ry9fdCSg/KjX5TVqRnxidoSA0e7kpQjzRuIc4voO4VdZev
-	 Kju8MfuBLhwzA==
+	b=GS9BODE7ZBuwYb3KoK1v9o1xoJhMCVeE3xGVBGsIsM3J/G3qIFRRdzZYhZNjqCABT
+	 nzw6Eirecu+Xg1+WvnNXD/rHNDHZrM0cyVGCGWStWDF2mKmnXyhg4QLD1tGyCeD/mQ
+	 Rj9HJXFwMGWc9otjvm8Z5YIs8REtBugFdj6lYhU7X7yw1Pzf5ZdQ2CwnNfySmI7dti
+	 khuOuznjDZKndaI5mgqfZfFQhJTb+gw68UgukDjBY2X96pdmlnCJPIi3cOtwLKXP3t
+	 GlzKAt+XurkSBYlu7DKX81gGFGpiD2UZSahvpZvN9H8tyHW+q2kloxapBELXmmSAl/
+	 P0itstnPk15xw==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: linux-integrity@vger.kernel.org,
@@ -37,7 +37,8 @@ Cc: linux-integrity@vger.kernel.org,
 	"David S. Miller" <davem@davemloft.net>,
 	linux-crypto@vger.kernel.org (open list:CRYPTO API),
 	linux-kernel@vger.kernel.org (open list),
-	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
 	James Bottomley <James.Bottomley@HansenPartnership.com>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	David Howells <dhowells@redhat.com>,
@@ -45,9 +46,9 @@ Cc: linux-integrity@vger.kernel.org,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
 	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH 2/6] lib: Expand asn1_encode_integer() to variable size integers
-Date: Mon, 20 May 2024 21:47:09 +0300
-Message-ID: <20240520184727.22038-3-jarkko@kernel.org>
+Subject: [PATCH 4/6] KEYS: trusted: Move tpm2_key_decode() to the TPM driver
+Date: Mon, 20 May 2024 21:47:11 +0300
+Message-ID: <20240520184727.22038-5-jarkko@kernel.org>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240520184727.22038-1-jarkko@kernel.org>
 References: <20240520184727.22038-1-jarkko@kernel.org>
@@ -59,297 +60,385 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Expand asn1_encode_integer() to variable size integers, meaning that it
-will get a blob in big-endian format as integer and length of the blob as
-parameters. This is required in order to encode RSA public key modulus.
+Move tpm2_key_decode() to the TPM driver and export the symbols to make
+them callable from trusted keys. It can re-used for asymmetric keys.
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- include/linux/asn1_encoder.h              |   3 +-
- lib/asn1_encoder.c                        | 185 ++++++++++++----------
- security/keys/trusted-keys/trusted_tpm2.c |   4 +-
- 3 files changed, 103 insertions(+), 89 deletions(-)
+ drivers/char/tpm/Kconfig                      |   1 +
+ drivers/char/tpm/Makefile                     |   5 +
+ drivers/char/tpm/tpm2_key.c                   | 111 ++++++++++++++++
+ .../char/tpm}/tpm2key.asn1                    |   0
+ include/crypto/tpm2_key.h                     |  33 +++++
+ security/keys/trusted-keys/Makefile           |   2 -
+ security/keys/trusted-keys/trusted_tpm2.c     | 121 +++---------------
+ 7 files changed, 166 insertions(+), 107 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm2_key.c
+ rename {security/keys/trusted-keys => drivers/char/tpm}/tpm2key.asn1 (100%)
+ create mode 100644 include/crypto/tpm2_key.h
 
-diff --git a/include/linux/asn1_encoder.h b/include/linux/asn1_encoder.h
-index 08cd0c2ad34f..ad5fb18db9e2 100644
---- a/include/linux/asn1_encoder.h
-+++ b/include/linux/asn1_encoder.h
-@@ -9,9 +9,10 @@
- #include <linux/bug.h>
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index e63a6a17793c..de2f4093c939 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -7,6 +7,7 @@ menuconfig TCG_TPM
+ 	tristate "TPM Hardware Support"
+ 	depends on HAS_IOMEM
+ 	imply SECURITYFS
++	select ASN1
+ 	select CRYPTO
+ 	select CRYPTO_HASH_INFO
+ 	help
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index 4c695b0388f3..071437058ef6 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -17,6 +17,11 @@ tpm-y += eventlog/tpm1.o
+ tpm-y += eventlog/tpm2.o
+ tpm-y += tpm-buf.o
  
- #define asn1_oid_len(oid) (sizeof(oid)/sizeof(u32))
++# TPM2 Asymmetric Key
++$(obj)/trusted_tpm2.o: $(obj)/tpm2key.asn1.h
++tpm-y += tpm2key.asn1.o
++tpm-y += tpm2_key.o
 +
- unsigned char *
- asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
--		    s64 integer);
-+		    const u8 *integer, int integer_len);
- unsigned char *
- asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
- 		u32 oid[], int oid_len);
-diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
-index 0fd3c454a468..51a2d7010a67 100644
---- a/lib/asn1_encoder.c
-+++ b/lib/asn1_encoder.c
-@@ -9,12 +9,78 @@
- #include <linux/bug.h>
- #include <linux/string.h>
- #include <linux/module.h>
+ tpm-$(CONFIG_TCG_TPM2_HMAC) += tpm2-sessions.o
+ tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
+ tpm-$(CONFIG_EFI) += eventlog/efi.o
+diff --git a/drivers/char/tpm/tpm2_key.c b/drivers/char/tpm/tpm2_key.c
+new file mode 100644
+index 000000000000..0112362e432e
+--- /dev/null
++++ b/drivers/char/tpm/tpm2_key.c
+@@ -0,0 +1,111 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/oid_registry.h>
 +#include <linux/slab.h>
++#include <linux/types.h>
++#include <crypto/tpm2_key.h>
++#include <asm/unaligned.h>
++#include "tpm2key.asn1.h"
 +
-+/**
-+ * asn1_encode_length() - encode a length to follow an ASN.1 tag
-+ * @data: pointer to encode at
-+ * @data_len: pointer to remaining length (adjusted by routine)
-+ * @len: length to encode
-+ *
-+ * This routine can encode lengths up to 65535 using the ASN.1 rules.
-+ * It will accept a negative length and place a zero length tag
-+ * instead (to keep the ASN.1 valid).  This convention allows other
-+ * encoder primitives to accept negative lengths as singalling the
-+ * sequence will be re-encoded when the length is known.
-+ */
-+static int asn1_encode_length(unsigned char **data, int *data_len, int len)
++#undef pr_fmt
++#define pr_fmt(fmt) "tpm2_key: "fmt
++
++int tpm2_key_parent(void *context, size_t hdrlen,
++		    unsigned char tag,
++		    const void *value, size_t vlen)
 +{
-+	if (*data_len < 1)
-+		return -EINVAL;
++	struct tpm2_key *ctx = context;
++	const u8 *v = value;
++	int i;
 +
-+	if (len < 0) {
-+		*((*data)++) = 0;
-+		(*data_len)--;
-+		return 0;
++	ctx->parent = 0;
++	for (i = 0; i < vlen; i++) {
++		ctx->parent <<= 8;
++		ctx->parent |= v[i];
 +	}
-+
-+	if (len <= 0x7f) {
-+		*((*data)++) = len;
-+		(*data_len)--;
-+		return 0;
-+	}
-+
-+	if (*data_len < 2)
-+		return -EINVAL;
-+
-+	if (len <= 0xff) {
-+		*((*data)++) = 0x81;
-+		*((*data)++) = len & 0xff;
-+		*data_len -= 2;
-+		return 0;
-+	}
-+
-+	if (*data_len < 3)
-+		return -EINVAL;
-+
-+	if (len <= 0xffff) {
-+		*((*data)++) = 0x82;
-+		*((*data)++) = (len >> 8) & 0xff;
-+		*((*data)++) = len & 0xff;
-+		*data_len -= 3;
-+		return 0;
-+	}
-+
-+	if (WARN(len > 0xffffff, "ASN.1 length can't be > 0xffffff"))
-+		return -EINVAL;
-+
-+	if (*data_len < 4)
-+		return -EINVAL;
-+	*((*data)++) = 0x83;
-+	*((*data)++) = (len >> 16) & 0xff;
-+	*((*data)++) = (len >> 8) & 0xff;
-+	*((*data)++) = len & 0xff;
-+	*data_len -= 4;
 +
 +	return 0;
 +}
- 
- /**
-  * asn1_encode_integer() - encode positive integer to ASN.1
-- * @data:	pointer to the pointer to the data
-- * @end_data:	end of data pointer, points one beyond last usable byte in @data
-- * @integer:	integer to be encoded
-+ * @data:		pointer to the pointer to the data
-+ * @end_data:		end of data pointer, points one beyond last usable byte in @data
-+ * @integer:		integer to be encoded
-+ * @integer_len:	length in bytes of the integer blob
-  *
-  * This is a simplified encoder: it only currently does
-  * positive integers, but it should be simple enough to add the
-@@ -22,15 +88,17 @@
-  */
- unsigned char *
- asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
--		    s64 integer)
-+		    const u8 *integer, int integer_len)
- {
- 	int data_len = end_data - data;
--	unsigned char *d = &data[2];
- 	bool found = false;
-+	unsigned char *d;
-+	int encoded_len;
-+	u8 *encoded;
-+	int ret;
- 	int i;
- 
--	if (WARN(integer < 0,
--		 "BUG: integer encode only supports positive integers"))
-+	if (WARN(!integer, "BUG: integer is null"))
- 		return ERR_PTR(-EINVAL);
- 
- 	if (IS_ERR(data))
-@@ -40,17 +108,22 @@ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
- 	if (data_len < 3)
- 		return ERR_PTR(-EINVAL);
- 
--	/* remaining length where at d (the start of the integer encoding) */
--	data_len -= 2;
-+	(*data++) = _tag(UNIV, PRIM, INT);
-+	data_len--;
- 
--	data[0] = _tag(UNIV, PRIM, INT);
--	if (integer == 0) {
--		*d++ = 0;
--		goto out;
-+	if (!memchr_inv(integer, 0, integer_len)) {
-+		data[1] = 1;
-+		data[2] = 0;
-+		return &data[2];
- 	}
- 
--	for (i = sizeof(integer); i > 0 ; i--) {
--		int byte = integer >> (8 * (i - 1));
-+	encoded = kzalloc(integer_len, GFP_KERNEL);
-+	if (!encoded)
-+		return ERR_PTR(-ENOMEM);
-+	d = encoded;
 +
-+	for (i = 0; i < integer_len; i++) {
-+		int byte = integer[i];
- 
- 		if (!found && byte == 0)
- 			continue;
-@@ -67,21 +140,23 @@ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
- 			 * have len >= 1
- 			 */
- 			*d++ = 0;
--			data_len--;
- 		}
- 
- 		found = true;
--		if (data_len == 0)
--			return ERR_PTR(-EINVAL);
--
- 		*d++ = byte;
--		data_len--;
- 	}
- 
-- out:
--	data[1] = d - data - 2;
-+	encoded_len = d - encoded;
- 
--	return d;
-+	ret = asn1_encode_length(&data, &data_len, encoded_len);
-+	if (ret)  {
-+		kfree(encoded);
-+		return ERR_PTR(ret);
++int tpm2_key_type(void *context, size_t hdrlen,
++		  unsigned char tag,
++		  const void *value, size_t vlen)
++{
++	enum OID oid = look_up_OID(value, vlen);
++
++	if (oid != OID_TPMSealedData) {
++		char buffer[50];
++
++		sprint_oid(value, vlen, buffer, sizeof(buffer));
++		pr_debug("OID is \"%s\" which is not TPMSealedData\n",
++			 buffer);
++		return -EINVAL;
 +	}
 +
-+	memcpy(data, encoded, encoded_len);
-+	kfree(encoded);
-+	return data + encoded_len;
- }
- EXPORT_SYMBOL_GPL(asn1_encode_integer);
++	return 0;
++}
++
++int tpm2_key_pub(void *context, size_t hdrlen,
++		 unsigned char tag,
++		 const void *value, size_t vlen)
++{
++	struct tpm2_key *ctx = context;
++
++	ctx->pub = value;
++	ctx->pub_len = vlen;
++
++	return 0;
++}
++
++int tpm2_key_priv(void *context, size_t hdrlen,
++		  unsigned char tag,
++		  const void *value, size_t vlen)
++{
++	struct tpm2_key *ctx = context;
++
++	ctx->priv = value;
++	ctx->priv_len = vlen;
++
++	return 0;
++}
++
++/**
++ * tpm_key_decode() - Decode TPM2 ASN.1 key.
++ * @src:		ASN.1 source.
++ * @src_len:		ASN.1 source length.
++ * @key:		TPM2 asymmetric key.
++ * @max_key_len:	Maximum length of the TPM2 asymmetric key.
++ *
++ * Decodes TPM2 ASN.1 key on success. Returns POSIX error code on failure.
++ */
++int tpm2_key_decode(const u8 *src, u32 src_len, struct tpm2_key *key,
++		    u32 max_key_len)
++{
++	struct tpm2_key ctx;
++	u32 blob_len;
++	int ret;
++
++	memset(&ctx, 0, sizeof(ctx));
++
++	ret = asn1_ber_decoder(&tpm2key_decoder, &ctx, src, src_len);
++	if (ret < 0)
++		return ret;
++
++	blob_len = ctx.priv_len + ctx.pub_len;
++	if (blob_len > max_key_len)
++		return -E2BIG;
++
++	ctx.blob_len = blob_len;
++	ctx.blob = kmalloc(blob_len, GFP_KERNEL);
++	if (!ctx.blob)
++		return -ENOMEM;
++
++	memcpy((void *)ctx.blob, ctx.priv, ctx.priv_len);
++	memcpy((void *)ctx.blob + ctx.priv_len, ctx.pub, ctx.pub_len);
++	ctx.priv = ctx.blob;
++	ctx.pub = ctx.blob + ctx.priv_len;
++
++	memcpy(key, &ctx, sizeof(ctx));
++	return 0;
++}
++EXPORT_SYMBOL_GPL(tpm2_key_decode);
+diff --git a/security/keys/trusted-keys/tpm2key.asn1 b/drivers/char/tpm/tpm2key.asn1
+similarity index 100%
+rename from security/keys/trusted-keys/tpm2key.asn1
+rename to drivers/char/tpm/tpm2key.asn1
+diff --git a/include/crypto/tpm2_key.h b/include/crypto/tpm2_key.h
+new file mode 100644
+index 000000000000..acf41b2e0c92
+--- /dev/null
++++ b/include/crypto/tpm2_key.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef __LINUX_TPM2_KEY_H__
++#define __LINUX_TPM2_KEY_H__
++
++#include <linux/slab.h>
++
++/*
++ * TPM2 ASN.1 key
++ */
++struct tpm2_key {
++	u32 parent;
++	const u8 *blob;
++	u32 blob_len;
++	const u8 *pub;
++	u32 pub_len;
++	const u8 *priv;
++	u32 priv_len;
++};
++
++int tpm2_key_decode(const u8 *src, u32 src_len, struct tpm2_key *key,
++		    u32 max_key_len);
++
++/**
++ * tpm2_key_free() - Release TPM2 asymmetric key resources and reset values
++ * @key:	TPM2 asymmetric key.
++ */
++static inline void tpm2_key_destroy(struct tpm2_key *key)
++{
++	kfree(key->blob);
++	memset(key, 0, sizeof(*key));
++}
++
++#endif /* __LINUX_TPM2_KEY_H__ */
+diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+index f0f3b27f688b..2674d5c10fc9 100644
+--- a/security/keys/trusted-keys/Makefile
++++ b/security/keys/trusted-keys/Makefile
+@@ -7,9 +7,7 @@ obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
+ trusted-y += trusted_core.o
+ trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm1.o
  
-@@ -176,70 +251,6 @@ asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
- }
- EXPORT_SYMBOL_GPL(asn1_encode_oid);
+-$(obj)/trusted_tpm2.o: $(obj)/tpm2key.asn1.h
+ trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm2.o
+-trusted-$(CONFIG_TRUSTED_KEYS_TPM) += tpm2key.asn1.o
  
--/**
-- * asn1_encode_length() - encode a length to follow an ASN.1 tag
-- * @data: pointer to encode at
-- * @data_len: pointer to remaining length (adjusted by routine)
-- * @len: length to encode
-- *
-- * This routine can encode lengths up to 65535 using the ASN.1 rules.
-- * It will accept a negative length and place a zero length tag
-- * instead (to keep the ASN.1 valid).  This convention allows other
-- * encoder primitives to accept negative lengths as singalling the
-- * sequence will be re-encoded when the length is known.
-- */
--static int asn1_encode_length(unsigned char **data, int *data_len, int len)
+ trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
+ 
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index ec59f9389a2d..49ee2a57797a 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -13,11 +13,10 @@
+ 
+ #include <keys/trusted-type.h>
+ #include <keys/trusted_tpm.h>
++#include <crypto/tpm2_key.h>
+ 
+ #include <asm/unaligned.h>
+ 
+-#include "tpm2key.asn1.h"
+-
+ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+@@ -100,106 +99,6 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	return ret;
+ }
+ 
+-struct tpm2_key_context {
+-	u32 parent;
+-	const u8 *pub;
+-	u32 pub_len;
+-	const u8 *priv;
+-	u32 priv_len;
+-};
+-
+-static int tpm2_key_decode(struct trusted_key_payload *payload,
+-			   struct trusted_key_options *options,
+-			   u8 **buf)
 -{
--	if (*data_len < 1)
+-	int ret;
+-	struct tpm2_key_context ctx;
+-	u8 *blob;
+-
+-	memset(&ctx, 0, sizeof(ctx));
+-
+-	ret = asn1_ber_decoder(&tpm2key_decoder, &ctx, payload->blob,
+-			       payload->blob_len);
+-	if (ret < 0)
+-		return ret;
+-
+-	if (ctx.priv_len + ctx.pub_len > MAX_BLOB_SIZE)
 -		return -EINVAL;
 -
--	if (len < 0) {
--		*((*data)++) = 0;
--		(*data_len)--;
--		return 0;
+-	blob = kmalloc(ctx.priv_len + ctx.pub_len + 4, GFP_KERNEL);
+-	if (!blob)
+-		return -ENOMEM;
+-
+-	*buf = blob;
+-	options->keyhandle = ctx.parent;
+-
+-	memcpy(blob, ctx.priv, ctx.priv_len);
+-	blob += ctx.priv_len;
+-
+-	memcpy(blob, ctx.pub, ctx.pub_len);
+-
+-	return 0;
+-}
+-
+-int tpm2_key_parent(void *context, size_t hdrlen,
+-		  unsigned char tag,
+-		  const void *value, size_t vlen)
+-{
+-	struct tpm2_key_context *ctx = context;
+-	const u8 *v = value;
+-	int i;
+-
+-	ctx->parent = 0;
+-	for (i = 0; i < vlen; i++) {
+-		ctx->parent <<= 8;
+-		ctx->parent |= v[i];
 -	}
 -
--	if (len <= 0x7f) {
--		*((*data)++) = len;
--		(*data_len)--;
--		return 0;
+-	return 0;
+-}
+-
+-int tpm2_key_type(void *context, size_t hdrlen,
+-		unsigned char tag,
+-		const void *value, size_t vlen)
+-{
+-	enum OID oid = look_up_OID(value, vlen);
+-
+-	if (oid != OID_TPMSealedData) {
+-		char buffer[50];
+-
+-		sprint_oid(value, vlen, buffer, sizeof(buffer));
+-		pr_debug("OID is \"%s\" which is not TPMSealedData\n",
+-			 buffer);
+-		return -EINVAL;
 -	}
 -
--	if (*data_len < 2)
--		return -EINVAL;
+-	return 0;
+-}
 -
--	if (len <= 0xff) {
--		*((*data)++) = 0x81;
--		*((*data)++) = len & 0xff;
--		*data_len -= 2;
--		return 0;
--	}
+-int tpm2_key_pub(void *context, size_t hdrlen,
+-	       unsigned char tag,
+-	       const void *value, size_t vlen)
+-{
+-	struct tpm2_key_context *ctx = context;
 -
--	if (*data_len < 3)
--		return -EINVAL;
+-	ctx->pub = value;
+-	ctx->pub_len = vlen;
 -
--	if (len <= 0xffff) {
--		*((*data)++) = 0x82;
--		*((*data)++) = (len >> 8) & 0xff;
--		*((*data)++) = len & 0xff;
--		*data_len -= 3;
--		return 0;
--	}
+-	return 0;
+-}
 -
--	if (WARN(len > 0xffffff, "ASN.1 length can't be > 0xffffff"))
--		return -EINVAL;
+-int tpm2_key_priv(void *context, size_t hdrlen,
+-		unsigned char tag,
+-		const void *value, size_t vlen)
+-{
+-	struct tpm2_key_context *ctx = context;
 -
--	if (*data_len < 4)
--		return -EINVAL;
--	*((*data)++) = 0x83;
--	*((*data)++) = (len >> 16) & 0xff;
--	*((*data)++) = (len >> 8) & 0xff;
--	*((*data)++) = len & 0xff;
--	*data_len -= 4;
+-	ctx->priv = value;
+-	ctx->priv_len = vlen;
 -
 -	return 0;
 -}
 -
  /**
-  * asn1_encode_tag() - add a tag for optional or explicit value
-  * @data:	pointer to place tag at
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 8b7dd73d94c1..ec59f9389a2d 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -38,6 +38,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	u8 *end_work = scratch + SCRATCH_SIZE;
- 	u8 *priv, *pub;
- 	u16 priv_len, pub_len;
-+	u32 key_handle;
- 	int ret;
+  * tpm2_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+  *
+@@ -389,20 +288,32 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 			 struct trusted_key_options *options,
+ 			 u32 *blob_handle)
+ {
+-	struct tpm_buf buf;
+ 	unsigned int private_len;
+ 	unsigned int public_len;
+ 	unsigned int blob_len;
++	struct tpm2_key key;
++	struct tpm_buf buf;
+ 	u8 *blob, *pub;
+ 	int rc;
+ 	u32 attrs;
  
- 	priv_len = get_unaligned_be16(src) + 2;
-@@ -77,7 +78,8 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 		goto err;
+-	rc = tpm2_key_decode(payload, options, &blob);
++	rc = tpm2_key_decode(payload->blob, payload->blob_len, &key,
++			     MAX_BLOB_SIZE);
+ 	if (rc) {
+-		/* old form */
++		/* legacy format: */
+ 		blob = payload->blob;
+ 		payload->old_format = 1;
++	} else {
++		blob = kmalloc(key.priv_len + key.pub_len + 4, GFP_KERNEL);
++		if (blob) {
++			options->keyhandle = key.parent;
++			memcpy(blob, key.priv, key.priv_len);
++			memcpy(&blob[key.priv_len], key.pub, key.pub_len);
++		}
  	}
++	tpm2_key_destroy(&key);
++	if (!blob)
++		return -ENOMEM;
  
--	work = asn1_encode_integer(work, end_work, options->keyhandle);
-+	key_handle = cpu_to_be32(options->keyhandle);
-+	work = asn1_encode_integer(work, end_work, (u8 *)&key_handle, 4);
- 	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
- 	work = asn1_encode_octet_string(work, end_work, priv, priv_len);
- 
+ 	/* new format carries keyhandle but old format doesn't */
+ 	if (!options->keyhandle)
 -- 
 2.45.1
 
