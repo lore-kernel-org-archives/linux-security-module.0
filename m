@@ -1,139 +1,120 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F79A6BFA2
-	for <linux-security-module@vger.kernel.org>; Mon, 20 May 2024 12:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A411E87C;
+	Mon, 20 May 2024 13:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716208284; cv=none; b=BbLLetlHOR5riqJjZ2b2OKCq1go0xNHmGc4iZC5x76bQBh6BGneDcPIgEL4z9z3zSOAjAXOpxTHluI0KdJD6sQhqd78WfXTYCC5mqZaS0Rlqa7s07XcQgKG47DQ0FWqiwJi4Bir1Yji4cvageXZf6LebbYKj5siflJwXi/dMkeE=
+	t=1716211822; cv=none; b=p0MPhX5oNiIQmb1+rjH0R3wHUc1fuOreiL6aWLaM1tHLEwS4HjkEmlxc4fTi2w/HYuN3hYmFi3YJWSdS5kkxIgTdHZtma6kEE2+QxPfikpX/BRyBku6MbFpOOwc9TpRGcmIYm3F7UD84LOgv+SoMHr/g5uMG4391l7LnQ33Se1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716208284; c=relaxed/simple;
-	bh=ce6oru7LPD9lbhzZfnzBKS2IPT8JY+sTsV2gMVxtYCk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XGbwYWti34lRGg1rdcMZFtuUlMNwZHZ82mEB9dUNf41MpEnC7hBubJ6WXRhf3keT8lpznLAekHlIvPLMwA3l0OvRVI0DefP0LqH9R3/bwGPJZX3NWCjEHjGkdipu4rucEjeaQpIKeSCig0w2Q4l6AIk+TB3+yANEAGSWcDtLcgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFP1hM52; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1716211822; c=relaxed/simple;
+	bh=qfvNWKn/CQRVv/+cpmMCpprLiCzOA6G5IF/qyBsiOO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gpk8NCBnmy1GBPYQRAc1znoPkHSW2KmH1tZLOc58kqa2YU6bVP4/2kw7ey2HgFm4DazYPXW1PcfcyA461AoJ0768c2h7fpx+r0/oqYpuwlb+u8RA933G+TcET83gV1rpXB9zzKds6malH8azet8lEpfVzywomU+erHRWimHDrRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=KngA7ggd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jcQS+Dwp; arc=none smtp.client-ip=64.147.123.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFP1hM52"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716208281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9xxq06coPp2aoGXiJwR3/gZ9zYxOiYsiplvRA2+0uqY=;
-	b=HFP1hM526Bj4ww30PVw945Te/GG7f4bYD0Ec3xBImzXXA7BDRFQSZbHCAxgFhgbGGbQ9Ze
-	KqYspKEfjm1mdJI4Cou3r59EwNXUYDUyHSmVEBhtT5fd7YL+A5UtHQ5BY9UMVfGBT3txIR
-	yl1gBiAr9FpM6htqR2y6jEHJaZ1W5FU=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-604-6Z3kB0usO7OYs13PWUSzNQ-1; Mon,
- 20 May 2024 08:31:18 -0400
-X-MC-Unique: 6Z3kB0usO7OYs13PWUSzNQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 848A73C0C2C4;
-	Mon, 20 May 2024 12:31:17 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 1BA0B40C6EB7;
-	Mon, 20 May 2024 12:31:17 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id E330530C1C33; Mon, 20 May 2024 12:31:16 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id E05EF3FB52;
-	Mon, 20 May 2024 14:31:16 +0200 (CEST)
-Date: Mon, 20 May 2024 14:31:16 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Fan Wu <wufan@linux.microsoft.com>
-cc: Mike Snitzer <snitzer@kernel.org>, corbet@lwn.net, zohar@linux.ibm.com, 
-    jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, 
-    axboe@kernel.dk, agk@redhat.com, eparis@redhat.com, paul@paul-moore.com, 
-    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
-    linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
-    linux-block@vger.kernel.org, dm-devel@lists.linux.dev, 
-    audit@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v18 12/21] dm: add finalize hook to target_type
-In-Reply-To: <234910c1-40c3-4489-94ab-6e9a5f00d93e@linux.microsoft.com>
-Message-ID: <889a7880-8336-a44a-bea4-a4c81c5e5cce@redhat.com>
-References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com> <1714775551-22384-13-git-send-email-wufan@linux.microsoft.com> <aa767961-5e3-2ceb-1a1e-ff66a8eed649@redhat.com> <212b02a8-f5f0-4433-a726-1639dda61790@linux.microsoft.com>
- <bc9aa053-20a6-eaa-cbe4-344f340242b@redhat.com> <234910c1-40c3-4489-94ab-6e9a5f00d93e@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="KngA7ggd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jcQS+Dwp"
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 1F8EC1800113;
+	Mon, 20 May 2024 09:30:19 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 20 May 2024 09:30:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716211818; x=1716298218; bh=oa2W4qjwd3
+	7BEc4YnG8uAq9YoHRdThoet19LMJypOJk=; b=KngA7ggdi0drYPof5o7hwmTHRG
+	S1IU/jqt9f39+LLVVayq0jCaruRqJLTNA7Ks8icMsmbv0cfVRKGccFi1pljVa866
+	SYJhvYcWV71/wPhdtsupKguUSphYy8FMJmGL+5CUUFDCMZuKdCPQj2IYpCuetuId
+	Ng4rjvr5M8VMsDg73uJZbUx7uiSmEl3qt2cXtvH0vlyNJsSJNqzIt2nw6mWG3ueS
+	S3bBtq351+HqbQaocyOy1b5Kkgu/XtWYxn0VotlTQg9VSZ25xjNw+EzqymjBmTTS
+	5jPxtYWLB11th1PnC8tJJ65cUBo/TnEkX2taPHdxyflnBj/zCniAj+McRJxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716211818; x=1716298218; bh=oa2W4qjwd37BEc4YnG8uAq9YoHRd
+	Thoet19LMJypOJk=; b=jcQS+DwpjR6VeZzuQ0pdwmbkcf2+ELvd20o2DZOzD9JW
+	K1Ouc82eECZh2CUyAZmcpgiJ7Aj+RGF+radye4kAqANBgqeSFC5Kc2RS6r73Qq78
+	wQavmUkdh4ZZyLtkeXSLaEfd/rnlxvhQ4uOL9a+JLfA5zqGV6o/L9jVXO/oK0LQx
+	bcN0cQZ5j0UEtgvbU4c3Qm2USaSBWjT68DDFLctcd6yIURrxVx1cxwHiBjvS0/2V
+	AXPv1wbwPmFkFQ8Xz7F5VxiJnuNqQrcN4kcGxKU6hstqC/KeJC34xetLKaWaTR8n
+	0zOYgO/KgxUDu+2UCJP2h3fO5zWI+MJIk5LWg8D3Qw==
+X-ME-Sender: <xms:aVBLZgSicgZjJPlIVVmqiGzabXmY7U6W-0cf6XlPPGb9FjAoRo3i3Q>
+    <xme:aVBLZtyvBNjibT9OIXMtuxSODDNt60MW4Zx1rQGGupWpM5STLV47xJdGO5ceQHoNp
+    Hn6WzBjyUeeWu9cDQM>
+X-ME-Received: <xmr:aVBLZt3gLg6GCxVnil1t54Zgi9M7nf9iJDLZJfgCKaz2OGOO9cDYTRLuhNRlBinQj-htlu-2o_0zCBcSoxwySoI5og>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeitddggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
+    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
+    grthhtvghrnhepleevudetgefhheekueekhfduffethfehteeftdfhvefgteelvedvudev
+    teeufeehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
+    iigr
+X-ME-Proxy: <xmx:aVBLZkC4m14s5n4tEp3avfH807qvPwncZ2I4Y8fgrQLUIdPf_FIzKA>
+    <xmx:aVBLZpi3GscB2ljoVCtHmBhYuWCIGQjJd8VIwqqSfz5mb8dIqOnIjg>
+    <xmx:aVBLZgpYWVjDC5IVwGQHAI3G5RpzgHOfzQpd-FVNiarwtvRY71MrWQ>
+    <xmx:aVBLZsgJ-Srgc7YF2SLDksEcZPHG5z1ImBm8SgQp1vv6jyTYTnoSJQ>
+    <xmx:alBLZoT0XhJL2dv8tXkxE_p1f3DxUlYY4oWx8zECBUg_U-dVblg9I4z5>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 May 2024 09:30:15 -0400 (EDT)
+Date: Mon, 20 May 2024 07:30:14 -0600
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Joel Granados <j.granados@samsung.com>,
+	Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, containers@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
+Message-ID: <ZktQZi5iCwxcU0qs@tycho.pizza>
+References: <20240516092213.6799-1-jcalmels@3xx0.net>
+ <20240516092213.6799-4-jcalmels@3xx0.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516092213.6799-4-jcalmels@3xx0.net>
 
+Hi Jonathan,
 
+On Thu, May 16, 2024 at 02:22:05AM -0700, Jonathan Calmels wrote:
+> +int proc_cap_userns_handler(struct ctl_table *table, int write,
+> +			    void *buffer, size_t *lenp, loff_t *ppos)
+> +{
 
-On Fri, 17 May 2024, Fan Wu wrote:
+there is an ongoing effort (started at [0]) to constify the first arg
+here, since you're not supposed to write to it. Your usage looks
+correct to me, so I think all it needs is a literal "const" here.
 
-> > So, it seems that the preresume callback provides the guarantee that you
-> > looking for.
-> > 
-> >> -Fan
-> > 
-> > Mikulas
-> 
-> Thanks for the info. I have tested and verified that the preresume() hook can
-> also work for our case.
-> 
-> From the source code
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/md/dm-ioctl.c#n1149,
-> the whole resume process appears to be:
-> 
-> 1. Check if there is a new map for the device. If so, attempt to activate the
-> new map using dm_swap_table() (where the finalize() callback occurs).
-> 
-> 2. Check if the device is suspended. If so, use dm_resume() (where the
-> preresume() callback occurs) to resume the device.
-> 
-> 3. If a new map is activated, use dm_table_destroy() to destroy the old map.
-> 
-> For our case:
-> 
-> - Using the finalize() callback, the metadata of the dm-verity target inside
-> the table is attached to the mapped device every time a new table is
-> activated.
-> - Using the preresume() callback, the same metadata is attached every time the
-> device resumes from suspension.
-> 
-> If I understand the code correctly, resuming from suspension is a necessary
-> step for loading a new mapping table. Thus, the preresume() callback covers
-> all conditions where the finalize() callback would be triggered.
+[0]: https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
 
-Yes.
+> +	struct ctl_table t;
+> +	unsigned long mask_array[2];
+> +	kernel_cap_t new_mask, *mask;
+> +	int err;
+> +
+> +	if (write && (!capable(CAP_SETPCAP) ||
+> +		      !capable(CAP_SYS_ADMIN)))
+> +		return -EPERM;
 
-> However, the preresume() callback can also be triggered when the device 
-> resumes from suspension without loading a new table, in which case there 
-> is no new metadata in the table to attach to the mapped device.
+...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
+explain why.
 
-Yes.
-
-> In the scenario where the finalize() callback succeeds but the preresume()
-> callback fails, it seems the device will remain in a suspended state, the
-> newly activated table will be kept, and the old table will be destroyed, so it
-> seems there is no inconsistency using finalize() even preresume() potentially
-> fails.
-
-What does your security module do when the verification of the dm-verity 
-hash fails? Does it halt the whole system? Does it destroy just the 
-failing dm device? Or does it attempt to recover somehow from this 
-situation?
-
-> I believe both the finalize() callback proposed by Mike and the preresume()
-> callback suggested by Mikulas can work for our case. I am fine with either
-> approach, but I would like to know which one is preferred by the maintainers
-> and would appreciate an ACK for the chosen approach.
-> 
-> -Fan
-
-I would prefer preresume - we shouldn't add new callbacks unless it's 
-necessary.
-
-Mikulas
-
+Tycho
