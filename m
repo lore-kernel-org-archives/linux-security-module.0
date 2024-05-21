@@ -1,98 +1,357 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1891CD3B;
-	Mon, 20 May 2024 22:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A369F219FD;
+	Tue, 21 May 2024 03:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716243183; cv=none; b=qXHoj6ujtHrjTKaqWp2TQFFdanDdL49QX2etbyd1CoD7NpIJ9JKCHroSB0wLwYLXuxHn75P+UWHtGDo7PhgWVxeh4qfNQINeHidJkAd0PGPX0Tt5BOrfTsep4GZUZ3QgLYiUP5uPGIWeVS/bVUBsJQHZ/MELJInnHv3gXSrAAXE=
+	t=1716261422; cv=none; b=bmHqUSjMHDWLuMuIuECYAUyxEttDeCAiiJnyqTq4d66ADQ6OZ67YzC60CAPL43EfD8q/sGKa8QT1Hl8VPNXRa9jEihFSrz1H16gOwY3a3f/4QxoJ+0UuBlZY9qbamIfPQhEcz7WMBJiwH3a1biN7tBAZLmyaQdIs5WRzy1tzpWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716243183; c=relaxed/simple;
-	bh=g67Au3Gl3mqSp0DalxfSQ7ydt1TQGOl6Vi8oRqoOvyE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=IfSGOjk8znDm4ZX9aDMqdZx8t3pKgqWga28Z/D3mq2NesX72w4EEcjOjpe5Z3axkgbTpyeViREAhx58khXaCjsb0Fg0PfFGMBKWXKGhBzlQ2LgHsSdz4er2RBwui2dKGguCVlxIrNCrh/QNMs9XydF5A09icmuVInY8pvoqZz7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jv+Yqjwe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716261422; c=relaxed/simple;
+	bh=xy+V7XL2mntIN1Y8Vq4nuU/5Bbmt5vykHQ/6P1bi5xo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hcAjztWaOVDWrtWqciVWhhTmx5iJw+sEMFH2gFRkGlfdvNiAomEihJnQ/IsDBKhqS860DwrXbD+gJcS/juhPEQIcAja4vlqGijmWLJwXc1kyjtEIOmBgK7dtbzKu+3ctHEZdMQjyS8r+8XipjsKK6tQw95CY9IXKYV/eGMiNRBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdqLKWAk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jv+Yqjwe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D6AC2BD10;
-	Mon, 20 May 2024 22:12:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdqLKWAk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A3BC2BD10;
+	Tue, 21 May 2024 03:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716243182;
-	bh=g67Au3Gl3mqSp0DalxfSQ7ydt1TQGOl6Vi8oRqoOvyE=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=jv+YqjweWfOJ58Q3rWlPlQFpRXdnf0erK6kTjwm69gsovWdMmwxN9rknV5ZxWSN6B
-	 Fqs8WiDOHc9qevF1/3ks8cLHz5bTvsGWiabm9jjGikcvnZZG1qt/aDXy8jxdg4uG4c
-	 z1WKhAGZceld4lkmUZbrOQKQJqV+ed++z5zKsq63KAs98UAwUtpJ5ALf4kCvQnVLuH
-	 iFAoYHnk66FrFIo3UhnKZKeGaFUfJvXUnMuZH2soK+u2t7rJxRqxV2iqQEemdJT6BQ
-	 uLCZIxjwrjwVmECgZ02bXTlOH/TcfCevAYf2khb2XBVuWXd0po3UYUMOSBHAy6kQ9L
-	 aWJlEPVroniqQ==
+	s=k20201202; t=1716261422;
+	bh=xy+V7XL2mntIN1Y8Vq4nuU/5Bbmt5vykHQ/6P1bi5xo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pdqLKWAkqn4rCqLGe5WuL12DGRwSUXOoyzGknryitZVpWDUZdVhacnjUdwNTaBVew
+	 jUg/PiWNgtS0EFLAXtIVj8jnBLSJML94vMHpuMSb3c9T8sLaHGQys525YZTX4msxm1
+	 c392dPotvPEtL4k3IgcHMKDTEFYaJA6r7fOd5lCsQ8vEaghtUDnLxfo0xEdlCCm5QH
+	 wbRHR5WXRAY98p3wju2PyTv4nY+f12nKbO0+MHgRFM1neRr5Op1S3GmmLkjWo7I/iG
+	 VTkSgn8RJZpWAOK+skEPGxZSC2GCRE/TU1ZAj2j4WqxIMQpfM/1tFAnjoSe0dfrCJH
+	 EK+kir9Llqy/Q==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com,
+	James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-kernel@vger.kernel.org (open list),
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v2 2/6] lib: Expand asn1_encode_integer() to variable size integers
+Date: Tue, 21 May 2024 06:16:27 +0300
+Message-ID: <20240521031645.17008-3-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240521031645.17008-1-jarkko@kernel.org>
+References: <20240521031645.17008-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 May 2024 01:12:57 +0300
-Message-Id: <D1ETFJFE9Y48.1T8I7SIPGFMQ2@kernel.org>
-Cc: <brauner@kernel.org>, <ebiederm@xmission.com>, "Luis Chamberlain"
- <mcgrof@kernel.org>, "Kees Cook" <keescook@chromium.org>, "Joel Granados"
- <j.granados@samsung.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David Howells"
- <dhowells@redhat.com>, <containers@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <keyrings@vger.kernel.org>
-Subject: Re: [PATCH 3/3] capabilities: add cap userns sysctl mask
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Tycho Andersen" <tycho@tycho.pizza>, "Jonathan Calmels"
- <jcalmels@3xx0.net>
-X-Mailer: aerc 0.17.0
-References: <20240516092213.6799-1-jcalmels@3xx0.net>
- <20240516092213.6799-4-jcalmels@3xx0.net> <ZktQZi5iCwxcU0qs@tycho.pizza>
- <ptixqmplbovxmqy3obybwphsie2xaybfj46xyafdnol7bme4z4@4kwdljmrkdpn>
- <Zku8839xgFRAEcl+@tycho.pizza>
-In-Reply-To: <Zku8839xgFRAEcl+@tycho.pizza>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue May 21, 2024 at 12:13 AM EEST, Tycho Andersen wrote:
-> On Mon, May 20, 2024 at 12:25:27PM -0700, Jonathan Calmels wrote:
-> > On Mon, May 20, 2024 at 07:30:14AM GMT, Tycho Andersen wrote:
-> > > there is an ongoing effort (started at [0]) to constify the first arg
-> > > here, since you're not supposed to write to it. Your usage looks
-> > > correct to me, so I think all it needs is a literal "const" here.
-> >=20
-> > Will do, along with the suggestions from Jarkko
-> >=20
-> > > > +	struct ctl_table t;
-> > > > +	unsigned long mask_array[2];
-> > > > +	kernel_cap_t new_mask, *mask;
-> > > > +	int err;
-> > > > +
-> > > > +	if (write && (!capable(CAP_SETPCAP) ||
-> > > > +		      !capable(CAP_SYS_ADMIN)))
-> > > > +		return -EPERM;
-> > >=20
-> > > ...why CAP_SYS_ADMIN? You mention it in the changelog, but don't
-> > > explain why.
-> >=20
-> > No reason really, I was hoping we could decide what we want here.
-> > UMH uses CAP_SYS_MODULE, Serge mentioned adding a new cap maybe.
->
-> I don't have a strong preference between SETPCAP and a new capability,
-> but I do think it should be just one. SYS_ADMIN is already god mode
-> enough, IMO.
+Expand asn1_encode_integer() to variable size integers, meaning that it
+will get a blob in big-endian format as integer and length of the blob as
+parameters. This is required in order to encode RSA public key modulus.
 
-Sometimes I think would it make more sense to invent something
-completely new like capabilities but more modern and robust, instead of
-increasing complexity of a broken mechanism (especially thanks to
-CAP_MAC_ADMIN).
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ include/linux/asn1_encoder.h              |   3 +-
+ lib/asn1_encoder.c                        | 185 ++++++++++++----------
+ security/keys/trusted-keys/trusted_tpm2.c |   4 +-
+ 3 files changed, 103 insertions(+), 89 deletions(-)
 
-I kind of liked the idea of privilege tokens both in Symbian and Maemo
-(have been involved professionally in both). Emphasis on the idea not
-necessarily on implementation.
+diff --git a/include/linux/asn1_encoder.h b/include/linux/asn1_encoder.h
+index 08cd0c2ad34f..ad5fb18db9e2 100644
+--- a/include/linux/asn1_encoder.h
++++ b/include/linux/asn1_encoder.h
+@@ -9,9 +9,10 @@
+ #include <linux/bug.h>
+ 
+ #define asn1_oid_len(oid) (sizeof(oid)/sizeof(u32))
++
+ unsigned char *
+ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+-		    s64 integer);
++		    const u8 *integer, int integer_len);
+ unsigned char *
+ asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+ 		u32 oid[], int oid_len);
+diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
+index 0fd3c454a468..51a2d7010a67 100644
+--- a/lib/asn1_encoder.c
++++ b/lib/asn1_encoder.c
+@@ -9,12 +9,78 @@
+ #include <linux/bug.h>
+ #include <linux/string.h>
+ #include <linux/module.h>
++#include <linux/slab.h>
++
++/**
++ * asn1_encode_length() - encode a length to follow an ASN.1 tag
++ * @data: pointer to encode at
++ * @data_len: pointer to remaining length (adjusted by routine)
++ * @len: length to encode
++ *
++ * This routine can encode lengths up to 65535 using the ASN.1 rules.
++ * It will accept a negative length and place a zero length tag
++ * instead (to keep the ASN.1 valid).  This convention allows other
++ * encoder primitives to accept negative lengths as singalling the
++ * sequence will be re-encoded when the length is known.
++ */
++static int asn1_encode_length(unsigned char **data, int *data_len, int len)
++{
++	if (*data_len < 1)
++		return -EINVAL;
++
++	if (len < 0) {
++		*((*data)++) = 0;
++		(*data_len)--;
++		return 0;
++	}
++
++	if (len <= 0x7f) {
++		*((*data)++) = len;
++		(*data_len)--;
++		return 0;
++	}
++
++	if (*data_len < 2)
++		return -EINVAL;
++
++	if (len <= 0xff) {
++		*((*data)++) = 0x81;
++		*((*data)++) = len & 0xff;
++		*data_len -= 2;
++		return 0;
++	}
++
++	if (*data_len < 3)
++		return -EINVAL;
++
++	if (len <= 0xffff) {
++		*((*data)++) = 0x82;
++		*((*data)++) = (len >> 8) & 0xff;
++		*((*data)++) = len & 0xff;
++		*data_len -= 3;
++		return 0;
++	}
++
++	if (WARN(len > 0xffffff, "ASN.1 length can't be > 0xffffff"))
++		return -EINVAL;
++
++	if (*data_len < 4)
++		return -EINVAL;
++	*((*data)++) = 0x83;
++	*((*data)++) = (len >> 16) & 0xff;
++	*((*data)++) = (len >> 8) & 0xff;
++	*((*data)++) = len & 0xff;
++	*data_len -= 4;
++
++	return 0;
++}
+ 
+ /**
+  * asn1_encode_integer() - encode positive integer to ASN.1
+- * @data:	pointer to the pointer to the data
+- * @end_data:	end of data pointer, points one beyond last usable byte in @data
+- * @integer:	integer to be encoded
++ * @data:		pointer to the pointer to the data
++ * @end_data:		end of data pointer, points one beyond last usable byte in @data
++ * @integer:		integer to be encoded
++ * @integer_len:	length in bytes of the integer blob
+  *
+  * This is a simplified encoder: it only currently does
+  * positive integers, but it should be simple enough to add the
+@@ -22,15 +88,17 @@
+  */
+ unsigned char *
+ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+-		    s64 integer)
++		    const u8 *integer, int integer_len)
+ {
+ 	int data_len = end_data - data;
+-	unsigned char *d = &data[2];
+ 	bool found = false;
++	unsigned char *d;
++	int encoded_len;
++	u8 *encoded;
++	int ret;
+ 	int i;
+ 
+-	if (WARN(integer < 0,
+-		 "BUG: integer encode only supports positive integers"))
++	if (WARN(!integer, "BUG: integer is null"))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	if (IS_ERR(data))
+@@ -40,17 +108,22 @@ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+ 	if (data_len < 3)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	/* remaining length where at d (the start of the integer encoding) */
+-	data_len -= 2;
++	(*data++) = _tag(UNIV, PRIM, INT);
++	data_len--;
+ 
+-	data[0] = _tag(UNIV, PRIM, INT);
+-	if (integer == 0) {
+-		*d++ = 0;
+-		goto out;
++	if (!memchr_inv(integer, 0, integer_len)) {
++		data[1] = 1;
++		data[2] = 0;
++		return &data[2];
+ 	}
+ 
+-	for (i = sizeof(integer); i > 0 ; i--) {
+-		int byte = integer >> (8 * (i - 1));
++	encoded = kzalloc(integer_len, GFP_KERNEL);
++	if (!encoded)
++		return ERR_PTR(-ENOMEM);
++	d = encoded;
++
++	for (i = 0; i < integer_len; i++) {
++		int byte = integer[i];
+ 
+ 		if (!found && byte == 0)
+ 			continue;
+@@ -67,21 +140,23 @@ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+ 			 * have len >= 1
+ 			 */
+ 			*d++ = 0;
+-			data_len--;
+ 		}
+ 
+ 		found = true;
+-		if (data_len == 0)
+-			return ERR_PTR(-EINVAL);
+-
+ 		*d++ = byte;
+-		data_len--;
+ 	}
+ 
+- out:
+-	data[1] = d - data - 2;
++	encoded_len = d - encoded;
+ 
+-	return d;
++	ret = asn1_encode_length(&data, &data_len, encoded_len);
++	if (ret)  {
++		kfree(encoded);
++		return ERR_PTR(ret);
++	}
++
++	memcpy(data, encoded, encoded_len);
++	kfree(encoded);
++	return data + encoded_len;
+ }
+ EXPORT_SYMBOL_GPL(asn1_encode_integer);
+ 
+@@ -176,70 +251,6 @@ asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+ }
+ EXPORT_SYMBOL_GPL(asn1_encode_oid);
+ 
+-/**
+- * asn1_encode_length() - encode a length to follow an ASN.1 tag
+- * @data: pointer to encode at
+- * @data_len: pointer to remaining length (adjusted by routine)
+- * @len: length to encode
+- *
+- * This routine can encode lengths up to 65535 using the ASN.1 rules.
+- * It will accept a negative length and place a zero length tag
+- * instead (to keep the ASN.1 valid).  This convention allows other
+- * encoder primitives to accept negative lengths as singalling the
+- * sequence will be re-encoded when the length is known.
+- */
+-static int asn1_encode_length(unsigned char **data, int *data_len, int len)
+-{
+-	if (*data_len < 1)
+-		return -EINVAL;
+-
+-	if (len < 0) {
+-		*((*data)++) = 0;
+-		(*data_len)--;
+-		return 0;
+-	}
+-
+-	if (len <= 0x7f) {
+-		*((*data)++) = len;
+-		(*data_len)--;
+-		return 0;
+-	}
+-
+-	if (*data_len < 2)
+-		return -EINVAL;
+-
+-	if (len <= 0xff) {
+-		*((*data)++) = 0x81;
+-		*((*data)++) = len & 0xff;
+-		*data_len -= 2;
+-		return 0;
+-	}
+-
+-	if (*data_len < 3)
+-		return -EINVAL;
+-
+-	if (len <= 0xffff) {
+-		*((*data)++) = 0x82;
+-		*((*data)++) = (len >> 8) & 0xff;
+-		*((*data)++) = len & 0xff;
+-		*data_len -= 3;
+-		return 0;
+-	}
+-
+-	if (WARN(len > 0xffffff, "ASN.1 length can't be > 0xffffff"))
+-		return -EINVAL;
+-
+-	if (*data_len < 4)
+-		return -EINVAL;
+-	*((*data)++) = 0x83;
+-	*((*data)++) = (len >> 16) & 0xff;
+-	*((*data)++) = (len >> 8) & 0xff;
+-	*((*data)++) = len & 0xff;
+-	*data_len -= 4;
+-
+-	return 0;
+-}
+-
+ /**
+  * asn1_encode_tag() - add a tag for optional or explicit value
+  * @data:	pointer to place tag at
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 8b7dd73d94c1..ec59f9389a2d 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -38,6 +38,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	u8 *end_work = scratch + SCRATCH_SIZE;
+ 	u8 *priv, *pub;
+ 	u16 priv_len, pub_len;
++	u32 key_handle;
+ 	int ret;
+ 
+ 	priv_len = get_unaligned_be16(src) + 2;
+@@ -77,7 +78,8 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 		goto err;
+ 	}
+ 
+-	work = asn1_encode_integer(work, end_work, options->keyhandle);
++	key_handle = cpu_to_be32(options->keyhandle);
++	work = asn1_encode_integer(work, end_work, (u8 *)&key_handle, 4);
+ 	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+ 	work = asn1_encode_octet_string(work, end_work, priv, priv_len);
+ 
+-- 
+2.45.1
 
-Not an LSM but like something that you could use in the place of POSIX
-caps. Probably quite tedious effort tho because you would need to pull
-the whole industry with the new thing...
-
-BR, Jarkko
