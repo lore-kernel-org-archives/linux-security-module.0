@@ -1,143 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09093BB32;
-	Tue, 21 May 2024 03:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D171B224D4
+	for <linux-security-module@vger.kernel.org>; Tue, 21 May 2024 04:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716261439; cv=none; b=lyDGkfJpJJmHeLiVzYurx4DTT5kOx9Xc5zji2NVUh0rvG3Kaa33EO6rP1SvYIcQTksFv0s81hTLNkkeSTG+TpvwPTv5hXnzmWfcRKmwv+CkO/3c1Js6pXB9ZAMn8AnReGZWXNGmLZkwNApan6FvFxW3c6Tyamjg0eaE63eGOd28=
+	t=1716264851; cv=none; b=LmW9IDcTre+j886cTwgOOv77/OUfWqsWYrnx/pkvm+g6E2+eyrcmWpvnvHtX70jFMyHLZ4ubP7VEq1mz1UmYcE/E+fo5k5EKfOHkUIh2g7+VLdDMjin36MTPPBSHC0NlflDiy/dl983Itq7FxRElgb8XTtqfW1I7wWPGofVJYCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716261439; c=relaxed/simple;
-	bh=UAboRLGS7mPC957H6sOCjxTXDHuNsnoUR6E4ZLlnQfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RSaxncjtJ8W9xFc8MYYnP3hix6ngPqVENTuc4FHdalqXqXzdU93vvz25ZS3NxyPK3BRRv5RCs9HxQ0UEtIyzvZYFjyuIjaLz7viY5gEqod5iUVw5eUMOXNq0jRpbiUL2lJh8PtjWEYJYRwCOuNrMb2n216FJK/eIskG5APaGspM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BE+6tN+m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716264851; c=relaxed/simple;
+	bh=CIfsby2oPpYY3kXs4oddKQZp1v5fbpImVUNDZjOnRlQ=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fUhCF/dpJWnUTl9jGuoAzTNDuJxo+kiXsxpJ61aw6oGjwV+k1daH8DeiYJntImMH0s07GdEds2UMmGqYxAR9mDMDZuFwLj0qaeDiO8a3cfRKmsDZSKNjjtYDZN2+hwDps7iQlKaeoGYCW6XWcPgVFayIA5PXp4IhqOrs63Gix40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FqzvrUK+; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BE+6tN+m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D663EC2BD10;
-	Tue, 21 May 2024 03:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716261439;
-	bh=UAboRLGS7mPC957H6sOCjxTXDHuNsnoUR6E4ZLlnQfU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BE+6tN+m6fx9OgZToaDacpbDWg+pJj59hvxFVCDQEd+zb5xAE344zx6ST7EMNHWsB
-	 so/X2hKPVn3FuA0kkSjC0jZjpND0sNc6ne2LAtIOgkAKzfycTyiLSmglDudknOizHY
-	 If14J9oWy00jpVeGnKzaOAqQFyn1yHlueM0RwJJSsCTyKys0ZbunfqptVIMvdTnoY3
-	 Kgv16jgwi/KoB1jlWHOuIsUKU9ugR4YeH8b7+VCWOFQczT3oQDDf817ATCeSu68Rfc
-	 /7hQqB9zS9bT8SMWo1Jv2jjVc/sCPGkvZjFXaOsJoE+esLGSQAJgxzZepkX8QqMpUs
-	 uPSu9a0mFz5jQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	Andreas.Fuchs@infineon.com,
-	James Prestwood <prestwoj@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org (open list:CRYPTO API),
-	linux-kernel@vger.kernel.org (open list),
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v2 5/6] tpm: tpm2_key: Extend parser to TPM_LoadableKey
-Date: Tue, 21 May 2024 06:16:30 +0300
-Message-ID: <20240521031645.17008-6-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240521031645.17008-1-jarkko@kernel.org>
-References: <20240521031645.17008-1-jarkko@kernel.org>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FqzvrUK+"
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4df9b81502eso1702100e0c.2
+        for <linux-security-module@vger.kernel.org>; Mon, 20 May 2024 21:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716264849; x=1716869649; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LQAMz+e0g3nZFFrVh6fJZF5RVSqH/2InZskkKfH8zyQ=;
+        b=FqzvrUK+NdBYJq1VycMOMh8ZN0tRdbaKWSMXeI/6r5UUsJOLYzunr9KGFP/DsYaMwh
+         MG8zrBUsYAbv63C1DE402ZkysrdXurAK3o44FaMD2s6W5oHluZQThEztf4R43xGiUySR
+         Uzj9EW2DRZtNnCYEbk5O5Dyxw2xs9y9tyUEv4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716264849; x=1716869649;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LQAMz+e0g3nZFFrVh6fJZF5RVSqH/2InZskkKfH8zyQ=;
+        b=qSJ3zrbSf52XApkZOYO7ZL0y5gjAi5RL0JNRYAD2hijfIEFvdKqVqzHXA+ONClJntr
+         VFIubbpYtrmPEBAnOTq4zElE/O7o0/aWYj7HWY/iGFs2L8A8f2ovERwEVnN5p4gsPJc9
+         jAfVKDQE3GcZm0UTuVFFwTj1/hqdySZhGxeedZ8mlGs3fDT4ichxvbtB18zsb71g6ajF
+         du+ysY2kFOmlEyEPocR/b76Yb/YNaPw4XN6xBJmzoIraTThXpYiKNDsMX0iP2iBwORn5
+         uuonX9u63tcGv+eSWVJHskrFeHffQXpJxzueQTzlcqZVs89gAqJiD/XMs+KfHbQ8Qr6i
+         Izfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWl72opNq/PMKtzCMSC4qtACPES+CRHTjtZZeAJgwREK9mb2/zZuR9DtXYcJStW1QLbYAonG0+Yf0LVRiFpBZgjSesQ2LODIF1k7fAVM26Z/SgEmQ5/
+X-Gm-Message-State: AOJu0YzzdlbJbWPfhfnrOGwnP37QesyahiSD9azz0L2JbVeV3BCZmzrx
+	b30OD5cC4ASapT6tPh7EJhtB5XZcLFELhIEgmLjEeUZ6KO9G1clAuKSsZVUJEXptdhWgbfCFZTd
+	iponlRJYSBjGf3D4nnUUhkpREOz8ud1t0cq5f
+X-Google-Smtp-Source: AGHT+IErt01awAAr7IkOBO0CcMyBfFJYFdKpLSMo+GZEaQYY7nAl+Dw2FgYvqdFb3fdaEaa/X8kAqIyrlEk7mqPwHt4=
+X-Received: by 2002:a05:6122:a19:b0:4d3:4ac2:29f4 with SMTP id
+ 71dfb90a1353d-4df88286136mr27403633e0c.2.1716264848783; Mon, 20 May 2024
+ 21:14:08 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 May 2024 00:14:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <202405181346.901048F98@keescook>
+References: <20240514224839.2526112-1-swboyd@chromium.org> <202405181346.901048F98@keescook>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Tue, 21 May 2024 00:14:08 -0400
+Message-ID: <CAE-0n50TuoSEaWmAcUoX3KDtp2ivdHmqWpaYn+dVdo4_L1H2NA@mail.gmail.com>
+Subject: Re: [PATCH] loadpin: Prevent SECURITY_LOADPIN_ENFORCE=y without
+ module decompression
+To: Kees Cook <keescook@chromium.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	linux-security-module@vger.kernel.org, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Douglas Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Extend parser to TPM_LoadableKey. Add field for oid to struct tpm2_key
-so that callers can differentiate different key types.
+Quoting Kees Cook (2024-05-18 13:47:14)
+> On Tue, May 14, 2024 at 03:48:38PM -0700, Stephen Boyd wrote:
+> > If modules are built compressed, and LoadPin is enforcing by default, we
+> > must have in-kernel module decompression enabled (MODULE_DECOMPRESS).
+> > Modules will fail to load without decompression built into the kernel
+> > because they'll be blocked by LoadPin. Add a depends on clause to
+> > prevent this combination.
+> >
+> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > Cc: Douglas Anderson <dianders@chromium.org>
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> > ---
+> >  security/loadpin/Kconfig | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+> > index 6724eaba3d36..8c22171088a7 100644
+> > --- a/security/loadpin/Kconfig
+> > +++ b/security/loadpin/Kconfig
+> > @@ -14,6 +14,9 @@ config SECURITY_LOADPIN
+> >  config SECURITY_LOADPIN_ENFORCE
+> >       bool "Enforce LoadPin at boot"
+> >       depends on SECURITY_LOADPIN
+> > +     # Module compression breaks LoadPin unless modules are decompressed in
+> > +     # the kernel.
+> > +     depends on MODULE_COMPRESS_NONE || MODULE_DECOMPRESS
+> >       help
+> >         If selected, LoadPin will enforce pinning at boot. If not
+> >         selected, it can be enabled at boot with the kernel parameter
+> >
+>
+> I've folded this change in, since loadpin also works in non-module
+> situations:
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- drivers/char/tpm/tpm2_key.c               | 14 +++++++++++---
- include/crypto/tpm2_key.h                 |  2 ++
- security/keys/trusted-keys/trusted_tpm2.c |  4 ++++
- 3 files changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm2_key.c b/drivers/char/tpm/tpm2_key.c
-index 0112362e432e..59797dc232f1 100644
---- a/drivers/char/tpm/tpm2_key.c
-+++ b/drivers/char/tpm/tpm2_key.c
-@@ -32,16 +32,24 @@ int tpm2_key_type(void *context, size_t hdrlen,
- 		  const void *value, size_t vlen)
- {
- 	enum OID oid = look_up_OID(value, vlen);
--
--	if (oid != OID_TPMSealedData) {
-+	struct tpm2_key *key = context;
-+
-+	switch (oid) {
-+	case OID_TPMSealedData:
-+		pr_info("TPMSealedData\n");
-+		break;
-+	case OID_TPMLoadableKey:
-+		pr_info("TPMLodableKey\n");
-+		break;
-+	default:
- 		char buffer[50];
--
- 		sprint_oid(value, vlen, buffer, sizeof(buffer));
- 		pr_debug("OID is \"%s\" which is not TPMSealedData\n",
- 			 buffer);
- 		return -EINVAL;
- 	}
- 
-+	key->oid = oid;
- 	return 0;
- }
- 
-diff --git a/include/crypto/tpm2_key.h b/include/crypto/tpm2_key.h
-index acf41b2e0c92..2d2434233000 100644
---- a/include/crypto/tpm2_key.h
-+++ b/include/crypto/tpm2_key.h
-@@ -2,12 +2,14 @@
- #ifndef __LINUX_TPM2_KEY_H__
- #define __LINUX_TPM2_KEY_H__
- 
-+#include <linux/oid_registry.h>
- #include <linux/slab.h>
- 
- /*
-  * TPM2 ASN.1 key
-  */
- struct tpm2_key {
-+	enum OID oid;
- 	u32 parent;
- 	const u8 *blob;
- 	u32 blob_len;
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index f255388d32b8..ce4c667c3ee3 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -305,6 +305,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		payload->old_format = 1;
- 	} else {
- 		blob = key.blob;
-+		if (key.oid != OID_TPMSealedData) {
-+			tpm2_key_destroy(&key);
-+			return -EINVAL;
-+		}
- 	}
- 
- 	if (!blob)
--- 
-2.45.1
-
+Thanks for fixing my thinko.
