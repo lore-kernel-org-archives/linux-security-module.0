@@ -1,98 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D01F17B;
-	Wed, 22 May 2024 16:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26AD14038F
+	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394288; cv=none; b=dnXRJdvwczvZ0+lBEqdA870po4h1AqSYS3GOPIKNKzJXvN/ANbPEaORsqhNUtGst9/Ae6RplNhx7W4b0VMS8ZmH7ffT61p3W1lvfTmYAB205pZ8BCp/sSDzplF0f11S1FcDwJY2wPlpdc6SJqirh3//ld6Rit2IbXwQvTWbepJc=
+	t=1716394777; cv=none; b=ct815FNWpja8HNhGIx8nkPiAzyXg1CF+KSoz08YMpPJa3qHzsJHsyKmN01uxKhZnjc4YKxxLujGGVSIaUJRSc42VAvByrr2zSbMUfwGOQqokXCdNENFuz9Ctf/AGUZbAVoqdRbHOewacn6LisamSqMiZTxyVeAhlV7RDYvLPPJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394288; c=relaxed/simple;
-	bh=l7EGjRfKBfRmrw53XUGC/wZrWAByRXWig4B6SkEmGf4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=gd98QGbqwQ7QSe46kznAYNDadGL1UQpYYldgDElCGoCbVKoUiUtSaDH9xtTRLV2+ozfnSQyP+MedLZp2iFSCdkCpnP74svW+Z6TOsofBybp6RSSvuoqnHUikj8GNdA3BDb6hPdRm2+99cRqSiwC0+u8zhXmPBVg3O5ZyqXwYbbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H6R5kMkQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716394777; c=relaxed/simple;
+	bh=gRGdiC32qyMGfj6WpEKPIdOaphnyHadvcat7Ef04QOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q/B9PfVnUo24H7vbr5owG/jn+bwhgxVBirRYQVJOBe96PJP7DoU362jNU+nS3nFHAb7B4WKd81yQRAHNfcpPVuyMyjIsU3qxo+dkQnYh9QMpg5mc9iusNmX9K4cVjceQCXqKXpVmoWgRpIObIHjE3OSY9BI7ciI4PuP07eNwTZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M+yRx/qJ; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6R5kMkQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ED71C2BBFC;
-	Wed, 22 May 2024 16:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716394288;
-	bh=l7EGjRfKBfRmrw53XUGC/wZrWAByRXWig4B6SkEmGf4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H6R5kMkQSiswrusbh5WtXMWujeSVB6+fuCe+VE/7f9IlC7/GncDlvpEIC8xnnHge/
-	 MoZrdhubeOJYvkXfk+vefdHg/evft/qMQ4yrEMldcG/28MEfLQsPqu1M1XXckoRfmj
-	 gGsaluwrvu6YLqBQoj3+xCwi/dMIPvFRHF306OtpSU9LUqoACTRuY2YkUjRNH1gfNu
-	 29BdDO3kn9QmLtEmTJ4SwOQYxhKmhUeEHDRq+N1BzGwJg+aBiYGE0uhP8If33XuJEI
-	 zg9qQxpvcfGubd+vFX7l4r7E2fFDRy2LMLwMwpK6ynxPK/fWGkzi88wXD+nLI0kLJa
-	 EggLsxXQWV6bg==
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M+yRx/qJ"
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7e1df3c0663so22498839f.3
+        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 09:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1716394775; x=1716999575; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=26coTTJPMwihRdwvqlxfLCNSgtD/ruUTDG9z4IGxkNE=;
+        b=M+yRx/qJyV3krTJFoIJpvzfi5HD9gPOjhWMFsZvS2WRQuzcBNB/hwbz/AHOa4wY+th
+         melQpBTsw3k8gyBdsCQAWDwm4ORJZG7qTjNgWuvT9k0e08W5V/6Bbgm1DM3CKge55wHg
+         EooZNmGoEJrYgfRZu5Gh0qTVOiGcGlDf3K0y4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716394775; x=1716999575;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=26coTTJPMwihRdwvqlxfLCNSgtD/ruUTDG9z4IGxkNE=;
+        b=QKAfRwkvdbjjl4qoLy1NHaIIehrDzdN4JmsNeTkddrLILpeGU7yy/3wQ0iIFP+yZP6
+         nFV20HcjJRh8e9ZE34xoDQ0iAQQGtaxrP5CJzExFKGk8bNOQGqx1ngiS7+RmDWnW482m
+         PB53IhQ7uchIzWZ6XwS37sD4RmQxUPPwquZxE1OatU79nitvrsrQ6J3mzBpt7PFtHzyL
+         qg2+k4fVqClnyjnluWnGYrxg6Pbz//ZD/j2EKP0RGQjGcpFUQ6zqGGInZssLKZRf+ie7
+         SMn0OR07EP4ZfDdc2jCdjbxEcRTWV2Mz/CTj7W0HWQ1GzQSdWTPfPwVc/ahXQA/1Wb3J
+         d9kA==
+X-Forwarded-Encrypted: i=1; AJvYcCV99IUq8DOCBPbcA0PNCwTD16tgPFFCWVow/VpqqDfH/e+2/PtGXitEoYI0mI0I0M3yFV3fhGxI0p3c7j5F+a7PumybnkVtXQsvZM521CpRpQYHq6xh
+X-Gm-Message-State: AOJu0YxV1oGrKaIvUFKJ5gteazUYPAeqtoGIrn9ixKrOrSlem7qcDqpA
+	sgmUkF2+2lv17wsSFnshsWestvAPn6t4yUhQdtonW/32nCfeUI3eEgrvqTgOtQw=
+X-Google-Smtp-Source: AGHT+IH/KZa0o+v3YObJYKHyHITiD47mIwmwbzcFdaePVDylL6T1KHgx+UsgI0x7EBrdYtRJOKeT1w==
+X-Received: by 2002:a5e:cb03:0:b0:7e1:d865:e700 with SMTP id ca18e2360f4ac-7e38b2004fbmr274656739f.2.1716394774799;
+        Wed, 22 May 2024 09:19:34 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376fc6aasm7421787173.174.2024.05.22.09.19.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 09:19:34 -0700 (PDT)
+Message-ID: <6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
+Date: Wed, 22 May 2024 10:19:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 May 2024 19:11:23 +0300
-Message-Id: <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Vitor Soares" <ivitro@gmail.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
- <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
- <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
- <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
-In-Reply-To: <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
+To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, linux-security-module@vger.kernel.org,
+ netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+ bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240522005913.3540131-1-edliaw@google.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed May 22, 2024 at 5:58 PM EEST, Vitor Soares wrote:
-> I did run with ftrace, but need some more time to go through it.
->
-> Here the step I did:
-> kernel config:
->   CONFIG_FUNCTION_TRACER
->   CONFIG_FUNCTION_GRAPH_TRACER
->
-> ftrace:
->   # set filters
->   echo tpm* > set_ftrace_filter
->
->   # set tracer
->   echo function_graph > current_tracer
->
->   # take the sample
->   echo 1 > tracing_on; time modprobe tpm_tis_spi; echo 0 > tracing_on
->
-> regards,
-> Vitor Soares
+On 5/21/24 18:56, Edward Liaw wrote:
+> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+> redefinitions of _GNU_SOURCE from source code.
+> 
+> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> asprintf into kselftest_harness.h, which is a GNU extension and needs
 
-I'm now compiling distro kernel (OpenSUSE) for NUC7 with v6.10 contents.
+Easier solution to define LINE_MAX locally. In gerenal it is advisable
+to not add local defines, but it is desirable in some cases to avoid
+churn like this one.
 
-After I have that setup, I'll develop a perf test either with perf or
-bpftrace. I'll come back with the possible CONFIG_* that should be in
-place in your kernel. Might take up until next week as I have some
-conference stuff to prepare but I try to have stuff ready early next
-week.
+> _GNU_SOURCE to either be defined prior to including headers or with the
+> -D_GNU_SOURCE flag passed to the compiler.
+> 
 
-No need to rush with this as long as possible patches go to rc2 or rc3.
-Let's do a proper analysis instead.
+This is huge churn to all the tests and some maintainers aren't
+onboard to take this change.
 
-In the meantime you could check if you get perf and/or bpftrace to=20
-your image that use to boot up your device. Preferably both but
-please inform about this.
+Is there an wasier way to fix this instead? Please explore
+localized options before asking me to take this series.
 
-Fair enough?
-
-BR, Jarkko
+thanks,
+-- Shuah
