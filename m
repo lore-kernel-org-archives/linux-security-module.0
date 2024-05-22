@@ -1,195 +1,86 @@
-Received: from wflow8-smtp.messagingengine.com (wflow8-smtp.messagingengine.com [64.147.123.143])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7153A1FA1;
-	Wed, 22 May 2024 00:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9CDDDBD;
+	Wed, 22 May 2024 00:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716338414; cv=none; b=Wm+0iaOlzc+MERH5Qf4cnycrYLJ5oKwpVvefUTeyHuu0lfBGxYfBnrx6pVtr9FslsyYtwczNVPFYpklEM3Xsv+Bwl0T7+rrkzjFxB93zeTlsKE5emQWU7E+nXFpF4xvWgo90rd+iyURNM94wamaPLLcCi76Jc4G5exFYHVrbt9s=
+	t=1716339191; cv=none; b=YVV37vRR1xlERXgLsKpf/eybADxQeIp9wbaPO9XKZEujypHpfHRDI+QYtxLfaMc3h6SOO0MvKWv9SWhkR5EVj6M/l/RLzD02S/9Yoh2HEL5utN+/UljQzpwq55+oML2hz4BT7Aj2ImGLVvUxmxhOuUQYXigWvBlnvmNtk5JTERY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716338414; c=relaxed/simple;
-	bh=8B0pyok8glyBoi2CMBAzxoUXPEO9Y2mHnaBCbVJXa9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JdAxtaksL6VXT9/PfRffcFWLOmyCtRkOPro7uu9vrkYsvWQWN7bx6sRwmdJdA0D/8kuJs+9a4sN+rHE9SLFzRxtMnhW71jtX1w6YWT2aqZr3dASetGn7/Qr9EhtzCVwEwaDYIIfV0QP+KmCUFE2+KQb06MSBgxvVimyVERpE6Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=YhB228Mc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SdbLII0G; arc=none smtp.client-ip=64.147.123.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+	s=arc-20240116; t=1716339191; c=relaxed/simple;
+	bh=h8orBF4zzRfW1mNSKt+5IoMKfbFfiHan4PWjJTDQxIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LaXTgtbjGGc8Im5H4PJXJGxHoRrOg1zIF8iPbKsXoIRoxWY1uhn3zubNXl8+kmC+bp2qtzZCm1rSXOwvrbXF8BNdTmohQvEJNs2PE1+BzphyUqQvRwB1j4cbUdxO98diRxBfZ2adQlGJv/i3TumDxlnh+MvbMNoEcsg6C+wEgsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jvjiXq3w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="YhB228Mc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SdbLII0G"
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailflow.west.internal (Postfix) with ESMTP id 850A22CC01E9;
-	Tue, 21 May 2024 20:40:10 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Tue, 21 May 2024 20:40:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1716338410; x=1716342010; bh=wE/C8/1cu4
-	wwG5XhDNZrp3sPxcam/hgaOM+3UxWxSUs=; b=YhB228Mcku29ocsPUmPJmLg9vF
-	XeW7+tphU59T5T7cGn8/QXcCHE53htbcynBc4aCoqn7vGXJCIMHECrHP7eLx23nI
-	XNLLGHHHCT2pigTnlz0ODOu+jNyCr8bcxMsAjDvey53IfkbmKsc2dP4Z+YioptXD
-	bSg+YW2Zl8K795G7NiglmOUICkj82swIWC932d0OxoFnoOkQuxsX+q/UmUigXUKw
-	zgR9ofJBCQjBJRhGp/uJ3yaQkr129Y+NUo8LT4Gl2JIwIbVSLtMBD/8TytsWwFwR
-	eMQAuBKea6LdWqcKUPaNuedHb5Ed9XyOZsFBMqKuoS2+YQqBlL0hHlVr9dEg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716338410; x=1716342010; bh=wE/C8/1cu4wwG5XhDNZrp3sPxcam
-	/hgaOM+3UxWxSUs=; b=SdbLII0GpoeZf4KddZQYQrcPPYidHnoZdi6KNEL/pZHa
-	be5aofGXMiVk6GpJ2AsG2ULTN8BIox7XKFHC0PiyfsL7JVAZIhU0evBh6aZhzbIF
-	2A2RlNZRstJpAit5kxlkaIWH2YLHbX5ALzFlEZ+XKMvPxBbDM9zeudBVZSuDghC/
-	8NXh35WtWQpwoBhxh1vxEA+VQfCufVrOQZ60r1+585MTxXTDhDs+9FO51NQQzUAJ
-	1kcmz8No0WgBeum+rWGwRk2luvjAJ9aQCg3HFEHFS1ZxsrVxGimgV7BHYFtC/yEN
-	tYe6GSL55G9owj0JSk1AJ1ma+lIKDrGbE9Cgq5VNlA==
-X-ME-Sender: <xms:6T5NZhx3rpiM1DavGQ6oUv8KDfdUkEerMFTp3xRQfD_5tE2BBNfquA>
-    <xme:6T5NZhT7ER-XROBTSVDqM4l0VBZ1slq3N-wnu0TuHosDDTQzvpMTjxFxL-BvqS7rZ
-    523FuD2VUIN-D8HWwI>
-X-ME-Received: <xmr:6T5NZrU3DCjTRvhUtKgGK0YGuCY-8mSgP5QzMYJ3RuC-QgVhuvNea4QABfbqWEDINpi35VM6jpQh7CpSoEtJjYs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeifedgfeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:6T5NZjjC_5ygO2oCudKGq4Ly4ife-SK1kOEExJqOzI95Yf0WsleoPQ>
-    <xmx:6T5NZjDGR3mnfpCzMoV3FpZP5lLBmhLkBLMSgM3KLtgPa3fxUZEGmA>
-    <xmx:6T5NZsIexfSMHxg5n9cqGJwoKgMyFOiQS0oziWMn4DSjveI0nke13A>
-    <xmx:6T5NZiD2BVvYhVoNaOapkIY5GvRKkk1NITZfUZCODC34MGf4eDJcrw>
-    <xmx:6j5NZrbx9SZxUZBpnfDmq-nHMs8jjVUBo4dCv2Z-dKNO_Edb_KcWyTKt>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 May 2024 20:40:06 -0400 (EDT)
-Date: Tue, 21 May 2024 17:45:07 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, brauner@kernel.org, ebiederm@xmission.com, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Joel Granados <j.granados@samsung.com>, Serge Hallyn <serge@hallyn.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce user namespace capabilities
-Message-ID: <7psuqchpr5njlcqb3koeyqz3y2jhuc44vfeockygdarqyc3eyu@qpmujctxfmak>
-References: <D1BC3VWXKTNC.2DB9JIIDOFIOQ@kernel.org>
- <jvy3npdptyro3m2q2junvnokbq2fjlffljxeqitd55ff37cydc@b7mwtquys6im>
- <df3c9e5c-b0e7-4502-8c36-c5cb775152c0@schaufler-ca.com>
- <vhpmew3kyay3xq4h3di3euauo43an22josvvz6assex4op3gzw@xeq63mqb2lmh>
- <D1CQ1FZ72NIW.2U7ZH0GU6C5W5@kernel.org>
- <D1CQ8J60S7L4.1OVRIWBERNM5Y@kernel.org>
- <D1CQC0PTK1G0.124QCO3S041Q@kernel.org>
- <1b0d222a-b556-48b0-913f-cdd5c30f8d27@canonical.com>
- <D1FDU1C3W974.2BXBDS10OB8CB@kernel.org>
- <872c8eb0-894b-413a-8e35-130984a87bba@canonical.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvjiXq3w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 671E5C32786;
+	Wed, 22 May 2024 00:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716339190;
+	bh=h8orBF4zzRfW1mNSKt+5IoMKfbFfiHan4PWjJTDQxIE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jvjiXq3wwfpzOG8HbOVG43V3jWYQ3L7M9WOAz1QtWgCqZFj1HawzEuVZsGM40z/r5
+	 32qNBPMnk58nZZCk7Fv2lKDLQLtZNXIyKNL7ErtE69fYBgsLf4P+J+MxfP91CESdfK
+	 H/PLRgxH2y0IN1Pb9ANisnBOla5PlXG6B3PiRTib1HwXniB1mAZvDnXBHVBeBJwqhM
+	 qD5CLzAy0dE6Y/YhZ1hrwyfynLToeikMNW1aARah1tFMxLencZR35+qQuCQRMsph6O
+	 u+RuKIQNvTkrNPpnpoVPRbScwcLntRB3zbVXVXSYbXPKaUu+zGSBuUjZ+vUyUkO4HZ
+	 t59L+V1vvuFAw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com,
+	James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-kernel@vger.kernel.org (open list),
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v4 2/5] KEYS: trusted: Change -EINVAL to -E2BIG
+Date: Wed, 22 May 2024 03:52:40 +0300
+Message-ID: <20240522005252.17841-3-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240522005252.17841-1-jarkko@kernel.org>
+References: <20240522005252.17841-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <872c8eb0-894b-413a-8e35-130984a87bba@canonical.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21, 2024 at 07:45:20AM GMT, John Johansen wrote:
-> On 5/21/24 07:12, Jarkko Sakkinen wrote:
-> > On Tue May 21, 2024 at 4:57 PM EEST, John Johansen wrote:
-> > > > One tip: I think this is wrong forum to present namespace ideas in the
-> > > > first place. It would be probably better to talk about this with e.g.
-> > > > systemd or podman developers, and similar groups. There's zero evidence
-> > > > of the usefulness. Then when you go that route and come back with actual
-> > > > users, things click much more easily. Now this is all in the void.
-> > > > 
-> > > > BR, Jarkko
-> > > 
-> > > Jarkko,
-> > > 
-> > > this is very much the right forum. User namespaces exist today. This
-> > > is a discussion around trying to reduce the exposed kernel surface
-> > > that is being used to attack the kernel.
-> > 
-> > Agreed, that was harsh way to put it. What I mean is that if this
-> > feature was included, would it be enabled by distributions?
-> > 
-> Enabled, maybe? It requires the debian distros to make sure their
-> packaging supports xattrs correctly. It should be good but it isn't
-> well exercised. It also requires the work to set these on multiple
-> applications. From experience we are talking 100s.
-> 
-> It will break out of repo applications, and require an extra step for
-> users to enable. Ubuntu is already breaking these but for many, of the
-> more popular ones they are shipping profiles so the users don't have
-> to take an extra step. Things like appimages remain broken and wil
-> require an approach similar to the Mac with unverified software
-> downloaded from the internet.
-> 
-> Nor does this fix the bwrap, unshare, ... use case. Which means the
-> distro is going to have to continue shipping an alternate solution
-> that covers those. For Ubuntu atm this is just an extra point of
-> friction but I expect we would still end up enabling it to tick the
-> checkbox at some point if it goes into the upstream kernel.
+Report -E2BIG instead of -EINVAL when too large size for the key blob is
+requested.
 
-I'm not sure I understand your point here and how this relates to xattrs.
-This patchset has nothing to do with file capabilities. The userns
-capability set is purely a process based capability set and in no way
-influenced by file attributes.
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ security/keys/trusted-keys/trusted_tpm2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > This user base part or potential user space part is not very well
-> > described in the cover letter. I.e. "motivation" to put it short.
-> > 
-> yes the cover letter needs work
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 8b7dd73d94c1..06c8fa7b21ae 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -122,7 +122,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+ 		return ret;
+ 
+ 	if (ctx.priv_len + ctx.pub_len > MAX_BLOB_SIZE)
+-		return -EINVAL;
++		return -E2BIG;
+ 
+ 	blob = kmalloc(ctx.priv_len + ctx.pub_len + 4, GFP_KERNEL);
+ 	if (!blob)
+-- 
+2.45.1
 
-Yes, it's been mentioned several times already.
-While not in the cover letter, the motivation is stated in the first
-patch and provides several references to past discussions on the topic.
-
-This is nothing new, this subject has been contentious for years now and
-discussed over and over on these lists (Eric would know :)). As
-mentioned in the patch also, this recently warranted the inclusion of
-new LSM hooks.
-
-But again, I wrongfully assumed that this problem was well understood
-and still relatively fresh, that's my bad.
-
-> > I mean the technical details are really in detail in this patch set but
-> > it would help to digest them if there was some even rough description
-> > how this would be deployed.
-> > 
-> yes
-
-Yes, this was purposefully left out so as not to influence any specific
-implementation. There is a mention of where this could be done (i.e.
-init, pam), but at the end of the day, this is going to depend on each
-use case.
-Having said that, since it appears to be confusing, maybe we could add
-some of the examples I sent out in this thread or the other ones.
-
-I want to reiterate that this is a generic capability set, this is not
-magic switch you turn on to secure the whole system.
-Its implementation is going to vary across environments and it is going
-to be dictated by your threat model.
-
-For example, John's threat model of securing a multi-user Ubuntu Desktop
-is going to be very different than say securing a server where all the
-userspace is fixed and known.
-The former might require additional integration with the LSM subsystem.
-Thankfully, this patch should synergize well with it.
-
-Fundamentally, and at its core, it's very simple. Serge put it nicely:
-
-> If you want root in a child user namespace to not have CAP_MAC_ADMIN,
-> you drop it from your pU.  Simple as that.
-
-From there, you can imagine any integration you want in userspace and
-ways to enforce your own policies.
-
-TLDR, this is a first step towards empowering userspace with control
-over capabilities granted by a userns. At present, the kernel does not
-offer ways to do this. By itself, it is not a comprehensive solution
-designed to thwart threat actors. However, it gives userspace the option
-to do so.
