@@ -1,107 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3E07E567;
-	Wed, 22 May 2024 12:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A9EC0
+	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 12:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716379347; cv=none; b=R7WVlurDdKi28QbABouA1RcZ3w3f59zrrrdhWTdeQItqi8SJHI0+SMMGfbxwLFLfErwA2hMRgTNX593phLZcaLO85JvRBXz4jnySWk81Psg9C9b5OLJ3SsyrOBtBxhgK1cSuRyRaAcscjQtE1h4oWRg4gPcPH2uUBlN0LfuKTvM=
+	t=1716381963; cv=none; b=QGM2VTiLsQMNngHMZ1sDOpiXl6uZbzxz1lQ1TQdFDjg7mXj6W433D/GLxtvWJQHMyglPA+0rsg3n3l5lDx5MYV4haPYEbuAK6czRAUVvQ0E1wyuUlD61kL0m75LhhEpvtXmRZtuoWpR7VLSg6CwL00NLFsdVEE26/SKM+yboOOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716379347; c=relaxed/simple;
-	bh=EMJVT5ZakDgrWxq+Pzu18YJ1rO0NK5CfLgZ0nMojMYU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=cODyXcsgilbrdorx/IdwE875wq9/a0OhTUxSR4u0jK2hWo1jMt4A+UbclZaMDrfDRYT5E8Mpe53u1PxXi8QeEquZicmRIFPJqtEgyAlNgzSSszN6gNaMBfF1X75slUIKhKeA5vJ1iwC3pRerbyreKZiavMZf66J8gRN8EU3Uj/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nelYOGVG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716381963; c=relaxed/simple;
+	bh=ZQJQmXhWg9nPg2zrXMvCQ7J/HQIRLAQCnGo6p6LlhiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJxKKXAaxCpNZhGvjbCocwh21FUPd4ZsYcv+qo1Tm4C8Tj5Z45ewhzkptpcIamJf1fQi8uW6fhYxXW74GobhcVGa1h52lPqZj5GDqKV9d2aEq+addYq7pcPyZ7ut+PcAU4ATi/OZT/KTYypzVbAenClGTu7pihaly6YnQT0aoNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=eY3zJIq8; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nelYOGVG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85904C2BD11;
-	Wed, 22 May 2024 12:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716379346;
-	bh=EMJVT5ZakDgrWxq+Pzu18YJ1rO0NK5CfLgZ0nMojMYU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=nelYOGVGN6SeA/MqZPRrHYH3CNr81B6sLCq+x2diVvbQ/bjR2LAKWPe2UjlLFI76V
-	 4BxzcsJbNXwbJH1mUzNt8/c6ww8iujAX9repqNTCFMl3o1cD32xzBOfID9S5hd2SQY
-	 hIpgm23AwqT4s+QO23a9cDRtMBEexa2UpkCc77kEhq6n/uwRJGmm/EeUOQHBLOT8FC
-	 hHGbvNvdVWZoDhGwLf2cn+lSmMOrwqxQ49xatAopsHB9N7gDGIOeL60WEp/oAlLnoS
-	 x5WGOuEzlh9k18P8tsZYMm8H9toKZ/NnCe/KmhseHzTPiIkNGHqXtgpaf+2ibeR04N
-	 c+17AzCNNwi2A==
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eY3zJIq8"
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-23d1c4c14ceso2564836fac.0
+        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 05:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1716381961; x=1716986761; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WijfuUs+156edccXDFhHVcWXKQ+B4/XZiPfwdG70AgA=;
+        b=eY3zJIq8qYY3iPPEEG+Ui/t+RVk6COnu0Icn3wSiWx2s5jUXUf902XD1btzA5YgLZ4
+         jnkSwAb7+qIpUckLOOgLLpDMs91Bp/VMXgtBzC7ZVLNOfiwFIz9v5L857FQNlXouNUVw
+         BcLWAkaSYpowlFkGkiwuF5PXIIeZM2nXmLIqKPdgZOvIUXQVg4oIfQ7jrMJrp8UlNfjW
+         IiYWCdbvt7W96FE+2Y6p3Jv5pkKZ9Svfql7bjSVJ1hOseXJcKUnevTW3Io/dyzG+Cdio
+         v7r38r4L55lhsrUngYmIE0RSfkh/gQTDkm7EFzB4M9Alxh5oG1hwM4hqywjV0itViPwN
+         51PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716381961; x=1716986761;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WijfuUs+156edccXDFhHVcWXKQ+B4/XZiPfwdG70AgA=;
+        b=GroKatEryQIfr3AMiZRDuO0eP+x4TR6kfMeeSh524O4hxZBs6Wzro8WHNe1femoczB
+         hLeghVcsEfWw0oSe8CtH1S4hT2qq58RpPwHNU2pnupcO7PJ7QfuB0t15d9ZVW8rqqFiM
+         pg554U03pCN1eKDul5XH+v5wFEnl1MA1M597MCEIpby64OUu9x8PPcbPaxPp1cccqM7f
+         BK+oBYR2VhpX+fYQi5WNPpLj1udUHn4cdDG/f41C6LYR79Qp/lFk5aSwf0KjAa1qkHO2
+         FZu4qXV5wT7J8YDVjuckPo0LP3aEshe5nozZjtagjhtGlaOsatrLVzGhFDbSex5GjulN
+         /ILw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Si8eJqd40EnEDZtJh5o8M6/0N5BbuZXbHx3xmOW8uAWYAX13z6oZjFtU+vCXPOkpit/bR19yiXinCXNNggCA0Yq5NA65gLFoI90S53TrwC/Ynkqj
+X-Gm-Message-State: AOJu0YxXnlLGHUet/u1x68vIFKt70PcZAIz8GKFhJphQJW18GJthPBWf
+	WhgM/xfqRej5nM5cXLcp8MTK7fFwsuQGQ0IXJNqtM4mlMPYlO27FU8Wwkqgz95M=
+X-Google-Smtp-Source: AGHT+IETP3qReUQJuxRlhxnWJn7QpbV+LVqvRpkT9nppkVGnw4JfRUuMImdtGPF2qcpBugAZnHpoew==
+X-Received: by 2002:a05:6870:d88e:b0:23d:a1d0:7334 with SMTP id 586e51a60fabf-24c68a33ae2mr2153288fac.17.1716381960558;
+        Wed, 22 May 2024 05:46:00 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.89])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e074719d1sm151805451cf.35.2024.05.22.05.46.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 05:46:00 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1s9lLy-00C914-Bg;
+	Wed, 22 May 2024 09:45:58 -0300
+Date: Wed, 22 May 2024 09:45:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com,
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org,
+	John Hubbard <jhubbard@nvidia.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH v5 23/68] selftests/iommu: Drop duplicate -D_GNU_SOURCE
+Message-ID: <20240522124558.GC69273@ziepe.ca>
+References: <20240522005913.3540131-1-edliaw@google.com>
+ <20240522005913.3540131-24-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 May 2024 15:02:19 +0300
-Message-Id: <D1G5P3B6BWGG.3EOYXHHI5MYPZ@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <kernel-team@android.com>, <linux-security-module@vger.kernel.org>,
- <netdev@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <bpf@vger.kernel.org>, "kernel test robot" <oliver.sang@intel.com>,
- <linux-sgx@vger.kernel.org>
-Subject: Re: [PATCH v5 57/68] selftests/sgx: Compile with -D_GNU_SOURCE
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Edward Liaw" <edliaw@google.com>, <shuah@kernel.org>,
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, "Christian Brauner"
- <brauner@kernel.org>, "Richard Cochran" <richardcochran@gmail.com>, "Paul
- Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
- <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexei
- Starovoitov" <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, "Jakub Kicinski"
- <kuba@kernel.org>, "Jesper Dangaard Brouer" <hawk@kernel.org>, "John
- Fastabend" <john.fastabend@gmail.com>, "Dave Hansen"
- <dave.hansen@linux.intel.com>, "Andrew Morton" <akpm@linux-foundation.org>,
- "Muhammad Usama Anjum" <usama.anjum@collabora.com>
-X-Mailer: aerc 0.17.0
-References: <20240522005913.3540131-1-edliaw@google.com>
- <20240522005913.3540131-58-edliaw@google.com>
-In-Reply-To: <20240522005913.3540131-58-edliaw@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522005913.3540131-24-edliaw@google.com>
 
-On Wed May 22, 2024 at 3:57 AM EEST, Edward Liaw wrote:
-> Add -D_GNU_SOURCE to HOST_CFLAGS and remove #define _GNU_SOURCE.
->
-> Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202404301040.3bea5782-oliver.sang@=
-intel.com
+On Wed, May 22, 2024 at 12:57:09AM +0000, Edward Liaw wrote:
+> -D_GNU_SOURCE can be de-duplicated here, as it is added by lib.mk.
+> 
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 > Signed-off-by: Edward Liaw <edliaw@google.com>
 > ---
->  tools/testing/selftests/sgx/Makefile    | 2 +-
->  tools/testing/selftests/sgx/sigstruct.c | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftes=
-ts/sgx/Makefile
-> index 867f88ce2570..272da790d9ae 100644
-> --- a/tools/testing/selftests/sgx/Makefile
-> +++ b/tools/testing/selftests/sgx/Makefile
-> @@ -12,7 +12,7 @@ OBJCOPY :=3D $(CROSS_COMPILE)objcopy
->  endif
-> =20
->  INCLUDES :=3D -I$(top_srcdir)/tools/include
-> -HOST_CFLAGS :=3D -Wall -Werror -g $(INCLUDES) -fPIC
-> +HOST_CFLAGS :=3D -Wall -Werror -g $(INCLUDES) -fPIC -D_GNU_SOURCE
->  HOST_LDFLAGS :=3D -z noexecstack -lcrypto
->  ENCL_CFLAGS +=3D -Wall -Werror -static-pie -nostdlib -ffreestanding -fPI=
-E \
->  	       -fno-stack-protector -mrdrnd $(INCLUDES)
-> diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/self=
-tests/sgx/sigstruct.c
-> index d73b29becf5b..200034a0fee5 100644
-> --- a/tools/testing/selftests/sgx/sigstruct.c
-> +++ b/tools/testing/selftests/sgx/sigstruct.c
-> @@ -1,7 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*  Copyright(c) 2016-20 Intel Corporation. */
-> =20
-> -#define _GNU_SOURCE
->  #include <assert.h>
->  #include <getopt.h>
->  #include <stdbool.h>
+>  tools/testing/selftests/iommu/Makefile | 2 --
+>  1 file changed, 2 deletions(-)
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-BR, Jarkko
+Jason
