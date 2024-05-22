@@ -1,55 +1,55 @@
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C82C1534F9
-	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 01:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5120153578
+	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 01:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716339696; cv=none; b=Yjxd8hL5qQOtkN9DLyZFKBm0SZJEw9lz8soNvsDVAkqwGa94S134gTE8+HooytG+KFSCa/0MLpLpzhrSiRclt6X9n2r3FK3NUc2836w6kiLGlrUmn98ENB4HmrKFK4skJrrlAF4WOsdN4pzeDq8simsJ1nHmk95TsZ6sMqbsm8g=
+	t=1716339700; cv=none; b=ZurwB2bIsDhFjhD1/9mp9LXr3sSJIp/s1WCVJSXNFcJXkURdbtf5D+Lvfzj5j9jEetQJvPhJY6flsdEn1KwJB6iQ7tX3Wjp3tYBf/tQ52M9ZwLqF/dCu3oAoefdx+fvPuGL+mOG9mRJR8CoaiOX/c1UM2Wmsi7MY4Wh4bBpTu3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716339696; c=relaxed/simple;
-	bh=NAJYxqCPknYhqA3yyvXxPpoo15475nrhk+HBgIL4eTQ=;
+	s=arc-20240116; t=1716339700; c=relaxed/simple;
+	bh=5HwaigB++GvyNQzZfOX3IT/xGcxYHjiLCiVX8SmJdZ8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HRuVmZL5IrifelybRsbgpjPJxWIuPwMK3NRgmzEPB5qfnTmS9PAS0aDpcuNyKw8yE1opcuSttnRonR8AwMCn6QYNp2nNg82HkSc0hyQSu3ZVZXZS7QF0VwTaZqTkL3oBfx0MhLmY7hoCeKzgFcAp3M1po5s8sIOTXTr6NG79qJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j+2OWzkr; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=ppogocirJFwf6/YqgbFAXNv1+mcnx1upp4N7IfVUR2kuSgjDy77hm5GPSarFBlbnFIvT/rfJgFnyave0wKN6VJU8FSgLeDrV4BRWCkrxQRkjj4bPHMl0sAmUav8IBRKaTcfl6zK5IbwbmOoiGcNs1jTDJ0Ap4dCllBfmPRUoRLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M749ZcAA; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j+2OWzkr"
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1eec5aba2bdso117452845ad.0
-        for <linux-security-module@vger.kernel.org>; Tue, 21 May 2024 18:01:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M749ZcAA"
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f68523fda2so3717485b3a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 21 May 2024 18:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716339695; x=1716944495; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1716339697; x=1716944497; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLnRSS+yUn+MQ4n2AryJR9rl6Su/0Qm7BmHquzszBTA=;
-        b=j+2OWzkrYb7qnzl2VFhWWKoqSGtWg+SSDqd8E9z3tFReqgB8XCNNHSpU/0Yhqa2Edm
-         SxmT4orlD7uqMIAuLlVx720Wjc1eiFfwWdNPM/McqZ90e8eXJic9itJa7iqUWKGtCmi+
-         hOk+O1mFqJBaQI/EjX+itAT2DqCbIp688j4SGjsjpIJilwzWAu6y5Y4V+wb7LHtvi5hj
-         /sqQ0je9JN0FSOXQHbarrthGjQtza6d0ln+iGlyDwal7fWQQkkLXSfp19aKW2PvwaS+u
-         LKxyB/6zpCaHsRahIh6MbFe0MT/cFosnMsHqWBEQpbNhHLLUeYGVsKxUE6+CWxtEuyYk
-         PLhA==
+        bh=+hOshFmf6G7zEK9XyWMlNtDhU83mdpWiA8UPY2QVI6c=;
+        b=M749ZcAA5xq7A3+Tuwt4nS1nmkCwG1KujGuwQN0ysupV2FApOkscbgCJzqctSaSzCb
+         h60rUj5SKdU4GTmiHIHtCCuSOuefMN843XzFZUDFpQVVfqXcp9lkw/K1ZZAsw+QylMq8
+         iQbm8E9aBzGZhmfXeg1sElT0CS7jUlZaxRBP8lz1L9lout/mqHahuAsaO0LOTD6ECv5j
+         NaZE5DTy0TlYFOXAqaDjXuK8BzC8To5JeDkNd48Mx/WXL/aa5h7kxpPoTDrCoKNOJEvN
+         REhVgJ/HrBvOGavUvOGkIUy9Ck7eEFDx1EaPf7GZ8csf/Jf0je2eiozvvWTnuEh7VJPk
+         dwzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716339695; x=1716944495;
+        d=1e100.net; s=20230601; t=1716339697; x=1716944497;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLnRSS+yUn+MQ4n2AryJR9rl6Su/0Qm7BmHquzszBTA=;
-        b=sb8Wkqqr2sWVl/Vqj+9gnywQf5RK6vhrxUDxStTB6+p2uKgN1jMlTgBSlQPxI7OplK
-         ULU8/f0WD/VKEVNPVq2W/xlVBxrJRGu+7snxoBKVSo7K+SQ/sS3/bnDTkCDJkNkw040r
-         /gsa1FB2iEi6+66I9EF1dNb1XpMHyUMHNJWgZzhe978r2JI4yUmpPDxpTtnSKVv300LC
-         NLaEZCvRsFvObyt5cZPm7bmrZ5a+iGGaiwrO4+TWoZrnG0WNEOw09CUSafw9dkcLBHZN
-         sJ53TnC+cFfALvs9Kd0IqUeUWd8RIvzobcW36EN51MZW6HTnrMGLUrfelhZ8CnlNr2Sr
-         H+FA==
-X-Forwarded-Encrypted: i=1; AJvYcCXICJe/iMZvXr88o8gjp6wxOgvIkyKzH90Dgl25qlTVx1QQiiVMsNP7p8j/Qgi43nWOyT5q9bFpQQ18rcOLCEWRAW/QrcrwAw/gDDHFyabm3GbMHkSS
-X-Gm-Message-State: AOJu0YyBiSDqBsLWylDmgTwEJUWuQ0q/xPmBed+Hr7tUwXwL8UKN8+ps
-	m+XtE9eUTASgNp5VPkWEfZMn+Z7/PAPciNV/Y0mFqLjtnc3Sydi7sD6AbMX3zko0/L6t8rAHmy2
-	gSQ==
-X-Google-Smtp-Source: AGHT+IG+8e8TBZZn3utok5/p5VNTf5xnorMVZ83TTS8mYS88H3TfUbRMjUB57+emmSy8pkL4qV3IXFBaRV8=
+        bh=+hOshFmf6G7zEK9XyWMlNtDhU83mdpWiA8UPY2QVI6c=;
+        b=awHBUs8k7a+hPDWbTGOTBncJler50FTp3Gn2XMTbb1tyLfJzj+cJ119AHc0MJeWdOk
+         dia1YBPeH71w2t/wJ2A/aIYCZlmEdEEk3Py+w436kySySiyZMZDVSEHldf5ARB3tZY9l
+         ajy3LjM+0eg5R7O5OmlgG9HqicmfwyPie6bNrhFzZojIU1+dyFetQ/G/A7x3K1w61N98
+         xYXGefNkAn3Z/tasuwrEDcj8c6Mc480Htd1MlVW4iE6tEILIqgVB5H4Tyno8CwXKCA+c
+         psYTOv6OT0KNfkozxQeA5gniGUt3hVsGcLi2bxRLgrJA1RLZm0uCrUUy5jpcgnegr+Oy
+         teXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWa6wGbjMJIOyB1rYjoUJkiH+1JdspnMeUTx57rcM/426DqqVd+sUhugR4dfkaq2RIvtXjBTRE77b/jVZ0HVzJ5LJRBOI0p/9g0bM/qsevK8sv808hm
+X-Gm-Message-State: AOJu0YwguPOBTbjEPoP3p06lJOkMYXD7/PHhuf5E9WD2xeHw84HoZ+C+
+	eeeL1xx0Yok1nK/7f8+oH7vyGILMkO/l7Gknv6hEXnpzUqO+/oX0KWazpcI6eY6MCNBPdjpc9V3
+	Bqw==
+X-Google-Smtp-Source: AGHT+IHysubaIzqInuZoraBMn6KY3/zhAPfwf/Xk9cMSLEOs6DDr4Qj7OXFhv9O7YBXKJiOesYtWd3F2Ac8=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a17:902:f7cd:b0:1eb:829:b6e3 with SMTP id
- d9443c01a7336-1f31c9672a0mr174615ad.4.1716339694571; Tue, 21 May 2024
- 18:01:34 -0700 (PDT)
-Date: Wed, 22 May 2024 00:57:28 +0000
+ (user=edliaw job=sendgmr) by 2002:a05:6a00:2e17:b0:6f3:eeda:a844 with SMTP id
+ d2e1a72fcca58-6f6d5fdba7fmr15269b3a.1.1716339697132; Tue, 21 May 2024
+ 18:01:37 -0700 (PDT)
+Date: Wed, 22 May 2024 00:57:29 +0000
 In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240522005913.3540131-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240522005913.3540131-43-edliaw@google.com>
-Subject: [PATCH v5 42/68] selftests/pidfd: Drop define _GNU_SOURCE
+Message-ID: <20240522005913.3540131-44-edliaw@google.com>
+Subject: [PATCH v5 43/68] selftests/ptrace: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -83,105 +83,30 @@ Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/pidfd/pidfd.h             | 1 -
- tools/testing/selftests/pidfd/pidfd_fdinfo_test.c | 2 --
- tools/testing/selftests/pidfd/pidfd_getfd_test.c  | 2 --
- tools/testing/selftests/pidfd/pidfd_open_test.c   | 2 --
- tools/testing/selftests/pidfd/pidfd_poll_test.c   | 2 --
- tools/testing/selftests/pidfd/pidfd_setns_test.c  | 2 --
- tools/testing/selftests/pidfd/pidfd_test.c        | 2 --
- tools/testing/selftests/pidfd/pidfd_wait.c        | 2 --
- 8 files changed, 15 deletions(-)
+ tools/testing/selftests/ptrace/get_set_sud.c | 1 -
+ tools/testing/selftests/ptrace/peeksiginfo.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-index 88d6830ee004..e33177b1aa41 100644
---- a/tools/testing/selftests/pidfd/pidfd.h
-+++ b/tools/testing/selftests/pidfd/pidfd.h
-@@ -3,7 +3,6 @@
- #ifndef __PIDFD_H
- #define __PIDFD_H
- 
--#define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <sched.h>
-diff --git a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c b/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-index f062a986e382..84135d75ece7 100644
---- a/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_fdinfo_test.c
-@@ -1,6 +1,4 @@
+diff --git a/tools/testing/selftests/ptrace/get_set_sud.c b/tools/testing/selftests/ptrace/get_set_sud.c
+index 5297b10d25c3..054a78ebe8b5 100644
+--- a/tools/testing/selftests/ptrace/get_set_sud.c
++++ b/tools/testing/selftests/ptrace/get_set_sud.c
+@@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
--
 -#define _GNU_SOURCE
- #include <assert.h>
- #include <errno.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/pidfd/pidfd_getfd_test.c b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
-index cd51d547b751..b6a0e9b3d2f5 100644
---- a/tools/testing/selftests/pidfd/pidfd_getfd_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_getfd_test.c
-@@ -1,6 +1,4 @@
+ #include "../kselftest_harness.h"
+ #include <stdio.h>
+ #include <string.h>
+diff --git a/tools/testing/selftests/ptrace/peeksiginfo.c b/tools/testing/selftests/ptrace/peeksiginfo.c
+index a6884f66dc01..1b7b77190f72 100644
+--- a/tools/testing/selftests/ptrace/peeksiginfo.c
++++ b/tools/testing/selftests/ptrace/peeksiginfo.c
+@@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
--
 -#define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <limits.h>
-diff --git a/tools/testing/selftests/pidfd/pidfd_open_test.c b/tools/testing/selftests/pidfd/pidfd_open_test.c
-index c62564c264b1..f6735eca1dab 100644
---- a/tools/testing/selftests/pidfd/pidfd_open_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_open_test.c
-@@ -1,6 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <inttypes.h>
-diff --git a/tools/testing/selftests/pidfd/pidfd_poll_test.c b/tools/testing/selftests/pidfd/pidfd_poll_test.c
-index 55d74a50358f..83af8489c88e 100644
---- a/tools/testing/selftests/pidfd/pidfd_poll_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_poll_test.c
-@@ -1,6 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
- #include <errno.h>
- #include <linux/types.h>
- #include <poll.h>
-diff --git a/tools/testing/selftests/pidfd/pidfd_setns_test.c b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-index 47746b0c6acd..518051f0c3a1 100644
---- a/tools/testing/selftests/pidfd/pidfd_setns_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_setns_test.c
-@@ -1,6 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
--#define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <limits.h>
-diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
-index 9faa686f90e4..53cce08a2202 100644
---- a/tools/testing/selftests/pidfd/pidfd_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_test.c
-@@ -1,6 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--
--#define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <linux/types.h>
-diff --git a/tools/testing/selftests/pidfd/pidfd_wait.c b/tools/testing/selftests/pidfd/pidfd_wait.c
-index 0dcb8365ddc3..54beba0983f1 100644
---- a/tools/testing/selftests/pidfd/pidfd_wait.c
-+++ b/tools/testing/selftests/pidfd/pidfd_wait.c
-@@ -1,6 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--
--#define _GNU_SOURCE
- #include <errno.h>
- #include <linux/sched.h>
- #include <linux/types.h>
+ #include <stdio.h>
+ #include <signal.h>
+ #include <unistd.h>
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
