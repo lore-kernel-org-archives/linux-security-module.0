@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBFF3F8C7;
-	Wed, 22 May 2024 12:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3E07E567;
+	Wed, 22 May 2024 12:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716379265; cv=none; b=nDw7g8pxWmyJK3KI5kcgCQjwEQ6mxbYaEibFeHQgggcCu0moiU1VfHCMPRUq9q//hMkgEQDTkYl2oWYiiZV7cLeAkTRpAYc0AtM7lWw2gBRHooi5PlTJR5ieKbxI2jPq09P/f39K384IlEi5YU9jdBmv4kaEmF7SLwyGjPxVc98=
+	t=1716379347; cv=none; b=R7WVlurDdKi28QbABouA1RcZ3w3f59zrrrdhWTdeQItqi8SJHI0+SMMGfbxwLFLfErwA2hMRgTNX593phLZcaLO85JvRBXz4jnySWk81Psg9C9b5OLJ3SsyrOBtBxhgK1cSuRyRaAcscjQtE1h4oWRg4gPcPH2uUBlN0LfuKTvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716379265; c=relaxed/simple;
-	bh=yJHTZScxmQkM5iwZ0RN3k60aeHqAG8E5DyXxOJ9hn7M=;
+	s=arc-20240116; t=1716379347; c=relaxed/simple;
+	bh=EMJVT5ZakDgrWxq+Pzu18YJ1rO0NK5CfLgZ0nMojMYU=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=VGDz6NS0FKSiwNrrKaiWWzo9PSRfEbDCNJQIXbA8GsvtnOt+a2sz6HQm/7HiCXu0lWMftPVZDx56mDv6cwYKRn93mkyAR33SPTXDXO58OWPJw+0vaxw+vD0VOeOFYNiW8zzXehqIAFeyEBOeAE5LhnJpRCXUQXRt4FLoel6Y3eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aM8i1leH; arc=none smtp.client-ip=10.30.226.201
+	 References:In-Reply-To; b=cODyXcsgilbrdorx/IdwE875wq9/a0OhTUxSR4u0jK2hWo1jMt4A+UbclZaMDrfDRYT5E8Mpe53u1PxXi8QeEquZicmRIFPJqtEgyAlNgzSSszN6gNaMBfF1X75slUIKhKeA5vJ1iwC3pRerbyreKZiavMZf66J8gRN8EU3Uj/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nelYOGVG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aM8i1leH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B1FC2BD11;
-	Wed, 22 May 2024 12:01:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nelYOGVG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85904C2BD11;
+	Wed, 22 May 2024 12:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716379264;
-	bh=yJHTZScxmQkM5iwZ0RN3k60aeHqAG8E5DyXxOJ9hn7M=;
+	s=k20201202; t=1716379346;
+	bh=EMJVT5ZakDgrWxq+Pzu18YJ1rO0NK5CfLgZ0nMojMYU=;
 	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=aM8i1leHbjTmwswydcW4TBsnV14OGuJgpKtrP8rqWidYB33tlDMOjHZxKWUeUFisd
-	 kHJa+l1yIXjZKTKel7rCwk/ysaez7fTofRgHZb2OG7MoYVU07Ewbx31RGlITvwDdd/
-	 DtXbHXkyu7Q8ZuYjgVxx4GBtCZ+fZ7VlrbkIiqaR66JfnopKmcvJa8AXqfmbjHWPFG
-	 /6Uxda/Vk8cBzgu1vLrLYRAWBVuBP0s8NWgdkzcGlZ+An9bSQ6Gg7QsLxTFPK2dzGI
-	 srm26X25B7nd5NN1HYfGM1kBEb5Rrh5F/BvAkWrZWQoLFft76ob+frDw9uVzYnybrr
-	 P5wNmmPR8CY6g==
+	b=nelYOGVGN6SeA/MqZPRrHYH3CNr81B6sLCq+x2diVvbQ/bjR2LAKWPe2UjlLFI76V
+	 4BxzcsJbNXwbJH1mUzNt8/c6ww8iujAX9repqNTCFMl3o1cD32xzBOfID9S5hd2SQY
+	 hIpgm23AwqT4s+QO23a9cDRtMBEexa2UpkCc77kEhq6n/uwRJGmm/EeUOQHBLOT8FC
+	 hHGbvNvdVWZoDhGwLf2cn+lSmMOrwqxQ49xatAopsHB9N7gDGIOeL60WEp/oAlLnoS
+	 x5WGOuEzlh9k18P8tsZYMm8H9toKZ/NnCe/KmhseHzTPiIkNGHqXtgpaf+2ibeR04N
+	 c+17AzCNNwi2A==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -34,145 +34,74 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 May 2024 15:01:00 +0300
-Message-Id: <D1G5O2Z86E4W.2DHG4QZE2W2JG@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
+Date: Wed, 22 May 2024 15:02:19 +0300
+Message-Id: <D1G5P3B6BWGG.3EOYXHHI5MYPZ@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <kernel-team@android.com>, <linux-security-module@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <bpf@vger.kernel.org>, "kernel test robot" <oliver.sang@intel.com>,
+ <linux-sgx@vger.kernel.org>
+Subject: Re: [PATCH v5 57/68] selftests/sgx: Compile with -D_GNU_SOURCE
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Vitor Soares" <ivitro@gmail.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
+To: "Edward Liaw" <edliaw@google.com>, <shuah@kernel.org>,
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, "Christian Brauner"
+ <brauner@kernel.org>, "Richard Cochran" <richardcochran@gmail.com>, "Paul
+ Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexei
+ Starovoitov" <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, "Jakub Kicinski"
+ <kuba@kernel.org>, "Jesper Dangaard Brouer" <hawk@kernel.org>, "John
+ Fastabend" <john.fastabend@gmail.com>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Muhammad Usama Anjum" <usama.anjum@collabora.com>
 X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
-In-Reply-To: <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
+References: <20240522005913.3540131-1-edliaw@google.com>
+ <20240522005913.3540131-58-edliaw@google.com>
+In-Reply-To: <20240522005913.3540131-58-edliaw@google.com>
 
-On Wed May 22, 2024 at 11:18 AM EEST, Vitor Soares wrote:
-> On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
-> > On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
-> > > This benchmark could be done in user space using /dev/tpm0.
-> >=20
-> > Let's actually try that.=C2=A0 If you have the ibmtss installed, the co=
-mmand
-> > to time primary key generation from userspace on your tpm is
-> >=20
-> > time tsscreateprimary -hi n -ecc nistp256
-> >=20
-> >=20
-> > And just for chuckles and grins, try it in the owner hierarchy as well
-> > (sometimes slow TPMs cache this)
-> >=20
-> > time tsscreateprimary -hi o -ecc nistp256
-> >=20
-> > And if you have tpm2 tools, the above commands should be:
-> >=20
-> > time tpm2_createprimary -C n -G ecc256
-> > time tpm2_createprimary -C o -G ecc256
-> >=20
-> > James
-> >=20
-> >=20
+On Wed May 22, 2024 at 3:57 AM EEST, Edward Liaw wrote:
+> Add -D_GNU_SOURCE to HOST_CFLAGS and remove #define _GNU_SOURCE.
 >
-> Testing on an arm64 platform I get the following results.
+> Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202404301040.3bea5782-oliver.sang@=
+intel.com
+> Signed-off-by: Edward Liaw <edliaw@google.com>
+> ---
+>  tools/testing/selftests/sgx/Makefile    | 2 +-
+>  tools/testing/selftests/sgx/sigstruct.c | 1 -
+>  2 files changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftes=
+ts/sgx/Makefile
+> index 867f88ce2570..272da790d9ae 100644
+> --- a/tools/testing/selftests/sgx/Makefile
+> +++ b/tools/testing/selftests/sgx/Makefile
+> @@ -12,7 +12,7 @@ OBJCOPY :=3D $(CROSS_COMPILE)objcopy
+>  endif
+> =20
+>  INCLUDES :=3D -I$(top_srcdir)/tools/include
+> -HOST_CFLAGS :=3D -Wall -Werror -g $(INCLUDES) -fPIC
+> +HOST_CFLAGS :=3D -Wall -Werror -g $(INCLUDES) -fPIC -D_GNU_SOURCE
+>  HOST_LDFLAGS :=3D -z noexecstack -lcrypto
+>  ENCL_CFLAGS +=3D -Wall -Werror -static-pie -nostdlib -ffreestanding -fPI=
+E \
+>  	       -fno-stack-protector -mrdrnd $(INCLUDES)
+> diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/self=
+tests/sgx/sigstruct.c
+> index d73b29becf5b..200034a0fee5 100644
+> --- a/tools/testing/selftests/sgx/sigstruct.c
+> +++ b/tools/testing/selftests/sgx/sigstruct.c
+> @@ -1,7 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*  Copyright(c) 2016-20 Intel Corporation. */
+> =20
+> -#define _GNU_SOURCE
+>  #include <assert.h>
+>  #include <getopt.h>
+>  #include <stdbool.h>
 
-OK, appreciate these results. I try to get mine this week, if I can
-allocate some bandwidth but latest early next week. The Intel CPU
-I'll be testing is Intel Celeron J4025:
-
-https://www.intel.com/content/www/us/en/products/sku/197307/intel-celeron-p=
-rocessor-j4025-4m-cache-up-to-2-90-ghz/specifications.html
-
-So if things work reasonably fast with this, then I think we can
-enable the feature at least on X86_64 by default, and make it
-opt-in for other arch's.
-
-I sent already this patch but holding with PR up until rc1 is
-out so that there is some window to act:
-
-https://lore.kernel.org/linux-integrity/20240521130921.15028-1-jarkko@kerne=
-l.org/
-
-If I need to send an updated patch ("default X86_64") and rip
-transcrip from below results.
-
-But to do that correctly I'd need to know at least:
-
-1. What is the aarch64 platform you are using?
-2. What kind of TPM you are using and how is it connect?
-
-Obviously if I make this decision, I'll put you as "Reported-by".
-
->
-> hmac disabled:
->   time modprobe tpm_tis_spi
->   real    0m2.776s
->   user    0m0.006s
->   sys     0m0.015s
->
->   time tpm2_createprimary -C n -G ecc256
->   real    0m0.686s
->   user    0m0.044s
->   sys     0m0.025s
->
->   time tpm2_createprimary -C o -G ecc256
->   real    0m0.638s
->   user    0m0.048s
->   sys     0m0.009s
->
->
-> hmac enabled:
->   time modprobe tpm_tis_spi
->   real    8m5.840s
->   user    0m0.005s
->   sys     0m0.018s
->
->
->   time tpm2_createprimary -C n -G ecc256
->   real    5m27.678s
->   user    0m0.059s
->   sys     0m0.009s
->
->   (after first command)
->   real    0m0.395s
->   user    0m0.040s
->   sys     0m0.015s
->
->   time tpm2_createprimary -C o -G ecc256
->   real    0m0.418s
->   user    0m0.049s
->   sys     0m0.009s
->
-> hmac enabled + patches applied
->   time modprobe tpm_tis_spi
->   real    8m6.663s
->   user    0m0.000s
->   sys     0m0.021s
->
->
->   time tpm2_createprimary -C n -G ecc256
->   real    7m24.662s
->   user    0m0.048s
->   sys     0m0.022s
->
->   (after first command)
->   real    0m0.395s
->   user    0m0.047s
->   sys     0m0.009s
->
->   time tpm2_createprimary -C o -G ecc256
->   real    0m0.404s
->   user    0m0.046s
->   sys     0m0.012s
->
->
-> Regards,
-> Vitor Soares
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
