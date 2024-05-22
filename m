@@ -1,172 +1,105 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A8C138;
-	Wed, 22 May 2024 08:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF44B7BB17;
+	Wed, 22 May 2024 11:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716365941; cv=none; b=eKRJXtzspCTrLAomU0rwAgqJCIzfiijMuE48ruPhjHwYC7/a4IMf6HWsa9smJvyp6i3comjj4HXFomdvEHmJfTznw9WwygMWTT5IXF6GNG3GUSX85dgzoIonjY2sI26BmubWpZhes7KnqJd2XtGok1MQYn360pvap4GiA5raOSg=
+	t=1716376884; cv=none; b=TvLAslyCFTCo8dvVguiaRJEIkMaLUbHmsQ+gfp7jSUOOSelEHTjHrLUHHBILFwSF8aMj/cyMXdI0WH+hR5BUEwvlpPsQ3QaQrPmxSHkdNHMv971h30AaKMltHiYwrREtYY3AD4rzhLb9SjBBr9UYO15ebhD7ZHV9nqzY2cesFhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716365941; c=relaxed/simple;
-	bh=bSHpF7FSeuBzxNcacKanUepxY0i4i7iOjdWUu/P8znY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V9VID4COpMUhMAOH7jRx3KTM6zfslFdjOVA7ByO8ntJRABgiIXofZughuStiDJCFJct1UaVsFNGwKeSe2gWEB0LBwnUZIBW4cVbrPovIYCk1YbbMselA7fj7ZKIdtMrN32kEVnuQGANSW2hOWj+kvVqxygMQq1VFjZRPruCpwlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VC7/V79j; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1716376884; c=relaxed/simple;
+	bh=6LFpisAJ3P2zL/wDbYfaPPwjur7WX2IAIulJ4g4PAAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wz5THzjwdF61xfazNIQ31tJw8M5E9l/0U5gw6Xt4p1p96CfOLQDXijUBs/Ur8uMPGSRGZLWT9VJgbmFA4xpiQz0AuyNrKlarpichlDBFrl10+kEMWV5NrN0A2ysLxxy19TQrp7eQ+MLGFiQaFhdimIXrc8ZikNWo4WPixondnDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqoFvCWh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VC7/V79j"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42016c8daa7so37961185e9.2;
-        Wed, 22 May 2024 01:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716365938; x=1716970738; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lBg4uyn78t0bKiR5npVACUo4W3upFksgzJ+CETLwn1o=;
-        b=VC7/V79jnvh8oNiXGIyENtx5r/GZNADafdUxhSm9tKx7KVTTCWWYaABKNPRgAHEW5G
-         poO7VYW9LfvydgVSl7tIEL0WP+oJsb29rdS9ikKSeyeIqX0esOSSDfY6LJhztPjwPC0G
-         wQenGVTkesDbc7WrzOjoeRIXLOb25iSyrQmEVblJxkuQQR/q4gsnGW+5xlZHcGCfuEwy
-         vBhYnc8az5VkWB0gsvoGtR4uOK+vhOKzK1ca+pfA6qHnxc1Q4A+R4ftxe3jgYzs0zqsF
-         pqURDC++m4hfrS7+Awx0YoPNwP0NKFVZTfsFB+18FCFHRDSa+sDOW0fLD+GSwmEaLshI
-         qcww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716365938; x=1716970738;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lBg4uyn78t0bKiR5npVACUo4W3upFksgzJ+CETLwn1o=;
-        b=A+9CRnJq2afFqnb191DvUBh8wkVxFXm/FaioDKNOVmtbYBRbyR2WK37tLiqDxtDDA4
-         WU3Ebpr2WQk9Qjb5XycHsR3U1GJtAny+IwBRg3IZgj3eZvSYeydEfKZtjt/tl4Ugc/Yv
-         JeKmH9qNWaqHmCJCjgk4pbOCOdroLopqjfhXal/HC0nRNDGxV24NJZYyHBybgN/QtG5W
-         hPwzw6AR/ANRgo5bFsLxJhHNDjSAO/Y7Ohs3mE2QGt4YWA9UGm1k8J34rUNyf9OnPZYy
-         u+7CQ//jSA2VcKXwT5WAZP2GG9RhnQJ+VurLxyKivt95T4Lk+Mw10nkXiR3R/9foiMIB
-         TIgw==
-X-Forwarded-Encrypted: i=1; AJvYcCULgoU+cVKdIi7Rh5To19YgdW6aiCUk4TDiH4luZyg4qbxZ4Y1K69IcndRTJ5WhRVN3bCTrpcDiTgjxZHR4sUAnD1GNq4NcOjxGjxK0eXSxjTXAchpZ9Ll76gC0lzowW/y6o6pUuhTIIaqVvNwkrXDlMvnJE1S60860xydeGGFj68aqNgsox6Bu2Kx8VW/AfGuDe5v7
-X-Gm-Message-State: AOJu0YzviqUTLZx752qOPTPD2TbY6DWcpgK3zN63RO75r6NqyGYh+x+0
-	R6XIij+iMEKrLriKwrd25gh4JJStyblzIktIxmRNY6QDz4j+fJ0Dz8kkcA==
-X-Google-Smtp-Source: AGHT+IHLXZgSDJmsis6up0QpZBrArcJ+z5AUWwf3Q497OyVDz9iO2MWp1O0/FUUykhM9+MyKYg62oA==
-X-Received: by 2002:a05:600c:2101:b0:41b:f30a:41f1 with SMTP id 5b1f17b1804b1-420fd2db85amr9177325e9.7.1716365937832;
-        Wed, 22 May 2024 01:18:57 -0700 (PDT)
-Received: from ?IPv6:2001:8a0:e622:f700:6a60:8259:5f0c:8e1? ([2001:8a0:e622:f700:6a60:8259:5f0c:8e1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42017166c64sm363200215e9.8.2024.05.22.01.18.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 01:18:57 -0700 (PDT)
-Message-ID: <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: Vitor Soares <ivitro@gmail.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jarkko Sakkinen
-	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Wed, 22 May 2024 09:18:56 +0100
-In-Reply-To: <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
-References: <20240519235122.3380-1-jarkko@kernel.org>
-	 <20240519235122.3380-2-jarkko@kernel.org>
-	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
-	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
-	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqoFvCWh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A68AEC2BD11;
+	Wed, 22 May 2024 11:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716376883;
+	bh=6LFpisAJ3P2zL/wDbYfaPPwjur7WX2IAIulJ4g4PAAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iqoFvCWhL06a+t3NwIiHw7f7YkYWr6An8TRv4o2dAlkTeFZh0noWkl8eHYPTJ7/L2
+	 TbYkFtaSP/IxDAkggFuA7DKY5bcZ8xT8qT4RVKbVJ9gdUQj9VrIdQqwiwRrEXLsqdA
+	 wwyDT+5UTEQj/NZLNW0BfAxrgiC0oXA0JtJYoD5IWAvOZ+Hm7CWjxwkEJtxqrBYgLo
+	 nWePa0mTUVjoCIZAWcNj7VvrxBbLdGB0OYgAeCBR/quUErwE7SWWeoscdX0UkNVTGN
+	 z6woD/4Ji2GtDcuFgtx1+D7X5zz1NYYsVcAVcd8paZo/ykOopjL94IV7OfzK2D7O37
+	 7LyBbaoe1ptyA==
+Date: Wed, 22 May 2024 12:21:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Kees Cook <keescook@chromium.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com,
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v5 02/68] kselftest: Desecalate reporting of missing
+ _GNU_SOURCE
+Message-ID: <94b73291-5b8a-480d-942d-cfc72971c2f5@sirena.org.uk>
+References: <20240522005913.3540131-1-edliaw@google.com>
+ <20240522005913.3540131-3-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WIFHs1Yh6LyJ3Qfq"
+Content-Disposition: inline
+In-Reply-To: <20240522005913.3540131-3-edliaw@google.com>
+X-Cookie: Bridge ahead.  Pay troll.
 
-On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
-> On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
-> > This benchmark could be done in user space using /dev/tpm0.
+
+--WIFHs1Yh6LyJ3Qfq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 22, 2024 at 12:56:48AM +0000, Edward Liaw wrote:
+
+> to make stopping builds early replace the static_assert() with a
+> missing without making the error more severe than it already was.  This
+> will be moot once the issue is fixed properly but reduces the disruption
+> while that happens.
 >=20
-> Let's actually try that.=C2=A0 If you have the ibmtss installed, the comm=
-and
-> to time primary key generation from userspace on your tpm is
->=20
-> time tsscreateprimary -hi n -ecc nistp256
->=20
->=20
-> And just for chuckles and grins, try it in the owner hierarchy as well
-> (sometimes slow TPMs cache this)
->=20
-> time tsscreateprimary -hi o -ecc nistp256
->=20
-> And if you have tpm2 tools, the above commands should be:
->=20
-> time tpm2_createprimary -C n -G ecc256
-> time tpm2_createprimary -C o -G ecc256
->=20
-> James
->=20
->=20
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> ---
+>  tools/testing/selftests/kselftest_harness.h | 2 +-
 
-Testing on an arm64 platform I get the following results.
+You've not provided a Signed-off-by for this so people can't do anything
+with it, please see Documentation/process/submitting-patches.rst for
+details on what this is and why it's important.
 
-hmac disabled:
-  time modprobe tpm_tis_spi
-  real    0m2.776s
-  user    0m0.006s
-  sys     0m0.015s
+--WIFHs1Yh6LyJ3Qfq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  time tpm2_createprimary -C n -G ecc256
-  real    0m0.686s
-  user    0m0.044s
-  sys     0m0.025s
+-----BEGIN PGP SIGNATURE-----
 
-  time tpm2_createprimary -C o -G ecc256
-  real    0m0.638s
-  user    0m0.048s
-  sys     0m0.009s
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZN1SkACgkQJNaLcl1U
+h9ALrgf/W2wyJyKvxhDmFrYgFJhxqTL7kAvJooFztcjGspGzZ11XMWpg5qCx0HHS
+CMQ056M6KjXP56PoyIJZUlgKZS/iTbNbN16CdgfzNjmm+bVoyI7RnHG5VU5ynmuC
+BgqlUZvPgjjEyxrdq3VZTEnGRMkOhSyGofvXfHkmTyxG6iPMEQP7oBAiYyKitqw1
+p16mfKVsFOWMVIa4Pz7N6DrB/DYMdLs+nmaueOfuqShFo4LwGkaP5f0ey5OFLqk4
+RSB8dbe74T8sqtlAiC+2eAHk4PIT7tsmiyAK1n80aE2bf+JBR4hWjhrniS1JKSoW
+znqrGa5yeQ/laQLifd57Xg0iW8mesw==
+=umSn
+-----END PGP SIGNATURE-----
 
-
-hmac enabled:
-  time modprobe tpm_tis_spi
-  real    8m5.840s
-  user    0m0.005s
-  sys     0m0.018s
-
-
-  time tpm2_createprimary -C n -G ecc256
-  real    5m27.678s
-  user    0m0.059s
-  sys     0m0.009s
-
-  (after first command)
-  real    0m0.395s
-  user    0m0.040s
-  sys     0m0.015s
-
-  time tpm2_createprimary -C o -G ecc256
-  real    0m0.418s
-  user    0m0.049s
-  sys     0m0.009s
-
-hmac enabled + patches applied
-  time modprobe tpm_tis_spi
-  real    8m6.663s
-  user    0m0.000s
-  sys     0m0.021s
-
-
-  time tpm2_createprimary -C n -G ecc256
-  real    7m24.662s
-  user    0m0.048s
-  sys     0m0.022s
-
-  (after first command)
-  real    0m0.395s
-  user    0m0.047s
-  sys     0m0.009s
-
-  time tpm2_createprimary -C o -G ecc256
-  real    0m0.404s
-  user    0m0.046s
-  sys     0m0.012s
-
-
-Regards,
-Vitor Soares
+--WIFHs1Yh6LyJ3Qfq--
