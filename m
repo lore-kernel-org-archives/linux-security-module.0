@@ -1,111 +1,73 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1975913D63D
-	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 16:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D7C762FF;
+	Wed, 22 May 2024 17:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716395709; cv=none; b=kMUsFzTeLobSj9gCgVhgdVVdU6eDXiPXHo//D4arFsoszJX+Mru2ESWth6tayBcx2MPfIkbeuomR+caJUySK/WS5S2zcAmkVadT2jzaW3KCOONd0tZ47bFM9LIUiFE0LlyvW/s0ozed8+Fc8gonfG0awajSmCjJQbg43jxA6JQE=
+	t=1716398032; cv=none; b=ZJnhnm29EjJS4ub04giVeuC1xYZo9jVd1pEiNVWfH0i8piUii5S2le+NsKsm6Y+IrlcJCMK21QE3YzO5veqEZcSHohR9rBNsE1Omc6lJnUYWzPwFSFiXPRe+hIXUO0Q498Aju8kntYninAUlmBGE+iFgCoANXCxA1MT7tJ535Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716395709; c=relaxed/simple;
-	bh=wow702hEWO/XsKIRiOeK7H7iVtAxQpkaiyuys0HINig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dD6hbAO3Sf9TVv9mqU9o6Qst97iy0MCaIDBrylkCKv5UweDApAOjrYZQ00WOrLAJ2UIA31zf2HpPGqs/ekMSSIlA0CQoAVhpnvRFLnzWA0QDurxnO6B4VuiNmom6UoDBhqlqFJ4+bsr2iUrOJTtQ6OyrMQq2MW6pgSfa17/sBuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b1W5D3q2; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1716398032; c=relaxed/simple;
+	bh=60LHAtzrKidGyWFU1huo2XzSzZXTtfyfRyB9guGBkOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cA002To3Muxf6iKI36/DvuoAI3Xtgx6X966Wxs5qOrGw5o5Xc1X6OBcjgTpRmU/XMLWELmOQIRsOKz241ZaFV5B1xOrx0KEC6Eo9RIyyjnRpeu2YeAoLaObxmEmW4K6iPdFZaE8T+UzkpOJXyiVE09IhAzN7lcDi/AGk2mQLqYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeFxgPqN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b1W5D3q2"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b27cc76e9aso330124eaf.2
-        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 09:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1716395707; x=1717000507; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FF30FLh4FVIj5wgbcXLnpEEb1c/d7E6kmTu0z50oYHg=;
-        b=b1W5D3q2beJtX3N9HzvoDuQ7BBtVhni8fHJ1kkFxClZdRBBrPwN11W+d/L45GTTpam
-         TwaV+CD33Hjdo5YBrAIZySOKgdLuyNNYxRJz0GMKwaAhpxCkAXENKgGf4kLlwGHkKtfX
-         L6QaLdyGvfMmd0q7a0i2j9/SbepGGDlun2SNs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716395707; x=1717000507;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FF30FLh4FVIj5wgbcXLnpEEb1c/d7E6kmTu0z50oYHg=;
-        b=Uod2x2RCrgO3NCczZ+ULk31kbUKES3r+F+7JINR79T1y8x0lHLqgd6zfC6N7aetgl5
-         H5WwVLmZuvfkr3n7DIfssIBMUOfrhcC6yDTpUK/Wv2s3JYC5BZpNXU4ZDWiljaF43p6H
-         F2iZ36ir3a9l/QH4yW43uZ6RjbLux+IP/IM72ys8eoQYXiAEF4eQ4BsPgzpSHnVj+Y0s
-         3Ww6UWgvkiEQh/pDnM9PLN8fK/WJPRhqlXTaHw8JRzL9tp8ivOnvK4q+k4BioKMfGv6k
-         6BJiW0Z5xL52RLCryCOoNh1zjy9BcQ9bCDBNJlpqBu4fJrjOVGyLZAJRhkQmXwNvsI3x
-         W8eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3rC9MWQMK50Cv5EQvGoTsRXNblJDhinmV5ZZe12PcwIjHj5PMYrd22V3u1N70IH5BMlF1vXWGiIXCQWFgEKkoSXmXrISqdhtDLUYd02afYaES0m+X
-X-Gm-Message-State: AOJu0YyLs3ABhPVKjzyyvqoGbQSq4ZOYowQyPqAba1vDwZfaMliKAJ79
-	kTkt/QXtdXvKVPNv43LCyVwCBBx8merxXCPu+RHHbRQkcUqQoE3ihl3788axtj0=
-X-Google-Smtp-Source: AGHT+IGHfAC3qkCN6OulIhZiaDBbxXmwg5VKYB936DJVaSdhJlQGCxL++LW2UUdg3/EuZDRuVOh0Ug==
-X-Received: by 2002:a05:6820:2585:b0:5b2:7d9f:e708 with SMTP id 006d021491bc7-5b6a2df34f2mr2891522eaf.1.1716395707090;
-        Wed, 22 May 2024 09:35:07 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b31b52263fsm2644126eaf.21.2024.05.22.09.35.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 09:35:06 -0700 (PDT)
-Message-ID: <25596b05-205a-471d-884f-289db262c485@linuxfoundation.org>
-Date: Wed, 22 May 2024 10:35:05 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeFxgPqN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E92FC2BBFC;
+	Wed, 22 May 2024 17:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716398031;
+	bh=60LHAtzrKidGyWFU1huo2XzSzZXTtfyfRyB9guGBkOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UeFxgPqNVyEgTI0XJHmMlqgVNwR2qk549KtkKSQj2xn6VpsjZwqC2Lf+iDGZOM5df
+	 0pIFB6FedIZ/eSAj34yv1Bx+FunjVdU3oXJTN9JCuPirVygCgAdPEBau4VikcgzwOQ
+	 vlGypaEUL6B4MLskgs7u6vTkyDaanEs1bahwrtj9f+XSO7m6MP7DKDlUm+A0438Ht9
+	 2a4kdmt1gQm5HYO3RfBeVkC9R256x/7f0QwJz18xlk3m5e89KQ/35CBOktYzcP1rKi
+	 EodPgwktvtviUOk0lBkjMML7i2DmwbUNREU03/GeffV5q/eqjOx9u6S0Sn1Z0ZUMco
+	 ceoRRyLMbHS3g==
+Date: Wed, 22 May 2024 10:13:49 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Edward Liaw <edliaw@google.com>, shuah@kernel.org, =?UTF-8?B?TWlja2E=?=
+ =?UTF-8?B?w6tsIFNhbGHDvG4=?= <mic@digikod.net>, =?UTF-8?B?R8O8bnRoZXI=?=
+ Noack <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, Richard
+ Cochran <richardcochran@gmail.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-team@android.com,
+ linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+ linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
+Message-ID: <20240522101349.565a745e@kernel.org>
+In-Reply-To: <6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
+References: <20240522005913.3540131-1-edliaw@google.com>
+	<6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
-To: Paolo Abeni <pabeni@redhat.com>, Edward Liaw <edliaw@google.com>,
- shuah@kernel.org, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Christian Brauner <brauner@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
- bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240522005913.3540131-1-edliaw@google.com>
- <b5e333368d9e69efc6325187a23cef4f4337c738.camel@redhat.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <b5e333368d9e69efc6325187a23cef4f4337c738.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 5/22/24 01:42, Paolo Abeni wrote:
-> On Wed, 2024-05-22 at 00:56 +0000, Edward Liaw wrote:
->> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
->> redefinitions of _GNU_SOURCE from source code.
->>
->> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
->> asprintf into kselftest_harness.h, which is a GNU extension and needs
->> _GNU_SOURCE to either be defined prior to including headers or with the
->> -D_GNU_SOURCE flag passed to the compiler.
+On Wed, 22 May 2024 10:19:33 -0600 Shuah Khan wrote:
+> On 5/21/24 18:56, Edward Liaw wrote:
+> > Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+> > redefinitions of _GNU_SOURCE from source code.
+> > 
+> > 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> > asprintf into kselftest_harness.h, which is a GNU extension and needs  
 > 
-> I'm sorry for the late question, but what is the merge plan here?
-> 
+> Easier solution to define LINE_MAX locally. In gerenal it is advisable
+> to not add local defines, but it is desirable in some cases to avoid
+> churn like this one.
 
-
-I have asked Edward Liaw explore options to localize the fix to the
-problem introduced by the following commit
-
-809216233555 ("selftests/harness: remove use of LINE_MAX")
-
-I am not happy with the churn. I don't plan to merge this series
-as it for sure.
-
-If and when this problem gets fixed, I plan to merge the change and
-take it through kselftest.
-
-thanks,
--- Shuah
+Will the patch that Andrew applied:
+https://lore.kernel.org/all/20240519213733.2AE81C32781@smtp.kernel.org/
+make its way to Linus? As you say that's a much simpler fix.
