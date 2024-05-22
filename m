@@ -1,110 +1,172 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F1D7CF1A
-	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 07:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A8C138;
+	Wed, 22 May 2024 08:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716363767; cv=none; b=tw4Gd6UTxobgr4ex8j6+tAKBP3PtgIImIlrwycYtyXk5wjFSR/YR00BRLBW5XFYHHr81YwzgFjyXJXsMqZ/u9b4lYlVJy78Dmrs/icbVhe5agtP/HEzRtUWz0vnay/vrWLOoDa/qFg8hywXdd5oqb54keplEdIhp3VB5g6L22YQ=
+	t=1716365941; cv=none; b=eKRJXtzspCTrLAomU0rwAgqJCIzfiijMuE48ruPhjHwYC7/a4IMf6HWsa9smJvyp6i3comjj4HXFomdvEHmJfTznw9WwygMWTT5IXF6GNG3GUSX85dgzoIonjY2sI26BmubWpZhes7KnqJd2XtGok1MQYn360pvap4GiA5raOSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716363767; c=relaxed/simple;
-	bh=1B+iTRkM26xJDQ0//STek9xRvnM84UISSi2Pz/0R1YU=;
+	s=arc-20240116; t=1716365941; c=relaxed/simple;
+	bh=bSHpF7FSeuBzxNcacKanUepxY0i4i7iOjdWUu/P8znY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ej0xHKlEUbYhPM616tJHQYgVmCdxa7L/Nl5qulaePwCdES97TPGj2h9FJSxRfyV8ovuY3ncW8lZ0bsaLpzDQbo9oBRpAFwTy6Yp1QFdEUh/Fz2VQDaER6rhl47YwtY+xECBANV6UtueGnO1w7NgW/sZi2nHhnXHK5nyzdl7Yo5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MI1wHXN5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:MIME-Version; b=V9VID4COpMUhMAOH7jRx3KTM6zfslFdjOVA7ByO8ntJRABgiIXofZughuStiDJCFJct1UaVsFNGwKeSe2gWEB0LBwnUZIBW4cVbrPovIYCk1YbbMselA7fj7ZKIdtMrN32kEVnuQGANSW2hOWj+kvVqxygMQq1VFjZRPruCpwlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VC7/V79j; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MI1wHXN5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716363765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1B+iTRkM26xJDQ0//STek9xRvnM84UISSi2Pz/0R1YU=;
-	b=MI1wHXN5PXakDRj+d7p5HH2OeB/D5Cy/x4BUH2HC5cXt9NRIFipLQ/nyWJ79BzKSR/JuPX
-	BUSt444RxxpUw7s1z+GcSndQh5/FIuWyMyzzj9org3AZ/oNS5ptOe4HViDPMsC/VcGkWS0
-	aShbtA0/wmgASPruhrrTKk6CPGQwVWE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-342-2PiMF6NKMJWavoWOZqKnUw-1; Wed, 22 May 2024 03:42:41 -0400
-X-MC-Unique: 2PiMF6NKMJWavoWOZqKnUw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-420104e53b7so713405e9.3
-        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 00:42:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VC7/V79j"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42016c8daa7so37961185e9.2;
+        Wed, 22 May 2024 01:18:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716365938; x=1716970738; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lBg4uyn78t0bKiR5npVACUo4W3upFksgzJ+CETLwn1o=;
+        b=VC7/V79jnvh8oNiXGIyENtx5r/GZNADafdUxhSm9tKx7KVTTCWWYaABKNPRgAHEW5G
+         poO7VYW9LfvydgVSl7tIEL0WP+oJsb29rdS9ikKSeyeIqX0esOSSDfY6LJhztPjwPC0G
+         wQenGVTkesDbc7WrzOjoeRIXLOb25iSyrQmEVblJxkuQQR/q4gsnGW+5xlZHcGCfuEwy
+         vBhYnc8az5VkWB0gsvoGtR4uOK+vhOKzK1ca+pfA6qHnxc1Q4A+R4ftxe3jgYzs0zqsF
+         pqURDC++m4hfrS7+Awx0YoPNwP0NKFVZTfsFB+18FCFHRDSa+sDOW0fLD+GSwmEaLshI
+         qcww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716363760; x=1716968560;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1B+iTRkM26xJDQ0//STek9xRvnM84UISSi2Pz/0R1YU=;
-        b=bPrDR4JWXOZZ75JNGdox9ExSm4qUPGpnHO+vHLVqyhq/SVq0eXBtE8ZD0IRmOsdQtq
-         kQOjhgDbeCoNiK6/lWJ3qeSvaB1i746jKV3tgasePWWHkQ2S7XoL0Rj8xsl6jiVz2B6q
-         jG0In5VOImrjOTPGwWX45v2b8vR9XBsSWGQe7iJ9AIUDeBGpSXc3OXBGGltTABmsWJ5K
-         4n7CDnQuymYVda5Go/k94jUGxXxJlhy2cJVlRdRa+yehE/rZMtYbOIK5zFTAubjljXZR
-         PLMkf5Jl5Oj3MOSnpB44Ddbj1QWjiOyJwQql/m5GfIob7bQo2257SyLRnyv3E2A5L4kv
-         Kvnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUREerIu/kanyZdlYZwHZ+eazqOGS5zIDkvUChAjPaDckG9NbqBL+O74Y5Dffx4GVfZuW+6/8G2osPmFGyhODgmpCN3Fe2R3dOWyYm4fTitJP5ntVdL
-X-Gm-Message-State: AOJu0YxbFviH7+HJiSCU3TWvmzGiNQj3Q7CLhvhU4nRwbsU1a2zCouJ+
-	dkQLIjqN52pZXKBoRXkEOMdDpLxQ9yN9w2u5v20XVKmVwop2yihSfXhcUnEW1GjJu+Np4DOc01d
-	0QUvO4NboF+5LguY2PXfhCE91s2eC0Jaz1piCUtAUoM9+k2DtPjrHD3hgAmMGhAu7+pLhSS5TWA
-	==
-X-Received: by 2002:a05:600c:3544:b0:41b:e83e:8bb with SMTP id 5b1f17b1804b1-420fd376c84mr8033345e9.3.1716363760500;
-        Wed, 22 May 2024 00:42:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrNJYQNBCV6/mB0UpUckR8l2hFK7QYVo9GtdTwp5hyr0ELTVeHubB7Oy+dPQUccQniC+/LQw==
-X-Received: by 2002:a05:600c:3544:b0:41b:e83e:8bb with SMTP id 5b1f17b1804b1-420fd376c84mr8033045e9.3.1716363760101;
-        Wed, 22 May 2024 00:42:40 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccee934csm490842515e9.38.2024.05.22.00.42.38
+        d=1e100.net; s=20230601; t=1716365938; x=1716970738;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lBg4uyn78t0bKiR5npVACUo4W3upFksgzJ+CETLwn1o=;
+        b=A+9CRnJq2afFqnb191DvUBh8wkVxFXm/FaioDKNOVmtbYBRbyR2WK37tLiqDxtDDA4
+         WU3Ebpr2WQk9Qjb5XycHsR3U1GJtAny+IwBRg3IZgj3eZvSYeydEfKZtjt/tl4Ugc/Yv
+         JeKmH9qNWaqHmCJCjgk4pbOCOdroLopqjfhXal/HC0nRNDGxV24NJZYyHBybgN/QtG5W
+         hPwzw6AR/ANRgo5bFsLxJhHNDjSAO/Y7Ohs3mE2QGt4YWA9UGm1k8J34rUNyf9OnPZYy
+         u+7CQ//jSA2VcKXwT5WAZP2GG9RhnQJ+VurLxyKivt95T4Lk+Mw10nkXiR3R/9foiMIB
+         TIgw==
+X-Forwarded-Encrypted: i=1; AJvYcCULgoU+cVKdIi7Rh5To19YgdW6aiCUk4TDiH4luZyg4qbxZ4Y1K69IcndRTJ5WhRVN3bCTrpcDiTgjxZHR4sUAnD1GNq4NcOjxGjxK0eXSxjTXAchpZ9Ll76gC0lzowW/y6o6pUuhTIIaqVvNwkrXDlMvnJE1S60860xydeGGFj68aqNgsox6Bu2Kx8VW/AfGuDe5v7
+X-Gm-Message-State: AOJu0YzviqUTLZx752qOPTPD2TbY6DWcpgK3zN63RO75r6NqyGYh+x+0
+	R6XIij+iMEKrLriKwrd25gh4JJStyblzIktIxmRNY6QDz4j+fJ0Dz8kkcA==
+X-Google-Smtp-Source: AGHT+IHLXZgSDJmsis6up0QpZBrArcJ+z5AUWwf3Q497OyVDz9iO2MWp1O0/FUUykhM9+MyKYg62oA==
+X-Received: by 2002:a05:600c:2101:b0:41b:f30a:41f1 with SMTP id 5b1f17b1804b1-420fd2db85amr9177325e9.7.1716365937832;
+        Wed, 22 May 2024 01:18:57 -0700 (PDT)
+Received: from ?IPv6:2001:8a0:e622:f700:6a60:8259:5f0c:8e1? ([2001:8a0:e622:f700:6a60:8259:5f0c:8e1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42017166c64sm363200215e9.8.2024.05.22.01.18.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 00:42:39 -0700 (PDT)
-Message-ID: <b5e333368d9e69efc6325187a23cef4f4337c738.camel@redhat.com>
-Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
-From: Paolo Abeni <pabeni@redhat.com>
-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org, 
- =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
- =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,  Christian Brauner
- <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard
- Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- kernel-team@android.com, linux-security-module@vger.kernel.org, 
- netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org
-Date: Wed, 22 May 2024 09:42:37 +0200
-In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
-References: <20240522005913.3540131-1-edliaw@google.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39)
+        Wed, 22 May 2024 01:18:57 -0700 (PDT)
+Message-ID: <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
+Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
+From: Vitor Soares <ivitro@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jarkko Sakkinen
+	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+ <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Wed, 22 May 2024 09:18:56 +0100
+In-Reply-To: <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
+References: <20240519235122.3380-1-jarkko@kernel.org>
+	 <20240519235122.3380-2-jarkko@kernel.org>
+	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
+	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
+	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-05-22 at 00:56 +0000, Edward Liaw wrote:
-> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
-> redefinitions of _GNU_SOURCE from source code.
+On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
+> On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
+> > This benchmark could be done in user space using /dev/tpm0.
 >=20
-> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> asprintf into kselftest_harness.h, which is a GNU extension and needs
-> _GNU_SOURCE to either be defined prior to including headers or with the
-> -D_GNU_SOURCE flag passed to the compiler.
+> Let's actually try that.=C2=A0 If you have the ibmtss installed, the comm=
+and
+> to time primary key generation from userspace on your tpm is
+>=20
+> time tsscreateprimary -hi n -ecc nistp256
+>=20
+>=20
+> And just for chuckles and grins, try it in the owner hierarchy as well
+> (sometimes slow TPMs cache this)
+>=20
+> time tsscreateprimary -hi o -ecc nistp256
+>=20
+> And if you have tpm2 tools, the above commands should be:
+>=20
+> time tpm2_createprimary -C n -G ecc256
+> time tpm2_createprimary -C o -G ecc256
+>=20
+> James
+>=20
+>=20
 
-I'm sorry for the late question, but what is the merge plan here?
+Testing on an arm64 platform I get the following results.
 
-Thanks!
+hmac disabled:
+  time modprobe tpm_tis_spi
+  real    0m2.776s
+  user    0m0.006s
+  sys     0m0.015s
 
-Paolo
+  time tpm2_createprimary -C n -G ecc256
+  real    0m0.686s
+  user    0m0.044s
+  sys     0m0.025s
 
+  time tpm2_createprimary -C o -G ecc256
+  real    0m0.638s
+  user    0m0.048s
+  sys     0m0.009s
+
+
+hmac enabled:
+  time modprobe tpm_tis_spi
+  real    8m5.840s
+  user    0m0.005s
+  sys     0m0.018s
+
+
+  time tpm2_createprimary -C n -G ecc256
+  real    5m27.678s
+  user    0m0.059s
+  sys     0m0.009s
+
+  (after first command)
+  real    0m0.395s
+  user    0m0.040s
+  sys     0m0.015s
+
+  time tpm2_createprimary -C o -G ecc256
+  real    0m0.418s
+  user    0m0.049s
+  sys     0m0.009s
+
+hmac enabled + patches applied
+  time modprobe tpm_tis_spi
+  real    8m6.663s
+  user    0m0.000s
+  sys     0m0.021s
+
+
+  time tpm2_createprimary -C n -G ecc256
+  real    7m24.662s
+  user    0m0.048s
+  sys     0m0.022s
+
+  (after first command)
+  real    0m0.395s
+  user    0m0.047s
+  sys     0m0.009s
+
+  time tpm2_createprimary -C o -G ecc256
+  real    0m0.404s
+  user    0m0.046s
+  sys     0m0.012s
+
+
+Regards,
+Vitor Soares
