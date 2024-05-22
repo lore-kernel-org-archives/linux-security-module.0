@@ -1,161 +1,110 @@
-Received: from sonic311-31.consmr.mail.ne1.yahoo.com (sonic311-31.consmr.mail.ne1.yahoo.com [66.163.188.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378B74C6D
-	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 01:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F1D7CF1A
+	for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 07:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716343088; cv=none; b=jzIiorDnoc01hYD4XbKGpUWGg9M22Nb2Tt3X7d6ksDPXvbTt17mSQlaNqa5MwThWZpI+kdd8cFtqdQKPRQWmtZR6ChqiDzzBz/atz9Y6AhvyMooQUp1icmRK7GJqtAsfBHNNX+5nZZ1Ge4SXvzWIAW+xxCV9an66W8hLVn+8d5k=
+	t=1716363767; cv=none; b=tw4Gd6UTxobgr4ex8j6+tAKBP3PtgIImIlrwycYtyXk5wjFSR/YR00BRLBW5XFYHHr81YwzgFjyXJXsMqZ/u9b4lYlVJy78Dmrs/icbVhe5agtP/HEzRtUWz0vnay/vrWLOoDa/qFg8hywXdd5oqb54keplEdIhp3VB5g6L22YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716343088; c=relaxed/simple;
-	bh=MZVe26BMPdvP8BLcp/KzGhheqUTEjkEcZE0Q5/XFoOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TEK6eOSwDU2yxjoaPnRu1pKkIvPLGOPX1iT3S/fK7vzxFKjZlEWERqzQGlTn3vRWPy2sS26tfAm5+y0Bdty3FcboXUFhm/IKf2iK3ryzG1J3zyE7QKfJPLOVMXaIT7Gj/4Gk7th3U/7o1dvonCWkignfIAwxBB1pYY/UUcRmflY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=F9Qqw4mU; arc=none smtp.client-ip=66.163.188.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1716363767; c=relaxed/simple;
+	bh=1B+iTRkM26xJDQ0//STek9xRvnM84UISSi2Pz/0R1YU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ej0xHKlEUbYhPM616tJHQYgVmCdxa7L/Nl5qulaePwCdES97TPGj2h9FJSxRfyV8ovuY3ncW8lZ0bsaLpzDQbo9oBRpAFwTy6Yp1QFdEUh/Fz2VQDaER6rhl47YwtY+xECBANV6UtueGnO1w7NgW/sZi2nHhnXHK5nyzdl7Yo5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MI1wHXN5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="F9Qqw4mU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1716343086; bh=K4ceCAMUd3OOguRCiqyTBlmv17C7zQy/D1e8nEr4anQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=F9Qqw4mU2enmujQlbIZOgIM7OPDle7ngbCNstZu3xz09DNABu0dXgPHnGGbhV6PpDQ4BVjDJosZ+9lXorHAruFkaP34YrdxcJJEJmVo/i2g5klZT44rhWACKAPbjCgqIgOyPYBXp2naQWe8zYP0Y/b+QERUN6x1TZKuNBDTPGSkOi1h3M6wA/J2gJzp4bcGENhedntJcNGD772TuHwGeDqLe504ij+eg2YxnDSMDF9zSBbTqP2Go6wFAwjNPUvKIvyxGZ9Vs2Q4XIQgwJgJqdRK/pH/Fn/9u4nt0bwaD/JOmkC5dFvnoECbumzLGNEZiYcYs7JxRKAgDT5V4cLWNgw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1716343086; bh=vfVkr9tXYm2rtOpgNt9s3Eq+r/z87Rfwm7e7eCLFWrP=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=B/nnn93GQDlYCKd/NTFS+HiXeEcKW3gFaG0sq+ZENvhbhQ0Lyfmzfqjye4IPVd7fS40w5ZUqA3JeUCcF+S27iF4ltGgACu0q/YjENDIvoNBSgzXvdY03O3chEHNFNiHryxlaSIgUDJEPO+EYFcZ7CgvdAx61C6axl3rO9HkfQ8EuUh1m/b0cfVIkWRD8i8BZ3ZyN76KKlbE0nO6eKNXFUpCFnme78gadJ/AbF2VMXk56uK4eWutiZVVmJK9Vp4badbhs6EVTDPS2jwi2l8qiSBISPwYC+OW4PsE0o1GCgUPPOSX0S1kCoKUAoLmkrRdEAmVgcThwvS+7vF4QKG+HUg==
-X-YMail-OSG: rb2W.CAVM1nn7ILuoqlSMVNWYt6G71IbQJ9C1HKd_egYmcdPyshvCQkau2uqHmg
- V3gDzX4MCvbm1s3h6dFstKiJHo0AzxprRnuQDGqR483yok1wJxyctaKFnTfm0G1M4mkfQ9MtlHs2
- kufxSKI0RMU6ZQoe4qnH.AKFJKZZa2j5pHTqs6fg1BHsCVmwJCSQVJcc2csAXuUIXrv4S9PrOzPy
- lY0h1fX9_UCOjjwOTwlp7k0RFzjHJ68s5Xn8SwQFuG7dBQS5zv3Jj7F_I3fgMO4GB1d7G3y_en4K
- LJjY7l7t1esBBF5EmWPkjJP_SzercipYtoBQEicP3BbaVoxj.muoG854TuB7sW77ujQsXY_bxAET
- rECUYPx_CAi8aRCZmQAv8UUuForZc5i2wG3_OCpysheSebAy.m0lEMecot8ONlajAC70zJyyImFa
- 4eHazUYGu9LxQWkht1UJ4talEPeFlQkqHYQmfrI2l6Fw.5Mk8tTnslGtAXC1RY7mb63ZlMKgMCPc
- enELx11AEdl4KjqV58inLw4bKXi6IGG2g8kApCArEXNC3d8n0VedAcFEVFzD2RtXgOWhSQ4xEvoK
- qC3V74GmO8FxOyvaWtAwvof2CYFvK1uYvYrLDmRBUPmWkDC6hexAUKCMtY6L8spNW.q.5vveN.9E
- QAvp2CGyy3izc9wVa6CApmhNucVpKP2_UsQQU6ZhFXGff8d_ahQ.qwuvrV1yBhdGv9i7lShD34Hl
- JCmhyobP9uMtNmcHNyHnwBCfcaxi5q7JBz7XlyBkTFYSi.c8R4deeSgUbv4SJ728RrGHDFrs0McL
- w3tg4xv9cr32JOq3CVhooyneAwu6pdKP2e4EvrOAkq3cXYdt6c09klBaQAuzhGfUWRfxne_K9bT4
- TCAX4IXb2A7Fox.ZKLsg3U.NY.7_1Rd5udexmFFP60nuxfGak6MaoAzL0We06kJ9ZXOszkJ7H.r1
- kYeZ5UxHsU0vrDYAqYIML2q9xuLhvZkHQJ.5J9f43t8wjt4QROThQLxzTYAx6QykkKaT0ElOwQ83
- 4HT42bO02OXfhvqDWBtq4XTUIxlI4x03ku8Bf8Q6VX0h9i5v_9UBOWlQ8_o.45KN.IJ52JX7u7qI
- q1T8_oR03xpxggBH1k4uUPLK_ZbyAcNIAStrSQbMGdx4VCM_g_FsFpmq3RBBNLa.QYrb142GelY8
- h27qRCIz8dL.CZQU0Kvfow5mPV8UKc54mdOZG9RLaynwuFgKG7EF5Gcldg3LgISLFH4cYR35YitR
- g2mhUEKgYpOauWAVQAN2wt03pxI_dFOUZwh5D2PN0Y62xh8.z8Uad_nZGZk3vsMCQQ7trvTyNWZG
- DJZd9jetcMZJRmhPoGWFH8QbA7Y_0mny4K88VoF1rrEl5nqtGIVqLPejPtMblyq8MLkAaVS_hVjo
- LPyJmrbjeUgJZTTPTi14kUmIBES9Q0HIpRbKoGnHiukGzLCtrunI5CRTkKBeK7e2CBth82UX_8mS
- WvvB_Hvgu3EBTLm9GJaVZUks4tpiXQ80ci1zVFtC8sOHXlSJreGDOvEnJl_jg2QLPEkgx9D36qox
- n19FmHxMmOnUlGWWkJFwRMLbhuYJTAsDVYDFVA69nPqXQ8ePmWDzRA_TgBQV7iL7P1.V_gk3o5Fs
- tvNkkhxECcdszebEhteGYlzYsh14.DIfNkYEppJ1TcEkzcHn6HRrJMZ10jOAGCJXQALPu_pWCExa
- rT7oIcsJV5sPD3C6hi3s34.mFwd0kVtnF00FrM2V49EiRKahMv5HSjNYFom66BHBUKhwWTDzEyl.
- hfKXEZAbrk0pLHvQwmEJWzRjeS8wCMTaXYJ.fKT5F_.q36xr_Q1fK5wmyg8nh6YxkuTqP2sVaQWe
- sOH9YFmIIftB156jy8tl_7C6N8d4ffx.q5JEkMgK7xLoZ1Ul6rd8hAJvNDxx3diEXVzUny1FpmJL
- rqLLJYx5vUdHrlk_j2aw_5LW8xM2Zwta29e0ilFkmZETh6un35X_ZaJD3cMNZZzaKCGGS1xrtdu.
- RDwOU8FqtbX9PNBSTHux7VPqC7w5cQRzJPnS9cvpMH8w0tMaNWLIxG5rtB1MFaU8rbeD50RtnATp
- 4WJRrFDWcU0dBPRAUhBT4HmuK54i0CHcFBEdzRaqhlothLGEh_8GIPWP9k8jKz7tABormleib9Py
- Eeq6myb.haTs3APIir3NRVM1Vmnnh8aNvOq1pVq.tv.qWdUmreoDdRduI6ITot6zI3JfN.6w.g1G
- DMgP4TTiohcV8.SfNoFmh7yhU8MNRLlb4bYX9Z5GVYxQGZt9JIwCb..y.bdJ5Z8ZM
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 47ee3241-7a52-4eda-bec9-01823c7c6fd7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Wed, 22 May 2024 01:58:06 +0000
-Received: by hermes--production-gq1-59c575df44-8sqjb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 95637bea4982e23cda54aebcf40e6a2a;
-          Wed, 22 May 2024 01:37:49 +0000 (UTC)
-Message-ID: <ce499a0d-fc35-40cd-aa6e-c100551d137c@schaufler-ca.com>
-Date: Tue, 21 May 2024 18:37:46 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MI1wHXN5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716363765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1B+iTRkM26xJDQ0//STek9xRvnM84UISSi2Pz/0R1YU=;
+	b=MI1wHXN5PXakDRj+d7p5HH2OeB/D5Cy/x4BUH2HC5cXt9NRIFipLQ/nyWJ79BzKSR/JuPX
+	BUSt444RxxpUw7s1z+GcSndQh5/FIuWyMyzzj9org3AZ/oNS5ptOe4HViDPMsC/VcGkWS0
+	aShbtA0/wmgASPruhrrTKk6CPGQwVWE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-342-2PiMF6NKMJWavoWOZqKnUw-1; Wed, 22 May 2024 03:42:41 -0400
+X-MC-Unique: 2PiMF6NKMJWavoWOZqKnUw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-420104e53b7so713405e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 22 May 2024 00:42:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716363760; x=1716968560;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1B+iTRkM26xJDQ0//STek9xRvnM84UISSi2Pz/0R1YU=;
+        b=bPrDR4JWXOZZ75JNGdox9ExSm4qUPGpnHO+vHLVqyhq/SVq0eXBtE8ZD0IRmOsdQtq
+         kQOjhgDbeCoNiK6/lWJ3qeSvaB1i746jKV3tgasePWWHkQ2S7XoL0Rj8xsl6jiVz2B6q
+         jG0In5VOImrjOTPGwWX45v2b8vR9XBsSWGQe7iJ9AIUDeBGpSXc3OXBGGltTABmsWJ5K
+         4n7CDnQuymYVda5Go/k94jUGxXxJlhy2cJVlRdRa+yehE/rZMtYbOIK5zFTAubjljXZR
+         PLMkf5Jl5Oj3MOSnpB44Ddbj1QWjiOyJwQql/m5GfIob7bQo2257SyLRnyv3E2A5L4kv
+         Kvnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUREerIu/kanyZdlYZwHZ+eazqOGS5zIDkvUChAjPaDckG9NbqBL+O74Y5Dffx4GVfZuW+6/8G2osPmFGyhODgmpCN3Fe2R3dOWyYm4fTitJP5ntVdL
+X-Gm-Message-State: AOJu0YxbFviH7+HJiSCU3TWvmzGiNQj3Q7CLhvhU4nRwbsU1a2zCouJ+
+	dkQLIjqN52pZXKBoRXkEOMdDpLxQ9yN9w2u5v20XVKmVwop2yihSfXhcUnEW1GjJu+Np4DOc01d
+	0QUvO4NboF+5LguY2PXfhCE91s2eC0Jaz1piCUtAUoM9+k2DtPjrHD3hgAmMGhAu7+pLhSS5TWA
+	==
+X-Received: by 2002:a05:600c:3544:b0:41b:e83e:8bb with SMTP id 5b1f17b1804b1-420fd376c84mr8033345e9.3.1716363760500;
+        Wed, 22 May 2024 00:42:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHrNJYQNBCV6/mB0UpUckR8l2hFK7QYVo9GtdTwp5hyr0ELTVeHubB7Oy+dPQUccQniC+/LQw==
+X-Received: by 2002:a05:600c:3544:b0:41b:e83e:8bb with SMTP id 5b1f17b1804b1-420fd376c84mr8033045e9.3.1716363760101;
+        Wed, 22 May 2024 00:42:40 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccee934csm490842515e9.38.2024.05.22.00.42.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 00:42:39 -0700 (PDT)
+Message-ID: <b5e333368d9e69efc6325187a23cef4f4337c738.camel@redhat.com>
+Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
+From: Paolo Abeni <pabeni@redhat.com>
+To: Edward Liaw <edliaw@google.com>, shuah@kernel.org, 
+ =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,  Christian Brauner
+ <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard
+ Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ kernel-team@android.com, linux-security-module@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+Date: Wed, 22 May 2024 09:42:37 +0200
+In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
+References: <20240522005913.3540131-1-edliaw@google.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 27/68] selftests/lsm: Drop define _GNU_SOURCE
-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Christian Brauner <brauner@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
- bpf@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-References: <20240522005913.3540131-1-edliaw@google.com>
- <20240522005913.3540131-28-edliaw@google.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240522005913.3540131-28-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22356 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/21/2024 5:57 PM, Edward Liaw wrote:
-> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
-> redefinition warnings.
->
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Signed-off-by: Edward Liaw <edliaw@google.com>
+On Wed, 2024-05-22 at 00:56 +0000, Edward Liaw wrote:
+> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+> redefinitions of _GNU_SOURCE from source code.
+>=20
+> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> asprintf into kselftest_harness.h, which is a GNU extension and needs
+> _GNU_SOURCE to either be defined prior to including headers or with the
+> -D_GNU_SOURCE flag passed to the compiler.
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+I'm sorry for the late question, but what is the merge plan here?
 
-> ---
->  tools/testing/selftests/lsm/common.c                 | 2 --
->  tools/testing/selftests/lsm/lsm_get_self_attr_test.c | 2 --
->  tools/testing/selftests/lsm/lsm_list_modules_test.c  | 2 --
->  tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 2 --
->  4 files changed, 8 deletions(-)
->
-> diff --git a/tools/testing/selftests/lsm/common.c b/tools/testing/selftests/lsm/common.c
-> index 9ad258912646..1b18aac570f1 100644
-> --- a/tools/testing/selftests/lsm/common.c
-> +++ b/tools/testing/selftests/lsm/common.c
-> @@ -4,8 +4,6 @@
->   *
->   * Copyright © 2023 Casey Schaufler <casey@schaufler-ca.com>
->   */
-> -
-> -#define _GNU_SOURCE
->  #include <linux/lsm.h>
->  #include <fcntl.h>
->  #include <string.h>
-> diff --git a/tools/testing/selftests/lsm/lsm_get_self_attr_test.c b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-> index df215e4aa63f..7465bde3f922 100644
-> --- a/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-> +++ b/tools/testing/selftests/lsm/lsm_get_self_attr_test.c
-> @@ -5,8 +5,6 @@
->   *
->   * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
->   */
-> -
-> -#define _GNU_SOURCE
->  #include <linux/lsm.h>
->  #include <fcntl.h>
->  #include <string.h>
-> diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> index 06d24d4679a6..a6b44e25c21f 100644
-> --- a/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> +++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
-> @@ -5,8 +5,6 @@
->   *
->   * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
->   */
-> -
-> -#define _GNU_SOURCE
->  #include <linux/lsm.h>
->  #include <string.h>
->  #include <stdio.h>
-> diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> index 66dec47e3ca3..110c6a07e74c 100644
-> --- a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> @@ -5,8 +5,6 @@
->   *
->   * Copyright © 2022 Casey Schaufler <casey@schaufler-ca.com>
->   */
-> -
-> -#define _GNU_SOURCE
->  #include <linux/lsm.h>
->  #include <string.h>
->  #include <stdio.h>
+Thanks!
+
+Paolo
+
