@@ -1,28 +1,28 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658E11304A3;
-	Fri, 24 May 2024 20:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73A612EBFC;
+	Fri, 24 May 2024 20:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716583626; cv=none; b=MX2tgQ7g3eg8lFBaYzMFgDKrtzw5DJuZcvZgnWJU6CJYa9JWANYvRM5ZDSr3MNBViZjAvKdXQ2wHkg1allICrcb1OolFtEiroR9XHqsp4O5tfhPio8BbItgnNsCQpiqB0uaGPJo4TU0vU3vWz5jhpPsP45VyJZ8TaZsy6Fc0LEg=
+	t=1716583626; cv=none; b=Y4U9IQXe146+D2hQSLbO1COUK/oIBkdzDPCV4n8rD9xV8EGBGyxrkvHGO6xDrZBb7FQrL6k9QETQfbrmGIr65Uqrcyl7r03Laz8lacUaH0bZTDkm3oMijWxmB5XAhXtYehBYRoq0zq5ugP8txeasGSCyOJ1XGybiM9kw0xLeKzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716583626; c=relaxed/simple;
-	bh=58KJqZpr7tcXAD2RtNhDSDrbIcauGmp8kRiOgMLstPQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=etqXldNEdCRDIDtScfdcZ7QwIGan6ub5im+ow9HOEnQHlLquXvGbPiWh2mwV83fweE7QfAlUlXji9sIyhjC817wF+gvTmnTMKe21XumpGhLoEnR8f+slpdnBSeyVT8AG3pN5khn8HzF80b4faQUPUGMgkrxOSRJaIczXq8JzAao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IVaNsk99; arc=none smtp.client-ip=13.77.154.182
+	bh=AhH2IqJvdgM9pOq0Cqn3h3nREs4VRy8ntYk/eAa9cO0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=HBxuyF1wnMhClBmpsuGqTPNx0tjY74JzK0SVMi47csrHz0EC+oI161/sA+QAENm2W+Kp1zRWq4YbvHOA8ctQvFpKxPPf6ADz8JjFID7ozvWqL2aIoNqch9LOPE+7j66UeEo8EbCG3zx/TG2p9lupkz3GRHHEjYXV7F/LzQZ/fK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KTqFoZvo; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IVaNsk99"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KTqFoZvo"
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-	id 1535120BE59D; Fri, 24 May 2024 13:46:51 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1535120BE59D
+	id E0D5920BE590; Fri, 24 May 2024 13:46:51 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E0D5920BE590
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1716583612;
-	bh=JQh/ltRUW7yEppuixZLk+tmyehDU+shJD1Aw2txd0lQ=;
+	s=default; t=1716583611;
+	bh=vBOMBcwQCO6k4hxnAcXoCQRNIv6CgwhcPskZVNgjbOY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IVaNsk99C4v0PYLAnZTu8jgwVPH2Ew4j4JTKKLO7uIMGtMBMc8jCGF/xM0pcSExRp
-	 lsF6MTZLeA8yx8TRKola9hSlaV9G07STJfV0IFoYUfORcayRXhRuyeT/Xi2zzhjwMm
-	 smaJAqeFNEWTFz3eJihOreDEP5COKSwZSqshdjCo=
+	b=KTqFoZvo0a8F1mIbNlvZnAmq/0C5EuRRTxz6HPZOGPEcwLZVFFhUs2qrWyAW/GZXQ
+	 vFR9GqQs+yvXNVyDgAFVWyruhUs0mOGgyEm/CCT2SEf2fZ/eOEHPFP67+JRPLJ/T+e
+	 sqEnIkRhXZbZFcN788bkK8H+ddylfZtndHv7Yg5U=
 From: Fan Wu <wufan@linux.microsoft.com>
 To: corbet@lwn.net,
 	zohar@linux.ibm.com,
@@ -44,11 +44,10 @@ Cc: linux-doc@vger.kernel.org,
 	dm-devel@lists.linux.dev,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>,
 	Fan Wu <wufan@linux.microsoft.com>
-Subject: [PATCH v19 17/20] scripts: add boot policy generation program
-Date: Fri, 24 May 2024 13:46:46 -0700
-Message-Id: <1716583609-21790-18-git-send-email-wufan@linux.microsoft.com>
+Subject: [PATCH v19 14/20] security: add security_inode_setintegrity() hook
+Date: Fri, 24 May 2024 13:46:43 -0700
+Message-Id: <1716583609-21790-15-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
 References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
@@ -58,399 +57,110 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-From: Deven Bowers <deven.desai@linux.microsoft.com>
+This patch introduces a new hook to save inode's integrity
+data. For example, for fsverity enabled files, LSMs can use this hook to
+save the verified fsverity builtin signature into the inode's security
+blob, and LSMs can make access decisions based on the data inside
+the signature, like the signer certificate.
 
-Enables an IPE policy to be enforced from kernel start, enabling access
-control based on trust from kernel startup. This is accomplished by
-transforming an IPE policy indicated by CONFIG_IPE_BOOT_POLICY into a
-c-string literal that is parsed at kernel startup as an unsigned policy.
-
-Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
----
-v2:
-  + No Changes
-
-v3:
-  + No Changes
-
-v4:
-  + No Changes
-
-v5:
-  + No Changes
-
-v6:
-  + No Changes
-
-v7:
-  + Move from 01/11 to 14/16
-  + Don't return errno directly.
-  + Make output of script more user-friendly
-  + Add escaping for tab and '?'
-  + Mark argv pointer const
-  + Invert return code check in the boot policy parsing code path.
-
-v8:
-  + No significant changes.
-
-v9:
-  + No changes
-
-v10:
-  + Update the init part code for rcu changes in the eval loop patch
-
-v11:
-  + Fix code style issues
-
-v12:
-  + No changes
-
-v13:
-  + No changes
-
-v14:
-  + No changes
+--
+v1-v14:
+  + Not present
 
 v15:
-  + Fix one grammar issue in Kconfig
+  + Introduced
 
 v16:
-  + No changes
+  + Switch to call_int_hook()
 
 v17:
-  + Add years to license header
-  + Fix code and documentation style issues
+  + Fix a typo
 
 v18:
   + No changes
 
 v19:
-  + No changes
+  + Refactor hook declaration
 ---
- scripts/Makefile              |   1 +
- scripts/ipe/Makefile          |   2 +
- scripts/ipe/polgen/.gitignore |   2 +
- scripts/ipe/polgen/Makefile   |   5 ++
- scripts/ipe/polgen/polgen.c   | 145 ++++++++++++++++++++++++++++++++++
- security/ipe/.gitignore       |   2 +
- security/ipe/Kconfig          |  10 +++
- security/ipe/Makefile         |  11 +++
- security/ipe/fs.c             |   8 ++
- security/ipe/ipe.c            |  12 +++
- 10 files changed, 198 insertions(+)
- create mode 100644 scripts/ipe/Makefile
- create mode 100644 scripts/ipe/polgen/.gitignore
- create mode 100644 scripts/ipe/polgen/Makefile
- create mode 100644 scripts/ipe/polgen/polgen.c
- create mode 100644 security/ipe/.gitignore
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      | 10 ++++++++++
+ security/security.c           | 20 ++++++++++++++++++++
+ 3 files changed, 32 insertions(+)
 
-diff --git a/scripts/Makefile b/scripts/Makefile
-index fe56eeef09dd..74c6a777c5bd 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -55,6 +55,7 @@ targets += module.lds
- subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
- subdir-$(CONFIG_MODVERSIONS) += genksyms
- subdir-$(CONFIG_SECURITY_SELINUX) += selinux
-+subdir-$(CONFIG_SECURITY_IPE) += ipe
- 
- # Let clean descend into subdirs
- subdir-	+= basic dtc gdb kconfig mod
-diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
-new file mode 100644
-index 000000000000..e87553fbb8d6
---- /dev/null
-+++ b/scripts/ipe/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+subdir-y := polgen
-diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
-new file mode 100644
-index 000000000000..b6f05cf3dc0e
---- /dev/null
-+++ b/scripts/ipe/polgen/.gitignore
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+polgen
-diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
-new file mode 100644
-index 000000000000..c20456a2f2e9
---- /dev/null
-+++ b/scripts/ipe/polgen/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+hostprogs-always-y	:= polgen
-+HOST_EXTRACFLAGS += \
-+	-I$(srctree)/include \
-+	-I$(srctree)/include/uapi \
-diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
-new file mode 100644
-index 000000000000..c6283b3ff006
---- /dev/null
-+++ b/scripts/ipe/polgen/polgen.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
-+ */
-+
-+#include <stdlib.h>
-+#include <stddef.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <errno.h>
-+
-+static void usage(const char *const name)
-+{
-+	printf("Usage: %s OutputFile (PolicyFile)\n", name);
-+	exit(EINVAL);
-+}
-+
-+static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
-+{
-+	size_t fsize;
-+	size_t read;
-+	char *lbuf;
-+	int rc = 0;
-+	FILE *fd;
-+
-+	fd = fopen(pathname, "r");
-+	if (!fd) {
-+		rc = errno;
-+		goto out;
-+	}
-+
-+	fseek(fd, 0, SEEK_END);
-+	fsize = ftell(fd);
-+	rewind(fd);
-+
-+	lbuf = malloc(fsize);
-+	if (!lbuf) {
-+		rc = ENOMEM;
-+		goto out_close;
-+	}
-+
-+	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
-+	if (read != fsize) {
-+		rc = -1;
-+		goto out_free;
-+	}
-+
-+	*buffer = lbuf;
-+	*size = fsize;
-+	fclose(fd);
-+
-+	return rc;
-+
-+out_free:
-+	free(lbuf);
-+out_close:
-+	fclose(fd);
-+out:
-+	return rc;
-+}
-+
-+static int write_boot_policy(const char *pathname, const char *buf, size_t size)
-+{
-+	int rc = 0;
-+	FILE *fd;
-+	size_t i;
-+
-+	fd = fopen(pathname, "w");
-+	if (!fd) {
-+		rc = errno;
-+		goto err;
-+	}
-+
-+	fprintf(fd, "/* This file is automatically generated.");
-+	fprintf(fd, " Do not edit. */\n");
-+	fprintf(fd, "#include <linux/stddef.h>\n");
-+	fprintf(fd, "\nextern const char *const ipe_boot_policy;\n\n");
-+	fprintf(fd, "const char *const ipe_boot_policy =\n");
-+
-+	if (!buf || size == 0) {
-+		fprintf(fd, "\tNULL;\n");
-+		fclose(fd);
-+		return 0;
-+	}
-+
-+	fprintf(fd, "\t\"");
-+
-+	for (i = 0; i < size; ++i) {
-+		switch (buf[i]) {
-+		case '"':
-+			fprintf(fd, "\\\"");
-+			break;
-+		case '\'':
-+			fprintf(fd, "'");
-+			break;
-+		case '\n':
-+			fprintf(fd, "\\n\"\n\t\"");
-+			break;
-+		case '\\':
-+			fprintf(fd, "\\\\");
-+			break;
-+		case '\t':
-+			fprintf(fd, "\\t");
-+			break;
-+		case '\?':
-+			fprintf(fd, "\\?");
-+			break;
-+		default:
-+			fprintf(fd, "%c", buf[i]);
-+		}
-+	}
-+	fprintf(fd, "\";\n");
-+	fclose(fd);
-+
-+	return 0;
-+
-+err:
-+	if (fd)
-+		fclose(fd);
-+	return rc;
-+}
-+
-+int main(int argc, const char *const argv[])
-+{
-+	char *policy = NULL;
-+	size_t len = 0;
-+	int rc = 0;
-+
-+	if (argc < 2)
-+		usage(argv[0]);
-+
-+	if (argc > 2) {
-+		rc = policy_to_buffer(argv[2], &policy, &len);
-+		if (rc != 0)
-+			goto cleanup;
-+	}
-+
-+	rc = write_boot_policy(argv[1], policy, len);
-+cleanup:
-+	if (policy)
-+		free(policy);
-+	if (rc != 0)
-+		perror("An error occurred during policy conversion: ");
-+	return rc;
-+}
-diff --git a/security/ipe/.gitignore b/security/ipe/.gitignore
-new file mode 100644
-index 000000000000..07313d3fd74a
---- /dev/null
-+++ b/security/ipe/.gitignore
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+boot-policy.c
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index 6bc487b689e0..fccc69e66af1 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -21,6 +21,16 @@ menuconfig SECURITY_IPE
- 	  If unsure, answer N.
- 
- if SECURITY_IPE
-+config IPE_BOOT_POLICY
-+	string "Integrity policy to apply on system startup"
-+	help
-+	  This option specifies a filepath to an IPE policy that is compiled
-+	  into the kernel. This policy will be enforced until a policy update
-+	  is deployed via the $securityfs/ipe/policies/$policy_name/active
-+	  interface.
-+
-+	  If unsure, leave blank.
-+
- menu "IPE Trust Providers"
- 
- config IPE_PROP_DM_VERITY
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index e1019bb9f0f3..84ad76556170 100644
---- a/security/ipe/Makefile
-+++ b/security/ipe/Makefile
-@@ -5,7 +5,16 @@
- # Makefile for building the IPE module as part of the kernel tree.
- #
- 
-+quiet_cmd_polgen = IPE_POL $(2)
-+      cmd_polgen = scripts/ipe/polgen/polgen security/ipe/boot-policy.c $(2)
-+
-+targets += boot-policy.c
-+
-+$(obj)/boot-policy.c: scripts/ipe/polgen/polgen $(CONFIG_IPE_BOOT_POLICY) FORCE
-+	$(call if_changed,polgen,$(CONFIG_IPE_BOOT_POLICY))
-+
- obj-$(CONFIG_SECURITY_IPE) += \
-+	boot-policy.o \
- 	digest.o \
- 	eval.o \
- 	hooks.o \
-@@ -15,3 +24,5 @@ obj-$(CONFIG_SECURITY_IPE) += \
- 	policy_fs.o \
- 	policy_parser.o \
- 	audit.o \
-+
-+clean-files := boot-policy.c \
-diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-index b52fb6023904..5b6d19fb844a 100644
---- a/security/ipe/fs.c
-+++ b/security/ipe/fs.c
-@@ -190,6 +190,7 @@ static const struct file_operations enforce_fops = {
- static int __init ipe_init_securityfs(void)
- {
- 	int rc = 0;
-+	struct ipe_policy *ap;
- 
- 	if (!ipe_enabled)
- 		return -EOPNOTSUPP;
-@@ -220,6 +221,13 @@ static int __init ipe_init_securityfs(void)
- 		goto err;
- 	}
- 
-+	ap = rcu_access_pointer(ipe_active_policy);
-+	if (ap) {
-+		rc = ipe_new_policyfs_node(ap);
-+		if (rc)
-+			goto err;
-+	}
-+
- 	np = securityfs_create_file("new_policy", 0200, root, NULL, &np_fops);
- 	if (IS_ERR(np)) {
- 		rc = PTR_ERR(np);
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index da79f66b0010..5e993cbf3428 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -9,6 +9,7 @@
- #include "hooks.h"
- #include "eval.h"
- 
-+extern const char *const ipe_boot_policy;
- bool ipe_enabled;
- 
- static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
-@@ -74,9 +75,20 @@ static struct security_hook_list ipe_hooks[] __ro_after_init = {
-  */
- static int __init ipe_init(void)
- {
-+	struct ipe_policy *p = NULL;
-+
- 	security_add_hooks(ipe_hooks, ARRAY_SIZE(ipe_hooks), &ipe_lsmid);
- 	ipe_enabled = true;
- 
-+	if (ipe_boot_policy) {
-+		p = ipe_new_policy(ipe_boot_policy, strlen(ipe_boot_policy),
-+				   NULL, 0);
-+		if (IS_ERR(p))
-+			return PTR_ERR(p);
-+
-+		rcu_assign_pointer(ipe_active_policy, p);
-+	}
-+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 4f9b43a87ba5..46293ca34091 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -178,6 +178,8 @@ LSM_HOOK(void, LSM_RET_VOID, inode_getsecid, struct inode *inode, u32 *secid)
+ LSM_HOOK(int, 0, inode_copy_up, struct dentry *src, struct cred **new)
+ LSM_HOOK(int, -EOPNOTSUPP, inode_copy_up_xattr, struct dentry *src,
+ 	 const char *name)
++LSM_HOOK(int, 0, inode_setintegrity, const struct inode *inode,
++	 enum lsm_integrity_type type, const void *value, size_t size)
+ LSM_HOOK(int, 0, kernfs_init_security, struct kernfs_node *kn_dir,
+ 	 struct kernfs_node *kn)
+ LSM_HOOK(int, 0, file_permission, struct file *file, int mask)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 09c80326518f..ab489fb02f06 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -410,6 +410,9 @@ int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer
+ void security_inode_getsecid(struct inode *inode, u32 *secid);
+ int security_inode_copy_up(struct dentry *src, struct cred **new);
+ int security_inode_copy_up_xattr(struct dentry *src, const char *name);
++int security_inode_setintegrity(const struct inode *inode,
++				enum lsm_integrity_type type, const void *value,
++				size_t size);
+ int security_kernfs_init_security(struct kernfs_node *kn_dir,
+ 				  struct kernfs_node *kn);
+ int security_file_permission(struct file *file, int mask);
+@@ -1026,6 +1029,13 @@ static inline int security_inode_copy_up(struct dentry *src, struct cred **new)
  	return 0;
  }
  
++static inline int security_inode_setintegrity(const struct inode *inode,
++					      enum lsm_integrity_type type,
++					      const void *value, size_t size)
++{
++	return 0;
++}
++
+ static inline int security_kernfs_init_security(struct kernfs_node *kn_dir,
+ 						struct kernfs_node *kn)
+ {
+diff --git a/security/security.c b/security/security.c
+index 743652e5e893..f4c7a13c6009 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2682,6 +2682,26 @@ int security_inode_copy_up_xattr(struct dentry *src, const char *name)
+ }
+ EXPORT_SYMBOL(security_inode_copy_up_xattr);
+ 
++/**
++ * security_inode_setintegrity() - Set the inode's integrity data
++ * @inode: inode
++ * @type: type of integrity, e.g. hash digest, signature, etc
++ * @value: the integrity value
++ * @size: size of the integrity value
++ *
++ * Register a verified integrity measurement of a inode with LSMs.
++ * LSMs should free the previously saved data if @value is NULL.
++ *
++ * Return: Returns 0 on success, negative values on failure.
++ */
++int security_inode_setintegrity(const struct inode *inode,
++				enum lsm_integrity_type type, const void *value,
++				size_t size)
++{
++	return call_int_hook(inode_setintegrity, inode, type, value, size);
++}
++EXPORT_SYMBOL(security_inode_setintegrity);
++
+ /**
+  * security_kernfs_init_security() - Init LSM context for a kernfs node
+  * @kn_dir: parent kernfs node
 -- 
 2.44.0
 
