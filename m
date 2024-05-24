@@ -1,59 +1,38 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9437129E8F;
-	Thu, 23 May 2024 21:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA10282E2;
+	Fri, 24 May 2024 09:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716499542; cv=none; b=mYkQv2H1A9k7xyaPYWkwlLl9H1wLXQzpVI78Wx0rnUXBP0FHwfZxcgva7zXmQbbP8eyw/vfAiFBKRIxvdrxODvLcS3vVQwzOkJeKC2tC36sJYOAjGxOGGa3VIGhqImXgo217yMahiFL3WSSe5OiZRT1pu5J4M/T/SWFTiZsfDXc=
+	t=1716543062; cv=none; b=nD5Z8pyPo653g726o5K8E2rJYHmZBfbirgy9TPa5NgsJkHo0ICgL4RRLObfON8zyBYTuV6X7SOsS1/saKEAN1ex0A1pA5ez2pOhLu/ptPoPhW3JWl9nKpiN+f+6tJNH/6MzRlpAr6kPX2CARmtqWYXnJjLMtolUyBZmt2RCvhGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716499542; c=relaxed/simple;
-	bh=bwx46fyxi21f4lcvrvEJTqeSya2jS+B+m4IM+zxLp1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h+aY1VY6MywZ3NbYMzoTMHc45LpiwTXBKtZJU5ItEhl4s5GHEsSYNfGfeHnbcvSobsf5mSowdrkCPAFrGa/meAYwmRo9rJ0EYVQiFmOVOkSab6PhNsbi3e0hjfCCo/lJeuOdz4ZE6pDW0X+sCyANX4aIVLpArIQPQtHDo2gHJGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dqz8ifPL; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dqz8ifPL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06DF3C2BD10;
-	Thu, 23 May 2024 21:25:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716499542;
-	bh=bwx46fyxi21f4lcvrvEJTqeSya2jS+B+m4IM+zxLp1E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Dqz8ifPLdAC3GfGmk+iFUDIJYQqDFZKz/rHwVow7krDMeCSi92Z3jvuJnR5ceYxj1
-	 DHv9R1+hOfYxsGuV2ZrmOaE5rD+6NiD8KJS9yfkSS3sJJ+vILaZbFZgDwlUHjdIxu0
-	 vDvImru48Z+xuT0jf2SFL5Ykhy4ujTInzztBw6VIVopGF53MjuECGB4hFB1tqmco+y
-	 oMr9tmZO7Bp55qDHTzprKeGKMCCC/vXLP1eym3eRqKoMJmEXhfbrLK1srcUCASIKdk
-	 oUulJ0Ow1p2ZXao4JBOuFtARibYlFAOJEZp542NuhQ7lWf8G1ouQHviuYtQVUos4gv
-	 Ry3+u3YepTBvg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	Andreas.Fuchs@infineon.com,
-	James Prestwood <prestwoj@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-crypto@vger.kernel.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org (open list),
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v5 4/5] tpm: tpm2_key: Extend parser to TPM_LoadableKey
-Date: Fri, 24 May 2024 00:25:05 +0300
-Message-ID: <20240523212515.4875-5-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240523212515.4875-1-jarkko@kernel.org>
-References: <20240523212515.4875-1-jarkko@kernel.org>
+	s=arc-20240116; t=1716543062; c=relaxed/simple;
+	bh=iSUGjStUDnULq441NmNtrtnQRwQJUew+PKFp4V5Spyk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JYqvT3ILmKtDqBIO9wDXsp7hNDhT0pVie0LHgIaYufYqExLMjexiuvf2hkIzvT5PUOj9NHkaM3rIdurNFUThp0LD+jKRWLD8+xfujd1kgBAXPetmoy8YJyZ+X3Yzlg8vVjZjrVGV62QGnfycXVT1DjOgjodqZfpNAsXiqOsRJRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Vm09Y5DDmz1HCVN;
+	Fri, 24 May 2024 17:29:21 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id DF78F14037C;
+	Fri, 24 May 2024 17:30:55 +0800 (CST)
+Received: from mscphis02103.huawei.com (10.123.65.215) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 24 May 2024 17:30:54 +0800
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+To: <mic@digikod.net>
+CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+Subject: [RFC PATCH v2 00/12] Socket type control for Landlock
+Date: Fri, 24 May 2024 17:30:03 +0800
+Message-ID: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -61,88 +40,102 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mscpeml100004.china.huawei.com (7.188.51.133) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-Extend parser to TPM_LoadableKey. Add field for oid to struct tpm2_key
-so that callers can differentiate different key types.
+Hello! This is v2 RFC patch dedicated to socket protocols restriction.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-* Fixup klog messages:
-  https://lore.kernel.org/linux-integrity/SN7PR18MB53140F4341BC441C1C11586EE3EA2@SN7PR18MB5314.namprd18.prod.outlook.com/
----
- drivers/char/tpm/tpm2_key.c               | 17 ++++++++++++-----
- include/crypto/tpm2_key.h                 |  2 ++
- security/keys/trusted-keys/trusted_tpm2.c |  4 ++++
- 3 files changed, 18 insertions(+), 5 deletions(-)
+It is based on the landlock's mic-next branch on top of v6.9 kernel
+version.
 
-diff --git a/drivers/char/tpm/tpm2_key.c b/drivers/char/tpm/tpm2_key.c
-index 7662b2cb85bf..b5c07288eff5 100644
---- a/drivers/char/tpm/tpm2_key.c
-+++ b/drivers/char/tpm/tpm2_key.c
-@@ -32,16 +32,23 @@ int tpm2_key_type(void *context, size_t hdrlen,
- 		  const void *value, size_t vlen)
- {
- 	enum OID oid = look_up_OID(value, vlen);
--
--	if (oid != OID_TPMSealedData) {
-+	struct tpm2_key *key = context;
-+
-+	switch (oid) {
-+	case OID_TPMSealedData:
-+		pr_debug("TPMSealedData\n");
-+		break;
-+	case OID_TPMLoadableKey:
-+		pr_debug("TPMLodableKey\n");
-+		break;
-+	default:
- 		char buffer[50];
--
- 		sprint_oid(value, vlen, buffer, sizeof(buffer));
--		pr_debug("OID is \"%s\" which is not TPMSealedData\n",
--			 buffer);
-+		pr_debug("Unknown OID \"%s\"\n", buffer);
- 		return -EINVAL;
- 	}
- 
-+	key->oid = oid;
- 	return 0;
- }
- 
-diff --git a/include/crypto/tpm2_key.h b/include/crypto/tpm2_key.h
-index acf41b2e0c92..2d2434233000 100644
---- a/include/crypto/tpm2_key.h
-+++ b/include/crypto/tpm2_key.h
-@@ -2,12 +2,14 @@
- #ifndef __LINUX_TPM2_KEY_H__
- #define __LINUX_TPM2_KEY_H__
- 
-+#include <linux/oid_registry.h>
- #include <linux/slab.h>
- 
- /*
-  * TPM2 ASN.1 key
-  */
- struct tpm2_key {
-+	enum OID oid;
- 	u32 parent;
- 	const u8 *blob;
- 	u32 blob_len;
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index e0bd1a2fc2ca..5b4555dd13e5 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -303,6 +303,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		payload->old_format = 1;
- 	} else {
- 		blob = key.blob;
-+		if (key.oid != OID_TPMSealedData) {
-+			tpm2_key_destroy(&key);
-+			return -EINVAL;
-+		}
- 	}
- 
- 	if (!blob)
+Description
+===========
+Patchset implements new type of Landlock rule, that restricts socket
+protocols used in the sandboxed process. This restriction does not affect
+socket actions such as bind(2) or send(2), only those actions that result
+in a socket with unwanted protocol (e.g. creating socket with socket(2)).
+
+Such restriction would be useful to ensure that a sandboxed process uses
+only necessary protocols. For example sandboxed TCP server may want to
+permit only TCP sockets and deny any others. See [1] for more cases.
+
+The rules store information about the socket family and type. Thus, any
+protocol that can be defined by a family-type pair can be restricted by
+Landlock.
+
+struct landlock_socket_attr {
+	__u64 allowed_access;
+	int family; // same as domain in socket(2)
+	int type; // see socket(2)
+}
+
+Patchset currently implements rule only for socket creation, but
+other necessary rules will also be impemented. [2]
+
+[1] https://lore.kernel.org/all/ZJvy2SViorgc+cZI@google.com/
+[2] https://lore.kernel.org/all/b8a2045a-e7e8-d141-7c01-bf47874c7930@digikod.net/
+
+Code coverage
+=============
+Code coverage(gcov) report with the launch of all the landlock selftests:
+* security/landlock:
+lines......: 93.3% (795 of 852 lines)
+functions..: 95.5% (106 of 111 functions)
+
+* security/landlock/socket.c:
+lines......: 100.0% (33 of 33 lines)
+functions..: 100.0% (5 of 5 functions)
+
+General changes
+===============
+ * Rebases on mic-next (landlock-6.10-rc1).
+ * Refactors code and commits.
+ * Renames `family` into `domain` in landlock_socket_attr.
+ * Changes ABI version from 5 to 6.
+ * Reverts landlock_key.data type from u64 to uinptr_t.
+ * Adds mini.socket_overflow, mini.socket_invalid_type tests.
+
+Previous versions
+=================
+v1: https://lore.kernel.org/all/20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com/
+
+Mikhail Ivanov (12):
+  landlock: Support socket access-control
+  landlock: Add hook on socket creation
+  selftests/landlock: Add protocol.create to socket tests
+  selftests/landlock: Add protocol.socket_access_rights to socket tests
+  selftests/landlock: Add protocol.rule_with_unknown_access to socket
+    tests
+  selftests/landlock: Add protocol.rule_with_unhandled_access to socket
+    tests
+  selftests/landlock: Add protocol.inval to socket tests
+  selftests/landlock: Add tcp_layers.ruleset_overlap to socket tests
+  selftests/landlock: Add mini.ruleset_with_unknown_access to socket
+    tests
+  selftests/landlock: Add mini.socket_overflow to socket tests
+  selftests/landlock: Add mini.socket_invalid_type to socket tests
+  samples/landlock: Support socket protocol restrictions
+
+ include/uapi/linux/landlock.h                 |  53 +-
+ samples/landlock/sandboxer.c                  | 141 ++++-
+ security/landlock/Makefile                    |   2 +-
+ security/landlock/limits.h                    |   5 +
+ security/landlock/ruleset.c                   |  37 +-
+ security/landlock/ruleset.h                   |  41 +-
+ security/landlock/setup.c                     |   2 +
+ security/landlock/socket.c                    | 130 ++++
+ security/landlock/socket.h                    |  19 +
+ security/landlock/syscalls.c                  |  66 +-
+ tools/testing/selftests/landlock/base_test.c  |   2 +-
+ tools/testing/selftests/landlock/common.h     |   1 +
+ tools/testing/selftests/landlock/config       |   1 +
+ .../testing/selftests/landlock/socket_test.c  | 581 ++++++++++++++++++
+ 14 files changed, 1056 insertions(+), 25 deletions(-)
+ create mode 100644 security/landlock/socket.c
+ create mode 100644 security/landlock/socket.h
+ create mode 100644 tools/testing/selftests/landlock/socket_test.c
+
 -- 
-2.45.1
+2.34.1
 
