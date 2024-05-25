@@ -1,148 +1,390 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BED138E;
-	Sat, 25 May 2024 05:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B96A18E02
+	for <linux-security-module@vger.kernel.org>; Sat, 25 May 2024 09:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716616203; cv=none; b=VYAC+d37bcNHyYpI/96WQ4WvOYXLnaCnR5W+rD6nxFzUu+7mCQNH5FeoNVlyMhUmQD0vIvPBYmgrD+EFkKRK2SMWT0l0yfMd0y8/8myaDO4KQ/vYYrtvZC/GBqLF+2H19Af4/BSSwC0KoSM7+ldDueWPKDY+x6fcN879xQAa4l0=
+	t=1716627768; cv=none; b=YH79gpAz5NAKnEvX6k9ObqlIdvA39yuu8G1bma9r4gInC10BmVf++YhLgVDgcnCnJejK2FtpJWsL62K0rD2avgX/vGAVvrO900qPp8wlIGvnMfVFlHfXSq6jF471T2XcngGr3Qarr304kGnYGU/Lf1gmjdtEwMNV/F3YcJLVbWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716616203; c=relaxed/simple;
-	bh=VSJIf4tmyz34+ryR8Cz9iQWIiMNUye0lMZyO2dQZvMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iq/NeGipyNNescnUHF96TzVwbHHuDzKorDCI4JgSm5xRqdTy8jSRIOWwfxmUmxj2oFnMk8Fi1l1Rgm3ieUaRGtWjlrHmbcvVmJv/FKkBfqSqc2QOOmvvPEmcYOoK0A64MomY7rS4HmdfQcGzT/osjLEK4/GK7FVLsduLiO7Ef/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U+5NR9Jw; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1716627768; c=relaxed/simple;
+	bh=WXZ3aTu/mmAKPxVAoAnX/sGVd7wKZ9FD/gY3DymuZY8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=O0bPSIAI1pAYPSWDjpt2OVpte9IFwMI34opABFNYCMOiblTVaY0fjw7w92dd8HCco0aAGi4ABOzrrLZswCy/+Zh2TyocQzgpl+laNTMHXFRlz/oAmBuL4ljFknmIorMRoEGw9cTCLE1dAMbMpUaKtWOSOQDoGgq7WvPJYSsJqOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XWNXJXXW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U+5NR9Jw"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=NjAIpWnGAztCMT7g7qkBL9r84roWJZLVxyIj65a/6/g=; b=U+5NR9JwCWW91cWlPKNvy1chd+
-	u0P/4HzM54MNe7A5vcQkxEZIlUb+dWfmrzRfJBHK7ADk3m/B4A/g3f6qMV8dGnYxd3wwq55EjRizS
-	5Y+EPpe2PN/GQIounZZSCkN/jGS6Yr1LjDieV11c/QyKfnzCgNVtzXRhlxBp8T0GznxoyiwSXM5HF
-	6eUbbl0Gwi3JXDOqrdPy99p+rR/7mwSWbXPya1yElAbc1ZkSoTLh0mVeGr+5zhHJ6OFisoRLbNN5A
-	Xx4xVSxUaf6oksx+MpjfGzzO9xL5YETFCy1jlTvVuQ0v3XAO+xr7UnoGj7Fa2estAJlHRGJ7LJepO
-	6Qz1N4sw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sAkI1-0000000ASst-1eDf;
-	Sat, 25 May 2024 05:49:57 +0000
-Message-ID: <9ce0c222-c80c-4049-8746-d74e612c3030@infradead.org>
-Date: Fri, 24 May 2024 22:49:54 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XWNXJXXW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716627765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1J0rKNy85PKDwGmqMPeEERwZIA8DQYDYUviYS11PQQ8=;
+	b=XWNXJXXWpV8cn5hv+n0obS0McC4ZOTx0agyrl4dovamFfzNLSIull9HqNpWfjutsPbF6b5
+	ktW67Kfmj9OGVGAy7dop1fNvg8fRV2Tqq9GIFc4sDUdFP6aTbycNYxnXOavemhcrM/JgyJ
+	IR6Wa5CS8FLeO0iRcHy3hIjEvepGgCQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-61-egEkEatAOuOAHeJGROQ6tw-1; Sat, 25 May 2024 05:02:41 -0400
+X-MC-Unique: egEkEatAOuOAHeJGROQ6tw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 67D8F101A525;
+	Sat, 25 May 2024 09:02:40 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id E3736200B4CF;
+	Sat, 25 May 2024 09:02:39 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id C2A9D30C1C33; Sat, 25 May 2024 09:02:39 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id BE9F23FB52;
+	Sat, 25 May 2024 11:02:39 +0200 (CEST)
+Date: Sat, 25 May 2024 11:02:39 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Fan Wu <wufan@linux.microsoft.com>
+cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, 
+    tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, 
+    snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com, 
+    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+    linux-block@vger.kernel.org, dm-devel@lists.linux.dev, 
+    audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [PATCH v19 12/20] dm verity: expose root hash digest and signature
+ data to LSMs
+In-Reply-To: <1716583609-21790-13-git-send-email-wufan@linux.microsoft.com>
+Message-ID: <fc51683b-827e-3f6c-baff-c64670ea5ab@redhat.com>
+References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com> <1716583609-21790-13-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] proc: restrict /proc/pid/mem
-To: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com,
- inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org,
- Guenter Roeck <groeck@chromium.org>, Doug Anderson <dianders@chromium.org>,
- Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>, Mike Frysinger <vapier@chromium.org>
-References: <20240524192858.3206-1-adrian.ratiu@collabora.com>
- <20240524192858.3206-2-adrian.ratiu@collabora.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240524192858.3206-2-adrian.ratiu@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-Hi--
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
 
-On 5/24/24 12:28 PM, Adrian Ratiu wrote:
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 412e76f1575d..0cd73f848b5a 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -183,6 +183,74 @@ config STATIC_USERMODEHELPER_PATH
->  	  If you wish for all usermode helper programs to be disabled,
->  	  specify an empty string here (i.e. "").
+
+
+On Fri, 24 May 2024, Fan Wu wrote:
+
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
+> 
+> dm-verity provides a strong guarantee of a block device's integrity. As
+> a generic way to check the integrity of a block device, it provides
+> those integrity guarantees to its higher layers, including the filesystem
+> level.
+> 
+> An LSM that control access to a resource on the system based on the
+> available integrity claims can use this transitive property of
+> dm-verity, by querying the underlying block_device of a particular
+> file.
+> 
+> The digest and signature information need to be stored in the block
+> device to fulfill the next requirement of authorization via LSM policy.
+> This will enable the LSM to perform revocation of devices that are still
+> mounted, prohibiting execution of files that are no longer authorized
+> by the LSM in question.
+> 
+> This patch adds two security hook calls in dm-verity to expose the
+> dm-verity roothash and the roothash signature to LSMs via preresume
+> callback. The hook calls are depended on CONFIG_SECURITY.
+> 
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> ---
+> v2:
+>   + No Changes
+> 
+> v3:
+>   + No changes
+> 
+> v4:
+>   + No changes
+> 
+> v5:
+>   + No changes
+> 
+> v6:
+>   + Fix an improper cleanup that can result in
+>     a leak
+> 
+> v7:
+>   + Squash patch 08/12, 10/12 to [11/16]
+>   + Use part0 for block_device, to retrieve the block_device, when
+>     calling security_bdev_setsecurity
+> 
+> v8:
+>   + Undo squash of 08/12, 10/12 - separating drivers/md/ from
+>     security/ & block/
+>   + Use common-audit function for dmverity_signature.
+>   + Change implementation for storing the dm-verity digest to use the
+>     newly introduced dm_verity_digest structure introduced in patch
+>     14/20.
+>   + Create new structure, dm_verity_digest, containing digest algorithm,
+>     size, and digest itself to pass to the LSM layer. V7 was missing the
+>     algorithm.
+>   + Create an associated public header containing this new structure and
+>     the key values for the LSM hook, specific to dm-verity.
+>   + Additional information added to commit, discussing the layering of
+>     the changes and how the information passed will be used.
+> 
+> v9:
+>   + No changes
+> 
+> v10:
+>   + No changes
+> 
+> v11:
+>   + Add an optional field to save signature
+>   + Move the security hook call to the new finalize hook
+> 
+> v12:
+>   + No changes
+> 
+> v13:
+>   + No changes
+> 
+> v14:
+>   + Correct code format
+>   + Remove unnecessary header and switch to dm_disk()
+> 
+> v15:
+>   + Refactor security_bdev_setsecurity() to security_bdev_setintegrity()
+>   + Remove unnecessary headers
+> 
+> v16:
+>   + Use kmemdup to duplicate signature
+>   + Clean up lsm blob data in error case
+> 
+> v17:
+>   + Switch to depend on CONFIG_SECURITY
+>   + Use new enum name LSM_INT_DMVERITY_SIG_VALID
+> 
+> v18:
+>   + Amend commit title
+>   + Fix incorrect error handling
+>   + Make signature exposure depends on CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
+>   + Fix inaccurate comment
+>   + Remove include/linux/dm-verity.h
+>   + use crypto_ahash_alg_name(v->tfm) instead of v->alg_name
+> 
+> v19:
+>   + Drop finalize callback and switch to preresume callback
+>   + Adding NULL check to avoid kmemdup when sig is NULL
+> ---
+>  drivers/md/dm-verity-target.c | 108 ++++++++++++++++++++++++++++++++++
+>  drivers/md/dm-verity.h        |   6 ++
+>  include/linux/security.h      |   9 ++-
+>  3 files changed, 122 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index bb5da66da4c1..0a54ce02ea53 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/string.h>
+>  #include <linux/jump_label.h>
+> +#include <linux/security.h>
 >  
-> +menu "Procfs mem restriction options"
+>  #define DM_MSG_PREFIX			"verity"
+>  
+> @@ -1017,6 +1018,41 @@ static void verity_io_hints(struct dm_target *ti, struct queue_limits *limits)
+>  	blk_limits_io_min(limits, limits->logical_block_size);
+>  }
+>  
+> +#ifdef CONFIG_SECURITY
 > +
-> +config PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT
-> +	bool "Restrict all FOLL_FORCE flag usage"
-> +	default n
-> +	help
-> +	  Restrict all FOLL_FORCE usage during /proc/*/mem RW.
-> +	  Debuggerg like GDB require using FOLL_FORCE for basic
+> +static int verity_init_sig(struct dm_verity *v, const void *sig,
+> +			   size_t sig_size)
+> +{
+> +	v->sig_size = sig_size;
+> +
+> +	if (sig) {
+> +		v->root_digest_sig = kmemdup(sig, v->sig_size, GFP_KERNEL);
+> +		if (!v->root_digest_sig)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void verity_free_sig(struct dm_verity *v)
+> +{
+> +	kfree(v->root_digest_sig);
+> +}
+> +
+> +#else
+> +
+> +static inline int verity_init_sig(struct dm_verity *v, const void *sig,
+> +				  size_t sig_size)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void verity_free_sig(struct dm_verity *v)
+> +{
+> +}
+> +
+> +#endif /* CONFIG_SECURITY */
+> +
+>  static void verity_dtr(struct dm_target *ti)
+>  {
+>  	struct dm_verity *v = ti->private;
+> @@ -1035,6 +1071,7 @@ static void verity_dtr(struct dm_target *ti)
+>  	kfree(v->salt);
+>  	kfree(v->root_digest);
+>  	kfree(v->zero_digest);
+> +	verity_free_sig(v);
+>  
+>  	if (v->tfm)
+>  		crypto_free_ahash(v->tfm);
+> @@ -1434,6 +1471,13 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>  		ti->error = "Root hash verification failed";
+>  		goto bad;
+>  	}
+> +
+> +	r = verity_init_sig(v, verify_args.sig, verify_args.sig_size);
+> +	if (r < 0) {
+> +		ti->error = "Cannot allocate root digest signature";
+> +		goto bad;
+> +	}
+> +
+>  	v->hash_per_block_bits =
+>  		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
+>  
+> @@ -1584,6 +1628,67 @@ int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest, unsigned i
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_SECURITY
+> +
+> +#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
+> +
+> +static int verity_security_set_signature(struct block_device *bdev,
+> +					 struct dm_verity *v)
+> +{
+> +	return security_bdev_setintegrity(bdev,
+> +					  LSM_INT_DMVERITY_SIG_VALID,
+> +					  v->root_digest_sig,
+> +					  v->sig_size);
+> +}
+> +
+> +#else
+> +
+> +static inline int verity_security_set_signature(struct block_device *bdev,
+> +						struct dm_verity *v)
+> +{
+> +	return 0;
+> +}
+> +
+> +#endif /* CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG */
+> +
+> +/*
+> + * Expose verity target's root hash and signature data to LSMs before resume.
+> + *
+> + * Returns 0 on success, or -ENOMEM if the system is out of memory.
+> + */
+> +static int verity_preresume(struct dm_target *ti)
+> +{
+> +	struct block_device *bdev;
+> +	struct dm_verity_digest root_digest;
+> +	struct dm_verity *v;
+> +	int r;
+> +
+> +	v = ti->private;
+> +	bdev = dm_disk(dm_table_get_md(ti->table))->part0;
+> +	root_digest.digest = v->root_digest;
+> +	root_digest.digest_len = v->digest_size;
+> +	root_digest.alg = crypto_ahash_alg_name(v->tfm);
+> +
+> +	r = security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, &root_digest,
+> +				       sizeof(root_digest));
+> +	if (r)
+> +		return r;
+> +
+> +	r =  verity_security_set_signature(bdev, v);
+> +	if (r)
+> +		goto bad;
+> +
+> +	return 0;
+> +
+> +bad:
+> +
+> +	security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, NULL, 0);
+> +
+> +	return r;
+> +}
+> +
+> +#endif /* CONFIG_SECURITY */
+> +
+>  static struct target_type verity_target = {
+>  	.name		= "verity",
+>  	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
+> @@ -1596,6 +1701,9 @@ static struct target_type verity_target = {
+>  	.prepare_ioctl	= verity_prepare_ioctl,
+>  	.iterate_devices = verity_iterate_devices,
+>  	.io_hints	= verity_io_hints,
+> +#ifdef CONFIG_SECURITY
+> +	.preresume	= verity_preresume,
+> +#endif /* CONFIG_SECURITY */
+>  };
+>  module_dm(verity);
+>  
+> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+> index 20b1bcf03474..2de89e0d555b 100644
+> --- a/drivers/md/dm-verity.h
+> +++ b/drivers/md/dm-verity.h
+> @@ -43,6 +43,9 @@ struct dm_verity {
+>  	u8 *root_digest;	/* digest of the root block */
+>  	u8 *salt;		/* salt: its size is salt_size */
+>  	u8 *zero_digest;	/* digest for a zero block */
+> +#ifdef CONFIG_SECURITY
+> +	u8 *root_digest_sig;	/* signature of the root digest */
+> +#endif /* CONFIG_SECURITY */
+>  	unsigned int salt_size;
+>  	sector_t data_start;	/* data offset in 512-byte sectors */
+>  	sector_t hash_start;	/* hash start in blocks */
+> @@ -56,6 +59,9 @@ struct dm_verity {
+>  	bool hash_failed:1;	/* set if hash of any block failed */
+>  	bool use_bh_wq:1;	/* try to verify in BH wq before normal work-queue */
+>  	unsigned int digest_size;	/* digest size for the current hash algorithm */
+> +#ifdef CONFIG_SECURITY
+> +	unsigned int sig_size;	/* root digest signature size */
+> +#endif /* CONFIG_SECURITY */
+>  	unsigned int ahash_reqsize;/* the size of temporary space for crypto */
+>  	enum verity_mode mode;	/* mode for handling verification errors */
+>  	unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index a64e83622c7c..09c80326518f 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -83,8 +83,15 @@ enum lsm_event {
+>  	LSM_POLICY_CHANGE,
+>  };
+>  
+> +struct dm_verity_digest {
+> +	const char *alg;
+> +	const u8 *digest;
+> +	size_t digest_len;
+> +};
+> +
+>  enum lsm_integrity_type {
+> -	__LSM_INT_MAX
+> +	LSM_INT_DMVERITY_SIG_VALID,
+> +	LSM_INT_DMVERITY_ROOTHASH,
+>  };
+>  
+>  /*
+> -- 
+> 2.44.0
+> 
 
-	  Debuggers
-
-> +	  functionality.
-> +
-> +config PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT
-> +	bool "Restrict FOLL_FORCE usage except for ptracers"
-> +	default n
-> +	help
-> +	  Restrict FOLL_FORCE usage during /proc/*/mem RW, except
-> +	  for ptracer processes. Debuggerg like GDB require using
-
-	                         Debuggers
-
-> +	  FOLL_FORCE for basic functionality.
-> +
-> +config PROC_MEM_RESTRICT_OPEN_READ_DEFAULT
-> +	bool "Restrict all open() read access"
-> +	default n
-> +	help
-> +	  Restrict all open() read access to /proc/*/mem files.
-> +	  Use with caution: this can break init systems, debuggers,
-> +	  container supervisors and other tasks using /proc/*/mem.
-> +
-> +config PROC_MEM_RESTRICT_OPEN_READ_PTRACE_DEFAULT
-> +	bool "Restrict open() for reads except for ptracers"
-> +	default n
-> +	help
-> +	  Restrict open() read access except for ptracer processes.
-> +	  Use with caution: this can break init systems, debuggers,
-> +	  container supervisors and other non-ptrace capable tasks
-> +	  using /proc/*/mem.
-> +
-> +config PROC_MEM_RESTRICT_OPEN_WRITE_DEFAULT
-> +	bool "Restrict all open() write access"
-> +	default n
-> +	help
-> +	  Restrict all open() write access to /proc/*/mem files.
-> +	  Debuggers like GDB and some container supervisors tasks
-> +	  require opening as RW and may break.
-> +
-> +config PROC_MEM_RESTRICT_OPEN_WRITE_PTRACE_DEFAULT
-> +	bool "Restrict open() for writes except for ptracers"
-> +	default n
-> +	help
-> +	  Restrict open() write access except for ptracer processes,
-> +	  usually debuggers.
-> +
-> +config PROC_MEM_RESTRICT_WRITE_DEFAULT
-> +	bool "Restrict all write() calls"
-> +	default n
-> +	help
-> +	  Restrict all /proc/*/mem direct write calls.
-> +	  Open calls with RW modes are still allowed, this blocks
-> +	  just the write() calls.
-> +
-> +config PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT
-> +	bool "Restrict write() calls except for ptracers"
-> +	default n
-> +	help
-> +	  Restrict /proc/*/mem direct write calls except for ptracer processes.
-> +	  Open calls with RW modes are still allowed, this blocks just
-> +	  the write() calls.
-> +
-> +endmenu
-
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
