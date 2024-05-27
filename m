@@ -1,210 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CC610A0C;
-	Mon, 27 May 2024 20:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2940A17BB6
+	for <linux-security-module@vger.kernel.org>; Mon, 27 May 2024 20:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716840076; cv=none; b=ZIWexDTqC6xu8VcrRKScNKLHZowvHmsnjp6zPEHy5EtqZJdaR7jpMMPVqO1w452EWm3QX6+48jfY2NosyhnDMtLLhK6qSnThF4iV90Jnr1Yw9CZ72TQeX051aMt4qrmmF5zOEaX0iP/Zx61LeNng5wnga7I7ajhfMTfQvzaSj8o=
+	t=1716843156; cv=none; b=KTXK7/ULwB9eJ1YrQEFkFdQE1DKTcLL5KYQ9QWbcbEIWRqLzXNoA4eopU2NKzKRMS1FZ75RPlqfItNbNmckypqiWh1SAX0100PLHz/3feCXFocf99ZJs8qD0HicbjBh4to2vOQXrGlFklni18eMb5QwhIRWV89wSyRhE3hRrLvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716840076; c=relaxed/simple;
-	bh=OWQYNDegokhSObT7nbj0+hL6/tPHQ6m0GIe7RUwAVXA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bsOQQrXXCMFvgwRprD8pX4c0y8PJZ1+H5GGaEbIPsTMVnqwgqdSqimTi/Aog4E854PoLYie4FlTSZnM+Wn8ExfBM8dzoiXsv1X1grlrdT17Bq05LkRZS4IV7KyWmRh/e+WEXWoOoadFsHO8bdYxSlb7cX/SFyihGGvYdEzYeIbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlfzhBwf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716843156; c=relaxed/simple;
+	bh=wudtqjXegGU2LtEgfC5Ee2aj9ydGYtWtwEHcvXo/4S0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=q6AlBhQfpWGZM8vQZUq898+/xFZS0my25pCkA3Zj2d1a+fLRC5WSCMY+sG+NZ6Mc4eWHKYrZIx5UBLlLD8XgVnALScXQ6TVX6+Yhs8g4M3/QdQkyKSbkb4qBIwQDVKI8NIsUfNMxfIUkleEu9mCHc4n6YqX+d6iH93MEQXpGSIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VcbWi//G; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlfzhBwf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526CFC2BBFC;
-	Mon, 27 May 2024 20:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716840076;
-	bh=OWQYNDegokhSObT7nbj0+hL6/tPHQ6m0GIe7RUwAVXA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=qlfzhBwfdAG2mxxccilHj0avcjDtwuzZC/VAbeTRGdxMOHXZLzTa0zvFvwCT0kcy6
-	 jbBKqvxVx8Z+tkgamv5EwVkSE6u3+pA99R6op1IyIeVuo33fMQdLXE4xPWJ0Btu8B7
-	 pgpGHT02fLsct+B+mPQvgkenRuoQZZrVPsbC1ehoHPfN96uHrAGoCLIbd5YbNYGbbT
-	 SdQT6fxlimLna1qC2L6p5A8XoB7Cdpsz/sDUHA0gGmmisxHoTYt4pcCOeFv6rBH4dC
-	 bsuPvqKeT88Gz7lzpe5m1nwlQWmBfmnAChMOw/dT6M0swbMCnMKzA7PVxvTawsKiys
-	 O7UPYq9sJmDRg==
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VcbWi//G"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df796aaa57dso165116276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 27 May 2024 13:52:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716843154; x=1717447954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bdSWbeuLkDTbi8rWZxWdxrTiYH7VS1P/CmuJ+z7yq7o=;
+        b=VcbWi//GhbGv/psMmJLARTlU7QOQVYkrDvHl9GhF36Qs8bmMpqPbvGF6QTbQuatn/c
+         Gn+BFhA5duxUdP6+EOHXzcBHowiQxDzoq4faeSiJTQRr6Ao0FNLyFqS/bpNwvCNqPsVw
+         M6f/AV+L4KKuGellOYL1KZs5GHLH6nJx4sZ8Lt6JPlwvzof/J/S4NIzSEdfFaIVne3Rf
+         By/Hzlknqj0L41sS0rMZik5jcuxoucULuBPpLkFZPNoaGhSpo5jLMoQtBTjPpVpu6xVg
+         mxYuBVs72E4r0ePDm3NqtigcAi7L2ev1FO3vItUjlxhuFMpv4niCtT41icMVP6ZD+M5E
+         whwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716843154; x=1717447954;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bdSWbeuLkDTbi8rWZxWdxrTiYH7VS1P/CmuJ+z7yq7o=;
+        b=b0PPl97u9urTsL1seSgXVuN0YUp/YtxHv6vQc1JR/kYOECEejHHYtbLucjjs9T1Mo2
+         N8opD76n4osrTXqhSFnc0q06odARmMcahsiXJxR62x+7s5BQoiulIq6FmGUSevQhDMKR
+         7FagFlBtix6iH4zFTS2TsL1TJI4cY82fI1bJFInHn9eGAmCr65AXxZxkjqYlbvsnFcXG
+         eRVnxYlTJPc6ArAY6sSV69Ev3sHEHmXQToG5d0ZtVdEumEKlC8kE2bLpRlMvjzDsx/Py
+         BSnMm9G3HZzF5dDGt7GdC5SRe43OdtgtCH+KMJvz0/s+M0yC71Y/1m3HcAVA3lwFWzGw
+         yy1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXmiNpVqa9ZqGbQEBKYdRGf0EkReF7U06lbpo7bb5zPWh8S7v3sSUVyJ4Xx/Zk1Z1aPtgZbLajUNZyanLdK7NepzQ1uvXinsXjk+BOS+35cU8qjOgy5
+X-Gm-Message-State: AOJu0YyNXB14osZEYYHndPAnOWeKkYaWOPePYey60rRVFhtTAs6+c6jM
+	plqOOegw3QIK18gRKw+iqIalZO4Ag9PvBRnYHw/7cNWq3AeY2vUXnY900Za4MITDkDBTkh3Y10g
+	+rg==
+X-Google-Smtp-Source: AGHT+IHDLacknHXmGIL0fTHZIViFSMUziqkpSLS4ou7PKscFtSM39cprVmoLrkxlA8wxM5OY6SXv9Fa4dTU=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a25:943:0:b0:dce:5218:c89b with SMTP id
+ 3f1490d57ef6-df77217397cmr911644276.5.1716843154243; Mon, 27 May 2024
+ 13:52:34 -0700 (PDT)
+Date: Mon, 27 May 2024 22:52:31 +0200
+In-Reply-To: <20240524093015.2402952-5-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com> <20240524093015.2402952-5-ivanov.mikhail1@huawei-partners.com>
+Message-ID: <ZlTyj_0g-E4oM22G@google.com>
+Subject: Re: [RFC PATCH v2 04/12] selftests/landlock: Add protocol.socket_access_rights
+ to socket tests
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 May 2024 23:01:11 +0300
-Message-Id: <D1KP0GQGBREG.1L307RLJM4NAF@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Vitor Soares" <ivitro@gmail.com>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
- <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
- <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
- <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
- <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
- <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
- <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
- <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
- <D1KIV2Q682XH.1GCPYWMFZ8B6J@kernel.org>
- <D1KJBXOPFWT7.1F14BWQJO29FC@kernel.org>
- <ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com>
- <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
-In-Reply-To: <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
 
-On Mon May 27, 2024 at 10:53 PM EEST, Jarkko Sakkinen wrote:
-> On Mon May 27, 2024 at 8:57 PM EEST, James Bottomley wrote:
-> > On Mon, 2024-05-27 at 18:34 +0300, Jarkko Sakkinen wrote:
-> > > On Mon May 27, 2024 at 6:12 PM EEST, Jarkko Sakkinen wrote:
-> > > > On Mon May 27, 2024 at 6:01 PM EEST, Jarkko Sakkinen wrote:
-> > > > > On Mon May 27, 2024 at 5:51 PM EEST, Jarkko Sakkinen wrote:
-> > > > > > On Thu May 23, 2024 at 10:59 AM EEST, Vitor Soares wrote:
-> > > > > > > On Wed, 2024-05-22 at 19:11 +0300, Jarkko Sakkinen wrote:
-> > > > > > > > On Wed May 22, 2024 at 5:58 PM EEST, Vitor Soares wrote:
-> > > > > > > > > I did run with ftrace, but need some more time to go
-> > > > > > > > > through it.
-> > > > > > > > >=20
-> > > > > > > > > Here the step I did:
-> > > > > > > > > kernel config:
-> > > > > > > > > =C2=A0 CONFIG_FUNCTION_TRACER
-> > > > > > > > > =C2=A0 CONFIG_FUNCTION_GRAPH_TRACER
-> > > > > > > > >=20
-> > > > > > > > > ftrace:
-> > > > > > > > > =C2=A0 # set filters
-> > > > > > > > > =C2=A0 echo tpm* > set_ftrace_filter
-> > > > > > > > >=20
-> > > > > > > > > =C2=A0 # set tracer
-> > > > > > > > > =C2=A0 echo function_graph > current_tracer
-> > > > > > > > >=20
-> > > > > > > > > =C2=A0 # take the sample
-> > > > > > > > > =C2=A0 echo 1 > tracing_on; time modprobe tpm_tis_spi; ec=
-ho 0
-> > > > > > > > > > tracing_on
-> > > > > > > > >=20
-> > > > > > > > > regards,
-> > > > > > > > > Vitor Soares
-> > > > > > > >=20
-> > > > > > > > I'm now compiling distro kernel (OpenSUSE) for NUC7 with
-> > > > > > > > v6.10 contents.
-> > > > > > > >=20
-> > > > > > > > After I have that setup, I'll develop a perf test either
-> > > > > > > > with perf or
-> > > > > > > > bpftrace. I'll come back with the possible CONFIG_* that
-> > > > > > > > should be in
-> > > > > > > > place in your kernel. Might take up until next week as I
-> > > > > > > > have some
-> > > > > > > > conference stuff to prepare but I try to have stuff ready
-> > > > > > > > early next
-> > > > > > > > week.
-> > > > > > > >=20
-> > > > > > > > No need to rush with this as long as possible patches go to
-> > > > > > > > rc2 or rc3.
-> > > > > > > > Let's do a proper analysis instead.
-> > > > > > > >=20
-> > > > > > > > In the meantime you could check if you get perf and/or
-> > > > > > > > bpftrace to=20
-> > > > > > > > your image that use to boot up your device. Preferably both
-> > > > > > > > but
-> > > > > > > > please inform about this.
-> > > > > > > >=20
-> > > > > > >=20
-> > > > > > > I already have perf running, for the bpftrace I might not be
-> > > > > > > able to help.
-> > > > > >=20
-> > > > > > The interesting function to look at with/without hmac is
-> > > > > > probably
-> > > > > > tpm2_get_random().
-> > > > > >=20
-> > > > > > I attached a patch that removes hmac shenigans out of
-> > > > > > tpm2_get_random()
-> > > > > > for the sake of proper comparative testing.
-> > > > >=20
-> > > > > Other thing that we need to measure is to split the cost into
-> > > > > two parts:
-> > > > >=20
-> > > > > 1. Handshake, i.e. setting up and shutdowning a session.
-> > > > > 2. Transaction, payload TPM command.
-> > > > >=20
-> > > > > This could be done by setting up couple of kprobes_events:
-> > > > >=20
-> > > > > =C2=A0 payload_event: tpm2_get_random() etc.
-> > > > > =C2=A0 hmac_event: tpm2_start_auth_session(), tpm2_end_auth_sessi=
-on()
-> > > > > etc.
-> > > > >=20
-> > > > > And just summing up the time for a boot to get a cost for hmac.
-> > > > >=20
-> > > > > I'd use bootconfig for this:
-> > > > >=20
-> > > > > https://www.kernel.org/doc/html/v6.9/trace/boottime-trace.html
-> > > > >=20
-> > > > > So I've made up plans how measure the incident but not sure when
-> > > > > I
-> > > > > have time to pro-actively work on a benchmark (thus sharing
-> > > > > details).
-> > > > >=20
-> > > > > So I think with just proper bootconfig wtih no other tools uses
-> > > > > this
-> > > > > can be measured.
-> > > >=20
-> > > >=20
-> > > > I'll disable this for anything else than X86_64 by default, and put
-> > > > such patch to my next pull request.
-> > > >=20
-> > > > Someone needs to do the perf analysis properly based on the above
-> > > > descriptions. I cannot commit my time to promise them to get the
-> > > > perf regressions fixed by time. I can only commit on limiting the
-> > > > feature ;-)
-> > > >=20
-> > > > It is thus better be conservative and reconsider opt-in post 6.10.
-> > > > X86_64 is safeplay because even in that 2018 NUC7 based on Celeron,
-> > > > hmac is just fine.
-> > >=20
-> > > While looking at code I started to wanted what was the reasoning
-> > > for adding *undocumented* "TPM2_OA_TMPL" in include/linux/tpm.h.
-> > > It should really be in tpm2-sessions.c and named something like
-> > > TPM2_NULL_KEY_OA or similar.
-> >
-> > Well, because you asked for it. I originally had all the flags spelled
-> > out and I'm not a fan of this obscurity, but you have to do stuff like
-> > this to get patches accepted:
-> >
-> > https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVICYHL@supp=
-ilovahvero/
->
-> I still think the constant does make sense.
->
-> The current constant does not really imply that it is for the null key,
-> it is defined in the wrong file and has no actual legit documentation
-> to go with it.
+Hello!
 
-Thus, being conservative and enabling only for x86_64 is pretty balanced
-choice for v6.10. The feature really needs to mature before widening the
-scope.
+I see that this test is adapted from the network_access_rights test in
+net_test.c, and some of the subsequent are similarly copied from there.  It
+makes it hard to criticize the code, because being a little bit consistent =
+is
+probably a good thing.  Have you found any opportunities to extract
+commonalities into common.h?
 
-The only platform I'm confident is x86_64 because even the old NUC did
-good job, so for that part I'm not too worried. Otherwise, it would be
-pure guesswork to unconditionally eanble for all arch's.
+On Fri, May 24, 2024 at 05:30:07PM +0800, Mikhail Ivanov wrote:
+> Add test that checks possibility of adding rule with every possible
+> access right.
+>=20
+> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> ---
+>=20
+> Changes since v1:
+> * Formats code with clang-format.
+> * Refactors commit message.
+> ---
+>  .../testing/selftests/landlock/socket_test.c  | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>=20
+> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testi=
+ng/selftests/landlock/socket_test.c
+> index 4c51f89ed578..eb5d62263460 100644
+> --- a/tools/testing/selftests/landlock/socket_test.c
+> +++ b/tools/testing/selftests/landlock/socket_test.c
+> @@ -178,4 +178,32 @@ TEST_F(protocol, create)
+>  	ASSERT_EQ(EAFNOSUPPORT, test_socket(&self->unspec_srv0));
+>  }
+> =20
+> +TEST_F(protocol, socket_access_rights)
+> +{
+> +	const struct landlock_ruleset_attr ruleset_attr =3D {
+> +		.handled_access_socket =3D ACCESS_ALL,
+> +	};
+> +	struct landlock_socket_attr protocol =3D {
+> +		.family =3D self->srv0.protocol.family,
+> +		.type =3D self->srv0.protocol.type,
+> +	};
+> +	int ruleset_fd;
+> +	__u64 access;
+> +
+> +	ruleset_fd =3D
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	for (access =3D 1; access <=3D ACCESS_LAST; access <<=3D 1) {
+> +		protocol.allowed_access =3D access;
+> +		EXPECT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
+> +					       &protocol, 0))
+> +		{
+> +			TH_LOG("Failed to add rule with access 0x%llx: %s",
+> +			       access, strerror(errno));
+> +		}
+> +	}
+> +	EXPECT_EQ(0, close(ruleset_fd));
 
-Those who want to turn the feature  on,still can but we should not make
-that decision for them. E.g. perhaps PowerPC could do this but I don't
-have any hardware to test it out, and have zero usage reports.
+Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
 
-Obviously can be reconsidered to future kernel versions but right now
-this feels like the most legit way to act.
+P.S. We are inconsistent with our use of EXPECT/ASSERT for test teardown.  =
+The
+fs_test.c uses ASSERT_EQ in these places whereas net_test.c and your new te=
+sts
+use EXPECT_EQ.
 
-BR, Jarkko
+It admittedly does not make much of a difference for close(), so should be =
+OK.
+Some other selftests are even ignoring the result for close().  If we want =
+to
+make it consistent in the Landlock tests again, we can also do it in an
+independent sweep.
+
+I filed a small cleanup task as a reminder:
+https://github.com/landlock-lsm/linux/issues/31
+
+=E2=80=94G=C3=BCnther
