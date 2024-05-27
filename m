@@ -1,149 +1,122 @@
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E1653389
-	for <linux-security-module@vger.kernel.org>; Mon, 27 May 2024 21:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E339C17BA7;
+	Mon, 27 May 2024 21:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716845254; cv=none; b=Zm5eMGNw7dhelaPqEMDwuUKDqcL2TD4w6sMShHzEIBwWVNOo7GZaqKnoldyBLBRNx/19hydMWeJdOorCL7jj7mSA0yATUc1Q5+LEzNAACO4OYC49WNp+qmx2Nzv28MV/NUXM1KynNiABQlJcGKo2NYZmW+vZGQfLLvvWXN4XCb8=
+	t=1716845774; cv=none; b=uXHktjEHBf4qPRZXbwq718MW9YU//vP+umlPNkzBYvv9JZBsj6PICRZcfXNj3Tw7HLfLHqcK+OPzDVfU4Ne95GYubFdAWhU7DUrCIVRNxWe4N24usNunrfyEreKldbu6+SJlGL6zDueecJrwXQpNCh0FjbFNpiwDFPsAbWBWpDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716845254; c=relaxed/simple;
-	bh=MOKhfWccensreMFlRubUql71+RAADhhqO5cGNzIre5g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QYyFCvGkEohBEljxtSudmcYOzXE9Vl2lAdvxhPe2uiA1viaxrtzf98KNzebvKBqs0EH2U4vfILzy5K79Z26Zjy/VEOzAhvHUdiXMMn1qTHlOKz6irl+bHzpFNYqzFsgpqnPfzLboKTzFFYHlpz4+6/t0e1k8n9RCw+SMSSq2RJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HxQNAvPf; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1716845774; c=relaxed/simple;
+	bh=ePgOBDA2ax1kCv4thLKsdmpgZhGIR5dGBMzgpyeuVsY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HyoOctlmnqNNtRQKHkjltClRMmdU23u7vKh7umL4hRxYLdFWRzLDXTqyuZqmxoGJjKDB3Hza3rlmWitbwLFKjs/wP/7uDUTXU3icYSCsoFN1eJnmOPjjEhJJ62v8wGgJuoSGOHLumfdwcpbbKDDGsUE26QnqtH95DDuxIdiFp1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=jbSadvIE; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=jbSadvIE; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HxQNAvPf"
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df777ba71e2so234763276.0
-        for <linux-security-module@vger.kernel.org>; Mon, 27 May 2024 14:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716845250; x=1717450050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G6ApPA8Hp1zvsFYSzsSUf+LZhx/4YAFyMZPpxudaXOs=;
-        b=HxQNAvPfMK8vnNAY9+2V3JG5h/0EeMYBv6jKIvWSgvLjQNkosgwhHNCd3e8MXZBdrr
-         iuECFiNYKC5IygfYMNlcS68Gfc9xRmgGO/KvfMeBfd+zSlFHqhpM7NQbOracisuN7Ub/
-         CenUScItWqg0yBr52da/qG8GdjmhO2bzRRTGsl/P9fiu2AzfDKZ9AGktnc3mN0tf7YSR
-         0l7l8EVqLRsOOM5xFCrNKce7I+aO7xljHhKY92VCdshAlYD/ppn/wA773zqMkBClVKUs
-         mDlY7D+YhfbyyE/EPEWZAhWCuMWSMZJqAxYjjM/1TzA93OZL9WwqVe25fP5s2IzcEFni
-         Z0dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716845250; x=1717450050;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=G6ApPA8Hp1zvsFYSzsSUf+LZhx/4YAFyMZPpxudaXOs=;
-        b=Eis0S+nu2HXTYsVdqxs8+yzU42qPpAnYlLhO/eLqN+pIpeqhqxP4GOwKGGO6wg7Z6E
-         fQdUym01IaZbRnqVaRnKh9x9Rw2gHZy9xKeTcBN7uAAXCEac8GJiyH2ZRyMtTynhLd28
-         d80kTxl0IJLo5eVNNjwTtaTEIMYAw82ufYGEL4AKXzNcOkzRS4Vy8zEQuXwBoAWl6r3Z
-         C9Qjd4IOSAtEQK797noJhvD7YYKb+GBbRIGJ0txPvwxkdHBMDdX3nXbpb3yc3DX0yc6z
-         ULg4VPKN3eKWV5vDJk9gvQSvy/NTu1zBuE4RgySj9U6Za90Q1qZ4VQ8ikS0EUseoffYi
-         7qVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwHYkWaL4dwKMSi8HPPRJcSUbg7tO0Mb5cNIxDX8NYt0N+eyzjoGny2tSxkz+yGjO+XW9HdZ1SJLJYVhMzzFjg9nE3ImM9tVHSstiWOMyegg0JMOMs
-X-Gm-Message-State: AOJu0YwyJXkv+Yjfqreyn11CSONimx1AiaRclH3mghzGB6ldzIcM50Ex
-	oljTIzd4H920UncBpUgdHB8o3qo4l9aAQwkRkakPoT0h6SfPTY3tj1E7c3/uqxbqY4WvtKZurEE
-	ZEQ==
-X-Google-Smtp-Source: AGHT+IH4gIkjFAwt/OFUaTh30uKqCejZR1YDpKaC1n++u54HeDgZ5N668CbWhXI8iNWHT4IwvEYltO3r/lI=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6902:72d:b0:dee:60e9:69f4 with SMTP id
- 3f1490d57ef6-df77239930emr2957325276.10.1716845250354; Mon, 27 May 2024
- 14:27:30 -0700 (PDT)
-Date: Mon, 27 May 2024 23:27:28 +0200
-In-Reply-To: <20240524093015.2402952-8-ivanov.mikhail1@huawei-partners.com>
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="jbSadvIE";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="jbSadvIE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1716845772;
+	bh=ePgOBDA2ax1kCv4thLKsdmpgZhGIR5dGBMzgpyeuVsY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=jbSadvIEvaNFIE3Sf1NXzbB9Gyc1etPo6jj0iRWWnYuxHMiSJOvCxkFSAHATZilbB
+	 j9Eiy+nfALL+9yc+Qn3OB5w78IJJccYTQoXgtUh/3kUFNcwssAkOtOlJLTcRxEfon3
+	 Led3qaXb/A+jCIta2ZKxE0e398CPHJvyN8Y68iBI=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3894312869EC;
+	Mon, 27 May 2024 17:36:12 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id CmJ45No8kRvy; Mon, 27 May 2024 17:36:12 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1716845772;
+	bh=ePgOBDA2ax1kCv4thLKsdmpgZhGIR5dGBMzgpyeuVsY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=jbSadvIEvaNFIE3Sf1NXzbB9Gyc1etPo6jj0iRWWnYuxHMiSJOvCxkFSAHATZilbB
+	 j9Eiy+nfALL+9yc+Qn3OB5w78IJJccYTQoXgtUh/3kUFNcwssAkOtOlJLTcRxEfon3
+	 Led3qaXb/A+jCIta2ZKxE0e398CPHJvyN8Y68iBI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0C02412868BA;
+	Mon, 27 May 2024 17:36:10 -0400 (EDT)
+Message-ID: <6e326fa73968839199378694d4e7cc2544326fa6.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Vitor Soares <ivitro@gmail.com>, 
+	linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+ <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Mon, 27 May 2024 17:36:09 -0400
+In-Reply-To: <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
+References: <20240519235122.3380-1-jarkko@kernel.org>
+	 <20240519235122.3380-2-jarkko@kernel.org>
+	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
+	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
+	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
+	 <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
+	 <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
+	 <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
+	 <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
+	 <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
+	 <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
+	 <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
+	 <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
+	 <D1KIV2Q682XH.1GCPYWMFZ8B6J@kernel.org>
+	 <D1KJBXOPFWT7.1F14BWQJO29FC@kernel.org>
+	 <ddbeb8111f48a8ddb0b8fca248dff6cc9d7079b2.camel@HansenPartnership.com>
+	 <D1KOUVENRY80.2NXQW3P1K6Z2R@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com> <20240524093015.2402952-8-ivanov.mikhail1@huawei-partners.com>
-Message-ID: <ZlT6wGIRbQI4pjmK@google.com>
-Subject: Re: [RFC PATCH v2 07/12] selftests/landlock: Add protocol.inval to
- socket tests
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 24, 2024 at 05:30:10PM +0800, Mikhail Ivanov wrote:
-> Add test that validates behavior of landlock with fully
-> access restriction.
->=20
-> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> ---
->=20
-> Changes since v1:
-> * Refactors commit message.
-> ---
->  .../testing/selftests/landlock/socket_test.c  | 34 +++++++++++++++++++
->  1 file changed, 34 insertions(+)
->=20
-> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testi=
-ng/selftests/landlock/socket_test.c
-> index 31af47de1937..751596c381fe 100644
-> --- a/tools/testing/selftests/landlock/socket_test.c
-> +++ b/tools/testing/selftests/landlock/socket_test.c
-> @@ -265,4 +265,38 @@ TEST_F(protocol, rule_with_unhandled_access)
->  	EXPECT_EQ(0, close(ruleset_fd));
->  }
-> =20
-> +TEST_F(protocol, inval)
-> +{
-> +	const struct landlock_ruleset_attr ruleset_attr =3D {
-> +		.handled_access_socket =3D LANDLOCK_ACCESS_SOCKET_CREATE
-> +	};
-> +
-> +	struct landlock_socket_attr protocol =3D {
-> +		.allowed_access =3D LANDLOCK_ACCESS_SOCKET_CREATE,
-> +		.family =3D self->srv0.protocol.family,
-> +		.type =3D self->srv0.protocol.type,
-> +	};
-> +
-> +	struct landlock_socket_attr protocol_denied =3D {
-> +		.allowed_access =3D 0,
-> +		.family =3D self->srv0.protocol.family,
-> +		.type =3D self->srv0.protocol.type,
-> +	};
-> +
-> +	int ruleset_fd;
-> +
-> +	ruleset_fd =3D
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	/* Checks zero access value. */
-> +	EXPECT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
-> +					&protocol_denied, 0));
-> +	EXPECT_EQ(ENOMSG, errno);
-> +
-> +	/* Adds with legitimate values. */
-> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
-> +				       &protocol, 0));
-> +}
-> +
->  TEST_HARNESS_MAIN
-> --=20
-> 2.34.1
->=20
+On Mon, 2024-05-27 at 22:53 +0300, Jarkko Sakkinen wrote:
+> On Mon May 27, 2024 at 8:57 PM EEST, James Bottomley wrote:
+> > On Mon, 2024-05-27 at 18:34 +0300, Jarkko Sakkinen wrote:
+[...]
+> > > While looking at code I started to wanted what was the reasoning
+> > > for adding *undocumented* "TPM2_OA_TMPL" in include/linux/tpm.h.
+> > > It should really be in tpm2-sessions.c and named something like
+> > > TPM2_NULL_KEY_OA or similar.
+> > 
+> > Well, because you asked for it. I originally had all the flags
+> > spelled out and I'm not a fan of this obscurity, but you have to do
+> > stuff like this to get patches accepted:
+> > 
+> > https://lore.kernel.org/linux-integrity/CZCKTWU6ZCC9.2UTEQPEVICYHL@suppilovahvero/
+> 
+> I still think the constant does make sense.
 
-Code is based on TEST_F(mini, inval) from net_test.c.  I see that you remov=
-ed
-the check for unhandled allowed_access, because there is already a separate
-TEST_F(mini, rule_with_unhandled_access) for that.
+I'm not so sure.  The TCG simply defines it as a collection of flags
+and every TPM tool set I've seen simply uses a list of flags as well. 
+The original design was that the template would be in this one place
+and everything else would call into it.  I think the reason all
+template construction looks similar is for ease of auditing (it's easy
+to get things, particularly the flags, wrong).
 
-That is true for the "legitimate value" case as well, though...?  We alread=
-y
-have a test for that too.  Should that also get removed?
+If it only has one use case, it should be spelled out but if someone
+else would use it then it should be in the tpm.h shared header.
 
-Should we then rename the "inval" test to "rule_with_zero_access", so that =
-the
-naming is consistent with the "rule_with_unhandled_access" test?
+> The current constant does not really imply that it is for the null
+> key,
 
-=E2=80=94G=C3=BCnther
+Well, it isn't exactly: it's the required flag set for all primaries.
+
+James
+
+>  it is defined in the wrong file and has no actual legit
+> documentation to go with it.
+
+
