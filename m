@@ -1,87 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C093713B2BC;
-	Mon, 27 May 2024 11:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13ED013C699;
+	Mon, 27 May 2024 11:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716807650; cv=none; b=lcQvcmPSj/Jg4rfZyV48EqDDwvzqChyH6jCQeftTVOTTvD9LxN1VfNOPazXO7QhACpViD1QHgpBOArsTD+duxcMflVwcsr63Q0fTpXZcquFIvVDMOvkuCS6mu2JNB0+PtTZ0KMvhWALOSyx+Th9s61lVF1nwk5JvfBvkqo7Gyr4=
+	t=1716808875; cv=none; b=dOZ647q54GHxpwtpfxCbN1YIwt5UiQ/ElOPuhXOeu/IU+JGPDyJ0XRqz7/MZZZL5GBPCySYZj55I16jaLwMTCfjxIvJnwyI3k97ldZkHhjOIVeoB+IddqAAOJmEe1pAMi8vFcBSVLK7IdWmTgrUiDV4pwqRKDYq5pH1DoueQobE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716807650; c=relaxed/simple;
-	bh=SCl5FIk5Id/nLQQw5/gf5Kfb9XND05Sm7vVtqyaXE0Q=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=R5MhK0yZRhk//YNMNO0O/KYJM8bxBU/oPghUukINflA8YLoPjHvBP279e4BBYamTuwCooZlVfaRnwXzP9T5aryQdqzuU8LKP43pKdoAD2q3N1Tjw32EfcmREBhxmo8/k2MyDa9/n3wxbc8yyQ+swYaR1Lq5bXomIPvWVq3xBA3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVIYnWm9; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVIYnWm9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28CFCC2BBFC;
-	Mon, 27 May 2024 11:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716807650;
-	bh=SCl5FIk5Id/nLQQw5/gf5Kfb9XND05Sm7vVtqyaXE0Q=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=mVIYnWm91n62JO71GIWwjjPrEFJvJ9UO/COzMgoLgkR9xLR6oY3y//mDlYvvua5f5
-	 jv3Bv3Nu6MM2Gl+BhZuD1/Fe/Y7LyepDslaw5LVweEkIU0pUq1iJ1dTQA/2UuSbNNJ
-	 wk2idr1rNHlsmrgwt0vovrsyyKUlfiv5WAWy98wHaMBpgP/cbh2qFFOZntkYfS+A2q
-	 eUAZRNzCzMgzGKyCd1/ecE2bjhHVuENmMSOyB0/zgSYABC3cT7ttvTnbBsdyITFHVy
-	 lNA5/QkjgyNb1u3dj9zKY/pizsINBNUtaEn0KaLpCHp/a3GYpFz8XrAv3kIeop8Aam
-	 EyCSNgZCfxNSg==
+	s=arc-20240116; t=1716808875; c=relaxed/simple;
+	bh=VbfpEmXuaAG7nWKQNcVSqAIJl4e4QDZ7FZgYw5QlnDI=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=jHO8EKY/oOJDYUfMGyctwtJdW9/JUJ2VWeVKAM/0JdT8YCdbC7T28rtmDAfes0ZhcEVp1pPNcDkeMohzm1PioQQoW+c30BrZKSNhkQ128/qtoNfMLf13Lu/ioOfCvlz4JU+Cyudwu0aq2xdKxfKbkoWUK1em6jh/bO44QdDJxik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id C9C2E378143B;
+	Mon, 27 May 2024 11:21:10 +0000 (UTC)
+From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
+In-Reply-To: <9ce0c222-c80c-4049-8746-d74e612c3030@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240524192858.3206-1-adrian.ratiu@collabora.com>
+ <20240524192858.3206-2-adrian.ratiu@collabora.com> <9ce0c222-c80c-4049-8746-d74e612c3030@infradead.org>
+Date: Mon, 27 May 2024 12:21:10 +0100
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Kees Cook" <keescook@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Christian Brauner" <brauner@kernel.org>, "Mike Frysinger" <vapier@chromium.org>
+To: "Randy Dunlap" <rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Message-ID: <1cc802-66546c80-1-65440180@177937837>
+Subject: =?utf-8?q?Re=3A?= [PATCH v4 2/2] =?utf-8?q?proc=3A?= restrict /proc/pid/mem
+User-Agent: SOGoMail 5.10.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 May 2024 14:00:45 +0300
-Message-Id: <D1KDIOAFZ55T.3ECZ64CCUEER2@kernel.org>
-Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <James.Bottomley@HansenPartnership.com>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>,
- "David Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>,
- "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- "Stefan Berger" <stefanb@linux.ibm.com>, "Ard Biesheuvel"
- <ardb@kernel.org>, "Mario Limonciello" <mario.limonciello@amd.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Open code tpm_buf_parameters()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Paul Menzel" <pmenzel@molgen.mpg.de>
-X-Mailer: aerc 0.17.0
-References: <20240525154406.4811-1-jarkko@kernel.org>
- <17bbe39e-3c68-4e0b-9862-9658f684b19e@molgen.mpg.de>
-In-Reply-To: <17bbe39e-3c68-4e0b-9862-9658f684b19e@molgen.mpg.de>
 
-On Sun May 26, 2024 at 8:42 AM EEST, Paul Menzel wrote:
-> Dear Jarkko,
->
->
-> Thank you for your patch.
->
-> Am 25.05.24 um 17:44 schrieb Jarkko Sakkinen:
-> > With only single call site, this no sense, and it actually slipped out
->
-> this *makes* no sense?
+On Saturday, May 25, 2024 08:49 EEST, Randy Dunlap <rdunlap@infradead.o=
+rg> wrote:
 
-Thanks for the remark :-)
+> Hi--
+>=20
+> On 5/24/24 12:28 PM, Adrian Ratiu wrote:
+> > diff --git a/security/Kconfig b/security/Kconfig
+> > index 412e76f1575d..0cd73f848b5a 100644
+> > --- a/security/Kconfig
+> > +++ b/security/Kconfig
+> > @@ -183,6 +183,74 @@ config STATIC=5FUSERMODEHELPER=5FPATH
+> >  	  If you wish for all usermode helper programs to be disabled,
+> >  	  specify an empty string here (i.e. "").
+> > =20
+> > +menu "Procfs mem restriction options"
+> > +
+> > +config PROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE=5FDEFAULT
+> > +	bool "Restrict all FOLL=5FFORCE flag usage"
+> > +	default n
+> > +	help
+> > +	  Restrict all FOLL=5FFORCE usage during /proc/*/mem RW.
+> > +	  Debuggerg like GDB require using FOLL=5FFORCE for basic
+>=20
+> 	  Debuggers
 
->
-> > of the radar during the review. Open code and document the action
-> > directly to the site, to make it more readable.
->
-> [=E2=80=A6]
->
->
-> Kind regards,
->
-> Paul
+Hello and thank you for the feedback!
 
-In order not to have to recycle this, does this now make sense to you:
+I'll fix these typos in a v5 together with the kernel test robot failur=
+es.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/comm=
-it/?id=3Db6b88cde77e7c30ab8f534d723ad9c4ec15b7753
+I'll give v4 a bit more time in case other people have more feedback,
+so I can address them all in one go.
 
-Unless actual critical fixes for hmac, probably will save this to v6.11
-but with some "real" fixes I'll piggy pack it to rcX.
-
-BR, Jarkko
