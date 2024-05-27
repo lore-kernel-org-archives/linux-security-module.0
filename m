@@ -1,158 +1,219 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1EB15A851;
-	Mon, 27 May 2024 15:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C1215E5CC
+	for <linux-security-module@vger.kernel.org>; Mon, 27 May 2024 15:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716822728; cv=none; b=IlRdSmlY7Kofy7jilCAewwuJeY7JR3srEfJc8BmbrGkwow+b86M4pG5gTwmj08zFfzjKAUplbxpiQ8x6UmcMLOdOlia5VgJ9sUFALSSM0G6/wlG23/Al4Q1mFIxf+GZscZfXKJDvDGMy8WsWZKisgDYRIT4HMLXFsQMuhknnSjs=
+	t=1716823648; cv=none; b=Z0GRA7CaZVDcxJ0yHvQ/jIH5P73/rocSp9JVN0Y/MYvAxZxUBVm3dLpRjJxJE91G0eLBDEQdXKuaFGjEStEcPY3ybcIdB+V+hOhUKPkFBxxQcSebcFQkTQNPW/7+1uAgWMyoUrAfbAIGGqbxSz6y8vsIHcJdmkpsfJUM3FLpS+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716822728; c=relaxed/simple;
-	bh=NAAb16yR/ArobVcLNWX5cjRE7d7GGuta0KaqTwDkg38=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=pRvkT9Xlu8RPKLKvSFczsZx2ljiMpAeCbfJPcPZ/tKGNKqqW+ObfJF0zT9SBBF/voWhn4qcUNIROsBkIiWwGQ+74gf32eS945dU5a1a89xOdokq4eg1vMW/J3WrgBUDPjAuvqStxe4B5Ac9gNEh9hrlkIU2vGmf9spjgUJcUHWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiOWSXTN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716823648; c=relaxed/simple;
+	bh=EH+uzBvIrlF2QnIH5v9HOVinZLSRxlGtcJDv3fu4nA8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KjmB3vuu9m3YmJQIT565/qNoq1T6wXHxQPdmPGXreTTGyu29B5HiKxFUY5yipHWY0/PndAbCJgOUAASwqaxNXZ90uX1L1j/6UKOOQUNKBPdRbE2bDp2jbzFu4+8OkYPGBd/GeFCEmHh2GbDRJ7TM+a4/fpoGl6OmOo/6sfDuk68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V0LfVciY; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiOWSXTN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA938C4AF07;
-	Mon, 27 May 2024 15:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716822727;
-	bh=NAAb16yR/ArobVcLNWX5cjRE7d7GGuta0KaqTwDkg38=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=FiOWSXTNkHJMdcov3wOpBg9gbEql8O8OWSYUpNlY+Y0zKJeWl+4oCITvh4TpMH1Cv
-	 cil30D2EZGwl2UG9w2q+moo8K09o6nBviEY6vuCaIgAUaIZUl2ab7s+ItFQaX7g4+m
-	 7GR7bcT7/kqkwjC33xZZEA4tDxXH3vnaB0ce9q2qVKuQnGs+V92ON1gH0dK/ISY7xZ
-	 AeD6U+pRfxTJAw5uRKWMos3HSMTvssC8fUdMJRwrBr27HacwAncCbRgbaUswx5Pqtu
-	 Zfbfqdd+emwbxNvuMFpHcZ4EcWti4ODajBtI6wSa21HdDiSgyYPjn69d0mEHyotb5S
-	 jLzPp1UiH3hxg==
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V0LfVciY"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df771dcec5cso4790332276.2
+        for <linux-security-module@vger.kernel.org>; Mon, 27 May 2024 08:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716823644; x=1717428444; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JgReQBAL8ooUhubet2sIcyqcKqExZySvMhVpx5G+EiE=;
+        b=V0LfVciYxHZFrEmclkYq9PhEhnZ4xyDE2XD/iexbUJJUp8v6j4XLYd7qN1bP8m0ghz
+         QjlLyUtkClO2c28We2kIZTSvynOH76DRZSG0miQDRQZzXAnEir6+E+Q1Ba6fady7IXdB
+         GGva0vxRjv1srHsD6h9gk/Np5VrT9nH4iSGU+swaQHWiKFCxJnzsSxu9834lAcJtLWrA
+         Lh5idHjTdSYPIFizf2IqjNANKIDSRu11uI7nFgLV26R+6OEzB/SWD1Qwz7TYQ/wB1sEN
+         0cBdwPFgEFnp43zPkhn+ItzS7o4Fw4fYW0cFrLbFPNzCDa6aIqe6gzhkqH4+Xs30HwON
+         Fv6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716823644; x=1717428444;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JgReQBAL8ooUhubet2sIcyqcKqExZySvMhVpx5G+EiE=;
+        b=gvS/r9UgxO0zCaxAyIsyjOXkADdTd2l0un7sxn1LRYIMXKsApEuIMnqgLKr/017J6A
+         I6YrmynW5JLWnibhjVvUy6PxZiHz+zGm64loC6WtmgNEHI2O95nAl4H+J1g/7CQV12ir
+         D+Q+Fs/LunW1RYoOz7uzIOl5bONvwMbZb8Bmai/VjkxajlPjhQzQkPzzPYaQ5dfEoqgY
+         TeUBSoSlQ13WF7LOK8RrbHWOmUm/HG8njsmEdADfuFhfU7hAsJatD9Hk8zUWsZqSYUx1
+         PX8ZB3ua/79Yi0Kv/KOTaYKBssqem6CqDyxJ8UKEZV91IkO3R+mwnldoP9q+RDZE3lqF
+         gm6A==
+X-Forwarded-Encrypted: i=1; AJvYcCX3weco5AG7eOrTZP3Ce6ePj/Ty1e/j/vEzcacnJ9I4M/zw1q9qnTSDLr7oKaKrQpIarSTS3OrYVSaPmCFIMG2nDf7d7YE7FdvMGfgR0iktH4XmAhV/
+X-Gm-Message-State: AOJu0YzcNu+BGohpoetxmGI7YIzoxmVM65EnfmJqzxgqn+giOxYsg75d
+	xv8ps/rBvJAMgVlqfb2xg/3mL3C3KrBZv+OrThk7iwINl4Vn5suHhgeU47Dzj7ytY8MlAUL5l2y
+	1hw==
+X-Google-Smtp-Source: AGHT+IEcMK/eb/1S9GxInlxz3v6B37pxwZZVCeVpsfVMsox8htgY0igmkWFUPucJUSd/a6wou/SqCeNEezw=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:1805:b0:df7:68c5:98d5 with SMTP id
+ 3f1490d57ef6-df77218599dmr2681802276.5.1716823644525; Mon, 27 May 2024
+ 08:27:24 -0700 (PDT)
+Date: Mon, 27 May 2024 17:27:22 +0200
+In-Reply-To: <20240524093015.2402952-4-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com> <20240524093015.2402952-4-ivanov.mikhail1@huawei-partners.com>
+Message-ID: <ZlSmAhLV00iry6we@google.com>
+Subject: Re: [RFC PATCH v2 03/12] selftests/landlock: Add protocol.create to
+ socket tests
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 May 2024 18:12:02 +0300
-Message-Id: <D1KIV2Q682XH.1GCPYWMFZ8B6J@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Vitor Soares"
- <ivitro@gmail.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
- <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
- <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
- <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
- <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
- <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
- <D1KIFPNBNGKH.IJKFRXH8WINU@kernel.org>
- <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
-In-Reply-To: <D1KINAE5E2MH.729CM4ABV5VN@kernel.org>
 
-On Mon May 27, 2024 at 6:01 PM EEST, Jarkko Sakkinen wrote:
-> On Mon May 27, 2024 at 5:51 PM EEST, Jarkko Sakkinen wrote:
-> > On Thu May 23, 2024 at 10:59 AM EEST, Vitor Soares wrote:
-> > > On Wed, 2024-05-22 at 19:11 +0300, Jarkko Sakkinen wrote:
-> > > > On Wed May 22, 2024 at 5:58 PM EEST, Vitor Soares wrote:
-> > > > > I did run with ftrace, but need some more time to go through it.
-> > > > >=20
-> > > > > Here the step I did:
-> > > > > kernel config:
-> > > > > =C2=A0 CONFIG_FUNCTION_TRACER
-> > > > > =C2=A0 CONFIG_FUNCTION_GRAPH_TRACER
-> > > > >=20
-> > > > > ftrace:
-> > > > > =C2=A0 # set filters
-> > > > > =C2=A0 echo tpm* > set_ftrace_filter
-> > > > >=20
-> > > > > =C2=A0 # set tracer
-> > > > > =C2=A0 echo function_graph > current_tracer
-> > > > >=20
-> > > > > =C2=A0 # take the sample
-> > > > > =C2=A0 echo 1 > tracing_on; time modprobe tpm_tis_spi; echo 0 > t=
-racing_on
-> > > > >=20
-> > > > > regards,
-> > > > > Vitor Soares
-> > > >=20
-> > > > I'm now compiling distro kernel (OpenSUSE) for NUC7 with v6.10 cont=
-ents.
-> > > >=20
-> > > > After I have that setup, I'll develop a perf test either with perf =
-or
-> > > > bpftrace. I'll come back with the possible CONFIG_* that should be =
-in
-> > > > place in your kernel. Might take up until next week as I have some
-> > > > conference stuff to prepare but I try to have stuff ready early nex=
-t
-> > > > week.
-> > > >=20
-> > > > No need to rush with this as long as possible patches go to rc2 or =
-rc3.
-> > > > Let's do a proper analysis instead.
-> > > >=20
-> > > > In the meantime you could check if you get perf and/or bpftrace to=
-=20
-> > > > your image that use to boot up your device. Preferably both but
-> > > > please inform about this.
-> > > >=20
-> > >
-> > > I already have perf running, for the bpftrace I might not be able to =
-help.
-> >
-> > The interesting function to look at with/without hmac is probably
-> > tpm2_get_random().
-> >
-> > I attached a patch that removes hmac shenigans out of tpm2_get_random()
-> > for the sake of proper comparative testing.
->
-> Other thing that we need to measure is to split the cost into
-> two parts:
->
-> 1. Handshake, i.e. setting up and shutdowning a session.
-> 2. Transaction, payload TPM command.
->
-> This could be done by setting up couple of kprobes_events:
->
->   payload_event: tpm2_get_random() etc.
->   hmac_event: tpm2_start_auth_session(), tpm2_end_auth_session() etc.
->
-> And just summing up the time for a boot to get a cost for hmac.
->
-> I'd use bootconfig for this:
->
-> https://www.kernel.org/doc/html/v6.9/trace/boottime-trace.html
->
-> So I've made up plans how measure the incident but not sure when I
-> have time to pro-actively work on a benchmark (thus sharing details).
->
-> So I think with just proper bootconfig wtih no other tools uses this
-> can be measured.
+On Fri, May 24, 2024 at 05:30:06PM +0800, Mikhail Ivanov wrote:
+> Initiate socket_test.c selftests. Add protocol fixture for tests
+> with changeable family-type values. Only most common variants of
+> protocols (like ipv4-tcp,ipv6-udp, unix) were added.
+> Add simple socket access right checking test.
+>=20
+> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> ---
+>=20
+> Changes since v1:
+> * Replaces test_socket_create() and socket_variant() helpers
+>   with test_socket().
+> * Renames domain to family in protocol fixture.
+> * Remove AF_UNSPEC fixture entry and add unspec_srv0 fixture field to
+>   check AF_UNSPEC socket creation case.
+> * Formats code with clang-format.
+> * Refactors commit message.
+> ---
+>  .../testing/selftests/landlock/socket_test.c  | 181 ++++++++++++++++++
+>  1 file changed, 181 insertions(+)
+>  create mode 100644 tools/testing/selftests/landlock/socket_test.c
+>=20
+> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testi=
+ng/selftests/landlock/socket_test.c
+> new file mode 100644
+> index 000000000000..4c51f89ed578
+> --- /dev/null
+> +++ b/tools/testing/selftests/landlock/socket_test.c
+> @@ -0,0 +1,181 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Landlock tests - Socket
+> + *
+> + * Copyright =C2=A9 2024 Huawei Tech. Co., Ltd.
+> + * Copyright =C2=A9 2024 Microsoft Corporation
+
+It looked to me like these patches came from Huawei?
+Was this left by accident?
 
 
-I'll disable this for anything else than X86_64 by default, and put
-such patch to my next pull request.
+> + */
+> +
+> +#define _GNU_SOURCE
+> +
+> +#include <errno.h>
+> +#include <linux/landlock.h>
+> +#include <sched.h>
+> +#include <string.h>
+> +#include <sys/prctl.h>
+> +#include <sys/socket.h>
+> +
+> +#include "common.h"
+> +
+> +/* clang-format off */
+> +
+> +#define ACCESS_LAST LANDLOCK_ACCESS_SOCKET_CREATE
+> +
+> +#define ACCESS_ALL ( \
+> +	LANDLOCK_ACCESS_SOCKET_CREATE)
+> +
+> +/* clang-format on */
 
-Someone needs to do the perf analysis properly based on the above
-descriptions. I cannot commit my time to promise them to get the
-perf regressions fixed by time. I can only commit on limiting the
-feature ;-)
+It does not look like clang-format would really mess up this format in a ba=
+d
+way.  Maybe we can remove the "clang-format off" section here and just writ=
+e the
+"#define"s on one line?
 
-It is thus better be conservative and reconsider opt-in post 6.10.
-X86_64 is safeplay because even in that 2018 NUC7 based on Celeron,
-hmac is just fine.
+ACCESS_ALL is unused in this commit.
+Should it be introduced in a subsequent commit instead?
 
-BR, Jarkko
+
+> +static int test_socket(const struct service_fixture *const srv)
+> +{
+> +	int fd;
+> +
+> +	fd =3D socket(srv->protocol.family, srv->protocol.type | SOCK_CLOEXEC, =
+0);
+> +	if (fd < 0)
+> +		return errno;
+> +	/*
+> +	 * Mixing error codes from close(2) and socket(2) should not lead to an=
+y
+> +	 * (access type) confusion for this test.
+> +	 */
+> +	if (close(fd) !=3D 0)
+> +		return errno;
+> +	return 0;
+> +}
+
+I personally find that it helps me remember if these test helpers have the =
+same
+signature as the syscall that they are exercising.  (But I don't feel very
+strongly about it.  Just a suggestion.)
+
+
+> [...]
+>
+> +TEST_F(protocol, create)
+> +{
+> +	const struct landlock_ruleset_attr ruleset_attr =3D {
+> +		.handled_access_socket =3D LANDLOCK_ACCESS_SOCKET_CREATE,
+> +	};
+> +	const struct landlock_socket_attr create_socket_attr =3D {
+> +		.allowed_access =3D LANDLOCK_ACCESS_SOCKET_CREATE,
+> +		.family =3D self->srv0.protocol.family,
+> +		.type =3D self->srv0.protocol.type,
+> +	};
+> +
+> +	int ruleset_fd;
+> +
+> +	/* Allowed create */
+> +	ruleset_fd =3D
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
+> +				       &create_socket_attr, 0));
+> +
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +
+> +	ASSERT_EQ(0, test_socket(&self->srv0));
+> +	ASSERT_EQ(EAFNOSUPPORT, test_socket(&self->unspec_srv0));
+> +
+> +	/* Denied create */
+> +	ruleset_fd =3D
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +
+> +	ASSERT_EQ(EACCES, test_socket(&self->srv0));
+> +	ASSERT_EQ(EAFNOSUPPORT, test_socket(&self->unspec_srv0));
+
+Should we exhaustively try out the other combinations (other than selv->srv=
+0)
+here?  I assume socket() should always fail for these?
+
+(If you are alredy doing this in another commit that I have not looked at y=
+et,
+please ignore this comment.)
+
+=E2=80=94G=C3=BCnther
