@@ -1,125 +1,84 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBF516A381;
-	Wed, 29 May 2024 09:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEB3180A97;
+	Wed, 29 May 2024 12:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716975500; cv=none; b=Ou1i3bWq6G6+arSHYuVebTB4tlRPxmuj6RKgvWHmEEHKysHFwwyjPUZMyf3DFhTB3iLo3pc+YRv2SfwS4v3hKPMzwQuvwkYP5gv2nbqNWIqnxM+wEPNlClkpyy27NSTnSaqhcdjDve4n0GV4t995mVDiDpoQNuzt/hlhPgow/94=
+	t=1716985231; cv=none; b=iGhrBg+udyZLInOQIbXNhY8E2ouZHQ15qfSepkLSoFkfiH1ZiDmLv5gCrjoi1MvgvM6+9JKS1Ef6pnu3HDevyoAUAoZHLK7telGoiLJ8jpR5S7iXsVZoGBdmE3l6LdDABNMQ3EhuJSm44ANRbIkP38mHBlYAjJ2VSznqoLAMbDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716975500; c=relaxed/simple;
-	bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ctky4x/bZQD0GtdVXkDs410Jiccc7OtcIaKp+2rDszebLjQjtqAzNJMt2L6ZRPgxAUDCwHfVc5sEjI4GXVfzhhFKgmkSAizzMx+UjbJ7zpqygJB9soFt7PLi9qAUcGIvefWfSaDoKPblbegH2XNBsrpLYufGhaetwAEcS5TYn5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YR56hVG+; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1716985231; c=relaxed/simple;
+	bh=VpHIdGNzMITuTJTo8IHKIYXLIDv6AXCePiPAEtOFDFo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=uWe2y1AS3vrIWaV3mf0lqb9Ur7v6l+lULXqtcmfx+/TI1QIshBgWIoQI7iSCAGZKPM1X4OhTUokilCT6Mh2+JfQ9z1pjrm3tYDceD3wwrjjmMJpUUz1CJMpE4MV705xRZcVrLFIhHfptwJyu0UxH2SpzPv9iO4hrpxayPgsGAoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhqUIqsF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YR56hVG+"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e6f51f9de4so25522911fa.3;
-        Wed, 29 May 2024 02:38:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716975497; x=1717580297; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
-        b=YR56hVG+45U8zxvkuLUwK+wkrRHivvK1jlcj0kZfzXP2DqzPpRhPgPVTI9x9q9hjRA
-         bTrocIfEzO6ZA191VcWAU4KJXZQroSqAuOqj39TIveN0CYrwhiml/1twtnJ9MSXVt8W2
-         uWjE/ppy1nJ0/XIS6L4KMnMAp2aBRi1MjKVyW8kgESOhuuY0Ca7c+lt9R0ww0zb2YgIo
-         FVmINdYwiqQ2kE2+6Xejey+2r9rUbZY9bASlB+/wcgoSi+j1sKR2RSp4hoiGWbe+u127
-         Gv7OmU8OCNU384w/cTm6+r4PLlYr8VI62j713Vkf8X8qGSdWRIVZrLKENXLf335z7EzX
-         aSKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716975497; x=1717580297;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRx92IjGm86HR4V8oZzkRs0aIanlP+XxMvyW7SOoQPE=;
-        b=fEnxUtRs5MBMFz35UVNi4dMh7ASKhFQuPpqvQu4rXabgZJxvXWLlcBNUNWqyGWN2UI
-         0xVYv2OkQOC88A5JndyG7nqdmlsSdGTVKs5zUVc8UOVtvdwwwZzw4TheFpaTpBCPV0wX
-         2oqarbm3OBGBS1gLFiluXgCuyAQIKLQD4Yhs5TBKEL40rFN7nhVi41T5E22GGdh7BTqk
-         Ua2/Z7Zj25Odgz6C9CtRie7z4+q0elTwtitpkXAMsqKBJAJwS5So8T7HRGAsetDoIhNV
-         GIEdQ8YsTqXf/B6JPEciTYRac65+Xdz7QDkxQrU5LJZ/eCvW6W5eK2WO29AYEMbsptJq
-         NsYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZXmBpLSsLKWbSfIwqhJrneoS8uL+1FmPdG6oNisbQl1tli96Jo+UPCDIB9sq2w+jq1h1G9+l6+6CWIRAeP/Wp6p8QEQGGyW3NrihQve1fTSKxmSKUtDWZr+KW8Hs9rQgB/4U/qO1JVeQqLbk7ayzqD/CP
-X-Gm-Message-State: AOJu0YxftKEe4ULDTFO1ncV2amwVuOGoXJO/G1+akGnM65Hy5wCrgxL7
-	Vh96At4+rRE66kS6KzSFyvAl0RiH9WzTxoISpjrDtQ1xtNDcaNTOAy7562aqB9C7GsTtR7q2+cf
-	z01sO4+BrvJUz2kbF5ERJIMHOLXc=
-X-Google-Smtp-Source: AGHT+IGmab8FsMOO1Mi1C3BhAPxA07HolrdLa1W444dOo1v7T4E8Z9DRX4WhskR3J6/tv+9ZXdM+1wnNxU/f8/8kKLQ=
-X-Received: by 2002:a05:6512:3e19:b0:529:b718:8d00 with SMTP id
- 2adb3069b0e04-529b7188dc4mr5909595e87.8.1716975496547; Wed, 29 May 2024
- 02:38:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhqUIqsF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66876C2BD10;
+	Wed, 29 May 2024 12:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716985231;
+	bh=VpHIdGNzMITuTJTo8IHKIYXLIDv6AXCePiPAEtOFDFo=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=AhqUIqsFLYOCebwLbUCnjjUx4VRWTD0BnXxREMkocMYUA64uSMLDspnGAE5xJYbTk
+	 SKotVExoVXb+3cXSp9SmBqPsJWhEs9sfZ8J/MWbC1fW21KUnPN55O21n7nOtem/RsD
+	 eXUaBO6NSuijG9knpgRAZJljAdYrfu1RHxGw8itCCd2HtGX5Y/HanvlZVfgNhI8UOL
+	 cICgXQvSVZGJKY/G129/QZkCx1dV1KQOLnPpjw8Jk1r5yaAKa3Zs3HQgiWy/nH6rQG
+	 mIQZbx18PK5VazXv6QgRoxNq7E79hjWos1ByswqeC7hmLiGCGgtf8z4QLDjuV3VKvV
+	 dbL8l4DMLdfPw==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com> <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
- <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com> <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
- <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com> <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
- <5c94947b-1f1f-44a7-8b9c-b701c78350b4@canonical.com> <CAGudoHFxma+H_iHPV8+gfEkHc0uwFD8=rJtFy7ZE3TH+7tGiwQ@mail.gmail.com>
- <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
-In-Reply-To: <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 29 May 2024 11:38:04 +0200
-Message-ID: <CAGudoHGqvAuAYnc75xRhSMYfxRbgpQuCYnxUWiCXJM8YtGJxjQ@mail.gmail.com>
-Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
- and potential solutions
-To: John Johansen <john.johansen@canonical.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	"Shukla, Santosh" <Santosh.Shukla@amd.com>, "Narayan, Ananth" <Ananth.Narayan@amd.com>, 
-	raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com, 
-	paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 May 2024 15:20:25 +0300
+Message-Id: <D1M4GRF0RL2W.3QHTBXZWNW9RW@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
+ <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
+ "Lennart Poettering" <lennart@poettering.net>, "David S. Miller"
+ <davem@davemloft.net>, "open list" <linux-kernel@vger.kernel.org>, "Mimi
+ Zohar" <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul
+ Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:SECURITY SUBSYSTEM"
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v7 2/5] KEYS: trusted: Change -EINVAL to -E2BIG
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-3-jarkko@kernel.org>
+ <14d0baf4-fa41-4a08-925d-90f028117352@linux.ibm.com>
+In-Reply-To: <14d0baf4-fa41-4a08-925d-90f028117352@linux.ibm.com>
 
-On Wed, May 29, 2024 at 2:37=E2=80=AFAM John Johansen
-<john.johansen@canonical.com> wrote:
-> I don't have objections to moving towards percpu refcounts, but the overh=
-ead
-> of a percpu stuct per label is a problem when we have thousands of labels
-> on the system. That is to say, this would have to be a config option. We
-> moved buffers from kmalloc to percpu to reduce memory overhead to reduce
-> contention. The to percpu, to a global pool because the percpu overhead w=
-as
-> too high for some machines, and then from a global pool to a hybrid schem=
-e
-> because of global lock contention. I don't see a way of doing that with t=
-he
-> label, which means a config would be the next best thing.
+On Wed May 29, 2024 at 4:50 AM EEST, Stefan Berger wrote:
 >
-
-There was a patchset somewhere which adds counters starting as atomic
-and automagically converting themselves per-cpu if there as enough
-load applied to them. General point being it is plausible this may
-autotune itself.
-
-Another option would be a boot-time tunable.
-
-> Not part of your patch but something to be considered is that the label t=
-ree
-> needs a rework, its locking needs to move to read side a read side lock l=
-ess
-> scheme, and the plan was to make it also use a linked list such that new
-> labels are always queued at the end, allowing dynamically created labels =
-to
-> be lazily added to the tree.
 >
-
-It's not *my* patchset. ;)
-
-> I see the use of the kworker as problematic as well, especially if we are
-> talking using kconfig to switch reference counting modes. I am futzing wi=
-th
-> some ideas, on how to deal with this.
+> On 5/28/24 17:08, Jarkko Sakkinen wrote:
+> > Report -E2BIG instead of -EINVAL when too large size for the key blob i=
+s
+> > requested.
+> >=20
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 >
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Thanks for the update. Hopefully this is going to get sorted out in
-the foreseeable future.
+Thank you.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Hmm... I'd like to add even:
+
+Cc: stable@vger.kernel.org # v5.13+
+Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format fo=
+r the blobs")
+
+It turned out to be useful error message and would be useful also for
+stable kernels. So if no decent counter-arguments, I'll just pick it
+to my master branch.
+
+BR, Jarkko
