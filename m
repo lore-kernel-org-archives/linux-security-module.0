@@ -1,135 +1,133 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16E169AC6;
-	Thu, 30 May 2024 14:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F6F186E41;
+	Thu, 30 May 2024 14:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079734; cv=none; b=dtxh86bbeJ6nbPdPhY1Eozts4LvcpPrfKnwu3hxMmdBUg+F3KDXORGpF41ISWAUbk6Z1yuzHySXGThYWCAuZwR/Tly8FntXzuHCw0L9+703xO8886IgWRGXMOkImOtiY2P2swBMGKptCN7eDqKeR6boR4dQwTJYhMA9lXvYumQM=
+	t=1717080051; cv=none; b=m5HylEPwVQJfLbaxA5PVNq1qqrZc9htSPJnkh+kzSuI+P+wwvJ0nRlmHuL9GWxdOnh7RXrXob2Gpa53Qae+PDT77AnYVslYyvzHxthozP7k7ijAfNkUD9TXyRP019WTZBJTNjEmIc/FOKeEHnYY47rwgn/pet7eP0TlR0QRTAN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079734; c=relaxed/simple;
-	bh=nw72xWnPpdyLXDd6BSSXfeSuAij6WeLgNpBcNRwcIao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cxpv7taI9362vLoLEi0dMUtq7xGKcEZFlMtb0Oc8HcoTKhQrlYmtfThQyOzhkXuEMpCL0PJLMwAjY8dHNQV6utu+z6pqffJdKYQyMKZ0UzeQfw5wgUgNofZ2cZdrs6BgUc9du/pVuZBr3kyPrYyrG4Lf3DBe28m8fezBU7kTOZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VqpZq18vWzmWxF;
-	Thu, 30 May 2024 22:30:59 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 813F018007F;
-	Thu, 30 May 2024 22:35:23 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 30 May 2024 22:35:19 +0800
-Message-ID: <f4b5e2b9-e960-fd08-fdf4-328bb475e2ef@huawei-partners.com>
-Date: Thu, 30 May 2024 17:35:14 +0300
+	s=arc-20240116; t=1717080051; c=relaxed/simple;
+	bh=XWlxAnuC/u9UwVSre4Bh7CKn2L/WZWSl+q4IsHzdHg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O+FwoD0hG46yW1cUgfWZ0coGCKP94Qhu6hOobfliBTlHvfH2AZKEcWegurMbrDBGwtsCs7FXA6Q3W96jSaOTvCVp0G5H3DPjmWMohquYLk0btWR0y0C4jfgltc9vfPBrAFH3XkBkLm/pPetRLilbBKx/dwQcWI3QP//jLXbe8Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7k4EgZF; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7k4EgZF"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b79447c58so1368664e87.1;
+        Thu, 30 May 2024 07:40:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717080047; x=1717684847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MiUZAyRllirKKzsD89/yIKCX3SIy5qsFBAtFuiUEDms=;
+        b=X7k4EgZFA2ZOU1fNksV7NmNlzXAmfMbX8++wQQ3wxibs/OAJjhxNcfFxJJNU1oxaqn
+         o118YyNLk5Q8E3InBOJPZH+s9sFjZxRkQqlm4LLEXI6grZ3++quj38w98KYdpsYT1Y8J
+         K/jotjBrFV3TXCTyr9CBqhytGG4mT/TaLUj0eBx+ACWj2XyUuBPlMCZiM+hPW0Y6OzSu
+         rMuLZMtJiv4zTVjlEaXAHCBY2nVfGaBKWKXOfccwI3P3aRSC6nbgAR2fxBKgBBUcwq/U
+         4phxfu9mXLb0dUC4oTY1klYLc7V/8RELWdFzxByAOeQ7TFIiY17u1LgZiqarGZ4Qc2HM
+         wYsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717080047; x=1717684847;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MiUZAyRllirKKzsD89/yIKCX3SIy5qsFBAtFuiUEDms=;
+        b=jBfqzpBT4HH0W2rq4Br2Zpvn+UHhngst+LCB74HK9xMyxbR+xxIIAmW5BD07/ZoSt1
+         Merl6qh3WgT8tA6TVRlECFbtxuvEkFa+mPhYTO97IgKggG1kFLell0gE5PC9uquHRDKL
+         sIFUz2LYo0Dk4yO8jc/ypZqeLoVENkEc3kIYWAzQjGQtK6Al2BdoZoceJ5ucHqPnaTp/
+         wKqAfAf48YzegBa1Ph3WuHVOjScxdkOdDlVoGrWHvBUbwhJsB6Vcmz8xELUS0plZneIJ
+         ik+Fywfje9TQX+s4gOEGXntXUSq4yaYCirWBVXQ/9SqbYzYTFHdWkW+U4ug5HXpF5lcz
+         blSQ==
+X-Gm-Message-State: AOJu0YwTDpvykcwkz9PkG8jpw/X4iq8fFzsrpWdzgHV46singNoGknW0
+	jAYrVq8U1mhbRMJcrnlZZYLy92w+SYYlN27nhSWv/kbFP9f7Evh8jmUXoTk5
+X-Google-Smtp-Source: AGHT+IG7nJ/NQimAb6ENu+Mt1IVoSFruIV2XJFdrCKecJVtj80xQ6v5uM62Ivd1eYoeWqqIfmUtOdQ==
+X-Received: by 2002:a19:430e:0:b0:52a:a91e:3f55 with SMTP id 2adb3069b0e04-52b7d499782mr1658316e87.47.1717080047196;
+        Thu, 30 May 2024 07:40:47 -0700 (PDT)
+Received: from f.. (cst-prg-8-232.cust.vodafone.cz. [46.135.8.232])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a66dbfc4ca6sm27932366b.165.2024.05.30.07.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 07:40:46 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paul@paul-moore.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] cred: plug a hole in struct cred
+Date: Thu, 30 May 2024 16:40:40 +0200
+Message-ID: <20240530144041.569927-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 04/12] selftests/landlock: Add
- protocol.socket_access_rights to socket tests
-Content-Language: ru
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
-	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
- <20240524093015.2402952-5-ivanov.mikhail1@huawei-partners.com>
- <ZlTyj_0g-E4oM22G@google.com>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZlTyj_0g-E4oM22G@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- dggpemm500020.china.huawei.com (7.185.36.49)
 
+/*     40      |       4 */    unsigned int securebits;
+/* XXX  4-byte hole      */
+/*     48      |       8 */    kernel_cap_t cap_inheritable;
+[snip]
+/*     88      |       1 */    unsigned char jit_keyring;
+/* XXX  7-byte hole      */
+/*     96      |       8 */    struct key *session_keyring;
 
+jit_keyring can be moved up to the 4-byte hole.
 
-5/27/2024 11:52 PM, Günther Noack wrote:
-> Hello!
-> 
-> I see that this test is adapted from the network_access_rights test in
-> net_test.c, and some of the subsequent are similarly copied from there.  It
-> makes it hard to criticize the code, because being a little bit consistent is
-> probably a good thing.  Have you found any opportunities to extract
-> commonalities into common.h?
+Size goes down from 184 to 176 bytes.
 
-I think that all common tests should be extracted to common.h or maybe
-some new header. *_test.c could maintain a fixture for these tests for
-some rule-specific logic. Such refactoring should be in separate patch
-though.
+Note total memory usage does not go down because the struct remains
+backed by 192-byte chunks, but space is made for future expansion.
 
-> 	
-> On Fri, May 24, 2024 at 05:30:07PM +0800, Mikhail Ivanov wrote:
->> Add test that checks possibility of adding rule with every possible
->> access right.
->>
->> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
->> ---
->>
->> Changes since v1:
->> * Formats code with clang-format.
->> * Refactors commit message.
->> ---
->>   .../testing/selftests/landlock/socket_test.c  | 28 +++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
->> index 4c51f89ed578..eb5d62263460 100644
->> --- a/tools/testing/selftests/landlock/socket_test.c
->> +++ b/tools/testing/selftests/landlock/socket_test.c
->> @@ -178,4 +178,32 @@ TEST_F(protocol, create)
->>   	ASSERT_EQ(EAFNOSUPPORT, test_socket(&self->unspec_srv0));
->>   }
->>   
->> +TEST_F(protocol, socket_access_rights)
->> +{
->> +	const struct landlock_ruleset_attr ruleset_attr = {
->> +		.handled_access_socket = ACCESS_ALL,
->> +	};
->> +	struct landlock_socket_attr protocol = {
->> +		.family = self->srv0.protocol.family,
->> +		.type = self->srv0.protocol.type,
->> +	};
->> +	int ruleset_fd;
->> +	__u64 access;
->> +
->> +	ruleset_fd =
->> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
->> +	ASSERT_LE(0, ruleset_fd);
->> +
->> +	for (access = 1; access <= ACCESS_LAST; access <<= 1) {
->> +		protocol.allowed_access = access;
->> +		EXPECT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
->> +					       &protocol, 0))
->> +		{
->> +			TH_LOG("Failed to add rule with access 0x%llx: %s",
->> +			       access, strerror(errno));
->> +		}
->> +	}
->> +	EXPECT_EQ(0, close(ruleset_fd));
-> 
-> Reviewed-by: Günther Noack <gnoack@google.com>
-> 
-> P.S. We are inconsistent with our use of EXPECT/ASSERT for test teardown.  The
-> fs_test.c uses ASSERT_EQ in these places whereas net_test.c and your new tests
-> use EXPECT_EQ.
-> 
-> It admittedly does not make much of a difference for close(), so should be OK.
-> Some other selftests are even ignoring the result for close().  If we want to
-> make it consistent in the Landlock tests again, we can also do it in an
-> independent sweep.
-> 
-> I filed a small cleanup task as a reminder:
-> https://github.com/landlock-lsm/linux/issues/31
-> 
-> —Günther
+No functional changes.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+I have some plans to hack up distributed reference counting for this
+struct, soon(tm). Should it land it is going to add at least 8 bytes.
+
+But even if nothing comes out of it this looks like a trivial clean up
+worth including.
+
+ include/linux/cred.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 2976f534a7a3..a936a291e9b1 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -107,6 +107,9 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+  * that task is going to act upon another object.  This may be overridden
+  * temporarily to point to another security context, but normally points to the
+  * same context as task->real_cred.
++ *
++ * NOTE: some fields have placement picked to plug alignment gaps -- don't
++ * shuffle things around without looking at output of pahole(1).
+  */
+ struct cred {
+ 	atomic_long_t	usage;
+@@ -119,14 +122,16 @@ struct cred {
+ 	kuid_t		fsuid;		/* UID for VFS ops */
+ 	kgid_t		fsgid;		/* GID for VFS ops */
+ 	unsigned	securebits;	/* SUID-less security management */
++#ifdef CONFIG_KEYS
++	unsigned char	jit_keyring;	/* default keyring to attach requested
++					 * keys to */
++#endif
+ 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
+ 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
+ 	kernel_cap_t	cap_effective;	/* caps we can actually use */
+ 	kernel_cap_t	cap_bset;	/* capability bounding set */
+ 	kernel_cap_t	cap_ambient;	/* Ambient capability set */
+ #ifdef CONFIG_KEYS
+-	unsigned char	jit_keyring;	/* default keyring to attach requested
+-					 * keys to */
+ 	struct key	*session_keyring; /* keyring inherited over fork */
+ 	struct key	*process_keyring; /* keyring private to this process */
+ 	struct key	*thread_keyring; /* keyring private to this thread */
+-- 
+2.39.2
+
