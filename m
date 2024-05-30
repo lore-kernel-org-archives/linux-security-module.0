@@ -1,297 +1,259 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F69814372C;
-	Thu, 30 May 2024 05:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB52142E8C;
+	Thu, 30 May 2024 05:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717048443; cv=none; b=AFK53xYcdjl+7PsqHKE7xedq9rMQ6+RPCW4BKvFNC0vKGsn6u6itm1oikCMeRsoGPvRWxCpH7q0dfdtldgFJr7zsrPVOrCqH1MwX5OWSj2zpPDp47rFtPabyANlkHQXPksc4hoNEiy69DqkXtatqaTMa557K5go0DwENIopdIPo=
+	t=1717048782; cv=none; b=UCEvGz2QbRv41nUeEXHXgQTSD0egunuVPwndyZJm8ULXb0bNQNy8ugh2ZFm9wbtEuWKJraHLy+FQCRY92k37+whlOyWKcZ2piZ7pF5NEUd2li/ajiVDbCENqD04J2ZgHDFcxDjBgDbcHcDGr9SITxCsz67l/Zuu8kqiHkxQCQwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717048443; c=relaxed/simple;
-	bh=zp259wkXtPz3aX+KSbUFsvWtLVHM6TCoCks217es0Ug=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=M8D7DdZ7pRIj9Rm6KixSZHyogvJgq9qqTPRW6WkvJOuPJFNFHdw0nohAZFogSttNSVndV+zN08tnn0DW2uLEbjRztkKksNSjcCPeO+n6V/hbTfBgFTo699BFOhNm4CbnMO3G1i5q5Dg1Uv0WYT5WWrjn+kVe95YPs4IIuLVu7DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFJkj3go; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717048782; c=relaxed/simple;
+	bh=MulVND32Z0MMDTTR+8QOaZUrYlVuVU29cuj0Px125ZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TrbwxJpLgXRlkfF9RtJL/+Vq+YXnGuSFI0KQYQyjiCnMzos/7MMam/MZQvw5DE8kMKkSM+9vAxGZlixaGZpzckhU7fqf3GcqBwez4mG4rYxEJVycPAy/8lkrIADK0x6y7t6OiK4H9fS76t2b9inMVFfN4aK56S0rB5Me688EVtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=trTpsidG; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFJkj3go"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFCF8C3277B;
-	Thu, 30 May 2024 05:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717048443;
-	bh=zp259wkXtPz3aX+KSbUFsvWtLVHM6TCoCks217es0Ug=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=IFJkj3goNCaD9gPedH2gZcpYRMcRbXdj71GqNXNmvj1VJ+a+IF6L9vw6KqI8YRxjT
-	 Yc0lEqwByVrurvRKzz4dumjKDl95MRzjIksFNrSP33V1+drP8O8nI+wxPxBzZdLweS
-	 24ocRbOfxerOUnJ0c55KmJFahoBp3V0XyxZX5QihR+MDOptwxv+KFKw4Od7Lat7dBp
-	 9HpIYfdN3lNwhx2VlHlL7q1ayRplEiA/xFGz9UFY8VwLw2H0h2lkr9Jyca7CtEUWE1
-	 eVdaaH09MqaSIlXQjXTxwUuUPXvRD86fJtOpMz/y/3Q+JrJVqNVesuEUZKg7nqaRRP
-	 +54JM5f9YqwGg==
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="trTpsidG"
+Received: from [192.168.192.85] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6F6363F27F;
+	Thu, 30 May 2024 05:59:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1717048772;
+	bh=iKIrKm+xfqbafQtN0sjQyozgN9+tcnXLbx0e6bOxTSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=trTpsidGVsMnxcOvLZJU5tvCApakflXkqvAJcZanzGAQ9wHchvuwJYQblNCC6q8Kd
+	 dl3uxFp2COokYcye18lqUHPpBGBpWftAM5wjZhlr7FTggQOV3beZf9BubSYyeWogVm
+	 N3S0tp30EzhzWQ3kCsi3jkfPNUcRAxms44ItvdT44X+53KAfW+JqsmHk1M0fJxgPEU
+	 bAvxlwonXqODuxtILG/NyuRt5jT83xkNKmLGS56qh96iUQOiRD9QbipScCK7mJVU2V
+	 HQnf9g04bgogs7noT8ndIY3I01BfpnBnEZlqDEuC/co3PGJZmc+oIbAPcORXu7A6Q9
+	 dd4PQsyY6Ykug==
+Message-ID: <f9215243-5610-4838-a31c-5894b75905e6@canonical.com>
+Date: Wed, 29 May 2024 22:59:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 30 May 2024 08:53:52 +0300
-Message-Id: <D1MQVCEITGPS.2HU8JUF2MAYQ7@kernel.org>
-Cc: <linux-doc@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <fsverity@lists.linux.dev>,
- <linux-block@vger.kernel.org>, <dm-devel@lists.linux.dev>,
- <audit@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Deven Bowers"
- <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 13/20] ipe: add support for dm-verity as a trust
- provider
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Fan Wu" <wufan@linux.microsoft.com>, "Paul Moore"
- <paul@paul-moore.com>, <corbet@lwn.net>, <zohar@linux.ibm.com>,
- <jmorris@namei.org>, <serge@hallyn.com>, <tytso@mit.edu>,
- <ebiggers@kernel.org>, <axboe@kernel.dk>, <agk@redhat.com>,
- <snitzer@kernel.org>, <mpatocka@redhat.com>, <eparis@redhat.com>
-X-Mailer: aerc 0.17.0
-References: <1716583609-21790-14-git-send-email-wufan@linux.microsoft.com>
- <2ecde610ca3f0cabcbb111e3432f2dd5@paul-moore.com>
- <67da2ff3-e0c4-4552-93dd-cf9cb04d0d78@linux.microsoft.com>
-In-Reply-To: <67da2ff3-e0c4-4552-93dd-cf9cb04d0d78@linux.microsoft.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
+ and potential solutions
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Mateusz Guzik <mjguzik@gmail.com>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ "Shukla, Santosh" <Santosh.Shukla@amd.com>,
+ "Narayan, Ananth" <Ananth.Narayan@amd.com>,
+ raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com,
+ paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
+References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com>
+ <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
+ <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com>
+ <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
+ <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com>
+ <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
+ <5c94947b-1f1f-44a7-8b9c-b701c78350b4@canonical.com>
+ <CAGudoHFxma+H_iHPV8+gfEkHc0uwFD8=rJtFy7ZE3TH+7tGiwQ@mail.gmail.com>
+ <78cfe966-33ec-4858-b114-57697e478109@canonical.com>
+ <82556a16-3390-4867-89b6-23e5ff168b89@amd.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
+ BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
+ rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
+ PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
+ a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
+ 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
+ gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
+ BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
+ eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
+ ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzStKb2huIEpvaGFu
+ c2VuIDxqb2huLmpvaGFuc2VuQGNhbm9uaWNhbC5jb20+wsF3BBMBCgAhBQJOjRdaAhsDBQsJ
+ CAcDBRUKCQgLBRYCAwEAAh4BAheAAAoJEAUvNnAY1cPYi0wP/2PJtzzt0zi4AeTrI0w3Rj8E
+ Waa1NZWw4GGo6ehviLfwGsM7YLWFAI8JB7gsuzX/im16i9C3wHYXKs9WPCDuNlMc0rvivqUI
+ JXHHfK7UHtT0+jhVORyyVVvX+qZa7HxdZw3jK+ROqUv4bGnImf31ll99clzo6HpOY59soa8y
+ 66/lqtIgDckcUt/1ou9m0DWKwlSvulL1qmD25NQZSnvB9XRZPpPd4bea1RTa6nklXjznQvTm
+ MdLq5aJ79j7J8k5uLKvE3/pmpbkaieEsGr+azNxXm8FPcENV7dG8Xpd0z06E+fX5jzXHnj69
+ DXXc3yIvAXsYZrXhnIhUA1kPQjQeNG9raT9GohFPMrK48fmmSVwodU8QUyY7MxP4U6jE2O9L
+ 7v7AbYowNgSYc+vU8kFlJl4fMrX219qU8ymkXGL6zJgtqA3SYHskdDBjtytS44OHJyrrRhXP
+ W1oTKC7di/bb8jUQIYe8ocbrBz3SjjcL96UcQJecSHu0qmUNykgL44KYzEoeFHjr5dxm+DDg
+ OBvtxrzd5BHcIbz0u9ClbYssoQQEOPuFmGQtuSQ9FmbfDwljjhrDxW2DFZ2dIQwIvEsg42Hq
+ 5nv/8NhW1whowliR5tpm0Z0KnQiBRlvbj9V29kJhs7rYeT/dWjWdfAdQSzfoP+/VtPRFkWLr
+ 0uCwJw5zHiBgzsFNBE5mrPoBEACirDqSQGFbIzV++BqYBWN5nqcoR+dFZuQL3gvUSwku6ndZ
+ vZfQAE04dKRtIPikC4La0oX8QYG3kI/tB1UpEZxDMB3pvZzUh3L1EvDrDiCL6ef93U+bWSRi
+ GRKLnNZoiDSblFBST4SXzOR/m1wT/U3Rnk4rYmGPAW7ltfRrSXhwUZZVARyJUwMpG3EyMS2T
+ dLEVqWbpl1DamnbzbZyWerjNn2Za7V3bBrGLP5vkhrjB4NhrufjVRFwERRskCCeJwmQm0JPD
+ IjEhbYqdXI6uO+RDMgG9o/QV0/a+9mg8x2UIjM6UiQ8uDETQha55Nd4EmE2zTWlvxsuqZMgy
+ W7gu8EQsD+96JqOPmzzLnjYf9oex8F/gxBSEfE78FlXuHTopJR8hpjs6ACAq4Y0HdSJohRLn
+ 5r2CcQ5AsPEpHL9rtDW/1L42/H7uPyIfeORAmHFPpkGFkZHHSCQfdP4XSc0Obk1olSxqzCAm
+ uoVmRQZ3YyubWqcrBeIC3xIhwQ12rfdHQoopELzReDCPwmffS9ctIb407UYfRQxwDEzDL+m+
+ TotTkkaNlHvcnlQtWEfgwtsOCAPeY9qIbz5+i1OslQ+qqGD2HJQQ+lgbuyq3vhefv34IRlyM
+ sfPKXq8AUTZbSTGUu1C1RlQc7fpp8W/yoak7dmo++MFS5q1cXq29RALB/cfpcwARAQABwsFf
+ BBgBCgAJBQJOZqz6AhsMAAoJEAUvNnAY1cPYP9cP/R10z/hqLVv5OXWPOcpqNfeQb4x4Rh4j
+ h/jS9yjes4uudEYU5xvLJ9UXr0wp6mJ7g7CgjWNxNTQAN5ydtacM0emvRJzPEEyujduesuGy
+ a+O6dNgi+ywFm0HhpUmO4sgs9SWeEWprt9tWrRlCNuJX+u3aMEQ12b2lslnoaOelghwBs8IJ
+ r998vj9JBFJgdeiEaKJLjLmMFOYrmW197As7DTZ+R7Ef4gkWusYFcNKDqfZKDGef740Xfh9d
+ yb2mJrDeYqwgKb7SF02Hhp8ZnohZXw8ba16ihUOnh1iKH77Ff9dLzMEJzU73DifOU/aArOWp
+ JZuGJamJ9EkEVrha0B4lN1dh3fuP8EjhFZaGfLDtoA80aPffK0Yc1R/pGjb+O2Pi0XXL9AVe
+ qMkb/AaOl21F9u1SOosciy98800mr/3nynvid0AKJ2VZIfOP46nboqlsWebA07SmyJSyeG8c
+ XA87+8BuXdGxHn7RGj6G+zZwSZC6/2v9sOUJ+nOna3dwr6uHFSqKw7HwNl/PUGeRqgJEVu++
+ +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
+ p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
+Organization: Canonical
+In-Reply-To: <82556a16-3390-4867-89b6-23e5ff168b89@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu May 30, 2024 at 6:58 AM EEST, Fan Wu wrote:
->
->
-> On 5/29/2024 6:44 PM, Paul Moore wrote:
-> > On May 24, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
-> >>
-> >> Allows author of IPE policy to indicate trust for a singular dm-verity
-> >> volume, identified by roothash, through "dmverity_roothash" and all
-> >> signed and validated dm-verity volumes, through "dmverity_signature".
-> >>
-> >> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> >> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> >> ---
-> >> v2:
-> >>    + No Changes
-> >>
-> >> v3:
-> >>    + No changes
-> >>
-> >> v4:
-> >>    + No changes
-> >>
-> >> v5:
-> >>    + No changes
-> >>
-> >> v6:
-> >>    + Fix an improper cleanup that can result in
-> >>      a leak
-> >>
-> >> v7:
-> >>    + Squash patch 08/12, 10/12 to [11/16]
-> >>
-> >> v8:
-> >>    + Undo squash of 08/12, 10/12 - separating drivers/md/ from securit=
-y/
-> >>      & block/
-> >>    + Use common-audit function for dmverity_signature.
-> >>    + Change implementation for storing the dm-verity digest to use the
-> >>      newly introduced dm_verity_digest structure introduced in patch
-> >>      14/20.
-> >>
-> >> v9:
-> >>    + Adapt to the new parser
-> >>
-> >> v10:
-> >>    + Select the Kconfig when all dependencies are enabled
-> >>
-> >> v11:
-> >>    + No changes
-> >>
-> >> v12:
-> >>    + Refactor to use struct digest_info* instead of void*
-> >>    + Correct audit format
-> >>
-> >> v13:
-> >>    + Remove the CONFIG_IPE_PROP_DM_VERITY dependency inside the parser
-> >>      to make the policy grammar independent of the kernel config.
-> >>
-> >> v14:
-> >>    + No changes
-> >>
-> >> v15:
-> >>    + Fix one grammar issue in KCONFIG
-> >>    + Switch to use security_bdev_setintegrity() hook
-> >>
-> >> v16:
-> >>    + Refactor for enum integrity type
-> >>
-> >> v17:
-> >>    + Add years to license header
-> >>    + Fix code and documentation style issues
-> >>    + Return -EINVAL in ipe_bdev_setintegrity when passed type is not
-> >>      supported
-> >>    + Use new enum name LSM_INT_DMVERITY_SIG_VALID
-> >>
-> >> v18:
-> >>    + Add Kconfig IPE_PROP_DM_VERITY_SIGNATURE and make both DM_VERITY
-> >>      config auto-selected
-> >>
-> >> v19:
-> >>    + No changes
-> >> ---
-> >>   security/ipe/Kconfig         |  27 ++++++++
-> >>   security/ipe/Makefile        |   1 +
-> >>   security/ipe/audit.c         |  29 ++++++++-
-> >>   security/ipe/digest.c        | 118 +++++++++++++++++++++++++++++++++=
-++
-> >>   security/ipe/digest.h        |  26 ++++++++
-> >>   security/ipe/eval.c          |  93 ++++++++++++++++++++++++++-
-> >>   security/ipe/eval.h          |  12 ++++
-> >>   security/ipe/hooks.c         |  93 +++++++++++++++++++++++++++
-> >>   security/ipe/hooks.h         |   8 +++
-> >>   security/ipe/ipe.c           |  15 +++++
-> >>   security/ipe/ipe.h           |   4 ++
-> >>   security/ipe/policy.h        |   3 +
-> >>   security/ipe/policy_parser.c |  24 ++++++-
-> >>   13 files changed, 449 insertions(+), 4 deletions(-)
-> >>   create mode 100644 security/ipe/digest.c
-> >>   create mode 100644 security/ipe/digest.h
-> >=20
-> > ...
-> >=20
-> >> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-> >> index b68719bf44fb..51f1e63c295c 100644
-> >> --- a/security/ipe/hooks.c
-> >> +++ b/security/ipe/hooks.c
-> >> @@ -191,3 +193,94 @@ void ipe_unpack_initramfs(void)
-> >>   {
-> >>   	ipe_sb(current->fs->root.mnt->mnt_sb)->initramfs =3D true;
-> >>   }
-> >> +
-> >> +#ifdef CONFIG_IPE_PROP_DM_VERITY
-> >> +/**
-> >> + * ipe_bdev_free_security() - Free IPE's LSM blob of block_devices.
-> >> + * @bdev: Supplies a pointer to a block_device that contains the stru=
-cture
-> >> + *	  to free.
-> >> + */
-> >> +void ipe_bdev_free_security(struct block_device *bdev)
-> >> +{
-> >> +	struct ipe_bdev *blob =3D ipe_bdev(bdev);
-> >> +
-> >> +	ipe_digest_free(blob->root_hash);
-> >> +}
-> >> +
-> >> +#ifdef CONFIG_IPE_PROP_DM_VERITY_SIGNATURE
-> >> +static void ipe_set_dmverity_signature(struct ipe_bdev *blob,
-> >> +				       const void *value,
-> >> +				       size_t size)
-> >> +{
-> >> +	blob->dm_verity_signed =3D size > 0 && value;
-> >> +}
-> >> +#else
-> >> +static inline void ipe_set_dmverity_signature(struct ipe_bdev *blob,
-> >> +					      const void *value,
-> >> +					      size_t size)
-> >> +{
-> >> +}
-> >> +#endif /* CONFIG_IPE_PROP_DM_VERITY_SIGNATURE */
-> >> +
-> >> +/**
-> >> + * ipe_bdev_setintegrity() - Save integrity data from a bdev to IPE's=
- LSM blob.
-> >> + * @bdev: Supplies a pointer to a block_device that contains the LSM =
-blob.
-> >> + * @type: Supplies the integrity type.
-> >> + * @value: Supplies the value to store.
-> >> + * @size: The size of @value.
-> >> + *
-> >> + * This hook is currently used to save dm-verity's root hash or the e=
-xistence
-> >> + * of a validated signed dm-verity root hash into LSM blob.
-> >> + *
-> >> + * Return: %0 on success. If an error occurs, the function will retur=
-n the
-> >> + * -errno.
-> >> + */
-> >> +int ipe_bdev_setintegrity(struct block_device *bdev, enum lsm_integri=
-ty_type type,
-> >> +			  const void *value, size_t size)
-> >> +{
-> >> +	const struct dm_verity_digest *digest =3D NULL;
-> >> +	struct ipe_bdev *blob =3D ipe_bdev(bdev);
-> >> +	struct digest_info *info =3D NULL;
-> >> +
-> >> +	if (type =3D=3D LSM_INT_DMVERITY_ROOTHASH) {
-> >> +		if (!value) {
-> >> +			ipe_digest_free(blob->root_hash);
-> >> +			blob->root_hash =3D NULL;
-> >> +
-> >> +			return 0;
-> >> +		}
-> >> +		digest =3D value;
-> >> +
-> >> +		info =3D kzalloc(sizeof(*info), GFP_KERNEL);
-> >> +		if (!info)
-> >> +			return -ENOMEM;
-> >> +
-> >> +		info->digest =3D kmemdup(digest->digest, digest->digest_len,
-> >> +				       GFP_KERNEL);
-> >> +		if (!info->digest)
-> >> +			goto dmv_roothash_err;
-> >> +
-> >> +		info->alg =3D kstrdup(digest->alg, GFP_KERNEL);
-> >> +		if (!info->alg)
-> >> +			goto dmv_roothash_err;
-> >> +
-> >> +		info->digest_len =3D digest->digest_len;
-> >> +
-> >> +		if (blob->root_hash)
-> >> +			ipe_digest_free(blob->root_hash);
-> >=20
-> > The above if/free looks like a new addition from v18 and I'm not quite
-> > sure why the `blob->root_hash` NULL check is necessary as
-> > ipe_digest_free() does a IS_ERR_OR_NULL() check right at the top.
-> >=20
-> > Likely harmless and doubtful to have any noticable performance impact,
-> > but I wanted to mention it just in case ...
-> >=20
->
-> Yes directly call ipe_digest_free() should be enough.
->
-> Also this new free is introduced because the mapped device with an=20
-> existing dm-verity target can be suspended and associated with a new=20
-> dm-verity target. In this case, the root hash associated with the=20
-> security blob will be stale and needs to be freed before setting the new=
-=20
-> data.
->
-> -Fan
->
-> >> +		blob->root_hash =3D info;
-> >> +
-> >> +		return 0;
-> >> +dmv_roothash_err:
+On 5/29/24 21:19, Neeraj Upadhyay wrote:
+> Hi John,
+> 
+> Thanks for taking a look at the series!
+> 
+> On 5/29/2024 6:07 AM, John Johansen wrote:
+>> On 5/28/24 06:29, Mateusz Guzik wrote:
+>>> On Fri, May 24, 2024 at 11:52 PM John Johansen
+>>> <john.johansen@canonical.com> wrote:
+>>>>
+>>>> On 5/24/24 14:10, Mateusz Guzik wrote:
+>>>>> On Fri, Mar 8, 2024 at 9:09 PM John Johansen
+>>>>> <john.johansen@canonical.com> wrote:
+>>>>>>
+>>>>>> On 3/2/24 02:23, Mateusz Guzik wrote:
+>>>>>>> On 2/9/24, John Johansen <john.johansen@canonical.com> wrote:
+>>>>>>>> On 2/6/24 20:40, Neeraj Upadhyay wrote:
+>>>>>>>>> Gentle ping.
+>>>>>>>>>
+>>>>>>>>> John,
+>>>>>>>>>
+>>>>>>>>> Could you please confirm that:
+>>>>>>>>>
+>>>>>>>>> a. The AppArmor refcount usage described in the RFC is correct?
+>>>>>>>>> b. Approach taken to fix the scalability issue is valid/correct?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hi Neeraj,
+>>>>>>>>
+>>>>>>>> I know your patchset has been waiting on review for a long time.
+>>>>>>>> Unfortunately I have been very, very busy lately. I will try to
+>>>>>>>> get to it this weekend, but I can't promise that I will be able
+>>>>>>>> to get the review fully done.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Gentle prod.
+>>>>>>>
+>>>>>>> Any chances of this getting reviewed in the foreseeable future? Would
+>>>>>>> be a real bummer if the patchset fell through the cracks.
+>>>>>>>
+>>>>>>
+>>>>>> yes, sorry I have been unavailable for the last couple of weeks. I am
+>>>>>> now back, I have a rather large backlog to try catching up on but this
+>>>>>> is has an entry on the list.
+>>>>>>
+>>>>>
+>>>>> So where do we stand here?
+>>>>>
+>>>> sorry I am still trying to dig out of my backlog, I will look at this,
+>>>> this weekend.
+>>>>
+>>>
+>>> How was the weekend? ;)
+>>>
+>>
+>> lets say it was busy. Have I looked at this, yes. I am still digesting it.
+>> I don't have objections to moving towards percpu refcounts, but the overhead
+>> of a percpu stuct per label is a problem when we have thousands of labels
+>> on the system. That is to say, this would have to be a config option. We
+>> moved buffers from kmalloc to percpu to reduce memory overhead to reduce
+>> contention. The to percpu, to a global pool because the percpu overhead was
+>> too high for some machines, and then from a global pool to a hybrid scheme
+>> because of global lock contention. I don't see a way of doing that with the
+>> label, which means a config would be the next best thing.
+>>
+> 
+> For the buffers, what was the percpu overhead roughly? For
+> thousands of labels, I think, the extra memory overhead roughly would
+> be in the range of few MBs (need to be profiled though). This extra
+> label overhead would be considered high for the machines where percpu
+> buffer overhead was considered high?
+> 
 
-Just a nitpick but 9/10 'err' is a prefix...
-
-Also now this patch set uses 'err'' ambiguously given the use
-as name of the variable to store a return code. Similar naming
-pattern would do miracles.
-
-> >> +		ipe_digest_free(info);
-> >> +
-> >> +		return -ENOMEM;
-> >> +	} else if (type =3D=3D LSM_INT_DMVERITY_SIG_VALID) {
-> >> +		ipe_set_dmverity_signature(blob, value, size);
-> >> +
-> >> +		return 0;
-> >> +	}
-> >> +
-> >> +	return -EINVAL;
-> >> +}
-> >> +#endif /* CONFIG_IPE_PROP_DM_VERITY */
-> >=20
-> > --
-> > paul-moore.com
+It of course varies. It was fixed at 2-8K per cpu core depending on the buffer
+size. So on a 192 cpu machine you we are talking a couple MBs. Obviously more
+on bigger machines. The problem here is say the percpu refcount while smaller
+per label, will be more in situations with lots of cpus. Which is fine if that
+is what it needs to be, but for other use cases tuning it to be smaller would
+be nice.
 
 
-BR, Jarkko
+> Please correct me here, so you are proposing that we use a kconfig to
+> use either 'struct percpu_ref' or a 'struct kref' (using a union maybe)
+> inside the 'struct aa_label' and update the refcount operations accordingly?
+> If yes, I will work on a patch with this kconfig based selection of
+> refcounting mode to see how it pans out.
+> 
+possibly, I am still mulling over how we want to approach this
+
+> @Mateusz can you share the dynamic switching counter mode patch series please?
+> 
+yes I am interested in looking at this as well.
+
+> In addition, for long term, there is an ongoing work (by Paul, Boqun and myself)
+> on implementing hazard pointers as a scalable refcounting scheme [1] in kernel,
+> which would not have memory usage overhead as in percpu refcount. At this point the
+> API design/implementation is in early prototype stage.
+> 
+> 
+> [1] https://docs.google.com/document/d/113WFjGlAW4m72xNbZWHUSE-yU2HIJnWpiXp91ShtgeE/edit?usp=sharing
+
+okay, I will take a look
+
+> 
+>> Not part of your patch but something to be considered is that the label tree
+>> needs a rework, its locking needs to move to read side a read side lock less
+>> scheme, and the plan was to make it also use a linked list such that new
+>> labels are always queued at the end, allowing dynamically created labels to
+>> be lazily added to the tree.
+>>
+> 
+> Read side would be rcu read lock protected in this scheme?
+> The linked list would store the dynamically created compound labels?
+> What is the advantage of using this lazy addition to the tree? We optimize
+> on the label search, addition/deletion for dynamic labels? The lazy addition
+> to the tree is done when a label find operation on the list succeeds?
+> 
+there are contexts where we are creating labels, and do not want to wait on
+some of the longer tree walk profile updates/replacements. If a replacement is
+on going the idea is to just add the label to the end of a list and let the
+process that is doing the tree update take the hit of inserting and rebalancing
+the tree.
+
+
+>> I see the use of the kworker as problematic as well, especially if we are
+>> talking using kconfig to switch reference counting modes. I am futzing with
+>> some ideas, on how to deal with this.
+>>
+> 
+> We can disable queuing of label reclaim work for non-percpu case?
+> 
+maybe, I am pondering ways we can deal with this. I have been pondering the
+if we might be able to leverage a seqlock here, but I will also take a look
+at hazard pointers.
+
+>> Like I said I am still digesting.
+>>
+> 
+> Thank you!
+> 
+> 
+> Thanks
+> Neeraj
+> 
+
