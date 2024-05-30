@@ -1,135 +1,218 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5B517F4E0
-	for <linux-security-module@vger.kernel.org>; Thu, 30 May 2024 20:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B0418629F;
+	Thu, 30 May 2024 23:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717102491; cv=none; b=t97RSTuyl15NrhpKxFLO+YGHKebxYybhUcFh0y/6EYgQkhWN6nU0whka3vQ/1WGtBbhg9X5DPGSClXOPpDWCCpUIMMfvMnecKVVzgpfE5JBjeadoy/3VOIvhlawOzlcExLPyJDaNsp6ejSiwzn5hcb0v/3rkobuDj/HG0mn+xQg=
+	t=1717110789; cv=none; b=DoYBZc/O8KYRF1XmKVw+ejEch9IdGnTckLxPFC//q6I3ALmnvi91bhPm0vhTN5cPqhAInqoITAVSGjuHRZbxk8K43FloE8XFp1Z8O0unzcrh7R27IPNtWK8D0z3JyqJH+QBsXOQxYeYBFcpVEV5Xd79+9aoyGFbDd6H9KvzMDr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717102491; c=relaxed/simple;
-	bh=eg+MIkwiEVxSkImTnP9/42HiBWABCU3sNxsgUn+kexk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=enIgBjWpjFxjG2yi2ePDuDeCM1D+Tla5GnTHYHdWI7XqWpqcEumIDYp9v9VwBoutuZMgs+mm4+anQ4t3R1iunuX6ZzcQ1rgtzx96/UQEKxuxh1DhSqGenK5EDzaXfAB3VF8oJb27yQJWZDbYWxQ8mMnA9GPuH+8HJ7PZ3Yygr3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BrzIFDm5; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1717110789; c=relaxed/simple;
+	bh=po7DAgy8YTC2bJzT7s/B+fFjRETSLdi28cWfqH3P/sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAFE2fdCk4yCVXsBk2ExhmnZuGVegDrjxM6t24H8QSLkIkVadwfprHf0ctChkzoLDD090HT8cMuTB+3Z0mRde1VbW49RLCtxDUy151PUFnadZOu2Fvxj6+5+zXZhr/O74r+nDWLufn3magwuIkiMoJJD5t8o2pzekpal7uKgk+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXsrmrkl; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BrzIFDm5"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-62a2a6a5ccfso13724057b3.3
-        for <linux-security-module@vger.kernel.org>; Thu, 30 May 2024 13:54:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXsrmrkl"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f6134df05fso13532375ad.1;
+        Thu, 30 May 2024 16:13:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1717102489; x=1717707289; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IHhnEY8EBCWzfeI4r7ZxHSk1OcUfnIeP4X4PVOCwAbA=;
-        b=BrzIFDm5u1OGrheVMzkYq0tj0rbabzbKf0pTE8oxaIY+RyN0ZEytQzCrnnJreDPOIg
-         7TQl9X+VZ0fTaRlX8iqumOhB09WMOpzndyPEMdEykX7NyENEaOKkQZfnijFXjWEozH3z
-         8Jpd+FQxLvzyhMT7cBq724wOfUQslHfL7cnw/ncQNudTDP+XWoyKxjHiBawIxliDwHlv
-         6Ck785H97sLYf86QFP/eOO/nxuZAAO/OzLO/ClrGsCTjSBbC4T16jgjO+ijjmzjwY+8e
-         nRz9WgFbGVZalnPuTw229RHuigu3tO8iUWyIqbb3VCvm0OPGAkN25fTRlj7b9Rfjy5qD
-         QNcw==
+        d=gmail.com; s=20230601; t=1717110787; x=1717715587; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FuqdMEwY6ApcjLMbdp1tLuV20KDvi7MGyAlyHkkts5I=;
+        b=SXsrmrklZ1RMGL+v9Ewg7AUrrnpV3NsJsqWlH9pymMEPNIJKrwCk9IHvpxmcDT58m8
+         J2Areu5sFc+rEa0uSYQNRSc0fyVMBIohXGqWhqNnIihZygW6f9haAMJ9lWEFhy3YBjNx
+         ObF+nH4Z3Oo4v/MvozyeOzmsnxHLPVCUTfT2zuUThDnBvRhhaq9M0c/fOOZJ4IlQZj4A
+         z0FOGhqWGwj3jBjx8hhe+Qr5I+ImfAzb3/HzKpg1/scyyWVXNu0ima1ZpPYGBdAgMHbk
+         Wj08F0ig3Rnna46k634F2booSJ+6StMQqaVw1Tu5k4NT9lZ0YOBO2Sh/MAetrbh5O11o
+         TtXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717102489; x=1717707289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IHhnEY8EBCWzfeI4r7ZxHSk1OcUfnIeP4X4PVOCwAbA=;
-        b=BMBqBgm+g5S2trr0X00N3w/2H0U9qq6RKPERT88DvVMpK8TKn6gYmMfFPOzPehmDZk
-         eqrnPIeYp/9/xobzn9ST8cbSZUC8igJTWcoS9Ta8+3+AXy3BhMHBOSMGO6N9A+Dim6sd
-         I209/5UDTa+q6tZ/7abK6GSOnYIa5C2ia+8X+AEpqjR6cshGVpqkpFmSGTztlotmwDI6
-         KmsI/socDjxYLFotQexIGaEfjb1NuIOhR2+swZFIwQenBZodEUKsB2X9UlY064IoDGVL
-         3vMKNl8a35M6ftituBQ+4y2Ox5pbPU2Ispk7cr0XUi0tBbxv+bd/Out0XtJf8sSNV99C
-         MDxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrIs5y3Ugi7QQzRmClsm+6b/3Bx0yM187xWgUlj2IWixOnbaMBBQA6T4mXsik/bykmSkl9QmKw6uTsJQN3swm5XjpOvknEyXxoYGSr9PF3I/XUIpqI
-X-Gm-Message-State: AOJu0YyBA2uqpG5t2JuXdq9wHd/PB6nc3FEZ88tJ7aLzbOylmj5LzfjL
-	JjAg/z/I0AHh1nj1HndMFvW2KSXcpB9CAQRdoasE6YvY1QTUQu1kRDSS0001XTtqze7vHsI8lBj
-	/1QbG7390Rn0NL3TFLjlGlmIDU8w2Re0vlxVv
-X-Google-Smtp-Source: AGHT+IFGAao34yd3dClXG2DXw+Iy5chVgrvzZN/oG9tpxQvuE1hMom7wnNuLEmL3KD2ppvrBp7AAzHWyXJlgtWi13+A=
-X-Received: by 2002:a0d:dc83:0:b0:61b:33fc:ad0e with SMTP id
- 00721157ae682-62c6bc3120bmr35459887b3.17.1717102489115; Thu, 30 May 2024
- 13:54:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717110787; x=1717715587;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FuqdMEwY6ApcjLMbdp1tLuV20KDvi7MGyAlyHkkts5I=;
+        b=omrMY1XI8/1ezWNsGKDtyH5xCWxaxRfnkk701bule8byOuPVkRxdoDqK2liuOmQ1Qv
+         1iCqAEYfwFV4jchUpPpCGARy++vD7h220K5rEwfBNQa87k4+0FMC608jdILbl1otlUMH
+         QhYkLnQ9iBezgJ7yiAvUYpnsO6ZTd7d4qq7F88C4wBxdDM/KjMbo1S9/9zwERHFCVWR6
+         tDVDOToMYuZfi4E7NdcBcfbmlG6CV23d2nooSMLFZu0birJWHvb/AG2PLmKPTGbE36UI
+         s86ULWIW6YbhpFYXuFeURyByKx+3d4bYcFGpFgMDUuwZX2qSHg5Aou4n5WRgSCvFCdJr
+         tiDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD/1im+nGiquY/R9bNDmJTLrNQwHxp+PIBCqgqB8RCgm9pRMBC+lmZCDYLcHADcQPrVGW5xZDHtCxoberAHdI2WBV7YD0bCd/XEKGbKi0zm/2z7mppySn6Gb+r8RfR3B0F9uNYBGXMpjMLNTPpOPQuGJ65UpsFjIDN3VKLpzeR/beFbpb1hqkGG/A/
+X-Gm-Message-State: AOJu0YykGCeSfjFaH3+h/lEOermLRSVoWuCJgzCVA0pHsSrEdX3WZCiR
+	f+7yYeXv5oZ+5qs4Bph2gqL8ht9kc5OkeAKVkOnk8MMAaWCFtvdH
+X-Google-Smtp-Source: AGHT+IFiG5YeKzz45vQv3iDZc2S0tQYYcLWdJy2aRjmI2ti60UDng2VinTyifoaD9XAnyO4R0PyYFQ==
+X-Received: by 2002:a17:902:e851:b0:1f4:947b:b7b6 with SMTP id d9443c01a7336-1f6370320c1mr2748675ad.39.1717110787217;
+        Thu, 30 May 2024 16:13:07 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323e9f2csm3160285ad.200.2024.05.30.16.13.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 16:13:06 -0700 (PDT)
+Date: Thu, 30 May 2024 17:13:04 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E.Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev, netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
+ restrictions
+Message-ID: <ZlkIAIpWG/l64Pl9@tahera-OptiPlex-5000>
+References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
+ <20240401.ieC2uqua5sha@digikod.net>
+ <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+ <20240411.ahgeefeiNg4i@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
- <1716583609-21790-16-git-send-email-wufan@linux.microsoft.com>
- <CAHC9VhRsnGjZATBj7-evK6Gdryr54raTTKMYO_vup8AGXLwjQg@mail.gmail.com> <20240530030605.GA29189@sol.localdomain>
-In-Reply-To: <20240530030605.GA29189@sol.localdomain>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 30 May 2024 16:54:37 -0400
-Message-ID: <CAHC9VhRySQ0c16UZz5xKT-y5Tn39wXxe4-f7LNjFY+ROGGxpaQ@mail.gmail.com>
-Subject: Re: [PATCH v19 15/20] fsverity: expose verified fsverity built-in
- signatures to LSMs
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, 
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, 
-	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, eparis@redhat.com, 
-	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240411.ahgeefeiNg4i@digikod.net>
 
-On Wed, May 29, 2024 at 11:06=E2=80=AFPM Eric Biggers <ebiggers@kernel.org>=
- wrote:
-> On Wed, May 29, 2024 at 09:46:57PM -0400, Paul Moore wrote:
-> > On Fri, May 24, 2024 at 4:46=E2=80=AFPM Fan Wu <wufan@linux.microsoft.c=
-om> wrote:
-> > >
-> > > This patch enhances fsverity's capabilities to support both integrity=
- and
-> > > authenticity protection by introducing the exposure of built-in
-> > > signatures through a new LSM hook. This functionality allows LSMs,
-> > > e.g. IPE, to enforce policies based on the authenticity and integrity=
- of
-> > > files, specifically focusing on built-in fsverity signatures. It enab=
-les
-> > > a policy enforcement layer within LSMs for fsverity, offering granula=
-r
-> > > control over the usage of authenticity claims. For instance, a policy
-> > > could be established to permit the execution of all files with verifi=
-ed
-> > > built-in fsverity signatures while restricting kernel module loading
-> > > from specified fsverity files via fsverity digests.
+On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
+> On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
+> > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
+> > > Thanks for this patch.  Please CC the netdev mailing list too, they may
+> > > be interested by this feature. I also added a few folks that previously
+> > > showed their interest for this feature.
+> > > 
+> > > On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
+> > > > Abstract unix sockets are used for local interprocess communication without
+> > > > relying on filesystem. Since landlock has no restriction for connecting to
+> > > > a UNIX socket in the abstract namespace, a sandboxed process can connect to
+> > > > a socket outside the sandboxed environment. Access to such sockets should
+> > > > be scoped the same way ptrace access is limited.
+> > > 
+> > > This is good but it would be better to explain that Landlock doesn't
+> > > currently control abstract unix sockets and that it would make sense for
+> > > a sandbox.
+> > > 
+> > > 
+> > > > 
+> > > > For a landlocked process to be allowed to connect to a target process, it
+> > > > must have a subset of the target process’s rules (the connecting socket
+> > > > must be in a sub-domain of the listening socket). This patch adds a new
+> > > > LSM hook for connect function in unix socket with the related access rights.
+> > > 
+> > > Because of compatibility reasons, and because Landlock should be
+> > > flexible, we need to extend the user space interface.  As explained in
+> > > the GitHub issue, we need to add a new "scoped" field to the
+> > > landlock_ruleset_attr struct. This field will optionally contain a
+> > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
+> > > ruleset will deny any connection from within the sandbox to its parents
+> > > (i.e. any parent sandbox or not-sandboxed processes).
+> 
+> > Thanks for the feedback. Here is what I understood, please correct me if
+> > I am wrong. First, I should add another field to the
+> > landlock_ruleset_attr (a field like handled_access_net, but for the unix
+> > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
+> > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
+> 
+> That was the initial idea, but after thinking more about it and talking
+> with some users, I now think we can get a more generic interface.
+> 
+> Because unix sockets, signals, and other IPCs are fully controlled by
+> the kernel (contrary to inet sockets that get out of the system), we can
+> add ingress and egress control according to the source and the
+> destination.
+> 
+> To control the direction we could add an
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE and a
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND rights (these names are a bit
+> long but at least explicit).  To control the source and destination, it
+> makes sense to use Landlock domain (i.e. sandboxes):
+> LANDLOCK_DOMAIN_HIERARCHY_PARENT, LANDLOCK_DOMAIN_HIERARCHY_SELF, and
+> LANDLOCK_DOMAIN_HIERARCHY_CHILD.  This could be used by extending the
+> landlock_ruleset_attr type and adding a new
+> landlock_domain_hierarchy_attr type:
+> 
+> struct landlock_ruleset_attr ruleset_attr = {
+>   .handled_access_dom = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+>                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> }
+> 
+> // Allows sending data to and receiving data from processes in the same
+> // domain or a child domain, through abstract unix sockets.
+> struct landlock_domain_hierarchy_attr dom_attr = {
+>   .allowed_access = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+>                     LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+>   .relationship = LANDLOCK_DOMAIN_HIERARCHY_SELF | \
+>                   LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+> };
+> 
+> It should also work with other kind of IPCs:
+> * LANDLOCK_ACCESS_DOM_UNIX_PATHNAME_RECEIVE/SEND (signal)
+> * LANDLOCK_ACCESS_DOM_SIGNAL_RECEIVE/SEND (signal)
+> * LANDLOCK_ACCESS_DOM_XSI_RECEIVE/SEND (XSI message queue)
+> * LANDLOCK_ACCESS_DOM_MQ_RECEIVE/SEND (POSIX message queue)
+> * LANDLOCK_ACCESS_DOM_PTRACE_RECEIVE/SEND (ptrace, which would be
+>   limited)
+> 
+> What do you think?
 
-...
+I was wondering if you expand your idea on the following example. 
 
-> > Eric, can you give this patch in particular a look to make sure you
-> > are okay with everything?  I believe Fan has addressed all of your
-> > previous comments and it would be nice to have your Ack/Review tag if
-> > you are okay with the current revision.
->
-> Sorry, I've just gotten a bit tired of finding so many basic issues in th=
-is
-> patchset even after years of revisions.
->
-> This patch in particular is finally looking better.  There are a couple i=
-ssues
-> that I still see.  (BTW, you're welcome to review it too to help find the=
-se
-> things, given that you seem to have an interest in getting this landed...=
-):
+Considering P1 with the rights that you mentioned in your email, forks a
+new process (P2). Now both P1 and P2 are on the same domain and are
+allowed to send data to and receive data from processes in the same
+domain or a child domain. 
+/*
+ *         Same domain (inherited)
+ * .-------------.
+ * | P1----.     |      P1 -> P2 : allow
+ * |        \    |      P2 -> P1 : allow
+ * |         '   |
+ * |         P2  |
+ * '-------------'
+ */
+(P1 domain) = (P2 domain) = {
+		.allowed_access =
+			LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | 
+			LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+		.relationship = 
+			LANDLOCK_DOMAIN_HIERARCHY_SELF | 
+			LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+		}
 
-I too have been reviewing this patchset across multiple years and have
-worked with Fan to fix locking issues, parsing issues, the initramfs
-approach, etc.  My interest in getting this landed is simply a
-combination of fulfilling my role as LSM maintainer as well as being
-Fan's coworker.  While I realize you don't work with Fan, you are
-listed as the fs-verity maintainer and as such I've been looking to
-you to help review and authorize the fs-verity related code.  If you
-are too busy, frustrated, or <fill in the blank> to continue reviewing
-this patchset it would be helpful if you could identify an authorized
-fs-verity reviewer.  I don't see any besides you and Ted listed in the
-MAINTAINERS file, but perhaps the fs-verity entry is dated.
+In another example, if P1 has the same domain as before but P2 has
+LANDLOCK_DOMAIN_HIERARCHY_PARENT in their domain, so P1 still can 
+connect to P2. 
+/*
+ *        Parent domain
+ * .------.
+ * |  P1  --.           P1 -> P2 : allow
+ * '------'  \          P2 -> P1 : allow
+ *            '
+ *            P2
+ */
 
-Regardless, I appreciate your time and feedback thus far and I'm sure
-Fan does as well.
+(P1 domain) = {
+                .allowed_access =
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE |
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+                .relationship = 
+                        LANDLOCK_DOMAIN_HIERARCHY_SELF |
+                        LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+                }
+(P2 domain) = {
+                .allowed_access =
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE |
+                        LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+                .relationship = 
+                        LANDLOCK_DOMAIN_HIERARCHY_SELF |
+                        LANDLOCK_DOMAIN_HIERARCHY_CHILD |
+			LANDLOCK_DOMAIN_HIERARCHY_PARENT,
+		}
+ 
 
---=20
-paul-moore.com
