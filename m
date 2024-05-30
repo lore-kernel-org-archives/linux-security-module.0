@@ -1,48 +1,31 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB8117D8A9;
-	Thu, 30 May 2024 14:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16E169AC6;
+	Thu, 30 May 2024 14:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717078099; cv=none; b=MIGaK3e6rN0x0WeMzVtGyCnxU7USCKLQ8yXHV8pjzpnwF0qhlWVMJGwFzd7RUJ0MWgHiTltdmWsDECtzAolLFW6wQQxGpCiC/uTLR75L925njG5648D8tESalyn/6olPD+Y/KaBOb+ZIuwCdmwn96OGFbAiWS8kvyvYqbt73W7Y=
+	t=1717079734; cv=none; b=dtxh86bbeJ6nbPdPhY1Eozts4LvcpPrfKnwu3hxMmdBUg+F3KDXORGpF41ISWAUbk6Z1yuzHySXGThYWCAuZwR/Tly8FntXzuHCw0L9+703xO8886IgWRGXMOkImOtiY2P2swBMGKptCN7eDqKeR6boR4dQwTJYhMA9lXvYumQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717078099; c=relaxed/simple;
-	bh=EZ6CNDZ/17E/DkuT+VWNmITW9/kfR2rHBbFL3oFnVPw=;
+	s=arc-20240116; t=1717079734; c=relaxed/simple;
+	bh=nw72xWnPpdyLXDd6BSSXfeSuAij6WeLgNpBcNRwcIao=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RckPjLl2p8ueT0WnxINvBllUNQBcX2SAgJYZcFrt81v97kPN2W7xpTTS9MOHyWQYn50QxOPrV7yL4fjk4ZQW/iOSK5ERf68zYUoeLnAmji42p+M1T2ktLJTs1h2eMjyZv8XEVog/jMQcHD/udl8ZNpkZIMSCDD5K0ADF5ZbKlD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WTopETGU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WTopETGU"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U5hH0r015684;
-	Thu, 30 May 2024 14:07:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s5xSVs/mPJRwYaKkrhVOTQmXac0Ej6Efg8321SwZZhI=; b=WTopETGUSoLaAfHj
-	yzsAv5EnJuQB+SALUtOVsJow/qAJHrbdkYAprpyf7UIizMkBFCzkQ94ZvaQGnRZr
-	gzl2DvXF2XFoGTR/+tIf+66a5EkkMkuSJdEb2KXJ1gvfJ5RRtLO1pHhHu2wb4ieL
-	pCi81c69EI2HcKNz5rd+3QFPjER0FJQUQ8HVZDPTfJ4i97x4ceCwxLKZYaJ0YIux
-	cZ+HCFxzGTRbPz1XvphL2iEkEzJH/NztJ61mFvbzP8osozOrny18z7T2ERFcFIn2
-	wqldoairb4vsR7cRDB7D2vBgdqAjvX6LUE44zy6vQSkYVh4XjIuV5pISQFn+CnNA
-	3xW74A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ydyws3uyu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 14:07:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UE7qYU018637
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 May 2024 14:07:52 GMT
-Received: from [10.110.109.163] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
- 2024 07:07:50 -0700
-Message-ID: <18ca9445-588c-4c41-b274-8f7f0ea589b5@quicinc.com>
-Date: Thu, 30 May 2024 07:07:49 -0700
+	 In-Reply-To:Content-Type; b=cxpv7taI9362vLoLEi0dMUtq7xGKcEZFlMtb0Oc8HcoTKhQrlYmtfThQyOzhkXuEMpCL0PJLMwAjY8dHNQV6utu+z6pqffJdKYQyMKZ0UzeQfw5wgUgNofZ2cZdrs6BgUc9du/pVuZBr3kyPrYyrG4Lf3DBe28m8fezBU7kTOZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VqpZq18vWzmWxF;
+	Thu, 30 May 2024 22:30:59 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 813F018007F;
+	Thu, 30 May 2024 22:35:23 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 30 May 2024 22:35:19 +0800
+Message-ID: <f4b5e2b9-e960-fd08-fdf4-328bb475e2ef@huawei-partners.com>
+Date: Thu, 30 May 2024 17:35:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,55 +33,103 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KEYS: trusted: add MODULE_DESCRIPTION()
-Content-Language: en-US
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley
-	<James.Bottomley@HansenPartnership.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-CC: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240529-md-trusted-v1-1-56c9a0ae8e28@quicinc.com>
- <D1MQK4XPVIUW.2EUDV0050EY5L@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <D1MQK4XPVIUW.2EUDV0050EY5L@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0eo2TFYGszRQoY_vu6BJyUxnh2959CFl
-X-Proofpoint-GUID: 0eo2TFYGszRQoY_vu6BJyUxnh2959CFl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_09,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- malwarescore=0 impostorscore=0 suspectscore=0 mlxscore=0 mlxlogscore=819
- priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405300107
-
-On 5/29/2024 10:39 PM, Jarkko Sakkinen wrote:
-> On Thu May 30, 2024 at 4:02 AM EEST, Jeff Johnson wrote:
->> Fix the 'make W=1' warning:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
-> 
-> Maybe instead:
-> 
-> """
-> KEYS: trusted: Add the missing MODULE_DESCRIPTION()
-> 
-> kbuild reports:
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
-> 
-> Add the missing MODULE_DESCRIPTION() macro invocation.
-
-Can do, v2 coming...
+Subject: Re: [RFC PATCH v2 04/12] selftests/landlock: Add
+ protocol.socket_access_rights to socket tests
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
+ <20240524093015.2402952-5-ivanov.mikhail1@huawei-partners.com>
+ <ZlTyj_0g-E4oM22G@google.com>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <ZlTyj_0g-E4oM22G@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
 
+
+5/27/2024 11:52 PM, Günther Noack wrote:
+> Hello!
+> 
+> I see that this test is adapted from the network_access_rights test in
+> net_test.c, and some of the subsequent are similarly copied from there.  It
+> makes it hard to criticize the code, because being a little bit consistent is
+> probably a good thing.  Have you found any opportunities to extract
+> commonalities into common.h?
+
+I think that all common tests should be extracted to common.h or maybe
+some new header. *_test.c could maintain a fixture for these tests for
+some rule-specific logic. Such refactoring should be in separate patch
+though.
+
+> 	
+> On Fri, May 24, 2024 at 05:30:07PM +0800, Mikhail Ivanov wrote:
+>> Add test that checks possibility of adding rule with every possible
+>> access right.
+>>
+>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+>> ---
+>>
+>> Changes since v1:
+>> * Formats code with clang-format.
+>> * Refactors commit message.
+>> ---
+>>   .../testing/selftests/landlock/socket_test.c  | 28 +++++++++++++++++++
+>>   1 file changed, 28 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
+>> index 4c51f89ed578..eb5d62263460 100644
+>> --- a/tools/testing/selftests/landlock/socket_test.c
+>> +++ b/tools/testing/selftests/landlock/socket_test.c
+>> @@ -178,4 +178,32 @@ TEST_F(protocol, create)
+>>   	ASSERT_EQ(EAFNOSUPPORT, test_socket(&self->unspec_srv0));
+>>   }
+>>   
+>> +TEST_F(protocol, socket_access_rights)
+>> +{
+>> +	const struct landlock_ruleset_attr ruleset_attr = {
+>> +		.handled_access_socket = ACCESS_ALL,
+>> +	};
+>> +	struct landlock_socket_attr protocol = {
+>> +		.family = self->srv0.protocol.family,
+>> +		.type = self->srv0.protocol.type,
+>> +	};
+>> +	int ruleset_fd;
+>> +	__u64 access;
+>> +
+>> +	ruleset_fd =
+>> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>> +	ASSERT_LE(0, ruleset_fd);
+>> +
+>> +	for (access = 1; access <= ACCESS_LAST; access <<= 1) {
+>> +		protocol.allowed_access = access;
+>> +		EXPECT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
+>> +					       &protocol, 0))
+>> +		{
+>> +			TH_LOG("Failed to add rule with access 0x%llx: %s",
+>> +			       access, strerror(errno));
+>> +		}
+>> +	}
+>> +	EXPECT_EQ(0, close(ruleset_fd));
+> 
+> Reviewed-by: Günther Noack <gnoack@google.com>
+> 
+> P.S. We are inconsistent with our use of EXPECT/ASSERT for test teardown.  The
+> fs_test.c uses ASSERT_EQ in these places whereas net_test.c and your new tests
+> use EXPECT_EQ.
+> 
+> It admittedly does not make much of a difference for close(), so should be OK.
+> Some other selftests are even ignoring the result for close().  If we want to
+> make it consistent in the Landlock tests again, we can also do it in an
+> independent sweep.
+> 
+> I filed a small cleanup task as a reminder:
+> https://github.com/landlock-lsm/linux/issues/31
+> 
+> —Günther
