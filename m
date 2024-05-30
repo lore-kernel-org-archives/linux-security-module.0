@@ -1,133 +1,115 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F6F186E41;
-	Thu, 30 May 2024 14:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F28E186E41;
+	Thu, 30 May 2024 14:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717080051; cv=none; b=m5HylEPwVQJfLbaxA5PVNq1qqrZc9htSPJnkh+kzSuI+P+wwvJ0nRlmHuL9GWxdOnh7RXrXob2Gpa53Qae+PDT77AnYVslYyvzHxthozP7k7ijAfNkUD9TXyRP019WTZBJTNjEmIc/FOKeEHnYY47rwgn/pet7eP0TlR0QRTAN8=
+	t=1717080246; cv=none; b=EjFBp3Vpj/209KZtDprLoNBuURMcTXWSFwoCuZlg3L/l+mhUovKKvU7BoYJ2j9LUFOfyTggnJSaSpSy4EHUiVnZxIqAOYvGzHqqaZ9Xh3QJBUS5JJcC8qzG0kLX2+JIA4pr+IqSsD02FGLo2WxzLPOisy51erBs+OkIHmIU4FtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717080051; c=relaxed/simple;
-	bh=XWlxAnuC/u9UwVSre4Bh7CKn2L/WZWSl+q4IsHzdHg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O+FwoD0hG46yW1cUgfWZ0coGCKP94Qhu6hOobfliBTlHvfH2AZKEcWegurMbrDBGwtsCs7FXA6Q3W96jSaOTvCVp0G5H3DPjmWMohquYLk0btWR0y0C4jfgltc9vfPBrAFH3XkBkLm/pPetRLilbBKx/dwQcWI3QP//jLXbe8Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7k4EgZF; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717080246; c=relaxed/simple;
+	bh=tg25GOAnFuC79KlOusqk+YPD90SDgnC8fQbadRbSbLI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=EMlgrgy71EuWqMdVFYsIY/ACXR7FlZCBiI5zEy6882clxHAAY9CTOktnmgcLexYmsFrMsWSdl4bSQq8hKU30O5Imn0HvrZbcbRyDVf73qDSFHa5mCfbdZGmUtnJlktOkMmtW4Pnvj2mJVUKqHgGMRfNQDMG/GP5hn9AhHBP4M54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bYNSued6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7k4EgZF"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b79447c58so1368664e87.1;
-        Thu, 30 May 2024 07:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717080047; x=1717684847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MiUZAyRllirKKzsD89/yIKCX3SIy5qsFBAtFuiUEDms=;
-        b=X7k4EgZFA2ZOU1fNksV7NmNlzXAmfMbX8++wQQ3wxibs/OAJjhxNcfFxJJNU1oxaqn
-         o118YyNLk5Q8E3InBOJPZH+s9sFjZxRkQqlm4LLEXI6grZ3++quj38w98KYdpsYT1Y8J
-         K/jotjBrFV3TXCTyr9CBqhytGG4mT/TaLUj0eBx+ACWj2XyUuBPlMCZiM+hPW0Y6OzSu
-         rMuLZMtJiv4zTVjlEaXAHCBY2nVfGaBKWKXOfccwI3P3aRSC6nbgAR2fxBKgBBUcwq/U
-         4phxfu9mXLb0dUC4oTY1klYLc7V/8RELWdFzxByAOeQ7TFIiY17u1LgZiqarGZ4Qc2HM
-         wYsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717080047; x=1717684847;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MiUZAyRllirKKzsD89/yIKCX3SIy5qsFBAtFuiUEDms=;
-        b=jBfqzpBT4HH0W2rq4Br2Zpvn+UHhngst+LCB74HK9xMyxbR+xxIIAmW5BD07/ZoSt1
-         Merl6qh3WgT8tA6TVRlECFbtxuvEkFa+mPhYTO97IgKggG1kFLell0gE5PC9uquHRDKL
-         sIFUz2LYo0Dk4yO8jc/ypZqeLoVENkEc3kIYWAzQjGQtK6Al2BdoZoceJ5ucHqPnaTp/
-         wKqAfAf48YzegBa1Ph3WuHVOjScxdkOdDlVoGrWHvBUbwhJsB6Vcmz8xELUS0plZneIJ
-         ik+Fywfje9TQX+s4gOEGXntXUSq4yaYCirWBVXQ/9SqbYzYTFHdWkW+U4ug5HXpF5lcz
-         blSQ==
-X-Gm-Message-State: AOJu0YwTDpvykcwkz9PkG8jpw/X4iq8fFzsrpWdzgHV46singNoGknW0
-	jAYrVq8U1mhbRMJcrnlZZYLy92w+SYYlN27nhSWv/kbFP9f7Evh8jmUXoTk5
-X-Google-Smtp-Source: AGHT+IG7nJ/NQimAb6ENu+Mt1IVoSFruIV2XJFdrCKecJVtj80xQ6v5uM62Ivd1eYoeWqqIfmUtOdQ==
-X-Received: by 2002:a19:430e:0:b0:52a:a91e:3f55 with SMTP id 2adb3069b0e04-52b7d499782mr1658316e87.47.1717080047196;
-        Thu, 30 May 2024 07:40:47 -0700 (PDT)
-Received: from f.. (cst-prg-8-232.cust.vodafone.cz. [46.135.8.232])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a66dbfc4ca6sm27932366b.165.2024.05.30.07.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:40:46 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	paul@paul-moore.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] cred: plug a hole in struct cred
-Date: Thu, 30 May 2024 16:40:40 +0200
-Message-ID: <20240530144041.569927-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bYNSued6"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44U7c8uY011441;
+	Thu, 30 May 2024 14:43:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XLdpCL5+8Hsj0t8FHTcGuy
+	JPg9m5dUgCcHm4X27HLRo=; b=bYNSued6tO57Yi1nNNy94V/kJw/PkCGNV5Eg7k
+	XJzLKjjcWruazj+j8RiWUe0bme+w1HX0TaunhDoSY6sxUzcqmvUQUvfC8+FqbYBu
+	w6baoUU9hRX9RVsH1k9YRXodp+9El3G9iUxKMWu7thSjSryg3ozeArmc7hx0rfRM
+	msA9lxtDLHrug/OLBpiUYzavnTFiKBwgzuBAzvUFPka2VZBnOmwEADx/2Sx8CJLu
+	ODdw3uI4Kmx8YpkT5GNClmKILUL4Q/aX5a+2fvfSsfMEC9QJ6Fu6Tme14jAhbfxZ
+	VY8Cm88QaDcwzSHYqb0IEak3TZO2DLtV8rc7mNaHXI4SaqgA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yjcdf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 14:43:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44UEhrs3026550
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 14:43:53 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 May
+ 2024 07:43:52 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 30 May 2024 07:43:43 -0700
+Subject: [PATCH v2] KEYS: trusted: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240530-md-trusted-v2-1-151f0c7be272@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJ6QWGYC/22NQQ6CMBBFr0Jm7RiYSENdeQ/DorSDTCJFWiAYw
+ t0trF2+5L/3N4gchCPcsw0CLxJl8AnokoHtjH8xiksMlNMtL0lj73AKc5zYoWLVOlKktXGQhE/
+ gVtYz9qwTNyYyNsF42x2Jt/h5xd4kNxzzTuI0hO95vRSH9PdlKbDAUlltcsMVU/UYZ7Hi7dUOP
+ dT7vv8Ak4jAjsUAAAA=
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen
+	<jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells
+	<dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris
+	<jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+CC: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BuoUwixUMpD6WNZG7a24fG8fQUScbc2O
+X-Proofpoint-ORIG-GUID: BuoUwixUMpD6WNZG7a24fG8fQUScbc2O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-30_09,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405300111
 
-/*     40      |       4 */    unsigned int securebits;
-/* XXX  4-byte hole      */
-/*     48      |       8 */    kernel_cap_t cap_inheritable;
-[snip]
-/*     88      |       1 */    unsigned char jit_keyring;
-/* XXX  7-byte hole      */
-/*     96      |       8 */    struct key *session_keyring;
+kbuild reports:
 
-jit_keyring can be moved up to the 4-byte hole.
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
 
-Size goes down from 184 to 176 bytes.
+Add the missing MODULE_DESCRIPTION() macro invocation.
 
-Note total memory usage does not go down because the struct remains
-backed by 192-byte chunks, but space is made for future expansion.
-
-No functional changes.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
+Changes in v2:
+- reword commit text per Jarkko's guidance
+- Link to v1: https://lore.kernel.org/r/20240529-md-trusted-v1-1-56c9a0ae8e28@quicinc.com
+---
+ security/keys/trusted-keys/trusted_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I have some plans to hack up distributed reference counting for this
-struct, soon(tm). Should it land it is going to add at least 8 bytes.
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 5113aeae5628..f4ab16d59663 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -395,4 +395,5 @@ static void __exit cleanup_trusted(void)
+ late_initcall(init_trusted);
+ module_exit(cleanup_trusted);
+ 
++MODULE_DESCRIPTION("Trusted Key support");
+ MODULE_LICENSE("GPL");
 
-But even if nothing comes out of it this looks like a trivial clean up
-worth including.
-
- include/linux/cred.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..a936a291e9b1 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -107,6 +107,9 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-  * that task is going to act upon another object.  This may be overridden
-  * temporarily to point to another security context, but normally points to the
-  * same context as task->real_cred.
-+ *
-+ * NOTE: some fields have placement picked to plug alignment gaps -- don't
-+ * shuffle things around without looking at output of pahole(1).
-  */
- struct cred {
- 	atomic_long_t	usage;
-@@ -119,14 +122,16 @@ struct cred {
- 	kuid_t		fsuid;		/* UID for VFS ops */
- 	kgid_t		fsgid;		/* GID for VFS ops */
- 	unsigned	securebits;	/* SUID-less security management */
-+#ifdef CONFIG_KEYS
-+	unsigned char	jit_keyring;	/* default keyring to attach requested
-+					 * keys to */
-+#endif
- 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
- 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
- 	kernel_cap_t	cap_effective;	/* caps we can actually use */
- 	kernel_cap_t	cap_bset;	/* capability bounding set */
- 	kernel_cap_t	cap_ambient;	/* Ambient capability set */
- #ifdef CONFIG_KEYS
--	unsigned char	jit_keyring;	/* default keyring to attach requested
--					 * keys to */
- 	struct key	*session_keyring; /* keyring inherited over fork */
- 	struct key	*process_keyring; /* keyring private to this process */
- 	struct key	*thread_keyring; /* keyring private to this thread */
--- 
-2.39.2
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240529-md-trusted-6e6fd26299ad
 
