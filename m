@@ -1,171 +1,107 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0876AA1;
-	Thu, 30 May 2024 00:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E628128FA;
+	Thu, 30 May 2024 01:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717030239; cv=none; b=Tlsd7GVOLzJXryfX4Tzw/G5Dtpk5flsJkqr7/SKSgtuMmuSlNdBkXuY7KQWtPl3t5S7OPctXjRzrH/Y3X+cRgwqF8qwDPftWmpxPUz6Uj5AgvDhu8ySvdVXsWTHXSU1qQ+GDP7WtVy6L3H4AWo/F7eSeDE3BJpDoNYZ0AbnAQxI=
+	t=1717030943; cv=none; b=V9OJi21rx9EeAui4akXUxDIKTbiOFtSxpbzcr4lukoa6wKwPkS9cNC/Or1qGpONNXPs+DUtrc7IuDqAfOYB3UXhH5hpt0nm2FEy79KpXmiMWhzp7lAcL9+ihVFmHvjV2omMJYJ1n777IvZVKtzI242LDgVoG9bUkBBMt7Q0eaB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717030239; c=relaxed/simple;
-	bh=w0M2NwYr/14Mvs7l87d7yBk8eY17sbC7zcA+FobWwQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bv2QXBNs+ta3OR5SuYpRy7RLX3tu/8zqoPlQNvORabGWmpBl4I+WzBpOp3zt6J0njLVWhD6K47Vj8n11pkQ7chwhMooVyy5Jr/uXWQ2CpmAIbjP8BD0plZGiJg3ASQ91PIFJmi3mUHnnDr7AwPkdZliNNcBQHJoEcKtQpO3tlNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F24FSipB; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717030943; c=relaxed/simple;
+	bh=B8P4cw0Ri7T3pjh0FXJ7HxJGptxOJd5wZrnUVn9xPII=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Gpi3zn2UC2Msg5Yrqjbs/7nTJIVseO0tQEUpldhB3PLufe2JVDg2YLYJSA+ifoXurx+Sw4JIG5KsFqvZKNPAVbFkCl5qBz5iedfp+F31CohZgJHw6vR6uaZcrS2CsKirN0TOzwbgn2f9hgyV6w6GzrACXYDHRKdcSikHwEA10fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UvSQLrq0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F24FSipB"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f4ed9dc7beso199691b3a.1;
-        Wed, 29 May 2024 17:50:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717030238; x=1717635038; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=k8+O8xhY+pxJWdqeW2KaJVJjVRnx1SFKpe5mCJ/JMA4=;
-        b=F24FSipBFdAKBQ1pwHupzNe/aaBgnlfzwW6J3wyDyAJRHhMPvB9ccvyBeDDiI+JUP3
-         +I5niiuefXkKIhumab3qU8vqatW7gimYNj5/mMjXtwFVGvr5b1Nr1Cs40n3QqSBzIo5T
-         XBxNaFwNe4cb9egClaXYd9jouKS39L1E+Mo+BmjXbfNYsxoR3xU1NcOUGFbe71QkZAW0
-         YdihjVyuFjHR45spuL61ZDY7oYl7sCzAIyZpNZg4NDvmhciUlaH2nLg9RPXdiRXXCPEo
-         P7ogpyxD+O30/Vpv1pvcXr3AS+VLlBpTK7lc80zedOR4CpiMLhez2pfxXbS9SNdI0qiY
-         YEUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717030238; x=1717635038;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k8+O8xhY+pxJWdqeW2KaJVJjVRnx1SFKpe5mCJ/JMA4=;
-        b=ZPIHzqKJSWyohIuDgX0pcV7EFl5GEQZbBN9x8BId0hCNeN3s8elzGZdG64ZC89D17q
-         utTPghO3YNN9fWolJEMgx7EP6wPDMdHr6SfuFWZ7MgVbY/Nd/PiKmmaBGTcQ4Dy5nafc
-         uaxRcCsmPACcKLAOYf+f45EXPl62S9pvDC8afhtglL/dwCdsQSzF+VYtvDRWbLW9QIQk
-         aBQ+wjk6i1k8GJvFqiknZesin2CK7U1SqiVYusQmqhlNSPAdTmV13ASn/CdzL2g8oWku
-         78zGzfofNFK+GYA6zHHKpSuPr11t/bhmqqYLKIpkudrGBPF85buOh2Cez5h40H3+dykh
-         NWYA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4OmjLT1qC0UUwwArf28CofcyO3w8igHoi3DHlj6j2pNnHPWlZNC0oT4fbzlt+fZZ56vxR9yiMl9zSXdlpndHsn0Q2XXxu+h8MktreQWaSdMQoTB3ySnqNUqwrd0UDjwGX5G10V1bCYNRZe6Z58fkUZww1n2BPVDSrG3dzZ/nXvsY/2wyX6LMsG8Ts
-X-Gm-Message-State: AOJu0YzJvm4f0EYpiCiP/Ca3NHT01tZZzCxY24XShbV/d6wDmBxvPvJn
-	did9Z8c7yIe0hVeOQITkge17Y0X9c5bOC9YVTOGxqFcYyiOzUl3IND5pq06u
-X-Google-Smtp-Source: AGHT+IEYDfQxP1oHkh5ta+MZE51Ikrl8Y36qaiEgsMUgYNELNTiBc5MpFMcJovRpYRv1UkeiFSflbw==
-X-Received: by 2002:a62:f201:0:b0:701:c944:ae75 with SMTP id d2e1a72fcca58-70231a867d5mr652385b3a.4.1717030237502;
-        Wed, 29 May 2024 17:50:37 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc3552ffsm8593308b3a.80.2024.05.29.17.50.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 17:50:37 -0700 (PDT)
-Date: Wed, 29 May 2024 18:50:34 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	outreachy@lists.linux.dev, netdev@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Jann Horn <jannh@google.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
- restrictions
-Message-ID: <ZlfNWtyEnIAw99ne@tahera-OptiPlex-5000>
-References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
- <20240401.ieC2uqua5sha@digikod.net>
- <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
- <20240411.ahgeefeiNg4i@digikod.net>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UvSQLrq0"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44TJ0aji006748;
+	Thu, 30 May 2024 01:02:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=SqQCY9K/42kZL4O4lFD+1J
+	zxmmzC9e7N8NRzPD0Ux6o=; b=UvSQLrq0HdfS+EnO/YSEptx3attwCTJno1NNw8
+	G8vcTj5xGy+j/R8y8qkV5leKmnU1IzEeD2qTmoThMlKQlkWopCW7ls6wyUTc9Q0Q
+	nRai1zmGGa0pOHezOw+aax4JSGup5Y5Gr9YKtY7jbQEPm/ffCouayBHEyZ3CkzBT
+	pJYL6QjbSgbuloIrRPt3CaEOCrrrt+V+O40XF5DCVLclS9Sk4IwBkMDJd0pBrpp8
+	58M3h6ozMeaY9c1oh65aZDZEYwiw5yyj29cdnLCFx8Ja9Xful9f3Mr9yNRa+tQNe
+	W4s6wflw6AHw2lcsxjajHsyig9vzsBK5AsmHSigR/WHueZsA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ybadxasap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 01:02:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44U123t6004114
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 May 2024 01:02:03 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 May
+ 2024 18:02:02 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 29 May 2024 18:02:01 -0700
+Subject: [PATCH] KEYS: trusted: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240411.ahgeefeiNg4i@digikod.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240529-md-trusted-v1-1-56c9a0ae8e28@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAjQV2YC/x3MQQrCQAxA0auUrA3UoAPjVcTFtEltwI6StKVQe
+ nejy7f4fwcXU3G4NTuYrOr6roHzqYF+LPUpqBwGaunSXinjxDjb4rMwJkkDU6KcC0MEH5NBt//
+ s/gh3xQU7K7Uff4uX1mXDqURrcBxfy/A7k3sAAAA=
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen
+	<jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells
+	<dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris
+	<jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+CC: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: y6llrNSiIkMm6FuLwUOu4CgG1z4r9vag
+X-Proofpoint-GUID: y6llrNSiIkMm6FuLwUOu4CgG1z4r9vag
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-29_16,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ impostorscore=0 bulkscore=0 mlxlogscore=834 malwarescore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2405300006
 
-On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
-> On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
-> > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
-> > > Thanks for this patch.  Please CC the netdev mailing list too, they may
-> > > be interested by this feature. I also added a few folks that previously
-> > > showed their interest for this feature.
-> > > 
-> > > On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
-> > > > Abstract unix sockets are used for local interprocess communication without
-> > > > relying on filesystem. Since landlock has no restriction for connecting to
-> > > > a UNIX socket in the abstract namespace, a sandboxed process can connect to
-> > > > a socket outside the sandboxed environment. Access to such sockets should
-> > > > be scoped the same way ptrace access is limited.
-> > > 
-> > > This is good but it would be better to explain that Landlock doesn't
-> > > currently control abstract unix sockets and that it would make sense for
-> > > a sandbox.
-> > > 
-> > > 
-> > > > 
-> > > > For a landlocked process to be allowed to connect to a target process, it
-> > > > must have a subset of the target process’s rules (the connecting socket
-> > > > must be in a sub-domain of the listening socket). This patch adds a new
-> > > > LSM hook for connect function in unix socket with the related access rights.
-> > > 
-> > > Because of compatibility reasons, and because Landlock should be
-> > > flexible, we need to extend the user space interface.  As explained in
-> > > the GitHub issue, we need to add a new "scoped" field to the
-> > > landlock_ruleset_attr struct. This field will optionally contain a
-> > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
-> > > ruleset will deny any connection from within the sandbox to its parents
-> > > (i.e. any parent sandbox or not-sandboxed processes).
-> 
-> > Thanks for the feedback. Here is what I understood, please correct me if
-> > I am wrong. First, I should add another field to the
-> > landlock_ruleset_attr (a field like handled_access_net, but for the unix
-> > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
-> > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
-> 
-> That was the initial idea, but after thinking more about it and talking
-> with some users, I now think we can get a more generic interface.
-> 
-> Because unix sockets, signals, and other IPCs are fully controlled by
-> the kernel (contrary to inet sockets that get out of the system), we can
-> add ingress and egress control according to the source and the
-> destination.
-> 
-> To control the direction we could add an
-> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE and a
-> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND rights (these names are a bit
-> long but at least explicit).  To control the source and destination, it
-> makes sense to use Landlock domain (i.e. sandboxes):
-> LANDLOCK_DOMAIN_HIERARCHY_PARENT, LANDLOCK_DOMAIN_HIERARCHY_SELF, and
-> LANDLOCK_DOMAIN_HIERARCHY_CHILD.  This could be used by extending the
-> landlock_ruleset_attr type and adding a new
-> landlock_domain_hierarchy_attr type:
-> 
-> struct landlock_ruleset_attr ruleset_attr = {
->   .handled_access_dom = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
->                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
-> }
-> 
-> // Allows sending data to and receiving data from processes in the same
-> // domain or a child domain, through abstract unix sockets.
-> struct landlock_domain_hierarchy_attr dom_attr = {
->   .allowed_access = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
->                     LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
->   .relationship = LANDLOCK_DOMAIN_HIERARCHY_SELF | \
->                   LANDLOCK_DOMAIN_HIERARCHY_CHILD,
-> };
-> 
-> It should also work with other kind of IPCs:
-> * LANDLOCK_ACCESS_DOM_UNIX_PATHNAME_RECEIVE/SEND (signal)
-> * LANDLOCK_ACCESS_DOM_SIGNAL_RECEIVE/SEND (signal)
-> * LANDLOCK_ACCESS_DOM_XSI_RECEIVE/SEND (XSI message queue)
-> * LANDLOCK_ACCESS_DOM_MQ_RECEIVE/SEND (POSIX message queue)
-> * LANDLOCK_ACCESS_DOM_PTRACE_RECEIVE/SEND (ptrace, which would be
->   limited)
-> 
-> What do you think?
-Indeed, in the case of abstract Unix sockets, both parties can send and
-receive data when a connection is established. Therefore, we can define
-a single LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT to represent the right to
-share data, regardless of direction. However, we should still retain
-LANDLOCK_DOMAIN_HIERARCHY for SELF, PARENT, and CHILD, as the source and
-destination are important. 
-As you said, I believe we should have receive and send rights for
-another kind of IPCs (which will be used for landlock#8 issue)
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ security/keys/trusted-keys/trusted_core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 5113aeae5628..f4ab16d59663 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -395,4 +395,5 @@ static void __exit cleanup_trusted(void)
+ late_initcall(init_trusted);
+ module_exit(cleanup_trusted);
+ 
++MODULE_DESCRIPTION("Trusted Key support");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+change-id: 20240529-md-trusted-6e6fd26299ad
 
