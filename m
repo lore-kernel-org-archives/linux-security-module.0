@@ -1,53 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597E117CA0B;
-	Fri, 31 May 2024 17:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD03DEAE7;
+	Fri, 31 May 2024 20:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717177633; cv=none; b=G/LiKh0Q7CLbGzdVtxBjpFRcD/lCIwiWCvQ+r7UDCt4rzgLGqhKV07kWGF2d/wZlrpc6xn1RbtfzQ6MaRlZjB5J1/omyE3pItCUadSx81I9V+p9pp/Djv17PyV5Yq6+qEvYpf7ryju7nuy2nnDkUKb96xFA20biGHn+A31Y6SFg=
+	t=1717185890; cv=none; b=EYc8GbrK738VJ1DTItrT7EXVv9vY5Llddr77xBnIg6rJgg9WFDVi8ITYkyD3htQH4MSQqWxkgI3NA2ujjJ9vaKnbOufbz/BX0zARfS+J0KRkjU37lUOouFGHYluUGAT9ElHaWpiwzFibDwdnHLAXu83Gz1Zl02UOr7GyykpxVI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717177633; c=relaxed/simple;
-	bh=21LSgTExidJOfb9UA4FlB1VpQJ4ptiqM3M6lPGstxwE=;
+	s=arc-20240116; t=1717185890; c=relaxed/simple;
+	bh=GCXeSlPBSz9f+Fmf6JZAEn9fxkAD47NmqX2HVIhOo8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvPZi3xYPfoWg3lYON7LZK8LCF755Vwirer+Fn8da5Fog03MkaMzJYesmRIYQr0p8ceRHAKBPaTNGepPHigZi1r+WDuGnKHf3b+2bKHvPsdpayoCnMGa5FrKtYmpcfUd9aVGLqIYsQXRKcOfg765Imo1NWQcj7REYz7Iipif80s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4BwxNqu; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=TsBJQlFOZSzb/de/zzTy7FKy6KrbwRXUS9j9xxzzpS3NlChesucYk4i7CcEEBznD35gxV19tHnHYiJe1D+i3ERw9OG3iVQKM6b23QleicCtimstOOBkT7heDyGpD863YK2KCgOAbCRSOyd5uL6BAdqM4v21u4gECqiMnvrs1PI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkTRkpqY; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4BwxNqu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C999C116B1;
-	Fri, 31 May 2024 17:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717177632;
-	bh=21LSgTExidJOfb9UA4FlB1VpQJ4ptiqM3M6lPGstxwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M4BwxNquzh28rbTZt9KxjLyZLSvSTUEVYSPItGYpHKgF/llgtUdz7spzjZ1qDWfGa
-	 gKO93Wzjs8Vx+T8V7cNOyauHIs3UPX+aRXdcfko+GnDigHqMnATPDylVjCYUbIalCu
-	 mLK9weStMKWstAV1+MOMVnDgh0XnsGGB0giWmHjEA+/CpLAcZ/MnvoduJIbPJUQR47
-	 OMjgYtOyL1c0PuJ+BD+6oBCQtj7WuFB/ZZM9kuhxilKjJWYp8n0ptSfDTR2GWqS4Hy
-	 v3VLBCY65eRALsv2ivwmueMxnocgcpQHy8qIu0uRVOh2SVw9hwMi7BOqKdB89RIP2S
-	 HBkfZ4plenMPw==
-Date: Fri, 31 May 2024 10:47:10 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk,
-	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-	eparis@redhat.com, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v19 15/20] fsverity: expose verified fsverity built-in
- signatures to LSMs
-Message-ID: <20240531174710.GA1199@sol.localdomain>
-References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
- <1716583609-21790-16-git-send-email-wufan@linux.microsoft.com>
- <CAHC9VhRsnGjZATBj7-evK6Gdryr54raTTKMYO_vup8AGXLwjQg@mail.gmail.com>
- <20240530030605.GA29189@sol.localdomain>
- <CAHC9VhRySQ0c16UZz5xKT-y5Tn39wXxe4-f7LNjFY+ROGGxpaQ@mail.gmail.com>
- <20240531004321.GA1238@sol.localdomain>
- <CAHC9VhRRuBdnv3u2VjKZCR672p4oj_smA72P-181ysdDXGJ-AA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkTRkpqY"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f4a52b9413so20363975ad.2;
+        Fri, 31 May 2024 13:04:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717185888; x=1717790688; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Qkl854xbR87XQad2EmWVc2cBMlNnfzqpxOQ9r8FlVSU=;
+        b=JkTRkpqYDd9GwPG/CWc4Aio7f0PQWw8Zl5MAQQLwbfn5UB2v368e4MRodIxFScTqPq
+         tn4oBwun5vNwS+qyAT81mnYOcM14Rom9UwghD0DNRGZ0zxtiDu9C9dczAPqCKQtrFpNz
+         0SDjt6Z4UAhQFLd1mxo6knsIRJKnuc86XKnKPEVLn+fcvEz9WAezpfiWbWsX9OzzE1mG
+         Qzwl5eUjzPdA2IGu21qy52tIcuN2QCwqlEplMtZeUX1OQ7VbjRa7+mn0OpAHbXZMdNYN
+         z0gFUvzurCGFRDeo6WisN7Fga4lmX3bchKNCRRYqBBiBeHCAyl5PtlXuS1z8yIWwlm7Y
+         ov/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717185888; x=1717790688;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qkl854xbR87XQad2EmWVc2cBMlNnfzqpxOQ9r8FlVSU=;
+        b=gwUehA4E0INDC/EPiduwR199tu4K+hVtAt6QKZ2mVG9YbWw98tL4GsLobc7ycg397/
+         LKueqGoWDCGRnZmgURkZ8iADCSsJUXiwz/a4BU8fYecngOzmkjG/Q1f3fBffkxtzLc+W
+         sJ0kj9t+htDmkAtRTUT0TkdK7CaVoJBtnOtG8F0L1GyMC48QlrhpA8kgLKNa66VvoqIz
+         5LmlNnAfXC1EIGt2OExyhH37M4RH/9Y2E3KsTxXFbO29qDx0rJ8OzKesyrDyp/dDklFs
+         59/pgxktzJMbsYXjq/NnGJ5hz6frFgYS4OzjygNGmHhKgwY2eitcjL6aemJ28iTGHGGc
+         x/bA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQZnXJhEHWPdqBYpyjwB0OEW8qcG3PGCac1hx70DHdAOWgHImRNta858twUJEjAJKlps1/VjykivZm+ti1ECJvYQDV2NBpLN81UMrJcpp/MKz7L4eNxEOCLcKtZe5/pUq3+YRuZtaHTqS4bh6XTvBxQiqwl8+U3c/XXm/qZC9lGTxWeAZBR0WcdtAx
+X-Gm-Message-State: AOJu0YxJZV7F9tox57MV8I7geJKlJYPHdOLhY2v2WA3ZLtChH4vHLrj4
+	KvcY0BIh3whpbsj23yBm0ePIsaZa00tF/BACMRw6Wo064RCuGSHc
+X-Google-Smtp-Source: AGHT+IEJDvRremBKoTR1ZOi9N+3QkBcHAbiDyl9awlI6Q/15YHWwNRdjivOSZB0PURFmXf1IbY4Yyg==
+X-Received: by 2002:a17:902:ecc5:b0:1f4:8a69:dab8 with SMTP id d9443c01a7336-1f6370b123bmr31784905ad.56.1717185887801;
+        Fri, 31 May 2024 13:04:47 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ec184sm20559545ad.209.2024.05.31.13.04.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 13:04:47 -0700 (PDT)
+Date: Fri, 31 May 2024 14:04:44 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: aul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E.Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev, netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
+ restrictions
+Message-ID: <ZlotXL4sfY5Ez3I5@tahera-OptiPlex-5000>
+References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
+ <20240401.ieC2uqua5sha@digikod.net>
+ <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
+ <20240411.ahgeefeiNg4i@digikod.net>
+ <ZlkIAIpWG/l64Pl9@tahera-OptiPlex-5000>
+ <20240531.Ahg5aap6caeG@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -57,104 +80,267 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRRuBdnv3u2VjKZCR672p4oj_smA72P-181ysdDXGJ-AA@mail.gmail.com>
+In-Reply-To: <20240531.Ahg5aap6caeG@digikod.net>
 
-On Fri, May 31, 2024 at 11:51:47AM -0400, Paul Moore wrote:
-> On Thu, May 30, 2024 at 8:43 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > On Thu, May 30, 2024 at 04:54:37PM -0400, Paul Moore wrote:
-> > > On Wed, May 29, 2024 at 11:06 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > > On Wed, May 29, 2024 at 09:46:57PM -0400, Paul Moore wrote:
-> > > > > On Fri, May 24, 2024 at 4:46 PM Fan Wu <wufan@linux.microsoft.com> wrote:
-> > > > > >
-> > > > > > This patch enhances fsverity's capabilities to support both integrity and
-> > > > > > authenticity protection by introducing the exposure of built-in
-> > > > > > signatures through a new LSM hook. This functionality allows LSMs,
-> > > > > > e.g. IPE, to enforce policies based on the authenticity and integrity of
-> > > > > > files, specifically focusing on built-in fsverity signatures. It enables
-> > > > > > a policy enforcement layer within LSMs for fsverity, offering granular
-> > > > > > control over the usage of authenticity claims. For instance, a policy
-> > > > > > could be established to permit the execution of all files with verified
-> > > > > > built-in fsverity signatures while restricting kernel module loading
-> > > > > > from specified fsverity files via fsverity digests.
-> > >
-> > > ...
-> > >
-> > > > > Eric, can you give this patch in particular a look to make sure you
-> > > > > are okay with everything?  I believe Fan has addressed all of your
-> > > > > previous comments and it would be nice to have your Ack/Review tag if
-> > > > > you are okay with the current revision.
-> > > >
-> > > > Sorry, I've just gotten a bit tired of finding so many basic issues in this
-> > > > patchset even after years of revisions.
-> > > >
-> > > > This patch in particular is finally looking better.  There are a couple issues
-> > > > that I still see.  (BTW, you're welcome to review it too to help find these
-> > > > things, given that you seem to have an interest in getting this landed...):
-> > >
-> > > I too have been reviewing this patchset across multiple years and have
-> > > worked with Fan to fix locking issues, parsing issues, the initramfs
-> > > approach, etc.
-> >
-> > Sure, but none of the patches actually have your Reviewed-by.
+On Fri, May 31, 2024 at 11:39:12AM +0200, Mickaël Salaün wrote:
+> On Thu, May 30, 2024 at 05:13:04PM -0600, Tahera Fahimi wrote:
+> > On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
+> > > On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
+> > > > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
+> > > > > Thanks for this patch.  Please CC the netdev mailing list too, they may
+> > > > > be interested by this feature. I also added a few folks that previously
+> > > > > showed their interest for this feature.
+> > > > > 
+> > > > > On Thu, Mar 28, 2024 at 05:12:13PM -0600, TaheraFahimi wrote:
+> > > > > > Abstract unix sockets are used for local interprocess communication without
+> > > > > > relying on filesystem. Since landlock has no restriction for connecting to
+> > > > > > a UNIX socket in the abstract namespace, a sandboxed process can connect to
+> > > > > > a socket outside the sandboxed environment. Access to such sockets should
+> > > > > > be scoped the same way ptrace access is limited.
+> > > > > 
+> > > > > This is good but it would be better to explain that Landlock doesn't
+> > > > > currently control abstract unix sockets and that it would make sense for
+> > > > > a sandbox.
+> > > > > 
+> > > > > 
+> > > > > > 
+> > > > > > For a landlocked process to be allowed to connect to a target process, it
+> > > > > > must have a subset of the target process’s rules (the connecting socket
+> > > > > > must be in a sub-domain of the listening socket). This patch adds a new
+> > > > > > LSM hook for connect function in unix socket with the related access rights.
+> > > > > 
+> > > > > Because of compatibility reasons, and because Landlock should be
+> > > > > flexible, we need to extend the user space interface.  As explained in
+> > > > > the GitHub issue, we need to add a new "scoped" field to the
+> > > > > landlock_ruleset_attr struct. This field will optionally contain a
+> > > > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
+> > > > > ruleset will deny any connection from within the sandbox to its parents
+> > > > > (i.e. any parent sandbox or not-sandboxed processes).
+> > > 
+> > > > Thanks for the feedback. Here is what I understood, please correct me if
+> > > > I am wrong. First, I should add another field to the
+> > > > landlock_ruleset_attr (a field like handled_access_net, but for the unix
+> > > > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
+> > > > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
+> > > 
+> > > That was the initial idea, but after thinking more about it and talking
+> > > with some users, I now think we can get a more generic interface.
+> > > 
+> > > Because unix sockets, signals, and other IPCs are fully controlled by
+> > > the kernel (contrary to inet sockets that get out of the system), we can
+> > > add ingress and egress control according to the source and the
+> > > destination.
+> > > 
+> > > To control the direction we could add an
+> > > LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE and a
+> > > LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND rights (these names are a bit
+> > > long but at least explicit).  To control the source and destination, it
+> > > makes sense to use Landlock domain (i.e. sandboxes):
+> > > LANDLOCK_DOMAIN_HIERARCHY_PARENT, LANDLOCK_DOMAIN_HIERARCHY_SELF, and
+> > > LANDLOCK_DOMAIN_HIERARCHY_CHILD.  This could be used by extending the
+> > > landlock_ruleset_attr type and adding a new
+> > > landlock_domain_hierarchy_attr type:
+> > > 
+> > > struct landlock_ruleset_attr ruleset_attr = {
+> > >   .handled_access_dom = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+> > >                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> > > }
+> > > 
+> > > // Allows sending data to and receiving data from processes in the same
+> > > // domain or a child domain, through abstract unix sockets.
+> > > struct landlock_domain_hierarchy_attr dom_attr = {
+> > >   .allowed_access = LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | \
+> > >                     LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> > >   .relationship = LANDLOCK_DOMAIN_HIERARCHY_SELF | \
+> > >                   LANDLOCK_DOMAIN_HIERARCHY_CHILD,
+> > > };
+> > > 
+> > > It should also work with other kind of IPCs:
+> > > * LANDLOCK_ACCESS_DOM_UNIX_PATHNAME_RECEIVE/SEND (signal)
+> > > * LANDLOCK_ACCESS_DOM_SIGNAL_RECEIVE/SEND (signal)
+> > > * LANDLOCK_ACCESS_DOM_XSI_RECEIVE/SEND (XSI message queue)
+> > > * LANDLOCK_ACCESS_DOM_MQ_RECEIVE/SEND (POSIX message queue)
+> > > * LANDLOCK_ACCESS_DOM_PTRACE_RECEIVE/SEND (ptrace, which would be
+> > >   limited)
+> > > 
+> > > What do you think?
+> > 
+> > I was wondering if you expand your idea on the following example. 
+> > 
+> > Considering P1 with the rights that you mentioned in your email, forks a
+> > new process (P2). Now both P1 and P2 are on the same domain and are
+> > allowed to send data to and receive data from processes in the same
+> > domain or a child domain. 
+> > /*
+> >  *         Same domain (inherited)
+> >  * .-------------.
+> >  * | P1----.     |      P1 -> P2 : allow
+> >  * |        \    |      P2 -> P1 : allow
+> >  * |         '   |
+> >  * |         P2  |
+> >  * '-------------'
+> >  */
+> > (P1 domain) = (P2 domain) = {
+> > 		.allowed_access =
+> > 			LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE | 
+> > 			LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> > 		.relationship = 
+> > 			LANDLOCK_DOMAIN_HIERARCHY_SELF | 
+> > 			LANDLOCK_DOMAIN_HIERARCHY_CHILD,
 > 
-> As a general rule I don't post Acked-by/Reviewed-by tags for patches
-> that are targeting a subsystem that I maintain.  The logic being that
-> I'm going to be adding my Signed-off-by tag to the patches and arguing
-> these in front of Linus, so adding a Acked-by/Reviewed-by simply
-> creates more work later on where I have to strip them off and replace
-> them with my sign-off.
+> In this case LANDLOCK_DOMAIN_HIERARCHY_CHILD would not be required
+> because P1 and P2 are on the same domain.
 > 
-> If the lack of a Reviewed-by tag is *really* what is preventing you
-> from reviewing the fs-verity patch, I can post that starting with the
-> next revision, but I'm guessing the lack of my tag isn't your core
-> issue (or at least I would argue it shouldn't be).
->
-> > > My interest in getting this landed is simply a
-> > > combination of fulfilling my role as LSM maintainer as well as being
-> > > Fan's coworker.  While I realize you don't work with Fan, you are
-> > > listed as the fs-verity maintainer and as such I've been looking to
-> > > you to help review and authorize the fs-verity related code.  If you
-> > > are too busy, frustrated, or <fill in the blank> to continue reviewing
-> > > this patchset it would be helpful if you could identify an authorized
-> > > fs-verity reviewer.  I don't see any besides you and Ted listed in the
-> > > MAINTAINERS file, but perhaps the fs-verity entry is dated.
-> > >
-> > > Regardless, I appreciate your time and feedback thus far and I'm sure
-> > > Fan does as well.
-> >
-> > Maintainers are expected to do reviews and acks, but not to the extent of
-> > extensive hand-holding of a half-baked submission.
+> > 		}
+> > 
+> > In another example, if P1 has the same domain as before but P2 has
+> > LANDLOCK_DOMAIN_HIERARCHY_PARENT in their domain, so P1 still can 
+> > connect to P2. 
+> > /*
+> >  *        Parent domain
+> >  * .------.
+> >  * |  P1  --.           P1 -> P2 : allow
+> >  * '------'  \          P2 -> P1 : allow
+> >  *            '
+> >  *            P2
+> >  */
+> > 
+> > (P1 domain) = {
+> >                 .allowed_access =
+> >                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE |
+> >                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> >                 .relationship = 
+> >                         LANDLOCK_DOMAIN_HIERARCHY_SELF |
+> >                         LANDLOCK_DOMAIN_HIERARCHY_CHILD,
 > 
-> Considering the current state of this patchset I don't believe that
-> verdict to be fair, or very considerate.
+> Hmm, in this case P2 doesn't have a domain, so
+> LANDLOCK_DOMAIN_HIERARCHY_CHILD doesn't make sense.
 > 
-> We clearly have different styles and approaches towards subsystem
-> maintainer roles.  I've had the good fortune to work with both hostile
-> and helpful senior developers during the early years of my time
-> working in the Linux kernel, and it helped reinforce the impact
-> patience and mentoring can have on contributors who are new to the
-> Linux kernel or perhaps system programming in general.  While I'm far
-> from perfect in this regard, I do hope and recommend that all of us in
-> maintainer, or senior developer, roles remember to exercise some
-> additional patience and education when working with new contributors.
+> >                 }
+> > (P2 domain) = {
+> >                 .allowed_access =
+> >                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE |
+> >                         LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND,
+> >                 .relationship = 
+> >                         LANDLOCK_DOMAIN_HIERARCHY_SELF |
+> >                         LANDLOCK_DOMAIN_HIERARCHY_CHILD |
+> > 			LANDLOCK_DOMAIN_HIERARCHY_PARENT,
+> > 		}
 > 
+> I think you wanted to use the "Inherited + child domain" example here,
+> in which case the domain policies make sense.
+> 
+> I was maybe too enthusiastic with the "relationship" field.  Let's
+> rename landlock_domain_hierarchy_attr to landlock_domain_attr and remove
+> the "relationship" field.  We'll always consider that
+> LANDLOCK_DOMAIN_HIERARCHY_SELF is set as well as
+> LANDLOCK_DOMAIN_HIERARCHY_CHILD (i.e. no restriction to send/received
+> to/from a child domain or our own domain).  In a nutshell, please only
+> keep the LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_{RECEIVE,SEND} rights and
+> follow the same logic as with ptrace restrictions.  It will be easier to
+> reason about and will be useful for most cases.  We could later extend
+> that with more features.
+> 
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_RECEIVE will then translates to "allow
+> to receive from the parent domain".
+> LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_SEND will then translates to "allow to
+> send to the parent domain".
+If we consider LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_* shows the
+ability to send/recieve data to/from the parent domain, different
+scenarios would be as follow(again using your drawings from the
+ptrace_test):
 
-It's not clear to me that you've done a close review of the verity related
-patches, including not just this one but the dm-verity related ones and the
-fsverity and dm-verity support in IPE itself, given the issues that I've been
-finding in them in the last couple months.  As I said before, I'm not too
-enthusiastic about IPE myself, for various reasons I've explained, so I've
-really been looking to the people who actually want it to help drive it forward.
+/*
+ *        No domain
+ *
+ *   P1-.               P1 -> P2 : allow
+ *       \              P2 -> P1 : allow
+ *        'P2
+ */
 
-Anyway, as I also said, the fsverity and dm-verity support does seem to be
-improved now after all the rounds of feedback, and I think it's close to the
-finish line.  I just hope you can understand that I'm also a bit burnt out now,
-and getting asked for an ack on this patch again and then seeing a bug in it
-(despite it having been simplified to only a few lines now) and also still
-misleading information in the commit message that I asked to be fixed before, is
-a bit frustrating.  I think it's reasonable to expect a bit better, especially
-for a security oriented feature.
+(Child domain): Since child can not send/recieve data to/from parent,the
+connection of both direction is banned.
+/*
+ *        Child domain:
+ *
+ *   P1--.              P1 -> P2 : deny
+ *        \             P2 -> P1 : deny
+ *        .'-----.
+ *        |  P2  |
+ *        '------'
+ */
 
-Thanks,
+(Parent domain): The parent's access to its parent is restricted, so the
+child and parent can establish connection.
+/*
+ *        Parent domain
+ * .------.
+ * |  P1  --.           P1 -> P2 : allow
+ * '------'  \          P2 -> P1 : allow
+ *            '
+ *            P2
+ */
 
-- Eric
+(Parent + child domain): Same as (child domain) scenario
+/*
+ *        Parent + child domain(inherited)
+ * .------.
+ * |  P1  ---.          P1 -> P2 : deny
+ * '------'   \         P2 -> P1 : deny
+ *         .---'--.
+ *         |  P2  |
+ *         '------'
+ */
+
+(Same domain): An example is when a process fork two child processes and
+they inherit the parent's access. In this case, children proccess can
+send/recieve data to/from each other since they are in the same domain.
+/*
+ *         Same domain (sibling)
+ * .-------------.
+ * | P1----.     |      P1 -> P2 : allow
+ * |        \    |      P2 -> P1 : allow
+ * |         '   |
+ * |         P2  |
+ * '-------------'
+ */
+
+/*
+ *         Inherited + child domain
+ * .-----------------.
+ * |  P1----.        |  P1 -> P2 : deny
+ * |         \       |  P2 -> P1 : deny
+ * |        .-'----. |
+ * |        |  P2  | |
+ * |        '------' |
+ * '-----------------'
+ */
+
+/*
+ *         Inherited + parent domain
+ * .-----------------.
+ * |.------.         |  P1 -> P2 : allow
+ * ||  P1  ----.     |  P2 -> P1 : allow
+ * |'------'    \    |
+ * |             '   |
+ * |             P2  |
+ * '-----------------'
+ */
+
+/*
+ *         Inherited + parent and child domain
+ * .-----------------.
+ * | .------.        |  P1 -> P2 : deny
+ * | |  P1  .        |  P2 -> P1 : deny
+ * | '------'\       |
+ * |          \      |
+ * |        .--'---. |
+ * |        |  P2  | |
+ * |        '------' |
+ * '-----------------'
+ */
+Any feedback on this logic is appreciated.
+
+> As for other Landlock access rights, the restrictions of domains should
+> only be changed if LANDLOCK_ACCESS_DOM_UNIX_ABSTRACT_* is "handled" by
+> the ruleset/domain.
