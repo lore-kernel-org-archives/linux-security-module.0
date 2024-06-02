@@ -1,143 +1,109 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50C18E11;
-	Sun,  2 Jun 2024 06:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAB2381B8
+	for <linux-security-module@vger.kernel.org>; Sun,  2 Jun 2024 12:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717311422; cv=none; b=N+7QB4f//PG61jMvjyfnWuiO4jI1ZpD9/4jukbPMP5tDeFyQcHfCOy1AcdShbMdkzhdUnsLDrinj2EK51KrhwNc6hUb7Mhw4OAM1XjGFcyHCsqVSJXUKOL2jhbl8fPFJYlhwW2HK+qbZiW7gyxdJhUKa9h/Tr69rDj5HP6yFRQc=
+	t=1717330395; cv=none; b=HGLtl3QBq0rMS4zm12zMR29VFvERiM55k3LO2QMwWLxWM+WJqQYWus0uBotRzX/HHdKXBQohrYaNueq9a96S9grerP6L/lNxLL5D6sHJws2vScS6pYrn5z213IV5+EZ0x51/BOgQ2u2xeMKDwdmZYB1dX1feyzCRllvD07AZzG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717311422; c=relaxed/simple;
-	bh=kNaAdwj4JXsTfPgEJdtdgcc05WNgvnkp0WyXnDIgbWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpS53aY4x7LyMJ4aTYvPfY3nUt9sQXBjbXaXov3VJsCRH0OAkEQFCOt5HL5c8YTZAEKdv9MyhkiLiedrmu4xHXA6Z65/7ZylUjvw3bBIiviXaXt2mbvXoXVD81YITjqaPdcmLW9PgIRcehfwkP392CSdqLNkPh+eJm0kq13XUms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLoWVB8A; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717330395; c=relaxed/simple;
+	bh=4o3d8kCL0il1WUfMIRaScf2hNYxw2URkg/tDazov59A=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Plxn6xZRwymaqTKYQuWdRGsEZLn23Wj1H20jiiZugSK08uLvlnJKEsXGdCuo/KDCsqFiKcQCH2dpp+5BqdVN5Sm8NZIpIbW83/9ezAvW0PO7Y5b5IiJ5rr3g+q6zua6AdA3DNVCnC7KXycUbRp/mi1x7nYqjFZg2bTkbOe9C358=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=R5OjOr6q; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLoWVB8A"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6ae279e6427so14716346d6.1;
-        Sat, 01 Jun 2024 23:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717311420; x=1717916220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAUPbRzuyrXUUhAbCV+RswkSNoR9RTLDNyX2Ucwmfqo=;
-        b=WLoWVB8ARGhW9CHP6QC1567Gawsr3LZmSR2SXlu/OVL2xD8emi2TqPu9l6kJC3vE/8
-         ZISgbrVy3432imlcxjziw7+jRLS78gabV0Rf50pmCYqv65TLwz4S1C3Ey34d39U3yWLl
-         IAXy95KCmyJzgvvcQCZR8g6rDJx5R5hPEvL4VWHMrXJXnCUSW2CzK5BKp41b9NWq0nDh
-         8PX28VgxhMnBqYiDWeVQSX1A2rqBfU9BN+frUhVvntbEw6unSB5hWJh/97e+HJricNV/
-         Ln5zfhPa+cmkyayd0PwbjzaUciz/gQEi7gKRkNo/aI3uYtKc7t4Ph4B1YfdYYt68QoeW
-         Vi7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717311420; x=1717916220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AAUPbRzuyrXUUhAbCV+RswkSNoR9RTLDNyX2Ucwmfqo=;
-        b=YgpJkIt/36YCc/t+koT3YH6xrLyrkCoT/tJZiW0dL925oQKMCzkJ+ekk2BEFVR8eKg
-         AhotUzBJK5fyY3RWFBzgR4grtjifgBI9dr26tvdL6clS0bMCX9QLvlzwRJl/B1zEsN1z
-         h1v9EOXWNSkvqWbyP8zWsUWBsYMJRtZRokRAuDV+9UzS4l9LFRgEWBhDe5E/x2joqtNu
-         NNwNn23JyZq+OeI8DH3Q9FMvSqhE9HTa/ILemlVGm77VS4XIgz4ftx+3HpXlUBund9lx
-         JOYA0Inhqty70pKHujXggfT3ZX6X9V8uPM1C1exrl8Y9qxOjUsQ9ZUWvS6vuI7vrIWrj
-         5qYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdOnO1kBtKrircJXJb5t/SwIv1MlXfXcuV6rLEDG4CuAuv1KMKUcvvjfw+f0kRg38aGLABA0RzYTOh9oJE7u4gHmiubhrYTe136WwU9e8YqfkdJV61IG+uqE8uLaQytdqhZQ+nbY3ruHqOWo7cqxyAHGD0t51IscuyL21l2PR7djiNHYoO6Qm574urD861Dog7p0AbEOjnMYWYGzDcxFWyMRN+4FwpVu9C1bBKtOfjEAgUPiodg1Oa0/k4jgUCYq5Ls3PprtNqrDWKOEUqm+6Z07oSxQvcrsZ3cSjagQ==
-X-Gm-Message-State: AOJu0Ywb+6Hb8Pp33Noz83GuzFPNy0UhXKTRBvPXSbFpd/pYoR5P8tui
-	aXC2iFwowTIUHcl8pWPh4MZqW/CwQkkhXeQIr0hLGOZb0eWTrPpPcUPIJzEOH9x6UBEFAXmIJM4
-	Hsa0a9HBZwlHZyFH9Fp0tqkCgT90=
-X-Google-Smtp-Source: AGHT+IHBO8CcAWYey7pRZVURNsZzP8hqqeNI4aNYwlr3UTd/2FxO0+zZYuavJGm6rllryB0FhnqOhCZpQ6HL1oaZSiY=
-X-Received: by 2002:a05:6214:4891:b0:6ab:9492:7d89 with SMTP id
- 6a1803df08f44-6aecd6f054bmr77058646d6.52.1717311419907; Sat, 01 Jun 2024
- 23:56:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="R5OjOr6q"
+Message-ID: <39aba268-8341-4644-9d70-71ed91c7525f@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1717329974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZDT4b57y9roa6OE5GaCrTx6QD+x4jnyI/QdwtJyJgtg=;
+	b=R5OjOr6qkqAT5mBK+Ci4YRxLB7njqKKP39tTsU6DoSJ3qDXgA8dZbgMZS6v4s98VejcKu0
+	j/W+HH6V9DjcEz2oVAtb6D+8aA/Q1yR2ZMrt6lQlj7U2oW6Peo4YcWuxAuf6j0HUJ8DxCK
+	xp+qpaBBW4lGYFbf72XLD6qFHwC4i1U=
+Date: Sun, 2 Jun 2024 15:06:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240602023754.25443-1-laoar.shao@gmail.com> <20240602023754.25443-2-laoar.shao@gmail.com>
- <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87ikysdmsi.fsf@email.froward.int.ebiederm.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 2 Jun 2024 14:56:23 +0800
-Message-ID: <CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: torvalds@linux-foundation.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Konstantin Andreev <andreev@swemel.ru>
+Subject: [PATCH] smack: tcp: ipv4, fix incorrect labeling and unauthorized
+ writes
+To: linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-OriginalArrivalTime: 02 Jun 2024 12:06:15.0909 (UTC) FILETIME=[45018950:01DAB4E5]
 
-On Sun, Jun 2, 2024 at 11:52=E2=80=AFAM Eric W. Biederman <ebiederm@xmissio=
-n.com> wrote:
->
-> Yafang Shao <laoar.shao@gmail.com> writes:
->
-> > Quoted from Linus [0]:
-> >
-> >   Since user space can randomly change their names anyway, using lockin=
-g
-> >   was always wrong for readers (for writers it probably does make sense
-> >   to have some lock - although practically speaking nobody cares there
-> >   either, but at least for a writer some kind of race could have
-> >   long-term mixed results
->
-> Ugh.
-> Ick.
->
-> This code is buggy.
->
-> I won't argue that Linus is wrong, about removing the
-> task_lock.
->
-> Unfortunately strscpy_pad does not work properly with the
-> task_lock removed, and buf_size larger that TASK_COMM_LEN.
-> There is a race that will allow reading past the end
-> of tsk->comm, if we read while tsk->common is being
-> updated.
+Currently, Smack mirrors the label of incoming tcp/ipv4 connections:
+when a label 'foo' connects to a label 'bar' with tcp/ipv4,
+'foo' always gets 'foo' in returned ipv4 packets. So,
+1) returned packets are incorrectly labeled ('foo' instead of 'bar')
+2) 'bar' can write to 'foo' without being authorized to write.
 
-It appears so. Thanks for pointing it out. Additionally, other code,
-such as the BPF helper bpf_get_current_comm(), also uses strscpy_pad()
-directly without the task_lock. It seems we should change that as
-well.
+Here is a scenario how to see this:
 
->
-> So __get_task_comm needs to look something like:
->
-> char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk=
-)
-> {
->         size_t len =3D buf_size;
->         if (len > TASK_COMM_LEN)
->                 len =3D TASK_COMM_LEN;
->         memcpy(buf, tsk->comm, len);
->         buf[len -1] =3D '\0';
->         return buf;
-> }
+* Take two machines, let's call them C and S,
+   with active Smack in the default state
+   (no settings, no rules, no labeled hosts, only builtin labels)
 
-Thanks for your suggestion.
+* At S, add Smack rule 'foo bar w'
+   (labels 'foo' and 'bar' are instantiated at S at this moment)
 
->
-> What shows up in buf past the '\0' is not guaranteed in the above
-> version but I would be surprised if anyone cares.
+* At S, at label 'bar', launch a program
+   that listens for incoming tcp/ipv4 connections
 
-I believe we pad it to prevent the leakage of kernel data. In this
-case, since no kernel data will be leaked, the following change may be
-unnecessary.
+* From C, at label 'foo', connect to the listener at S.
+   (label 'foo' is instantiated at C at this moment)
+   Connection succeedes and works.
 
->
-> If people do care the code can do something like:
-> char *last =3D strchr(buf);
-> memset(last, '\0', buf_size - (last - buf));
->
-> To zero everything in the buffer past the first '\0' byte.
->
+* Send some data in both directions.
+* Collect network traffic of this connection.
 
---=20
-Regards
-Yafang
+All packets in both directions are labeled with the CIPSO
+of the label 'foo'. Hence, label 'bar' writes to 'foo' without
+being authorized, and even without ever being known at C.
+
+If anybody cares: exactly the same happens with DCCP.
+
+This behavior 1st manifested in release 2.6.29.4 (see Fixes below)
+and it looks unintentional. At least, no explanation was provided.
+
+I changed returned packes label into the 'bar',
+to bring it into line with the Smack documentation claims.
+
+Fixes: 6c3823bc3abf ("smack: Set the proper NetLabel security attributes for connection requests")
+Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
+---
+The patch is against branch smack-for-6.9 at https://github.com/cschaufler/smack-next
+The hash 6c3823bc3abf is against git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+The commit 6c3823bc3abf is based on 07feee8f812f, which is available at `smack-next' repo,
+but 6c3823bc3abf has much narrower scope, so I point at it, not 07feee8f812f.
+This fix passed `Smack kernel test suite' https://github.com/smack-team/smack-testsuite.git
+
+  security/smack/smack_lsm.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index b18b50232947..d836ca61e081 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4428,7 +4428,7 @@ static int smack_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
+  	rcu_read_unlock();
+
+  	if (hskp == NULL)
+-		rc = netlbl_req_setattr(req, &skp->smk_netlabel);
++		rc = netlbl_req_setattr(req, &ssp->smk_out->smk_netlabel);
+  	else
+  		netlbl_req_delattr(req);
+
+--
+2.40.1
