@@ -1,87 +1,90 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A83B57333
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Jun 2024 22:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA3784FB7;
+	Mon,  3 Jun 2024 22:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717454172; cv=none; b=HplZtpj8/eeYDBijVMlX5DhxtHS/tsNUUierEUQye0FecTds5Afm/3Hlh+2haBnwkr+YCb0tnmhn3EUCAQWbKgA722jDQdv7yZYlGDc2aT+vmn4X/PtxCdWsak2xymAdmzhntN2EgGYSMCN5fDaIPiTMTpfg7A+0x3tRDZYOhC0=
+	t=1717454194; cv=none; b=lpjrhF5dYxszCpdKSn2H+LxZIAwHthyjpeFqx6CbBM4XoiD7NNWXRgiGmQ3lCiUkoT3ayR2vHfN+b08J9ItdYRK2pEt6/h7D2kq8EuY6gzG5O1x9KET3BxIgIvmiznZ5lgKG2FpAl+NB55vLmQW7o5fEPyrK/VvavSvwmirWeBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717454172; c=relaxed/simple;
-	bh=eLQTm5bdwsIaGMdIKYVz+iwaKfPty9F535UJJa1XdvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hlFKOBdCyvCOymCRciR1eH+iER/NFKVxiofNPSygXa+TjPUqJdHhftHseNlte5TfY7J30d9+vWA5x5uNg1pIpzREwx+a1lCcbZCItZVonterSW9goG56P5bEJSfnoluIL7k7oUwftX8rJM9tuQBIUusqo/TVWBL4mu4foUKP1MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JUnqFBuI; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JUnqFBuI"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62a2a6a5ccfso50351797b3.3
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Jun 2024 15:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1717454169; x=1718058969; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eLQTm5bdwsIaGMdIKYVz+iwaKfPty9F535UJJa1XdvU=;
-        b=JUnqFBuImCJDxqUT1ykjHVXh/ujwI5KrsEYcF8hSJ8DtqDHHcqkSEg4FZru1kvyFte
-         MA6rVBesYqx4Sz2p+AoXgo/mo9uUMZbr/e4goohb9qLEes8CSzML0Deb7qgRFWxjxV6v
-         AFRu2UJmCkmC1nuAaut6YXv58I5Hoi3HrFx1/LNpcTDRPWnWvMUAifAzPtoeGycycNPD
-         jI/eY72Vv5CG1w6dv5hVKYCeWcAgtVpEK/FPbys7BikwBpQ01eSo16084nMqZ3deecjJ
-         g0QbKCAQS+rXzf7ol53epun0N9ZChMnP92nPOKHolmGxzNCU2mimAGRwrNdoqWemv6vi
-         1Sow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717454169; x=1718058969;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eLQTm5bdwsIaGMdIKYVz+iwaKfPty9F535UJJa1XdvU=;
-        b=S8VPrY+tTk2mw3jPAv9g9G8FxsTXgrMmc3MHtxph5BNzQT5koK+wnKUHX7l3mQm2ES
-         xT5w7NFX2v9iVoEbO40dZFDZ5uUAfJnCi5NypjsjDiAUPQK9bs6gtMzaAiM5FDoXLou1
-         nfB56vRHh9dL97+p3EGpjb3bKL3O9/7pw+v1roLf8JTu/K8b6D40IhJplQkdG2FKwM0c
-         qpJ6y75Psqb5nGPL9Ri5TRKESm7SxlWpoqxnZQLLndt1t2I92NRah60gCHMev+BYwFNw
-         a3+0NADChNC8OG9/rZ1XJk14txjl8IB/t5sKb1hnNbhPGTzqdaj5nV/9RthwnjFoJh4p
-         QcAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbr7416BZRb/MJjGtDSOPxu6SJxjxZ5MCaV10qsghILi7PkXa/+Hl5Kvl2THezSD4vECmZroTJP2XQHq4+sWbx4VvYdHY/o3LJyf6bkWWXryZzlO+O
-X-Gm-Message-State: AOJu0Yz1jN5ewIAZ4ugEqdD8EzDgryz7UDQtXQoHFKZnVtiOohyOu2cv
-	l9PQYRNeOeVqDbIIjlWRS3k59urpFaEsJMyai2pdTe3/hqwzcEZaUvb4/6XmCt2tcWIt/NnVeJr
-	mJavv8MFisM39wfqLAzme/1kVVaXSgQlv2j9m
-X-Google-Smtp-Source: AGHT+IEnEj0HaAe2XXJ+P58B/3DENp7qDyeNgjkaCnTRpS2uJyaK4IE7boqra/mRVtjfChhSz9siZckxkdCbwRz+WVk=
-X-Received: by 2002:a81:ee03:0:b0:610:e9b2:f84a with SMTP id
- 00721157ae682-62c79720b48mr101000677b3.26.1717454169627; Mon, 03 Jun 2024
- 15:36:09 -0700 (PDT)
+	s=arc-20240116; t=1717454194; c=relaxed/simple;
+	bh=aHFLneUiM7Y8KGK9AriZOavkvqFrckBGJd50BYmAOIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sxChJSAoH5ww8L0WHokSb+YE0+UPdCMbke4p/srpw9Fee2ZqpP6ExSdzrvF+rURsKiHJhurjlV/OlXGnos+8t/YGZG49qPwNZWpGHiCRYl6lK+I8IxsaEriki0F3pGxMc+Z04XG86p78DMdIA0AlZj9wRPQE7O30EZbhTI1TZHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF7A3C2BD10;
+	Mon,  3 Jun 2024 22:36:31 +0000 (UTC)
+Date: Mon, 3 Jun 2024 18:37:42 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ audit@vger.kernel.org, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org, bpf@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH 2/6] tracing: Replace memcpy() with __get_task_comm()
+Message-ID: <20240603183742.17b34bc3@gandalf.local.home>
+In-Reply-To: <CAHk-=wgDWUpz2LG5KEztbg-S87N9GjPf5Tv2CVFbxKJJ0uwfSQ@mail.gmail.com>
+References: <20240602023754.25443-1-laoar.shao@gmail.com>
+	<20240602023754.25443-3-laoar.shao@gmail.com>
+	<20240603172008.19ba98ff@gandalf.local.home>
+	<CAHk-=whPUBbug2PACOzYXFbaHhA6igWgmBzpr5tOQYzMZinRnA@mail.gmail.com>
+	<20240603181943.09a539aa@gandalf.local.home>
+	<CAHk-=wgDWUpz2LG5KEztbg-S87N9GjPf5Tv2CVFbxKJJ0uwfSQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240315125418.273104-1-cgzones@googlemail.com>
- <20240315125418.273104-2-cgzones@googlemail.com> <202403281506.46D9C5BEEA@keescook>
-In-Reply-To: <202403281506.46D9C5BEEA@keescook>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 3 Jun 2024 18:35:59 -0400
-Message-ID: <CAHC9VhTWoehrxwPe3_Xf0Jud-ouc8Cfwp0hwcE3+JekWQ2nJXA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] yama: document function parameter
-To: Kees Cook <keescook@chromium.org>
-Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 28, 2024 at 6:06=E2=80=AFPM Kees Cook <keescook@chromium.org> w=
-rote:
-> On Fri, Mar 15, 2024 at 01:54:10PM +0100, Christian G=C3=B6ttsche wrote:
-> > Document the unused function parameter of yama_relation_cleanup() to
-> > please kernel doc warnings.
+On Mon, 3 Jun 2024 15:23:48 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Mon, 3 Jun 2024 at 15:18, Steven Rostedt <rostedt@goodmis.org> wrote:
 > >
-> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+> > The logic behind __string() and __assign_str() will always add a NUL
+> > character.  
+> 
+> Ok. But then you still end up with the issue that now the profiles are
+> different, and you have a 8-byte pointer to dynamically allocated
+> memory instead of just the simpler comm[TASK_COMM_LEN].
 
-I ran across this in patchwork just now and don't see it upstream yet,
-you're picking this up right Kees?
+It's actually a 4 byte meta data that holds it.
 
---=20
-paul-moore.com
+	__data_offsets->item##_ptr_ = src;
+
+The __data_offsets is a local helper structure that holds the information
+about where the string data will be in the ring buffer event, while the
+event is being recorded. The actual data in the ring buffer is a 4 byte
+word, where 2 bytes is for the size of the string and 2 bytes is for the
+offset into the event.
+
+If you have a task->comm = "ps", that will take up 12 bytes in the ring buffer.
+
+   field: 2 bytes: for where in the event the "ps" is.
+          2 bytes: for the length of ps.
+
+Then after the data, you have 3 or 4 bytes to hold "ps\0". (the data always
+ends on a 4 byte alignment).
+
+The amount of data in the ring buffer to hold "ps" just went from 16 bytes
+down to 12 bytes, and nothing is truncated if we extend the size of comm.
+
+> 
+> Is that actually a good idea for tracing?
+> 
+> We're trying to fix the core code to be cleaner for places that may
+> actually *care* (like 'ps').
+> 
+> Would we really want to touch this part of tracing?
+
+Note, I've been wanting to get rid of the hard coded TASK_COMM_LEN from the
+events for a while. As I mentioned before, the only reason the memcpy exists
+is because it was added before the __string() logic was. Then it became
+somewhat of a habit to do that for everything that referenced task->comm. :-/
+
+-- Steve
