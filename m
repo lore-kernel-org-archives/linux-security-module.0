@@ -1,51 +1,68 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB9012FF71
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Jun 2024 15:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5F91386CF
+	for <linux-security-module@vger.kernel.org>; Mon,  3 Jun 2024 18:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428151; cv=none; b=LxlMR1VPKTuJlTyb+PO0SFP+xwSV/nDRkuynj0B2406xytPtH9HBPKOmYqDXtD+wCQq2OYz5hhMIPMji0ta2qXLenqPHV+i1aydtS3Nl4ykZLJL+sM9zwF3Lic7xEpPNuJwyugaQPGL553tj6/i23iaWi+VCN9IrJ+Kw4PkMySk=
+	t=1717439980; cv=none; b=XEIsqDQJs2i5Zsot2envNWwKOVS6+v+XZNNlDoTUVEWi4HDpOL84wmjfhdVc3dj4BsljAiPTgmakC9cb/dSXXOastK3JTLzi9LOZH3vTTXj7qEJLLjqxRZP4OEF7bvnqJpDcguzKOS83zfoAHTw8SACLtfqROwtitqNO6RjS1y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717428151; c=relaxed/simple;
-	bh=/mjcv62h20/YuCxxk+v08bUG5s4jmTFwSRETq+kYZyY=;
+	s=arc-20240116; t=1717439980; c=relaxed/simple;
+	bh=45DMRn2FH77YelrORvqcFvTIqhXAmUJq7b7LNS71ris=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNqCA4ON+Sn7ZgD7Q1xuQonY6PEb/g0Vzt9FW39kuRKtMv6h1D2Ra0z4s0B/Sr3bW34wZ3tae5n0nnJyI7SwI4lEXtb1CQO6VYZY8FzTsh+gDk38U2enVl6H197wiOoogXFchzG9uip/scxImrc5D3E5h+yi2dKJvr3EpV1/A4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FCviUm6O; arc=none smtp.client-ip=84.16.66.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYl4JcglcHal5GqDCxDMdultYXJu/uZJqmozKJc3apGtD0sGmtAeo/6mA4sfCDsrdIE6a5FDSB6CJBkTircjxGftASBXjbBo2AhojIY4y5J0KVYftr5kHUW3BYmyHpHW/W/pxK4i/QpE9Rbfb3iBEXpuWaU7z2JUGZSqxBTmwQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xgOLEnz6; arc=none smtp.client-ip=45.157.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FCviUm6O"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VtHXC0M63zslV;
-	Mon,  3 Jun 2024 17:22:19 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xgOLEnz6"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VtMvh6qFGzbqD;
+	Mon,  3 Jun 2024 20:39:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1717428138;
-	bh=f72YWsPTvzhPYR8mlANeq/hcliyb10E3qJT1dzHyWlE=;
+	s=20191114; t=1717439968;
+	bh=gtIaPUDSXyeON8s2CCg1DgIhDlLJpeFMkqvOS8MasVM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FCviUm6OSZIQsFmYeFMuIVZSwN3n7uizhrCyJkHYNEMuBhApx6FQ67CDILxyskfop
-	 aVAyh5a/QaxyW5HZqgTV0n+wufcPEfHn7T9x3Uhpb8+S66FQgwXnapRugQg/6mMUQc
-	 oPo+VOLyV3QwXGr/GGUFWisYCXLdGXACc30gwVBA=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VtHX95W5szJ1K;
-	Mon,  3 Jun 2024 17:22:17 +0200 (CEST)
-Date: Mon, 3 Jun 2024 17:22:12 +0200
+	b=xgOLEnz6SJcIhFjVsyAJkws+cB0hDF1vBl5UhdAnMFZ3IwIv9+mfJG3z/z022GaLC
+	 hucCNjddaf0O63psa6tLWOQ3L5xKcN9U7KIay9a2JpyiZ7tPESeMWs+1ppcAXahNNL
+	 fGKNj5z+dog4VQDnEUOYMq6wUCsWbim9yiLiW2VQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VtMvf5T4yz1Y3;
+	Mon,  3 Jun 2024 20:39:26 +0200 (CEST)
+Date: Mon, 3 Jun 2024 20:39:24 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: aul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E.Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, outreachy@lists.linux.dev, netdev@vger.kernel.org, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Jann Horn <jannh@google.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v2] landlock: Add abstract unix socket connect
- restrictions
-Message-ID: <20240603.Quaes2eich5f@digikod.net>
-References: <ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000>
- <20240401.ieC2uqua5sha@digikod.net>
- <ZhcRnhVKFUgCleDi@tahera-OptiPlex-5000>
- <20240411.ahgeefeiNg4i@digikod.net>
- <ZlkIAIpWG/l64Pl9@tahera-OptiPlex-5000>
- <20240531.Ahg5aap6caeG@digikod.net>
- <ZlotXL4sfY5Ez3I5@tahera-OptiPlex-5000>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Nicolas Saenz Julienne <nsaenz@amazon.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+	Kees Cook <keescook@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Wanpeng Li <wanpengli@tencent.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Alexander Graf <graf@amazon.com>, Angelina Vu <angelinavu@linux.microsoft.com>, 
+	Anna Trikalinou <atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Forrest Yuan Yu <yuanyu@google.com>, James Gowans <jgowans@amazon.com>, 
+	James Morris <jamorris@linux.microsoft.com>, John Andersen <john.s.andersen@intel.com>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>, 
+	Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>, =?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>, 
+	Thara Gopinath <tgopinath@microsoft.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, 
+	Yu Zhang <yu.c.zhang@linux.intel.com>, =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>, 
+	dev@lists.cloudhypervisor.org, kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org, 
+	x86@kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
+ configuration and violation
+Message-ID: <20240603.ahNg8waif6Fu@digikod.net>
+References: <20240503131910.307630-1-mic@digikod.net>
+ <20240503131910.307630-4-mic@digikod.net>
+ <ZjTuqV-AxQQRWwUW@google.com>
+ <20240506.ohwe7eewu0oB@digikod.net>
+ <ZjmFPZd5q_hEBdBz@google.com>
+ <20240507.ieghomae0UoC@digikod.net>
+ <ZjpTxt-Bxia3bRwB@google.com>
+ <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com>
+ <20240514.mai3Ahdoo2qu@digikod.net>
+ <ZkUb2IWj4Z9FziCb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -55,169 +72,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZlotXL4sfY5Ez3I5@tahera-OptiPlex-5000>
+In-Reply-To: <ZkUb2IWj4Z9FziCb@google.com>
 X-Infomaniak-Routing: alpha
 
-OK, thanks to your examples I found some issues with this "send/recv"
-design.  A sandboxed process should not be able to block actions on
-its own socket from a higher privileged domain (or a process without
-domain).  One issue is that if a domain D2 denies access (to its
-abstract unix sockets) to its parent D1, processes without domains (e.g.
-parent of D1) should not be restricted in any way.  Furthermore, it
-should not be possible for a process to enforce such restriction if it
-is not already sandboxed in a domain.  Implementing such mechanism would
-require to add exceptions, which makes this design inconsistent.
+On Wed, May 15, 2024 at 01:32:24PM -0700, Sean Christopherson wrote:
+> On Tue, May 14, 2024, Mickaël Salaün wrote:
+> > On Fri, May 10, 2024 at 10:07:00AM +0000, Nicolas Saenz Julienne wrote:
+> > > Development happens
+> > > https://github.com/vianpl/{linux,qemu,kvm-unit-tests} and the vsm-next
+> > > branch, but I'd advice against looking into it until we add some order
+> > > to the rework. Regardless, feel free to get in touch.
+> > 
+> > Thanks for the update.
+> > 
+> > Could we schedule a PUCK meeting to synchronize and help each other?
+> > What about June 12?
+> 
+> June 12th works on my end.
 
-Let's get back to the initial "scope" design, which is simpler and
-consistent with the ptrace restrictions.  Sorry for the back and forth.
-This discussions will be useful for the rationale though. ;)
-I kept the relevant parts:
+Can you please send an invite?
 
-On Fri, May 31, 2024 at 02:04:44PM -0600, Tahera Fahimi wrote:
-> On Fri, May 31, 2024 at 11:39:12AM +0200, Mickaël Salaün wrote:
-> > On Thu, May 30, 2024 at 05:13:04PM -0600, Tahera Fahimi wrote:
-> > > On Tue, Apr 30, 2024 at 05:24:45PM +0200, Mickaël Salaün wrote:
-> > > > On Wed, Apr 10, 2024 at 04:24:30PM -0600, Tahera Fahimi wrote:
-> > > > > On Tue, Apr 02, 2024 at 11:53:09AM +0200, Mickaël Salaün wrote:
-
-[...]
-
-> > > > > > Because of compatibility reasons, and because Landlock should be
-> > > > > > flexible, we need to extend the user space interface.  As explained in
-> > > > > > the GitHub issue, we need to add a new "scoped" field to the
-> > > > > > landlock_ruleset_attr struct. This field will optionally contain a
-> > > > > > LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag to specify that this
-> > > > > > ruleset will deny any connection from within the sandbox to its parents
-> > > > > > (i.e. any parent sandbox or not-sandboxed processes).
-> > > > 
-> > > > > Thanks for the feedback. Here is what I understood, please correct me if
-> > > > > I am wrong. First, I should add another field to the
-> > > > > landlock_ruleset_attr (a field like handled_access_net, but for the unix
-> > > > > sockets) with a flag LANDLOCK_ACCESS_UNIX_CONNECT (it is a flag like
-> > > > > LANDLOCK_ACCESS_NET_CONNECT_TCP but fot the unix sockets connect).
-
-Yes, but the field's name should be "scoped", and it will only accept a
-LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET flag.
-
-This is a bit different than handled_access_net because there is no rule
-that would accept LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET (i.e. it
-is a restriction-only).
-
-Without LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET, the current
-behavior should not be changed.  This should be covered with appropriate
-tests.
-
-Taking the following examples for domains with
-LANDLOCK_RULESET_SCOPED_ABSTRACT_UNIX_SOCKET, we get the same
-restrictions as with ptrace:
-
-[...]
-
-> /*
->  *        No domain
->  *
->  *   P1-.               P1 -> P2 : allow
->  *       \              P2 -> P1 : allow
->  *        'P2
->  */
-
-This is still correct.
-
-> /*
->  *        Child domain:
->  *
->  *   P1--.              P1 -> P2 : deny
->  *        \             P2 -> P1 : deny
->  *        .'-----.
->  *        |  P2  |
->  *        '------'
->  */
-
-With the "scoped" approach:
-P1 -> P2: allow
-P2 -> P1: deny
-
-> /*
->  *        Parent domain
->  * .------.
->  * |  P1  --.           P1 -> P2 : allow
->  * '------'  \          P2 -> P1 : allow
->  *            '
->  *            P2
->  */
-
-With the "scoped" approach:
-P1 -> P2: deny
-P2 -> P1: allow
-
-Indeed, only the domain hierarchy matters, not the process hierarchy.
-This works the same way with ptrace restrictions.
-
-> /*
->  *        Parent + child domain(inherited)
->  * .------.
->  * |  P1  ---.          P1 -> P2 : deny
->  * '------'   \         P2 -> P1 : deny
->  *         .---'--.
->  *         |  P2  |
->  *         '------'
->  */
-
-This is still correct.
-
-> /*
->  *         Same domain (sibling)
->  * .-------------.
->  * | P1----.     |      P1 -> P2 : allow
->  * |        \    |      P2 -> P1 : allow
->  * |         '   |
->  * |         P2  |
->  * '-------------'
->  */
-
-This is still correct.
-
-> /*
->  *         Inherited + child domain
->  * .-----------------.
->  * |  P1----.        |  P1 -> P2 : deny
->  * |         \       |  P2 -> P1 : deny
->  * |        .-'----. |
->  * |        |  P2  | |
->  * |        '------' |
->  * '-----------------'
->  */
-
-With the "scoped" approach:
-P1 -> P2: allow
-P2 -> P1: deny
-
-> /*
->  *         Inherited + parent domain
->  * .-----------------.
->  * |.------.         |  P1 -> P2 : allow
->  * ||  P1  ----.     |  P2 -> P1 : allow
->  * |'------'    \    |
->  * |             '   |
->  * |             P2  |
->  * '-----------------'
->  */
-
-With the "scoped" approach:
-P1 -> P2: deny
-P2 -> P1: allow
-
-> /*
->  *         Inherited + parent and child domain
->  * .-----------------.
->  * | .------.        |  P1 -> P2 : deny
->  * | |  P1  .        |  P2 -> P1 : deny
->  * | '------'\       |
->  * |          \      |
->  * |        .--'---. |
->  * |        |  P2  | |
->  * |        '------' |
->  * '-----------------'
->  */
-
-This is still correct.
+ Mickaël
