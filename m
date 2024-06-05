@@ -1,479 +1,409 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4640F18F2F4;
-	Wed,  5 Jun 2024 16:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC021922FD
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Jun 2024 17:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717606228; cv=none; b=PlUQ1lw1FksAOBIcuqqlHIt1Evajv9Mbc9US3dQ4267Grp9zUqGYvj7FstL5hDSGFJHxNbeZJjKJ/nLoP/LrpkiRH5piS8nut879XCjJIVckrz46MF5w+uzJ4ALHE/FOlCmQX498LObWRKSOR1tbNlx7TvYFfjPioxzSqwSdwxQ=
+	t=1717607076; cv=none; b=fUOpOtjsMWOkIMZihvIpbQjQmZby/4w+tV+nVbWyHkxq2y9URUc0jMr00eeFjEIEb6jXVqQ683eIrCrx9pOeBzFe0Kk52Z41RFTislwN0LW/iKooK0GJgvJ54B/elEZspjqy1lMzrwGABXW2505Q1s+OldUXAZA4K1tZHTg9bWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717606228; c=relaxed/simple;
-	bh=kzuN9oxg8OP/9rJGGivC7fdmn8uFhtEGTxAstmuYmJI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bvVOz/3aYNtw7PCb5LLcBVsEEJzzX674DPZK8YPGQuFCZ56POiubekbyMgAcDwlAuagbTZOkGuMW8KrnqMHF5s0KnaTuSOhme3Q/ydTBrdvPhEbjesWc+zJ4OwCFekRo+q/82OlYT7Tpahml7FVKjKGsp4DOLi7kAB0Rm3PsEEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TX/mcEVP; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1717607076; c=relaxed/simple;
+	bh=xBnLcGJNYkCr4hFC35be6L2lEyTlLQ3eS2mQ026felE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lTBwZsoF0vsl0BB7i//YtpAqx234a6ui3yqLbfuOUMU9h+b9g3hzww3kpY0mGMqB5LJ0PBHlkO6mpAFLMN2OJrLqloY2y3wuA7cqywSXkhPUaUO7bMdAG21cQTvYVSFqO9JTq4YlJbQXLoJlO6X+UEDcICiVzbUG4Os9fR5E9zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e1NLoEMM; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TX/mcEVP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717606217;
-	bh=kzuN9oxg8OP/9rJGGivC7fdmn8uFhtEGTxAstmuYmJI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TX/mcEVPsB3RBATJT6jy5psw0s2w+Eq1bx5ouZ6HJgSzomiGuxz06d5kgmHA7RY5e
-	 frDy/k1WGqDHiqceENPYK+mN1ZXQ5x4JziXf/C8zJb8U7vZaY6ke4MEwVcTkoIUE5E
-	 HQ06fl2wRr52ewIRkk8uBk87jrJhZElubRJb/kyST6YgLVBdi7TQlTM+JAJAyryf99
-	 WSsIHKdo7dZ1442G4AVBCFEvElje6VvI+xjBmNXijtZ9Mj579pXx02QdcVyEkN9ZGa
-	 zLc/wf+SDidHAN46xYID4P62WopRQfxNGVr3e4FA1RL2sMh+ThlxCie2Yb6W4WKodG
-	 uR2iRVef5WerA==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: aratiu)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 87F7037821A8;
-	Wed,  5 Jun 2024 16:50:16 +0000 (UTC)
-From: Adrian Ratiu <adrian.ratiu@collabora.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kernel@collabora.com,
-	gbiv@google.com,
-	ryanbeltran@google.com,
-	inglorion@google.com,
-	ajordanr@google.com,
-	jorgelo@chromium.org,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Kees Cook <keescook@chromium.org>,
-	Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Xu <jeffxu@google.com>,
-	Mike Frysinger <vapier@chromium.org>
-Subject: [PATCH v5 2/2] proc: restrict /proc/pid/mem
-Date: Wed,  5 Jun 2024 19:49:31 +0300
-Message-ID: <20240605164931.3753-2-adrian.ratiu@collabora.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240605164931.3753-1-adrian.ratiu@collabora.com>
-References: <20240605164931.3753-1-adrian.ratiu@collabora.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e1NLoEMM"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a27e501d4so44527497b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Jun 2024 10:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717607073; x=1718211873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MIvEv+leeNSj8OFRkkIA/f4lYD7DJjk6WiBrdV4cIqM=;
+        b=e1NLoEMM6Bq2pg9uM1tZJD7oDaXcaszv8I47XlZqsNHaqYWnlP3BVGwACz7jBkoPpA
+         wa2g0BEh4hGxdbUMxrAFRzReuF436A+yp6+twWIuozwLH47SyNQY7rafCbbFbZ34y6V5
+         67SHIoVLgEekj1QDNN727anpMeUXCr01idW0hsgA6HBMzboAmIMOogw70F0NiI+tEaqe
+         M99DZErlSsnbKhI6LtmKY641Wt1FlMRpl22WJ/K/4Di0jmTO0H6jedkAxqj8kTD4lSaT
+         oIT8zc5rM+oVq38AaL264Kuo8rZKlS5QDRe0CGEMyZ2T2Reen/SFoi4psFCMqSWtZ4x7
+         z3Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717607073; x=1718211873;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MIvEv+leeNSj8OFRkkIA/f4lYD7DJjk6WiBrdV4cIqM=;
+        b=cXYqkJ/wuMjYmzeFttZ2TXCsMAna+wrHJUPLvaiAj8DQAULmhAE4G91gq0U2e50QSz
+         T4FLhenwogxwBzVPrsqBBrrDoIvMG/M2qRlVnqbFcTRKKktapdUZEqpqnhNj7VW1jWez
+         Ct7vivwIYznvqYUPVP2y4ses8MVjG2dtJ3re3H+UUjKUef/nQEils1cp3QyjK/fxrEpJ
+         Afympaz+OZuiqwBUN5QgIdjnHYj2UMKwwyb8Md0BIw7OGps5xnXii3LK+DGsfGZ6nXyx
+         ZUtegduPkeRmHHvXpQ+e6AuWPWfmwmulMmW1VZ8I3ydujlu/BVS+LD220ureXXbOjZL/
+         un6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUlhAdkbpcuGaZNHdbX2anziKJsdiGGt62Dep2rTAXggEWFbyjtK9+SBn6fu+x6ldWFYEYfienyB4W0c51nwV8FI/pR3XcHwFT3+33AdbifopS1W3WS
+X-Gm-Message-State: AOJu0YwMv9wfURJcHma7K64fHExMIUHhgp1nYEuumBZcKXSZJT9EcG0o
+	dHxvXchR2Z1nAOY+Uszp4MVBKv/b7BdBUIXEcR36GQBwE04nykX8t+MgAH4UXeHYCTaIy0bfH6A
+	JXg==
+X-Google-Smtp-Source: AGHT+IHrAa1mXbNDzjNwFQzkwpq7M0s5LXLVc9H92HxJd2sIsLyDLUGEkJ81jMFCqFmiOlYtju8AgOeCLbU=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:690c:6c0a:b0:627:a961:1b32 with SMTP id
+ 00721157ae682-62cbb5e0aedmr6679437b3.6.1717607073264; Wed, 05 Jun 2024
+ 10:04:33 -0700 (PDT)
+Date: Wed, 5 Jun 2024 19:04:30 +0200
+In-Reply-To: <ff5ce842-7c67-d658-95b6-ba356dfcfeaf@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
+ <20240524093015.2402952-2-ivanov.mikhail1@huawei-partners.com>
+ <ZlRY-W_30Kxd4RJd@google.com> <ff5ce842-7c67-d658-95b6-ba356dfcfeaf@huawei-partners.com>
+Message-ID: <ZmCantjZlyxL8jzh@google.com>
+Subject: Re: [RFC PATCH v2 01/12] landlock: Support socket access-control
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-after which it got allowed in commit 198214a7ee50 ("proc: enable
-writing to /proc/pid/mem"). Famous last words from that patch:
-"no longer a security hazard". :)
+Hello!
 
-Afterwards exploits started causing drama like [1]. The exploits
-using /proc/*/mem can be rather sophisticated like [2] which
-installed an arbitrary payload from noexec storage into a running
-process then exec'd it, which itself could include an ELF loader
-to run arbitrary code off noexec storage.
+On Thu, May 30, 2024 at 03:05:56PM +0300, Mikhail Ivanov wrote:
+> 5/27/2024 12:57 PM, G=C3=BCnther Noack wrote:
+> > On Fri, May 24, 2024 at 05:30:04PM +0800, Mikhail Ivanov wrote:
+> > > +/**
+> > > + * struct landlock_socket_attr - Socket definition
+> > > + *
+> > > + * Argument of sys_landlock_add_rule().
+> > > + */
+> > > +struct landlock_socket_attr {
+> > > +	/**
+> > > +	 * @allowed_access: Bitmask of allowed access for a socket
+> > > +	 * (cf. `Socket flags`_).
+> > > +	 */
+> > > +	__u64 allowed_access;
+> > > +	/**
+> > > +	 * @family: Protocol family used for communication
+> > > +	 * (same as domain in socket(2)).
+> > > +	 */
+> > > +	int family;
+> > > +	/**
+> > > +	 * @type: Socket type (see socket(2)).
+> > > +	 */
+> > > +	int type;
+> > > +};
+> >=20
+> > Regarding the naming of struct landlock_socket_attr and the associated
+> > LANDLOCK_RULE_SOCKET enum:
+> >=20
+> > For the two existing rule types LANDLOCK_RULE_PATH_BENEATH (struct
+> > landlock_path_beneath_attr) and LANDLOCK_RULE_NET_PORT (struct
+> > landlock_net_port_attr), the names of the rule types are describing the
+> > *properties* by which we are filtering (path *beneath*, *network port*)=
+, rather
+> > than just the kind of object that we are filtering on.
+> >=20
+> > Should the new enum and struct maybe be called differently as well to m=
+atch that
+> > convention?  Maybe LANDLOCK_RULE_SOCKET_FAMILY_TYPE and struct
+> > landlock_socket_family_type_attr?
+> >=20
+> > Are there *other* properties apart from family and type, by which you a=
+re
+> > thinking of restricting the use of sockets in the future?
+>=20
+> There was a thought about adding `protocol` (socket(2)) restriction,
+> but Micka=C3=ABl noted that it would be useless [1]. Therefore, no other
+> properties are planned until someone has good use cases.
+>=20
+> I agree that current naming can be associated with socket objects. But i
+> don't think using family-type words for naming of this rule would be
+> convenient for users. In comparison with net port and path beneath
+> family-type pair doesn't represent a single semantic unit, so it would
+> be a little harder to read the code.
+>=20
+> Perhaps LANDLOCK_RULE_SOCKET_PROTO (struct landlock_socket_proto_attr)
+> would be more suitable here? Although socket(2) has `protocol` argument
+> to specify the socket protocol in some cases (e.g. RAW sockets), in most
+> cases family-type pair defines protocol itself. Since the purpose of
+> this patchlist is to restrict protocols used in a sandboxed process, I
+> think that in the presence of well-written documentation, such naming
+> may be appropriate here. WDYT?
+>=20
+> [1]
+> https://lore.kernel.org/all/a6318388-e28a-e96f-b1ae-51948c13de4d@digikod.=
+net/
 
-One of the well-known problems with /proc/*/mem writes is they
-ignore page permissions via FOLL_FORCE, as opposed to writes via
-process_vm_writev which respect page permissions. These writes can
-also be used to bypass mode bits.
+It is difficult, I also can't come up with a much better name.  In doubt, w=
+e
+could stick with what you already have, I think.
 
-To harden against these types of attacks, distrbutions might want
-to restrict /proc/pid/mem accesses, either entirely or partially,
-for eg. to restrict FOLL_FORCE usage.
+LANDLOCK_RULE_SOCKET_PROTO alludes to "protocol" and even though that is th=
+e
+general term, it can be confused with the third argument to socket(2), whic=
+h is
+also called "protocol" and is rarely used.
 
-Known valid use-cases which still need these accesses are:
+Micka=C3=ABl, do you have any opinions on the naming of this?
 
-* Debuggers which also have ptrace permissions, so they can access
-memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
-are designed to write /proc/pid/mem for basic functionality.
 
-* Container supervisors using the seccomp notifier to intercept
-syscalls and rewrite memory of calling processes by passing
-around /proc/pid/mem file descriptors.
+> > (More about the content)
+> >=20
+> > The Landlock documentation states the general approach up front:
+> >=20
+> >    A Landlock rule describes an *action* on an *object* which the proce=
+ss intends
+> >    to perform.
+> >=20
+> > (In your case, the object is a socket, and the action is the socket's c=
+reation.
+> > The Landlock rules describe predicates on objects to restrict the set o=
+f actions
+> > through the access_mask_t.)
+> >=20
+> > The implementation is perfectly in line with that, but it would help to=
+ phrase
+> > the documentation also in terms of that framework.  That means, what we=
+ are
+> > restricting are *actions*, not protocols.
+> >=20
+> > To make a more constructive suggestion:
+> >=20
+> >    "These flags restrict actions on sockets for a sandboxed process (e.=
+g. socket
+> >    creation)."
+>=20
+> I think this has too general meaning (e.g. bind(2) is also an action on
+> socket). Probably this one would be more suitable:
+>=20
+>   "These flags restrict actions of adding sockets in a sandboxed
+>   process (e.g. socket creation, passing socket FDs to/from the
+>   process)."
 
-There might be more, that's why these params default to disabled.
+Sounds good.  (Although I would not give "passing socket FDs to/from the
+process" as an example, as long as it's not supported yet.)
 
-Regarding other mechanisms which can block these accesses:
 
-* seccomp filters can be used to block mmap/mprotect calls with W|X
-perms, but they often can't block open calls as daemons want to
-read/write their runtime state and seccomp filters cannot check
-file paths, so plain write calls can't be easily blocked.
+> > > + * - %LANDLOCK_ACCESS_SOCKET_CREATE: Create a socket.
+> >=20
+> > Can we be more specific here what operations are affected by this?  It =
+is rather
+> > obvious that this affects socket(2), but does this also affect accept(2=
+) and
+> > connect(2)?
+> >=20
+> > A scenario that I could imagine being useful is to sandbox a TCP server=
+ like
+> > this:
+> >=20
+> >    * create a socket, bind(2) and listen(2)
+> >    * sandbox yourself so that no new sockets can be created with socket=
+(2)
+> >    * go into the main loop and start accept(2)ing new connections
+> >=20
+> > Is this an approach that would work with this patch set?
+>=20
+> Yes, such scenario is possible. This rule should apply to all socket
+> creation requests in the user space (socket(2), socketpair(2), io_uring
+> request). Perhaps it's necessary to clarify here that only user space
+> sockets are restricted?
+>=20
+> Btw, current implementation doesn't check that the socket creation
+> request doesn't come from the kernel space. Will be fixed.
 
-* Since the mem file is part of the dynamic /proc/<pid>/ space, we
-can't run chmod once at boot to restrict it (and trying to react
-to every process and run chmod doesn't scale, and the kernel no
-longer allows chmod on any of these paths).
+Two brief side discussions:
 
-* SELinux could be used with a rule to cover all /proc/*/mem files,
-but even then having multiple ways to deny an attack is useful in
-case one layer fails.
+* What are the scenarios where that creation request comes from kernel spac=
+e?
+  If this is used under the hood for network-backed file systems like NFS, =
+can
+  this result in surprising interactions when the program tries to access t=
+he
+  file system?
 
-Thus we introduce four kernel parameters to restrict /proc/*/mem
-access: open-read, open-write, write and foll_force. All these can
-be independently set to the following values:
+* To be clear, I think it would be useful to support the scenario above, wh=
+ere
+  accept() continues to work. - It would make it easy to create sandboxed s=
+erver
+  processes and they could still accept connections, but do no other networ=
+king.
 
-all     => restrict all access unconditionally.
-ptracer => restrict all access except for ptracer processes.
+But to bring it back to my original remark, and to unblock progress:
 
-If left unset, the existing behaviour is preserved, i.e. access
-is governed by basic file permissions.
+I think for this patch set (focused on userspace-requested socket creation)=
+, it
+would be enough to clarify in the documentation which operations are affect=
+ed by
+the LANDLOCK_ACCESS_SOCKET_CREATE right.
 
-Examples which can be passed by bootloaders:
 
-proc_mem.restrict_foll_force=all
-proc_mem.restrict_open_write=ptracer
-proc_mem.restrict_open_read=ptracer
-proc_mem.restrict_write=all
+> > (It might make a neat sample tool as well, if something like this works=
+ :))
+> >=20
+> >=20
+> > Regarding the list of socket access rights with only one item in it:
+> >=20
+> > I am still unsure what other socket actions are in scope in the future;=
+ it would
+> > probably help to phrase the documentation in those terms.  (listen(2), =
+bind(2),
+> > connect(2), shutdown(2)?  On the other hand, bind(2) and connect(2) for=
+ TCP are
+> > already restrictable differently.))
+>=20
+> I think it would be useful to restrict sending and receiving socket
+> FDs via unix domain sockets (see SCM_RIGHTS in unix(7)).
 
-These knobs can also be enabled via Kconfig like for eg:
+That seems like a reasonable idea.  Would you like to file an issue on the
+Landlock bugtracker about it?
 
-CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=y
-CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=y
+https://github.com/landlock-lsm/linux/issues
 
-Each distribution needs to decide what restrictions to apply,
-depending on its use-cases. Embedded systems might want to do
-more, while general-purpouse distros might want a more relaxed
-policy, because for e.g. foll_force=all and write=all both break
-break GDB, so it might be a bit excessive.
 
-Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+> > > +	/* Checks that all supported socket families and types can be store=
+d in socket_key. */
+> > > +	BUILD_BUG_ON(AF_MAX > (typeof(socket_key.data.family))~0);
+> > > +	BUILD_BUG_ON(SOCK_MAX > (typeof(socket_key.data.type))~0);
+> >=20
+> > Off-by-one nit: AF_MAX and SOCK_MAX are one higher than the last permit=
+ted value,
+> > so technically it would be ok if they are one higher than (unsigned sho=
+rt)~0.
 
-Link: https://lwn.net/Articles/476947/ [1]
-Link: https://issues.chromium.org/issues/40089045 [2]
-Cc: Guenter Roeck <groeck@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Xu <jeffxu@google.com>
-Co-developed-by: Mike Frysinger <vapier@chromium.org>
-Signed-off-by: Mike Frysinger <vapier@chromium.org>
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
----
-Changes in v5:
-* Fixed 2 typos by Randy D. (thanks!)
-* Fixed mm_access() resource leak
-* Rebased on next-20240605
----
- .../admin-guide/kernel-parameters.txt         |  38 +++++
- fs/proc/base.c                                | 130 +++++++++++++++++-
- security/Kconfig                              |  68 +++++++++
- 3 files changed, 235 insertions(+), 1 deletion(-)
+(Did you see this remark?)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f4f2b0ab61fae..035ed61a3e4e3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4814,6 +4814,44 @@
- 	printk.time=	Show timing data prefixed to each printk message line
- 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
- 
-+	proc_mem.restrict_foll_force= [KNL]
-+			Format: {all | ptracer}
-+			Restricts the use of the FOLL_FORCE flag for /proc/*/mem access.
-+			If restricted, the FOLL_FORCE flag will not be added to vm accesses.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, FOLL_FORCE is always used.
-+
-+	proc_mem.restrict_open_read= [KNL]
-+			Format: {all | ptracer}
-+			Allows restricting read access to /proc/*/mem files during open().
-+			Depending on restriction level, open for reads return -EACCES.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, then basic file permissions continue to apply.
-+
-+	proc_mem.restrict_open_write= [KNL]
-+			Format: {all | ptracer}
-+			Allows restricting write access to /proc/*/mem files during open().
-+			Depending on restriction level, open for writes return -EACCES.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, then basic file permissions continue to apply.
-+
-+	proc_mem.restrict_write= [KNL]
-+			Format: {all | ptracer}
-+			Allows restricting write access to /proc/*/mem after the files
-+			have been opened, during the actual write calls. This is useful for
-+			systems which can't block writes earlier during open().
-+			Depending on restriction level, writes will return -EACCES.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, then basic file permissions continue to apply.
-+
- 	processor.max_cstate=	[HW,ACPI]
- 			Limit processor to maximum C-state
- 			max_cstate=9 overrides any DMI blacklist limit.
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 4c607089f66ed..3f33c579cb65c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -152,6 +152,30 @@ struct pid_entry {
- 		NULL, &proc_pid_attr_operations,	\
- 		{ .lsmid = LSMID })
- 
-+#define DEFINE_EARLY_PROC_MEM_RESTRICT(CFG, name)				\
-+DEFINE_STATIC_KEY_MAYBE_RO(CONFIG_PROC_MEM_RESTRICT_##CFG##_DEFAULT,		\
-+			   proc_mem_restrict_##name##_all);			\
-+DEFINE_STATIC_KEY_MAYBE_RO(CONFIG_PROC_MEM_RESTRICT_##CFG##_PTRACE_DEFAULT,	\
-+			   proc_mem_restrict_##name##_ptracer);			\
-+										\
-+static int __init early_proc_mem_restrict_##name(char *buf)			\
-+{										\
-+	if (!buf)								\
-+		return -EINVAL;							\
-+										\
-+	if (strcmp(buf, "all") == 0)						\
-+		static_key_slow_inc(&proc_mem_restrict_##name##_all.key);	\
-+	else if (strcmp(buf, "ptracer") == 0)					\
-+		static_key_slow_inc(&proc_mem_restrict_##name##_ptracer.key);	\
-+	return 0;								\
-+}										\
-+early_param("proc_mem.restrict_" #name, early_proc_mem_restrict_##name)
-+
-+DEFINE_EARLY_PROC_MEM_RESTRICT(OPEN_READ, open_read);
-+DEFINE_EARLY_PROC_MEM_RESTRICT(OPEN_WRITE, open_write);
-+DEFINE_EARLY_PROC_MEM_RESTRICT(WRITE, write);
-+DEFINE_EARLY_PROC_MEM_RESTRICT(FOLL_FORCE, foll_force);
-+
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-  * and .. links.
-@@ -794,12 +818,56 @@ static const struct file_operations proc_single_file_operations = {
- };
- 
- 
-+static int __mem_open_access_permitted(struct file *file, struct task_struct *task)
-+{
-+	bool is_ptracer;
-+
-+	rcu_read_lock();
-+	is_ptracer = current == ptrace_parent(task);
-+	rcu_read_unlock();
-+
-+	if (file->f_mode & FMODE_WRITE) {
-+		/* Deny if writes are unconditionally disabled via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_DEFAULT,
-+					&proc_mem_restrict_open_write_all))
-+			return -EACCES;
-+
-+		/* Deny if writes are allowed only for ptracers via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_PTRACE_DEFAULT,
-+					&proc_mem_restrict_open_write_ptracer) &&
-+		    !is_ptracer)
-+			return -EACCES;
-+	}
-+
-+	if (file->f_mode & FMODE_READ) {
-+		/* Deny if reads are unconditionally disabled via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_READ_DEFAULT,
-+					&proc_mem_restrict_open_read_all))
-+			return -EACCES;
-+
-+		/* Deny if reads are allowed only for ptracers via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_READ_PTRACE_DEFAULT,
-+					&proc_mem_restrict_open_read_ptracer) &&
-+		    !is_ptracer)
-+			return -EACCES;
-+	}
-+
-+	return 0; /* R/W are not restricted */
-+}
-+
- struct mm_struct *proc_mem_open(struct file  *file, unsigned int mode)
- {
- 	struct task_struct *task = get_proc_task(file->f_inode);
- 	struct mm_struct *mm = ERR_PTR(-ESRCH);
-+	int ret;
- 
- 	if (task) {
-+		ret = __mem_open_access_permitted(file, task);
-+		if (ret) {
-+			put_task_struct(task);
-+			return ERR_PTR(ret);
-+		}
-+
- 		mm = mm_access(task, mode | PTRACE_MODE_FSCREDS);
- 		put_task_struct(task);
- 
-@@ -835,6 +903,62 @@ static int mem_open(struct inode *inode, struct file *file)
- 	return ret;
- }
- 
-+static bool __mem_rw_current_is_ptracer(struct file *file)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct task_struct *task = get_proc_task(inode);
-+	struct mm_struct *mm = NULL;
-+	int is_ptracer = false, has_mm_access = false;
-+
-+	if (task) {
-+		rcu_read_lock();
-+		is_ptracer = current == ptrace_parent(task);
-+		rcu_read_unlock();
-+
-+		mm = mm_access(task, PTRACE_MODE_READ_FSCREDS);
-+		if (mm && file->private_data == mm) {
-+			has_mm_access = true;
-+			mmput(mm);
-+		}
-+
-+		put_task_struct(task);
-+	}
-+
-+	return is_ptracer && has_mm_access;
-+}
-+
-+static unsigned int __mem_rw_get_foll_force_flag(struct file *file)
-+{
-+	/* Deny if FOLL_FORCE is disabled via param */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT,
-+				&proc_mem_restrict_foll_force_all))
-+		return 0;
-+
-+	/* Deny if FOLL_FORCE is allowed only for ptracers via param */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT,
-+				&proc_mem_restrict_foll_force_ptracer) &&
-+	    !__mem_rw_current_is_ptracer(file))
-+		return 0;
-+
-+	return FOLL_FORCE;
-+}
-+
-+static bool __mem_rw_block_writes(struct file *file)
-+{
-+	/* Block if writes are disabled via param proc_mem.restrict_write=all */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_WRITE_DEFAULT,
-+				&proc_mem_restrict_write_all))
-+		return true;
-+
-+	/* Block with an exception only for ptracers */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT,
-+				&proc_mem_restrict_write_ptracer) &&
-+	    !__mem_rw_current_is_ptracer(file))
-+		return true;
-+
-+	return false;
-+}
-+
- static ssize_t mem_rw(struct file *file, char __user *buf,
- 			size_t count, loff_t *ppos, int write)
- {
-@@ -847,6 +971,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mm)
- 		return 0;
- 
-+	if (write && __mem_rw_block_writes(file))
-+		return -EACCES;
-+
- 	page = (char *)__get_free_page(GFP_KERNEL);
- 	if (!page)
- 		return -ENOMEM;
-@@ -855,7 +982,8 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mmget_not_zero(mm))
- 		goto free;
- 
--	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-+	flags = (write ? FOLL_WRITE : 0);
-+	flags |= __mem_rw_get_foll_force_flag(file);
- 
- 	while (count > 0) {
- 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
-diff --git a/security/Kconfig b/security/Kconfig
-index 412e76f1575d0..873f7c048a0b3 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -183,6 +183,74 @@ config STATIC_USERMODEHELPER_PATH
- 	  If you wish for all usermode helper programs to be disabled,
- 	  specify an empty string here (i.e. "").
- 
-+menu "Procfs mem restriction options"
-+
-+config PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT
-+	bool "Restrict all FOLL_FORCE flag usage"
-+	default n
-+	help
-+	  Restrict all FOLL_FORCE usage during /proc/*/mem RW.
-+	  Debuggers like GDB require using FOLL_FORCE for basic
-+	  functionality.
-+
-+config PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT
-+	bool "Restrict FOLL_FORCE usage except for ptracers"
-+	default n
-+	help
-+	  Restrict FOLL_FORCE usage during /proc/*/mem RW, except
-+	  for ptracer processes. Debuggers like GDB require using
-+	  FOLL_FORCE for basic functionality.
-+
-+config PROC_MEM_RESTRICT_OPEN_READ_DEFAULT
-+	bool "Restrict all open() read access"
-+	default n
-+	help
-+	  Restrict all open() read access to /proc/*/mem files.
-+	  Use with caution: this can break init systems, debuggers,
-+	  container supervisors and other tasks using /proc/*/mem.
-+
-+config PROC_MEM_RESTRICT_OPEN_READ_PTRACE_DEFAULT
-+	bool "Restrict open() for reads except for ptracers"
-+	default n
-+	help
-+	  Restrict open() read access except for ptracer processes.
-+	  Use with caution: this can break init systems, debuggers,
-+	  container supervisors and other non-ptrace capable tasks
-+	  using /proc/*/mem.
-+
-+config PROC_MEM_RESTRICT_OPEN_WRITE_DEFAULT
-+	bool "Restrict all open() write access"
-+	default n
-+	help
-+	  Restrict all open() write access to /proc/*/mem files.
-+	  Debuggers like GDB and some container supervisors tasks
-+	  require opening as RW and may break.
-+
-+config PROC_MEM_RESTRICT_OPEN_WRITE_PTRACE_DEFAULT
-+	bool "Restrict open() for writes except for ptracers"
-+	default n
-+	help
-+	  Restrict open() write access except for ptracer processes,
-+	  usually debuggers.
-+
-+config PROC_MEM_RESTRICT_WRITE_DEFAULT
-+	bool "Restrict all write() calls"
-+	default n
-+	help
-+	  Restrict all /proc/*/mem direct write calls.
-+	  Open calls with RW modes are still allowed, this blocks
-+	  just the write() calls.
-+
-+config PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT
-+	bool "Restrict write() calls except for ptracers"
-+	default n
-+	help
-+	  Restrict /proc/*/mem direct write calls except for ptracer processes.
-+	  Open calls with RW modes are still allowed, this blocks just
-+	  the write() calls.
-+
-+endmenu
-+
- source "security/selinux/Kconfig"
- source "security/smack/Kconfig"
- source "security/tomoyo/Kconfig"
--- 
-2.30.2
 
+> > I see that this function traces back to Micka=C3=ABl's comment in
+> > https://lore.kernel.org/all/20240412.phoh7laim7Th@digikod.net/
+> >=20
+> > In my understanding, the motivation was to keep the key size in check.
+> > But that does not mean that we need to turn it into a uintptr_t?
+> >=20
+> > Would it not have been possible to extend the union landlock_key in rul=
+eset.h
+> > with a
+> >=20
+> >    struct {
+> >      unsigned short family, type;
+> >    }
+> >=20
+> > and then do the AF_MAX, SOCK_MAX build-time checks on that?
+> > It seems like that might be more in line with what we already have?
+>=20
+> I don't think that complicating general entity with such a specific
+> representation would be a good solution here. `landlock_key` shouldn't
+> contain any semantic information about the key content.
+
+Hm, OK.  I think that is debatable, but these are all things that are
+implementation details and can be changed later if needed.  Sounds good to =
+me if
+we fix the undefined behaviour in the key calculation.
+
+
+> > > +	/* Denies inserting a rule with unsupported socket family and type.=
+ */
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Is the wording "unsupported socket family" misleading here?
+
+(a) It is technically a "protocol family" and a "socket type", according to
+    socket(2). (BTW, the exact delineation between a "protocol family" and =
+an
+    "address family" is not clear to me.)
+
+(b) "unsupported" in the context of protocol families may mean that the ker=
+nel
+    does not know how to speak that protocol, which is slightly different t=
+han
+    saying that it's outside of the [0, AF_MAX) range.  If we wanted to che=
+ck
+    for the protocol family being "supported", we should also probably retu=
+rn
+    -EAFNOSUPPORT, similar to what we already return when adding a "port" r=
+ule
+    with the wrong protocol [1]?
+
+    [1] https://docs.kernel.org/userspace-api/landlock.html#extending-a-rul=
+eset
+
+I suspect that -EINVAL is slightly more correct here, because this is not a=
+bout
+the protocols that the kernel supports, but only about the range.  If we wa=
+nted
+to return errors about the protocol that the kernel supports, I realized th=
+at
+we'd probably also have to check whether the *combination* of family and ty=
+pe
+makes sense.  In my understanding, the equivalent errors for type and proto=
+col,
+ESOCKTNOSUPPORT and EPROTONOSUPPORT, only get returned based on whether the=
+y
+make sense together with the other values.
+
+
+> > > +	if (family < 0 || family >=3D AF_MAX)
+> > > +		return -EINVAL;
+> > > +	if (type < 0 || type >=3D SOCK_MAX)
+> > > +		return -EINVAL;
+> >=20
+> > enum sock_type (include/linux/net.h) has "holes": values 7, 8 and 9 are=
+ not
+> > defined in the header.  Should we check more specifically for the suppo=
+rted
+> > values here?  (Is there already a helper function for that?)
+>=20
+> I think that a more detailed check of the family-type values may have a
+> good effect here, since the rules will contain real codes of families
+> and types.
+>=20
+> I haven't found any helper to check the supported socket type value.
+> Performing a check inside landlock can lead to several minor problems,
+> which theoretically should not lead to any costs.
+>=20
+> * There are would be a dependency with constants of enum sock_types. But
+>   we are unlikely to see new types of sockets in the next few years, so
+>   it wouldn't be a problem to maintain such check.
+>=20
+> * enum sock_types can be redefined (see ARCH_HAS_SOCKET_TYPES in net.h),
+>   but i haven't found anyone to actually change the constants of socket
+>   types. It would be wrong to have a different landlock behavior for
+>   arch that redefines sock_types for some purposes, so probably this
+>   should also be maintained.
+>=20
+> WDYT?
+
+Thinking about it again, from a Landlock safety perspective, I believe it i=
+s
+safe to keep the checks as they are and to check for the two values to be i=
+n the
+ranges [0, AF_MAX) and [0, SOCK_MAX).
+
+Even if we permit the rule to be added for an invalid socket type, there do=
+es
+not seem to be any harm in that, as these sockets can't be created anyway.
+Also, given the semantics of these errors in socket(2), where also the
+*combinations* of the values are checked, it seems overly complicated to ch=
+eck
+all these combinations.  I think it would be fine to keep as is, I was most=
+ly
+wondering whether you had done any deeper analysis?
+
+It might be worth spelling out in the struct documentation that the values =
+which
+fulfil 0 <=3D family < AF_MAX and 0 <=3D type < SOCK_MAX are considered val=
+id.  Does
+that sound reasonable?
+
+P.S., it seems that the security/apparmor/Makefile is turning the "#define"=
+s
+into C code with lookup tables, but it seems that this is only used for
+human-readable audit-logging, not for validating the policies.
+
+=E2=80=94G=C3=BCnther
