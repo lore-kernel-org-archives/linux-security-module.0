@@ -1,409 +1,162 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC021922FD
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Jun 2024 17:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1D62575A
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Jun 2024 17:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717607076; cv=none; b=fUOpOtjsMWOkIMZihvIpbQjQmZby/4w+tV+nVbWyHkxq2y9URUc0jMr00eeFjEIEb6jXVqQ683eIrCrx9pOeBzFe0Kk52Z41RFTislwN0LW/iKooK0GJgvJ54B/elEZspjqy1lMzrwGABXW2505Q1s+OldUXAZA4K1tZHTg9bWE=
+	t=1717607523; cv=none; b=Uys1gUMwXPiRwX0V9p4bhKBYHqtGJ6RfB5BzMqqDs7R81HH2Oj1QZPT3bRZ+FAqpxBAjWfDXyLEtk4N9VRAazk0RMvaX52LKTi8FMNnQpP8gZbkj+l3w/erZ+NDfBiAsnMyD+PnEUm6PE+KmFrDbfopzgKLgCEjyFxmZlDIG3jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717607076; c=relaxed/simple;
-	bh=xBnLcGJNYkCr4hFC35be6L2lEyTlLQ3eS2mQ026felE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lTBwZsoF0vsl0BB7i//YtpAqx234a6ui3yqLbfuOUMU9h+b9g3hzww3kpY0mGMqB5LJ0PBHlkO6mpAFLMN2OJrLqloY2y3wuA7cqywSXkhPUaUO7bMdAG21cQTvYVSFqO9JTq4YlJbQXLoJlO6X+UEDcICiVzbUG4Os9fR5E9zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e1NLoEMM; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1717607523; c=relaxed/simple;
+	bh=/PNuujJFh9VqncFAp/ets+NCzadmx8tL0t6lS3a78cM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j4B2sMgcOrTL/M5piMfvrno5At7eqCJq5BoWuS+52DF6OUrPUDrKPNvdtPtRIJkbXAFGJFgRAgJl0kj2RVEubkWO/+wzuAUsq9lr2ZjJdDaVvQpgZzakVnu+GM8jYrIYvt8HXsiDCGWq6d9BDfaTMMPiqVkuJehwYxVio8IkYjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=EJT1xgTP; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e1NLoEMM"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a27e501d4so44527497b3.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Jun 2024 10:04:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717607073; x=1718211873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MIvEv+leeNSj8OFRkkIA/f4lYD7DJjk6WiBrdV4cIqM=;
-        b=e1NLoEMM6Bq2pg9uM1tZJD7oDaXcaszv8I47XlZqsNHaqYWnlP3BVGwACz7jBkoPpA
-         wa2g0BEh4hGxdbUMxrAFRzReuF436A+yp6+twWIuozwLH47SyNQY7rafCbbFbZ34y6V5
-         67SHIoVLgEekj1QDNN727anpMeUXCr01idW0hsgA6HBMzboAmIMOogw70F0NiI+tEaqe
-         M99DZErlSsnbKhI6LtmKY641Wt1FlMRpl22WJ/K/4Di0jmTO0H6jedkAxqj8kTD4lSaT
-         oIT8zc5rM+oVq38AaL264Kuo8rZKlS5QDRe0CGEMyZ2T2Reen/SFoi4psFCMqSWtZ4x7
-         z3Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717607073; x=1718211873;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MIvEv+leeNSj8OFRkkIA/f4lYD7DJjk6WiBrdV4cIqM=;
-        b=cXYqkJ/wuMjYmzeFttZ2TXCsMAna+wrHJUPLvaiAj8DQAULmhAE4G91gq0U2e50QSz
-         T4FLhenwogxwBzVPrsqBBrrDoIvMG/M2qRlVnqbFcTRKKktapdUZEqpqnhNj7VW1jWez
-         Ct7vivwIYznvqYUPVP2y4ses8MVjG2dtJ3re3H+UUjKUef/nQEils1cp3QyjK/fxrEpJ
-         Afympaz+OZuiqwBUN5QgIdjnHYj2UMKwwyb8Md0BIw7OGps5xnXii3LK+DGsfGZ6nXyx
-         ZUtegduPkeRmHHvXpQ+e6AuWPWfmwmulMmW1VZ8I3ydujlu/BVS+LD220ureXXbOjZL/
-         un6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlhAdkbpcuGaZNHdbX2anziKJsdiGGt62Dep2rTAXggEWFbyjtK9+SBn6fu+x6ldWFYEYfienyB4W0c51nwV8FI/pR3XcHwFT3+33AdbifopS1W3WS
-X-Gm-Message-State: AOJu0YwMv9wfURJcHma7K64fHExMIUHhgp1nYEuumBZcKXSZJT9EcG0o
-	dHxvXchR2Z1nAOY+Uszp4MVBKv/b7BdBUIXEcR36GQBwE04nykX8t+MgAH4UXeHYCTaIy0bfH6A
-	JXg==
-X-Google-Smtp-Source: AGHT+IHrAa1mXbNDzjNwFQzkwpq7M0s5LXLVc9H92HxJd2sIsLyDLUGEkJ81jMFCqFmiOlYtju8AgOeCLbU=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:690c:6c0a:b0:627:a961:1b32 with SMTP id
- 00721157ae682-62cbb5e0aedmr6679437b3.6.1717607073264; Wed, 05 Jun 2024
- 10:04:33 -0700 (PDT)
-Date: Wed, 5 Jun 2024 19:04:30 +0200
-In-Reply-To: <ff5ce842-7c67-d658-95b6-ba356dfcfeaf@huawei-partners.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EJT1xgTP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717607519; bh=spia9CfPBRawlPILH+KGHi4AdnaSo4b6C17kdWnc1LM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=EJT1xgTPDrMh/bqTSk6mgpVUaHKvM9/f4z+n5WinN1pgjLU3k8HfxsWKKY2T6EHXeil0TmApdZTrCc6k75af5lQaorg4bSjN1F7FPd4XR/Xiw/sygSd8VDNYKySf8kjdwBAc9DztUgvNsYy2ev1he9neV1ofPWAKkTh6uu+ETcua4X6QMKUnBxakjS1tVW7raWJiLoy6bUx3J8m7zUFoS/gGXVdYBPFQdrDaLqEaKqJZfyiW+Jx8jzBNRgGDuO2JoyjtgbcwUxuBtNu5xW3OCGAt9nSzekvPC552/z1ZuTMQ6giGjQiQ5Lg+zaLsPOtCHhq0jcHFDP24E4Gj0YqzpA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717607519; bh=+5MJXDmjEWdbqrcm1fpS7517ljcdhturn3W2wS/Jpeb=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DF3eZrEGxFArZMRAGrld7SddA7fRnHr7mUutqeprm1aRP0xdoR0SYv42GpK1Vz3fh0O/L4bfjMa5xPwVm8vwiDQkTLNobTuCZtVBbb2lB0lCFKhvlJeN91dvbxrQMlievDyhHKiKORoIC2lBVNlAvDwlOhQKNKFpTzw3uiDKTJYLYw7pMUikknIR2jgExVmsoMtpwqpMh2DhPool9BXy/FPaHBMvWhkeF/dW3btLURUwnwPmZNxqthXAJQ7D++oqG63L5n0EFhqCtztRbYbkZQWRuiZk5gMcYeoE6Id1huKv3AtiiNXfmAbl3CcHMK1Wc1DH0mlj1dnDNNUYWFnzMA==
+X-YMail-OSG: cK9rUA4VM1lvRgYIKyOcnRlIDM_dHTr7YlUIzPYkD6MsPDSLBVgb461Gk7TfSjO
+ XjOIj_o4wpr8d7hXPdqsF_V53xdCbxTuRGnsODNNhVVlxDuCtDvqUhmn_dM34iXnUQBiuBmBHGq8
+ DGdJ6R6DB19svaI69sr3k8g6dA7o4OxWuttCk0cD3n07cWK4pXOqDE5PjjINA48lIPwoyajc20Ow
+ 2QHodF4e_mRYodCDacfa.jXpPhmSdbwgubRendG9Nj3CU0tO.B68KMLwX1yN0gM_3.mfycFgwh_9
+ jz6kHK7XtWLv4KziPbhoXcAazEYNYMccJKO8_Ww1IDO7DZ6qgGDGhcp9vSzmY1dmapxnMRq4RWXc
+ xnmsa4uHiG4CxCmcmOQ6.e6HTLWCszVhsZ0CQdXXlM2Y2LogdKGB_VcRH9EkZ.AiYkdn4q7p786n
+ oEiq4SS2TU_zUVMqPM9GZvlCIoMeoQvlpireaKbM0b2bX8p2IfGbwdue2VjN8EDjymVjx3y3L_Fp
+ Dx1rBYTy8.0wYbT6h03y_BeUK3eTarCXIlniaiinNKDhY8yPmr7wU5jWI1TIdnxxwctydi8gT60n
+ BUs30L5zlVNVu9ZKlFEkDCzCVrk0GQT_SKNJX2aT8wQtad4axoKUqa8AqgWQDHr79Jae9UdUZrzT
+ okMFsOZVZITjmPaKdq_MVBKAJi3HZ31FvqfyAp9MVpznv9tNly6QFqgB0dDtVDx3NG__21Qc5c1M
+ xVPkSllYk_M1ML0H6clNAQ36cES5NtOclC6G2X0imTGjLOFW3743E93OXG0qtTAoTH6QxIbmlteC
+ TQCHdxV_JgzyTGCPdRz1o2O_pNIbuv.iwTswL2B7PRmHS_hQRNzzYcZQG3Dj8E3fljopY9hELCeP
+ ha9nKc51iGSWrSXcjwQ8mUbmt.9dLwnplOS5pGlLsdm4kTKQBCuBgUxchQHwNt2CjfVhCZ6SU34g
+ .GTi8uY9AFXGP.SB283YB60zlICNzXs4WZmXjSDp.impG0EFes0vBOseB3Fh7PhW5g_Mx6_cgAGn
+ RyL7z_eJ8mwHp4dv2ZQ_DU4qmH3Ba6TGL9Uq2IsggnhKGqRI48xzjBHA.6112yR49Jc..jFZg.Tz
+ sStEmteYFdRnmZHo9K6VJ5RoBHzxrEuCIPtja.RheoWW3HTXSAU5GDZEp5tOOZcoPhxgxH6jSF4a
+ H9dX2kEqP1PSd4e4YOuwKRb3TQK9Yilsv7N.EPey0RB0BKjanKe7H5mpS4BAE74OXNQBQw02SsC9
+ nSFuml5L.7jqqpMSSIsiG7FDFniAYNXPRGkZjs3JlsOTTL6NsNSrJD_u5iSSS5dZ_6vSt7R6sHw3
+ H5_6ek4pLCGvKc.Kzd3IeRCjoP8NGgj8XR3jpmLap.bp2XV2htn.qGnLh_y6hEeSRY7HFatMWR6i
+ aUavKepGr0olIQfdnkneTB0S8BdAbV5AGTMJcfbCc.qTeVggS6ONNVYK8j3J4Fq9QUCd5mfPuInp
+ S31MuUiiifjwvjLBRjBYzqRa03DUgrihXGIz2UAEddbyyoM2d9ojfRf50K82mHiqmafJ8vRM3l5_
+ QcIiMHVPLPG8wJCAmWG5UtMoLslj7Ho83VcPfgYYbnp2ZLEryzgM8b5fD9HCJ.nwFfnDwRDquOTp
+ a7YY4GCyJlef7Rq1wKhTMbCWz2qgyiWchBEhx1n8jehkBltL3MpnXsfxqoxOdkaNvRAk1zb1HZ7_
+ wAeqVJ0FMYhRx2BtZowczJK1JMKxTtJwqUga0_2Fyr34YnRPHC5xw6txgsZIgjGVfVPcQiNld0zr
+ 6FBIlvCevqd_kEzhhSEk8fbk3ZD7M0Y5nK078YqfoT3iwJJOswuVqERehYR7hxuV0ujgmZ3zfwUD
+ HTbH8bOynLT2Hp6ivzwf0uL6.Ma8IxjVWyl8SSuAFDfnP4khpEupyvV.r8upqRMmCSbQJMqWw7wn
+ zwebjtP0oEjKC.y3Y0VOzwlaC5yePCRMLxBHOPeDN7TzT7QqRJGx8tyWnIX00j2ULbkp3fXp_UsR
+ 3DkvgW4X7gZZkeH2gI_hZR5toltR0Q5ME9kNXtoONIWM0cnTV7T.ALUkzwtZ5Eo5FQlJ0KXT7hiJ
+ A5i0Ento09Glw7IRAMcBClj.Xrb5dXDJU1HxkenW70NO7E7nTRK4hXgoEatlj.fIuO3h9QhA4L3n
+ 1I6nyZlcJhPtd.bsnq_cDrmbC035Jwf6fvU_I2sIOZQhBMzBxl.Tk7w2kSsRUq2X4cYjDEbs8CvM
+ Oi84YWKhNiIqMNJRzxyHVJydPWatW0uQP54ISExP8m_mV_acYPGgwJPomS9DNiROMkI3mqBQz5XM
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 2f8f7982-6794-4938-988f-90642b6b8a6f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 5 Jun 2024 17:11:59 +0000
+Received: by hermes--production-gq1-59c575df44-cc288 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b69e2e6cd9bd691a317edceaca05248a;
+          Wed, 05 Jun 2024 16:51:43 +0000 (UTC)
+Message-ID: <8d3abd0f-065f-4bc8-b0d1-6d47b7ba2489@schaufler-ca.com>
+Date: Wed, 5 Jun 2024 09:51:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
- <20240524093015.2402952-2-ivanov.mikhail1@huawei-partners.com>
- <ZlRY-W_30Kxd4RJd@google.com> <ff5ce842-7c67-d658-95b6-ba356dfcfeaf@huawei-partners.com>
-Message-ID: <ZmCantjZlyxL8jzh@google.com>
-Subject: Re: [RFC PATCH v2 01/12] landlock: Support socket access-control
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smack: tcp: ipv4, fix incorrect labeling and unauthorized
+ writes
+To: Konstantin Andreev <andreev@swemel.ru>,
+ linux-security-module@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <39aba268-8341-4644-9d70-71ed91c7525f@swemel.ru>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <39aba268-8341-4644-9d70-71ed91c7525f@swemel.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hello!
+On 6/2/2024 5:06 AM, Konstantin Andreev wrote:
+> Currently, Smack mirrors the label of incoming tcp/ipv4 connections:
+> when a label 'foo' connects to a label 'bar' with tcp/ipv4,
+> 'foo' always gets 'foo' in returned ipv4 packets. So,
+> 1) returned packets are incorrectly labeled ('foo' instead of 'bar')
+> 2) 'bar' can write to 'foo' without being authorized to write.
+>
+> Here is a scenario how to see this:
+>
+> * Take two machines, let's call them C and S,
+>   with active Smack in the default state
+>   (no settings, no rules, no labeled hosts, only builtin labels)
+>
+> * At S, add Smack rule 'foo bar w'
+>   (labels 'foo' and 'bar' are instantiated at S at this moment)
+>
+> * At S, at label 'bar', launch a program
+>   that listens for incoming tcp/ipv4 connections
+>
+> * From C, at label 'foo', connect to the listener at S.
+>   (label 'foo' is instantiated at C at this moment)
+>   Connection succeedes and works.
+>
+> * Send some data in both directions.
+> * Collect network traffic of this connection.
+>
+> All packets in both directions are labeled with the CIPSO
+> of the label 'foo'. Hence, label 'bar' writes to 'foo' without
+> being authorized, and even without ever being known at C.
+>
+> If anybody cares: exactly the same happens with DCCP.
+>
+> This behavior 1st manifested in release 2.6.29.4 (see Fixes below)
+> and it looks unintentional. At least, no explanation was provided.
+>
+> I changed returned packes label into the 'bar',
+> to bring it into line with the Smack documentation claims.
+>
+> Fixes: 6c3823bc3abf ("smack: Set the proper NetLabel security
+> attributes for connection requests")
+> Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
 
-On Thu, May 30, 2024 at 03:05:56PM +0300, Mikhail Ivanov wrote:
-> 5/27/2024 12:57 PM, G=C3=BCnther Noack wrote:
-> > On Fri, May 24, 2024 at 05:30:04PM +0800, Mikhail Ivanov wrote:
-> > > +/**
-> > > + * struct landlock_socket_attr - Socket definition
-> > > + *
-> > > + * Argument of sys_landlock_add_rule().
-> > > + */
-> > > +struct landlock_socket_attr {
-> > > +	/**
-> > > +	 * @allowed_access: Bitmask of allowed access for a socket
-> > > +	 * (cf. `Socket flags`_).
-> > > +	 */
-> > > +	__u64 allowed_access;
-> > > +	/**
-> > > +	 * @family: Protocol family used for communication
-> > > +	 * (same as domain in socket(2)).
-> > > +	 */
-> > > +	int family;
-> > > +	/**
-> > > +	 * @type: Socket type (see socket(2)).
-> > > +	 */
-> > > +	int type;
-> > > +};
-> >=20
-> > Regarding the naming of struct landlock_socket_attr and the associated
-> > LANDLOCK_RULE_SOCKET enum:
-> >=20
-> > For the two existing rule types LANDLOCK_RULE_PATH_BENEATH (struct
-> > landlock_path_beneath_attr) and LANDLOCK_RULE_NET_PORT (struct
-> > landlock_net_port_attr), the names of the rule types are describing the
-> > *properties* by which we are filtering (path *beneath*, *network port*)=
-, rather
-> > than just the kind of object that we are filtering on.
-> >=20
-> > Should the new enum and struct maybe be called differently as well to m=
-atch that
-> > convention?  Maybe LANDLOCK_RULE_SOCKET_FAMILY_TYPE and struct
-> > landlock_socket_family_type_attr?
-> >=20
-> > Are there *other* properties apart from family and type, by which you a=
-re
-> > thinking of restricting the use of sockets in the future?
->=20
-> There was a thought about adding `protocol` (socket(2)) restriction,
-> but Micka=C3=ABl noted that it would be useless [1]. Therefore, no other
-> properties are planned until someone has good use cases.
->=20
-> I agree that current naming can be associated with socket objects. But i
-> don't think using family-type words for naming of this rule would be
-> convenient for users. In comparison with net port and path beneath
-> family-type pair doesn't represent a single semantic unit, so it would
-> be a little harder to read the code.
->=20
-> Perhaps LANDLOCK_RULE_SOCKET_PROTO (struct landlock_socket_proto_attr)
-> would be more suitable here? Although socket(2) has `protocol` argument
-> to specify the socket protocol in some cases (e.g. RAW sockets), in most
-> cases family-type pair defines protocol itself. Since the purpose of
-> this patchlist is to restrict protocols used in a sandboxed process, I
-> think that in the presence of well-written documentation, such naming
-> may be appropriate here. WDYT?
->=20
-> [1]
-> https://lore.kernel.org/all/a6318388-e28a-e96f-b1ae-51948c13de4d@digikod.=
-net/
+I've verified the issue and your fix. Responding with the outbound
+label from the socket is the correct thing to do. It introduces an
+inconvenient situation, where the connection hangs and times out on
+the client end. The connection isn't refused, but the reply never
+gets to the client socket because access is denied. There needs to
+be a change on the receiving end to address this part of the handshake.
 
-It is difficult, I also can't come up with a much better name.  In doubt, w=
-e
-could stick with what you already have, I think.
+Nonetheless, I'm taking this in smack-next. Thank you.
 
-LANDLOCK_RULE_SOCKET_PROTO alludes to "protocol" and even though that is th=
-e
-general term, it can be confused with the third argument to socket(2), whic=
-h is
-also called "protocol" and is rarely used.
-
-Micka=C3=ABl, do you have any opinions on the naming of this?
-
-
-> > (More about the content)
-> >=20
-> > The Landlock documentation states the general approach up front:
-> >=20
-> >    A Landlock rule describes an *action* on an *object* which the proce=
-ss intends
-> >    to perform.
-> >=20
-> > (In your case, the object is a socket, and the action is the socket's c=
-reation.
-> > The Landlock rules describe predicates on objects to restrict the set o=
-f actions
-> > through the access_mask_t.)
-> >=20
-> > The implementation is perfectly in line with that, but it would help to=
- phrase
-> > the documentation also in terms of that framework.  That means, what we=
- are
-> > restricting are *actions*, not protocols.
-> >=20
-> > To make a more constructive suggestion:
-> >=20
-> >    "These flags restrict actions on sockets for a sandboxed process (e.=
-g. socket
-> >    creation)."
->=20
-> I think this has too general meaning (e.g. bind(2) is also an action on
-> socket). Probably this one would be more suitable:
->=20
->   "These flags restrict actions of adding sockets in a sandboxed
->   process (e.g. socket creation, passing socket FDs to/from the
->   process)."
-
-Sounds good.  (Although I would not give "passing socket FDs to/from the
-process" as an example, as long as it's not supported yet.)
-
-
-> > > + * - %LANDLOCK_ACCESS_SOCKET_CREATE: Create a socket.
-> >=20
-> > Can we be more specific here what operations are affected by this?  It =
-is rather
-> > obvious that this affects socket(2), but does this also affect accept(2=
-) and
-> > connect(2)?
-> >=20
-> > A scenario that I could imagine being useful is to sandbox a TCP server=
- like
-> > this:
-> >=20
-> >    * create a socket, bind(2) and listen(2)
-> >    * sandbox yourself so that no new sockets can be created with socket=
-(2)
-> >    * go into the main loop and start accept(2)ing new connections
-> >=20
-> > Is this an approach that would work with this patch set?
->=20
-> Yes, such scenario is possible. This rule should apply to all socket
-> creation requests in the user space (socket(2), socketpair(2), io_uring
-> request). Perhaps it's necessary to clarify here that only user space
-> sockets are restricted?
->=20
-> Btw, current implementation doesn't check that the socket creation
-> request doesn't come from the kernel space. Will be fixed.
-
-Two brief side discussions:
-
-* What are the scenarios where that creation request comes from kernel spac=
-e?
-  If this is used under the hood for network-backed file systems like NFS, =
-can
-  this result in surprising interactions when the program tries to access t=
-he
-  file system?
-
-* To be clear, I think it would be useful to support the scenario above, wh=
-ere
-  accept() continues to work. - It would make it easy to create sandboxed s=
-erver
-  processes and they could still accept connections, but do no other networ=
-king.
-
-But to bring it back to my original remark, and to unblock progress:
-
-I think for this patch set (focused on userspace-requested socket creation)=
-, it
-would be enough to clarify in the documentation which operations are affect=
-ed by
-the LANDLOCK_ACCESS_SOCKET_CREATE right.
-
-
-> > (It might make a neat sample tool as well, if something like this works=
- :))
-> >=20
-> >=20
-> > Regarding the list of socket access rights with only one item in it:
-> >=20
-> > I am still unsure what other socket actions are in scope in the future;=
- it would
-> > probably help to phrase the documentation in those terms.  (listen(2), =
-bind(2),
-> > connect(2), shutdown(2)?  On the other hand, bind(2) and connect(2) for=
- TCP are
-> > already restrictable differently.))
->=20
-> I think it would be useful to restrict sending and receiving socket
-> FDs via unix domain sockets (see SCM_RIGHTS in unix(7)).
-
-That seems like a reasonable idea.  Would you like to file an issue on the
-Landlock bugtracker about it?
-
-https://github.com/landlock-lsm/linux/issues
-
-
-> > > +	/* Checks that all supported socket families and types can be store=
-d in socket_key. */
-> > > +	BUILD_BUG_ON(AF_MAX > (typeof(socket_key.data.family))~0);
-> > > +	BUILD_BUG_ON(SOCK_MAX > (typeof(socket_key.data.type))~0);
-> >=20
-> > Off-by-one nit: AF_MAX and SOCK_MAX are one higher than the last permit=
-ted value,
-> > so technically it would be ok if they are one higher than (unsigned sho=
-rt)~0.
-
-(Did you see this remark?)
-
-
-> > I see that this function traces back to Micka=C3=ABl's comment in
-> > https://lore.kernel.org/all/20240412.phoh7laim7Th@digikod.net/
-> >=20
-> > In my understanding, the motivation was to keep the key size in check.
-> > But that does not mean that we need to turn it into a uintptr_t?
-> >=20
-> > Would it not have been possible to extend the union landlock_key in rul=
-eset.h
-> > with a
-> >=20
-> >    struct {
-> >      unsigned short family, type;
-> >    }
-> >=20
-> > and then do the AF_MAX, SOCK_MAX build-time checks on that?
-> > It seems like that might be more in line with what we already have?
->=20
-> I don't think that complicating general entity with such a specific
-> representation would be a good solution here. `landlock_key` shouldn't
-> contain any semantic information about the key content.
-
-Hm, OK.  I think that is debatable, but these are all things that are
-implementation details and can be changed later if needed.  Sounds good to =
-me if
-we fix the undefined behaviour in the key calculation.
-
-
-> > > +	/* Denies inserting a rule with unsupported socket family and type.=
- */
-                                        ^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Is the wording "unsupported socket family" misleading here?
-
-(a) It is technically a "protocol family" and a "socket type", according to
-    socket(2). (BTW, the exact delineation between a "protocol family" and =
-an
-    "address family" is not clear to me.)
-
-(b) "unsupported" in the context of protocol families may mean that the ker=
-nel
-    does not know how to speak that protocol, which is slightly different t=
-han
-    saying that it's outside of the [0, AF_MAX) range.  If we wanted to che=
-ck
-    for the protocol family being "supported", we should also probably retu=
-rn
-    -EAFNOSUPPORT, similar to what we already return when adding a "port" r=
-ule
-    with the wrong protocol [1]?
-
-    [1] https://docs.kernel.org/userspace-api/landlock.html#extending-a-rul=
-eset
-
-I suspect that -EINVAL is slightly more correct here, because this is not a=
-bout
-the protocols that the kernel supports, but only about the range.  If we wa=
-nted
-to return errors about the protocol that the kernel supports, I realized th=
-at
-we'd probably also have to check whether the *combination* of family and ty=
-pe
-makes sense.  In my understanding, the equivalent errors for type and proto=
-col,
-ESOCKTNOSUPPORT and EPROTONOSUPPORT, only get returned based on whether the=
-y
-make sense together with the other values.
-
-
-> > > +	if (family < 0 || family >=3D AF_MAX)
-> > > +		return -EINVAL;
-> > > +	if (type < 0 || type >=3D SOCK_MAX)
-> > > +		return -EINVAL;
-> >=20
-> > enum sock_type (include/linux/net.h) has "holes": values 7, 8 and 9 are=
- not
-> > defined in the header.  Should we check more specifically for the suppo=
-rted
-> > values here?  (Is there already a helper function for that?)
->=20
-> I think that a more detailed check of the family-type values may have a
-> good effect here, since the rules will contain real codes of families
-> and types.
->=20
-> I haven't found any helper to check the supported socket type value.
-> Performing a check inside landlock can lead to several minor problems,
-> which theoretically should not lead to any costs.
->=20
-> * There are would be a dependency with constants of enum sock_types. But
->   we are unlikely to see new types of sockets in the next few years, so
->   it wouldn't be a problem to maintain such check.
->=20
-> * enum sock_types can be redefined (see ARCH_HAS_SOCKET_TYPES in net.h),
->   but i haven't found anyone to actually change the constants of socket
->   types. It would be wrong to have a different landlock behavior for
->   arch that redefines sock_types for some purposes, so probably this
->   should also be maintained.
->=20
-> WDYT?
-
-Thinking about it again, from a Landlock safety perspective, I believe it i=
-s
-safe to keep the checks as they are and to check for the two values to be i=
-n the
-ranges [0, AF_MAX) and [0, SOCK_MAX).
-
-Even if we permit the rule to be added for an invalid socket type, there do=
-es
-not seem to be any harm in that, as these sockets can't be created anyway.
-Also, given the semantics of these errors in socket(2), where also the
-*combinations* of the values are checked, it seems overly complicated to ch=
-eck
-all these combinations.  I think it would be fine to keep as is, I was most=
-ly
-wondering whether you had done any deeper analysis?
-
-It might be worth spelling out in the struct documentation that the values =
-which
-fulfil 0 <=3D family < AF_MAX and 0 <=3D type < SOCK_MAX are considered val=
-id.  Does
-that sound reasonable?
-
-P.S., it seems that the security/apparmor/Makefile is turning the "#define"=
-s
-into C code with lookup tables, but it seems that this is only used for
-human-readable audit-logging, not for validating the policies.
-
-=E2=80=94G=C3=BCnther
+> ---
+> The patch is against branch smack-for-6.9 at
+> https://github.com/cschaufler/smack-next
+> The hash 6c3823bc3abf is against
+> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+> The commit 6c3823bc3abf is based on 07feee8f812f, which is available
+> at `smack-next' repo,
+> but 6c3823bc3abf has much narrower scope, so I point at it, not
+> 07feee8f812f.
+> This fix passed `Smack kernel test suite'
+> https://github.com/smack-team/smack-testsuite.git
+>
+>  security/smack/smack_lsm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index b18b50232947..d836ca61e081 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4428,7 +4428,7 @@ static int smack_inet_conn_request(const struct
+> sock *sk, struct sk_buff *skb,
+>      rcu_read_unlock();
+>
+>      if (hskp == NULL)
+> -        rc = netlbl_req_setattr(req, &skp->smk_netlabel);
+> +        rc = netlbl_req_setattr(req, &ssp->smk_out->smk_netlabel);
+>      else
+>          netlbl_req_delattr(req);
+>
+> -- 
+> 2.40.1
