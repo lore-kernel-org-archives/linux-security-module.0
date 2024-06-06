@@ -1,133 +1,165 @@
 Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3FF1FAA
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Jun 2024 20:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2647A6D1B9
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Jun 2024 21:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717704452; cv=none; b=Ayz48UTTKiXyFp8MvPCGinSVNn5N5fg2n9fb0Pr9bn+OJjRt7ULAXmWxDkldFw+JfvwnZEzdSw8TUEw+Z1mnQKwaKIirzwpVHJeU2kggWv9Dim2wTWhtcTp8sm57MAOkk7wI2Tc5yLGDmagRQOUuyKrl52bwuAdqhoX4s+ZuUQE=
+	t=1717710810; cv=none; b=AJu5UB41xBH1wo/f0p1pukLKJWRlmfhulOt7kzYxkQofl6qlS3hH+6g5lL4rCJMbPMzI0PQgKo38LdxZg4IQnukvlJXVcnNmfuRjBM5f3wh7se+Qxp/R/N7I8vFPeY4iOsPVOErh477pelO/MQsbdjUUYWcRJxuMo+Ch/eYy6b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717704452; c=relaxed/simple;
-	bh=U2YOLGhWnJ3EKs6TvLDBihgog9qIC96h8Zr3CJUPGfw=;
+	s=arc-20240116; t=1717710810; c=relaxed/simple;
+	bh=+FpI6vYpR5bbyxTEbYr9rtFq5rhJFeJhBlUYUqcnlgY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ChGNV9OqcLK8BtyvpZWDlgvoEuPG9L9AJ0xSv9BnpzYoEx3PnUlevBsVyA4xEImYzB3WdG4i9iThuy2CtwUFSXT7zxuvSHrKECvN7KmO0KD//epCKH12Edk5d91QY2Qp497SG//zIVl/I/3PgviaPNeRRoNSM7ouZCSGdzxVhnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MTtiAUF/; arc=none smtp.client-ip=209.85.128.169
+	 To:Cc:Content-Type; b=X7fUx97t8QCtL9jeLEQ7aHlZu90Y3cfqbUdkcshwipGegofgOS2oVGCFyFhfK9+iJOV8227OMO7lcnckxuv9yTw2OosTKkyQe8vwy4w631NRpSRkxhq+2GcQrKzDXeOpsMqoJM5J4xidmGGZmENyMRa4VJfrTVjQKVsBzNW/QIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RajqOgPB; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MTtiAUF/"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a052f74c1so11591107b3.1
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2024 13:07:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RajqOgPB"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a087bc74bso15053967b3.2
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2024 14:53:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1717704449; x=1718309249; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1717710807; x=1718315607; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sDb/wZ+yDZPmhrmv2GpPqRfAAgDWr6bj0zJL5aDLHMY=;
-        b=MTtiAUF/2b3MjG455GPO4YV9b8e1yyZfb2TRagg56AhCjowa/Nf3Cd0yIKM+V/bOAL
-         nI8ZCka0x4aKhs3ABUXYn3Ld2ZrVGHLOubiZWs4bAEYVVTnIuqVbyaDG9jd29B53U7tc
-         aHmDBkCfU5e/trHn3c8OMRPGx/+EM1/Rog9JRLD9E49SFaZsjbwlQ9xJE6j/FllAbHZI
-         N2VQ/hWL6WO90ajb1Cbe7aDylVCrfq5+IgPBiqyCAPajxOAssMuIDyhj6jE2g0hGUDQy
-         HBZCMZWEaDcVCbDIBAKdfveK8J3A6eaoPL0A0wtHesyAarqI8jy4EYfndM5ztZkAJR/4
-         +xAQ==
+        bh=y9/LZLrVCiBmLFl657w1ASVEfglGqQmKYkFf7dxmKcI=;
+        b=RajqOgPBwv8XJAwhXWZXlVonrRF/YPPRy9ozsRER3hLSkk6xn5+2NkLmVUpYWo4z24
+         vkdDuC+8GAi+qh9w4Q8U8gJqytgI1tFDxKjmY07/kt30zRk4SsHMnidS0/j80kJsZYJZ
+         e9uYsPru6kO6APku6GR8PEw+6fLvfsvBKhdW7NkohU3AbJ9ua2xvtoDbuMaFPC00pb5y
+         4aDAvy4mPm25RQfwi7BHcBrjo2H1pAYX0OFVEOYbCs/fmyHVX4I6gpN5bfjuRB1O1Ov+
+         87VlPFsC7ESewPLRCFIkMsnBlfW3xXJB4C9PpcBVxvg+1WLVZzfVBQGLcqG+xHyCgNS7
+         2gVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717704449; x=1718309249;
+        d=1e100.net; s=20230601; t=1717710807; x=1718315607;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sDb/wZ+yDZPmhrmv2GpPqRfAAgDWr6bj0zJL5aDLHMY=;
-        b=ia3NvmS27hoSjPLBHsI/KkBogunb3gtP2o/16GIElD3F/0fKwdrg0nhxaaDhL70sd0
-         u4WtBuujV6LZNHipZyBgCzFxtuJgjnk2PwqhuZkObDuRCWLO6LNtRlIKa3u9v+tAof4V
-         aJtqSnAjTQuohyYRss/SaLNE1YyuYTW445xzuXLbQHds76xupZ8kXPbIk9Fb9Hp5e9Cb
-         XAJOFvuyfdRq6MzXT6zt3mCrpJmGmxndNu47MPkS8BK95+Nx2cEuYvRQ46urS9xEdRwi
-         jBsO0Bn3dvX/Im0LDZ0CcX0IuNA2Wrejhw5t2tubk6e2fwh+QWsF8pSqYYeBvCL3goA7
-         Dl/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVDGuMdjZaXEk6fOkzSn9kB18VYu+0adwXitaRVKg5KbpGGnWQA0zxOYHBFfpOmFGzkWEo0ybY/CdHq3iU8HBj2SGymuHf+MGS1NtG7iwsuHFN2nR4p
-X-Gm-Message-State: AOJu0Yxv/Cr39hwqA8nIDHPfdMnoyexyp4m8/e3nfJ/SSZECzZK59gYY
-	isrhO8yTFoLZqYevlipppcLNpHiBzs6XPFj3lMz+maV9+sQSmdh9VC2fz0GMpfLuBtJ0G5bmxf4
-	dElWw4aOzgR+BGcFWtYsjqeVu/qQy/rJSozNK
-X-Google-Smtp-Source: AGHT+IHUoi8Z31NKeV4XbsUe0RlTFo2m7VtyOJYW/ftgP4W6BKHiU74Jf3FuILhUE+62R40hTTPPhs7JLqRZLuHV5Wo=
-X-Received: by 2002:a0d:d204:0:b0:62c:c641:f8eb with SMTP id
- 00721157ae682-62cd45efda4mr6679627b3.24.1717704449460; Thu, 06 Jun 2024
- 13:07:29 -0700 (PDT)
+        bh=y9/LZLrVCiBmLFl657w1ASVEfglGqQmKYkFf7dxmKcI=;
+        b=ubrfvnwcoB/Y5KGgRJ36XX/bZ19MRUrxj+HB5oG9aB1YyVdjWlp0nkRkz7FuLGS4QE
+         +U8/8Q1zBgZIH9fmMxwyeVwNc+HrJ55DQYKTjoeQqSeSTxVqxqgDIRso8/DRUuGE9HJL
+         XAFIi4YMt5RKIk9Bxq4uylLHZs9szwzfozyvB9CyySbHzBdBZgUUDuHTa/11RFOMGT+8
+         NtZH4UBw/QTonDzho7gfMFIrEjXSE6Atsi/DNMHkBhtBxUoLA5Rewd84/y1DZDQ1S8Nu
+         DmzRvBBLzd2Gxg5wYVHetbg61nZxbStUb5oWvc9oHyD1mNkNS9C4HjGiQsmSB2VuxlkM
+         QPnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVliVyZxLfdPGkzpzD2PEBKxjiPaisxxXwNtTDGVbW/ZhZ/+JiyUhi+4qE/8RISt/lz0ff9rVwWGHlsqlHw1aXa58wA2dsCw+obCvZ74/ntq1opWXqo
+X-Gm-Message-State: AOJu0YyYqmR9NvI1BcvWjDf8PVdJi45y7dPbIWk5Kfh/FBfHJUl/iox8
+	esf6w1eHHP5boRo3XliIVCaN0wEHcFQU1ny8Ka05CtxoRrIm0pPdrRM8L+litj0x+QY3xg00pEp
+	ERKBhHKQP5hX2OsdJviEiUOTL/v8A4MJMrWN5
+X-Google-Smtp-Source: AGHT+IHr+vEgrNOTl351kbnQRCFUgvkUIF6Lp0SFJ0/CR+WTO6ePRrwS52Q8I6+bzc57ubSMFu7oFmRulMZYl2piscY=
+X-Received: by 2002:a81:7b57:0:b0:622:df58:2cf6 with SMTP id
+ 00721157ae682-62cd568be78mr5356547b3.50.1717710807083; Thu, 06 Jun 2024
+ 14:53:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516003524.143243-1-kpsingh@kernel.org> <202406060856.95CBD48@keescook>
- <CAHC9VhQ1NfdPZ1WVKTnsYmMt_0Lvb0XKMS3EqLKHQrX78yjohg@mail.gmail.com> <202406061049.F2FD4F8A@keescook>
-In-Reply-To: <202406061049.F2FD4F8A@keescook>
+References: <20240411122752.2873562-1-xukuohai@huaweicloud.com> <20240411122752.2873562-2-xukuohai@huaweicloud.com>
+In-Reply-To: <20240411122752.2873562-2-xukuohai@huaweicloud.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 6 Jun 2024 16:07:18 -0400
-Message-ID: <CAHC9VhQyy6u9O=KPE4vNR3FO+5ofGky8hw53jadxW2n0RyLd=g@mail.gmail.com>
-Subject: Re: [PATCH v12 0/5] Reduce overhead of LSMs with static calls
-To: Kees Cook <kees@kernel.org>
-Cc: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, ast@kernel.org, casey@schaufler-ca.com, 
-	andrii@kernel.org, daniel@iogearbox.net, renauld@google.com, 
-	revest@chromium.org, song@kernel.org
+Date: Thu, 6 Jun 2024 17:53:16 -0400
+Message-ID: <CAHC9VhRipBNd+G=RMPVeVOiYCx6FZwHSn0JNKv=+jYZtd5SdYg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 01/11] bpf, lsm: Annotate lsm hook return
+ value range
+To: Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Khadija Kamran <kamrankhadijadj@gmail.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Kees Cook <keescook@chromium.org>, John Johansen <john.johansen@canonical.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 6, 2024 at 2:07=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
-> On Thu, Jun 06, 2024 at 12:36:03PM -0400, Paul Moore wrote:
-> > It's in the queue, I've been swamped lately as you'll likely notice I
-> > haven't really had a chance to process patches yet during this cycle.
+On Thu, Apr 11, 2024 at 8:24=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.com=
+> wrote:
 >
-> I get that you're busy, and I understand that situation -- I get swamped
-> too. The latency on LSM patch review has been very high lately, and I'm
-> hoping there's some way we could help. I assume other folks could jump
-> in and help with the queue[1], but I'm not sure if that would satisfy
-> your requirements? Other subsystems have been switching more and more to
-> a group maintainership system, etc. Are there other people you'd be
-> comfortable sharing the load with? (Currently James and Serge are also
-> listed as "M:" in MAINTAINERS, but I don't think the 3 of you have a
-> shared git.kernel.org tree, for example...)
+> From: Xu Kuohai <xukuohai@huawei.com>
+>
+> Add macro LSM_RET_INT to annotate lsm hook return integer type and the
+> default return value, and the expected return range.
+>
+> The LSM_RET_INT is declared as:
+>
+> LSM_RET_INT(defval, min, max)
+>
+> where
+>
+> - defval is the default return value
+>
+> - min and max indicate the expected return range is [min, max]
+>
+> The return value range for each lsm hook is taken from the description
+> in security/security.c.
+>
+> The expanded result of LSM_RET_INT is not changed, and the compiled
+> product is not changed.
+>
+> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+> ---
+>  include/linux/lsm_hook_defs.h | 591 +++++++++++++++++-----------------
+>  include/linux/lsm_hooks.h     |   6 -
+>  kernel/bpf/bpf_lsm.c          |  10 +
+>  security/security.c           |   1 +
+>  4 files changed, 313 insertions(+), 295 deletions(-)
 
-We already have a fairly distributed model with each LSM sending
-directly to Linus; the issue we are seeing now is an odd combination
-of multiple things: 1) $DAYJOB has had a sudden explosion of high
-priority internal work which has siphoned away a good chunk of my time
-2) we have seen an historically unusual amount of development at the
-LSM layer itself (as opposed to the individual LSMs) 3) we had a long
-holiday weekend here in the US and I decided to do what normal people
-do and not spend all weekend arguing with people on the Internet.
-Without going into details on #1, let's just say it is transient and
-not something I expect to be a long term issue (if it does become a
-long term issue I'll start looking for a new $DAYJOB).  I suspect
-issue #2 is a byproduct of some of the efforts around reinvigorating
-LSM development, clearing up some long standing warts, etc. and also
-not something I expect to last for an extended period of time.  Issue
-#3 is a direct result of ... well, far too many threads like this,
-both from well and poorly intentioned authors.
+...
 
-As an aside, things like this typically work better if you have
-another email setup so you can do the good-cop/bad-cop bit more
-convincingly.
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 334e00efbde4..708f515ffbf3 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -18,435 +18,448 @@
+>   * The macro LSM_HOOK is used to define the data structures required by
+>   * the LSM framework using the pattern:
+>   *
+> - *     LSM_HOOK(<return_type>, <default_value>, <hook_name>, args...)
+> + *     LSM_HOOK(<return_type>, <return_description>, <hook_name>, args..=
+.)
+>   *
+>   * struct security_hook_heads {
+> - *   #define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
+> + *   #define LSM_HOOK(RET, RETVAL_DESC, NAME, ...) struct hlist_head NAM=
+E;
+>   *   #include <linux/lsm_hook_defs.h>
+>   *   #undef LSM_HOOK
+>   * };
+>   */
+> -LSM_HOOK(int, 0, binder_set_context_mgr, const struct cred *mgr)
+> -LSM_HOOK(int, 0, binder_transaction, const struct cred *from,
+> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_set_context_mgr, con=
+st struct cred *mgr)
+> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transaction, const s=
+truct cred *from,
+>          const struct cred *to)
+> -LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
+> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_binder, con=
+st struct cred *from,
+>          const struct cred *to)
+> -LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
+> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_file, const=
+ struct cred *from,
+>          const struct cred *to, const struct file *file)
 
-> And yes, there are a lot of patches up for review. I'm antsy about this
-> series in particular because I'm worried inaction is going to create
-> larger problems for the LSM as a whole. We've already had Linus drop
-> in and tell us to do better; I'd really like to avoid having him make
-> unilateral changes to the LSM, especially when we have a solution on
-> deck that has been reviewed by many people.
-
-You'll note that I'm one of those "many people" that has reviewed it
-(and had my feedback ignored for several rounds).  I simply haven't
-had the chance to review the latest revision.
-
-In my opinion the LSM's largest issue has nothing to do with code, and
-everything to do with the mentality that a hardware flaw is a LSM bug.
-If that same mentality wants to ignore decades of work, in a construct
-it insisted on, and break the user experience for billions of users
-(and entire usage scenarios) in order to satisfy some misdirected
-need, then I seriously doubt one patchset is going to solve anything.
-
-> I will go back to being anxious/patient... ;)
-
-"do better" ;)
+I'm not overly excited about injecting these additional return value
+range annotations into the LSM hook definitions, especially since the
+vast majority of the hooks "returns 0 on success, negative values on
+error".  I'd rather see some effort put into looking at the
+feasibility of converting some (all?) of the LSM hook return value
+exceptions into the more conventional 0/-ERRNO format.  Unfortunately,
+I haven't had the time to look into that myself, but if you wanted to
+do that I think it would be a good thing.
 
 --=20
 paul-moore.com
