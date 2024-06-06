@@ -1,79 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C0716FF26;
-	Thu,  6 Jun 2024 18:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F1D45012;
+	Thu,  6 Jun 2024 18:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717697243; cv=none; b=BmwFDsjXvHKadtXn91rGy8fHvO/71k9bE44Rhf5ieq3/EnsEAICRXlUeu7V3v9TK+LhFLOZmMMCvB389j69/BheeSJi1jQ7NNePI4pe/AeWsc8GpyeVHONbG9GIFdFlIigBHSSx7pPXELCVUslVsmYQH8etS/sClW2BfuqfZmX8=
+	t=1717699276; cv=none; b=KTfs2ul6HMV0pJfUfyXiyVqXFHDt+ntpuiRi4/V6KfPU9cXrjeSreLbIod9fJkjV3tn1y8ngujvAjz0WAz60YIjzETUnLn6Dn7k6TOSaXEHc6eZ92KUnPMutzMrjAjhY27RZeGCLwL6ytM7mXTgSirlpsUMYwBj1MBNMVh4gxBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717697243; c=relaxed/simple;
-	bh=aZojnkR8OHqTvCRPx8BRkZ2FGcBOyZP/LRYz4CpLm9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVw/7jLvojidINUu9rV+Nf3tUOwXDuOv+pEmQ1JRvt+uZ2foMtJ3LPSjp68o7PNrAIBGYJ3VodMv0dMAMz1d54+T3Qy2KHdrHR9hGcn0wgAKGwQRf//n2I6cy1tS3vlck8naZphhMueFfh+PXmSUjg8RoVvlKGeNwcXN1gBt+y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5s59++m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717699276; c=relaxed/simple;
+	bh=Ly0SqIj5WlemWgxRiDvVndeGtcs/ovTqnPzD254vT9k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Oy0NgOUXw66fKGXBeWWxjGmTU+9vskub05GbKaoMrWeq8ST2SqlmMrMwi3/QH7ZV8ZLB0rksm1Q9lsMimj3FnnhoalKGr+/PIcD9G/WaOHpAXGBRoyeXRAW85qvCmDdvZXvwsbHnFsLtCoem0BmkSnD6fg++p697MPEi60YUPMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVyIfY9x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5s59++m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3807C2BD10;
-	Thu,  6 Jun 2024 18:07:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVyIfY9x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF3CC2BD10;
+	Thu,  6 Jun 2024 18:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717697243;
-	bh=aZojnkR8OHqTvCRPx8BRkZ2FGcBOyZP/LRYz4CpLm9w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f5s59++mQaKs8pYNLpQey9LcYzoGhFSVo6b2L2H3eR+1O+Z6JXycasQ/R72kZkAjI
-	 bqlvpb/WLs34mT4oIiC//qbPwWwFVAKgZK82MA3bFWsMzc5DPrz+bDrt6XdDAwM39v
-	 jWaR7Caa6iZTrQTek4zxp3xjzOXtXqdwBJFRAKd51IcflkitYtAUG+SKQdwFQ80vmT
-	 vCxBd1XFFQyQ2B43yymfyt2MVqDjuHjp74ummXeL5HL1CqezULhDoVfbc+1MiHmO4D
-	 W7rKR+IsvG70aMw/gJIcjg/YczdAfuD11UQy+Kz9CZ/5I0SKVdTFuQT43zLw05vGHr
-	 JHR+fDlIFDaxg==
-Date: Thu, 6 Jun 2024 11:07:22 -0700
+	s=k20201202; t=1717699275;
+	bh=Ly0SqIj5WlemWgxRiDvVndeGtcs/ovTqnPzD254vT9k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YVyIfY9xqvu5qzFj9AyT4ge1NRGhOUV/Nv/QIQ5cGHV52/QS7/6PZePLrXixt+9T3
+	 yUvh9g2e0jpC4S1Wo00uHnJN/yI8dX+ES+R6yOhP2yVwLfI3ekznAYPCBr+H1KlWEh
+	 E9H9uHQ/QBSJjdtiZc86Yqp3Kl7EYb2jP9alMl5u0AN2smISbRIk1H3bgQQNK6TsAi
+	 hG3zg9+WHv2NfaqqqqnJ8rFVcf7+P8mXK8dxaWjsIxerYpS1CrzICSdV1qgkpcu9zl
+	 2xuqwU5FHvcWDIgSuuYxuRgJoYM0ZZ1z/nw9p4Qudr1Vjd0w/qA/Jxokz2HLYjR9Vk
+	 3EAaSa65/8mow==
 From: Kees Cook <kees@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org, ast@kernel.org, casey@schaufler-ca.com,
-	andrii@kernel.org, daniel@iogearbox.net, renauld@google.com,
-	revest@chromium.org, song@kernel.org
-Subject: Re: [PATCH v12 0/5] Reduce overhead of LSMs with static calls
-Message-ID: <202406061049.F2FD4F8A@keescook>
-References: <20240516003524.143243-1-kpsingh@kernel.org>
- <202406060856.95CBD48@keescook>
- <CAHC9VhQ1NfdPZ1WVKTnsYmMt_0Lvb0XKMS3EqLKHQrX78yjohg@mail.gmail.com>
+To: linux-security-module@vger.kernel.org,
+	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 1/2] yama: document function parameter
+Date: Thu,  6 Jun 2024 11:41:11 -0700
+Message-Id: <171769926724.125569.8640491304656584040.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240315125418.273104-2-cgzones@googlemail.com>
+References: <20240315125418.273104-1-cgzones@googlemail.com> <20240315125418.273104-2-cgzones@googlemail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ1NfdPZ1WVKTnsYmMt_0Lvb0XKMS3EqLKHQrX78yjohg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 06, 2024 at 12:36:03PM -0400, Paul Moore wrote:
-> It's in the queue, I've been swamped lately as you'll likely notice I
-> haven't really had a chance to process patches yet during this cycle.
+On Fri, 15 Mar 2024 13:54:10 +0100, Christian Göttsche wrote:
+> Document the unused function parameter of yama_relation_cleanup() to
+> please kernel doc warnings.
+> 
+> 
 
-I get that you're busy, and I understand that situation -- I get swamped
-too. The latency on LSM patch review has been very high lately, and I'm
-hoping there's some way we could help. I assume other folks could jump
-in and help with the queue[1], but I'm not sure if that would satisfy
-your requirements? Other subsystems have been switching more and more to
-a group maintainership system, etc. Are there other people you'd be
-comfortable sharing the load with? (Currently James and Serge are also
-listed as "M:" in MAINTAINERS, but I don't think the 3 of you have a
-shared git.kernel.org tree, for example...)
+Applied to for-next/hardening, thanks!
 
-And yes, there are a lot of patches up for review. I'm antsy about this
-series in particular because I'm worried inaction is going to create
-larger problems for the LSM as a whole. We've already had Linus drop
-in and tell us to do better; I'd really like to avoid having him make
-unilateral changes to the LSM, especially when we have a solution on
-deck that has been reviewed by many people.
+[1/2] yama: document function parameter
+      https://git.kernel.org/kees/c/f7d3b1ffc654
 
-I will go back to being anxious/patient... ;)
-
--Kees
-
-[1] https://patchwork.kernel.org/project/linux-security-module/list/
+Take care,
 
 -- 
 Kees Cook
+
