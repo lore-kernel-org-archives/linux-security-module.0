@@ -1,67 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F1D45012;
-	Thu,  6 Jun 2024 18:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DE961FC5
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Jun 2024 19:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717699276; cv=none; b=KTfs2ul6HMV0pJfUfyXiyVqXFHDt+ntpuiRi4/V6KfPU9cXrjeSreLbIod9fJkjV3tn1y8ngujvAjz0WAz60YIjzETUnLn6Dn7k6TOSaXEHc6eZ92KUnPMutzMrjAjhY27RZeGCLwL6ytM7mXTgSirlpsUMYwBj1MBNMVh4gxBs=
+	t=1717702339; cv=none; b=c5JLrqfPmHARb38qUuNbD989uh8km7RcRz9fNW+J2kqn9y7iQFal0CD5bIJ9GGheHVHA+JKcl44T1yaxjsZo8yKoF0XsjneaOPFFJvZHTTlN5VGacH2Hm3eptXj4jNRgDKE0vsEH0yl6pbnbNW94+JSkKfifKNDZdklarHFIosQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717699276; c=relaxed/simple;
-	bh=Ly0SqIj5WlemWgxRiDvVndeGtcs/ovTqnPzD254vT9k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Oy0NgOUXw66fKGXBeWWxjGmTU+9vskub05GbKaoMrWeq8ST2SqlmMrMwi3/QH7ZV8ZLB0rksm1Q9lsMimj3FnnhoalKGr+/PIcD9G/WaOHpAXGBRoyeXRAW85qvCmDdvZXvwsbHnFsLtCoem0BmkSnD6fg++p697MPEi60YUPMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVyIfY9x; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717702339; c=relaxed/simple;
+	bh=cAmKIx2+UgNcuQBFot4p5jbltSaygdkddVxlCRP+3Y8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dOS4Lv+HJrAKf+YtHM0D1Grz7LwW31K2+ZODzDE05xoY5jTxlqwfd3WpOmlGtygOkuCejJ4H/BWOcIbgAwjTjvvhWGDMcemqJRQD5JbVILytuQUlb/XNcJTwmq+iVCOj8/Ehtk13M0pddGPm0fb0ZaHOATUwUvVMKFsftuU4dx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ssDq7W22; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVyIfY9x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF3CC2BD10;
-	Thu,  6 Jun 2024 18:41:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717699275;
-	bh=Ly0SqIj5WlemWgxRiDvVndeGtcs/ovTqnPzD254vT9k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YVyIfY9xqvu5qzFj9AyT4ge1NRGhOUV/Nv/QIQ5cGHV52/QS7/6PZePLrXixt+9T3
-	 yUvh9g2e0jpC4S1Wo00uHnJN/yI8dX+ES+R6yOhP2yVwLfI3ekznAYPCBr+H1KlWEh
-	 E9H9uHQ/QBSJjdtiZc86Yqp3Kl7EYb2jP9alMl5u0AN2smISbRIk1H3bgQQNK6TsAi
-	 hG3zg9+WHv2NfaqqqqnJ8rFVcf7+P8mXK8dxaWjsIxerYpS1CrzICSdV1qgkpcu9zl
-	 2xuqwU5FHvcWDIgSuuYxuRgJoYM0ZZ1z/nw9p4Qudr1Vjd0w/qA/Jxokz2HLYjR9Vk
-	 3EAaSa65/8mow==
-From: Kees Cook <kees@kernel.org>
-To: linux-security-module@vger.kernel.org,
-	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/2] yama: document function parameter
-Date: Thu,  6 Jun 2024 11:41:11 -0700
-Message-Id: <171769926724.125569.8640491304656584040.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240315125418.273104-2-cgzones@googlemail.com>
-References: <20240315125418.273104-1-cgzones@googlemail.com> <20240315125418.273104-2-cgzones@googlemail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ssDq7W22"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-627e4afa326so20668907b3.2
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Jun 2024 12:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717702337; x=1718307137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Us5kw3fIsRJVzMbaEb9EJYarQPDAku4qQMRL1mEGwI0=;
+        b=ssDq7W22ezN/5chrAarXCG6s9065F8WvN4mxYjINmde3fcubleFAdSguIBSAkeu/xr
+         36CAIpTBDxk167C9wIxl5xwEBN38Q9IAX5qtXNeY0DDFcsg/5uapngG+Iiq1hifvOfCf
+         F0AjbIDrvX8lIlsGEBTfq+vmEx/ReeyYuD0+G8GCF1BQc/ekgYBARMf/eHX8bhfS2ByV
+         bjPliHaiMnj/dycEdca3aBmqzU8tMFwLLdFgI6B/S20xusDidc5zMgB3SC3Pga1F0gyP
+         T1EOsNOtmXxLzcsGL1fNZ8aYz5PC998+kU9a8RKSTqPNvobXdROFWJql1v+gHOgN9Cgz
+         BiwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717702337; x=1718307137;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Us5kw3fIsRJVzMbaEb9EJYarQPDAku4qQMRL1mEGwI0=;
+        b=qtwzlH5qYYaHIPpyJ7oIHvSuWHVsMaYlKY+FV7t4MWeIb70yubGofIvYAP7vfdG7pG
+         HM06XZHDtLkv5GO/h/NjHiDbZA9NOgLkfpjGDDQNeW3TlMBlYMaD0kjEDlMIjmhWaDLx
+         to+BuF+mU9F69IN+YOJYmIfKWnyZT3cHnp100vRnnoyee7EL8LCExWXtRuDN/l1LQLFt
+         64cAWD6MdjJb4XumMSs2cQzGVAtAhNa+Z0BHSkWECMgTIRLs952d8swVcXAO4lEpf16Y
+         9AZ9DzV5OBxoG+XP8VfiUm7ZAYflObzz8ehLn4aZLXY8ymA9gp/w3IvuZgLHM4dpx8RY
+         dSfA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6kTucaqA1ZHzqrD+xNYElt7VfFxTckF5oTgbJaOoM2+UwiBUj7mdTE3W+fIIkFyMzVLhUyqtMk+2juMxsEf6E83fdYSaIemBpS+MJx9HUsBKnkejd
+X-Gm-Message-State: AOJu0YxSpHtQt/maI0FtCBKmD2hGj7iGYm2PEHnx4rM7u2jY/aHAd/45
+	sWhOfaob/l3aBv62N9X2Qjcnmvnp4gHNwnI6J43SH7XZGa+7PDG0RUAH0E3SA/ir8hby+Hk7uda
+	SIA==
+X-Google-Smtp-Source: AGHT+IGuutWtJjBpFO3VxSCq3j0WSE6iFmjH8jY1+Hy7CRzoly2/MFImVM+zgtvIzvRtbqZN3kTDiKT4Hlc=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:690c:3609:b0:61a:d0d2:b31 with SMTP id
+ 00721157ae682-62cd55e4952mr645807b3.3.1717702337593; Thu, 06 Jun 2024
+ 12:32:17 -0700 (PDT)
+Date: Thu, 6 Jun 2024 21:32:15 +0200
+In-Reply-To: <ZmG6f1XCrdWE-O7y@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
+ <20240604.c18387da7a0e@gnoack.org> <ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com>
+ <ZmG6f1XCrdWE-O7y@google.com>
+Message-ID: <ZmIOv3MiXC6M4Dws@google.com>
+Subject: Re: [RFC PATCH v2 00/12] Socket type control for Landlock
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack3000@gmail.com>, mic@digikod.net, willemdebruijn.kernel@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 15 Mar 2024 13:54:10 +0100, Christian Göttsche wrote:
-> Document the unused function parameter of yama_relation_cleanup() to
-> please kernel doc warnings.
-> 
-> 
+On Thu, Jun 06, 2024 at 03:32:47PM +0200, G=C3=BCnther Noack wrote:
+> Thanks for figuring it out so quickly.  With that change, I'm getting som=
+e
+> compilation errors (some bit shifts are becoming too wide for the underly=
+ing
+> types), but I'm sure you can address that easily for the next version of =
+the
+> patch set.
 
-Applied to for-next/hardening, thanks!
+Addendum, please ignore the remark about me getting compilation errors - I =
+made
+a typo myself, and it worked in the way you suggested without warnings or
+errors.
 
-[1/2] yama: document function parameter
-      https://git.kernel.org/kees/c/f7d3b1ffc654
-
-Take care,
-
--- 
-Kees Cook
+=E2=80=94G=C3=BCnther
 
