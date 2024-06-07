@@ -1,185 +1,97 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA52158214;
-	Fri,  7 Jun 2024 10:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE76C15DBC1;
+	Fri,  7 Jun 2024 13:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717756705; cv=none; b=UGmxGz4GBqAYhee+EBmk6+Eg9BOPwbHB0XI+Lu18lXEBqIQuII+t5UCNucqnw9gUgNlbiiLlYcEdyCEP/O4gvLRN+eoqHRzYyex1seMOfUgH48xWvDFMhiG87rEXPnPwL37IIfNzZMUjGNdPfIIHfkOMa39elsCcQ7pR6FP7Pd4=
+	t=1717766656; cv=none; b=f65E3s9GdLPLYDIydw+eiXPRUQ4/pFXJHpT5FSySjtBouf6Sd05JdxZ9Hkzfh9JJYElw25vbPGFeLOiJ1oODgQXbnRb4JpMZOiBhbOLNtcWL2vraU//JCAdGhUXBWUVDGYVxRdLSgEg/bdBNeObJEMiB4wIiVqQVTACLcOX9Pgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717756705; c=relaxed/simple;
-	bh=DT7FNHmQI0I2WJM1Vw3SgQZACIUEah+Ky8z8hPcqO3k=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=RGTuMeCrzFz6ZcOxFnbzYSpzOZVpxJnOhXT4xRmYN/JYBK7L04n/C1QpSxW2IvIHPff2Wb0ttSbrTYWUpDZdeQbufrrRkLCNnh2DSVZgOnWtWafdNn0SP+trd8fgRUwT+ulOW5EIEo52/5STOGnMQ0JDKhMSRGLY0okAUUkR9Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 211DB37810C3;
-	Fri,  7 Jun 2024 10:38:21 +0000 (UTC)
-From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
-In-Reply-To: <202406060917.8DEE8E3@keescook>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240605164931.3753-1-adrian.ratiu@collabora.com>
- <20240605164931.3753-2-adrian.ratiu@collabora.com> <202406060917.8DEE8E3@keescook>
-Date: Fri, 07 Jun 2024 11:38:12 +0100
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org, "Guenter Roeck" <groeck@chromium.org>, "Doug Anderson" <dianders@chromium.org>, "Jann Horn" <jannh@google.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Randy Dunlap" <rdunlap@infradead.org>, "Christian Brauner" <brauner@kernel.org>, "Jeff Xu" <jeffxu@google.com>, "Mike Frysinger" <vapier@chromium.org>
-To: "Kees Cook" <kees@kernel.org>
+	s=arc-20240116; t=1717766656; c=relaxed/simple;
+	bh=wVF9xY3bR+1qDUnVkTJXj/DMwKOX5LwldEXjp0TYtDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwF05p6O6cXdC4Q+fQmbfJJHNVnaESXBTMp1jGbxkKF92Fh8FFnn1wQileXXlPSpBdZHh+DWenfOFBaE2ES/VrGieF0FNxkCpg/bHuk7uU8GFGsgM6l1dPcmrPQATUQuQyNwszQm7k0e0fkKRi+hsF0zFGrBBeibA8aLzyC1djc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDztUcvS; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDztUcvS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ADDBC2BBFC;
+	Fri,  7 Jun 2024 13:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717766655;
+	bh=wVF9xY3bR+1qDUnVkTJXj/DMwKOX5LwldEXjp0TYtDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JDztUcvSqeBno6dD439/MkH/PgooBhSCcTZVjiYHpsFpWmfNeoX2scsNssDX6HIkG
+	 l2jMRQPa1pF3q7LZR+x7IzKWkHX8xcAyATahzkvIpG6yu+9K7x1hyBSV0PsOyQP0q2
+	 UB9R008nUoymwDMzHbO81sqMz4Yyge07nFWVSrsjqZ0dycGf3lcMCweZIzzcf+WnHr
+	 9s7rmcuZTGAJ5fgIcekeRw4RGq/Iiyba5tczELg4rQxmMd3F6GpFeLp140ZD7M1fTj
+	 OLuE+ny06naCEXdldvseigo3p5l8be7lINsbl/n7wUVf18vNcULlYs3LvTOwMOcpAA
+	 MrIoJktBF7/Gw==
+Date: Fri, 7 Jun 2024 14:24:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	outreachy@lists.linux.dev
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <20240607132410.GC27689@kernel.org>
+References: <ZmE8u1LV6aOWV9tB@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2724ac-6662e300-3-2336898@243510220>
-Subject: =?utf-8?q?Re=3A?= [PATCH v5 2/2] =?utf-8?q?proc=3A?= restrict /proc/pid/mem
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmE8u1LV6aOWV9tB@tahera-OptiPlex-5000>
 
-On Thursday, June 06, 2024 20:45 EEST, Kees Cook <kees@kernel.org> wrot=
-e:
+On Wed, Jun 05, 2024 at 10:36:11PM -0600, Tahera Fahimi wrote:
+> Abstract unix sockets are used for local inter-process communications
+> without on a filesystem. Currently a sandboxed process can connect to a
+> socket outside of the sandboxed environment, since landlock has no
+> restriction for connecting to a unix socket in the abstract namespace.
+> Access to such sockets for a sandboxed process should be scoped the same
+> way ptrace is limited.
+> 
+> Because of compatibility reasons and since landlock should be flexible,
+> we extend the user space interface by adding a new "scoped" field. This
+> field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> specify that the ruleset will deny any connection from within the
+> sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
 
-> On Wed, Jun 05, 2024 at 07:49:31PM +0300, Adrian Ratiu wrote:
-> > +	proc=5Fmem.restrict=5Ffoll=5Fforce=3D [KNL]
-> > +			Format: {all | ptracer}
-> > +			Restricts the use of the FOLL=5FFORCE flag for /proc/*/mem acce=
-ss.
-> > +			If restricted, the FOLL=5FFORCE flag will not be added to vm ac=
-cesses.
-> > +			Can be one of:
-> > +			- 'all' restricts all access unconditionally.
-> > +			- 'ptracer' allows access only for ptracer processes.
-> > +			If not specified, FOLL=5FFORCE is always used.
->=20
-> It dawns on me that we likely need an "off" setting for these in case=
- it
-> was CONFIG-enabled...
+...
 
-Indeed, having CONFIG-enabled and disabling entirely via kernel
-params is a valid usecase (eg for debug images with no restriction).
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 68625e728f43..1641aeb9eeaa 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+>  	 * rule explicitly allow them.
+>  	 */
+>  	__u64 handled_access_net;
+> +	/**
+> +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
 
-Will do in v6.
+nit: s/scoped: /@scoped: / 
 
->=20
-> > +static int =5F=5Finit early=5Fproc=5Fmem=5Frestrict=5F##name(char =
-*buf)			\
-> > +{										\
-> > +	if (!buf)								\
-> > +		return -EINVAL;							\
-> > +										\
-> > +	if (strcmp(buf, "all") =3D=3D 0)						\
-> > +		static=5Fkey=5Fslow=5Finc(&proc=5Fmem=5Frestrict=5F##name##=5Fal=
-l.key);	\
-> > +	else if (strcmp(buf, "ptracer") =3D=3D 0)					\
-> > +		static=5Fkey=5Fslow=5Finc(&proc=5Fmem=5Frestrict=5F##name##=5Fpt=
-racer.key);	\
-> > +	return 0;								\
-> > +}										\
-> > +early=5Fparam("proc=5Fmem.restrict=5F" #name, early=5Fproc=5Fmem=5F=
-restrict=5F##name)
->=20
-> Why slow=5Finc here instead of the normal static=5Fkey=5Fenable/disab=
-le?
+     Flagged by ./scripts/kernel-doc -none
 
-No real reason, my mind was just more attuned to the inc/dec
-semantics, however in this case we can just use enable/disable,
-especially if they're faster.
+> +	 * that is handled by this ruleset and should be permitted
+> +	 * by default if no rule explicitly deny them.
+> +	 */
+> +	__u64 scoped;
+>  };
+>  
+>  /*
 
-I'll do this in v6.
-
->=20
-> And we should report misparsing too, so perhaps:
-
-Ack
-
-> > +static int =5F=5Fmem=5Fopen=5Faccess=5Fpermitted(struct file *file=
-, struct task=5Fstruct *task)
-> > +{
-> > +	bool is=5Fptracer;
-> > +
-> > +	rcu=5Fread=5Flock();
-> > +	is=5Fptracer =3D current =3D=3D ptrace=5Fparent(task);
-> > +	rcu=5Fread=5Funlock();
-> > +
-> > +	if (file->f=5Fmode & FMODE=5FWRITE) {
-> > +		/* Deny if writes are unconditionally disabled via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FWRITE=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fall))
-> > +			return -EACCES;
-> > +
-> > +		/* Deny if writes are allowed only for ptracers via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FWRITE=5FPTRACE=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fptracer) &&
-> > +		    !is=5Fptracer)
-> > +			return -EACCES;
-> > +	}
-> > +
-> > +	if (file->f=5Fmode & FMODE=5FREAD) {
-> > +		/* Deny if reads are unconditionally disabled via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FREAD=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fread=5Fall))
-> > +			return -EACCES;
-> > +
-> > +		/* Deny if reads are allowed only for ptracers via param */
-> > +		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPE=
-N=5FREAD=5FPTRACE=5FDEFAULT,
-> > +					&proc=5Fmem=5Frestrict=5Fopen=5Fread=5Fptracer) &&
-> > +		    !is=5Fptracer)
-> > +			return -EACCES;
-> > +	}
-> > +
-> > +	return 0; /* R/W are not restricted */
-> > +}
->=20
-> Given how deeply some of these behaviors may be in userspace, it migh=
-t
-> be more friendly to report the new restrictions with a pr=5Fnotice() =
-so
-> problems can be more easily tracked down. For example:
->=20
-> static void report=5Fmem=5Frw=5Frejection(const char *action, struct =
-task=5Fstruct *task)
-> {
-> 	pr=5Fwarn=5Fratelimited("Denied %s of /proc/%d/mem (%s) by pid %d (%=
-s)\n",
-> 			    action, task=5Fpid=5Fnr(task), task->comm,
-> 			    task=5Fpid=5Fnr(current), current->comm);
-> }
->=20
-> ...
->=20
-> 	if (file->f=5Fmode & FMODE=5FWRITE) {
-> 		/* Deny if writes are unconditionally disabled via param */
-> 		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPEN=5F=
-WRITE=5FDEFAULT,
-> 					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fall)) {
-> 			report=5Fmem=5Frw=5Freject("all open-for-write");
-> 			return -EACCES;
-> 		}
->=20
-> 		/* Deny if writes are allowed only for ptracers via param */
-> 		if (static=5Fbranch=5Fmaybe(CONFIG=5FPROC=5FMEM=5FRESTRICT=5FOPEN=5F=
-WRITE=5FPTRACE=5FDEFAULT,
-> 					&proc=5Fmem=5Frestrict=5Fopen=5Fwrite=5Fptracer) &&
-> 		    !is=5Fptracer)
-> 			report=5Fmem=5Frw=5Freject("non-ptracer open-for-write");
-> 			return -EACCES;
-> 	}
->=20
-> etc
-
-Yes, will do in v6.
-
-> Can we adjust the Kconfigs to match the bootparam arguments? i.e.
-> instead of two for each mode, how about one with 3 settings ("all",
-> "ptrace", or "off")
-
-Sure. Thank you for all the code! All your help designing this
-and code contributions are very much appreciated!
-
-Do you want to be listed as co-author in v6?
-
+...
