@@ -1,105 +1,265 @@
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7771A270
-	for <linux-security-module@vger.kernel.org>; Fri,  7 Jun 2024 18:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB64A4DA08;
+	Fri,  7 Jun 2024 19:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717786223; cv=none; b=T+//n+QIF1b97FARc3iUV1eJ+rB5VN2U/Re2/7TVvD28iqc+7+iUAWlvsGMnCB7sat2R8yywHUA7ji9S5wdKNK71xVlG80NEGUtz5A9CaOVU0PaZF/wggvi5eia2r4D366W+wUb7yKRaJpsLIOzml7+df8lknIT53eeiyvpuWUo=
+	t=1717789304; cv=none; b=b9NNDr2220Y3mZfanadLgykKUcSMMGaQAWY1egGLtc6UCmptCQGWGY+oDWgIVHnCmngRMhfS0IwCie7XcBBmvK0e9y1KJDYdCEtnGpyKqwKNz0PWMPBvtEEDNldm6l2tLUHEOkvdoRGz+1ddI980P1nWmY7WoHNEXxtiKS3wh0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717786223; c=relaxed/simple;
-	bh=2Xi0RYnzigepioYMasZJzBhHuea8gcSwQ38nznxB8Dg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iKF6umUzGNchOXxmWkZ9rSEVuAJemvY7E6XtqTjjQExvpGInnXlpF3yF1FOYH/QwHOXLA6rVmHge1IaCeXdLyBxJSuTl+4JZ7quEPD3h/poI85T10/Fp8R775UReE/u3k1dRlgbEY/QeyV5I23BLd5jzg3bcueMyziNi5Hl6Og8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=UrKcVMlS; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1717789304; c=relaxed/simple;
+	bh=B5wpoJOAS1yCcn6AHTzXdnnzuJTU6sZuXi+k2Dj9i+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFOV5DRGsfb7EpQW6e/NAmNVG3xCcxPeZxrHC6T8+iz9uI3xq1OXs1TArCLR5ZE5A1FV92ILG7DpeaaJJzvdHvamIPDIkRwIqEx2ulaU9w/G3JcV/CwkW/LkLRh2DtOzum79a4polaVmjdmwIYM7j/SfriA2kCIts1u/9gat0hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOF3AI62; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UrKcVMlS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717786214; bh=jjpBRxkpMLr3gtmzed0KzCkC6MUwXaUW8Hfa5XmCu8o=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UrKcVMlSfr26pw2N1absEnyk5Smty4CyiOl5E7rmORPk1XBQ4x72gnUBgrD5uX0pIgQFnFfHpfYjGG3JM/BEUJYQsXKnqJkUECnaRbhATnSpZb1zitlQQwcIuHU9QJaqr6loZCNvRhfdYNlAAodFs0GKZu0G28hH2VqQ9jnxlId+PikhKXKZX6mdOM414aBaExAohcnPJFZZoiYJL2eEsuF3fmBiMO/uo84gUb+VL9xoqR7D/c6iboK90CoRKZ4To6H8gr/QQDScCfn1DirBu5SNc5wfEH3oRTwT9LUIU4EB1tlSaDwstX2QKmuDWLATwSITGfRHekHGzV6oEIgOWQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717786214; bh=dykRUqslyI0Td0onN6MwTln35FzTXIbhzNOvDrhIFFM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sPTF+br6JcwH8zSmJq8GAGHoKGtiFhQcIQSJaiVHWmQ3JRUtlZrkP2XKrOAFAnr9+/oIpCRluLlrY9Kw0CKq/3RhlNNX2g1mY42kV5iKIWKdIH8sqA9nSxuG+rcw7jP4U49MxEcqTg50utWsyuEUcFUndlJIrNdV2Kt6BZd/2GI1WcXjuHvlhDVn6CJK3k06zcIv8jzIBjsPk+vAY0jNiDHf0+8tnqO4AMC7EVyMSQVUxKJgo22z0g6P5a96JrimpidBrrG4LoUjFQsRpv2WH1KC3YSQ+FmXvIMczG7nGVamyS3jY60VUGi0dMjQ367zYR32KY7YjAl3Xg9f9rCWlg==
-X-YMail-OSG: 7xQSf.MVM1lEU0KLzg7s5h.3yRAXzEdHrrhop_4YUNh9nWE5qwgpdGQw_L4EKPL
- oKDIbZIXJ_h7cHrFICQwBwfvEzirAL8D2Y5KQShbjLhurGQvwEmY1_qpPcnLqPn8TQr7ERXHGPsx
- .La8X7eNjh4.MLbbupzLygRFfzU8cqwqmfioTvyDII683Bn.gKycDwa6JmXpfsfJ8e2Gk5a2zfqf
- DgNi8WSSS03R0pT3IrERyc6bbV0UJvGsaoTdVyPvc8YEVYjNZy9huLE3q6GZMA8b55zFZbXLhIPn
- gRe231FXw4kDFcBiUYpBY8Dh8FjVBiU0LTWouqMl301w7vcw44X4Fq8FIq9r_AGy3fGaFzr3Ex7.
- ZmrQZivSCeJPtBgiA3cNNiJ0RaFZOlPk2KjlTtqD6.LWPGlO2zSU5PpbC9VFiad9ftaqaYb_nvTy
- JXCglsZCwD_woDNMlHozJ8BCH_He25PlIsnpz0mmrz6GOXFEpPcYAzkt2gMLqGLVl.cUI6xg66W0
- 6ZvwJC0BcWVuNttlC4EMYiEytAXjipMbScPs7ATZaRZM8n9YwRblHOI5hdbfsapM_Swtbkd44Zfu
- 0D.5d0b4kSWm4.IiAmmvqmix3upf3FuAKNchgSjFyN79ozxDrUog9mirMlY8_ldVlWNh5M4LmTNd
- _DF2kLlGw57DmMS7oHBnD51l6ppuZ30TtE8WX_7DK5fs7ZLh2VpKylQSzPCqxS90fExclbQPWMxe
- ZtyYLk7ZiiEQd8gnfnsD5wDhozV8y_Sjmq4bUOPi.abXHXK7BJ8wf3rloMwWExQLAX9kdvCn.IWj
- WErXODWFJAjaAXtsGYhW4uQn460eAHsuj8JsIpmY.b5zhPVDgwSHH6EQRyHfzjRkASG2wGRjRydy
- A.SsuE9qu4DQTfEGcjyUn976ZuHNM4v1w38Vut.H3neaEjN7qzMNYh0A2C3ehEUbC3Ej9XyssMBi
- LTghljgVQj8dRj4RInMAVkDMkR9pkWw5ybucz3_GJ3aB9xsCe7Jfxs3r7BvG1cEIgez25zBs36ZJ
- xGc5bmQ5Qh1tBSu4EXKcv7kXPE9LscJBdMkvWqL5UqZx_H3wijcYbhe7nUu4iEZ.oYQkhW.VpDo5
- rb2A5qP1hB9I5q8CNWTGM9T0PuGNrRzCqXemvMbKjsj03P16eCLHQCqnJgYakpbdmnrGF09g0.dy
- sj2xRHJtpr7Z3_9rSaCQzED2miVvzzKC1BLWfuT.JUWUEMWx5Vx8Qqfft4ZLrpevXwoTP3h5FbUE
- 1_b6.yGoxdPWKtgytoQHMuwmaza2taDTGclQ4.OW2GfRrbD02I9t72IMCbbjg4w4W3rGU40uYm8X
- WTVQJ5tnPKtGxVOkl7fpyWEqcnW20WHBSpWkotJvQhrW1jwNmiWDgomVaSsI4G7m8IR4DejZtIRu
- uQziN23gghlbUM8UkIorsTo58ofUb5i1r9rKgL7B_Kk_akwo3RsTQwv4EJ5DgdOl63Yeu6ZH0iGq
- 4fXILxazHNmxYV0fqfMlJsloyqoPiy.4Z_bUS8tdEg5ZiKamHodzX.blvX.3rKX2p3xs3r9KcitS
- c4LSy5ILBu0isw9KgemukY9oq8C4gosgJdNZukXKJlrr3LWLzcv.Kh5tfPdlE9ezsFNrcBusGOqg
- p6svfyT836bJAf7ERcMRTiUyHvce10X.E04XH24fa1aW7A3B81NRlTLSJoKQFI91ccXUboxOpeRO
- lu2.Y35I4SaPzFgMuVSvsuvbZVD2P0Dc766gomc9ekQaoaBeIxwuOtYBqnmdQZOnEWgAIu5sUKbQ
- CbTtYXsHWvjmqkDadpeTge5OCpuL_TBybd_da7wSVaKMWi01.sGcOjwxtSszz_lQOlpuWsrLs.Mp
- JsYyZUhKaNxBiEmWOy5tHAXTckmgdBcly8fQBwvJHh4bS.0SGs482Umhrp660HMJpht7tyOmloiZ
- 4WcYV.NzE3r5dwdiopRJri_QbyfKFNtuKzfqpeLQSESpXeFgYu9syirZoK7iCibl9QmzcAaCEyLp
- v9Z994TxHBCrKy3pz.A3dYnnGlfPHt5wyBm3cdecJhna1a.jaVsfQR2.z6reiJK9wzKDnE5h03m3
- VL_IkirE7rItekj3XMJ_7PRDiRcbh1GtDPXk0D9omC1T6HxgvLLvV56zXvZ5M8_Sk4ueBHRe6gKp
- dMEKDJLA_xPHHKMrd09Uz7OWWSAvAqSMq3nY6iGOb6XL08FZsW9ofDYjgntf2PNdjgUee7mrmGnU
- 0KCQfO31UxASPV.PKveYAFjAKbod4g8JUyWEEfmtAYeLwA95MdW7O6bx9ZUaMahg2yOEBwlLZO5.
- d.mAmQfE-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 6fd9d693-87b7-4c08-bd52-39d2e1236bab
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 7 Jun 2024 18:50:14 +0000
-Received: by hermes--production-gq1-59c575df44-8lqx4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 112a64c8672692ce743352f04ced2bf3;
-          Fri, 07 Jun 2024 18:50:11 +0000 (UTC)
-Message-ID: <b764863b-6111-45ee-8364-66a4ca7e5d59@schaufler-ca.com>
-Date: Fri, 7 Jun 2024 11:50:10 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOF3AI62"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f47f07acd3so23650615ad.0;
+        Fri, 07 Jun 2024 12:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717789302; x=1718394102; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
+        b=NOF3AI62XrtyTBIES/6hzDoX3p2n36YH3SG2CBvuMUEtDo8CZkXIvsbcqkTwqMQw1W
+         iU1eEk90o7tanzVcv3dFgFAQA57j0qh1TyzafPS2gl7G0itBrIWnM7bBSMXkzPxA0Ej/
+         DTQj1olYtfbcNH16IO0q3R0lsT6WlB/v6o2Oi/SOBhpCp9Qhkx3clU558dwJ9QE5h4D+
+         iBgnVsALFv2PFIihIZGUZVHq7KaajAUOJU/xIiDSudi/OcLXzN2aurDsBhidJ1Ql6oeK
+         +onOGKjbd+DH7BL1tnn8MOEOAf++sueZSgNqVwUJy8AtH4A4xTC0cX6KOyZyqn/o2Ys8
+         GyXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717789302; x=1718394102;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
+        b=bPjrYQu2Sv7znyXP9kQ1NMaYZNTpmOFs/JNsr8U4fZ4Mi4rEYk1rY+Pwo/cB5svXGj
+         GiAc/7DlbBXIkjcVVKoHK9H/fOpTfdcr6FHa9YtfmjJtQt1uTf2n/15C95HC4ilcHz6g
+         MN3plOuaGkER/oSz4zmvFr3hZUmGBsf5FKul+Cuj7nRSPar5w7SMw0SBzWyILQB9H3Nh
+         Cl7CnxuLYMHspwb4rXOThEA7aqGb2s0hMNcMKYjcsQbt+Mj0lZNB+l/FJQwWsKv747WG
+         kksT0jeXiJxSMch9YL+/9MTG4FI8h271Kz3tSbK12HI0M0wRkQQaIdgGOTrbRChIdZnd
+         bKmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfwBc6f5SJ7dogp5Jvj0O9V8Dh6n1gv9dRRyxS/YTUuqIpWb+J97jhEjaMvfZDFtn9SpuTEHzL8H+VUp9xUMkHxxEoskV3vrTox5CBF5yrl2kSQJ9Nvn4vLcpPnwINK4tASrieROBQToZGXELx+bgOr+iHf0K7WkNYdg8gYm9xrVVl02bftdLyP/wh
+X-Gm-Message-State: AOJu0Yw0FluOPucJcnmDCDXUsSBAYpZA5QFDzlJRSVAdIzr4A+k8xI7B
+	FWL3KYOA/jLDXALA2yvX8q01fL+qBUqABmLS1L43OCSJc4bkAtVa
+X-Google-Smtp-Source: AGHT+IGscUbgi37qbqXXc5w7y2H8tq5p/gmvxvvmo71C1+DhTMvyNutUQJaTF7RIefH0R+RKzJ5Hlw==
+X-Received: by 2002:a17:903:2445:b0:1f6:70fe:76bf with SMTP id d9443c01a7336-1f6d02d1a99mr41772155ad.14.1717789301946;
+        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd769a2esm38410355ad.66.2024.06.07.12.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
+Date: Fri, 7 Jun 2024 13:41:39 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <ZmNic8S1KtyLcp7i@tahera-OptiPlex-5000>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <ZmLEoBfHyUR3nKAV@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
- the CIPSO options
-To: Ondrej Mosnacek <omosnace@redhat.com>, Paul Moore <paul@paul-moore.com>
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240607160753.1787105-1-omosnace@redhat.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240607160753.1787105-1-omosnace@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmLEoBfHyUR3nKAV@google.com>
 
-On 6/7/2024 9:07 AM, Ondrej Mosnacek wrote:
-> This series aims to improve cipso_v4_skbuff_delattr() to fully
-> remove the CIPSO options instead of just clearing them with NOPs.
-> That is implemented in the second patch, while the first patch is
-> a bugfix for cipso_v4_delopt() that the second patch depends on.
->
-> Tested using selinux-testsuite a TMT/Beakerlib test from this PR:
-> https://src.fedoraproject.org/tests/selinux/pull-request/488
+On Fri, Jun 07, 2024 at 10:28:35AM +0200, Günther Noack wrote:
+> Hello Tahera!
+> 
+> Thanks for sending another revision of your patch set!
+Hello Günther, 
+Thanks for your feedback.
 
-Smack also uses CIPSO. The Smack testsuite is:
-https://github.com/smack-team/smack-testsuite.git
+> On Thu, Jun 06, 2024 at 05:44:46PM -0600, Tahera Fahimi wrote:
+> > Abstract unix sockets are used for local inter-process communications
+> > without on a filesystem. Currently a sandboxed process can connect to a
+> > socket outside of the sandboxed environment, since landlock has no
+> > restriction for connecting to a unix socket in the abstract namespace.
+> > Access to such sockets for a sandboxed process should be scoped the same
+> > way ptrace is limited.
+> > 
+> > Because of compatibility reasons and since landlock should be flexible,
+> > we extend the user space interface by adding a new "scoped" field. This
+> > field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> > specify that the ruleset will deny any connection from within the
+> > sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> > 
+> > Closes: https://github.com/landlock-lsm/linux/issues/7
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > 
+> > -------
+> > V3: Added "scoped" field to landlock_ruleset_attr
+> > V2: Remove wrapper functions
+> > 
+> > -------
+> > ---
+> >  include/uapi/linux/landlock.h | 28 +++++++++++++++++++++++
+> >  security/landlock/limits.h    |  5 ++++
+> >  security/landlock/ruleset.c   | 15 ++++++++----
+> >  security/landlock/ruleset.h   | 28 +++++++++++++++++++++--
+> >  security/landlock/syscalls.c  | 12 +++++++---
+> >  security/landlock/task.c      | 43 +++++++++++++++++++++++++++++++++++
+> >  6 files changed, 121 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 68625e728f43..d887e67dc0ed 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+> >  	 * rule explicitly allow them.
+> >  	 */
+> >  	__u64 handled_access_net;
+> > +	/**
+> > +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
+> > +	 * that is handled by this ruleset and should be permitted
+> > +	 * by default if no rule explicitly deny them.
+> > +	 */
+> > +	__u64 scoped;
+> 
+> I have trouble understanding what this docstring means.
+> 
+> If those are "handled" things, shouldn't the name also start with "handled_", in
+> line with the other fields?  Also, I don't see any way to manipulate these
+> rights with a Landlock rule in this ?
 
->
-> Changes in v2:
-> - drop the paranoid WARN_ON() usage
-> - reword the description of the second patch
->
-> v1: https://lore.kernel.org/linux-security-module/20240416152913.1527166-1-omosnace@redhat.com/
->
-> Ondrej Mosnacek (2):
->   cipso: fix total option length computation
->   cipso: make cipso_v4_skbuff_delattr() fully remove the CIPSO options
->
->  net/ipv4/cipso_ipv4.c | 75 +++++++++++++++++++++++++++++++------------
->  1 file changed, 54 insertions(+), 21 deletions(-)
->
+.scoped attribute is not defined as .handled_scope since there is no
+rule to handle/manipulate it, simply because this attribute shows either
+action is permitted or denied. 
+
+> How about:
+> 
+> /**
+>  * handled_scoped: Bitmask of IPC actions (cf. `Scoped access flags`_)
+>  * which are confined to only affect the current Landlock domain.
+>  */
+
+This is a good docstring. I will use it. 
+
+> __u64 handled_scoped;
+> 
+> >  };
+> >  
+> >  /*
+> > @@ -266,4 +272,26 @@ struct landlock_net_port_attr {
+> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> >  /* clang-format on */
+> > +
+> > +/**
+> > + * DOC: scoped
+> > + *
+> > + * Scoped handles a set of restrictions on kernel IPCs.
+> > + *
+> > + * Scope access flags
+> 
+> Scoped with a "d"?
+Scoped meant to point to .scoped attribute.  
+> > + * ~~~~~~~~~~~~~~~~~~~~
+> > + * 
+> > + * These flags enable to restrict a sandboxed process from a set of
+> > + * inter-process communications actions. Setting a flag in a landlock
+> > + * domain will isolate the Landlock domain to forbid connections
+> > + * to resources outside the domain.
+> > + *
+> > + * IPCs with scoped actions:
+> > + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
+> > + *   connect to a process outside of the sandbox domain through abstract
+> > + *   unix sockets.
+> > + */
+> > +/* clang-format off */
+> > +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
+> 
+> Should the name of this #define indicate the direction that we are restricting?
+
+Since the domain of a process specifies if a process can connect or not,
+the direction of the connection does not matter. This restriction is the
+same as ptrace.
+
+> If I understand your documentation correctly, this is about *connecting out* of
+> the current Landlock domain, but incoming connections from more privileged
+> domains are OK, right?
+
+Yes, Incoming connections are allowed if they are from a higher
+privileged domain (or no domain). Consider two process P1 and P2 where
+P1 wants to connect to P2. If P1 is not landlocked, it can connect to P2
+regardless of whether P2 has a domain. If P1 is landlocked, it must have
+an equal or less domain than P2 to connect to P2. We disscussed about
+direction in [2]
+https://lore.kernel.org/outreachy/20240603.Quaes2eich5f@digikod.net/T/#m6d5c5e65e43eaa1c8c38309f1225d169be3d6f87
+
+> 
+> Also:
+> 
+> Is it intentional that you are both restricting the connection and the sending
+> with the same flag (security_unix_may_send)?  If an existing Unix Domain Socket
+> gets passed in to a program from the outside (e.g. as stdout), shouldn't it
+> still be possible that the program enables a Landlock policy and then still
+> writes to it?  (Does that work?  Am I mis-reading the patch?)
+
+security_unix_may_send checks if AF_UNIX socket can send datagrams, so
+connecting and sending datagrams happens at the same state. I am not
+sure if I understand your example correctly. Can you please explain a
+bit more?
+
+> The way that write access is normally checked for other files is at the time
+> when you open the file, not during write(), and I believe it would be more in
+> line with that normal "check at open" behaviour if we did the same here?
+
+It checks the ability to connect to a unix socket at the point of
+connecting, so I think it is aligned with the "check at point"
+behaviour. This security check is called right before finalizing the
+connection. 
+
+> 
+> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> > index 20fdb5ff3514..7b794b81ef05 100644
+> > --- a/security/landlock/limits.h
+> > +++ b/security/landlock/limits.h
+> > @@ -28,6 +28,11 @@
+> >  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+> >  #define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
+> >  
+> > +#define LANDLOCK_LAST_ACCESS_SCOPE       LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
+> > +#define LANDLOCK_MASK_ACCESS_SCOPE	((LANDLOCK_LAST_ACCESS_SCOPE << 1) - 1)
+> > +#define LANDLOCK_NUM_ACCESS_SCOPE         __const_hweight64(LANDLOCK_MASK_ACCESS_SCOPE)
+> > +#define LANDLOCK_SHIFT_ACCESS_SCOPE      LANDLOCK_SHIFT_ACCESS_NET
+>                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> I believe this #define has the wrong value, and as a consequence, the code
+> suffers from the same problem as we already had on the other patch set from
+> Mikhail Ivanov -- see [1] for that discussion.
+
+Thanks for the hint. I will definitly check this. 
+
+> The LANDLOCK_SHIFT_ACCESS_FOO variable is used for determining the position of
+> your flag in the access_masks_t type, where all access masks are combined
+> together in one big bit vector.  If you are defining this the same for _SCOPE as
+> for _NET, I believe that we will start using the same bits in that vector for
+> both the _NET flags and the _SCOPE flags, and that will manifest in unwanted
+> interactions between the different types of restrictions.  (e.g. you will create
+> a policy to restrict _SCOPE, and you will find yourself unable to do some things
+> with TCP ports)
+> 
+> Please also see the other thread for more discussions about how we can avoid
+> such problems in the future.  (This code is easy to get wrong,
+> apparently... When we don't test what happens across multiple types of
+> restrictions, everything looks fine.)
+> 
+> [1] https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com/
+> 
+> —Günther
+> 
