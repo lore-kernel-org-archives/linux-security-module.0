@@ -1,170 +1,246 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB44154C14;
-	Fri,  7 Jun 2024 07:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717744769; cv=fail; b=tSLC/JIxNw4Bkh+bRgU6my0WCut3QU+zzs3thpH1BVvcQy1xrQvhq9BWt59CDyrBNcjr4k/+h5oKhd6IleZLpX7kOuTw+chUtJYWkGh2SCil0ki2HtoUCoT24kxLsQmiLxXryZPa730M3eLP867T986IkFn7uJM4C6HtwQ51gUo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717744769; c=relaxed/simple;
-	bh=BzTknB916gK8guUyhBR9cvo8VRxiWAqYr7lV5KfB65o=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=COMlYxH5nuvqdczgFIV9dfd0YDLaBSaG5D+A3TbfcoqCVLcTMHPTMaUv9cQIdKK8p4379LLhJkBAGqluZUum/xs6j0+slkk7KxaMU9hqRJkO5SOInD4l6wJtZqwN930pJT4afUyroa1jUIeOXFFdj2SBnY+l+XcqFc8Tyk0ixMY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YRVQIK4Q; arc=fail smtp.client-ip=40.107.236.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A39915B0FC
+	for <linux-security-module@vger.kernel.org>; Fri,  7 Jun 2024 08:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717748921; cv=none; b=EBaLt4mwKnh78u6ihkHRFDKhLTlt2nitJP+e/+mxvM7LoNXQU6fJ+kcL+ipvwe6N4Pia6LE+gcsO+cpXfNxtuv83t8EykSjzQ3qhlnJipJla4b+E7yxQPYSW2Z0Dv8YTnm00zR2CbmQRXdeKB2BPRAm+NvbdV+3j4OXgF1oMIbE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717748921; c=relaxed/simple;
+	bh=V+84QYm/Gzzg3mgR6rUaepJo0r1Cyl/7Xb7TVgNcpkE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EmincVcypEJQiAXjjaGLyFg4GpRhXxzbeNPWkFLEAR64pMNoxxrLeqCiFriRfc48JArgShjIOPhhRjdt90RrOmpk19ayHvdK+uwzmTJJrTrFJ/uQPFOAGGLh643d3C+GguEMBz3bRDaQTtkbvA/AOK0b0v22YinHDClxkD8Aoi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w28Wk+HE; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YRVQIK4Q"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c2irsle2n207ri44pIZD4TAEWiMqDQzgp1UNkHcQHBjkkVNaLsj6WUyjkoa1U0y6zogmsitfJlSBxfsZrZq1Ehzrtr+jAwhTqHbJOOAahy5x5PAjELN+MI3IUJ24j81I66FxDVx7Pchx5SY89ym3MUSQb9H4XGkhNTyIWePQB0UJ5c26AousfJugu88uiGAsUDKs5kbDeKkYIp4jDun/Mgn3M15T1Do6NqKxAXJav9QxK1Cb+GgjFjIB3Sob/4Y8R+GJHwz1BaDfB4un8V426AP4HWWKXbQ6qtgrVic4rACHiL+AiJj+PgRa2oTWgdIG2EeWIQNy00A0SH4jK129Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BfjdUGKNUWiqSgvlJj84a17FCFX87jFYhVfRaBaYgso=;
- b=REldYpzsvI65HF4NlqDNxKf3vj1h3TcFvf4jLpQaW+NleGXKP5zRJWzLA+biFhEODFVam+siVkpkQV4HOpFhXBNNhwAtc8gNl8+Oba/a9+HOwo/OF8njIoZofMmGw86uTdyz+NntxQVH8DSjwH2DF6buby1CqdZAJH8/dmo4e6SBQkdIZ5kLMJBbdKBvly5Nh07884A49eFoF4oc1GUl3+wYwwVMDr/JHqBSFqVjMz90sVVio4hJmEFIu5yS4GlairQThtXANTWVtt3cgN1xBeRRpJaw2+rSaz6uM6gup2n8gYzeUxnnv/CXYv728pGMXudteI4/Kwct3jD43kDpEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BfjdUGKNUWiqSgvlJj84a17FCFX87jFYhVfRaBaYgso=;
- b=YRVQIK4QRTRfYJ4bDGF9mQ7vXfCC2P/F1ZlYPpliljmq4CmCfvnd72lF69DElTOTCHxEwn83GaeHtUgD7iBty3vlooyetLdcEezgWN7X3gCCxgNq8P2nkuTzfWP0o4RRYhvCRFmd2r1QiIRlWOPtGNv2WpGy9nwpzqT/yYlUvNc=
-Received: from BN9PR12MB5228.namprd12.prod.outlook.com (2603:10b6:408:101::7)
- by MW4PR12MB7334.namprd12.prod.outlook.com (2603:10b6:303:219::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.34; Fri, 7 Jun
- 2024 07:19:25 +0000
-Received: from BN9PR12MB5228.namprd12.prod.outlook.com
- ([fe80::9eb6:6233:fa7e:f904]) by BN9PR12MB5228.namprd12.prod.outlook.com
- ([fe80::9eb6:6233:fa7e:f904%4]) with mapi id 15.20.7633.033; Fri, 7 Jun 2024
- 07:19:25 +0000
-From: "Thangavel, Karthik" <karthik.thangavel@amd.com>
-To: "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>, "linux-spi@vger.kernel.org"
-	<linux-spi@vger.kernel.org>
-CC: "Gaddipati, Naveen" <naveen.gaddipati@amd.com>, "Narra, Bharath Kumar"
-	<BharathKumar.Narra@amd.com>
-Subject: IMA Reports No TPM Device
-Thread-Topic: IMA Reports No TPM Device
-Thread-Index: Adq4qE45KxXVKDnZQr2Y5S02DshRfA==
-Date: Fri, 7 Jun 2024 07:19:24 +0000
-Message-ID:
- <BN9PR12MB5228AB9BF8A3951983B39EBEFFFB2@BN9PR12MB5228.namprd12.prod.outlook.com>
-Accept-Language: en-US, en-IN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR12MB5228:EE_|MW4PR12MB7334:EE_
-x-ms-office365-filtering-correlation-id: 976ecad8-4633-4f24-5c67-08dc86c22913
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?oa3cbfNmk9WYWUZilIqth87xaDCWYkFQ3sPTzjVomf6Ji9gRuPRIU4IUiQbd?=
- =?us-ascii?Q?w2PD+7PbkEIfFb6hbnxsYWQ76USL2sYNYdOIxY5tKUZfxFujXdsGg5nKyZQT?=
- =?us-ascii?Q?VnZDCQcbzq5fUc1QDRsc+pqpzSC0S0NOk284/YAHPPBZ1ukhr62EDQLDe2GR?=
- =?us-ascii?Q?RzUv6XYu9IHt1EqRTl/MyVKmg1kXamrmTq4win9PtPQWnumgbEdxhQBtec/J?=
- =?us-ascii?Q?oXSlptfdGx5yEWQaUmENiBPYsx0/PWk+fPX2QTTdFr3HYxuG7O3Ebzn1WEiS?=
- =?us-ascii?Q?ft5qsXsowL/MOhwaA2P3WzR99eRs58j4LaAGTz3UbnV1xFqfvCX6ZQUD7mFa?=
- =?us-ascii?Q?7KSv5gBIZk3zrvkldi/jMnJSTX6LSqL5xdoEQFbRPETwN0XTFHIiMx6gV2Rr?=
- =?us-ascii?Q?+Vgby14sTX8Rp0Hfntc/XvC4d8NbMZBN+asJJdSxen7LADij1QV5GLutvLq2?=
- =?us-ascii?Q?+cbGlDW29iwjWlOI6Lxbsmul8lU9TrySO75n/epemC6LWRoZez4c5SDdOgRO?=
- =?us-ascii?Q?X+wxiDkvs0mU72+LQNPuTQkXOhSLj7rlERJQKeVlDr6ludNi7g2hBPdd6uf8?=
- =?us-ascii?Q?0WtOGjZ36XU55SqCtnsZ1Hjcv6CGsmipyg3a5qwtqFxm5vhp1LGkQ+P5eQBU?=
- =?us-ascii?Q?cJB9wqAqvVYfBRJPSk1KVS9nLu/p82foKdX6Esso/vVqpKzseOkFKpFpac5P?=
- =?us-ascii?Q?b+LRBpC4yn0B/nyDhxuTVyE9+8j4sSkdZ67dYtlnP46/Z4SC4orm0/8KL1rN?=
- =?us-ascii?Q?bjfZ0rIhBiwD+Jd3ZhnaSh1ky9kOc6b7vjw8yRO4xeKCBK1wyBF31Onw7cfk?=
- =?us-ascii?Q?jt9bZgJWGrUI3Gq/DcAgVoP2+oRRYN8LSNCDY6s+9am57uSYlxe7cD9IkBjw?=
- =?us-ascii?Q?4uqccSKjrf2VAIu84J0ftn8mTIw0+LBHo2X0TcADfTKnU10Nq2RXQKuJ/FxJ?=
- =?us-ascii?Q?lK6QJ1aGGiq/VTRbciLwbuN7s6pndEzUFHNxAFdNqmm7g3SXdQ9cl+L+OEeZ?=
- =?us-ascii?Q?GDqrVxJUiMgXYMormzYv5mvTL0XIVbSURf5dRbXCLTJ0suLJm/6nHOeNvtGW?=
- =?us-ascii?Q?Ex+VKyDnlYaQr+m1LxWb76wawkC0Zq3yGTALIbBO+tv9OSGsmFiBaLV7+JRI?=
- =?us-ascii?Q?4PcQW0t82XuCk1CLeC5BYpF9kCg3DaGtYTWAQmiLKOQsETUkjilpdOsVQ2eh?=
- =?us-ascii?Q?+dDxhQsdsDsOuCSrRvGq+JmpifXHE376MkHJiijUVeWiuTsJKsh0bXn+MydB?=
- =?us-ascii?Q?6kQoUzyPf8K3D9AcOhuqbMxXRjAlLBAWld2oa6zqKuQgqNmrcYSLIGFdoD+y?=
- =?us-ascii?Q?h+PdLIS+kqAnNQPD9BUmcSoGV9oNKPLNe6ergOTh+t2WBEiyM32uqWYC75aR?=
- =?us-ascii?Q?x2SeeDA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5228.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?TyJ8806blNEz540Ud9cEuAsjDp0h4bWsgJ9MpFfFTH/+md442d3jBbJEm23b?=
- =?us-ascii?Q?pkj+GaBc4tGxnmH5/bol2EWsD1dJ7J9sCvv5W/GGy9hS7UN+R+ryiLYABsYH?=
- =?us-ascii?Q?qJF0n+8guDg2ZnWXnsG34IaczWJieMVXNernvlUHXN+uM9MHnFj288lqhjpq?=
- =?us-ascii?Q?74sw3jRa467x8Dg/lcD4kD+c5pccsLMGomaLYWWHn0wgK+njtIUKSlDIs9Kt?=
- =?us-ascii?Q?eOd2xSQY0DSt6e2eOlsWicP+S+sZAzpa1o3dzwJGRpJ6Qe7pbpq9YS4PRqs2?=
- =?us-ascii?Q?Tyj5Go3lDjtNYSNTSYsSIFVlvkKELZswofSHZfDJ6voClOvzw/3DhX54ItAh?=
- =?us-ascii?Q?Qb0OY/df8wm7gIUwZdX3TS8OsQM76WCKKMTaqQpHhJ+71e5uGyFT7dmvTVWT?=
- =?us-ascii?Q?B0TLQM18oLdz1l3+5AA7hYI95zySKP/2JGUG7yMNvFp7wl//PtESLZgLgsR6?=
- =?us-ascii?Q?mMSI5ICrA82u4yqHJT+Y8uALQy0vlyVmssxkZhwfQWVNIjKcLMIfyE04G/cW?=
- =?us-ascii?Q?RoSxF7R/ZEs9xviZSa4LwTp2kSnfQil4sj5zAzpFnjUMEookXS7Gng9MQKxQ?=
- =?us-ascii?Q?ekQmsyJPqohLCObCfQPkhTQvp/QBaLTOTNwX1jAL8tkOz/3n5YDiGVfUSFAo?=
- =?us-ascii?Q?NsJhNXQu+O+RsJEMojvBYayFKA9RpmmzpgSgAU1INOBeILo7NpTBNE50TRIE?=
- =?us-ascii?Q?MCpSmNIl8pRRQIhRE4VFu8Lb0kJhFv1DWUrxoR+vMBUFv7TM/0N3pzRaXGZm?=
- =?us-ascii?Q?6yDMm67cZGaWk0CpDzJboYatCCrzYVVmS0zJc/dJp7aJrHrTxSzatJTkeOdl?=
- =?us-ascii?Q?iZNaHP7fFCEF2M9iiYOYK7h4zP8chsrrJvSoa6WfE6Khco8djV+2OJYM3iYV?=
- =?us-ascii?Q?HMQgP2FU8b+4f/CLztgsRVRM7p43BiIhKTaGTEbyZ8R/vlc3/CCtdSPg+0/C?=
- =?us-ascii?Q?IncrpJ555+/jOXVkVeSbELGyJWi833k6Q3Fn2jcLEK3euJ+KxHvCRh7BOvV6?=
- =?us-ascii?Q?5YHCf3xD9Qbeh2re97/AWxCuvq74CHckyB6z4zxxWoZYWfQdg00DMp8VCHnO?=
- =?us-ascii?Q?XQkZvysSY6ywKOwMpR+zBomOSReXxvn57GHvQeRBIEtvlQb5Fabip6GWaK2u?=
- =?us-ascii?Q?ahItYAnhnGxoNZVXRIbiQY4cd4ENgTAzWSflP2n6Cf8NI9IrXkL//QhFH601?=
- =?us-ascii?Q?rhjYD4vWcuE7oYj6Q7cXtcooAZMHe5TtKtJzPMFaOaMZnlVFKibwiJ+irb40?=
- =?us-ascii?Q?J+taMKUC0gACb+mZODNpvF7jM9Scryfu7LaFEIEDBhjWA2iZHy0Qp/dgBgzW?=
- =?us-ascii?Q?9eKIzv7Z9XqUBoQcvleQQ4452fFvyao+34GpMjTW3sZQcdrlOIhIcsgnTWZn?=
- =?us-ascii?Q?dc85umf9bluMXDUu17CI4JPidnca3sY7PPUibZwSW8EkAdA3U+v0sKAvqOTq?=
- =?us-ascii?Q?uBIkumXIu0bLw9Nw1LfGHpL8ba6znUi1Wqm0wuN6lhjmJFaHtDeL2UkHX1ei?=
- =?us-ascii?Q?bsAzaUTWOgerwz3C5yFOaZscP9nRyEFpQbnW/xeXhUPZBoEXWErA2vOeVFxi?=
- =?us-ascii?Q?qTUClNjk7IRbkxbUIfQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w28Wk+HE"
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-57a2fb28a23so1439346a12.3
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Jun 2024 01:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717748918; x=1718353718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6OYdxhgFVrSCAJh5nTESxNjl0nid+o3EXmChjmTXO6g=;
+        b=w28Wk+HEgzyF8u9viVfhnWmoYUPrkAgwk6ebJAs5iNh5M/ENf/Vwl/knmWgQlYfm61
+         CUrpFvdMssiphHjJC1D4Gxoxt5lZ/qNNzhN6R7kMkYIB6CAAGWAvTD35yoE+1pU1/zd/
+         D/Cz7fEVdRBNAQv6ITODOtq0sJzCsoVJszzY/dbHT6Ngwbpoxb+/eFkqfcykiuMXHe5I
+         9qHKc+5rvc6hpV+xRu/Oq+0DGQGQEBPl6pBqENkQxDWl9DI/vdcktjOTQj4hzSkyK5xc
+         5NZLUoLvbA+nAES7366ZC7UO2Hovh/rkS5LFjlG/nDOAX3a3U3jwjnD3aGzE2zaJRWUY
+         VOdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717748918; x=1718353718;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6OYdxhgFVrSCAJh5nTESxNjl0nid+o3EXmChjmTXO6g=;
+        b=gtmSk1c1QzoI8VczOR6OjLXY/17u2fsLzFhaKWhxZ6nykXE4oJnITvw8ur1SOSujqe
+         TI2a0BMNOYBjBFzvURDbrEoKEkuESjwAXzIRnJXUdXhm0/VxdD/RmDgL5gfO2zu8DQrD
+         bKKnNPVB3xqFq6/2MAZm12sNuWWF/1oP3CLBuhYyI+YbY6G54PDS/yMt4ihmE79pgB6U
+         lvbtktWrX//+mmkwRNnJzg4uGDLJzlumoTAzl6EwoEAIfE5gENL51uqKDiGkAbNRjudY
+         8zk8niiYbI7Do4K+AOB7R+kOOZWne2IlgjguC+ctOHQCFLXLjVoLBjjHd/YiAgpSzOj6
+         sLcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvhaUm9auOd8PTAZrXK0mIkL4nHb26ve9G9N5AX0u/YsuDrd90+YJBgE+WCE7bNnrzzbnVeW4gbXRsrmjSB3mOc20r6ObPlcJTNA0aOUd9r9YsbUoq
+X-Gm-Message-State: AOJu0Yy4n+sfHJSRhLI/8h3FN1WQqpCts/Q4zkfUJVll1kETGJnVsk0F
+	8gelP194FMjqjfJOgdUPygvyZLc5dZtxv35qhAhNK1rFw6u7u2VZfeHcngwKn1QW++U+WJbTkAH
+	2gQ==
+X-Google-Smtp-Source: AGHT+IFm6zHQPhNfj9qNWj7inN20qPj6gTlPDrvKVF9RSk0XwJJlfwcUlhrHgql0SwWnOy27kt3jFrT5jRg=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6402:5515:b0:57a:5277:554b with SMTP id
+ 4fb4d7f45d1cf-57c509a3be6mr1882a12.7.1717748917756; Fri, 07 Jun 2024 01:28:37
+ -0700 (PDT)
+Date: Fri, 7 Jun 2024 10:28:35 +0200
+In-Reply-To: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5228.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 976ecad8-4633-4f24-5c67-08dc86c22913
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2024 07:19:25.0391
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dGioQmz0UKerTvMrctt+0qcMhlhZBAhIB72iHjPt0CspoS8VBsqGgj4po5sR6MBSkinXJ8dxYtOHJHmPoXyGUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7334
+Mime-Version: 1.0
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+Message-ID: <ZmLEoBfHyUR3nKAV@google.com>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, outreachy@lists.linux.dev, 
+	Jann Horn <jannh@google.com>, netdev@vger.kernel.org, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hello Tahera!
 
-We are booting linux v6.1.30 on Xilinx ZynqMP SoC which is using ARM-A53.
-We want to run IMA on TPM device connected over SPI interface.
-During booting found that IMA reports "No TPM chip found".
+Thanks for sending another revision of your patch set!
 
-Please find the below logs which shows IMA subsystem init=20
-called before TPM device.
+On Thu, Jun 06, 2024 at 05:44:46PM -0600, Tahera Fahimi wrote:
+> Abstract unix sockets are used for local inter-process communications
+> without on a filesystem. Currently a sandboxed process can connect to a
+> socket outside of the sandboxed environment, since landlock has no
+> restriction for connecting to a unix socket in the abstract namespace.
+> Access to such sockets for a sandboxed process should be scoped the same
+> way ptrace is limited.
+>=20
+> Because of compatibility reasons and since landlock should be flexible,
+> we extend the user space interface by adding a new "scoped" field. This
+> field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> specify that the ruleset will deny any connection from within the
+> sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+>=20
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+>=20
+> -------
+> V3: Added "scoped" field to landlock_ruleset_attr
+> V2: Remove wrapper functions
+>=20
+> -------
+> ---
+>  include/uapi/linux/landlock.h | 28 +++++++++++++++++++++++
+>  security/landlock/limits.h    |  5 ++++
+>  security/landlock/ruleset.c   | 15 ++++++++----
+>  security/landlock/ruleset.h   | 28 +++++++++++++++++++++--
+>  security/landlock/syscalls.c  | 12 +++++++---
+>  security/landlock/task.c      | 43 +++++++++++++++++++++++++++++++++++
+>  6 files changed, 121 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.=
+h
+> index 68625e728f43..d887e67dc0ed 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+>  	 * rule explicitly allow them.
+>  	 */
+>  	__u64 handled_access_net;
+> +	/**
+> +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
+> +	 * that is handled by this ruleset and should be permitted
+> +	 * by default if no rule explicitly deny them.
+> +	 */
+> +	__u64 scoped;
+
+I have trouble understanding what this docstring means.
+
+If those are "handled" things, shouldn't the name also start with "handled_=
+", in
+line with the other fields?  Also, I don't see any way to manipulate these
+rights with a Landlock rule in this ?
+
+How about:
+
+/**
+ * handled_scoped: Bitmask of IPC actions (cf. `Scoped access flags`_)
+ * which are confined to only affect the current Landlock domain.
+ */
+__u64 handled_scoped;
+
+>  };
+> =20
+>  /*
+> @@ -266,4 +272,26 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  /* clang-format on */
+> +
+> +/**
+> + * DOC: scoped
+> + *
+> + * Scoped handles a set of restrictions on kernel IPCs.
+> + *
+> + * Scope access flags
+
+Scoped with a "d"?
+
+> + * ~~~~~~~~~~~~~~~~~~~~
+> + *=20
+> + * These flags enable to restrict a sandboxed process from a set of
+> + * inter-process communications actions. Setting a flag in a landlock
+> + * domain will isolate the Landlock domain to forbid connections
+> + * to resources outside the domain.
+> + *
+> + * IPCs with scoped actions:
+> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process t=
+o
+> + *   connect to a process outside of the sandbox domain through abstract
+> + *   unix sockets.
+> + */
+> +/* clang-format off */
+> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
+
+Should the name of this #define indicate the direction that we are restrict=
+ing?
+If I understand your documentation correctly, this is about *connecting out=
+* of
+the current Landlock domain, but incoming connections from more privileged
+domains are OK, right?
 
 
-[    0.000000] Linux version 6.1.30-xilinx-v2023.2 (oe-user@oe-host) (aarch=
-64-xilinx-linux-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39.0.20220819) #1=
- SMP Fri Sep 22 10:41:01 UTC 2023
-[    0.000000] Machine model: xlnx,zynqmp
-...
-[    2.561405] ima: No TPM chip found, activating TPM-bypass!
-[    2.567199] ima: Allocated hash algorithm: sha256
-...
-[    3.727105] tpm_tis_spi spi1.0: 2.0 TPM (device-id 0x1B, rev-id 22)
-[    3.764152] tpm tpm0: starting up the TPM manually
-...
+Also:
 
-In security/integrity/ima/ima_main.c=20
-late_initcall(init_ima);	/* Start IMA after the TPM is available */
+Is it intentional that you are both restricting the connection and the send=
+ing
+with the same flag (security_unix_may_send)?  If an existing Unix Domain So=
+cket
+gets passed in to a program from the outside (e.g. as stdout), shouldn't it
+still be possible that the program enables a Landlock policy and then still
+writes to it?  (Does that work?  Am I mis-reading the patch?)
 
-As per above comment line IMA should start after TPM is available.
-But we are observing the opposite behavior.=20
-Please let us know how to fix this issue.
+The way that write access is normally checked for other files is at the tim=
+e
+when you open the file, not during write(), and I believe it would be more =
+in
+line with that normal "check at open" behaviour if we did the same here?
 
--Karthik
+
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 20fdb5ff3514..7b794b81ef05 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -28,6 +28,11 @@
+>  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_=
+NET)
+>  #define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
+> =20
+> +#define LANDLOCK_LAST_ACCESS_SCOPE       LANDLOCK_SCOPED_ABSTRACT_UNIX_S=
+OCKET
+> +#define LANDLOCK_MASK_ACCESS_SCOPE	((LANDLOCK_LAST_ACCESS_SCOPE << 1) - =
+1)
+> +#define LANDLOCK_NUM_ACCESS_SCOPE         __const_hweight64(LANDLOCK_MAS=
+K_ACCESS_SCOPE)
+> +#define LANDLOCK_SHIFT_ACCESS_SCOPE      LANDLOCK_SHIFT_ACCESS_NET
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+I believe this #define has the wrong value, and as a consequence, the code
+suffers from the same problem as we already had on the other patch set from
+Mikhail Ivanov -- see [1] for that discussion.
+
+The LANDLOCK_SHIFT_ACCESS_FOO variable is used for determining the position=
+ of
+your flag in the access_masks_t type, where all access masks are combined
+together in one big bit vector.  If you are defining this the same for _SCO=
+PE as
+for _NET, I believe that we will start using the same bits in that vector f=
+or
+both the _NET flags and the _SCOPE flags, and that will manifest in unwante=
+d
+interactions between the different types of restrictions.  (e.g. you will c=
+reate
+a policy to restrict _SCOPE, and you will find yourself unable to do some t=
+hings
+with TCP ports)
+
+Please also see the other thread for more discussions about how we can avoi=
+d
+such problems in the future.  (This code is easy to get wrong,
+apparently... When we don't test what happens across multiple types of
+restrictions, everything looks fine.)
+
+[1] https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei=
+-partners.com/
+
+=E2=80=94G=C3=BCnther
+
