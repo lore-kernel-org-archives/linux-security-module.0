@@ -1,231 +1,105 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C5018629B
-	for <linux-security-module@vger.kernel.org>; Fri,  7 Jun 2024 16:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7771A270
+	for <linux-security-module@vger.kernel.org>; Fri,  7 Jun 2024 18:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717776485; cv=none; b=cNyNUNL7+LUZwuJapX0WoPgZW7NttFPz2d6oVaOzwLSIm1coZBgzRQ550u3/HVQvYquTnRRZjsVf8j3ZUlg1BkagfNDR/y2aECiTlUqFMDZ+MmRFxmrNig0BO5K0CHRcoDaGXeqHkJvWzYBGJJJKlKXfDXmv3ce1/Zrqami69g0=
+	t=1717786223; cv=none; b=T+//n+QIF1b97FARc3iUV1eJ+rB5VN2U/Re2/7TVvD28iqc+7+iUAWlvsGMnCB7sat2R8yywHUA7ji9S5wdKNK71xVlG80NEGUtz5A9CaOVU0PaZF/wggvi5eia2r4D366W+wUb7yKRaJpsLIOzml7+df8lknIT53eeiyvpuWUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717776485; c=relaxed/simple;
-	bh=QglwNdcsA51J6wQYL6H/q82x8oDdhH78HGfeiSZECsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cNCwIdLKBFHYOOioInEf/9O2rfXswjnnoqdhhoQ7rWQ5KdgGUU5S13Gv/GHIhTMrmbMQj3U/wpdhdRAcNUaszvfXb+qHswPHSggD/jBVHQa/J6nERi6pwSE0GJk1DmdUyPyGJ9X7VsHZoL/8hK8+vgn4Vjj5ym2/SRjSRtVRFRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VEot8apf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1717786223; c=relaxed/simple;
+	bh=2Xi0RYnzigepioYMasZJzBhHuea8gcSwQ38nznxB8Dg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iKF6umUzGNchOXxmWkZ9rSEVuAJemvY7E6XtqTjjQExvpGInnXlpF3yF1FOYH/QwHOXLA6rVmHge1IaCeXdLyBxJSuTl+4JZ7quEPD3h/poI85T10/Fp8R775UReE/u3k1dRlgbEY/QeyV5I23BLd5jzg3bcueMyziNi5Hl6Og8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=UrKcVMlS; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VEot8apf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717776482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8U3+g6YznrIZbdPROW/ErLXZCEgBfJNaERO2crh9nyw=;
-	b=VEot8apf0pSeyxWlKzVMZkrQCodbBAsWYQOm3pPq4wF6m0g8nat6CzsQD+Lh22sjvgXKRF
-	/k62/QihN6L+7wdK9qj5ydvCg2fon4hu/WuFMOdHQ94whCtkgZBjhksXz456x6y5ncnhPY
-	6lHSEQD43h0dSmnEhB7LfAnnSRpkvyk=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-683-Hedw_D2nNiCgBjZ0-S77Pw-1; Fri, 07 Jun 2024 12:08:01 -0400
-X-MC-Unique: Hedw_D2nNiCgBjZ0-S77Pw-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ea91ce9225so20560301fa.3
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Jun 2024 09:08:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717776480; x=1718381280;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8U3+g6YznrIZbdPROW/ErLXZCEgBfJNaERO2crh9nyw=;
-        b=tvkcTRVfkS1XexNcLJ2uysD1HP0wJ1kakAqRCmxQcYyoqoyJ/8NbiecMZh68e24aD0
-         iF0wzZH6/Hmg0Lkjja12V7TbfrnNcTaRj7q3JTETOdtQ+TPfmK1KZV+R6ob1ltEzc7lI
-         dcN1aE5XOIDaXmDAj75zxpnxRbRKG8QVYMi98hjpVpJxdlEc2hABWJL3rQH96brJCrzd
-         oKDt7dn66Vu7jqqhGqH4KLF1Ts9CDoK3uzZbPZdqxdfWSWCYdrOCLespBLP0pj0Fyz2F
-         Fb2X05+H25jMHWBYNhp9/EJAwDYq+Q/PsufMLiCgNdQCtpFYtZTABKDONw2jU3xGYnWF
-         eEhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUmMkW7XfcchvL6t0E2bjTt4rqnQ5kMVMEaBKSEElx0iCfsJ02j5i7ZD7eTaDvgXQK01uNGEM5+A++OX5hyzvn6suwxtYcmpM0icmGYijy84rOYh7N
-X-Gm-Message-State: AOJu0Yw03s7O+4Biap8kNlTXmNl53kqL9ACc1enrc0bzTYolsbAFY2Rd
-	AUkBjVLZ/E03OFwY6OmbrPqKn/fT/blav7KwhZxi6HW1dRKczqItSdl+vNomHAnlKjVl/3oT94x
-	R6EkFezgl6T7KtP8bS3nEFdZasvUKZD87w1o5Md1Zqd64DGWMInsXuxGybUsuGmSMxlzANPwQHQ
-	==
-X-Received: by 2002:a2e:890d:0:b0:2ea:904e:481c with SMTP id 38308e7fff4ca-2eadcea97e0mr23697741fa.53.1717776480034;
-        Fri, 07 Jun 2024 09:08:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4L3C+xdL2eKbxFZaKahGICbEU8EtZXqMbTaMd8HBKPo9qrXs2Jc8UZ+3KVo8TpRZHUAsryw==
-X-Received: by 2002:a2e:890d:0:b0:2ea:904e:481c with SMTP id 38308e7fff4ca-2eadcea97e0mr23697601fa.53.1717776479693;
-        Fri, 07 Jun 2024 09:07:59 -0700 (PDT)
-Received: from telekom.ip (adsl-dyn127.78-99-32.t-com.sk. [78.99.32.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ebd59sm264672166b.116.2024.06.07.09.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 09:07:58 -0700 (PDT)
-From: Ondrej Mosnacek <omosnace@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v2 2/2] cipso: make cipso_v4_skbuff_delattr() fully remove the CIPSO options
-Date: Fri,  7 Jun 2024 18:07:53 +0200
-Message-ID: <20240607160753.1787105-3-omosnace@redhat.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240607160753.1787105-1-omosnace@redhat.com>
-References: <20240607160753.1787105-1-omosnace@redhat.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UrKcVMlS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717786214; bh=jjpBRxkpMLr3gtmzed0KzCkC6MUwXaUW8Hfa5XmCu8o=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UrKcVMlSfr26pw2N1absEnyk5Smty4CyiOl5E7rmORPk1XBQ4x72gnUBgrD5uX0pIgQFnFfHpfYjGG3JM/BEUJYQsXKnqJkUECnaRbhATnSpZb1zitlQQwcIuHU9QJaqr6loZCNvRhfdYNlAAodFs0GKZu0G28hH2VqQ9jnxlId+PikhKXKZX6mdOM414aBaExAohcnPJFZZoiYJL2eEsuF3fmBiMO/uo84gUb+VL9xoqR7D/c6iboK90CoRKZ4To6H8gr/QQDScCfn1DirBu5SNc5wfEH3oRTwT9LUIU4EB1tlSaDwstX2QKmuDWLATwSITGfRHekHGzV6oEIgOWQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717786214; bh=dykRUqslyI0Td0onN6MwTln35FzTXIbhzNOvDrhIFFM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sPTF+br6JcwH8zSmJq8GAGHoKGtiFhQcIQSJaiVHWmQ3JRUtlZrkP2XKrOAFAnr9+/oIpCRluLlrY9Kw0CKq/3RhlNNX2g1mY42kV5iKIWKdIH8sqA9nSxuG+rcw7jP4U49MxEcqTg50utWsyuEUcFUndlJIrNdV2Kt6BZd/2GI1WcXjuHvlhDVn6CJK3k06zcIv8jzIBjsPk+vAY0jNiDHf0+8tnqO4AMC7EVyMSQVUxKJgo22z0g6P5a96JrimpidBrrG4LoUjFQsRpv2WH1KC3YSQ+FmXvIMczG7nGVamyS3jY60VUGi0dMjQ367zYR32KY7YjAl3Xg9f9rCWlg==
+X-YMail-OSG: 7xQSf.MVM1lEU0KLzg7s5h.3yRAXzEdHrrhop_4YUNh9nWE5qwgpdGQw_L4EKPL
+ oKDIbZIXJ_h7cHrFICQwBwfvEzirAL8D2Y5KQShbjLhurGQvwEmY1_qpPcnLqPn8TQr7ERXHGPsx
+ .La8X7eNjh4.MLbbupzLygRFfzU8cqwqmfioTvyDII683Bn.gKycDwa6JmXpfsfJ8e2Gk5a2zfqf
+ DgNi8WSSS03R0pT3IrERyc6bbV0UJvGsaoTdVyPvc8YEVYjNZy9huLE3q6GZMA8b55zFZbXLhIPn
+ gRe231FXw4kDFcBiUYpBY8Dh8FjVBiU0LTWouqMl301w7vcw44X4Fq8FIq9r_AGy3fGaFzr3Ex7.
+ ZmrQZivSCeJPtBgiA3cNNiJ0RaFZOlPk2KjlTtqD6.LWPGlO2zSU5PpbC9VFiad9ftaqaYb_nvTy
+ JXCglsZCwD_woDNMlHozJ8BCH_He25PlIsnpz0mmrz6GOXFEpPcYAzkt2gMLqGLVl.cUI6xg66W0
+ 6ZvwJC0BcWVuNttlC4EMYiEytAXjipMbScPs7ATZaRZM8n9YwRblHOI5hdbfsapM_Swtbkd44Zfu
+ 0D.5d0b4kSWm4.IiAmmvqmix3upf3FuAKNchgSjFyN79ozxDrUog9mirMlY8_ldVlWNh5M4LmTNd
+ _DF2kLlGw57DmMS7oHBnD51l6ppuZ30TtE8WX_7DK5fs7ZLh2VpKylQSzPCqxS90fExclbQPWMxe
+ ZtyYLk7ZiiEQd8gnfnsD5wDhozV8y_Sjmq4bUOPi.abXHXK7BJ8wf3rloMwWExQLAX9kdvCn.IWj
+ WErXODWFJAjaAXtsGYhW4uQn460eAHsuj8JsIpmY.b5zhPVDgwSHH6EQRyHfzjRkASG2wGRjRydy
+ A.SsuE9qu4DQTfEGcjyUn976ZuHNM4v1w38Vut.H3neaEjN7qzMNYh0A2C3ehEUbC3Ej9XyssMBi
+ LTghljgVQj8dRj4RInMAVkDMkR9pkWw5ybucz3_GJ3aB9xsCe7Jfxs3r7BvG1cEIgez25zBs36ZJ
+ xGc5bmQ5Qh1tBSu4EXKcv7kXPE9LscJBdMkvWqL5UqZx_H3wijcYbhe7nUu4iEZ.oYQkhW.VpDo5
+ rb2A5qP1hB9I5q8CNWTGM9T0PuGNrRzCqXemvMbKjsj03P16eCLHQCqnJgYakpbdmnrGF09g0.dy
+ sj2xRHJtpr7Z3_9rSaCQzED2miVvzzKC1BLWfuT.JUWUEMWx5Vx8Qqfft4ZLrpevXwoTP3h5FbUE
+ 1_b6.yGoxdPWKtgytoQHMuwmaza2taDTGclQ4.OW2GfRrbD02I9t72IMCbbjg4w4W3rGU40uYm8X
+ WTVQJ5tnPKtGxVOkl7fpyWEqcnW20WHBSpWkotJvQhrW1jwNmiWDgomVaSsI4G7m8IR4DejZtIRu
+ uQziN23gghlbUM8UkIorsTo58ofUb5i1r9rKgL7B_Kk_akwo3RsTQwv4EJ5DgdOl63Yeu6ZH0iGq
+ 4fXILxazHNmxYV0fqfMlJsloyqoPiy.4Z_bUS8tdEg5ZiKamHodzX.blvX.3rKX2p3xs3r9KcitS
+ c4LSy5ILBu0isw9KgemukY9oq8C4gosgJdNZukXKJlrr3LWLzcv.Kh5tfPdlE9ezsFNrcBusGOqg
+ p6svfyT836bJAf7ERcMRTiUyHvce10X.E04XH24fa1aW7A3B81NRlTLSJoKQFI91ccXUboxOpeRO
+ lu2.Y35I4SaPzFgMuVSvsuvbZVD2P0Dc766gomc9ekQaoaBeIxwuOtYBqnmdQZOnEWgAIu5sUKbQ
+ CbTtYXsHWvjmqkDadpeTge5OCpuL_TBybd_da7wSVaKMWi01.sGcOjwxtSszz_lQOlpuWsrLs.Mp
+ JsYyZUhKaNxBiEmWOy5tHAXTckmgdBcly8fQBwvJHh4bS.0SGs482Umhrp660HMJpht7tyOmloiZ
+ 4WcYV.NzE3r5dwdiopRJri_QbyfKFNtuKzfqpeLQSESpXeFgYu9syirZoK7iCibl9QmzcAaCEyLp
+ v9Z994TxHBCrKy3pz.A3dYnnGlfPHt5wyBm3cdecJhna1a.jaVsfQR2.z6reiJK9wzKDnE5h03m3
+ VL_IkirE7rItekj3XMJ_7PRDiRcbh1GtDPXk0D9omC1T6HxgvLLvV56zXvZ5M8_Sk4ueBHRe6gKp
+ dMEKDJLA_xPHHKMrd09Uz7OWWSAvAqSMq3nY6iGOb6XL08FZsW9ofDYjgntf2PNdjgUee7mrmGnU
+ 0KCQfO31UxASPV.PKveYAFjAKbod4g8JUyWEEfmtAYeLwA95MdW7O6bx9ZUaMahg2yOEBwlLZO5.
+ d.mAmQfE-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 6fd9d693-87b7-4c08-bd52-39d2e1236bab
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 7 Jun 2024 18:50:14 +0000
+Received: by hermes--production-gq1-59c575df44-8lqx4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 112a64c8672692ce743352f04ced2bf3;
+          Fri, 07 Jun 2024 18:50:11 +0000 (UTC)
+Message-ID: <b764863b-6111-45ee-8364-66a4ca7e5d59@schaufler-ca.com>
+Date: Fri, 7 Jun 2024 11:50:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"; x-default=true
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
+ the CIPSO options
+To: Ondrej Mosnacek <omosnace@redhat.com>, Paul Moore <paul@paul-moore.com>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240607160753.1787105-1-omosnace@redhat.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20240607160753.1787105-1-omosnace@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-As the comment in this function says, the code currently just clears the
-CIPSO part with IPOPT_NOP, rather than removing it completely and
-trimming the packet. The other cipso_v4_*_delattr() functions, however,
-do the proper removal and also calipso_skbuff_delattr() makes an effort
-to remove the CALIPSO options instead of replacing them with padding.
+On 6/7/2024 9:07 AM, Ondrej Mosnacek wrote:
+> This series aims to improve cipso_v4_skbuff_delattr() to fully
+> remove the CIPSO options instead of just clearing them with NOPs.
+> That is implemented in the second patch, while the first patch is
+> a bugfix for cipso_v4_delopt() that the second patch depends on.
+>
+> Tested using selinux-testsuite a TMT/Beakerlib test from this PR:
+> https://src.fedoraproject.org/tests/selinux/pull-request/488
 
-Some routers treat IPv4 packets with anything (even NOPs) in the option
-header as a special case and take them through a slower processing path.
-Consequently, hardening guides such as STIG recommend to configure such
-routers to drop packets with non-empty IP option headers [1][2]. Thus,
-users might expect NetLabel to produce packets with minimal padding (or
-at least with no padding when no actual options are present).
+Smack also uses CIPSO. The Smack testsuite is:
+https://github.com/smack-team/smack-testsuite.git
 
-Implement the proper option removal to address this and to be closer to
-what the peer functions do.
-
-[1] https://www.stigviewer.com/stig/juniper_router_rtr/2019-09-27/finding/V-90937
-[2] https://www.stigviewer.com/stig/cisco_ios_xe_router_rtr/2021-03-26/finding/V-217001
-
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- net/ipv4/cipso_ipv4.c | 79 +++++++++++++++++++++++++++++--------------
- 1 file changed, 54 insertions(+), 25 deletions(-)
-
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 5e9ac68444f89..e9cb27061c12e 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1810,6 +1810,29 @@ static int cipso_v4_genopt(unsigned char *buf, u32 buf_len,
- 	return CIPSO_V4_HDR_LEN + ret_val;
- }
- 
-+static int cipso_v4_get_actual_opt_len(const unsigned char *data, int len)
-+{
-+	int iter = 0, optlen = 0;
-+
-+	/* determining the new total option length is tricky because of
-+	 * the padding necessary, the only thing i can think to do at
-+	 * this point is walk the options one-by-one, skipping the
-+	 * padding at the end to determine the actual option size and
-+	 * from there we can determine the new total option length
-+	 */
-+	while (iter < len) {
-+		if (data[iter] == IPOPT_END) {
-+			break;
-+		} else if (data[iter] == IPOPT_NOP) {
-+			iter++;
-+		} else {
-+			iter += data[iter + 1];
-+			optlen = iter;
-+		}
-+	}
-+	return optlen;
-+}
-+
- /**
-  * cipso_v4_sock_setattr - Add a CIPSO option to a socket
-  * @sk: the socket
-@@ -1986,7 +2009,6 @@ static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
- 		u8 cipso_len;
- 		u8 cipso_off;
- 		unsigned char *cipso_ptr;
--		int iter;
- 		int optlen_new;
- 
- 		cipso_off = opt->opt.cipso - sizeof(struct iphdr);
-@@ -2006,23 +2028,8 @@ static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
- 		memmove(cipso_ptr, cipso_ptr + cipso_len,
- 			opt->opt.optlen - cipso_off - cipso_len);
- 
--		/* determining the new total option length is tricky because of
--		 * the padding necessary, the only thing i can think to do at
--		 * this point is walk the options one-by-one, skipping the
--		 * padding at the end to determine the actual option size and
--		 * from there we can determine the new total option length */
--		iter = 0;
--		optlen_new = 0;
--		while (iter < opt->opt.optlen) {
--			if (opt->opt.__data[iter] == IPOPT_END) {
--				break;
--			} else if (opt->opt.__data[iter] == IPOPT_NOP) {
--				iter++;
--			} else {
--				iter += opt->opt.__data[iter + 1];
--				optlen_new = iter;
--			}
--		}
-+		optlen_new = cipso_v4_get_actual_opt_len(opt->opt.__data,
-+							 opt->opt.optlen);
- 		hdr_delta = opt->opt.optlen;
- 		opt->opt.optlen = (optlen_new + 3) & ~3;
- 		hdr_delta -= opt->opt.optlen;
-@@ -2242,7 +2249,8 @@ int cipso_v4_skbuff_setattr(struct sk_buff *skb,
-  */
- int cipso_v4_skbuff_delattr(struct sk_buff *skb)
- {
--	int ret_val;
-+	int ret_val, cipso_len, hdr_len_actual, new_hdr_len_actual, new_hdr_len,
-+	    hdr_len_delta;
- 	struct iphdr *iph;
- 	struct ip_options *opt = &IPCB(skb)->opt;
- 	unsigned char *cipso_ptr;
-@@ -2255,16 +2263,37 @@ int cipso_v4_skbuff_delattr(struct sk_buff *skb)
- 	if (ret_val < 0)
- 		return ret_val;
- 
--	/* the easiest thing to do is just replace the cipso option with noop
--	 * options since we don't change the size of the packet, although we
--	 * still need to recalculate the checksum */
--
- 	iph = ip_hdr(skb);
- 	cipso_ptr = (unsigned char *)iph + opt->cipso;
--	memset(cipso_ptr, IPOPT_NOOP, cipso_ptr[1]);
-+	cipso_len = cipso_ptr[1];
-+
-+	hdr_len_actual = sizeof(struct iphdr) +
-+			 cipso_v4_get_actual_opt_len((unsigned char *)(iph + 1),
-+						     opt->optlen);
-+	new_hdr_len_actual = hdr_len_actual - cipso_len;
-+	new_hdr_len = (new_hdr_len_actual + 3) & ~3;
-+	hdr_len_delta = (iph->ihl << 2) - new_hdr_len;
-+
-+	/* 1. shift any options after CIPSO to the left */
-+	memmove(cipso_ptr, cipso_ptr + cipso_len,
-+		new_hdr_len_actual - opt->cipso);
-+	/* 2. move the whole IP header to its new place */
-+	memmove((unsigned char *)iph + hdr_len_delta, iph, new_hdr_len_actual);
-+	/* 3. adjust the skb layout */
-+	skb_pull(skb, hdr_len_delta);
-+	skb_reset_network_header(skb);
-+	iph = ip_hdr(skb);
-+	/* 4. re-fill new padding with IPOPT_END (may now be longer) */
-+	memset((unsigned char *)iph + new_hdr_len_actual, IPOPT_END,
-+	       new_hdr_len - new_hdr_len_actual);
-+
-+	opt->optlen -= hdr_len_delta;
- 	opt->cipso = 0;
- 	opt->is_changed = 1;
--
-+	if (hdr_len_delta != 0) {
-+		iph->ihl = new_hdr_len >> 2;
-+		iph_set_totlen(iph, skb->len);
-+	}
- 	ip_send_check(iph);
- 
- 	return 0;
--- 
-2.45.1
-
+>
+> Changes in v2:
+> - drop the paranoid WARN_ON() usage
+> - reword the description of the second patch
+>
+> v1: https://lore.kernel.org/linux-security-module/20240416152913.1527166-1-omosnace@redhat.com/
+>
+> Ondrej Mosnacek (2):
+>   cipso: fix total option length computation
+>   cipso: make cipso_v4_skbuff_delattr() fully remove the CIPSO options
+>
+>  net/ipv4/cipso_ipv4.c | 75 +++++++++++++++++++++++++++++++------------
+>  1 file changed, 54 insertions(+), 21 deletions(-)
+>
