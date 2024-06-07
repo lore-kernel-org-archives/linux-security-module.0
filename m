@@ -1,31 +1,31 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9EC1667DE;
-	Fri,  7 Jun 2024 13:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183B4190672;
+	Fri,  7 Jun 2024 14:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717768718; cv=none; b=VlFXwF7BYdrCouG01q5+lqO3x89oZRzqh7YRVWcFHrgJev0fm0KgEI5vnqu+fOoq6fMYnZFo3l2ZarFv3gvpgm5LY/W1IEaFSV9c+EpaPFWkTBQeZA0a7aGDgxJdX4OFeF63RjiPM6JNYKqTwsqpaBJTVQ1MLEqGv3+zu8AAYbw=
+	t=1717771562; cv=none; b=VGQuKB1UJqvlYJaZxniZ+Bgm0SIiqsz5dlUcc5Wy7bZXFqDTlPVBQWsHrhOChDpoeEY8DdslejORPbTM3+/VCuqngQM6bK2VCCnjq9WMpX4jKiYwRd5yR5MIz+T80nSrTyPik8b+m0V+CoVJBEQ/CEr/U3bimwgfZPu0pxQUr/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717768718; c=relaxed/simple;
-	bh=4G3FDvumPPb0WEUrF2heN84BCxUEYbAoobu+s6ougQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jsP30XqQVIuI99wB2FkF3da9TRLh69y7Tr598EeMxM9Yhsm9M9pVR/bpcMUu5nCw0fHSk9Kkt7vrYDQDjXjjVGemzyOxzvuf3PAaBuUfLmtMEMODyrIJGir89fre68hQtdC/cuVDqXurIeQrKKr048No+q/66n/nbhB/OnyzwZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1717771562; c=relaxed/simple;
+	bh=rkBZeUKTqeFDh5cP2yVoebbQjSKSpEiANwSjoqxpAPA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=QUzKJCACyZlfzbOnE7vYSz4uYjubl8t6K0Fr+PUWQZn6irbBQD2fzkGAeQq+uV4posMBqdFMiz0PpOz6Gyu/GLpRXBbkHvuPvZfvwAb6ppJV/ibBqgyS9Y/aVdnFnilLVFCREHnF82QtYb2xxEB9/HHB4Obs1uSIJiutqlHG7X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VwjNL4Rr8zmYYQ;
-	Fri,  7 Jun 2024 21:53:54 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VwkRm3vm5zmXJq;
+	Fri,  7 Jun 2024 22:41:56 +0800 (CST)
 Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1337C18007B;
-	Fri,  7 Jun 2024 21:58:31 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 0CBBF18007E;
+	Fri,  7 Jun 2024 22:45:56 +0800 (CST)
 Received: from [10.123.123.159] (10.123.123.159) by
  dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 7 Jun 2024 21:58:26 +0800
-Message-ID: <a2514345-f6e0-c081-d285-1ce0f8885291@huawei-partners.com>
-Date: Fri, 7 Jun 2024 16:58:21 +0300
+ 15.1.2507.39; Fri, 7 Jun 2024 22:45:51 +0800
+Message-ID: <3433b163-2371-e679-cc8a-e540a0218bca@huawei-partners.com>
+Date: Fri, 7 Jun 2024 17:45:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -33,163 +33,120 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 00/12] Socket type control for Landlock
-Content-Language: ru
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Subject: Re: [RFC PATCH v2 02/12] landlock: Add hook on socket creation
 To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>, <mic@digikod.net>,
-	<willemdebruijn.kernel@gmail.com>, <linux-security-module@vger.kernel.org>,
+CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
 	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
 	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
 	<konstantin.meskhidze@huawei.com>
 References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
- <20240604.c18387da7a0e@gnoack.org>
- <ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com>
- <ZmG6f1XCrdWE-O7y@google.com>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZmG6f1XCrdWE-O7y@google.com>
+ <20240524093015.2402952-3-ivanov.mikhail1@huawei-partners.com>
+ <ZlRI-gqDNkYOV_Th@google.com>
+ <3cd4fad8-d72e-87cd-3cf9-2648a770f13c@huawei-partners.com>
+ <ZmCf9JVIXmRZrCWk@google.com>
+Content-Language: ru
+In-Reply-To: <ZmCf9JVIXmRZrCWk@google.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
  dggpemm500020.china.huawei.com (7.185.36.49)
 
-6/6/2024 4:32 PM, Günther Noack wrote:
-> Hello Mikhail!
+6/5/2024 8:27 PM, Günther Noack wrote:
+> Hello!
 > 
-> On Thu, Jun 06, 2024 at 02:44:23PM +0300, Mikhail Ivanov wrote:
->> 6/4/2024 11:22 PM, Günther Noack wrote:
->>> On Fri, May 24, 2024 at 05:30:03PM +0800, Mikhail Ivanov wrote:
->>>> Hello! This is v2 RFC patch dedicated to socket protocols restriction.
+> On Thu, May 30, 2024 at 03:20:21PM +0300, Mikhail Ivanov wrote:
+>> 5/27/2024 11:48 AM, Günther Noack wrote:
+>>> On Fri, May 24, 2024 at 05:30:05PM +0800, Mikhail Ivanov wrote:
+>>>> Add hook to security_socket_post_create(), which checks whether the socket
+>>>> type and family are allowed by domain. Hook is called after initializing
+>>>> the socket in the network stack to not wrongfully return EACCES for a
+>>>> family-type pair, which is considered invalid by the protocol.
 >>>>
->>>> It is based on the landlock's mic-next branch on top of v6.9 kernel
->>>> version.
+>>>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
 >>>
->>> Hello Mikhail!
+>>> ## Some observations that *do not* need to be addressed in this commit, IMHO:
 >>>
->>> I patched in your patchset and tried to use the feature with a small
->>> demo tool, but I ran into what I think is a bug -- do you happen to
->>> know what this might be?
+>>> get_raw_handled_socket_accesses, get_current_socket_domain and
+>>> current_check_access_socket are based on the similarly-named functions from
+>>> net.c (and fs.c), and it makes sense to stay consistent with these.
 >>>
->>> I used 6.10-rc1 as a base and patched your patches on top.
+>>> There are some possible refactorings that could maybe be applied to that code,
+>>> but given that the same ones would apply to net.c as well, it's probably best to
+>>> address these separately.
 >>>
->>> The code is a small tool called "nonet", which does the following:
->>>
->>>     - Disable socket creation with a Landlock ruleset with the following
->>>       attributes:
->>>       struct landlock_ruleset_attr attr = {
->>>         .handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>       };
->>>
->>>     - open("/dev/null", O_WRONLY)
->>>
->>> Expected result:
->>>
->>>     - open() should work
->>>
->>> Observed result:
->>>
->>>     - open() fails with EACCES.
->>>
->>> I traced this with perf, and found that the open() gets rejected from
->>> Landlock's hook_file_open, whereas hook_socket_create does not get
->>> invoked.  This is surprising to me -- Enabling a policy for socket
->>> creation should not influence the outcome of opening files!
->>>
->>> Tracing commands:
->>>
->>>     sudo perf probe hook_socket_create '$params'
->>>     sudo perf probe 'hook_file_open%return $retval'
->>>     sudo perf record -e 'probe:*' -g -- ./nonet
->>>     sudo perf report
->>> You can find the tool in my landlock-examples repo in the nonet_bug branch:
->>> https://github.com/gnoack/landlock-examples/blob/nonet_bug/nonet.c
->>>
->>> Landlock is enabled like this:
->>> https://github.com/gnoack/landlock-examples/blob/nonet_bug/sandbox_socket.c
->>>
->>> Do you have a hunch what might be going on?
+>>>     * Should get_raw_handled_socket_accesses be inlined
+>> It's a fairly simple and compact function, so compiler should inline it
+>> without any problems. Mickaël was against optional inlines [1].
 >>
->> Hello Günther!
->> Big thanks for this research!
->>
->> I figured out that I define LANDLOCK_SHIFT_ACCESS_SOCKET macro in
->> really strange way (see landlock/limits.h):
->>
->>    #define LANDLOCK_SHIFT_ACCESS_SOCKET	LANDLOCK_NUM_ACCESS_SOCKET
->>
->> With this definition, socket access mask overlaps the fs access
->> mask in ruleset->access_masks[layer_level]. That's why
->> landlock_get_fs_access_mask() returns non-zero mask in hook_file_open().
->>
->> So, the macro must be defined in this way:
->>
->>    #define LANDLOCK_SHIFT_ACCESS_SOCKET	(LANDLOCK_NUM_ACCESS_NET +
->>                                           LANDLOCK_NUM_ACCESS_FS)
->>
->> With this fix, open() doesn't fail in your example.
->>
->> I'm really sorry that I somehow made such a stupid typo. I will try my
->> best to make sure this doesn't happen again.
+>> [1] https://lore.kernel.org/linux-security-module/5c6c99f7-4218-1f79-477e-5d943c9809fd@digikod.net/
 > 
-> Thanks for figuring it out so quickly.  With that change, I'm getting some
-> compilation errors (some bit shifts are becoming too wide for the underlying
-> types), but I'm sure you can address that easily for the next version of the
-> patch set.
-> 
-> IMHO this shows that our reliance on bit manipulation is probably getting in the
-> way of code clarity. :-/ I hope we can simplify these internal structures at
-> some point.  Once we have a better way to check for performance changes [1], we
-> can try to change this and measure whether these comprehensibility/performance
-> tradeoff is really worth it.
-> 
-> [1] https://github.com/landlock-lsm/linux/issues/24
+> Sorry for the confusion -- what I meant was not "should we add the inline
+> keyword", but I meant "should we remove that function and place its
+> implementation in the place where we are currently calling it"?
 
-Sounds great, probably this idea should be added to this issue [1].
+Oh, I got it, thanks!
+It will be great to find a way how to generalize this helpers. But if
+we won't come up with some good design, it will be really better to
+simply inline them. I added a mark about this in code refactoring issue
+[1].
 
 [1] https://github.com/landlock-lsm/linux/issues/34
 
 > 
-> The other takeaway in my mind is, we should probably have some tests for that,
-> to check that the enablement of one kind of policy does not affect the
-> operations that belong to other kinds of policies.  Like this, for instance (I
-> was about to send this test to help debugging):
 > 
-> TEST_F(mini, restricting_socket_does_not_affect_fs_actions)
-> {
-> 	const struct landlock_ruleset_attr ruleset_attr = {
-> 		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
-> 	};
-> 	int ruleset_fd, fd;
+>>>     * Does the WARN_ON_ONCE(dom->num_layers < 1) check have the right return code?
+>>
+>> Looks like a rudimental check. `dom` is always NULL when `num_layers`< 1
+>> (see get_*_domain functions).
 > 
-> 	ruleset_fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> 	ASSERT_LE(0, ruleset_fd);
-> 
-> 	enforce_ruleset(_metadata, ruleset_fd);
-> 	ASSERT_EQ(0, close(ruleset_fd));
-> 
-> 	/*
-> 	 * Accessing /dev/null for writing should be permitted,
-> 	 * because we did not add any file system restrictions.
-> 	 */
-> 	fd = open("/dev/null", O_WRONLY);
-> 	EXPECT_LE(0, fd);
-> 
-> 	ASSERT_EQ(0, close(fd));
-> }
-> 
-> Since these kinds of tests are a bit at the intersection between the
-> fs/net/socket tests, maybe they could go into a separate test file?  The next
-> time we add a new kind of Landlock restriction, it would come more naturally to
-> add the matching test there and spot such issues earlier.  Would you volunteer
-> to add such a test as part of your patch set? :)
+> What I found irritating about it is that with 0 layers (= no Landlock policy was
+> ever enabled), you would logically assume that we return a success?  But then I
+> realized that this code was copied verbatim from other places in fs.c and net.c,
+> and it is actually checking for an internal inconsistency that is never supposed
+> to happen.  If we were to actually hit that case at some point, we have probably
+> stumbled over our own feet and it might be better to not permit anything.
 
-Good idea! This test should probably be a part of the patch I mentioned
-here [1]. WDYT?
-
-(Btw, [1] should also be a part of the issue mentioned above).
-
-[1] 
-https://lore.kernel.org/all/f4b5e2b9-e960-fd08-fdf4-328bb475e2ef@huawei-partners.com/
+This check is probably really useful for validating code changes.
 
 > 
-> Thanks,
-> Günther
+> 
+>>>     * Can we refactor out commonalities (probably not worth it right now though)?
+>>
+>> I had a few ideas about refactoring commonalities, as currently landlock
+>> has several repetitive patterns in the code. But solution requires a
+>> good design and a separate patch. Probably it's worth opening an issue
+>> on github. WDYT?
+> 
+> Absolutely, please do open one.  In my mind, patches in C which might not get
+> accepted are an expensive way to iterate on such ideas, and it might make sense
+> to collect some refactoring approaches on a bug or the mailing list before
+> jumping into the implementation.
+> 
+> (You might want to keep an eye on https://github.com/landlock-lsm/linux/issues/1
+> as well, which is about some ideas to refactor Landlock's internal data
+> structures.)
+
+Thank you! Discussing refactoring ideas before actually implementing
+them sounds really great. We can collect multiple ideas, discuss them
+and implement a single dedicated patchlist.
+
+Issue: https://github.com/landlock-lsm/linux/issues/34.
+
+> 
+> 
+>>> ## The only actionable feedback that I have that is specific to this commit is:
+>>>
+>>> In the past, we have introduced new (non-test) Landlock functionality in a
+>>> single commit -- that way, we have no "loose ends" in the code between these two
+>>> commits, and that simplifies it for people who want to patch your feature onto
+>>> other kernel trees.  (e.g. I think we should maybe merge commit 01/12 and 02/12
+>>> into a single commit.)  WDYT?
+>>
+>> Yeah, this two should be merged and tests commits as well. I just wanted
+>> to do this in one of the latest patch versions to simplify code review.
+> 
+> That sounds good, thanks!
+> 
+> —Günther
