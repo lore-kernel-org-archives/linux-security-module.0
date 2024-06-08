@@ -1,265 +1,178 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB64A4DA08;
-	Fri,  7 Jun 2024 19:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4824ACA40;
+	Sat,  8 Jun 2024 08:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717789304; cv=none; b=b9NNDr2220Y3mZfanadLgykKUcSMMGaQAWY1egGLtc6UCmptCQGWGY+oDWgIVHnCmngRMhfS0IwCie7XcBBmvK0e9y1KJDYdCEtnGpyKqwKNz0PWMPBvtEEDNldm6l2tLUHEOkvdoRGz+1ddI980P1nWmY7WoHNEXxtiKS3wh0c=
+	t=1717833875; cv=none; b=tzRRYUN6sY2/WzKvaE42C/H8LOssuOkeEWIjHEY6QyKvg0pxxuP5vfss2AztXOVgwJgpLoLn+0+0MrlniFRG9TR6NVZca8ODZqjF6Ww2jO1VxUcjmnO92vMckHdhxhsHg660Tk5Lj3McHU6adsjAnt61YHAAuNf2DD294QG5FTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717789304; c=relaxed/simple;
-	bh=B5wpoJOAS1yCcn6AHTzXdnnzuJTU6sZuXi+k2Dj9i+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFOV5DRGsfb7EpQW6e/NAmNVG3xCcxPeZxrHC6T8+iz9uI3xq1OXs1TArCLR5ZE5A1FV92ILG7DpeaaJJzvdHvamIPDIkRwIqEx2ulaU9w/G3JcV/CwkW/LkLRh2DtOzum79a4polaVmjdmwIYM7j/SfriA2kCIts1u/9gat0hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOF3AI62; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOF3AI62"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f47f07acd3so23650615ad.0;
-        Fri, 07 Jun 2024 12:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717789302; x=1718394102; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
-        b=NOF3AI62XrtyTBIES/6hzDoX3p2n36YH3SG2CBvuMUEtDo8CZkXIvsbcqkTwqMQw1W
-         iU1eEk90o7tanzVcv3dFgFAQA57j0qh1TyzafPS2gl7G0itBrIWnM7bBSMXkzPxA0Ej/
-         DTQj1olYtfbcNH16IO0q3R0lsT6WlB/v6o2Oi/SOBhpCp9Qhkx3clU558dwJ9QE5h4D+
-         iBgnVsALFv2PFIihIZGUZVHq7KaajAUOJU/xIiDSudi/OcLXzN2aurDsBhidJ1Ql6oeK
-         +onOGKjbd+DH7BL1tnn8MOEOAf++sueZSgNqVwUJy8AtH4A4xTC0cX6KOyZyqn/o2Ys8
-         GyXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717789302; x=1718394102;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RJJyaYN0sPbNug3PyyX1s3PiVD+hYAyOGyOGOym/UzI=;
-        b=bPjrYQu2Sv7znyXP9kQ1NMaYZNTpmOFs/JNsr8U4fZ4Mi4rEYk1rY+Pwo/cB5svXGj
-         GiAc/7DlbBXIkjcVVKoHK9H/fOpTfdcr6FHa9YtfmjJtQt1uTf2n/15C95HC4ilcHz6g
-         MN3plOuaGkER/oSz4zmvFr3hZUmGBsf5FKul+Cuj7nRSPar5w7SMw0SBzWyILQB9H3Nh
-         Cl7CnxuLYMHspwb4rXOThEA7aqGb2s0hMNcMKYjcsQbt+Mj0lZNB+l/FJQwWsKv747WG
-         kksT0jeXiJxSMch9YL+/9MTG4FI8h271Kz3tSbK12HI0M0wRkQQaIdgGOTrbRChIdZnd
-         bKmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfwBc6f5SJ7dogp5Jvj0O9V8Dh6n1gv9dRRyxS/YTUuqIpWb+J97jhEjaMvfZDFtn9SpuTEHzL8H+VUp9xUMkHxxEoskV3vrTox5CBF5yrl2kSQJ9Nvn4vLcpPnwINK4tASrieROBQToZGXELx+bgOr+iHf0K7WkNYdg8gYm9xrVVl02bftdLyP/wh
-X-Gm-Message-State: AOJu0Yw0FluOPucJcnmDCDXUsSBAYpZA5QFDzlJRSVAdIzr4A+k8xI7B
-	FWL3KYOA/jLDXALA2yvX8q01fL+qBUqABmLS1L43OCSJc4bkAtVa
-X-Google-Smtp-Source: AGHT+IGscUbgi37qbqXXc5w7y2H8tq5p/gmvxvvmo71C1+DhTMvyNutUQJaTF7RIefH0R+RKzJ5Hlw==
-X-Received: by 2002:a17:903:2445:b0:1f6:70fe:76bf with SMTP id d9443c01a7336-1f6d02d1a99mr41772155ad.14.1717789301946;
-        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd769a2esm38410355ad.66.2024.06.07.12.41.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 12:41:41 -0700 (PDT)
-Date: Fri, 7 Jun 2024 13:41:39 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
-	netdev@vger.kernel.org,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
-Message-ID: <ZmNic8S1KtyLcp7i@tahera-OptiPlex-5000>
-References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
- <ZmLEoBfHyUR3nKAV@google.com>
+	s=arc-20240116; t=1717833875; c=relaxed/simple;
+	bh=Wrgs+ZE7cmrZBquFV5k8uyVqzNDWOPnRTG9hcmXBzsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IL/xbzbsuA88yT4XisyIYN95RFTd94BTBnydXfgjVlA77v4yp0gCaU8VkzK40BLG++qN27aHYGmREqAiWqHNj9Th/5k3THZrCgpxKddSI22FVQFSkmigXh1TykDMzrXrm7mNyznRBUpb2n3qj8Ut3Y7E/fnteEtc2q16gNExypQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vx9ZT5SdMz4f3jsq;
+	Sat,  8 Jun 2024 16:04:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F4FF1A016E;
+	Sat,  8 Jun 2024 16:04:27 +0800 (CST)
+Received: from [10.67.111.192] (unknown [10.67.111.192])
+	by APP1 (Coremail) with SMTP id cCh0CgDH4AmJEGRmD5OVOw--.47038S2;
+	Sat, 08 Jun 2024 16:04:27 +0800 (CST)
+Message-ID: <b4484882-0de5-4515-8c40-41891ac4b21e@huaweicloud.com>
+Date: Sat, 8 Jun 2024 16:04:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 01/11] bpf, lsm: Annotate lsm hook return
+ value range
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
+ Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>,
+ Khadija Kamran <kamrankhadijadj@gmail.com>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
+ John Johansen <john.johansen@canonical.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Shung-Hsi Yu <shung-hsi.yu@suse.com>
+References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
+ <20240411122752.2873562-2-xukuohai@huaweicloud.com>
+ <CAHC9VhRipBNd+G=RMPVeVOiYCx6FZwHSn0JNKv=+jYZtd5SdYg@mail.gmail.com>
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+In-Reply-To: <CAHC9VhRipBNd+G=RMPVeVOiYCx6FZwHSn0JNKv=+jYZtd5SdYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmLEoBfHyUR3nKAV@google.com>
+X-CM-TRANSID:cCh0CgDH4AmJEGRmD5OVOw--.47038S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWry8ur1xZr43Gr4rGr4Durg_yoWrAF43pF
+	sYka43KFWvyFWa9rn2yan8ZayakrWfCr47tr17KwnFy3WSqrnFva17tw4Y9FWrCry8K34j
+	9F4j93yrCw4DAa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-On Fri, Jun 07, 2024 at 10:28:35AM +0200, Günther Noack wrote:
-> Hello Tahera!
+On 6/7/2024 5:53 AM, Paul Moore wrote:
+> On Thu, Apr 11, 2024 at 8:24 AM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+>>
+>> From: Xu Kuohai <xukuohai@huawei.com>
+>>
+>> Add macro LSM_RET_INT to annotate lsm hook return integer type and the
+>> default return value, and the expected return range.
+>>
+>> The LSM_RET_INT is declared as:
+>>
+>> LSM_RET_INT(defval, min, max)
+>>
+>> where
+>>
+>> - defval is the default return value
+>>
+>> - min and max indicate the expected return range is [min, max]
+>>
+>> The return value range for each lsm hook is taken from the description
+>> in security/security.c.
+>>
+>> The expanded result of LSM_RET_INT is not changed, and the compiled
+>> product is not changed.
+>>
+>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+>> ---
+>>   include/linux/lsm_hook_defs.h | 591 +++++++++++++++++-----------------
+>>   include/linux/lsm_hooks.h     |   6 -
+>>   kernel/bpf/bpf_lsm.c          |  10 +
+>>   security/security.c           |   1 +
+>>   4 files changed, 313 insertions(+), 295 deletions(-)
 > 
-> Thanks for sending another revision of your patch set!
-Hello Günther, 
-Thanks for your feedback.
-
-> On Thu, Jun 06, 2024 at 05:44:46PM -0600, Tahera Fahimi wrote:
-> > Abstract unix sockets are used for local inter-process communications
-> > without on a filesystem. Currently a sandboxed process can connect to a
-> > socket outside of the sandboxed environment, since landlock has no
-> > restriction for connecting to a unix socket in the abstract namespace.
-> > Access to such sockets for a sandboxed process should be scoped the same
-> > way ptrace is limited.
-> > 
-> > Because of compatibility reasons and since landlock should be flexible,
-> > we extend the user space interface by adding a new "scoped" field. This
-> > field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
-> > specify that the ruleset will deny any connection from within the
-> > sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
-> > 
-> > Closes: https://github.com/landlock-lsm/linux/issues/7
-> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > 
-> > -------
-> > V3: Added "scoped" field to landlock_ruleset_attr
-> > V2: Remove wrapper functions
-> > 
-> > -------
-> > ---
-> >  include/uapi/linux/landlock.h | 28 +++++++++++++++++++++++
-> >  security/landlock/limits.h    |  5 ++++
-> >  security/landlock/ruleset.c   | 15 ++++++++----
-> >  security/landlock/ruleset.h   | 28 +++++++++++++++++++++--
-> >  security/landlock/syscalls.c  | 12 +++++++---
-> >  security/landlock/task.c      | 43 +++++++++++++++++++++++++++++++++++
-> >  6 files changed, 121 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > index 68625e728f43..d887e67dc0ed 100644
-> > --- a/include/uapi/linux/landlock.h
-> > +++ b/include/uapi/linux/landlock.h
-> > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
-> >  	 * rule explicitly allow them.
-> >  	 */
-> >  	__u64 handled_access_net;
-> > +	/**
-> > +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
-> > +	 * that is handled by this ruleset and should be permitted
-> > +	 * by default if no rule explicitly deny them.
-> > +	 */
-> > +	__u64 scoped;
+> ...
 > 
-> I have trouble understanding what this docstring means.
+>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>> index 334e00efbde4..708f515ffbf3 100644
+>> --- a/include/linux/lsm_hook_defs.h
+>> +++ b/include/linux/lsm_hook_defs.h
+>> @@ -18,435 +18,448 @@
+>>    * The macro LSM_HOOK is used to define the data structures required by
+>>    * the LSM framework using the pattern:
+>>    *
+>> - *     LSM_HOOK(<return_type>, <default_value>, <hook_name>, args...)
+>> + *     LSM_HOOK(<return_type>, <return_description>, <hook_name>, args...)
+>>    *
+>>    * struct security_hook_heads {
+>> - *   #define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
+>> + *   #define LSM_HOOK(RET, RETVAL_DESC, NAME, ...) struct hlist_head NAME;
+>>    *   #include <linux/lsm_hook_defs.h>
+>>    *   #undef LSM_HOOK
+>>    * };
+>>    */
+>> -LSM_HOOK(int, 0, binder_set_context_mgr, const struct cred *mgr)
+>> -LSM_HOOK(int, 0, binder_transaction, const struct cred *from,
+>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_set_context_mgr, const struct cred *mgr)
+>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transaction, const struct cred *from,
+>>           const struct cred *to)
+>> -LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
+>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_binder, const struct cred *from,
+>>           const struct cred *to)
+>> -LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
+>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_file, const struct cred *from,
+>>           const struct cred *to, const struct file *file)
 > 
-> If those are "handled" things, shouldn't the name also start with "handled_", in
-> line with the other fields?  Also, I don't see any way to manipulate these
-> rights with a Landlock rule in this ?
-
-.scoped attribute is not defined as .handled_scope since there is no
-rule to handle/manipulate it, simply because this attribute shows either
-action is permitted or denied. 
-
-> How about:
+> I'm not overly excited about injecting these additional return value
+> range annotations into the LSM hook definitions, especially since the
+> vast majority of the hooks "returns 0 on success, negative values on
+> error".  I'd rather see some effort put into looking at the
+> feasibility of converting some (all?) of the LSM hook return value
+> exceptions into the more conventional 0/-ERRNO format.  Unfortunately,
+> I haven't had the time to look into that myself, but if you wanted to
+> do that I think it would be a good thing.
 > 
-> /**
->  * handled_scoped: Bitmask of IPC actions (cf. `Scoped access flags`_)
->  * which are confined to only affect the current Landlock domain.
->  */
 
-This is a good docstring. I will use it. 
+I agree that keeping all hooks return a consistent range of 0/-ERRNO
+is more elegant than adding return value range annotations. However, there
+are two issues that might need to be addressed first:
 
-> __u64 handled_scoped;
-> 
-> >  };
-> >  
-> >  /*
-> > @@ -266,4 +272,26 @@ struct landlock_net_port_attr {
-> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
-> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
-> >  /* clang-format on */
-> > +
-> > +/**
-> > + * DOC: scoped
-> > + *
-> > + * Scoped handles a set of restrictions on kernel IPCs.
-> > + *
-> > + * Scope access flags
-> 
-> Scoped with a "d"?
-Scoped meant to point to .scoped attribute.  
-> > + * ~~~~~~~~~~~~~~~~~~~~
-> > + * 
-> > + * These flags enable to restrict a sandboxed process from a set of
-> > + * inter-process communications actions. Setting a flag in a landlock
-> > + * domain will isolate the Landlock domain to forbid connections
-> > + * to resources outside the domain.
-> > + *
-> > + * IPCs with scoped actions:
-> > + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
-> > + *   connect to a process outside of the sandbox domain through abstract
-> > + *   unix sockets.
-> > + */
-> > +/* clang-format off */
-> > +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
-> 
-> Should the name of this #define indicate the direction that we are restricting?
+1. Compatibility
 
-Since the domain of a process specifies if a process can connect or not,
-the direction of the connection does not matter. This restriction is the
-same as ptrace.
+For instance, security_vm_enough_memory_mm() determines whether to
+set cap_sys_admin by checking if the hook vm_enough_memory returns
+a positive number. If we were to change the hook vm_enough_memory
+to return 0 to indicate the need for cap_sys_admin, then for the
+LSM BPF program currently returning 0, the interpretation of its
+return value would be reversed after the modification.
 
-> If I understand your documentation correctly, this is about *connecting out* of
-> the current Landlock domain, but incoming connections from more privileged
-> domains are OK, right?
+2. Expressing multiple non-error states using 0/-ERRNO
 
-Yes, Incoming connections are allowed if they are from a higher
-privileged domain (or no domain). Consider two process P1 and P2 where
-P1 wants to connect to P2. If P1 is not landlocked, it can connect to P2
-regardless of whether P2 has a domain. If P1 is landlocked, it must have
-an equal or less domain than P2 to connect to P2. We disscussed about
-direction in [2]
-https://lore.kernel.org/outreachy/20240603.Quaes2eich5f@digikod.net/T/#m6d5c5e65e43eaa1c8c38309f1225d169be3d6f87
+IIUC, although 0/-ERRNO can be used to express different errors,
+only 0 can be used for non-error state. If there are multiple
+non-error states, they cannot be distinguished. For example,
+security_inode_need_killpriv() returns < 0 on error, 0 if
+security_inode_killpriv() doesn't need to be called, and > 0
+if security_inode_killpriv() does need to be called.
 
-> 
-> Also:
-> 
-> Is it intentional that you are both restricting the connection and the sending
-> with the same flag (security_unix_may_send)?  If an existing Unix Domain Socket
-> gets passed in to a program from the outside (e.g. as stdout), shouldn't it
-> still be possible that the program enables a Landlock policy and then still
-> writes to it?  (Does that work?  Am I mis-reading the patch?)
-
-security_unix_may_send checks if AF_UNIX socket can send datagrams, so
-connecting and sending datagrams happens at the same state. I am not
-sure if I understand your example correctly. Can you please explain a
-bit more?
-
-> The way that write access is normally checked for other files is at the time
-> when you open the file, not during write(), and I believe it would be more in
-> line with that normal "check at open" behaviour if we did the same here?
-
-It checks the ability to connect to a unix socket at the point of
-connecting, so I think it is aligned with the "check at point"
-behaviour. This security check is called right before finalizing the
-connection. 
-
-> 
-> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> > index 20fdb5ff3514..7b794b81ef05 100644
-> > --- a/security/landlock/limits.h
-> > +++ b/security/landlock/limits.h
-> > @@ -28,6 +28,11 @@
-> >  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
-> >  #define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
-> >  
-> > +#define LANDLOCK_LAST_ACCESS_SCOPE       LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
-> > +#define LANDLOCK_MASK_ACCESS_SCOPE	((LANDLOCK_LAST_ACCESS_SCOPE << 1) - 1)
-> > +#define LANDLOCK_NUM_ACCESS_SCOPE         __const_hweight64(LANDLOCK_MASK_ACCESS_SCOPE)
-> > +#define LANDLOCK_SHIFT_ACCESS_SCOPE      LANDLOCK_SHIFT_ACCESS_NET
->                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> I believe this #define has the wrong value, and as a consequence, the code
-> suffers from the same problem as we already had on the other patch set from
-> Mikhail Ivanov -- see [1] for that discussion.
-
-Thanks for the hint. I will definitly check this. 
-
-> The LANDLOCK_SHIFT_ACCESS_FOO variable is used for determining the position of
-> your flag in the access_masks_t type, where all access masks are combined
-> together in one big bit vector.  If you are defining this the same for _SCOPE as
-> for _NET, I believe that we will start using the same bits in that vector for
-> both the _NET flags and the _SCOPE flags, and that will manifest in unwanted
-> interactions between the different types of restrictions.  (e.g. you will create
-> a policy to restrict _SCOPE, and you will find yourself unable to do some things
-> with TCP ports)
-> 
-> Please also see the other thread for more discussions about how we can avoid
-> such problems in the future.  (This code is easy to get wrong,
-> apparently... When we don't test what happens across multiple types of
-> restrictions, everything looks fine.)
-> 
-> [1] https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com/
-> 
-> —Günther
-> 
