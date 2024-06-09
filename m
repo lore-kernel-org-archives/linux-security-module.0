@@ -1,257 +1,92 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0599348CC7
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Jun 2024 18:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63A11DA23;
+	Sun,  9 Jun 2024 19:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717957082; cv=none; b=MuTSQIN8N1NJIW0N2wPeNy7tfNeb9+SrOyi8R7dFlLwXAmn8PVonocWPVFerqUV+k5iuL9SEeUfhbL/nYTKx9WI/aNuEPR8Pr42meeAC6kfrWA9w/N7ImoUGPHRb7pSa5iwsCf4vTJvBvPSRKj+qJ0T1bHv2Cui6pu0XxQH6sGI=
+	t=1717960267; cv=none; b=gj3Ek+4LaFSp+GL1gDCbtT0973stWHQh3Kuf2hYRPmFhx8CJ7oz76rDniqQAfWypS+tdpKVcP3uYpXOX3kdwyQ0PQdbohGTH/I0D4FApk0+aGPkkTBGVnLHhmNG+z2y27SW1DxWoTak9ztrwYVytabW00DS2Gne44tfDEP47l5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717957082; c=relaxed/simple;
-	bh=X55LatrF7lvine1wfeeIWb35njHKNztVnss/n9y+HT4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xt3eLUI6I4TvCrShN7j35LI2EG+qsTVxEc1PAc23Xm6ugrbdRmg9K2XcdbGzp/vza9cuTgEmliOnHLLP0S8F3sGZz9WRc7gJGB3sQA9sIiYHTRhX9c/yu8MdsjRB0+YDHwmnxkZCMB/j/m4HEFts2FsNN2nZ+jMF9JXfZoCLWwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Or7xWhT1; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1717960267; c=relaxed/simple;
+	bh=YnJ6yY0kxkf1yXvMuHok1nLzJNsY6Nscx/FJTwHLG/w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=BGMdy7vox1+/M6G4RqIWVgjZE4h1/YHOQ8OGwipDUOlcKnZ7KQBuYpPVQrU2Jjgg9POZdx+QQuLEucu5Mw2jutLKJ22QfIBwCA1+xtrooDcLLwLGh/dzg+jMR4IMjZhLY5NfW27VC2r0+FOoRshnWN+uoa7lg6QgC48BqwKV1g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wtNdwUqv; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Or7xWhT1"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-62a087c3a92so36860207b3.2
-        for <linux-security-module@vger.kernel.org>; Sun, 09 Jun 2024 11:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1717957079; x=1718561879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BRnjcHDnfUUWSedC6UPSlPmw0hXWeHjZ2LgT3kdmxEs=;
-        b=Or7xWhT1L5obHvBFqPVxOmKkXHmVgJKKXUwj1ewxNUD9i74PoOmdaTl+sKLIjv549m
-         PqE4U0Bm57innElfkDVhxTT5Ta+J1A9d9ttpWbtJ514RT9GuxdlWHGf8UD1j5gaDPs5w
-         FNp4v0GTKxsYXye9zFFSEESUe8wy9e3ofwv2xpVK/FHYc/a/EySmGCmZ3nZaDLQJDHdR
-         NGeAu1ZX26Ma1cmb6I53dkFyXjJV/LYuRDIAewE4BfubsCX2ozemf7aXRKepX86kepPp
-         gxYjvm3Ul+Aw04sA5aamucwrl1fVVUHMiFeBPWIlskw1aNdXD9C0IL+kah6+JJX5V+39
-         MiAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717957079; x=1718561879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BRnjcHDnfUUWSedC6UPSlPmw0hXWeHjZ2LgT3kdmxEs=;
-        b=nIYh0NhKrmCFYSGB3Qtw3dDuD4vl75MAdlzRpp67ARUjfKfrCTSTa46wHkGoZrZLH8
-         OE2LWs2+EptkDmKn1a0g3J16Ftjy6JKHI0Nkppxms4FblXY67PTk/ej/iOifVU4xlJb+
-         T4yzPHCQoCpFBhb2lN2Ykd2rmfWBPlU1Dgdfrg9pfTQTUIVF6sxDoBab2+uHRtmJj6eW
-         VzsEc5FT+hPlC+YO3rosQP1VdkMYHszBy7iXbfip0GriaGFNts4iLaV02znI2Oek4Hkf
-         rH6tavp4LdPkiLnT+s3AR+cNAiwM4DeUSdJuJgBHoFXLGAK91A2u7UEb6mPR1ID2n/Vp
-         MRBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBUTrgPFjae5f4XLvqt+OfHQWlhQ6Hp1tqAFNnZwBOACfUfK6ZkG0iJBwLKcxDXOJ2bNiXHbbM623+eRDNmNlqhYGmRKZ2B+87VQHUUo+Dwq0yBFDj
-X-Gm-Message-State: AOJu0YzUcXjItyoqVktDMoeKZIA8meZCya1Vq5/a3EA5HvxJU/L2lSFo
-	gGY0OKllO2HqtJ34sdwb05SFcdKPolEAaWMjL4hk0L3Upxq0yfbimjoSDdli1bWpZO3rdt3ZzaS
-	C+Fuqy1MdWFTCtoNVSTVNj0LC7LVwXNdj34Qs
-X-Google-Smtp-Source: AGHT+IEyzvmGOs9XjT3k7MrlvW/EocTlySBeSBNcxienTHGSNtoBSEmGziQiL7XZU5YCYB4GYQhXjHwIyTCyMd7fvp4=
-X-Received: by 2002:a0d:d5c4:0:b0:62c:f772:2af4 with SMTP id
- 00721157ae682-62cf7722bafmr21708217b3.8.1717957078225; Sun, 09 Jun 2024
- 11:17:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wtNdwUqv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717960233; x=1718565033; i=markus.elfring@web.de;
+	bh=YnJ6yY0kxkf1yXvMuHok1nLzJNsY6Nscx/FJTwHLG/w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wtNdwUqvGO7vuU1E3AgUWCHdAoLpEYY7SUz0KUO5yyBkqbiXPPTU7H1HuONe6Mll
+	 1JEcKggM9gnlLXGcqFEvzpu50Xv7AY2UYijFmN8p9L1enXgrZTHVdsI2bXOjoMfzC
+	 3PUoXJd6PoemlG8B8GCeH/ZIE1Tz6KAQRo4sKjVSQhn8U/GggGPSCn+mBAVmV6uvE
+	 XkyZz/GUkX8+MullBkjRJY23BHxnP3FDLLoH2Qdn9E7x6OGdZ7aGWAczvFDEUBD9R
+	 EJVLopDTrQRTHZMpfOG4ShngZNcXPAcyrtXVDzOaWEtSpj5pcZ25iZA8aC1SpPli5
+	 HCsl9wCnUhJ1kjm61w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTfol-1rqhGf3udp-00NdWW; Sun, 09
+ Jun 2024 21:10:33 +0200
+Message-ID: <d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de>
+Date: Sun, 9 Jun 2024 21:10:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
- <20240411122752.2873562-2-xukuohai@huaweicloud.com> <CAHC9VhRipBNd+G=RMPVeVOiYCx6FZwHSn0JNKv=+jYZtd5SdYg@mail.gmail.com>
- <b4484882-0de5-4515-8c40-41891ac4b21e@huaweicloud.com> <CAADnVQJfU-qMYHGSggfPwmpSy+QrCvQHPrxmei=UU6zzR2R+Sw@mail.gmail.com>
- <571e5244-367e-45a0-8147-1acbd5a1de6f@schaufler-ca.com>
-In-Reply-To: <571e5244-367e-45a0-8147-1acbd5a1de6f@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 9 Jun 2024 14:17:47 -0400
-Message-ID: <CAHC9VhQ_sTmoXwQ_AVfjTYQe4KR-uTnksPVfsei5JZ+VDJBQkA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 01/11] bpf, lsm: Annotate lsm hook return
- value range
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Xu Kuohai <xukuohai@huaweicloud.com>, 
-	bpf <bpf@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Khadija Kamran <kamrankhadijadj@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	John Johansen <john.johansen@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Howard Chu <howardchu95@gmail.com>, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?=
+ <gnoack@google.com>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Namhyung Kim <namhyung@kernel.org>
+References: <20240608172147.2779890-1-howardchu95@gmail.com>
+Subject: Re: [PATCH] perf trace: Fix syscall untraceable bug
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240608172147.2779890-1-howardchu95@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:loiKlUeVG/cvD/6mt7zFwk7DiMngcfkEpvsa9j5Cn8qj94nZXB5
+ FEBticdnDFBidkOYQiIs0t5ArX9n6wQ8E/dK7g4xsNGQ2PIix6ZxzBoai3pVBjoYa/gYUJY
+ qdjBgV2RBPM/lDkVBH6UixCtaFAZRfT1oXUM4hxsz2oC9Swls+zlhUCadXJYlrPWqD6JCiW
+ LlNLGVydHqj0AHgMMVdXA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fyQ3HizanSg=;BaqCYqzTT646PfgdVySuUOhIlHj
+ qTNb4j59hNxbLFXHPHBAL4asH3TInev08YLW90ZKo9b+mmTjqSPZ1wMFMSFPlT2vTlozZiYfU
+ SmX0FDztLbEZSuIR3dswbEJDSJ/scO13Lqd3OXUpu5fpJZN3FkqbetaE3+tPNX6LnOzJaTM+i
+ 086ds2yM2K7sQsaM1p5nFALvlK7mNRSjgmSOky05b7JkrOmgsTW66fB72t5anMYdmnBn2WRIz
+ TksYt54asCPCiF9tPXyT/W8RmYClZ36FFUjvQecPcyLd/03eZqNyL8HezsTa06Z15DyT1pVVZ
+ GVQSPUgoTIG3e4DVCK8QZdxMDESEerWi+I6qtvCi5RpK7svH1ToD2kXYW6prQKNpZ8NUgIrnw
+ YVAJu9cTV75DA7A3Jkvaf62Uf2PrhWkJnnjQ/kM+TWY3A/tM2AZOwO/c+YuDlOzTkprRsj8Lo
+ zUDHCzf6VyBqjVwg3XDL3VmCAv1T++cX6or8KZMDJVZnP5MCdSU0PAoje8IUZ1k4ThmnFwGEM
+ HvUED3A5+q5CeNfVk/9xx6b8eFsk2yZk2DerpJpswuGGd0b2EIyqvSlr73CdJ9VEJyyxslENo
+ XlRCV3BaGKXZF0GLR4wjmSv2sLeMPl4XMvlqMv7TaGVuOntx0ari6qlKnT8zI/JQJGi7Dpsyx
+ Fy3zAwRYugFbRjxtvcjXXCggLgQLYPk1GYV1RrS06fxi4eCNOB9SsP5YkJZaAVLIOX7BTMbHz
+ zhkKS5IEi6R/i1Itw18ZYn3ZJ1FWMFC38ITW67pHWCNyuU5DkmYGJHKMXPeA4Zm5sQB8Afchl
+ y+3uIVynZB0ZQELsfp2PvG5dLyJJkCahX1iQkjO1/bbfQ=
 
-On Sun, Jun 9, 2024 at 1:39=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 6/8/2024 6:54 AM, Alexei Starovoitov wrote:
-> > On Sat, Jun 8, 2024 at 1:04=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.=
-com> wrote:
-> >> On 6/7/2024 5:53 AM, Paul Moore wrote:
-> >>> On Thu, Apr 11, 2024 at 8:24=E2=80=AFAM Xu Kuohai <xukuohai@huaweiclo=
-ud.com> wrote:
-> >>>> From: Xu Kuohai <xukuohai@huawei.com>
-> >>>>
-> >>>> Add macro LSM_RET_INT to annotate lsm hook return integer type and t=
-he
-> >>>> default return value, and the expected return range.
-> >>>>
-> >>>> The LSM_RET_INT is declared as:
-> >>>>
-> >>>> LSM_RET_INT(defval, min, max)
-> >>>>
-> >>>> where
-> >>>>
-> >>>> - defval is the default return value
-> >>>>
-> >>>> - min and max indicate the expected return range is [min, max]
-> >>>>
-> >>>> The return value range for each lsm hook is taken from the descripti=
-on
-> >>>> in security/security.c.
-> >>>>
-> >>>> The expanded result of LSM_RET_INT is not changed, and the compiled
-> >>>> product is not changed.
-> >>>>
-> >>>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
-> >>>> ---
-> >>>>   include/linux/lsm_hook_defs.h | 591 +++++++++++++++++-------------=
-----
-> >>>>   include/linux/lsm_hooks.h     |   6 -
-> >>>>   kernel/bpf/bpf_lsm.c          |  10 +
-> >>>>   security/security.c           |   1 +
-> >>>>   4 files changed, 313 insertions(+), 295 deletions(-)
-> >>> ...
-> >>>
-> >>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_=
-defs.h
-> >>>> index 334e00efbde4..708f515ffbf3 100644
-> >>>> --- a/include/linux/lsm_hook_defs.h
-> >>>> +++ b/include/linux/lsm_hook_defs.h
-> >>>> @@ -18,435 +18,448 @@
-> >>>>    * The macro LSM_HOOK is used to define the data structures requir=
-ed by
-> >>>>    * the LSM framework using the pattern:
-> >>>>    *
-> >>>> - *     LSM_HOOK(<return_type>, <default_value>, <hook_name>, args..=
-.)
-> >>>> + *     LSM_HOOK(<return_type>, <return_description>, <hook_name>, a=
-rgs...)
-> >>>>    *
-> >>>>    * struct security_hook_heads {
-> >>>> - *   #define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NA=
-ME;
-> >>>> + *   #define LSM_HOOK(RET, RETVAL_DESC, NAME, ...) struct hlist_hea=
-d NAME;
-> >>>>    *   #include <linux/lsm_hook_defs.h>
-> >>>>    *   #undef LSM_HOOK
-> >>>>    * };
-> >>>>    */
-> >>>> -LSM_HOOK(int, 0, binder_set_context_mgr, const struct cred *mgr)
-> >>>> -LSM_HOOK(int, 0, binder_transaction, const struct cred *from,
-> >>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_set_context_mgr=
-, const struct cred *mgr)
-> >>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transaction, co=
-nst struct cred *from,
-> >>>>           const struct cred *to)
-> >>>> -LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
-> >>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_binder=
-, const struct cred *from,
-> >>>>           const struct cred *to)
-> >>>> -LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
-> >>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_file, =
-const struct cred *from,
-> >>>>           const struct cred *to, const struct file *file)
-> >>> I'm not overly excited about injecting these additional return value
-> >>> range annotations into the LSM hook definitions, especially since the
-> >>> vast majority of the hooks "returns 0 on success, negative values on
-> >>> error".  I'd rather see some effort put into looking at the
-> >>> feasibility of converting some (all?) of the LSM hook return value
-> >>> exceptions into the more conventional 0/-ERRNO format.  Unfortunately=
-,
-> >>> I haven't had the time to look into that myself, but if you wanted to
-> >>> do that I think it would be a good thing.
-> >>>
-> >> I agree that keeping all hooks return a consistent range of 0/-ERRNO
-> >> is more elegant than adding return value range annotations. However, t=
-here
-> >> are two issues that might need to be addressed first:
-> >>
-> >> 1. Compatibility
-> >>
-> >> For instance, security_vm_enough_memory_mm() determines whether to
-> >> set cap_sys_admin by checking if the hook vm_enough_memory returns
-> >> a positive number. If we were to change the hook vm_enough_memory
-> >> to return 0 to indicate the need for cap_sys_admin, then for the
-> >> LSM BPF program currently returning 0, the interpretation of its
-> >> return value would be reversed after the modification.
-> >
-> > This is not an issue. bpf lsm progs are no different from other lsm-s.
-> > If the meaning of return value or arguments to lsm hook change
-> > all lsm-s need to adjust as well. Regardless of whether they are
-> > written as in-kernel lsm-s, bpf-lsm, or out-of-tree lsm-s.
+> This is a bug found when implementing pretty-printing for the
+> landlock_add_rule system call, I decided to send this patch separately
+> because this is a serious bug that should be fixed fast.
+=E2=80=A6
 
-Yes, the are no guarantees around compatibility in kernel/LSM
-interface from one kernel release to the next.  If we need to change a
-LSM hook, we can change a LSM hook; the important part is that when we
-change the LSM hook we must make sure to update all of the in-tree
-LSMs which make use of that hook.
+Would you like to add the tag =E2=80=9CFixes=E2=80=9D accordingly?
 
-> >> 2. Expressing multiple non-error states using 0/-ERRNO
-> >>
-> >> IIUC, although 0/-ERRNO can be used to express different errors,
-> >> only 0 can be used for non-error state. If there are multiple
-> >> non-error states, they cannot be distinguished. For example,
-> >> security_inode_need_killpriv() returns < 0 on error, 0 if
-> >> security_inode_killpriv() doesn't need to be called, and > 0
-> >> if security_inode_killpriv() does need to be called.
-> > This looks like a problem indeed.
->
-> Hang on. There aren't really three states here. security_inode_killpriv()
-> is called only on the security_inode_need_killpriv() > 0 case. I'm not
-> looking at the code this instant, but adjusting the return to something
-> like -ENOSYS (OK, maybe not a great choice, but you get the idea) instead
-> of 0 in the don't call case and switching the positive value to 0 should
-> work just fine.
->
-> We're working on getting the LSM interfaces to be more consistent. This
-> particular pair of hooks is an example of why we need to do that.
-
-Yes, exactly.  Aside from the issues with BPF verification, we've seen
-problems in the past with LSM hooks that differ from the usual "0 on
-success, negative values on failure" pattern.  I'm not saying it is
-possible to convert all of the hooks to fit this model, but even if we
-can only adjust one or two I think that is still a win.
-
-As far as security_inode_need_killpriv()/security_inode_killpriv() is
-concerned, one possibility would be to shift the ATTR_KILL_PRIV
-set/mask operation into the LSM hook, something like this:
-
-[WARNING: completely untested, likely broken, yadda yadda]
-
-/**
- * ...
- * Returns: Return 0 on success, negative values on failure.  @attrs
-may be updated
- *          on success.
- */
-int security_inode_need_killpriv(*dentry, attrs)
-{
-  int rc;
-  rc =3D call_int_hook(inode_killpriv, dentry);
-  if (rc < 0)
-    return rc;
-  if (rc > 0)
-    attrs |=3D ATTR_KILL_PRIV;
-  else if (rc =3D=3D 0)
-    attrs &=3D ~ATTR_KILL_PRIV;
-  return 0;
-}
-
-Yes, that doesn't fix the problem for the individual LSMs, but it does
-make the hook a bit more consistent from the rest of the kernel.
-
---=20
-paul-moore.com
+Regards,
+Markus
