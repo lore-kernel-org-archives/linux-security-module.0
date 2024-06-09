@@ -1,377 +1,214 @@
-Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86EA2C181;
-	Sun,  9 Jun 2024 10:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7388481D5
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Jun 2024 17:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717929658; cv=none; b=B88DVSSn6NFfVZKO+yOqq4igTnY/LQeok3eZWGnqrXEjX9BZsSsiYKe3sjgfsMuYu9JsFxJdddGnwp8FdxG+5Wzm+/6veE6fXsVLCFourju/b6ccc8hkp8Qr+zp56jh7eSKha8gPaETmqC2EllrJkc9yS2BYTtABuCV8TW1mSDs=
+	t=1717954766; cv=none; b=uRyngjXlV+ibdXYWvsY+aBW3wsLtWx5fiIBLE/6FEA7R/0qFqC5uxW7ALZubrRQTSSBHnEX0CekmEqzAN/bTioV9JufVf8nM1FgBGwJpcdoeo9Ogw5Q0aUQY6G2ssQeTuXeUAHqaZObLK9MKs+9elwtk10Lfw/SpAWM+zumnynY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717929658; c=relaxed/simple;
-	bh=Te9b2tTgFLIjn+G+t41oNEnaKLeIvcknA3SYrFEQ1WA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UaAlVMZHGXpCRt6hmqsJ26uAjVL1cSedgRv6Eqxhegn0e+PHigmudChHUsaXynCzqdVzb+Og4a8SAy/iQJI1uhHYgugRww8LrwjRerzSOJfQXN0ub8hmSx5Zh4xXt+7J1nADeYx9ukx5+GpMJEG/Tamu8VAD0sp0C1654ep2Kcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=UqNy3PyQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mGpmevGf; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+	s=arc-20240116; t=1717954766; c=relaxed/simple;
+	bh=WtcOlU3lT7T0UfV56WLWVPOL0HZ6Hndj14wJ+gAc1Zk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hJs0IrG7kqhI0w7XaXU/YAMk0fWXT2ZbcQptOuYK6A435aaPBHkM8TOfzTim1IMBtVQHlNTrf7MEC93A+OyF3StIoCsl7Y8LuEF0Q99GnHHhEH4nbfHSiL6r2RrZSSw0BnJYUdtHDEt44IgA7cakKhcWW521ywmzSxoGfQJ7k8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PP7l5vun; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="UqNy3PyQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mGpmevGf"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailflow.nyi.internal (Postfix) with ESMTP id D663B200230;
-	Sun,  9 Jun 2024 06:40:55 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 09 Jun 2024 06:40:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1717929655; x=
-	1717933255; bh=XpZy3c6xoasiD2Syf1e7KNVl4niFLU+xqznRa2cRaQY=; b=U
-	qNy3PyQhOH732E7pX54uA3DCObeosJ+3w1bM4h6PkM2TyOXtPe/X0C7NeDBarAuo
-	bscAip/ZjGHinjSrMO965JZL9l3X+NmdjU8lc4p0JMQ1kCBtPfZzesdnYahUht/Y
-	SmpLd4vgq1rB96M7R1mpl0jYE8AeKKwqc5DVGUObjxfkeNdWEvf1P9G9MFmlOXih
-	WsmRaPVhEutfR5aL4ufVoG7BY3sxlZNu7WEaiifcC+9RTuazDpTIfhDwbyRQdU76
-	8BB1Epbsh7d5SYG4MbMELRbmH6s79Znf3/qb8BC50Bgvu74JM4HoZd8BXgz0DePe
-	BTd+aBrY9kbdKRaP4bUuw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717929655; x=
-	1717933255; bh=XpZy3c6xoasiD2Syf1e7KNVl4niFLU+xqznRa2cRaQY=; b=m
-	GpmevGfJ6mIMqMWXF3GfuRbVuOA2qHUusWXetaTnZatmccDgLfYt9+gS8WJKZ7Vt
-	sVvca/vuyK2rJxBkV+rov0Rv9vhlzkbXlOZeQ3W7UD5V3xUr9bHqYbXdrD90kW8T
-	mfIcvLN9T/J4zqKyxGkMok8jg2c0FsbVkpZoIbqXOmOpRQOnjybVqC8UkVKGPmNB
-	mM/wMt3j1YfbluAoPiUhWXFbadxAJSCEXovKZtA+IhaBy83V4Yz/GJNv6uzAznAR
-	AFcbxiXoutSy5hAYpQ+RtGJH5UywxdNvOTOxhQssELcFsrOOyJbK2WXfuPZGUK4U
-	3mxF0P6YInPFOZp55XBhQ==
-X-ME-Sender: <xms:t4ZlZo9IflglwKsxJcGvS3ziOgS3xaFQ3VAEPAvKh2WceeCzEUNgog>
-    <xme:t4ZlZgt7v1BD6pvWbJOGxp6P5oYLtYMpFdUZy2UT3lyQgTxlsuyR0JVSY1YAGAXzp
-    KNyX13OkMH-TQlTJi0>
-X-ME-Received: <xmr:t4ZlZuCdl1nCithzrSs8q0izLPKgeIvOzF_PakLTzqgfYeSWrB_dYAsBh04Z_EpsRuex68Q2_rYYgazXh4ACiZmeU1Okl6JH5W1pMBtN3TFaVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedtjedgfeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnheptdejhfelheejfeeutdekgeevueetkedtgfelkeejgfffhefgveet
-    teffueegvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:t4ZlZofkyGw2LmydXXIp1AiE0O7P2nlor4vGHogskKoVXSarHEv-Sw>
-    <xmx:t4ZlZtNbkskkmKxSAeENTXJ02YNaLtZjd1ZaESnZb-hQYzZqXfracg>
-    <xmx:t4ZlZilHO3NbxrikZ_7DiBnaQ0YRebK71s0iefnRYqqYZFyYIlNaEw>
-    <xmx:t4ZlZvuzley0VgQKAlY8NKi0iYlWKutjzNB7QguBu32VGnSBYnHPSg>
-    <xmx:t4ZlZrvwhdkm2Bf48stWRVtlfQLTgSRRtev1LlVvhO7YtQ3-Y0YKwnfH>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 9 Jun 2024 06:40:51 -0400 (EDT)
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: brauner@kernel.org,	ebiederm@xmission.com,
-	Jonathan Corbet <corbet@lwn.net>,	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,	"Serge E. Hallyn" <serge@hallyn.com>,
-	KP Singh <kpsingh@kernel.org>,	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@google.com>,	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,	Joel Granados <j.granados@samsung.com>,
-	John Johansen <john.johansen@canonical.com>,
-	David Howells <dhowells@redhat.com>,	Jarkko Sakkinen <jarkko@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: containers@lists.linux.dev,
-	Jonathan Calmels <jcalmels@3xx0.net>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	keyrings@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM hooks
-Date: Sun,  9 Jun 2024 03:43:37 -0700
-Message-ID: <20240609104355.442002-5-jcalmels@3xx0.net>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240609104355.442002-1-jcalmels@3xx0.net>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PP7l5vun"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717954756; bh=ppUCW70evrkwRUKJY2kF8Vr2jyP3snB9PtrR8i8bOAI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PP7l5vunx08P/H27ZY2yIxQ4EEvIrH5N4isMIkwHb26FDvbMIb/MwWOWMK+lW6lMxHNdS4o/m0p/GbmjY53jFmR9Ic6MqSnZAnnyzfdOfrYyOoNqu5p1ujd8L3M/Lln861Vq7yU1j1iW3TgMSCF1vwS2+znOAkvM51O1EYWstZgNgI3WpCBnhqnMYFWq9vkkhvhiQuBqcLp5Ry6fUScyzQdm3TPSrqPgwUfV2icsl0ZfHVDjfhZAnQQnXREcSbMaTQeU+rXpbLDqzmLCKJ2CS9m0P3xXEx7nbCPAI4ZVxIuXWX5BJ1ti+0K71gRmSPXIehOxfvldtPYaWBoEr6CDNg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717954756; bh=glxSNiUD9PY6qqQScAb1/JtuMYdiPJCUWXKOQk+hq2j=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=P9e2UGgl5n920oBiZspe6NUYYfBxR1v7FVswknSkeNtx6rWKamMm+rOyCLIQz3NB+id13Ll05fGJFh5GWdxempMIHRCLZ2foIqu2KWEEB1YscNpqYjZMyc7QuuByrG6Idblv2aOBaQdlIKbnq9Plt/aure5hikX9c09U8ck5tZ/ulzxSNKc4lghp48FMzQaO/6sblZJKrWunlP8qCTfc6uCtC06pqDcCka1VJfrwTcexi5Hi9kKEnyIgkfBlx/tgbo6QQ7ZWbzyiP0nZaDPNdzb1+9xj2/Lo3VJTZf/PLyXf48q4/k4yujp2PMEoBCczAUvVl8DMFUYmKXzaYpoeEQ==
+X-YMail-OSG: 8XR4DKYVM1kYAOIv9N_h5U97TZsAlx1NG2pQDQFk2LbW8L5zoQWVGMefyV3y_cJ
+ JRPv1h1vDnfglUB9O6WtBFLPb.p158JWZdu.X6gYD0I6OhOn57gQJVdUVnqI3zCZDZDrRHlMLSbq
+ GZY0UXRPoCF5fLlk.A4H_lf73LFs1Hg2uYhYu0So5ckWLkWvE2lx1eSQc.nog6TXogjcKakuA0oN
+ gWikG8_rF_UR5RdtOL6AmHhfc60v.6BU9Aq6Rwr18rIlojRSFHqZCw8.WMPx0yPP8GYbNByRrX_3
+ 42loFwnjGOWd1iMmkN9TGLxrprQ4rEeIddLF4I8VnT80op7J8qu0Vk3tDyt.dRvCgGlDswSYlxSe
+ lX7zzDBDwpi2K6fidKDKcCBoQfZJ1reynae0PLxco6MjbARSMCQ0ww9YyMwS5AyVg7qMBbNz4cM_
+ bS1NgKAIkWyS30Ga1zEslS11NjIKQ3Fu4uCKqNeb0TSDhOjhBp7ZY28jtEyTXFDQehyTbie4RUZN
+ yFUNCSvF.aFnz3.3G_cCNp0lhNg..lGD26jEp17DSdD3AQdcp2Zr5CurNtifd5ePZg.4nH6Nzv39
+ jMA2Y.JVbJYlbggu2OKgZ44f3hT2b0fp9pD1cJ6N31zQhp9qNclJ7VgRY48sRl4.a9NLGmvRAhFS
+ SsOnsjFWVRMT7kS3rqXLc3OtozWmMIsOBunhznKo3t_2f870fSNqVvsHY9DwnyLjwOBr30_M0X7H
+ UvYg377FeCqIajknjtBVGnqm3FK1DgzocYZ_ZWrwKzpWIrQYJz0WgEVng2Hq7tLat.PZzAfRWuwR
+ dCOBnO6JlxTMgXMU1tVE.kp_zx1olON8bbMHZeb7PGc1jG8f0pSdRQqFzcr916PW58p0jcToJQB7
+ a1CYd5JTTnEPXmE4awNsQPwCspTLUm3tHEQ9eaWpzyBT4u8BPvNr0UEI.1hfFKqJjIOA8tb_Obg8
+ Zr4yCrGgqihLAgn6BMhf2W7ANPV2YmaCvmLvEPJA0VYkoFWY2VaIpiTR0MhaYek8M7O636Kq3Hva
+ AAqSNWW1yZ27HqfqpwTQdXuytVHwg_Z9L_OngFhnLqsOJDZUkCfOAurVY5VgaaYMEVI4lLC4y00A
+ vBlR5k8M9_OeDU.ia_9Gl38xT34Bj8uBbyBDLXw7EqtanyXsn4ItRiHVdbLIqxceP55rNpmJj5Oj
+ duo59VtBo8mrLVq1qo0Afz0QN10ZGQfJFdDEyFKTGVqQnWOJoqnHc30SJPuKjL9u4bVaTfTXvd2W
+ uHsJnriEsWEuVAQXCGKqJowBlx88HHI_T7F3BhXvKg6sFL5LOFgnNWuFUT.FvJi2L0vIkAzLzgCu
+ LH66XC43Kf.XY6zDEQ0MOnjTkEbsRHE8ZIemkjar_OIG6REBswOJvOyfKPC5J8W8aQ4QOFAluumC
+ 0D8buQlc5Cqibz0gzOZb1q4HyIoJiAcGKFE7uthmTJxRPXRNGvwC0.y3_8hTyVBSbG5Tn_kv0TeY
+ uwx9WhhgLypXbyOGR68u9WUYTxN3mMKIxY0NJQ3cBnsNmpyyPGECmA81baNfnuCNAf6XBINIyY1H
+ MFUQbU_2REfRariLwSmZJZKJpwKutIHm8H7yFo7tERHzwVTrizIJHUvrq5eif9bKjUStkmY17.MP
+ hnTO35vNXvzd.ev5lY2vGy9dGSioRfktD2JcfRKY3X6zZa8EcF3pyjku4hbcQD7cDAmjV_s5m6oJ
+ 5D_IQCC_1C29JUtxiNPWvQEcbxsqmY2wD9biwg9ix_3kUlhvMIvWb1qKNFvdMMg_DqboaIezPi7q
+ _VtmJI.ZKYMbhVKxTxW9GWxBhCaEpiZQOrqMTCq6VDjt0LY0AcpwYu18957q_vUj9gagwu6kHkRJ
+ trMgjO.a62jv1PKKkpHvCesRLeAKXjEuJhatW1_bwuizpqdzfV.06.uEeWawm8099EzW.4l4jSmh
+ myunShdUSpT.iEKEyhUPxHG8BcAuF6sNrAsMMtDUcjckWIaCDdS2qWZaMBBKEcvxgBKBOVn8thZc
+ 6Zi8G0Pzs40FWPSjH8ZK9ZBCCr7KnDeR_waUU1b37w24ZCiqQPhn1aHBs0EwwpW2BGVQGP5JxK4g
+ qNpUX8BCywoTjs2Emb3qB.uVcEaoUfs3TtGaleA_lvlS8WXQjlBzGwdt9SqsWuWjhajCmiJhqXM.
+ 4vAtiLPkT9AVzL.z8lVWtz8v1.6XEa55VvqtcloY1V_rvPcOPgNK68NQS03ueNqBfnLGqFsXbhCC
+ xb4eUR1_Uvc5myJqqJ3JyIzYlX_jNLR77BflinbMv6kysgYAdgIVaRr3_.xXASDo-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 12d0376b-fd35-4153-ae54-1396c68eaff7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Sun, 9 Jun 2024 17:39:16 +0000
+Received: by hermes--production-gq1-59c575df44-xmm9l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9ea7126d3e636458f12b466243e622fa;
+          Sun, 09 Jun 2024 17:39:11 +0000 (UTC)
+Message-ID: <571e5244-367e-45a0-8147-1acbd5a1de6f@schaufler-ca.com>
+Date: Sun, 9 Jun 2024 10:39:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 01/11] bpf, lsm: Annotate lsm hook return
+ value range
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: Paul Moore <paul@paul-moore.com>, bpf <bpf@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>,
+ LSM List <linux-security-module@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
+ Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>,
+ Khadija Kamran <kamrankhadijadj@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
+ John Johansen <john.johansen@canonical.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
+ <20240411122752.2873562-2-xukuohai@huaweicloud.com>
+ <CAHC9VhRipBNd+G=RMPVeVOiYCx6FZwHSn0JNKv=+jYZtd5SdYg@mail.gmail.com>
+ <b4484882-0de5-4515-8c40-41891ac4b21e@huaweicloud.com>
+ <CAADnVQJfU-qMYHGSggfPwmpSy+QrCvQHPrxmei=UU6zzR2R+Sw@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAADnVQJfU-qMYHGSggfPwmpSy+QrCvQHPrxmei=UU6zzR2R+Sw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-This patch allows modifying the various capabilities of the struct cred
-in BPF-LSM hooks. More specifically, the userns_create hook called
-prior to creating a new user namespace.
+On 6/8/2024 6:54 AM, Alexei Starovoitov wrote:
+> On Sat, Jun 8, 2024 at 1:04 AM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+>> On 6/7/2024 5:53 AM, Paul Moore wrote:
+>>> On Thu, Apr 11, 2024 at 8:24 AM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+>>>> From: Xu Kuohai <xukuohai@huawei.com>
+>>>>
+>>>> Add macro LSM_RET_INT to annotate lsm hook return integer type and the
+>>>> default return value, and the expected return range.
+>>>>
+>>>> The LSM_RET_INT is declared as:
+>>>>
+>>>> LSM_RET_INT(defval, min, max)
+>>>>
+>>>> where
+>>>>
+>>>> - defval is the default return value
+>>>>
+>>>> - min and max indicate the expected return range is [min, max]
+>>>>
+>>>> The return value range for each lsm hook is taken from the description
+>>>> in security/security.c.
+>>>>
+>>>> The expanded result of LSM_RET_INT is not changed, and the compiled
+>>>> product is not changed.
+>>>>
+>>>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+>>>> ---
+>>>>   include/linux/lsm_hook_defs.h | 591 +++++++++++++++++-----------------
+>>>>   include/linux/lsm_hooks.h     |   6 -
+>>>>   kernel/bpf/bpf_lsm.c          |  10 +
+>>>>   security/security.c           |   1 +
+>>>>   4 files changed, 313 insertions(+), 295 deletions(-)
+>>> ...
+>>>
+>>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>>>> index 334e00efbde4..708f515ffbf3 100644
+>>>> --- a/include/linux/lsm_hook_defs.h
+>>>> +++ b/include/linux/lsm_hook_defs.h
+>>>> @@ -18,435 +18,448 @@
+>>>>    * The macro LSM_HOOK is used to define the data structures required by
+>>>>    * the LSM framework using the pattern:
+>>>>    *
+>>>> - *     LSM_HOOK(<return_type>, <default_value>, <hook_name>, args...)
+>>>> + *     LSM_HOOK(<return_type>, <return_description>, <hook_name>, args...)
+>>>>    *
+>>>>    * struct security_hook_heads {
+>>>> - *   #define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
+>>>> + *   #define LSM_HOOK(RET, RETVAL_DESC, NAME, ...) struct hlist_head NAME;
+>>>>    *   #include <linux/lsm_hook_defs.h>
+>>>>    *   #undef LSM_HOOK
+>>>>    * };
+>>>>    */
+>>>> -LSM_HOOK(int, 0, binder_set_context_mgr, const struct cred *mgr)
+>>>> -LSM_HOOK(int, 0, binder_transaction, const struct cred *from,
+>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_set_context_mgr, const struct cred *mgr)
+>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transaction, const struct cred *from,
+>>>>           const struct cred *to)
+>>>> -LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
+>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_binder, const struct cred *from,
+>>>>           const struct cred *to)
+>>>> -LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
+>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_file, const struct cred *from,
+>>>>           const struct cred *to, const struct file *file)
+>>> I'm not overly excited about injecting these additional return value
+>>> range annotations into the LSM hook definitions, especially since the
+>>> vast majority of the hooks "returns 0 on success, negative values on
+>>> error".  I'd rather see some effort put into looking at the
+>>> feasibility of converting some (all?) of the LSM hook return value
+>>> exceptions into the more conventional 0/-ERRNO format.  Unfortunately,
+>>> I haven't had the time to look into that myself, but if you wanted to
+>>> do that I think it would be a good thing.
+>>>
+>> I agree that keeping all hooks return a consistent range of 0/-ERRNO
+>> is more elegant than adding return value range annotations. However, there
+>> are two issues that might need to be addressed first:
+>>
+>> 1. Compatibility
+>>
+>> For instance, security_vm_enough_memory_mm() determines whether to
+>> set cap_sys_admin by checking if the hook vm_enough_memory returns
+>> a positive number. If we were to change the hook vm_enough_memory
+>> to return 0 to indicate the need for cap_sys_admin, then for the
+>> LSM BPF program currently returning 0, the interpretation of its
+>> return value would be reversed after the modification.
+> This is not an issue. bpf lsm progs are no different from other lsm-s.
+> If the meaning of return value or arguments to lsm hook change
+> all lsm-s need to adjust as well. Regardless of whether they are
+> written as in-kernel lsm-s, bpf-lsm, or out-of-tree lsm-s.
+>
+>> 2. Expressing multiple non-error states using 0/-ERRNO
+>>
+>> IIUC, although 0/-ERRNO can be used to express different errors,
+>> only 0 can be used for non-error state. If there are multiple
+>> non-error states, they cannot be distinguished. For example,
+>> security_inode_need_killpriv() returns < 0 on error, 0 if
+>> security_inode_killpriv() doesn't need to be called, and > 0
+>> if security_inode_killpriv() does need to be called.
+> This looks like a problem indeed.
 
-With the introduction of userns capabilities, this effectively provides
-a simple way for LSMs to control the capabilities granted to a user
-namespace and all its descendants.
+Hang on. There aren't really three states here. security_inode_killpriv()
+is called only on the security_inode_need_killpriv() > 0 case. I'm not
+looking at the code this instant, but adjusting the return to something
+like -ENOSYS (OK, maybe not a great choice, but you get the idea) instead
+of 0 in the don't call case and switching the positive value to 0 should
+work just fine.
 
-Update the selftests accordingly by dropping CAP_SYS_ADMIN in
-namespaces and checking the resulting task's bounding set.
+We're working on getting the LSM interfaces to be more consistent. This
+particular pair of hooks is an example of why we need to do that. 
 
-Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
----
- include/linux/lsm_hook_defs.h                 |  2 +-
- include/linux/security.h                      |  4 +-
- kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
- security/apparmor/lsm.c                       |  2 +-
- security/security.c                           |  6 +-
- security/selinux/hooks.c                      |  2 +-
- .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
- .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
- 8 files changed, 76 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index f804b76cde44..58d6d8f2511f 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -250,7 +250,7 @@ LSM_HOOK(int, -ENOSYS, task_prctl, int option, unsigned long arg2,
- 	 unsigned long arg3, unsigned long arg4, unsigned long arg5)
- LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
- 	 struct inode *inode)
--LSM_HOOK(int, 0, userns_create, const struct cred *cred)
-+LSM_HOOK(int, 0, userns_create, struct cred *cred)
- LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
- LSM_HOOK(void, LSM_RET_VOID, ipc_getsecid, struct kern_ipc_perm *ipcp,
- 	 u32 *secid)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 21cf70346b33..ffb1b0dd2aef 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -465,7 +465,7 @@ int security_task_kill(struct task_struct *p, struct kernel_siginfo *info,
- int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			unsigned long arg4, unsigned long arg5);
- void security_task_to_inode(struct task_struct *p, struct inode *inode);
--int security_create_user_ns(const struct cred *cred);
-+int security_create_user_ns(struct cred *cred);
- int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
- void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
- int security_msg_msg_alloc(struct msg_msg *msg);
-@@ -1294,7 +1294,7 @@ static inline int security_task_prctl(int option, unsigned long arg2,
- static inline void security_task_to_inode(struct task_struct *p, struct inode *inode)
- { }
- 
--static inline int security_create_user_ns(const struct cred *cred)
-+static inline int security_create_user_ns(struct cred *cred)
- {
- 	return 0;
- }
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 68240c3c6e7d..6edba93ff883 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -382,10 +382,65 @@ bool bpf_lsm_is_trusted(const struct bpf_prog *prog)
- 	return !btf_id_set_contains(&untrusted_lsm_hooks, prog->aux->attach_btf_id);
- }
- 
-+static int bpf_lsm_btf_struct_access(struct bpf_verifier_log *log,
-+				     const struct bpf_reg_state *reg,
-+				     int off, int size)
-+{
-+	const struct btf_type *cred;
-+	const struct btf_type *t;
-+	s32 type_id;
-+	size_t end;
-+
-+	type_id = btf_find_by_name_kind(reg->btf, "cred", BTF_KIND_STRUCT);
-+	if (type_id < 0)
-+		return -EINVAL;
-+
-+	t = btf_type_by_id(reg->btf, reg->btf_id);
-+	cred = btf_type_by_id(reg->btf, type_id);
-+	if (t != cred) {
-+		bpf_log(log, "only read is supported\n");
-+		return -EACCES;
-+	}
-+
-+	switch (off) {
-+	case offsetof(struct cred, cap_inheritable):
-+		end = offsetofend(struct cred, cap_inheritable);
-+		break;
-+	case offsetof(struct cred, cap_permitted):
-+		end = offsetofend(struct cred, cap_permitted);
-+		break;
-+	case offsetof(struct cred, cap_effective):
-+		end = offsetofend(struct cred, cap_effective);
-+		break;
-+	case offsetof(struct cred, cap_bset):
-+		end = offsetofend(struct cred, cap_bset);
-+		break;
-+	case offsetof(struct cred, cap_ambient):
-+		end = offsetofend(struct cred, cap_ambient);
-+		break;
-+	case offsetof(struct cred, cap_userns):
-+		end = offsetofend(struct cred, cap_userns);
-+		break;
-+	default:
-+		bpf_log(log, "no write support to cred at off %d\n", off);
-+		return -EACCES;
-+	}
-+
-+	if (off + size > end) {
-+		bpf_log(log,
-+			"write access at off %d with size %d beyond the member of cred ended at %zu\n",
-+			off, size, end);
-+		return -EACCES;
-+	}
-+
-+	return 0;
-+}
-+
- const struct bpf_prog_ops lsm_prog_ops = {
- };
- 
- const struct bpf_verifier_ops lsm_verifier_ops = {
- 	.get_func_proto = bpf_lsm_func_proto,
- 	.is_valid_access = btf_ctx_access,
-+	.btf_struct_access = bpf_lsm_btf_struct_access,
- };
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 6239777090c4..310c9fa3d4b4 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1036,7 +1036,7 @@ static int apparmor_task_kill(struct task_struct *target, struct kernel_siginfo
- 	return error;
- }
- 
--static int apparmor_userns_create(const struct cred *cred)
-+static int apparmor_userns_create(struct cred *cred)
- {
- 	struct aa_label *label;
- 	struct aa_profile *profile;
-diff --git a/security/security.c b/security/security.c
-index e5da848c50b9..83cf2025c58e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3558,14 +3558,14 @@ void security_task_to_inode(struct task_struct *p, struct inode *inode)
- }
- 
- /**
-- * security_create_user_ns() - Check if creating a new userns is allowed
-+ * security_create_user_ns() - Review permissions prior to userns creation
-  * @cred: prepared creds
-  *
-- * Check permission prior to creating a new user namespace.
-+ * Check and/or modify permissions prior to creating a new user namespace.
-  *
-  * Return: Returns 0 if successful, otherwise < 0 error code.
-  */
--int security_create_user_ns(const struct cred *cred)
-+int security_create_user_ns(struct cred *cred)
- {
- 	return call_int_hook(userns_create, cred);
- }
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7eed331e90f0..28deb9510d8e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4263,7 +4263,7 @@ static void selinux_task_to_inode(struct task_struct *p,
- 	spin_unlock(&isec->lock);
- }
- 
--static int selinux_userns_create(const struct cred *cred)
-+static int selinux_userns_create(struct cred *cred)
- {
- 	u32 sid = current_sid();
- 
-diff --git a/tools/testing/selftests/bpf/prog_tests/deny_namespace.c b/tools/testing/selftests/bpf/prog_tests/deny_namespace.c
-index 1bc6241b755b..1500578f9a30 100644
---- a/tools/testing/selftests/bpf/prog_tests/deny_namespace.c
-+++ b/tools/testing/selftests/bpf/prog_tests/deny_namespace.c
-@@ -5,6 +5,8 @@
- #include <sched.h>
- #include "cap_helpers.h"
- #include <stdio.h>
-+#include <stdbool.h>
-+#include <sys/prctl.h>
- 
- static int wait_for_pid(pid_t pid)
- {
-@@ -29,7 +31,7 @@ static int wait_for_pid(pid_t pid)
-  * positive return value -> userns creation failed
-  * 0                     -> userns creation succeeded
-  */
--static int create_user_ns(void)
-+static int create_user_ns(bool bpf)
- {
- 	pid_t pid;
- 
-@@ -40,6 +42,8 @@ static int create_user_ns(void)
- 	if (pid == 0) {
- 		if (unshare(CLONE_NEWUSER))
- 			_exit(EXIT_FAILURE);
-+		if (bpf && prctl(PR_CAPBSET_READ, CAP_SYS_ADMIN))
-+			_exit(EXIT_FAILURE);
- 		_exit(EXIT_SUCCESS);
- 	}
- 
-@@ -53,11 +57,11 @@ static void test_userns_create_bpf(void)
- 
- 	cap_enable_effective(cap_mask, &old_caps);
- 
--	ASSERT_OK(create_user_ns(), "priv new user ns");
-+	ASSERT_OK(create_user_ns(true), "priv new user ns");
- 
- 	cap_disable_effective(cap_mask, &old_caps);
- 
--	ASSERT_EQ(create_user_ns(), EPERM, "unpriv new user ns");
-+	ASSERT_EQ(create_user_ns(true), EPERM, "unpriv new user ns");
- 
- 	if (cap_mask & old_caps)
- 		cap_enable_effective(cap_mask, NULL);
-@@ -70,7 +74,7 @@ static void test_unpriv_userns_create_no_bpf(void)
- 
- 	cap_disable_effective(cap_mask, &old_caps);
- 
--	ASSERT_OK(create_user_ns(), "no-bpf unpriv new user ns");
-+	ASSERT_OK(create_user_ns(false), "no-bpf unpriv new user ns");
- 
- 	if (cap_mask & old_caps)
- 		cap_enable_effective(cap_mask, NULL);
-diff --git a/tools/testing/selftests/bpf/progs/test_deny_namespace.c b/tools/testing/selftests/bpf/progs/test_deny_namespace.c
-index e96b901a733c..051906f80f4c 100644
---- a/tools/testing/selftests/bpf/progs/test_deny_namespace.c
-+++ b/tools/testing/selftests/bpf/progs/test_deny_namespace.c
-@@ -9,12 +9,13 @@ typedef struct { unsigned long long val; } kernel_cap_t;
- 
- struct cred {
- 	kernel_cap_t cap_effective;
-+	kernel_cap_t cap_userns;
- } __attribute__((preserve_access_index));
- 
- char _license[] SEC("license") = "GPL";
- 
- SEC("lsm.s/userns_create")
--int BPF_PROG(test_userns_create, const struct cred *cred, int ret)
-+int BPF_PROG(test_userns_create, struct cred *cred, int ret)
- {
- 	kernel_cap_t caps = cred->cap_effective;
- 	__u64 cap_mask = 1ULL << CAP_SYS_ADMIN;
-@@ -23,8 +24,10 @@ int BPF_PROG(test_userns_create, const struct cred *cred, int ret)
- 		return 0;
- 
- 	ret = -EPERM;
--	if (caps.val & cap_mask)
-+	if (caps.val & cap_mask) {
-+		cred->cap_userns.val &= ~cap_mask;
- 		return 0;
-+	}
- 
- 	return -EPERM;
- }
--- 
-2.45.2
-
+>  Converting all hooks to 0/-errno
+> doesn't look practical.
+>
