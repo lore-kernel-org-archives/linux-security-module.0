@@ -1,104 +1,153 @@
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6D5152177
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 16:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E23414F121
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 20:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718038415; cv=none; b=JGDoVzHrudBonGU7qZl0hSUFPKRcQLJYQXICu7lYHwpMUQovFpE46k2xu7cPOyECQpaAWNycxuq+Cf82sPYp5PNy3rU/UAOMZX2lvMInk9kmfr1p+PCmKjf0Ltfht547cbDdwLhuLS1ICnWqk1lYae/8bzDn92NKzVSbye3nRXQ=
+	t=1718050351; cv=none; b=LDLi/N/umWMW8XZHzYGfw/qdQaUWbBoeOSMHft7IChWUzM0UGuqKmcO/tSQaEG7jUlVxWY41Hzq1471B+fZhAIZTtAVSvPQ2wkiLKCChq69zVMavYMSVX3GeAlEsAuw1NLoYz3AIBlIJnW2uIW+Nm5b5mb4PSBLZwHMfBzMPN14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718038415; c=relaxed/simple;
-	bh=2sDljUqx7BMZwRr2HPtgbGcAMzqMw0fbMhCG9tbc+SM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jRfG8eaLppI49JbyIM+rCiShkUq7R96ZKe3YlNsKF4Dmc3tJlXhEvG0Os9lw2gtw0iDDiIry428Ocs9Ee4YVbo6vkE1KBPpWxswGnf1RHbxB/Pyhw0aZaBoqYpckiTAuZSUIDUCLP8T5+rZODE5x6WFyl0549z7dU8BD+RogUv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Stmc5snH; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1718050351; c=relaxed/simple;
+	bh=b7+MwoWNMLPQ7YyhI/4+4s4P3K4STGUIbLhPZG0Mamc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amb9M4ZOT7oDX07ss0JDZrQO/u7v7gna1z6+lOmakg79FnIfyEASifWlMIHW66mGylLtuKeTVo86lmWiRAf2NW71sfDiuVZqnbXu/C5JB02Pvdrvu2nasxOSF8dUc/hJPSYb1OZhk2BBlCgewC/bOAS6pi/CQOkSTsQUc5zXEYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=LYwY4ug2; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Stmc5snH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718038406; bh=2sDljUqx7BMZwRr2HPtgbGcAMzqMw0fbMhCG9tbc+SM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Stmc5snH+oHwbddgBke4uJRdUf0sO0S9a0VgoBA+AJ1qyQ1junjlxJuK0+sWSjTv3uwXcS5iU370dVNoK8R99zNqpgvjPYYk4DybW6t7yBIzchPA91UBnLCNa+bz48ykD1LbJ3J1/zVZj/loUG7TawcJ2g8Wp8b5KrlkKomiKf/7SZKnnfGpsazOyUIDW2BAgUQo7qJCxMPdP0qb9HNIWatcJjztnjCWrtY8a9ytxFwmkoXl183vbL/Ex6PpTXWF5NxCbicyUal3sWkFrTG0JITn62GtlcrG8gaeq+Lbv/n+eWPv6oKIBoSuTEVaWvx0HMMNiB8bOBHcpDKVLmHIbQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718038406; bh=Dqc07a4wf2jcqjCoappO+ZnSGu9JxpryTnaW8SaEUEM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=q83veGDWyWDkNLHiS4t9zhTXObZJ3Hj2GtnaSWi79AWZcApU18ruC99oiGT1oia9QqZd7+8NTZO0t6bRQYXBYoxDTKQ2XLakEzZAhBoVqKrdPkV5FBs5zq8Gx8+54htb6aTz8eV5Avm0i6VKvAyGgyxHhE1pXTTQ0gWujfKXOG5Ou++Hy/CdWAZr1OQhVcDLn+UVf47SbFXIcpmf/lJE+1Z8iaMEQBajgc7cbKe3aTOGMiZpJ5PEnbuB696K2UC6dWI9xVoPdnyvIOmqL12HcYuXK1DsV4jeoijf+fnjpzS5oUf5glF06fgmPiwGUYUSQtpRrMQxAs84Ff+BjEEutg==
-X-YMail-OSG: GN3C3lMVM1kJOS2WQy1t1sYapc4g6hP7COlcDfQEeH5LB0z8.HBrmhAxXihZEhz
- eMUiMlyFlqCp4hoQK1X04Tz4czzznkwnWZif6evTgOY6hRInp7rqpcMLVltAEryqsy31cC0T0IvF
- kfG86YXxLy8bLOFcSiT9oHinnvAwihzvtjVr9VL7WCa344aCsj_MDuGBhLWZzLXrxPQ3MS_SIgo3
- 4kQNMoWRDBdHEfVfBqa1QWidL_VG_NcAuhIINHiaVfz0MdSD4KagUyKDuu7ogT.XC0bM98YO6eX3
- GdL1n0s9PpACtl8jQCu6YMpVP.WI90dsp6dXnKCGeC3i4YidtxAUta0xLSOhXPPSnanZIlEfUhCy
- JXEApgloC_jLeVUe47pCenFKS0CTlZ1aswSJxA5etx5i259qf81H.qy14O5QtkT9TvlWryvDIoqz
- YmeNXq.z5fc0jRkKxRrCFt1vSwYqmDqhqugS6CMercn7jFXO0RBzNgmyeM4l5z1H_yOy8.NgfOJS
- 9AXxPSsIyBybgGLikJ2O_R0SGVE_A3_vuIBL22QQQU2xtOww2DVurp8HEOtjVnDIvpkHdD1is44h
- FTtE8Swb22Bt60z59nO7T.3.cC7_mvvsyfAXB9VT3t8uIRAHM0Ki7BOSDFPWveximXslhN2sJrDT
- 9BGycWU8SClpKMzHzewuLgX.2NHekOM47j_yp6MCq0WC6aqXMz3lNppjoI4Q7I.rvYaLZicZFxOE
- k5Ao7h_ADfHKqBz0a9P1s2WhdK1BHuqX_8jIkBqoiSm.TjKa1iYx20TJchvkYraMCo7ePJYgVWrd
- zj1Vf.fFThiJXtDZ5DVFtPtD278V3533doSb0NsP8R1Wb2s14rh7bTCwxOo65xsuT7NsrI5DhQZa
- t0QsfhG3.XCLfgvmwW4iui2S.jqZMJgkT0L_pQzhI0eHyWOucjmpq.X558Isq.hQK5ItGG_DENdl
- EHcGiwRTo5b5NyTb1sS3cQN0hBvYMn9L7Qn0PttJJ644UyIPBPGoMEvjG353kJ2gzoWzHYcAxOt.
- PJ9IiOFf0sMgL09YkBBo5Ew2trbkUzU9z8b0kxpJPlsd8rG3j.Iou3_68McSdm2K91oODvYqQXVm
- JwXRVL7OOL7.W.l8e9kGQBvryOp6Dupvx6r1VQPqDo6QQfr4SKz3koN9NYaFmv9bnulMM3b4P9lx
- 5BSKPgYXCe03rq2wZaPxg0ZnY7i0mfa0W8M4jV7amGvc4c67nTVXodCMjGt2LobsKHGq1v6S.Ygj
- 2yBuawhuKtGf90dzZQwVhmzsjWA44KohT0pfbrPNc2nj7.dtFy9FTgPOxwhrCRr5LhnGdDLBbtyU
- ox7VjoLOcUE2OgC9CBIlLVvx11ZUJ6b8lH.vVt3CdG1BN5lfM.aksfUIasiLWiEKEXL2raoCXilx
- 3y5ahKV9yum20YiMMNXJjw_IIR.2Okv7igo9xZTqaHjP3H4wRm2sNpq.7c_cszayUPzCmR3Hx5AO
- ToVUuYj.Yf751Inji3fK7IzYF8pVsnotNE.01oX7g6WIr03Szb01F3AbfW4O2xvWPAFl1mWvqGBb
- rldEbw21xAQAsjvP54ICMqZHOSTaWHzVq3dLlSuWxXYEQy8bEm7GBtw0TxfuW4IOy9uMUcZxzAU5
- UA0agkIOTLOerYUmfzlh78G7wqnOLSWyx7y8dQuXApq9BS2Q5s2eR9B69zbZUs_m27svjLS_ckV4
- 6cN7CSoBc.0_As_jjexZmHfQbvcdC.EZgr_FPGvW618jKU2o7fFel15QdKaMpL3P6dXvrMcXF9z.
- iRu8yTfy5ZKWokxJAmNBGUDTQvRTQU2EaFx9grsgI2pActEKTV3hVmsd7_yiA7E6pf_ColZaWc7b
- MParv1pz.oYlmOFXBVWtfG4PZyNPYjew5UNyMIotz8ULi3YHR85MAPhgyZEhTZnMyoWMOFuB.9SB
- vg7EeMnl9666ApqHYolvPLyxRtY1o4aDIwaEbhzq0eCdIZ6Dnjvlv0e0Rq9AxF8BlKfBJuG4AJK7
- qb6c_adOL2DKehFReUh9uIQegDm3hRPnb_RXAGvIH_GKaOiIrw7yBsXrwS.yIDwvuSYUm4F1qdJB
- X18tVwKuRLT7HGii9bbQXkT8V5sAhwg0igxVv_3CPJ.UdZ8.UOOhGPL1cwULE6cOk7UOKJLPPUL2
- yOWlF_d4Oe4Ol37AkGGLneeMw5CbxrDTMA0RgL3UAn_iPKdc1xqhWDmKLDH27l7YwpUbn6UQttlD
- 3zyUWyYbpm7VW2czyP4SK.eCMYCwd5wcoVLKsiLYHV6PO5u6pd8orc5ACuOt0IHCreykWjzkW
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: ab3ff22a-9973-4a29-9e73-a9250002a8b8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Mon, 10 Jun 2024 16:53:26 +0000
-Received: by hermes--production-gq1-59c575df44-n6ttj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0b7865191f3c2f3a0ddea3bbdd342cfe;
-          Mon, 10 Jun 2024 16:53:22 +0000 (UTC)
-Message-ID: <2812aeed-ab49-492b-8c93-c553c2a02775@schaufler-ca.com>
-Date: Mon, 10 Jun 2024 09:53:21 -0700
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="LYwY4ug2"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a087c3a92so48860367b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 13:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1718050348; x=1718655148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q8U88OhWZh1tCo+0WQ1tID8xLxoIwnJftDZHFtRwK3o=;
+        b=LYwY4ug2iL/vJ4DIUm0/Hp2MvpGURHFsHfCR8hKgvsmAqgzRPxBeFZzp5Tfo48EbCo
+         Euj3YFKE98R3xDK+TVi4X08MQrChZxoR0ZdwAIKYcBEyuT6J6pRA6MFIWpmGlK1QH6yk
+         ayaE24UINt0NKI07iU6nbvvP+ur4CK0DddjWE0Gtpl8JlrD2yRSechl/xjLYVx0XPb6G
+         i76retKit/NIZmraE8AuogV1B4ponmQt72v7gY3tzehh7ckEOuDJ8LHGOKzXVFo5n2E+
+         4LMkjHweMxF1v6LeN1NaZpvEMI8QBe5KxGttDTh645mywME2cc7oJs1j5M/rPYABPg7M
+         UNcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718050348; x=1718655148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q8U88OhWZh1tCo+0WQ1tID8xLxoIwnJftDZHFtRwK3o=;
+        b=qf4hqpEjpfw0nmZx9yjONseBEwYpdSHiLPKWz7kK4Qg5+7r6De0WqO6TW3TY+XESbU
+         Y6orLVDeUSunAkqd5OhVDiqME9jX/Tl2/7hSgWuQpf0prxYx0WZEU1xrMk8QZ2CIGgB/
+         4zE6rra4kfpcMBq9YR+NBwWZ1DPvcKXo0UZknoii6zl0Cf5fkzjl+cDRG5V1HHtSirWU
+         1L1f37npjuKXcH/rMklzRdRN+3Ja6hUDxIdCVeMSNeK/sCMt3QFw0j+Ttel+dI/cmFfj
+         J+qXC3ItoWe9kNtiI8IsrkSO3ia/k//WYbDAukoD5ruaWRC0jUogENvNdHe+k8dBOe9k
+         skgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDBqfDA55q1gO12Au6DamBY+HKRC3vYuQT41mlh7v8i1Yp7rQNjz1h9sOWvy5qGBpVN7po9fuJ4cPE0JIeUQSVa0rnNlWqa0/+3SyA1QnOodEkGsgB
+X-Gm-Message-State: AOJu0Yyosn6WufHEImYKeY5ZHpQCCpaxnut7im6FuZSYMIPuj4ccU5LC
+	BbNkXVLC/m+oHp1ojyErkAURgVW99P4R6Ybsjwva2TVdhMHQZU/w/OUrzdsU4fY=
+X-Google-Smtp-Source: AGHT+IHAq2uat/BxStlvycvWIMemf9chq6bKvr5RgwVh7JekY7oKEJ33MFsCJYBOa4s18l+17nIrDA==
+X-Received: by 2002:a81:ef0e:0:b0:61a:f206:bad6 with SMTP id 00721157ae682-62cd55f6755mr90104707b3.30.1718050348318;
+        Mon, 10 Jun 2024 13:12:28 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccaef2825sm17372997b3.139.2024.06.10.13.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 13:12:27 -0700 (PDT)
+Date: Mon, 10 Jun 2024 16:12:27 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com,
+	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
+	John Johansen <john.johansen@canonical.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Introduce user namespace capabilities
+Message-ID: <20240610201227.GD235772@perftesting>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
- the CIPSO options
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240607160753.1787105-1-omosnace@redhat.com>
- <b764863b-6111-45ee-8364-66a4ca7e5d59@schaufler-ca.com>
- <CAFqZXNumv+NNZjR4KSD-U7pDXszn1YwZoKwfYO2GxvHpaUnQHA@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAFqZXNumv+NNZjR4KSD-U7pDXszn1YwZoKwfYO2GxvHpaUnQHA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240609104355.442002-1-jcalmels@3xx0.net>
 
-On 6/10/2024 8:14 AM, Ondrej Mosnacek wrote:
-> On Fri, Jun 7, 2024 at 8:50 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 6/7/2024 9:07 AM, Ondrej Mosnacek wrote:
->>> This series aims to improve cipso_v4_skbuff_delattr() to fully
->>> remove the CIPSO options instead of just clearing them with NOPs.
->>> That is implemented in the second patch, while the first patch is
->>> a bugfix for cipso_v4_delopt() that the second patch depends on.
->>>
->>> Tested using selinux-testsuite a TMT/Beakerlib test from this PR:
->>> https://src.fedoraproject.org/tests/selinux/pull-request/488
->> Smack also uses CIPSO. The Smack testsuite is:
->> https://github.com/smack-team/smack-testsuite.git
-> I tried to run it now, but 6 out of 114 tests fail for me already on
-> the baseline kernel (I tried with the v6.9 tag from mainline). The
-> output is not very verbose, so I'm not sure what is actually failing
-> and if it's caused by something on my side... With my patches applied,
-> the number of failed tests was the same, though, so there is no
-> evidence of a regression, at least.
+On Sun, Jun 09, 2024 at 03:43:33AM -0700, Jonathan Calmels wrote:
+> This patch series introduces a new user namespace capability set, as
+> well as some plumbing around it (i.e. sysctl, secbit, lsm support).
+> 
+> First patch goes over the motivations for this as well as prior art.
+> 
+> In summary, while user namespaces are a great success today in that they
+> avoid running a lot of code as root, they also expand the attack surface
+> of the kernel substantially which is often abused by attackers. 
+> Methods exist to limit the creation of such namespaces [1], however,
+> application developers often need to assume that user namespaces are
+> available for various tasks such as sandboxing. Thus, instead of
+> restricting the creation of user namespaces, we offer ways for userspace
+> to limit the capabilities granted to them.
+> 
+> Why a new capability set and not something specific to the userns (e.g.
+> ioctl_ns)?
+> 
+>     1. We can't really expect userspace to patch every single callsite
+>     and opt-in this new security mechanism. 
+> 
+>     2. We don't necessarily want policies enforced at said callsites.
+>     For example a service like systemd-machined or a PAM session need to
+>     be able to place restrictions on any namespace spawned under it.
+> 
+>     3. We would need to come up with inheritance rules, querying
+>     capabilities, etc. At this point we're just reinventing capability
+>     sets.
+> 
+>     4. We can easily define interactions between capability sets, thus
+>     helping with adoption (patch 2 is an example of this)
+> 
+> Some examples of how this could be leveraged in userspace:
+> 
+>     - Prevent user from getting CAP_NET_ADMIN in user namespaces under SSH:
+>         echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
+>         echo "!cap_net_admin $USER"     >> /etc/security/capability.conf
+>         capsh --secbits=$((1 << 8)) -- -c /usr/sbin/sshd
+> 
+>     - Prevent containers from ever getting CAP_DAC_OVERRIDE:
+>         systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
+>                     -p SecureBits=userns-strict-caps \
+>                     /usr/bin/dockerd
+>         systemd-run -p UserNSCapabilities=~CAP_DAC_OVERRIDE \
+>                     /usr/bin/incusd
+> 
+>     - Kernel could be vulnerable to CAP_SYS_RAWIO exploits, prevent it:
+>         sysctl -w cap_bound_userns_mask=0x1fffffdffff
+> 
+>     - Drop CAP_SYS_ADMIN for this shell and all the user namespaces below it:
+>         bwrap --unshare-user --cap-drop CAP_SYS_ADMIN /bin/sh
+> 
 
-I assume you didn't select CONFIG_SECURITY_SMACK_NETFILTER, which
-impacts some of the IPv6 test case. Thank you for running the tests.
+Where are the tests for this patchset?  I see you updated the bpf tests for the
+bpf lsm bits, but there's nothing to validate this new behavior or exercise the
+new ioctl you've added.  Thanks,
 
->
+Josef
