@@ -1,285 +1,142 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2D381AA3;
-	Mon, 10 Jun 2024 13:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A73E4501B;
+	Mon, 10 Jun 2024 13:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025019; cv=none; b=WHxEekg5nn+4klm41+v4QNRJYtPLnNDpmqbmr5d2qZRqxk6hREA0EY6eiouJFJ87sQY3echscNLN10MSB89gl2zzDZoBqeMYxtMyd89YW8w3Sd4GkPgwO4CTuOZIsak9kAVpzQMMylr4WxQMePSZs5M4IN1ieXs5SgnoXoXhNaw=
+	t=1718025405; cv=none; b=AbRXtFhtAP3d4jIZ5YWz+14Kby8GPBB4BUYro2sZNj8UQavqs8qLQ6161lfPDBE/xoSmh+DVr2Oc+Gwnt/21haqLW8ff+/uewKlBYryT8Xen6XB/pK2d6svxIA7mpLT0iiuy6hxi0bvHj7mVwp3U/OiivD26OJuAev3JvyLxE6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025019; c=relaxed/simple;
-	bh=rpnzjkzZRJoH5xNjY/jyUr59J9J55liY1k0khb0kVqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASA74I5sPPHTOgTA38Ys3+PdXnDOnc2WtEY+G/5aacRa5tENvcoLUKYmw2m9FyDXMrs+At69jZxD8Dm7LvpaXRl1NxxcCYr3ckpYaD3d0zJQbrKhmnZVsVX73pgC+0c6Ckir0ynmwVa/0w2r+YWe/VPnv9SV3zQ4B6rnfYoLQaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6M0HsFM; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6M0HsFM"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f47f07acd3so40441465ad.0;
-        Mon, 10 Jun 2024 06:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718025017; x=1718629817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JqQv+T68Z77ieKbOSSWpRumFodMN2xfZwuCPpy+rybg=;
-        b=Z6M0HsFMFHLOMdYhqo2/HQNk1sOLLwKSHCN1sMJXb9gzrAT00VS4oYi1UBB8PXZIJA
-         Of07mZwbuCk5ggSB5rcjjuNm3wVyvbGQK6YmWR5thP9Cd1FirDa961uO6bnXhugFKZOz
-         E0+Qgdecj3drFfDxpXRnjYcZiLFPwh4RlmRb9P1u4hK2pKz5PQcWTP9OwyddxKLxE7ed
-         9VfB68EHFSzKcwR2EY2koQb+IaWZAucu1ujqufdUko1lNgqp2tQ9oAkEaUiJ7u04G27i
-         kvVVsJnL9EPix0crXH5ssdZ1ULSBve2qPy3cPcHi1CcbEGR6YAmVpNE+u8qu2cu9rraS
-         wh9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718025017; x=1718629817;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JqQv+T68Z77ieKbOSSWpRumFodMN2xfZwuCPpy+rybg=;
-        b=rgyB1ObmcpM15qxjg1ut8M4fVExLOai97oF5HBi+y5EQmIpQUhkbCA+6PsPTTlWq0p
-         IRqqN02Uu3Zx5sIPaNfj3t7ncQKGpQ+Qgk9qFDu+6Aeu44yAxVNl3uis9H3eJ6DPpV2l
-         pUaXUqx2Z6KRTdKltxpOMIsWu8CC1ecxuTBnzTHFnyQjen4uJtj+UcPqbxg08DQZtPbY
-         2SEdrZOIu3G2UVKnW+5OY/o8G3VmY0BSVEaydzbNcGKnO9dczbhV6gA1vpONQFNVnIGM
-         kgOG4IeGMBUBuXBzy73EWdgrCVhUwC6dYcVdQh/Yo0IBtudj2STHHYqEq8vvICpDF359
-         qXCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX13MI6lTxr3ypRWpqljhuTN9fke5ztDjkDgN4NsFqzqMxUDUh1rkMoMfRjq9Jd6twfH3Mb7VVHzc1AwjhA5aZAtBaoc/bnm9wgyMc5VqtElegOKnJfYR1oXZZASUKpE2FLZHCxEZtfUOc/YWoOXhNwzhRnZncHtl5x/ub57a/VyeYNNBaiyl7v/801cPbXVOn8pPXb7XQ3hbh3rXRxesLUAQGoTpa1j3kK+A==
-X-Gm-Message-State: AOJu0Yw4rMZQ31Il8oKE9WM1YpRtmrOW9gFg3YLIXfH6joJYilZwpg2h
-	kMqG5bePrwwOrW94K28RBdX2POOkhhbElrWZr/Av9fpsHSUj9Lxe
-X-Google-Smtp-Source: AGHT+IFEw7OtWfkzx2pwUoIKN7qZKIAsOjNAjB8U7pQ6n7MIYx7TDtVWcRYxQ55Lvb2r/mqRzscouw==
-X-Received: by 2002:a17:903:183:b0:1f6:6426:8da4 with SMTP id d9443c01a7336-1f6d03c14demr118275555ad.66.1718025016816;
-        Mon, 10 Jun 2024 06:10:16 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.49.105])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e3e66sm81938285ad.182.2024.06.10.06.10.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 06:10:16 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH v1] perf trace: BTF-based enum pretty printing
-Date: Mon, 10 Jun 2024 21:10:32 +0800
-Message-ID: <20240610131032.516323-1-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718025405; c=relaxed/simple;
+	bh=77k5rIMoIWHg6IseVGjYJC6hiieeMJ1RXLsTOo5sn9Q=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=lo9bYUA9nPyAd4qw/6n7qTJ7rBgTEijbFYdu7OmqgLYvob6eo0Lm1my5mCb17U8q4rJd/6k2aH6LbblQMWcxLMUGSn+2inSQINZOYGRitgnoAqC0Wutd8dVxar+NkQFenVHD8NaBUTt7/JmqrQ0xUX3P4/NeRUUv4iLOvrDtRjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:38392)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sGeE1-007QxW-Ub; Mon, 10 Jun 2024 06:34:14 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:54200 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sGeE0-00FROe-SU; Mon, 10 Jun 2024 06:34:13 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  linux-mm <linux-mm@kvack.org>,
+  Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,  linux-trace-kernel
+ <linux-trace-kernel@vger.kernel.org>,  audit@vger.kernel.org,  LSM List
+ <linux-security-module@vger.kernel.org>,  selinux@vger.kernel.org,  bpf
+ <bpf@vger.kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Kees
+ Cook <keescook@chromium.org>
+References: <20240602023754.25443-1-laoar.shao@gmail.com>
+	<20240602023754.25443-2-laoar.shao@gmail.com>
+	<87ikysdmsi.fsf@email.froward.int.ebiederm.org>
+	<CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
+	<CAADnVQJ_RPg_xTjuO=+3G=4auZkS-t-F2WTs18rU2PbVdJVbdQ@mail.gmail.com>
+	<874jabdygo.fsf@email.froward.int.ebiederm.org>
+	<CAADnVQ+9T4n=ZhNMd57qfu2w=VqHM8Dzx-7UAAinU5MoORg63w@mail.gmail.com>
+Date: Mon, 10 Jun 2024 07:34:01 -0500
+In-Reply-To: <CAADnVQ+9T4n=ZhNMd57qfu2w=VqHM8Dzx-7UAAinU5MoORg63w@mail.gmail.com>
+	(Alexei Starovoitov's message of "Sun, 2 Jun 2024 11:23:17 -0700")
+Message-ID: <87ikyhrn7q.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-XM-SPF: eid=1sGeE0-00FROe-SU;;;mid=<87ikyhrn7q.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+aqS3BV7g8TVW+kULFxysO2TVuiqUO+14=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: **
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4982]
+	*  0.7 XMSubLong Long Subject
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Alexei Starovoitov <alexei.starovoitov@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 465 ms - load_scoreonly_sql: 0.13 (0.0%),
+	signal_user_changed: 11 (2.3%), b_tie_ro: 9 (1.9%), parse: 1.04 (0.2%),
+	 extract_message_metadata: 12 (2.7%), get_uri_detail_list: 1.43 (0.3%),
+	 tests_pri_-2000: 13 (2.8%), tests_pri_-1000: 3.0 (0.6%),
+	tests_pri_-950: 1.29 (0.3%), tests_pri_-900: 1.09 (0.2%),
+	tests_pri_-90: 82 (17.7%), check_bayes: 81 (17.4%), b_tokenize: 8
+	(1.6%), b_tok_get_all: 10 (2.1%), b_comp_prob: 2.5 (0.5%),
+	b_tok_touch_all: 58 (12.5%), b_finish: 0.75 (0.2%), tests_pri_0: 320
+	(68.9%), check_dkim_signature: 0.66 (0.1%), check_dkim_adsp: 3.4
+	(0.7%), poll_dns_idle: 1.19 (0.3%), tests_pri_10: 2.7 (0.6%),
+	tests_pri_500: 14 (2.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-This is a feature implemented on the basis of the previous bug fix
-https://lore.kernel.org/linux-perf-users/d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de/T/#t
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-In this patch, I use BTF to turn enum value to the corresponding name.
-There is only one system call that uses enum value as its argument,
-that is `landlock_add_rule`.
+> On Sun, Jun 2, 2024 at 10:53=E2=80=AFAM Eric W. Biederman <ebiederm@xmiss=
+ion.com> wrote:
+>>
+>> If you are performing lockless reads and depending upon a '\0'
+>> terminator without limiting yourself to the size of the buffer
+>> there needs to be a big fat comment as to how in the world
+>> you are guaranteed that a '\0' inside the buffer will always
+>> be found.
+>
+> I think Yafang can certainly add such a comment next to
+> __[gs]et_task_comm.
+>
+> I prefer to avoid open coding memcpy + mmemset when strscpy_pad works.
 
-The vmlinux btf is loaded lazily, when user decided to trace the
-`landlock_add_rule` syscall. But if one decide to run `perf trace`
-without any arguments, the behaviour is to trace `landlock_add_rule`,
-so vmlinux btf will be loaded by default.
+Looking through the code in set_task_comm
+strscpy_pad only works when both the source and designation are aligned.
+Otherwise it performs a byte a time copy, and is most definitely
+susceptible to the race I observed.
 
-The laziest behaviour is to load vmlinux btf when a
-`landlock_add_rule` syscall hits. But I think you could lose some
-samples when loading vmlinux btf at run time, for it can delay the
-handling of other samples. I might need your precious opinions on
-this...
+Further I looked a couple of the uses of set_task_com, in
+fs/proc/base.c, kernel/kthread.c, and kernel/sys.c.
 
-before:
+Nowhere do I see a guarantee that the source buffer is word aligned
+or even something that would reasonably cause a compiler to place the
+buffer that is being passed to set_task_comm to be word aligned.
 
-```
-perf $ ./perf trace -e landlock_add_rule
-     0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
-     0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
-```
+As far as I can tell it is completely up to the compiler if it will
+cause strscpy_pad to honor the word at a time guarantee needed
+to make strscpy_pad safe for reading the information.
 
-after:
+This is not to say we can't make it safe.
 
-```
-perf $ ./perf trace -e landlock_add_rule
-     0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
-     0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
-```
+The easiest would be to create an aligned temporary buffer in
+set_task_comm, and preserve the existing interface.  Alternatively
+a type that has the appropriate size and alignment could be used
+as input to set_task_comm and it could be caller's responsibility
+to use it.
 
-P.S.
-If you don't apply the patch "perf trace: Fix syscall untraceable
-bug", there will be no output whatsoever when running
-`perf trace -e landlock_add_rule`
+While we can definitely make reading task->comm happen without taking
+the lock.  Doing so without updating set_task_comm to provide the
+guarantees needed to make it safe, looks like a case of play silly
+games, win silly prizes.
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/builtin-trace.c | 69 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 66 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 5cbe1748911d..5acb9a910ea1 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -19,6 +19,7 @@
- #ifdef HAVE_LIBBPF_SUPPORT
- #include <bpf/bpf.h>
- #include <bpf/libbpf.h>
-+#include <bpf/btf.h>
- #ifdef HAVE_BPF_SKEL
- #include "bpf_skel/augmented_raw_syscalls.skel.h"
- #endif
-@@ -110,6 +111,7 @@ struct syscall_arg_fmt {
- 	const char *name;
- 	u16	   nr_entries; // for arrays
- 	bool	   show_zero;
-+	bool	   is_enum;
- };
- 
- struct syscall_fmt {
-@@ -140,6 +142,7 @@ struct trace {
- #ifdef HAVE_BPF_SKEL
- 	struct augmented_raw_syscalls_bpf *skel;
- #endif
-+	struct btf		*btf;
- 	struct record_opts	opts;
- 	struct evlist	*evlist;
- 	struct machine		*host;
-@@ -887,6 +890,36 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
- 
- #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
- 
-+static size_t btf_enum_scnprintf(char *bf, size_t size, int val,
-+			  struct btf *btf, const char *type)
-+{
-+	const struct btf_type *bt;
-+	struct btf_enum *e;
-+	char enum_prefix[][16] = {"enum", "const enum"}, *ep;
-+	int id;
-+
-+	for (size_t i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
-+		ep = enum_prefix[i];
-+		if (strlen(type) > strlen(ep) + 1 && strstr(type, ep) == type)
-+			type += strlen(ep) + 1;
-+	}
-+
-+	id = btf__find_by_name(btf, type);
-+	if (id < 0)
-+		return 0;
-+
-+	bt = btf__type_by_id(btf, id);
-+	e = btf_enum(bt);
-+
-+	for (int i = 0; i < btf_vlen(bt); i++, e++) {
-+		if (e->val == val)
-+			return scnprintf(bf, size, "%s",
-+					 btf__name_by_offset(btf, e->name_off));
-+	}
-+
-+	return 0;
-+}
-+
- #define STRARRAY(name, array) \
- 	  { .scnprintf	= SCA_STRARRAY, \
- 	    .strtoul	= STUL_STRARRAY, \
-@@ -1238,6 +1271,7 @@ struct syscall {
- 	bool		    is_exit;
- 	bool		    is_open;
- 	bool		    nonexistent;
-+	bool		    use_btf;
- 	struct tep_format_field *args;
- 	const char	    *name;
- 	const struct syscall_fmt  *fmt;
-@@ -1756,6 +1790,7 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			continue;
- 
- 		len = strlen(field->name);
-+		arg->is_enum = false;
- 
- 		if (strcmp(field->type, "const char *") == 0 &&
- 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
-@@ -1782,6 +1817,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			 * 7 unsigned long
- 			 */
- 			arg->scnprintf = SCA_FD;
-+		} else if (strstr(field->type, "enum")) {
-+			arg->is_enum = true;
- 		} else {
- 			const struct syscall_arg_fmt *fmt =
- 				syscall_arg_fmt__find_by_name(field->name);
-@@ -1798,7 +1835,13 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 
- static int syscall__set_arg_fmts(struct syscall *sc)
- {
--	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
-+	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args),
-+				*field = sc->args;
-+	struct syscall_arg_fmt *arg = sc->arg_fmt;
-+
-+	for (; field; field = field->next, ++arg)
-+		if (arg->is_enum)
-+			sc->use_btf = true;
- 
- 	if (last_field)
- 		sc->args_size = last_field->offset + last_field->size;
-@@ -1811,6 +1854,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
- 	char tp_name[128];
- 	struct syscall *sc;
- 	const char *name = syscalltbl__name(trace->sctbl, id);
-+	int err;
- 
- #ifdef HAVE_SYSCALL_TABLE_SUPPORT
- 	if (trace->syscalls.table == NULL) {
-@@ -1883,7 +1927,17 @@ static int trace__read_syscall_info(struct trace *trace, int id)
- 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
- 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
- 
--	return syscall__set_arg_fmts(sc);
-+	err = syscall__set_arg_fmts(sc);
-+
-+	/* after calling syscall__set_arg_fmts() we'll know whether use_btf is true */
-+	if (sc->use_btf && trace->btf == NULL) {
-+		trace->btf = btf__load_vmlinux_btf();
-+		if (verbose > 0)
-+			fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
-+							    "Failed to load vmlinux BTF\n");
-+	}
-+
-+	return err;
- }
- 
- static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
-@@ -2050,7 +2104,7 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 				      unsigned char *args, void *augmented_args, int augmented_args_size,
- 				      struct trace *trace, struct thread *thread)
- {
--	size_t printed = 0;
-+	size_t printed = 0, p;
- 	unsigned long val;
- 	u8 bit = 1;
- 	struct syscall_arg arg = {
-@@ -2103,6 +2157,15 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 			if (trace->show_arg_names)
- 				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
- 
-+			if (sc->arg_fmt[arg.idx].is_enum == true && trace->btf) {
-+				p = btf_enum_scnprintf(bf + printed, size - printed, val,
-+						       trace->btf, field->type);
-+				if (p) {
-+					printed += p;
-+					continue;
-+				}
-+			}
-+
- 			printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
- 								  bf + printed, size - printed, &arg, val);
- 		}
--- 
-2.45.2
-
+Eric
