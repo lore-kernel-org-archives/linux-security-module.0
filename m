@@ -1,106 +1,280 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589C913F437
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 15:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0497786255
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 16:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718032507; cv=none; b=iWJ7lzsWPsib9qFfhUMMDzUlF7yBXHU1pCcnrMnKacUY1m0cPG2udzVXAZGfnuE/lnPcBKbYuGhYMLXREpu4+3XzEbDLhg7oLah4rKpGvL1XAbwwnlMNpprRRWqH0g4VclTZpxgjJEb9cD63hLsx1AjtAHaBj2cVYXVcNG9bLDs=
+	t=1718037387; cv=none; b=q7nIkuc81YXPJwUt/FBG1khYg3VuYXFUueSVCPQEeUV4mbOuGuBvV0Qz9F1xqzs+kZGN0mhSEC5m0vWLd141+phsp6qZMHoVaat3sZt/re4Dl7Z/aBYQyNxBxCfZJJ2kV2YPVzbfUhTONb7r8g1+ZUplvl2gKl6MmyJO2F/1MuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718032507; c=relaxed/simple;
-	bh=MKsQCqfN1ZQ4o2Ioge7OKkX52qONyWXvxqNAfzQqFbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TRxeQuSvGf+ajjwPsUhJNlSOCL7SxjEWzNs0K6g1VYkPUFgzSgTwxEHWfOArV1sDC/s5QDZ24MoROua6ytptVFc9pl/dRYGIOR98O9v20RIwzyNSlNneJOOJ3SR0ous2H3svg2qt9HNZrVQXRzQkLZwC4d09x9sMi8++TCCkLkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ik9VoJlz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1718037387; c=relaxed/simple;
+	bh=xAxkkHMbE6EFj7Vn4VrY8iVDYj3woWE7f3bw7uwgP5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WARp0YY7cnxDsxTH99iUUQ27KtffUWxfnyaSGRPhcPxAYq62v8Pb1xHUOaFw+RP/+6cnU0pPqmm3Vx4PEFfbkmhdCb1qZIzg9me9ySwv4837K0hWna2P/2qh5/hMwAzaD+cZf7FXQ7eDqs3um85eggeYFNcKteGP8VkG4lCvVOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=VDlBHnfe; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ik9VoJlz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718032505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MKsQCqfN1ZQ4o2Ioge7OKkX52qONyWXvxqNAfzQqFbs=;
-	b=Ik9VoJlzyTFHRyo4PcyyeHhojR530wZEO7bktzxgWXvMcMCwh70eMKKYDXjc2+pae1hm1v
-	fDHNrT1uCaVp1cwAaYvfUctf89kwOeNPrcDvOmzNkVkjLi2q3qtGCCTdASJe1If6oWb4S/
-	7yNS9vKGsxD9xeLW9b8PU/LGuEFwzyI=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-EzNYx6SjPZuQ385CPrBgxw-1; Mon, 10 Jun 2024 11:15:04 -0400
-X-MC-Unique: EzNYx6SjPZuQ385CPrBgxw-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c2d0e695d7so2662006a91.1
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 08:15:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718032502; x=1718637302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MKsQCqfN1ZQ4o2Ioge7OKkX52qONyWXvxqNAfzQqFbs=;
-        b=lJxv7JF/6zpN2WodOxpnKCfiNFW0EbgTZixE/djCb3DXaanSH6VduCYHu7e+CDV34Z
-         tX30Y7GYMufceq3gndDX8S3ppcInKbseKmujQFQZlb/fFRwutycVaaeSzdSZwYKTvpVh
-         avXIVYvZcPMxuV6wWJGG7FOutMeYe8i+A/c2GbbBU0D1K77BN0OcBOecdOdQGkiZpgf2
-         3fBWH2lvmJmMjbPBV40AFiV65tvCHl2ALb84FueDS+i1IeIJcVNAQR1A9wLByX1LIpYr
-         lj7vhyMW6lYJPWt1NHo2BBA4hup3cX+Wv5TGJaf6HNxX+moaJGxHWpqyoTdWkBJB9GF8
-         cl7g==
-X-Forwarded-Encrypted: i=1; AJvYcCURP56PlMgyV83VAt0zf9hp7Ns3FRAl69TrTpI0NSKjNhd7RbR71L5GHPIEi0QvNTe7yNkQKVki8E+578BDfNpFHlSwxgdlJHYgsRXjwaAO04eVeT1F
-X-Gm-Message-State: AOJu0YwtF+XvcIUKfRBpfxhlWEnguVJxAoQr6lQUFipqBVSqDrtOqBBq
-	5eRBNcOdnX0ap9OXpYbqLu2RN+8z06w8ffY4HXSaa31MnTcXn7r1hDIhEUgZwelR2u8mztHLorV
-	O9LFHMlS4MNMGnY+oFqxrKES3dvtD4RDF+7AfR+4rk5cX9oTMb27rSok7N6d/mt2UAa0VsPBjfZ
-	+aw2B9jKQ87MBVb2lG6Bw45VtmVPilHK0WU53RWG9Xgwdzpdy+y+JBipbu
-X-Received: by 2002:a17:90a:cf16:b0:2c2:edc2:6021 with SMTP id 98e67ed59e1d1-2c2edc26151mr4212534a91.11.1718032502566;
-        Mon, 10 Jun 2024 08:15:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUX+qE30sOtQcdPcBO6cllJjlpNJG1nFcZzFDbNKN76d+4g6+6h4LDFL2zf1CaTNmhGd2dMj97g14KHF/lYOE=
-X-Received: by 2002:a17:90a:cf16:b0:2c2:edc2:6021 with SMTP id
- 98e67ed59e1d1-2c2edc26151mr4212523a91.11.1718032502221; Mon, 10 Jun 2024
- 08:15:02 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="VDlBHnfe"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VycrF3N4tzQpH;
+	Mon, 10 Jun 2024 18:36:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1718037373;
+	bh=3JgBwHpKRWvfgFVnmu0Q8DgoOgyaOkMHD9BGniMMe6Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VDlBHnfe/vrBazYgmFfZcfC209tpPzUBRDYlBkUD4J7gUfiS/02knHJ9h9jY/poBI
+	 p8GGzmrvJSrtwUT6RvEr0+nyzxK4GkkAtAy7MjepuqC1PKVpdkLbEa8fe1I02/2caJ
+	 3R8jVLbqIMuXlud1xBjcfuny8j1549CM7cs7ILb4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4VycrD2ppyzT7Q;
+	Mon, 10 Jun 2024 18:36:12 +0200 (CEST)
+Date: Mon, 10 Jun 2024 18:36:08 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <20240610.Aifee5ingugh@digikod.net>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <ZmLEoBfHyUR3nKAV@google.com>
+ <ZmNic8S1KtyLcp7i@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607160753.1787105-1-omosnace@redhat.com> <b764863b-6111-45ee-8364-66a4ca7e5d59@schaufler-ca.com>
-In-Reply-To: <b764863b-6111-45ee-8364-66a4ca7e5d59@schaufler-ca.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Mon, 10 Jun 2024 17:14:50 +0200
-Message-ID: <CAFqZXNumv+NNZjR4KSD-U7pDXszn1YwZoKwfYO2GxvHpaUnQHA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
- the CIPSO options
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmNic8S1KtyLcp7i@tahera-OptiPlex-5000>
+X-Infomaniak-Routing: alpha
 
-On Fri, Jun 7, 2024 at 8:50=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
->
-> On 6/7/2024 9:07 AM, Ondrej Mosnacek wrote:
-> > This series aims to improve cipso_v4_skbuff_delattr() to fully
-> > remove the CIPSO options instead of just clearing them with NOPs.
-> > That is implemented in the second patch, while the first patch is
-> > a bugfix for cipso_v4_delopt() that the second patch depends on.
-> >
-> > Tested using selinux-testsuite a TMT/Beakerlib test from this PR:
-> > https://src.fedoraproject.org/tests/selinux/pull-request/488
->
-> Smack also uses CIPSO. The Smack testsuite is:
-> https://github.com/smack-team/smack-testsuite.git
+On Fri, Jun 07, 2024 at 01:41:39PM -0600, Tahera Fahimi wrote:
+> On Fri, Jun 07, 2024 at 10:28:35AM +0200, Günther Noack wrote:
+> > Hello Tahera!
+> > 
+> > Thanks for sending another revision of your patch set!
+> Hello Günther, 
+> Thanks for your feedback.
+> 
+> > On Thu, Jun 06, 2024 at 05:44:46PM -0600, Tahera Fahimi wrote:
+> > > Abstract unix sockets are used for local inter-process communications
+> > > without on a filesystem. Currently a sandboxed process can connect to a
+> > > socket outside of the sandboxed environment, since landlock has no
+> > > restriction for connecting to a unix socket in the abstract namespace.
+> > > Access to such sockets for a sandboxed process should be scoped the same
+> > > way ptrace is limited.
+> > > 
+> > > Because of compatibility reasons and since landlock should be flexible,
+> > > we extend the user space interface by adding a new "scoped" field. This
+> > > field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> > > specify that the ruleset will deny any connection from within the
+> > > sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> > > 
+> > > Closes: https://github.com/landlock-lsm/linux/issues/7
+> > > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > > 
+> > > -------
+> > > V3: Added "scoped" field to landlock_ruleset_attr
+> > > V2: Remove wrapper functions
+> > > 
+> > > -------
+> > > ---
+> > >  include/uapi/linux/landlock.h | 28 +++++++++++++++++++++++
+> > >  security/landlock/limits.h    |  5 ++++
+> > >  security/landlock/ruleset.c   | 15 ++++++++----
+> > >  security/landlock/ruleset.h   | 28 +++++++++++++++++++++--
+> > >  security/landlock/syscalls.c  | 12 +++++++---
+> > >  security/landlock/task.c      | 43 +++++++++++++++++++++++++++++++++++
+> > >  6 files changed, 121 insertions(+), 10 deletions(-)
+> > > 
+> > > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > > index 68625e728f43..d887e67dc0ed 100644
+> > > --- a/include/uapi/linux/landlock.h
+> > > +++ b/include/uapi/linux/landlock.h
+> > > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+> > >  	 * rule explicitly allow them.
+> > >  	 */
+> > >  	__u64 handled_access_net;
+> > > +	/**
+> > > +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
+> > > +	 * that is handled by this ruleset and should be permitted
+> > > +	 * by default if no rule explicitly deny them.
+> > > +	 */
+> > > +	__u64 scoped;
+> > 
+> > I have trouble understanding what this docstring means.
+> > 
+> > If those are "handled" things, shouldn't the name also start with "handled_", in
+> > line with the other fields?  Also, I don't see any way to manipulate these
+> > rights with a Landlock rule in this ?
+> 
+> .scoped attribute is not defined as .handled_scope since there is no
+> rule to handle/manipulate it, simply because this attribute shows either
+> action is permitted or denied. 
 
-I tried to run it now, but 6 out of 114 tests fail for me already on
-the baseline kernel (I tried with the v6.9 tag from mainline). The
-output is not very verbose, so I'm not sure what is actually failing
-and if it's caused by something on my side... With my patches applied,
-the number of failed tests was the same, though, so there is no
-evidence of a regression, at least.
+Correct.  Günther, what do you think about the naming?
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+> 
+> > How about:
+> > 
+> > /**
+> >  * handled_scoped: Bitmask of IPC actions (cf. `Scoped access flags`_)
+> >  * which are confined to only affect the current Landlock domain.
+> >  */
+> 
+> This is a good docstring. I will use it. 
+> 
+> > __u64 handled_scoped;
+> > 
+> > >  };
+> > >  
+> > >  /*
+> > > @@ -266,4 +272,26 @@ struct landlock_net_port_attr {
+> > >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> > >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> > >  /* clang-format on */
+> > > +
+> > > +/**
+> > > + * DOC: scoped
+> > > + *
+> > > + * Scoped handles a set of restrictions on kernel IPCs.
+> > > + *
+> > > + * Scope access flags
+> > 
+> > Scoped with a "d"?
+> Scoped meant to point to .scoped attribute.  
 
+Right, but a "d" was missing.
+
+> > > + * ~~~~~~~~~~~~~~~~~~~~
+> > > + * 
+> > > + * These flags enable to restrict a sandboxed process from a set of
+> > > + * inter-process communications actions. Setting a flag in a landlock
+> > > + * domain will isolate the Landlock domain to forbid connections
+> > > + * to resources outside the domain.
+> > > + *
+> > > + * IPCs with scoped actions:
+> > > + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
+> > > + *   connect to a process outside of the sandbox domain through abstract
+> > > + *   unix sockets.
+> > > + */
+> > > +/* clang-format off */
+> > > +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
+> > 
+> > Should the name of this #define indicate the direction that we are restricting?
+> 
+> Since the domain of a process specifies if a process can connect or not,
+> the direction of the connection does not matter. This restriction is the
+> same as ptrace.
+> 
+> > If I understand your documentation correctly, this is about *connecting out* of
+> > the current Landlock domain, but incoming connections from more privileged
+> > domains are OK, right?
+> 
+> Yes, Incoming connections are allowed if they are from a higher
+> privileged domain (or no domain). Consider two process P1 and P2 where
+> P1 wants to connect to P2. If P1 is not landlocked, it can connect to P2
+> regardless of whether P2 has a domain. If P1 is landlocked, it must have
+> an equal or less domain than P2 to connect to P2. We disscussed about
+> direction in [2]
+> https://lore.kernel.org/outreachy/20240603.Quaes2eich5f@digikod.net/T/#m6d5c5e65e43eaa1c8c38309f1225d169be3d6f87
+
+Correct, this is what Günther highlighted: restriction on direction.
+
+About the name "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET", I think it should
+be OK if the "scoped" docstring section clearly explains this direction.
+
+> 
+> > 
+> > Also:
+> > 
+> > Is it intentional that you are both restricting the connection and the sending
+> > with the same flag (security_unix_may_send)?  If an existing Unix Domain Socket
+> > gets passed in to a program from the outside (e.g. as stdout), shouldn't it
+> > still be possible that the program enables a Landlock policy and then still
+> > writes to it?  (Does that work?  Am I mis-reading the patch?)
+
+If a passed socket is already connected, then a write/send should work.
+
+> 
+> security_unix_may_send checks if AF_UNIX socket can send datagrams, so
+> connecting and sending datagrams happens at the same state. I am not
+> sure if I understand your example correctly. Can you please explain a
+> bit more?
+
+The concern is about using the current's or the socket's credential.
+
+> 
+> > The way that write access is normally checked for other files is at the time
+> > when you open the file, not during write(), and I believe it would be more in
+> > line with that normal "check at open" behaviour if we did the same here?
+> 
+> It checks the ability to connect to a unix socket at the point of
+> connecting, so I think it is aligned with the "check at point"
+> behaviour. This security check is called right before finalizing the
+> connection. 
+
+From my point of view, the main difference between a file's FD and a
+socket's FD is that a file's FD allows actions on only the referenced
+file, whereas the socket's FD may not only reference a connection
+because it can be disconnected (see net_test.c:protocol.connect_unspec)
+and reconnected.  Well, as we can see in the test, this doesn't work
+with AF_UNIX but I'm wondering if there is no other way to do it.
+Anyway, this seems closer to the use of a directory's FD to open another
+file: the access check is done when accessing a "new" resource.  To say
+it another way, a socket may be seen as a builder object to exchange
+data with a peer, and this object can be reconfigured/recycled to
+exchange data with another peer.  This rationale also applies to TCP
+connect and bind control.
+
+> 
+> > 
+> > > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> > > index 20fdb5ff3514..7b794b81ef05 100644
+> > > --- a/security/landlock/limits.h
+> > > +++ b/security/landlock/limits.h
+> > > @@ -28,6 +28,11 @@
+> > >  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+> > >  #define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
+> > >  
+> > > +#define LANDLOCK_LAST_ACCESS_SCOPE       LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
+> > > +#define LANDLOCK_MASK_ACCESS_SCOPE	((LANDLOCK_LAST_ACCESS_SCOPE << 1) - 1)
+> > > +#define LANDLOCK_NUM_ACCESS_SCOPE         __const_hweight64(LANDLOCK_MASK_ACCESS_SCOPE)
+> > > +#define LANDLOCK_SHIFT_ACCESS_SCOPE      LANDLOCK_SHIFT_ACCESS_NET
+> >                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+> > 
+> > I believe this #define has the wrong value, and as a consequence, the code
+> > suffers from the same problem as we already had on the other patch set from
+> > Mikhail Ivanov -- see [1] for that discussion.
+> 
+> Thanks for the hint. I will definitly check this. 
+> 
+> > The LANDLOCK_SHIFT_ACCESS_FOO variable is used for determining the position of
+> > your flag in the access_masks_t type, where all access masks are combined
+> > together in one big bit vector.  If you are defining this the same for _SCOPE as
+> > for _NET, I believe that we will start using the same bits in that vector for
+> > both the _NET flags and the _SCOPE flags, and that will manifest in unwanted
+> > interactions between the different types of restrictions.  (e.g. you will create
+> > a policy to restrict _SCOPE, and you will find yourself unable to do some things
+> > with TCP ports)
+> > 
+> > Please also see the other thread for more discussions about how we can avoid
+> > such problems in the future.  (This code is easy to get wrong,
+> > apparently... When we don't test what happens across multiple types of
+> > restrictions, everything looks fine.)
+> > 
+> > [1] https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com/
+
+Yep, good catch.
+
+A test should be able to catch this issue.
+
+> > 
+> > —Günther
+> > 
+> 
