@@ -1,162 +1,129 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BBF136A;
-	Mon, 10 Jun 2024 02:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2004A55886
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 08:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717986787; cv=none; b=owhSqJAQSOgU6vC3jGYJs6RtU2ojNK0iUa88OSYKLm3yWMEeJ4fEOzHJppSMvx8J31PNdhdjkdcpe9+r9/XfPLeC47pRZopT2m9RlzyTv/AqkSF9aJSYJjwVCkLl4u7OLPgjf+5T8uAOvXdyB2z1XtF1S8ogCt8JOd8/QwMco5E=
+	t=1718006609; cv=none; b=oZRgpcoRTEy2U+SXgvJ9bYhFoNSfQM562hoSjDHqtxtnog87eWojiOyzXtxIhc/txFPPBj9sVBx64+RdHfIoV+ceh9/zY/X5R5Oa/N/bx3Bz/LiUf4w/3Bk7MUwLtMAPsPm9Kglty1imhXHJgmKL/EsbFZchKGGEzexXJUFi1s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717986787; c=relaxed/simple;
-	bh=HbycHs7DADBVRvhki7EX2pSnnSjZWAfNBicUJiliqt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtY4YQLcj1Aj1Ja0JxvG905IMPg0QEv5mTgltCPzPYh8NC0JxKGtAGQo0vCPSerSycGmMe8RliNr1+jE1YbaC8rYdMqqqtcetY6Ki8l+NnsD+0tc8VpX9bmEphsqJKEG9R5UqSAs1cgQ1STDkxOC/kExeAW6vtsEtXx96RY6vSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 63BEA234; Sun,  9 Jun 2024 21:33:01 -0500 (CDT)
-Date: Sun, 9 Jun 2024 21:33:01 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
-	John Johansen <john.johansen@canonical.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
- caps
-Message-ID: <20240610023301.GA2183903@mail.hallyn.com>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-3-jcalmels@3xx0.net>
+	s=arc-20240116; t=1718006609; c=relaxed/simple;
+	bh=AoFy+rf1qZRigJ4LH6ipbIRwsjVgf59hZHjebuClpOA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mgvt0tZK4i5BdEoQVISmViPWK5GxrFtai2FsSugNO8Wj3580G+tSf0ctwK8YXEVYjLXeP+NVzll5xI2rkqrkNkavSUe2ylke90qTfS5NVReIPAD5ToZdzZ1TJKwVHhGxIsFVoRqhhrYISSywjcRZQ86tp8rDedEhgrRVxTHi4dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K8sTvkzI; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K8sTvkzI"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a248f46aaso71260827b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 01:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718006607; x=1718611407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u5Q1iezkHd1ZRu0oHAjMzqV0sR5Aqpfu+Gd/v+RGtA8=;
+        b=K8sTvkzInp9J5+K9RnO4rt6HqA1AzsdD3k+6tJfs9ORH797yOfCrQ1ROM1yG4ZE4z8
+         w22gli4fRf/b65fNxxE/PGjXZiT6Z2ESIfyOVqcAjg0Vw5i28tL2yPTgEsmxrHP/Za+e
+         UXC97Nbay9OnyuFWh6Qu442gdd9+Nw/WREmawsdLH/GgXMqgzd5cqtSn35UzBzvqJe6v
+         p5KJCghtT+/BI5N0tMp0v1yyHOiKmB9AV8HCMLn1Aar6jG05u56wRLrW56bHsKzhkCHd
+         Ya3u6Z3ahrrIOi76r4RsAGdYylOaI3c4H4r5SwPCRUuUa1/G2/JkwH3/gQ+u9eh7bl7G
+         FtuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718006607; x=1718611407;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u5Q1iezkHd1ZRu0oHAjMzqV0sR5Aqpfu+Gd/v+RGtA8=;
+        b=NcKg/eEDKB20jDKkiDoJu8uhK8gxxvFmTSSTbBZw9d/6qINXcCtZgVc0Zn1WGwThxb
+         VeM4CeH4KowkrGiqBjmtm/EId/FcsXvgVG1e76FUd6+Aq3VXb+IahIOPJGKLx3FPUoZ5
+         FARlch7pmck6jIlwQAS0DMXdBCEz8uq7xa7tQR5nnRCV/Z2P3LvnLE7tcD6Rf9zrB6p1
+         nv/SF6cLopF2Uz1cMGj3kMKokSJJAC8XWbF2KE6M+qPjJQOxiNTOESJmlPrix5sCKN41
+         XdaIIPUctb1hIOv+XZA71fCdPUdL7dYq2N8+SaAODl5PYSMRTktb7iWOm35dvaFuSmPd
+         zmdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5kgtdPsUF5GCU+fd5wsA76RPjLgeJugRZct39wIYtG1HIVlt7DyVbRMZ5SN1Qu2ugmsj8AVmVzQgx+JJSCCV3MoOyZMdgeoh5OkGdxUpVW3wfe5iN
+X-Gm-Message-State: AOJu0YybWLjuTn3OcFfCdDeXjsb/F9hOy1SFBHZj/x0FIHpppFDhrdKj
+	x+FUmvB+o6udL/yeW5Wt16QCt4jX/3bQgLGFydOYrRhr14Z8geVgB+KFfN5rZ4FPUwpGxDLD/3K
+	iaA==
+X-Google-Smtp-Source: AGHT+IEqUSN8bbuvDaJ9iwyS/r+NYoz4VPyxoViB6VkdbhYoxkNWwauW4YkGrTdiiidcWgxVr6IZzZ91l5Q=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:690c:39c:b0:62a:564d:aed1 with SMTP id
+ 00721157ae682-62cd56571c5mr28478027b3.8.1718006607062; Mon, 10 Jun 2024
+ 01:03:27 -0700 (PDT)
+Date: Mon, 10 Jun 2024 10:03:24 +0200
+In-Reply-To: <ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240609104355.442002-3-jcalmels@3xx0.net>
+Mime-Version: 1.0
+References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
+ <20240604.c18387da7a0e@gnoack.org> <ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com>
+Message-ID: <ZmazTKVNlsH3crwP@google.com>
+Subject: Re: [RFC PATCH v2 00/12] Socket type control for Landlock
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack3000@gmail.com>, mic@digikod.net, willemdebruijn.kernel@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	Tahera Fahimi <fahimitahera@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 09, 2024 at 03:43:35AM -0700, Jonathan Calmels wrote:
-> This patch adds a new capability security bit designed to constrain a
-> task’s userns capability set to its bounding set. The reason for this is
-> twofold:
-> 
-> - This serves as a quick and easy way to lock down a set of capabilities
->   for a task, thus ensuring that any namespace it creates will never be
->   more privileged than itself is.
-> - This helps userspace transition to more secure defaults by not requiring
->   specific logic for the userns capability set, or libcap support.
-> 
-> Example:
-> 
->     # capsh --secbits=$((1 << 8)) --drop=cap_sys_rawio -- \
->             -c 'unshare -r grep Cap /proc/self/status'
->     CapInh: 0000000000000000
->     CapPrm: 000001fffffdffff
->     CapEff: 000001fffffdffff
->     CapBnd: 000001fffffdffff
->     CapAmb: 0000000000000000
->     CapUNs: 000001fffffdffff
+On Thu, Jun 06, 2024 at 02:44:23PM +0300, Mikhail Ivanov wrote:
+> 6/4/2024 11:22 PM, G=C3=BCnther Noack wrote:
+> I figured out that I define LANDLOCK_SHIFT_ACCESS_SOCKET macro in
+> really strange way (see landlock/limits.h):
+>=20
+>   #define LANDLOCK_SHIFT_ACCESS_SOCKET	LANDLOCK_NUM_ACCESS_SOCKET
+>=20
+> With this definition, socket access mask overlaps the fs access
+> mask in ruleset->access_masks[layer_level]. That's why
+> landlock_get_fs_access_mask() returns non-zero mask in hook_file_open().
+>=20
+> So, the macro must be defined in this way:
+>=20
+>   #define LANDLOCK_SHIFT_ACCESS_SOCKET	(LANDLOCK_NUM_ACCESS_NET +
+>                                          LANDLOCK_NUM_ACCESS_FS)
+>=20
+> With this fix, open() doesn't fail in your example.
+>=20
+> I'm really sorry that I somehow made such a stupid typo. I will try my
+> best to make sure this doesn't happen again.
 
-But you are not (that I can see, in this or the previous patch)
-keeping SECURE_USERNS_STRICT_CAPS in securebits on the next
-level unshare.  Though I think it's ok, because by then both
-cap_userns and cap_bset are reduced and cap_userns can't be
-expanded.  (Sorry, just thinking aloud here)
+I found that we had the exact same bug with a wrongly defined "SHIFT" value=
+ in
+[1].
 
-> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> ---
->  include/linux/securebits.h      |  1 +
->  include/uapi/linux/securebits.h | 11 ++++++++++-
->  kernel/user_namespace.c         |  5 +++++
->  3 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/securebits.h b/include/linux/securebits.h
-> index 656528673983..5f9d85cd69c3 100644
-> --- a/include/linux/securebits.h
-> +++ b/include/linux/securebits.h
-> @@ -5,4 +5,5 @@
->  #include <uapi/linux/securebits.h>
->  
->  #define issecure(X)		(issecure_mask(X) & current_cred_xxx(securebits))
-> +#define iscredsecure(cred, X)	(issecure_mask(X) & cred->securebits)
->  #endif /* !_LINUX_SECUREBITS_H */
-> diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
-> index d6d98877ff1a..2da3f4be4531 100644
-> --- a/include/uapi/linux/securebits.h
-> +++ b/include/uapi/linux/securebits.h
-> @@ -52,10 +52,19 @@
->  #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
->  			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
->  
-> +/* When set, user namespace capabilities are restricted to their parent's bounding set. */
-> +#define SECURE_USERNS_STRICT_CAPS			8
-> +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9  /* make bit-8 immutable */
-> +
-> +#define SECBIT_USERNS_STRICT_CAPS (issecure_mask(SECURE_USERNS_STRICT_CAPS))
-> +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
-> +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_LOCKED))
-> +
->  #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
->  				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
->  				 issecure_mask(SECURE_KEEP_CAPS) | \
-> -				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
-> +				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
-> +				 issecure_mask(SECURE_USERNS_STRICT_CAPS))
->  #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
->  
->  #endif /* _UAPI_LINUX_SECUREBITS_H */
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 7e624607330b..53848e2b68cd 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -10,6 +10,7 @@
->  #include <linux/cred.h>
->  #include <linux/securebits.h>
->  #include <linux/security.h>
-> +#include <linux/capability.h>
->  #include <linux/keyctl.h>
->  #include <linux/key-type.h>
->  #include <keys/user-type.h>
-> @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts *ucounts)
->  
->  static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
->  {
-> +	/* Limit userns capabilities to our parent's bounding set. */
+Maybe we should define access_masks_t as a bit-field rather than doing the
+bit-shifts by hand.  Then the compiler would keep track of the bit-offsets
+automatically.
 
-In the case of userns_install(), it will be the target user namespace
-creator's bounding set, right?  Not "our parent's"?
+Bit-fields have a bad reputation, but in my understanding, this is largely
+because they make it hard to control the exact bit-by-bit layout.  In our c=
+ase,
+we do not need such an exact control though, and it would be fine.
 
-> +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
-> +		cred->cap_userns = cap_intersect(cred->cap_userns, cred->cap_bset);
-> +
->  	/* Start with the capabilities defined in the userns set. */
->  	cred->cap_bset = cred->cap_userns;
->  	cred->cap_permitted = cred->cap_userns;
-> -- 
-> 2.45.2
+To quote Linus Torvalds on [2],
+
+  Bitfields are fine if you don't actually care about the underlying format=
+,
+  and want gcc to just randomly assign bits, and want things to be
+  convenient in that situation.
+
+Let me send you a proposal patch which replaces access_masks_t with a bit-f=
+ield
+and removes the need for the "SHIFT" definition, which we already got wrong=
+ in
+two patch sets now.  It has the additional benefit of making the code a bit
+shorter and also removing a few static_assert()s which are now guaranteed b=
+y the
+compiler.
+
+=E2=80=94G=C3=BCnther
+
+[1] https://lore.kernel.org/all/ZmLEoBfHyUR3nKAV@google.com/
+[2] https://yarchive.net/comp/linux/bitfields.html
