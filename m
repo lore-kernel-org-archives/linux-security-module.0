@@ -1,203 +1,206 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED82A558BB
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 08:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D911C5FBB1
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 08:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006916; cv=none; b=p+tOfH5GdUUHdREpw3jGEdcPRL9gtmX1RFunZODmN8DnwGur0JL22h8PO80hqnDpeyE0N0Fgu7BttyF6NSzbh4uQK0I0YDLHlrssgKgppG5MFtGakEYhzDIQleUgjBgp36qSYZ5MF82uBhi7hQPd3Xdmcmwvrd7kklOnIgsvAtQ=
+	t=1718007694; cv=none; b=ECb6VEIUwclclfoNpuAFg3R86bwx3RjJJpHqdihN7uaIwYxU/74Oze4IyZOhfXyl+QhFWck1sRlbKylQr7/RL1/GhHZ2ZmkqMeq6ctbxY76W+XdIUy0zqhOYSunDwS8UZggqkbW4f8kkiXBssYOqPpIHJaJF84f1+JaJZItReG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006916; c=relaxed/simple;
-	bh=/L5y1Dv6ivY3eszYnYmdXRYc401x9YYY2yBAmmyUG/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EaGth07ll3ApfQ4HpT6msNSgOl/DB85hRqVswCu7Iu5KwP/5+8wEjkBpiFTdNJeAgiKIX3YvP+PXMW8M+QYw+knzgzWGWw5l6TRYcXkxKkSRJKN7/tp38meZmqck9MOEB169uPZHhoRcyHZgM126wHVCThDz3eS5Q3t+mP1RKI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FY2k3Mn1; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718007694; c=relaxed/simple;
+	bh=h1/FnOTQSMTt1z4R/KEDZc+lka7aaFToV7EmZ3HCGk0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DiNx66sgibZ+53e4BmiKeLQkhFKxAM9rAhOUt8vWxCJz8nadbVzwSUht4+0d2FFg4I2ZjAQk8bo7w79iPGN5eTnUVGCPEcLrejnprjBVxpuX+ycpHlPAUAFhfOJ/sJPygOs/oP3wmCqjnYdHMQmx8s0Wlz9fNSSV6k8a+srN4g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UPfdToA7; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FY2k3Mn1"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5295e488248so4550414e87.2
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 01:08:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UPfdToA7"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-57a49b8a27eso1485511a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 01:21:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718006913; x=1718611713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/L5y1Dv6ivY3eszYnYmdXRYc401x9YYY2yBAmmyUG/k=;
-        b=FY2k3Mn1PYXcT34Eo96oKLUsknRz0hgtVbv3X+DhxGiYz+kbwRScKV5erdDVYUAAcd
-         jw6OuZPpP2NNPqOZ2xbFrAnjX+R/moWth1xQbyLTQwP/AO2viR5QhBlPBUqVIiumNaWh
-         q9FNp9oq5otLzICQCloUWcrekkzWRFWluxtU4sFdlbDWDluPzyuTugazeXoFyCiJBRP3
-         HApxSZljkEXVYOKB9+xNb5fXk5aZomQQNqaUlFf2wJEZ4UBULeRnjXc636gbucf+QV1v
-         lD2YagRXZavPnguwNF+EgxZqcY5VeCnUF1kmP29ABaYpXiQO+TVb9XtCe6irhsUQsFWo
-         cHEg==
+        d=google.com; s=20230601; t=1718007691; x=1718612491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8rfrEd2rTrsOZHlQKovQ5zuPOD0/iB//vkQmtjp7JHs=;
+        b=UPfdToA7YDl/pI49r+CAkW60qB5/7B5N+BzkvHrmpvyEdeiPfNY9QB37ot2PtxWe7X
+         MQTwnQm3UtTDfx87RkIj3/PEYmFl9ZZmQtEDqqdQnZHKchCxnwMdcPLPl+CzKrUZgWBY
+         6+svRkOQHjbDqavagLtVA3gfzTayzFYiME00DDLURmCCWopAyVixoH27BCun/HnvqZsb
+         JblAeBNHHBzkRMBlddpeuotVDG82Tips20/4FUvVGyjm263aQblkoQ4XUuSxWqzXrW+9
+         d46We0BYum913J9K1le80NS6QVU6MdHZWPgooxcxP55+i1bJizpHYciTaoc+tK8CCBO8
+         Dqwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718006913; x=1718611713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/L5y1Dv6ivY3eszYnYmdXRYc401x9YYY2yBAmmyUG/k=;
-        b=brF7AmcDK/FY+L62c8J8r6IVefUOs7h9Ioszt5yfqiswLmWFFZ4tIKgiLedyBTkzoD
-         yAq5zksD09Hq7gSyl/EHsQxvrMr6NWacRNZPEEyYnhGwE2uyVv0o2YeR72ddzgvPMZOl
-         HTQwpC5YKuThGmc8iF+DMquTsU1SWv98QI0mQnzUPROaQiqj0STO66E0a5rerZ/hzGxQ
-         O5IWnJT2xLTe4vsbfM/S1M3MnmYbtS6Ec1I/Ngr/BfwQLp1oy2/KFfAW4BF5bD1K1ntU
-         Xkfu1w9upix160+xqtnw4cOTa6K5a1FzMtn4s/+EnLmYH1BnLtevis45mw1hemft7niG
-         r4NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUeSaYaehCabvMkWdeUTxy6YMCIWXFv8YPyIyvY6EWI/Ve+L4NcweyKUtpMBKZqYmZeE5n0EEGzsuIsTjRo/+SEmJZVYDIpbRwMtWFaQ/inFOkV4MK
-X-Gm-Message-State: AOJu0Yzvj0LM/i+4TVxmR1ZDM8AE4LE+5wF1F8O/RZlvWGmxRlqcXViv
-	fYZWlagAC5TUCetn/E9D9dwoXvPWFoe11nsh+2V+QRy9F4D/21z/9Bt93JcRkfPADd+tkw8rEyK
-	Aoga2yQymD4sXtfJMc0xeOtBOekZqSyCpV1TtR/g5M9vPPcj4
-X-Google-Smtp-Source: AGHT+IEoIIaopVbMhKiBzu+ZFeFG117iZrYhuaSy1PLsnicMvCE0nAaF1iUL9hhnUeVtUHqe9i20V059/u6XmSWe6yI=
-X-Received: by 2002:a05:6512:234d:b0:52b:be9b:cafe with SMTP id
- 2adb3069b0e04-52bbe9bcbadmr5940256e87.21.1718006892189; Mon, 10 Jun 2024
- 01:08:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718007691; x=1718612491;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8rfrEd2rTrsOZHlQKovQ5zuPOD0/iB//vkQmtjp7JHs=;
+        b=VVLpPvsW+o1gUMdofJgvJwTt/BQadwRZ85JJL9vchjSQD08R8sqz+QsPyRX8a01g2H
+         2Ayiis6Rg2ioHv5pUsvoIuzF8mVCHjvVKN7rz80CTy8GAK2BiuCfTqZScydnCQe4lV1z
+         r8EJgrt0s10zsyhnYjm/U/zIZ9ISbYbxWgwNamAnUDkjKmE3deKavTaLPMPOhsnG2yt3
+         s/WD25sv3h6IeHskgRujYEdaYa6fUFa2qlKqrd3plGZNgVzNSZAgSZ6G+ocPRCyO1q3m
+         5ydpHusUwpM90G/sjWwOlJ7P6BH/j/PaqHEnp2zm4hUMRj21upImSFCt7o14aRzgqEp/
+         ozHw==
+X-Gm-Message-State: AOJu0Yx3u4ZpiXW1+KsibkMWOs9Tk3RHle+pTSnn/+nRIGBOpUkIgzsM
+	6WoEk3kVW2EQ/pwdjagYO6n0OzKrDlyCWY2JCfLGLZM8nQFYW3oXRCkwBDkehaVMXojOFGJmDSE
+	qEfqO4jAJJ38x4077ovIhETJjJ98iFrSUvHFGPvuq6Vd9G0usa7idEcK+SkTZ/a6aNeQq22hxPD
+	2/0g1QzxS3bzmiQBCCDbTjT6VaNh1372scN97IVMopUDCVDc1UNV/P
+X-Google-Smtp-Source: AGHT+IEs11M1Y63786D+5Hioh7IKlJvkefxMzqedxEEgmCjuAg4YRWW46YdWl1DdalzWVwqwRbtufKe1O3o=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6402:5485:b0:57a:6158:a867 with SMTP id
+ 4fb4d7f45d1cf-57c506c6b87mr10634a12.0.1718007690802; Mon, 10 Jun 2024
+ 01:21:30 -0700 (PDT)
+Date: Mon, 10 Jun 2024 08:21:15 +0000
+In-Reply-To: <ZmazTKVNlsH3crwP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com> <87tti9cfry.fsf@intel.com>
-In-Reply-To: <87tti9cfry.fsf@intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 10 Jun 2024 10:08:00 +0200
-Message-ID: <CACRpkdZFPG_YLici-BmYfk9HZ36f4WavCN3JNotkk8cPgCODCg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] treewide: Align match_string() with sysfs_match_string()
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Corey Minyard <minyard@acm.org>, 
-	Allen Pais <apais@linux.microsoft.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Perry Yuan <perry.yuan@amd.com>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Nuno Sa <nuno.sa@analog.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Randy Dunlap <rdunlap@infradead.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Elad Nachman <enachman@marvell.com>, 
-	Arseniy Krasnov <AVKrasnov@sberdevices.ru>, Johannes Berg <johannes.berg@intel.com>, 
-	Gregory Greenman <gregory.greenman@intel.com>, Benjamin Berg <benjamin.berg@intel.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Robert Richter <rrichter@amd.com>, Vinod Koul <vkoul@kernel.org>, 
-	Chunfeng Yun <chunfeng.yun@mediatek.com>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Nikita Kravets <teackot@gmail.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Stanley Chang <stanley_chang@realtek.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Abdel Alkuor <abdelalkuor@geotab.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Eric Biggers <ebiggers@google.com>, 
-	Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@kernel.org>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>, Daniel Bristot de Oliveira <bristot@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-	Abel Wu <wuyun.abel@bytedance.com>, John Johansen <john.johansen@canonical.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, 
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-ide@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
-	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, qat-linux@intel.com, 
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, netdev@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-fbdev@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, alsa-devel@alsa-project.org, 
-	linux-sound@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, David Howells <dhowells@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Sergey Shtylyov <s.shtylyov@omp.ru>, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Jean Delvare <jdelvare@suse.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Tony Lindgren <tony@atomide.com>, Adrian Hunter <adrian.hunter@intel.com>, Hu Ziji <huziji@marvell.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Potnuri Bharat Teja <bharat@chelsio.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>, Kalle Valo <kvalo@kernel.org>, 
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver O'Halloran" <oohall@gmail.com>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, JC Kuo <jckuo@nvidia.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Helge Deller <deller@gmx.de>, Brian Foster <bfoster@redhat.com>, 
-	Zhihao Cheng <chengzhihao1@huawei.com>, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Mime-Version: 1.0
+References: <ZmazTKVNlsH3crwP@google.com>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+Message-ID: <20240610082115.1693267-1-gnoack@google.com>
+Subject: [PATCH] landlock: Use bit-fields for storing handled layer access masks
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: linux-security-module@vger.kernel.org, 
+	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
+Cc: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 9:46=E2=80=AFAM Jani Nikula <jani.nikula@linux.intel=
-.com> wrote:
+When defined using bit-fields, the compiler takes care of packing the
+bits in a memory-efficient way and frees us from defining
+LANDLOCK_SHIFT_ACCESS_* by hand.  The exact memory layout does not
+matter in our use case.
 
-[Maybe slightly off-topic, ranty]
+The manual definition of LANDLOCK_SHIFT_ACCESS_* has resulted in bugs
+in at least two recent patch sets where new kinds of handled access
+rights were introduced.
 
-> Why do we think it's a good idea to increase and normalize the use of
-> double-underscore function names across the kernel, like
-> __match_string() in this case? It should mean "reserved for the
-> implementation, not to be called directly".
->
-> If it's to be used directly, it should be named accordingly, right?
+Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Link: https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huaw=
+ei-partners.com/
+Link: https://lore.kernel.org/all/ZmLEoBfHyUR3nKAV@google.com/
+Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+---
+ security/landlock/limits.h  |  2 --
+ security/landlock/ruleset.c |  4 ----
+ security/landlock/ruleset.h | 24 +++++++++---------------
+ 3 files changed, 9 insertions(+), 21 deletions(-)
 
-It's a huge mess. "__" prefix is just so ambiguous I think it just
-shouldn't be used or prolifierated, and it usually breaks Rusty Russells
-API rules times over.
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 20fdb5ff3514..4eb643077a2a 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -21,12 +21,10 @@
+ #define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_DEV
+ #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+-#define LANDLOCK_SHIFT_ACCESS_FS	0
+=20
+ #define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
+ #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NE=
+T)
+-#define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
+=20
+ /* clang-format on */
+=20
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index e0a5fbf9201a..6ff232f58618 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -169,13 +169,9 @@ static void build_check_ruleset(void)
+ 		.num_rules =3D ~0,
+ 		.num_layers =3D ~0,
+ 	};
+-	typeof(ruleset.access_masks[0]) access_masks =3D ~0;
+=20
+ 	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
+ 	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
+-	BUILD_BUG_ON(access_masks <
+-		     ((LANDLOCK_MASK_ACCESS_FS << LANDLOCK_SHIFT_ACCESS_FS) |
+-		      (LANDLOCK_MASK_ACCESS_NET << LANDLOCK_SHIFT_ACCESS_NET)));
+ }
+=20
+ /**
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index c7f1526784fd..0f1b5b4c8f6b 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -39,10 +39,10 @@ static_assert(BITS_PER_TYPE(access_mask_t) >=3D LANDLOC=
+K_NUM_ACCESS_NET);
+ static_assert(sizeof(unsigned long) >=3D sizeof(access_mask_t));
+=20
+ /* Ruleset access masks. */
+-typedef u32 access_masks_t;
+-/* Makes sure all ruleset access rights can be stored. */
+-static_assert(BITS_PER_TYPE(access_masks_t) >=3D
+-	      LANDLOCK_NUM_ACCESS_FS + LANDLOCK_NUM_ACCESS_NET);
++struct access_masks {
++	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
++	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
++};
+=20
+ typedef u16 layer_mask_t;
+ /* Makes sure all layers can be checked. */
+@@ -226,7 +226,7 @@ struct landlock_ruleset {
+ 			 * layers are set once and never changed for the
+ 			 * lifetime of the ruleset.
+ 			 */
+-			access_masks_t access_masks[];
++			struct access_masks access_masks[];
+ 		};
+ 	};
+ };
+@@ -265,8 +265,7 @@ landlock_add_fs_access_mask(struct landlock_ruleset *co=
+nst ruleset,
+=20
+ 	/* Should already be checked in sys_landlock_create_ruleset(). */
+ 	WARN_ON_ONCE(fs_access_mask !=3D fs_mask);
+-	ruleset->access_masks[layer_level] |=3D
+-		(fs_mask << LANDLOCK_SHIFT_ACCESS_FS);
++	ruleset->access_masks[layer_level].fs |=3D fs_mask;
+ }
+=20
+ static inline void
+@@ -278,17 +277,14 @@ landlock_add_net_access_mask(struct landlock_ruleset =
+*const ruleset,
+=20
+ 	/* Should already be checked in sys_landlock_create_ruleset(). */
+ 	WARN_ON_ONCE(net_access_mask !=3D net_mask);
+-	ruleset->access_masks[layer_level] |=3D
+-		(net_mask << LANDLOCK_SHIFT_ACCESS_NET);
++	ruleset->access_masks[layer_level].net |=3D net_mask;
+ }
+=20
+ static inline access_mask_t
+ landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const rules=
+et,
+ 				const u16 layer_level)
+ {
+-	return (ruleset->access_masks[layer_level] >>
+-		LANDLOCK_SHIFT_ACCESS_FS) &
+-	       LANDLOCK_MASK_ACCESS_FS;
++	return ruleset->access_masks[layer_level].fs;
+ }
+=20
+ static inline access_mask_t
+@@ -304,9 +300,7 @@ static inline access_mask_t
+ landlock_get_net_access_mask(const struct landlock_ruleset *const ruleset,
+ 			     const u16 layer_level)
+ {
+-	return (ruleset->access_masks[layer_level] >>
+-		LANDLOCK_SHIFT_ACCESS_NET) &
+-	       LANDLOCK_MASK_ACCESS_NET;
++	return ruleset->access_masks[layer_level].net;
+ }
+=20
+ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+--=20
+2.45.2.505.gda0bf45e8d-goog
 
-Consider __set_bit() from <linux/bitops.h>, used all over the place,
-in contrast with set_bit() for example, what does "__" represent in
-this context that makes __set_bit() different from set_bit()?
-
-It means "non-atomic"...
-
-How does a random contributor know this?
-
-Yeah, you guess it. By the token of "everybody knows that".
-(Grep, google, repeat for the number of contributors to the kernel.)
-
-I was considering to send a script to Torvalds to just change all
-this to set_bit_nonatomic() (etc) but was hesitating because that
-makes the name unambiguous but long. I think I stayed off it
-because changing stuff like that all over the place creates churn
-and churn is bad.
-
-Yours,
-Linus Walleij
