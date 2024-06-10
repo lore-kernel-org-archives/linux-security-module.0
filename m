@@ -1,153 +1,144 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E23414F121
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 20:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB88210E7
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 20:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718050351; cv=none; b=LDLi/N/umWMW8XZHzYGfw/qdQaUWbBoeOSMHft7IChWUzM0UGuqKmcO/tSQaEG7jUlVxWY41Hzq1471B+fZhAIZTtAVSvPQ2wkiLKCChq69zVMavYMSVX3GeAlEsAuw1NLoYz3AIBlIJnW2uIW+Nm5b5mb4PSBLZwHMfBzMPN14=
+	t=1718052285; cv=none; b=Fo6C2NZwsmyjW4V1W43sitVr2GDSQz2UwPxx7HOGf+LtrABkHpFuRD45v8HOSZWGhxIXeqtNliEWuPsUJBTwMoiEajrGxyeusSMFlTarSmfUEQ8uc3l0340kN/3iYb9+NqmkC1L5TSg2wstIiMsbWHj3fqCwSzxf4WhErYTYcfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718050351; c=relaxed/simple;
-	bh=b7+MwoWNMLPQ7YyhI/4+4s4P3K4STGUIbLhPZG0Mamc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amb9M4ZOT7oDX07ss0JDZrQO/u7v7gna1z6+lOmakg79FnIfyEASifWlMIHW66mGylLtuKeTVo86lmWiRAf2NW71sfDiuVZqnbXu/C5JB02Pvdrvu2nasxOSF8dUc/hJPSYb1OZhk2BBlCgewC/bOAS6pi/CQOkSTsQUc5zXEYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=LYwY4ug2; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+	s=arc-20240116; t=1718052285; c=relaxed/simple;
+	bh=2AMpvZTyySR52Q575EvvbyYkR5oPISP1+4gct2WOnNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FlxBOMSSj/Jali4aqx2tlHsI5hnWvbGWOOK4WKNGd21Xuqe4kGmwuQM6/N1RCqIkNQMT9DChoxuudR6Y/WWo3jCpVGgXUtKNI+3/ZrevI6wgJFzPxW9InHZwr2cgq0heG8FNokscGqFKes/qermLluh9XyGtkElYcvvPC8rp6KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QP0ZVlXn; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="LYwY4ug2"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a087c3a92so48860367b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 13:12:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QP0ZVlXn"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfa584ea2ffso3890877276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 13:44:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1718050348; x=1718655148; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8U88OhWZh1tCo+0WQ1tID8xLxoIwnJftDZHFtRwK3o=;
-        b=LYwY4ug2iL/vJ4DIUm0/Hp2MvpGURHFsHfCR8hKgvsmAqgzRPxBeFZzp5Tfo48EbCo
-         Euj3YFKE98R3xDK+TVi4X08MQrChZxoR0ZdwAIKYcBEyuT6J6pRA6MFIWpmGlK1QH6yk
-         ayaE24UINt0NKI07iU6nbvvP+ur4CK0DddjWE0Gtpl8JlrD2yRSechl/xjLYVx0XPb6G
-         i76retKit/NIZmraE8AuogV1B4ponmQt72v7gY3tzehh7ckEOuDJ8LHGOKzXVFo5n2E+
-         4LMkjHweMxF1v6LeN1NaZpvEMI8QBe5KxGttDTh645mywME2cc7oJs1j5M/rPYABPg7M
-         UNcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718050348; x=1718655148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1718052282; x=1718657082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q8U88OhWZh1tCo+0WQ1tID8xLxoIwnJftDZHFtRwK3o=;
-        b=qf4hqpEjpfw0nmZx9yjONseBEwYpdSHiLPKWz7kK4Qg5+7r6De0WqO6TW3TY+XESbU
-         Y6orLVDeUSunAkqd5OhVDiqME9jX/Tl2/7hSgWuQpf0prxYx0WZEU1xrMk8QZ2CIGgB/
-         4zE6rra4kfpcMBq9YR+NBwWZ1DPvcKXo0UZknoii6zl0Cf5fkzjl+cDRG5V1HHtSirWU
-         1L1f37npjuKXcH/rMklzRdRN+3Ja6hUDxIdCVeMSNeK/sCMt3QFw0j+Ttel+dI/cmFfj
-         J+qXC3ItoWe9kNtiI8IsrkSO3ia/k//WYbDAukoD5ruaWRC0jUogENvNdHe+k8dBOe9k
-         skgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDBqfDA55q1gO12Au6DamBY+HKRC3vYuQT41mlh7v8i1Yp7rQNjz1h9sOWvy5qGBpVN7po9fuJ4cPE0JIeUQSVa0rnNlWqa0/+3SyA1QnOodEkGsgB
-X-Gm-Message-State: AOJu0Yyosn6WufHEImYKeY5ZHpQCCpaxnut7im6FuZSYMIPuj4ccU5LC
-	BbNkXVLC/m+oHp1ojyErkAURgVW99P4R6Ybsjwva2TVdhMHQZU/w/OUrzdsU4fY=
-X-Google-Smtp-Source: AGHT+IHAq2uat/BxStlvycvWIMemf9chq6bKvr5RgwVh7JekY7oKEJ33MFsCJYBOa4s18l+17nIrDA==
-X-Received: by 2002:a81:ef0e:0:b0:61a:f206:bad6 with SMTP id 00721157ae682-62cd55f6755mr90104707b3.30.1718050348318;
-        Mon, 10 Jun 2024 13:12:28 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccaef2825sm17372997b3.139.2024.06.10.13.12.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 13:12:27 -0700 (PDT)
-Date: Mon, 10 Jun 2024 16:12:27 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Jonathan Calmels <jcalmels@3xx0.net>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
-	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
-	John Johansen <john.johansen@canonical.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Introduce user namespace capabilities
-Message-ID: <20240610201227.GD235772@perftesting>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
+        bh=dcoA750Bj+ZN7bjH86sGDKqLI2brF1ReIBjp5AaBwhc=;
+        b=QP0ZVlXnPzi9JHSb9MI9yByHECUpe4ZIOkg61l1ioIz6jTHJyBd37Q4pAlyRAPgt6l
+         8xBkGM9N3hGvqj9btiOzmw15M2HlRmJepSNRYlltUuhGxA06IujUR6b9v/c18HlMAcwW
+         HFy2SpzSUz6k/LX3LWIay8nUXv5OO70g85CJTwA1oftokNjYyTaOA0t9IZnY34QKZos+
+         4NJWoAOBgseg5HOG0euABPH732rkWSmydSiduFVHKZlYxBV4a7zA+v9FZQhTgMw8ofXO
+         4+KKoEXDEIFUpxXB9nncLl+JqfLtevtlRePW3g+p00iveGKE4aD2l3JKrNsZZjmxygie
+         VKzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718052282; x=1718657082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dcoA750Bj+ZN7bjH86sGDKqLI2brF1ReIBjp5AaBwhc=;
+        b=RzLwa580e1xNbBrqQGZvUDRmKw7KqcfGdi29JNhwzyVVC4yLRKxUTl1hfQOOlDJt4m
+         J5oSIKCTsKkxD+t3xBkG9WIID1aNB6vu0kGe6fI2zzUIKns6mgt2OBr3a7ANS1DJQqxX
+         4zbnJQsi9SAOx0IztVl1f+u0igXmina90j7New0x/SkWTQ9KpYQM2uPpqgUumTBqeKjm
+         yyRCtPBnJHq1CbzSAXTxLHRLD985DsmI5/VFFWIwBzzVonlsTQqJVL1o2Sh/DYZQPMem
+         jtIBpuyh24USQ5cvlS+8zncvZVPQaVQ6R3Dan56r2NJYJAipJWMiRFfzgMhotytQEzD8
+         d6uA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKMc26PfcHsi1Un2pT/jwGT/vnd2FlnFDX6QTMYNOL1P0K9qFiAswSHPYUL5P+r7zFuonghNxligHb6DRh74IveEo5A2FuskOkNeayOL++J5ROmM4D
+X-Gm-Message-State: AOJu0YzdOsbB6oueBCD0szW6ejPKH57YkC5DLck8Qus+yj2phu4E5aux
+	8JW/taJioCqH8YQQA3GZVu/yOFwwuIphbe6qiD71B65CAFKxfYZYdoHPt2vwGGSbasFrLE5pzlT
+	9yGxhRQRI7iGylSOuEjuzfFsz6pJtlUvdtM8i
+X-Google-Smtp-Source: AGHT+IG3SmWEZjN2PWG+EsAgWFrCFp7Ijii/YP3+foCW4tNLPIKtnByY5hj7IEgbBVJSG4st69P97jNgbcAYtpOSl/w=
+X-Received: by 2002:a25:5f44:0:b0:df7:c087:57a1 with SMTP id
+ 3f1490d57ef6-dfaf66d1ddamr8231100276.51.1718052282366; Mon, 10 Jun 2024
+ 13:44:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240609104355.442002-1-jcalmels@3xx0.net>
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+ <202402070631.7B39C4E8@keescook> <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
+ <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
+ <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp> <202405011257.E590171@keescook>
+In-Reply-To: <202405011257.E590171@keescook>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 10 Jun 2024 16:44:31 -0400
+Message-ID: <CAHC9VhTucjgxe8rc1j3r3krGPzLFYmPeToCreaqc3HSUkg6dZA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Serge Hallyn <serge@hallyn.com>, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 09, 2024 at 03:43:33AM -0700, Jonathan Calmels wrote:
-> This patch series introduces a new user namespace capability set, as
-> well as some plumbing around it (i.e. sysctl, secbit, lsm support).
-> 
-> First patch goes over the motivations for this as well as prior art.
-> 
-> In summary, while user namespaces are a great success today in that they
-> avoid running a lot of code as root, they also expand the attack surface
-> of the kernel substantially which is often abused by attackers. 
-> Methods exist to limit the creation of such namespaces [1], however,
-> application developers often need to assume that user namespaces are
-> available for various tasks such as sandboxing. Thus, instead of
-> restricting the creation of user namespaces, we offer ways for userspace
-> to limit the capabilities granted to them.
-> 
-> Why a new capability set and not something specific to the userns (e.g.
-> ioctl_ns)?
-> 
->     1. We can't really expect userspace to patch every single callsite
->     and opt-in this new security mechanism. 
-> 
->     2. We don't necessarily want policies enforced at said callsites.
->     For example a service like systemd-machined or a PAM session need to
->     be able to place restrictions on any namespace spawned under it.
-> 
->     3. We would need to come up with inheritance rules, querying
->     capabilities, etc. At this point we're just reinventing capability
->     sets.
-> 
->     4. We can easily define interactions between capability sets, thus
->     helping with adoption (patch 2 is an example of this)
-> 
-> Some examples of how this could be leveraged in userspace:
-> 
->     - Prevent user from getting CAP_NET_ADMIN in user namespaces under SSH:
->         echo "auth optional pam_cap.so" >> /etc/pam.d/sshd
->         echo "!cap_net_admin $USER"     >> /etc/security/capability.conf
->         capsh --secbits=$((1 << 8)) -- -c /usr/sbin/sshd
-> 
->     - Prevent containers from ever getting CAP_DAC_OVERRIDE:
->         systemd-run -p CapabilityBoundingSet=~CAP_DAC_OVERRIDE \
->                     -p SecureBits=userns-strict-caps \
->                     /usr/bin/dockerd
->         systemd-run -p UserNSCapabilities=~CAP_DAC_OVERRIDE \
->                     /usr/bin/incusd
-> 
->     - Kernel could be vulnerable to CAP_SYS_RAWIO exploits, prevent it:
->         sysctl -w cap_bound_userns_mask=0x1fffffdffff
-> 
->     - Drop CAP_SYS_ADMIN for this shell and all the user namespaces below it:
->         bwrap --unshare-user --cap-drop CAP_SYS_ADMIN /bin/sh
-> 
+On Wed, May 1, 2024 at 4:04=E2=80=AFPM Kees Cook <keescook@chromium.org> wr=
+ote:
+> On Thu, Feb 15, 2024 at 11:33:32PM +0900, Tetsuo Handa wrote:
+> > On 2024/02/15 6:46, Paul Moore wrote:
+> > >> To quickly summarize, there are two paths forward that I believe are
+> > >> acceptable from a LSM perspective, pick either one and send me an
+> > >> updated patchset.
+> > >>
+> > >> 1. Rename the hook to security_bprm_free() and update the LSM hook
+> > >> description as I mentioned earlier in this thread.
+> > >>
+> > >> 2. Rename the hook to security_execve_revert(), move it into the
+> > >> execve related functions, and update the LSM hook description to
+> > >> reflect that this hook is for reverting execve related changes to th=
+e
+> > >> current task's internal LSM state beyond what is possible via the
+> > >> credential hooks.
+> > >
+> > > Hi Tetsuo, I just wanted to check on this and see if you've been able
+> > > to make any progress?
+> > >
+> >
+> > I'm fine with either approach. Just worrying that someone doesn't like
+> > overhead of unconditionally calling security_bprm_free() hook.
+>
+> With the coming static calls series, this concern will delightfully go
+> away. :)
+>
+> > If everyone is fine with below one, I'll post v4 patchset.
+>
+> I'm okay with it being security_bprm_free(). One question I had was how
+> Tomoyo deals with it? I was depending on the earlier hook only being
+> called in a failure path.
+>
+> > [...]
+> > @@ -1530,6 +1530,7 @@ static void free_bprm(struct linux_binprm *bprm)
+> >               kfree(bprm->interp);
+> >       kfree(bprm->fdpath);
+> >       kfree(bprm);
+> > +     security_bprm_free();
+> >  }
+>
+> I'm fine with security_bprm_free(), but this needs to be moved to the
+> start of free_bprm(), and to pass the bprm itself. This is the pattern we
+> use for all the other "free" hooks. (Though in this case we don't attach
+> any security context to the brpm, but there may be state of interest in
+> it.) i.e.:
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 40073142288f..7ec13b104960 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1532,6 +1532,7 @@ static void do_close_execat(struct file *file)
+>
+>  static void free_bprm(struct linux_binprm *bprm)
+>  {
+> +       security_bprm_free(bprm);
+>         if (bprm->mm) {
+>                 acct_arg_size(bprm, 0);
+>                 mmput(bprm->mm);
+>
 
-Where are the tests for this patchset?  I see you updated the bpf tests for the
-bpf lsm bits, but there's nothing to validate this new behavior or exercise the
-new ioctl you've added.  Thanks,
+Tetsuo, it's been a while since we've heard from you in this thread -
+are you still planning to work on this?  If not, would you object if
+someone else took over this patchset?
 
-Josef
+--=20
+paul-moore.com
