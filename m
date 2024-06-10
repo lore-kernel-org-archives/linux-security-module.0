@@ -1,210 +1,539 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8051879;
-	Mon, 10 Jun 2024 21:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EB75B69E
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 21:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718053939; cv=none; b=LVVKsgTj+b6XItx7Wd1nUlx34Jeg3dTNRt4FYGO7gyEdGAMzcOu7Tmp3NJoRyAAEfEMUYROkGCL6wIIRz0JlQYcXz/1vtyCGPTID3yiikEyaugazNOmC2WVYZoQBwpqpMR8ZmW2Yie2rpe9rxKUoKOqqPePyqy/orMFlLUE0E7Q=
+	t=1718055209; cv=none; b=jGkXpsnKGLuiQ+d74wIj0xzJWdVkpIkSk0XulkofTiaateuvPCX6t2jx7bNjgDJZMiDtcMTpqyX/FhmG4pM8V2OjicONwaXbHEBhwIk8c7ev87/EKIogSgMfWYLseAOn4tKXwHIj7DB6d14fTWE9TOdHRI27vVjAMS3dWj7tLRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718053939; c=relaxed/simple;
-	bh=L6idWEylvQppgYHhQF7YKp4UwnmESQ6eDx18yypSxo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OwCqnCpuQPyrxRaWQGHoELnMYYYqLm1Q8f7Ow9FtaLusrnBhzYihjDw0pxhCeXYZ7cMslXask/l+uSIwqApr/pTD9rZVRBeH4TU7d8M3p483SYh1XpYgAMPyOF320BeIxN/4uCjh79pDhhXdQD2vQDgLsuAP2huJEDoZtfhF8Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FSbpHbeJ; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1718055209; c=relaxed/simple;
+	bh=0yBu0GixRXi4Ppeqwbh5M4bwKPiAv3KfPRnL1nr9SJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsjWmZyqeegLBeGdce7E0TorXZIATcBAuH8ZR5nQj0NEkunrJWqV2XGyJVQKoA/vuSMIMH8n+AFOzGL6RzN+uEzHZ8n6+nXaLE6zTsMrWfwXFDnxPyGExJ9HX+tzjmoXxtgTEk0xk3CkZ4QY3oYbqlm2i6bWkkygj4zwNQ4a6s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YJGsVmyn; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FSbpHbeJ"
-Received: from [192.168.192.83] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EA0BE40FC9;
-	Mon, 10 Jun 2024 21:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1718053927;
-	bh=0+CsIHZM4SguLeaiX+nC4gxIoEzogxF06SwIBnAaJt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=FSbpHbeJ0qs8ahd0/RIZF8ZdBAdo315IAdFQ9tI7YpABFM9GR8ENuv/wcQaY5ALTy
-	 4O/iscNJCO9tCrEPM2U+Smpe0vkPzg2buaPqVAY7XIwhb+pZ/cSd+rLmysOdEreLNB
-	 tlVCs88sRtTcqCBA654FwfvPgsU4csCpEKSjUwFz0JNx6m4B2HMn2ZKHXxkYnj3Tbn
-	 Yl4FBS+yDxThTxFsiU0mnSWBYBNkS731+cmrGfN1/HQTY2Br1SKtR9bsm0j5XEiFgk
-	 1UJEVB91SFy9PbHey6QQiLkSQISQ9wTOVHt/r4tK38CMpGHxQSu3TxK2hzOhYcx+/o
-	 yrBNYQC0MnuUQ==
-Message-ID: <4cfca86d-ceb7-4abe-8b6b-35194fc55565@canonical.com>
-Date: Mon, 10 Jun 2024 14:12:01 -0700
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YJGsVmyn"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4405cf01a7fso44821cf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 14:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718055206; x=1718660006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k/1MZYkvJqGzXwxdxyKaiV/jOC5GN5vlXbEcMG/wWjo=;
+        b=YJGsVmynJJtxmsp/Q1yx7d5kh7BZSBu5xnF1kpogxfrEgbfmLbtFY8E1FZkWqtjH1V
+         8CCvJVIMcq0HjtrbA+7YnB7fQywT6Seto0CRAaNRgXHDGgNiH2KzeVXLQHpHUZhudpVY
+         Seifi8i9VvYw6RbBc4j5oxKBk4gMuK4fdGUhnyt9m/x+7/5CXpRn2E7Fzp5q8Xjf5lUN
+         NMqOjup3IVfBJ5tcnKCNp6LwYCDZyt/EayQ/bE+OBEIw9FL9K6KDduD9IHjE9P1Hi1Z8
+         6XVghQYJeZUHTu4NTWjTJ3m1uucDujfbyeQEvFLzaEL7+jgXW6EI2LjcZexecwd2AhM+
+         rkrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718055206; x=1718660006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k/1MZYkvJqGzXwxdxyKaiV/jOC5GN5vlXbEcMG/wWjo=;
+        b=ZfpAkXobKvr4EDeHHdwrLC7AqGgY9HWQCWm7HQg4JFuz1NwElCmtjheZnJJdw95api
+         CJyqsI7o2oRf+flQlJJ2gam1UlGrPu83FiQw2L9/af1Bxz40V/YFQVKUWIN4ON5ASE93
+         y2nBF9wlp8QGNUWjlJ5TUXgDtrZCgEEuWymTeI8dVnbOWTK0/1g/A8uoAkE1HSz84zfV
+         ItU2QGAGWb2nm80EKVP6Rc9fG1TN+g06alVOKtgG45jlThoC2F42/pSfSIwAMZudx7fU
+         fYYcdyLwYJhc6c0gjPkqfvedbiXBhctbY+/L0glhaBKCfGe2JRn0PGo0PeGPdx5ug+BB
+         RtxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlewSuT3kt0XQ/XwW6U5iYqpLlZ4n/J3W0FJGtoUc67uDC//HW+dx7wSES99LBrZEvGrPHVm9aqMI1oLvpBVcQ+OiCJ6mpQftdk58hR6qZ4QJ8YOzl
+X-Gm-Message-State: AOJu0YyZIcKV5u4qJhx//XOuT62JU/Id7qY5cSwMnf7RtvmsFyIG1VlS
+	R3fXvMNEp0gENt7dlRyT4xpy7aE9NbJZKIDM307sRFm0+sLOiurfOtn475bd981m9mVQcRViwOJ
+	FDGES5WCHKRC9eT8EG6wRkRTSFzrqOwAwF9J5
+X-Google-Smtp-Source: AGHT+IE2oVD7QAe0nD/gru3sJCBjYJQssg/NRVaZrMCqHZ96jYj3WmoKmOINKGmHa8llrdJDzXC5Q+nKjyn8PK92kgE=
+X-Received: by 2002:a05:622a:4114:b0:440:5441:56bf with SMTP id
+ d75a77b69052e-4413ec32cd5mr1245251cf.0.1718055205534; Mon, 10 Jun 2024
+ 14:33:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] capability: introduce new capable flag
- CAP_OPT_NOAUDIT_ONDENY
-To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- linux-security-module@vger.kernel.org
-Cc: linux-block@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Christian Brauner <brauner@kernel.org>,
- Roberto Sassu <roberto.sassu@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
- apparmor@lists.ubuntu.com, selinux@vger.kernel.org, bpf@vger.kernel.org
-References: <20240315113828.258005-1-cgzones@googlemail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240315113828.258005-1-cgzones@googlemail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240608172147.2779890-1-howardchu95@gmail.com>
+In-Reply-To: <20240608172147.2779890-1-howardchu95@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 10 Jun 2024 14:33:10 -0700
+Message-ID: <CAP-5=fVW0coox1KFpoVTq5wf54yyppM0JgXNT5mLfLOCX_Jugg@mail.gmail.com>
+Subject: Re: [PATCH] perf trace: Fix syscall untraceable bug
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	mic@digikod.net, gnoack@google.com, brauner@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/15/24 04:37, Christian Göttsche wrote:
-> Introduce a new capable flag, CAP_OPT_NOAUDIT_ONDENY, to not generate
-> an audit event if the requested capability is not granted.  This will be
-> used in a new capable_any() functionality to reduce the number of
-> necessary capable calls.
-> 
-> Handle the flag accordingly in AppArmor and SELinux.
-> 
-> CC: linux-block@vger.kernel.org
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
+On Sat, Jun 8, 2024 at 10:21=E2=80=AFAM Howard Chu <howardchu95@gmail.com> =
+wrote:
+>
+> This is a bug found when implementing pretty-printing for the
+> landlock_add_rule system call, I decided to send this patch separately
+> because this is a serious bug that should be fixed fast.
+>
+> I wrote a test program to do landlock_add_rule syscall in a loop,
+> yet perf trace -e landlock_add_rule freezes, giving no output.
+>
+> This bug is introduced by the false understanding of the variable "key"
+> below:
+> ```
+> for (key =3D 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+>         struct syscall *sc =3D trace__syscall_info(trace, NULL, key);
+>         ...
+> }
+> ```
+> The code above seems right at the beginning, but when looking at
+> syscalltbl.c, I found these lines:
+>
+> ```
+> for (i =3D 0; i <=3D syscalltbl_native_max_id; ++i)
+>         if (syscalltbl_native[i])
+>                 ++nr_entries;
+>
+> entries =3D tbl->syscalls.entries =3D malloc(sizeof(struct syscall) * nr_=
+entries);
+> ...
+>
+> for (i =3D 0, j =3D 0; i <=3D syscalltbl_native_max_id; ++i) {
+>         if (syscalltbl_native[i]) {
+>                 entries[j].name =3D syscalltbl_native[i];
+>                 entries[j].id =3D i;
+>                 ++j;
+>         }
+> }
+> ```
+>
+> meaning the key is merely an index to traverse the syscall table,
+> instead of the actual syscall id for this particular syscall.
 
+
+Thanks Howard, I'm not following this. Doesn't it make sense to use
+the syscall number as its id?
+
+>
+>
+> So if one uses key to do trace__syscall_info(trace, NULL, key), because
+> key only goes up to trace->sctbl->syscalls.nr_entries, for example, on
+> my X86_64 machine, this number is 373, it will end up neglecting all
+> the rest of the syscall, in my case, everything after `rseq`, because
+> the traversal will stop at 373, and `rseq` is the last syscall whose id
+> is lower than 373
+>
+> in tools/perf/arch/x86/include/generated/asm/syscalls_64.c:
+> ```
+>         ...
+>         [334] =3D "rseq",
+>         [424] =3D "pidfd_send_signal",
+>         ...
+> ```
+>
+> The reason why the key is scrambled but perf trace works well is that
+> key is used in trace__syscall_info(trace, NULL, key) to do
+> trace->syscalls.table[id], this makes sure that the struct syscall return=
+ed
+> actually has an id the same value as key, making the later bpf_prog
+> matching all correct.
+
+
+Could we create a test for this? We have tests that list all perf
+events and then running a perf command on them. It wouldn't be
+possible to guarantee output.
+
+>
+> After fixing this bug, I can do perf trace on 38 more syscalls, and
+> because more syscalls are visible, we get 8 more syscalls that can be
+> augmented.
+>
+> before:
+>
+> perf $ perf trace -vv --max-events=3D1 |& grep Reusing
+> Reusing "open" BPF sys_enter augmenter for "stat"
+> Reusing "open" BPF sys_enter augmenter for "lstat"
+> Reusing "open" BPF sys_enter augmenter for "access"
+> Reusing "connect" BPF sys_enter augmenter for "accept"
+> Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
+> Reusing "connect" BPF sys_enter augmenter for "bind"
+> Reusing "connect" BPF sys_enter augmenter for "getsockname"
+> Reusing "connect" BPF sys_enter augmenter for "getpeername"
+> Reusing "open" BPF sys_enter augmenter for "execve"
+> Reusing "open" BPF sys_enter augmenter for "truncate"
+> Reusing "open" BPF sys_enter augmenter for "chdir"
+> Reusing "open" BPF sys_enter augmenter for "mkdir"
+> Reusing "open" BPF sys_enter augmenter for "rmdir"
+> Reusing "open" BPF sys_enter augmenter for "creat"
+> Reusing "open" BPF sys_enter augmenter for "link"
+> Reusing "open" BPF sys_enter augmenter for "unlink"
+> Reusing "open" BPF sys_enter augmenter for "symlink"
+> Reusing "open" BPF sys_enter augmenter for "readlink"
+> Reusing "open" BPF sys_enter augmenter for "chmod"
+> Reusing "open" BPF sys_enter augmenter for "chown"
+> Reusing "open" BPF sys_enter augmenter for "lchown"
+> Reusing "open" BPF sys_enter augmenter for "mknod"
+> Reusing "open" BPF sys_enter augmenter for "statfs"
+> Reusing "open" BPF sys_enter augmenter for "pivot_root"
+> Reusing "open" BPF sys_enter augmenter for "chroot"
+> Reusing "open" BPF sys_enter augmenter for "acct"
+> Reusing "open" BPF sys_enter augmenter for "swapon"
+> Reusing "open" BPF sys_enter augmenter for "swapoff"
+> Reusing "open" BPF sys_enter augmenter for "delete_module"
+> Reusing "open" BPF sys_enter augmenter for "setxattr"
+> Reusing "open" BPF sys_enter augmenter for "lsetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
+> Reusing "open" BPF sys_enter augmenter for "getxattr"
+> Reusing "open" BPF sys_enter augmenter for "lgetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
+> Reusing "open" BPF sys_enter augmenter for "listxattr"
+> Reusing "open" BPF sys_enter augmenter for "llistxattr"
+> Reusing "open" BPF sys_enter augmenter for "removexattr"
+> Reusing "open" BPF sys_enter augmenter for "lremovexattr"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
+> Reusing "open" BPF sys_enter augmenter for "mq_open"
+> Reusing "open" BPF sys_enter augmenter for "mq_unlink"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
+> Reusing "open" BPF sys_enter augmenter for "symlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
+> Reusing "connect" BPF sys_enter augmenter for "accept4"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
+> Reusing "open" BPF sys_enter augmenter for "memfd_create"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
+>
+> after
+>
+> perf $ perf trace -vv --max-events=3D1 |& grep Reusing
+> Reusing "open" BPF sys_enter augmenter for "stat"
+> Reusing "open" BPF sys_enter augmenter for "lstat"
+> Reusing "open" BPF sys_enter augmenter for "access"
+> Reusing "connect" BPF sys_enter augmenter for "accept"
+> Reusing "sendto" BPF sys_enter augmenter for "recvfrom"
+> Reusing "connect" BPF sys_enter augmenter for "bind"
+> Reusing "connect" BPF sys_enter augmenter for "getsockname"
+> Reusing "connect" BPF sys_enter augmenter for "getpeername"
+> Reusing "open" BPF sys_enter augmenter for "execve"
+> Reusing "open" BPF sys_enter augmenter for "truncate"
+> Reusing "open" BPF sys_enter augmenter for "chdir"
+> Reusing "open" BPF sys_enter augmenter for "mkdir"
+> Reusing "open" BPF sys_enter augmenter for "rmdir"
+> Reusing "open" BPF sys_enter augmenter for "creat"
+> Reusing "open" BPF sys_enter augmenter for "link"
+> Reusing "open" BPF sys_enter augmenter for "unlink"
+> Reusing "open" BPF sys_enter augmenter for "symlink"
+> Reusing "open" BPF sys_enter augmenter for "readlink"
+> Reusing "open" BPF sys_enter augmenter for "chmod"
+> Reusing "open" BPF sys_enter augmenter for "chown"
+> Reusing "open" BPF sys_enter augmenter for "lchown"
+> Reusing "open" BPF sys_enter augmenter for "mknod"
+> Reusing "open" BPF sys_enter augmenter for "statfs"
+> Reusing "open" BPF sys_enter augmenter for "pivot_root"
+> Reusing "open" BPF sys_enter augmenter for "chroot"
+> Reusing "open" BPF sys_enter augmenter for "acct"
+> Reusing "open" BPF sys_enter augmenter for "swapon"
+> Reusing "open" BPF sys_enter augmenter for "swapoff"
+> Reusing "open" BPF sys_enter augmenter for "delete_module"
+> Reusing "open" BPF sys_enter augmenter for "setxattr"
+> Reusing "open" BPF sys_enter augmenter for "lsetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fsetxattr"
+> Reusing "open" BPF sys_enter augmenter for "getxattr"
+> Reusing "open" BPF sys_enter augmenter for "lgetxattr"
+> Reusing "openat" BPF sys_enter augmenter for "fgetxattr"
+> Reusing "open" BPF sys_enter augmenter for "listxattr"
+> Reusing "open" BPF sys_enter augmenter for "llistxattr"
+> Reusing "open" BPF sys_enter augmenter for "removexattr"
+> Reusing "open" BPF sys_enter augmenter for "lremovexattr"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "fremovexattr"
+> Reusing "open" BPF sys_enter augmenter for "mq_open"
+> Reusing "open" BPF sys_enter augmenter for "mq_unlink"
+> Reusing "fsetxattr" BPF sys_enter augmenter for "add_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "request_key"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "inotify_add_watch"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mkdirat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "mknodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchownat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "futimesat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "newfstatat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "unlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "linkat"
+> Reusing "open" BPF sys_enter augmenter for "symlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "readlinkat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "fchmodat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "faccessat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "utimensat"
+> Reusing "connect" BPF sys_enter augmenter for "accept4"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "name_to_handle_at"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "renameat2"
+> Reusing "open" BPF sys_enter augmenter for "memfd_create"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
+>
+> TL;DR:
+>
+> These are the new syscalls that can be augmented
+> Reusing "openat" BPF sys_enter augmenter for "open_tree"
+> Reusing "openat" BPF sys_enter augmenter for "openat2"
+> Reusing "openat" BPF sys_enter augmenter for "mount_setattr"
+> Reusing "openat" BPF sys_enter augmenter for "move_mount"
+> Reusing "open" BPF sys_enter augmenter for "fsopen"
+> Reusing "openat" BPF sys_enter augmenter for "fspick"
+> Reusing "openat" BPF sys_enter augmenter for "faccessat2"
+> Reusing "openat" BPF sys_enter augmenter for "fchmodat2"
+>
+> as for the perf trace output:
+>
+> before
+>
+> perf $ perf trace -e faccessat2 --max-events=3D1
+> [no output]
+>
+> after
+>
+> perf $ ./perf trace -e faccessat2 --max-events=3D1
+>      0.000 ( 0.037 ms): waybar/958 faccessat2(dfd: 40, filename: "uevent"=
+)                               =3D 0
+>
+> P.S. The reason why this bug was not found in the past five years is
+> probably because it only happens to the newer syscalls whose id is
+> greater, for instance, faccessat2 of id 439, which not a lot of people
+> care about when using perf trace.
+>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
 > ---
-> v5:
->     rename flag to CAP_OPT_NOAUDIT_ONDENY, suggested by Serge:
->       https://lore.kernel.org/all/20230606190013.GA640488@mail.hallyn.com/
-> ---
->   include/linux/security.h       |  2 ++
->   security/apparmor/capability.c |  8 +++++---
->   security/selinux/hooks.c       | 14 ++++++++------
->   3 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 41a8f667bdfa..c60cae78ff8b 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -70,6 +70,8 @@ struct lsm_ctx;
->   #define CAP_OPT_NOAUDIT BIT(1)
->   /* If capable is being called by a setid function */
->   #define CAP_OPT_INSETID BIT(2)
-> +/* If capable should audit the security request for authorized requests only */
-> +#define CAP_OPT_NOAUDIT_ONDENY BIT(3)
->   
->   /* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
->   #define SECURITY_LSM_NATIVE_LABELS	1
-> diff --git a/security/apparmor/capability.c b/security/apparmor/capability.c
-> index 9934df16c843..08c9c9a0fc19 100644
-> --- a/security/apparmor/capability.c
-> +++ b/security/apparmor/capability.c
-> @@ -108,7 +108,8 @@ static int audit_caps(struct apparmor_audit_data *ad, struct aa_profile *profile
->    * profile_capable - test if profile allows use of capability @cap
->    * @profile: profile being enforced    (NOT NULL, NOT unconfined)
->    * @cap: capability to test if allowed
-> - * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
-> + * @opts: CAP_OPT_NOAUDIT/CAP_OPT_NOAUDIT_ONDENY bit determines whether audit
-> + *	record is generated
->    * @ad: audit data (MAY BE NULL indicating no auditing)
->    *
->    * Returns: 0 if allowed else -EPERM
-> @@ -126,7 +127,7 @@ static int profile_capable(struct aa_profile *profile, int cap,
->   	else
->   		error = -EPERM;
->   
-> -	if (opts & CAP_OPT_NOAUDIT) {
-> +	if ((opts & CAP_OPT_NOAUDIT) || ((opts & CAP_OPT_NOAUDIT_ONDENY) && error)) {
->   		if (!COMPLAIN_MODE(profile))
->   			return error;
->   		/* audit the cap request in complain mode but note that it
-> @@ -143,7 +144,8 @@ static int profile_capable(struct aa_profile *profile, int cap,
->    * @subj_cred: cred we are testing capability against
->    * @label: label being tested for capability (NOT NULL)
->    * @cap: capability to be tested
-> - * @opts: CAP_OPT_NOAUDIT bit determines whether audit record is generated
-> + * @opts: CAP_OPT_NOAUDIT/CAP_OPT_NOAUDIT_ONDENY bit determines whether audit
-> + *	record is generated
->    *
->    * Look up capability in profile capability set.
->    *
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 3448454c82d0..1a2c7c1a89be 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -1624,7 +1624,7 @@ static int cred_has_capability(const struct cred *cred,
->   	u16 sclass;
->   	u32 sid = cred_sid(cred);
->   	u32 av = CAP_TO_MASK(cap);
-> -	int rc;
-> +	int rc, rc2;
->   
->   	ad.type = LSM_AUDIT_DATA_CAP;
->   	ad.u.cap = cap;
-> @@ -1643,11 +1643,13 @@ static int cred_has_capability(const struct cred *cred,
->   	}
->   
->   	rc = avc_has_perm_noaudit(sid, sid, sclass, av, 0, &avd);
-> -	if (!(opts & CAP_OPT_NOAUDIT)) {
-> -		int rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad);
-> -		if (rc2)
-> -			return rc2;
-> -	}
-> +	if ((opts & CAP_OPT_NOAUDIT) || ((opts & CAP_OPT_NOAUDIT_ONDENY) && rc))
-> +		return rc;
+>  tools/perf/builtin-trace.c   | 32 +++++++++++++++++++++-----------
+>  tools/perf/util/syscalltbl.c | 21 +++++++++------------
+>  tools/perf/util/syscalltbl.h |  5 +++++
+>  3 files changed, 35 insertions(+), 23 deletions(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index c42bc608954e..5cbe1748911d 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -3354,7 +3354,8 @@ static int trace__bpf_prog_sys_exit_fd(struct trace=
+ *trace, int id)
+>  static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trac=
+e *trace, struct syscall *sc)
+>  {
+>         struct tep_format_field *field, *candidate_field;
+> -       int id;
+> +       struct __syscall *scs =3D trace->sctbl->syscalls.entries;
+> +       int id, _id;
+>
+>         /*
+>          * We're only interested in syscalls that have a pointer:
+> @@ -3368,10 +3369,13 @@ static struct bpf_program *trace__find_usable_bpf=
+_prog_entry(struct trace *trace
+>
+>  try_to_find_pair:
+>         for (id =3D 0; id < trace->sctbl->syscalls.nr_entries; ++id) {
+> -               struct syscall *pair =3D trace__syscall_info(trace, NULL,=
+ id);
+> +               struct syscall *pair;
+>                 struct bpf_program *pair_prog;
+>                 bool is_candidate =3D false;
+>
+> +               _id =3D scs[id].id;
+> +               pair =3D trace__syscall_info(trace, NULL, _id);
 > +
-> +	rc2 = avc_audit(sid, sid, sclass, av, &avd, rc, &ad);
-> +	if (rc2)
-> +		return rc2;
+>                 if (pair =3D=3D NULL || pair =3D=3D sc ||
+>                     pair->bpf_prog.sys_enter =3D=3D trace->skel->progs.sy=
+scall_unaugmented)
+>                         continue;
+> @@ -3456,23 +3460,26 @@ static int trace__init_syscalls_bpf_prog_array_ma=
+ps(struct trace *trace)
+>  {
+>         int map_enter_fd =3D bpf_map__fd(trace->skel->maps.syscalls_sys_e=
+nter);
+>         int map_exit_fd  =3D bpf_map__fd(trace->skel->maps.syscalls_sys_e=
+xit);
+> -       int err =3D 0, key;
+> +       int err =3D 0, key, id;
+> +       struct __syscall *scs =3D trace->sctbl->syscalls.entries;
+>
+>         for (key =3D 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+>                 int prog_fd;
+>
+> -               if (!trace__syscall_enabled(trace, key))
+> +               id =3D scs[key].id;
 > +
->   	return rc;
->   }
->   
+> +               if (!trace__syscall_enabled(trace, id))
+>                         continue;
+>
+> -               trace__init_syscall_bpf_progs(trace, key);
+> +               trace__init_syscall_bpf_progs(trace, id);
+>
+>                 // It'll get at least the "!raw_syscalls:unaugmented"
+> -               prog_fd =3D trace__bpf_prog_sys_enter_fd(trace, key);
+> -               err =3D bpf_map_update_elem(map_enter_fd, &key, &prog_fd,=
+ BPF_ANY);
+> +               prog_fd =3D trace__bpf_prog_sys_enter_fd(trace, id);
+> +               err =3D bpf_map_update_elem(map_enter_fd, &id, &prog_fd, =
+BPF_ANY);
+>                 if (err)
+>                         break;
+> -               prog_fd =3D trace__bpf_prog_sys_exit_fd(trace, key);
+> -               err =3D bpf_map_update_elem(map_exit_fd, &key, &prog_fd, =
+BPF_ANY);
+> +               prog_fd =3D trace__bpf_prog_sys_exit_fd(trace, id);
+> +               err =3D bpf_map_update_elem(map_exit_fd, &id, &prog_fd, B=
+PF_ANY);
+>                 if (err)
+>                         break;
+>         }
+> @@ -3506,10 +3513,13 @@ static int trace__init_syscalls_bpf_prog_array_ma=
+ps(struct trace *trace)
+>          * array tail call, then that one will be used.
+>          */
+>         for (key =3D 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+> -               struct syscall *sc =3D trace__syscall_info(trace, NULL, k=
+ey);
+> +               struct syscall *sc;
+>                 struct bpf_program *pair_prog;
+>                 int prog_fd;
+>
+> +               id =3D scs[key].id;
+> +               sc =3D trace__syscall_info(trace, NULL, id);
+> +
+>                 if (sc =3D=3D NULL || sc->bpf_prog.sys_enter =3D=3D NULL)
+>                         continue;
+>
+> @@ -3535,7 +3545,7 @@ static int trace__init_syscalls_bpf_prog_array_maps=
+(struct trace *trace)
+>                  * with the fd for the program we're reusing:
+>                  */
+>                 prog_fd =3D bpf_program__fd(sc->bpf_prog.sys_enter);
+> -               err =3D bpf_map_update_elem(map_enter_fd, &key, &prog_fd,=
+ BPF_ANY);
+> +               err =3D bpf_map_update_elem(map_enter_fd, &id, &prog_fd, =
+BPF_ANY);
+>                 if (err)
+>                         break;
+>         }
+> diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+> index 63be7b58761d..16aa886c40f0 100644
+> --- a/tools/perf/util/syscalltbl.c
+> +++ b/tools/perf/util/syscalltbl.c
+> @@ -44,22 +44,17 @@ const int syscalltbl_native_max_id =3D SYSCALLTBL_LOO=
+NGARCH_MAX_ID;
+>  static const char *const *syscalltbl_native =3D syscalltbl_loongarch;
+>  #endif
+>
+> -struct syscall {
+> -       int id;
+> -       const char *name;
+> -};
+> -
+>  static int syscallcmpname(const void *vkey, const void *ventry)
+>  {
+>         const char *key =3D vkey;
+> -       const struct syscall *entry =3D ventry;
+> +       const struct __syscall *entry =3D ventry;
+>
+>         return strcmp(key, entry->name);
+>  }
+>
+>  static int syscallcmp(const void *va, const void *vb)
+>  {
+> -       const struct syscall *a =3D va, *b =3D vb;
+> +       const struct __syscall *a =3D va, *b =3D vb;
+>
+>         return strcmp(a->name, b->name);
+>  }
+> @@ -67,13 +62,14 @@ static int syscallcmp(const void *va, const void *vb)
+>  static int syscalltbl__init_native(struct syscalltbl *tbl)
+>  {
+>         int nr_entries =3D 0, i, j;
+> -       struct syscall *entries;
+> +       struct __syscall *entries;
+>
+>         for (i =3D 0; i <=3D syscalltbl_native_max_id; ++i)
+>                 if (syscalltbl_native[i])
+>                         ++nr_entries;
+>
+> -       entries =3D tbl->syscalls.entries =3D malloc(sizeof(struct syscal=
+l) * nr_entries);
+> +       entries =3D tbl->syscalls.entries =3D malloc(sizeof(struct __sysc=
+all) *
+> +                                                nr_entries);
+>         if (tbl->syscalls.entries =3D=3D NULL)
+>                 return -1;
+>
+> @@ -85,7 +81,8 @@ static int syscalltbl__init_native(struct syscalltbl *t=
+bl)
+>                 }
+>         }
+>
+> -       qsort(tbl->syscalls.entries, nr_entries, sizeof(struct syscall), =
+syscallcmp);
+> +       qsort(tbl->syscalls.entries, nr_entries, sizeof(struct __syscall)=
+,
+> +             syscallcmp);
+>         tbl->syscalls.nr_entries =3D nr_entries;
+>         tbl->syscalls.max_id     =3D syscalltbl_native_max_id;
+>         return 0;
+> @@ -116,7 +113,7 @@ const char *syscalltbl__name(const struct syscalltbl =
+*tbl __maybe_unused, int id
+>
+>  int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+>  {
+> -       struct syscall *sc =3D bsearch(name, tbl->syscalls.entries,
+> +       struct __syscall *sc =3D bsearch(name, tbl->syscalls.entries,
+>                                      tbl->syscalls.nr_entries, sizeof(*sc=
+),
+>                                      syscallcmpname);
+>
+> @@ -126,7 +123,7 @@ int syscalltbl__id(struct syscalltbl *tbl, const char=
+ *name)
+>  int syscalltbl__strglobmatch_next(struct syscalltbl *tbl, const char *sy=
+scall_glob, int *idx)
+>  {
+>         int i;
+> -       struct syscall *syscalls =3D tbl->syscalls.entries;
+> +       struct __syscall *syscalls =3D tbl->syscalls.entries;
+>
+>         for (i =3D *idx + 1; i < tbl->syscalls.nr_entries; ++i) {
+>                 if (strglobmatch(syscalls[i].name, syscall_glob)) {
+> diff --git a/tools/perf/util/syscalltbl.h b/tools/perf/util/syscalltbl.h
+> index a41d2ca9e4ae..6e93a0874c40 100644
+> --- a/tools/perf/util/syscalltbl.h
+> +++ b/tools/perf/util/syscalltbl.h
+> @@ -2,6 +2,11 @@
+>  #ifndef __PERF_SYSCALLTBL_H
+>  #define __PERF_SYSCALLTBL_H
+>
 
+It'd be  nice to document the struct with examples that explain the
+confusion that's happened and is fixed here.
+
+Thanks,
+Ian
+
+> +struct __syscall {
+> +       int id;
+> +       const char *name;
+> +};
+> +
+>  struct syscalltbl {
+>         int audit_machine;
+>         struct {
+> --
+> 2.45.2
+>
