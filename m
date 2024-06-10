@@ -1,144 +1,102 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB88210E7
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 20:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4350352F7A
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 20:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718052285; cv=none; b=Fo6C2NZwsmyjW4V1W43sitVr2GDSQz2UwPxx7HOGf+LtrABkHpFuRD45v8HOSZWGhxIXeqtNliEWuPsUJBTwMoiEajrGxyeusSMFlTarSmfUEQ8uc3l0340kN/3iYb9+NqmkC1L5TSg2wstIiMsbWHj3fqCwSzxf4WhErYTYcfQ=
+	t=1718053009; cv=none; b=OKxMKq4DUnn2GTjcQd71lshfk/nxbZXumeftWFhhvOvfjiwpYvkzQzxGbVdSeUHD7pKCkXNJnB8cNQcuMSjNXPaGgg47c3229wAXC3xl74f7wYKWezem261ZRh3tMJwK3s8Y7m/N7eNrkh6g85Wkr9Hr/zgTibGLfLmfIcbiZ7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718052285; c=relaxed/simple;
-	bh=2AMpvZTyySR52Q575EvvbyYkR5oPISP1+4gct2WOnNM=;
+	s=arc-20240116; t=1718053009; c=relaxed/simple;
+	bh=51EEDb0ue/Nhh7wtSldBpAO4aoc8AOeutvOQIatD1gI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FlxBOMSSj/Jali4aqx2tlHsI5hnWvbGWOOK4WKNGd21Xuqe4kGmwuQM6/N1RCqIkNQMT9DChoxuudR6Y/WWo3jCpVGgXUtKNI+3/ZrevI6wgJFzPxW9InHZwr2cgq0heG8FNokscGqFKes/qermLluh9XyGtkElYcvvPC8rp6KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QP0ZVlXn; arc=none smtp.client-ip=209.85.219.175
+	 To:Cc:Content-Type; b=aeICYBWhfRpv31hRbAN2S+0WJ/RZZqQHaauTwxp0mbfFPdiSQb9Jq7BWAjHrEk+OTTq9tVrAnnu7W5FqNapIL/oxWaAw4jLLAGc+3lv3ojjbGDOtp8+DIIeCnKILtewWyK8gjyUIivQytdqlbWk2pKa9zWlbmECFvBV9bEelLFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CWhCeBTG; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QP0ZVlXn"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfa584ea2ffso3890877276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 13:44:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CWhCeBTG"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62a0849f5a8so48394087b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 13:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718052282; x=1718657082; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1718053006; x=1718657806; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dcoA750Bj+ZN7bjH86sGDKqLI2brF1ReIBjp5AaBwhc=;
-        b=QP0ZVlXnPzi9JHSb9MI9yByHECUpe4ZIOkg61l1ioIz6jTHJyBd37Q4pAlyRAPgt6l
-         8xBkGM9N3hGvqj9btiOzmw15M2HlRmJepSNRYlltUuhGxA06IujUR6b9v/c18HlMAcwW
-         HFy2SpzSUz6k/LX3LWIay8nUXv5OO70g85CJTwA1oftokNjYyTaOA0t9IZnY34QKZos+
-         4NJWoAOBgseg5HOG0euABPH732rkWSmydSiduFVHKZlYxBV4a7zA+v9FZQhTgMw8ofXO
-         4+KKoEXDEIFUpxXB9nncLl+JqfLtevtlRePW3g+p00iveGKE4aD2l3JKrNsZZjmxygie
-         VKzQ==
+        bh=YCHlrp1sqWxXkENQgyX1SA6e/23clY3UwLtIBI7esY0=;
+        b=CWhCeBTG3Q0p0XsuKyOTUvQ0qPEMzZFPx5wDriOHW+PHt9qNp8exs2zS4RhDUwz6tl
+         0teTqbs4HduRtEbNGACtYTgLE6G2Et6VswyA9jy3DI/rd+FESjuGI2WafyolHNngzuHl
+         kPNqTPfQxuKGCO5Zhyd49EprGdM9MtZXWPFQkcKs7gPwcRTQi/8eFw5kXRCHSBWdxZjV
+         UH6CBNkS7rsS1yd/C3VW9yR4lf8mdKUrEHouq61hQ5uv3MPfx4r4AL+I439mBpsCJCr8
+         GONZAvefmIEog28pmMNqE2MIXZm74FWIiVeMae0fvOfNlkx5ax8jZ2IaU+gWnCX5Ufif
+         EfZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718052282; x=1718657082;
+        d=1e100.net; s=20230601; t=1718053006; x=1718657806;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dcoA750Bj+ZN7bjH86sGDKqLI2brF1ReIBjp5AaBwhc=;
-        b=RzLwa580e1xNbBrqQGZvUDRmKw7KqcfGdi29JNhwzyVVC4yLRKxUTl1hfQOOlDJt4m
-         J5oSIKCTsKkxD+t3xBkG9WIID1aNB6vu0kGe6fI2zzUIKns6mgt2OBr3a7ANS1DJQqxX
-         4zbnJQsi9SAOx0IztVl1f+u0igXmina90j7New0x/SkWTQ9KpYQM2uPpqgUumTBqeKjm
-         yyRCtPBnJHq1CbzSAXTxLHRLD985DsmI5/VFFWIwBzzVonlsTQqJVL1o2Sh/DYZQPMem
-         jtIBpuyh24USQ5cvlS+8zncvZVPQaVQ6R3Dan56r2NJYJAipJWMiRFfzgMhotytQEzD8
-         d6uA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKMc26PfcHsi1Un2pT/jwGT/vnd2FlnFDX6QTMYNOL1P0K9qFiAswSHPYUL5P+r7zFuonghNxligHb6DRh74IveEo5A2FuskOkNeayOL++J5ROmM4D
-X-Gm-Message-State: AOJu0YzdOsbB6oueBCD0szW6ejPKH57YkC5DLck8Qus+yj2phu4E5aux
-	8JW/taJioCqH8YQQA3GZVu/yOFwwuIphbe6qiD71B65CAFKxfYZYdoHPt2vwGGSbasFrLE5pzlT
-	9yGxhRQRI7iGylSOuEjuzfFsz6pJtlUvdtM8i
-X-Google-Smtp-Source: AGHT+IG3SmWEZjN2PWG+EsAgWFrCFp7Ijii/YP3+foCW4tNLPIKtnByY5hj7IEgbBVJSG4st69P97jNgbcAYtpOSl/w=
-X-Received: by 2002:a25:5f44:0:b0:df7:c087:57a1 with SMTP id
- 3f1490d57ef6-dfaf66d1ddamr8231100276.51.1718052282366; Mon, 10 Jun 2024
- 13:44:42 -0700 (PDT)
+        bh=YCHlrp1sqWxXkENQgyX1SA6e/23clY3UwLtIBI7esY0=;
+        b=F7hRWqTVE9pM1OBVGRbZwlSNC0ZAVUsiaiHun905QY542nUq6R08GbSpJtGUBMNGXR
+         GTVJ0fQy3sUcTRyXv6KRGduceV+ypeDQosjmWjDGbh9Ad+JW/i05xNoy2XU/h2BButPM
+         Eq7vU9ni7Bo3E0skNERkQFcipvrh8gG+UR9IgtSwmPbXHExb6BhofSWhOC30uSynNCq4
+         F8duutnmHe10JDGRDmyEMPhVt2O0rBAzZ7G913fBiTC21MMCJM9ytfmKCi9tnOPLUaed
+         hdAiK9fwN1Z+LqSfW6SwuD1Co5rrt2pC62F5OktBIlk8FVF6YCT9PJtEn/9qSWoIarNI
+         yCig==
+X-Gm-Message-State: AOJu0YyKk2etAR8sQDwhqA6cNxK4LQRQ1K+jkCjbjB15ikmcMngVGvVg
+	6rt9mYPtAoOsSI5btzE+FNbFkO7XMHm+73z1n3BFGIg9apVVo5bCE95VVFGkm8bdxu2wViAEY4v
+	rjIXjXETbtg7RsO499kofJ6pFQdAxnO7HyorW
+X-Google-Smtp-Source: AGHT+IFvfIOmbU92tIEUP97U962ZwkX+dae5pNDe8HVsVV2fINnzI7Cy6PJ/dYbQrp9/0zG0WtFUc6q1Xyv7UapuZHg=
+X-Received: by 2002:a0d:c186:0:b0:62d:355:5b34 with SMTP id
+ 00721157ae682-62d03555e3fmr47903587b3.20.1718053006262; Mon, 10 Jun 2024
+ 13:56:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
- <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
- <202402070631.7B39C4E8@keescook> <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
- <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
- <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp> <202405011257.E590171@keescook>
-In-Reply-To: <202405011257.E590171@keescook>
+References: <20240315113828.258005-1-cgzones@googlemail.com>
+In-Reply-To: <20240315113828.258005-1-cgzones@googlemail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 10 Jun 2024 16:44:31 -0400
-Message-ID: <CAHC9VhTucjgxe8rc1j3r3krGPzLFYmPeToCreaqc3HSUkg6dZA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Serge Hallyn <serge@hallyn.com>, 
-	Kees Cook <keescook@chromium.org>
+Date: Mon, 10 Jun 2024 16:56:35 -0400
+Message-ID: <CAHC9VhRekFEc5HHAEhp52tNT6NLnLw__fpy7F0Yq=Qry0Jk_-Q@mail.gmail.com>
+Subject: Re: [PATCH 01/10] capability: introduce new capable flag CAP_OPT_NOAUDIT_ONDENY
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Cc: linux-security-module@vger.kernel.org, linux-block@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Khadija Kamran <kamrankhadijadj@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 1, 2024 at 4:04=E2=80=AFPM Kees Cook <keescook@chromium.org> wr=
-ote:
-> On Thu, Feb 15, 2024 at 11:33:32PM +0900, Tetsuo Handa wrote:
-> > On 2024/02/15 6:46, Paul Moore wrote:
-> > >> To quickly summarize, there are two paths forward that I believe are
-> > >> acceptable from a LSM perspective, pick either one and send me an
-> > >> updated patchset.
-> > >>
-> > >> 1. Rename the hook to security_bprm_free() and update the LSM hook
-> > >> description as I mentioned earlier in this thread.
-> > >>
-> > >> 2. Rename the hook to security_execve_revert(), move it into the
-> > >> execve related functions, and update the LSM hook description to
-> > >> reflect that this hook is for reverting execve related changes to th=
-e
-> > >> current task's internal LSM state beyond what is possible via the
-> > >> credential hooks.
-> > >
-> > > Hi Tetsuo, I just wanted to check on this and see if you've been able
-> > > to make any progress?
-> > >
-> >
-> > I'm fine with either approach. Just worrying that someone doesn't like
-> > overhead of unconditionally calling security_bprm_free() hook.
+On Fri, Mar 15, 2024 at 7:38=E2=80=AFAM Christian G=C3=B6ttsche
+<cgzones@googlemail.com> wrote:
 >
-> With the coming static calls series, this concern will delightfully go
-> away. :)
+> Introduce a new capable flag, CAP_OPT_NOAUDIT_ONDENY, to not generate
+> an audit event if the requested capability is not granted.  This will be
+> used in a new capable_any() functionality to reduce the number of
+> necessary capable calls.
 >
-> > If everyone is fine with below one, I'll post v4 patchset.
+> Handle the flag accordingly in AppArmor and SELinux.
 >
-> I'm okay with it being security_bprm_free(). One question I had was how
-> Tomoyo deals with it? I was depending on the earlier hook only being
-> called in a failure path.
->
-> > [...]
-> > @@ -1530,6 +1530,7 @@ static void free_bprm(struct linux_binprm *bprm)
-> >               kfree(bprm->interp);
-> >       kfree(bprm->fdpath);
-> >       kfree(bprm);
-> > +     security_bprm_free();
-> >  }
->
-> I'm fine with security_bprm_free(), but this needs to be moved to the
-> start of free_bprm(), and to pass the bprm itself. This is the pattern we
-> use for all the other "free" hooks. (Though in this case we don't attach
-> any security context to the brpm, but there may be state of interest in
-> it.) i.e.:
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 40073142288f..7ec13b104960 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1532,6 +1532,7 @@ static void do_close_execat(struct file *file)
->
->  static void free_bprm(struct linux_binprm *bprm)
->  {
-> +       security_bprm_free(bprm);
->         if (bprm->mm) {
->                 acct_arg_size(bprm, 0);
->                 mmput(bprm->mm);
->
+> CC: linux-block@vger.kernel.org
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> ---
+> v5:
+>    rename flag to CAP_OPT_NOAUDIT_ONDENY, suggested by Serge:
+>      https://lore.kernel.org/all/20230606190013.GA640488@mail.hallyn.com/
+> ---
+>  include/linux/security.h       |  2 ++
+>  security/apparmor/capability.c |  8 +++++---
+>  security/selinux/hooks.c       | 14 ++++++++------
+>  3 files changed, 15 insertions(+), 9 deletions(-)
 
-Tetsuo, it's been a while since we've heard from you in this thread -
-are you still planning to work on this?  If not, would you object if
-someone else took over this patchset?
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --=20
 paul-moore.com
