@@ -1,206 +1,138 @@
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow1-smtp.messagingengine.com (flow1-smtp.messagingengine.com [103.168.172.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D911C5FBB1
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 08:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E68B6F2F0;
+	Mon, 10 Jun 2024 08:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718007694; cv=none; b=ECb6VEIUwclclfoNpuAFg3R86bwx3RjJJpHqdihN7uaIwYxU/74Oze4IyZOhfXyl+QhFWck1sRlbKylQr7/RL1/GhHZ2ZmkqMeq6ctbxY76W+XdIUy0zqhOYSunDwS8UZggqkbW4f8kkiXBssYOqPpIHJaJF84f1+JaJZItReG8=
+	t=1718008929; cv=none; b=o5pQs48g5zsm8nTh2s5B0+7sciSSQJmKMGNDpN5lR72vdbFlho7YIAZi6+LRMA3czgCGnY9dGBD4QjeI8y+rI8VHSY/OkPs2iFjQnXsrxQuPCX+m60SuzjNqXad1RD0YDNnLGCS4c1A4oY8hOlBsoja8zRnVIH89a0NZef9S5yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718007694; c=relaxed/simple;
-	bh=h1/FnOTQSMTt1z4R/KEDZc+lka7aaFToV7EmZ3HCGk0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DiNx66sgibZ+53e4BmiKeLQkhFKxAM9rAhOUt8vWxCJz8nadbVzwSUht4+0d2FFg4I2ZjAQk8bo7w79iPGN5eTnUVGCPEcLrejnprjBVxpuX+ycpHlPAUAFhfOJ/sJPygOs/oP3wmCqjnYdHMQmx8s0Wlz9fNSSV6k8a+srN4g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UPfdToA7; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1718008929; c=relaxed/simple;
+	bh=ITgA5tjnrazsj2z8uUTCi7sXYM16+9a2OVtLAQMXods=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Relsxzy4uQyga+2a98GurNHHEQIEExo26YbVWohBMv+H7mKKVdz/Hpmv/8odHhLY4IZNe7E16gGqOobQWcB+vJBqlXanCysjfuaXuXcpF3z94peuEkDooGfRXdYSOdvJ38e8Yu+WOMR72csTV9H1Mbq3uX+Iz22IdUpp3m/hr1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=mnhLTPrt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oYdR8igH; arc=none smtp.client-ip=103.168.172.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UPfdToA7"
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-57a49b8a27eso1485511a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 01:21:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718007691; x=1718612491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8rfrEd2rTrsOZHlQKovQ5zuPOD0/iB//vkQmtjp7JHs=;
-        b=UPfdToA7YDl/pI49r+CAkW60qB5/7B5N+BzkvHrmpvyEdeiPfNY9QB37ot2PtxWe7X
-         MQTwnQm3UtTDfx87RkIj3/PEYmFl9ZZmQtEDqqdQnZHKchCxnwMdcPLPl+CzKrUZgWBY
-         6+svRkOQHjbDqavagLtVA3gfzTayzFYiME00DDLURmCCWopAyVixoH27BCun/HnvqZsb
-         JblAeBNHHBzkRMBlddpeuotVDG82Tips20/4FUvVGyjm263aQblkoQ4XUuSxWqzXrW+9
-         d46We0BYum913J9K1le80NS6QVU6MdHZWPgooxcxP55+i1bJizpHYciTaoc+tK8CCBO8
-         Dqwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718007691; x=1718612491;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8rfrEd2rTrsOZHlQKovQ5zuPOD0/iB//vkQmtjp7JHs=;
-        b=VVLpPvsW+o1gUMdofJgvJwTt/BQadwRZ85JJL9vchjSQD08R8sqz+QsPyRX8a01g2H
-         2Ayiis6Rg2ioHv5pUsvoIuzF8mVCHjvVKN7rz80CTy8GAK2BiuCfTqZScydnCQe4lV1z
-         r8EJgrt0s10zsyhnYjm/U/zIZ9ISbYbxWgwNamAnUDkjKmE3deKavTaLPMPOhsnG2yt3
-         s/WD25sv3h6IeHskgRujYEdaYa6fUFa2qlKqrd3plGZNgVzNSZAgSZ6G+ocPRCyO1q3m
-         5ydpHusUwpM90G/sjWwOlJ7P6BH/j/PaqHEnp2zm4hUMRj21upImSFCt7o14aRzgqEp/
-         ozHw==
-X-Gm-Message-State: AOJu0Yx3u4ZpiXW1+KsibkMWOs9Tk3RHle+pTSnn/+nRIGBOpUkIgzsM
-	6WoEk3kVW2EQ/pwdjagYO6n0OzKrDlyCWY2JCfLGLZM8nQFYW3oXRCkwBDkehaVMXojOFGJmDSE
-	qEfqO4jAJJ38x4077ovIhETJjJ98iFrSUvHFGPvuq6Vd9G0usa7idEcK+SkTZ/a6aNeQq22hxPD
-	2/0g1QzxS3bzmiQBCCDbTjT6VaNh1372scN97IVMopUDCVDc1UNV/P
-X-Google-Smtp-Source: AGHT+IEs11M1Y63786D+5Hioh7IKlJvkefxMzqedxEEgmCjuAg4YRWW46YdWl1DdalzWVwqwRbtufKe1O3o=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6402:5485:b0:57a:6158:a867 with SMTP id
- 4fb4d7f45d1cf-57c506c6b87mr10634a12.0.1718007690802; Mon, 10 Jun 2024
- 01:21:30 -0700 (PDT)
-Date: Mon, 10 Jun 2024 08:21:15 +0000
-In-Reply-To: <ZmazTKVNlsH3crwP@google.com>
+	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="mnhLTPrt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oYdR8igH"
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 5B03E200404;
+	Mon, 10 Jun 2024 04:42:06 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 10 Jun 2024 04:42:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1718008926; x=1718012526; bh=qmk9dz8QY8
+	vVMsdJ1Kd+/af5+W3nNXWO20q8csDii3A=; b=mnhLTPrtZQ/DDGiawOwuJeaWat
+	64250584gAjf2J/Dh8JvewKGYb34oCQE7URqIZHKpzJUeYA1kKsjDnhkfUZX+E68
+	+8LVxRN9t/wJJjEEuCIuLof7r8VwRIZrZVHEAxubGvtTPuErvpSMPolZc6h/FBs6
+	TnUtSUmlc0OkbJmubq9zDokuTpz7ngnJl4EEexVQqOAqSn6pQo4Yp6x54OpvrcCE
+	XoIpGEw5oanL1CCEcLnD1Mbujxjb6oms1X2GanNYQEYDUDbSg8aqnlDuyXX+O/MN
+	PNOtsnmF7Ft5GaBeljHc9lHlaU2Wz+ihucK9sDes64ynJ1BHh+vrhTVwTgQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1718008926; x=1718012526; bh=qmk9dz8QY8vVMsdJ1Kd+/af5+W3n
+	NXWO20q8csDii3A=; b=oYdR8igHwhuxgPsbo+C1eL/H3iR7gJqPSOM/AbjIQpfK
+	67ktft+vuRVUKOaSvQRrky9qaOMVWGj9avRo7pDMQvDIUFwkzbpuOiDn6K/TcgJt
+	K0frIvAmuJWqDSWzdLA0kJ+/Mque4OK/hfemuDOAqZAWyceRSHkX5eUTbIyt8DYe
+	OhZixUDRh5ix2wgO28sZgvD7JW1Xe/+XTSGgkl9r6Q/yVMV6LyMXNCZhBqlzO2Wo
+	mWBL3VIwKNRUn2DZuAKHbw6ioQD7VWsp8Bn9Ad8sFqGX9pKA8tZ6n3tYRn9gmqbD
+	Z3JJFybCaAzTgVcMBgq/Sa50HuXv9Mh3IMoYALTfUA==
+X-ME-Sender: <xms:XrxmZvzZP7xbrkP_X1Z_DJfplTPafejtRtkJI4A43LClUzmSIHIS5w>
+    <xme:XrxmZnRUTkndK9sE_BuuYIUb3li2sZXgcdw5psio_zlMRycF1h7dtvtqc0gXr60x-
+    dYdIq0OVEdPTi7AuKY>
+X-ME-Received: <xmr:XrxmZpWFigCDMyF99Q0x1VukZuZF0pDyfj4v2qucOFZZZDNBIvxynahcR2xUygWLyodScN7TnSc7OL_2djL-qWE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedutddgtdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
+    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
+    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
+    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
+X-ME-Proxy: <xmx:XrxmZpgqPk_6F3e5JQ18-ltyf9uNdIpk3jU47q9k4RC_A1m-HkSIAA>
+    <xmx:XrxmZhB3IOiTK8sDG3QzU35vcUkoWUzUhlt1H4t01NxV3RSUPw8VgA>
+    <xmx:XrxmZiKucST3S9pfjfKdDEsNV54urVKt3wVhxz_XrYt_KNl9GdSMGg>
+    <xmx:XrxmZgBCzxwwvZvceM4u8WKtEVlmeP_3n1PIWsMJ5HQgJ1N61m6WRg>
+    <xmx:XrxmZtzmO1peIdr1owfiir_hApCQU2o9fIR5wZQfJTTv79xrcvqQ4J7P>
+Feedback-ID: i76614979:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 10 Jun 2024 04:42:02 -0400 (EDT)
+Date: Mon, 10 Jun 2024 01:47:13 -0700
+From: Jonathan Calmels <jcalmels@3xx0.net>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Andrew Morgan <morgan@kernel.org>, brauner@kernel.org,
+ 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
+ 	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ KP Singh <kpsingh@kernel.org>,
+ 	Matt Bobrowski <mattbobrowski@google.com>,
+ Alexei Starovoitov <ast@kernel.org>,
+ 	Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ 	Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ 	Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
+ John Johansen <john.johansen@canonical.com>,
+ 	David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ 	Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
+ 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
+ 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
+Message-ID: <6pwskrbtmxjy2ti3xabfslmupjhat7dhrnbftinzhxgxnsveum@5jq5l6ws7hls>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-2-jcalmels@3xx0.net>
+ <20240610015024.GA2182786@mail.hallyn.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ZmazTKVNlsH3crwP@google.com>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-Message-ID: <20240610082115.1693267-1-gnoack@google.com>
-Subject: [PATCH] landlock: Use bit-fields for storing handled layer access masks
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240610015024.GA2182786@mail.hallyn.com>
 
-When defined using bit-fields, the compiler takes care of packing the
-bits in a memory-efficient way and frees us from defining
-LANDLOCK_SHIFT_ACCESS_* by hand.  The exact memory layout does not
-matter in our use case.
+On Sun, Jun 09, 2024 at 08:50:24PM GMT, Serge E. Hallyn wrote:
+> On Sun, Jun 09, 2024 at 03:43:34AM -0700, Jonathan Calmels wrote:
+> > Attackers often rely on user namespaces to get elevated (yet confined)
+> > privileges in order to target specific subsystems (e.g. [1]). Distributions
+> 
+> I'd modify this to say "in order to target *bugs* in specific subsystems" :)
 
-The manual definition of LANDLOCK_SHIFT_ACCESS_* has resulted in bugs
-in at least two recent patch sets where new kinds of handled access
-rights were introduced.
+Ack
 
-Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Link: https://lore.kernel.org/all/ebd680cc-25d6-ee14-4856-310f5e5e28e4@huaw=
-ei-partners.com/
-Link: https://lore.kernel.org/all/ZmLEoBfHyUR3nKAV@google.com/
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- security/landlock/limits.h  |  2 --
- security/landlock/ruleset.c |  4 ----
- security/landlock/ruleset.h | 24 +++++++++---------------
- 3 files changed, 9 insertions(+), 21 deletions(-)
+> > This effectively mimics the inheritable set rules and means that, by
+> > default, only root in the user namespace can regain userns capabilities
+> > previously dropped:
+> 
+> Something about this last sentence feels wrong, but I'm not sure what
+> the best alternative would be.  As is, though, it makes it sound as though
+> root in the userns can always regain previously dropped capabilities, but
+> that's not true if dropped in ancestor ns, or if root also dropped the
+> bits from its bounding set (right?).
 
-diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-index 20fdb5ff3514..4eb643077a2a 100644
---- a/security/landlock/limits.h
-+++ b/security/landlock/limits.h
-@@ -21,12 +21,10 @@
- #define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_DEV
- #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
- #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
--#define LANDLOCK_SHIFT_ACCESS_FS	0
-=20
- #define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
- #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
- #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NE=
-T)
--#define LANDLOCK_SHIFT_ACCESS_NET	LANDLOCK_NUM_ACCESS_FS
-=20
- /* clang-format on */
-=20
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index e0a5fbf9201a..6ff232f58618 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -169,13 +169,9 @@ static void build_check_ruleset(void)
- 		.num_rules =3D ~0,
- 		.num_layers =3D ~0,
- 	};
--	typeof(ruleset.access_masks[0]) access_masks =3D ~0;
-=20
- 	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
- 	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
--	BUILD_BUG_ON(access_masks <
--		     ((LANDLOCK_MASK_ACCESS_FS << LANDLOCK_SHIFT_ACCESS_FS) |
--		      (LANDLOCK_MASK_ACCESS_NET << LANDLOCK_SHIFT_ACCESS_NET)));
- }
-=20
- /**
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index c7f1526784fd..0f1b5b4c8f6b 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -39,10 +39,10 @@ static_assert(BITS_PER_TYPE(access_mask_t) >=3D LANDLOC=
-K_NUM_ACCESS_NET);
- static_assert(sizeof(unsigned long) >=3D sizeof(access_mask_t));
-=20
- /* Ruleset access masks. */
--typedef u32 access_masks_t;
--/* Makes sure all ruleset access rights can be stored. */
--static_assert(BITS_PER_TYPE(access_masks_t) >=3D
--	      LANDLOCK_NUM_ACCESS_FS + LANDLOCK_NUM_ACCESS_NET);
-+struct access_masks {
-+	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
-+	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
-+};
-=20
- typedef u16 layer_mask_t;
- /* Makes sure all layers can be checked. */
-@@ -226,7 +226,7 @@ struct landlock_ruleset {
- 			 * layers are set once and never changed for the
- 			 * lifetime of the ruleset.
- 			 */
--			access_masks_t access_masks[];
-+			struct access_masks access_masks[];
- 		};
- 	};
- };
-@@ -265,8 +265,7 @@ landlock_add_fs_access_mask(struct landlock_ruleset *co=
-nst ruleset,
-=20
- 	/* Should already be checked in sys_landlock_create_ruleset(). */
- 	WARN_ON_ONCE(fs_access_mask !=3D fs_mask);
--	ruleset->access_masks[layer_level] |=3D
--		(fs_mask << LANDLOCK_SHIFT_ACCESS_FS);
-+	ruleset->access_masks[layer_level].fs |=3D fs_mask;
- }
-=20
- static inline void
-@@ -278,17 +277,14 @@ landlock_add_net_access_mask(struct landlock_ruleset =
-*const ruleset,
-=20
- 	/* Should already be checked in sys_landlock_create_ruleset(). */
- 	WARN_ON_ONCE(net_access_mask !=3D net_mask);
--	ruleset->access_masks[layer_level] |=3D
--		(net_mask << LANDLOCK_SHIFT_ACCESS_NET);
-+	ruleset->access_masks[layer_level].net |=3D net_mask;
- }
-=20
- static inline access_mask_t
- landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const rules=
-et,
- 				const u16 layer_level)
- {
--	return (ruleset->access_masks[layer_level] >>
--		LANDLOCK_SHIFT_ACCESS_FS) &
--	       LANDLOCK_MASK_ACCESS_FS;
-+	return ruleset->access_masks[layer_level].fs;
- }
-=20
- static inline access_mask_t
-@@ -304,9 +300,7 @@ static inline access_mask_t
- landlock_get_net_access_mask(const struct landlock_ruleset *const ruleset,
- 			     const u16 layer_level)
- {
--	return (ruleset->access_masks[layer_level] >>
--		LANDLOCK_SHIFT_ACCESS_NET) &
--	       LANDLOCK_MASK_ACCESS_NET;
-+	return ruleset->access_masks[layer_level].net;
- }
-=20
- bool landlock_unmask_layers(const struct landlock_rule *const rule,
---=20
-2.45.2.505.gda0bf45e8d-goog
+Right, the wording is a little bit confusing here I admit.
+What I meant to say is that if a cap is dropped in a *given* namespace,
+then it can only be regained by root there. But yes, caps can never be
+regained from ancestors ns. I'll try to rephrase it.
 
+BTW, this is rather strict, but I think that's what we want right,
+something simple? Alternative would be to have a new cap masked off by
+default, but if granted to a userns, allows you to regain ancestors
+caps.
