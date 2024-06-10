@@ -1,142 +1,106 @@
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A73E4501B;
-	Mon, 10 Jun 2024 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589C913F437
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 15:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718025405; cv=none; b=AbRXtFhtAP3d4jIZ5YWz+14Kby8GPBB4BUYro2sZNj8UQavqs8qLQ6161lfPDBE/xoSmh+DVr2Oc+Gwnt/21haqLW8ff+/uewKlBYryT8Xen6XB/pK2d6svxIA7mpLT0iiuy6hxi0bvHj7mVwp3U/OiivD26OJuAev3JvyLxE6Y=
+	t=1718032507; cv=none; b=iWJ7lzsWPsib9qFfhUMMDzUlF7yBXHU1pCcnrMnKacUY1m0cPG2udzVXAZGfnuE/lnPcBKbYuGhYMLXREpu4+3XzEbDLhg7oLah4rKpGvL1XAbwwnlMNpprRRWqH0g4VclTZpxgjJEb9cD63hLsx1AjtAHaBj2cVYXVcNG9bLDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718025405; c=relaxed/simple;
-	bh=77k5rIMoIWHg6IseVGjYJC6hiieeMJ1RXLsTOo5sn9Q=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=lo9bYUA9nPyAd4qw/6n7qTJ7rBgTEijbFYdu7OmqgLYvob6eo0Lm1my5mCb17U8q4rJd/6k2aH6LbblQMWcxLMUGSn+2inSQINZOYGRitgnoAqC0Wutd8dVxar+NkQFenVHD8NaBUTt7/JmqrQ0xUX3P4/NeRUUv4iLOvrDtRjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:38392)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sGeE1-007QxW-Ub; Mon, 10 Jun 2024 06:34:14 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:54200 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sGeE0-00FROe-SU; Mon, 10 Jun 2024 06:34:13 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Yafang Shao <laoar.shao@gmail.com>,  Linus Torvalds
- <torvalds@linux-foundation.org>,  linux-mm <linux-mm@kvack.org>,
-  Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,  linux-trace-kernel
- <linux-trace-kernel@vger.kernel.org>,  audit@vger.kernel.org,  LSM List
- <linux-security-module@vger.kernel.org>,  selinux@vger.kernel.org,  bpf
- <bpf@vger.kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Kees
- Cook <keescook@chromium.org>
-References: <20240602023754.25443-1-laoar.shao@gmail.com>
-	<20240602023754.25443-2-laoar.shao@gmail.com>
-	<87ikysdmsi.fsf@email.froward.int.ebiederm.org>
-	<CALOAHbAASdjLjfDv5ZH7uj=oChKE6iYnwjKFMu6oabzqfs2QUw@mail.gmail.com>
-	<CAADnVQJ_RPg_xTjuO=+3G=4auZkS-t-F2WTs18rU2PbVdJVbdQ@mail.gmail.com>
-	<874jabdygo.fsf@email.froward.int.ebiederm.org>
-	<CAADnVQ+9T4n=ZhNMd57qfu2w=VqHM8Dzx-7UAAinU5MoORg63w@mail.gmail.com>
-Date: Mon, 10 Jun 2024 07:34:01 -0500
-In-Reply-To: <CAADnVQ+9T4n=ZhNMd57qfu2w=VqHM8Dzx-7UAAinU5MoORg63w@mail.gmail.com>
-	(Alexei Starovoitov's message of "Sun, 2 Jun 2024 11:23:17 -0700")
-Message-ID: <87ikyhrn7q.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1718032507; c=relaxed/simple;
+	bh=MKsQCqfN1ZQ4o2Ioge7OKkX52qONyWXvxqNAfzQqFbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TRxeQuSvGf+ajjwPsUhJNlSOCL7SxjEWzNs0K6g1VYkPUFgzSgTwxEHWfOArV1sDC/s5QDZ24MoROua6ytptVFc9pl/dRYGIOR98O9v20RIwzyNSlNneJOOJ3SR0ous2H3svg2qt9HNZrVQXRzQkLZwC4d09x9sMi8++TCCkLkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ik9VoJlz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ik9VoJlz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718032505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MKsQCqfN1ZQ4o2Ioge7OKkX52qONyWXvxqNAfzQqFbs=;
+	b=Ik9VoJlzyTFHRyo4PcyyeHhojR530wZEO7bktzxgWXvMcMCwh70eMKKYDXjc2+pae1hm1v
+	fDHNrT1uCaVp1cwAaYvfUctf89kwOeNPrcDvOmzNkVkjLi2q3qtGCCTdASJe1If6oWb4S/
+	7yNS9vKGsxD9xeLW9b8PU/LGuEFwzyI=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-479-EzNYx6SjPZuQ385CPrBgxw-1; Mon, 10 Jun 2024 11:15:04 -0400
+X-MC-Unique: EzNYx6SjPZuQ385CPrBgxw-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c2d0e695d7so2662006a91.1
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Jun 2024 08:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718032502; x=1718637302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MKsQCqfN1ZQ4o2Ioge7OKkX52qONyWXvxqNAfzQqFbs=;
+        b=lJxv7JF/6zpN2WodOxpnKCfiNFW0EbgTZixE/djCb3DXaanSH6VduCYHu7e+CDV34Z
+         tX30Y7GYMufceq3gndDX8S3ppcInKbseKmujQFQZlb/fFRwutycVaaeSzdSZwYKTvpVh
+         avXIVYvZcPMxuV6wWJGG7FOutMeYe8i+A/c2GbbBU0D1K77BN0OcBOecdOdQGkiZpgf2
+         3fBWH2lvmJmMjbPBV40AFiV65tvCHl2ALb84FueDS+i1IeIJcVNAQR1A9wLByX1LIpYr
+         lj7vhyMW6lYJPWt1NHo2BBA4hup3cX+Wv5TGJaf6HNxX+moaJGxHWpqyoTdWkBJB9GF8
+         cl7g==
+X-Forwarded-Encrypted: i=1; AJvYcCURP56PlMgyV83VAt0zf9hp7Ns3FRAl69TrTpI0NSKjNhd7RbR71L5GHPIEi0QvNTe7yNkQKVki8E+578BDfNpFHlSwxgdlJHYgsRXjwaAO04eVeT1F
+X-Gm-Message-State: AOJu0YwtF+XvcIUKfRBpfxhlWEnguVJxAoQr6lQUFipqBVSqDrtOqBBq
+	5eRBNcOdnX0ap9OXpYbqLu2RN+8z06w8ffY4HXSaa31MnTcXn7r1hDIhEUgZwelR2u8mztHLorV
+	O9LFHMlS4MNMGnY+oFqxrKES3dvtD4RDF+7AfR+4rk5cX9oTMb27rSok7N6d/mt2UAa0VsPBjfZ
+	+aw2B9jKQ87MBVb2lG6Bw45VtmVPilHK0WU53RWG9Xgwdzpdy+y+JBipbu
+X-Received: by 2002:a17:90a:cf16:b0:2c2:edc2:6021 with SMTP id 98e67ed59e1d1-2c2edc26151mr4212534a91.11.1718032502566;
+        Mon, 10 Jun 2024 08:15:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUX+qE30sOtQcdPcBO6cllJjlpNJG1nFcZzFDbNKN76d+4g6+6h4LDFL2zf1CaTNmhGd2dMj97g14KHF/lYOE=
+X-Received: by 2002:a17:90a:cf16:b0:2c2:edc2:6021 with SMTP id
+ 98e67ed59e1d1-2c2edc26151mr4212523a91.11.1718032502221; Mon, 10 Jun 2024
+ 08:15:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240607160753.1787105-1-omosnace@redhat.com> <b764863b-6111-45ee-8364-66a4ca7e5d59@schaufler-ca.com>
+In-Reply-To: <b764863b-6111-45ee-8364-66a4ca7e5d59@schaufler-ca.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Mon, 10 Jun 2024 17:14:50 +0200
+Message-ID: <CAFqZXNumv+NNZjR4KSD-U7pDXszn1YwZoKwfYO2GxvHpaUnQHA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
+ the CIPSO options
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-XM-SPF: eid=1sGeE0-00FROe-SU;;;mid=<87ikyhrn7q.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+aqS3BV7g8TVW+kULFxysO2TVuiqUO+14=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: **
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4982]
-	*  0.7 XMSubLong Long Subject
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.0 T_TooManySym_03 6+ unique symbols in subject
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
-	*      patterns
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Alexei Starovoitov <alexei.starovoitov@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 465 ms - load_scoreonly_sql: 0.13 (0.0%),
-	signal_user_changed: 11 (2.3%), b_tie_ro: 9 (1.9%), parse: 1.04 (0.2%),
-	 extract_message_metadata: 12 (2.7%), get_uri_detail_list: 1.43 (0.3%),
-	 tests_pri_-2000: 13 (2.8%), tests_pri_-1000: 3.0 (0.6%),
-	tests_pri_-950: 1.29 (0.3%), tests_pri_-900: 1.09 (0.2%),
-	tests_pri_-90: 82 (17.7%), check_bayes: 81 (17.4%), b_tokenize: 8
-	(1.6%), b_tok_get_all: 10 (2.1%), b_comp_prob: 2.5 (0.5%),
-	b_tok_touch_all: 58 (12.5%), b_finish: 0.75 (0.2%), tests_pri_0: 320
-	(68.9%), check_dkim_signature: 0.66 (0.1%), check_dkim_adsp: 3.4
-	(0.7%), poll_dns_idle: 1.19 (0.3%), tests_pri_10: 2.7 (0.6%),
-	tests_pri_500: 14 (2.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/6] fs/exec: Drop task_lock() inside __get_task_comm()
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
-
-> On Sun, Jun 2, 2024 at 10:53=E2=80=AFAM Eric W. Biederman <ebiederm@xmiss=
-ion.com> wrote:
->>
->> If you are performing lockless reads and depending upon a '\0'
->> terminator without limiting yourself to the size of the buffer
->> there needs to be a big fat comment as to how in the world
->> you are guaranteed that a '\0' inside the buffer will always
->> be found.
+On Fri, Jun 7, 2024 at 8:50=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
 >
-> I think Yafang can certainly add such a comment next to
-> __[gs]et_task_comm.
+> On 6/7/2024 9:07 AM, Ondrej Mosnacek wrote:
+> > This series aims to improve cipso_v4_skbuff_delattr() to fully
+> > remove the CIPSO options instead of just clearing them with NOPs.
+> > That is implemented in the second patch, while the first patch is
+> > a bugfix for cipso_v4_delopt() that the second patch depends on.
+> >
+> > Tested using selinux-testsuite a TMT/Beakerlib test from this PR:
+> > https://src.fedoraproject.org/tests/selinux/pull-request/488
 >
-> I prefer to avoid open coding memcpy + mmemset when strscpy_pad works.
+> Smack also uses CIPSO. The Smack testsuite is:
+> https://github.com/smack-team/smack-testsuite.git
 
-Looking through the code in set_task_comm
-strscpy_pad only works when both the source and designation are aligned.
-Otherwise it performs a byte a time copy, and is most definitely
-susceptible to the race I observed.
+I tried to run it now, but 6 out of 114 tests fail for me already on
+the baseline kernel (I tried with the v6.9 tag from mainline). The
+output is not very verbose, so I'm not sure what is actually failing
+and if it's caused by something on my side... With my patches applied,
+the number of failed tests was the same, though, so there is no
+evidence of a regression, at least.
 
-Further I looked a couple of the uses of set_task_com, in
-fs/proc/base.c, kernel/kthread.c, and kernel/sys.c.
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-Nowhere do I see a guarantee that the source buffer is word aligned
-or even something that would reasonably cause a compiler to place the
-buffer that is being passed to set_task_comm to be word aligned.
-
-As far as I can tell it is completely up to the compiler if it will
-cause strscpy_pad to honor the word at a time guarantee needed
-to make strscpy_pad safe for reading the information.
-
-This is not to say we can't make it safe.
-
-The easiest would be to create an aligned temporary buffer in
-set_task_comm, and preserve the existing interface.  Alternatively
-a type that has the appropriate size and alignment could be used
-as input to set_task_comm and it could be caller's responsibility
-to use it.
-
-While we can definitely make reading task->comm happen without taking
-the lock.  Doing so without updating set_task_comm to provide the
-guarantees needed to make it safe, looks like a case of play silly
-games, win silly prizes.
-
-Eric
