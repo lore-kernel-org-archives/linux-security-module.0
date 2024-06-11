@@ -1,338 +1,357 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97BA5336D;
-	Tue, 11 Jun 2024 14:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718117091; cv=fail; b=DM5wjW6NJERXP1yIdt6zFmKdFXVEsJMYWt5l5X9yViO87MEgGtXoHcgRZy8/D8ZUVEOHy66qjzvbOTMtk/Nq98UkkCdOCFV2ry9qiSluxbwa3I5KL10/D/KFrwPCLBPVMWTfeLELEjw9dUS6emNazPK+Tk1hiVFnpYR81NbcP/I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718117091; c=relaxed/simple;
-	bh=5GmAU2TmTcNC47xyuoTM71tsAyrsPKMll4zKJZ80c/4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=L6R3c+QFWr6AmjiQ0B8e3Gand/tWQiMDwhJZHl38t07bhD0+4u7j/qPoW1v+Ff2O0F3gtduMJ1VdRCMayb+gRxG3ihSCbgHrjOM82m8tdu4uMZoFrflTwCym2ZyQOtuZl+5KCuduUj/4ngExhGlUiR1ezMIHXI02VJfGsGHiae4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jxpVuDZe; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=C7yKFOBN; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168EA11712;
+	Tue, 11 Jun 2024 14:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718117639; cv=none; b=VBB7sBrrFfsBZq9X1I9xEBLtvb617S9yV6DtOKLB/Liosrr8ARzERDctXEiOfefWxNLNi4GmLWhDQSGP2wSsCP11UnKa2NRLgjKIceXPem4Mf7qJzyYXdyokguVTN2kFasFTn7OAKQwM7mTub/KzyJErCN7FkhHtfmKMUyrccew=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718117639; c=relaxed/simple;
+	bh=ZzSZpf/GI/3KLyUrgN1e5daeegCfTTeMo9Fq+wptzdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rG66vcH/RJBa/b+H5txIJl38l4BKpWzQ97X/NDW1s/1YcoGmouP90iemOqILLzOMFMENSI34tTHLAokokcz8qlgvT//E57olaqm+lk3UNN4rad6vnEAW9y93jcipQtcogKhgpSH5Ae8finH/wSTcd/pITgfOHuj57b7oObeChFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ic/BOeqV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jxpVuDZe";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="C7yKFOBN"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B7fRDj013404;
-	Tue, 11 Jun 2024 14:36:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-id:content-transfer-encoding:mime-version;
-	 s=corp-2023-11-20; bh=5GmAU2TmTcNC47xyuoTM71tsAyrsPKMll4zKJZ80c
-	/4=; b=jxpVuDZen0XnvMtcmFkCPCojCUD4L3vafApdy4YBqIFIYrvnoFZeECJF7
-	+GaWryoQN9GwvZjKjTimrQf/Se0EgtLuSV0FuqiTEFYwuVFRhLf050eQm66tYD3x
-	CoSY5wu6AC91cePKG6hhTPUfiT+JcBO7mwukXJY4b0abBiGl8PCCzvesNXrioLOA
-	eCzKIseszVMlXa8HADVCMIDRJZoE/CiSURFGASCLUuesusXwCN3KtDZqEtFBRwFW
-	X3SM6INAvRC4ZGB9Q1rcF9MghiTYbRuFFBwyJyiL85ZaApbWVGiVamwTdCBqDrlT
-	ctvfMHnos9yT2r70EBCziFH0X8jkg==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh7fmxn3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Jun 2024 14:36:31 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45BEM8fa012556;
-	Tue, 11 Jun 2024 14:36:30 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2045.outbound.protection.outlook.com [104.47.66.45])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ync9wxsk9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Jun 2024 14:36:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Im/H0ujCh7ZRuGdaWNDFbsuUr+Jv6W6lSsMX26RiRBBeLh4fkXDQoqIOxMTSQo05Zp38Q/VVS7SxOybnJ0kpBVEYw2eLMdF7q5BfVVTDyr95oPHfcwrvTuW8kcuZEakFkaf4yChKc2atKBRup8WQ+m2ii9WbTJRi9TRVEXw1y/eVRaJIcxpFX62Us4oKUVeURO87v7vyU1LRAgeKu+it7Ve4eUeAM6DT/SbsYn4hIf0n6/teJ8xje3mMnLWussMlvBQZQwo7piVYrLdlR8MJQ0853bXp1lwNTaLIHkeKZ0MBPFxJE7p2AKcIG5NRJKKjgD4FXRK9tgbSbSM6K57/Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5GmAU2TmTcNC47xyuoTM71tsAyrsPKMll4zKJZ80c/4=;
- b=ZXHl1XmLqpnA6I9Qj4al47QyDrxzZcFbAUhD6GKfaXUmNG3JTZR83OI1T6FwqWQIzqTQQLwnB9OUo7XsDQkrg7xtfbm21nQp+f4hoFfiZ2+a1MI8JcVRAhTGE0djL4y+/sbutW6Nqo1P94+01snwsebAPFuo1UWIIbuWyskXAtu47tE5v35iky2ILoOqYJgRH91tP/JsmmpInV8jRadqDtZU+FrywKUUSh2pm+6bA3JPS9z6lWIrDT1OE6LttS649qXsiuLSQ4hx6ZokyV7RSHm/yLeu8xz+40pcWA9V/256AI40X27yvSQ//LUIFdbYOZcU3HISNtuzLEUUvQZ5xQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5GmAU2TmTcNC47xyuoTM71tsAyrsPKMll4zKJZ80c/4=;
- b=C7yKFOBNbOnfJlgy8Z9UW7uQBY7BTBmYUq4YbJrzWiWmQ8g26dg2mwKpm0XnHOs8kohsUJlJuySXY9v2JtMkrUkYPX+dQJFUHudq04rLRvvvHS1H+RhkED3HlCu8H1uGbQy3tnTVsQ17xHC1vRQ4X79fs2YuvuqrpXUaeKIzwsc=
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by MW4PR10MB5774.namprd10.prod.outlook.com (2603:10b6:303:18e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Tue, 11 Jun
- 2024 14:36:27 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::5527:ab55:d1e7:9c9a]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::5527:ab55:d1e7:9c9a%4]) with mapi id 15.20.7633.037; Tue, 11 Jun 2024
- 14:36:27 +0000
-From: Eric Snowberg <eric.snowberg@oracle.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-CC: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Ard Biesheuvel
-	<ardb@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>,
-        Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
-	<serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu
-	<roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        Stefan Berger
-	<stefanb@linux.ibm.com>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        open
- list <linux-kernel@vger.kernel.org>,
-        "keyrings@vger.kernel.org"
-	<keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org"
-	<linux-efi@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org"
-	<linux-integrity@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 8/8] clavis: Introduce new LSM called clavis
-Thread-Topic: [RFC PATCH v2 8/8] clavis: Introduce new LSM called clavis
-Thread-Index: AQHasvMfEYuY8yxvA0+2J/4ejcRyFbHB6YcAgADKAQA=
-Date: Tue, 11 Jun 2024 14:36:26 +0000
-Message-ID: <A607E53F-96EF-42BD-A438-FA07C111BEFF@oracle.com>
-References: <20240531003945.44594-1-eric.snowberg@oracle.com>
- <20240531003945.44594-9-eric.snowberg@oracle.com>
- <754d54b0-5848-4775-a989-43b75dac4dbf@infradead.org>
-In-Reply-To: <754d54b0-5848-4775-a989-43b75dac4dbf@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3774.600.62)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|MW4PR10MB5774:EE_
-x-ms-office365-filtering-correlation-id: 71885ecf-961b-46ec-1e65-08dc8a23e033
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|1800799015|376005|7416005|366007|38070700009;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?N1ZYRDFXOFlDa0VyTmNiUUk1MEtmcGJaYnJwSm5Nbjk3WmZTNjRBRXF2bVRm?=
- =?utf-8?B?b1Y1ci9WYldNVGdKaUN0VGZidS9ybjN2aEIvMFhmTjVDS2pZdTJoL0Qwb3hX?=
- =?utf-8?B?YWhSeUhCNkl1Nk15VjdDQzBFVU5qVFJaTHUyc2dPaVk3UDN3cS9hb0J1RDhB?=
- =?utf-8?B?SlI0OW9iQmg4UjJnM1RSVzZmL01CV2liZ01jc21FaXE3TUpMeGtPYmkxRmVL?=
- =?utf-8?B?bk1RRnpkVkNzWTc4cHp5VFdrR0N5anduUU5mM2t0enBsWTgzZWYvUExWd2VO?=
- =?utf-8?B?RUFJUkpwSWdqUU8xUW5VRFRDMW85MHo0WXFkN2RJN2dNckV5TDl6cFd0SVIr?=
- =?utf-8?B?cVlscU51MW9sbVdBMXY5dkhjUUN3Z1EzSXVmRHNhVWdvdUlCZTMyaXdDRFRM?=
- =?utf-8?B?U25RQi9ER010Y2ZLRDZud0UxdkZObmF2OHg5QWxBRmp1UVBmL2dvbTdLclVi?=
- =?utf-8?B?eHk4VGlST1l5N1FzOXlLL2VKMHVpVWxUWlR0ZDN5eFcxWFhVTGt0NXRScDI1?=
- =?utf-8?B?Z2NRa29kSFFPSTFxQmErSGJ3VmJZckl1NGRHY2lKb01NTXRXTUhIV3VqMENV?=
- =?utf-8?B?T0pEWVNJZk02ZmdrWC9obXBOL1M1U3REUkFlK29CSU5HVEVSZFdEZ3JLSFZ1?=
- =?utf-8?B?TDFlbVNuRTQwa3JudnI3VVQzaXczb2pCU3ZJejNRZWUzanJ1ZHNHYVprZERX?=
- =?utf-8?B?QS81R3NzeFRMblBQd3p3VzhDWWwzWC9Ua2pXYzkvRGd3cWdUNzNvZ1NGMEVP?=
- =?utf-8?B?OFZxZC9jUDFLcGNzeHlBRjhrYVJneVFoWkpTVWhEbVYxVzFtQitGSnBaWnNa?=
- =?utf-8?B?d1J5dGR6aFhWMm5SUXFjN2xPVGVLVjJ2VDYzemJhNktKVVFEMS84emhiYTJ5?=
- =?utf-8?B?UUQ0U29SUVI1Vjh6RmgxZC9sdFFjUU0vQmxLZTNWTDZnKzBiY0Npd1JUTXRC?=
- =?utf-8?B?cGlLOGZDa2ozUEdvWVFHSHVwMWlibEpWM29ubEdiL1ZJbTJIZnVQdTdhK0gr?=
- =?utf-8?B?ZGxnTGsyQk9RS1o1S1V1V1JPK0tVWFF0cDZOeWVWZWNVcFI3aDVvRDJIVlpj?=
- =?utf-8?B?clBoTEhJa2MzS0gzR1hadDhsZC8vaEdDdkpKWDduRkxUUjluSkpuVldiYjQv?=
- =?utf-8?B?Y1hvWWQzM2xKdUZtdFM4cXUyWkNvWlErczJzQUpKclRRY21mcU9weUp2bU5U?=
- =?utf-8?B?T09zejFqaG0xcFRLbnJlYnFEUTdBbmE3bFBYMHVkOTQ3cFdyRTM2d216bTVr?=
- =?utf-8?B?YURJS3loMjF1bUxYbkdmMzR1T0JWK2lobHI0Y0VUS09ETTdoZ2xzUCtxeWRL?=
- =?utf-8?B?MmdtU3NuUXFLc2ljS3VIU1B4bTVNWHpsK3VhdGNNeTNpYTdmMzNsdGZ3TXV4?=
- =?utf-8?B?QmljMDg0LzJoSjdZTkNSWXRhQlpiVzJWSjhrekRjS3dkL1JhckxSWU83YStP?=
- =?utf-8?B?SUdZazlFeDVPUjVYVCtmS1VGWEZob1J3VlpXT0cvUVg2YTdTRlJJQUhpVFRk?=
- =?utf-8?B?MktkTkJSamJUdXFSaGRUbmZmRnhUaXozRUVLc0lYWFYrRnBuTDVHUUc1SHRW?=
- =?utf-8?B?czNkT1N1TkwrYy8vM3Z1OVl0SlpvU0VxWjVXQkVmSjYyY2d0NnJDbGQzc2ZW?=
- =?utf-8?B?N2dsYU4yYkdOclNSVUwxT2lQNk9pVU5BV3ZlNW5UcXg4UVNacm9pL0pBSzRO?=
- =?utf-8?B?MmI3dm5LZkxEZGdzVFNoaFluWXM1alF1S0lWNkg0Q0VGWENYNHYraTF3aXJG?=
- =?utf-8?B?WG9VWHBlc05Ya21HQUFnZjJsRGdiU3BBczJkaUxBUVZnY21ucHRXNEJxNkJZ?=
- =?utf-8?Q?JlsHMiOqJZAwfDG43abGtCFOsiJ3K1tOLIMdc=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?NHhQVVF4UkI0aFo2VEE5V2hWMUVSL3FEVVBrTytiVDNTTDk5TXBRRWlDS0dw?=
- =?utf-8?B?QTBCSWdTSXFVMC9wVllSeFVsQzg1N3RuVUhYZ1kzNlRDRVVHdWxaQVdHU0tx?=
- =?utf-8?B?TlhDNmYxUzFNOHB4SW1yNlZCaVBPa3Z5VytWV0tMSDBFb1V6T1oyRmdLZyty?=
- =?utf-8?B?blhMVjRHRC9NQWZBeHA4VU42OFMxRnBmbldDSWtLV1JQM1FXWHNEVmt6Zk1J?=
- =?utf-8?B?eFRpZVFVZVE0U2tUK3BhMXdlN3p2T3lmMUJ0S2liNWZFN0N1QytWOXRMNG9k?=
- =?utf-8?B?bGV6UzcyaEdLN2NMVjRDcHMzaVRDSDZwOHE0ZERSOTVSS2cwM3AwTkMzQ2s3?=
- =?utf-8?B?akMxcXpVUHhnbkpmK1B1ZmZ3Z1F6VWpDZ3lqSytjaG5EbE5reTZCVGxxbWZk?=
- =?utf-8?B?ZlNsQUtsSFpDaThldTJHWWh0RXZ0bExzSVZxM1E3S3YxNDQ4bWVscHFMOGJN?=
- =?utf-8?B?UVhieExQMkVObVFaTmN2SDZUenpvTm5hSCtmek5rYTRjYnJyMFJtYnZJcmMz?=
- =?utf-8?B?YzgwbkZnOGJVdkdicWpIZWZTb1B3RGJjVENRamtxenRaSnRmZTVCdHlzVnRu?=
- =?utf-8?B?bWs3TnlSenVkbEt3QTdQZk5jdVFBQ0Z6bGtqamFzSEpkdkVYakRuOTdqWnVJ?=
- =?utf-8?B?cnV2eGRmdHVHelFRWGdUSSs4QW5TeUZ6MXA4WVBTcG1wMld3a2w4WWowV2tS?=
- =?utf-8?B?eXFHQ01abUdoQ0hmRGhUakJkYndHTitQNjhIU1grM2RKQ3VHUlM3QWNzdHhS?=
- =?utf-8?B?RVZFSGZXbjdRUHNXTmxEU1BIL2R4VnRIY2p4aEEwQ3RTbkpTSzZMWmNuNmR5?=
- =?utf-8?B?dURjT2FIVUZTM1JqbnRZWnNFR242SG5Ec2xVTTZvbjdWWHdKZ3ppR3RDcUJH?=
- =?utf-8?B?RWxGdG9NY2g2TUhmNklVWWdsSlo5Q2VzTThoL1owbXRTWDlNQnI3citNalpx?=
- =?utf-8?B?cWRHL0pGQ1ZtL1VvTVB5RTdqWVJjZ0ZjaDVJTytmWGpKWWRCT25oSmVySFRv?=
- =?utf-8?B?MDlYQm5vZXRTYlZPZVk1RU5aUFZYRm5SWklGc1hZMWVRanIzSHQwWWJIUHJK?=
- =?utf-8?B?elk1dGNTZ3A1U3NvRXlzYmRQck1nQWh4K2FhMjhvVGdLSWExTktNWUE2ZzQ1?=
- =?utf-8?B?U0gxSFlwcHlhOUFoYXpJbEVGZEx6cjZ0UFZZZ3R3VElZdGk0ckwvTE1vcFpP?=
- =?utf-8?B?V3RxemQ0aXdhbGVSY1cvYzlXQTRFRFV1czR2UW51VDBpR0lDbkJVa2ZrOEFn?=
- =?utf-8?B?MUVJUDM4V3RYcnh3amJ2ZFVUTGJCaEZxVENLQnpOL1RCTzF6MStoQ3l0bUpT?=
- =?utf-8?B?ZEczTDZMOG9BaThjTE5LSHJJbXd4UEdJbVhLdld2aHYyNnVsMEdmOG9RS0R0?=
- =?utf-8?B?YlBobG14a3BDbkttb3JnbWpRRTVCSzZ0a1pDY1BQdGJ1NmVrb2w2dVlQSGN4?=
- =?utf-8?B?bFpvZ3JNVE5RaXRRa2d2SDhNQktIblBPenFRTlN4b3dLa0FBL0FreVh2MWZ6?=
- =?utf-8?B?OHIyaDFCR0xuM3lDUy9kTnU0YlMvaG95RVA4cW41WkFzTE8yYnF2cmVhQjVx?=
- =?utf-8?B?VEpHN2h0Q1BJeUJzUGFLNmRnOFpLMm41dFhWcUo4QTAyYSsrdDliVVgvOXNk?=
- =?utf-8?B?VUlqWUY3b2F3dVlPbzYyWFV0bzNER0NweHRZNmVCcG03M3g1OWdFb1VwNmZR?=
- =?utf-8?B?bjlPUVNGcUpKWlVVcFF3Q3BOT0RQdjNzUGlLL0JWRzF1NktUSnA5a2ErVlNm?=
- =?utf-8?B?dFRzaEVVZHBaVlRIVHpKM3NiYWQ1L0NrS1FFdWNnN3l3UkxoNWxvUUwyQ2pP?=
- =?utf-8?B?MmVLSkplKzFXNmJTaFFUeHNPTGptRm1RWkg0VUJ3NkU0U3FkV3BtbXZBZXM1?=
- =?utf-8?B?SWd1czl0dDRtSWdlalBVQVZZZTU1dU1BekphRklkTHQ2WEFiVGFpcUJmbXhj?=
- =?utf-8?B?aUZaa3VjNHh0OVltbzdwcVJpakNRM25YZzdodnp0SlA3M2lYVTBqOGR4YVNx?=
- =?utf-8?B?N1k4ZmMxb2xyaDNFamlvSmhWYkdQbnJuMGZWSkdKM0EvNHB3elV0bFdpS3Nu?=
- =?utf-8?B?NHk0eHBpWVBKOGtHcWVjZXdHelRLYnREU2w0OEc5QXZpQzNoOHk5TVdOeitu?=
- =?utf-8?B?KytRZ1BJTzRrU3UvSmNYYVR5bFJORkdiZ1VvK0R6b2RxOFF4R3NZZUFaM2Jm?=
- =?utf-8?B?a0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6CC86E4603DB764A919F77A72F0A6D5B@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ic/BOeqV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622F2C2BD10;
+	Tue, 11 Jun 2024 14:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718117638;
+	bh=ZzSZpf/GI/3KLyUrgN1e5daeegCfTTeMo9Fq+wptzdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ic/BOeqVSiWVkhSkUeWwoH2eQXR66XJ00/cm8HgjdorHAjZ7JeXFJUmixkZN49V0x
+	 oUA3tjCvfD0ygsyFAA76N8+s8TcYPvVOdaGBsgT1xdG9g1vUwH1sJyfH/t0iFgd1cR
+	 3Hszxe/bQko0+df5uMVnSrvft2MwbAbsQnqZP4wEkKYfn65f42/49OaN5Wj8qrugNf
+	 dzp9GMZku3xxii599qFSAMrJm6yu0JDpLawCjsIPw26OxDiuhrI3+rPw6lx341HTlq
+	 cE12/Fe4R/+r0s2e7aPOvhbttk1mjukZVvm9/kY7w+Yh2udjlIvH8ieM5Lrbrx/ZTK
+	 uSLDLEvrp1E1g==
+Date: Tue, 11 Jun 2024 11:53:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, mic@digikod.net, gnoack@google.com,
+	brauner@kernel.org, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] perf trace: Fix syscall untraceable bug
+Message-ID: <ZmhlAxbVcAKoPTg8@x1>
+References: <20240608172147.2779890-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	pIe5+XnduzQ7tB6OHt6NniiOkYCiOfd1P3UJaj2BCjEvlmubyo5/zqmp/skQdf0sAa0/vYsncutmhCvxOtDxh4fzCOnqx0VkXW8s9wjB4Y/n/xuLKzLRq1s8WVtFgOXo6O9PIlQFZC0RcgGDR17Wmyr7U1o+eoACQ5vhed/qL92geLwGwAIhLOOKXe/ih0PCrPGmKjp9zCGalMU320ChUSfNUpAaWNd6mK1SwgK+GvJmsYW433Boq4ZgI+tRCn1honPBVdrgoYjUfu9OPlwOw3pEYA4ll51f3TMyIshYrwLq9c+BIk+pRnbcUJPTul647OzWztl7uzKodtS4TlgBk/DHifbmkQmrZzW7g0wk0tWOtr4ky0JiFhd3VocWHOyjtDVxl5DrG+gyknU3D2ZFsBndrW2/nEyAQBbUtIE9NeT15yN/uVuWYkHSHc1FsjXzBX49nXzF+pRk2mGNQnR89ZdBG8/IEfezMNyYOKlM3BcpuRWi25pNhhL7XOtJhIdB7rVXYcAXfDvf8iwhHfLokjkKJuBO4u+nmZEAaMWqPO0H5Q1JFiKdFCJCj9ZZo8DdGMCEFVR/Se2Psvr7qpXyG+cA83cgbAEoCl0AXdwuxqA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71885ecf-961b-46ec-1e65-08dc8a23e033
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2024 14:36:26.9298
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8VSKUzQS0UDdRLbejBNEVUB/oi2ittDQ2GoTAQVJ0oCDeWQ1Qwrldo9GXkYwpLv7zylyLa+VidpLxJRcfxBsCjCtg1QQKT1cIAHzNFH7lHg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5774
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406110105
-X-Proofpoint-GUID: tRh6vsWPiLqr87PgX8S-r4V5ewtZUJHM
-X-Proofpoint-ORIG-GUID: tRh6vsWPiLqr87PgX8S-r4V5ewtZUJHM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240608172147.2779890-1-howardchu95@gmail.com>
 
-DQoNCj4gT24gSnVuIDEwLCAyMDI0LCBhdCA4OjMz4oCvUE0sIFJhbmR5IER1bmxhcCA8cmR1bmxh
-cEBpbmZyYWRlYWQub3JnPiB3cm90ZToNCj4gDQo+IEhpIEVyaWMsDQo+IA0KPiBPbiA1LzMwLzI0
-IDU6MzkgUE0sIEVyaWMgU25vd2Jlcmcgd3JvdGU6DQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6IEVy
-aWMgU25vd2JlcmcgPGVyaWMuc25vd2JlcmdAb3JhY2xlLmNvbT4NCj4+IC0tLQ0KPj4gRG9jdW1l
-bnRhdGlvbi9hZG1pbi1ndWlkZS9MU00vY2xhdmlzLnJzdCB8IDE5OCArKysrKysrKysrKysrKysr
-KysrKysrKw0KPj4gTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAg
-NyArDQo+PiBjcnlwdG8vYXN5bW1ldHJpY19rZXlzL3NpZ25hdHVyZS5jICAgICAgIHwgICA0ICsN
-Cj4+IGluY2x1ZGUvbGludXgvbHNtX2hvb2tfZGVmcy5oICAgICAgICAgICAgfCAgIDIgKw0KPj4g
-aW5jbHVkZS9saW51eC9zZWN1cml0eS5oICAgICAgICAgICAgICAgICB8ICAgNyArDQo+PiBpbmNs
-dWRlL3VhcGkvbGludXgvbHNtLmggICAgICAgICAgICAgICAgIHwgICAxICsNCj4+IHNlY3VyaXR5
-L0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTAgKy0NCj4+IHNlY3VyaXR5L2Ns
-YXZpcy9NYWtlZmlsZSAgICAgICAgICAgICAgICAgfCAgIDEgKw0KPj4gc2VjdXJpdHkvY2xhdmlz
-L2NsYXZpcy5jICAgICAgICAgICAgICAgICB8ICAyNSArKysNCj4+IHNlY3VyaXR5L2NsYXZpcy9j
-bGF2aXMuaCAgICAgICAgICAgICAgICAgfCAgIDQgKw0KPj4gc2VjdXJpdHkvY2xhdmlzL2NsYXZp
-c19rZXlyaW5nLmMgICAgICAgICB8ICA4MyArKysrKysrKysrDQo+PiBzZWN1cml0eS9zZWN1cml0
-eS5jICAgICAgICAgICAgICAgICAgICAgIHwgIDE2ICstDQo+PiAxMiBmaWxlcyBjaGFuZ2VkLCAz
-NTIgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4+IGNyZWF0ZSBtb2RlIDEwMDY0NCBE
-b2N1bWVudGF0aW9uL2FkbWluLWd1aWRlL0xTTS9jbGF2aXMucnN0DQo+PiBjcmVhdGUgbW9kZSAx
-MDA2NDQgc2VjdXJpdHkvY2xhdmlzL2NsYXZpcy5jDQo+PiANCj4+IGRpZmYgLS1naXQgYS9Eb2N1
-bWVudGF0aW9uL2FkbWluLWd1aWRlL0xTTS9jbGF2aXMucnN0IGIvRG9jdW1lbnRhdGlvbi9hZG1p
-bi1ndWlkZS9MU00vY2xhdmlzLnJzdA0KPj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4
-IDAwMDAwMDAwMDAwMC4uZDE2NDFlM2VmMzhiDQo+PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9E
-b2N1bWVudGF0aW9uL2FkbWluLWd1aWRlL0xTTS9jbGF2aXMucnN0DQo+PiBAQCAtMCwwICsxLDE5
-OCBAQA0KPj4gKy4uIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQo+PiArDQo+PiAr
-PT09PT09DQo+PiArQ2xhdmlzDQo+PiArPT09PT09DQo+PiArDQo+PiArQ2xhdmlzIGlzIGEgTGlu
-dXggU2VjdXJpdHkgTW9kdWxlIHRoYXQgcHJvdmlkZXMgbWFuZGF0b3J5IGFjY2VzcyBjb250cm9s
-IHRvDQo+PiArc3lzdGVtIGtlcm5lbCBrZXlzIChpLmUuIGJ1aWx0aW4sIHNlY29uZGFyeSwgbWFj
-aGluZSBhbmQgcGxhdGZvcm0pLiBUaGVzZQ0KPj4gK3Jlc3RyaWN0aW9ucyB3aWxsIHByb2hpYml0
-IGtleXMgZnJvbSBiZWluZyB1c2VkIGZvciB2YWxpZGF0aW9uLiBVcG9uIGJvb3QsIHRoZQ0KPj4g
-K0NsYXZpcyBMU00gaXMgcHJvdmlkZWQgYSBrZXkgaWQgYXMgYSBib290IHBhcmFtLiAgVGhpcyBz
-aW5nbGUga2V5IGlzIHRoZW4NCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIGJvb3QgcGFyYW1ldGVyLg0KPiANCj4+ICt1c2VkIGFzIHRoZSByb290IG9mIHRydXN0
-IGZvciBhbnkgYWNjZXNzIGNvbnRyb2wgbW9kaWZpY2F0aW9ucyBtYWRlIGdvaW5nDQo+PiArZm9y
-d2FyZC4gQWNjZXNzIGNvbnRyb2wgdXBkYXRlcyBtdXN0IGJlIHNpZ25lZCBhbmQgdmFsaWRhdGVk
-IGJ5IHRoaXMga2V5Lg0KPj4gKw0KPj4gK0NsYXZpcyBoYXMgaXRzIG93biBrZXlyaW5nLiAgQWxs
-IEFDTCB1cGRhdGVzIGFyZSBhcHBsaWVkIHRocm91Z2ggdGhpcyBrZXlyaW5nLg0KPj4gK1RoZSB1
-cGRhdGUgbXVzdCBiZSBzaWduZWQgYnkgdGhlIHNpbmdsZSByb290IG9mIHRydXN0IGtleS4NCj4+
-ICsNCj4+ICtXaGVuIGVuYWJsZWQsIGFsbCBzeXN0ZW0ga2V5cyBhcmUgcHJvaGliaXRlZCBmcm9t
-IGJlaW5nIHVzZWQgdW50aWwgYW4gQUNMIGlzDQo+PiArYWRkZWQgZm9yIHRoZW0uIFRoZXJlIGlz
-IHR3byBleGNlcHRpb25zIHRvIHRoaXMgcnVsZSwgYnVpbHRpbiBrZXlzIG1heSBiZSB1c2VkDQo+
-IA0KPiAgICAgICAgICAgICAgICAgICBUaGVyZSBhcmUgICAgICAgICAgICAgICAgICAgICAgIHJ1
-bGU6DQo+IA0KPiANCj4+ICt0byB2YWxpZGF0ZSBib3RoIHNpZ25lZCBrZXJuZWxzIGFuZCBtb2R1
-bGVzLg0KPj4gKw0KPj4gK0FkZGluZyBzeXN0ZW0ga2VybmVsIGtleXMgY2FuIG9ubHkgYmUgcGVy
-Zm9ybWVkIGJ5IHRoZSBtYWNoaW5lIG93bmVyOyB0aGlzDQo+PiArY291bGQgYmUgdGhyb3VnaCB0
-aGUgTWFjaGluZSBPd25lciBLZXkgKE1PSykgb3IgdGhlIFVFRkkgU2VjdXJlIEJvb3QgREIuIEl0
-DQo+PiAraXMgcG9zc2libGUgdGhlIG1hY2hpbmUgb3duZXIgYW5kIHN5c3RlbSBhZG1pbmlzdHJh
-dG9yIG1heSBiZSBkaWZmZXJlbnQNCj4+ICtwZW9wbGUuIFRoZSBzeXN0ZW0gYWRtaW5pc3RyYXRv
-ciB3aWxsIG5vdCBiZSBhYmxlIHRvIG1ha2UgQUNMIHVwZGF0ZXMgd2l0aG91dA0KPj4gK3RoZW0g
-YmVpbmcgc2lnbmVkIGJ5IHRoZSBtYWNoaW5lIG93bmVyLg0KPj4gKw0KPj4gK09uIFVFRkkgcGxh
-dGZvcm1zLCB0aGUgcm9vdCBvZiB0cnVzdCBrZXkgc2hhbGwgc3Vydml2ZSBhIGtleGVjLiBUcnlp
-bmcgdG8NCj4+ICtkZWZlYXQgb3IgY2hhbmdlIGl0IGZyb20gdGhlIGNvbW1hbmQgbGluZSBpcyBu
-b3QgYWxsb3dlZC4gIFRoZSBvcmlnaW5hbCBib290DQo+PiArcGFyYW0gaXMgc3RvcmVkIGluIFVF
-RkkgYW5kIHdpbGwgYWx3YXlzIGJlIHJlZmVyZW5jZWQgZm9sbG93aW5nIGEga2V4ZWMuDQo+IA0K
-PiAgIHBhcmFtZXRlcg0KPiANCj4+ICsNCj4+ICtUaGUgQ2xhdmlzIExTTSBjb250YWlucyBhIHN5
-c3RlbSBrZXlyaW5nIGNhbGwgLmNsYXZpcy4gIEl0IGNvbnRhaW5zIGEgc2luZ2xlDQo+PiArYXN5
-bW1ldHJpYyBrZXkgdGhhdCBpcyB1c2UgdG8gdmFsaWRhdGUgYW55dGhpbmcgYWRkZWQgdG8gaXQu
-ICBUaGlzIGtleSBjYW4gb25seQ0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgIHVzZWQN
-Cj4gDQo+PiArYmUgYWRkZWQgZHVyaW5nIGJvb3QgYW5kIG11c3QgYmUgYSBwcmVleGlzdGluZyBz
-eXN0ZW0ga2VybmVsIGtleS4gIElmIHRoZQ0KPj4gK2BgY2xhdmlzPWBgIGJvb3QgcGFyYW0gaXMg
-bm90IHVzZWQsIHRoZSBrZXlyaW5nIGRvZXMgbm90IGV4aXN0IGFuZCB0aGUgZmVhdHVyZQ0KPiAN
-Cj4gICAgICAgICAgICAgICAgICAgIHBhcmFtZXRlcg0KPiANCj4+ICtjYW4gbm90IGJlIHVzZWQg
-dW50aWwgdGhlIG5leHQgcmVib290Lg0KPiANCj4gICBjYW5ub3QNCj4gcHJlZmVyYWJseQ0KPiAN
-Cj4+ICsNCj4+ICtUaGUgb25seSB1c2VyIHNwYWNlIGNvbXBvbmVudHMgYXJlIE9wZW5TU0wgYW5k
-IHRoZSBrZXljdGwgdXRpbGl0eS4gQSBuZXcNCj4+ICtrZXkgdHlwZSBjYWxsIGBgY2xhdmlzX2tl
-eV9hY2xgYCBpcyB1c2VkIGZvciBBQ0wgdXBkYXRlcy4gQW55IG51bWJlciBvZiBzaWduZWQNCj4+
-ICtgYGNsYXZpc19rZXlfYWNsYGAgZW50cmllcyBtYXkgYmUgYWRkZWQgdG8gdGhlIC5jbGF2aXMg
-a2V5cmluZy4gVGhlDQo+PiArYGBjbGF2aXNfa2V5X2FjbGBgIGNvbnRhaW5zIHRoZSBzdWJqZWN0
-IGtleSBpZGVudGlmaWVyIGFsb25nIHdpdGggdGhlIGFsbG93ZWQNCj4+ICt1c2FnZSB0eXBlIGZv
-cg0KPj4gK3RoZSBrZXkuDQo+IA0KPiBKb2luIDIgbGluZXM/DQo+IA0KPj4gKw0KPj4gK1RoZSBm
-b3JtYXQgaXMgYXMgZm9sbG93czoNCj4+ICsNCj4+ICsuLiBjb2RlLWJsb2NrOjogY29uc29sZQ0K
-Pj4gKw0KPj4gKyAgWFg6WVlZWVlZWVlZWVkNCj4+ICsNCj4+ICsgIFhYIC0gU2luZ2xlIGJ5dGUg
-b2YgdGhlIGtleSB0eXBlDQo+PiArIFZFUklGWUlOR19NT0RVTEVfU0lHTkFUVVJFICAgICAgICAg
-ICAgMDANCj4+ICsgVkVSSUZZSU5HX0ZJUk1XQVJFX1NJR05BVFVSRSAgICAgICAgICAwMQ0KPj4g
-KyBWRVJJRllJTkdfS0VYRUNfUEVfU0lHTkFUVVJFICAgICAgICAgIDAyDQo+PiArIFZFUklGWUlO
-R19LRVlfU0lHTkFUVVJFICAgICAgICAgICAgICAgMDMNCj4+ICsgVkVSSUZZSU5HX0tFWV9TRUxG
-X1NJR05BVFVSRSAgICAgICAgICAwNA0KPj4gKyBWRVJJRllJTkdfVU5TUEVDSUZJRURfU0lHTkFU
-VVJFICAgICAgIDA1DQo+PiArICA6ICAtIEFTQ0lJIGNvbG9uDQo+PiArICBZWSAtIEV2ZW4gbnVt
-YmVyIG9mIGhleGFkZWNpbWFsIGNoYXJhY3RlcnMgcmVwcmVzZW50aW5nIHRoZSBrZXkgaWQNCj4+
-ICsNCj4+ICtUaGUgYGBjbGF2aXNfa2V5X2FjbGBgIG11c3QgYmUgUy9NSU1FIHNpZ25lZCBieSB0
-aGUgc29sZSBhc3ltbWV0cmljIGtleSBjb250YWluZWQNCj4+ICt3aXRoaW4gdGhlIC5jbGF2aXMg
-a2V5cmluZy4NCj4+ICsNCj4+ICtJbiB0aGUgZnV0dXJlIGlmIG5ldyBmZWF0dXJlcyBhcmUgYWRk
-ZWQsIG5ldyBrZXkgdHlwZXMgY291bGQgYmUgY3JlYXRlZC4NCj4+ICsNCj4+ICtVc2FnZSBFeGFt
-cGxlcw0KPj4gKz09PT09PT09PT09PT09DQo+PiArDQo+PiArSG93IHRvIGNyZWF0ZSBhIHNpZ25p
-bmcga2V5Og0KPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+ICsNCj4+ICsuLiBj
-b2RlLWJsb2NrOjogYmFzaA0KPj4gKw0KPj4gKyAgY2F0IDw8RU9GID4gY2xhdmlzLWxzbS5nZW5r
-ZXkNCj4+ICsgIFsgcmVxIF0NCj4+ICsgIGRlZmF1bHRfYml0cyA9IDQwOTYNCj4+ICsgIGRpc3Rp
-bmd1aXNoZWRfbmFtZSA9IHJlcV9kaXN0aW5ndWlzaGVkX25hbWUNCj4+ICsgIHByb21wdCA9IG5v
-DQo+PiArICBzdHJpbmdfbWFzayA9IHV0Zjhvbmx5DQo+PiArICB4NTA5X2V4dGVuc2lvbnMgPSB2
-M19jYQ0KPj4gKyAgWyByZXFfZGlzdGluZ3Vpc2hlZF9uYW1lIF0NCj4+ICsgIE8gPSBURVNUDQo+
-PiArICBDTiA9IENsYXZpcyBMU00ga2V5DQo+PiArICBlbWFpbEFkZHJlc3MgPSB1c2VyQGV4YW1w
-bGUuY29tDQo+PiArICBbIHYzX2NhIF0NCj4+ICsgIGJhc2ljQ29uc3RyYWludHM9Q0E6VFJVRQ0K
-Pj4gKyAgc3ViamVjdEtleUlkZW50aWZpZXI9aGFzaA0KPj4gKyAgYXV0aG9yaXR5S2V5SWRlbnRp
-Zmllcj1rZXlpZDphbHdheXMsaXNzdWVyDQo+PiArICBrZXlVc2FnZT1kaWdpdGFsU2lnbmF0dXJl
-DQo+PiArICBFT0YNCj4+ICsNCj4+ICsgIG9wZW5zc2wgcmVxIC1uZXcgLXg1MDkgLXV0ZjggLXNo
-YTI1NiAtZGF5cyAzNjUwIC1iYXRjaCBcDQo+PiArICAgICAgICAtY29uZmlnIGNsYXZpcy1sc20u
-Z2Vua2V5IC1vdXRmb3JtIERFUiBcDQo+PiArICAgICAgICAtb3V0IGNsYXZpcy1sc20ueDUwOSAt
-a2V5b3V0IGNsYXZpcy1sc20ucHJpdg0KPj4gKw0KPj4gK0hvdyB0byBnZXQgdGhlIFN1YmplY3Qg
-S2V5IElkZW50aWZpZXINCj4+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-DQo+PiArDQo+PiArLi4gY29kZS1ibG9jazo6IGJhc2gNCj4+ICsNCj4+ICsgIG9wZW5zc2wgeDUw
-OSAtaW4gLi9jbGF2aXMtbHNtLng1MDkgLWluZm9ybSBkZXIgXA0KPj4gKyAgICAgICAgLWV4dCBz
-dWJqZWN0S2V5SWRlbnRpZmllciAgLW5vY2VydCBcDQo+PiArICAgICAgICB8IHRhaWwgLW4gKzIg
-fCBjdXQgLWYyIC1kICc9J3wgdHIgLWQgJzonDQo+PiArICA0YTAwYWI5ZjM1YzlkYzNhZWQ3YzIy
-NWQyMmJhZmNiZDkyODVlMWU4DQo+PiArDQo+PiArSG93IHRvIGVucm9sbCB0aGUgc2lnbmluZyBr
-ZXkgaW50byB0aGUgTU9LDQo+PiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tDQo+PiArDQo+PiArVGhlIGtleSBtdXN0IG5vdyBiZSBhZGRlZCB0byB0aGUgbWFjaGlu
-ZSBvciBwbGF0Zm9ybSBrZXlyaW5ncy4gIFRoaXMNCj4+ICtpbmRpY2F0ZXMgdGhlIGtleSB3YXMg
-YWRkZWQgYnkgdGhlIHN5c3RlbSBvd25lci4gVG8gYWRkIHRvIHRoZSBtYWNoaW5lDQo+PiAra2V5
-cmluZyBvbiB4ODYgZG86DQo+IA0KPiBBcmUgb3RoZXIgYXJjaGl0ZWN0dXJlcyBkaWZmZXJlbnQ/
-IHdoeT8NCg0KVGhpcyBleGFtcGxlIHdvdWxkIGFwcGx5IHRvIGFueSBhcmNoaXRlY3R1cmUgdGhh
-dCBib290cyB0aHJvdWdoIGEgc2hpbSBhbmQgaGFzIA0KbW9rdXRpbC4gIEknbGwgZml4IHRoaXMg
-YW5kIHJlbW92ZSB0aGUgcmVmZXJlbmNlIHRvIHg4Ni4gIEknbGwgYWxzbyBmaXggYWxsIHRoZSBv
-dGhlciBjaGFuZ2VzIA0KeW91IGlkZW50aWZpZWQuICBUaGFua3MuDQoNCg==
+On Sun, Jun 09, 2024 at 01:21:46AM +0800, Howard Chu wrote:
+> This is a bug found when implementing pretty-printing for the
+> landlock_add_rule system call, I decided to send this patch separately
+> because this is a serious bug that should be fixed fast.
+ 
+> I wrote a test program to do landlock_add_rule syscall in a loop,
+> yet perf trace -e landlock_add_rule freezes, giving no output.
+ 
+> This bug is introduced by the false understanding of the variable "key"
+> below:
+> ```
+> for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+> 	struct syscall *sc = trace__syscall_info(trace, NULL, key);
+> 	...
+> }
+> ```
+> The code above seems right at the beginning, but when looking at
+> syscalltbl.c, I found these lines:
+> 
+> ```
+> for (i = 0; i <= syscalltbl_native_max_id; ++i)
+> 	if (syscalltbl_native[i])
+> 		++nr_entries;
+> 
+> entries = tbl->syscalls.entries = malloc(sizeof(struct syscall) * nr_entries);
+> ...
+> 
+> for (i = 0, j = 0; i <= syscalltbl_native_max_id; ++i) {
+> 	if (syscalltbl_native[i]) {
+> 		entries[j].name = syscalltbl_native[i];
+> 		entries[j].id = i;
+> 		++j;
+> 	}
+> }
+> ```
+> 
+> meaning the key is merely an index to traverse the syscall table,
+> instead of the actual syscall id for this particular syscall.
+
+> So if one uses key to do trace__syscall_info(trace, NULL, key), because
+> key only goes up to trace->sctbl->syscalls.nr_entries, for example, on
+> my X86_64 machine, this number is 373, it will end up neglecting all
+> the rest of the syscall, in my case, everything after `rseq`, because
+> the traversal will stop at 373, and `rseq` is the last syscall whose id
+> is lower than 373
+ 
+> in tools/perf/arch/x86/include/generated/asm/syscalls_64.c:
+> ```
+> 	...
+> 	[334] = "rseq",
+> 	[424] = "pidfd_send_signal",
+> 	...
+> ```
+> 
+> The reason why the key is scrambled but perf trace works well is that
+> key is used in trace__syscall_info(trace, NULL, key) to do
+> trace->syscalls.table[id], this makes sure that the struct syscall returned
+> actually has an id the same value as key, making the later bpf_prog
+> matching all correct.
+
+Right, trace->syscalls.table holds info read from tracefs, while
+trace->sctbl holds info created from per-arch syscall tables, usually
+from:
+
+⬢[acme@toolbox perf-tools-next]$ find arch -name "*.tbl"
+arch/alpha/kernel/syscalls/syscall.tbl
+arch/arm/tools/syscall.tbl
+arch/m68k/kernel/syscalls/syscall.tbl
+arch/microblaze/kernel/syscalls/syscall.tbl
+arch/mips/kernel/syscalls/syscall_n32.tbl
+arch/mips/kernel/syscalls/syscall_n64.tbl
+arch/mips/kernel/syscalls/syscall_o32.tbl
+arch/parisc/kernel/syscalls/syscall.tbl
+arch/powerpc/kernel/syscalls/syscall.tbl
+arch/s390/kernel/syscalls/syscall.tbl
+arch/sh/kernel/syscalls/syscall.tbl
+arch/sparc/kernel/syscalls/syscall.tbl
+arch/x86/entry/syscalls/syscall_32.tbl
+arch/x86/entry/syscalls/syscall_64.tbl
+arch/xtensa/kernel/syscalls/syscall.tbl
+⬢[acme@toolbox perf-tools-next]$
+
+trace->sctbl->syscalls.entries is sorted by name and has { syscall_id,
+name } as contents.
+
+But it is loaded at the time the reuse of BPF programs is attempted,
+because initially we were using libaudit for getting id, that we get
+from the tracepoint payload:
+
+root@number:~# cat /sys/kernel/tracing/events/raw_syscalls/sys_enter/format 
+name: sys_enter
+ID: 361
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:long id;	offset:8;	size:8;	signed:1;
+                   ^^
+                   ^^
+                   ^^
+                   ^^
+	field:unsigned long args[6];	offset:16;	size:48;	signed:0;
+
+print fmt: "NR %ld (%lx, %lx, %lx, %lx, %lx, %lx)", REC->id, REC->args[0], REC->args[1], REC->args[2], REC->args[3], REC->args[4], REC->args[5]
+root@number:~#
+
+To syscall name.
+
+Your analysis is perfect, great! Please take a look at the attached
+patch, that I'm testing now that is a simplification of your patch, that
+avoids exposing that __syscall struct, reducing patch size by
+introducing this instead:
+
++++ b/tools/perf/util/syscalltbl.c
+@@ -123,6 +123,13 @@ int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+        return sc ? sc->id : -1;
+ }
+ 
++int syscalltbl__id_at_idx(struct syscalltbl *tbl, int idx)
++{
++       struct syscall *syscalls = tbl->syscalls.entries;
++
++       return idx < tbl->syscalls.nr_entries ? syscalls[idx].id : -1;
++}
+
+And then using it to go from the index to the syscall id in the loops
+traversing the sorted trace->sctbl->
+
+> After fixing this bug, I can do perf trace on 38 more syscalls, and
+> because more syscalls are visible, we get 8 more syscalls that can be
+> augmented.
+> 
+> before:
+> 
+> perf $ perf trace -vv --max-events=1 |& grep Reusing
+> Reusing "open" BPF sys_enter augmenter for "stat"
+> Reusing "open" BPF sys_enter augmenter for "lstat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "execveat"
+> Reusing "fremovexattr" BPF sys_enter augmenter for "statx"
+> 
+> TL;DR:
+
+I did the above and got:
+
+root@number:~# wc -l before after
+  63 before
+  71 after
+ 134 total
+root@number:~#
+
+> These are the new syscalls that can be augmented
+
+Which matches the 8 more reused bpf programs.
+
+> Reusing "openat" BPF sys_enter augmenter for "open_tree"
+> Reusing "openat" BPF sys_enter augmenter for "openat2"
+> Reusing "openat" BPF sys_enter augmenter for "mount_setattr"
+> Reusing "openat" BPF sys_enter augmenter for "move_mount"
+> Reusing "open" BPF sys_enter augmenter for "fsopen"
+> Reusing "openat" BPF sys_enter augmenter for "fspick"
+> Reusing "openat" BPF sys_enter augmenter for "faccessat2"
+> Reusing "openat" BPF sys_enter augmenter for "fchmodat2"
+
+But interestingly I get this:
+
+root@number:~# grep -E 'for "(open_tree|openat2|mount_setattr|move_mount|fsopen|fspick|faccessat2|fchmodat2)' after
+Reusing "faccessat" BPF sys_enter augmenter for "faccessat2"
+Reusing "faccessat" BPF sys_enter augmenter for "fchmodat2"
+Reusing "access" BPF sys_enter augmenter for "fsopen"
+Reusing "faccessat" BPF sys_enter augmenter for "fspick"
+Reusing "faccessat" BPF sys_enter augmenter for "mount_setattr"
+Reusing "faccessat" BPF sys_enter augmenter for "move_mount"
+Reusing "faccessat" BPF sys_enter augmenter for "open_tree"
+Reusing "faccessat" BPF sys_enter augmenter for "openat2"
+root@number:~#
+
+Which matches my expectations as the array we're traversing,
+trace->sctbl->syscalls->entries is sorted by name.
+ 
+> as for the perf trace output:
+
+> before
+> 
+> perf $ perf trace -e faccessat2 --max-events=1
+> [no output]
+> 
+> after
+> 
+> perf $ ./perf trace -e faccessat2 --max-events=1
+>      0.000 ( 0.037 ms): waybar/958 faccessat2(dfd: 40, filename: "uevent")                               = 0
+> 
+> P.S. The reason why this bug was not found in the past five years is
+> probably because it only happens to the newer syscalls whose id is
+> greater, for instance, faccessat2 of id 439, which not a lot of people
+> care about when using perf trace.
+
+That and the fact that the BPF code was hidden before having to use -e,
+that got changed kinda recently when we switched to using BPF skels for
+augmenting syscalls in 'perf trace':
+
+⬢[acme@toolbox perf-tools-next]$ git log --oneline tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+a9f4c6c999008c92 perf trace: Collect sys_nanosleep first argument
+29d16de26df17e94 perf augmented_raw_syscalls.bpf: Move 'struct timespec64' to vmlinux.h
+5069211e2f0b47e7 perf trace: Use the right bpf_probe_read(_str) variant for reading user data
+33b725ce7b988756 perf trace: Avoid compile error wrt redefining bool
+7d9642311b6d9d31 perf bpf augmented_raw_syscalls: Add an assert to make sure sizeof(augmented_arg->value) is a power of two.
+262b54b6c9396823 perf bpf augmented_raw_syscalls: Add an assert to make sure sizeof(saddr) is a power of two.
+1836480429d173c0 perf bpf_skel augmented_raw_syscalls: Cap the socklen parameter using &= sizeof(saddr)
+cd2cece61ac5f900 perf trace: Tidy comments related to BPF + syscall augmentation
+5e6da6be3082f77b perf trace: Migrate BPF augmentation to use a skeleton
+⬢[acme@toolbox perf-tools-next]$ 
+
+⬢[acme@toolbox perf-tools-next]$ git show --oneline --pretty=reference 5e6da6be3082f77b | head -1
+5e6da6be3082f77b (perf trace: Migrate BPF augmentation to use a skeleton, 2023-08-10)
+⬢[acme@toolbox perf-tools-next]$ 
+
+I.e. from August, 2023.
+
+One had as well to ask for BUILD_BPF_SKEL=1, which now is default if all
+it needs is available on the system.
+
+I'll test it together with your btf_enum work.
+
+- Arnaldo
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index c42bc608954ee08d..c4fa8191253d4880 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3354,8 +3354,6 @@ static int trace__bpf_prog_sys_exit_fd(struct trace *trace, int id)
+ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace, struct syscall *sc)
+ {
+ 	struct tep_format_field *field, *candidate_field;
+-	int id;
+-
+ 	/*
+ 	 * We're only interested in syscalls that have a pointer:
+ 	 */
+@@ -3367,7 +3365,8 @@ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace
+ 	return NULL;
+ 
+ try_to_find_pair:
+-	for (id = 0; id < trace->sctbl->syscalls.nr_entries; ++id) {
++	for (int i = 0; i < trace->sctbl->syscalls.nr_entries; ++i) {
++		int id = syscalltbl__id_at_idx(trace->sctbl, i);
+ 		struct syscall *pair = trace__syscall_info(trace, NULL, id);
+ 		struct bpf_program *pair_prog;
+ 		bool is_candidate = false;
+@@ -3456,10 +3455,10 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
+ {
+ 	int map_enter_fd = bpf_map__fd(trace->skel->maps.syscalls_sys_enter);
+ 	int map_exit_fd  = bpf_map__fd(trace->skel->maps.syscalls_sys_exit);
+-	int err = 0, key;
++	int err = 0;
+ 
+-	for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
+-		int prog_fd;
++	for (int i = 0; i < trace->sctbl->syscalls.nr_entries; ++i) {
++		int prog_fd, key = syscalltbl__id_at_idx(trace->sctbl, i);
+ 
+ 		if (!trace__syscall_enabled(trace, key))
+ 			continue;
+@@ -3505,7 +3504,8 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace)
+ 	 * first and second arg (this one on the raw_syscalls:sys_exit prog
+ 	 * array tail call, then that one will be used.
+ 	 */
+-	for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
++	for (int i = 0; i < trace->sctbl->syscalls.nr_entries; ++i) {
++		int key = syscalltbl__id_at_idx(trace->sctbl, i);
+ 		struct syscall *sc = trace__syscall_info(trace, NULL, key);
+ 		struct bpf_program *pair_prog;
+ 		int prog_fd;
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index 63be7b58761d2f33..0dd26b991b3fb513 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -123,6 +123,13 @@ int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+ 	return sc ? sc->id : -1;
+ }
+ 
++int syscalltbl__id_at_idx(struct syscalltbl *tbl, int idx)
++{
++	struct syscall *syscalls = tbl->syscalls.entries;
++
++	return idx < tbl->syscalls.nr_entries ? syscalls[idx].id : -1;
++}
++
+ int syscalltbl__strglobmatch_next(struct syscalltbl *tbl, const char *syscall_glob, int *idx)
+ {
+ 	int i;
+diff --git a/tools/perf/util/syscalltbl.h b/tools/perf/util/syscalltbl.h
+index a41d2ca9e4aebad5..2b53b7ed25a6affe 100644
+--- a/tools/perf/util/syscalltbl.h
++++ b/tools/perf/util/syscalltbl.h
+@@ -16,6 +16,7 @@ void syscalltbl__delete(struct syscalltbl *tbl);
+ 
+ const char *syscalltbl__name(const struct syscalltbl *tbl, int id);
+ int syscalltbl__id(struct syscalltbl *tbl, const char *name);
++int syscalltbl__id_at_idx(struct syscalltbl *tbl, int idx);
+ 
+ int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_glob, int *idx);
+ int syscalltbl__strglobmatch_next(struct syscalltbl *tbl, const char *syscall_glob, int *idx);
+ 
