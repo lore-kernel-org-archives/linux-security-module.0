@@ -1,102 +1,171 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C17BB17
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 20:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7A9BA34
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 21:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718136388; cv=none; b=QDXAFxAypr+filOT7jbkndPereQNL5JTdSMwKYE/fX3kkl7FNaigoAjYbPGmjTJKt7LS0xEPSXXmTBvDoKWm3v/UO5gaoYpQdQuxjhprmjb7xPkh+8puO1HMmk+ywKYy/qGztNNuaNDrTR1CvmNz0pwR7ucVMsOlXrH6Q1sEcAM=
+	t=1718139682; cv=none; b=EBpw4Bu3ECg0lOZQ/0VkqxOdkcpyaED5ffEcqqmyolvcpyyAzUhV0RQ0iN85hkko1QcW5+iWyqZ0xD6GjMwNPd1KFULo4uNQHjxbS6zfP/gHw4tjjY19XcvrX+x1Oeah1bx87JET7u5JRsIYjf9kvq+OrU8l5tBoIdFqvV9wEKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718136388; c=relaxed/simple;
-	bh=6DuGM5fm9sMdiKKC/WzqFLjAfDr5pFOPi+UtnZ33exA=;
+	s=arc-20240116; t=1718139682; c=relaxed/simple;
+	bh=6PW1nf/eWeFY2tKmIOQ1VuWT7fqIpneyYVorJAwQeL0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MBL1v1X5y4GuYJF1b0E8IMnYNwt7tJu4nVGIXM5F6AYoR8pBYk2A6FQrfpbHnFi7Yqpz102XTrzJnIAl2CkoAPNTuURT0Z5/G+qS3c0d9jwgNr7MPRrt3praK6e4ud1Q2QPRmucG+YK+NEGo7A+eQeMgv+jQmVKKHBryeyWmjts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IqOzeNFY; arc=none smtp.client-ip=209.85.160.52
+	 To:Cc:Content-Type; b=n9YCbOx0u/mLEi82xYKO4z5Q5BemPI6Lr0r/filCKyAMzaV23zN3JGSd5A534X8qhs8se6tFcbsllhY4btkSdErY9Pf8zpdfwbFQrlwX8O7LNNs3VWXYj9sLHupMezhsulggc5c2bf/BUT6tIq5oTgCE/tVXU4hDWebvoVmqf1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IZZ4ptLW; arc=none smtp.client-ip=209.85.128.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IqOzeNFY"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-254871388d3so2161554fac.1
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 13:06:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IZZ4ptLW"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a08b250a2so57802217b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 14:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718136385; x=1718741185; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1718139679; x=1718744479; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+CExcQ4PTPEISDHLreU0FYNDPVjS7h+Xb3qqAXzSA+o=;
-        b=IqOzeNFY03R0cXDbAnICbDCC0jgE5zZQOV+vZd9DZ1uEfJ7oNOXIQXffXtvMxCgh0F
-         KsF5UZYk8mlRbAZr9a1lNjWRClDVRDI6i+gTAW1NMtu09SqQ+TTt8t/PtxfM9CwN5Ede
-         ylPGnC07y5SW+6HNQQg5QRrnegfozy8Pn6y3cCjzflhIeU1nu7AP7vFiav+XHrsupHz/
-         INPGlfXH2B7FRx1jlIuG8fYHD8koZsLs0lhNd1GmWOuzg7BvzBJ1bOfDKp3vCyIIZyPN
-         W9jxlLzPnfAkfRDCalHFJGJZPW4r8T5aL6uNr56V3DHmYTGzERKhv8LGl/fI5cUs68MY
-         8keg==
+        bh=lIc8quk+z80Oj5qJUtipwWH7RvxlN0ArT34YBzXHKug=;
+        b=IZZ4ptLW+OqUb8MStYpvMaLrYfUMJ8hPiTIpZdoJtwMGWhMhaJ0scu3lnkjMZFvOQy
+         MixwuHT9pmIAMdYYpDEllQGdq6nUqIHwolxRLthcqHFAwvQsVqURKmvkaeZP+q5N420m
+         uTNx5uHUeckPza9N9f8KXTk28zl70ePp/ozv+eD2NK5Yv5qWZJjPT8S2uFDUj4gV4+hI
+         +WNCI7ewzXymLXBNuLEB+N7CBjKHM47NlfLS5m3rzNZqzxaAf1m1Cuf5tYtiUNXMvJHs
+         HPPKrAqMGy2PkjwPosLsNGxdFj76XTJx7GpZubXRLStKWx5Eghj8ftmTlntBwlz4ZUaC
+         rC4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718136385; x=1718741185;
+        d=1e100.net; s=20230601; t=1718139679; x=1718744479;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+CExcQ4PTPEISDHLreU0FYNDPVjS7h+Xb3qqAXzSA+o=;
-        b=dtMAcaUNbs7bVV8/XkngxDHdpxNnZ28LbdUzc3m2E55ecaXS1aNb/91idPqna5XEOu
-         zgoGebJWgiIbx7+65bZWJ5rOfYbRXd/MWNiq7cYUqZVpAuqKLVJDvsXi6tCmXaPJNk1k
-         3qc+0o6zGCq0+ciQRifXMWFe0/imjvcCTrru16+rWGDb2EUUpJXEglmz7+t2/XEK+CdS
-         WLumxc1IXaWaRSKKjQsQVvlltab16cVcxIXse6xrbAP/vF41VNl2B/lNNsjGe2bXCzeB
-         UojrtCuuiIlfMf5Rs1Dz2c8FtuCCD2g5/Zt4bh8mXAU/vs+Hfja4AIRug8BH5QZqOXzx
-         fkYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNrRnBSqFU6JUB8tjjCvuaX+PMJrg2z5SuAkpJp9sMGLm53qtSNfzf/mI31S5gJB3ahjDBb0chCEXqZ11On/DDM5VDazcnkh+/alOB/YypDMSXJu1e
-X-Gm-Message-State: AOJu0YzoSbWSjSq55deVbob4KBz+S5K0B2GuhrsZzmYH4kF/G7r/Lmo5
-	4R2FKsFBl+I7NRpKyWYAU/SLfohmHlm0kkF3OHuDAwBbvkW52p+u3ARys9DmpPidUmFIcH1TldL
-	VT9otZ1RFk2Cz4/NXbWaczTsWJpgy2sv+dkD1
-X-Google-Smtp-Source: AGHT+IHHH4VJZvqHTtWeog2nzZW8lbhZbgh0NRNurmKB3eipae72c98a4akNavV6vsz7kIP9Mcb0pMY7Gk+umjSzE/0=
-X-Received: by 2002:a05:6870:9613:b0:254:a217:f8b5 with SMTP id
- 586e51a60fabf-254a217f9f8mr9516338fac.39.1718136385566; Tue, 11 Jun 2024
- 13:06:25 -0700 (PDT)
+        bh=lIc8quk+z80Oj5qJUtipwWH7RvxlN0ArT34YBzXHKug=;
+        b=OJjO9mKAy5DUQDiihU3mquyrtmNxJ3y0Q25kaXEkgLOujc6w9oMSJSoEgRB72fNfmm
+         sZykDRw1CLuCUczLVajwM59dvgAuMEYQRK40yNUjmSR4iIcE80knDdu1Qtfa4uak4Duj
+         ob8OSUNwYrT7qMGYKO3hmKRLxuygleTvY9wy4yG2fl/+O/2UeQzo1d0V+OV6rUJqNtHo
+         V7y2KSKTpf2X79JZ2eE4Q/ZnAv5ePZu/l6k+D+ubZIkRx1G+XWIBsEzPdxGe5pUjIUqY
+         Odk8BC56ursbK+wWMHdeXziAx4z9ofLjGdTQAr7NUC3owRzDUBlyMoCHkDgwYr4YSAAp
+         B9jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURVQ5kYvULzvTeuyPaqxT8J8k9SWX9GtcUuXcoEOEu6+xbHDB+HqAFkIxn1xbhMZIA1vRAnCmtMO53yhZ04oM75hhQayjMw7FllDXEr18OaWj84TeD
+X-Gm-Message-State: AOJu0Yx7XcbyAfkNEhTmUaSSEiwTtPp43gaOFrTWocnt1Fkp0Jlm+xCV
+	UF+YWW9zF8oVtFk5dM+Km118AxFeGS0yFbFRvDCeSLtMX7THmEhXM1QvOpsNGTmNuApMMYq+rJV
+	wakv0m9EecIuLZ2Z7tps8wz5X1ETQYc6zlTGR
+X-Google-Smtp-Source: AGHT+IEWcUj9ep9xaBN0Bg4UlWx61XZpNTcHBtMw5fUITZAHNLDrUirNuGDY44SYa9fueZ78AZH0WB9O4j/xjXEXaGA=
+X-Received: by 2002:a81:91c5:0:b0:620:26f5:c97c with SMTP id
+ 00721157ae682-62cd5652979mr119836597b3.35.1718139679016; Tue, 11 Jun 2024
+ 14:01:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
- <20240411122752.2873562-2-xukuohai@huaweicloud.com> <CAHC9VhRipBNd+G=RMPVeVOiYCx6FZwHSn0JNKv=+jYZtd5SdYg@mail.gmail.com>
- <b4484882-0de5-4515-8c40-41891ac4b21e@huaweicloud.com> <CAADnVQJfU-qMYHGSggfPwmpSy+QrCvQHPrxmei=UU6zzR2R+Sw@mail.gmail.com>
- <571e5244-367e-45a0-8147-1acbd5a1de6f@schaufler-ca.com> <CAHC9VhQ_sTmoXwQ_AVfjTYQe4KR-uTnksPVfsei5JZ+VDJBQkA@mail.gmail.com>
- <61e96101-caf7-456d-a125-13dfe33ca080@huaweicloud.com>
-In-Reply-To: <61e96101-caf7-456d-a125-13dfe33ca080@huaweicloud.com>
+References: <20240416152913.1527166-3-omosnace@redhat.com> <085faf37b4728d7c11b05f204b0d9ad6@paul-moore.com>
+ <CAFqZXNvm6T9pdWmExgmuODaNupMu3zSfYyb0gebn5AwmJ+86oQ@mail.gmail.com>
+ <CAHC9VhTxhcSDfYCK95UsuZixMSRNFtTGkDvBWjpagHw6328PMQ@mail.gmail.com>
+ <CAFqZXNurJZ-q64gxh54YhoO_GZeFzxXE0Yta_X-DqF_CcRSvRA@mail.gmail.com>
+ <CAHC9VhRjDn3yihw8fpmweWynE9nmcqaCCspM_SpM7ujUnqoGDw@mail.gmail.com> <CAFqZXNsy86uN0J41HOhjH_Rq-WRU2DVzhbJOx3xtxtB5PbwFFA@mail.gmail.com>
+In-Reply-To: <CAFqZXNsy86uN0J41HOhjH_Rq-WRU2DVzhbJOx3xtxtB5PbwFFA@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 11 Jun 2024 16:06:14 -0400
-Message-ID: <CAHC9VhS=4fpTs4VusORHWxjL6bDB2KExbpRSRYTtvMkc4OSObQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 01/11] bpf, lsm: Annotate lsm hook return
- value range
-To: Xu Kuohai <xukuohai@huaweicloud.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Khadija Kamran <kamrankhadijadj@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	John Johansen <john.johansen@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Date: Tue, 11 Jun 2024 17:01:08 -0400
+Message-ID: <CAHC9VhQzGx2bYpGh-7zMsVT4hh45zs7QFuU9GAOdnE7bJQOSJg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cipso: make cipso_v4_skbuff_delattr() fully remove
+ the CIPSO options
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 10:25=E2=80=AFPM Xu Kuohai <xukuohai@huaweicloud.co=
+On Fri, Jun 7, 2024 at 11:47=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
 m> wrote:
+> On Fri, May 17, 2024 at 9:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > On Tue, May 14, 2024 at 7:29=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
+t.com> wrote:
+> > > I tried to test what you describe - hopefully I got close enough:
+> > >
+> > > My test setup has 3 VMs (running Fedora 39 from the stock qcow2 image=
+)
+> > > A, B, and R, connected via separate links as A <--> R <--> B, where R
+> > > acts as a router between A and B (net.ipv4.ip_forward is set to 1 on
+> > > R, and the appropriate routes are set on A, B, R).
+> > >
+> > > The A <--> R link has subnet 10.123.123.0/24, A having address
+> > > 10.123.123.2 and R having 10.123.123.1.
+> > > The B <--> R link has subnet 10.123.124.0/24, B having address
+> > > 10.123.124.2 and R having 10.123.124.1.
+> > >
+> > > The links are implemented as GRE tunnels over the main network that i=
+s
+> > > shared between the VMs.
+> > >
+> > > Netlabel configuration on A:
+> > > netlabelctl cipsov4 add pass doi:16 tags:5
+> > > netlabelctl map del default
+> > > netlabelctl map add default address:0.0.0.0/0 protocol:unlbl
+> > > netlabelctl map add default address:::/0 protocol:unlbl
+> > > netlabelctl map add default address:10.123.123.0/24 protocol:cipsov4,=
+16
+> > > netlabelctl map add default address:10.123.124.0/24 protocol:cipsov4,=
+16
+> > >
+> > > Netlabel configuration on R:
+> > > netlabelctl cipsov4 add pass doi:16 tags:5
+> > > netlabelctl map del default
+> > > netlabelctl map add default address:0.0.0.0/0 protocol:unlbl
+> > > netlabelctl map add default address:::/0 protocol:unlbl
+> > > netlabelctl map add default address:10.123.123.0/24 protocol:cipsov4,=
+16
+> > >
+> > > B has no netlabel configured.
+> > >
+> > > (I.e. A tries to send CIPSO-labeled packets to B, but R treats the
+> > > 10.123.124.0/24 network as unlabeled, so should strip/add the CIPSO
+> > > label when forwarding between A and B.)
+> > >
+> > > A basic TCP connection worked just fine in both directions with and
+> > > without these patches applied (I installed the patched kernel on all
+> > > machines, though it should only matter on machine R). I ignored the
+> > > actual labels/CIPSO content - i.e. I didn't change the default SELinu=
+x
+> > > policy and put SELinux into permissive mode on machines A and R.
+> > >
+> > > Capturing the packets on R showed the following IP option content
+> > > without the patches:
+> > > A -> R: CIPSO
+> > > R -> B: NOPs
+> > > B -> R: (empty)
+> > > R -> A: CIPSO
+> > >
+> > > With the patches this changed to:
+> > > A -> R: CIPSO
+> > > R -> B: (empty)
+> > > B -> R: (empty)
+> > > R -> A: CIPSO
+> > >
+> > > Is this convincing enough or do you have different scenarios in mind?
+> >
+> > Thanks for verifying your patch, the methodology looks good to me, but
+> > as I mentioned in my previous email I would feel much better if you
+> > verified this with a different client OS/stack.  Do you have access to
+> > Windows/MacOS/BSD/non-Linux system you could use in place of B in your
+> > test above?
 >
-> Alright, I'll give it a try. Perhaps in the end, there will be a few
-> hooks that cannot be converted. If that's the case, it seems we can
-> just provide exceptions for the return value explanations for these
-> not unconverted hooks, maybe on the BPF side only, thus avoiding the
-> need to annotate return values for all LSM hooks.
+> I don't think I can easily plug that into the framework I used for the
+> testing (there doesn't seem to be a convenient way to install a
+> FreeBSD VM without manual interaction and the rest is proprietary).
 
-Thanks.  Yes, while I don't think we will be able to normalize all of
-the hooks to 0/-ERRNO, my guess is that we can reduce the exceptions
-to a manageable count.
+Surely you can perform a manual unit test with some VMs on your local
+machine if whatever test automation you are using doesn't support
+this.
+
+> I still don't quite understand what exactly you expect to break under
+> that scenario and why - could you elaborate on that? If anything, I'd
+> expect the IP header growing along the path (which already happens
+> pretty much by design in the opposite direction) to be more likely to
+> cause an issue.
+
+I'm concerned about potential oddities caused by the changes in IP
+header sizes while the packet is in flight.  Every OS's network stack
+is a bit different and I don't think it is too much to ask to test at
+least one non-Linux network stack as a client.
 
 --=20
 paul-moore.com
