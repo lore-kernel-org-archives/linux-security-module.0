@@ -1,103 +1,48 @@
-Received: from wflow1-smtp.messagingengine.com (wflow1-smtp.messagingengine.com [64.147.123.136])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57F03F8C7;
-	Tue, 11 Jun 2024 08:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED38918643
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 08:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718093739; cv=none; b=rYX/8Juy/KVXENGvSFn6eBQPvXAdYF0Hi82IqBImV2PeWGfR9AY8hXRMVRt5y7Ymc+m7i/0Ot8mK7BmiGVwRDp3WhF7SrQ6ofEpLU9Kkrm1uv8oOInxQLh7wX+Obrwtx+m58NkEudTN6+DE8UAxw39WjUg/1UcOWchvjgdiV3nU=
+	t=1718093965; cv=none; b=um1oGJDBmwnu10CU7p6DhQ8vD289m0OFdSLnNIUGEQrwr6l3EqPmhboatqf/53mRXW7NvoQ87mq24G+89E32YE1DuBT+SltLvHOTxhFCSUO4u1wfn/fYdkhRYnv22NorSbpE+6MtowzFwDB1HFW9mXId4sRZ/gqkzZUqeVFFTxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718093739; c=relaxed/simple;
-	bh=z43s94CnLrweY/tQQTWD/T164eJu5lCBbRFTHO2hCys=;
+	s=arc-20240116; t=1718093965; c=relaxed/simple;
+	bh=DyfZMNqfbelowjKg7Fg2Zw3jpBlT2GRYPwzy3WhZrVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGyJ1FIh+Ev3pFy8c1ZGH+Lr4ssu33UkggZZtY4z/iAjfKKo9PwKzge4os0RdFhQwCzRkP+zXzw/nMHu3Rqe7VVsLpzGJPqfubgDM3A3ddkVCQYGyG4CBjLqWSjH5v+LKd6JP6Regs6G2LUPm6JQcZx4b2r9I36oYilGp8YAhu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=J/rYoVfI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=knDhbLDt; arc=none smtp.client-ip=64.147.123.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7bVJLUpnzvvCJJJv/wzeRnVAr5UtDr0HNjHraUaQSXlUsKW5yP8bLpfiisP2/8u4KwltxyQJThmNQqjf2VHU3KOHXMoijhSMonmm1lzzLnj3LOZZ4SMB/Gaq4PgH9fw8dcnOz7qF7OUbzj1HYA7Hq6922rYD7FYra+WzFdQTrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=et2xVbPX; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="J/rYoVfI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="knDhbLDt"
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailflow.west.internal (Postfix) with ESMTP id 57A532CC01C9;
-	Tue, 11 Jun 2024 04:15:34 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 11 Jun 2024 04:15:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718093733; x=1718097333; bh=FHmyaqd99K
-	ibuNFcHRNSHKPpvreyC45H6/JsNKHxzgM=; b=J/rYoVfIrIPfb3R2Z5VsoocWAy
-	9b2ZNUviqa5JVMGRCXBoiGRPeEeflfhkWFoS4xp0wjGjjSoSzjr9/Ry2HM1NQBN3
-	rGqBL30RWZBG73M3IR0nPjnmrU3Sz21PdFoKWDbMJzhPW3O6iAMidFE01i0ne35m
-	ZCifgOEBmaiySDmPBUt0jV5RVgES7tcTELewog99jLkcFGyJRB8tLQTfAuJ5fzWU
-	NvC+jd9iAPGpwbp55drVsng9u6fA/WRQbuNVFLgVl4Q6G7g9XnWXU3XoTYp415xB
-	qCvlyQPcfOV73rrJSbvTeUD+H6r87uB59hI4zB3Q1HHFT3ENM1XmjkFWtMsg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718093733; x=1718097333; bh=FHmyaqd99KibuNFcHRNSHKPpvrey
-	C45H6/JsNKHxzgM=; b=knDhbLDtDZHXqot+UutYHGqxS+ybOwLtEfM2l9Qv3Bwk
-	xRNVii1WuqbblONh3bapyi6jj+y6ihyLWa0qNKKjHiIl7XFMm7fgR+5L+xCTF92K
-	GWHUzRyxh9lghsjWzQ9gBVJ9hjKTS/HWxw2ShAhRKgm7Vm8yRx40W3qpoNsSCaGu
-	aqquX1GrReuK45wM0FrT8SBTo3nZHK/2eH89ywUAXSuW5VUSDZmD4xm60JzA6TSe
-	giAHdHgi2K8JXuiZ7rHtmgxSaDO6GemHKVygtxIh52B0oRqDmtyKfd4UH0PMBIWP
-	mYiMgkVPIG2EZJBxX48gzPmFFkCXkWkL2HNPICsi/Q==
-X-ME-Sender: <xms:pQdoZnJwpUwMJ5aSh754SMicBUig2Yo7cuxFIWBG488MykM7DOVeAg>
-    <xme:pQdoZrJohRL0fRPyBWFyomxQw_Wntfm3Hi8KpMnHjHHAFSi3UgnvVIf_nrppUfvqp
-    nbk4c5IYdmGH_HX-Us>
-X-ME-Received: <xmr:pQdoZvvXVZYadnWUMnwqdouS2UsXYPZmppj5ffgA80HwlxeFKqUKT3Tckwlj9nuA14nh00vFXkes2Lh_2rgy-v4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvdcutefuodetggdotefrodftvfcurf
-    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttdejnecuhfhrohhmpeflohhnrghthhgr
-    nhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenucggtffrrg
-    htthgvrhhnpeekkeetgeefgfdvfefgfeffueefffejvdduieejheejheffkeejkeelffeu
-    lefggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:pQdoZgbk3yz2iWEH2OCd2tzORrTqUi8Xy8tlfWlgEJ7aFszfgufoNA>
-    <xmx:pQdoZuY-_ecrn57VvpsDzZQxq0DRPaeHlkGlaWPxohtt9RKsQqVRjw>
-    <xmx:pQdoZkAIRT6rZ72ReWB9WCp__6QSGkYRSShFTuVyOTissCzd__D53w>
-    <xmx:pQdoZsaUaxZf6hlV2VqKqE-kV3pGikI5Wpp7thyLHw9MpGq7NOr0AQ>
-    <xmx:pQdoZioJsRbSnszbs1P2taAhZGEiLrtjH4FHUkxUUaOwAvhnVOVqp5RG>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 04:15:29 -0400 (EDT)
-Date: Tue, 11 Jun 2024 01:20:40 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Andrew Morgan <morgan@kernel.org>, brauner@kernel.org,
- 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
- 	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- KP Singh <kpsingh@kernel.org>,
- 	Matt Bobrowski <mattbobrowski@google.com>,
- Alexei Starovoitov <ast@kernel.org>,
- 	Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>,
- 	Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- John Johansen <john.johansen@canonical.com>,
- 	David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- 	Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
- 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
-Message-ID: <o5llgu7tzei7g2alssdqvy4g2gn66b73tcsir3xqktfqs765ke@wyofd2abvdbj>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-2-jcalmels@3xx0.net>
- <20240610130057.GB2193924@mail.hallyn.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="et2xVbPX"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Vz1mH1BnxzmBh;
+	Tue, 11 Jun 2024 10:19:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1718093951;
+	bh=7HhB4sE7NSHxAQDCrk3KUOzkf7diWu3HyUqm9CqHvEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=et2xVbPXxCumQmIsI+DjulepJsWh1kePvzlLTh4VmveVuXji/VJMRwDKZ3SrExvKX
+	 gB5KaN1tbWKEs1gfnEsT9+mhjcY6BXpSapxm/IjeqIl+fslwsbZvLtl1qjnOZWtbhT
+	 dU9ltWH1xnmMN0+1OKYI+k090IpP/lU8XYhZ66o4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Vz1mF6P1kzqRS;
+	Tue, 11 Jun 2024 10:19:09 +0200 (CEST)
+Date: Tue, 11 Jun 2024 10:19:06 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <20240611.Eed0Oochaht4@digikod.net>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <ZmLEoBfHyUR3nKAV@google.com>
+ <ZmNic8S1KtyLcp7i@tahera-OptiPlex-5000>
+ <20240610.Aifee5ingugh@digikod.net>
+ <CAG48ez3MBGi6i9Xcj29+pD9Lo1_hKkEtWYn-jNqvOZ_WWQZjYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -106,25 +51,39 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240610130057.GB2193924@mail.hallyn.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3MBGi6i9Xcj29+pD9Lo1_hKkEtWYn-jNqvOZ_WWQZjYA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jun 10, 2024 at 08:00:57AM GMT, Serge E. Hallyn wrote:
+On Mon, Jun 10, 2024 at 11:49:21PM +0200, Jann Horn wrote:
+> On Mon, Jun 10, 2024 at 6:36 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Fri, Jun 07, 2024 at 01:41:39PM -0600, Tahera Fahimi wrote:
+> > > On Fri, Jun 07, 2024 at 10:28:35AM +0200, Günther Noack wrote:
+> > > > Is it intentional that you are both restricting the connection and the sending
+> > > > with the same flag (security_unix_may_send)?  If an existing Unix Domain Socket
+> > > > gets passed in to a program from the outside (e.g. as stdout), shouldn't it
+> > > > still be possible that the program enables a Landlock policy and then still
+> > > > writes to it?  (Does that work?  Am I mis-reading the patch?)
+> >
+> > If a passed socket is already connected, then a write/send should work.
 > 
-> Now, one thing that does occur to me here is that there is a
-> very mild form of sendmail-capabilities vulnerability that
-> could happen here.  Unpriv user joe can drop CAP_SYS_ADMIN
-> from cap_userns, then run a setuid-root program which starts
-> a container which expects CAP_SYS_ADMIN.  This could be a
-> shared container, and so joe could be breaking expected
-> behavior there.
+> If I'm reading unix_dgram_sendmsg() correctly, we'll always hit
+> security_unix_may_send() for any UNIX socket type other than
+> SOCK_SEQPACKET (meaning SOCK_STREAM and SOCK_DGRAM), even if the
+> socket is already connected, and then we'll do the landlock check.
+> That's probably not the intended behavior for Landlock, unless I'm
+> misreading the code?
 > 
-> I *think* we want to say we don't care about this case, but
-> if we did, I suppose we could say that the normal cap raise
-> rules on setuid should apply to cap_userns?
-> 
+> Maybe to get nice semantics it's necessary to add a parameter to
+> security_unix_may_send() that says whether the destination address
+> came from the caller or from the socket?
 
-Right, good catch. If we do want to fix it, we could just check for
-setuid no? Or do we want to follow the normal root inheritance rules
-too? Essentially something like this:
+I think it would make sense to ignore connected sockets with
+security_unix_may_send() because it should already be controlled by
+security_unix_stream_connect().  This would still allow passed/inherited
+connected sockets to be used, which is an important feature and would
+be consistent with read/write on other passed FDs.  This would not work
+with dgram sockets though.
 
-pU' = is_suid(root) ? X : pU
+We need tests for this case and with different socket modes (inspired by
+the net_test.c:protocol variants).
