@@ -1,171 +1,155 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7A9BA34
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 21:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27036386;
+	Tue, 11 Jun 2024 21:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718139682; cv=none; b=EBpw4Bu3ECg0lOZQ/0VkqxOdkcpyaED5ffEcqqmyolvcpyyAzUhV0RQ0iN85hkko1QcW5+iWyqZ0xD6GjMwNPd1KFULo4uNQHjxbS6zfP/gHw4tjjY19XcvrX+x1Oeah1bx87JET7u5JRsIYjf9kvq+OrU8l5tBoIdFqvV9wEKA=
+	t=1718140006; cv=none; b=ley+6DG8ni/SiUcjhw2JDj+fqPu3rj1zVDddVM+gCSvQx4vJ9ewjwebppAAylQIsko1vjcW2hAbUyDtk2kfujcGiQKkwZP+pawJRPttXCyBw5O89T4m59As1Q30BHsPCO6070JamhFxUOnqzXNYf/70I2LrzotmhlweMYlzYJTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718139682; c=relaxed/simple;
-	bh=6PW1nf/eWeFY2tKmIOQ1VuWT7fqIpneyYVorJAwQeL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n9YCbOx0u/mLEi82xYKO4z5Q5BemPI6Lr0r/filCKyAMzaV23zN3JGSd5A534X8qhs8se6tFcbsllhY4btkSdErY9Pf8zpdfwbFQrlwX8O7LNNs3VWXYj9sLHupMezhsulggc5c2bf/BUT6tIq5oTgCE/tVXU4hDWebvoVmqf1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IZZ4ptLW; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1718140006; c=relaxed/simple;
+	bh=Rui9AoBITRyDlF2eWQs8vZ8OuJoMhByhTlQhym14BIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WleXF/6MD+YbP9fiLFPQOd5cZXfE7+RaZ60I6u0/5F73DEKIxXYCfe1F34+YmG0YoCc4HDkLCA4qhYKhm3fXZRP3xshjCywgrLXvKAxOcfqlI0pvr99rvhoQ4ttIOnhe8bmRqKqe5Ci+AWjh98mYo+tIllgCkp6wwvbBnunlDWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KwwpB9dG; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IZZ4ptLW"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a08b250a2so57802217b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 14:01:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwwpB9dG"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70421e78edcso1513196b3a.3;
+        Tue, 11 Jun 2024 14:06:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718139679; x=1718744479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lIc8quk+z80Oj5qJUtipwWH7RvxlN0ArT34YBzXHKug=;
-        b=IZZ4ptLW+OqUb8MStYpvMaLrYfUMJ8hPiTIpZdoJtwMGWhMhaJ0scu3lnkjMZFvOQy
-         MixwuHT9pmIAMdYYpDEllQGdq6nUqIHwolxRLthcqHFAwvQsVqURKmvkaeZP+q5N420m
-         uTNx5uHUeckPza9N9f8KXTk28zl70ePp/ozv+eD2NK5Yv5qWZJjPT8S2uFDUj4gV4+hI
-         +WNCI7ewzXymLXBNuLEB+N7CBjKHM47NlfLS5m3rzNZqzxaAf1m1Cuf5tYtiUNXMvJHs
-         HPPKrAqMGy2PkjwPosLsNGxdFj76XTJx7GpZubXRLStKWx5Eghj8ftmTlntBwlz4ZUaC
-         rC4A==
+        d=gmail.com; s=20230601; t=1718140004; x=1718744804; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=F6Ifet/6ih8RgGZZ0QsdkVuw8FBoDD+UlCvt9Kx1Ys4=;
+        b=KwwpB9dGAkH7GZHN4oTYbYtBLlK8BnMyihJYrLeJCSlCvU8SUMy4zdzBjCRsRvGrLn
+         rSUrb0AETcDJWGph6gfSWClCfUlnGjkYl9vTo7/U9Ipy0JQGtrGD1xu6ePXSkeoQy51t
+         I8rqW5IU0fKZOdhxvnb4XhRc818de1AD1NNsDWpu1HAqe5XdjS6AO8NKo3Kf9LJG1SO9
+         RctzlkyUVEZOr8ZtJHe6iGhVS35271+JOcGS7rEzZpgIfbiWi9bTCv25iQIDuX4ULJTR
+         raOmgnHk/Le3Ja5LnXRzuO1LD+qwmrCEWdzkO5vvN3tHpQpoedYq7K749vtrfYYlsYUo
+         objQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718139679; x=1718744479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lIc8quk+z80Oj5qJUtipwWH7RvxlN0ArT34YBzXHKug=;
-        b=OJjO9mKAy5DUQDiihU3mquyrtmNxJ3y0Q25kaXEkgLOujc6w9oMSJSoEgRB72fNfmm
-         sZykDRw1CLuCUczLVajwM59dvgAuMEYQRK40yNUjmSR4iIcE80knDdu1Qtfa4uak4Duj
-         ob8OSUNwYrT7qMGYKO3hmKRLxuygleTvY9wy4yG2fl/+O/2UeQzo1d0V+OV6rUJqNtHo
-         V7y2KSKTpf2X79JZ2eE4Q/ZnAv5ePZu/l6k+D+ubZIkRx1G+XWIBsEzPdxGe5pUjIUqY
-         Odk8BC56ursbK+wWMHdeXziAx4z9ofLjGdTQAr7NUC3owRzDUBlyMoCHkDgwYr4YSAAp
-         B9jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURVQ5kYvULzvTeuyPaqxT8J8k9SWX9GtcUuXcoEOEu6+xbHDB+HqAFkIxn1xbhMZIA1vRAnCmtMO53yhZ04oM75hhQayjMw7FllDXEr18OaWj84TeD
-X-Gm-Message-State: AOJu0Yx7XcbyAfkNEhTmUaSSEiwTtPp43gaOFrTWocnt1Fkp0Jlm+xCV
-	UF+YWW9zF8oVtFk5dM+Km118AxFeGS0yFbFRvDCeSLtMX7THmEhXM1QvOpsNGTmNuApMMYq+rJV
-	wakv0m9EecIuLZ2Z7tps8wz5X1ETQYc6zlTGR
-X-Google-Smtp-Source: AGHT+IEWcUj9ep9xaBN0Bg4UlWx61XZpNTcHBtMw5fUITZAHNLDrUirNuGDY44SYa9fueZ78AZH0WB9O4j/xjXEXaGA=
-X-Received: by 2002:a81:91c5:0:b0:620:26f5:c97c with SMTP id
- 00721157ae682-62cd5652979mr119836597b3.35.1718139679016; Tue, 11 Jun 2024
- 14:01:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718140004; x=1718744804;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6Ifet/6ih8RgGZZ0QsdkVuw8FBoDD+UlCvt9Kx1Ys4=;
+        b=TqFFv3N6JlBSq2elNup5W7wW0lBU+ygEBaIfV4iHRRtOHbZpBHmpftHQTJW5EINlHd
+         AckA4AoBt9Bo+uAL7YXkrIcETBAwnx/eRfEpvd2O+HlB5Z3RG98CO1p3to/QP2YXYJH1
+         zmM19d7NWMxuVy1FT/mrJbmTkY2HwcFk0QayF5er6WvZWzMXgfwQplwQJoztl7RDqQv/
+         DZcYrLD5E4w4xfuCt10r+8SzpW9zho4ivHN10kAuLZIfyI+2MROYOfhqJWF279dG+1Xq
+         H0rHdcA8WLU4UwRO9APs24UNLjhKxb5hLOWsoC+kPhfNaeDMx9744jK8GSdrCjkRP62+
+         CRiA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5P2zcjYhO5i5vynITJHsiuTf8C9RtYrBDCT6k0RmlAL+LaBFT3WOa7VnZC2Gsbf7qptn5KZGCHPQ5S9fKp5y7yNj7OuNkxsFdPqvsbs6+uWCgyffIHVlhUxhoS3V/97CJbtJTgyVmVdJKBfWqLb0HrTSPSdC27v3K9V0fmodt+7Sn4hmMk08NyF7l
+X-Gm-Message-State: AOJu0YwfHHRCcf4ud3zFXXz5iweySz3hFaCNQOiWO0eEf5UoXL4wCLMA
+	wuuhYL1t/9wKLfd4T8SAhGEOH7ZRDJpY6EJo7M4872+BBH+c6pWf
+X-Google-Smtp-Source: AGHT+IEmtVX2k5iMqX+QTQs2nsXQB9pmHFxP3TYrDQbolAgY9BCTAdR+sFm/P/GOwC4t2bikQlErXw==
+X-Received: by 2002:a05:6a20:12cb:b0:1b8:391f:dfaf with SMTP id adf61e73a8af0-1b8aa068190mr139979637.52.1718140004183;
+        Tue, 11 Jun 2024 14:06:44 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7041aef65f2sm7117544b3a.108.2024.06.11.14.06.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 14:06:43 -0700 (PDT)
+Date: Tue, 11 Jun 2024 15:06:41 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: Jann Horn <jannh@google.com>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240416152913.1527166-3-omosnace@redhat.com> <085faf37b4728d7c11b05f204b0d9ad6@paul-moore.com>
- <CAFqZXNvm6T9pdWmExgmuODaNupMu3zSfYyb0gebn5AwmJ+86oQ@mail.gmail.com>
- <CAHC9VhTxhcSDfYCK95UsuZixMSRNFtTGkDvBWjpagHw6328PMQ@mail.gmail.com>
- <CAFqZXNurJZ-q64gxh54YhoO_GZeFzxXE0Yta_X-DqF_CcRSvRA@mail.gmail.com>
- <CAHC9VhRjDn3yihw8fpmweWynE9nmcqaCCspM_SpM7ujUnqoGDw@mail.gmail.com> <CAFqZXNsy86uN0J41HOhjH_Rq-WRU2DVzhbJOx3xtxtB5PbwFFA@mail.gmail.com>
-In-Reply-To: <CAFqZXNsy86uN0J41HOhjH_Rq-WRU2DVzhbJOx3xtxtB5PbwFFA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 11 Jun 2024 17:01:08 -0400
-Message-ID: <CAHC9VhQzGx2bYpGh-7zMsVT4hh45zs7QFuU9GAOdnE7bJQOSJg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cipso: make cipso_v4_skbuff_delattr() fully remove
- the CIPSO options
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
 
-On Fri, Jun 7, 2024 at 11:47=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
-m> wrote:
-> On Fri, May 17, 2024 at 9:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > On Tue, May 14, 2024 at 7:29=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
-t.com> wrote:
-> > > I tried to test what you describe - hopefully I got close enough:
-> > >
-> > > My test setup has 3 VMs (running Fedora 39 from the stock qcow2 image=
-)
-> > > A, B, and R, connected via separate links as A <--> R <--> B, where R
-> > > acts as a router between A and B (net.ipv4.ip_forward is set to 1 on
-> > > R, and the appropriate routes are set on A, B, R).
-> > >
-> > > The A <--> R link has subnet 10.123.123.0/24, A having address
-> > > 10.123.123.2 and R having 10.123.123.1.
-> > > The B <--> R link has subnet 10.123.124.0/24, B having address
-> > > 10.123.124.2 and R having 10.123.124.1.
-> > >
-> > > The links are implemented as GRE tunnels over the main network that i=
-s
-> > > shared between the VMs.
-> > >
-> > > Netlabel configuration on A:
-> > > netlabelctl cipsov4 add pass doi:16 tags:5
-> > > netlabelctl map del default
-> > > netlabelctl map add default address:0.0.0.0/0 protocol:unlbl
-> > > netlabelctl map add default address:::/0 protocol:unlbl
-> > > netlabelctl map add default address:10.123.123.0/24 protocol:cipsov4,=
-16
-> > > netlabelctl map add default address:10.123.124.0/24 protocol:cipsov4,=
-16
-> > >
-> > > Netlabel configuration on R:
-> > > netlabelctl cipsov4 add pass doi:16 tags:5
-> > > netlabelctl map del default
-> > > netlabelctl map add default address:0.0.0.0/0 protocol:unlbl
-> > > netlabelctl map add default address:::/0 protocol:unlbl
-> > > netlabelctl map add default address:10.123.123.0/24 protocol:cipsov4,=
-16
-> > >
-> > > B has no netlabel configured.
-> > >
-> > > (I.e. A tries to send CIPSO-labeled packets to B, but R treats the
-> > > 10.123.124.0/24 network as unlabeled, so should strip/add the CIPSO
-> > > label when forwarding between A and B.)
-> > >
-> > > A basic TCP connection worked just fine in both directions with and
-> > > without these patches applied (I installed the patched kernel on all
-> > > machines, though it should only matter on machine R). I ignored the
-> > > actual labels/CIPSO content - i.e. I didn't change the default SELinu=
-x
-> > > policy and put SELinux into permissive mode on machines A and R.
-> > >
-> > > Capturing the packets on R showed the following IP option content
-> > > without the patches:
-> > > A -> R: CIPSO
-> > > R -> B: NOPs
-> > > B -> R: (empty)
-> > > R -> A: CIPSO
-> > >
-> > > With the patches this changed to:
-> > > A -> R: CIPSO
-> > > R -> B: (empty)
-> > > B -> R: (empty)
-> > > R -> A: CIPSO
-> > >
-> > > Is this convincing enough or do you have different scenarios in mind?
-> >
-> > Thanks for verifying your patch, the methodology looks good to me, but
-> > as I mentioned in my previous email I would feel much better if you
-> > verified this with a different client OS/stack.  Do you have access to
-> > Windows/MacOS/BSD/non-Linux system you could use in place of B in your
-> > test above?
->
-> I don't think I can easily plug that into the framework I used for the
-> testing (there doesn't seem to be a convenient way to install a
-> FreeBSD VM without manual interaction and the rest is proprietary).
+On Tue, Jun 11, 2024 at 12:27:58AM +0200, Jann Horn wrote:
+> Hi!
+> 
+> Thanks for helping with making Landlock more comprehensive!
+Thanks for your feedback!
 
-Surely you can perform a manual unit test with some VMs on your local
-machine if whatever test automation you are using doesn't support
-this.
+> On Fri, Jun 7, 2024 at 1:44 AM Tahera Fahimi <fahimitahera@gmail.com> wrote:
+> > Abstract unix sockets are used for local inter-process communications
+> > without on a filesystem. Currently a sandboxed process can connect to a
+> > socket outside of the sandboxed environment, since landlock has no
+> > restriction for connecting to a unix socket in the abstract namespace.
+> > Access to such sockets for a sandboxed process should be scoped the same
+> > way ptrace is limited.
+> 
+> This reminds me - from what I remember, Landlock also doesn't restrict
+> access to filesystem-based unix sockets yet... I'm I'm right about
+> that, we should probably at some point add code at some point to
+> restrict that as part of the path-based filesystem access rules? (But
+> to be clear, I'm not saying I expect you to do that as part of your
+> patch, just commenting for context.)
+> 
+> > Because of compatibility reasons and since landlock should be flexible,
+> > we extend the user space interface by adding a new "scoped" field. This
+> > field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> > specify that the ruleset will deny any connection from within the
+> > sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> 
+> You call the feature "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET", but I
+> don't see anything in this code that actually restricts it to abstract
+> unix sockets (as opposed to path-based ones and unnamed ones, see the
+> "Three types of address are distinguished" paragraph of
+> https://man7.org/linux/man-pages/man7/unix.7.html). If the feature is
+> supposed to be limited to abstract unix sockets, I guess you'd maybe
+> have to inspect the unix_sk(other)->addr, check that it's non-NULL,
+> and then check that `unix_sk(other)->addr->name->sun_path[0] == 0`,
+> similar to what unix_seq_show() does? (unix_seq_show() shows abstract
+> sockets with an "@".)
+Correct, I will break it into another function that checks if it is an
+abstract unix socket. In this case, we can add other restrictions on
+connection for pathname and unname sockets later. 
 
-> I still don't quite understand what exactly you expect to break under
-> that scenario and why - could you elaborate on that? If anything, I'd
-> expect the IP header growing along the path (which already happens
-> pretty much by design in the opposite direction) to be more likely to
-> cause an issue.
+> Separately, I wonder if it would be useful to have another mode for
+> forbidding access to abstract unix sockets entirely; or alternatively
+> to change the semantics of LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET so
+> that it also forbids access from outside the landlocked domain as was
+> discussed elsewhere in the thread. If a landlocked process starts
+> listening on something like "@/tmp/.X11-unix/X0", maybe X11 clients
+> elsewhere on my system shouldn't be confused into connecting to that
+> landlocked socket...
+> 
+> [...]
+> > +static bool sock_is_scoped(struct sock *const other)
+> > +{
+> > +       bool is_scoped = true;
+> > +       const struct landlock_ruleset *dom_other;
+> > +       const struct cred *cred_other;
+> > +
+> > +       const struct landlock_ruleset *const dom =
+> > +               landlock_get_current_domain();
+> > +       if (!dom)
+> > +               return true;
+> > +
+> > +       lockdep_assert_held(&unix_sk(other)->lock);
+> > +       /* the credentials will not change */
+> > +       cred_other = get_cred(other->sk_peer_cred);
+> > +       dom_other = landlock_cred(cred_other)->domain;
+> > +       is_scoped = domain_scope_le(dom, dom_other);
+> > +       put_cred(cred_other);
+> 
+> You don't have to use get_cred()/put_cred() here; as the comment says,
+> the credentials will not change, so we don't need to take another
+> reference to them.
+Noted. Thanks.
 
-I'm concerned about potential oddities caused by the changes in IP
-header sizes while the packet is in flight.  Every OS's network stack
-is a bit different and I don't think it is too much to ask to test at
-least one non-Linux network stack as a client.
-
---=20
-paul-moore.com
+> > +       return is_scoped;
+> > +}
