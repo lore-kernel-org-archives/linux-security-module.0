@@ -1,102 +1,45 @@
-Received: from wflow1-smtp.messagingengine.com (wflow1-smtp.messagingengine.com [64.147.123.136])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1533A172764;
-	Tue, 11 Jun 2024 08:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B26E1BF2A
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 09:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718094507; cv=none; b=f+M+XkzO3Jc3+enS1o9u6nJSelzb45mEB0XjifF15mMp9+iqqokpjhEb5EyWPaoHvx5vxRRk5paxmIWGpRH655jl6O1zZgAAUn9bGDxhRvo8vN6+FdTd8MiVeZLxqykiwcvniz+uvglvPiN2P+PX1rbGWAcAopy2M2SR3EuPhLc=
+	t=1718098244; cv=none; b=IjFEJxiQdIhU90I9PHMA86/A0DAy0wmgaCfwC9xDbcrKLPbn+AyN07J3ENpc6875w+t/U2XD8EZHc1MoSQptN8f4/XuJGKupnzUNjS9gw3hdyQvc0iPDkshdX1TVxZycyfYhXrqqRY0NODD8B+3r0EbvtAwN4EpR8TWNtqEM+Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718094507; c=relaxed/simple;
-	bh=WlCLV+10vurnCj41WSYI9fw9oRJL9wgxuJfNi2U9UP0=;
+	s=arc-20240116; t=1718098244; c=relaxed/simple;
+	bh=ybykIiW5VS3w+BkZyxy+Xnk5v4bDo8zglruVsuDtuxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDAfADCdJ1dWulLVX1YgpZ5AZ66ACs1AfrExLF3sbG8CLUpPMOGeCM+AG/QcZ4jIkjs/4cWcTT8Vl8mlRtEMzrMSaeu1nB/04Wvu9zEeOdvTMNmu8lr46839CQGPM+uIgUd1W4+X8wwTRrCc+4npCdIVqCFN0feWkUwzIDnepjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=osE7N0Wu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZOqPDh57; arc=none smtp.client-ip=64.147.123.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvzUHyxAeY7c3tHXweBkbjGZnhLHfsLW3JhLbhnA94v9o3JFmmkwRPnHoUPakNmAiOwEj551SbHwpwx1Kpn/cvxqWRGXhiQ1n/PRaCboKHJWfYjshNAgVjT1LE/j8O4UTJYQLlUdYVt8TFvCfF7LIMoca25IRWGVRlTHCXpdhMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=p7gWMbH9; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="osE7N0Wu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZOqPDh57"
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailflow.west.internal (Postfix) with ESMTP id BAE8E2CC0168;
-	Tue, 11 Jun 2024 04:28:22 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Tue, 11 Jun 2024 04:28:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718094502; x=1718098102; bh=bQpdgobU82
-	YWZriN3d7BiIoR2BmrlzIuuKqmODIu3NA=; b=osE7N0WuCRJ4jr/zq9XEthfsSB
-	JaihG8TMRtsCQYH3e74lkFjSBml+3s1i0xShAwaaxUYVSMbjVGY3pBd6oD9V/xFA
-	4EQhcALk8KlAvXfna0DVEdgCOAgwRrrT0U84FNNmYmgSoQ1eAYZB8pQIE+uKJZTL
-	JBwCXT+3w99jaMOnc5iKeo4Xc/RT9DaxqEcwXKiDL8A31Xl2rs2eHq6cjafmsUko
-	XdVeMrXsMNOYWXX2KVJ8fiRwhqHIWbiajSn5Ff0SlrUUq0vCVusalLSHryvxB/nE
-	naWH9GSK8CH0p6CRpNRg3O95uOWQw0GrLj3Kq2JlsrDkuo0hMXXDxpOpe/EQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718094502; x=1718098102; bh=bQpdgobU82YWZriN3d7BiIoR2Bmr
-	lzIuuKqmODIu3NA=; b=ZOqPDh57FHfBZoeMW5VTOtiPNI5X6qPdO47jp8figGmz
-	rQUBRMnwR8xaLGfRDS/mEc5jYRLplg98K4VVw6rd/IEyvLDiVhXi+d/6x2LpFnIt
-	jKtQvuFLkQS7TXGAfFPv2l0Zvqcg38jpCgfK+HrE/ZvNuQMx2b2waDYQzPyAiHRf
-	zwHElFx3sT7n/kv/GUbWI/KVZlR9UJrB++qghkJUqjqckGq7+ZzecK+mKPPJ8/dJ
-	QLZCU9od/qU2AYLno3ZZXyuEm/cqRZ9+WIvA6ydTL/K/wx2E0OTp2UbklsAygM/Z
-	lrbV70srVgC0egd6MnTWjINW3FB1/DBsBwa4DdwVYg==
-X-ME-Sender: <xms:pgpoZvHNoVLJZbvLBBx9zFSFJzjc3tBW9UvbNLH_EEhz7hUrZ9eJYQ>
-    <xme:pgpoZsVRDa5XD2bB9RpI24nGiyrXg-nm5rbo01f73VnNF46kAmDY4tAdomQp12gSc
-    gcOQgNGh2G4X5djpn8>
-X-ME-Received: <xmr:pgpoZhInH0L3g_lSzDHyFn_04fwDolaKCC-XKra6rrhvqOIupxIfTMIpiszoXDXEEtflWn32cYxoDR8u5AoKrwQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduvddgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtjeenucfhrhhomheplfhonhgr
-    thhhrghnucevrghlmhgvlhhsuceojhgtrghlmhgvlhhsseefgiigtddrnhgvtheqnecugg
-    ftrfgrthhtvghrnhepkeekteegfefgvdefgfefffeufeffjedvudeijeehjeehffekjeek
-    leffueelgffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhgtrghlmhgvlhhsseefgiigtddrnhgvth
-X-ME-Proxy: <xmx:pgpoZtE62QlC7KH4a1-Foj7m6SuGeo1__iLpVx3kWrNlKBtZDBGEXw>
-    <xmx:pgpoZlWVRQ_p8fUh5gFYj3sWLfDDqVe2tMDDZAU1gqBXHf7mYlnMMQ>
-    <xmx:pgpoZoOPDeZrLcNPr8SiDMzORypHNbn-VXsYWGSfv1UBbph_1w1i6w>
-    <xmx:pgpoZk1eF3x0f-nXXHLkc3aOXfnwdUUVFZsttwxxSOhu5TFpp2cacg>
-    <xmx:pgpoZqUhWZIGf2kTk6xnb51pDwG2k0o0o69dvVdgwO0G37IIm-rtNfGI>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Jun 2024 04:28:18 -0400 (EDT)
-Date: Tue, 11 Jun 2024 01:33:29 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- 	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
- 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- 	KP Singh <kpsingh@kernel.org>,
- Matt Bobrowski <mattbobrowski@google.com>,
- 	Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- 	Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- 	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- John Johansen <john.johansen@canonical.com>,
- 	David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- 	Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, 	Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com,
- 	keyrings@vger.kernel.org, selinux@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Introduce user namespace capabilities
-Message-ID: <tqvnpbrdmfj3q7rc2m365nxvwgb6hsvipiz7l473cdwyacdb6s@b22nvrk7vbok>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240610201227.GD235772@perftesting>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="p7gWMbH9"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Vz1mY3v3Kzmd9;
+	Tue, 11 Jun 2024 10:19:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1718093965;
+	bh=NW3ocj6F1Nb72KUy4vifp/1WY92XTuWX9CWEPsfwJug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p7gWMbH9DGOuQoUYjnndqIVt2uAA3gUGDUyubDLx1JaPzfKf5SYKVV51GfcWqciLM
+	 hINyTroRtAcw//sLWZq18//REbzYac0e+KsNpLeubtjEWLLTBgcMIfCoGpB/qvGC/C
+	 oTkqrskWLQVC5V4PYi/DiCCsCQdk3VyQ/u6HJt60=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Vz1mX56RQz9FN;
+	Tue, 11 Jun 2024 10:19:24 +0200 (CEST)
+Date: Tue, 11 Jun 2024 10:19:20 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, outreachy@lists.linux.dev, 
+	netdev@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <20240611.Pi8Iph7ootae@digikod.net>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -105,13 +48,102 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240610201227.GD235772@perftesting>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jun 10, 2024 at 04:12:27PM GMT, Josef Bacik wrote:
-> Where are the tests for this patchset?  I see you updated the bpf tests for the
-> bpf lsm bits, but there's nothing to validate this new behavior or exercise the
-> new ioctl you've added.  Thanks,
+On Tue, Jun 11, 2024 at 12:27:58AM +0200, Jann Horn wrote:
+> Hi!
+> 
+> Thanks for helping with making Landlock more comprehensive!
+> 
+> On Fri, Jun 7, 2024 at 1:44 AM Tahera Fahimi <fahimitahera@gmail.com> wrote:
+> > Abstract unix sockets are used for local inter-process communications
+> > without on a filesystem. Currently a sandboxed process can connect to a
+> > socket outside of the sandboxed environment, since landlock has no
+> > restriction for connecting to a unix socket in the abstract namespace.
+> > Access to such sockets for a sandboxed process should be scoped the same
+> > way ptrace is limited.
+> 
+> This reminds me - from what I remember, Landlock also doesn't restrict
+> access to filesystem-based unix sockets yet... I'm I'm right about
+> that, we should probably at some point add code at some point to
+> restrict that as part of the path-based filesystem access rules? (But
+> to be clear, I'm not saying I expect you to do that as part of your
+> patch, just commenting for context.)
 
-Apologies, I haven't had much time to spend on it so I prioritized the
-rest. But yes, we should certainly update the capabilities selftests
-once we agreed on the different behaviors.
+Yes, I totally agree.  For now, unix socket binding requires to create
+the LANDLOCK_ACCESS_FS_MAKE_SOCK right, but connecting to an existing
+socket is not controlled.  The abstract unix socket scoping is
+orthogonal and extends Landlock with unix socket LSM hooks, which are
+required to extend the "filesystem" access rights to control path-based
+unix socket.
+
+> 
+> > Because of compatibility reasons and since landlock should be flexible,
+> > we extend the user space interface by adding a new "scoped" field. This
+> > field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> > specify that the ruleset will deny any connection from within the
+> > sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> 
+> You call the feature "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET", but I
+> don't see anything in this code that actually restricts it to abstract
+> unix sockets (as opposed to path-based ones and unnamed ones, see the
+> "Three types of address are distinguished" paragraph of
+> https://man7.org/linux/man-pages/man7/unix.7.html). If the feature is
+> supposed to be limited to abstract unix sockets, I guess you'd maybe
+> have to inspect the unix_sk(other)->addr, check that it's non-NULL,
+> and then check that `unix_sk(other)->addr->name->sun_path[0] == 0`,
+> similar to what unix_seq_show() does? (unix_seq_show() shows abstract
+> sockets with an "@".)
+
+Right, that should be part of the next series.  Tests should check that
+too.
+
+> 
+> Separately, I wonder if it would be useful to have another mode for
+> forbidding access to abstract unix sockets entirely; or alternatively
+> to change the semantics of LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET so
+> that it also forbids access from outside the landlocked domain as was
+> discussed elsewhere in the thread. If a landlocked process starts
+> listening on something like "@/tmp/.X11-unix/X0", maybe X11 clients
+> elsewhere on my system shouldn't be confused into connecting to that
+> landlocked socket...
+
+In this case, I think we should have a (light) Landlock domain for a
+user session to make sure apps only connect to the legitimate X11 socket
+(either in the same domain, or through a path-based socket).
+
+There is also ongoing work to restrict socket creation according to their
+type:
+https://lore.kernel.org/all/20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com/
+This will make possible to control abstract unix socket creation and
+avoid this kind of issue too.
+
+> 
+> [...]
+> > +static bool sock_is_scoped(struct sock *const other)
+> > +{
+> > +       bool is_scoped = true;
+> > +       const struct landlock_ruleset *dom_other;
+> > +       const struct cred *cred_other;
+> > +
+> > +       const struct landlock_ruleset *const dom =
+> > +               landlock_get_current_domain();
+> > +       if (!dom)
+> > +               return true;
+> > +
+> > +       lockdep_assert_held(&unix_sk(other)->lock);
+> > +       /* the credentials will not change */
+> > +       cred_other = get_cred(other->sk_peer_cred);
+> > +       dom_other = landlock_cred(cred_other)->domain;
+> > +       is_scoped = domain_scope_le(dom, dom_other);
+> > +       put_cred(cred_other);
+> 
+> You don't have to use get_cred()/put_cred() here; as the comment says,
+> the credentials will not change, so we don't need to take another
+> reference to them.
+> 
+> > +       return is_scoped;
+> > +}
+> 
