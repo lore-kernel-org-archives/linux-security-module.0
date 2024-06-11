@@ -1,30 +1,37 @@
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5480F159917;
-	Tue, 11 Jun 2024 02:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146FAAD59;
+	Tue, 11 Jun 2024 02:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718072709; cv=none; b=AwdY0pJwjzgAktSnHKm/zfW9ZN0pds5MN2T54Ozzd5559sdgFtuDYU8mNoxq3OvQTyhpGF4WFrMf7+2eD2vhVQKGQ+R1UWxI7xw4W9zmtTgCH0/kafTrVB9zR0X/pL/B/V5rttS2JciKSWEpBoLgemLVT3uKyuIa9iWF0qF5CRM=
+	t=1718073202; cv=none; b=OOqlvC1zfLacuJVDXBiQ7gzEleTYdQ6MRaV5icMeKui+/tcGPglp70RWc5KEqKObwLSO1U2qUt8WS5je+wo14EnNhXNQnKqpzGF9JGUPr/cjvfMJtbRIj6F2FX4BOat+lzUybzYt/1Jn10tiKI8oY7uD5ZG6JB+/Prttn86wksc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718072709; c=relaxed/simple;
-	bh=GfjNm/ci4r3MXpxjHkAJnioZR0HjcTwermokN5o2m/4=;
+	s=arc-20240116; t=1718073202; c=relaxed/simple;
+	bh=THNgh4FZcql1DTTeV3hnnPPUyy1VqB0lKWjg99comYY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvrJVoyAaCPdusEuMvZ+UujcS1dPPB5Zw48RcgvWPW4p/02oHqq0GCPjKnSHvf/B5KKwJ3xPi+xiIY/lSEHCbMSLSHxIjH/qPTshDXGvG4rxZNMGHM8PdD8FpTPG3ZoXzFDq6/4LdP/WIFxR3nNoiL1OTHdIsR4ZIlwjbG3CJ/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VysvQ13Z7z4f3jtj;
-	Tue, 11 Jun 2024 10:24:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id A4A021A0C0D;
-	Tue, 11 Jun 2024 10:24:56 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP1 (Coremail) with SMTP id cCh0CgBngAl3tWdmB8WZPA--.32049S2;
-	Tue, 11 Jun 2024 10:24:56 +0800 (CST)
-Message-ID: <61e96101-caf7-456d-a125-13dfe33ca080@huaweicloud.com>
-Date: Tue, 11 Jun 2024 10:24:54 +0800
+	 In-Reply-To:Content-Type; b=V3O6jikpxYez6utn/Ac5MQCGpV90GaW6NFEF4cO6Fmpyv3SeNSbbebHWjnnHcOsSYEej03H/VcdYZ2JIfmWFizJXI29PEOUqvs6iwEXax9IClma4SrmdkTVJ0VmRvakVhbqln/H7SSby4VF/ugddcVH/MySVKV3sokzSQUCTbfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1UYISocw; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1UYISocw"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=pShm9lxCJ+b2fSyVlY4N79GwCSVK+vqhYK/KheofYh8=; b=1UYISocwT3IrBF8cb6QHDhaMF3
+	v7iPtZnFL66/FNLUfb/dsBdH/Fg1iXUp3ro8LY3vLE70WuCNj5K7unDgtqi08NH/kXK2hfBsGzlAY
+	FVN2tXujo6GLYiUDDL3ztcDFLcuJ6A5sMcHUEUyx0ADHeVhsVmOz3VNy8nud0p0vQhR+6OvhDWzwz
+	aht81RUK+fI6v+5YobacPb2PjXPoCf3jOdgpj6PTNdjxyX5dkfDu3FvdjmFsG2jSBoudXyurbagFE
+	W9A2ZrF2xKK6UsCOJShYGtBtwh5Q6bc1zqjEk8Lp2ifUldNTQGLdzpMHlYI7OykuErtt9VzQpaPhx
+	8OaT50rw==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGrK2-00000007ABE-0zEf;
+	Tue, 11 Jun 2024 02:33:18 +0000
+Message-ID: <754d54b0-5848-4775-a989-43b75dac4dbf@infradead.org>
+Date: Mon, 10 Jun 2024 19:33:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -32,219 +39,290 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 01/11] bpf, lsm: Annotate lsm hook return
- value range
+Subject: Re: [RFC PATCH v2 8/8] clavis: Introduce new LSM called clavis
+To: Eric Snowberg <eric.snowberg@oracle.com>,
+ linux-security-module@vger.kernel.org
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au,
+ davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ mic@digikod.net, casey@schaufler-ca.com, stefanb@linux.ibm.com,
+ ebiggers@kernel.org, linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-integrity@vger.kernel.org
+References: <20240531003945.44594-1-eric.snowberg@oracle.com>
+ <20240531003945.44594-9-eric.snowberg@oracle.com>
 Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- bpf <bpf@vger.kernel.org>, Network Development <netdev@vger.kernel.org>,
- LSM List <linux-security-module@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
- Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>
-References: <20240411122752.2873562-1-xukuohai@huaweicloud.com>
- <20240411122752.2873562-2-xukuohai@huaweicloud.com>
- <CAHC9VhRipBNd+G=RMPVeVOiYCx6FZwHSn0JNKv=+jYZtd5SdYg@mail.gmail.com>
- <b4484882-0de5-4515-8c40-41891ac4b21e@huaweicloud.com>
- <CAADnVQJfU-qMYHGSggfPwmpSy+QrCvQHPrxmei=UU6zzR2R+Sw@mail.gmail.com>
- <571e5244-367e-45a0-8147-1acbd5a1de6f@schaufler-ca.com>
- <CAHC9VhQ_sTmoXwQ_AVfjTYQe4KR-uTnksPVfsei5JZ+VDJBQkA@mail.gmail.com>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <CAHC9VhQ_sTmoXwQ_AVfjTYQe4KR-uTnksPVfsei5JZ+VDJBQkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBngAl3tWdmB8WZPA--.32049S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Gw1xKFy3ZrWfuFW8tw13Jwb_yoW3XryrpF
-	s8Ca43KF4vyFy3Arn2ya15XaySyrW3Jr42qr1Utw1jy3ZYqrn2qF43tr4Y9FWrCry8t34j
-	vF4jvayfuwn8Aa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240531003945.44594-9-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 6/10/2024 2:17 AM, Paul Moore wrote:
-> On Sun, Jun 9, 2024 at 1:39 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 6/8/2024 6:54 AM, Alexei Starovoitov wrote:
->>> On Sat, Jun 8, 2024 at 1:04 AM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
->>>> On 6/7/2024 5:53 AM, Paul Moore wrote:
->>>>> On Thu, Apr 11, 2024 at 8:24 AM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
->>>>>> From: Xu Kuohai <xukuohai@huawei.com>
->>>>>>
->>>>>> Add macro LSM_RET_INT to annotate lsm hook return integer type and the
->>>>>> default return value, and the expected return range.
->>>>>>
->>>>>> The LSM_RET_INT is declared as:
->>>>>>
->>>>>> LSM_RET_INT(defval, min, max)
->>>>>>
->>>>>> where
->>>>>>
->>>>>> - defval is the default return value
->>>>>>
->>>>>> - min and max indicate the expected return range is [min, max]
->>>>>>
->>>>>> The return value range for each lsm hook is taken from the description
->>>>>> in security/security.c.
->>>>>>
->>>>>> The expanded result of LSM_RET_INT is not changed, and the compiled
->>>>>> product is not changed.
->>>>>>
->>>>>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
->>>>>> ---
->>>>>>    include/linux/lsm_hook_defs.h | 591 +++++++++++++++++-----------------
->>>>>>    include/linux/lsm_hooks.h     |   6 -
->>>>>>    kernel/bpf/bpf_lsm.c          |  10 +
->>>>>>    security/security.c           |   1 +
->>>>>>    4 files changed, 313 insertions(+), 295 deletions(-)
->>>>> ...
->>>>>
->>>>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->>>>>> index 334e00efbde4..708f515ffbf3 100644
->>>>>> --- a/include/linux/lsm_hook_defs.h
->>>>>> +++ b/include/linux/lsm_hook_defs.h
->>>>>> @@ -18,435 +18,448 @@
->>>>>>     * The macro LSM_HOOK is used to define the data structures required by
->>>>>>     * the LSM framework using the pattern:
->>>>>>     *
->>>>>> - *     LSM_HOOK(<return_type>, <default_value>, <hook_name>, args...)
->>>>>> + *     LSM_HOOK(<return_type>, <return_description>, <hook_name>, args...)
->>>>>>     *
->>>>>>     * struct security_hook_heads {
->>>>>> - *   #define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
->>>>>> + *   #define LSM_HOOK(RET, RETVAL_DESC, NAME, ...) struct hlist_head NAME;
->>>>>>     *   #include <linux/lsm_hook_defs.h>
->>>>>>     *   #undef LSM_HOOK
->>>>>>     * };
->>>>>>     */
->>>>>> -LSM_HOOK(int, 0, binder_set_context_mgr, const struct cred *mgr)
->>>>>> -LSM_HOOK(int, 0, binder_transaction, const struct cred *from,
->>>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_set_context_mgr, const struct cred *mgr)
->>>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transaction, const struct cred *from,
->>>>>>            const struct cred *to)
->>>>>> -LSM_HOOK(int, 0, binder_transfer_binder, const struct cred *from,
->>>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_binder, const struct cred *from,
->>>>>>            const struct cred *to)
->>>>>> -LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
->>>>>> +LSM_HOOK(int, LSM_RET_INT(0, -MAX_ERRNO, 0), binder_transfer_file, const struct cred *from,
->>>>>>            const struct cred *to, const struct file *file)
->>>>> I'm not overly excited about injecting these additional return value
->>>>> range annotations into the LSM hook definitions, especially since the
->>>>> vast majority of the hooks "returns 0 on success, negative values on
->>>>> error".  I'd rather see some effort put into looking at the
->>>>> feasibility of converting some (all?) of the LSM hook return value
->>>>> exceptions into the more conventional 0/-ERRNO format.  Unfortunately,
->>>>> I haven't had the time to look into that myself, but if you wanted to
->>>>> do that I think it would be a good thing.
->>>>>
->>>> I agree that keeping all hooks return a consistent range of 0/-ERRNO
->>>> is more elegant than adding return value range annotations. However, there
->>>> are two issues that might need to be addressed first:
->>>>
->>>> 1. Compatibility
->>>>
->>>> For instance, security_vm_enough_memory_mm() determines whether to
->>>> set cap_sys_admin by checking if the hook vm_enough_memory returns
->>>> a positive number. If we were to change the hook vm_enough_memory
->>>> to return 0 to indicate the need for cap_sys_admin, then for the
->>>> LSM BPF program currently returning 0, the interpretation of its
->>>> return value would be reversed after the modification.
->>>
->>> This is not an issue. bpf lsm progs are no different from other lsm-s.
->>> If the meaning of return value or arguments to lsm hook change
->>> all lsm-s need to adjust as well. Regardless of whether they are
->>> written as in-kernel lsm-s, bpf-lsm, or out-of-tree lsm-s.
-> 
-> Yes, the are no guarantees around compatibility in kernel/LSM
-> interface from one kernel release to the next.  If we need to change a
-> LSM hook, we can change a LSM hook; the important part is that when we
-> change the LSM hook we must make sure to update all of the in-tree
-> LSMs which make use of that hook.
->
+Hi Eric,
 
-Great, so there are no compatibility restrictions on both LSM and BPF
-sides.
+On 5/30/24 5:39 PM, Eric Snowberg wrote:
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> ---
+>  Documentation/admin-guide/LSM/clavis.rst | 198 +++++++++++++++++++++++
+>  MAINTAINERS                              |   7 +
+>  crypto/asymmetric_keys/signature.c       |   4 +
+>  include/linux/lsm_hook_defs.h            |   2 +
+>  include/linux/security.h                 |   7 +
+>  include/uapi/linux/lsm.h                 |   1 +
+>  security/Kconfig                         |  10 +-
+>  security/clavis/Makefile                 |   1 +
+>  security/clavis/clavis.c                 |  25 +++
+>  security/clavis/clavis.h                 |   4 +
+>  security/clavis/clavis_keyring.c         |  83 ++++++++++
+>  security/security.c                      |  16 +-
+>  12 files changed, 352 insertions(+), 6 deletions(-)
+>  create mode 100644 Documentation/admin-guide/LSM/clavis.rst
+>  create mode 100644 security/clavis/clavis.c
+> 
+> diff --git a/Documentation/admin-guide/LSM/clavis.rst b/Documentation/admin-guide/LSM/clavis.rst
+> new file mode 100644
+> index 000000000000..d1641e3ef38b
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/clavis.rst
+> @@ -0,0 +1,198 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======
+> +Clavis
+> +======
+> +
+> +Clavis is a Linux Security Module that provides mandatory access control to
+> +system kernel keys (i.e. builtin, secondary, machine and platform). These
+> +restrictions will prohibit keys from being used for validation. Upon boot, the
+> +Clavis LSM is provided a key id as a boot param.  This single key is then
 
->>>> 2. Expressing multiple non-error states using 0/-ERRNO
->>>>
->>>> IIUC, although 0/-ERRNO can be used to express different errors,
->>>> only 0 can be used for non-error state. If there are multiple
->>>> non-error states, they cannot be distinguished. For example,
->>>> security_inode_need_killpriv() returns < 0 on error, 0 if
->>>> security_inode_killpriv() doesn't need to be called, and > 0
->>>> if security_inode_killpriv() does need to be called.
->>> This looks like a problem indeed.
->>
->> Hang on. There aren't really three states here. security_inode_killpriv()
->> is called only on the security_inode_need_killpriv() > 0 case. I'm not
->> looking at the code this instant, but adjusting the return to something
->> like -ENOSYS (OK, maybe not a great choice, but you get the idea) instead
->> of 0 in the don't call case and switching the positive value to 0 should
->> work just fine.
->>
->> We're working on getting the LSM interfaces to be more consistent. This
->> particular pair of hooks is an example of why we need to do that.
-> 
-> Yes, exactly.  Aside from the issues with BPF verification, we've seen
-> problems in the past with LSM hooks that differ from the usual "0 on
-> success, negative values on failure" pattern.  I'm not saying it is
-> possible to convert all of the hooks to fit this model, but even if we
-> can only adjust one or two I think that is still a win.
-> 
-> As far as security_inode_need_killpriv()/security_inode_killpriv() is
-> concerned, one possibility would be to shift the ATTR_KILL_PRIV
-> set/mask operation into the LSM hook, something like this:
-> 
-> [WARNING: completely untested, likely broken, yadda yadda]
-> 
-> /**
->   * ...
->   * Returns: Return 0 on success, negative values on failure.  @attrs
-> may be updated
->   *          on success.
->   */
-> int security_inode_need_killpriv(*dentry, attrs)
-> {
->    int rc;
->    rc = call_int_hook(inode_killpriv, dentry);
->    if (rc < 0)
->      return rc;
->    if (rc > 0)
->      attrs |= ATTR_KILL_PRIV;
->    else if (rc == 0)
->      attrs &= ~ATTR_KILL_PRIV;
->    return 0;
-> }
-> 
-> Yes, that doesn't fix the problem for the individual LSMs, but it does
-> make the hook a bit more consistent from the rest of the kernel.
->
+                                        boot parameter.
 
-Alright, I'll give it a try. Perhaps in the end, there will be a few
-hooks that cannot be converted. If that's the case, it seems we can
-just provide exceptions for the return value explanations for these
-not unconverted hooks, maybe on the BPF side only, thus avoiding the
-need to annotate return values for all LSM hooks.
+> +used as the root of trust for any access control modifications made going
+> +forward. Access control updates must be signed and validated by this key.
+> +
+> +Clavis has its own keyring.  All ACL updates are applied through this keyring.
+> +The update must be signed by the single root of trust key.
+> +
+> +When enabled, all system keys are prohibited from being used until an ACL is
+> +added for them. There is two exceptions to this rule, builtin keys may be used
 
+                   There are                       rule:
+
+
+> +to validate both signed kernels and modules.
+> +
+> +Adding system kernel keys can only be performed by the machine owner; this
+> +could be through the Machine Owner Key (MOK) or the UEFI Secure Boot DB. It
+> +is possible the machine owner and system administrator may be different
+> +people. The system administrator will not be able to make ACL updates without
+> +them being signed by the machine owner.
+> +
+> +On UEFI platforms, the root of trust key shall survive a kexec. Trying to
+> +defeat or change it from the command line is not allowed.  The original boot
+> +param is stored in UEFI and will always be referenced following a kexec.
+
+   parameter
+
+> +
+> +The Clavis LSM contains a system keyring call .clavis.  It contains a single
+> +asymmetric key that is use to validate anything added to it.  This key can only
+
+                          used
+
+> +be added during boot and must be a preexisting system kernel key.  If the
+> +``clavis=`` boot param is not used, the keyring does not exist and the feature
+
+                    parameter
+
+> +can not be used until the next reboot.
+
+   cannot
+preferably
+
+> +
+> +The only user space components are OpenSSL and the keyctl utility. A new
+> +key type call ``clavis_key_acl`` is used for ACL updates. Any number of signed
+> +``clavis_key_acl`` entries may be added to the .clavis keyring. The
+> +``clavis_key_acl`` contains the subject key identifier along with the allowed
+> +usage type for
+> +the key.
+
+Join 2 lines?
+
+> +
+> +The format is as follows:
+> +
+> +.. code-block:: console
+> +
+> +  XX:YYYYYYYYYYY
+> +
+> +  XX - Single byte of the key type
+> +	VERIFYING_MODULE_SIGNATURE            00
+> +	VERIFYING_FIRMWARE_SIGNATURE          01
+> +	VERIFYING_KEXEC_PE_SIGNATURE          02
+> +	VERIFYING_KEY_SIGNATURE               03
+> +	VERIFYING_KEY_SELF_SIGNATURE          04
+> +	VERIFYING_UNSPECIFIED_SIGNATURE       05
+> +  :  - ASCII colon
+> +  YY - Even number of hexadecimal characters representing the key id
+> +
+> +The ``clavis_key_acl`` must be S/MIME signed by the sole asymmetric key contained
+> +within the .clavis keyring.
+> +
+> +In the future if new features are added, new key types could be created.
+> +
+> +Usage Examples
+> +==============
+> +
+> +How to create a signing key:
+> +----------------------------
+> +
+> +.. code-block:: bash
+> +
+> +  cat <<EOF > clavis-lsm.genkey
+> +  [ req ]
+> +  default_bits = 4096
+> +  distinguished_name = req_distinguished_name
+> +  prompt = no
+> +  string_mask = utf8only
+> +  x509_extensions = v3_ca
+> +  [ req_distinguished_name ]
+> +  O = TEST
+> +  CN = Clavis LSM key
+> +  emailAddress = user@example.com
+> +  [ v3_ca ]
+> +  basicConstraints=CA:TRUE
+> +  subjectKeyIdentifier=hash
+> +  authorityKeyIdentifier=keyid:always,issuer
+> +  keyUsage=digitalSignature
+> +  EOF
+> +
+> +  openssl req -new -x509 -utf8 -sha256 -days 3650 -batch \
+> +        -config clavis-lsm.genkey -outform DER \
+> +        -out clavis-lsm.x509 -keyout clavis-lsm.priv
+> +
+> +How to get the Subject Key Identifier
+> +-------------------------------------
+> +
+> +.. code-block:: bash
+> +
+> +  openssl x509 -in ./clavis-lsm.x509 -inform der \
+> +        -ext subjectKeyIdentifier  -nocert \
+> +        | tail -n +2 | cut -f2 -d '='| tr -d ':'
+> +  4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +How to enroll the signing key into the MOK
+> +------------------------------------------
+> +
+> +The key must now be added to the machine or platform keyrings.  This
+> +indicates the key was added by the system owner. To add to the machine
+> +keyring on x86 do:
+
+Are other architectures different? why?
+
+> +
+> +.. code-block:: bash
+> +
+> +  mokutil --import ./clavis-lsm.x509
+> +
+> +and then reboot and enroll the key through the MokManager.
+> +
+> +How to enable the Clavis LSM
+> +----------------------------
+> +
+> +Add the key id to the ``clavis=`` boot param.  With the example above the
+
+                                          parameter.
+
+> +key id is the subject key identifier: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +Add the following boot param:
+
+                          parameter:
+
+> +
+> +.. code-block:: console
+> +
+> +  clavis=4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +After booting there will be a single key contained in the .clavis keyring:
+> +
+> +.. code-block:: bash
+> +
+> +  keyctl show %:.clavis
+> +  Keyring
+> +    254954913 ----swrv      0     0  keyring: .clavis
+> +    301905375 ---lswrv      0     0   \_ asymmetric: TEST: Clavis LSM key: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +The original ``clavis=`` boot param will persist across any kexec. Changing it or
+
+                                 parameter
+
+> +removing it has no effect.
+> +
+> +
+> +How to sign an entry to be added to the .clavis keyring:
+> +--------------------------------------------------------
+> +
+> +In this example we have 3 keys in the machine keyring.  Our Clavis LSM key, a
+> +key we want to use for kernel verification and a key we want to use for module
+> +verification.
+> +
+> +.. code-block:: bash
+> +
+> +  keyctl show %:.machine
+> +  Keyring
+> +    999488265 ---lswrv      0     0  keyring: .machine
+> +    912608009 ---lswrv      0     0   \_ asymmetric: TEST: Module Key: 17eb8c5bf766364be094c577625213700add9471
+> +    646229664 ---lswrv      0     0   \_ asymmetric: TEST: Kernel Key: b360d113c848ace3f1e6a80060b43d1206f0487d
+> +   1073737099 ---lswrv      0     0   \_ asymmetric: TEST: Clavis LSM key: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +To update the .clavis kerying ACL list.  First create a file containing the
+
+                                     list, first
+
+> +key usage type followed by a colon and the key id that we want to allow to
+> +validate that usage.  In the first example we are saying key
+> +17eb8c5bf766364be094c577625213700add9471 is allowed to validate kernel modules.
+> +In the second example we are saying key b360d113c848ace3f1e6a80060b43d1206f0487d
+> +is allowed to validate signed kernels.
+> +
+> +.. code-block:: bash
+> +
+> +  echo "00:17eb8c5bf766364be094c577625213700add9471" > module-acl.txt
+> +  echo "02:b360d113c848ace3f1e6a80060b43d1206f0487d" > kernel-acl.txt
+> +
+> +Now both these files must be signed by the key contained in the .clavis keyring:
+> +
+> +.. code-block:: bash
+> +
+> +  openssl smime -sign -signer clavis-lsm.x509 -inkey clavis-lsm.priv -in module-acl.txt \
+> +        -out module-acl.pkcs7 -binary -outform DER -nodetach -noattr
+> +
+> +  openssl smime -sign -signer clavis-lsm.x509 -inkey clavis-lsm.priv -in kernel-acl.txt \
+> +        -out kernel-acl.pkcs7 -binary -outform DER -nodetach -noattr
+> +
+> +Afterwards the ACL list in the clavis keyring can be updated:
+> +
+> +.. code-block:: bash
+> +
+> +  keyctl padd clavis_key_acl "" %:.clavis < module-acl.pkcs7
+> +  keyctl padd clavis_key_acl "" %:.clavis < kernel-acl.pkcs7
+> +
+> +  keyctl show %:.clavis
+> +
+> +  Keyring
+> +    254954913 ----swrv      0     0  keyring: .clavis
+> +    301905375 ---lswrv      0     0   \_ asymmetric: TEST: Clavis LSM key: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +   1013065475 --alswrv      0     0   \_ clavis_key_acl: 02:b360d113c848ace3f1e6a80060b43d1206f0487d
+> +    445581284 --alswrv      0     0   \_ clavis_key_acl: 00:17eb8c5bf766364be094c577625213700add9471
+> +
+> +Now the 17eb8c5bf766364be094c577625213700add9471 key can be used for
+> +validating kernel modules and the b360d113c848ace3f1e6a80060b43d1206f0487d
+> +key can be used to validate signed kernels.
+
+
+-- 
+~Randy
