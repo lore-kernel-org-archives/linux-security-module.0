@@ -1,117 +1,185 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF8844C6E
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 17:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066AD7691F
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 19:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718126387; cv=none; b=IwwM0wEkCdZeUX0W3RiwJ/0dTCAcb5wxHjo1kL2nOUTUEU+NIZlGKfNYu2Pldog7SHKZazXkmSuQI1NlvZRkHh9LDR15xUG64i+qZm/9gmtH1pb/dwXuKOI8QESMr3z1hKz4pfCl8kwteK1FbGgrJ3vCUUxhXZVqoqqicDz7G3c=
+	t=1718132476; cv=none; b=a9TQ1mqxz+XUJNSJdWGY/XgBB7+BXRPGzXP/xjtRsBqG7CRyTr0elfCrbhJXVB0kqyWLk+RdjV6h/qshfZ2on1rrrf+ts3xjRo7HBLwoWXOsSRvUHhrAnrJDY4QsWh5rJktHgIEMxheYJPcg3VI8XQHZT1nv065xboFWMHpCh2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718126387; c=relaxed/simple;
-	bh=c0Hu3eDQNUHdzMWHOZviKhvIvMHCcuBZbeevCnua86U=;
+	s=arc-20240116; t=1718132476; c=relaxed/simple;
+	bh=ENJyu2q1TCIG7X86Dkn/kBr09c7RlEUlrRfjGN+h+lU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XmPUoA1v3iaR2mx0EY/BA2CDaPSOik8bxbRFqFrnH2KD1VsbrH8rLbJPTNHVi+xm7fO7jsSKp1MOFIWBSkvE0h3403M3bN7HNhvAaZPn2tHZUGbZW4KG+ccvYhdJsDJK66Geoo8oPyiJKoassK2YT3f8skkaunoKGK4SZZBD5qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=T29diAYW; arc=none smtp.client-ip=209.85.219.181
+	 To:Cc:Content-Type; b=WH6ugroq2DK6hjfWFESxLkKiqg1XssU/wOAdHS1nqh07R5wkvwK/A2IhBf4GIagXzZ7PnURX8IV8ka3HWdRserBHozwx4XHICYv/oeczp2UK2Esn6nvYcOYJvgnb1ux1BPLtCbwutwfC5Ar4RDf9zftw0C4mCauxzoSlNH3b8UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=T6AVwgxv; arc=none smtp.client-ip=209.85.217.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="T29diAYW"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfb0ccbd401so3219498276.0
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 10:19:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="T6AVwgxv"
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-48c4739dd39so780093137.1
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Jun 2024 12:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718126383; x=1718731183; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1718132473; x=1718737273; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J9ogFLxbLWp/7JKp4IH1qADojIschvT679JCf6moq4c=;
-        b=T29diAYWUnPRLlv83N9dKpZuDxlytRJnk6hS2w82SGvLUKjj4Kq6ntUFi+qCrd2lQP
-         T22EOHyAqkQsLo86q+sd0vbDpN0edfxzHDjcnCc3bGiHRHKHER/QFwNbSsHqhZDrw8TJ
-         KO0U4UvNgYkfAoC5MTBCXm8IwRmZtCellVJfaWE/KMDElgxJWt9j1dVshPSqkf+uTDmW
-         JVYzdZBk47BE16irAIRBTD+PSvWF1V5LK25zGBsCceSKOrLhfhZJQoA0TDQ8pRRLjnmk
-         oY+YOLAZ0MVn3ewUcnJ6D6L6IOzSHJNLcAzY2fVLPB/ftz5PrMzgx2lNAQS1RtbMwXum
-         bvdA==
+        bh=EIQEfhtUbJ7wSRBw/Z3zFV6dBPlc3fX2vRxj6Dj2nXo=;
+        b=T6AVwgxvMWbNKACXjYTAV6vrBVRPd2vr4NSw1Q31b0LWOBTTkhObRxI5jHVPc1u1sN
+         S98//NKrQsFF2Qug1uSohZWo3TCbSvdBM3kWjQW0Ww+qIKdf6apXELbXumyY+JKPC3OH
+         EqT1WQ+9ZMW+i0eqwzIHoCX0exbf3Q95HOsVnm2ZI/UNEjFM+jY4vppiqJwdgNcEqCz6
+         kHqdL0pdKFHs1UVF0EFSsh6H4hrMedBzevW9zwIszoigNqklahEtbEAo4NYwUiCg1hTD
+         30zcCbPMDT4yHCirXoFfJBmbsLwxlg7/t13hKuiaC66Uifr7P61e/DxkpxXENJ1Nncfb
+         mlZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718126383; x=1718731183;
+        d=1e100.net; s=20230601; t=1718132473; x=1718737273;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J9ogFLxbLWp/7JKp4IH1qADojIschvT679JCf6moq4c=;
-        b=hAGAL/gVdmv/zQGxbCvYxoByEYHdp93ZLCI+xsM0VPlsXOskDYV2tjedkdq3US8nPO
-         yRJWKQdDjJ7Fwb85hfwuJZg4S6OnSbst3Kwvqg2BbAIR75iwKVmvZm+/Z99SOq5jj6kJ
-         N0G6FtYenPnuGObXT/VU7OxMBz7JGd+8LVI4ly+z3wh9y8cR7/5v1aGWNHJG0maVFvKP
-         E8LmxUVErCgSgG5G+w5+trqKMv+9K5s955tDO9ERHd21D28Jua2cmIPWlWtPAMSBZoqk
-         ZMMx6Zxxy6DknkMxQrBK4n/0mCEbPvG9UrqiadJtDwdESG+3D520rviW3d0iafLS06IB
-         +T1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVBzQVD79ZdoF7+CIYUVCRDzAqpV0atV00N+PC1+G0Fe7u6jCfyz9oZAsX5uRmxhdq55RiR4pMyRXOLczWPYlxrEpMt30gROkIq7/sx1pWff3x7ecSe
-X-Gm-Message-State: AOJu0Yw7KOjlCvaqAKZBdawvEh/n1kRTabnhrFlM79kNEYlqz6AHZphU
-	2EFZYznFDriW9kfuyNGUfuCpBbHoyFVYIW6Lmos/hJTojfgz9bOAbzw0yiEGr0dXXgzAylwwvFx
-	WdH08hayGQFC30c3Ka/czxyf+mtYSccGZecQvhX1UjRK9k/H52Q==
-X-Google-Smtp-Source: AGHT+IEdDn6ha3s1+w4VrQk0fxK1wz6Q1fTrUfNyPSzmZbTczlAzPMLTr9NS3aslGjyW4jmQxcE6FAM1ugrcNSNTbXc=
-X-Received: by 2002:a25:84c8:0:b0:dfa:582f:8b93 with SMTP id
- 3f1490d57ef6-dfaf6492e0dmr11875248276.10.1718126383599; Tue, 11 Jun 2024
- 10:19:43 -0700 (PDT)
+        bh=EIQEfhtUbJ7wSRBw/Z3zFV6dBPlc3fX2vRxj6Dj2nXo=;
+        b=D/BAQmnSIFJV4xddlFtd1TGicBFWVHZXwFpGjLkcMhmSkThj/9iXpV0b4XoZ9dOZWu
+         FYStc2O7f6AV7wesrNucUYsiQkz6RNipsRHeR0DQKOUd31Uc7WRWPz0G/uNewYuyGU7z
+         C8whocCzOIPsrMBsVSgfAZp2rIYN+ZhhcA/+rSJtt9hTvr55LCFtm7yHQE92e8ZkOFHy
+         mHesKU/HJK4opS/JsFeBXQOXaJGPj35s6UJ4p/QD8rX6a/O3p3feyih5FCqxFKD4cT7Z
+         xbSgPRVEqpdShMXmvLGszzLDtf8O43vGR/8zM+84OKPkrz63hMZpAN/nf8/VDFKoOwNo
+         U7jg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnECo3pulb09cACmkw8bVWzn0Q0ze85oXImNQjThGqFKTceyTEq+CVUKdBsYHvzi7sUSNAzC9NRYV7jXNtichNC324tug+bwW0IImfe/QbD+tGSP9b
+X-Gm-Message-State: AOJu0Yzkf2Htnxy8n6dMY9i7ZtS7zxGugTr6+psST8Mn3r2RYGHuSOC+
+	WwG4ZzQIzHaJvRXb4DEJJoNZ9qemWhakt3drRP7vkP0KBawhMDl0WBlEyWRZJ6GPxfAGdLu9XXH
+	vnyYoSBOgnl2x801Y9Ai27hMv/Qcw42WtM/BY
+X-Google-Smtp-Source: AGHT+IH7RGfkj1TXHCbT0kM+n/35Ll9I9wY3s9K+VYTc8H3wpcJisLGeX88yBuo+qYhZgyhgS/ZiOgeqpnjCaxPdS8A=
+X-Received: by 2002:a05:6102:2162:b0:48c:5349:b19a with SMTP id
+ ada2fe7eead31-48c5349b531mr6044494137.15.1718132472414; Tue, 11 Jun 2024
+ 12:01:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
- <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
- <202402070631.7B39C4E8@keescook> <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
- <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
- <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
- <202405011257.E590171@keescook> <CAHC9VhTucjgxe8rc1j3r3krGPzLFYmPeToCreaqc3HSUkg6dZA@mail.gmail.com>
- <7445203e-50b1-49a6-b7a3-8357b4fe62ab@I-love.SAKURA.ne.jp>
-In-Reply-To: <7445203e-50b1-49a6-b7a3-8357b4fe62ab@I-love.SAKURA.ne.jp>
+References: <20240609104355.442002-1-jcalmels@3xx0.net> <20240609104355.442002-5-jcalmels@3xx0.net>
+ <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
+ <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw> <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
+In-Reply-To: <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 11 Jun 2024 13:19:32 -0400
-Message-ID: <CAHC9VhQEq=8j-EW_DX9ebm1dO9m5gvRV+CcjV0aaemUuzu_t0g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Serge Hallyn <serge@hallyn.com>, 
-	Kees Cook <keescook@chromium.org>
+Date: Tue, 11 Jun 2024 15:01:01 -0400
+Message-ID: <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM hooks
+To: John Johansen <john.johansen@canonical.com>, Jonathan Calmels <jcalmels@3xx0.net>
+Cc: brauner@kernel.org, ebiederm@xmission.com, 
+	Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 9:10=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2024/06/11 5:44, Paul Moore wrote:
-> >> diff --git a/fs/exec.c b/fs/exec.c
-> >> index 40073142288f..7ec13b104960 100644
-> >> --- a/fs/exec.c
-> >> +++ b/fs/exec.c
-> >> @@ -1532,6 +1532,7 @@ static void do_close_execat(struct file *file)
-> >>
-> >>  static void free_bprm(struct linux_binprm *bprm)
-> >>  {
-> >> +       security_bprm_free(bprm);
-> >>         if (bprm->mm) {
-> >>                 acct_arg_size(bprm, 0);
-> >>                 mmput(bprm->mm);
-> >>
-> >
-> > Tetsuo, it's been a while since we've heard from you in this thread -
-> > are you still planning to work on this?  If not, would you object if
-> > someone else took over this patchset?
+On Tue, Jun 11, 2024 at 6:32=E2=80=AFAM John Johansen
+<john.johansen@canonical.com> wrote:
 >
-> You are going to merge static call patches first (though I call it a regr=
-ession),
-> aren't you?
+> On 6/11/24 01:09, Jonathan Calmels wrote:
+> > On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
+> >> On Sun, Jun 9, 2024 at 6:40=E2=80=AFAM Jonathan Calmels <jcalmels@3xx0=
+.net> wrote:
+> >>>
+> >>> This patch allows modifying the various capabilities of the struct cr=
+ed
+> >>> in BPF-LSM hooks. More specifically, the userns_create hook called
+> >>> prior to creating a new user namespace.
+> >>>
+> >>> With the introduction of userns capabilities, this effectively provid=
+es
+> >>> a simple way for LSMs to control the capabilities granted to a user
+> >>> namespace and all its descendants.
+> >>>
+> >>> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
+> >>> namespaces and checking the resulting task's bounding set.
+> >>>
+> >>> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> >>> ---
+> >>>   include/linux/lsm_hook_defs.h                 |  2 +-
+> >>>   include/linux/security.h                      |  4 +-
+> >>>   kernel/bpf/bpf_lsm.c                          | 55 ++++++++++++++++=
++++
+> >>>   security/apparmor/lsm.c                       |  2 +-
+> >>>   security/security.c                           |  6 +-
+> >>>   security/selinux/hooks.c                      |  2 +-
+> >>>   .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
+> >>>   .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
+> >>>   8 files changed, 76 insertions(+), 14 deletions(-)
+> >>
+> >> I'm not sure we want to go down the path of a LSM modifying the POSIX
+> >> capabilities of a task, other than the capabilities/commoncap LSM.  It
+> >> sets a bad precedent and could further complicate issues around LSM
+> >> ordering.
+> >
+> > Well unless I'm misunderstanding, this does allow modifying the
+> > capabilities/commoncap LSM through BTF. The reason for allowing
+> > `userns_create` to be modified is that it is functionally very similar
+> > to `cred_prepare` in that it operates with new creds (but specific to
+> > user namespaces because of reasons detailed in [1]).
+>
+> yes
+>
+> > There were some concerns in previous threads that the userns caps by
+> > themselves wouldn't be granular enough, hence the LSM integration.
+>
+> > Ubuntu for example, currently has to resort to a hardcoded profile
+> > transition to achieve this [2].
+> >
+>
+> The hard coded profile transition, is because the more generic solution
+> as part of policy just wasn't ready. The hard coding will go away before
+> it is upstreamed.
+>
+> But yes, updating the cred really is necessary for the flexibility needed
+> whether it is modifying the POSIX capabilities of the task or the LSM
+> modifying its own security blob.
+>
+> I do share some of Paul's concerns about the LSM modifying the POSIX
+> capabilities of the task, but also thing the LSM here needs to be
+> able to modify its own blob.
 
-That is the plan, although we need another revision as the latest
-draft has a randstruct casting problem.
+To be clear, this isn't about a generic LSM needing to update its own
+blob (LSM state), it is about the BPF LSM updating the capability
+sets.  While we obviously must support a LSM updating its own state,
+I'm currently of the opinion that allowing one LSM to update the state
+of another LSM is only going to lead to problems.  We wouldn't want to
+allow Smack to update AppArmor state, and from my current perspective
+allowing the BPF LSM to update the capability state is no different.
 
-> For me, reviving dynamically appendable hooks (which is about to be
-> killed by static call patches) has the higher priority than adding
-> security_bprm_free() hook.
+It's also important to keep in mind that if we allow one LSM to do
+something, we need to allow all LSMs to do something.  If we allow
+multiple LSMs to manipulate the capability sets, how do we reconcile
+differences in the desired capability state?  Does that resolution
+change depending on what LSMs are enabled at build time?  Enabled at
+boot?  Similarly, what about custom LSM ordering?
 
-Unfortunately, dynamic hooks do not appear to be something we are
-going to support, at least in the near term.  With that understanding,
-do you expect to be able to work on the security_bprm_free() hook
-patchset?
+What about those LSMs that use a task's capabilities as an input to an
+access control decision?  If those LSMs allow an access based on a
+given capability set only to have a LSM later in the ordering modify
+that capability set to something which would have resulted in an
+access denial, do we risk a security regression?
+
+Our current approach to handling multiple LSMs is that each LSM is
+limited to modifying its own state, and I'm pretty confident that we
+stick to this model if we have any hope of preserving the sanity of
+the LSM layer as a whole.  If you want to modify the capability set
+you need to do so within the confines of the capability LSM and/or
+modify the other related kernel subsystems (which I'm guessing will
+likely necessitate a change in the LSMs, but that avenue is very
+unclear if such an option even exists).
 
 --=20
 paul-moore.com
