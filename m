@@ -1,40 +1,31 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F3E7407C;
-	Tue, 11 Jun 2024 10:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F51E17C7D3;
+	Tue, 11 Jun 2024 11:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718101938; cv=none; b=CGdtOFj7ipHb0EFIssIsVAUpnqcOToja/tJiFCXSIaCiPwikzSCjNIHICte0honB33BnwXfuIhJFjHgyASo+JUiy23OWS2RkJPUyyfXJHhpcrt7q81Prp43qWddfdqpEM//yySWpkQ0FQVXZdKmX0HIxZ+EW/x+PaXhF643WBLo=
+	t=1718105763; cv=none; b=Nj/f8sxN4odXUGZvxbvLO09lV3Mnp592qt8Ikyk9Neb2IG4aS9igUl7YC+NcL0ZNxPKDBTDEdvqaRJK2XJ6BAf31RO7YWr1xgRbB6KQ4sOmWugarPyLb/xtG6EqCHs1M1PO6GxGCcl6cskty2xXKFhbiwBNNj+xHAnloB9FlncM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718101938; c=relaxed/simple;
-	bh=4gUX2Nkdvr4uMueRlF1MAsWgrpQGIDfwlHWqe7a4zYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G1i9/KOYFxO0smRMIO4hWi/sRQi/NC/8WI1QGIQLBm/TIwu2nqG/9MD/24y6mal8B0Ttpc9WkT+ahc19L+uDTbW0OYh4svfGU+RiwCV+aRe7/bxsSBh3PApyLsB+MYKEzVdD66/fR8KcYCDZUdCJFwiWqz/aWTnY4x2xn6S/RkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ibbu4awM; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ibbu4awM"
-Received: from [192.168.192.83] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8D74940EA5;
-	Tue, 11 Jun 2024 10:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1718101929;
-	bh=FuWU3S8T9H1PCw3M7cNRUYssP1wgq9lP4eO/D5Buewg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=Ibbu4awMvEK8bDBSzFvSHo4KysoyHDSyJogL3aDOGrmK/MndkQdB/FuBdhc8tuDnC
-	 3wctX7vJraevcHXU3Wd7UK85ESPsj32CzAkVctpUHFdvUoJ2gDRozSTgudiZ/zrCC6
-	 omsvQWGMY7VyU8Lc/xnGO/sEABQpOjRn4c04bIPSNLHPGLkN0ivNFTFpWFMKvlJrdL
-	 17HDFJWIoMRdpBMpMAR2hfROvTtRSH8HnVdSc1p37+UOWn7rD5z3kob4LbBtQOzs+5
-	 GMm+Ek3VTPPblZHYvGOtdt2oqGZ6m6XpTEqOjtbdVrqU3NYcw9O5Zk9CW03FQG3mEq
-	 KVatTldgzoVNA==
-Message-ID: <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
-Date: Tue, 11 Jun 2024 03:31:59 -0700
+	s=arc-20240116; t=1718105763; c=relaxed/simple;
+	bh=X+Vr5x7b/jaeilN4C9JCZliYRRivqC4zJPAs6RBXedg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dwVpnIOGa6LjvhUzHk1Fl2t1FfFg9Iu8y0Lzw3qF/h1SIgs2LKimsDiXM4lgzTLY/qN+dQdOLPtfO22qjBbK0qJ11atEsgK4afFURVbkLGBWsZSmWczb4qAqTOyCIs79355tn9VFeps7vKYLgR3/wQxrGDxXyXnSlYwl9urb5p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Vz63H1gk6zPqgD;
+	Tue, 11 Jun 2024 19:32:27 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3EDDE18006C;
+	Tue, 11 Jun 2024 19:35:51 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 11 Jun 2024 19:35:46 +0800
+Message-ID: <00f459b5-8aac-4312-8327-fa2bb4964ba6@huawei-partners.com>
+Date: Tue, 11 Jun 2024 14:35:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,145 +33,75 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
- hooks
-To: Jonathan Calmels <jcalmels@3xx0.net>, Paul Moore <paul@paul-moore.com>
-Cc: brauner@kernel.org, ebiederm@xmission.com,
- Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, containers@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-5-jcalmels@3xx0.net>
- <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
- <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [RFC PATCH v2 00/12] Socket type control for Landlock
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+CC: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>, <mic@digikod.net>,
+	<willemdebruijn.kernel@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>, Tahera Fahimi <fahimitahera@gmail.com>
+References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
+ <20240604.c18387da7a0e@gnoack.org>
+ <ebd680cc-25d6-ee14-4856-310f5e5e28e4@huawei-partners.com>
+ <ZmazTKVNlsH3crwP@google.com>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <ZmazTKVNlsH3crwP@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On 6/11/24 01:09, Jonathan Calmels wrote:
-> On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
->> On Sun, Jun 9, 2024 at 6:40 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
->>>
->>> This patch allows modifying the various capabilities of the struct cred
->>> in BPF-LSM hooks. More specifically, the userns_create hook called
->>> prior to creating a new user namespace.
->>>
->>> With the introduction of userns capabilities, this effectively provides
->>> a simple way for LSMs to control the capabilities granted to a user
->>> namespace and all its descendants.
->>>
->>> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
->>> namespaces and checking the resulting task's bounding set.
->>>
->>> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
->>> ---
->>>   include/linux/lsm_hook_defs.h                 |  2 +-
->>>   include/linux/security.h                      |  4 +-
->>>   kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
->>>   security/apparmor/lsm.c                       |  2 +-
->>>   security/security.c                           |  6 +-
->>>   security/selinux/hooks.c                      |  2 +-
->>>   .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
->>>   .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
->>>   8 files changed, 76 insertions(+), 14 deletions(-)
+6/10/2024 11:03 AM, Günther Noack wrote:
+> On Thu, Jun 06, 2024 at 02:44:23PM +0300, Mikhail Ivanov wrote:
+>> 6/4/2024 11:22 PM, Günther Noack wrote:
+>> I figured out that I define LANDLOCK_SHIFT_ACCESS_SOCKET macro in
+>> really strange way (see landlock/limits.h):
 >>
->> I'm not sure we want to go down the path of a LSM modifying the POSIX
->> capabilities of a task, other than the capabilities/commoncap LSM.  It
->> sets a bad precedent and could further complicate issues around LSM
->> ordering.
+>>    #define LANDLOCK_SHIFT_ACCESS_SOCKET	LANDLOCK_NUM_ACCESS_SOCKET
+>>
+>> With this definition, socket access mask overlaps the fs access
+>> mask in ruleset->access_masks[layer_level]. That's why
+>> landlock_get_fs_access_mask() returns non-zero mask in hook_file_open().
+>>
+>> So, the macro must be defined in this way:
+>>
+>>    #define LANDLOCK_SHIFT_ACCESS_SOCKET	(LANDLOCK_NUM_ACCESS_NET +
+>>                                           LANDLOCK_NUM_ACCESS_FS)
+>>
+>> With this fix, open() doesn't fail in your example.
+>>
+>> I'm really sorry that I somehow made such a stupid typo. I will try my
+>> best to make sure this doesn't happen again.
 > 
-> Well unless I'm misunderstanding, this does allow modifying the
-> capabilities/commoncap LSM through BTF. The reason for allowing
-> `userns_create` to be modified is that it is functionally very similar
-> to `cred_prepare` in that it operates with new creds (but specific to
-> user namespaces because of reasons detailed in [1]).
+> I found that we had the exact same bug with a wrongly defined "SHIFT" value in
+> [1].
 > 
-yes
-
-> There were some concerns in previous threads that the userns caps by
-> themselves wouldn't be granular enough, hence the LSM integration.
-
-> Ubuntu for example, currently has to resort to a hardcoded profile
-> transition to achieve this [2].
+> Maybe we should define access_masks_t as a bit-field rather than doing the
+> bit-shifts by hand.  Then the compiler would keep track of the bit-offsets
+> automatically.
 > 
+> Bit-fields have a bad reputation, but in my understanding, this is largely
+> because they make it hard to control the exact bit-by-bit layout.  In our case,
+> we do not need such an exact control though, and it would be fine.
+> 
+> To quote Linus Torvalds on [2],
+> 
+>    Bitfields are fine if you don't actually care about the underlying format,
+>    and want gcc to just randomly assign bits, and want things to be
+>    convenient in that situation.
+> 
+> Let me send you a proposal patch which replaces access_masks_t with a bit-field
+> and removes the need for the "SHIFT" definition, which we already got wrong in
+> two patch sets now.  It has the additional benefit of making the code a bit
+> shorter and also removing a few static_assert()s which are now guaranteed by the
+> compiler.
+> 
+> —Günther
+> 
+> [1] https://lore.kernel.org/all/ZmLEoBfHyUR3nKAV@google.com/
+> [2] https://yarchive.net/comp/linux/bitfields.html
 
-The hard coded profile transition, is because the more generic solution
-as part of policy just wasn't ready. The hard coding will go away before
-it is upstreamed.
+Thank you, Günther! It really looks more clear.
 
-But yes, updating the cred really is necessary for the flexibility needed
-whether it is modifying the POSIX capabilities of the task or the LSM
-modifying its own security blob.
-
-I do share some of Paul's concerns about the LSM modifying the POSIX
-capabilities of the task, but also thing the LSM here needs to be
-able to modify its own blob.
-
-I have a very similar patch I was planning on posting once the
-work to fix the hard coded profile transition is done.
-
-
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7cd4c5c2101cb092db00f61f69d24380cf7a0ee8
-> [2] https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble/commit/?id=43a6c29532f517179fea8c94949d657d71f4fc13
-
+This patch should be applied to Landlock separately, right?
