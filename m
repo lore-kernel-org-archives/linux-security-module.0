@@ -1,255 +1,353 @@
-Received: from wflow5-smtp.messagingengine.com (wflow5-smtp.messagingengine.com [64.147.123.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A355416D305;
-	Wed, 12 Jun 2024 08:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666B417082A;
+	Wed, 12 Jun 2024 12:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718180148; cv=none; b=deuYjV9nKHnGLkYfwfED7o3lUPR0/MFNmCpqhtaDOvm4EMBvbcEOnUGBfjSRpbCZcJSZ1RYIi1EqN0ngido1OsgXDYs9h45fPWfuR62w80ykrEgkKAMVaQAQzT1nvvR2b5KE/OVCXUgwM1FGMxnCbcjt4kXC31Vc58JfCGmhFZE=
+	t=1718196196; cv=none; b=Aw+Q01yiQHIVJxs6BaWCe+n+SIJqvMMfUqtPR/TQ6MdWwmVIuyTG7TptTlvKQY7HmmWKBuSUOXo9esAWkrOVdBJWn1XHW+jNHwIFfgwJuDupxUdi3+RI+wFitci7u1vJrkvHphz59jSNvVwr99rX1zcRN9lp4cMHPsz/lrwD17I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718180148; c=relaxed/simple;
-	bh=U6hukzBbxKrvojtraGdCUg5S848y4qN0OYQuMf0rzt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPBxECaVt8IPUzcE/h+brj/Pizn8iUe3t2kAg62fb/+qwW2rPShxzVf6zJ0EySVPwHHfZ0eyhGJsbcdCffXlAO3GPjnL+ds62jqBijMwMOoHFu5117epb8GpQR+LhzUFHoNfSVCcb0LsDWnz+smHkKyXonCz6SYTrQzGvHYfoZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net; spf=pass smtp.mailfrom=3xx0.net; dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b=T/COupJO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q1t7Oopg; arc=none smtp.client-ip=64.147.123.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=3xx0.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xx0.net
+	s=arc-20240116; t=1718196196; c=relaxed/simple;
+	bh=R6d2Wsj4QxH0RDApbKmwweFfHUlf/fdhBjmP+MaQRG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kq0F0zHDgB5L387qb9f8iw78TblwS4gIAvNng3xjlPgoi6/H7xjbpLnAzldcN295scwsrRkiSb0nDsJx/rWhItWIBjsC5CH58z9JNInJwOehh37VNBomINg56fsvubS5H7nsrIKh77BoQXy683CdcfjcjnofQqvf7BYYwGqshUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJ0nYaWB; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xx0.net header.i=@3xx0.net header.b="T/COupJO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q1t7Oopg"
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailflow.west.internal (Postfix) with ESMTP id 56FE02CC01F5;
-	Wed, 12 Jun 2024 04:15:43 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 12 Jun 2024 04:15:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xx0.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718180142;
-	 x=1718183742; bh=HeipJvuPUXcxMs0ABdL536egEdVvkPwYQPNqw34NrRM=; b=
-	T/COupJOcGQBBzKb4rbSed3jgNiyDZbxjs5JEtO62DxXUNSbNnBaXJ6I3BPKd6Z+
-	6ARsd0guK71kwjXw1RDdKg5FDdOuWZkhwcyazmIZQ+0GGUiPXA//nZRmjiyKDLNQ
-	H3/FNjklRKt6S0bTwlxmBGERxBLF6m4484BT0r9L+hTKInVQ+3ZYLh5YNyhJQYXp
-	ZZZMseNCt+e5LtkzAJE90jHuYM3sIq1I7W7lunhkpVB8TAmty1La50EuAaJ2vR/x
-	PTEbGgbt62p4WoIo7bG36hXKZCWOBjYI6WmrR/4jUJFSGtN1AaNl7FrHu6maHb+C
-	adktYiXIICDWSH7ngkbRJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718180142; x=
-	1718183742; bh=HeipJvuPUXcxMs0ABdL536egEdVvkPwYQPNqw34NrRM=; b=Q
-	1t7OopgDslFmy8Sn7kpNoKmWbzt3Z2MGoExLH6bfO3TYPzfnfQmHEmYzcMmDYeHV
-	4dOdhWYUwwev8eBSiP2BjHKfakaj7tjqMPnm2sdSXNNRycOPLgtwenCOF46yNAyx
-	pPGsiB5WI1cN0szwAA8d9Y57IMMJlW3Ei1JOljlO9f5ryb0xDOh5eGgEy9Jj/ToU
-	J12o9vnGWKGOfi3Pf99MDmRwkD/fZLuT0kChTde7Io3QW+/d+bIpBFmWeAnhDtLL
-	Sktq4hNvnEGvGrHexapT4Ja5f4O0hdjtDsDaNSAJp70b6y8l05Fy5XHVTfs3iZLk
-	IGtT76BrLZv7Sbyt6kHjw==
-X-ME-Sender: <xms:LllpZr8xON2t8JBtvP8z2r9RPYAmVXKWxpra7VsoLzksHIWrVAqsTw>
-    <xme:LllpZnvkqHMbLn7nTwJpStwes9BHkU7PymLNoNE0gBFFBIWcXFG3r7Wg35DH8sg6E
-    Ww3SmzOnbYfBIBkWs8>
-X-ME-Received: <xmr:LllpZpAi9D44gg8B35OwmmG863qQRbZ6qMZRrXVT34TXUCAV6qQheTcH-4QZDZnznyXra_ThPng13sWtDhfFg7Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgtdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeflohhn
-    rghthhgrnhcuvegrlhhmvghlshcuoehjtggrlhhmvghlshesfeiggidtrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpeetgedutdfggeetleefhfeuhedtheduteekieduvdeigeegvdev
-    vddtieekiedvheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjtggrlhhmvghlshesfeiggidtrdhnvght
-X-ME-Proxy: <xmx:LllpZneDoyZ-RX3X4rVUuUmiN2s53H0HQpEPmjarSlJmdbeNsrC-cg>
-    <xmx:LllpZgOos_vdtrYhH4zy-fXOAUsMnhJPoF2-A5YI2fB8xlNbQzKhqQ>
-    <xmx:LllpZpnXG5LqLB-ZltLJVdyjPBFYDlsy8SHeGNxT_BRuOggOAb-DYg>
-    <xmx:LllpZqvTNxszjuD5ehQbJyHiu7_SOSqdldAZXDNby64nJkUiYieeqQ>
-    <xmx:LllpZquORTNviG0fl8x754yxTGr1qD6L8k5YykdTsQFtiAHXFTPbkZnD>
-Feedback-ID: i76614979:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 04:15:38 -0400 (EDT)
-Date: Wed, 12 Jun 2024 01:20:49 -0700
-From: Jonathan Calmels <jcalmels@3xx0.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: John Johansen <john.johansen@canonical.com>, brauner@kernel.org,
- 	ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>,
- 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- 	KP Singh <kpsingh@kernel.org>,
- Matt Bobrowski <mattbobrowski@google.com>,
- 	Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- 	Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>,
- 	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- 	Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- 	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, 	Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, 	Joel Granados <j.granados@samsung.com>,
- David Howells <dhowells@redhat.com>,
- 	Jarkko Sakkinen <jarkko@kernel.org>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- 	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, 	containers@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- 	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- bpf@vger.kernel.org, 	apparmor@lists.ubuntu.com,
- keyrings@vger.kernel.org, selinux@vger.kernel.org,
- 	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM
- hooks
-Message-ID: <rgzhcsblub7wedm734n56cw2qf6czjb4jgck6l5miur6odhovo@n5tgrco74zce>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
- <20240609104355.442002-5-jcalmels@3xx0.net>
- <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
- <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
- <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com>
- <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
- <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
- <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJ0nYaWB"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f8395a530dso7738705ad.0;
+        Wed, 12 Jun 2024 05:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718196194; x=1718800994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9SNFY3n97DVU3ATjWx5G0DI5PrBypnYbaH0Od/W/SAg=;
+        b=DJ0nYaWBYG5Q1xZ6fFcMngBngYdRfxu+Hp06VHe08M5n4n8I8EDQDbHvLUHF80SiTc
+         FowSVOM7CRqIUwwN3FdifA+ADmjwb72p9RVZJ2BBnC0SpyX0kNgANuRL2zDhGTdWQh81
+         ZgakBt/b6zuD+8m1Q8u4NWtL4dRnbyBScmkAKyRkzowwC9VmhCJS4zRCtxEH5ebH/cvp
+         UO+KRgRKUfPJ7lV9krXJwRUTV4p/I/QMLwvlotQNQuwVcoYOpVe9h6V8Q7DYwIv4QoCQ
+         srOtZBzlvOFOFTsWPnASly4Cgz6NzfPbCpCe7n3/jd+9EbqfysCComAxvUYXzzZl6Mng
+         zTcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718196194; x=1718800994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9SNFY3n97DVU3ATjWx5G0DI5PrBypnYbaH0Od/W/SAg=;
+        b=Li2Ua3dGumF+OqGZUpUEFbgycSjtv+TIDICw4SoSJ3lrWp9o7+uKnBjyRuXrhXrEnk
+         qfB0Zoo0THXxHlOsB2H1mAKYTUpRV2eCEjkXS8/+zLdqYTpRtd4c3S7OcEqUs/9n4Rv0
+         BrR/21SFsCchVaOt9xKyMLkXf/GOAEVpFg+2CATiPLRe1zDmF1leWXnTXd9mhNGUuBZ9
+         jV9AJkaToXmTO6DI9TkjHFPD2W68A59P6Jl8Xv++gcmFK/51PtsZhq+0ObzPmwPP4LKF
+         nhhft2dxjoCWM3TxfQa2z3EYfg6vrHll+LgXJysm3TSKvge2ptE7hK0Aj1J+LG9wNgIx
+         0aVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXveuSShtJBwtnOumRQpwmklNwQzxmyoE+vzkLHJqHIz8TNeN/d2MiIxNo29rewnO2iqE2TUtoVxcQtijTCxXg5cTnXvka2+dnHN9StUIvdwddNZKYYEAL+WzbfjQ8/Z3R6aecCAbqUX0QC50oNcQSlqzmbOut0xpewP4ZWX6IgPhQe1trRjzs/PjiACjtG3DdrfbGnKFQFZZ5mSTqZMPm3mRnUeHLg8GWfMA==
+X-Gm-Message-State: AOJu0Yxp1HW6tU1CGq0Kd5BOUoQAYjy+I0FPjzmFlSGqy0egEsl37ckg
+	3Z5cGZQC6XZMQ/73ezcb/HiSkNKVFrDsu1vd7OJGA6JpUMH9Y78i4/l+IljxgjtkQA==
+X-Google-Smtp-Source: AGHT+IHfxnxJFtybWOETRz8nFAUjRPtRPTMFfDOIh2cJHNF2VOy38bMQPBp+nS02/q9Bo62rS6aaoA==
+X-Received: by 2002:a17:903:228e:b0:1f6:f1ca:2e18 with SMTP id d9443c01a7336-1f83b5df353mr21766865ad.17.1718196193525;
+        Wed, 12 Jun 2024 05:43:13 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.49.105])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f71b9dec2bsm51310775ad.186.2024.06.12.05.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 05:43:13 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH v2] perf trace: BTF-based enum pretty printing
+Date: Wed, 12 Jun 2024 20:43:25 +0800
+Message-ID: <20240612124325.3149243-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com>
 
-On Tue, Jun 11, 2024 at 06:38:31PM GMT, Paul Moore wrote:
-> On Tue, Jun 11, 2024 at 6:15 PM Jonathan Calmels <jcalmels@3xx0.net> wrote:
-> > On Tue, Jun 11, 2024 at 03:01:01PM GMT, Paul Moore wrote:
-> > > On Tue, Jun 11, 2024 at 6:32 AM John Johansen
-> > > <john.johansen@canonical.com> wrote:
-> > > >
-> > > > On 6/11/24 01:09, Jonathan Calmels wrote:
-> > > > > On Sun, Jun 09, 2024 at 08:18:48PM GMT, Paul Moore wrote:
-> > > > >> On Sun, Jun 9, 2024 at 6:40 AM Jonathan Calmels <jcalmels@3xx0.net> wrote:
-> > > > >>>
-> > > > >>> This patch allows modifying the various capabilities of the struct cred
-> > > > >>> in BPF-LSM hooks. More specifically, the userns_create hook called
-> > > > >>> prior to creating a new user namespace.
-> > > > >>>
-> > > > >>> With the introduction of userns capabilities, this effectively provides
-> > > > >>> a simple way for LSMs to control the capabilities granted to a user
-> > > > >>> namespace and all its descendants.
-> > > > >>>
-> > > > >>> Update the selftests accordingly by dropping CAP_SYS_ADMIN in
-> > > > >>> namespaces and checking the resulting task's bounding set.
-> > > > >>>
-> > > > >>> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> > > > >>> ---
-> > > > >>>   include/linux/lsm_hook_defs.h                 |  2 +-
-> > > > >>>   include/linux/security.h                      |  4 +-
-> > > > >>>   kernel/bpf/bpf_lsm.c                          | 55 +++++++++++++++++++
-> > > > >>>   security/apparmor/lsm.c                       |  2 +-
-> > > > >>>   security/security.c                           |  6 +-
-> > > > >>>   security/selinux/hooks.c                      |  2 +-
-> > > > >>>   .../selftests/bpf/prog_tests/deny_namespace.c | 12 ++--
-> > > > >>>   .../selftests/bpf/progs/test_deny_namespace.c |  7 ++-
-> > > > >>>   8 files changed, 76 insertions(+), 14 deletions(-)
-> > > > >>
-> > > > >> I'm not sure we want to go down the path of a LSM modifying the POSIX
-> > > > >> capabilities of a task, other than the capabilities/commoncap LSM.  It
-> > > > >> sets a bad precedent and could further complicate issues around LSM
-> > > > >> ordering.
-> > > > >
-> > > > > Well unless I'm misunderstanding, this does allow modifying the
-> > > > > capabilities/commoncap LSM through BTF. The reason for allowing
-> > > > > `userns_create` to be modified is that it is functionally very similar
-> > > > > to `cred_prepare` in that it operates with new creds (but specific to
-> > > > > user namespaces because of reasons detailed in [1]).
-> > > >
-> > > > yes
-> > > >
-> > > > > There were some concerns in previous threads that the userns caps by
-> > > > > themselves wouldn't be granular enough, hence the LSM integration.
-> > > >
-> > > > > Ubuntu for example, currently has to resort to a hardcoded profile
-> > > > > transition to achieve this [2].
-> > > > >
-> > > >
-> > > > The hard coded profile transition, is because the more generic solution
-> > > > as part of policy just wasn't ready. The hard coding will go away before
-> > > > it is upstreamed.
-> > > >
-> > > > But yes, updating the cred really is necessary for the flexibility needed
-> > > > whether it is modifying the POSIX capabilities of the task or the LSM
-> > > > modifying its own security blob.
-> > > >
-> > > > I do share some of Paul's concerns about the LSM modifying the POSIX
-> > > > capabilities of the task, but also thing the LSM here needs to be
-> > > > able to modify its own blob.
-> > >
-> > > To be clear, this isn't about a generic LSM needing to update its own
-> > > blob (LSM state), it is about the BPF LSM updating the capability
-> > > sets.  While we obviously must support a LSM updating its own state,
-> > > I'm currently of the opinion that allowing one LSM to update the state
-> > > of another LSM is only going to lead to problems.  We wouldn't want to
-> > > allow Smack to update AppArmor state, and from my current perspective
-> > > allowing the BPF LSM to update the capability state is no different.
-> > >
-> > > It's also important to keep in mind that if we allow one LSM to do
-> > > something, we need to allow all LSMs to do something.  If we allow
-> > > multiple LSMs to manipulate the capability sets, how do we reconcile
-> > > differences in the desired capability state?  Does that resolution
-> > > change depending on what LSMs are enabled at build time?  Enabled at
-> > > boot?  Similarly, what about custom LSM ordering?
-> > >
-> > > What about those LSMs that use a task's capabilities as an input to an
-> > > access control decision?  If those LSMs allow an access based on a
-> > > given capability set only to have a LSM later in the ordering modify
-> > > that capability set to something which would have resulted in an
-> > > access denial, do we risk a security regression?
-> >
-> > I understand the concerns, what I fail to understand however, is how is
-> > it any different from say the `cred_prepare` hook today?
-> 
-> The existing cred_prepare hooks only operate on their own small
-> portion of the cred::security blob.  What you are proposing would be
-> the BPF LSM operating on the capability sets that it does not "own"
-> (they belong to the capability LSM).
-> 
-> If you see that as a minor difference, please understand that if you
-> skip past that you have all the issues I mentioned in my previous
-> message to deal with.
-> 
-> > > Our current approach to handling multiple LSMs is that each LSM is
-> > > limited to modifying its own state, and I'm pretty confident that we
-> > > stick to this model if we have any hope of preserving the sanity of
-> > > the LSM layer as a whole.  If you want to modify the capability set
-> > > you need to do so within the confines of the capability LSM and/or
-> > > modify the other related kernel subsystems (which I'm guessing will
-> > > likely necessitate a change in the LSMs, but that avenue is very
-> > > unclear if such an option even exists).
-> >
-> > What do you mean by "within the confines of the capability LSM" here?
-> 
-> Basically security/commoncap.c.  One could make a lot of arguments
-> about if it is, or isn't, a LSM, but commoncap.c registers LSM hooks
-> which is pretty much the definition of a LSM from an implementation
-> point of view.
+changes in v2
 
-Yes, hence the proposal to give it more fine-grained controls than
-what's currently available. But to your point, unlike the others,
-its own state (i.e. capsets) is shared, so this gets questionable.
+- Fix formatting issues
 
-> > Arguably, if we do want fine-grained userns policies, we need LSMs to
-> > influence the userns capset at some point.
-> 
-> One could always use, or develop, a LSM that offers additional
-> controls around exercising capabilities.  There are currently four
-> in-tree LSMs, including the capabilities LSM, which supply a
-> security_capable() hook that is used by the capability-based access
-> controls in the kernel; all of these hook implementations work
-> together within the LSM framework and provide an additional level of
-> control/granularity beyond the existing capabilities.
+- Pass a &use_btf to syscall_arg_fmt__init_array(), instead of
+traversing all the arguments again.
 
-Right, but the idea was to have a simple and easy way to reuse/trigger
-as much of the commoncap one as possible from BPF. If we're saying we
-need to reimplement and/or use a whole new framework, then there is
-little value.
+- Add a trace__load_vmlinux_btf() function to load vmlinux BTF
 
-TBH, I don't feel strongly about this, which is why it is absent from
-v1. However, as John pointed out, we should at least be able to modify
-the blob if we want flexible userns caps policies down the road.
+- Add member 'btf_entry' in 'struct syscall_arg_fmt' to save the entry to
+the corresponding 'struct btf_member' object, without having to do
+btf__find_by_name(), btf__type_by_id(), btf_enum(), and btf_vlen()
+everytime a syscall enters.
+
+In 'struct syscall_arg_fmt':
+```
+	struct {
+		void	*entry;
+		u16	nr_entries;
+	}	   btf_entry;
+```
+
+This is the new member btf_entry, it saves the 'struct btf_member' pointer
+, so that we don't have to do btf__find_by_name(), btf__type_by_id(),
+btf_enum(), and btf_vlen() everytime a landlock_add_rule() syscall entered.
+
+Note that entry is of type 'void *', because this btf_entry can also be
+applied to 'struct btf_member *' for 'BTF_KIND_STRUCT', hopefully in the
+future.
+
+===
+
+This is a feature implemented on the basis of the previous bug fix
+https://lore.kernel.org/linux-perf-users/d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de/T/#t
+
+In this patch, BTF is used to turn enum value to the corresponding
+name. There is only one system call that uses enum value as its
+argument, that is `landlock_add_rule()`.
+
+The vmlinux btf is loaded lazily, when user decided to trace the
+`landlock_add_rule` syscall. But if one decide to run `perf trace`
+without any arguments, the behaviour is to trace `landlock_add_rule`,
+so vmlinux btf will be loaded by default.
+
+The laziest behaviour is to load vmlinux btf when a
+`landlock_add_rule` syscall hits. But I think you could lose some
+samples when loading vmlinux btf at run time, for it can delay the
+handling of other samples. I might need your precious opinions on
+this...
+
+before:
+
+```
+perf $ ./perf trace -e landlock_add_rule
+     0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
+     0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
+```
+
+after:
+
+```
+perf $ ./perf trace -e landlock_add_rule
+     0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
+     0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
+```
+
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
+---
+ tools/perf/builtin-trace.c | 96 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 92 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 5cbe1748911d..a89379ccac39 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -19,6 +19,7 @@
+ #ifdef HAVE_LIBBPF_SUPPORT
+ #include <bpf/bpf.h>
+ #include <bpf/libbpf.h>
++#include <bpf/btf.h>
+ #ifdef HAVE_BPF_SKEL
+ #include "bpf_skel/augmented_raw_syscalls.skel.h"
+ #endif
+@@ -110,6 +111,11 @@ struct syscall_arg_fmt {
+ 	const char *name;
+ 	u16	   nr_entries; // for arrays
+ 	bool	   show_zero;
++	bool	   is_enum;
++	struct {
++		void	*entry;
++		u16	nr_entries;
++	}	   btf_entry;
+ };
+ 
+ struct syscall_fmt {
+@@ -140,6 +146,7 @@ struct trace {
+ #ifdef HAVE_BPF_SKEL
+ 	struct augmented_raw_syscalls_bpf *skel;
+ #endif
++	struct btf		*btf;
+ 	struct record_opts	opts;
+ 	struct evlist	*evlist;
+ 	struct machine		*host;
+@@ -887,6 +894,56 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 
+ #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
+ 
++static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
++{
++	const struct btf_type *bt;
++	char enum_prefix[][16] = { "enum", "const enum" }, *ep;
++	int id;
++	size_t i;
++
++	for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
++		ep = enum_prefix[i];
++		if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
++			type += strlen(ep) + 1;
++	}
++
++	id = btf__find_by_name(btf, type);
++	if (id < 0)
++		return -1;
++
++	bt = btf__type_by_id(btf, id);
++	if (bt == NULL)
++		return -1;
++
++	arg_fmt->btf_entry.entry      = btf_enum(bt);
++	arg_fmt->btf_entry.nr_entries = btf_vlen(bt);
++
++	return 0;
++}
++
++static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf, char *type,
++				 struct syscall_arg_fmt *arg_fmt)
++{
++	struct btf_enum *be;
++	int i;
++
++	/* if btf_entry is NULL, find and save it to arg_fmt */
++	if (arg_fmt->btf_entry.entry == NULL)
++		if (btf_enum_find_entry(btf, type, arg_fmt))
++			return 0;
++
++	be = (struct btf_enum *)arg_fmt->btf_entry.entry;
++
++	for (i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
++		if (be->val == val) {
++			return scnprintf(bf, size, "%s",
++					 btf__name_by_offset(btf, be->name_off));
++		}
++	}
++
++	return 0;
++}
++
+ #define STRARRAY(name, array) \
+ 	  { .scnprintf	= SCA_STRARRAY, \
+ 	    .strtoul	= STUL_STRARRAY, \
+@@ -1238,6 +1295,7 @@ struct syscall {
+ 	bool		    is_exit;
+ 	bool		    is_open;
+ 	bool		    nonexistent;
++	bool		    use_btf;
+ 	struct tep_format_field *args;
+ 	const char	    *name;
+ 	const struct syscall_fmt  *fmt;
+@@ -1699,6 +1757,14 @@ static void trace__symbols__exit(struct trace *trace)
+ 	symbol__exit();
+ }
+ 
++static void trace__load_vmlinux_btf(struct trace *trace)
++{
++	trace->btf = btf__load_vmlinux_btf();
++	if (verbose > 0)
++		fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
++						    "Failed to load vmlinux BTF\n");
++}
++
+ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+ {
+ 	int idx;
+@@ -1744,7 +1810,8 @@ static const struct syscall_arg_fmt *syscall_arg_fmt__find_by_name(const char *n
+ }
+ 
+ static struct tep_format_field *
+-syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field)
++syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field,
++			    bool *use_btf)
+ {
+ 	struct tep_format_field *last_field = NULL;
+ 	int len;
+@@ -1756,6 +1823,7 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 			continue;
+ 
+ 		len = strlen(field->name);
++		arg->is_enum = false;
+ 
+ 		if (strcmp(field->type, "const char *") == 0 &&
+ 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+@@ -1782,6 +1850,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 			 * 7 unsigned long
+ 			 */
+ 			arg->scnprintf = SCA_FD;
++		} else if (strstr(field->type, "enum") && use_btf != NULL) {
++			*use_btf = arg->is_enum = true;
+ 		} else {
+ 			const struct syscall_arg_fmt *fmt =
+ 				syscall_arg_fmt__find_by_name(field->name);
+@@ -1798,7 +1868,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 
+ static int syscall__set_arg_fmts(struct syscall *sc)
+ {
+-	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
++	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args,
++									  &sc->use_btf);
+ 
+ 	if (last_field)
+ 		sc->args_size = last_field->offset + last_field->size;
+@@ -1811,6 +1882,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ 	char tp_name[128];
+ 	struct syscall *sc;
+ 	const char *name = syscalltbl__name(trace->sctbl, id);
++	int err;
+ 
+ #ifdef HAVE_SYSCALL_TABLE_SUPPORT
+ 	if (trace->syscalls.table == NULL) {
+@@ -1883,7 +1955,13 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
+ 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
+ 
+-	return syscall__set_arg_fmts(sc);
++	err = syscall__set_arg_fmts(sc);
++
++	/* after calling syscall__set_arg_fmts() we'll know whether use_btf is true */
++	if (sc->use_btf && trace->btf == NULL)
++		trace__load_vmlinux_btf(trace);
++
++	return err;
+ }
+ 
+ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+@@ -1891,7 +1969,7 @@ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+ 	struct syscall_arg_fmt *fmt = evsel__syscall_arg_fmt(evsel);
+ 
+ 	if (fmt != NULL) {
+-		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields);
++		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields, NULL);
+ 		return 0;
+ 	}
+ 
+@@ -2103,6 +2181,16 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+ 			if (trace->show_arg_names)
+ 				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+ 
++			if (sc->arg_fmt[arg.idx].is_enum && trace->btf) {
++				size_t p = btf_enum_scnprintf(bf + printed, size - printed, val,
++							      trace->btf, field->type,
++							      &sc->arg_fmt[arg.idx]);
++				if (p) {
++					printed += p;
++					continue;
++				}
++			}
++
+ 			printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
+ 								  bf + printed, size - printed, &arg, val);
+ 		}
+-- 
+2.45.2
+
