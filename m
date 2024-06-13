@@ -1,198 +1,358 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3A386277
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Jun 2024 21:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66D85E093;
+	Thu, 13 Jun 2024 02:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718228624; cv=none; b=A4OVV85767SORvoZJdnAyCgLZqi7xr1Y3ZeTdinvwM8EY4UisPUAF0xeLmOmgdOr+ugYCodQVkdvprhtR/cfpsp8NjADnaxqDQ3m99zPUKdd4KLN3NqO9YlwTMQiGd+Zt+dfIUhUSxPla9KgnDMHXieoREkFLcamc+s/QIlh/r0=
+	t=1718245667; cv=none; b=CPcNhDpJ2pyIoQzzY2XLwtdg13fkzzycamn7KqOviI54Sozguh/JFEBJ4/udFTIGS88rnHUfpBTm5dG2CJgdPIxYGAPkiCYmpSAnnYgbxCtN0Zj2f9aKvSlIysnMNY6FwHBoeP80zKfWIxM1lS+J56ps6NSSnmfbC2bhe4x7g2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718228624; c=relaxed/simple;
-	bh=fu1M9lWhRUD8wRdmq/h32XCfO82gXRNhQRHjhGNYpVY=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=jB8kaMk2ngzoP84opy7uLffcX6IoG2sE07SiXtIXAenySRRKn1q5sgSEuIxCCXpf8w5rHHL8HkeQOMhE7ae4Uv3nLI77VGA3hoQAvIsTGcapHNANwPGECAxtBcEdM+HWz2FYvYjGU0VEIZY5Y3/FFWTfStit/ULII6mBL/7udkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SIKgFwFP; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1718245667; c=relaxed/simple;
+	bh=t5yuDcQ0ykKMEHpsggeG5waeTS4s07O/fuE7rJ8o46Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=igkZTdXG1cwLITh5WJXPANZk1le9JDOcaWPG0hXlTWWoKZxYeL6vteHZ0ydB0zCZMSiHcJ2vQYpwIszsToeGs8xfSsFQgCESkT92U9JbTUyMcLoXBofnLfNIYlCXyOX7u6K9WFxXqr4LYII1jY/RoZIZfXD8CP3NXgIt5FdlSVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBCjddFi; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SIKgFwFP"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62f518bbab1so4091697b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Jun 2024 14:43:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBCjddFi"
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d226aff122so244286b6e.2;
+        Wed, 12 Jun 2024 19:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718228620; x=1718833420; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=H5P+IbdHtppUszGApidFOa9Hm6YpZkzCVF9qJbTn8jo=;
-        b=SIKgFwFPzAgVLcAK5KZvOkSypriDmquKjdzdySQLw/7qPz/SN3M7A8eaTSaXnoLCYb
-         4TE5igJzUSb34Lq688fda+G1MZDZs8e6PmMFmGdSj5N0zDoi+ERvEF+sqFDEJDg7nIzP
-         sdtUFaG8zKrtm8DXqlWgzI3R1rzhsjxGnPh3TjRllwNpIg3ARkpKas2qH6F3zuYqqKjy
-         vor4cWoCsMyR3ryYM3IaIQMUVNkDeZJdYFNTxztXJhzkhIT1tf/ya4u3RSFPFFvp/iFZ
-         W+lw21YxzDnz5h/6SSWdqwCb8iDX3T3E/Skqqq9vG4+R/oUqAeeOTyB3VwWSlmVnRC3f
-         GuGg==
+        d=gmail.com; s=20230601; t=1718245665; x=1718850465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9ywzJRQTh8DPOaRceemdt4DVGPTa3CulQ7K7ijUVuE=;
+        b=fBCjddFiULuPNXUnULrpjJCHkMZdoKMpzIT/e7f+D205nKA5A/LvwL5QEOdo/yY5nN
+         uvO6127/BIzySndnqW8Yg0f7P3jx9GHsvu98MhW1NDqcfp8K4opuA0hPE+HL4tlg+GaV
+         yYUB4akjpBX8UdfUF1F1JECe2r815M7gEG+L/b6o84YUQMmZ5rv642GE3eFdV6pEopGx
+         28Ftp1r3bvLpC2D/EASa/mqiyEXDEEtp3eK8ro9IstqhPhJ+dkK0wVDE5fJhFUISTRag
+         rpbIkb9g2tvsS/aA4eTurtHkoxPWANDdYJ6ZkK6qvMNyIip+cSISy/GTwl3gyOXG0u9c
+         27XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718228620; x=1718833420;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H5P+IbdHtppUszGApidFOa9Hm6YpZkzCVF9qJbTn8jo=;
-        b=CMx/hYW8lwvobDYMJgsWlp/oyxTyK7hRijccUeKaimuVEqTnV+6MCbsFchYqBt57/Y
-         a5b/+RnELINy5d6K2xLBOOLrK5hzjrkt//I7t+YaSrIwQdFtMrl8LS0PPT8sp5Vuya6r
-         hdRkYS2SmP1fNMUTSqmQr1PLnGcNPPVUmGFWQ5Ofj1pRRNBKFLyDVgc6MBTRlzrrte0s
-         2RGSvMcZtrYp1BEx4/XKLXLX+aIUr+8lGruTJ5jlTdxJpDNnDVQl7O2iI8r4AnhNm52A
-         Oy8F13+pcamLDuOKeodLyVB6CUEvR+2EnU0Mv04pJfHe2DJukIwoQ2wScgTWioJxCVZ5
-         oWEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWexynuqpACrJXPveutLoSiGYaAXWzvE+BTnBebFhyE8WA67VoZWcLQPrg34izVcI59q+PYsgwGRcKV0L0IZBmHjBjdPfATvMTUmezkGEMMcCaDldhE
-X-Gm-Message-State: AOJu0Yxqf725DTZjANubOcEJbrsh7Rb7ySQleUs8UJvaphVmOLQgpfBi
-	hPd4GV8gfOs8v1AEeTIn30h0SJteS7gxV+1ztr4FbS9jwUDLpG0s0oMedv7htQ==
-X-Google-Smtp-Source: AGHT+IEzCkGmcURuwumylkliwQQS7tKCwphHhO+nQwNDPDQUW3WVTWS6GxOh4TbgC9Y2HEAECiLJvA==
-X-Received: by 2002:a81:c546:0:b0:61a:cd65:3010 with SMTP id 00721157ae682-62fb91269a1mr30015217b3.30.1718228620242;
-        Wed, 12 Jun 2024 14:43:40 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2d6e933sm190801cf.44.2024.06.12.14.43.39
+        d=1e100.net; s=20230601; t=1718245665; x=1718850465;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y9ywzJRQTh8DPOaRceemdt4DVGPTa3CulQ7K7ijUVuE=;
+        b=j1+2HFMn8AcLIiAoEqIN/A8y9v3gCA0Ak7mzilduuLp7+HPnaWo5alQjiy1a4qY0mJ
+         J5y9ruH3qYMhEj3p/0dSNp3i7idMMUzCwqVq2Ai6xhCdNVLqd2aGXp6H6tbIxBM7tmaS
+         aGFZKasLUqUIi9yM3xG00KxAFC0EGsrrSMnIS3vOsa31UMM9FVAovMI6F/iyNLyvsCkU
+         Lj/k80MaTubqJ3fjr6ok6KGJWBR45orbFLxJ/sd9rSRjQdYewrWPJ7dEMYXAIvAGVFWB
+         wR4GCp+D1kRAV1WGInToChf5NnHVD8ch0/VnC3Z2S9x2aVlGjYpFLRAQCgobP6bJDiSR
+         O6+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUla0ytOpKulKyEbkB1DTiMDwGYNWk4iGZt8nk74+9LIBV7o3Ddg1nEXyfKRlXcB90EsFXiSURXibXaRZfkpO64x62OJka60jVB2mE79/XP5l5dwQ8yh2jai6rsItYpe8WHi+G6jnGfvaDczjsss4PnedYgf2UjjvKUE2Y0e5FQ356+Xw8O+5vrUi4pQe47kBcMBcJjLduKhnV1N+sva/IKAO4OMXqGs1UYug==
+X-Gm-Message-State: AOJu0YyPooW6/zC4e1JJ3qu+Q6/94AJVdk+rY8o/GXa23jjtPMI672u/
+	ZN6bhhD3ZuMK6bfXTu2vhuwZ5WC80sdcfDOl+/OZD9PZJztUQCVN
+X-Google-Smtp-Source: AGHT+IE29/IbzvDrj9TG3ggdYIaewSZdxbagQlBFXyR8OR4Le6RUvpt/RxApwu5nZA0XBdlWWWaQFg==
+X-Received: by 2002:a05:6808:1315:b0:3d2:2848:4c91 with SMTP id 5614622812f47-3d23e011ab9mr3912526b6e.28.1718245664872;
+        Wed, 12 Jun 2024 19:27:44 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.49.105])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc964a5asm260392b3a.47.2024.06.12.19.27.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 14:43:39 -0700 (PDT)
-Date: Wed, 12 Jun 2024 17:43:39 -0400
-Message-ID: <00d88046025c611f2bf94708ffc65ecc@paul-moore.com>
+        Wed, 12 Jun 2024 19:27:44 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH v3] perf trace: BTF-based enum pretty printing
+Date: Thu, 13 Jun 2024 10:27:57 +0800
+Message-ID: <20240613022757.3589783-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: GUO Zihua <guozihua@huawei.com>, <john.johansen@canonical.com>, <jmorris@namei.org>, <serge@hallyn.com>, <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>, <dmitry.kasatkin@gmail.com>, <stephen.smalley.work@gmail.com>, <casey@schaufler-ca.com>, <eparis@redhat.com>
-Cc: <eric.snowberg@oracle.com>, <omosnace@redhat.com>, <audit@vger.kernel.org>, <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>, <linux-integrity@vger.kernel.org>, <selinux@vger.kernel.org>
-Subject: Re: [PATCH v3] ima: Avoid blocking in RCU read-side critical section
-References: <20240507012541.796421-1-guozihua@huawei.com>
-In-Reply-To: <20240507012541.796421-1-guozihua@huawei.com>
 
-On May  6, 2024 GUO Zihua <guozihua@huawei.com> wrote:
-> 
-> A panic happens in ima_match_policy:
-> 
-> BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
-> PGD 42f873067 P4D 0
-> Oops: 0000 [#1] SMP NOPTI
-> CPU: 5 PID: 1286325 Comm: kubeletmonit.sh Kdump: loaded Tainted: P
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-> RIP: 0010:ima_match_policy+0x84/0x450
-> Code: 49 89 fc 41 89 cf 31 ed 89 44 24 14 eb 1c 44 39 7b 18 74 26 41 83 ff 05 74 20 48 8b 1b 48 3b 1d f2 b9 f4 00 0f 84 9c 01 00 00 <44> 85 73 10 74 ea 44 8b 6b 14 41 f6 c5 01 75 d4 41 f6 c5 02 74 0f
-> RSP: 0018:ff71570009e07a80 EFLAGS: 00010207
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000200
-> RDX: ffffffffad8dc7c0 RSI: 0000000024924925 RDI: ff3e27850dea2000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffffabfce739
-> R10: ff3e27810cc42400 R11: 0000000000000000 R12: ff3e2781825ef970
-> R13: 00000000ff3e2785 R14: 000000000000000c R15: 0000000000000001
-> FS:  00007f5195b51740(0000) GS:ff3e278b12d40000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000010 CR3: 0000000626d24002 CR4: 0000000000361ee0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  ima_get_action+0x22/0x30
->  process_measurement+0xb0/0x830
->  ? page_add_file_rmap+0x15/0x170
->  ? alloc_set_pte+0x269/0x4c0
->  ? prep_new_page+0x81/0x140
->  ? simple_xattr_get+0x75/0xa0
->  ? selinux_file_open+0x9d/0xf0
->  ima_file_check+0x64/0x90
->  path_openat+0x571/0x1720
->  do_filp_open+0x9b/0x110
->  ? page_counter_try_charge+0x57/0xc0
->  ? files_cgroup_alloc_fd+0x38/0x60
->  ? __alloc_fd+0xd4/0x250
->  ? do_sys_open+0x1bd/0x250
->  do_sys_open+0x1bd/0x250
->  do_syscall_64+0x5d/0x1d0
->  entry_SYSCALL_64_after_hwframe+0x65/0xca
-> 
-> Commit c7423dbdbc9e ("ima: Handle -ESTALE returned by
-> ima_filter_rule_match()") introduced call to ima_lsm_copy_rule within a
-> RCU read-side critical section which contains kmalloc with GFP_KERNEL.
-> This implies a possible sleep and violates limitations of RCU read-side
-> critical sections on non-PREEMPT systems.
-> 
-> Sleeping within RCU read-side critical section might cause
-> synchronize_rcu() returning early and break RCU protection, allowing a
-> UAF to happen.
-> 
-> The root cause of this issue could be described as follows:
-> |	Thread A	|	Thread B	|
-> |			|ima_match_policy	|
-> |			|  rcu_read_lock	|
-> |ima_lsm_update_rule	|			|
-> |  synchronize_rcu	|			|
-> |			|    kmalloc(GFP_KERNEL)|
-> |			|      sleep		|
-> ==> synchronize_rcu returns early
-> |  kfree(entry)		|			|
-> |			|    entry = entry->next|
-> ==> UAF happens and entry now becomes NULL (or could be anything).
-> |			|    entry->action	|
-> ==> Accessing entry might cause panic.
->
-> To fix this issue, we are converting all kmalloc that is called within
-> RCU read-side critical section to use GFP_ATOMIC.
-> 
-> Fixes: c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: GUO Zihua <guozihua@huawei.com>
-> Acked-by: John Johansen <john.johansen@canonical.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
-> v3:
->   ima_lsm_copy_rule takes a GFP flag as input as well.
-> v2:
->   Changed the audit_rule_init security hook to accept a new GFP flag, as
-> per Stephen's suggestion.
-> 
-> ---
->  include/linux/lsm_hook_defs.h       |  2 +-
->  include/linux/security.h            |  5 +++--
->  kernel/auditfilter.c                |  5 +++--
->  security/apparmor/audit.c           |  6 +++---
->  security/apparmor/include/audit.h   |  2 +-
->  security/integrity/ima/ima_policy.c | 15 +++++++++------
->  security/security.c                 |  6 ++++--
->  security/selinux/include/audit.h    |  4 +++-
->  security/selinux/ss/services.c      |  5 +++--
->  security/smack/smack_lsm.c          |  3 ++-
->  10 files changed, 32 insertions(+), 21 deletions(-)
+changes in v3:
 
-With the exception of one small gotcha (see below), this looks okay to
-me.  At Mimi's request I'm going to merge this into the LSM tree, via
-lsm/stable-6.10, where I'll give it a few days in linux-next before
-sending it up to Linus.
+- Fixed another awkward formatting issue in trace__load_vmlinux_btf()
 
-Thanks everyone :)
+changes in v2:
 
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 146667937811..a4943628d75a 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4696,7 +4696,8 @@ static int smack_post_notification(const struct cred *w_cred,
->   * Prepare to audit cases where (@field @op @rulestr) is true.
->   * The label to be audited is created if necessay.
->   */
-> -static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule)
-> +static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule,
-> +				 gfp_t gfp)
+- Fix formatting issues
 
-You forgot to add the new @gfp parameter to the function's header
-comment block.  I'm going to add the following as the text is used in
-other Smack functions, if anyone has any objections please let me know.
+- Pass a &use_btf to syscall_arg_fmt__init_array(), instead of
+traversing all the arguments again.
 
-  " * @gfp: type of the memory for the allocation"
+- Add a trace__load_vmlinux_btf() function to load vmlinux BTF
 
->  {
->  	struct smack_known *skp;
->  	char **rule = (char **)vrule;
+- Add member 'btf_entry' in 'struct syscall_arg_fmt' to save the entry to
+the corresponding 'struct btf_member' object, without having to do
+btf__find_by_name(), btf__type_by_id(), btf_enum(), and btf_vlen()
+everytime a syscall enters.
 
---
-paul-moore.com
+In 'struct syscall_arg_fmt':
+```
+	struct {
+		void	*entry;
+		u16	nr_entries;
+	}	   btf_entry;
+```
+
+This is the new member btf_entry. 'struct btf_member' object, so that
+we don't have to do btf__find_by_name(), btf__type_by_id(), btf_enum(),
+and btf_vlen() everytime a landlock_add_rule() syscall entered.
+
+Note that entry is of type 'void *', because this btf_entry can also be
+applied to 'struct btf_member *' for 'BTF_KIND_STRUCT', hopefully in the
+future.
+
+===
+
+This is a feature implemented on the basis of the previous bug fix
+https://lore.kernel.org/linux-perf-users/d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de/T/#t
+
+In this patch, BTF is used to turn enum value to the corresponding
+name. There is only one system call that uses enum value as its
+argument, that is `landlock_add_rule()`.
+
+The vmlinux btf is loaded lazily, when user decided to trace the
+`landlock_add_rule` syscall. But if one decide to run `perf trace`
+without any arguments, the behaviour is to trace `landlock_add_rule`,
+so vmlinux btf will be loaded by default.
+
+The laziest behaviour is to load vmlinux btf when a
+`landlock_add_rule` syscall hits. But I think you could lose some
+samples when loading vmlinux btf at run time, for it can delay the
+handling of other samples. I might need your precious opinions on
+this...
+
+before:
+
+```
+perf $ ./perf trace -e landlock_add_rule
+     0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
+     0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
+```
+
+after:
+
+```
+perf $ ./perf trace -e landlock_add_rule
+     0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
+     0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
+```
+
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
+---
+ tools/perf/builtin-trace.c | 97 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 93 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 5cbe1748911d..740285a1f189 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -19,6 +19,7 @@
+ #ifdef HAVE_LIBBPF_SUPPORT
+ #include <bpf/bpf.h>
+ #include <bpf/libbpf.h>
++#include <bpf/btf.h>
+ #ifdef HAVE_BPF_SKEL
+ #include "bpf_skel/augmented_raw_syscalls.skel.h"
+ #endif
+@@ -110,6 +111,11 @@ struct syscall_arg_fmt {
+ 	const char *name;
+ 	u16	   nr_entries; // for arrays
+ 	bool	   show_zero;
++	bool	   is_enum;
++	struct {
++		void	*entry;
++		u16	nr_entries;
++	}	   btf_entry;
+ };
+ 
+ struct syscall_fmt {
+@@ -140,6 +146,7 @@ struct trace {
+ #ifdef HAVE_BPF_SKEL
+ 	struct augmented_raw_syscalls_bpf *skel;
+ #endif
++	struct btf		*btf;
+ 	struct record_opts	opts;
+ 	struct evlist	*evlist;
+ 	struct machine		*host;
+@@ -887,6 +894,56 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 
+ #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
+ 
++static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
++{
++	const struct btf_type *bt;
++	char enum_prefix[][16] = { "enum", "const enum" }, *ep;
++	int id;
++	size_t i;
++
++	for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
++		ep = enum_prefix[i];
++		if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
++			type += strlen(ep) + 1;
++	}
++
++	id = btf__find_by_name(btf, type);
++	if (id < 0)
++		return -1;
++
++	bt = btf__type_by_id(btf, id);
++	if (bt == NULL)
++		return -1;
++
++	arg_fmt->btf_entry.entry      = btf_enum(bt);
++	arg_fmt->btf_entry.nr_entries = btf_vlen(bt);
++
++	return 0;
++}
++
++static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf, char *type,
++				 struct syscall_arg_fmt *arg_fmt)
++{
++	struct btf_enum *be;
++	int i;
++
++	/* if btf_entry is NULL, find and save it to arg_fmt */
++	if (arg_fmt->btf_entry.entry == NULL)
++		if (btf_enum_find_entry(btf, type, arg_fmt))
++			return 0;
++
++	be = (struct btf_enum *)arg_fmt->btf_entry.entry;
++
++	for (i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
++		if (be->val == val) {
++			return scnprintf(bf, size, "%s",
++					 btf__name_by_offset(btf, be->name_off));
++		}
++	}
++
++	return 0;
++}
++
+ #define STRARRAY(name, array) \
+ 	  { .scnprintf	= SCA_STRARRAY, \
+ 	    .strtoul	= STUL_STRARRAY, \
+@@ -1238,6 +1295,7 @@ struct syscall {
+ 	bool		    is_exit;
+ 	bool		    is_open;
+ 	bool		    nonexistent;
++	bool		    use_btf;
+ 	struct tep_format_field *args;
+ 	const char	    *name;
+ 	const struct syscall_fmt  *fmt;
+@@ -1699,6 +1757,15 @@ static void trace__symbols__exit(struct trace *trace)
+ 	symbol__exit();
+ }
+ 
++static void trace__load_vmlinux_btf(struct trace *trace)
++{
++	trace->btf = btf__load_vmlinux_btf();
++	if (verbose > 0) {
++		fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
++						    "Failed to load vmlinux BTF\n");
++	}
++}
++
+ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+ {
+ 	int idx;
+@@ -1744,7 +1811,8 @@ static const struct syscall_arg_fmt *syscall_arg_fmt__find_by_name(const char *n
+ }
+ 
+ static struct tep_format_field *
+-syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field)
++syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field,
++			    bool *use_btf)
+ {
+ 	struct tep_format_field *last_field = NULL;
+ 	int len;
+@@ -1756,6 +1824,7 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 			continue;
+ 
+ 		len = strlen(field->name);
++		arg->is_enum = false;
+ 
+ 		if (strcmp(field->type, "const char *") == 0 &&
+ 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+@@ -1782,6 +1851,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 			 * 7 unsigned long
+ 			 */
+ 			arg->scnprintf = SCA_FD;
++		} else if (strstr(field->type, "enum") && use_btf != NULL) {
++			*use_btf = arg->is_enum = true;
+ 		} else {
+ 			const struct syscall_arg_fmt *fmt =
+ 				syscall_arg_fmt__find_by_name(field->name);
+@@ -1798,7 +1869,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 
+ static int syscall__set_arg_fmts(struct syscall *sc)
+ {
+-	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
++	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args,
++									  &sc->use_btf);
+ 
+ 	if (last_field)
+ 		sc->args_size = last_field->offset + last_field->size;
+@@ -1811,6 +1883,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ 	char tp_name[128];
+ 	struct syscall *sc;
+ 	const char *name = syscalltbl__name(trace->sctbl, id);
++	int err;
+ 
+ #ifdef HAVE_SYSCALL_TABLE_SUPPORT
+ 	if (trace->syscalls.table == NULL) {
+@@ -1883,7 +1956,13 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
+ 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
+ 
+-	return syscall__set_arg_fmts(sc);
++	err = syscall__set_arg_fmts(sc);
++
++	/* after calling syscall__set_arg_fmts() we'll know whether use_btf is true */
++	if (sc->use_btf && trace->btf == NULL)
++		trace__load_vmlinux_btf(trace);
++
++	return err;
+ }
+ 
+ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+@@ -1891,7 +1970,7 @@ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+ 	struct syscall_arg_fmt *fmt = evsel__syscall_arg_fmt(evsel);
+ 
+ 	if (fmt != NULL) {
+-		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields);
++		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields, NULL);
+ 		return 0;
+ 	}
+ 
+@@ -2103,6 +2182,16 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+ 			if (trace->show_arg_names)
+ 				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+ 
++			if (sc->arg_fmt[arg.idx].is_enum && trace->btf) {
++				size_t p = btf_enum_scnprintf(bf + printed, size - printed, val,
++							      trace->btf, field->type,
++							      &sc->arg_fmt[arg.idx]);
++				if (p) {
++					printed += p;
++					continue;
++				}
++			}
++
+ 			printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
+ 								  bf + printed, size - printed, &arg, val);
+ 		}
+-- 
+2.45.2
+
