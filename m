@@ -1,98 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62433136E1D;
-	Thu, 13 Jun 2024 20:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02B013B592
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2024 20:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718309414; cv=none; b=S9We/C6ePQwR/IhGnL5jlIh8I/3MYwE7px9K7muH+xuOuGHQPSpV7q9JTR1eMQf46TIW9wa0kiTd7xLWzMnm+IaUupunbd3ID0qfjfM71pJHhA6/V1LG1rCIfyGmTqlJWZAUywqUxYRNqucj4BNfDNK2ToxR+PI7OhNfE/4lDbA=
+	t=1718311397; cv=none; b=fY/N4APawAPxOwVf37EAaVAD1SguwUSjdXrrIiqR6dKPT6DZtDYXqPimH3hQYm+06K2FT6Hw/hQRWP3dA8ep0bsclyHwB3odaNL9+XQj5AJA1RqbTqAeq1S7ENdc8NmzhRChDl1QbmXlSpEq0bFhEbMi6psPatZMrAmFSaUtGmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718309414; c=relaxed/simple;
-	bh=IjmHMXcphwekH/gLOJkQYvaNS+ZdtxIQCAgnq4I7qjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a/ElfHe7xdpVECcZuxP3hHfM6WDggO8bIucTLBRlTKN2TCe/vcCHn5V7V2xd7tuisjliNsVGKwfdWUe747pVcCg0CzkPt96BEvUBK3lTDSMatzW2q+e2jdCx1ph0jfGrYhUtK9O7yOVgLChgkSQlzedAEDIEPcFJfzKi/h2GiiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 794DDC2BBFC;
-	Thu, 13 Jun 2024 20:10:13 +0000 (UTC)
-Date: Thu, 13 Jun 2024 16:10:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-security-module@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] linux++: delete some forward declarations
-Message-ID: <20240613161012.1dd2ff60@rorschach.local.home>
-In-Reply-To: <20240613130420.a62ed8965a73b0f8d35890d4@linux-foundation.org>
-References: <5ad5556c-7c32-45b7-89cf-f723c9d7332b@p183>
-	<20240613153402.3b067d4b@rorschach.local.home>
-	<20240613130420.a62ed8965a73b0f8d35890d4@linux-foundation.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718311397; c=relaxed/simple;
+	bh=Te1wWeTYuhWG0UJJRZ0nQ9Ccy7EzdVqqwIlRrujyH3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Axjb7DJ0yPlzHbpiwh+RWyLBcsAg0BVQXkjspHwHxCRF6fvmYXdRq5Tx11kWzW9DCR+cJDefiueTITcmUixMXlOv1T3C4qWuS700ueQYWAB0UR517zqXWKLGO3HjDMr6XoK6jSoRRFqZKNezQgNefpWpb0SxwPhIfBCOGsr678Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fuMZHDa4; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fuMZHDa4"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dff0c685371so949329276.2
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2024 13:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1718311394; x=1718916194; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mbp06UNvP6AGs/AzZYfCY2RlFHeTWL3VjFq/M7RiWuQ=;
+        b=fuMZHDa4bjNFsZajlFm6gAnBMvg/BwfoJNgcncVCRis1Xp1EqIcaCMTgNtrGkb+lev
+         Td1yWR1Rkd2rkCeBDcQJUchRHw/8NkPLAFMjtHsDDx4h3uwj27b8hpy81y9LyFa2yyfM
+         9ipuVzXbIEcs/BrpeRd3fBf6ccrZSzLeL8ssvU9nrI5TxLLoREyYQ7oBFjKdY47fYmNX
+         brSHYzQODPhrEttIHfMF8nrIT17YW5MH2w3MuvykUxNS6eeSH7aWNVoHMwlDZOaX/+Nv
+         qu3T40pgZ0PL8LiZWv6i/IS/Cc+IYcgv1Cs9LlVkewvKLmdhIAUqNzgMG4diumVCwnjX
+         H+XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718311394; x=1718916194;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mbp06UNvP6AGs/AzZYfCY2RlFHeTWL3VjFq/M7RiWuQ=;
+        b=bb17iULYbrUlo1npvW02ZWd6ijV12oZYE5ceHmbNNaFTdLkX52j+KKMlZcf0GIbh90
+         8X7Hr01HR7GpVjweX8VR3gQwaqlkVzwfZmovF6/HErBpJ9+vJJGKxAKqhF8g89PsWcXG
+         U1WSztYnFJlwV9C22kPXm5eV+aGYRHCOlFwPrRpQjK/zvbZMxzl0/oT1AagBlvhWkSGn
+         Y2e5WmzJfL8A/l/6u9p3XBJh79JVZsIsZeg4DzYR2psM2ij5WfF1IbR6dDDIshw2INDn
+         LPGXPAxkija0bD1sJREeeMFsoG8eKnvgqpClM8MQGRMJlrx32ldFOhjRJAI3jPGK28gR
+         Dpzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKnYV81x7dzZtytUSqfRJ5NUiAQbfYn9VlV8POJbxAkC+BUp2HyPZTrTS7qGH7tBbxCR5YJ8IljjvPCaamyJTXC3RNZtULqekUQVqU+jjB84O3UCs3
+X-Gm-Message-State: AOJu0Yxb/QI8h1A01xy4TuIErqJL55qhtu8hy03AAaWNu0+9nFKsmi4d
+	XdQGGxSoSO7j/k3HQw30dmccuK2l4wEe4POO5yS/4tLxEJ5xKl9RxxmPUb2JbFoCibQHzv3vYrx
+	koR81hcKmdQqWrSqB194ZUC4M07H5qdbTLPBQ
+X-Google-Smtp-Source: AGHT+IG0WhxM6z6YdDtEWCi+I5IKFVVK+KMGdEQEjK8s3DDuXT3JscqlC3UvTHCxO6S8YW/rHWD2Pox3VJGxEor1JBc=
+X-Received: by 2002:a25:b327:0:b0:dfe:653:3de0 with SMTP id
+ 3f1490d57ef6-dff154f9c91mr601718276.63.1718311394391; Thu, 13 Jun 2024
+ 13:43:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20240609104355.442002-1-jcalmels@3xx0.net> <20240609104355.442002-5-jcalmels@3xx0.net>
+ <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
+ <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
+ <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com> <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
+ <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
+ <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com>
+ <rgzhcsblub7wedm734n56cw2qf6czjb4jgck6l5miur6odhovo@n5tgrco74zce>
+ <CAHC9VhRGJTND25MFk4gR-FGxoLhMmgUrMpz_YoMFOwL6kr28zQ@mail.gmail.com> <ba8d88c8-a251-4c1f-8653-1082b0a101dd@canonical.com>
+In-Reply-To: <ba8d88c8-a251-4c1f-8653-1082b0a101dd@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 13 Jun 2024 16:43:03 -0400
+Message-ID: <CAHC9VhTfXGeSkDxCaHRWRJjc+4DBorHOrqhrw8BzWhKD9SG39Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM hooks
+To: John Johansen <john.johansen@canonical.com>
+Cc: Jonathan Calmels <jcalmels@3xx0.net>, brauner@kernel.org, ebiederm@xmission.com, 
+	Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Jun 2024 13:04:20 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, Jun 12, 2024 at 11:54=E2=80=AFPM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 6/12/24 10:29, Paul Moore wrote:
+> > On Wed, Jun 12, 2024 at 4:15=E2=80=AFAM Jonathan Calmels <jcalmels@3xx0=
+.net> wrote:
+> >> On Tue, Jun 11, 2024 at 06:38:31PM GMT, Paul Moore wrote:
+> >>> On Tue, Jun 11, 2024 at 6:15=E2=80=AFPM Jonathan Calmels <jcalmels@3x=
+x0.net> wrote:
+> >
+> > ...
+> >
+> >>>> Arguably, if we do want fine-grained userns policies, we need LSMs t=
+o
+> >>>> influence the userns capset at some point.
+> >>>
+> >>> One could always use, or develop, a LSM that offers additional
+> >>> controls around exercising capabilities.  There are currently four
+> >>> in-tree LSMs, including the capabilities LSM, which supply a
+> >>> security_capable() hook that is used by the capability-based access
+> >>> controls in the kernel; all of these hook implementations work
+> >>> together within the LSM framework and provide an additional level of
+> >>> control/granularity beyond the existing capabilities.
+> >>
+> >> Right, but the idea was to have a simple and easy way to reuse/trigger
+> >> as much of the commoncap one as possible from BPF. If we're saying we
+> >> need to reimplement and/or use a whole new framework, then there is
+> >> little value.
+> >
+> > I can appreciate how allowing direct manipulation of capability bits
+> > from a BPF LSM looks attractive, but my hope is that our discussion
+> > here revealed that as you look deeper into making it work there are a
+> > number of pitfalls which prevent this from being a safe option for
+> > generalized systems.
+> >
+> >> TBH, I don't feel strongly about this, which is why it is absent from
+> >> v1. However, as John pointed out, we should at least be able to modify
+> >> the blob if we want flexible userns caps policies down the road.
+> >
+> > As discussed in this thread, there are existing ways to provide fine
+> > grained control over exercising capabilities that can be safely used
+> > within the LSM framework.  I don't want to speak to what John is
+> > envisioning, but he should be aware of these mechanisms, and if I
+> > recall he did voice a level of concern about the same worries I
+> > mentioned.
+> >
+>
+> sorry, I should have been more clear. I envision LSMs being able to
+> update their own state in the userns hook.
 
-> On Thu, 13 Jun 2024 15:34:02 -0400 Steven Rostedt <rostedt@goodmis.org> w=
-rote:
->=20
-> > On Thu, 13 Jun 2024 22:22:18 +0300
-> > Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >  =20
-> > > g++ doesn't like forward enum declarations:
-> > >=20
-> > > 	error: use of enum =E2=80=98E=E2=80=99 without previous declaration
-> > > 	   64 | enum E; =20
-> >=20
-> > But we don't care about g++. Do we? =20
->=20
-> It appears that g++ is a useful enum declaration detector.
->=20
-> I'm curious to know how even the above warning was generated.  Does g++
-> work at all on Linux?
->=20
-> > I would make that a separate patch. =20
->=20
-> What are you referring to here?
+Ah, okay, yes, that seems reasonable; although like any other change,
+until we have an in-tree user we should just leave it as-is.
 
-The enum change should be separate from the struct changes.
-
->=20
-> > >=20
-> > > Delete those which aren't used.
-> > >=20
-> > > Delete some unused/unnecessary forward struct declarations for a chan=
-ge. =20
-> >=20
-> > This is a clean up, but should have a better change log. Just something
-> > simple like:
-> >=20
-> >   Delete unnecessary forward struct declarations. =20
->=20
-> Alexey specializes in cute changelogs.
-
-eh
-
->=20
-> I do have a concern about the patch: has it been tested with all
-> possible Kconfigs?  No.  There may be some configs in which the forward
-> declaration is required.
->=20
-> And...  I'm a bit surprised that forward declarations are allowed in C.
-> A billion years ago I used a C compiler which would use 16 bits for
-> an enum if the enumted values would fit in 16 bits.  And it would use 32
-> bits otherwise.  So the enumerated values were *required* for the
-> compiler to be able to figure out the sizeof.  But it was a billion
-> years ago.
-
-Well, I only looked at the one change in ftrace.h which has a
-"struct seq_file;" that is not used anywhere else in the file, so that
-one definitely can go.
-
--- Steve
+--=20
+paul-moore.com
