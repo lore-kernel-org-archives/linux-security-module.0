@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E20A13541B;
-	Thu, 13 Jun 2024 21:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E831E5F876;
+	Thu, 13 Jun 2024 21:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718313277; cv=none; b=nAWDc/JpKo3O0iQpmo3f/JVeyQno3RUUPtoMYEDxuJ752qQCa+hRnZ2P/kW132a2KCrEnJ/Jt/DbN8/NzQMsmZWFYhQlmMhlKoGoucQFps/04TmyFCjwNbLvpNNOzD6+xbhz0gspQTrGALkIspPP2RUMZpJlzXJBScphlNnAVLY=
+	t=1718313672; cv=none; b=FZL6fhY9X359gkF+molAa+cOtlZ/uRGy0Qt9o9R6KdRovz9nlCN+P9sEfc/unItDjO1sLJFI2P+uNPklf4JS56ByOLS/r7nPZzZj+hYmkEbb+i9JHofkl44D+7RdEcrrdVx8Lz4GdLMOSN0wn18iyO8CCtJ8oP+wlVWdMxVZ6rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718313277; c=relaxed/simple;
-	bh=4a2+5zIfwargPvYAlTmLGH6pFw0rZamk0P9b4EVRVsM=;
+	s=arc-20240116; t=1718313672; c=relaxed/simple;
+	bh=tIVI8sDxoP6vcgbRqp/b+XMQGtqvU/991pldqPDDpVo=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=J5qK+BHpvk/gEtqryvsEniQeH2DMXzjDGqdVN3KRwcRNo+449/wjJrKHs7bSXbV8AlwCfNkHdu0XY0+pXSrsO0Cfizrv5Ibd2OkYjaHmfara94UAz+BYb7WE4fncOem3BmVTsmiDMXKUmF2Rb8GFoMbjd+FLDypwH0yMjmzWB6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EMg5zEp0; arc=none smtp.client-ip=10.30.226.201
+	 Mime-Version:Content-Type; b=S2fBkhXplaQKklbXGnoKHDySZG/yts+uYJOlbJBuIiNIW04Q2y+9L2moBKzi07Rk6zBkKwICtEB+6hMTIFBLWiQuIAruEHr3J9JVgv+EeTVDEUSdCEQeSZmNoOrEp1mRRq5c8E5kNPo1KDqZNubtdqvjm9ithljRU2fvrzDxJIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ufbtqggP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EMg5zEp0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E20C2BBFC;
-	Thu, 13 Jun 2024 21:14:36 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ufbtqggP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA7BC2BBFC;
+	Thu, 13 Jun 2024 21:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1718313277;
-	bh=4a2+5zIfwargPvYAlTmLGH6pFw0rZamk0P9b4EVRVsM=;
+	s=korg; t=1718313671;
+	bh=tIVI8sDxoP6vcgbRqp/b+XMQGtqvU/991pldqPDDpVo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EMg5zEp0mO+NhF6jvPGvPYkQn8Gd0u2aw4kR2cAYBNOQj5bRnNWwQM9CehUe95cZs
-	 6Ig1y6VAXMhH/JYy3dPHM1EG0vGdCUoJaJs1tYAbb6NeSB3p4cP0PLop0SsGaGcGr6
-	 fg74mWAVBAHGreHe41TJIWG8GiGZhlI1Nb5wr4hM=
-Date: Thu, 13 Jun 2024 14:14:35 -0700
+	b=ufbtqggP0qaJWrdyuqK5JCm+amuWgHEKBTQAJvq5bYk1bRoaLGybAa033rBWFP5EC
+	 UlzfQnjdB/G2RD3fX9gn+0HedIfldL8bmA0C28PVro8Jbtc5B6gef5OYfZeGFDay6Y
+	 mlvkoxIoQt0gOnqRVafCCcl8uX0yOtsDDIlEeP7Q=
+Date: Thu, 13 Jun 2024 14:21:10 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
- alexei.starovoitov@gmail.com, rostedt@goodmis.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- audit@vger.kernel.org, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 05/10] mm/util: Fix possible race condition in
- kstrdup()
-Message-Id: <20240613141435.fad09579c934dbb79a3086cc@linux-foundation.org>
-In-Reply-To: <20240613023044.45873-6-laoar.shao@gmail.com>
-References: <20240613023044.45873-1-laoar.shao@gmail.com>
-	<20240613023044.45873-6-laoar.shao@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] linux++: delete some forward declarations
+Message-Id: <20240613142110.30019a4084d922d63c6d4352@linux-foundation.org>
+In-Reply-To: <20240613161012.1dd2ff60@rorschach.local.home>
+References: <5ad5556c-7c32-45b7-89cf-f723c9d7332b@p183>
+	<20240613153402.3b067d4b@rorschach.local.home>
+	<20240613130420.a62ed8965a73b0f8d35890d4@linux-foundation.org>
+	<20240613161012.1dd2ff60@rorschach.local.home>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -48,58 +46,18 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 13 Jun 2024 10:30:39 +0800 Yafang Shao <laoar.shao@gmail.com> wrote:
+On Thu, 13 Jun 2024 16:10:12 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> In kstrdup(), it is critical to ensure that the dest string is always
-> NUL-terminated. However, potential race condidtion can occur between a
-> writer and a reader.
+> > And...  I'm a bit surprised that forward declarations are allowed in C.
+> > A billion years ago I used a C compiler which would use 16 bits for
+> > an enum if the enumted values would fit in 16 bits.  And it would use 32
+> > bits otherwise.  So the enumerated values were *required* for the
+> > compiler to be able to figure out the sizeof.  But it was a billion
+> > years ago.
 > 
-> Consider the following scenario involving task->comm:
-> 
->     reader                    writer
-> 
->   len = strlen(s) + 1;
->                              strlcpy(tsk->comm, buf, sizeof(tsk->comm));
->   memcpy(buf, s, len);
-> 
-> In this case, there is a race condition between the reader and the
-> writer. The reader calculate the length of the string `s` based on the
-> old value of task->comm. However, during the memcpy(), the string `s`
-> might be updated by the writer to a new value of task->comm.
-> 
-> If the new task->comm is larger than the old one, the `buf` might not be
-> NUL-terminated. This can lead to undefined behavior and potential
-> security vulnerabilities.
-> 
-> Let's fix it by explicitly adding a NUL-terminator.
+> Well, I only looked at the one change in ftrace.h which has a
+> "struct seq_file;" that is not used anywhere else in the file, so that
+> one definitely can go.
 
-The concept sounds a little strange.  If some code takes a copy of a
-string while some other code is altering it, yes, the result will be a
-mess.  This is why get_task_comm() exists, and why it uses locking.
-
-I get that "your copy is a mess" is less serious than "your string
-isn't null-terminated" but still.  Whichever outcome we get, the
-calling code is buggy and should be fixed.
-
-Are there any other problematic scenarios we're defending against here?
-
->
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -60,8 +60,10 @@ char *kstrdup(const char *s, gfp_t gfp)
->  
->  	len = strlen(s) + 1;
->  	buf = kmalloc_track_caller(len, gfp);
-> -	if (buf)
-> +	if (buf) {
->  		memcpy(buf, s, len);
-> +		buf[len - 1] = '\0';
-> +	}
->  	return buf;
->  }
-
-Now I'll start receiving patches to remove this again.  Let's have a
-code comment please.
-
-And kstrdup() is now looking awfully similar to kstrndup().  Perhaps
-there's a way to reduce duplication?
+The risk is that something which includes ftrace.h is depending upon
+the enum declaration.
