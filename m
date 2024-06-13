@@ -1,135 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCB8137914;
-	Thu, 13 Jun 2024 12:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5806143895;
+	Thu, 13 Jun 2024 13:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718283550; cv=none; b=Mo1QMqWchiWwJBgw1jI81A6wxFW6X5ZaA2xT+4y82qY9f3R1jVDRXwrgNjKj2UjtrcitO9wpc4DIPfEQ+nRmRqXKzy/a67u1p+PQYrNZCprnQh8QjmGdKm9PvxgM1eWS/xFB44M18TMPz2bpe1dpj9lhC0iQsNefU7R6fF9d87k=
+	t=1718286010; cv=none; b=UmsiR6HU+u+IQolx6smPXS+E2fya7i/7TTMyLzogy3dqGVWjrXwnYXjo87A87mUCUfR5VOJJ/qANudHCVZGALz/eOnEmUS3SrnR+A73XnjREjI4SEyldLcSgKcosGOEseNTdwsp9pdzv0CfO9Y2zqHXGy03l7uM16g1mvp0Fg1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718283550; c=relaxed/simple;
-	bh=etrALkXwRl8zDxAotSVCh3RhyEbTiNBpltd+VXvzvNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+GbObZKTtjcK/mrWipLzdURNpy7LW+c4V9TL+kuH4HEr0CZzjSldi6Ehk/CKElcsxYkQ8OQXwUTr8VjWp5pnlfaUF4PwzbuXMaedQlqSAa9ZemeXHRVklsjS3LRwxqwPaQbkkh2IzlKu968aexzwTlYHw0D3pWUSEif2aWTcf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1NWlxKM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718286010; c=relaxed/simple;
+	bh=mM/nGXvzfhzKRjtNF5lAJbBStRl1RPZ5BZMncy1sL9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GnZ8gL+7nnAPUxQaw7Occ6gW9p7z/ewM/Lqe76FgN65d53EEq42gWCpakkEHybNFE7SLhbtOKqbpqqHABr9In6KTt5kRUUGJvrT8OtZlr/9tugp4kt9pqyVeQXZ2J1/qmXeS+oZCSp6MktREwBD2BufeQwfjeE3nc8e/gQcFFaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=rCIvFHUB; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1NWlxKM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96739C2BBFC;
-	Thu, 13 Jun 2024 12:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718283550;
-	bh=etrALkXwRl8zDxAotSVCh3RhyEbTiNBpltd+VXvzvNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k1NWlxKMENC+Q3DhMuln06VopaAL/VXRxy5sDVDqSt4L6aFwMy1L2JXzTdhs3Kkg2
-	 C2Wv66R/o66EYxKbWHPKQNP9Q2Ewp9mXJhKwnm8y0/7r8+ONjxD0Mc46y7MkLZG6wf
-	 kEiebLSKL8Ww98b2EuFV/tlH+9KkPGi1KPVzEjygpRzr962oNqBv0z38jAl07JXinL
-	 yhHp/n3MH0fJovw7iyVKz/zm3iMHLCJUeh6iGepW0l/wiUsss7oVA0a3FDTowfypfa
-	 BehIamiT6sp6zDy1g1TnJIh7pDfTr1xTYC6+5bohSeBS2NlwxCwZ/xc74Epj+O3+6s
-	 kqwl8Y8Ta1nkg==
-Date: Thu, 13 Jun 2024 09:59:06 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, mic@digikod.net, gnoack@google.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v4] perf trace: BTF-based enum pretty printing
-Message-ID: <ZmrtGuhdMlbssODG@x1>
-References: <20240613042747.3770204-1-howardchu95@gmail.com>
- <ZmrqQs64TvAt8XjK@x1>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="rCIvFHUB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718286006;
+	bh=mM/nGXvzfhzKRjtNF5lAJbBStRl1RPZ5BZMncy1sL9k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rCIvFHUBsO5NZzLnUDiHYsWRCOzH0+8w/ag1XyrR9PX/x4XX/uvnkxNzv2d8nVntG
+	 y1Ld3hgr80TjTw6qLpnRICkElS4/mOugMovzdvHzFL1bp4NQzRJxIvGDS4rmlLYtru
+	 EsJsllDL3M8DLJFdg1qda0xd6Cp657KA/gmNDhHEcf+AnPsalZMPDYh1MypzvlmHZ9
+	 8fokoOZdOKqkSda4rutLNAGUU7ulLq4Yv75KS1ON1rLT/jverE/Cw7HoYARRgjAZbn
+	 M/EWDvTqj1INdyeABnul94j2PB3HrSfxNHQArDomMU1SgliiFiwS+2dl5zbkEEzEwo
+	 VxA9WdqQL8bnA==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aratiu)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id EA0C037820CD;
+	Thu, 13 Jun 2024 13:40:05 +0000 (UTC)
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel@collabora.com,
+	gbiv@google.com,
+	ryanbeltran@google.com,
+	inglorion@google.com,
+	ajordanr@google.com,
+	jorgelo@chromium.org,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH v6 1/2] proc: pass file instead of inode to proc_mem_open
+Date: Thu, 13 Jun 2024 16:39:36 +0300
+Message-ID: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmrqQs64TvAt8XjK@x1>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 13, 2024 at 09:47:02AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Jun 13, 2024 at 12:27:47PM +0800, Howard Chu wrote:
-> > changes in v4:
+The file struct is required in proc_mem_open() so its
+f_mode can be checked when deciding whether to allow or
+deny /proc/*/mem open requests via the new read/write
+and foll_force restriction mechanism.
 
-> > - Add enum support to tracepoint arguments
+Thus instead of directly passing the inode to the fun,
+we pass the file and get the inode inside it.
+
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Xu <jeffxu@google.com>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+Reviewed-by: Kees Cook <kees@kernel.org>
+---
+No changes in v6
+---
+ fs/proc/base.c       | 6 +++---
+ fs/proc/internal.h   | 2 +-
+ fs/proc/task_mmu.c   | 6 +++---
+ fs/proc/task_nommu.c | 2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675..4c607089f66e 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -794,9 +794,9 @@ static const struct file_operations proc_single_file_operations = {
+ };
  
-> That is cool, but see below the comment as having this as a separate
-> patch.
-> 
-> Also please, on the patch that introduces ! syscall tracepoint enum args
-> BTF augmentation include examples of tracepoints being augmented. I'll
+ 
+-struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
++struct mm_struct *proc_mem_open(struct file  *file, unsigned int mode)
+ {
+-	struct task_struct *task = get_proc_task(inode);
++	struct task_struct *task = get_proc_task(file->f_inode);
+ 	struct mm_struct *mm = ERR_PTR(-ESRCH);
+ 
+ 	if (task) {
+@@ -816,7 +816,7 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+ 
+ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+ {
+-	struct mm_struct *mm = proc_mem_open(inode, mode);
++	struct mm_struct *mm = proc_mem_open(file, mode);
+ 
+ 	if (IS_ERR(mm))
+ 		return PTR_ERR(mm);
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index a71ac5379584..d38b2eea40d1 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -295,7 +295,7 @@ struct proc_maps_private {
+ #endif
+ } __randomize_layout;
+ 
+-struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode);
++struct mm_struct *proc_mem_open(struct file *file, unsigned int mode);
+ 
+ extern const struct file_operations proc_pid_maps_operations;
+ extern const struct file_operations proc_pid_numa_maps_operations;
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f8d35f993fe5..fe3b2182b0aa 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -210,7 +210,7 @@ static int proc_maps_open(struct inode *inode, struct file *file,
+ 		return -ENOMEM;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(priv->mm)) {
+ 		int err = PTR_ERR(priv->mm);
+ 
+@@ -1030,7 +1030,7 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
+ 		goto out_free;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(priv->mm)) {
+ 		ret = PTR_ERR(priv->mm);
+ 
+@@ -1754,7 +1754,7 @@ static int pagemap_open(struct inode *inode, struct file *file)
+ {
+ 	struct mm_struct *mm;
+ 
+-	mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(mm))
+ 		return PTR_ERR(mm);
+ 	file->private_data = mm;
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index bce674533000..a8ab182a4ed1 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -259,7 +259,7 @@ static int maps_open(struct inode *inode, struct file *file,
+ 		return -ENOMEM;
+ 
+ 	priv->inode = inode;
+-	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
++	priv->mm = proc_mem_open(file, PTRACE_MODE_READ);
+ 	if (IS_ERR(priv->mm)) {
+ 		int err = PTR_ERR(priv->mm);
+ 
+-- 
+2.44.2
 
-You did it as a notes for v4, great, I missed that.
-
-> try here while testing the patch as-is.
-
-The landlock_add_rule continues to work, using the same test program I 
-posted when testing your v1 patch: 
-
-root@x1:~# perf trace -e landlock_add_rule
-     0.000 ( 0.016 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 1, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
-     0.115 ( 0.003 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 2, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
-
-Now lets try with some of the !syscalls tracepoints with enum args:
-
-root@x1:~# perf trace -e timer:hrtimer_start --max-events=5
-     0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-18446744073709.551 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff2a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-     0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff325050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-     0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff3a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-18446744073709.543 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff425050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-root@x1:~# 
-
-Cool, it works!
-
-Now lets try and use it with filters, to get something other than HRTIMER_MODE_ABS:
-
-root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS' --max-events=5
-No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS) && (common_pid != 475859 && common_pid != 4041)"
-root@x1:~#
-
-
-oops, that is the next step then :-)
-
-If I do:
-
-root@x1:~# pahole --contains_enumerator=HRTIMER_MODE_ABS
-enum hrtimer_mode {
-	HRTIMER_MODE_ABS             = 0,
-	HRTIMER_MODE_REL             = 1,
-	HRTIMER_MODE_PINNED          = 2,
-	HRTIMER_MODE_SOFT            = 4,
-	HRTIMER_MODE_HARD            = 8,
-	HRTIMER_MODE_ABS_PINNED      = 2,
-	HRTIMER_MODE_REL_PINNED      = 3,
-	HRTIMER_MODE_ABS_SOFT        = 4,
-	HRTIMER_MODE_REL_SOFT        = 5,
-	HRTIMER_MODE_ABS_PINNED_SOFT = 6,
-	HRTIMER_MODE_REL_PINNED_SOFT = 7,
-	HRTIMER_MODE_ABS_HARD        = 8,
-	HRTIMER_MODE_REL_HARD        = 9,
-	HRTIMER_MODE_ABS_PINNED_HARD = 10,
-	HRTIMER_MODE_REL_PINNED_HARD = 11,
-}
-root@x1:~#
-
-And then use the value for HRTIMER_MODE_ABS instead:
-
-root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0' --max-events=1
-     0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210759990000000, softexpires: 210759990000000, mode: HRTIMER_MODE_ABS_PINNED_HARD)
-root@x1:~#
-
-Now also filtering HRTIMER_MODE_ABS_PINNED_HARD:
-
-root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0 && mode != 10' --max-events=2
-     0.000 podman/178137 timer:hrtimer_start(hrtimer: 0xffffa2024468fda8, function: 0xffffffff9e2170c0, expires: 210886679225214, softexpires: 210886679175214, mode: HRTIMER_MODE_REL)
-    32.935 podman/5046 timer:hrtimer_start(hrtimer: 0xffffa20244fabc40, function: 0xffffffff9e2170c0, expires: 210886712159707, softexpires: 210886712109707, mode: HRTIMER_MODE_REL)
-root@x1:~#
-
-But this then should be a _third_ patch :-)
-
-We're making progress!
-
-- Arnaldo
