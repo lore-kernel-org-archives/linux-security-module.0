@@ -1,106 +1,229 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52B814A623
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2024 18:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A238714A62D
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2024 18:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718303012; cv=none; b=AguDXhwq8Md1gvPsdc1Q9W19XnWyI0gOjAwpKsrwt4lTImm0ngjkjdF76ndgQKPOEdalVEI/QIyQNQBtZrVv17Hjohi1gaEjxl9DK7DL+FEuOOOQ7bNHmLh8a7GN5sYHvGXkqAfHmyTLPn/FmHF8p5tbSlBOX36yrDN0gHvtsQY=
+	t=1718303217; cv=none; b=Bcj9ekeOZC46MEmWQSUlUecwqcl5Cu6pVheLLVqseK05tQI5/20hY32bI63uvt9LlF6eD/yKTQ//I0Up+BUGE3FP8t+68WiKEldfT0CmT3CyX1zXUsfWep8P2/fV9qtsemL6S4EzPhUnh5lTu6NY7L/nOAp7bOWi1MqdD6CIoi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718303012; c=relaxed/simple;
-	bh=krCnTrtnkHB1D6bVOwKkRyMFqhSVLnQUJePCdLAPTDQ=;
+	s=arc-20240116; t=1718303217; c=relaxed/simple;
+	bh=VLw0bWZBkfRfVs06AEgEM820Gqa5lkBzbVmDwF233Eo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ti4uT2uo+/WnEaFqmarCb/aU7T4NRAVD5CaBY8oeEcH2I9X4pAkCs8N/240N+29/ai30v0nUeVS+QK3hCwcaRxJFvYPhm9Gzfh5R1BzPWeLb0QB4UYSX4seQXdGuFtqqNFTcafEDTHmleAcRenGAKQsfHJ6DnquZ0DHALSzvwsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MrMqolDU; arc=none smtp.client-ip=209.85.219.173
+	 To:Cc:Content-Type; b=uNG1C5wBBoVmgiLSF/qy5CrssIt16NOR6gZzDQFLFcMhYJSGtpqr4AYAL0+SjG4WKS9XNtuTjnJidV7AQ1a6QDQGrEo/9DHoUSD1wcZvscIT0RNDcKhmsA1nrDPqL3NyVmo9x8LS+TwSBxGdEaHb2WCrsnGwtOLgTJZC4fMmSNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YFFSDk4R; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MrMqolDU"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dff0067a263so1545104276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2024 11:23:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YFFSDk4R"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62f86eaffbeso15007187b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Jun 2024 11:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718303010; x=1718907810; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1718303214; x=1718908014; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G7FnJEUeHYST8KdquXXOOwJt3IXf3k8psfyOLW+siSs=;
-        b=MrMqolDUAlzO/IwTF/IGKX2UT5qyxUTNn9DCi10W5dPT07/AkjTeQUapfuL+zOuWnG
-         dBS7kyFdbOpfHtC0oZqGrrymabTVe1iQnNtN7Ftsfw+kZX9ZLIYUWNYyZDhjYzw149uG
-         sal4RQFSAfd+AnOShUxqyWj5VOrVCw6Rt3XMvjk05zUOu0SEbUkwvdckXx5VLwfAFgZ9
-         B2bzl48OgAetQRpB/iQsTY2vMnLj4xpYx1sip/7brXX0H1J5jzJHppAAal0yOFz4wnSJ
-         oigpWpaJGgc0fyEuSLg+2WjG4f5uq5AdVdb+YX2bUgOZWRHpnWQr/DmhRT90KqgEQfbb
-         AXzg==
+        bh=NUZMZYdmH0PD0W1ckRqY92IjQ0umZRiAKgV8BSjjNmU=;
+        b=YFFSDk4RTJVQ4wJDU3a9MCS2itsq9jf7OdJNnvZFA1zyM3OqnX2hGWPM1cPvWadPgK
+         0NnKJlpnXvQ7rgmWWxZzWdIfQEYAt/sten0dE2w0z9I4TsDpK/zMtKdGrTFk7BmZpTFk
+         onnHCe36ym/gZsB3gbgN20iO1DAuDkh//Nss/8QFM5yfKisvz5Lacneq0AavWKmBn+ZO
+         6sOF/Rql6qIVFnLMp9eFJb3hPQ7hzH8+9zSi5Jbw0AnXiuv6bmwdB1zuruAQANrWAbjM
+         bfJ27qf0hA1oJxLEVDyJfVPAlYUGLAbvJV9K+MHyhakn+mTCWrmdhIgUVsaMmDnvOiVG
+         UdqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718303010; x=1718907810;
+        d=1e100.net; s=20230601; t=1718303214; x=1718908014;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G7FnJEUeHYST8KdquXXOOwJt3IXf3k8psfyOLW+siSs=;
-        b=SVposSLklbBXUCpxQjSRVwlcFcOZnndDAiLkgtF1xO9lQYOB0WP/8G1B3AtJBvoLLD
-         rRXhZheWUxuhXiizTqe210OKwjT5VYH28UxD3P6Q1E/cw2jpbgb6W0GT6y8XRuLxTECK
-         a/+92zKaPKLTyZqjBTvDDxF81r1YO/SzXg2IRTiqGu477/ap/cpqhMWskyGybb7VBbNp
-         2TwPR5ELVAxldtbTII6ap5L/Ux4y3ss1vfO+ThrlAtZKNCsDd4BaD0FTiRqBTZd4cilR
-         fmdSDnucjF38LcvPcLvAnnKRFS0vYlHdMBAea7R5QFL7vudmQ/wAGZ9eWjIuH+L/yNOU
-         l7JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBIgmFCZerGcugg1FJPhicC0HTS+qgjVvaWak9miK0psT8ZtSWvEdToGmGeFx1Nt8S7O5FTmeLDZKnN+Lt0tO2Bp2P1arxhPRyFLFNRT0kaZE1fYcP
-X-Gm-Message-State: AOJu0Yx2s2TImF9jp0dHDYW3/lyZP3aCcRgp2XkWvVbcthC0lBcELbpv
-	1l64+1hJBxPBQ0w16QoLStkbXI3QYAn0ZASpbofSlOt6HGlTC1v0Bf60kLptNROBCy7EczvkNDj
-	Wkdza2Xnd4cUEjqeWwL329MBWKSLbwUA5J+h5
-X-Google-Smtp-Source: AGHT+IE4Ltjey1yaGfz53sQ/9WLShdZ82+JIBb7XxCn7Eqt0EFUMoYYVjqNU2UFmX1J77aFxmDQczyuNhRm+3bZd5xw=
-X-Received: by 2002:a25:dbcb:0:b0:dfa:584e:c661 with SMTP id
- 3f1490d57ef6-dff153c3883mr320940276.34.1718303009863; Thu, 13 Jun 2024
- 11:23:29 -0700 (PDT)
+        bh=NUZMZYdmH0PD0W1ckRqY92IjQ0umZRiAKgV8BSjjNmU=;
+        b=i5gXPL6JXHLqQSFkDnY/3fAJNADnYS2K+KYjuL3iSX+4TmFwF9UsYU/ig4FG+D/XWi
+         ah/TcjsI22y4UKkRcxJHrBAqdTWgtvF4WD0teFkR3XpPTQS9o/+pUw1bOBGLEZzef1q2
+         XNtybF4BJS37mi2fHrDJMCThXB7S9TRz7Lm7BAKTa8H0S6xrniJ+bhZ4QbFOb8+8pSe2
+         oIcMeEzpWm2ueHWwL3oFoupJ+XnTVC81woqBboP8dCqOMMKQV31j+Yn3sgrY8JD83aeC
+         HDX4VJFRlbuGblga+QmZK3OgYaTPdtg17DKmqbCiNfIjGASswqE8LbkIwIs8eIEhS4cx
+         Q3Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVN0CuQxPlM9I62G3APbdeuefKF1VFSmMTgLn0h1i5RD9YTA878jUUibA2uCfMSDKD5LvYGSyLQPX8GqE8rFgyTiv7Bz0e62kRJ9grlV0rDLSu5+DEr
+X-Gm-Message-State: AOJu0YyY8etEGHRPcj8WSF5vLqKaeq4eXAIcRHg9efIpvcST/3//J56l
+	PC9cvMqQ2CzX4NxHZN2uAWogIIuXSPKRUH+6kn+d9O0WhrzMciGJkQ58xnAmxi+WiCCcN4Ic4Dj
+	kb594FeptuxBveoe2wGbq7YDKwhEwVn5S6YfIcHWA3LsvA8/Sy+XM
+X-Google-Smtp-Source: AGHT+IFsylxSbj2uZgSGOJg0LMaFfRq7IjLxJeN2QodiQ5UR3ur142ShbPh1aawzB6Sp1Ix5B6xJW8rBRuAPSk+Aesw=
+X-Received: by 2002:a81:a548:0:b0:62f:7ba7:d5a4 with SMTP id
+ 00721157ae682-6322265df68mr2812027b3.16.1718303213265; Thu, 13 Jun 2024
+ 11:26:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvWXuWyd3NiX3WwRyorRiDRbxGmRW_7aVnBVKUVA_TaGg@mail.gmail.com>
- <CAHC9VhSeNGo4fPY0H5eM_fFsPSQ18xWUYMvyHBChEysXk-+00Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhSeNGo4fPY0H5eM_fFsPSQ18xWUYMvyHBChEysXk-+00Q@mail.gmail.com>
+References: <20240507012541.796421-1-guozihua@huawei.com> <00d88046025c611f2bf94708ffc65ecc@paul-moore.com>
+In-Reply-To: <00d88046025c611f2bf94708ffc65ecc@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 13 Jun 2024 14:23:19 -0400
-Message-ID: <CAHC9VhRg3efo2J5VsxxskFW0ntotwswvLmn7cWEMmSTkEC4QFg@mail.gmail.com>
-Subject: Re: security: ima_policy.c:427:17: error: too many arguments to
- function 'ima_filter_rule_init'
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, John Johansen <john.johansen@canonical.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	linux-security-module@vger.kernel.org
+Date: Thu, 13 Jun 2024 14:26:42 -0400
+Message-ID: <CAHC9VhRqvBsdy+U-wr+X6QmawLv6DnB32nwAO7Ex6L7cdR=mSg@mail.gmail.com>
+Subject: Re: [PATCH v3] ima: Avoid blocking in RCU read-side critical section
+To: GUO Zihua <guozihua@huawei.com>, john.johansen@canonical.com, jmorris@namei.org, 
+	serge@hallyn.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, 
+	dmitry.kasatkin@gmail.com, stephen.smalley.work@gmail.com, 
+	casey@schaufler-ca.com, eparis@redhat.com
+Cc: eric.snowberg@oracle.com, omosnace@redhat.com, audit@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 1:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+On Wed, Jun 12, 2024 at 5:43=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
 ote:
-> On Thu, Jun 13, 2024 at 8:43=E2=80=AFAM Naresh Kamboju
-> <naresh.kamboju@linaro.org> wrote:
+> On May  6, 2024 GUO Zihua <guozihua@huawei.com> wrote:
 > >
-> > The arm and arm64 kselftests builds started failing on Linux next-20240=
-613 tag.
-> > Please find the build log and related links below.
+> > A panic happens in ima_match_policy:
 > >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > BUG: unable to handle kernel NULL pointer dereference at 00000000000000=
+10
+> > PGD 42f873067 P4D 0
+> > Oops: 0000 [#1] SMP NOPTI
+> > CPU: 5 PID: 1286325 Comm: kubeletmonit.sh Kdump: loaded Tainted: P
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06=
+/2015
+> > RIP: 0010:ima_match_policy+0x84/0x450
+> > Code: 49 89 fc 41 89 cf 31 ed 89 44 24 14 eb 1c 44 39 7b 18 74 26 41 83=
+ ff 05 74 20 48 8b 1b 48 3b 1d f2 b9 f4 00 0f 84 9c 01 00 00 <44> 85 73 10 =
+74 ea 44 8b 6b 14 41 f6 c5 01 75 d4 41 f6 c5 02 74 0f
+> > RSP: 0018:ff71570009e07a80 EFLAGS: 00010207
+> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000200
+> > RDX: ffffffffad8dc7c0 RSI: 0000000024924925 RDI: ff3e27850dea2000
+> > RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffffabfce739
+> > R10: ff3e27810cc42400 R11: 0000000000000000 R12: ff3e2781825ef970
+> > R13: 00000000ff3e2785 R14: 000000000000000c R15: 0000000000000001
+> > FS:  00007f5195b51740(0000) GS:ff3e278b12d40000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000000000010 CR3: 0000000626d24002 CR4: 0000000000361ee0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  ima_get_action+0x22/0x30
+> >  process_measurement+0xb0/0x830
+> >  ? page_add_file_rmap+0x15/0x170
+> >  ? alloc_set_pte+0x269/0x4c0
+> >  ? prep_new_page+0x81/0x140
+> >  ? simple_xattr_get+0x75/0xa0
+> >  ? selinux_file_open+0x9d/0xf0
+> >  ima_file_check+0x64/0x90
+> >  path_openat+0x571/0x1720
+> >  do_filp_open+0x9b/0x110
+> >  ? page_counter_try_charge+0x57/0xc0
+> >  ? files_cgroup_alloc_fd+0x38/0x60
+> >  ? __alloc_fd+0xd4/0x250
+> >  ? do_sys_open+0x1bd/0x250
+> >  do_sys_open+0x1bd/0x250
+> >  do_syscall_64+0x5d/0x1d0
+> >  entry_SYSCALL_64_after_hwframe+0x65/0xca
+> >
+> > Commit c7423dbdbc9e ("ima: Handle -ESTALE returned by
+> > ima_filter_rule_match()") introduced call to ima_lsm_copy_rule within a
+> > RCU read-side critical section which contains kmalloc with GFP_KERNEL.
+> > This implies a possible sleep and violates limitations of RCU read-side
+> > critical sections on non-PREEMPT systems.
+> >
+> > Sleeping within RCU read-side critical section might cause
+> > synchronize_rcu() returning early and break RCU protection, allowing a
+> > UAF to happen.
+> >
+> > The root cause of this issue could be described as follows:
+> > |     Thread A        |       Thread B        |
+> > |                     |ima_match_policy       |
+> > |                     |  rcu_read_lock        |
+> > |ima_lsm_update_rule  |                       |
+> > |  synchronize_rcu    |                       |
+> > |                     |    kmalloc(GFP_KERNEL)|
+> > |                     |      sleep            |
+> > =3D=3D> synchronize_rcu returns early
+> > |  kfree(entry)               |                       |
+> > |                     |    entry =3D entry->next|
+> > =3D=3D> UAF happens and entry now becomes NULL (or could be anything).
+> > |                     |    entry->action      |
+> > =3D=3D> Accessing entry might cause panic.
+> >
+> > To fix this issue, we are converting all kmalloc that is called within
+> > RCU read-side critical section to use GFP_ATOMIC.
+> >
+> > Fixes: c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_m=
+atch()")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: GUO Zihua <guozihua@huawei.com>
+> > Acked-by: John Johansen <john.johansen@canonical.com>
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > ---
+> > v3:
+> >   ima_lsm_copy_rule takes a GFP flag as input as well.
+> > v2:
+> >   Changed the audit_rule_init security hook to accept a new GFP flag, a=
+s
+> > per Stephen's suggestion.
+> >
+> > ---
+> >  include/linux/lsm_hook_defs.h       |  2 +-
+> >  include/linux/security.h            |  5 +++--
+> >  kernel/auditfilter.c                |  5 +++--
+> >  security/apparmor/audit.c           |  6 +++---
+> >  security/apparmor/include/audit.h   |  2 +-
+> >  security/integrity/ima/ima_policy.c | 15 +++++++++------
+> >  security/security.c                 |  6 ++++--
+> >  security/selinux/include/audit.h    |  4 +++-
+> >  security/selinux/ss/services.c      |  5 +++--
+> >  security/smack/smack_lsm.c          |  3 ++-
+> >  10 files changed, 32 insertions(+), 21 deletions(-)
 >
-> Thank you, the same error was reported by the kernel test robot
-> overnight.  I'm going to look at it today, I suspect it is a conflict
-> between the LSM and IMA/EVM branches.  FWIW, I compiled and booted a
-> kernel using the LSM changes yesterday without problem.
+> With the exception of one small gotcha (see below), this looks okay to
+> me.  At Mimi's request I'm going to merge this into the LSM tree, via
+> lsm/stable-6.10, where I'll give it a few days in linux-next before
+> sending it up to Linus.
 
-Nevermind, it turns out the patch is bad :( ... more on the LSM list shortl=
-y.
+I also had to apply the following fix to this patch to resolve the
+!CONFIG_IMA_LSM_RULES ca
+se ... grrrrr.
 
-> > Build error:
-> > --------
-> > security/integrity/ima/ima_policy.c: In function 'ima_lsm_copy_rule':
-> > security/integrity/ima/ima_policy.c:427:17: error: too many arguments
-> > to function 'ima_filter_rule_init'
-> >   427 |                 ima_filter_rule_init(nentry->lsm[i].type, Audit=
-_equal,
-> >       |                 ^~~~~~~~~~~~~~~~~~~~
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 3e568126cd48..c51e24d24d1e 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -546,7 +546,7 @@ static inline void ima_free_modsig(struct modsig *modsi=
+g)
+#else
+
+static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+-                                      void **lsmrule)
++                                      void **lsmrule, gfp_t gfp)
+{
+       return -EINVAL;
+}
+
+> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> > index 146667937811..a4943628d75a 100644
+> > --- a/security/smack/smack_lsm.c
+> > +++ b/security/smack/smack_lsm.c
+> > @@ -4696,7 +4696,8 @@ static int smack_post_notification(const struct c=
+red *w_cred,
+> >   * Prepare to audit cases where (@field @op @rulestr) is true.
+> >   * The label to be audited is created if necessay.
+> >   */
+> > -static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, voi=
+d **vrule)
+> > +static int smack_audit_rule_init(u32 field, u32 op, char *rulestr, voi=
+d **vrule,
+> > +                              gfp_t gfp)
+>
+> You forgot to add the new @gfp parameter to the function's header
+> comment block.  I'm going to add the following as the text is used in
+> other Smack functions, if anyone has any objections please let me know.
+>
+>   " * @gfp: type of the memory for the allocation"
+>
+> >  {
+> >       struct smack_known *skp;
+> >       char **rule =3D (char **)vrule;
 
 --=20
 paul-moore.com
