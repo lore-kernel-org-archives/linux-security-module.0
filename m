@@ -1,106 +1,111 @@
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3B6195B16
-	for <linux-security-module@vger.kernel.org>; Fri, 14 Jun 2024 12:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035852837A
+	for <linux-security-module@vger.kernel.org>; Fri, 14 Jun 2024 15:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718366820; cv=none; b=VJRlHkDxoQ2/HtTWC/7MIMA+GXdrIQTPmW0NLlo/bCMIAWa6BuoAT0BhD2iKDhRw0GBpaN9OXB/3Md73XS565wuQ5SddfnUA2XvaDb82Pu11l8LX923pB+2ji0QSYT7ClDg2Im2XmjRFiCNm0nei56ex7JWBdEihQkOuz+/637w=
+	t=1718377736; cv=none; b=FUYCIgkNbEU5ZJPilm0SlzxfUG9LeLYGsFMfx3du0WbWGG0G42sBVWYDI+hrnGDzh9K4wdaSmaP5FWduzkUP5A4sWE6l11pQzR9QkjN2H8+OAeC6AbPTILIFmtDmnnx/m4/cWTf+vxTB40/Yja7h9wHH34XjQ6NW2y1YFJNBVGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718366820; c=relaxed/simple;
-	bh=+/uhGibMC0VodWLnmx3poA1E1omFTZn+oa/pCFS/5tY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OBw4Z+83uGD9rsU8zkPExNf3nNmG1XquJSlN1ABAeMiCued9VnRBYHLkbnLE4RDycqSkRQGhpfYmR1edrh80VaAaIIZLS6hXLT3FZGG+0LX9BwzxxTXZIRMCTlm2wwvYSRf5lbPRTcs1Rc7cfUEPYSOpB3kC+Ppdo9+JPDR7rvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ztbTGydD; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1718377736; c=relaxed/simple;
+	bh=HrDFMm3wKTp0UO86+kI8aHZ3XDSGQ+2b7UCsc2lJ5RU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hz69UymWTDk1sgPYDn0Hf1+8f2O5EOYcYM3iIN+vsu7WCz4OcIB1JeNKY7iaLO6Gxe4m6ttEpwJNmKridpEOoy1WFcZtusNcR75vsm4jJNDxYjO5csoH7kiuO1w6zDafbSSTruda/rojBg0CDE6oCb5A3V7CBgdwP4d8lVe7zoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ElG3alYV; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ztbTGydD"
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-57cad3fa0a1so1293180a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 14 Jun 2024 05:06:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ElG3alYV"
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6fa11ac8695so1231772a34.3
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Jun 2024 08:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718366817; x=1718971617; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GR7hffcO8SN+iR814i+ZXXfRtOjZPEskyOkMnCnkLaI=;
-        b=ztbTGydDDPMEXpMQcqO04iGzDSrmo3/rkvUOV87IZjQPjqWZBn9s35gEqqE9nijTke
-         1UnNz0D9QW+VzonNfA/ndRhgRn9XzxT0duocmwCsOHxDDFaDtrA/1a20sgbPuEaW/IdB
-         1O+0z/lq5mlK0x551o3WGLhPv48LtgnsPGfItKG2nEwr4S6LwqxdLysJv9PVxg3ZBjjl
-         0sssQGpLLAJyiVEfiBTkrhw35V7RnXLpubtYZEKjfECt2J9eKu06MN2yF39N4MuYhAgQ
-         GO/R4M42im82VUje3ru0sPmgOk+v38YpvMhw1YlOkA4wPvDW35A+6257nQWeV/NDJxPq
-         hpAQ==
+        d=paul-moore.com; s=google; t=1718377733; x=1718982533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=so5U+szNbhr5bnxSQqrZZ3bBxHi8XinDGxihgq18GlU=;
+        b=ElG3alYVenfyC60oeKAQUBdtwT+VkJo6fF/6P1CcBLrjWqFpF7ibdC/RPMGWxRype4
+         wBY4AWisfWXxbN/jWxq2CSeia32mKcOOSRY/gGz2XdzYNsmfnh9z4Rb6xpOeTnsNicg8
+         ODgsdBUGXuYYBXwVz6ccg0CG63X6AuRuW9OvR1dpErtmYJB0IF4qFhCKzRcsqKRsbXsb
+         vTDBBCur+7jOH+/gel7Ochi3Hw7OXPMcFTO6zZc8Css8AvgLmTYadppy++y4AcUCxskE
+         SnSF8tu6h7JFwQcF/Hn+rhLR2gMrbtzEfTLTH7HXg7Knh7FAKModOc/hfmjYFPRbpnOv
+         W0hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718366817; x=1718971617;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GR7hffcO8SN+iR814i+ZXXfRtOjZPEskyOkMnCnkLaI=;
-        b=lb+I47vNPH44WmSLeSd3fyeBxOVkAlxC58Lh9uSWBHPZrjL+dgMUE0sHutWG90BGr4
-         qsIX0HH+cWkautOpBOX1U5a+IEDN50I8wd7ySO7yhDOgXwo44yoXU+nx3IUHABSx7/qF
-         zij86rbBR62CUxeB6D1QCHpyztj5qR/xNvUcnkPlwrfIv2QQlxN58sViAargMubF3TAK
-         SelgEgGHGyYV9N6SS/10SnjrjwQ2VBJWapC5qo2+zZYrOp0qjhY+n6PtufBDDSTkfX5Z
-         YdEPbJhvNRn5D/YP24xo878L4bPp++rIBKdkDoQ+bbnn2akygPlYCPJigEclzej0jdWV
-         TIQQ==
-X-Gm-Message-State: AOJu0YwgddLnPNyZT8UvO83126B3/S2hIuzGewBYoKPWFJuwUlNlBu8o
-	lFdnOkPKohVXYzrCMj7Q5i0SWpVL72m+03yZJOoLpqMBEyU/XpJJGLUWXeasVvoK85zvTVzg/Se
-	pkw==
-X-Google-Smtp-Source: AGHT+IH0aPfN2xcmzs5hHHc3KdGfiGTggvt09QbMV9bZ0Udafhb2wsj3/5ejSvEFbmifkv/XgXprA2qn70w=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:aa7:d44d:0:b0:57c:c0ea:110 with SMTP id
- 4fb4d7f45d1cf-57cc0ea02f8mr2025a12.3.1718366817062; Fri, 14 Jun 2024 05:06:57
- -0700 (PDT)
-Date: Fri, 14 Jun 2024 14:06:54 +0200
-In-Reply-To: <20240613.chiec1EeThe3@digikod.net>
+        d=1e100.net; s=20230601; t=1718377733; x=1718982533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=so5U+szNbhr5bnxSQqrZZ3bBxHi8XinDGxihgq18GlU=;
+        b=lM4laYMstsAOLkpoToL7NGnjBbJawCHjfGX21r5AUrmMwpigvom6KBU0Jx13j7F3W0
+         Yi9O+1VxCeBxwQe3kSvdtHaNnRnwfyWLAlP1SCvF2WeRYdLAL6T5ZbpJaqbUiM7d9hz8
+         KKmZjqGeMUxKRZSxh80yAJTyiShLj6DkbbdaM18ZJxtPXB2nU3TDs0Dc98v+SUcmANGI
+         V3CqILHLmkC0f85iurngvRGPXBkZ7ghND0sLMptFwASxuJoY3Mt1rKgPNtd6b/co+6c8
+         R0/4CEddOi5QMBlJztoILk/wcIwA+D9leOs8si2Nvge5ObwcxVNp0U1rxsqlewexAo4d
+         3r9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOq1URf+jrbwPwEiIK4WY5cvgbM/RWek04lWuvNtzCq5ATvSq3mAfJ0ebEgR+ol6nfhE/S0Zv5yrq/+XScDPQ02s6FelLK/+xMN8zVPg3phjNbblay
+X-Gm-Message-State: AOJu0YxrSvTNTWsduGC4jaAGZy+cnemBk4Keda6U/gvqZR6bDpyoNIYe
+	uY64yWy0F4AU6AaRSFZaUfPVV08P2x5Eq6AkufXPVKDmw7Gazi4JRIJeGL51MFFtg08hmCB+EC5
+	PBYfFaNwguxhVHd/NgpsJ1HuHMLot6u1Rc9Kc
+X-Google-Smtp-Source: AGHT+IFwLI89Z0cObJU/BB4y3EADZgT0NPGQP8yPvcIcc70tnoYEV1Wzk2snZ+CT8t98W5JCjs0/zjJ2FHkRh1NIJcU=
+X-Received: by 2002:a05:6808:170b:b0:3d2:2b43:1804 with SMTP id
+ 5614622812f47-3d24e8e108bmr3360579b6e.19.1718377732934; Fri, 14 Jun 2024
+ 08:08:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ZmazTKVNlsH3crwP@google.com> <20240610082115.1693267-1-gnoack@google.com>
- <20240613.chiec1EeThe3@digikod.net>
-Message-ID: <ZmwyXoItby7LDd6k@google.com>
-Subject: Re: [PATCH] landlock: Use bit-fields for storing handled layer access masks
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240607160753.1787105-1-omosnace@redhat.com> <171834962895.31068.8051988032320283876.git-patchwork-notify@kernel.org>
+In-Reply-To: <171834962895.31068.8051988032320283876.git-patchwork-notify@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 14 Jun 2024 11:08:41 -0400
+Message-ID: <CAHC9VhSRUW5hQNmXUGt2zd8hQUFB0wuXh=yZqAzH7t+erzqRKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
+ the CIPSO options
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	patchwork-bot+netdevbpf@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 11:20:38PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> Great!  Looking at the generated data structures with pahole, it doesn't
-> increase the whole size, and it should be fine with other (small) fields
-> too.
->=20
-> With this new struct, we don't need the landlock_get_* helpers anymore.
-> We might want to keep the landlock_add_*() helpers as safeguards
-> (because of the WARN_ON_ONCE) though.
+On Fri, Jun 14, 2024 at 3:20=E2=80=AFAM <patchwork-bot+netdevbpf@kernel.org=
+> wrote:
+>
+> Hello:
+>
+> This series was applied to netdev/net.git (main)
+> by David S. Miller <davem@davemloft.net>:
 
-I am unsure about removing these helper functions, due to the following rea=
-sons:
+Welp, that was premature based on the testing requests in the other
+thread, but what's done is done.
 
- * landlock_get_fs_access_mask is the place where we transparently add the
-   "refer" access right.  If we remove landlock_get_net_access_mask, it wou=
-ld be
-   assymetric with keeping the same function for the file system restrictio=
-ns.
+Ondrej, please accelerate the testing if possible as this patchset now
+in the netdev tree and it would be good to know if it need a fix or
+reverting before the next merge window.
 
- * landlock_init_layer_masks() is using landlock_get_fs_access_mask and
-   landlock_get_net_access_mask through a function pointer.  When these
-   functions are gone, we would have to redefine them locally anyway.
+> On Fri,  7 Jun 2024 18:07:51 +0200 you wrote:
+> > This series aims to improve cipso_v4_skbuff_delattr() to fully
+> > remove the CIPSO options instead of just clearing them with NOPs.
+> > That is implemented in the second patch, while the first patch is
+> > a bugfix for cipso_v4_delopt() that the second patch depends on.
+> >
+> > Tested using selinux-testsuite a TMT/Beakerlib test from this PR:
+> > https://src.fedoraproject.org/tests/selinux/pull-request/488
+> >
+> > [...]
+>
+> Here is the summary with links:
+>   - [v2,1/2] cipso: fix total option length computation
+>     https://git.kernel.org/netdev/net/c/9f3616991233
+>   - [v2,2/2] cipso: make cipso_v4_skbuff_delattr() fully remove the CIPSO=
+ options
+>     (no matching commit)
+>
+> You are awesome, thank you!
+> --
+> Deet-doot-dot, I am a bot.
+> https://korg.docs.kernel.org/patchwork/pwbot.html
 
-   Options to refactor this function include:
-    * split it in two separate functions landlock_init_fs_layer_masks and
-      landlock_init_net_layer_masks.  It would end up duplicating some of t=
-he
-      bit manipulation code.
-    * add another #if further down in the function
-
-   Both variants seem not nice.
-
-Do you think this is worth doing?
-
-=E2=80=94G=C3=BCnther
+--=20
+paul-moore.com
