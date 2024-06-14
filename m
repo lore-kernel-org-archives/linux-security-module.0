@@ -1,46 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7AB19ADB3;
-	Fri, 14 Jun 2024 18:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE901F946;
+	Fri, 14 Jun 2024 20:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718390499; cv=none; b=qNeM+TJJjDORGzOJ79u3IhSU1EwH3dL+J0WZDXQsHHbunt7ofumeBvb/XyqGVPdQLk4e5KH+fzBdtWa8s3NKajf2SNHrHs7rEXffdeDin5Fslr47uwZdGOEI3oYSfpvjlTtxkaOzBLec5hEqV1gu7qCOAQ4nWaNTUu6H2kuMh4Q=
+	t=1718395504; cv=none; b=IWIyEVyA3c27kBnSJ3EcC+IMF5PqeCSK0lJXypB9Q7F/BhezaXgnv8y0/rFVjijwZljjqve2ujRuNV84YbY4eRsiHsQNfPpQlF+hXvJ894aycj1ADtHhdlnfVEqHzUM2FVMJE4OQGHRZF9HAVkRLedHvZPP9+ZaSyc0kbSCp1ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718390499; c=relaxed/simple;
-	bh=eNfNLPou9bpDvL/G8e13RmhlK6Su6AEqPpnIuSsApjA=;
+	s=arc-20240116; t=1718395504; c=relaxed/simple;
+	bh=RY8ceAoPye2/KbZtpTdpJ8++ZFtCXb35P5m4OwHe5Os=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e7harG5QmBI9GHjLUigF7fL42lkoTj+/YiWW8MLBcZuH4bF98FJ5mS811uXFgJJ0m5snXtmq8Zq33ASAFKx7zJmV+nvMcg/ct/7XZSpz83QT22rNtw7gJXewnZV9pX3P8/IcuQ8sWEPyx1Jy5j6bhXhTZNlxn+oU6Ma9l3Xctgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3gVxdH0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=szVtZYVMvQi+ykbOibdUQWx0xbCPYnwhLemub8p8NhZjMmfHYmy+F0uSPFjti/o7R7QWEwMROVfx/jtqdzACiunspNxnRAVBqNl4LTbh/PHV1JJHerfE2Dj5a90S6cyYCl0/XjCPo4AMjixUh8SGlwpnR/93RBBMw+FaAjsqFbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZYrk0p0; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3gVxdH0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661B1C2BD10;
-	Fri, 14 Jun 2024 18:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718390499;
-	bh=eNfNLPou9bpDvL/G8e13RmhlK6Su6AEqPpnIuSsApjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d3gVxdH0BxA+WtA3scbeVwkYwYzeMkYO4urUszsIfoSrrOwSAJR4DD1R+Jyb56JiH
-	 aQkf3M9/+Q7IH8fcqeD8iizadr0rpbvF9Z4dntHG2YQVNsKNgGWXQTqomvTNnrMNo6
-	 s6zA63mdxp4BDm7qifjkxCKuYbf1zWfnuSiiHKVJtBYLmv+7pygVw4OVFevo7K/NB/
-	 Y1lA2FVJXCgq3XNk6n3jPa/Y65mTlnFFYPePdaQt69IDkf8iyJgtzROZXdWA+FV4k5
-	 flfbFxERUJdxWQnpvBZaNj5LlQbyLz8knuqiwnENzhMEI0HT9xZI7Ace64nDYGtnFC
-	 IQKKbUsJrhQTg==
-Date: Fri, 14 Jun 2024 15:41:35 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, mic@digikod.net, gnoack@google.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v4] perf trace: BTF-based enum pretty printing
-Message-ID: <ZmyO39kNH0gscc5n@x1>
-References: <20240613042747.3770204-1-howardchu95@gmail.com>
- <ZmrqQs64TvAt8XjK@x1>
- <ZmrtGuhdMlbssODG@x1>
- <CAH0uvogFih59J1nBQKKM4r2Fc1UA755EoAa01e6MihSd1_QHFg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZYrk0p0"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c83100bd6so3216136a12.3;
+        Fri, 14 Jun 2024 13:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718395502; x=1719000302; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GOLNVEd7uGKCnwNzRJhDFbm6VnORpl1wejZd5oVyq3I=;
+        b=gZYrk0p0XFmSrCMwr+cECwmmKsXx5ManCUtfKty2UJuV+2I7h8qZglyT4JXZrX2Aqr
+         lCKfvkzTemVZGLJxyE2Xyzf0K2A8xmujKJIJkO7zCeWthN7SY/JwLQcH/Yx0VqAMCL5+
+         jy6iUt6i8l80cTjdeGdjTYmnzlVQA7GTUhNQRvvJ7+xRG1pvGottCxfHxdRsQdzcx4aj
+         PIbP/79c9Ia1KRqPVtedmyYYsuMXMDbaushwcRUoNBLTImgz/ZWTG5bqBNVid2L/avZH
+         cFHRE+TvlHpZ4EMiGtmLSkkPIk88Ci5yQn4UQJdp62w+S4r0PoaAG5/zIFR2RdS1AJue
+         0Y8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718395502; x=1719000302;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GOLNVEd7uGKCnwNzRJhDFbm6VnORpl1wejZd5oVyq3I=;
+        b=TlHXbhLuUOVYLX57kYbNvL7blz3GIZhDNhtzMP6zLKx4klHzh5mfQAFIXwc0BpZNGR
+         Ed4be1smy7Yvk2BtbCaODTSdzWzGsCBOc34sp6XzRhqHhjRyNj/CBwHGjWYhrhp3k+ht
+         vslBIkdj8X9YnzydSWELd/C1p+qgwIDJNNNUSFxL3ZqJh0sErvPdHeY0/mTuVCvp3LwR
+         B/itKw4B2LAuzL93J6Yenp6pvfMNkDSxW1lMMcldPJL5m/Y7AjZdSEhQ3qTddvZSKjYV
+         umtuZM8EBG9w5IuMetV8+E06DBcYKis7j9XgypWlcWsu8QpO6pM1+mOu6JK8nVPvktN5
+         m1uw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8HCuHqUnF15Ye1EOz5wQS4EBhmal5TgPNFsm+SLF07jVWUV8hNvkeIMSLDtp33cIyDkLxKOvl5a15B2BSncuipcz0qbJZSyo/FylRh5sM6zeMHMUib4s2XIdEwvUmX0rgaDqUkfnwD9wH7IZ25nqgTMyq78fDYV5U8sBnhMUsWAqDpmwsHQ/f717k
+X-Gm-Message-State: AOJu0YwaE3pEdfljz+U7ir2Bj3c4PAtUULIhjQw4nRWi+CRzoAEc/Mvb
+	oeyvlv0acuc+ra2zaq5XUglacIQSHmikxz18F/hI4YHndu/TFyc8
+X-Google-Smtp-Source: AGHT+IEWfLWlENiwg72FCRRqNPcBcq3lwyJii5+8BM8ZYIu/nw1QYu4DRlw4LsF9JMJ9JUGXSABcog==
+X-Received: by 2002:a50:ab1d:0:b0:57c:a886:c402 with SMTP id 4fb4d7f45d1cf-57cbd665237mr2364187a12.12.1718395501361;
+        Fri, 14 Jun 2024 13:05:01 -0700 (PDT)
+Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e5aesm2639504a12.60.2024.06.14.13.05.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 13:05:01 -0700 (PDT)
+Date: Fri, 14 Jun 2024 22:04:56 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <20240614.128b8d9046fd@gnoack.org>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
+ <20240611.Pi8Iph7ootae@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,164 +76,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH0uvogFih59J1nBQKKM4r2Fc1UA755EoAa01e6MihSd1_QHFg@mail.gmail.com>
+In-Reply-To: <20240611.Pi8Iph7ootae@digikod.net>
 
-On Thu, Jun 13, 2024 at 11:50:59PM +0800, Howard Chu wrote:
-> Thanks for testing and reviewing this patch, and your precious suggestions.
-
-You're welcome
- 
-> On Thu, Jun 13, 2024 at 8:59 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > > On Thu, Jun 13, 2024 at 12:27:47PM +0800, Howard Chu wrote:
-> > > > changes in v4:
-
-> > > > - Add enum support to tracepoint arguments
-
-> > > That is cool, but see below the comment as having this as a separate
-> > > patch.
-
-> > > Also please, on the patch that introduces ! syscall tracepoint enum args
-> > > BTF augmentation include examples of tracepoints being augmented. I'll
-
-> > You did it as a notes for v4, great, I missed that.
-
-> > > try here while testing the patch as-is.
-
-> > The landlock_add_rule continues to work, using the same test program I
-> > posted when testing your v1 patch:
-
-> > root@x1:~# perf trace -e landlock_add_rule
-> >      0.000 ( 0.016 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 1, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
-> >      0.115 ( 0.003 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 2, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
-
-> > Now lets try with some of the !syscalls tracepoints with enum args:
-
-> > root@x1:~# perf trace -e timer:hrtimer_start --max-events=5
-> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-> > 18446744073709.551 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff2a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-> >      0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff325050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-> >      0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff3a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-> > 18446744073709.543 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff425050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
-> > root@x1:~#
-
-> > Cool, it works!
-
-> > Now lets try and use it with filters, to get something other than HRTIMER_MODE_ABS:
-
-> > root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS' --max-events=5
-> > No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS) && (common_pid != 475859 && common_pid != 4041)"
-> > root@x1:~#
-
-> > oops, that is the next step then :-)
- 
-> Sure, I will add support for enum filtering(enum string -> int).
-
-Cool
- 
-> > If I do:
-
-> > root@x1:~# pahole --contains_enumerator=HRTIMER_MODE_ABS
-> > enum hrtimer_mode {
-> >         HRTIMER_MODE_ABS             = 0,
-> >         HRTIMER_MODE_REL             = 1,
-> >         HRTIMER_MODE_PINNED          = 2,
-> >         HRTIMER_MODE_SOFT            = 4,
-> >         HRTIMER_MODE_HARD            = 8,
-> >         HRTIMER_MODE_ABS_PINNED      = 2,
-> >         HRTIMER_MODE_REL_PINNED      = 3,
-> >         HRTIMER_MODE_ABS_SOFT        = 4,
-> >         HRTIMER_MODE_REL_SOFT        = 5,
-> >         HRTIMER_MODE_ABS_PINNED_SOFT = 6,
-> >         HRTIMER_MODE_REL_PINNED_SOFT = 7,
-> >         HRTIMER_MODE_ABS_HARD        = 8,
-> >         HRTIMER_MODE_REL_HARD        = 9,
-> >         HRTIMER_MODE_ABS_PINNED_HARD = 10,
-> >         HRTIMER_MODE_REL_PINNED_HARD = 11,
-> > }
-> > root@x1:~#
-
-> > And then use the value for HRTIMER_MODE_ABS instead:
-
-> > root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0' --max-events=1
-> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210759990000000, softexpires: 210759990000000, mode: HRTIMER_MODE_ABS_PINNED_HARD)
-> > root@x1:~#
-
-> > Now also filtering HRTIMER_MODE_ABS_PINNED_HARD:
-
-> > root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0 && mode != 10' --max-events=2
-> >      0.000 podman/178137 timer:hrtimer_start(hrtimer: 0xffffa2024468fda8, function: 0xffffffff9e2170c0, expires: 210886679225214, softexpires: 210886679175214, mode: HRTIMER_MODE_REL)
-> >     32.935 podman/5046 timer:hrtimer_start(hrtimer: 0xffffa20244fabc40, function: 0xffffffff9e2170c0, expires: 210886712159707, softexpires: 210886712109707, mode: HRTIMER_MODE_REL)
-> > root@x1:~#
-
-> > But this then should be a _third_ patch :-)
+On Tue, Jun 11, 2024 at 10:19:20AM +0200, Mickaël Salaün wrote:
+> On Tue, Jun 11, 2024 at 12:27:58AM +0200, Jann Horn wrote:
+> > This reminds me - from what I remember, Landlock also doesn't restrict
+> > access to filesystem-based unix sockets yet... I'm I'm right about
+> > that, we should probably at some point add code at some point to
+> > restrict that as part of the path-based filesystem access rules? (But
+> > to be clear, I'm not saying I expect you to do that as part of your
+> > patch, just commenting for context.)
 > 
-> Sure.
+> Yes, I totally agree.  For now, unix socket binding requires to create
+> the LANDLOCK_ACCESS_FS_MAKE_SOCK right, but connecting to an existing
+> socket is not controlled.  The abstract unix socket scoping is
+> orthogonal and extends Landlock with unix socket LSM hooks, which are
+> required to extend the "filesystem" access rights to control path-based
+> unix socket.
 
-> > We're making progress!
- 
-> > See the comment about evsel__init_tp_arg_scnprintf() below. Also please
-> > do patches on top of previous work, i.e. the v3 patch should be a
-> > separate patch and this v4 should add the extra functionality, i.e. the
-> > support for !syscall tracepoint enum BTF augmentation.
- 
-> Thank you for suggesting this. May I ask if this is saying that v3 and
-> v4 should all be separated?
+Thanks for the reminder, Jann!  I filed it as
+https://github.com/landlock-lsm/linux/issues/36.
 
-Yes, I suggest you extract from v4 the updated contents of v3 and have
-it as a "perf trace: Augment enum syscall arguments with BTF", have the
-examples of such syscalls before and after.
-
-Then have another patch, that assumes that first patch with the fix and
-the "perf trace: Augment enum syscall arguments with BTF" are applied
-that will add support for augmenting non-syscall tracepoints with enum
-arguments with BTF.
- 
-> > The convention here is that evsel__ is the "class" name, so the first
-> > arg is a 'struct evsel *', if you really were transforming this into a
-> > 'struct trace' specific "method" you would change the name of the C
-> > function to 'trace__init_tp_arg_scnprintf'.
- 
-> Oops, my bad. Thanks for pointing it out.
- 
-> > But in this case instead of passing the 'struct trace' pointer all the
-> > way down we should instead pass a 'bool *use_btf' argument, making it:
-
-> > static int evsel__init_tp_arg_scnprintf(struct evsel *evsel, bool *use_btf)
- 
-> You are right, we should do that. Thanks for pointing out this silly
-> implementation. I think we should do the same for
-> syscall__set_arg_fmts(struct trace *trace, struct syscall *sc) as
-> well. Also, I forgot to delete the unused 'bool use_btf' in struct
-> syscall, I will delete it.
->
-> > Then, when evlist__set_syscall_tp_fields(evlist, &use_btf) returns,
-> > check that use_btf to check if we need to call
-> > trace__load_vmlinux_btf(trace).
- 
-> > And when someone suggests you do something and you implement it, a
-> > Suggested-by: tag is as documented in:
-
-> > ⬢[acme@toolbox perf-tools-next]$ grep -A5 Suggested-by Documentation/process/submitting-patches.rst
-> > Using Reported-by:, Tested-by:, Reviewed-by:, Suggested-by: and Fixes:
- 
-> > A Suggested-by: tag indicates that the patch idea is suggested by the person
-> > named and ensures credit to the person for the idea. Please note that this
-> > tag should not be added without the reporter's permission
- 
-> May I ask if you want a Suggested-by? Hats off to you sir.
-
-yes, it is appropriate in this case.
- 
-> Also, do you want me to do the fixes on evsel__init_tp_arg_scnprintf()
-
-If its separate from what you are doing, yes, you do the fix then
-continue with the new features.
-
-> for tracepoint enum, and send it as v5, or just send a separate patch
-> for tracepoint enum, so we get a patch for syscall enum, and another
-> patch for tracepoint enum? Sorry to bother you on these trivial
-> things.
-
-> Thanks again for this detailed review, and valuable suggestions.
-
-- Arnaldo
+–Günther
