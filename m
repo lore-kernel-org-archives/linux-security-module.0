@@ -1,88 +1,88 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273184779F
-	for <linux-security-module@vger.kernel.org>; Sat, 15 Jun 2024 15:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE602179BC;
+	Sat, 15 Jun 2024 15:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718464113; cv=none; b=WcLoowyKVdCpm6mYhoWFh3a6v8a1QhaZl92aKzeDtQehBcUsxzqQkYRoNA0pPCg3hEXfX43HVCJrZlogHwidnb/XMiG9axaghGfSO2KCq5voO4KkzzgzZQpA7bJ6mFQHdxClXVTAQTKTdwzj6a2t79eQ9MXPwgkEmnwJ6XCDyq4=
+	t=1718464759; cv=none; b=ccHWVuY8eaYBZgGXgDVwgpIA8VACA7tIBgLwFwICFkUaWuOx5trAicMFg+s/6rZuooK6Mc0RtRH0MOCIAKMLGOocSXR5f5DAYeZreJxNePcvNWWAlaUr8JwtjeF5Zl4y9OKSfdHsUEkevgkjNa26zBdeP2ZPqOCl3sXvCVORMZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718464113; c=relaxed/simple;
-	bh=mEAUaSYtM704GXb+Tw47BKuFbkXvOoIG6okmdn5DaBE=;
+	s=arc-20240116; t=1718464759; c=relaxed/simple;
+	bh=1zDuwRl/lX9dBCJ3NnMtmQCVtCwygvYkw+bI7CIvKEg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1nSYWfywUnGTpPCCeDNlsmAoChAoyAcWPWFxci2H1hOTWwGpHOK4BMRnkrrv6FpFocKOUa60qOv6m2e0vbI7AVjmJgTYuOJSudyCFRqAYMqZFnL/Ok9IjBP8dwxvIlS+LKhwXGvPLDXgCpkpxHvnbokqKABIi8wrKulfmZJguw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Oww9SoUK; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Oww9SoUK"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W1ffS5m60zBWw;
-	Sat, 15 Jun 2024 17:08:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1718464096;
-	bh=ENCJTkUwhZrciw6pMkqaNCXvUNNHoTFHBqvd1gf3+Ks=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oww9SoUKNKcqh6Lh1sDox3xTjO2p8/06yrUpg5PPiN9FM8/0Oj2ZAkTJ8GH/yNvyy
-	 AuWX4KyMGsLR+SKVGNGOUxzOxDPrNWh86H6qC96mq6lPDQGdl5+KTpVqXpwR+/XZSJ
-	 uPnxZcn++8b8u1Wk0r5bd7Zwrs61sUhly0EbwK/w=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4W1ffS1WMWz4V2;
-	Sat, 15 Jun 2024 17:08:16 +0200 (CEST)
-Date: Sat, 15 Jun 2024 17:08:12 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH] landlock: Use bit-fields for storing handled layer
- access masks
-Message-ID: <20240615.ahch5wah7OY4@digikod.net>
-References: <ZmazTKVNlsH3crwP@google.com>
- <20240610082115.1693267-1-gnoack@google.com>
- <20240613.chiec1EeThe3@digikod.net>
- <ZmwyXoItby7LDd6k@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ut4e2njVUCH0DSKaYG8avLBul5tEjQw1kMu77HZD7bB9AVQjkhBWI5DXNy2QoftBx4Q+GxEzA1HO52IQ4uIZsB5sCfCy4XpVStU5uIMi/wYtCSlm4/RcaZixtiifg7QGrtOkqZEl0aHyy1/Uch2kOy0uZxb63BxxWKXqIRyN4dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id B241C66D; Sat, 15 Jun 2024 10:19:08 -0500 (CDT)
+Date: Sat, 15 Jun 2024 10:19:08 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jonathan Calmels <jcalmels@3xx0.net>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andrew Morgan <morgan@kernel.org>,
+	brauner@kernel.org, ebiederm@xmission.com,
+	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>, KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>,
+	John Johansen <john.johansen@canonical.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	containers@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] capabilities: Add user namespace capabilities
+Message-ID: <20240615151908.GA44653@mail.hallyn.com>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+ <20240609104355.442002-2-jcalmels@3xx0.net>
+ <20240610130057.GB2193924@mail.hallyn.com>
+ <o5llgu7tzei7g2alssdqvy4g2gn66b73tcsir3xqktfqs765ke@wyofd2abvdbj>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmwyXoItby7LDd6k@google.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <o5llgu7tzei7g2alssdqvy4g2gn66b73tcsir3xqktfqs765ke@wyofd2abvdbj>
 
-On Fri, Jun 14, 2024 at 02:06:54PM +0200, Günther Noack wrote:
-> On Thu, Jun 13, 2024 at 11:20:38PM +0200, Mickaël Salaün wrote:
-> > Great!  Looking at the generated data structures with pahole, it doesn't
-> > increase the whole size, and it should be fine with other (small) fields
-> > too.
+On Tue, Jun 11, 2024 at 01:20:40AM -0700, Jonathan Calmels wrote:
+> On Mon, Jun 10, 2024 at 08:00:57AM GMT, Serge E. Hallyn wrote:
 > > 
-> > With this new struct, we don't need the landlock_get_* helpers anymore.
-> > We might want to keep the landlock_add_*() helpers as safeguards
-> > (because of the WARN_ON_ONCE) though.
+> > Now, one thing that does occur to me here is that there is a
+> > very mild form of sendmail-capabilities vulnerability that
+> > could happen here.  Unpriv user joe can drop CAP_SYS_ADMIN
+> > from cap_userns, then run a setuid-root program which starts
+> > a container which expects CAP_SYS_ADMIN.  This could be a
+> > shared container, and so joe could be breaking expected
+> > behavior there.
+> > 
+> > I *think* we want to say we don't care about this case, but
+> > if we did, I suppose we could say that the normal cap raise
+> > rules on setuid should apply to cap_userns?
+> > 
 > 
-> I am unsure about removing these helper functions, due to the following reasons:
+> Right, good catch. If we do want to fix it, we could just check for
+> setuid no? Or do we want to follow the normal root inheritance rules
+> too? Essentially something like this:
 > 
->  * landlock_get_fs_access_mask is the place where we transparently add the
->    "refer" access right.  If we remove landlock_get_net_access_mask, it would be
->    assymetric with keeping the same function for the file system restrictions.
-> 
->  * landlock_init_layer_masks() is using landlock_get_fs_access_mask and
->    landlock_get_net_access_mask through a function pointer.  When these
->    functions are gone, we would have to redefine them locally anyway.
-> 
->    Options to refactor this function include:
->     * split it in two separate functions landlock_init_fs_layer_masks and
->       landlock_init_net_layer_masks.  It would end up duplicating some of the
->       bit manipulation code.
->     * add another #if further down in the function
-> 
->    Both variants seem not nice.
-> 
-> Do you think this is worth doing?
+> pU' = is_suid(root) ? X : pU
 
-No, I agree with you.  It's applied to my next branch. Thanks!
+Yeah, I think that makes sense.  Thanks.
 
-Mikhail, Tahera, please base your next patch series on this branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/
+-serge
