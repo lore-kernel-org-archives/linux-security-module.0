@@ -1,100 +1,341 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE901F946;
-	Fri, 14 Jun 2024 20:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706C2C153;
+	Sat, 15 Jun 2024 01:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718395504; cv=none; b=IWIyEVyA3c27kBnSJ3EcC+IMF5PqeCSK0lJXypB9Q7F/BhezaXgnv8y0/rFVjijwZljjqve2ujRuNV84YbY4eRsiHsQNfPpQlF+hXvJ894aycj1ADtHhdlnfVEqHzUM2FVMJE4OQGHRZF9HAVkRLedHvZPP9+ZaSyc0kbSCp1ec=
+	t=1718416426; cv=none; b=a2aly9Rqg5rU9NQ0Q2OVnnTTGrrKN1g2JFpas1gKU3wfc7dZYGS1uxYY4d+nbK2P7fs49ByrqWlapqmH+84BorX2g68wfPcoeKDxq+RgRM9+A+5WeNA/F5aoKwi6LaQxnDqn5Rgb5CJlUIG97Wa+DLTagvPgtZwkLAYkg94NRoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718395504; c=relaxed/simple;
-	bh=RY8ceAoPye2/KbZtpTdpJ8++ZFtCXb35P5m4OwHe5Os=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=szVtZYVMvQi+ykbOibdUQWx0xbCPYnwhLemub8p8NhZjMmfHYmy+F0uSPFjti/o7R7QWEwMROVfx/jtqdzACiunspNxnRAVBqNl4LTbh/PHV1JJHerfE2Dj5a90S6cyYCl0/XjCPo4AMjixUh8SGlwpnR/93RBBMw+FaAjsqFbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZYrk0p0; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1718416426; c=relaxed/simple;
+	bh=qY19UZhPA2bTp4GBh41w50lOAkvM+FXG8RAsmb/Nv/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GfzFaVcCjxFPUcVnze0QKQ6dqt7nDGo7g19YEbi6vkwk0dmArU041wiRZgx39f91AW/l0v35VkN5uPrW5Vu9aMhhWDgxmH8RDc58bE/VcVALXgm9bAcZldGNnG7M6LlBDcxzHXKgeMrqgH0g/Tj4boIT7+gr3vzfwOyxdJ7qaO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+GeYPp8; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZYrk0p0"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c83100bd6so3216136a12.3;
-        Fri, 14 Jun 2024 13:05:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+GeYPp8"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f44b45d6abso21666915ad.0;
+        Fri, 14 Jun 2024 18:53:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718395502; x=1719000302; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GOLNVEd7uGKCnwNzRJhDFbm6VnORpl1wejZd5oVyq3I=;
-        b=gZYrk0p0XFmSrCMwr+cECwmmKsXx5ManCUtfKty2UJuV+2I7h8qZglyT4JXZrX2Aqr
-         lCKfvkzTemVZGLJxyE2Xyzf0K2A8xmujKJIJkO7zCeWthN7SY/JwLQcH/Yx0VqAMCL5+
-         jy6iUt6i8l80cTjdeGdjTYmnzlVQA7GTUhNQRvvJ7+xRG1pvGottCxfHxdRsQdzcx4aj
-         PIbP/79c9Ia1KRqPVtedmyYYsuMXMDbaushwcRUoNBLTImgz/ZWTG5bqBNVid2L/avZH
-         cFHRE+TvlHpZ4EMiGtmLSkkPIk88Ci5yQn4UQJdp62w+S4r0PoaAG5/zIFR2RdS1AJue
-         0Y8w==
+        d=gmail.com; s=20230601; t=1718416424; x=1719021224; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5t3lCO/aliWaX3lRu3qs/sWr5aScOQ+/zbL8ye5TNf0=;
+        b=g+GeYPp8heHpjQXKwW61qst1z9ORgUVsbJPNqgvqV+I2/AP/zQbwU/AHQx+ZW/2HWh
+         gAtX/9HhxAZHHHwIVy0+vLcz22PDvr/wnUs4xLyfnZ3MaNT2DYeIAmk1ptIkpT7uc/dz
+         bCyAC60jmF4VKOvrWmEeXamAc4rMI6js8oy8lhPZqiLW8Jp/R7f7BBE+ZP3eSUeGvybE
+         2Lb80jxkW2L06Pbig9f+cYJF6ej21izJ20uy+QyjHJUdVniQ54TAiegvsXKhHNm/8mvX
+         PA+8ki0Okwh4cs5JxI36e2SJya0I5X10OHpToNk54PEXI5drtJjndIRLFb6aLSKaKlDQ
+         nPaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718395502; x=1719000302;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GOLNVEd7uGKCnwNzRJhDFbm6VnORpl1wejZd5oVyq3I=;
-        b=TlHXbhLuUOVYLX57kYbNvL7blz3GIZhDNhtzMP6zLKx4klHzh5mfQAFIXwc0BpZNGR
-         Ed4be1smy7Yvk2BtbCaODTSdzWzGsCBOc34sp6XzRhqHhjRyNj/CBwHGjWYhrhp3k+ht
-         vslBIkdj8X9YnzydSWELd/C1p+qgwIDJNNNUSFxL3ZqJh0sErvPdHeY0/mTuVCvp3LwR
-         B/itKw4B2LAuzL93J6Yenp6pvfMNkDSxW1lMMcldPJL5m/Y7AjZdSEhQ3qTddvZSKjYV
-         umtuZM8EBG9w5IuMetV8+E06DBcYKis7j9XgypWlcWsu8QpO6pM1+mOu6JK8nVPvktN5
-         m1uw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8HCuHqUnF15Ye1EOz5wQS4EBhmal5TgPNFsm+SLF07jVWUV8hNvkeIMSLDtp33cIyDkLxKOvl5a15B2BSncuipcz0qbJZSyo/FylRh5sM6zeMHMUib4s2XIdEwvUmX0rgaDqUkfnwD9wH7IZ25nqgTMyq78fDYV5U8sBnhMUsWAqDpmwsHQ/f717k
-X-Gm-Message-State: AOJu0YwaE3pEdfljz+U7ir2Bj3c4PAtUULIhjQw4nRWi+CRzoAEc/Mvb
-	oeyvlv0acuc+ra2zaq5XUglacIQSHmikxz18F/hI4YHndu/TFyc8
-X-Google-Smtp-Source: AGHT+IEWfLWlENiwg72FCRRqNPcBcq3lwyJii5+8BM8ZYIu/nw1QYu4DRlw4LsF9JMJ9JUGXSABcog==
-X-Received: by 2002:a50:ab1d:0:b0:57c:a886:c402 with SMTP id 4fb4d7f45d1cf-57cbd665237mr2364187a12.12.1718395501361;
-        Fri, 14 Jun 2024 13:05:01 -0700 (PDT)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e5aesm2639504a12.60.2024.06.14.13.05.01
+        d=1e100.net; s=20230601; t=1718416424; x=1719021224;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5t3lCO/aliWaX3lRu3qs/sWr5aScOQ+/zbL8ye5TNf0=;
+        b=YeOj7tjAP7rbpisfpa6VPZkRISjvH5TaCV0VtIBdqnyap9KKjO/OaiXTe587YRqnu8
+         KIc4UB/18CqYQlFKcIXDSqnwexo2DFxOu6R08zb9QVu0Hi9z+XUr3wm3x+DzbUimEHKu
+         33RsHbvphAvBdaSibyp2yWAp1d1DS25gNJhdW3q2gO0ItZ8Tuc3teijoJ46EeGCo6+lK
+         jS6Jg8arXhkcBHOlTrGuQRyLaGhXtmGtAUZQjwJfmRedw10E1t3+nTn4/UEzVB1gHKRE
+         uWl9pm23Tt2xcp0DYqkztfuDDJ98S5HrYhyBcPlVntFCNYO+AKMlesUm1kHmnuKTuN9/
+         cKSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm458OmTMy//84nm0iF1pqiM+bqW8nx4FEpUN+pt+ny3PV2sKgsvHBsEBdA0/wkm/CiejCpaPzOVU4NU9VjkdCJECqypgli/GGUnPoeqsYoOSLESuvkiwcnIC+PC7RTN+6BPqeIMX7q3rd/UFg4kYt+cizN5TGrOKMY1QnSmBHwq6wbiz4XisHwUdlRo2LNUlKK6hnRmKCE/kRRZjGxaQmiRiO+cVPz7BFoA==
+X-Gm-Message-State: AOJu0YzNZ5t6gnwH7bIlj2WTnkx8oXMIKaB0DOG21GU/PycFW37Kxo1f
+	+FTXotDbY8DdSB3rH5AEMGrm+yJAqUkpkaY8nCPaMuGyEFQm3GCmVSq1/oKGlPeZww==
+X-Google-Smtp-Source: AGHT+IHRBbU6N6tCxc5X6jt7eouN1BMNkyvMjIA8uDYP9C5/s5KJmmEGEm9PBXbexO0lAvnO9EFq/A==
+X-Received: by 2002:a17:902:eb82:b0:1f7:90e:6d47 with SMTP id d9443c01a7336-1f8625cf286mr44852325ad.25.1718416423470;
+        Fri, 14 Jun 2024 18:53:43 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.49.105])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55e5fsm39246745ad.59.2024.06.14.18.53.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 13:05:01 -0700 (PDT)
-Date: Fri, 14 Jun 2024 22:04:56 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, outreachy@lists.linux.dev,
-	netdev@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
-Message-ID: <20240614.128b8d9046fd@gnoack.org>
-References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
- <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
- <20240611.Pi8Iph7ootae@digikod.net>
+        Fri, 14 Jun 2024 18:53:43 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH v1] perf trace: Augment enum syscall arguments with BTF
+Date: Sat, 15 Jun 2024 09:54:00 +0800
+Message-ID: <20240615015400.1889540-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611.Pi8Iph7ootae@digikod.net>
 
-On Tue, Jun 11, 2024 at 10:19:20AM +0200, Mickaël Salaün wrote:
-> On Tue, Jun 11, 2024 at 12:27:58AM +0200, Jann Horn wrote:
-> > This reminds me - from what I remember, Landlock also doesn't restrict
-> > access to filesystem-based unix sockets yet... I'm I'm right about
-> > that, we should probably at some point add code at some point to
-> > restrict that as part of the path-based filesystem access rules? (But
-> > to be clear, I'm not saying I expect you to do that as part of your
-> > patch, just commenting for context.)
-> 
-> Yes, I totally agree.  For now, unix socket binding requires to create
-> the LANDLOCK_ACCESS_FS_MAKE_SOCK right, but connecting to an existing
-> socket is not controlled.  The abstract unix socket scoping is
-> orthogonal and extends Landlock with unix socket LSM hooks, which are
-> required to extend the "filesystem" access rights to control path-based
-> unix socket.
+This is a feature implemented on the basis of the previous bug fix
+https://lore.kernel.org/linux-perf-users/d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de/T/#t
 
-Thanks for the reminder, Jann!  I filed it as
-https://github.com/landlock-lsm/linux/issues/36.
+In this patch, BTF is used to turn enum value to the corresponding
+enum variable name. There is only one system call that uses enum value
+as its argument, that is `landlock_add_rule()`.
 
-–Günther
+The vmlinux btf is loaded lazily, when user decided to trace the
+`landlock_add_rule` syscall. But if one decides to run `perf trace`
+without any arguments, the behaviour is to trace `landlock_add_rule`,
+so vmlinux btf will be loaded by default.
+
+before:
+
+```
+perf $ ./perf trace -e landlock_add_rule
+     0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
+     0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
+```
+
+after:
+
+```
+perf $ ./perf trace -e landlock_add_rule
+     0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
+     0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
+```
+
+This patch can be tested using this program, calling landlock_add_rule
+syscall (created by Arnaldo Carvalho de Melo <acme@kernel.org>):
+
+#include <linux/landlock.h>  /* Definition of LANDLOCK_* constants */
+#include <sys/syscall.h>     /* Definition of SYS_* constants */
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <stdio.h>
+
+/* Provide own perf_event_open stub because glibc doesn't */
+__attribute__((weak))
+int landlock_add_rule(int ruleset_fd, enum landlock_rule_type rule_type, const void *rule_attr, uint32_t flags)
+{
+        return syscall(SYS_landlock_add_rule, ruleset_fd, rule_type, rule_attr, flags);
+}
+
+int main(int argc, char *argv[])
+{
+        struct landlock_path_beneath_attr attr = { .allowed_access = 1, };
+        int err = landlock_add_rule(1, LANDLOCK_RULE_PATH_BENEATH, &attr, 0);
+
+        printf("landlock_add_rule(1, LANDLOCK_RULE_PATH_BENEATH, { .allowed_access = 1, }, 0) = %d (%s)\n", err, strerror(errno));
+
+        attr = (struct landlock_path_beneath_attr){ .parent_fd = 222, };
+
+        err = landlock_add_rule(2, LANDLOCK_RULE_NET_PORT, &attr, 0);
+
+        printf("landlock_add_rule(2, LANDLOCK_RULE_NET_PORT, { .parent_fd = 222, }, 0) = %d (%s)\n", err, strerror(errno));
+
+        return err;
+}
+
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Reviewed-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+
+---
+ tools/perf/builtin-trace.c | 96 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 91 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index c4fa8191253d..d93f34e9af74 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -19,6 +19,7 @@
+ #ifdef HAVE_LIBBPF_SUPPORT
+ #include <bpf/bpf.h>
+ #include <bpf/libbpf.h>
++#include <bpf/btf.h>
+ #ifdef HAVE_BPF_SKEL
+ #include "bpf_skel/augmented_raw_syscalls.skel.h"
+ #endif
+@@ -110,6 +111,11 @@ struct syscall_arg_fmt {
+ 	const char *name;
+ 	u16	   nr_entries; // for arrays
+ 	bool	   show_zero;
++	bool	   is_enum;
++	struct {
++		void	*entries;
++		u16	nr_entries;
++	}	   btf_entry;
+ };
+ 
+ struct syscall_fmt {
+@@ -140,6 +146,7 @@ struct trace {
+ #ifdef HAVE_BPF_SKEL
+ 	struct augmented_raw_syscalls_bpf *skel;
+ #endif
++	struct btf		*btf;
+ 	struct record_opts	opts;
+ 	struct evlist	*evlist;
+ 	struct machine		*host;
+@@ -897,6 +904,56 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 	    .strtoul	= STUL_STRARRAY_FLAGS, \
+ 	    .parm	= &strarray__##array, }
+ 
++static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
++{
++	const struct btf_type *bt;
++	char enum_prefix[][16] = { "enum", "const enum" }, *ep;
++	int id;
++	size_t i;
++
++	for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
++		ep = enum_prefix[i];
++		if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
++			type += strlen(ep) + 1;
++	}
++
++	id = btf__find_by_name(btf, type);
++	if (id < 0)
++		return -1;
++
++	bt = btf__type_by_id(btf, id);
++	if (bt == NULL)
++		return -1;
++
++	arg_fmt->btf_entry.entries    = btf_enum(bt);
++	arg_fmt->btf_entry.nr_entries = btf_vlen(bt);
++
++	return 0;
++}
++
++static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf, char *type,
++				 struct syscall_arg_fmt *arg_fmt)
++{
++	struct btf_enum *be;
++	int i;
++
++	/* if btf_entry is NULL, find and save it to arg_fmt */
++	if (arg_fmt->btf_entry.entries == NULL)
++		if (btf_enum_find_entry(btf, type, arg_fmt))
++			return 0;
++
++	be = (struct btf_enum *)arg_fmt->btf_entry.entries;
++
++	for (i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
++		if (be->val == val) {
++			return scnprintf(bf, size, "%s",
++					 btf__name_by_offset(btf, be->name_off));
++		}
++	}
++
++	return 0;
++}
++
+ #include "trace/beauty/arch_errno_names.c"
+ #include "trace/beauty/eventfd.c"
+ #include "trace/beauty/futex_op.c"
+@@ -1699,6 +1756,15 @@ static void trace__symbols__exit(struct trace *trace)
+ 	symbol__exit();
+ }
+ 
++static void trace__load_vmlinux_btf(struct trace *trace)
++{
++	trace->btf = btf__load_vmlinux_btf();
++	if (verbose > 0) {
++		fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
++						    "Failed to load vmlinux BTF\n");
++	}
++}
++
+ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+ {
+ 	int idx;
+@@ -1744,7 +1810,7 @@ static const struct syscall_arg_fmt *syscall_arg_fmt__find_by_name(const char *n
+ }
+ 
+ static struct tep_format_field *
+-syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field)
++syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field, bool *use_btf)
+ {
+ 	struct tep_format_field *last_field = NULL;
+ 	int len;
+@@ -1782,6 +1848,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 			 * 7 unsigned long
+ 			 */
+ 			arg->scnprintf = SCA_FD;
++		} else if (strstr(field->type, "enum") && use_btf != NULL) {
++			*use_btf = arg->is_enum = true;
+ 		} else {
+ 			const struct syscall_arg_fmt *fmt =
+ 				syscall_arg_fmt__find_by_name(field->name);
+@@ -1796,9 +1864,10 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 	return last_field;
+ }
+ 
+-static int syscall__set_arg_fmts(struct syscall *sc)
++static int syscall__set_arg_fmts(struct syscall *sc, bool *use_btf)
+ {
+-	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
++	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args,
++									  use_btf);
+ 
+ 	if (last_field)
+ 		sc->args_size = last_field->offset + last_field->size;
+@@ -1810,7 +1879,9 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ {
+ 	char tp_name[128];
+ 	struct syscall *sc;
++	int err;
+ 	const char *name = syscalltbl__name(trace->sctbl, id);
++	bool use_btf = false;
+ 
+ #ifdef HAVE_SYSCALL_TABLE_SUPPORT
+ 	if (trace->syscalls.table == NULL) {
+@@ -1883,7 +1954,12 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
+ 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
+ 
+-	return syscall__set_arg_fmts(sc);
++	err = syscall__set_arg_fmts(sc, &use_btf);
++
++	if (use_btf && trace->btf == NULL)
++		trace__load_vmlinux_btf(trace);
++
++	return err;
+ }
+ 
+ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+@@ -1891,7 +1967,7 @@ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+ 	struct syscall_arg_fmt *fmt = evsel__syscall_arg_fmt(evsel);
+ 
+ 	if (fmt != NULL) {
+-		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields);
++		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields, NULL);
+ 		return 0;
+ 	}
+ 
+@@ -2103,6 +2179,16 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+ 			if (trace->show_arg_names)
+ 				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+ 
++			if (sc->arg_fmt[arg.idx].is_enum && trace->btf) {
++				size_t p = btf_enum_scnprintf(bf + printed, size - printed, val,
++							      trace->btf, field->type,
++							      &sc->arg_fmt[arg.idx]);
++				if (p) {
++					printed += p;
++					continue;
++				}
++			}
++
+ 			printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
+ 								  bf + printed, size - printed, &arg, val);
+ 		}
+-- 
+2.45.2
+
