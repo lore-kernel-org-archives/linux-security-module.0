@@ -1,137 +1,88 @@
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D7C182BB
-	for <linux-security-module@vger.kernel.org>; Sat, 15 Jun 2024 08:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273184779F
+	for <linux-security-module@vger.kernel.org>; Sat, 15 Jun 2024 15:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718438889; cv=none; b=hLEjlHRE8eZhFu2Fygfv8ddrMLNA7Vjh9VotR9pC5Plo6JCm4okshy1Wl4dvlOgcBy6Qrjog7N2DvPjJa17fCePZy42DCkNbxsoayFfk620yYai4XuzERicQijVf6Smhy2zlS+JUYvQBdz10WwqCLA8mH273YDuggA4Sz0FPPF8=
+	t=1718464113; cv=none; b=WcLoowyKVdCpm6mYhoWFh3a6v8a1QhaZl92aKzeDtQehBcUsxzqQkYRoNA0pPCg3hEXfX43HVCJrZlogHwidnb/XMiG9axaghGfSO2KCq5voO4KkzzgzZQpA7bJ6mFQHdxClXVTAQTKTdwzj6a2t79eQ9MXPwgkEmnwJ6XCDyq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718438889; c=relaxed/simple;
-	bh=zpTDiiwYRHFfQwWxieiObPybAsuSt+nSdOvDRnB85dY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtS+3diJUS/gz2GzhmD3v8Djoq1CG4hgdWvZQLuY/xmRn27kX7CDnVd+aQ4Qa1SOumpdRtZnR1C4AY+4VfZDSMO62SHHX0g5XgHIoE/P0V9TtJmIMwsleac3Cv/9VSpZvtOPcqGYE1j/jLjQxuc0w+DO16v0FVQk2RaS2/50f58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=CjYg5+K2; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+	s=arc-20240116; t=1718464113; c=relaxed/simple;
+	bh=mEAUaSYtM704GXb+Tw47BKuFbkXvOoIG6okmdn5DaBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1nSYWfywUnGTpPCCeDNlsmAoChAoyAcWPWFxci2H1hOTWwGpHOK4BMRnkrrv6FpFocKOUa60qOv6m2e0vbI7AVjmJgTYuOJSudyCFRqAYMqZFnL/Ok9IjBP8dwxvIlS+LKhwXGvPLDXgCpkpxHvnbokqKABIi8wrKulfmZJguw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Oww9SoUK; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="CjYg5+K2"
-Received: from macsyma.thunk.org ([154.16.192.69])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45F87bPV000998
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 04:07:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1718438860; bh=+/ngTIzUuX7XPploPv7z+d8ZCh/mJEmERdsDc2gEMQs=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=CjYg5+K2+Wt1RLQ4rv/rviuM5Rz8VL+A3E1rEEB4T/+8o2YS/oBowYjanddtdm/0C
-	 4G7N+4tRWRA3fPsh5hq/AIj1G0Pa4hCSMaH6i4rwrLmBScFI2VFgH9qDgGA6d8nrvD
-	 2oQDe1t4ZrBpP5mRxtXccrh2xJ+Qaer0EQcL26vKfcUVwuOqEAIfL0XvDugL04HN1z
-	 ge9vs5n04NZOimsUAZeWuYz9RnBKirMAW2GOKPLtdrvyZWugpczGMTfigg7a67WGNe
-	 KCAMalwB9RtUKWGD88XTRBOVb0oKMdNjo0rL3EvmPVDHZvhQBQ4MSLrb1fNX9erl6P
-	 n0GWoI8nalb+Q==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 3C980341697; Sat, 15 Jun 2024 10:07:37 +0200 (CEST)
-Date: Sat, 15 Jun 2024 09:07:37 +0100
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, ksummit@lists.linux.dev,
-        linux-security-module@vger.kernel.org
-Subject: Re: Maintainers Summit 2024 Call for Topics
-Message-ID: <20240615080737.GG1906022@mit.edu>
-References: <20240531144957.GA301668@mit.edu>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Oww9SoUK"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W1ffS5m60zBWw;
+	Sat, 15 Jun 2024 17:08:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1718464096;
+	bh=ENCJTkUwhZrciw6pMkqaNCXvUNNHoTFHBqvd1gf3+Ks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oww9SoUKNKcqh6Lh1sDox3xTjO2p8/06yrUpg5PPiN9FM8/0Oj2ZAkTJ8GH/yNvyy
+	 AuWX4KyMGsLR+SKVGNGOUxzOxDPrNWh86H6qC96mq6lPDQGdl5+KTpVqXpwR+/XZSJ
+	 uPnxZcn++8b8u1Wk0r5bd7Zwrs61sUhly0EbwK/w=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4W1ffS1WMWz4V2;
+	Sat, 15 Jun 2024 17:08:16 +0200 (CEST)
+Date: Sat, 15 Jun 2024 17:08:12 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH] landlock: Use bit-fields for storing handled layer
+ access masks
+Message-ID: <20240615.ahch5wah7OY4@digikod.net>
+References: <ZmazTKVNlsH3crwP@google.com>
+ <20240610082115.1693267-1-gnoack@google.com>
+ <20240613.chiec1EeThe3@digikod.net>
+ <ZmwyXoItby7LDd6k@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240531144957.GA301668@mit.edu>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmwyXoItby7LDd6k@google.com>
+X-Infomaniak-Routing: alpha
 
-Many thanks to those who have submitted topics for the Maintainers
-Summit and to the Kernel Summit track at the Linux Plumber's
-Conference.
+On Fri, Jun 14, 2024 at 02:06:54PM +0200, Günther Noack wrote:
+> On Thu, Jun 13, 2024 at 11:20:38PM +0200, Mickaël Salaün wrote:
+> > Great!  Looking at the generated data structures with pahole, it doesn't
+> > increase the whole size, and it should be fine with other (small) fields
+> > too.
+> > 
+> > With this new struct, we don't need the landlock_get_* helpers anymore.
+> > We might want to keep the landlock_add_*() helpers as safeguards
+> > (because of the WARN_ON_ONCE) though.
+> 
+> I am unsure about removing these helper functions, due to the following reasons:
+> 
+>  * landlock_get_fs_access_mask is the place where we transparently add the
+>    "refer" access right.  If we remove landlock_get_net_access_mask, it would be
+>    assymetric with keeping the same function for the file system restrictions.
+> 
+>  * landlock_init_layer_masks() is using landlock_get_fs_access_mask and
+>    landlock_get_net_access_mask through a function pointer.  When these
+>    functions are gone, we would have to redefine them locally anyway.
+> 
+>    Options to refactor this function include:
+>     * split it in two separate functions landlock_init_fs_layer_masks and
+>       landlock_init_net_layer_masks.  It would end up duplicating some of the
+>       bit manipulation code.
+>     * add another #if further down in the function
+> 
+>    Both variants seem not nice.
+> 
+> Do you think this is worth doing?
 
-We have extended the deadline for Kernel Summit proposals by a week,
-to June 23.  If you have something that you would like to share with
-the kernel development community as a technical topic, or something
-you'd like to porpose as a Maintainers Summit topic, please submit
-your proposal in the next week!
+No, I agree with you.  It's applied to my next branch. Thanks!
 
-Many thanks,
-
-						- Ted
-
-On Fri, May 31, 2024 at 04:49:57PM +0200, Theodore Ts'o wrote:
-> This year, the Maintainers Summit will be held in Vienna, Austria on
-> Tuesday, September 17th, 2024, just before the Linux Plumber's Conference
-> (September 18--20th).
-> 
-> As in previous years, the Maintainers Summit is invite-only, where the
-> primary focus will be process issues around Linux Kernel Development.
-> It will be limited to 30 invitees and a handful of sponsored
-> attendees.
-> 
-> Linus has generated a list of people for the program committee to
-> consider.  People who suggest topics that should be discussed at the
-> Maintainers Summit will also be added to the list for consideration.
-> To make topic suggestions for the Maintainers Summit, please send
-> e-mail to the ksummit@lists.linux.dev with a subject prefix of
-> [MAINTAINERS SUMMIT].
-> 
-> To get the most out of our topic discussions, folks proposing a topic
-> should also suggest relevant people and desired outcomes.
-> 
-> For an examples of past Maintainers Summit topics, please see these
-> LWN articles:
-> 
->  * 2023 https://lwn.net/Articles/951847/
->  * 2022 https://lwn.net/Articles/908320/
->  * 2021 https://lwn.net/Articles/870415/
-> 
-> The Kernel Summit is organized as a track which is run in parallel
-> with the other tracks at the Linux Plumbers Conference (LPC), and is
-> open to all registered attendees of LPC.  The goal of the Kernel
-> Summit track will be to provide a forum to discuss specific technical
-> issues that would be easier to resolve in person than over e-mail.
-> The program committee will also consider "information sharing" topics
-> if they are clearly of interest to the wider development community
-> (i.e., advanced training in topics that would be useful to kernel
-> developers).
-> 
-> To suggest a topic for the Kernel Summit, please do two things. by
-> June 16th, 2024.  First, please tag your e-mail with [TECH TOPIC].  As
-> before, please use a separate e-mail for each topic, and send the
-> topic suggestions to the ksummit discussion list.
-> 
-> Secondly, please create a topic at the Linux Plumbers Conference
-> proposal submission site and target it to the Kernel Summit track:
-> 
-> 	https://lpc.events/event/18/abstracts/
-> 
-> Please do both steps.  I'll try to notice if someone forgets one or
-> the other, but your chances of making sure your proposal gets the
-> necessary attention and consideration are maximized by submitting both
-> to the mailing list and the web site.
-> 
-> 
-> If you were not subscribed on to the kernel mailing list from
-> last year (or if you had removed yourself after the kernel summit),
-> you can subscribe by sending an e-mail to the address:
-> 
->    ksummit+subscribe@lists.linux.dev
-> 
-> The program committee this year is composed of the following people:
-> 
-> Christian Brauner
-> Jon Corbet
-> Greg KH
-> Sasha Levin
-> Ted Ts'o
-> Rafael J. Wysocki
-> 
+Mikhail, Tahera, please base your next patch series on this branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/
