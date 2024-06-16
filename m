@@ -1,131 +1,216 @@
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.hc1506-8.eu.iphmx.com (esa.hc1506-8.eu.iphmx.com [23.90.122.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63794503A
-	for <linux-security-module@vger.kernel.org>; Sun, 16 Jun 2024 17:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718560497; cv=none; b=jcWW1WpzrKnADB0V3oxvgecDgkeoz8a98xTN6KDleNvUrDzyl9dcK37uzAHKp7srxB9vyqAyNKxzQ2XXtUeMvbjOxITT26KfJCfq1xmdgvQUtevxhbiwqSFSRpdIKgabAerVKv6UvIQmtD+6Xj+xFslfNoNR3u+FSOEGfDABOSY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718560497; c=relaxed/simple;
-	bh=6bgUNJ2rYry/oQ2e3Z9Ha2X6ox2bK1wL4EgxBmoUKls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wb8UaOi53wmZhgdws9rXDrnNKjB+shWQd03zAOXH4FSvYS0g3OhwjHKb13dkDrao/mvKFEDkk3CFAE5oCIw6fnxFTEICkwFTNLGO/mgZD00zlf2xOHZGCQ78vB6PpAfTTy02grf8qgj9zfwBFAIxdbuvjztdRtF2x/ZHQVieP3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=W9VyI8zF; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5F1481A5;
+	Sun, 16 Jun 2024 18:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=23.90.122.144
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718560943; cv=fail; b=rBfMcKlaPOh6+tChb+XOCMQLYq+X7zw1pSYgMaq12P6+Xwg6KV2Xzd4CEZrEkXipDTefdhn+LPatwmrEX5IBCxvVbtlQ+a6akWfd6sTbX3xL2PNU0bAAYSXZ+VfQSSZzmK114GYrlhFg3nTI3bcPCYwwX7xA+Z1MbPHC7GRXPXg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718560943; c=relaxed/simple;
+	bh=wrtrYmhRwJmgGUW73ZJHV4AEjpjFvRBdtJ5OtpV/oC8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Bi46WHLrP1THpmwRKzoqIb0C/o1bST10Pnyaf3T8Oz8ly+OjyZWS3X9hF1/dJyNCyWFV2rtVR6YHF4KBZIWntQSjgGI10jtRVTsgDtqyeUwwTuc/Z5KiFCkTbQaZHd0y2ejOzikRtSkflc1INU2XNo8zUBFJzdxACam6Asyjgjc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=renault.com; spf=pass smtp.mailfrom=renault.com; dkim=pass (2048-bit key) header.d=renault.com header.i=@renault.com header.b=K5ycxGPW; arc=fail smtp.client-ip=23.90.122.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=renault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renault.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="W9VyI8zF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718560489; bh=kD62mAI0M2rWp1OcfBj675fX8BwJ3GiQhzzl1f1Qrec=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=W9VyI8zFt2pMS97U8cyRnYcBRc6C/WjpUoaJbgjoVONXSZB1xtJlAZG1JC6eNPP0OSmCNdMEjaa7SiXZ/AWRWTDKrgRN0jLVQCNvhINjKghdH9LteNyznFLV4ROmBjDvXGqM5tCoevgjZHCkV2a4bJGaEBnf2HjLVOTBmKMkiFX5PH2XzHM3u+4WFOoyPP/1rQc7q1hQ+vYZW9VIOITijU8a4d/+NMzWzQOc2ZKaiz+jlZB4TZkyueGpVWqXeKKD/rdqp4HMZZj1HNH8nmKrvXqiPUfPuEdwlhsvO8kbvqBmUiYOTOy6VR1y1q5Z6gzhdViJM6X/X1knt9FzZHZaSA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718560489; bh=1uxJrQeT4tYd8gQg4Mt9exWMRBYdvapKxIxp2b6X+yp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ktq7YYglE1pjJEjE6m1pkpOQ8HM1/F5x6lmQPfKgXBJkfusJ88CmiSe0+N6AuGsSboeARNU5aEO3M6jv2kc4FL0TgP5DZqmw02iolII6UFKQNEuUzlOmodwerhqx7qPRtsZcwB77b1CAE2wAmHAXnrjp6Kasss6is7+klrzYabP6EmmywfhYRyiQtgYx+PUxVhOQLtOcGYpRwzlL9O5hofoIdZFUlqBThnU5Ai3Bhh5lSlbJ1Uzvdbnb/F2Uqb/rLHbYxgs9LUzk/PXieRFNUSthrKae8iYwlOqDRjy/q5zJjz3R/XwmcB8LXM1vrfpDCK4NUu43rmAi95v5YM5waw==
-X-YMail-OSG: tjTxiBYVM1lA3knOTuKRy2YD4n8l0T4NxFJvk._g6kPIGX77_j0dkyfrTnk921.
- Zq6Fqqdq_swtvIqUCi7hCmCqNYhAeEglfNErnKFiDaDUG1U7gwae7_lqAy285qUFbXHpXVdkgPXS
- xfRspDln3Sc5fUbAH2q9y3K_TOoWNR1XPSRwyvyiDgeNpGDr.cbSLYHAF9zBtQF.bh8jTSIP03XQ
- aadLhHAgTv9MemaVJ9tC4bCySwHYKbnRXYeJ4Rizq0ryW6jEV7snUh5GWKBviUhvVq05a6j2MotT
- VPBMQSrscDWrxab4._RvRiaKF1hYOZhQDAXu7TS6Dh6zqIlT8GDG47gTY6PthGV8CMdieRw7yr8K
- rTNRUCiO1UrsZb6nBvmhf1tAUY8LuV8jkTM67W55cifyJ5RIMXDZRv..7aQqpL6sUyZGvAiyXvAu
- AncId63cSWURf3KHWgCPX3YAZz1Z2C5GF87mnmDhYAXZwsBjw7BGhpDznpRvdWlOOu_EaA.JHa6f
- Q1nhMGPLsmWnDDO.LmnsepB3Ip.s8t59CU_X8RIR64bE1CjYoTVVRTkfwvsKlZIhRVbdsZn4WLFK
- un1rmE8yFtaBYbgF3N1ueRFUjHKo7w5h3YAf4ItQxYOXDiM9Er135iov6USo3epXc8Nttws4tI1Q
- M2kcJl0Syvlyv.4FaJbXfxT6CmCUrTczD_NGyIdc5.wBV15tNGx847jcy5UdaNSH2viYG_7X4kM6
- sloe9siMX.uFjkA4V8ezAHhrC5LP5KJJBVyszNJ0WSLC.7snTn8WNq1z.07zow9QOThYi_tbmUhv
- uqYb7AoOhXhzxI5g17_e8UR_K6DIBbd2SgEkVG5pCVl3bU_vtGdBp1R88EtyRGz5oXLHwiuskhjR
- v_Z5KIB6TUuIuOJjLaQMzinvFqjF7kVpjpCSJd7PycM93StR1Lmkt9wN6leRrc74P48ESZHXMgsu
- SgFnrL8v1gTzTFNWYslfEiCktVGnsrmPChi0GF3emyPKAnFYJ3SfZSSRhQX2ZEVAU8R_HTpxq645
- fBwi3wWmpQx3wXELbbUG7MhU620QGrElJEyZnGFNXvdPTOeUs5izGGWO8qMEUKChL2G3jacVJacc
- 34H9S.TaWkIY4xifStR6.aUYO9rjWrj61Ey3cxQB0ihTSrMxtFkf9kTeSigmvdzfrJ5Kh2ukfQl_
- LGOgGTbeI47MtMAHtmgvdRopUNLCpofIIO3w4v6hSXi9rfMPvszF9ETtq6TFSfrUThWh3qqzWh8j
- 85NzfIewbG.EkshArJ4q7zDzqOLlEgyNqmMFoW47kItzVQ_.WVxmARRoeMjLF4L6hBwYQe5Itv.L
- InAtQgdiRcvflgIyMimKgXr69ZakGKGQyZipft8f.ypwXEcNjowEp81hAWh2OA3UjUeeWnHSyGbM
- c3OEwceN_6RNBZdW3R0lgHKyDos1HUN9wBg6GkTYlR0JX8woLXVkIvQowvCFN96GQQe3USPLlvDu
- kqsl36aTj0jfUu50P9DWsRKZtPLDEVf5avDtZ_C3FSgEjavEqafZD4BWDqAFMzo1qtCaaXgyc3DR
- dBpVmz9_77_2RI8T2WcJ0Aeylve4WAemAZPc455EGCCuLDkr25TZRWb.lzVd9wquZIadIu9E5lpM
- fiGsdKSj5ohTiyDC8z6Cu.iCVNhbq54ppciVDzR9fRI2W7Cgactpj3kr5dCyC4fYV4UVdMQWYwid
- _lAT8Y1Vz6rPTM9GMlByYTtMXA41CBsqjmi_8vSCvWO4uNPrZpnzJypgczwxCcP1XarsOncokLGe
- _5YJ_rFjkmH4HDK7YFHlqFSpXnpy8fVdbtsLfhOjhyISz_T65QW2uV.ySO8TAcD6uMfoBWaCub3A
- IzUha7Kha24c1w9aFQI90_qhdKEHRE4mdBbvUcw9VWp2YntjtCd_CrjWE_EilGXDWygAhKsuMeKX
- 2jqJsgzLqmIZ74.AjYdYGG6tVV6x8RsV5PSZnJNQWCTjzXHOaTlt1h96X1qaYm.8rwtEgaAIrwXo
- uSIpertTFBBlP.DAGhvpS2GIE4cEg92zCFdS.WCTDX5kL3HgMiqXsSktjSZVvQ.OcCNvoMB6xnYN
- cFLavuWuV5IT2Uoew1FhXgsZMvKocHcd.LpSgRf_aU.rjNJmo8TLcTK5qD3bl9HqW8R43GlvxGl6
- tw9hLnlDaXkX96RjviYt.cU2rgyk6Lvj_mlozXq4tkIA2n1OktYwWuDBoulE98q7nkoCwn9JNABa
- I0EYn2JVMOg4J1n2PTfXrj9pwo6gK1aqZlFaAnTv_O0dZD5Yb6KoIWdw38ZiIpCBn5nP5iIi1s7E
- yyj_mBA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 9a0cf727-2907-4bcd-aef7-729d7ecdb78f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Sun, 16 Jun 2024 17:54:49 +0000
-Received: by hermes--production-gq1-5b4c49485c-q2dhb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID edd5ecbda534338a3a5960c0058ac2cb;
-          Sun, 16 Jun 2024 17:54:46 +0000 (UTC)
-Message-ID: <c74af596-1691-4580-824f-2f1a811454ca@schaufler-ca.com>
-Date: Sun, 16 Jun 2024 10:54:44 -0700
+	dkim=pass (2048-bit key) header.d=renault.com header.i=@renault.com header.b="K5ycxGPW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=renault.com; i=@renault.com; q=dns/txt;
+  s=DKIMCES1506-renault-com; t=1718560933; x=1750096933;
+  h=from:to:subject:date:message-id:references:in-reply-to:
+   mime-version:content-transfer-encoding;
+  bh=wrtrYmhRwJmgGUW73ZJHV4AEjpjFvRBdtJ5OtpV/oC8=;
+  b=K5ycxGPWm78FyhuScYlFdb0nZa+BHnZHaeTUwNMa/SLnW346Vri+o07Z
+   XTz2KzYjagHkT3q9+lI6c7JFFEXyTGuCzLHiUCckzazrGd74HVzAnBNDd
+   9AyW+wsCi8FeIVzbdf5me/qNeQALf24Yp289PAKzVJAFlSq7EumhkM6RA
+   HMwa4M+em6JDrVgHfemM8C2CpCk753qPaJpJL/UUkdev9GGJ5OG7b9HEv
+   VmQmwSnDPS9F00AdYSyaeJMe/LSpM3c1odXUb9L5zEn2rXHLXVlzI3oU/
+   FhCkAHyLOhGzB3nVJ1nPwKx0QUYUbVS6ulx2cHXwHOKaQJlqyKMfOJkeJ
+   Q==;
+X-CSE-ConnectionGUID: ANpCoz79QtuHKRpSDpKYqg==
+X-CSE-MsgGUID: ZpGP7uUzS1iHKAAhL9TOyQ==
+X-IronPort-RemoteIP: 104.47.2.50
+X-IronPort-MID: 34041083
+X-IronPort-Reputation: None
+X-IronPort-Listener: Outgoing
+X-IronPort-SenderGroup: RELAY_O365_RENAULT
+X-IronPort-MailFlowPolicy: $RELAYED
+Received: from mail-db5eur01lp2050.outbound.protection.outlook.com (HELO EUR01-DB5-obe.outbound.protection.outlook.com) ([104.47.2.50])
+  by ob1.hc1506-8.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 20:02:05 +0200
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eFxfNu2d3HVxN8ckMHf8pos6a6ucAfkf9VOgOtV/eKOrJ+qynoy1/D+TeJmEpp9K69Vjrax1tWXWKjf2zOF9oWcAF8CTXIYLSwrwtkD6tKcPqqRSM8nXYheEbCqNq/rc1Sehs92jjgzqcx2HpQNkaeYW+sawikkEKszT2mJthXZ4cNGKLMwAbXgBHLaVQlxFFrNnYiHrnQm4l8aQDhleQDzyB72X5+jlgoPUJBhQeWTrUBm/UiusgjwKx4ijKxiSK4LZUNTcbQrrc5ERZ9rPQjugwvrVfsfBI52u51wmomHU2+SkLEZqGx9UhM1kywrivNTjgG3LtUb//kzMRX/itw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yl3gigl2SaWaN5YT22OmGZz6sf2X06PMjbU5hWjhxUY=;
+ b=VNc0RcsU8N4065W3uHtWNlaHOjeOudoNhdzucJUYYhwVCB6aOC4mKjGJaLHJC5mL7/3++xmzdjp0x1shifyXZH3u2Xd7L777ofom32khRXqXK5GIxh8pgzMIaUGfZxgiepI+e4/hOF+filyq2+YYYmUYLmP7n8vRsUr6o4hJm0FPA5CWA64Sb8Paqa95ZGVr4kBz0NtYI2NThFJIok66x3TWqP0y9HJm3rgnLitVInEtNpy8lPhcQKYUpRUyDqWjfYlG0MoShUsLPf0tfWz3oAuO5+ZqtSNuJULVfaESu9qOs80R9povkF93d4LuanTkDZ+zV52E++FfBtt9LRaEmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renault.com; dmarc=pass action=none header.from=renault.com;
+ dkim=pass header.d=renault.com; arc=none
+Received: from VI1PR05MB6782.eurprd05.prod.outlook.com (2603:10a6:800:134::21)
+ by AS8PR05MB10673.eurprd05.prod.outlook.com (2603:10a6:20b:631::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Sun, 16 Jun
+ 2024 18:02:03 +0000
+Received: from VI1PR05MB6782.eurprd05.prod.outlook.com
+ ([fe80::32cb:44bf:3eda:30e5]) by VI1PR05MB6782.eurprd05.prod.outlook.com
+ ([fe80::32cb:44bf:3eda:30e5%3]) with mapi id 15.20.7677.030; Sun, 16 Jun 2024
+ 18:02:03 +0000
+From: "COHEN-SCALI Remi (AMPERE)" <remi.cohen-scali@renault.com>
+To: "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>
+Subject: [LSM/Landlock] Adding ability to sandbox TTYs
+Thread-Topic: [LSM/Landlock] Adding ability to sandbox TTYs
+Thread-Index: Adq79XtfaMnSWb7DS1qpstx3E3o4lQEIF6Pw
+Date: Sun, 16 Jun 2024 18:02:03 +0000
+Message-ID:  <VI1PR05MB6782D0D70A2A313434013F9ACBCC2@VI1PR05MB6782.eurprd05.prod.outlook.com>
+References:  <VI1PR05MB67825BD1C2EFCFCBF7521F7ECBC72@VI1PR05MB6782.eurprd05.prod.outlook.com>
+In-Reply-To:  <VI1PR05MB67825BD1C2EFCFCBF7521F7ECBC72@VI1PR05MB6782.eurprd05.prod.outlook.com>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_fd1c0902-ed92-4fed-896d-2e7725de02d4_Enabled=true;
+ MSIP_Label_fd1c0902-ed92-4fed-896d-2e7725de02d4_SetDate=2024-06-16T18:02:02Z;
+ MSIP_Label_fd1c0902-ed92-4fed-896d-2e7725de02d4_Method=Standard;
+ MSIP_Label_fd1c0902-ed92-4fed-896d-2e7725de02d4_Name=Anyone (not protected);
+ MSIP_Label_fd1c0902-ed92-4fed-896d-2e7725de02d4_SiteId=d6b0bbee-7cd9-4d60-bce6-4a67b543e2ae;
+ MSIP_Label_fd1c0902-ed92-4fed-896d-2e7725de02d4_ActionId=94b0a7bb-86d1-4b8b-bb20-cc2b334bb84f;
+ MSIP_Label_fd1c0902-ed92-4fed-896d-2e7725de02d4_ContentBits=2
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renault.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR05MB6782:EE_|AS8PR05MB10673:EE_
+x-ms-office365-filtering-correlation-id: 7ffee65b-8682-40ff-bbb8-08dc8e2e6d71
+x-connecteur: On-premise Ironport
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|38070700015;
+x-microsoft-antispam-message-info:  =?us-ascii?Q?P76CLBW76KA2PaEuDqLlslPK32iB4ya8ujUgKD0oQ5Q/ZiLlRuYbDJaahqmr?=
+ =?us-ascii?Q?2bbLKfU7YwUh/MjkfH5kfjBBwu295x9GhDYaBxwRhGlhuTpQLpte1ydQaP8A?=
+ =?us-ascii?Q?TKSut/U9DplcsTtm8/Ioeblx+TTPJwWVdw0WEc5Qb5STxQ12lp/xa/zB5mzv?=
+ =?us-ascii?Q?SztOErhO6FIWarNOIM2qUlt6S+kqBhN2RRUCkJRHiuCZEGpuT4e9mVs6+VjX?=
+ =?us-ascii?Q?hTMn+gJClDIR5ARgM3JluTWAoP9Z2NjAdtG7LUSKZrI07nsG/yMbXbmLyoo9?=
+ =?us-ascii?Q?wF7zP3lIAwLkkPeekcz5qZbGddnACquKh4xC/hwWqKDN0G81256caIsztRyj?=
+ =?us-ascii?Q?fXV6QmMtCtBEAOacLYly7KwkM3WKf+x1MIMGxCdONwJEVPeQ/u39ztg1p4TY?=
+ =?us-ascii?Q?jQ+fqv8PItwKxK4umIcNztI98PbOxWDbeJvDfbuVo/9SfflFGFA58Av6OM7U?=
+ =?us-ascii?Q?5XdQ1MpsanzbeAO3sOfYcqlTAa0lXy/19zeD1eHKO3vR5kwnVoZFu03C1QWb?=
+ =?us-ascii?Q?b98sXkmjQ7XTpUHJxSlekUYXKYGKYhihAKlEl/wb67F9W0L/lBkJj3Sd07DB?=
+ =?us-ascii?Q?+XEDQX/O5JuBtVp23Vr8YPcAb9B2hC5gcCG4Tu6TGp9I+pxhfuPu7I8++oXM?=
+ =?us-ascii?Q?tdWvIAHR9UGKqD4aDCl1XvRAu9SMHmBZMzMdMFwuvwpO/NZ3X2S1MHjnk1Eb?=
+ =?us-ascii?Q?Pwk5W5Z5ncRB9AdDvMlNPUd1VwZLQF37AxYnCK4Q3gIwn5gGVWfCLwtqBPdn?=
+ =?us-ascii?Q?ZMuNjOB9Pk3x4MB3OP+pfo0YrPNKj1O4Xr2J0D/QtVAo/YZLNjxoCYbUSJ5M?=
+ =?us-ascii?Q?byCzctc8STEJ6AAXnV/aKAm6AasWWroZNzfaHq3hCX3LNKvjncasv4jEffow?=
+ =?us-ascii?Q?GpJTgkMvqcnxWDaG1xjOLxLwkSR1WnzOG31TwVt9ys2MDNzHPf4REgb8AjKZ?=
+ =?us-ascii?Q?bx5tenevpkb5w9iOcPAmAagfOjmemPnyrjF40ZxE+8ACjBgCB4lGsVlu/GsV?=
+ =?us-ascii?Q?7haMKG+j58pF4PWQxUs3OfzITPhkfflYUemOf7oB22CgtnFPfAOq8uM+0VnX?=
+ =?us-ascii?Q?A12/zN7VRHv3jaUt2+C1eidainOqZn6s9iW/HaCJTBqK+kVzZdJ6mR0vZvN6?=
+ =?us-ascii?Q?Xru4k4COYqsL9qjciU3jStJztkeqx+iOOjQ/2bjc0u7z1CoK6kfAk/G5BrwH?=
+ =?us-ascii?Q?7ErWGoM6ZqMu/MIaJ0zZJl0Q/bob0wfZJLYvbA0itFNtMHzjmAlk4i6+tlc8?=
+ =?us-ascii?Q?qpDhmK98P7L34Z+w3rXUnWdKKqG53b/bzO3NeJ+Gt/53t9vQ8NpDUY6vTuMj?=
+ =?us-ascii?Q?3h3wxiJFrxgJDDRnYuABm/+ii2ftWU6sOviSxoX6YAHhZ4q8mCXQql5i00Ht?=
+ =?us-ascii?Q?4UofKgU=3D?=
+x-forefront-antispam-report:  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR05MB6782.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:  =?us-ascii?Q?/NY/EyyxT/zn/D9mDkCh80H5DSAECXXVX4ZbIU7KczOqHwfFKMtMNeWE8yGo?=
+ =?us-ascii?Q?zFz8g5Yl2owkJh29h/H67XosmFZDMdb5X62QQyNHMU2EXH7/Tkqjnj1ecNwP?=
+ =?us-ascii?Q?LamL1FAKj4hLxzPfYtAcNG1EOr34xsJfyNYoec3NCbGmGtQgq5fX5OIsqRhS?=
+ =?us-ascii?Q?wkQgfuOnc92B6ovq3bLeUviGjPTOT9nxxqKE+MVio+fDfVlLdlR0RqfdnF07?=
+ =?us-ascii?Q?vhXZeLgmyMYaR/BDi0V3WGmadHK7nzKRArDtRrAjo8/W7ZbllSxRaCT5Wq66?=
+ =?us-ascii?Q?3+8MY12I7IzXMrjDFhGmnQjZvYiEo0m4YlHr4RjxXSGM2JfVi+pRiH/bL2aR?=
+ =?us-ascii?Q?XKLkvHNdYwHkluUjEw4kHX3JA8PK47z6enjQyCWuJUfy6OyGl9s092a7aTZR?=
+ =?us-ascii?Q?D87V00JK+9cdkhfQWZWeXfbHh/TtRFHcDFOL79EsmMAkvEJfsmmWViqRT5KX?=
+ =?us-ascii?Q?NiSWbpFT9XpnHK+dsKQBiv10Mv/zbuYVogn7EYtsD6yRuvGykjbyEOH6mZsN?=
+ =?us-ascii?Q?4vrG1Kyu1bT75zWLX7Prq9MCGCEv0ZMez4+eDJaIf7niDpAXPXd1sZRtkPV1?=
+ =?us-ascii?Q?yWfi7NBIdnVNjvUEicR4sUINuFKByfIAfWCqwibuCN9NIafBE9PafV/i+8Ei?=
+ =?us-ascii?Q?X2L5GYUJB95AZDuJ7aXFnEJbKEG0HnV0f32bVgKVM5aSV9EjjDNoo7gopECj?=
+ =?us-ascii?Q?qZkOoVo++ziGD/JkyzibcUu1SCKo/CEAOvqN0ZDToh5EYefvkY1PWKfFkujp?=
+ =?us-ascii?Q?C/GmAduOD3eadtFXnMQnN+edGD/v6pbmWwCRSGRuFCx/M/HX9BuYT2SauIy9?=
+ =?us-ascii?Q?/liLA440zi0BzrReilSDV2QANIXrbq8B7JBD2VRvGNy1g3jlDSzCcW9cP4vA?=
+ =?us-ascii?Q?eEBa6wpupmArB646RZf2K93dzg1xH7xemtjLF81jBMrNb3iYM1r9BORGzN2G?=
+ =?us-ascii?Q?3KKFRQhR+nSvCQ/+aXksZvfx/+Q6FldbCL4DIHm7vw5ZSoQBvqdB0Fwkn5EY?=
+ =?us-ascii?Q?D1RAwwcmdVvpnDJvN4CE6wcnBW2MHhgvu1G5lH9fic7azNF9rBmsk6FKMiPz?=
+ =?us-ascii?Q?FA8oRlLmaiH2H7/Q6TKwt9BeHSxA3khq3iRzwQugGDeJqAWyIBH7LlKT68AK?=
+ =?us-ascii?Q?P9H8KT8Bb9fnVa4q8hRwcXtQB7mdKkQucMz1J6/7hLYysVgf+Z2Pvem4j1wp?=
+ =?us-ascii?Q?YaKhGXFFapcYEbOJXp63ry506hTnnTXuK5puYss1t0m+jbrfjlDRfSQQvOZx?=
+ =?us-ascii?Q?BLfCw7PaEV+7SKvLPunp6Xxu9bc8ZGvTr130NXeLLSJjlUMzVvdCwotlb6QJ?=
+ =?us-ascii?Q?0U1JSiuvQBDSnbxjhQg5kqwPmF67M0fmCBK0WmuOzGhRYteVCXa9Ms6Vu9Rz?=
+ =?us-ascii?Q?GHZ8Ci5EqiZ+isU6zuoKxu0AmoeUYAnbs1BDozTlN2Dv74yQKdsxzo878mWr?=
+ =?us-ascii?Q?ov7IzKsAyGuj2AIuMKBLPmeJkLurniZPNfj3/WaUvk2t5mVSO0Dzp1h30wq7?=
+ =?us-ascii?Q?KD09dWyKtR6Qf6ZbpTpqe/wjzyXHe64q+HA/gZesxnQBI0ANmHj/oARE8k+5?=
+ =?us-ascii?Q?tihdw/63Lmfx87DEG+T2UVDFmPR4yP7YBVzv+A+EIeuTqARkxXHd3yjB/Pvs?=
+ =?us-ascii?Q?Yg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smack: unix sockets: fix accept()ed socket label
-To: Konstantin Andreev <andreev@swemel.ru>,
- linux-security-module@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240616142751.273466-1-andreev@swemel.ru>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240616142751.273466-1-andreev@swemel.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 	Lj9xGnQjpdOTCOVbb2K8CkMKgC+QxoyToe50p0pDs2Jfd1kxay5bV5lSR9SCr/0fSMTyuXJUhmAyCS+puO4iiW1OOBiphP3j1qPNj4vrco5FC+R0yyfO3hyB/rVea9B3GP/NXBoOcQmGJUbn0ILkrhpXl9uvmCkbF/cV3GSVIOrt+puTtUEpZ632PHxBCsIrVdqEjnuzMZeXNdIG/DZ/Q2WPZv4JR1Ytg/U9/DdtCzPTpOKyYl/qka71vxR7LsmOB+pqyFhvZkKD9aeLAyLO/C8IHtajgI3zXiyNB/m8YVbgqAJ0R4S8q8LXM3sHDm4UF04yzMWRmmf6kb0gHpsqV+RmFhiigyojM4i8A2Cx24OI7LIuiyOj0VOB5mo3lIWtPvTvbXkX4rCx0Xfq1BVHxVzmWvk6Al3861V0hJeNJVZtuu+i+DgrRd2iMKHztPhf4CdI6xKylHPQ4JQrmA/5MmgR3eZ00BQMdu8CCq1wsYsYQGBXYAKGoan79zqKT9GF3fVpqK7esU5c0Jb0LF2G6hvBNy2zca/33Zra3lqimh61CBRa4BoRjx8uet4EuKHoB2X/gSX1UbOU443lIkxLRA/wWeBGAXymH7qddX0EQYiey2TXFhGYhagS6637Zgqo/bCHyPMm4KdDhOan8TADPg==
+X-OriginatorOrg: renault.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR05MB6782.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ffee65b-8682-40ff-bbb8-08dc8e2e6d71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jun 2024 18:02:03.4958
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d6b0bbee-7cd9-4d60-bce6-4a67b543e2ae
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T6C+w3BVhO2HOerkY5nDCNZhIslD0M/Ul+6VF4oyGUYfiq4sMgZKlNxpd2NNuKQ2kKAkYWfe49LkRMZrmSiFQ0tLfsosUWUAddZbglpFT2A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR05MB10673
+Content-Transfer-Encoding: quoted-printable
 
-On 6/16/2024 7:27 AM, Konstantin Andreev wrote:
-> When a process accept()s connection from a unix socket
-> (either stream or seqpacket)
-> it gets the socket with the label of the connecting process.
->
-> For example, if a connecting process has a label 'foo',
-> the accept()ed socket will also have 'in' and 'out' labels 'foo',
-> regardless of the label of the listener process.
->
-> This is because kernel creates unix child sockets
-> in the context of the connecting process.
->
-> I do not see any obvious way for the listener to abuse
-> alien labels coming with the new socket, but,
-> to be on the safe side, it's better fix new socket labels.
->
-> Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
-> ---
-> The patch is against `next' branch at https://github.com/cschaufler/smack-next
-> The patch does not hurt `Smack kernel test suite' https://github.com/smack-team/smack-testsuite.git
->
->  security/smack/smack_lsm.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 56e02cc5c44d..0843bc519ed9 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3846,12 +3846,17 @@ static int smack_unix_stream_connect(struct sock *sock,
->  		}
->  	}
->  
-> -	/*
-> -	 * Cross reference the peer labels for SO_PEERSEC.
-> -	 */
->  	if (rc == 0) {
-> +		/*
-> +		 * Cross reference the peer labels for SO_PEERSEC.
-> +		 */
->  		nsp->smk_packet = ssp->smk_out;
->  		ssp->smk_packet = osp->smk_out;
-> +
-> +		/* new/child/established socket must inherit listening socket labels */
+Hi
 
-Please use the multiple line comment style from above.
+A feature request on landlock is about sandboxing ttys management. I'd like=
+ to propose an api for this feature but before I'd like to hear from you ab=
+out what could be proposed to developers.
+Of course the standard approach can be provided for "locking" access to som=
+e syscalls. It will allow a dev to setup a ttys mngt for his app and then l=
+ock it. However I think this will not be enough for most of the use case fo=
+r applications making an intensive usage of tty framework.
+So I will go first by proposing a standard approach. But in a second step, =
+and for also allowing apps having an intensive ttys framework usage to use =
+landlock, I think it could be interesting to propose another approach: =
 
-> +
-> +		nsp->smk_out = osp->smk_out;
-> +		nsp->smk_in  = osp->smk_in;
->  	}
->  
->  	return rc;
+something as... providing the app a way to define several configurations an=
+d allow it to switch from one to another
+or ...
+
+Have you got ideas for this ... I can't wait hearing from you if you have i=
+deas about ...
+
+Thanks
+
+PS: I saw @gnoack proposals about this tty handling in landlock and  they s=
+eems to be, at least, a good starting point. I'm also looking at several ap=
+ps using teletypewriter management (gtkterm, minicom,  vterm, shells and on=
+e I specifically love and use, emacs).
+
+Rc5kali
+
+Confidential C
+-- Disclaimer ------------------------------------ =
+
+Ce message ainsi que les eventuelles pieces jointes constituent une corresp=
+ondance privee et confidentielle a l'attention exclusive du destinataire de=
+signe ci-dessus. Si vous n'etes pas le destinataire du present message ou u=
+ne personne susceptible de pouvoir le lui delivrer, il vous est signifie qu=
+e toute divulgation, distribution ou copie de cette transmission est strict=
+ement interdite. Si vous avez recu ce message par erreur, nous vous remerci=
+ons d'en informer l'expediteur par telephone ou de lui retourner le present=
+ message, puis d'effacer immediatement ce message de votre systeme.
+
+*** This e-mail and any attachments is a confidential correspondence intend=
+ed only for use of the individual or entity named above. If you are not the=
+ intended recipient or the agent responsible for delivering the message to =
+the intended recipient, you are hereby notified that any disclosure, distri=
+bution or copying of this communication is strictly prohibited. If you have=
+ received this communication in error, please notify the sender by phone or=
+ by replying this message, and then delete this message from your system.
+
