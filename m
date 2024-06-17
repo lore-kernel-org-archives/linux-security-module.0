@@ -1,152 +1,107 @@
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2A71990A8
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2024 19:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAEA7492
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2024 20:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718652591; cv=none; b=hRJreL4l6a8I9BcHHgM0+lfpEpQvyKi3phKJQ8SXFgqYSMmMAzGPPbrD6yCJTsBH7vl2LiJzVnD6ULFnXL2uffkudx2tMlC5n+4D72KdwpvStst3itv4HgzDMhmEbpGE//B26D8bKVMrr0XF/mnpaO7l1Ak7xAOjPXQzDBP+nis=
+	t=1718657278; cv=none; b=BOqAKhAOguyWPGntshDeQG9DajKdDJF2jzQ9HQjNOKR0aU97zI42fMHhw7NqQF8o8uLoBpNHIsoBxt6It8LXUBvv1YDgMuOd4MPxta9N5nOkFDNEw+aQTAV+LPmCZCyBLvODhC7RNn5JiWr0DiCko8+lIyxHtrI00xk8/Cny0BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718652591; c=relaxed/simple;
-	bh=8cuQz2UmP2mjJZs6GUFp9YvP+kEirWd7y9qE5iYFTVE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KFJK+9xlIsfWdGkmzYBVZ9e7obiA6o8X8g3ITNbTM/DcJUQokPeN+H7WN4i8EgKOrlPDWmxl+sE9aC85E05qr5xQ3JT8EgG4R3hTpNE8ZgV/CdVmsz1VLxPGpAvO0LO7S3VtXf9THU81c7fdmtjE+pe+LTUEPY+0bHCp9PkzIYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qsDnel5T; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1718657278; c=relaxed/simple;
+	bh=9CLcbPxHradhU318O+lke+/HjC2AVt2hnaWNP91vr3Q=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=HA36A/A/CMM3XyU0BR9JR8Xv4UhHvDdrs43aBqz0DmTZxZDORn04BYWkyPFwrlooNRLvlP5WX/2aRFKutqUgEVXHpZxccaTTLhHaryoczbpSAVb70cq5KJvm/wyS9s+odPZ0DJ7tYtzndrM7qgHdgMxKnn1YwNy0j1Chgj/BG+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IXOj/xpT; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qsDnel5T"
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-57cd2950eefso1291332a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2024 12:29:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IXOj/xpT"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6ad86f3cc34so22380876d6.1
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Jun 2024 13:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718652589; x=1719257389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HiXIJbuLM9AiKCrkAru4erNGygZvBZwC1BER3jDffD8=;
-        b=qsDnel5TgN7CtbmzX/NkXLFRtY/qb2JPfv2SBJJV/sBxJS0ci5LG6xSaidEYajVdy1
-         46dsVEJuSYL6c+ynMn/C3gdvZQ228KzF7axhwCYSPz7obL16QkSvQI/II7hxJkDhbqIe
-         MNhGNUKTTTfY+JwPfSeDsC2odKUxcQk2MvYeFeyTERoQkgEZOdLAR+YokkK0df+OTi5J
-         91CHchej2DlLyPKiKfvSJQzswux76FdY3CcIKnppuEELItLAyRC/fC15PKPYltwvwoch
-         h8uWkIBV+Husjm2aP6zxR4YjEG33t4VwPhBxiBe87Y+UG35po5VJVCXIOn6tiRnI0xEg
-         ownw==
+        d=paul-moore.com; s=google; t=1718657274; x=1719262074; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=92sq+GmOYl4GyfOH+/hkMbHR0Ef8PWt4g2QvxUaxZJo=;
+        b=IXOj/xpTEQ7PV/rfqFj37fDxIvZgAKtUk9E6uNQjxM/k+6dB/P6JU1W2EridMV1I+n
+         GcFHGfX+Lsx+fRLYli0obHGmFsxfb4aHXqUiQfh/XzFQy1iJRtPOISYmSgV4uWlPuGFd
+         v7EFEC1RDO1aRkYyAnB/+z90EOakF4vAy5sGHTf1ejLkK768gqF31eGYm/1VgyJWTScc
+         VWxTop5/tylphHvOkEesbfPXw98676S776cpbgN3AcfPzee+KmGVGGbleWZJ6hXDuXgr
+         hO82YUIkkuiiR/P/iLhmIso0N+xsfl2KsBnIM0IT5McwrUz15zYheWTUJKA8oCfhFIu3
+         FoCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718652589; x=1719257389;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HiXIJbuLM9AiKCrkAru4erNGygZvBZwC1BER3jDffD8=;
-        b=wAAVYb1tqfOcj1AmJU/toqmV6nzkejm4wgpCseMr0I2LQJMBslx4cOzi9wBVdDwlNq
-         CqXLoONzE5uKzcv/lAm/Mjl94WIUIuuq1TiEebHF+ie0Q0kn5AUExFDNuJxuM9IrSlDw
-         boApjHfmOaBXI+6OrxmO3qWu4HKuLGYrFRsAc5LmuHfUhAQPW9q4VqznEXv73P6sZd8k
-         jc63kAqh/UItWn36Fx8kFE/lEI1YiNZ108hQ4zF4p46YaP5EnRtUJMQ211cYn/yEBwS/
-         dv9prQWFYZQs6fFbf4uow+j3mynN689KAjeWdVv3qPr87YpssHIemo6uW0T2IV995IwQ
-         r6kg==
-X-Gm-Message-State: AOJu0YzYaYtPQfrXyLeR6H16rKzUlVADsDFq2zydbLfj61Zq8TfyDbEc
-	we3vGZ0GxfZyeqtgGGOjTOAFcA1TxxDsjCf2xigG162WlWw/3GjZNvNQsMgVjHz6Iu2GKvNvBKl
-	jyg==
-X-Google-Smtp-Source: AGHT+IE+p0qWaICcOkHIWSwAXKqcsMLbzGj61pTdnBKLT1q8RUdq3tg3Ab8TycaL0HnRkIkBuint1KLrXqU=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6402:530e:b0:57c:e715:4cbe with SMTP id
- 4fb4d7f45d1cf-57ce7154daamr4553a12.3.1718652588722; Mon, 17 Jun 2024 12:29:48
- -0700 (PDT)
-Date: Mon, 17 Jun 2024 21:29:39 +0200
-In-Reply-To: <VI1PR05MB6782D0D70A2A313434013F9ACBCC2@VI1PR05MB6782.eurprd05.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1718657274; x=1719262074;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=92sq+GmOYl4GyfOH+/hkMbHR0Ef8PWt4g2QvxUaxZJo=;
+        b=IH2p1y0J8j/FTWdVyuqCUlh+cY4eW2ahWe88KxH135X9f1XQx22HWZ48jeBL0kEO5G
+         1RbqsfO/dX47zrECnQ950z596Iijcvoxw50neuEZsMtcQTVRfO8VdhiMaVr+5X5uQVNq
+         WOsNmr/YB9xuLVnrlCJkKPgoLfJ9lzdeoZvIeIFDFKK7VwGRl9rdBB+WrhK6v954Q3nL
+         PcQcykRB0p/cHiT2YuEF3OZZc4vFl/05Tt6YT1arrIRGMwyS4sbpEOeu4W7bYk2fJGwi
+         Iidgu6RZg5AQFjTAbbs3Hh1zSrrLQiOIlEuO2Y0+RRbPPttfwzNtw9jIQphYa31NKiDE
+         28Ug==
+X-Gm-Message-State: AOJu0YxwhvzzTj/4ZoNnI9bgZufkkPAvfQo2oqKyE+HU0tlYj9Fcjkjq
+	xk090tCEHk/DISw1ajYZR2ZDc+1T+Uh95U1TFFK5hBvnehfGBf5yNDBGNKN8eg==
+X-Google-Smtp-Source: AGHT+IEqO4CUsYZVLJCb/94sp0SvfrmvTrph0QBZoua/4cXKkig5M4a/2XUdeWBnYjxcVSrA7DJsng==
+X-Received: by 2002:a05:6214:1652:b0:6b2:b13c:5b12 with SMTP id 6a1803df08f44-6b2b13c5e15mr105415296d6.61.1718657274215;
+        Mon, 17 Jun 2024 13:47:54 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5efc23asm59678836d6.126.2024.06.17.13.47.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 13:47:53 -0700 (PDT)
+Date: Mon, 17 Jun 2024 16:47:53 -0400
+Message-ID: <278d13277e281ab2e358499fce8a849a@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20240617
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <VI1PR05MB67825BD1C2EFCFCBF7521F7ECBC72@VI1PR05MB6782.eurprd05.prod.outlook.com>
- <VI1PR05MB6782D0D70A2A313434013F9ACBCC2@VI1PR05MB6782.eurprd05.prod.outlook.com>
-Message-ID: <ZnCOozJy0slUYF_u@google.com>
-Subject: Re: [LSM/Landlock] Adding ability to sandbox TTYs
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "COHEN-SCALI Remi (AMPERE)" <remi.cohen-scali@renault.com>
-Cc: "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, 
-	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello!
+Linus,
 
-On Sun, Jun 16, 2024 at 06:02:03PM +0000, COHEN-SCALI Remi (AMPERE) wrote:
-> A feature request on landlock is about sandboxing ttys management.
+A single LSM/IMA patch to fix a problem caused by sleeping while
+in a RCU critical section, please merge for the next v6.10-rc
+release.
 
-For completeness, this feature request about TTY IOCTL restrictions is at [=
-1].
-The idea was originally explained in [2], to protect processes on the same =
-TTY
-from messing with each other through the TTY IOCTLs.  In that proposed appr=
-oach,
-the policy decision is guided by the nesting of Landlock domains of the pro=
-cess
-and the TTY, similar to how it is decided for ptrace-ability.
+-Paul
 
-[1] https://github.com/landlock-lsm/linux/issues/5
-[2] https://lore.kernel.org/all/20230822.ua3aib8Zaile@digikod.net/
+--
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-> I'd like to propose an api for this feature but before I'd like to hear f=
-rom
-> you about what could be proposed to developers.
->
-> Of course the standard approach can be provided for "locking" access to s=
-ome
-> syscalls. It will allow a dev to setup a ttys mngt for his app and then l=
-ock
-> it. However I think this will not be enough for most of the use case for
-> applications making an intensive usage of tty framework.
->
-> So I will go first by proposing a standard approach. But in a second step=
-, and
-> for also allowing apps having an intensive ttys framework usage to use
-> landlock, I think it could be interesting to propose another approach:
->
-> something as... providing the app a way to define several configurations =
-and
-> allow it to switch from one to another or ...
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
-I'm not sure I follow your proposal there.  I assume that by "configuration=
-" you
-mean a Landlock domain (an enforced Landlock ruleset)?  In that case, I don=
-'t
-see what the advantage of that would be.  -- If an attacker has taken contr=
-ol
-over the sandboxed process, they would be able to switch between these
-configurations as needed and it would be just as effective security-wise as
-having only a single configuration which enforces the lowest common denomin=
-ator.
+are available in the Git repository at:
 
-Generally, once a Landlock ruleset has been enforced, that enforcement is n=
-ot
-reversable and is inherited to all new subprocesses and threads as well.
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20240617
 
-Am I missing something?
+for you to fetch changes up to 9a95c5bfbf02a0a7f5983280fe284a0ff0836c34:
 
+  ima: Avoid blocking in RCU read-side critical section
+    (2024-06-13 14:26:50 -0400)
 
-> PS: I saw @gnoack proposals about this tty handling in landlock and they =
-seems
-> to be, at least, a good starting point. I'm also looking at several apps =
-using
-> teletypewriter management (gtkterm, minicom, vterm, shells and one I
-> specifically love and use, emacs).
+----------------------------------------------------------------
+lsm/stable-6.10 PR 20240617
 
-The current status quo is that distributions with new kernels are largely
-requiring CAP_SYS_ADMIN for the most dangerous TTY IOCTLs which have been u=
-sed
-for privilege escalation in the past.  These IOCTLs are (a) TIOCSTI, as wel=
-l as
-(b) TIOCLINUX with its copy-paste subcommands TIOCL_SETSEL, TIOCL_PASTESEL =
-and
-TIOCL_SELLOADLUT.  These patches are independent of Landlock and are alread=
-y in:
+----------------------------------------------------------------
+GUO Zihua (1):
+      ima: Avoid blocking in RCU read-side critical section
 
-(a) 83efeeeb3d04 ("tty: Allow TIOCSTI to be disabled")
-(b) 8d1b43f6a6df ("tty: Restrict access to TIOCLINUX' copy-and-paste subcom=
-mands")
+ include/linux/lsm_hook_defs.h       |  2 +-
+ include/linux/security.h            |  5 +++--
+ kernel/auditfilter.c                |  5 +++--
+ security/apparmor/audit.c           |  6 +++---
+ security/apparmor/include/audit.h   |  2 +-
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_policy.c | 15 +++++++++------
+ security/security.c                 |  6 ++++--
+ security/selinux/include/audit.h    |  4 +++-
+ security/selinux/ss/services.c      |  5 +++--
+ security/smack/smack_lsm.c          |  4 +++-
+ 11 files changed, 34 insertions(+), 22 deletions(-)
 
-(This is also documented in tty_ioctl(4) and ioctl_console(2).)
-
-=E2=80=94G=C3=BCnther
+--
+paul-moore.com
