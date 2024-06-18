@@ -1,189 +1,118 @@
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BF71741F2
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 22:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247181741E4
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 23:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718750399; cv=none; b=n8uDzQwZ7qdO6AQg0sTu2WwLKtQjzOvDzafcPIHIljyJJ7U5OHmUdoC8ZpH7zyDmZj3gZSKZuNva6EoTkiWnl5wS5gVQiSmCfRbEncqHBhk/oORifMdH8tWfMVLfyRTUO9T3eV2E0nwCbjJVaaVn90FiReX4XdWq3ulgdGbIoo8=
+	t=1718752868; cv=none; b=DLrC1TnwyGPu7qI+UKa1vxYEhPFYJR5WuUn3mCZnERyH2VOrN6XK+d/8UOKcaA8F3MQKnPqI9lRpr5UTZjcOEbMbSFG2F7Noj8EigGIDrFZ7FTBtcv32alqdQxlmXKJpwk39tsvMi4ZTbK194Tp7SJk8on2wrtu11YV+LQeDwEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718750399; c=relaxed/simple;
-	bh=M7mzEbGbaQjbrcrgflbQy+a72iKuC7EQIbJAodQwhWU=;
+	s=arc-20240116; t=1718752868; c=relaxed/simple;
+	bh=+wBaHcSHdnhQBl8EAcG7ho1hpPuCnLLSfcZ0pIqfHgI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GmvO8IZTEP4jH0SvGTeKmadn3DMcALQ4dji/HoxbmsZUXKZKcmUF4T3SaMjo9vh03rTDp+G7Uk+8BVflCBXnH5Dassm0pIq9wS/ANjvnigfvMwYyfSVhWyHC0Z0NMCUuc25Ytrh3tuK2vsizcxsFU4ZxHsQ7FBuNCzKQX8dOX2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M/OSJfwc; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	 To:Cc:Content-Type; b=jPybAeZzvB3eb7WDqGtQ2rMIz1DP03m64zF++x3LS3zw3fm9zuHJO/TRUJp9zbewJXrK+siDHPpNIss+vLQwqLrNPn0fr1/QxmiSKgWRSaYsk15BqGMG+MSqBoiNaY9IYeov37KivPjmi5wMrrY1gtan3rsrUAtdSBL3D758/EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VHXKe04i; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M/OSJfwc"
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25c963747e7so192473fac.1
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 15:39:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VHXKe04i"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dff0c685371so5366045276.2
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 16:21:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718750396; x=1719355196; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1718752865; x=1719357665; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SDuIqiO2clIGfsQayJd1PsKODcIpbW8KgtS5TlfWIbc=;
-        b=M/OSJfwcH4Zn/CDNpuzlfsXRQGTdXlZt/fe2onN7PnYVNBWmLQ0oHBgJOrc4Ok6Xo2
-         oIGvBU8EFuFYpkTz9z27gmJe8osddhCC3ab6+M2lD3RBfjf7jg6VQmqPDa6yaDwiyOCx
-         20U30Il2fAmosZoNCJUwJgCFLy/6ikca8fX1M=
+        bh=eiWmKBBXMD92k+n8gcYpFFSycdOAu2SpOI6WWatC5Kk=;
+        b=VHXKe04iraEG7NjRob04gdnjbBXlnFM5zTplppcLsKu1UTT8C8oov8s/ITVDrOmffK
+         4PhUZ8F6CzR3GV0dd39sieKEvd9pKWXqQAwL0h0PdfO9Yp/6U4jXm6eDtPfAyCHn5CQs
+         6hHEPx//jTvajGqYsj4g4FjDg+LFTx3OGb4p2hn70i2wUz1ukM8XBgYsgFJM0Sdy2Z3n
+         zL+ApmJdpfnJFfsRaxT9mC5r8zeMLoTmz3DMgGVctQsqy4FCid2vXVaIqgV1+MfEb9ll
+         8hr3UkuA9pfpUuyqHwOFFE9oD9LD1ScTdd6BXXI5cGJOxqCcu30PxIjlGW9WCz4c1UDT
+         MsAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718750396; x=1719355196;
+        d=1e100.net; s=20230601; t=1718752865; x=1719357665;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SDuIqiO2clIGfsQayJd1PsKODcIpbW8KgtS5TlfWIbc=;
-        b=VcAEjBqxhzcxvNUiVMDBEuy+EXl3JxRLUVzHWauNxi3t8CSXyKewZ+k9TqoIYHnTnb
-         YWqgHM++tsRYkuoir+t/93Ec+tAA5A0mdsL99SWZTp4I8K9H4ZovwJFtIMNGBAyQZ8GZ
-         sMiO1cQnorDRoe0/fEMbzDuZ+H//BGGIKDC0ctlz3MC3+HLjrENfzxRO9gHrIrPNTJx1
-         xyJQqnHqSiTJX0yxERETH7/IZ1YqpksJqIuhb3/NTwlGS8RuLgjwOBb9gP0xo1O0iEap
-         GV6FUMp1VxsEPL0P3g/826LJJ5EAlwCsrJL8GInE61YUYm4OXGgVHjrAZlCpYequ60JG
-         vyZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgkRoUEmOFtS7YDpVmVrN1cAYvFPVtz4s51ClVWzhl3PzdDpPH6FPug2waKX7BiGnfOVd2eyaz6OH746ncRRn+EIGXyGnFAAouo0qFC0qojkhLEB5H
-X-Gm-Message-State: AOJu0Yx9UZsj1ZMZcApYelMODjIdlr4RIQeJciomYpaPrpop+jlaUL20
-	6SluEiHjRBk8RlJR94Ux+NQjthVHLP2FIsg4A2DvS4q8jr2za/UICZqMUvm9RkccJnsD3uuErc/
-	rkIrZZCugYEe62MEP8Y6XKr4JwqOtfOki+ovI
-X-Google-Smtp-Source: AGHT+IGVKWa3GDRDjvSCD4uk1Oy7nmeKUd5oiv8J/DJjDfpPfF8EqAvDsryZDGFNvYGm2Dh/2EdeImNb0LSeD/IJeuk=
-X-Received: by 2002:a05:6870:c111:b0:254:e924:be62 with SMTP id
- 586e51a60fabf-25c94a57362mr1438525fac.13.1718750396111; Tue, 18 Jun 2024
- 15:39:56 -0700 (PDT)
+        bh=eiWmKBBXMD92k+n8gcYpFFSycdOAu2SpOI6WWatC5Kk=;
+        b=elUVve/5pCxQkWpMSujrrvUWcMJeNENdt2qHihVTLsMcBhozZOZGHyeoO8Q6BgHPdi
+         0Gss8T9V208HoSzAm+VdHigO/B2Lih+W2Ed8INUunEN0NbyGVcTYSaBDStpeV0H/AZMH
+         d6wmvAKvk7G+s+JHYIAwDpXLqEBiPIcOhZqQnAEGhR7n6iEqIpaC22W/uKjh/KfSJ3kS
+         NWvYy1PUbAZ9MWXYbX801YMnuzuHlBigg1xyfVETUnNMPjCdoYF5BD1oKLZrlaVVSBE1
+         ceOV6PlHhKn0ccJ1PK3Av7+cGIzPabBrYkUOWSUV8y/yNs+tNutQd/ozVvY3hHD6ttb7
+         PfHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVo0dZKdtxmUZ1mWyweBMnv0cNFTDB83paDbmQXJJNSyamHs3+YfTJoZwwW1tTD41BJYHVA4PFuaPPvjQk4suD5VRzjKrjGV7q8WpYVkWftiW+B2LqK
+X-Gm-Message-State: AOJu0YwLtpejDkqW2ODGVMkN07KkxopI7nGwaKYzxJEgvHa2KOzBYe0f
+	Rgf2pxJBrlLAJ8PG7w42Ov2frFVB45eVBJwrVRwjY3vxqTlpOjRS9COpzntQo4NGCCKh0NCwLNY
+	uEOfV/d64sNqsPOHPwBCgK6ja3vGDRUOWWHfH
+X-Google-Smtp-Source: AGHT+IHus0+Dwy7C3mYoVy1EnKy9AYfd3/lzpGvqA1GMz///IqTnVQHpm2tTpoqlitUnmFxuHZFCy9rO5c7Ub6gvyco=
+X-Received: by 2002:a25:bfc9:0:b0:df7:7096:88f2 with SMTP id
+ 3f1490d57ef6-e02be226ff7mr1293526276.55.1718752865063; Tue, 18 Jun 2024
+ 16:21:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613133937.2352724-1-adrian.ratiu@collabora.com> <20240613133937.2352724-2-adrian.ratiu@collabora.com>
-In-Reply-To: <20240613133937.2352724-2-adrian.ratiu@collabora.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 18 Jun 2024 15:39:44 -0700
-Message-ID: <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] proc: restrict /proc/pid/mem
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com, 
-	ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com, 
-	jorgelo@chromium.org, Guenter Roeck <groeck@chromium.org>, 
-	Doug Anderson <dianders@chromium.org>, Kees Cook <keescook@chromium.org>, 
-	Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>, 
-	Mike Frysinger <vapier@chromium.org>
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 18 Jun 2024 19:20:54 -0400
+Message-ID: <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
+	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, mic@digikod.net, 
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
+	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
+	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
+	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
+	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi
+On Mon, Apr 15, 2024 at 10:25=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Integrity detection and protection has long been a desirable feature, to
+> reach a large user base and mitigate the risk of flaws in the software
+> and attacks.
+>
+> However, while solutions exist, they struggle to reach the large user
+> base, due to requiring higher than desired constraints on performance,
+> flexibility and configurability, that only security conscious people are
+> willing to accept.
+>
+> This is where the new digest_cache LSM comes into play, it offers
+> additional support for new and existing integrity solutions, to make
+> them faster and easier to deploy.
+>
+> The full documentation with the motivation and the solution details can b=
+e
+> found in patch 14.
+>
+> The IMA integration patch set will be introduced separately. Also a PoC
+> based on the current version of IPE can be provided.
 
-Thanks for the patch !
+I'm not sure we want to implement a cache as a LSM.  I'm sure it would
+work, but historically LSMs have provided some form of access control,
+measurement, or other traditional security service.  A digest cache,
+while potentially useful for a variety of security related
+applications, is not a security service by itself, it is simply a file
+digest storage mechanism.
 
-On Thu, Jun 13, 2024 at 6:40=E2=80=AFAM Adrian Ratiu <adrian.ratiu@collabor=
-a.com> wrote:
->
-> Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-> after which it got allowed in commit 198214a7ee50 ("proc: enable
-> writing to /proc/pid/mem"). Famous last words from that patch:
-> "no longer a security hazard". :)
->
-> Afterwards exploits started causing drama like [1]. The exploits
-> using /proc/*/mem can be rather sophisticated like [2] which
-> installed an arbitrary payload from noexec storage into a running
-> process then exec'd it, which itself could include an ELF loader
-> to run arbitrary code off noexec storage.
->
-> One of the well-known problems with /proc/*/mem writes is they
-> ignore page permissions via FOLL_FORCE, as opposed to writes via
-> process_vm_writev which respect page permissions. These writes can
-> also be used to bypass mode bits.
->
-> To harden against these types of attacks, distrbutions might want
-> to restrict /proc/pid/mem accesses, either entirely or partially,
-> for eg. to restrict FOLL_FORCE usage.
->
-> Known valid use-cases which still need these accesses are:
->
-> * Debuggers which also have ptrace permissions, so they can access
-> memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
-> are designed to write /proc/pid/mem for basic functionality.
->
-> * Container supervisors using the seccomp notifier to intercept
-> syscalls and rewrite memory of calling processes by passing
-> around /proc/pid/mem file descriptors.
->
-> There might be more, that's why these params default to disabled.
->
-> Regarding other mechanisms which can block these accesses:
->
-> * seccomp filters can be used to block mmap/mprotect calls with W|X
-> perms, but they often can't block open calls as daemons want to
-> read/write their runtime state and seccomp filters cannot check
-> file paths, so plain write calls can't be easily blocked.
->
-> * Since the mem file is part of the dynamic /proc/<pid>/ space, we
-> can't run chmod once at boot to restrict it (and trying to react
-> to every process and run chmod doesn't scale, and the kernel no
-> longer allows chmod on any of these paths).
->
-> * SELinux could be used with a rule to cover all /proc/*/mem files,
-> but even then having multiple ways to deny an attack is useful in
-> case one layer fails.
->
-> Thus we introduce four kernel parameters to restrict /proc/*/mem
-> access: open-read, open-write, write and foll_force. All these can
-> be independently set to the following values:
->
-> all     =3D> restrict all access unconditionally.
-> ptracer =3D> restrict all access except for ptracer processes.
->
-> If left unset, the existing behaviour is preserved, i.e. access
-> is governed by basic file permissions.
->
-> Examples which can be passed by bootloaders:
->
-> proc_mem.restrict_foll_force=3Dall
-> proc_mem.restrict_open_write=3Dptracer
-> proc_mem.restrict_open_read=3Dptracer
-> proc_mem.restrict_write=3Dall
->
-> These knobs can also be enabled via Kconfig like for eg:
->
-> CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=3Dy
-> CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=3Dy
->
-> Each distribution needs to decide what restrictions to apply,
-> depending on its use-cases. Embedded systems might want to do
-> more, while general-purpouse distros might want a more relaxed
-> policy, because for e.g. foll_force=3Dall and write=3Dall both break
-> break GDB, so it might be a bit excessive.
->
-> Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
->
-It is noteworthy that ChromeOS has benefited from blocking
-/proc/pid/mem write since 2017 [1], owing to the patch implemented by
-Mike Frysinger.
+I think it's fine if an individual LSM wants to implement a file
+digest cache as part of its own functionality, but a generalized file
+digest cache seems like something that should be part of the general
+kernel, and not implemented as a LSM.
 
-It is great that upstream can consider this patch, ChromeOS will use
-the solution once it is accepted.
-
-> Link: https://lwn.net/Articles/476947/ [1]
-> Link: https://issues.chromium.org/issues/40089045 [2]
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jeff Xu <jeffxu@google.com>
-> Co-developed-by: Mike Frysinger <vapier@chromium.org>
-> Signed-off-by: Mike Frysinger <vapier@chromium.org>
-> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-
-Reviewed-by: Jeff Xu <jeffxu@chromium.org>
-Tested-by: Jeff Xu <jeffxu@chromium.org>
-[1] https://chromium-review.googlesource.com/c/chromiumos/third_party/kerne=
-l/+/764773
-
--Jeff Xu
-
-
--Jeff
+--=20
+paul-moore.com
