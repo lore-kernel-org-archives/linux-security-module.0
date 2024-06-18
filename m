@@ -1,102 +1,189 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E1216CD1C
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 19:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BF71741F2
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 22:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718739889; cv=none; b=Jg39KN71Bh+NQWTR6IkCSIdVnIUKt187HtcUCDA+KU8TaoLdYXMQ3SbbAUFXH8/0GXdKkKcrze9Iu6h5nvdGQVSExZzpYBgDSwj83lRdff+WSx0uEADrRt+HGoWbaKGdzvhImumhR5CCYzx2jZ+H2GCr8P+a6qmt72r7HMuBS7E=
+	t=1718750399; cv=none; b=n8uDzQwZ7qdO6AQg0sTu2WwLKtQjzOvDzafcPIHIljyJJ7U5OHmUdoC8ZpH7zyDmZj3gZSKZuNva6EoTkiWnl5wS5gVQiSmCfRbEncqHBhk/oORifMdH8tWfMVLfyRTUO9T3eV2E0nwCbjJVaaVn90FiReX4XdWq3ulgdGbIoo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718739889; c=relaxed/simple;
-	bh=VN547w+VN5o5DE8HvJwoLrfKRWnxFAxA+jTsnbyfBGU=;
+	s=arc-20240116; t=1718750399; c=relaxed/simple;
+	bh=M7mzEbGbaQjbrcrgflbQy+a72iKuC7EQIbJAodQwhWU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UaTNYWNBZpKFgPPmWzKV3jfQGXWIHjM5mZXQCbRf1ATdjBuwWSdF3YghJ94l+6vEsYq+n3Gy3PH98ER+LD6FXIPdwLyGS3/uteis/R0lnBbKqcsLgxf/kuelz5B69d2U2ZzeTla4vaxBNJOQzYtGKZOxvLyYEagOLWkuhAW0Mls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FSocZMz8; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=GmvO8IZTEP4jH0SvGTeKmadn3DMcALQ4dji/HoxbmsZUXKZKcmUF4T3SaMjo9vh03rTDp+G7Uk+8BVflCBXnH5Dassm0pIq9wS/ANjvnigfvMwYyfSVhWyHC0Z0NMCUuc25Ytrh3tuK2vsizcxsFU4ZxHsQ7FBuNCzKQX8dOX2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M/OSJfwc; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FSocZMz8"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6327e303739so44113087b3.2
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 12:44:46 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M/OSJfwc"
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25c963747e7so192473fac.1
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Jun 2024 15:39:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718739886; x=1719344686; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718750396; x=1719355196; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JM17wTy9/rRfZ8ThkdkO+gn1FlG9OhXzhFhng4YH2g0=;
-        b=FSocZMz8jCkpT5aT5sI3sOfzvvkR1PEDcsAdE9qFY04j+ZRXsqMhcukEg2JQ8zs5la
-         924yAUg0DyGmqCI2J6p8dy0CLoUH2nP1FoW4etBYpA0TE19plvFeMRlegOHUUllpe0/u
-         JgvY+vJa+iM9oCAJzZIOa70sKAP7eHOeQqXUnS69QgszfwSr8lNH7S0znUTTynWKlk7K
-         aUvVWNLFavkBflI79gP0N0bTGFkRV1OoZb5+EXumi/2X8DfhYGHboAswptLtldI7ezde
-         0ibM1S2GlMyCw+bWTeYa7Yfiw7DY9ClG1YfhcqAXFS3HN8XOVBkttXRLw1wpQYI+L3nL
-         dE7Q==
+        bh=SDuIqiO2clIGfsQayJd1PsKODcIpbW8KgtS5TlfWIbc=;
+        b=M/OSJfwcH4Zn/CDNpuzlfsXRQGTdXlZt/fe2onN7PnYVNBWmLQ0oHBgJOrc4Ok6Xo2
+         oIGvBU8EFuFYpkTz9z27gmJe8osddhCC3ab6+M2lD3RBfjf7jg6VQmqPDa6yaDwiyOCx
+         20U30Il2fAmosZoNCJUwJgCFLy/6ikca8fX1M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718739886; x=1719344686;
+        d=1e100.net; s=20230601; t=1718750396; x=1719355196;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JM17wTy9/rRfZ8ThkdkO+gn1FlG9OhXzhFhng4YH2g0=;
-        b=GI5GYkt0LJ7Si/HyiXQa4Lkag5CweQ7HmM1ifF9ThWOGhmT4jwvA4sKG3pRPiG8Lgq
-         o6GBv/4c2A9jcwO7CSzTR6Zi8XoPJyziR4K7cftgc4vUJJr3V+gx3SRmUHRKahWNQYb7
-         l/pEnVfgIw6gNerBiQk+3DwsRtFXCOjbw0jGrXWM+P0NCH2Kzf1PiBc97puoMh+KDcqC
-         wiSOFQDuNAYAqNTXA1B44PbCBROPWLlr6IiMenCvbcf1Vd/iSY0/OJxRQPq0Bx6cm/Q/
-         ld19NU0aPYrGCd7DpFtxt2y3DbdCS3HaPTX9S8j10c9tKOJJzOJl/TBNYoQIa+oXxbbJ
-         m+qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTO6LKROJjoYrsdDJ2UzUW0H4WyNzaSwibQHlHbvJP115mkT0qDJowVa3/OY9rzrjNrLZpPjHZpqsATXNRCc7CGaqtzsJf3eDEKV0xTJPmuKzQQnee
-X-Gm-Message-State: AOJu0YyY8/26Mssr0WZRn05iDhhEPnAxHdDpin4DPWkFUiSFvV+/PzdF
-	CAD/eXqIwtfwsec9onJzWwiEY2JpzSBbTotXrst8CwpMMWaQkHy35Ws+T4HPei1d/JGEIrxiaG7
-	H7RSFnZ0GVNs5REuHu2vMd/Td9Cj224D3MkLA
-X-Google-Smtp-Source: AGHT+IEK8Dtm/LMdflWvORsofjcPiKC+teg8B3fl6iBIXLr9a2xcHWfRb0owhtf0/w3ajHDDj/VarFLrnIWOR7HVMfk=
-X-Received: by 2002:a0d:ea55:0:b0:61a:cde6:6542 with SMTP id
- 00721157ae682-63a8db105efmr8814347b3.16.1718739885749; Tue, 18 Jun 2024
- 12:44:45 -0700 (PDT)
+        bh=SDuIqiO2clIGfsQayJd1PsKODcIpbW8KgtS5TlfWIbc=;
+        b=VcAEjBqxhzcxvNUiVMDBEuy+EXl3JxRLUVzHWauNxi3t8CSXyKewZ+k9TqoIYHnTnb
+         YWqgHM++tsRYkuoir+t/93Ec+tAA5A0mdsL99SWZTp4I8K9H4ZovwJFtIMNGBAyQZ8GZ
+         sMiO1cQnorDRoe0/fEMbzDuZ+H//BGGIKDC0ctlz3MC3+HLjrENfzxRO9gHrIrPNTJx1
+         xyJQqnHqSiTJX0yxERETH7/IZ1YqpksJqIuhb3/NTwlGS8RuLgjwOBb9gP0xo1O0iEap
+         GV6FUMp1VxsEPL0P3g/826LJJ5EAlwCsrJL8GInE61YUYm4OXGgVHjrAZlCpYequ60JG
+         vyZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgkRoUEmOFtS7YDpVmVrN1cAYvFPVtz4s51ClVWzhl3PzdDpPH6FPug2waKX7BiGnfOVd2eyaz6OH746ncRRn+EIGXyGnFAAouo0qFC0qojkhLEB5H
+X-Gm-Message-State: AOJu0Yx9UZsj1ZMZcApYelMODjIdlr4RIQeJciomYpaPrpop+jlaUL20
+	6SluEiHjRBk8RlJR94Ux+NQjthVHLP2FIsg4A2DvS4q8jr2za/UICZqMUvm9RkccJnsD3uuErc/
+	rkIrZZCugYEe62MEP8Y6XKr4JwqOtfOki+ovI
+X-Google-Smtp-Source: AGHT+IGVKWa3GDRDjvSCD4uk1Oy7nmeKUd5oiv8J/DJjDfpPfF8EqAvDsryZDGFNvYGm2Dh/2EdeImNb0LSeD/IJeuk=
+X-Received: by 2002:a05:6870:c111:b0:254:e924:be62 with SMTP id
+ 586e51a60fabf-25c94a57362mr1438525fac.13.1718750396111; Tue, 18 Jun 2024
+ 15:39:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618192923.379852-1-mattbobrowski@google.com>
-In-Reply-To: <20240618192923.379852-1-mattbobrowski@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 18 Jun 2024 15:44:35 -0400
-Message-ID: <CAHC9VhTMmPC47A91NqazrR=RKwt4JxBMRbpsPowTqxQ06ZjgZA@mail.gmail.com>
-Subject: Re: [PATCH] bpf: add security_file_post_open() LSM hook to sleepable_lsm_hooks
-To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: bpf@vger.kernel.org, kpsingh@kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	linux-security-module@vger.kernel.org, roberto.sassu@huawei.com
+References: <20240613133937.2352724-1-adrian.ratiu@collabora.com> <20240613133937.2352724-2-adrian.ratiu@collabora.com>
+In-Reply-To: <20240613133937.2352724-2-adrian.ratiu@collabora.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Tue, 18 Jun 2024 15:39:44 -0700
+Message-ID: <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] proc: restrict /proc/pid/mem
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kernel@collabora.com, gbiv@google.com, 
+	ryanbeltran@google.com, inglorion@google.com, ajordanr@google.com, 
+	jorgelo@chromium.org, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Kees Cook <keescook@chromium.org>, 
+	Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>, 
+	Mike Frysinger <vapier@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 3:29=E2=80=AFPM Matt Bobrowski <mattbobrowski@googl=
-e.com> wrote:
+Hi
+
+Thanks for the patch !
+
+On Thu, Jun 13, 2024 at 6:40=E2=80=AFAM Adrian Ratiu <adrian.ratiu@collabor=
+a.com> wrote:
 >
-> The new generic LSM hook security_file_post_open() was recently added
-> to the LSM framework in commit 8f46ff5767b0b ("security: Introduce
-> file_post_open hook"). Let's proactively add this generic LSM hook to
-> the sleepable_lsm_hooks BTF ID set, because I can't see there being
-> any strong reasons not to, and it's only a matter of time before
-> someone else comes around and asks for it to be there.
+> Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> after which it got allowed in commit 198214a7ee50 ("proc: enable
+> writing to /proc/pid/mem"). Famous last words from that patch:
+> "no longer a security hazard". :)
 >
-> security_file_post_open() is inherently sleepable as it's purposely
-> situated in the kernel that allows LSMs to directly read out the
-> contents of the backing file if need be. Additionally, it's called
-> directly after securuty_file_open(), and that LSM hook in itself
-
-*cough*
-
-"security_file_open()"
-
-*cough*
-
-> already exists in the sleepable_lsm_hooks BTF ID set.
+> Afterwards exploits started causing drama like [1]. The exploits
+> using /proc/*/mem can be rather sophisticated like [2] which
+> installed an arbitrary payload from noexec storage into a running
+> process then exec'd it, which itself could include an ELF loader
+> to run arbitrary code off noexec storage.
 >
-> Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
-> ---
->  kernel/bpf/bpf_lsm.c | 1 +
->  1 file changed, 1 insertion(+)
+> One of the well-known problems with /proc/*/mem writes is they
+> ignore page permissions via FOLL_FORCE, as opposed to writes via
+> process_vm_writev which respect page permissions. These writes can
+> also be used to bypass mode bits.
+>
+> To harden against these types of attacks, distrbutions might want
+> to restrict /proc/pid/mem accesses, either entirely or partially,
+> for eg. to restrict FOLL_FORCE usage.
+>
+> Known valid use-cases which still need these accesses are:
+>
+> * Debuggers which also have ptrace permissions, so they can access
+> memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
+> are designed to write /proc/pid/mem for basic functionality.
+>
+> * Container supervisors using the seccomp notifier to intercept
+> syscalls and rewrite memory of calling processes by passing
+> around /proc/pid/mem file descriptors.
+>
+> There might be more, that's why these params default to disabled.
+>
+> Regarding other mechanisms which can block these accesses:
+>
+> * seccomp filters can be used to block mmap/mprotect calls with W|X
+> perms, but they often can't block open calls as daemons want to
+> read/write their runtime state and seccomp filters cannot check
+> file paths, so plain write calls can't be easily blocked.
+>
+> * Since the mem file is part of the dynamic /proc/<pid>/ space, we
+> can't run chmod once at boot to restrict it (and trying to react
+> to every process and run chmod doesn't scale, and the kernel no
+> longer allows chmod on any of these paths).
+>
+> * SELinux could be used with a rule to cover all /proc/*/mem files,
+> but even then having multiple ways to deny an attack is useful in
+> case one layer fails.
+>
+> Thus we introduce four kernel parameters to restrict /proc/*/mem
+> access: open-read, open-write, write and foll_force. All these can
+> be independently set to the following values:
+>
+> all     =3D> restrict all access unconditionally.
+> ptracer =3D> restrict all access except for ptracer processes.
+>
+> If left unset, the existing behaviour is preserved, i.e. access
+> is governed by basic file permissions.
+>
+> Examples which can be passed by bootloaders:
+>
+> proc_mem.restrict_foll_force=3Dall
+> proc_mem.restrict_open_write=3Dptracer
+> proc_mem.restrict_open_read=3Dptracer
+> proc_mem.restrict_write=3Dall
+>
+> These knobs can also be enabled via Kconfig like for eg:
+>
+> CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=3Dy
+> CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=3Dy
+>
+> Each distribution needs to decide what restrictions to apply,
+> depending on its use-cases. Embedded systems might want to do
+> more, while general-purpouse distros might want a more relaxed
+> policy, because for e.g. foll_force=3Dall and write=3Dall both break
+> break GDB, so it might be a bit excessive.
+>
+> Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+>
+It is noteworthy that ChromeOS has benefited from blocking
+/proc/pid/mem write since 2017 [1], owing to the patch implemented by
+Mike Frysinger.
 
---=20
-paul-moore.com
+It is great that upstream can consider this patch, ChromeOS will use
+the solution once it is accepted.
+
+> Link: https://lwn.net/Articles/476947/ [1]
+> Link: https://issues.chromium.org/issues/40089045 [2]
+> Cc: Guenter Roeck <groeck@chromium.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jeff Xu <jeffxu@google.com>
+> Co-developed-by: Mike Frysinger <vapier@chromium.org>
+> Signed-off-by: Mike Frysinger <vapier@chromium.org>
+> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+
+Reviewed-by: Jeff Xu <jeffxu@chromium.org>
+Tested-by: Jeff Xu <jeffxu@chromium.org>
+[1] https://chromium-review.googlesource.com/c/chromiumos/third_party/kerne=
+l/+/764773
+
+-Jeff Xu
+
+
+-Jeff
