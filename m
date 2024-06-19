@@ -1,181 +1,185 @@
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584D91E4B0
-	for <linux-security-module@vger.kernel.org>; Wed, 19 Jun 2024 19:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117151591F3;
+	Wed, 19 Jun 2024 20:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718823910; cv=none; b=mVrJexYWqNyG9Kcs7R5Nxoi0KIAxtQx4dEYJrv5HDE7Ta5xbyjiLg9nqUQc3eXoKNxIb7foiRNeOw0/E0u5drwVzWb8GlwCXHfIX6oaTwMpgA1wAN9viRiQJ8hLq4xFGMY2QCh/A11/CTBRcCYvCtS/Z7GaPn71RJYlQMpqrqvw=
+	t=1718829677; cv=none; b=pkFx8TlA6ctYCa2c4u99mwx0nWr8MD6nJT/F7csiBXr8/8qi3PTqyaM41g5THk8hzTg1yiHUNCOSZ1k6qhyw2be6w/Zc+htmYijLC722US0u/cekkaruGbYwNmFJqHV2J2bQHkHyHvz2EjzA9ZWGF5DcM/uEBtUmeRam7SCd6DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718823910; c=relaxed/simple;
-	bh=HsYG3u4BQt6CoTRVpqG4TEiDfmw8LWNDnatTsKEzkb8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N9Sdc1xXQZ1yvDcrwruBiCwDvD3b+XhyAjhi4Huqn7ejJn/JMxAtx57wBM+f5/UviS1rv8ncdrdqFFgdHL1dicpO55fOnQT+nxAzSJyiNrTmXdZS3V4AbxC1GLWSPc4dmQynAaiDooJxD0gAmHnde9ZBe1XQlTIyoCi5zaJ7aWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SJR23Yxz; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1718829677; c=relaxed/simple;
+	bh=hsAftkLN4fxN7Bc95o8vyB/YDSgQFr59/CdyR9siv4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eC5Xkk4hEBqPINvD2oMmafksS2A0WILKk4fgbI4eDUGe9FpLmkZNfVZvVzAV0nL3SZX2EKuc2n9IrY8KXzfrelbxf6sdG5uPs1MTp2mhX1p1UZurgOqEJH4RAuvgbq8+ADsKPdUn4++UxwuW/FJ19jXo4wAlEeuDB/XYgYde94s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VI8SD32Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SJR23Yxz"
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-57d0524060dso10846a12.2
-        for <linux-security-module@vger.kernel.org>; Wed, 19 Jun 2024 12:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718823907; x=1719428707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5cBZWGbah1lE3Ejb3luq7CWnw8Aj0HxoLRS/D6N+3r0=;
-        b=SJR23YxzaYyvW889BAghG+CvSfV2szgHsex7117rRvLYhbedINvbUeXSLHENS/+L2K
-         CXz3iARAOH90Rx6N4c+C6p+Rs1V6CuAdqcs4/BnJaYUMpgolamWwtBN48ETE4nUCjadF
-         6Jo8a60Q1ICIIYpoVrB+93zCyFjXMrq41JIaKGos3QGBJ5bMDUUAnGIVh+qaUcsIfMOF
-         h5x10boO4sdlWbfy89DrYsUcu9obMjPESsnxwhDJMk5i89pjG4JzyT0adn0iRlnXxtmW
-         E1DcFui3UJTpuJBFLArrkwSGRA82rTxO0aOq9EJI/FkewsqCud2C+RjPHog2jFm6fwNl
-         kZ3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718823907; x=1719428707;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5cBZWGbah1lE3Ejb3luq7CWnw8Aj0HxoLRS/D6N+3r0=;
-        b=OWFz/xqo8eaaMRt8x2sDYaVj+zoyEvObImnvbTHSJg5FlCBxMIlaHkBF/47AUbtalh
-         bRX1NPsnNYlfSiMZ6W7FaeD8dLtMnSMpN8Zibimyz0DVljnsMEGwtI+EOnHOKIl47VwM
-         0O6bTl7sR7VK3qJQF8oTTzdwLix/9iFeH1+Y3G3vTXLMghS9TU9EdwKvHzDqF6ozXqTI
-         6wG3U+nP8LlLj5CPQYSA5S3iFU21e2dyCKeSPZUJyuGduAUf0ts1YKpwbdsI4LWh5CAQ
-         wypYr/srGFs+zHybfxzvB6BsgeK7bctpzjBDlqsbRAYf/ZablqfNNqRyBVq1jN2Aw3nm
-         qC8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXfp6+JLWE4r0b+DHSWtr3+15zopkotfyti4mcb5bZk1y+8+Hq1budcEZTCeXFWjSzvzsJvDFURUGVYaczAbaPuocTautW5H7JJrFxP0p4QVdVCnYgk
-X-Gm-Message-State: AOJu0YwFBMT/R+zrGsQmNyOrarGy2DUr0ZO54FlTIJHmafN97OmX4KLU
-	SWYCeV54cDLuPA/2CJEOUCsdgDAMdEi2VNj7WgGbxewpuUNEb41C4HJU0cWjJq6to4RCl56UQwE
-	ZFQ==
-X-Google-Smtp-Source: AGHT+IH6ezgKV5I5dqSOcFIAzwyP5l78NkMHv7BZHgz0EUfSDl2F76DIwt6VZIICzod9Kw3Y9KPHF1bf3Jc=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6402:1608:b0:57c:7cda:6757 with SMTP id
- 4fb4d7f45d1cf-57d07edca18mr2461a12.6.1718823906227; Wed, 19 Jun 2024 12:05:06
- -0700 (PDT)
-Date: Wed, 19 Jun 2024 21:05:03 +0200
-In-Reply-To: <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VI8SD32Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03BBC2BBFC;
+	Wed, 19 Jun 2024 20:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718829676;
+	bh=hsAftkLN4fxN7Bc95o8vyB/YDSgQFr59/CdyR9siv4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VI8SD32ZiFz4904GFvpC+tXK1cPzkucpL5JmbdLUes7BdH3JX1lgGFmcOFKwGw8mY
+	 6I4txIMw4m981lYGDoMBkEgWBoVnqJZHNbAT4cO54AnTCcRcjTzPDH80ytr71xn6hs
+	 JbSdNIyTnKSUaOp7A1wjuncql3f4TGEFbBX1zBDcctCtHRqM8pWbK3dZ6OBcxFA3KH
+	 +HkQTEnWK+Dw+ZOghKzWk0o9VmCL0Lmkj1wSMAYKspptbt8G/2TcQ18LleXIntkyM5
+	 A9eQJtha7Nprs1iphPWQLq8c/Vcv//SR9gMHK2JATRpKzB8VGI8n/nBty2LJ6lZ0Jt
+	 7pF+Q8UPrwOdw==
+Date: Wed, 19 Jun 2024 13:41:16 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org,
+	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com,
+	inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org,
+	Guenter Roeck <groeck@chromium.org>,
+	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>,
+	Mike Frysinger <vapier@chromium.org>
+Subject: Re: [PATCH v6 2/2] proc: restrict /proc/pid/mem
+Message-ID: <202406191336.AC7F803123@keescook>
+References: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
+ <20240613133937.2352724-2-adrian.ratiu@collabora.com>
+ <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
- <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
- <20240425.Soot5eNeexol@digikod.net> <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
-Message-ID: <ZnMr30kSCGME16rO@google.com>
-Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
 
-I agree with Micka=C3=ABl's comment: this seems like an important fix.
+On Tue, Jun 18, 2024 at 03:39:44PM -0700, Jeff Xu wrote:
+> Hi
+> 
+> Thanks for the patch !
+> 
+> On Thu, Jun 13, 2024 at 6:40 AM Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
+> >
+> > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> > after which it got allowed in commit 198214a7ee50 ("proc: enable
+> > writing to /proc/pid/mem"). Famous last words from that patch:
+> > "no longer a security hazard". :)
+> >
+> > Afterwards exploits started causing drama like [1]. The exploits
+> > using /proc/*/mem can be rather sophisticated like [2] which
+> > installed an arbitrary payload from noexec storage into a running
+> > process then exec'd it, which itself could include an ELF loader
+> > to run arbitrary code off noexec storage.
+> >
+> > One of the well-known problems with /proc/*/mem writes is they
+> > ignore page permissions via FOLL_FORCE, as opposed to writes via
+> > process_vm_writev which respect page permissions. These writes can
+> > also be used to bypass mode bits.
+> >
+> > To harden against these types of attacks, distrbutions might want
+> > to restrict /proc/pid/mem accesses, either entirely or partially,
+> > for eg. to restrict FOLL_FORCE usage.
+> >
+> > Known valid use-cases which still need these accesses are:
+> >
+> > * Debuggers which also have ptrace permissions, so they can access
+> > memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
+> > are designed to write /proc/pid/mem for basic functionality.
+> >
+> > * Container supervisors using the seccomp notifier to intercept
+> > syscalls and rewrite memory of calling processes by passing
+> > around /proc/pid/mem file descriptors.
+> >
+> > There might be more, that's why these params default to disabled.
+> >
+> > Regarding other mechanisms which can block these accesses:
+> >
+> > * seccomp filters can be used to block mmap/mprotect calls with W|X
+> > perms, but they often can't block open calls as daemons want to
+> > read/write their runtime state and seccomp filters cannot check
+> > file paths, so plain write calls can't be easily blocked.
+> >
+> > * Since the mem file is part of the dynamic /proc/<pid>/ space, we
+> > can't run chmod once at boot to restrict it (and trying to react
+> > to every process and run chmod doesn't scale, and the kernel no
+> > longer allows chmod on any of these paths).
+> >
+> > * SELinux could be used with a rule to cover all /proc/*/mem files,
+> > but even then having multiple ways to deny an attack is useful in
+> > case one layer fails.
+> >
+> > Thus we introduce four kernel parameters to restrict /proc/*/mem
+> > access: open-read, open-write, write and foll_force. All these can
+> > be independently set to the following values:
+> >
+> > all     => restrict all access unconditionally.
+> > ptracer => restrict all access except for ptracer processes.
+> >
+> > If left unset, the existing behaviour is preserved, i.e. access
+> > is governed by basic file permissions.
+> >
+> > Examples which can be passed by bootloaders:
+> >
+> > proc_mem.restrict_foll_force=all
+> > proc_mem.restrict_open_write=ptracer
+> > proc_mem.restrict_open_read=ptracer
+> > proc_mem.restrict_write=all
+> >
+> > These knobs can also be enabled via Kconfig like for eg:
+> >
+> > CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=y
+> > CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=y
+> >
+> > Each distribution needs to decide what restrictions to apply,
+> > depending on its use-cases. Embedded systems might want to do
+> > more, while general-purpouse distros might want a more relaxed
+> > policy, because for e.g. foll_force=all and write=all both break
+> > break GDB, so it might be a bit excessive.
+> >
+> > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+> >
+> It is noteworthy that ChromeOS has benefited from blocking
+> /proc/pid/mem write since 2017 [1], owing to the patch implemented by
+> Mike Frysinger.
+> 
+> It is great that upstream can consider this patch, ChromeOS will use
+> the solution once it is accepted.
+> 
+> > Link: https://lwn.net/Articles/476947/ [1]
+> > Link: https://issues.chromium.org/issues/40089045 [2]
+> > Cc: Guenter Roeck <groeck@chromium.org>
+> > Cc: Doug Anderson <dianders@chromium.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Jeff Xu <jeffxu@google.com>
+> > Co-developed-by: Mike Frysinger <vapier@chromium.org>
+> > Signed-off-by: Mike Frysinger <vapier@chromium.org>
+> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> 
+> Reviewed-by: Jeff Xu <jeffxu@chromium.org>
+> Tested-by: Jeff Xu <jeffxu@chromium.org>
+> [1] https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/764773
 
-Mostly for completeness: I played with the "socket type" patch set in a "TC=
-P
-server" example, where *all* possible operations are restricted with Landlo=
-ck,
-including the ones from the "socket type" patch set V2 with the little fix =
-we
-discussed.
+Thanks for the testing! What settings did you use? I think Chrome OS was
+effectively doing this?
 
- - socket()
- - bind()
- - enforce a landlock ruleset restricting:
-   - file system access
-   - all TCP bind and connect
-   - socket creation
- - listen()
- - accept()
+PROC_MEM_RESTRICT_OPEN_READ_OFF=y
+CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=y
+CONFIG_PROC_MEM_RESTRICT_WRITE_ALL=y
+CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_ALL=y
 
-From the connection handler (which would be the place where an attacker can
-usually provide input), it is now still possible to bind a socket due to th=
-is
-problem.  The steps are:
+Though I don't see the FOLL_FORCE changes in the linked Chrome OS patch,
+but I suspect it's unreachable with
+CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=y.
 
-  1) connect() on client_fd with AF_UNSPEC to disassociate the client FD
-  2) listen() on the client_fd
+-Kees
 
-This succeeds and it listens on an ephemeral port.
-
-The code is at [1], if you are interested.
-
-[1] https://github.com/gnoack/landlock-examples/blob/main/tcpserver.c
-
-
-On Mon, May 13, 2024 at 03:15:50PM +0300, Ivanov Mikhail wrote:
-> 4/30/2024 4:36 PM, Micka=C3=ABl Sala=C3=BCn wrote:
-> > On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
-> > > Make hook for socket_listen(). It will check that the socket protocol=
- is
-> > > TCP, and if the socket's local port number is 0 (which means,
-> > > that listen(2) was called without any previous bind(2) call),
-> > > then listen(2) call will be legitimate only if there is a rule for bi=
-nd(2)
-> > > allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is not
-> > > supported by the sandbox).
-> >=20
-> > Thanks for this patch and sorry for the late full review.  The code is
-> > good overall.
-> >=20
-> > We should either consider this patch as a fix or add a new flag/access
-> > right to Landlock syscalls for compatibility reason.  I think this
-> > should be a fix.  Calling listen(2) without a previous call to bind(2)
-> > is a corner case that we should properly handle.  The commit message
-> > should make that explicit and highlight the goal of the patch: first
-> > explain why, and then how.
->=20
-> Yeap, this is fix-patch. I have covered motivation and proposed solution
-> in cover letter. Do you have any suggestions on how i can improve this?
-
-Without wanting to turn around the direction of this code review now, I am =
-still
-slightly concerned about the assymetry of this special case being implement=
-ed
-for listen() but not for connect().
-
-The reason is this: My colleague Mr. B. recently pointed out to me that you=
- can
-also do a bind() on a socket before a connect(!). The steps are:
-
-* create socket with socket()
-* bind() to a local port 9090
-* connect() to a remote port 8080
-
-This gives you a connection between ports 9090 and 8080.
-
-A regular connect() without an explicit bind() is of course the more usual
-scenario.  In that case, we are also using up ("implicitly binding") one of=
- the
-ephemeral ports.
-
-It seems that, with respect to the port binding, listen() and connect() wor=
-k
-quite similarly then?  This being considered, maybe it *is* the listen()
-operation on a port which we should be restricting, and not bind()?
-
-With some luck, that would then also free us from having to implement the
-check_tcp_socket_can_listen() logic, which is seemingly emulating logic fro=
-m
-elsewhere in the kernel?
-
-(I am by far not an expert in Linux networking, so I'll put this out for
-consideration and will happily stand corrected if I am misunderstanding
-something.  Maybe someone with more networking background can chime in?)
-
-
-> > > +		/* Socket is alredy binded to some port. */
-> >=20
-> > This kind of spelling issue can be found by scripts/checkpatch.pl
->=20
-> will be fixed
-
-P.S. there are two typos here, the obvious one in "alredy",
-but also the passive of "to bind" is "bound", not "binded".
-(That is also mis-spelled in a few more places I think.)
-
-=E2=80=94G=C3=BCnther
+-- 
+Kees Cook
