@@ -1,160 +1,129 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE481AF6AA;
-	Thu, 20 Jun 2024 15:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88D91ACE94
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 15:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896505; cv=none; b=dv+OjOInUdc2s1dznZPkkZn9BrQmjF4cKULMSxIdAz47EbwsGSb0Z5EDPvJift1GlsV7pFjbfHNXIX8bw2rNzjXxm7x6FFyRPoVEyTDD+OtB96NuC/V6103L4wLrrO87mpLn26++Q4DWXQhI+1SC5JfKeZsgnN7CcK+UutpJemA=
+	t=1718897795; cv=none; b=Pt9Ub2tO9NwepO0YilVbZ9pG97cmEhnEOvjzEpCgtfgTb7XTguRI5d9RuurtZpkcIKbeuEW6dCxhtjI5IWV0OF14JVguiOX1XScpZVvBhbQbThazVhmLjoAH46f0t7pcYtkXQwK1FV32h41JqXOr3BAwk1v/z3huhew4gOTcZQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896505; c=relaxed/simple;
-	bh=B+ANxAr5I5iCOeavRB0jI50wfQL2dL1ZXhcF7hJaeXA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=npfehlmsGrSKtXBVAyspnxjuKnUYLuiqsFwjgyFPu7GiR+ijnG8/8A1yGAeb1J2OpFEiBoukgyYurSstsygVHxwhjv6MCpq9MORamzZzmqZD9Z7gqGxUs1JgyHdEcFBdoPWyNO0bZtxasMNDjrj1sCHc48W28mDuYRSvMKTcBkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4W4k3T5t3mz9v7Jj;
-	Thu, 20 Jun 2024 22:52:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 50AA214010C;
-	Thu, 20 Jun 2024 23:14:53 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwB3_zlXR3RmAzTNAA--.2719S2;
-	Thu, 20 Jun 2024 16:14:52 +0100 (CET)
-Message-ID: <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
- akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
- alexandre.torgue@foss.st.com, mic@digikod.net, 
- linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
- linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
- pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
- pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
- jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
- mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Thu, 20 Jun 2024 17:14:28 +0200
-In-Reply-To: <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
-	 <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
-	 <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
-	 <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
-	 <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
-	 <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
-	 <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
-	 <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
-	 <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1718897795; c=relaxed/simple;
+	bh=5MPy9H6/MZrSI5ArYOAHM/uP6GCpr9j2aMXesDfOHfo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RyyzUWcRA05Jm+b00k0Ptm0kmFohimjfyZ9sIR1CNa7yBFg5EkylGCXxyGsEf3LkazUnFm2NuJkoeclGeZI5w4yqfQl09OFC6DCBs04+v81Nq7M7P9cIOHXoYMGCl9EAvn92kayLEX2zcYdicmY+Akz9rT8nddEnpdjN2HJm1Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eStHfILF; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eStHfILF"
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d51e7557faso318645b6e.1
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 08:36:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718897793; x=1719502593; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5MPy9H6/MZrSI5ArYOAHM/uP6GCpr9j2aMXesDfOHfo=;
+        b=eStHfILFdAyJtdv82IM5qdrXI2p2eqi4igzmgpdJiGtDT5Rdhedqg+omt3GUxshnWN
+         DTryzHx5tqrG8z9hq3GQG/IJFUuTuBeD6dYZYvSXaSmcWtZGAu28n5W3TVZJ3Y7iZspl
+         A98Kz/wsxXrkcM60F+j85yc5KIuM5LVep4hw7/zHZOAlCgm23t2JUc/Eo70R0Q/M7oSO
+         jm32TcTZwJqUFZx8G6pJA9XFEKVswCaayhAe/9/MGfqeIot/1ARoeDhV5/k+l4ibvXrh
+         0lGJMJAUooedybmlld0UHN2SFYZIIMxPJOcJHbGubOnVouPEgzoSD8QFKkn9wBwbqnrG
+         DucQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718897793; x=1719502593;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5MPy9H6/MZrSI5ArYOAHM/uP6GCpr9j2aMXesDfOHfo=;
+        b=GiiVEXq51Mom6FYy1yvNb06qGUZwQf1zz5/oDoODB0K6nud6cG3RIO8UKbk1ftg/xn
+         8uxJ7UA1GspnLrJVDd0kX+cGXWRHI1jARYQbjt8CMhoDRoOPkk8PqQVYvol9jyxk1JeM
+         EaNEjvZ+NG8OQYdZLvveIhk5IG213jhtps71m+MimfLjHx1CETK9eGGFkNitGD8J9Huv
+         e3R51NJQhGsp4ooBAp5IkuJMi+AuY765f+51NbXtvRymsjzFo7v6eTx02RIkpE8jquQb
+         O0nhaA8gDaXN1CTYhatAfmohqVVUdcrRfJMmbA0cGWmI0gmTsrDQjem7Khiagmrcz4md
+         O+0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUdW8vXK44eRh8GN5leL6/FwFo4vHdZiwrIUDs99aC1cyjLAuQ0xcpkLYl8roVDu7KCAOGydZZFqzEI5EDrqlZ/AwN30TzVxP+hTe8vkW0tSXJhiT6i
+X-Gm-Message-State: AOJu0YxejAfvsFrgmO1cCESOfeXxtRBXdIUVkDU0L198HIDfh2dMqUUh
+	3UtWkNMkfOq5II4FfhjtJeWo+uzdyXRfqlIPnBOime2q89Czj8P5vk2qKPs73Y4KMX08Aa6Dm0G
+	z05/5lOlEvQG0tSKMJ8svSAifmeo=
+X-Google-Smtp-Source: AGHT+IH+XGYiBsDbEePvLfP+uFYj0NXt5JHJKNCV7UEeIK+6SbAVLw3cBq5sdIZwv/giGZVuEq4H7JBM+nTigjMtSec=
+X-Received: by 2002:a05:6808:30a0:b0:3d2:49b2:c01a with SMTP id
+ 5614622812f47-3d51bb03794mr6593482b6e.46.1718897792958; Thu, 20 Jun 2024
+ 08:36:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwB3_zlXR3RmAzTNAA--.2719S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF18uFyDJF15AF1xZw1UZFb_yoW5Xw17pa
-	9rCF1Ykr4vqryfCwn2v3W7Z3WFvrZ8tF17Wwn8Xry5Cryq9r1Ikw1I9F4UuFWDXrn5u3Wa
-	yF42vFya9rn8uaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAI
-	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-	CF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
-	aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj595mQACsJ
+References: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
+ <CAEjxPJ7oNGyzh3Q5FyXLtDoq0BmzbBAfLv11ZSkZYBt3Vz_pEw@mail.gmail.com> <3e40424a-a73c-4258-a796-b5d75de323b6@I-love.SAKURA.ne.jp>
+In-Reply-To: <3e40424a-a73c-4258-a796-b5d75de323b6@I-love.SAKURA.ne.jp>
+From: Timur Chernykh <tim.cherry.co@gmail.com>
+Date: Thu, 20 Jun 2024 18:36:22 +0300
+Message-ID: <CABZOZnSsDadW0WmuSYzZ1H3yE=G586KQTtDUz1CJvwY2ZSye=A@mail.gmail.com>
+Subject: Re: Yet another vision of Linux security | Endpoint Security Framework
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2024-06-20 at 10:48 -0400, Paul Moore wrote:
-> On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
-> > > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > >=20
-> > > > Making it a kernel subsystem would likely mean replicating what the=
- LSM
-> > > > infrastructure is doing, inode (security) blob and being notified a=
-bout
-> > > > file/directory changes.
-> > >=20
-> > > Just because the LSM framework can be used for something, perhaps it
-> > > even makes the implementation easier, it doesn't mean the framework
-> > > should be used for everything.
-> >=20
-> > It is supporting 3 LSMs: IMA, IPE and BPF LSM.
-> >=20
-> > That makes it a clear target for the security subsystem, and as you
-> > suggested to start for IMA, if other kernel subsystems require them, we
-> > can make it as an independent subsystem.
->=20
-> Have you discussed the file digest cache functionality with either the
-> IPE or BPF LSM maintainers?  While digest_cache may support these
+> I could be wrong, but I thought that supporting such solutions was one
+> of the reasons that fanotify was introduced
 
-Well, yes. I was in a discussion since long time ago with Deven and
-Fan. The digest_cache LSM is listed in the Use Case section of the IPE
-cover letter:
+You're right. Fanotify was invented to solve AV developers' problems,
+but it gives only a filesystem monitor with, in my opinion, weak
+instrumentary, when the modern EDR solutions do much more than just FS
+control: firewall, fs protection, process monitoring, vulnerabilities
+scanning, container security and so on.
 
-https://lore.kernel.org/linux-integrity/1716583609-21790-1-git-send-email-w=
-ufan@linux.microsoft.com/
+> Can you explain which ones can't be met using those
+> today?
 
-I also developed an IPE module back in the DIGLIM days:
+Audit + fanotify doesn't give you control over the whole system, which
+good AV/EDR should provide as a feature. For example, now you can not
+"pause" the process execution and then "allow" it after scanning, like
+Windows defender. You even cannot deny binary file or script
+execution, like in my PoC here:
+https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/samples/esf/agent.c#L543
 
-https://lore.kernel.org/linux-integrity/a16a628b9e21433198c490500a987121@hu=
-awei.com/
+Moreover, you can retrieve consistent information from just fanotify
+and audit and correlate it because:
+- They have a different format of events;
+- They aren't synchronized with each other at all;
+- Audit is not a reliable source of information, it has some sort of
+events that differs or may be or may not be from system to system.
 
-As for eBPF, I just need to make the digest_cache LSM API callable by
-eBPF programs, very likely not requiring any change on the eBPF
-infrastructure itself. As an example of the modification needed, you
-could have a look at:
+Of course, this is just "another programmers' task", but it could be
+better if Linux provides it all from the box, like MacOS.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/ker=
-nel/trace/bpf_trace.c?h=3Dv6.10-rc4#n1381
+In my vision there should be only *one* source of security events for
+the whole system. All events should be consistent and sequenced.
 
+> Note that a number of the LSM hooks are called from interrupt or while
+> holding locks and thus cannot sleep/block.
 
-Once the digest_cache LSM API is exposed in eBPF, you could write a
-simple file integrity check (taken from my DIGLIM eBPF), not tested:
+Yes, I know, thank you. This doesn't seem to be a big problem.
 
-SEC("lsm.s/bprm_creds_for_exec")
-int BPF_PROG(exec, struct linux_binprm *bprm)
-{
-	u8 digest[MAX_DIGEST_SIZE] =3D { 0 };
-	digest_cache_found_t found;
-	struct digest_cache;
-	int algo;
+> I don't know the reason, but I think that that is because LSM framework
+> did not officially support loading LSM modules after boot, and LSM hooks
+> did not receive enough arguments needed by AV/EDR software.
 
-	algo =3D bpf_ima_file_hash(bprm->file, digest, sizeof(digest));
-	if (algo < 0)
-		return -EPERM;
+Yep, I'm talking about moving all security logic to userspace, by
+allowing some security agent(s) (like EDR or AV) to interact with
+restricted API.
+In this concept kernel just gives a guarantee of well-written code to
+developers and delegates userspace protection to EDR/AV vendors. It's
+like a loadable LSM module, but in userspace and not eBPF :)
 
-	digest_cache =3D bpf_digest_cache_get(bprm->file->f_path.dentry);
-	if (!digest_cache)
-		return -EPERM;
+I believe that there's no need in loadable LSM at all, just a security
+agent, which communicates with the kernel. Therefore some of "hooks"
+might not be LSM, it can be integrated in the kernel as part of
+technology, as it is done with audit.
 
-	found =3D bpf_digest_cache_lookup(bprm->file->f_path.dentry,
-					digest_cache, digest, algo);
+> I prefer getting kernel code used by AV/EDR software reviewed (and get
+> their code tested by fuzzers), by allowing AV/EDR software developers
+> to submit their kernel code for upstream.
 
-	bpf_digest_cache_put(digest_cache);
-	return found ? 0 : -EPERM;
-}
-
-Roberto
-
-> LSMs, I don't recall seeing any comments from the other LSM
-> developers; if you are going to advocate for this as something outside
-> of IMA, it would be good to see a show of support for the other LSMs.
->=20
-
+Of course, it's an obvious thing, but at this step I haven't set up
+any fuzzers or checks. It'll definitely be done in case this idea get
+approve from community and I'll continue working on this PoC like on
+new technology.
