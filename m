@@ -1,211 +1,169 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4D919EEBC;
-	Thu, 20 Jun 2024 16:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1881BB682;
+	Thu, 20 Jun 2024 16:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900785; cv=none; b=ZeYz45ytsPUnvmn348gH/lONyICp/xuxjsz3JSD7rt2DuqiUT8+hDXAy5MQ/zMtUYqXy6eHVi7iHY//mjVKVFBOcqWO8Iutl8Et/NGuTnOzFf4jMUo2OlYLhlGXFcL7X40t18UcFhUrVcrGxhScQoPx/rCGLLgYln01VVjm2bEc=
+	t=1718901077; cv=none; b=O9YKfWSh719iYlRctzSQwOuIWawLnmW3q2291Qvwysc7GPjCc7H4bj/BNXgAodz4Jjwt1zxFvHqKidLMAZ50P2FATpVv/I8i0n5uiNhK1jEVhxHakPSISCRMAOLzGZ5IL8FNI982yu7/OrXyN8+Js7pRrUHBYFEWyIhZWtDTCOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900785; c=relaxed/simple;
-	bh=DJCvEuccwgJSlq7HDYpXbo1yrXYfR4nL6nl4LO0BNLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AxtGgBqBE2KIo7hQNSrZopksoN5/hsJl4AY4AvYldOrECietVazycamAc8hGocMauWe69mVpVhpRYLEnUHBoryObVFYMPGNsdZQnJUn1ET8i/3HJX2PY2OzlF0a0CB9kbJ5r+rWpifZZrRz+7y1akkiyZT9zdWOlcazAILNDTlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=XgJIEacE; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="XgJIEacE"
-Received: from [10.0.0.100] (pool-99-255-30-7.cpe.net.cable.rogers.com [99.255.30.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 5747A3F0FE;
-	Thu, 20 Jun 2024 16:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1718900763;
-	bh=FDvEQmTbtmdPiKLPsp3RR0QwHmOgJpWn0QiXczl359M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=XgJIEacEezPM3Qy4zQYvqF5dRJuqdfImLw5BcEXCdoVJdw0/6rN+dJV5k2Uhr2kT/
-	 gWqkF9Wv2AzVNV9Us9VRMgnQoTHPLoleQ5ASmpO72Gkm5unHGtuTIsRFrUOpT0eZs1
-	 qDrSa+FXb6FSzWv7M7vUGSm5mtoXv+OsPEs6f7Vw6Y4508Hl7S+aGbQd3w+BLcRKtg
-	 LVob+FSl2JzkvNx0BiDa/I8wpOJ2f9uojbESHVAyR8iHl7hZe2jIcWoYmNiOzEtz/t
-	 KEdT9GHx0xTzlM1iCLx4lyPCvR0FzhAWqaR3qDUwNxnZMOZmiLia4EoPnqq+UvInHW
-	 OLRLzrXUm2LZA==
-Message-ID: <71c0ea18-8b8b-402b-b03c-029aeedc2747@canonical.com>
-Date: Thu, 20 Jun 2024 09:26:00 -0700
+	s=arc-20240116; t=1718901077; c=relaxed/simple;
+	bh=gTgvxw4Oyi7BJ7oODAOXGz4mQfb46ayQMJtrFK+oj3E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Af5FrN3Re00zRi7sxqGe/+pdcL8sI8T0Bv9DatGhzcYQnnOCSBwBH92nv286VPEUOec4daM84tXSIblt3CLzD58XCX7wIMt+6Bs6QZYrjk1AIzjf6jMq94Nomi4hOc51PbDvmfrRG/6OeqZ8Ix/GnsvjkQ67YUCNgrRB6VkRG9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4W4ls91Zj1z9v7Hl;
+	Fri, 21 Jun 2024 00:13:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id C1E0A140857;
+	Fri, 21 Jun 2024 00:30:55 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDn9FMqWXRmDrTMAA--.33469S2;
+	Thu, 20 Jun 2024 17:30:54 +0100 (CET)
+Message-ID: <c732b1eb15141f909e99247192539b7f76e9952c.camel@huaweicloud.com>
+Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
+ akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
+ alexandre.torgue@foss.st.com, mic@digikod.net, 
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+ linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
+ mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Thu, 20 Jun 2024 18:30:31 +0200
+In-Reply-To: <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+	 <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
+	 <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
+	 <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
+	 <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
+	 <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
+	 <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
+	 <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
+	 <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
+	 <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
+	 <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
+	 <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: try to avoid refing the label in
- apparmor_file_open
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, Neeraj.Upadhyay@amd.com
-References: <20240620131524.156312-1-mjguzik@gmail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240620131524.156312-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwDn9FMqWXRmDrTMAA--.33469S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF15tF47trW7Ar45KFW7Jwb_yoW5uw1Upa
+	yUK3WUKr4ktFy7Cwn2ya17uayS9rW5tF17Xwn8J34rAF909r12kw1IkF45uFyUWrs5Ca42
+	vF4aqry3u3s8ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
+	CF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj596+AAAsp
 
-On 6/20/24 06:15, Mateusz Guzik wrote:
-> It can be done in the common case.
-> > A 24-way open1_processes from will-it-scale (separate file open) shows:
->    29.37%  [kernel]           [k] apparmor_file_open
->    26.84%  [kernel]           [k] apparmor_file_alloc_security
->    26.62%  [kernel]           [k] apparmor_file_free_security
->     1.32%  [kernel]           [k] clear_bhb_loop
-> 
-> apparmor_file_open is eliminated from the profile with the patch.
-> 
-> Throughput (ops/s):
-> before:	6092196
-> after:	8309726 (+36%)
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-can you cleanup the commit message and I will pull this in
+On Thu, 2024-06-20 at 12:08 -0400, Paul Moore wrote:
+> On Thu, Jun 20, 2024 at 11:14=E2=80=AFAM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > On Thu, 2024-06-20 at 10:48 -0400, Paul Moore wrote:
+> > > On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
+> > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
+> > > > > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
+> > > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > >=20
+> > > > > > Making it a kernel subsystem would likely mean replicating what=
+ the LSM
+> > > > > > infrastructure is doing, inode (security) blob and being notifi=
+ed about
+> > > > > > file/directory changes.
+> > > > >=20
+> > > > > Just because the LSM framework can be used for something, perhaps=
+ it
+> > > > > even makes the implementation easier, it doesn't mean the framewo=
+rk
+> > > > > should be used for everything.
+> > > >=20
+> > > > It is supporting 3 LSMs: IMA, IPE and BPF LSM.
+> > > >=20
+> > > > That makes it a clear target for the security subsystem, and as you
+> > > > suggested to start for IMA, if other kernel subsystems require them=
+, we
+> > > > can make it as an independent subsystem.
+> > >=20
+> > > Have you discussed the file digest cache functionality with either th=
+e
+> > > IPE or BPF LSM maintainers?  While digest_cache may support these
+> >=20
+> > Well, yes. I was in a discussion since long time ago with Deven and
+> > Fan. The digest_cache LSM is listed in the Use Case section of the IPE
+> > cover letter:
+> >=20
+> > https://lore.kernel.org/linux-integrity/1716583609-21790-1-git-send-ema=
+il-wufan@linux.microsoft.com/
+>=20
+> I would hope to see more than one sentence casually mentioning that
+> there might be some integration in the future.
 
-> ---
-> 
-> I think this is a worthwhile touch up regardless of what happens with
-> label refcouting in the long run. It does not of course does not fully
-> fix the problem.
-> 
-I have no objections to incremental improvements.
+Sure, I can work more with Fan to do a proper integration.
 
-> I concede the naming is not consistent with other stuff in the file and
-> I'm not going to argue about it -- happy to name it whatever as long as
-> the problem is sorted out.
-> 
-its fine, we could use crit_section here like with the current_label but
-I don't think we really gain anything by doing so.
+> > I also developed an IPE module back in the DIGLIM days:
+> >=20
+> > https://lore.kernel.org/linux-integrity/a16a628b9e21433198c490500a98712=
+1@huawei.com/
+>=20
+> That looks like more of an fs-verity integration to me.  Yes, of
+> course there would be IPE changes to accept a signature/digest from a
+> digest cache, but that should be minor.
 
-> Am I missing something which makes the approach below not work to begin
-> with?
-> 
-no this will work in the short term. Long term there is work that will
-break this. Both replacing unconfined and the object delegation work
-will cause a performance regression as I am not sure we will be able
-to conditionally get the label but that is something for those patch
-series to work out. My biggest concern being people objecting to necessary
-changes that regress performance, if it can't be worked out, but
-that really isn't a reason to stop this now.
+True, but IPE will also benefit from not needing to specify every
+digest in the policy.
 
+Also, the design choice of attaching the digest cache to the inode
+helps LSMs like IPE that don't have a per inode cache on their own.
+Sure, IPE would have to do a digest lookup every time, but at least on
+an already populated hash table.
 
+> > As for eBPF, I just need to make the digest_cache LSM API callable by
+> > eBPF programs, very likely not requiring any change on the eBPF
+> > infrastructure itself.
+>=20
+> That's great, but it would be good to hear from KP and any other BPF
+> LSM devs that this would be desirable.
 
->   security/apparmor/include/cred.h | 20 ++++++++++++++++++++
->   security/apparmor/lsm.c          |  5 +++--
->   2 files changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-> index 58fdc72af664..7265d2f81dd5 100644
-> --- a/security/apparmor/include/cred.h
-> +++ b/security/apparmor/include/cred.h
-> @@ -63,6 +63,26 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
->   	return aa_get_newest_label(aa_cred_raw_label(cred));
->   }
->   
-> +static inline struct aa_label *aa_get_newest_cred_label_condref(const struct cred *cred,
-> +								bool *needput)
-> +{
-> +	struct aa_label *l = aa_cred_raw_label(cred);
-> +
-> +	if (unlikely(label_is_stale(l))) {
-> +		*needput = true;
-> +		return aa_get_newest_label(l);
-> +	}
-> +
-> +	*needput = false;
-> +	return l;
-> +}
-> +
-> +static inline void aa_put_label_condref(struct aa_label *l, bool needput)
-> +{
-> +	if (unlikely(needput))
-> +		aa_put_label(l);
-> +}
-> +
->   /**
->    * aa_current_raw_label - find the current tasks confining label
->    *
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 2cea34657a47..4bf87eac4a56 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -461,6 +461,7 @@ static int apparmor_file_open(struct file *file)
->   	struct aa_file_ctx *fctx = file_ctx(file);
->   	struct aa_label *label;
->   	int error = 0;
-> +	bool needput;
->   
->   	if (!path_mediated_fs(file->f_path.dentry))
->   		return 0;
-> @@ -477,7 +478,7 @@ static int apparmor_file_open(struct file *file)
->   		return 0;
->   	}
->   
-> -	label = aa_get_newest_cred_label(file->f_cred);
-> +	label = aa_get_newest_cred_label_condref(file->f_cred, &needput);
->   	if (!unconfined(label)) {
->   		struct mnt_idmap *idmap = file_mnt_idmap(file);
->   		struct inode *inode = file_inode(file);
-> @@ -494,7 +495,7 @@ static int apparmor_file_open(struct file *file)
->   		/* todo cache full allowed permissions set and state */
->   		fctx->allow = aa_map_file_to_perms(file);
->   	}
-> -	aa_put_label(label);
-> +	aa_put_label_condref(label, needput);
->   
->   	return error;
->   }
+Yes, I would also like to know their opinion. They already support
+getting a file digest from IMA. Adding support for the digest_cache LSM
+is a nice complement, to make security decisions based on an
+authenticated source of reference digests (signature verification was
+not shown in the example).
+
+> I still believe that this is something that should live as a service
+> outside of the LSM.
+
+It will not cost me too much to plug to IMA rather than the LSM
+infrastructure, but I would rather prefer the second.
+
+I'm not aware of equivalent facilities in the kernel that would make
+the digest_cache LSM work in the same way, so making it as an
+independent kernel subsystem seems a too big jump for me.
+
+Roberto
 
