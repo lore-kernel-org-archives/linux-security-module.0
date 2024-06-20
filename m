@@ -1,107 +1,222 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58381CD3D;
-	Thu, 20 Jun 2024 16:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03D61B3737
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 16:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900536; cv=none; b=SSYoHxH+S4wLaC4W1oZbHBm+lWo+IHbaz9D8WK7kjeOuGm/3M2UOCi7hqgecobEC7Xyp7UTJ9Mtgml1nLujacPcB3f+BJk5FdihztplvXypJjpepzrbOD+siCVIWHUU4RBxihNO77F6SyltbrcdBL0ge7FGa7KBOdDuTU0lGhe8=
+	t=1718900665; cv=none; b=Z8HiQ9CppcbU+JhnqpcwN8EV75hSHjBMqWaA0QfJjzSO4Su/7WCRsoOm03mLHxKyNEh3BXxEX6NcN+tsPKCDy697lCE/49wwKgUKEUi6VXC51G8gmfX3NYK6kZtiIbE1Yf6DFEHqw3ehosrpaF/bYkx4Z3BUGaZ+XotT1QW0xf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900536; c=relaxed/simple;
-	bh=ssJliKc5kNtUyUtknPdOclEvUOLH+104ZebK/uc38CI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F7ORG2kyXxrEGOGi0ttBjkaw8J0c0ViWFsqX4USSdKmBJE4Uh3+43RGFSTqjXw87ZLvN2WEDZzKeKDlTSXY+9p2lPH/wsxOrrwqIbgNdOTPK7cTzTWrmw24AAfhyZnDxc9X6YFfwc9x9NKX2d4dfGNJvSY3Zr9j8Rq7+w9DmejA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jOx7eYfG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718900665; c=relaxed/simple;
+	bh=G9HKFUhajGasiqamL48YDxw+DEmI8YzmL0Uiykg5fY4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z/+4DxDDOoX/XWV0WLo0fRtG1zshPXMxr01yS+pweFMdJD7zdKlv9D/z6AsQ5zyCZNqJnDah5/9zcMS41TtJTxXctxf4SDSVu0lkSahEURKeaD6eJxWV/0t47tsKnFcSMjvXjkHT5AeyXg5pKFOHEnqQRDqc32vRbHZyV4XM6yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YMS+NiOH; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jOx7eYfG"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9vXRa003612;
-	Thu, 20 Jun 2024 16:22:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hhGpsxMxzPNoapl7cqpvoCRjNe/ydCSjVn5o6h1MEu0=; b=jOx7eYfGaCbY5pPh
-	PU+XzdAGyBjuNJh9BhWB6mHmDbc8ETjF3tIBCJI+nJwNgWu8LV1cvgxI1z6jHMLr
-	GkpETrTgkA7Dw/XMf3WueG88YxPtraRbz1NlUmoRtGYSamfdEfmXV1OWyT42O0C3
-	V+bRn0ChDOkdPRA4kaB0tgE4l/sxVgn8TqneiplzztakibGkDALk8es/KgU6YTBK
-	i0qg4G1deu6wbcTzaoJRQ35BUkU5JJhyvDLRV1gjEh2eIpmHW64qL5VljiF5yGc7
-	fav6XDU2IMgtWcgwzAW6Xll1fZvSZyQpjhf/bd8t1MDYQo1Vz0yNwn5pmuKmSLl8
-	EuaDmg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbswx4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 16:22:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGM0XL001765
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 16:22:00 GMT
-Received: from [10.48.244.93] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
- 2024 09:21:59 -0700
-Message-ID: <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
-Date: Thu, 20 Jun 2024 09:21:59 -0700
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMS+NiOH"
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b96b249d56so900363eaf.1
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 09:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718900661; x=1719505461; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nt4TaLRiigym5jbcwq/kMWuY93Qd7TBOqg1NFwNoq6E=;
+        b=YMS+NiOHPFLEdu4YzN1VwDcS8pERi2TrlGLwDogh55nknPwdYDZDWK5pSdVBPEyYhw
+         +yCCZriIRvEWVLCfJJjSR5/C+jqMDrxJWNRc+4J/KRPMp4xJR2PeuMmdHrjuH0nb3TcI
+         p0Aj801PeKi0IbIKmfJeXFTAHW8O/muMrcDGk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718900661; x=1719505461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nt4TaLRiigym5jbcwq/kMWuY93Qd7TBOqg1NFwNoq6E=;
+        b=Jkr/jNlibk9nxPxw5llUr8nA03SOIh9l5RVHG9svWMDvjA3qDii/plylJoh1BQjcIN
+         0FLndIQApBjnjXUfiuGTTge8f7zbuWtJ1GHDPrEszNdb5xoQYWJzwyTdsLSsZ1Axlqlr
+         Hco5gdhcmcTJcYLFUHz+8UfEYw6tYwAlsMhTm3+XtSRrlVwie8zlQnF1V/eH0SabKcuL
+         4lR1gK72reCW7HjGF7kM3h0GwCuUnmu0BF6e1DLyy6nYL+NaOiPZSvANo+ZRI9WjvnD9
+         RvXhqX3sVX7Acaz91ANPz4taILSBCSVvletGgLEWMtuMyY6I9cgR4c7DULBqt5w5A1tb
+         sj1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZV6lrZBzbAtFNJOZSTWJ9v+HnXRtnfFkE/Srpd20iFGwVI5MxZRZpSPNZE6rA6WjwF0H2speoXAZWAb3OkdRbWkptQCHNjhV4Yy1ohfNQqR6QdkGl
+X-Gm-Message-State: AOJu0YyeiQl0pCu9R400CSkvmtomOoMs9tQj1F5CSV6fhrELVI0dE2P9
+	6GUKYanhi3hJQj0E7Yaa4/HwdsrzZQSaKdNiAYw5Uj8mdsTTHo/zS2Cq43qkSiNXZUEiVhpazKq
+	MyBqNza58DtIlwcDqQYb7Od/XXXiGEDYcac3H
+X-Google-Smtp-Source: AGHT+IFBpvlmEuvbahBVElIajKUVoumeP4+3qEjJukkg86pbSwvP4+dt7eZAeaxRiL+fF3GyBU2EqugxSpNNxR2hW2s=
+X-Received: by 2002:a05:6870:248a:b0:254:b781:2f5e with SMTP id
+ 586e51a60fabf-25972de7257mr3753010fac.17.1718900660925; Thu, 20 Jun 2024
+ 09:24:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
-Content-Language: en-US
-To: John Johansen <john.johansen@canonical.com>,
-        Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
-	<serge@hallyn.com>
-CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
+References: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
+ <20240613133937.2352724-2-adrian.ratiu@collabora.com> <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
+ <202406191336.AC7F803123@keescook>
+In-Reply-To: <202406191336.AC7F803123@keescook>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 20 Jun 2024 09:24:09 -0700
+Message-ID: <CABi2SkWDwAU2ARyMVTeCqFeOXyQZn3hbkdWv-1OzzgG=MNoU8Q@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] proc: restrict /proc/pid/mem
+To: Kees Cook <kees@kernel.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, 
+	inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org, 
+	Guenter Roeck <groeck@chromium.org>, Doug Anderson <dianders@chromium.org>, 
+	Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>, 
+	Mike Frysinger <vapier@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
-X-Proofpoint-ORIG-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200118
+Content-Transfer-Encoding: quoted-printable
 
-On 5/29/2024 6:21 PM, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  security/apparmor/policy_unpack_test.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-> index 5c9bde25e56d..874fcf97794e 100644
-> --- a/security/apparmor/policy_unpack_test.c
-> +++ b/security/apparmor/policy_unpack_test.c
-> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
->  
->  kunit_test_suite(apparmor_policy_unpack_test_module);
->  
-> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
-> 
+On Wed, Jun 19, 2024 at 1:41=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+> On Tue, Jun 18, 2024 at 03:39:44PM -0700, Jeff Xu wrote:
+> > Hi
+> >
+> > Thanks for the patch !
+> >
+> > On Thu, Jun 13, 2024 at 6:40=E2=80=AFAM Adrian Ratiu <adrian.ratiu@coll=
+abora.com> wrote:
+> > >
+> > > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> > > after which it got allowed in commit 198214a7ee50 ("proc: enable
+> > > writing to /proc/pid/mem"). Famous last words from that patch:
+> > > "no longer a security hazard". :)
+> > >
+> > > Afterwards exploits started causing drama like [1]. The exploits
+> > > using /proc/*/mem can be rather sophisticated like [2] which
+> > > installed an arbitrary payload from noexec storage into a running
+> > > process then exec'd it, which itself could include an ELF loader
+> > > to run arbitrary code off noexec storage.
+> > >
+> > > One of the well-known problems with /proc/*/mem writes is they
+> > > ignore page permissions via FOLL_FORCE, as opposed to writes via
+> > > process_vm_writev which respect page permissions. These writes can
+> > > also be used to bypass mode bits.
+> > >
+> > > To harden against these types of attacks, distrbutions might want
+> > > to restrict /proc/pid/mem accesses, either entirely or partially,
+> > > for eg. to restrict FOLL_FORCE usage.
+> > >
+> > > Known valid use-cases which still need these accesses are:
+> > >
+> > > * Debuggers which also have ptrace permissions, so they can access
+> > > memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
+> > > are designed to write /proc/pid/mem for basic functionality.
+> > >
+> > > * Container supervisors using the seccomp notifier to intercept
+> > > syscalls and rewrite memory of calling processes by passing
+> > > around /proc/pid/mem file descriptors.
+> > >
+> > > There might be more, that's why these params default to disabled.
+> > >
+> > > Regarding other mechanisms which can block these accesses:
+> > >
+> > > * seccomp filters can be used to block mmap/mprotect calls with W|X
+> > > perms, but they often can't block open calls as daemons want to
+> > > read/write their runtime state and seccomp filters cannot check
+> > > file paths, so plain write calls can't be easily blocked.
+> > >
+> > > * Since the mem file is part of the dynamic /proc/<pid>/ space, we
+> > > can't run chmod once at boot to restrict it (and trying to react
+> > > to every process and run chmod doesn't scale, and the kernel no
+> > > longer allows chmod on any of these paths).
+> > >
+> > > * SELinux could be used with a rule to cover all /proc/*/mem files,
+> > > but even then having multiple ways to deny an attack is useful in
+> > > case one layer fails.
+> > >
+> > > Thus we introduce four kernel parameters to restrict /proc/*/mem
+> > > access: open-read, open-write, write and foll_force. All these can
+> > > be independently set to the following values:
+> > >
+> > > all     =3D> restrict all access unconditionally.
+> > > ptracer =3D> restrict all access except for ptracer processes.
+> > >
+> > > If left unset, the existing behaviour is preserved, i.e. access
+> > > is governed by basic file permissions.
+> > >
+> > > Examples which can be passed by bootloaders:
+> > >
+> > > proc_mem.restrict_foll_force=3Dall
+> > > proc_mem.restrict_open_write=3Dptracer
+> > > proc_mem.restrict_open_read=3Dptracer
+> > > proc_mem.restrict_write=3Dall
+> > >
+> > > These knobs can also be enabled via Kconfig like for eg:
+> > >
+> > > CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=3Dy
+> > > CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=3Dy
+> > >
+> > > Each distribution needs to decide what restrictions to apply,
+> > > depending on its use-cases. Embedded systems might want to do
+> > > more, while general-purpouse distros might want a more relaxed
+> > > policy, because for e.g. foll_force=3Dall and write=3Dall both break
+> > > break GDB, so it might be a bit excessive.
+> > >
+> > > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+> > >
+> > It is noteworthy that ChromeOS has benefited from blocking
+> > /proc/pid/mem write since 2017 [1], owing to the patch implemented by
+> > Mike Frysinger.
+> >
+> > It is great that upstream can consider this patch, ChromeOS will use
+> > the solution once it is accepted.
+> >
+> > > Link: https://lwn.net/Articles/476947/ [1]
+> > > Link: https://issues.chromium.org/issues/40089045 [2]
+> > > Cc: Guenter Roeck <groeck@chromium.org>
+> > > Cc: Doug Anderson <dianders@chromium.org>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Jann Horn <jannh@google.com>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Jeff Xu <jeffxu@google.com>
+> > > Co-developed-by: Mike Frysinger <vapier@chromium.org>
+> > > Signed-off-by: Mike Frysinger <vapier@chromium.org>
+> > > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> >
+> > Reviewed-by: Jeff Xu <jeffxu@chromium.org>
+> > Tested-by: Jeff Xu <jeffxu@chromium.org>
+> > [1] https://chromium-review.googlesource.com/c/chromiumos/third_party/k=
+ernel/+/764773
+>
+> Thanks for the testing! What settings did you use? I think Chrome OS was
+> effectively doing this?
+>
+> PROC_MEM_RESTRICT_OPEN_READ_OFF=3Dy
+> CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=3Dy
+> CONFIG_PROC_MEM_RESTRICT_WRITE_ALL=3Dy
+> CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_ALL=3Dy
+>
+> Though I don't see the FOLL_FORCE changes in the linked Chrome OS patch,
+> but I suspect it's unreachable with
+> CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=3Dy.
+>
+I use CONFIG_PROC_MEM_RESTRICT_WRITE_ALL=3Dy and
+did manual test writing to /proc/pid/mem using code similar to [1]
 
-Following up to see if anything else is needed to get this merged.
+The __mem_rw_block_writes check is placed ahead of
+__mem_rw_get_foll_force_flag, so it doesn't need
+CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT. It might be nice to call
+this out in kernel-parameters.txt.
+
+I didn't restrict_open_read and restrict_open_write, ChromeOS doesn't
+use those two.
+
+-Jeff
+
+[1] https://offlinemark.com/an-obscure-quirk-of-proc/
+
+> -Kees
+
+>
+> --
+> Kees Cook
