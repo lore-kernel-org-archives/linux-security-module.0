@@ -1,178 +1,105 @@
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FB1171080
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 08:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ACF44C81;
+	Thu, 20 Jun 2024 09:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718871044; cv=none; b=UJkM0BRdhl3m3qlvrivkPBiDRZn0gDrB0/nZXlOLtckq/OUwhVzb6827pjLpIeE9ADoCz6CzHrSmkn71+hQLROJvLuqS1o8yUOY4SscEYTEpU0C3F0VW+CWKnXC1x8uXfngNMBGvqIasElq4iToM0rJagl/TGwc9LKB74RsCPTs=
+	t=1718874770; cv=none; b=km5aoFXcHGvePWPOQidHZrZDiWUpLwwgPmrZcz6LCW2JaF9R++TTJKEr25IYruMNWU2YYeYhOJVjsThSbPMbaLGCLI4qWZ3Pflhd9x5zsI6OmlmGWaMWMzmn0SjNJn6wjgYRW1Ni7F2gR1d0syqu0NxgSsN813hHLIJu2Wk9WwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718871044; c=relaxed/simple;
-	bh=FyjNm/I3kq/pP/dapIPg9gsHpP1PzC710dtt7pmzUKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vAXhZOE28YQEyFiqPzG5+KT3ADQXEiKJxgiNr8uqdKMSBqe8fBwYD84fmyiAhEn/OuzCz5pQsnwQuP8JVcA5DabVxBfu0MizoJOtBOI6ZUJYcfOi1POFtcPcr6vI44uLrqI0JdgIGiyE3C3hqrIaEbfogzTcr9VC3yLAyUnyYmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sOtNOmYZ; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sOtNOmYZ"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W4Xwr6kjdz8pT;
-	Thu, 20 Jun 2024 10:00:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1718870444;
-	bh=W/NUAL6voE5A4pFcJSHOLM46v6kGmeT8h3EcYwb3KUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sOtNOmYZHEhT5EIB2V7KL7iSkDlMWcmlXneHp9D4RSJGbbkFF01kDHHlU3rEP3MqK
-	 db2AHQ+1PdQ3sARwOOndydYhkRuqDzzz0lu9vjn3Zis9aLshwsvhTNB4T4MNzlnX7h
-	 tVG6xTX3hNIg1t4k/xOjCkXRQ4pckdidlfeyTPvk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4W4Xwk3bNHzMhc;
-	Thu, 20 Jun 2024 10:00:38 +0200 (CEST)
-Date: Thu, 20 Jun 2024 10:00:36 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Eric Dumazet <edumazet@google.com>
-Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
-	willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
-Message-ID: <20240620.teeFoot6gaeX@digikod.net>
-References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
- <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
- <20240425.Soot5eNeexol@digikod.net>
- <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
- <ZnMr30kSCGME16rO@google.com>
+	s=arc-20240116; t=1718874770; c=relaxed/simple;
+	bh=ChY8gl0UQ9gw90dwFyrkevV7MUzuk6dTQKw1LvhGJ8Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=njjNK/u12aQynTcUi5VJfciSA4fFxpi61VW8JwwMwqbitsJQYfCBNMHlrc/vPahbPbtPZfGDV0qWiK9kzkBqi6Fe25lnXuO8snS5GEDfl4ETPdpwGgk/SFkPWv1ZVVsvzY9YzzgwBzR8x0Dm2gDftcD7u4+uOy3yjzoFh2jdAYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4W4Z7M51D2z9v7Hm;
+	Thu, 20 Jun 2024 16:54:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id E6669140AA0;
+	Thu, 20 Jun 2024 17:12:33 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBHHDdu8nNmgPLIAA--.31992S2;
+	Thu, 20 Jun 2024 10:12:33 +0100 (CET)
+Message-ID: <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
+Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
+ akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
+ alexandre.torgue@foss.st.com, mic@digikod.net, 
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+ linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
+ mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Thu, 20 Jun 2024 11:12:11 +0200
+In-Reply-To: <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+	 <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
+	 <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
+	 <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
+	 <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
+	 <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
+	 <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
+	 <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnMr30kSCGME16rO@google.com>
-X-Infomaniak-Routing: alpha
+X-CM-TRANSID:GxC2BwBHHDdu8nNmgPLIAA--.31992S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruF4UAr4UGFW3ZFy7tF4fZrb_yoWDGwb_Wr
+	1qyw1kGw4Durn7tFWayF1IqFZ2grWxKFyDW34Fqr1UZ34xAFs3JFZ8GF1Svrs8tw1xXr9I
+	k3Z5W3y3G34SqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0E
+	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABF1jj5txJwAAs6
 
-On Wed, Jun 19, 2024 at 09:05:03PM +0200, Günther Noack wrote:
-> I agree with Mickaël's comment: this seems like an important fix.
-> 
-> Mostly for completeness: I played with the "socket type" patch set in a "TCP
-> server" example, where *all* possible operations are restricted with Landlock,
-> including the ones from the "socket type" patch set V2 with the little fix we
-> discussed.
-> 
->  - socket()
->  - bind()
->  - enforce a landlock ruleset restricting:
->    - file system access
->    - all TCP bind and connect
->    - socket creation
->  - listen()
->  - accept()
-> 
-> From the connection handler (which would be the place where an attacker can
-> usually provide input), it is now still possible to bind a socket due to this
-> problem.  The steps are:
-> 
->   1) connect() on client_fd with AF_UNSPEC to disassociate the client FD
->   2) listen() on the client_fd
-> 
-> This succeeds and it listens on an ephemeral port.
-> 
-> The code is at [1], if you are interested.
-> 
-> [1] https://github.com/gnoack/landlock-examples/blob/main/tcpserver.c
-> 
-> 
-> On Mon, May 13, 2024 at 03:15:50PM +0300, Ivanov Mikhail wrote:
-> > 4/30/2024 4:36 PM, Mickaël Salaün wrote:
-> > > On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
-> > > > Make hook for socket_listen(). It will check that the socket protocol is
-> > > > TCP, and if the socket's local port number is 0 (which means,
-> > > > that listen(2) was called without any previous bind(2) call),
-> > > > then listen(2) call will be legitimate only if there is a rule for bind(2)
-> > > > allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is not
-> > > > supported by the sandbox).
-> > > 
-> > > Thanks for this patch and sorry for the late full review.  The code is
-> > > good overall.
-> > > 
-> > > We should either consider this patch as a fix or add a new flag/access
-> > > right to Landlock syscalls for compatibility reason.  I think this
-> > > should be a fix.  Calling listen(2) without a previous call to bind(2)
-> > > is a corner case that we should properly handle.  The commit message
-> > > should make that explicit and highlight the goal of the patch: first
-> > > explain why, and then how.
-> > 
-> > Yeap, this is fix-patch. I have covered motivation and proposed solution
-> > in cover letter. Do you have any suggestions on how i can improve this?
-> 
-> Without wanting to turn around the direction of this code review now, I am still
-> slightly concerned about the assymetry of this special case being implemented
-> for listen() but not for connect().
-> 
-> The reason is this: My colleague Mr. B. recently pointed out to me that you can
-> also do a bind() on a socket before a connect(!). The steps are:
-> 
-> * create socket with socket()
-> * bind() to a local port 9090
-> * connect() to a remote port 8080
-> 
-> This gives you a connection between ports 9090 and 8080.
+On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
+> On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> >=20
+> > Making it a kernel subsystem would likely mean replicating what the LSM
+> > infrastructure is doing, inode (security) blob and being notified about
+> > file/directory changes.
+>=20
+> Just because the LSM framework can be used for something, perhaps it
+> even makes the implementation easier, it doesn't mean the framework
+> should be used for everything.
 
-Yes, this should not be an issue, but something to keep in mind.
+It is supporting 3 LSMs: IMA, IPE and BPF LSM.
 
-> 
-> A regular connect() without an explicit bind() is of course the more usual
-> scenario.  In that case, we are also using up ("implicitly binding") one of the
-> ephemeral ports.
-> 
-> It seems that, with respect to the port binding, listen() and connect() work
-> quite similarly then?  This being considered, maybe it *is* the listen()
-> operation on a port which we should be restricting, and not bind()?
+That makes it a clear target for the security subsystem, and as you
+suggested to start for IMA, if other kernel subsystems require them, we
+can make it as an independent subsystem.
 
-I agree that we should be able to control listen according to the binded
-port, see https://github.com/landlock-lsm/linux/issues/15
-In a nutshell, the LANDLOCK_ACCESS_NET_LISTEN_TCP should make more sense
-for most use cases, but I think LANDLOCK_ACCESS_NET_BIND_TCP is also
-useful to limit opened (well-known) ports and port spoofing.
+Starting from IMA means that we are mixing two different things in the
+inode security blob, and I'm not sure that it is more straightforward
+than making the digest_cache LSM require the space it needs and be
+notified about security events.
 
-> 
-> With some luck, that would then also free us from having to implement the
-> check_tcp_socket_can_listen() logic, which is seemingly emulating logic from
-> elsewhere in the kernel?
+Thanks
 
-An alternative could be to only use LANDLOCK_ACCESS_NET_BIND_TCP for
-explicit binding (i.e. current state, but with appropriate
-documentation), and delegate to LANDLOCK_ACCESS_NET_LISTEN_TCP the
-control of binding with listen(2).  That should free us from
-implementing check_tcp_socket_can_listen().  The rationale would be that
-a malicious sandboxed process could not explicitly bind to a
-well-specified port, but only to a range of dedicated random ports (the
-same range use for auto-binding with connect).  That could also help
-developers by staying close to the kernel syscall ABI (principle of
-least astonishment).
+Roberto
 
-> 
-> (I am by far not an expert in Linux networking, so I'll put this out for
-> consideration and will happily stand corrected if I am misunderstanding
-> something.  Maybe someone with more networking background can chime in?)
-
-That would be good indeed.  Netfilter or network folks? Eric?
-
-> 
-> 
-> > > > +		/* Socket is alredy binded to some port. */
-> > > 
-> > > This kind of spelling issue can be found by scripts/checkpatch.pl
-> > 
-> > will be fixed
-> 
-> P.S. there are two typos here, the obvious one in "alredy",
-> but also the passive of "to bind" is "bound", not "binded".
-> (That is also mis-spelled in a few more places I think.)
-> 
-> —Günther
-> 
