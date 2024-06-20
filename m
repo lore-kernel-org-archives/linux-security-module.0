@@ -1,149 +1,107 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE361B1411
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 16:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58381CD3D;
+	Thu, 20 Jun 2024 16:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899739; cv=none; b=BerIJ1RxezKACpn17kwRgBcLKPHJ5XjKFK974YvK3VLR4Ce2NbsPNgLWh3QcfNU4z1gCy/0LDM73MoqnrJx9tkTdqcAsMVtnj2elFplEzl0xBaGErjp7557zFx0ICzmpRFPdg1Gjch2xADRSoRdFHmbrFh60QiD/S6ubZd5fM8o=
+	t=1718900536; cv=none; b=SSYoHxH+S4wLaC4W1oZbHBm+lWo+IHbaz9D8WK7kjeOuGm/3M2UOCi7hqgecobEC7Xyp7UTJ9Mtgml1nLujacPcB3f+BJk5FdihztplvXypJjpepzrbOD+siCVIWHUU4RBxihNO77F6SyltbrcdBL0ge7FGa7KBOdDuTU0lGhe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899739; c=relaxed/simple;
-	bh=jKOKhzCb/s1qR2kIGMCwfAQ0zH++nCz+I3VwV8UWtwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TfpP5XJy/r74yKSjkhNQqBo1/pfgd1f9kNGM5pQ9SJ0Ud5BsVEuTRzHTYkIF/ueSTE0jAVhTATlgNiimHxn6J3SENZypJSFmNRriy3BXCFkrZRoCrMbgcC2EeK8njlK9NdVxFlCwnUwFW7Sf3iYbKfgOUZzaHeUkiI4GCw7z6qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SmQnNKYU; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1718900536; c=relaxed/simple;
+	bh=ssJliKc5kNtUyUtknPdOclEvUOLH+104ZebK/uc38CI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F7ORG2kyXxrEGOGi0ttBjkaw8J0c0ViWFsqX4USSdKmBJE4Uh3+43RGFSTqjXw87ZLvN2WEDZzKeKDlTSXY+9p2lPH/wsxOrrwqIbgNdOTPK7cTzTWrmw24AAfhyZnDxc9X6YFfwc9x9NKX2d4dfGNJvSY3Zr9j8Rq7+w9DmejA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jOx7eYfG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SmQnNKYU"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a08092c4dso10884277b3.0
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 09:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718899736; x=1719504536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vZ4/HE33CH2Jns1MFWm0ZR7t5r4f1OMGqj8nTkihE70=;
-        b=SmQnNKYUz0J+LWkhP3ayIphOmx0E12zK437aHpbtGmblipl5FTe/Bv0cVS1syhPnzZ
-         ritvPxHvF8Tu344XouOlrjBBar3LwrRY4+ClqTtWms0FljQzUFm/fJ9SMOJjk5+J2IGN
-         lJaaWm5sDS+qoFQSYcfhZh49ZMNZ5vMP/jn7PckCphmDOymeuQ3HmY+jxoJiSyGWEo4J
-         YQQ0w2ioASC4AorOxnIl9ykOZQD8F7GEgSwdPA2z8wbWRLREZhaODO+cepFUzo3+DuBY
-         QDNcG2dHYGQ4tbGJTzYya07OzHK9ZRVx6fUYAVSzljTPjhyVBIg2YaYdoG12kYXbLxwh
-         mncw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718899736; x=1719504536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vZ4/HE33CH2Jns1MFWm0ZR7t5r4f1OMGqj8nTkihE70=;
-        b=m3fWWoxwwxHbUesXflPosc81gdHHNgTdN7gzjEzNH97uHNUJPnNWJb9+vEH1pzMR43
-         HLLlYPAXIwd+tgMlLP46lVJGiqauSrqkV9F+JF4JMVRWHXEZWhciARcOdCDqpuOxBBO6
-         TP1f89eC/CLGAEqPOe8lVR93ODor7dEVYqv7DD79ikOag8WyDqdojHCtsEGphyL2JkRZ
-         HvWW9JJ5/xC8M6Ygr0cJ/HiMVg3/WYTRAwq8xIPAA402J6mGxrv5dNLST7L5jxl7CLr/
-         11umo8GHkMjf8klNYUuSTKVUuhXNBIUcMcYb5pDlEiDPrs5et0vs3n76XsbcJ3RsOoUm
-         IXGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDVvTAuFbgESRTtSNQmSAAvWjz3jwGSWgN9DFscD6fx7YRy0DBF1QiU1BMbSUEMBkYdNuHdmaQO7NLdnCgH4wjCYcmYmFKi+IPxLxuPBBE6kZ19PF4
-X-Gm-Message-State: AOJu0YxlPnD+d+DlHtFUaOn1kND+IiyA6z8zhRHALGi7m/ez4VZp43AZ
-	7RyWkWoisr8F7muqKxLz4PB47bjgUMWzzoDrv+RGcZ/DEy+lWbKxxz+K1Mot+ZXLy/aSVNJwZyo
-	WDKIEBgYcFSDkXRaYNXWmeVaKhYknldS0VxoUXoRbG1t4u/J8kA==
-X-Google-Smtp-Source: AGHT+IEJD8llzQZDQm0N+h/SilvZaX1H4grLcrBULEvzCzsoMDLOV0byMoHIPLcWuG2L/HTPdx4UkXvFsIa166iHKFg=
-X-Received: by 2002:a25:9c87:0:b0:dff:2ce8:cc1b with SMTP id
- 3f1490d57ef6-e02be19ffc7mr5879084276.35.1718899736547; Thu, 20 Jun 2024
- 09:08:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jOx7eYfG"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9vXRa003612;
+	Thu, 20 Jun 2024 16:22:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hhGpsxMxzPNoapl7cqpvoCRjNe/ydCSjVn5o6h1MEu0=; b=jOx7eYfGaCbY5pPh
+	PU+XzdAGyBjuNJh9BhWB6mHmDbc8ETjF3tIBCJI+nJwNgWu8LV1cvgxI1z6jHMLr
+	GkpETrTgkA7Dw/XMf3WueG88YxPtraRbz1NlUmoRtGYSamfdEfmXV1OWyT42O0C3
+	V+bRn0ChDOkdPRA4kaB0tgE4l/sxVgn8TqneiplzztakibGkDALk8es/KgU6YTBK
+	i0qg4G1deu6wbcTzaoJRQ35BUkU5JJhyvDLRV1gjEh2eIpmHW64qL5VljiF5yGc7
+	fav6XDU2IMgtWcgwzAW6Xll1fZvSZyQpjhf/bd8t1MDYQo1Vz0yNwn5pmuKmSLl8
+	EuaDmg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbswx4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:22:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGM0XL001765
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:22:00 GMT
+Received: from [10.48.244.93] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 09:21:59 -0700
+Message-ID: <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
+Date: Thu, 20 Jun 2024 09:21:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
- <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
- <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
- <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
- <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
- <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
- <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
- <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
- <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com> <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
-In-Reply-To: <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Jun 2024 12:08:45 -0400
-Message-ID: <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
-	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, mic@digikod.net, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
-	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
+Content-Language: en-US
+To: John Johansen <john.johansen@canonical.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>
+CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
+X-Proofpoint-ORIG-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200118
 
-On Thu, Jun 20, 2024 at 11:14=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Thu, 2024-06-20 at 10:48 -0400, Paul Moore wrote:
-> > On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
-> > > > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > >
-> > > > > Making it a kernel subsystem would likely mean replicating what t=
-he LSM
-> > > > > infrastructure is doing, inode (security) blob and being notified=
- about
-> > > > > file/directory changes.
-> > > >
-> > > > Just because the LSM framework can be used for something, perhaps i=
-t
-> > > > even makes the implementation easier, it doesn't mean the framework
-> > > > should be used for everything.
-> > >
-> > > It is supporting 3 LSMs: IMA, IPE and BPF LSM.
-> > >
-> > > That makes it a clear target for the security subsystem, and as you
-> > > suggested to start for IMA, if other kernel subsystems require them, =
-we
-> > > can make it as an independent subsystem.
-> >
-> > Have you discussed the file digest cache functionality with either the
-> > IPE or BPF LSM maintainers?  While digest_cache may support these
->
-> Well, yes. I was in a discussion since long time ago with Deven and
-> Fan. The digest_cache LSM is listed in the Use Case section of the IPE
-> cover letter:
->
-> https://lore.kernel.org/linux-integrity/1716583609-21790-1-git-send-email=
--wufan@linux.microsoft.com/
+On 5/29/2024 6:21 PM, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  security/apparmor/policy_unpack_test.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> index 5c9bde25e56d..874fcf97794e 100644
+> --- a/security/apparmor/policy_unpack_test.c
+> +++ b/security/apparmor/policy_unpack_test.c
+> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
+>  
+>  kunit_test_suite(apparmor_policy_unpack_test_module);
+>  
+> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
+> 
 
-I would hope to see more than one sentence casually mentioning that
-there might be some integration in the future.
-
-> I also developed an IPE module back in the DIGLIM days:
->
-> https://lore.kernel.org/linux-integrity/a16a628b9e21433198c490500a987121@=
-huawei.com/
-
-That looks like more of an fs-verity integration to me.  Yes, of
-course there would be IPE changes to accept a signature/digest from a
-digest cache, but that should be minor.
-
-> As for eBPF, I just need to make the digest_cache LSM API callable by
-> eBPF programs, very likely not requiring any change on the eBPF
-> infrastructure itself.
-
-That's great, but it would be good to hear from KP and any other BPF
-LSM devs that this would be desirable.
-
-I still believe that this is something that should live as a service
-outside of the LSM.
-
---=20
-paul-moore.com
+Following up to see if anything else is needed to get this merged.
