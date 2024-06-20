@@ -1,204 +1,260 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8E61D556
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 20:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6BC74E3D
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 21:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718915873; cv=none; b=kh7e3vyQx0Fhd3FWs3NSb59Egsv8Kw3eTyIehSv6fVY4Th4elf2SFgUOpIal7ssCPKP341XqGhQgrAo1v21sZgQyoQVZ4xf+9d8IvWl1MHJQ9zwNSJ1uYWZdwvSO3vKwE/7GFSpqs8Gh48J8Kli4rnEHQyzzZ12h6/MpyQcRFO0=
+	t=1718917532; cv=none; b=TkbQt+ablQXB7lfdbZxPaGYVIR0thPxNOxm6nycNUGs5gFxyov0sAvLPWoaYbfUUEAeh9perIrUaJjDT85gmnMkcQXoGb7BSHfl7iWnnnhIGX+g+gZUI4nyyHMCUOaJ7q9IZ0e1pUcZm+G6b+kCkcUSY3kgaczTZ+83ZZ/V1e3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718915873; c=relaxed/simple;
-	bh=wRPfJl92761YHJsX9H0iK2ApEUOtSGTKizahdfZStH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIxPTSMMoxPvsu8ioT2vipbfVuzs5YcWUGR5O4HAWXS++UuSJcMC5MFk6n1WhaCpty1T59JwxPDSVlmxM9zmGQaeYXzJQjqcU99osXIyofU4/b73yrCwGKsVUADDfIkBKQeSsWIy+F93zt13u60SpiWLnyZ5BIzlSzZh5+310i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 45KKbZqT032205;
-	Thu, 20 Jun 2024 15:37:35 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 45KKbY8m032204;
-	Thu, 20 Jun 2024 15:37:34 -0500
-Date: Thu, 20 Jun 2024 15:37:34 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Timur Chernykh <tim.cherry.co@gmail.com>
-Cc: linux-security-module@vger.kernel.org
-Subject: Re: Yet another vision of Linux security | Endpoint Security Framework
-Message-ID: <20240620203733.GA31923@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
+	s=arc-20240116; t=1718917532; c=relaxed/simple;
+	bh=mg+X7y4AeKUnrgakVmUQbP1hixJ/v7TNpOM2HJ3IhXg=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Subject:References:In-Reply-To; b=Xk2AW6IDD0DbIg0SZ/MF0z7F3hiEGVPxg4rxG1fE8YtXzoe9LDU6nnmHhjOf24rVH0s1H25IsYLaybhuYcd4WpoD/gFPr1uqj5Mrgsw4qXw2Vz8t2EVHCL1f2qTAVKcmm5V+2hF7ABbD9Oz+ZdQPDkrOlda2PsaEnoLNi5T8/P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IOll1FDb; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IOll1FDb"
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b4fc5c2f08so5908496d6.0
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 14:05:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1718917528; x=1719522328; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nsfCpB+dAhdiD/N3v6ggI+eNymd+g4KZSDaOf75av9o=;
+        b=IOll1FDbw7zhvPiy3k1IL6zDcVI9INl844dOa/XeeuD/xRRZ1V52i1fSo5KtqsO5RQ
+         kcf9tYTc1dpmp6OyCpPcv01UQZVVLEBfL+Pk5BzQoa9fYMfcV0jhjQGvUGwMXkkiBvEX
+         lINxdgAqMyGG52lIQ5joKUbGbcMO5PKgMHLQ0vkAzCjIej0Q1bRwoQ9KHJwuR7aklSrK
+         R5yBSecN8kKpY2zIcO2TC8rzo3806a0K8Am4QkbkTovRm96PRzeH9BR5F7xqS2BLbD1K
+         5C5nbmIUOnO7DW3BjW2yu76hsn/gtvXDd+xIFpohScasZ4Gk7u7G9rTfl4GHknMt7Qhv
+         MExA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718917528; x=1719522328;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nsfCpB+dAhdiD/N3v6ggI+eNymd+g4KZSDaOf75av9o=;
+        b=uq4AoQPfO+YgMLttAXezwO/2uiVgCiBnIKBXS6kaKS3W8H42r3yZBbLGxMko2Oh5wL
+         vyg5uuvQ91MnLdskunm0gya3M/RGWYMmmHOGwAadYUvGuRq2Q7zZbQHMMfGNdXZyJkFd
+         zKXOhojCK7ZviLgLU45W9p3MvCh+HQYV1TokeQptMVLG1g3lun/AVdPXb2cSqxikqixI
+         2oBBYyqCOKRvx1jpl3BFKST1vC/FhWdvGtdMjuRPtQ+Ho3aQx6JwHx7KxOMm26pqesl1
+         zVijvqpEa1sSyhv7VYPA7XVzzCz57iqB4LGAA6RFjH5tsh/Bmz2hhkOcNMTVu3qMYEOf
+         UsCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVraswCdxA/WrlBJUdmO0v/v9q5JW62W8D+iF0G3OdmkavkWZu+Oc2RHJ9AOXku6zHxEW56d8+fz9hih77GmrQenRsaPiruovfiPeQdWigHj9Y6K7Lh
+X-Gm-Message-State: AOJu0YzULlhhVDDNu6fhFdLH0OJ0CZmQXRSBxNr5dh41WndgUu9DCwV/
+	5xWB1slddQP7Vv3JXeOu9Jw20ixm2qklpxwK2/yANb1e/HqMQKIcFERMXr88LQ==
+X-Google-Smtp-Source: AGHT+IEg/efvOeBU00ll/tsNr2NMecKZloltnZsQEGNrcMSYAsM9HZzR1J3C3pxMop0HsequrRDhrA==
+X-Received: by 2002:a0c:f7c2:0:b0:6b4:f7bc:6e3 with SMTP id 6a1803df08f44-6b501e20b8bmr66532976d6.23.1718917527920;
+        Thu, 20 Jun 2024 14:05:27 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef67c12sm111026d6.126.2024.06.20.14.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 14:05:27 -0700 (PDT)
+Date: Thu, 20 Jun 2024 17:05:27 -0400
+Message-ID: <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 20 Jun 2024 15:37:35 -0500 (CDT)
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org, linux-api@vger.kernel.org, Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
+References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
+In-Reply-To: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
 
-On Thu, Jun 20, 2024 at 04:40:09PM +0300, Timur Chernykh wrote:
-
-> Hello!
-
-Good afternoon Timur, I hope the week is going well for you.
-
-> I'm here for yours' opinions.
+On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> The modern Linux, in fact, does not provide convenient options to
-> write AV/EDR software with real-time system events analysis as far as
-> unified system security events. For now we have only inconsistent
-> self-made events from eBPF, audit, fanotify, etc. eBPF itself is a
-> cool technology, but even CO-RE sometimes works as not expected or
-> gets broken, for example:
-> https://github.com/aquasecurity/tracee/pull/3769/files. This hack (one
-> of a huge amount of the same hacks) looks a bit "crutchy".
+> We recently introduced system calls to access process attributes that
+> are used by Linux Security Modules (LSM). An important aspect of these
+> system calls is that they provide the LSM attribute data in a format
+> that identifies the LSM to which the data applies. Another aspect is that
+> it can be used to provide multiple instances of the attribute for the
+> case where more than one LSM supplies the attribute.
 > 
-> As an EDR developer, I have an idea how to fix this situation, using a
-> unified endpoint security framework (ESF) placed in the kernel. Its
-> must:
-> - Provide unified and consistent security events;
-> - API to communicate with kernel:
->  - To send program-defined events (as audit has);
->  - Read events from kernel;
-> - Trusted agents delivery mechanisms (signing like kernel modules);
-> - Has a possibility to control what happens on system e.g block some
-> file operations, binary executions and so on;
-> - Has a portable and flexible events structure which doesn't get
-> broken from version to version;
+> We wish to take advantage of this format for data about network peers.
+> The existing mechanism, SO_PEERSEC, provides peer security data as a
+> text string. This is sufficient when the LSM providing the information
+> is known by the user of SO_PEERSEC, and there is only one LSM providing
+> the information. It fails, however, if the user does not know which
+> LSM is providing the information.
 > 
-> For now I have PoC, which describes the concept in more detail:
-> GH mirror: https://github.com/Linux-Endpoint-Security-Framework/linux.
-> It contains all listed above points (maybe except portable event
-> structures)
+> Discussions about extending SO_PEERSEC to accomodate either the new
+
+Spelling nitpick -> "accommodate" :)
+
+> format or some other encoding scheme invariably lead to the conclusion
+> that doing so would lead to tears. Hence, we introduce SO_PEERCONTEXT
+> which uses the same API data as the LSM system calls.
 > 
-> There are an examples with:
-> - Security agent:
-> https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/samples/esf/agent.c
-> - API: https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/ctl.h
-> - Event structures and types:
-> https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/defs.h
-> - Main ESF source code:
-> https://github.com/Linux-Endpoint-Security-Framework/linux/tree/esf/main/security/esf
-> 
-> Questions I'm interested in:
-> How does the community feel about this idea? Is it a viable concept?
-> If all is OK, what should I, as developer, do further? How much kernel
-> code outside the LSM module may be modified to keep further merge
-> acceptable? (currently not all LSM hooks meet to intercept all needed
-> data).
-> 
-> The general purpose is to make AV/EDR software development easier,
-> more convinient, and stable for Linux-based operating systems. This
-> PoC (as far as technology idea) is inspired by MacOS Endpoint Security
-> based on MAC policy.
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  arch/alpha/include/uapi/asm/socket.h  |  1 +
+>  arch/mips/include/uapi/asm/socket.h   |  1 +
+>  arch/parisc/include/uapi/asm/socket.h |  1 +
+>  arch/sparc/include/uapi/asm/socket.h  |  1 +
+>  include/linux/lsm_hook_defs.h         |  2 +
+>  include/linux/security.h              | 18 ++++++++
+>  include/uapi/asm-generic/socket.h     |  1 +
+>  net/core/sock.c                       |  4 ++
+>  security/apparmor/lsm.c               | 39 ++++++++++++++++
+>  security/security.c                   | 86 +++++++++++++++++++++++++++++++++++
+>  security/selinux/hooks.c              | 35 ++++++++++++++
+>  security/smack/smack_lsm.c            | 25 ++++++++++
+>  12 files changed, 214 insertions(+)
 
-I'm not sure how much you follow the Linux Security Mailing List so
-you may have missed it.  I believe you will find that our Trusted
-Security Event Modeling (TSEM) architecture, that we have submitted
-for review and inclusion in the kernel, provides a superset of the
-type of functionality that you and others in the industry are looking
-for.
+...
 
-Here are links to the three releases:
+> diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
+> index 8ce8a39a1e5f..e0166ff53670 100644
+> --- a/include/uapi/asm-generic/socket.h
+> +++ b/include/uapi/asm-generic/socket.h
+> @@ -134,6 +134,7 @@
+>  
+>  #define SO_PASSPIDFD		76
+>  #define SO_PEERPIDFD		77
+> +#define SO_PEERCONTEXT		78
 
-V1
-https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
+Bikeshed time ... how about SO_PEERLSMCTX since we are returning a
+lsm_ctx struct?
 
-V2:
-https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
+> diff --git a/security/security.c b/security/security.c
+> index e387614cb054..fd4919c28e8f 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -874,6 +874,64 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
+>  	return rc;
+>  }
+>  
+> +/**
+> + * lsm_fill_socket_ctx - Fill a socket lsm_ctx structure
+> + * @optval: a socket LSM context to be filled
+> + * @optlen: uctx size
 
-V3:
-https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#m1cc4ad76677d07517220f1fadc2303c36a75bab0
+"@optlen: @optval size"
 
-The first release was in February of 2023, a year and a half ago, we
-are on schedule for the fourth release, which is now largely feature
-complete, after the US Fourth of July holiday week.
+> + * @val: the new LSM context value
+> + * @val_len: the size of the new LSM context value
+> + * @id: LSM id
+> + * @flags: LSM defined flags
+> + *
+> + * Fill all of the fields in a lsm_ctx structure.  If @optval is NULL
+> + * simply calculate the required size to output via @optlen and return
+> + * success.
+> + *
+> + * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
+> + * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
+> + */
+> +int lsm_fill_socket_ctx(sockptr_t optval, sockptr_t optlen, void *val,
+> +			size_t val_len, u64 id, u64 flags)
+> +{
+> +	struct lsm_ctx *nctx = NULL;
+> +	unsigned int nctx_len;
+> +	int loptlen;
 
-We describe TSEM as a generic security modeling architecture for the
-kernel.  It is based on the generation of security state coefficients
-for each LSM based security event that occurs.  These coefficients can
-be used to drive mathematical models that very precisely describe the
-security state of either the platform at large or an isolated
-workload.
+u32?
 
-The underlying model is capable of providing very precise detection of
-attempts to implement concepts such as Living Off The Land, ie. Hello
-Volt Typhoon.
+> +	int rc = 0;
+> +
+> +	if (copy_from_sockptr(&loptlen, optlen, sizeof(int)))
+> +		return -EFAULT;
 
-The operative premise is that in all aspects of science and
-engineering it is routine to build mathematical models for the
-performance of things like airplanes, bridges, buildings, the
-electronic state of molecular systems etc., why not the security
-behavior of an operating system.
+It seems the current guidance prefers copy_safe_from_sockptr(), see
+the note in include/linux/sockptr.h. 
 
-Obviously the current zest for machine learning/AI is an embodiment of
-the principal of modeling.
+> +	nctx_len = ALIGN(struct_size(nctx, ctx, val_len), sizeof(void *));
+> +	if (nctx_len > loptlen && !sockptr_is_null(optval))
+> +		rc = -E2BIG;
 
-Over the last year it has become increasingly apparent that TSEM can
-play a very powerful role in endpoint security and anomaly detection
-systems.  Particularly with respect to driving machine learning models
-in environments where deterministic or quasi-deterministic models are
-infeasible.
+Why do we care if @optval is NULL or not?  We are in a -E2BIG state,
+we're not copying anything into @optval anyway.  In fact, why are we
+doing the @rc check below?  Do it here like we do in lsm_fill_user_ctx().
 
-So TSEM now has an efficient export only mode that provides JSON
-encoded description streams of almost all of the security relevant
-events that the LSM can capture.  So it provides a framework for doing
-everything from security reconaissance to enforcement.
+  if (nctx_len > loptlen) {
+    rc = -E2BIG;
+    goto out;
+  }
 
-Others have already commented on this, but the notion of having
-'standardized' event descriptions for any system of this type is
-problematic.  Given that it has been made clear that there is no
-intention to have a stable API for the Linux security architecture.
-FWIW, in practice we have not found this to be a significant
-impediment to what can be implemented from a security perspective.
+> +	/* no buffer - return success/0 and set @uctx_len to the req size */
 
-I believe we address the issue of security event handlers that run in
-atomic context as best as can be expected.  If you look through the
-e-mail threads surrounding our three releases you will see timing
-information as to how fast our external modelers can react, on the
-order of tens of micro-seconds, as compared to current agent based
-systems that have measured reaction latencies in excess of multiple
-seconds if not longer.
+"... set @opt_len ... "
 
-If external modeling is infeasible, and the default TSEM deterministic
-model is insufficient, the v4 release TSEM has the ability to use
-loadable modules to build customized in kernel modelers that can
-detect and react at event time, regardless of process context.
+> +	if (sockptr_is_null(optval) || rc)
+> +		goto out;
 
-We are always looking for thoughts and feedback from others on how to
-enhance what we are working to deliver.
+Do the @rc check above, not here.
 
-Our GitHub site has GIT trees for not only the TSEM kernel component
-but also the Quixote userspace tools that make the kernel driver
-useful.
+> +	nctx = kzalloc(nctx_len, GFP_KERNEL);
+> +	if (!nctx) {
+> +		rc = -ENOMEM;
+> +		goto out;
+> +	}
+> +	nctx->id = id;
+> +	nctx->flags = flags;
+> +	nctx->len = nctx_len;
+> +	nctx->ctx_len = val_len;
+> +	memcpy(nctx->ctx, val, val_len);
+> +
+> +	if (copy_to_sockptr(optval, nctx, nctx_len))
+> +		rc = -EFAULT;
 
-The kernel sources include very extensive documentation describing the
-design and motivation of the system, including the JSON encoding of
-the event descriptions.
+This is always going to copy to the start of @optval which means we
+are going to keep overwriting previous values in the multi-LSM case.
+I think we likely want copy_to_sockptr_offset(), or similar.  See my
+comment in security_socket_getpeerctx_stream().
 
-We are in the process of providing a public, MQTT based broker system,
-that will provide access to event streams of some of our internal
-systems if anyone wants to look at what the security event description
-streams look like or if there would be a desire to experiment with
-building models.
+> +	kfree(nctx);
+> +out:
+> +	if (copy_to_sockptr(optlen, &nctx_len, sizeof(int)))
+> +		rc = -EFAULT;
+> +
+> +	return rc;
+> +}
+> +
+> +
+>  /*
+>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>   * can be accessed with:
+> @@ -4743,6 +4801,34 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+>  	return LSM_RET_DEFAULT(socket_getpeersec_stream);
+>  }
+>  
+> +/**
+> + * security_socket_getpeerctx_stream() - Get the remote peer label
+> + * @sock: socket
+> + * @optval: destination buffer
+> + * @optlen: size of peer label copied into the buffer
+> + * @len: maximum size of the destination buffer
+> + *
+> + * This hook allows the security module to provide peer socket security state
+> + * for unix or connected tcp sockets to userspace via getsockopt
+> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
+> + * is associated with an ipsec SA.
+> + *
+> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
+> + *         values.
+> + */
+> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
+> +				      sockptr_t optlen, unsigned int len)
+> +{
+> +	struct security_hook_list *hp;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
+> +			     list)
+> +		return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
+> +							 len);
+> +
+> +	return LSM_RET_DEFAULT(socket_getpeerctx_stream);
+> +}
 
-In closing, one of the increasingly important objectives with TSEM is
-to provide kernel based security event description infrastructure that
-reduces the potential supply chain attack scenarios that are possible,
-given the amount of privilege being afforded to current agent systems.
+Don't we need the same magic that we have in security_getselfattr() to
+handle the multi-LSM case?
 
-> Best regards,
-> Timur Chernykh,
-> Lead developer, F.A.C.C.T.
-
-We hope the above information is useful.
-
-On behalf of the Quixote Team, have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+--
+paul-moore.com
