@@ -1,204 +1,163 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ABF1B3743
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 17:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550961AC24B;
+	Thu, 20 Jun 2024 17:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903647; cv=none; b=snrHlFaqRcPqnLZ6TOnqhP5GLnMLrGmHnviloPXCQG0EX/xCbFibxSQcBrjmDNibA18GKIxjc/O3vF4z/j45f8XOX132aaWhAXuD+HgcCWDHv+prlidbik4SgIifM0y7pLfhTA3BAl1KXuP0t8vw21M3J61r/K0K/btVcs7A5Ys=
+	t=1718903740; cv=none; b=j2qeDS/mf7OjP09ts+i6cAws8NXYJL5M+Yj/S3gw7zqZWIMwKinUuaA8U0+0wT0qqnOgIIr75+u9yDPQzAMMOxppueoaN2nFEka9JYPNZT4YBQmwEuoAhCZkBwFVV2yTJnY4QBLicdgvR+a3vudVlZswtTbJuZt6oeEH1d9s7WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903647; c=relaxed/simple;
-	bh=RlxxN8z3HnKmd7RWEP2xagF6fJLvI+Y6nZ5HcYEuPFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+jWwmpaUK7hlpExNr7qU/X8Heqfd4vR1OhUP4IAWrfQX8Bti79w4VVndjulhpItvbWt/hnL21Ftk3jeBXdXNF00kjsxGx/gXhsT8bBmBVeaJHNdau1GbbJfE6zPum0avbbzPjQ4ryVjWZyd3srf9baCLnnMXIp8kO6S3U8eqo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CXQ6FnOW; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1718903740; c=relaxed/simple;
+	bh=gT12HUOyeQpAnsBYlpUmtkBdVmuOFZO12M6sDqqDb+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jrVYMDU+hyb8GE6yHXNmcSDJXmJq1J6BzjqyaY4If3YCnbYeeNbv24NHheNSW3yW3GC3i4F25s1lHvsXD5c52aDj126QkEdRoFjQS/b1g0xnSpCVg+o45Cl68d/lsBeCwEeXwu8wRTayU69F2Y/moSGN5aaYzghMKEMl5+YAob0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/OpYAIs; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CXQ6FnOW"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02a6d4bdbeso1051185276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 10:14:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/OpYAIs"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so13639901fa.0;
+        Thu, 20 Jun 2024 10:15:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718903645; x=1719508445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wSjgOH3MRiYTPXLCETGqDmeFsSXsqOVl3xiPcS9XIH8=;
-        b=CXQ6FnOW/JpZOU/rQckmm9hyE7H1okcnRx2PxFzN1CcAQhjeL9HOxRSt5B2g5XGsSJ
-         RNzXqSUsCos/vq3BqXtHBWNrDunlXtIyCf1UKduvcAeO5aB3+r83QEK+aOhz7h/Ba1bi
-         uSkJoAHLa4T9tqYujtU3MS3DNgefUHjZ/n0LKbqg8WfXsy+Kp7TcYX16HVuw6aU7APpm
-         YYobzHDi6HJ+7Mz9lKzgXiLKLHFXvuusEZ3CzQDmw26niXBE9UarLVh1btKdgUEZilyn
-         nS0GVrMtUgTQN9vDb48XMe3Z52OPU5gbCeotBX8dXGQ/Rkmw2khn0o4REqDyDp5KmZuy
-         U7Dg==
+        d=gmail.com; s=20230601; t=1718903736; x=1719508536; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aYg/fQs2+kuc4laJDOi7nR98E30rR5KMEuEzLwwwI/U=;
+        b=S/OpYAIs/m0mdvCc+QXDihYLMUiqTThV1kJQZs3aE1DPZf22eKQ+rVk31M6E4fy+sV
+         cO3c3DatQXr4dnj9rgbobYzzChnzd5X8dAn0gjpLxJ97H5KR5r3Lw+9Jo7Hhw2+vW1tD
+         szpt7+D8WjPeeatuo3nQY75U1mZhTpwIL3FCyo+4CZ+5riFVEc05VvFHlFfPy4Vatkfu
+         jAEcb/QpTXKb5NoRzA/nRch1hdYJWpts2SiEoRW3i2+z/oDcFQAtSWJ3KSLhB8pF8dqZ
+         Qcsq8hfAd6Umk2DINpouN/bweSAzxLfCgHsQaPcDqqjcuoyJktgKutF5sqDV7xVn6+f8
+         H6dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718903645; x=1719508445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wSjgOH3MRiYTPXLCETGqDmeFsSXsqOVl3xiPcS9XIH8=;
-        b=FNWuFhRbtjrBWFVT2XDiGMjBxL84diHLff0WmZd7+H7xQrmZVSGtqTkPeXGSs/npDI
-         wgxdBvWjpbInwSycYJXSoJSaCC0p+hNoFzmyf6gZ5855COm61QvbmGXTxNyAk9fxBr3k
-         0MJW3Bin/2nE9E9ASYVzVSwSDD4WpeM6MY/Ue0a49oTUONZQKlBgiB95GOYy9xgq7BjQ
-         lZBhhIAkxN4tAtGtw3sOsIyRLMv14XGphZQ+KraDOkVMZkVeblz6WqNCEWHgsj4CFW4f
-         Dq6saWLgyUFNJB1+c/RjM0/7/9lsiS0B1SLo2XZYop5UOE7z+eGtOAh0rbxe9fXbiW1s
-         aImg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQmdL56xQyEKl30XZQGrMcjf5wtSz3225DIOUY5OKAA228CyQ/vqCywgYVXdp20f+qq6S+QCmju1Z+zs0ZnuJaciODjXpleIEWZks6/LI7aT7PIw/O
-X-Gm-Message-State: AOJu0Yx2FWAkddufls8GdPgDEiNmxeh5RtEcf7Fz0uIWcUQ3H9cf1GRo
-	DsZELE8AXokZLefe8hZatmW1GsOphLTRxvUGXXV/WdZwxOm8sDxb0u36pgSKSFoPoE/LQrKekhe
-	2g3m6tapn6JKey1QQ2WBzlPDeF22OiFD8mFkP
-X-Google-Smtp-Source: AGHT+IEt2BAX4ZSJpnrrhbSbQYDBiYx8y+fmuLpTpl/M0RJ3695pwMWckVzrkaOUEOTeYU5DlKOXBhfcyjQJ7VGd3Fc=
-X-Received: by 2002:a25:dbc4:0:b0:e02:2adf:b0ce with SMTP id
- 3f1490d57ef6-e02be16ed3cmr5340894276.32.1718903644904; Thu, 20 Jun 2024
- 10:14:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718903736; x=1719508536;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aYg/fQs2+kuc4laJDOi7nR98E30rR5KMEuEzLwwwI/U=;
+        b=KqndabjuTSVd/HkKLfbSQXVYyZJYcLz8TLfzXfrrosTKxHDfiqvOY/cqzH+w1wkA6K
+         gPc13VrT5hCp6W7rJcsD51d985EcBh6f4NrAaj9Sc74QgqyISIGN/nj7VT1F5OysXcYS
+         OLMAmLMI9AYwXH7HnX1tk9j/tNmlFC1FeB9xQ1tCSaVSnRzHPI/yBpOx4dBKsgPjuyu+
+         Ht3qDASrHoDjZ9PR9WTRfGN1G9QiiOUtJ56TcsTLybsiVq42VL/lV7KXuVjDR2h40D+q
+         0YWJMCORD6c62rRgseREeM2na1Zg7L2yqWOMuGPErRtQjre1xKN6CPus5CwhItAVQRoU
+         OOew==
+X-Forwarded-Encrypted: i=1; AJvYcCXWV059kN5Im4nymDlUP5DC2X94mttlrK1urOx4iReUhWscbA074dEjoOUYBVeswcmk4fk9vgzRrBv+/DeG5GtjeT/WseuQwbeRbSQ/sVFXcTaSMaLtUdEtEWpypDqZpa2q3fcLpQ/chxtVvfAqYjjFCKYs
+X-Gm-Message-State: AOJu0YxkXYdQ0UzuJCvWH/bnVtYWfltFbfkoFevMpxMpVVPWOItVH/kp
+	6LwsvtL206RYGHm3XShb7j7aatXk+TTl81r4Q6TjQUc+4PqSNUTe
+X-Google-Smtp-Source: AGHT+IEiryEnHRn0pakoC9f3F0xz4DDlqEixJnJvkaTjsTfaWq0cDwBI+U6mRxj1AIyUk52rmV5xKg==
+X-Received: by 2002:a2e:80c9:0:b0:2eb:1ac4:c9cc with SMTP id 38308e7fff4ca-2ec3cfe1c38mr35389951fa.52.1718903736064;
+        Thu, 20 Jun 2024 10:15:36 -0700 (PDT)
+Received: from f.. (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cd449efd6sm6333746a12.45.2024.06.20.10.15.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 10:15:35 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: john.johansen@canonical.com
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-kernel@vger.kernel.org,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	Neeraj.Upadhyay@amd.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] apparmor: try to avoid refing the label in apparmor_file_open
+Date: Thu, 20 Jun 2024 19:15:27 +0200
+Message-ID: <20240620171528.167997-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
- <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
- <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
- <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
- <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
- <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
- <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
- <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
- <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
- <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
- <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
- <c732b1eb15141f909e99247192539b7f76e9952c.camel@huaweicloud.com>
- <CAHC9VhSA0dSQ1jaRO_J1S5xEc14XoCnYaVG3AWF=uYaDb-AjoQ@mail.gmail.com> <7ad255dce0b85e018b693d302689e0e970b8cc00.camel@huaweicloud.com>
-In-Reply-To: <7ad255dce0b85e018b693d302689e0e970b8cc00.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Jun 2024 13:13:54 -0400
-Message-ID: <CAHC9VhSqtdwO_C1r_uduPLdZp3o+75ojSY+B7JG6H2noEmv7VA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
-	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, mic@digikod.net, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
-	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 1:06=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Thu, 2024-06-20 at 12:51 -0400, Paul Moore wrote:
-> > On Thu, Jun 20, 2024 at 12:31=E2=80=AFPM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Thu, 2024-06-20 at 12:08 -0400, Paul Moore wrote:
-> > > > On Thu, Jun 20, 2024 at 11:14=E2=80=AFAM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > On Thu, 2024-06-20 at 10:48 -0400, Paul Moore wrote:
-> > > > > > On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
-> > > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > > On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
-> > > > > > > > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
-> > > > > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > > > >
-> > > > > > > > > Making it a kernel subsystem would likely mean replicatin=
-g what the LSM
-> > > > > > > > > infrastructure is doing, inode (security) blob and being =
-notified about
-> > > > > > > > > file/directory changes.
-> > > > > > > >
-> > > > > > > > Just because the LSM framework can be used for something, p=
-erhaps it
-> > > > > > > > even makes the implementation easier, it doesn't mean the f=
-ramework
-> > > > > > > > should be used for everything.
-> > > > > > >
-> > > > > > > It is supporting 3 LSMs: IMA, IPE and BPF LSM.
-> > > > > > >
-> > > > > > > That makes it a clear target for the security subsystem, and =
-as you
-> > > > > > > suggested to start for IMA, if other kernel subsystems requir=
-e them, we
-> > > > > > > can make it as an independent subsystem.
-> > > > > >
-> > > > > > Have you discussed the file digest cache functionality with eit=
-her the
-> > > > > > IPE or BPF LSM maintainers?  While digest_cache may support the=
-se
-> > > > >
-> > > > > Well, yes. I was in a discussion since long time ago with Deven a=
-nd
-> > > > > Fan. The digest_cache LSM is listed in the Use Case section of th=
-e IPE
-> > > > > cover letter:
-> > > > >
-> > > > > https://lore.kernel.org/linux-integrity/1716583609-21790-1-git-se=
-nd-email-wufan@linux.microsoft.com/
-> > > >
-> > > > I would hope to see more than one sentence casually mentioning that
-> > > > there might be some integration in the future.
-> > >
-> > > Sure, I can work more with Fan to do a proper integration.
-> >
-> > That seems like a good pre-requisite for turning digest_cache into a
-> > general purpose subsystem.
-> >
-> > > > > I also developed an IPE module back in the DIGLIM days:
-> > > > >
-> > > > > https://lore.kernel.org/linux-integrity/a16a628b9e21433198c490500=
-a987121@huawei.com/
-> > > >
-> > > > That looks like more of an fs-verity integration to me.  Yes, of
-> > > > course there would be IPE changes to accept a signature/digest from=
- a
-> > > > digest cache, but that should be minor.
-> > >
-> > > True, but IPE will also benefit from not needing to specify every
-> > > digest in the policy.
-> >
-> > Sure, but that isn't really that important from a code integration
-> > perspective, that's an admin policy issue.  I expect there would be
-> > much more integration work with fs-verity than with IPE, and I think
-> > the fs-verity related work might be a challenge.
->
-> Uhm, not sure what you mean, but I don't plan to touch fsverity. There
-> was already work to get the fsverity digest. All I would need to do
-> from my side is to request a digest cache for the inode being verified
-> by IPE and to query the fsverity digest.
+apparmor: try to avoid refing the label in apparmor_file_open
 
-So your proposed file digest cache wouldn't be used as a replacement
-for the fs-verity digest?  Hmm.  I'll leave this up to you and Fan
-(current IPE maintainer), but I'm not sure how much value this would
-have for IPE, especially since I believe IPE's fs-verity support is
-mostly around fs-verity signatures.
+If the label is not stale (which is the common case), the fact that the
+passed file object holds a reference can be leverged to avoid the
+ref/unref cycle. Doing so reduces performance impact of apparmor on
+parallel open() invocations.
 
-> Of course IPE should also capture kernel reads and verify the file
-> containing the reference digests, used to build the digest cache.
->
-> > > Also, the design choice of attaching the digest cache to the inode
-> > > helps LSMs like IPE that don't have a per inode cache on their own.
-> > > Sure, IPE would have to do a digest lookup every time, but at least o=
-n
-> > > an already populated hash table.
-> >
-> > Just because you need to attach some state to an inode does not mean a
-> > file digest cache must be a LSM.  It could be integrated into the VFS
-> > or it could be a separate subsystem; either way it could provide an
-> > API (either through well defined data structures or functions) that
-> > could be used by various LSMs and filesystems that provide integrity
-> > protection.
->
-> Given that IMA solved the same problem after 15 years, when it became
-> an LSM, I'm not super optimistic on that. But if VFS people or other
-> subsystem maintainers would be open for such alternative, I can give it
-> a try.
+When benchmarking on a 24-core vm using will-it-scale's open1_process
+("Separate file open"), the results are (ops/s):
+before: 6092196
+after:  8309726 (+36%)
 
-I think you should, because I'm not currently supportive of
-digest_cache as a standalone LSM.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
---=20
-paul-moore.com
+v2:
+- reword the commit message
+
+If you want any changes made to it can you just do them on your own
+accord? :) Will be faster for both of us than another mail trip.
+
+ security/apparmor/include/cred.h | 20 ++++++++++++++++++++
+ security/apparmor/lsm.c          |  5 +++--
+ 2 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+index 58fdc72af664..7265d2f81dd5 100644
+--- a/security/apparmor/include/cred.h
++++ b/security/apparmor/include/cred.h
+@@ -63,6 +63,26 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
+ 	return aa_get_newest_label(aa_cred_raw_label(cred));
+ }
+ 
++static inline struct aa_label *aa_get_newest_cred_label_condref(const struct cred *cred,
++								bool *needput)
++{
++	struct aa_label *l = aa_cred_raw_label(cred);
++
++	if (unlikely(label_is_stale(l))) {
++		*needput = true;
++		return aa_get_newest_label(l);
++	}
++
++	*needput = false;
++	return l;
++}
++
++static inline void aa_put_label_condref(struct aa_label *l, bool needput)
++{
++	if (unlikely(needput))
++		aa_put_label(l);
++}
++
+ /**
+  * aa_current_raw_label - find the current tasks confining label
+  *
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 2cea34657a47..4bf87eac4a56 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -461,6 +461,7 @@ static int apparmor_file_open(struct file *file)
+ 	struct aa_file_ctx *fctx = file_ctx(file);
+ 	struct aa_label *label;
+ 	int error = 0;
++	bool needput;
+ 
+ 	if (!path_mediated_fs(file->f_path.dentry))
+ 		return 0;
+@@ -477,7 +478,7 @@ static int apparmor_file_open(struct file *file)
+ 		return 0;
+ 	}
+ 
+-	label = aa_get_newest_cred_label(file->f_cred);
++	label = aa_get_newest_cred_label_condref(file->f_cred, &needput);
+ 	if (!unconfined(label)) {
+ 		struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 		struct inode *inode = file_inode(file);
+@@ -494,7 +495,7 @@ static int apparmor_file_open(struct file *file)
+ 		/* todo cache full allowed permissions set and state */
+ 		fctx->allow = aa_map_file_to_perms(file);
+ 	}
+-	aa_put_label(label);
++	aa_put_label_condref(label, needput);
+ 
+ 	return error;
+ }
+-- 
+2.43.0
+
