@@ -1,170 +1,116 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451E31E49E;
-	Thu, 20 Jun 2024 13:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72CE1AB91B
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 13:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718889335; cv=none; b=Rof6SR5aJrWEDBmB9R0+N/3T1P4iJPV7wqeOgs8QP4B4omRiLGI2wjOQrwdd0W4tYoXse69EF6f4FeTrQdQf2tH0eB1uMWtGAXgCgF/av54oBiKW7iklDZRXEvHslFT5V7cZW7bzDIkGQgrI0tlosFLV+1RO4PR1Kty199/kZ0E=
+	t=1718890823; cv=none; b=GPukGD6c67bKQKdtlRRxwd2OfekyajOsz7hSVj4cXRPF3bzzu4fr8FmEkoIPXFXHE35wykHUhuDydjXSxIMFdt+Y7BCr23Tx3XvcMXfgpmrbnZtsUp2Qx/uLFrT76D7GRiYUs8NhoVh5rUq5GEW/9MEz9EznRN0Ywshta6RPMY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718889335; c=relaxed/simple;
-	bh=Dm+OAoDNq27a8NmdBwsCJshDlb5owqtvCwqqIvl+zsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INstyemNZrynsY17W7ErAdqKmTsVyRB6Ym9Mzbno4WOUoP8Yc4hkKeYr9NuR0ZX7SY7tQ3bAC3awGn3O4houH1npXFYH5XIDqdXGFkVw9ZzE5WdO9xbaoBJRvcZBwNm2JO1S83OrlRZDPdABpe/+tfBkh0nbMLdCX/GV/cun5/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JDU2na7F; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1718890823; c=relaxed/simple;
+	bh=Q8QdvPizY1ZcV64zp0TGWeYn+Fg2XUF5OYlumUmLB5M=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=TwvE6x1FDvjO9+qF+XWlfX59JYiTVy3HPJQxarfDZE0jW4fNf+OPAOpVPmtg9bISAr10NqWTkMJaC+H/8fLL5HetbZo7UuKM0OaP7oT/4OXTQO1EtmA4PdxSZonQDDQzG0RBGutbXhkYgKCW6UUsAjDB4bMwT/LeMTUTci3AuOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILrC15Ax; arc=none smtp.client-ip=209.85.217.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JDU2na7F"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f8ebbd268so330896566b.0;
-        Thu, 20 Jun 2024 06:15:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILrC15Ax"
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48c54370c56so281982137.3
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 06:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718889332; x=1719494132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvxuvoBqoE/GY1YheFb9DI1s4W2tvYezeKtzJ7T24dY=;
-        b=JDU2na7FFY87GS6cg1I9dAXj5c8Cprpx4I6LhnUAtUXgjURRLgpuFFjub4EwLT2KWA
-         c7XveWEzLC7BD5/XiIc7y80lEF4wBOuQ0gJSIF5h0jJubtikETqQrc+xZRNngkYt1MME
-         o9yiD72LywuUVXiC5x0ki7GwQiqeIQbm3iEBAdqWxnWz4RkP13y0mZcnl/lcwInVGJxL
-         lj5vFpr+nqMoTik9OcSiNn6tkbcAp9+oxj8XIcRME3COk5ibC6BdpS63DeG2PQn1x3o5
-         CHItPil0O0fcBXYsxze1v3KkK+IRNQO9D2AQSwYmT05KlBacWTgU85OwxxAXUjXC3oqB
-         Vnjg==
+        d=gmail.com; s=20230601; t=1718890820; x=1719495620; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q8QdvPizY1ZcV64zp0TGWeYn+Fg2XUF5OYlumUmLB5M=;
+        b=ILrC15Axd3YJ/d0Y9EPZGnqIC7AKhj2Za3AIH14hMMAgFoJEjIWoA3SrYuyvBMlt+b
+         fBP7pCDf6ymfSmuXPe+bsPZZuDWk8JJjr4HKOx+oMXD6UgBEVzyNNCrA1N6XHjT/+T7s
+         Ymp1KRtr2PzWQ37qAJFVz7tUMHL8wa43EMf+tAQr/asxwhKpW+uyEJ2mzmb4jdFqFblB
+         cjM0WxSjxoTdiG5GKfyalLgkb5qa9mLZpeaS/aulqvzihmfvnm+rm2Xk1hMCMtl/HyWP
+         LVHwjhvI2jS5ISip6s7LkIEkQneVEv58GX/ejibrD62b2GKDlRJAHivwctFk+mqdPhVZ
+         e+hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718889332; x=1719494132;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GvxuvoBqoE/GY1YheFb9DI1s4W2tvYezeKtzJ7T24dY=;
-        b=e3uZ1TsPHO5Av/oolfdx/V3wYimyQB+1pE1hg87q/n//nxlCuKe04QIYuARQgPePin
-         Hvc8sRQ5sK0LDnDsjrNrKmcRF+QeAkEpTpn9XVbrJncqUcu4qQjLAkQQQTjruv6rmnyz
-         KfXzXxWAnEOXipGNeG7uQxTgdnjAZ49mXexgPlfEZBgXoMUa4252jBrma2L5rvTKB3Qn
-         SW959WYUthJ6zahlIqpQEf8Mi0kfpgK96pedHnpiHWNv2bLNkMYku6ymLjWRwvEWI/1t
-         nuYFxOtor5dC0bTIDjsQBYQnH+eFMJooVG4c4l+C8eAOCEpWf2t564rTEY99XJh55DNd
-         rE1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWyG2qTf5dhKAGtkL2n+s6Fpzg1On/Od8Gtt+jsYmQaHKUh/9xDuIcFN9TTbrDhXp0Sxv4kne4GSfzV2KcJkkIi2xLAXsZMuvuK3nnDg8g4dyKQcRuI1jwWeXs9mbM4n3HsnL4ps0Ut9YO4/OIdNECVj9gB
-X-Gm-Message-State: AOJu0Yz6UoNIILNiklMDBBT5jeHhjAKNKLzhEeQUr2mVmDS5JvtX7Zz0
-	GonOLJGFUIHGftsSL5rtWm//c9fevVEzIrLO/oPKQR3X3b166E2Y
-X-Google-Smtp-Source: AGHT+IEqnJp1SNZXbYGPZ0xa9ovKenpl+H5Wg16kK3FxOFIVW8FaphRKTrag0JDQQqPQVJ6VlHxa9w==
-X-Received: by 2002:a17:907:a645:b0:a62:49ae:cd7b with SMTP id a640c23a62f3a-a6fa438df9fmr358825866b.24.1718889332198;
-        Thu, 20 Jun 2024 06:15:32 -0700 (PDT)
-Received: from f.. (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f881fbdfcsm370454266b.121.2024.06.20.06.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 06:15:31 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: john.johansen@canonical.com
-Cc: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-kernel@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	Neeraj.Upadhyay@amd.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] apparmor: try to avoid refing the label in apparmor_file_open
-Date: Thu, 20 Jun 2024 15:15:24 +0200
-Message-ID: <20240620131524.156312-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1718890820; x=1719495620;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q8QdvPizY1ZcV64zp0TGWeYn+Fg2XUF5OYlumUmLB5M=;
+        b=w2Jix09144fEmf2c1HjcoJM5X4PaFU9Nqnu6BQ/IhGvqT/lUObMs2Rc1np9ppw3GMP
+         cIbsRk80v1ouaFL2fPeZNVthiDBuX0Kpx6yEAS8tpOH6mNYw+82+J/PhN8fplBGpjz+2
+         6wEOgKh2TIhOULnx9yyT++2xD3e/8+TK0yfu9XY4dcpCGBv4s6MM7ODrbeVG7yvve9Un
+         7bcCJ4UDSyNwuxefOuU1QQNGxPKExqEE+vjBYjIkwyiJO9zXdZwv/BujTkqiMp0/87QB
+         zyKLZBLgN/NFqtFdPit4Ktedb6OJKgaYO7XRYU9+RocZuUllq7g/URF/QsKsJXwfrbOi
+         lQvw==
+X-Gm-Message-State: AOJu0YwmV8sTs53DIy5MBO8lGvxwT8HN2BY7EL11jkFcX6o4k2GPbOn7
+	fobhg3oLncMHDrJpcJEiTLoz3is6q2ku/Bv8lrpt6yzA7ktJEV7ii37A+OBKLIVAnY1zrRWc1r+
+	cjafFXs+SaDblKV/MGNKLE6Red1zFF7EGcgU=
+X-Google-Smtp-Source: AGHT+IEzRCRah0iazTQVakbVGuqVaxDs+1IZ1JSo1l5Uu64ht0qcYI1xpik4rqJYeuRczK0i+wQVAhhqwqQafz9KONY=
+X-Received: by 2002:a67:f3c7:0:b0:48d:ca28:6579 with SMTP id
+ ada2fe7eead31-48f13057725mr5666986137.18.1718890820289; Thu, 20 Jun 2024
+ 06:40:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Timur Chernykh <tim.cherry.co@gmail.com>
+Date: Thu, 20 Jun 2024 16:40:09 +0300
+Message-ID: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
+Subject: Yet another vision of Linux security | Endpoint Security Framework
+To: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-It can be done in the common case.
+Hello!
 
-A 24-way open1_processes from will-it-scale (separate file open) shows:
-  29.37%  [kernel]           [k] apparmor_file_open
-  26.84%  [kernel]           [k] apparmor_file_alloc_security
-  26.62%  [kernel]           [k] apparmor_file_free_security
-   1.32%  [kernel]           [k] clear_bhb_loop
+I'm here for yours' opinions.
 
-apparmor_file_open is eliminated from the profile with the patch.
+The modern Linux, in fact, does not provide convenient options to
+write AV/EDR software with real-time system events analysis as far as
+unified system security events. For now we have only inconsistent
+self-made events from eBPF, audit, fanotify, etc. eBPF itself is a
+cool technology, but even CO-RE sometimes works as not expected or
+gets broken, for example:
+https://github.com/aquasecurity/tracee/pull/3769/files. This hack (one
+of a huge amount of the same hacks) looks a bit "crutchy".
 
-Throughput (ops/s):
-before:	6092196
-after:	8309726 (+36%)
+As an EDR developer, I have an idea how to fix this situation, using a
+unified endpoint security framework (ESF) placed in the kernel. Its
+must:
+- Provide unified and consistent security events;
+- API to communicate with kernel:
+ - To send program-defined events (as audit has);
+ - Read events from kernel;
+- Trusted agents delivery mechanisms (signing like kernel modules);
+- Has a possibility to control what happens on system e.g block some
+file operations, binary executions and so on;
+- Has a portable and flexible events structure which doesn't get
+broken from version to version;
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+For now I have PoC, which describes the concept in more detail:
+GH mirror: https://github.com/Linux-Endpoint-Security-Framework/linux.
+It contains all listed above points (maybe except portable event
+structures)
 
-I think this is a worthwhile touch up regardless of what happens with
-label refcouting in the long run. It does not of course does not fully
-fix the problem.
+There are an examples with:
+- Security agent:
+https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/samples/esf/agent.c
+- API: https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/ctl.h
+- Event structures and types:
+https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/defs.h
+- Main ESF source code:
+https://github.com/Linux-Endpoint-Security-Framework/linux/tree/esf/main/security/esf
 
-I concede the naming is not consistent with other stuff in the file and
-I'm not going to argue about it -- happy to name it whatever as long as
-the problem is sorted out.
+Questions I'm interested in:
+How does the community feel about this idea? Is it a viable concept?
+If all is OK, what should I, as developer, do further? How much kernel
+code outside the LSM module may be modified to keep further merge
+acceptable? (currently not all LSM hooks meet to intercept all needed
+data).
 
-Am I missing something which makes the approach below not work to begin
-with?
+The general purpose is to make AV/EDR software development easier,
+more convinient, and stable for Linux-based operating systems. This
+PoC (as far as technology idea) is inspired by MacOS Endpoint Security
+based on MAC policy.
 
- security/apparmor/include/cred.h | 20 ++++++++++++++++++++
- security/apparmor/lsm.c          |  5 +++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-index 58fdc72af664..7265d2f81dd5 100644
---- a/security/apparmor/include/cred.h
-+++ b/security/apparmor/include/cred.h
-@@ -63,6 +63,26 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
- 	return aa_get_newest_label(aa_cred_raw_label(cred));
- }
- 
-+static inline struct aa_label *aa_get_newest_cred_label_condref(const struct cred *cred,
-+								bool *needput)
-+{
-+	struct aa_label *l = aa_cred_raw_label(cred);
-+
-+	if (unlikely(label_is_stale(l))) {
-+		*needput = true;
-+		return aa_get_newest_label(l);
-+	}
-+
-+	*needput = false;
-+	return l;
-+}
-+
-+static inline void aa_put_label_condref(struct aa_label *l, bool needput)
-+{
-+	if (unlikely(needput))
-+		aa_put_label(l);
-+}
-+
- /**
-  * aa_current_raw_label - find the current tasks confining label
-  *
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 2cea34657a47..4bf87eac4a56 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -461,6 +461,7 @@ static int apparmor_file_open(struct file *file)
- 	struct aa_file_ctx *fctx = file_ctx(file);
- 	struct aa_label *label;
- 	int error = 0;
-+	bool needput;
- 
- 	if (!path_mediated_fs(file->f_path.dentry))
- 		return 0;
-@@ -477,7 +478,7 @@ static int apparmor_file_open(struct file *file)
- 		return 0;
- 	}
- 
--	label = aa_get_newest_cred_label(file->f_cred);
-+	label = aa_get_newest_cred_label_condref(file->f_cred, &needput);
- 	if (!unconfined(label)) {
- 		struct mnt_idmap *idmap = file_mnt_idmap(file);
- 		struct inode *inode = file_inode(file);
-@@ -494,7 +495,7 @@ static int apparmor_file_open(struct file *file)
- 		/* todo cache full allowed permissions set and state */
- 		fctx->allow = aa_map_file_to_perms(file);
- 	}
--	aa_put_label(label);
-+	aa_put_label_condref(label, needput);
- 
- 	return error;
- }
--- 
-2.43.0
-
+Best regards,
+Timur Chernykh,
+Lead developer, F.A.C.C.T.
