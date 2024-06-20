@@ -1,116 +1,143 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF631AE087
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 14:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D9423774
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718894929; cv=none; b=BbxpYUmV0n1McalzBIcQpu9iO5NYY896zWflbjyjcoUlHF392Q88DLv8aHp1mJBgEnScgyq9XfKdlhZ/agRgPDlefWsmLEKLoxdd9v8BlzT+xzRBcd2Ldg7ScyWa1j3Jqky5nmyWAJAfqvFEqXCKUeAx9OXtIKwFUsgTJUs48WA=
+	t=1718895282; cv=none; b=Sl70hqtiEfuK0rE1FT+WLNR02ko0io2Ef3EaCahhvgmac7D4JPIkUrZdm97ldhLVeNvOQsqbGCtm9NYCjwTraERxtdkNyd8rh3PnSeY/4uKuDSs7zMtEitwuLUsCeRam4UjckRLHJfzpThv8FdnErmnJoohFHkcZtn9A4zjzVzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718894929; c=relaxed/simple;
-	bh=ZWkJZNR2bxEM6LA73IvJZfOwKaypUz3ChIAu4T7npaA=;
+	s=arc-20240116; t=1718895282; c=relaxed/simple;
+	bh=gMIU85E4sVlbAmhxL8HA4spZPOe6dtkhsj6eMGzEWGo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iodiynNVxBC4xmPJj2UbbfCgifW0ZCIOdTl4Rf+w9t95NemPdtF3rBSwsvr8XrEpDlskqjEkP38WmVh1YL94Vfz6v4F4OGlQl0oJOoujvIlogLNrkhlmTz9rgvDvxscbvSnzjHa31hev/4p6bi+0s+aeiXSBZi9rTeWHf6/5anM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B8xFZOZt; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=Uo/SUTvSlLEOM5Z7amlTGFrp7Iqn/zMNChgC5YA+GHnxFogeUtYE88V3IHzYW7ydP3opp16/8XS5BgdomVufP4qC+XDeO2Zxgrk0KBSdUKQMcGhXlw93r+xK/azsXA/r4hQWTsr0KtOJEZvoLBDyNB8wY9t1WvmjTyj0oABfV4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iu7sDsea; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B8xFZOZt"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-63ba688bdc9so9619587b3.1
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 07:48:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iu7sDsea"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c348a263easo1534978a91.0
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 07:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718894927; x=1719499727; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718895280; x=1719500080; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T2Ix8vRkDYAbIzLofJN03PlLvyWp4g34uNnV/Zr5cQo=;
-        b=B8xFZOZt8jPqgy49CCh+db03r8W/X2N/3Hduxw02AQet6Ndo8rbrygpiB3VVOLxYVY
-         LVeJ9j71pXht2slK/ht1eJyvN0M1c3bVEPtmr1cfO68+l9eH3etCSrLR34M+UYgkGWax
-         dmWIH16RPNPJLHhH5CzWD/qzZTMdOdOhOp3xnfQZVDmE+jTuk0NZAPsFzaJW2zrxrMhm
-         lIh3re0UejijpFlzuci5Z7eo3lvzl7LrG9PyKVaRCY6rFkcYXYrdxnzlnF9VQaxzWs4+
-         aeVytPtwcm8tXgnGoBdfSpIgwGgenHHfAbopMf57nuLDqft161bwWlbdPTBF9YwA6XMx
-         mVIg==
+        bh=N038QHxhArka8W/5BWMhOgRaal0bxOlQ0gQWQJRILY8=;
+        b=Iu7sDsea2L7TgVO3G7zoDi650bD68jpm+u37r0PQ4LUplgKm/l/NxJT7dsj+zwIZft
+         56EAoHDhfqKl7CUx4zdvv8dAP5Q5YYrlDHUeWTEbxK+6zC7V8k9OES2Bk4C0tgUlP2zM
+         K29XMRXluyeJ2xYOPvmJAHwDh96yN5TQ9RQP0h20yLhPqymvGdpGznOfVQ9S7o10M/2Z
+         kH4UoL9iH2SnTUnzEcms3CfIRm5fG6HblxuzjIVNDjkxx4kUzDSo0BQSXbrj7uCJYL9i
+         0zgLdVk8tR+c0ZvwkneDBeeeshR1bLqSVLArJ1nt6LWKpJFpCTBxHSg9rGuFmB7uJ4xJ
+         3Bzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718894927; x=1719499727;
+        d=1e100.net; s=20230601; t=1718895280; x=1719500080;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T2Ix8vRkDYAbIzLofJN03PlLvyWp4g34uNnV/Zr5cQo=;
-        b=TijE8YFw07F1AGxZP230vzAbHOnhMJxlxVLhk0RZ+skS4QD24hCraASe5eg+4Knqwu
-         8W/mPIlTfPNr6KVruKNHyD0VLOc0hnVC3fQ4EyR/fzbxmsMUW3/HWdxisSuCndrXqPQe
-         GGI6Th9M9jhIECHqGC26U5gzkg7WcDJO+h3MzlVfDwRlxQdUW5fSxAdbt0Aw4fVjg2A3
-         qp/l1If+YUvZE8ALe9hk81PBMvLuC4NupF2754IxxGZ4tGmU6hL5nhkv3vHmpNBnVT3Y
-         51FSuRCB4hr3r1eAPBvA9W/eOZHx0A0ud4UtRpDgQbJDhl8n8g6AHexS0lrHVhA1PHNw
-         4Nfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzaCkKhyLVn8I71chj0x5QPXaRHjmQWEeIb8MEF7K0LgT/SO2NN9MvoRZ/fSdJ2ucwWBmP4HjAGSwysHa6Ct1N1C5EFlw1G/UZFPasYkMDwFzaGgW7
-X-Gm-Message-State: AOJu0YzFa+psTbFEf4fAdHH0sUx2eQNex6JXGKZRzsuxzMqzYNbVbBK9
-	qZpL3kjcKHro3yeR8/79kjR/ejZI+m0t+aNzElnHbqPkZ8UdMk6tIZyoCPQfkR2EXZgAJkCMu+l
-	h3hO7I0Va/+6SCnRnxGIalHJjG/hDm8Fi043O
-X-Google-Smtp-Source: AGHT+IFuiJSlu6ok/X5AbetO8OQ5D7Cz21KHbzk+IA9kRhrNMOU3OFyVB6D+lstQN8v9cNDF9o7/AysNWhm9yCWP10k=
-X-Received: by 2002:a0d:e614:0:b0:632:6615:3d67 with SMTP id
- 00721157ae682-63a8d25c8e4mr59092877b3.6.1718894927304; Thu, 20 Jun 2024
- 07:48:47 -0700 (PDT)
+        bh=N038QHxhArka8W/5BWMhOgRaal0bxOlQ0gQWQJRILY8=;
+        b=FBhU15dD+R/t/WvBnnpHtEt6xNW4NvnWPlbYH7Qxr1JaE/zAjj9ArVYaNJSZNlGX7y
+         YA8HQmuQuoGlUeUJCJJVMJZuBvMAVyUGzmpjYuLTQC5Fmr0WtkmjrnuyyxrxMP4VOZxA
+         uZI1myFfgcYgDKYULUIZMH1slA6eiIAvqUbcpE6XweyQJahbDkcawLUGRoRULI8UnJAf
+         jmfRi4hJi2KdNHb44CxD4u0ZsEeXlbyry/688TekJuQANQ+GWMaFqEqY8G1qhxWcrNEK
+         E2FzmwgaPuPavws7qRAIZebbR1NyDT3qoo5cIERMYel8/ridJHeEflkfekX19eKs31/H
+         Bqnw==
+X-Gm-Message-State: AOJu0YzvcR4rafB4wGrEgFxEYqet4DA3D9keh/SpB3ejGrzsaZRPiidN
+	PXTzrID/y8a383/mMC4nKzMmCQzlu0/vDSRdRC54UPb6+kHipp/k8bczCcfoBKtXwV02R7YzsDr
+	n9P4pOCqGo6chTxJcgT3G6O90kEA=
+X-Google-Smtp-Source: AGHT+IFspGCwwI/rbHKHWfh+hmuJr5IWxM4itLm+d2epVW5VbqRMlA2jXKXZIpJPcrwrbVvO+VvmCwMxRqQAcT7TMQc=
+X-Received: by 2002:a17:90a:9a8a:b0:2c8:647:3238 with SMTP id
+ 98e67ed59e1d1-2c8064732a6mr1226158a91.9.1718895279925; Thu, 20 Jun 2024
+ 07:54:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
- <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
- <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
- <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
- <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
- <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
- <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com> <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
-In-Reply-To: <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Jun 2024 10:48:36 -0400
-Message-ID: <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
-	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, mic@digikod.net, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
-	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+References: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
+ <CAEjxPJ7oNGyzh3Q5FyXLtDoq0BmzbBAfLv11ZSkZYBt3Vz_pEw@mail.gmail.com>
+In-Reply-To: <CAEjxPJ7oNGyzh3Q5FyXLtDoq0BmzbBAfLv11ZSkZYBt3Vz_pEw@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 20 Jun 2024 10:54:28 -0400
+Message-ID: <CAEjxPJ53FRaMGO0mZ214jpHpHR-NXVcoQrfSxc-upR7C_1Ke4w@mail.gmail.com>
+Subject: Re: Yet another vision of Linux security | Endpoint Security Framework
+To: Timur Chernykh <tim.cherry.co@gmail.com>
+Cc: linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
-> > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > Making it a kernel subsystem would likely mean replicating what the L=
-SM
-> > > infrastructure is doing, inode (security) blob and being notified abo=
-ut
-> > > file/directory changes.
+On Thu, Jun 20, 2024 at 10:28=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Thu, Jun 20, 2024 at 9:40=E2=80=AFAM Timur Chernykh <tim.cherry.co@gma=
+il.com> wrote:
 > >
-> > Just because the LSM framework can be used for something, perhaps it
-> > even makes the implementation easier, it doesn't mean the framework
-> > should be used for everything.
+> > Hello!
+> >
+> > I'm here for yours' opinions.
+> >
+> > The modern Linux, in fact, does not provide convenient options to
+> > write AV/EDR software with real-time system events analysis as far as
+> > unified system security events. For now we have only inconsistent
+> > self-made events from eBPF, audit, fanotify, etc. eBPF itself is a
+> > cool technology, but even CO-RE sometimes works as not expected or
+> > gets broken, for example:
+> > https://github.com/aquasecurity/tracee/pull/3769/files. This hack (one
+> > of a huge amount of the same hacks) looks a bit "crutchy".
+> >
+> > As an EDR developer, I have an idea how to fix this situation, using a
+> > unified endpoint security framework (ESF) placed in the kernel. Its
+> > must:
+> > - Provide unified and consistent security events;
+> > - API to communicate with kernel:
+> >  - To send program-defined events (as audit has);
+> >  - Read events from kernel;
+> > - Trusted agents delivery mechanisms (signing like kernel modules);
+> > - Has a possibility to control what happens on system e.g block some
+> > file operations, binary executions and so on;
+> > - Has a portable and flexible events structure which doesn't get
+> > broken from version to version;
+> >
+> > For now I have PoC, which describes the concept in more detail:
+> > GH mirror: https://github.com/Linux-Endpoint-Security-Framework/linux.
+> > It contains all listed above points (maybe except portable event
+> > structures)
+> >
+> > There are an examples with:
+> > - Security agent:
+> > https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/mai=
+n/samples/esf/agent.c
+> > - API: https://github.com/Linux-Endpoint-Security-Framework/linux/blob/=
+esf/main/include/uapi/linux/esf/ctl.h
+> > - Event structures and types:
+> > https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/mai=
+n/include/uapi/linux/esf/defs.h
+> > - Main ESF source code:
+> > https://github.com/Linux-Endpoint-Security-Framework/linux/tree/esf/mai=
+n/security/esf
+> >
+> > Questions I'm interested in:
+> > How does the community feel about this idea? Is it a viable concept?
+> > If all is OK, what should I, as developer, do further? How much kernel
+> > code outside the LSM module may be modified to keep further merge
+> > acceptable? (currently not all LSM hooks meet to intercept all needed
+> > data).
+> >
+> > The general purpose is to make AV/EDR software development easier,
+> > more convinient, and stable for Linux-based operating systems. This
+> > PoC (as far as technology idea) is inspired by MacOS Endpoint Security
+> > based on MAC policy.
 >
-> It is supporting 3 LSMs: IMA, IPE and BPF LSM.
+> I could be wrong, but I thought that supporting such solutions was one
+> of the reasons that fanotify was introduced, and that some combination
+> of LSM + fanotify + audit could fulfill most if not all of the
+> requirements. Can you explain which ones can't be met using those
+> today?
 >
-> That makes it a clear target for the security subsystem, and as you
-> suggested to start for IMA, if other kernel subsystems require them, we
-> can make it as an independent subsystem.
+> Note that a number of the LSM hooks are called from interrupt or while
+> holding locks and thus cannot sleep/block.
 
-Have you discussed the file digest cache functionality with either the
-IPE or BPF LSM maintainers?  While digest_cache may support these
-LSMs, I don't recall seeing any comments from the other LSM
-developers; if you are going to advocate for this as something outside
-of IMA, it would be good to see a show of support for the other LSMs.
-
---=20
-paul-moore.com
+Looking for a list of such hooks, it appears that the BPF LSM is
+maintaining a list of sleepable LSM hooks in its sleepable_lsm_hooks
+list in kernel/bpf/bpf_lsm.c.
