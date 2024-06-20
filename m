@@ -1,40 +1,62 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A521B3736;
-	Thu, 20 Jun 2024 17:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D762F1B3753
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 17:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903348; cv=none; b=A2jZLZcmRiwhPOTGa/iMxBAbbtx96C2UNJzdTusXvXFv/Na7Gzr2j5A71zMO0vKeS0+RDPeCWlOcq/m7ScBDKdg/dHjBdL1sQVBoug06LXICWUQVA97Xy3lYuVUHAyW3VjU84VDCr8mYjySQGwOKrTkMeXIDaaNvWtN4TaY2qn0=
+	t=1718903582; cv=none; b=f8/YwM8vO+vfb/34DskD/9EqfdJZ/ltN+hc6/SAb8kVCkWxnXr7eYyu3b+ONeknmdsq8HIWTCr/F8DZ8fXUN0+m0elGI2dyOjh7ntVfg/Mn9f08e/nopY/nPTuWtNoDsaW38X673iHtDw1yrip+UWU8Jo/+IxtveVie9gywBQ4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903348; c=relaxed/simple;
-	bh=dMTJ8908E2JNrwW/lpHVRd+tVPSWWPLkCIEguNz8I0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHxWWkXW9aZkLBNiE/gr+YccUqF4ZJoLaibs9rJsFHfWBI8zoguEduLGYRfSH0exXzamq2eucjteQMJtcuRs4GGOuB55dHO9/bzhZgEvCpuCuQgFK6By6HU4OP6FDJPu1lhgBH2TGNG1TZHqY/gb0tMxlHVwYORSoRO+lzeez8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=E/5/ThKI; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1718903582; c=relaxed/simple;
+	bh=DT69cig5T+HJP3QxES/sQY6L1UJ1ASS2EvGp9fZoQmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=SfnT3CYtO+Gyfbik77nV0uUATKZ/xuX6ja6V0o+eOvB0FIGxmjpw6fCo760VJvy/rjK1I+zjLUlXB3xON7UbhuBtow8JqcfhDUQpssqUa1PMGNCMUuXSDEn4opdTY6GqBIztnDlrpS9HljY6w2RLdLmsfyTsxQswfKVU1XZZpP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=IbEjxjHS; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="E/5/ThKI"
-Received: from [10.0.0.100] (pool-99-255-30-7.cpe.net.cable.rogers.com [99.255.30.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EBC4A3F210;
-	Thu, 20 Jun 2024 17:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1718903341;
-	bh=WUmq2Z+BZ+5Q2DHpiaBkQxOe37bDl4Qhdq2/NQMQuco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=E/5/ThKIUAuABAsJCcC6kMW81J3WwrxQq/XW0JKQjblFomtVI3c+vnhI0JI9j6R+i
-	 bybkZ/XRsNk27Mpk0KeHaDcdsQi6phL1cPBQyIP+WKkf49HxE8AgFakPqG2yBxxCRt
-	 AC8hF6lCbMnnSx+VHjw3+NWAejhDnwLdn4tPF39l5fVnYxt/dNSFxmIAvoUdAb+x/L
-	 vl6lJR0NK+bEdbvas11hujemBPFuCi0/28hu6tRvmVwlhp1i45Qxwh905Tj508DgwQ
-	 aJQjkgicrulhYg/Men9dopgWqvLbcU6h/lT9xEj48abe/vZjR4Xa6RhhNzlUY5sbgi
-	 ddYdhEbXMja7A==
-Message-ID: <c9f55357-029b-4799-8072-f5c96216d60c@canonical.com>
-Date: Thu, 20 Jun 2024 10:08:58 -0700
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IbEjxjHS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718903573; bh=1dCjEj3mjJczEwo7yId4dIQ2YxYDscmgCFAd8ToOFpo=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=IbEjxjHS+10Sb9GVaFgGhe19WCp1pdY8u1MiqWsyYjthtICBWpi9oNUdQHaAgU1nmLrqE2vvf89dFED1r8tezUiVXqpiQ1L6mEM5GomqwzRmQrdQAQCGQ8nm2UyHosG0n1KxL7R5zpL25jSQhyeP8Wn390n0tyff7IK+JH+yyG9fYiEm6eN+K0zqyUutwHA4H38RPhsphtfj6jKKPVd8Ok3pTqvjeW9cnNVOJ3B8Ew78GxO77jr8dRdCyoUS1V9rt4fI/lnlHQZd938paabbgL0xFODFfX3UsgAbTo8cbjqEfeGmAGRitoz6TeqNfqh0WvJuE0bkLyR2K7YyRUpELA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718903573; bh=1bWW3Kg/6Os1ArxamqCvxQN9fkzpqFvh6TPzIPMnxdp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Xs9bVI9goccYKLOg7cTXcGteiCW/XG1sisI0wd5+JdSeNLnrgZSFhhGZ9TgpkJ6eVnO+nBJwQpVY7wSmD439O2daRmhyb5JodT9puERST61c4+27NBBowZRwwncngrctnhlkWNCbl/34A/IJ+ZYzeez1gHXwzZy6R+VYS/eSHn8B5If+GUmbzRIBoNk2YXNQ16jr8zyeEBYADfJBEnNQYFL//Dw5WJsY8a4iRgBreFfEPthbSAA7dj7zQEfo7MXARCpjYkoKAzD9RTwJNSWBHIgVeVU8skTi00nPyEg/VkQfX8M9jwZlClhsbcKVgagxwa8k/gyD5M2Re0lCKtlwXQ==
+X-YMail-OSG: ENgimUcVM1kJgt5J_ADVIHI4k6Osjq3Mpu2oY5Y3qz3JT5hPRKdoiDSQtkR82.P
+ _pAyXHNqhSMHxKm7gOUtcmuwhVWlw1JZthIcjYiwjppQpRa.2uBTfplbr6ZciLqujAzgsD9BzQFz
+ ZkEBsJW9gUbGBKP3aT889JD9kNe9.B33Xc0Iu2w6FTrkW8KBlXPOMNOseT3LVy1czGPxk3evfuDC
+ RPjr_HaAp4uf.ivE0tyckDzj.XDl8O9a.u3dkGGnFryfs_5GVFMIvwZtDKY3KBXSWKsBgM7XcsQF
+ 9Rp2GbbkSlrgaQ4rLP3eW5OZA8JthPbJo7i4C0U8oN84ex0tAjZK5dm82zVf.UfQNXpu5ju.sq8Z
+ kvd4KzKEZJ77n7SaS5x1IQs.Qj8n760ZdMO6OJB1uQqLLfvwj09u02JKCgPEA8vKF7LC_LOdXQ.b
+ u86rJLVk7IvNtOxDXQXxNFd0K0yL2uWoxsWCnWAuF8d_YJvpJOwwKKctjzxmQH1bK70VrKkwBkwl
+ cupCfn5kgiRtk91l45fRvKkQaaeqCXP8tYG88gj9ZoLt7Yzz8kR6mN2ISOju_PzFERe3mw36baPP
+ nXCXZV1QfuoHvYWXBz83Q757wSbq4NqYd9eNQ2m3uuDIv8nPgOzAD2yTwY0J3Syy9Wgsqp_LiS__
+ BbYFtQLg3dDOxv4Gl5.zTrAK8b11g0eW.2CZWd2zVw78k_oUev.6N99ay3Kn2eG9KnUjOe6F6sS5
+ 2Vz61SUYb88rYEYZLBPPwhCgVfMIvwzc4t6tlUpObhrX9vLCotwpbWChqdVWLmgKokKD9HZtPith
+ 7GOSxxMbmdik52ny0aJ4Qw9yz4dvl0oiYfGRLaNNrBStHC.HyYGACwpdrXMQVX1TSOfF1dpL7GM.
+ 3J5IlAOc79n.FQMxcJAD4VKnr.AvKA_n50G.0d9XvIcKrcBs350HcoC_rhQ4T4WI7TrdKwks3RtH
+ YZ914jmi1uM5GP4FwWBaLbLtDlAf_IvdJ9ZoDmb.NpyYWQlUbg7enmaHI4v1aNTQnAJdBR6Igycu
+ 6occye37k5QjFY0dZrcsqpNVDLrkW6oBX3GyAh.4RsNY3N_l8GqC0cowWJ9Iy6uGIVfhs6sDgzOE
+ .T5hwuBRe5xJSKkjYrdKn5lEIoQaEnHYKUNUhhx3wwdkfci._J17Iu3cUfiZ4Hyp8JrMetpRmUoq
+ W9V9BbaERZiPPURdbtLmxSUf4Va2x.oOvCCuf2MHb8T2KdzDHWczEYpUf5Sr9L8yhaeGqFMl1zNW
+ 7x4SoPjo6hHs_6SnvqIhCnS1Rtfji4RNtQeF2w4fvLcvF_jq51Z_JzmH5eyF7848oY823ZIcbXp4
+ 9d2TbYi2AvIJcLVeMMVNjxlZPCzmxYnCDutEkMootf2WVS0uR7Lk5RY96rlx0IaBB2.V9zX.jl24
+ Q4I5OocrwTmN8WVznRDkXqVddc9Y3uw5V0tV4yd.T0VrZKNNk1cD6939dc30IU2UPOfD5k9pHSzy
+ 55uxRrxYikfr5WdndJ1L0zInwJXWZRr_EDKDGPxDlMRTS99FMyAssCJHXKYPp8UB4Cn8dwJgbXM4
+ .9.kYD9tYeg2ev6EXQ0BDHl8beIDMdQIcYDmwe1CHe77toNekiYqlmG0.tRucLOTUXM8U2L7igi3
+ NrUAcC.EiFhQpWuoVC.E9OgtY2knUGDCqq3erBCwtZXRKm9YED9kLKntw8VzvxFTiyyLZ_urQnId
+ k8MV0Ye.3y031hGXkZKSNDxJzxZaWHa9n3LHcAIRTnEwice1U9aghbzXIA.BAQ.5EbcguY9Ozd7q
+ zgIt6DgBevL.khSUiAGN60VToI2cwAzlD5sJuJfPPysH.0lJcCWEZo21A1dGIaYWWMsF3.afAy0C
+ HrQ2XYyTrXZkbZHFVp107OMTg_D7HlI.xwSD1sQ506qVSjM1xaT9K7b6axNqkpVo2CLX5hm7Ls_n
+ B5eF239VvLvojiZFV4.w158yr2F1dw5EvL1WAx2hadgriSFgCU0SeQozvKU9rKIoQQxFEztbqsiu
+ QmTfS7V_5oXIh2kijItoFiV2MiVN23j.xxuKaNdOw7NfOs9nWfY7dZY1ulAOJp6kokr3ShJyBq1M
+ QR_pZzvieNvqr1p3rkEoxMeD4WJOR9bI1Fr5IO_itL33GjCw501EP49SnsfWYJMCB2oTJpVp4eyq
+ isXL94rzALV31uR1oJ51M1Wb_Q7sLbcLRpMc81zVqQbQldpy4uDI2IT4OfGopaKQQYIN5z7jzBCg
+ j6WNPLSNkXfUHApUpu2FnX3_EtZFa0HEyP6AlLsBAj7O.EtT6.C.lnknNr9SisIMmH4iihS2aPRk
+ .EqBbOg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: eda89079-59be-4dc7-9d88-5ef5a8b8f9df
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Jun 2024 17:12:53 +0000
+Received: by hermes--production-gq1-5b4c49485c-vr5s6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b15db0c57ebca36900b26dc3d8ea6aed;
+          Thu, 20 Jun 2024 16:52:38 +0000 (UTC)
+Message-ID: <9b672b38-f580-4278-be20-9b9ca1f0cccf@schaufler-ca.com>
+Date: Thu, 20 Jun 2024 09:52:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,124 +64,102 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: try to avoid refing the label in
- apparmor_file_open
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, Neeraj.Upadhyay@amd.com
-References: <20240620131524.156312-1-mjguzik@gmail.com>
- <71c0ea18-8b8b-402b-b03c-029aeedc2747@canonical.com>
- <3ijkwqkrynfxi6t5bj2jingkpebsnomdcwduhe4pgl6pu25sfs@smvxx7ewexkc>
+Subject: Re: Yet another vision of Linux security | Endpoint Security
+ Framework
+To: Timur Chernykh <tim.cherry.co@gmail.com>,
+ linux-security-module@vger.kernel.org
+References: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
 Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <3ijkwqkrynfxi6t5bj2jingkpebsnomdcwduhe4pgl6pu25sfs@smvxx7ewexkc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 6/20/24 09:41, Mateusz Guzik wrote:
-> On Thu, Jun 20, 2024 at 09:26:00AM -0700, John Johansen wrote:
->> On 6/20/24 06:15, Mateusz Guzik wrote:
->>> It can be done in the common case.
->>>> A 24-way open1_processes from will-it-scale (separate file open) shows:
->>>     29.37%  [kernel]           [k] apparmor_file_open
->>>     26.84%  [kernel]           [k] apparmor_file_alloc_security
->>>     26.62%  [kernel]           [k] apparmor_file_free_security
->>>      1.32%  [kernel]           [k] clear_bhb_loop
->>>
->>> apparmor_file_open is eliminated from the profile with the patch.
->>>
->>> Throughput (ops/s):
->>> before:	6092196
->>> after:	8309726 (+36%)
->>>
->>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->> can you cleanup the commit message and I will pull this in
->>
-> 
-> First of all thanks for a timely review.
-> 
-> I thought that's a decent commit message though. ;)
-> 
-> Would something like this work:
-> <cm>
-> apparmor: try to avoid refing the label in apparmor_file_open
-> 
-> In the common case it can be avoided, which in turn reduces the
-> performance impact apparmor on parallel open() invocations.
-> 
-> When benchmarking on 24-core vm using will-it-scale's open1_process
-> ("Separate file open"), the results are (ops/s):
-> before: 6092196
-> after:  8309726 (+36%)
-> </cm>
-> 
-> If this is fine I'll send a v2.
-> 
-it will do, largely, I was just looking for something that explains
-a little more than. "It can be done in the common case"
+On 6/20/2024 6:40 AM, Timur Chernykh wrote:
+> Hello!
+>
+> I'm here for yours' opinions.
+>
+> The modern Linux, in fact, does not provide convenient options to
+> write AV/EDR software
 
+Please don't assume that everyone knows your abbreviations.
+Audio Visual / Editable Data Record.
+Sure, "everyone knows" what AV/EDR is today. Except that many of
+us also know what it was in 2010, 2000, 1990, and 1980. Confusion!
 
-> If you are looking for something fundamentally different I would say it
-> will be the fastest if you write your own commit message while borrowing
-> the numbers and denoting all the wording is yours. I'm trying to reduce
-> back and forth over email here.
-> 
->>> Am I missing something which makes the approach below not work to begin
->>> with?
->>>
->> no this will work in the short term. Long term there is work that will
->> break this. Both replacing unconfined and the object delegation work
->> will cause a performance regression as I am not sure we will be able
->> to conditionally get the label but that is something for those patch
->> series to work out. My biggest concern being people objecting to necessary
->> changes that regress performance, if it can't be worked out, but
->> that really isn't a reason to stop this now.
->>
-> 
-> hrm. I was looking at going a step further, now I'm going to have to
-> poke around.
+>  with real-time system events analysis as far as
+> unified system security events. For now we have only inconsistent
+> self-made events from eBPF, audit, fanotify, etc. eBPF itself is a
+> cool technology, but even CO-RE sometimes works as not expected or
+> gets broken, for example:
+> https://github.com/aquasecurity/tracee/pull/3769/files. This hack (one
+> of a huge amount of the same hacks) looks a bit "crutchy".
+>
+> As an EDR developer, I have an idea how to fix this situation, using a
+> unified endpoint security framework (ESF) placed in the kernel. Its
+> must:
+> - Provide unified and consistent security events;
 
+"Consistent" is hardly a term you can use to describe Linux security events.
+Is binding a socket to a port a security event? Where is the security event
+when using io_uring?
+
+> - API to communicate with kernel:
+>  - To send program-defined events (as audit has);
+>  - Read events from kernel;
+
+A comprehensive set of events is likely to overwhelm any user space
+collector. 
+
+> - Trusted agents delivery mechanisms (signing like kernel modules);
+> - Has a possibility to control what happens on system e.g block some
+> file operations, binary executions and so on;
+
+Performance concerns (locking, sleeping and a host of others) are
+likely to prevent this.
+
+> - Has a portable and flexible events structure which doesn't get
+> broken from version to version;
+
+If the kernel's policies, mechanisms and structures were more consistent
+you might have a chance at this.
+
+>
+> For now I have PoC, which describes the concept in more detail:
+> GH mirror: https://github.com/Linux-Endpoint-Security-Framework/linux.
+> It contains all listed above points (maybe except portable event
+> structures)
+>
+> There are an examples with:
+> - Security agent:
+> https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/samples/esf/agent.c
+> - API: https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/ctl.h
+> - Event structures and types:
+> https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/defs.h
+> - Main ESF source code:
+> https://github.com/Linux-Endpoint-Security-Framework/linux/tree/esf/main/security/esf
+>
+> Questions I'm interested in:
+> How does the community feel about this idea? Is it a viable concept?
+> If all is OK, what should I, as developer, do further? How much kernel
+> code outside the LSM module may be modified to keep further merge
+> acceptable? (currently not all LSM hooks meet to intercept all needed
+> data).
+
+User-space arbitration of kernel events won't work. It's been tried
+repeatedly. I started seeing it in the early 1980's. It always devolved
+into a kernel bolt-on, with sub-optimal performance and versatility.
+
+>
+> The general purpose is to make AV/EDR software development easier,
+> more convinient, and stable for Linux-based operating systems. This
+> PoC (as far as technology idea) is inspired by MacOS Endpoint Security
+> based on MAC policy.
+>
+> Best regards,
+> Timur Chernykh,
+> Lead developer, F.A.C.C.T.
+>
