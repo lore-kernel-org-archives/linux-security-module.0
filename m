@@ -1,120 +1,170 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4238A19B3E1
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 10:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451E31E49E;
+	Thu, 20 Jun 2024 13:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718877795; cv=none; b=OxIIQpEsxCNwPUny0nk30z3kCvRsa7kB1jRsP1BSAFtAB5Oa0XEuYq3+0SrNkN6TQzpJdbLsxofocSGxRW0VK3rwEL9KyYulCmGeWjuXzLVgUiZun/hLNrYwjQk9gLhL5KI95MH5QsTc6MIpAjbAQzwFiXF0uIfvtIsli3GA5eA=
+	t=1718889335; cv=none; b=Rof6SR5aJrWEDBmB9R0+N/3T1P4iJPV7wqeOgs8QP4B4omRiLGI2wjOQrwdd0W4tYoXse69EF6f4FeTrQdQf2tH0eB1uMWtGAXgCgF/av54oBiKW7iklDZRXEvHslFT5V7cZW7bzDIkGQgrI0tlosFLV+1RO4PR1Kty199/kZ0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718877795; c=relaxed/simple;
-	bh=qoo2Q0Zqih/O71OjIZHibGDXD6Cjin7X8WUFbvQIdks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KaJcFhzjW1tqXSWVqZe9lEEOmJegMM08MgqZSLCqfb1g9A9iN6QnB7Li3Wq792BrnGocCJH8GD/g65qs1P9RUiZkfEISHUK+Ed8Dm16nbH/jIwHH3rMguzwl2bnlOjqmKMMuJ0iy8Zi/XUmCE63ttwFQTGAmmI/SVGTZLpbn5Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TC93dRmx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1718889335; c=relaxed/simple;
+	bh=Dm+OAoDNq27a8NmdBwsCJshDlb5owqtvCwqqIvl+zsE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INstyemNZrynsY17W7ErAdqKmTsVyRB6Ym9Mzbno4WOUoP8Yc4hkKeYr9NuR0ZX7SY7tQ3bAC3awGn3O4houH1npXFYH5XIDqdXGFkVw9ZzE5WdO9xbaoBJRvcZBwNm2JO1S83OrlRZDPdABpe/+tfBkh0nbMLdCX/GV/cun5/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JDU2na7F; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TC93dRmx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718877793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qoo2Q0Zqih/O71OjIZHibGDXD6Cjin7X8WUFbvQIdks=;
-	b=TC93dRmx4OWsVFAl216oWLs0V6tolBiDlR8DewzrvjdC3brr/W9Qm/HnSgatz+thZGh4tJ
-	2mVLQgclg1A68fOr6mAluKy81DYvAvHECgJyIyLnBfYRjTE5mMDQlImJUI60IwcVQzTPYp
-	z+FWTNcFZkxeKcZ1R6f5+47ApNZgrSU=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374--pWoFGpXMgaKWAPwLl0jdA-1; Thu, 20 Jun 2024 06:03:12 -0400
-X-MC-Unique: -pWoFGpXMgaKWAPwLl0jdA-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7043008f4beso795012b3a.2
-        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 03:03:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JDU2na7F"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f8ebbd268so330896566b.0;
+        Thu, 20 Jun 2024 06:15:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718889332; x=1719494132; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GvxuvoBqoE/GY1YheFb9DI1s4W2tvYezeKtzJ7T24dY=;
+        b=JDU2na7FFY87GS6cg1I9dAXj5c8Cprpx4I6LhnUAtUXgjURRLgpuFFjub4EwLT2KWA
+         c7XveWEzLC7BD5/XiIc7y80lEF4wBOuQ0gJSIF5h0jJubtikETqQrc+xZRNngkYt1MME
+         o9yiD72LywuUVXiC5x0ki7GwQiqeIQbm3iEBAdqWxnWz4RkP13y0mZcnl/lcwInVGJxL
+         lj5vFpr+nqMoTik9OcSiNn6tkbcAp9+oxj8XIcRME3COk5ibC6BdpS63DeG2PQn1x3o5
+         CHItPil0O0fcBXYsxze1v3KkK+IRNQO9D2AQSwYmT05KlBacWTgU85OwxxAXUjXC3oqB
+         Vnjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718877791; x=1719482591;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qoo2Q0Zqih/O71OjIZHibGDXD6Cjin7X8WUFbvQIdks=;
-        b=TT/QpR2EkHY8QH4gAS+wu3RMW5z6CY9E6EtuCjWBIcRLrhgIs/fPsZFc+TdVhZx2Ka
-         NSATQdLed8pQmhy2gV2izrW/0AgfAR6axIi3iXMbVxFGD03bL2wWWWJRW7RcHxXGErUj
-         2d0HbLet67HKj7lbgfSWsSjwRmuGl614Lu7WkpUajPfa0Mxu6mJJyOJs8yiAHP5E3VTw
-         bo7Qw84VwhLjGL/agF71NcsItHKpvi2hAK3LPSBfDJZkrwV2/7D3vjlX0mYCj9h+cFGy
-         MdEDHeT1f2lU9ODPIbR/BVz6auS7meq6qH3RdtcYRpgPNsECsw7Bl04TWz+PYAiEB1nf
-         fAIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNIuTkyGK/uUSwyaStHZPskpFgZ4tP6iVgccwVYu0G9FJ+BKLuJH2o0n8gp/FHQ7pS5WRai84gEVcgT2+Xcytg3U616m4/yHjxPrwbwLCcd2xVUCrR
-X-Gm-Message-State: AOJu0Yz/A7W3NxPzKifnbS1aKEgiADT/HgPGSdkRBmyol41BgKF+qj0Q
-	rxHN+KC4Fl10ovVCRAyeVDGvNKZssYUJ7wXyLwlU5KuLmjWODYpSIxqCz9tnzjG8y8e4mTJ+QLT
-	rkUN+veqSLAi9X5aYzeJoik2992W5TihHQwkxQ3GIeEHHDu3nDI6yQm73E8V7CPRC6LCuO4uNai
-	+2GBbTis0Nrixpjzvc3gt1VSq1onyTQktkdDiNrIOxXPSkdS/NVwVsMp+n
-X-Received: by 2002:a05:6a20:a128:b0:1b8:c2b0:fda2 with SMTP id adf61e73a8af0-1bcbb5d35abmr6483081637.43.1718877790911;
-        Thu, 20 Jun 2024 03:03:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRC/XV2Fx8DNpODYsdVD20HF/u2bDPNfi/2ArFUsKbmboVuPQ5TpjVvdf+CxrBHWox1y0ZaJh1X8phqUki8Zs=
-X-Received: by 2002:a05:6a20:a128:b0:1b8:c2b0:fda2 with SMTP id
- adf61e73a8af0-1bcbb5d35abmr6483047637.43.1718877790530; Thu, 20 Jun 2024
- 03:03:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718889332; x=1719494132;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GvxuvoBqoE/GY1YheFb9DI1s4W2tvYezeKtzJ7T24dY=;
+        b=e3uZ1TsPHO5Av/oolfdx/V3wYimyQB+1pE1hg87q/n//nxlCuKe04QIYuARQgPePin
+         Hvc8sRQ5sK0LDnDsjrNrKmcRF+QeAkEpTpn9XVbrJncqUcu4qQjLAkQQQTjruv6rmnyz
+         KfXzXxWAnEOXipGNeG7uQxTgdnjAZ49mXexgPlfEZBgXoMUa4252jBrma2L5rvTKB3Qn
+         SW959WYUthJ6zahlIqpQEf8Mi0kfpgK96pedHnpiHWNv2bLNkMYku6ymLjWRwvEWI/1t
+         nuYFxOtor5dC0bTIDjsQBYQnH+eFMJooVG4c4l+C8eAOCEpWf2t564rTEY99XJh55DNd
+         rE1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWyG2qTf5dhKAGtkL2n+s6Fpzg1On/Od8Gtt+jsYmQaHKUh/9xDuIcFN9TTbrDhXp0Sxv4kne4GSfzV2KcJkkIi2xLAXsZMuvuK3nnDg8g4dyKQcRuI1jwWeXs9mbM4n3HsnL4ps0Ut9YO4/OIdNECVj9gB
+X-Gm-Message-State: AOJu0Yz6UoNIILNiklMDBBT5jeHhjAKNKLzhEeQUr2mVmDS5JvtX7Zz0
+	GonOLJGFUIHGftsSL5rtWm//c9fevVEzIrLO/oPKQR3X3b166E2Y
+X-Google-Smtp-Source: AGHT+IEqnJp1SNZXbYGPZ0xa9ovKenpl+H5Wg16kK3FxOFIVW8FaphRKTrag0JDQQqPQVJ6VlHxa9w==
+X-Received: by 2002:a17:907:a645:b0:a62:49ae:cd7b with SMTP id a640c23a62f3a-a6fa438df9fmr358825866b.24.1718889332198;
+        Thu, 20 Jun 2024 06:15:32 -0700 (PDT)
+Received: from f.. (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f881fbdfcsm370454266b.121.2024.06.20.06.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 06:15:31 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: john.johansen@canonical.com
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-kernel@vger.kernel.org,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	Neeraj.Upadhyay@amd.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] apparmor: try to avoid refing the label in apparmor_file_open
+Date: Thu, 20 Jun 2024 15:15:24 +0200
+Message-ID: <20240620131524.156312-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607160753.1787105-1-omosnace@redhat.com> <171834962895.31068.8051988032320283876.git-patchwork-notify@kernel.org>
- <CAHC9VhSRUW5hQNmXUGt2zd8hQUFB0wuXh=yZqAzH7t+erzqRKQ@mail.gmail.com> <1902e638728.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <1902e638728.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Thu, 20 Jun 2024 12:02:59 +0200
-Message-ID: <CAFqZXNsQQMxS=nVWmvUbepDL5NaXk679pNUTJqe8sKjB6yLyhg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
- the CIPSO options
-To: Paul Moore <paul@paul-moore.com>
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	patchwork-bot+netdevbpf@kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 4:46=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On June 14, 2024 11:08:41 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Fri, Jun 14, 2024 at 3:20=E2=80=AFAM <patchwork-bot+netdevbpf@kernel=
-.org> wrote:
-> >>
-> >> Hello:
-> >>
-> >> This series was applied to netdev/net.git (main)
-> >> by David S. Miller <davem@davemloft.net>:
-> >
-> > Welp, that was premature based on the testing requests in the other
-> > thread, but what's done is done.
-> >
-> > Ondrej, please accelerate the testing if possible as this patchset now
-> > in the netdev tree and it would be good to know if it need a fix or
-> > reverting before the next merge window.
->
-> Ondrej, can you confirm that you are currently working on testing this
-> patchset as requested?
+It can be done in the common case.
 
-Not really... I tried some more to get cloud-init to work on FreeBSD,
-but still no luck... Anyway, I still don't see why I should waste my
-time on testing this scenario, since you didn't provide any credible
-hypothesis on why/what should break there. Convince me that there is a
-valid concern and I will be much more willing to put more effort into
-it. You see something there that I don't, and I'd like to see and
-understand it, too. Let's turn it from *your* concern to *our* concern
-(or lack of it) and then the cooperation will work better.
+A 24-way open1_processes from will-it-scale (separate file open) shows:
+  29.37%  [kernel]           [k] apparmor_file_open
+  26.84%  [kernel]           [k] apparmor_file_alloc_security
+  26.62%  [kernel]           [k] apparmor_file_free_security
+   1.32%  [kernel]           [k] clear_bhb_loop
 
-BTW, I was also surprised that David merged the patches quietly like
-this. I don't know if he didn't see your comments or if he knowingly
-dismissed them...
+apparmor_file_open is eliminated from the profile with the patch.
 
---
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+Throughput (ops/s):
+before:	6092196
+after:	8309726 (+36%)
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+I think this is a worthwhile touch up regardless of what happens with
+label refcouting in the long run. It does not of course does not fully
+fix the problem.
+
+I concede the naming is not consistent with other stuff in the file and
+I'm not going to argue about it -- happy to name it whatever as long as
+the problem is sorted out.
+
+Am I missing something which makes the approach below not work to begin
+with?
+
+ security/apparmor/include/cred.h | 20 ++++++++++++++++++++
+ security/apparmor/lsm.c          |  5 +++--
+ 2 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+index 58fdc72af664..7265d2f81dd5 100644
+--- a/security/apparmor/include/cred.h
++++ b/security/apparmor/include/cred.h
+@@ -63,6 +63,26 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
+ 	return aa_get_newest_label(aa_cred_raw_label(cred));
+ }
+ 
++static inline struct aa_label *aa_get_newest_cred_label_condref(const struct cred *cred,
++								bool *needput)
++{
++	struct aa_label *l = aa_cred_raw_label(cred);
++
++	if (unlikely(label_is_stale(l))) {
++		*needput = true;
++		return aa_get_newest_label(l);
++	}
++
++	*needput = false;
++	return l;
++}
++
++static inline void aa_put_label_condref(struct aa_label *l, bool needput)
++{
++	if (unlikely(needput))
++		aa_put_label(l);
++}
++
+ /**
+  * aa_current_raw_label - find the current tasks confining label
+  *
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 2cea34657a47..4bf87eac4a56 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -461,6 +461,7 @@ static int apparmor_file_open(struct file *file)
+ 	struct aa_file_ctx *fctx = file_ctx(file);
+ 	struct aa_label *label;
+ 	int error = 0;
++	bool needput;
+ 
+ 	if (!path_mediated_fs(file->f_path.dentry))
+ 		return 0;
+@@ -477,7 +478,7 @@ static int apparmor_file_open(struct file *file)
+ 		return 0;
+ 	}
+ 
+-	label = aa_get_newest_cred_label(file->f_cred);
++	label = aa_get_newest_cred_label_condref(file->f_cred, &needput);
+ 	if (!unconfined(label)) {
+ 		struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 		struct inode *inode = file_inode(file);
+@@ -494,7 +495,7 @@ static int apparmor_file_open(struct file *file)
+ 		/* todo cache full allowed permissions set and state */
+ 		fctx->allow = aa_map_file_to_perms(file);
+ 	}
+-	aa_put_label(label);
++	aa_put_label_condref(label, needput);
+ 
+ 	return error;
+ }
+-- 
+2.43.0
 
