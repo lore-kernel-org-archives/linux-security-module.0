@@ -1,165 +1,204 @@
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D762F1B3753
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 17:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ABF1B3743
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 17:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903582; cv=none; b=f8/YwM8vO+vfb/34DskD/9EqfdJZ/ltN+hc6/SAb8kVCkWxnXr7eYyu3b+ONeknmdsq8HIWTCr/F8DZ8fXUN0+m0elGI2dyOjh7ntVfg/Mn9f08e/nopY/nPTuWtNoDsaW38X673iHtDw1yrip+UWU8Jo/+IxtveVie9gywBQ4g=
+	t=1718903647; cv=none; b=snrHlFaqRcPqnLZ6TOnqhP5GLnMLrGmHnviloPXCQG0EX/xCbFibxSQcBrjmDNibA18GKIxjc/O3vF4z/j45f8XOX132aaWhAXuD+HgcCWDHv+prlidbik4SgIifM0y7pLfhTA3BAl1KXuP0t8vw21M3J61r/K0K/btVcs7A5Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903582; c=relaxed/simple;
-	bh=DT69cig5T+HJP3QxES/sQY6L1UJ1ASS2EvGp9fZoQmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=SfnT3CYtO+Gyfbik77nV0uUATKZ/xuX6ja6V0o+eOvB0FIGxmjpw6fCo760VJvy/rjK1I+zjLUlXB3xON7UbhuBtow8JqcfhDUQpssqUa1PMGNCMUuXSDEn4opdTY6GqBIztnDlrpS9HljY6w2RLdLmsfyTsxQswfKVU1XZZpP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=IbEjxjHS; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1718903647; c=relaxed/simple;
+	bh=RlxxN8z3HnKmd7RWEP2xagF6fJLvI+Y6nZ5HcYEuPFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y+jWwmpaUK7hlpExNr7qU/X8Heqfd4vR1OhUP4IAWrfQX8Bti79w4VVndjulhpItvbWt/hnL21Ftk3jeBXdXNF00kjsxGx/gXhsT8bBmBVeaJHNdau1GbbJfE6zPum0avbbzPjQ4ryVjWZyd3srf9baCLnnMXIp8kO6S3U8eqo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CXQ6FnOW; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IbEjxjHS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718903573; bh=1dCjEj3mjJczEwo7yId4dIQ2YxYDscmgCFAd8ToOFpo=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=IbEjxjHS+10Sb9GVaFgGhe19WCp1pdY8u1MiqWsyYjthtICBWpi9oNUdQHaAgU1nmLrqE2vvf89dFED1r8tezUiVXqpiQ1L6mEM5GomqwzRmQrdQAQCGQ8nm2UyHosG0n1KxL7R5zpL25jSQhyeP8Wn390n0tyff7IK+JH+yyG9fYiEm6eN+K0zqyUutwHA4H38RPhsphtfj6jKKPVd8Ok3pTqvjeW9cnNVOJ3B8Ew78GxO77jr8dRdCyoUS1V9rt4fI/lnlHQZd938paabbgL0xFODFfX3UsgAbTo8cbjqEfeGmAGRitoz6TeqNfqh0WvJuE0bkLyR2K7YyRUpELA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718903573; bh=1bWW3Kg/6Os1ArxamqCvxQN9fkzpqFvh6TPzIPMnxdp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Xs9bVI9goccYKLOg7cTXcGteiCW/XG1sisI0wd5+JdSeNLnrgZSFhhGZ9TgpkJ6eVnO+nBJwQpVY7wSmD439O2daRmhyb5JodT9puERST61c4+27NBBowZRwwncngrctnhlkWNCbl/34A/IJ+ZYzeez1gHXwzZy6R+VYS/eSHn8B5If+GUmbzRIBoNk2YXNQ16jr8zyeEBYADfJBEnNQYFL//Dw5WJsY8a4iRgBreFfEPthbSAA7dj7zQEfo7MXARCpjYkoKAzD9RTwJNSWBHIgVeVU8skTi00nPyEg/VkQfX8M9jwZlClhsbcKVgagxwa8k/gyD5M2Re0lCKtlwXQ==
-X-YMail-OSG: ENgimUcVM1kJgt5J_ADVIHI4k6Osjq3Mpu2oY5Y3qz3JT5hPRKdoiDSQtkR82.P
- _pAyXHNqhSMHxKm7gOUtcmuwhVWlw1JZthIcjYiwjppQpRa.2uBTfplbr6ZciLqujAzgsD9BzQFz
- ZkEBsJW9gUbGBKP3aT889JD9kNe9.B33Xc0Iu2w6FTrkW8KBlXPOMNOseT3LVy1czGPxk3evfuDC
- RPjr_HaAp4uf.ivE0tyckDzj.XDl8O9a.u3dkGGnFryfs_5GVFMIvwZtDKY3KBXSWKsBgM7XcsQF
- 9Rp2GbbkSlrgaQ4rLP3eW5OZA8JthPbJo7i4C0U8oN84ex0tAjZK5dm82zVf.UfQNXpu5ju.sq8Z
- kvd4KzKEZJ77n7SaS5x1IQs.Qj8n760ZdMO6OJB1uQqLLfvwj09u02JKCgPEA8vKF7LC_LOdXQ.b
- u86rJLVk7IvNtOxDXQXxNFd0K0yL2uWoxsWCnWAuF8d_YJvpJOwwKKctjzxmQH1bK70VrKkwBkwl
- cupCfn5kgiRtk91l45fRvKkQaaeqCXP8tYG88gj9ZoLt7Yzz8kR6mN2ISOju_PzFERe3mw36baPP
- nXCXZV1QfuoHvYWXBz83Q757wSbq4NqYd9eNQ2m3uuDIv8nPgOzAD2yTwY0J3Syy9Wgsqp_LiS__
- BbYFtQLg3dDOxv4Gl5.zTrAK8b11g0eW.2CZWd2zVw78k_oUev.6N99ay3Kn2eG9KnUjOe6F6sS5
- 2Vz61SUYb88rYEYZLBPPwhCgVfMIvwzc4t6tlUpObhrX9vLCotwpbWChqdVWLmgKokKD9HZtPith
- 7GOSxxMbmdik52ny0aJ4Qw9yz4dvl0oiYfGRLaNNrBStHC.HyYGACwpdrXMQVX1TSOfF1dpL7GM.
- 3J5IlAOc79n.FQMxcJAD4VKnr.AvKA_n50G.0d9XvIcKrcBs350HcoC_rhQ4T4WI7TrdKwks3RtH
- YZ914jmi1uM5GP4FwWBaLbLtDlAf_IvdJ9ZoDmb.NpyYWQlUbg7enmaHI4v1aNTQnAJdBR6Igycu
- 6occye37k5QjFY0dZrcsqpNVDLrkW6oBX3GyAh.4RsNY3N_l8GqC0cowWJ9Iy6uGIVfhs6sDgzOE
- .T5hwuBRe5xJSKkjYrdKn5lEIoQaEnHYKUNUhhx3wwdkfci._J17Iu3cUfiZ4Hyp8JrMetpRmUoq
- W9V9BbaERZiPPURdbtLmxSUf4Va2x.oOvCCuf2MHb8T2KdzDHWczEYpUf5Sr9L8yhaeGqFMl1zNW
- 7x4SoPjo6hHs_6SnvqIhCnS1Rtfji4RNtQeF2w4fvLcvF_jq51Z_JzmH5eyF7848oY823ZIcbXp4
- 9d2TbYi2AvIJcLVeMMVNjxlZPCzmxYnCDutEkMootf2WVS0uR7Lk5RY96rlx0IaBB2.V9zX.jl24
- Q4I5OocrwTmN8WVznRDkXqVddc9Y3uw5V0tV4yd.T0VrZKNNk1cD6939dc30IU2UPOfD5k9pHSzy
- 55uxRrxYikfr5WdndJ1L0zInwJXWZRr_EDKDGPxDlMRTS99FMyAssCJHXKYPp8UB4Cn8dwJgbXM4
- .9.kYD9tYeg2ev6EXQ0BDHl8beIDMdQIcYDmwe1CHe77toNekiYqlmG0.tRucLOTUXM8U2L7igi3
- NrUAcC.EiFhQpWuoVC.E9OgtY2knUGDCqq3erBCwtZXRKm9YED9kLKntw8VzvxFTiyyLZ_urQnId
- k8MV0Ye.3y031hGXkZKSNDxJzxZaWHa9n3LHcAIRTnEwice1U9aghbzXIA.BAQ.5EbcguY9Ozd7q
- zgIt6DgBevL.khSUiAGN60VToI2cwAzlD5sJuJfPPysH.0lJcCWEZo21A1dGIaYWWMsF3.afAy0C
- HrQ2XYyTrXZkbZHFVp107OMTg_D7HlI.xwSD1sQ506qVSjM1xaT9K7b6axNqkpVo2CLX5hm7Ls_n
- B5eF239VvLvojiZFV4.w158yr2F1dw5EvL1WAx2hadgriSFgCU0SeQozvKU9rKIoQQxFEztbqsiu
- QmTfS7V_5oXIh2kijItoFiV2MiVN23j.xxuKaNdOw7NfOs9nWfY7dZY1ulAOJp6kokr3ShJyBq1M
- QR_pZzvieNvqr1p3rkEoxMeD4WJOR9bI1Fr5IO_itL33GjCw501EP49SnsfWYJMCB2oTJpVp4eyq
- isXL94rzALV31uR1oJ51M1Wb_Q7sLbcLRpMc81zVqQbQldpy4uDI2IT4OfGopaKQQYIN5z7jzBCg
- j6WNPLSNkXfUHApUpu2FnX3_EtZFa0HEyP6AlLsBAj7O.EtT6.C.lnknNr9SisIMmH4iihS2aPRk
- .EqBbOg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: eda89079-59be-4dc7-9d88-5ef5a8b8f9df
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Jun 2024 17:12:53 +0000
-Received: by hermes--production-gq1-5b4c49485c-vr5s6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b15db0c57ebca36900b26dc3d8ea6aed;
-          Thu, 20 Jun 2024 16:52:38 +0000 (UTC)
-Message-ID: <9b672b38-f580-4278-be20-9b9ca1f0cccf@schaufler-ca.com>
-Date: Thu, 20 Jun 2024 09:52:36 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CXQ6FnOW"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02a6d4bdbeso1051185276.2
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Jun 2024 10:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1718903645; x=1719508445; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wSjgOH3MRiYTPXLCETGqDmeFsSXsqOVl3xiPcS9XIH8=;
+        b=CXQ6FnOW/JpZOU/rQckmm9hyE7H1okcnRx2PxFzN1CcAQhjeL9HOxRSt5B2g5XGsSJ
+         RNzXqSUsCos/vq3BqXtHBWNrDunlXtIyCf1UKduvcAeO5aB3+r83QEK+aOhz7h/Ba1bi
+         uSkJoAHLa4T9tqYujtU3MS3DNgefUHjZ/n0LKbqg8WfXsy+Kp7TcYX16HVuw6aU7APpm
+         YYobzHDi6HJ+7Mz9lKzgXiLKLHFXvuusEZ3CzQDmw26niXBE9UarLVh1btKdgUEZilyn
+         nS0GVrMtUgTQN9vDb48XMe3Z52OPU5gbCeotBX8dXGQ/Rkmw2khn0o4REqDyDp5KmZuy
+         U7Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718903645; x=1719508445;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wSjgOH3MRiYTPXLCETGqDmeFsSXsqOVl3xiPcS9XIH8=;
+        b=FNWuFhRbtjrBWFVT2XDiGMjBxL84diHLff0WmZd7+H7xQrmZVSGtqTkPeXGSs/npDI
+         wgxdBvWjpbInwSycYJXSoJSaCC0p+hNoFzmyf6gZ5855COm61QvbmGXTxNyAk9fxBr3k
+         0MJW3Bin/2nE9E9ASYVzVSwSDD4WpeM6MY/Ue0a49oTUONZQKlBgiB95GOYy9xgq7BjQ
+         lZBhhIAkxN4tAtGtw3sOsIyRLMv14XGphZQ+KraDOkVMZkVeblz6WqNCEWHgsj4CFW4f
+         Dq6saWLgyUFNJB1+c/RjM0/7/9lsiS0B1SLo2XZYop5UOE7z+eGtOAh0rbxe9fXbiW1s
+         aImg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQmdL56xQyEKl30XZQGrMcjf5wtSz3225DIOUY5OKAA228CyQ/vqCywgYVXdp20f+qq6S+QCmju1Z+zs0ZnuJaciODjXpleIEWZks6/LI7aT7PIw/O
+X-Gm-Message-State: AOJu0Yx2FWAkddufls8GdPgDEiNmxeh5RtEcf7Fz0uIWcUQ3H9cf1GRo
+	DsZELE8AXokZLefe8hZatmW1GsOphLTRxvUGXXV/WdZwxOm8sDxb0u36pgSKSFoPoE/LQrKekhe
+	2g3m6tapn6JKey1QQ2WBzlPDeF22OiFD8mFkP
+X-Google-Smtp-Source: AGHT+IEt2BAX4ZSJpnrrhbSbQYDBiYx8y+fmuLpTpl/M0RJ3695pwMWckVzrkaOUEOTeYU5DlKOXBhfcyjQJ7VGd3Fc=
+X-Received: by 2002:a25:dbc4:0:b0:e02:2adf:b0ce with SMTP id
+ 3f1490d57ef6-e02be16ed3cmr5340894276.32.1718903644904; Thu, 20 Jun 2024
+ 10:14:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Yet another vision of Linux security | Endpoint Security
- Framework
-To: Timur Chernykh <tim.cherry.co@gmail.com>,
- linux-security-module@vger.kernel.org
-References: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
-Content-Language: en-US
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+ <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
+ <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
+ <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
+ <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
+ <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
+ <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
+ <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
+ <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
+ <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
+ <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
+ <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
+ <c732b1eb15141f909e99247192539b7f76e9952c.camel@huaweicloud.com>
+ <CAHC9VhSA0dSQ1jaRO_J1S5xEc14XoCnYaVG3AWF=uYaDb-AjoQ@mail.gmail.com> <7ad255dce0b85e018b693d302689e0e970b8cc00.camel@huaweicloud.com>
+In-Reply-To: <7ad255dce0b85e018b693d302689e0e970b8cc00.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 20 Jun 2024 13:13:54 -0400
+Message-ID: <CAHC9VhSqtdwO_C1r_uduPLdZp3o+75ojSY+B7JG6H2noEmv7VA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
+	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, mic@digikod.net, 
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
+	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
+	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
+	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
+	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/20/2024 6:40 AM, Timur Chernykh wrote:
-> Hello!
+On Thu, Jun 20, 2024 at 1:06=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Thu, 2024-06-20 at 12:51 -0400, Paul Moore wrote:
+> > On Thu, Jun 20, 2024 at 12:31=E2=80=AFPM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Thu, 2024-06-20 at 12:08 -0400, Paul Moore wrote:
+> > > > On Thu, Jun 20, 2024 at 11:14=E2=80=AFAM Roberto Sassu
+> > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > On Thu, 2024-06-20 at 10:48 -0400, Paul Moore wrote:
+> > > > > > On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
+> > > > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > > > On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
+> > > > > > > > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
+> > > > > > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > > > > >
+> > > > > > > > > Making it a kernel subsystem would likely mean replicatin=
+g what the LSM
+> > > > > > > > > infrastructure is doing, inode (security) blob and being =
+notified about
+> > > > > > > > > file/directory changes.
+> > > > > > > >
+> > > > > > > > Just because the LSM framework can be used for something, p=
+erhaps it
+> > > > > > > > even makes the implementation easier, it doesn't mean the f=
+ramework
+> > > > > > > > should be used for everything.
+> > > > > > >
+> > > > > > > It is supporting 3 LSMs: IMA, IPE and BPF LSM.
+> > > > > > >
+> > > > > > > That makes it a clear target for the security subsystem, and =
+as you
+> > > > > > > suggested to start for IMA, if other kernel subsystems requir=
+e them, we
+> > > > > > > can make it as an independent subsystem.
+> > > > > >
+> > > > > > Have you discussed the file digest cache functionality with eit=
+her the
+> > > > > > IPE or BPF LSM maintainers?  While digest_cache may support the=
+se
+> > > > >
+> > > > > Well, yes. I was in a discussion since long time ago with Deven a=
+nd
+> > > > > Fan. The digest_cache LSM is listed in the Use Case section of th=
+e IPE
+> > > > > cover letter:
+> > > > >
+> > > > > https://lore.kernel.org/linux-integrity/1716583609-21790-1-git-se=
+nd-email-wufan@linux.microsoft.com/
+> > > >
+> > > > I would hope to see more than one sentence casually mentioning that
+> > > > there might be some integration in the future.
+> > >
+> > > Sure, I can work more with Fan to do a proper integration.
+> >
+> > That seems like a good pre-requisite for turning digest_cache into a
+> > general purpose subsystem.
+> >
+> > > > > I also developed an IPE module back in the DIGLIM days:
+> > > > >
+> > > > > https://lore.kernel.org/linux-integrity/a16a628b9e21433198c490500=
+a987121@huawei.com/
+> > > >
+> > > > That looks like more of an fs-verity integration to me.  Yes, of
+> > > > course there would be IPE changes to accept a signature/digest from=
+ a
+> > > > digest cache, but that should be minor.
+> > >
+> > > True, but IPE will also benefit from not needing to specify every
+> > > digest in the policy.
+> >
+> > Sure, but that isn't really that important from a code integration
+> > perspective, that's an admin policy issue.  I expect there would be
+> > much more integration work with fs-verity than with IPE, and I think
+> > the fs-verity related work might be a challenge.
 >
-> I'm here for yours' opinions.
+> Uhm, not sure what you mean, but I don't plan to touch fsverity. There
+> was already work to get the fsverity digest. All I would need to do
+> from my side is to request a digest cache for the inode being verified
+> by IPE and to query the fsverity digest.
+
+So your proposed file digest cache wouldn't be used as a replacement
+for the fs-verity digest?  Hmm.  I'll leave this up to you and Fan
+(current IPE maintainer), but I'm not sure how much value this would
+have for IPE, especially since I believe IPE's fs-verity support is
+mostly around fs-verity signatures.
+
+> Of course IPE should also capture kernel reads and verify the file
+> containing the reference digests, used to build the digest cache.
 >
-> The modern Linux, in fact, does not provide convenient options to
-> write AV/EDR software
-
-Please don't assume that everyone knows your abbreviations.
-Audio Visual / Editable Data Record.
-Sure, "everyone knows" what AV/EDR is today. Except that many of
-us also know what it was in 2010, 2000, 1990, and 1980. Confusion!
-
->  with real-time system events analysis as far as
-> unified system security events. For now we have only inconsistent
-> self-made events from eBPF, audit, fanotify, etc. eBPF itself is a
-> cool technology, but even CO-RE sometimes works as not expected or
-> gets broken, for example:
-> https://github.com/aquasecurity/tracee/pull/3769/files. This hack (one
-> of a huge amount of the same hacks) looks a bit "crutchy".
+> > > Also, the design choice of attaching the digest cache to the inode
+> > > helps LSMs like IPE that don't have a per inode cache on their own.
+> > > Sure, IPE would have to do a digest lookup every time, but at least o=
+n
+> > > an already populated hash table.
+> >
+> > Just because you need to attach some state to an inode does not mean a
+> > file digest cache must be a LSM.  It could be integrated into the VFS
+> > or it could be a separate subsystem; either way it could provide an
+> > API (either through well defined data structures or functions) that
+> > could be used by various LSMs and filesystems that provide integrity
+> > protection.
 >
-> As an EDR developer, I have an idea how to fix this situation, using a
-> unified endpoint security framework (ESF) placed in the kernel. Its
-> must:
-> - Provide unified and consistent security events;
+> Given that IMA solved the same problem after 15 years, when it became
+> an LSM, I'm not super optimistic on that. But if VFS people or other
+> subsystem maintainers would be open for such alternative, I can give it
+> a try.
 
-"Consistent" is hardly a term you can use to describe Linux security events.
-Is binding a socket to a port a security event? Where is the security event
-when using io_uring?
+I think you should, because I'm not currently supportive of
+digest_cache as a standalone LSM.
 
-> - API to communicate with kernel:
->  - To send program-defined events (as audit has);
->  - Read events from kernel;
-
-A comprehensive set of events is likely to overwhelm any user space
-collector. 
-
-> - Trusted agents delivery mechanisms (signing like kernel modules);
-> - Has a possibility to control what happens on system e.g block some
-> file operations, binary executions and so on;
-
-Performance concerns (locking, sleeping and a host of others) are
-likely to prevent this.
-
-> - Has a portable and flexible events structure which doesn't get
-> broken from version to version;
-
-If the kernel's policies, mechanisms and structures were more consistent
-you might have a chance at this.
-
->
-> For now I have PoC, which describes the concept in more detail:
-> GH mirror: https://github.com/Linux-Endpoint-Security-Framework/linux.
-> It contains all listed above points (maybe except portable event
-> structures)
->
-> There are an examples with:
-> - Security agent:
-> https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/samples/esf/agent.c
-> - API: https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/ctl.h
-> - Event structures and types:
-> https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/defs.h
-> - Main ESF source code:
-> https://github.com/Linux-Endpoint-Security-Framework/linux/tree/esf/main/security/esf
->
-> Questions I'm interested in:
-> How does the community feel about this idea? Is it a viable concept?
-> If all is OK, what should I, as developer, do further? How much kernel
-> code outside the LSM module may be modified to keep further merge
-> acceptable? (currently not all LSM hooks meet to intercept all needed
-> data).
-
-User-space arbitration of kernel events won't work. It's been tried
-repeatedly. I started seeing it in the early 1980's. It always devolved
-into a kernel bolt-on, with sub-optimal performance and versatility.
-
->
-> The general purpose is to make AV/EDR software development easier,
-> more convinient, and stable for Linux-based operating systems. This
-> PoC (as far as technology idea) is inspired by MacOS Endpoint Security
-> based on MAC policy.
->
-> Best regards,
-> Timur Chernykh,
-> Lead developer, F.A.C.C.T.
->
+--=20
+paul-moore.com
