@@ -1,289 +1,285 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19344F215
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 16:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4E815AACD
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 16:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718985618; cv=none; b=OIck2bNUr0Dab2fUAOeIMi/eFyKrBw7SGrxTdNhfzJlPxwkv+yBYJAf0IYwF4cdAkZWvIf/9XqVQHEYESfz8uVWmOIFlVsYNxm3MB9GcmXYpgww4YwLjz1RVUZFcQw6Gx1t9gAkPeqlrg/wBSCPoyhubSJQWc/rUgjHpOzpA6vE=
+	t=1718986022; cv=none; b=Eko6JCmwNswA8qg2LVj3n+XR9qwZLXklC6gmKLeLQjWhx13E/7Ju0/hYagpajNPrgI6VHCNSHgGBViv905h4s1tSIEFDuIQYsn4BaCNQmkuDfcwQdgXRC4p9rGvG2FHTV94yuLpUZmJK5pDPDht54cEO4mIKs86qvgPmacZd2A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718985618; c=relaxed/simple;
-	bh=HLIGsFoFXfkW5grq1kBsr2MpcKrxX3SI7FnwCeRJfmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHddFMfyBOt6uTvoVA3AI388/+AW+vGnbA+tQA1p3Q/HGDeqka0bOv5rhvJgoNJv5rNXOeQGRtaFSwSrFz7CDzHX5v6uvI1jM8DJNzifXwPKMKqiN9NdMbzef/QMNJM8I+DKXwR0PkK/YiKy+AIfwOw7JRNmEfzfWUp2BG0GZsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WaFdfRFb; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1718986022; c=relaxed/simple;
+	bh=4JXEbivYBcsxYTgIWZVnh5SdG3somsUbAFEAVWYGAQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=F5ac567Y1Gtd30Idi8cb/g4sXPy/VQNVluEoMZmrLOWnNVLgknutiZZ+xSLZwWjAtGQchlAp2/mi4TZEUQuyG4pSVMjZ2Q0OseyAu5x6m1IY7ZIkA6vQzRrHpPR7qCVt5uEz0uTAsJhhXnodue23y85hyrn0D+Ng4o9EHy5ERDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qXSVxcs+; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WaFdfRFb"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W5MWR4WWmzhc9;
-	Fri, 21 Jun 2024 18:00:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1718985603;
-	bh=jjsdmC2rugRobeZ0tOl0fxS/md4FLeZ48MksR7AnbBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WaFdfRFbrYof0i6GJ3s03UP2zYVpTvHZEofmVI+QFEKiogYokX1VszDK9uzjkk+lK
-	 j4OrAs8Q4kmgye1LO+uLrT8MfCppYj6fsGOKwQEs7RQYeLXKIjmwBpqEJaRuUzHKEt
-	 6v+2gQi7FUW0V6JK0vIhKrt1Ww7CUp1ISzdxpPlE=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4W5MWQ29Yrz353;
-	Fri, 21 Jun 2024 18:00:02 +0200 (CEST)
-Date: Fri, 21 Jun 2024 18:00:01 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v5] landlock: Add abstract unix socket connect restriction
-Message-ID: <20240621.OhK4Aht4oa7i@digikod.net>
-References: <ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qXSVxcs+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=OUlshDAGcf4r9tpcl9XAZhSVZg2AM0tLoTIMQEFIi2o=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=qXSVxcs+GtEjbZ0d5k+4l2SAnxGZ90p8r7pSM+sPQh0gwiWK7oGOPt5A/djfgiWq3axN8FuWsOFcEd4VoiiaLQjnrZnE4KpF0HL3p4wcQEQVLCfR//kRrNPfMqeWmQ6UnqotKJJguw532wrh9Htx/3jxi0q1bNTIx9oOVTzal8v3Y46/Sp7Dmwct4LWKvmvBYPp8H4P53BoRpBRCZdFn7YAHCAjTjOqhMXYkS/3XL0UlEm648T/Wa2QxsDyguB2hpqCTlQiiAHDKG+iQ3tj4lmX0SlcPy4XxfQuCy0nv4ohAkCMZeKFwE7YiSNFUZYpcL4BkZJ4JLKPeSepJJkngYA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=UhRdylbyR4htXfQ3ksARAjZ+RHaqucn3VSCr8yka/PI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=k5vdivu9A40A7njFYrRvHuSrHcq6MDFQ4uOP6lf2zpAcGjgw7pbMhMkq/HUOtB5VS8MnXBXxMRID1MmG1I/ovptzCojf3kq7Ezuyl/J7Znr59053iXGSIuLhlwgnBzjK6uSvzWP+rdq+0rQK4qcdEtV+eYvWjVkAQ3ZE21tUIhHh3CLGjdiQflS60u3lhE0P+rmdun1cnfbZ3zV48B/YSTwtfnX011aBu0YPsPBI5q42CI9YZkBph6y5tmuK+9R63bQeKz5HFlsZHdKmCPk72Xu7lDSYVuIscWiHynOig52r4A8UCxB3ntfSlXFiPQQShdGWW8ekfDG1PMSpJPhztQ==
+X-YMail-OSG: UOgmaHYVM1l.B2Lrwvs9KpB9HMayDYjTI.v_pcGE.wyV8yJdV__a0iUF6w8M_ZQ
+ 9DjlRcCmrDJAhwYa_DkAW._pe1YFEAdBPbisx6IBljY6jPDBVytM15A3b9y_ICOOf6Y2gQyZZQEG
+ vbd2Ra5Z5dETlmzIeIem5nfBDxGPXM1pS9AQQLiG8TTrc9bp1D8vFoxjewkEv.hgn.vFmLHmFiOk
+ F690WplsukRvEIs6ORdxhnao6.LAE601yD5uRlvFI0F2xivoOQxcfl7IkyeelamXEfWJXhJqi0mt
+ m5X6mp56a_Gh3YoMT2OP.MUPl5qWpfqu_pvLuaYwF4QfB87ApZ7_J3Q7AQJPNoMwqcS6y7Ns2dge
+ 9i3gRXrET3MvwMizhVvjrhr05YyzZqyypfOdvxvWi5fNLqHE8vLbTqWHjC3LPIinledP0Oizg8iC
+ ej3v0aVoGCou.qFqoLnLLKEzpkrVPxC1g826XwPCOLCde4QgW1JcNCAO0Lm7S7DnqJUgI7AeQsir
+ .E3QINU30eyLN27Xw_crEpXNJaGkBuGXMPMebwXz7T2yVOgXBVarAoLG9EjeO.icxB.4Km9yQi4r
+ _SieKbYMH1vuLQxciuDMp_O7_Jo.hodJyD8LlL9JPw38l43TUDCTvJpsSL7hy9s036PLrBveClYF
+ eDbEtIVfEb4YJTf9ElyIrvYOKiNDU61pA4waE0vaA.a6036kUAQi4rjqszjaEG73uKevvXLuut9U
+ RSbOb6PAMSdPFZI9nu2SzqKUTs7gDFAWYcekbebo_fbyy6Rb4ryZkDLaUEM.pRYDBYihY6tCnEjP
+ mcbJ0v21C1a4JlKj6h6.ts6rWqiXZDU7OHKxyAmK9pT.E0iYVloph6MPEUEwwHnOJf08eZUHvcWB
+ ON._nTJNBbw10Je5FWqkz77Ca8_2kgcBTrSkCsmzeziJpPTpqIKZMLSD9rh67uIqajVByCXKKcFp
+ 5xeHHXNHYLdWiZMhyi2C3lFunwBdK6JQPqLq62hA0D9PwH19C1QSTGg1J7OZehcMEYkrvKm35Cey
+ 6GlqyiC7W2AT0a5bGyotkT6hrwpyyUuINqiYBcC1zWbpqoZXi3Eom_jNBVTpwvwJfPopb2QNoOJ8
+ 64qDnw2fj93bG9Lc27MP9W6MKLW3QpRe8HcX6GOC._NfQthkrcwjkgTLHfPGWEKCChwlRvqgBSNY
+ b_qOYv_tqcePaCCtN.tus.xdI7qVNoGRS_LcqH3hqbGf1oBzQXDIc1sgypqGoCs62Vr1a0F2YEf1
+ MX3DjJH6pp2jarQG2BgP1jrHWzNyCdwHPZdwA7zM9NKn5T8BW18OwsAm7ziVT1vebnbkW_hlmXFx
+ lA9ERpKKBEB7AYpH2B2.343nl2pJ7jnrLGV3hCkf4i6J8Q0TRF68_lfwSQ0a1lglJsDxXC_qPmXd
+ BQuc0YZ79q2QNaUvSYM.aCsKnovkTLoXfuGhYX_.fIktvZYhSkydkUZc56t1F1PAuCb4rC2jGkjp
+ rpngP_51S0IuaTBR5XtdzSzVupHco63RcaAS0Zu3iGqf8s24Ku4mdnAATcX1BtEvohK0dIxPuEos
+ oitPQJMCvG_BN4pZSQDGuyhVAeYm.GM1fLquHub6fQrb4wvqIssazbb58JiN.NUU2ESj1.RGllLx
+ z1IOcg_QAymfklby7q8FFoOZ_fRuL38bHX95Vfhxc6jbcQpr9akYcAq76U4dPRrevo7zalZ0xgdN
+ rMYxWlGZvQfuhRBvZbIGgAhPxQwqnMjJd9N9SWpC93I9g1S5QAWQvYCR48IdbRZRWNZJETdn76AK
+ pThh8UpEzWYOxyaxKVPfDzIPm92kp_lUyxV4Sb_QpFrLsYqrYRbYvcMjg6HDAP7DC1YEs811wqad
+ ayFe7IrbomLVkvRjQskGjt65kVsBUd3alLX6iNZ_aUA48kmGeKlF5jUw0iatgnj358cIaarUO7dC
+ YUwZawNqdEQyEdFmqagmEoCCIjSdL9q2Na8c7Lg0fmDEUYo4yt606buaBldxbgivtrlQbq1.hdbR
+ f_5IFiDe66qpM9V1PoWMwKKgcHNGHYBIrx_6m2bfiBKZ.QtA5tUnk.UI_ejS4Q3rFyiMwqKl9vji
+ eAPYIl1sRp4Javo.3VcYbK1N82X1vfOUJ4gR9ovSbF4TDICFRC5qbgyoLKvwwHWuk5WrgbJ2nxAw
+ 2gKVpMPJW70ZUXk_ZeRrzcExGs11R5z6s9SSOimuV0UIwXSGTVqKh5pMN6.kaYV8O6iaBejXCMK8
+ G3i3Cjsw2qH1R5rpPQF4n7h6WTVs0EZfhJjG.1s8kSan7AdOlq_Xtt42lX6y2STwOtAWH
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 63602443-7919-45b5-95cb-a0501af045f3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 16:06:58 +0000
+Received: by hermes--production-gq1-5b4c49485c-4rmzt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a6ae495510b30a623b4b0801ff5ab356;
+          Fri, 21 Jun 2024 16:06:55 +0000 (UTC)
+Message-ID: <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
+Date: Fri, 21 Jun 2024 09:06:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
+To: Paul Moore <paul@paul-moore.com>,
+ LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-api@vger.kernel.org,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
+ <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Jun 20, 2024 at 03:05:34PM GMT, Tahera Fahimi wrote:
-> Abstract unix sockets are used for local inter-process communications
-> without on a filesystem. Currently a sandboxed process can connect to a
+On 6/20/2024 2:05 PM, Paul Moore wrote:
+> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> We recently introduced system calls to access process attributes that
+>> are used by Linux Security Modules (LSM). An important aspect of these
+>> system calls is that they provide the LSM attribute data in a format
+>> that identifies the LSM to which the data applies. Another aspect is that
+>> it can be used to provide multiple instances of the attribute for the
+>> case where more than one LSM supplies the attribute.
+>>
+>> We wish to take advantage of this format for data about network peers.
+>> The existing mechanism, SO_PEERSEC, provides peer security data as a
+>> text string. This is sufficient when the LSM providing the information
+>> is known by the user of SO_PEERSEC, and there is only one LSM providing
+>> the information. It fails, however, if the user does not know which
+>> LSM is providing the information.
+>>
+>> Discussions about extending SO_PEERSEC to accomodate either the new
+> Spelling nitpick -> "accommodate" :)
 
-"without a"
+Thanks.
 
-> socket outside of the sandboxed environment, since landlock has no
+>> format or some other encoding scheme invariably lead to the conclusion
+>> that doing so would lead to tears. Hence, we introduce SO_PEERCONTEXT
+>> which uses the same API data as the LSM system calls.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  arch/alpha/include/uapi/asm/socket.h  |  1 +
+>>  arch/mips/include/uapi/asm/socket.h   |  1 +
+>>  arch/parisc/include/uapi/asm/socket.h |  1 +
+>>  arch/sparc/include/uapi/asm/socket.h  |  1 +
+>>  include/linux/lsm_hook_defs.h         |  2 +
+>>  include/linux/security.h              | 18 ++++++++
+>>  include/uapi/asm-generic/socket.h     |  1 +
+>>  net/core/sock.c                       |  4 ++
+>>  security/apparmor/lsm.c               | 39 ++++++++++++++++
+>>  security/security.c                   | 86 +++++++++++++++++++++++++++++++++++
+>>  security/selinux/hooks.c              | 35 ++++++++++++++
+>>  security/smack/smack_lsm.c            | 25 ++++++++++
+>>  12 files changed, 214 insertions(+)
+> ..
+>
+>> diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
+>> index 8ce8a39a1e5f..e0166ff53670 100644
+>> --- a/include/uapi/asm-generic/socket.h
+>> +++ b/include/uapi/asm-generic/socket.h
+>> @@ -134,6 +134,7 @@
+>>  
+>>  #define SO_PASSPIDFD		76
+>>  #define SO_PEERPIDFD		77
+>> +#define SO_PEERCONTEXT		78
+> Bikeshed time ... how about SO_PEERLSMCTX since we are returning a
+> lsm_ctx struct?
 
-s/landlock/Landlock/
-
-> restriction for connecting to a unix socket in the abstract namespace.
-
-"namespace" usually refers to the namespaces(7) man page.  What about
-using the same vocabulary is in unix(7):
-"for connecting to an abstract socket address."
-
-> Access to such sockets for a sandboxed process should be scoped the same
-> way ptrace is limited.
-> 
-> Because of compatibility reasons and since landlock should be flexible,
-> we extend the user space interface by adding a new "scoped" field
-
-...to the ruleset attribute structure.
-
-> . This
-> field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
-> specify that the ruleset will deny any connection from within the
-> sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
-> -------
-
-For the next version, please list all changes since last version. With
-this v5 I see some renaming, a new curr_ruleset field with optional
-domain scopping, and code formatting.
-
-
-> V4: Added abstract unix socket scoping tests
-> V3: Added "scoped" field to landlock_ruleset_attr
-> V2: Remove wrapper functions
-> 
-> -------
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
->  include/uapi/linux/landlock.h                 |  27 ++
->  security/landlock/limits.h                    |   3 +
->  security/landlock/ruleset.c                   |  12 +-
->  security/landlock/ruleset.h                   |  27 +-
->  security/landlock/syscalls.c                  |  13 +-
->  security/landlock/task.c                      |  95 +++++++
->  .../testing/selftests/landlock/ptrace_test.c  | 261 ++++++++++++++++++
->  7 files changed, 430 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 68625e728f43..1eb459afcb3b 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -37,6 +37,11 @@ struct landlock_ruleset_attr {
->  	 * rule explicitly allow them.
->  	 */
->  	__u64 handled_access_net;
-> +	/**
-> +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
-
-Please take a look at the generated documentation and fix the build
-warnings related to this patch: check-linux.sh doc (or make htmldocs)
+Sure.
 
 
-> +	 * which are confined to only affect the current Landlock domain.
+>> diff --git a/security/security.c b/security/security.c
+>> index e387614cb054..fd4919c28e8f 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -874,6 +874,64 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
+>>  	return rc;
+>>  }
+>>  
+>> +/**
+>> + * lsm_fill_socket_ctx - Fill a socket lsm_ctx structure
+>> + * @optval: a socket LSM context to be filled
+>> + * @optlen: uctx size
+> "@optlen: @optval size"
 
-What about this?
-"Bitmask of scopes () restricting a Landlock domain from accessing
-outside resources (e.g. IPCs)."
+Thank you.
 
-> +	 */
-> +	__u64 scoped;
->  };
->  
->  /*
-> @@ -266,4 +271,26 @@ struct landlock_net_port_attr {
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->  /* clang-format on */
-> +
-> +/**
-> + * DOC: scope
-> + *
-> + * .scoped attribute handles a set of restrictions on kernel IPCs through
-> + * the following flags.
 
-Shouldn't this be after the section title?
+>> + * @val: the new LSM context value
+>> + * @val_len: the size of the new LSM context value
+>> + * @id: LSM id
+>> + * @flags: LSM defined flags
+>> + *
+>> + * Fill all of the fields in a lsm_ctx structure.  If @optval is NULL
+>> + * simply calculate the required size to output via @optlen and return
+>> + * success.
+>> + *
+>> + * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
+>> + * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
+>> + */
+>> +int lsm_fill_socket_ctx(sockptr_t optval, sockptr_t optlen, void *val,
+>> +			size_t val_len, u64 id, u64 flags)
+>> +{
+>> +	struct lsm_ctx *nctx = NULL;
+>> +	unsigned int nctx_len;
+>> +	int loptlen;
+> u32?
 
-> + *
-> + * Scope access flags
+Probably. I'll revise in line with your comment below.
 
-You can remove "access"
+>> +	int rc = 0;
+>> +
+>> +	if (copy_from_sockptr(&loptlen, optlen, sizeof(int)))
+>> +		return -EFAULT;
+> It seems the current guidance prefers copy_safe_from_sockptr(), see
+> the note in include/linux/sockptr.h.
 
-> + * ~~~~~~~~~~~~~~~~~~~~
-> + * 
-> + * These flags enable to restrict a sandboxed process from a set of IPC 
+Always a good idea to follow guidance.
 
-There are several spaces at the end of lines, they should be removed.
+>> +	nctx_len = ALIGN(struct_size(nctx, ctx, val_len), sizeof(void *));
+>> +	if (nctx_len > loptlen && !sockptr_is_null(optval))
+>> +		rc = -E2BIG;
+> Why do we care if @optval is NULL or not?  We are in a -E2BIG state,
+> we're not copying anything into @optval anyway.  In fact, why are we
+> doing the @rc check below?  Do it here like we do in lsm_fill_user_ctx().
+>
+>   if (nctx_len > loptlen) {
+>     rc = -E2BIG;
+>     goto out;
+>   }
 
-> + * actions. Setting a flag in a landlock domain will isolate the Landlock
+That's a bit sloppy on my part. I'll clean it up.
 
-A flag is not set "in a Landlock domain" but for a ruleset.
 
-> + *  domain to forbid connections to resources outside the domain.
+>> +	/* no buffer - return success/0 and set @uctx_len to the req size */
+> "... set @opt_len ... "
 
-Please remove unneeded spaces.
+Yes.
 
-> + *
-> + * IPCs with scoped actions:
-> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
-> + *   connect to a process outside of the sandbox domain through abstract
-> + *   unix sockets. 
+>> +	if (sockptr_is_null(optval) || rc)
+>> +		goto out;
+> Do the @rc check above, not here.
+>
+>> +	nctx = kzalloc(nctx_len, GFP_KERNEL);
+>> +	if (!nctx) {
+>> +		rc = -ENOMEM;
+>> +		goto out;
+>> +	}
+>> +	nctx->id = id;
+>> +	nctx->flags = flags;
+>> +	nctx->len = nctx_len;
+>> +	nctx->ctx_len = val_len;
+>> +	memcpy(nctx->ctx, val, val_len);
+>> +
+>> +	if (copy_to_sockptr(optval, nctx, nctx_len))
+>> +		rc = -EFAULT;
+> This is always going to copy to the start of @optval which means we
+> are going to keep overwriting previous values in the multi-LSM case.
 
-Restrict a sandboxed process from connecting to an abstract unix socket
-created by a process outside the related Landlock domain (e.g. a parent
-domain or a process which is not sandboxed).
+The multiple LSM case isn't handled in this version. I don't want this
+patch to depend on multiple LSM support.
 
-> + */
-> +/* clang-format off */
-> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
-> +/* clang-format on*/
->  #endif /* _UAPI_LINUX_LANDLOCK_H */
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index 4eb643077a2a..eb01d0fb2165 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -26,6 +26,9 @@
->  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
->  
-> +#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
-> +#define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
-> +#define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
->  /* clang-format on */
->  
->  #endif /* _SECURITY_LANDLOCK_LIMITS_H */
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 6ff232f58618..3b3844574326 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -52,12 +52,13 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->  
->  struct landlock_ruleset *
->  landlock_create_ruleset(const access_mask_t fs_access_mask,
-> -			const access_mask_t net_access_mask)
-> +			const access_mask_t net_access_mask,
-> +			const access_mask_t scope_mask)
->  {
->  	struct landlock_ruleset *new_ruleset;
->  
->  	/* Informs about useless ruleset. */
-> -	if (!fs_access_mask && !net_access_mask)
-> +	if (!fs_access_mask && !net_access_mask && !scope_mask)
->  		return ERR_PTR(-ENOMSG);
->  	new_ruleset = create_ruleset(1);
->  	if (IS_ERR(new_ruleset))
-> @@ -66,6 +67,8 @@ landlock_create_ruleset(const access_mask_t fs_access_mask,
->  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
->  	if (net_access_mask)
->  		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
-> +	if (scope_mask)
-> +		landlock_add_scope_mask(new_ruleset, scope_mask, 0);
->  	return new_ruleset;
->  }
->  
-> @@ -311,7 +314,7 @@ static void put_hierarchy(struct landlock_hierarchy *hierarchy)
->  {
->  	while (hierarchy && refcount_dec_and_test(&hierarchy->usage)) {
->  		const struct landlock_hierarchy *const freeme = hierarchy;
-> -
-> +		
->  		hierarchy = hierarchy->parent;
->  		kfree(freeme);
->  	}
-> @@ -472,6 +475,7 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
->  	}
->  	get_hierarchy(parent->hierarchy);
->  	child->hierarchy->parent = parent->hierarchy;
-> +	child->hierarchy->curr_ruleset = child;
->  
->  out_unlock:
->  	mutex_unlock(&parent->lock);
-> @@ -571,7 +575,7 @@ landlock_merge_ruleset(struct landlock_ruleset *const parent,
->  	err = merge_ruleset(new_dom, ruleset);
->  	if (err)
->  		goto out_put_dom;
-> -
-> +	new_dom->hierarchy->curr_ruleset = new_dom;
->  	return new_dom;
->  
->  out_put_dom:
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 0f1b5b4c8f6b..39cb313812dc 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -35,6 +35,8 @@ typedef u16 access_mask_t;
->  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
->  /* Makes sure all network access rights can be stored. */
->  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_NET);
-> +/* Makes sure all scoped rights can be stored*/
-> +static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_SCOPE);
->  /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
->  static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
->  
-> @@ -42,6 +44,7 @@ static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
->  struct access_masks {
->  	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
->  	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
-> +	access_mask_t scoped : LANDLOCK_NUM_SCOPE;
->  };
->  
->  typedef u16 layer_mask_t;
-> @@ -150,6 +153,10 @@ struct landlock_hierarchy {
->  	 * domain.
->  	 */
->  	refcount_t usage;
-> +	/**
-> +	 * @curr_ruleset: a pointer back to the current ruleset
-> +	 */
-> +	struct landlock_ruleset *curr_ruleset;
+> I think we likely want copy_to_sockptr_offset(), or similar.  See my
+> comment in security_socket_getpeerctx_stream().
+>
+>> +	kfree(nctx);
+>> +out:
+>> +	if (copy_to_sockptr(optlen, &nctx_len, sizeof(int)))
+>> +		rc = -EFAULT;
+>> +
+>> +	return rc;
+>> +}
+>> +
+>> +
+>>  /*
+>>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>>   * can be accessed with:
+>> @@ -4743,6 +4801,34 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+>>  	return LSM_RET_DEFAULT(socket_getpeersec_stream);
+>>  }
+>>  
+>> +/**
+>> + * security_socket_getpeerctx_stream() - Get the remote peer label
+>> + * @sock: socket
+>> + * @optval: destination buffer
+>> + * @optlen: size of peer label copied into the buffer
+>> + * @len: maximum size of the destination buffer
+>> + *
+>> + * This hook allows the security module to provide peer socket security state
+>> + * for unix or connected tcp sockets to userspace via getsockopt
+>> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
+>> + * is associated with an ipsec SA.
+>> + *
+>> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
+>> + *         values.
+>> + */
+>> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
+>> +				      sockptr_t optlen, unsigned int len)
+>> +{
+>> +	struct security_hook_list *hp;
+>> +
+>> +	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
+>> +			     list)
+>> +		return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
+>> +							 len);
+>> +
+>> +	return LSM_RET_DEFAULT(socket_getpeerctx_stream);
+>> +}
+> Don't we need the same magic that we have in security_getselfattr() to
+> handle the multi-LSM case?
 
-This curr_ruleset pointer can become a dangling pointer and then lead to
-a user after free bug because a domain (i.e. ruleset tie to a set of
-processes) is free when no processes use it.
+Yes. I would like to move this ahead independently of the multi-LSM support.
+Putting the multi-LSM magic in is unnecessary and rather pointless until then.
 
-Instead, we could just use a bitmask (or a boolean for now) to identify
-if the related layer scopes abstract unix sockets.  Because struct
-landlock_hierarchy identifies only one layer of a domain, another and
-simpler approach would be to only rely on the "client" and "server"
-domains' layers.
+> --
+> paul-moore.com
+
+Thank you for the review. Expect v2 before very long.
+
