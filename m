@@ -1,62 +1,62 @@
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE817C7B5
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 22:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2981A16C877
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 22:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719007845; cv=none; b=OPzKnr+auuWjb1qFm0/OhjE8+lb3xNq6bGkw0Bdh8R2XLH/Pdpe3X5gegQIMcNr6OklMz83jef8E5nmT15QoNHQLFQmOjm/UjuaBl3AtnipxJoCPIAyDsoX2pyKdhhW6dSXSAilB3HKzcv78c0WdkXQ3JZt4iu/6Mpv+F4McAco=
+	t=1719008668; cv=none; b=mEXSXg2y2XhODHmSfyi6gaKdqn9m3DgnTs8TcaLOco2OffzqpzRdk+/xgkk+FioEoAh/ZR0PllGITAynFjsU+VL5pKWxlOm4LqerP+WktaCWxyu9DnsBBJh9c3M2vLrvW5Sp/ey1qqvBioYSovnQxpDU/UYLvrIaTtK1jlXGA+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719007845; c=relaxed/simple;
-	bh=/3OUXbxbh4HVBBwvgsX+pbK2kz+8OtQOGQtbeuGta1o=;
+	s=arc-20240116; t=1719008668; c=relaxed/simple;
+	bh=sVyjOfJZO+IoW9VJKQZYjE+kYCNI6kTj9mrzhNObKXc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eRlvM/vtVHxhV5IWUkmPgRBVELFXR8dyVpaBTPSWQZtiBuMbHROSthsPTJqOZiU0QGo1Dj1vRI38aAhqXo5kcTpeoro6NYwTh8j6xknIp7blRabqaAAjdgcuMvPEeM/qMBoCT+lP0VbkVCDXehRiweEEHmY1nljKUf3ba6nDVcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=BVxRMx2U; arc=none smtp.client-ip=66.163.185.38
+	 In-Reply-To:Content-Type; b=f5yJAHmcNvCTMFf7V0oDi8nj3bRjikmbA8ri+9LQAdmC2VKRZiBwZjG+M92kd2L2TrF3t00qaEQQ2WGxlKE4eOQOzjzw84Ei22rrP/vxvFVvnoO6ge/QloccmNQ2VpVgZrPsHgh405mpbb46ixkSjz0HbAh5GH4sLBJojE/e0vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=sPsy0lp3; arc=none smtp.client-ip=66.163.186.212
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BVxRMx2U"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007837; bh=W93MUuqF8YI2qTC2EngAWFfgxbIWTzpfO4cxB6FzZ44=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=BVxRMx2UZ4Sd9mDni9AlM6542+M+c5KP3zShg4gsDDXyQJcA+IyJtgSfGEFzc40U3qxJUt91Ax2NIzE6T0Wl2GxlS/7hydpzGI44ToE1zvyhqe9RhANGjrJul36jkfr1ElmqAXLRMSNuPXKSueqCgvGEZal13dy8WBfKKWqItUjcF47k4bqFx8viasQLr35Yx/oFFl7gdcZkb8tYwIvYDW3gT8qW0S9/hX0f5+ye602NqXlCiVeADggDyj8GaG+0nkGUOlish2zBsdxGdU5KDDK9ZM5WehFOdQc5GKi5SDPQvNkvWeMLqjXK/24vf8pflArLc0lqP/5dl+ZoY9wcsg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007837; bh=ui6s94h4q2oudp0CSKkXKz3tYjBAbXlEXtQLpiASxhy=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=EuPVysbHMMYzOZdicVN27+3in9yPa/SJCP7qHyNIAYgZCF72Svkn7sYR4wUPTGv+3iDs13s7MzbijyIMvThIWAd02UA7IKmQvcxWtaCB3fscWjMxRFaE0NS8IeheG6/PdfzfoX8RlSYzrNrHS5CXI7FjELtEBHHqEsSLxbk9H3MLjUukVXG0Ld0tTTF1O1vyfHD1cd+nT57SJnJoO2Vdk0K9+b/dV0N8OSKNwuS1UzZMo9OEWYMdAjL1juOIHtsxvpiQAKmwhl0YfUcF9RGw0QwDzfrE3nmBGdRY/JBJoJAAdTOl4b58kv2QwPuJRjht1hRMwnhnfg02Sfq3NlRbLg==
-X-YMail-OSG: xHIJgvYVM1l_e5pHrqiy_yh8PxQUmnnZNw03DwldaoYhvIGtjxoRyA1hUkbJVF2
- SyOTADNPwKlhsH4_83zkPIKbRq.Q0DDQVZXhiAYJiSXcCpI4pkxrfdfI3vWbH_etfKHXhHTVjZSE
- HA9zfNysDePb7ZPyH_ti6YBa2UBkPKPpnnvew_UvKOdqFRm71QQRYfAegjLsmc9dSBpn_3HWkfhq
- 2x0HKa_ysth7HW2P1UYkZvIszKuYDsub_iF_rSh8nYr65Q1fDLOSK9UpkwRw1a12c3eFmJlbg0gG
- Ps.qhuEdAr69Y3LbxLYIrKwm1QmlWSyFaCxW4GRYkAmyhSzc8GD..EoXavTvvE8fvz8AAOZYWO2Q
- o3oiK8stAertTzEtGqR0VWSFo1XxCDtA2Im6C9LiZ99jz75WJ.24MDm1a5yBTXJFqFBe0p13NiRI
- laAyoDkDOk1F11Zw.0bvEP5UrWMudvqUqBMOcoVmVQHQCeUBz8ignD9gGW8tWJmNH5YIn9OL1EAC
- sLK6kt9hL_Pg00d2R.TgEfim0FuBicqwA1PecLiM4YD_llWpfGSbZ1LIDtys8G2TXmDsA52XupJx
- PMZjxcX8z7U_Z4l19e7ijxZrDfSkg02CsUczSeAbhYVo.NUZLs_Rb6nmI.15KZLAmHmqd_xQlpSE
- HmNNwR.v7AxvawVtBWhMpYm4Fien70j10RRBAXyJ3xDHBseTIV7f_f1eAJzEQfKRtHy1jSFI_5O6
- 9W4ox2yyxPEAeIyvRTDJ3DpJXsE_QCHuPUaY23.mIkOVS6vbqAUc6Jes1P2vRpSC2fto3GRdtTCt
- BuaJOI1owyBSFNasUaLZb3jT1bVk.4EKVT2a56pf.sHQCSbSxXgGi6aJ0BJffqA2gp_i8u1oSZ3f
- 6N.WKA.hUb2iRQ7lBTIaV.2JXAVAuRJdP0_rCTSyDr443NZTQ_GHzuY3STxDEXNsHP2BX2lIa2JT
- UPUwrhHrgTQGt40I8FtCXt0fPc.do3fDAEvnbMj3yd5kzy34.U2DukQcJ3ykWDIRnZKgwaQBFlbT
- 2SPn6B6Yfte1JmW9oVQBt6Bcr0eQv.Jwsjrus0mnWb1DVqrjLzOZuLMlwC3u0oxqaRTJfpvyZcQD
- k_bAPui8HfxrlGg_yH.wqVeDrUAvUUuOv66uKwagBp2Eyl_eVayXfj3f2RzP2xxd8enU.owi.whw
- 4j1OiGmAUtbNINy3mzjjRpaIQoFuR577yzUkFvYzKka61bZN61J_YbfDuPhwUlBePngWeWdasony
- XyvXRR9ac5F2y3agMebnLJSGv0E0n1RJurZ12HYCGD_mRUNfVTw_vyGNYReqT.7d32FalsrkhXNM
- YE7X70zZYy.QvxBzsj9hBywvB1wAn131GV3nDNvyu03jd9V32qpkMJUAeZ2O0s36i_sjiky2RBnE
- IR9_V9wk3p3jbdJ7umKG0BtTNjwHO2yc.K1TxmSmTGg.YyAgWznGK4qarj.5z_LAWmyAVyNnpFVI
- EUIeRBnK.jdm.oeBa_etlm.RFulscNElPDHZJaIfhlqoxSiSf0pApy_vsW756ibuOUjqt9RIaFfy
- FiaURzn6l_1w4u6FvRoYbgGCOW1tSciD3ceLtTOCX_0Az.et8w67gzyvtLQ9wApkF8Pru3jCYO3U
- SqnGkd1jqaq.D.BWNalIaF3QkpLZor5mF09f1GiHTJTmQLzRtdMbbmXBF6cDdoHhmBSgAFBWvScq
- b.DzMpIcEfNHzmK.O17slhHyZ_jfQFXwhAIJAbifTkTVWxx.PwMVxHWIpeLuhEukWJgfAF8Off20
- VCejX_LNPVoO5MDUVNnB.UeFvWep7en17N7Y6GMQ3jmJWoF7EUmjPdDrF.JPqiWCXfeksdI5Cwfx
- oKAkT7Eci3JBKS0SDAE9z3tItrRYpvceo37.dySQuLtrLhJa0ImT69QsKnCtTEo95RjTqcDKLJL0
- dxMhgkNhQdt3.dTjhhaQdvRTgawMLhdFz5vaILGYncO00Zy03VhwmPwkoaYJG2GlPcd.flgMobOs
- 3tsHIk32BxbadWd5a5QpKTxIP9VT4cScMqPZr0iu.ikEYWkmxj15JdbnXchSsW7B_J_QDOGtprtl
- bKecFPJEE5a1OCuLLQKrB1xulpgMCgz24Ns60rT13dXBf4iSvPUG_fruCb1xupgZhY4HVVIHS0uD
- SHd1H0ZWEvi9xgJFapzZbp_zTk1SpF3cNUx3FPJc6.k7Y2YYZ2rba22bJEOwnDg5Y6dpidlYfXBz
- YOknam3R1lChQ7W0ePQWNYxezpArxdnk8PnmZkKVtSmrwCXzeAxdoz3O1wLXzb.2IT3Ln8viyS9w
- -
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sPsy0lp3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719008665; bh=P19Ilaj6gEH8rytHfVjwZ7uHtfZcbce3ktCVkx7vP40=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sPsy0lp30nw79teX39UFOhGlAw1EKt7WSE9Kz9C2Np62nAAuTH0Z6IECJ1OX1C0yeJTVV92vdAvShGnOLCjLe6pl+izV7t7NDS5rV44icuCCDFLQAWvO38JXZykrdFljz2Qh470FIYOVoPTJIWaJivNJAnIhAzgNeeACxFN2jDS7IyZ6gYhcH/PfnmQKsMqjp01/2ppHHDMOHlY5CcYBFWIyYbmZkfMrnXdrO+GA2tvIxafoDjMTC/eIbe4MdZt1xMsbL2zkKLS8G3R5VwxPtNwigeFKTRobfB0sH++qAfUs8ENWTHsUtAWrdqkKKPAa87jzhArsAT5NQYUBoh+9CQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719008665; bh=NEFLtCkOu+GEhqwpyL67TouSdX1IKamOPKl6pTwsyH6=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=s3AmalVINgwafaOQh55EkRwbLxXGrFemSPvZy3iH1RUjR3AJyWtNqJD4OLcgzxi9+QohfDqQOddFlGL5/OQb/RZCq5t4lF2z1dZGup9Eaaqvqg+5A5b31UCJH5FboTLbShRNazlvTUXLVlK4sWAc4crhaItsJ+e9Wj8Npc2Pdatbck8VVcQApOUNFoQ7WokKa+8cJaMLbt6Vc023nA4/gMVQBS9CXupyVTJEHY1s8Mf2XCQBdc3/2nBXeGFVyBMiM4RBKya8QjkEskZba14U5S8zmAZmwk1maN99AxHM4wnkE75JL/e/pgcf6KMBwvSQjed/i9reXTXgcLaXXlg0MQ==
+X-YMail-OSG: LpbVKJ0VM1kHBogIKr30izTZv6EK4wtjN7xH6tDGZtyRrUyP_B68iyI4jYbzSFH
+ ox2ogO22wIxSxELIeqz94oVLwIlRmQXZ1E8SZ5vmSR80FiEAGZjm5YxHpQ_qFKvj3Q5syXaRuXRE
+ RjsrN.GjmcrYgl3wIhbs5HUgQ0ABwUVvAp6CA9c4e5DW9HhxjMZeD0srh5L8PmQUSclGr.hvIEkt
+ OEN82PemjITKM3xXiRGuiCMZni8pwMlInS44W.MDla.MRnpmq4YczabA0cSK_MsVwWF58C98sGIV
+ 9AOOe3yEOp0v6kJxENaCe3Dcdakmu3cryTspu4t7BDIspS1Tt9WxQE31BHMrz7ZuVBIPRWhqsuJk
+ CfyKdYyAPP5kn_PjbIIXDzf1mAxOKU0RCffEKpBSttm8yG4C2NgmuJMLVeRk4uLNV16RQstCGykU
+ a7C4ZW9X06Q3RKp2ZRvw3W69pN1cXCleGO_FoWNYRFo2gf63YeL9jp4qQ6gbBOKLSlhdBUtmSFGo
+ YVi_x8RbUmCxSqBOTg08jBdZ6nWD_mZt7dN3W08x.gnxM.9o.mqTdXKh93kh_QT3jU2mziaUAyDT
+ P4jXbvdXgXBQRwKpU4T1GDsPMlZLOAnQrhOPlT1K_jsi1J0wcT86wlWgtQ74l_NEaNPjgKDzjYWT
+ BVE9Sp_HMum3CHcoy9zRfV5xRK6io1cCSXg7PTYU7EFDgFofwsRS1._sL6gVVTU7PhtiqiK.MAJj
+ Y7PgebORx1O1Go1YZK6mupxrG1CDvl90yrZKT9XZrAyHUlbeaF_MZAFen6J4CNvMvEdvJdEMTkQ1
+ 4eix9.X3HdAjPWtUU20.wG3ULkBu4eN13l09t1XEGxLY5QLZBswWwN.Yo1_gcn0dcpYn8xVvbFUQ
+ SADDXEfGnlNSmhG.XFEs5_3.SeRP6s3d2kFpYgpslwmAi1zq4C5tRmoZ_x9WmY88yZszLyvANwV6
+ jtPXiVaFXDdfLbIe8R2vJzkDpK.tiVDwcJaQYb1EN8iJlYHb2mDC7fqVUt7n0BHHGrn.CoyvdnIs
+ rr0Y7qWdFPg0TJq4Wo8_lpHSGJiGzI6c_2QlzIUqpV3qeXIY2j2zB36Q.YAH37_uVTkFEprxU_Xh
+ 8JVxIYVUpv7neXwk39EIh5j.95bi_Oj35F65eX.n0keRpao6B1XiYwz4nb5cyDQ4VSIcL3tEZA.J
+ ALnwCV7D_t8PUokc7ogqF.BB4IXD_oHeube3DyWiYlzAMcXsH7YYkcMsiBzBIUnwiinOM8_J1Ecp
+ a7CDaA8ucQzbUR8OnvTeVStEO5NrjDA9XSCNhXTJ5vCTYwBmy5ahfLPj9ZvUfqzY3g_c_g1he3fA
+ 8L9CJmeQXNq5qlzdZgJN2lsrvQtnlWV6qqu0j.12K4KEv3Caww8ZiEXaDvfiDATer6LQDdM5Fy5K
+ o7mHTvX1nxuCd0DvS5yalSAt2fECK0koSwhRWL2RhFgW7w_cBIDfupxrcViLid9bspoH0WxZfNUu
+ 9Eaqkj1eC6fZFI9JrM.oEaVxWBBGZMb81IGUssAKq0aIphy4fvuwXN1LliUH3XWUQhSFppJmHx2K
+ C3CC4VMNISdcgy9f0lyhNABYrlyzp47A6g1Y2ywnnoALDxTfx1nlYOC0y8NtTN7wGDv3m3dLm0hh
+ yomdb24UF1wahbe93PrtCNGZ.x2qbsBRvF5o17Bxp1WfNO2lPJSqI5WuYyhl8WKfz6BN4h587qWA
+ 7DK0ZyAMdmHBfIK23JMl9YhLW1A0YUU5u0g1Hqrjf.6Oq1K8HDVgQWhYPK8_UBWuiF5ZSj9WZzWq
+ gXMbdfP5FPEfwpUpHQblpW91FoT2hA3BQIKqlb7I_G9HovJQiYSjCDFXEuB9rHmzAcrlY3huf_3w
+ A5ZuLtz9RDJ5n_W6Q_lUBUagKwT42DM2PloneQAFNvwGe_wb6ttoHhL8696cci7d72PhzBz.QY18
+ UVyGA9jSrFv7SuxcL_j2Fe825VhFREySe_qALXGZD7JHRCSwL1O9z392YHuHMaVsMrSqx97jVksb
+ QANbuxRRmKhTIL1wop7kkIf6hK9_qzAj0xhRVgQb3M2IHFbcIVrqTMl16AiQ1IqN0M3BwUYgmkwq
+ .JvsKrEPO58swzUiXMecJGuTNH2RJW2su5mvs65UAqpXTEWNjEpWSTzfQjURzoxz.nSbju_t0AyV
+ Xry_sLYpvaPh8hQ6_OA2DOq1OfFYRpJSVT6et1JvGBVubUfZWC2UrZn_mfiVqXzgQBAXygEFJHXH
+ FQ0E3Y3IwNuzowKwWhYUJubl5kSSvJTU9TDwoBkPm45VOD0A2INJ2JZ8pVBNzMuHhJo.z0zpWylC
+ viMX4yzQ-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 40e448d0-786a-4711-84b1-e00c610a0ba3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 22:10:37 +0000
-Received: by hermes--production-gq1-5b4c49485c-75jqb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fa3be147b3108ab3bb88dd26f261d3a7;
-          Fri, 21 Jun 2024 22:00:25 +0000 (UTC)
-Message-ID: <2cddc480-f911-44e3-b415-33e0cec2964c@schaufler-ca.com>
-Date: Fri, 21 Jun 2024 15:00:22 -0700
+X-Sonic-ID: 6b825526-385f-4b5c-9dcb-3dda0333b2d8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 22:24:25 +0000
+Received: by hermes--production-gq1-5b4c49485c-pghqv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 937a7f93953c1717f4f52ea5056797ad;
+          Fri, 21 Jun 2024 22:24:22 +0000 (UTC)
+Message-ID: <aae5d7de-d3ff-4a67-a8f6-fea293bee0f6@schaufler-ca.com>
+Date: Fri, 21 Jun 2024 15:24:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,80 +64,73 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
+Subject: Re: [PATCH v39 02/42] SM: Infrastructure management of the sock
+ security
 To: Paul Moore <paul@paul-moore.com>
-Cc: LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
- linux-api@vger.kernel.org,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
+ serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+ penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+ linux-kernel@vger.kernel.org, mic@digikod.net,
  Casey Schaufler <casey@schaufler-ca.com>
-References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
- <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
- <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
- <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-3-casey@schaufler-ca.com>
+ <CAHC9VhQnzrHPRWKvWPSuFLWHhcXkwqeAfXsFbEdBBOMcACZorg@mail.gmail.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQnzrHPRWKvWPSuFLWHhcXkwqeAfXsFbEdBBOMcACZorg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 6/21/2024 12:41 PM, Paul Moore wrote:
-> On Fri, Jun 21, 2024 at 12:06 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 6/20/2024 2:05 PM, Paul Moore wrote:
->>> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> ..
+On 6/21/2024 1:31 PM, Paul Moore wrote:
+> On Fri, Dec 15, 2023 at 5:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Move management of the sock->sk_security blob out
+>> of the individual security modules and into the security
+>> infrastructure. Instead of allocating the blobs from within
+>> the modules the modules tell the infrastructure how much
+>> space is required, and the space is allocated there.
+>>
+>> Acked-by: Paul Moore <paul@paul-moore.com>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+>> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/lsm_hooks.h         |  1 +
+>>  security/apparmor/include/net.h   |  3 +-
+>>  security/apparmor/lsm.c           | 20 +-------
+>>  security/apparmor/net.c           |  2 +-
+>>  security/security.c               | 36 ++++++++++++++-
+>>  security/selinux/hooks.c          | 76 ++++++++++++++-----------------
+>>  security/selinux/include/objsec.h |  5 ++
+>>  security/selinux/netlabel.c       | 23 +++++-----
+>>  security/smack/smack.h            |  5 ++
+>>  security/smack/smack_lsm.c        | 70 ++++++++++++++--------------
+>>  security/smack/smack_netfilter.c  |  4 +-
+>>  11 files changed, 131 insertions(+), 114 deletions(-)
+> I had to do some minor merge fixups, but I just merged this into the
+> lsm/dev-staging branch to do some testing, assuming all goes well I'll
+> move this over to the lsm/dev branch; I'll send another note if/when
+> that happens.
 >
->>>> +/**
->>>> + * security_socket_getpeerctx_stream() - Get the remote peer label
->>>> + * @sock: socket
->>>> + * @optval: destination buffer
->>>> + * @optlen: size of peer label copied into the buffer
->>>> + * @len: maximum size of the destination buffer
->>>> + *
->>>> + * This hook allows the security module to provide peer socket security state
->>>> + * for unix or connected tcp sockets to userspace via getsockopt
->>>> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
->>>> + * is associated with an ipsec SA.
->>>> + *
->>>> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
->>>> + *         values.
->>>> + */
->>>> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
->>>> +                                  sockptr_t optlen, unsigned int len)
->>>> +{
->>>> +    struct security_hook_list *hp;
->>>> +
->>>> +    hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
->>>> +                         list)
->>>> +            return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
->>>> +                                                     len);
->>>> +
->>>> +    return LSM_RET_DEFAULT(socket_getpeerctx_stream);
->>>> +}
->>> Don't we need the same magic that we have in security_getselfattr() to
->>> handle the multi-LSM case?
->> Yes. I would like to move this ahead independently of the multi-LSM support.
->> Putting the multi-LSM magic in is unnecessary and rather pointless until then.
-> Starting with the LSM syscalls, I want any new user visible API that
-> can support multiple LSMs to have support for multiple LSMs.  Yes, the
-> setselfattr API doesn't support multiple LSMs, but that is because we
-> agreed there was never going to be a way to safely support that usage.
-> In this particular case, that same argument does not apply, we could
-> have multiple LSMs returning a socket's network peer information (even
-> if we don't currently see that), so let's make sure our API supports
-> it from the start.
-
-OK. I'll put that in v2 as well.
-
+> One of the things that has bothered me about the LSM framework is the
+> inconsistency around allocation and management of the LSM security
+> blobs (the `void *security` fields present in many kernel objects).
+> In some cases the framework itself manages these fields, in other
+> cases it is left up to the individual LSMs; while there are reasons
+> for this (move to the framework on an as-needed basis), it is a little
+> odd and with any inconsistency I worry about the potential for bugs.
+> I think moving the allocation and management of all the LSM blobs into
+> the LSM framework, similar to what was done here with the sock's
+> sk_security field, would be a Very Good Thing and help bring some
+> additional consistency to the LSM interfaces.  Looking quickly at only
+> the SELinux code, I see six additional blobs that would need to be
+> converted; it's possible there are others in use by other LSMs, but I
+> haven't checked.
 >
-> Unrelated to the above, it would also be good to datagram support as a
-> patch 2/2 thing in a future version of this patchset.  Please be
-> careful not to carry over the mistakes we made with SCM_SECURITY (see
-> the GH discussion linked below).
+> Casey, is this something you would be interested in pursuing or would
+> you rather I give it a shot?
 
-That's "in my queue". I didn't want to spend time on it until I got
-feedback on this one.
+I'm happy to do it. Would you like a separate patch set for this, or
+should I add it to the stacking mega-set?
 
->
-> * https://github.com/SELinuxProject/selinux-kernel/issues/24
->
