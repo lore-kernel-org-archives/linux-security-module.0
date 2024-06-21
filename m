@@ -1,285 +1,154 @@
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4E815AACD
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 16:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FEC15FCFE
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 16:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986022; cv=none; b=Eko6JCmwNswA8qg2LVj3n+XR9qwZLXklC6gmKLeLQjWhx13E/7Ju0/hYagpajNPrgI6VHCNSHgGBViv905h4s1tSIEFDuIQYsn4BaCNQmkuDfcwQdgXRC4p9rGvG2FHTV94yuLpUZmJK5pDPDht54cEO4mIKs86qvgPmacZd2A8=
+	t=1718987972; cv=none; b=qkai3AOPNq/Pu2mgxlmlGw5X8NuknbyrQF+mjWIBTYFoVm7F2hpyiFLL3/WEtMeR62e7Y8AlkkYuNKLw30rMxqTsnGnYG64CzKvSzjeMxO8jnxvLrRsl9cvpaMahtmVkEg9yoXlsUgVoY6fNc1vlFQ6QthqsWcACOrQGRTkiVwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986022; c=relaxed/simple;
-	bh=4JXEbivYBcsxYTgIWZVnh5SdG3somsUbAFEAVWYGAQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=F5ac567Y1Gtd30Idi8cb/g4sXPy/VQNVluEoMZmrLOWnNVLgknutiZZ+xSLZwWjAtGQchlAp2/mi4TZEUQuyG4pSVMjZ2Q0OseyAu5x6m1IY7ZIkA6vQzRrHpPR7qCVt5uEz0uTAsJhhXnodue23y85hyrn0D+Ng4o9EHy5ERDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qXSVxcs+; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1718987972; c=relaxed/simple;
+	bh=UlgFUywd2WSEjSU6xsxYFHFG7CT7Xep9ROempUMO7/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L6tI1ZnQPoodqL34jSzyreYQmkGGvyciJdsZ7kg5PStLE62dVfwp3rLT5kxFTZf2XEX6/cUVhTTwndabgAx3Ux4XoiqpGZf/s0cwQ12Q514KaThb60oCmYl2s/09S1wEbflmFksXuHNZ2ZjgQoPKqit9XktDH6jwndM8yA/DFhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=VtXeSSY9; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qXSVxcs+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=OUlshDAGcf4r9tpcl9XAZhSVZg2AM0tLoTIMQEFIi2o=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=qXSVxcs+GtEjbZ0d5k+4l2SAnxGZ90p8r7pSM+sPQh0gwiWK7oGOPt5A/djfgiWq3axN8FuWsOFcEd4VoiiaLQjnrZnE4KpF0HL3p4wcQEQVLCfR//kRrNPfMqeWmQ6UnqotKJJguw532wrh9Htx/3jxi0q1bNTIx9oOVTzal8v3Y46/Sp7Dmwct4LWKvmvBYPp8H4P53BoRpBRCZdFn7YAHCAjTjOqhMXYkS/3XL0UlEm648T/Wa2QxsDyguB2hpqCTlQiiAHDKG+iQ3tj4lmX0SlcPy4XxfQuCy0nv4ohAkCMZeKFwE7YiSNFUZYpcL4BkZJ4JLKPeSepJJkngYA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=UhRdylbyR4htXfQ3ksARAjZ+RHaqucn3VSCr8yka/PI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=k5vdivu9A40A7njFYrRvHuSrHcq6MDFQ4uOP6lf2zpAcGjgw7pbMhMkq/HUOtB5VS8MnXBXxMRID1MmG1I/ovptzCojf3kq7Ezuyl/J7Znr59053iXGSIuLhlwgnBzjK6uSvzWP+rdq+0rQK4qcdEtV+eYvWjVkAQ3ZE21tUIhHh3CLGjdiQflS60u3lhE0P+rmdun1cnfbZ3zV48B/YSTwtfnX011aBu0YPsPBI5q42CI9YZkBph6y5tmuK+9R63bQeKz5HFlsZHdKmCPk72Xu7lDSYVuIscWiHynOig52r4A8UCxB3ntfSlXFiPQQShdGWW8ekfDG1PMSpJPhztQ==
-X-YMail-OSG: UOgmaHYVM1l.B2Lrwvs9KpB9HMayDYjTI.v_pcGE.wyV8yJdV__a0iUF6w8M_ZQ
- 9DjlRcCmrDJAhwYa_DkAW._pe1YFEAdBPbisx6IBljY6jPDBVytM15A3b9y_ICOOf6Y2gQyZZQEG
- vbd2Ra5Z5dETlmzIeIem5nfBDxGPXM1pS9AQQLiG8TTrc9bp1D8vFoxjewkEv.hgn.vFmLHmFiOk
- F690WplsukRvEIs6ORdxhnao6.LAE601yD5uRlvFI0F2xivoOQxcfl7IkyeelamXEfWJXhJqi0mt
- m5X6mp56a_Gh3YoMT2OP.MUPl5qWpfqu_pvLuaYwF4QfB87ApZ7_J3Q7AQJPNoMwqcS6y7Ns2dge
- 9i3gRXrET3MvwMizhVvjrhr05YyzZqyypfOdvxvWi5fNLqHE8vLbTqWHjC3LPIinledP0Oizg8iC
- ej3v0aVoGCou.qFqoLnLLKEzpkrVPxC1g826XwPCOLCde4QgW1JcNCAO0Lm7S7DnqJUgI7AeQsir
- .E3QINU30eyLN27Xw_crEpXNJaGkBuGXMPMebwXz7T2yVOgXBVarAoLG9EjeO.icxB.4Km9yQi4r
- _SieKbYMH1vuLQxciuDMp_O7_Jo.hodJyD8LlL9JPw38l43TUDCTvJpsSL7hy9s036PLrBveClYF
- eDbEtIVfEb4YJTf9ElyIrvYOKiNDU61pA4waE0vaA.a6036kUAQi4rjqszjaEG73uKevvXLuut9U
- RSbOb6PAMSdPFZI9nu2SzqKUTs7gDFAWYcekbebo_fbyy6Rb4ryZkDLaUEM.pRYDBYihY6tCnEjP
- mcbJ0v21C1a4JlKj6h6.ts6rWqiXZDU7OHKxyAmK9pT.E0iYVloph6MPEUEwwHnOJf08eZUHvcWB
- ON._nTJNBbw10Je5FWqkz77Ca8_2kgcBTrSkCsmzeziJpPTpqIKZMLSD9rh67uIqajVByCXKKcFp
- 5xeHHXNHYLdWiZMhyi2C3lFunwBdK6JQPqLq62hA0D9PwH19C1QSTGg1J7OZehcMEYkrvKm35Cey
- 6GlqyiC7W2AT0a5bGyotkT6hrwpyyUuINqiYBcC1zWbpqoZXi3Eom_jNBVTpwvwJfPopb2QNoOJ8
- 64qDnw2fj93bG9Lc27MP9W6MKLW3QpRe8HcX6GOC._NfQthkrcwjkgTLHfPGWEKCChwlRvqgBSNY
- b_qOYv_tqcePaCCtN.tus.xdI7qVNoGRS_LcqH3hqbGf1oBzQXDIc1sgypqGoCs62Vr1a0F2YEf1
- MX3DjJH6pp2jarQG2BgP1jrHWzNyCdwHPZdwA7zM9NKn5T8BW18OwsAm7ziVT1vebnbkW_hlmXFx
- lA9ERpKKBEB7AYpH2B2.343nl2pJ7jnrLGV3hCkf4i6J8Q0TRF68_lfwSQ0a1lglJsDxXC_qPmXd
- BQuc0YZ79q2QNaUvSYM.aCsKnovkTLoXfuGhYX_.fIktvZYhSkydkUZc56t1F1PAuCb4rC2jGkjp
- rpngP_51S0IuaTBR5XtdzSzVupHco63RcaAS0Zu3iGqf8s24Ku4mdnAATcX1BtEvohK0dIxPuEos
- oitPQJMCvG_BN4pZSQDGuyhVAeYm.GM1fLquHub6fQrb4wvqIssazbb58JiN.NUU2ESj1.RGllLx
- z1IOcg_QAymfklby7q8FFoOZ_fRuL38bHX95Vfhxc6jbcQpr9akYcAq76U4dPRrevo7zalZ0xgdN
- rMYxWlGZvQfuhRBvZbIGgAhPxQwqnMjJd9N9SWpC93I9g1S5QAWQvYCR48IdbRZRWNZJETdn76AK
- pThh8UpEzWYOxyaxKVPfDzIPm92kp_lUyxV4Sb_QpFrLsYqrYRbYvcMjg6HDAP7DC1YEs811wqad
- ayFe7IrbomLVkvRjQskGjt65kVsBUd3alLX6iNZ_aUA48kmGeKlF5jUw0iatgnj358cIaarUO7dC
- YUwZawNqdEQyEdFmqagmEoCCIjSdL9q2Na8c7Lg0fmDEUYo4yt606buaBldxbgivtrlQbq1.hdbR
- f_5IFiDe66qpM9V1PoWMwKKgcHNGHYBIrx_6m2bfiBKZ.QtA5tUnk.UI_ejS4Q3rFyiMwqKl9vji
- eAPYIl1sRp4Javo.3VcYbK1N82X1vfOUJ4gR9ovSbF4TDICFRC5qbgyoLKvwwHWuk5WrgbJ2nxAw
- 2gKVpMPJW70ZUXk_ZeRrzcExGs11R5z6s9SSOimuV0UIwXSGTVqKh5pMN6.kaYV8O6iaBejXCMK8
- G3i3Cjsw2qH1R5rpPQF4n7h6WTVs0EZfhJjG.1s8kSan7AdOlq_Xtt42lX6y2STwOtAWH
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 63602443-7919-45b5-95cb-a0501af045f3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 16:06:58 +0000
-Received: by hermes--production-gq1-5b4c49485c-4rmzt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a6ae495510b30a623b4b0801ff5ab356;
-          Fri, 21 Jun 2024 16:06:55 +0000 (UTC)
-Message-ID: <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
-Date: Fri, 21 Jun 2024 09:06:53 -0700
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VtXeSSY9"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebd6ae2f56so2920631fa.0
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 09:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1718987969; x=1719592769; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d+B4q6j7rnOa8lY5YGMu4l7DUBInPDPw5kUdlNxco7g=;
+        b=VtXeSSY9ptdv08DJDTJ2WKmFOBfvm36uqqpB1SXvyXSjnyBwyR/YSRClM3Fekc5PEb
+         dd8gQNWD9nZJ9TDZN2xK7sOY6Ng+93H+bPR3vwYwyztHQIRZ7VsPi0IMubPX9azpw0gj
+         56RGX+N8Cg63P3IsX1jP8xeP/0Sw8vR5VG9e8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718987969; x=1719592769;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d+B4q6j7rnOa8lY5YGMu4l7DUBInPDPw5kUdlNxco7g=;
+        b=Y1PvTQ0ZSVAurrSVcEVZ82L8bmTBhucBi9igv+ckFk0EdgSyPY3YgfjTaNv0jPXEc/
+         nN3T2A3INzroqvxTWzkuAn2ts5+Zv3JOmOoAeq3JMh5kUN71Tnmopi8rHWjaYUsrPRsm
+         eRYqWYA4zN9i1qFnjXZ2/brM6mWjY8OfkfaMNYoAMsf0VFGAS6IUIbd7FgxnVqA+Ungy
+         TifNYPi9w6zx0v0orC7m6YX6qNukWMkNlPms2G2eiWnwhRr6licjapZGUPgO/UgIZRIv
+         Q/dDwgQJJEvwoOr5FDLTY8IU9xOdi7pK6pctYPV1pq3GFXj8krrnHEJZNz5z1XMZcQmO
+         341w==
+X-Forwarded-Encrypted: i=1; AJvYcCWp7lydXqF+g5XGxK+TGy4twLe+MrHMg57HIMj4p6HjTaBXxbPbuyaeoYynGkOXrw3JlJ8aYj3v/yCrjeTudOkEgzbiY5f/KVsp9iFKip6mAoYKrmvT
+X-Gm-Message-State: AOJu0YwJ0veafTrwXOxEuS2D4dcvEZLp7VbHIb0P+h/Y5Iwb+KZoiSFb
+	MTgIgH0s7opw6tw0EpZMyouJpu1AAXcm/zxq7w4IXu6XTae7N3JTUWsh6i/CMcM=
+X-Google-Smtp-Source: AGHT+IG0ddJjXBlSpbVZD4r9/H9u00KEsN82L79oP/i1sXbnFlr8kZL72WUFKn7R6WiFRcw1OhTvRw==
+X-Received: by 2002:a05:651c:1a12:b0:2ec:5365:34d3 with SMTP id 38308e7fff4ca-2ec53653746mr3909701fa.1.1718987968916;
+        Fri, 21 Jun 2024 09:39:28 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8960sm2247234f8f.100.2024.06.21.09.39.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 09:39:28 -0700 (PDT)
+Date: Fri, 21 Jun 2024 18:39:26 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
+	catalin.marinas@arm.com, akpm@linux-foundation.org,
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	audit@vger.kernel.org, linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v3 11/11] drm: Replace strcpy() with __get_task_comm()
+Message-ID: <ZnWsvvRUonTmZG5h@phenom.ffwll.local>
+Mail-Followup-To: Yafang Shao <laoar.shao@gmail.com>,
+	torvalds@linux-foundation.org, ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
+	catalin.marinas@arm.com, akpm@linux-foundation.org,
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	audit@vger.kernel.org, linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>
+References: <20240621022959.9124-1-laoar.shao@gmail.com>
+ <20240621022959.9124-12-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
-To: Paul Moore <paul@paul-moore.com>,
- LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
- linux-api@vger.kernel.org,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
- <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621022959.9124-12-laoar.shao@gmail.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On 6/20/2024 2:05 PM, Paul Moore wrote:
-> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> We recently introduced system calls to access process attributes that
->> are used by Linux Security Modules (LSM). An important aspect of these
->> system calls is that they provide the LSM attribute data in a format
->> that identifies the LSM to which the data applies. Another aspect is that
->> it can be used to provide multiple instances of the attribute for the
->> case where more than one LSM supplies the attribute.
->>
->> We wish to take advantage of this format for data about network peers.
->> The existing mechanism, SO_PEERSEC, provides peer security data as a
->> text string. This is sufficient when the LSM providing the information
->> is known by the user of SO_PEERSEC, and there is only one LSM providing
->> the information. It fails, however, if the user does not know which
->> LSM is providing the information.
->>
->> Discussions about extending SO_PEERSEC to accomodate either the new
-> Spelling nitpick -> "accommodate" :)
+On Fri, Jun 21, 2024 at 10:29:59AM +0800, Yafang Shao wrote:
+> To prevent erros from occurring when the src string is longer than the
+> dst string in strcpy(), we should use __get_task_comm() instead. This
+> approach also facilitates future extensions to the task comm.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
 
-Thanks.
+I guess the entire series will go in through a dedicated pull or some
+other tree, so
 
->> format or some other encoding scheme invariably lead to the conclusion
->> that doing so would lead to tears. Hence, we introduce SO_PEERCONTEXT
->> which uses the same API data as the LSM system calls.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  arch/alpha/include/uapi/asm/socket.h  |  1 +
->>  arch/mips/include/uapi/asm/socket.h   |  1 +
->>  arch/parisc/include/uapi/asm/socket.h |  1 +
->>  arch/sparc/include/uapi/asm/socket.h  |  1 +
->>  include/linux/lsm_hook_defs.h         |  2 +
->>  include/linux/security.h              | 18 ++++++++
->>  include/uapi/asm-generic/socket.h     |  1 +
->>  net/core/sock.c                       |  4 ++
->>  security/apparmor/lsm.c               | 39 ++++++++++++++++
->>  security/security.c                   | 86 +++++++++++++++++++++++++++++++++++
->>  security/selinux/hooks.c              | 35 ++++++++++++++
->>  security/smack/smack_lsm.c            | 25 ++++++++++
->>  12 files changed, 214 insertions(+)
-> ..
->
->> diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
->> index 8ce8a39a1e5f..e0166ff53670 100644
->> --- a/include/uapi/asm-generic/socket.h
->> +++ b/include/uapi/asm-generic/socket.h
->> @@ -134,6 +134,7 @@
->>  
->>  #define SO_PASSPIDFD		76
->>  #define SO_PEERPIDFD		77
->> +#define SO_PEERCONTEXT		78
-> Bikeshed time ... how about SO_PEERLSMCTX since we are returning a
-> lsm_ctx struct?
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Sure.
+for merging through whatever non-drm tree makes most sense for this.
 
+Cheers, Sima
 
->> diff --git a/security/security.c b/security/security.c
->> index e387614cb054..fd4919c28e8f 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -874,6 +874,64 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
->>  	return rc;
->>  }
->>  
->> +/**
->> + * lsm_fill_socket_ctx - Fill a socket lsm_ctx structure
->> + * @optval: a socket LSM context to be filled
->> + * @optlen: uctx size
-> "@optlen: @optval size"
+> ---
+>  drivers/gpu/drm/drm_framebuffer.c     | 2 +-
+>  drivers/gpu/drm/i915/i915_gpu_error.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
+> index 888aadb6a4ac..25262b07ffaf 100644
+> --- a/drivers/gpu/drm/drm_framebuffer.c
+> +++ b/drivers/gpu/drm/drm_framebuffer.c
+> @@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
+>  	INIT_LIST_HEAD(&fb->filp_head);
+>  
+>  	fb->funcs = funcs;
+> -	strcpy(fb->comm, current->comm);
+> +	__get_task_comm(fb->comm, sizeof(fb->comm), current);
+>  
+>  	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
+>  				    false, drm_framebuffer_free);
+> diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
+> index 625b3c024540..b2c16a53bd24 100644
+> --- a/drivers/gpu/drm/i915/i915_gpu_error.c
+> +++ b/drivers/gpu/drm/i915/i915_gpu_error.c
+> @@ -1411,7 +1411,7 @@ static bool record_context(struct i915_gem_context_coredump *e,
+>  	rcu_read_lock();
+>  	task = pid_task(ctx->pid, PIDTYPE_PID);
+>  	if (task) {
+> -		strcpy(e->comm, task->comm);
+> +		__get_task_comm(e->comm, sizeof(e->comm), task);
+>  		e->pid = task->pid;
+>  	}
+>  	rcu_read_unlock();
+> -- 
+> 2.39.1
+> 
 
-Thank you.
-
-
->> + * @val: the new LSM context value
->> + * @val_len: the size of the new LSM context value
->> + * @id: LSM id
->> + * @flags: LSM defined flags
->> + *
->> + * Fill all of the fields in a lsm_ctx structure.  If @optval is NULL
->> + * simply calculate the required size to output via @optlen and return
->> + * success.
->> + *
->> + * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
->> + * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
->> + */
->> +int lsm_fill_socket_ctx(sockptr_t optval, sockptr_t optlen, void *val,
->> +			size_t val_len, u64 id, u64 flags)
->> +{
->> +	struct lsm_ctx *nctx = NULL;
->> +	unsigned int nctx_len;
->> +	int loptlen;
-> u32?
-
-Probably. I'll revise in line with your comment below.
-
->> +	int rc = 0;
->> +
->> +	if (copy_from_sockptr(&loptlen, optlen, sizeof(int)))
->> +		return -EFAULT;
-> It seems the current guidance prefers copy_safe_from_sockptr(), see
-> the note in include/linux/sockptr.h.
-
-Always a good idea to follow guidance.
-
->> +	nctx_len = ALIGN(struct_size(nctx, ctx, val_len), sizeof(void *));
->> +	if (nctx_len > loptlen && !sockptr_is_null(optval))
->> +		rc = -E2BIG;
-> Why do we care if @optval is NULL or not?  We are in a -E2BIG state,
-> we're not copying anything into @optval anyway.  In fact, why are we
-> doing the @rc check below?  Do it here like we do in lsm_fill_user_ctx().
->
->   if (nctx_len > loptlen) {
->     rc = -E2BIG;
->     goto out;
->   }
-
-That's a bit sloppy on my part. I'll clean it up.
-
-
->> +	/* no buffer - return success/0 and set @uctx_len to the req size */
-> "... set @opt_len ... "
-
-Yes.
-
->> +	if (sockptr_is_null(optval) || rc)
->> +		goto out;
-> Do the @rc check above, not here.
->
->> +	nctx = kzalloc(nctx_len, GFP_KERNEL);
->> +	if (!nctx) {
->> +		rc = -ENOMEM;
->> +		goto out;
->> +	}
->> +	nctx->id = id;
->> +	nctx->flags = flags;
->> +	nctx->len = nctx_len;
->> +	nctx->ctx_len = val_len;
->> +	memcpy(nctx->ctx, val, val_len);
->> +
->> +	if (copy_to_sockptr(optval, nctx, nctx_len))
->> +		rc = -EFAULT;
-> This is always going to copy to the start of @optval which means we
-> are going to keep overwriting previous values in the multi-LSM case.
-
-The multiple LSM case isn't handled in this version. I don't want this
-patch to depend on multiple LSM support.
-
-> I think we likely want copy_to_sockptr_offset(), or similar.  See my
-> comment in security_socket_getpeerctx_stream().
->
->> +	kfree(nctx);
->> +out:
->> +	if (copy_to_sockptr(optlen, &nctx_len, sizeof(int)))
->> +		rc = -EFAULT;
->> +
->> +	return rc;
->> +}
->> +
->> +
->>  /*
->>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
->>   * can be accessed with:
->> @@ -4743,6 +4801,34 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
->>  	return LSM_RET_DEFAULT(socket_getpeersec_stream);
->>  }
->>  
->> +/**
->> + * security_socket_getpeerctx_stream() - Get the remote peer label
->> + * @sock: socket
->> + * @optval: destination buffer
->> + * @optlen: size of peer label copied into the buffer
->> + * @len: maximum size of the destination buffer
->> + *
->> + * This hook allows the security module to provide peer socket security state
->> + * for unix or connected tcp sockets to userspace via getsockopt
->> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
->> + * is associated with an ipsec SA.
->> + *
->> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
->> + *         values.
->> + */
->> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
->> +				      sockptr_t optlen, unsigned int len)
->> +{
->> +	struct security_hook_list *hp;
->> +
->> +	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
->> +			     list)
->> +		return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
->> +							 len);
->> +
->> +	return LSM_RET_DEFAULT(socket_getpeerctx_stream);
->> +}
-> Don't we need the same magic that we have in security_getselfattr() to
-> handle the multi-LSM case?
-
-Yes. I would like to move this ahead independently of the multi-LSM support.
-Putting the multi-LSM magic in is unnecessary and rather pointless until then.
-
-> --
-> paul-moore.com
-
-Thank you for the review. Expect v2 before very long.
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
