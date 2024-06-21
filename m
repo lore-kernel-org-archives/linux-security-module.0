@@ -1,66 +1,289 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94C563D5;
-	Fri, 21 Jun 2024 13:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19344F215
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 16:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718978239; cv=none; b=iLxK5jwY8OV05o5xjxAA+xiKt9QOEp/BVZC2JfGyDd7hO5AQINXdWgvdt4RY60MB9OLaBkueuWAOoHVjWFr+mgnBnZjhk9NA3vey3bpHu1h4bc5OsorYyvphmjXmZrp6THefM+Mex2FH7/MF5LlSLAWXc+FmKHZJijv1zpMA3WU=
+	t=1718985618; cv=none; b=OIck2bNUr0Dab2fUAOeIMi/eFyKrBw7SGrxTdNhfzJlPxwkv+yBYJAf0IYwF4cdAkZWvIf/9XqVQHEYESfz8uVWmOIFlVsYNxm3MB9GcmXYpgww4YwLjz1RVUZFcQw6Gx1t9gAkPeqlrg/wBSCPoyhubSJQWc/rUgjHpOzpA6vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718978239; c=relaxed/simple;
-	bh=7D1XSOiDMq3J20D9eCQjvYB35cnbWTU/PoTWWvCb8rY=;
+	s=arc-20240116; t=1718985618; c=relaxed/simple;
+	bh=HLIGsFoFXfkW5grq1kBsr2MpcKrxX3SI7FnwCeRJfmQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNEIdPfiaoxTaDnkP+AlIW9zxKTkPv8hGyadXgy71KqzH9tyAEFSSt7QFyheeWrlrQ6xZ3vnZiFlALaHAIkk6PFAwOTEhg/zCTzg5B0zl+8/06IO2hGk72zJZS9tomHPrejl8Hmiory+tQFmzqnrh8mpfO2IMxQs16wSWtYSObg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mO5OOz3S; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=eHddFMfyBOt6uTvoVA3AI388/+AW+vGnbA+tQA1p3Q/HGDeqka0bOv5rhvJgoNJv5rNXOeQGRtaFSwSrFz7CDzHX5v6uvI1jM8DJNzifXwPKMKqiN9NdMbzef/QMNJM8I+DKXwR0PkK/YiKy+AIfwOw7JRNmEfzfWUp2BG0GZsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WaFdfRFb; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mO5OOz3S"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7D1XSOiDMq3J20D9eCQjvYB35cnbWTU/PoTWWvCb8rY=; b=mO5OOz3SIWlYAssxOG0CRWoAp/
-	L64OelAl2Iw5whZKQuTcpkXinUkOwVp6l9D5GRFVtsFuYWHJbBQqcL6FICt050IxsfQKfvDTuMZUl
-	sg/akK8oWqgR8MYV/AbLrDQ+XphkyeSGmXCjIWigtkPjpD/CDpWQtAbhKMX40rz7r/GyVM0DxOx9+
-	P/Iw1kTh7JIISPvnZNKF9qfyxMec91XW4JG7yjCBYqPKzTL2010UQ3WH533TC7+dN1/Xf253uALgo
-	fhYiTSl6bxT3icrvO6qwt74jay6C/y7Vh1HtMRIeAsCDYzdVzh7C55AGfmBQlcK8p05Wp54FdJrQR
-	CtGKSFng==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sKelH-00000007G58-0bUT;
-	Fri, 21 Jun 2024 13:57:07 +0000
-Date: Fri, 21 Jun 2024 14:57:07 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
-	catalin.marinas@arm.com, akpm@linux-foundation.org,
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 06/11] mm/util: Deduplicate code in
- {kstrdup,kstrndup,kmemdup_nul}
-Message-ID: <ZnWGsw4d9aq5mY0S@casper.infradead.org>
-References: <20240621022959.9124-1-laoar.shao@gmail.com>
- <20240621022959.9124-7-laoar.shao@gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WaFdfRFb"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W5MWR4WWmzhc9;
+	Fri, 21 Jun 2024 18:00:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1718985603;
+	bh=jjsdmC2rugRobeZ0tOl0fxS/md4FLeZ48MksR7AnbBo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WaFdfRFbrYof0i6GJ3s03UP2zYVpTvHZEofmVI+QFEKiogYokX1VszDK9uzjkk+lK
+	 j4OrAs8Q4kmgye1LO+uLrT8MfCppYj6fsGOKwQEs7RQYeLXKIjmwBpqEJaRuUzHKEt
+	 6v+2gQi7FUW0V6JK0vIhKrt1Ww7CUp1ISzdxpPlE=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4W5MWQ29Yrz353;
+	Fri, 21 Jun 2024 18:00:02 +0200 (CEST)
+Date: Fri, 21 Jun 2024 18:00:01 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v5] landlock: Add abstract unix socket connect restriction
+Message-ID: <20240621.OhK4Aht4oa7i@digikod.net>
+References: <ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240621022959.9124-7-laoar.shao@gmail.com>
+In-Reply-To: <ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000>
+X-Infomaniak-Routing: alpha
 
-On Fri, Jun 21, 2024 at 10:29:54AM +0800, Yafang Shao wrote:
-> +++ b/mm/internal.h
+On Thu, Jun 20, 2024 at 03:05:34PM GMT, Tahera Fahimi wrote:
+> Abstract unix sockets are used for local inter-process communications
+> without on a filesystem. Currently a sandboxed process can connect to a
 
-Why are you putting __kstrndup in a header file when it's only used
-in util.c?
+"without a"
 
-Also, I think this function is actually __kmemdup_nul(), not
-__kstrndup().
+> socket outside of the sandboxed environment, since landlock has no
 
+s/landlock/Landlock/
+
+> restriction for connecting to a unix socket in the abstract namespace.
+
+"namespace" usually refers to the namespaces(7) man page.  What about
+using the same vocabulary is in unix(7):
+"for connecting to an abstract socket address."
+
+> Access to such sockets for a sandboxed process should be scoped the same
+> way ptrace is limited.
+> 
+> Because of compatibility reasons and since landlock should be flexible,
+> we extend the user space interface by adding a new "scoped" field
+
+...to the ruleset attribute structure.
+
+> . This
+> field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+> specify that the ruleset will deny any connection from within the
+> sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> 
+> -------
+
+For the next version, please list all changes since last version. With
+this v5 I see some renaming, a new curr_ruleset field with optional
+domain scopping, and code formatting.
+
+
+> V4: Added abstract unix socket scoping tests
+> V3: Added "scoped" field to landlock_ruleset_attr
+> V2: Remove wrapper functions
+> 
+> -------
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+>  include/uapi/linux/landlock.h                 |  27 ++
+>  security/landlock/limits.h                    |   3 +
+>  security/landlock/ruleset.c                   |  12 +-
+>  security/landlock/ruleset.h                   |  27 +-
+>  security/landlock/syscalls.c                  |  13 +-
+>  security/landlock/task.c                      |  95 +++++++
+>  .../testing/selftests/landlock/ptrace_test.c  | 261 ++++++++++++++++++
+>  7 files changed, 430 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 68625e728f43..1eb459afcb3b 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -37,6 +37,11 @@ struct landlock_ruleset_attr {
+>  	 * rule explicitly allow them.
+>  	 */
+>  	__u64 handled_access_net;
+> +	/**
+> +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
+
+Please take a look at the generated documentation and fix the build
+warnings related to this patch: check-linux.sh doc (or make htmldocs)
+
+
+> +	 * which are confined to only affect the current Landlock domain.
+
+What about this?
+"Bitmask of scopes () restricting a Landlock domain from accessing
+outside resources (e.g. IPCs)."
+
+> +	 */
+> +	__u64 scoped;
+>  };
+>  
+>  /*
+> @@ -266,4 +271,26 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  /* clang-format on */
+> +
+> +/**
+> + * DOC: scope
+> + *
+> + * .scoped attribute handles a set of restrictions on kernel IPCs through
+> + * the following flags.
+
+Shouldn't this be after the section title?
+
+> + *
+> + * Scope access flags
+
+You can remove "access"
+
+> + * ~~~~~~~~~~~~~~~~~~~~
+> + * 
+> + * These flags enable to restrict a sandboxed process from a set of IPC 
+
+There are several spaces at the end of lines, they should be removed.
+
+> + * actions. Setting a flag in a landlock domain will isolate the Landlock
+
+A flag is not set "in a Landlock domain" but for a ruleset.
+
+> + *  domain to forbid connections to resources outside the domain.
+
+Please remove unneeded spaces.
+
+> + *
+> + * IPCs with scoped actions:
+> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
+> + *   connect to a process outside of the sandbox domain through abstract
+> + *   unix sockets. 
+
+Restrict a sandboxed process from connecting to an abstract unix socket
+created by a process outside the related Landlock domain (e.g. a parent
+domain or a process which is not sandboxed).
+
+> + */
+> +/* clang-format off */
+> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
+> +/* clang-format on*/
+>  #endif /* _UAPI_LINUX_LANDLOCK_H */
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 4eb643077a2a..eb01d0fb2165 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -26,6 +26,9 @@
+>  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+>  
+> +#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
+> +#define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+> +#define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
+>  /* clang-format on */
+>  
+>  #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index 6ff232f58618..3b3844574326 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -52,12 +52,13 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+>  
+>  struct landlock_ruleset *
+>  landlock_create_ruleset(const access_mask_t fs_access_mask,
+> -			const access_mask_t net_access_mask)
+> +			const access_mask_t net_access_mask,
+> +			const access_mask_t scope_mask)
+>  {
+>  	struct landlock_ruleset *new_ruleset;
+>  
+>  	/* Informs about useless ruleset. */
+> -	if (!fs_access_mask && !net_access_mask)
+> +	if (!fs_access_mask && !net_access_mask && !scope_mask)
+>  		return ERR_PTR(-ENOMSG);
+>  	new_ruleset = create_ruleset(1);
+>  	if (IS_ERR(new_ruleset))
+> @@ -66,6 +67,8 @@ landlock_create_ruleset(const access_mask_t fs_access_mask,
+>  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+>  	if (net_access_mask)
+>  		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
+> +	if (scope_mask)
+> +		landlock_add_scope_mask(new_ruleset, scope_mask, 0);
+>  	return new_ruleset;
+>  }
+>  
+> @@ -311,7 +314,7 @@ static void put_hierarchy(struct landlock_hierarchy *hierarchy)
+>  {
+>  	while (hierarchy && refcount_dec_and_test(&hierarchy->usage)) {
+>  		const struct landlock_hierarchy *const freeme = hierarchy;
+> -
+> +		
+>  		hierarchy = hierarchy->parent;
+>  		kfree(freeme);
+>  	}
+> @@ -472,6 +475,7 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+>  	}
+>  	get_hierarchy(parent->hierarchy);
+>  	child->hierarchy->parent = parent->hierarchy;
+> +	child->hierarchy->curr_ruleset = child;
+>  
+>  out_unlock:
+>  	mutex_unlock(&parent->lock);
+> @@ -571,7 +575,7 @@ landlock_merge_ruleset(struct landlock_ruleset *const parent,
+>  	err = merge_ruleset(new_dom, ruleset);
+>  	if (err)
+>  		goto out_put_dom;
+> -
+> +	new_dom->hierarchy->curr_ruleset = new_dom;
+>  	return new_dom;
+>  
+>  out_put_dom:
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index 0f1b5b4c8f6b..39cb313812dc 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -35,6 +35,8 @@ typedef u16 access_mask_t;
+>  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+>  /* Makes sure all network access rights can be stored. */
+>  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_NET);
+> +/* Makes sure all scoped rights can be stored*/
+> +static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_SCOPE);
+>  /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
+>  static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+>  
+> @@ -42,6 +44,7 @@ static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+>  struct access_masks {
+>  	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
+>  	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
+> +	access_mask_t scoped : LANDLOCK_NUM_SCOPE;
+>  };
+>  
+>  typedef u16 layer_mask_t;
+> @@ -150,6 +153,10 @@ struct landlock_hierarchy {
+>  	 * domain.
+>  	 */
+>  	refcount_t usage;
+> +	/**
+> +	 * @curr_ruleset: a pointer back to the current ruleset
+> +	 */
+> +	struct landlock_ruleset *curr_ruleset;
+
+This curr_ruleset pointer can become a dangling pointer and then lead to
+a user after free bug because a domain (i.e. ruleset tie to a set of
+processes) is free when no processes use it.
+
+Instead, we could just use a bitmask (or a boolean for now) to identify
+if the related layer scopes abstract unix sockets.  Because struct
+landlock_hierarchy identifies only one layer of a domain, another and
+simpler approach would be to only rely on the "client" and "server"
+domains' layers.
