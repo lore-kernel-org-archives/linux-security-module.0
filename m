@@ -1,124 +1,143 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800EC16D4CE
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 21:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE817C7B5
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 22:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719004768; cv=none; b=gJH14dPHvO/r17FfEQxm2gIglbmyDSnTHMTdQ2Iq2nmVuxdTHbDPVBycoUcAz//afKYCHzVchsIgqCUmPtbEv/oeg3rv5u74iUGaWuWCANO7mqFW3PPoqTqJZ2ZwKk/oO+liCe6SQBA7fQ/uRv+F61ugu7nD3I+RVOaGvy6E+qk=
+	t=1719007845; cv=none; b=OPzKnr+auuWjb1qFm0/OhjE8+lb3xNq6bGkw0Bdh8R2XLH/Pdpe3X5gegQIMcNr6OklMz83jef8E5nmT15QoNHQLFQmOjm/UjuaBl3AtnipxJoCPIAyDsoX2pyKdhhW6dSXSAilB3HKzcv78c0WdkXQ3JZt4iu/6Mpv+F4McAco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719004768; c=relaxed/simple;
-	bh=8lr1mwe6kp+kuxQVqcuMU3hSRlGZ/owZFV26zQzK298=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V4TWZGyOLftw1VTYSR6Y9SmTKSLvIrox2K7N3lzfMpWVuNTyUHH6jwBb+bX8IVJgrmA9xnKp0vpfFagqJj1UmNxXn0ChaY0FNgl+7dmvunjrTgG1j3pZb3NkM/CoXaditb6Tf/k2a/UYNIHu93KZTjeKxnjNp4nzedHueT8Wxqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KeNONThH; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1719007845; c=relaxed/simple;
+	bh=/3OUXbxbh4HVBBwvgsX+pbK2kz+8OtQOGQtbeuGta1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eRlvM/vtVHxhV5IWUkmPgRBVELFXR8dyVpaBTPSWQZtiBuMbHROSthsPTJqOZiU0QGo1Dj1vRI38aAhqXo5kcTpeoro6NYwTh8j6xknIp7blRabqaAAjdgcuMvPEeM/qMBoCT+lP0VbkVCDXehRiweEEHmY1nljKUf3ba6nDVcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=BVxRMx2U; arc=none smtp.client-ip=66.163.185.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KeNONThH"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so2448798276.2
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 14:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1719004765; x=1719609565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uTh4L3BY4iwQCbofoLDyf8SOpU+yU/iGqx41nKNZbog=;
-        b=KeNONThHR5rPROY4WGN8GVZ2DfbLUel0xnJPzlL46IgAyJkA1rVEE5Bg/+aFYZm3y9
-         mmxKAt42c2ucaHb2WV5v7ADvb0RXZZ/sRJ9GkOeNMUJh2slY1lVGT+hh+7D5w86U+4Kq
-         Bovus/SOYTVddU2sC7FBZg80jSGq8+mZ/bYZh3aA6qwKfOaGcylvhLs1k0AGFP0+X8P7
-         bl1UXL/+8egdNX+7Z+Ir5kiWxNHVCJFphG40U91lehEwX4FQ9nzpBBtsp00jGL3j5U3J
-         B3oOysnh6hx9ztyZRwwJ+BKDmw90b8xo3hO+N8cScniI3/acY7pJWnbExncXlL+cWdQa
-         l6Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719004765; x=1719609565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uTh4L3BY4iwQCbofoLDyf8SOpU+yU/iGqx41nKNZbog=;
-        b=AXzYtF5xRLEWLAdauotUaRWVksOVX/9oTtUJgHVvZDM0Vzu1/njFG8tYvgSXUGXILI
-         lgyemXrO6V85h1tIpc2zBpFQtDvQhQZEmvTgSSzHQIkt5N6Ip1ETSEU4SdkfFyHGQmpI
-         b+mG/jKpgK9p1wBZdvvpGco2I6qN13AtDgouWPbdmQS0oUtmYaU+D3PgHT9MTtcEfPkX
-         o2l13iImMI+xsRWrpWZdwMH2qaLm0s9B7ckSrZTTNzq5OdBVeX2sGRIqrJalh9uJsbcE
-         IxpOQYQwK9bzep31z23bmUp6Ypl8SBgxdR672o57hhuq3qw7qdZuA2sByFxJwnHf4SYj
-         TWZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/DI9b0MQFvpcXovDg58vkk1kSo3aHytbZ8IjFmDy4SAI9lXCrA4rzk8syqDxZyLDxRY7kowKNt4PyEH3tDWXI4FuddT7Vy3IxkOLXpBtJn7ija6vk
-X-Gm-Message-State: AOJu0Yxy5ymU0YVvx74AUBIoiPJU0UueA2Q8Q8ding+5seiVWGRXfBSn
-	VG8tkftL5T65w+Qv5B6qBhFzrMED3rHNJLUxDpxnDX2xGpgkFMXwq8Xj98XM4lcEuioel0gBsOb
-	4GRHJSUmf+pydR1fpGIXDBpFOVQTyDfizbeaO
-X-Google-Smtp-Source: AGHT+IEO3bU6Bkwuyqrkdth6ewbR+7IHhepu1IYoa73UuwczNOTdI9rtJb2IzNy/CVVXrmq3jsM8cCXNxJAJ4+XXpKo=
-X-Received: by 2002:a25:ad06:0:b0:dff:2ef1:e3d5 with SMTP id
- 3f1490d57ef6-e02be227615mr8816096276.63.1719004765371; Fri, 21 Jun 2024
- 14:19:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BVxRMx2U"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007837; bh=W93MUuqF8YI2qTC2EngAWFfgxbIWTzpfO4cxB6FzZ44=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=BVxRMx2UZ4Sd9mDni9AlM6542+M+c5KP3zShg4gsDDXyQJcA+IyJtgSfGEFzc40U3qxJUt91Ax2NIzE6T0Wl2GxlS/7hydpzGI44ToE1zvyhqe9RhANGjrJul36jkfr1ElmqAXLRMSNuPXKSueqCgvGEZal13dy8WBfKKWqItUjcF47k4bqFx8viasQLr35Yx/oFFl7gdcZkb8tYwIvYDW3gT8qW0S9/hX0f5+ye602NqXlCiVeADggDyj8GaG+0nkGUOlish2zBsdxGdU5KDDK9ZM5WehFOdQc5GKi5SDPQvNkvWeMLqjXK/24vf8pflArLc0lqP/5dl+ZoY9wcsg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007837; bh=ui6s94h4q2oudp0CSKkXKz3tYjBAbXlEXtQLpiASxhy=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=EuPVysbHMMYzOZdicVN27+3in9yPa/SJCP7qHyNIAYgZCF72Svkn7sYR4wUPTGv+3iDs13s7MzbijyIMvThIWAd02UA7IKmQvcxWtaCB3fscWjMxRFaE0NS8IeheG6/PdfzfoX8RlSYzrNrHS5CXI7FjELtEBHHqEsSLxbk9H3MLjUukVXG0Ld0tTTF1O1vyfHD1cd+nT57SJnJoO2Vdk0K9+b/dV0N8OSKNwuS1UzZMo9OEWYMdAjL1juOIHtsxvpiQAKmwhl0YfUcF9RGw0QwDzfrE3nmBGdRY/JBJoJAAdTOl4b58kv2QwPuJRjht1hRMwnhnfg02Sfq3NlRbLg==
+X-YMail-OSG: xHIJgvYVM1l_e5pHrqiy_yh8PxQUmnnZNw03DwldaoYhvIGtjxoRyA1hUkbJVF2
+ SyOTADNPwKlhsH4_83zkPIKbRq.Q0DDQVZXhiAYJiSXcCpI4pkxrfdfI3vWbH_etfKHXhHTVjZSE
+ HA9zfNysDePb7ZPyH_ti6YBa2UBkPKPpnnvew_UvKOdqFRm71QQRYfAegjLsmc9dSBpn_3HWkfhq
+ 2x0HKa_ysth7HW2P1UYkZvIszKuYDsub_iF_rSh8nYr65Q1fDLOSK9UpkwRw1a12c3eFmJlbg0gG
+ Ps.qhuEdAr69Y3LbxLYIrKwm1QmlWSyFaCxW4GRYkAmyhSzc8GD..EoXavTvvE8fvz8AAOZYWO2Q
+ o3oiK8stAertTzEtGqR0VWSFo1XxCDtA2Im6C9LiZ99jz75WJ.24MDm1a5yBTXJFqFBe0p13NiRI
+ laAyoDkDOk1F11Zw.0bvEP5UrWMudvqUqBMOcoVmVQHQCeUBz8ignD9gGW8tWJmNH5YIn9OL1EAC
+ sLK6kt9hL_Pg00d2R.TgEfim0FuBicqwA1PecLiM4YD_llWpfGSbZ1LIDtys8G2TXmDsA52XupJx
+ PMZjxcX8z7U_Z4l19e7ijxZrDfSkg02CsUczSeAbhYVo.NUZLs_Rb6nmI.15KZLAmHmqd_xQlpSE
+ HmNNwR.v7AxvawVtBWhMpYm4Fien70j10RRBAXyJ3xDHBseTIV7f_f1eAJzEQfKRtHy1jSFI_5O6
+ 9W4ox2yyxPEAeIyvRTDJ3DpJXsE_QCHuPUaY23.mIkOVS6vbqAUc6Jes1P2vRpSC2fto3GRdtTCt
+ BuaJOI1owyBSFNasUaLZb3jT1bVk.4EKVT2a56pf.sHQCSbSxXgGi6aJ0BJffqA2gp_i8u1oSZ3f
+ 6N.WKA.hUb2iRQ7lBTIaV.2JXAVAuRJdP0_rCTSyDr443NZTQ_GHzuY3STxDEXNsHP2BX2lIa2JT
+ UPUwrhHrgTQGt40I8FtCXt0fPc.do3fDAEvnbMj3yd5kzy34.U2DukQcJ3ykWDIRnZKgwaQBFlbT
+ 2SPn6B6Yfte1JmW9oVQBt6Bcr0eQv.Jwsjrus0mnWb1DVqrjLzOZuLMlwC3u0oxqaRTJfpvyZcQD
+ k_bAPui8HfxrlGg_yH.wqVeDrUAvUUuOv66uKwagBp2Eyl_eVayXfj3f2RzP2xxd8enU.owi.whw
+ 4j1OiGmAUtbNINy3mzjjRpaIQoFuR577yzUkFvYzKka61bZN61J_YbfDuPhwUlBePngWeWdasony
+ XyvXRR9ac5F2y3agMebnLJSGv0E0n1RJurZ12HYCGD_mRUNfVTw_vyGNYReqT.7d32FalsrkhXNM
+ YE7X70zZYy.QvxBzsj9hBywvB1wAn131GV3nDNvyu03jd9V32qpkMJUAeZ2O0s36i_sjiky2RBnE
+ IR9_V9wk3p3jbdJ7umKG0BtTNjwHO2yc.K1TxmSmTGg.YyAgWznGK4qarj.5z_LAWmyAVyNnpFVI
+ EUIeRBnK.jdm.oeBa_etlm.RFulscNElPDHZJaIfhlqoxSiSf0pApy_vsW756ibuOUjqt9RIaFfy
+ FiaURzn6l_1w4u6FvRoYbgGCOW1tSciD3ceLtTOCX_0Az.et8w67gzyvtLQ9wApkF8Pru3jCYO3U
+ SqnGkd1jqaq.D.BWNalIaF3QkpLZor5mF09f1GiHTJTmQLzRtdMbbmXBF6cDdoHhmBSgAFBWvScq
+ b.DzMpIcEfNHzmK.O17slhHyZ_jfQFXwhAIJAbifTkTVWxx.PwMVxHWIpeLuhEukWJgfAF8Off20
+ VCejX_LNPVoO5MDUVNnB.UeFvWep7en17N7Y6GMQ3jmJWoF7EUmjPdDrF.JPqiWCXfeksdI5Cwfx
+ oKAkT7Eci3JBKS0SDAE9z3tItrRYpvceo37.dySQuLtrLhJa0ImT69QsKnCtTEo95RjTqcDKLJL0
+ dxMhgkNhQdt3.dTjhhaQdvRTgawMLhdFz5vaILGYncO00Zy03VhwmPwkoaYJG2GlPcd.flgMobOs
+ 3tsHIk32BxbadWd5a5QpKTxIP9VT4cScMqPZr0iu.ikEYWkmxj15JdbnXchSsW7B_J_QDOGtprtl
+ bKecFPJEE5a1OCuLLQKrB1xulpgMCgz24Ns60rT13dXBf4iSvPUG_fruCb1xupgZhY4HVVIHS0uD
+ SHd1H0ZWEvi9xgJFapzZbp_zTk1SpF3cNUx3FPJc6.k7Y2YYZ2rba22bJEOwnDg5Y6dpidlYfXBz
+ YOknam3R1lChQ7W0ePQWNYxezpArxdnk8PnmZkKVtSmrwCXzeAxdoz3O1wLXzb.2IT3Ln8viyS9w
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 40e448d0-786a-4711-84b1-e00c610a0ba3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 22:10:37 +0000
+Received: by hermes--production-gq1-5b4c49485c-75jqb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fa3be147b3108ab3bb88dd26f261d3a7;
+          Fri, 21 Jun 2024 22:00:25 +0000 (UTC)
+Message-ID: <2cddc480-f911-44e3-b415-33e0cec2964c@schaufler-ca.com>
+Date: Fri, 21 Jun 2024 15:00:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231215221636.105680-1-casey@schaufler-ca.com>
- <20231215221636.105680-2-casey@schaufler-ca.com> <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
- <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
- <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com> <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
-In-Reply-To: <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Jun 2024 17:19:14 -0400
-Message-ID: <CAHC9VhRKmkAPgQRt0YXrF4hLXCp7RyCSkG0K9ZchJ6x4bKKhEw@mail.gmail.com>
-Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from security_audit_rule
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
-	keescook@chromium.org, john.johansen@canonical.com, 
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
-	linux-kernel@vger.kernel.org, mic@digikod.net, 
-	linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
+To: Paul Moore <paul@paul-moore.com>
+Cc: LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-api@vger.kernel.org,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
+ <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
+ <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
+ <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Jun 21, 2024 at 4:34=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On 6/21/2024 10:23 PM, Mimi Zohar wrote:
-> > On Fri, 2024-06-21 at 15:07 -0400, Paul Moore wrote:
-> >> On Fri, Jun 21, 2024 at 12:50=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> >>> On Fri, Dec 15, 2023 at 5:16=E2=80=AFPM Casey Schaufler <casey@schauf=
-ler-ca.com> wrote:
-> >>>> Create real functions for the ima_filter_rule interfaces.
-> >>>> These replace #defines that obscure the reuse of audit
-> >>>> interfaces. The new functions are put in security.c because
-> >>>> they use security module registered hooks that we don't
-> >>>> want exported.
-> >>>>
-> >>>> Acked-by: Paul Moore <paul@paul-moore.com>
-> >>>> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> >>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> >>>> To: Mimi Zohar <zohar@linux.ibm.com>
-> >>>> Cc: linux-integrity@vger.kernel.org
-> >>>> ---
-> >>>>   include/linux/security.h     | 24 ++++++++++++++++++++++++
-> >>>>   security/integrity/ima/ima.h | 26 --------------------------
-> >>>>   security/security.c          | 21 +++++++++++++++++++++
-> >>>>   3 files changed, 45 insertions(+), 26 deletions(-)
-> >>>
-> >>> Mimi, Roberto, are you both okay if I merge this into the lsm/dev
-> >>> branch?  The #define approach taken with the ima_filter_rule_XXX
-> >>> macros likely contributed to the recent problem where the build
-> >>> problem caused by the new gfp_t parameter was missed during review;
-> >>> I'd like to get this into an upstream tree independent of the larger
-> >>> stacking effort as I believe it has standalone value.
-> >>
-> >> ... and I just realized neither Mimi or Roberto were directly CC'd on
-> >> that last email, oops.  Fixed.
-> >
-> > Paul, I do see things posted on the linux-integrity mailing list pretty=
- quickly.
-> > Unfortunately, something came up midday and I'm just seeing this now.  =
-As for
-> > Roberto, it's probably a time zone issue.
+On 6/21/2024 12:41 PM, Paul Moore wrote:
+> On Fri, Jun 21, 2024 at 12:06 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 6/20/2024 2:05 PM, Paul Moore wrote:
+>>> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> ..
 >
-> Will review/check it first thing Monday morning.
+>>>> +/**
+>>>> + * security_socket_getpeerctx_stream() - Get the remote peer label
+>>>> + * @sock: socket
+>>>> + * @optval: destination buffer
+>>>> + * @optlen: size of peer label copied into the buffer
+>>>> + * @len: maximum size of the destination buffer
+>>>> + *
+>>>> + * This hook allows the security module to provide peer socket security state
+>>>> + * for unix or connected tcp sockets to userspace via getsockopt
+>>>> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
+>>>> + * is associated with an ipsec SA.
+>>>> + *
+>>>> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
+>>>> + *         values.
+>>>> + */
+>>>> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
+>>>> +                                  sockptr_t optlen, unsigned int len)
+>>>> +{
+>>>> +    struct security_hook_list *hp;
+>>>> +
+>>>> +    hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
+>>>> +                         list)
+>>>> +            return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
+>>>> +                                                     len);
+>>>> +
+>>>> +    return LSM_RET_DEFAULT(socket_getpeerctx_stream);
+>>>> +}
+>>> Don't we need the same magic that we have in security_getselfattr() to
+>>> handle the multi-LSM case?
+>> Yes. I would like to move this ahead independently of the multi-LSM support.
+>> Putting the multi-LSM magic in is unnecessary and rather pointless until then.
+> Starting with the LSM syscalls, I want any new user visible API that
+> can support multiple LSMs to have support for multiple LSMs.  Yes, the
+> setselfattr API doesn't support multiple LSMs, but that is because we
+> agreed there was never going to be a way to safely support that usage.
+> In this particular case, that same argument does not apply, we could
+> have multiple LSMs returning a socket's network peer information (even
+> if we don't currently see that), so let's make sure our API supports
+> it from the start.
 
-Thanks Roberto, no rush.
+OK. I'll put that in v2 as well.
 
---=20
-paul-moore.com
+>
+> Unrelated to the above, it would also be good to datagram support as a
+> patch 2/2 thing in a future version of this patchset.  Please be
+> careful not to carry over the mistakes we made with SCM_SECURITY (see
+> the GH discussion linked below).
+
+That's "in my queue". I didn't want to spend time on it until I got
+feedback on this one.
+
+>
+> * https://github.com/SELinuxProject/selinux-kernel/issues/24
+>
