@@ -1,154 +1,218 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FEC15FCFE
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 16:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5749D15FA7F
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 16:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718987972; cv=none; b=qkai3AOPNq/Pu2mgxlmlGw5X8NuknbyrQF+mjWIBTYFoVm7F2hpyiFLL3/WEtMeR62e7Y8AlkkYuNKLw30rMxqTsnGnYG64CzKvSzjeMxO8jnxvLrRsl9cvpaMahtmVkEg9yoXlsUgVoY6fNc1vlFQ6QthqsWcACOrQGRTkiVwo=
+	t=1718988666; cv=none; b=JF4SYdFutV1fuy/P4cBHNT0smLdYJc5iJqzCy6crHSZHCyPXvnu6NJpJB4Ve8ExWFDK2R+Yz3vWZAdu3KP+aT5FsFjXOD2Yi62hJv5QBhi1z4O9Jf6Ivl9Su7w7odt/18pTBScoLHlJXHjVw7EWj2c/baihgeVFP63cVn/u0iy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718987972; c=relaxed/simple;
-	bh=UlgFUywd2WSEjSU6xsxYFHFG7CT7Xep9ROempUMO7/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6tI1ZnQPoodqL34jSzyreYQmkGGvyciJdsZ7kg5PStLE62dVfwp3rLT5kxFTZf2XEX6/cUVhTTwndabgAx3Ux4XoiqpGZf/s0cwQ12Q514KaThb60oCmYl2s/09S1wEbflmFksXuHNZ2ZjgQoPKqit9XktDH6jwndM8yA/DFhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=VtXeSSY9; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+	s=arc-20240116; t=1718988666; c=relaxed/simple;
+	bh=IZ4Cnnxk3XF7uvCUsWi/i38UQ2fJzqrI6jo78DbBRUE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lrqQF8MSVs7l8KzP5cYnYqMSspLP0thxSd4b6g0xekEGl0jAn1QG3p7IYWHyZZuybHgYak2tbDDc5v0iBobgJeSrnkqS/lCizYOMW/i5YiKIM5374qyFTsL48nZsMk4ZuXLFVi5mApKKTWo6hfvGnhOH0FGjcRblABFipl1d35Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=D1OZOPJD; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VtXeSSY9"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebd6ae2f56so2920631fa.0
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 09:39:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="D1OZOPJD"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-63bce128c70so17279057b3.0
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 09:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1718987969; x=1719592769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d+B4q6j7rnOa8lY5YGMu4l7DUBInPDPw5kUdlNxco7g=;
-        b=VtXeSSY9ptdv08DJDTJ2WKmFOBfvm36uqqpB1SXvyXSjnyBwyR/YSRClM3Fekc5PEb
-         dd8gQNWD9nZJ9TDZN2xK7sOY6Ng+93H+bPR3vwYwyztHQIRZ7VsPi0IMubPX9azpw0gj
-         56RGX+N8Cg63P3IsX1jP8xeP/0Sw8vR5VG9e8=
+        d=paul-moore.com; s=google; t=1718988663; x=1719593463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tSrhlkWdX6A/JwQnL1qGyp7h9CQ4fvs211cMTRuxiNQ=;
+        b=D1OZOPJDKqfKk8kKH2DSz5kN68XqSbmDRPGVtdetr0D+mzIrCCkISOJVimj9i7iFpx
+         pg2gNK9MYGg6jZDx/e7/VtqrFfE0+CKTU20yx5tG8PklFeT2PguoLYUoV0vBE2M/np+F
+         AODEQ1AEkAwgzNUc5iPrCO1YmFJRXsA0o/96u1r5ljE47CHHvzq4yIdPeGDhTtpVEYMs
+         /ObRwcypxgB0vw1YB8g7K4l2LspjvN+lsQBZmdesF4svh2ipVpcW7VOqZ4wi7kQ8sjc3
+         xKBfPAVJZTn5uq+VIfeO4Q6+Ar/g0Q1dlpzxDdQDUE/72qkdfdfxEcsOMvGNoaGve7VL
+         YfSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718987969; x=1719592769;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+B4q6j7rnOa8lY5YGMu4l7DUBInPDPw5kUdlNxco7g=;
-        b=Y1PvTQ0ZSVAurrSVcEVZ82L8bmTBhucBi9igv+ckFk0EdgSyPY3YgfjTaNv0jPXEc/
-         nN3T2A3INzroqvxTWzkuAn2ts5+Zv3JOmOoAeq3JMh5kUN71Tnmopi8rHWjaYUsrPRsm
-         eRYqWYA4zN9i1qFnjXZ2/brM6mWjY8OfkfaMNYoAMsf0VFGAS6IUIbd7FgxnVqA+Ungy
-         TifNYPi9w6zx0v0orC7m6YX6qNukWMkNlPms2G2eiWnwhRr6licjapZGUPgO/UgIZRIv
-         Q/dDwgQJJEvwoOr5FDLTY8IU9xOdi7pK6pctYPV1pq3GFXj8krrnHEJZNz5z1XMZcQmO
-         341w==
-X-Forwarded-Encrypted: i=1; AJvYcCWp7lydXqF+g5XGxK+TGy4twLe+MrHMg57HIMj4p6HjTaBXxbPbuyaeoYynGkOXrw3JlJ8aYj3v/yCrjeTudOkEgzbiY5f/KVsp9iFKip6mAoYKrmvT
-X-Gm-Message-State: AOJu0YwJ0veafTrwXOxEuS2D4dcvEZLp7VbHIb0P+h/Y5Iwb+KZoiSFb
-	MTgIgH0s7opw6tw0EpZMyouJpu1AAXcm/zxq7w4IXu6XTae7N3JTUWsh6i/CMcM=
-X-Google-Smtp-Source: AGHT+IG0ddJjXBlSpbVZD4r9/H9u00KEsN82L79oP/i1sXbnFlr8kZL72WUFKn7R6WiFRcw1OhTvRw==
-X-Received: by 2002:a05:651c:1a12:b0:2ec:5365:34d3 with SMTP id 38308e7fff4ca-2ec53653746mr3909701fa.1.1718987968916;
-        Fri, 21 Jun 2024 09:39:28 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8960sm2247234f8f.100.2024.06.21.09.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 09:39:28 -0700 (PDT)
-Date: Fri, 21 Jun 2024 18:39:26 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
-	catalin.marinas@arm.com, akpm@linux-foundation.org,
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 11/11] drm: Replace strcpy() with __get_task_comm()
-Message-ID: <ZnWsvvRUonTmZG5h@phenom.ffwll.local>
-Mail-Followup-To: Yafang Shao <laoar.shao@gmail.com>,
-	torvalds@linux-foundation.org, ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
-	catalin.marinas@arm.com, akpm@linux-foundation.org,
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>
-References: <20240621022959.9124-1-laoar.shao@gmail.com>
- <20240621022959.9124-12-laoar.shao@gmail.com>
+        d=1e100.net; s=20230601; t=1718988663; x=1719593463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tSrhlkWdX6A/JwQnL1qGyp7h9CQ4fvs211cMTRuxiNQ=;
+        b=RwLO1KpHFoCSMTYhbFYTHe7jjw4tmTG2QJmp9WADcQws78v86hmo6+azPSs6HiCeLp
+         Qh+o7lcLYESwSsjcHQ1h1Vi2GHhdLjMGwJdAA+JlUHt0BBizbpVHmK2EAG2yvQtirwev
+         wwtPBMBNg6JNB5qWXbi5+3l6I39V8g3IGKi6DrtnHu6o54+dH8RAE/mKH9toOH3lNO6h
+         LnW4RDHrnexn0/JoLyjCDhqf+TsT9RKfU3CL03LiFQ9/u8C0+/kPBmy630zZnVxbNYqt
+         9eGMHDGJBANvsOmQTdvgAsWghufqruCzb3kKyEk4YR63RP89JU5lFdpbrOYALnxDpVId
+         V7qQ==
+X-Gm-Message-State: AOJu0YwQ9lO1Z8eYC0l7bEpGtDbN3mOy/kqEtodaAQ8qbdKG+WmwBFg/
+	nBp9bc7lYhuuzZ0ScJRF1c7zerB7gOJ8eXXClHKhQ+u1aDs6WhwnhEkuhY5v3FymcTWyqjkcjsK
+	k2NlBMYggOc2eX5cZNDMtrNbrvWHCgQMt+DQg
+X-Google-Smtp-Source: AGHT+IFgmp5RsbF5wpzYfKgtVbH0mSqcmQYprYV8KJXjbZUbpr+S0cYL1rPczjsK1o6CAOpABdLrNgJCmL2S+1BoVtU=
+X-Received: by 2002:a0d:d692:0:b0:63b:ab21:4f8f with SMTP id
+ 00721157ae682-64134290c70mr3646647b3.12.1718988663220; Fri, 21 Jun 2024
+ 09:51:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621022959.9124-12-laoar.shao@gmail.com>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+References: <20231215221636.105680-1-casey@schaufler-ca.com> <20231215221636.105680-2-casey@schaufler-ca.com>
+In-Reply-To: <20231215221636.105680-2-casey@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 21 Jun 2024 12:50:51 -0400
+Message-ID: <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from security_audit_rule
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, mic@digikod.net, 
+	linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 10:29:59AM +0800, Yafang Shao wrote:
-> To prevent erros from occurring when the src string is longer than the
-> dst string in strcpy(), we should use __get_task_comm() instead. This
-> approach also facilitates future extensions to the task comm.
-> 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-
-I guess the entire series will go in through a dedicated pull or some
-other tree, so
-
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-for merging through whatever non-drm tree makes most sense for this.
-
-Cheers, Sima
-
+On Fri, Dec 15, 2023 at 5:16=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+>
+> Create real functions for the ima_filter_rule interfaces.
+> These replace #defines that obscure the reuse of audit
+> interfaces. The new functions are put in security.c because
+> they use security module registered hooks that we don't
+> want exported.
+>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> To: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: linux-integrity@vger.kernel.org
 > ---
->  drivers/gpu/drm/drm_framebuffer.c     | 2 +-
->  drivers/gpu/drm/i915/i915_gpu_error.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-> index 888aadb6a4ac..25262b07ffaf 100644
-> --- a/drivers/gpu/drm/drm_framebuffer.c
-> +++ b/drivers/gpu/drm/drm_framebuffer.c
-> @@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
->  	INIT_LIST_HEAD(&fb->filp_head);
->  
->  	fb->funcs = funcs;
-> -	strcpy(fb->comm, current->comm);
-> +	__get_task_comm(fb->comm, sizeof(fb->comm), current);
->  
->  	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
->  				    false, drm_framebuffer_free);
-> diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-> index 625b3c024540..b2c16a53bd24 100644
-> --- a/drivers/gpu/drm/i915/i915_gpu_error.c
-> +++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-> @@ -1411,7 +1411,7 @@ static bool record_context(struct i915_gem_context_coredump *e,
->  	rcu_read_lock();
->  	task = pid_task(ctx->pid, PIDTYPE_PID);
->  	if (task) {
-> -		strcpy(e->comm, task->comm);
-> +		__get_task_comm(e->comm, sizeof(e->comm), task);
->  		e->pid = task->pid;
->  	}
->  	rcu_read_unlock();
-> -- 
-> 2.39.1
-> 
+>  include/linux/security.h     | 24 ++++++++++++++++++++++++
+>  security/integrity/ima/ima.h | 26 --------------------------
+>  security/security.c          | 21 +++++++++++++++++++++
+>  3 files changed, 45 insertions(+), 26 deletions(-)
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Mimi, Roberto, are you both okay if I merge this into the lsm/dev
+branch?  The #define approach taken with the ima_filter_rule_XXX
+macros likely contributed to the recent problem where the build
+problem caused by the new gfp_t parameter was missed during review;
+I'd like to get this into an upstream tree independent of the larger
+stacking effort as I believe it has standalone value.
+
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 750130a7b9dd..4790508818ee 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -2009,6 +2009,30 @@ static inline void security_audit_rule_free(void *=
+lsmrule)
+>  #endif /* CONFIG_SECURITY */
+>  #endif /* CONFIG_AUDIT */
+>
+> +#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
+> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrul=
+e);
+> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
+> +void ima_filter_rule_free(void *lsmrule);
+> +
+> +#else
+> +
+> +static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+> +                                          void **lsmrule)
+> +{
+> +       return 0;
+> +}
+> +
+> +static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+> +                                           void *lsmrule)
+> +{
+> +       return 0;
+> +}
+> +
+> +static inline void ima_filter_rule_free(void *lsmrule)
+> +{ }
+> +
+> +#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
+> +
+>  #ifdef CONFIG_SECURITYFS
+>
+>  extern struct dentry *securityfs_create_file(const char *name, umode_t m=
+ode,
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index c29db699c996..560d6104de72 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -420,32 +420,6 @@ static inline void ima_free_modsig(struct modsig *mo=
+dsig)
+>  }
+>  #endif /* CONFIG_IMA_APPRAISE_MODSIG */
+>
+> -/* LSM based policy rules require audit */
+> -#ifdef CONFIG_IMA_LSM_RULES
+> -
+> -#define ima_filter_rule_init security_audit_rule_init
+> -#define ima_filter_rule_free security_audit_rule_free
+> -#define ima_filter_rule_match security_audit_rule_match
+> -
+> -#else
+> -
+> -static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+> -                                      void **lsmrule)
+> -{
+> -       return -EINVAL;
+> -}
+> -
+> -static inline void ima_filter_rule_free(void *lsmrule)
+> -{
+> -}
+> -
+> -static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+> -                                       void *lsmrule)
+> -{
+> -       return -EINVAL;
+> -}
+> -#endif /* CONFIG_IMA_LSM_RULES */
+> -
+>  #ifdef CONFIG_IMA_READ_POLICY
+>  #define        POLICY_FILE_FLAGS       (S_IWUSR | S_IRUSR)
+>  #else
+> diff --git a/security/security.c b/security/security.c
+> index d7b15ea67c3f..8e5379a76369 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5350,6 +5350,27 @@ int security_audit_rule_match(u32 secid, u32 field=
+, u32 op, void *lsmrule)
+>  }
+>  #endif /* CONFIG_AUDIT */
+>
+> +#ifdef CONFIG_IMA_LSM_RULES
+> +/*
+> + * The integrity subsystem uses the same hooks as
+> + * the audit subsystem.
+> + */
+> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrul=
+e)
+> +{
+> +       return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmr=
+ule);
+> +}
+> +
+> +void ima_filter_rule_free(void *lsmrule)
+> +{
+> +       call_void_hook(audit_rule_free, lsmrule);
+> +}
+> +
+> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+> +{
+> +       return call_int_hook(audit_rule_match, 0, secid, field, op, lsmru=
+le);
+> +}
+> +#endif /* CONFIG_IMA_LSM_RULES */
+> +
+>  #ifdef CONFIG_BPF_SYSCALL
+>  /**
+>   * security_bpf() - Check if the bpf syscall operation is allowed
+> --
+> 2.41.0
+>
+
+
+--=20
+paul-moore.com
