@@ -1,224 +1,131 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45794374DD;
-	Fri, 21 Jun 2024 20:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DACC1791F4
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 21:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719002089; cv=none; b=Ro4uFzeBx9UcC1yAGNVXc5XG6Az8lh6goBZSAY1qcDsCqkIvU02dX4DtNfx5C5BoeKoso+be5jHTV59WNXXLkVPT2/+aIfiiSGstHwUbSIWJgxZB35SGAd+lS6lRuXz3lFV86zLLyA9rmN456jdt6sDoEHZjdc2OeXWiaZ5VICc=
+	t=1719004745; cv=none; b=uK3IkZC73wdbQ5z6oTJWeahkz0EDKSq/ucY/dX0PMS75x71nIaE4zcD3ZjCQOpZIzBHy/MpolMEWtHxQp30dZ5WTo9JXMZol1VdxWY9tdprAWS6Nd6FM88cU/c9vgHBVWoVgSEHI6C00EXEpaQve3KRiD+ugI5Lq60nqKTwEUVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719002089; c=relaxed/simple;
-	bh=RT/+yhfG1qX8sq8+FisAQwWHObfiENnmk06EzW4HVak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tLcxkTzy0iBnLofC4ApkpLXLxMZ+t3KB8EQ67/wTOvJ55wOg9ROq+KQZOEFeaOpDJhyQQYlHo+VJem1S6fQKy5XJiUPxQIRgmYRuCqNGLo+Muf8IIaUZtcIv0VE/Zdv5zvEMoGuYtxchs48EdEm/MEb/J1ZmIFOROTaHd17Sc7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4W5TCn12j8z9v7Hk;
-	Sat, 22 Jun 2024 04:16:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 439F31407FA;
-	Sat, 22 Jun 2024 04:34:32 +0800 (CST)
-Received: from [10.45.150.173] (unknown [10.45.150.173])
-	by APP2 (Coremail) with SMTP id GxC2BwCXHzrM43VmwarhAA--.16019S2;
-	Fri, 21 Jun 2024 21:34:31 +0100 (CET)
-Message-ID: <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
-Date: Fri, 21 Jun 2024 22:34:18 +0200
+	s=arc-20240116; t=1719004745; c=relaxed/simple;
+	bh=X9WSMFU/wNIJq2RKIpQCKPYG8Sq+Ik2gDt2GAk8E5kA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gIXTxEuDQWCWeh20+se46j+MQGz4UL4PlC6uNxCq39o/lYoc+jNmwnm9tuk1pKPfozlZPY432jh31Hs8DmOPu9vPvgGuv05jSIi/ZNBvsAbl9TmcQFPsyutUeg0qT87/VEJGCTwaZRRFpdvSRaI6cjluwvxbLADOcbwi4MGyirc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZZQtfcVr; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZZQtfcVr"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2591092276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 14:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1719004741; x=1719609541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pCD4r20mrpTxmvcMRXNwOiX5qAdOlLJEKmqvDoOzpPQ=;
+        b=ZZQtfcVr4rAIifpUrpBSrSr0wwaRMF2r56zZSDIge/Es78JpQj6HlQD55SzUo35QoB
+         qDMSibqzG1qXRU0vaMjAI8RI37Et6X/cDpJxKcFGuboY2D+A2qohA5fMrRkD1k9PDnwt
+         V+rZDtpnIAURXlNJN3xcvt87/P4UKtKJemWv/yS4CpVFmExYLSi5Q+sm7ddasog0Zvpm
+         R7LsaOTz/0u/XZdSRrB/mY8bd3Wz9j2mes60YF45yB6AABSYbjUKk715qtvByOMINFdV
+         epc5CRpGY55ykQMR8Iy24GgxhU/9j4MRr+Wsu7DYSM2bhnn99KWdw0BTXIDpBX0oqkzx
+         OpBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719004741; x=1719609541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pCD4r20mrpTxmvcMRXNwOiX5qAdOlLJEKmqvDoOzpPQ=;
+        b=VYVeuU0wSKnRM9ALagveAlkvdqbR2OX92ST0sfimyJUvxZHgzHMMbRO8y0ZRdiJ4ih
+         9VTOPHmt7JGEgMHXK06uFsTCieDKNwtU4/MBSZUy4LvdROPxICfqFqX0DBD1d7DVedXf
+         38JlYmMuaNmIXFL0SrWa2oyEBupCl/6PyVbxpFJ9woYv2XSKNKvJnYr/3jfbmNKlmJlZ
+         bzNc/ExSRJzIUNL6qB8D4zC17iYaeZumo368fJ3HUfnMw9goDwfrpuLHasr73XD6ZP1F
+         ZphmnGi2qvbAfZwhFzXuLJIV6i91dEvyIUpAIjFGc7FBy/aiito33EBDruPwYTXSQg7T
+         EH1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWO2LjuTFWfIraUntmXyMPRhoyz0LRusVZxQy8tsk0K8d44kNAmaUlUy7SpnB9N8/BPY6iYeAhSLsz4DpLA1fYSwwPDlBJjboxfH7Hy4E/fl7RQdY8k
+X-Gm-Message-State: AOJu0Yzx67dUOVFRl/pHeUcERb5vs2sFAa9Bc+wdGHmwxtkw+M7e9OY4
+	HfJcA2CsF3J+dCnvLwqW5FztFgen0peEik+y5aV6oH9+vSo2C9LNWZwv6Gm6syCad3NdAUl2Lyq
+	aejxq24lgu9qyjETuUVVLoLXYLWsfVMKaLh5M
+X-Google-Smtp-Source: AGHT+IFe108rxfdI4dceOPLQyYzs1eDja/U43G2YmMGoBEVShtoTYQzpQ8euwTVDfc0m+2FKogi3L+jAlR4yzx48SCE=
+X-Received: by 2002:a25:5f50:0:b0:e02:b9ac:1486 with SMTP id
+ 3f1490d57ef6-e02be22e5ebmr9441533276.57.1719004741560; Fri, 21 Jun 2024
+ 14:19:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
- security_audit_rule
-To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
- serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
- penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- linux-kernel@vger.kernel.org, mic@digikod.net,
- linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
 References: <20231215221636.105680-1-casey@schaufler-ca.com>
- <20231215221636.105680-2-casey@schaufler-ca.com>
- <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
- <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
- <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+ <20231215221636.105680-2-casey@schaufler-ca.com> <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+ <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com> <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
 In-Reply-To: <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCXHzrM43VmwarhAA--.16019S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XryDCF48CrWkAF17Kry5twb_yoW7ZFW8pF
-	WUKF4UCF48XFy7G3sa9wnrW3ZaqrWrGr1DZrsxG34DtFn0yrnrGr13Ar4rur9Ygr48Cr1I
-	vF17WrW3uw4Dt3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBF1jj5+PkAAAs1
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 21 Jun 2024 17:18:50 -0400
+Message-ID: <CAHC9VhTPE-dcwVWeMf=S8ci2J_h9Cm4B54knaskFKBOaYSEWiw@mail.gmail.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from security_audit_rule
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, mic@digikod.net, 
+	linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/21/2024 10:23 PM, Mimi Zohar wrote:
+On Fri, Jun 21, 2024 at 4:27=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
 > On Fri, 2024-06-21 at 15:07 -0400, Paul Moore wrote:
->> On Fri, Jun 21, 2024 at 12:50 PM Paul Moore <paul@paul-moore.com> wrote:
->>> On Fri, Dec 15, 2023 at 5:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Create real functions for the ima_filter_rule interfaces.
->>>> These replace #defines that obscure the reuse of audit
->>>> interfaces. The new functions are put in security.c because
->>>> they use security module registered hooks that we don't
->>>> want exported.
->>>>
->>>> Acked-by: Paul Moore <paul@paul-moore.com>
->>>> Reviewed-by: John Johansen <john.johansen@canonical.com>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> To: Mimi Zohar <zohar@linux.ibm.com>
->>>> Cc: linux-integrity@vger.kernel.org
->>>> ---
->>>>   include/linux/security.h     | 24 ++++++++++++++++++++++++
->>>>   security/integrity/ima/ima.h | 26 --------------------------
->>>>   security/security.c          | 21 +++++++++++++++++++++
->>>>   3 files changed, 45 insertions(+), 26 deletions(-)
->>>
->>> Mimi, Roberto, are you both okay if I merge this into the lsm/dev
->>> branch?  The #define approach taken with the ima_filter_rule_XXX
->>> macros likely contributed to the recent problem where the build
->>> problem caused by the new gfp_t parameter was missed during review;
->>> I'd like to get this into an upstream tree independent of the larger
->>> stacking effort as I believe it has standalone value.
->>
->> ... and I just realized neither Mimi or Roberto were directly CC'd on
->> that last email, oops.  Fixed.
-> 
-> Paul, I do see things posted on the linux-integrity mailing list pretty quickly.
-> Unfortunately, something came up midday and I'm just seeing this now.  As for
+> > On Fri, Jun 21, 2024 at 12:50=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > On Fri, Dec 15, 2023 at 5:16=E2=80=AFPM Casey Schaufler <casey@schauf=
+ler-ca.com> wrote:
+> > > > Create real functions for the ima_filter_rule interfaces.
+> > > > These replace #defines that obscure the reuse of audit
+> > > > interfaces. The new functions are put in security.c because
+> > > > they use security module registered hooks that we don't
+> > > > want exported.
+> > > >
+> > > > Acked-by: Paul Moore <paul@paul-moore.com>
+> > > > Reviewed-by: John Johansen <john.johansen@canonical.com>
+> > > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > > To: Mimi Zohar <zohar@linux.ibm.com>
+> > > > Cc: linux-integrity@vger.kernel.org
+> > > > ---
+> > > >  include/linux/security.h     | 24 ++++++++++++++++++++++++
+> > > >  security/integrity/ima/ima.h | 26 --------------------------
+> > > >  security/security.c          | 21 +++++++++++++++++++++
+> > > >  3 files changed, 45 insertions(+), 26 deletions(-)
+> > >
+> > > Mimi, Roberto, are you both okay if I merge this into the lsm/dev
+> > > branch?  The #define approach taken with the ima_filter_rule_XXX
+> > > macros likely contributed to the recent problem where the build
+> > > problem caused by the new gfp_t parameter was missed during review;
+> > > I'd like to get this into an upstream tree independent of the larger
+> > > stacking effort as I believe it has standalone value.
+> >
+> > ... and I just realized neither Mimi or Roberto were directly CC'd on
+> > that last email, oops.  Fixed.
+>
+> Paul, I do see things posted on the linux-integrity mailing list pretty q=
+uickly.
+> Unfortunately, something came up midday and I'm just seeing this now.  As=
+ for
 > Roberto, it's probably a time zone issue.
 
-Will review/check it first thing Monday morning.
+Oh, no worries at all, please don't take my comment above to mean I
+was expecting an immediate response!  I try to make sure that if I'm
+addressing someone directly that they are explicitly included on the
+To/CC line.  I was writing another email and it occurred to me that I
+didn't check for that when emailing the two of you, and sure enough,
+you guys weren't on the To/CC line ... I was just trying to fix my
+screw-up :)
 
-Roberto
-
-> The patch looks ok, but I haven't had a chance to apply or test it.  I'll look
+> The patch looks ok, but I haven't had a chance to apply or test it.  I'll=
+ look
 > at it over the weekend and get back to you.
-> 
-> Mimi
-> 
->>
->>>> diff --git a/include/linux/security.h b/include/linux/security.h
->>>> index 750130a7b9dd..4790508818ee 100644
->>>> --- a/include/linux/security.h
->>>> +++ b/include/linux/security.h
->>>> @@ -2009,6 +2009,30 @@ static inline void security_audit_rule_free(void *lsmrule)
->>>>   #endif /* CONFIG_SECURITY */
->>>>   #endif /* CONFIG_AUDIT */
->>>>
->>>> +#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
->>>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
->>>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
->>>> +void ima_filter_rule_free(void *lsmrule);
->>>> +
->>>> +#else
->>>> +
->>>> +static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
->>>> +                                          void **lsmrule)
->>>> +{
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
->>>> +                                           void *lsmrule)
->>>> +{
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +static inline void ima_filter_rule_free(void *lsmrule)
->>>> +{ }
->>>> +
->>>> +#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
->>>> +
->>>>   #ifdef CONFIG_SECURITYFS
->>>>
->>>>   extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
->>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>>> index c29db699c996..560d6104de72 100644
->>>> --- a/security/integrity/ima/ima.h
->>>> +++ b/security/integrity/ima/ima.h
->>>> @@ -420,32 +420,6 @@ static inline void ima_free_modsig(struct modsig *modsig)
->>>>   }
->>>>   #endif /* CONFIG_IMA_APPRAISE_MODSIG */
->>>>
->>>> -/* LSM based policy rules require audit */
->>>> -#ifdef CONFIG_IMA_LSM_RULES
->>>> -
->>>> -#define ima_filter_rule_init security_audit_rule_init
->>>> -#define ima_filter_rule_free security_audit_rule_free
->>>> -#define ima_filter_rule_match security_audit_rule_match
->>>> -
->>>> -#else
->>>> -
->>>> -static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
->>>> -                                      void **lsmrule)
->>>> -{
->>>> -       return -EINVAL;
->>>> -}
->>>> -
->>>> -static inline void ima_filter_rule_free(void *lsmrule)
->>>> -{
->>>> -}
->>>> -
->>>> -static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
->>>> -                                       void *lsmrule)
->>>> -{
->>>> -       return -EINVAL;
->>>> -}
->>>> -#endif /* CONFIG_IMA_LSM_RULES */
->>>> -
->>>>   #ifdef CONFIG_IMA_READ_POLICY
->>>>   #define        POLICY_FILE_FLAGS       (S_IWUSR | S_IRUSR)
->>>>   #else
->>>> diff --git a/security/security.c b/security/security.c
->>>> index d7b15ea67c3f..8e5379a76369 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -5350,6 +5350,27 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
->>>>   }
->>>>   #endif /* CONFIG_AUDIT */
->>>>
->>>> +#ifdef CONFIG_IMA_LSM_RULES
->>>> +/*
->>>> + * The integrity subsystem uses the same hooks as
->>>> + * the audit subsystem.
->>>> + */
->>>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
->>>> +{
->>>> +       return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
->>>> +}
->>>> +
->>>> +void ima_filter_rule_free(void *lsmrule)
->>>> +{
->>>> +       call_void_hook(audit_rule_free, lsmrule);
->>>> +}
->>>> +
->>>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
->>>> +{
->>>> +       return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
->>>> +}
->>>> +#endif /* CONFIG_IMA_LSM_RULES */
->>>> +
->>>>   #ifdef CONFIG_BPF_SYSCALL
->>>>   /**
->>>>    * security_bpf() - Check if the bpf syscall operation is allowed
->>>> --
->>>> 2.41.0
-> 
 
+No rush, enjoy your weekend, the patch isn't going to run away :)
+
+--=20
+paul-moore.com
