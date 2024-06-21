@@ -1,133 +1,168 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F61916F27E
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 10:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE02C443D;
+	Fri, 21 Jun 2024 13:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718967087; cv=none; b=Le2jM5zlbHfaTFJDO4y643PMFY4WCov5huMrpiCEk2gYEzZMpjC6m0Y9gqUebGn5zBm/R5X9npSS65kcDeWTWRPUo9D59e/gjaNzrN8ojkLHmhPIWbHIu/YL9jAIe1oJ0n+OlKX5wcK+Ne/C7VQ9AwacA1/mDCeF/CZD74Ooc+0=
+	t=1718977908; cv=none; b=M1hcOYW4ffAK9N8oG7Yzp6yJUMoF3qrzfCVwyZLGJKKM65qZ38aBimKSxWKLL+CA6Hm4Dua3w1/GMnb0buV1+5Glv8OwuRJIB9a+4SG+/fn88kogekAvZw6vHVbItwRZhLWDOrry8T2w9YTp124l0L7fqws3Jnp3bDbsT7J5zX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718967087; c=relaxed/simple;
-	bh=A7rWod1mPpDnJHEONIPO07HoWnY59UHJAGZd4q7mnMs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZcRFmLdFMRII3dOseWWO8J7pgzDx8hRuc5FLoCmnLa2GvgxQBHCkxsKCox7hEqZA9yH3mOtyb/25NGeMgug+ciXKDQh2E0Sgv9WbbrZjMwMHPCsgWZinmptrkv6nKugRyyxX6b1BU70piZjjElwl30FOodXVN8CuZjnNXOgh6V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jrxo9HVE; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718977908; c=relaxed/simple;
+	bh=8ElvnQPorg4Uy8imgywI1nXgKQs3ZmLKdexYoFKBvac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NuwdLi7CQKtcyp6caXuL77Ub8LZIBIcx4GiWdQF0eCGLPiJDdC9cxe3x3XdjHX0F1mRK3iCPju42wK8bh4zrGrqjj4OP515lFXEvEbGkredh0oj/6b3mLxG09YYA5io+V3nw7HcQlZIAcpRLhPEr6HPVXXP289aSk8nY5Nw1mbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsGyxC89; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jrxo9HVE"
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4ef3cc03000so451946e0c.0
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Jun 2024 03:51:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718967084; x=1719571884; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7rWod1mPpDnJHEONIPO07HoWnY59UHJAGZd4q7mnMs=;
-        b=Jrxo9HVE+Ya05c99qeNCtWdNuU1F7V0BzqlEqK+p8uObZ4X7Cqa6/xJQSJ5mRzxxRa
-         d0JsJPwTD8hXl7HS1/NUMj/xLqvUQ17nhcekU/bPE7YKVh9gqpOljQk+/DPu0IaxMwQb
-         Wh2Y5sva+nAteKAGsSEkBtATTrhWwK7pmKojxDnrLNzZBCi6/NBBcvYYdKfcVQNr8AkY
-         wOp27/nfUNaZGKaFmXpwKAuxSIjBKOlitvhBmDAIqoEKcCUASpMjHLnG8+J69B/GsAzZ
-         S/ZZnKu/0AgE5gCcatxn2MVkCtaoOJOXG5d7xVrEQ+pMP0LQ3/HPjDVusFZZgqNK6uo1
-         I0Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718967084; x=1719571884;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A7rWod1mPpDnJHEONIPO07HoWnY59UHJAGZd4q7mnMs=;
-        b=fzKXNd67z+IdYQsrJozQmsX2lOUHlH0r8fiMG/CacqxIo2CQ12k7y3JJqKcFg3n9gk
-         Ji4fgPfXZRiqD+mSn1+kpqbIck7Xs8NAOAf5dFpcCowzhFaUs2QFNpZF6iHsqBu2IUKo
-         I/luPFvhsL2krVOcqoojdv0t4vCLD8kVlSEi/opVhLRm5nGD0MqtvGNazFut36sMvPGR
-         naZlZ+epF2oCVonyJB9z8xJf5QKP0Uas5sLoMD4b6+dv0CtKaKqEATBPsh5sipu6czSo
-         XSO0I5Ly2r7EJrca0fJaGfkdYbeUuMNjhtsMMjtNPDt6SMgmLauRI+TMdi2oBd5viJMP
-         CP3w==
-X-Gm-Message-State: AOJu0YyCdvfkjw40XpIqhS6bBHWykTBpviAi5Gm9CHYNgxf/r+7h6epm
-	jozoXqVo+5Xt5QWrJYOnDIo78mMRBFLav1kz4fuGhl9+28c1swpBgNrCtC/qE/9+QBxFARO/o1S
-	/HmIG/lS2lViAxCFqrjOMwx/rtAYrNTCr
-X-Google-Smtp-Source: AGHT+IH2CJyUlwTjV6JXe9aKopDm8CiRs5YHr9/EbLcRcTawpoTyWTi6thAcgfsPH2+SF0doY5Kh57uynM1sfI7Wbco=
-X-Received: by 2002:a05:6122:250e:b0:4d3:45a2:ae53 with SMTP id
- 71dfb90a1353d-4ef27845548mr8630847e0c.16.1718967084278; Fri, 21 Jun 2024
- 03:51:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsGyxC89"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550E9C2BBFC;
+	Fri, 21 Jun 2024 13:51:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718977907;
+	bh=8ElvnQPorg4Uy8imgywI1nXgKQs3ZmLKdexYoFKBvac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UsGyxC89mordI9Vx2/gblUM+5Ftjcp3r6aWKgvC7AgxfbKbF3tjOKH0Oc8+4xZ7ka
+	 53imU3u4kl0xmHWBQeUrPXwpUd4HV0CgvxjAnuDWJ+ESadO9DPtFhcHEFsx5/l50Bz
+	 PqCADX8QGP+tUecordMNnCcTvHzzeLNDNuubgkM1ZH0YhaycbAUJQX5AgoxWKcT6ec
+	 LoK6DITeynsMoscskznn7E6zxgUT2BnmrOQrutlHoqdl3OFBWB1zfStM0zrLF8lSLa
+	 q/3x7IxAscJ0MKpSbvImWfCwO2VqiKdnJI4j+sBQLyP7fynER53ZfDDEcEKKBhm0gu
+	 ID9btTmN8DF3w==
+Date: Fri, 21 Jun 2024 14:51:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
+	catalin.marinas@arm.com, akpm@linux-foundation.org,
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	audit@vger.kernel.org, linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 06/11] mm/util: Deduplicate code in
+ {kstrdup,kstrndup,kmemdup_nul}
+Message-ID: <20240621135142.GF1098275@kernel.org>
+References: <20240621022959.9124-1-laoar.shao@gmail.com>
+ <20240621022959.9124-7-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com>
- <9b672b38-f580-4278-be20-9b9ca1f0cccf@schaufler-ca.com>
-In-Reply-To: <9b672b38-f580-4278-be20-9b9ca1f0cccf@schaufler-ca.com>
-From: Timur Chernykh <tim.cherry.co@gmail.com>
-Date: Fri, 21 Jun 2024 13:51:13 +0300
-Message-ID: <CABZOZnSeh49tBoBAe+Ku42_=xTk95uAm2NQTancvUE4JjBedCQ@mail.gmail.com>
-Subject: Re: Yet another vision of Linux security | Endpoint Security Framework
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621022959.9124-7-laoar.shao@gmail.com>
 
-> Please don't assume that everyone knows your abbreviations.
-> Audio Visual / Editable Data Record.
+On Fri, Jun 21, 2024 at 10:29:54AM +0800, Yafang Shao wrote:
+> These three functions follow the same pattern. To deduplicate the code,
+> let's introduce a common help __kstrndup().
+> 
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-I'm sorry for that. Of course, AV - Antivirus, EDR - Endpoint
-Detection and Response.
+Hi Yafang Shao,
 
-> "Consistent" is hardly a term you can use to describe Linux security events.
-> Is binding a socket to a port a security event? Where is the security event
-> when using io_uring?
+Some minor nits from my side.
 
-Under "consistent" I mean "has a unified structure". Currently all
-security mechanisms in Linux have a different events format and it's
-an additional task to read, parse and transform it to a unified view.
-The assumed list of security events can be found at
-https://github.com/Linux-Endpoint-Security-Framework/linux/blob/esf/main/include/uapi/linux/esf/defs.h#L73
+> ---
+>  mm/internal.h | 24 ++++++++++++++++++++++++
+>  mm/util.c     | 27 ++++-----------------------
+>  2 files changed, 28 insertions(+), 23 deletions(-)
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index b2c75b12014e..fd87f685739b 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1521,4 +1521,28 @@ static inline void shrinker_debugfs_remove(struct dentry *debugfs_entry,
+>  void workingset_update_node(struct xa_node *node);
+>  extern struct list_lru shadow_nodes;
+>  
+> +/**
+> + * __kstrndup - Create a NUL-terminated string from @s, which might be unterminated.
+> + * @s: The data to stringify
+> + * @len: The size of the data, including the null terminator
+> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> + *
+> + * Return: newly allocated copy of @s with NUL-termination or %NULL in
+> + * case of error
+> + */
+> +static __always_inline char *__kstrndup(const char *s, size_t len, gfp_t gfp)
+> +{
+> +	char *buf;
+> +
+> +	buf = kmalloc_track_caller(len, gfp);
+> +	if (!buf)
+> +		return NULL;
+> +
+> +	memcpy(buf, s, len);
+> +	/* Ensure the buf is always NUL-terminated, regardless of @s. */
+> +	buf[len - 1] = '\0';
+> +	return buf;
+> +}
+> +
+> +
 
-> A comprehensive set of events is likely to overwhelm any user space
-> collector.
+nit: One blank line is enough.
 
-I'm definitely agree. The kernel in my vision must define what
-security events are, as it is done with LSM. Userspace should have a
-restricted set of security events, it shouldn't know about any kernel
-internals. Each event should be a kind of abstraction above what
-really happens. There is a good example of real-life implementation:
-https://developer.apple.com/documentation/endpointsecurity/event_types.
-For my vision of linux security events in userspace, please, look the
-link above thought.
+>  #endif	/* __MM_INTERNAL_H */
+> diff --git a/mm/util.c b/mm/util.c
+> index 41c7875572ed..d9135c5fdf7f 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -58,17 +58,8 @@ char *kstrdup(const char *s, gfp_t gfp)
+>  	if (!s)
+>  		return NULL;
+>  
+> -	len = strlen(s) + 1;
+> -	buf = kmalloc_track_caller(len, gfp);
+> -	if (buf) {
+> -		memcpy(buf, s, len);
+> -		/* During memcpy(), the string might be updated to a new value,
+> -		 * which could be longer than the string when strlen() is
+> -		 * called. Therefore, we need to add a null termimator.
+> -		 */
+> -		buf[len - 1] = '\0';
+> -	}
+> -	return buf;
 
-> "Consistent" is hardly a term you can use to describe Linux security events.
+nit: The local variable buf is now unused, and should be removed from kstrdup().
+     Likewise for kstrndup() and kmemdup_nul()
 
-Yes, and this is a bad thing, which I want to fix.
+     Flagged by W=1 builds with gcc-13 and clang-18, and Smatch.
 
-> Is binding a socket to a port a security event? Where is the security event
-> when using io_uring?
-
-Socket binding may not be a security event itself, but a listening
-port for a network connection is. And it doesn't matter how many steps
-are included to a port listening itself. Opening socket, setup,
-binding should be converted to a single event, that says to userspace
-agent: "Hey, this process is trying to listen to the socket for a
-network connection. Do you want to allow this action?".
-
-> Performance concerns (locking, sleeping and a host of others) are
-> likely to prevent this.
-
-It's not an unresolvable task. MacOS and Windows solved this issue.
-Anyway, users should have a choice between security and performance.
-All modern security solutions in any implementation already affect the
-linux performance.
-
-> If the kernel's policies, mechanisms and structures were more consistent
-> you might have a chance at this.
-
-I think that's a work I (and even probable we) should work for. As a
-better OS Linux should provide userspace stable structured security
-events.
-
-> User-space arbitration of kernel events won't work. It's been tried
-> repeatedly. I started seeing it in the early 1980's. It always devolved
-> into a kernel bolt-on, with sub-optimal performance and versatility.
-
-Can you give examples, please? I don't remember early '80, hah, I want
-to get to know about previous attempts :)
-I don't be sure if this is impossible. As I mentioned before, Windows
-and MacOS are done with it. Anyway, I think that users must have a
-choice.
+> +	len = strlen(s);
+> +	return __kstrndup(s, len + 1, gfp);
+>  }
+>  EXPORT_SYMBOL(kstrdup);
+>  
+> @@ -111,12 +102,7 @@ char *kstrndup(const char *s, size_t max, gfp_t gfp)
+>  		return NULL;
+>  
+>  	len = strnlen(s, max);
+> -	buf = kmalloc_track_caller(len+1, gfp);
+> -	if (buf) {
+> -		memcpy(buf, s, len);
+> -		buf[len] = '\0';
+> -	}
+> -	return buf;
+> +	return __kstrndup(s, len + 1, gfp);
+>  }
+>  EXPORT_SYMBOL(kstrndup);
+>  
+> @@ -195,12 +181,7 @@ char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+>  	if (!s)
+>  		return NULL;
+>  
+> -	buf = kmalloc_track_caller(len + 1, gfp);
+> -	if (buf) {
+> -		memcpy(buf, s, len);
+> -		buf[len] = '\0';
+> -	}
+> -	return buf;
+> +	return __kstrndup(s, len + 1, gfp);
+>  }
+>  EXPORT_SYMBOL(kmemdup_nul);
+>  
+> -- 
+> 2.39.1
+> 
+> 
