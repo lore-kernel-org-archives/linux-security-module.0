@@ -1,102 +1,134 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3458C11;
-	Sun, 23 Jun 2024 06:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2EE1805E
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Jun 2024 19:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719122468; cv=none; b=PTUmBY1dmoLJkNH7hTLa1xsNk4SjKRW6WTh4luJOhglupT9Y5dXtDWj7Xkn5ID0Sw6296myI4wjOyEAcByhk8Lb9CT7ND/3Lu691qA49c2wYGnj2/h2QSe1P2AX91DLPMfxtFZCKDKZIKLSIvmgt/VmieXQ65eQ/rSgRoDdIeMc=
+	t=1719172688; cv=none; b=E4BBCyx+Sza/C3SaBTbbyv8WRB9HPOEe+zoTK/aDu6+ctYiT/d2rPD98sQWzdxSF14T54/vfcFdghCk4UdDRaIkTqUnzvAw73jpFwnvWfm5/bUIE6X0FSl0zj5iZZA7wdgMtewdE2ncUWj45SyDnmh9ouaByAo06/ztTF7uOnKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719122468; c=relaxed/simple;
-	bh=7tBYjcPASrEA9EIwWbdTX/mLPmfYmGFhdjPrPv9CTiE=;
+	s=arc-20240116; t=1719172688; c=relaxed/simple;
+	bh=zDU2UcQI5rojl2mKeivQSF1G2P6Ava3nXMNTFcgcyfM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RQ1+YiKUYDt22Lm5MDnfhUOjUdDxsDQF6eh55HOL7G3Yojxq4svKd9adIrMLSdYjNTQ+L+CLHOLZaQwEaAQZ12nkH61i1AmuBGTxsV3HfvxoXD0daye5blAmYFKX+k/lZWwUWoz0qRvq5i3vI/21ybb2Fa6RqMjV5iebl0IohUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R993nS54; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=nc8iFhHVyg2yyLbl4fWKOTg7ercgtPOKQJKQqcSpR/U8jjBVeTWWEpvZ9xofJa3SGREX2eQ96nNWZNzneCituEAyMeorV7iyWePKyY5r8NRuW46e70vx/5/nctGuNVEv2XfuMS8TwjL4YiiFph3KPmabvGnN6CB7J+eYle9oV4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RValyZn4; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R993nS54"
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-79baa4e8531so326304185a.2;
-        Sat, 22 Jun 2024 23:01:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RValyZn4"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so3380602276.2
+        for <linux-security-module@vger.kernel.org>; Sun, 23 Jun 2024 12:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719122465; x=1719727265; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1719172685; x=1719777485; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=639B1VhzkVRiQ3egX05fSRdoRLJZKUd3UI9/6wfJ8lw=;
-        b=R993nS54gBQpPnXksw45EdyenrtLPYB3PmH6lO7ye4DAWTstO2fNdwaDSKS50tzZMG
-         G2SRAG/e3ADXA7/Uw+En4WEJ66dhxJhNIQj/C4JFGQrSAOCyC7DuzK8jFHCvSxJNXG6B
-         hy7TfF/cBCwJorUHscfJETTmJufxf8caMyMvMZF2ywAWqKTcSRj0h6JDausIwcfrDElH
-         0jbik2TCCgi+eBaq4zVfXb4vbviX2AEWlrCriSPCj4jSeejjaDCweHM96sJ15UPln9M7
-         YNc5PUDAZ3RrdecTx7vsdqVzU/yIpirvYSExFO00Q5l8q6oiR5vCeiR/dXK0W35XcUln
-         txmw==
+        bh=L935TfPsSs5fPfvxhR59Cz899DgU7q+IitpDJf5wbbw=;
+        b=RValyZn4iVnbWl9hHRLL4pyUeAvXuj1PO+Kxpb9DetuciuRcvDxQzAIkQYfoYIrpPQ
+         8PHbOhB5XwZScxys/IONgDItF6wpC1z8iJbrlFSD4LMIwREdQbGD0//LpJRGaYtJziME
+         Re03ghb0Q/1+7yVBMHKVDMhDdcusZnTee4Tgi3zMeRc/qsiuDncsmxOX06qV6oIgpZBY
+         iMEuh23yDLpuGOpr5Uo6iqf4tsrNH/5wX1l4tiXEDQxkw3oa1EVHolVkpKsoYjx6Fzdw
+         JJmqHd+BFhovxVdB5R5SvSKup8K8nH0mCjyH68TR5EgY6RTLnYXdQ96faBlOP60QtGLc
+         PC9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719122465; x=1719727265;
+        d=1e100.net; s=20230601; t=1719172685; x=1719777485;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=639B1VhzkVRiQ3egX05fSRdoRLJZKUd3UI9/6wfJ8lw=;
-        b=R6r8PO9gl32YCX79nMEJ4J4RZYcyICnnjMd9X8xtXAZt+8gC+BrTUfQPg/RSZubuzm
-         77TSRNtq8DBd8p+a8aW7TrrjaB2lY+Y/WP9xbf4eSD995/uQSQMigMRpdH85AbevF6F+
-         B3gz6UbxmkkDzL8zRj8DDspihdEac6GCkBkSQRIUsw6R2cPByZRlRutf86ccIL1ncH9/
-         pnN322M9Dq2JLFSY5TKb4GIpg/VPrV+CPcZsZODs0BuATu/Glw1v1YumsFv1sCzCqU5m
-         FdOaKbDXukPSySg/aZ9fwDMewmzKSm5s/W5Te2fMF2Z+wve+iDof5FaczqaPX1uuqHFE
-         GsOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVajQzy9Hbni0oxBpL2+OOM9ET+/fAjwYME5PfBc+rJF7nxjOuazS+nlkyWZXHMY4Kx0wsjDJoBysiuriAY+Z4GGPlf/T0Wbr6OP1PvJVa4JcdYEP8Kqz4fTP9jWmsSsjh8kxFBs+ZjdL71MwpcUEeFOCuRiyFTUxxNSzDeDsvhB2vqzwjKstF/UnkEPBnDA83PfMDq1tZVzcYwo3jGlFAqx5AI0hZYArDj7uEVFCmG84oGMYiqabRRc7scJoXm03f7w7XjjQKmY+s1rz3yZ+sxNWoLx61WR6fj/RUJ1ddX+oPW9plU8FPW8N6KoqP5e5VjuxvA5w==
-X-Gm-Message-State: AOJu0YyBC/us2QSiJofjJQ16RCW7Jk0Es7RtiShpUz1F5UZdlRFUhfhN
-	+lmnymsOwfAmr+0pqBhbPzXxambXIU6iILsCdC86bwcsoATc33cOarFvSQFnoF0IYrNmyaQ24AS
-	R9beyfGGncsFCOdoWeLOi5B3hlGE=
-X-Google-Smtp-Source: AGHT+IHcXR+ehU+k0C/NmM/DLF8W1FSfgc1FOoi+9SruG7tbvTjl8bMu8+dVhBmSjLDe3SkqoqwwTUGvFNLK0f3vidI=
-X-Received: by 2002:ad4:5228:0:b0:6b4:f644:9d87 with SMTP id
- 6a1803df08f44-6b53debf738mr17899726d6.21.1719122465581; Sat, 22 Jun 2024
- 23:01:05 -0700 (PDT)
+        bh=L935TfPsSs5fPfvxhR59Cz899DgU7q+IitpDJf5wbbw=;
+        b=LtVo0P1cJtFI/F71iBdIxD347rTtXd2kkFoORU3KePm0Hw5l9xu3l22PCgzjXJmXjH
+         mVSIfG5wIYg0oL6BOU2iesXHA1kzXmBJ+t1LKp3MRxBzWTAqBuh0T3DUmBnG8Sy6JTBt
+         ZQ40FBDNhXhXp//Q1dTYAAz66UYuqYNE+WZC3HU7P0mqSJ7ApxUxtONb3LLy8bsAuPXg
+         0wOlmQogKKEyk6w98cDRYP4RQDhLg3Ez7D5xKvY8Z4t8tY0nPfVwun2KwbBes5nJ/HmG
+         /ya6ySnTLxFkXC9DdfrXBOQBewpuk3p8VB9tfJNnOXkQSJ5mutCL3Dja65WiLadf4Sfh
+         reAw==
+X-Gm-Message-State: AOJu0YyYPvBFnMzkPAEWS1QfVMDeE0RUH73hOxCqEd7Z38V6u2R6keR2
+	oRpA9aZbyZBwtDLWJTF30LDUN5Bd12cXXqypLl9CrvgaUox6Gs9G0mxr1WJdgKpKiMape5SOHRt
+	tGMMTDO6RcnDrcZD6aW+6jP48mWGVyH1Yvx1h
+X-Google-Smtp-Source: AGHT+IGCoHamBCvZArDMlOqMLOKeuW3LhZTZRSKdsazoc6q3eCJaQq1HPmh7IWp4Sz2/keVwTbtL8KnzfMVsliNNFbA=
+X-Received: by 2002:a5b:dc8:0:b0:dff:2ef1:e3d5 with SMTP id
+ 3f1490d57ef6-e0301101c58mr1994522276.63.1719172684789; Sun, 23 Jun 2024
+ 12:58:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621022959.9124-1-laoar.shao@gmail.com> <20240621022959.9124-7-laoar.shao@gmail.com>
- <ZnWGsw4d9aq5mY0S@casper.infradead.org> <CALOAHbC0ta-g2pcWqsL6sVVigthedN04y8_tH-cS9TuDGEBsEg@mail.gmail.com>
- <ZneSWDgijj3r0MMC@casper.infradead.org>
-In-Reply-To: <ZneSWDgijj3r0MMC@casper.infradead.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 23 Jun 2024 14:00:29 +0800
-Message-ID: <CALOAHbDvyBn=yUABT4G6Egne48cQqHDM7bvuBeKFmbSA5fhg4A@mail.gmail.com>
-Subject: Re: [PATCH v3 06/11] mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
-To: Matthew Wilcox <willy@infradead.org>
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
-	akpm@linux-foundation.org, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-3-casey@schaufler-ca.com> <CAHC9VhQnzrHPRWKvWPSuFLWHhcXkwqeAfXsFbEdBBOMcACZorg@mail.gmail.com>
+ <aae5d7de-d3ff-4a67-a8f6-fea293bee0f6@schaufler-ca.com>
+In-Reply-To: <aae5d7de-d3ff-4a67-a8f6-fea293bee0f6@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 23 Jun 2024 15:57:54 -0400
+Message-ID: <CAHC9VhTK0etXQ3X4g4E-v_d3f50waoatbC2ihJ8vOV2RmwMYPQ@mail.gmail.com>
+Subject: Re: [PATCH v39 02/42] SM: Infrastructure management of the sock security
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, mic@digikod.net
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 11:11=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Sun, Jun 23, 2024 at 10:29:30AM +0800, Yafang Shao wrote:
-> > On Fri, Jun 21, 2024 at 9:57=E2=80=AFPM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> > >
-> > > On Fri, Jun 21, 2024 at 10:29:54AM +0800, Yafang Shao wrote:
-> > > > +++ b/mm/internal.h
-> > >
-> > > Why are you putting __kstrndup in a header file when it's only used
-> > > in util.c?
+On Fri, Jun 21, 2024 at 6:24=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 6/21/2024 1:31 PM, Paul Moore wrote:
+> > On Fri, Dec 15, 2023 at 5:18=E2=80=AFPM Casey Schaufler <casey@schaufle=
+r-ca.com> wrote:
+> >> Move management of the sock->sk_security blob out
+> >> of the individual security modules and into the security
+> >> infrastructure. Instead of allocating the blobs from within
+> >> the modules the modules tell the infrastructure how much
+> >> space is required, and the space is allocated there.
+> >>
+> >> Acked-by: Paul Moore <paul@paul-moore.com>
+> >> Reviewed-by: Kees Cook <keescook@chromium.org>
+> >> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> >> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  include/linux/lsm_hooks.h         |  1 +
+> >>  security/apparmor/include/net.h   |  3 +-
+> >>  security/apparmor/lsm.c           | 20 +-------
+> >>  security/apparmor/net.c           |  2 +-
+> >>  security/security.c               | 36 ++++++++++++++-
+> >>  security/selinux/hooks.c          | 76 ++++++++++++++----------------=
+-
+> >>  security/selinux/include/objsec.h |  5 ++
+> >>  security/selinux/netlabel.c       | 23 +++++-----
+> >>  security/smack/smack.h            |  5 ++
+> >>  security/smack/smack_lsm.c        | 70 ++++++++++++++--------------
+> >>  security/smack/smack_netfilter.c  |  4 +-
+> >>  11 files changed, 131 insertions(+), 114 deletions(-)
+> > I had to do some minor merge fixups, but I just merged this into the
+> > lsm/dev-staging branch to do some testing, assuming all goes well I'll
+> > move this over to the lsm/dev branch; I'll send another note if/when
+> > that happens.
 > >
-> > I want to make it always inlined. However, it is not recommended to
-> > define an inline function in a .c file, right ?
+> > One of the things that has bothered me about the LSM framework is the
+> > inconsistency around allocation and management of the LSM security
+> > blobs (the `void *security` fields present in many kernel objects).
+> > In some cases the framework itself manages these fields, in other
+> > cases it is left up to the individual LSMs; while there are reasons
+> > for this (move to the framework on an as-needed basis), it is a little
+> > odd and with any inconsistency I worry about the potential for bugs.
+> > I think moving the allocation and management of all the LSM blobs into
+> > the LSM framework, similar to what was done here with the sock's
+> > sk_security field, would be a Very Good Thing and help bring some
+> > additional consistency to the LSM interfaces.  Looking quickly at only
+> > the SELinux code, I see six additional blobs that would need to be
+> > converted; it's possible there are others in use by other LSMs, but I
+> > haven't checked.
+> >
+> > Casey, is this something you would be interested in pursuing or would
+> > you rather I give it a shot?
 >
-> I'm not aware of any such recommendation.  Better than putting it in
-> a .h file that everybody has to look at but nobody uses.
+> I'm happy to do it. Would you like a separate patch set for this, or
+> should I add it to the stacking mega-set?
 
-Understood.
-Will change it.
+Separate patchset please, in my mind this is more about improving the
+consistency of the LSM interface ;)
 
 --=20
-Regards
-Yafang
+paul-moore.com
