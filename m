@@ -1,160 +1,126 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7279C2F24
-	for <linux-security-module@vger.kernel.org>; Mon, 24 Jun 2024 10:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96A91411C8;
+	Mon, 24 Jun 2024 13:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719226475; cv=none; b=a5a+nYhpEDKQMCerKPnYgUnvrcIl2GkZ6RYFV1qIpv9q9kKjMj7qRh2zuYc1IbMqNJBcILkHIswLYAQqdgs2w+EiEhgI98TPf7uNY75y8rZWSxhg0MDYlxagSCjzJfPeAm+GMiApHdwgbU09lZGgGGAk7C8aMgo/wG/M1pZPRRU=
+	t=1719237474; cv=none; b=uQUx1EWLOkNa4qmeBtw6AN/8og5dIWVNddOSKu6ATTsDhZ9uozOdroZys1nz6hwK+1hWfjSalgROKoZsKaLctn5P/Yj6Z4wMFjv1T62MhzUQT243cT0Q1hhA2nJHzGJv4WK8Tp+NQRr0SBiAesLrc2Ip+d5msViB6/YURiqBbeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719226475; c=relaxed/simple;
-	bh=7UAQHmqfvj7fgr86jsnB/zIVnUnl676QBnmnXy35SSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heSMDAjOSZf1kvQxHSebWaPJFsOfqjlIUaaaeSEAj2O7E+82XUqtlMJKyZmAL4J80MOGqghWxI9HnMzSbsRJg8qInUsKU7k9x35QwfwGKpodxRL7Y7Ny95i4XZlPrmat0ZES1UyTPAuSIt6BFodtjXqNcyMl0i2jbgstbIH1lgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 45OAs312027545;
-	Mon, 24 Jun 2024 05:54:03 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 45OAs2TB027544;
-	Mon, 24 Jun 2024 05:54:02 -0500
-Date: Mon, 24 Jun 2024 05:54:02 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Timur Chernykh <tim.cherry.co@gmail.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: Yet another vision of Linux security | Endpoint Security Framework
-Message-ID: <20240624105401.GA27511@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <CABZOZnS13-KscVQY0YqqWZsBwmQaKyRO_G=kzCL8zc9jHxAC=A@mail.gmail.com> <9978b326-15de-465f-b032-252899526119@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1719237474; c=relaxed/simple;
+	bh=0yxI92P/8LK00PUAQGJcV8c0/upOK1FZgPxXwQQ0Al8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=mrcMlzgDhFI5V61ymZiDfDsoq1feIdn7XJ6ve7aWEGloHuqxDKrY/okR1Larl/2Nf6zANMSpNVzTTiiFOWXVkQh0wfPAgPsn0xYKm5dfVWavtBdVaF5AWGmx1XTp3MKHmzGk/DVPlNV02xD/3jaaKDtj8dGXBSfWXP0Oas9Qk/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kfnR7+z9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kfnR7+z9"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ODvAC9022725;
+	Mon, 24 Jun 2024 13:57:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:mime-version:content-transfer-encoding; s=pp1; bh=
+	0yxI92P/8LK00PUAQGJcV8c0/upOK1FZgPxXwQQ0Al8=; b=kfnR7+z9LQDkyT2n
+	hLYfofbKwc3kEUSAKPKRbc9DpMkcWg0pThZj53NKp7dXWkFP5PK5psSVu1aEpbGs
+	X16gzO6XZBrPiyjrOtfd0P+ZaGeDOLCEyusty9K1L1MMJ+I479XI7qBw4rL2xyVw
+	sljtx3UCA1VLNnK2NA7WU1yNMG0U/C7eKgcrlGSWTEAE8wM8mRxoI6JbrOpXI8en
+	C6Tm8FOI/s61s0XrB+TecU8QAQAfJPr6f31pF5wIyxnh15eoXC9zRvB3jOMpQDVJ
+	oHXG7q9FjvqrMTByV1jhTV5nHbR7+M2PYAqr2N5duO/ZKz9jRid7eKNECtoWzOCl
+	Y4NEOQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy7y20dq1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:57:20 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45ODvJ7a022895;
+	Mon, 24 Jun 2024 13:57:19 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy7y20dpw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:57:19 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OCa9dH019625;
+	Mon, 24 Jun 2024 13:57:18 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xps3re-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:57:18 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45ODvGmU11797032
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 13:57:18 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B7365805F;
+	Mon, 24 Jun 2024 13:57:16 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 133D058056;
+	Mon, 24 Jun 2024 13:57:15 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.65.213])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Jun 2024 13:57:14 +0000 (GMT)
+Message-ID: <52bffc64dc7db2cc1912544514008eada1e058a7.camel@linux.ibm.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
+ security_audit_rule
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Paul Moore
+	 <paul@paul-moore.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, mic@digikod.net,
+        linux-integrity@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+Date: Mon, 24 Jun 2024 09:57:14 -0400
+In-Reply-To: <aecad5ea129946dbf9cf5013331f9368ceb84326.camel@huaweicloud.com>
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+	 <20231215221636.105680-2-casey@schaufler-ca.com>
+	 <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+	 <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
+	 <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+	 <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
+	 <CAHC9VhRKmkAPgQRt0YXrF4hLXCp7RyCSkG0K9ZchJ6x4bKKhEw@mail.gmail.com>
+	 <aecad5ea129946dbf9cf5013331f9368ceb84326.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9978b326-15de-465f-b032-252899526119@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 24 Jun 2024 05:54:04 -0500 (CDT)
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jtA9RUYxkFCrtJv5OMGa8NU1o0JMmskp
+X-Proofpoint-ORIG-GUID: 3-yBhrzcszi56fSIXqpkYtsqRqA5YqUn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_10,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 adultscore=0 phishscore=0
+ clxscore=1015 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240111
 
-On Thu, Jun 20, 2024 at 11:39:43PM +0900, Tetsuo Handa wrote:
+On Mon, 2024-06-24 at 10:45 +0200, Roberto Sassu wrote:
+> My only comment would be that I would not call the new functions with
+> the ima_ prefix, being those in security.c, which is LSM agnostic, but
+> I would rather use a name that more resembles the differences, if any.
 
-Good morning, I hope the week is starting well for everyone.
+Commit 4af4662fa4a9 ("integrity: IMA policy") originally referred to these hooks
+as security_filter_rule_XXXX, but commit b8867eedcf76 ("ima: Rename internal
+filter rule functions") renamed the function to ima_filter_rule_XXX) to avoid
+security namespace polution.
 
-> On 2024/06/20 22:40, Timur Chernykh wrote:
-> > Questions I'm interested in:
-> > How does the community feel about this idea? Is it a viable concept?
-> > If all is OK, what should I, as developer, do further? How much kernel
-> > code outside the LSM module may be modified to keep further merge
-> > acceptable? (currently not all LSM hooks meet to intercept all needed
-> > data).
-> > 
-> > The general purpose is to make AV/EDR software development easier,
-> > more convinient, and stable for Linux-based operating systems. This
-> > PoC (as far as technology idea) is inspired by MacOS Endpoint Security
-> > based on MAC policy.
+If these were regular security hooks, the hooks would be named:
+filter_rule_init, filter_rule_free, filter_rule_match with the matching
+"security" prefix functions. Audit and IMA would then register the hooks.
 
-> I agree that security hooks for AV/EDR software are missing in
-> Linux.
+I agree these functions should probably be renamed again, probably to
+security_ima_filter_rule_XXXX.
 
-The issue isn't an insufficient number of security hooks, the issue is
-that the detection of anomalous behavior is not being framed properly.
+Mimi
 
-This is a modeling problem.  The challenge is that it is a modeling
-problem over a range of potential model types, each with its own set
-of advantages and disadvantages.  So the best thing that can be done
-is to expose the basis set of information that the Linux development
-community has indicated as relevant to the security posture of the
-operating system.
-
-That basis set is currently the LSM hooks.  Given the amount of
-information that can be surfaced by these hooks, the security industry
-hasn't even scratched the surface with respect to the available
-detection limits.
-
-> My experience says that customers cannot afford managing
-> allowlist-based access control mechanisms (such as SELinux and
-> AppArmor) and they instead choose AV/EDR software for their systems.
-
-This issue, which may be an unpopular concept in some corners of the
-this list, is true.  The market has spoken, for both technical and
-political reasons, the future is going to involve host based modeling
-and detection of unwanted platform or workload behaviors.
-
-There are a myriad of technical reasons for this, the political reason
-though is pretty sample, paying a vendor to be responsible for
-detecting security intrusions allows companies, to at least
-ostensibly, transfer the liability from themselves to another entity.
-
-It is basically a manifestation of the long standing technology meme
-of: "No one ever got fired for buying IBM".
-
-> The LSM framework (which is using linked list for registering multiple
-> LSM modules) is about to be replaced with static calls (which reduces
-> overhead, at the cost of restricting at build time LSM modules which can
-> be registered). Use of static calls might make it possible to insert more
-> hooks into the Linux kernel because the overhead becomes negligible, but
-> kernel code used by AV/EDR software cannot be built into distributor
-> kernels due to support problem. Therefore, without ability to load
-> unlimited number of LSM modules after boot, AV/EDR software won't be
-> benefited with static calls. Such limitation will lead people to invent
-> a new set of security hooks (or resort to unofficial hacks such as
-> rewriting readonly data structure) rather than trying to utilize LSM
-> framework.
-
-The commentary above would thus suggest that the problem is not one of
-an insufficient number of LSM hooks but rather the amount of
-flexibility with respect to interpreting the existing hooks.
-
-What we would suggest is needed is 2-fold.
-
-First, there is not a need for more LSM's but rather an LSM that has
-more flexibility with respect to the type of responses that can be
-implemented for the existing hooks.  The BPF LSM is a partial step in
-that direction, but there are challenges that you have previously
-documented, with respect to what can be accomplished.
-
-Secondly, we would posit that there is more interest from the security
-industry in getting the information provided by the existing hooks out
-of the kernel for analysis rather than implementing the classic
-immediate response model of current mandatory access control systems.
-
-We would further suggest that even casual observation of the security
-industry would indicate, that like many other technology venues, it is
-now completely enamored with the notion of the application of
-AI/machine learning to it mission.  That is not going to happen inside
-of the kernel, the question will be providing an optimized framework
-for making this happen.
-
-At the risk of being accussed of 'hijacking' a thread, we would posit
-that we are addressing both issues with our TSEM implementation,
-particularly in the V4 release that is right around the corner.
-
-> I prefer getting kernel code used by AV/EDR software reviewed (and get
-> their code tested by fuzzers), by allowing AV/EDR software developers
-> to submit their kernel code for upstream.
-
-We would also suggest that it is unlikely that security vendors are
-going to be willing to submit much, if any, of their 'secret sauce'
-for inclusion in the kernel.  Alexey Starovoitov aluded to this at his
-BPF presentation at the European Security Summit.
-
-At least on Linux, the current endpoint security agent architecture
-that the industry is grappling with is a functional and security
-nightmare waiting to happen.
-
-The most positive security contributions will surround reducing the
-security footprint and privilege level that the vendors need in order
-to accomplish their objectives, along with increasing the simplicity
-of access to the vast amount of information that is available from the
-existing hooks/handlers.
-
-Have a good week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
