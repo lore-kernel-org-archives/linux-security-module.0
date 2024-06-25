@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1F01482F0;
-	Tue, 25 Jun 2024 08:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41511148312;
+	Tue, 25 Jun 2024 08:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719303979; cv=none; b=Yq7Yp5yveHzPpBrFjalkEop988BNgv1WaPAdLDdTV7CbK2TNIqP18nrFaxwFe4pJIFPNgMy4oVpBjwZdYWh37d+o2fm5p3n4FMoul1cMO6oJfAPr4oRsG8EOEb/5/glqSvZDPpixYwoCjwvzgsHfPHZ9xZ+fbZ0tTyyRyZlTwEs=
+	t=1719304002; cv=none; b=XPzM6fuKCf8wLP9jiyFBJfQmbwe4naIxRqWDxxXwVQUk7/f5+jdsfW3BSpVaeNvYoNIVbq7nhC0P08EJsV+HU+gtpCIzlSKfZaUCJLOJRmCo54XnKPZGm3dvX8L270Q5Ho70tju/uiahPRbqrWAsnaqUMfWVs9fG6+u3qE+rbXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719303979; c=relaxed/simple;
-	bh=3Sp7R+5GzPKhL8gtm3wzHbjQ0bynnUDOtYj6N93anXU=;
+	s=arc-20240116; t=1719304002; c=relaxed/simple;
+	bh=BQ9kNbrPpzeImFo00g4KBYC1c+0nqfw8+UuDMbnQzNk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnjrSfYg1lEcRcivXST1sK3hadrqbCsR0PjFHsUrjmWxXOw0+BJKEyUHWR46pBuE0gnlX3IYBxCZcPSax/bNrC1B3peNW/vz6z0DZZ4Ew9WgyQctrryTHDbYQ0SHVk416V6kNb+coQHbTXeTCnNechWVyGhoHTmNPNDs6Ke/OBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=wOHc7S9O; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=KnCGu5/zNwVBqJLPmpLVGCBakmJ8//LA8xz6StEQtpxIo/h+FmHCmzqD03IdOXiRsl+HJNSc2DSp781zjDJXbqJFVgpyVvAWu9WsP6x6kTKBFG2BI4Yvv+QyMdzknasW17FAoSxAxeYit/iBD4Hic/0WFPvANVDmw+FNrOMzArI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=TuS6PQe0; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="wOHc7S9O"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TuS6PQe0"
 Received: from [10.0.0.100] (pool-99-255-30-7.cpe.net.cable.rogers.com [99.255.30.7])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 801F940FAD;
-	Tue, 25 Jun 2024 08:26:06 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 36B4640FAD;
+	Tue, 25 Jun 2024 08:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1719303968;
-	bh=8g/SA/nwZqNz0MhiMJztTyH11UWEy/bA/EtkNv/uz/I=;
+	s=20210705; t=1719303997;
+	bh=wTzLXfd9yMtwyHiYV3uWIdxvkfzRaQy0R5/+H6GPJP8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=wOHc7S9OZ7hiOSAgAoMIWY539V2z9Kc/Kvia0NClWps8oy0SGPXrwFP1B2UrEXcdW
-	 P/ay2Td4b5HlN5g3zYM6C3cSponZ23ckk5sKAay/4Ijcj91b2JPsSzfnJlFGBh4E4z
-	 MWXrh13C1nIYyI3dcMf3nqcht4cD1pqHGT73WldVDOWeNDcvJyN7nL15yX2nV7MQWo
-	 N6ZSTvEC3rOHJ5QQGaGCeyQDm87Llp+Sz9e94yFEjssQKZNjfqOIC1JKspz4sXIirZ
-	 6X88gwnjHHBApeyNb6jd3lydmJSHX2tss6OYceCG1lY4k9FYUVQkeLU0YBpNjS69H9
-	 GmCA1s8yn/w4w==
-Message-ID: <17dad6b9-9dc3-4b0f-bd3d-34e9e22e7627@canonical.com>
-Date: Tue, 25 Jun 2024 01:26:04 -0700
+	b=TuS6PQe0qCUba1eR9ABvOCchB2FAAhHX3KYPi+v/87L4Ujgmgz+JC97g0k1a0oawC
+	 r1j7eMZmxNuOoesqEY00PA/BvUtwYe5G1C45m6nscLwQCvp/cuDsGQehSIw003MB1N
+	 C0AbpY9elHVrSfLgA+VKxkIEbGy2ixK61wcV2BZGlUX35QsMxYscM9TIbzUPLnExgP
+	 un3RQm6lKcfjleFpjUHpstqisn+TSOfXxlrUwuQfYcknQM3k7tSqg/MzPgIE4LHLgs
+	 PbjY+5OlgSGz+C41n42UrCBsop5vVMhgN76m4rvRjDk6Tx1kSoMI0vaogaKgI+v7dJ
+	 JgpXzWYu6Lmlg==
+Message-ID: <640381ed-4db2-43e1-b742-2e7d2c7c1adf@canonical.com>
+Date: Tue, 25 Jun 2024 01:26:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,6 +49,7 @@ To: Jeff Johnson <quic_jjohnson@quicinc.com>, Paul Moore
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
+ <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -94,37 +95,37 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
+In-Reply-To: <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/29/24 18:21, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
+On 6/20/24 09:21, Jeff Johnson wrote:
+> On 5/29/2024 6:21 PM, Jeff Johnson wrote:
+>> Fix the 'make W=1' warning:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>   security/apparmor/policy_unpack_test.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+>> index 5c9bde25e56d..874fcf97794e 100644
+>> --- a/security/apparmor/policy_unpack_test.c
+>> +++ b/security/apparmor/policy_unpack_test.c
+>> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
+>>   
+>>   kunit_test_suite(apparmor_policy_unpack_test_module);
+>>   
+>> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
+>>   MODULE_LICENSE("GPL");
+>>
+>> ---
+>> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
+>> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
+>>
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Following up to see if anything else is needed to get this merged.
 
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I will pull this into my tree
-
-> ---
->   security/apparmor/policy_unpack_test.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-> index 5c9bde25e56d..874fcf97794e 100644
-> --- a/security/apparmor/policy_unpack_test.c
-> +++ b/security/apparmor/policy_unpack_test.c
-> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
->   
->   kunit_test_suite(apparmor_policy_unpack_test_module);
->   
-> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
->   MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
-> 
+sorry, just me catching up on my backlog
 
