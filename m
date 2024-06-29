@@ -1,173 +1,170 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2486A15698D;
-	Fri, 28 Jun 2024 16:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F97383AE
+	for <linux-security-module@vger.kernel.org>; Sat, 29 Jun 2024 08:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719593477; cv=none; b=sk+cGQ7tmqUDiydTYaus5P1dZJmpgCZyGCaJrdsMuFqVxvp9vKmP45BJW2D7voEEHY0Pkg2Ree0HXHHXIMaAUemXL0u9Sszhr3ZZfNbLPocLzhIylz++lEK0n8A8WcKRBraZl4bQzbxA3cdU4GQ1NnDlJd3d6NTq1DunCzbFsZs=
+	t=1719648822; cv=none; b=X2OF8TvT/p/NjdQrN7u8zlgeGmCyxZvz1HCN/oj4Z/2uY7EhyTI9usLOflPKyN035EWYB0DX8h86+2KsWYL1OLiU0dkjv6BwSRTHqRoOjQkstm0zjZcCaC+2WGNwNTNQOcxU5Rutq+5UgFaTRmSGNNNzIE0qD3FWXoHLvJhjDCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719593477; c=relaxed/simple;
-	bh=4owyfH6X+DyJ9WfPxXPkoc5JShgygnGI39eEOeau6PI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bxRp05Xa0FI/BDItVP/AyRiUDN7VSZJyxitONmRpik5z8Dz0DYemZJlk7HSwh50NcQKd9qGcMuPfwGN4OC3TwKuTiqtlXTp4f3zBWs1xSQeVBeOs2iaPs1P0G02oDbIegym1ohwYHQP/GlCcghKMXSmLS+eoebAtFj9yOqzN5Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W9hHM0dTgzdfP2;
-	Sat, 29 Jun 2024 00:49:35 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0F5C1180087;
-	Sat, 29 Jun 2024 00:51:10 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 29 Jun 2024 00:51:05 +0800
-Message-ID: <b2d1a152-0241-6a3a-1f31-4a1045fff856@huawei-partners.com>
-Date: Fri, 28 Jun 2024 19:51:00 +0300
+	s=arc-20240116; t=1719648822; c=relaxed/simple;
+	bh=1jCxBGpGU81pgWUcqGkfoa7KPlglGQP+hudgOhGyxMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWr5UNV/7vUIYtMa3wEcTNEWclqEI02SmONU2KCCLJrhjAW+2HDLGr41DHfkC9HsI0b3kSVsccHnL7vvezBapwcph7pA1RyQg82p9nxNDIQHRhBiWGVq4WMpaaHbEPfbIr+rkpb3wShIGokjmhdVYrKq8q8NeCVfTh9yzoN3OUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BrnnakOo; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BrnnakOo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D08C4AF10
+	for <linux-security-module@vger.kernel.org>; Sat, 29 Jun 2024 08:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719648822;
+	bh=1jCxBGpGU81pgWUcqGkfoa7KPlglGQP+hudgOhGyxMU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BrnnakOog8cY2pUp3eI5/C1xpcnPRqoKInlAoI1mSfyxVc2vjeC0Pmt+lsiFra6qh
+	 zh0pmas3Nx0gWvyXOahBJvkgUCj2TIzzj0vrA+XIomgD9f81NOaK6WSyqLispTcTYT
+	 wSxEr5d1ZgMgqRp7vT68A82SviQuw0zrAuW8xfe5xe8KcseJ2inzbaKK/yT/a2EZS6
+	 mkeIKb0D9VCq8nybmLNeWnf9A4WTUYmjOYvO8YyK6eqpRIBRViAvAzP5dejmuH/rYf
+	 IRztt6Ke7ZsKy7WFIQdXizbha+IAZ+FqLUl5P3py9/UiAlE7ndx+h1SS820yfDb5Rj
+	 acgdo6saT0pxQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so14221931fa.0
+        for <linux-security-module@vger.kernel.org>; Sat, 29 Jun 2024 01:13:41 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzrPKYCX/lqbdvIyDivM6NLe7QFPrD0Co6O/XHu9Ks//RvoCyob
+	ietH9DNwIZYAu3+ULxiGB/SghPnbW7buK1c4PjUJ/VPs/Nrkvdvb5HEMP/fFz+eKEF+0ouRYpF1
+	JJfTsjSj5xYl8djG3HA1JWH/Phk4ABTA7bYV/
+X-Google-Smtp-Source: AGHT+IHguEG8pekqrd8aD21X4p8y8aI6Zbl7rkO8tvm6/5jukDtiKlDeUF4IjB+Y2FdE+SAmd4DYms5X9scCYyo99MU=
+X-Received: by 2002:a2e:300e:0:b0:2ec:92ad:19ad with SMTP id
+ 38308e7fff4ca-2ee5e34575fmr3271671fa.7.1719648820189; Sat, 29 Jun 2024
+ 01:13:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
-Content-Language: ru
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	<willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
- <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
- <20240425.Soot5eNeexol@digikod.net>
- <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
- <ZnMr30kSCGME16rO@google.com>
-From: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZnMr30kSCGME16rO@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+References: <20240516003524.143243-6-kpsingh@kernel.org> <03c6f35485d622d8121fa0d7a7e3d0b2@paul-moore.com>
+In-Reply-To: <03c6f35485d622d8121fa0d7a7e3d0b2@paul-moore.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Sat, 29 Jun 2024 13:43:28 +0530
+X-Gmail-Original-Message-ID: <CACYkzJ6hBdk0MEW+4-U3zprEY4a_JcOLYj0wFEz1KW2gBDDE_Q@mail.gmail.com>
+Message-ID: <CACYkzJ6hBdk0MEW+4-U3zprEY4a_JcOLYj0wFEz1KW2gBDDE_Q@mail.gmail.com>
+Subject: Re: [PATCH v12 5/5] bpf: Only enable BPF LSM hooks when an LSM
+ program is attached
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-6/19/2024 10:05 PM, Günther Noack wrote:
-> I agree with Mickaël's comment: this seems like an important fix.
-> 
-> Mostly for completeness: I played with the "socket type" patch set in a "TCP
-> server" example, where *all* possible operations are restricted with Landlock,
-> including the ones from the "socket type" patch set V2 with the little fix we
-> discussed.
-> 
->   - socket()
->   - bind()
->   - enforce a landlock ruleset restricting:
->     - file system access
->     - all TCP bind and connect
->     - socket creation
->   - listen()
->   - accept()
-> 
->>From the connection handler (which would be the place where an attacker can
-> usually provide input), it is now still possible to bind a socket due to this
-> problem.  The steps are:
-> 
->    1) connect() on client_fd with AF_UNSPEC to disassociate the client FD
->    2) listen() on the client_fd
-> 
-> This succeeds and it listens on an ephemeral port.
-> 
-> The code is at [1], if you are interested.
-> 
-> [1] https://github.com/gnoack/landlock-examples/blob/main/tcpserver.c
+On Tue, Jun 11, 2024 at 6:35=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On May 15, 2024 KP Singh <kpsingh@kernel.org> wrote:
+> >
+> >
 
-Do you mean that this scenario works with patch-fix currently being
-discussed?
+[...]
 
-> 
-> 
-> On Mon, May 13, 2024 at 03:15:50PM +0300, Ivanov Mikhail wrote:
->> 4/30/2024 4:36 PM, Mickaël Salaün wrote:
->>> On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
->>>> Make hook for socket_listen(). It will check that the socket protocol is
->>>> TCP, and if the socket's local port number is 0 (which means,
->>>> that listen(2) was called without any previous bind(2) call),
->>>> then listen(2) call will be legitimate only if there is a rule for bind(2)
->>>> allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is not
->>>> supported by the sandbox).
->>>
->>> Thanks for this patch and sorry for the late full review.  The code is
->>> good overall.
->>>
->>> We should either consider this patch as a fix or add a new flag/access
->>> right to Landlock syscalls for compatibility reason.  I think this
->>> should be a fix.  Calling listen(2) without a previous call to bind(2)
->>> is a corner case that we should properly handle.  The commit message
->>> should make that explicit and highlight the goal of the patch: first
->>> explain why, and then how.
->>
->> Yeap, this is fix-patch. I have covered motivation and proposed solution
->> in cover letter. Do you have any suggestions on how i can improve this?
-> 
-> Without wanting to turn around the direction of this code review now, I am still
-> slightly concerned about the assymetry of this special case being implemented
-> for listen() but not for connect().
-> 
-> The reason is this: My colleague Mr. B. recently pointed out to me that you can
-> also do a bind() on a socket before a connect(!). The steps are:
-> 
-> * create socket with socket()
-> * bind() to a local port 9090
-> * connect() to a remote port 8080
-> 
-> This gives you a connection between ports 9090 and 8080.
-> 
-> A regular connect() without an explicit bind() is of course the more usual
-> scenario.  In that case, we are also using up ("implicitly binding") one of the
-> ephemeral ports.
-> 
-> It seems that, with respect to the port binding, listen() and connect() work
-> quite similarly then?  This being considered, maybe it *is* the listen()
-> operation on a port which we should be restricting, and not bind()?
+> > +/**
+> > + * security_toggle_hook - Toggle the state of the LSM hook.
+> > + * @hook_addr: The address of the hook to be toggled.
+> > + * @state: Whether to enable for disable the hook.
+> > + *
+> > + * Returns 0 on success, -EINVAL if the address is not found.
+> > + */
+> > +int security_toggle_hook(void *hook_addr, bool state)
+> > +{
+> > +     struct lsm_static_call *scalls =3D ((void *)&static_calls_table);
+>
+> GCC (v14.1.1 if that matters) is complaining about casting randomized
+> structs.  Looking quickly at the two structs, lsm_static_call and
+> lsm_static_calls_table, I suspect the cast is harmless even if the
+> randstruct case, but I would like to see some sort of fix for this so
+> I don't get spammed by GCC every time I do a build.  On the other hand,
+> if this cast really is a problem in the randstruct case we obviously
+> need to fix that.
+>
 
-Do you mean that ability to restrict auto-binding for connect() should
-also be implemented? This looks like good idea if we want to provide
-full control over port binding. But it's hard for me to come up with an
-idea how it can be implemented: current Landlock API allows to restrict
-only the destination port for connect().
+The cast is not a problem with rand struct, we are iterating through a
+2 dimensional array and it does not matter in which order we iterate
+the first dimension.
 
-I think an independent restriction of auto-binding for bind() and
-listen() is a good approach: API is more clear and Landlock rules do
-not affect each other's behavior. Did I understood your suggestion
-correctly?
+diff --git a/security/security.c b/security/security.c
+index 2ee880b3a39a..4cc0e368d07f 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -899,23 +899,24 @@ int lsm_fill_user_ctx(struct lsm_ctx __user
+*uctx, u32 *uctx_len,
+  */
+ int security_toggle_hook(void *hook_addr, bool state)
+ {
+-       struct lsm_static_call *scalls =3D ((void *)&static_calls_table);
++       struct lsm_static_call *scall;
++       void *scalls_table =3D ((void *)&static_calls_table);
+        unsigned long num_entries =3D
+                (sizeof(static_calls_table) / sizeof(struct lsm_static_call=
+));
+        int i;
 
-> 
-> With some luck, that would then also free us from having to implement the
-> check_tcp_socket_can_listen() logic, which is seemingly emulating logic from
-> elsewhere in the kernel?
+        for (i =3D 0; i < num_entries; i++) {
+-
+-               if (!scalls[i].hl || !scalls[i].hl->runtime)
++               scall =3D scalls_table + (i * sizeof(struct lsm_static_call=
+));
++               if (!scall->hl || !scall->hl->runtime)
+                        continue;
 
-But check_tcp_socket_can_listen() will be required for
-LANDLOCK_ACCESS_NET_LISTEN_TCP hook anyway. Did I miss smth?
+-               if (scalls[i].hl->hook.lsm_func_addr !=3D hook_addr)
++               if (scall->hl->hook.lsm_func_addr !=3D hook_addr)
+                        continue;
 
-> 
-> (I am by far not an expert in Linux networking, so I'll put this out for
-> consideration and will happily stand corrected if I am misunderstanding
-> something.  Maybe someone with more networking background can chime in?)
-> 
-> 
->>>> +		/* Socket is alredy binded to some port. */
->>>
->>> This kind of spelling issue can be found by scripts/checkpatch.pl
->>
->> will be fixed
-> 
-> P.S. there are two typos here, the obvious one in "alredy",
-> but also the passive of "to bind" is "bound", not "binded".
-> (That is also mis-spelled in a few more places I think.)
+                if (state)
+-                       static_branch_enable(scalls[i].active);
++                       static_branch_enable(scall->active);
+                else
+-                       static_branch_disable(scalls[i].active);
++                       static_branch_disable(scall->active);
+                return 0;
+        }
+        return -EINVAL;
 
-Thanks, I'll fix them.
+fixes the error. I will respin.
 
-> 
-> —Günther
+
+
+
+> Either way, resolve this and make sure you test with GCC/randstruct
+> enabled.
+>
+> > +     unsigned long num_entries =3D
+> > +             (sizeof(static_calls_table) / sizeof(struct lsm_static_ca=
+ll));
+> > +     int i;
+> > +
+> > +     for (i =3D 0; i < num_entries; i++) {
+> > +
+> > +             if (!scalls[i].hl || !scalls[i].hl->runtime)
+> > +                     continue;
+> > +
+> > +             if (scalls[i].hl->hook.lsm_func_addr !=3D hook_addr)
+> > +                     continue;
+> > +
+> > +             if (state)
+> > +                     static_branch_enable(scalls[i].active);
+> > +             else
+> > +                     static_branch_disable(scalls[i].active);
+> > +             return 0;
+> > +     }
+> > +     return -EINVAL;
+> > +}
+> > +
+> >  /*
+> >   * The default value of the LSM hook is defined in linux/lsm_hook_defs=
+.h and
+> >   * can be accessed with:
+> > --
+> > 2.45.0.rc1.225.g2a3ae87e7f-goog
+>
+> --
+> paul-moore.com
