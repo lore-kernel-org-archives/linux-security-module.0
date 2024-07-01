@@ -1,323 +1,308 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207FB3A1B0;
-	Sat, 29 Jun 2024 08:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B8512C52E
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Jul 2024 10:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719650631; cv=none; b=o+wyvFCaL6p5HjwH6J7XxnWSMksMofnFtw6Q/OPdRu3VxWCYDLdTJ6q1aGIAesCh89MW0U3EEjoaGzYLGRdmdt6qcD5gLk2KrksejF/DFymSikeMcy4B1wo5s0ujs5xSyYcDPWpoAg3uYJ/hTg1SN0EaL9dYGUfBQ30LKs77NLo=
+	t=1719828979; cv=none; b=REeWD+f0ir2KrmhFkp2K3oQnje5ZMxJDtSdxo4Ll8mjyFvwObfW1QPPmjJkFe0/8OeGOVwI+8CEQ3F3LJ3TEQUqayuQAACMJ7jRbmY17tGNk3mj6lsU4fTxkKjFDtVcKtYoZgzxqQRJMu5iYL2yH5JS+Fv+fuc8kHGAfy1Om9W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719650631; c=relaxed/simple;
-	bh=Crgk1qXG9zWmEXg9/eV4RcF36q1Mme5e5rBDZThYdhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tsfn23W03+tip2xq1pdA1hs/aNxAKQflPkpktgnKmRREHP/7/hK6/OciyjHIdpLfzRIG2k7YBcx2KZTgxmSUJ/AMz2DxK0NcEm2zUPQT2S8BJS5bdYBv+040mXJ61mkhYrwEBSiT9oG+pt9TKotMXRwvFrQxHBVY8gZ+xWcENkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuwFdOiN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719828979; c=relaxed/simple;
+	bh=I/MXA0zPPYFlP5xrDxlKqDDGJbfrw5DNI6BjVtOLnOU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=L8YFidqvKV6h0qLPN4mfzSqFWYVn7GVMA8jWYqxpiImSWf2JVfS80HXm3KdPiibc4lHwTIbk6IrHAJml4V71VVPhQ990tzdCHtGd2Sp6xBqAtOY2zZQUEL+vbcxwaOSUsdIraKgk645V0/M9bQPkr7mNbz9qmo2/CF7ISggf7V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F1sDkY4f; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuwFdOiN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D22E1C4AF0C;
-	Sat, 29 Jun 2024 08:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719650631;
-	bh=Crgk1qXG9zWmEXg9/eV4RcF36q1Mme5e5rBDZThYdhw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VuwFdOiN/o5oP30V57+VJR/Ni3j4V54EXkrslFovkHlWw7+D+6Sl+gDYl+juDjilK
-	 dS4xcrEw6MTq+omavlnBzSuRcqvUHNkFClGzTWJyLTS39RvlS9X/JmzUqUd0qftGqD
-	 dSCRfxMsV17Y32B5jM2PIx6S9sLLhQBpKHJradXU8AoJpoUKyoRb4KEEbZFWQLTbOL
-	 GtrZQO/lRdw+ja4N09fawruYeg+LQtxe0xVPA+gwgqusGugCEhTqNVl6KSxErXX/OM
-	 rzh272VcKY9A0HzEB5P4wNoSeGzOBX8ZAR9Akqt1YlgzSKtoN8nC3etNus8DXeF5zK
-	 8Oa7h9EE4PrOw==
-From: KP Singh <kpsingh@kernel.org>
-To: linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	paul@paul-moore.com,
-	casey@schaufler-ca.com,
-	andrii@kernel.org,
-	keescook@chromium.org,
-	daniel@iogearbox.net,
-	renauld@google.com,
-	revest@chromium.org,
-	song@kernel.org,
-	KP Singh <kpsingh@kernel.org>
-Subject: [PATCH v13 5/5] bpf: Only enable BPF LSM hooks when an LSM program is attached
-Date: Sat, 29 Jun 2024 10:43:31 +0200
-Message-ID: <20240629084331.3807368-6-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-In-Reply-To: <20240629084331.3807368-1-kpsingh@kernel.org>
-References: <20240629084331.3807368-1-kpsingh@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F1sDkY4f"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e034f972e8bso4850265276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2024 03:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719828976; x=1720433776; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pCkkNdMqFZerD7tkEN5hmKlVtmGwPcLl/F0vhhBqA38=;
+        b=F1sDkY4fk+zmddFNOnveVpmlASdFWwydZ4dCzJVI0FtrRAflMjI3uiHEenM/wilxg1
+         LwIlgWogBWZqMMZN/PrB0ieBlAOeBaKn1e5+1CnZfPhOXzwntK1PM6b0tqPSxp+v+I/M
+         QrrYFRDomfK00Luol7I1Si80oQ10qnFPzixS6YbYs1gG1rMAmimH2XQqs1y+X8V44iWj
+         ujs1DZiy4PAiyFLfDBp234VtSn6QM5pioCZg7zc8gCNVpWwdlAAKxmo1DPlgLqfF2gP4
+         K+gArBOdSq8gTa9TcCH8AW42n+qKrKHzdurugOxpsEzyE5dUwxVjvRX+q/IaIS0G39yp
+         TFLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719828976; x=1720433776;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pCkkNdMqFZerD7tkEN5hmKlVtmGwPcLl/F0vhhBqA38=;
+        b=BwM9A/otvD/XpAwiS5yhqcy9V0imQVtkplrziy+yAvlqIKKDkS7JBEAgkGGoH0xBSA
+         r3B7d5+0ZWyQNDjO0zjGnORdQ2BJ8BPhupatkeQ5tXpFpBgSutARft1Slr8IwKcmW6ny
+         T6+j4X34g/Qb3qkGqQCJcxLRz3f1sNsDzqyVXNSuW9PSrlmd2qAWGlkUEUWd7W0h5UHb
+         kSjxw8CVSaL35GqPEw/TdRISoyqIvCkOoI1uaoR0lsrxhJDFszZGV+IzNv4BHasddyMQ
+         g+B2aQyzw9BI/HymJEUxjJL13y2KIwiX5fjLaTdYmvyCZ1eD8WsjMCAXs/4b/wCGkd4S
+         pfRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/PGY7IoSITYomsVBIngIOUTrcX386XBLmnAGCXVd9Gv+a025arRxYk2CQqlKcIA4evg6yPxe2a4xVWB+aDw2opB9TnAzwmovpEdoIlZvBFOkWyVxd
+X-Gm-Message-State: AOJu0YzzayK3suuOdaXHDZZOEzo+2J6xw69aoLvl1gGLfpDlPHV/991Q
+	07aQ/rQNk7AoXO1YjbZ6ViPfqoU4XlOgSveqq++FPq6VXyqsI7k1SkT5QdKzwKK37uv5Kc3ysLc
+	KKA==
+X-Google-Smtp-Source: AGHT+IFx2ZlcrsxTL5ignpx/Ts4gwIEOVRBQC4O84/V6VuPKAUXSoRYNyQSRY4mRcL2/wgSRRTIYKbjvDUM=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:1083:b0:e03:58b1:540e with SMTP id
+ 3f1490d57ef6-e036eb1ebfemr159669276.4.1719828976531; Mon, 01 Jul 2024
+ 03:16:16 -0700 (PDT)
+Date: Mon, 1 Jul 2024 12:16:13 +0200
+In-Reply-To: <b2d1a152-0241-6a3a-1f31-4a1045fff856@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
+ <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
+ <20240425.Soot5eNeexol@digikod.net> <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
+ <ZnMr30kSCGME16rO@google.com> <b2d1a152-0241-6a3a-1f31-4a1045fff856@huawei-partners.com>
+Message-ID: <ZoKB7bl41ZOiiXmF@google.com>
+Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-BPF LSM hooks have side-effects (even when a default value's returned)
-as some hooks end up behaving differently due to the very presence of
-the hook.
+Hello!
 
-The static keys guarding the BPF LSM hooks are disabled by default and
-enabled only when a BPF program is attached implementing the hook
-logic. This avoids the issue of the side-effects and also the minor
-overhead associated with the empty callback.
+On Fri, Jun 28, 2024 at 07:51:00PM +0300, Ivanov Mikhail wrote:
+> 6/19/2024 10:05 PM, G=C3=BCnther Noack wrote:
+> > I agree with Micka=C3=ABl's comment: this seems like an important fix.
+> >=20
+> > Mostly for completeness: I played with the "socket type" patch set in a=
+ "TCP
+> > server" example, where *all* possible operations are restricted with La=
+ndlock,
+> > including the ones from the "socket type" patch set V2 with the little =
+fix we
+> > discussed.
+> >=20
+> >   - socket()
+> >   - bind()
+> >   - enforce a landlock ruleset restricting:
+> >     - file system access
+> >     - all TCP bind and connect
+> >     - socket creation
+> >   - listen()
+> >   - accept()
+> >=20
+> > > From the connection handler (which would be the place where an attack=
+er can
+> > usually provide input), it is now still possible to bind a socket due t=
+o this
+> > problem.  The steps are:
+> >=20
+> >    1) connect() on client_fd with AF_UNSPEC to disassociate the client =
+FD
+> >    2) listen() on the client_fd
+> >=20
+> > This succeeds and it listens on an ephemeral port.
+> >=20
+> > The code is at [1], if you are interested.
+> >=20
+> > [1] https://github.com/gnoack/landlock-examples/blob/main/tcpserver.c
+>=20
+> Do you mean that this scenario works with patch-fix currently being
+> discussed?
 
-security_file_ioctl:
-   0xff...0e30 <+0>:	endbr64
-   0xff...0e34 <+4>:	nopl   0x0(%rax,%rax,1)
-   0xff...0e39 <+9>:	push   %rbp
-   0xff...0e3a <+10>:	push   %r14
-   0xff...0e3c <+12>:	push   %rbx
-   0xff...0e3d <+13>:	mov    %rdx,%rbx
-   0xff...0e40 <+16>:	mov    %esi,%ebp
-   0xff...0e42 <+18>:	mov    %rdi,%r14
-   0xff...0e45 <+21>:	jmp    0xff...0e57 <security_file_ioctl+39>
-   				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+I did not mean to say that, no, I mostly wanted to spell out the scenario t=
+o
+make sure we are on the same page about the goal.
 
-   Static key enabled for SELinux
+I have tried it out with a kernel that had V2 of the "socket type" patch se=
+t
+patched in, with the minor fix that we discussed on the "socket type" patch
+thread after the initial submission.  On that kernel, I did not have the
+patch-fix applied.
 
-   0xff...0e47 <+23>:	xchg   %ax,%ax
-   			^^^^^^^^^^^^^^
+The patch-fix should keep the listen() from working, yes, but I have not tr=
+ied
+it out yet.
 
-   Static key disabled for BPF. This gets patched when a BPF LSM
-   program is attached
 
-   0xff...0e49 <+25>:	xor    %eax,%eax
-   0xff...0e4b <+27>:	xchg   %ax,%ax
-   0xff...0e4d <+29>:	pop    %rbx
-   0xff...0e4e <+30>:	pop    %r14
-   0xff...0e50 <+32>:	pop    %rbp
-   0xff...0e51 <+33>:	cs jmp 0xff...0000 <__x86_return_thunk>
-   0xff...0e57 <+39>:	endbr64
-   0xff...0e5b <+43>:	mov    %r14,%rdi
-   0xff...0e5e <+46>:	mov    %ebp,%esi
-   0xff...0e60 <+48>:	mov    %rbx,%rdx
-   0xff...0e63 <+51>:	call   0xff...33c0 <selinux_file_ioctl>
-   0xff...0e68 <+56>:	test   %eax,%eax
-   0xff...0e6a <+58>:	jne    0xff...0e4d <security_file_ioctl+29>
-   0xff...0e6c <+60>:	jmp    0xff...0e47 <security_file_ioctl+23>
-   0xff...0e6e <+62>:	endbr64
-   0xff...0e72 <+66>:	mov    %r14,%rdi
-   0xff...0e75 <+69>:	mov    %ebp,%esi
-   0xff...0e77 <+71>:	mov    %rbx,%rdx
-   0xff...0e7a <+74>:	call   0xff...e3b0 <bpf_lsm_file_ioctl>
-   0xff...0e7f <+79>:	test   %eax,%eax
-   0xff...0e81 <+81>:	jne    0xff...0e4d <security_file_ioctl+29>
-   0xff...0e83 <+83>:	jmp    0xff...0e49 <security_file_ioctl+25>
-   0xff...0e85 <+85>:	endbr64
-   0xff...0e89 <+89>:	mov    %r14,%rdi
-   0xff...0e8c <+92>:	mov    %ebp,%esi
-   0xff...0e8e <+94>:	mov    %rbx,%rdx
-   0xff...0e91 <+97>:	pop    %rbx
-   0xff...0e92 <+98>:	pop    %r14
-   0xff...0e94 <+100>:	pop    %rbp
-   0xff...0e95 <+101>:	ret
+> > On Mon, May 13, 2024 at 03:15:50PM +0300, Ivanov Mikhail wrote:
+> > > 4/30/2024 4:36 PM, Micka=C3=ABl Sala=C3=BCn wrote:
+> > > > On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
+> > > > > Make hook for socket_listen(). It will check that the socket prot=
+ocol is
+> > > > > TCP, and if the socket's local port number is 0 (which means,
+> > > > > that listen(2) was called without any previous bind(2) call),
+> > > > > then listen(2) call will be legitimate only if there is a rule fo=
+r bind(2)
+> > > > > allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is=
+ not
+> > > > > supported by the sandbox).
+> > > >=20
+> > > > Thanks for this patch and sorry for the late full review.  The code=
+ is
+> > > > good overall.
+> > > >=20
+> > > > We should either consider this patch as a fix or add a new flag/acc=
+ess
+> > > > right to Landlock syscalls for compatibility reason.  I think this
+> > > > should be a fix.  Calling listen(2) without a previous call to bind=
+(2)
+> > > > is a corner case that we should properly handle.  The commit messag=
+e
+> > > > should make that explicit and highlight the goal of the patch: firs=
+t
+> > > > explain why, and then how.
+> > >=20
+> > > Yeap, this is fix-patch. I have covered motivation and proposed solut=
+ion
+> > > in cover letter. Do you have any suggestions on how i can improve thi=
+s?
+> >=20
+> > Without wanting to turn around the direction of this code review now, I=
+ am still
+> > slightly concerned about the assymetry of this special case being imple=
+mented
+> > for listen() but not for connect().
+> >=20
+> > The reason is this: My colleague Mr. B. recently pointed out to me that=
+ you can
+> > also do a bind() on a socket before a connect(!). The steps are:
+> >=20
+> > * create socket with socket()
+> > * bind() to a local port 9090
+> > * connect() to a remote port 8080
+> >=20
+> > This gives you a connection between ports 9090 and 8080.
+> >=20
+> > A regular connect() without an explicit bind() is of course the more us=
+ual
+> > scenario.  In that case, we are also using up ("implicitly binding") on=
+e of the
+> > ephemeral ports.
+> >=20
+> > It seems that, with respect to the port binding, listen() and connect()=
+ work
+> > quite similarly then?  This being considered, maybe it *is* the listen(=
+)
+> > operation on a port which we should be restricting, and not bind()?
+>=20
+> Do you mean that ability to restrict auto-binding for connect() should
+> also be implemented? This looks like good idea if we want to provide
+> full control over port binding. But it's hard for me to come up with an
+> idea how it can be implemented: current Landlock API allows to restrict
+> only the destination port for connect().
 
-This patch enables this by providing a LSM_HOOK_INIT_RUNTIME variant
-that allows the LSMs to opt-in to hooks which can be toggled at runtime
-which with security_toogle_hook.
+I do not think that restricting auto-binding for connect as part of
+LANDLOCK_ACCESS_NET_BIND_TCP would be the correct way.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- include/linux/lsm_hooks.h | 30 ++++++++++++++++++++++++++++-
- kernel/bpf/trampoline.c   | 40 +++++++++++++++++++++++++++++++++++----
- security/bpf/hooks.c      |  2 +-
- security/security.c       | 36 ++++++++++++++++++++++++++++++++++-
- 4 files changed, 101 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index a66ca68485a2..dbe0f40f7f67 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -110,11 +110,14 @@ struct lsm_id {
-  * @scalls: The beginning of the array of static calls assigned to this hook.
-  * @hook: The callback for the hook.
-  * @lsm: The name of the lsm that owns this hook.
-+ * @default_state: The state of the LSM hook when initialized. If set to false,
-+ * the static key guarding the hook will be set to disabled.
-  */
- struct security_hook_list {
- 	struct lsm_static_call	*scalls;
- 	union security_list_options	hook;
- 	const struct lsm_id		*lsmid;
-+	bool				runtime;
- } __randomize_layout;
- 
- /*
-@@ -165,7 +168,19 @@ static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
- #define LSM_HOOK_INIT(NAME, HOOK)			\
- 	{						\
- 		.scalls = static_calls_table.NAME,	\
--		.hook = { .NAME = HOOK }		\
-+		.hook = { .NAME = HOOK },		\
-+		.runtime = false			\
-+	}
-+
-+/*
-+ * Initialize hooks that are inactive by default and
-+ * enabled at runtime with security_toggle_hook.
-+ */
-+#define LSM_HOOK_INIT_RUNTIME(NAME, HOOK)		\
-+	{						\
-+		.scalls = static_calls_table.NAME,	\
-+		.hook = { .NAME = HOOK },		\
-+		.runtime = true				\
- 	}
- 
- extern char *lsm_names;
-@@ -207,4 +222,17 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- extern int lsm_inode_alloc(struct inode *inode);
- extern struct lsm_static_calls_table static_calls_table __ro_after_init;
- 
-+#ifdef CONFIG_SECURITY
-+
-+int security_toggle_hook(void *addr, bool value);
-+
-+#else
-+
-+static inline int security_toggle_hook(void *addr, bool value)
-+{
-+	return -EINVAL;
-+}
-+
-+#endif /* CONFIG_SECURITY */
-+
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-index f8302a5ca400..69d3eb490a1b 100644
---- a/kernel/bpf/trampoline.c
-+++ b/kernel/bpf/trampoline.c
-@@ -523,6 +523,21 @@ static enum bpf_tramp_prog_type bpf_attach_type_to_tramp(struct bpf_prog *prog)
- 	}
- }
- 
-+static int bpf_trampoline_toggle_lsm(struct bpf_trampoline *tr,
-+				      enum bpf_tramp_prog_type kind)
-+{
-+	struct bpf_tramp_link *link;
-+	bool found = false;
-+
-+	hlist_for_each_entry(link, &tr->progs_hlist[kind], tramp_hlist) {
-+		if (link->link.prog->type == BPF_PROG_TYPE_LSM) {
-+			found  = true;
-+			break;
-+		}
-+	}
-+	return security_toggle_hook(tr->func.addr, found);
-+}
-+
- static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_trampoline *tr)
- {
- 	enum bpf_tramp_prog_type kind;
-@@ -562,11 +577,22 @@ static int __bpf_trampoline_link_prog(struct bpf_tramp_link *link, struct bpf_tr
- 
- 	hlist_add_head(&link->tramp_hlist, &tr->progs_hlist[kind]);
- 	tr->progs_cnt[kind]++;
--	err = bpf_trampoline_update(tr, true /* lock_direct_mutex */);
--	if (err) {
--		hlist_del_init(&link->tramp_hlist);
--		tr->progs_cnt[kind]--;
-+
-+	if (link->link.prog->type == BPF_PROG_TYPE_LSM) {
-+		err = bpf_trampoline_toggle_lsm(tr, kind);
-+		if (err)
-+			goto cleanup;
- 	}
-+
-+	err = bpf_trampoline_update(tr, true /* lock_direct_mutex */);
-+	if (err)
-+		goto cleanup;
-+
-+	return 0;
-+
-+cleanup:
-+	hlist_del_init(&link->tramp_hlist);
-+	tr->progs_cnt[kind]--;
- 	return err;
- }
- 
-@@ -595,6 +621,12 @@ static int __bpf_trampoline_unlink_prog(struct bpf_tramp_link *link, struct bpf_
- 	}
- 	hlist_del_init(&link->tramp_hlist);
- 	tr->progs_cnt[kind]--;
-+
-+	if (link->link.prog->type == BPF_PROG_TYPE_LSM) {
-+		err = bpf_trampoline_toggle_lsm(tr, kind);
-+		WARN(err, "BUG: unable to toggle BPF LSM hook");
-+	}
-+
- 	return bpf_trampoline_update(tr, true /* lock_direct_mutex */);
- }
- 
-diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-index 57b9ffd53c98..8452e0835f56 100644
---- a/security/bpf/hooks.c
-+++ b/security/bpf/hooks.c
-@@ -9,7 +9,7 @@
- 
- static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
- 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
--	LSM_HOOK_INIT(NAME, bpf_lsm_##NAME),
-+	LSM_HOOK_INIT_RUNTIME(NAME, bpf_lsm_##NAME),
- 	#include <linux/lsm_hook_defs.h>
- 	#undef LSM_HOOK
- 	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
-diff --git a/security/security.c b/security/security.c
-index 4f0f35857217..1c448fe529f9 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -409,7 +409,9 @@ static void __init lsm_static_call_init(struct security_hook_list *hl)
- 			__static_call_update(scall->key, scall->trampoline,
- 					     hl->hook.lsm_func_addr);
- 			scall->hl = hl;
--			static_branch_enable(scall->active);
-+			/* Runtime hooks are inactive by default */
-+			if (!hl->runtime)
-+				static_branch_enable(scall->active);
- 			return;
- 		}
- 		scall++;
-@@ -888,6 +890,38 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
- 	return rc;
- }
- 
-+/**
-+ * security_toggle_hook - Toggle the state of the LSM hook.
-+ * @hook_addr: The address of the hook to be toggled.
-+ * @state: Whether to enable for disable the hook.
-+ *
-+ * Returns 0 on success, -EINVAL if the address is not found.
-+ */
-+int security_toggle_hook(void *hook_addr, bool state)
-+{
-+	unsigned long num_entries =
-+		(sizeof(static_calls_table) / sizeof(struct lsm_static_call));
-+	void *scalls_table = ((void *)&static_calls_table);
-+	struct lsm_static_call *scall;
-+	int i;
-+
-+	for (i = 0; i < num_entries; i++) {
-+		scall = scalls_table + (i * sizeof(struct lsm_static_call));
-+		if (!scall->hl || !scall->hl->runtime)
-+			continue;
-+
-+		if (scall->hl->hook.lsm_func_addr != hook_addr)
-+			continue;
-+
-+		if (state)
-+			static_branch_enable(scall->active);
-+		else
-+			static_branch_disable(scall->active);
-+		return 0;
-+	}
-+	return -EINVAL;
-+}
-+
- /*
-  * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
-  * can be accessed with:
--- 
-2.45.2.803.g4e1b14247a-goog
+> I think an independent restriction of auto-binding for bind() and
+> listen() is a good approach: API is more clear and Landlock rules do
+> not affect each other's behavior. Did I understood your suggestion
+> correctly?
 
+I believe you did; After reading a lot of documentation on that subject
+recently, let me try to phrase it in yet another way, so that we are on the=
+ same
+page:
+
+The socket operations do the following things:
+
+ - listen() and connect() make the local port available from the outside.
+
+ - bind(): Userspace processes call bind() to express that they want to use=
+ a
+   specific local address (IP+port) with the given socket.  With TCP, users=
+pace
+   may always omit the call to bind().  If omitted, the kernel picks an
+   ephemeral port.
+
+So, bind() behaves the same way, whether is is being used with listen() or
+connect().  The common way is to use listen() with bind() and connect() wit=
+hout
+bind(), but the opposite can also be done: listen() without bind() will lis=
+ten
+on an ephemeral port, and connect() with bind() will use the desired port.
+
+(The Unix Network Programming book remarks that listen() without bind() is =
+done
+for SunRPC servers, where the separately running portmapper daemon provides=
+ a
+lookup facility for the running services, and services can therefore be off=
+ered
+on any port.)
+
+A good description I found in the man pages is this:
+
+From ip(7):
+
+  An ephemeral port is allocated to a socket in the following circumstances=
+:
+
+  =E2=80=A2  the port number in a socket address is specified as 0 when cal=
+ling bind(2);
+  =E2=80=A2  listen(2) is called on a stream socket that was not previously=
+ bound;
+  =E2=80=A2  connect(2) was called on a socket that was not previously boun=
+d;
+  =E2=80=A2  sendto(2) is called on a datagram socket that was not previous=
+ly bound.
+
+(This section of the ip(7) man page is referenced from connect(2) and liste=
+n(2),
+in their ERRORS sections.)
+
+So, due to the symmetry of how bind() behaves for both connect() and listen=
+(),
+my suggestion would be:
+
+ * Keep the LANDLOCK_ACCESS_NET_BIND_TCP implementation as it is.
+
+ * Clarify in LANDLOCK_ACCESS_NET_BIND_TCP that this only makes calls to bi=
+nd()
+   return errors, but that this does not keep a socket from listening on
+   ephemeral ports.
+
+ * Create a new LANDLOCK_ACCESS_NET_LISTEN_TCP access right and restrict
+   listen() with that.  Looking at your patch set again, the code in
+   hook_socket_listen() should be very similar, but we might want to call
+   check_access_socket() with the port number that was previously bound (if
+   bind() was called).
+
+Does that sound reasonable?
+
+
+With the current patch-fix as you sent it on the top of this thread, there =
+are
+otherwise some confusing aspects to it, such as:
+
+ * connect() is also implicitly using a local ephemeral port, just like
+   listen().  But while calls to listen() are checked against
+   LANDLOCK_ACCESS_NET_BIND_TCP, calls to connect() are not.
+
+ * listen() can return an error due to LANDLOCK_ACCESS_NET_BIND_TCP,
+   even when the userspace program never called bind().
+
+Both of these are potentially puzzling and might be more in-line with BSD s=
+ocket
+concepts if we did it differently.
+
+
+> > With some luck, that would then also free us from having to implement t=
+he
+> > check_tcp_socket_can_listen() logic, which is seemingly emulating logic=
+ from
+> > elsewhere in the kernel?
+>=20
+> But check_tcp_socket_can_listen() will be required for
+> LANDLOCK_ACCESS_NET_LISTEN_TCP hook anyway. Did I miss smth?
+
+You are right -- my fault, I misread that.
+
+=E2=80=94G=C3=BCnther
