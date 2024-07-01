@@ -1,93 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6921339B1;
-	Mon,  1 Jul 2024 15:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E87126F1E
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Jul 2024 15:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719846031; cv=none; b=Aea1Jl2V/8W8qZzeR1HXQzd8RFLcf8rM9T3DSMo1oxi7kEVu6J8mEn6MSa+Dt+v8DB9GCoRsA0ua5TGhExWPvD74Gj8R79osneAIs643lIbe+IwLaI+y5p+wKJ+aUT46mYA17nFlU5UtXof9gHhXBPdKc08w9sCL5sKkTLBVHH4=
+	t=1719848841; cv=none; b=UORk1qc1/jZZ4LrfeM2SvJLH+4nTG9AE704TQBeY+RGwX9VplEDiGQMFgTvljC0n4LdNj0PAOsWCcgjSmwCwbF7R5l4gSi2OqPvKzC5zgYc8p6aPp64HsdZq+Ji8DvvJ28bsMgKhduGZJipe4pn/HvXlUYpHQ2XuJDXm6/b+JlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719846031; c=relaxed/simple;
-	bh=fbn2NGKb2qkaahIhbmmExTV1fZJk1OftjiQiEv/22fk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qihrAFuUe/0gTr+hE/XkmxRIrBKJANPGWUW5OqIKSBK2Tj+6QyDcTHU/5t3XPXT+6WAieqs+okLljJmJCvW1rAyuI/ugqVHTHG5Io5x70+2K+Pu7fhDj6nJc8yjXoMc740atYkuI30swuBjw1jc7ObqCLFBINFZJFhL+zy1C9Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkpMYn/h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719848841; c=relaxed/simple;
+	bh=FPo8D/Kk1dOyR5uT4VxPnhtcwddp+vWKSHFQqxpjbjU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JtdlOnvPUW2msiIkWx5TeJ3CXtzsOBg+pkeKqD0pFPeXzf+ZBKAoy3stYUohdZGPGkbiljULxeQShJW9Ab3L+tDuhTexTdSpZMFjCDCZyRw03R0f6lWmKjwN8mqBFLdvKm+YDE/njTKg/kcJL+dx4MZcbzP7qEwqT6lUSlqU4HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aOaubwWF; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkpMYn/h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6C0C116B1;
-	Mon,  1 Jul 2024 15:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719846031;
-	bh=fbn2NGKb2qkaahIhbmmExTV1fZJk1OftjiQiEv/22fk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=fkpMYn/hbFQlOFDcDGu1lS8X4x8q5qttab8iLxUOFB3fE6cUtsZ1PlYPpnD8O4mKW
-	 EtkIhdJpfE0rW+2koBvWajjvr+JWkhjhIL56kQfbNVv4MVu+9xgIZFWJ+li/Armu9c
-	 QTxz13lOmcXy1CbEHO+NcV92Cx8DCMMOxKHPN+UdjpJfcAauSr/duTwaeF2OkQCER4
-	 QtAyO0NXfojbp8wYQHKK+F+nm0nAdnzA7x93N3S3mmowjelPnupxFQyRiy9KHkiSKj
-	 76F++uf92XObvdkBYlTWNKsuaIzXxU3RUZwi6o5ykHWMhsnRdh1bzegpdBCRC5YNxA
-	 7IFIry89eWoAw==
-Message-ID: <4258218f9de3a70e7a04783881baed3879a914f1.camel@kernel.org>
-Subject: Re: [PATCH v3 1/2] KEYS: trusted: add missing MODULE_DESCRIPTION()
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, James Bottomley
- <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
- David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,  linux-integrity@vger.kernel.org,
- keyrings@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org
-Date: Mon, 01 Jul 2024 15:00:28 +0000
-In-Reply-To: <CAHC9VhSVSS46oCAz_NrUUGstmG3j0NVk70-SwwtCTVJ-R1Z+OA@mail.gmail.com>
-References: <20240606-md-trusted-v3-0-42716f15e66e@quicinc.com>
-	 <20240606-md-trusted-v3-1-42716f15e66e@quicinc.com>
-	 <D24EWHXV14EM.S0NQ3H51R892@kernel.org>
-	 <CAHC9VhSVSS46oCAz_NrUUGstmG3j0NVk70-SwwtCTVJ-R1Z+OA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aOaubwWF"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfe71fc2ab1so5768914276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2024 08:47:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719848839; x=1720453639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WU1tUU/5ppJ9JQGB+epgGM7MVZKaRXGO2Nbxk9/VZsc=;
+        b=aOaubwWFuqJdoKFt27fXTt1PngjO6tfxXkDmMjW49iIRHc1baBBKO3iYLOOsvTfFQn
+         zwjMnQtBXLog0o687dMRKc3Y8HQK+Nb4N34Loaw3wlyzqWiIAhALW+nYguiugcEL3jFK
+         jPXYOkXqjVahWMhIzskZecGMD8P7hqf1WxsoDOhMvhD369CNH1NvjxD2qqsWPuroVUO6
+         hzf+g01BFqlDZsDFGD2DcFLtVL7/AxEOWuusTKiNBlUL3mmloS+9Qny0OreSm8judjtQ
+         EwgmvicbKdTI9/FHK3C2pc6jOpY3k1pkkRlIdWEMdltdaRHGp8MlA6K4eq9d7Jv+ydE6
+         k6cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719848839; x=1720453639;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WU1tUU/5ppJ9JQGB+epgGM7MVZKaRXGO2Nbxk9/VZsc=;
+        b=mL1n2HZ12VWR+7Hi+5GU8I7i4QNICRu63ZczObdi/3PlZSx6IN39mEULTwKM9gzKyd
+         fNA0rlP6oA/7ekUhbAsZeIJKfwb80zSm6KwUtp7mzXepvZrlpz27vGxiCZ8xRGsn2QLu
+         hIZiunq+SC4sfFXlF/n4Qk+KAb88vvSwjdFAc4zE/1LR54RxNN4R7mzuMk2QogVwTJvr
+         TQECPsqfcW7BDxRJdkYaKZmVo9TEJNX9thgVs0wLmgbGpfTKIwKvctDA28778Pu5y0S5
+         UUNfYL0v2ZLDIQBqM6RML25Ws57hmfv6TbI14BPviPDm9RMCCJV46LYXrEiJ/QYSJW7m
+         90ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOBw6SGRRlsDpypUUJj7F7kla9GM95xC1OES14Rua1N/MipWp8+SE6RS9+tF9iH/phkEw9VqneZYlRP0g/5fAkS1E/G1TzMWfSc7QMoQN0h+KQgRCr
+X-Gm-Message-State: AOJu0YygqfrJ6xw9VyF3BrZ8Ybu0jsyUCyELgQP1SQMMIATIe49Ko86g
+	a+LS/FU6h1f0tVxWUx8+H6THOiExDWpnrqBiZkGB8SmNeRoMGegMLFhevGHq2FM53UW1yoSmG+Q
+	8uw==
+X-Google-Smtp-Source: AGHT+IErBJMV/zWn0JWp3w5OGm+ClIlLy1G7Ira79YbfIC8FfYGvfByDwDiqd2kOIkaWE4wAf39lUKmODns=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:2b84:b0:e03:6556:9fa1 with SMTP id
+ 3f1490d57ef6-e036ec44f66mr275869276.8.1719848839432; Mon, 01 Jul 2024
+ 08:47:19 -0700 (PDT)
+Date: Mon, 1 Jul 2024 17:47:17 +0200
+In-Reply-To: <bd2622cf-27e2-dbb6-735a-0adf6c79b339@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
+ <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
+ <20240425.Soot5eNeexol@digikod.net> <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
+ <ZnMr30kSCGME16rO@google.com> <b2d1a152-0241-6a3a-1f31-4a1045fff856@huawei-partners.com>
+ <ZoKB7bl41ZOiiXmF@google.com> <bd2622cf-27e2-dbb6-735a-0adf6c79b339@huawei-partners.com>
+Message-ID: <ZoLPhQ4eyl0H_oSQ@google.com>
+Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-06-20 at 12:54 -0400, Paul Moore wrote:
-> On Wed, Jun 19, 2024 at 8:19=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.or=
-g> wrote:
-> > On Fri Jun 7, 2024 at 4:47 AM EEST, Jeff Johnson wrote:
-> > > kbuild reports:
-> > >=20
-> > > WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trust=
-ed-keys/trusted.o
-> > >=20
-> > > Add the missing MODULE_DESCRIPTION() macro invocation.
-> > >=20
-> > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > > ---
-> > > =C2=A0security/keys/trusted-keys/trusted_core.c | 1 +
-> > > =C2=A01 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/security/keys/trusted-keys/trusted_core.c b/security/key=
-s/trusted-
-> > > keys/trusted_core.c
-> > > index 5113aeae5628..e2d9644efde1 100644
-> > > --- a/security/keys/trusted-keys/trusted_core.c
-> > > +++ b/security/keys/trusted-keys/trusted_core.c
-> > > @@ -395,4 +395,5 @@ static void __exit cleanup_trusted(void)
-> > > =C2=A0late_initcall(init_trusted);
-> > > =C2=A0module_exit(cleanup_trusted);
-> > >=20
-> > > +MODULE_DESCRIPTION("Trusted Key type");
-> > > =C2=A0MODULE_LICENSE("GPL");
-> >=20
-> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Mon, Jul 01, 2024 at 04:10:27PM +0300, Ivanov Mikhail wrote:
+> Thanks for the great explanation! We're on the same page.
 >=20
-> Are you planning on taking these patches Jarkko?
+> Considering that binding to ephemeral ports can be done not only with
+> bind() or listen(), I think your approach is more correct.
+> Restricting any possible binding to ephemeral ports just using
+> LANDLOCK_ACCESS_NET_BIND_TCP wouldn't allow sandboxed processes
+> to deny listen() without pre-binding (which is quite unsafe) and
+> use connect() in the usuall way (without pre-binding).
+>=20
+> Controlling ephemeral ports allocation for listen() can be done in the
+> same way as for LANDLOCK_ACCESS_NET_BIND_TCP in the patch with
+> LANDLOCK_ACCESS_NET_LISTEN_TCP access right implementation.
 
-Hi, both are now applied.
+That sounds good, yes! =F0=9F=91=8D
 
-Except slow phase this month as I'm on holiday. I'll take care of
-v6.11 PR's.
 
-BR, Jarkko
+> I'm only concerned about controlling the auto-binding for other
+> operations (such as connect() and sendto() for UDP). As I said, I think
+> this can also be useful: users will be able to control which processes
+> are allowed to use ephemeral ports from ip_local_port_range and which
+> are not, and they must assign ports for each operation explicitly. If
+> you agree that such control is reasonable, we'll probably  have to
+> consider some API changes, since such control is currently not possible.
+>=20
+> We should clarify this before I send a patch with the
+> LANDLOCK_ACCESS_NET_LISTEN_TCP implementation. WDYT?
+
+LANDLOCK_ACCESS_NET_LISTEN_TCP seems like the most important to me.
+
+For connect() and sendto(), I think the access rights are less urgent:
+
+connect(): We already have LANDLOCK_ACCESS_NET_CONNECT_TCP, but that one is
+getting restricted for the *remote* port number.
+
+ (a) I think it would be possible to do the same for the *local* port numbe=
+r, by
+     introducing a separate LANDLOCK_ACCESS_NET_CONNECT_TCP_LOCALPORT right=
+.
+     (Yes, the name is absolutely horrible, this is just for the example :)=
+)
+     hook_socket_connect() would then need to do both a check for the remot=
+e
+     port using LANDLOCK_ACCESS_NET_CONNECT_TCP, as it already does today, =
+as
+     well as a check for the (previously bound?) local port using
+     LANDLOCK_ACCESS_NET_CONNECT_TCP_LOCALPORT.
+    =20
+     So I think it is extensible in that direction, in principle, even thou=
+gh I
+     don't currently have a good name for that access right. :)
+    =20
+ (b) Compared to what LANDLOCK_ACCESS_NET_BIND_TCP already restricts, a
+     hypothetical LANDLOCK_ACCESS_NET_CONNECT_TCP_LOCALPORT right would onl=
+y
+     additionally restrict the use of ephemeral ports.  I'm currently havin=
+g a
+     hard time seeing what an attacker could do with that (use up all ephem=
+eral
+     ports?).
+
+sendto(): I think this is not relevant yet, because as the documentation sa=
+id,
+ephemeral ports are only handed out when sendto() is used with datagram (UD=
+P)
+sockets.
+
+Once Landlock starts having UDP support, this would become relevant, but fo=
+r
+this patch set, I think that the TCP server use case as discussed further a=
+bove
+in this thread is very compelling.
+
+Thanks,
+=E2=80=94G=C3=BCnther
