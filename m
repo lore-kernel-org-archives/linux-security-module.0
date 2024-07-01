@@ -1,273 +1,159 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D3E1EB2A;
-	Mon,  1 Jul 2024 13:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9EE15D5D8
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Jul 2024 13:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719839457; cv=none; b=bj72zHD725mSeEHKM6SPIsPGY+9ZOYfX1mmMVguAN8xTZ0299B/4eLmNfL9Y7CnDo89eQcYha/Ajt0OiZhTScTqt8pkXmvgFEPwXqaYwNHyrC7VCMJZy/SyRbjZBjL1QvZEBN/Taxjn2+FjSPUxl3aLOq4X/yqNArg45Yziq7hI=
+	t=1719841104; cv=none; b=K0Pg4IOqPwo5zhsvxTCRaN8kUYRM5xiRUOxZIN2fK3ao2BWedCmPg0Cw5MqzoJDzQiMahLK5ALg20cxC2lXFPfLwmHpjx+xo+rxX/h/644+kVA7L7C+maDuKs+Xj4nHRNIBWUyLYY6Xm7ojHzob9Y52AGnTqqtCVFP/fNqS04dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719839457; c=relaxed/simple;
-	bh=BzFaEn11ycGUZj5/yQOsE4ys7q1rIfmH1GclFKEwPWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n2/bZoYiJ5gl5PaIL8GWCIyaeb254nFftw4hMzdtd6o6F8mvCE+bDxvwLXUf1waGm0VKvmNrTB9UOQsbcfbZVxrkCs049GB43u4rIQHiCBoqGJMXhYGRmP4slolaESAcTsDB4ziX6tAqLFvLY918wvWqtXsI+uItCrlX0Z0xGdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WCRHG5VBPznYjM;
-	Mon,  1 Jul 2024 21:10:34 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id BAA22140417;
-	Mon,  1 Jul 2024 21:10:48 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 1 Jul 2024 21:10:44 +0800
-Message-ID: <bd2622cf-27e2-dbb6-735a-0adf6c79b339@huawei-partners.com>
-Date: Mon, 1 Jul 2024 16:10:27 +0300
+	s=arc-20240116; t=1719841104; c=relaxed/simple;
+	bh=IN2Pz7feRSB89N45CnxvbpbzXQIdjfaQZf+/3twSXjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dn4+uPEZGp5ZTxasx9GRR18oJz9GdepNFC7Xb8s0Mlqcd4N67DPVoSM0+Lzy3EHGw4nwk4ZOZ75LXPaU7yZczzYd+1wjlFZHe4jj3qTWMztKjZQh4K5l9eBBkFgJeDyn7qAVSoarLPZRc/3uHGs0hr+5sdREt8zfTndCxmv8kGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b=02MZcKf0; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b="02MZcKf0"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso31415601fa.0
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2024 06:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1719841099; x=1720445899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k5sD7PnRdPX0lFwpY8jX67XXDkztmCAH2fY727c2mDM=;
+        b=02MZcKf0LQ3T+MiaBjc8YXR816vctgKAJ33jaB//yAU1DhUC7tyiDI3wqx4DWj4IEr
+         IVtZHZT+Rq2o7jcRFQUGNszDxmp8y7wlMTbDjU/9p1VUHuAu3LmxHwmH3Y8TuiJhRuxP
+         Do9fXpdRsdSQldYyr9hDPK46CPnxVtrlKBOn4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719841099; x=1720445899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k5sD7PnRdPX0lFwpY8jX67XXDkztmCAH2fY727c2mDM=;
+        b=t8doDY0Xsp7NmH0ADnsB0rNTYZWO8/vJYjY8nPTqs3+yZjQmTgLTq+QgYj0UJy0v0e
+         UNrWi03Ezx7mGDjZjpNYENHdFLPQDPOJo3+TO0t0re7rwyDbKcXX3yDZXocAKU2Llql2
+         A74xxTJsF2ts1wuneHacY2+XE+p/mO53hocD2R/QlqnhkU5bM9XG2kfoWUkFG7uuDaQa
+         CLDCNZlvtxZCGnL8BIikJUm4JTdyQLXJybG1q3N1rsfVGoYvni99xTWfhEdo+0pXsGsQ
+         x/mJHxBOQi+dIeAXDKdQfS3eQsJtL1HXvxYJIlIlvHYF5z8916OjPrVUlQPWYXuT7A3g
+         8Eiw==
+X-Gm-Message-State: AOJu0YzLGUU4zc6L2/cko8p93sMcq1BHzJi6A7froeu1EhtkgVX9vdFd
+	icIQOhlJl73/L/kNoL331+IZI0a8oXr6E6g1PxlMqztN/yy1mal/9J92G5UDjDA=
+X-Google-Smtp-Source: AGHT+IHmRxD0Ok8fKaC0DosRpV2IDl7uw7clyTO+K42aYv3Bil+q7gUIwRukGNNBTLKKJQSiA1uKog==
+X-Received: by 2002:a05:651c:4d2:b0:2ee:5301:945d with SMTP id 38308e7fff4ca-2ee5e37e0e8mr43871931fa.11.1719841098600;
+        Mon, 01 Jul 2024 06:38:18 -0700 (PDT)
+Received: from P-NTS-Evian.home (2a01cb05949d5800e3ef2d7a4131071f.ipv6.abo.wanadoo.fr. [2a01:cb05:949d:5800:e3ef:2d7a:4131:71f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5ba67sm153562855e9.19.2024.07.01.06.38.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 06:38:18 -0700 (PDT)
+From: Romain Naour <romain.naour@smile.fr>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	serge@hallyn.com,
+	jmorris@namei.org,
+	paul@paul-moore.com,
+	eric.snowberg@oracle.com,
+	dmitry.kasatkin@gmail.com,
+	roberto.sassu@huawei.com,
+	zohar@linux.ibm.com,
+	Romain Naour <romain.naour@skf.com>
+Subject: [RFC] integrity: wait for completion of i2c initialization using late_initcall_sync()
+Date: Mon,  1 Jul 2024 15:38:14 +0200
+Message-ID: <20240701133814.641662-1-romain.naour@smile.fr>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
-Content-Language: ru
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	<willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
- <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
- <20240425.Soot5eNeexol@digikod.net>
- <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
- <ZnMr30kSCGME16rO@google.com>
- <b2d1a152-0241-6a3a-1f31-4a1045fff856@huawei-partners.com>
- <ZoKB7bl41ZOiiXmF@google.com>
-From: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZoKB7bl41ZOiiXmF@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- dggpemm500020.china.huawei.com (7.185.36.49)
 
-7/1/2024 1:16 PM, Günther Noack wrote:
-> Hello!
-> 
-> On Fri, Jun 28, 2024 at 07:51:00PM +0300, Ivanov Mikhail wrote:
->> 6/19/2024 10:05 PM, Günther Noack wrote:
->>> I agree with Mickaël's comment: this seems like an important fix.
->>>
->>> Mostly for completeness: I played with the "socket type" patch set in a "TCP
->>> server" example, where *all* possible operations are restricted with Landlock,
->>> including the ones from the "socket type" patch set V2 with the little fix we
->>> discussed.
->>>
->>>    - socket()
->>>    - bind()
->>>    - enforce a landlock ruleset restricting:
->>>      - file system access
->>>      - all TCP bind and connect
->>>      - socket creation
->>>    - listen()
->>>    - accept()
->>>
->>>>  From the connection handler (which would be the place where an attacker can
->>> usually provide input), it is now still possible to bind a socket due to this
->>> problem.  The steps are:
->>>
->>>     1) connect() on client_fd with AF_UNSPEC to disassociate the client FD
->>>     2) listen() on the client_fd
->>>
->>> This succeeds and it listens on an ephemeral port.
->>>
->>> The code is at [1], if you are interested.
->>>
->>> [1] https://github.com/gnoack/landlock-examples/blob/main/tcpserver.c
->>
->> Do you mean that this scenario works with patch-fix currently being
->> discussed?
-> 
-> I did not mean to say that, no, I mostly wanted to spell out the scenario to
-> make sure we are on the same page about the goal.
-> 
-> I have tried it out with a kernel that had V2 of the "socket type" patch set
-> patched in, with the minor fix that we discussed on the "socket type" patch
-> thread after the initial submission.  On that kernel, I did not have the
-> patch-fix applied.
-> 
-> The patch-fix should keep the listen() from working, yes, but I have not tried
-> it out yet.
+From: Romain Naour <romain.naour@skf.com>
 
-I got it, thanks for the clarification! Indeed, goal of this patch-fix
-is to restrict such scenarios.
+It has been reported that on some plateforms the ima and evm
+initialization were performed too early during initcall initialization
+process and misses TPM chip detection [1] [2].
 
-> 
-> 
->>> On Mon, May 13, 2024 at 03:15:50PM +0300, Ivanov Mikhail wrote:
->>>> 4/30/2024 4:36 PM, Mickaël Salaün wrote:
->>>>> On Mon, Apr 08, 2024 at 05:47:46PM +0800, Ivanov Mikhail wrote:
->>>>>> Make hook for socket_listen(). It will check that the socket protocol is
->>>>>> TCP, and if the socket's local port number is 0 (which means,
->>>>>> that listen(2) was called without any previous bind(2) call),
->>>>>> then listen(2) call will be legitimate only if there is a rule for bind(2)
->>>>>> allowing binding to port 0 (or if LANDLOCK_ACCESS_NET_BIND_TCP is not
->>>>>> supported by the sandbox).
->>>>>
->>>>> Thanks for this patch and sorry for the late full review.  The code is
->>>>> good overall.
->>>>>
->>>>> We should either consider this patch as a fix or add a new flag/access
->>>>> right to Landlock syscalls for compatibility reason.  I think this
->>>>> should be a fix.  Calling listen(2) without a previous call to bind(2)
->>>>> is a corner case that we should properly handle.  The commit message
->>>>> should make that explicit and highlight the goal of the patch: first
->>>>> explain why, and then how.
->>>>
->>>> Yeap, this is fix-patch. I have covered motivation and proposed solution
->>>> in cover letter. Do you have any suggestions on how i can improve this?
->>>
->>> Without wanting to turn around the direction of this code review now, I am still
->>> slightly concerned about the assymetry of this special case being implemented
->>> for listen() but not for connect().
->>>
->>> The reason is this: My colleague Mr. B. recently pointed out to me that you can
->>> also do a bind() on a socket before a connect(!). The steps are:
->>>
->>> * create socket with socket()
->>> * bind() to a local port 9090
->>> * connect() to a remote port 8080
->>>
->>> This gives you a connection between ports 9090 and 8080.
->>>
->>> A regular connect() without an explicit bind() is of course the more usual
->>> scenario.  In that case, we are also using up ("implicitly binding") one of the
->>> ephemeral ports.
->>>
->>> It seems that, with respect to the port binding, listen() and connect() work
->>> quite similarly then?  This being considered, maybe it *is* the listen()
->>> operation on a port which we should be restricting, and not bind()?
->>
->> Do you mean that ability to restrict auto-binding for connect() should
->> also be implemented? This looks like good idea if we want to provide
->> full control over port binding. But it's hard for me to come up with an
->> idea how it can be implemented: current Landlock API allows to restrict
->> only the destination port for connect().
-> 
-> I do not think that restricting auto-binding for connect as part of
-> LANDLOCK_ACCESS_NET_BIND_TCP would be the correct way.
-> 
-> 
->> I think an independent restriction of auto-binding for bind() and
->> listen() is a good approach: API is more clear and Landlock rules do
->> not affect each other's behavior. Did I understood your suggestion
->> correctly?
-> 
-> I believe you did; After reading a lot of documentation on that subject
-> recently, let me try to phrase it in yet another way, so that we are on the same
-> page:
-> 
-> The socket operations do the following things:
-> 
->   - listen() and connect() make the local port available from the outside.
-> 
->   - bind(): Userspace processes call bind() to express that they want to use a
->     specific local address (IP+port) with the given socket.  With TCP, userspace
->     may always omit the call to bind().  If omitted, the kernel picks an
->     ephemeral port.
-> 
-> So, bind() behaves the same way, whether is is being used with listen() or
-> connect().  The common way is to use listen() with bind() and connect() without
-> bind(), but the opposite can also be done: listen() without bind() will listen
-> on an ephemeral port, and connect() with bind() will use the desired port.
-> 
-> (The Unix Network Programming book remarks that listen() without bind() is done
-> for SunRPC servers, where the separately running portmapper daemon provides a
-> lookup facility for the running services, and services can therefore be offered
-> on any port.)
-> 
-> A good description I found in the man pages is this:
-> 
->>From ip(7):
-> 
->    An ephemeral port is allocated to a socket in the following circumstances:
-> 
->    •  the port number in a socket address is specified as 0 when calling bind(2);
->    •  listen(2) is called on a stream socket that was not previously bound;
->    •  connect(2) was called on a socket that was not previously bound;
->    •  sendto(2) is called on a datagram socket that was not previously bound.
-> 
-> (This section of the ip(7) man page is referenced from connect(2) and listen(2),
-> in their ERRORS sections.)
-> 
-> So, due to the symmetry of how bind() behaves for both connect() and listen(),
-> my suggestion would be:
-> 
->   * Keep the LANDLOCK_ACCESS_NET_BIND_TCP implementation as it is.
-> 
->   * Clarify in LANDLOCK_ACCESS_NET_BIND_TCP that this only makes calls to bind()
->     return errors, but that this does not keep a socket from listening on
->     ephemeral ports.
-> 
->   * Create a new LANDLOCK_ACCESS_NET_LISTEN_TCP access right and restrict
->     listen() with that.  Looking at your patch set again, the code in
->     hook_socket_listen() should be very similar, but we might want to call
->     check_access_socket() with the port number that was previously bound (if
->     bind() was called).
-> 
-> Does that sound reasonable?
-> 
-> 
-> With the current patch-fix as you sent it on the top of this thread, there are
-> otherwise some confusing aspects to it, such as:
-> 
->   * connect() is also implicitly using a local ephemeral port, just like
->     listen().  But while calls to listen() are checked against
->     LANDLOCK_ACCESS_NET_BIND_TCP, calls to connect() are not.
-> 
->   * listen() can return an error due to LANDLOCK_ACCESS_NET_BIND_TCP,
->     even when the userspace program never called bind().
-> 
-> Both of these are potentially puzzling and might be more in-line with BSD socket
-> concepts if we did it differently.
+Indeed, ima may uses a TPM chip but requires to wait for bus
+interface (spi or i2c) and TPM driver initialization.
 
-Thanks for the great explanation! We're on the same page.
+[    0.166261] ima: No TPM chip found, activating TPM-bypass!
+...
+[    0.166322] evm: Initialising EVM extended attributes:
+...
+[    0.182571] ti-sci 44083000.system-controller: ABI: 3.1 (firmware rev 0x0009 '9.2.4--v09.02.04 (Kool Koala)')
+[    0.281540] omap_i2c 42120000.i2c: bus 0 rev0.12 at 400 kHz
+[    0.282314] omap_i2c 2000000.i2c: bus 4 rev0.12 at 400 kHz
+[    0.282972] omap_i2c 2010000.i2c: bus 5 rev0.12 at 400 kHz
+[    0.335177] tpm_tis_i2c 2-002e: 2.0 TPM (device-id 0x1C, rev-id 22)
+[    0.471596] omap_i2c 2020000.i2c: bus 2 rev0.12 at 100 kHz
+[    0.472310] omap_i2c 2030000.i2c: bus 6 rev0.12 at 400 kHz
+[    0.472951] omap_i2c 2040000.i2c: bus 3 rev0.12 at 100 kHz
+[    0.473596] omap_i2c 2050000.i2c: bus 7 rev0.12 at 400 kHz
+[    0.474274] omap_i2c 2060000.i2c: bus 1 rev0.12 at 100 kHz
 
-Considering that binding to ephemeral ports can be done not only with
-bind() or listen(), I think your approach is more correct.
-Restricting any possible binding to ephemeral ports just using
-LANDLOCK_ACCESS_NET_BIND_TCP wouldn't allow sandboxed processes
-to deny listen() without pre-binding (which is quite unsafe) and
-use connect() in the usuall way (without pre-binding).
+The ima stack was expecting to start after the TPM device (hence the
+comment) using late_initcall() but fail to do so on such plateforms:
 
-Controlling ephemeral ports allocation for listen() can be done in the
-same way as for LANDLOCK_ACCESS_NET_BIND_TCP in the patch with
-LANDLOCK_ACCESS_NET_LISTEN_TCP access right implementation.
+  late_initcall(init_ima);	/* Start IMA after the TPM is available */
 
-I'm only concerned about controlling the auto-binding for other
-operations (such as connect() and sendto() for UDP). As I said, I think
-this can also be useful: users will be able to control which processes
-are allowed to use ephemeral ports from ip_local_port_range and which
-are not, and they must assign ports for each operation explicitly. If
-you agree that such control is reasonable, we'll probably  have to
-consider some API changes, since such control is currently not possible.
+Using late_initcall_sync() variant allows to really wait for i2c
+initialization completion.
 
-We should clarify this before I send a patch with the
-LANDLOCK_ACCESS_NET_LISTEN_TCP implementation. WDYT?
+[    0.285986] omap_i2c 42120000.i2c: bus 0 rev0.12 at 400 kHz
+[    0.286706] omap_i2c 2000000.i2c: bus 4 rev0.12 at 400 kHz
+[    0.287382] omap_i2c 2010000.i2c: bus 5 rev0.12 at 400 kHz
+[    0.331503] tpm_tis_i2c 2-002e: 2.0 TPM (device-id 0x1C, rev-id 22)
+[    0.677185] omap_i2c 2020000.i2c: bus 2 rev0.12 at 100 kHz
+[    0.677904] omap_i2c 2030000.i2c: bus 6 rev0.12 at 400 kHz
+[    0.678557] omap_i2c 2040000.i2c: bus 3 rev0.12 at 100 kHz
+[    0.679167] omap_i2c 2050000.i2c: bus 7 rev0.12 at 400 kHz
+[    0.679792] omap_i2c 2060000.i2c: bus 1 rev0.12 at 100 kHz
+...
+[    3.062788] ima: Allocated hash algorithm: sha256
+...
+[    3.318975] ima: No architecture policies found
+[    3.323536] evm: Initialising EVM extended attributes:
+[    3.328662] evm: security.selinux (disabled)
+[    3.332919] evm: security.SMACK64 (disabled)
+[    3.337177] evm: security.SMACK64EXEC (disabled)
+[    3.341781] evm: security.SMACK64TRANSMUTE (disabled)
+[    3.346819] evm: security.SMACK64MMAP (disabled)
+[    3.351422] evm: security.apparmor (disabled)
+[    3.355764] evm: security.ima
+[    3.358721] evm: security.capability
+[    3.362285] evm: HMAC attrs: 0x1
 
-> 
-> 
->>> With some luck, that would then also free us from having to implement the
->>> check_tcp_socket_can_listen() logic, which is seemingly emulating logic from
->>> elsewhere in the kernel?
->>
->> But check_tcp_socket_can_listen() will be required for
->> LANDLOCK_ACCESS_NET_LISTEN_TCP hook anyway. Did I miss smth?
-> 
-> You are right -- my fault, I misread that.
-> 
-> —Günther
+[1] https://lore.kernel.org/linux-integrity/9b98d912-ba78-402c-a5c8-154bef8794f7@smile.fr/
+[2] https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1375425/tda4vm-ima-vs-tpm-builtin-driver-boot-order
+
+Signed-off-by: Romain Naour <romain.naour@skf.com>
+---
+ security/integrity/evm/evm_main.c | 2 +-
+ security/integrity/ima/ima_main.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 62fe66dd53ce..316f8d140825 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -1180,4 +1180,4 @@ DEFINE_LSM(evm) = {
+ 	.blobs = &evm_blob_sizes,
+ };
+ 
+-late_initcall(init_evm);
++late_initcall_sync(init_evm);	/* Start EVM after IMA */
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index f04f43af651c..0aa7cd9aabfa 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -1220,4 +1220,4 @@ DEFINE_LSM(ima) = {
+ 	.blobs = &ima_blob_sizes,
+ };
+ 
+-late_initcall(init_ima);	/* Start IMA after the TPM is available */
++late_initcall_sync(init_ima);	/* Start IMA after the TPM is available */
+-- 
+2.45.0
+
