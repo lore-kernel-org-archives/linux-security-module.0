@@ -1,197 +1,125 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0028715F3E0;
-	Mon,  1 Jul 2024 19:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880F12F29
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Jul 2024 23:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719861692; cv=none; b=q7K3KUYjhYQu6V47HKzJ2tvEUhtRbh+F2H+D/wL5zVRlynNc8KyVhJn+0sNDi1QfImXKTeLJ/8rPqtyMSTBEtVejGJV0ZgSB/PlGLnUHjLH6namXs8PwNRd+WddcIiSBiGeELb4kwZzzXSiSavU7mZLHg+GTX4FEScyjcGG5t1s=
+	t=1719877272; cv=none; b=Niaps3RSkgxqTNNNyi+LzTi1CFLt/Rbzx2XN6u2/RCsXLHeD9TxVJEAJpZPQ1G5QnTIKa8BcxP7xwamfcfC0WFi28SbgpqOCTkoXuy1chxJG0KCWuDl8qW9RWy8p7WcaPUY2FDQhj3v/oryiqF303GcJrFXIi26snysRfTX7xmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719861692; c=relaxed/simple;
-	bh=xA4gT5jgdk/OTxA5+HmO+icyiiNsnLJsHJKqiT48Ou0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HD2Qa2DZGkBWOyjlqj7h07VGjHDLX8lR1+jHBbYfjGGnpumy6QywWJ5zvyJTOHzQuJ4FUgARLOZzRSirEYr/uyrk1wWHizUeHwn/nrKJY0ncrS9zFVfXiN5eEoJokOxOinXqhitxBlxTv3EE+YncfvaobS4Hux+IQ5/pvZDQIiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UqjDwCGD; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1719877272; c=relaxed/simple;
+	bh=CgoTJpfM3Eaqb9b9tstTTdsvLHWdvVZJPceoVZ/lIxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QaIi8guKHIEHouWinBRB1zXxck8f1yusDXyUHa8PZCYDQSvox6pLmbmmEGJmG/8MNNuvm0cjciy4Deva5zNyU2LQVLgH3SWDcjLoyRDiBe64veLPt3qjZNDEaFo8rpuRVtpeaius7EhcEowmNsoVYM2t6fprViq4vLUBfq/exAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=giqerGV4; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UqjDwCGD"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461Iv0HE013388;
-	Mon, 1 Jul 2024 19:21:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	vwPSGgNyfB7PV/gU5mKuyglcYgFurNIMZQ4OJRpNuIs=; b=UqjDwCGD7ZPhhPfJ
-	2T6PY4BrgQHagrXZIf+zZGGzZGUfoAAodzuyCsNY0bxSrOZToKePlOHrxjrIz/Uc
-	pF54TtoFwemRyaydw+3mzwZchISj0Xq60tA8dwJY9Z8wSSaPLiodu8NrjWB/FAmk
-	nA17VDTWM4JdDXqrH+hsEENndoD/bIza/7p70dmsTF5ZdfXcYzeSMIFBtFkQmVu7
-	YxTRGSTwhtAZsXOVnUe4Ujt+iA1eQ8hnWzMN4N829hYvBXaorK5VZMYC7gmQA5jA
-	9qZOM7J2vaJGjmPzzZrvPEgOd6TvEY0Mi31+kExoiKKVK2USaLTDGULpdsEVr7nS
-	mZ3nEA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4041rw03s2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 19:21:16 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 461JLFUw025280;
-	Mon, 1 Jul 2024 19:21:15 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4041rw03s1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 19:21:15 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 461I0B4R009561;
-	Mon, 1 Jul 2024 19:21:14 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402w00h39e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 19:21:14 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 461JLBA256230172
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 1 Jul 2024 19:21:13 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2DFFC58055;
-	Mon,  1 Jul 2024 19:21:11 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D36B58060;
-	Mon,  1 Jul 2024 19:21:07 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  1 Jul 2024 19:21:07 +0000 (GMT)
-Message-ID: <596c3997-6a9d-4ac4-895f-512058a2648c@linux.ibm.com>
-Date: Mon, 1 Jul 2024 15:21:06 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tpm: Check non-nullity of chip->auth
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Ard Biesheuvel <ardb@kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-References: <20240701170735.109583-1-jarkko@kernel.org>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20240701170735.109583-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZiMnc2k-AjdCMwIntE57sE603DRvScCp
-X-Proofpoint-ORIG-GUID: 1rPc_D_JYeAanSUH0ce6VrL5Yf1X5woA
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="giqerGV4"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e0360f890a1so2602934276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2024 16:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1719877269; x=1720482069; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ql1LylJQbz5AqF02VyghAmPHhBmm+I/CxB5gAOiOtG0=;
+        b=giqerGV4DRRuwFPvN6Xrg9BgUdFji2MMj5Dij9liQWHDD+UdN7NnE7+ZR3jOf+7iCr
+         gfZLcQktp+Oj2ikTU6ahGw3g2BNjlt3anXc20tn2oC39tNn1TymcXZOUW4cb6HyOp+oo
+         XaT4yOn35rOvJwm4PgVWQVX/3Dty9N/F2XDpX/WFSxhxPy915splFSHsv/pjNf8RgGeO
+         aczV0HE4Ky/cnz8lbyOkkizwsym1Hd/GiUzKhyipkiYyAUQy22Y4xKoSZYmCRDSYcnY/
+         cDH2dYgPZfqtFUwcTZWIlP8G+4qr+/F3cugHhx35a4zCFLd5XngisbDEN6+ooNx3rMRi
+         YaKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719877269; x=1720482069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ql1LylJQbz5AqF02VyghAmPHhBmm+I/CxB5gAOiOtG0=;
+        b=Ogx78/i86eIenp0AHCXcYOKcWNOizwLeBwzzKAOTRi+6haubC8Nn9lsosskBlBQv5r
+         5t4POuFwlRZPXER/3njY7W+cb9JNr/Uubo98qnv/WcBJaT6ZmnrLA3UZqysz5DvlZCdF
+         dDOzBbbJAvOsOmcST761mVCO4oK0Mq5jBnFnGANFZatPyKfdN0ZZr0i2gkGxKjwG0V7B
+         pPwgW5WBlQ4OzwEG8hyYLV4BxrTZCyb4UYc5LO/yO3aqKpf3biZTZrys4LUOvEcHOzI8
+         Q/CFRF8aB9KqxuRnda8pIWDQld6+UfyYYcUhoIrIsL1YB1kz8qG0Lh4Zhk8NL7xY/dL2
+         gIag==
+X-Gm-Message-State: AOJu0YxfihA3D1iaxkggS2B4ZsEX0Roz/NI+TCqkG6vcXgMYEDwLpnWQ
+	OfJkuBA3fYGIgyeSDGCXKm/FCPeNGUOr6xEcTCUJDm06MQUmBbf9maP1LkTAFf8ue/ZQHgELGz3
+	lZWw6CXqAENiGTlrP38NRJkdLKhTBu7tN2WOi
+X-Google-Smtp-Source: AGHT+IHtDYzMOZDam+ECIMAw43vgsX26d3AvzRHQKMU8Wr/2vGxwFWto9PP9Wduno94h2/m8Ochn48+TWWWjPOg+GJ4=
+X-Received: by 2002:a81:83d0:0:b0:64b:1eb2:3dd4 with SMTP id
+ 00721157ae682-64c6cabc43fmr49699387b3.8.1719877269534; Mon, 01 Jul 2024
+ 16:41:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_19,2024-07-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 spamscore=0 clxscore=1011 bulkscore=0
- phishscore=0 mlxscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407010141
+References: <20240516003524.143243-6-kpsingh@kernel.org> <03c6f35485d622d8121fa0d7a7e3d0b2@paul-moore.com>
+ <CACYkzJ6hBdk0MEW+4-U3zprEY4a_JcOLYj0wFEz1KW2gBDDE_Q@mail.gmail.com>
+In-Reply-To: <CACYkzJ6hBdk0MEW+4-U3zprEY4a_JcOLYj0wFEz1KW2gBDDE_Q@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 1 Jul 2024 19:40:58 -0400
+Message-ID: <CAHC9VhS_5d-CsTVTQCSZ3W151hGhNC+AZf=jRqfheKtZ+J4xOg@mail.gmail.com>
+Subject: Re: [PATCH v12 5/5] bpf: Only enable BPF LSM hooks when an LSM
+ program is attached
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Jun 29, 2024 at 4:13=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
+:
+> On Tue, Jun 11, 2024 at 6:35=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On May 15, 2024 KP Singh <kpsingh@kernel.org> wrote:
+> > >
+>
+> [...]
+>
+> > > +/**
+> > > + * security_toggle_hook - Toggle the state of the LSM hook.
+> > > + * @hook_addr: The address of the hook to be toggled.
+> > > + * @state: Whether to enable for disable the hook.
+> > > + *
+> > > + * Returns 0 on success, -EINVAL if the address is not found.
+> > > + */
+> > > +int security_toggle_hook(void *hook_addr, bool state)
+> > > +{
+> > > +     struct lsm_static_call *scalls =3D ((void *)&static_calls_table=
+);
+> >
+> > GCC (v14.1.1 if that matters) is complaining about casting randomized
+> > structs.  Looking quickly at the two structs, lsm_static_call and
+> > lsm_static_calls_table, I suspect the cast is harmless even if the
+> > randstruct case, but I would like to see some sort of fix for this so
+> > I don't get spammed by GCC every time I do a build.  On the other hand,
+> > if this cast really is a problem in the randstruct case we obviously
+> > need to fix that.
+> >
+>
+> The cast is not a problem with rand struct, we are iterating through a
+> 2 dimensional array and it does not matter in which order we iterate
+> the first dimension.
 
+That was my suspicion when I looked at it quickly after the gcc
+complained, but if nothing else the compiler splat needed to be
+resolved.  Based on your comment it looks like you've fixed that in
+v13, that's good.  Please make sure to test with both gcc and clang in
+the future.
 
-On 7/1/24 13:07, Jarkko Sakkinen wrote:
-> All exported functions lack the check for non-nullity of chip->auth. Add
-> the guard for each.
-> 
-> Link: https://lore.kernel.org/linux-integrity/9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org/
-> Cc: Stefan Berger <stefanb@linux.ibm.com>
-> Cc: stable@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
->   drivers/char/tpm/tpm2-sessions.c | 26 ++++++++++++++++++++++++--
->   1 file changed, 24 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-> index 907ac9956a78..d833db20531a 100644
-> --- a/drivers/char/tpm/tpm2-sessions.c
-> +++ b/drivers/char/tpm/tpm2-sessions.c
-> @@ -377,6 +377,9 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
->   	u32 len;
->   	struct tpm2_auth *auth = chip->auth;
->   
-> +	if (!auth)
-> +		return;
-> +
->   	/*
->   	 * The Architecture Guide requires us to strip trailing zeros
->   	 * before computing the HMAC
-> @@ -449,6 +452,9 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
->   	u8 cphash[SHA256_DIGEST_SIZE];
->   	struct sha256_state sctx;
->   
-> +	if (!auth)
-> +		return;
-> +
->   	/* save the command code in BE format */
->   	auth->ordinal = head->ordinal;
->   
-> @@ -639,6 +645,9 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
->   	struct tpm2_auth *auth = chip->auth;
->   	int slot;
->   
-> +	if (!auth)
-> +		return;
-> +
->   	slot = (tpm_buf_length(buf) - TPM_HEADER_SIZE)/4;
->   	if (slot >= AUTH_MAX_NAMES) {
->   		dev_err(&chip->dev, "TPM: too many handles\n");
-> @@ -705,6 +714,9 @@ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
->   	u32 cc = be32_to_cpu(auth->ordinal);
->   	int parm_len, len, i, handles;
->   
-> +	if (!auth)
-> +		return rc;
-> +
->   	if (auth->session >= TPM_HEADER_SIZE) {
->   		WARN(1, "tpm session not filled correctly\n");
->   		goto out;
-> @@ -824,8 +836,13 @@ EXPORT_SYMBOL(tpm_buf_check_hmac_response);
->    */
->   void tpm2_end_auth_session(struct tpm_chip *chip)
->   {
-> -	tpm2_flush_context(chip, chip->auth->handle);
-> -	memzero_explicit(chip->auth, sizeof(*chip->auth));
-> +	struct tpm2_auth *auth = chip->auth;
-> +
-> +	if (!auth)
-> +		return;
-> +
-> +	tpm2_flush_context(chip, auth->handle);
-> +	memzero_explicit(auth, sizeof(*auth));
->   }
->   EXPORT_SYMBOL(tpm2_end_auth_session);
->   
-> @@ -907,6 +924,11 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
->   	int rc;
->   	u32 null_key;
->   
-> +	if (!auth) {
-> +		pr_warn_once("%s: encryption is not active\n", __func__);
-> +		return 0;
-> +	}
-> +
->   	rc = tpm2_load_null(chip, &null_key);
->   	if (rc)
->   		goto out;
-It looks like you got all of the chip->auth tested:
+In an effort to avoid the "merge this now!" shouts and any other
+attempted maintainer manipulations using Linus' email as
+justification, I want to make it clear that the earliest the v13 would
+possibly be merged is after the upcoming merge window.  See the
+"Kernel Source Branches and Development Process" in the LSM guidance
+document below:
 
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/tree/README=
+.md
 
-As I mentioned in the other email (1), it does not solve the problem on 
-ppc64.
-
-1: 
-https://lore.kernel.org/linux-integrity/656b319fc58683e399323b880722434467cf20f2.camel@kernel.org/T/#m88892cb6f9cf8fdef875dcdd0ed3eccac1d28190
+--=20
+paul-moore.com
