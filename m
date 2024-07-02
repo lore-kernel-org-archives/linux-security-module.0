@@ -1,131 +1,145 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C78168A8;
-	Tue,  2 Jul 2024 02:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AF116C6A2;
+	Tue,  2 Jul 2024 12:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719887907; cv=none; b=WrPfKPG2y2GhbZSos3JQnNrKuYTidmXCppTxuwqGDtVUixb7cHO/U1yVnG/Hn5G79lBE9TwYr2z78RX9Qg9lZy58e0ZyIpZ5JpIBTr8vcryvPoqlN1l3FmHjptJHTYGIb4emeVHCj2BFMxuhhKmZNNy0aj3VwUH4Yy5X3+iuDxY=
+	t=1719924224; cv=none; b=kfnigZiNY9d9VnFFiIjt3MTCcTAk6Pfn6vzg+TS2vWWi5cKqEQa0PjZkIOSADDMqvICIpeACHDrgs4MuP7cabzgYDeNsYOgSFqYc6vhBKr0ui3Q7fd1sPqLkTFuB0XJH/Q0UMEzFU+i09kh93RtgVG6jVLtNwk0wsKyjc0luCA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719887907; c=relaxed/simple;
-	bh=zA15/BuS2QNdz4cCYTBy9x+qacrIci0a/oQFaD0luXA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B2U7ckLMhHOI7h0nn7sShPgWy9qtERm7rYu376LBO9G69PatC39IwyyDAEgBYy4G7vd2hDLKFBlWeTxBYt67emvHVvfYYkI4kbCmUnLdTEREuHEu8fqiC6+0nkdDLp/2mUfSIRVvK0tIT7Tb+W0Ma3G7LWQtdJjrTRhFV+NL+bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eH5z7BE1; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eH5z7BE1"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4622LRJY010690;
-	Tue, 2 Jul 2024 02:37:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	5G10Lixps+J/SrJAGVwjF9YxL3IksWa13KqA59IUw4c=; b=eH5z7BE1GXy3/6Xv
-	uYnjzc9l8IxGgssJmFwLXXwq0ywuiPeU+ainZcSgItKQXLAkBC0X+uQD9/rA68WW
-	m3fU+2MYC7u6jHBaH7RG1e0nrQlphmoLhzVCdSMdaklakSRzS/dRRIQW0rka52Xm
-	syH6P3oZl3nv4PCr1eUjfC5Gu5NzC25onaYJyldsD/Cz6al31Z0kzuj04tqlm7+/
-	Jjof7bogMG0Ggf3YfdTr27Yre3Gv5GKJgtJUi+vbYFX0E6FTjaCQK6EPac0c8E8A
-	3Sjj2T5SWN8QVxJGRIRFzX5OJrrx2wW408p5GDWuixxl3B/5NfpPWdP1F+4z50hJ
-	qxaciQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4048btr2eg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 02:37:52 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4622bpOK001084;
-	Tue, 2 Jul 2024 02:37:51 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4048btr2ee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 02:37:51 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4620qI2f024095;
-	Tue, 2 Jul 2024 02:37:50 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya3a2px-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 02:37:50 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4622blUa43712774
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 2 Jul 2024 02:37:50 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D823B58137;
-	Tue,  2 Jul 2024 02:37:44 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB2CF58151;
-	Tue,  2 Jul 2024 02:37:43 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.36.24])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  2 Jul 2024 02:37:43 +0000 (GMT)
-Message-ID: <e197920f27bc67df45327ef56ee509d113435b25.camel@linux.ibm.com>
-Subject: Re: [RFC] integrity: wait for completion of i2c initialization
- using late_initcall_sync()
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Romain Naour <romain.naour@smile.fr>, Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        serge@hallyn.com, jmorris@namei.org, paul@paul-moore.com,
-        eric.snowberg@oracle.com, dmitry.kasatkin@gmail.com,
-        roberto.sassu@huawei.com, Romain Naour <romain.naour@skf.com>
-Date: Mon, 01 Jul 2024 22:37:43 -0400
-In-Reply-To: <d7429218-7b48-4201-8ad9-63728e188be5@smile.fr>
-References: <20240701133814.641662-1-romain.naour@smile.fr>
-	 <c090cd3c-f4c6-4923-a9fa-b54768ca2a26@molgen.mpg.de>
-	 <d7429218-7b48-4201-8ad9-63728e188be5@smile.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: qMiskM232WjBB-RqGNJBjjqD_6_TKtsC
-X-Proofpoint-ORIG-GUID: PHgzAHwB6bTXv0hUio-xhULBrOuLBjMZ
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1719924224; c=relaxed/simple;
+	bh=+4pUZI8Vh3YIUfOxi6pW0WIBII4dOgHNC8SzYkgDUCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WKxKPHBin60m4bVMw1UVVCRSr5kcNS7aWzk8cubNJt7H9XGc8o+e6qOhX/biDeYh4dqNHvFO9ARqfTzX496RW9URGW6rqctO+mjU+tcQAlYbIBeuNNzWj7jTX/ZuPgV+xlWMlvRH4l+Fgjwx2cMhkUKtZrVbBL0p7m8I0Xh+sQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WD2XV3dNTz1T4H3;
+	Tue,  2 Jul 2024 20:39:06 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9B3241400CD;
+	Tue,  2 Jul 2024 20:43:38 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 2 Jul 2024 20:43:34 +0800
+Message-ID: <9943a87b-b981-794a-2c3d-b8dc143fe3e9@huawei-partners.com>
+Date: Tue, 2 Jul 2024 15:43:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_23,2024-07-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=999 adultscore=0 bulkscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020016
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] landlock: Add hook on socket_listen()
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+CC: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	<willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+References: <20240408094747.1761850-1-ivanov.mikhail1@huawei-partners.com>
+ <20240408094747.1761850-2-ivanov.mikhail1@huawei-partners.com>
+ <20240425.Soot5eNeexol@digikod.net>
+ <a18333c0-4efc-dcf4-a219-ec46480352b1@huawei-partners.com>
+ <ZnMr30kSCGME16rO@google.com>
+ <b2d1a152-0241-6a3a-1f31-4a1045fff856@huawei-partners.com>
+ <ZoKB7bl41ZOiiXmF@google.com>
+ <bd2622cf-27e2-dbb6-735a-0adf6c79b339@huawei-partners.com>
+ <ZoLPhQ4eyl0H_oSQ@google.com>
+From: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <ZoLPhQ4eyl0H_oSQ@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-Hi Romain,
-
-Please limit the subject line to 70 - 75 characters.
-
-
-On Mon, 2024-07-01 at 16:58 +0200, Romain Naour wrote:
-> > > [1]
-> > > https://lore.kernel.org/linux-integrity/9b98d912-ba78-402c-a5c8-154bef8794f7@smile.fr/
-> > > [2]
-> > > https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1375425/tda4vm-ima-vs-tpm-builtin-driver-boot-order
-> > > 
-> > > Signed-off-by: Romain Naour <romain.naour@skf.com>
-> > 
-> > Should this get a Fixes: tag and be also applied to the stable series?
+7/1/2024 6:47 PM, Günther Noack wrote:
+> On Mon, Jul 01, 2024 at 04:10:27PM +0300, Ivanov Mikhail wrote:
+>> Thanks for the great explanation! We're on the same page.
+>>
+>> Considering that binding to ephemeral ports can be done not only with
+>> bind() or listen(), I think your approach is more correct.
+>> Restricting any possible binding to ephemeral ports just using
+>> LANDLOCK_ACCESS_NET_BIND_TCP wouldn't allow sandboxed processes
+>> to deny listen() without pre-binding (which is quite unsafe) and
+>> use connect() in the usuall way (without pre-binding).
+>>
+>> Controlling ephemeral ports allocation for listen() can be done in the
+>> same way as for LANDLOCK_ACCESS_NET_BIND_TCP in the patch with
+>> LANDLOCK_ACCESS_NET_LISTEN_TCP access right implementation.
 > 
-> The current behavior can be reproduced on any released kernel (at least since
-> 6.1). But I'm not sure if it should be backported to stable kernels since it
-> delays the ima/evm initialization at runtime.
+> That sounds good, yes! 👍
+> 
+> 
+>> I'm only concerned about controlling the auto-binding for other
+>> operations (such as connect() and sendto() for UDP). As I said, I think
+>> this can also be useful: users will be able to control which processes
+>> are allowed to use ephemeral ports from ip_local_port_range and which
+>> are not, and they must assign ports for each operation explicitly. If
+>> you agree that such control is reasonable, we'll probably  have to
+>> consider some API changes, since such control is currently not possible.
+>>
+>> We should clarify this before I send a patch with the
+>> LANDLOCK_ACCESS_NET_LISTEN_TCP implementation. WDYT?
+> 
+> LANDLOCK_ACCESS_NET_LISTEN_TCP seems like the most important to me.
+> 
+> For connect() and sendto(), I think the access rights are less urgent:
+> 
+> connect(): We already have LANDLOCK_ACCESS_NET_CONNECT_TCP, but that one is
+> getting restricted for the *remote* port number.
+> 
+>   (a) I think it would be possible to do the same for the *local* port number, by
+>       introducing a separate LANDLOCK_ACCESS_NET_CONNECT_TCP_LOCALPORT right.
+>       (Yes, the name is absolutely horrible, this is just for the example :))
+>       hook_socket_connect() would then need to do both a check for the remote
+>       port using LANDLOCK_ACCESS_NET_CONNECT_TCP, as it already does today, as
+>       well as a check for the (previously bound?) local port using
+>       LANDLOCK_ACCESS_NET_CONNECT_TCP_LOCALPORT.
+>       
+>       So I think it is extensible in that direction, in principle, even though I
+>       don't currently have a good name for that access right. :)
 
-With the IMA builtin measurement policy specified on the boot command line
-("ima_policy=tcb"), moving init_ima from the late_initcall() to
-late_initcall_sync() affects the measurement list order.  It's unlikely, but
-possible, that someone is sealing the TPM to PCR-10.  It's probably not a good
-idea to backport the change.
+Indeed, implementing a new type of rule seems to be an optimal approach
+for this.
 
-An alternative would be to continue using the late_initcall(), but retry on
-failure, instead of going directly into TPM-bypass mode.
+>       
+>   (b) Compared to what LANDLOCK_ACCESS_NET_BIND_TCP already restricts, a
+>       hypothetical LANDLOCK_ACCESS_NET_CONNECT_TCP_LOCALPORT right would only
+>       additionally restrict the use of ephemeral ports.  I'm currently having a
+>       hard time seeing what an attacker could do with that (use up all ephemeral
+>       ports?).
 
-As far as I can tell, everything is still being measured and verified, but more
-testing is required.
+I thought about something like that, yeah) Also, I tried to find out
+if there are cases where port remains bound to the client socket after
+the connection is completed. In this case, listen() can be called to a
+socket with a port bound via connect() call. In the case of TCP, such
+scenario is not possible, port is always deallocated in tcp_set_state()
+method.
 
-Mimi
+So, I don't see any realworld vulnerabilities, we can leave this case
+until someone comes up with a real issue.
 
+> 
+> sendto(): I think this is not relevant yet, because as the documentation said,
+> ephemeral ports are only handed out when sendto() is used with datagram (UDP)
+> sockets.
+> 
+> Once Landlock starts having UDP support, this would become relevant, but for
+> this patch set, I think that the TCP server use case as discussed further above
+> in this thread is very compelling.
+
+Agreed. Anyway, if someone finds any interesting cases with
+auto-binding via sendto(), we can implement a new rule, as you suggested
+for connect().
+
+Thanks you for your research and ideas, Günther!
+I'll prepare the LANDLOCK_ACCESS_NET_LISTEN_TCP patchset for the review.
+
+> 
+> Thanks,
+> —Günther
