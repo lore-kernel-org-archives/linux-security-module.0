@@ -1,125 +1,131 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880F12F29
-	for <linux-security-module@vger.kernel.org>; Mon,  1 Jul 2024 23:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C78168A8;
+	Tue,  2 Jul 2024 02:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719877272; cv=none; b=Niaps3RSkgxqTNNNyi+LzTi1CFLt/Rbzx2XN6u2/RCsXLHeD9TxVJEAJpZPQ1G5QnTIKa8BcxP7xwamfcfC0WFi28SbgpqOCTkoXuy1chxJG0KCWuDl8qW9RWy8p7WcaPUY2FDQhj3v/oryiqF303GcJrFXIi26snysRfTX7xmw=
+	t=1719887907; cv=none; b=WrPfKPG2y2GhbZSos3JQnNrKuYTidmXCppTxuwqGDtVUixb7cHO/U1yVnG/Hn5G79lBE9TwYr2z78RX9Qg9lZy58e0ZyIpZ5JpIBTr8vcryvPoqlN1l3FmHjptJHTYGIb4emeVHCj2BFMxuhhKmZNNy0aj3VwUH4Yy5X3+iuDxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719877272; c=relaxed/simple;
-	bh=CgoTJpfM3Eaqb9b9tstTTdsvLHWdvVZJPceoVZ/lIxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QaIi8guKHIEHouWinBRB1zXxck8f1yusDXyUHa8PZCYDQSvox6pLmbmmEGJmG/8MNNuvm0cjciy4Deva5zNyU2LQVLgH3SWDcjLoyRDiBe64veLPt3qjZNDEaFo8rpuRVtpeaius7EhcEowmNsoVYM2t6fprViq4vLUBfq/exAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=giqerGV4; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1719887907; c=relaxed/simple;
+	bh=zA15/BuS2QNdz4cCYTBy9x+qacrIci0a/oQFaD0luXA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B2U7ckLMhHOI7h0nn7sShPgWy9qtERm7rYu376LBO9G69PatC39IwyyDAEgBYy4G7vd2hDLKFBlWeTxBYt67emvHVvfYYkI4kbCmUnLdTEREuHEu8fqiC6+0nkdDLp/2mUfSIRVvK0tIT7Tb+W0Ma3G7LWQtdJjrTRhFV+NL+bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eH5z7BE1; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="giqerGV4"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e0360f890a1so2602934276.0
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jul 2024 16:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1719877269; x=1720482069; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ql1LylJQbz5AqF02VyghAmPHhBmm+I/CxB5gAOiOtG0=;
-        b=giqerGV4DRRuwFPvN6Xrg9BgUdFji2MMj5Dij9liQWHDD+UdN7NnE7+ZR3jOf+7iCr
-         gfZLcQktp+Oj2ikTU6ahGw3g2BNjlt3anXc20tn2oC39tNn1TymcXZOUW4cb6HyOp+oo
-         XaT4yOn35rOvJwm4PgVWQVX/3Dty9N/F2XDpX/WFSxhxPy915splFSHsv/pjNf8RgGeO
-         aczV0HE4Ky/cnz8lbyOkkizwsym1Hd/GiUzKhyipkiYyAUQy22Y4xKoSZYmCRDSYcnY/
-         cDH2dYgPZfqtFUwcTZWIlP8G+4qr+/F3cugHhx35a4zCFLd5XngisbDEN6+ooNx3rMRi
-         YaKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719877269; x=1720482069;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ql1LylJQbz5AqF02VyghAmPHhBmm+I/CxB5gAOiOtG0=;
-        b=Ogx78/i86eIenp0AHCXcYOKcWNOizwLeBwzzKAOTRi+6haubC8Nn9lsosskBlBQv5r
-         5t4POuFwlRZPXER/3njY7W+cb9JNr/Uubo98qnv/WcBJaT6ZmnrLA3UZqysz5DvlZCdF
-         dDOzBbbJAvOsOmcST761mVCO4oK0Mq5jBnFnGANFZatPyKfdN0ZZr0i2gkGxKjwG0V7B
-         pPwgW5WBlQ4OzwEG8hyYLV4BxrTZCyb4UYc5LO/yO3aqKpf3biZTZrys4LUOvEcHOzI8
-         Q/CFRF8aB9KqxuRnda8pIWDQld6+UfyYYcUhoIrIsL1YB1kz8qG0Lh4Zhk8NL7xY/dL2
-         gIag==
-X-Gm-Message-State: AOJu0YxfihA3D1iaxkggS2B4ZsEX0Roz/NI+TCqkG6vcXgMYEDwLpnWQ
-	OfJkuBA3fYGIgyeSDGCXKm/FCPeNGUOr6xEcTCUJDm06MQUmBbf9maP1LkTAFf8ue/ZQHgELGz3
-	lZWw6CXqAENiGTlrP38NRJkdLKhTBu7tN2WOi
-X-Google-Smtp-Source: AGHT+IHtDYzMOZDam+ECIMAw43vgsX26d3AvzRHQKMU8Wr/2vGxwFWto9PP9Wduno94h2/m8Ochn48+TWWWjPOg+GJ4=
-X-Received: by 2002:a81:83d0:0:b0:64b:1eb2:3dd4 with SMTP id
- 00721157ae682-64c6cabc43fmr49699387b3.8.1719877269534; Mon, 01 Jul 2024
- 16:41:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eH5z7BE1"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4622LRJY010690;
+	Tue, 2 Jul 2024 02:37:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	5G10Lixps+J/SrJAGVwjF9YxL3IksWa13KqA59IUw4c=; b=eH5z7BE1GXy3/6Xv
+	uYnjzc9l8IxGgssJmFwLXXwq0ywuiPeU+ainZcSgItKQXLAkBC0X+uQD9/rA68WW
+	m3fU+2MYC7u6jHBaH7RG1e0nrQlphmoLhzVCdSMdaklakSRzS/dRRIQW0rka52Xm
+	syH6P3oZl3nv4PCr1eUjfC5Gu5NzC25onaYJyldsD/Cz6al31Z0kzuj04tqlm7+/
+	Jjof7bogMG0Ggf3YfdTr27Yre3Gv5GKJgtJUi+vbYFX0E6FTjaCQK6EPac0c8E8A
+	3Sjj2T5SWN8QVxJGRIRFzX5OJrrx2wW408p5GDWuixxl3B/5NfpPWdP1F+4z50hJ
+	qxaciQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4048btr2eg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 02:37:52 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4622bpOK001084;
+	Tue, 2 Jul 2024 02:37:51 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4048btr2ee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 02:37:51 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4620qI2f024095;
+	Tue, 2 Jul 2024 02:37:50 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya3a2px-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 02:37:50 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4622blUa43712774
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 2 Jul 2024 02:37:50 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D823B58137;
+	Tue,  2 Jul 2024 02:37:44 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB2CF58151;
+	Tue,  2 Jul 2024 02:37:43 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.36.24])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  2 Jul 2024 02:37:43 +0000 (GMT)
+Message-ID: <e197920f27bc67df45327ef56ee509d113435b25.camel@linux.ibm.com>
+Subject: Re: [RFC] integrity: wait for completion of i2c initialization
+ using late_initcall_sync()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Romain Naour <romain.naour@smile.fr>, Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, jmorris@namei.org, paul@paul-moore.com,
+        eric.snowberg@oracle.com, dmitry.kasatkin@gmail.com,
+        roberto.sassu@huawei.com, Romain Naour <romain.naour@skf.com>
+Date: Mon, 01 Jul 2024 22:37:43 -0400
+In-Reply-To: <d7429218-7b48-4201-8ad9-63728e188be5@smile.fr>
+References: <20240701133814.641662-1-romain.naour@smile.fr>
+	 <c090cd3c-f4c6-4923-a9fa-b54768ca2a26@molgen.mpg.de>
+	 <d7429218-7b48-4201-8ad9-63728e188be5@smile.fr>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: qMiskM232WjBB-RqGNJBjjqD_6_TKtsC
+X-Proofpoint-ORIG-GUID: PHgzAHwB6bTXv0hUio-xhULBrOuLBjMZ
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516003524.143243-6-kpsingh@kernel.org> <03c6f35485d622d8121fa0d7a7e3d0b2@paul-moore.com>
- <CACYkzJ6hBdk0MEW+4-U3zprEY4a_JcOLYj0wFEz1KW2gBDDE_Q@mail.gmail.com>
-In-Reply-To: <CACYkzJ6hBdk0MEW+4-U3zprEY4a_JcOLYj0wFEz1KW2gBDDE_Q@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 1 Jul 2024 19:40:58 -0400
-Message-ID: <CAHC9VhS_5d-CsTVTQCSZ3W151hGhNC+AZf=jRqfheKtZ+J4xOg@mail.gmail.com>
-Subject: Re: [PATCH v12 5/5] bpf: Only enable BPF LSM hooks when an LSM
- program is attached
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
-	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
-	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
-	song@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_23,2024-07-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020016
 
-On Sat, Jun 29, 2024 at 4:13=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
-:
-> On Tue, Jun 11, 2024 at 6:35=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On May 15, 2024 KP Singh <kpsingh@kernel.org> wrote:
-> > >
->
-> [...]
->
-> > > +/**
-> > > + * security_toggle_hook - Toggle the state of the LSM hook.
-> > > + * @hook_addr: The address of the hook to be toggled.
-> > > + * @state: Whether to enable for disable the hook.
-> > > + *
-> > > + * Returns 0 on success, -EINVAL if the address is not found.
-> > > + */
-> > > +int security_toggle_hook(void *hook_addr, bool state)
-> > > +{
-> > > +     struct lsm_static_call *scalls =3D ((void *)&static_calls_table=
-);
-> >
-> > GCC (v14.1.1 if that matters) is complaining about casting randomized
-> > structs.  Looking quickly at the two structs, lsm_static_call and
-> > lsm_static_calls_table, I suspect the cast is harmless even if the
-> > randstruct case, but I would like to see some sort of fix for this so
-> > I don't get spammed by GCC every time I do a build.  On the other hand,
-> > if this cast really is a problem in the randstruct case we obviously
-> > need to fix that.
-> >
->
-> The cast is not a problem with rand struct, we are iterating through a
-> 2 dimensional array and it does not matter in which order we iterate
-> the first dimension.
+Hi Romain,
 
-That was my suspicion when I looked at it quickly after the gcc
-complained, but if nothing else the compiler splat needed to be
-resolved.  Based on your comment it looks like you've fixed that in
-v13, that's good.  Please make sure to test with both gcc and clang in
-the future.
+Please limit the subject line to 70 - 75 characters.
 
-In an effort to avoid the "merge this now!" shouts and any other
-attempted maintainer manipulations using Linus' email as
-justification, I want to make it clear that the earliest the v13 would
-possibly be merged is after the upcoming merge window.  See the
-"Kernel Source Branches and Development Process" in the LSM guidance
-document below:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/tree/README=
-.md
+On Mon, 2024-07-01 at 16:58 +0200, Romain Naour wrote:
+> > > [1]
+> > > https://lore.kernel.org/linux-integrity/9b98d912-ba78-402c-a5c8-154bef8794f7@smile.fr/
+> > > [2]
+> > > https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1375425/tda4vm-ima-vs-tpm-builtin-driver-boot-order
+> > > 
+> > > Signed-off-by: Romain Naour <romain.naour@skf.com>
+> > 
+> > Should this get a Fixes: tag and be also applied to the stable series?
+> 
+> The current behavior can be reproduced on any released kernel (at least since
+> 6.1). But I'm not sure if it should be backported to stable kernels since it
+> delays the ima/evm initialization at runtime.
 
---=20
-paul-moore.com
+With the IMA builtin measurement policy specified on the boot command line
+("ima_policy=tcb"), moving init_ima from the late_initcall() to
+late_initcall_sync() affects the measurement list order.  It's unlikely, but
+possible, that someone is sealing the TPM to PCR-10.  It's probably not a good
+idea to backport the change.
+
+An alternative would be to continue using the late_initcall(), but retry on
+failure, instead of going directly into TPM-bypass mode.
+
+As far as I can tell, everything is still being measured and verified, but more
+testing is required.
+
+Mimi
+
