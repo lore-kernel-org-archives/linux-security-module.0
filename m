@@ -1,103 +1,184 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9D43A8D0
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 23:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45EF1946DD
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 23:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720047670; cv=none; b=bAUtWJJQDyIra9FuOrBZfhYzj9yyF1cQFI8OAm9IoAOrRtiuKqm/DswRFUlcuTbY25J0+dmgcvJm0NmpPWIL/p3fqwn4Hc+VDIoUjlnVLeDgA0YE3m6H7ON+inxoScqakRn7QhOCRuERk1+14oP6skLW1FBIzGcU4SV8OUruQGQ=
+	t=1720048113; cv=none; b=JIN8gNYLtDE4+loZwE1LMLD+I2thtx9P9aiYEMPi/mVwp5niSsEkjv6RC2QZRu/rMMcTV8R/UoqPKxcGMyI5528W7+DYH4ntXtSTMkq9PI7/4Kvl+9LDSBiydGTyiRUibrZLtTHejri1462yfD5B8xfjGk5DrnIlRLyDVMEy5Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720047670; c=relaxed/simple;
-	bh=bUTbTvzj82LJV3RkK+LQb2gR0EFbWiO3r4bl0COLezw=;
+	s=arc-20240116; t=1720048113; c=relaxed/simple;
+	bh=2OMOqfOetSmVlahXw8mHSTHgbxV4dER+5EvCBq83hnk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q7jy9bpsumDeovpcSVUsXbmDBiXm0BiOe7YBweR9p9GlKPSkguA+K8ivoN3Fvpk4jrl7yollm70HLnftopmaxB8Q/si468iSG0kXlkQySgqrFH31iBxmQbxhcOCr+p2wNudx/RTWEbSdkez9nlVRqgivnr9fXLkYBLTaTq6V/Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SFwr8sac; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=SAc0cAUmgikYI4rDhy6+cKi7VzFmWkxYAC1P0820qvqFJyZIyJo2/DUFrS7WBluJUxHYyqIsp0thjfyzVqGsNSf8LqnvP8woHigWofDXqkb5IkwCe8sIXDZX0B2pmduZXAyExozoJsvW89U+XOlF+zHCSE9oZqB2Wv3QqSRvVYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGlzMnLs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SFwr8sac"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so25692276.2
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 16:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720047668; x=1720652468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T6juE3uWpR8vi0HecVzx6BeVrOtW6clnNJqbZGyj11g=;
-        b=SFwr8sac2DGIwD8MAYPXnX/ihb19SoiznR6UYrPlyn6aAZyteWIqknjhI3k7L6xGn9
-         HxmK8K4PDcfm2XZmAVmY1MZ//9JW9nh9Ri05jw3/7KqtZojNcJgDpBfsOCtC+fmWtF2S
-         FbvYLS3tOeWP9Uk7ZrE5enPbhoOXl8ht2XHM5IXw1fZFZUCU1nC9YAJYvbmUNQkJmvPv
-         KrQjFgLnfgSgyFH4I1HIW+9UVUuZiMq1S2yFCMaMXLqZAR4MgWfPf/vQL+Z0amQe5VEO
-         mta+GsgZKj7gDEfXh7utMTM6oHxcUsmq4yoMVc3mi4lEyhwGNN9h812f+gt/YKleZMFo
-         XZ6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720047668; x=1720652468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T6juE3uWpR8vi0HecVzx6BeVrOtW6clnNJqbZGyj11g=;
-        b=Dx6iGaFnHDVm9gouBvmvrlulw4M+LpKpgyv2OXdGxONRvNIRTjkh8Fj+iXnQVCLaOS
-         eFs/BO4PZweaVSGOwf/xf3+QE7A9BBPv/HccUvDEK6uL+JYTwdo1ip0xKDg3mx0M2N3b
-         pWg/qieFmAZ4n6zzk9XRi+4Il9RBN31arQFFnVWKOzHgHGeXRAQiH8DiEmuq2kxQ+JlG
-         q3cQLYAAE5M/Up4jKllQyjd1ZeGzghSTghjv0KGDezpHtEl6zhteW8GwyQqGNg985eA/
-         1gAHDwF4tJHPhSS0tOpufd2yfNuhH1N+31eLvCX+bCjU4O3FA+KlbNidmw+C4wfF0AWk
-         GNmg==
-X-Gm-Message-State: AOJu0YzBA1SUW3XDGkGX5+YFNYSaBNS0FV0wqtReWrkR4uVnxcOGOOkR
-	pBBoy/achg9sGLKTPKLI/DQIN9MOHd6X6Y+tLx/cTed+uV6FANBkIPO6+/7WP4tPAxvbs3AhzYC
-	9OSxRuSzZngRjG+rhWg3lRqDwz41S/Dr/QoZwt3fH19XoWf8=
-X-Google-Smtp-Source: AGHT+IHlw5TKJf6IMqAed1Vi2Ai3i8Ur7WHChBmTXeHOEhRKNmzxeBjFEpH88VIG0Rp7pZvbfI94DImgAdCx+5A6J+U=
-X-Received: by 2002:a5b:f0a:0:b0:de5:5693:4e96 with SMTP id
- 3f1490d57ef6-e036eb67f53mr13564734276.27.1720047668247; Wed, 03 Jul 2024
- 16:01:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGlzMnLs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B8FC4AF12
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 23:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720048113;
+	bh=2OMOqfOetSmVlahXw8mHSTHgbxV4dER+5EvCBq83hnk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oGlzMnLs+63jwkZ+lusqszPc88hl5RzQ/TPZhXBDwro3NO4Sm8voeHd2L2fnmxgCI
+	 KZLBHBr7vJPKCeAinLfi6tbBpuyg0KDJ3j44C2zMiU4zjXdlQtL9CAakYEjdfQvLcZ
+	 BzrVag2JYmRPPBko5AtcdpVkeD5mS8GqKyLXhH4gbw/uDy2aZwNlQd6NYz+xGHquq9
+	 c/dIY+Urzht57FaWI2IKp92aytAA2kXF9Tr5yw79Q78TyxNKZydOqdJ236lm5Ad5OW
+	 YKVi+7pamruEP6cAgZ0pPyf4ggLYj6dhWQIAvbCcbhKLDAvC2kLdgnOjvKmT994cIi
+	 Q9vIi942fozng==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebe785b234so62570081fa.1
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 16:08:33 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwpmKQcKGJVZ+VpG07LZP3mZuh4sbGD67kMbnku/Bz5zexbIMEJ
+	WzHtT9YybaTONw5A8CAXi/UlHShcZTG0pewzDcc0/k8HPWHJufNYzmlWjr2kj/QVCFwQ5ECKNBU
+	3B4K9LcWgC19ho2UPcO6XiFnEvaeGk1c6fBzJ
+X-Google-Smtp-Source: AGHT+IGWzttEz+J2RL9fns3/eUhmpms1UQ8pJEdGX+w2EfSjsxosZzxB4GPMd6yfdN2II6DPIY2pD/7a1FPp9VzZTdI=
+X-Received: by 2002:a05:6512:e98:b0:52c:6461:e913 with SMTP id
+ 2adb3069b0e04-52e82661276mr9141990e87.16.1720048111618; Wed, 03 Jul 2024
+ 16:08:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703211134.349950-2-paul@paul-moore.com> <CAHC9VhTA5tUUH7DAYx9k6X2L4eTzJ1a-ETaJ5+sMZrxKqjKOKA@mail.gmail.com>
- <30fe42db-461c-4716-8874-ff78baf4b14b@schaufler-ca.com>
-In-Reply-To: <30fe42db-461c-4716-8874-ff78baf4b14b@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 3 Jul 2024 19:00:57 -0400
-Message-ID: <CAHC9VhR0Dt9_HO_Ym3oJa9FqBoP3Av73Rwtj_Y-U8YhhkR5pVw@mail.gmail.com>
-Subject: Re: [PATCH] selinux,smack: remove the capability checks in the
- removexattr hooks
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
+ <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
+ <CAHC9VhQ4qH-rtTpvCTpO5aNbFV4epJr5Xaj=TJ86_Y_Z3v-uyw@mail.gmail.com>
+ <CACYkzJ4kwrsDwD2k5ywn78j7CcvufgJJuZQ4Wpz8upL9pAsuZw@mail.gmail.com> <CAHC9VhRoMpmHEVi5K+BmKLLEkcAd6Qvf+CdSdBdLOx4LUSsgKQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRoMpmHEVi5K+BmKLLEkcAd6Qvf+CdSdBdLOx4LUSsgKQ@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Thu, 4 Jul 2024 01:08:20 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ6mWFRsdtRXSnaEZbnYR9w85MfmMJ3i76WEz+af=_QnLg@mail.gmail.com>
+Message-ID: <CACYkzJ6mWFRsdtRXSnaEZbnYR9w85MfmMJ3i76WEz+af=_QnLg@mail.gmail.com>
+Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
+ static calls
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 5:55=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 7/3/2024 2:14 PM, Paul Moore wrote:
-> > On Wed, Jul 3, 2024 at 5:11=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> >> Commit 61df7b828204 ("lsm: fixup the inode xattr capability handling")
-> >> moved the responsibility of doing the inode xattr capability checking
-> >> out of the individual LSMs and into the LSM framework itself.
-> >> Unfortunately, while the original commit added the capability checks
-> >> to both the setxattr and removexattr code in the LSM framework, it
-> >> only removed the setxattr capability checks from the individual LSMs,
-> >> leaving duplicated removexattr capability checks in both the SELinux
-> >> and Smack code.
-> >>
-> >> This patch removes the duplicated code from SELinux and Smack.
-> >>
-> >> Fixes: 61df7b828204 ("lsm: fixup the inode xattr capability handling")
-> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> >> ---
-> >>  security/selinux/hooks.c   | 10 ++--------
-> >>  security/smack/smack_lsm.c |  3 +--
-> >>  2 files changed, 3 insertions(+), 10 deletions(-)
-> > FYI, this is still untested as my test kernel is compiling now, but I
-> > wanted to get this out onto the list before the holiday in the US for
-> > folks (/me looks at Casey for the Smack bits)
+On Thu, Jul 4, 2024 at 12:52=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> Let me know how your test goes, and then I'll have a closer look.
+> On Wed, Jul 3, 2024 at 6:22=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
+e:
+> > On Wed, Jul 3, 2024 at 10:56=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Wed, Jul 3, 2024 at 12:55=E2=80=AFPM KP Singh <kpsingh@kernel.org>=
+ wrote:
+> > > > On Wed, Jul 3, 2024 at 2:07=E2=80=AFAM Paul Moore <paul@paul-moore.=
+com> wrote:
+> > > > >
+> > > > > On Jun 29, 2024 KP Singh <kpsingh@kernel.org> wrote:
+> > > > > >
+> > > > > > LSM hooks are currently invoked from a linked list as indirect =
+calls
+> > > > > > which are invoked using retpolines as a mitigation for speculat=
+ive
+> > > > > > attacks (Branch History / Target injection) and add extra overh=
+ead which
+> > > > > > is especially bad in kernel hot paths:
+> > > >
+> > > > [...]
+> > > >
+> > > > > should fix the more obvious problems.  I'd like to know if you ar=
+e
+> > > > > aware of any others?  If not, the text above should be adjusted a=
+nd
+> > > > > we should reconsider patch 5/5.  If there are other problems I'd
+> > > > > like to better understand them as there may be an independent
+> > > > > solution for those particular problems.
+> > > >
+> > > > We did have problems with some other hooks but I was unable to dig =
+up
+> > > > specific examples though, it's been a while. More broadly speaking,=
+ a
+> > > > default decision is still a decision. Whereas the intent from the B=
+PF
+> > > > LSM is not to make a default decision unless a BPF program is loade=
+d.
+> > > > I am quite worried about the holes this leaves open, subtle bugs
+> > > > (security or crashes) we have not caught yet and PATCH 5/5 engineer=
+s away
+> > > >  the problem of the "default decision".
+> > >
+> > > The inode/xattr problem you originally mentioned wasn't really rooted
+> > > in a "bad" default return value, it was really an issue with how the
+> > > LSM hook was structured due to some legacy design assumptions made
+> > > well before the initial stacking patches were merged.  That should be
+> > > fixed now[1] and given that the inode/xattr set/remove hooks were
+> > > unique in this regard (individual LSMs were responsible for performin=
+g
+> > > the capabilities checks) I don't expect this to be a general problem.
+> > >
+> > > There were also some issues caused by the fact that we were defining
+> > > the default return value in multiple places and these values had gone
+> > > out of sync in a number of hooks.  We've also fixed this problem by
+> > > only defining the default return value once for each hook, solving al=
+l
+> > > of those problems.
+> >
+> > I don't see how this solves problems or prevents any future problems
+> > with side-effects. I have always been uncomfortable with an extraneous
+> > function being called with a side effect ever since we merged BPF LSM
+> > with default callback. We have found one bug due to this, not all the
+> > bugs.
+>
+> You've got to give me something more concrete than that.  If you can't
+> provide any concrete examples, start with providing a basic concept
+> with far more detail than just "side-effects".
+>
+> > > I'm not aware of any other existing problems relating to the LSM hook
+> > > default values, if there are any, we need to fix them independent of
+> > > this patchset.  The LSM framework should function properly if the
+> > > "default" values are used.
+> >
+> > Patch 5 eliminates the possibilities of errors and subtle bugs all
+> > together. The problem with subtle bugs is, well, they are subtle, if
+> > you and I knew of the bugs, we would fix all of them, but we don't. I
+> > really feel we ought to eliminate the class of issues and not just
+> > whack-a-mole when we see the bugs.
+>
+> Here's the thing, I don't really like patch 5/5.  To be honest, I
+> don't really like a lot of this patchset.  From my perspective, the
+> complexity of the code is likely going to mean more maintenance
+> headaches down the road, but Linus hath spoken so we're doing this
+> (although "this" is still a bit undefined as far as I'm concerned).
+> If you want me to merge patch 5/5 you've got to give me something real
+> and convincing that can't be fixed by any other means.  My current
+> opinion is that you're trying to use a previously fixed bug to scare
+> and/or coerce the merging of some changes I don't really want to
+> merge.  If you want me to take patch 5/5, you've got to give me a
+> reason that is far more compelling that what you've written thus far.
 
-It looks good - my SELinux test system booted up, appears to be
-running normally, and all of the selinux-testsuite tests pass.
+Paul, I am not scaring you, I am providing a solution that saves us
+from headaches with side-effects and bugs in the future. It's safer by
+design.
 
---=20
-paul-moore.com
+You say you have not reviewed it carefully, but you did ask me to move
+the function from the BPF LSM layer to an LSM API, and we had a bunch
+of discussion around naming in the subsequent revisions.
+
+https://lore.kernel.org/bpf/f7e8a16b0815d9d901e019934d684c5f@paul-moore.com=
+/
+
+My reasons are:
+
+1. It's safer, no side effects, guaranteed to be not buggy. Neither
+you, nor me, can guarantee that a default value will be safe in the
+LSM layer. I request others (Casey, Kees) for their opinion here too.
+2. Performance, no extra function call.
+
+If you still don't like it, it's your call, I would still like to keep
+most of the logic local to the BPF LSM as proposed in
+https://lore.kernel.org/bpf/f7e8a16b0815d9d901e019934d684c5f@paul-moore.com=
+/
+
+- KP
+
+>
+> --
+> paul-moore.com
