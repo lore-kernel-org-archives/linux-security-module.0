@@ -1,149 +1,127 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E7717F51A
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 20:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3846A191F85
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 21:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720040213; cv=none; b=C5Ue1AqPsha8OgsBFCOcpVpL/bdcNT+z0IZf/r4N8tXL93+FIeBOD8njXWqxBhho6UbPRBxoAG1moNW2SxZ+xCZ064uVgYtdEo4/RICuwles9xit7ynGAnslTGyrjU93JmN9BJpXfXxS3mBKP9DpnaY8OBF1+3b4UydXQAcRXYw=
+	t=1720041107; cv=none; b=TblOkEuZ85Oo8Fjto/ZO/+1bSuAqfxDcHXrGGgUW6zgTuywkW529IlHO34bSHpSNY+my4MkeKuPMi25KBJy1dyVBYAgezqZTP4ZwapIbAuDX7gyUVYpi3HDKsFj87HQYmIKVnFUTFk4Dx2EELf2cOitTEZvlAiCs+yFqOnkEq5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720040213; c=relaxed/simple;
-	bh=obgNzfWpS4Wqjh8sVn9FRXNg2IXTLSbLvjMbVsv5wz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UAm9RcbGLxXb8hw56ZHBAsC0B5CiNGNuQpncZ3DSWsJZi/LfqnkN4/uT5QNJA54tTOEkL3UwMV7Po5cMyJn2uDegMzMeydwz8VrjkQxfc5OIA7YPLKSfFdb8RkvCq1no9U4QRdx++HSPhjq2JKeTVCw/8uXzO8Pc5nL00L9F85g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eV654SwB; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1720041107; c=relaxed/simple;
+	bh=wZFvPplBA5czywCUBflHPzgRNL0Sq05dZrkZr5gs9eY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O/JY8ZWV/YKe4lRuNGxiKmQjbrHlNovPgdHp6H8MwRV9kzLHlvv/gXaYIuyuTtF6N78jYxM6waGjh5d6JP2N/Awh8YHHrRPmLrs47ssM+e/Q5mUAMvdB+oHUvnUcaAOEO9vU/kXajh6Dc3Q6I6Eea/HUsmbbEgIVl0ifSpvthOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dqUlOhFk; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eV654SwB"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6512866fa87so14506577b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 13:56:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dqUlOhFk"
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-79c084476bdso514795885a.3
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 14:11:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720040210; x=1720645010; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xm3scAkam10jRvz+UGdgrBYyDyM7niI++wTLdui9CLM=;
-        b=eV654SwBV3rz6FcIxIrriDJL/2aCBqJ5Gk0fMzIfIwG/JIMR+5N8hMr5nlumrOodgh
-         Kgqb5MwI8R4lDTdRY3WotunM7533LkocBQRoh7obD8gRfBHpx6j7ArSYJVEJ7EEU50aD
-         rz8rTMM1VmLlTOGl8Vp4TuWB3TFI11FHeYoDhh2GYDkLtvUgVB4lkqi4KETTTyYK4mE9
-         wi5sE4FHC6q2gjiTLLB3mbKpiCV5GMYyEho02NyKcMC81tgQW0MQIDBPiL8knqk9JCfW
-         +Lo5UPJR1pFHZJ4CkTiyAkuQU9ixky5pc+5E61KYLZDXoE6UhKP4LjRfaZqm67FwOxIT
-         KrAg==
+        d=paul-moore.com; s=google; t=1720041105; x=1720645905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UnyKkJVgC/cQ7dQRIq7KgfEKF2f1km9Urn3V2lCE9SQ=;
+        b=dqUlOhFk839RBf1GXb1IaazAdFMVmap444bu7809AYy7N2kzeAhbCmkuHmi6EgpwLN
+         Ics05Z0zGA7n+DvJEW/gjjEsPU0Iq35w5ibN4K0xeC+tYTSmQdJlcJB63DvZyiazRTKn
+         IOA7ZwKWyQlETeN8GfoiUbiFBtGV1ttTLCFHib3MUF/WBCY15v3UmQY3+GxmhritG0zi
+         BDtpiRaxI0CQ8VT2pWM59A3c+8RbTGDmgpYy2pYSeOviTiIj0mlT9V9fBqEnDuRXpx1p
+         rtYS+BAIVOMK0s5iGBrUaQVo8IkqdDcIBY+3dWsrh7EqV6kbdSCACRQc1jpErY6KgfHS
+         F2Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720040210; x=1720645010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xm3scAkam10jRvz+UGdgrBYyDyM7niI++wTLdui9CLM=;
-        b=gp4eBiQijpreu7/4UYFf8xTdilUdPTDSXTMScNV54LS7PTqrdtsFkgHoc233AUBfgc
-         UNgQrOBr7dWV4rwu+jDuMhLOLn2pg185ijyU6uyptTHTMRU9qinVnVF7SP064YDNoNsW
-         m4CT8UUEEE1di1fXvZUA+e2A7hvvVkqfppmiSM0C29Ucm/coGD8jg//0zGJ/QjQsMHJB
-         yCnz5qHOwixp0RRymRan9s+hSJtgt2fPKo+CpZIzZgfmgJT5+WG9M84EXozaQXyvElPT
-         rsB+YG0x8FJpKNX63QtFffMj2zdqyFOhlHXi+0Fqs3ESYdDm+1L/AXfmctvTgicVX6hL
-         D81Q==
-X-Gm-Message-State: AOJu0YzsPEvGsa1U1oi89qKCHSV9Oiu062gYSEjnGIhqDaKYaCuZvoZD
-	mBTons8szcUeaNdlxicH09UqvdwgatuU10qaM+x3s3RS1cTk7N66/LRUepa50OdA+xZ6lsGc2ep
-	L7tEFGFUBdoFuDJGkLK95uCSiTD1SAs4lM+1E
-X-Google-Smtp-Source: AGHT+IGNRuXndoerx+c+18AiEd37OO1dyOuVdk3aAsh5sos5JlabrQ9IEFOKlwNvejaNXfF+hqhb3IBEBOFOundq9IA=
-X-Received: by 2002:a0d:e80d:0:b0:645:44d:82cf with SMTP id
- 00721157ae682-64c71145676mr110101137b3.1.1720040210534; Wed, 03 Jul 2024
- 13:56:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720041105; x=1720645905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UnyKkJVgC/cQ7dQRIq7KgfEKF2f1km9Urn3V2lCE9SQ=;
+        b=O1l9GsuJPHCHrMMfZ2TWc8VssjyqMiyF7fAGjYv+dew+qTS4dfU8VfguRr+NK2TEih
+         V2ZIV2PXxKHYsDVQDKmfAJt4hVdFUooWTf4sr+ZbyHRpg7eA+dWCUueSfoXnE7r4cTC5
+         hCRnAvp10RGpC5nYJbO2sI+WNCqy0eZEFbRTgfLPYjGU7hgrpbZ3zRhPoPcE6WGFYEX9
+         x8y3EJGFI9i8reaXijh0Ezqql1kVLKf9Mix4Cv4ZCWsCJXC8bnZY1FMTOQMgR0F2x9cT
+         F5d2E2K2P/vicpkP37e/v66ePEoPZSwkPv28uaaCmQMXPqgIOtpI8izkYAC2AqTtk3Y7
+         QC0w==
+X-Gm-Message-State: AOJu0YzdNp+ujRwHRIZOy1naiOhkXvK9mnQfmNmEEnbS8hHGcjyk86fr
+	FATODD0txtcN4Gy4ApTORZ6McxeGAawySooIRElyG8Yaxc16IM7lrTU/HeMzQxzkKZ4pOIolDYg
+	=
+X-Google-Smtp-Source: AGHT+IHLe73UD4amcWFSbKp1vSKLhzE6MAdHDNTLaNkVgOXw3n2FHCKQoQPnOSjPVk/Us4GV+TzmOg==
+X-Received: by 2002:ad4:5eca:0:b0:6b5:e7c8:5493 with SMTP id 6a1803df08f44-6b5e7c859ecmr10333986d6.50.1720041104940;
+        Wed, 03 Jul 2024 14:11:44 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e368456sm56959546d6.7.2024.07.03.14.11.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 14:11:44 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH] selinux,smack: remove the capability checks in the removexattr hooks
+Date: Wed,  3 Jul 2024 17:11:35 -0400
+Message-ID: <20240703211134.349950-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
- <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
-In-Reply-To: <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 3 Jul 2024 16:56:39 -0400
-Message-ID: <CAHC9VhQ4qH-rtTpvCTpO5aNbFV4epJr5Xaj=TJ86_Y_Z3v-uyw@mail.gmail.com>
-Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
- static calls
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
-	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
-	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
-	song@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2150; i=paul@paul-moore.com; h=from:subject; bh=wZFvPplBA5czywCUBflHPzgRNL0Sq05dZrkZr5gs9eY=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBmhb6GiiLz0e89gj4sxPP7pB5ETACOtTVb5Die5 xojeZkIffCJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZoW+hgAKCRDqIPLalzeJ cxeuEACN4tI4iJBkq6zWO9wFqEVysWS+OPXDiThkObO4c+2TiNz+1WQLyCRio8UOC5WTaOApuZS V6S9gquK/aYjwMNdSldFcIk00xG3BNsvuhldA0Xt4dw1WNCPnfY8QFM8AFWhO26/hSyJLfmXwk6 aWwv+lGzdE3pEFpMuwzU/U4UJul6OG+o8qtla2IFf3PmcgO2fRklCIpeWVpm6n4SYfvYAzKrvYH 4gHURWJrROlnf2J38gDN4lSOFaV6lM/VCuop2YuoYSTMHhe1wnhM159r2G3El0duEi09+CdVfv7 K4uMVU8oNQu/Y5K384L+C3Kfn/ZIQ1fBRaDGzkXvy0/gyJXhWMSmGfbQVaET1y14xo7h+pWpz3S FL3BrG0KId+11JAmZnpx5Hk0BaSaVeCMSTEJ/AuoobcJhUswiO3pg+s7dbO9+DmMeCHBp+ll+HY nKHEsAEIJ4HuZohLyxCFjr5N9tni08tgFavXy2v+Zi9UCnwmfGLMMP/U3rwmn91lTnWtdG4nDYj CTo0S+jAPWGxm0DwkJe6ruS5ObtcutY46uIbdBuMhcniQ4834l8z0Mj0i1VLB1KA1/SsgLQJoqf tVjuvzs8scBu4JplqKJq5dcBkErfvG4kNrIl1v0mbNEXDHzTLQaExvr0SM7oaWDeGqNZ5B2Y7DW jMLpdM+aqDy1C3g==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 3, 2024 at 12:55=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
-:
-> On Wed, Jul 3, 2024 at 2:07=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
-rote:
-> >
-> > On Jun 29, 2024 KP Singh <kpsingh@kernel.org> wrote:
-> > >
-> > > LSM hooks are currently invoked from a linked list as indirect calls
-> > > which are invoked using retpolines as a mitigation for speculative
-> > > attacks (Branch History / Target injection) and add extra overhead wh=
-ich
-> > > is especially bad in kernel hot paths:
->
-> [...]
->
-> > should fix the more obvious problems.  I'd like to know if you are
-> > aware of any others?  If not, the text above should be adjusted and
-> > we should reconsider patch 5/5.  If there are other problems I'd
-> > like to better understand them as there may be an independent
-> > solution for those particular problems.
->
-> We did have problems with some other hooks but I was unable to dig up
-> specific examples though, it's been a while. More broadly speaking, a
-> default decision is still a decision. Whereas the intent from the BPF
-> LSM is not to make a default decision unless a BPF program is loaded.
-> I am quite worried about the holes this leaves open, subtle bugs
-> (security or crashes) we have not caught yet and PATCH 5/5 engineers away
->  the problem of the "default decision".
+Commit 61df7b828204 ("lsm: fixup the inode xattr capability handling")
+moved the responsibility of doing the inode xattr capability checking
+out of the individual LSMs and into the LSM framework itself.
+Unfortunately, while the original commit added the capability checks
+to both the setxattr and removexattr code in the LSM framework, it
+only removed the setxattr capability checks from the individual LSMs,
+leaving duplicated removexattr capability checks in both the SELinux
+and Smack code.
 
-The inode/xattr problem you originally mentioned wasn't really rooted
-in a "bad" default return value, it was really an issue with how the
-LSM hook was structured due to some legacy design assumptions made
-well before the initial stacking patches were merged.  That should be
-fixed now[1] and given that the inode/xattr set/remove hooks were
-unique in this regard (individual LSMs were responsible for performing
-the capabilities checks) I don't expect this to be a general problem.
+This patch removes the duplicated code from SELinux and Smack.
 
-There were also some issues caused by the fact that we were defining
-the default return value in multiple places and these values had gone
-out of sync in a number of hooks.  We've also fixed this problem by
-only defining the default return value once for each hook, solving all
-of those problems.
+Fixes: 61df7b828204 ("lsm: fixup the inode xattr capability handling")
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ security/selinux/hooks.c   | 10 ++--------
+ security/smack/smack_lsm.c |  3 +--
+ 2 files changed, 3 insertions(+), 10 deletions(-)
 
-I'm not aware of any other existing problems relating to the LSM hook
-default values, if there are any, we need to fix them independent of
-this patchset.  The LSM framework should function properly if the
-"default" values are used.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 2daa0961b7f1..c41bf07d4b06 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3356,15 +3356,9 @@ static int selinux_inode_listxattr(struct dentry *dentry)
+ static int selinux_inode_removexattr(struct mnt_idmap *idmap,
+ 				     struct dentry *dentry, const char *name)
+ {
+-	if (strcmp(name, XATTR_NAME_SELINUX)) {
+-		int rc = cap_inode_removexattr(idmap, dentry, name);
+-		if (rc)
+-			return rc;
+-
+-		/* Not an attribute we recognize, so just check the
+-		   ordinary setattr permission. */
++	/* if not a selinux xattr, only check the ordinary setattr perm */
++	if (strcmp(name, XATTR_NAME_SELINUX))
+ 		return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
+-	}
+ 
+ 	if (!selinux_initialized())
+ 		return 0;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index a19a94f27766..9f8a8ffb5dde 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1461,8 +1461,7 @@ static int smack_inode_removexattr(struct mnt_idmap *idmap,
+ 	    strcmp(name, XATTR_NAME_SMACKMMAP) == 0) {
+ 		if (!smack_privileged(CAP_MAC_ADMIN))
+ 			rc = -EPERM;
+-	} else
+-		rc = cap_inode_removexattr(idmap, dentry, name);
++	}
+ 
+ 	if (rc != 0)
+ 		return rc;
+-- 
+2.45.2
 
-[1] I just realized that commit 61df7b828204 doesn't properly update
-the removexattr implementations for SELinux and Smack, expect a patch
-for that soon.  The current code is okay, it just does some
-unnecessary work (see the setxattr changes to get an idea of the
-changes needed).
-
-> > > +#define lsm_for_each_hook(scall, NAME)                              =
-         \
-> > > +     for (scall =3D static_calls_table.NAME;                        =
-   \
-> > > +          scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++) =
- \
-> > > +             if (static_key_enabled(&scall->active->key))
-> >
-> > This is probably a stupid question, but why use static_key_enabled()
-> > here instead of static_branch_unlikely() as in the call_XXX_macros?
->
-> The static_key_enabled is a check for the key being enabled, whereas
-> the static_branch_likely is for laying out the right assembly code
-> (jump tables etc.) and based on the value of the static key, here we
-> are not using the static calls or even keys, rather we are following
-> back from direct calls to indirect calls and don't really need any
-> jump tables in the slow path.
-
-Gotcha, thanks for the explanation.
-
---=20
-paul-moore.com
