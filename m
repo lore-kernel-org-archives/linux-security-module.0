@@ -1,163 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C60142651
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 22:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16409136643
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 22:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720045375; cv=none; b=OuusEGxhJYTajNs+KnIJt1flB+MU3vfOe0IDtud9PFs2+o6nPrxSYZGtdGfXLTuUplZgn6K+JlGMldGSP8fU9rdCwml55HLeKg8Crx4pD8bC7mz0j465j57flKsDrimIwakVpyGoH/396ktgPe+Fsk8AcYn+OyswSDLVMoZNCaw=
+	t=1720045553; cv=none; b=W2VFGgD4fnPqKfr/Df/eVrPz+K+Ad5df/8tFFlbyBul/17+Vg74bm2+0GALVnCWNLRpN9aQ27S4M+wf63Oa5dc5JgRQoDgipY9GthWnYuS0dfEVSqGDhg27RavxnmmT/U5MTKuKvjos/i+iiqnxguWsF5PfLrLCkj/qB3Hj6hPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720045375; c=relaxed/simple;
-	bh=Pknlh239cKWhhvyp7caV3a3RTyq1add85b+Okr37Ca8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QS5RdpExeyWCwL2Z6saFLVlrTiY4lYzDEfui4W7Dh3KKAfzoHp2FotZNGMr7H4UvGrUSqAV2sVhZBorgYkYZWDElQ32D2FZfkApPVwuITV/jSFJQBGF3+oHxvpTlzlzQEydJeOK5v3G9ghSlAO3Kc5y0G2En+NUIS0hc574aSeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDqka1DD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720045553; c=relaxed/simple;
+	bh=d/GXZExxP7iHIljKktH2xf2oo8tzAzf7itiZJHSdGLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=QqlkOLyoZlHfiwq66KAY616QUz1FiTgED7a7QoR0ccpPBT3oU2e3FgdO6M2n8BOo66ywXtEUkqK/y5YUPEVCRYNkUv1pNjfEbS/CQRR3KFWp6Wv9EDe/nev+lyesuL9Voe+EAzLEncTUKFaxQ32GJEb9l+FjyM3DCOXaL35w8XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PzLsSlnK; arc=none smtp.client-ip=66.163.185.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDqka1DD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB40C4AF13
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 22:22:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720045375;
-	bh=Pknlh239cKWhhvyp7caV3a3RTyq1add85b+Okr37Ca8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UDqka1DDpoiAE7zDd0uEJQ9PAjM0lnyYuOl5KY5m4VlHXywpANW/dh5F5Q+cJiG7Q
-	 JtH39ZyV8n4sojOxeRaXv+62ovI1vxVEKLzZh57DuSAuJ8JeYPVtuzITqAm5CJm66V
-	 s/CGFx/9JjkhBvliqadMhs5Lx3Wxj+lw9HI++qxHcKGLf9ogNTk5KAuBXCFd+3nd2p
-	 RGCKvgop8YXa6Qzp3avS5VKAgjJLz9gTKT3XZtf+DHC5z+87XH/FhIFAeQV72NEE5Y
-	 ESGji1ISypbnij+bk2/3xvZ6wazVGBw+v81ZNlHRYdTqOGfq0TUA/4NuBprRylqG4O
-	 lyCyml5nuJNiw==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso4481752a12.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 15:22:55 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yy2xsfyFO4BdL506G3As73KItl5qZRs3SfkxWAHjlHt/+gWsF08
-	K79scwQgSSxN3imOzVWFlc9bmYzK5LWjfdlk4FALGXz7zCv3/Pxq871hJsAJ5kkKpuIKjogcyiq
-	CaPSWIoDuQTz+iq5JSZ6zVL2fOY6U4Y50eCol
-X-Google-Smtp-Source: AGHT+IEHWpPHEUqRs/J6w5z8j+hazXuFXKD7mojNIT7monYyELk63gnzNUp4V+3SuHiFxGjElmh5GNdDD0kfas9Fttg=
-X-Received: by 2002:a05:6402:40d4:b0:58b:e89:b0c8 with SMTP id
- 4fb4d7f45d1cf-58b0e89b393mr3775054a12.36.1720045373910; Wed, 03 Jul 2024
- 15:22:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PzLsSlnK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720045550; bh=1fMoFRg02t09ZaM5zT0OQRAJMuRGusVcoXWxDXP0NzA=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=PzLsSlnKLyrjikCXszkKVJwM1AQuVzsKGMV2GxPx8MFfZRPfxoQKw3E0ev4Yt59AF38Q3TkTyiKTreeLCpIklTz6IAR5VAciOlF5NSrO9HmTc8TqphLs+i54Qo7Jz78ppJdQJmlFg+PfDMdxsWs4yY8NmAO83DAhTyClOA5AlCh5fx+VMH5sJagj5i/KIhjloZohpx+iy7iSn145PI2pMmCAcqYY5VKHNdrmAB+EOco5yQ35YTFsqSiX+YXn6FLfWMQtGSxiY/YSEwuIQ1l/5wh54vad89APYvbu4zEglQ1LXGcXbGbv8xCZ9tyiieLvgg5FcCx7fQkOYzRZekpbSQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720045550; bh=szu5tq68pdjV7q9V5QzMXX6CpvGWYFBg48O9v5IJ6QP=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=S8Zi15mQUuNw/yr1sQUE0YQ9aztLp4jfYml6BqvwLbLX+kJ+5Veh5GVVCVD78rcnM2WJkcdVUm8GK4xvBjY+PS0owu1JB7R0FsJGz6xb/I/+6Q3u28vfw5Qgh4o2s8oA5q+bWSVWg50rwyTZob1mkt01OcG81VCYWaQmRJnUVRSxbXnytr7tiHU9b1tTaJQqsD6mruBANEIc0ffllRB2aDp42PoIuJTU0jzhE3VXp8GqMtcwbX8IaWHlfMqc/raid7Jm8BYWA6mC1gETici7inEhSCtVdsgxWtP9OLx8B6yGcixVxoDEbNNOZ+EqawC985MinuW9DorG3uZabPMFfQ==
+X-YMail-OSG: vAFVpxYVM1l2rzAZkQgyK0e340gl0Ef8ULIKtrnLCdqgdsoY3AsZ_714H5OYTYz
+ XDmhr97PPS5A_miQBI1wfbBEQFxhN3TfS8pfR8KQfJ_WSRtiFnzDVp8HdQSOPkAUSFtNCfw6.HDz
+ _TT0bInWVxs8BxHl5.zxmfx95A7Ugj9Fl5Ua0cHEWY.IFvDgFjYRkF4qU.V3645wFf_f3sWOlYj_
+ WV18H2cUWyhaTfkezcN0PQSScIqHuxUK4xl2lGRZmk9hjZm.kBSNFMXZDeYftrK.0XKAI215fpBN
+ .JZ3lZ34Gj7RWPPmU6LzyYQ1kWy2FH6Jqe3pQVPI8Iv2oPyDSdSrh7Q57AeI5iqiK4.LRd727V23
+ xbtwg9ASTMFHDLKDOZ8BD_gWb2SeFceOxpFaP3v9Auba8GwDemL4g1fEHk9UmRlQqETKdVRKiRcf
+ EX76bJ7ZywpJd6Zz5s4JX3JcvpS9gK15fx3G94x9N_tSbAS1w3kmbYjmBRh7U7QXX9p.ey6RNucx
+ YMouunEhh_YQhCWcUdTg0HrG4iRIBoIWu_tSEXEEppnuLKfY3ONkVGI_GUFP88d4BPmgI9FnXTfu
+ wKJkWDmiG51eHLqLdhLsnQxHrN_HgZjXR.0rVkrnOuJT1dERINHaQvetKVKFUr_.EOhgVXxKOsIW
+ R7sO13LdX_FA5Gl8WehCwDDWfYIBke6ogVxk_Zr13ZWF62aTa8ZBjTdb7GUFyGKGAiIBggj.r2hh
+ k6e_CFX3FuktEMrlzp7zlktSwVOx_26Up8FAd1Zbeo7XN51tzHiVaMAP.qXwJQvXId89C1IjGvQf
+ 7L6clSSpz3B9qfoGLhWLN50O.jDktU2sTJNP87kD6WgwClWFmCpu42Z1ruGtJ7dSzWRLldao_S5X
+ EjuJqfX1P_Wj9Sjfn6nc_R854wFJNY0K0dBgOFcjLiC47Yj_Q68tZjKu9xmj62dJT0sLSdfKeXGR
+ 8wPVuj8I5mKt2Rt4ls57M_IzZhg7npPMVrtGMO1eXWtShHAEYCwSf64euRmU4qVk88j42_lqH23v
+ FXksW_bcfXYXCDBX2WNVPq1pTpB3WMHkgel1Eim5QaH4nIuFVJ_YAg.iJt5ivBzihbxxLdVCW8sX
+ weWrCX10QKQwMDBYAk5eBve4SGoATUwx7NaRzHwrOtQzEadNZOAi2l1mkROjCPSxzS.6PbeRIJNo
+ AQ3FjOkBqeLiv3XiSIDTAsVcoef6zapmNIWcnYVR1UA4dVwi0xDDsumNl_HidpaTQbV2aS2eeOiL
+ 6jAj6.KZdkBv1sJDX8xRqgMbNaUpuZBoOEx_Gv6BFhSmRY7M0PVcVelK7SGvN0IblhfAXP5X8e3U
+ .tZ9BeLBCxVBc4a5fr6Ta19vjPMnuA0SvUIZTbni35keRTOJ2cSB9QWX3I2KWUqYx3s9fwiO1iCs
+ poT886oM9JGmsVZGtSDqK8vuC49flGWgJme7lMUYkoF79hlU2cwxSAkTVTa39jWrSgR7A9PaZyqs
+ oWvlIqGKzpzNq8bBBIx3DG1JOd_Wtqe_Yy4AGnb4z9zoBJiR_0VfC8nwssJQ42i3PLwmvsT2Twhm
+ 7k8i2xOUC_faExAtEcG2yRK_oza50jy677SOxTZNuh_lGsFQqFnXXWufdGInTkQms3e3KEwb9JeE
+ xn3vkeBeiTmUIVDN4wu9Z5jkltSYZY3tYHn5SwPmhRnyWt5w2zggb1BgWrgZfBaE99nXgSKneYBH
+ E2aWiuBr2HocFSkE2PYd7QWOMoTFuMAXyA929RjJLFkcKDgtTTsCSR6dqyUHSr1H_UTLiMGmqaxL
+ YgqAxCQB3blF2t0dXi_uve4eBEyNkz4wDM9GLdMENrspYPXOgtBh.srO3Xzt4CHnzffV7SRozvZM
+ austK1hw7SK8lqXfY5TaVzTIR4cxstypxXnLFs0TViNe8dx_W1bstmBy55htmV8KdNDCL16kPNcB
+ 6luC6jdOvycjw3Mkq0ffZFoSX2Xh848d9iBxROjXS.RUUF5qCeXyPKRSEEYhQm3p_M6A0r3vkz.E
+ G0U.dfqN_sDQre335ThYvhiJ86JHlJNvu.a6.UVhFBpjlw3l_z4adrpJz1166DtWOAhcp3u2cRbJ
+ UvwPPqcGp2lJcHhyxloF9c7yXXBnpp12qXsahbUrXtyAwwBm0uOs92zkJ3s1_Sz6bt6Vc.LBCIno
+ RI2IJnZFCyxFKYE5kl8spasuQp_R3o1Wf1qRPy0WcUSU7mT8RlZbocrEVWIEaQgCsAI0foGHKSGG
+ zA6fO86aagTfPdB4aqjiTS13RitWjM9EZdw5JGTJPk.y_U5sius.M9bg_fJaFBje3y0hCbjxEzg1
+ 7KBmpPg--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: f052b74b-efac-4265-9759-5a6a8cdfc37d
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Wed, 3 Jul 2024 22:25:50 +0000
+Received: by hermes--production-gq1-5b4c49485c-qj6fx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aaa554a1e262de3d08c55cdb86156ef6;
+          Wed, 03 Jul 2024 21:55:27 +0000 (UTC)
+Message-ID: <30fe42db-461c-4716-8874-ff78baf4b14b@schaufler-ca.com>
+Date: Wed, 3 Jul 2024 14:55:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
- <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com> <CAHC9VhQ4qH-rtTpvCTpO5aNbFV4epJr5Xaj=TJ86_Y_Z3v-uyw@mail.gmail.com>
-In-Reply-To: <CAHC9VhQ4qH-rtTpvCTpO5aNbFV4epJr5Xaj=TJ86_Y_Z3v-uyw@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Thu, 4 Jul 2024 00:22:43 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4kwrsDwD2k5ywn78j7CcvufgJJuZQ4Wpz8upL9pAsuZw@mail.gmail.com>
-Message-ID: <CACYkzJ4kwrsDwD2k5ywn78j7CcvufgJJuZQ4Wpz8upL9pAsuZw@mail.gmail.com>
-Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
- static calls
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
-	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
-	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
-	song@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selinux,smack: remove the capability checks in the
+ removexattr hooks
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+References: <20240703211134.349950-2-paul@paul-moore.com>
+ <CAHC9VhTA5tUUH7DAYx9k6X2L4eTzJ1a-ETaJ5+sMZrxKqjKOKA@mail.gmail.com>
+Content-Language: en-US
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhTA5tUUH7DAYx9k6X2L4eTzJ1a-ETaJ5+sMZrxKqjKOKA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22464 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Jul 3, 2024 at 10:56=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Wed, Jul 3, 2024 at 12:55=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
-te:
-> > On Wed, Jul 3, 2024 at 2:07=E2=80=AFAM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > >
-> > > On Jun 29, 2024 KP Singh <kpsingh@kernel.org> wrote:
-> > > >
-> > > > LSM hooks are currently invoked from a linked list as indirect call=
-s
-> > > > which are invoked using retpolines as a mitigation for speculative
-> > > > attacks (Branch History / Target injection) and add extra overhead =
-which
-> > > > is especially bad in kernel hot paths:
-> >
-> > [...]
-> >
-> > > should fix the more obvious problems.  I'd like to know if you are
-> > > aware of any others?  If not, the text above should be adjusted and
-> > > we should reconsider patch 5/5.  If there are other problems I'd
-> > > like to better understand them as there may be an independent
-> > > solution for those particular problems.
-> >
-> > We did have problems with some other hooks but I was unable to dig up
-> > specific examples though, it's been a while. More broadly speaking, a
-> > default decision is still a decision. Whereas the intent from the BPF
-> > LSM is not to make a default decision unless a BPF program is loaded.
-> > I am quite worried about the holes this leaves open, subtle bugs
-> > (security or crashes) we have not caught yet and PATCH 5/5 engineers aw=
-ay
-> >  the problem of the "default decision".
->
-> The inode/xattr problem you originally mentioned wasn't really rooted
-> in a "bad" default return value, it was really an issue with how the
-> LSM hook was structured due to some legacy design assumptions made
-> well before the initial stacking patches were merged.  That should be
-> fixed now[1] and given that the inode/xattr set/remove hooks were
-> unique in this regard (individual LSMs were responsible for performing
-> the capabilities checks) I don't expect this to be a general problem.
->
-> There were also some issues caused by the fact that we were defining
-> the default return value in multiple places and these values had gone
-> out of sync in a number of hooks.  We've also fixed this problem by
-> only defining the default return value once for each hook, solving all
-> of those problems.
+On 7/3/2024 2:14 PM, Paul Moore wrote:
+> On Wed, Jul 3, 2024 at 5:11 PM Paul Moore <paul@paul-moore.com> wrote:
+>> Commit 61df7b828204 ("lsm: fixup the inode xattr capability handling")
+>> moved the responsibility of doing the inode xattr capability checking
+>> out of the individual LSMs and into the LSM framework itself.
+>> Unfortunately, while the original commit added the capability checks
+>> to both the setxattr and removexattr code in the LSM framework, it
+>> only removed the setxattr capability checks from the individual LSMs,
+>> leaving duplicated removexattr capability checks in both the SELinux
+>> and Smack code.
+>>
+>> This patch removes the duplicated code from SELinux and Smack.
+>>
+>> Fixes: 61df7b828204 ("lsm: fixup the inode xattr capability handling")
+>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>> ---
+>>  security/selinux/hooks.c   | 10 ++--------
+>>  security/smack/smack_lsm.c |  3 +--
+>>  2 files changed, 3 insertions(+), 10 deletions(-)
+> FYI, this is still untested as my test kernel is compiling now, but I
+> wanted to get this out onto the list before the holiday in the US for
+> folks (/me looks at Casey for the Smack bits)
 
-I don't see how this solves problems or prevents any future problems
-with side-effects. I have always been uncomfortable with an extraneous
-function being called with a side effect ever since we merged BPF LSM
-with default callback. We have found one bug due to this, not all the
-bugs.
+Let me know how your test goes, and then I'll have a closer look.
 
+>  to look at and
+> potentially review.
 >
-> I'm not aware of any other existing problems relating to the LSM hook
-> default values, if there are any, we need to fix them independent of
-> this patchset.  The LSM framework should function properly if the
-> "default" values are used.
-
-Patch 5 eliminates the possibilities of errors and subtle bugs all
-together. The problem with subtle bugs is, well, they are subtle, if
-you and I knew of the bugs, we would fix all of them, but we don't. I
-really feel we ought to eliminate the class of issues and not just
-whack-a-mole when we see the bugs.
-
-The LSM framework ought to function with default values is a nice
-goal, but a weaker position than what we have where we make these
-subtle bugs impossible. If you feel this should not be a part of the
-framework, I would still like to revert back to implementation where
-we kept the toggling logic contained to the BPF LSM.
-
-- KP
-
->
-> [1] I just realized that commit 61df7b828204 doesn't properly update
-> the removexattr implementations for SELinux and Smack, expect a patch
-> for that soon.  The current code is okay, it just does some
-> unnecessary work (see the setxattr changes to get an idea of the
-> changes needed).
->
-> > > > +#define lsm_for_each_hook(scall, NAME)                            =
-           \
-> > > > +     for (scall =3D static_calls_table.NAME;                      =
-     \
-> > > > +          scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++=
-)  \
-> > > > +             if (static_key_enabled(&scall->active->key))
-> > >
-> > > This is probably a stupid question, but why use static_key_enabled()
-> > > here instead of static_branch_unlikely() as in the call_XXX_macros?
-> >
-> > The static_key_enabled is a check for the key being enabled, whereas
-> > the static_branch_likely is for laying out the right assembly code
-> > (jump tables etc.) and based on the value of the static key, here we
-> > are not using the static calls or even keys, rather we are following
-> > back from direct calls to indirect calls and don't really need any
-> > jump tables in the slow path.
->
-> Gotcha, thanks for the explanation.
->
-> --
-> paul-moore.com
