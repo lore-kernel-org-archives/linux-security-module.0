@@ -1,44 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FC218FDC8;
-	Wed,  3 Jul 2024 20:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F29213DBB1;
+	Wed,  3 Jul 2024 20:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720037374; cv=none; b=J+/vBnGvH83PcKhzYv4MuzPFKoySsO/OmCWhAU1lIW4HitUhzLPKhi/TKA6viuTDTRSGHYsiRjqdi6HgPYALNFmqD9FeSXWO+yw66ugJA6ke0VKthmdSfKu2cj9L2KRUe3gk1oYXEyNj/gjnT8RUozO+qMxrhnPwwrn8knrbfRg=
+	t=1720037477; cv=none; b=aHcuVxFxFrg7qSPkGdoekuKjH3pKfQ1QHjl8CN3n6a+bkZLjRBXtQPVgMot8PcZrakKD1Wo5kgNTxyMN42/gR/mQ7srqCy9yYWfuPxuaz/klIQko8oRAw+LQs9Ee4n1vs1cWIjKEyK5if0H6Wgp4CbypPL+B881yT6oCHpWUYw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720037374; c=relaxed/simple;
-	bh=Wnd3o8k1qpgOfPgnkTw0f/86KjmhH34TRGl5E7XRXIw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hT6vQYI3XSIslqlu2jXL91majwU9IB1f0B62CB3IWiH37m2pFfo+X4ZQyGjT550IaCsn4EUFNRioL3s2LvjpEY9c2PgJYT1uGIfbctcFy6zqGKEMH7t33vFUJs8vssnV1Xnyg+pbFWQ9Oq59ImkJgXLdEo4qp0wlpoHvdfiA4XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHF0m6/g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720037477; c=relaxed/simple;
+	bh=SQpiK44TEPrFruykt3kBmYo9BZX1HZl2Svyj+QKUNEE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B2SYkt/R9te9r1hr6V1zv0KaGMwwVg14XPTnQQj5Og1tiOkBSBIccpCjxg3Bv5h6tdsFfJMDMnmJSzIJKHNbVEskCIZOGoMgvp39zti/tx6+EmbBHRR0UOpp7Ti8MqFO5xUasll/DP8Vivo30Hz4nx6d3FRYDvlXmnThRGLaM1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=S/IWTZMS; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=S/IWTZMS; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHF0m6/g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0497CC2BD10;
-	Wed,  3 Jul 2024 20:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720037374;
-	bh=Wnd3o8k1qpgOfPgnkTw0f/86KjmhH34TRGl5E7XRXIw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OHF0m6/gf0FO74XTNMVbkzvMC5tPZ0F9b2WrUWqcXUvT6MTfiNRScZdkD19jNerIO
-	 fDzTQrIYSVKhWYX5omZ6dqwRY9Ohz9uDcvEQ+JDiL/x6lXiq3Z5dlJLnHklTGuBNWa
-	 OENRbiAA5oi9U2WHEGjzVEyIwA+1GBgpWH1Nasq1vZOMHOx0tjhPjC7bkG2bw1iXSq
-	 LoMOmkXUWQxrsqdLm4oaLR9NTC/oCl3a/eIIeiyYpSP5hCcWRSbe+msufoceV1FpqQ
-	 bVgv6DZT/uk/xbXywPLwNmaN4WAXahJVP5CSFxEQxI0pAgbselnFsePXgEc2M1NStP
-	 paztPvpMgCVaA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: dm-devel@lists.linux.dev,
-	Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH] dm-verity: fix dm_is_verity_target() when dm-verity is builtin
-Date: Wed,  3 Jul 2024 13:08:13 -0700
-Message-ID: <20240703200813.64802-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="S/IWTZMS";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="S/IWTZMS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1720037474;
+	bh=SQpiK44TEPrFruykt3kBmYo9BZX1HZl2Svyj+QKUNEE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=S/IWTZMSUy7AlGM8LAvIJ1znS98TFW8MYgZ+lnih8uqo+wvwlsXGtJxDon0o3Qgx4
+	 mraPuBhnou3LjQkTluGrNKL0R41q0hQtjFKLD36bLTby1x+giv/y7E744381INRMqh
+	 GvJGEDsMIkq99Ge+BOq0I+rE6peXevvzcQDowb5E=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 64A7F1286C78;
+	Wed, 03 Jul 2024 16:11:14 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id 4ndU80lSrPBQ; Wed,  3 Jul 2024 16:11:14 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1720037474;
+	bh=SQpiK44TEPrFruykt3kBmYo9BZX1HZl2Svyj+QKUNEE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=S/IWTZMSUy7AlGM8LAvIJ1znS98TFW8MYgZ+lnih8uqo+wvwlsXGtJxDon0o3Qgx4
+	 mraPuBhnou3LjQkTluGrNKL0R41q0hQtjFKLD36bLTby1x+giv/y7E744381INRMqh
+	 GvJGEDsMIkq99Ge+BOq0I+rE6peXevvzcQDowb5E=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C1EE3128607E;
+	Wed, 03 Jul 2024 16:11:12 -0400 (EDT)
+Message-ID: <922603265d61011dbb23f18a04525ae973b83ffd.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 2/3] tpm: Address !chip->auth in tpm_buf_append_name()
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>, Linus Torvalds
+	 <torvalds@linux-foundation.org>, stable@vger.kernel.org, Stefan Berger
+	 <stefanb@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe
+	 <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+	 <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+	 <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Ard Biesheuvel
+	 <ardb@kernel.org>, Mario Limonciello <mario.limonciello@amd.com>, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Date: Wed, 03 Jul 2024 16:11:10 -0400
+In-Reply-To: <20240703182453.1580888-3-jarkko@kernel.org>
+References: <20240703182453.1580888-1-jarkko@kernel.org>
+	 <20240703182453.1580888-3-jarkko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,65 +70,33 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Eric Biggers <ebiggers@google.com>
+On Wed, 2024-07-03 at 21:24 +0300, Jarkko Sakkinen wrote:
+[...]
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 21a67dc9efe8..2844fea4a12a 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -211,8 +211,8 @@ struct tpm_chip {
+>         u8 null_key_name[TPM2_NAME_SIZE];
+>         u8 null_ec_key_x[EC_PT_SZ];
+>         u8 null_ec_key_y[EC_PT_SZ];
+> -       struct tpm2_auth *auth;
+>  #endif
+> +       struct tpm2_auth *auth;
+>  };
 
-When CONFIG_DM_VERITY=y, dm_is_verity_target() returned true for any
-builtin dm target, not just dm-verity.  Fix this by checking for
-verity_target instead of THIS_MODULE (which is NULL for builtin code).
+Since auth should only be present if CONFIG_TCG_TPM2_HMAC this is
+clearly an undesirable thing to do.  I think you did it because in a
+later patch you want to collapse the hmac sessions to use a single
+routine, but you can make that check with the preprocessor __and
+function defined in kconfig.h:
 
-Fixes: b6c1c5745ccc ("dm: Add verity helpers for LoadPin")
-Cc: stable@vger.kernel.org
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- drivers/md/dm-verity-target.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+if (__and(IS_ENABLED(CONFIG_TCG_TPM2_HMAC), chip->auth))
 
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index 0a2399d958b7..cf659c8feb29 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -1519,18 +1519,10 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	verity_dtr(ti);
- 
- 	return r;
- }
- 
--/*
-- * Check whether a DM target is a verity target.
-- */
--bool dm_is_verity_target(struct dm_target *ti)
--{
--	return ti->type->module == THIS_MODULE;
--}
--
- /*
-  * Get the verity mode (error behavior) of a verity target.
-  *
-  * Returns the verity mode of the target, or -EINVAL if 'ti' is not a verity
-  * target.
-@@ -1580,10 +1572,18 @@ static struct target_type verity_target = {
- 	.iterate_devices = verity_iterate_devices,
- 	.io_hints	= verity_io_hints,
- };
- module_dm(verity);
- 
-+/*
-+ * Check whether a DM target is a verity target.
-+ */
-+bool dm_is_verity_target(struct dm_target *ti)
-+{
-+	return ti->type == &verity_target;
-+}
-+
- MODULE_AUTHOR("Mikulas Patocka <mpatocka@redhat.com>");
- MODULE_AUTHOR("Mandeep Baines <msb@chromium.org>");
- MODULE_AUTHOR("Will Drewry <wad@chromium.org>");
- MODULE_DESCRIPTION(DM_NAME " target for transparent disk integrity checking");
- MODULE_LICENSE("GPL");
+Which will become 0 if the config is not enabled and chip->auth if it
+is, thus eliminating the code in the former case while not causing the
+compiler to complain about chip->auth not being defined even if it's
+under the config parameter.
 
-base-commit: ed28fe59c042e9b5bf3b15050aa6ee67834dc852
--- 
-2.45.2
+James
 
