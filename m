@@ -1,102 +1,397 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B4617DA06
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 14:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB2E1426C
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 16:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018506; cv=none; b=bO7opi32bJMF/u0KQUtEl5nIE77EUNdjlyhRY8IZA+k6ra5oDfP4TbNEFZgudqCYAPgqc/3eOE/XznCU657sQZkqSvkB4mbt8F5Cop3T2TyeyxXdDnVp/S8M3BiEgeE2sUwnyjSkfY4ILUjJMksmL6RBxVPd6usAIoY+7t8vOGM=
+	t=1720025702; cv=none; b=MV7wiWWMHWBSnPjdYWauRT6TlrY/a/+3Xb80PxZmvAs/CgwGw1NdVSeN9nnUlnq7nEzz2i4g3IbhtQ+UFge+S5JTzgb6VLWACVu1002AQCYWB7Z3NXHoqg27dN5aTx4d25+JGUyMJQRnG6S4wm5qVjbKgHCuEqr84CoOVA/Frrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018506; c=relaxed/simple;
-	bh=5L8z/sb3dJfBJ2NzPsTGv1Wac4OQs83G4KhRGhXEd24=;
+	s=arc-20240116; t=1720025702; c=relaxed/simple;
+	bh=6BkqlMXppNscJCQHWu2J1dXFevUBHHrSBjRG1IqhLhQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+g0+3q41FaYvN0Gdj1YVCgAgu+1om+FdricA2eP11GZSeI8vCsmx+Uy8+175WhHlct1igUIIZ75qcpm2fOLNpqmlWgQDjeocX0VpLV6ogScaU8o7Xy6j7lA/wtNmzWOEUWyjce9r1CsVsMIBF9jKZ/yhlDqq4fG4ue+tMI6om8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OCsaCSiz; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=Wm7lpGagFkKtOrtFVCLTavHycONaWTN7YGTMiLUh/lfbVz8FCm0IEWJkPHWeF4xaOQdz7+8Vcdr8ALflqvb1gBr7e//cbhVVXHah/ghkHtzv6PQ8oyZ63d5N35y8GVWB6HDnzNWiMUcKhHMr6WlcQTULF7xPNj9SEbL9tVWrogw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQwZHWZi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OCsaCSiz"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0360f890a1so631592276.0
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 07:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720018504; x=1720623304; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5L8z/sb3dJfBJ2NzPsTGv1Wac4OQs83G4KhRGhXEd24=;
-        b=OCsaCSiz4D1Ik66LBtxvko3yf7DrPcnVmBLkeoco3UCSZh6dAkXKd5k8G6qhAjnpZu
-         myo87+fYI7//88Ar4uy1v5isc0uOxWmovaugU6Z8I8e4XVp6So/nglamHkYQUfMoTz10
-         C7O2cl3XEC9SPV36xOG34/ebc/1z1vsSMAJQvlA3bVGlAzqcXVUZeYY+fime2+0JvTzx
-         EsP7eSGidyTJgp9zd8XuUfYKR4/2K1lV3KQX7CHoZMCZTmb3ouGEIAWbyeBqQ3Eeh9nz
-         RaLpwOHjvJEZxqGn/z6OsG/Lbr1G3k0P+A62IPe5z8rPhgN7npEikN9qH8BeJ+L+pmk+
-         6XDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720018504; x=1720623304;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5L8z/sb3dJfBJ2NzPsTGv1Wac4OQs83G4KhRGhXEd24=;
-        b=AfqrBqly+JyVTs6WBitxztVZeqNz9IfsXsOABZNZD0ayG6wmcV/3dS2uCxN3LU0QsS
-         7sseeQUgtmNnMwD0RL+FyK/OCRLrHzXCUJjMcgF12wQ68neWs+y+J8sfJx2nD4x+4Qxh
-         +7GH/2TIxZU1kfV9ahnKZlesiA6nWFopRteUMkQqaV3wPaZJqIv26zUd9+VlvoE5qfsl
-         o4f5nzzCgcwu15ywgFcT/+KqRuZdEPVR1as9CaxfUAplhYp+ciePEJZblNKKt0sAD/O8
-         SqqmSpQPNqjuSyxZf+bX4w8MnNJwrU4hdR0NdymxPjMUJPC6CpT7q6QVkVo15NmclqQt
-         BZpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbJCtq42ZrQ1U9EK8+qZFHXB9ZSR8bfLr8xXQvO4UNJ/0Ys/6Lgted1jRWOqwtyyvqUY++Bypj3dw3MMm+hcs3YqAWfTZ67+ZTIXuS1AjVXuJ4wnei
-X-Gm-Message-State: AOJu0YxwSwAGAi7ay1jnc/GDZSbWGnFrLkKfxOTfkuFKFCeQ59Ppe7fu
-	mQEz2yiLhjL+Ln5cNHXMrRXej9uSs4e1HSgjLXMlqV1VzjquPLgI4rRUqeGzOem9C7090e0jqpp
-	tYJkbZ9VLVDWI/16cI7MwR+qAlmh/0BzVeUr0
-X-Google-Smtp-Source: AGHT+IG6kF95qc2PPcOH4Zj5Qhp/bKkLPuBZZW/n3lb6eoXrdAw6TKe1QICXMqSaa9Tq8kGQ1JWZCMAXsRwfBXLzU+U=
-X-Received: by 2002:a25:d08d:0:b0:e03:a382:f1 with SMTP id 3f1490d57ef6-e03ad7f365fmr1319009276.11.1720018503710;
- Wed, 03 Jul 2024 07:55:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQwZHWZi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3707AC3277B
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 16:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720025702;
+	bh=6BkqlMXppNscJCQHWu2J1dXFevUBHHrSBjRG1IqhLhQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tQwZHWZiWHadFh5EWWe5WFNBAkxAo7uFPz65MQgp2t/CxxS59DJ7Mv40JxG6O+OKO
+	 +SJTTkE0MfDcKXZZO+pnCu7eKsKqMBDo0dKIT5NoeH20AvWSkBJSaRgVaUhn3nomSh
+	 N01mmGbYS0WuRdU5xpMH96Rs78P/yMWxKPDejgpOAY+w/VMNo2iH+aN9dXf2ZE9Ha4
+	 hry2S3fhPNyUbKxAEkRM8aKejjmElD0tS3iCS40j+KDNJyAebJx7n3nUWawexLGaW3
+	 JXSac8tAWufejbf3jKoAwUh4129cg9IibvZh8RKdeeqRhR6qar/hLcyOFNWitkuf7n
+	 UBJJS9EKmA7qg==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cecba8d11so6801472e87.1
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 09:55:01 -0700 (PDT)
+X-Gm-Message-State: AOJu0YztCpYC2Yv2CX9oe9ENJsW6JnTn6dxVie585QmbZfvj1u1A/pLU
+	NoQvc292AFrQYmqPqfKZbZnAAJ+aUZMFV61AQpPyE3UxqO7BZud2nwYxMylnovgGg0DygPNTOJD
+	Qz7nES8hc1udrrXWwaZMq1THVE54uetWLwcyV
+X-Google-Smtp-Source: AGHT+IE736FfVm4z7Siy4FYv8rIU6pG0hmhNouMFPyGsMsxwe2nPueXhE/4IuvoztHDVTNehBN5jJT0pbBQdeFOrxrM=
+X-Received: by 2002:a05:6512:3dab:b0:52c:d085:9978 with SMTP id
+ 2adb3069b0e04-52e82733e8amr8760059e87.62.1720025699465; Wed, 03 Jul 2024
+ 09:54:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629084331.3807368-1-kpsingh@kernel.org> <20240629084331.3807368-3-kpsingh@kernel.org>
- <87zfqyq07z.fsf@prevas.dk> <F537442F-C6B5-48E7-8492-569D5C3D8B83@kernel.org>
-In-Reply-To: <F537442F-C6B5-48E7-8492-569D5C3D8B83@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 3 Jul 2024 10:54:52 -0400
-Message-ID: <CAHC9VhQGBuYz9pkVxUrXTgcNab-rh62M-Z727JKONrRy7T+_dA@mail.gmail.com>
-Subject: Re: [PATCH v13 2/5] security: Count the LSMs enabled at compile time
-To: KP Singh <kpsingh@kernel.org>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, andrii@kernel.org, keescook@chromium.org, 
+References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
+In-Reply-To: <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Wed, 3 Jul 2024 18:54:48 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
+Message-ID: <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
+Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
+ static calls
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
 	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
-	song@kernel.org, Kui-Feng Lee <sinquersw@gmail.com>
+	song@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 9:12=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote:
-> > On 3 Jul 2024, at 11:44, Rasmus Villemoes <rasmus.villemoes@prevas.dk> =
-wrote:
-> > KP Singh <kpsingh@kernel.org> writes:
+On Wed, Jul 3, 2024 at 2:07=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Jun 29, 2024 KP Singh <kpsingh@kernel.org> wrote:
 > >
-> >> These macros are a clever trick to determine a count of the number of
-> >> LSMs that are enabled in the config to ascertain the maximum number of
-> >> static calls that need to be configured per LSM hook.
+> > LSM hooks are currently invoked from a linked list as indirect calls
+> > which are invoked using retpolines as a mitigation for speculative
+> > attacks (Branch History / Target injection) and add extra overhead whic=
+h
+> > is especially bad in kernel hot paths:
 
-...
+[...]
 
-> > Instead of all this trickery with defining temporary, never used again,
-> > macros expanding to something with trailing comma or not, what about
-> > this simpler (at least in terms of LOC, but IMO also readability)
-> > approach:
+> should fix the more obvious problems.  I'd like to know if you are
+> aware of any others?  If not, the text above should be adjusted and
+> we should reconsider patch 5/5.  If there are other problems I'd
+> like to better understand them as there may be an independent
+> solution for those particular problems.
 
-...
+We did have problems with some other hooks but I was unable to dig up
+specific examples though, it's been a while. More broadly speaking, a
+default decision is still a decision. Whereas the intent from the BPF
+LSM is not to make a default decision unless a BPF program is loaded.
+I am quite worried about the holes this leaves open, subtle bugs
+(security or crashes) we have not caught yet and PATCH 5/5 engineers away
+ the problem of the "default decision".
 
-> I actually prefer the version we have now from a readability perspective,=
- it makes it more explicit (the check about the CONFIG_* being enabled and =
-counting them). let's keep this as an incremental change that you can propo=
-se :) once the patches are merged.
+>
+> > With the hook now exposed as a static call, one can see that the
+> > retpolines are no longer there and the LSM callbacks are invoked
+> > directly:
+> >
+> > security_file_ioctl:
+> >    0xff...0ca0 <+0>:  endbr64
+> >    0xff...0ca4 <+4>:  nopl   0x0(%rax,%rax,1)
+> >    0xff...0ca9 <+9>:  push   %rbp
+> >    0xff...0caa <+10>: push   %r14
+> >    0xff...0cac <+12>: push   %rbx
+> >    0xff...0cad <+13>: mov    %rdx,%rbx
+> >    0xff...0cb0 <+16>: mov    %esi,%ebp
+> >    0xff...0cb2 <+18>: mov    %rdi,%r14
+> >    0xff...0cb5 <+21>: jmp    0xff...0cc7 <security_file_ioctl+39>
+> >                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >    Static key enabled for SELinux
+> >
+> >    0xffffffff818f0cb7 <+23>:  jmp    0xff...0cde <security_file_ioctl+6=
+2>
+> >                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
+^^
+> >
+> >    Static key enabled for BPF LSM. This is something that is changed to
+> >    default to false to avoid the existing side effect issues of BPF LSM
+> >    [1] in a subsequent patch.
+> >
+> >    0xff...0cb9 <+25>: xor    %eax,%eax
+> >    0xff...0cbb <+27>: xchg   %ax,%ax
+> >    0xff...0cbd <+29>: pop    %rbx
+> >    0xff...0cbe <+30>: pop    %r14
+> >    0xff...0cc0 <+32>: pop    %rbp
+> >    0xff...0cc1 <+33>: cs jmp 0xff...0000 <__x86_return_thunk>
+> >    0xff...0cc7 <+39>: endbr64
+> >    0xff...0ccb <+43>: mov    %r14,%rdi
+> >    0xff...0cce <+46>: mov    %ebp,%esi
+> >    0xff...0cd0 <+48>: mov    %rbx,%rdx
+> >    0xff...0cd3 <+51>: call   0xff...3230 <selinux_file_ioctl>
+> >                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >    Direct call to SELinux.
+> >
+> >    0xff...0cd8 <+56>: test   %eax,%eax
+> >    0xff...0cda <+58>: jne    0xff...0cbd <security_file_ioctl+29>
+> >    0xff...0cdc <+60>: jmp    0xff...0cb7 <security_file_ioctl+23>
+> >    0xff...0cde <+62>: endbr64
+> >    0xff...0ce2 <+66>: mov    %r14,%rdi
+> >    0xff...0ce5 <+69>: mov    %ebp,%esi
+> >    0xff...0ce7 <+71>: mov    %rbx,%rdx
+> >    0xff...0cea <+74>: call   0xff...e220 <bpf_lsm_file_ioctl>
+> >                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >    Direct call to BPF LSM.
+> >
+> >    0xff...0cef <+79>: test   %eax,%eax
+> >    0xff...0cf1 <+81>: jne    0xff...0cbd <security_file_ioctl+29>
+> >    0xff...0cf3 <+83>: jmp    0xff...0cb9 <security_file_ioctl+25>
+> >    0xff...0cf5 <+85>: endbr64
+> >    0xff...0cf9 <+89>: mov    %r14,%rdi
+> >    0xff...0cfc <+92>: mov    %ebp,%esi
+> >    0xff...0cfe <+94>: mov    %rbx,%rdx
+> >    0xff...0d01 <+97>: pop    %rbx
+> >    0xff...0d02 <+98>: pop    %r14
+> >    0xff...0d04 <+100>:        pop    %rbp
+> >    0xff...0d05 <+101>:        ret
+> >    0xff...0d06 <+102>:        int3
+> >    0xff...0d07 <+103>:        int3
+> >    0xff...0d08 <+104>:        int3
+> >    0xff...0d09 <+105>:        int3
+> >
+> > While this patch uses static_branch_unlikely indicating that an LSM hoo=
+k
+> > is likely to be not present. In most cases this is still a better choic=
+e
+> > as even when an LSM with one hook is added, empty slots are created for
+> > all LSM hooks (especially when many LSMs that do not initialize most
+> > hooks are present on the system).
+> >
+> > There are some hooks that don't use the call_int_hook and
+> > call_void_hook.
+>
+> I think you mean "or" and not "and", yes?
 
-I prefer the original approach by KP as well, let's leave it as-is.
-IMO, it's far from the worst of the macro shenanigans in this patchset
-(or existing LSM code for that matter).
+Yep, thanks, fixed.
 
---=20
-paul-moore.com
+>
+> > These hooks are updated to use a new macro called
+> > lsm_for_each_hook where the lsm_callback is directly invoked as an
+> > indirect call. These are updated in a subsequent patch to also use
+> > static calls.
+> >
+> > Below are results of the relevant Unixbench system benchmarks with BPF =
+LSM
+> > and SELinux enabled with default policies enabled with and without thes=
+e
+> > patches.
+> >
+> > Benchmark                                               Delta(%): (+ is=
+ better)
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > Execl Throughput                                             +1.9356
+> > File Write 1024 bufsize 2000 maxblocks                       +6.5953
+> > Pipe Throughput                                              +9.5499
+> > Pipe-based Context Switching                                 +3.0209
+> > Process Creation                                             +2.3246
+> > Shell Scripts (1 concurrent)                                 +1.4975
+> > System Call Overhead                                         +2.7815
+> > System Benchmarks Index Score (Partial Only):                +3.4859
+> >
+> > In the best case, some syscalls like eventfd_create benefitted to about=
+ ~10%.
+> >
+> > [1] https://lore.kernel.org/linux-security-module/20220609234601.202636=
+2-1-kpsingh@kernel.org/
+> >
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Acked-by: Song Liu <song@kernel.org>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  include/linux/lsm_hooks.h |  72 ++++++++++++--
+> >  security/security.c       | 198 ++++++++++++++++++++++++++------------
+> >  2 files changed, 197 insertions(+), 73 deletions(-)
+>
+> ...
+>
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index efd4a0655159..a66ca68485a2 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -30,19 +30,66 @@
+> >  #include <linux/init.h>
+> >  #include <linux/rculist.h>
+> >  #include <linux/xattr.h>
+> > +#include <linux/static_call.h>
+> > +#include <linux/unroll.h>
+> > +#include <linux/jump_label.h>
+> > +#include <linux/lsm_count.h>
+> > +
+> > +#define SECURITY_HOOK_ACTIVE_KEY(HOOK, IDX) security_hook_active_##HOO=
+K##_##IDX
+> > +
+> > +/*
+> > + * Identifier for the LSM static calls.
+> > + * HOOK is an LSM hook as defined in linux/lsm_hookdefs.h
+> > + * IDX is the index of the static call. 0 <=3D NUM < MAX_LSM_COUNT
+> > + */
+> > +#define LSM_STATIC_CALL(HOOK, IDX) lsm_static_call_##HOOK##_##IDX
+> > +
+> > +/*
+> > + * Call the macro M for each LSM hook MAX_LSM_COUNT times.
+> > + */
+> > +#define LSM_LOOP_UNROLL(M, ...)              \
+> > +do {                                         \
+> > +     UNROLL(MAX_LSM_COUNT, M, __VA_ARGS__)   \
+> > +} while (0)
+> > +
+> > +#define LSM_DEFINE_UNROLL(M, ...) UNROLL(MAX_LSM_COUNT, M, __VA_ARGS__=
+)
+>
+> All of the macros above (SECURITY_HOOK_ACTIVE_KEY, LSM_STATIC_CALL,
+> LSM_LOOP_UNROLL, and LSM_DEFINE_UNROLL) are only used in
+> security/security.c, yes?  If so, is there a reason why they are
+> defined here and not in security/security.c?
+
+Fair point, fixed.
+
+>
+> > diff --git a/security/security.c b/security/security.c
+> > index 9c3fb2f60e2a..e0ec185cf125 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -112,6 +113,51 @@ static __initconst const char *const builtin_lsm_o=
+rder =3D CONFIG_LSM;
+> >  static __initdata struct lsm_info **ordered_lsms;
+> >  static __initdata struct lsm_info *exclusive;
+> >
+> > +
+> > +#ifdef CONFIG_HAVE_STATIC_CALL
+> > +#define LSM_HOOK_TRAMP(NAME, NUM) \
+> > +     &STATIC_CALL_TRAMP(LSM_STATIC_CALL(NAME, NUM))
+> > +#else
+> > +#define LSM_HOOK_TRAMP(NAME, NUM) NULL
+> > +#endif
+> > +
+> > +/*
+> > + * Define static calls and static keys for each LSM hook.
+> > + */
+> > +
+> > +#define DEFINE_LSM_STATIC_CALL(NUM, NAME, RET, ...)                  \
+> > +     DEFINE_STATIC_CALL_NULL(LSM_STATIC_CALL(NAME, NUM),             \
+> > +                             *((RET(*)(__VA_ARGS__))NULL));          \
+> > +     DEFINE_STATIC_KEY_FALSE(SECURITY_HOOK_ACTIVE_KEY(NAME, NUM));
+> > +
+> > +#define LSM_HOOK(RET, DEFAULT, NAME, ...)                            \
+> > +     LSM_DEFINE_UNROLL(DEFINE_LSM_STATIC_CALL, NAME, RET, __VA_ARGS__)
+> > +#include <linux/lsm_hook_defs.h>
+> > +#undef LSM_HOOK
+> > +#undef DEFINE_LSM_STATIC_CALL
+>
+> If you end up respinning the patchset, drop the two blank lines
+> before the DEFINE_LSM_STATIC_CALL and LSM_HOOK definitions.
+
+Done.
+
+>
+> > @@ -856,29 +916,43 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx=
+, u32 *uctx_len,
+> >   * call_int_hook:
+> >   *   This is a hook that returns a value.
+> >   */
+> > +#define __CALL_STATIC_VOID(NUM, HOOK, ...)                            =
+    \
+> > +do {                                                                  =
+    \
+> > +     if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM)))=
+ {    \
+> > +             static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);    =
+    \
+> > +     }                                                                =
+    \
+> > +} while (0);
+> >
+> > -#define call_void_hook(FUNC, ...)                            \
+> > -     do {                                                    \
+> > -             struct security_hook_list *P;                   \
+> > -                                                             \
+> > -             hlist_for_each_entry(P, &security_hook_heads.FUNC, list) =
+\
+> > -                     P->hook.FUNC(__VA_ARGS__);              \
+> > +#define call_void_hook(HOOK, ...)                                 \
+> > +     do {                                                      \
+> > +             LSM_LOOP_UNROLL(__CALL_STATIC_VOID, HOOK, __VA_ARGS__); \
+> >       } while (0)
+> >
+> > -#define call_int_hook(FUNC, ...) ({                          \
+> > -     int RC =3D LSM_RET_DEFAULT(FUNC);                         \
+> > -     do {                                                    \
+> > -             struct security_hook_list *P;                   \
+> > -                                                             \
+> > -             hlist_for_each_entry(P, &security_hook_heads.FUNC, list) =
+{ \
+> > -                     RC =3D P->hook.FUNC(__VA_ARGS__);         \
+> > -                     if (RC !=3D LSM_RET_DEFAULT(FUNC))        \
+> > -                             break;                          \
+> > -             }                                               \
+> > -     } while (0);                                            \
+> > -     RC;                                                     \
+> > +
+> > +#define __CALL_STATIC_INT(NUM, R, HOOK, LABEL, ...)                   =
+    \
+> > +do {                                                                  =
+    \
+> > +     if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM)))=
+ {  \
+> > +             R =3D static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__=
+);    \
+> > +             if (R !=3D LSM_RET_DEFAULT(HOOK))                        =
+      \
+> > +                     goto LABEL;                                      =
+    \
+> > +     }                                                                =
+    \
+> > +} while (0);
+> > +
+> > +#define call_int_hook(HOOK, ...)                                     \
+> > +({                                                                   \
+> > +     __label__ out;                                                  \
+>
+> This is another only-if-you-respin, consider /out/OUT/ so it is more
+> consistent.
+
+Done. I will do a re-spin as we do have some fixes.
+
+>
+> > +     int RC =3D LSM_RET_DEFAULT(HOOK);                                =
+ \
+> > +                                                                     \
+> > +     LSM_LOOP_UNROLL(__CALL_STATIC_INT, RC, HOOK, out, __VA_ARGS__); \
+> > +out:                                                                 \
+> > +     RC;                                                             \
+> >  })
+> >
+> > +#define lsm_for_each_hook(scall, NAME)                                =
+       \
+> > +     for (scall =3D static_calls_table.NAME;                          =
+ \
+> > +          scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)  \
+> > +             if (static_key_enabled(&scall->active->key))
+>
+> This is probably a stupid question, but why use static_key_enabled()
+> here instead of static_branch_unlikely() as in the call_XXX_macros?
+
+The static_key_enabled is a check for the key being enabled, whereas
+the static_branch_likely is for laying out the right assembly code
+(jump tables etc.) and based on the value of the static key, here we
+are not using the static calls or even keys, rather we are following
+back from direct calls to indirect calls and don't really need any
+jump tables in the slow path.
+
+We also get rid of this macro in the
+subsequent patch, but we might need to keep it around if we leave
+security_getselfattr alone.
+
+- KP
+
+>
+> --
+> paul-moore.com
