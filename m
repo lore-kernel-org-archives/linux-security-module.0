@@ -1,55 +1,57 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C97217334F
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 12:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5BA178360
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jul 2024 12:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720011246; cv=none; b=BwijRNz3kswX78B5ZsAsE3/nWhw0TnEob070t6XertaBZEcuePI/6rlHhw7BPmyVjm2Y2+gYXu492bst2fj4iFIyD/xEfe0CwPMwL21RebuO4H57YcqBrTMyYs83M2df15Ie1ZMIbnvjqeKA1IPNnZ1rSMofV5ICmMear70SlNc=
+	t=1720011253; cv=none; b=XIJw4jYzsKH0LQLsQUvgBf11bmkVEw/5owA+xGRASCNPqXBN065Aj5dnsC0Pn1c1TDU77gxQAwDvTzvFdMkTbELb4mkaY6K8byEPOHBFkXEkJFSq+smGcmMUjEHESSLp+IOmgSsMCnczwWGkmSfp/b9x2eEFPc4Q3l/RCkneiys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720011246; c=relaxed/simple;
-	bh=icdGIhylB0lXVqhQ0Oq7EE1+CLenXFSI1YMAf1lrq+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=awB3DKzC0L1/1jHGw2C+OA9fktgqqPNp+H81WKLYd8aGpcICmep4McrFDioz72tmkh6/cxXeliy5IMtx7lPFwtu+++XYa5ETrXuwp5YqJU/z4ihD8cOJDIrW5MW+ps/Hf+/7FmAuBN42jrvYAakTYBzLtNTLpk9ideUMbr8P2Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=ZtnmC/Ab; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1720011253; c=relaxed/simple;
+	bh=ej4DRPK0/rYZog3eIJb7t75rQM0X53llNTBRXQWgPLs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fbb4WoZT31UEuJgg2joi1OVRtPlhvng+EiGHe7qYU9OYZgubKKDr8vFqjNLy8FEpmFjZhtYGQz02yEzV8vh4GyFzO/TlcVQXb6uirCBsi1gsa8cyVknpUdNTCtCoHxCRm3d0avEM8aJkFawyYVUMpEC43UqYDMCgLwXP751LwBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=pzDjb0Bh; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="ZtnmC/Ab"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-36532d177a0so3112300f8f.2
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 05:54:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="pzDjb0Bh"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4256aee6e4dso38856605e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jul 2024 05:54:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1720011243; x=1720616043; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yzx9VHlc/8h9m6p3SRKEm1Y4xLQisswwlqQ+JvkCTDE=;
-        b=ZtnmC/AbZzQDFm3e+qe1qL7U9It+RJ0V9zshhUBc9BGDawvbKrGpVuWVLsVFo7WjjF
-         is8/hqshXxPt/nHmfx5CBBLHdSWMyX+9krMVsPu+yL76Qwc3+pJa35SpZqWYWw093bdW
-         2smyX5BENKzeuRB4hwUG3wGRil1yz6OzPxpasZRFH9k6JL+m5zERzv5+jISBsyBiny/x
-         P1l69+zPmXeOfyaa+4qkaa47WEccm038Quq/lLNiIftiACAfCb5/wvdXe2kJiIIBuV3N
-         JOXw258OKl2OQtAi3b5NriUN0f3lL8lrwNrCWn1G/2pAN8TZR4RCL3k27IhB1lMTgbwo
-         StmQ==
+        d=sigma-star.at; s=google; t=1720011249; x=1720616049; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ogZkpiiKmUATBh2P81264pdDXZ4qUG+ZRQsmJgTVO3k=;
+        b=pzDjb0BhgBglNJt+nB9q5tIdc5qvg8mBaV5P+q2TbwHDYO2HFZhJS8OHeTQsadQrU9
+         S0SoJQZfmbGpl3Pfo2TdyoS1SyUnQ0EBot6yMwFYOdFXX93Xz4xaqTq2wH6y2LDwmyT3
+         QQ980iPI5y2ifYorHKQdlMvXTqUtxjKdhwpqvSkW8iiLDS3icpb0YyibWaUYS0gxwcNo
+         CAeGgPwh+g1i35I+GxaoruzkoXNAQdDEDV9/vlP7p4XB1jK91TuA57nRmvF/GtmFkA1d
+         4XrySlj7z4bEfcKLnaWyTsE2SyESScMU20sYwkL5gIZoDimJDKCGtZTG3aYLEbPNBvg0
+         Sg8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720011243; x=1720616043;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yzx9VHlc/8h9m6p3SRKEm1Y4xLQisswwlqQ+JvkCTDE=;
-        b=TO33PP+/diE4SBGrBMwGtUnBr08q/3ld9Z5c7bZwfkuCUC4RDNcUzllIiWD3NHaNpz
-         j8W9corSbtoEBzVxAxEfvwpHWx7gAXCL9Y48vWcZ3HGVeviY80AXDMKHvxju8Cimri2p
-         g6J79IAk+wnRplyTOz/5ynwxXDsG7vtFIqbOXyZWufYNhgAzse5EsMqc06eN9ES9xCIx
-         29bEt68F7wht4HTikFx8yGTGGaEeK8rzJOtHFhq5QvoUCKbSWHDq5CkPW/pUp5q24R89
-         E71kGEF/JUA4jPMZlR+PxZ9IRwzj2je7zsZByJ6sILuv7hdPWnLe4R88H6lM96VKWv0J
-         KXlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcHmeOyvSTVLQCKXaVvNVulA6Z/DvRCKmm4XP9H2JZYLw0jJji6I5Q1Z2Nz4qDJ6oVzV3jSNHn5CkaiJ+xIOnmhlhmxbIL8axysu8ND6Ak85rnjOqt
-X-Gm-Message-State: AOJu0Yy5MyIcERvvxUVaUJMv0VZA40EnNs/rywx8FfZTvSjzYGTmqZAg
-	T4HN9+ziK7/AXPt4XAYwVI4oDDszd46Al2pCqi0FgsyPABQIOanYqwYIEOx06s4=
-X-Google-Smtp-Source: AGHT+IHKkT/F7VYwbLXQnp0PsjNCbmpL2tzMJ16ri/aVmQvC719AC9zQFGR8qEFOdoj3yqk4lIc+HQ==
-X-Received: by 2002:a5d:648f:0:b0:366:ee84:6a73 with SMTP id ffacd0b85a97d-36775696c16mr8572598f8f.10.1720011242537;
-        Wed, 03 Jul 2024 05:54:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720011249; x=1720616049;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ogZkpiiKmUATBh2P81264pdDXZ4qUG+ZRQsmJgTVO3k=;
+        b=oOKTU9385owViuutVWRwTKUi5jKdXMbxYCG6f9XJ4GjW7x4Y3epOiikLAN/P427ZXI
+         5DuHfHt/1PtyQx0FIab2vuQnzw8PvDZv0AcmL1ElE81qXfoSfSq2hrLE2Cwyr6mUJKtu
+         D09xow9oY4lUzfiTMRZaQX3lR7mMGoGLt8FJr3JbgUm2/dAszo8K0qirhwb+h6ayOfrh
+         Qal29ag2eteabaN+kGjIjlwwnt+8gxQvTog52AMqFLtG/ERqyMRniKand02ymgLP/I5w
+         WawSA5stx0XHI3fwWGGLvD0ow0Y0XgIii2vgZh/ZpL6/NNp3XmgeRK//3/wwUk938cR5
+         wK6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWj58n5ev3WtVv2tJ5OnnR5zg+8wmtyM0vE9k4rQtqipgiUN0ekDQJy2WU4EzOo7k3nEkOhvvxZTjRmJNdLcgAX8YW6cekUupoH/TcmcNUSKc4FBG8p
+X-Gm-Message-State: AOJu0YwGLau3Uw+a7KhWirJXMpbzQDIK7cBtAMDXIMwynd0Bkzbg8H7s
+	yZjkGQSQt/8zN/n394mB0p+iQrk17AZU2ChvHMiNnG8WrY3wgKYZJrPLnrZVPh4=
+X-Google-Smtp-Source: AGHT+IF0v/eZhOIu9x1sxCmfokLUMTeBD5wN6QOfncceonScPm4movN63YwShRHYE2qtmSUJ0jf9uw==
+X-Received: by 2002:adf:a395:0:b0:367:8383:6305 with SMTP id ffacd0b85a97d-367838364e4mr2581253f8f.55.1720011249184;
+        Wed, 03 Jul 2024 05:54:09 -0700 (PDT)
 Received: from localhost ([82.150.214.1])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3675a0d8daasm15703542f8f.30.2024.07.03.05.54.01
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-36792881856sm1791613f8f.6.2024.07.03.05.54.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 05:54:02 -0700 (PDT)
+        Wed, 03 Jul 2024 05:54:09 -0700 (PDT)
 From: David Gstir <david@sigma-star.at>
 To: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
 	James Bottomley <James.Bottomley@HansenPartnership.com>,
@@ -65,12 +67,13 @@ Cc: linux-integrity@vger.kernel.org,
 	keyrings@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	David Gstir <david@sigma-star.at>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 1/2] KEYS: trusted: fix DCP blob payload length assignment
-Date: Wed,  3 Jul 2024 14:53:52 +0200
-Message-ID: <20240703125353.46115-1-david@sigma-star.at>
+	David Gstir <david@sigma-star.at>
+Subject: [PATCH 2/2] KEYS: trusted: dcp: fix leak of blob encryption key
+Date: Wed,  3 Jul 2024 14:53:53 +0200
+Message-ID: <20240703125353.46115-2-david@sigma-star.at>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240703125353.46115-1-david@sigma-star.at>
+References: <20240703125353.46115-1-david@sigma-star.at>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,34 +82,131 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The DCP trusted key type uses the wrong helper function to store
-the blob's payload length which can lead to the wrong byte order
-being used in case this would ever run on big endian architectures.
+Trusted keys unseal the key blob on load, but keep the sealed payload in
+the blob field so that every subsequent read (export) will simply
+convert this field to hex and send it to userspace.
 
-Fix by using correct helper function.
+With DCP-based trusted keys, we decrypt the blob encryption key (BEK)
+in the Kernel due hardware limitations and then decrypt the blob payload.
+BEK decryption is done in-place which means that the trusted key blob
+field is modified and it consequently holds the BEK in plain text.
+Every subsequent read of that key thus send the plain text BEK instead
+of the encrypted BEK to userspace.
+
+This issue only occurs when importing a trusted DCP-based key and
+then exporting it again. This should rarely happen as the common use cases
+are to either create a new trusted key and export it, or import a key
+blob and then just use it without exporting it again.
+
+Fix this by performing BEK decryption and encryption in a dedicated
+buffer. Further always wipe the plain text BEK buffer to prevent leaking
+the key via uninitialized memory.
 
 Signed-off-by: David Gstir <david@sigma-star.at>
-Suggested-by: Richard Weinberger <richard@nod.at>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202405240610.fj53EK0q-lkp@intel.com/
 Fixes: 2e8a0f40a39c ("KEYS: trusted: Introduce NXP DCP-backed trusted keys")
 ---
- security/keys/trusted-keys/trusted_dcp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/keys/trusted-keys/trusted_dcp.c | 33 +++++++++++++++---------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
 
 diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
-index b5f81a05be36..b0947f072a98 100644
+index b0947f072a98..4edc5bbbcda3 100644
 --- a/security/keys/trusted-keys/trusted_dcp.c
 +++ b/security/keys/trusted-keys/trusted_dcp.c
-@@ -222,7 +222,7 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
- 		return ret;
+@@ -186,20 +186,21 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
+ 	return ret;
+ }
+ 
+-static int decrypt_blob_key(u8 *key)
++static int decrypt_blob_key(u8 *encrypted_key, u8 *plain_key)
+ {
+-	return do_dcp_crypto(key, key, false);
++	return do_dcp_crypto(encrypted_key, plain_key, false);
+ }
+ 
+-static int encrypt_blob_key(u8 *key)
++static int encrypt_blob_key(u8 *plain_key, u8 *encrypted_key)
+ {
+-	return do_dcp_crypto(key, key, true);
++	return do_dcp_crypto(plain_key, encrypted_key, true);
+ }
+ 
+ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
+ {
+ 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
+ 	int blen, ret;
++	u8 plain_blob_key[AES_KEYSIZE_128];
+ 
+ 	blen = calc_blob_len(p->key_len);
+ 	if (blen > MAX_BLOB_SIZE)
+@@ -207,30 +208,36 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
+ 
+ 	b->fmt_version = DCP_BLOB_VERSION;
+ 	get_random_bytes(b->nonce, AES_KEYSIZE_128);
+-	get_random_bytes(b->blob_key, AES_KEYSIZE_128);
++	get_random_bytes(plain_blob_key, AES_KEYSIZE_128);
+ 
+-	ret = do_aead_crypto(p->key, b->payload, p->key_len, b->blob_key,
++	ret = do_aead_crypto(p->key, b->payload, p->key_len, plain_blob_key,
+ 			     b->nonce, true);
+ 	if (ret) {
+ 		pr_err("Unable to encrypt blob payload: %i\n", ret);
+-		return ret;
++		goto out;
  	}
  
--	b->payload_len = get_unaligned_le32(&p->key_len);
-+	put_unaligned_le32(p->key_len, &b->payload_len);
+-	ret = encrypt_blob_key(b->blob_key);
++	ret = encrypt_blob_key(plain_blob_key, b->blob_key);
+ 	if (ret) {
+ 		pr_err("Unable to encrypt blob key: %i\n", ret);
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	put_unaligned_le32(p->key_len, &b->payload_len);
  	p->blob_len = blen;
- 	return 0;
+-	return 0;
++	ret = 0;
++
++out:
++	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
++
++	return ret;
  }
+ 
+ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
+ {
+ 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
+ 	int blen, ret;
++	u8 plain_blob_key[AES_KEYSIZE_128];
+ 
+ 	if (b->fmt_version != DCP_BLOB_VERSION) {
+ 		pr_err("DCP blob has bad version: %i, expected %i\n",
+@@ -248,14 +255,14 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
+ 		goto out;
+ 	}
+ 
+-	ret = decrypt_blob_key(b->blob_key);
++	ret = decrypt_blob_key(b->blob_key, plain_blob_key);
+ 	if (ret) {
+ 		pr_err("Unable to decrypt blob key: %i\n", ret);
+ 		goto out;
+ 	}
+ 
+ 	ret = do_aead_crypto(b->payload, p->key, p->key_len + DCP_BLOB_AUTHLEN,
+-			     b->blob_key, b->nonce, false);
++			     plain_blob_key, b->nonce, false);
+ 	if (ret) {
+ 		pr_err("Unwrap of DCP payload failed: %i\n", ret);
+ 		goto out;
+@@ -263,6 +270,8 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
+ 
+ 	ret = 0;
+ out:
++	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
++
+ 	return ret;
+ }
+ 
 -- 
 2.35.3
 
