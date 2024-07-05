@@ -1,117 +1,179 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D684962D
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Jul 2024 18:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0D0139D10
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jul 2024 18:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720202634; cv=none; b=h6nQggHaG4hRsgysRB1XOIIulNsrQc3KQVxo4yr37kA1j68JXij7jcJIQrOFfYUo8KQ5lLOTv4WR+Rh/y/O1Lme7Qmv+PU0lxiqnc+UKVIceERCq0sywVbgmAIvPg/pulCGD0qoxwamrEAJu9WC+bfBZx86TmMMrCwHJ2+2i6vY=
+	t=1720202841; cv=none; b=YU7cFkQX5OT7ub/IgRABIRjS3tZqn2S7IUxObygPW5ISz7hlV4Imkh99WjauoGzV9iIF/zT6ZVMnbYj4lMv9ygdDajYUSbL/yU54NExIJqajlbwcxnIgxMVlh0Y2tRDTsB0cfJ8UCf9NZms1zJVlvcWMDS9c1ZKqqVy9ur4O3pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720202634; c=relaxed/simple;
-	bh=IU4DznuS8O10S9wSXs8ik1clXTs+rnbTjUN+0QtdGXA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aEJxRxeCncZUOt2DqYzNlb24yDj2kiZ++QqwOmWy7p93E313yvLh5agiSOK74H2pGKFYsuy+mkMe/UidzkAWOVgQizPX7nJW2wKm4xcWoRtnOBtJnY1wwVsKmranXRj9M3M+nBXGC5nUAR3Ugv852h8ZjAcFyT/pFkBuwTdT9Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fxjFsG5g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720202841; c=relaxed/simple;
+	bh=mTFn1+gouHuDvwi8MhJq3mtQwOjyoxlhGXl229894LU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P63AUjpbo71xkC+pwIcvCgOeLZMkMNgOeSZl+hE/8ccAGjveMHMIXubtzRGiMn1JX0CCZxDHev0Yo8YM7BBPCcKi7rPL8kBq6x8Z+9YavsZu52zl8FtPHGcCltF3eqaLAwLqL5JV5AxYDhyKyUtr60GRbPBBsEgNZgb0FWPIxWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZdOSw+3l; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fxjFsG5g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720202631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zSfj4hB72oKzYazsXTJG2nso9UJZp4flz44DNiaCEyM=;
-	b=fxjFsG5g3GB5m54sOBMWs+FSDKMtJfUrLup07Qs84X9IgcJJ4rv9BXWwyIMd9xAuujq6Lc
-	F9HIK2egS8nFx5AzKc7KYzyUx7BIsiaVe+u+mAQaNIx3ozEKDrnvSAZf127hm0w99UeRUY
-	DqQjAE/VpfXEuA2mg44OXiSACr+qStY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-283-FWma5yPMP_mRE7JBJbAOnQ-1; Fri,
- 05 Jul 2024 14:03:45 -0400
-X-MC-Unique: FWma5yPMP_mRE7JBJbAOnQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B1DC195609F;
-	Fri,  5 Jul 2024 18:03:37 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.6])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 20F721955F65;
-	Fri,  5 Jul 2024 18:03:17 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>,  Linus Torvalds
- <torvalds@linux-foundation.org>,  Paul Moore <paul@paul-moore.com>,
-  Theodore Ts'o <tytso@mit.edu>,  Alejandro Colomar
- <alx.manpages@gmail.com>,  Aleksa Sarai <cyphar@cyphar.com>,  Andrew
- Morton <akpm@linux-foundation.org>,  Andy Lutomirski <luto@kernel.org>,
-  Arnd Bergmann <arnd@arndb.de>,  Casey Schaufler <casey@schaufler-ca.com>,
-  Christian Heimes <christian@python.org>,  Dmitry Vyukov
- <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,  Eric Chiang
- <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,  Geert
- Uytterhoeven <geert@linux-m68k.org>,  James Morris
- <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>,  Jeff Xu <jeffxu@google.com>,  Jonathan Corbet
- <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>,  Lakshmi
- Ramasubramanian <nramas@linux.microsoft.com>,  Luca Boccassi
- <bluca@debian.org>,  Luis Chamberlain <mcgrof@kernel.org>,  "Madhavan T .
- Venkataraman" <madvenka@linux.microsoft.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
- <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
- <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
- Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-In-Reply-To: <20240704190137.696169-2-mic@digikod.net> (=?utf-8?Q?=22Micka?=
- =?utf-8?Q?=C3=ABl_Sala=C3=BCn=22's?=
-	message of "Thu, 4 Jul 2024 21:01:33 +0200")
-References: <20240704190137.696169-1-mic@digikod.net>
-	<20240704190137.696169-2-mic@digikod.net>
-Date: Fri, 05 Jul 2024 20:03:14 +0200
-Message-ID: <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZdOSw+3l"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e035ecb35ffso1798389276.2
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jul 2024 11:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1720202839; x=1720807639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Z5FLCZCyvnlRwY34tEON5vJPfy/b/J/+6MiwH9oud8=;
+        b=ZdOSw+3l9DVU7mNd1KGA9Hb5/soVOhPn2kpOsPtg3kAwUJ6Ds+7U5Y6Agrir4VdAAq
+         X+oaQC3SInXM67+d8jzDM1I6KjrqUGi+puozama1ezIfQ60r8pv6wTazVWy1ZUt3m5h9
+         4xj5RhF4JJXfWGsfsyc6tj4BqQDyypjlDzytPdDKSgyQmf5MqGXmMczy19KICsMSx/Mi
+         tWsgTjB0k88hEQGYcBFAtp64/00zpkbgldNq9imVnXIH/kQ2126A/nB1cHJ+r7PcAcIg
+         n6vp0wwVb91WX5Qk97RkJasSeLOdItzLZXvuAfB2X3qN/2Zwkfevz7gYfEjRThsQG5C0
+         chmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720202839; x=1720807639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Z5FLCZCyvnlRwY34tEON5vJPfy/b/J/+6MiwH9oud8=;
+        b=wQnrdJ/mWHYJImIh+UCb73lsaOKRYVXFrgVFKHvxL9fWF9ldx3xwjR1qfpdNOzfl6O
+         k9STdLDUmxlBjKapu3ruIVNsZkjUWG6O81mAKmZvenjr8ZM95W829WEs+FwXFEOv9LVv
+         p1U6ITt06LTCaqew1veTFsyuQfDpeFrwdh3964NynCRiVoZOFIUgd/i7xtKtMafslIo2
+         OmCCQAu2qAeQge7ErdXEGGoFwueopoQQarx/RnNFvwnMYeyMk08FBLXDJnUwJTUlAlmU
+         eo8n0nOhPNwOB+5YlAPfuoPyW2mtc1bMQiFOa/bHpVsLYWwDnaPK2fDrUIJ9Ofw3v0KP
+         5jIQ==
+X-Gm-Message-State: AOJu0YxcG68uuE17xOwrLtdxCoqIYJTglt3jIoJ9dJB5swmINTFu0FoY
+	NRUj2wh7ApAKfENTiwMFTIZZYO0M7+l3e6tk9bfKSTvRB+1P/AUCIGXYsUj4Q9Zt2jOGLsyYal2
+	x1gfG2+RU2D1pr5wmtDL16MAXZ0gpCugBoFmv
+X-Google-Smtp-Source: AGHT+IHtVQL4ushPXpuFfGzD/I37qb404b6S8CwopaYra26BwP845rfO/hNT8paVpltqskHWve498APJkFDoux9J+OE=
+X-Received: by 2002:a5b:bcf:0:b0:e03:597f:5c0 with SMTP id 3f1490d57ef6-e03c1963ea4mr5500345276.17.1720202838303;
+ Fri, 05 Jul 2024 11:07:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
+ <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
+ <CAHC9VhQ4qH-rtTpvCTpO5aNbFV4epJr5Xaj=TJ86_Y_Z3v-uyw@mail.gmail.com>
+ <CACYkzJ4kwrsDwD2k5ywn78j7CcvufgJJuZQ4Wpz8upL9pAsuZw@mail.gmail.com>
+ <CAHC9VhRoMpmHEVi5K+BmKLLEkcAd6Qvf+CdSdBdLOx4LUSsgKQ@mail.gmail.com> <CACYkzJ6mWFRsdtRXSnaEZbnYR9w85MfmMJ3i76WEz+af=_QnLg@mail.gmail.com>
+In-Reply-To: <CACYkzJ6mWFRsdtRXSnaEZbnYR9w85MfmMJ3i76WEz+af=_QnLg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 5 Jul 2024 14:07:07 -0400
+Message-ID: <CAHC9VhRA0hX-Nx20CK+yV276d7nooMmR+Q5OBNOy5fces4q9Bw@mail.gmail.com>
+Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
+ static calls
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-* Micka=C3=ABl Sala=C3=BCn:
+On Wed, Jul 3, 2024 at 7:08=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
+> On Thu, Jul 4, 2024 at 12:52=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Wed, Jul 3, 2024 at 6:22=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
+ote:
+> > > On Wed, Jul 3, 2024 at 10:56=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > > > On Wed, Jul 3, 2024 at 12:55=E2=80=AFPM KP Singh <kpsingh@kernel.or=
+g> wrote:
+> > > > > On Wed, Jul 3, 2024 at 2:07=E2=80=AFAM Paul Moore <paul@paul-moor=
+e.com> wrote:
+> > > > > > On Jun 29, 2024 KP Singh <kpsingh@kernel.org> wrote:
+> > > > > > >
+> > > > > > > LSM hooks are currently invoked from a linked list as indirec=
+t calls
+> > > > > > > which are invoked using retpolines as a mitigation for specul=
+ative
+> > > > > > > attacks (Branch History / Target injection) and add extra ove=
+rhead which
+> > > > > > > is especially bad in kernel hot paths:
 
-> Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> allowed for execution.  The main use case is for script interpreters and
-> dynamic linkers to check execution permission according to the kernel's
-> security policy. Another use case is to add context to access logs e.g.,
-> which script (instead of interpreter) accessed a file.  As any
-> executable code, scripts could also use this check [1].
+...
 
-Some distributions no longer set executable bits on most shared objects,
-which I assume would interfere with AT_CHECK probing for shared objects.
-Removing the executable bit is attractive because of a combination of
-two bugs: a binutils wart which until recently always set the entry
-point address in the ELF header to zero, and the kernel not checking for
-a zero entry point (maybe in combination with an absent program
-interpreter) and failing the execve with ELIBEXEC, instead of doing the
-execve and then faulting at virtual address zero.  Removing the
-executable bit is currently the only way to avoid these confusing
-crashes, so I understand the temptation.
+> > > > I'm not aware of any other existing problems relating to the LSM ho=
+ok
+> > > > default values, if there are any, we need to fix them independent o=
+f
+> > > > this patchset.  The LSM framework should function properly if the
+> > > > "default" values are used.
+> > >
+> > > Patch 5 eliminates the possibilities of errors and subtle bugs all
+> > > together. The problem with subtle bugs is, well, they are subtle, if
+> > > you and I knew of the bugs, we would fix all of them, but we don't. I
+> > > really feel we ought to eliminate the class of issues and not just
+> > > whack-a-mole when we see the bugs.
+> >
+> > Here's the thing, I don't really like patch 5/5.  To be honest, I
+> > don't really like a lot of this patchset.  From my perspective, the
+> > complexity of the code is likely going to mean more maintenance
+> > headaches down the road, but Linus hath spoken so we're doing this
+> > (although "this" is still a bit undefined as far as I'm concerned).
+> > If you want me to merge patch 5/5 you've got to give me something real
+> > and convincing that can't be fixed by any other means.  My current
+> > opinion is that you're trying to use a previously fixed bug to scare
+> > and/or coerce the merging of some changes I don't really want to
+> > merge.  If you want me to take patch 5/5, you've got to give me a
+> > reason that is far more compelling that what you've written thus far.
+>
+> Paul, I am not scaring you, I am providing a solution that saves us
+> from headaches with side-effects and bugs in the future. It's safer by
+> design.
 
-Thanks,
-Florian
+Perhaps I wasn't clear enough in my previous emails; instead of trying
+to convince me that your solution is literally the best possible thing
+to ever touch the kernel, convince me that there is a problem we need
+to fix.  Right now, I'm not convinced there is a bug that requires all
+of the extra code in patch 5/5 (all of which have the potential to
+introduce new bugs).  As mentioned previously, the bugs that typically
+have been used as examples of unwanted side effects with the LSM hooks
+have been resolved, both in the specific and general case.  If you
+want me to add more code/functionality to fix a bug, you must first
+demonstrate the bug exists and the risk is real; you have not done
+that as far as I'm concerned.
 
+> You say you have not reviewed it carefully ...
+
+That may have been true of previous versions of this patchset, but I
+did not say that about this current patchset.
+
+> ... but you did ask me to move
+> the function from the BPF LSM layer to an LSM API, and we had a bunch
+> of discussion around naming in the subsequent revisions.
+>
+> https://lore.kernel.org/bpf/f7e8a16b0815d9d901e019934d684c5f@paul-moore.c=
+om/
+
+That discussion predates commit 61df7b828204 ("lsm: fixup the inode
+xattr capability handling") which is currently in the lsm/dev branch,
+marked for stable, and will go up to Linus during the upcoming merge
+window.
+
+> My reasons are:
+>
+> 1. It's safer, no side effects, guaranteed to be not buggy. Neither
+> you, nor me, can guarantee that a default value will be safe in the
+> LSM layer.
+
+In the first sentence above you "guarantee" that your code is not
+buggy and then follow that up with a second sentence discussing how no
+one can guarantee source code safety.  Regardless of whatever point
+you were trying to make here, I maintain that *all* patches have the
+potential for bugs, even those that are attempting to fix bugs.  With
+that in mind, if you want me to merge more code to fix a bug (class),
+a bug that I've mentioned several times now that I believe we've
+already fixed, you first MUST convince me that the bug (class) still
+exists.  You have not done that.
+
+> 2. Performance, no extra function call.
+
+Convince me the bug still exists first and then we can discuss the
+merits of whatever solutions are proposed.
+
+--=20
+paul-moore.com
