@@ -1,95 +1,131 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB68E5FBB7
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Jul 2024 17:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688C416B751
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jul 2024 17:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720199478; cv=none; b=KWu2Bh+gSl6a4+Q59Ma4fjnV/ymX7ZbEbCmSI509U0PHnRgkWq9hx8vsVS9mvplQtTXOhWvB4c/KAIu7k3g8cT+OwTOrnmbKbogJaYVX+96L7qCiUyTPSUFeXgZThz5dBPwL0+eRKxs2UpAX1riDxKJ+ILiX2Q5AJlVoES5uDk8=
+	t=1720202014; cv=none; b=GF2e/qndtyu/eB1dKE0RjHDXS6HXXFCvBK9YvuR5KBOE4SktKzAbJ8Bcm/f9jxOPHSZ8pda/tIG/q069mYxfUvAV1IddbpQLJ1hlvmZcUbJ0e6CO+hqF4wjj43YkNHHNqqzTOidcm228CRdQ45yv75t6gdx2DMhM/UJU4t0bfuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720199478; c=relaxed/simple;
-	bh=uFoZhI+y8PqW89rv42XL15MiRKjZkSfGtLddBoynQSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hz2xMGqFA6i2FtUBGYVLzqzUAMfoO1yMpPrybW8pCiUAXcCsJCz3DaVJGsVdWtO/HQXhdq6O4ANiYePCmWE8HtAUEDondpfOxQEfGK+wJ9x5c28D5DEfj6OfXMrtqqYroduwAiLCSiILCqaZOh76li6pIIaBe1aGKs3jtac1QtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KADqoiAg; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1720202014; c=relaxed/simple;
+	bh=1ovZsTEE4mGTjZJNE9Bn+x7nEz8rd0oYSMZQ7aLG7dE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rl9h4Vz9RHxf5NW/TUB5MQfLVWbwtQN02ZWCscxfnTkmI48H0F/rGuP3lkbZUZz/aCnwAbbXzf6EHptNuvwM76BGolxkDJBvluq3JzVn7vWZbziL/MoH1Z3Fl8Qf31KR50z2eWAn7f6PhUP/EKashEpuoGNX82CWvGDUYxLlmNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vLPJ8Ots; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KADqoiAg"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0360f890a1so2403986276.0
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jul 2024 10:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720199475; x=1720804275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=84qVFb2nDbAUCwkzyJJKS1FbfelcLQzwoo/l877IkBU=;
-        b=KADqoiAg4JLLNSHgthscqMRHcYvIF/m8qiySEaTO419mtjkzQXlO3+8oJA8JIYSCj7
-         Rg6VJXYPc4NeqE+x2VmOjELBXiKUtXIeR/49UD2D37zd2lNlZOlcJlX+mm+VwdYUoJBt
-         QAIYwGFzaS4NIz2QOn2NusdWxflNjJEsu+Yf5de16k4j8yc3aSVsBmmSh7fjn/ZrJzCl
-         LkmC9jvGAeAMXPJub0/BjX2CUsMcC4zyAv0rKpVm6mB5VBRBjLhEu+IwGUdF93dcAAgs
-         1S3EvE2xqXxtCllq3QKR6W0yVNPAfuzUaprMDuPwftMEsyfjuCyVZPcBT/vM82KTsd6a
-         0isg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720199475; x=1720804275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=84qVFb2nDbAUCwkzyJJKS1FbfelcLQzwoo/l877IkBU=;
-        b=MXsJbLtEIeBYxIcFUBkhwwnZ2KY0Pr6porWzFYkFOIG/lc7AwgoJbTzgW81x5E2rTX
-         CfczvLZQjaWb2NvMZaNcqcqXPKAHMRi/f0AlWUwI0EL7I66EhpHojdxhq/2/7XR9Y2oC
-         /JdHHQu+sgZb+O+nygBLmiTWP2jX1Kz5dTBQz8GgYjG1iwS7h600Q/nSxZ1rsZiuhy9o
-         E1lhDlbeR7zCd6Qqi6H9SP5oqovPr1+fvL6LwF/8qX7DwHkCwwxLm8ePBIuzG2nL2qA1
-         eMG1HZFjZcNXfEqtmG38hvvE5bZezgZoYdMrqSaiPrjx6jjEz8Fj8dex13TgqJRmkGzV
-         /LQg==
-X-Gm-Message-State: AOJu0YyizhtIDFCIe/wJbuoQWNLpnrrOYSrOQAbMmMXsUeboPRpBLDdG
-	vfG9GCShfIbcJP2UlEND2rodlYcYYLiGTN7oo9f5UmPCYkNwqKowRX0FMYs9wif2+FNgQjggTRF
-	I2WEEDPWQgW3LDdqMVs1Z95oLZnVAartkyp/4
-X-Google-Smtp-Source: AGHT+IEUehfLkP/b0qCwvoZnMsa8LDPHzos4+YAaeUMFI2pMvO/QgLHw9mWVUzg3TySRzEnKB7mNaQ+fUn5DhyQgIc8=
-X-Received: by 2002:a81:430c:0:b0:618:90cc:bc4a with SMTP id
- 00721157ae682-652f8184b19mr27843367b3.26.1720199474812; Fri, 05 Jul 2024
- 10:11:14 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vLPJ8Ots"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WG1Mk0nY6zGDF;
+	Fri,  5 Jul 2024 19:53:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720202002;
+	bh=EVA4xGWQR4aMmDX4txfboMVq0fyWNrcCv8C687hvy6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vLPJ8OtssQOlAqvXDFLxhWrIipCNWzJ6q15HW0SkxoQATmx3f9vwxO6gOmyBI0HrA
+	 4PSkXXW7A+42nK65h5f5pROfqbwAEkOnDtb09VPQhRvNKvA//vbxT1YWHTEfUB9nuq
+	 NcVdFfFqOavW6dvw976SzC/jNfIeam4utTzxBdMA=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WG1MY3F4nzGZx;
+	Fri,  5 Jul 2024 19:53:13 +0200 (CEST)
+Date: Fri, 5 Jul 2024 19:53:10 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Kees Cook <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240705.uch1saeNi6mo@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <202407041656.3A05153@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703211134.349950-2-paul@paul-moore.com> <9335721c-db66-43a4-8fc1-078d94550a0a@schaufler-ca.com>
-In-Reply-To: <9335721c-db66-43a4-8fc1-078d94550a0a@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 5 Jul 2024 13:11:04 -0400
-Message-ID: <CAHC9VhR6Xdo9tMnbDpJ=1F8YraPGvnrUjw9okYbxo88gbByOwg@mail.gmail.com>
-Subject: Re: [PATCH] selinux,smack: remove the capability checks in the
- removexattr hooks
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202407041656.3A05153@keescook>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jul 3, 2024 at 7:13=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
-> On 7/3/2024 2:11 PM, Paul Moore wrote:
-> > Commit 61df7b828204 ("lsm: fixup the inode xattr capability handling")
-> > moved the responsibility of doing the inode xattr capability checking
-> > out of the individual LSMs and into the LSM framework itself.
-> > Unfortunately, while the original commit added the capability checks
-> > to both the setxattr and removexattr code in the LSM framework, it
-> > only removed the setxattr capability checks from the individual LSMs,
-> > leaving duplicated removexattr capability checks in both the SELinux
-> > and Smack code.
-> >
-> > This patch removes the duplicated code from SELinux and Smack.
-> >
-> > Fixes: 61df7b828204 ("lsm: fixup the inode xattr capability handling")
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
->
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+On Thu, Jul 04, 2024 at 05:04:03PM -0700, Kees Cook wrote:
+> On Thu, Jul 04, 2024 at 09:01:33PM +0200, Mickaël Salaün wrote:
+> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > allowed for execution.  The main use case is for script interpreters and
+> > dynamic linkers to check execution permission according to the kernel's
+> > security policy. Another use case is to add context to access logs e.g.,
+> > which script (instead of interpreter) accessed a file.  As any
+> > executable code, scripts could also use this check [1].
+> > 
+> > This is different than faccessat(2) which only checks file access
+> > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > real execution, user space gets the same error codes.
+> 
+> Nice! I much prefer this method of going through the exec machinery so
+> we always have a single code path for these kinds of checks.
+> 
+> > Because AT_CHECK is dedicated to user space interpreters, it doesn't
+> > make sense for the kernel to parse the checked files, look for
+> > interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
+> > if the format is unknown.  Because of that, security_bprm_check() is
+> > never called when AT_CHECK is used.
+> 
+> I'd like some additional comments in the code that reminds us that
+> access control checks have finished past a certain point.
 
-Thanks Casey.  As this is a pretty minor fix, I'm going to go ahead
-and merge it into lsm/dev so it will go up to Linus during the next
-merge window; if anyone has any objections to that please let me know
-soon.
+Where in the code? Just before the bprm->is_check assignment?
 
---=20
-paul-moore.com
+> 
+> [...]
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index 40073142288f..ea2a1867afdc 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -931,7 +931,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+> >  		.lookup_flags = LOOKUP_FOLLOW,
+> >  	};
+> >  
+> > -	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> > +	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_CHECK)) != 0)
+> >  		return ERR_PTR(-EINVAL);
+> >  	if (flags & AT_SYMLINK_NOFOLLOW)
+> >  		open_exec_flags.lookup_flags &= ~LOOKUP_FOLLOW;
+> [...]
+> > + * To avoid race conditions leading to time-of-check to time-of-use issues,
+> > + * AT_CHECK should be used with AT_EMPTY_PATH to check against a file
+> > + * descriptor instead of a path.
+> 
+> I want this enforced by the kernel. Let's not leave trivial ToCToU
+> foot-guns around. i.e.:
+> 
+> 	if ((flags & AT_CHECK) == AT_CHECK && (flags & AT_EMPTY_PATH) == 0)
+>   		return ERR_PTR(-EBADF);
+
+There are valid use cases relying on pathnames. See Linus's comment:
+https://lore.kernel.org/r/CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com
