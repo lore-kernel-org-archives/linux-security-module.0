@@ -1,149 +1,95 @@
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4EA16C685;
-	Fri,  5 Jul 2024 15:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720191907; cv=pass; b=AHqA1P7dJkk2r0JUz4YsHcZnGMPkdqzy2+jeQpnly2ricjHlDP2Zou7jW7z7Ybwd+aGoNpYYAzTfoPOHXrkpkJAyk5ko5QbjXwfZuvussNp/yS1kwl+zdC8R3brli9wMXrwPz3HM86AJBa24eEy7y8mQoUArp4gktn93wLP52g0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720191907; c=relaxed/simple;
-	bh=HKSqxvF3CxgL10ACjEGWckPH1vvYFkiWNx3iwMo7AA8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=qknMxEf6Zdul1Fh6tOKtR0bKIUBhJLL76Kgky14PS0sFSKd1pPTjPjf/wvQEQN4KXtRziGJsss8K2RSVBfeTgExiKxa2ubxwPq4SVMJXBLO1+ecGW5F9i63/8ymYdsQraYGu50lfmbzMVVgcgHRerJD5TPY1pk7Yfd0niaTuKTI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=tz+hmpXt; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB68E5FBB7
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jul 2024 17:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720199478; cv=none; b=KWu2Bh+gSl6a4+Q59Ma4fjnV/ymX7ZbEbCmSI509U0PHnRgkWq9hx8vsVS9mvplQtTXOhWvB4c/KAIu7k3g8cT+OwTOrnmbKbogJaYVX+96L7qCiUyTPSUFeXgZThz5dBPwL0+eRKxs2UpAX1riDxKJ+ILiX2Q5AJlVoES5uDk8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720199478; c=relaxed/simple;
+	bh=uFoZhI+y8PqW89rv42XL15MiRKjZkSfGtLddBoynQSM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hz2xMGqFA6i2FtUBGYVLzqzUAMfoO1yMpPrybW8pCiUAXcCsJCz3DaVJGsVdWtO/HQXhdq6O4ANiYePCmWE8HtAUEDondpfOxQEfGK+wJ9x5c28D5DEfj6OfXMrtqqYroduwAiLCSiILCqaZOh76li6pIIaBe1aGKs3jtac1QtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KADqoiAg; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="tz+hmpXt"
-Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WFxdK1ljHz49PwY;
-	Fri,  5 Jul 2024 18:04:52 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1720191896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I1T+P8FyFyyO/m0YF8++lEjDIL2XJa3WTUGx4ue/aE0=;
-	b=tz+hmpXtF1An88gQr0KIJGScQpFm9ckn28+DNI1w3j6Szh4QE25ZaWuBdev/21V5xPKvYv
-	9zZFbc9MLE1XhHARcQI6MRa9BLLXCFUglXSSiJFV7BjUUEJ8xZZ9q2eL8AbnB/Glgwsdjz
-	uBCE/xpB06MqFgvHhvr33FvOFMrYmrPfb9XGAOLb0FoUku+tzqGgZ678BTb5TjLvGh/07B
-	tJmDtzy/oXp+CjjLWvXth/WmIO14ScQsuZ4ooFE+OBqlLYZ7FnumaE+g0OodSt/Hvmenvy
-	RPUtuADcZcTiKCE2uZ7o1KEqmT9/r9APUxyNp6adyE48aV0IrMf9yLT6Iv54Tw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1720191896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I1T+P8FyFyyO/m0YF8++lEjDIL2XJa3WTUGx4ue/aE0=;
-	b=vaXREb1LYrwVwE0h3MpNdszwKsXTcSaLnu4TdlVWLAcLEkOn/g5LgkKvolcVHh/hzz4auC
-	F+TbRHJln7ORldVNDcQ7Yq7a3kjInW+T6K7kP2xxqnz7zMhH6m+8/k0Hu8gg4eMCwH+ofJ
-	gDCy1swxqWthMbedsKeUooVDg25SiUgpn6RZSq/alr8bixgSpvVuXf/yrxZimEv0haMk3H
-	JiZLddFit1tdH5EQA4QTPO0cVKegJ4mZiEP54wh1cW3y57Njy7Sl2srSruc+EXBV6MiNFU
-	ZWVYPtMs4Ubg6qnnR2NCiy5RbfJV03e27YwtQbw5n8Qi/n6AqAKrZKB6qn8N3w==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1720191896; a=rsa-sha256;
-	cv=none;
-	b=T1mf1NkKLBvs1+EKIb8wizUNhUGJMm0UWU9rHP/XzyLr1iLHEEAL3v8xormQWi5kqTiKmN
-	cil9l5+OnPLreYdwbSjUdz1awdQozS84jb8YGru6VUtfrUjjSOg5HAimV3LXK9TZ7jV3++
-	qEcGaTGW86Rp9P6UfML7sGHAPrVPGTAozVpueotKdr7EU8lFzUop3XSrbm98cY3YB/galj
-	DJZYeQZtSXPnIS7zrLo3FrQdmbW3N49CqtQwgWlEokXNzaouaYLa/4czsHYlVc57cxVkIE
-	dAgxN4WiGIodm3JAcfJ383jzhx0T6eZQ6tnkusBxzdXQpnUwLJMpVlcqlNoCYA==
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KADqoiAg"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0360f890a1so2403986276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jul 2024 10:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1720199475; x=1720804275; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=84qVFb2nDbAUCwkzyJJKS1FbfelcLQzwoo/l877IkBU=;
+        b=KADqoiAg4JLLNSHgthscqMRHcYvIF/m8qiySEaTO419mtjkzQXlO3+8oJA8JIYSCj7
+         Rg6VJXYPc4NeqE+x2VmOjELBXiKUtXIeR/49UD2D37zd2lNlZOlcJlX+mm+VwdYUoJBt
+         QAIYwGFzaS4NIz2QOn2NusdWxflNjJEsu+Yf5de16k4j8yc3aSVsBmmSh7fjn/ZrJzCl
+         LkmC9jvGAeAMXPJub0/BjX2CUsMcC4zyAv0rKpVm6mB5VBRBjLhEu+IwGUdF93dcAAgs
+         1S3EvE2xqXxtCllq3QKR6W0yVNPAfuzUaprMDuPwftMEsyfjuCyVZPcBT/vM82KTsd6a
+         0isg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720199475; x=1720804275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=84qVFb2nDbAUCwkzyJJKS1FbfelcLQzwoo/l877IkBU=;
+        b=MXsJbLtEIeBYxIcFUBkhwwnZ2KY0Pr6porWzFYkFOIG/lc7AwgoJbTzgW81x5E2rTX
+         CfczvLZQjaWb2NvMZaNcqcqXPKAHMRi/f0AlWUwI0EL7I66EhpHojdxhq/2/7XR9Y2oC
+         /JdHHQu+sgZb+O+nygBLmiTWP2jX1Kz5dTBQz8GgYjG1iwS7h600Q/nSxZ1rsZiuhy9o
+         E1lhDlbeR7zCd6Qqi6H9SP5oqovPr1+fvL6LwF/8qX7DwHkCwwxLm8ePBIuzG2nL2qA1
+         eMG1HZFjZcNXfEqtmG38hvvE5bZezgZoYdMrqSaiPrjx6jjEz8Fj8dex13TgqJRmkGzV
+         /LQg==
+X-Gm-Message-State: AOJu0YyizhtIDFCIe/wJbuoQWNLpnrrOYSrOQAbMmMXsUeboPRpBLDdG
+	vfG9GCShfIbcJP2UlEND2rodlYcYYLiGTN7oo9f5UmPCYkNwqKowRX0FMYs9wif2+FNgQjggTRF
+	I2WEEDPWQgW3LDdqMVs1Z95oLZnVAartkyp/4
+X-Google-Smtp-Source: AGHT+IEUehfLkP/b0qCwvoZnMsa8LDPHzos4+YAaeUMFI2pMvO/QgLHw9mWVUzg3TySRzEnKB7mNaQ+fUn5DhyQgIc8=
+X-Received: by 2002:a81:430c:0:b0:618:90cc:bc4a with SMTP id
+ 00721157ae682-652f8184b19mr27843367b3.26.1720199474812; Fri, 05 Jul 2024
+ 10:11:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240703211134.349950-2-paul@paul-moore.com> <9335721c-db66-43a4-8fc1-078d94550a0a@schaufler-ca.com>
+In-Reply-To: <9335721c-db66-43a4-8fc1-078d94550a0a@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 5 Jul 2024 13:11:04 -0400
+Message-ID: <CAHC9VhR6Xdo9tMnbDpJ=1F8YraPGvnrUjw9okYbxo88gbByOwg@mail.gmail.com>
+Subject: Re: [PATCH] selinux,smack: remove the capability checks in the
+ removexattr hooks
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Jul 2024 18:04:52 +0300
-Message-Id: <D2HP4TX4S873.2OS2LXAWT58C4@iki.fi>
-Cc: "Thorsten Leemhuis" <regressions@leemhuis.info>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, <stable@vger.kernel.org>, "Peter Huewe"
- <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
- Limonciello" <mario.limonciello@amd.com>, <linux-kernel@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] tpm: Address !chip->auth in
- tpm_buf_append_hmac_session*()
-From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Stefan Berger"
- <stefanb@linux.ibm.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240703182453.1580888-1-jarkko@kernel.org>
- <20240703182453.1580888-4-jarkko@kernel.org>
- <c90ce151-c6e5-40c6-8d3d-ccec5a97d10f@linux.ibm.com>
- <D2GJSLLC0LSF.2RP57L3ALBW38@kernel.org>
- <bffebaaa-4831-459f-939d-adf531e4c78b@linux.ibm.com>
- <D2HOI1829XOO.3ERITAWX9N5IC@kernel.org>
-In-Reply-To: <D2HOI1829XOO.3ERITAWX9N5IC@kernel.org>
 
-On Fri Jul 5, 2024 at 5:35 PM EEST, Jarkko Sakkinen wrote:
-> On Fri Jul 5, 2024 at 5:05 PM EEST, Stefan Berger wrote:
-> > The original thread here
+On Wed, Jul 3, 2024 at 7:13=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> On 7/3/2024 2:11 PM, Paul Moore wrote:
+> > Commit 61df7b828204 ("lsm: fixup the inode xattr capability handling")
+> > moved the responsibility of doing the inode xattr capability checking
+> > out of the individual LSMs and into the LSM framework itself.
+> > Unfortunately, while the original commit added the capability checks
+> > to both the setxattr and removexattr code in the LSM framework, it
+> > only removed the setxattr capability checks from the individual LSMs,
+> > leaving duplicated removexattr capability checks in both the SELinux
+> > and Smack code.
 > >
-> > https://lore.kernel.org/linux-integrity/656b319fc58683e399323b880722434=
-467cf20f2.camel@kernel.org/T/#t
+> > This patch removes the duplicated code from SELinux and Smack.
 > >
-> > identified the fact that tpm2_session_init() was missing for the ibmvtp=
-m=20
-> > driver. It is a non-zero problem for the respective platforms where thi=
-s=20
-> > driver is being used. The patched fixed the reported issue.
+> > Fixes: 61df7b828204 ("lsm: fixup the inode xattr capability handling")
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
 >
-> All bugs needs to be fixed always before features are added. You are
-> free now to submit your change as a feature patch, which will be
-> reviewed and applied later on.
->
-> > Now that you fixed it in v4 are you going to accept my original patch=
-=20
-> > with the Fixes tag since we will (likely) have an enabled feature in=20
-> > 6.10 that is not actually working when the ibmvtpm driver is being used=
-?
->
-> There's no bug in tpm_ibmvtpm driver as it functions as well as in 6.9.
->
-> I can review it earliest in the week 31, as feature patch. This was my
-> holiday week, and I came back only to fix the bug in the authentication
-> session patch set.
->
-> > I do no think that this is true and its only tpm_ibmvtpm.c that need th=
-e=20
-> > call to tpm2_session_init. All drivers that use TPM_OPS_AUTO_STARTUP=20
-> > will run tpm_chip_register -> tpm_chip_bootstrap -> tpm_auto_startup ->=
-=20
-> > tpm2_auto_startup -> tpm2_sessions_init
->
-> Right my bad. I overlooked the call sites and you're correct in that
-> for anything with that flag on, it will be called.
->
-> It still changes nothing, as the commit you were pointing out in the
-> fixes tag does not implement initialization code, and we would not have
-> that flag in the first place, if it was mandatory [1].
->
-> [1] It could be that it is mandatory perhaps, but that is a different
-> story. Then we would render the whole flag out. I think this was anyway
-> good insight, even if by unintentionally, and we can reconsider removing
-> it some day.
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-I should have rejected the patch set based on not validating chip->auth
-in opaque API that tpm2-sessions is, and it should not fail caller like
-that no matter how world outside of it is structured. It's a time-bomb
-like it is in the mainline because of this.  I missed that detail
-and your transcript exposed the bug.
+Thanks Casey.  As this is a pretty minor fix, I'm going to go ahead
+and merge it into lsm/dev so it will go up to Linus during the next
+merge window; if anyone has any objections to that please let me know
+soon.
 
-Working around an *identified* bug in the caller *is not* a bug fix.
-
-BR, Jarkko
+--=20
+paul-moore.com
