@@ -1,100 +1,191 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6914E16C87B;
-	Fri,  5 Jul 2024 20:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B361C693;
+	Fri,  5 Jul 2024 21:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720211285; cv=none; b=bT9bTUm3NIa68Nuzi+3q3yLbE7aAhp+Y2LzPSA3tH+TYD7ZCs0xU4IYHyW5atx2q9x+Lo7I6KUFQmuZ7v3kIBzyupKcAqleK/iKqXiPRB2RS1nlrLxBtqVLsU9HM3HYCSnP7I21RFIQP/1hr+BOHK+5aS7HSRnxF5Z8fo1+FzQ4=
+	t=1720214558; cv=none; b=eDzVPCXXdSjYIenbP9HsxoDFMe0b6vnH85SjlXbLq2dIvalFbTsqaomKwQnrPjcKhTPmZyy2AT6CLtWLMs62z3YG2ROBz0MTQ6VSbwWsXO1iH2BG4b6UqYKrRZaT/g8yffbuwzdC+XvBF/v6kvw5YSOEVoAAV/mQtvkTWF5ORvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720211285; c=relaxed/simple;
-	bh=NL+K7wTvWIIJcOI3nH5/UmoRp86jiGOjSMhH+b3K7HI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=mEBIkwNZG3buSDwQ1gcKtGefS4Jt9lJG1yjq/X1W6Ac1APLGVSL1G04rDSGF3BjSDXdZ24mMG+VrksGswXIwVdvMssY4E7LYmHYzapH0kpDilbpXoOVpD7XuSclc+oekeU959hDxx5L8060weCVhD66iMuBhMjF3BvpnEcoMGHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C76C116B1;
-	Fri,  5 Jul 2024 20:28:03 +0000 (UTC)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1720214558; c=relaxed/simple;
+	bh=LP9JoMyO4RZYpmRyEi7/n2mZtToGbzb3V52WgLGytew=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qDYDeWepcT7GJ0BeG2qaGkll6ou6L6iSvSQJ3+zAEuxS28wkkjoXatl/+Uc6KqY5PE3SNTxgQn+FFpTdpNzbNMTsBBn+XS4nXG3CfDoa2j1tu1iiZ/RvTjB1JrtwBFIAmj7yShbRDpOmPbdZ58pQybweqU6uHKfxk6twtxUQ8AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1qHhH0u; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1qHhH0u"
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-25e43dda1edso644470fac.0;
+        Fri, 05 Jul 2024 14:22:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720214556; x=1720819356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1IhT7MF8kH57E/SnoiAkldNxZCcRzmTR9RjNaE8Yyeo=;
+        b=I1qHhH0uLKZ5F0k9bmajmlCV+v5Wi7S8+tx7cD8A8grJb/xnqs53YbPnrnnqdJCo6L
+         RmlRSs/fkfzxHG0XrtwcKp2LYuEVQyz1pw0khkv9I4N2MlIzAMu7HQi+ggzSpo+20bOz
+         1YKV0b7cA9sam0tri7U4ydbb5ZWQY3jAZNdglPZjrrUnOK+CJZT3/bV7tfyST/2ipCgC
+         vtiEfuMCib0GNh4TVkku9NOUR/ptKOM5VOnawVsRLqICCeiiV+6egL8tHGZNjpwGRVbt
+         KappanQjz/tTokntALxh2t2b4x/9cBucJZxMzfCk3QeokpteHYW5lB9epSW4nHsE6DAa
+         /1fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720214556; x=1720819356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1IhT7MF8kH57E/SnoiAkldNxZCcRzmTR9RjNaE8Yyeo=;
+        b=kcQnHQhgHjRotjN1JENCg6sXBYeIpUCPmo47nwXMmHE6gwUQsI/0FHRHmiPHArBVvI
+         auUI0FZFUtUK5/CXWwOa61cHzhsBJulNlsuChsMiMUr2QFH8jIe4A+Ke+D8DASp3sA/N
+         2Mue0yexDa/fZU0DgskfWv5aXIsYI9UbFWrpyLRAVESC0Ge3qKY44HCz0vs7UoAJvigj
+         PvNuIakdj2kmblpjulNYynHIm4Gm8SS6MkrDigXgpKos2RZBosHyaW/kLN0ouQZ5qOLY
+         LKXwRya5GROXyZ0PxgGmn11Xp6wZBaxOJKsfLkltUlmIQ+2MB4FY8o5vyyR4YUp8TNxl
+         hh5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVKDCMuwE6KcyUne5ElmtWn0Kapa0fYIn8uuo5OByqU8WRnnz7Y1HvEhWjhSXqdvclzgtaU3heJvwwSvG0FTFH1jyp/oGmI5Jj1F5ypqLwAgy1Sj1/uedRMAtpxkcbfGqxeVHtIpk6QTjGEjMTW6+dGMKcrdL+byQXBj9SCBSJcjRGIL80gI5Io5Cqk
+X-Gm-Message-State: AOJu0Ywlq+vea0gqPWKHthYO2mqMUCizPy39BkO2HWlw9sRQuLZMhRSJ
+	1zGi5fTcuJRxPtKIZWrwQChjdtnlwKbUlC6OIlvosjD2UEUMOKXn
+X-Google-Smtp-Source: AGHT+IEeLwgtXYb/uj8sDcO09wT71NkvpSBq/jo4Esw2OxgX+mlE6v9Dh2n5HNVFAIktMgSFbTyp7A==
+X-Received: by 2002:a05:6870:63a6:b0:25e:1659:4ce9 with SMTP id 586e51a60fabf-25e2b5a06admr4612401fac.0.1720214555903;
+        Fri, 05 Jul 2024 14:22:35 -0700 (PDT)
+Received: from tahera-OptiPlex-5000.uc.ucalgary.ca ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802566511sm14507529b3a.75.2024.07.05.14.22.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 14:22:35 -0700 (PDT)
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: mic@digikod.net,
+	gnoack@google.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com,
+	jannh@google.com,
+	outreachy@lists.linux.dev,
+	netdev@vger.kernel.org
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Subject: [PATCH v1 1/2] Landlock: Add signal control
+Date: Fri,  5 Jul 2024 15:21:42 -0600
+Message-Id: <36958dbc486e1f975f4d4ecdfa51ae65c2c4ced0.1720213293.git.fahimitahera@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [RFC PATCH] lsm: fixup the inode xattr capability handling
-From: KP Singh <kpsingh@chromium.org>
-In-Reply-To: <20240503005850.466144-2-paul@paul-moore.com>
-Date: Fri, 5 Jul 2024 22:28:00 +0200
-Cc: selinux@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Ondrej Mosnacek <omosnace@redhat.com>,
- Felix Fu <fuzhen5@huawei.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <835A3242-CE91-4F73-99D8-66980DC14234@chromium.org>
-References: <20240503005850.466144-2-paul@paul-moore.com>
-To: Paul Moore <paul@paul-moore.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Currently, a sandbox process is not restricted to send a signal
+(e.g. SIGKILL) to a process outside of the sandbox environment.
+Ability to sending a signal for a sandboxed process should be
+scoped the same way abstract unix sockets are scoped.
 
+The same way as abstract unix socket, we extend "scoped" field
+in a ruleset with "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset
+will deny sending any signal from within a sandbox process to its
+parent(i.e. any parent sandbox or non-sandboxed procsses).
 
-> On 3 May 2024, at 02:58, Paul Moore <paul@paul-moore.com> wrote:
->=20
-> The current security_inode_setxattr() and security_inode_removexattr()
-> hooks rely on individual LSMs to either call into the associated
-> capability hooks (cap_inode_setxattr() or cap_inode_removexattr()), or
-> return a magic value of 1 to indicate that the LSM layer itself should
-> perform the capability checks.  Unfortunately, with the default return
-> value for these LSM hooks being 0, an individual LSM hook returning a
-> 1 will cause the LSM hook processing to exit early, potentially
-> skipping a LSM.  Thankfully, with the exception of the BPF LSM, none
-> of the LSMs which currently register inode xattr hooks should end up
-> returning a value of 1, and in the BPF LSM case, with the BPF LSM =
-hooks
-> executing last there should be no real harm in stopping processing of
-> the LSM hooks.  However, the reliance on the individual LSMs to either
-> call the capability hooks themselves, or signal the LSM with a return
-> value of 1, is fragile and relies on a specific set of LSMs being
-> enabled.  This patch is an effort to resolve, or minimize, these
-> issues.
->=20
-> Before we discuss the solution, there are a few observations and
-> considerations that we need to take into account:
-> * BPF LSM registers an implementation for every LSM hook, and that
->  implementation simply returns the hook's default return value, a
->  0 in this case.  We want to ensure that the default BPF LSM behavior
->  results in the capability checks being called.
+Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+---
+ include/uapi/linux/landlock.h |  3 +++
+ security/landlock/limits.h    |  2 +-
+ security/landlock/task.c      | 49 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+), 1 deletion(-)
 
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 010aaca5b05a..878479a1b9dd 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -291,8 +291,11 @@ struct landlock_net_port_attr {
+  *   from connecting to an abstract unix socket created by a process
+  *   outside the related Landlock domain (e.g. a parent domain or a process
+  *   which is not sandboxed).
++ * - %LANDLOCK_SCOPED_SIGNAL: Restrict a sandboxed process from sending a signal
++ *   to another process outside sandbox domain.
+  */
+ /* clang-format off */
+ #define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
++#define LANDLOCK_SCOPED_SIGNAL		                (1ULL << 1)
+ /* clang-format on*/
+ #endif /* _UAPI_LINUX_LANDLOCK_H */
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index eb01d0fb2165..fa28f9236407 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -26,7 +26,7 @@
+ #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+ 
+-#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
++#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_SIGNAL
+ #define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+ #define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
+ /* clang-format on */
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index acc6e0fbc111..caee485b97b2 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -168,11 +168,60 @@ static int hook_unix_may_send(struct socket *const sock,
+ 	return -EPERM;
+ }
+ 
++static bool signal_is_scoped(const struct landlock_ruleset *const sender_dom,
++			     struct task_struct *const target)
++{
++	const struct landlock_ruleset *target_dom =
++		landlock_get_task_domain(target);
++
++	/* quick return if there is no domain or .scoped is not set */
++	if (!sender_dom || !get_scoped_accesses(sender_dom))
++		return true;
++
++	if (!target_dom || !get_scoped_accesses(target_dom))
++		return false;
++
++	/* other is scoped, they connect if they are in the same domain */
++	return domain_scope_le(sender_dom, target_dom);
++}
++
++static int hook_task_kill(struct task_struct *const p,
++			  struct kernel_siginfo *const info, const int sig,
++			  const struct cred *const cred)
++{
++	const struct landlock_ruleset *const dom =
++		landlock_get_current_domain();
++	bool ret = false;
++
++	if (!cred)
++		ret = signal_is_scoped(dom, p);
++	else
++		ret = signal_is_scoped(landlock_cred(cred)->domain, p);
++	if (ret)
++		return 0;
++	return EPERM;
++}
++
++static int hook_file_send_sigiotask(struct task_struct *tsk,
++				    struct fown_struct *fown, int signum)
++{
++	const struct task_struct *result =
++		get_pid_task(fown->pid, fown->pid_type);
++
++	const struct landlock_ruleset *const dom =
++		landlock_get_task_domain(result);
++	if (signal_is_scoped(dom, tsk))
++		return 0;
++	return EPERM;
++}
++
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
+ 	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
+ 	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
++	LSM_HOOK_INIT(task_kill, hook_task_kill),
++	LSM_HOOK_INIT(file_send_sigiotask, hook_file_send_sigiotask),
+ };
+ 
+ __init void landlock_add_task_hooks(void)
+-- 
+2.34.1
 
-The BPF LSM never intended to add default callbacks from the very first =
-day:
-
-
-https://lwn.net/ml/linux-kernel/20200224171305.GA21886@chromium.org/
-
-
-But, we went ahead with a "compromise" because were were going to make =
-the LSM layer better and tackle this problem with the broader =
-enhancements for the LSM layer. Little did I know this would take 4 =
-years (and counting...) from then.
-
-
-If you want to go ahead with this change for other reasons, please feel =
-free to. But, I don't want the BPF LSM default callbacks being cited as =
-a reason here.
-
-
-- KP
-
-> * SELinux and Smack do not expect the traditional capability checks
->  to be applied to the xattrs that they "own".
-> * SELinux and Smack are currently written in such a way that the
->  xattr capability checks happen before any additional LSM specific
->  access control checks.  SELinux does apply SELinux specific access
->  controls to all xattrs, even those not "owned" by SELinux.
-> * IMA and EVM also register xattr hooks but assume that the LSM layer
->  and specific LSMs have already authorized the basic xattr operation.
-
-
-[...]=
