@@ -1,174 +1,128 @@
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9E813664E
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 14:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F0784E11
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 14:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720447916; cv=none; b=XeWC5YhXMmEq+5v8rtdyGPt4uys4mSEEL7WPF+EK4hwD+k9Yr6QoPlpAiYb01pOJ93n/8Jqst1Wz/59TxL2W9VZcOXNL3Z9jSk/UgyVvVMohl5greBKLD8EObLUD1g9CxtSPdi4SRmw1KGU6FmK/t4bO4QiL1oEy5/QSGpuv2QY=
+	t=1720448632; cv=none; b=AiFBotNhONDdE3QtbPkwN4JkPzKJ6TLlvgj+y6vW/fYXYcaoR+rHuUFtmS85gUjsr7GdDJ3FNU+jO89LJcStwTcfafC8z7l3r57tdhbOCCVjXi2u4tZ2JF7VuBjXGNxg/7WtHMsKRp8B9idoYP5ClFaAKCGrys5RW1vH703oYro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720447916; c=relaxed/simple;
-	bh=1ByY6PXW2xxzSd22cVMso9XpgM+bCV0UwLxue8k786U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4vlPmk9sIZyCQ9MK7kab6MDUS8Wwi3zUefBwNXoS9kkKxHxyggRd2jyZZQhKzojoWwKnzpArRC/1cHh2+h6ebqWcAqeu2e6GPlBMMcwrcINrBMSxCoZ62VDKkGQcUXBVN9TM2nmhRSbMzxQs+vNCfjxga6jwUpP/jvTDacDktY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0acH4c+/; arc=none smtp.client-ip=83.166.143.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1720448632; c=relaxed/simple;
+	bh=OM54P7B3r4HdTh4sRoFHFY4s8HxyUb3roHfXF1U4dqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qPLYYfSz/YahRmH1QP98kdVAFVytBaqC65t8Ebh0k90CB3exu8521qyx16mXJd6c+ZJS0MY/swnDP9MLCTw4pAeuhsqTy2sKapWY9QKmzu/dIbaDf8wB/NvZo7UcjocM/vGk9EdVNcO2FfyaBlqV5ou/6M/+i2sm/uaeHF3wiFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GeAGRNvg; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0acH4c+/"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHmJc6gmyzj4P;
-	Mon,  8 Jul 2024 16:11:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720447904;
-	bh=SWoeWAKcGmuLJ7xgWkDxhZp8KgZj+OA6pwC+rCsx6wA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0acH4c+/M6ebmADvJWrr2AgaJxbdxA1pjxR68UDUuNpv1tSf5MfgrTg0+iehNiNql
-	 A4AXYGVpuT7vBw6mKyLNfvcxGphJDln0LhjwL+RXbQO7E7OGpARkqJPJJaBQlolaqN
-	 73HbuXMjlnqwuaHK0vXVmo0UwglZYUxw/YC3O8Rs=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHmJb6cmdzwJh;
-	Mon,  8 Jul 2024 16:11:43 +0200 (CEST)
-Date: Mon, 8 Jul 2024 16:11:41 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jann Horn <jannh@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <keescook@chromium.org>, 
-	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [syzbot] [lsm?] general protection fault in
- hook_inode_free_security
-Message-ID: <20240708.ig8Kucapheid@digikod.net>
-References: <00000000000076ba3b0617f65cc8@google.com>
- <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
- <20240515.Yoo5chaiNai9@digikod.net>
- <20240516.doyox6Iengou@digikod.net>
- <20240627.Voox5yoogeum@digikod.net>
- <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GeAGRNvg"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso4086060276.2
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2024 07:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1720448630; x=1721053430; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SFjrQp5ph1Z3A3x+y2fXNj7/rwBzKHFY9KimN30WTes=;
+        b=GeAGRNvgFOvvxHONg/n3+QalYHksVBzpqUz4sCnhoNF8xWFHjs7348nzEZJwwpXe6R
+         lhciWaZ6ftqc7tGSJ9mdqS7nYYqN3UIxFy1bPwWxZwWfPjoW/F/zNDTovXct8148bdJX
+         itCkrkYsvNFF3O6tZO+FUXCxR7B2VpStYWgFk9oEwA9K2lZ9Lb9IjnCuYTlVY0MFyH1A
+         WZUgUbPMxUAAYqPsnr+l+FQMq7TD1HVGqJ2s/m1O6xLZh21uxo6oyLEkNYI3YiH7woPx
+         yg7TUMgzy8JrsWYdquFeJVcEouA9dPQxIWJeLQFsqSNV3FHAHQ5dbhLL49vpvcWDfHLB
+         k+cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720448630; x=1721053430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SFjrQp5ph1Z3A3x+y2fXNj7/rwBzKHFY9KimN30WTes=;
+        b=BqufivLtlOQN0bKuKI6m3jNE/mO2vpKLFpw0EjPyvKN+KJsASGjh8sbb8hWoa/7+6H
+         tm9nvGvjTwIIXSoIIX8CVUUnvSw5S61xEVPCMBnDTGDG+QOz0skG3LAJ45jekIa+SgwI
+         5ktn+R4KeeiOUYLJ+b7gXGGarKTJWMivXizcgKaY485gHxKKGiR7ChNWti2xmExgmAYd
+         BeVMq/ZqAmeuL/SnJa+cjJbXnsfvmVb/Q2IIhCy2BFR6tDpej+yTZAXjwB54+dggAZm6
+         uLyFYn4QD9vZPBkJzfDcYoqUB8pnRm1HxN4af0g8kWhkQrS9sMifzBVKiiASO9lQGio7
+         Q62w==
+X-Gm-Message-State: AOJu0YwDEPemeU7+dR1kZn2MeFLatTVb41SJ5jZZ3KUgih9KsDx45b8K
+	6iEbzNUVlQ4JIhu1X0wp+wYaf763NB3TxnlhkTMJdp4GlQRXdEK6DVkryRBYvt5QEk483jug++8
+	7YH2cIJ+ktPWBH2vdQabb7MW45IniMWdHThlU
+X-Google-Smtp-Source: AGHT+IEo7g9vTZEwAQP7psKA2oJOxY8RD4WA9EMmzXZT73rG+FZ8uLqMXWa58cNv3ZW3OtOwVlaiEr5ClrgMLJWZe0M=
+X-Received: by 2002:a81:844a:0:b0:61a:ed1e:ecd with SMTP id
+ 00721157ae682-652d892592bmr109385627b3.50.1720448630409; Mon, 08 Jul 2024
+ 07:23:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
+ <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
+ <CAHC9VhQ4qH-rtTpvCTpO5aNbFV4epJr5Xaj=TJ86_Y_Z3v-uyw@mail.gmail.com>
+ <CACYkzJ4kwrsDwD2k5ywn78j7CcvufgJJuZQ4Wpz8upL9pAsuZw@mail.gmail.com>
+ <CAHC9VhRoMpmHEVi5K+BmKLLEkcAd6Qvf+CdSdBdLOx4LUSsgKQ@mail.gmail.com>
+ <CACYkzJ6mWFRsdtRXSnaEZbnYR9w85MfmMJ3i76WEz+af=_QnLg@mail.gmail.com>
+ <CAHC9VhRA0hX-Nx20CK+yV276d7nooMmR+Q5OBNOy5fces4q9Bw@mail.gmail.com>
+ <CACYkzJ6jADoGNuPP3-1wkk-kV7NOQh+eFkU5KEDEZgq9qNNEfg@mail.gmail.com>
+ <CAHC9VhQQkWxMT3KguOOK7W8cbY-cdeYTJSuh=tSDV4jsqp6s6g@mail.gmail.com>
+ <CACYkzJ5gAnbXX_aWy6952s2O5L2p3Mw14OUfo9Z-Od6_Dp2HLQ@mail.gmail.com>
+ <CAHC9VhQ+KkqTZdvo0cT6-F1fJaG3QgBEnMQqHkiN-GToH37BuA@mail.gmail.com> <CACYkzJ6mR9mRGS8Df_U1yTBSamW2VRt4v9-6WQnkbhGDuH5KGQ@mail.gmail.com>
+In-Reply-To: <CACYkzJ6mR9mRGS8Df_U1yTBSamW2VRt4v9-6WQnkbhGDuH5KGQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 8 Jul 2024 10:23:38 -0400
+Message-ID: <CAHC9VhR+6ePv3ce5rMB+42935dsKo6Xok=qzcH6o08ZEx32F+w@mail.gmail.com>
+Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
+ static calls
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
-> On Thu, Jun 27, 2024 at 9:34 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > I didn't find specific issues with Landlock's code except the extra
-> > check in hook_inode_free_security().  It looks like inode->i_security is
-> > a dangling pointer, leading to UAF.
-> >
-> > Reading security_inode_free() comments, two things looks weird to me:
-> >
-> > > /**
-> > >  * security_inode_free() - Free an inode's LSM blob
-> > >  * @inode: the inode
-> > >  *
-> > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
-> >
-> > I don't see where i_security is set to NULL.
-> 
-> The function header comments are known to be a bit suspect, a side
-> effect of being detached from the functions for many years, this may
-> be one of those cases.  I tried to fix up the really awful ones when I
-> moved the comments back, back I didn't have time to go through each
-> one in detail.  Patches to correct the function header comments are
-> welcome and encouraged! :)
-> 
-> > >  */
-> > > void security_inode_free(struct inode *inode)
-> > > {
-> >
-> > Shouldn't we add this check here?
-> > if (!inode->i_security)
-> >         return;
-> 
-> Unless I'm remembering something wrong, I believe we *should* always
-> have a valid i_security pointer each time we are called, if not
-> something has gone wrong, e.g. the security_inode_free() hook is no
-> longer being called from the right place.  If we add a NULL check, we
-> should probably have a WARN_ON(), pr_err(), or something similar to
-> put some spew on the console/logs.
-> 
-> All that said, it would be good to hear some confirmation from the VFS
-> folks that the security_inode_free() hook is located in a spot such
-> that once it exits it's current RCU critical section it is safe to
-> release the associated LSM state.
-> 
-> It's also worth mentioning that while we always allocate i_security in
-> security_inode_alloc() right now, I can see a world where we allocate
-> the i_security field based on need using the lsm_blob_size info (maybe
-> that works today?  not sure how kmem_cache handled 0 length blobs?).
-> The result is that there might be a legitimate case where i_security
-> is NULL, yet we still want to call into the LSM using the
-> inode_free_security() implementation hook.
-> 
-> > >       call_void_hook(inode_free_security, inode);
-> > >       /*
-> > >        * The inode may still be referenced in a path walk and
-> > >        * a call to security_inode_permission() can be made
-> > >        * after inode_free_security() is called. Ideally, the VFS
-> > >        * wouldn't do this, but fixing that is a much harder
-> > >        * job. For now, simply free the i_security via RCU, and
-> > >        * leave the current inode->i_security pointer intact.
-> > >        * The inode will be freed after the RCU grace period too.
-> >
-> > It's not clear to me why this should be safe if an LSM try to use the
-> > partially-freed blob after the hook calls and before the actual blob
-> > free.
-> 
-> I had the same thought while looking at this just now.  At least in
-> the SELinux case I think this "works" simply because SELinux doesn't
-> do much here, it just drops the inode from a SELinux internal list
-> (long story) and doesn't actually release any memory or reset the
-> inode's SELinux state (there really isn't anything to "free" in the
-> SELinux case).  I haven't checked the other LSMs, but they may behave
-> similarly.
-> 
-> We may want (need?) to consider two LSM implementation hooks called
-> from within security_inode_free(): the first where the existing
-> inode_free_security() implementation hook is called, the second inside
-> the inode_free_by_rcu() callback immediately before the i_security
-> data is free'd.
+On Mon, Jul 8, 2024 at 9:52=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote:
+> On Mon, Jul 8, 2024 at 2:52=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Mon, Jul 8, 2024 at 6:04=E2=80=AFAM KP Singh <kpsingh@kernel.org> wr=
+ote:
+> > > On Sat, Jul 6, 2024 at 6:40=E2=80=AFAM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > > On Fri, Jul 5, 2024 at 3:34=E2=80=AFPM KP Singh <kpsingh@kernel.org=
+> wrote:
+> > > > > On Fri, Jul 5, 2024 at 8:07=E2=80=AFPM Paul Moore <paul@paul-moor=
+e.com> wrote:
+> > > > > > On Wed, Jul 3, 2024 at 7:08=E2=80=AFPM KP Singh <kpsingh@kernel=
+.org> wrote:
 
-Couldn't we call everything in inode_free_by_rcu()?
-I replied here instead:
-https://lore.kernel.org/r/20240708.hohNgieja0av@digikod.net
+...
 
-> 
-> ... or we find a better placement in the VFS for
-> security_inode_free(), is that is possible.  It may not be, our VFS
-> friends should be able to help here.
+> I think you are ignoring my point that BPF does not want to add
+> extraneous function calls which at the least result in extra overhead.
 
-Christian? Al?
+I haven't been ignoring you on that point, see my previous comment:
 
-> 
-> > >        */
-> > >       if (inode->i_security)
-> > >               call_rcu((struct rcu_head *)inode->i_security,
-> > >                        inode_free_by_rcu);
-> >
-> > And then:
-> > inode->i_security = NULL;
-> 
-> According to the comment we may still need i_security for permission
-> checks.  See my comment about decomposing the LSM implementation into
-> two hooks to better handle this for LSMs.
+"Correctness first, maintainability second, performance third.  That's
+my current priority and I feel the maintainability hit doesn't justify
+the performance win at this point in time.  Besides, we're already
+expecting a big performance boost simply by moving to static_calls."
 
-That was my though too, but maybe not if the path walk just ends early.
+https://lore.kernel.org/linux-security-module/CAHC9VhQQkWxMT3KguOOK7W8cbY-c=
+deYTJSuh=3DtSDV4jsqp6s6g@mail.gmail.com/
 
-> 
-> > But why call_rcu()?  i_security is not protected by RCU barriers.
-> 
-> I believe the issue is that the inode is protected by RCU and that
-> affects the lifetime of the i_security blob.
+>  You have ignored the fact that BPF LSM never wanted these empty
+> callbacks and you still continue to ignore it. Sigh, I will drop it
+> now and will propose it as a separate patch so that we can at least
+> unblock the static call series.
 
-It seems to be related to commit fa0d7e3de6d6 ("fs: icache RCU free
-inodes").
+I didn't comment on that because it isn't very relevant at this point
+in time, what matters is the current status quo and the proposed
+change.  In this particular case I'm not going to debate decisions
+made by previous maintainers, my focus is on what we currently have
+in-tree and what/how/why people want to change.
+
+You've got a path forward with the bulk of this patchset, if you want
+to scuttle it over the last patch in the series that is up to you, but
+in my opinion that seems like a lost opportunity.
+
+--
+paul-moore.com
