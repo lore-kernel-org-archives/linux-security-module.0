@@ -1,67 +1,45 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD0C1D540
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 17:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474291D6AA
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720458354; cv=none; b=nae5clDyT+MahGqlucKUN27vavNKeNmOYAydRsuyPeAkUbDBqQU31BVUTY/rmMGaWvvH4CEqNgK2SebaJzUzlj+jcNvo5efvCKqFhmxKSDB1C8Y5uLXxkXkymCbc0RL4kA13yzZ3WB90swhO4J2HTg6dlM0q/LgTVqHXvk28kqo=
+	t=1720459904; cv=none; b=CufnZvQUOgrAUwoumGdNkddk+rcZ3hLY95+bV/K1UVcl4X+j9NZCGRhcj3nwbxqqWEgyNrwmpS2i+xi0Yz8LK+UrROkFB2EHSgMRZR0a9AyjuIzplLady1v9bUxLpKoWRjlICcy/yEg3vOpp7YynfnrBROEi3qYRvv+wj527PSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720458354; c=relaxed/simple;
-	bh=uxsJY74mGnl6Pfbb3/HWHQAP4SJETbEUSAhS9KG71Rc=;
+	s=arc-20240116; t=1720459904; c=relaxed/simple;
+	bh=lJ2932qDkC0LYg+crodmOu1OYYAGfPXir2mvX7XuYlQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLTP+ZDgAfr5hgYZlrKKK+/MAO6TDPCh8a0x0wV3D71RhZLzWnutfSCa4L7w78fqzm9YEM86iQ5sf7EVRziOF+e8FlLocgBVHBnRPiEfkFr+zp9fbMFa13KT9YBmbOgF18yMg9PJz91mgivRLIn+Qdx7vRDWlcEBXBa535i0kd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=iGsmbWMw; arc=none smtp.client-ip=45.157.188.8
+	 Content-Type:Content-Disposition:In-Reply-To; b=az0B4611UHxz50eXw8daXqfrEx0UoYpvpYIdnSgVIgCKV2eQHx3nTm1LBMyvo7rClxTqVGaL2qoDlnvcS8u92CMBSUmYEha3gdFZIPj0Kv0H7eH6/i/+i+yk/ieUAL/IWjUo1SMGFwyCzcpFG/qC61b6XmTlyQa7DpYG4znL77c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wrHC8FpA; arc=none smtp.client-ip=185.125.25.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="iGsmbWMw"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHr9Q2JFsz77b;
-	Mon,  8 Jul 2024 19:05:46 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wrHC8FpA"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHrlH2nGgz7CV;
+	Mon,  8 Jul 2024 19:31:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720458346;
-	bh=rqrFtsUKnrmCy2BFEII07R6XIPCDv3T85BZjHwdXhkA=;
+	s=20191114; t=1720459899;
+	bh=mQnW5NCn1TmU2xbMOO/R79KgJurHxMXyQn21myAso+g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iGsmbWMwtJflXK6ehzd9F4+q9ko4rI+RsU0vRG2KJenxOv9O+37g3x9xV5rgAxw8Z
-	 x1SZVivMlS1QjsFvkpzoPQZqGVHx90Rr3itkH76Jq4XlBOLzK1xxTqHrU/DZq8+AiM
-	 9gy+wZVKNeUrfCRAdOIT+S6aPHFpqIfzk5yYleOI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHr9L0CjHz70k;
-	Mon,  8 Jul 2024 19:05:41 +0200 (CEST)
-Date: Mon, 8 Jul 2024 19:05:39 +0200
+	b=wrHC8FpAa0Nrl6MDhZVLEh2IeCdDaKszP59Loyn9h+Zj4ecIdUMCDDZKe7nSZkOwP
+	 uzWsImMOqfvVuCwR+BC6UzTKJmdW3P8jRIgpiH2ZG68a9aMTMVELy+D/AFwLi4zKW1
+	 hotUiwgj3pzOluGti7Y3vY2hLM6TYdSwJLXo5s3g=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHrlG41Ygz3C2;
+	Mon,  8 Jul 2024 19:31:38 +0200 (CEST)
+Date: Mon, 8 Jul 2024 19:31:35 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Florian Weimer <fweimer@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240708.ujeeDahkee4e@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
- <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
- <87ed83etpk.fsf@oldenburg.str.redhat.com>
- <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH 0/2] Landlock: Add abstract unix socket connect
+ reastriction
+Message-ID: <20240708.nujahgh6Zeec@digikod.net>
+References: <cover.1720203255.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,52 +48,43 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+In-Reply-To: <cover.1720203255.git.fahimitahera@gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Mon, Jul 08, 2024 at 09:40:45AM -0700, Jeff Xu wrote:
-> On Mon, Jul 8, 2024 at 9:26 AM Florian Weimer <fweimer@redhat.com> wrote:
-> >
-> > * Jeff Xu:
-> >
-> > > Will dynamic linkers use the execveat(AT_CHECK) to check shared
-> > > libraries too ?  or just the main executable itself.
-> >
-> > I expect that dynamic linkers will have to do this for everything they
-> > map.
+Please send inline patches, and don't forget to set the patch series
+version.  Because the difference with the previous series is only about
+formatting, I'l only review the previous one.
 
-Correct, that would enable to safely handle LD_PRELOAD for instance.
-
-> Then all the objects (.so, .sh, etc.) will go through  the check from
-> execveat's main  to security_bprm_creds_for_exec(), some of them might
-> be specific for the main executable ?
-> e.g. ChromeOS uses security_bprm_creds_for_exec to block executable
-> memfd [1], applying this means automatically extending the block to
-> the .so object.
-
-That's a good example of how this AT_CHECK check makes sense.
-
-Landlock will probably get a similar (optional) restriction too:
-https://github.com/landlock-lsm/linux/issues/37
-
+On Fri, Jul 05, 2024 at 12:58:10PM -0600, Tahera Fahimi wrote:
+> This patch series introduces the optional scoping of abstract unix
+> sockets. This feature aims to scope the connection of an abstract socket
+> from a sandbox process to other sockets outside of the sandbox domain.
+> (see [1, 2])
 > 
-> I'm not sure if other LSMs need to be updated ?  e.g.  will  SELINUX
-> check for .so with its process transaction policy ?
+> The following changes are included in this series:
+>   [PATCH 1/2]: Introduce the "scoped" field to the ruleset structure in
+>                the user space interface, and add the restriction
+>                mechanism to Landlock.
+>   [PATCH 2/2]: Add three comprehensive tests for the new feature.
+> 
+> Tahera Fahimi (2):
+>   Landlock: Add abstract unix socket connect restriction
+>   Landlock: Abstract unix socket restriction tests
+> 
+>  include/uapi/linux/landlock.h                 |  29 +
+>  security/landlock/limits.h                    |   3 +
+>  security/landlock/ruleset.c                   |   7 +-
+>  security/landlock/ruleset.h                   |  23 +-
+>  security/landlock/syscalls.c                  |  12 +-
+>  security/landlock/task.c                      |  62 ++
+>  .../testing/selftests/landlock/ptrace_test.c  | 786 ++++++++++++++++++
+>  7 files changed, 916 insertions(+), 6 deletions(-)
+> 
+> [1]: https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+> [2]: https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
+> -- 
+> 2.34.1
+> 
 
-LSM should not need to be updated with this patch series.  However,
-systems/components/containers enabling this new check should make sure
-it works with their current policy.
 
-> 
-> [1] https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/3834992
-> 
-> -Jeff
-> 
-> 
-> > Usually, that does not include the maim program, but this can
-> > happen with explicit loader invocations (“ld.so /bin/true”).
-> >
-> > Thanks,
-> > Florian
-> >
+
