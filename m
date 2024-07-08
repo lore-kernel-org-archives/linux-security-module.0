@@ -1,120 +1,135 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0F47F53;
-	Mon,  8 Jul 2024 08:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAB440848
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 10:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720429040; cv=none; b=tZeVDWLGresdKc7DQBv+V4lx5+Ilrtwfy+VHjXzwL0CZSsNUNetUb9VLDa7rEt4aFEmJcyoMKb5hgaFofxbq4TLUngoPt2meu5WzS0wJqJKVAgZ0aYQEETXic8GcQkaYepXadLiYbTffqZKVoPFfE3k9JwqFMzHnsjZ5DVBOJlI=
+	t=1720433091; cv=none; b=E7U4WzbGeMTHfSaRciBumMUHYbVOUpTR/+D+bc+zrqzvpM5bOQbWsMb035+7xG6W+XXQf+M7ol+fYtB3QRKVEQNKho0ICagaKgwKIZxx2+VAYy0KzWDAOHYnbq8UXAHIOnIdtf3datbKDeE7D7pQtrsbCFKj3/Ttd2uXk25iyzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720429040; c=relaxed/simple;
-	bh=Cb1AF0mLzMpKLDzenlvnWCSwmMf5JIIi0U9107W5+ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UAk31DnJzBvjmUQjMC5yhwpmuwlQg64nqJ3Qw29xNkhYU5rX29cgJmS8pc9w56DZ6ENv2KpuMsp2AXGY5/DUPpCiOCxz8fwxGzh1dIbzNOWHUH1kdJKwPosw1r6vmeVkN4CaNtTcrVNeo9VjK/hrKs2kR0dmwF/rrsBTVdIxZcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0MfGmOLJ; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1720433091; c=relaxed/simple;
+	bh=USy5tAusbYhsNK4T3DhzfrXWJZNN3yFfYPLsqMtD+AY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LfY0dHZicT71dLE0WINi26m0asNg5oWnZSi3Cpglsdd1R630+IyI2tOIjcBI4le3UAewJWtrR0HTdxmwS9BE+4wAzQuvEzY+gwvTY01mA9zlofLKvmpdeZ3XPAqKD0z/XqXJOsOPwinoXypw9qso9dPWfL4vO0K7L/5SPA1w+x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjMQoKB/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0MfGmOLJ"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHdKc1k4lzkyc;
-	Mon,  8 Jul 2024 10:57:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720429028;
-	bh=7bLt7WxO3ulEYXhk1rhXT6KKMcWMaVDQidRXNgAZAWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0MfGmOLJXnmucGesfHgTcGIrV1AuYeLm7OPKPfCmEW0e1L+aQfqE3m5322nbHkmbp
-	 o/g25CO5nyDvvCCX0mNrl+9Vxi2omD86s/oTmd2DYsR4YvIMPmAftfijfVaZPvAxYt
-	 1uPPfRCpd1M7aQnk90+oYq6XmUBltSw7ahYrQLDs=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHdKV00tCzWdS;
-	Mon,  8 Jul 2024 10:57:01 +0200 (CEST)
-Date: Mon, 8 Jul 2024 10:56:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240708.zooj9Miaties@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
- <20240706.poo9ahd3La9b@digikod.net>
- <871q46bkoz.fsf@oldenburg.str.redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjMQoKB/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5229C4AF0C
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 10:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720433090;
+	bh=USy5tAusbYhsNK4T3DhzfrXWJZNN3yFfYPLsqMtD+AY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HjMQoKB/Tz2oaWPvKxRodrl1bgihRp5pQHQoz3ddUDeg968b/8wOlJmO+Ir2YLfRz
+	 1/AXGdUzDNwK2J5d6Zq+LDqz4IiWJhJfBbk8LhJUlRcVlPat/qiajn59/yrTWvbVYk
+	 O828Kp1hh0AKM4Za9t9E3otA9iKjMMPbOwu2ai1LHIG53DnJqPdnuor5HxfInaJKsb
+	 oUDac6oYF4CwZqYITibpyHC3+vamLNehSWrQPT6zhqePwcM2QhPJIVOd4LCnEdaFLW
+	 yTTZdM+pxpG5upHtOWJheV+b9p7hdYLpDqwkn8/q0L//HG+tkRX991Zkw33uz7XfqC
+	 J72cL00m56gcQ==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so4219791a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2024 03:04:50 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzVCxXYz8lhRk7m81YAXL6OzXyx+Ko18JlLZyq7/idtSmNQzWG9
+	zifozcIG8qUkPvr9T03FEpq4GE0OmMzqA35sL7B1xcf9nj3ZHVsqi869jceS00CXdmAtHkFB8mF
+	E9a6ydcOAHATanceh8z4BuQMf/FtAJhPIrkQV
+X-Google-Smtp-Source: AGHT+IHYhZUMGl3xoMe6nGJCiUDuux4b5qNKC9p3FSNKDNSbMdP8pPQTIUoPx5b2kRBVKsNnXotkfx2Vvb3CGONNVLc=
+X-Received: by 2002:a05:6402:40cc:b0:57a:27c8:3269 with SMTP id
+ 4fb4d7f45d1cf-58e5a7f0899mr9931152a12.4.1720433089092; Mon, 08 Jul 2024
+ 03:04:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <871q46bkoz.fsf@oldenburg.str.redhat.com>
-X-Infomaniak-Routing: alpha
+References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87a7e2440fbe4@paul-moore.com>
+ <CACYkzJ60tmZEe3=T-yU3dF2x757_BYUxb_MQRm6tTp8Nj2A9KA@mail.gmail.com>
+ <CAHC9VhQ4qH-rtTpvCTpO5aNbFV4epJr5Xaj=TJ86_Y_Z3v-uyw@mail.gmail.com>
+ <CACYkzJ4kwrsDwD2k5ywn78j7CcvufgJJuZQ4Wpz8upL9pAsuZw@mail.gmail.com>
+ <CAHC9VhRoMpmHEVi5K+BmKLLEkcAd6Qvf+CdSdBdLOx4LUSsgKQ@mail.gmail.com>
+ <CACYkzJ6mWFRsdtRXSnaEZbnYR9w85MfmMJ3i76WEz+af=_QnLg@mail.gmail.com>
+ <CAHC9VhRA0hX-Nx20CK+yV276d7nooMmR+Q5OBNOy5fces4q9Bw@mail.gmail.com>
+ <CACYkzJ6jADoGNuPP3-1wkk-kV7NOQh+eFkU5KEDEZgq9qNNEfg@mail.gmail.com> <CAHC9VhQQkWxMT3KguOOK7W8cbY-cdeYTJSuh=tSDV4jsqp6s6g@mail.gmail.com>
+In-Reply-To: <CAHC9VhQQkWxMT3KguOOK7W8cbY-cdeYTJSuh=tSDV4jsqp6s6g@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Mon, 8 Jul 2024 12:04:36 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5gAnbXX_aWy6952s2O5L2p3Mw14OUfo9Z-Od6_Dp2HLQ@mail.gmail.com>
+Message-ID: <CACYkzJ5gAnbXX_aWy6952s2O5L2p3Mw14OUfo9Z-Od6_Dp2HLQ@mail.gmail.com>
+Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
+ static calls
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 06, 2024 at 05:32:12PM +0200, Florian Weimer wrote:
-> * Mickaël Salaün:
-> 
-> > On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
-> >> * Mickaël Salaün:
-> >> 
-> >> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> >> > allowed for execution.  The main use case is for script interpreters and
-> >> > dynamic linkers to check execution permission according to the kernel's
-> >> > security policy. Another use case is to add context to access logs e.g.,
-> >> > which script (instead of interpreter) accessed a file.  As any
-> >> > executable code, scripts could also use this check [1].
-> >> 
-> >> Some distributions no longer set executable bits on most shared objects,
-> >> which I assume would interfere with AT_CHECK probing for shared objects.
-> >
-> > A file without the execute permission is not considered as executable by
-> > the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
-> > note that this is just a check, not a restriction.  See the next patch
-> > for the optional policy enforcement.
-> >
-> > Anyway, we need to define the policy, and for Linux this is done with
-> > the file permission bits.  So for systems willing to have a consistent
-> > execution policy, we need to rely on the same bits.
-> 
-> Yes, that makes complete sense.  I just wanted to point out the odd
-> interaction with the old binutils bug and the (sadly still current)
-> kernel bug.
-> 
-> >> Removing the executable bit is attractive because of a combination of
-> >> two bugs: a binutils wart which until recently always set the entry
-> >> point address in the ELF header to zero, and the kernel not checking for
-> >> a zero entry point (maybe in combination with an absent program
-> >> interpreter) and failing the execve with ELIBEXEC, instead of doing the
-> >> execve and then faulting at virtual address zero.  Removing the
-> >> executable bit is currently the only way to avoid these confusing
-> >> crashes, so I understand the temptation.
-> >
-> > Interesting.  Can you please point to the bug report and the fix?  I
-> > don't see any ELIBEXEC in the kernel.
-> 
-> The kernel hasn't been fixed yet.  I do think this should be fixed, so
-> that distributions can bring back the executable bit.
+On Sat, Jul 6, 2024 at 6:40=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Fri, Jul 5, 2024 at 3:34=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
+e:
+> > On Fri, Jul 5, 2024 at 8:07=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > > On Wed, Jul 3, 2024 at 7:08=E2=80=AFPM KP Singh <kpsingh@kernel.org> =
+wrote:
 
-Can you please point to the mailing list discussion or the bug report?
+[...]
+
+> >
+> > Paul, I am talking about eliminating a class of bugs, but you don't
+> > seem to get the point and you are fixated on the very instance of this
+> > bug class.
+>
+> I do understand that you are trying to eliminate a class of bugs, the
+> point I'm trying to make is that I believe we have addressed that
+> already with the patches I've previously cited.
+
+The class I am referring to is useless hooks returning a default value
+and imposing a denial / enforcement when they are not supposed to. If
+you think this class of issues is not relevant to the overall LSM,
+sure. I would still like BPF LSM to not add default callbacks as I
+have always maintained since day 1:
+
+https://lwn.net/ml/linux-kernel/20200224171305.GA21886@chromium.org/
+
+BPF LSM does not want to provide a default decision until a BPF LSM
+policy program is loaded,
+
+>
+> > > > 2. Performance, no extra function call.
+> > >
+> > > Convince me the bug still exists first and then we can discuss the
+> > > merits of whatever solutions are proposed.
+> >
+> > This is independent of the bug!
+>
+> Correctness first, maintainability second, performance third.  That's
+> my current priority and I feel the maintainability hit doesn't justify
+> the performance win at this point in time.  Besides, we're already
+> expecting a big performance boost simply by moving to static_calls.
+>
+> > As I said, If you don't want to modify the core LSM layer, it's okay,
+> > I still want to go with changes local to the BPF LSM, If you really
+> > don't agree with the changes local to the BPF LSM, we can have it go
+> > via the BPF tree and seek Linus' help to resolve the conflict.
+>
+> As the BPF maintainer you are always free to do whatever you like
+> within the scope of the LSM you maintain so long as it does not touch
+> or otherwise impact any of the other LSMs or the LSM framework.  If
+> you do affect the other LSMs, or the LSM framework, you need to get an
+> ACK from the associated maintainer.  That's pretty much how Linux
+> kernel development works.
+
+Okay, then let's not make an LSM API, I will handle it within the BPF LSM.
+
+The patch I proposed should not affect any other LSMs and is self
+contained within BPF LSM:
+
+https://lore.kernel.org/bpf/CACYkzJ6jADoGNuPP3-1wkk-kV7NOQh+eFkU5KEDEZgq9qN=
+NEfg@mail.gmail.com/
+
+
+>
+> --
+> paul-moore.com
