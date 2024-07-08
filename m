@@ -1,45 +1,91 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474291D6AA
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 17:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20FD149C64
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 17:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720459904; cv=none; b=CufnZvQUOgrAUwoumGdNkddk+rcZ3hLY95+bV/K1UVcl4X+j9NZCGRhcj3nwbxqqWEgyNrwmpS2i+xi0Yz8LK+UrROkFB2EHSgMRZR0a9AyjuIzplLady1v9bUxLpKoWRjlICcy/yEg3vOpp7YynfnrBROEi3qYRvv+wj527PSA=
+	t=1720460018; cv=none; b=drAe5tB4gxEikfMigFroCrzZvd+lF2QKGm4x1zL4b7wEc7mPiEjUDnG1vt/AM3/k0ZJlu2UTw3NINamwdKYKWqPkBHCKUfgjeg2R1Xh0Ujd3eXSsBc22EWuyLsu0wEVt4s1BJAoGARK78h4bbd9B4qtVErpeJop7/Z0RAO4YdLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720459904; c=relaxed/simple;
-	bh=lJ2932qDkC0LYg+crodmOu1OYYAGfPXir2mvX7XuYlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=az0B4611UHxz50eXw8daXqfrEx0UoYpvpYIdnSgVIgCKV2eQHx3nTm1LBMyvo7rClxTqVGaL2qoDlnvcS8u92CMBSUmYEha3gdFZIPj0Kv0H7eH6/i/+i+yk/ieUAL/IWjUo1SMGFwyCzcpFG/qC61b6XmTlyQa7DpYG4znL77c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wrHC8FpA; arc=none smtp.client-ip=185.125.25.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1720460018; c=relaxed/simple;
+	bh=SGGTfSOeRUwxz6VC/qRrj5DKzqlNaTgG40wQSssXK7c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SxYPZD480LqlNTC0Mz73gH//oDoGW5nxMd0ptm+Qt7sY8nuiLowULrwZk740dfnmQElUipkIVLIcwqgiXe5pFOF4RfHdLk8pccwLWAciwI07cJss+h1GcrxrW/XtFaJuhGUnIOSUQMzb6CFMVHIXIkSYJf5QJxfoFq0he/QvfRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8P8LZit; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wrHC8FpA"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHrlH2nGgz7CV;
-	Mon,  8 Jul 2024 19:31:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720459899;
-	bh=mQnW5NCn1TmU2xbMOO/R79KgJurHxMXyQn21myAso+g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wrHC8FpAa0Nrl6MDhZVLEh2IeCdDaKszP59Loyn9h+Zj4ecIdUMCDDZKe7nSZkOwP
-	 uzWsImMOqfvVuCwR+BC6UzTKJmdW3P8jRIgpiH2ZG68a9aMTMVELy+D/AFwLi4zKW1
-	 hotUiwgj3pzOluGti7Y3vY2hLM6TYdSwJLXo5s3g=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHrlG41Ygz3C2;
-	Mon,  8 Jul 2024 19:31:38 +0200 (CEST)
-Date: Mon, 8 Jul 2024 19:31:35 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH 0/2] Landlock: Add abstract unix socket connect
- reastriction
-Message-ID: <20240708.nujahgh6Zeec@digikod.net>
-References: <cover.1720203255.git.fahimitahera@gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8P8LZit"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720460015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NzysFrdc8w10bKEbWw8ppHuT/B9oi64/ANDYqxDHLjs=;
+	b=e8P8LZit6wLglcAZcL+dzOY6pkf3XHaUC2u+bHpp5HbjI1GM665GPOb1uMyHYNimjUzo7f
+	IPnnpLrpXaKHxoKvZ2Qmx/o+WQXAfULo8MgGvMFNchjx/3Gg0637rzyqSzmuqw0OaWBU0u
+	b2OKv7SM1AFULpIPH6boNzak8nAF2aw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-i2EE8bhrPTu-d51vmcgTDg-1; Mon,
+ 08 Jul 2024 13:33:32 -0400
+X-MC-Unique: i2EE8bhrPTu-d51vmcgTDg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9014B1956046;
+	Mon,  8 Jul 2024 17:33:24 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CE9B19560AE;
+	Mon,  8 Jul 2024 17:33:05 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Jeff Xu <jeffxu@google.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,  Al Viro
+ <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Kees Cook
+ <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
+  Paul Moore <paul@paul-moore.com>,  "Theodore Ts'o" <tytso@mit.edu>,
+  Alejandro Colomar <alx.manpages@gmail.com>,  Aleksa Sarai
+ <cyphar@cyphar.com>,  Andrew Morton <akpm@linux-foundation.org>,  Andy
+ Lutomirski <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey
+ Schaufler <casey@schaufler-ca.com>,  Christian Heimes
+ <christian@python.org>,  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers
+ <ebiggers@kernel.org>,  Eric Chiang <ericchiang@google.com>,  Fan Wu
+ <wufan@linux.microsoft.com>,  Geert Uytterhoeven <geert@linux-m68k.org>,
+  James Morris <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,
+  Jann Horn <jannh@google.com>,  Jonathan Corbet <corbet@lwn.net>,  Jordan
+ R Abrahams <ajordanr@google.com>,  Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>,  Luca Boccassi <bluca@debian.org>,  Luis
+ Chamberlain <mcgrof@kernel.org>,  "Madhavan T . Venkataraman"
+ <madvenka@linux.microsoft.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
+  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
+ <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
+ <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
+ Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
+ <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
+ <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
+ Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+In-Reply-To: <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+	(Jeff Xu's message of "Mon, 8 Jul 2024 09:40:45 -0700")
+References: <20240704190137.696169-1-mic@digikod.net>
+	<20240704190137.696169-2-mic@digikod.net>
+	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+	<CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
+	<87ed83etpk.fsf@oldenburg.str.redhat.com>
+	<CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+Date: Mon, 08 Jul 2024 19:33:03 +0200
+Message-ID: <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,44 +93,29 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1720203255.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Please send inline patches, and don't forget to set the patch series
-version.  Because the difference with the previous series is only about
-formatting, I'l only review the previous one.
+* Jeff Xu:
 
-On Fri, Jul 05, 2024 at 12:58:10PM -0600, Tahera Fahimi wrote:
-> This patch series introduces the optional scoping of abstract unix
-> sockets. This feature aims to scope the connection of an abstract socket
-> from a sandbox process to other sockets outside of the sandbox domain.
-> (see [1, 2])
-> 
-> The following changes are included in this series:
->   [PATCH 1/2]: Introduce the "scoped" field to the ruleset structure in
->                the user space interface, and add the restriction
->                mechanism to Landlock.
->   [PATCH 2/2]: Add three comprehensive tests for the new feature.
-> 
-> Tahera Fahimi (2):
->   Landlock: Add abstract unix socket connect restriction
->   Landlock: Abstract unix socket restriction tests
-> 
->  include/uapi/linux/landlock.h                 |  29 +
->  security/landlock/limits.h                    |   3 +
->  security/landlock/ruleset.c                   |   7 +-
->  security/landlock/ruleset.h                   |  23 +-
->  security/landlock/syscalls.c                  |  12 +-
->  security/landlock/task.c                      |  62 ++
->  .../testing/selftests/landlock/ptrace_test.c  | 786 ++++++++++++++++++
->  7 files changed, 916 insertions(+), 6 deletions(-)
-> 
-> [1]: https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
-> [2]: https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
-> -- 
-> 2.34.1
-> 
+> On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Florian Weimer <fweimer@redhat.com=
+> wrote:
+>>
+>> * Jeff Xu:
+>>
+>> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
+>> > libraries too ?  or just the main executable itself.
+>>
+>> I expect that dynamic linkers will have to do this for everything they
+>> map.
+> Then all the objects (.so, .sh, etc.) will go through  the check from
+> execveat's main  to security_bprm_creds_for_exec(), some of them might
+> be specific for the main executable ?
 
+If we want to avoid that, we could have an agreed-upon error code which
+the LSM can signal that it'll never fail AT_CHECK checks, so we only
+have to perform the extra system call once.
 
+Thanks,
+Florian
 
