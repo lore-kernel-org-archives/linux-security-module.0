@@ -1,114 +1,130 @@
-Received: from mail.python.org (mail.python.org [188.166.95.178])
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B561EB44;
-	Mon,  8 Jul 2024 21:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.166.95.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFF6145B06
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 21:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720474364; cv=none; b=n7eSAGpPCxiD/50PmjMj7/X+g1nkxGyh/vCqkOF287ZlSJndoL90By7p1AB7K7MTtIUwuF/y9FVsR6LqopxLGdEMIRA2H9xhT/WoBAz+Z376KdkuYO5NGxzQexgEoqaDexKadrocbdIQFYSm/ifeNxXj3D0dJmgCHXrLYQBDHz8=
+	t=1720474818; cv=none; b=lPQSeFiccogNRwpcVJVSC295tmMtaG3pUXfJxvzCdlOE1Mqe9il4KJGbSqNWx805WDoCUuAmzrFFVWdWgohJhftUmWPQK+sJeI2iTYptCBEyFv8+NESAkcRMaRzoiZ1qy3D0qObJoJ24F4Tj50jPBrKsx7tVfAIV09mqgHKArxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720474364; c=relaxed/simple;
-	bh=qP9JJjp2wwtgqNEqstI/ReNHBLe0F8Tj7JsMZZjC+tY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=keNbQ3Ecg/lne3KvXI14s7Qfm3wQKR4SxkCatKDKcvsiekKX3OkHizkX9dBRcwlgn/mGxhQLXJCS9SSn36X5ZwIH+eeU1sqAiZ12zSLko/cwtUJwb2xc88CX/JecFeFv2tlZdiaiaRrsnY22zKewSmF+2ZW0OmZPztmOgzrTIDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=python.org; spf=pass smtp.mailfrom=python.org; dkim=pass (1024-bit key) header.d=python.org header.i=@python.org header.b=fRvlg0QX; arc=none smtp.client-ip=188.166.95.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=python.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=python.org
+	s=arc-20240116; t=1720474818; c=relaxed/simple;
+	bh=AwHtlWnslTP3Vscp7eqPUwKBD3oJbQJP0LUPcxmA7Mw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=paipbQJvaK1uPHc3WoLf7sfO/7ah+f9pL6nUbmIZkvGAa++buo10U+WoKHeknKRhP3E489Ml6mUw+KT1JFRWsbFAiNj7eemW6cMxowrY/2wGZCD+86nseohlolHffdBLKcAOYQycjOC3cVAoAXdQbRT1AaEqjE8gWWOoq+UpulA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=DK96b5Kp; arc=none smtp.client-ip=66.163.187.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=python.org header.i=@python.org header.b="fRvlg0QX"
-Received: from [192.168.1.83] (unknown [2.29.184.121])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.python.org (Postfix) with ESMTPSA id 4WHxxK6lcqznVF4;
-	Mon, 08 Jul 2024 17:25:41 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=python.org; s=200901;
-	t=1720473943; bh=qP9JJjp2wwtgqNEqstI/ReNHBLe0F8Tj7JsMZZjC+tY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fRvlg0QXwIJAkXyrCKhMDJxtPyAXB0mjii1640HG3xWRb2W5P+42eQTBJPTIuhKpt
-	 W7kH1zP794uZGf0rnntp5p+gP5s1k2YsFyKXYqxePPc8Ng44leBwaQk7RKeO5U7X6v
-	 HzB8cs5L4tQul4iZaKKGJIvbQF7weKnmuCGRaspc=
-Message-ID: <ef3281ad-48a5-4316-b433-af285806540d@python.org>
-Date: Mon, 8 Jul 2024 22:25:41 +0100
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DK96b5Kp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720474809; bh=7sawCs6kAFtswQkj0Alqvi2cDbAyQ2DGAg4fi5tfPYs=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=DK96b5Kpfoa7IByhj7oCaoz5RyIN1l/Jav7WBHWSbsusORInt4qSfIASYr1jVjAFubL/E/+7tZWe2lYJ654XbDZ24LZerdUiuSaZbzHonB/jnyAQc9zRTistyV+Fxk7mBBBgjtnF5vj7NE0q4RLE6BmNTuGbf+oRja3mIZHW0BBN9V5CURngcXnunlvn1IuQCaXdQg/dmR1QOTAT8h3GyUexLnKk13UTDS8dDEY+/sf01llCOnhbXhWqCRUD3maX7UIXFp9Gv1YO4B7MrPk9sGwq7QTxCgZJe4TRErfhPplAw1aK0HIXd4y0umDpBSABHIyn/YCZHkOFlIkkrpUphw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720474809; bh=DqWM5beigCkLC9ecnfYnD8DKwhundcY9+/lxxWHNfYD=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=CRqY3i7WaYqV3QmGhH2dnAjK+bVhbB1F6L2VD+nqjSUnrrC5uGStI/ZM3y1zfZnIK2bWoZSEnlofMs2idH1SU6tnGLRmlv1C0Q+DSSAWYpy5Sqsu9e0JYD2Bcae+FDQXKKwaQqdSaTH+K24dKgrpzLSMTJRtXR0NLGcBtbFRukRiGspIbqZ8Rsc7yTjveDfOJJimk1bAlzhrl2hxyYw9kgxt1cRnID++4xSlTetd1TcKx1xFNaF8D69JXJ80zleCVerBgQQg049E96bYjYm8ARN0VQbp0jsjUwq0b8TrPe7MZECGPtAu8Ec0BTlbTO0OmtsmpXqZLq+bykjL7jLpUw==
+X-YMail-OSG: jpiTQSsVM1nOO9xIWAaA98T7dP9RfUR1DCQeFME9tOt.8Y8Ms888u.fAnrH6Nxv
+ kJopLAXHqbTjNOgV3nsVSdKbVoewg.uABJ1QCDoG88nIjqOUpr30iqORgLiSItDfQYXNdXJaWcit
+ KMILlYpGrX7Vy1tUQaX2jw9poHbAG6EcgNkrsrrgZak6rP44I83SB8DuYo_xGEUeCSrIp0mPz266
+ dl_AwPND5z8PGVg1cspiuyPb7g3ixjSUdtVZb8X0rI3CbSZtqZIhS5mhRjFO4r8dFPrdUahHzCur
+ uzTjuC6XDl73c0DZ0L2pWZGqtvChVhBIdBGLArynRaTaMqPPV4N_DFaxIJcVg1V1alWpG7UK1RPb
+ 3JRXUKsxnC9PvCAT7hUGLQSDqcCbxxG4LpOBx6Zs_m5pd2XghM9FSDi03Ja6liq0jLUCuUjicTou
+ nxzqu2LrZ4jA3g.MIdfzkUsM72pIMeaMRZI0rH9LUZ2R2FibNUaKiP8kB3oNRUEzAHur2m_KY3PL
+ hI0jze58qAnVewGQ3KpTs9rK_pG2ndD_BVNjOnJbrjrcnc8lLojMEzTyQXHsiTUN_A69wYkEHFO5
+ ysgP99cuvw0G7l8HAOW4XQTkmZYFrrXQiHo8gGglBnExKwCu3bqmFnDfoVpehMLXJC2gSzZV9P3e
+ aB1JP3RikhVGxtZ0tgPry5aRpfNPyK9OYhFQxAUcYpSR5JbTj63.NY9LmlR86sc4ayNWV5OM1VmN
+ 5EFihnFotAtLa1SQEeYl8WhvTvjn0AXdGuyY8o6.oWZiKWHe.lITeHD.x_kzsb0RV6XQJudpMtxU
+ ONGgqQbHgMrQ9li32doTBch1s5WTlQqvlJqh4H4Lw9u1ZTgZRYw3Ml7TBRNw41cAOPdbM4Z4m0ie
+ l8xZ7apIAeDp49aulQ6iZPkGlnEiByXzrCw3jQpDrCLgqNk9fJjJuR.aWd7THLB61PiPbz1PxIqB
+ 6HzYQrpT1lDLx0JZujCfK5aaVwxx4vvnFVqz98.fUomV55x1kCDVRg6k8Dmq31Km9LM9WdQ.uDlU
+ aC1c74C8CLj7dQ9foBcN8BRRn3TVBlfnCeqL.ljPKiOMq8L5j1NEZJ2hAoB1bAsk1cOsBUCqkSDt
+ Y965L61rm8Ql_w5.xNnnQdBuIg5iB0h0j.NPz0nKVR97fqxRuY1LSFYFQX3EGA1P7PLBzuNajjBN
+ OdPN86SqWY17Goi.0vebYybFxVhg.xtRDN.SUUDoyXVXRkTcqnc9YCBDYjz63xkyRACnGF.KhFX9
+ ds3yyPatCqn_z4L9M1UgeYQ4bMmIYzuZynJ.n4blPG5RgyOz3OIu6PDObapB_JkZZz9KsSD9QKpv
+ 3vwFz5fH8G_xhlnINF_B6h7VvMa.iG4p.yCSn2dVsWV8t2UfPLXz7pUuBYfCH0ykgP0TO03.BySC
+ QLX6bg6hv1UzESQENrEMbNWVBO16EDtweFEFnj9P9aJqCcxtjrJhlYxcsXd67PFhxCP1mhPf77.F
+ nk.d2X3aKXp4mulm3.DYfCjJRNUzim5xio0Cel7aHOKPAzfwGcWiIWwBC7AOVUVvgROE0.Qi0nWv
+ DPpsws8N6GTpGwIwinrE2CsMXxdl0Im1_cC4KydnqfOJM2t2JQff6wMPIs.x3AxSOAOrYsdVj51C
+ e57WP9trf1h_dVA3kAGIPuz7fYVTMamaB2Ru2TXso99XrxryIZ5RH1wofnxUahXhjHFH6Z1.XdDt
+ 6sJ4Lljkl3yUoOWlWh_ikFgKl7fkt9CyWq5gsdsumZXx2b71sGyVAXJWnT0gHKK1A5YGtj796ldB
+ Nvdrf8gK5xkWE_R0pkC7BMRKBy0YP_Mj2bHMk4HxvdcodYuG9Dl1wNSjDKXs5m9ryi_cLI7xIPbT
+ AIXkeQ4xH8Q.bXfcHknL7v6H25WMjJoR8rmqGPJD6srFM4wahs51rL60N_Hb5z9m3vLPCRaobAvb
+ XcrnTidLSPOQlRWYK0R1s3ta.rqSjZpTlYKKgd8zeD9jC3T4FT98aHoaqs_8dBHJnUJIxRJAE5OA
+ 5rdTkDFK27552qYDRi5H7SSSvCeC7z4HzFEt350q2JGNGPhNVDzsxCwIQU9a5Ups74Ug008ZKqJW
+ d310il3g6b5sV9_JHTmZYSITp7Wob5y.aHgS1Ksa6Y3fBz1yqofbG8lFYBA6Ti_G24ioKpeqm10u
+ tC3sXmKwz_91R8PgutE9BhkTpIy6blVsVhwnFW56TJLi.h2YwYC5jGq19bfyOTJlNG6eGC.rWyI0
+ AmTBB3Y3v9dCIgHS5nGPsJQZs
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: fb5f052b-4644-4369-8c5f-c866f2f15731
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 8 Jul 2024 21:40:09 +0000
+Received: by hermes--production-gq1-5b4c49485c-4ls9q (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 493327e53f094c0d7e867cac350cba0d;
+          Mon, 08 Jul 2024 21:40:05 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	mic@digikod.net
+Subject: [PATCH 0/6] LSM: Infrastructure blob allocation
+Date: Mon,  8 Jul 2024 14:39:51 -0700
+Message-ID: <20240708213957.20519-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Content-Language: en-GB
-To: Jeff Xu <jeffxu@google.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
- Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
- Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>,
- Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>,
- Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,
- Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Jordan R Abrahams <ajordanr@google.com>,
- Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
- Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>,
- "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>,
- Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>,
- Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
- Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
- Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>,
- kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net>
- <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
- <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
- <20240708.quoe8aeSaeRi@digikod.net>
- <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
-From: Steve Dower <steve.dower@python.org>
-In-Reply-To: <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+References: <20240708213957.20519-1-casey.ref@schaufler-ca.com>
 
-On 08/07/2024 22:15, Jeff Xu wrote:
-> IIUC:
-> CHECK=0, RESTRICT=0: do nothing, current behavior
-> CHECK=1, RESTRICT=0: permissive mode - ignore AT_CHECK results.
-> CHECK=0, RESTRICT=1: call AT_CHECK, deny if AT_CHECK failed, no exception.
-> CHECK=1, RESTRICT=1: call AT_CHECK, deny if AT_CHECK failed, except
-> those in the "checked-and-allowed" list.
+When more than one Linux Security Module (LSM) can use the security
+blob for a partincular object the management of the memory associated
+with that blob needs to be done by the infrastructure rather than the
+individual modules.  Until now, this has been done on an as needed basis,
+with the blob management remaining in the modules until such time as a
+new configuration of modules requires sharing the blob.  This piecemeal
+approach makes adding new modules that use blobs more difficult, as
+moving the blob management to the infrastructure isn't as simple as
+it might seem. This patch set moves management of the security blobs
+that is done in the modules into the infrastructure. Making security
+blob management more consistant improves mantainablity and makes the
+possibilty of general improvement of LSM blob managment easier.
 
-I had much the same question for Mickaël while working on this.
+No effort has been put into pursuing the possible performance
+optimizations these changes introduce. For example, sk_security blobs
+might be moved to use kmem_zone_alloc(). The option of changing the
+blob sizes to being compile time determined rather than calculated at
+run time has been considered for future exploration.
 
-Essentially, "CHECK=0, RESTRICT=1" means to restrict without checking. 
-In the context of a script or macro interpreter, this just means it will 
-never interpret any scripts. Non-binary code execution is fully disabled 
-in any part of the process that respects these bits.
+Security blobs for the xfrm subsystem are problematic as the only
+security module that implements them (SELinux) has a variable size blob
+that has a published external API. Management of these blobs by the
+infrastructure will require significant consideration and negotiation
+with the maintainers of the existing code.  This has been deferred until
+such time as another user of xfrm appears.
 
-"CHECK=1, RESTRICT=1" means to restrict unless AT_CHECK passes. This 
-case is the allow list (or whatever mechanism is being used to determine 
-the result of an AT_CHECK check). The actual mechanism isn't the 
-business of the script interpreter at all, it just has to refuse to 
-execute anything that doesn't pass the check. So a generic interpreter 
-can implement a generic mechanism and leave the specifics to whoever 
-configures the machine.
+Casey Schaufler (6):
+  LSM: Infrastructure management of the sock security
+  LSM: Infrastructure management of the key security blob
+  LSM: Add helper for blob allocations
+  LSM: Infrastructure management of the dev_tun blob
+  LSM: Infrastructure management of the infiniband blob
+  LSM: Infrastructure management of the perf_event security blob
 
-The other two case are more obvious. "CHECK=0, RESTRICT=0" is the 
-zero-overhead case, while "CHECK=1, RESTRICT=0" might log, warn, or 
-otherwise audit the result of the check, but it won't restrict execution.
+ include/linux/lsm_hook_defs.h     |   4 +-
+ include/linux/lsm_hooks.h         |   5 +
+ security/apparmor/include/net.h   |   3 +-
+ security/apparmor/lsm.c           |  17 +--
+ security/apparmor/net.c           |   2 +-
+ security/security.c               | 166 +++++++++++++++++++++---------
+ security/selinux/hooks.c          | 159 ++++++++++------------------
+ security/selinux/include/objsec.h |  30 ++++++
+ security/selinux/netlabel.c       |  23 +++--
+ security/smack/smack.h            |  12 +++
+ security/smack/smack_lsm.c        | 103 +++++++++---------
+ security/smack/smack_netfilter.c  |   4 +-
+ 12 files changed, 288 insertions(+), 240 deletions(-)
 
-Cheers,
-Steve
+-- 
+2.41.0
+
