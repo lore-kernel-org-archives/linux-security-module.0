@@ -1,121 +1,129 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20FD149C64
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 17:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1C1149DE1
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 17:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720460018; cv=none; b=drAe5tB4gxEikfMigFroCrzZvd+lF2QKGm4x1zL4b7wEc7mPiEjUDnG1vt/AM3/k0ZJlu2UTw3NINamwdKYKWqPkBHCKUfgjeg2R1Xh0Ujd3eXSsBc22EWuyLsu0wEVt4s1BJAoGARK78h4bbd9B4qtVErpeJop7/Z0RAO4YdLE=
+	t=1720461198; cv=none; b=kRVjoaWsv+5Flfo8mu14YEyNZGB+VGjNyo4azAGkB/Tfsgxh53lVEIzmM96hfzbw/zQvjpEImim1Hu9h6XZEcmazohr8yAuTi36ZSw1kfenDX6UNkIkhWlFW5EqSAefwFwbT37Wsg3VCBVijHpOpFrS3ekBn+9HYXu6zrEKkPm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720460018; c=relaxed/simple;
-	bh=SGGTfSOeRUwxz6VC/qRrj5DKzqlNaTgG40wQSssXK7c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SxYPZD480LqlNTC0Mz73gH//oDoGW5nxMd0ptm+Qt7sY8nuiLowULrwZk740dfnmQElUipkIVLIcwqgiXe5pFOF4RfHdLk8pccwLWAciwI07cJss+h1GcrxrW/XtFaJuhGUnIOSUQMzb6CFMVHIXIkSYJf5QJxfoFq0he/QvfRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8P8LZit; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720461198; c=relaxed/simple;
+	bh=A51TjF59OTkpsKWSIYn/LlAqbFDjDhnXxoyl83snzzY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qJ7Igf4/Lg6vYzoRhLAM91stALGH36J4HNGc/8glcxsEB3wRiSPOmwCxQenLSV/TrVXoBmDjvL/Pro8+CSIxm9R07+02RfR0PDpXdEaR+KhGCUy52VqNLt1Uh/cFlTkU2dk0fxzotZja0z9u+fJchvou7VbUwO5mEnOvQgaWZ2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UBUeVMhH; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8P8LZit"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720460015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NzysFrdc8w10bKEbWw8ppHuT/B9oi64/ANDYqxDHLjs=;
-	b=e8P8LZit6wLglcAZcL+dzOY6pkf3XHaUC2u+bHpp5HbjI1GM665GPOb1uMyHYNimjUzo7f
-	IPnnpLrpXaKHxoKvZ2Qmx/o+WQXAfULo8MgGvMFNchjx/3Gg0637rzyqSzmuqw0OaWBU0u
-	b2OKv7SM1AFULpIPH6boNzak8nAF2aw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-i2EE8bhrPTu-d51vmcgTDg-1; Mon,
- 08 Jul 2024 13:33:32 -0400
-X-MC-Unique: i2EE8bhrPTu-d51vmcgTDg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9014B1956046;
-	Mon,  8 Jul 2024 17:33:24 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CE9B19560AE;
-	Mon,  8 Jul 2024 17:33:05 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Jeff Xu <jeffxu@google.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,  Al Viro
- <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
-  Paul Moore <paul@paul-moore.com>,  "Theodore Ts'o" <tytso@mit.edu>,
-  Alejandro Colomar <alx.manpages@gmail.com>,  Aleksa Sarai
- <cyphar@cyphar.com>,  Andrew Morton <akpm@linux-foundation.org>,  Andy
- Lutomirski <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey
- Schaufler <casey@schaufler-ca.com>,  Christian Heimes
- <christian@python.org>,  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers
- <ebiggers@kernel.org>,  Eric Chiang <ericchiang@google.com>,  Fan Wu
- <wufan@linux.microsoft.com>,  Geert Uytterhoeven <geert@linux-m68k.org>,
-  James Morris <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,
-  Jann Horn <jannh@google.com>,  Jonathan Corbet <corbet@lwn.net>,  Jordan
- R Abrahams <ajordanr@google.com>,  Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>,  Luca Boccassi <bluca@debian.org>,  Luis
- Chamberlain <mcgrof@kernel.org>,  "Madhavan T . Venkataraman"
- <madvenka@linux.microsoft.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
- <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
- <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
- Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-In-Reply-To: <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
-	(Jeff Xu's message of "Mon, 8 Jul 2024 09:40:45 -0700")
-References: <20240704190137.696169-1-mic@digikod.net>
-	<20240704190137.696169-2-mic@digikod.net>
-	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
-	<CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
-	<87ed83etpk.fsf@oldenburg.str.redhat.com>
-	<CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
-Date: Mon, 08 Jul 2024 19:33:03 +0200
-Message-ID: <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UBUeVMhH"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58c0abd6b35so1175a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2024 10:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720461195; x=1721065995; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T3TbkBbvUVbFeDVSEP1fW1+EltO1UgtRB4Zsk2MimJk=;
+        b=UBUeVMhHyoAEuzPBDsDDW7ygRkxeRScsR8pIIQ92bjzur3K1AS9VY/UYvQaWNcIQlG
+         IH7LA482FL8ab0BnOBLNoZ47d5sGruaBvSsWwBCF2yLr4H09MuBoQsEQJ5Ayh196qk+K
+         mtp4yFrPAEKiZPD5jez9sn424UHAVzWwwr++zUwIR87l6ILDzYNxv0mndqbcAxBBTPKD
+         1w1nh+uBxsQ3W61VJAPg8f7n6bZTzqw0Ql36+QGSU12S663n8alf3NwxI0NdQEQpzndl
+         Enw6BdonEl5hGuy18mbEdu9oX8XSw4ml7Oxm7EcNHhZP0P85YXfduMh9suY9K5kqTjGv
+         Uc2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720461195; x=1721065995;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T3TbkBbvUVbFeDVSEP1fW1+EltO1UgtRB4Zsk2MimJk=;
+        b=cnZMpLCTsUed2GvdaekDU+Nw8OMgjyNSr7Q/ECH9FgWYYcLNCyQJga9b08hopt98bN
+         dZAE7w5B8ETN+Deo4bSdV60FsmWLCbXdKNV+ftXag8iQHy9ZeEKdxb8YfOTy0bWFRUXs
+         p1o4jT1xlawe+FbtU4ek8EWQAl8oqSYWYSs0F8djwJKIo5ZGuvZRjFb3vzE1PGj65d4D
+         KbRdHzaeRs4D7ywUZlmAoE6gCWFzM8xutZUpRHw7wIJlOrs5QrNGY/EATe6BspkkulJI
+         /RHciMSWWZ8WDCzg4nyxtIdYIGrd7Ma7pNohemvX/cJfQfv0WaovA4lQaJSoKhMsacer
+         IGTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtwpe0z1GJWgf93P7SZPzbKw/QY365tHk+PHSaXmOR+1EB3z4HX5IfsxVWiEy5GEhtrlm87MnTaoBJ5WDTrVp2puDutLbvpOoD4A0O5xXxywVfJARp
+X-Gm-Message-State: AOJu0YzwL6fSVHQMHGf+WzCj3nPee6rSFZuEYjuJOObJzQJht2F0Dg9I
+	jQR2Fs/9YuVxcE82ynNxgD6CbmJV1TAIVem7STnIVwymGfTaB/3Qkg/xUNk979hJRIbjAE5N8EY
+	/PDHxBrymPUBOa4bx/oDfKKCSEsUNJFuG8C1F
+X-Google-Smtp-Source: AGHT+IHHxKVbyksIrCSInAfN33CbHiJrGetzywRVqsOhmUb93ffLYHC9Q2t9UkNSdOIhMtNmgF5pWC4xS+6p5oWJ6ps=
+X-Received: by 2002:a50:bb2c:0:b0:57c:c5e2:2c37 with SMTP id
+ 4fb4d7f45d1cf-594d6d8047dmr3249a12.3.1720461194964; Mon, 08 Jul 2024 10:53:14
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <87bk3bvhr1.fsf@oldenburg.str.redhat.com> <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
+ <87ed83etpk.fsf@oldenburg.str.redhat.com> <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+ <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 8 Jul 2024 10:52:36 -0700
+Message-ID: <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: Florian Weimer <fweimer@redhat.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-* Jeff Xu:
+On Mon, Jul 8, 2024 at 10:33=E2=80=AFAM Florian Weimer <fweimer@redhat.com>=
+ wrote:
+>
+> * Jeff Xu:
+>
+> > On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Florian Weimer <fweimer@redhat.c=
+om> wrote:
+> >>
+> >> * Jeff Xu:
+> >>
+> >> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
+> >> > libraries too ?  or just the main executable itself.
+> >>
+> >> I expect that dynamic linkers will have to do this for everything they
+> >> map.
+> > Then all the objects (.so, .sh, etc.) will go through  the check from
+> > execveat's main  to security_bprm_creds_for_exec(), some of them might
+> > be specific for the main executable ?
+>
+> If we want to avoid that, we could have an agreed-upon error code which
+> the LSM can signal that it'll never fail AT_CHECK checks, so we only
+> have to perform the extra system call once.
+>
+Right, something like that.
+I would prefer not having AT_CHECK specific code in LSM code as an
+initial goal, if that works, great.
 
-> On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Florian Weimer <fweimer@redhat.com=
-> wrote:
->>
->> * Jeff Xu:
->>
->> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
->> > libraries too ?  or just the main executable itself.
->>
->> I expect that dynamic linkers will have to do this for everything they
->> map.
-> Then all the objects (.so, .sh, etc.) will go through  the check from
-> execveat's main  to security_bprm_creds_for_exec(), some of them might
-> be specific for the main executable ?
+-Jeff
 
-If we want to avoid that, we could have an agreed-upon error code which
-the LSM can signal that it'll never fail AT_CHECK checks, so we only
-have to perform the extra system call once.
-
-Thanks,
-Florian
-
+> Thanks,
+> Florian
+>
