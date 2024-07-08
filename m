@@ -1,157 +1,245 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128AF1DDF4
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 19:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4323A29;
+	Mon,  8 Jul 2024 20:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720468365; cv=none; b=OEsUKknDHao/xHMwJJ1Mv73RKHS0EdMeLwrKtgm3nybCRN4F87XS7t3SRrUfcLqYS76vTrRLpGol4Vlc4xpYdHII7DDapw3K1FGsmmQsi5E9yeMXmzxE1v9ztkqlRN4f6obycouNOCV9e7FyK0sECnI8uhf3BJj6jVKTJBa6YUA=
+	t=1720471038; cv=none; b=fpUziBePc9yu3gDQl5B+956pBKlIInJNG1cC/nJUuxx3AVfd3LzHx+83TaEtVF0J+tADQ2esrLaW/N0vxx5Nu1OBbeOEH+s+R3gO8l/DoebXSSyjV7z0fQ3om7s0eDlQqHCiful7siEpaSuj3nbScPYWWWo5ZixnPRVBuiY6UgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720468365; c=relaxed/simple;
-	bh=f6J3SyMoDlZnX07mleC15lOwC8e7IIONVGk8M5fMiVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQxUttGwMeiBjKE+mMKeX3vDgeo84mc6daibzLoqJ7i39Tf0c0qjAIdKi3OiNRcVpFOY3XGjzjB1l8wnGhQQab6HSG1JMjTU7OwqSMNhGw1pJXv3161GB7WKNwxmuxEEXvOh8jzgziAgOHS1DmlBQU1pJZJeXf+3QfkKqIrpj7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=14o6G+kt; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1720471038; c=relaxed/simple;
+	bh=JTpsJ4BLsqwl1tMAbcghItB5dY+DDbryHsbxbYy99ew=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DOmAeS1Rg3f+37XRHouVOKtaqzRPauH84Lrp5+sPQu8XUHvVvVfDiK76b2bHFSHznUitvIPCKQ5NMGLfbix1+EvGZKgm4FlGYnSV1tA0Mw2iu/ShbcexDXy+yOeTz8lJzk0fJFbruSPKOEGTJmIJ2E0cFvIRZq5QKNdFB3bMNK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GJxdClp3; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="14o6G+kt"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WHvkC0RZ8zTJk;
-	Mon,  8 Jul 2024 21:45:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720467954;
-	bh=ilehYGP+q5fwPfEBN5/iUyPlmWRy6d513iG8m2WrmI8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=14o6G+ktpNaLu4raXbCfVq0pepd/8UsG3XShk47o7zGTN4rGazuD5syQSYmnD2Ihg
-	 HDnlDIQIBwCMAmSJvEgcJrk1d4Vl4+PGEy4YdG4h/kYYXX1STAfivnR+7paePaMWTU
-	 7u8oCJK5OknQp9bCFzbLfNGwFSuL0rNel1zR3/IY=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WHvkB1W56zm5b;
-	Mon,  8 Jul 2024 21:45:54 +0200 (CEST)
-Date: Mon, 8 Jul 2024 21:45:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v1] landlock: Abstract unix socket restriction tests
-Message-ID: <20240708.rootai6weiXe@digikod.net>
-References: <Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GJxdClp3"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468GSgar022732;
+	Mon, 8 Jul 2024 20:35:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	CxgxLsMfcgEUGG2AWRuuw2fi5FzNeGA6j6CPtR3F6bc=; b=GJxdClp3WxyMXnqE
+	bBREpQh9CN6I51cP+LBGgngbCtNdpuo13librI+ftvNXrMdPGc75VePQ5Y3hlSGM
+	sYJNjvaSz5CblUOF+jyeefhrB3UOaZWNLZznFo1Ym4hAodwaU2yFFB50VUOyeVMx
+	SG8YeeTPwpoBaL1uA1rDZtrxp57/XGQFEkL+Wvx5VaW7sArZku7RsphqCEbZ+2Uj
+	SoEWNlA73iM+/kwaFLfGT4a0dgayWX+liRqMp8bYHnGH/nKSHICTGOAHgOQBqtK5
+	kofUhF9jTVpxBiCinq3Yox6wOYsYLHWROqqgjcVpIwHp9Md5V9FA5A4MLUbVXWdg
+	XtzGwA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 408knm0jhw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 20:35:49 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 468KZmVD010338;
+	Mon, 8 Jul 2024 20:35:48 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 408knm0jhp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 20:35:48 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 468JjYcX013901;
+	Mon, 8 Jul 2024 20:35:46 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407gn0h1pd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 20:35:46 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 468KZhOE54133212
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 8 Jul 2024 20:35:45 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 73C7F5804B;
+	Mon,  8 Jul 2024 20:35:43 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7BA115805B;
+	Mon,  8 Jul 2024 20:35:39 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.72.224])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  8 Jul 2024 20:35:39 +0000 (GMT)
+Message-ID: <55b4f6291e8d83d420c7d08f4233b3d304ce683d.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Al Viro
+ <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Kees
+ Cook <keescook@chromium.org>,
+        Linus Torvalds
+ <torvalds@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Alejandro Colomar <alx.manpages@gmail.com>,
+        Aleksa Sarai
+ <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy
+ Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Casey
+ Schaufler <casey@schaufler-ca.com>,
+        Christian Heimes
+ <christian@python.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers
+ <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Fan Wu
+ <wufan@linux.microsoft.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert
+ Uytterhoeven <geert@linux-m68k.org>,
+        James Morris
+ <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn
+ <jannh@google.com>, Jeff Xu <jeffxu@google.com>,
+        Jonathan Corbet
+ <corbet@lwn.net>,
+        Jordan R Abrahams <ajordanr@google.com>,
+        Lakshmi
+ Ramasubramanian <nramas@linux.microsoft.com>,
+        Luca Boccassi
+ <bluca@debian.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Madhavan T .
+ Venkataraman" <madvenka@linux.microsoft.com>,
+        Matt Bobrowski
+ <mattbobrowski@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Matthew
+ Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+        Scott Shell
+ <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell
+ <sfr@canb.auug.org.au>,
+        Steve Dower <steve.dower@python.org>, Steve Grubb
+ <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Xiaoming Ni
+ <nixiaoming@huawei.com>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Mon, 08 Jul 2024 16:35:38 -0400
+In-Reply-To: <20240704190137.696169-1-mic@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-26.el8_10) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xfgBL0ZavfhoiN98qDf8nNW4jFF4_Skx
+X-Proofpoint-ORIG-GUID: 0zv7xLsYvghyVjWtpLVEhBOkEbPIHn4V
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000>
-X-Infomaniak-Routing: alpha
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_11,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407080151
 
-These are good tests!  However, I get errors when running some of them (using
-the latest formatted patches):
+Hi Mickaël,
 
-#  RUN           unix_socket.allow_without_domain_connect_to_parent.abstract_unix_socket ...
-# ptrace_test.c:845:abstract_unix_socket:Expected 0 (0) == bind(self->server, (struct sockaddr *)&addr, addrlen) (-1)
-# abstract_unix_socket: Test terminated by assertion
-#          FAIL  unix_socket.allow_without_domain_connect_to_parent.abstract_unix_socket
-not ok 9 unix_socket.allow_without_domain_connect_to_parent.abstract_unix_socket
-#  RUN           unix_socket.allow_without_domain_connect_to_child.abstract_unix_socket ...
-# ptrace_test.c:793:abstract_unix_socket:Expected 0 (0) == bind(self->server, (struct sockaddr *)&addr, addrlen) (-1)
-# ptrace_test.c:826:abstract_unix_socket:Expected 1 (1) == read(pipe_child[0], &buf_parent, 1) (0)
-# abstract_unix_socket: Test terminated by assertion
-#          FAIL  unix_socket.allow_without_domain_connect_to_child.abstract_unix_socket
-not ok 10 unix_socket.allow_without_domain_connect_to_child.abstract_unix_socket
-
-
-On Thu, Jun 27, 2024 at 05:30:48PM -0600, Tahera Fahimi wrote:
-> Tests for scoping abstract unix sockets. The patch has three types of tests:
-> i) unix_socket: tests the scoping mechanism for a landlocked process, same as
-> ptrace test.
-> ii) optional_scoping: generates three processes with different domains and tests if
-> a process with a non-scoped domain can connect to other processes.
-> iii) unix_sock_special_cases: since the socket's creator credentials are used for
-> scoping datagram sockets, this test examine the cases where the socket's credentials
-> are different from the process who is using it.
+On Thu, 2024-07-04 at 21:01 +0200, Mickaël Salaün wrote:
+> Hi,
 > 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
+> The ultimate goal of this patch series is to be able to ensure that
+> direct file execution (e.g. ./script.sh) and indirect file execution
+> (e.g. sh script.sh) lead to the same result, especially from a security
+> point of view.
+> 
+> Overview
+> --------
+> 
+> This patch series is a new approach of the initial O_MAYEXEC feature,
+> and a revamp of the previous patch series.  Taking into account the last
+> reviews [1], we now stick to the kernel semantic for file executability.
+> One major change is the clear split between access check and policy
+> management.
+> 
+> The first patch brings the AT_CHECK flag to execveat(2).  The goal is to
+> enable user space to check if a file could be executed (by the kernel).
+> Unlike stat(2) that only checks file permissions, execveat2(2) +
+> AT_CHECK take into account the full context, including mount points
+> (noexec), caller's limits, and all potential LSM extra checks (e.g.
+> argv, envp, credentials).
+> 
+> The second patch brings two new securebits used to set or get a security
+> policy for a set of processes.  For this to be meaningful, all
+> executable code needs to be trusted.  In practice, this means that
+> (malicious) users can be restricted to only run scripts provided (and
+> trusted) by the system.
+> 
+> [1] https://lore.kernel.org/r/CAHk-=wjPGNLyzeBMWdQu+kUdQLHQugznwY7CvWjmvNW47D5sog@mail.gmail.com
+> 
+> Script execution
+> ----------------
+> 
+> One important thing to keep in mind is that the goal of this patch
+> series is to get the same security restrictions with these commands:
+> * ./script.py
+> * python script.py
+> * python < script.py
+> * python -m script.pyT
 
-> +/* clang-format off */
-> +FIXTURE(optional_scoping)
-> +{
-> +	int parent_server, child_server, client;
-> +};
-> +/* clang-format on */
-> +
-> +/* Domain is defined as follows:
-> + * 0 --> no domain
-> + * 1 --> have domain
-> + * 2 --> have domain and is scoped
+This is really needed, but is it the "only" purpose of this patch set or can it
+be used to also monitor files the script opens (for read) with the intention of
+executing.
 
-You should use an enum instead of these hardcoded values.  This is
-better to understand/document, to review, and to maintain.
+> 
+> However, on secure systems, we should be able to forbid these commands
+> because there is no way to reliably identify the origin of the script:
+> * xargs -a script.py -d '\r' -- python -c
+> * cat script.py | python
+> * python
+> 
+> Background
+> ----------
+> 
+> Compared to the previous patch series, there is no more dedicated
+> syscall nor sysctl configuration.  This new patch series only add new
+> flags: one for execveat(2) and four for prctl(2).
+> 
+> This kind of script interpreter restriction may already be used in
+> hardened systems, which may need to fork interpreters and install
+> different versions of the binaries.  This mechanism should enable to
+> avoid the use of duplicate binaries (and potential forked source code)
+> for secure interpreters (e.g. secure Python [2]) by making it possible
+> to dynamically enforce restrictions or not.
+> 
+> The ability to control script execution is also required to close a
+> major IMA measurement/appraisal interpreter integrity [3].
 
-> + **/
-> +FIXTURE_VARIANT(optional_scoping)
-> +{
-> +	int domain_all;
-> +	int domain_parent;
-> +	int domain_children;
-> +	int domain_child;
-> +	int domain_grand_child;
-> +	int type;
-> +};
-> +/*
-> + * .-----------------.
-> + * |         ####### |  P3 -> P2 : allow
-> + * |   P1----# P2  # |  P3 -> P1 : deny
-> + * |         #  |  # |
-> + * |         # P3  # |
-> + * |         ####### |
-> + * '-----------------'
-> + */
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(optional_scoping, deny_scoped) {
-> +	.domain_all = 1,
-> +	.domain_parent = 0,
-> +	.domain_children = 2,
-> +	.domain_child = 0,
-> +	.domain_grand_child = 0,
-> +	.type = SOCK_DGRAM,
-> +	/* clang-format on */
-> +};
-> +/*
-> + * .-----------------.
-> + * |         .-----. |  P3 -> P2 : allow
-> + * |   P1----| P2  | |  P3 -> P1 : allow
-> + * |         |     | |
-> + * |         | P3  | |
-> + * |         '-----' |
-> + * '-----------------'
-> + */
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(optional_scoping, allow_with_domain) {
-> +	.domain_all = 1,
-> +	.domain_parent = 0,
-> +	.domain_children = 1,
-> +	.domain_child = 0,
-> +	.domain_grand_child = 0,
-> +	.type = SOCK_DGRAM,
-> +	/* clang-format on */
-> +};
+Definitely.  But it isn't limited to controlling script execution, but also
+measuring the script.  Will it be possible to measure and appraise the indirect
+script calls with this patch set?
 
-I guess this should failed with the current kernel patch (see my review
-of the kernel patch), but something like that should be tested:
+Mimi
 
-FIXTURE_VARIANT_ADD(optional_scoping, allow_with_one_domain) {
-	.domain_parent = 0,
-	.domain_child = 2,
-	.domain_grand_child = 0,
-};
+> This new execveat + AT_CHECK should not be confused with the O_EXEC flag
+> (for open) which is intended for execute-only, which obviously doesn't
+> work for scripts.
+> 
+> I gave a talk about controlling script execution where I explain the
+> previous approaches [4].  The design of the WIP RFC I talked about
+> changed quite a bit since then.
+> 
+> [2] https://github.com/zooba/spython
+> [3] https://lore.kernel.org/lkml/20211014130125.6991-1-zohar@linux.ibm.com/
+> [4] https://lssna2023.sched.com/event/1K7bO
+> 
 
-grand_child should be able to connect to its parent (child), but not its
-grand parent (parent).
