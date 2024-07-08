@@ -1,40 +1,54 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAB440848
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 10:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090C98172D
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 12:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433091; cv=none; b=E7U4WzbGeMTHfSaRciBumMUHYbVOUpTR/+D+bc+zrqzvpM5bOQbWsMb035+7xG6W+XXQf+M7ol+fYtB3QRKVEQNKho0ICagaKgwKIZxx2+VAYy0KzWDAOHYnbq8UXAHIOnIdtf3datbKDeE7D7pQtrsbCFKj3/Ttd2uXk25iyzY=
+	t=1720443137; cv=none; b=FlnfhKcCVp5gz8Dwb1f7x0lEDXUcbyp2asxymk7S0W2vlCoH0a3AI29Hfgv2IqGnhZns3UFB1NHi2EdE+aT4el74nM4fszuGLACmKc4TUTI8W+lvrlLhksLtdQlELJHAQPM4Z84ENZcxC+6/HckKFMhJqfzLYzfC16sr6NaaZiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433091; c=relaxed/simple;
-	bh=USy5tAusbYhsNK4T3DhzfrXWJZNN3yFfYPLsqMtD+AY=;
+	s=arc-20240116; t=1720443137; c=relaxed/simple;
+	bh=GKaxPMeQCGwz0xGt/xe9JtjyKYlBVSwbj5uPlZY2E+4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LfY0dHZicT71dLE0WINi26m0asNg5oWnZSi3Cpglsdd1R630+IyI2tOIjcBI4le3UAewJWtrR0HTdxmwS9BE+4wAzQuvEzY+gwvTY01mA9zlofLKvmpdeZ3XPAqKD0z/XqXJOsOPwinoXypw9qso9dPWfL4vO0K7L/5SPA1w+x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjMQoKB/; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=ppXQJJyksEhajNb8vJRFnFte81VYPAzgj1xjxPeIJ0nmF3Fe+bJwEka/NFNVNvcQkmadisIzfaH1Of8q7cSDAaPD0KTCUHboQf3hPCKqcOgb+EXL7Uz2IgbjxnDKkc1xkbudqCI2kupIClh7yTWHbGwv1XjeyEVZV66J4ORyvyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cngZK1Xm; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjMQoKB/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5229C4AF0C
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jul 2024 10:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720433090;
-	bh=USy5tAusbYhsNK4T3DhzfrXWJZNN3yFfYPLsqMtD+AY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HjMQoKB/Tz2oaWPvKxRodrl1bgihRp5pQHQoz3ddUDeg968b/8wOlJmO+Ir2YLfRz
-	 1/AXGdUzDNwK2J5d6Zq+LDqz4IiWJhJfBbk8LhJUlRcVlPat/qiajn59/yrTWvbVYk
-	 O828Kp1hh0AKM4Za9t9E3otA9iKjMMPbOwu2ai1LHIG53DnJqPdnuor5HxfInaJKsb
-	 oUDac6oYF4CwZqYITibpyHC3+vamLNehSWrQPT6zhqePwcM2QhPJIVOd4LCnEdaFLW
-	 yTTZdM+pxpG5upHtOWJheV+b9p7hdYLpDqwkn8/q0L//HG+tkRX991Zkw33uz7XfqC
-	 J72cL00m56gcQ==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so4219791a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2024 03:04:50 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzVCxXYz8lhRk7m81YAXL6OzXyx+Ko18JlLZyq7/idtSmNQzWG9
-	zifozcIG8qUkPvr9T03FEpq4GE0OmMzqA35sL7B1xcf9nj3ZHVsqi869jceS00CXdmAtHkFB8mF
-	E9a6ydcOAHATanceh8z4BuQMf/FtAJhPIrkQV
-X-Google-Smtp-Source: AGHT+IHYhZUMGl3xoMe6nGJCiUDuux4b5qNKC9p3FSNKDNSbMdP8pPQTIUoPx5b2kRBVKsNnXotkfx2Vvb3CGONNVLc=
-X-Received: by 2002:a05:6402:40cc:b0:57a:27c8:3269 with SMTP id
- 4fb4d7f45d1cf-58e5a7f0899mr9931152a12.4.1720433089092; Mon, 08 Jul 2024
- 03:04:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cngZK1Xm"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64b417e1511so36012207b3.3
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Jul 2024 05:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1720443135; x=1721047935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tWQFkOE0z0Ym6Txw+ydgQQZdK+TeJwfjOMSz/3B528I=;
+        b=cngZK1XmagyQSQcXPsE+zOY7o9ipn8xqhyih/A+56BXmdM72slgqGoXc7kuWosiS9V
+         gx1QWLaXc8KnjPtBvOOKVXu4FY6ZO6nuGwvI/0rAt6Sj6d6TQpynTC1uH1Wb3G1po/Pb
+         kW26pum9b5dodtbo63ELzAkQ78ih+WslGMAyTizJFN9vKG4LCyYm0lsaMMs5Os6owNUv
+         YoCUCl0txqXsP1GD7IRY2fFK5IfJ6lOYVhD04l1Ood2x1CoLqOai3+HguSvpt7FLiKdc
+         c0mXT3XjqQrzLGlkcNPN9tWQ+0YUzdqsrpPP3Yp866B3cw2OFllT0SPs8rwkS9sPLZe5
+         aK9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720443135; x=1721047935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tWQFkOE0z0Ym6Txw+ydgQQZdK+TeJwfjOMSz/3B528I=;
+        b=DwUjPCippGC8PHWp/3QmwFRVCuOuU3XzD65IfpL116alCcm9I+FKg/SA8zgYwyFkO1
+         vvr3YTMCBMnKj9HARtzDF6aTgJY5mYA38GXRsPnC21uC8CE7JCWPfLci6T9/4XcC0lho
+         RBU+7X67Juw+/Lf6iR1W1nNrkgr/0v8K7U/bpPCl40G0R8Z+oAQ20XmNIOYIpDEKHNDi
+         5l2DG5Ld7MW4zq/BNfpf8WgMGif+8B7akHY+yN7/cjADPRre63nB7WwGDJWX2RgFp7cB
+         G74wdq8woW+lKULs7glOMGMoYIGZJQ0tk1ZRtxRTvYvdde9pRsG/qfB0Tgv+FTExVmrT
+         fu9A==
+X-Gm-Message-State: AOJu0Yx4WHpfLq40fzyOs0eCHD/YJa5RmH4G7PNh+v5BX6CVccauF7tl
+	R3kThRBqg/KJGqefRBRIx1sVBkOf7JJgnPpJKMIbCn3tRXoHINOm2iJsD6NNYr0BsfPiafhdrtD
+	5EkRxf5HJR23OCf1LuzwCAp+UgsLwdlevyNyM
+X-Google-Smtp-Source: AGHT+IG8zzbRg4bwkTys4DhYJPBGGaNK8oeWdV1kR+CQ9qZu8soabHqXFh7VGeTZX0rBfmAwmZ4oYhgYUUAPDTy/hQA=
+X-Received: by 2002:a05:690c:a9e:b0:651:79ee:d14b with SMTP id
+ 00721157ae682-652d62e4aafmr145100107b3.29.1720443134920; Mon, 08 Jul 2024
+ 05:52:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,15 +62,15 @@ References: <20240629084331.3807368-4-kpsingh@kernel.org> <ce279e1f9a4e4226e7a87
  <CAHC9VhRoMpmHEVi5K+BmKLLEkcAd6Qvf+CdSdBdLOx4LUSsgKQ@mail.gmail.com>
  <CACYkzJ6mWFRsdtRXSnaEZbnYR9w85MfmMJ3i76WEz+af=_QnLg@mail.gmail.com>
  <CAHC9VhRA0hX-Nx20CK+yV276d7nooMmR+Q5OBNOy5fces4q9Bw@mail.gmail.com>
- <CACYkzJ6jADoGNuPP3-1wkk-kV7NOQh+eFkU5KEDEZgq9qNNEfg@mail.gmail.com> <CAHC9VhQQkWxMT3KguOOK7W8cbY-cdeYTJSuh=tSDV4jsqp6s6g@mail.gmail.com>
-In-Reply-To: <CAHC9VhQQkWxMT3KguOOK7W8cbY-cdeYTJSuh=tSDV4jsqp6s6g@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Mon, 8 Jul 2024 12:04:36 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ5gAnbXX_aWy6952s2O5L2p3Mw14OUfo9Z-Od6_Dp2HLQ@mail.gmail.com>
-Message-ID: <CACYkzJ5gAnbXX_aWy6952s2O5L2p3Mw14OUfo9Z-Od6_Dp2HLQ@mail.gmail.com>
+ <CACYkzJ6jADoGNuPP3-1wkk-kV7NOQh+eFkU5KEDEZgq9qNNEfg@mail.gmail.com>
+ <CAHC9VhQQkWxMT3KguOOK7W8cbY-cdeYTJSuh=tSDV4jsqp6s6g@mail.gmail.com> <CACYkzJ5gAnbXX_aWy6952s2O5L2p3Mw14OUfo9Z-Od6_Dp2HLQ@mail.gmail.com>
+In-Reply-To: <CACYkzJ5gAnbXX_aWy6952s2O5L2p3Mw14OUfo9Z-Od6_Dp2HLQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 8 Jul 2024 08:52:03 -0400
+Message-ID: <CAHC9VhQ+KkqTZdvo0cT6-F1fJaG3QgBEnMQqHkiN-GToH37BuA@mail.gmail.com>
 Subject: Re: [PATCH v13 3/5] security: Replace indirect LSM hook calls with
  static calls
-To: Paul Moore <paul@paul-moore.com>
+To: KP Singh <kpsingh@kernel.org>
 Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
 	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
 	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
@@ -64,72 +78,67 @@ Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 6, 2024 at 6:40=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
-te:
+On Mon, Jul 8, 2024 at 6:04=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote:
+> On Sat, Jul 6, 2024 at 6:40=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Fri, Jul 5, 2024 at 3:34=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
+ote:
+> > > On Fri, Jul 5, 2024 at 8:07=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > > On Wed, Jul 3, 2024 at 7:08=E2=80=AFPM KP Singh <kpsingh@kernel.org=
+> wrote:
 >
-> On Fri, Jul 5, 2024 at 3:34=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
-e:
-> > On Fri, Jul 5, 2024 at 8:07=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > > On Wed, Jul 3, 2024 at 7:08=E2=80=AFPM KP Singh <kpsingh@kernel.org> =
-wrote:
-
-[...]
-
-> >
-> > Paul, I am talking about eliminating a class of bugs, but you don't
-> > seem to get the point and you are fixated on the very instance of this
-> > bug class.
+> [...]
 >
-> I do understand that you are trying to eliminate a class of bugs, the
-> point I'm trying to make is that I believe we have addressed that
-> already with the patches I've previously cited.
-
-The class I am referring to is useless hooks returning a default value
-and imposing a denial / enforcement when they are not supposed to. If
-you think this class of issues is not relevant to the overall LSM,
-sure. I would still like BPF LSM to not add default callbacks as I
-have always maintained since day 1:
-
-https://lwn.net/ml/linux-kernel/20200224171305.GA21886@chromium.org/
-
-BPF LSM does not want to provide a default decision until a BPF LSM
-policy program is loaded,
-
->
-> > > > 2. Performance, no extra function call.
 > > >
-> > > Convince me the bug still exists first and then we can discuss the
-> > > merits of whatever solutions are proposed.
+> > > Paul, I am talking about eliminating a class of bugs, but you don't
+> > > seem to get the point and you are fixated on the very instance of thi=
+s
+> > > bug class.
 > >
-> > This is independent of the bug!
+> > I do understand that you are trying to eliminate a class of bugs, the
+> > point I'm trying to make is that I believe we have addressed that
+> > already with the patches I've previously cited.
 >
-> Correctness first, maintainability second, performance third.  That's
-> my current priority and I feel the maintainability hit doesn't justify
-> the performance win at this point in time.  Besides, we're already
-> expecting a big performance boost simply by moving to static_calls.
+> The class I am referring to is useless hooks returning a default value
+> and imposing a denial / enforcement when they are not supposed to.
+
+If a LSM hook's default value were to result in an undesirable
+behavior within the kernel that would be an issue regardless of what
+LSMs were involved and we would either need to modify the hook and/or
+the default value.  I am not convinced that we can adequately solve
+this entire class of problems simply by allowing one LSM, or even
+arbitrary combinations of LSMs, to disable or otherwise disconnect
+themselves from the framework.
+
+> > As the BPF maintainer you are always free to do whatever you like
+> > within the scope of the LSM you maintain so long as it does not touch
+> > or otherwise impact any of the other LSMs or the LSM framework.  If
+> > you do affect the other LSMs, or the LSM framework, you need to get an
+> > ACK from the associated maintainer.  That's pretty much how Linux
+> > kernel development works.
 >
-> > As I said, If you don't want to modify the core LSM layer, it's okay,
-> > I still want to go with changes local to the BPF LSM, If you really
-> > don't agree with the changes local to the BPF LSM, we can have it go
-> > via the BPF tree and seek Linus' help to resolve the conflict.
+> Okay, then let's not make an LSM API, I will handle it within the BPF LSM=
+.
 >
-> As the BPF maintainer you are always free to do whatever you like
-> within the scope of the LSM you maintain so long as it does not touch
-> or otherwise impact any of the other LSMs or the LSM framework.  If
-> you do affect the other LSMs, or the LSM framework, you need to get an
-> ACK from the associated maintainer.  That's pretty much how Linux
-> kernel development works.
-
-Okay, then let's not make an LSM API, I will handle it within the BPF LSM.
-
-The patch I proposed should not affect any other LSMs and is self
-contained within BPF LSM:
-
-https://lore.kernel.org/bpf/CACYkzJ6jADoGNuPP3-1wkk-kV7NOQh+eFkU5KEDEZgq9qN=
-NEfg@mail.gmail.com/
-
-
+> The patch I proposed should not affect any other LSMs and is self
+> contained within BPF LSM:
 >
-> --
-> paul-moore.com
+> https://lore.kernel.org/bpf/CACYkzJ6jADoGNuPP3-1wkk-kV7NOQh+eFkU5KEDEZgq9=
+qNNEfg@mail.gmail.com/
+
+The code changes may be self-contained within the BPF LSM, but it does
+appear that the bpf_lsm_toggle_hook() function directly manipulates
+the LSM framework hook state which is not something we want to allow -
+none of the individual LSMs should be directly manipulating the LSM
+hook state/configuration.  Although perhaps I'm missing or not
+factoring in some context around the patch linked above and that isn't
+the case?
+
+While I had issues with Kees' comments, at a high level his suggestion
+of dropping the last patch and moving forward is something you should
+consider as I don't see this a good path forward with all of the
+approaches that have been discussed thus far.
+
+--=20
+paul-moore.com
