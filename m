@@ -1,167 +1,113 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FBE15B57D
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 14:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C345218C34F
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 15:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720536695; cv=none; b=KlprOKXr5K1tALgDa2VCPWJC82YG95grJv9Ai/W8ViCWt8ZnD0lZE0Nj5tca8mbZtRVbfhPL4FgYtw6u4S+jyQsXgqJIOc1mV57nnnj9rIJIlgvCUAPmeg/ufbniWQA802BgBfyRuRSf/PZX+WXSnP1JjVY15yCSdrC7EetZt80=
+	t=1720538343; cv=none; b=cvw+1jSnaeZGdBiKD5l7ohavqHg2cBUZs9kR4Zct9HD/GILMoKIeODHOunaDqpC6wVZG0xzk1TeSPHOlmgDVXqEwpqUaRltpamIOau2+U2avWm+w5VvreMPCkvcUVmMxQ8ZArxNjSjDcFGXDT2ZTnhDtucr7dviLm5hXUbrwg0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720536695; c=relaxed/simple;
-	bh=UVpvvv5hcYG8IH0FzAYJgDALiwcVm6EMz7HdnduQllU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sad+nDKEE3f8cIz6167sOxQKfF2jaiZO6gC9baKUflB7wGlXPRksOmtBbJNI6jy8lLNIpjl2FTFQD0V34LHlqC/O3jUROsElbJKxYfiIrRbuCZVj9jD68JpYpKUJKTDY/gF/pWYlP0TGh5rh5qAJpXmZNG3h98OJem0ze1/3fRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bE80LEc0; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1720538343; c=relaxed/simple;
+	bh=ojN2JmcT7kvuAEXfKcAoFG86zqUA6Rqq1vkhBEhguOg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ry+3agffDy8wQI6ZJQiaqsdr59SLLgOVxdoGZYp4QaM4gzMPA73jAbM5K5NsX0YFQGUwLEBOinWn8+4VXDaBtL0A+TruYVfiwffz09LyTzWB4q3GhYQ5rG157B5O2ozxvPgpELdmPfMPeuiMSiBfRdg92EGRiK4hM3Jt+gTVdwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1RPpgbzI; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bE80LEc0"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e0361c767ddso5008918276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jul 2024 07:51:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1RPpgbzI"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-650fccfd373so82444127b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Jul 2024 08:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720536693; x=1721141493; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X2cIr3JLhxqqtsJCxEtam/aozkG3wv5prUSPsfUfDOk=;
-        b=bE80LEc0qkt4DIuq0C0YoqXTkc4K0kk9sm/dxaOTKaR8d/j78WLTyP6QAOPT6YS8pd
-         GFjU6NSit7ZHKRRrr1lX/nSDNjEqnjy3RiOvmSxEIaIFtZLSJ+mcUNbt2EHby6LTVaEq
-         43hIEToLjAgAMV/qFdDDZ3SpQ2K2I6W3+pgwYAc3vSPKFbjVrSF4AMtCM6fEaUuQyjM/
-         p5hu/5hFsgJmTlHrfco3EFSjCGodC87gkZ2d7NTzECynCw4SvpO7Kf175a6jnTBikAep
-         nFp4ux1TI3NQLau0cSK0usx0r+stLh5Wp7YedO6hZ1M3XM5veRCOWcfHRham1uiB0+yu
-         n+2Q==
+        d=google.com; s=20230601; t=1720538340; x=1721143140; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WFa9c2fe6FXvwC1bTAk+U1J7rwHtRLarFBf2iyFVXFo=;
+        b=1RPpgbzIGzHo3yWZJf4MsJNhfbVGOR5W46lwsH9F7sdjsJc/Q64O2ZOHjRg5AXOjur
+         TjOk7MRSlsyr6otXso+gw4UZ4IxGZ7p8XdG0bdRuh/agGo+4nuNkxkz/3jGUxkutCx2P
+         EPlgZbQgRmvW1vFhiTocAtPbl3fAiivnzqFDJkp1njpS9tkhLMsBtjCvu8VFdy18ttZo
+         W3vkT6Rp+puih+IBWSyrijQ6vyf2+2gitNeYtZUWxptbb5xUnJ6UU9jCzlh3dTllU0xC
+         JtQ6UU/Ra3HHthOAtekVePEixR1y9ZrKPzlHTJP0lnlqn9zb8hzgvblHGyEsz2xcBzfH
+         F+PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720536693; x=1721141493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X2cIr3JLhxqqtsJCxEtam/aozkG3wv5prUSPsfUfDOk=;
-        b=Hz9bv6CTd6kyKLaC9+7FepSB1xEs/sKj0UFSKG0DT0EDTRtGQIPdib+mgVxx8xgUpC
-         vqsDReZ1BWN6L4yX3HDui544szyDti2qwPBWj7Tmzw1vNapaSTrPZy8yJXhIsWL/DPU0
-         eGtO2xL2ju0nU8bjn9TK6sSZ46bTlCskj8TsnDHzP/owELV8JoukoA4XLeMbQjgOLgh7
-         q0blj/rLmhccvRSpAMWyJ8pqozBt6LVFEdzmiymwrOJvT/xsycf+hfGjjovi7MlLOc9Q
-         jVKh41ng1GgLj4zroewwjSEHwfMQSWB11xNBdYQ2PXVQgc5rv4nxH2sFnP5xVY2WaiIk
-         NA1w==
-X-Gm-Message-State: AOJu0YyNN7YxLGyBtO+1ucKHN6ilNHfqWoxGrjxdrME5E6STEV7v8sW1
-	uIcMoCP3NBPplrrdLynf/F0Ew5HobtblIWClmteDiP8Q/zXE7pZzekq9aFOOE4QowDvHWe6Wi+c
-	InFuuAeHXleFkXqj1azVtJ8Inxt+luSrQleNq
-X-Google-Smtp-Source: AGHT+IG2FdoxZPzV+YqmBDtPFwV2kV8zsMsNY2H/39Lmek9L5lLQSS6rMDUZt6mnCu3uhTMZi25NRsoJXHcx1P6zDPQ=
-X-Received: by 2002:a81:b663:0:b0:61d:fcf7:b79a with SMTP id
- 00721157ae682-658ee79043emr30907067b3.11.1720536692759; Tue, 09 Jul 2024
- 07:51:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720538340; x=1721143140;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WFa9c2fe6FXvwC1bTAk+U1J7rwHtRLarFBf2iyFVXFo=;
+        b=Ue7IDXNy8sIXlC42dINnw6r4ocvd//Ej1pHuOVWq79ArG/nsc4qTi31O44RV+NQE2O
+         glObbFTy7cPymr1+7u77yQFE/Q72CwRnwXI0tCrWlezOV2+bEv0/RWGe/KzWPIU6Idsr
+         5S/xYgq48uWnXgzbed+IZ5tKOcfiHr737Z93BhjjBd1IFJIB/UuuYV21nR7RbAZspDOV
+         92DE3uAcDu45AFCg7gctbSbbArBjoIaW2O8+phoaINbSNXwGHDZR2y7Cw7G4UfKlL/4K
+         x5v58d+33ne992vo8tmR6sqNo3ceHvnOKxl+frICJXkY2qWkdVuZwkveO0ZzFlTWlPg8
+         ZxxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlNIizQR+aMO2UcluwFbOaWHayG5EEHTXGxhjIDQV1/ithZwZSelIl+zCz6oluS3SjYt44AJLVVXu6ARrN1twlwKSw2lo2G8g+qbt6HCktde/QNW9K
+X-Gm-Message-State: AOJu0Yw2bR8+Shy0ISkW6yMclmDd4C2awapphA//ZMU6Q6oJQIgoHngU
+	xk7D5AeV1vUmbqyKGaTOxKlZLCdBKByby3x1ye6RcRFkIreg1xNDlxvriT1iIcdfzGFJTzpcBTU
+	LuA==
+X-Google-Smtp-Source: AGHT+IG6s2DL4z5jJ3caJ1nyKbichgc+9treufuJXMxHE5/JSZIsXGqVg7GvHDIihpvMghDuHrXil7HRN0A=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:690c:46c8:b0:62c:de05:5a78 with SMTP id
+ 00721157ae682-658f01fd061mr279197b3.6.1720538339849; Tue, 09 Jul 2024
+ 08:18:59 -0700 (PDT)
+Date: Tue, 9 Jul 2024 17:18:57 +0200
+In-Reply-To: <70756a7b4ed5bd32f2d881aa1a0d1e7760ce4215.1720213293.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240629084331.3807368-5-kpsingh@kernel.org> <f40a3d1bc1cd69442f4524118c3e2956@paul-moore.com>
- <CACYkzJ4R-zG8=Xet4v-mf-Dmi_V9cHL7f0EiOEKhnPDxwsqx1Q@mail.gmail.com>
-In-Reply-To: <CACYkzJ4R-zG8=Xet4v-mf-Dmi_V9cHL7f0EiOEKhnPDxwsqx1Q@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 9 Jul 2024 10:51:21 -0400
-Message-ID: <CAHC9VhSH+JkgxHccKBb-11o0QRjOHjB2T0q8tSGw7M7CxQyWhQ@mail.gmail.com>
-Subject: Re: [PATCH v13 4/5] security: Update non standard hooks to use static calls
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
-	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
-	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
-	song@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <36958dbc486e1f975f4d4ecdfa51ae65c2c4ced0.1720213293.git.fahimitahera@gmail.com>
+ <70756a7b4ed5bd32f2d881aa1a0d1e7760ce4215.1720213293.git.fahimitahera@gmail.com>
+Message-ID: <Zo1U4dX-kGcm0hHA@google.com>
+Subject: Re: [PATCH v1 2/2] Landlock: Signal scoping tests
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: mic@digikod.net, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bjorn3_gh@protonmail.com, jannh@google.com, outreachy@lists.linux.dev, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 9, 2024 at 8:36=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote:
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
+On Fri, Jul 05, 2024 at 03:21:43PM -0600, Tahera Fahimi wrote:
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+>  .../testing/selftests/landlock/ptrace_test.c  | 216 ++++++++++++++++++
+>  1 file changed, 216 insertions(+)
+>=20
+> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testi=
+ng/selftests/landlock/ptrace_test.c
+> index a19db4d0b3bd..e092b67f8b67 100644
+> --- a/tools/testing/selftests/landlock/ptrace_test.c
+> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+> [...]
 
-...
+> +static void scope_signal_handler(int sig, siginfo_t *info, void *ucontex=
+t)
+> +{
+> +	if (sig =3D=3D SIGHUP || sig =3D=3D SIGURG || sig =3D=3D SIGTSTP || sig=
+ =3D=3D SIGTRAP)
+> +		signaled =3D 1;
+> +
+> +	// signal process group
+> +	//kill(-(t->pid), SIGKILL);
 
-> > > -#define lsm_for_each_hook(scall, NAME)                              =
-         \
-> > > -     for (scall =3D static_calls_table.NAME;                        =
-   \
-> > > -          scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++) =
- \
-> > > -             if (static_key_enabled(&scall->active->key))
-> > > +/*
-> > > + * Can be used in the context passed to lsm_for_each_hook to get the=
- lsmid of the
-> > > + * current hook
-> > > + */
-> > > +#define current_lsmid() _hook_lsmid
-> >
-> > See my comments below about security_getselfattr(), I think we can drop
-> > the current_lsmid() macro.  If we really must keep it, we need to renam=
-e
-> > it to something else as it clashes too much with the other current_XXX(=
-)
-> > macros/functions which are useful outside of our wacky macros.
->
-> call_hook_with_lsmid is a pattern used by quite a few hooks, happy to
-> update the name.
->
-> What do you think about __security_hook_lsm_id().
+There is commented-out code like this in various places in this patch.
 
-I guess we can't get rid of it due to the crazy macro stuff with loop
-unrolling, BEFORE/AFTER blocks, etc.  Ooof.  If you were looking for
-another example of why I don't really like these patches, this would
-be a good candidate.
+I am pretty sure that scripts/checkpatch.pl should flag that.
+See https://docs.kernel.org/dev-tools/checkpatch.html
+and https://docs.kernel.org/process/submitting-patches.html#style-check-you=
+r-changes
 
-More below ...
+I personally just keep a checklist of things to remember before sending a p=
+atch.
+(rebase as needed, clang-format -i (for Landlock files), run tests, check c=
+ommit
+metadata, git format-patch with -v and --cover-letter, scripts/checkpatch.p=
+l,
+edit cover letter, git send-email)
 
-> > I know I was the one who asked to implement the static_calls for *all*
-> > of the LSM functions - thank you for doing that - but I think we can
-> > all agree that some of the resulting code is pretty awful.  I'm probabl=
-y
-> > missing something important, but would an apporach similar to the pseud=
-o
-> > code below work?
->
-> This does not work.
->
-> The special macro you are defining does not have the static_call
-> invocation and if you add that bit it's basically the __CALL_HOOK
-> macro or __CALL_STATIC_INT, __CALL_STATIC_VOID macro inlined
-> everywhere, I tried implementing it but it gets very dirty.
-
-Thanks for testing it out.  Perhaps trying to move all of these hooks
-to use the static_call approach was a mistake.  I realize you're doing
-your best adapting the static_call API to support multiple LSMs, but
-it just doesn't look like a good fit to me for the "unconventional"
-hooks here in this patch.
-
-> > I think we may need to admit defeat with security_getselfattr() and
-> > leave it as-is, the above is just too ugly to live.  I'd suggest
-> > adding a comment explaining that it wasn't converted due to complexity
-> > and the resulting awfulness.
->
-> I think your position on fixing everything is actually a valid one for
-> security, which is why I did not contest it.
->
-> The security_getselfattr is called very close to the syscall boundary
-> and the closer to the boundary the call is, the greater control the
-> attacker has over arguments and the easier it is to mount the attack.
-> This is why LSM indirect calls are a lucrative target because they
-> happen fairly early in the transition from user to kernel.
-> security_getselfattr is literally just in a SYSCALL_DEFINE
-
-I recognize that your comments are in reference to that last flaw
-rooted in the hardware that used indirect calls at an attack vector,
-but wasn't that resolved through other means?  I never saw the PoC or
-had time to follow up on whatever mitigation was ultimately merged (if
-any).  However, my understanding is that the move to static_calls is
-not strictly necessary to patch over that particular hardware flaw, it
-is just a we-really-want-this for either a performance or a
-non-specific security reason; pick your favorite  of the two based on
-your audience.
-
-Regardless, since none of the previous suggestions/options proved to
-be workable, I'm going to suggest we just kill this patch too and move
-forward with the others.  I had hoped we could get the changes in this
-patch cleaned up, but it doesn't look like that is going to be the
-case, or at least not within a week or two, so let's drop it and we
-can always reconsider this in the future if a cleaner implementation
-is presented.
-
---=20
-paul-moore.com
+=E2=80=94G=C3=BCnther
