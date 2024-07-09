@@ -1,62 +1,40 @@
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30BC1FA3
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 23:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53851189F38
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 23:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720567763; cv=none; b=l+CckiGTuXeu4rvx9KcUNWnsXNS0nSp74HgExnqNSeMbjJkSVayCUo+WkJ7KboZGT9ZdqqQLBLuWNYq0WD1edt0hLHAISwXtvEPbYYKjJyEKKHs63R59egOUoZczKPfb6PVBcunj8VZV0nV4TN9DHRqdkcwbylgm4s3yN2tsBnI=
+	t=1720568346; cv=none; b=bZqK5SU+bJPFS3fHk8ZTB4EbBkbZfaIEZiPiuoRgYnHGW5M6apQBgMJt/bW4+wC24nOnCnX25NXMPWr/HeHUVbzhV7PSlTVuLqOuU1XLNxh5+K7WKxA32yJn3Y8COA3eQxXa27sHjOPlc+JPkO5kh160MkXV6o03Cm0aK+lWq/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720567763; c=relaxed/simple;
-	bh=D4QqHq0Smlh9kWEXCNEgrkLHldkLfT2QHQNDpUaOfj4=;
+	s=arc-20240116; t=1720568346; c=relaxed/simple;
+	bh=2FXqNXNL2N6Qz7qbQ4XkBfrFDLBsYgz1DqNduOFSLo4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CoKjKlPiSTf9nuFwkw/SQH4QVAGNnQNQDYUttfzZoFSyvi15KhtKN6XK/v5pnkLxanc0WyI4/Hxl3ThNymzuuNfNNnA7Q1qy7ufovKghfxtXVBiEDBiLpGXEq8IN/l+fse+w7stYbBO0UPtt68S8VAqm2CXF0nVsqUvl/VlWGS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=AQk/gr/k; arc=none smtp.client-ip=66.163.187.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	 In-Reply-To:Content-Type; b=H3QSE2l8Ll2iUoKPQnxwFc1XYGJKkWl0R3qX3nltuNpK2yVc+LqHvn2pLSi0eHh6PTgtLE8rloZ676Nal8aHbM/2vJvTrInDdx0RSGDgv7p7Uf21/9SuCMvww9mOdoUp/RH+tRtm+v++kJOetd+uM1mkfuWU+VJMaqmzHu1e/WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=k6maP6L7; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="AQk/gr/k"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720567760; bh=2kbytU94C9ET8BdmiNtibOr2X3EZ/dyFxV/PlrqOt2g=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=AQk/gr/kV6cd0I8CcIJfWUnxlncG8Nr/loYxblCshJ2utGdVdbIGEqfta8+bw22dPMFhV7RFQ4d11o39BCMsthOc0O/dGNz0N9ZmzfBjFQaobGM4TZofj4CoC1MGRYucMiu8YjKkblt5PU5WNOFgYUcC5w11bJRCL6Fb263QPUIvbn8xF/Fp/HOPKwci+NKTeZvp9Kdtt6kOVVGyBU9Z9MruADtzfdbIOWY9dcpYo/syds5LBeYejwtPDIpq64UMzI6P4ed41jhkEwVU1H6FvQeHOvXjzI1Ig0v9YdszUrFJK55o79iIrVTRD3nyCMXyLro1hE5o3chy7051fovi4g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720567760; bh=Rk+BKWirh9uUBElKXprumKvtxdzwGPaLqjTvdeBFWgA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=uIoZj6aghC3r5TsGIF/wU1Lp8ieZzLsWNzaDplqDct2lU51rnxxtWoz0c/QpgMaksVrmLfcKEeady1FvyUedHj68suBF90Pih1ZXsf9ZdG43cIdDmXRDht0UsThCu2W3S4ammJHFif+LOUNGEuVR8wsvEgP7Uy0g1Hu6LJ8VxA1rjnCbyEoHw3sFKxu3estdzmWUFLAORwrV3Jeem5euiF1psI3gJbJjRj77Xvg5+OrnJ9i+8CrwOK5OOynJnOIv4yjRj3znaEDue3/hqFS6DSFjT5i8uX4lTLHD/FVxXn3XhJ77hloqv1BTkJGf8jTkvS/c12jpQoUaJTSahUEFJA==
-X-YMail-OSG: 7Ar4nS0VM1mGzewVDzuJQ6X_Nxefr9gNCLuLQzbykX9p22RYr1q7sj_jkdC_.da
- VVQA9KhCOiB.NjALTLLrNlteXy_D9vC2wdSwYS5JKs3EnP7511.lG.WaLU_AweicKjhnH_Ea9INc
- I62htVUrzN_pNJfv2tBAO_QAk5TXSQezjRWl5nNuPgd55_u9rBR..kbQADGvTV4A2XSh7N08CxK3
- jwjCYDWnT_kQNOXqquRbC4pOq8tCT07QtCcKhFSqUSAwmo9y_WeNv6KOKg3LGeqi6PHb9N4IIC_z
- y7BF_dnp36VMEqqzwxqOX3xzPd3P0OLEMFaUOj0EuP_Xfe113iKPNxaI9jdQKgFVNm64Zb2roKJc
- .KLEVWjS2XEhuhqpw_CGkst6ywI6m7bduoHhNnb3ZI.VY1ITPxcvfcTC1xhc4CuzA_95bGWUpHtz
- j6ED2.cnIQSNz3QcxkOYZct8b99nlCzPgdiyD2s6.9ARtGs_bfQtptKPmzgzFTuTxl87zfbH4H2n
- tvNHpVqMqlfJ9mObkOiq33buWLdbITuJsTNd0rwWR7TJgPPyOdm.QEDUpXqYCii4m6jy.HZ8FkZN
- UKX.nqu3GDCnw1zZVrQsUtPW1Avh9g9W9lQVD_a.YbKjE7YvD45DyW4L2oCFwDq1cqavfSZPHT2L
- bhpeJqnN0ajP8t1oknAMX1aBNByEqYztILZ4hA_ghInLE3xd0m5bQM_HCSgJKW7ueYR_u21.nuPV
- TK9DiA6fDkREEFXOc9ZcnxUh2Xt9.PaMBuB2AScRa91sQHiMKcgd2Ep9EaBVgSV9_5acKSN0AMSb
- eRJuLTVkU07fvmO_A4WAH7S6Q5zIjD0vrVbrQeDitIKwJcj0De.b9KchGBMSmshiVGtnGSMvXo2p
- 5BFZEauJTWv3eNlCcriy3qFmoB.9u.4iF6Ca5RhcHD1bsZ9jSSHwZPs2BgeRhNvFWxhG0T57lLAn
- VGvLuZvmplEZoN6J5jrTHjAzDZvcAXqVWX3YngC2JViIJzRXnwmFmMnZA95maSHUwHxvpfYn_gy1
- npy6R8.Yw4jRsQKE1jaU4s05xFLc.2SxEu0aBSWwhyvlZb5qPvmZyGbU6YJ2ZdMNm20noJyAqB2h
- _JaEMrEE8fmiYyw3PiwiTcWT6B0XdiPRpbJeEmKI5if7Cjp0H20cdgeIrPMq7kXq_X4rdd4ls1im
- _epuY8Q.NZb2MOCUlroKNgo4OowmIGmcL2gc61E_Ka1_1IDbvg2YOFKMKQdGLJ9EPyqR7PQ_lr1s
- zZ5MDKsEnC7hy2Dty_FcXQewfikJ93LHIpUKzwaizaaE2Jc32j2yFlx8gcXBJsRvYVvasPWLiWFt
- 2qqc61T0D3UW__.Z0sH3hUk87nf7hAN65IjPlOq3LxWSPd_PPmFV.yvUlCWkEV.ylrnihGig6mrl
- fSp0AcnK7HXZwIoN_id1fNNaFg7FHVAWd3LfAUyMeYc4UczDOGFgAeLDy9wKm54qKybG.dtilpZi
- hBlxemR_n8rPzMYkm9CENJPQkX7AUGjIkfiIPBex4LruF1PD0OTB70D311jcSh9Ek_rU0SYXsEWz
- tlsgo5aOBfhkzz30ZnESZzGDDyGPEgxKC.fxZa7AXC6.ONs9EdAszSpgWk7tahEP_vH.Ti9clepW
- 8TsK1uhHMINZKMa70Q09XDYQsO1lcKtB1QTSbCTo_Qtj2g8KMBE49MBY3E9Yg.fsRgv44d4s_C33
- fxf84NQSnnOdyXp9.jqbwqTLQpRALxNYK6rrij6bUxz7qRouh7Sn5IlWWxguqpcdGTtphy4yUdt2
- oIXwDorL9a.FjzvuFIrhZyveja2LtaoZUogLH9dOnYywlLtTzfOAaeEY6FMsPM87FSXySH6Nefzz
- v87vQI0mNOcOKhDg4Vi5Vz2uNexhMRAhchMRDQ1Gic125qh1dysWcHkK9YhRDTd99fm_uPqZknzg
- amP0J4HiisNAwJ0R16Z3SvOlRupzfIpIFCwQJVSzueRbCEitRnT9gpKyhM8zYQfS4wWgre0SZKOY
- SnP7CLt2uIsWlpWOjwIsmg4BgRuiG1xxXPk6rKnikp6RxyZjYktYx4X338fLVtBYbt2v9GfX7Yba
- hHN_VHenpQI.XR8o7AI0ZGMMHiHWDIPtE6sXPQ1lLQ8GkqL1FhiWIc_ih_7SBA3pW_0pSfVth8Lb
- NUaPVNdy6yk7QKEYfxalLfmVU5EDTUPeYZVXV6sjR43oOkrN2S0VeYpa.Pk6np6pbOpWllCv5bal
- 8lBi0lh22eN5H6qMtQwT4KLmWDvaBhURylTMQpxHoodBCmnYfveDVsNvIFhv3y19q8wTM8RsHvOY
- YbSRpmL08LQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: cdccb336-8414-4cb0-82f4-154895454d70
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Jul 2024 23:29:20 +0000
-Received: by hermes--production-gq1-799bb7c8cf-zh7nt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9b6bd9bddf87b7cf998d00607d78f5f6;
-          Tue, 09 Jul 2024 23:29:16 +0000 (UTC)
-Message-ID: <b8744973-2236-4f1c-86cb-27c92e753bb2@schaufler-ca.com>
-Date: Tue, 9 Jul 2024 16:29:14 -0700
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="k6maP6L7"
+Received: from [192.168.192.84] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 54DAF40D7C;
+	Tue,  9 Jul 2024 23:38:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1720568340;
+	bh=kjjEZzYD7DbmAE2OkipOXkd9j0qVtZvDidHf0FohraY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=k6maP6L7KOsPyw09Zpyu35xv/oJvWD4dcR8TFHGjXZlY8DmsH2EEvzmYV2qimMcnM
+	 JNCeMvpYOUqzInYltirllI1m2JfEFhjUOhH7y5iGtdN1JniKRSkQ66NBm69tl/77JA
+	 BuSRcVo/8ov7TmNrlmStIf+5Ns042XdNWJ4u1BJ9qv2RDMxUDt1gZBJtv6Io0wWHjq
+	 hRBEhII7h86/JODXYq7OA2RE7aZ47q4F+yt4em3XKCHjLRvP1HT+Ja+O9QOiwJdQv6
+	 +Dwe+XvZZj4EWHLmcFq/IsbEwPoFLGXrSmmBtXT8RBYIVaYz9UWM7IrOUUefPhpISf
+	 wc9zNzPvKIN0w==
+Message-ID: <d5d3062f-4bc0-43d0-855e-d7449fefb28b@canonical.com>
+Date: Tue, 9 Jul 2024 16:38:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,89 +42,211 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] LSM: Infrastructure management of the sock security
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
- serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+Subject: Re: [PATCH 5/6] LSM: Infrastructure management of the infiniband blob
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+ linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
  penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- mic@digikod.net, Casey Schaufler <casey@schaufler-ca.com>
+ mic@digikod.net
 References: <20240708213957.20519-1-casey@schaufler-ca.com>
- <20240708213957.20519-2-casey@schaufler-ca.com>
- <CAHC9VhR-OOsjS-gB+Y35_bsLxTS__eJEwrYOrzLYou8gU10imw@mail.gmail.com>
- <f815cc68-ca2d-4bd0-b5fe-7093b5bc5e4a@schaufler-ca.com>
- <CAHC9VhRrKOcayQzY1GeExqufzs=COGQrkcnKeW-kAxKrrr0BeA@mail.gmail.com>
+ <20240708213957.20519-6-casey@schaufler-ca.com>
 Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhRrKOcayQzY1GeExqufzs=COGQrkcnKeW-kAxKrrr0BeA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22464 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20240708213957.20519-6-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 7/9/2024 4:05 PM, Paul Moore wrote:
-> On Tue, Jul 9, 2024 at 7:00 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 7/9/2024 12:15 PM, Paul Moore wrote:
->>> On Mon, Jul 8, 2024 at 5:40 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Move management of the sock->sk_security blob out
->>>> of the individual security modules and into the security
->>>> infrastructure. Instead of allocating the blobs from within
->>>> the modules the modules tell the infrastructure how much
->>>> space is required, and the space is allocated there.
->>>>
->>>> Acked-by: Paul Moore <paul@paul-moore.com>
->>>> Reviewed-by: Kees Cook <keescook@chromium.org>
->>>> Reviewed-by: John Johansen <john.johansen@canonical.com>
->>>> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> ---
->>>>  include/linux/lsm_hooks.h         |  1 +
->>>>  security/apparmor/include/net.h   |  3 +-
->>>>  security/apparmor/lsm.c           | 17 +------
->>>>  security/apparmor/net.c           |  2 +-
->>>>  security/security.c               | 36 +++++++++++++-
->>>>  security/selinux/hooks.c          | 80 ++++++++++++++-----------------
->>>>  security/selinux/include/objsec.h |  5 ++
->>>>  security/selinux/netlabel.c       | 23 ++++-----
->>>>  security/smack/smack.h            |  5 ++
->>>>  security/smack/smack_lsm.c        | 70 +++++++++++++--------------
->>>>  security/smack/smack_netfilter.c  |  4 +-
->>>>  11 files changed, 133 insertions(+), 113 deletions(-)
->>> ..
->>>
->>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>>> index 7eed331e90f0..19346e1817ff 100644
->>>> --- a/security/selinux/hooks.c
->>>> +++ b/security/selinux/hooks.c
->>>> @@ -5495,8 +5488,8 @@ static void selinux_sctp_sk_clone(struct sctp_association *asoc, struct sock *sk
->>>>
->>>>  static int selinux_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
->>>>  {
->>>> -       struct sk_security_struct *ssksec = ssk->sk_security;
->>>> -       struct sk_security_struct *sksec = sk->sk_security;
->>>> +       struct sk_security_struct *ssksec = selinux_sock(ssk);
->>>> +       struct sk_security_struct *sksec = selinux_sock(sk);
->>>>
->>>>         ssksec->sclass = sksec->sclass;
->>>>         ssksec->sid = sksec->sid;
->>> That's new :)
->>>
->>> Unfortunately I merged a previous version of this patch into lsm/dev a
->>> couple of weeks ago (see below) which appears to have a bug based on
->>> the changes in this revision (lore link below).  While I'm generally
->>> adverse to popping patches off the lsm/dev branch so as to not upset
->>> any ongoing development work, given that we are at -rc7 it's probably
->>> okay and much cleaner than doing a full revert; I'll remove that
->>> commit now.
->> Sorry 'bout that. I had troubles with kernels built from lsm/dev crashing,
->> so I switched to linus' tree.
-> No worries, that's fine, my policy is that I'll typically resolve
-> merge conflicts so long as the patches are based on either Linus' or
-> the subsystem tree.  In this case it turned out to be a good thing as
-> it highlighted the MPTCP omission in the commit merged into lsm/dev.
->
-> However, do you have any more detail on the lsm/dev crashes you are
-> seeing?  I wonder if it is general v6.10-rc1 instability ...
+On 7/8/24 14:39, Casey Schaufler wrote:
+> Move management of the infiniband security blob out of the individual
+> security modules and into the LSM infrastructure.  The security modules
+> tell the infrastructure how much space they require at initialization.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Alas, no. My VMs just stopped hard, with no panic or traces.
-The problem went away with rc3 (I did almost nothing with rc2)
-so I shrugged it off and moved on.
+an issue below, other than that and Paul's point it looks good
+
+> ---
+>   include/linux/lsm_hook_defs.h     |  2 +-
+>   include/linux/lsm_hooks.h         |  1 +
+>   security/security.c               | 11 ++++++++++-
+>   security/selinux/hooks.c          | 16 +++-------------
+>   security/selinux/include/objsec.h |  6 ++++++
+>   5 files changed, 21 insertions(+), 15 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 601e3092a7ed..796ab400e992 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -373,7 +373,7 @@ LSM_HOOK(int, 0, mptcp_add_subflow, struct sock *sk, struct sock *ssk)
+>   LSM_HOOK(int, 0, ib_pkey_access, void *sec, u64 subnet_prefix, u16 pkey)
+>   LSM_HOOK(int, 0, ib_endport_manage_subnet, void *sec, const char *dev_name,
+>   	 u8 port_num)
+> -LSM_HOOK(int, 0, ib_alloc_security, void **sec)
+> +LSM_HOOK(int, 0, ib_alloc_security, void *sec)
+>   LSM_HOOK(void, LSM_RET_VOID, ib_free_security, void *sec)
+>   #endif /* CONFIG_SECURITY_INFINIBAND */
+>   
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 0ff14ff128c8..b6fc6ac88723 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -72,6 +72,7 @@ struct security_hook_list {
+>   struct lsm_blob_sizes {
+>   	int	lbs_cred;
+>   	int	lbs_file;
+> +	int	lbs_ib;
+>   	int	lbs_inode;
+>   	int	lbs_sock;
+>   	int	lbs_superblock;
+> diff --git a/security/security.c b/security/security.c
+> index 2c9d075f5f92..731a54fabc79 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -219,6 +219,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+>   
+>   	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+>   	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
+> +	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
+>   	/*
+>   	 * The inode blob gets an rcu_head in addition to
+>   	 * what the modules might need.
+> @@ -404,6 +405,7 @@ static void __init ordered_lsm_init(void)
+>   
+>   	init_debug("cred blob size       = %d\n", blob_sizes.lbs_cred);
+>   	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
+> +	init_debug("ib blob size         = %d\n", blob_sizes.lbs_ib);
+>   	init_debug("inode blob size      = %d\n", blob_sizes.lbs_inode);
+>   	init_debug("ipc blob size        = %d\n", blob_sizes.lbs_ipc);
+>   #ifdef CONFIG_KEYS
+> @@ -5068,7 +5070,13 @@ EXPORT_SYMBOL(security_ib_endport_manage_subnet);
+>    */
+>   int security_ib_alloc_security(void **sec)
+>   {
+> -	return call_int_hook(ib_alloc_security, sec);
+> +	int rc;
+> +
+> +	rc = lsm_blob_alloc(sec, blob_sizes.lbs_ib, GFP_KERNEL);
+> +	if (rc)
+> +		return rc;
+> +
+> +	return call_int_hook(ib_alloc_security, *sec);
+
+this has a similar problem to the tun dev. When security_ib_alloc() fails,
+security_ib_free() hook isn't getting called
+
+>   }
+>   EXPORT_SYMBOL(security_ib_alloc_security);
+>   
+> @@ -5081,6 +5089,7 @@ EXPORT_SYMBOL(security_ib_alloc_security);
+>   void security_ib_free_security(void *sec)
+>   {
+>   	call_void_hook(ib_free_security, sec);
+> +	kfree(sec);
+>   }
+>   EXPORT_SYMBOL(security_ib_free_security);
+>   #endif	/* CONFIG_SECURITY_INFINIBAND */
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 7f1d8358922a..79fe75603881 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6776,23 +6776,13 @@ static int selinux_ib_endport_manage_subnet(void *ib_sec, const char *dev_name,
+>   			    INFINIBAND_ENDPORT__MANAGE_SUBNET, &ad);
+>   }
+>   
+> -static int selinux_ib_alloc_security(void **ib_sec)
+> +static int selinux_ib_alloc_security(void *ib_sec)
+>   {
+> -	struct ib_security_struct *sec;
+> +	struct ib_security_struct *sec = selinux_ib(ib_sec);
+>   
+> -	sec = kzalloc(sizeof(*sec), GFP_KERNEL);
+> -	if (!sec)
+> -		return -ENOMEM;
+>   	sec->sid = current_sid();
+> -
+> -	*ib_sec = sec;
+>   	return 0;
+>   }
+> -
+> -static void selinux_ib_free_security(void *ib_sec)
+> -{
+> -	kfree(ib_sec);
+> -}
+>   #endif
+>   
+>   #ifdef CONFIG_BPF_SYSCALL
+> @@ -6966,6 +6956,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
+>   	.lbs_superblock = sizeof(struct superblock_security_struct),
+>   	.lbs_xattr_count = SELINUX_INODE_INIT_XATTRS,
+>   	.lbs_tun_dev = sizeof(struct tun_security_struct),
+> +	.lbs_ib = sizeof(struct ib_security_struct),
+>   };
+>   
+>   #ifdef CONFIG_PERF_EVENTS
+> @@ -7284,7 +7275,6 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(ib_pkey_access, selinux_ib_pkey_access),
+>   	LSM_HOOK_INIT(ib_endport_manage_subnet,
+>   		      selinux_ib_endport_manage_subnet),
+> -	LSM_HOOK_INIT(ib_free_security, selinux_ib_free_security),
+>   #endif
+>   #ifdef CONFIG_SECURITY_NETWORK_XFRM
+>   	LSM_HOOK_INIT(xfrm_policy_free_security, selinux_xfrm_policy_free),
+> diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+> index 461c6985977d..b1878f9395b5 100644
+> --- a/security/selinux/include/objsec.h
+> +++ b/security/selinux/include/objsec.h
+> @@ -213,4 +213,10 @@ selinux_tun_dev(void *security)
+>   	return security + selinux_blob_sizes.lbs_tun_dev;
+>   }
+>   
+> +static inline struct ib_security_struct *
+> +selinux_ib(void *ib_sec)
+> +{
+> +	return ib_sec + selinux_blob_sizes.lbs_ib;
+> +}
+> +
+>   #endif /* _SELINUX_OBJSEC_H_ */
 
