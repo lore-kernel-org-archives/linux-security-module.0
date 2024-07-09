@@ -1,124 +1,285 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73149155C80
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 10:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D712D158DC3
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 12:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720519588; cv=none; b=paHjLXXLVeItKq+bDuprP8hBaakZesdtsYzaglzFrPKqO6DG7n4LAkVxPgp7moFyukYtbUQEIG8gq+Ye7uMRh9vwyrpr8Q2Hu+1xp3p+w04eLu+SXkXRPTZoxfg1wmHLWnJiB6fMrnKnHmxf25CDg4Szxck8OBRu8x/wxYyJ6Y0=
+	t=1720528581; cv=none; b=WmXSh+NcTed8CW2bY8Pd5njcu7GRcMJ0BagcMtppPiD93AaA6cSAy/Rm2Bl6WBSOHtGcEoHd+2VR+zEmguERfKPv3KKPAjnc2T82lNP0OB3D08Zr0o4wF7Z7w8W77tkkoLQMJq79feG8k94YFC+HDQXMoeJ4ykBBXONZQlOa4Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720519588; c=relaxed/simple;
-	bh=/KRfE1rWf1wyqso3Vkt58rj1kXw2cVDyjzWknY+bgYk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L64tbcsYRmBMu0Dj1OZ1zRUSTG8CqxYz+Vt90v9eHdazghfZDz0O+wnOkk+P/uRRUBfQXd/1fBS6nrpkfVmsisMUe7B/ED0tjKJRiQAQ0x4AC5sR77OiW/R2QaobH55Ly03PwiGg+JscnysjI39yiFONSoufx1Ko2IDwhqTrxk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NaiHyeih; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1720528581; c=relaxed/simple;
+	bh=AKmZ4OjkmVTiV01A8IbzmYyO4WTh5o4Hya9czZ/I22Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rdv7rua/EKDryJblWIVC4cWtxHpjWzRqBf5lKWS5+brBvSXA5AtSlSXi5PPDbzA22Z7HeSQh7rJWbggN09VGUj/xSSB4WM1KGGJQhkURUCkmEXGfKXakQxPTqvMOng4zjTNM8V+6fmt/Kaw8Q8+7xWGE2/qCTueqHaAEPjVM2SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFPODbWM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NaiHyeih"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720519586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tjTUnc7IhcTY8yXbQZCHDpYRmcDVvOi7wtfkPwMCZy4=;
-	b=NaiHyeihGpFHPeSD71e7Q9ld+vug2/bCOsTugm28AfcZ4PzuYSO9eSeMPx02H7TNP7zkec
-	hu0lEEYL2g0y+76buMN29rYPDQBLLgLMTHnVkuNX8fDdP4bYDNalLpSOXhMtO/YWC0UMVv
-	QaJlA9oY6xpGe9uIrh4+O/T7Yvk3NgQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-361-UiV9XaiFPlaMJoCqgi_zcA-1; Tue,
- 09 Jul 2024 06:06:20 -0400
-X-MC-Unique: UiV9XaiFPlaMJoCqgi_zcA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F23819560A1;
-	Tue,  9 Jul 2024 10:06:12 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.64])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED1F13000181;
-	Tue,  9 Jul 2024 10:05:53 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>,  Al Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
-  Paul Moore <paul@paul-moore.com>,  Theodore Ts'o <tytso@mit.edu>,
-  Alejandro Colomar <alx@kernel.org>,  Aleksa Sarai <cyphar@cyphar.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  Andy Lutomirski
- <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey Schaufler
- <casey@schaufler-ca.com>,  Christian Heimes <christian@python.org>,
-  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,
-  Eric Chiang <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,
-  Geert Uytterhoeven <geert@linux-m68k.org>,  James Morris
- <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>,  Jonathan Corbet <corbet@lwn.net>,  Jordan R Abrahams
- <ajordanr@google.com>,  Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>,  Luca Boccassi <bluca@debian.org>,  Luis
- Chamberlain <mcgrof@kernel.org>,  "Madhavan T . Venkataraman"
- <madvenka@linux.microsoft.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
- <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
- <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
- Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-In-Reply-To: <20240709.gae4cu4Aiv6s@digikod.net> (=?utf-8?Q?=22Micka=C3=AB?=
- =?utf-8?Q?l_Sala=C3=BCn=22's?= message
-	of "Tue, 9 Jul 2024 11:18:00 +0200")
-References: <20240704190137.696169-1-mic@digikod.net>
-	<20240704190137.696169-2-mic@digikod.net>
-	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
-	<CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
-	<87ed83etpk.fsf@oldenburg.str.redhat.com>
-	<CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
-	<87r0c3dc1c.fsf@oldenburg.str.redhat.com>
-	<CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
-	<20240709.gae4cu4Aiv6s@digikod.net>
-Date: Tue, 09 Jul 2024 12:05:50 +0200
-Message-ID: <87ed82283l.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFPODbWM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821AAC4AF0C
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 12:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720528581;
+	bh=AKmZ4OjkmVTiV01A8IbzmYyO4WTh5o4Hya9czZ/I22Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kFPODbWMC+IG22QE/o6r+70HaY/ksElqGRP45OfF1XrmS+ifiQrYMVdAYRA8uX+8x
+	 0JA8vBNOUqI/ZntVubRmoOalwYIBeO3BNH8VrfCPov4hQ8kfuLXuafsUNIlPUVvl3I
+	 vwqZHgnHuTeLewjZD+mgq2u5YtRzjN/7ItCyxnKPKXWcKLSyT8kkyYo5rSWJs2U9so
+	 9eUsY7e+IlNx1SJjBK2pNlpi0Uots+nKOjiPLV9/7wFGBbQm4o595fj2lh1/WXV0U6
+	 TexBY4Q5gtZ+bbE6Q3/B3fVNSHCCd2UNxLiDkPiqCdJ4MQ/50j7U7DEH6iItIpp1Uh
+	 91PMwjgcFnFWw==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso6331482a12.2
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Jul 2024 05:36:21 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yzw0JAUnFa7JjAb6xa0N8eHBckLndHfRnn7/A1lMbHgk7Ifdkty
+	8wYA15XHsg8T0Z9Z99Im7SD8Swe1qhKLDYhqlt6vHBrYERuVrBsrUhSRQq/jVUL4jbd56SNnS3/
+	3HrXymLdlTIqEJ1F3mjqbk7UK+C7/Gm/RND6o
+X-Google-Smtp-Source: AGHT+IG1Si26Cbx0HslXhLXUGis33dx0vBH3psY0I7515F2klIiqIzevs/8ZpPT5B2p90cvyks9vaWmCfwsgj3a3MS4=
+X-Received: by 2002:a05:6402:1941:b0:58b:eb96:81ea with SMTP id
+ 4fb4d7f45d1cf-594bb085d40mr2171999a12.18.1720528580070; Tue, 09 Jul 2024
+ 05:36:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20240629084331.3807368-5-kpsingh@kernel.org> <f40a3d1bc1cd69442f4524118c3e2956@paul-moore.com>
+In-Reply-To: <f40a3d1bc1cd69442f4524118c3e2956@paul-moore.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 9 Jul 2024 14:36:09 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4R-zG8=Xet4v-mf-Dmi_V9cHL7f0EiOEKhnPDxwsqx1Q@mail.gmail.com>
+Message-ID: <CACYkzJ4R-zG8=Xet4v-mf-Dmi_V9cHL7f0EiOEKhnPDxwsqx1Q@mail.gmail.com>
+Subject: Re: [PATCH v13 4/5] security: Update non standard hooks to use static calls
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-* Micka=C3=ABl Sala=C3=BCn:
+[...]
 
->> > If we want to avoid that, we could have an agreed-upon error code which
->> > the LSM can signal that it'll never fail AT_CHECK checks, so we only
->> > have to perform the extra system call once.
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -948,10 +948,48 @@ out:                                                                    \
+> >       RC;                                                             \
+> >  })
+> >
+> > -#define lsm_for_each_hook(scall, NAME)                                       \
+> > -     for (scall = static_calls_table.NAME;                           \
+> > -          scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)  \
+> > -             if (static_key_enabled(&scall->active->key))
+> > +/*
+> > + * Can be used in the context passed to lsm_for_each_hook to get the lsmid of the
+> > + * current hook
+> > + */
+> > +#define current_lsmid() _hook_lsmid
 >
-> I'm not sure to follow.  Either we check executable code or we don't,
-> but it doesn't make sense to only check some parts (except for migration
-> of user space code in a system, which is one purpose of the securebits
-> added with the next patch).
+> See my comments below about security_getselfattr(), I think we can drop
+> the current_lsmid() macro.  If we really must keep it, we need to rename
+> it to something else as it clashes too much with the other current_XXX()
+> macros/functions which are useful outside of our wacky macros.
+
+call_hook_with_lsmid is a pattern used by quite a few hooks, happy to
+update the name.
+
+What do you think about __security_hook_lsm_id().
+
+> > +#define __CALL_HOOK(NUM, HOOK, RC, BLOCK_BEFORE, BLOCK_AFTER, ...)        \
+> > +do {                                                                      \
+> > +     int __maybe_unused _hook_lsmid;                                      \
+> > +                                                                          \
+> > +     if (static_branch_unlikely(&SECURITY_HOOK_ACTIVE_KEY(HOOK, NUM))) {  \
+> > +             _hook_lsmid = static_calls_table.HOOK[NUM].hl->lsmid->id;    \
+> > +             BLOCK_BEFORE                                                 \
+> > +             RC = static_call(LSM_STATIC_CALL(HOOK, NUM))(__VA_ARGS__);   \
+> > +             BLOCK_AFTER                                                  \
+> > +     }                                                                    \
+> > +} while (0);
+> > +
+> > +#define lsm_for_each_hook(HOOK, RC, BLOCK_AFTER, ...)        \
+> > +     LSM_LOOP_UNROLL(__CALL_HOOK, HOOK, RC, ;, BLOCK_AFTER, __VA_ARGS__)
+> > +
+> > +#define call_hook_with_lsmid(HOOK, LSMID, ...)                               \
+> > +({                                                                   \
+> > +     __label__ out;                                                  \
+> > +     int RC = LSM_RET_DEFAULT(HOOK);                                 \
+> > +                                                                     \
+> > +     LSM_LOOP_UNROLL(__CALL_HOOK, HOOK, RC,                          \
+> > +     /* BLOCK BEFORE INVOCATION */                                   \
+> > +     {                                                               \
+> > +             if (current_lsmid() != LSMID)                           \
+> > +                     continue;                                       \
+> > +     },                                                              \
+> > +     /* END BLOCK BEFORE INVOCATION */                               \
+> > +     /* BLOCK AFTER INVOCATION */                                    \
+> > +     {                                                               \
+> > +             goto out;                                               \
+> > +     },                                                              \
+> > +     /* END BLOCK AFTER INVOCATION */                                \
+> > +     __VA_ARGS__);                                                   \
+> > +out:                                                                 \
+> > +     RC;                                                             \
+> > +})
+> >
+> >  /* Security operations */
 >
-> The idea with AT_CHECK is to unconditionnaly check executable right the
-> same way it is checked when a file is executed.  User space can decide
-> to check that or not according to its policy (i.e. securebits).
+> ...
+>
+> > @@ -1581,15 +1629,19 @@ int security_sb_set_mnt_opts(struct super_block *sb,
+> >                            unsigned long kern_flags,
+> >                            unsigned long *set_kern_flags)
+> >  {
+> > -     struct lsm_static_call *scall;
+> >       int rc = mnt_opts ? -EOPNOTSUPP : LSM_RET_DEFAULT(sb_set_mnt_opts);
+> >
+> > -     lsm_for_each_hook(scall, sb_set_mnt_opts) {
+> > -             rc = scall->hl->hook.sb_set_mnt_opts(sb, mnt_opts, kern_flags,
+> > -                                           set_kern_flags);
+> > -             if (rc != LSM_RET_DEFAULT(sb_set_mnt_opts))
+> > -                     break;
+> > -     }
+> > +     lsm_for_each_hook(
+> > +             sb_set_mnt_opts, rc,
+> > +             /* BLOCK AFTER INVOCATION */
+> > +             {
+> > +                     if (rc != LSM_RET_DEFAULT(sb_set_mnt_opts))
+> > +                             goto out;
+> > +             },
+> > +             /* END BLOCK AFTER INVOCATION */
+> > +             sb, mnt_opts, kern_flags, set_kern_flags);
+> > +
+> > +out:
+> >       return rc;
+> >  }
+> >  EXPORT_SYMBOL(security_sb_set_mnt_opts);
+>
+> I know I was the one who asked to implement the static_calls for *all*
+> of the LSM functions - thank you for doing that - but I think we can
+> all agree that some of the resulting code is pretty awful.  I'm probably
+> missing something important, but would an apporach similar to the pseudo
+> code below work?
 
-I meant it purely as a performance optimization, to skip future system
-calls if we know they won't provide any useful information for this
-process.  In the grand scheme of things, the extra system call probably
-does not matter because we already have to do costly things like mmap.
+This does not work.
 
-Thanks,
-Florian
+The special macro you are defining does not have the static_call
+invocation and if you add that bit it's basically the __CALL_HOOK
+macro or __CALL_STATIC_INT, __CALL_STATIC_VOID macro inlined
+everywhere, I tried implementing it but it gets very dirty.
 
+>
+>   #define call_int_hook_special(HOOK, RC, LABEL, ...) \
+>     LSM_LOOP_UNROLL(HOOK##_SPECIAL, RC, HOOK, LABEL, __VA_ARGS__)
+>
+>   int security_sb_set_mnt_opts(...)
+>   {
+>       int rc = LSM_RET_DEFAULT(sb_set_mnt_opts);
+>
+>   #define sb_set_mnt_opts_SPECIAL \
+>       do { \
+>         if (rc != LSM_RET_DEFAULT(sb_set_mnt_opts)) \
+>           goto out; \
+>       } while (0)
+>
+>       rc = call_int_hook_special(sb_set_mnt_opts, rc, out, ...);
+>
+>   out:
+>     return rc;
+>   }
+>
+> > @@ -4040,7 +4099,6 @@ EXPORT_SYMBOL(security_d_instantiate);
+> >  int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
+> >                        u32 __user *size, u32 flags)
+> >  {
+> > -     struct lsm_static_call *scall;
+> >       struct lsm_ctx lctx = { .id = LSM_ID_UNDEF, };
+> >       u8 __user *base = (u8 __user *)uctx;
+> >       u32 entrysize;
+> > @@ -4078,31 +4136,42 @@ int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
+> >        * In the usual case gather all the data from the LSMs.
+> >        * In the single case only get the data from the LSM specified.
+> >        */
+> > -     lsm_for_each_hook(scall, getselfattr) {
+> > -             if (single && lctx.id != scall->hl->lsmid->id)
+> > -                     continue;
+> > -             entrysize = left;
+> > -             if (base)
+> > -                     uctx = (struct lsm_ctx __user *)(base + total);
+> > -             rc = scall->hl->hook.getselfattr(attr, uctx, &entrysize, flags);
+> > -             if (rc == -EOPNOTSUPP) {
+> > -                     rc = 0;
+> > -                     continue;
+> > -             }
+> > -             if (rc == -E2BIG) {
+> > -                     rc = 0;
+> > -                     left = 0;
+> > -                     toobig = true;
+> > -             } else if (rc < 0)
+> > -                     return rc;
+> > -             else
+> > -                     left -= entrysize;
+> > +     LSM_LOOP_UNROLL(
+> > +             __CALL_HOOK, getselfattr, rc,
+> > +             /* BLOCK BEFORE INVOCATION */
+> > +             {
+> > +                     if (single && lctx.id != current_lsmid())
+> > +                             continue;
+> > +                     entrysize = left;
+> > +                     if (base)
+> > +                             uctx = (struct lsm_ctx __user *)(base + total);
+> > +             },
+> > +             /* END BLOCK BEFORE INVOCATION */
+> > +             /* BLOCK AFTER INVOCATION */
+> > +             {
+> > +                     if (rc == -EOPNOTSUPP) {
+> > +                             rc = 0;
+> > +                     } else {
+> > +                             if (rc == -E2BIG) {
+> > +                                     rc = 0;
+> > +                                     left = 0;
+> > +                                     toobig = true;
+> > +                             } else if (rc < 0)
+> > +                                     return rc;
+> > +                             else
+> > +                                     left -= entrysize;
+> > +
+> > +                             total += entrysize;
+> > +                             count += rc;
+> > +                             if (single)
+> > +                                     goto out;
+> > +                     }
+> > +             },
+> > +             /* END BLOCK AFTER INVOCATION */
+> > +             attr, uctx, &entrysize, flags);
+> > +
+> > +out:
+> >
+> > -             total += entrysize;
+> > -             count += rc;
+> > -             if (single)
+> > -                     break;
+> > -     }
+> >       if (put_user(total, size))
+> >               return -EFAULT;
+> >       if (toobig)
+>
+> I think we may need to admit defeat with security_getselfattr() and
+> leave it as-is, the above is just too ugly to live.  I'd suggest
+> adding a comment explaining that it wasn't converted due to complexity
+> and the resulting awfulness.
+>
+
+I think your position on fixing everything is actually a valid one for
+security, which is why I did not contest it.
+
+The security_getselfattr is called very close to the syscall boundary
+and the closer to the boundary the call is, the greater control the
+attacker has over arguments and the easier it is to mount the attack.
+This is why LSM indirect calls are a lucrative target because they
+happen fairly early in the transition from user to kernel.
+security_getselfattr is literally just in a SYSCALL_DEFINE
+
+From a security perspective we should not leave this open.
+
+- KP
+
+> --
+> paul-moore.com
