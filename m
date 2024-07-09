@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B3913211E
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 22:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B1414D439
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 22:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720565274; cv=none; b=ZfdBsGfAaV+gumceQnUfrO7jTYb/ARiKioyiroOeS6xLPuEvaI3B2Z46DiaumTnI7t5G2e0qff8R1jiL4JtUi8Z76HppCTJ9YLMA0BRplsq4dd1dfRaAI9PLrdz5uPbCZ417MkPhXothrkbtymwdrSe+uy+eQAOvISBNIMnhQw0=
+	t=1720565474; cv=none; b=JhcrsBkU2yguGwHjx7SCgs3pk9Y3N4H9xQP5ZQ72BwwybtbrhVWOcc+spW5G6WgEBS3nCCOw86yvCii9qiKXt+OOHTLlg0Co/TLs1d4V1tlFBv5qqDlhQp7TfMR7AnUi0Ifz1JeeWlXXBX79xUFRcTY2y/uZ7xX30VXeOQ34iHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720565274; c=relaxed/simple;
-	bh=JBdrFRcP+K2dAjklmI75MuK7GXFtG659GBXqS8fcTCE=;
+	s=arc-20240116; t=1720565474; c=relaxed/simple;
+	bh=9lWqMYzf1u5aoxQnj8D2YWYuAPFc1MFnbV5WdKrrz7A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SGy+dcIWszUM0WckwOwm9hjMi+/diYkLB+R+PV5fWVMgWTcn507ChWnmGE1d2IhSLXXc1c2KS52760ilJaWtPweK2Xd7c261dbAqT3IB90/OSga47qmC29r8fhwmoNGW9CDFl8VDDLXlH7OpKhMPFKxFBZkcNZvtYK3xFCCSI9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=oooywzbL; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=s1SFFwTL0RWnBfRDg478sBxtJAc6rvNgfjY8s5rhoau+HRcdCdFmSqwxCnPTDlozhC+MKO6SKUgNws/uh5KR04alYb/q7UGvXtRxvu9hSMSeX1TZxUXAuDuMeNB8VF+OgHi2pbEGPJ3mtjCD5PMd1f1GIUowScXv0ZY7TBhKva4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vRCSZgg0; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="oooywzbL"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vRCSZgg0"
 Received: from [192.168.192.84] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id D08423F1D1;
-	Tue,  9 Jul 2024 22:47:47 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 8CE003F201;
+	Tue,  9 Jul 2024 22:51:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1720565269;
-	bh=KSuA1WoqJzDB+idGNWfl/9kE+VUKeM98Pe0SeYWZndM=;
+	s=20210705; t=1720565469;
+	bh=3i5WJvw3AJOTj7YucJY+KubX1B0rb5BkjDK5IVtU2ck=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=oooywzbLc0VNi82xOqTYTYwprXUQD0eShPzoTIzprvP7s6KscX+JL/6ZsbS41YhS/
-	 P1531/QTPYK4IZdgurKl1/J2lCorXPC9N1vlTOHVOERPKUP6s6hfXSvzvmHvNy0WZ5
-	 BuNTHbvhMf1I576XbPJ6r4tkhj9RCV9pFVPNNHPVhZh0AKcikAV3XLcOF8dmn/WIEO
-	 Tba/GKedUFsGBTCcDm8GaxSC7jeWlIwhRnRTwZrRdeJvFR5RvHGGHSoOSRSuXwvaQY
-	 ehmGuQY34hsAD/GAylOKTKdYc4M8jlHLZCrlc+ksivt58i49xpIFLNo1Ezp395i/ib
-	 MjObYAugtMfSQ==
-Message-ID: <af2cfc52-e91a-4d1e-bb74-43322d1cea20@canonical.com>
-Date: Tue, 9 Jul 2024 15:47:45 -0700
+	b=vRCSZgg0yrfl5OuxNhnD7dSXCFPKhDYx5d4azuMBS2yiGGH/yZUD4+nmCeGD2AQaj
+	 KIdbI4G1Lcvg0sHA01fVYgLcZGBd2oFSSaaHxWFjb5vTEORph+xaYE5Qw+2xuvtUgo
+	 X1z4m1PKaplgSv6GrglXulFiR4v19ZE2Lojofd/OhcSjcs7oWsYtfAdxOBb+HvBAZX
+	 mr+JmbFLwHaljfI4LjIw3Ow6ij/khKREZKLb/vLegAyK4m58j4l5dC5SnkBKpPhmf3
+	 V3WMX6qQM5aafrpITkx8nCTLTpdT8JLd2C25vnKcmOz85T/X5xEoKrC7ERwu6Ad9ea
+	 NQqKAtwmTxuEA==
+Message-ID: <955484a5-9598-46fc-b64b-f8884d0fdd31@canonical.com>
+Date: Tue, 9 Jul 2024 15:51:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,15 +42,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] LSM: Infrastructure management of the key security
- blob
-To: Paul Moore <paul@paul-moore.com>, Casey Schaufler
- <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 3/6] LSM: Add helper for blob allocations
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+ linux-security-module@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
  penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
  mic@digikod.net
-References: <20240708213957.20519-3-casey@schaufler-ca.com>
- <8088e9a23a22fef35159b86760a9ab8e@paul-moore.com>
+References: <20240708213957.20519-1-casey@schaufler-ca.com>
+ <20240708213957.20519-4-casey@schaufler-ca.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -96,132 +95,194 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <8088e9a23a22fef35159b86760a9ab8e@paul-moore.com>
+In-Reply-To: <20240708213957.20519-4-casey@schaufler-ca.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/9/24 15:08, Paul Moore wrote:
-> On Jul  8, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->>
->> Move management of the key->security blob out of the
->> individual security modules and into the security
->> infrastructure. Instead of allocating the blobs from within
->> the modules the modules tell the infrastructure how much
->> space is required, and the space is allocated there.
+On 7/8/24 14:39, Casey Schaufler wrote:
+> Create a helper function lsm_blob_alloc() for general use in the hook
+> specific functions that allocate LSM blobs. Change the hook specific
+> functions to use this helper. This reduces the code size by a small
+> amount and will make adding new instances of infrastructure managed
+> security blobs easier.
 > 
-> Perhaps mention that the key_free hook is being removed as it is not
-> currently needed after this change?
-> 
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>   include/linux/lsm_hooks.h         |  1 +
->>   security/security.c               | 41 +++++++++++++++++++++++++++++--
->>   security/selinux/hooks.c          | 23 +++++------------
->>   security/selinux/include/objsec.h |  7 ++++++
->>   security/smack/smack.h            |  7 ++++++
->>   security/smack/smack_lsm.c        | 33 +++++++++++--------------
->>   6 files changed, 75 insertions(+), 37 deletions(-)
-> 
-> ...
-> 
->> diff --git a/security/security.c b/security/security.c
->> index 5e93a72bdca6..aae37481b7be 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -227,6 +227,9 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
->>   		blob_sizes.lbs_inode = sizeof(struct rcu_head);
->>   	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
->>   	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
->> +#ifdef CONFIG_KEYS
->> +	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
->> +#endif
-> 
-> Since the lsm_blob_sizes struct is going to have the lsb_key field
-> regardless of CONFIG_KEYS (which is good, I'm not arguing that), we
-> should be okay to call lsm_set_blob_size() on the lsb_key field, right?
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-yes
+looks good
 
-> 
->>   	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
->>   	lsm_set_blob_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
->>   	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
->> @@ -402,6 +405,9 @@ static void __init ordered_lsm_init(void)
->>   	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
->>   	init_debug("inode blob size      = %d\n", blob_sizes.lbs_inode);
->>   	init_debug("ipc blob size        = %d\n", blob_sizes.lbs_ipc);
->> +#ifdef CONFIG_KEYS
->> +	init_debug("key blob size        = %d\n", blob_sizes.lbs_key);
->> +#endif /* CONFIG_KEYS */
-> 
-> This one makes sense.
-> 
->> @@ -5301,7 +5337,8 @@ int security_key_alloc(struct key *key, const struct cred *cred,
->>    */
->>   void security_key_free(struct key *key)
->>   {
->> -	call_void_hook(key_free, key);
->> +	kfree(key->security);
->> +	key->security = NULL;
->>   }
-> 
-> A note to future devs, we can add the key_free hook back if needed, but
-> currently nobody is using it beyond basic memory management.
-> 
->>   /**
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 19346e1817ff..b3de2e941ef7 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -6981,6 +6968,9 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
->>   	.lbs_file = sizeof(struct file_security_struct),
->>   	.lbs_inode = sizeof(struct inode_security_struct),
->>   	.lbs_ipc = sizeof(struct ipc_security_struct),
->> +#ifdef CONFIG_KEYS
->> +	.lbs_key = sizeof(struct key_security_struct),
->> +#endif /* CONFIG_KEYS */
-> 
-> We can probably get rid of the Kconfig conditional.  I understand the
-> desire to keep this to only what is needed, but since this only really
-> has an impact on boot, and the impact is some basic math, I'd rather
-> not run the risk of rot due to conditional compilation.
-> 
+Reviewed-by: John Johansen <john.johansen@canonical.com>
 
-sure, the counter argument is why isn't this conditional when other parts
-for keys is. That inconsistency introduces it own issues that can cause
-problems down the road. I really don't have an opinion on which way
-is better, just playing devils advocate.
-
-
->>   	.lbs_msg_msg = sizeof(struct msg_security_struct),
->>   	.lbs_sock = sizeof(struct sk_security_struct),
->>   	.lbs_superblock = sizeof(struct superblock_security_struct),
+> ---
+>   security/security.c | 97 +++++++++++++++------------------------------
+>   1 file changed, 33 insertions(+), 64 deletions(-)
 > 
-> ...
-> 
->> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->> index a931b44bc959..17bcc9cbf584 100644
->> --- a/security/smack/smack_lsm.c
->> +++ b/security/smack/smack_lsm.c
->> @@ -5010,6 +5005,9 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
->>   	.lbs_file = sizeof(struct smack_known *),
->>   	.lbs_inode = sizeof(struct inode_smack),
->>   	.lbs_ipc = sizeof(struct smack_known *),
->> +#ifdef CONFIG_KEYS
->> +	.lbs_key = sizeof(struct smack_known *),
->> +#endif /* CONFIG_KEYS */
-> 
-> See above, but ultimately this is Smack code so it's your call.
-
-I think we should be consistent, either it goes everywhere or it stays
-everywhere. It is going to be confusing for other people coming in and
-looking at the code as to why one is conditional and one isn't.
-
-> 
->>   	.lbs_msg_msg = sizeof(struct smack_known *),
->>   	.lbs_sock = sizeof(struct socket_smack),
->>   	.lbs_superblock = sizeof(struct superblock_smack),
-> 
-> --
-> paul-moore.com
+> diff --git a/security/security.c b/security/security.c
+> index aae37481b7be..438ec6708eb3 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -605,27 +605,42 @@ int unregister_blocking_lsm_notifier(struct notifier_block *nb)
+>   EXPORT_SYMBOL(unregister_blocking_lsm_notifier);
+>   
+>   /**
+> - * lsm_cred_alloc - allocate a composite cred blob
+> - * @cred: the cred that needs a blob
+> + * lsm_blob_alloc - allocate a composite blob
+> + * @dest: the destination for the blob
+> + * @size: the size of the blob
+>    * @gfp: allocation type
+>    *
+> - * Allocate the cred blob for all the modules
+> + * Allocate a blob for all the modules
+>    *
+>    * Returns 0, or -ENOMEM if memory can't be allocated.
+>    */
+> -static int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+> +static int lsm_blob_alloc(void **dest, size_t size, gfp_t gfp)
+>   {
+> -	if (blob_sizes.lbs_cred == 0) {
+> -		cred->security = NULL;
+> +	if (size == 0) {
+> +		*dest = NULL;
+>   		return 0;
+>   	}
+>   
+> -	cred->security = kzalloc(blob_sizes.lbs_cred, gfp);
+> -	if (cred->security == NULL)
+> +	*dest = kzalloc(size, gfp);
+> +	if (*dest == NULL)
+>   		return -ENOMEM;
+>   	return 0;
+>   }
+>   
+> +/**
+> + * lsm_cred_alloc - allocate a composite cred blob
+> + * @cred: the cred that needs a blob
+> + * @gfp: allocation type
+> + *
+> + * Allocate the cred blob for all the modules
+> + *
+> + * Returns 0, or -ENOMEM if memory can't be allocated.
+> + */
+> +static int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+> +{
+> +	return lsm_blob_alloc(&cred->security, blob_sizes.lbs_cred, gfp);
+> +}
+> +
+>   /**
+>    * lsm_early_cred - during initialization allocate a composite cred blob
+>    * @cred: the cred that needs a blob
+> @@ -692,15 +707,7 @@ int lsm_inode_alloc(struct inode *inode)
+>    */
+>   static int lsm_task_alloc(struct task_struct *task)
+>   {
+> -	if (blob_sizes.lbs_task == 0) {
+> -		task->security = NULL;
+> -		return 0;
+> -	}
+> -
+> -	task->security = kzalloc(blob_sizes.lbs_task, GFP_KERNEL);
+> -	if (task->security == NULL)
+> -		return -ENOMEM;
+> -	return 0;
+> +	return lsm_blob_alloc(&task->security, blob_sizes.lbs_task, GFP_KERNEL);
+>   }
+>   
+>   /**
+> @@ -713,15 +720,7 @@ static int lsm_task_alloc(struct task_struct *task)
+>    */
+>   static int lsm_ipc_alloc(struct kern_ipc_perm *kip)
+>   {
+> -	if (blob_sizes.lbs_ipc == 0) {
+> -		kip->security = NULL;
+> -		return 0;
+> -	}
+> -
+> -	kip->security = kzalloc(blob_sizes.lbs_ipc, GFP_KERNEL);
+> -	if (kip->security == NULL)
+> -		return -ENOMEM;
+> -	return 0;
+> +	return lsm_blob_alloc(&kip->security, blob_sizes.lbs_ipc, GFP_KERNEL);
+>   }
+>   
+>   #ifdef CONFIG_KEYS
+> @@ -735,15 +734,7 @@ static int lsm_ipc_alloc(struct kern_ipc_perm *kip)
+>    */
+>   static int lsm_key_alloc(struct key *key)
+>   {
+> -	if (blob_sizes.lbs_key == 0) {
+> -		key->security = NULL;
+> -		return 0;
+> -	}
+> -
+> -	key->security = kzalloc(blob_sizes.lbs_key, GFP_KERNEL);
+> -	if (key->security == NULL)
+> -		return -ENOMEM;
+> -	return 0;
+> +	return lsm_blob_alloc(&key->security, blob_sizes.lbs_key, GFP_KERNEL);
+>   }
+>   #endif /* CONFIG_KEYS */
+>   
+> @@ -757,15 +748,8 @@ static int lsm_key_alloc(struct key *key)
+>    */
+>   static int lsm_msg_msg_alloc(struct msg_msg *mp)
+>   {
+> -	if (blob_sizes.lbs_msg_msg == 0) {
+> -		mp->security = NULL;
+> -		return 0;
+> -	}
+> -
+> -	mp->security = kzalloc(blob_sizes.lbs_msg_msg, GFP_KERNEL);
+> -	if (mp->security == NULL)
+> -		return -ENOMEM;
+> -	return 0;
+> +	return lsm_blob_alloc(&mp->security, blob_sizes.lbs_msg_msg,
+> +			      GFP_KERNEL);
+>   }
+>   
+>   /**
+> @@ -792,15 +776,8 @@ static void __init lsm_early_task(struct task_struct *task)
+>    */
+>   static int lsm_superblock_alloc(struct super_block *sb)
+>   {
+> -	if (blob_sizes.lbs_superblock == 0) {
+> -		sb->s_security = NULL;
+> -		return 0;
+> -	}
+> -
+> -	sb->s_security = kzalloc(blob_sizes.lbs_superblock, GFP_KERNEL);
+> -	if (sb->s_security == NULL)
+> -		return -ENOMEM;
+> -	return 0;
+> +	return lsm_blob_alloc(&sb->s_security, blob_sizes.lbs_superblock,
+> +			      GFP_KERNEL);
+>   }
+>   
+>   /**
+> @@ -4682,23 +4659,15 @@ EXPORT_SYMBOL(security_socket_getpeersec_dgram);
+>   /**
+>    * lsm_sock_alloc - allocate a composite sock blob
+>    * @sock: the sock that needs a blob
+> - * @priority: allocation mode
+> + * @gfp: allocation mode
+>    *
+>    * Allocate the sock blob for all the modules
+>    *
+>    * Returns 0, or -ENOMEM if memory can't be allocated.
+>    */
+> -static int lsm_sock_alloc(struct sock *sock, gfp_t priority)
+> +static int lsm_sock_alloc(struct sock *sock, gfp_t gfp)
+>   {
+> -	if (blob_sizes.lbs_sock == 0) {
+> -		sock->sk_security = NULL;
+> -		return 0;
+> -	}
+> -
+> -	sock->sk_security = kzalloc(blob_sizes.lbs_sock, priority);
+> -	if (sock->sk_security == NULL)
+> -		return -ENOMEM;
+> -	return 0;
+> +	return lsm_blob_alloc(&sock->sk_security, blob_sizes.lbs_sock, gfp);
+>   }
+>   
+>   /**
 
