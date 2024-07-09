@@ -1,59 +1,59 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2B6135A63
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 22:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449E21514C3
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 22:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720562885; cv=none; b=lQp+nqxg8R/qfexFabIb82Fu3OS8oM2IEWqiQ+MYbbXM3etsU4dHJ4/YubXim44GJlz8LnYplDxp7fh2H1C5WExsn21AA2XwHsSGgNVH7L6f4T4Dq1awr5Gg/z2IrnYkbyf0/FC465o6x17tJsB99hqFBL/0uVVriaORwtNRnY8=
+	t=1720562885; cv=none; b=ZvwNMOvHePsL2yKWgDztZj1KXDMTa7YNq2Zji9JMkWOLXCP4jS6AsxA9wqgHCs40WiENEnsfdrRJOilSyF0keROgnch/HZawdVIfhnaBdpcwavP+PurH9oFayHYrTzvbSq5waDOyxcoinL2ifUggtOTgExGp72TcjJ7isr9+8yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720562885; c=relaxed/simple;
-	bh=a0IEvsseBx2lXRDAMOpnmaVgyAUOhpHrqgq02Qgy2bM=;
+	bh=nmxPAIiEyed0KpqwIcixdXXW+OJCD7FTGecSdBxP0Bk=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=UDLya/8HyPp5LSWJQiq1beFajkhTilqbsgan2/e1D27m+igmizJdlS8EuJkYlO4yUzhnq35MUix5/ShWHfmQSQT60sjZP6dRWCMGD2yhk1e65yJG/7mYHy/Q3dvkDvZ6PM5EurA5F6sgfWyQJGIizYZ4NMTJfRz5U24D2VSEJDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bvvRhWyk; arc=none smtp.client-ip=209.85.160.48
+	 From:To:Cc:Subject:References:In-Reply-To; b=KKSmfxhpU1qHMCirZHK9ZzaNR55vnJV0D4GipCcNb+iCPy2ElFXocCm8n7+sCnm+v7vK+JJJtuATQ174kgajqASwwKqa+sn2MwBYu1a/oypggRGS6CPjXfLYqFkFfj0qxKqV05GuRhHzIz09RJa+yDtboEpeazx9M0oihy+aWig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=W99ryOqV; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bvvRhWyk"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-25e0d750b73so2870024fac.3
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jul 2024 15:08:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="W99ryOqV"
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-447ed27aea2so16360761cf.2
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Jul 2024 15:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720562882; x=1721167682; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1720562883; x=1721167683; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=7bL0TlKOsMXbDTOiaM9rZ9bL0TymI3EaDxO5HtRQYXU=;
-        b=bvvRhWykoHSN0RYBGlhjj3b9GkmvHJJWYQr0ccAKhgZwpoW43snbXh8BjRh8dC/S9U
-         OIZXKKe9QIBud8JQbyCKzp0YecLWtRn/PS47VPTiE1Op3NtBbTlExB+yFqroR0S0i45I
-         Q35/BRexjw/xOgUroJhnV1CHKfKagmMs6j+KoeQl5wl5NWeO+xKpaOjQ0hK2dQv3BDuT
-         4HxbQlY5d8it5OzZ4EnFVDIaXAPR6t5mLRHfwtR04gdjwyTW6457Fbfa2Wf+MwIUvaL2
-         Dv6334uqkvNHoufnRRVZvUyicBFq/6AwQXOcDIeupDzlyAXT0rYiWhjWhY8QyI4WvIUd
-         mP/g==
+        bh=JkNsOCjWH2lUDQsahymUcMcXSH/koucrDaRpCORy5U8=;
+        b=W99ryOqVj37hugNNFhdfs8TJtFasXHZJywg3UrPyqw+cGwKkMtYra5IE1ExBo+4YyS
+         ybn31T8iLzIjAwwUWRAq669rArbVhF+KXoZdjtB8SGS1ThORWuTcC+Rpw9p9SxeGSz50
+         QQpjSQn+ZUZiDxe0FOTk1cWcGm/wBc8VxRYYQri86y6E0ZJOn7E8QVz4aG4yXuOCejjw
+         y5FpQUDYswMJ7Pf5wR6FYqC8mnXTIzoOPdMnyNMRXcDHbbvtn04OsvBCNVX+VWzKN6wF
+         1FUppXnre7JkBwOEkiOsjDF7/x6KclwACPvpS33MFhvgf8YCt331lvodOQ4Pct39oPqv
+         mgNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720562882; x=1721167682;
+        d=1e100.net; s=20230601; t=1720562883; x=1721167683;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7bL0TlKOsMXbDTOiaM9rZ9bL0TymI3EaDxO5HtRQYXU=;
-        b=xTQ5rGTpLIOAZZOd/1gPa653qcP1mwsBxm5TljxqZXv95e1BAuvrlfIUbs2pnppAms
-         RXRYWgRWys3p4ZKfgaD1fzO+dA/Guuyok9aUIlzPzByrHkYt5EGaazriqoQyiYpruKJJ
-         bHZe2RQeL9+rTjB/zXPuEcMIUXhAh6oqb3DUA+AIkjUsi16AxGFXfw4mBuf6HpFmOFc4
-         eipeSjRor272Qcn9ojfzEkHNErMhddLhAULKGUP0CxHrutgnW+RuuOOFjJzK/06N5Ycm
-         K12b04gC3IrPdMgfp0yRTq+Crv7iUVjsy18NhTCBDOi1M4r2PC6oEnilRV7c6ptfyIhM
-         HZCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfZBMU8gpNLkc7vDl8EayPlsLkKTntBzJyO4wRbvXHwjazgVAweopljcr4o1Y/qnf/b7xPrjdD8v4qi7+yl/HWo8vAjfhb66JirnFrSVRLW6Q8hh4H
-X-Gm-Message-State: AOJu0YwTP/x4nIaIX0IzmlK2KYoE7IvxYi6AMrNgFVChjGzED9yggP8e
-	yfSAx481XZ8NjByfyBHDe7Q9gJvH2bYaOoCPoxVReo7t66kclY4kspqvqED5GQ==
-X-Google-Smtp-Source: AGHT+IEx8cFRTFZDcL4q7cih1qN1K04l6VG/psPlz6g5TQ1S/Js1CKeD6EVib+ZnxZN7EWTYuTh+5A==
-X-Received: by 2002:a05:6870:1017:b0:25e:1659:5eec with SMTP id 586e51a60fabf-25eaec3f16bmr2206717fac.51.1720562882344;
-        Tue, 09 Jul 2024 15:08:02 -0700 (PDT)
+        bh=JkNsOCjWH2lUDQsahymUcMcXSH/koucrDaRpCORy5U8=;
+        b=wzsUbRgPqS1O3FYMSkqwEq+a0XO0x+cklzjKSWGj/v+sWQeeJOk0Y2m2OE2MDnmoLN
+         cM1GCuKMElDAp3dqd/hzW+fCoZzJ4NViDXA51V6bv1UEnIRpc94+i0gLrDHZd3bz422+
+         ae1IoJI6qXPqv6E7FCi7X9KJJZPBPQ8UpQteIKWVxTW6xNPNGpI47QJFZRXT743uRyJ6
+         U6rLS+acjS+hGBrwgwtfAs4DoOL1neW01MztOAX+yTKfgnm2TrjZnlD1LBMjWxHfRSHy
+         A8+NYzS4llLBhCgsfm3mRk+zX05ct0Zlnj3fjazCLbFqSS1V8AhaIGcQkR0+bXObSerc
+         S+Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWV9czr81A6RO+z8bWvAXTm5+Kju3qDN1zTyjpTn4+87W1IfJNnLQRf6MXtgQbsUOIjH+zttNG6yELiE5USODEiHm8ZvmR3BvMNSli/bizFTuPYik/M
+X-Gm-Message-State: AOJu0YznQ/4YznrmPrOkSRyuZLXACwD7TOMFCgEeswonlR1UaON0xpml
+	yy2rZG+KCNyHnbuSK5FRxIVVoCxypODnR3f8Lm00XbgFZPIkn2mc9b9l/wgNVQ==
+X-Google-Smtp-Source: AGHT+IE6qX9vGp2kW5WeCiJEdCESMKTqnf4skmAkw4vwTMsYgIJe5JtA5KrMVp7JFKLnhqCmJpyLNA==
+X-Received: by 2002:ac8:5ac5:0:b0:446:342e:42fc with SMTP id d75a77b69052e-447fa8adb39mr47689901cf.8.1720562883250;
+        Tue, 09 Jul 2024 15:08:03 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9bf3308sm14436931cf.85.2024.07.09.15.08.01
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b269b8sm14617501cf.5.2024.07.09.15.08.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 09 Jul 2024 15:08:02 -0700 (PDT)
-Date: Tue, 09 Jul 2024 18:08:01 -0400
-Message-ID: <8088e9a23a22fef35159b86760a9ab8e@paul-moore.com>
+Date: Tue, 09 Jul 2024 18:08:02 -0400
+Message-ID: <a7b378b26bb6b6cafb05d9102da61558@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -66,115 +66,25 @@ Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
 To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, linux-security-module@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, mic@digikod.net
-Subject: Re: [PATCH 2/6] LSM: Infrastructure management of the key security  blob
-References: <20240708213957.20519-3-casey@schaufler-ca.com>
-In-Reply-To: <20240708213957.20519-3-casey@schaufler-ca.com>
+Subject: Re: [PATCH 3/6] LSM: Add helper for blob allocations
+References: <20240708213957.20519-4-casey@schaufler-ca.com>
+In-Reply-To: <20240708213957.20519-4-casey@schaufler-ca.com>
 
 On Jul  8, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> Move management of the key->security blob out of the
-> individual security modules and into the security
-> infrastructure. Instead of allocating the blobs from within
-> the modules the modules tell the infrastructure how much
-> space is required, and the space is allocated there.
-
-Perhaps mention that the key_free hook is being removed as it is not
-currently needed after this change?
-
+> Create a helper function lsm_blob_alloc() for general use in the hook
+> specific functions that allocate LSM blobs. Change the hook specific
+> functions to use this helper. This reduces the code size by a small
+> amount and will make adding new instances of infrastructure managed
+> security blobs easier.
+> 
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  include/linux/lsm_hooks.h         |  1 +
->  security/security.c               | 41 +++++++++++++++++++++++++++++--
->  security/selinux/hooks.c          | 23 +++++------------
->  security/selinux/include/objsec.h |  7 ++++++
->  security/smack/smack.h            |  7 ++++++
->  security/smack/smack_lsm.c        | 33 +++++++++++--------------
->  6 files changed, 75 insertions(+), 37 deletions(-)
+>  security/security.c | 97 +++++++++++++++------------------------------
+>  1 file changed, 33 insertions(+), 64 deletions(-)
 
-...
-
-> diff --git a/security/security.c b/security/security.c
-> index 5e93a72bdca6..aae37481b7be 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -227,6 +227,9 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
->  		blob_sizes.lbs_inode = sizeof(struct rcu_head);
->  	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
->  	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
-> +#ifdef CONFIG_KEYS
-> +	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
-> +#endif
-
-Since the lsm_blob_sizes struct is going to have the lsb_key field
-regardless of CONFIG_KEYS (which is good, I'm not arguing that), we
-should be okay to call lsm_set_blob_size() on the lsb_key field, right?
-
->  	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
->  	lsm_set_blob_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
->  	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
-> @@ -402,6 +405,9 @@ static void __init ordered_lsm_init(void)
->  	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
->  	init_debug("inode blob size      = %d\n", blob_sizes.lbs_inode);
->  	init_debug("ipc blob size        = %d\n", blob_sizes.lbs_ipc);
-> +#ifdef CONFIG_KEYS
-> +	init_debug("key blob size        = %d\n", blob_sizes.lbs_key);
-> +#endif /* CONFIG_KEYS */
-
-This one makes sense.
-
-> @@ -5301,7 +5337,8 @@ int security_key_alloc(struct key *key, const struct cred *cred,
->   */
->  void security_key_free(struct key *key)
->  {
-> -	call_void_hook(key_free, key);
-> +	kfree(key->security);
-> +	key->security = NULL;
->  }
-
-A note to future devs, we can add the key_free hook back if needed, but
-currently nobody is using it beyond basic memory management.
-
->  /**
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 19346e1817ff..b3de2e941ef7 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -6981,6 +6968,9 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
->  	.lbs_file = sizeof(struct file_security_struct),
->  	.lbs_inode = sizeof(struct inode_security_struct),
->  	.lbs_ipc = sizeof(struct ipc_security_struct),
-> +#ifdef CONFIG_KEYS
-> +	.lbs_key = sizeof(struct key_security_struct),
-> +#endif /* CONFIG_KEYS */
-
-We can probably get rid of the Kconfig conditional.  I understand the
-desire to keep this to only what is needed, but since this only really
-has an impact on boot, and the impact is some basic math, I'd rather
-not run the risk of rot due to conditional compilation.
-
->  	.lbs_msg_msg = sizeof(struct msg_security_struct),
->  	.lbs_sock = sizeof(struct sk_security_struct),
->  	.lbs_superblock = sizeof(struct superblock_security_struct),
-
-...
-
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index a931b44bc959..17bcc9cbf584 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -5010,6 +5005,9 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
->  	.lbs_file = sizeof(struct smack_known *),
->  	.lbs_inode = sizeof(struct inode_smack),
->  	.lbs_ipc = sizeof(struct smack_known *),
-> +#ifdef CONFIG_KEYS
-> +	.lbs_key = sizeof(struct smack_known *),
-> +#endif /* CONFIG_KEYS */
-
-See above, but ultimately this is Smack code so it's your call.
-
->  	.lbs_msg_msg = sizeof(struct smack_known *),
->  	.lbs_sock = sizeof(struct socket_smack),
->  	.lbs_superblock = sizeof(struct superblock_smack),
+Looks good to me, but as it is dependent on 2/6 I'm unable to apply
+it anywhere right now.
 
 --
 paul-moore.com
