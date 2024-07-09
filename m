@@ -1,148 +1,120 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2535180054
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 18:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4650C1DFCF
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jul 2024 19:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720551488; cv=none; b=IjfBbWdYqstjBhJ8GV0dxMjxvjQedP8PNPtwdjTuAoBrJDtZwFn2XFwauYxCsGknTqXh/L1kLTA8gxrjfOV7N8CAR2X5Yii7aWlx1GQ4HPfZlGbxNiQ321EMi4ZQVz+xiAwC9p9YvWzlVW+zdVvWs2PDRsbCKgZWLHHLdKoo+qM=
+	t=1720551944; cv=none; b=dHUXcQI5yLlk6+Xo2hkNEGWUTnqygvetfii8oJgDmFOUsdPloYqphCS8yumeUIDvQj1tvAq9QWVrlwQGTZV06H9Xiv4EjTZ+WXokAPEFTGXo28vRJ9XJmxKlmYegfq4Botd/oGIm4OeE0jTixp4vgxmQwG3GjZgm7V5pSGJ0X2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720551488; c=relaxed/simple;
-	bh=vgV3NNlzFKCiU3pBnrqOOxg16OSb3pUQ2G39Zbsbj1Q=;
+	s=arc-20240116; t=1720551944; c=relaxed/simple;
+	bh=0lSY8sS7FSdXqlC2bQMt25iLlSxIwfhjNcgv1ErZNuQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HFhEgNQwgJhNx8bJl5QMomKvBxjJSiNMYvipVgQLisb+nDInPgHILIo19EUGwMfjFQiqTBffLFNEIWL1tnHjvCRuju4cTH3LM/dxLV5nhdg4BmxW/Qm29OKb4dK61V4zpPvJyj1p9ynvlH7NDWHCDG9m1cq7LKMttmDdf4SGXUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sa5BsQzN; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=StqbgVl2NJ+qnsGK+hBqn7fKYh7vG4jV0118M304raurCpvd+eoZPZsw5Oi3KF7ALo81ehdukE950a41RSGV8bDn00uovaTkOrfPfaIwWw0CCMkq9re0L4Et7Dj5vRwowpnOpLMEmh0g7CjQfMHaXzM6QnQLiX6HPM7m6fmOWVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fh1eDlZV; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sa5BsQzN"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so2522a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jul 2024 11:58:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fh1eDlZV"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6325b04c275so51875637b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Jul 2024 12:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720551485; x=1721156285; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1720551942; x=1721156742; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zAoQUSx9bhpcdjQTt+qmhPqP+zZAnIGtZqlOI0lzq4w=;
-        b=sa5BsQzNzOOcSPF9OfoPAP207D5WndvlKepdTyJgMU8ybS4vX3ZOPl+9Hv9bzFYd/O
-         XhaQdi6jl9KabAjFmVJT8ItjVBtHJhFYGNkFIJZAQTWcyc5lxNQ7lzhHoEgbuK4Le8Kn
-         LSnYsZf0vlgpQjnhSd+7pwu3h0XC9zqEL3yh91FGpwDnsCCrlx/5AyS9jPRaavA2mdr7
-         Bs5ySs7DjRQh+5GI+qbRdsHbr9bLvoDiG04oRQtVA+5Jj+WPw2rOBgoDQfdT4C+vJvP2
-         dHDu3dewG3VaQZ06i/8DQUpQSAJOPqWpMXqneQjVwK8KmQJdt8sOpr1BKZYaJafXcPQ8
-         HSJg==
+        bh=22oPYIkXUegZik//iuLkIA/RKQ6ygZrjslJR51pDVSw=;
+        b=fh1eDlZVqj8ZgsocOT4BMf0SWTuotH+L3YyPVSYmyWGE9QvFfqrEge88/7K6aV9H3w
+         XkSvP5LJ5h6GdwcWuVvEukzA/9mIZNc4SSXhhWADuA0ug2eQ3n9cCFw3FaOtG3LV7ELk
+         q8gZ2d3l3gWk8bV4js1vCxrYfWSZSwQ7IxK3JhnQ96qcvvlDvoiqeADfzM6ECj1pU38/
+         ZoqbaCW0E1Ek+dOzoy5vsFhIkMtVpvXDv+oPIKglFCrtoSE0h7Qc/WpbrhM3CeLCgrsQ
+         7s4JjJboGqZQ+xt5VTSpfdnPvXsHPSxGfoHF2fa0QAhuOJFbgeieV5KdwVJTCdZv9Zot
+         RPWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720551485; x=1721156285;
+        d=1e100.net; s=20230601; t=1720551942; x=1721156742;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zAoQUSx9bhpcdjQTt+qmhPqP+zZAnIGtZqlOI0lzq4w=;
-        b=do1HZD7pdw9lfGsCa2GKrf7uev014RicIj6Wp8DkMyVEu1zrsR0gdgA0zUuTuq15FQ
-         u453+at+30EGZKTyDko2JyY3swNDTmSEJBtzoRtf44e/m77g1ruQUH6htdfsZWoHyzxQ
-         i30t91Jrg8W/wgU4CcLT98+BBc6sG6z6VkmtCQaAqxAZKn23xWNuXMUfQHjY38+aDPZh
-         weafqAIlXdJIqo3Z4mBi7+exIbogtdp1IXq5RRkIXiubk7+WJPjVuVoCvWfTbfi76+up
-         PbYvVkAcn0EXCPq+rzgdLYqfE/6+61ReWZLEQlY9EjXvOE8IigoLvY56+ku94CdiXhUf
-         3zEA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3AN6gExEVIlOkuEjlPMJMyVD7lfraZ5za1AAwOMhRes4W8bQbYFLIl3g9gCI2CuVbBMLMlKkV/5SAzfjYCFHmdatyCNSMgbBGxwCNy3/qgBN40DPm
-X-Gm-Message-State: AOJu0Yx3ELTiBZUeFdXyv4s3NUZzRF8Ym97BeG00keo5qXBJWZQSElbz
-	mtJZlGMdoyWX+K2Ke35JPBX12Cdg0GqwiTOdXRsi+6RDbeNTd0GshRrS1OPIyvtSgO0s82DhCbE
-	tAe0d6IGyAAIWnaHnZr7eIVlZACuCmyZRU4yn
-X-Google-Smtp-Source: AGHT+IECwTUCWfNd/m0r/4U5ddqq9szdLi7Tw8glyBT6PX7+eYxwo4Ic0ZuXywbnuTJaGnFDZBWSOOJzFKOrzR9sUWE=
-X-Received: by 2002:a50:9f84:0:b0:58b:dfaa:a5ca with SMTP id
- 4fb4d7f45d1cf-596d4daf533mr28844a12.6.1720551484754; Tue, 09 Jul 2024
- 11:58:04 -0700 (PDT)
+        bh=22oPYIkXUegZik//iuLkIA/RKQ6ygZrjslJR51pDVSw=;
+        b=UsdYCB/CXUasXKK7uj4tqgVwN1QTPx49aSorWdC0oR5yFySlhG3CihAlg17EcpLGxb
+         Zod9uvHliVTuRRfet81rkbS/dqR8OsqlbHsGiykjTnWZStzHcWSpFBpNtiXl62jJMQfX
+         jBaCJET3ms24LXw/lvaiitu+t/Y9TF/9cZ1LZsOQZ8lceZ5e7hvsNHv6PGORIoe9FPs/
+         6iLhDZikbpz+vb/3bQYaAvwHSFGXUyubZkmRFyUeo5oT/KIcP0b+r2a4gy9Oul5RW6Zn
+         juM9/zTw7latzQeQQiPwoVimG8ZQCHzOvPJ2C2krlKX4q+FNZu079rmFKSathsGziSrN
+         rpQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+FKInh7fkosmORGPLBtgUl1XHHVr1Q137QbQsXDSkfrPGT1DddiIXgkD6JgCz07ZuyVIJD+eS8hbUpu74X5G9buck4H4gqUfsEfuyjDi5SE1b21gf
+X-Gm-Message-State: AOJu0Yy6xQKcQ2yGTLJN1jzb9yX0ziJsyi6foXNO/k/PBWL0oNYnUDNL
+	+ELd5+zTsdGlhWroUh+TN+FzOv2zbZNxWhZ0J0bgR1VF2KWeKnryi2KhjXRzh4oFSxLlWZDsSBe
+	esp+lv9nf8cii2kIGZAi+iptc4FnUp0LP5UBv
+X-Google-Smtp-Source: AGHT+IGhklg038a5HzgbiWQLqn94HkdHCX43xrbJmCQsjITh8ARHePNHXKlvflNW6mFrvEOict7TZp2ZMTMAFhLGEN8=
+X-Received: by 2002:a0d:ea50:0:b0:653:ffe7:d648 with SMTP id
+ 00721157ae682-658f0bc622fmr35885457b3.34.1720551942224; Tue, 09 Jul 2024
+ 12:05:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com> <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
- <87ed83etpk.fsf@oldenburg.str.redhat.com> <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
- <87r0c3dc1c.fsf@oldenburg.str.redhat.com> <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
- <20240709.gae4cu4Aiv6s@digikod.net>
-In-Reply-To: <20240709.gae4cu4Aiv6s@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Tue, 9 Jul 2024 11:57:27 -0700
-Message-ID: <CALmYWFsvKq+yN4qHhBamxyjtcy9myg8_t3Nc=5KErG=DDaDAEA@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Florian Weimer <fweimer@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
+References: <20240629084331.3807368-5-kpsingh@kernel.org> <f40a3d1bc1cd69442f4524118c3e2956@paul-moore.com>
+ <CACYkzJ4R-zG8=Xet4v-mf-Dmi_V9cHL7f0EiOEKhnPDxwsqx1Q@mail.gmail.com> <e170a720-c6e7-480c-a54d-c6ae7cf9a77a@schaufler-ca.com>
+In-Reply-To: <e170a720-c6e7-480c-a54d-c6ae7cf9a77a@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 9 Jul 2024 15:05:31 -0400
+Message-ID: <CAHC9VhS64J+0PhK6YJVvRe0rRGK935+KPbGMZBO4PxVH22ug0Q@mail.gmail.com>
+Subject: Re: [PATCH v13 4/5] security: Update non standard hooks to use static calls
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 9, 2024 at 2:18=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
+On Tue, Jul 9, 2024 at 12:53=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 7/9/2024 5:36 AM, KP Singh wrote:
+> > [...]
+> >
+> >>> --- a/security/security.c
+> >>> +++ b/security/security.c
+> >>> @@ -948,10 +948,48 @@ out:                                           =
+                         \
+> >>>       RC;                                                            =
+ \
+> >>>  })
+> >>>
+> >>> -#define lsm_for_each_hook(scall, NAME)                              =
+         \
+> >>> -     for (scall =3D static_calls_table.NAME;                        =
+   \
+> >>> -          scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++) =
+ \
+> >>> -             if (static_key_enabled(&scall->active->key))
+> >>> +/*
+> >>> + * Can be used in the context passed to lsm_for_each_hook to get the=
+ lsmid of the
+> >>> + * current hook
+> >>> + */
+> >>> +#define current_lsmid() _hook_lsmid
+> >> See my comments below about security_getselfattr(), I think we can dro=
+p
+> >> the current_lsmid() macro.  If we really must keep it, we need to rena=
+me
+> >> it to something else as it clashes too much with the other current_XXX=
+()
+> >> macros/functions which are useful outside of our wacky macros.
+> > call_hook_with_lsmid is a pattern used by quite a few hooks, happy to
+> > update the name.
+> >
+> > What do you think about __security_hook_lsm_id().
 >
-> On Mon, Jul 08, 2024 at 10:52:36AM -0700, Jeff Xu wrote:
-> > On Mon, Jul 8, 2024 at 10:33=E2=80=AFAM Florian Weimer <fweimer@redhat.=
-com> wrote:
-> > >
-> > > * Jeff Xu:
-> > >
-> > > > On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Florian Weimer <fweimer@redh=
-at.com> wrote:
-> > > >>
-> > > >> * Jeff Xu:
-> > > >>
-> > > >> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
-> > > >> > libraries too ?  or just the main executable itself.
-> > > >>
-> > > >> I expect that dynamic linkers will have to do this for everything =
-they
-> > > >> map.
-> > > > Then all the objects (.so, .sh, etc.) will go through  the check fr=
-om
-> > > > execveat's main  to security_bprm_creds_for_exec(), some of them mi=
-ght
-> > > > be specific for the main executable ?
->
-> Yes, we should check every executable code (including seccomp filters)
-> to get a consistent policy.
->
-> What do you mean by "specific for the main executable"?
->
-I meant:
+> I really dislike it. The security prefix (even with __) tells the
+> developer in security.c that the code is used elsewhere. How about
+> lsm_hook_current_id()?
 
-The check is for the exe itself, not .so, etc.
+See my reply.  There is enough ugliness in converting the hooks in
+this particular patch that I think we need to shelve this patch too.
 
-For example:  /usr/bin/touch is checked.
-not the shared objects:
-ldd /usr/bin/touch
-linux-vdso.so.1 (0x00007ffdc988f000)
-libc.so.6 =3D> /lib/x86_64-linux-gnu/libc.so.6 (0x00007f59b6757000)
-/lib64/ld-linux-x86-64.so.2 (0x00007f59b6986000)
-
-Basically, I asked if the check can be extended to shared-objects,
-seccomp filters, etc, without modifying existing LSMs.
-you pointed out "LSM should not need to be updated with this patch
-series.", which already answered my question.
-
-Thanks.
--Jeff
-
--Jeff
+--=20
+paul-moore.com
