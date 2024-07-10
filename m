@@ -1,70 +1,42 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C261B86F3
-	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 10:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34F517FD
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 10:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720605915; cv=none; b=SlvcmG2jf2hh94Qpw3a0HOabTFzSi64uYoOyIzaf3GprpqCOUTjywpWvJPlpGEH2iU+Hi4JgJDfCNPFX8o5yV8wZAqY9KLCqfAfFXR49fuPuJUrLnEq8DIW67yCnww9ALuJr2MmBxmP/RtOksqCE9ZEl5A4APlcNFYQblUAmgQQ=
+	t=1720608014; cv=none; b=InWRGm4AN6AWniaiCExP/HBjPfBPZ3vWi5mv4fTmELg9V2sOGJLgC9qehb7xkaWHNIApRs5gxAphqHniERNOEuESdkVlPFu8omQs8DSI5fpaLRH5UV5qL9ji66acBmLQ79oUj9U0psH2sEiXSCD95RHYYLhmVGZraTMKBYsFFqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720605915; c=relaxed/simple;
-	bh=6XjeGM1uoLScdRWcAjqr9FYRJeKY3sUp1jjgMn0Q/rw=;
+	s=arc-20240116; t=1720608014; c=relaxed/simple;
+	bh=lUejIBjgkSRZK9nXeVw7xBPpqekdbR52PsTjDzDGnKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MUdStzwzI4H9K1OAnwHKylLzlTS8JFTqGNcgiYCKu/u3cQpVuuiOwlxlEo6Ebitc802mc8NbooWAqZr65oxny7NpWr6C5qJpOJWvWefkC0XzDHvRdBQrx1fsKdrcN9ixKXcJH+8WgvNP4kO8uXWq7X0VR/+jkH77EVDoacQmlds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DNVbx2ud; arc=none smtp.client-ip=45.157.188.8
+	 Content-Type:Content-Disposition:In-Reply-To; b=NXQykitVr38swes1YOyrUE5GY1Dob9vZXs3MlP6nPltaDhdggG5QhT9paqVBXCA1EHJDqF87MynUWI4H/42l5NpWBnbpFSJzwG12SekJbSYo7FkukYjFh+KFC/ZwC/fHhjhaRaPXtPn6dCIpz48TUrbK5/xvsPawHjUF/P4aWvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=l+zdYosG; arc=none smtp.client-ip=83.166.143.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DNVbx2ud"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJtlB1VRnz128g;
-	Wed, 10 Jul 2024 12:05:10 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="l+zdYosG"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJvWV6m6rzxvQ;
+	Wed, 10 Jul 2024 12:40:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720605910;
-	bh=58eL5zKFVrJFUT+TpbxjO2RgasvOa3v7FdFqIaHbAZ8=;
+	s=20191114; t=1720608006;
+	bh=8hdd97ZzjanvrH81RpupqwCmx1FmND14UpviDAFPS3g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNVbx2udibxVu+14OKvyFsM2tte1G7+GSl8Z+NOcHcVVvvBg1ydxpZsw6h/1RkTaN
-	 ejzvZofhsiG9dNul4ThaAxY28YALObLrSzblZ8Zjk8uwQdQKc/EuaduylSGnGw3pZ7
-	 LEta7bCt/CqWCCKmMGDr9F+uKDtZtEAT6JChcVeQ=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJtl848ghzL4p;
-	Wed, 10 Jul 2024 12:05:08 +0200 (CEST)
-Date: Wed, 10 Jul 2024 12:05:05 +0200
+	b=l+zdYosG3135vxXCkBw5gZ4Lu+PMNNf664VjjTfsqjNZZklpPX6p1GFcudSvJsLaX
+	 0Wxenl5xYhurDRtaiHSj0X8vmrFmdnJxtQoH5ltWftT2EGt+yOH9JKCKs9+sy68sgy
+	 O4IzjKAzc6RZLwosL9xav6KTN9ZifD2wHMKPC1JY=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJvWV3nm1z61K;
+	Wed, 10 Jul 2024 12:40:06 +0200 (CEST)
+Date: Wed, 10 Jul 2024 12:40:03 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] binfmt_elf: Fail execution of shared objects with
- ELIBEXEC (was: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to
- execveat(2))
-Message-ID: <20240710.Lu2thiemeil2@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
- <20240706.poo9ahd3La9b@digikod.net>
- <871q46bkoz.fsf@oldenburg.str.redhat.com>
- <20240708.zooj9Miaties@digikod.net>
- <878qybet6t.fsf_-_@oldenburg.str.redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+Message-ID: <20240710.peiDu2aiD1su@digikod.net>
+References: <20240710024029.669314-2-paul@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -73,72 +45,223 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <878qybet6t.fsf_-_@oldenburg.str.redhat.com>
+In-Reply-To: <20240710024029.669314-2-paul@paul-moore.com>
 X-Infomaniak-Routing: alpha
 
-On Mon, Jul 08, 2024 at 06:37:14PM +0200, Florian Weimer wrote:
-> * Mickaël Salaün:
+On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+> The LSM framework has an existing inode_free_security() hook which
+> is used by LSMs that manage state associated with an inode, but
+> due to the use of RCU to protect the inode, special care must be
+> taken to ensure that the LSMs do not fully release the inode state
+> until it is safe from a RCU perspective.
 > 
-> > On Sat, Jul 06, 2024 at 05:32:12PM +0200, Florian Weimer wrote:
-> >> * Mickaël Salaün:
-> >> 
-> >> > On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
-> >> >> * Mickaël Salaün:
-> >> >> 
-> >> >> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> >> >> > allowed for execution.  The main use case is for script interpreters and
-> >> >> > dynamic linkers to check execution permission according to the kernel's
-> >> >> > security policy. Another use case is to add context to access logs e.g.,
-> >> >> > which script (instead of interpreter) accessed a file.  As any
-> >> >> > executable code, scripts could also use this check [1].
-> >> >> 
-> >> >> Some distributions no longer set executable bits on most shared objects,
-> >> >> which I assume would interfere with AT_CHECK probing for shared objects.
-> >> >
-> >> > A file without the execute permission is not considered as executable by
-> >> > the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
-> >> > note that this is just a check, not a restriction.  See the next patch
-> >> > for the optional policy enforcement.
-> >> >
-> >> > Anyway, we need to define the policy, and for Linux this is done with
-> >> > the file permission bits.  So for systems willing to have a consistent
-> >> > execution policy, we need to rely on the same bits.
-> >> 
-> >> Yes, that makes complete sense.  I just wanted to point out the odd
-> >> interaction with the old binutils bug and the (sadly still current)
-> >> kernel bug.
-> >> 
-> >> >> Removing the executable bit is attractive because of a combination of
-> >> >> two bugs: a binutils wart which until recently always set the entry
-> >> >> point address in the ELF header to zero, and the kernel not checking for
-> >> >> a zero entry point (maybe in combination with an absent program
-> >> >> interpreter) and failing the execve with ELIBEXEC, instead of doing the
-> >> >> execve and then faulting at virtual address zero.  Removing the
-> >> >> executable bit is currently the only way to avoid these confusing
-> >> >> crashes, so I understand the temptation.
-> >> >
-> >> > Interesting.  Can you please point to the bug report and the fix?  I
-> >> > don't see any ELIBEXEC in the kernel.
-> >> 
-> >> The kernel hasn't been fixed yet.  I do think this should be fixed, so
-> >> that distributions can bring back the executable bit.
-> >
-> > Can you please point to the mailing list discussion or the bug report?
+> This patch implements a new inode_free_security_rcu() implementation
+> hook which is called when it is safe to free the LSM's internal inode
+> state.  Unfortunately, this new hook does not have access to the inode
+> itself as it may already be released, so the existing
+> inode_free_security() hook is retained for those LSMs which require
+> access to the inode.
 > 
-> I'm not sure if this was ever reported upstream as an RFE to fail with
-> ELIBEXEC.  We have downstream bug report:
-> 
->   Prevent executed .so files with e_entry == 0 from attempting to become
->   a process.
->   <https://bugzilla.redhat.com/show_bug.cgi?id=2004942>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 
-Thanks for the info.
+I like this new hook.  It is definitely safer than the current approach.
 
-> 
-> I've put together a patch which seems to work, see below.
-> 
-> I don't think there's any impact on AT_CHECK with execveat because that
-> mode will never get to this point.
+To make it more consistent, I think we should also rename
+security_inode_free() to security_inode_put() to highlight the fact that
+LSM implementations should not free potential pointers in this blob
+because they could still be dereferenced in a path walk.
 
-Correct, that is not an issue for AT_CHECK use cases.
+> ---
+>  include/linux/lsm_hook_defs.h     |  1 +
+>  security/integrity/ima/ima.h      |  2 +-
+>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+>  security/integrity/ima/ima_main.c |  2 +-
+>  security/landlock/fs.c            |  9 ++++++---
+>  security/security.c               | 26 +++++++++++++-------------
+>  6 files changed, 30 insertions(+), 30 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 8fd87f823d3a..abe6b0ef892a 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -114,6 +114,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+>  	 unsigned int obj_type)
+>  LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+>  LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+> +LSM_HOOK(void, LSM_RET_VOID, inode_free_security_rcu, void *)
+>  LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+>  	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
+>  	 int *xattr_count)
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 3e568126cd48..e2a2e4c7eab6 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -223,7 +223,7 @@ static inline void ima_inode_set_iint(const struct inode *inode,
+>  
+>  struct ima_iint_cache *ima_iint_find(struct inode *inode);
+>  struct ima_iint_cache *ima_inode_get(struct inode *inode);
+> -void ima_inode_free(struct inode *inode);
+> +void ima_inode_free_rcu(void *inode_sec);
+>  void __init ima_iintcache_init(void);
+>  
+>  extern const int read_idmap[];
+> diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
+> index e23412a2c56b..54480df90bdc 100644
+> --- a/security/integrity/ima/ima_iint.c
+> +++ b/security/integrity/ima/ima_iint.c
+> @@ -109,22 +109,18 @@ struct ima_iint_cache *ima_inode_get(struct inode *inode)
+>  }
+>  
+>  /**
+> - * ima_inode_free - Called on inode free
+> - * @inode: Pointer to the inode
+> + * ima_inode_free_rcu - Called to free an inode via a RCU callback
+> + * @inode_sec: The inode::i_security pointer
+>   *
+> - * Free the iint associated with an inode.
+> + * Free the IMA data associated with an inode.
+>   */
+> -void ima_inode_free(struct inode *inode)
+> +void ima_inode_free_rcu(void *inode_sec)
+>  {
+> -	struct ima_iint_cache *iint;
+> +	struct ima_iint_cache **iint_p = inode_sec + ima_blob_sizes.lbs_inode;
+>  
+> -	if (!IS_IMA(inode))
+> -		return;
+> -
+> -	iint = ima_iint_find(inode);
+> -	ima_inode_set_iint(inode, NULL);
+> -
+> -	ima_iint_free(iint);
+> +	/* *iint_p should be NULL if !IS_IMA(inode) */
+> +	if (*iint_p)
+> +		ima_iint_free(*iint_p);
+>  }
+>  
+>  static void ima_iint_init_once(void *foo)
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index f04f43af651c..5b3394864b21 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -1193,7 +1193,7 @@ static struct security_hook_list ima_hooks[] __ro_after_init = {
+>  #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+>  	LSM_HOOK_INIT(kernel_module_request, ima_kernel_module_request),
+>  #endif
+> -	LSM_HOOK_INIT(inode_free_security, ima_inode_free),
+> +	LSM_HOOK_INIT(inode_free_security_rcu, ima_inode_free_rcu),
+>  };
+>  
+>  static const struct lsm_id ima_lsmid = {
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 22d8b7c28074..f583f8cec345 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1198,13 +1198,16 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>  
+>  /* Inode hooks */
+>  
+> -static void hook_inode_free_security(struct inode *const inode)
+> +static void hook_inode_free_security_rcu(void *inode_sec)
+>  {
+> +	struct landlock_inode_security *lisec;
+
+Please rename "lisec" to "inode_sec" for consistency with
+get_inode_object()'s variables.
+
+> +
+>  	/*
+>  	 * All inodes must already have been untied from their object by
+>  	 * release_inode() or hook_sb_delete().
+>  	 */
+> -	WARN_ON_ONCE(landlock_inode(inode)->object);
+> +	lisec = inode_sec + landlock_blob_sizes.lbs_inode;
+> +	WARN_ON_ONCE(lisec->object);
+>  }
+
+This looks good to me.
+
+We can add these footers:
+Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/r/00000000000076ba3b0617f65cc8@google.com
+
+However, I'm wondering if we could backport this patch down to v5.15 .
+I guess not, so I'll need to remove this hook implementation for
+Landlock, backport it to v5.15, and then you'll need to re-add this
+check with this patch.  At least it has been useful to spot this inode
+issue, but it could still be useful to spot potential memory leaks with
+a negligible performance impact.
+
+
+>  
+>  /* Super-block hooks */
+> @@ -1628,7 +1631,7 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+>  }
+>  
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> -	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
+> +	LSM_HOOK_INIT(inode_free_security_rcu, hook_inode_free_security_rcu),
+>  
+>  	LSM_HOOK_INIT(sb_delete, hook_sb_delete),
+>  	LSM_HOOK_INIT(sb_mount, hook_sb_mount),
+> diff --git a/security/security.c b/security/security.c
+> index b52e81ac5526..bc6805f7332e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1596,9 +1596,8 @@ int security_inode_alloc(struct inode *inode)
+>  
+>  static void inode_free_by_rcu(struct rcu_head *head)
+>  {
+> -	/*
+> -	 * The rcu head is at the start of the inode blob
+> -	 */
+> +	/* The rcu head is at the start of the inode blob */
+> +	call_void_hook(inode_free_security_rcu, head);
+
+For this to work, we need to extend the inode blob size (lbs_inode) with
+sizeof(struct rcu_head).  The current implementation override the
+content of the blob with a new rcu_head.
+
+>  	kmem_cache_free(lsm_inode_cache, head);
+>  }
+>  
+> @@ -1606,20 +1605,21 @@ static void inode_free_by_rcu(struct rcu_head *head)
+>   * security_inode_free() - Free an inode's LSM blob
+>   * @inode: the inode
+>   *
+> - * Deallocate the inode security structure and set @inode->i_security to NULL.
+> + * Release any LSM resources associated with @inode, although due to the
+> + * inode's RCU protections it is possible that the resources will not be
+> + * fully released until after the current RCU grace period has elapsed.
+> + *
+> + * It is important for LSMs to note that despite being present in a call to
+> + * security_inode_free(), @inode may still be referenced in a VFS path walk
+> + * and calls to security_inode_permission() may be made during, or after,
+> + * a call to security_inode_free().  For this reason the inode->i_security
+> + * field is released via a call_rcu() callback and any LSMs which need to
+> + * retain inode state for use in security_inode_permission() should only
+> + * release that state in the inode_free_security_rcu() LSM hook callback.
+>   */
+>  void security_inode_free(struct inode *inode)
+>  {
+>  	call_void_hook(inode_free_security, inode);
+> -	/*
+> -	 * The inode may still be referenced in a path walk and
+> -	 * a call to security_inode_permission() can be made
+> -	 * after inode_free_security() is called. Ideally, the VFS
+> -	 * wouldn't do this, but fixing that is a much harder
+> -	 * job. For now, simply free the i_security via RCU, and
+> -	 * leave the current inode->i_security pointer intact.
+> -	 * The inode will be freed after the RCU grace period too.
+> -	 */
+>  	if (inode->i_security)
+>  		call_rcu((struct rcu_head *)inode->i_security,
+>  			 inode_free_by_rcu);
+
+We should have something like:
+call_rcu(inode->i_security.rcu, inode_free_by_rcu);
+
+> -- 
+> 2.45.2
+> 
+> 
