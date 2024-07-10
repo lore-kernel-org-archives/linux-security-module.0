@@ -1,257 +1,258 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE54E22071
-	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 16:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB79618FA02;
+	Wed, 10 Jul 2024 17:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720629675; cv=none; b=Fc8PXb1UPDYY6SJc2qVQpt2d4Mv1zYuuuwfqbPy7UQRfTj7OUNJiMsCCqQNNu4O7mFMltR3pK5YZ3HDqGkcNxwGiUT4M27fxevyOaLfu6ymZH6Hb/v9bp4zjrpCqorpcJ4Z+2sNuyf7ajO9HS+1Ba3fkGPpeoYET5w9A9vfd7vw=
+	t=1720632049; cv=none; b=WwleNcZHEw1ky0+MFWH//yw2FMLLsQUPBp/y2q4w/gX0wEEmBhfccW9OkGY59fqQDdaEsdv2YMJjg2ne/JJT1kRdZ11rr30Ap1SIAFfWUQEnPSSeFNUptkaMpEHMmJnY6bKKCu5TogEsDPC2oUWWKUeK0trr6eVj8WCLaST70fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720629675; c=relaxed/simple;
-	bh=waiAxW+dKpwpKtM18batcOROvx/ysIw8Y9+0N5xC0Cw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VZmjlmVJEaL/ZbNZfCixlDOvKiL1pqlXICYfIV+Oj54w3M1gWXQWFSa56bEuYUZHnS8KPFv+8q9fLX5J6r7jk/Ov6CBMrivvvqqq+JXTZJIF7mC7aYEXCLwP9McueVwPjDqu5qJfVV6Dgoa+2qfKDkLOGDnxzhqufGuErLB5j48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=pDuh3OZD; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1720632049; c=relaxed/simple;
+	bh=qRcTcUopRK2xHoEu39uGsBqYKTPXei/IqbG5uKck4zM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwDHBAUhZdo784v6VqFRrb7w0fZ9VNV67V4WX7IhlVCXbouA8s/KhAgj0EeeFlyGKa8XCeMimNykhI/Ziz6Nlv8fcu2VgpnbUBjHBqcERKXkjYU4sgsu8no+vffitME64B+SbyhkVGozFYyWOG+HdJr/nckGhdDHulczVPylufk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZlCDndiS; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pDuh3OZD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720629666; bh=2OijOwd35xgJveaDQP8zv24F/srwv/q2RYqa2egsL2c=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=pDuh3OZDvtwyoELdJ87vc1XFkqwJfkA3KyPRzQGeNvAmNVYwmvLu+QETrCfYtXH2vGgpRPHzMf5o2M2tmmLN9J2ClW6sZf6L4FroNrUpTIT5ap3v6iWYP+xpiGVvVXQKapMDrQBLeUgKPRTvPkD4jLEJ2+6gxB7160MNkNyQZwdUeSxqlgfG0gIgKYKA4X7O2w06PkFkH6vvXErz3F1YUBuFf2Ig9j5aMEotltn74zsa9R0g1vX4bhm9u3hsCgt4Y0kgBHaiNBIqm6ZHl/m02Hbr97wAksNNN6ehNMu+WTrnYOT6VWN9J7WutTbeRO5c7UMUO0952bFTuuKPzhZACw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1720629666; bh=F7kwkmeSWBR9otZkRoL4iw7dJ/xKfE+uFhKmBrPO2kM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=oPBUGC21UPoRFnQuAEJTcQF741IkFZZOZH5bk/7ep5ilQeG8xTAH6M/D+iPfIZPzKdL6WvGSvks+KbOz78TUwfOfEBWTJbxYx3nIpwG37E9Iu/5hS3oG0vW4NSQRMNNAVMbRpzi3jKU0noToly1oa7QvinnciGuq8nDvuXypkhmBHtxKWO9TIq3HEB+9Ucdy1Z5R7Bkkhakpmxki/TWm0jtTayIuYaHgr2ZK1V7Hss4Qc+T5ZRHeO3gKTibGtHgLBYL9EN81o5ZvLlmnCWulKZ7KYVjfIrV926jBM3aaDYNbP+g7wpqCiVUc/rfgXet6blSbiqYHadSb46wz7rKTOA==
-X-YMail-OSG: f0jPSosVM1n127NKIAELG2N7PDDab6NPAdcT30tjX8EckingrBBXpi.HXUliN9q
- Ei3OXSSJp0qKtwIFLbEhh9VT.EJz1BEfy0PL4PXCirqtENhWfFAFbb.VFXerYsdvRJT0hP89.eaJ
- dVwynwxrLhllD4CbLpC_60cRSv3LKBQPdw9nTxWhaZ_NqmTebX2QLumMgZyrGJYdCGJNqOZ1wZrR
- gaOY02kNVN1_0gsI_2GqozNreIzJQrwBrfGDhyAGyBR4UJ4uEJ4S2z4nIynw02PkW0eV4iug4oVv
- iKT3OZKqXlEAR31S1momwhunPvdQBbwJbn7kRo7lMLd6icAFw9oTjQc_glWfey3dtFb3OMF2Bc7M
- fKtg_.Vuha8hAgjJtiCPv4dhl3DeXDutQhx4WZaws88AWmaYAWNChVvFom_7NJLu7P0_XvAh5eX7
- DkGcXiHPLyMcY6Sf4KalI_RTI3.BdDt3IkeoVI1Rt7u6RwBXSetVOv9epkbOfq52fh7v.YZmMLlU
- ugs5oVGMG2z9mBwLb1k6irKJPuRP0FcHAM909_YzkE7eBhZuhuJG2HHipVl6KiW4yr3naBnK17JX
- wDe07iNeNM0Iu45saogEXRQJMvN6lnEVqWx1Wxp8ER5n13wPEpeFI139fLXBOGi31kKsb.yt02fF
- rWXaSUrVvvq4vGOAgkVXraMnwj3jt4j8f.gxQ42lnEe1hUuYkY1K6A3P65l1.pnGPEQaUIyHxd4m
- gjT14mnJyRGKnBAh9JbSRNVeiFG9KwD1OPjPLYmYHgFkRPB2jOguBeNdCipyt3pZI1BIm_lZBWDl
- 2DpxipBMYogzUF5X6kfVhmayVNtIV6FXKN5TW_Hek9o_RBO8J0HHHNncirOJ8QJTHBUefEGFWVcf
- GS6Kh9b_RGaQWzTgvrB36znIp8MiwKG_UKUuc5OYSPvj6PzGjhLRhmerQdvxyRHzSwihRxq3fczy
- zrAYjzK3aTZ.Yj1rIsbVmROD6wW0JFcml1uWG7XPV9Ct4T4THlpfd.i.PQmjZSWLB_XBkKk38k8d
- SHZ.y_2ZhlSVw1LWMJ6Uz4VtWSr01J3v_Bb778zhwqhvxdfmQiFIzgbR0gHWwA2QVuo8iJ9NAoz5
- RHpxfDI8CDCvs6kU_WIbUMcPhYyLXFk5Gn2zQ7SdgsZsdz5u3m4ZE6km4RuCnvUdasVnximidZ29
- kEWQ6I8yIFpFUfAJgA67tiTdPMMo7T0GrikS2Yn91cVqMEAhw_1kObjIX1eIcXYOmSo3J5mwVHNg
- IrjhP7hxrQYw80GrdS3HBzORhQsV2X2c0g8hzTScyrVMFHiCEQoRJOqsOIGmon2l6GEL9OSBD4ho
- EDgjts7Z6_o9pGTZC466.ZMVJGnRHwdBMzBEzC46iJCWHIF2PoB_5k9rU3DHTMNuKsN6QmBkDJfz
- QImHuGjjyCgRSYnjSOZyBVUg7HhMLiXBd5x91wu706M3vNWW0bV6Q7nMO59BjF1y1j_ilSMZLtaZ
- qszdCE8aqFk2Jmva3q6o.CTr.vV.Gm56AMBa9U_6XqppblByZktUBq1PRosP4AiEEX0mNYn33iGO
- VdjUuh9gfyKnsAmrnbk_rfmUaLgrNWaaNuY.cMVUFnXCyvjOYZy96lklOcSWUKbf7uBSDv64o70r
- JY07ReeVyGih6md.apRYCkeX7XZ0_eQDh1cuDQNmbZg5uStPpqfJz_SrNksOr1QBOTljXm_6KwXN
- e1AEY9s94QODtDBvJH61wAGgt_JW23AgGArbINSF5KjGm.5AObQmHZdz.jUAbbAxFia.v6.Cv.xB
- tTUvnXk9ABvSzOKpQTNO6S50ts4hgNTiyWIIFrp4yc96ToTfYeKDiUUp_GXFIivSRO3pai5_GPRu
- _ZxUTJKKXyLsktdLKEFBx8bm_tbrJXBdglqUxjd8gtUhnun2JMIMYGtFOOz.PDWEuN0mkhqOnbWI
- GXmKbTa_uT_dWls5BmEqEEULYXe8T6bY6LARI2IkxBvT5.q3KEl9jYdtZCCm1MxMBYXJp.VhmH.S
- zDJnTeUQDHoRuw9bXV45X5fRCRtRUVlUb9GI0_.E_CFOU_BM1OejAAAaodBSHcsZObnzUbTOFWza
- oePWAx3yNVlaz21qfOdTCYfokiOGvN2Ymbg7PNH_L6o6XilII0zrzsMaB3T3vSnOyfvbB3hMortP
- u46y_qMnZ7IfsOC.5Oe8O5lSM_vLNjWUgBjqYclTljgxwi2ndrfC4fMdi4unqs6WaqrZ8Pj8hyqh
- fA_tg1UpZxxZfHDj9JXQIBm8kaRi__k6CbT.JcD4qIaL8A8W8d9BTaktUsSVecMHOwOzTXXz07We
- btWxh_PxTGg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 6f81bee5-7992-4641-9e43-e75bd0bac9cc
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 10 Jul 2024 16:41:06 +0000
-Received: by hermes--production-gq1-799bb7c8cf-9xr4w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e1c3df5f43dd1ca029467866f5d51778;
-          Wed, 10 Jul 2024 16:41:04 +0000 (UTC)
-Message-ID: <cda2665d-34c3-4276-afc6-e79e553b7664@schaufler-ca.com>
-Date: Wed, 10 Jul 2024 09:41:03 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlCDndiS"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fa9ecfb321so41588995ad.0;
+        Wed, 10 Jul 2024 10:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720632047; x=1721236847; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pcl1f+AK0P8JCKXXKjbHo0YsgLy2QnOimTj9DcDVJYs=;
+        b=ZlCDndiSZTJRnQ06WWWS4Kk7VWBtoY6PRy11eeN4tIxTfO9yMtxHHObN10SdbR8uOp
+         fqv6dc8x+QsHkmPLMH+Ic4ifZfUhirLRZp/rcyl5UYJ6k4594fQ2OHZKup3xBHE7kei8
+         XOBlgAd2RTm3clKtSjm+iMb69gGtzFS3GMGCa+MwTogFiN/hr+uzXCfqQPUfkei0sXpg
+         uceVKEYQ81eqc3rYANS7KpCQMCUcS2yo0OFypWySCRQyydv/YCaGpEdtrJ0IEBei8315
+         dycGJIMnaF+7YVvcdnIY/y6GO6eK/W7Ac7nW4mYCK6ynMO2f/kX0ed+H45esfjhxeTH8
+         L2rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720632047; x=1721236847;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pcl1f+AK0P8JCKXXKjbHo0YsgLy2QnOimTj9DcDVJYs=;
+        b=m6IR7nAR8RePNvWwNKW3Di2AGcd1N2kfrXQnDzT3NP07mL9vdna23fHMc+E7EV9/s7
+         ExWJUMEL283tPRnHMj8CjQ0SIWsiTVrMoT+APrpwt1sM2RiSODoQvYRmey8Pj5YRA4wA
+         alcUrXSuJ2f0ieUp0VZt3WOPg6i39rtszVy6yj2a1qU4FqFnJNaPT/iYitKoQLTLjJOj
+         YspHHVsVM4RSK8mhVgIiu7KjP2doi3wsOq/eRpMd65fLzpNjaZZ8jo2gJmycKGH8vvU9
+         4MZ7/LUiCriyEq5DKhgz84QSxe48SFH4vPP5zwqZzMhf1xmBMjW/r2qEeN+BLi1wS4D8
+         babQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX663Cra7aTy4LVuIwvI3sjyvAbXMpGVhCYTUJk43w4P1bH0wbqvwXkEaQ8+e9HY26fFtcWzhctl2n8DwIt+Bz1gZjRlqFPBq1JsYRRNUQhrz6TQvG4aLSfs/BWTpgWMzsiYx6tH52FodV2vTsenDkKnef1XrVW5UJ0+V8ZhgRLoPglnfJLKL//R2wh
+X-Gm-Message-State: AOJu0YzHB2r1PvQWGNb14h24P/dhwLw6thMol8XEu+EAwcXJhZS/bOns
+	jv4B0RVWE3t1Aj6Qq76if56yEANTH1wbV6hDbhdSAIlD8jLA0Z7G
+X-Google-Smtp-Source: AGHT+IGTzt5K2rzfweaEtxiqsl4HgDFZ/lCPOIrLsQV0ScOaq5I5BseMmXfl86hdYqwHj3mGlMJLBg==
+X-Received: by 2002:a17:90b:4f8b:b0:2c9:cf1d:1bcc with SMTP id 98e67ed59e1d1-2ca35d386c5mr5149648a91.36.1720632046879;
+        Wed, 10 Jul 2024 10:20:46 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e6a7dcsm4101196a91.16.2024.07.10.10.20.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 10:20:46 -0700 (PDT)
+Date: Wed, 10 Jul 2024 11:20:44 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v6] landlock: Add abstract unix socket connect restriction
+Message-ID: <Zo7C7MUfnPApp0Np@tahera-OptiPlex-5000>
+References: <Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000>
+ <20240704.uab4aveeYad0@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
- implementation hook
-To: Paul Moore <paul@paul-moore.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240710024029.669314-2-paul@paul-moore.com>
- <20240710.peiDu2aiD1su@digikod.net>
- <CAHC9VhTxz6eFFUBZYJ3kgneRqKMSqaW63cXuQvVs_tt88GU_OA@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhTxz6eFFUBZYJ3kgneRqKMSqaW63cXuQvVs_tt88GU_OA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22464 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+In-Reply-To: <20240704.uab4aveeYad0@digikod.net>
 
-On 7/10/2024 9:20 AM, Paul Moore wrote:
-> On Wed, Jul 10, 2024 at 6:40â€¯AM MickaÃ«l SalaÃ¼n <mic@digikod.net> wrote:
->> On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
->>> The LSM framework has an existing inode_free_security() hook which
->>> is used by LSMs that manage state associated with an inode, but
->>> due to the use of RCU to protect the inode, special care must be
->>> taken to ensure that the LSMs do not fully release the inode state
->>> until it is safe from a RCU perspective.
->>>
->>> This patch implements a new inode_free_security_rcu() implementation
->>> hook which is called when it is safe to free the LSM's internal inode
->>> state.  Unfortunately, this new hook does not have access to the inode
->>> itself as it may already be released, so the existing
->>> inode_free_security() hook is retained for those LSMs which require
->>> access to the inode.
->>>
->>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->> I like this new hook.  It is definitely safer than the current approach.
-> It would be nicer to simply have a single inode free hook, but it
-> doesn't look like that is a possibility due to the inode
-> synchronization methods and differing lifetimes of inodes and their
-> associated LSM state.  At least the workaround isn't too ugly :)
->
->> To make it more consistent, I think we should also rename
->> security_inode_free() to security_inode_put() to highlight the fact that
->> LSM implementations should not free potential pointers in this blob
->> because they could still be dereferenced in a path walk.
-> I'd prefer to keep the naming as-is in this patch since
-> security_inode_free() does trigger the free'ing/release of the LSM
-> state associated with the inode.
->
->>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
->>> index 22d8b7c28074..f583f8cec345 100644
->>> --- a/security/landlock/fs.c
->>> +++ b/security/landlock/fs.c
->>> @@ -1198,13 +1198,16 @@ static int current_check_refer_path(struct dentry *const old_dentry,
->>>
->>>  /* Inode hooks */
->>>
->>> -static void hook_inode_free_security(struct inode *const inode)
->>> +static void hook_inode_free_security_rcu(void *inode_sec)
->>>  {
->>> +     struct landlock_inode_security *lisec;
->> Please rename "lisec" to "inode_sec" for consistency with
->> get_inode_object()'s variables.
-> Done.  That did conflict with the parameter name so I renamed the
-> parameter everywhere to "inode_security".
->
->>>       /*
->>>        * All inodes must already have been untied from their object by
->>>        * release_inode() or hook_sb_delete().
->>>        */
->>> -     WARN_ON_ONCE(landlock_inode(inode)->object);
->>> +     lisec = inode_sec + landlock_blob_sizes.lbs_inode;
->>> +     WARN_ON_ONCE(lisec->object);
->>>  }
->> This looks good to me.
->>
->> We can add these footers:
->> Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
->> Closes: https://lore.kernel.org/r/00000000000076ba3b0617f65cc8@google.com
-> Thanks, metadata added.  This was a quick RFC patch so I didn't want
-> to spend a lot of time chasing down metadata refs until I knew there
-> was some basic support for this approach.  I still want to make sure
-> it is okay with the IMA folks.
->
->> However, I'm wondering if we could backport this patch down to v5.15 .
->> I guess not, so I'll need to remove this hook implementation for
->> Landlock, backport it to v5.15, and then you'll need to re-add this
->> check with this patch.  At least it has been useful to spot this inode
->> issue, but it could still be useful to spot potential memory leaks with
->> a negligible performance impact.
-> Yes, it's a bit complicated with the IMA/EVM promotion happening
-> fairly recently.  I'm marking the patch with a stable tag, but
-> considering we're at -rc7 and this needs at least one more respin,
-> testing, ACKs, etc. it might not land in Linus' tree until sometime
-> post v6.11-rc1.  Considering that, I might suggest dropping the
-> Landlock hook in -stable and re-adding it to Linus' tree once this fix
-> lands, but that decision is up to you.
->
->>> diff --git a/security/security.c b/security/security.c
->>> index b52e81ac5526..bc6805f7332e 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -1596,9 +1596,8 @@ int security_inode_alloc(struct inode *inode)
->>>
->>>  static void inode_free_by_rcu(struct rcu_head *head)
->>>  {
->>> -     /*
->>> -      * The rcu head is at the start of the inode blob
->>> -      */
->>> +     /* The rcu head is at the start of the inode blob */
->>> +     call_void_hook(inode_free_security_rcu, head);
->> For this to work, we need to extend the inode blob size (lbs_inode) with
->> sizeof(struct rcu_head).  The current implementation override the
->> content of the blob with a new rcu_head.
-> Take a look at lsm_set_blob_sizes() and you'll see that the rcu_head
-> struct is already accounted for in the inode->i_security blob.
->
->>> @@ -1606,20 +1605,21 @@ static void inode_free_by_rcu(struct rcu_head *head)
->>>   * security_inode_free() - Free an inode's LSM blob
->>>   * @inode: the inode
->>>   *
->>> - * Deallocate the inode security structure and set @inode->i_security to NULL.
->>> + * Release any LSM resources associated with @inode, although due to the
->>> + * inode's RCU protections it is possible that the resources will not be
->>> + * fully released until after the current RCU grace period has elapsed.
->>> + *
->>> + * It is important for LSMs to note that despite being present in a call to
->>> + * security_inode_free(), @inode may still be referenced in a VFS path walk
->>> + * and calls to security_inode_permission() may be made during, or after,
->>> + * a call to security_inode_free().  For this reason the inode->i_security
->>> + * field is released via a call_rcu() callback and any LSMs which need to
->>> + * retain inode state for use in security_inode_permission() should only
->>> + * release that state in the inode_free_security_rcu() LSM hook callback.
->>>   */
->>>  void security_inode_free(struct inode *inode)
->>>  {
->>>       call_void_hook(inode_free_security, inode);
->>> -     /*
->>> -      * The inode may still be referenced in a path walk and
->>> -      * a call to security_inode_permission() can be made
->>> -      * after inode_free_security() is called. Ideally, the VFS
->>> -      * wouldn't do this, but fixing that is a much harder
->>> -      * job. For now, simply free the i_security via RCU, and
->>> -      * leave the current inode->i_security pointer intact.
->>> -      * The inode will be freed after the RCU grace period too.
->>> -      */
->>>       if (inode->i_security)
->>>               call_rcu((struct rcu_head *)inode->i_security,
->>>                        inode_free_by_rcu);
->> We should have something like:
->> call_rcu(inode->i_security.rcu, inode_free_by_rcu);
-> The unfortunate side effect of that is that the patch grows
-> significantly as everyone that touches inode->i_security would need to
-> be updated to use inode->i_security.data or something similar.  For a
-> patch that we likely want to see backported to -stable that could make
-> things more difficult than needed.
->
-> However, I have always thought we should add some better
-> structure/typing to these opaque LSM blobs both to get away from the
-> raw pointer math and add a marginal layer of safety.  I've envisioned
-> doing something like this:
->
->   struct lsm_blob_inode {
->     struct selinux_blob_inode selinux;
->     struct smack_blob_inode smack;
->     struct aa_blob_inode apparmor;
->     ...
->     struct rcu_head rcu;
->   }
+On Mon, Jul 08, 2024 at 05:35:48PM +0200, Mickaël Salaün wrote:
+> Please add a user documentation with the next version.  You can take
+> some inspiration in commits that changed
+> Documentation/userspace-api/landlock.rst
+> 
+> You also need to extend samples/landlock/sandboxer.c with this new
+> feature.  You might want to use a new environment variable (LL_SCOPED)
+> with "a" (for abstract unix socket) as the only valid content.  New kind
+> of sopping could add new characters.  I'm not sure this is the most
+> ergonomic, but let's go this way unless you have something else in mind.
+Thanks for the feedback. 
+This will be added in the next patch. 
 
-I have considered doing this as part of the stacking effort for quite
-some time. I've already done it for the lsmblob structure that will replace
-most uses of the u32 secid in the LSM APIs. I am concerned that there would
-be considerable gnashing of teeth over the potential increase in the blob
-sizes for kernels compiled with LSMs that aren't active. I have been frantically
-avoiding anything that might slow the stacking effort further. If this would
-help moving this along I'll include it in v40.
+> All the related patches (kernel change, tests, sample, documentation)
+> should be in the same patch series, with a cover letter introducing the
+> feature and pointing to the previous versions with links to
+> https://lore.kernel.org/r/...
+Noted.
+> 
+> On Thu, Jun 27, 2024 at 05:30:17PM -0600, Tahera Fahimi wrote:
+> > Abstract unix sockets are used for local inter-process communications
+> > without a filesystem. Currently a sandboxed process can connect to a
+> 
+> "local inter-process communications independant of the filesystem."
+> 
+> > socket outside of the sandboxed environment, since Landlock has no
+> > restriction for connecting to an abstract socket address. Access to
+> > such sockets for a sandboxed process should be scoped the same way
+> > ptrace is limited.
+> > 
+> > Because of compatibility reasons and since landlock should be flexible,
+> 
+> Landlock
 
->
-> .. with lsm_blob_inode allocated and assigned to inode->i_security.
-> Those LSMs that are enabled and require blob space would define their
-> struct with the necessary fields, those that were disabled or did not
-> require space would define an empty struct; some minor pre-processor
-> checking and header file work would be needed, but it shouldn't be too
-> bad.  Ideally, we would use the same approach for all of the LSM
-> security blobs, only with different LSM supplied structs.  Perhaps
-> once we land Casey's latest patchset I'll see about doing something
-> like that, but right now we've got bigger problems to address.
->
-> I'll hold off on posting a proper patch for this RFC until I hear back
-> from Mini or Roberto on the IMA changes.
->
+[...]
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 68625e728f43..010aaca5b05a 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+> >  	 * rule explicitly allow them.
+> >  	 */
+> >  	__u64 handled_access_net;
+> > +	/**
+> > +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
+> > +	 * restricting a Landlock domain from accessing outside
+> > +	 * resources(e.g. IPCs).
+> 
+> A space is missing.
+> 
+> > +	 */
+> > +	__u64 scoped;
+> >  };
+> >  
+> >  /*
+> > @@ -266,4 +272,27 @@ struct landlock_net_port_attr {
+> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> >  /* clang-format on */
+> > +
+> > +/**
+> > + * DOC: scope
+> > + *
+> > + * .scoped attribute handles a set of restrictions on kernel IPCs through
+> > + * the following flags.
+> 
+> I think you can remove this sentence.
+> 
+[...] 
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 849f5123610b..acc6e0fbc111 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -13,6 +13,8 @@
+> >  #include <linux/lsm_hooks.h>
+> >  #include <linux/rcupdate.h>
+> >  #include <linux/sched.h>
+> > +#include <net/sock.h>
+> > +#include <net/af_unix.h>
+> >  
+> >  #include "common.h"
+> >  #include "cred.h"
+> > @@ -108,9 +110,69 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+> >  	return task_ptrace(parent, current);
+> >  }
+> >  
+> > +static access_mask_t
+> > +get_scoped_accesses(const struct landlock_ruleset *const domain)
+> > +{
+> > +	access_mask_t access_dom = 0;
+> > +	size_t layer_level;
+> > +
+> > +	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> > +		access_dom |= landlock_get_scope_mask(domain, layer_level);
+> > +	return access_dom;
+> > +}
+> > +
+> > +static bool sock_is_scoped(struct sock *const other)
+> > +{
+> > +	const struct landlock_ruleset *dom_other;
+> > +	const struct landlock_ruleset *const dom =
+> > +		landlock_get_current_domain();
+> > +
+> > +	/* quick return if there is no domain or .scoped is not set */
+> > +	if (!dom || !get_scoped_accesses(dom))
+> > +		return true;
+> > +
+> > +	/* the credentials will not change */
+> > +	lockdep_assert_held(&unix_sk(other)->lock);
+> > +	if (other->sk_type != SOCK_DGRAM) {
+> > +		dom_other = landlock_cred(other->sk_peer_cred)->domain;
+> 
+> Why using different credentials for connected or not connected sockets?
+> We should use the same consistent logic for both:
+> other->sk_socket->file->f_cred (the process that created the socket, not
+> the one listening).
+The aim was to use the process's credential that utilized the socket for
+connected sockets, and the process's credential created the socket for
+non-connected sockets. However, I will change it and use the same
+credential to keep it consistent for both cases. 
+
+> > +	} else {
+> > +		dom_other =
+> > +			landlock_cred(other->sk_socket->file->f_cred)->domain;
+> > +	}
+> > +
+> > +	if (!dom_other || !get_scoped_accesses(dom_other))
+> 
+> What if only one layer in dom_other is scoped?
+The function `get_scoped_accesses()` cover this. 
+
+> > +		return false;
+> > +
+> > +	/* other is scoped, they connect if they are in the same domain */
+> 
+> This doesn't fit with each domain's scoping. It only considers no
+> scopping for all domains, or all domains as scopped if any of them is.
+> domain_scope_le() needs to be changed to follow each domain's contract.
+Noted.
+
+> > +	return domain_scope_le(dom, dom_other);
+> > +}
+> > +
+> > +static int hook_unix_stream_connect(struct sock *const sock,
+> > +				    struct sock *const other,
+> > +				    struct sock *const newsk)
+> > +{
+> > +	if (sock_is_scoped(other))
+> > +		return 0;
+> > +
+> > +	return -EPERM;
+> > +}
+> > +
+> > +static int hook_unix_may_send(struct socket *const sock,
+> > +			      struct socket *const other)
+> > +{
+> > +	pr_warn("XXX %s:%d sock->file:%p other->file:%p\n", __func__, __LINE__,
+> > +		sock->file, other->file);
+> 
+> Please remove debug code.
+> 
+> > +	if (sock_is_scoped(other->sk))
+> > +		return 0;
+> > +
+> > +	return -EPERM;
+> > +}
+> > +
+> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
+> >  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
+> > +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
+> > +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
+> >  };
+> >  
+> >  __init void landlock_add_task_hooks(void)
+> > -- 
+> > 2.34.1
+> > 
+> > 
