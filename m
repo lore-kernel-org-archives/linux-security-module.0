@@ -1,50 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F113E15CB;
-	Wed, 10 Jul 2024 05:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0912C18FA28
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 09:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720590737; cv=none; b=m0Szq54zEQjiApu8N7XkkeXnxvaUa1CccykpbKjLXvKWqq9dzXUzChv6eMnrGYDM0j3IS73R8zUElWelsMGX3v05wxsdHPgfmieM2+fp1oyRNdK9i9uLkNk3L5Ci18PbJM07zopxyrowo1qFx7fBuc6NAAdNWqquaOSqIEdNxEk=
+	t=1720605523; cv=none; b=aHBAX8Mgt8wScM44tmkxz5QtvJOwkKP6HpQKtMoD7znDzaqLQzU/rNhdjzY80oY7GfcwQm1Co22O4KEM6UeOnyFxF2NB+bA0EO2C/VbeCKuhVtBugMNfsEXXUxciFuhsBPoIpAE0Z7VyJIeKOnXO1GkWo+r6YT7rdynsQ3toJyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720590737; c=relaxed/simple;
-	bh=7LL+Ff7Y0QqOl8nVmsoGJ2m7iN8u9RmmQDcVI++dqyM=;
+	s=arc-20240116; t=1720605523; c=relaxed/simple;
+	bh=ggCqrQBvrrG8yiVpZ2nE9VBvLg4UjjrGTkmALuvItEU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WX071303fPsuAfOtim8sXB82+n/mkPMk1LF68ZdQ5xvQ8XSfUB5oRnxIcQ7sSIer2fZVmP0vXoeXE3UftmIvwgcJB6Z6OqBaisg91+MPBLvvrbFLsWrme5Hyk1yAqizSIQCEEVHGMPtUho4EgNbowwq/k8amsmEO+6f+qOHB5OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVqbcfVd; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnGKiRqhoH0c4kJxDEgdS+/kIn0qYkqK2Dzzr/DTnaGyjLUMp6dDaa9zaN0IQ6jzsWL+FI9DyoFofy6HQA0dV3TDeGBAGTl2FwnIqF0ZxH/elMhi3HiCi8ctoPZY+RYkJKICf8VwXgE5pTCg8qZzFq4/i5kPkjBqF42fvDkvK4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DaR54BNM; arc=none smtp.client-ip=84.16.66.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVqbcfVd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E365C32781;
-	Wed, 10 Jul 2024 05:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720590736;
-	bh=7LL+Ff7Y0QqOl8nVmsoGJ2m7iN8u9RmmQDcVI++dqyM=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DaR54BNM"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJtbW6W7GzwkR;
+	Wed, 10 Jul 2024 11:58:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720605511;
+	bh=GHxfhG9pyjM4wm0dM1heyMCWxzYAh2GXre8FZxnfg4g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oVqbcfVdgWfrFpck6mJywu/tapj+CKvrnt8aVNkRcYyc6Chy+oHw30rwDfAW5CaKG
-	 2BCPuhWgs0AIkuTg4k3rOCKahu8GDs7uH30MNYfLUZFi77sceutMieg3Oea05hKzJa
-	 MXy5NP83B8JfrDFevk8BkzZFBNRZQxyi1y0PPu9h3glxPLsAa91kPkWxFMAg/Pf49O
-	 40kuX6fCjW9411TmJvjHS+jf0KTD1jIaZGcI5+3Yrtd9QpxRPwvCS4gA0r9B/abJIp
-	 71ktPVZH6sMnWg3maSkoyz+r8f1mUqFx0fmvIanPtVIB0S2aZaTFqxUfGDhpc8Ug76
-	 NhpiBuGoWiEag==
-Date: Wed, 10 Jul 2024 07:52:10 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Jann Horn <jannh@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <keescook@chromium.org>, 
-	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [syzbot] [lsm?] general protection fault in
- hook_inode_free_security
-Message-ID: <20240710-sagenhaft-rednerpult-81de44066c91@brauner>
-References: <00000000000076ba3b0617f65cc8@google.com>
- <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
- <20240515.Yoo5chaiNai9@digikod.net>
- <20240516.doyox6Iengou@digikod.net>
- <20240627.Voox5yoogeum@digikod.net>
- <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
- <20240708.ig8Kucapheid@digikod.net>
+	b=DaR54BNM5FcOyFu3r2Y5PjFq7SQW2EzQwlQsAFtZjZwHS6QM+njE0Li3ZTrdgBcK+
+	 59QHiOa06zW0Cu2srNkVLIjfPCL75HDRLAOyqUgEp+NSyVTqA6Eug6UMynpMHjZiq2
+	 Kn3NrWYZrdvGLmO6vnATSK+6LIS7Jw544KpmzJhY=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJtbS484Bz8rt;
+	Wed, 10 Jul 2024 11:58:28 +0200 (CEST)
+Date: Wed, 10 Jul 2024 11:58:25 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Steve Dower <steve.dower@python.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+Message-ID: <20240710.eiKohpa4Phai@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-3-mic@digikod.net>
+ <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
+ <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
+ <20240708.quoe8aeSaeRi@digikod.net>
+ <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
+ <ef3281ad-48a5-4316-b433-af285806540d@python.org>
+ <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
+ <20240709.aech3geeMoh0@digikod.net>
+ <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -54,128 +77,163 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708.ig8Kucapheid@digikod.net>
+In-Reply-To: <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 08, 2024 at 04:11:41PM GMT, Mickaël Salaün wrote:
-> On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
-> > On Thu, Jun 27, 2024 at 9:34 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > >
-> > > I didn't find specific issues with Landlock's code except the extra
-> > > check in hook_inode_free_security().  It looks like inode->i_security is
-> > > a dangling pointer, leading to UAF.
-> > >
-> > > Reading security_inode_free() comments, two things looks weird to me:
-> > >
-> > > > /**
-> > > >  * security_inode_free() - Free an inode's LSM blob
-> > > >  * @inode: the inode
-> > > >  *
-> > > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
-> > >
-> > > I don't see where i_security is set to NULL.
-> > 
-> > The function header comments are known to be a bit suspect, a side
-> > effect of being detached from the functions for many years, this may
-> > be one of those cases.  I tried to fix up the really awful ones when I
-> > moved the comments back, back I didn't have time to go through each
-> > one in detail.  Patches to correct the function header comments are
-> > welcome and encouraged! :)
-> > 
-> > > >  */
-> > > > void security_inode_free(struct inode *inode)
-> > > > {
-> > >
-> > > Shouldn't we add this check here?
-> > > if (!inode->i_security)
-> > >         return;
-> > 
-> > Unless I'm remembering something wrong, I believe we *should* always
-> > have a valid i_security pointer each time we are called, if not
-> > something has gone wrong, e.g. the security_inode_free() hook is no
-> > longer being called from the right place.  If we add a NULL check, we
-> > should probably have a WARN_ON(), pr_err(), or something similar to
-> > put some spew on the console/logs.
-> > 
-> > All that said, it would be good to hear some confirmation from the VFS
-> > folks that the security_inode_free() hook is located in a spot such
-> > that once it exits it's current RCU critical section it is safe to
-> > release the associated LSM state.
-> > 
-> > It's also worth mentioning that while we always allocate i_security in
-> > security_inode_alloc() right now, I can see a world where we allocate
-> > the i_security field based on need using the lsm_blob_size info (maybe
-> > that works today?  not sure how kmem_cache handled 0 length blobs?).
-> > The result is that there might be a legitimate case where i_security
-> > is NULL, yet we still want to call into the LSM using the
-> > inode_free_security() implementation hook.
-> > 
-> > > >       call_void_hook(inode_free_security, inode);
-> > > >       /*
-> > > >        * The inode may still be referenced in a path walk and
-> > > >        * a call to security_inode_permission() can be made
-> > > >        * after inode_free_security() is called. Ideally, the VFS
-> > > >        * wouldn't do this, but fixing that is a much harder
-> > > >        * job. For now, simply free the i_security via RCU, and
-> > > >        * leave the current inode->i_security pointer intact.
-> > > >        * The inode will be freed after the RCU grace period too.
-> > >
-> > > It's not clear to me why this should be safe if an LSM try to use the
-> > > partially-freed blob after the hook calls and before the actual blob
-> > > free.
-> > 
-> > I had the same thought while looking at this just now.  At least in
-> > the SELinux case I think this "works" simply because SELinux doesn't
-> > do much here, it just drops the inode from a SELinux internal list
-> > (long story) and doesn't actually release any memory or reset the
-> > inode's SELinux state (there really isn't anything to "free" in the
-> > SELinux case).  I haven't checked the other LSMs, but they may behave
-> > similarly.
-> > 
-> > We may want (need?) to consider two LSM implementation hooks called
-> > from within security_inode_free(): the first where the existing
-> > inode_free_security() implementation hook is called, the second inside
-> > the inode_free_by_rcu() callback immediately before the i_security
-> > data is free'd.
-> 
-> Couldn't we call everything in inode_free_by_rcu()?
-> I replied here instead:
-> https://lore.kernel.org/r/20240708.hohNgieja0av@digikod.net
-> 
-> > 
-> > ... or we find a better placement in the VFS for
-> > security_inode_free(), is that is possible.  It may not be, our VFS
-> > friends should be able to help here.
-> 
-> Christian? Al?
-> 
-> > 
-> > > >        */
-> > > >       if (inode->i_security)
-> > > >               call_rcu((struct rcu_head *)inode->i_security,
-> > > >                        inode_free_by_rcu);
-> > >
-> > > And then:
-> > > inode->i_security = NULL;
-> > 
-> > According to the comment we may still need i_security for permission
-> > checks.  See my comment about decomposing the LSM implementation into
-> > two hooks to better handle this for LSMs.
-> 
-> That was my though too, but maybe not if the path walk just ends early.
-> 
-> > 
-> > > But why call_rcu()?  i_security is not protected by RCU barriers.
-> > 
-> > I believe the issue is that the inode is protected by RCU and that
-> > affects the lifetime of the i_security blob.
-> 
-> It seems to be related to commit fa0d7e3de6d6 ("fs: icache RCU free
-> inodes").
+On Tue, Jul 09, 2024 at 02:57:43PM -0700, Jeff Xu wrote:
+> On Tue, Jul 9, 2024 at 1:42 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Mon, Jul 08, 2024 at 03:07:24PM -0700, Jeff Xu wrote:
+> > > On Mon, Jul 8, 2024 at 2:25 PM Steve Dower <steve.dower@python.org> wrote:
+> > > >
+> > > > On 08/07/2024 22:15, Jeff Xu wrote:
+> > > > > IIUC:
+> > > > > CHECK=0, RESTRICT=0: do nothing, current behavior
+> > > > > CHECK=1, RESTRICT=0: permissive mode - ignore AT_CHECK results.
+> > > > > CHECK=0, RESTRICT=1: call AT_CHECK, deny if AT_CHECK failed, no exception.
+> > > > > CHECK=1, RESTRICT=1: call AT_CHECK, deny if AT_CHECK failed, except
+> > > > > those in the "checked-and-allowed" list.
+> > > >
+> > > > I had much the same question for Mickaël while working on this.
+> > > >
+> > > > Essentially, "CHECK=0, RESTRICT=1" means to restrict without checking.
+> > > > In the context of a script or macro interpreter, this just means it will
+> > > > never interpret any scripts. Non-binary code execution is fully disabled
+> > > > in any part of the process that respects these bits.
+> > > >
+> > > I see, so Mickaël does mean this will block all scripts.
+> >
+> > That is the initial idea.
+> >
+> > > I guess, in the context of dynamic linker, this means: no more .so
+> > > loading, even "dlopen" is called by an app ?  But this will make the
+> > > execve()  fail.
+> >
+> > Hmm, I'm not sure this "CHECK=0, RESTRICT=1" configuration would make
+> > sense for a dynamic linker except maybe if we want to only allow static
+> > binaries?
+> >
+> > The CHECK and RESTRICT securebits are designed to make it possible a
+> > "permissive mode" and an enforcement mode with the related locked
+> > securebits.  This is why this "CHECK=0, RESTRICT=1" combination looks a
+> > bit weird.  We can replace these securebits with others but I didn't
+> > find a better (and simple) option.  I don't think this is an issue
+> > because with any security policy we can create unusable combinations.
+> > The three other combinations makes a lot of sense though.
+> >
+> If we need only handle 3  combinations,  I would think something like
+> below is easier to understand, and don't have wield state like
+> CHECK=0, RESTRICT=1
 
-Path walking can happen in RCU- and ref-mode. We'll try RCU first and
-fallback to ref mode if it fails with ECHILD. In RCU mode it's possible
-to call inode_permission() on nd->inode (e.g., in may_lookup()) while
-dentry->d_inode has changed (rename or similar)). This would be detected
-later when we validate that the parent child relationship hasn't changed
-while we were under RCU and would force a drop out of RCU into ref
-walking mode.
+The "CHECK=0, RESTRICT=1" is useful for script interpreter instances
+that should not interpret any command from users e.g., but only execute
+script files.
+
+> 
+> XX_RESTRICT: when true: Perform the AT_CHECK, and deny the executable
+> after AT_CHECK fails.
+
+> XX_RESTRICT_PERMISSIVE:  take effect when XX_RESTRICT is true. True
+> means Ignoring the AT_CHECK result.
+
+We get a similar weird state with XX_RESTRICT_PERMISSIVE=1 and
+XX_RESTRICT=0
+
+As a side note, for compatibility reasons, by default all securebits
+must be 0, and this must translate to no restriction.
+
+> 
+> Or
+> 
+> XX_CHECK: when true: Perform the AT_CHECK.
+> XX_CHECK_ENFORCE takes effect only when XX_CHECK is true.   True means
+> restrict the executable when AT_CHECK failed; false means ignore the
+> AT_CHECK failure.
+
+We get a similar weird state with XX_CHECK_ENFORCE=1 and XX_CHECK=0
+
+> 
+> Of course, we can replace XX_CHECK_ENFORCE with XX_RESTRICT.
+> Personally I think having _CHECK_ in the name implies the XX_CHECK
+> needs to be true as a prerequisite for this flag , but that is my
+> opinion only. As long as the semantics are clear as part of the
+> comments of definition in code,  it is fine.
+
+Here is another proposal:
+
+We can change a bit the semantic by making it the norm to always check
+file executability with AT_CHECK, and using the securebits to restrict
+file interpretation and/or command injection (e.g. user supplied shell
+commands).  Non-executable checked files can be reported/logged at the
+kernel level, with audit, configured by sysadmins.
+
+New securebits (feel free to propose better names):
+
+- SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
+
+- SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
+  command line arguments, environment variables, or configuration files.
+  This should be ignored by dynamic linkers.  We could also have an
+  allow-list of shells for which this bit is not set, managed by an
+  LSM's policy, if the native securebits scoping approach is not enough.
+
+Different modes for script interpreters:
+
+1. RESTRICT_FILE=0 DENY_INTERACTIVE=0 (default)
+   Always interpret scripts, and allow arbitrary user commands.
+   => No threat, everyone and everything is trusted, but we can get
+   ahead of potential issues with logs to prepare for a migration to a
+   restrictive mode.
+
+2. RESTRICT_FILE=1 DENY_INTERACTIVE=0
+   Deny script interpretation if they are not executable, and allow
+   arbitrary user commands.
+   => Threat: (potential) malicious scripts run by trusted (and not
+      fooled) users.  That could protect against unintended script
+      executions (e.g. sh /tmp/*.sh).
+   ==> Makes sense for (semi-restricted) user sessions.
+
+3. RESTRICT_FILE=1 DENY_INTERACTIVE=1
+   Deny script interpretation if they are not executable, and also deny
+   any arbitrary user commands.
+   => Threat: malicious scripts run by untrusted users.
+   ==> Makes sense for system services executing scripts.
+
+4. RESTRICT_FILE=0 DENY_INTERACTIVE=1
+   Always interpret scripts, but deny arbitrary user commands.
+   => Goal: monitor/measure/assess script content (e.g. with IMA/EVM) in
+      a system where the access rights are not (yet) ready.  Arbitrary
+      user commands would be much more difficult to monitor.
+   ==> First step of restricting system services that should not
+       directly pass arbitrary commands to shells.
+
+> 
+> Thanks
+> -Jeff
+> 
+> 
+> > >
+> > > > "CHECK=1, RESTRICT=1" means to restrict unless AT_CHECK passes. This
+> > > > case is the allow list (or whatever mechanism is being used to determine
+> > > > the result of an AT_CHECK check). The actual mechanism isn't the
+> > > > business of the script interpreter at all, it just has to refuse to
+> > > > execute anything that doesn't pass the check. So a generic interpreter
+> > > > can implement a generic mechanism and leave the specifics to whoever
+> > > > configures the machine.
+> > > >
+> > > In the context of dynamic linker. this means:
+> > > if .so passed the AT_CHECK, ldopen() can still load it.
+> > > If .so fails the AT_CHECK, ldopen() will fail too.
+> >
+> > Correct
+> >
+> > >
+> > > Thanks
+> > > -Jeff
+> > >
+> > > > The other two case are more obvious. "CHECK=0, RESTRICT=0" is the
+> > > > zero-overhead case, while "CHECK=1, RESTRICT=0" might log, warn, or
+> > > > otherwise audit the result of the check, but it won't restrict execution.
+> > > >
+> > > > Cheers,
+> > > > Steve
