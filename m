@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676931487C5
-	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 23:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B5D1487C5
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 23:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653006; cv=none; b=ahEGZsuFwve7xryS7ByCrnYknQO6JoLNXvk0uoe83/2B3jUGCTFy3l6v2cGL6HKhWTiYbS7EpqtWpSfUJs9SFJDiEe7k9NuhV3Jqk8gv5pPHsEU3LT1C0xQSYrxHmF4CibsL6LLgtQQEn57OyfnbCpP3T6Mix040WKlF3C1Ex6A=
+	t=1720653066; cv=none; b=Ei2/vwn94WAeKD7xBTahSUNMK2JRdQEDYgPM/bDaHPRKYgbkMKGn9zwwOQ86TBtjNlq/H0bWV+d3RPw3gMM/VOcouxbKwba/59hoegqV9IJp8W7wAu4SFa83XUttieQK1/vD6VqsQ28v9tHDZlU8vxS3lrDuWBPufVSBQYo4umI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653006; c=relaxed/simple;
-	bh=MR+Kr1bkV1XMefcvqgtxEKI7Fq5P0KU+uwLvv78f7Q8=;
+	s=arc-20240116; t=1720653066; c=relaxed/simple;
+	bh=e77Q6AvOB4dDYAjvXIVPvsZbMoVv+VPFfSmRlTHwJiQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EeXIfn0Q8LAU3kecWGZzufXojTtTgm0ld3BcQBk4xhhPPPGCTGXPZowQc3gFz40hdf7z5g+UnFDGEawcAqpRbNN/aXq2QodkGFZCdA/pHibSAy18PmLLV39EOs3+t8IK+o/8EDJUHNyhxT5NBp6PKeGN3z1BT/0VCHI9+fk9aiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=He3ELrNs; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=QM9bj0AGDT8Y/0c1GH+4s7IBmuBxPdQ3NsHExl8cjsRVN9gsSBYayrjJX2OLvxOEoLDxYgKKHUb/okJK4yxSk6ZVlYcV5/0paOrRGgjfiis1W8xlRFyK8nUdMyvqZvu0xQnLaUqQml6MkThb8PHkB/qUxe7CA+ts7WJlhaRkpCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FfmiZAMp; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="He3ELrNs"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FfmiZAMp"
 Received: from [192.168.192.84] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 2D31240A66;
-	Wed, 10 Jul 2024 23:09:59 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B3C0840A68;
+	Wed, 10 Jul 2024 23:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1720653002;
-	bh=4s4w4yH8cdpJByOu587/EVuoYIowyEY/D9u2RzPtH2k=;
+	s=20210705; t=1720653059;
+	bh=gTDPWeTx8Gkx9n0XiKCfSh6JeIkJc3oYA0gT/dack1o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=He3ELrNsCg4UaoZZuqQC5WhAiYk1AapYgA7mK6BWjyspZXmXQOQ977Xq+YZLeTiuT
-	 3Fhe4oSmnIUHiHACqK/EsGVOTEWtw1fvyUjY6hl61FYl0yQSK2RrRhjwhpJld25gRj
-	 iIYP2ryedVcNBFgKTk8df8KH+zQTACGX3Hc7Ac2Or7rNrThaVQLh7iUXWx74oS7lVH
-	 xahgpe8cdA6lhnErOUsjgk8DtYocFMNBJutw9NwdKVwZ2ZKMB3abCV0GOLn9JWxAKC
-	 R2JzBwWZK1UeNvfKewLKQ8TN4DiklOq23CawUFsJiHB4xub+e5mN8g+Uwhf0VtpPgm
-	 qPXCksb3PezwA==
-Message-ID: <eea55c14-84d6-4d38-83b1-8b7d6dd90f70@canonical.com>
-Date: Wed, 10 Jul 2024 16:09:56 -0700
+	b=FfmiZAMpFR9hAE68xhXxUZMkemhhd7THm5yZwT293JFnpvVWgU0iMD3asKHxy51xD
+	 AJ/v2Px9eJpizPwB1gbI+oiXMZpCOhEMwPNysAy/pR7V61RpXCf4HSmhmwLMLraEHX
+	 DE87BXx9azICqQOWEXZ3nyfulaGIKPsXOJt2XXqdsu2s4hAboG0dXnsIuCNbuKJXRB
+	 bWE6r5tRkAqc81nSIcQdsS+U0k+MEsZNXGYtIqUYFYaIfWvQSf0TpP2+Fz1is47KhW
+	 KpMZJ7wXmVcc1hp0kgITePT9Mc6+k0WGfFzhQtmHl2igSv6A0h2L9nNIscFtRRhoV4
+	 0XN/k61DQtkCQ==
+Message-ID: <5ad05864-2b0b-434c-a726-ef327b54a08a@canonical.com>
+Date: Wed, 10 Jul 2024 16:10:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,15 +42,15 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] LSM: Infrastructure management of the infiniband
- blob
+Subject: Re: [PATCH v2 6/6] LSM: Infrastructure management of the perf_event
+ security blob
 To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
  linux-security-module@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
  penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
  mic@digikod.net
 References: <20240710213230.11978-1-casey@schaufler-ca.com>
- <20240710213230.11978-6-casey@schaufler-ca.com>
+ <20240710213230.11978-7-casey@schaufler-ca.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -96,165 +96,175 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20240710213230.11978-6-casey@schaufler-ca.com>
+In-Reply-To: <20240710213230.11978-7-casey@schaufler-ca.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 7/10/24 14:32, Casey Schaufler wrote:
-> Move management of the infiniband security blob out of the individual
-> security modules and into the LSM infrastructure.  The security modules
-> tell the infrastructure how much space they require at initialization.
-> There are no longer any modules that require the ib_free() hook.
-> The hook definition has been removed.
+> Move management of the perf_event->security blob out of the individual
+> security modules and into the security infrastructure. Instead of
+> allocating the blobs from within the modules the modules tell the
+> infrastructure how much space is required, and the space is allocated
+> there.  There are no longer any modules that require the perf_event_free()
+> hook.  The hook definition has been removed.
 > 
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-
 
 looks good
 
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 
 > ---
->   include/linux/lsm_hook_defs.h     |  3 +--
+>   include/linux/lsm_hook_defs.h     |  1 -
 >   include/linux/lsm_hooks.h         |  1 +
->   security/security.c               | 17 +++++++++++++++--
->   security/selinux/hooks.c          | 16 +++-------------
+>   security/security.c               | 20 ++++++++++++++++++--
+>   security/selinux/hooks.c          | 18 ++++--------------
 >   security/selinux/include/objsec.h |  6 ++++++
->   5 files changed, 26 insertions(+), 17 deletions(-)
+>   5 files changed, 29 insertions(+), 17 deletions(-)
 > 
 > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index f1e0d6138845..7c979137c0f2 100644
+> index 7c979137c0f2..658e4ba282e6 100644
 > --- a/include/linux/lsm_hook_defs.h
 > +++ b/include/linux/lsm_hook_defs.h
-> @@ -372,8 +372,7 @@ LSM_HOOK(int, 0, mptcp_add_subflow, struct sock *sk, struct sock *ssk)
->   LSM_HOOK(int, 0, ib_pkey_access, void *sec, u64 subnet_prefix, u16 pkey)
->   LSM_HOOK(int, 0, ib_endport_manage_subnet, void *sec, const char *dev_name,
->   	 u8 port_num)
-> -LSM_HOOK(int, 0, ib_alloc_security, void **sec)
-> -LSM_HOOK(void, LSM_RET_VOID, ib_free_security, void *sec)
-> +LSM_HOOK(int, 0, ib_alloc_security, void *sec)
->   #endif /* CONFIG_SECURITY_INFINIBAND */
->   
->   #ifdef CONFIG_SECURITY_NETWORK_XFRM
+> @@ -438,7 +438,6 @@ LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
+>   #ifdef CONFIG_PERF_EVENTS
+>   LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
+>   LSM_HOOK(int, 0, perf_event_alloc, struct perf_event *event)
+> -LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
+>   LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
+>   LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+>   #endif /* CONFIG_PERF_EVENTS */
 > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 0ff14ff128c8..b6fc6ac88723 100644
+> index b6fc6ac88723..f1ca8082075a 100644
 > --- a/include/linux/lsm_hooks.h
 > +++ b/include/linux/lsm_hooks.h
-> @@ -72,6 +72,7 @@ struct security_hook_list {
->   struct lsm_blob_sizes {
->   	int	lbs_cred;
->   	int	lbs_file;
-> +	int	lbs_ib;
->   	int	lbs_inode;
->   	int	lbs_sock;
->   	int	lbs_superblock;
+> @@ -79,6 +79,7 @@ struct lsm_blob_sizes {
+>   	int	lbs_ipc;
+>   	int	lbs_key;
+>   	int	lbs_msg_msg;
+> +	int	lbs_perf_event;
+>   	int	lbs_task;
+>   	int	lbs_xattr_count; /* number of xattr slots in new_xattrs array */
+>   	int	lbs_tun_dev;
 > diff --git a/security/security.c b/security/security.c
-> index f1eb93b65ae9..e8f34cbb1990 100644
+> index e8f34cbb1990..444b0ea28c04 100644
 > --- a/security/security.c
 > +++ b/security/security.c
-> @@ -219,6 +219,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+> @@ -28,6 +28,7 @@
+>   #include <linux/xattr.h>
+>   #include <linux/msg.h>
+>   #include <linux/overflow.h>
+> +#include <linux/perf_event.h>
+>   #include <net/flow.h>
+>   #include <net/sock.h>
 >   
->   	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
->   	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
-> +	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
->   	/*
->   	 * The inode blob gets an rcu_head in addition to
->   	 * what the modules might need.
-> @@ -402,6 +403,7 @@ static void __init ordered_lsm_init(void)
->   
->   	init_debug("cred blob size       = %d\n", blob_sizes.lbs_cred);
->   	init_debug("file blob size       = %d\n", blob_sizes.lbs_file);
-> +	init_debug("ib blob size         = %d\n", blob_sizes.lbs_ib);
->   	init_debug("inode blob size      = %d\n", blob_sizes.lbs_inode);
->   	init_debug("ipc blob size        = %d\n", blob_sizes.lbs_ipc);
->   #ifdef CONFIG_KEYS
-> @@ -5070,7 +5072,18 @@ EXPORT_SYMBOL(security_ib_endport_manage_subnet);
+> @@ -230,6 +231,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+>   	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+>   	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
+>   	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+> +	lsm_set_blob_size(&needed->lbs_perf_event, &blob_sizes.lbs_perf_event);
+>   	lsm_set_blob_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
+>   	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
+>   	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
+> @@ -412,6 +414,7 @@ static void __init ordered_lsm_init(void)
+>   	init_debug("msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
+>   	init_debug("sock blob size       = %d\n", blob_sizes.lbs_sock);
+>   	init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
+> +	init_debug("perf event blob size = %d\n", blob_sizes.lbs_perf_event);
+>   	init_debug("task blob size       = %d\n", blob_sizes.lbs_task);
+>   	init_debug("tun device blob size = %d\n", blob_sizes.lbs_tun_dev);
+>   	init_debug("xattr slots          = %d\n", blob_sizes.lbs_xattr_count);
+> @@ -5659,7 +5662,19 @@ int security_perf_event_open(struct perf_event_attr *attr, int type)
 >    */
->   int security_ib_alloc_security(void **sec)
+>   int security_perf_event_alloc(struct perf_event *event)
 >   {
-> -	return call_int_hook(ib_alloc_security, sec);
+> -	return call_int_hook(perf_event_alloc, event);
 > +	int rc;
 > +
-> +	rc = lsm_blob_alloc(sec, blob_sizes.lbs_ib, GFP_KERNEL);
+> +	rc = lsm_blob_alloc(&event->security, blob_sizes.lbs_perf_event,
+> +			    GFP_KERNEL);
 > +	if (rc)
 > +		return rc;
 > +
-> +	rc = call_int_hook(ib_alloc_security, *sec);
+> +	rc = call_int_hook(perf_event_alloc, event);
 > +	if (rc) {
-> +		kfree(*sec);
-> +		*sec = NULL;
+> +		kfree(event->security);
+> +		event->security = NULL;
 > +	}
 > +	return rc;
 >   }
->   EXPORT_SYMBOL(security_ib_alloc_security);
 >   
-> @@ -5082,7 +5095,7 @@ EXPORT_SYMBOL(security_ib_alloc_security);
+>   /**
+> @@ -5670,7 +5685,8 @@ int security_perf_event_alloc(struct perf_event *event)
 >    */
->   void security_ib_free_security(void *sec)
+>   void security_perf_event_free(struct perf_event *event)
 >   {
-> -	call_void_hook(ib_free_security, sec);
-> +	kfree(sec);
+> -	call_void_hook(perf_event_free, event);
+> +	kfree(event->security);
+> +	event->security = NULL;
 >   }
->   EXPORT_SYMBOL(security_ib_free_security);
->   #endif	/* CONFIG_SECURITY_INFINIBAND */
+>   
+>   /**
 > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 34ed787a4bfa..11f4bdabda97 100644
+> index 11f4bdabda97..f42f6af55a73 100644
 > --- a/security/selinux/hooks.c
 > +++ b/security/selinux/hooks.c
-> @@ -6776,23 +6776,13 @@ static int selinux_ib_endport_manage_subnet(void *ib_sec, const char *dev_name,
->   			    INFINIBAND_ENDPORT__MANAGE_SUBNET, &ad);
->   }
->   
-> -static int selinux_ib_alloc_security(void **ib_sec)
-> +static int selinux_ib_alloc_security(void *ib_sec)
->   {
-> -	struct ib_security_struct *sec;
-> +	struct ib_security_struct *sec = selinux_ib(ib_sec);
->   
-> -	sec = kzalloc(sizeof(*sec), GFP_KERNEL);
-> -	if (!sec)
-> -		return -ENOMEM;
->   	sec->sid = current_sid();
-> -
-> -	*ib_sec = sec;
->   	return 0;
->   }
-> -
-> -static void selinux_ib_free_security(void *ib_sec)
-> -{
-> -	kfree(ib_sec);
-> -}
->   #endif
->   
->   #ifdef CONFIG_BPF_SYSCALL
-> @@ -6964,6 +6954,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
+> @@ -6950,6 +6950,9 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
+>   	.lbs_ipc = sizeof(struct ipc_security_struct),
+>   	.lbs_key = sizeof(struct key_security_struct),
+>   	.lbs_msg_msg = sizeof(struct msg_security_struct),
+> +#ifdef CONFIG_PERF_EVENTS
+> +	.lbs_perf_event = sizeof(struct perf_event_security_struct),
+> +#endif
+>   	.lbs_sock = sizeof(struct sk_security_struct),
 >   	.lbs_superblock = sizeof(struct superblock_security_struct),
 >   	.lbs_xattr_count = SELINUX_INODE_INIT_XATTRS,
->   	.lbs_tun_dev = sizeof(struct tun_security_struct),
-> +	.lbs_ib = sizeof(struct ib_security_struct),
->   };
+> @@ -6981,24 +6984,12 @@ static int selinux_perf_event_alloc(struct perf_event *event)
+>   {
+>   	struct perf_event_security_struct *perfsec;
 >   
->   #ifdef CONFIG_PERF_EVENTS
-> @@ -7282,7 +7273,6 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
->   	LSM_HOOK_INIT(ib_pkey_access, selinux_ib_pkey_access),
->   	LSM_HOOK_INIT(ib_endport_manage_subnet,
->   		      selinux_ib_endport_manage_subnet),
-> -	LSM_HOOK_INIT(ib_free_security, selinux_ib_free_security),
->   #endif
->   #ifdef CONFIG_SECURITY_NETWORK_XFRM
->   	LSM_HOOK_INIT(xfrm_policy_free_security, selinux_xfrm_policy_free),
-> diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-> index 461c6985977d..b1878f9395b5 100644
-> --- a/security/selinux/include/objsec.h
-> +++ b/security/selinux/include/objsec.h
-> @@ -213,4 +213,10 @@ selinux_tun_dev(void *security)
->   	return security + selinux_blob_sizes.lbs_tun_dev;
+> -	perfsec = kzalloc(sizeof(*perfsec), GFP_KERNEL);
+> -	if (!perfsec)
+> -		return -ENOMEM;
+> -
+> +	perfsec = selinux_perf_event(event->security);
+>   	perfsec->sid = current_sid();
+> -	event->security = perfsec;
+>   
+>   	return 0;
 >   }
 >   
-> +static inline struct ib_security_struct *
-> +selinux_ib(void *ib_sec)
+> -static void selinux_perf_event_free(struct perf_event *event)
+> -{
+> -	struct perf_event_security_struct *perfsec = event->security;
+> -
+> -	event->security = NULL;
+> -	kfree(perfsec);
+> -}
+> -
+>   static int selinux_perf_event_read(struct perf_event *event)
+>   {
+>   	struct perf_event_security_struct *perfsec = event->security;
+> @@ -7310,7 +7301,6 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+>   
+>   #ifdef CONFIG_PERF_EVENTS
+>   	LSM_HOOK_INIT(perf_event_open, selinux_perf_event_open),
+> -	LSM_HOOK_INIT(perf_event_free, selinux_perf_event_free),
+>   	LSM_HOOK_INIT(perf_event_read, selinux_perf_event_read),
+>   	LSM_HOOK_INIT(perf_event_write, selinux_perf_event_write),
+>   #endif
+> diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+> index b1878f9395b5..d632a9180b41 100644
+> --- a/security/selinux/include/objsec.h
+> +++ b/security/selinux/include/objsec.h
+> @@ -219,4 +219,10 @@ selinux_ib(void *ib_sec)
+>   	return ib_sec + selinux_blob_sizes.lbs_ib;
+>   }
+>   
+> +static inline struct perf_event_security_struct *
+> +selinux_perf_event(void *perf_event)
 > +{
-> +	return ib_sec + selinux_blob_sizes.lbs_ib;
+> +	return perf_event + selinux_blob_sizes.lbs_perf_event;
 > +}
 > +
 >   #endif /* _SELINUX_OBJSEC_H_ */
