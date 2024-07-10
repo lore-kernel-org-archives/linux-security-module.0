@@ -1,248 +1,255 @@
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61A7198A15
-	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 20:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FF8197A91;
+	Wed, 10 Jul 2024 21:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720644082; cv=none; b=Vjt1zHMHLowixy2E0fpyYrXn4NJoGR//c02RxbljE9wuMGBI351P1plVoJYSmq1tk34r30SzX03dUoxJbnXCDHEyh+hv12OhQt9cozULDRxJD9uW0kDdB7ZVIKavPmyzzLdOTrW6hUXYSOS794FUJEMnjI49uYt4oirzCFLnQ8w=
+	t=1720645325; cv=none; b=jov8UayIJoCOI+0NAywfDemc/Z0MVpLUV7VeddmS2pZzm7AYPv9bGSNlVfjVFZEwNZsx1HpOAI2XeGZ44Ypsvb7UO/0G4nSPk5s8vsb5fb8o8+2Xtt3nPyoxrLNOsW1tFzbT1S3eLaggMpUkkKQwDEH3hRU9xfl6Dz9StQQKLNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720644082; c=relaxed/simple;
-	bh=LsoiaYDzTEhSMIlC2mSQom7YLX7z+Ni7zi460kx+YiE=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=LYkKm1UX1z3V9/l3Yh6sPa5fXsAcykQp/OkBzyr1uFVNPYmFhu8n91ZCA4l5AyqP7OCbj25UDtAInPyxOGnik/jfSQC/viQ+ortIAbOhedvNxCVok0V231qiU/eE2nquDVlu+KAnlqfC+uk/fzeSjtg+QLDSe0qYYQ+eZVfGNNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CExN+IcL; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CExN+IcL"
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-447e57103d5so927171cf.2
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 13:41:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720644077; x=1721248877; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Q4mdW9+gwOyhLqUdWH6kx7lwiJuy2XBYAaNgyUah3Fw=;
-        b=CExN+IcLMyVf2gfO2iCWJNBCuUvUz+nAruPN/4T3ApaflOjL1iau0or156mNOjknFi
-         gKq8dP/YpIbW18OZQU9+eSrDJzJCraNrxDuXnOzjvu13FSr0pXmg04emZouJjlhaPqJ0
-         waL7EDXwZZHpdUs69rGl0J1Ld4aifhiQ9F3GeiHOOrv2f2cKKePEIFaz5XaTIp3Sz810
-         Dli8GHjOGkQCxQrFYQoZBxOaQntAJ7CSFJXl0EpvyS/HrjNV0guM5Z8zoIQJxpe3AkCy
-         Z4/MQZHBxG80vkKGMEXFUkbEVerhed1uRbfXdz/5yueKZ2tbDQE09sMf+puemPLGgICG
-         WC0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720644077; x=1721248877;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4mdW9+gwOyhLqUdWH6kx7lwiJuy2XBYAaNgyUah3Fw=;
-        b=rLtyBDCmgYDtfQxj9jUnChdWTrNb3KYbnTbicbo1jJSeJVjER62i7RdxyVLJm/YHdj
-         L9IJxuDvCzerjbVpXCWnz8MTP1IVXQg2asaMTVYGLsCTAD5pjqm68j1Ydgz8SssjBo8C
-         wBhh1WypxkRVXOkskX+c7+8FeofqzIZn6n9OGPnAkFPWILyoJlvEmEvqNoUY5YwwhArH
-         O968wS+PqKvizdcpZ52rhYwF39xm+twPb4bD8fikdOmES4polWrbUlSOVY1eSvPalgeh
-         z+lgGEvXbUU2/5LCIv0v0+NgL60Mpwu6GDOQrnoyQ26cfdAVN9/9JoCDhDTKJpK+PgSa
-         7y/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUAbxS1NrHdJVfZocL1lRkFMu1kXUocBB3yQ1uvLsYfq9o3o2Suu+DIvPk+pJ63Mml9sAMKAN8MOYJ+8rXcUqjVuijo1UVhY2JA/eYXT3IH/ZIxCg8t
-X-Gm-Message-State: AOJu0YzH45xbeIMbMQyP2DNsmBsZjC/uvQqpcjhN5aNby3LC5mQVqi07
-	GUGxx9F62i4GNGl09Lnty+TqrViVtFxhEg50jLX7hQWyWfpN/h9IZTmnflYxxA==
-X-Google-Smtp-Source: AGHT+IFY1Nq8B7mzCJSItFmAP9NcaTGKgxoetuAbxOWQ3qCTPFzFg71q8pqQIZg7kpupQtFFSRwBHw==
-X-Received: by 2002:a05:622a:ce:b0:444:d0da:4a7 with SMTP id d75a77b69052e-447fa880d7amr81509741cf.19.1720644077429;
-        Wed, 10 Jul 2024 13:41:17 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b3c542sm23370551cf.26.2024.07.10.13.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 13:41:17 -0700 (PDT)
-Date: Wed, 10 Jul 2024 16:41:16 -0400
-Message-ID: <b23e0868802853a9ab17e17fdc35c678@paul-moore.com>
+	s=arc-20240116; t=1720645325; c=relaxed/simple;
+	bh=rfFs8iMAFVc1YOT6B/slxivQnJPHfOG9XeMqG/dCCno=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eLQQ3S2MEMKv3N4m3RygmhF6qIDrOibYYtxQAwsXsSb8FdnuVdiRQLjWBZyMX9X/u1qGxo20AoRyJn8AaC/42tcmmzLRrkkx/3FFRqqhhd9xdU89bn+x+0GHXxmsXxRqA3bDtXnbC8w33M1VvgUdnUY2XjwkAO2HrUVJoKA0VAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4WK8vy5x99z9v7Hl;
+	Thu, 11 Jul 2024 04:43:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 6D33B1403D2;
+	Thu, 11 Jul 2024 05:01:48 +0800 (CST)
+Received: from [10.48.132.127] (unknown [10.48.132.127])
+	by APP1 (Coremail) with SMTP id LxC2BwBX5KO09o5mZQk0AQ--.64340S2;
+	Wed, 10 Jul 2024 22:01:47 +0100 (CET)
+Message-ID: <ebe7be89-1e5d-443b-b066-e5286ca1c986@huaweicloud.com>
+Date: Wed, 10 Jul 2024 23:01:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc: ast@kernel.org, casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, daniel@iogearbox.net, renauld@google.com, revest@chromium.org, song@kernel.org, KP Singh <kpsingh@kernel.org>
-Subject: Re: [PATCH v14 3/3] security: Replace indirect LSM hook calls with  static calls
-References: <20240710000500.208154-4-kpsingh@kernel.org>
-In-Reply-To: <20240710000500.208154-4-kpsingh@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
+References: <20240710024029.669314-2-paul@paul-moore.com>
+Content-Language: en-US
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240710024029.669314-2-paul@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwBX5KO09o5mZQk0AQ--.64340S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XF1rXr45tFy7XrW3uFykXwb_yoW3Cw4fpa
+	n2qF17Grn8JFy7urs5tF17ua1Sgay5GF47GrZ5Cw1IyFnxZry0qr4UAr1UCF15GrWkXw1I
+	qwnF9rsxAw4DtrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUy2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r126r1DMIIYY7kG6xAYrwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
+	6r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj4
+	0_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j
+	6r4UYxBIdaVFxhVjvjDU0xZFpf9x07boxRDUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABF1jj50YZgABsV
 
-On Jul  9, 2024 KP Singh <kpsingh@kernel.org> wrote:
+On 7/10/2024 4:40 AM, Paul Moore wrote:
+> The LSM framework has an existing inode_free_security() hook which
+> is used by LSMs that manage state associated with an inode, but
+> due to the use of RCU to protect the inode, special care must be
+> taken to ensure that the LSMs do not fully release the inode state
+> until it is safe from a RCU perspective.
 > 
-> LSM hooks are currently invoked from a linked list as indirect calls
-> which are invoked using retpolines as a mitigation for speculative
-> attacks (Branch History / Target injection) and add extra overhead which
-> is especially bad in kernel hot paths:
+> This patch implements a new inode_free_security_rcu() implementation
+> hook which is called when it is safe to free the LSM's internal inode
+> state.  Unfortunately, this new hook does not have access to the inode
+> itself as it may already be released, so the existing
+> inode_free_security() hook is retained for those LSMs which require
+> access to the inode.
 > 
-> security_file_ioctl:
->    0xff...0320 <+0>:	endbr64
->    0xff...0324 <+4>:	push   %rbp
->    0xff...0325 <+5>:	push   %r15
->    0xff...0327 <+7>:	push   %r14
->    0xff...0329 <+9>:	push   %rbx
->    0xff...032a <+10>:	mov    %rdx,%rbx
->    0xff...032d <+13>:	mov    %esi,%ebp
->    0xff...032f <+15>:	mov    %rdi,%r14
->    0xff...0332 <+18>:	mov    $0xff...7030,%r15
->    0xff...0339 <+25>:	mov    (%r15),%r15
->    0xff...033c <+28>:	test   %r15,%r15
->    0xff...033f <+31>:	je     0xff...0358 <security_file_ioctl+56>
->    0xff...0341 <+33>:	mov    0x18(%r15),%r11
->    0xff...0345 <+37>:	mov    %r14,%rdi
->    0xff...0348 <+40>:	mov    %ebp,%esi
->    0xff...034a <+42>:	mov    %rbx,%rdx
-> 
->    0xff...034d <+45>:	call   0xff...2e0 <__x86_indirect_thunk_array+352>
->    			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
->     Indirect calls that use retpolines leading to overhead, not just due
->     to extra instruction but also branch misses.
-> 
->    0xff...0352 <+50>:	test   %eax,%eax
->    0xff...0354 <+52>:	je     0xff...0339 <security_file_ioctl+25>
->    0xff...0356 <+54>:	jmp    0xff...035a <security_file_ioctl+58>
->    0xff...0358 <+56>:	xor    %eax,%eax
->    0xff...035a <+58>:	pop    %rbx
->    0xff...035b <+59>:	pop    %r14
->    0xff...035d <+61>:	pop    %r15
->    0xff...035f <+63>:	pop    %rbp
->    0xff...0360 <+64>:	jmp    0xff...47c4 <__x86_return_thunk>
-> 
-> The indirect calls are not really needed as one knows the addresses of
-> enabled LSM callbacks at boot time and only the order can possibly
-> change at boot time with the lsm= kernel command line parameter.
-> 
-> An array of static calls is defined per LSM hook and the static calls
-> are updated at boot time once the order has been determined.
-> 
-> A static key guards whether an LSM static call is enabled or not,
-> without this static key, for LSM hooks that return an int, the presence
-> of the hook that returns a default value can create side-effects which
-> has resulted in bugs [1].
-
-I don't want to rehash our previous discussions on this topic, but I do
-think we either need to simply delete the paragraph above or update it
-to indicate that all known side effects involving LSM callback return
-values have been addressed.  Removal is likely easier if for no other
-reason than we don't have to go back and forth with edits, but I can
-understand if you would prefer to have the paragraph in the commit
-description, albeit in a revised form.  If you want to go with the
-revised paragraph option, you don't need to keep resubmitting the
-patchset, once we agree on something I can do the paragraph swap when
-I merge the patchset.
-
-Otherwise, this patchset looks okay, but as I mentioned earlier, given
-we are at -rc7 this isn't something that I'm comfortable sending up to
-Linus during the upcoming merge window.  This is v6.12 material at this
-point.
-
-> With the hook now exposed as a static call, one can see that the
-> retpolines are no longer there and the LSM callbacks are invoked
-> directly:
-> 
-> security_file_ioctl:
->    0xff...0ca0 <+0>:	endbr64
->    0xff...0ca4 <+4>:	nopl   0x0(%rax,%rax,1)
->    0xff...0ca9 <+9>:	push   %rbp
->    0xff...0caa <+10>:	push   %r14
->    0xff...0cac <+12>:	push   %rbx
->    0xff...0cad <+13>:	mov    %rdx,%rbx
->    0xff...0cb0 <+16>:	mov    %esi,%ebp
->    0xff...0cb2 <+18>:	mov    %rdi,%r14
->    0xff...0cb5 <+21>:	jmp    0xff...0cc7 <security_file_ioctl+39>
->   			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->    Static key enabled for SELinux
-> 
->    0xffffffff818f0cb7 <+23>:	jmp    0xff...0cde <security_file_ioctl+62>
->    				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
->    Static key enabled for BPF LSM. This is something that is changed to
->    default to false to avoid the existing side effect issues of BPF LSM
->    [1] in a subsequent patch.
-> 
->    0xff...0cb9 <+25>:	xor    %eax,%eax
->    0xff...0cbb <+27>:	xchg   %ax,%ax
->    0xff...0cbd <+29>:	pop    %rbx
->    0xff...0cbe <+30>:	pop    %r14
->    0xff...0cc0 <+32>:	pop    %rbp
->    0xff...0cc1 <+33>:	cs jmp 0xff...0000 <__x86_return_thunk>
->    0xff...0cc7 <+39>:	endbr64
->    0xff...0ccb <+43>:	mov    %r14,%rdi
->    0xff...0cce <+46>:	mov    %ebp,%esi
->    0xff...0cd0 <+48>:	mov    %rbx,%rdx
->    0xff...0cd3 <+51>:	call   0xff...3230 <selinux_file_ioctl>
->    			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->    Direct call to SELinux.
-> 
->    0xff...0cd8 <+56>:	test   %eax,%eax
->    0xff...0cda <+58>:	jne    0xff...0cbd <security_file_ioctl+29>
->    0xff...0cdc <+60>:	jmp    0xff...0cb7 <security_file_ioctl+23>
->    0xff...0cde <+62>:	endbr64
->    0xff...0ce2 <+66>:	mov    %r14,%rdi
->    0xff...0ce5 <+69>:	mov    %ebp,%esi
->    0xff...0ce7 <+71>:	mov    %rbx,%rdx
->    0xff...0cea <+74>:	call   0xff...e220 <bpf_lsm_file_ioctl>
->    			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->    Direct call to BPF LSM.
-> 
->    0xff...0cef <+79>:	test   %eax,%eax
->    0xff...0cf1 <+81>:	jne    0xff...0cbd <security_file_ioctl+29>
->    0xff...0cf3 <+83>:	jmp    0xff...0cb9 <security_file_ioctl+25>
->    0xff...0cf5 <+85>:	endbr64
->    0xff...0cf9 <+89>:	mov    %r14,%rdi
->    0xff...0cfc <+92>:	mov    %ebp,%esi
->    0xff...0cfe <+94>:	mov    %rbx,%rdx
->    0xff...0d01 <+97>:	pop    %rbx
->    0xff...0d02 <+98>:	pop    %r14
->    0xff...0d04 <+100>:	pop    %rbp
->    0xff...0d05 <+101>:	ret
->    0xff...0d06 <+102>:	int3
->    0xff...0d07 <+103>:	int3
->    0xff...0d08 <+104>:	int3
->    0xff...0d09 <+105>:	int3
-> 
-> While this patch uses static_branch_unlikely indicating that an LSM hook
-> is likely to be not present. In most cases this is still a better choice
-> as even when an LSM with one hook is added, empty slots are created for
-> all LSM hooks (especially when many LSMs that do not initialize most
-> hooks are present on the system).
-> 
-> There are some hooks that don't use the call_int_hook or
-> call_void_hook. These hooks are updated to use a new macro called
-> lsm_for_each_hook where the lsm_callback is directly invoked as an
-> indirect call.
-> 
-> Below are results of the relevant Unixbench system benchmarks with BPF LSM
-> and SELinux enabled with default policies enabled with and without these
-> patches.
-> 
-> Benchmark                                               Delta(%): (+ is better)
-> ===============================================================================
-> Execl Throughput                                             +1.9356
-> File Write 1024 bufsize 2000 maxblocks                       +6.5953
-> Pipe Throughput                                              +9.5499
-> Pipe-based Context Switching                                 +3.0209
-> Process Creation                                             +2.3246
-> Shell Scripts (1 concurrent)                                 +1.4975
-> System Call Overhead                                         +2.7815
-> System Benchmarks Index Score (Partial Only):                +3.4859
-> 
-> In the best case, some syscalls like eventfd_create benefitted to about ~10%.
-> 
-> [1] https://lore.kernel.org/linux-security-module/20220609234601.2026362-1-kpsingh@kernel.org/
-> 
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Song Liu <song@kernel.org>
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 > ---
->  include/linux/lsm_hooks.h |  53 ++++++++--
->  security/security.c       | 215 ++++++++++++++++++++++++++------------
->  2 files changed, 195 insertions(+), 73 deletions(-)
+>   include/linux/lsm_hook_defs.h     |  1 +
+>   security/integrity/ima/ima.h      |  2 +-
+>   security/integrity/ima/ima_iint.c | 20 ++++++++------------
+>   security/integrity/ima/ima_main.c |  2 +-
+>   security/landlock/fs.c            |  9 ++++++---
+>   security/security.c               | 26 +++++++++++++-------------
+>   6 files changed, 30 insertions(+), 30 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 8fd87f823d3a..abe6b0ef892a 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -114,6 +114,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+>   	 unsigned int obj_type)
+>   LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+>   LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+> +LSM_HOOK(void, LSM_RET_VOID, inode_free_security_rcu, void *)
+>   LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+>   	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
+>   	 int *xattr_count)
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 3e568126cd48..e2a2e4c7eab6 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -223,7 +223,7 @@ static inline void ima_inode_set_iint(const struct inode *inode,
+>   
+>   struct ima_iint_cache *ima_iint_find(struct inode *inode);
+>   struct ima_iint_cache *ima_inode_get(struct inode *inode);
+> -void ima_inode_free(struct inode *inode);
+> +void ima_inode_free_rcu(void *inode_sec);
+>   void __init ima_iintcache_init(void);
+>   
+>   extern const int read_idmap[];
+> diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
+> index e23412a2c56b..54480df90bdc 100644
+> --- a/security/integrity/ima/ima_iint.c
+> +++ b/security/integrity/ima/ima_iint.c
+> @@ -109,22 +109,18 @@ struct ima_iint_cache *ima_inode_get(struct inode *inode)
+>   }
+>   
+>   /**
+> - * ima_inode_free - Called on inode free
+> - * @inode: Pointer to the inode
+> + * ima_inode_free_rcu - Called to free an inode via a RCU callback
+> + * @inode_sec: The inode::i_security pointer
+>    *
+> - * Free the iint associated with an inode.
+> + * Free the IMA data associated with an inode.
+>    */
+> -void ima_inode_free(struct inode *inode)
+> +void ima_inode_free_rcu(void *inode_sec)
+>   {
+> -	struct ima_iint_cache *iint;
+> +	struct ima_iint_cache **iint_p = inode_sec + ima_blob_sizes.lbs_inode;
+>   
+> -	if (!IS_IMA(inode))
+> -		return;
+> -
+> -	iint = ima_iint_find(inode);
+> -	ima_inode_set_iint(inode, NULL);
+> -
+> -	ima_iint_free(iint);
+> +	/* *iint_p should be NULL if !IS_IMA(inode) */
+> +	if (*iint_p)
+> +		ima_iint_free(*iint_p);
 
---
-paul-moore.com
+It looks ok for me. The only thing we are not doing is to set the 
+pointer to NULL, but I guess does not matter, since the inode security 
+blob is being freed.
+
+I also ran some UML kernel tests in the CI, and everything looks good:
+
+https://github.com/robertosassu/ima-evm-utils/actions/runs/9880817007/job/27291259487
+
+Will think a bit, if I'm missing something.
+
+Roberto
+
+>   }
+>   
+>   static void ima_iint_init_once(void *foo)
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index f04f43af651c..5b3394864b21 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -1193,7 +1193,7 @@ static struct security_hook_list ima_hooks[] __ro_after_init = {
+>   #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+>   	LSM_HOOK_INIT(kernel_module_request, ima_kernel_module_request),
+>   #endif
+> -	LSM_HOOK_INIT(inode_free_security, ima_inode_free),
+> +	LSM_HOOK_INIT(inode_free_security_rcu, ima_inode_free_rcu),
+>   };
+>   
+>   static const struct lsm_id ima_lsmid = {
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 22d8b7c28074..f583f8cec345 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1198,13 +1198,16 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>   
+>   /* Inode hooks */
+>   
+> -static void hook_inode_free_security(struct inode *const inode)
+> +static void hook_inode_free_security_rcu(void *inode_sec)
+>   {
+> +	struct landlock_inode_security *lisec;
+> +
+>   	/*
+>   	 * All inodes must already have been untied from their object by
+>   	 * release_inode() or hook_sb_delete().
+>   	 */
+> -	WARN_ON_ONCE(landlock_inode(inode)->object);
+> +	lisec = inode_sec + landlock_blob_sizes.lbs_inode;
+> +	WARN_ON_ONCE(lisec->object);
+>   }
+>   
+>   /* Super-block hooks */
+> @@ -1628,7 +1631,7 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+>   }
+>   
+>   static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> -	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
+> +	LSM_HOOK_INIT(inode_free_security_rcu, hook_inode_free_security_rcu),
+>   
+>   	LSM_HOOK_INIT(sb_delete, hook_sb_delete),
+>   	LSM_HOOK_INIT(sb_mount, hook_sb_mount),
+> diff --git a/security/security.c b/security/security.c
+> index b52e81ac5526..bc6805f7332e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1596,9 +1596,8 @@ int security_inode_alloc(struct inode *inode)
+>   
+>   static void inode_free_by_rcu(struct rcu_head *head)
+>   {
+> -	/*
+> -	 * The rcu head is at the start of the inode blob
+> -	 */
+> +	/* The rcu head is at the start of the inode blob */
+> +	call_void_hook(inode_free_security_rcu, head);
+>   	kmem_cache_free(lsm_inode_cache, head);
+>   }
+>   
+> @@ -1606,20 +1605,21 @@ static void inode_free_by_rcu(struct rcu_head *head)
+>    * security_inode_free() - Free an inode's LSM blob
+>    * @inode: the inode
+>    *
+> - * Deallocate the inode security structure and set @inode->i_security to NULL.
+> + * Release any LSM resources associated with @inode, although due to the
+> + * inode's RCU protections it is possible that the resources will not be
+> + * fully released until after the current RCU grace period has elapsed.
+> + *
+> + * It is important for LSMs to note that despite being present in a call to
+> + * security_inode_free(), @inode may still be referenced in a VFS path walk
+> + * and calls to security_inode_permission() may be made during, or after,
+> + * a call to security_inode_free().  For this reason the inode->i_security
+> + * field is released via a call_rcu() callback and any LSMs which need to
+> + * retain inode state for use in security_inode_permission() should only
+> + * release that state in the inode_free_security_rcu() LSM hook callback.
+>    */
+>   void security_inode_free(struct inode *inode)
+>   {
+>   	call_void_hook(inode_free_security, inode);
+> -	/*
+> -	 * The inode may still be referenced in a path walk and
+> -	 * a call to security_inode_permission() can be made
+> -	 * after inode_free_security() is called. Ideally, the VFS
+> -	 * wouldn't do this, but fixing that is a much harder
+> -	 * job. For now, simply free the i_security via RCU, and
+> -	 * leave the current inode->i_security pointer intact.
+> -	 * The inode will be freed after the RCU grace period too.
+> -	 */
+>   	if (inode->i_security)
+>   		call_rcu((struct rcu_head *)inode->i_security,
+>   			 inode_free_by_rcu);
+
