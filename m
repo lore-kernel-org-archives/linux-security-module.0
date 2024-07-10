@@ -1,271 +1,259 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B5D1487C5
-	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 23:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59A013C679
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 23:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653066; cv=none; b=Ei2/vwn94WAeKD7xBTahSUNMK2JRdQEDYgPM/bDaHPRKYgbkMKGn9zwwOQ86TBtjNlq/H0bWV+d3RPw3gMM/VOcouxbKwba/59hoegqV9IJp8W7wAu4SFa83XUttieQK1/vD6VqsQ28v9tHDZlU8vxS3lrDuWBPufVSBQYo4umI=
+	t=1720653353; cv=none; b=NMTOboxQVqMqZ14DeMVuJNOWOF8KdgR+Xi2Dbuzp+waWkrnKaCTu4LTMNSVSKr1GGJhnBe1+83lfM6m2GRGle6ipXKF/TrC3AF+t+w5KlrrKB0xzz7ihEzatr6HEGa1SD5+ylLUoJxu/9pBCw2tGeiMz2eVOK2vGlNM1RAMq74s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653066; c=relaxed/simple;
-	bh=e77Q6AvOB4dDYAjvXIVPvsZbMoVv+VPFfSmRlTHwJiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QM9bj0AGDT8Y/0c1GH+4s7IBmuBxPdQ3NsHExl8cjsRVN9gsSBYayrjJX2OLvxOEoLDxYgKKHUb/okJK4yxSk6ZVlYcV5/0paOrRGgjfiis1W8xlRFyK8nUdMyvqZvu0xQnLaUqQml6MkThb8PHkB/qUxe7CA+ts7WJlhaRkpCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FfmiZAMp; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1720653353; c=relaxed/simple;
+	bh=97FLUtmU4HJT89z5jtI1w9UADdmkYNpPY2Utv+s2Cls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JBKq1B9BrpMgpVqCprmGw1SfTuDqRdquHF7R/6QKgS3RMYeqwZ2Gbv6WZYH3fFmBUrrz0QjDwurgxP43FTcBj/ZTkpSovjb67+DoDrXqWlA9zFKYFGEntLdly51gS3tcNeVtVQka713VIrkaqV2x+hMtG7w6e9rp83NWDyEuYpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1+XfB5a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FfmiZAMp"
-Received: from [192.168.192.84] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B3C0840A68;
-	Wed, 10 Jul 2024 23:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1720653059;
-	bh=gTDPWeTx8Gkx9n0XiKCfSh6JeIkJc3oYA0gT/dack1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=FfmiZAMpFR9hAE68xhXxUZMkemhhd7THm5yZwT293JFnpvVWgU0iMD3asKHxy51xD
-	 AJ/v2Px9eJpizPwB1gbI+oiXMZpCOhEMwPNysAy/pR7V61RpXCf4HSmhmwLMLraEHX
-	 DE87BXx9azICqQOWEXZ3nyfulaGIKPsXOJt2XXqdsu2s4hAboG0dXnsIuCNbuKJXRB
-	 bWE6r5tRkAqc81nSIcQdsS+U0k+MEsZNXGYtIqUYFYaIfWvQSf0TpP2+Fz1is47KhW
-	 KpMZJ7wXmVcc1hp0kgITePT9Mc6+k0WGfFzhQtmHl2igSv6A0h2L9nNIscFtRRhoV4
-	 0XN/k61DQtkCQ==
-Message-ID: <5ad05864-2b0b-434c-a726-ef327b54a08a@canonical.com>
-Date: Wed, 10 Jul 2024 16:10:55 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1+XfB5a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D39EC4AF0A
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 23:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720653353;
+	bh=97FLUtmU4HJT89z5jtI1w9UADdmkYNpPY2Utv+s2Cls=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=q1+XfB5auhaltcySKBLEuui8f5vwKWYXwLsqJT3v3qXrjrnTTAWPap3dpT1glZkQc
+	 WdJbb6Hvei0FO8MFlU87Yz6mqSzeopzzEFKFgSTwECc16vT/79q3hJSgcJjY4HtZ3R
+	 yaqxjdfawV93KQPk4cwxXS2gprerieV6N3QZdhY1tPArGkmvVIvrQtK9TUa4Gh+8pR
+	 elegpcWPd13YnTibvp79tuPmTgy+1Z0kqHXLZlAEKOMwRKhpBB7N11FKNFvD+AdS7O
+	 oXk9GjS1y1DNaTy7NdoByebElrdEckaEQ2f5uz8W3R8PlqIWKNSGD1lpGqK3FAVnZr
+	 aKQHRC7IOsrLg==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d05e0017aso401403a12.1
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Jul 2024 16:15:53 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yztx/N8gjFi9ise3EtkJOXeKZVDsYqqF5dnUd21KK4DMuON3Xuw
+	fmrzJ8USaP8NbdKEzVAcWssfSU1vByJ7gRvqN0Xx89JatIgKA7M9CAFxAruAG9MX5i6ZWwpnHfY
+	Sm1pNXwj5qlujMcObK89+D6qrwvuKnuBwjRsn
+X-Google-Smtp-Source: AGHT+IGr2V4LF1G8Eb2SMPuLiIeJSlBZdatPNJTj12WRyW6trJBwsbLli+UfOaLCjuW+x7bF6Xtwat83MwjQ3bpuHN4=
+X-Received: by 2002:aa7:da54:0:b0:57d:ef3:c3b7 with SMTP id
+ 4fb4d7f45d1cf-594bbe2ba17mr3775696a12.36.1720653352023; Wed, 10 Jul 2024
+ 16:15:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] LSM: Infrastructure management of the perf_event
- security blob
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
- linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- mic@digikod.net
-References: <20240710213230.11978-1-casey@schaufler-ca.com>
- <20240710213230.11978-7-casey@schaufler-ca.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240710213230.11978-7-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240710000500.208154-4-kpsingh@kernel.org> <b23e0868802853a9ab17e17fdc35c678@paul-moore.com>
+In-Reply-To: <b23e0868802853a9ab17e17fdc35c678@paul-moore.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Thu, 11 Jul 2024 01:15:41 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ6HGdW1Vqs_KPtGLZEyX4NO8ZpreJfhoCoOwsWDdmAueQ@mail.gmail.com>
+Message-ID: <CACYkzJ6HGdW1Vqs_KPtGLZEyX4NO8ZpreJfhoCoOwsWDdmAueQ@mail.gmail.com>
+Subject: Re: [PATCH v14 3/3] security: Replace indirect LSM hook calls with
+ static calls
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/10/24 14:32, Casey Schaufler wrote:
-> Move management of the perf_event->security blob out of the individual
-> security modules and into the security infrastructure. Instead of
-> allocating the blobs from within the modules the modules tell the
-> infrastructure how much space is required, and the space is allocated
-> there.  There are no longer any modules that require the perf_event_free()
-> hook.  The hook definition has been removed.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+On Wed, Jul 10, 2024 at 10:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Jul  9, 2024 KP Singh <kpsingh@kernel.org> wrote:
+> >
+> > LSM hooks are currently invoked from a linked list as indirect calls
+> > which are invoked using retpolines as a mitigation for speculative
+> > attacks (Branch History / Target injection) and add extra overhead whic=
+h
+> > is especially bad in kernel hot paths:
+> >
+> > security_file_ioctl:
+> >    0xff...0320 <+0>:  endbr64
+> >    0xff...0324 <+4>:  push   %rbp
+> >    0xff...0325 <+5>:  push   %r15
+> >    0xff...0327 <+7>:  push   %r14
+> >    0xff...0329 <+9>:  push   %rbx
+> >    0xff...032a <+10>: mov    %rdx,%rbx
+> >    0xff...032d <+13>: mov    %esi,%ebp
+> >    0xff...032f <+15>: mov    %rdi,%r14
+> >    0xff...0332 <+18>: mov    $0xff...7030,%r15
+> >    0xff...0339 <+25>: mov    (%r15),%r15
+> >    0xff...033c <+28>: test   %r15,%r15
+> >    0xff...033f <+31>: je     0xff...0358 <security_file_ioctl+56>
+> >    0xff...0341 <+33>: mov    0x18(%r15),%r11
+> >    0xff...0345 <+37>: mov    %r14,%rdi
+> >    0xff...0348 <+40>: mov    %ebp,%esi
+> >    0xff...034a <+42>: mov    %rbx,%rdx
+> >
+> >    0xff...034d <+45>: call   0xff...2e0 <__x86_indirect_thunk_array+352=
+>
+> >                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
+^
+> >
+> >     Indirect calls that use retpolines leading to overhead, not just du=
+e
+> >     to extra instruction but also branch misses.
+> >
+> >    0xff...0352 <+50>: test   %eax,%eax
+> >    0xff...0354 <+52>: je     0xff...0339 <security_file_ioctl+25>
+> >    0xff...0356 <+54>: jmp    0xff...035a <security_file_ioctl+58>
+> >    0xff...0358 <+56>: xor    %eax,%eax
+> >    0xff...035a <+58>: pop    %rbx
+> >    0xff...035b <+59>: pop    %r14
+> >    0xff...035d <+61>: pop    %r15
+> >    0xff...035f <+63>: pop    %rbp
+> >    0xff...0360 <+64>: jmp    0xff...47c4 <__x86_return_thunk>
+> >
+> > The indirect calls are not really needed as one knows the addresses of
+> > enabled LSM callbacks at boot time and only the order can possibly
+> > change at boot time with the lsm=3D kernel command line parameter.
+> >
+> > An array of static calls is defined per LSM hook and the static calls
+> > are updated at boot time once the order has been determined.
+> >
+> > A static key guards whether an LSM static call is enabled or not,
+> > without this static key, for LSM hooks that return an int, the presence
+> > of the hook that returns a default value can create side-effects which
+> > has resulted in bugs [1].
+>
+> I don't want to rehash our previous discussions on this topic, but I do
+> think we either need to simply delete the paragraph above or update it
+> to indicate that all known side effects involving LSM callback return
+> values have been addressed.  Removal is likely easier if for no other
+> reason than we don't have to go back and forth with edits, but I can
 
-looks good
+Agreed, we can just delete this paragraph. Thanks!
 
-Reviewed-by: John Johansen <john.johansen@canonical.com>
+- KP
 
-> ---
->   include/linux/lsm_hook_defs.h     |  1 -
->   include/linux/lsm_hooks.h         |  1 +
->   security/security.c               | 20 ++++++++++++++++++--
->   security/selinux/hooks.c          | 18 ++++--------------
->   security/selinux/include/objsec.h |  6 ++++++
->   5 files changed, 29 insertions(+), 17 deletions(-)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 7c979137c0f2..658e4ba282e6 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -438,7 +438,6 @@ LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
->   #ifdef CONFIG_PERF_EVENTS
->   LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
->   LSM_HOOK(int, 0, perf_event_alloc, struct perf_event *event)
-> -LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
->   LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
->   LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
->   #endif /* CONFIG_PERF_EVENTS */
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index b6fc6ac88723..f1ca8082075a 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -79,6 +79,7 @@ struct lsm_blob_sizes {
->   	int	lbs_ipc;
->   	int	lbs_key;
->   	int	lbs_msg_msg;
-> +	int	lbs_perf_event;
->   	int	lbs_task;
->   	int	lbs_xattr_count; /* number of xattr slots in new_xattrs array */
->   	int	lbs_tun_dev;
-> diff --git a/security/security.c b/security/security.c
-> index e8f34cbb1990..444b0ea28c04 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -28,6 +28,7 @@
->   #include <linux/xattr.h>
->   #include <linux/msg.h>
->   #include <linux/overflow.h>
-> +#include <linux/perf_event.h>
->   #include <net/flow.h>
->   #include <net/sock.h>
->   
-> @@ -230,6 +231,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
->   	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
->   	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
->   	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
-> +	lsm_set_blob_size(&needed->lbs_perf_event, &blob_sizes.lbs_perf_event);
->   	lsm_set_blob_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
->   	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
->   	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
-> @@ -412,6 +414,7 @@ static void __init ordered_lsm_init(void)
->   	init_debug("msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
->   	init_debug("sock blob size       = %d\n", blob_sizes.lbs_sock);
->   	init_debug("superblock blob size = %d\n", blob_sizes.lbs_superblock);
-> +	init_debug("perf event blob size = %d\n", blob_sizes.lbs_perf_event);
->   	init_debug("task blob size       = %d\n", blob_sizes.lbs_task);
->   	init_debug("tun device blob size = %d\n", blob_sizes.lbs_tun_dev);
->   	init_debug("xattr slots          = %d\n", blob_sizes.lbs_xattr_count);
-> @@ -5659,7 +5662,19 @@ int security_perf_event_open(struct perf_event_attr *attr, int type)
->    */
->   int security_perf_event_alloc(struct perf_event *event)
->   {
-> -	return call_int_hook(perf_event_alloc, event);
-> +	int rc;
-> +
-> +	rc = lsm_blob_alloc(&event->security, blob_sizes.lbs_perf_event,
-> +			    GFP_KERNEL);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = call_int_hook(perf_event_alloc, event);
-> +	if (rc) {
-> +		kfree(event->security);
-> +		event->security = NULL;
-> +	}
-> +	return rc;
->   }
->   
->   /**
-> @@ -5670,7 +5685,8 @@ int security_perf_event_alloc(struct perf_event *event)
->    */
->   void security_perf_event_free(struct perf_event *event)
->   {
-> -	call_void_hook(perf_event_free, event);
-> +	kfree(event->security);
-> +	event->security = NULL;
->   }
->   
->   /**
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 11f4bdabda97..f42f6af55a73 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -6950,6 +6950,9 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
->   	.lbs_ipc = sizeof(struct ipc_security_struct),
->   	.lbs_key = sizeof(struct key_security_struct),
->   	.lbs_msg_msg = sizeof(struct msg_security_struct),
-> +#ifdef CONFIG_PERF_EVENTS
-> +	.lbs_perf_event = sizeof(struct perf_event_security_struct),
-> +#endif
->   	.lbs_sock = sizeof(struct sk_security_struct),
->   	.lbs_superblock = sizeof(struct superblock_security_struct),
->   	.lbs_xattr_count = SELINUX_INODE_INIT_XATTRS,
-> @@ -6981,24 +6984,12 @@ static int selinux_perf_event_alloc(struct perf_event *event)
->   {
->   	struct perf_event_security_struct *perfsec;
->   
-> -	perfsec = kzalloc(sizeof(*perfsec), GFP_KERNEL);
-> -	if (!perfsec)
-> -		return -ENOMEM;
-> -
-> +	perfsec = selinux_perf_event(event->security);
->   	perfsec->sid = current_sid();
-> -	event->security = perfsec;
->   
->   	return 0;
->   }
->   
-> -static void selinux_perf_event_free(struct perf_event *event)
-> -{
-> -	struct perf_event_security_struct *perfsec = event->security;
-> -
-> -	event->security = NULL;
-> -	kfree(perfsec);
-> -}
-> -
->   static int selinux_perf_event_read(struct perf_event *event)
->   {
->   	struct perf_event_security_struct *perfsec = event->security;
-> @@ -7310,7 +7301,6 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
->   
->   #ifdef CONFIG_PERF_EVENTS
->   	LSM_HOOK_INIT(perf_event_open, selinux_perf_event_open),
-> -	LSM_HOOK_INIT(perf_event_free, selinux_perf_event_free),
->   	LSM_HOOK_INIT(perf_event_read, selinux_perf_event_read),
->   	LSM_HOOK_INIT(perf_event_write, selinux_perf_event_write),
->   #endif
-> diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-> index b1878f9395b5..d632a9180b41 100644
-> --- a/security/selinux/include/objsec.h
-> +++ b/security/selinux/include/objsec.h
-> @@ -219,4 +219,10 @@ selinux_ib(void *ib_sec)
->   	return ib_sec + selinux_blob_sizes.lbs_ib;
->   }
->   
-> +static inline struct perf_event_security_struct *
-> +selinux_perf_event(void *perf_event)
-> +{
-> +	return perf_event + selinux_blob_sizes.lbs_perf_event;
-> +}
-> +
->   #endif /* _SELINUX_OBJSEC_H_ */
-
+> understand if you would prefer to have the paragraph in the commit
+> description, albeit in a revised form.  If you want to go with the
+> revised paragraph option, you don't need to keep resubmitting the
+> patchset, once we agree on something I can do the paragraph swap when
+> I merge the patchset.
+>
+> Otherwise, this patchset looks okay, but as I mentioned earlier, given
+> we are at -rc7 this isn't something that I'm comfortable sending up to
+> Linus during the upcoming merge window.  This is v6.12 material at this
+> point.
+>
+> > With the hook now exposed as a static call, one can see that the
+> > retpolines are no longer there and the LSM callbacks are invoked
+> > directly:
+> >
+> > security_file_ioctl:
+> >    0xff...0ca0 <+0>:  endbr64
+> >    0xff...0ca4 <+4>:  nopl   0x0(%rax,%rax,1)
+> >    0xff...0ca9 <+9>:  push   %rbp
+> >    0xff...0caa <+10>: push   %r14
+> >    0xff...0cac <+12>: push   %rbx
+> >    0xff...0cad <+13>: mov    %rdx,%rbx
+> >    0xff...0cb0 <+16>: mov    %esi,%ebp
+> >    0xff...0cb2 <+18>: mov    %rdi,%r14
+> >    0xff...0cb5 <+21>: jmp    0xff...0cc7 <security_file_ioctl+39>
+> >                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >    Static key enabled for SELinux
+> >
+> >    0xffffffff818f0cb7 <+23>:  jmp    0xff...0cde <security_file_ioctl+6=
+2>
+> >                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
+^^
+> >
+> >    Static key enabled for BPF LSM. This is something that is changed to
+> >    default to false to avoid the existing side effect issues of BPF LSM
+> >    [1] in a subsequent patch.
+> >
+> >    0xff...0cb9 <+25>: xor    %eax,%eax
+> >    0xff...0cbb <+27>: xchg   %ax,%ax
+> >    0xff...0cbd <+29>: pop    %rbx
+> >    0xff...0cbe <+30>: pop    %r14
+> >    0xff...0cc0 <+32>: pop    %rbp
+> >    0xff...0cc1 <+33>: cs jmp 0xff...0000 <__x86_return_thunk>
+> >    0xff...0cc7 <+39>: endbr64
+> >    0xff...0ccb <+43>: mov    %r14,%rdi
+> >    0xff...0cce <+46>: mov    %ebp,%esi
+> >    0xff...0cd0 <+48>: mov    %rbx,%rdx
+> >    0xff...0cd3 <+51>: call   0xff...3230 <selinux_file_ioctl>
+> >                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >    Direct call to SELinux.
+> >
+> >    0xff...0cd8 <+56>: test   %eax,%eax
+> >    0xff...0cda <+58>: jne    0xff...0cbd <security_file_ioctl+29>
+> >    0xff...0cdc <+60>: jmp    0xff...0cb7 <security_file_ioctl+23>
+> >    0xff...0cde <+62>: endbr64
+> >    0xff...0ce2 <+66>: mov    %r14,%rdi
+> >    0xff...0ce5 <+69>: mov    %ebp,%esi
+> >    0xff...0ce7 <+71>: mov    %rbx,%rdx
+> >    0xff...0cea <+74>: call   0xff...e220 <bpf_lsm_file_ioctl>
+> >                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> >    Direct call to BPF LSM.
+> >
+> >    0xff...0cef <+79>: test   %eax,%eax
+> >    0xff...0cf1 <+81>: jne    0xff...0cbd <security_file_ioctl+29>
+> >    0xff...0cf3 <+83>: jmp    0xff...0cb9 <security_file_ioctl+25>
+> >    0xff...0cf5 <+85>: endbr64
+> >    0xff...0cf9 <+89>: mov    %r14,%rdi
+> >    0xff...0cfc <+92>: mov    %ebp,%esi
+> >    0xff...0cfe <+94>: mov    %rbx,%rdx
+> >    0xff...0d01 <+97>: pop    %rbx
+> >    0xff...0d02 <+98>: pop    %r14
+> >    0xff...0d04 <+100>:        pop    %rbp
+> >    0xff...0d05 <+101>:        ret
+> >    0xff...0d06 <+102>:        int3
+> >    0xff...0d07 <+103>:        int3
+> >    0xff...0d08 <+104>:        int3
+> >    0xff...0d09 <+105>:        int3
+> >
+> > While this patch uses static_branch_unlikely indicating that an LSM hoo=
+k
+> > is likely to be not present. In most cases this is still a better choic=
+e
+> > as even when an LSM with one hook is added, empty slots are created for
+> > all LSM hooks (especially when many LSMs that do not initialize most
+> > hooks are present on the system).
+> >
+> > There are some hooks that don't use the call_int_hook or
+> > call_void_hook. These hooks are updated to use a new macro called
+> > lsm_for_each_hook where the lsm_callback is directly invoked as an
+> > indirect call.
+> >
+> > Below are results of the relevant Unixbench system benchmarks with BPF =
+LSM
+> > and SELinux enabled with default policies enabled with and without thes=
+e
+> > patches.
+> >
+> > Benchmark                                               Delta(%): (+ is=
+ better)
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > Execl Throughput                                             +1.9356
+> > File Write 1024 bufsize 2000 maxblocks                       +6.5953
+> > Pipe Throughput                                              +9.5499
+> > Pipe-based Context Switching                                 +3.0209
+> > Process Creation                                             +2.3246
+> > Shell Scripts (1 concurrent)                                 +1.4975
+> > System Call Overhead                                         +2.7815
+> > System Benchmarks Index Score (Partial Only):                +3.4859
+> >
+> > In the best case, some syscalls like eventfd_create benefitted to about=
+ ~10%.
+> >
+> > [1] https://lore.kernel.org/linux-security-module/20220609234601.202636=
+2-1-kpsingh@kernel.org/
+> >
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Acked-by: Song Liu <song@kernel.org>
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  include/linux/lsm_hooks.h |  53 ++++++++--
+> >  security/security.c       | 215 ++++++++++++++++++++++++++------------
+> >  2 files changed, 195 insertions(+), 73 deletions(-)
+>
+> --
+> paul-moore.com
