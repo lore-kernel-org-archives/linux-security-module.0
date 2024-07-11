@@ -1,158 +1,97 @@
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6B916B74F
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Jul 2024 16:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164737F492;
+	Thu, 11 Jul 2024 17:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720716954; cv=none; b=h7WhC3R0y8izkIt6lZWlRWp33l2v2xgVLsWCJrabjLmSkNcLXwgZtCSVt+w7jn4aX6n8Kr+i8P3RtUemJqD7yJ0MJsat8WXRN3fw5OGRT2V15IgGs4uDjPMcVhQdzaS5GaFsuTaLl7Qnn8niPY8ZmCdLNqLDcXPKWjKjyuQJRaA=
+	t=1720719960; cv=none; b=cB1TvAfh53CobLDTfc130YO/fVfSG6nZVANo77/HPZR7QbY23mjUghyabI4cfzFu04oK/bya+E9Kc6ojHqiLTELRXvIEkjrxf5Y+j/BK91Xhl2Eph8zEUaOMOsn8RHZa7xexIgZxUH5oD4MLYawGxRXHrE02l7H8R3reTOdxKrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720716954; c=relaxed/simple;
-	bh=C9CaTVNOPzct39t+RjnfqGPNyoWy0BOzoOizLyQ1fIM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sIFTS1FXwSVaKkRWp0ahh1FEpw0/xuGd5QaTuUtH+Q6OwG9J8dup5505UE6dF53Ucyej3bg9lMzNaTN/lGj91xTRnl4dg+w17ZGzWaLNKCTw/ypDQMNMuZHTqA8SW/fnrAjOOFulgnTtGpC/kI68DTxBK1FtisTOoAQ6j8mYtZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=syatRwrP; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1720719960; c=relaxed/simple;
+	bh=xclbpvZqBZFVNWlZTggHeSBR9i8w8gKEldzknM8mYRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jg3/7aWY1wJanP7OWTd1FBFV/PfEtZ4LubWI1q7cua79Ah1Ef1UxCtIn3BiMqn+LXe1B4FFGQvqNBKlXlslPRfpDC59BO5Y8eBzwQ6nilgNEwJMReynAPXSnew93zo0amcDrvBDgibe0Xhf9WLZlNx0aKk2q95yOy8sdEB/eCvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RYRoACGC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="syatRwrP"
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e03623b24ddso2020859276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Jul 2024 09:55:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720716952; x=1721321752; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SvIVngPkpQF2aOTZHJCVjaJqnfJSy+eWc6U15OjE3Yk=;
-        b=syatRwrPJhkuzhPy1FtsQ7/QV3BX1x7/LL5gFHmji3ProOf6VnYY+J9ANJ1moxYHlp
-         JHsoi9v1egTQrfDVtlXxbFrdImY2zzEuddGxncQo+2D7aZTRHvsuotj9A9dVdjC4Co5H
-         fJB21xZscRihefWVdp6xbgO1/ciTKmJrQM3x49nWM/WXogK3VjrCHi7c8SICUJaOmc0N
-         6xl4mpw/tOjo9fLWCwPDnJI4afI47YNExh3HFVjzVH43fwRN0WVXStxtYTqoNlYHk4bn
-         7tk/5RmnfKPRWkClwIRslbspy1YbVfZhjIldB8LlBSv5MgOww/o37cXpckVY4ZLt4B65
-         Utxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720716952; x=1721321752;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SvIVngPkpQF2aOTZHJCVjaJqnfJSy+eWc6U15OjE3Yk=;
-        b=Qyk8Mgp/Vr1U4RbvJw6KUhRaaFCiSoDfWUeWdDc9sb3blO2vAXKUl4kxdu7+QQT8W0
-         7nh098/p8QHy14cKVZMdkI/CiwMBrhQaeQB5NReS/zsQ2PurWGYIoUOLnISN6nQ2QIOa
-         Rk+E9YpdwiF2rFXLk65O4X5pH8FrOmYxfWM6doOdZLewu6KpZWwBhfWx3l3sc88jbAqa
-         Q9uqgSWa4V7zkBWjnKUsH1ho+iSd/nAIoQtRMSMlzFCxHqunMcaKWAPkvmY9H4nSaqAB
-         MLPG6NqUSrzcBR0IoD/LO1cPlI4aZs+c6I8L4a+9XsMnTJqJ4zExNsEK9d/nbxAIuyhb
-         2DqQ==
-X-Gm-Message-State: AOJu0Yzq+7zOiy87lkfmaI9/rLPjsB5TP6kQDK0xbKfrM2UZwZyGOgKT
-	FS5jU7W6zf/zkFyWTvlpEXzoyTaoz2+CxtCZTIMotXSEKBD/iJ6wCyOr6yJwseKXmqmlq6ZM3s3
-	HosuDJGDv3WJB+msQWB6Kf8p6KGCOE37ZduNG+fhBX4tD+DA5aGCYsELpwtZHx8L0jZ9JsCMj76
-	SxjwyQpDySc3k/UgYBUYvj0XWC1VCuW7SPDVHxrNg9sFf7hUpxv6e0
-X-Google-Smtp-Source: AGHT+IGdquWT8JIBi6oFVlr8y1ln5ftncZzRQisotGkZdXCBZNQp4aOLlOaeBUrjgV7iHrgBUpZTdCD/+Jw=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6902:1002:b0:e02:b51f:ceac with SMTP id
- 3f1490d57ef6-e041b1415d3mr379527276.9.1720716952150; Thu, 11 Jul 2024
- 09:55:52 -0700 (PDT)
-Date: Thu, 11 Jul 2024 16:54:57 +0000
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RYRoACGC"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BCih1U014631;
+	Thu, 11 Jul 2024 17:45:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GwBFYXMdD1X49TV4BVm7xe3SSQwTysSATv9976M8WMU=; b=RYRoACGCohysQ15e
+	w9EJPsz4WSd0Gv9fKb+JkNcG90wZwYeU167EnTZssM9cYWGDN7QiWaJxCivpTPzb
+	pB6Jff6E33wPiSIAahhD3GAUc6d/tCeXd6TrI8CLvVgqoog5kBATlgAQYTudsrt4
+	GcnKTANgFRIhXUuB23VGPCdIfUollPx2/A3XICefqeApcGRVOyQgeRFGZ6tydLGs
+	Np74UJwQpmRhbzj5i12XtHOifHBqGycxUTBW5ddLJ2L3Y/eRVEThrJS/iGXvPQok
+	bOSTyC1GhS82ZjLa3WY+G37Qz8hE/xD07tsE4typsistGGy/4N+eDcvP10+9M8l/
+	N6uUoQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 409kdtmxrf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 17:45:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BHjiMD009338
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 17:45:44 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 10:45:43 -0700
+Message-ID: <ea1b2ed4-704a-4676-8915-d3e566675070@quicinc.com>
+Date: Thu, 11 Jul 2024 10:45:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240711165456.2148590-2-gnoack@google.com>
-Subject: [PATCH v2] landlock: Clarify documentation for struct landlock_ruleset_attr
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Matt Bobrowski <repnop@google.com>, "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, 
-	Alejandro Colomar <alx@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
+To: John Johansen <john.johansen@canonical.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>
+CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
+ <17dad6b9-9dc3-4b0f-bd3d-34e9e22e7627@canonical.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <17dad6b9-9dc3-4b0f-bd3d-34e9e22e7627@canonical.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: k8Mhs3lXG4xo2MilVXA2DfNYVGINlqP_
+X-Proofpoint-GUID: k8Mhs3lXG4xo2MilVXA2DfNYVGINlqP_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_12,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ impostorscore=0 mlxlogscore=635 lowpriorityscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110123
 
-The explanation for @handled_access_fs and @handled_access_net has
-significant overlap and is better explained together.
+On 6/25/24 01:26, John Johansen wrote:
+> On 5/29/24 18:21, Jeff Johnson wrote:
+>> Fix the 'make W=1' warning:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
+>> security/apparmor/apparmor_policy_unpack_test.o
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> 
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> 
+> I will pull this into my tree
 
-* Explain the commonalities in structure-level documentation.
-* Clarify some wording and break up longer sentences.
-* Put emphasis on the word "handled" to make it clearer that "handled" is a=
- term
-  with special meaning in the context of Landlock.
-
-I'd like to transfer this wording into the man pages as well.
-
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
-Cc: Alejandro Colomar <alx@kernel.org>
-Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc: linux-security-module@vger.kernel.org
----
- include/uapi/linux/landlock.h | 39 +++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
-
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index 68625e728f43..e76186da3260 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -12,29 +12,36 @@
- #include <linux/types.h>
-=20
- /**
-- * struct landlock_ruleset_attr - Ruleset definition
-+ * struct landlock_ruleset_attr - Ruleset definition.
-  *
-- * Argument of sys_landlock_create_ruleset().  This structure can grow in
-- * future versions.
-+ * Argument of sys_landlock_create_ruleset().
-+ *
-+ * This structure defines a set of *handled access rights*, a set of actio=
-ns on
-+ * different object types, which should be denied by default when the rule=
-set is
-+ * enacted.  Vice versa, access rights that are not specifically listed he=
-re are
-+ * not going to be denied by this ruleset when it is enacted.
-+ *
-+ * For historical reasons, the %LANDLOCK_ACCESS_FS_REFER right is always d=
-enied
-+ * by default, even when its bit is not set in @handled_access_fs.  In ord=
-er to
-+ * add new rules with this access right, the bit must still be set explici=
-tly
-+ * (cf. `Filesystem flags`_).
-+ *
-+ * The explicit listing of *handled access rights* is required for backwar=
-ds
-+ * compatibility reasons.  In most use cases, processes that use Landlock =
-will
-+ * *handle* a wide range or all access rights that they know about at buil=
-d time
-+ * (and that they have tested with a kernel that supported them all).
-+ *
-+ * This structure can grow in future Landlock versions.
-  */
- struct landlock_ruleset_attr {
- 	/**
--	 * @handled_access_fs: Bitmask of actions (cf. `Filesystem flags`_)
--	 * that is handled by this ruleset and should then be forbidden if no
--	 * rule explicitly allow them: it is a deny-by-default list that should
--	 * contain as much Landlock access rights as possible. Indeed, all
--	 * Landlock filesystem access rights that are not part of
--	 * handled_access_fs are allowed.  This is needed for backward
--	 * compatibility reasons.  One exception is the
--	 * %LANDLOCK_ACCESS_FS_REFER access right, which is always implicitly
--	 * handled, but must still be explicitly handled to add new rules with
--	 * this access right.
-+	 * @handled_access_fs: Bitmask of handled filesystem actions
-+	 * (cf. `Filesystem flags`_).
- 	 */
- 	__u64 handled_access_fs;
- 	/**
--	 * @handled_access_net: Bitmask of actions (cf. `Network flags`_)
--	 * that is handled by this ruleset and should then be forbidden if no
--	 * rule explicitly allow them.
-+	 * @handled_access_net: Bitmask of handled network actions (cf. `Network
-+	 * flags`_).
- 	 */
- 	__u64 handled_access_net;
- };
---=20
-2.45.2.993.g49e7a77208-goog
+I still don't see this in linux-next.
+I'm hoping to have these warnings fixed tree-wide in 6.11.
 
