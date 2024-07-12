@@ -1,137 +1,253 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7188C16FF47
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Jul 2024 16:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED2F1DFE1;
+	Fri, 12 Jul 2024 17:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720800024; cv=none; b=KYds+nOnTESMx8XdRHSJaeQosJGfU1RNRorwMYardG9jd+dYwZAky80Db1UNDgxyB5cFTuyfESkIXE754lY5/KW4pFsmLJOKj60pe28tyX3c+vT7VuywtjGvP/ftAzrNcZfN8JalpiUgKeCBgWCORz0hI5ljSZUiRoyDpm38x3s=
+	t=1720804980; cv=none; b=ug3TS4CprivVm+6oNM4nOoIfQH+ZLehEAsr69AV4MFnwf8cVC7KAD7gJeE9bdGFPFQQdDFxVCAdzy8bHPi+YouL2F2fiG/sOw0XdVxxx4EGuGGR5RS+2osgQJHhkX0IkN5W5qxa+4lEA+tKpcgJZCgZr0qzsNXe4hM/vD5CeT5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720800024; c=relaxed/simple;
-	bh=teFvllSrR8u1LwxNwtWBUZZZcgHd4yYz/LxZF9Uqdjc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eY2cPdchrn5QlTaI7mOZ4HHMQpcOwoNmaKqvEQx+WTztopgI70psgbqiKzvHTvxe9NtL9DbBB3PVY2fgGfUGYPcO8uIW4HE0ynA0KYKusdq/A5GJLNdqZhjp4UwoQkgPE27QUyx9IvB034yPzuWM1qh3mPHT9Z0PsRis9QV6y84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZFErMHLS; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1720804980; c=relaxed/simple;
+	bh=uVE2UiNa7DePMRseBr+bl8aWLcGPijv0qhaMwcCky2E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMHtO5AXYiryCsxP1/bI0QyH2et8VB2mIrP4Rowu0z1BLh1x7VXinI2xRQUVg/Ck1t7uOw68A/m73sHoddrJNs/PIN8HRAkMSVvFe8qdKCTTpBS0LYcGiac9b5TDoiElZdMhOX27AjWfQrU/9aWnav+9k9+vN1/0Q6osWFwIyXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NLpxPif4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5j0q6qIj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NLpxPif4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5j0q6qIj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZFErMHLS"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6510c0c8e29so21041517b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Jul 2024 09:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720800021; x=1721404821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fnIdY8cOUw38JAafq5wFUGBK6m5NkxtUKb6vV5qaE/U=;
-        b=ZFErMHLSikYIgxanXwqGiwZRjRVlpbnQAX64KyOTNLdtzCUOV0hLtWwSFcieCHVpZc
-         t+T8vtu+QQFNDfV1Yn/iQ49R182Vj6A9H4e+dDzEvETq/joXfGYaxI1T3Nkw29UABlX0
-         ZUMU+CVKj93W7RlsaBOrnqq3K2m01EEa1mpREqm+V7r1RuGOQFFJlXTtZA6i/Cer33O/
-         LBLsYctVhG+kFlqkC2PCmPwscKk/I2Qw0FT1oRjEmn7M27Zho6YKMXLd4GX6D2kHmFh/
-         PgvCAKQaBNXBml+KWcuL7MEm9If1C6ZH1UgK81OMOegNBMBjsWuyNVmMBN0HhnkJWuay
-         eDWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720800021; x=1721404821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fnIdY8cOUw38JAafq5wFUGBK6m5NkxtUKb6vV5qaE/U=;
-        b=FeIJ5u6X4Yuvwkc3XjxQJ90fTMu16ebvI0WprdPPnAI3IGlz6yEpccvA0BIcwowQsW
-         Xw5PBoP/oSuydSmGSZjnlrHaD33O3wUBDSHYQ0ZCEiG029SnY8ouztYGMx/eqgcwwgNE
-         c5gZIG1Reg/q7yoW19dBSuiE5bVKGaLJGHa/VUZPmSmnTbCDGYnetR2vUFePiNepcXuZ
-         o+66ZJmz5HvasgMyi9irulmcdSLANgRERpLXmtPgBaUCybFyZOfNEQ3mRLrvJdwGzRsy
-         T1ooQncG4JxmImQ0jnN3dm1YbNC7CirfBFhR4wjXiyvmDCZd3bwoU8tATgAeX46sqEID
-         om8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVPM2pyDfg2Mdz1Fkk6tVoj0z8zmaoKqz4MnM8BAP06bDVr6U4sWcjBqyBUNb9qMdRHDYqU33r8gFlGMFftRkgpJ5ZUbhT8oGo2tN3kUJEMIQcGahBF
-X-Gm-Message-State: AOJu0YxfeJ/a5Liy5NziQ8tjg5oKM1syO5GDx+k3hZSz8Gga99UdODgT
-	iqvzdG2pvZ1J/ttikq0hNTM3zTKMNgd9x1PY4swJJud3k5PmDiaz6fZTDVcy95A6PXrKilX5cPO
-	oiuDGokWBN7WotNi2MYRiVYMk7Kdp1PuY9nJp5oflmGcuvSk2I1Nu
-X-Google-Smtp-Source: AGHT+IHMT0du6hnJIItX/6mTkJFxNvw+z/Qex7BmduSDlDVCO3FlfK9m+2jlZrQudmjY8vONYjC0fSXRiUdwhit5XPg=
-X-Received: by 2002:a0d:eec6:0:b0:646:fe8e:f03b with SMTP id
- 00721157ae682-658ee791211mr112675977b3.2.1720800021231; Fri, 12 Jul 2024
- 09:00:21 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NLpxPif4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5j0q6qIj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NLpxPif4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5j0q6qIj"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 653E21FB90;
+	Fri, 12 Jul 2024 17:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720804976; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=pZOdEKIeBY3qz3MDqg0aj09Mf4HrF01PKXMeBP1Gjl8=;
+	b=NLpxPif4Ku18lTB8K/VONIaoaFsnRDawylbLMxfMN6VtcITAr8eIoFzd8RMOAiYcSlWxZS
+	CMZ5K9I1DkuY8YIk1iaNlWSXusvTeADDJ4DonYG6chmrozoM46hl4kRZmwMgkJ118U4VWM
+	DcIv/HNn3fJlRqDpHGn+UhOBPKviKFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720804976;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=pZOdEKIeBY3qz3MDqg0aj09Mf4HrF01PKXMeBP1Gjl8=;
+	b=5j0q6qIjRzuuJ1z8qW7MaUmyCv8Wd8Oy6B0uiwUNzfQwY61WLpei4E2w2iK0Hf4UW079ks
+	OCGOpKu9cBCg2aAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720804976; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=pZOdEKIeBY3qz3MDqg0aj09Mf4HrF01PKXMeBP1Gjl8=;
+	b=NLpxPif4Ku18lTB8K/VONIaoaFsnRDawylbLMxfMN6VtcITAr8eIoFzd8RMOAiYcSlWxZS
+	CMZ5K9I1DkuY8YIk1iaNlWSXusvTeADDJ4DonYG6chmrozoM46hl4kRZmwMgkJ118U4VWM
+	DcIv/HNn3fJlRqDpHGn+UhOBPKviKFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720804976;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=pZOdEKIeBY3qz3MDqg0aj09Mf4HrF01PKXMeBP1Gjl8=;
+	b=5j0q6qIjRzuuJ1z8qW7MaUmyCv8Wd8Oy6B0uiwUNzfQwY61WLpei4E2w2iK0Hf4UW079ks
+	OCGOpKu9cBCg2aAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E76E13686;
+	Fri, 12 Jul 2024 17:22:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ui6hBW9mkWbuLQAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Fri, 12 Jul 2024 17:22:55 +0000
+From: Petr Vorel <pvorel@suse.cz>
+To: linux-man@vger.kernel.org
+Cc: Petr Vorel <pvorel@suse.cz>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Alejandro Colomar <alx@kernel.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v2 1/2] Unify error wording
+Date: Fri, 12 Jul 2024 19:22:45 +0200
+Message-ID: <20240712172246.151258-1-pvorel@suse.cz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711111908.3817636-1-xukuohai@huaweicloud.com> <CAHC9VhSBg7qf81O+mC1EDSUhZ4xR57jfY4h0P6Vy1PO++JqMBw@mail.gmail.com>
-In-Reply-To: <CAHC9VhSBg7qf81O+mC1EDSUhZ4xR57jfY4h0P6Vy1PO++JqMBw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 12 Jul 2024 12:00:09 -0400
-Message-ID: <CAHC9VhQ9tevCE5MDXxqmErSayHe12XKd=VEVGyPKL0TMxwLC8w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 00/20] Add return value range check for BPF LSM
-To: Xu Kuohai <xukuohai@huaweicloud.com>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	selinux@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Khadija Kamran <kamrankhadijadj@gmail.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Kees Cook <keescook@chromium.org>, John Johansen <john.johansen@canonical.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>, Edward Cree <ecree.xilinx@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-On Fri, Jul 12, 2024 at 11:56=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
-rote:
-> On Thu, Jul 11, 2024 at 7:13=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.c=
-om> wrote:
-> >
-> > From: Xu Kuohai <xukuohai@huawei.com>
-> >
-> > LSM BPF prog returning a positive number attached to the hook
-> > file_alloc_security makes kernel panic.
->
-> ...
->
-> > Xu Kuohai (20):
-> >   lsm: Refactor return value of LSM hook vm_enough_memory
-> >   lsm: Refactor return value of LSM hook inode_need_killpriv
-> >   lsm: Refactor return value of LSM hook inode_getsecurity
-> >   lsm: Refactor return value of LSM hook inode_listsecurity
-> >   lsm: Refactor return value of LSM hook inode_copy_up_xattr
-> >   lsm: Refactor return value of LSM hook getselfattr
-> >   lsm: Refactor return value of LSM hook setprocattr
-> >   lsm: Refactor return value of LSM hook getprocattr
-> >   lsm: Refactor return value of LSM hook key_getsecurity
-> >   lsm: Refactor return value of LSM hook audit_rule_match
-> >   bpf, lsm: Add disabled BPF LSM hook list
-> >   bpf, lsm: Enable BPF LSM prog to read/write return value parameters
-> >   bpf, lsm: Add check for BPF LSM return value
-> >   bpf: Prevent tail call between progs attached to different hooks
-> >   bpf: Fix compare error in function retval_range_within
-> >   bpf: Add a special case for bitwise AND on range [-1, 0]
-> >   selftests/bpf: Avoid load failure for token_lsm.c
-> >   selftests/bpf: Add return value checks for failed tests
-> >   selftests/bpf: Add test for lsm tail call
-> >   selftests/bpf: Add verifier tests for bpf lsm
->
-> I'm not quite sure what happened, but it looks like patches 13/20
-> through 20/20 did not hit the mailing lists, see lore link below; did
-> you have any mail failures when sending the patchset?  Regardless, can
-> you sort this out and resend the patchset?
->
-> https://lore.kernel.org/all/20240711111908.3817636-1-xukuohai@huaweicloud=
-.com
+Follow the pattern to replace "to indicate the cause of the error"
+with "to indicate the error".
 
-Oh wait, it looks like the patchset was split in lore somehow,
-nevermind.  The "missing" patches are here:
+Suggested-by: Alejandro Colomar <alx@kernel.org>
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+changes v1->v2:
+New in this version.
 
-https://lore.kernel.org/all/20240711113828.3818398-1-xukuohai@huaweicloud.c=
-om
+ man/man2/mount_setattr.2   | 2 +-
+ man/man2/seccomp_unotify.2 | 6 +++---
+ man/man3/aio_cancel.3      | 2 +-
+ man/man3/dlinfo.3          | 2 +-
+ man/man3/dlsym.3           | 2 +-
+ man/man3/fts.3             | 2 +-
+ man/man3/resolver.3        | 2 +-
+ man/man3/rpmatch.3         | 2 +-
+ 8 files changed, 10 insertions(+), 10 deletions(-)
 
---=20
-paul-moore.com
+diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+index f4bbc088b..96d1c5d7f 100644
+--- a/man/man2/mount_setattr.2
++++ b/man/man2/mount_setattr.2
+@@ -390,7 +390,7 @@ returns zero.
+ On error,
+ \-1 is returned and
+ .I errno
+-is set to indicate the cause of the error.
++is set to indicate the error.
+ .SH ERRORS
+ .TP
+ .B EBADF
+diff --git a/man/man2/seccomp_unotify.2 b/man/man2/seccomp_unotify.2
+index 7092f9491..c7ce0cc74 100644
+--- a/man/man2/seccomp_unotify.2
++++ b/man/man2/seccomp_unotify.2
+@@ -370,7 +370,7 @@ for details of this structure.
+ .P
+ On success, this operation returns 0; on failure, \-1 is returned, and
+ .I errno
+-is set to indicate the cause of the error.
++is set to indicate the error.
+ This operation can fail with the following errors:
+ .TP
+ .BR EINVAL " (since Linux 5.5)"
+@@ -612,7 +612,7 @@ field contains a nonzero value.
+ .P
+ On success, this operation returns 0; on failure, \-1 is returned, and
+ .I errno
+-is set to indicate the cause of the error.
++is set to indicate the error.
+ This operation can fail with the following errors:
+ .TP
+ .B EINPROGRESS
+@@ -790,7 +790,7 @@ operation.
+ .P
+ On error, \-1 is returned and
+ .I errno
+-is set to indicate the cause of the error.
++is set to indicate the error.
+ .P
+ This operation can fail with the following errors:
+ .TP
+diff --git a/man/man3/aio_cancel.3 b/man/man3/aio_cancel.3
+index 4e32cd2bd..2798eba61 100644
+--- a/man/man3/aio_cancel.3
++++ b/man/man3/aio_cancel.3
+@@ -81,7 +81,7 @@ All requests had already been completed before the call.
+ .TP
+ \-1
+ An error occurred.
+-The cause of the error can be found by inspecting
++the error can be found by inspecting
+ .IR errno .
+ .SH ERRORS
+ .TP
+diff --git a/man/man3/dlinfo.3 b/man/man3/dlinfo.3
+index ada8f643e..8ca490957 100644
+--- a/man/man3/dlinfo.3
++++ b/man/man3/dlinfo.3
+@@ -198,7 +198,7 @@ NULL is placed in
+ On success,
+ .BR dlinfo ()
+ returns 0.
+-On failure, it returns \-1; the cause of the error can be diagnosed using
++On failure, it returns \-1; the error can be diagnosed using
+ .BR dlerror (3).
+ .SH ATTRIBUTES
+ For an explanation of the terms used in this section, see
+diff --git a/man/man3/dlsym.3 b/man/man3/dlsym.3
+index 74cc36af2..577e83296 100644
+--- a/man/man3/dlsym.3
++++ b/man/man3/dlsym.3
+@@ -100,7 +100,7 @@ On success,
+ these functions return the address associated with
+ .IR symbol .
+ On failure, they return NULL;
+-the cause of the error can be diagnosed using
++the error can be diagnosed using
+ .BR dlerror (3).
+ .SH ATTRIBUTES
+ For an explanation of the terms used in this section, see
+diff --git a/man/man3/fts.3 b/man/man3/fts.3
+index d2c520450..461ff88b0 100644
+--- a/man/man3/fts.3
++++ b/man/man3/fts.3
+@@ -270,7 +270,7 @@ the
+ field contains the error number (i.e., the
+ .I errno
+ value)
+-specifying the cause of the error.
++specifying the error.
+ Otherwise, the contents of the
+ .I fts_errno
+ field are undefined.
+diff --git a/man/man3/resolver.3 b/man/man3/resolver.3
+index c54337218..c7dec6a36 100644
+--- a/man/man3/resolver.3
++++ b/man/man3/resolver.3
+@@ -462,7 +462,7 @@ the global variable
+ .I h_errno
+ (see
+ .BR gethostbyname (3))
+-can be consulted to determine the cause of the error.
++can be consulted to determine the error.
+ .SH FILES
+ .TP
+ .I /etc/resolv.conf
+diff --git a/man/man3/rpmatch.3 b/man/man3/rpmatch.3
+index 5ef3ca5f9..50f753d38 100644
+--- a/man/man3/rpmatch.3
++++ b/man/man3/rpmatch.3
+@@ -98,7 +98,7 @@ can fail for any of the reasons that
+ .BR regcomp (3)
+ or
+ .BR regexec (3)
+-can fail; the cause of the error
++can fail; the error
+ is not available from
+ .I errno
+ or anywhere else, but indicates a
+-- 
+2.45.2
+
