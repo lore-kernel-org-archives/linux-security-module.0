@@ -1,173 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BCE143C52;
-	Fri, 12 Jul 2024 17:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3B6176FD6;
+	Fri, 12 Jul 2024 17:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720806803; cv=none; b=Vym9mUYLRMFER3KfkQE1gIwci8xXAClkQWFakt5CXfDOgwlKLMes3hwvOYTM8xv6RBAxziWQDpfYyO/4VkvDz/CujJtca+4v+UH2LVtHPF+v5Hvu1MCQhsBnfa+KmZjzRRIZ0SYhLFJs9lBeckSxAyA2tzAnBhmhoGLkKK11u2M=
+	t=1720807009; cv=none; b=NHmZSteqZNuzr36fw//9U1PP2EJ4f7kzPM6hyh3FEg1IaSyA7Rj/hGwgrTAnC0aTEmtTaJ43z6KKbgvNjLG996E7ADBu3H2/3a64pWO8ZKjeODuEjIxUE9LWtB5AAOCYQjtbPXclKQViKhDQyYc6SHe1/+LA5/i33UyUhVCXPMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720806803; c=relaxed/simple;
-	bh=j6sIATo6CzMdTySQVxN2VTzdLQnH8mMMhtziO3X3I/E=;
+	s=arc-20240116; t=1720807009; c=relaxed/simple;
+	bh=3eIayu+1UjuqYkXeZHl62aeqtdNVS59QixTFOllGIwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZGDzjsuiEucNprjLfsVuJtf01DHtJzLijoRfgBTSiwQx0Nbs7gySAbH7C/Iz/cnbpcasb1NjkWSzuEwgWw5EVchZFgg20eA9TMKD2l9EJQP2RTwYnFqholirsiGk6PB0CItpzQXt1VcBODftwReuV4fGswiYGMSdLtYBATit+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+h4MYim; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPb9oW8DRC4yTIH9kur0BJ8cbqN1u1kJuKriInQDif4U9slN4OgtWgTqmR3lzJIdIlQ70BaAXl7scX/jW3Q5c/blHJVIdY7AnQc96SEB1L4R4J4JKlXNzoQkZZmswo+KWLciTcMYhczzEOLjAQBsE2WNrZN492qWbogHKKLm1f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ipzjd/X7; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+h4MYim"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E33C32782;
-	Fri, 12 Jul 2024 17:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720806803;
-	bh=j6sIATo6CzMdTySQVxN2VTzdLQnH8mMMhtziO3X3I/E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y+h4MYimHoS/UykF28uMFfqcxmYpXz2il8r01j1RcTVzF5NEKehAHQYHRsszEEONT
-	 RGWIC3S+Ennj4P+LgSKLhRqF6zt1Yy2RNocWC2ge5URksHbdnsL8FqFgox1KxUvfj/
-	 WSadZ1ms4Hw2AS3Cc1kM+nYuW0tM2GkcpfIZCnLEQxtvXvwXd4b/T/LW2mSWIRTGc2
-	 zT30N7p4EjEyee/olsLSpBMeJPty8MK8rPSMG/+QevMD3mDOix6Jzsdpa7wzFy5BCx
-	 cQyFTzKB1BwRtfUK9yHMF8DucOORQ3MBW1Tms3CIPYEtoEMCdkO7CgXg4xQKuJbpVo
-	 nd/hHAZZ66dug==
-Date: Fri, 12 Jul 2024 19:53:19 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Petr Vorel <pvorel@suse.cz>
-Cc: linux-man@vger.kernel.org, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] landlock: Mention -1 return code on failure
-Message-ID: <bz3xewcvhobkffqrwg5bgt5wh3z5rd6ipmsjgczxj6p4ljkbg7@h77ig7r7t2vd>
-References: <20240712172246.151258-1-pvorel@suse.cz>
- <20240712172246.151258-2-pvorel@suse.cz>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ipzjd/X7"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70af8062039so1862411b3a.0;
+        Fri, 12 Jul 2024 10:56:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720807007; x=1721411807; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hvJqMz2g+QWTR/26uvM7LO7+R0enQZRj5mYnnkzzRMo=;
+        b=Ipzjd/X7JjVHinD/8km7XAfv0EgGSbe1cfVeFl4jjNxx4wT+agHmBw851TnH+xVoPz
+         o4eNr4NTuZjv0wJtMD0RE9KHuCwue3aQ5Ys+P9OgpIL4JGDDzlQRNS33E7KToyNDYXuW
+         q3WbOGFnL76MDba8lKKR5uW3IE4++jKe+CVu9KQXcZMny0RduamUFeh6t3DvB32+gj9L
+         gXSNSXU41qRSyU81QUb2I1EEyKTCW7ySFnAwpfudd3Er/EISxf5MvPapZ+svYkaMNFMi
+         iCWiY8Ru/jivVs6fWPEQBQDDujUBj8pUVJX/jV8T0Q1+78ZJnokiTFQtS39XIjPkeZxM
+         Y/zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720807007; x=1721411807;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hvJqMz2g+QWTR/26uvM7LO7+R0enQZRj5mYnnkzzRMo=;
+        b=Ywg6dcK/AsWSV1jeHGJ8A67EuC4EOebfvISZB3AaMRlTHQtTPv/wtltuEyTkxWiz/J
+         zXSZsNykXBh6eRqehjoXprC6CHBZLMdRwXHgcQDrNaEdDU1VYWIQyIRxFPCVVQGlX+bb
+         rUuZVAhvTDGkEiy5E6jD9r3mVOajhFaLVXEYtZ1UE5KxGuRzCiYYnuSHpPHUkT3hIfp6
+         60UA7VTSZzaMaCT/i9gEQiy9eNL9h8SZwyCC2L23HobD0GNgnLLSje53Pvv+uI1cqmHV
+         wcPT3K2p30QRw2JyY6XuVcSQjDJ19oyU0OZl94vVohUcR3srSoRdHAOps2QFuGz7rLOi
+         4IDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR/keXp1KMeOZijsQFg1SOyAkD6qjLb1ClPCugZprjyZvKsZI8I0DyN4bgsWy+OwiZ8hKo0S74XfYpO7jKYogaCXg/rTfWaQ2E4EuerP3OQ9Mny/vl1J9SNqw8razbvit1CDNZHUjOFhfjrevcS1iCQ2Im7OGe6bJcXlVBGQmuoIcYDtHmTUaXZeh+7nGFQZzj2Gb9Zf/QfMrGTjGCns8EmS4lAWmBiKBxeDBhvgc1CxnRH/qZgJ6P7qdrAgdGNnwoy6+PRafrkA==
+X-Gm-Message-State: AOJu0Yw0XEvYXRXp4aghGx8rm9p6kn2OmbF21k4vmlklqwxK/ztjUFI9
+	+q+8yE5iQyfIIkdAXdYNR/SfDC6phvbB4ebzEIU9199VO3wHquoL8fUuNg==
+X-Google-Smtp-Source: AGHT+IEQhOEcyJo9nymze7EJcWUmb0pa0RPK5Sh5riMCUcRm7lnBoF6POikeGeyiWKlGRHtmtiu3qw==
+X-Received: by 2002:a05:6a21:6704:b0:1c0:f080:ed5b with SMTP id adf61e73a8af0-1c2984ce612mr12926893637.54.1720807006607;
+        Fri, 12 Jul 2024 10:56:46 -0700 (PDT)
+Received: from MacBook-Pro-49.local ([2620:10d:c090:500::7:44ce])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab8041sm69662725ad.135.2024.07.12.10.56.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 10:56:46 -0700 (PDT)
+Date: Fri, 12 Jul 2024 10:56:41 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, selinux@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Brendan Jackman <jackmanb@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Khadija Kamran <kamrankhadijadj@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	John Johansen <john.johansen@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Shung-Hsi Yu <shung-hsi.yu@suse.com>, 
+	Edward Cree <ecree.xilinx@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, 
+	Anna Schumaker <anna@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH bpf-next v4 11/20] bpf, lsm: Add disabled BPF LSM hook
+ list
+Message-ID: <qjrf5c6f24b6ef5tpvpz75uxp6ro6mhos34ovssinv4yxjwyz3@nvs75o5sywgx>
+References: <20240711111908.3817636-1-xukuohai@huaweicloud.com>
+ <20240711111908.3817636-12-xukuohai@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sec3mkynufb7yv4a"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240712172246.151258-2-pvorel@suse.cz>
+In-Reply-To: <20240711111908.3817636-12-xukuohai@huaweicloud.com>
 
+On Thu, Jul 11, 2024 at 07:18:59PM +0800, Xu Kuohai wrote:
+> From: Xu Kuohai <xukuohai@huawei.com>
+> 
+> Add a disabled hooks list for BPF LSM. progs being attached to the
+> listed hooks will be rejected by the verifier.
+> 
+> Suggested-by: KP Singh <kpsingh@kernel.org>
+> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
 
---sec3mkynufb7yv4a
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Petr Vorel <pvorel@suse.cz>
-Cc: linux-man@vger.kernel.org, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] landlock: Mention -1 return code on failure
-References: <20240712172246.151258-1-pvorel@suse.cz>
- <20240712172246.151258-2-pvorel@suse.cz>
-MIME-Version: 1.0
-In-Reply-To: <20240712172246.151258-2-pvorel@suse.cz>
+Xu,
 
-Hi Petr,
-
-On Fri, Jul 12, 2024 at 07:22:46PM GMT, Petr Vorel wrote:
-> Mention -1 return code on failure for landlock_add_rule(),
-> landlock_create_ruleset() and landlock_restrict_self().
->=20
-> Although it's a common rule to return -1 on error, it's better to be
-> explicit (as the other man pages are).
->=20
-> Fixes: a01d04a69 ("landlock_add_rule.2: Document new syscall")
-> Fixes: ca5163697 ("landlock_create_ruleset.2: Document new syscall")
-> Fixes: 3f7e4f808 ("landlock_restrict_self.2: Document new syscall")
-> Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-
-Patch applied:
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3Df635c200e5fddd6f4250246239c59a5b833d435c>
-
-Thanks!
-
-Have a lovely day!
-Alex
-
-> ---
-> changes v1->v2:
-> * s/the cause of //g
->=20
->  man/man2/landlock_add_rule.2       | 4 ++++
->  man/man2/landlock_create_ruleset.2 | 4 ++++
->  man/man2/landlock_restrict_self.2  | 4 ++++
->  3 files changed, 12 insertions(+)
->=20
-> diff --git a/man/man2/landlock_add_rule.2 b/man/man2/landlock_add_rule.2
-> index 4b95afb07..d4ae8f2f6 100644
-> --- a/man/man2/landlock_add_rule.2
-> +++ b/man/man2/landlock_add_rule.2
-> @@ -79,6 +79,10 @@ must be 0.
->  On success,
->  .BR landlock_add_rule ()
->  returns 0.
-> +On error,
-> +\-1 is returned and
-> +.I errno
-> +is set to indicate the error.
->  .SH ERRORS
->  .BR landlock_add_rule ()
->  can fail for the following reasons:
-> diff --git a/man/man2/landlock_create_ruleset.2 b/man/man2/landlock_creat=
-e_ruleset.2
-> index e62a3f9b9..618d54f37 100644
-> --- a/man/man2/landlock_create_ruleset.2
-> +++ b/man/man2/landlock_create_ruleset.2
-> @@ -86,6 +86,10 @@ returns a new Landlock ruleset file descriptor,
->  or a Landlock ABI version,
->  according to
->  .IR flags .
-> +On error,
-> +\-1 is returned and
-> +.I errno
-> +is set to indicate the error.
->  .SH ERRORS
->  .BR landlock_create_ruleset ()
->  can fail for the following reasons:
-> diff --git a/man/man2/landlock_restrict_self.2 b/man/man2/landlock_restri=
-ct_self.2
-> index 43f15c932..d4e5e753c 100644
-> --- a/man/man2/landlock_restrict_self.2
-> +++ b/man/man2/landlock_restrict_self.2
-> @@ -72,6 +72,10 @@ must be 0.
->  On success,
->  .BR landlock_restrict_self ()
->  returns 0.
-> +On error,
-> +\-1 is returned and
-> +.I errno
-> +is set to indicate the error.
->  .SH ERRORS
->  .BR landlock_restrict_self ()
->  can fail for the following reasons:
-> --=20
-> 2.45.2
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---sec3mkynufb7yv4a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmaRbY8ACgkQnowa+77/
-2zKLXxAAjVQrtfgTKY5//jGDqPV+r04i13hevYBapU+gXszAu3D8rRZpZHJe/4WG
-LpzsqqJr36CLjq/b4x1mMnE7ZoPy3HNSE/I9SlxA2nVXnx9o/toK/kFH/OXAcgm+
-K1UMpU/owZYq2RRUdVxPREbjXqufYPJeKE2AF16E6XfEUtV1iuTVtjcDTPLxjh+V
-vCEqEgJ+3kGD+RYkYzlBC7h11FFuSg1V4XIPE2LRIMgxnOPGJCRpq61FX+oiNfBz
-HDk2KfBUm6BBerPhwHnbfUQ7KGQ9EF27hNDneSPgvMVQ9fKUwmtzTR/9i/Qf4uNI
-NHEN1vemkN7PAFP4Abhu5mII8l0CUxnmLFcywNJwizLHGou6FWOT3x30TOv1RIm8
-J41Y97rBeN3XTt0nx9LszyK04+SipK8ZKovuhQrA7jzOI4jpc9AIwxnsfipDdHLt
-kySNI9zbtms2IQm4QrwKicA4buMJtgU/YO3ubk3rUflh3K8nycFvstdaUzXEzvsY
-bvSIqF4Cpl3VTs+GFicXHnDHqU82s30pdN24IuI2qcbADXnUvTXt8R6q09yVWbbb
-zoZU+29CTX3qfqbQ1jlflGw2fgl65tkcU9o4ywnMQdoX+L/0ZZdV04Cg9X4KosyL
-zGyniPkMisS6mh7INcE/eITNY3jZRxn0R4Od7gL3ZMuF243vm/0=
-=aLxz
------END PGP SIGNATURE-----
-
---sec3mkynufb7yv4a--
+The patches 11 and higher are mostly independent from lsm refactoring.
+Please send them as a separate patchset for bpf-next.
+While lsm cleanups are being reviewed this lsm_disabled list can be
+a bit larger temporarily.
