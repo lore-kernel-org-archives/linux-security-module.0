@@ -1,110 +1,177 @@
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE301DFE3;
-	Sat, 13 Jul 2024 08:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB993BBE5
+	for <linux-security-module@vger.kernel.org>; Sat, 13 Jul 2024 08:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720858274; cv=none; b=KeHgHRKnW3bnIw/H+nk7QcqCKJNVL1DRBsHrzIE1umJIwDslOLNIwY9QjRFWjuRUwW1nxBu+EE32P3mcqFcmom2RfqN3wPxp0mVIy2nWsCbtXKjxiZepfrrtwbpZJpCX8bu7Rh2i5qlNd0meVvYPYWmNttCLZjASCTLAEnjlBJ8=
+	t=1720858886; cv=none; b=jUVvYKviu4z7k9eQc7EeQ4Ve1QCNx3btaKfrmcRlKxt6G0LBoVJndZ35+Abaxdc6HBUlGWzwCz2ipFKRx23d/R8DOcZ6gAPiumElyKrydo6c2k4wA19au4wbg50NLUDD+oFgeC+Y3JUuu9YeYj9uSXl5keCPaWu1ysFs2OLnhEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720858274; c=relaxed/simple;
-	bh=v6WEaM18t7QWAOiNkCtdqwMsvabTvhmPFPEIsnakkHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjHCar3ogmEoV/JeueFAWSTXPiXXkdH9ijtyLSMksKkS5k/Sj+MY/h1Jvx8wcyF9VcFkUMkqx1tfL4nPAhmx4qsMryFMkHa84NURXsBr930KIM7ZYjV48CbPWiy7llEFSwzxsUPB6fetyrih9yvQf4dKdfll9j53xXiA/c6qEEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WLh452CFQz4f3jM1;
-	Sat, 13 Jul 2024 16:11:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 130DE1A0185;
-	Sat, 13 Jul 2024 16:11:09 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP4 (Coremail) with SMTP id gCh0CgAnLfacNpJmR8bRBw--.46904S2;
-	Sat, 13 Jul 2024 16:11:08 +0800 (CST)
-Message-ID: <92b895d4-8831-404b-98f3-3f42edbc5331@huaweicloud.com>
-Date: Sat, 13 Jul 2024 16:11:08 +0800
+	s=arc-20240116; t=1720858886; c=relaxed/simple;
+	bh=xctafCIz09k4Ew0L2XCOTCa/hJ05EIdNhWmBFccHwkA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ChK6CXS0woCphCMClKVVbvtPsM5BYpHR68a5Dy717abfuhQjYuZ8spt3/qtFeNuap11zFX5Berze3maeVyYXTclA4+m3tuGFguWgn7aR9YNENxO7RuYEQHMVV+ZDYzhu1tmBlaf1kED+VC1tjR1JLdxI3yAMG9Mbd1TSajMTqOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7fb15d52c5cso308252339f.3
+        for <linux-security-module@vger.kernel.org>; Sat, 13 Jul 2024 01:21:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720858884; x=1721463684;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pHcFln8j5JUFwqmr33UhFWzq5QLUVLRuKMyc3/eRyY0=;
+        b=gVUo3wOKW9BX38f3oMsMui9JxnQDJvscKCTQ0yhk/ZTHa9YTEiBkhetVtwdK9RaaPe
+         Ud9kAkOEx1/lhb1Ob+6gFY4diHWaH+Se+8rXgGTCT2TCim5qz+6d6mBS/tRVTUgaQiI8
+         WKgqUmAkAoGaY6wAQak6q52q9+nV5Wc24mdLiYXzmNQwU2FBHTAmx3NsiZ5A1wh/2xbJ
+         pttli0V0WOyfJEPNA0Qz2zapf0fGwWgvj0dIHiJeG8wWoqLgdhsWgxV8VoOiT0mk3rwl
+         0UsEFM5rXaIVf+kGYXC28imGBfdgq8+gblbAIwC5l1L8N0OF8jp3uL4jIMLXjzVdW9Bp
+         ekMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbqMPU+1Fzcop61DqJ1jhhekKdJUzQ7jB4wBojSLu6PmmrHtJUKIFzcYH3KtkUEaym4hOLVvco6QO1ci/YKg4OpSdtc2i2D6yGviP9F3Q0Fdq2xpIH
+X-Gm-Message-State: AOJu0YznQY0aaVCRor1ns+DkKmVmFja2bvOjA+vfUKIZHn0Vacurrpyz
+	KHbFY95XLDJCgG9oCZl87LIajDlLjEO6fxohKAGLww+81o2MbC6idP82Xb+PYZrVU0JlqQOlpj+
+	Huozz6/0VDiA/BQedlBvKP4NCHuLmzi/vlZdCmWmJRApAfo+33nupF48=
+X-Google-Smtp-Source: AGHT+IFOJKrGfV5Fyn38OKb4xPzZ3gO/pFFyTv2ojc6Fu4aDEkkhECgQXXhHBdcpANJRB6jtsg5WHF4Q/Wx+6HOnn0pkAOx1CbcI
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4 11/20] bpf, lsm: Add disabled BPF LSM hook
- list
-Content-Language: en-US
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-integrity@vger.kernel.org, apparmor@lists.ubuntu.com,
- selinux@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
- Brendan Jackman <jackmanb@chromium.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>, Edward Cree <ecree.xilinx@gmail.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Anna Schumaker <anna@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-References: <20240711111908.3817636-1-xukuohai@huaweicloud.com>
- <20240711111908.3817636-12-xukuohai@huaweicloud.com>
- <qjrf5c6f24b6ef5tpvpz75uxp6ro6mhos34ovssinv4yxjwyz3@nvs75o5sywgx>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <qjrf5c6f24b6ef5tpvpz75uxp6ro6mhos34ovssinv4yxjwyz3@nvs75o5sywgx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAnLfacNpJmR8bRBw--.46904S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruFyDtrWxuF1rKw4kXFWDJwb_yoW3GFb_ur
-	yjv3srtw1ftwn3AF4F9F42gFWUuw4vgFy5W345Wr98XryfZF95Za1kGrs5AFWUJFWvvFy2
-	9F1fJanFgw42qjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb28YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0x
-	vE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
-	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6602:340f:b0:7f9:3fd9:ccf with SMTP id
+ ca18e2360f4ac-800036e6deemr103957339f.2.1720858883877; Sat, 13 Jul 2024
+ 01:21:23 -0700 (PDT)
+Date: Sat, 13 Jul 2024 01:21:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007b7ce6061d1caec0@google.com>
+Subject: [syzbot] [io-uring] general protection fault in tomoyo_socket_bind_permission
+From: syzbot <syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, jmorris@namei.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	paul@paul-moore.com, penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/13/2024 1:56 AM, Alexei Starovoitov wrote:
-> On Thu, Jul 11, 2024 at 07:18:59PM +0800, Xu Kuohai wrote:
->> From: Xu Kuohai <xukuohai@huawei.com>
->>
->> Add a disabled hooks list for BPF LSM. progs being attached to the
->> listed hooks will be rejected by the verifier.
->>
->> Suggested-by: KP Singh <kpsingh@kernel.org>
->> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
-> 
-> Xu,
-> 
-> The patches 11 and higher are mostly independent from lsm refactoring.
-> Please send them as a separate patchset for bpf-next.
-> While lsm cleanups are being reviewed this lsm_disabled list can be
-> a bit larger temporarily.
-> 
+Hello,
 
-It's great to separate patches unrelated to bpf by temporarily extending
-the lsm disabled list. I'll post an update. Thanks!
+syzbot found the following issue on:
 
+HEAD commit:    3fe121b62282 Add linux-next specific files for 20240712
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=149a439e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
+dashboard link: https://syzkaller.appspot.com/bug?extid=1e811482aa2c70afa9a0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1746d385980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c2be31980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8c6fbf69718d/disk-3fe121b6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/39fc7e43dfc1/vmlinux-3fe121b6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0a78e70e4b4e/bzImage-3fe121b6.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+CPU: 0 UID: 0 PID: 5098 Comm: syz-executor321 Not tainted 6.10.0-rc7-next-20240712-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:tomoyo_socket_bind_permission+0xa5/0x340 security/tomoyo/network.c:727
+Code: f3 f3 66 43 c7 44 2e 0e f3 f3 e8 e6 e6 2b fd ba 30 00 00 00 48 89 df 31 f6 e8 e7 6f 93 fd 49 8d 5c 24 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 fc 6c 93 fd 48 8b 03 48 89 44 24
+RSP: 0018:ffffc9000348f860 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc9000348f8d0
+RBP: ffffc9000348f950 R08: ffffc9000348f8cf R09: 0000000000000000
+R10: ffffc9000348f8a0 R11: fffff52000691f1a R12: 0000000000000000
+R13: dffffc0000000000 R14: 1ffff92000691f10 R15: ffff88801e82bca0
+FS:  000055558d6cc480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 0000000078dee000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ security_socket_bind+0x75/0xb0 security/security.c:4460
+ __sys_bind_socket+0x28/0xb0 net/socket.c:1830
+ io_bind+0x8f/0x190 io_uring/net.c:1746
+ io_issue_sqe+0x3cf/0x1570 io_uring/io_uring.c:1710
+ io_queue_sqe io_uring/io_uring.c:1924 [inline]
+ io_submit_sqe io_uring/io_uring.c:2180 [inline]
+ io_submit_sqes+0xaff/0x1bf0 io_uring/io_uring.c:2295
+ __do_sys_io_uring_enter io_uring/io_uring.c:3205 [inline]
+ __se_sys_io_uring_enter+0x2d4/0x2670 io_uring/io_uring.c:3142
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f744e4d88f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc942a3638 EFLAGS: 00000216 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f744e4d88f9
+RDX: 0000000000000000 RSI: 0000000000002d3e RDI: 0000000000000003
+RBP: 00000000000024fa R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000001
+R13: 431bde82d7b634db R14: 00007ffc942a3690 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:tomoyo_socket_bind_permission+0xa5/0x340 security/tomoyo/network.c:727
+Code: f3 f3 66 43 c7 44 2e 0e f3 f3 e8 e6 e6 2b fd ba 30 00 00 00 48 89 df 31 f6 e8 e7 6f 93 fd 49 8d 5c 24 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 fc 6c 93 fd 48 8b 03 48 89 44 24
+RSP: 0018:ffffc9000348f860 EFLAGS: 00010206
+RAX: 0000000000000003 RBX: 0000000000000018 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc9000348f8d0
+RBP: ffffc9000348f950 R08: ffffc9000348f8cf R09: 0000000000000000
+R10: ffffc9000348f8a0 R11: fffff52000691f1a R12: 0000000000000000
+R13: dffffc0000000000 R14: 1ffff92000691f10 R15: ffff88801e82bca0
+FS:  000055558d6cc480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 0000000078dee000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	f3 f3 66 43 c7 44 2e 	repz xrelease movw $0xf3f3,0xe(%r14,%r13,1)
+   7:	0e f3 f3
+   a:	e8 e6 e6 2b fd       	call   0xfd2be6f5
+   f:	ba 30 00 00 00       	mov    $0x30,%edx
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	31 f6                	xor    %esi,%esi
+  19:	e8 e7 6f 93 fd       	call   0xfd937005
+  1e:	49 8d 5c 24 18       	lea    0x18(%r12),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 fc 6c 93 fd       	call   0xfd936d35
+  39:	48 8b 03             	mov    (%rbx),%rax
+  3c:	48                   	rex.W
+  3d:	89                   	.byte 0x89
+  3e:	44                   	rex.R
+  3f:	24                   	.byte 0x24
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
