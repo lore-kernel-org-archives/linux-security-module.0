@@ -1,177 +1,186 @@
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB993BBE5
-	for <linux-security-module@vger.kernel.org>; Sat, 13 Jul 2024 08:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22F11BF31;
+	Sun, 14 Jul 2024 19:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720858886; cv=none; b=jUVvYKviu4z7k9eQc7EeQ4Ve1QCNx3btaKfrmcRlKxt6G0LBoVJndZ35+Abaxdc6HBUlGWzwCz2ipFKRx23d/R8DOcZ6gAPiumElyKrydo6c2k4wA19au4wbg50NLUDD+oFgeC+Y3JUuu9YeYj9uSXl5keCPaWu1ysFs2OLnhEk=
+	t=1720985667; cv=none; b=OVwefcF2tgbLuVPamky8WYfvl89/XJEKIijjf1kdI2v1MQU4Yqfaw4/Qq7IJtXzXLeD6v/ea/QlFA0oOALtq2UowvUJIOzlE4WSCaOO+Td+lpO9hLhYo0Tm3qX4qYHBnnsFPTShnbLSxJvRLPQQL7ZlUe0VrGA7zynd6juUxruI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720858886; c=relaxed/simple;
-	bh=xctafCIz09k4Ew0L2XCOTCa/hJ05EIdNhWmBFccHwkA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ChK6CXS0woCphCMClKVVbvtPsM5BYpHR68a5Dy717abfuhQjYuZ8spt3/qtFeNuap11zFX5Berze3maeVyYXTclA4+m3tuGFguWgn7aR9YNENxO7RuYEQHMVV+ZDYzhu1tmBlaf1kED+VC1tjR1JLdxI3yAMG9Mbd1TSajMTqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7fb15d52c5cso308252339f.3
-        for <linux-security-module@vger.kernel.org>; Sat, 13 Jul 2024 01:21:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720858884; x=1721463684;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pHcFln8j5JUFwqmr33UhFWzq5QLUVLRuKMyc3/eRyY0=;
-        b=gVUo3wOKW9BX38f3oMsMui9JxnQDJvscKCTQ0yhk/ZTHa9YTEiBkhetVtwdK9RaaPe
-         Ud9kAkOEx1/lhb1Ob+6gFY4diHWaH+Se+8rXgGTCT2TCim5qz+6d6mBS/tRVTUgaQiI8
-         WKgqUmAkAoGaY6wAQak6q52q9+nV5Wc24mdLiYXzmNQwU2FBHTAmx3NsiZ5A1wh/2xbJ
-         pttli0V0WOyfJEPNA0Qz2zapf0fGwWgvj0dIHiJeG8wWoqLgdhsWgxV8VoOiT0mk3rwl
-         0UsEFM5rXaIVf+kGYXC28imGBfdgq8+gblbAIwC5l1L8N0OF8jp3uL4jIMLXjzVdW9Bp
-         ekMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbqMPU+1Fzcop61DqJ1jhhekKdJUzQ7jB4wBojSLu6PmmrHtJUKIFzcYH3KtkUEaym4hOLVvco6QO1ci/YKg4OpSdtc2i2D6yGviP9F3Q0Fdq2xpIH
-X-Gm-Message-State: AOJu0YznQY0aaVCRor1ns+DkKmVmFja2bvOjA+vfUKIZHn0Vacurrpyz
-	KHbFY95XLDJCgG9oCZl87LIajDlLjEO6fxohKAGLww+81o2MbC6idP82Xb+PYZrVU0JlqQOlpj+
-	Huozz6/0VDiA/BQedlBvKP4NCHuLmzi/vlZdCmWmJRApAfo+33nupF48=
-X-Google-Smtp-Source: AGHT+IFOJKrGfV5Fyn38OKb4xPzZ3gO/pFFyTv2ojc6Fu4aDEkkhECgQXXhHBdcpANJRB6jtsg5WHF4Q/Wx+6HOnn0pkAOx1CbcI
+	s=arc-20240116; t=1720985667; c=relaxed/simple;
+	bh=M87rrktCHY7ghhsSswI4T1DoWNIiUEx81cbb38bY5aA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGXTjMrUPKKizVbYgks80Ly9SvxyTi4fMjb3/scdNUqniCD/XN9vgYdpRoHvCyd3IqJAfgYIBeV5PNV2j5msPv10FJHMBpcyxjloxuZRrH2ZezdDtC4Upd/yeNpcZhG5H9hBtLuE4CIpM7b91nSa3UFlniUnG++9ZrIPcglt0hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dT3qRkeK; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dT3qRkeK"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WMb9w4V8NzDD7;
+	Sun, 14 Jul 2024 21:34:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720985652;
+	bh=K31st2qlqWJi+cy7FgRVcUlfoX1RhYvk1QYxVEuqOUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dT3qRkeKGq56bt9kV3Qstlrq22PAo5PeK2fYHLXD/IRoR9V0R2eAfUGJZOA3lPoLy
+	 iIYTgtY16vjW+FXeO0NRwEjAhXkUxPeIGhop+M0XpWhOeusW5XKYKlLSG/hb51hJ6O
+	 fTcQJ4HoEwQqXvY6SeqxgjHwMmXuuWFq++s4cBTY=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WMb9v1hMczv4r;
+	Sun, 14 Jul 2024 21:34:11 +0200 (CEST)
+Date: Sun, 14 Jul 2024 21:34:01 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Brian Foster <bfoster@redhat.com>, 
+	linux-bcachefs@vger.kernel.org
+Cc: syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>, 
+	gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] [lsm?] WARNING in current_check_refer_path - bcachefs
+ bug
+Message-ID: <20240714.iaDuNgieR9Qu@digikod.net>
+References: <000000000000a65b35061cffca61@google.com>
+ <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:340f:b0:7f9:3fd9:ccf with SMTP id
- ca18e2360f4ac-800036e6deemr103957339f.2.1720858883877; Sat, 13 Jul 2024
- 01:21:23 -0700 (PDT)
-Date: Sat, 13 Jul 2024 01:21:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007b7ce6061d1caec0@google.com>
-Subject: [syzbot] [io-uring] general protection fault in tomoyo_socket_bind_permission
-From: syzbot <syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, io-uring@vger.kernel.org, jmorris@namei.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	paul@paul-moore.com, penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hello,
+On Fri, Jul 12, 2024 at 10:55:11AM -0400, Paul Moore wrote:
+> On Thu, Jul 11, 2024 at 5:53 PM syzbot
+> <syzbot+34b68f850391452207df@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-arm..
+> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=174b0e6e980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=15349546db652fd3
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > userspace arch: arm64
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cd1b69980000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12667fd1980000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/disk-8a03d70c.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinux-8a03d70c.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/Image-8a03d70c.gz.xz
+> > mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacdef/mount_0.gz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
+> >
+> > bcachefs (loop0): resume_logged_ops... done
+> > bcachefs (loop0): delete_dead_inodes... done
+> > bcachefs (loop0): done starting filesystem
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> 
+> I'll let Mickaël answer this for certain, but based on a quick look it
+> appears that the fs object being moved has a umode_t that Landlock is
+> not setup to handle?
 
-syzbot found the following issue on:
+syzbot found an issue with bcachefs: in some cases umode_t is invalid (i.e.
+a weird file).
 
-HEAD commit:    3fe121b62282 Add linux-next specific files for 20240712
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=149a439e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
-dashboard link: https://syzkaller.appspot.com/bug?extid=1e811482aa2c70afa9a0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1746d385980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c2be31980000
+Kend, Brian, you'll find the incorrect filesystem with syzbot's report.
+Could you please investigate the issue?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8c6fbf69718d/disk-3fe121b6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/39fc7e43dfc1/vmlinux-3fe121b6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0a78e70e4b4e/bzImage-3fe121b6.xz
+Here is the content of the file system:
+# losetup --find --show mount_0
+/dev/loop0
+# mount /dev/loop0 /mnt/
+# ls -la /mnt/
+ls: cannot access '/mnt/file2': No such file or directory
+ls: cannot access '/mnt/file3': No such file or directory
+total 24
+drwxr-xr-x 4 root root   0 May  2 20:21 .
+drwxr-xr-x 1 root root 130 Oct 31  2023 ..
+drwxr-xr-x 2 root root   0 May  2 20:21 file0
+?rwxr-xr-x 1 root root  10 May  2 20:21 file1
+-????????? ? ?    ?      ?            ? file2
+-????????? ? ?    ?      ?            ? file3
+-rwxr-xr-x 1 root root 100 May  2 20:21 file.cold
+drwx------ 2 root root   0 May  2 20:21 lost+found
+# stat /mnt/file1
+  File: /mnt/file1
+  Size: 10              Blocks: 8          IO Block: 4096   weird file
+Device: 7,0     Inode: 1073741824  Links: 1
+Access: (0755/?rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2024-05-02 20:21:07.747039697 +0000
+Modify: 2024-05-02 20:21:07.747039697 +0000
+Change: 2024-05-02 20:21:07.747039697 +0000
+ Birth: 2024-05-02 20:21:07.747039697 +0000
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com
+dmesg:
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=compression=lz4,nojournal_transaction_names
+bcachefs (loop0): recovering from clean shutdown, journal seq 7
+bcachefs (loop0): alloc_read... done
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read... done
+bcachefs (loop0): going read-write
+bcachefs (loop0): journal_replay... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): delete_dead_inodes... done
+bcachefs (loop0): dirent to missing inode:
+  u64s 7 type dirent 4096:5067489913167654073:U32_MAX len 0 ver 0: file2 -> 4098 type reg
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 11
+bcachefs (loop0): dirent to missing inode:
+  u64s 7 type dirent 4096:5868742249271439647:U32_MAX len 0 ver 0:
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 5098 Comm: syz-executor321 Not tainted 6.10.0-rc7-next-20240712-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:tomoyo_socket_bind_permission+0xa5/0x340 security/tomoyo/network.c:727
-Code: f3 f3 66 43 c7 44 2e 0e f3 f3 e8 e6 e6 2b fd ba 30 00 00 00 48 89 df 31 f6 e8 e7 6f 93 fd 49 8d 5c 24 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 fc 6c 93 fd 48 8b 03 48 89 44 24
-RSP: 0018:ffffc9000348f860 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc9000348f8d0
-RBP: ffffc9000348f950 R08: ffffc9000348f8cf R09: 0000000000000000
-R10: ffffc9000348f8a0 R11: fffff52000691f1a R12: 0000000000000000
-R13: dffffc0000000000 R14: 1ffff92000691f10 R15: ffff88801e82bca0
-FS:  000055558d6cc480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 0000000078dee000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- security_socket_bind+0x75/0xb0 security/security.c:4460
- __sys_bind_socket+0x28/0xb0 net/socket.c:1830
- io_bind+0x8f/0x190 io_uring/net.c:1746
- io_issue_sqe+0x3cf/0x1570 io_uring/io_uring.c:1710
- io_queue_sqe io_uring/io_uring.c:1924 [inline]
- io_submit_sqe io_uring/io_uring.c:2180 [inline]
- io_submit_sqes+0xaff/0x1bf0 io_uring/io_uring.c:2295
- __do_sys_io_uring_enter io_uring/io_uring.c:3205 [inline]
- __se_sys_io_uring_enter+0x2d4/0x2670 io_uring/io_uring.c:3142
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f744e4d88f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc942a3638 EFLAGS: 00000216 ORIG_RAX: 00000000000001aa
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f744e4d88f9
-RDX: 0000000000000000 RSI: 0000000000002d3e RDI: 0000000000000003
-RBP: 00000000000024fa R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000001
-R13: 431bde82d7b634db R14: 00007ffc942a3690 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:tomoyo_socket_bind_permission+0xa5/0x340 security/tomoyo/network.c:727
-Code: f3 f3 66 43 c7 44 2e 0e f3 f3 e8 e6 e6 2b fd ba 30 00 00 00 48 89 df 31 f6 e8 e7 6f 93 fd 49 8d 5c 24 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 fc 6c 93 fd 48 8b 03 48 89 44 24
-RSP: 0018:ffffc9000348f860 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc9000348f8d0
-RBP: ffffc9000348f950 R08: ffffc9000348f8cf R09: 0000000000000000
-R10: ffffc9000348f8a0 R11: fffff52000691f1a R12: 0000000000000000
-R13: dffffc0000000000 R14: 1ffff92000691f10 R15: ffff88801e82bca0
-FS:  000055558d6cc480(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 0000000078dee000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	f3 f3 66 43 c7 44 2e 	repz xrelease movw $0xf3f3,0xe(%r14,%r13,1)
-   7:	0e f3 f3
-   a:	e8 e6 e6 2b fd       	call   0xfd2be6f5
-   f:	ba 30 00 00 00       	mov    $0x30,%edx
-  14:	48 89 df             	mov    %rbx,%rdi
-  17:	31 f6                	xor    %esi,%esi
-  19:	e8 e7 6f 93 fd       	call   0xfd937005
-  1e:	49 8d 5c 24 18       	lea    0x18(%r12),%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 fc 6c 93 fd       	call   0xfd936d35
-  39:	48 8b 03             	mov    (%rbx),%rax
-  3c:	48                   	rex.W
-  3d:	89                   	.byte 0x89
-  3e:	44                   	rex.R
-  3f:	24                   	.byte 0x24
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> > Modules linked in:
+> > CPU: 0 PID: 6284 Comm: syz-executor169 Not tainted 6.10.0-rc6-syzkaller-g8a03d70c27fc #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > pc : current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> > lr : get_mode_access security/landlock/fs.c:953 [inline]
+> > lr : current_check_refer_path+0x4dc/0xaa8 security/landlock/fs.c:1132
+> > sp : ffff80009bb47840
+> > x29: ffff80009bb47980 x28: ffff80009bb478e0 x27: 0000000000000001
+> > x26: 1fffe0001b7a831f x25: ffff0000d713ef00 x24: ffff700013768f14
+> > x23: 000000000000f1ed x22: dfff800000000000 x21: ffff0000dbd418f8
+> > x20: 0000000000000000 x19: 0000000000001fff x18: ffff80009bb46be0
+> > x17: ffff800080b8363c x16: ffff80008afaca80 x15: 0000000000000004
+> > x14: 1ffff00013768f24 x13: 0000000000000000 x12: 0000000000000000
+> > x11: ffff700013768f28 x10: 0000000000ff0100 x9 : 0000000000000000
+> > x8 : ffff0000d6845ac0 x7 : 0000000000000000 x6 : 0000000000000000
+> > x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000020
+> > x2 : 0000000000000000 x1 : 000000000000f1ed x0 : 000000000000d000
+> > Call trace:
+> >  current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> >  hook_path_rename+0x4c/0x60 security/landlock/fs.c:1416
+> >  security_path_rename+0x154/0x1f0 security/security.c:1918
+> >  do_renameat2+0x724/0xe40 fs/namei.c:5031
+> >  __do_sys_renameat2 fs/namei.c:5078 [inline]
+> >  __se_sys_renameat2 fs/namei.c:5075 [inline]
+> >  __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:5075
+> >  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+> >  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+> >  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+> >  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+> >  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+> >  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+> >  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> > irq event stamp: 67226
+> > hardirqs last  enabled at (67225): [<ffff80008b1683b4>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+> > hardirqs last  enabled at (67225): [<ffff80008b1683b4>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+> > hardirqs last disabled at (67226): [<ffff80008b06e498>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
+> > softirqs last  enabled at (66914): [<ffff8000800307e0>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+> > softirqs last disabled at (66912): [<ffff8000800307ac>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+> > ---[ end trace 0000000000000000 ]---
+> 
+> -- 
+> paul-moore.com
+> 
