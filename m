@@ -1,99 +1,97 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F23573446
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2024 18:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDE5FBE8
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2024 19:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066669; cv=none; b=YgJ4VJFixnNHMPsoDW2aqxy0xRUU5uP0SErU95t3Au+yHFwQWlaD0CjRL5MNsPbJFtBCg80IDy+VDGIupe+OOaQlGDLI9by4ytb80dqyPLQuDd+kcspgyWIBQs977nPJBg2xM+KLL6EMPSSHQ17pM5rWxsLUEmq/8iulbhMXX1s=
+	t=1721071057; cv=none; b=afQG6p1dw/6phBEKD5khePz8QAmrd1L4Yz27FOLNOy1RLbh49Myda/NFeBPs39YFz1s7opqCDrEpnF+sbA3BSThsWvSDFFs44Sss9Z1Ey6gWdmGEFuZZGtpZeC3FsYZnVXRKkasGWjmXX90p6d5JzGrmQipSDRpKR02bWB38gRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066669; c=relaxed/simple;
-	bh=qTCr6QL4J6++WwWH8o7u6xeqNvp1YHa3q8UcBYI2COY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCB22EOYE+wmzcmcSZljz+7PVY4ZZzCrEMzTWHIYLhiUB1UrLdl1uvNuREu66Co+TTQr2rjxlzXskd+LP3rQH70OyuiSLGqdiGl7x4tkMKwsOEOG4hvy2RK8XvoUxdO8wWp/4+DnrlvrykkzsbbWn4hhSHIHCda5OmOmbc16f6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QTdnTKbU; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1721071057; c=relaxed/simple;
+	bh=Bsmpc0VdJCgXbGMhJy9C704JLK3m+Ax9F8TxdmjI7ZQ=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=Tfro7omqZvV7BuO1ZQNUXCw3447d0WJIuCKnEEj/yMZw2ZU2V34Gns//+CpHpmptuT/olv/aIrMYfBSGiyAdVQSEIFRvketJMREW7bLEAa+yl4r8b9rX/LXdiR2rXFwrc4w+8q27slVw/zZvolXivEj4A0qxvrU1kmVLJxvQROI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TUoy4Dq8; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QTdnTKbU"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WN97q1T5dzP8D;
-	Mon, 15 Jul 2024 20:04:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721066663;
-	bh=Ts0JRV5RTp+wreMPGmJVZjdkQk90kW48JRHm2YH+ldE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QTdnTKbUTMwd+hU3fxrktta6iCELFR/pBAtMWtEc5LIfYSAFlOn93v8NBLXiFKwyK
-	 p9rUYVyFbKbHLQ/kAlicr9hjkBFiMYJacblnaqX/sQsmfGpzVivvwUn5OkVEXDSMCU
-	 7aE9xaO4nWAl5FBuw0GumVKqmx9jo4EkGUOONRMo=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WN97p4pZrz115;
-	Mon, 15 Jul 2024 20:04:22 +0200 (CEST)
-Date: Mon, 15 Jul 2024 20:04:21 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, cve@kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
-Message-ID: <20240715.seingevie9Ph@digikod.net>
-References: <2024071218-CVE-2024-40938-1619@gregkh>
- <20240715.aeLiunipi8ia@digikod.net>
- <2024071553-yippee-broadways-8035@gregkh>
- <20240715.Eishohd0ehoo@digikod.net>
- <202407150908.34E00AAD1@keescook>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TUoy4Dq8"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-79f08b01ba6so392258985a.0
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2024 12:17:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1721071054; x=1721675854; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l1SvJ95k6LtIC53lwJQ166LkSovQJo1Z3A0ATzEYqfw=;
+        b=TUoy4Dq8xkX4p4Nhiq7DdKW0YcyOFQj8PrOFN5GGVlEXZAfQEusuB74DvdC5+wpHfZ
+         lKdXNzmEfWOL4vBbrNGuzuV9kBiRNHiToZKwgfS9npwkk5rZIbMGyWELXsDeBo6e3d3Z
+         XfKjC/bJLqF4FFjUwsTKSJJ36alnTRW6M6NXHohBfXz7ROLJcMrW38G4tqAe6dT/mNDd
+         e1msXjJA4N9JHIE/DAtfhzE9yQltwYeHcJwmO6FkXTqA0dK4LFTNhhLyMljTFTRpi5fm
+         4hZ1IXGCO9DCVND+StxBMmYerC7/0/3rkZRRoEVyfT7N8d6dNJo7msyLzaSgRROFbWvN
+         n8Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721071054; x=1721675854;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l1SvJ95k6LtIC53lwJQ166LkSovQJo1Z3A0ATzEYqfw=;
+        b=MsExcYlHNjNzgrGzC3GJfILgk6LLK6dHMkUS3fbK3VsDUIbuc0on/z57v+vawi3z9N
+         1l8zunhvRHcs8dFGkkMhFojLW2rT4F0T/lIuxA888Mz0vdlcg+gedgX7+LHgR752AbAi
+         coc3og2a8YCTo5gfRHghwoEOOqddk5XtEuwNgGKLc4mPgOK24fGGog6+V5/Z1dbzEBlY
+         WcUfrXIVzK9dlg9eVxZod6Q2pdH+W5LOr8gp3Uv8q8D9C9UBtp3E4U6gao3+er69IG53
+         zlthRBYVRPGy1rCGCRau6z1CkzOEv/M6tOI6iDoXztKkDdxYqQ8A/L7ypyoc8lr70Xqa
+         JBPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6fnLCgfKmEGK+OWKSafN5y6sYwyZ0I7rBp46l+pOM9xfMtWWYxOYh1n2yoSD3bIihabh7e1sTs5lJ3Tb9oRCSKOf4CkOw2FCqMf2jyBZx5k2NrY98
+X-Gm-Message-State: AOJu0YyMaLeXOttFVHz+PF2zOSuWMUf+2EQt+Mija2D04+vOJF1a/gz8
+	WWe6OmErFF+yz5E2O3sGljM5YcB6FBh2YWOFrCmhD37HQHXqrgx7jqcx5qTviQ==
+X-Google-Smtp-Source: AGHT+IGSgcl6qwGZ73pFUTMRJB3d8hsYhody6VszuU8jGekmQlCOH7F40gt0W/lCmiheORwDMsVF2Q==
+X-Received: by 2002:a05:620a:2684:b0:79e:e9ac:80c3 with SMTP id af79cd13be357-7a152fbccbbmr1979957285a.1.1721071054513;
+        Mon, 15 Jul 2024 12:17:34 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160c6dc8dsm225327885a.110.2024.07.15.12.17.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 12:17:34 -0700 (PDT)
+Date: Mon, 15 Jul 2024 15:17:33 -0400
+Message-ID: <4b4df5f5e3d91b9342b56ae69b3fd2be@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20240715
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202407150908.34E00AAD1@keescook>
-X-Infomaniak-Routing: alpha
 
-On Mon, Jul 15, 2024 at 09:11:35AM -0700, Kees Cook wrote:
-> On Mon, Jul 15, 2024 at 02:20:59PM +0200, Mickaël Salaün wrote:
-> > On Mon, Jul 15, 2024 at 01:16:38PM +0200, Greg Kroah-Hartman wrote:
-> > > On Mon, Jul 15, 2024 at 12:37:53PM +0200, Mickaël Salaün wrote:
-> > > > Hello,
-> > > > 
-> > > > AFAIK, commit 88da52ccd66e ("landlock: Fix d_parent walk") doesn't fix a
-> > > > security issue but an unexpected case.  The triggered WARN_ON_ONCE() is
-> > > > just a canary, and this case was correctly handled with defensive
-> > > > programming and didn't allow to bypass the security policy nor to harm
-> > > > the kernel.  However, this fix should indeed be backported.
-> > > 
-> > > If a WARN_ON() is hit, a machine with panic_on_warn enabled will reboot,
-> > > hence if there is any way that userspace can hit this, it needs to be
-> > > issued a CVE, sorry.
-> > 
-> > OK, I didn't know about this panic_on_warn rule for CVE.  Out of
-> > curiosity, panic_on_warn is definitely useful for fuzzing and testing,
-> > but what is the rational to enable panic_on_warn on production systems?
-> > It literally transforms a warning message into a system DoS (i.e.
-> > WARN_ON into BUG_ON).  We should explicitly use BUG_ON() if this is a
-> > critical unhandled case, right?
-> 
-> We need a way to raise WARN to panic for deployments that have tested
-> their workloads and want FORTIFY_SOURCE and UBSAN_BOUNDS to actually
+Linus,
 
-OK, I guess it makes sense if we know and tested all the possible
-execution paths and states, which is challenging, but I get your point.
-However, for this use case, I don't see the point of promoting a WARN_ON
-issue to a CVE.
+A single SELinux patch for Linux v6.11 to change the type of a
+pre-processor constant to better match its use.  Please merge.
 
-> perform mitigations instead of just warning. Linus rejected all prior
-> knobs for this and panic_on_warn (or better yet, kernel.warn_limit
-> syscall) is used for this purpose.
-> 
-> Userspace actions must never be able to reach a WARN or BUG state:
-> https://docs.kernel.org/process/deprecated.html#bug-and-bug-on
+-Paul
 
-Yes, that's why we use WARN_ON_ONCE() to check cases that should never
-happen (at the time of writting), but in practice it's useful to check
-(with fuzzing) that this assertion is true.  However, if a
-WARN_ON_ONCE() is reached, this doesn't mean that this is a security
-issue, but just an unexpected case that kernel maintainers should be
-notified with to fix it.
+--
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20240715
+
+for you to fetch changes up to e123134b39dc40af94e8aec49227ae55b5e087a8:
+
+  selinux: Use 1UL for EBITMAP_BIT to match maps type
+    (2024-07-02 11:41:05 -0400)
+
+----------------------------------------------------------------
+selinux/stable-6.11 PR 20240715
+
+----------------------------------------------------------------
+Canfeng Guo (1):
+      selinux: Use 1UL for EBITMAP_BIT to match maps type
+
+ security/selinux/ss/ebitmap.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--
+paul-moore.com
