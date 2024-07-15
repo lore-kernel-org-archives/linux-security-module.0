@@ -1,103 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-out.cvt.stuba.sk (smtp-out.cvt.stuba.sk [147.175.1.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252961891A4;
-	Mon, 15 Jul 2024 12:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3016E18D4C1;
+	Mon, 15 Jul 2024 13:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.175.1.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721047181; cv=none; b=a63nnqjcQML/G17lnECw7em3K3yaczc88H9BULOIZ3GD+lh1yZP7f+TmlSqFwemNCf+Hq8KmId2KCMSR0Pfj+BC1+/MfFzsOgO361tq9Pg72+L0VIGrN2sMJ7cInmy4H8E6HaFgvvKRX5bXXVUwNHubKEAZnrniewoVvYhqGURA=
+	t=1721049071; cv=none; b=fLVAWrBCYpapmQObrG7anPasg1vD6EJ5FfWMN4BXsuhGiC95CR+zIZUNynmzb9JMcuLKoMNcNy1h0Ug0AgA97N4XTl/NuaPo4Kk7YiRTlWTsbFNuyn0KryND/TQdV5zsMa2mLQoTPzILUFACqmkYGkReSR80ggld5FOgXz/ZfJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721047181; c=relaxed/simple;
-	bh=urFsKcjAp6UTHzAfM659oLy3mk1/RPrjyvRtDxyWXyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nllTLPjV290LPv6NWF6f2TCDmQv1EGrDQXM59HXrycQyQIU1J//M2DnnGW1UywkTKx8tgYOeTVtxbFaEFAVgijau76cdV+8pJlJhT4ZMyIKlutt1ZP/KRl4TAsTOhprl/du80S4f8pMZf/LjmrFTn1jaxj/EE4qmZGKqQmk8VwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kjCkiobM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721049071; c=relaxed/simple;
+	bh=UBfgy5+0l8x+M07N7A4Dki6luKXzyCWR4r70sFx/1SY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sookpNAuyUJLYdswfRzgMCfE8lTQgmGKrIwrsyBRUa/49SXmWiAq9VJEIhaG/e4kuxQnjQu/qnciIKnc2twRlSkfLkH66pIhXFIUQ2YdGc40VoU/7Hl8dRpP6b8Wuw+twJqhVJZHcpD6trQklSXOAyzP2buU1dtyY7K8b9Ns7uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk; spf=pass smtp.mailfrom=stuba.sk; dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b=yRdfuyUk; arc=none smtp.client-ip=147.175.1.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stuba.sk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kjCkiobM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DBFC32782;
-	Mon, 15 Jul 2024 12:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721047180;
-	bh=urFsKcjAp6UTHzAfM659oLy3mk1/RPrjyvRtDxyWXyA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kjCkiobMrrmzutk0XWXmPF7ovtLU/HHJrgpvpUKqFctINM57tngfPipyqinp8m/Ig
-	 7jgaGq/w2YHTx32S01/MJVNrM6qiOc03nnM95/fen55w7SiD5TBBu5KQOS4KztaB29
-	 lGjW+F1n8nXHxqQi4m20iXb7VnZnXadIegHb+RZc=
-Date: Mon, 15 Jul 2024 14:39:37 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
-Message-ID: <2024071508-prison-liftoff-7987@gregkh>
-References: <2024071218-CVE-2024-40938-1619@gregkh>
- <20240715.aeLiunipi8ia@digikod.net>
- <2024071553-yippee-broadways-8035@gregkh>
- <20240715.Eishohd0ehoo@digikod.net>
+	dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b="yRdfuyUk"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=stuba.sk;
+	s=20180406; h=Content-Transfer-Encoding:Content-Type:From:To:Subject:
+	MIME-Version:Date:Message-ID; bh=hPXmEGrpNCxQtlE+7MmiOVH/DDCPb8s47qf1vlPNH8Y=
+	; t=1721049068; x=1721481068; b=yRdfuyUka8R8o/yS9lizhVwyr0ygk5Wde5XqpaziEQpOp
+	j1O7FP/gSubqEyJ6/+7NWKmQeGS3K2wpxTQkKnzyWSEDnzagJF0sqCFSpLb7D0nUHnJUfW4WSSvGR
+	SU1o1LEdZMM4NF4htQGocy9AjBNIrLp1lXn7cQPWF1BVsq/87g8mhbHvXRY/nQh6CKpNNj5p1iTq4
+	yB8dWUshaa+TyyUHM2vkXiDGhhBx5ycWvi1zKQwKqGdJqHXgfgYHqUy1YvHV7m/jOJyg7EZNQW1Gu
+	gpUkjMSYm56MDGKnTQYo0apIxf6QzSJn0+oPMHxi5SYjlIzPHAnBii2daofaJGpgGA==;
+X-STU-Diag: 0488aa0426ae2156 (auth)
+Received: from ellyah.uim.fei.stuba.sk ([147.175.106.89])
+	by mx1.stuba.sk (Exim4) with esmtpsa (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(envelope-from <matus.jokay@stuba.sk>)
+	id 1sTL8u-000000003nF-2IVT;
+	Mon, 15 Jul 2024 14:49:24 +0200
+Message-ID: <498a6aad-3b53-4918-975e-3827f8230bd0@stuba.sk>
+Date: Mon, 15 Jul 2024 14:49:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240715.Eishohd0ehoo@digikod.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] net: Split a __sys_bind helper for io_uring
+To: Jens Axboe <axboe@kernel.dk>, Jakub Kicinski <kuba@kernel.org>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, io-uring@vger.kernel.org,
+ netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240614163047.31581-1-krisman@suse.de>
+ <20240618174953.5efda404@kernel.org>
+ <68b482cd-4516-4e00-b540-4f9ee492d6e3@kernel.dk>
+ <20240619080447.6ad08fea@kernel.org>
+ <8002392e-5246-4d3e-8c8a-70ccffe39a08@kernel.dk>
+Content-Language: en-US
+From: Matus Jokay <matus.jokay@stuba.sk>
+In-Reply-To: <8002392e-5246-4d3e-8c8a-70ccffe39a08@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 15, 2024 at 02:20:59PM +0200, Mickaël Salaün wrote:
-> On Mon, Jul 15, 2024 at 01:16:38PM +0200, Greg Kroah-Hartman wrote:
-> > On Mon, Jul 15, 2024 at 12:37:53PM +0200, Mickaël Salaün wrote:
-> > > Hello,
-> > > 
-> > > AFAIK, commit 88da52ccd66e ("landlock: Fix d_parent walk") doesn't fix a
-> > > security issue but an unexpected case.  The triggered WARN_ON_ONCE() is
-> > > just a canary, and this case was correctly handled with defensive
-> > > programming and didn't allow to bypass the security policy nor to harm
-> > > the kernel.  However, this fix should indeed be backported.
-> > 
-> > If a WARN_ON() is hit, a machine with panic_on_warn enabled will reboot,
-> > hence if there is any way that userspace can hit this, it needs to be
-> > issued a CVE, sorry.
+On 19. 6. 2024 17:06, Jens Axboe wrote:
+> On 6/19/24 9:04 AM, Jakub Kicinski wrote:
+>> On Wed, 19 Jun 2024 07:40:40 -0600 Jens Axboe wrote:
+>>> On 6/18/24 6:49 PM, Jakub Kicinski wrote:
+>>>> On Fri, 14 Jun 2024 12:30:44 -0400 Gabriel Krisman Bertazi wrote:  
+>>>>> io_uring holds a reference to the file and maintains a
+>>>>> sockaddr_storage address.  Similarly to what was done to
+>>>>> __sys_connect_file, split an internal helper for __sys_bind in
+>>>>> preparation to supporting an io_uring bind command.
+>>>>>
+>>>>> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+>>>>> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>  
+>>>>
+>>>> Acked-by: Jakub Kicinski <kuba@kernel.org>  
+>>>
+>>> Are you fine with me queueing up 1-2 via the io_uring branch?
+>>> I'm guessing the risk of conflict should be very low, so doesn't
+>>> warrant a shared branch.
+>>
+>> Yup, exactly, these can go via io_uring without branch juggling.
 > 
-> OK, I didn't know about this panic_on_warn rule for CVE.  Out of
-> curiosity, panic_on_warn is definitely useful for fuzzing and testing,
-> but what is the rational to enable panic_on_warn on production systems?
-
-People like to have their devices/servers rebooted if _anything_ is seen
-to go wrong.  A few billion phones have this enabled, as do most all
-cloud servers it seems :(
-
-> It literally transforms a warning message into a system DoS (i.e.
-> WARN_ON into BUG_ON).
-
-Yes :(
-
-> We should explicitly use BUG_ON() if this is a critical unhandled
-> case, right?
-
-Personally I would use neither, handle the error properly and clean up
-correctly.  Only if the continuing to run would cause unrecoverable harm
-(i.e. data loss or corruption or compromise) would I ever call BUG_ON().
-
-> > > Could you please Cc me for future CVE related to my changes or to
-> > > Landlock?  For kernel CVEs, I think it would be good to Cc at least
-> > > maintainers, reviewers, authors, and committers for the related commits.
-> > 
-> > I suggest setting up lei to watch the linux-cve-announce mailing list if
-> > you wish to do this (just filter for landlock stuff).  Automatically
-> > mailing cve stuff to maintainers has been deemed too "noisy" which is
-> > why we do not do this by default.
+> Great thanks!
 > 
-> Well, it might be too noisy for some but I guess/hope not for most.
-> Email filtering should be easy for the few receiving too many of these
-> emails though.
+Please fix io_bind and io_listen to not pass NULL ptr to related helpers
+__sys_bind_socket and __sys_listen_socket. The first helper's argument
+shouldn't be NULL, as related security hooks expect a valid socket object.
 
-For now we have decided to not cc: maintainers as these are all sent to
-a public list that can be subscribed to if they wish to.
+See the syzkaller's bug report:
+https://lore.kernel.org/linux-security-module/0000000000007b7ce6061d1caec0@google.com/
 
-thanks,
-
-greg k-h
+Thanks,
+mY
