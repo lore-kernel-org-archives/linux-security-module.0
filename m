@@ -1,119 +1,111 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BE213B5B6
-	for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2024 21:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41D3143C61
+	for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2024 23:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721078615; cv=none; b=bNiQEZJBEQzI7D7l5ZzkObc2VbA6qrA3+8OCWbenZJ4jXcSrPnhp95GbJ0P3KPIEsMd+WVe883sFf3WovpKQAsa0S2rCj5CuEFghy7qY/3dYjIHm88tdnczfA8duFTFg9LDMHsRBXacStV/VeiwHypQaadwmsLqp4QmG+CRNGxg=
+	t=1721086854; cv=none; b=gZptFayhFmmxQRVMhpToCv4gWse/uqzDx4NyuoMN4cbqOeQihx+8ptAXeXXaQnj3oe4XmTLg+zhrsIrWQKxxwN6ErAV+H1dUjNA1/f+pBdBrPVfj+tzGZXWYdraX3h79ZFu8P7y95GB/F5kmJrWX3SEcz1KiW1br50CXErZAsOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721078615; c=relaxed/simple;
-	bh=MZ3iBxt+5dqDGRLllZnI1LCFqMjWc4P+6DjlVLb7tec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GAsxrx9/uVnGSoxQ06/ZC3hVwZuAnPTUNSboo5j6vlInCpITQGJiT6EWUgFrBvoHKnm+orYXoOlAlHqPBT8jufn/+KR0lN8BVC8hg9o9LCc1J5aBib1N8cCSSH23XBNHXVIPdsWJoigOsTElXSpgGL0P1nIDgz+6kcH1IT4aXMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NXX2KmNJ; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1721086854; c=relaxed/simple;
+	bh=ZJqlczQnyFnkjnOMPY6EOJrRY+9hZErhisnAph9h7mk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=LbByfCeRnVMkxD6fkUb0wEIZ9plUeSHH6HH3S1Drpsr0c3KG0tm5LTz5KaR9aK7NeIl1xuR1D9sVv2gV71RLF6BFZ7hz+XwA/4L2GBkE5cgiEiC/7KEVsx+hDScs8m/MZ+Pt+sEl1Sw7F/n+yASElLNATs9UoAJGb1tzhLTCpn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=fcSRD0LQ; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NXX2KmNJ"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6518f8bc182so42799167b3.0
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jul 2024 14:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1721078611; x=1721683411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tEnN5uN5cY/n5JR2WvewER9KhzgBlk/5MGdM2c3D0Yc=;
-        b=NXX2KmNJ7XU27sXhjJ8PJIsoTnyK3wa5INopVtIOP0mYPdCFJNFHpaVo+9DFlPi32d
-         oXhtBjRw2T8cbzOY6m/jzxLIC3RLGogKIJya0ioPV0o6zWBrZPqpJMRaC01DvwYHAFPr
-         r3PUj6NypGQ7NcGsN6A8c64SqEq4TeCPkFNsXXtZ6gruPb/71jY1Ky9KgrnDWqx/3cY4
-         0VHWtezWuhm5ewCgmKpCmD4d2AVQ0F1VcMolMYZMlRwYrlU1VRe9tJk6xgJpcGjJaqrw
-         1VjiKMD89kcDlKw6tLuxgKjaoHGmF3wMIwteSQ6rJEJNiutW9z1GQgQl6+eVnU9H3TIH
-         Q5qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721078611; x=1721683411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tEnN5uN5cY/n5JR2WvewER9KhzgBlk/5MGdM2c3D0Yc=;
-        b=A+8JmQi2yINH+GVt/f+Qx0Y+D0uYF58WB9gTAEiIUumnpH6aTpDkw1ykggHZg7Rqda
-         leGCJLSlggECZodoweT2ht2bTMD4xXvEYjXxUVlECXpjFh3tnpkkOb/yLG7L0Ytll8Ym
-         +/oMG8MGBaz+W5yzYRAINUdiMZPnIuu/3FeH/7OHAxkDwvMKE9UHq9cyXhxUNiDHxCUZ
-         8ArqcIJ/YGdFK8eAQKJgmZoUCnGQ2NNgeDfA1w1Fd/hpSPgPLYWSGLjOCBZ29M5GGkfY
-         zbaW3pgRr09P7g44R/p6NIqUVIxIiMPsQrtx9eDQNBhulN2xoH8sQRHNvk0qh1u/WjBx
-         DKmQ==
-X-Gm-Message-State: AOJu0Yz3ujh2fpUe+4DzJEA/DJYieOK4Dnu31M4Y2h5rWMZiF6u4w/rl
-	PUEi3i3VgHulBR0KBEMT4ussJUQ02T2Sr2Cbo6daEDHyGHKN6nhlitOtcq7/2nMNOaC7Eflo8Pe
-	hTP50OyQst6K1/XemqGgoJjmr0re4PG09jHlFYOT7Xnzu6CU=
-X-Google-Smtp-Source: AGHT+IH+Qq7dAFzyGYGImGr7Ipjqqk01sz7FXkA4fwUSm/bl+/PzFE0JSsAaoOe8H4FstSfodQ/izKPDYhsurwMH0q8=
-X-Received: by 2002:a81:9e50:0:b0:65f:96e9:42f4 with SMTP id
- 00721157ae682-663890c272cmr1039547b3.15.1721078611496; Mon, 15 Jul 2024
- 14:23:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="fcSRD0LQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1721086846; bh=m6fvGEXDejgdvUwq0XGyGydA5OkCYBpq6UuMurIHjTw=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=fcSRD0LQf4X69O6aUzke9cVgLnJ0HktRUZc4EENiODb6i7RduDn8fQRG3F73e1ae6lVOyWhHPAwYPNLDVpE9uNhKrRvZANhuw35nQslRJ+kycmd4yYKHmH3Vd8ml5CLrPDe6aO150xiJ5K9DtVlYtgLG5K3wgEdng09cKq1Xob5DQBtTV8EcJUDLrc7e6A2jKysOodwbKr8t5fKbX0kfL32akX51OG4j8WpQZr4qvS/pJly5i5ltVIxNkpyDeoYW/nBWKMNxvLjLLKwt58dWTt7t2rsRKo0dgj1wVqnFE8HbS+Oz8gceKnXuut9mvIf6Cj8fFF7G+ssac2RNX8edIA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1721086846; bh=PpkPBZwoarN6bh7UluVx0AKklEQSY4Re5S9BPuGOAgN=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=E3vHnPbqs3LLWKJOH9fSqyK4we4NTz0514TbDVofKqS9IlsLjCfOCpgT/p6VQDX94YCZb/u9BvRsGj1Cegrdj0icU86AQizGXBo84vrE98nqhHtFtIxloHyQmblce9pw163xziCgnjtZmOzn9QFbyyzZVNqW2f+iCfOo1HBOO5v5WQVvXqEqkiXva7LivQo/fA9NGeRhvisQXDj7uOFxfJIjNcToJhKVvNqqaGG7F+/3S2H8p7Yw0j9Gav5Pl8TMlJGVizD4I0vLJDcY+O4Q+aWEsrnyRX8uApDXecN8tELA57lqeLoKRcEexgqb/qBmYk6aeuBLcaISF7voLHeJhw==
+X-YMail-OSG: mxyPJDYVM1nJVmTbGtE3C_daPg8SlpQky2xlF_dHlMBN734UkW3BhN0EO04dETu
+ LcuIdQeyNBq71.RcFvQ7XHwrozkQJfqxgEhrznvn4tf2gaofaE269dSoqWHWov3pA0GINaRAQGYb
+ 22aN0BY8j.9u_Wa06v8I_KA0FMvMv94Ta1RBOQ5JF1qLI3R3u5X1hA8z9Oyimzbkv99rDGTFdbaZ
+ Xo1AQCu9BvD5OF7LkTEVCNQBng_5vNMm_nmuxPB3MPP6rr5cyOfsZHDfgHyNvJc_vJ2k5ix1.gr4
+ .uJvPSzpTPCh5cjwrKVgcaqn_m.VzZVDhXrJpEettds6lZ4KQukHcP7qM1ihwGOdSVfGmUFutFYC
+ c8etb5uxRDwUgmPn4u4gh9W3rry4Fqw.4nGFVliFtLy82Uyt.B9dIfSiUDzu7YEBzqyEsCz3YuEp
+ t9hB.UaXhOMvtGsURb0X5Q4CQ872waWFNiP5fRcsXAhNhdgsq01a6vr1l6feD8iemfvR04l4b6vZ
+ qnuW4wrjSobrNZFhry5bsd9ileg040dJmcS_oYwRGCTY69oGGJw6Wh9gPMwOwfqtYWF4P1YqmNT.
+ FY4Mvbj23Nf0g.9xspplPYUB0YGn08bzQaMqyHaRQS.owM4K0mTJj0q1sUdFe4RCwq1Nwc2TwoZN
+ CGKiCdfWCHVWO9EriXrk1fgGLf9sPyLKJaea8MyCcR_uyS_64VdrzYBcxNG3zumQXz_oyhl66m9C
+ VbOz4TulrHGfVdS9p3qA__y.wvFiZuNzjeSPWJhtpH1fMYjse5E1nJE16NhnDBJ7Pz0ZQmxgV2GY
+ tk9TY.K3UtBagOnU4owwp8Cvw7TuwD1GPlywBjK1iItml9FMYLCfTiJbe0ZuI04tntDuf2ovtsKc
+ SZEbu5sxEZPRzL9nR3dcVkWFLrtdXWylSnV5fRdVN14cb7D4wdEl7zTY90alUKLS0rSfTbEUXmG0
+ 8uynlFYqavs5xJBIMrO4Z6_jF.kfjF3JjBYHY98zovDFdWpBU.bTqUbIqT1qi9RpiSXv.k2UdmJy
+ XBjyyOc8xOmKf9q7axqdwFyn.9BSpbtRGjpsu99M4oVVypHbGrkG74VmrW61CPWu06E.krdsDz1h
+ rXcm3Eyz3vFIcycrYqVzO7R1q4BKIKvq_co6RBTJgZ71iXfEeD.Orpgl7D9rX0yVgi3YLRgQP.Wr
+ NlxHlGTfUgFlH6AkHycesSduqBSAVbErXLR1QuMCbl.zk7S8Ijr8RnMhmaUTnzooEJcXmEtBBo2r
+ kltZmXl1kq2O46zCY9uzhf6Z_vKTg0f5sm7EYkrBaYZLfpUskvXB1FH6HdPpDerfSHpQEisdd_6D
+ GQYw.dGyVoW82cIszRhCegLF1PAM5rvbSq8ZAEQMVpvtvJpd.XEKDEg5fMBYQWMq4ODGWC4ZReTK
+ U5E2_ZUKgtMRE75oM8..x_ZiZqr5CJ7CfSH2_rTc5dcpaYr69xKjcIyebuw0WZytN7hjr1IdDFst
+ P1bDjZRwJDPbpQXjKip3Zpe3QWu2bDlkLkdf_gOJxngftr3q9vicftogggT9Xa5iGFYsf_isdL_z
+ VDi49f7g7ZLP_vrN_bJ6zsPJ0fZ.2P7B_iyUoQzJUf9axZ3QgvQw_TDnAHIhy7RhefNRNAqTOQT6
+ hu0FUbMUzzk69UXy45RARzGu86.ygmD.JCn7StygoSgi9udRTCbzsBRCJxD6FWAmEYnKHPFy0YOD
+ EP6R9Q5fPgfroNh_u5hR2WV1HiVOrvh0ngM7kc5vXr6s8DbK1h_NLHE5ftC8KgMPkFJQBkEpRN.N
+ OMFb1pi8OmMIeMGi_GlayNMaWjEDOn0GPAr_yq3RPmWmyqY8_rnig_MlpXc._U3j42HTASde_MKR
+ 5wiXDCKMVWwAv5QitoQ05T2Xmms7Ik48oJH5QT0VQGMLwWVgM4kQ6SVLMxuLV_UxbfaKk5WIQ2gV
+ YJXrJwXD_u1THSXIgeaBesnAsUcmOr.AnT_yLpxAfhR_1r11qCD9yq5nLPup0z9LQaMSXST_p8ZG
+ JNYjbxE5xQd2SYdW.arUP3x49TZnIrTX58TaKVIclsADDrFl_WqCIV38buLe91VKwx2z2TbHx78n
+ uLl7QFzDRu_KVIlbjcxaByCbDVC53oMWbhaJcosg9v.ibuBOTjBBgp3Q9XmzH019ZZ2HzFw81wuN
+ S56BkFPL9lak1PqZ12Xj4sqXQODOMnXNyTNIG2RbMTQ7zwW32rkKGvDmc_joG6KI3c4WIbL6Qc63
+ i6K1hQhJB99xQQe7F9HEXLdc_gKynecsjfe5c0UmjNXgdzrQ8U4qbALi9PwufBfo1hEMcksdsSqV
+ 9UOw3
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: cdb50ec1-fcdc-4a0e-93c3-ee133e69eda6
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 15 Jul 2024 23:40:46 +0000
+Received: by hermes--production-gq1-799bb7c8cf-zh7nt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d1bc5c0a4d958b9d32104fb379cfcb74;
+          Mon, 15 Jul 2024 23:30:35 +0000 (UTC)
+Message-ID: <c9842562-3564-4977-880f-9042ebe43e62@schaufler-ca.com>
+Date: Mon, 15 Jul 2024 16:30:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710024029.669314-2-paul@paul-moore.com> <20240710.peiDu2aiD1su@digikod.net>
- <CAHC9VhTxz6eFFUBZYJ3kgneRqKMSqaW63cXuQvVs_tt88GU_OA@mail.gmail.com> <20240715.uax4chahCohw@digikod.net>
-In-Reply-To: <20240715.uax4chahCohw@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 15 Jul 2024 17:23:20 -0400
-Message-ID: <CAHC9VhQtENHOpx+CpeFT6jySqvK-Hc40iFkc0H4RMTwf_g58Vg@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
- implementation hook
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Konstantin Andreev <andreev@swemel.ru>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for 6.11
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <c9842562-3564-4977-880f-9042ebe43e62.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.22501 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Mon, Jul 15, 2024 at 9:35=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Wed, Jul 10, 2024 at 12:20:18PM -0400, Paul Moore wrote:
-> > On Wed, Jul 10, 2024 at 6:40=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+Hello Linus,
 
-...
+Here is the Smack pull request for v6.11.
 
-> > > However, I'm wondering if we could backport this patch down to v5.15 =
-.
-> > > I guess not, so I'll need to remove this hook implementation for
-> > > Landlock, backport it to v5.15, and then you'll need to re-add this
-> > > check with this patch.  At least it has been useful to spot this inod=
-e
-> > > issue, but it could still be useful to spot potential memory leaks wi=
-th
-> > > a negligible performance impact.
-> >
-> > Yes, it's a bit complicated with the IMA/EVM promotion happening
-> > fairly recently.  I'm marking the patch with a stable tag, but
-> > considering we're at -rc7 and this needs at least one more respin,
-> > testing, ACKs, etc. it might not land in Linus' tree until sometime
-> > post v6.11-rc1.  Considering that, I might suggest dropping the
-> > Landlock hook in -stable and re-adding it to Linus' tree once this fix
-> > lands, but that decision is up to you.
->
-> I would prefer to backport the new hook.  I can help with that.  In
-> fact, I tried to backport the removal of the hook for Landlock, and it
-> requires the same amount of work, so it would be better to work
-> together.  That should also ease future backports impacting the same
-> part of the code.
+There are 2 patches. Both address network labeling issues.
+Both have been in the next branch and pass all tests.
 
-Okay, let's get the initial v6.11 LSM PR merged (I just sent it to
-Linus) and then I'll post the updated patchset and a proper patch for
-review.
+The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
 
-> BTW, while trying to backport that to linux-5.15.y I noticed that a fix
-> is missing in this branch: the default return value for the
-> inode_init_security hook, see commit 6bcdfd2cac55 ("security: Allow all
-> LSMs to provide xattrs for inode_init_security hook").
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
 
-Likely a casualty of a merge conflict; I haven't noticed the stable
-kernel folks doing any manual merging of LSM patches that fail an
-automated merge.  You can always do the merge and send it to them.
+are available in the Git repository at:
 
---=20
-paul-moore.com
+  https://github.com/cschaufler/smack-next tags/Smack-for-6.10
+
+for you to fetch changes up to e86cac0acdb1a74f608bacefe702f2034133a047:
+
+  smack: unix sockets: fix accept()ed socket label (2024-06-19 09:25:00 -0700)
+
+----------------------------------------------------------------
+Two fixes for Smack networking by Konstantin Andreev.
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+      smack: tcp: ipv4, fix incorrect labeling
+
+Konstantin Andreev (1):
+      smack: unix sockets: fix accept()ed socket label
+
+ security/smack/smack_lsm.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
