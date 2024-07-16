@@ -1,73 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1B7224DD;
-	Tue, 16 Jul 2024 07:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2384919D897
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2024 14:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114271; cv=none; b=kH9BMcKaxO3okgZseQdiFIO/YcjT6AG3L+nnDGLjoGVwCRwQqajtNCXieOUD7uUqQTkvZ8EWTl5J1T0m4NKbEYNH8d3LmS2RGx7pjuOVEpXTluozRoWnZ9THN9/fRtH0Y2ZDI3mqC9zbgU7h1gaeA0KhWt92KXiCjXYiBI6fhts=
+	t=1721140676; cv=none; b=Rpizv46mRHVcT5UGa9o80TNRsWrGtz9gMbDX0q7lZNmQSzlfSG6AaFH4p2f0+09WPI/Osithbj+XjD0lQderiHingUe2Unh4qRDIrlSe0DcnfSpfRnJc0Kkz50kdn6VPoePR+WnblwBk/IPJWcVVovUK62185k0ydkBtlHSzATA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114271; c=relaxed/simple;
-	bh=RPgWsqPkqCULp4EQ+wvnSiI5qZJJnSgv+KSWYJap9FY=;
+	s=arc-20240116; t=1721140676; c=relaxed/simple;
+	bh=uV6jEBY/VNA2God+Z/LTrFFeXLFehpkYyWj0Kq9vXkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7Naw9II62+wUbl94Il8Q0EjyrnfqaxQqmU801GbYGWQyF1/3yL1kUrlULErExob8iT3kKjPiWhIUaJoqIPdMli9o669yDUV9zSQSMLzhjJcSh0ym1MasEoj9WrYm5jBq4FKjirUmwSwTUt9cR0OAXwOfZ9ar4/Mo3Jx0+JL30U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qol7SDQ7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQgHVTzwkHuKhxRln8XuCqSpLiI/RNDtQpgw8nLd2B80chUgl0lVxZetHSFjev0TeFoR1fZMNJBG2Hr/IeyOj5oASw8zAc28qsEQyHVfM9SFq4MrHMb9u5bKuCYXZ1PiIk5+0cvXx5TbjU8h6aT/PPgiTFhEOxF/zwgAioiC+QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0PGgVTI0; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qol7SDQ7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3090C116B1;
-	Tue, 16 Jul 2024 07:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721114270;
-	bh=RPgWsqPkqCULp4EQ+wvnSiI5qZJJnSgv+KSWYJap9FY=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0PGgVTI0"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNhVs555jzppZ;
+	Tue, 16 Jul 2024 16:37:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721140661;
+	bh=h0lhACXja6hn17y7ELrbWUVfRqsYW3kqD9ydNv/dHIE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qol7SDQ7A+QwlDSeEI7eAS/Z1zvSCkF4W3o+eiSTQqh/LABcA7jc0v4z6+F6Kov6W
-	 +RZLe8LxVUtWD4DySlu2IwZzdq3EBqtNWlNHeu1awbyVcufffzY4x4sg8R8htoWfjX
-	 IqlKgS9QQ0ptVMtm52T+fGYT6K9UwoVIQUPaKh64=
-Date: Tue, 16 Jul 2024 09:17:47 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kees Cook <kees@kernel.org>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, cve@kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: CVE-2024-40938: landlock: Fix d_parent walk
-Message-ID: <2024071617-unscathed-spur-f4e5@gregkh>
-References: <2024071218-CVE-2024-40938-1619@gregkh>
- <20240715.aeLiunipi8ia@digikod.net>
- <2024071553-yippee-broadways-8035@gregkh>
- <20240715.Eishohd0ehoo@digikod.net>
- <202407150908.34E00AAD1@keescook>
- <20240715.seingevie9Ph@digikod.net>
- <202407151315.88BE0662@keescook>
+	b=0PGgVTI05u5idlaK1N2MyCwOVsWoG+MBZv6t/7nuZhgEtPAehTx+M9yiNnr/Kp3na
+	 pwbhZj7vm6koQWKduFD0SO/7xplve5dU0STt3Xl2RGZ8Ru+rkfG6OnFypOw+u0s+kQ
+	 lrbH1YF00iLy6K60OQLGNuG2gBXH2vWn9VcfxqA4=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNhVs0D0Yz9NB;
+	Tue, 16 Jul 2024 16:37:40 +0200 (CEST)
+Date: Tue, 16 Jul 2024 16:37:39 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Matt Bobrowski <repnop@google.com>, Alejandro Colomar <alx@kernel.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v2] landlock: Clarify documentation for struct
+ landlock_ruleset_attr
+Message-ID: <20240716.ooRe5oweew5A@digikod.net>
+References: <20240711165456.2148590-2-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202407151315.88BE0662@keescook>
+In-Reply-To: <20240711165456.2148590-2-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 15, 2024 at 01:17:10PM -0700, Kees Cook wrote:
-> On Mon, Jul 15, 2024 at 08:04:21PM +0200, Micka�l Sala�n wrote:
-> > Yes, that's why we use WARN_ON_ONCE() to check cases that should never
-> > happen (at the time of writting), but in practice it's useful to check
-> > (with fuzzing) that this assertion is true.  However, if a
-> > WARN_ON_ONCE() is reached, this doesn't mean that this is a security
-> > issue, but just an unexpected case that kernel maintainers should be
-> > notified with to fix it.
+On Thu, Jul 11, 2024 at 04:54:57PM +0000, Günther Noack wrote:
+> The explanation for @handled_access_fs and @handled_access_net has
+> significant overlap and is better explained together.
 > 
-> I leave CVE determinations to the CNA. :) I think the difficulty here is
-> with having no way to trivially see which WARN is security sensitive and
-> which isn't, and since WARNs may panic, all WARNs could be a DoS, and
-> therefore may be a CVE for some deployment somewhere.
+> * Explain the commonalities in structure-level documentation.
+> * Clarify some wording and break up longer sentences.
+> * Put emphasis on the word "handled" to make it clearer that "handled" is a term
+>   with special meaning in the context of Landlock.
+> 
+> I'd like to transfer this wording into the man pages as well.
+> 
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> Cc: Alejandro Colomar <alx@kernel.org>
+> Cc: Mickaël Salaün <mic@digikod.net>
+> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Cc: linux-security-module@vger.kernel.org
 
-That is exactly correct, and why we must mark any way that userspace can
-hit a WARN as needing a CVE.
+Thanks, applied!
 
-thanks,
-
-greg k-h
+> ---
+>  include/uapi/linux/landlock.h | 39 +++++++++++++++++++++--------------
+>  1 file changed, 23 insertions(+), 16 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 68625e728f43..e76186da3260 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -12,29 +12,36 @@
+>  #include <linux/types.h>
+>  
+>  /**
+> - * struct landlock_ruleset_attr - Ruleset definition
+> + * struct landlock_ruleset_attr - Ruleset definition.
+>   *
+> - * Argument of sys_landlock_create_ruleset().  This structure can grow in
+> - * future versions.
+> + * Argument of sys_landlock_create_ruleset().
+> + *
+> + * This structure defines a set of *handled access rights*, a set of actions on
+> + * different object types, which should be denied by default when the ruleset is
+> + * enacted.  Vice versa, access rights that are not specifically listed here are
+> + * not going to be denied by this ruleset when it is enacted.
+> + *
+> + * For historical reasons, the %LANDLOCK_ACCESS_FS_REFER right is always denied
+> + * by default, even when its bit is not set in @handled_access_fs.  In order to
+> + * add new rules with this access right, the bit must still be set explicitly
+> + * (cf. `Filesystem flags`_).
+> + *
+> + * The explicit listing of *handled access rights* is required for backwards
+> + * compatibility reasons.  In most use cases, processes that use Landlock will
+> + * *handle* a wide range or all access rights that they know about at build time
+> + * (and that they have tested with a kernel that supported them all).
+> + *
+> + * This structure can grow in future Landlock versions.
+>   */
+>  struct landlock_ruleset_attr {
+>  	/**
+> -	 * @handled_access_fs: Bitmask of actions (cf. `Filesystem flags`_)
+> -	 * that is handled by this ruleset and should then be forbidden if no
+> -	 * rule explicitly allow them: it is a deny-by-default list that should
+> -	 * contain as much Landlock access rights as possible. Indeed, all
+> -	 * Landlock filesystem access rights that are not part of
+> -	 * handled_access_fs are allowed.  This is needed for backward
+> -	 * compatibility reasons.  One exception is the
+> -	 * %LANDLOCK_ACCESS_FS_REFER access right, which is always implicitly
+> -	 * handled, but must still be explicitly handled to add new rules with
+> -	 * this access right.
+> +	 * @handled_access_fs: Bitmask of handled filesystem actions
+> +	 * (cf. `Filesystem flags`_).
+>  	 */
+>  	__u64 handled_access_fs;
+>  	/**
+> -	 * @handled_access_net: Bitmask of actions (cf. `Network flags`_)
+> -	 * that is handled by this ruleset and should then be forbidden if no
+> -	 * rule explicitly allow them.
+> +	 * @handled_access_net: Bitmask of handled network actions (cf. `Network
+> +	 * flags`_).
+>  	 */
+>  	__u64 handled_access_net;
+>  };
+> -- 
+> 2.45.2.993.g49e7a77208-goog
+> 
+> 
