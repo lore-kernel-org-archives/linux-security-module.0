@@ -1,220 +1,263 @@
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78D019E7D1
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2024 15:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7010B19DF94
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2024 15:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721143133; cv=none; b=XSncQ3Q+SZ3bEwE4pSoUHlb9ebyJkB/Vx1LTaWf4ee9LUvO6GZyIbaCYATacw43byyU2cPDQVIcyYXp9gRmi1zTcpGch5LkBkoA6GCeeRJHa6uzEiKLuoYTHQ6j5M0ch/ecnrM9b+fdeP9YDI+bahM6QHxv45cUjQJhr8NcerbQ=
+	t=1721143649; cv=none; b=MJjPT0nOWc/BEF42nvVnNaZxEs+PBiWlY1HAhEpXZ1Pq/ZBkdctxAbTHlnU+RzS6tMpz9+eZ3u6HANCJTCvC/4SSVOqOh7wWAHcF++9Bw4lbPc3b99vYlLaTu7Xzd6jdfSTl6Qnq0g//rsmomdyo4U7uNhVwo3hokPUAPgnjp+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721143133; c=relaxed/simple;
-	bh=9Cy/3Y8kPlwgnsA87ATuYpWF26sXvnlcGY/yqfqbXSU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IWnR1khEbRuXcW5bhhlJ3qEo1OyiFORDI0T3JrcX8zSzQ7o89OhVcN8uCdXRL3Zu9iERdYjkIIxyieiKvqnGb3nnu/7b7IMSPdYOI+jdtKnF7A2PY6g0Y4UipcZJnacUl5X04bgjgLPC34fZnDGZPDeR56IUK94Cnr/YIEw1zJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KuM2abcJ; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1721143649; c=relaxed/simple;
+	bh=MciHCjykVzCLsloWvBMq3Mk60cvmYK7lNa4zFsMZ4BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Z/4XjH3ZorvDkw9MTSwCyEes2gKMmodlxakoYOKtFHIXsHeMdc93f/rbVQSDXSpGK2KvjBp9zUGQpBk8bubH3GeTA1bxLdzeufBYGzFPt9DZGqjaY91DGL27iDhS9xE+SVOW2+Bs5dbcGOA/EIVmDC5D6cCOWJvqmTSjNhE4kyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Q1GTJCH8; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KuM2abcJ"
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-447f8aa87bfso462591cf.0
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2024 08:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721143131; x=1721747931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WWVNrxbBHDXZu/jCvfJLl2ens68sOvgHXhZ1riQlav8=;
-        b=KuM2abcJKNu6Wu/Zo6y3Dila7DecYrbJ3Jt4gioQHFe2bftbtrqLfYEDx7ZvWclHS2
-         HY8POeFIzuln87aKfgkH39mcSevAbp2lvfj6gWOn0n+xO+RlHMjSfV1C6jF4w89pNtQr
-         6QttE9ehDZWnTJppIhMidRDOjxHwb7Hf3+IUzEn0E3AWoBclFHDTZ6BFMkoFe8yH8JhK
-         2sAVJWYu0HFyYerDwucdOrwouVmkCQCCj9q4M1LdV7oe/pvY1KsFZO0YomFMX9B/uUlS
-         kaNqwnZkhkKf7mBYUcm44e0sorNHWXg8mgDi5vaPxrsS45DcpgBlHTrUTBhdUYjQXn6A
-         c99A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721143131; x=1721747931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WWVNrxbBHDXZu/jCvfJLl2ens68sOvgHXhZ1riQlav8=;
-        b=pmOAEguzEIcrNDvManaD1261cY+C8D/LV465hULzuY9JE49DxKBdNAzJM+AO1C6m5n
-         GZhJXkxTQajRPj9Tk28kEZeM/pG4yQeWXIXRHybN/fbWD9/Sl+I6+5CPxPjth6MROWW8
-         aELXeVPbB6RgJVfljcPtKGC6xt1uGrfT1vOrHfHY3nxttzkF+iIDYqENT3aAwScVAeDJ
-         upWyQkpR4Kr81zkMXa/Xu2AD1R9gKnt+5YgfY3+AHbhwrIVWayCDIEaUTAQ7cISeDJUM
-         pnIg556nIlG/EKHiruZT9sxOAvt5YH97qD4QxNU9rXTHYtxpBfVKIxpeJiCBYOoLfudp
-         2vNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+e9yHZDVqBAHRn+kl+H/hHD1lWU8cNh4rUZ2YgfXx7iFBqRsumWk+Fs2r9EVycvsdQfLUh2iiWrwAD/rA0DazgU3wZuBmTsgziQs0CO+uc/kUb1yH
-X-Gm-Message-State: AOJu0Yzm75D5DBfGgHt3/NXhmw0eY1/WzODVYqzqEezk3iZId8fpIK4n
-	C8oHikhCEERdXbda1ugzt/CLhurwm4rtQNlm8ZyOrII6Rocw2Y+1o5evouxzR19BroRDrEgzc7T
-	V6pM0A/fVy6/KHjcIzzTVRxV+obJKCTGgE7i/
-X-Google-Smtp-Source: AGHT+IHWbKj34zsRyLKiBWqdmFyKlDq6Wr5+2Wdecg/ZG3HyZU7BuDsfvRbU1vyabej6wFPdLE9jOxxXXzqK9dZsCJU=
-X-Received: by 2002:a05:622a:997:b0:444:dc22:fb1d with SMTP id
- d75a77b69052e-44f7a64c7e0mr3638781cf.12.1721143130336; Tue, 16 Jul 2024
- 08:18:50 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Q1GTJCH8"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNjcC4BvDz15p9;
+	Tue, 16 Jul 2024 17:27:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721143643;
+	bh=MTy+WuAklkoimjPRPFnnMvrYWfaXAqiv/BdqRfJnrsw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Q1GTJCH8QB/YCj11kSHucclDrPj3puZbHG69qz7jCic+aRu3dzhY+24qKQC0QpxQM
+	 s1LEkk8PGD62QPr9uLa6daSGUEJL/j52KQDEmbp7wWZFNC/m38YJ4KUPJ/no26s8Ps
+	 MjBJEkHXimVgx7kBPX+YjsqD8jT08dUu0/bG4y3o=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNjcB2WjgzHPq;
+	Tue, 16 Jul 2024 17:27:22 +0200 (CEST)
+Date: Tue, 16 Jul 2024 17:27:21 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: landlock@lists.linux.dev
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, lwn@lwn.net, linux-security-module@vger.kernel.org, 
+	oss-security@lists.openwall.com
+Subject: Landlock news #4
+Message-ID: <20240716.yui4Iezai8ae@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708.quoe8aeSaeRi@digikod.net> <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
- <ef3281ad-48a5-4316-b433-af285806540d@python.org> <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
- <20240709.aech3geeMoh0@digikod.net> <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
- <20240710.eiKohpa4Phai@digikod.net> <202407100921.687BE1A6@keescook>
- <20240711.sequuGhee0th@digikod.net> <CALmYWFt7X0v8k1N9=aX6BuT2gCiC9SeWwPEBckvBk8GQtb0rqQ@mail.gmail.com>
- <20240716.Zah8Phaiphae@digikod.net>
-In-Reply-To: <20240716.Zah8Phaiphae@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Tue, 16 Jul 2024 08:18:09 -0700
-Message-ID: <CALmYWFu=kdsxZwj-U5yqCUXrhvzxWCt1YjuJv0eAAaAyGFbxFQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Kees Cook <kees@kernel.org>, Steve Dower <steve.dower@python.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Tue, Jul 16, 2024 at 8:15=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Tue, Jul 16, 2024 at 08:02:37AM -0700, Jeff Xu wrote:
-> > On Thu, Jul 11, 2024 at 1:57=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Wed, Jul 10, 2024 at 09:26:14AM -0700, Kees Cook wrote:
-> > > > On Wed, Jul 10, 2024 at 11:58:25AM +0200, Micka=C3=ABl Sala=C3=BCn =
-wrote:
-> > > > > Here is another proposal:
-> > > > >
-> > > > > We can change a bit the semantic by making it the norm to always =
-check
-> > > > > file executability with AT_CHECK, and using the securebits to res=
-trict
-> > > > > file interpretation and/or command injection (e.g. user supplied =
-shell
-> > > > > commands).  Non-executable checked files can be reported/logged a=
-t the
-> > > > > kernel level, with audit, configured by sysadmins.
-> > > > >
-> > > > > New securebits (feel free to propose better names):
-> > > > >
-> > > > > - SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
-> > > >
-> > > > Would you want the enforcement of this bit done by userspace or the
-> > > > kernel?
-> > > >
-> > > > IIUC, userspace would always perform AT_CHECK regardless of
-> > > > SECBIT_EXEC_RESTRICT_FILE, and then which would happen?
-> > > >
-> > > > 1) userspace would ignore errors from AT_CHECK when
-> > > >    SECBIT_EXEC_RESTRICT_FILE is unset
-> > >
-> > > Yes, that's the idea.
-> > >
-> > > >
-> > > > or
-> > > >
-> > > > 2) kernel would allow all AT_CHECK when SECBIT_EXEC_RESTRICT_FILE i=
-s
-> > > >    unset
-> > > >
-> > > > I suspect 1 is best and what you intend, given that
-> > > > SECBIT_EXEC_DENY_INTERACTIVE can only be enforced by userspace.
-> > >
-> > > Indeed. We don't want AT_CHECK's behavior to change according to
-> > > securebits.
-> > >
-> > One bit is good.
-> >
-> > > >
-> > > > > - SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
-> > > > >   command line arguments, environment variables, or configuration=
- files.
-> > > > >   This should be ignored by dynamic linkers.  We could also have =
-an
-> > > > >   allow-list of shells for which this bit is not set, managed by =
-an
-> > > > >   LSM's policy, if the native securebits scoping approach is not =
-enough.
-> > > > >
-> > > > > Different modes for script interpreters:
-> > > > >
-> > > > > 1. RESTRICT_FILE=3D0 DENY_INTERACTIVE=3D0 (default)
-> > > > >    Always interpret scripts, and allow arbitrary user commands.
-> > > > >    =3D> No threat, everyone and everything is trusted, but we can=
- get
-> > > > >    ahead of potential issues with logs to prepare for a migration=
- to a
-> > > > >    restrictive mode.
-> > > > >
-> > > > > 2. RESTRICT_FILE=3D1 DENY_INTERACTIVE=3D0
-> > > > >    Deny script interpretation if they are not executable, and all=
-ow
-> > > > >    arbitrary user commands.
-> > > > >    =3D> Threat: (potential) malicious scripts run by trusted (and=
- not
-> > > > >       fooled) users.  That could protect against unintended scrip=
-t
-> > > > >       executions (e.g. sh /tmp/*.sh).
-> > > > >    =3D=3D> Makes sense for (semi-restricted) user sessions.
-> > > > >
-> > > > > 3. RESTRICT_FILE=3D1 DENY_INTERACTIVE=3D1
-> > > > >    Deny script interpretation if they are not executable, and als=
-o deny
-> > > > >    any arbitrary user commands.
-> > > > >    =3D> Threat: malicious scripts run by untrusted users.
-> > > > >    =3D=3D> Makes sense for system services executing scripts.
-> > > > >
-> > > > > 4. RESTRICT_FILE=3D0 DENY_INTERACTIVE=3D1
-> > > > >    Always interpret scripts, but deny arbitrary user commands.
-> > > > >    =3D> Goal: monitor/measure/assess script content (e.g. with IM=
-A/EVM) in
-> > > > >       a system where the access rights are not (yet) ready.  Arbi=
-trary
-> > > > >       user commands would be much more difficult to monitor.
-> > > > >    =3D=3D> First step of restricting system services that should =
-not
-> > > > >        directly pass arbitrary commands to shells.
-> > > >
-> > > > I like these bits!
-> > >
-> > > Good! Jeff, Steve, Florian, Matt, others, what do you think?
-> >
-> > For below two cases: will they be restricted by one (or some) mode abov=
-e ?
-> >
-> > 1> cat /tmp/a.sh | sh
-> >
-> > 2> sh -c "$(cat /tmp/a.sh)"
->
-> Yes, DENY_INTERACTIVE=3D1 is to deny both of these cases (i.e. arbitrary
-> user command).
->
-> These other examples should be allowed with AT_CHECK and RESTRICT_FILE=3D=
-1
-> if a.sh is executable though:
-> * sh /tmp/a.sh
-> * sh < /tmp/a.sh
-That looks good. Thanks for clarifying.
+Here is the fourth Landlock newsletter!
+
+Official website: https://landlock.io
+Previews newsletter:
+https://lore.kernel.org/landlock/d4ed5733-d07b-5548-2534-a63e22906778@digikod.net
+
+Articles and conferences
+------------------------
+
+We wrote a detailed article about Landlock explaining the underlying
+concepts, the implementation, and the community:
+https://landlock.io/talks/2024-06-06_landlock-article.pdf
+This was written for the SSTIC conference:
+https://www.sstic.org/2024/presentation/landlock-design/
+
+I did a workshop at the Pass the Salt conference to explain how to
+mitigate security vulnerabilities with Landlock (demonstrated with
+ImageMagick): https://cfp.pass-the-salt.org/pts2024/talk/8FVYDF/
+Related materials are freely available to do it at home:
+https://github.com/landlock-lsm/workshop-imagemagick
+
+Arto Niemi published a "Survey of Real-World Process Sandboxing" at the
+Conference of Open Innovations Association (FRUCT):
+https://fruct.org/publications/volume-35/fruct35/files/Niem.pdf
+Their conclusion:  "[...] we found Landlock and minijail [which uses
+Landlock] to be relatively convenient from a developer perspective. In
+general, process self-containment and process-wrapping seems to be an
+order of magnitude easier to configure than MAC policies."
+
+Researchers from University of Bergamo gave a talk at ASIA CCS
+conference about Cage4Deno: A Fine-Grained Sandbox for Deno Subprocesses
+(leveraging Landlock)
+https://cs.unibg.it/seclab-papers/2023/ASIACCS/paper/cage4deno.pdf
+They also gave a talk at the RAID conference about NatiSand: Native Code
+Sandboxing for JavaScript Runtimes (leveraging Landlock)
+https://cs.unibg.it/seclab-papers/2023/RAID/natisand.pdf
+
+Eric Leblond gave a talk (in French) at the SSTIC conference about
+sandboxing with Landlock to mitigate real world security issues:
+https://www.sstic.org/2023/presentation/attaque_supply_chain_suricata/
+
+Günther Noack will give a talk at LSS Europe about Landlock and the new
+IOCTL support: https://sched.co/1ebVW
+
+I'll give a talk at OSS Europe to better explain sandboxing with
+Landlock: https://sched.co/1ej3a
+
+The XZ backdoor
+---------------
+
+XZ Utils is a widely used compression tool and library.  The main
+maintainer implemented sandboxing with Landlock, and released a new
+version 5.6.0 with this feature.  In March 2024, a backdoor was found
+and reported.  It was introduced in February by a new maintainer who
+earned this trust after more than two years of effort.
+
+Among the malicious changes, the attacker disabled Landlock's support
+for XZ Utils and released a new version 5.6.1:
+https://research.swtch.com/xz-timeline
+The sabotaged configuration check has since been fixed with version
+5.6.2, but this effort to stealthily disable sandboxing is a clear sign
+that Landlock disturbs attackers:
+https://github.com/tukaani-project/xz/commit/f9cf4c05edd1
+
+Merged kernel features
+----------------------
+
+Linux 6.7 (Landlock ABI 4) supports initial network access control with
+the LANDLOCK_ACCESS_NET_BIND_TCP and LANDLOCK_ACCESS_NET_CONNECT_TCP
+rights thanks to Konstantin Meskhidze.  We can now control inbound and
+outbound TCP connections according to the source or the destination
+port.  This led to kernel code refactoring which opens the way to more
+network protocol support.  See user space documentation:
+https://docs.kernel.org/userspace-api/landlock.html#network-flags
+
+Linux 6.10 (Landlock ABI 5) supports IOCTL control with the new
+LANDLOCK_ACCESS_FS_IOCTL_DEV right thanks to Günther Noack.  This
+restriction only applies to IOCTL commands implemented by device drivers
+(i.e. block or character devices).  As other file system access rights,
+this can be used to only allow such IOCTL commands on a specified set of
+file hierarchies per sandbox.  See user space documentation:
+https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+
+We also added a slight change in all supported kernels to inform system
+administrators (with kernel logs) how they can configure the system to
+support Landlock, if a process tried to sandbox itself on a kernel where
+Landlock is disabled.  New documentation will help enable Landlock on
+systems when it is not already the case:
+https://docs.kernel.org/userspace-api/landlock.html#kernel-support
+
+Since Linux 6.3, we improved documentation and kselftests (user space
+testing), and added support for KUnit (kernel testing).  Part of this
+work lead us to support the UML architecture to easily run application
+tests in a CI against different kernel versions.  With this support we
+can make sure that backward compatibility works fine for the tested
+applications.  I encourage to take a look at landlock-test-tools and the
+GitHub CI configuration for the Rust library:
+https://github.com/landlock-lsm/landlock-test-tools
+https://github.com/landlock-lsm/rust-landlock/blob/main/.github/workflows/rust.yml#L166-L179
+
+Roadmap and ongoing development
+-------------------------------
+
+We created GitHub issues to track ongoing and future work:
+https://github.com/landlock-lsm/linux/issues
+https://github.com/orgs/landlock-lsm/projects/1
+
+Feel free to reach out if you want to contribute!
+https://github.com/landlock-lsm/linux/contribute
+
+We also plan to improve the website with extended documentation and
+examples.
+
+Kernel development highlights
+-----------------------------
+
+Günther Noack is now an official reviewer of Landlock!
+https://git.kernel.org/torvalds/c/5bf9e57e634b
+After the IOCTL feature, he is now working on improving the
+documentation, including man pages.
+
+Mikhail Ivanov is working on socket type control.  This is an important
+feature that will make it possible to create sandboxes without any
+network access, except for an explicit list of allowed protocols.  This
+will nicely complement the TCP port control (and future ones for other
+protocols): https://github.com/landlock-lsm/linux/issues/6
+He is also working on controlling TCP listen calls:
+https://github.com/landlock-lsm/linux/issues/15
+
+Tahera Fahimi was selected as an Outreachy intern to work on IPC
+restrictions (e.g. abstract unix socket, signals) to better isolate a
+Landlock domain:
+https://github.com/landlock-lsm/linux/issues/7
+https://github.com/landlock-lsm/linux/issues/8
+
+I'm working on bringing audit support to Landlock:
+https://github.com/landlock-lsm/linux/issues/3
+
+Landlock libraries
+------------------
+
+As explained by Günther Noack, the Go library now supports TCP and IOCTL
+restrictions: https://blog.gnoack.org/post/landlock-v4/
+https://blog.gnoack.org/post/landlock-ioctl/
+
+A new version of the Rust crate was released, with support for TCP
+control and some miscellaneous improvements:
+https://github.com/landlock-lsm/rust-landlock/releases/tag/v0.4.0
+
+Please update your dependencies and use the latest Landlock ABI version
+for improved sandboxing.
+
+We are also working on a new minimal C library:
+https://github.com/landlock-lsm/linux/issues/38
+
+New Landlock user space supports
+--------------------------------
+
+Firejail 0.9.74 (sandboxer) will be able to use landlock:
+https://github.com/netblue30/firejail/pull/6078
+
+setpriv 2.40 (sandboxer):
+https://github.com/util-linux/util-linux/pull/2628
+
+extrasafe 0.4.0 (sandbox library):
+https://github.com/boustrophedon/extrasafe/pull/28
+
+bevy_mod_lockdown (sandbox library):
+https://github.com/FrTerstappen/bevy_mod_lockdown
+
+Cloud Hypervisor (VM monitor) will be sandboxed with Landlock:
+https://github.com/cloud-hypervisor/cloud-hypervisor/pull/6214
+
+Ukuleleweb (wiki server):
+https://github.com/gnoack/ukuleleweb/commit/0ecdd54b36fa
+
+websrv 3.2.0 (web server):
+https://github.com/ngergs/websrv/commit/40fa2d7d2bbb
+
+egress-eddie 0.5.0 (network filtering):
+https://github.com/capnspacehook/egress-eddie/releases/tag/v0.5.0
+
+Suricata 7.0.0 (network security monitoring engine):
+https://docs.suricata.io/en/latest/configuration/landlock.html
+
+sslh 2.1.0 (protocol multiplexer):
+https://lore.kernel.org/landlock/Zfq6f30spnYCx_9Y@rutschle.net/
+https://github.com/yrutschle/sslh/releases/tag/v2.1.0
+
+wireproxy 1.0.8 (Wireguard client):
+https://github.com/pufferffish/wireproxy/pull/108
+
+Emilua 0.5.0 (Lua runtime):
+https://lore.kernel.org/landlock/CAK9RveLxro4zUG4jfFB=UNgcv5gdc8JuzNhMt=YbNhH=35ADzg@mail.gmail.com/
+https://docs.emilua.org/api/0.5/changelog.html
+
+Polkadot (blockchain SDK):
+https://github.com/paritytech/polkadot/pull/7303
+
+XZ Utils 5.6.2 (archive manager):
+https://github.com/tukaani-project/xz/commit/374868d81d47
+
+Zathura (document viewer) will be sandboxed with Landlock:
+https://github.com/pwmt/zathura/pull/575
+
+Pacman 7.0.0 (Arch Linux's package manager):
+https://gitlab.archlinux.org/pacman/pacman/-/merge_requests/167
+
+
+Thanks to all contributors!
+
+Regards,
+ Mickaël
