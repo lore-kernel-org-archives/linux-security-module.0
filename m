@@ -1,182 +1,197 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F4819D897
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2024 14:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40B119D886
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2024 15:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721140682; cv=none; b=GiZplf/yOlBwNb0TVD6iJs5wDzRUL0+DpCv3NgsX905RK3GBZrle0uPMPG4swZF/m04xRgGLl5R0Uy9kh7myOq2s3G2Z8aBTDNabtV3vpxMFAgE9Yg8472WstiivKFDfmnJYK+8aGsFzaInEtQ94Uc5FEtveR+u7lARHX1hI5vw=
+	t=1721142200; cv=none; b=A8BM0p65QvHFR+r62akyywMQdnjLY5lAl3g7bi3kjx1xIhxENImPJdvA34MvBac67ZmuMTcQJ/NxGdaw+paFPcoSiV9LMP7XwMNYpM+lub/dTynu1WOvexg7G0FXnrY1hVPKHHsUvGyjEV9kfhPitPYSMEtTW+M43/elwZzc9N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721140682; c=relaxed/simple;
-	bh=LioEcFHEgf0jKt9ArwCwBpWqli8Isc8EkIa6Vp+UnII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0W/hw9rNt5UXH/kUg1ts4pHICPt7RTAdKC5tRtxrJLflCLpVkexhYy2L4RDH5OrmDycs0indA7V+4NGHX4cXkyTz2TFlHhvlQRRm+NW3bsdWo72eLedmS7Ff5Pc0SaL9rW/MmQOUweRUwhcJyRecDXxgJ7tOtwfkg+BWOxlt3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TNac3cAw; arc=none smtp.client-ip=45.157.188.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1721142200; c=relaxed/simple;
+	bh=DHR09VYVRkGUGP0l/vA4+20intCid7dDJWNip64G1sM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JpkYVdcBYQHDjfluMiywKkiKXKPrDpA3fzdcbkwTUcBo01dOtvIznORe8ZVvFf27CxdwZaWyxUUBxc3tF/bB4s+p3Vt87ewNit5KIrs1VzphXWL61wX55y/jn+AKR9XiW1JQ1WyChM7YsFOkT8w4poYNHkb5JNG+KmR1NqtKNtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QoPTLJPR; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TNac3cAw"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNhW246PjzlcH;
-	Tue, 16 Jul 2024 16:37:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721140670;
-	bh=qynRMZcAUvCoePX2iuk2j7/6DeSNHVVQ88NDNcTQgIo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TNac3cAwuEvMLIhViMslI6Pr8c5kjZOjAsLcYFT5060oMVgqhFn/+xlyyxDcyBimg
-	 1vRIZ0f3U+42NcVjUTyAgmlipgWHlENa7Em4O+CHXGZepBfbT+8LlGBuwnAwkf51n8
-	 3a9Ty7InT/9Rw+0vQHmIryLjNRnAT36vJNxLY60c=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNhW20VP3z6jT;
-	Tue, 16 Jul 2024 16:37:50 +0200 (CEST)
-Date: Tue, 16 Jul 2024 16:37:48 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Alejandro Colomar <alx@kernel.org>
-Subject: Re: [PATCH] landlock: Various documentation improvements
-Message-ID: <20240716.pu0fei6Aix6o@digikod.net>
-References: <20240715160328.2792835-2-gnoack@google.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QoPTLJPR"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so16589a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jul 2024 08:03:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721142197; x=1721746997; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MQXyGuZsqmv7+37GKhT1A2NCIQ7jfA+IZBk14phBRDQ=;
+        b=QoPTLJPRSEAsmyiHvuKHvsgRIBssbG+D5pYuQ2mxtkILDMoKSOxa1Fmi0IHDUvobEo
+         U5jmx3fQW3bBsTvofTB9b6A5CIrhfJBXcM/tkHbghRK6tTp5TJ8cEufZ1Pw8T6o99wSK
+         /m40jaHhdrN2z41LJ6E4pmibGtqGDX+/Jlz3eaT6RR3aQ4MCRY2qEwM2TjTvlxlS2QRJ
+         9VzncfEE2XCOZEj4V3UK73T91QHA29DQlyt3Wdi7m59s6pA2VSJl9RMZ2D2Gr40Ej1h6
+         tr046IqfIm99zPMMn7TXNXgpTf0zQnHHTe6hNFhZyBgAzcBL/RQNg0Og1pihELrs7k5s
+         bugA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721142197; x=1721746997;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MQXyGuZsqmv7+37GKhT1A2NCIQ7jfA+IZBk14phBRDQ=;
+        b=J3AaXPu3KSplh4Ki2LYYyFvBZ6G0Gq/CLLBKtzVC/rUxjFw9vRdL+gvfQJPOcVILwr
+         skWDxYWr5+y0RoICVJx1pssnrSUwiqIr9TUvesjokZ/izZHm8q+0EWACXgrojITzKB7P
+         /vjtbuki1i4vLHVcc4bkeDnPOo8w1qMeKgUhyUE+KqZMbUSnSeVkEbNBcjTB4ypXlEq5
+         vNeldg4DpxNnvPAUp5UsNllgNqW4y7U/Ovu7AADPP26onY/kF7vKLQEEksGa/Bc0amXc
+         CNwP3ejCSnoZlyqsM9QKHle78tqMqyd0i95SJ6o9ejmNgwpHqwcEFS36ZgwS4pVk2dfr
+         N3zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQfd+rWbZq7D5qkS9NWGIdlfzbao1T6N4TupiC+D+VwAcLqAOfUHvDs0oUX3J7FsnUmDQ9MgyRkAVmjvZdVdK8hx1TF6SYr7wLt8bBedXPKIy6FAaR
+X-Gm-Message-State: AOJu0YxtP06cG3Z2U7O2Xy3fcGYxmvOMNLXEeWbInZQfLoqa5f/l7RQ+
+	4QNp8lLdpycgjeQP8HpejMVtrGRuEPybA1qY7lPQCPJVmoMzJyhOUSlPGe8rckn/dsQMsgHh4is
+	FLhRfA8KO0pxsOeAyxCstDm/6F+ciY6kHU7mQ
+X-Google-Smtp-Source: AGHT+IGAbpbbKqsLUGXh464cytP863iXT7qQnuBJhBT38qhaCF0Grsul4hxlGXsYzxPX+jxvJ5qXz6HHJ6C646I/Z5I=
+X-Received: by 2002:a05:6402:4304:b0:57c:bb0d:5e48 with SMTP id
+ 4fb4d7f45d1cf-59ec5417830mr368292a12.2.1721142196804; Tue, 16 Jul 2024
+ 08:03:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240715160328.2792835-2-gnoack@google.com>
-X-Infomaniak-Routing: alpha
+References: <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
+ <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
+ <20240708.quoe8aeSaeRi@digikod.net> <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
+ <ef3281ad-48a5-4316-b433-af285806540d@python.org> <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
+ <20240709.aech3geeMoh0@digikod.net> <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
+ <20240710.eiKohpa4Phai@digikod.net> <202407100921.687BE1A6@keescook> <20240711.sequuGhee0th@digikod.net>
+In-Reply-To: <20240711.sequuGhee0th@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Tue, 16 Jul 2024 08:02:37 -0700
+Message-ID: <CALmYWFt7X0v8k1N9=aX6BuT2gCiC9SeWwPEBckvBk8GQtb0rqQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Kees Cook <kees@kernel.org>, Steve Dower <steve.dower@python.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 04:03:29PM +0000, Günther Noack wrote:
-> * Fix some typos, incomplete or confusing phrases.
-> * Split paragraphs where appropriate.
-> * List the same error code multiple times,
->   if it has multiple possible causes.
-> * Bring wording closer to the man page wording,
->   which has undergone more thorough review
->   (esp. for LANDLOCK_ACCESS_FS_WRITE_FILE).
-> * Small semantic clarifications
->   * Call the ephemeral port range "ephemeral"
->   * Clarify reasons for EFAULT in landlock_add_rule()
->   * Clarify @rule_type doc for landlock_add_rule()
-> 
-> This is a collection of small fixes which I collected when preparing the
-> corresponding man pages (see link below).
-> 
-> Link: https://lore.kernel.org/all/20240715155554.2791018-1-gnoack@google.com/
-> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> Cc: Mickaël Salaün <mic@digikod.net>
-> Cc: Alejandro Colomar <alx@kernel.org>
-> Signed-off-by: Günther Noack <gnoack@google.com>
+On Thu, Jul 11, 2024 at 1:57=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> On Wed, Jul 10, 2024 at 09:26:14AM -0700, Kees Cook wrote:
+> > On Wed, Jul 10, 2024 at 11:58:25AM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> > > Here is another proposal:
+> > >
+> > > We can change a bit the semantic by making it the norm to always chec=
+k
+> > > file executability with AT_CHECK, and using the securebits to restric=
+t
+> > > file interpretation and/or command injection (e.g. user supplied shel=
+l
+> > > commands).  Non-executable checked files can be reported/logged at th=
+e
+> > > kernel level, with audit, configured by sysadmins.
+> > >
+> > > New securebits (feel free to propose better names):
+> > >
+> > > - SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
+> >
+> > Would you want the enforcement of this bit done by userspace or the
+> > kernel?
+> >
+> > IIUC, userspace would always perform AT_CHECK regardless of
+> > SECBIT_EXEC_RESTRICT_FILE, and then which would happen?
+> >
+> > 1) userspace would ignore errors from AT_CHECK when
+> >    SECBIT_EXEC_RESTRICT_FILE is unset
+>
+> Yes, that's the idea.
+>
+> >
+> > or
+> >
+> > 2) kernel would allow all AT_CHECK when SECBIT_EXEC_RESTRICT_FILE is
+> >    unset
+> >
+> > I suspect 1 is best and what you intend, given that
+> > SECBIT_EXEC_DENY_INTERACTIVE can only be enforced by userspace.
+>
+> Indeed. We don't want AT_CHECK's behavior to change according to
+> securebits.
+>
+One bit is good.
 
-Thanks, applied!
+> >
+> > > - SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
+> > >   command line arguments, environment variables, or configuration fil=
+es.
+> > >   This should be ignored by dynamic linkers.  We could also have an
+> > >   allow-list of shells for which this bit is not set, managed by an
+> > >   LSM's policy, if the native securebits scoping approach is not enou=
+gh.
+> > >
+> > > Different modes for script interpreters:
+> > >
+> > > 1. RESTRICT_FILE=3D0 DENY_INTERACTIVE=3D0 (default)
+> > >    Always interpret scripts, and allow arbitrary user commands.
+> > >    =3D> No threat, everyone and everything is trusted, but we can get
+> > >    ahead of potential issues with logs to prepare for a migration to =
+a
+> > >    restrictive mode.
+> > >
+> > > 2. RESTRICT_FILE=3D1 DENY_INTERACTIVE=3D0
+> > >    Deny script interpretation if they are not executable, and allow
+> > >    arbitrary user commands.
+> > >    =3D> Threat: (potential) malicious scripts run by trusted (and not
+> > >       fooled) users.  That could protect against unintended script
+> > >       executions (e.g. sh /tmp/*.sh).
+> > >    =3D=3D> Makes sense for (semi-restricted) user sessions.
+> > >
+> > > 3. RESTRICT_FILE=3D1 DENY_INTERACTIVE=3D1
+> > >    Deny script interpretation if they are not executable, and also de=
+ny
+> > >    any arbitrary user commands.
+> > >    =3D> Threat: malicious scripts run by untrusted users.
+> > >    =3D=3D> Makes sense for system services executing scripts.
+> > >
+> > > 4. RESTRICT_FILE=3D0 DENY_INTERACTIVE=3D1
+> > >    Always interpret scripts, but deny arbitrary user commands.
+> > >    =3D> Goal: monitor/measure/assess script content (e.g. with IMA/EV=
+M) in
+> > >       a system where the access rights are not (yet) ready.  Arbitrar=
+y
+> > >       user commands would be much more difficult to monitor.
+> > >    =3D=3D> First step of restricting system services that should not
+> > >        directly pass arbitrary commands to shells.
+> >
+> > I like these bits!
+>
+> Good! Jeff, Steve, Florian, Matt, others, what do you think?
 
-> ---
->  include/uapi/linux/landlock.h | 27 ++++++++++++++-------------
->  security/landlock/syscalls.c  | 17 +++++++++--------
->  2 files changed, 23 insertions(+), 21 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index e76186da3260..2c8dbc74b955 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -104,20 +104,21 @@ struct landlock_path_beneath_attr {
->   */
->  struct landlock_net_port_attr {
->  	/**
-> -	 * @allowed_access: Bitmask of allowed access network for a port
-> +	 * @allowed_access: Bitmask of allowed network actions for a port
->  	 * (cf. `Network flags`_).
->  	 */
->  	__u64 allowed_access;
->  	/**
->  	 * @port: Network port in host endianness.
->  	 *
-> -	 * It should be noted that port 0 passed to :manpage:`bind(2)` will
-> -	 * bind to an available port from a specific port range. This can be
-> -	 * configured thanks to the ``/proc/sys/net/ipv4/ip_local_port_range``
-> -	 * sysctl (also used for IPv6). A Landlock rule with port 0 and the
-> -	 * ``LANDLOCK_ACCESS_NET_BIND_TCP`` right means that requesting to bind
-> -	 * on port 0 is allowed and it will automatically translate to binding
-> -	 * on the related port range.
-> +	 * It should be noted that port 0 passed to :manpage:`bind(2)` will bind
-> +	 * to an available port from the ephemeral port range.  This can be
-> +	 * configured with the ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl
-> +	 * (also used for IPv6).
-> +	 *
-> +	 * A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP``
-> +	 * right means that requesting to bind on port 0 is allowed and it will
-> +	 * automatically translate to binding on the related port range.
->  	 */
->  	__u64 port;
->  };
-> @@ -138,10 +139,10 @@ struct landlock_net_port_attr {
->   * The following access rights apply only to files:
->   *
->   * - %LANDLOCK_ACCESS_FS_EXECUTE: Execute a file.
-> - * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access. Note that
-> - *   you might additionally need the %LANDLOCK_ACCESS_FS_TRUNCATE right in order
-> - *   to overwrite files with :manpage:`open(2)` using ``O_TRUNC`` or
-> - *   :manpage:`creat(2)`.
-> + * - %LANDLOCK_ACCESS_FS_WRITE_FILE: Open a file with write access.  When
-> + *   opening files for writing, you will often additionally need the
-> + *   %LANDLOCK_ACCESS_FS_TRUNCATE right.  In many cases, these system calls
-> + *   truncate existing files when overwriting them (e.g., :manpage:`creat(2)`).
->   * - %LANDLOCK_ACCESS_FS_READ_FILE: Open a file with read access.
->   * - %LANDLOCK_ACCESS_FS_TRUNCATE: Truncate a file with :manpage:`truncate(2)`,
->   *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
-> @@ -263,7 +264,7 @@ struct landlock_net_port_attr {
->   * These flags enable to restrict a sandboxed process to a set of network
->   * actions. This is supported since the Landlock ABI version 4.
->   *
-> - * TCP sockets with allowed actions:
-> + * The following access rights apply to TCP port numbers:
->   *
->   * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
->   * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index 03b470f5a85a..352c34b327d3 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -378,8 +378,7 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
->   *		with the new rule.
->   * @rule_type: Identify the structure type pointed to by @rule_attr:
->   *             %LANDLOCK_RULE_PATH_BENEATH or %LANDLOCK_RULE_NET_PORT.
-> - * @rule_attr: Pointer to a rule (only of type &struct
-> - *             landlock_path_beneath_attr for now).
-> + * @rule_attr: Pointer to a rule (matching the @rule_type).
->   * @flags: Must be 0.
->   *
->   * This system call enables to define a new rule and add it to an existing
-> @@ -390,18 +389,20 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
->   * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
->   * - %EAFNOSUPPORT: @rule_type is %LANDLOCK_RULE_NET_PORT but TCP/IP is not
->   *   supported by the running kernel;
-> - * - %EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
-> + * - %EINVAL: @flags is not 0;
-> + * - %EINVAL: The rule accesses are inconsistent (i.e.
->   *   &landlock_path_beneath_attr.allowed_access or
-> - *   &landlock_net_port_attr.allowed_access is not a subset of the
-> - *   ruleset handled accesses), or &landlock_net_port_attr.port is
-> - *   greater than 65535;
-> - * - %ENOMSG: Empty accesses (e.g. &landlock_path_beneath_attr.allowed_access);
-> + *   &landlock_net_port_attr.allowed_access is not a subset of the ruleset
-> + *   handled accesses)
-> + * - %EINVAL: &landlock_net_port_attr.port is greater than 65535;
-> + * - %ENOMSG: Empty accesses (e.g. &landlock_path_beneath_attr.allowed_access is
-> +      0);
->   * - %EBADF: @ruleset_fd is not a file descriptor for the current thread, or a
->   *   member of @rule_attr is not a file descriptor as expected;
->   * - %EBADFD: @ruleset_fd is not a ruleset file descriptor, or a member of
->   *   @rule_attr is not the expected file descriptor type;
->   * - %EPERM: @ruleset_fd has no write access to the underlying ruleset;
-> - * - %EFAULT: @rule_attr inconsistency.
-> + * - %EFAULT: @rule_attr was not a valid address.
->   */
->  SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->  		const enum landlock_rule_type, rule_type,
-> -- 
-> 2.45.2.993.g49e7a77208-goog
-> 
-> 
+For below two cases: will they be restricted by one (or some) mode above ?
+
+1> cat /tmp/a.sh | sh
+
+2> sh -c "$(cat /tmp/a.sh)"
