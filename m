@@ -1,155 +1,223 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8CE12E75
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 18:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405F318641;
+	Wed, 17 Jul 2024 19:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721240238; cv=none; b=G9+Sq7YF+5PfrOFYlli/KLuICxIqLLNwT+0ypQXyrd2ZuSZ86x6ItnxeX3ueTyy7cnq8T00NPygYiHLLynzzaqU+ugn60WRzzOw83hBaz+VmnFf2cwb/CgiaQ8y3UUGJmOTec/hqwgi1aLEcKcFbhAHHaSxneOFbDCBj0GmsY7k=
+	t=1721244632; cv=none; b=QScLyCotSaAxZKAE5/1wAJMODazV9OcTKg8ejDa4/a2OVXS0c2jgkPuYWMHOYpiikXJEWhFBtW9SUK1OA8aDFPxDgxst8KgxEHy8HnMegpiActYWXOj2aGVzXlJWFOC+Oo6d0jWU0J9jnUWGQv48Eksbg5dozhOUYv9R4tFX2mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721240238; c=relaxed/simple;
-	bh=plI9VQ8PNkZ0Z7s2DW8Xc/jOMVJgY+/ameGpL8Yn5Yw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qWc19JPUVmdm8/EAbDkkkiYwFCmDZRZpWGif8pvjfjevGn4lfUOHMF6z9SjqMxXQkGVLIPH9IIf2HH+wEeHy0A4qMNg10ByOX9663p+ogfZ/kRs9qGe2LHppxjXjysZXUKwopbM1lsX8jnqa9H+I7nXjhFlJmnB7bWj4tJMTchw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=E3o+CiEZ; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1721244632; c=relaxed/simple;
+	bh=X2vXEq9hXttjY2oUXpdodNiLPWdudJaKdhl5bdclwf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WagtcRzcias69g6jmpXc4rkraSBcAgHa/1UBD2g+oDAQ3rVAHb3LIV8oJxVIj2sjZlrWSIBRzWVs4sYIoldfeDSamcZH4e0QzTRLcfl0+MbIEwjuZqCNRQ484sPdpHvGkckiV03lo5iJGch3+TsDO6fpK1bv00/j//pdZ0WHvEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cef1Wnsn; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="E3o+CiEZ"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eec7e43229so47811fa.3
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 11:17:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cef1Wnsn"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eedec7fbc4so1026951fa.0;
+        Wed, 17 Jul 2024 12:30:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721240234; x=1721845034; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgdx7vvSTCDmReVymeTt0yzw+JJTtSiE4bn5RhejZQg=;
-        b=E3o+CiEZoLi7JCeAKmJQj9uC7Ws40jxFyfUx7SyQY6wBWmT78xoygh+51UEKOqL/fE
-         JYA82iJ1Bj+Gp3IG31OVY/Y5TsL6gg550Q5iMckl1oaCYTUNcdjORSFFu60x8XXXb9EC
-         TjudTpYazFppQHYH6IbYZD82BPsaa5xaabLFU=
+        d=gmail.com; s=20230601; t=1721244628; x=1721849428; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KQNNcJJvwr3DB7AU2YhhE3Rux/aVBmgy8x/TrO2xcsU=;
+        b=cef1WnsnWdLa2LC1dd0IqYcEOEB3WLIUuiTlP+CcO8oBTNa2kzTcQZC5S+9apuN5sq
+         rUuosz6Gb2GZkSZhy7o+t1MsnSBAhnZpvzzh6B6mZri3Dn+Oyd5v5GznmchVxpjC2twn
+         +cuObID8f9buliCzKBh25PotC+n2vfo/uOglCSILHyFlpSgy9EXcI9wWngTz5zlO0MKA
+         ELTVgJQPh4scpOHOgln2vwZnjVfSMjPq46gtJs365xRu0uw4SRkK7YgHWvSOKkZ3583w
+         6joIxei296r+2LH3Gzw8Za3UVnBQUzyZXNQusnH5LmLFH+deawjPgwxMtcXuLV74Bisr
+         cN7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721240234; x=1721845034;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1721244628; x=1721849428;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bgdx7vvSTCDmReVymeTt0yzw+JJTtSiE4bn5RhejZQg=;
-        b=CdpF76s+1exjvnI76Qb93XZKdiUfQAazODwEDRSKkjGy5b2Mqazq+oBxTJ2rMzG1uL
-         i8rV5pLM7/T/CPCs8TDo5VQ84l+kvMXf7E0dzpr9Png3ZmJgbk6YpH2Bn3/aVzkcnGfu
-         hL1/GBo9Bny2af7ht2cAsA3WjaoMQYIswOMeu3V+WCP+s0AFJ8NNBV5p7yjMMNM79R0Q
-         8iKtINbnDqZpS+BqpSYO0eNQEl81euuinKRoOQRh1egZTmSMx0s+KS7/RdNxJFnDARqD
-         pCvZOH2EaLews1Dh/8Ngd9X8X0Tgg8XUBN5MZix8K4mjtB9h6+1wuEHPpZeyNRaiGMg7
-         5N5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXw8PdOPGTjU90XiJf3C8RWBfwHMBhB+/HJxNLmUwJIZhBWqU0y25alwxMKDNqKepyK82UFt7K8LrfPIaQ9YB4byF2T7NAOdGBL9PEFkyRlREAW8Fr8
-X-Gm-Message-State: AOJu0YyEXHGmB4S6bbpmaR9ixG5wA8So0qVc7Bp4PFGX4Jk4RbM0MX0h
-	cSxEi5uScBsQS/3CIYBvbzZXzcL+iXGJaqJrEDlat1uwy3TTCI+DMaB7tIXzI77s9+JdQaut0m7
-	VKI1Asw==
-X-Google-Smtp-Source: AGHT+IGfpFRHt2r1j2y21NAifwhzeO/TScpfWGGdnn6zk2L+t9SP110V5+cRd6oRPOGU1JVlzhj3nw==
-X-Received: by 2002:a05:651c:1548:b0:2ec:7300:d02f with SMTP id 38308e7fff4ca-2ef05d452b6mr1365601fa.49.1721240234368;
-        Wed, 17 Jul 2024 11:17:14 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ef05d6eee0sm155991fa.98.2024.07.17.11.17.13
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 11:17:13 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eec7e43229so47331fa.3
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 11:17:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXpvmIEtDfIM2p9u34m/TI62oKFvwYCNP6bB+1uuPfeYzmr7iZIQadezaQnk5TBKXz9YUpY2o1rLPpQtjDNadp6sY87IyEbxC0tWjOAsymrWosLsb1i
-X-Received: by 2002:a2e:9b12:0:b0:2ee:7b7d:66ed with SMTP id
- 38308e7fff4ca-2ef05c52bbamr1815371fa.10.1721240232921; Wed, 17 Jul 2024
- 11:17:12 -0700 (PDT)
+        bh=KQNNcJJvwr3DB7AU2YhhE3Rux/aVBmgy8x/TrO2xcsU=;
+        b=CsykZWtbYxQJ62Z3akbEIGR1PeWYuJqQhR/SihzEcfeLT39o71kF8q2Wyohx7aM8xA
+         T0+7oMFzYVqePUQgz75FJTwZi2NtY1Jo+/WAP+W0OcQT5A3pfJws7jY2f1gmtcHHnACP
+         u/2X04MYDorwKCR5sr34KRw3Qb129hynD7DYmFfBngS9viRk9L14fK9yMRtNv63MoAGa
+         V620da3JJPuAoiOxTiSGZqcwLDzkQ2z8n/tnXtealR+6E3uBqMt8mkXQbvljauF+1f9i
+         KSBFJXB3aA07CMyzetmJpuiYf1qgzGBav0lHnWSqiAv2i79MJFruWQEdG16+BZh2qiDD
+         rVdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFnjXMFbZrlW47McYLLszctSrnwqUjHA3ENxjhk9X1Lq2mKtTNit/5o1tynFQvs2z+db5vy2zTCKXlsQIOB1nSBuIqPfuzdOHn5LEC
+X-Gm-Message-State: AOJu0YzotPqnk1Gwvs+HSyEevkb4/hsQDGSy+p7OUAuHL34R1tbmzv5P
+	VYjjEsH60kqOiOtwFLy3iYa4MwvRNsB2lEDgvtzyZIVKxzLgM+8xxm5RCg==
+X-Google-Smtp-Source: AGHT+IELwK8RRqNe8PtXuyClZuTBOyJwKDrW4Ewf+aAWVuG4RwrkgbrQOHf1axYAdYs8jAjNhk/Ohw==
+X-Received: by 2002:a2e:88c5:0:b0:2ec:557b:f89c with SMTP id 38308e7fff4ca-2ef05d43a9fmr2476691fa.31.1721244627786;
+        Wed, 17 Jul 2024 12:30:27 -0700 (PDT)
+Received: from f.. (cst-prg-77-238.cust.vodafone.cz. [46.135.77.238])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b268a290fsm7399561a12.77.2024.07.17.12.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jul 2024 12:30:27 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: paul@paul-moore.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] cred: separate the refcount from frequently read fields
+Date: Wed, 17 Jul 2024 21:29:36 +0200
+Message-ID: <20240717192937.527246-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717111358.415712-1-adrian.ratiu@collabora.com> <202407171017.A0930117@keescook>
-In-Reply-To: <202407171017.A0930117@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 17 Jul 2024 11:16:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
-Message-ID: <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
-Subject: Re: [PATCH] proc: add config to block FOLL_FORCE in mem writes
-To: Kees Cook <kees@kernel.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, 
-	inglorion@google.com, ajordanr@google.com, 
-	Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000a8f0be061d757832"
+Content-Transfer-Encoding: 8bit
 
---000000000000a8f0be061d757832
-Content-Type: text/plain; charset="UTF-8"
+Refcount is modified a lot, for example every time a file is closed or
+opened. Then this avoidably dirties the same cacheline which contains
+uid, gid and other frequently read fields.
 
-On Wed, 17 Jul 2024 at 10:23, Kees Cook <kees@kernel.org> wrote:
->
-> For this to be available for general distros, I still want to have a
-> bootparam to control this, otherwise this mitigation will never see much
-> testing as most kernel deployments don't build their own kernels. A
-> simple __ro_after_init variable can be used.
+Also tidy up non_rcu handling -- it only transitions true->false once,
+and even then only for a rare case (access(2) system call which had to
+duplicate creds). As such the field belongs in the read-mostly area.
 
-Oh, btw, I looked at the FOLL_FORCE back in 2017 when we did this:
+In order to avoid growing the struct fill in the space with keyring.
 
-    8ee74a91ac30 ("proc: try to remove use of FOLL_FORCE entirely")
+No change in size on typical configs on 64-bit architectures.
 
-and then we had to undo that with
+Validated with a simple test where one thread opens and closes a file,
+while another keeps re-reading another file in a loop (ops/s):
+before:	4353763
+after:	4742792 (+9%)
 
-    f511c0b17b08 (""Yes, people use FOLL_FORCE ;)"")
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-but at the time I also had an experimental patch that worked for me,
-but I seem to have only sent that out in private to the people
-involved with the original issue.
+Back in May I sent a patch to plug a small hole in the struct. I did not
+get any traffic, but just in case I'll note it should be dropped in
+favor of this one.
 
-And then that whole discussion petered out, and nothing happened.
+Also note this does not solve real scalability problems, but I'm going
+to get to it at some point(tm).
 
-But maybe we can try again.
+ fs/open.c            |  2 +-
+ include/linux/cred.h | 31 +++++++++++++++----------------
+ kernel/cred.c        |  6 +++---
+ 3 files changed, 19 insertions(+), 20 deletions(-)
 
-In particular, while people piped up about other uses (see the quotes
-in that commit f511c0b17b08) they were fairly rare and specialized.
+diff --git a/fs/open.c b/fs/open.c
+index 22adbef7ecc2..930e22fe8dba 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -455,7 +455,7 @@ static const struct cred *access_override_creds(void)
+ 	 * cred accesses will keep things non-racy to avoid RCU
+ 	 * freeing.
+ 	 */
+-	override_cred->non_rcu = 1;
++	override_cred->non_rcu = true;
+ 
+ 	old_cred = override_creds(override_cred);
+ 
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 2976f534a7a3..3127eaad4140 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -110,7 +110,16 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+  */
+ struct cred {
+ 	atomic_long_t	usage;
+-	kuid_t		uid;		/* real UID of the task */
++	struct rcu_head	rcu;		/* RCU deletion hook */
++#ifdef CONFIG_KEYS
++	unsigned char	jit_keyring;	/* default keyring to attach requested
++					 * keys to */
++	struct key	*session_keyring; /* keyring inherited over fork */
++	struct key	*process_keyring; /* keyring private to this process */
++	struct key	*thread_keyring; /* keyring private to this thread */
++	struct key	*request_key_auth; /* assumed request_key authority */
++#endif
++	kuid_t		uid ____cacheline_aligned_in_smp;/* real UID of the task */
+ 	kgid_t		gid;		/* real GID of the task */
+ 	kuid_t		suid;		/* saved UID of the task */
+ 	kgid_t		sgid;		/* saved GID of the task */
+@@ -119,19 +128,12 @@ struct cred {
+ 	kuid_t		fsuid;		/* UID for VFS ops */
+ 	kgid_t		fsgid;		/* GID for VFS ops */
+ 	unsigned	securebits;	/* SUID-less security management */
++	bool		non_rcu;	/* Can we skip RCU deletion? */
+ 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
+ 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
+ 	kernel_cap_t	cap_effective;	/* caps we can actually use */
+ 	kernel_cap_t	cap_bset;	/* capability bounding set */
+ 	kernel_cap_t	cap_ambient;	/* Ambient capability set */
+-#ifdef CONFIG_KEYS
+-	unsigned char	jit_keyring;	/* default keyring to attach requested
+-					 * keys to */
+-	struct key	*session_keyring; /* keyring inherited over fork */
+-	struct key	*process_keyring; /* keyring private to this process */
+-	struct key	*thread_keyring; /* keyring private to this thread */
+-	struct key	*request_key_auth; /* assumed request_key authority */
+-#endif
+ #ifdef CONFIG_SECURITY
+ 	void		*security;	/* LSM security */
+ #endif
+@@ -139,11 +141,6 @@ struct cred {
+ 	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
+ 	struct ucounts *ucounts;
+ 	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
+-	/* RCU deletion */
+-	union {
+-		int non_rcu;			/* Can we skip RCU deletion? */
+-		struct rcu_head	rcu;		/* RCU deletion hook */
+-	};
+ } __randomize_layout;
+ 
+ extern void __put_cred(struct cred *);
+@@ -217,7 +214,8 @@ static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
+ 	struct cred *nonconst_cred = (struct cred *) cred;
+ 	if (!cred)
+ 		return cred;
+-	nonconst_cred->non_rcu = 0;
++	if (unlikely(nonconst_cred->non_rcu))
++		WRITE_ONCE(nonconst_cred->non_rcu, false);
+ 	return get_new_cred_many(nonconst_cred, nr);
+ }
+ 
+@@ -242,7 +240,8 @@ static inline const struct cred *get_cred_rcu(const struct cred *cred)
+ 		return NULL;
+ 	if (!atomic_long_inc_not_zero(&nonconst_cred->usage))
+ 		return NULL;
+-	nonconst_cred->non_rcu = 0;
++	if (unlikely(nonconst_cred->non_rcu))
++		WRITE_ONCE(nonconst_cred->non_rcu, false);
+ 	return cred;
+ }
+ 
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 075cfa7c896f..23b73ee2ec63 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -104,7 +104,7 @@ void __put_cred(struct cred *cred)
+ 	BUG_ON(cred == current->cred);
+ 	BUG_ON(cred == current->real_cred);
+ 
+-	if (cred->non_rcu)
++	if (unlikely(cred->non_rcu))
+ 		put_cred_rcu(&cred->rcu);
+ 	else
+ 		call_rcu(&cred->rcu, put_cred_rcu);
+@@ -218,7 +218,7 @@ struct cred *prepare_creds(void)
+ 	old = task->cred;
+ 	memcpy(new, old, sizeof(struct cred));
+ 
+-	new->non_rcu = 0;
++	new->non_rcu = false;
+ 	atomic_long_set(&new->usage, 1);
+ 	get_group_info(new->group_info);
+ 	get_uid(new->user);
+@@ -643,7 +643,7 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
+ 	old = get_task_cred(daemon);
+ 
+ 	*new = *old;
+-	new->non_rcu = 0;
++	new->non_rcu = false;
+ 	atomic_long_set(&new->usage, 1);
+ 	get_uid(new->user);
+ 	get_user_ns(new->user_ns);
+-- 
+2.43.0
 
-The one *common* use was gdb.
-
-But my old diff from years ago mostly still applies, so I resurrected it.
-
-It basically restricts FOLL_FORCE to just ptracers.
-
-That's *not* good for some of the people that piped up back when (eg
-Julia JIT), but it might be a more palatable halfway state.
-
-In particular, this patch would make it easy to make that
-SECURITY_PROC_MEM_RESTRICT_FOLL_FORCE config option be a "choice"
-where you pick "never, ptrace, always" by just changing the rules in
-proc_is_ptracing().
-
-I guess that function should be renamed too, I only did a minimal
-"forward-port an old patch" thing.
-
-               Linus
-
---000000000000a8f0be061d757832
-Content-Type: text/x-patch; charset="US-ASCII"; name="foll_force.patch"
-Content-Disposition: attachment; filename="foll_force.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lyq5yyfz0>
-X-Attachment-Id: f_lyq5yyfz0
-
-IGZzL3Byb2MvYmFzZS5jIHwgMTYgKysrKysrKysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDE1
-IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9mcy9wcm9jL2Jhc2Uu
-YyBiL2ZzL3Byb2MvYmFzZS5jCmluZGV4IDcyYTFhY2QwMzY3NS4uMWI2NDZjYjk2NTA5IDEwMDY0
-NAotLS0gYS9mcy9wcm9jL2Jhc2UuYworKysgYi9mcy9wcm9jL2Jhc2UuYwpAQCAtODM1LDYgKzgz
-NSwxOCBAQCBzdGF0aWMgaW50IG1lbV9vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBm
-aWxlICpmaWxlKQogCXJldHVybiByZXQ7CiB9CiAKK3N0YXRpYyBib29sIHByb2NfaXNfcHRyYWNp
-bmcoc3RydWN0IGZpbGUgKmZpbGUsIHN0cnVjdCBtbV9zdHJ1Y3QgKm1tKQoreworCWJvb2wgcHRy
-YWNlX2FjdGl2ZSA9IGZhbHNlOworCXN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzayA9IGdldF9wcm9j
-X3Rhc2soZmlsZV9pbm9kZShmaWxlKSk7CisKKwlpZiAodGFzaykgeworCQlwdHJhY2VfYWN0aXZl
-ID0gdGFzay0+cHRyYWNlICYmIHRhc2stPm1tID09IG1tICYmIHRhc2stPnBhcmVudCA9PSBjdXJy
-ZW50OworCQlwdXRfdGFza19zdHJ1Y3QodGFzayk7CisJfQorCXJldHVybiBwdHJhY2VfYWN0aXZl
-OworfQorCiBzdGF0aWMgc3NpemVfdCBtZW1fcncoc3RydWN0IGZpbGUgKmZpbGUsIGNoYXIgX191
-c2VyICpidWYsCiAJCQlzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcywgaW50IHdyaXRlKQogewpA
-QCAtODU1LDcgKzg2Nyw5IEBAIHN0YXRpYyBzc2l6ZV90IG1lbV9ydyhzdHJ1Y3QgZmlsZSAqZmls
-ZSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAlpZiAoIW1tZ2V0X25vdF96ZXJvKG1tKSkKIAkJZ290byBm
-cmVlOwogCi0JZmxhZ3MgPSBGT0xMX0ZPUkNFIHwgKHdyaXRlID8gRk9MTF9XUklURSA6IDApOwor
-CWZsYWdzID0gd3JpdGUgPyBGT0xMX1dSSVRFIDogMDsKKwlpZiAocHJvY19pc19wdHJhY2luZyhm
-aWxlLCBtbSkpCisJCWZsYWdzIHw9IEZPTExfRk9SQ0U7CiAKIAl3aGlsZSAoY291bnQgPiAwKSB7
-CiAJCXNpemVfdCB0aGlzX2xlbiA9IG1pbl90KHNpemVfdCwgY291bnQsIFBBR0VfU0laRSk7Cg==
---000000000000a8f0be061d757832--
