@@ -1,42 +1,44 @@
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC99180A67;
-	Wed, 17 Jul 2024 16:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ABE1822DC;
+	Wed, 17 Jul 2024 17:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721233521; cv=none; b=r7wtl7whIqfqaGCoTqpKzvvgsERqApywkvC4XUhw6FrHLbJTrDcdBNxwx0oJFcZElmGAcKdt1vyINPR0h/JazhV+hInQoGsGwcXma3922op1mRBhp8OgGPUHFx2VxBzjaomcAvz2hmkUnyVBCMhhdfEprTicSzHVqZOmpw/nMtM=
+	t=1721236979; cv=none; b=efqTzHNMDeb+QZO1ucSlJPQYBUBQOwdocnZXiQE4rQeOEWx3KoXj/SzgK5/MoDVIzSyySrVyj9GuylSUJZUF3zeFsRJcjTkkEH3XjwMVlF44M044gN+WdQFQRWa5mhv2Ct5XTh28c5JnNQk8oEyUOy1qXUEsfHRWEdcu6D72lFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721233521; c=relaxed/simple;
-	bh=gsTjsJKiSv9mO94ijtFAZFseVqYNxVDnZ1NCnfwYttA=;
+	s=arc-20240116; t=1721236979; c=relaxed/simple;
+	bh=vXLSOrGn/aah+WtVj2d/I7VJH4jg0Ee672xxZq8HGdw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omX9BfJ5lScG0VOswBxUfRWZH0yJf3dqgCjpjZ5cVWUuY9ZSkLzBRErdN+pl1bigj41ZMyz5KLAZCI8yB+d6K3pvLA5haTCJXafqrKo1dtRaDr9af51JWmVg1zCJ4onPViiK92A1VsUlbMAdj6eFel0H5/xTz3m2923d87Cv4U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 431D92800B3CC;
-	Wed, 17 Jul 2024 18:17:45 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 2E3BF21097A; Wed, 17 Jul 2024 18:17:45 +0200 (CEST)
-Date: Wed, 17 Jul 2024 18:17:45 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	davem@davemloft.net, herbert@gondor.apana.org.au,
-	dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patrick@puiterwijk.org
-Subject: Re: [PATCH v12 02/10] crypto: Add support for ECDSA signature
- verification
-Message-ID: <ZpfuqeSVC47jqme2@wunner.de>
-References: <20210316210740.1592994-1-stefanb@linux.ibm.com>
- <20210316210740.1592994-3-stefanb@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gSoqKp9dkSdebbNkycxbb3yCh0pj4vdJ3RGptpfYYo4ME0j5NercjM2O8BAI4PZNfiVEncdPiZa3jOY76N7Z/yBzyh5TjV1q0osw9CbFRq0OcYFruvKqXAraw/2ZUnkCmCAADFG1nAvD/bGx4Nvm3/dQH5mnwthtn26GSnhxik0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xz/TYGku; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xz/TYGku"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E854C2BD10;
+	Wed, 17 Jul 2024 17:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721236979;
+	bh=vXLSOrGn/aah+WtVj2d/I7VJH4jg0Ee672xxZq8HGdw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xz/TYGkuAVjvLd8XZ+jmdmRyYX5twMMZcUExUiF2rZ8juVpUDFAv1ouulk9d7NkkV
+	 Ir1E9rXBMoNu/GYRFIlwPsQTUVwrtPfYcPuNN8g2xtI+KpaSsC3bvrHUh5h+GTixK6
+	 E9/TAZ56cwTqGb+1aRzxfbm6vdm9ydUGQZ+mMbR5xjgx7Y722NqgWTT/kcMKmCCW8n
+	 W2L9ekz37YcRY8QhFAsL7wHQ7OMa2IX/kL5JWZxCoZPI4CIXcFzGNO7QAdCIwzdQBq
+	 JtcfM7IbxfultoQC6D11woJBliUtTo7jYch/1xxxWGFYB/A1Qffajy/uFAs10+vUy7
+	 E1/4g+1quc5Yw==
+Date: Wed, 17 Jul 2024 10:22:58 -0700
+From: Kees Cook <kees@kernel.org>
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	kernel@collabora.com, gbiv@google.com, inglorion@google.com,
+	ajordanr@google.com, Doug Anderson <dianders@chromium.org>,
+	Jeff Xu <jeffxu@google.com>, Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] proc: add config to block FOLL_FORCE in mem writes
+Message-ID: <202407171017.A0930117@keescook>
+References: <20240717111358.415712-1-adrian.ratiu@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -45,90 +47,19 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210316210740.1592994-3-stefanb@linux.ibm.com>
+In-Reply-To: <20240717111358.415712-1-adrian.ratiu@collabora.com>
 
-Hi Stefan,
+On Wed, Jul 17, 2024 at 02:13:58PM +0300, Adrian Ratiu wrote:
+> This simple Kconfig option removes the FOLL_FORCE flag from
+> procfs write calls because it can be abused.
 
-On Tue, Mar 16, 2021 at 05:07:32PM -0400, Stefan Berger wrote:
-> +/*
-> + * Get the r and s components of a signature from the X509 certificate.
-> + */
-> +static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
-> +				  const void *value, size_t vlen, unsigned int ndigits)
-> +{
-> +	size_t keylen = ndigits * sizeof(u64);
-> +	ssize_t diff = vlen - keylen;
-> +	const char *d = value;
-> +	u8 rs[ECC_MAX_BYTES];
-> +
-> +	if (!value || !vlen)
-> +		return -EINVAL;
-> +
-> +	/* diff = 0: 'value' has exacly the right size
-> +	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
-> +	 *           makes the value a positive integer; error on more
-> +	 * diff < 0: 'value' is missing leading zeros, which we add
-> +	 */
-> +	if (diff > 0) {
-> +		/* skip over leading zeros that make 'value' a positive int */
-> +		if (*d == 0) {
-> +			vlen -= 1;
-> +			diff--;
-> +			d++;
-> +		}
-> +		if (diff)
-> +			return -EINVAL;
-> +	}
-> +	if (-diff >= keylen)
-> +		return -EINVAL;
+For this to be available for general distros, I still want to have a
+bootparam to control this, otherwise this mitigation will never see much
+testing as most kernel deployments don't build their own kernels. A
+simple __ro_after_init variable can be used.
 
-I'm in the process of creating a crypto_template for decoding an x962
-signature as requested by Herbert:
+In the future if folks want a more flexible version, we could make this
+a one-way per-process flag, like no_new_privs.
 
-https://lore.kernel.org/all/ZoHXyGwRzVvYkcTP@gondor.apana.org.au/
-
-I intend to move the above code to the template and to do so I'm
-trying to understand what it's doing.
-
-There's an oddity in the above-quoted function.  The check ...
-
-+	if (-diff >= keylen)
-+		return -EINVAL;
-
-... seems superfluous. diff is assigned the following value at the
-top of the function:
-
-+	ssize_t diff = vlen - keylen;
-
-This means that:  -diff == keylen - vlen.
-
-Now, if vlen is zero, -diff would equal keylen and then the
-"-diff >= keylen" check would be true.  However at the top of
-the function, there's already a !vlen check.  No need to check
-the same thing again!
-
-Next, I'm asking myself if -diff can ever be greater than keylen.
-I don't think it can.  For that to be true, vlen would have to be
-negative.  But vlen is of unsigned type size_t!
-
-I just wanted to double-check with you whether ...
-
-+	if (-diff >= keylen)
-+		return -EINVAL;
-
-... is indeed superfluous as I suspect or whether I'm missing
-something.  I'm guessing that the check might be some kind of
-safety net to avoid an out-of-bounds access in the memset()
-and memcpy() calls that follow further down in the function,
-in case sig->curve->g.ndigits was neglected to be set by the
-programmer.  But there doesn't seem to be any real need for
-the check, so I'm leaning towards not carrying it over to the
-x962 template.
-
-The check was already present in v1 of your ecdsa patch set:
-
-https://lore.kernel.org/all/20210126170359.363969-2-stefanb@linux.vnet.ibm.com/
-
-Thanks,
-
-Lukas
+-- 
+Kees Cook
