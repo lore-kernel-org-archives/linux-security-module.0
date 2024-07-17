@@ -1,220 +1,155 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C4A1E492
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 17:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8CE12E75
+	for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 18:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721239176; cv=none; b=pryYo05l4hsPbvBmyAgwK7ORfhoGbeSUwVySGE1bEU5hZuLxavS5uBfHzCHp7VMNksntNZnzsLaNDk55sX4F0cc+DOgp89RRl4jgHdq6QrUY9ayKZTrKhPPqJ9eZhdwenyk/vLo8iI/HT5sFrXMZY//B9C/URWm9VrqpeeuKFiM=
+	t=1721240238; cv=none; b=G9+Sq7YF+5PfrOFYlli/KLuICxIqLLNwT+0ypQXyrd2ZuSZ86x6ItnxeX3ueTyy7cnq8T00NPygYiHLLynzzaqU+ugn60WRzzOw83hBaz+VmnFf2cwb/CgiaQ8y3UUGJmOTec/hqwgi1aLEcKcFbhAHHaSxneOFbDCBj0GmsY7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721239176; c=relaxed/simple;
-	bh=H+21wE+2iLRZVcP4hl3SPiAfZGYS6lnRDxIGD4RAScs=;
+	s=arc-20240116; t=1721240238; c=relaxed/simple;
+	bh=plI9VQ8PNkZ0Z7s2DW8Xc/jOMVJgY+/ameGpL8Yn5Yw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ro+NhOoBzEtOVJBnXrpVhl6pAEY1mO6RAy5vKpEGtrE8xhW1KIkyjfgX0zRnN6JQrxnJf3DET6eQx7PCh7ZQQU6+ldHG4qU4u8q/BjZ42/Wb2N6qonRVQ9nWknUWYWJT7NG8bdZ3v6Yz/6c6f/7Kct5UsCT82zGGynSSBmuK188=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sempervictus.com; spf=pass smtp.mailfrom=sempervictus.com; dkim=pass (2048-bit key) header.d=sempervictus-com.20230601.gappssmtp.com header.i=@sempervictus-com.20230601.gappssmtp.com header.b=bwM9jGXI; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sempervictus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sempervictus.com
+	 To:Cc:Content-Type; b=qWc19JPUVmdm8/EAbDkkkiYwFCmDZRZpWGif8pvjfjevGn4lfUOHMF6z9SjqMxXQkGVLIPH9IIf2HH+wEeHy0A4qMNg10ByOX9663p+ogfZ/kRs9qGe2LHppxjXjysZXUKwopbM1lsX8jnqa9H+I7nXjhFlJmnB7bWj4tJMTchw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=E3o+CiEZ; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sempervictus-com.20230601.gappssmtp.com header.i=@sempervictus-com.20230601.gappssmtp.com header.b="bwM9jGXI"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e03a0faee1eso59958276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 10:59:34 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="E3o+CiEZ"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eec7e43229so47811fa.3
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 11:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sempervictus-com.20230601.gappssmtp.com; s=20230601; t=1721239173; x=1721843973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M8eaQLw9xNg9uFvBqSP89sHIql2nuE2XWi7tzCheL6U=;
-        b=bwM9jGXIDPY2RP+zfLzAji+xk+1TZw3XnxzIJYrZ3lgTntWgVbzSOoarL9rYRLMUqD
-         hRBRPodo2UO5qJfPfhfyJa1qJQLNM9nD3pB4YvHNouUiT87p87jUOjwiQN5ed1X8v919
-         RWF/8UKZqFMeQz5GM+LeFAYxqJjbyf9r88HDhjvpZDChOFGBka8+wZTuTYgNnXZaCceA
-         N6vTYRoL05roZ5Pwbxlrh4Jr2mTgtrHPm5hi817AUhIOsarZ8pzE44z19Vcd1A3iz+I+
-         U1huGfSQoUNFTspen+P1vG+9P2DVOGSrZauJy+pq5qOpLsLbXiHyozBem93kEXtP4a3k
-         B6YQ==
+        d=linux-foundation.org; s=google; t=1721240234; x=1721845034; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bgdx7vvSTCDmReVymeTt0yzw+JJTtSiE4bn5RhejZQg=;
+        b=E3o+CiEZoLi7JCeAKmJQj9uC7Ws40jxFyfUx7SyQY6wBWmT78xoygh+51UEKOqL/fE
+         JYA82iJ1Bj+Gp3IG31OVY/Y5TsL6gg550Q5iMckl1oaCYTUNcdjORSFFu60x8XXXb9EC
+         TjudTpYazFppQHYH6IbYZD82BPsaa5xaabLFU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721239173; x=1721843973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M8eaQLw9xNg9uFvBqSP89sHIql2nuE2XWi7tzCheL6U=;
-        b=SiM03zTyFHWM4BpAn5xhrUvIecyMHkcxqGeD+vHk6X6Ynfsp2DiMU8T9KR8fePqMRU
-         MhTyONymAb2ihXcoRJwMDJVI1cpQ3Z13LQnclS2tClSZA9KSry3C8J2acGduTr/2XUJT
-         ZZF5M3yr7mBIrzUcznG6dbsyIpaxkz0YZW49R0noDTmgVgtWZKZJRiN93oXjjX1Cgbod
-         4Xy3k7UAZ3KdpPb3b3B4gmoKSfPVhJNhW4m2EHqatYCl+OiY4zkXDkyNoCmcZGffx5hv
-         +TayGphdnq4DY3x1fhvqYQk83Q8UQ5CVkhWndjUIQUxK3BDEtKR7Jo0hjbpTHWZ8O8pz
-         L19g==
-X-Forwarded-Encrypted: i=1; AJvYcCWAR68zZY0e0WGfEUJe2sv6Zvhv1lM2qBcOk8RWbsLx5wu3/qrNX0MFnIx8vkwe6XKpdhQ+EaGUfnla5ySqFOJ7+IP9oy+NFeWatoT1cXqYP7R87Bao
-X-Gm-Message-State: AOJu0YzLjan1x63MvVjC/vvI5AY6QAsGua++dVStTMeNYZSfpeDrePrs
-	NiA+VrImMDhKVZPP2IKqbRfLzJJL+bqtGA7LxAKnqELDcUmTIA9JfCEoVArAJkbhh7szhreBvOO
-	zWG3O4oMyOECPhg4dRgzArTuTWZK6SdHzsbYNtg==
-X-Google-Smtp-Source: AGHT+IHEIU9neXftIncv5fOI1sUBbkOnPhjhzxfBjmV6pQBNc144cKpBZMqrxy2p/3onnp89VdZ5B8F9Pc4Udgj9/PQ=
-X-Received: by 2002:a05:6902:278a:b0:e03:63d0:4516 with SMTP id
- 3f1490d57ef6-e05ed7e2324mr2980262276.57.1721239173538; Wed, 17 Jul 2024
- 10:59:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721240234; x=1721845034;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bgdx7vvSTCDmReVymeTt0yzw+JJTtSiE4bn5RhejZQg=;
+        b=CdpF76s+1exjvnI76Qb93XZKdiUfQAazODwEDRSKkjGy5b2Mqazq+oBxTJ2rMzG1uL
+         i8rV5pLM7/T/CPCs8TDo5VQ84l+kvMXf7E0dzpr9Png3ZmJgbk6YpH2Bn3/aVzkcnGfu
+         hL1/GBo9Bny2af7ht2cAsA3WjaoMQYIswOMeu3V+WCP+s0AFJ8NNBV5p7yjMMNM79R0Q
+         8iKtINbnDqZpS+BqpSYO0eNQEl81euuinKRoOQRh1egZTmSMx0s+KS7/RdNxJFnDARqD
+         pCvZOH2EaLews1Dh/8Ngd9X8X0Tgg8XUBN5MZix8K4mjtB9h6+1wuEHPpZeyNRaiGMg7
+         5N5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXw8PdOPGTjU90XiJf3C8RWBfwHMBhB+/HJxNLmUwJIZhBWqU0y25alwxMKDNqKepyK82UFt7K8LrfPIaQ9YB4byF2T7NAOdGBL9PEFkyRlREAW8Fr8
+X-Gm-Message-State: AOJu0YyEXHGmB4S6bbpmaR9ixG5wA8So0qVc7Bp4PFGX4Jk4RbM0MX0h
+	cSxEi5uScBsQS/3CIYBvbzZXzcL+iXGJaqJrEDlat1uwy3TTCI+DMaB7tIXzI77s9+JdQaut0m7
+	VKI1Asw==
+X-Google-Smtp-Source: AGHT+IGfpFRHt2r1j2y21NAifwhzeO/TScpfWGGdnn6zk2L+t9SP110V5+cRd6oRPOGU1JVlzhj3nw==
+X-Received: by 2002:a05:651c:1548:b0:2ec:7300:d02f with SMTP id 38308e7fff4ca-2ef05d452b6mr1365601fa.49.1721240234368;
+        Wed, 17 Jul 2024 11:17:14 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ef05d6eee0sm155991fa.98.2024.07.17.11.17.13
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 11:17:13 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eec7e43229so47331fa.3
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 11:17:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXpvmIEtDfIM2p9u34m/TI62oKFvwYCNP6bB+1uuPfeYzmr7iZIQadezaQnk5TBKXz9YUpY2o1rLPpQtjDNadp6sY87IyEbxC0tWjOAsymrWosLsb1i
+X-Received: by 2002:a2e:9b12:0:b0:2ee:7b7d:66ed with SMTP id
+ 38308e7fff4ca-2ef05c52bbamr1815371fa.10.1721240232921; Wed, 17 Jul 2024
+ 11:17:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <55b4f6291e8d83d420c7d08f4233b3d304ce683d.camel@linux.ibm.com>
- <20240709.AhJ7oTh1biej@digikod.net> <9e3df65c2bf060b5833558e9f8d82dcd2fe9325a.camel@huaweicloud.com>
- <ee1ae815b6e75021709612181a6a4415fda543a4.camel@HansenPartnership.com>
- <E608EDB8-72E8-4791-AC9B-8FF9AC753FBE@sempervictus.com> <20240716.shaliZ2chohj@digikod.net>
-In-Reply-To: <20240716.shaliZ2chohj@digikod.net>
-From: Boris Lukashev <rageltman@sempervictus.com>
-Date: Wed, 17 Jul 2024 13:59:22 -0400
-Message-ID: <CAFUG7CfqAV0vzuFf_WL+wedeRzAfOyRGVWRVhfNBxS3FU78Tig@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
+References: <20240717111358.415712-1-adrian.ratiu@collabora.com> <202407171017.A0930117@keescook>
+In-Reply-To: <202407171017.A0930117@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 17 Jul 2024 11:16:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
+Message-ID: <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
+Subject: Re: [PATCH] proc: add config to block FOLL_FORCE in mem writes
+To: Kees Cook <kees@kernel.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, 
+	inglorion@google.com, ajordanr@google.com, 
+	Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, Jann Horn <jannh@google.com>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000a8f0be061d757832"
+
+--000000000000a8f0be061d757832
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Apologies, sent from phone so plain-text wasn't flying.
-To elaborate a bit on the quick commentary there - i'm the happy
-camper behind most of the SSL shells, SSH stuff, AWS shells, and so on
-in Metasploit. So please take the following with a grain of
-tinfoil-hat salt as i'm well aware that there is no perfect defense
-against these things which covers all bases while permitting any level
-of sane operation in a general-purpose linux system (also work w/
-GrapheneOS which is a far more suitable context for this sort of
-thing). Having loosely followed the discussion thread, my offsec-brain
-$0.02 are:
+On Wed, 17 Jul 2024 at 10:23, Kees Cook <kees@kernel.org> wrote:
+>
+> For this to be available for general distros, I still want to have a
+> bootparam to control this, otherwise this mitigation will never see much
+> testing as most kernel deployments don't build their own kernels. A
+> simple __ro_after_init variable can be used.
 
-Shells are the provenance of the post-exploitation world - it's what
-we want to get as a result of the exploit succeeding. So i think we
-want to keep clear delineation between exploit and post-exp mitigation
-as they're actually separate concerns of the killchain.
-1. Command shells tend to differentiate from interpreted or binary
-execution environments in their use of POSIX file descriptor
-primitives such as pipes. How those are marshalled, chained, and
-maintained (in a loop or whatever, hiding args, etc) are the only real
-IOCs available at this tier for interdiction as observation of data
-flow through the pipes is too onerous and complex. Target systems vary
-in the post-exp surfaces exposed (/dev/tcp for example) with the
-mechanics of that exposure necessitating adaptation of marshalling,
-chaining, and maintenance to fit the environment; but the basic
-premise of what forms a command shell cannot be mitigated without
-breaking POSIX mechanics themselves - offsec devs are no different
-from anyone else, we want our code to utilize architectural primitives
-instead of undefined behavior for longevity and ecosystem
-persistence/relevance.
-2. The conversation about interpreted languages is probably a dead-end
-unless you want to neuter the interpreter - check out Spencer
-McIntyre's work re Python meterpreter or HDs/mine/etc on the PHP side.
-The stagers, loaded contexts, execution patterns, etc are all
-trivially modified to avoid detection (private versions not submitted
-for free ripping by lazy commercial entities to the FOSS ecosystem,
-yet). Dynamic code loading of interpreted languages is trivial and
-requires no syscalls, just text/serialized IL/etc. The complexity of
-loaded context available permits much more advanced functionality than
-we get in most basic command interpreter shells - <advanced evasions
-go here before doing something that'll get you caught> sort of thing.
-3. Lastly, binary payloads such as Mettle have their own advantages re
-portability, skipping over libc, etc but need to be "harnessed-in"
-from say a command-injection exploit via memfd or similar. We haven't
-published our memfd stagers while the relevant sysctl gets adopted
-more widely, but we've had them for a long time (meaning real bad guys
-have as well) and have other ways to get binary content into
-executable memory or make memory containing it executable
-(to-the-gills Grsec/PaX systems notwithstanding). IMO, interdiction of
-the harnessed injection from a command context is the last time when
-anything of use can be done at this layer unless we're sure that we
-can trace all related and potentially async (not within the process
-tree anyway) syscalls emanating from what happens next. Subsequent
-actions are separate "remedial" workflows which is a wholly separate
-philosophical discussion about how to handle having been compromised
-already.
+Oh, btw, I looked at the FOLL_FORCE back in 2017 when we did this:
 
-Security is very much not binary and in that vein of logic i think
-that we should probably define our shades of gray as ranges of what we
-want to protect/how and at what operational cost to then permit
-"dial-in" knobs to actually garner adoption from a broad range of
-systems outside the "real hardened efforts." At some point this turns
-into "limit users to sftp or git shells" which is a perfectly valid
-approach when the context permits that level of draconian restriction
-but the architectural breakdown of "native command, interpreted
-context, fully binary" shell types is pretty universal with new ones
-being API access into runtimes of clouds (SSM/serial/etc) which have
-their own set of limitations at execution and interface layers.
-Organizing defensive functions to handle the primitives necessary for
-each of these shell classes would likely help stratify/simplify this
-conversation and allow for more granular tasking toward those specific
-objectives.
+    8ee74a91ac30 ("proc: try to remove use of FOLL_FORCE entirely")
 
-Thanks,
--Boris
+and then we had to undo that with
 
+    f511c0b17b08 (""Yes, people use FOLL_FORCE ;)"")
 
-On Tue, Jul 16, 2024 at 1:48=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> (adding back other people in Cc)
->
-> On Tue, Jul 16, 2024 at 01:29:43PM -0400, Boris Lukashev wrote:
-> > Wouldn't count those shell chickens - awk alone is enough and we can
-> > use ssh and openssl clients (all in metasploit public code). As one of
-> > the people who makes novel shell types, I can assure you that this
-> > effort is only going to slow skiddies and only until the rest of us
-> > publish mitigations for this mitigation :)
->
-> Security is not binary. :)
->
-> Not all Linux systems are equals. Some hardened systems need this kind
-> of feature and they can get guarantees because they fully control and
-> trust their executable binaries (e.g. CLIP OS, chromeOS) or they
-> properly sandbox them.  See context in the cover letter.
->
-> awk is a script interpreter that should be patched too, like other Linux
-> tools.
->
-> >
-> > -Boris (RageLtMan)
-> >
-> > On July 16, 2024 12:12:49 PM EDT, James Bottomley <James.Bottomley@Hans=
-enPartnership.com> wrote:
-> > >On Tue, 2024-07-16 at 17:57 +0200, Roberto Sassu wrote:
-> > >> But the Clip OS 4 patch does not cover the redirection case:
-> > >>
-> > >> # ./bash < /root/test.sh
-> > >> Hello World
-> > >>
-> > >> Do you have a more recent patch for that?
-> > >
-> > >How far down the rabbit hole do you want to go?  You can't forbid a
-> > >shell from executing commands from stdin because logging in then won't
-> > >work.  It may be possible to allow from a tty backed file and not from
-> > >a file backed one, but you still have the problem of the attacker
-> > >manually typing in the script.
-> > >
-> > >The saving grace for this for shells is that they pretty much do
-> > >nothing on their own (unlike python) so you can still measure all the
-> > >executables they call out to, which provides reasonable safety.
-> > >
-> > >James
-> > >
+but at the time I also had an experimental patch that worked for me,
+but I seem to have only sent that out in private to the people
+involved with the original issue.
+
+And then that whole discussion petered out, and nothing happened.
+
+But maybe we can try again.
+
+In particular, while people piped up about other uses (see the quotes
+in that commit f511c0b17b08) they were fairly rare and specialized.
+
+The one *common* use was gdb.
+
+But my old diff from years ago mostly still applies, so I resurrected it.
+
+It basically restricts FOLL_FORCE to just ptracers.
+
+That's *not* good for some of the people that piped up back when (eg
+Julia JIT), but it might be a more palatable halfway state.
+
+In particular, this patch would make it easy to make that
+SECURITY_PROC_MEM_RESTRICT_FOLL_FORCE config option be a "choice"
+where you pick "never, ptrace, always" by just changing the rules in
+proc_is_ptracing().
+
+I guess that function should be renamed too, I only did a minimal
+"forward-port an old patch" thing.
+
+               Linus
+
+--000000000000a8f0be061d757832
+Content-Type: text/x-patch; charset="US-ASCII"; name="foll_force.patch"
+Content-Disposition: attachment; filename="foll_force.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lyq5yyfz0>
+X-Attachment-Id: f_lyq5yyfz0
+
+IGZzL3Byb2MvYmFzZS5jIHwgMTYgKysrKysrKysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDE1
+IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9mcy9wcm9jL2Jhc2Uu
+YyBiL2ZzL3Byb2MvYmFzZS5jCmluZGV4IDcyYTFhY2QwMzY3NS4uMWI2NDZjYjk2NTA5IDEwMDY0
+NAotLS0gYS9mcy9wcm9jL2Jhc2UuYworKysgYi9mcy9wcm9jL2Jhc2UuYwpAQCAtODM1LDYgKzgz
+NSwxOCBAQCBzdGF0aWMgaW50IG1lbV9vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBm
+aWxlICpmaWxlKQogCXJldHVybiByZXQ7CiB9CiAKK3N0YXRpYyBib29sIHByb2NfaXNfcHRyYWNp
+bmcoc3RydWN0IGZpbGUgKmZpbGUsIHN0cnVjdCBtbV9zdHJ1Y3QgKm1tKQoreworCWJvb2wgcHRy
+YWNlX2FjdGl2ZSA9IGZhbHNlOworCXN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzayA9IGdldF9wcm9j
+X3Rhc2soZmlsZV9pbm9kZShmaWxlKSk7CisKKwlpZiAodGFzaykgeworCQlwdHJhY2VfYWN0aXZl
+ID0gdGFzay0+cHRyYWNlICYmIHRhc2stPm1tID09IG1tICYmIHRhc2stPnBhcmVudCA9PSBjdXJy
+ZW50OworCQlwdXRfdGFza19zdHJ1Y3QodGFzayk7CisJfQorCXJldHVybiBwdHJhY2VfYWN0aXZl
+OworfQorCiBzdGF0aWMgc3NpemVfdCBtZW1fcncoc3RydWN0IGZpbGUgKmZpbGUsIGNoYXIgX191
+c2VyICpidWYsCiAJCQlzaXplX3QgY291bnQsIGxvZmZfdCAqcHBvcywgaW50IHdyaXRlKQogewpA
+QCAtODU1LDcgKzg2Nyw5IEBAIHN0YXRpYyBzc2l6ZV90IG1lbV9ydyhzdHJ1Y3QgZmlsZSAqZmls
+ZSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAlpZiAoIW1tZ2V0X25vdF96ZXJvKG1tKSkKIAkJZ290byBm
+cmVlOwogCi0JZmxhZ3MgPSBGT0xMX0ZPUkNFIHwgKHdyaXRlID8gRk9MTF9XUklURSA6IDApOwor
+CWZsYWdzID0gd3JpdGUgPyBGT0xMX1dSSVRFIDogMDsKKwlpZiAocHJvY19pc19wdHJhY2luZyhm
+aWxlLCBtbSkpCisJCWZsYWdzIHw9IEZPTExfRk9SQ0U7CiAKIAl3aGlsZSAoY291bnQgPiAwKSB7
+CiAJCXNpemVfdCB0aGlzX2xlbiA9IG1pbl90KHNpemVfdCwgY291bnQsIFBBR0VfU0laRSk7Cg==
+--000000000000a8f0be061d757832--
