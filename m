@@ -1,157 +1,140 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B0E1B86E7;
-	Thu, 18 Jul 2024 04:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C8A6F2E0
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2024 12:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721276154; cv=none; b=GCurUM77OD/ztPiIm8RKwjBlnJgJPznF3JR86w7H2mZGY4jLDKReq1iTZr7WFYxZaB/6e2UQp7vRTbsX3fPGRQyu6/2niZzWB24/qoeGQQDWze0fzelJtp76EI7B3Rrod2py4jvg6rMWY94EDgxVdckvqpDqE/CP/xWORMZ32cw=
+	t=1721305388; cv=none; b=d53Ero0y1iFdhTvB9fnqdub8ZUY70H5JEN3yQG9/HwICqJrFSK5202cBM9FBEj8H0GvZmiaSKs2v8CPRS1AKS9SbScuB+azQolhHKv0NIU179GN8uv1sAUtrqJVVRBM6nXLX/dn0GBihO8G8l1YvLo3cIjg0TRMLmCSmzkgwqGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721276154; c=relaxed/simple;
-	bh=U1skI0/owqu89TPWoLBxrMB2fOvZuZ6/wD+ec3esMxU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZR5qUhYb9G7tJHTFFPKwEj0QT/wRWUmFubJriXpkR0fZItnl14SQMnjnE8nEUaKOLKWMRvzfMiV8XCUgYCYU5PDsLBF/jx5uakaVfmWjrh9HP3JeltqZzhFXOB/eGufC2bHC04vtqqbQd9neYFxUwmQ7y2MpKetLbjTt76fuAXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=htsPrR+o; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721305388; c=relaxed/simple;
+	bh=9vVfAGDjEYaGuzWwBLV44oZB2+MwfbkqxnsqL98UXuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxCm0VWZcaz55ZqInB9/E3IYv4fVZYROBE4IqzG0FfTQ+wsnnAGwySX0HIrWP9Lkn2+JSzEZFX1k0fxUoa0RFsRuq9ZjM9BCABL+UrmKuzxygwucmy5RNJBDIQFKTCcHip9718o/5TGqjvg83N3/wr+mn55oV8qpetzQ78WtSoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Q+/V9E/e; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htsPrR+o"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc569440e1so3878315ad.3;
-        Wed, 17 Jul 2024 21:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721276152; x=1721880952; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K4AZApuNWuMCTq5fWJPFQbHeMwMdXxcGaz7OzmTbO1M=;
-        b=htsPrR+oxs7E3DAVDT3EvTvH43AjFsbjS+zAKbExEVUSB2OaB83p8Td2V/zUZstO7q
-         GpZPSJPjCXkrcH4i7eBQC35Ozk622pFZ9mm4fsWh0fIRONiO80mj4DsFPsSsy2gPmxyP
-         Q0SP/dSO9djaE2ceqbclerYnYPnITX3sEsMmd1HLB9NsHWicJHVjXnOnFX0BvvopevAg
-         FTUsnhs/Dy6B0BkllvOmGn8XrVE4YydLrNWvf7xL1CntsC4jdIOjFdq6o7lM5dRC4x8t
-         6JTF1VUWj53kXtBXD3ZtPdmfjAhbOEqzh1MxkZ/bttyzGYJYjGogItngkHrAy64Z9dBj
-         kJsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721276152; x=1721880952;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K4AZApuNWuMCTq5fWJPFQbHeMwMdXxcGaz7OzmTbO1M=;
-        b=jkrnzNAlQ8hoVeqyTGHSaZql+fXEHD9mvcXskoTtD7SQn769OxEosoAOXvLaYdopYj
-         TsalUeKn9YvRRe0U3b+lUw9/bO78YD5aO7/tf95PHA9qfyLKzjDt5IqnZDnYpg0M0ykZ
-         SBCtLVewGBwr4QIqCz/yfW+9ZnERAZuZd6FmqgicvyAQVC2YObIxVtBqRiMa/fhcOXaO
-         5cY56XuazohVOdrVDR7B9bTz5XWug3pRfm36CCsGJeecyjqFIpt4TXOR+aWphspHouEv
-         A+xnkCNLoBkpEoCmEGgLh0H3CfwklIP2u3w4S1B1yURb4Fx0LdQ2TW5Tz8qu7p83/gPU
-         KqDw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0nXldHXheZ+Hto9XjfVCqgqDBE2m7LJdNu7C60KiiR6qm5KMdj9q/+377+kqoxj2lzfXsYYv98qNYZWpZ6xff1kLNw99CcqX6+y3mheZFWKDCxOcyur4MAvTyfvl9I3O8UknhCmZ82pPJjTn+5dUOYU/K9WQ37rQ04AfkR9cPCP1eUulTpk0p7RFh
-X-Gm-Message-State: AOJu0YxUKHHZJUiOhJCOHYf5y/3hPiyjlRhhO0iRYazRtuCmj43j+bsU
-	sShhul319kb1Sss0gCK9Uc7NOoE0RyYlOObupVIxtQJ2JeXJfJzD
-X-Google-Smtp-Source: AGHT+IE89WGHF6zhVB1Wo0uchAQ3vvWGFzOEJsdiKRmsm4DKPl2YocYWq1TxHWGxltp2Fr6Wyayu7g==
-X-Received: by 2002:a17:902:c94d:b0:1fb:5808:73c9 with SMTP id d9443c01a7336-1fc4e676606mr33999065ad.33.1721276152529;
-        Wed, 17 Jul 2024 21:15:52 -0700 (PDT)
-Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc38dc0sm83152785ad.215.2024.07.17.21.15.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 21:15:52 -0700 (PDT)
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: mic@digikod.net,
-	gnoack@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com,
-	jannh@google.com,
-	outreachy@lists.linux.dev,
-	netdev@vger.kernel.org
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Subject: [PATCH v7 4/4] documentation/landlock: Adding scoping mechanism documentation
-Date: Wed, 17 Jul 2024 22:15:22 -0600
-Message-Id: <319fd95504a9e491fa756c56048e63791ecd2aed.1721269836.git.fahimitahera@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1721269836.git.fahimitahera@gmail.com>
-References: <cover.1721269836.git.fahimitahera@gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Q+/V9E/e"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WPsQS3ztvzmCM;
+	Thu, 18 Jul 2024 14:22:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721305376;
+	bh=UuxN7bN/Fuu2OQEszjkAFQVZQifPWKBjgSrPir4Ebkw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q+/V9E/enLZnrkKrttf8y9hOgi20C0C4HhYlV1nFcKgT0ABn2mTbB01bIrXEdykV+
+	 3k6/zk6VwUdg4v8pkHW46XXJ82C//bDuJflvichEl0FOm0Pfi+x1UId3Kn6shCj6Nc
+	 20PvlnlYXxM0iXovWqaAI5pmmzDtbEaTo4i6+oa4=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WPsQN2nrHzncc;
+	Thu, 18 Jul 2024 14:22:52 +0200 (CEST)
+Date: Thu, 18 Jul 2024 14:22:49 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Steve Dower <steve.dower@python.org>, Jeff Xu <jeffxu@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240718.Niexoo0ahch0@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
+ <20240717.AGh2shahc9ee@digikod.net>
+ <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-- Defining ABI version 6 that supports IPC restriction.
-- Adding "scoped" to the "Access rights".
-- In current limitation, unnamed sockets are specified as
-  sockets that are not restricted.
+On Thu, Jul 18, 2024 at 09:02:56AM +0800, Andy Lutomirski wrote:
+> > On Jul 17, 2024, at 6:01 PM, Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
+> >>> On 17/07/2024 07:33, Jeff Xu wrote:
+> >>> Consider those cases: I think:
+> >>> a> relying purely on userspace for enforcement does't seem to be
+> >>> effective,  e.g. it is trivial  to call open(), then mmap() it into
+> >>> executable memory.
+> >>
+> >> If there's a way to do this without running executable code that had to pass
+> >> a previous execveat() check, then yeah, it's not effective (e.g. a Python
+> >> interpreter that *doesn't* enforce execveat() is a trivial way to do it).
+> >>
+> >> Once arbitrary code is running, all bets are off. So long as all arbitrary
+> >> code is being checked itself, it's allowed to do things that would bypass
+> >> later checks (and it's up to whoever audited it in the first place to
+> >> prevent this by not giving it the special mark that allows it to pass the
+> >> check).
+> >
+> > Exactly.  As explained in the patches, one crucial prerequisite is that
+> > the executable code is trusted, and the system must provide integrity
+> > guarantees.  We cannot do anything without that.  This patches series is
+> > a building block to fix a blind spot on Linux systems to be able to
+> > fully control executability.
+> 
+> Circling back to my previous comment (did that ever get noticed?), I
 
-Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+Yes, I replied to your comments.  Did I miss something?
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 07b63aec56fa..61b91cc03560 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: April 2024
-+:Date: July 2024
- 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
- filesystem or network access) for a set of processes.  Because Landlock
-@@ -306,6 +306,16 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
- process, a sandboxed process should have a subset of the target process rules,
- which means the tracee must be in a sub-domain of the tracer.
- 
-+IPC Scoping
-+-----------
-+
-+Similar to Ptrace, a sandboxed process should not be able to access the resources
-+(like abstract unix sockets, or signals) outside of the sandbox domain. For example,
-+a sandboxed process should not be able to :manpage:`connect(2)` to a non-sandboxed
-+process through abstract unix sockets (:manpage:`unix(7)`). This restriction is
-+applicable by optionally specifying ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET`` in
-+the ruleset.
-+
- Truncating files
- ----------------
- 
-@@ -404,7 +414,7 @@ Access rights
- -------------
- 
- .. kernel-doc:: include/uapi/linux/landlock.h
--    :identifiers: fs_access net_access
-+    :identifiers: fs_access net_access scoped
- 
- Creating a new ruleset
- ----------------------
-@@ -446,7 +456,7 @@ Special filesystems
- 
- Access to regular files and directories can be restricted by Landlock,
- according to the handled accesses of a ruleset.  However, files that do not
--come from a user-visible filesystem (e.g. pipe, socket), but can still be
-+come from a user-visible filesystem (e.g. pipe, unnamed socket), but can still be
- accessed through ``/proc/<pid>/fd/*``, cannot currently be explicitly
- restricted.  Likewise, some special kernel filesystems such as nsfs, which can
- be accessed through ``/proc/<pid>/ns/*``, cannot currently be explicitly
-@@ -541,6 +551,13 @@ earlier ABI.
- Starting with the Landlock ABI version 5, it is possible to restrict the use of
- :manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right.
- 
-+Special filesystems (ABI < 6)
-+-----------------------------
-+
-+With ABI version 6, it is possible to restrict IPC actions such as connecting to
-+an abstract Unix socket through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``, thanks
-+to the ``.scoped`` ruleset attribute.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.34.1
+> don’t think this is quite right:
+> 
+> https://lore.kernel.org/all/CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com/
+> 
+> On a basic system configuration, a given path either may or may not be
+> executed. And maybe that path has some integrity check (dm-verity,
+> etc).  So the kernel should tell the interpreter/loader whether the
+> target may be executed. All fine.
+> 
+>  But I think the more complex cases are more interesting, and the
+> “execute a program” process IS NOT BINARY.  An attempt to execute can
+> be rejected outright, or it can be allowed *with a change to creds or
+> security context*.  It would be entirely reasonable to have a policy
+> that allows execution of non-integrity-checked files but in a very
+> locked down context only.
 
+I guess you mean to transition to a sandbox when executing an untrusted
+file.  This is a good idea.  I talked about role transition in the
+patch's description:
+
+With the information that a script interpreter is about to interpret a
+script, an LSM security policy can adjust caller's access rights or log
+execution request as for native script execution (e.g. role transition).
+This is possible thanks to the call to security_bprm_creds_for_exec().
+
+> 
+> So… shouldn’t a patch series to this effect actually support this?
+> 
+
+This patch series brings the minimal building blocks to have a
+consistent execution environment.  Role transitions for script execution
+are left to LSMs.  For instance, we could extend Landlock to
+automatically sandbox untrusted scripts.
