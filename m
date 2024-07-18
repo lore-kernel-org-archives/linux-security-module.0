@@ -1,160 +1,148 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AFD195
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2024 00:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603C7110A
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2024 01:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721261090; cv=none; b=TPIJ2lFabFehpFW6ztC4UoGHgWBJoR7TiTx7QEHEpmqYv67gmJ14JOjZRTkPrTJ17+XrnY8p7qX4JJ4oeGad6G5/ik3hQstvH9gQMBXB+ULQUv8lvvT4H++kwNV/9oR+0sHtLBJNHpECGHl6eYrkWQV7jSFVa7u1Ki1gc7j9te8=
+	t=1721264592; cv=none; b=rosX/TofeY7wp7oGo+Asgns9o2IMKs32bBADCdF6nCoxqa7kjvXLHOzvxmCxcomqfBCQmt+pTb4DEhC39YO+5p+G33MymM7PLJHwpr/qhGtHxUk+RdBdBuXxPMKhxt+eZc4/Quq5PlokKNpuGy8orvB4J3/sn5fMmELMGVtnT+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721261090; c=relaxed/simple;
-	bh=FAj1MClzOnm7txs8nlFo1G77N9NS2dCzEHAW+o9TMto=;
+	s=arc-20240116; t=1721264592; c=relaxed/simple;
+	bh=wM0kktGn47Y6sE5nEErkw1T11AYqer5jFZMgYakKxfM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zt6KIGn9UDTc99xIuTrXXdrkEjuajXOHUb2lssRpNnhJfEk/nXZec1zCX4c4ug22kkcnxOOIGBk7vsfI3HFlsEAKH5bZPGr5loMHCtpG6Awpj+pDvB35Bn3QIzge9cdQgX9ZR9+AbkHb5OhpuRxO04QelNXgC1VdMqTyG4Bg3bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iE6rsGtt; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=d7dgHqbMs0DnO5OyCLqVp6xq91TdREauRQirZQ5lfXTZ6uwx8LqSh0fI54iO2xltUC3Y4E8Ml45xnGZC3yaGHx5I45Lbc+8B/tfY8vRy3m4Bj6kktjwPxEWZ6ymknW6ebwo0CgvieHlGXsTJ2hcikUa26sZQ9astPa70FKZwPJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=DxOXamwl; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iE6rsGtt"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a728f74c23dso21136966b.1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 17:04:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="DxOXamwl"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so2608188a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 18:03:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721261086; x=1721865886; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgh/5TL5RuPEkrIYyZ+YL3lfHWM6eC22E94AhsG1cyU=;
-        b=iE6rsGtt4tI9s13ZeRpYW6N7GXXikpHJOxduC05ahwLSXy2XjgO1QAo78BFEWjMJK3
-         4mJXXJht5D8SGxeNV2uJ0qa5fLR1DMEk3xNA0SpvJnalJiHMul9p7RPQDWKycnbeHGZd
-         Y/kzmRQhyAktb5DcBQkazVsCwEL852ekBlkj0=
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1721264589; x=1721869389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4DvCNFOJURn8U74iwm+vc54yZXB4520PPHveux2N1NI=;
+        b=DxOXamwlYccCzdYOacDuUCnh9IPgIzkn/QABRrTOes7bNtzLBTmAd5yp28XrEiwacu
+         W482D/ld89nlgnHPWJBJ8cgvz4opDGbuAPBm2ZnkB448ktUMw0DWbSJdUp3X3W6mNWDo
+         ZKB9Aq8q8NU4/9bAcDxAKuyE9T+QKA94QwFbwlIQ9BJbsxYUW0FRMF+tAcQsorSh9wLP
+         gWCwhCZMnOGxFi/kpmEaQYSbrSpewOCL4JuI0JTygp4Y28owKSi8JYZD40AS5L6uu6r+
+         Yhbv7Rvp69IDxAGUqIC9eDEMjx8TSIaliPfjiWIXTCqkUZECf7qUT24otGY84y4YkEts
+         ZC/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721261086; x=1721865886;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fgh/5TL5RuPEkrIYyZ+YL3lfHWM6eC22E94AhsG1cyU=;
-        b=bm3+HzYgXRLf0qoyqzxTJde+gwfrtMybqilWxV1NA+KptThVonPlrOtx361ieflWoq
-         myEK//s5865dj8CRW+etMtQqaQY3/Rs8+4SPVocIe1tet7VEuLbWVj0S4/Z4ybKz/4ei
-         r0lR4AgJrJCEqv+9t28FegmpSjXvgnsRln+RpAJoF0e8axGcd3xnDRkCsP02ysl9GZGv
-         UiEyUcj4Oq4HncFvKPrO0WaxGVEk6hxxX74RxqZiaNcwgGgqqbCXrEJNZ8/6xnBJ3H+6
-         PScqloPR9BmAAP4khjT1PaaesWzy1403xsnn95GNNxwVhRkQVYU4Qc0QgE+R5hc25YGN
-         19Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrIuPuUGjm+lyLIEXyxjv9SwpEmnLI3Ooyr/HeQjtw4zeAm94VglCQSsnlVbEVcPRYCFMOiY6u41gto5nQeHhPrmz9mNgKpGDC6tLqyJ+EyrDv1ODW
-X-Gm-Message-State: AOJu0YwnBoEizzLr/WeHU2fQsJeyePpRTOyGmRhu8Po4ad9mx6jm7Pzn
-	fzuw/w0J+qDqP1rmUx90K5eIwDsEvX2oHYK6Nv1DMzOFQFSdUGSKX1PQ6OmRI2HgPKfpDGGqpOS
-	5ZuzHpw==
-X-Google-Smtp-Source: AGHT+IE5sESe9oTll2DsdzlJc0D8p/hxGyscb0onRuEO8zDUIvVdB+E5YSiVGsVL/z1B6aF+DYVnOw==
-X-Received: by 2002:a17:906:5a8c:b0:a77:cf9d:f49b with SMTP id a640c23a62f3a-a7a0133a6e7mr223430166b.54.1721261086161;
-        Wed, 17 Jul 2024 17:04:46 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5a344fsm506915766b.14.2024.07.17.17.04.44
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 17:04:44 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a728f74c23dso21133266b.1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jul 2024 17:04:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWyXL8ZlQulTR+XlBW5l9FYLWXSCXjSXJ0YwtkoBTEHYJ0VX5YrvhAKDy0YxeMRZMiA0AGNTrkEWl0K6IUJBYCocDkw6OTgSPVKznB3G2hem29Ii5DI
-X-Received: by 2002:a17:906:40d5:b0:a77:cd3c:e9b7 with SMTP id
- a640c23a62f3a-a7a0133ac71mr230759566b.57.1721261084140; Wed, 17 Jul 2024
- 17:04:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721264589; x=1721869389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4DvCNFOJURn8U74iwm+vc54yZXB4520PPHveux2N1NI=;
+        b=UDijDmElnl6y3pjf5Kw4UjTFVhv9+sIPlzznPpyyLfjRGXZqI6U01PVb36fsqC3Okp
+         xGNNcfIs2O2nDBz/1p+OKiWeSlvr+z/X4a8xFdtVGvcodq5fK+7pSxpaLVMgm7fyHMoJ
+         3jJ9zDadw1VzdN5v4OvexBOMYIJRbKBK8S2RjWbsM9A376jcp2dW2LOVmq7tme+qJuaR
+         vBS+n/PDoKnbBqz2WrCQzTJ2+n8B9jfIGaluQheIY1T2RYt884kDdDs1YrbHP6Yl9CC/
+         eqY9/M9mBOkBieb4M76Lfzj6iutvPCGBrs56bffwox3waDt+0PgsWRCTH5XeQs/oESec
+         VPng==
+X-Forwarded-Encrypted: i=1; AJvYcCWeoGwsE2ovEqxNaC7xPmqpWKXJJBjWhDv5cNTBKPS+kEeq0TJ5U5sLOSrYiUItoc/ObdAW/SQugOduJXGo9pEVQFop5vY85TcG8Z+keAkmNg7VISS9
+X-Gm-Message-State: AOJu0YyBS2YoXuhAdEbNxr4Fe2R8ocRa4HCtRG+TBYXkighhUSzaEhYk
+	wFwXSQvh+b206+AJZcJaAJwJwco6Zvp2ROdFSFlDMFQNHNDBLPNK3jpGdI0VfEOYf+TApd6ToLU
+	9IRWBcRMMwHbuoaSmzNyAYFNL3O1jTUqjX4lx
+X-Google-Smtp-Source: AGHT+IE7SBwV2lQaXPjuvVAVH1UzPNTxYBnnea3hS+FDItUKjfyoEirYJPBEWFBIzD4Kcr81i9vTbZRgtB1tPcSWRYA=
+X-Received: by 2002:a50:f617:0:b0:57c:9eef:e54 with SMTP id
+ 4fb4d7f45d1cf-5a155e8f87cmr1229866a12.5.1721264588545; Wed, 17 Jul 2024
+ 18:03:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717111358.415712-1-adrian.ratiu@collabora.com>
- <202407171017.A0930117@keescook> <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
- <202407171520.FD49AE35@keescook>
-In-Reply-To: <202407171520.FD49AE35@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 17 Jul 2024 17:04:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi9qsy-bX65ev8jgDzGM+uTk=Vbix32F8SLfUWegajT+w@mail.gmail.com>
-Message-ID: <CAHk-=wi9qsy-bX65ev8jgDzGM+uTk=Vbix32F8SLfUWegajT+w@mail.gmail.com>
-Subject: Re: [PATCH] proc: add config to block FOLL_FORCE in mem writes
-To: Kees Cook <kees@kernel.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, 
-	inglorion@google.com, ajordanr@google.com, 
-	Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000007ccffd061d7a5312"
-
---0000000000007ccffd061d7a5312
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org> <20240717.AGh2shahc9ee@digikod.net>
+In-Reply-To: <20240717.AGh2shahc9ee@digikod.net>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Thu, 18 Jul 2024 09:02:56 +0800
+Message-ID: <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Steve Dower <steve.dower@python.org>, Jeff Xu <jeffxu@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 17 Jul 2024 at 15:24, Kees Cook <kees@kernel.org> wrote:
+> On Jul 17, 2024, at 6:01=E2=80=AFPM, Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
 >
-> > In particular, this patch would make it easy to make that
-> > SECURITY_PROC_MEM_RESTRICT_FOLL_FORCE config option be a "choice"
-> > where you pick "never, ptrace, always" by just changing the rules in
-> > proc_is_ptracing().
+> =EF=BB=BFOn Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
+>>> On 17/07/2024 07:33, Jeff Xu wrote:
+>>> Consider those cases: I think:
+>>> a> relying purely on userspace for enforcement does't seem to be
+>>> effective,  e.g. it is trivial  to call open(), then mmap() it into
+>>> executable memory.
+>>
+>> If there's a way to do this without running executable code that had to =
+pass
+>> a previous execveat() check, then yeah, it's not effective (e.g. a Pytho=
+n
+>> interpreter that *doesn't* enforce execveat() is a trivial way to do it)=
+.
+>>
+>> Once arbitrary code is running, all bets are off. So long as all arbitra=
+ry
+>> code is being checked itself, it's allowed to do things that would bypas=
+s
+>> later checks (and it's up to whoever audited it in the first place to
+>> prevent this by not giving it the special mark that allows it to pass th=
+e
+>> check).
 >
-> So the original patch could be reduced to just the single tristate option
-> instead of 3 tristates? I think that would be a decent middle ground,
-> and IIUC, will still provide the coverage Chrome OS is looking for[1].
+> Exactly.  As explained in the patches, one crucial prerequisite is that
+> the executable code is trusted, and the system must provide integrity
+> guarantees.  We cannot do anything without that.  This patches series is
+> a building block to fix a blind spot on Linux systems to be able to
+> fully control executability.
 
-So here's what I kind of think might be ok.
+Circling back to my previous comment (did that ever get noticed?), I
+don=E2=80=99t think this is quite right:
 
-ENTIRELY UNTESTED! This is more of a "look, something like this,
-perhaps" patch than a real one.
+https://lore.kernel.org/all/CALCETrWYu=3DPYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h=
+6+U0tA@mail.gmail.com/
 
-If somebody tests this, and it is ok for Chrome OS, you can consider
-this signed-off-on, but only with actual testing. I might have gotten
-something hroribly wrong.
+On a basic system configuration, a given path either may or may not be
+executed. And maybe that path has some integrity check (dm-verity,
+etc).  So the kernel should tell the interpreter/loader whether the
+target may be executed. All fine.
 
-              Linus
+ But I think the more complex cases are more interesting, and the
+=E2=80=9Cexecute a program=E2=80=9D process IS NOT BINARY.  An attempt to e=
+xecute can
+be rejected outright, or it can be allowed *with a change to creds or
+security context*.  It would be entirely reasonable to have a policy
+that allows execution of non-integrity-checked files but in a very
+locked down context only.
 
---0000000000007ccffd061d7a5312
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lyqie9xt0>
-X-Attachment-Id: f_lyqie9xt0
-
-IGZzL3Byb2MvYmFzZS5jICAgfCAyMiArKysrKysrKysrKysrKysrKysrKystCiBzZWN1cml0eS9L
-Y29uZmlnIHwgMzIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIDIgZmlsZXMgY2hh
-bmdlZCwgNTMgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2ZzL3By
-b2MvYmFzZS5jIGIvZnMvcHJvYy9iYXNlLmMKaW5kZXggNzJhMWFjZDAzNjc1Li5mYmU5YTk2YzJk
-OTggMTAwNjQ0Ci0tLSBhL2ZzL3Byb2MvYmFzZS5jCisrKyBiL2ZzL3Byb2MvYmFzZS5jCkBAIC04
-MzUsNiArODM1LDI0IEBAIHN0YXRpYyBpbnQgbWVtX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwg
-c3RydWN0IGZpbGUgKmZpbGUpCiAJcmV0dXJuIHJldDsKIH0KIAorc3RhdGljIGJvb2wgcHJvY19t
-ZW1fZm9sbF9mb3JjZShzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IG1tX3N0cnVjdCAqbW0pCit7
-CisjaWYgZGVmaW5lZChDT05GSUdfUFJPQ19NRU1fTk9fRk9SQ0UpCisJcmV0dXJuIGZhbHNlOwor
-I2VsaWYgZGVmaW5lZChDT05GSUdfUFJPQ19NRU1fRk9SQ0VfUFRSQUNFKQorCWJvb2wgcHRyYWNl
-X2FjdGl2ZSA9IGZhbHNlOworCXN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzayA9IGdldF9wcm9jX3Rh
-c2soZmlsZV9pbm9kZShmaWxlKSk7CisKKwlpZiAodGFzaykgeworCQlwdHJhY2VfYWN0aXZlID0g
-dGFzay0+cHRyYWNlICYmIHRhc2stPm1tID09IG1tICYmIHRhc2stPnBhcmVudCA9PSBjdXJyZW50
-OworCQlwdXRfdGFza19zdHJ1Y3QodGFzayk7CisJfQorCXJldHVybiBwdHJhY2VfYWN0aXZlOwor
-I2Vsc2UKKwlyZXR1cm4gdHJ1ZTsKKyNlbmRpZgorfQorCiBzdGF0aWMgc3NpemVfdCBtZW1fcnco
-c3RydWN0IGZpbGUgKmZpbGUsIGNoYXIgX191c2VyICpidWYsCiAJCQlzaXplX3QgY291bnQsIGxv
-ZmZfdCAqcHBvcywgaW50IHdyaXRlKQogewpAQCAtODU1LDcgKzg3Myw5IEBAIHN0YXRpYyBzc2l6
-ZV90IG1lbV9ydyhzdHJ1Y3QgZmlsZSAqZmlsZSwgY2hhciBfX3VzZXIgKmJ1ZiwKIAlpZiAoIW1t
-Z2V0X25vdF96ZXJvKG1tKSkKIAkJZ290byBmcmVlOwogCi0JZmxhZ3MgPSBGT0xMX0ZPUkNFIHwg
-KHdyaXRlID8gRk9MTF9XUklURSA6IDApOworCWZsYWdzID0gd3JpdGUgPyBGT0xMX1dSSVRFIDog
-MDsKKwlpZiAocHJvY19tZW1fZm9sbF9mb3JjZShmaWxlLCBtbSkpCisJCWZsYWdzIHw9IEZPTExf
-Rk9SQ0U7CiAKIAl3aGlsZSAoY291bnQgPiAwKSB7CiAJCXNpemVfdCB0aGlzX2xlbiA9IG1pbl90
-KHNpemVfdCwgY291bnQsIFBBR0VfU0laRSk7CmRpZmYgLS1naXQgYS9zZWN1cml0eS9LY29uZmln
-IGIvc2VjdXJpdHkvS2NvbmZpZwppbmRleCA0MTJlNzZmMTU3NWQuLmIyMDFhZTNmZWVhYiAxMDA2
-NDQKLS0tIGEvc2VjdXJpdHkvS2NvbmZpZworKysgYi9zZWN1cml0eS9LY29uZmlnCkBAIC0xOSw2
-ICsxOSwzOCBAQCBjb25maWcgU0VDVVJJVFlfRE1FU0dfUkVTVFJJQ1QKIAogCSAgSWYgeW91IGFy
-ZSB1bnN1cmUgaG93IHRvIGFuc3dlciB0aGlzIHF1ZXN0aW9uLCBhbnN3ZXIgTi4KIAorY2hvaWNl
-CisJcHJvbXB0ICJBbGxvdyAvcHJvYy9waWQvbWVtIGFjY2VzcyBvdmVycmlkZSIKKwlkZWZhdWx0
-IFBST0NfUElEX01FTV9BTFdBWVNfRk9SQ0UKKwloZWxwCisJICBUcmFkaXRpb25hbGx5IC9wcm9j
-L3BpZC9tZW0gYWxsb3dzIHVzZXJzIHRvIG92ZXJyaWRlIG1lbW9yeQorCSAgcGVybWlzc2lvbnMg
-Zm9yIHVzZXJzIGxpa2UgcHRyYWNlLCBhc3N1bWluZyB0aGV5IGhhdmUgcHRyYWNlCisJICBjYXBh
-YmlsaXR5LgorCisJICBUaGlzIGFsbG93cyBwZW9wbGUgdG8gbGltaXQgdGhhdCAtIGVpdGhlciBu
-ZXZlciBvdmVycmlkZSwgb3IKKwkgIHJlcXVpcmUgYWN0dWFsIGFjdGl2ZSBwdHJhY2UgYXR0YWNo
-bWVudC4KKworCSAgRGVmYXVsdHMgdG8gdGhlIHRyYWRpdGlvbmFsIGJlaGF2aW9yIChmb3Igbm93
-KQorCitjb25maWcgUFJPQ19QSURfTUVNX0FMV0FZU19GT1JDRQorCWJvb2wgIlRyYWRpdGlvbmFs
-IC9wcm9jL3BpZC9tZW0gYmVoYXZpb3IiCisJaGVscAorCSAgVGhpcyBhbGxvd3MgL3Byb2MvcGlk
-L21lbSBhY2Nlc3NlcyB0byBvdmVycmlkZSBtZW1vcnkgbWFwcGluZworCSAgcGVybWlzc2lvbnMg
-aWYgeW91IGhhdmUgcHRyYWNlIGFjY2VzcyByaWdodHMuCisKK2NvbmZpZyBDT05GSUdfUFJPQ19N
-RU1fRk9SQ0VfUFRSQUNFCisJYm9vbCAiUmVxdWlyZSBhY3RpdmUgcHRyYWNlKCkgdXNlIGZvciBh
-Y2Nlc3Mgb3ZlcnJpZGUiCisJaGVscAorCSAgVGhpcyBhbGxvd3MgL3Byb2MvcGlkL21lbSBhY2Nl
-c3NlcyB0byBvdmVycmlkZSBtZW1vcnkgbWFwcGluZworCSAgcGVybWlzc2lvbnMgZm9yIGFjdGl2
-ZSBwdHJhY2VycyBsaWtlIGdkYi4KKworY29uZmlnIENPTkZJR19QUk9DX01FTV9OT19GT1JDRQor
-CWJvb2wgIk5ldmVyIgorCWhlbHAKKwkgIE5ldmVyIG92ZXJyaWRlIG1lbW9yeSBtYXBwaW5nIHBl
-cm1pc3Npb25zCisKK2VuZGNob2ljZQorCiBjb25maWcgU0VDVVJJVFkKIAlib29sICJFbmFibGUg
-ZGlmZmVyZW50IHNlY3VyaXR5IG1vZGVscyIKIAlkZXBlbmRzIG9uIFNZU0ZTCg==
---0000000000007ccffd061d7a5312--
+So=E2=80=A6 shouldn=E2=80=99t a patch series to this effect actually suppor=
+t this?
