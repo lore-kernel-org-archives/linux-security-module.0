@@ -1,118 +1,175 @@
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CD2145A1E
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2024 20:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53996146595
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2024 22:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721334256; cv=none; b=JAX6ghBmb5MBO+ITbIGkmGL7iBvMH3/SAPi43vIIVPJTgmVLXraX+V0Twbep+s95i6AoaLACI3/FFCB4zcPeInDQRbMHU0yAfG6EDvRyAOZgp993ybAH7AOE1lV5xK0tf5Co9Om9BAFULYdYLMHQ/8pf3oRaWaOLdb/wyG4yVQc=
+	t=1721343281; cv=none; b=XlDfwpbnFdfQTYWDRmVYvGVlvIS8rEWrY+PIcdBKzFzP5mBmlPeGJMyjXKDKxplAxXCr/kmrTvXGrMqUMlL6zzN4+I8zL3t3Nr3To1xBi8gvGJDn7TZejNcYCmwfFHdxl204YngaoyG4r53feDSGTlTwZK3YLQhd1Z4T3UceOKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721334256; c=relaxed/simple;
-	bh=Y0KT7kX9YaVl3aer/d085haNhD5NnDzB4JE+rocmmJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFcoWuKi6wIHk/QBWXETM4oWkd041d13ZQueOSeyqGUVHfLU5nqYUxjooRuLDFcZq80EznS7UgSXyc082buWZMsA1a52jnnZlEbE8jkp4P9IbkqhrOjljaodvPrfw2BS7IWgSS9ncHaohIpoFJXfps7pkd+LGII7OFcmtFTzkGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mJ7kKKAl; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1721343281; c=relaxed/simple;
+	bh=VL+Lf2PCbmDdTiT3JFTZcz3U21Qry7ipzuZR0ssfsGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sHYO5ORrl6MX4MwJiJYg61OiQk8i3p/fkmYD/+4QhKeB9wJxo3L8J+Bh6x+blrLXccuraOOBfueWA4qIG5EyzIf6OLl1EvB/aJjA4sMXufXy6iEERuw/jyvDswS6uKBFhVBfabb2q8XxtE8waOaEzcwPbFHSHcOop+5ZH//iLOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XQckQ9nW; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mJ7kKKAl"
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-396db51d140so3911615ab.0
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2024 13:24:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XQckQ9nW"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so3810a12.1
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Jul 2024 15:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721334254; x=1721939054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sO75zMNZ2oS5yiFcWvWFnn+7GgQViti8sJ8HNULNiFU=;
-        b=mJ7kKKAlXLG2v5Mno8OyRjUcal06n3SaJxyzp1C7UIHTDdCLLIEo0uUKm8uTzb0s16
-         YnEwB+VpHQszFs5U4KoMp3zC/2bDIMOjddOlaNhgXpkHsuHmecy4TpAhhylPttoDUpX/
-         tFOp/ehpSpWR7xeICkTY0qxZGGS4WiPLtcI6o=
+        d=google.com; s=20230601; t=1721343277; x=1721948077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SnXUJZUUq5kQBG44OPNJniIMw+LK8h1ZLMMk9t95bZg=;
+        b=XQckQ9nWXFaczFQ12cnNj9LPHSvF7Aqf8KMMakcXHkl3p4j9Oflv01OhW5eXUpBhT9
+         gvdlW2+XRxayOS/BrI/3ntkZGmlo693EHbmVdOvWr79dqI8J7SrTC6cu62c4F9+GOYax
+         uY6xA1+UQt9YkueKsJfwLZdI0wvsw7+PzcO3x6QSq71g0UjS682XQUrJb7TjpvBMdYqb
+         LegbKGPhiiW3A6Tfcp2nW17ArG/DCYgmRZIYsgSq7fuuRnSRyZPbYOyCPT86Mhdk/QDo
+         MMbO5XYkdNW4AMWhaSm8yVRjbcCmDc89gztqAEzK1+EHTlDEd9w60rVZNHuMyom/gCuc
+         n3tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721334254; x=1721939054;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sO75zMNZ2oS5yiFcWvWFnn+7GgQViti8sJ8HNULNiFU=;
-        b=WvARsX9OIzbq8NXIs6/2QWTFDFzmllnGZfoqcb3BAPu3DDa87Ra80L+tNwOYuo7vu0
-         rLJDIhhFhsDqV9qN1UUWMKoLC4TdQNp/rUBAtoNxNG59kippl33oqPrYRuUoOxFy3zS1
-         omEXpVvDOd4qbNlaH88yO6p6lpCCHlLutmhBRLZxa0+AqIMqquagyLDzu7kfYpDHmSum
-         NZjuoAjhgrwuUiV4ee/3LHX9RFvvj9plaW9kOGfGRZ6+dA80xuDtOR3f/06CIPS6d9n2
-         jSVre31L8/3V1mSFVRVx6FgiCB49O/mqP7juQxQJnHhsjk2ypKKqlu3c2MGhnXgoTFBN
-         rm3g==
-X-Gm-Message-State: AOJu0Yx9jXwMCO+IHfxv+wZdANMiluuWHxf/DjfUzMcnL7sOMKN0+IKZ
-	mck8amUREoOKBeiHJKTGJIsFS+utpsGextdp1nd2FP2lQdeg6MSpZNYxi4nv6Q==
-X-Google-Smtp-Source: AGHT+IHZPGNqhBOvV5YQLPgRg+bUR77xw4PNBSLiWtTSbz7AjsRnwsM+5ZvhdEOFS+1B0ScAkq3xMA==
-X-Received: by 2002:a05:6e02:2164:b0:397:584d:9b73 with SMTP id e9e14a558f8ab-397584d9d43mr23414195ab.7.1721334253923;
-        Thu, 18 Jul 2024 13:24:13 -0700 (PDT)
-Received: from rink.c.googlers.com.com (212.165.232.35.bc.googleusercontent.com. [35.232.165.212])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3950b6ad6e5sm18932175ab.39.2024.07.18.13.24.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 13:24:13 -0700 (PDT)
-From: Jett Rink <jettrink@chromium.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-security-module@vger.kernel.org,
-	jettrink@chromium.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH v2] tpm: Add new device/vendor ID 0x50666666
-Date: Thu, 18 Jul 2024 20:23:52 +0000
-Message-ID: <20240718202359.127482-1-jettrink@chromium.org>
-X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+        d=1e100.net; s=20230601; t=1721343277; x=1721948077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SnXUJZUUq5kQBG44OPNJniIMw+LK8h1ZLMMk9t95bZg=;
+        b=QSJHSrohFq6wMvJnseXzGcwpKQiV5xII7x1NLQBKpAa5C47gZbxgxpsNxjsDPwyeb7
+         fUXcvxZi1P+psd1W8Bi3xn5rQa+ZTUNiKyoa49EN8P7And6ObtflPaNpDSk4kWkwd0ZE
+         +UJFtJuG8SjXa8Orqn9C73R/n6SqZ0Nen99I6Ozmrj5XmunbxX8UPlEcwWHfB51Egkzx
+         ljHWOM5CVBxJtP0zLtZneZDmjDqkfDOvX0ZpMb2V/khGDQ2xtQ298Xf9svUvbVNUGs6y
+         Q9GYzta4DR3riO+aRWoGU/PC9VhKTwKl27TRcrhXEk7TrMgLX1eOPjCFAc316UepgDoX
+         DdyA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+BMFAbypkksfaGsYZDciYVKh2pLEMHnXvrfuza6gAswykR6kWtL/Ua60vXl1uaz9O3K4qfQ87ZVttqGnflHRJiA5mnhyIM31ApLd00b1O9xWrqrM1
+X-Gm-Message-State: AOJu0YwZaOqaIFEUQNO3cbUHTnHqxdGbIXQkeHvu7R4scw/glfetwrQD
+	zyPB/sHoBUVXDJ6S1ub/+DmYRRVaw2C6ipMqTWjN4llji+msUFHIe2jMjaSAKXqDXKIRxqObM3j
+	kukeGIdbtNIb9uoOw4FFo9H2M8hdBAawslWfN
+X-Google-Smtp-Source: AGHT+IFD08e2bkpE0+ciYMxbQAHum1I99VoHhJUfFR8GdMFbVfM2/11g6fb19Z5YGSucTrp/1La67vd2feM3Ldh0j0I=
+X-Received: by 2002:a05:6402:51cd:b0:57d:32ff:73ef with SMTP id
+ 4fb4d7f45d1cf-5a2cae572bbmr113920a12.6.1721343277083; Thu, 18 Jul 2024
+ 15:54:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org> <20240717.AGh2shahc9ee@digikod.net>
+ <CALmYWFvxJSyi=BT5BKDiKCNanmbhLuZ6=iAMvv1ibnP24SC7fA@mail.gmail.com> <20240718.ahph4che5Shi@digikod.net>
+In-Reply-To: <20240718.ahph4che5Shi@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Thu, 18 Jul 2024 15:54:00 -0700
+Message-ID: <CALmYWFvAFfXmHgo6Ca+FsKhAapJ_C1VXhqT7LdFy3ZnU4Vu3Hw@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Steve Dower <steve.dower@python.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Accept another DID:VID for the next generation Google TPM. This TPM
-has the same Ti50 firmware and fulfills the same interface.
+On Thu, Jul 18, 2024 at 5:23=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> On Wed, Jul 17, 2024 at 06:51:11PM -0700, Jeff Xu wrote:
+> > On Wed, Jul 17, 2024 at 3:00=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
+> > > > On 17/07/2024 07:33, Jeff Xu wrote:
+> > > > > Consider those cases: I think:
+> > > > > a> relying purely on userspace for enforcement does't seem to be
+> > > > > effective,  e.g. it is trivial  to call open(), then mmap() it in=
+to
+> > > > > executable memory.
+> > > >
+> > > > If there's a way to do this without running executable code that ha=
+d to pass
+> > > > a previous execveat() check, then yeah, it's not effective (e.g. a =
+Python
+> > > > interpreter that *doesn't* enforce execveat() is a trivial way to d=
+o it).
+> > > >
+> > > > Once arbitrary code is running, all bets are off. So long as all ar=
+bitrary
+> > > > code is being checked itself, it's allowed to do things that would =
+bypass
+> > > > later checks (and it's up to whoever audited it in the first place =
+to
+> > > > prevent this by not giving it the special mark that allows it to pa=
+ss the
+> > > > check).
+> > >
+> > We will want to define what is considered as "arbitrary code is running=
+"
+> >
+> > Using an example of ROP, attackers change the return address in stack,
+> > e.g. direct the execution flow to a gauge to call "ld.so /tmp/a.out",
+> > do you consider "arbitrary code is running" when stack is overwritten
+> > ? or after execve() is called.
+>
+> Yes, ROP is arbitrary code execution (which can be mitigated with CFI).
+> ROP could be enough to interpret custom commands and create a small
+> interpreter/VM.
+>
+> > If it is later, this patch can prevent "ld.so /tmp/a.out".
+> >
+> > > Exactly.  As explained in the patches, one crucial prerequisite is th=
+at
+> > > the executable code is trusted, and the system must provide integrity
+> > > guarantees.  We cannot do anything without that.  This patches series=
+ is
+> > > a building block to fix a blind spot on Linux systems to be able to
+> > > fully control executability.
+> >
+> > Even trusted executable can have a bug.
+>
+> Definitely, but this patch series is dedicated to script execution
+> control.
+>
+> >
+> > I'm thinking in the context of ChromeOS, where all its system services
+> > are from trusted partitions, and legit code won't load .so from a
+> > non-exec mount.  But we want to sandbox those services, so even under
+> > some kind of ROP attack, the service still won't be able to load .so
+> > from /tmp. Of course, if an attacker can already write arbitrary
+> > length of data into the stack, it is probably already a game over.
+> >
+>
+> OK, you want to tie executable file permission to mmap.  That makes
+> sense if you have a consistent execution model.  This can be enforced by
+> LSMs.  Contrary to script interpretation which is a full user space
+> implementation (and then controlled by user space), mmap restrictions
+> should indeed be enforced by the kernel.
+Ya, that is what I meant. it can be out of scope for this patch.
+Indeed, as you point out, this patch is dedicated to script execution
+control, and fixing ld.so /tmp/a.out is an extra bonus in addition to
+script.
 
-Signed-off-by: Jett Rink <jettrink@chromium.org>
----
-
-Changes in v2:
-Patchset 2 applies cleanly
-
- drivers/char/tpm/tpm_tis_i2c_cr50.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-index adf22992138e..b50005ccfc5e 100644
---- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-+++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-@@ -31,7 +31,8 @@
- #define TPM_CR50_TIMEOUT_SHORT_MS	2		/* Short timeout during transactions */
- #define TPM_CR50_TIMEOUT_NOIRQ_MS	20		/* Timeout for TPM ready without IRQ */
- #define TPM_CR50_I2C_DID_VID		0x00281ae0L	/* Device and vendor ID reg value */
--#define TPM_TI50_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
-+#define TPM_TI50_DT_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
-+#define TPM_TI50_OT_I2C_DID_VID		0x50666666L	/* Device and vendor ID reg value */
- #define TPM_CR50_I2C_MAX_RETRIES	3		/* Max retries due to I2C errors */
- #define TPM_CR50_I2C_RETRY_DELAY_LO	55		/* Min usecs between retries on I2C */
- #define TPM_CR50_I2C_RETRY_DELAY_HI	65		/* Max usecs between retries on I2C */
-@@ -741,14 +742,18 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
- 	}
- 
- 	vendor = le32_to_cpup((__le32 *)buf);
--	if (vendor != TPM_CR50_I2C_DID_VID && vendor != TPM_TI50_I2C_DID_VID) {
-+	if (vendor != TPM_CR50_I2C_DID_VID &&
-+	    vendor != TPM_TI50_DT_I2C_DID_VID &&
-+	    vendor != TPM_TI50_OT_I2C_DID_VID) {
- 		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
- 		tpm_cr50_release_locality(chip, true);
- 		return -ENODEV;
- 	}
- 
- 	dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
--		 vendor == TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
-+		 vendor == TPM_CR50_I2C_DID_VID    ? "cr50" :
-+		 vendor == TPM_TI50_DT_I2C_DID_VID ? "ti50 DT" :
-+						     "ti50 OT",
- 		 client->addr, client->irq, vendor >> 16);
- 	return tpm_chip_register(chip);
- }
--- 
-2.45.2.1089.g2a221341d9-goog
-
+Thanks
+-Jeff
