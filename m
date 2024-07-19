@@ -1,91 +1,202 @@
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD174145A1A
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 15:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234001459FA
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401618; cv=none; b=RM68FSz+FvS9TX2kh/vwZEnMUQpEUSmz3PvIgbdUykCubVUYxRWWBPP93D7frr7ZGNX6gWowjmxS2moF2ZHa/vsFVAmSNofPZbf/7nhWl35wTOnqPpg11Z9b8pPsl6uVQJxcl86wobFaDvwzG733kCziv1Hr2BupR9JKE7likc0=
+	t=1721402007; cv=none; b=GleW2xAQLKxs+sePZ+uf7GE8pZ+PJ0jlloT0eZv34DTuIC70re6kUuyXI6AkI0JN3LWjlNVO/rPqMRom1sGiiqZUWeuUXbKEJfhiRD5ezlek87R+rldbAcuBYRJYCQuCg0Y7CxRlqVFtRHS7mp9BMVmFUoVNvPWmnUnO4yMAiT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401618; c=relaxed/simple;
-	bh=1VRgN9E20Mz0E1cuuygk/Vt16CkssBzZL4IMwdHn5A8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RJabUHUtA3xgWIYSYsMTeoQMwereyUsQNxaPU26DI1+7ilEvhuzXUveSgvJpVkPBON2J5Q310wXahaeg2nYMPJdx1XhDX9rJ1PupkuubOReXhofoWDThnWMwz5q6/yhfkkqSWBSiGCqD5gWaEvqylGZrHEuOoEZ7izQZYxGK9ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zZl6K+7K; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1721402007; c=relaxed/simple;
+	bh=cNzYZ/BtYyZDYVyvCWTWgLlzPaAtMCxc6S1Bv8I5Lck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qq5IvrkHDr289T4BF6/sj07u8ZOY1ReiGeNDCwrcb5JVNDMxn7Wh6O0xM/X4qgVvJ7hKWeF0hxYDNyEm7uuRigSumiPwuil7kY9A/Gf0IxLvdxoqZjMwD+317hg9KUnbE/JP24cN+wimJ+xiMC8ixdiskO0qsr7UDp5ddsHqOFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FLiAw4TG; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zZl6K+7K"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQY132qxMzcBS;
-	Fri, 19 Jul 2024 17:06:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721401607;
-	bh=OBPsO/SKaEeE/YlM+it8OhWEccms0c50naVM5DXA5DM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=zZl6K+7KhAbi7bYpDROj72Z4n5CgbrmipVkvzgc99i6WI8wepLoaj7q4hywJa494g
-	 KAM8GT55IEH4ZTwDLJe1cqODQ0Nzt+HRzalIKzn1xbQhq2k0s2HoT6H6pWxSLVbV77
-	 Z7E1pqLCdCPFCaZS+mUZ4S3Fs1D7cvlIKCJvo350=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQY126cp3ztZT;
-	Fri, 19 Jul 2024 17:06:46 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Paul Moore <paul@paul-moore.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Shervin Oloumi <enlightened@chromium.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH v1 3/3] landlock: Document network restrictions tied to sockets
-Date: Fri, 19 Jul 2024 17:06:18 +0200
-Message-ID: <20240719150618.197991-4-mic@digikod.net>
-In-Reply-To: <20240719150618.197991-1-mic@digikod.net>
-References: <20240719150618.197991-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FLiAw4TG"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso18634a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 08:13:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721402002; x=1722006802; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
+        b=FLiAw4TGg/gaI0MJ3VFuXxJiexG2NF+XT7VJP4kC+kIjMxbaU1zmk9P+sHmNHGeUiE
+         PudRrPfvtR/qvN9fwEfrhBkwtJf3nxAIs2JK81e9CWUqb9NbHIDVyc2qKY8xPvOuzK6B
+         Sk0z0sVDSTGpdgyTp4LZ7JwM63rradyU++JuQF4Nq9upMZ79xsszZCTRkoJoTQozNpl+
+         3rsOeFNx5O3jTV9gKOIToCgpdGDBUkgRzib4Ol8FWB90s18HTJ+Kx3TT0TGLpbY+LKcC
+         dCzAg+Pdm2gcJaE4maihNSueKsPv2gjFnSeBJi/QJAZ35m1JWL8cnS1ynzGdXIvhjkfy
+         2gkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721402002; x=1722006802;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
+        b=s/rQJhnWavPDuKlkUBNTZ+VSZjl8NwTI+mms7/1gfSvr2ndbivfKVBasuVEgRm6qiO
+         WiUbb3+6ZJZZ5HeX4EtY4DdXYRZBR6UoQc0673Vh5RgVkVoWCVGsByejRsLB5bh3QtNo
+         xz52h4L7TFJOrpxeJUiqV8rvGgNB+y/dcdnvtxfF48yf6hNAsWCQ3/sYuM66QDVbYa6q
+         9AbvKKPjiT6yzkyGeOQZJQoiLrQfPtaSz5Km83WpdqQYtCcIaw0B3XP6+++eP90lfXA+
+         DC1itNH9Z2HQHSZy2a1blDOxdCk0TgzMGVF7w1JXj/Ec7mer1lNgihb8X3G0AjIziE4q
+         8ojQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIH/T6e4To2NwO0hujqssrkX5ix9eCTvA1RI4fF9E1vLKd9Mdv8hFMH9qCsUO8G11GN7U3BWCGYJi+8qtO3ootAgFoDiWGsREOIa4vvPLgiQd9Iid0
+X-Gm-Message-State: AOJu0Yzmi3YD4+ZuAY56igXpYGmU7XJ+dEOmvTPolirs9ajiLWlVuc23
+	7lS0NqDzNOS+1EINIfy1SLryqunUwefdSuqwLNGFGMmceUVi7L4IoAMoxxXKigl1ebiEmquBJuQ
+	R9chKQscR04g97dNexGdUVsPQ9MGuqEY/BUsf
+X-Google-Smtp-Source: AGHT+IF8jhfTz4CuviZW9GqUcQNbR2n0XX/TjDOw52cr0zBh16yuWoo/aIR1mpwaKRcfuoy4T/F2djmB2w64vrVE1xU=
+X-Received: by 2002:a05:6402:4405:b0:59e:9fb1:a0dc with SMTP id
+ 4fb4d7f45d1cf-5a2cb049fdamr247891a12.6.1721401996282; Fri, 19 Jul 2024
+ 08:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+In-Reply-To: <20240718.kaePhei9Ahm9@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Fri, 19 Jul 2024 08:12:37 -0700
+Message-ID: <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Landlock domain used to restrict operations on a socket is the
-domain from the thread that created this socket.
+On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
+ic@digikod.net> wrote:
+> > > > >
+> > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would b=
+e
+> > > > > allowed for execution.  The main use case is for script interpret=
+ers and
+> > > > > dynamic linkers to check execution permission according to the ke=
+rnel's
+> > > > > security policy. Another use case is to add context to access log=
+s e.g.,
+> > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > executable code, scripts could also use this check [1].
+> > > > >
+> > > > > This is different than faccessat(2) which only checks file access
+> > > > > rights, but not the full context e.g. mount point's noexec, stack=
+ limit,
+> > > > > and all potential LSM extra checks (e.g. argv, envp, credentials)=
+.
+> > > > > Since the use of AT_CHECK follows the exact kernel semantic as fo=
+r a
+> > > > > real execution, user space gets the same error codes.
+> > > > >
+> > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > exec, shared object, script and config file (such as seccomp config=
+),
+> > >
+> > > "config file" that contains executable code.
+> > >
+> > Is seccomp config  considered as "contains executable code", seccomp
+> > config is translated into bpf, so maybe yes ? but bpf is running in
+> > the kernel.
+>
+> Because seccomp filters alter syscalls, they are similar to code
+> injection.
+>
+> >
+> > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
+> > > > different use cases:
+> > > >
+> > > > execveat clearly has less code change, but that also means: we can'=
+t
+> > > > add logic specific to exec (i.e. logic that can't be applied to
+> > > > config) for this part (from do_execveat_common to
+> > > > security_bprm_creds_for_exec) in future.  This would require some
+> > > > agreement/sign-off, I'm not sure from whom.
+> > >
+> > > I'm not sure to follow. We could still add new flags, but for now I
+> > > don't see use cases.  This patch series is not meant to handle all
+> > > possible "trust checks", only executable code, which makes sense for =
+the
+> > > kernel.
+> > >
+> > I guess the "configfile" discussion is where I get confused, at one
+> > point, I think this would become a generic "trust checks" api for
+> > everything related to "generating executable code", e.g. javascript,
+> > java code, and more.
+> > We will want to clearly define the scope of execveat(AT_CHECK)
+>
+> The line between data and code is blurry.  For instance, a configuration
+> file can impact the execution flow of a program.  So, where to draw the
+> line?
+>
+> It might makes sense to follow the kernel and interpreter semantic: if a
+> file can be executed by the kernel (e.g. ELF binary, file containing a
+> shebang, or just configured with binfmt_misc), then this should be
+> considered as executable code.  This applies to Bash, Python,
+> Javascript, NodeJS, PE, PHP...  However, we can also make a picture
+> executable with binfmt_misc.  So, again, where to draw the line?
+>
+> I'd recommend to think about interaction with the outside, through
+> function calls, IPCs, syscalls...  For instance, "running" an image
+> should not lead to reading or writing to arbitrary files, or accessing
+> the network, but in practice it is legitimate for some file formats...
+> PostScript is a programming language, but mostly used to draw pictures.
+> So, again, where to draw the line?
+>
+The javascript is run by browser and java code by java runtime, do
+they meet the criteria? they do not interact with the kernel directly,
+however they might have the same "executable" characteristics and the
+app might not want them to be put into non-exec mount.
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240719150618.197991-4-mic@digikod.net
----
- Documentation/userspace-api/landlock.rst | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+If the answer is yes, they can also use execveat(AT_CHECK),  the next
+question is: does it make sense for javacript/java code to go through
+execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
+it is)
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 37dafce8038b..4a9bfff575d5 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -529,7 +529,9 @@ Network support (ABI < 4)
- Starting with the Landlock ABI version 4, it is now possible to restrict TCP
- bind and connect actions to only a set of allowed ports thanks to the new
- ``LANDLOCK_ACCESS_NET_BIND_TCP`` and ``LANDLOCK_ACCESS_NET_CONNECT_TCP``
--access rights.
-+access rights.  These restrictions are tied to a socket and are inherited from
-+the sandboxed thread that created this socket.  Hence, sockets created before
-+sandboxing are not restricted.
- 
- IOCTL (ABI < 5)
- ---------------
--- 
-2.45.2
-
+> We should follow the principle of least astonishment.  What most users
+> would expect?  This should follow the *common usage* of executable
+> files.  At the end, the script interpreters will be patched by security
+> folks for security reasons.  I think the right question to ask should
+> be: could this file format be (ab)used to leak or modify arbitrary
+> files, or to perform arbitrary syscalls?  If the answer is yes, then it
+> should be checked for executability.  Of course, this excludes bugs
+> exploited in the file format parser.
+>
+> I'll extend the next patch series with this rationale.
+>
