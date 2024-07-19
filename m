@@ -1,55 +1,55 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234001459FA
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 15:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFA814534D
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 15:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721402007; cv=none; b=GleW2xAQLKxs+sePZ+uf7GE8pZ+PJ0jlloT0eZv34DTuIC70re6kUuyXI6AkI0JN3LWjlNVO/rPqMRom1sGiiqZUWeuUXbKEJfhiRD5ezlek87R+rldbAcuBYRJYCQuCg0Y7CxRlqVFtRHS7mp9BMVmFUoVNvPWmnUnO4yMAiT0=
+	t=1721402881; cv=none; b=SVlYM1/RonTCvbpr6eHTBZRfsPrf035hNS2aZ4/EWbEmv9uQ4U12ZiJvk83bYGq4Cg0C6GlHalfuGidg1s+QH9UPu5Qbxwu53Rl+p7+/jwT1lp4bxD97JNFqxCd4d8jOl3pwhjKy4TVfYWKIiYAlA54IAvcqWzAZ61mZG1aDNPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721402007; c=relaxed/simple;
-	bh=cNzYZ/BtYyZDYVyvCWTWgLlzPaAtMCxc6S1Bv8I5Lck=;
+	s=arc-20240116; t=1721402881; c=relaxed/simple;
+	bh=sD1lGd9SneUctEquyLBmVbslUeLr+/Ruw82FHYbwjto=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qq5IvrkHDr289T4BF6/sj07u8ZOY1ReiGeNDCwrcb5JVNDMxn7Wh6O0xM/X4qgVvJ7hKWeF0hxYDNyEm7uuRigSumiPwuil7kY9A/Gf0IxLvdxoqZjMwD+317hg9KUnbE/JP24cN+wimJ+xiMC8ixdiskO0qsr7UDp5ddsHqOFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FLiAw4TG; arc=none smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=lzkeF3flS+NtZL0pNfPunJzZIeNFd8MFjr15ruJaTB7RnAFrK+AQ70seN2lhwYGJQ7BWb1vLewMcGpU6IxztYbIvzcHBkUiit/rh3S/wJrRT3sPZUlzpAgcl3BEYTBTvf6bZuVyqNsH8FR3HZrgwlCDRgs8Ourt3VIu6vYT8gP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aXH0hAzy; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FLiAw4TG"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso18634a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 08:13:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aXH0hAzy"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so13938a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 08:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721402002; x=1722006802; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721402878; x=1722007678; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
-        b=FLiAw4TGg/gaI0MJ3VFuXxJiexG2NF+XT7VJP4kC+kIjMxbaU1zmk9P+sHmNHGeUiE
-         PudRrPfvtR/qvN9fwEfrhBkwtJf3nxAIs2JK81e9CWUqb9NbHIDVyc2qKY8xPvOuzK6B
-         Sk0z0sVDSTGpdgyTp4LZ7JwM63rradyU++JuQF4Nq9upMZ79xsszZCTRkoJoTQozNpl+
-         3rsOeFNx5O3jTV9gKOIToCgpdGDBUkgRzib4Ol8FWB90s18HTJ+Kx3TT0TGLpbY+LKcC
-         dCzAg+Pdm2gcJaE4maihNSueKsPv2gjFnSeBJi/QJAZ35m1JWL8cnS1ynzGdXIvhjkfy
-         2gkQ==
+        bh=W/MxYH2/uzCcS4HqNETSoYIUh519YogSSIkssubeOjA=;
+        b=aXH0hAzy9WFcE/WsXnwIXUinFc2tYiWtF+sspx4k49z1wTp2JcuKgxXf0GYLSPZJFx
+         NF5BtUWzep56Sd02nJ5x1UbJOOvMOoA+sZNL2Yh0GqbeEsxOO4pUWUDVI0BQM/ceY1aK
+         5yU2xaoF4O9l6LUXiI2aJd8i3MKDrTETHo9dhDh2jL15QiXGv/j2uJdaTUyddb3AHIJk
+         QBLNLlffWSlW8EF+zbegUQLlzbeKtPTTu6MKFUyBF/Jxe0qY4RJtCQsJOSCcyCrbq4gC
+         0pNpa7nHWngnjSbjbIfuzWY1blUl5kvxMytHKc8Aah6axhpKhIJcXa82+YX4O7BBPWTJ
+         zOPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721402002; x=1722006802;
+        d=1e100.net; s=20230601; t=1721402878; x=1722007678;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DOJZUI+POSTXFSIgNy35weqRERtHN5CsyKdohOMq5CI=;
-        b=s/rQJhnWavPDuKlkUBNTZ+VSZjl8NwTI+mms7/1gfSvr2ndbivfKVBasuVEgRm6qiO
-         WiUbb3+6ZJZZ5HeX4EtY4DdXYRZBR6UoQc0673Vh5RgVkVoWCVGsByejRsLB5bh3QtNo
-         xz52h4L7TFJOrpxeJUiqV8rvGgNB+y/dcdnvtxfF48yf6hNAsWCQ3/sYuM66QDVbYa6q
-         9AbvKKPjiT6yzkyGeOQZJQoiLrQfPtaSz5Km83WpdqQYtCcIaw0B3XP6+++eP90lfXA+
-         DC1itNH9Z2HQHSZy2a1blDOxdCk0TgzMGVF7w1JXj/Ec7mer1lNgihb8X3G0AjIziE4q
-         8ojQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIH/T6e4To2NwO0hujqssrkX5ix9eCTvA1RI4fF9E1vLKd9Mdv8hFMH9qCsUO8G11GN7U3BWCGYJi+8qtO3ootAgFoDiWGsREOIa4vvPLgiQd9Iid0
-X-Gm-Message-State: AOJu0Yzmi3YD4+ZuAY56igXpYGmU7XJ+dEOmvTPolirs9ajiLWlVuc23
-	7lS0NqDzNOS+1EINIfy1SLryqunUwefdSuqwLNGFGMmceUVi7L4IoAMoxxXKigl1ebiEmquBJuQ
-	R9chKQscR04g97dNexGdUVsPQ9MGuqEY/BUsf
-X-Google-Smtp-Source: AGHT+IF8jhfTz4CuviZW9GqUcQNbR2n0XX/TjDOw52cr0zBh16yuWoo/aIR1mpwaKRcfuoy4T/F2djmB2w64vrVE1xU=
-X-Received: by 2002:a05:6402:4405:b0:59e:9fb1:a0dc with SMTP id
- 4fb4d7f45d1cf-5a2cb049fdamr247891a12.6.1721401996282; Fri, 19 Jul 2024
- 08:13:16 -0700 (PDT)
+        bh=W/MxYH2/uzCcS4HqNETSoYIUh519YogSSIkssubeOjA=;
+        b=vEZBvINbvmzeH1BDakVkHnoFppxPkuMbrxyJW/U51Z4+qB2OgkoPA2NjxZKS8Md3MP
+         p0rMGqjz28u1PC8FlGHk9O4Nm9FnX+9azUaPaegvydteVdcJBze1Jb4EEE0/jhOPzmi6
+         AIT2p/jAmnwxuxUpvrbZNSqBO/WRg8O9oc3s6YkiVrey54SOqMp/oQLGnF14Idle5LfC
+         PJDCqe03tzWuOEOUqRKzlRM7A2FJRwdvcIoUiYfU+W8I9GTeEDPt4zYJVjsRMEs3KWsO
+         l4eMFZZB+l2keLM72d89rrGYc96UBGKgYGsH+3CXAmmKhtSNYy//HaSNlmFtRXart8zb
+         uxQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWn+/07zf+UO5HZkvwUHU6tItGPyOzOsznBE5ihwJmjIECxXQqg9xD0zir80Kd9aZRt3tdzTjWmZ3TfOnNAODsJZu3pas7DAl+BDgKLF/mr6Ez9p5Go
+X-Gm-Message-State: AOJu0YzDd5PUhNe3agclx/LH7A7hdtYckInpe0hTR4jpKkYJLGyHZLqd
+	WrrInnn+Vi+D+VPy/sLyYboObuQmkQYiSiJfgxDEfRq2FG9G9WZr5DHGXTlmqDTnkydHOmpJJbO
+	d1HEyUfFm6FOMCgcwwO6DEQtH4qTgq7s1uAvr
+X-Google-Smtp-Source: AGHT+IGSwc1Sbm2gtpC0SvLJW7tBA/sZMi1xLeY6EhseEA9RMcDEKQHymOTelOQ90KNEQFpSSZW3FvOrxTA1Y9I1PzU=
+X-Received: by 2002:a05:6402:50c9:b0:57c:c5e2:2c37 with SMTP id
+ 4fb4d7f45d1cf-5a2f262b220mr178043a12.3.1721402878011; Fri, 19 Jul 2024
+ 08:27:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,11 +59,13 @@ MIME-Version: 1.0
 References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
  <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
  <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
-In-Reply-To: <20240718.kaePhei9Ahm9@digikod.net>
+ <20240718.kaePhei9Ahm9@digikod.net> <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
+ <20240719.shaeK6PaiSie@digikod.net> <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
+ <20240719.sah7oeY9pha4@digikod.net>
+In-Reply-To: <20240719.sah7oeY9pha4@digikod.net>
 From: Jeff Xu <jeffxu@google.com>
-Date: Fri, 19 Jul 2024 08:12:37 -0700
-Message-ID: <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
+Date: Fri, 19 Jul 2024 08:27:18 -0700
+Message-ID: <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
 Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
 To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
@@ -94,109 +96,146 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+On Fri, Jul 19, 2024 at 8:04=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
 od.net> wrote:
 >
-> On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
+> On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
+> > On Fri, Jul 19, 2024 at 1:45=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
 igikod.net> wrote:
 > > >
-> > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
+> > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
+> > > > On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
 ic@digikod.net> wrote:
 > > > > >
-> > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would b=
-e
-> > > > > allowed for execution.  The main use case is for script interpret=
-ers and
-> > > > > dynamic linkers to check execution permission according to the ke=
-rnel's
-> > > > > security policy. Another use case is to add context to access log=
-s e.g.,
-> > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > executable code, scripts could also use this check [1].
-> > > > >
-> > > > > This is different than faccessat(2) which only checks file access
-> > > > > rights, but not the full context e.g. mount point's noexec, stack=
- limit,
-> > > > > and all potential LSM extra checks (e.g. argv, envp, credentials)=
-.
-> > > > > Since the use of AT_CHECK follows the exact kernel semantic as fo=
-r a
-> > > > > real execution, user space gets the same error codes.
-> > > > >
-> > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > exec, shared object, script and config file (such as seccomp config=
-),
+> > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > > > > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=C3=BC=
+n <mic@digikod.net> wrote:
+> > > > > > >
+> > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sala=
+=C3=BCn <mic@digikod.net> wrote:
+> > > > > > > > >
+> > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file=
+ would be
+> > > > > > > > > allowed for execution.  The main use case is for script i=
+nterpreters and
+> > > > > > > > > dynamic linkers to check execution permission according t=
+o the kernel's
+> > > > > > > > > security policy. Another use case is to add context to ac=
+cess logs e.g.,
+> > > > > > > > > which script (instead of interpreter) accessed a file.  A=
+s any
+> > > > > > > > > executable code, scripts could also use this check [1].
+> > > > > > > > >
+> > > > > > > > > This is different than faccessat(2) which only checks fil=
+e access
+> > > > > > > > > rights, but not the full context e.g. mount point's noexe=
+c, stack limit,
+> > > > > > > > > and all potential LSM extra checks (e.g. argv, envp, cred=
+entials).
+> > > > > > > > > Since the use of AT_CHECK follows the exact kernel semant=
+ic as for a
+> > > > > > > > > real execution, user space gets the same error codes.
+> > > > > > > > >
+> > > > > > > > So we concluded that execveat(AT_CHECK) will be used to che=
+ck the
+> > > > > > > > exec, shared object, script and config file (such as seccom=
+p config),
 > > >
-> > > "config file" that contains executable code.
+> > > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so=
+ to make
+> > > > > > > > sure it passes AT_CHECK, before loading it into memory.
+> > > > > > >
+> > > > > > > All ELF dependencies are opened and checked with open_exec(),=
+ which
+> > > > > > > perform the main executability checks (with the __FMODE_EXEC =
+flag).
+> > > > > > > Did I miss something?
+> > > > > > >
+> > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in th=
+e kernel.
+> > > > > > The app can choose its own dynamic linker path during build, (m=
+aybe
+> > > > > > even statically link one ?)  This is another reason that relyin=
+g on a
+> > > > > > userspace only is not enough.
+> > > > >
+> > > > > The kernel calls open_exec() on all dependencies, including
+> > > > > ld-linux-x86-64.so.2, so these files are checked for executabilit=
+y too.
+> > > > >
+> > > > This might not be entirely true. iiuc, kernel  calls open_exec for
+> > > > open_exec for interpreter, but not all its dependency (e.g. libc.so=
+.6)
 > > >
-> > Is seccomp config  considered as "contains executable code", seccomp
-> > config is translated into bpf, so maybe yes ? but bpf is running in
-> > the kernel.
+> > > Correct, the dynamic linker is in charge of that, which is why it mus=
+t
+> > > be enlighten with execveat+AT_CHECK and securebits checks.
+> > >
+> > > > load_elf_binary() {
+> > > >    interpreter =3D open_exec(elf_interpreter);
+> > > > }
+> > > >
+> > > > libc.so.6 is opened and mapped by dynamic linker.
+> > > > so the call sequence is:
+> > > >  execve(a.out)
+> > > >   - open exec(a.out)
+> > > >   - security_bprm_creds(a.out)
+> > > >   - open the exec(ld.so)
+> > > >   - call open_exec() for interruptor (ld.so)
+> > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going throu=
+gh
+> > > > the same check and code path as libc.so below ?
+> > >
+> > > open_exec() checks are enough.  LSMs can use this information (open +
+> > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
+> > > request.
+> > >
+> > Then the ld.so doesn't go through the same security_bprm_creds() check
+> > as other .so.
 >
-> Because seccomp filters alter syscalls, they are similar to code
-> injection.
+> Indeed, but...
+>
+My point is: we will want all the .so going through the same code
+path, so  security_ functions are called consistently across all the
+objects, And in the future, if we want to develop additional LSM
+functionality based on AT_CHECK, it will be applied to all objects.
+
+Another thing to consider is:  we are asking userspace to make
+additional syscall before  loading the file into memory/get executed,
+there is a possibility for future expansion of the mechanism, without
+asking user space to add another syscall again.
+
+I m still not convinced yet that execveat(AT_CHECK) fits more than
+faccessat(AT_CHECK)
+
+
+> >
+> > As my previous email, the ChromeOS LSM restricts executable mfd
+> > through security_bprm_creds(), the end result is that ld.so can still
+> > be executable memfd, but not other .so.
+>
+> The chromeOS LSM can check that with the security_file_open() hook and
+> the __FMODE_EXEC flag, see Landlock's implementation.  I think this
+> should be the only hook implementation that chromeOS LSM needs to add.
 >
 > >
-> > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
-> > > > different use cases:
-> > > >
-> > > > execveat clearly has less code change, but that also means: we can'=
-t
-> > > > add logic specific to exec (i.e. logic that can't be applied to
-> > > > config) for this part (from do_execveat_common to
-> > > > security_bprm_creds_for_exec) in future.  This would require some
-> > > > agreement/sign-off, I'm not sure from whom.
+> > One way to address this is to refactor the necessary code from
+> > execveat() code patch, and make it available to call from both kernel
+> > and execveat() code paths., but if we do that, we might as well use
+> > faccessat2(AT_CHECK)
+>
+> That's why I think it makes sense to rely on the existing __FMODE_EXEC
+> information.
+>
+> >
+> >
+> > > >   - transfer the control to ld.so)
+> > > >   - ld.so open (libc.so)
+> > > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patc=
+h,
+> > > > require dynamic linker change.
+> > > >   - ld.so mmap(libc.so,rx)
 > > >
-> > > I'm not sure to follow. We could still add new flags, but for now I
-> > > don't see use cases.  This patch series is not meant to handle all
-> > > possible "trust checks", only executable code, which makes sense for =
-the
-> > > kernel.
-> > >
-> > I guess the "configfile" discussion is where I get confused, at one
-> > point, I think this would become a generic "trust checks" api for
-> > everything related to "generating executable code", e.g. javascript,
-> > java code, and more.
-> > We will want to clearly define the scope of execveat(AT_CHECK)
->
-> The line between data and code is blurry.  For instance, a configuration
-> file can impact the execution flow of a program.  So, where to draw the
-> line?
->
-> It might makes sense to follow the kernel and interpreter semantic: if a
-> file can be executed by the kernel (e.g. ELF binary, file containing a
-> shebang, or just configured with binfmt_misc), then this should be
-> considered as executable code.  This applies to Bash, Python,
-> Javascript, NodeJS, PE, PHP...  However, we can also make a picture
-> executable with binfmt_misc.  So, again, where to draw the line?
->
-> I'd recommend to think about interaction with the outside, through
-> function calls, IPCs, syscalls...  For instance, "running" an image
-> should not lead to reading or writing to arbitrary files, or accessing
-> the network, but in practice it is legitimate for some file formats...
-> PostScript is a programming language, but mostly used to draw pictures.
-> So, again, where to draw the line?
->
-The javascript is run by browser and java code by java runtime, do
-they meet the criteria? they do not interact with the kernel directly,
-however they might have the same "executable" characteristics and the
-app might not want them to be put into non-exec mount.
-
-If the answer is yes, they can also use execveat(AT_CHECK),  the next
-question is: does it make sense for javacript/java code to go through
-execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
-it is)
-
-> We should follow the principle of least astonishment.  What most users
-> would expect?  This should follow the *common usage* of executable
-> files.  At the end, the script interpreters will be patched by security
-> folks for security reasons.  I think the right question to ask should
-> be: could this file format be (ab)used to leak or modify arbitrary
-> files, or to perform arbitrary syscalls?  If the answer is yes, then it
-> should be checked for executability.  Of course, this excludes bugs
-> exploited in the file format parser.
->
-> I'll extend the next patch series with this rationale.
->
+> > > Explaining these steps is useful. I'll include that in the next patch
+> > > series.
