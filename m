@@ -1,179 +1,80 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D333B660
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 15:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08A1145356
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 15:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401459; cv=none; b=iE14Lw66kSNHInU6TTr94AqR2l7xIhK21m33cbB5PnRO8xxv7uihBGv2T09do6S1FNR5CUUkJNePFh6wx3vU09b03rR8YhAUrzpC/kQcMMSFJCmPU3YEuGnhvVzBH7YiL1cuX+1KUbuL9OX4pw98GMIiPyjeXAHyQTjPfeBxAyA=
+	t=1721401615; cv=none; b=awzO72jiq0/x1uPjwf2ZniZmH9e/YZQ+LoXwLee3kGCMuJOI/JHRNpSYrVFO+1zZfagC/aZwZgIm8D9LLzWRdHPTMJgA6kvv5sEyhTsVE7/dsmJjrD3+ERk4qzyVeXZ23pvepTL1ZrS1BTsQOdjn8d874w8vOBXCmO/FEmGMnvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401459; c=relaxed/simple;
-	bh=IkerZt4Fxk/+kj7zT55z8pEEfoDcPPMEQB+n7a6GaUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMWa3t8+aEhGrDBrY9/0/2cQj463t3GPl39n0aJcxWSptsmMnCpsN7Fars+DanKbRlGCSL6+H0ihbe2QOGQKOHKD/F/KWVkbebti+2n2mc+LXeOlJtyRSDq7CLim/phiaoANapMJ/5XuUvWhKheeDd5S5Wp2m+YqYDqxxociSd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=b4kakrJ2; arc=none smtp.client-ip=185.125.25.11
+	s=arc-20240116; t=1721401615; c=relaxed/simple;
+	bh=R8UECAoOpn6Z9VyU8XWdVP4VJVlOGQ/d9Y7jGVbdA50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p+M/EZRssVykXuX8/0aC/IK7d4xYU2buWAXLLEcJy/PXP+qftxkuR8pAsVJw19K+gpGJN7/kBUNhXX1AMs7RCSEXm6B+i+6Unyn5UcAQkKkj/dlC+AzRC3YwhUGK3+P34VPhNa9Bkky/o8GS/7pU8/l33VAw+zRw3MPR4pfx7Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=R1vGEDai; arc=none smtp.client-ip=83.166.143.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="b4kakrJ2"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQXy012pJzgTk;
-	Fri, 19 Jul 2024 17:04:08 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="R1vGEDai"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQY102ql7zYG1;
+	Fri, 19 Jul 2024 17:06:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721401447;
-	bh=iO8TtxQIbOnz80RswndwIyTDS+UMf9IftsRCjoUU3os=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b4kakrJ2gEcsh07UAD7jdRnmSpBpScTkTk8IOgBrpODTDzJ2Nw1DRAUDcDp+p0np0
-	 zppIOPLEwPo8uiPxahx62iDnkq36SBKgaaRTzxyDUjLiIbUlQYNZc3TBUf8/fVTn+m
-	 /3a86+glhXe287wY9p8tD+Gq9LxALtGy6QgHjDbI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQXxw06kVzs0G;
-	Fri, 19 Jul 2024 17:04:03 +0200 (CEST)
-Date: Fri, 19 Jul 2024 17:04:01 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240719.sah7oeY9pha4@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net>
- <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
- <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net>
- <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
+	s=20191114; t=1721401604;
+	bh=MlvNcRdaWPCv4piayBnreztb2E0SfctcFZFdov4MJHM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=R1vGEDaiOLE+63hKxA8+FlULKos0AYSaDhRQj6FydQIyKTFheCvHucyRs4jdV/EtN
+	 c93xAKYjB8auzzIyfshrfNrsyktxu4QKufpY2Fd77crcH/PRFi/vFCB17VQesgJULV
+	 qTvJNn4IHrP8P4kILn5By5R9HM8lyxgPpJwHFeAU=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQY0z2nrYzxKb;
+	Fri, 19 Jul 2024 17:06:43 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Shervin Oloumi <enlightened@chromium.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH v1 0/3] Use socket's Landlock domain
+Date: Fri, 19 Jul 2024 17:06:15 +0200
+Message-ID: <20240719150618.197991-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
-> On Fri, Jul 19, 2024 at 1:45 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > >
-> > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > > > > > > > allowed for execution.  The main use case is for script interpreters and
-> > > > > > > > dynamic linkers to check execution permission according to the kernel's
-> > > > > > > > security policy. Another use case is to add context to access logs e.g.,
-> > > > > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > > > > executable code, scripts could also use this check [1].
-> > > > > > > >
-> > > > > > > > This is different than faccessat(2) which only checks file access
-> > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > > > > > > > real execution, user space gets the same error codes.
-> > > > > > > >
-> > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > > > > exec, shared object, script and config file (such as seccomp config),
-> >
-> > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
-> > > > > > > sure it passes AT_CHECK, before loading it into memory.
-> > > > > >
-> > > > > > All ELF dependencies are opened and checked with open_exec(), which
-> > > > > > perform the main executability checks (with the __FMODE_EXEC flag).
-> > > > > > Did I miss something?
-> > > > > >
-> > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
-> > > > > The app can choose its own dynamic linker path during build, (maybe
-> > > > > even statically link one ?)  This is another reason that relying on a
-> > > > > userspace only is not enough.
-> > > >
-> > > > The kernel calls open_exec() on all dependencies, including
-> > > > ld-linux-x86-64.so.2, so these files are checked for executability too.
-> > > >
-> > > This might not be entirely true. iiuc, kernel  calls open_exec for
-> > > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
-> >
-> > Correct, the dynamic linker is in charge of that, which is why it must
-> > be enlighten with execveat+AT_CHECK and securebits checks.
-> >
-> > > load_elf_binary() {
-> > >    interpreter = open_exec(elf_interpreter);
-> > > }
-> > >
-> > > libc.so.6 is opened and mapped by dynamic linker.
-> > > so the call sequence is:
-> > >  execve(a.out)
-> > >   - open exec(a.out)
-> > >   - security_bprm_creds(a.out)
-> > >   - open the exec(ld.so)
-> > >   - call open_exec() for interruptor (ld.so)
-> > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
-> > > the same check and code path as libc.so below ?
-> >
-> > open_exec() checks are enough.  LSMs can use this information (open +
-> > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
-> > request.
-> >
-> Then the ld.so doesn't go through the same security_bprm_creds() check
-> as other .so.
+Hi,
 
-Indeed, but...
+While the current approach works, I think we should change the way
+Landlock restricts network actions.  Because this feature is relatively
+new, we can still fix this inconsistency.  In a nutshell, let's follow a
+more capability-based model.  Please let me know what you think.
 
-> 
-> As my previous email, the ChromeOS LSM restricts executable mfd
-> through security_bprm_creds(), the end result is that ld.so can still
-> be executable memfd, but not other .so.
+Regards,
 
-The chromeOS LSM can check that with the security_file_open() hook and
-the __FMODE_EXEC flag, see Landlock's implementation.  I think this
-should be the only hook implementation that chromeOS LSM needs to add.
+Mickaël Salaün (3):
+  landlock: Use socket's domain instead of current's domain
+  selftests/landlock: Add test for socket's domain
+  landlock: Document network restrictions tied to sockets
 
-> 
-> One way to address this is to refactor the necessary code from
-> execveat() code patch, and make it available to call from both kernel
-> and execveat() code paths., but if we do that, we might as well use
-> faccessat2(AT_CHECK)
+ Documentation/userspace-api/landlock.rst    |  4 ++-
+ security/landlock/net.c                     | 22 ++++++++--------
+ tools/testing/selftests/landlock/net_test.c | 29 +++++++++++++++++++++
+ 3 files changed, 43 insertions(+), 12 deletions(-)
 
-That's why I think it makes sense to rely on the existing __FMODE_EXEC
-information.
 
-> 
-> 
-> > >   - transfer the control to ld.so)
-> > >   - ld.so open (libc.so)
-> > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
-> > > require dynamic linker change.
-> > >   - ld.so mmap(libc.so,rx)
-> >
-> > Explaining these steps is useful. I'll include that in the next patch
-> > series.
+base-commit: f4b89d8ce5a835afa51404977ee7e3889c2b9722
+-- 
+2.45.2
+
