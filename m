@@ -1,28 +1,27 @@
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9A484A28;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC96683A14;
 	Fri, 19 Jul 2024 10:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721386559; cv=none; b=Tt3xdlaALugmXfk0mH5lWsUWHZoEKb7aXEr+BkS7Jrlb4e4MdYzJMLwgwsC7YGSWDI30Zneh11l2ZeFf9x4i05JPikxoDSRu/KRkONnY4ofwmhJf+ei9UpRoNoMfkFTw6yu17ClONhRV8vJkvMiRuyNXM/8DWc/GTvqwgo3AyKQ=
+	t=1721386560; cv=none; b=nQI7y9/aGJe0RmnsTgU5C+A40E5YQ2LXZqpdx9PzmoL9oaoOmlRJjCPTpvSmKK7zBigofjt9p+7Mgu3XeLMknX+nkkqbXq8fXh02Ey6ztC2F2IEcu8BATcTD1/GgjWjtikLfKsUfVEcGrGO19jHE+K4QMPXdyXD6jPxxBZoO3f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721386559; c=relaxed/simple;
-	bh=USl+GS8SjbfAG9TdaFkQ19+FupY8gk0c9UWuJ1wPhLY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pcUJkTj8ETIXN7kRGlHU3Iv3MuWvdxKcMLRlbW03VTpbzg/w+VNdr+ym7hYu7MN4fkXqIJ8EYZfYpg5irpmcSPyxnATMT8X6G8UxwqtTgxO2gGC7bbR2Kq6UJeVpyfV0/33rAY/6w4Mw9k0iSJ4FdYE77TD6GzpyGgckHwBoLFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	s=arc-20240116; t=1721386560; c=relaxed/simple;
+	bh=rE6Ptw6QyPGUyOgXwCWyVd8DT9HkJTMUPru9G3bLjfo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tlk8zWCmOU+/PECPPROfJLuf3/Blizf7Gc92CjRRxtCSFCJc78Wq3jj7kLR3L6TRGMcuXe4VMQPJivoIV6rb3PYE+YXUV1UToV3qNJpP5bGkaKNvQZBoiV7r+iogVn2GLT+0gWX3gnyy1PfHTDLVtwMBHYgyIzVQ+f32O+B3W80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQRRN5bk0z4f3jjm;
-	Fri, 19 Jul 2024 18:55:44 +0800 (CST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQRRG6Tmpz4f3l11;
+	Fri, 19 Jul 2024 18:55:38 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id D57331A016E;
+	by mail.maildlp.com (Postfix) with ESMTP id 389771A0572;
 	Fri, 19 Jul 2024 18:55:52 +0800 (CST)
 Received: from k01.huawei.com (unknown [10.67.174.197])
-	by APP3 (Coremail) with SMTP id _Ch0CgD3BVE0RppmM3cvAg--.11767S8;
-	Fri, 19 Jul 2024 18:55:52 +0800 (CST)
+	by APP3 (Coremail) with SMTP id _Ch0CgD3BVE0RppmM3cvAg--.11767S2;
+	Fri, 19 Jul 2024 18:55:49 +0800 (CST)
 From: Xu Kuohai <xukuohai@huaweicloud.com>
 To: bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
@@ -43,12 +42,10 @@ Cc: Alexei Starovoitov <ast@kernel.org>,
 	Kees Cook <kees@kernel.org>,
 	Brendan Jackman <jackmanb@google.com>,
 	Florent Revest <revest@google.com>
-Subject: [PATCH bpf-next v2 6/9] selftests/bpf: Avoid load failure for token_lsm.c
-Date: Fri, 19 Jul 2024 19:00:56 +0800
-Message-Id: <20240719110059.797546-7-xukuohai@huaweicloud.com>
+Subject: [PATCH bpf-next v2 0/9] Add BPF LSM return value range check, BPF part
+Date: Fri, 19 Jul 2024 19:00:50 +0800
+Message-Id: <20240719110059.797546-1-xukuohai@huaweicloud.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240719110059.797546-1-xukuohai@huaweicloud.com>
-References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,78 +53,89 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgD3BVE0RppmM3cvAg--.11767S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw1rJr4DJry7XFy7Jr1UJrb_yoW5CF48pF
-	95W3429rWkJFy2kr1xXF13KryYqFs2va17JF1UCry0q3y7Kw4UXry7GFWakF95Grsayrsa
-	vF95XFZ0qr12kaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPvb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
-	AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
-	v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuY
-	vjxUI-eODUUUU
+X-CM-TRANSID:_Ch0CgD3BVE0RppmM3cvAg--.11767S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1rArWUZr1UZrW7WF4fuFg_yoW5Xryrpa
+	ykury5tr1FkF12qF4xGFW7CrWrJa1kX343C3Wxtr1rZF1UJryDXrWxGr1Ygr9xJrWFgwnY
+	v3WagFnak3W8Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU0s2-5UUUUU==
 X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
 From: Xu Kuohai <xukuohai@huawei.com>
 
-The compiler optimized the two bpf progs in token_lsm.c to make return
-value from the bool variable in the "return -1" path, causing an
-unexpected rejection:
+LSM BPF prog may make kernel panic when returning an unexpected value,
+such as returning positive value on hook file_alloc_security.
 
-0: R1=ctx() R10=fp0
-; int BPF_PROG(bpf_token_capable, struct bpf_token *token, int cap) @ bpf_lsm.c:17
-0: (b7) r6 = 0                        ; R6_w=0
-; if (my_pid == 0 || my_pid != (bpf_get_current_pid_tgid() >> 32)) @ bpf_lsm.c:19
-1: (18) r1 = 0xffffc9000102a000       ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5)
-3: (61) r7 = *(u32 *)(r1 +0)          ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5) R7_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-4: (15) if r7 == 0x0 goto pc+11       ; R7_w=scalar(smin=umin=umin32=1,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-5: (67) r7 <<= 32                     ; R7_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-6: (c7) r7 s>>= 32                    ; R7_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-7: (85) call bpf_get_current_pid_tgid#14      ; R0=scalar()
-8: (77) r0 >>= 32                     ; R0_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-9: (5d) if r0 != r7 goto pc+6         ; R0_w=scalar(smin=smin32=0,smax=umax=umax32=0x7fffffff,var_off=(0x0; 0x7fffffff)) R7=scalar(smin=smin32=0,smax=umax=umax32=0x7fffffff,var_off=(0x0; 0x7fffffff))
-; if (reject_capable) @ bpf_lsm.c:21
-10: (18) r1 = 0xffffc9000102a004      ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5,off=4)
-12: (71) r6 = *(u8 *)(r1 +0)          ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5,off=4) R6_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=255,var_off=(0x0; 0xff))
-;  @ bpf_lsm.c:0
-13: (87) r6 = -r6                     ; R6_w=scalar()
-14: (67) r6 <<= 56                    ; R6_w=scalar(smax=0x7f00000000000000,umax=0xff00000000000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xff00000000000000))
-15: (c7) r6 s>>= 56                   ; R6_w=scalar(smin=smin32=-128,smax=smax32=127)
-; int BPF_PROG(bpf_token_capable, struct bpf_token *token, int cap) @ bpf_lsm.c:17
-16: (bf) r0 = r6                      ; R0_w=scalar(id=1,smin=smin32=-128,smax=smax32=127) R6_w=scalar(id=1,smin=smin32=-128,smax=smax32=127)
-17: (95) exit
-At program exit the register R0 has smin=-128 smax=127 should have been in [-4095, 0]
+To fix it, series [1] refactored LSM hook return values and added
+BPF return value check on top of that. Since the refactoring of LSM
+hooks and checking BPF prog return value patches is not closely related,
+this series separates BPF-related patches from [1].
 
-To avoid this failure, change the variable type from bool to int.
+v2:
+- Update Shung-Hsi's patch with [3]
 
-Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
----
- tools/testing/selftests/bpf/progs/token_lsm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v1: https://lore.kernel.org/bpf/20240719081749.769748-1-xukuohai@huaweicloud.com/
 
-diff --git a/tools/testing/selftests/bpf/progs/token_lsm.c b/tools/testing/selftests/bpf/progs/token_lsm.c
-index e4d59b6ba743..a6002d073b1b 100644
---- a/tools/testing/selftests/bpf/progs/token_lsm.c
-+++ b/tools/testing/selftests/bpf/progs/token_lsm.c
-@@ -8,8 +8,8 @@
- char _license[] SEC("license") = "GPL";
- 
- int my_pid;
--bool reject_capable;
--bool reject_cmd;
-+int reject_capable;
-+int reject_cmd;
- 
- SEC("lsm/bpf_token_capable")
- int BPF_PROG(token_capable, struct bpf_token *token, int cap)
+Changes to [1]:
+
+1. Extend LSM disabled list to include hooks refactored in [1] to avoid
+   dependency on the hooks return value refactoring patches.
+
+2. Replace the special case patch for bitwise AND on [-1, 0] with Shung-Hsi's
+   general bitwise AND improvement patch [2].
+
+3. Remove unused patches.
+
+[1] https://lore.kernel.org/bpf/20240711111908.3817636-1-xukuohai@huaweicloud.com
+    https://lore.kernel.org/bpf/20240711113828.3818398-1-xukuohai@huaweicloud.com
+
+[2] https://lore.kernel.org/bpf/ykuhustu7vt2ilwhl32kj655xfdgdlm2xkl5rff6tw2ycksovp@ss2n4gpjysnw
+
+[3] https://lore.kernel.org/bpf/20240719081702.137173-1-shung-hsi.yu@suse.com/
+
+Shung-Hsi Yu (1):
+  bpf, verifier: improve signed ranges inference for BPF_AND
+
+Xu Kuohai (8):
+  bpf, lsm: Add disabled BPF LSM hook list
+  bpf, lsm: Add check for BPF LSM return value
+  bpf: Prevent tail call between progs attached to different hooks
+  bpf: Fix compare error in function retval_range_within
+  selftests/bpf: Avoid load failure for token_lsm.c
+  selftests/bpf: Add return value checks for failed tests
+  selftests/bpf: Add test for lsm tail call
+  selftests/bpf: Add verifier tests for bpf lsm
+
+ include/linux/bpf.h                           |   2 +
+ include/linux/bpf_lsm.h                       |   8 +
+ kernel/bpf/bpf_lsm.c                          |  65 ++++++-
+ kernel/bpf/btf.c                              |   5 +-
+ kernel/bpf/core.c                             |  21 ++-
+ kernel/bpf/verifier.c                         | 139 ++++++++++----
+ .../selftests/bpf/prog_tests/test_lsm.c       |  46 ++++-
+ .../selftests/bpf/prog_tests/verifier.c       |   2 +
+ tools/testing/selftests/bpf/progs/err.h       |  10 +
+ .../selftests/bpf/progs/lsm_tailcall.c        |  34 ++++
+ .../selftests/bpf/progs/test_sig_in_xattr.c   |   4 +
+ .../bpf/progs/test_verify_pkcs7_sig.c         |   8 +-
+ tools/testing/selftests/bpf/progs/token_lsm.c |   4 +-
+ .../bpf/progs/verifier_global_subprogs.c      |   7 +-
+ .../selftests/bpf/progs/verifier_lsm.c        | 178 ++++++++++++++++++
+ 15 files changed, 486 insertions(+), 47 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/lsm_tailcall.c
+ create mode 100644 tools/testing/selftests/bpf/progs/verifier_lsm.c
+
 -- 
 2.30.2
 
