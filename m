@@ -1,27 +1,27 @@
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C8584A32;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9A484A28;
 	Fri, 19 Jul 2024 10:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721386559; cv=none; b=r2RA+2HXpDlkgUCH7sXVEhibczVrWnPovgvXdsTO7PhtDc0nGK2nfurPfb2zSxAAGwRGr81n0o0B4ver6DmMvcxNlySIr8Sj7RG7JA+ng1UqYLbty2EOEn2kALJCFMDcGQpmrrGTwFSvHffTX/JfdEei/A9FKRkLNgJwYTDAqq0=
+	t=1721386559; cv=none; b=Tt3xdlaALugmXfk0mH5lWsUWHZoEKb7aXEr+BkS7Jrlb4e4MdYzJMLwgwsC7YGSWDI30Zneh11l2ZeFf9x4i05JPikxoDSRu/KRkONnY4ofwmhJf+ei9UpRoNoMfkFTw6yu17ClONhRV8vJkvMiRuyNXM/8DWc/GTvqwgo3AyKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721386559; c=relaxed/simple;
-	bh=zlqLgd6GZc0VkrNvoIBa6GFAHFPcWJh7iCT2Nln+fM0=;
+	bh=USl+GS8SjbfAG9TdaFkQ19+FupY8gk0c9UWuJ1wPhLY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wmjx1LOxvjbbCLKL3JOXyJrLOyM+Bktp5JONN/inu7GsEmATm0+36FYRzOvCaAzLl6g3oCZnjRepyPitYVffFxu/aLO7WPRyLgC0qk1bQqsTeC8qSD31hjLCmBMpg9SAhnYo0f0AymaTDplIlD4Q0XlMcMZ6MFL+GAwIiu83Bfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=pcUJkTj8ETIXN7kRGlHU3Iv3MuWvdxKcMLRlbW03VTpbzg/w+VNdr+ym7hYu7MN4fkXqIJ8EYZfYpg5irpmcSPyxnATMT8X6G8UxwqtTgxO2gGC7bbR2Kq6UJeVpyfV0/33rAY/6w4Mw9k0iSJ4FdYE77TD6GzpyGgckHwBoLFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQRRH2Jhqz4f3l1r;
-	Fri, 19 Jul 2024 18:55:39 +0800 (CST)
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQRRN5bk0z4f3jjm;
+	Fri, 19 Jul 2024 18:55:44 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 9F1091A11E8;
+	by mail.maildlp.com (Postfix) with ESMTP id D57331A016E;
 	Fri, 19 Jul 2024 18:55:52 +0800 (CST)
 Received: from k01.huawei.com (unknown [10.67.174.197])
-	by APP3 (Coremail) with SMTP id _Ch0CgD3BVE0RppmM3cvAg--.11767S6;
+	by APP3 (Coremail) with SMTP id _Ch0CgD3BVE0RppmM3cvAg--.11767S8;
 	Fri, 19 Jul 2024 18:55:52 +0800 (CST)
 From: Xu Kuohai <xukuohai@huaweicloud.com>
 To: bpf@vger.kernel.org,
@@ -43,9 +43,9 @@ Cc: Alexei Starovoitov <ast@kernel.org>,
 	Kees Cook <kees@kernel.org>,
 	Brendan Jackman <jackmanb@google.com>,
 	Florent Revest <revest@google.com>
-Subject: [PATCH bpf-next v2 4/9] bpf: Fix compare error in function retval_range_within
-Date: Fri, 19 Jul 2024 19:00:54 +0800
-Message-Id: <20240719110059.797546-5-xukuohai@huaweicloud.com>
+Subject: [PATCH bpf-next v2 6/9] selftests/bpf: Avoid load failure for token_lsm.c
+Date: Fri, 19 Jul 2024 19:00:56 +0800
+Message-Id: <20240719110059.797546-7-xukuohai@huaweicloud.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240719110059.797546-1-xukuohai@huaweicloud.com>
 References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
@@ -56,11 +56,11 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgD3BVE0RppmM3cvAg--.11767S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4kWF4rtw1kZw4rtw4UCFg_yoWrXw4rpr
-	4rG34qyr1DtF43ua12yan5A34FyF1aqayIkrWkJ3sYyw45trWDXFW2kw4Y9ayFyrW8Gw1I
-	vF4jva15Gw1UZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:_Ch0CgD3BVE0RppmM3cvAg--.11767S8
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1rJr4DJry7XFy7Jr1UJrb_yoW5CF48pF
+	95W3429rWkJFy2kr1xXF13KryYqFs2va17JF1UCry0q3y7Kw4UXry7GFWakF95Grsayrsa
+	vF95XFZ0qr12kaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPvb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
 	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
@@ -70,101 +70,64 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxXw4kWF4rtw1kZw4rtw4UCFg_yoWrXw4rpr
 	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
 	AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
 	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
-	07jIPfQUUUUU=
+	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF
+	7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
+	v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuY
+	vjxUI-eODUUUU
 X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
 From: Xu Kuohai <xukuohai@huawei.com>
 
-After checking lsm hook return range in verifier, the test case
-"test_progs -t test_lsm" failed, and the failure log says:
+The compiler optimized the two bpf progs in token_lsm.c to make return
+value from the bool variable in the "return -1" path, causing an
+unexpected rejection:
 
-libbpf: prog 'test_int_hook': BPF program load failed: Invalid argument
-libbpf: prog 'test_int_hook': -- BEGIN PROG LOAD LOG --
 0: R1=ctx() R10=fp0
-; int BPF_PROG(test_int_hook, struct vm_area_struct *vma, @ lsm.c:89
-0: (79) r0 = *(u64 *)(r1 +24)         ; R0_w=scalar(smin=smin32=-4095,smax=smax32=0) R1=ctx()
+; int BPF_PROG(bpf_token_capable, struct bpf_token *token, int cap) @ bpf_lsm.c:17
+0: (b7) r6 = 0                        ; R6_w=0
+; if (my_pid == 0 || my_pid != (bpf_get_current_pid_tgid() >> 32)) @ bpf_lsm.c:19
+1: (18) r1 = 0xffffc9000102a000       ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5)
+3: (61) r7 = *(u32 *)(r1 +0)          ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5) R7_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+4: (15) if r7 == 0x0 goto pc+11       ; R7_w=scalar(smin=umin=umin32=1,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+5: (67) r7 <<= 32                     ; R7_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+6: (c7) r7 s>>= 32                    ; R7_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
+7: (85) call bpf_get_current_pid_tgid#14      ; R0=scalar()
+8: (77) r0 >>= 32                     ; R0_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+9: (5d) if r0 != r7 goto pc+6         ; R0_w=scalar(smin=smin32=0,smax=umax=umax32=0x7fffffff,var_off=(0x0; 0x7fffffff)) R7=scalar(smin=smin32=0,smax=umax=umax32=0x7fffffff,var_off=(0x0; 0x7fffffff))
+; if (reject_capable) @ bpf_lsm.c:21
+10: (18) r1 = 0xffffc9000102a004      ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5,off=4)
+12: (71) r6 = *(u8 *)(r1 +0)          ; R1_w=map_value(map=bpf_lsm.bss,ks=4,vs=5,off=4) R6_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=255,var_off=(0x0; 0xff))
+;  @ bpf_lsm.c:0
+13: (87) r6 = -r6                     ; R6_w=scalar()
+14: (67) r6 <<= 56                    ; R6_w=scalar(smax=0x7f00000000000000,umax=0xff00000000000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xff00000000000000))
+15: (c7) r6 s>>= 56                   ; R6_w=scalar(smin=smin32=-128,smax=smax32=127)
+; int BPF_PROG(bpf_token_capable, struct bpf_token *token, int cap) @ bpf_lsm.c:17
+16: (bf) r0 = r6                      ; R0_w=scalar(id=1,smin=smin32=-128,smax=smax32=127) R6_w=scalar(id=1,smin=smin32=-128,smax=smax32=127)
+17: (95) exit
+At program exit the register R0 has smin=-128 smax=127 should have been in [-4095, 0]
 
-[...]
+To avoid this failure, change the variable type from bool to int.
 
-24: (b4) w0 = -1                      ; R0_w=0xffffffff
-; int BPF_PROG(test_int_hook, struct vm_area_struct *vma, @ lsm.c:89
-25: (95) exit
-At program exit the register R0 has smin=4294967295 smax=4294967295 should have been in [-4095, 0]
-
-It can be seen that instruction "w0 = -1" zero extended -1 to 64-bit
-register r0, setting both smin and smax values of r0 to 4294967295.
-This resulted in a false reject when r0 was checked with range [-4095, 0].
-
-Given bpf lsm does not return 64-bit values, this patch fixes it by changing
-the compare between r0 and return range from 64-bit operation to 32-bit
-operation for bpf lsm.
-
-Fixes: 8fa4ecd49b81 ("bpf: enforce exact retval range on subprog/callback exit")
 Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
-Acked-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
 ---
- kernel/bpf/verifier.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ tools/testing/selftests/bpf/progs/token_lsm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index fefa1d5d2faa..78104bd85274 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -9964,9 +9964,13 @@ static bool in_rbtree_lock_required_cb(struct bpf_verifier_env *env)
- 	return is_rbtree_lock_required_kfunc(kfunc_btf_id);
- }
+diff --git a/tools/testing/selftests/bpf/progs/token_lsm.c b/tools/testing/selftests/bpf/progs/token_lsm.c
+index e4d59b6ba743..a6002d073b1b 100644
+--- a/tools/testing/selftests/bpf/progs/token_lsm.c
++++ b/tools/testing/selftests/bpf/progs/token_lsm.c
+@@ -8,8 +8,8 @@
+ char _license[] SEC("license") = "GPL";
  
--static bool retval_range_within(struct bpf_retval_range range, const struct bpf_reg_state *reg)
-+static bool retval_range_within(struct bpf_retval_range range, const struct bpf_reg_state *reg,
-+				bool return_32bit)
- {
--	return range.minval <= reg->smin_value && reg->smax_value <= range.maxval;
-+	if (return_32bit)
-+		return range.minval <= reg->s32_min_value && reg->s32_max_value <= range.maxval;
-+	else
-+		return range.minval <= reg->smin_value && reg->smax_value <= range.maxval;
- }
+ int my_pid;
+-bool reject_capable;
+-bool reject_cmd;
++int reject_capable;
++int reject_cmd;
  
- static int prepare_func_exit(struct bpf_verifier_env *env, int *insn_idx)
-@@ -10003,8 +10007,8 @@ static int prepare_func_exit(struct bpf_verifier_env *env, int *insn_idx)
- 		if (err)
- 			return err;
- 
--		/* enforce R0 return value range */
--		if (!retval_range_within(callee->callback_ret_range, r0)) {
-+		/* enforce R0 return value range, and bpf_callback_t returns 64bit */
-+		if (!retval_range_within(callee->callback_ret_range, r0, false)) {
- 			verbose_invalid_scalar(env, r0, callee->callback_ret_range,
- 					       "At callback return", "R0");
- 			return -EINVAL;
-@@ -15610,6 +15614,7 @@ static int check_return_code(struct bpf_verifier_env *env, int regno, const char
- 	int err;
- 	struct bpf_func_state *frame = env->cur_state->frame[0];
- 	const bool is_subprog = frame->subprogno;
-+	bool return_32bit = false;
- 
- 	/* LSM and struct_ops func-ptr's return type could be "void" */
- 	if (!is_subprog || frame->in_exception_callback_fn) {
-@@ -15721,6 +15726,7 @@ static int check_return_code(struct bpf_verifier_env *env, int regno, const char
- 			/* no restricted range, any return value is allowed */
- 			if (range.minval == S32_MIN && range.maxval == S32_MAX)
- 				return 0;
-+			return_32bit = true;
- 		} else if (!env->prog->aux->attach_func_proto->type) {
- 			/* Make sure programs that attach to void
- 			 * hooks don't try to modify return value.
-@@ -15751,7 +15757,7 @@ static int check_return_code(struct bpf_verifier_env *env, int regno, const char
- 	if (err)
- 		return err;
- 
--	if (!retval_range_within(range, reg)) {
-+	if (!retval_range_within(range, reg, return_32bit)) {
- 		verbose_invalid_scalar(env, reg, range, exit_ctx, reg_name);
- 		if (!is_subprog &&
- 		    prog->expected_attach_type == BPF_LSM_CGROUP &&
+ SEC("lsm/bpf_token_capable")
+ int BPF_PROG(token_capable, struct bpf_token *token, int cap)
 -- 
 2.30.2
 
