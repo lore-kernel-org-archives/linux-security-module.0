@@ -1,323 +1,228 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B68145A1A
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 18:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D580BE5A
+	for <linux-security-module@vger.kernel.org>; Sat, 20 Jul 2024 01:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721412854; cv=none; b=MURXmTYliPRPm37UfZebR47AzsruMQL/ma5yOi5dAhMXnekCNfIjrMRQp4/kbz5CGpSZxcG/P+Q6ePmgPAXkQ9qMeTgnWz6O/xDOT+7AQ4rCWlNRq5NrO8c4/SWKE0eJ1Ag/q9UinBopcgw/12R2MCy10yMArPvKVeSNvkBRsSY=
+	t=1721440790; cv=none; b=jQLB9StrejtMKmQWn8492VWAnCnPRQZqdl4XWA4XjVJ13Q5ri4cheZ9nwlRLWr2DB2AfEg6M/1t/6PlYVRwBKcXiySh7xe2kdm6SQ4OUBm0Bt25Ii1o8un9iM3ln39GRcyQPKuQcqEn4NEYuP+ZmyFmCDnu+N2QpLKG5AGQWF1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721412854; c=relaxed/simple;
-	bh=qCrqHdn+cpkWR3yivLl119Ad62YP9Gu7JeJQO9PsfUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwTMrnVBf7/gMAxD6EDTHxAdFL7iATTsNGSg1E/oS6l4+aBWImIFdMdO+v/L8tmcyGKnydsHeFjQvMNN9cYhoVUT28QDuUMhMzh8FznM+CMXcREpBUFg2A+vPiKRg5Fb+t13mz9LVOrQlcAr9fJuermVwiJ8/JB5WhIFYRU2HhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OlBdRfZU; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1721440790; c=relaxed/simple;
+	bh=E1eLx88XHE6fDhD73HMyCsMIQaNNvWZwSr2N86ttOKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jkKxBMWweMoQBRtFuODOOd3LVfDUX+Xvt5MDa9ZjdoA74SmcLXS/1uiAfF4YAhqUS7gE3epXJtl7Y7aGZqLhzL6vCQUYHvg4VwaQ3nfMXa+hHYDdfYpXLIrYReTCIRdGZbs4dDF8c8Ng69NuDgJo4ZR6HoUU7sY6t/KCkOwyGDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=hSZYFHzB; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OlBdRfZU"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQd9B1JHSzYJB;
-	Fri, 19 Jul 2024 20:14:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721412846;
-	bh=Sfu7kbVhK7l3nqVtAhoPi7msdo+3IQX+4FwZA44EGgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OlBdRfZUhd534U/aK4GNrmC8QpD79aZSrAOFi/PqN71269udy5dKni70LUqT1DFMC
-	 ZnNwoZFZrMm8XsVV8cdILIOy3aXHyPj3ON0udSwvLVqTaDCVkPSDWwGW0NbOdFeL0M
-	 AGO05GreLlBAJu28zxT3xOw3yg8ug8T+JKVoxeKc=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQd990l2Wznlr;
-	Fri, 19 Jul 2024 20:14:05 +0200 (CEST)
-Date: Fri, 19 Jul 2024 20:14:02 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240719.AepeeXeib7sh@digikod.net>
-References: <cover.1721269836.git.fahimitahera@gmail.com>
- <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="hSZYFHzB"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-59f9f59b827so1800678a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Jul 2024 18:59:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1721440785; x=1722045585; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hF0Wt/38bKIJqW5oK7QO5iRqmAOtacgZ7FH0L0aMp3Y=;
+        b=hSZYFHzBF7OkIJOlIzzuDohVNWl640CV13N8JiFOLm53TkI1PYZRPBpJjvOjMT0JGq
+         p5RBnmerPzNovwpgIYfh10WorY3KOEFhrZwb7SDJDpFipR7878sk7+mTM2mT+G3C05nr
+         ESjj57iHS3FMoOMuZ0wvQ6SkGjmYkmc6kJHseJsNrpD8i4JzFM7miqTYvCR2hkqFW5L/
+         zvoLkJ5i0MbL2tC5xToGcN8HEWyzkBjyBGJoW8n5mKFtxVg2Ho/olCTor8Ri5NC0I2uV
+         bxCAjAsHtwBthV9JXoj63OuTxMv7kkRmBC/nh0nwVOx5d/qhe679aj4XXZdHROG8o75f
+         Oifg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721440785; x=1722045585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hF0Wt/38bKIJqW5oK7QO5iRqmAOtacgZ7FH0L0aMp3Y=;
+        b=RUk8Jp7+fLAbSH7GSpxM9v3gBwT5STmHzSkYQ31/ocHL7lbEm2gIgWU9KArLyjlNYj
+         J///k/DjmM+KLALETs6Ep8G1pxzyd25gcg2v8w5TevF+N70K0F4nq860x7AoikkPQjE0
+         HlrmQwZnzQrq5zietwrXQz0NExVnI5WCigjDgdd/Fb+egyUI5lOu3cw3STMhcWtuLoDj
+         wlDxrdnnR3EnupGDEwoyKC3Qi2kU0r9Y4x8ON1Mkx3XcRmYUa+N1hZrQWwfqRHOWZWnK
+         zI652ujK2czw6BZ8vQKi5wUFNKbsnpwwPLMUo1d5083dX07C6mYLaUMSaY5rDCvgM/X6
+         QVSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVORJAdSU/1VP0hTtqkIJExtgrG119+1Ebg3CO9dp7bo17ambcWzV1DlnowuGR3UUOO1fPoIPGFuZRUaVjto9fLLauD8tUfGHRFLurct/Vtkt6xXzq
+X-Gm-Message-State: AOJu0YyjjOiTtVMhLzi747QvHZFsFlLalc/aXHbK9QzLyIEzlgSpDTrE
+	expQpRPfBGN4kZ28pzXlcErrlwu7qzU1zb/9RIK+wG4hoqu9VRL3bVelzVnIOna450bu25xObcL
+	P8Dn6jUqthCbXpuugu4lwQlYFtxyyWHbJqCim
+X-Google-Smtp-Source: AGHT+IGPYuZjDvQfeyD4B+TT7ChrPYCBt+VlxtnMNlpScn9nrLy6yNlQv3uwy7Afge2EeZ7qAEBLsOBXVTnm/afPX2s=
+X-Received: by 2002:a50:c051:0:b0:5a1:a469:4d9b with SMTP id
+ 4fb4d7f45d1cf-5a47967b45cmr145698a12.13.1721440785336; Fri, 19 Jul 2024
+ 18:59:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org> <20240717.AGh2shahc9ee@digikod.net>
+ <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com> <20240718.Niexoo0ahch0@digikod.net>
+In-Reply-To: <20240718.Niexoo0ahch0@digikod.net>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Sat, 20 Jul 2024 09:59:33 +0800
+Message-ID: <CALCETrVVq4DJZ2q9V9TMuvZ1nb+-Qf4Eu8LVBgUy3XiTa=jFCQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Steve Dower <steve.dower@python.org>, Jeff Xu <jeffxu@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 10:15:19PM -0600, Tahera Fahimi wrote:
-> The patch introduces a new "scoped" attribute to the
-> landlock_ruleset_attr that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET"
-> to scope abstract unix sockets from connecting to a process outside of
-> the same landlock domain.
-> 
-> This patch implement two hooks, "unix_stream_connect" and "unix_may_send" to
-> enforce this restriction.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
-> -------
+> On Jul 18, 2024, at 8:22=E2=80=AFPM, Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+>
+> =EF=BB=BFOn Thu, Jul 18, 2024 at 09:02:56AM +0800, Andy Lutomirski wrote:
+>>>> On Jul 17, 2024, at 6:01=E2=80=AFPM, Micka=C3=ABl Sala=C3=BCn <mic@dig=
+ikod.net> wrote:
+>>>
+>>> On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
+>>>>> On 17/07/2024 07:33, Jeff Xu wrote:
+>>>>> Consider those cases: I think:
+>>>>> a> relying purely on userspace for enforcement does't seem to be
+>>>>> effective,  e.g. it is trivial  to call open(), then mmap() it into
+>>>>> executable memory.
+>>>>
+>>>> If there's a way to do this without running executable code that had t=
+o pass
+>>>> a previous execveat() check, then yeah, it's not effective (e.g. a Pyt=
+hon
+>>>> interpreter that *doesn't* enforce execveat() is a trivial way to do i=
+t).
+>>>>
+>>>> Once arbitrary code is running, all bets are off. So long as all arbit=
+rary
+>>>> code is being checked itself, it's allowed to do things that would byp=
+ass
+>>>> later checks (and it's up to whoever audited it in the first place to
+>>>> prevent this by not giving it the special mark that allows it to pass =
+the
+>>>> check).
+>>>
+>>> Exactly.  As explained in the patches, one crucial prerequisite is that
+>>> the executable code is trusted, and the system must provide integrity
+>>> guarantees.  We cannot do anything without that.  This patches series i=
+s
+>>> a building block to fix a blind spot on Linux systems to be able to
+>>> fully control executability.
+>>
+>> Circling back to my previous comment (did that ever get noticed?), I
+>
+> Yes, I replied to your comments.  Did I miss something?
 
-Only "---"
+I missed that email in the pile, sorry. I=E2=80=99ll reply separately.
 
-> v7:
+>
+>> don=E2=80=99t think this is quite right:
+>>
+>> https://lore.kernel.org/all/CALCETrWYu=3DPYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3=
+U5h6+U0tA@mail.gmail.com/
+>>
+>> On a basic system configuration, a given path either may or may not be
+>> executed. And maybe that path has some integrity check (dm-verity,
+>> etc).  So the kernel should tell the interpreter/loader whether the
+>> target may be executed. All fine.
+>>
+>> But I think the more complex cases are more interesting, and the
+>> =E2=80=9Cexecute a program=E2=80=9D process IS NOT BINARY.  An attempt t=
+o execute can
+>> be rejected outright, or it can be allowed *with a change to creds or
+>> security context*.  It would be entirely reasonable to have a policy
+>> that allows execution of non-integrity-checked files but in a very
+>> locked down context only.
+>
+> I guess you mean to transition to a sandbox when executing an untrusted
+> file.  This is a good idea.  I talked about role transition in the
+> patch's description:
+>
+> With the information that a script interpreter is about to interpret a
+> script, an LSM security policy can adjust caller's access rights or log
+> execution request as for native script execution (e.g. role transition).
+> This is possible thanks to the call to security_bprm_creds_for_exec().
 
-Thanks for the detailed changelog, it helps!
+=E2=80=A6
 
->  - Using socket's file credentials for both connected(STREAM) and
->    non-connected(DGRAM) sockets.
->  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
->    ptrace ensures that if a server's domain is accessible from the client's
->    domain (where the client is more privileged than the server), the client
->    can connect to the server in all edge cases.
->  - Removing debug codes.
-> v6:
->  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
->    the same domain scoping as ptrace.
->  - code clean up.
-> v5:
->  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
->  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
->    landlock_hierarchy to its respective landlock_ruleset.
->  - Using curr_ruleset to check if a domain is scoped while walking in the
->    hierarchy of domains.
->  - Modifying inline comments.
-> V4:
->  - Rebased on Günther's Patch:
->    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
->    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
->  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
->  - Using file's FD credentials instead of credentials stored in peer_cred
->    for datagram sockets. (see discussion in [1])
->  - Modifying inline comments.
-> V3:
->  - Improving commit description.
->  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
->    purpose, and adding related functions.
->  - Changing structure of ruleset based on "scoped".
->  - Removing rcu lock and using unix_sk lock instead.
->  - Introducing scoping for datagram sockets in unix_may_send.
-> V2:
->  - Removing wrapper functions
-> 
-> [1]https://lore.kernel.org/outreachy/Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000/T/#m8cdf33180d86c7ec22932e2eb4ef7dd4fc94c792
+> This patch series brings the minimal building blocks to have a
+> consistent execution environment.  Role transitions for script execution
+> are left to LSMs.  For instance, we could extend Landlock to
+> automatically sandbox untrusted scripts.
 
+I=E2=80=99m not really convinced.  There=E2=80=99s more to building an API =
+that
+enables LSM hooks than merely sticking the hook somewhere in kernel
+code. It needs to be a defined API. If you call an operation =E2=80=9Ccheck=
+=E2=80=9D,
+then people will expect it to check, not to change the caller=E2=80=99s
+credentials.  And people will mess it up in both directions (e.g.
+callers will call it and then open try to load some library that they
+should have loaded first, or callers will call it and forget to close
+fds first.
 
-> -------
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+And there should probably be some interaction with dumpable as well.
+If I =E2=80=9Ccheck=E2=80=9D a file for executability, that should not sudd=
+enly allow
+someone to ptrace me?
 
-No need for this hunk.
-
-
-> ---
->  include/uapi/linux/landlock.h |  29 +++++++++
->  security/landlock/limits.h    |   3 +
->  security/landlock/ruleset.c   |   7 ++-
->  security/landlock/ruleset.h   |  23 ++++++-
->  security/landlock/syscalls.c  |  14 +++--
->  security/landlock/task.c      | 112 ++++++++++++++++++++++++++++++++++
->  6 files changed, 181 insertions(+), 7 deletions(-)
-
-> diff --git a/security/landlock/task.c b/security/landlock/task.c
-> index 849f5123610b..597d89e54aae 100644
-> --- a/security/landlock/task.c
-> +++ b/security/landlock/task.c
-> @@ -13,6 +13,8 @@
->  #include <linux/lsm_hooks.h>
->  #include <linux/rcupdate.h>
->  #include <linux/sched.h>
-> +#include <net/sock.h>
-> +#include <net/af_unix.h>
->  
->  #include "common.h"
->  #include "cred.h"
-> @@ -108,9 +110,119 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
->  	return task_ptrace(parent, current);
->  }
->  
-> +static int walk_and_check(const struct landlock_ruleset *const child,
-> +			  struct landlock_hierarchy **walker, int i, int j,
-
-We don't know what are "i" and "j" are while reading this function's
-signature.  They need a better name.
-
-Also, they are ingegers (signed), whereas l1 and l2 are size_t (unsigned).
-
-> +			  bool check)
-> +{
-> +	if (!child || i < 0)
-> +		return -1;
-> +
-> +	while (i < j && *walker) {
-
-This would be more readable with a for() loop.
-
-> +		if (check && landlock_get_scope_mask(child, j))
-
-This is correct now but it will be a bug when we'll have other scope.
-Instead, you can replace the "check" boolean with a variable containing
-LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET.
-
-> +			return -1;
-> +		*walker = (*walker)->parent;
-> +		j--;
-> +	}
-> +	if (!*walker)
-> +		pr_warn_once("inconsistency in landlock hierarchy and layers");
-
-This must indeed never happen, but WARN_ON_ONCE(!*walker) would be
-better than this check+pr_warn.
-
-Anyway, if this happen this pointer will still be dereferenced in
-domain_sock_scope() right?  This must not be possible.
+And callers need to know to exit on failure, not carry on.
 
 
-> +	return j;
+More concretely, a runtime that fully opts in to this may well "check"
+multiple things.  For example, if I do:
 
-Because j is now equal to i, no need to return it.  This function can
-return a boolean instead, or a struct landlock_ruleset pointer/NULL to
-avoid the pointer of pointer?
+$ ld.so ~/.local/bin/some_program   (i.e. I literally execve ld.so)
 
-> +}
-> +
-> +/**
-> + * domain_sock_scope - Checks if client domain is scoped in the same
-> + *			domain as server.
-> + *
-> + * @client: Connecting socket domain.
-> + * @server: Listening socket domain.
-> + *
-> + * Checks if the @client domain is scoped, then the server should be
-> + * in the same domain to connect. If not, @client can connect to @server.
-> + */
-> +static bool domain_sock_scope(const struct landlock_ruleset *const client,
+then ld.so will load several things:
 
-This function can have a more generic name if
-LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET is passed as argument.  This could
-be reused as-is for other kind of scope.
+~/.local/bin/some_program
+libc.so
+other random DSOs, some of which may well be in my home directory
 
-> +			      const struct landlock_ruleset *const server)
-> +{
-> +	size_t l1, l2;
-> +	int scope_layer;
-> +	struct landlock_hierarchy *cli_walker, *srv_walker;
+And for all ld.so knows, some_program is actually an interpreter and
+will "check" something else.  And the LSMs have absolutely no clue
+what's what.  So I think for this to work right, the APIs need to be a
+lot more expressive and explicit:
 
-We have some room for a bit more characters ;)
-client_walker, server_walker;
+check_library(fd to libc.so);  <-- does not transition or otherwise drop pr=
+ivs
+check_transition_main_program(fd to ~/.local/bin/some_program);  <--
+may drop privs
 
-> +
-> +	if (!client)
-> +		return true;
-> +
-> +	l1 = client->num_layers - 1;
+and if some_program is really an interpreter, then it will do:
 
-Please rename variables in a consistent way, in this case something like
-client_layer?
+check_library(fd to some thing imported by the script);
+check_transition_main_program(fd to the actual script);
 
-> +	cli_walker = client->hierarchy;
-> +	if (server) {
-> +		l2 = server->num_layers - 1;
-> +		srv_walker = server->hierarchy;
-> +	} else
-> +		l2 = 0;
-> +
-> +	if (l1 > l2)
-> +		scope_layer = walk_and_check(client, &cli_walker, l2, l1, true);
+And maybe that takes a parameter that gets run eval-style:
 
-Instead of mixing the layer number with an error code, walk_and_check()
-can return a boolean, take as argument &scope_layer, and update it.
+check_unsafe_user_script("actual contents of snippet");
 
-> +	else if (l2 > l1)
-> +		scope_layer =
-> +			walk_and_check(server, &srv_walker, l1, l2, false);
-> +	else
-> +		scope_layer = l1;
-> +
-> +	if (scope_layer == -1)
-> +		return false;
+The actual spelling of all this doesn't matter so much.  But the user
+code and the kernel code need to be on the same page as to what the
+user program is doing and what it's asking the kernel program to do.
 
-All these domains and layers checks are difficult to review. It needs at
-least some comments, and preferably also some code refactoring to avoid
-potential inconsistencies (checks).
-
-> +
-> +	while (scope_layer >= 0 && cli_walker) {
-
-Why srv_walker is not checked?  Could this happen?  What would be the
-result?
-
-Please also use a for() loop here.
-
-> +		if (landlock_get_scope_mask(client, scope_layer) &
-> +		    LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET) {
-
-The logic needs to be explained.
-
-> +			if (!server)
-> +				return false;
-> +
-> +			if (srv_walker == cli_walker)
-> +				return true;
-> +
-> +			return false;
-> +		}
-> +		cli_walker = cli_walker->parent;
-> +		srv_walker = srv_walker->parent;
-> +		scope_layer--;
-> +	}
-> +	return true;
-> +}
-> +
-> +static bool sock_is_scoped(struct sock *const other)
-> +{
-> +	const struct landlock_ruleset *dom_other;
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	/* the credentials will not change */
-> +	lockdep_assert_held(&unix_sk(other)->lock);
-> +	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-> +
-> +	/* other is scoped, they connect if they are in the same domain */
-> +	return domain_sock_scope(dom, dom_other);
-> +}
-> +
-> +static int hook_unix_stream_connect(struct sock *const sock,
-> +				    struct sock *const other,
-> +				    struct sock *const newsk)
-> +{
-> +	if (sock_is_scoped(other))
-> +		return 0;
-> +
-> +	return -EPERM;
-> +}
-> +
-> +static int hook_unix_may_send(struct socket *const sock,
-> +			      struct socket *const other)
-> +{
-> +	if (sock_is_scoped(other->sk))
-> +		return 0;
-> +
-> +	return -EPERM;
-> +}
-> +
->  static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
->  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
-> +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
-> +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
->  };
->  
->  __init void landlock_add_task_hooks(void)
-> -- 
-> 2.34.1
-> 
-> 
+--Andy
