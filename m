@@ -1,90 +1,134 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2BE15E8C
-	for <linux-security-module@vger.kernel.org>; Sat, 20 Jul 2024 09:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7558840847;
+	Sat, 20 Jul 2024 09:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721467034; cv=none; b=SlVxeWqf4FwJxHSAvIu+c+r+egG+sumlfDcysZLwgV6UVXrFkE8Q5RkbsKzCXOiw0cFHuF804I0hSg28RRu4ES/rXzuM4MwgQmiH+1cOYb0ieD5HBDQhbDQVGcihPdc2pzZkpsBW5/ODsNM6Dob+wyBUZM5W8T66IZ3sXrdD73Y=
+	t=1721467693; cv=none; b=efgww0Pxf8fquwkfXAiD6qiB/MnJ0y7DVmYkXTWp6kLAJcOzfQaWhwcNfxv5xtGf+VK25nyX80mDWCJ9G/TIl1H0WLqxFH5fJXNwBEX9YMJ5WWyAaYvHBk6FreG6aQ6EkbcU15MC8JweNXNT+6cq+dVE543Wmi8pvb8EfHu/SKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721467034; c=relaxed/simple;
-	bh=zBlyMiZr5ZJ4NHeCLJ7YGyvosulwqESWN7yt2NzJulE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V8jdGzwzhQwpjbmnHSkhfqXoWAdSKemHMch2XGL/k2FucZ84/fsWGNGzPl8kVygLSnfmx//rF4uPvj0XwOqo5ulM1gsMFGRs9WmqKIUjPlm3DEJidja2xrQmE7Bd9k8yvjgeMTMHfyWV2OrDHXqEgscF0YPV4Vsx/yyHGHFYrxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WSPw5Pq8; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WSPw5Pq8"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WR11N18v0z5Vh;
-	Sat, 20 Jul 2024 11:08:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721466520;
-	bh=yjXRrqUcVbN8llmZR7ukkPu82dUi4AHWsqh4sofvfA4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WSPw5Pq8BN7GDzAmfamZNj4VM4tjQdIVs473U2DEYG41a5Tk5nLPhVy88bl4TnJMe
-	 vtvIddwZtE6VTehr79VAVUBsILT6OFqwWHCe9AuLPbjWIkDg675z8eNESLTbHQOP99
-	 jnfuMfwneFBcEuufdLB8z29D+T9hhcLcGKX+6pKg=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WR11M2YRfzBsX;
-	Sat, 20 Jul 2024 11:08:39 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v6.11
-Date: Sat, 20 Jul 2024 11:08:34 +0200
-Message-ID: <20240720090834.267835-1-mic@digikod.net>
+	s=arc-20240116; t=1721467693; c=relaxed/simple;
+	bh=l+nqa5nuwOmzj5kBnQDOncKPCh024WoBxcbNeqzzTjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=twz4/xmAU12ZdnTFoldrNBkTM2bvknQ7zDvUOmgC4I72/QHGO85DapyCUAtoKnYhDkWTGKgEHMPa6DiVmOJTU2LHuNhK9CnJmhWpNBrLrj5TH6JF1E9jU2OFPwVEO/aFu5Fl306SjmBrSZOnY5aOhdX6+5RukTi4fxn87JnhQZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WR1RS0TNWz4f3jdT;
+	Sat, 20 Jul 2024 17:27:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 3EEB71A0820;
+	Sat, 20 Jul 2024 17:28:00 +0800 (CST)
+Received: from [10.67.111.192] (unknown [10.67.111.192])
+	by APP2 (Coremail) with SMTP id Syh0CgBnxg0cg5tmdeOcAg--.53823S2;
+	Sat, 20 Jul 2024 17:27:57 +0800 (CST)
+Message-ID: <b78ced92-78a4-41d2-8d2b-248f8bb43abb@huaweicloud.com>
+Date: Sat, 20 Jul 2024 17:27:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/20] lsm: Refactor return value of LSM hook
+ inode_need_killpriv
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-integrity@vger.kernel.org,
+ selinux@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>,
+ Khadija Kamran <kamrankhadijadj@gmail.com>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
+ John Johansen <john.johansen@canonical.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Shung-Hsi Yu <shung-hsi.yu@suse.com>, Edward Cree <ecree.xilinx@gmail.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Anna Schumaker <anna@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>
+References: <20240711111908.3817636-3-xukuohai@huaweicloud.com>
+ <1cc57fedd0b012874a031dc3d3d4a0fd@paul-moore.com>
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+In-Reply-To: <1cc57fedd0b012874a031dc3d3d4a0fd@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgBnxg0cg5tmdeOcAg--.53823S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tryDtr13XFy7Jw47Xw1kKrg_yoW8ZFW7pr
+	WYkF4Y9w1DAFyxur9aqF17uw4Fy3yfGr47ta9akryUZFn8Ar1Ikr4Syw429r18Xr10vryY
+	vws2v3WrCF1UAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
+	xVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1U
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUVZ
+	2-UUUUU
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-Hi Linus,
+On 7/19/2024 10:08 AM, Paul Moore wrote:
+> On Jul 11, 2024 Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+>>
+>> To be consistent with most LSM hooks, convert the return value of
+>> hook inode_need_killpriv to 0 or a negative error code.
+>>
+>> Before:
+>> - Both hook inode_need_killpriv and func security_inode_need_killpriv
+>>    return > 0 if security_inode_killpriv is required, 0 if not, and < 0
+>>    to abort the operation.
+>>
+>> After:
+>> - Both hook inode_need_killpriv and func security_inode_need_killpriv
+>>    return 0 on success and a negative error code on failure.
+>>    On success, hook inode_need_killpriv sets output param @need to true
+>>    if security_inode_killpriv is required, and false if not. When @need
+>>    is true, func security_inode_need_killpriv sets ATTR_KILL_PRIV flag
+>>    in @attr; when false, it clears the flag.
+>>    On failure, @need and @attr remains unchanged.
+>>
+>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+>> ---
+>>   fs/attr.c                     |  5 ++---
+>>   fs/inode.c                    |  4 +---
+>>   include/linux/lsm_hook_defs.h |  2 +-
+>>   include/linux/security.h      | 20 ++++++++++++++++----
+>>   security/commoncap.c          | 12 ++++++++----
+>>   security/security.c           | 29 ++++++++++++++++++++++++-----
+>>   6 files changed, 52 insertions(+), 20 deletions(-)
+> 
+> In general I think a lot of these changes are a good improvement, thank
+> you very much for the time and effort you've spent on this.  However,
+> I'm not in favor of passing the new hook parameter as a way of reducing
+> the number of states represented by the security_inode_killpriv() return
+> value.  This particular hook may need to remain as one of the odd special
+> cases.
+> 
 
-This PR simplifies code and improves documentation.
+I learned from previous discussions [1] to use a new output parameter to store
+odd return values. Actually, I am not in favor of this method either, especially
+since it requires extra work to enable BPF to access the output parameter. I
+think we could just keep it as-is.
 
-Please pull these changes for v6.11-rc1.  This commit merged cleanly with your
-master branch.  The kernel code has been tested in the latest linux-next
-releases.
+[1] https://lore.kernel.org/bpf/CAHC9VhQ_sTmoXwQ_AVfjTYQe4KR-uTnksPVfsei5JZ+VDJBQkA@mail.gmail.com/
 
-Regards,
- Mickaël
-
---
-The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
-
-  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.11-rc1
-
-for you to fetch changes up to f4b89d8ce5a835afa51404977ee7e3889c2b9722:
-
-  landlock: Various documentation improvements (2024-07-18 08:27:47 +0200)
-
-----------------------------------------------------------------
-Landlock updates for v6.11-rc1
-
-----------------------------------------------------------------
-Günther Noack (3):
-      landlock: Use bit-fields for storing handled layer access masks
-      landlock: Clarify documentation for struct landlock_ruleset_attr
-      landlock: Various documentation improvements
-
- Documentation/userspace-api/landlock.rst |  2 +-
- include/uapi/linux/landlock.h            | 66 ++++++++++++++++++--------------
- security/landlock/limits.h               |  2 -
- security/landlock/ruleset.c              |  4 --
- security/landlock/ruleset.h              | 24 +++++-------
- security/landlock/syscalls.c             | 17 ++++----
- 6 files changed, 56 insertions(+), 59 deletions(-)
