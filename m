@@ -1,30 +1,35 @@
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A9C7829C;
-	Sat, 20 Jul 2024 09:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7197D29AB
+	for <linux-security-module@vger.kernel.org>; Sat, 20 Jul 2024 10:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721467910; cv=none; b=RDQZdLOLwnEpvmLew8lngF935gCRAKEhnC1Zidn/BuvdMAXrX77ajFuJkL6qSaKXKR1mgKr5FhwU7+0lYao/38cSjKvvC8qlzOj8o9TDhxI1I0ol+4ZL3mvYnerNJJQ+Pd/kO8mCcDq34zqW4g/hIc+70whAur990+En+wjzUyc=
+	t=1721471454; cv=none; b=chESE6vOUvane20GPcZUzKPgRU+3nFQvi3DxfX5FM1YMtp+rBkceLvk9R1zd5LET/1I6Xv8UrkzUgWYW6Ms63f3RbKGH1rjOZLya1+fKqfxSrUlN99rb0guTX1KKjliejBrLoUkgs6Q+zJY6BIYdu+gYd6L8C098T7X3ev5xXvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721467910; c=relaxed/simple;
-	bh=2l6tmWT9koYokJ/U+bvELmWCsy+MWH156hsZGwlidAQ=;
+	s=arc-20240116; t=1721471454; c=relaxed/simple;
+	bh=ZP6OOWbF7mpjRAPFyMhEs7+dz9eq9abWtqD4IWCEcYI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYrWMIQAHeY/wn3bv2FZMLuI4kdEWP5/FKz+ySEAiCndHxtyxIg1zdJHhtL9rhL8XJ64yb9bpiTV3qA7hIoW62/a0krN+gSCZpLLz8hxQFuwqogTTOY/QgSFvY+29FiS/mkqQeHB/XO7KeYbSFwutO/Jlu9BIFO15hSqMoVsdzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WR1Ws4Xv7z4f3jkM;
-	Sat, 20 Jul 2024 17:31:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B91DD1A0809;
-	Sat, 20 Jul 2024 17:31:45 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP4 (Coremail) with SMTP id gCh0CgBHdzW5g5tmfxqfAg--.54511S5;
-	Sat, 20 Jul 2024 17:31:45 +0800 (CST)
-Message-ID: <dc54d44a-465a-472c-8636-5de786ad0264@huaweicloud.com>
-Date: Sat, 20 Jul 2024 17:31:44 +0800
+	 In-Reply-To:Content-Type; b=hoHcCSPdqu3KffyInUL+dMIvYitiJaxTRYB/BQqnFSN9l0ARoo39lJWzzG8SHIguACN8uDZ4d90uPZGldQJM2LD3gjxjVwmxP5ohloZAvnHrFl3o77+gPn+/QJCn1X2KsCU8E5tozKp0TSySYtT01a7s0qSDXiJW05N0hqfEh9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46KAUnSQ013652;
+	Sat, 20 Jul 2024 19:30:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
+ Sat, 20 Jul 2024 19:30:49 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46KAUmeX013646
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 20 Jul 2024 19:30:49 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <9d26b25e-d0bf-426c-bd5a-aec5746dc848@I-love.SAKURA.ne.jp>
+Date: Sat, 20 Jul 2024 19:30:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -32,100 +37,176 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/20] lsm: Refactor return value of LSM hook
- setprocattr
+Subject: Re: [PATCH v14 3/3] security: Replace indirect LSM hook calls with
+ static calls
+To: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc: ast@kernel.org, paul@paul-moore.com, casey@schaufler-ca.com,
+        andrii@kernel.org, keescook@chromium.org, daniel@iogearbox.net,
+        renauld@google.com, revest@chromium.org, song@kernel.org
+References: <20240710000500.208154-1-kpsingh@kernel.org>
+ <20240710000500.208154-4-kpsingh@kernel.org>
 Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-integrity@vger.kernel.org,
- selinux@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>,
- Khadija Kamran <kamrankhadijadj@gmail.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
- John Johansen <john.johansen@canonical.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Shung-Hsi Yu <shung-hsi.yu@suse.com>, Edward Cree <ecree.xilinx@gmail.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Anna Schumaker <anna@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-References: <20240711111908.3817636-8-xukuohai@huaweicloud.com>
- <9f26368cc7aeccba460c9bce0a13f301@paul-moore.com>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <9f26368cc7aeccba460c9bce0a13f301@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20240710000500.208154-4-kpsingh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBHdzW5g5tmfxqfAg--.54511S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7trWUJw4kCFWUXr48WryDJrb_yoW8Xry8pF
-	s5KFn09ryktF93urs3ZF13ua15Aw4rGr45JrW3Kw1jyF98Jr1xWry7Gr12krW7G3W8uwn5
-	tF42qrsxuryDArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Wr
-	v_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4UJwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU0uM
-	KtUUUUU==
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-On 7/19/2024 10:08 AM, Paul Moore wrote:
-> On Jul 11, 2024 Xu Kuohai <xukuohai@huaweicloud.com> wrote:
->>
->> To be consistent with most LSM hooks, convert the return value of
->> hook setprocattr to 0 or a negative error code.
->>
->> Before:
->> - Hook setprocattr returns the number of bytes written on success
->>    or a negative error code on failure.
->>
->> After:
->> - Hook setprocattr returns 0 on success or a negative error code
->>    on failure. An output parameter @wbytes is introduced to hold
->>    the number of bytes written on success.
->>
->> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
->> ---
->>   fs/proc/base.c                |  5 +++--
->>   include/linux/lsm_hook_defs.h |  3 ++-
->>   include/linux/security.h      |  5 +++--
->>   security/apparmor/lsm.c       | 10 +++++++---
->>   security/security.c           |  8 +++++---
->>   security/selinux/hooks.c      | 11 ++++++++---
->>   security/smack/smack_lsm.c    | 14 ++++++++++----
->>   7 files changed, 38 insertions(+), 18 deletions(-)
+On 2024/07/10 9:05, KP Singh wrote:
+> LSM hooks are currently invoked from a linked list as indirect calls
+> which are invoked using retpolines as a mitigation for speculative
+> attacks (Branch History / Target injection) and add extra overhead which
+> is especially bad in kernel hot paths:
 > 
-> The security_setprocattr() hook is another odd case that we probably
-> just want to leave alone for two reasons:
+> security_file_ioctl:
+>    0xff...0320 <+0>:	endbr64
+>    0xff...0324 <+4>:	push   %rbp
+>    0xff...0325 <+5>:	push   %r15
+>    0xff...0327 <+7>:	push   %r14
+>    0xff...0329 <+9>:	push   %rbx
+>    0xff...032a <+10>:	mov    %rdx,%rbx
+>    0xff...032d <+13>:	mov    %esi,%ebp
+>    0xff...032f <+15>:	mov    %rdi,%r14
+>    0xff...0332 <+18>:	mov    $0xff...7030,%r15
+>    0xff...0339 <+25>:	mov    (%r15),%r15
+>    0xff...033c <+28>:	test   %r15,%r15
+>    0xff...033f <+31>:	je     0xff...0358 <security_file_ioctl+56>
+>    0xff...0341 <+33>:	mov    0x18(%r15),%r11
+>    0xff...0345 <+37>:	mov    %r14,%rdi
+>    0xff...0348 <+40>:	mov    %ebp,%esi
+>    0xff...034a <+42>:	mov    %rbx,%rdx
 > 
-> 1. With the move to LSM syscalls for getting/setting a task's LSM
-> attributes we are "freezing" the procfs API and not adding any new
-> entries to it.
+>    0xff...034d <+45>:	call   0xff...2e0 <__x86_indirect_thunk_array+352>
+>    			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 > 
-> 2. The BPF LSM doesn't currently register any procfs entries.
+>     Indirect calls that use retpolines leading to overhead, not just due
+>     to extra instruction but also branch misses.
 > 
-> I'd suggest leaving security_setprocattr() as-is and blocking it in
-> the BPF verifier, I can't see any reason why a BPF LSM would need
-> this hook.
+>    0xff...0352 <+50>:	test   %eax,%eax
+>    0xff...0354 <+52>:	je     0xff...0339 <security_file_ioctl+25>
+>    0xff...0356 <+54>:	jmp    0xff...035a <security_file_ioctl+58>
+>    0xff...0358 <+56>:	xor    %eax,%eax
+>    0xff...035a <+58>:	pop    %rbx
+>    0xff...035b <+59>:	pop    %r14
+>    0xff...035d <+61>:	pop    %r15
+>    0xff...035f <+63>:	pop    %rbp
+>    0xff...0360 <+64>:	jmp    0xff...47c4 <__x86_return_thunk>
 > 
-OK, I'll drop this patch in the next version.
+> The indirect calls are not really needed as one knows the addresses of
+> enabled LSM callbacks at boot time and only the order can possibly
+> change at boot time with the lsm= kernel command line parameter.
+> 
+> An array of static calls is defined per LSM hook and the static calls
+> are updated at boot time once the order has been determined.
+> 
+> A static key guards whether an LSM static call is enabled or not,
+> without this static key, for LSM hooks that return an int, the presence
+> of the hook that returns a default value can create side-effects which
+> has resulted in bugs [1].
+> 
+> With the hook now exposed as a static call, one can see that the
+> retpolines are no longer there and the LSM callbacks are invoked
+> directly:
+> 
+> security_file_ioctl:
+>    0xff...0ca0 <+0>:	endbr64
+>    0xff...0ca4 <+4>:	nopl   0x0(%rax,%rax,1)
+>    0xff...0ca9 <+9>:	push   %rbp
+>    0xff...0caa <+10>:	push   %r14
+>    0xff...0cac <+12>:	push   %rbx
+>    0xff...0cad <+13>:	mov    %rdx,%rbx
+>    0xff...0cb0 <+16>:	mov    %esi,%ebp
+>    0xff...0cb2 <+18>:	mov    %rdi,%r14
+>    0xff...0cb5 <+21>:	jmp    0xff...0cc7 <security_file_ioctl+39>
+>   			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    Static key enabled for SELinux
+> 
+>    0xffffffff818f0cb7 <+23>:	jmp    0xff...0cde <security_file_ioctl+62>
+>    				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+>    Static key enabled for BPF LSM. This is something that is changed to
+>    default to false to avoid the existing side effect issues of BPF LSM
+>    [1] in a subsequent patch.
+> 
+>    0xff...0cb9 <+25>:	xor    %eax,%eax
+>    0xff...0cbb <+27>:	xchg   %ax,%ax
+>    0xff...0cbd <+29>:	pop    %rbx
+>    0xff...0cbe <+30>:	pop    %r14
+>    0xff...0cc0 <+32>:	pop    %rbp
+>    0xff...0cc1 <+33>:	cs jmp 0xff...0000 <__x86_return_thunk>
+>    0xff...0cc7 <+39>:	endbr64
+>    0xff...0ccb <+43>:	mov    %r14,%rdi
+>    0xff...0cce <+46>:	mov    %ebp,%esi
+>    0xff...0cd0 <+48>:	mov    %rbx,%rdx
+>    0xff...0cd3 <+51>:	call   0xff...3230 <selinux_file_ioctl>
+>    			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    Direct call to SELinux.
+> 
+>    0xff...0cd8 <+56>:	test   %eax,%eax
+>    0xff...0cda <+58>:	jne    0xff...0cbd <security_file_ioctl+29>
+>    0xff...0cdc <+60>:	jmp    0xff...0cb7 <security_file_ioctl+23>
+>    0xff...0cde <+62>:	endbr64
+>    0xff...0ce2 <+66>:	mov    %r14,%rdi
+>    0xff...0ce5 <+69>:	mov    %ebp,%esi
+>    0xff...0ce7 <+71>:	mov    %rbx,%rdx
+>    0xff...0cea <+74>:	call   0xff...e220 <bpf_lsm_file_ioctl>
+>    			       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    Direct call to BPF LSM.
+> 
+>    0xff...0cef <+79>:	test   %eax,%eax
+>    0xff...0cf1 <+81>:	jne    0xff...0cbd <security_file_ioctl+29>
+>    0xff...0cf3 <+83>:	jmp    0xff...0cb9 <security_file_ioctl+25>
+>    0xff...0cf5 <+85>:	endbr64
+>    0xff...0cf9 <+89>:	mov    %r14,%rdi
+>    0xff...0cfc <+92>:	mov    %ebp,%esi
+>    0xff...0cfe <+94>:	mov    %rbx,%rdx
+>    0xff...0d01 <+97>:	pop    %rbx
+>    0xff...0d02 <+98>:	pop    %r14
+>    0xff...0d04 <+100>:	pop    %rbp
+>    0xff...0d05 <+101>:	ret
+>    0xff...0d06 <+102>:	int3
+>    0xff...0d07 <+103>:	int3
+>    0xff...0d08 <+104>:	int3
+>    0xff...0d09 <+105>:	int3
+> 
+> While this patch uses static_branch_unlikely indicating that an LSM hook
+> is likely to be not present. In most cases this is still a better choice
+> as even when an LSM with one hook is added, empty slots are created for
+> all LSM hooks (especially when many LSMs that do not initialize most
+> hooks are present on the system).
+> 
+> There are some hooks that don't use the call_int_hook or
+> call_void_hook. These hooks are updated to use a new macro called
+> lsm_for_each_hook where the lsm_callback is directly invoked as an
+> indirect call.
+> 
+> Below are results of the relevant Unixbench system benchmarks with BPF LSM
+> and SELinux enabled with default policies enabled with and without these
+> patches.
+> 
+> Benchmark                                               Delta(%): (+ is better)
+> ===============================================================================
+> Execl Throughput                                             +1.9356
+> File Write 1024 bufsize 2000 maxblocks                       +6.5953
+> Pipe Throughput                                              +9.5499
+> Pipe-based Context Switching                                 +3.0209
+> Process Creation                                             +2.3246
+> Shell Scripts (1 concurrent)                                 +1.4975
+> System Call Overhead                                         +2.7815
+> System Benchmarks Index Score (Partial Only):                +3.4859
+> 
+> In the best case, some syscalls like eventfd_create benefitted to about ~10%.
+> 
+> [1] https://lore.kernel.org/linux-security-module/20220609234601.2026362-1-kpsingh@kernel.org/
+> 
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Song Liu <song@kernel.org>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+
+I'm not against about use of static calls.
+But I nack this series because of wrong assumption that ignores reality.
+
+Nacked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
