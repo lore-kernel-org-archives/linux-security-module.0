@@ -1,144 +1,146 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from r9204.ps.combzmail.jp (r9204.ps.combzmail.jp [160.16.62.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC581B969;
-	Mon, 22 Jul 2024 07:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D142012B63
+	for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 07:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.62.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721632408; cv=none; b=K/9a65qvHG8eKZ5W4r7aG7OGzO8/r2IRBQWFcjadZvhnUA074suoYYf5wwEkOAFGUdyNTWMrb6NrUww802uCGPygor8CM3ZdfQrNGsh9X2z51wZwmgOkKBDlpd/AHgOcfQyn6+vs0bHc0PSAZ6gbX+wpEaMbMjtxBNDS8JQYXWk=
+	t=1721634144; cv=none; b=eI5NZd+3IDTMrk4Puu1VU/MTzQUUfU4Ba8kED3kTMK4KAfk4Q6/aJPJItOHGM/vxRmRc737epDuuta/1pWObucq1acHZuPj9rKclVcRosq7qg/Wl5oHQEruztitOjMz/nNKhKFzy/1+mzuDrAZLutP01h0cPb3LzCGB2btMWAxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721632408; c=relaxed/simple;
-	bh=x5Wg36hIMdYFrhhqgCS4o7e/N1aHzPmQO+sgltViDbo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iJPZZJrshuvzvuo5W/GSoYnHJWGKr0eAZF/2qf5knEk4nm4UEAiX59m9MXF/kT11Cuf/abzYugMg8V6pQTD12CKr0MNAUmN7Z2bNMcIqynd/w5Mqfw8vSYHigDC7l7yxIBkbjDAeIOfarnHTBF9b/WZQcSCJHLCh3YSRqRq6Yg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjxG8N8p; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjxG8N8p"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d2b921c48so316558b3a.1;
-        Mon, 22 Jul 2024 00:13:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721632406; x=1722237206; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=igkQ00TUuMQildPejDAwnH78KHdTHKVABM52KsHDG/Y=;
-        b=QjxG8N8poo0w8PgCMmGwBEabot/O2uTv2pB69ML9fLdssQPr4JpQsUYT3nc/Bz0MJQ
-         IQBngSCZdfA1yj+fUzpZd2t8Ok3ahTbAvXKzHS2g00THzFgAGx0vlAFRVbOBlGGSa1Av
-         h+PSfybrEp/CEo4TJnSXULt6+rKR17muIerEVl0b9YSxpJa/OFBXsIIhENR2pjsGqWVv
-         nw7py5knlbSVw248z9TCw7K6r5KRW9ixTIaF1wLLa3FV41fvrOBavWc64IJZ52vUS0Us
-         pLC7uTd6btjQLzTmoElkWG1sr0bvp/OBH3qsxBqR+zdE5w2cN5z6agZtZ3JT0sUnPerb
-         ZzPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721632406; x=1722237206;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=igkQ00TUuMQildPejDAwnH78KHdTHKVABM52KsHDG/Y=;
-        b=Ak8eV7uKB02IW0zs9vh4xFvHqBP1uEF7u0ucHhi6F6P2fmqPBkUMxXOWnnEqZuId4b
-         8op9kQ2LpfMTvlye5Ly3lSD0V46QesH8y2wZz+5RXUeFkptbnJ7nEF9by+ODfcVDSGLk
-         I1KVexGNhDH4i8B8jkIYNudY27isxWtP6aMNBTOp/6u2GnFb47/RDai2JYWXbOBkZ3Ub
-         iBBzcqvz97lwqwhZULnv5pUog10z9rydL9wK0+uve/6Sk0yQMYh/TNkCfxPaecPNEU4n
-         1chTYfCSItIaZHyCnCy/q7xdIlNELVn0vwFE0vHXFOFB8J4Pg+BWtC1SXm8jaQwFBv5+
-         rFqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHkNrJTTGNUB6amnFJ8VYwi9BUGzx5t78E6q622vmxPEn0JM1TF5Jj9FwrSWQ0UGmaFYJDy2ekSGo/sgj4GF+XVpIGjG3CeUbG6gjJau6ssa5h9pSaR4x81CdOxkSnL0Tl3AXWqtWRlRDwJBFMCWa0DtyVd+JzxpLchIa6jQ3Dw31R
-X-Gm-Message-State: AOJu0YyewpLg8xOmxD82okoVdeT6R2DueWjEuOxXRcDceaeYm3KEMbOL
-	uluQs4xNMxqixzp3xyeYJpusUDzrl/vYd3UYCk4Dtb4K8vFBPV5s
-X-Google-Smtp-Source: AGHT+IHMDZrZKO0nbRoj3na9xXFEvvb63FEpSpD3S4S3Xd/wM4AmPbE1tZM+p8pRjyU9cLO9pYUSNw==
-X-Received: by 2002:a05:6a20:d50a:b0:1c2:93a7:2541 with SMTP id adf61e73a8af0-1c428594bfcmr3541183637.24.1721632406288;
-        Mon, 22 Jul 2024 00:13:26 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7b2f30esm6190456a91.9.2024.07.22.00.13.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 00:13:25 -0700 (PDT)
-Message-ID: <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
-Subject: Re: [PATCH bpf-next v2 5/9] bpf, verifier: improve signed ranges
- inference for BPF_AND
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Xu Kuohai <xukuohai@huaweicloud.com>, bpf@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko
- <andrii@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, Shung-Hsi Yu
- <shung-hsi.yu@suse.com>, Yonghong Song <yonghong.song@linux.dev>, KP Singh
- <kpsingh@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, Matt
- Bobrowski <mattbobrowski@google.com>,  Yafang Shao <laoar.shao@gmail.com>,
- Ilya Leoshkevich <iii@linux.ibm.com>, "Jose E . Marchesi"
- <jose.marchesi@oracle.com>, James Morris <jamorris@linux.microsoft.com>, 
- Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>, Florent
- Revest <revest@google.com>
-Date: Mon, 22 Jul 2024 00:13:20 -0700
-In-Reply-To: <20240719110059.797546-6-xukuohai@huaweicloud.com>
-References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
-	 <20240719110059.797546-6-xukuohai@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1721634144; c=relaxed/simple;
+	bh=bRnKA1Qcfy1z90LiBUXZMV7ptIgCu4NUBAo9hBW3BGg=;
+	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=BHFt8NLgHl0liJ9NoXZ+Eucj1sBZ/Ojf665+o12OleZg/lDWEZMG9lF8rDtxUxSqfq1GD+GgOqJqKE39efG9D1Gv+CZ5DInnFCeTYDnTmcfzQcfmUFeEeC4M6nKN21k4to197u1gOOFQops4I/wuqbjVyWQKTbC7YjnPi5N1auU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c-united-coffee.jp; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.62.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c-united-coffee.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
+Received: by r9204.ps.combzmail.jp (Postfix, from userid 99)
+	id B5588103670; Mon, 22 Jul 2024 16:30:53 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9204.ps.combzmail.jp B5588103670
+To: linux-security-module@vger.kernel.org
+From: info@c-united-coffee.jp<info@c-united-coffee.jp>
+X-Ip: 782267939100313
+X-Ip-source: k85gj72648dnsa00u0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCMzkkTjpiOzokSyRKJGs1SkNjRTk7djZIGyhC?=
+ =?ISO-2022-JP?B?GyRCISEbKEJGQxskQiVRITwlSCVKITxKZz04GyhC?=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-MagazineId: 2600
+X-uId: 6762286045485863754554561029
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20240722073110.B5588103670@r9204.ps.combzmail.jp>
+Date: Mon, 22 Jul 2024 16:30:53 +0900 (JST)
 
-On Fri, 2024-07-19 at 19:00 +0800, Xu Kuohai wrote:
-> From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+―　創業54年　昔懐かしい味わいの喫茶店
+　　“　珈琲館　”
+　　にて、フランチャイズ加盟店を募集しています。
 
-[...]
 
->=20
->                         |                         src_reg
->        smin' =3D ?        +----------------------------+-----------------=
-----------
->   smin'(r) <=3D smin(r)   |        negative            |       non-negati=
-ve
-> ---------+--------------+----------------------------+-------------------=
---------
->          |   negative   |negative_bit_floor(         |negative_bit_floor(
->          |              |  min(dst->smin, src->smin))|  min(dst->smin, sr=
-c->smin))
-> dst_reg  +--------------+----------------------------+-------------------=
---------
->          | non-negative |negative_bit_floor(         |negative_bit_floor(
->          |              |  min(dst->smin, src->smin))|  min(dst->smin, sr=
-c->smin))
->=20
-> Meaning that simply using
->=20
->     negative_bit_floor(min(dst_reg->smin_value, src_reg->smin_value))
->=20
-> to calculate the resulting smin_value would work across all sign combinat=
-ions.
->=20
-> Together these allows the BPF verifier to infer the signed range of the
-> result of BPF_AND operation using the signed range from its operands,
-> and use that information
->=20
->     r0 s>>=3D 63; R0_w=3Dscalar(smin=3Dsmin32=3D-1,smax=3Dsmax32=3D0)
->     r0 &=3D -13 ; R0_w=3Dscalar(smin=3Dsmin32=3D-16,smax=3Dsmax32=3D0,uma=
-x=3D0xfffffffffffffff3,umax32=3D0xfffffff3,var_off=3D(0x0; 0xffffffffffffff=
-f3))
->=20
-> [0] https://lore.kernel.org/bpf/e62e2971301ca7f2e9eb74fc500c520285cad8f5.=
-camel@gmail.com/
->=20
-> Link: https://lore.kernel.org/bpf/phcqmyzeqrsfzy7sb4rwpluc37hxyz7rcajk2bq=
-w6cjk2x7rt5@m2hl6enudv7d/
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-> Acked-by: Xu Kuohai <xukuohai@huawei.com>
-> ---
 
-I find derivation of these new rules logical.
-Also tried a simple brute force testing of this algorithm for 6-bit
-signed integers, and have not found any constraint violations:
-https://github.com/eddyz87/bpf-and-brute-force-check
+いつもお世話になります。
 
-As a nitpick, I think that it would be good to have some shortened
-version of the derivation in the comments alongside the code.
-(Maybe with a link to the mailing list).
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+新規事業をご検討のビジネスオーナー様向けに
+フランチャイズ事業のセミナーをご案内申し上げます。
 
-[...]
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+
+　創業54年　昔懐かしい味わいの喫茶店
+　“　珈琲館　”
+
+　フランチャイズパッケージ ｜ オンライン説明会
+
+
+
+　▼　詳細＆申込ページ
+　https://coffee-kan-fc.jp/seminar/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+　■開催日程　　：　8月29日（木）14時〜15時
+　■開催方式　　：　オンライン（Zoom）
+　■参加費　　　：　無料
+　■定員　　　　：　30社
+　■プレゼンター：　C-United株式会社（珈琲館FC本部）
+
+
+　▼　詳細＆申込ページ
+　https://coffee-kan-fc.jp/seminar/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+
+―　街の財産となる、昔懐かしい味わいの喫茶店を始めませんか？　―
+
+
+ゆっくりとした読書の時間を過ごしたい方
+友人との語らいの時間を楽しみたい方
+モーニングやランチでしっかり食事をしたい方
+そして、主役のコーヒーを楽しみたい方
+
+
+「珈琲館」は50年以上もの間、一杯のコーヒーを通じて
+たくさんのお客様の、あらゆるシーンをご一緒させていただきました。
+
+
+“街の財産となるお店づくり”
+
+
+あなたの地元に、「珈琲文化」を感じ、
+受け継がれていく存在＝財産を根付かせませんか？
+
+
+私たちC-Unitedは、この想いに共感いただける企業様の
+フランチャイズ加盟を募集しています。
+
+
+珈琲館には、50年以上にわたって蓄積された「成功のノウハウ」があり、
+飲食業未経験の企業様でも、開店準備から運営に至るまで
+専属チームによる協力なサポートを受け、安心して開店を迎えられます。
+
+
+この説明会では、C-Unitedが提供する珈琲館の
+フランチャイズパッケージをお伝えします。
+
+
+新規事業を検討したい
+既存事業に喫茶事業を＋αして相乗効果を得たい
+遊休不動産を活用したい
+地域貢献の為の喫茶店を出店したい
+
+
+とお考えの企業オーナー様は、この機会にぜひ説明会へご参加ください。
+
+
+
+　▼　詳細＆申込ページ
+　https://coffee-kan-fc.jp/seminar/
+
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+本メールが不要の方には大変失礼しました。
+今後ご案内が不要な際は、下記URLにて配信停止を承っています。
+https://coffee-kan-fc.jp/mail/
+また、本メールにそのまま、件名に「配信停止」とご入力のうえ
+ご返信いただければ配信停止登録をいたします。
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+C-United株式会社
+東京都港区芝大門2丁目10番12号 KDX芝大門ビル 1階・9階
+TEL: 03-6206-0347
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
