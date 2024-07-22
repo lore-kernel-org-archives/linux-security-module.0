@@ -1,108 +1,175 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8617238DC7;
-	Mon, 22 Jul 2024 18:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5A816F8FE
+	for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 19:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721674082; cv=none; b=JqbwZboyfHA7/13MSwXrafH8Pnw4UNfF9QxzhnCjVj9yC0n6gPirHtZ+SF23E5amwmBG8BmT1IUKcwwvvZnOpicscGjVhQbdSRzuszA8M15BBu7TWXhrasKtsqiwi/0uvbmeonmDa+MxefSVLJjkW1gh39bDFGJW4J//v3gBQeg=
+	t=1721677610; cv=none; b=CJFApXyyg1kAW8DavXnrCVh3EoaUu4AX927M4YvY6bxCNinxLr7qh8H7XXoea8JhtlJ4LWT3OCVVS/lgFw//4dk/Q2tXmkbXGIohikKfKDCpVQhPrjrqHI/LaeXduAbDDEhhUvxSTwghR6NpSZCS9YREB7FlYRUgjnPqx1bB+go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721674082; c=relaxed/simple;
-	bh=YT1G6z6f1UMio3qlxrxQpaN1hLCP2KlC0vYZ7ZElp8M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IJghtrGr/7ak08YSqI81swoJ8bAGdgAlMjAJamvFODKmV5vqW3Wd2ZTgEWaBEkXPMkvJwGtKdi7bJwm2u7Edx0Y5Ro09tnaD07UCFGIXScXoQyuoAxxgW1uw43UpdYGukxRcZOinzzgMQQ2ITfaCZSeU6t78/UO9bO7Sw0JPXzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoAHdBDL; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721677610; c=relaxed/simple;
+	bh=rvq+CWJ7KyybcI/TZ7Cso/tA/xiqNuIasYSqFhXRoLQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q/HHLDqE9RtRwbksfc7Cy1Wfljq1R6tv+jWHvXkM8GSJa+esTIbwNAk3VqvXRyuB7azrOxqGjf/LxKcBCiBCEKZQKX9ABHjIDphlpjhKMJEnmTLN52UGvKfjJrj+J/76unPr2whcjMCZebn9UhpUgQWPzrAAJ/Ih2R3UI3VIZII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z3xKcnac; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoAHdBDL"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d2b27c115so890189b3a.2;
-        Mon, 22 Jul 2024 11:48:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z3xKcnac"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e05f25fb96eso4304863276.1
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 12:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721674081; x=1722278881; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YT1G6z6f1UMio3qlxrxQpaN1hLCP2KlC0vYZ7ZElp8M=;
-        b=JoAHdBDLHDCRo3sjj/2eHOAEw/4ZjEo6x7RC8wFayQfTbBsiYcrDR5oOcHIXQJDX2o
-         +F3Ri7IcxB/0JGD8ruPj2ueMWnR+A4EFmg0OjLAk8KX6e+folOSjM01eqAxP95wma267
-         8q4Kb7sT1H2k8QQBnBcDA1zDiFEdlE9TwTt2IudC1t4yuIY0S5d63pU7j2i5SLWE/ZcN
-         K3FXCA34NBJU35BSjRKxgbXBMkmJf7dHVy+rSS4gGCFizj9qyeX0ozHwwIG299XXbdg/
-         X112pzny9hAsIWTmsf17JoPuQTs51IRTE8gr2+G0oYzZw54mVsJWfgsyQrthW7djkF+Y
-         mNxw==
+        d=paul-moore.com; s=google; t=1721677607; x=1722282407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IlsyLoJ7kHoM0a0Ziou/1J4ZDEbSzOtiEJ45NJYR1HE=;
+        b=Z3xKcnacnNYEnUivQss7OoF1tXOKKEk3IK8WPgDhOkqUN0ovgfnUes5Le80Czsmu02
+         d51qiqb9WvOannd/N2Zo//Z80GV77GvabkjJp4y0Oo2+csI8wpy4jpTnyNfiDNcZPBET
+         8Jfg0ViUl9Kgi9xMcg7+b7ox9KQGYTkXszLqtakw+/mnC6MgnHPAcvnpSB7PkNVOlZ2w
+         I+ZeWpp98GBFVjbRLI99AqJqmQILyCM4EaFBvNNXn83Oxa+NbM80j12rxaaIu9Vlm1V1
+         pwWABf5pfQNdYjEw502Sg8wsGEnsCUSoi7vp1EWmm/v5VIzgZ21slF8sU4hVBF2DX+Zl
+         cW2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721674081; x=1722278881;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YT1G6z6f1UMio3qlxrxQpaN1hLCP2KlC0vYZ7ZElp8M=;
-        b=hHgW554neioFK7OJP08JBfKhOMAMvIGXJH173EymB5F9k+r2yb1Is2dtytnvGDvW2c
-         NJPIFKeAAjvBXWS6TIFtTWV5VvC6QWq51SaCnqQoLVWZ0Tjm6wgyT+exot6j9SwOhEgZ
-         TOEvnIeUjVf+KoYQujn+CfFEnj2RHQj3s/zwdau8omjCEKZOAeIxXOJx+SbLVl7RFJi8
-         hkP32S+qyHIJ28C4YJoXntjttrp8rtye3qVhv7mXZztXJAIFjTAlEuWHc9/Nhj8w0Srk
-         /IfqFQMXLQV18qWJRiZKOQQf7QxebCRWn+VG2X3VILMu1bRrn/HL72LR/QmJ3DoZr5kh
-         fZvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv0qxVysNat7E2O4aDmdI4SDH4BgggCE+IvURLU5yaBWs9fHLMXFNwtps5xN+q0KyM68K83lE3ow9N2t3sUkVmtTyQuhStCYbPlKfLTRHvlAeCeyhGYoEfGOi99YJQr4oFMHhbGv7dCNgSxEEL
-X-Gm-Message-State: AOJu0Yze0isgIvmk0tcd2rNsji/ok3K3nQBAB97HabyuAASP8LBmj0y2
-	KMZZYaBo4rfKLbS07WakM/uYrmmFwRpuGTu3V+lw/cdFdfSmTiXk
-X-Google-Smtp-Source: AGHT+IFARhx17YmjAw/Ctt/erbqqFO5Sa/JclzO9trxS0oMrVio9oi5pziQSNFQ11V0kvMfY19t0OA==
-X-Received: by 2002:a05:6a00:ac4:b0:704:2f65:4996 with SMTP id d2e1a72fcca58-70d0efa433dmr9672732b3a.11.1721674080736;
-        Mon, 22 Jul 2024 11:48:00 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a0de7abd43sm3162257a12.23.2024.07.22.11.47.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 11:48:00 -0700 (PDT)
-Message-ID: <0e46dcf652ff0b1168fc82e491c3d20eae18b21d.camel@gmail.com>
-Subject: Re: [PATCH bpf-next v2 5/9] bpf, verifier: improve signed ranges
- inference for BPF_AND
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, Xu Kuohai
- <xukuohai@huaweicloud.com>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
- linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-  Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>,  KP Singh
- <kpsingh@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, Matt
- Bobrowski <mattbobrowski@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Ilya Leoshkevich <iii@linux.ibm.com>, "Jose E . Marchesi"
- <jose.marchesi@oracle.com>, James Morris <jamorris@linux.microsoft.com>,
- Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>, Florent
- Revest <revest@google.com>
-Date: Mon, 22 Jul 2024 11:47:55 -0700
-In-Reply-To: <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
-References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
-	 <20240719110059.797546-6-xukuohai@huaweicloud.com>
-	 <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
-	 <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+        d=1e100.net; s=20230601; t=1721677607; x=1722282407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IlsyLoJ7kHoM0a0Ziou/1J4ZDEbSzOtiEJ45NJYR1HE=;
+        b=S80cZwiX1jjzngc/BbQKtckK2MpzN3yHV0j9zc5FFneKTkWt+dSXxKywXUKuTEch7e
+         LeINbS2StbiZUFydZNQCLv6Zz6XhyXJI1y+dDSzBDjdCGJ8kQZwV/Q8AwrU6XB5RrQ6q
+         8iVEltvbmBM9pKNxvizImOJauLtvfa2i/6av8pE04BmJACU2GFU5xcjhCrslMmo5+N7+
+         zFni/m0vCDFkTxr7QCqCZS3nMTaabjRXpe6LXCKgBX5UEn6/5xl/spdG+ElW3FwWgQto
+         EJ67Kri8Cjr9UvTbnfe2Y6Px5b8p4QJ5F29xnW8J4NICuH7Gam+y1WlB4oj03swMC/BB
+         EeCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxXzTWfrgSpBNCUD68eFjoCRAEFTLamxOZ4Z2cDbHdwwknkJIS7sQzDQhZ9zzft5TyX5yEWPOszl2KPGvjfgDhw4kY0u5LuCvCuEM8NMboIIkkWu1b
+X-Gm-Message-State: AOJu0Yz5l80s2YyePgVzyaYNfdAkSyo7rJc9DJc/2NlD3lM0qFvLhMzd
+	PlcFwr+xU5MWdbz7htbweoiOkQXzYplhdBAmX5GaO8wmBsW1tn5axkljSMyTam7sI4cfejtAL1o
+	8xDY0Zn2QpIcfDTyjZ7fWmMdGVIh4yfSgkccX
+X-Google-Smtp-Source: AGHT+IEOsMZxw0Xw68qGvDBWu3kZ+3yQnbvGHXg/Ez4wSvfzxgZSKczbqq9vqe5RMMTqlPlW8aYSoANyjDSjpwD5OvM=
+X-Received: by 2002:a05:6902:150a:b0:e05:fdbe:bbec with SMTP id
+ 3f1490d57ef6-e086fe55573mr10735481276.9.1721677607589; Mon, 22 Jul 2024
+ 12:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240710024029.669314-2-paul@paul-moore.com> <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+In-Reply-To: <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 22 Jul 2024 15:46:36 -0400
+Message-ID: <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+To: Matus Jokay <matus.jokay@stuba.sk>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-07-22 at 20:57 +0800, Shung-Hsi Yu wrote:
+On Mon, Jul 22, 2024 at 8:30=E2=80=AFAM Matus Jokay <matus.jokay@stuba.sk> =
+wrote:
+> On 10. 7. 2024 12:40, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+> >> The LSM framework has an existing inode_free_security() hook which
+> >> is used by LSMs that manage state associated with an inode, but
+> >> due to the use of RCU to protect the inode, special care must be
+> >> taken to ensure that the LSMs do not fully release the inode state
+> >> until it is safe from a RCU perspective.
+> >>
+> >> This patch implements a new inode_free_security_rcu() implementation
+> >> hook which is called when it is safe to free the LSM's internal inode
+> >> state.  Unfortunately, this new hook does not have access to the inode
+> >> itself as it may already be released, so the existing
+> >> inode_free_security() hook is retained for those LSMs which require
+> >> access to the inode.
+> >>
+> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >
+> > I like this new hook.  It is definitely safer than the current approach=
+.
+> >
+> > To make it more consistent, I think we should also rename
+> > security_inode_free() to security_inode_put() to highlight the fact tha=
+t
+> > LSM implementations should not free potential pointers in this blob
+> > because they could still be dereferenced in a path walk.
+> >
+> >> ---
+> >>  include/linux/lsm_hook_defs.h     |  1 +
+> >>  security/integrity/ima/ima.h      |  2 +-
+> >>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+> >>  security/integrity/ima/ima_main.c |  2 +-
+> >>  security/landlock/fs.c            |  9 ++++++---
+> >>  security/security.c               | 26 +++++++++++++-------------
+> >>  6 files changed, 30 insertions(+), 30 deletions(-)
 
-[...]
+...
 
-> > As a nitpick, I think that it would be good to have some shortened
-> > version of the derivation in the comments alongside the code.
->=20
-> Agree it would. Will try to add a 2-4 sentence explanation.
->=20
-> > (Maybe with a link to the mailing list).
->=20
-> Adding a link to the mailing list seems out of the usual for comment in
-> verifier.c though, and it would be quite long. That said, it would be
-> nice to hint that there exists a more verbose version of the
-> explanation.
->=20
-> Maybe an explicit "see commit for the full detail" at the end of
-> the added comment?
+> Sorry for the questions, but for several weeks I can't find answers to tw=
+o things related to this RFC:
+>
+> 1) How does this patch close [1]?
+>    As Micka=C3=ABl pointed in [2], "It looks like security_inode_free() i=
+s called two times on the same inode."
+>    Indeed, it does not seem from the backtrace that it is a case of race =
+between destroy_inode and inode_permission,
+>    i.e. referencing the inode in a VFS path walk while destroying it...
+>    Please, can anyone tell me how this situation could have happened? May=
+be folks from VFS... I added them to the copy.
 
-Tbh, I find bounds deduction code extremely confusing.
-Imho, having lengthy comments there is a good thing.
+The VFS folks can likely provide a better, or perhaps a more correct
+answer, but my understanding is that during the path walk the inode is
+protected by a RCU lock which allows for multiple threads to access
+the inode simultaneously; this could result in some cases where one
+thread is destroying the inode while another is accessing it.
+Changing this would require changes to the VFS code, and I'm not sure
+why you would want to change it anyway, the performance win of using
+RCU here is likely significant.
 
+> 2) Is there a guarantee that inode_free_by_rcu and i_callback will be cal=
+led within the same RCU grace period?
+
+I'm not an RCU expert, but I don't believe there are any guarantees
+that the inode_free_by_rcu() and the inode's own free routines are
+going to be called within the same RCU grace period (not really
+applicable as inode_free_by_rcu() isn't called *during* a grace
+period, but *after* the grace period of the associated
+security_inode_free() call).  However, this patch does not rely on
+synchronization between the inode and inode LSM free routine in
+inode_free_by_rcu(); the inode_free_by_rcu() function and the new
+inode_free_security_rcu() LSM callback does not have a pointer to the
+inode, only the inode's LSM blob.  I agree that it is a bit odd, but
+freeing the inode and inode's LSM blob independently of each other
+should not cause a problem so long as the inode is no longer in use
+(hence the RCU callbacks).
+
+>    If not, can the security context be released earlier than the inode it=
+self?
+
+Possibly, but it should only happen after the inode is no longer in
+use (the call_rcu () callback should ensure that we are past all of
+the currently executing RCU critical sections).
+
+> If yes, can be executed
+>    inode_permission concurrently, leading to UAF of inode security contex=
+t in security_inode_permission?
+
+I do not believe so, see the discussion above, but I welcome any correction=
+s.
+
+>    Can fsnotify affect this (leading to different RCU grace periods)? (Ag=
+ain probably a question for VFS people.)
+
+If fsnotify is affecting this negatively then I suspect that is a
+reason for much larger concern as I believe that would indicate a
+problem with fsnotify and the inode locking scheme.
+
+--=20
+paul-moore.com
