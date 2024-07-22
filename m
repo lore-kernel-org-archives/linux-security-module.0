@@ -1,102 +1,152 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AC316D30E
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 12:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD1D161311
+	for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 12:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721652377; cv=none; b=II7Y+rmRlMwUQdA2ZtSJCi/x8cFBZE/yfXUYJ06SLwxVHNQIJnHzZP32jor/K18ZtXAUA2KrN5OE+Sg7pzlsNkompPUuIqm9gzhW2NknHe4n2nJuBNxhDEJhMhdJsqvzpkqmz7OJIxitki+gyyStUIhqTFbbYsj/GHLtQFkLmGA=
+	t=1721653083; cv=none; b=AMU2MMgnTQdFQwRK/YxeX4t8E5mW3HTAjWFdaHoWtDSS6V1omuylw974SnGEOnVJyhIZMYmWHaMMCQVzPmtxNDjpPcN27XSzxntmeeOhEN68/3cWS7ZywI7gYUoHlEo0XtAk9KkwtqJZcjd6J/OvU+nQGvHLNj2ajJhmX5C+SvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721652377; c=relaxed/simple;
-	bh=08A40bbhznrlKFn2gZRVp22dL57vJ4Sag/bNSCApeS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UjbpLhWJCYCPifoAWHrCBSuAiOpt1ByF8NUU4w2TLKOiQQYsCPMwtOBJI6WSqLwhoqYDZu4cKP8sK4qwTZqdLzBmk9j9d9Atl84uBO4u7ZLgO6EcqGBa0+sa1zN1PuPZJe5D45wsLICx+dvgiNdnQia7U/60FoGpwkmUmr9/hVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4S8G4QcC; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1721653083; c=relaxed/simple;
+	bh=zpvGzWjagUJbT+tBRs1I+pK766noVDsalbL5S5OQ/VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtZMw1BzwbKVHVuzJXpQ68wr56Dq8hBPbSMF44EYP+jUxdM8Q163yvq++lqXw6AJNW9gavNi1pMiL5UuB8v4WzILWKGfKI3/8INvQy9Vvl1E84RqOz8IikaSOJEqtlmroYB0DPn0ReFwHyikhGt3AKsJCiQ/lWfHDN2JEoARwzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Lo37DPtW; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4S8G4QcC"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so33950a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 05:46:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Lo37DPtW"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-367963ea053so2879030f8f.2
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 05:58:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721652374; x=1722257174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SkPk7qSJmsTXHG/tHIONPG7HUxcysTuWtB6jumYqrdM=;
-        b=4S8G4QcCqOGfRYHIIs0g5/Wwjr//Em8gk65flqFmVi4ClJ/rNSvYsMirttABh5ptNu
-         bhhxnqQjubap6Y1faNWAhsltz/e61/eAe8C0Agi47vO4bdvyE2kwKISBeINduzF2IGI1
-         UuJwSJIO4uLuwtekWq3BDNa1ybfbTRwTljRdwAu5S9J6h+xLw5W91TERxZd+0uWg5G0n
-         bqEtfPDZTzwxTr31PhTJ3tdrVW2gMzF9JWq64wD8pu6vd0Uu0Yk57uW9bxSo8qLJ2f8M
-         8HTFXVixodWq0YdSVTLGTRAl45q3ISqbqg8XuBrQC871AtIa/OzQmGYCprIw5P264z3E
-         fyEg==
+        d=suse.com; s=google; t=1721653079; x=1722257879; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Cw665BKFijDU6M6QF/AAWMgJ5QHnl6aJNUeL2ge/ZM=;
+        b=Lo37DPtWf01Ng7byzUplOiHTVkIQuGI7xQWhz82ywUtRX8fPOtH0KMATZnm3bjmFRv
+         NxzL3543KUGviJ0N/PVoJSPagoHAzb5EO/X6q5DFjMDQXS+01i3dGJCcv4V9jLCEP7sQ
+         Ww9H0ABb5QmhQNGxat+JlkBe8hgoqxzkgxOPH7zGkks0SjKD4ujQ1ZwG5KgY1YSJC4j7
+         TL98ARhkB4vp7wpeiZLk4LUA4Z1OhyGomSPFYEA+WwSV/YJ4YXxfNbnocj2tfr3f2Ttx
+         5gB8Xk42+FDnVws61ZbqDDMxr9n8HtxP4W3fIXsg047H7mZGW+YjoRtRtqJMrzvXja41
+         C+QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721652374; x=1722257174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SkPk7qSJmsTXHG/tHIONPG7HUxcysTuWtB6jumYqrdM=;
-        b=jPpq+944TUI9NAKon3pqY0f2cZH1rrzvWBuJgaz5x2+2i8ZcHM6+uTpVyGF7n412M0
-         Ja1UxaEpY98FG0ZjnjtvJeWp7l7QN+N862Xwn8cXG7KQvcqIjrU6wRNV50A5xo+1Hnde
-         iDjv4+ahsX3phDh14Up7ymcrVig/OSlm3KM+JGUA1kwh8KoND4V2nkWOGmsatvxb0616
-         BbEcZPQFlT0Yg8cixcwhPb1hEnW4BRWNBYDtBf2013b5udzpgww4cXkvmZe0R2S5Y/Eb
-         fiDdSmd9QiHGwNxLubt49ESctAX6G5HNpYhVwCaRl+Zyb4KuZe8+lUiDbLqV9lz/sDgk
-         87Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ7gZbcdhn4QcV9U6B6j31s8bJqummw7210WeT08XXs2Uux+qUfEt9yvNIXExOvPSQk3vadXcnSPhThm+Dp098Q4gIG47y5uUEv/26M1aWlF86U/gX
-X-Gm-Message-State: AOJu0Yxtxpi9d31oZeIKNVp3xGTz5x4oNMcXw0P/pbAr190YbVHI2nvh
-	A6UGWtBl64rNeTqa8M7wnj3MAPnSMQfhy7p2rJo9gH6GE5DeN6EBj9+cn6eLKNaynXe2fLcXZod
-	r+G94Avq15j0l6IuVhEqDq5RWuM7BplNXK/Vh
-X-Google-Smtp-Source: AGHT+IHCi62PM+KOTFc8/S9a0uMCt8sBsWfBOfvWEaTCwIQZzIuRwZy1cJ/vucoCoYuRW5CLLmMrzJQs2JS1pzid0TE=
-X-Received: by 2002:a05:6402:34c9:b0:57c:c3a7:dab6 with SMTP id
- 4fb4d7f45d1cf-5a4a842af45mr220593a12.3.1721652371314; Mon, 22 Jul 2024
- 05:46:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721653079; x=1722257879;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Cw665BKFijDU6M6QF/AAWMgJ5QHnl6aJNUeL2ge/ZM=;
+        b=EbO8bdWPLXqzVq96rPNJDnrldYLUTqJdwN2QEwrbSLB1FTGazzv6ma4Tn2oOVquiO1
+         5f8jkgjeimL3UW5ENQSocfCpjgsU+fx6zsiBwTnVd3RDghSqg8c6HhwFkTPSG8nJmr72
+         hJFPqyMG8HfKWydW7+8lLnBlXl7s0v0m9BTdCtX16AVAWnl7rGZHGzt6GwicBtyWZkCa
+         Olr8XSCzOi2K+rm5sDZcVWJhHdmpc2S6xk4/B2MfBwLNmLNLBeMHo18aauAUdeAdJUE2
+         Qj3FH9TE835rBjExFFOxf9f85puK/jymXs4gt2vdRPRIPKmlJXA/G+9MD+FtldLqiL6d
+         AMPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/WuVXeQCkfJwlDoVYW8XOhb+iDrcMWHg9ccmF0YYeq6i727OTyiNNfQKT7S6hU8wVj6GpHBkhPR8tfUpG8MPT7C5JzNBJluQOo1Ws+kJqqII2X6L1
+X-Gm-Message-State: AOJu0YwJOpzgqLyIKuJhQXKfEU7OhbbVfxQNNGAqqQY1XPf0HAdxf4Nt
+	qINnpYdc8cLpSw/JiZyPB0dn0xyrVMZrOH4LaiCOJW2ZoIXxm+5C+QITD8kFSjU=
+X-Google-Smtp-Source: AGHT+IH1f0hqgUPCnwjNSW1Wa8N2G7bSYStrtqNXEOO9neu2VXreDY3l7pHKNRB4WJ9afg+pNl3zSA==
+X-Received: by 2002:a5d:64ea:0:b0:366:f04d:676f with SMTP id ffacd0b85a97d-369bae3a43emr6151788f8f.12.1721653078778;
+        Mon, 22 Jul 2024 05:57:58 -0700 (PDT)
+Received: from u94a (61-227-67-19.dynamic-ip.hinet.net. [61.227.67.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd8dff753bsm29447165ad.243.2024.07.22.05.57.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 05:57:58 -0700 (PDT)
+Date: Mon, 22 Jul 2024 20:57:49 +0800
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: Eduard Zingerman <eddyz87@gmail.com>, 
+	Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Yafang Shao <laoar.shao@gmail.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	"Jose E . Marchesi" <jose.marchesi@oracle.com>, James Morris <jamorris@linux.microsoft.com>, 
+	Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>, 
+	Florent Revest <revest@google.com>
+Subject: Re: [PATCH bpf-next v2 5/9] bpf, verifier: improve signed ranges
+ inference for BPF_AND
+Message-ID: <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
+References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
+ <20240719110059.797546-6-xukuohai@huaweicloud.com>
+ <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <36958dbc486e1f975f4d4ecdfa51ae65c2c4ced0.1720213293.git.fahimitahera@gmail.com>
-In-Reply-To: <36958dbc486e1f975f4d4ecdfa51ae65c2c4ced0.1720213293.git.fahimitahera@gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 22 Jul 2024 14:45:35 +0200
-Message-ID: <CAG48ez3MNJ9QiULabERc-SWQLx4T80_UOvsqCVFXTi3yxeeMRg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] Landlock: Add signal control
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
-	outreachy@lists.linux.dev, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
 
-On Fri, Jul 5, 2024 at 11:22=E2=80=AFPM Tahera Fahimi <fahimitahera@gmail.c=
-om> wrote:
-> Currently, a sandbox process is not restricted to send a signal
-> (e.g. SIGKILL) to a process outside of the sandbox environment.
-> Ability to sending a signal for a sandboxed process should be
-> scoped the same way abstract unix sockets are scoped.
->
-> The same way as abstract unix socket, we extend "scoped" field
-> in a ruleset with "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset
-> will deny sending any signal from within a sandbox process to its
-> parent(i.e. any parent sandbox or non-sandboxed procsses).
->
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-[...]
-> +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> +                                   struct fown_struct *fown, int signum)
-> +{
-> +       const struct task_struct *result =3D
-> +               get_pid_task(fown->pid, fown->pid_type);
+On Mon, Jul 22, 2024 at 12:13:20AM GMT, Eduard Zingerman wrote:
+> On Fri, 2024-07-19 at 19:00 +0800, Xu Kuohai wrote:
+> > From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+> 
+> [...]
+> 
+> > 
+> >                         |                         src_reg
+> >        smin' = ?        +----------------------------+---------------------------
+> >   smin'(r) <= smin(r)   |        negative            |       non-negative
+> > ---------+--------------+----------------------------+---------------------------
+> >          |   negative   |negative_bit_floor(         |negative_bit_floor(
+> >          |              |  min(dst->smin, src->smin))|  min(dst->smin, src->smin))
+> > dst_reg  +--------------+----------------------------+---------------------------
+> >          | non-negative |negative_bit_floor(         |negative_bit_floor(
+> >          |              |  min(dst->smin, src->smin))|  min(dst->smin, src->smin))
+> > 
+> > Meaning that simply using
+> > 
+> >     negative_bit_floor(min(dst_reg->smin_value, src_reg->smin_value))
+> > 
+> > to calculate the resulting smin_value would work across all sign combinations.
+> > 
+> > Together these allows the BPF verifier to infer the signed range of the
+> > result of BPF_AND operation using the signed range from its operands,
+> > and use that information
 
-get_pid_task() returns a refcounted reference; you'll have to call
-put_task_struct(result) to drop this reference at the end of the
-function.
+I accidentally left the above paragraph unfinished, it should end with
 
-> +       const struct landlock_ruleset *const dom =3D
-> +               landlock_get_task_domain(result);
-> +       if (signal_is_scoped(dom, tsk))
-> +               return 0;
-> +       return EPERM;
-> +}
+... and using that information, it can be sure that that the result of
+[-1, 0] & -13 will be within that expected range of [-4095, 0].
+
+> >     r0 s>>= 63; R0_w=scalar(smin=smin32=-1,smax=smax32=0)
+> >     r0 &= -13 ; R0_w=scalar(smin=smin32=-16,smax=smax32=0,umax=0xfffffffffffffff3,umax32=0xfffffff3,var_off=(0x0; 0xfffffffffffffff3))
+> > 
+> > [0] https://lore.kernel.org/bpf/e62e2971301ca7f2e9eb74fc500c520285cad8f5.camel@gmail.com/
+> > 
+> > Link: https://lore.kernel.org/bpf/phcqmyzeqrsfzy7sb4rwpluc37hxyz7rcajk2bqw6cjk2x7rt5@m2hl6enudv7d/
+> > Cc: Eduard Zingerman <eddyz87@gmail.com>
+> > Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+> > Acked-by: Xu Kuohai <xukuohai@huawei.com>
+> > ---
+> 
+> I find derivation of these new rules logical.
+> Also tried a simple brute force testing of this algorithm for 6-bit
+> signed integers, and have not found any constraint violations:
+> https://github.com/eddyz87/bpf-and-brute-force-check
+
+Thanks!
+
+> As a nitpick, I think that it would be good to have some shortened
+> version of the derivation in the comments alongside the code.
+
+Agree it would. Will try to add a 2-4 sentence explanation.
+
+> (Maybe with a link to the mailing list).
+
+Adding a link to the mailing list seems out of the usual for comment in
+verifier.c though, and it would be quite long. That said, it would be
+nice to hint that there exists a more verbose version of the
+explanation.
+
+Maybe an explicit "see commit for the full detail" at the end of
+the added comment?
+
+> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+> 
+> [...]
+
+Will send an update for this tomorrow.
