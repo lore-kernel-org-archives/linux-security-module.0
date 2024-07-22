@@ -1,180 +1,108 @@
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CB816A38B;
-	Mon, 22 Jul 2024 13:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8617238DC7;
+	Mon, 22 Jul 2024 18:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721654694; cv=none; b=tOhKFym4tbClfS96cWtIpq+c+YwCapg/3UGjB0j4hakQAUkJHSuuNLD5t18oxQMqS6sYS+RhNFAKaR5F4pAcrED8CLEoIae6cYBcio2tvQZyceEik+1oPQxjndw8xCRheYQlGIYVkkfx/CaugpRNfTRn+U6R0CHkTybcZiJpNP0=
+	t=1721674082; cv=none; b=JqbwZboyfHA7/13MSwXrafH8Pnw4UNfF9QxzhnCjVj9yC0n6gPirHtZ+SF23E5amwmBG8BmT1IUKcwwvvZnOpicscGjVhQbdSRzuszA8M15BBu7TWXhrasKtsqiwi/0uvbmeonmDa+MxefSVLJjkW1gh39bDFGJW4J//v3gBQeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721654694; c=relaxed/simple;
-	bh=2BpJsPdlxUMrpsvgLLfigFUTFaZc7fnvSQoalYgm214=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUcvrrMzSVVNdh1arPXLYqvkJybmA4dNNENs2a93Fu8M7RQHCp/j4whJTA0GGV4IPBAcxzVsrF7mmXalreaWUDNgrjkSysgJu8Tgty+LyMPyam9UCYBF8bfAJ2wT2WEHoEdTUIwSYXI2z/1FmLCxWk/C16TjL4YkIiIqydptj50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 39FF8100DA1C4;
-	Mon, 22 Jul 2024 15:17:34 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id E785A9F86C; Mon, 22 Jul 2024 15:17:33 +0200 (CEST)
-Date: Mon, 22 Jul 2024 15:17:33 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	davem@davemloft.net, herbert@gondor.apana.org.au,
-	dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patrick@puiterwijk.org
-Subject: Re: [PATCH v12 02/10] crypto: Add support for ECDSA signature
- verification
-Message-ID: <Zp5b7ZQaXfGbkCVC@wunner.de>
-References: <20210316210740.1592994-1-stefanb@linux.ibm.com>
- <20210316210740.1592994-3-stefanb@linux.ibm.com>
- <ZpfuqeSVC47jqme2@wunner.de>
- <6eee0c55-40cd-4e7b-8819-1a4c9596062a@linux.ibm.com>
+	s=arc-20240116; t=1721674082; c=relaxed/simple;
+	bh=YT1G6z6f1UMio3qlxrxQpaN1hLCP2KlC0vYZ7ZElp8M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IJghtrGr/7ak08YSqI81swoJ8bAGdgAlMjAJamvFODKmV5vqW3Wd2ZTgEWaBEkXPMkvJwGtKdi7bJwm2u7Edx0Y5Ro09tnaD07UCFGIXScXoQyuoAxxgW1uw43UpdYGukxRcZOinzzgMQQ2ITfaCZSeU6t78/UO9bO7Sw0JPXzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoAHdBDL; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoAHdBDL"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d2b27c115so890189b3a.2;
+        Mon, 22 Jul 2024 11:48:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721674081; x=1722278881; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YT1G6z6f1UMio3qlxrxQpaN1hLCP2KlC0vYZ7ZElp8M=;
+        b=JoAHdBDLHDCRo3sjj/2eHOAEw/4ZjEo6x7RC8wFayQfTbBsiYcrDR5oOcHIXQJDX2o
+         +F3Ri7IcxB/0JGD8ruPj2ueMWnR+A4EFmg0OjLAk8KX6e+folOSjM01eqAxP95wma267
+         8q4Kb7sT1H2k8QQBnBcDA1zDiFEdlE9TwTt2IudC1t4yuIY0S5d63pU7j2i5SLWE/ZcN
+         K3FXCA34NBJU35BSjRKxgbXBMkmJf7dHVy+rSS4gGCFizj9qyeX0ozHwwIG299XXbdg/
+         X112pzny9hAsIWTmsf17JoPuQTs51IRTE8gr2+G0oYzZw54mVsJWfgsyQrthW7djkF+Y
+         mNxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721674081; x=1722278881;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YT1G6z6f1UMio3qlxrxQpaN1hLCP2KlC0vYZ7ZElp8M=;
+        b=hHgW554neioFK7OJP08JBfKhOMAMvIGXJH173EymB5F9k+r2yb1Is2dtytnvGDvW2c
+         NJPIFKeAAjvBXWS6TIFtTWV5VvC6QWq51SaCnqQoLVWZ0Tjm6wgyT+exot6j9SwOhEgZ
+         TOEvnIeUjVf+KoYQujn+CfFEnj2RHQj3s/zwdau8omjCEKZOAeIxXOJx+SbLVl7RFJi8
+         hkP32S+qyHIJ28C4YJoXntjttrp8rtye3qVhv7mXZztXJAIFjTAlEuWHc9/Nhj8w0Srk
+         /IfqFQMXLQV18qWJRiZKOQQf7QxebCRWn+VG2X3VILMu1bRrn/HL72LR/QmJ3DoZr5kh
+         fZvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUv0qxVysNat7E2O4aDmdI4SDH4BgggCE+IvURLU5yaBWs9fHLMXFNwtps5xN+q0KyM68K83lE3ow9N2t3sUkVmtTyQuhStCYbPlKfLTRHvlAeCeyhGYoEfGOi99YJQr4oFMHhbGv7dCNgSxEEL
+X-Gm-Message-State: AOJu0Yze0isgIvmk0tcd2rNsji/ok3K3nQBAB97HabyuAASP8LBmj0y2
+	KMZZYaBo4rfKLbS07WakM/uYrmmFwRpuGTu3V+lw/cdFdfSmTiXk
+X-Google-Smtp-Source: AGHT+IFARhx17YmjAw/Ctt/erbqqFO5Sa/JclzO9trxS0oMrVio9oi5pziQSNFQ11V0kvMfY19t0OA==
+X-Received: by 2002:a05:6a00:ac4:b0:704:2f65:4996 with SMTP id d2e1a72fcca58-70d0efa433dmr9672732b3a.11.1721674080736;
+        Mon, 22 Jul 2024 11:48:00 -0700 (PDT)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a0de7abd43sm3162257a12.23.2024.07.22.11.47.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 11:48:00 -0700 (PDT)
+Message-ID: <0e46dcf652ff0b1168fc82e491c3d20eae18b21d.camel@gmail.com>
+Subject: Re: [PATCH bpf-next v2 5/9] bpf, verifier: improve signed ranges
+ inference for BPF_AND
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Shung-Hsi Yu <shung-hsi.yu@suse.com>, Xu Kuohai
+ <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+  Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>,  KP Singh
+ <kpsingh@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, Matt
+ Bobrowski <mattbobrowski@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+ Ilya Leoshkevich <iii@linux.ibm.com>, "Jose E . Marchesi"
+ <jose.marchesi@oracle.com>, James Morris <jamorris@linux.microsoft.com>,
+ Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>, Florent
+ Revest <revest@google.com>
+Date: Mon, 22 Jul 2024 11:47:55 -0700
+In-Reply-To: <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
+References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
+	 <20240719110059.797546-6-xukuohai@huaweicloud.com>
+	 <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
+	 <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6eee0c55-40cd-4e7b-8819-1a4c9596062a@linux.ibm.com>
 
-On Mon, Jul 22, 2024 at 08:19:41AM -0400, Stefan Berger wrote:
-> On 7/17/24 12:17, Lukas Wunner wrote:
-> > On Tue, Mar 16, 2021 at 05:07:32PM -0400, Stefan Berger wrote:
-> > > +/*
-> > > + * Get the r and s components of a signature from the X509 certificate.
-> > > + */
-> > > +static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
-> > > +				  const void *value, size_t vlen, unsigned int ndigits)
-> > > +{
-> > > +	size_t keylen = ndigits * sizeof(u64);
-> > > +	ssize_t diff = vlen - keylen;
-> > > +	const char *d = value;
-> > > +	u8 rs[ECC_MAX_BYTES];
-> > > +
-> > > +	if (!value || !vlen)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/* diff = 0: 'value' has exacly the right size
-> > > +	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
-> > > +	 *           makes the value a positive integer; error on more
-> > > +	 * diff < 0: 'value' is missing leading zeros, which we add
-> > > +	 */
-> > > +	if (diff > 0) {
-> > > +		/* skip over leading zeros that make 'value' a positive int */
-> > > +		if (*d == 0) {
-> > > +			vlen -= 1;
-> > > +			diff--;
-> > > +			d++;
-> > > +		}
-> > > +		if (diff)
-> > > +			return -EINVAL;
-> > > +	}
-> > > +	if (-diff >= keylen)
-> > > +		return -EINVAL;
-> > 
-> > There's an oddity in the above-quoted function.  The check ...
-> > 
-> > +	if (-diff >= keylen)
-> > +		return -EINVAL;
-> > 
-> > ... seems superfluous.
-> 
-> You're right, this check is not necessary.
+On Mon, 2024-07-22 at 20:57 +0800, Shung-Hsi Yu wrote:
 
-After staring at the code a little longer I've realized that
-the purpose of this if-clause is likely to check for a signed
-integer overflow.  So it *does* seem to have a purpose,
-but it's quite subtle and not very obvious.
+[...]
 
-I've provisionally added the (untested) commit below to my
-development branch to make it more obvious what's going on.
-Using check_sub_overflow() might be an alternative.
+> > As a nitpick, I think that it would be good to have some shortened
+> > version of the derivation in the comments alongside the code.
+>=20
+> Agree it would. Will try to add a 2-4 sentence explanation.
+>=20
+> > (Maybe with a link to the mailing list).
+>=20
+> Adding a link to the mailing list seems out of the usual for comment in
+> verifier.c though, and it would be quite long. That said, it would be
+> nice to hint that there exists a more verbose version of the
+> explanation.
+>=20
+> Maybe an explicit "see commit for the full detail" at the end of
+> the added comment?
 
-I want to ask mips maintainers first whether signed integer
-overflows can really cause an exception on their arch
-as commit 36ccf1c0e391 suggests, despite -fno-strict-overflow...
+Tbh, I find bounds deduction code extremely confusing.
+Imho, having lengthy comments there is a good thing.
 
--- >8 --
-
-Subject: [PATCH] crypto: ecdsa - Avoid signed integer overflow on signature
- decoding
-
-When extracting a signature component R or S from an ASN.1-encoded
-integer, ecdsa_get_signature_rs() subtracts the expected length
-"bufsize" from the ASN.1 length "vlen" (both of unsigned type size_t)
-and stores the result in "diff" (of signed type ssize_t).
-
-This results in a signed integer overflow if vlen > SSIZE_MAX + bufsize.
-
-The kernel is compiled with -fno-strict-overflow, which implies -fwrapv,
-meaning signed integer overflow is not undefined behavior.  And the
-function does check for overflow:
-
-       if (-diff >= bufsize)
-               return -EINVAL;
-
-However that's not very readable and may trigger a false-positive with
-CONFIG_UBSAN_SIGNED_WRAP=y.  It also seems that certain Mips CPUs may
-raise an exception regardless of -fno-strict-overflow (see do_ov() in
-arch/mips/kernel/traps.c).
-
-Avoid by comparing the two unsigned variables directly and erroring out
-if "vlen" is too large.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
----
- crypto/ecdsa.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
-
-diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
-index 08c2c76..0cead9b 100644
---- a/crypto/ecdsa.c
-+++ b/crypto/ecdsa.c
-@@ -36,29 +36,20 @@ static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
- 				  const void *value, size_t vlen, unsigned int ndigits)
- {
- 	size_t bufsize = ndigits * sizeof(u64);
--	ssize_t diff = vlen - bufsize;
- 	const char *d = value;
- 
--	if (!value || !vlen)
-+	if (!value || !vlen || vlen > bufsize + 1)
- 		return -EINVAL;
- 
--	/* diff = 0: 'value' has exacly the right size
--	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
--	 *           makes the value a positive integer; error on more
--	 * diff < 0: 'value' is missing leading zeros
--	 */
--	if (diff > 0) {
-+	if (vlen > bufsize) {
- 		/* skip over leading zeros that make 'value' a positive int */
- 		if (*d == 0) {
- 			vlen -= 1;
--			diff--;
- 			d++;
--		}
--		if (diff)
-+		} else {
- 			return -EINVAL;
-+		}
- 	}
--	if (-diff >= bufsize)
--		return -EINVAL;
- 
- 	ecc_digits_from_bytes(d, vlen, dest, ndigits);
- 
--- 
-2.43.0
