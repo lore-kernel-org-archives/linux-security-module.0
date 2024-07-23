@@ -1,145 +1,257 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-out.cvt.stuba.sk (smtp-out.cvt.stuba.sk [147.175.1.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0555213D882
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 07:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3804B14E2CC;
+	Tue, 23 Jul 2024 09:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.175.1.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721718468; cv=none; b=oWD8S5+QqzDy1mUS1uCPQoLUaX2O9o5bIxFj+KfNzAWiOVa3bbpsYQkQ7GJP5M04JXJdqEY0jSWE6vUiY5AvOGmEDBn3zMzEgTh2yFXmbfb2jH/6IwAXIH1STOuQrG3R+UnHHqktbhHHbzyhB/yVlZBbsbY80G2TpBnG4BY7UOM=
+	t=1721726854; cv=none; b=kFpYd3INnUaUJu2hcRs2GFHRmh/Pm1YVTcBFSAnR0GgRW82fhGZmb5SoKw+yavB0mPfxbUehHQa0OjJCkO0Y/x9C3VVg38A1DtUK0NzOFHT5UQZ7O+xTVqYhNPn3oEIgl1SW5JbfxbJQAz23gH+uWwCYbh94Nugf4TGqE7wudcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721718468; c=relaxed/simple;
-	bh=+OBX6C6GtejNy8NzBPodSHLqKjilnUo+0lIu+8qCbfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ka+aDEka84iLlHGDShc8N9yW3jQ5WxK7vULGm6funXx0aJn4vK5TbZP7qbjU4KocbqABc/T1/jMNKR/Skfj7VHE4xZWGHhR0hEsqIesXL2A+ADh020GyxrKFO/tbL0HRMXxojcf7uNa+AdO6YMcQIu/hasOajCaT8DFhbnS0+T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MPpjeicJ; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1721726854; c=relaxed/simple;
+	bh=dTPOyAwNtVSLz78wrRsPEA3bx+Ml/ub1vghT8wtZXLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bocAu4GN3FGs701WV/2jFb0RFVi4C7sTgnTnZUwccTl40qkjck9Tt80mScZzMTtue0naEEKl2AcBZRlc18rYy5/wZwIv477cIIqDNS+SfXewJqthO+niMCE2UoXO8rFkSEAcrhfu6SCSegon0G1Ko8WonpF2KZAtJpFbHoyscYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk; spf=pass smtp.mailfrom=stuba.sk; dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b=sh3uSmK+; arc=none smtp.client-ip=147.175.1.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stuba.sk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stuba.sk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MPpjeicJ"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eefe705510so58019031fa.1
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 00:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721718464; x=1722323264; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cj33ojbfrElrbAIDbnoxdxeJv+EBBbjpQCNbDVfCAeI=;
-        b=MPpjeicJyO+I11bZAvgWsmv794YBYST1r+pfptC25ffrhriK+ws3/94Vd+SelCVlAO
-         Z6yJ9dLB5avjJXZ/7g/OOibvwDhsRtfTthWpRMmTj5F+RkK6HXkadTF+ixT2l72dfL6y
-         mgNltXgKTKywvJE1eD35VLmtRSfBO67n7wLVaLmIQDLv/5yRDwEEwPgTlCWudHtgWi4w
-         UvlCrhaLzcEbQzJ1fQ+KasJAXAPhMxSm4iwYXxUFPl5xa3WC545sYXMGYfA99v2Rde4i
-         O9a++8W+iNhtutuZsiNOCk9wyp1x/ETDFy8w2xlbEHJ1nTw/87xLJQ1LLP+g+mxcic2u
-         irXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721718464; x=1722323264;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cj33ojbfrElrbAIDbnoxdxeJv+EBBbjpQCNbDVfCAeI=;
-        b=LJR26P0BAt05O9ySXs8D5SI2foikCJxGwvueEQmBG6//G6Cw5zu5zQOIRU/vOCjfjx
-         ZFuBtc18J8Y529aA2pjN+yIP7rJK3elRDYdXNyJAbXMWyo86BLEKjAU5ROerUFaStOjK
-         siyj5X0wVfAJxz3BvrcWrXN2C5LMTwZl2BdINLlPH/tzmaK5creN0rdPAO8pl5Kkln0M
-         DOIkO4joczndya1Z173rAwZUbDkr3o587B5SWXMVNaAxn+u5+Rg3RKZtlFicVqG/sPwb
-         4dUs2zaXkADVzLm/i5lZ4bluXhEtmt586k7pohbi4tjJjTBwUPN0AF2cDywoeMjmmuHv
-         Xm7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXWuW1gCvJjmm/U3eAUq3xMqpGFWWdBwsCxD3tSY4LTw1FVuQkzGrxx3S/uc6QGEezLWxJEckKw+WnTcqmL4gEziY1CwlkLoDM84wkuUJXr5sHSgUT6
-X-Gm-Message-State: AOJu0Yyd1sdWEzAoAsTBhLd3yrm751svGlErP8iEXCbyXRFL3ABrsyL8
-	3qQUxQwEz9xDJ5uqvWUVjYzdct8LQe6rrCjxR64XYj8GatybbYOPQWhWqh6YKzo=
-X-Google-Smtp-Source: AGHT+IG/tVywbRmAEoMnoev2JxGc+GA3BH8xlmMxvbYfkuglKQ6LHu8xIzxeviJVooU17G7hPmTKtw==
-X-Received: by 2002:a2e:9d86:0:b0:2ef:1c0a:9b94 with SMTP id 38308e7fff4ca-2ef1c0a9c83mr57463061fa.16.1721718464036;
-        Tue, 23 Jul 2024 00:07:44 -0700 (PDT)
-Received: from u94a (110-28-42-216.adsl.fetnet.net. [110.28.42.216])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a2163d7d3csm2680356a12.13.2024.07.23.00.07.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 00:07:43 -0700 (PDT)
-Date: Tue, 23 Jul 2024 15:07:34 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Xu Kuohai <xukuohai@huaweicloud.com>, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Yafang Shao <laoar.shao@gmail.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, "Jose E . Marchesi" <jose.marchesi@oracle.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Kees Cook <kees@kernel.org>, 
-	Brendan Jackman <jackmanb@google.com>, Florent Revest <revest@google.com>
-Subject: Re: [PATCH bpf-next v2 5/9] bpf, verifier: improve signed ranges
- inference for BPF_AND
-Message-ID: <cgarsuloniffcqn5zjjomhmm5xd72t4cdiwavjqnvmgqfuc7dd@2itjdtwcq7gk>
-References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
- <20240719110059.797546-6-xukuohai@huaweicloud.com>
- <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
- <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
- <0e46dcf652ff0b1168fc82e491c3d20eae18b21d.camel@gmail.com>
- <CAADnVQJ2bE0cAp8DNh1m6VqphNvWLkq8p=gwyPbbcdopaKcCCA@mail.gmail.com>
- <2k3v5ywz5hgwc2istobhath7i76azg5yqvbgfgzfvqvyd72zv5@4g3synjlqha4>
+	dkim=pass (2048-bit key) header.d=stuba.sk header.i=@stuba.sk header.b="sh3uSmK+"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=stuba.sk;
+	s=20180406; h=Content-Transfer-Encoding:Content-Type:From:To:Subject:
+	MIME-Version:Date:Message-ID; bh=9RpNSy45+X40vq0zxQ5onfv5IhjYZaqj+D9N17xn5u0=
+	; t=1721726850; x=1722158850; b=sh3uSmK+OqHY2vf4AJVxOAypo9ZSPOs+IGmR9nwSU/UcQ
+	Kp5UrJdQs9DPqYQZSqkFHJ/06ojwzM2sG23GxFiz6P9gFFu0UImSTTYBr9Khk9sMsj7YhDLgyblY2
+	zPZVPIRtqZRXp27R5Yq39ScCgmvXt8NzBbrBY/Gg4/EC3SjjpHXW9ybNKdny7NF4tRZVzjY21WQiA
+	oeTos/Ef7P98+IVxkSRTIH1ao3Ax5NiGJIbc3YYq1sGmvqCAz52tI03Khb9eeg938xVsjUflMRJn0
+	GpzOyErUrQQgM4TABxaLvbWWLQaH3Lr4nkLHhb0Jnm2Np8LJxCCQ4CBT+uvrbcgVxw==;
+X-STU-Diag: 182cb9893f02c253 (auth)
+Received: from ellyah.uim.fei.stuba.sk ([147.175.106.89])
+	by mx1.stuba.sk (Exim4) with esmtpsa (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(envelope-from <matus.jokay@stuba.sk>)
+	id 1sWBnq-000000005oX-18Z2;
+	Tue, 23 Jul 2024 11:27:26 +0200
+Message-ID: <645268cd-bb8f-4661-bab8-faa827267682@stuba.sk>
+Date: Tue, 23 Jul 2024 11:27:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2k3v5ywz5hgwc2istobhath7i76azg5yqvbgfgzfvqvyd72zv5@4g3synjlqha4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+References: <20240710024029.669314-2-paul@paul-moore.com>
+ <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+ <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+Content-Language: en-US
+From: Matus Jokay <matus.jokay@stuba.sk>
+In-Reply-To: <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 23, 2024 at 02:36:18PM GMT, Shung-Hsi Yu wrote:
-[...]
-> > +1
-> > Pls document the logic in the code.
-> > commit log is good, but good chunk of it probably should be copied
-> > as a comment.
-> > 
-> > I've applied the rest of the patches and removed 'test 3' selftest.
-> > Pls respin this patch and a test.
-> > More than one test would be nice too.
+On 22. 7. 2024 21:46, Paul Moore wrote:
+> On Mon, Jul 22, 2024 at 8:30 AM Matus Jokay <matus.jokay@stuba.sk> wrote:
+>> On 10. 7. 2024 12:40, Mickaël Salaün wrote:
+>>> On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+>>>> The LSM framework has an existing inode_free_security() hook which
+>>>> is used by LSMs that manage state associated with an inode, but
+>>>> due to the use of RCU to protect the inode, special care must be
+>>>> taken to ensure that the LSMs do not fully release the inode state
+>>>> until it is safe from a RCU perspective.
+>>>>
+>>>> This patch implements a new inode_free_security_rcu() implementation
+>>>> hook which is called when it is safe to free the LSM's internal inode
+>>>> state.  Unfortunately, this new hook does not have access to the inode
+>>>> itself as it may already be released, so the existing
+>>>> inode_free_security() hook is retained for those LSMs which require
+>>>> access to the inode.
+>>>>
+>>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>>>
+>>> I like this new hook.  It is definitely safer than the current approach.
+>>>
+>>> To make it more consistent, I think we should also rename
+>>> security_inode_free() to security_inode_put() to highlight the fact that
+>>> LSM implementations should not free potential pointers in this blob
+>>> because they could still be dereferenced in a path walk.
+>>>
+>>>> ---
+>>>>  include/linux/lsm_hook_defs.h     |  1 +
+>>>>  security/integrity/ima/ima.h      |  2 +-
+>>>>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+>>>>  security/integrity/ima/ima_main.c |  2 +-
+>>>>  security/landlock/fs.c            |  9 ++++++---
+>>>>  security/security.c               | 26 +++++++++++++-------------
+>>>>  6 files changed, 30 insertions(+), 30 deletions(-)
 > 
-> Ack. Will send send another series that:
+> ...
 > 
-> 1. update current patch
->   - add code comment explanation how signed ranges are deduced in
->     scalar*_min_max_and()
->   - revert 229d6db14942 "selftests/bpf: Workaround strict bpf_lsm return
->     value check."
-> 2. reintroduce Xu Kuohai's "test 3" into verifier_lsm.c
-> 3. add a few tests for BPF_AND's signed range deduction
->    - should it be added to verifier_bounds*.c or verifier_and.c?
+>> Sorry for the questions, but for several weeks I can't find answers to two things related to this RFC:
+>>
+>> 1) How does this patch close [1]?
+>>    As Mickaël pointed in [2], "It looks like security_inode_free() is called two times on the same inode."
+>>    Indeed, it does not seem from the backtrace that it is a case of race between destroy_inode and inode_permission,
+>>    i.e. referencing the inode in a VFS path walk while destroying it...
+>>    Please, can anyone tell me how this situation could have happened? Maybe folks from VFS... I added them to the copy.
 > 
->      I think former, because if we later add signed range deduction for
->      BPF_OR as well...
+> The VFS folks can likely provide a better, or perhaps a more correct
+> answer, but my understanding is that during the path walk the inode is
+> protected by a RCU lock which allows for multiple threads to access
+> the inode simultaneously; this could result in some cases where one
+> thread is destroying the inode while another is accessing it.
+> Changing this would require changes to the VFS code, and I'm not sure
+> why you would want to change it anyway, the performance win of using
+> RCU here is likely significant.
+> 
+>> 2) Is there a guarantee that inode_free_by_rcu and i_callback will be called within the same RCU grace period?
+> 
+> I'm not an RCU expert, but I don't believe there are any guarantees
+> that the inode_free_by_rcu() and the inode's own free routines are
+> going to be called within the same RCU grace period (not really
+> applicable as inode_free_by_rcu() isn't called *during* a grace
+> period, but *after* the grace period of the associated
+> security_inode_free() call).  However, this patch does not rely on
+> synchronization between the inode and inode LSM free routine in
+> inode_free_by_rcu(); the inode_free_by_rcu() function and the new
+> inode_free_security_rcu() LSM callback does not have a pointer to the
+> inode, only the inode's LSM blob.  I agree that it is a bit odd, but
+> freeing the inode and inode's LSM blob independently of each other
+> should not cause a problem so long as the inode is no longer in use
+> (hence the RCU callbacks).
 
-I was curious whether there would be imminent need for signed range
-deduction for BPF_OR, though looks like there is _not_.
+Paul, many thanks for your answer.
 
-Looking at DAGCombiner::SimplifySelectCC() it does not do the
-bitwise-OR variant of what we've encountered[1,2], that is
+I will try to clarify the issue, because fsnotify was a bad example.
+Here is the related code taken from v10.
 
-    fold (select_cc seteq (and x, y), 0, A, -1) -> (or (sra (shl x)) A)
+void security_inode_free(struct inode *inode)
+{
+	call_void_hook(inode_free_security, inode);
+	/*
+	 * The inode may still be referenced in a path walk and
+	 * a call to security_inode_permission() can be made
+	 * after inode_free_security() is called. Ideally, the VFS
+	 * wouldn't do this, but fixing that is a much harder
+	 * job. For now, simply free the i_security via RCU, and
+	 * leave the current inode->i_security pointer intact.
+	 * The inode will be freed after the RCU grace period too.
+	 */
+	if (inode->i_security)
+		call_rcu((struct rcu_head *)inode->i_security,
+			 inode_free_by_rcu);
+}
 
-In other words, transforming the following theoretial C code that
-returns -EACCES when certain bit is unset, and -1 when certain bit is
-set
+void __destroy_inode(struct inode *inode)
+{
+	BUG_ON(inode_has_buffers(inode));
+	inode_detach_wb(inode);
+	security_inode_free(inode);
+	fsnotify_inode_delete(inode);
+	locks_free_lock_context(inode);
+	if (!inode->i_nlink) {
+		WARN_ON(atomic_long_read(&inode->i_sb->s_remove_count) == 0);
+		atomic_long_dec(&inode->i_sb->s_remove_count);
+	}
 
-    if (fmode & FMODE_WRITE)
-        return -1;
-    
-    return -EACCESS;
+#ifdef CONFIG_FS_POSIX_ACL
+	if (inode->i_acl && !is_uncached_acl(inode->i_acl))
+		posix_acl_release(inode->i_acl);
+	if (inode->i_default_acl && !is_uncached_acl(inode->i_default_acl))
+		posix_acl_release(inode->i_default_acl);
+#endif
+	this_cpu_dec(nr_inodes);
+}
 
-into the following instructions
+static void destroy_inode(struct inode *inode)
+{
+	const struct super_operations *ops = inode->i_sb->s_op;
 
-    r0  <<= 62
-    r0 s>>= 63 /* set => r0 = -1, unset => r0 = 0 */
-    r0  |= -13 /* set => r0 = (-1 | -13) = -1, unset => r0 = (0 | -13) = -13 = -EACCESS */
-	exit       /* returns either -1 or -EACCESS */
+	BUG_ON(!list_empty(&inode->i_lru));
+	__destroy_inode(inode);
+	if (ops->destroy_inode) {
+		ops->destroy_inode(inode);
+		if (!ops->free_inode)
+			return;
+	}
+	inode->free_inode = ops->free_inode;
+	call_rcu(&inode->i_rcu, i_callback);
+}
 
-So signed ranged deduction with BPF_OR is probably just a nice-to-have
-for now.
+Yes, inode_free_by_rcu() is being called after the grace period of the associated
+security_inode_free(). i_callback() is also called after the grace period, but is it
+always the same grace period as in the case of inode_free_by_rcu()? If not in general,
+maybe it could be a problem. Explanation below.
 
-1: https://github.com/llvm/llvm-project/blob/2b78303/llvm/lib/CodeGen/SelectionDAG/DAGCombiner.cpp#L27657-L27684
-2: neither was the setne version transformed, i.e.
-   fold (select_cc setne (and x, y), 0, A, 0) -> (and (sra (shl x)) A)
-   
->      then test for signed range deducation of both
->      BPF_AND and BPF_OR can live in the same file, which would be nice
->      as signed range deduction of the two are somewhat symmetric
+If there is a function call leading to the end of the grace period between
+call_rcu(inode_free_by_rcu) and call_rcu(i_callback) (by reaching a CPU quiescent state
+or another mechanism?), there will be a small time window, when the inode security
+context is released, but the inode itself not, because call_rcu(i_callback) was not called
+yet. So in that case each access to inode security blob leads to UAF.
+
+For example, see invoking ops->destroy_inode() after call_rcu(inode_free_by_rcu) but
+*before* call_rcu(i_callback). If destroy_inode() may sleep, can be reached end of the
+grace period? destroy_inode() is *before* call_rcu(i_callback), therefore simultaneous
+access to the inode during path lookup may be performed. Note: I use destroy_inode() as
+*an example* of the idea. I'm not expert at all in fsnotify, posix ACL, VFS in general
+and RCU, too.
+
+In the previous message I only mentioned fsnotify, but it was only as an example.
+I think that destroy_inode() is a better example of the idea I wanted to express.
+
+I repeat that I'm aware that this RFC does not aim to solve this issue. But it can be
+unpleasant to get another UAF in a production environment.
+
+And regarding the UAF in [1], it seems very strange to me. The object managed by
+Landlock was *not* dereferenced. There was access to the inode security blob itself.
+
+static void hook_inode_free_security(struct inode *const inode)
+{
+	/*
+	 * All inodes must already have been untied from their object by
+	 * release_inode() or hook_sb_delete().
+	 */
+	WARN_ON_ONCE(landlock_inode(inode)->object);
+}
+
+But security blob is released at the end of the grace period related to
+security_inode_free(): call_rcu(inode_free_by_rcu) is *after* invoking all registered
+inode_free_security hooks.
+
+The only place of releasing inode security blob I see in inode_free_by_rcu(). Thus,
+I think, there was another call of __destroy_inode(). Or general protection fault was
+not caused by UAF. Any ideas? Can someone explain it? I don't understand what and *how*
+happened.
+
+If Landlock had dereferenced the object it manages, this RFC could be the right one (if
+it were a dereference from a fast path lookup, of course).
+
+[1] https://lore.kernel.org/all/00000000000076ba3b0617f65cc8@google.com/
+
+
+> 
+>>    If not, can the security context be released earlier than the inode itself?
+> 
+> Possibly, but it should only happen after the inode is no longer in
+> use (the call_rcu () callback should ensure that we are past all of
+> the currently executing RCU critical sections).
+> 
+>> If yes, can be executed
+>>    inode_permission concurrently, leading to UAF of inode security context in security_inode_permission?
+> 
+> I do not believe so, see the discussion above, but I welcome any corrections.
+> 
+>>    Can fsnotify affect this (leading to different RCU grace periods)? (Again probably a question for VFS people.)
+> 
+> If fsnotify is affecting this negatively then I suspect that is a
+> reason for much larger concern as I believe that would indicate a
+> problem with fsnotify and the inode locking scheme.
+> 
+
