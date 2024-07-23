@@ -1,94 +1,209 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA235158879
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 18:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500D5158A22
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 18:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759635; cv=none; b=GNRDI6Y/wlF+jBgEBMRtwZElXVJ5SeNgNOVCBoefg01UJFXl6juaNgBh0iQYAkROjiYvttkqu0/sOkT9K9SftYyoFGWdrCjIy37c/GL9a26Pyd2mdnzGBpKKx+27SbMUnVy0Ch//SQXO5IqZiJHHGyUCRXkrrMmUlc90rJagDxY=
+	t=1721759658; cv=none; b=pkqAheSs6mIpFnML9EAewa7vIgKIeNLhawacXjSHXki1rwLrpQxbfzIS/uiarwbYR9KZ9E/TxC6h7jJwXPlG6LDkWP/UgdCjfhhXl+OcQK9ngdH09WZOJYcNPCbzCBx1fZcvgynrKIgE9uYetXso0X+zqh9mAdFTXhSsEShEWAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759635; c=relaxed/simple;
-	bh=NFq/ekDOEm1BCUiEQxAbPVsS7vv5PxDQqveu1WlBUdQ=;
+	s=arc-20240116; t=1721759658; c=relaxed/simple;
+	bh=/BDujCC1m34ov27OfSvcr6YJrOqVpBj1SDvh/3UsOlU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uc/kUYyguLALdUn21xR+kYVEkOzhq5xG0It0ljQUIxHM9O3BiM/WZwt0mw4mvy8qW2TqUBS3X5RLCwlHJ66aEpC/hgVk9+bkC8267tfI2CPQQD3YYVI+F0ALuLfwHFafFauFzWVnchMnYmmrv4E2quyDCWCyG9niC3LgFXT9ElU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BWoVOlkh; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=MZvpyHFrsgWJY3V0hOo2/fB83Ij/0lN0mSXUGZgk0Gfh5TYWinb0dAm0J/k+y8WCMDci8S3VNILX7pbt6YzZUnaBnlulldQ2Yt4X7wkttEemHi4tcrH8pQ9hrnKuOVhfRktCs79Nufz0hrgkiT1ktqdLTmMDvsbY1PdZvTIZf14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aFepVZkW; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BWoVOlkh"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52fc14d6689so2246661e87.1
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 11:33:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aFepVZkW"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e05ed8a5526so5652079276.3
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 11:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721759632; x=1722364432; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jVlnyN0btPbYCcHbH0TkKobCqtHm6zMls3/CNbNfk/I=;
-        b=BWoVOlkhhWtTHUF4nKcFnVEDmWEvMIIXT6uWr6WvJC2qcVhoYqcbkuTxV17PNZMuss
-         EeBEyGYv+kp7YDQB9vqG2Zsi/lOz3tbPFvhTt5cC9ZkMiuljwqHJ+T8HncDwcgNkMV9o
-         0GzdAoD1N2Z69DtYI0erbcGA1WelF6MmHcrUg=
+        d=paul-moore.com; s=google; t=1721759655; x=1722364455; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Umx7dac9KxgI1oocDLH/hx1evzjsOlrXNT+tzGIsg7k=;
+        b=aFepVZkWo816N4mggXBCyxO8EYpfjir9sv3wzJyUlO/Brxq1ogEQQCmErHOsWvOdpn
+         GEKaw3Ar0YNNjJJXto3U9ymA7CHHwCHvrEZGW2qB1KaWcN4BYF2/eYVSEp5dmIl44ain
+         2qkv+MAeuV1nunFiLAt19CLxls2oALpPIPqkxlTeDO+1DgQv2x3OZ35exOhUf3me8Yvb
+         t1PeWMYKTpQAEdmm47UaoG0jPgaMtux5w0fBctyxEwItK8Mnw7OA35RPafGl4lh62z+H
+         RnI1p+Pb5kwiQxZor2rqBP+jNDgpDHf7QDK0wQ5hHImC7v9Ok0S3afv/4imlHvK6CuWp
+         QBrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721759632; x=1722364432;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jVlnyN0btPbYCcHbH0TkKobCqtHm6zMls3/CNbNfk/I=;
-        b=hrVjUhDBdKsu7iXcmmoxxtkCgQVrmw1WnIW73UcWigs9Nxu4eZnsa4sUDGycfuAUIk
-         LleLfM0hnBD5KnJ7xsuonx2sGdq+zatCGT76zJlq9D8+wW2PS+W+4aQ76iNQ8FiOvhvK
-         5hMu0Xb/FJCqxx1IRTDQw5wga+LAK5gKZlT3ndn//1rFUWUYxVSDaT3Ipi6na9GmuV9t
-         jCcFmb1cKkCoxyrYG5N4KtoPl/9ckUwJ82tMLpZ1/O5tgFVfQuMjiLdK1oL1EnAM/NEp
-         pIExwVeLA1dXFOsKpNpPqL3B6zc5xOrlbTpXm5AS/+Oo2jl/MQLEDnqsyu00+0Tc8SmJ
-         e+kg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+o4PDJAk4/RmkGR8AmiJsJaoCoKsWsbWWEs+eVmh7iQXfmQjZN97WZhk1LPwNBXcaseWlUTPAsXfZSy1xlVx9DHdfdHj406OEcyr6jF4ft/RTmmEz
-X-Gm-Message-State: AOJu0YzadT/Hynq0tJD+4Apgvqa1YrAp9nKL99nceKWPFbOB3fXYCINI
-	IUlUnohu5AJjH82iP05K5T8LHXxup8zmcdua9GvneukORTb9b1DTbISOskeJEz/n3kJScZWPtwp
-	fGjvWmg==
-X-Google-Smtp-Source: AGHT+IEUOfHVEd4ypPSU+EVENrJEtKfU41gHJ+518kYL05vWDanb+x72O2j4foGdX+f77Qke7Jnifg==
-X-Received: by 2002:a05:6512:12d4:b0:52c:e170:9d38 with SMTP id 2adb3069b0e04-52efb771787mr7042333e87.31.1721759631775;
-        Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30a4d6c17sm7905275a12.5.2024.07.23.11.33.51
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a156557026so5269679a12.2
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVS3QtU5L9INtP5ucj9nL8IqloJ8vVux/N5EuI1YcUuspyOkALHkZ4NcjwhKtaNYypNtqbWcNsGxnqMoLJ05193lWw8zvDym66nq6FkYjWMQevEg/SD
-X-Received: by 2002:a05:6402:26c2:b0:5a3:f5c6:7cd9 with SMTP id
- 4fb4d7f45d1cf-5a47a61f330mr9178333a12.26.1721759630852; Tue, 23 Jul 2024
- 11:33:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721759655; x=1722364455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Umx7dac9KxgI1oocDLH/hx1evzjsOlrXNT+tzGIsg7k=;
+        b=gDVwgYT7o8hioYqZk4FFBo/z54FdXPQVHvntJzUaBAZWeRoQTwHnlpTzjxMbHIjA9J
+         EABPZTZiV/IZuGSPB5f1tqFGmbFaakZWbAk56JG0fzIhet7jfbJCypmLAxxoYoS2Xn9v
+         2b3HonBlYcjOKioTJy2339Vw44kjmN5/80BkXD75VBFKzyL9DR6qPRHYEBah04IwpiqQ
+         fFDaU1/P3jE9snVsm0Ma6nsgB7EU0jM011kooUW0XIW7iPHyh01LNSJLrzAVbdxqSti2
+         IMIIi8AQ2mfeMl1o6SLwI0FIFH3hheAdhYQ1NfjecvdHUqI3UskEg869g6S2zsinNRcB
+         pdRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQDRODwMm5UoMTSek060OW0HKBWoeyCGlUSRqv/gq4sVmMb4kxcVQQ455UDdx2tGP+FL7Tg7b+6kH8YPE58EIbP/S9u9o4vFtrloOExFaKB+hy2lXY
+X-Gm-Message-State: AOJu0YxqPJZ9e6KREPSwaBesw4k+nrC/gRnNK6HqAzpVrEoX3VJZHOm1
+	FaUhxnM77U4L6IEdcf1oMdU/8IDMbCXY8NQdNKiVmteyGgdEz3oAFlKzhx2r+9qBviYXyffKmBi
+	2nqL4uLNcL0u0ve9a+0rOwNM/up9M+jQjZBsa
+X-Google-Smtp-Source: AGHT+IEk6clKXMmbj8F9c4ALs9K9k0S5PErz2GXRvQye1XVqqzrWp12U0J4otwfEg5J3qaVWYV/s7JesHhJr3dvtkHg=
+X-Received: by 2002:a05:6902:11cc:b0:e08:551f:c90f with SMTP id
+ 3f1490d57ef6-e087b2eaaa6mr11618458276.7.1721759655226; Tue, 23 Jul 2024
+ 11:34:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723171753.739971-1-adrian.ratiu@collabora.com> <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
-In-Reply-To: <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 23 Jul 2024 11:33:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiU8igSGkycZ1e8+6-NF9obbbt1aZXYwd0ONzXnHsBgHA@mail.gmail.com>
-Message-ID: <CAHk-=wiU8igSGkycZ1e8+6-NF9obbbt1aZXYwd0ONzXnHsBgHA@mail.gmail.com>
-Subject: Re: [PATCH] proc: add config & param to block forcing mem writes
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	kernel@collabora.com, gbiv@google.com, inglorion@google.com, 
-	ajordanr@google.com, Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, 
-	Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
+References: <20240711111908.3817636-10-xukuohai@huaweicloud.com>
+ <94a3b82a1e3e1fec77d676fa382105d4@paul-moore.com> <7711bdba-9fbd-406c-8b81-adf91074d0b7@huaweicloud.com>
+ <CAHC9VhSsCuJzJ3ReUTyTXfWqRd+_TfShJBnRugZtX6OrMYJkOQ@mail.gmail.com> <b1ba86f7-f943-4913-8265-2a94f3951a88@huaweicloud.com>
+In-Reply-To: <b1ba86f7-f943-4913-8265-2a94f3951a88@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 23 Jul 2024 14:34:04 -0400
+Message-ID: <CAHC9VhQhLE8aunBsSvoGv2dWw3TGihXhXCJO1eSbx2VRAf5GDQ@mail.gmail.com>
+Subject: Re: [PATCH v4 9/20] lsm: Refactor return value of LSM hook key_getsecurity
+To: Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Brendan Jackman <jackmanb@chromium.org>, 
+	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Khadija Kamran <kamrankhadijadj@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	John Johansen <john.johansen@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Shung-Hsi Yu <shung-hsi.yu@suse.com>, 
+	Edward Cree <ecree.xilinx@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, 
+	Anna Schumaker <anna@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 23 Jul 2024 at 11:30, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Tue, Jul 23, 2024 at 3:04=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.com=
+> wrote:
+> On 7/23/2024 5:35 AM, Paul Moore wrote:
+> > On Sat, Jul 20, 2024 at 5:31=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud=
+.com> wrote:
+> >> On 7/19/2024 10:08 AM, Paul Moore wrote:
+> >>> On Jul 11, 2024 Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+> >>>>
+> >>>> To be consistent with most LSM hooks, convert the return value of
+> >>>> hook key_getsecurity to 0 or a negative error code.
+> >>>>
+> >>>> Before:
+> >>>> - Hook key_getsecurity returns length of value on success or a
+> >>>>     negative error code on failure.
+> >>>>
+> >>>> After:
+> >>>> - Hook key_getsecurity returns 0 on success or a negative error
+> >>>>     code on failure. An output parameter @len is introduced to hold
+> >>>>     the length of value on success.
+> >>>>
+> >>>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+> >>>> ---
+> >>>>    include/linux/lsm_hook_defs.h |  3 ++-
+> >>>>    include/linux/security.h      |  6 ++++--
+> >>>>    security/keys/keyctl.c        | 11 ++++++++---
+> >>>>    security/security.c           | 26 +++++++++++++++++++++-----
+> >>>>    security/selinux/hooks.c      | 11 +++++------
+> >>>>    security/smack/smack_lsm.c    | 21 +++++++++++----------
+> >>>>    6 files changed, 51 insertions(+), 27 deletions(-)
+> >
+> > ...
+> >
+> >>>> diff --git a/security/security.c b/security/security.c
+> >>>> index 9dd2ae6cf763..2c161101074d 100644
+> >>>> --- a/security/security.c
+> >>>> +++ b/security/security.c
+> >>>> @@ -5338,19 +5338,35 @@ int security_key_permission(key_ref_t key_re=
+f, const struct cred *cred,
+> >>>>     * security_key_getsecurity() - Get the key's security label
+> >>>>     * @key: key
+> >>>>     * @buffer: security label buffer
+> >>>> + * @len: the length of @buffer (including terminating NULL) on succ=
+ess
+> >>>>     *
+> >>>>     * Get a textual representation of the security context attached =
+to a key for
+> >>>>     * the purposes of honouring KEYCTL_GETSECURITY.  This function a=
+llocates the
+> >>>>     * storage for the NUL-terminated string and the caller should fr=
+ee it.
+> >>>>     *
+> >>>> - * Return: Returns the length of @buffer (including terminating NUL=
+) or -ve if
+> >>>> - *         an error occurs.  May also return 0 (and a NULL buffer p=
+ointer) if
+> >>>> - *         there is no security label assigned to the key.
+> >>>> + * Return: Returns 0 on success or -ve if an error occurs. May also=
+ return 0
+> >>>> + *         (and a NULL buffer pointer) if there is no security labe=
+l assigned
+> >>>> + *         to the key.
+> >>>>     */
+> >>>> -int security_key_getsecurity(struct key *key, char **buffer)
+> >>>> +int security_key_getsecurity(struct key *key, char **buffer, size_t=
+ *len)
+> >>>>    {
+> >>>> +    int rc;
+> >>>> +    size_t n =3D 0;
+> >>>> +    struct security_hook_list *hp;
+> >>>> +
+> >>>>       *buffer =3D NULL;
+> >>>> -    return call_int_hook(key_getsecurity, key, buffer);
+> >>>> +
+> >>>> +    hlist_for_each_entry(hp, &security_hook_heads.key_getsecurity, =
+list) {
+> >>>> +            rc =3D hp->hook.key_getsecurity(key, buffer, &n);
+> >>>> +            if (rc < 0)
+> >>>> +                    return rc;
+> >>>> +            if (n)
+> >>>> +                    break;
+> >>>> +    }
+> >>>> +
+> >>>> +    *len =3D n;
+> >>>> +
+> >>>> +    return 0;
+> >>>>    }
+> >>>
+> >>> Help me understand why we can't continue to use the call_int_hook()
+> >>> macro here?
+> >>>
+> >>
+> >> Before this patch, the hook may return +ve, 0, or -ve, and call_int_ho=
+ok
+> >> breaks the loop when the hook return value is not 0.
+> >>
+> >> After this patch, the +ve is stored in @n, so @n and return value shou=
+ld
+> >> both be checked to determine whether to break the loop. This is not
+> >> feasible with call_int_hook.
+> >
+> > Yes, gotcha.  I was focused on the error condition and wasn't thinking
+> > about the length getting zero'd out by a trailing callback.
+> > Unfortunately, we *really* want to stick with the
+> > call_{int,void}_hook() macros so I think we either need to find a way
+> > to work within that constraint for existing macro callers, or we have
+> > to leave this hook as-is for the moment.
+> >
 >
-> but while that looks a bit prettier, the whole "fs_parser.h" thing is
-> admittedly odd.
+> Let's leave it as is. So we ultimately have four hooks that can be
+> converted, two of which require adding additional output parameter to
+> hold odd return values. These output parameters require extra work
+> on the BPF verifier, and it doesn't seem worthwhile just for two
+> hooks. So I prefer to keep only the two patches that handle
+> conversion without adding output parameters (patch 1 and 5).
 
-.. don't get me wrong - /proc obviously *is* a filesystem, but in this
-context it's a boot command line parameter, not a mount option.
+Fair enough.  Thanks for working on this, between the changes to the
+LSM framework and the BPF verifier, I think this is still a nice
+improvement.
 
-The "constant_table" thing obviously does work outside of mount
-options too, it's just that it's documented and used in the context of
-the mount API.
-
-                  Linus
+--=20
+paul-moore.com
