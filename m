@@ -1,209 +1,287 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500D5158A22
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 18:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E32813E3E4
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 19:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759658; cv=none; b=pkqAheSs6mIpFnML9EAewa7vIgKIeNLhawacXjSHXki1rwLrpQxbfzIS/uiarwbYR9KZ9E/TxC6h7jJwXPlG6LDkWP/UgdCjfhhXl+OcQK9ngdH09WZOJYcNPCbzCBx1fZcvgynrKIgE9uYetXso0X+zqh9mAdFTXhSsEShEWAc=
+	t=1721764133; cv=none; b=Y4K6suGh8WLoup3oMKkBB24Wv3W3CUQo/wT/ALjS9GZpt5T07zhNIzcWkVYHO+XsBVwcMJI/cTZNv+TmBOpujnwOuVfd7L6kWi4lTavGAvuy/brJxNiUzr+Q2dfdQ4YTt4nU3edX42K2AuWRnU9f2pidE18iUGh5E2ylhTJ7LZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759658; c=relaxed/simple;
-	bh=/BDujCC1m34ov27OfSvcr6YJrOqVpBj1SDvh/3UsOlU=;
+	s=arc-20240116; t=1721764133; c=relaxed/simple;
+	bh=bYLxHOhEU+Zp51G0LpqfUxnSFeXVz781+ABLldwFSko=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MZvpyHFrsgWJY3V0hOo2/fB83Ij/0lN0mSXUGZgk0Gfh5TYWinb0dAm0J/k+y8WCMDci8S3VNILX7pbt6YzZUnaBnlulldQ2Yt4X7wkttEemHi4tcrH8pQ9hrnKuOVhfRktCs79Nufz0hrgkiT1ktqdLTmMDvsbY1PdZvTIZf14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aFepVZkW; arc=none smtp.client-ip=209.85.219.176
+	 To:Cc:Content-Type; b=SfFMtR3z7bKxrDhV1X7DEEzuTOuzisqLQJ0ic2NPN0/99g4FpgiY155SZx0z3EEDheCCVyiLHKiQKKBr0Y3ShWwgAXb/WtMX6CDkO6cYFwGSpWR+KICHAEiW+7Ic4sxbkT/4W1aUiFm1gjZ1VGMhNtM9LJlMl8tN804ayc2p1CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eWMs9ieU; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aFepVZkW"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e05ed8a5526so5652079276.3
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 11:34:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eWMs9ieU"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0354459844so5578918276.3
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 12:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1721759655; x=1722364455; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1721764130; x=1722368930; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Umx7dac9KxgI1oocDLH/hx1evzjsOlrXNT+tzGIsg7k=;
-        b=aFepVZkWo816N4mggXBCyxO8EYpfjir9sv3wzJyUlO/Brxq1ogEQQCmErHOsWvOdpn
-         GEKaw3Ar0YNNjJJXto3U9ymA7CHHwCHvrEZGW2qB1KaWcN4BYF2/eYVSEp5dmIl44ain
-         2qkv+MAeuV1nunFiLAt19CLxls2oALpPIPqkxlTeDO+1DgQv2x3OZ35exOhUf3me8Yvb
-         t1PeWMYKTpQAEdmm47UaoG0jPgaMtux5w0fBctyxEwItK8Mnw7OA35RPafGl4lh62z+H
-         RnI1p+Pb5kwiQxZor2rqBP+jNDgpDHf7QDK0wQ5hHImC7v9Ok0S3afv/4imlHvK6CuWp
-         QBrQ==
+        bh=wnS3xKEFgnfQyUitOQWc1I0Q6R6pqx6TXDex6LBUNdo=;
+        b=eWMs9ieUQWZsr/Z04TeSYuO8OoaRGNbMelLb9wG14jQcfDYqkoMM91DWw44Wf3Ktoc
+         K0ooVWhaJQrIKkj7BrE3ZuQoJdVsJbrD8xi94x/gjqN5ZQFKXFBDg2K7PEsu6r2AB3OK
+         nkKtX4CK+AMAWnXpbW2bbQ+WRQ3TKJ5Hp3M07ClImCmPpkPYbLLnDbB1I5VSD7+i6XDD
+         FigIt5uiz3VgHxVqkM3rRQJGXva7dEFGXSZpW3SFJJExVdFYEk3Dg5VqmMGhpV3Iui7j
+         Qg/4nVZKPPpKfeSFtnxRzDE+dN86kU1ySp66JaFsJXEmrsbjgCGSVJCzcNcfoA36A3Ly
+         jZhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721759655; x=1722364455;
+        d=1e100.net; s=20230601; t=1721764130; x=1722368930;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Umx7dac9KxgI1oocDLH/hx1evzjsOlrXNT+tzGIsg7k=;
-        b=gDVwgYT7o8hioYqZk4FFBo/z54FdXPQVHvntJzUaBAZWeRoQTwHnlpTzjxMbHIjA9J
-         EABPZTZiV/IZuGSPB5f1tqFGmbFaakZWbAk56JG0fzIhet7jfbJCypmLAxxoYoS2Xn9v
-         2b3HonBlYcjOKioTJy2339Vw44kjmN5/80BkXD75VBFKzyL9DR6qPRHYEBah04IwpiqQ
-         fFDaU1/P3jE9snVsm0Ma6nsgB7EU0jM011kooUW0XIW7iPHyh01LNSJLrzAVbdxqSti2
-         IMIIi8AQ2mfeMl1o6SLwI0FIFH3hheAdhYQ1NfjecvdHUqI3UskEg869g6S2zsinNRcB
-         pdRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQDRODwMm5UoMTSek060OW0HKBWoeyCGlUSRqv/gq4sVmMb4kxcVQQ455UDdx2tGP+FL7Tg7b+6kH8YPE58EIbP/S9u9o4vFtrloOExFaKB+hy2lXY
-X-Gm-Message-State: AOJu0YxqPJZ9e6KREPSwaBesw4k+nrC/gRnNK6HqAzpVrEoX3VJZHOm1
-	FaUhxnM77U4L6IEdcf1oMdU/8IDMbCXY8NQdNKiVmteyGgdEz3oAFlKzhx2r+9qBviYXyffKmBi
-	2nqL4uLNcL0u0ve9a+0rOwNM/up9M+jQjZBsa
-X-Google-Smtp-Source: AGHT+IEk6clKXMmbj8F9c4ALs9K9k0S5PErz2GXRvQye1XVqqzrWp12U0J4otwfEg5J3qaVWYV/s7JesHhJr3dvtkHg=
-X-Received: by 2002:a05:6902:11cc:b0:e08:551f:c90f with SMTP id
- 3f1490d57ef6-e087b2eaaa6mr11618458276.7.1721759655226; Tue, 23 Jul 2024
- 11:34:15 -0700 (PDT)
+        bh=wnS3xKEFgnfQyUitOQWc1I0Q6R6pqx6TXDex6LBUNdo=;
+        b=avFqR+0NrxBL2SaTDgv1ub8a9McnXhgqvEKSp66id7ekf4vYnHT1mWyrzCS6A8p/JN
+         MDdDKIyblm/p8ck5NzjAxAOXZvsF+x6wgl7vw/dKN1qzdF5sz7TW9Zit36bjlUXusjdw
+         SAlxN1ga7TldZVfCZpnKmuEVRXz6nTS9MjeQ/rN1RhwQ/e5m1YOevOfT3snh6WdW7DXv
+         ug+0FKxs8fAvdnPciPy2xWAF50ZNPeXpaQqReup5WgEEnV6FXs+lULc1mh1sr3FLcuvi
+         Y+R9qgiF9TMzT6GBCsqLWxsLZZIq9z5tw3UnMRD73uPaz0u01DElHJlNWwNSptvk0Az6
+         1wVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWT5PLjdaMx+G5aCkCNXCYe/uUMVIVQPLEloh/QoaWM+jJjYdYX31ZpwTJY1tiHwz58C4h7uqD3WHn9ZHxKPxpkefyfvU7pAtH8wYBf6BSYnVScEfKF
+X-Gm-Message-State: AOJu0YzJXJKyZPB4PNjmSVtLW+9duYan/b+S51a5RJeoMbspxGhbbGPe
+	l8vPtb/2920L4Igm3x2wJYT7lUk4fPmUuVkHCCUO8+i4c3d/NcbpZNTF6iQFm/p8/DUajUN+H9V
+	v5ScW372PyPKNAfMFU3HZRSlbsmIT6mdG98Sj
+X-Google-Smtp-Source: AGHT+IHUYrj6Sm+2gmwsGjgo1dhS7pDIA8KVhNJX5HCD4Knd5Qs8R+aNGqrPRl9vAIiVaNDRvqCWZDE2bH23Mn9FNE0=
+X-Received: by 2002:a05:6902:c0a:b0:dff:1020:6f31 with SMTP id
+ 3f1490d57ef6-e0b0985c49fmr888654276.45.1721764130208; Tue, 23 Jul 2024
+ 12:48:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711111908.3817636-10-xukuohai@huaweicloud.com>
- <94a3b82a1e3e1fec77d676fa382105d4@paul-moore.com> <7711bdba-9fbd-406c-8b81-adf91074d0b7@huaweicloud.com>
- <CAHC9VhSsCuJzJ3ReUTyTXfWqRd+_TfShJBnRugZtX6OrMYJkOQ@mail.gmail.com> <b1ba86f7-f943-4913-8265-2a94f3951a88@huaweicloud.com>
-In-Reply-To: <b1ba86f7-f943-4913-8265-2a94f3951a88@huaweicloud.com>
+References: <20240710024029.669314-2-paul@paul-moore.com> <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk> <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+ <645268cd-bb8f-4661-bab8-faa827267682@stuba.sk>
+In-Reply-To: <645268cd-bb8f-4661-bab8-faa827267682@stuba.sk>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 23 Jul 2024 14:34:04 -0400
-Message-ID: <CAHC9VhQhLE8aunBsSvoGv2dWw3TGihXhXCJO1eSbx2VRAf5GDQ@mail.gmail.com>
-Subject: Re: [PATCH v4 9/20] lsm: Refactor return value of LSM hook key_getsecurity
-To: Xu Kuohai <xukuohai@huaweicloud.com>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Brendan Jackman <jackmanb@chromium.org>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Khadija Kamran <kamrankhadijadj@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	John Johansen <john.johansen@canonical.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Shung-Hsi Yu <shung-hsi.yu@suse.com>, 
-	Edward Cree <ecree.xilinx@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, 
-	Anna Schumaker <anna@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Tue, 23 Jul 2024 15:48:39 -0400
+Message-ID: <CAHC9VhRnv0+4PZ9Qs-gFhMxmQc07_wr-_W41T45FztOkzD=__g@mail.gmail.com>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+To: Matus Jokay <matus.jokay@stuba.sk>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 23, 2024 at 3:04=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.com=
-> wrote:
-> On 7/23/2024 5:35 AM, Paul Moore wrote:
-> > On Sat, Jul 20, 2024 at 5:31=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud=
-.com> wrote:
-> >> On 7/19/2024 10:08 AM, Paul Moore wrote:
-> >>> On Jul 11, 2024 Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+On Tue, Jul 23, 2024 at 5:27=E2=80=AFAM Matus Jokay <matus.jokay@stuba.sk> =
+wrote:
+> On 22. 7. 2024 21:46, Paul Moore wrote:
+> > On Mon, Jul 22, 2024 at 8:30=E2=80=AFAM Matus Jokay <matus.jokay@stuba.=
+sk> wrote:
+> >> On 10. 7. 2024 12:40, Micka=C3=ABl Sala=C3=BCn wrote:
+> >>> On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+> >>>> The LSM framework has an existing inode_free_security() hook which
+> >>>> is used by LSMs that manage state associated with an inode, but
+> >>>> due to the use of RCU to protect the inode, special care must be
+> >>>> taken to ensure that the LSMs do not fully release the inode state
+> >>>> until it is safe from a RCU perspective.
 > >>>>
-> >>>> To be consistent with most LSM hooks, convert the return value of
-> >>>> hook key_getsecurity to 0 or a negative error code.
+> >>>> This patch implements a new inode_free_security_rcu() implementation
+> >>>> hook which is called when it is safe to free the LSM's internal inod=
+e
+> >>>> state.  Unfortunately, this new hook does not have access to the ino=
+de
+> >>>> itself as it may already be released, so the existing
+> >>>> inode_free_security() hook is retained for those LSMs which require
+> >>>> access to the inode.
 > >>>>
-> >>>> Before:
-> >>>> - Hook key_getsecurity returns length of value on success or a
-> >>>>     negative error code on failure.
-> >>>>
-> >>>> After:
-> >>>> - Hook key_getsecurity returns 0 on success or a negative error
-> >>>>     code on failure. An output parameter @len is introduced to hold
-> >>>>     the length of value on success.
-> >>>>
-> >>>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+> >>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >>>
+> >>> I like this new hook.  It is definitely safer than the current approa=
+ch.
+> >>>
+> >>> To make it more consistent, I think we should also rename
+> >>> security_inode_free() to security_inode_put() to highlight the fact t=
+hat
+> >>> LSM implementations should not free potential pointers in this blob
+> >>> because they could still be dereferenced in a path walk.
+> >>>
 > >>>> ---
-> >>>>    include/linux/lsm_hook_defs.h |  3 ++-
-> >>>>    include/linux/security.h      |  6 ++++--
-> >>>>    security/keys/keyctl.c        | 11 ++++++++---
-> >>>>    security/security.c           | 26 +++++++++++++++++++++-----
-> >>>>    security/selinux/hooks.c      | 11 +++++------
-> >>>>    security/smack/smack_lsm.c    | 21 +++++++++++----------
-> >>>>    6 files changed, 51 insertions(+), 27 deletions(-)
+> >>>>  include/linux/lsm_hook_defs.h     |  1 +
+> >>>>  security/integrity/ima/ima.h      |  2 +-
+> >>>>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+> >>>>  security/integrity/ima/ima_main.c |  2 +-
+> >>>>  security/landlock/fs.c            |  9 ++++++---
+> >>>>  security/security.c               | 26 +++++++++++++-------------
+> >>>>  6 files changed, 30 insertions(+), 30 deletions(-)
 > >
 > > ...
 > >
-> >>>> diff --git a/security/security.c b/security/security.c
-> >>>> index 9dd2ae6cf763..2c161101074d 100644
-> >>>> --- a/security/security.c
-> >>>> +++ b/security/security.c
-> >>>> @@ -5338,19 +5338,35 @@ int security_key_permission(key_ref_t key_re=
-f, const struct cred *cred,
-> >>>>     * security_key_getsecurity() - Get the key's security label
-> >>>>     * @key: key
-> >>>>     * @buffer: security label buffer
-> >>>> + * @len: the length of @buffer (including terminating NULL) on succ=
-ess
-> >>>>     *
-> >>>>     * Get a textual representation of the security context attached =
-to a key for
-> >>>>     * the purposes of honouring KEYCTL_GETSECURITY.  This function a=
-llocates the
-> >>>>     * storage for the NUL-terminated string and the caller should fr=
-ee it.
-> >>>>     *
-> >>>> - * Return: Returns the length of @buffer (including terminating NUL=
-) or -ve if
-> >>>> - *         an error occurs.  May also return 0 (and a NULL buffer p=
-ointer) if
-> >>>> - *         there is no security label assigned to the key.
-> >>>> + * Return: Returns 0 on success or -ve if an error occurs. May also=
- return 0
-> >>>> + *         (and a NULL buffer pointer) if there is no security labe=
-l assigned
-> >>>> + *         to the key.
-> >>>>     */
-> >>>> -int security_key_getsecurity(struct key *key, char **buffer)
-> >>>> +int security_key_getsecurity(struct key *key, char **buffer, size_t=
- *len)
-> >>>>    {
-> >>>> +    int rc;
-> >>>> +    size_t n =3D 0;
-> >>>> +    struct security_hook_list *hp;
-> >>>> +
-> >>>>       *buffer =3D NULL;
-> >>>> -    return call_int_hook(key_getsecurity, key, buffer);
-> >>>> +
-> >>>> +    hlist_for_each_entry(hp, &security_hook_heads.key_getsecurity, =
-list) {
-> >>>> +            rc =3D hp->hook.key_getsecurity(key, buffer, &n);
-> >>>> +            if (rc < 0)
-> >>>> +                    return rc;
-> >>>> +            if (n)
-> >>>> +                    break;
-> >>>> +    }
-> >>>> +
-> >>>> +    *len =3D n;
-> >>>> +
-> >>>> +    return 0;
-> >>>>    }
-> >>>
-> >>> Help me understand why we can't continue to use the call_int_hook()
-> >>> macro here?
-> >>>
+> >> Sorry for the questions, but for several weeks I can't find answers to=
+ two things related to this RFC:
 > >>
-> >> Before this patch, the hook may return +ve, 0, or -ve, and call_int_ho=
-ok
-> >> breaks the loop when the hook return value is not 0.
-> >>
-> >> After this patch, the +ve is stored in @n, so @n and return value shou=
-ld
-> >> both be checked to determine whether to break the loop. This is not
-> >> feasible with call_int_hook.
+> >> 1) How does this patch close [1]?
+> >>    As Micka=C3=ABl pointed in [2], "It looks like security_inode_free(=
+) is called two times on the same inode."
+> >>    Indeed, it does not seem from the backtrace that it is a case of ra=
+ce between destroy_inode and inode_permission,
+> >>    i.e. referencing the inode in a VFS path walk while destroying it..=
+.
+> >>    Please, can anyone tell me how this situation could have happened? =
+Maybe folks from VFS... I added them to the copy.
 > >
-> > Yes, gotcha.  I was focused on the error condition and wasn't thinking
-> > about the length getting zero'd out by a trailing callback.
-> > Unfortunately, we *really* want to stick with the
-> > call_{int,void}_hook() macros so I think we either need to find a way
-> > to work within that constraint for existing macro callers, or we have
-> > to leave this hook as-is for the moment.
+> > The VFS folks can likely provide a better, or perhaps a more correct
+> > answer, but my understanding is that during the path walk the inode is
+> > protected by a RCU lock which allows for multiple threads to access
+> > the inode simultaneously; this could result in some cases where one
+> > thread is destroying the inode while another is accessing it.
+> > Changing this would require changes to the VFS code, and I'm not sure
+> > why you would want to change it anyway, the performance win of using
+> > RCU here is likely significant.
 > >
+> >> 2) Is there a guarantee that inode_free_by_rcu and i_callback will be =
+called within the same RCU grace period?
+> >
+> > I'm not an RCU expert, but I don't believe there are any guarantees
+> > that the inode_free_by_rcu() and the inode's own free routines are
+> > going to be called within the same RCU grace period (not really
+> > applicable as inode_free_by_rcu() isn't called *during* a grace
+> > period, but *after* the grace period of the associated
+> > security_inode_free() call).  However, this patch does not rely on
+> > synchronization between the inode and inode LSM free routine in
+> > inode_free_by_rcu(); the inode_free_by_rcu() function and the new
+> > inode_free_security_rcu() LSM callback does not have a pointer to the
+> > inode, only the inode's LSM blob.  I agree that it is a bit odd, but
+> > freeing the inode and inode's LSM blob independently of each other
+> > should not cause a problem so long as the inode is no longer in use
+> > (hence the RCU callbacks).
 >
-> Let's leave it as is. So we ultimately have four hooks that can be
-> converted, two of which require adding additional output parameter to
-> hold odd return values. These output parameters require extra work
-> on the BPF verifier, and it doesn't seem worthwhile just for two
-> hooks. So I prefer to keep only the two patches that handle
-> conversion without adding output parameters (patch 1 and 5).
+> Paul, many thanks for your answer.
+>
+> I will try to clarify the issue, because fsnotify was a bad example.
+> Here is the related code taken from v10.
+>
+> void security_inode_free(struct inode *inode)
+> {
+>         call_void_hook(inode_free_security, inode);
+>         /*
+>          * The inode may still be referenced in a path walk and
+>          * a call to security_inode_permission() can be made
+>          * after inode_free_security() is called. Ideally, the VFS
+>          * wouldn't do this, but fixing that is a much harder
+>          * job. For now, simply free the i_security via RCU, and
+>          * leave the current inode->i_security pointer intact.
+>          * The inode will be freed after the RCU grace period too.
+>          */
+>         if (inode->i_security)
+>                 call_rcu((struct rcu_head *)inode->i_security,
+>                          inode_free_by_rcu);
+> }
+>
+> void __destroy_inode(struct inode *inode)
+> {
+>         BUG_ON(inode_has_buffers(inode));
+>         inode_detach_wb(inode);
+>         security_inode_free(inode);
+>         fsnotify_inode_delete(inode);
+>         locks_free_lock_context(inode);
+>         if (!inode->i_nlink) {
+>                 WARN_ON(atomic_long_read(&inode->i_sb->s_remove_count) =
+=3D=3D 0);
+>                 atomic_long_dec(&inode->i_sb->s_remove_count);
+>         }
+>
+> #ifdef CONFIG_FS_POSIX_ACL
+>         if (inode->i_acl && !is_uncached_acl(inode->i_acl))
+>                 posix_acl_release(inode->i_acl);
+>         if (inode->i_default_acl && !is_uncached_acl(inode->i_default_acl=
+))
+>                 posix_acl_release(inode->i_default_acl);
+> #endif
+>         this_cpu_dec(nr_inodes);
+> }
+>
+> static void destroy_inode(struct inode *inode)
+> {
+>         const struct super_operations *ops =3D inode->i_sb->s_op;
+>
+>         BUG_ON(!list_empty(&inode->i_lru));
+>         __destroy_inode(inode);
+>         if (ops->destroy_inode) {
+>                 ops->destroy_inode(inode);
+>                 if (!ops->free_inode)
+>                         return;
+>         }
+>         inode->free_inode =3D ops->free_inode;
+>         call_rcu(&inode->i_rcu, i_callback);
+> }
+>
+> Yes, inode_free_by_rcu() is being called after the grace period of the as=
+sociated
+> security_inode_free(). i_callback() is also called after the grace period=
+, but is it
+> always the same grace period as in the case of inode_free_by_rcu()? If no=
+t in general,
+> maybe it could be a problem. Explanation below.
+>
+> If there is a function call leading to the end of the grace period betwee=
+n
+> call_rcu(inode_free_by_rcu) and call_rcu(i_callback) (by reaching a CPU q=
+uiescent state
+> or another mechanism?), there will be a small time window, when the inode=
+ security
+> context is released, but the inode itself not, because call_rcu(i_callbac=
+k) was not called
+> yet. So in that case each access to inode security blob leads to UAF.
 
-Fair enough.  Thanks for working on this, between the changes to the
-LSM framework and the BPF verifier, I think this is still a nice
-improvement.
+While it should be possible for the inode's LSM blob to be free'd
+prior to the inode itself, the RCU callback mechanism provided by
+call_rcu() should ensure that both the LSM's free routine and the
+inode's free routine happen at a point in time after the current RCU
+critical sections have lapsed and the inode is no longer being
+accessed.  The LSM's inode_free_rcu callback can run independent of
+the inode's callback as it doesn't access the inode and if it does
+happen to run before the inode's RCU callback that should also be okay
+as we are past the original RCU critical sections and the inode should
+no longer be in use.  If the inode is still in use by the time the
+LSM's RCU callback is triggered then there is a flaw in the inode
+RCU/locking/synchronization code.
+
+It is also worth mentioning that while this patch shuffles around some
+code at the LSM layer, the basic idea of the LSM using a RCU callback
+to free state associated with an inode is far from new.  While that
+doesn't mean there isn't a problem, we have a few years of experience
+across a large number of systems, that would indicate this isn't a
+problem.
+
+> For example, see invoking ops->destroy_inode() after call_rcu(inode_free_=
+by_rcu) but
+> *before* call_rcu(i_callback). If destroy_inode() may sleep, can be reach=
+ed end of the
+> grace period? destroy_inode() is *before* call_rcu(i_callback), therefore=
+ simultaneous
+> access to the inode during path lookup may be performed. Note: I use dest=
+roy_inode() as
+> *an example* of the idea. I'm not expert at all in fsnotify, posix ACL, V=
+FS in general
+> and RCU, too.
+>
+> In the previous message I only mentioned fsnotify, but it was only as an =
+example.
+> I think that destroy_inode() is a better example of the idea I wanted to =
+express.
+>
+> I repeat that I'm aware that this RFC does not aim to solve this issue. B=
+ut it can be
+> unpleasant to get another UAF in a production environment.
+
+I'm open to there being another fix needed, or a change to this fix,
+but I don't believe the problems you are describing are possible.  Of
+course it's very possible that I'm wrong, so if you are aware of an
+issue I would appreciate a concrete example explaining the code path
+and timeline between tasks A and B that would trigger the flaw ... and
+yes, patches are always welcome ;)
 
 --=20
 paul-moore.com
