@@ -1,38 +1,37 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0043F153505
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 13:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727614EC4D
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 13:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740615; cv=none; b=Djwu4CptTwgKuFuJK+DCpWN2zX6UZJ6Vx8+ZB8WTiT1m+j7FqvfkGOR/9Y0TCSylEZpYeCPQc6/jKL+Q7c2CvDxSO4MPevpD0qUTx+dFXtOqdinOROrsUUeDu0rHQRiGl853RtxopyU+3cnlUl/tpOVxWahRFkcQ5B+XrhKwt8s=
+	t=1721740934; cv=none; b=YvwdffnqP2YS0L/yhbg9zMqhxsdpEb5Axp0fRPOjnmmfv4bPZhFt66+/rWPN8HDYHSa0jLbnmPnMZwassjafHIeM4Pi6gpjlZgZ0smgJqRB4DHyeHWGHVWifw5Gch/xJGnxfgxKOuJA8ibyUPWUITiDaTGk76yvQd6aEzgoA0a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740615; c=relaxed/simple;
-	bh=xEwc8PxtVvX8tsn9ZtZk7QYu/EDsOr3ij74CMnS5fEM=;
+	s=arc-20240116; t=1721740934; c=relaxed/simple;
+	bh=4t/c9B/kIoP+Ate7ojlvKUMM9iVTLD9O0V5zMyRqH/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFjOnphxv2decdrOw5yWCsgM+nt3NgKv7YdmQLUxrrdiBOTtydvl0/GOK3ubWVAQVZrOHxIqaHRnszn1aommhofqR6ahByc3SPAlreaRU6JZzxupBuQ2YUsHqWMDe4DPutscqIgdYTGi50+hFjrGk43y9McC94sPaYTXuijmPmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QoxHXFmq; arc=none smtp.client-ip=84.16.66.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=evMbnbXFDdtM5nGv4jYld2XH2Yp/HE4YjT2qPx3zZ9CfMIfqMBIGVr8aEW526FMfxZRFocnZouN7YRqhS37XGxY7qMF/T5hdsv9k2RgVecI/rXrkBw7xL88fgof7Gdq12dNMnUW+J+YTk8iSO5MGWQebWgMgLT5PPStEUeUTmNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=iu5aRGVF; arc=none smtp.client-ip=84.16.66.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QoxHXFmq"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyNF4BxtzkLM;
-	Tue, 23 Jul 2024 15:16:45 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="iu5aRGVF"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyM22wgkzvsg;
+	Tue, 23 Jul 2024 15:15:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721740605;
-	bh=aewoPXtLEZ2GI0ABNVUxmYfgHpbPmetUh2xF9chmBvU=;
+	s=20191114; t=1721740542;
+	bh=4lI4oazmkOZyVO/+hKYfpMj2Cu7Ya1lQsK8QvumCDJo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QoxHXFmq0LCFEzZK0mctxYTvHGqNZ1uCqYaYTsicvHyPtGk6/EoAvbcjptbOdletB
-	 Xb+mo9w40Pve8Z4bqucnZtXJ5vuZ8LzPC439s3sEnEroIcBRqKvnRKpMP3XVQmBgwu
-	 oYK6AKjw5ryx52fN9ih6Bs6OS9r5voySJS6klizc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyND3c4Mz7kk;
-	Tue, 23 Jul 2024 15:16:44 +0200 (CEST)
-Date: Tue, 23 Jul 2024 15:16:41 +0200
+	b=iu5aRGVFiaz2EvXdhm0W92QucmsighTPOyKQ4FzdFc/TOsdnkel8EKdaRpqzc/2ku
+	 JBfDlUhRFyffOrc38SsjnUdhtefvVfso2+Gqqg/DSIgSU0uxvpEXds2Ikf458ZRYi+
+	 uz8YoHUftVi8pVezUeXWt2AMSfwFwTDQjhh2Z7No=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyM127Vdz9Ll;
+	Tue, 23 Jul 2024 15:15:41 +0200 (CEST)
+Date: Tue, 23 Jul 2024 15:15:38 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, 
-	Steve Dower <steve.dower@python.org>, Jeff Xu <jeffxu@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+To: Jeff Xu <jeffxu@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
 	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
 	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
@@ -49,23 +48,24 @@ Cc: Andy Lutomirski <luto@amacapital.net>,
 	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
 	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
 	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
 Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240723.eY8boameed1k@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
+Message-ID: <20240723.beiTu0qui2ei@digikod.net>
+References: <20240704190137.696169-2-mic@digikod.net>
  <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
- <20240717.AGh2shahc9ee@digikod.net>
- <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com>
- <20240718.Niexoo0ahch0@digikod.net>
- <CALCETrVVq4DJZ2q9V9TMuvZ1nb+-Qf4Eu8LVBgUy3XiTa=jFCQ@mail.gmail.com>
- <D2UC8YVOX9WU.1DRD4QFQ92L1U@kernel.org>
+ <20240717.neaB5Aiy2zah@digikod.net>
+ <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+ <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
+ <20240719.shaeK6PaiSie@digikod.net>
+ <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
+ <20240719.sah7oeY9pha4@digikod.net>
+ <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -75,138 +75,140 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <D2UC8YVOX9WU.1DRD4QFQ92L1U@kernel.org>
+In-Reply-To: <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Sat, Jul 20, 2024 at 02:43:41PM +0300, Jarkko Sakkinen wrote:
-> On Sat Jul 20, 2024 at 4:59 AM EEST, Andy Lutomirski wrote:
-> > > On Jul 18, 2024, at 8:22 PM, Mickaël Salaün <mic@digikod.net> wrote:
+On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
+> On Fri, Jul 19, 2024 at 8:04 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
+> > > On Fri, Jul 19, 2024 at 1:45 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
+> > > > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > >
+> > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > > > >
+> > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > > > > > > > > allowed for execution.  The main use case is for script interpreters and
+> > > > > > > > > > dynamic linkers to check execution permission according to the kernel's
+> > > > > > > > > > security policy. Another use case is to add context to access logs e.g.,
+> > > > > > > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > > > > > > executable code, scripts could also use this check [1].
+> > > > > > > > > >
+> > > > > > > > > > This is different than faccessat(2) which only checks file access
+> > > > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > > > > > > > > real execution, user space gets the same error codes.
+> > > > > > > > > >
+> > > > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > > > > > > exec, shared object, script and config file (such as seccomp config),
+> > > >
+> > > > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
+> > > > > > > > > sure it passes AT_CHECK, before loading it into memory.
+> > > > > > > >
+> > > > > > > > All ELF dependencies are opened and checked with open_exec(), which
+> > > > > > > > perform the main executability checks (with the __FMODE_EXEC flag).
+> > > > > > > > Did I miss something?
+> > > > > > > >
+> > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
+> > > > > > > The app can choose its own dynamic linker path during build, (maybe
+> > > > > > > even statically link one ?)  This is another reason that relying on a
+> > > > > > > userspace only is not enough.
+> > > > > >
+> > > > > > The kernel calls open_exec() on all dependencies, including
+> > > > > > ld-linux-x86-64.so.2, so these files are checked for executability too.
+> > > > > >
+> > > > > This might not be entirely true. iiuc, kernel  calls open_exec for
+> > > > > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
+> > > >
+> > > > Correct, the dynamic linker is in charge of that, which is why it must
+> > > > be enlighten with execveat+AT_CHECK and securebits checks.
+> > > >
+> > > > > load_elf_binary() {
+> > > > >    interpreter = open_exec(elf_interpreter);
+> > > > > }
+> > > > >
+> > > > > libc.so.6 is opened and mapped by dynamic linker.
+> > > > > so the call sequence is:
+> > > > >  execve(a.out)
+> > > > >   - open exec(a.out)
+> > > > >   - security_bprm_creds(a.out)
+> > > > >   - open the exec(ld.so)
+> > > > >   - call open_exec() for interruptor (ld.so)
+> > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
+> > > > > the same check and code path as libc.so below ?
+> > > >
+> > > > open_exec() checks are enough.  LSMs can use this information (open +
+> > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
+> > > > request.
+> > > >
+> > > Then the ld.so doesn't go through the same security_bprm_creds() check
+> > > as other .so.
+> >
+> > Indeed, but...
+> >
+> My point is: we will want all the .so going through the same code
+> path, so  security_ functions are called consistently across all the
+> objects, And in the future, if we want to develop additional LSM
+> functionality based on AT_CHECK, it will be applied to all objects.
+
+I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, which
+already is the common security check for all executable dependencies.
+As extra information, they can get explicit requests by looking at
+execveat+AT_CHECK call.
+
+> 
+> Another thing to consider is:  we are asking userspace to make
+> additional syscall before  loading the file into memory/get executed,
+> there is a possibility for future expansion of the mechanism, without
+> asking user space to add another syscall again.
+
+AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
+LSM policies) could enforce other restrictions following the same
+semantic.  We need to keep in mind backward compatibility.
+
+> 
+> I m still not convinced yet that execveat(AT_CHECK) fits more than
+> faccessat(AT_CHECK)
+
+faccessat2(2) is dedicated to file permission/attribute check.
+execveat(2) is dedicated to execution, which is a superset of file
+permission for executability, plus other checks (e.g. noexec).
+
+> 
+> 
 > > >
-> > > ﻿On Thu, Jul 18, 2024 at 09:02:56AM +0800, Andy Lutomirski wrote:
-> > >>>> On Jul 17, 2024, at 6:01 PM, Mickaël Salaün <mic@digikod.net> wrote:
-> > >>>
-> > >>> On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
-> > >>>>> On 17/07/2024 07:33, Jeff Xu wrote:
-> > >>>>> Consider those cases: I think:
-> > >>>>> a> relying purely on userspace for enforcement does't seem to be
-> > >>>>> effective,  e.g. it is trivial  to call open(), then mmap() it into
-> > >>>>> executable memory.
-> > >>>>
-> > >>>> If there's a way to do this without running executable code that had to pass
-> > >>>> a previous execveat() check, then yeah, it's not effective (e.g. a Python
-> > >>>> interpreter that *doesn't* enforce execveat() is a trivial way to do it).
-> > >>>>
-> > >>>> Once arbitrary code is running, all bets are off. So long as all arbitrary
-> > >>>> code is being checked itself, it's allowed to do things that would bypass
-> > >>>> later checks (and it's up to whoever audited it in the first place to
-> > >>>> prevent this by not giving it the special mark that allows it to pass the
-> > >>>> check).
-> > >>>
-> > >>> Exactly.  As explained in the patches, one crucial prerequisite is that
-> > >>> the executable code is trusted, and the system must provide integrity
-> > >>> guarantees.  We cannot do anything without that.  This patches series is
-> > >>> a building block to fix a blind spot on Linux systems to be able to
-> > >>> fully control executability.
-> > >>
-> > >> Circling back to my previous comment (did that ever get noticed?), I
-> > >
-> > > Yes, I replied to your comments.  Did I miss something?
+> > > As my previous email, the ChromeOS LSM restricts executable mfd
+> > > through security_bprm_creds(), the end result is that ld.so can still
+> > > be executable memfd, but not other .so.
 > >
-> > I missed that email in the pile, sorry. I’ll reply separately.
+> > The chromeOS LSM can check that with the security_file_open() hook and
+> > the __FMODE_EXEC flag, see Landlock's implementation.  I think this
+> > should be the only hook implementation that chromeOS LSM needs to add.
 > >
 > > >
-> > >> don’t think this is quite right:
-> > >>
-> > >> https://lore.kernel.org/all/CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com/
-> > >>
-> > >> On a basic system configuration, a given path either may or may not be
-> > >> executed. And maybe that path has some integrity check (dm-verity,
-> > >> etc).  So the kernel should tell the interpreter/loader whether the
-> > >> target may be executed. All fine.
-> > >>
-> > >> But I think the more complex cases are more interesting, and the
-> > >> “execute a program” process IS NOT BINARY.  An attempt to execute can
-> > >> be rejected outright, or it can be allowed *with a change to creds or
-> > >> security context*.  It would be entirely reasonable to have a policy
-> > >> that allows execution of non-integrity-checked files but in a very
-> > >> locked down context only.
+> > > One way to address this is to refactor the necessary code from
+> > > execveat() code patch, and make it available to call from both kernel
+> > > and execveat() code paths., but if we do that, we might as well use
+> > > faccessat2(AT_CHECK)
+> >
+> > That's why I think it makes sense to rely on the existing __FMODE_EXEC
+> > information.
+> >
 > > >
-> > > I guess you mean to transition to a sandbox when executing an untrusted
-> > > file.  This is a good idea.  I talked about role transition in the
-> > > patch's description:
 > > >
-> > > With the information that a script interpreter is about to interpret a
-> > > script, an LSM security policy can adjust caller's access rights or log
-> > > execution request as for native script execution (e.g. role transition).
-> > > This is possible thanks to the call to security_bprm_creds_for_exec().
-> >
-> > …
-> >
-> > > This patch series brings the minimal building blocks to have a
-> > > consistent execution environment.  Role transitions for script execution
-> > > are left to LSMs.  For instance, we could extend Landlock to
-> > > automatically sandbox untrusted scripts.
-> >
-> > I’m not really convinced.  There’s more to building an API that
-> > enables LSM hooks than merely sticking the hook somewhere in kernel
-> > code. It needs to be a defined API. If you call an operation “check”,
-> > then people will expect it to check, not to change the caller’s
-> > credentials.  And people will mess it up in both directions (e.g.
-> > callers will call it and then open try to load some library that they
-> > should have loaded first, or callers will call it and forget to close
-> > fds first.
-> >
-> > And there should probably be some interaction with dumpable as well.
-> > If I “check” a file for executability, that should not suddenly allow
-> > someone to ptrace me?
-> >
-> > And callers need to know to exit on failure, not carry on.
-> >
-> >
-> > More concretely, a runtime that fully opts in to this may well "check"
-> > multiple things.  For example, if I do:
-> >
-> > $ ld.so ~/.local/bin/some_program   (i.e. I literally execve ld.so)
-> >
-> > then ld.so will load several things:
-> >
-> > ~/.local/bin/some_program
-> > libc.so
-> > other random DSOs, some of which may well be in my home directory
+> > > > >   - transfer the control to ld.so)
+> > > > >   - ld.so open (libc.so)
+> > > > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
+> > > > > require dynamic linker change.
+> > > > >   - ld.so mmap(libc.so,rx)
+> > > >
+> > > > Explaining these steps is useful. I'll include that in the next patch
+> > > > series.
 > 
-> What would really help to comprehend this patch set would be a set of
-> test scripts, preferably something that you can run easily with
-> BuildRoot or similar.
-> 
-> Scripts would demonstrate the use cases for the patch set. Then it
-> would be easier to develop scripts that would underline the corner
-> cases. I would keep all this out of kselftest shenanigans for now.
-
-I'll include a toy script interpreter with the next patch series.  This
-one was an RFC.
-
-> 
-> I feel that the patch set is hovering in abstractions with examples
-> that you cannot execute.
-> 
-> I added the patches to standard test CI hack:
-> 
-> https://codeberg.org/jarkko/linux-tpmdd-test
-> 
-> But after I booted up a kernel I had no idea what to do with it. And
-> all this lenghty discussion makes it even more confusing.
-
-You can run the tests in the CI.
-
-> 
-> Please find some connection to the real world before sending any new
-> version of this (e.g. via test scripts). I think this should not be
-> pulled before almost anyone doing kernel dev can comprehend the "gist"
-> at least in some reasonable level.
-
-You'll find in this patch series (cover letter, patch description, and
-comments) connection to the real world. :)
-The next patch series should take into account the current discussions.
-
-> 
-> BR, Jarkko
