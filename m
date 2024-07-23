@@ -1,66 +1,70 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038A9152196
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 13:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35001152182
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 13:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740537; cv=none; b=JhydZPuUp4HyhAhnTVobJrcbcF77LNov6GtcX/8cDDyWCwAmiiFupzf0lmFOTmf0h+VRZ51YKQHEhJ6ezK5dhhJBcST3J8lIlY7bZXGDD6ZZGoY9FMP48rGTHlu6DB02znLb+hUOVEu3cS6SmMwzGJ5csp2LLEEC1ECYqw1wDNI=
+	t=1721740558; cv=none; b=KNaOggOnYFuOGj6JZ8Ke8U9zVnWpWBYybMhATSFzCH7Fxd+tZYxnkQYlYqNOQ/SfhPpKrf5/zlyE0khxGFv/4Tzwakop6h/M8HR9HC89c+q4lDbB6rerCRGGGecjtrTX7sCzliZdz+xYX5W8AliQ7wjbT9mCKwy+vz/uOQ1tXO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740537; c=relaxed/simple;
-	bh=GQMYqRZLirdBdnV9m05p3q7iUsQxl7Es+Hr/8ahrDeQ=;
+	s=arc-20240116; t=1721740558; c=relaxed/simple;
+	bh=Lx5/C3kgTZUuhvSRKptYrcXcNNirYAak6PUUc/aufyQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nWehbobEz8SWlVBmQA/y5KmQ6EuyG6gWbJcqkCJsF1F06cmyu2UwOQLrNz419e0GVdz76pLVzxq+AXfF3z0n4e2jGXK6sl+svxptJHIeUZrdxRIfGqrkJ40p0Uh059hnr8A8S4Ink5M4JJLyikzsuk0bVN2tq1i5vN05tVOyuLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HjieBgpR; arc=none smtp.client-ip=185.125.25.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSKxz0oOEFZ7YoweQWp8RXxlm9xAUghAjXii4q6SuePQ0eTll5eaxGoGD6CxdKi631lqN5dXySt7RWf/42Fy7e29iECo0aVVUW2E3EsobXG3lP//t3NRWFPlc4DSgYXw5v7GQf/9Fzb0JM02qbmiObjjSWhJqxy5LZV/yp82dS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=C9wC2Z9Y; arc=none smtp.client-ip=45.157.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HjieBgpR"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="C9wC2Z9Y"
 Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyLj0XJ6zvdg;
-	Tue, 23 Jul 2024 15:15:25 +0200 (CEST)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyMF45D1zsmt;
+	Tue, 23 Jul 2024 15:15:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721740524;
-	bh=Qj8Xgm8rcMJSt8La6LY/BFSnfayKGlNJ2hnbPdsP+c4=;
+	s=20191114; t=1721740553;
+	bh=X+cQ1CksGDxJLeuT4f0yi9T7wa0DAMxewXTYiALB970=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HjieBgpROL8YzXywnxRaVs/lBhQC8sCG72MSmA1PAGizlICvD8PSvtDlMWicL9X1d
-	 V6xSMy1NB4+7ISBIZb5R4Qb0Q/5r6uVtc04r+yNAtiVVgbQ5PNuDUeO/uAa8G6Yad2
-	 AwO0Y79iGqgbZUsXUVSXoOuwFz3cBPmXaXbe6uxk=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyLb1YXwzpH5;
-	Tue, 23 Jul 2024 15:15:19 +0200 (CEST)
-Date: Tue, 23 Jul 2024 15:15:16 +0200
+	b=C9wC2Z9YUmhqSaOgAMUsCHF1ldoniIs3b2we+tv1C+O9+pcrKt2He9zmyIhY2f7wT
+	 P0h5Z8ivItzzsMAtTb7DLalzvzCHghPj9v9NlqNhFt0L+mYtYCrDpgaKROG2uGSJvB
+	 bPpVnn7jg7KuYQ7VhkqBzXhpG60q/wFfAoSLJ3zg=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyMD2Sy8zq8Y;
+	Tue, 23 Jul 2024 15:15:52 +0200 (CEST)
+Date: Tue, 23 Jul 2024 15:15:49 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Andy Lutomirski <luto@kernel.org>
+To: Jeff Xu <jeffxu@google.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, 
 	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
 	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
 	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
 	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
 	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
 	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Message-ID: <20240723.Uquiangopie6@digikod.net>
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240723.quohpho8Ie6i@digikod.net>
 References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net>
- <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net>
+ <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+ <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
+ <20240719.Ooxeithah8Sh@digikod.net>
+ <CALmYWFsR+fWVuPLCoNhisTV5Lviv_dzb=5ajoKs0LaHsei9qTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,123 +74,132 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
+In-Reply-To: <CALmYWFsR+fWVuPLCoNhisTV5Lviv_dzb=5ajoKs0LaHsei9qTQ@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Sat, Jul 20, 2024 at 10:06:28AM +0800, Andy Lutomirski wrote:
-> On Fri, Jul 5, 2024 at 3:02 AM Mickaël Salaün <mic@digikod.net> wrote:
+On Fri, Jul 19, 2024 at 10:36:01AM -0700, Jeff Xu wrote:
+> On Fri, Jul 19, 2024 at 8:31 AM Mickaël Salaün <mic@digikod.net> wrote:
 > >
-> > These new SECBIT_SHOULD_EXEC_CHECK, SECBIT_SHOULD_EXEC_RESTRICT, and
-> > their *_LOCKED counterparts are designed to be set by processes setting
-> > up an execution environment, such as a user session, a container, or a
-> > security sandbox.  Like seccomp filters or Landlock domains, the
-> > securebits are inherited across proceses.
+> > On Fri, Jul 19, 2024 at 08:12:37AM -0700, Jeff Xu wrote:
+> > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > >
+> > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > > > > > > allowed for execution.  The main use case is for script interpreters and
+> > > > > > > > dynamic linkers to check execution permission according to the kernel's
+> > > > > > > > security policy. Another use case is to add context to access logs e.g.,
+> > > > > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > > > > executable code, scripts could also use this check [1].
+> > > > > > > >
+> > > > > > > > This is different than faccessat(2) which only checks file access
+> > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > > > > > > real execution, user space gets the same error codes.
+> > > > > > > >
+> > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > > > > exec, shared object, script and config file (such as seccomp config),
+> > > > > >
+> > > > > > "config file" that contains executable code.
+> > > > > >
+> > > > > Is seccomp config  considered as "contains executable code", seccomp
+> > > > > config is translated into bpf, so maybe yes ? but bpf is running in
+> > > > > the kernel.
+> > > >
+> > > > Because seccomp filters alter syscalls, they are similar to code
+> > > > injection.
+> > > >
+> > > > >
+> > > > > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
+> > > > > > > different use cases:
+> > > > > > >
+> > > > > > > execveat clearly has less code change, but that also means: we can't
+> > > > > > > add logic specific to exec (i.e. logic that can't be applied to
+> > > > > > > config) for this part (from do_execveat_common to
+> > > > > > > security_bprm_creds_for_exec) in future.  This would require some
+> > > > > > > agreement/sign-off, I'm not sure from whom.
+> > > > > >
+> > > > > > I'm not sure to follow. We could still add new flags, but for now I
+> > > > > > don't see use cases.  This patch series is not meant to handle all
+> > > > > > possible "trust checks", only executable code, which makes sense for the
+> > > > > > kernel.
+> > > > > >
+> > > > > I guess the "configfile" discussion is where I get confused, at one
+> > > > > point, I think this would become a generic "trust checks" api for
+> > > > > everything related to "generating executable code", e.g. javascript,
+> > > > > java code, and more.
+> > > > > We will want to clearly define the scope of execveat(AT_CHECK)
+> > > >
+> > > > The line between data and code is blurry.  For instance, a configuration
+> > > > file can impact the execution flow of a program.  So, where to draw the
+> > > > line?
+> > > >
+> > > > It might makes sense to follow the kernel and interpreter semantic: if a
+> > > > file can be executed by the kernel (e.g. ELF binary, file containing a
+> > > > shebang, or just configured with binfmt_misc), then this should be
+> > > > considered as executable code.  This applies to Bash, Python,
+> > > > Javascript, NodeJS, PE, PHP...  However, we can also make a picture
+> > > > executable with binfmt_misc.  So, again, where to draw the line?
+> > > >
+> > > > I'd recommend to think about interaction with the outside, through
+> > > > function calls, IPCs, syscalls...  For instance, "running" an image
+> > > > should not lead to reading or writing to arbitrary files, or accessing
+> > > > the network, but in practice it is legitimate for some file formats...
+> > > > PostScript is a programming language, but mostly used to draw pictures.
+> > > > So, again, where to draw the line?
+> > > >
+> > > The javascript is run by browser and java code by java runtime, do
+> > > they meet the criteria? they do not interact with the kernel directly,
+> > > however they might have the same "executable" characteristics and the
+> > > app might not want them to be put into non-exec mount.
+> > >
+> > > If the answer is yes, they can also use execveat(AT_CHECK),  the next
+> > > question is: does it make sense for javacript/java code to go through
+> > > execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
+> > > it is)
 > >
-> > When SECBIT_SHOULD_EXEC_CHECK is set, programs interpreting code should
-> > check executable resources with execveat(2) + AT_CHECK (see previous
-> > patch).
+> > Java and NodeJS can do arbitrary syscalls (through their runtime) and
+> > they can access arbitrary files, so according to my below comment, yes
+> > they should be managed as potentially dangerous executable code.
 > >
-> > When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
-> > execution of approved resources, if any (see SECBIT_SHOULD_EXEC_CHECK).
+> > The question should be: is this code trusted? Most of the time it is
+> > not, hence the security model of web browser and their heavy use of
+> > sandboxing.  So no, I don't think it would make sense to check this kind
+> > of code more than what the browser already do.
+> >
 > 
-> I read this twice, slept on it, read them again, and I *still* can't
-> understand it.  See below...
+> If I understand you correctly, Java/NodeJS won't use
+> execveat(AT_CHECK), we will leave that work to the web browser/java
+> runtime's sandboxer.
+> This is good because the scope is more narrow/clear.
 
-There is a new proposal:
-https://lore.kernel.org/all/20240710.eiKohpa4Phai@digikod.net/
-The new securebits will be SECBIT_EXEC_RESTRICT_FILE and
-SECBIT_EXEC_DENY_INTERACTIVE.  I'll send a new patch series with that.
+Yes for browser's sandboxes because the code comes from the network
+(i.e. not authenticated at the kernel level, and mostly untrusted).
 
-> 
-> > The only restriction enforced by the kernel is the right to ptrace
-> > another process.  Processes are denied to ptrace less restricted ones,
-> > unless the tracer has CAP_SYS_PTRACE.  This is mainly a safeguard to
-> > avoid trivial privilege escalations e.g., by a debugging process being
-> > abused with a confused deputy attack.
-> 
-> What's the actual issue?  And why can't I, as root, do, in a carefully
-> checked, CHECK'd and RESTRICT'd environment, # gdb -p <pid>?  Adding
-> weird restrictions to ptrace can substantially *weaken* security
-> because it forces people to do utterly daft things to work around the
-> restrictions.
-
-Restricting ptrace was a cautious approach, but I get you point and I
-agree.  I'll remove the ptrace restrictions in the next patch series.
+For standalone Java applications (stored in the filesystem), the Java
+runtime(s) should be patched as other script interpreters.
 
 > 
-> ...
+> Thanks
+> -Jeff
 > 
-> > +/*
-> > + * When SECBIT_SHOULD_EXEC_CHECK is set, a process should check all executable
-> > + * files with execveat(2) + AT_CHECK.  However, such check should only be
-> > + * performed if all to-be-executed code only comes from regular files.  For
-> > + * instance, if a script interpreter is called with both a script snipped as
-> 
-> s/snipped/snippet/
-> 
-> > + * argument and a regular file, the interpreter should not check any file.
-> > + * Doing otherwise would mislead the kernel to think that only the script file
-> > + * is being executed, which could for instance lead to unexpected permission
-> > + * change and break current use cases.
-> 
-> This is IMO not nearly clear enough to result in multiple user
-> implementations and a kernel implementation and multiple LSM
-> implementations and LSM policy authors actually agreeing as to what
-> this means.
-
-Right, no kernel parts (e.g. LSMs) should try to infer anything other
-than an executability check.  We should handle things such as role
-transitions with something else (e.g. a complementary dedicated flag),
-and that should be decorrelated from this patch series.
-
-> 
-> I also think it's wrong to give user code instructions about what
-> kernel checks it should do.  Have the user code call the kernel and
-> have the kernel implement the policy.
-
-Call the kernel for what?  Script interpreter is a user space thing, and
-restrictions enforced on interpreters need to be a user space thing.
-The kernel cannot restrict user space according to a semantic only
-defined by user space, such as Python interpretation, CLI arguments,
-content of environment variables...  If a process wants to interpret
-some data and turn than into code, there is no way for the kernel to
-know about that.
-
-> 
-> > +/*
-> > + * When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
-> > + * execution of approved files, if any (see SECBIT_SHOULD_EXEC_CHECK).  For
-> > + * instance, script interpreters called with a script snippet as argument
-> > + * should always deny such execution if SECBIT_SHOULD_EXEC_RESTRICT is set.
-> > + * However, if a script interpreter is called with both
-> > + * SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT, they should
-> > + * interpret the provided script files if no unchecked code is also provided
-> > + * (e.g. directly as argument).
-> 
-> I think you're trying to say that this is like (the inverse of)
-> Content-Security-Policy: unsafe-inline.  In other words, you're saying
-> that, if RESTRICT is set, then programs should not execute code-like
-> text that didn't come from a file.  Is that right?
-
-That is the definition of the new SECBIT_EXEC_DENY_INTERACTIVE, which
-should be clearer.
-
-> 
-> I feel like it would be worth looking at the state of the art of
-> Content-Security-Policy and all the lessons people have learned from
-> it.  Whatever the result is should be at least as comprehensible and
-> at least as carefully engineered as Content-Security-Policy.
-
-That's a good idea, but I guess Content-Security-Policy cannot be
-directly applied here.  My understanding is that CSP enables web servers
-to request restrictions on code they provide.  In the
-AT_CHECK+securebits case, the policy is defined and enforced by the
-interpreter, not necessarily the script provider. One big difference is
-that web servers (should) know the scripts they provide, and can then
-request the browser to ensure that they do what they should do, while
-the script interpreter trusts the kernel to check security properties of
-a script.  In other words, something like CSP could be implemented with
-AT_CHECK+securebits and a LSM policy (e.g. according to file's xattr).
-
-> 
-> --Andy
+> > I'll talk about this use case in the next patch series.
+> >
+> > >
+> > > > We should follow the principle of least astonishment.  What most users
+> > > > would expect?  This should follow the *common usage* of executable
+> > > > files.  At the end, the script interpreters will be patched by security
+> > > > folks for security reasons.  I think the right question to ask should
+> > > > be: could this file format be (ab)used to leak or modify arbitrary
+> > > > files, or to perform arbitrary syscalls?  If the answer is yes, then it
+> > > > should be checked for executability.  Of course, this excludes bugs
+> > > > exploited in the file format parser.
+> > > >
+> > > > I'll extend the next patch series with this rationale.
+> > > >
+> > >
