@@ -1,136 +1,190 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B9C13D248
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 06:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDE13B5A6;
+	Tue, 23 Jul 2024 07:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721716592; cv=none; b=YGOTyeplpGRTTrn2sgTKkEskqCDkIEPqDnyaWtb/n2WB8L+UhJKuHz0hXQIF/IaChfIuUUgB3g4L2ouRpjGYIwUZ0VDQBZXk8JbhA9ieIzknK5TGsF89MReETnPwENPAx24sZc6CXIVrMHdj4Wk/QuTn8HDQn6zip/5GcbWKJlo=
+	t=1721718289; cv=none; b=NZfDBNNmXhi2UJwUGVAexlBZII9wGed5QYkqRhRZP/f0a4jgi/xs5hzLVPyS+aHqueC+30z8KU1zu7p5LnK368tpehzK0mLpWXug+aazlw5G9aDOsdliiKSGwCNyDIkSmQQQ20P6OvkDS3QmQaDCN0f1h10XgqVOD+bwkyCoh34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721716592; c=relaxed/simple;
-	bh=Rh1iU4QMSCWVRtVE9r8jRFOBzKUv8LzpqIXny499Dgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dRXVfBMvmwqJbMg2NFy4V7hT+o/vwAFhP6NZEmfSDcmDZrj2rK9E9PzX56ET/KbYx2aStPZGZF6ZfNQS4uTSscC0TwJmPmWFTvj5hlQjkRzde6hE5bJs9+tYHtiAYmenphzJArKLM7fc3x/53m6j2kJDqIXuTV9jZXyowziqRuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HEv87vCm; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HEv87vCm"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ef2cce8c08so22313181fa.0
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Jul 2024 23:36:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721716588; x=1722321388; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=p96qSH2XGEzEu6XiRXjHGRDwLv6x0uLl02kl77T1vtg=;
-        b=HEv87vCmKdm9JrYmLpz2wN6Q/NoNu3mfmLWtZ3nf2gmKWkBgg9/OFNhqC1kpv3HsjS
-         pQktkLk8Qa9ytiZGy1SbTwbp5TpgHRt4VqAzlGvkc8A+VBACOcZA3TM4+hZJoVFoM4QT
-         m9BcEtyIZqnq9DG1A/gpO3xZ8vhyI2dHR+m+HPxRU95jUkW+kHxLfHjolcnPN/nvl9QU
-         2LDICX3T9VHWx6vy4U4jQHFUHnQyG420EDQHcgna9C9ttd+91oKaUaXib2UXbZn48jH6
-         f2GaLodnE7+6LLV/C9UoegnR8JNYtZLSEGim5wdytBnUSqsrCYpL5IYepS+Bt9Yvsi+j
-         AKNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721716588; x=1722321388;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p96qSH2XGEzEu6XiRXjHGRDwLv6x0uLl02kl77T1vtg=;
-        b=RX5zL1qyvT3wdMwp6bdRijxbG+hwnVsFKrVxqQ0k6mrEn+U/+j22+pU2uSYAgajlMU
-         jaOPIhvDYBqndI6SDUiXW3jMOu44zCqRD6jj3Zbzhqkmijr9K2YFJRuRwm+Ki2Z4XPNn
-         +MSl9LQGNqj+TKvL3w6PQVRXSyJFFpGIU0O5xmVyXyZ9aJrixUu6/k9PQj82kIcNdpIx
-         JjCAevWTcI6Ey2bomhpAy7TOw332wbwiwVcdCMp/Ez/8L0DhDaNT+Sq9F5PYswHWMy9o
-         oYyx4+moQE3UJlzA2H0ntEprEMJPcGThpxb2cvLV/+uQYm/lfofOTwEzRaSYBhwluuAQ
-         47Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmbptSmG9I4mbUuZkpmxji5VM8VCxLi+vAf3JmxXVsuIN25rFuQsveKso9z0NKWFGYGfCVJzhKs04Zt4KFMnYV5Q6ZYVE6WBZ0ZJhnG+5L3aQSBQEE
-X-Gm-Message-State: AOJu0Yz+nbl99GDBNICM2X5zcsnRU+X0bZyGbQSwgKQVoXDE8bUQWAZh
-	IPQ6jnDHrpzq37qgxI2H9VqZ9/uxTvXjZHqXijgydvpMWAMIE6lODNQv5QuupwI3QpAUhFVhXFC
-	E/js=
-X-Google-Smtp-Source: AGHT+IHWuTVuB2KW4cQs3g8t7OXEEPzFwqn1ezI1cnjHR//9/ahmV71iGxRUiWwnmbYZkrCSD5Ac8w==
-X-Received: by 2002:a2e:be92:0:b0:2ef:1784:a20 with SMTP id 38308e7fff4ca-2ef17840efbmr68420581fa.38.1721716588376;
-        Mon, 22 Jul 2024 23:36:28 -0700 (PDT)
-Received: from u94a (110-28-42-216.adsl.fetnet.net. [110.28.42.216])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d15c36135sm4215375b3a.60.2024.07.22.23.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 23:36:27 -0700 (PDT)
-Date: Tue, 23 Jul 2024 14:36:18 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, 
-	Xu Kuohai <xukuohai@huaweicloud.com>, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Yafang Shao <laoar.shao@gmail.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, "Jose E . Marchesi" <jose.marchesi@oracle.com>, 
-	James Morris <jamorris@linux.microsoft.com>, Kees Cook <kees@kernel.org>, 
-	Brendan Jackman <jackmanb@google.com>, Florent Revest <revest@google.com>
-Subject: Re: [PATCH bpf-next v2 5/9] bpf, verifier: improve signed ranges
- inference for BPF_AND
-Message-ID: <2k3v5ywz5hgwc2istobhath7i76azg5yqvbgfgzfvqvyd72zv5@4g3synjlqha4>
-References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
- <20240719110059.797546-6-xukuohai@huaweicloud.com>
- <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
- <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
- <0e46dcf652ff0b1168fc82e491c3d20eae18b21d.camel@gmail.com>
- <CAADnVQJ2bE0cAp8DNh1m6VqphNvWLkq8p=gwyPbbcdopaKcCCA@mail.gmail.com>
+	s=arc-20240116; t=1721718289; c=relaxed/simple;
+	bh=OS7/D2fswcHFX0KJp9WVoT9m3o1j5i+tbBQzNvC5FiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PM26A4M3wpbhyQpyIZYEmXww1iJ6K1AoSDryHLMCfyH5//D3rDaUXndVfh4FyEjY5qrx7j2iWhV0golj10BBRX903ZgCIzkCDc7+MLCLWcxJSxsf1rtsCDT65K8L3/T1vo9xKy0CIkOZ5BxV1FxZizPeLVUpwM175nV5csvcdDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WSp6h0vm8z4f3l19;
+	Tue, 23 Jul 2024 15:04:28 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 97B481A0CA0;
+	Tue, 23 Jul 2024 15:04:41 +0800 (CST)
+Received: from [10.67.111.192] (unknown [10.67.111.192])
+	by APP3 (Coremail) with SMTP id _Ch0CgBndE8HVp9mDXyOAw--.51101S2;
+	Tue, 23 Jul 2024 15:04:41 +0800 (CST)
+Message-ID: <b1ba86f7-f943-4913-8265-2a94f3951a88@huaweicloud.com>
+Date: Tue, 23 Jul 2024 15:04:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 9/20] lsm: Refactor return value of LSM hook
+ key_getsecurity
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ Brendan Jackman <jackmanb@chromium.org>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>,
+ Khadija Kamran <kamrankhadijadj@gmail.com>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Kees Cook <keescook@chromium.org>,
+ John Johansen <john.johansen@canonical.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Shung-Hsi Yu <shung-hsi.yu@suse.com>, Edward Cree <ecree.xilinx@gmail.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Anna Schumaker <anna@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>
+References: <20240711111908.3817636-10-xukuohai@huaweicloud.com>
+ <94a3b82a1e3e1fec77d676fa382105d4@paul-moore.com>
+ <7711bdba-9fbd-406c-8b81-adf91074d0b7@huaweicloud.com>
+ <CAHC9VhSsCuJzJ3ReUTyTXfWqRd+_TfShJBnRugZtX6OrMYJkOQ@mail.gmail.com>
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+In-Reply-To: <CAHC9VhSsCuJzJ3ReUTyTXfWqRd+_TfShJBnRugZtX6OrMYJkOQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQJ2bE0cAp8DNh1m6VqphNvWLkq8p=gwyPbbcdopaKcCCA@mail.gmail.com>
+X-CM-TRANSID:_Ch0CgBndE8HVp9mDXyOAw--.51101S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryfGF1fXrW8KFWUZry8AFb_yoWrWryxpr
+	W5Ka1Yyr4kJFy3ur1Iv3W7uF4Sya93GF1UWrZ3Gw1UZr1qvr17Wr1jkr1j9ryrCr1fJr10
+	vw47ZFZxCr1DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
+	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	j6a0PUUUUU=
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-On Mon, Jul 22, 2024 at 05:48:22PM GMT, Alexei Starovoitov wrote:
-> On Mon, Jul 22, 2024 at 11:48 AM Eduard Zingerman <eddyz87@gmail.com> wrote:
-> > On Mon, 2024-07-22 at 20:57 +0800, Shung-Hsi Yu wrote:
-> >
-> > [...]
-> >
-> > > > As a nitpick, I think that it would be good to have some shortened
-> > > > version of the derivation in the comments alongside the code.
-> > >
-> > > Agree it would. Will try to add a 2-4 sentence explanation.
-> > >
-> > > > (Maybe with a link to the mailing list).
-> > >
-> > > Adding a link to the mailing list seems out of the usual for comment in
-> > > verifier.c though, and it would be quite long. That said, it would be
-> > > nice to hint that there exists a more verbose version of the
-> > > explanation.
-> > >
-> > > Maybe an explicit "see commit for the full detail" at the end of
-> > > the added comment?
-> >
-> > Tbh, I find bounds deduction code extremely confusing.
-> > Imho, having lengthy comments there is a good thing.
+On 7/23/2024 5:35 AM, Paul Moore wrote:
+> On Sat, Jul 20, 2024 at 5:31 AM Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+>> On 7/19/2024 10:08 AM, Paul Moore wrote:
+>>> On Jul 11, 2024 Xu Kuohai <xukuohai@huaweicloud.com> wrote:
+>>>>
+>>>> To be consistent with most LSM hooks, convert the return value of
+>>>> hook key_getsecurity to 0 or a negative error code.
+>>>>
+>>>> Before:
+>>>> - Hook key_getsecurity returns length of value on success or a
+>>>>     negative error code on failure.
+>>>>
+>>>> After:
+>>>> - Hook key_getsecurity returns 0 on success or a negative error
+>>>>     code on failure. An output parameter @len is introduced to hold
+>>>>     the length of value on success.
+>>>>
+>>>> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+>>>> ---
+>>>>    include/linux/lsm_hook_defs.h |  3 ++-
+>>>>    include/linux/security.h      |  6 ++++--
+>>>>    security/keys/keyctl.c        | 11 ++++++++---
+>>>>    security/security.c           | 26 +++++++++++++++++++++-----
+>>>>    security/selinux/hooks.c      | 11 +++++------
+>>>>    security/smack/smack_lsm.c    | 21 +++++++++++----------
+>>>>    6 files changed, 51 insertions(+), 27 deletions(-)
 > 
-> +1
-> Pls document the logic in the code.
-> commit log is good, but good chunk of it probably should be copied
-> as a comment.
+> ...
 > 
-> I've applied the rest of the patches and removed 'test 3' selftest.
-> Pls respin this patch and a test.
-> More than one test would be nice too.
+>>>> diff --git a/security/security.c b/security/security.c
+>>>> index 9dd2ae6cf763..2c161101074d 100644
+>>>> --- a/security/security.c
+>>>> +++ b/security/security.c
+>>>> @@ -5338,19 +5338,35 @@ int security_key_permission(key_ref_t key_ref, const struct cred *cred,
+>>>>     * security_key_getsecurity() - Get the key's security label
+>>>>     * @key: key
+>>>>     * @buffer: security label buffer
+>>>> + * @len: the length of @buffer (including terminating NULL) on success
+>>>>     *
+>>>>     * Get a textual representation of the security context attached to a key for
+>>>>     * the purposes of honouring KEYCTL_GETSECURITY.  This function allocates the
+>>>>     * storage for the NUL-terminated string and the caller should free it.
+>>>>     *
+>>>> - * Return: Returns the length of @buffer (including terminating NUL) or -ve if
+>>>> - *         an error occurs.  May also return 0 (and a NULL buffer pointer) if
+>>>> - *         there is no security label assigned to the key.
+>>>> + * Return: Returns 0 on success or -ve if an error occurs. May also return 0
+>>>> + *         (and a NULL buffer pointer) if there is no security label assigned
+>>>> + *         to the key.
+>>>>     */
+>>>> -int security_key_getsecurity(struct key *key, char **buffer)
+>>>> +int security_key_getsecurity(struct key *key, char **buffer, size_t *len)
+>>>>    {
+>>>> +    int rc;
+>>>> +    size_t n = 0;
+>>>> +    struct security_hook_list *hp;
+>>>> +
+>>>>       *buffer = NULL;
+>>>> -    return call_int_hook(key_getsecurity, key, buffer);
+>>>> +
+>>>> +    hlist_for_each_entry(hp, &security_hook_heads.key_getsecurity, list) {
+>>>> +            rc = hp->hook.key_getsecurity(key, buffer, &n);
+>>>> +            if (rc < 0)
+>>>> +                    return rc;
+>>>> +            if (n)
+>>>> +                    break;
+>>>> +    }
+>>>> +
+>>>> +    *len = n;
+>>>> +
+>>>> +    return 0;
+>>>>    }
+>>>
+>>> Help me understand why we can't continue to use the call_int_hook()
+>>> macro here?
+>>>
+>>
+>> Before this patch, the hook may return +ve, 0, or -ve, and call_int_hook
+>> breaks the loop when the hook return value is not 0.
+>>
+>> After this patch, the +ve is stored in @n, so @n and return value should
+>> both be checked to determine whether to break the loop. This is not
+>> feasible with call_int_hook.
+> 
+> Yes, gotcha.  I was focused on the error condition and wasn't thinking
+> about the length getting zero'd out by a trailing callback.
+> Unfortunately, we *really* want to stick with the
+> call_{int,void}_hook() macros so I think we either need to find a way
+> to work within that constraint for existing macro callers, or we have
+> to leave this hook as-is for the moment.
+> 
 
-Ack. Will send send another series that:
+Let's leave it as is. So we ultimately have four hooks that can be
+converted, two of which require adding additional output parameter to
+hold odd return values. These output parameters require extra work
+on the BPF verifier, and it doesn't seem worthwhile just for two
+hooks. So I prefer to keep only the two patches that handle
+conversion without adding output parameters (patch 1 and 5).
 
-1. update current patch
-  - add code comment explanation how signed ranges are deduced in
-    scalar*_min_max_and()
-  - revert 229d6db14942 "selftests/bpf: Workaround strict bpf_lsm return
-    value check."
-2. reintroduce Xu Kuohai's "test 3" into verifier_lsm.c
-3. add a few tests for BPF_AND's signed range deduction
-   - should it be added to verifier_bounds*.c or verifier_and.c?
-
-     I think former, because if we later add signed range deduction for
-     BPF_OR as well, then test for signed range deducation of both
-     BPF_AND and BPF_OR can live in the same file, which would be nice
-     as signed range deduction of the two are somewhat symmetric
