@@ -1,46 +1,46 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B164A3D55D;
-	Tue, 23 Jul 2024 15:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC591157A7C
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 16:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721747986; cv=none; b=VpDd7x5WhrX3Ae74LSZcC6qdGZuko3jL4B16hTcrFqieB7C/HtZDJz83M8tl4EkgETAZQ9h2DmcCV2Vn4AsQdm2HFN4xvXrQRCo3bHxGObsjag6R0sKEMpkGmipc/97cTuGF06J+F3ePwjcsRohc1Jz7AO90rH6lEgiaM7lhpts=
+	t=1721753454; cv=none; b=Qn9KQ6fEYeQ6pGbyakMGAJCqo2BHZnkLki7PZ8HLneRbMtaSOc1rgNpzMcVe8BC/SB3JrtTTgUrjxII4jyT6zgyALU3ECk6jLcXPTucl+lskaBERBeQibjQ7tK16su2pUpp86IfRLcpWbCqjS5TuqdO4UznSwepNfYZeJfOt+oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721747986; c=relaxed/simple;
-	bh=FwPpgS4qRjlEJADupC/3U3E6AgMhwSAnIXwqKsSfzK4=;
+	s=arc-20240116; t=1721753454; c=relaxed/simple;
+	bh=+ppp43Ig0Ybxm6TsC99DBorr9/fIy3Ir+ExxDkm5Lz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ii+dcZJnIp7mW9iKOiqhJW2PeTPeUXSONDgm2EoMnNmWuxcOc1KmPhrYCSCTEoTw8Fd0n85Lh5iBfWpX7mZg1kbp/YnGvNiEZtUjIP/wegB2qa5aUn74eIaJ3hg+/PrG6dVz9dkWkprR6rc728D4jEU5Z3M4++626pCtEJAvuQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUyJmG7w; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgvSeY+eL/9S4ICBYbkwrZ//fsisVNhf+ll0OIVXFISLyv2dKLbHy3CjxNz+/VpLRmV98SEvFemtIsX/eyAUZ44dJHslJuf5/Dstk4OvzW3FHVGyZpkpSmJiXeMTsZ+SJefWwVXW4jUBjP06HJAX5lNDv9ew58e37MucuGtWxos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YgckCY06; arc=none smtp.client-ip=45.157.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUyJmG7w"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1C9C4AF09;
-	Tue, 23 Jul 2024 15:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721747986;
-	bh=FwPpgS4qRjlEJADupC/3U3E6AgMhwSAnIXwqKsSfzK4=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YgckCY06"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WT37C4Jhzz6Lk;
+	Tue, 23 Jul 2024 18:50:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721753447;
+	bh=Brq8CGE6n5AxIP1M9IXyLvKdJ9qyGO3tn/GoLw2aeQ8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MUyJmG7wwbd1xfqy1LCcUUztVhYv1mjmyLFSESrHiudgz/0+RB0kyJbPuWmOHDS6h
-	 H5hnH3CDR9fHV73GYHyn4+UWJ6bzfK2IO0lueVqppT+0XRSEBT03HfRCjNUSjpjNIE
-	 h6rrL/hDl5sQT0zZ6nn7Q5wmNp88YLeI3o4bOvMBDdRtGzMcJ5TnxohfBnZJIfJ7xf
-	 V8j/HXq/TOkhzg2ymsLEfjJLUyiSz+JnhQMYOX4wBfNbEY/uu+TjTC/qm74q+Wp3Ti
-	 hktBrUpZWIZg3Nj9ckj/Z4OL3WCxrZuNFtt+HEy2Ndfv5G7uzn9lOHCdmgA9WBNq7v
-	 RGhC+8KWPco5g==
-Date: Tue, 23 Jul 2024 17:19:40 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Paul Moore <paul@paul-moore.com>, Matus Jokay <matus.jokay@stuba.sk>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
- implementation hook
-Message-ID: <20240723-winkelmesser-wegschauen-4a8b00031504@brauner>
-References: <20240710024029.669314-2-paul@paul-moore.com>
- <20240710.peiDu2aiD1su@digikod.net>
- <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
- <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
- <Zp8k1H/qeaVZOXF5@dread.disaster.area>
+	b=YgckCY06kG5xbq1fwZwWKX7pSwKx3RWRLdRhOa6T2Z+wPDUEi1xx2dsY7oJjZJDl/
+	 Jfhm2eGtnR1X376HqvkY4VaVN8V/7MYvMpqMm683gLJSmj3J3iL0a/yyW9dCOXlBOU
+	 uadIWcuu6TwAvHjnVXdYOCdmLANF0/uzR7E44eOA=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WT37B4JB4zGll;
+	Tue, 23 Jul 2024 18:50:46 +0200 (CEST)
+Date: Tue, 23 Jul 2024 18:50:43 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Paul Moore <paul@paul-moore.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Shervin Oloumi <enlightened@chromium.org>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/3] Use socket's Landlock domain
+Message-ID: <20240723.Bee3bah1caim@digikod.net>
+References: <20240719150618.197991-1-mic@digikod.net>
+ <Zp-q9zxmCmGjR2-N@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,126 +50,166 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zp8k1H/qeaVZOXF5@dread.disaster.area>
+In-Reply-To: <Zp-q9zxmCmGjR2-N@google.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, Jul 23, 2024 at 01:34:44PM GMT, Dave Chinner wrote:
-> On Mon, Jul 22, 2024 at 03:46:36PM -0400, Paul Moore wrote:
-> > On Mon, Jul 22, 2024 at 8:30 AM Matus Jokay <matus.jokay@stuba.sk> wrote:
-> > > On 10. 7. 2024 12:40, Mickaël Salaün wrote:
-> > > > On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
-> > > >> The LSM framework has an existing inode_free_security() hook which
-> > > >> is used by LSMs that manage state associated with an inode, but
-> > > >> due to the use of RCU to protect the inode, special care must be
-> > > >> taken to ensure that the LSMs do not fully release the inode state
-> > > >> until it is safe from a RCU perspective.
-> > > >>
-> > > >> This patch implements a new inode_free_security_rcu() implementation
-> > > >> hook which is called when it is safe to free the LSM's internal inode
-> > > >> state.  Unfortunately, this new hook does not have access to the inode
-> > > >> itself as it may already be released, so the existing
-> > > >> inode_free_security() hook is retained for those LSMs which require
-> > > >> access to the inode.
-> > > >>
-> > > >> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > > >
-> > > > I like this new hook.  It is definitely safer than the current approach.
-> > > >
-> > > > To make it more consistent, I think we should also rename
-> > > > security_inode_free() to security_inode_put() to highlight the fact that
-> > > > LSM implementations should not free potential pointers in this blob
-> > > > because they could still be dereferenced in a path walk.
-> > > >
-> > > >> ---
-> > > >>  include/linux/lsm_hook_defs.h     |  1 +
-> > > >>  security/integrity/ima/ima.h      |  2 +-
-> > > >>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
-> > > >>  security/integrity/ima/ima_main.c |  2 +-
-> > > >>  security/landlock/fs.c            |  9 ++++++---
-> > > >>  security/security.c               | 26 +++++++++++++-------------
-> > > >>  6 files changed, 30 insertions(+), 30 deletions(-)
-> > 
-> > ...
-> > 
-> > > Sorry for the questions, but for several weeks I can't find answers to two things related to this RFC:
-> > >
-> > > 1) How does this patch close [1]?
-> > >    As Mickaël pointed in [2], "It looks like security_inode_free() is called two times on the same inode."
-> > >    Indeed, it does not seem from the backtrace that it is a case of race between destroy_inode and inode_permission,
-> > >    i.e. referencing the inode in a VFS path walk while destroying it...
-> > >    Please, can anyone tell me how this situation could have happened? Maybe folks from VFS... I added them to the copy.
-> > 
-> > The VFS folks can likely provide a better, or perhaps a more correct
-> > answer, but my understanding is that during the path walk the inode is
-> > protected by a RCU lock which allows for multiple threads to access
-> > the inode simultaneously; this could result in some cases where one
-> > thread is destroying the inode while another is accessing it.
+On Tue, Jul 23, 2024 at 03:07:53PM +0200, Günther Noack wrote:
+> Hello Mickaël!
 > 
-> Shouldn't may_lookup() be checking the inode for (I_NEW |
-> I_WILLFREE | I_FREE) so that it doesn't access an inode either not
-> completely initialised or being evicted during the RCU path walk?
-
-Going from memory since I don't have time to go really into the weeds.
-
-A non-completely initalised inode shouldn't appear in path lookup.
-Before the inode is attached to a dentry I_NEW would have been removed
-otherwise this is a bug. That can either happen via unlock_new_inode()
-and d_splice_alias() or in some cases directly via d_instantiate_new().
-Concurrent inode lookup calls on the same inode (e.g., iget_locked() and
-friends) will sleep until I_NEW is cleared.
-
-> All accesses to the VFS inode that don't have explicit reference
-> counts have to do these checks...
+> On Fri, Jul 19, 2024 at 05:06:15PM +0200, Mickaël Salaün wrote:
+> > While the current approach works, I think we should change the way
+> > Landlock restricts network actions.  Because this feature is relatively
+> > new, we can still fix this inconsistency.  In a nutshell, let's follow a
+> > more capability-based model.  Please let me know what you think.
 > 
-> IIUC, at the may_lookup() point, the RCU pathwalk doesn't have a
-> fully validate reference count to the dentry or the inode at this
-> point, so it seems accessing random objects attached to an inode
-> that can be anywhere in the setup or teardown process isn't at all
-> safe...
+> Thanks for sending the patch.  The implementation with ->f_cred is much simpler
+> than I had thought it would be.  Some higher level questions:
+> 
+>  * I assume that the plan is to backport this as a fix to older kernels that
+>    already have the feature?  (Otherwise, we would potentially have backwards
+>    compatibility issues.)
 
-may_lookup() cannot encounter inodes in random states. It will start
-from a well-known struct path and sample sequence counters for rename,
-mount, and dentry changes. Each component will be subject to checks
-after may_lookup() via these sequence counters to ensure that no change
-occurred that would invalidate the lookup just done. To be precise to
-ensure that no state could be reached via rcu that couldn't have been
-reached via ref walk.
+Correct, if this patch is merged it must be backported too, but there
+might be better alternatives, or we might just stick to the initial
+approach.
 
-So may_lookup() may be called on something that's about to be freed
-(concurrent unlink on a directory that's empty that we're trying to
-create or lookup something nonexistent under) while we're looking at it
-but all the machinery is in place so that it will be detected and force
-a drop out of rcu and into reference walking mode.
+> 
+>  * I believe it clashes a little bit with the TCP server example [1],
+>    which I found a useful use case for the TCP connect/bind and socket
+>    restriction features.
 
-When may_lookup() calls inode_permission() it only calls into the
-filesystem itself if the filesystem has a custom i_op->permission()
-handler. And if it has to call into the filesystem it passes
-MAY_NOT_BLOCK to inform the filesystem about this. And in those cases
-the filesystem must ensure any additional data structures can safely be
-accessed under rcu_read_lock() (documented in path_lookup.rst).
+Indeed, because the socket is created before the sandboxing, the socket
+could be reused to bind (or connect) to other ports.  This is a good
+example of why using current's instead of socket's credentials may be
+less surprising.  From my point of view, the main issue is that a socket
+can be reconfigured.
 
-If the filesystem detects that it cannot safely handle this or detects
-that something is invalid it can return -ECHILD causing the VFS to drop
-out of rcu and into ref walking mode to redo the lookup. That may happen
-directly in may_lookup() it unconditionally happens in walk_component()
-when it's verified that the parent had no changes while we were looking
-at it.
+> 
+>  * accept(2) on a passive (listen-mode) socket will give you a new socket FD
+>    -- does that new socket inherit its f_cred from the server socket,
+>    or does it inherit its f_cred from the thread?
 
-The same logic extends to security modules. Both selinux and smack
-handle MAY_NOT_BLOCK calls from security_inode_permission() with e.g.,
-selinux returning -ECHILD in case the inode security context isn't
-properly initialized causing the VFS to drop into ref walking mode and
-allowing selinux to redo the initialization.
+According to sock_alloc_file(), the newly created socket inherits the
+caller's credentials, which is similar to a call to openat2(2) with a
+directory file descriptor.
 
-Checking inode state flags isn't needed because the VFS already handles
-all of this via other means as e.g., sequence counters in various core
-structs. It also likely wouldn't help because we'd have to take locks to
-access i_state or sample i_state before calling into inode_permission()
-and then it could still change behind our back. It's also the wrong
-layer as we're dealing almost exclusively with dentries as the main data
-structure during lookup.
+> 
+> Regarding the TCP server example, the current implementation is *very* simple,
+> and does the following steps:
+> 
+>  1. create socket with socket(2)
+>  2. bind(2) the socket to the desired port
+>  3. enforce a Landlock ruleset that disables all networking features
+>     (TCP bind, TCP connect and socket creation with the new patch set)
+>  4. listen(2) on the socket
+>  5. go into the accept(2) loop
+> 
+> With the old behaviour, step 3 is going to affect the existing passive socket:
+> It will not be possible any more to bind(2) that passive socket to another port.
+> 
+> With the new behaviour (after your patch), step 3 does *not* affect the existing
+> socket, and the server socket can be reused to bind(2) to other ports.
+> 
+> Or, in other words: If the relevant domain is tied to the socket at creation
+> time, that means that a future client connection which takes over the process
+> might be able to use that socket's Landlock domain, which potentially grants
+> more permissions than the thread's domain
 
-Fwiw, a bunch of this is documented in path_lookup.rst, vfs.rst, and
-porting.rst.
+Yes, that's why it might be more risky, but I wanted to have this
+discussion.  Whatever the outcome, it should be explained in
+Documentation/security/landlock.rst
 
-(I'm running out of time with other stuff so I want to point out that I
-can't really spend a lot more time on this thread tbh.)
+One thing to keep in mind and that contrary to other LSMs, Landlock,
+like seccomp, enables processes to (only) drop privileges, and this is
+done by the process itself (not at execve time).  This was also one
+argument for the initial approach.
+
+A thing that bothered me was related to the restrictions of sockets,
+especially with the WIP scoping feature.  Datagram (unix) sockets could
+work before sandboxing, and suddenly become broken after sandboxing
+(because the security check would be done at send time instead of
+connect time).  This kind of issue should be identified quite early and
+easily though.
+
+However, there is still an inconsistency between connected stream
+sockets and datagram sockets.  From a security point of view, this looks
+like a good thing though.
+
+> 
+> I think it would be nice if a use case like in the TCP server example would
+> still be possible with Landlock; there are multiple ways to reach that:
+> 
+>  - We could enforce two layers of Landlock rules, one before socket creation
+>    that restricts bind(2) to a given port, and one after socket creation that
+>    restricts other bind(2), create(2) and socket(2) operations.
+> 
+>    Drawbacks:
+> 
+>    - One Landlock layer more, and needs to add a Landlock rule:
+>      This is a bit more complicated to implement.
+
+Right, I think it's too complex for users.
+
+>    - The bind(2) restriction on the socket is still only per port *number*,
+>      but it is still possible to bind with that port number on different IP
+>      addresses.
+
+Good point.  That's another argument for the initial approach and the
+way you sandboxed the example: dropping the *_TCP access rights, it is
+not possible to rebind or reconnect a socket (to another address).
+
+Actually, I'm not sure if using the socket's credential would not
+confuse users to understand why an access is denied (or allowed).
+
+> 
+>  - Alternatively, I wish we could just lock the passive server socket in, so
+>    that it can't be made to reconnect anywhere else.  After all, the socket
+>    disassociation with connect(2) with AF_UNSPEC seems to be a somewhat obscure
+>    and seldomly used feature - if we could just disallow that operation, we
+>    could ensure that this socket gets reused for such a nefarious purpose.
+
+We could also add a new "scope" for socket reconfiguration of sockets
+created by a parent or sibling domain, similar to the ptrace
+restrictions.
+
+> 
+>    It would still require two nested Landlock rulesets to make the TCP server
+>    example work, but they would be a bit simpler than in the alternative above.
+> 
+>  - There are probably more alternatives...?
+> 
+> What do you think?
+
+I see other alternatives:
+
+- We could have a new ruleset's attribute to specify if network
+  restrictions should apply on the caller or the socket.  That might be
+  confusing for users though.
+
+- We could just stick to the initial approach and add new access rights
+  (denied by default, similar to FS_REFER) that will only apply to newly
+  created sockets.  This is close to the previous alternative but more
+  explicit. Both use cases could then be used, with a default secure
+  approach (i.e. the initial one).  However, we need to have a clear
+  rationale for the WIP scoping restrictions: should the caller or the
+  socket be checked as the client?
+
+- We could extend the current approach and check both the caller's
+  credential and the socket's credential.  This could be confusing to
+  users though.
+
+- We could have a new fcntl(2) command to (securely) transition a file
+  descriptor's credential to the caller's one (e.g. approved by
+  ptrace_may_access).  That could be generic to all Linux access control
+  systems.
+
+- According to a new ruleset's attribute, we could revalidate (at use
+  time) file descriptors not opened by the caller's Landlock domain, but
+  users would have to be explicit (e.g. stdio issue). And how to handle
+  partially allowed accesses?
+
+> 
+> —Günther
+> 
+> [1] https://wiki.gnoack.org/LandlockTcpServerExample
+> 
