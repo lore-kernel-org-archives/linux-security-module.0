@@ -1,71 +1,46 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727614EC4D
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jul 2024 13:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B164A3D55D;
+	Tue, 23 Jul 2024 15:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740934; cv=none; b=YvwdffnqP2YS0L/yhbg9zMqhxsdpEb5Axp0fRPOjnmmfv4bPZhFt66+/rWPN8HDYHSa0jLbnmPnMZwassjafHIeM4Pi6gpjlZgZ0smgJqRB4DHyeHWGHVWifw5Gch/xJGnxfgxKOuJA8ibyUPWUITiDaTGk76yvQd6aEzgoA0a0=
+	t=1721747986; cv=none; b=VpDd7x5WhrX3Ae74LSZcC6qdGZuko3jL4B16hTcrFqieB7C/HtZDJz83M8tl4EkgETAZQ9h2DmcCV2Vn4AsQdm2HFN4xvXrQRCo3bHxGObsjag6R0sKEMpkGmipc/97cTuGF06J+F3ePwjcsRohc1Jz7AO90rH6lEgiaM7lhpts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740934; c=relaxed/simple;
-	bh=4t/c9B/kIoP+Ate7ojlvKUMM9iVTLD9O0V5zMyRqH/M=;
+	s=arc-20240116; t=1721747986; c=relaxed/simple;
+	bh=FwPpgS4qRjlEJADupC/3U3E6AgMhwSAnIXwqKsSfzK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evMbnbXFDdtM5nGv4jYld2XH2Yp/HE4YjT2qPx3zZ9CfMIfqMBIGVr8aEW526FMfxZRFocnZouN7YRqhS37XGxY7qMF/T5hdsv9k2RgVecI/rXrkBw7xL88fgof7Gdq12dNMnUW+J+YTk8iSO5MGWQebWgMgLT5PPStEUeUTmNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=iu5aRGVF; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=ii+dcZJnIp7mW9iKOiqhJW2PeTPeUXSONDgm2EoMnNmWuxcOc1KmPhrYCSCTEoTw8Fd0n85Lh5iBfWpX7mZg1kbp/YnGvNiEZtUjIP/wegB2qa5aUn74eIaJ3hg+/PrG6dVz9dkWkprR6rc728D4jEU5Z3M4++626pCtEJAvuQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUyJmG7w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="iu5aRGVF"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyM22wgkzvsg;
-	Tue, 23 Jul 2024 15:15:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721740542;
-	bh=4lI4oazmkOZyVO/+hKYfpMj2Cu7Ya1lQsK8QvumCDJo=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUyJmG7w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1C9C4AF09;
+	Tue, 23 Jul 2024 15:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721747986;
+	bh=FwPpgS4qRjlEJADupC/3U3E6AgMhwSAnIXwqKsSfzK4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iu5aRGVFiaz2EvXdhm0W92QucmsighTPOyKQ4FzdFc/TOsdnkel8EKdaRpqzc/2ku
-	 JBfDlUhRFyffOrc38SsjnUdhtefvVfso2+Gqqg/DSIgSU0uxvpEXds2Ikf458ZRYi+
-	 uz8YoHUftVi8pVezUeXWt2AMSfwFwTDQjhh2Z7No=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyM127Vdz9Ll;
-	Tue, 23 Jul 2024 15:15:41 +0200 (CEST)
-Date: Tue, 23 Jul 2024 15:15:38 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240723.beiTu0qui2ei@digikod.net>
-References: <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net>
- <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
- <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net>
- <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
- <20240719.sah7oeY9pha4@digikod.net>
- <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
+	b=MUyJmG7wwbd1xfqy1LCcUUztVhYv1mjmyLFSESrHiudgz/0+RB0kyJbPuWmOHDS6h
+	 H5hnH3CDR9fHV73GYHyn4+UWJ6bzfK2IO0lueVqppT+0XRSEBT03HfRCjNUSjpjNIE
+	 h6rrL/hDl5sQT0zZ6nn7Q5wmNp88YLeI3o4bOvMBDdRtGzMcJ5TnxohfBnZJIfJ7xf
+	 V8j/HXq/TOkhzg2ymsLEfjJLUyiSz+JnhQMYOX4wBfNbEY/uu+TjTC/qm74q+Wp3Ti
+	 hktBrUpZWIZg3Nj9ckj/Z4OL3WCxrZuNFtt+HEy2Ndfv5G7uzn9lOHCdmgA9WBNq7v
+	 RGhC+8KWPco5g==
+Date: Tue, 23 Jul 2024 17:19:40 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Paul Moore <paul@paul-moore.com>, Matus Jokay <matus.jokay@stuba.sk>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+Message-ID: <20240723-winkelmesser-wegschauen-4a8b00031504@brauner>
+References: <20240710024029.669314-2-paul@paul-moore.com>
+ <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+ <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+ <Zp8k1H/qeaVZOXF5@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -75,140 +50,126 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <Zp8k1H/qeaVZOXF5@dread.disaster.area>
 
-On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
-> On Fri, Jul 19, 2024 at 8:04 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
-> > > On Fri, Jul 19, 2024 at 1:45 AM Mickaël Salaün <mic@digikod.net> wrote:
+On Tue, Jul 23, 2024 at 01:34:44PM GMT, Dave Chinner wrote:
+> On Mon, Jul 22, 2024 at 03:46:36PM -0400, Paul Moore wrote:
+> > On Mon, Jul 22, 2024 at 8:30 AM Matus Jokay <matus.jokay@stuba.sk> wrote:
+> > > On 10. 7. 2024 12:40, Mickaël Salaün wrote:
+> > > > On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+> > > >> The LSM framework has an existing inode_free_security() hook which
+> > > >> is used by LSMs that manage state associated with an inode, but
+> > > >> due to the use of RCU to protect the inode, special care must be
+> > > >> taken to ensure that the LSMs do not fully release the inode state
+> > > >> until it is safe from a RCU perspective.
+> > > >>
+> > > >> This patch implements a new inode_free_security_rcu() implementation
+> > > >> hook which is called when it is safe to free the LSM's internal inode
+> > > >> state.  Unfortunately, this new hook does not have access to the inode
+> > > >> itself as it may already be released, so the existing
+> > > >> inode_free_security() hook is retained for those LSMs which require
+> > > >> access to the inode.
+> > > >>
+> > > >> Signed-off-by: Paul Moore <paul@paul-moore.com>
 > > > >
-> > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > > > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > > >
-> > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > > > > > > > > > allowed for execution.  The main use case is for script interpreters and
-> > > > > > > > > > dynamic linkers to check execution permission according to the kernel's
-> > > > > > > > > > security policy. Another use case is to add context to access logs e.g.,
-> > > > > > > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > > > > > > executable code, scripts could also use this check [1].
-> > > > > > > > > >
-> > > > > > > > > > This is different than faccessat(2) which only checks file access
-> > > > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > > > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > > > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > > > > > > > > > real execution, user space gets the same error codes.
-> > > > > > > > > >
-> > > > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > > > > > > exec, shared object, script and config file (such as seccomp config),
+> > > > I like this new hook.  It is definitely safer than the current approach.
 > > > >
-> > > > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
-> > > > > > > > > sure it passes AT_CHECK, before loading it into memory.
-> > > > > > > >
-> > > > > > > > All ELF dependencies are opened and checked with open_exec(), which
-> > > > > > > > perform the main executability checks (with the __FMODE_EXEC flag).
-> > > > > > > > Did I miss something?
-> > > > > > > >
-> > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
-> > > > > > > The app can choose its own dynamic linker path during build, (maybe
-> > > > > > > even statically link one ?)  This is another reason that relying on a
-> > > > > > > userspace only is not enough.
-> > > > > >
-> > > > > > The kernel calls open_exec() on all dependencies, including
-> > > > > > ld-linux-x86-64.so.2, so these files are checked for executability too.
-> > > > > >
-> > > > > This might not be entirely true. iiuc, kernel  calls open_exec for
-> > > > > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
+> > > > To make it more consistent, I think we should also rename
+> > > > security_inode_free() to security_inode_put() to highlight the fact that
+> > > > LSM implementations should not free potential pointers in this blob
+> > > > because they could still be dereferenced in a path walk.
 > > > >
-> > > > Correct, the dynamic linker is in charge of that, which is why it must
-> > > > be enlighten with execveat+AT_CHECK and securebits checks.
-> > > >
-> > > > > load_elf_binary() {
-> > > > >    interpreter = open_exec(elf_interpreter);
-> > > > > }
-> > > > >
-> > > > > libc.so.6 is opened and mapped by dynamic linker.
-> > > > > so the call sequence is:
-> > > > >  execve(a.out)
-> > > > >   - open exec(a.out)
-> > > > >   - security_bprm_creds(a.out)
-> > > > >   - open the exec(ld.so)
-> > > > >   - call open_exec() for interruptor (ld.so)
-> > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
-> > > > > the same check and code path as libc.so below ?
-> > > >
-> > > > open_exec() checks are enough.  LSMs can use this information (open +
-> > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
-> > > > request.
-> > > >
-> > > Then the ld.so doesn't go through the same security_bprm_creds() check
-> > > as other .so.
-> >
-> > Indeed, but...
-> >
-> My point is: we will want all the .so going through the same code
-> path, so  security_ functions are called consistently across all the
-> objects, And in the future, if we want to develop additional LSM
-> functionality based on AT_CHECK, it will be applied to all objects.
-
-I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, which
-already is the common security check for all executable dependencies.
-As extra information, they can get explicit requests by looking at
-execveat+AT_CHECK call.
-
-> 
-> Another thing to consider is:  we are asking userspace to make
-> additional syscall before  loading the file into memory/get executed,
-> there is a possibility for future expansion of the mechanism, without
-> asking user space to add another syscall again.
-
-AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
-LSM policies) could enforce other restrictions following the same
-semantic.  We need to keep in mind backward compatibility.
-
-> 
-> I m still not convinced yet that execveat(AT_CHECK) fits more than
-> faccessat(AT_CHECK)
-
-faccessat2(2) is dedicated to file permission/attribute check.
-execveat(2) is dedicated to execution, which is a superset of file
-permission for executability, plus other checks (e.g. noexec).
-
-> 
-> 
+> > > >> ---
+> > > >>  include/linux/lsm_hook_defs.h     |  1 +
+> > > >>  security/integrity/ima/ima.h      |  2 +-
+> > > >>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+> > > >>  security/integrity/ima/ima_main.c |  2 +-
+> > > >>  security/landlock/fs.c            |  9 ++++++---
+> > > >>  security/security.c               | 26 +++++++++++++-------------
+> > > >>  6 files changed, 30 insertions(+), 30 deletions(-)
+> > 
+> > ...
+> > 
+> > > Sorry for the questions, but for several weeks I can't find answers to two things related to this RFC:
 > > >
-> > > As my previous email, the ChromeOS LSM restricts executable mfd
-> > > through security_bprm_creds(), the end result is that ld.so can still
-> > > be executable memfd, but not other .so.
-> >
-> > The chromeOS LSM can check that with the security_file_open() hook and
-> > the __FMODE_EXEC flag, see Landlock's implementation.  I think this
-> > should be the only hook implementation that chromeOS LSM needs to add.
-> >
-> > >
-> > > One way to address this is to refactor the necessary code from
-> > > execveat() code patch, and make it available to call from both kernel
-> > > and execveat() code paths., but if we do that, we might as well use
-> > > faccessat2(AT_CHECK)
-> >
-> > That's why I think it makes sense to rely on the existing __FMODE_EXEC
-> > information.
-> >
-> > >
-> > >
-> > > > >   - transfer the control to ld.so)
-> > > > >   - ld.so open (libc.so)
-> > > > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
-> > > > > require dynamic linker change.
-> > > > >   - ld.so mmap(libc.so,rx)
-> > > >
-> > > > Explaining these steps is useful. I'll include that in the next patch
-> > > > series.
+> > > 1) How does this patch close [1]?
+> > >    As Mickaël pointed in [2], "It looks like security_inode_free() is called two times on the same inode."
+> > >    Indeed, it does not seem from the backtrace that it is a case of race between destroy_inode and inode_permission,
+> > >    i.e. referencing the inode in a VFS path walk while destroying it...
+> > >    Please, can anyone tell me how this situation could have happened? Maybe folks from VFS... I added them to the copy.
+> > 
+> > The VFS folks can likely provide a better, or perhaps a more correct
+> > answer, but my understanding is that during the path walk the inode is
+> > protected by a RCU lock which allows for multiple threads to access
+> > the inode simultaneously; this could result in some cases where one
+> > thread is destroying the inode while another is accessing it.
 > 
+> Shouldn't may_lookup() be checking the inode for (I_NEW |
+> I_WILLFREE | I_FREE) so that it doesn't access an inode either not
+> completely initialised or being evicted during the RCU path walk?
+
+Going from memory since I don't have time to go really into the weeds.
+
+A non-completely initalised inode shouldn't appear in path lookup.
+Before the inode is attached to a dentry I_NEW would have been removed
+otherwise this is a bug. That can either happen via unlock_new_inode()
+and d_splice_alias() or in some cases directly via d_instantiate_new().
+Concurrent inode lookup calls on the same inode (e.g., iget_locked() and
+friends) will sleep until I_NEW is cleared.
+
+> All accesses to the VFS inode that don't have explicit reference
+> counts have to do these checks...
+> 
+> IIUC, at the may_lookup() point, the RCU pathwalk doesn't have a
+> fully validate reference count to the dentry or the inode at this
+> point, so it seems accessing random objects attached to an inode
+> that can be anywhere in the setup or teardown process isn't at all
+> safe...
+
+may_lookup() cannot encounter inodes in random states. It will start
+from a well-known struct path and sample sequence counters for rename,
+mount, and dentry changes. Each component will be subject to checks
+after may_lookup() via these sequence counters to ensure that no change
+occurred that would invalidate the lookup just done. To be precise to
+ensure that no state could be reached via rcu that couldn't have been
+reached via ref walk.
+
+So may_lookup() may be called on something that's about to be freed
+(concurrent unlink on a directory that's empty that we're trying to
+create or lookup something nonexistent under) while we're looking at it
+but all the machinery is in place so that it will be detected and force
+a drop out of rcu and into reference walking mode.
+
+When may_lookup() calls inode_permission() it only calls into the
+filesystem itself if the filesystem has a custom i_op->permission()
+handler. And if it has to call into the filesystem it passes
+MAY_NOT_BLOCK to inform the filesystem about this. And in those cases
+the filesystem must ensure any additional data structures can safely be
+accessed under rcu_read_lock() (documented in path_lookup.rst).
+
+If the filesystem detects that it cannot safely handle this or detects
+that something is invalid it can return -ECHILD causing the VFS to drop
+out of rcu and into ref walking mode to redo the lookup. That may happen
+directly in may_lookup() it unconditionally happens in walk_component()
+when it's verified that the parent had no changes while we were looking
+at it.
+
+The same logic extends to security modules. Both selinux and smack
+handle MAY_NOT_BLOCK calls from security_inode_permission() with e.g.,
+selinux returning -ECHILD in case the inode security context isn't
+properly initialized causing the VFS to drop into ref walking mode and
+allowing selinux to redo the initialization.
+
+Checking inode state flags isn't needed because the VFS already handles
+all of this via other means as e.g., sequence counters in various core
+structs. It also likely wouldn't help because we'd have to take locks to
+access i_state or sample i_state before calling into inode_permission()
+and then it could still change behind our back. It's also the wrong
+layer as we're dealing almost exclusively with dentries as the main data
+structure during lookup.
+
+Fwiw, a bunch of this is documented in path_lookup.rst, vfs.rst, and
+porting.rst.
+
+(I'm running out of time with other stuff so I want to point out that I
+can't really spend a lot more time on this thread tbh.)
