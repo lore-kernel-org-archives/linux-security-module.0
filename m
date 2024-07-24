@@ -1,136 +1,343 @@
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED22139588
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Jul 2024 20:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6751878C60;
+	Wed, 24 Jul 2024 21:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721854598; cv=none; b=ECzrYg9Y/e0bDt5xFcXrI/Fjoo7k0ryOY9Cb1N41/9xsbe6IxrOTD7FRfpDCPoZXG5wEfXmMs4pv8qSJlmYRKJNRUmq6KiWSbL3Wyz3xbhgwvZQnc+X74tBWPJqE1Cy5AlqGcLr7aRoLYKLZOKpN8Ip+0Cw/Pg5Bnbb9fIU2c70=
+	t=1721854826; cv=none; b=ijFpn7w3xsRjBT2FUW4mEL1SlmQjLzmNM6CEJ/LLEciqI3dnrweEl9W2+Z1vW0XreO7fWOxm9JlTZRJNX+g7ehgyklhx8WJfEnt76spXmvSIrxrCPyr7c0XThSrbSMST5JvgWPW4+F28rTx5z83UkgFZC3wPe/MvrVhBVUrq9yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721854598; c=relaxed/simple;
-	bh=pTW0C/srNvLSd1af1jTM4YafIWW01ysF9V0iRUeGJTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tc7sdUOtISHmcjYY+Krt+nTJ3+1nTjF+GRjb+er1O4TjBDsvuEj0PfnJb431H9Cpfzx/05Ru1Y7PMe8h3JKpLDlEtJs/5GQskAmKeEBSQuNJK3373Ma8JCev06Tt4PMBKWa2TJTLiaMkUNtO+ZPKl+hvfUZI3WRcC0jCdp08nEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=sbmZ5NeE; arc=none smtp.client-ip=66.163.187.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1721854826; c=relaxed/simple;
+	bh=MWPyVHqyGAdLPGNh/jcvXb92SGEZuZ9xxlgHcr3qQcE=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:References; b=A1j+ydKXNP4x5yl4fIWrgvs6IrUwTx6etrGsCEhl4LbBAQ3NY6G3z346N2hiShsgLna8q6SD5o2milajy8gkhYyI5/WZM4FXccfQ0MI794MwaLaaVomVXxc9Ysza2Olf5iL+zIw7Fec33WgodurhZe66ZVYXx+9f7QvwSICPur4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TX5MYsYU; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sbmZ5NeE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1721854595; bh=uyqNlMER+A4e+8EYoXNA4LcRlMSMioRF3dT/72cqgck=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sbmZ5NeECTHbsBoxh7XsxOWKrw1Pa18WHiN/fvvcfO1w2HwJPX5vg5yPDzFzlexluBoUz59LSyhqDdX6at0Wc3pi/yh//JdaCzoobcZzMZx6L4APixKl6a7I+QC9bazpWmT6t6yy38IxFacPFhHvUwy3e0rP+MJOxUKxfwyOSldIc49Hwvudmw67msi3vCFm8Ab/F8Z70Uw96Pnsme787lOhAc8nvCKW/g48U+UF6IVYpjzwpOQxS5vu+nuOATJlmvqOsx9PXfA2S1QpL5zyXvwVOC81eda3jSyX3yqNo6AQRz8RWBQXeNOBRETjL3g2OJkL42F+9/5I+X5tIcyUbw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1721854595; bh=9kUQNmljyOaQuWHdIsnHWyNMjsXYRLvWiH/dWNwR2lM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=oDPlu+oTKP9l9C+IotORUg7OXOELQH4h5ImUM/zb/ZrLCfc6j28h5rDSRQPot69Hj1OHGUqnMBrncL3f/tO25VJcVuwtPAIBa+7kOi9CpIV19M3gId93LwwgFErumqyCCiqxfamXysm9YQeeUAOT5zzVX8/oHFo21ecfcnPacnF/FusNmyUk4n+ers0BrTQDkmI4CCoFezJnMB65d9KgLrWyznBaIE6nCVhpOtuGuEMYLOB0kAJByxiOD9ODiuCdkBcGHEI6f/fAL8hhfdVyintpQB3vmzdtR6F77kGnOx+cpgcjBogbqrhBvdwMFZE4eQdpjn3socCrt4EaCwVnuQ==
-X-YMail-OSG: 9zDWBc4VM1m_91EP.9GB7I._GbYyaOrnxhXq7Z8y_iBeIa26U4Qy1Osv0MjAJ4m
- UBX2t9GtXtwhEibAJPBgqDOdryPJSmBLytpqrnwf3nYtvHeEYpjw52vfa1BY.10p5LDBrL88aiPt
- caHAvdVIYrY1JMzSRQG5HGncaIs.Al8HhmdxnYRgiJ1UyxfNiAHxXclwwf.4sopQVVr2X6mDmeC6
- waSTmFbaNN7g1T9J9mVPGycj2hpiGkYsG_j6UfARjgWN_64DE.EMcjerMfWupsIkaK7JgF3eCaqy
- aHwgJeNyb7uk2XUHRv.d2tN3BL77ttSdPowGXLESJHi1DbHu09nig7IygHn5oiUsZd4KqT3ChPdU
- jGwyIlaplZhLhWVUb_n17wb_eDjXLQm6PrpRori2mJ_96NIL.e.0rKb_T6IhLJLkv3nDFOrDMDGv
- JnSf.6lGnxKwwRWjKXuDcArHLN11uKLs1nAqz36tk8tuSLH48s8qg.NC9ZBCHJ7SI_IZDndmbvxO
- IE9GfPT2jAX3k8zFGrE1vbBvSsgFPMTzIZWC1VtPvyGwuoGzz_HpDkMwnNod4Ud7mqiIfjcpRWKQ
- eZQ4yHGdedWsUrlP4mVWooD8IPrUPeb56VMy0UUeKw2vGskgN7Mifyjj4N9z.OOP.mON.eDkddCf
- qPH2MLCmaLcRNmXcl.blr0YgPF8HsVSxhkjI3nIdFEAX5BRUsGxOKBBWDTYWpqSIKhs9i4tADZz_
- 5_yEmhlM7cGRGF0zFVj1RmZ4yFt04jcBcuF8UWu9W6CLOMUXITqxNRZMBjwDWJU.vbsynPRNpn.L
- xFRnP2KqjDUW95mKJ1EpcTADRgvtEA.udNH41P_4Hw610.ktTH.nelPWC2ZStMq_Ae.nXPgnn9nK
- RUQNGXBTEqc48rQ5nHl5iO0a2fDfAl2M3_5Ns0k0RqtnO_cMcGaIB0rm2YdsY1IjkuKeoPemuFnS
- d7Z65qZQa.lEW7IXxB3jj.Xb2GmaP1j4qw2.35DgE.3zdKGCwpUoqNikY14.SDP7nhilmRSTpDZ9
- FgkMmVf5JIagzUgG_pNDp9DTw5rSzh_DjAiFxF3MyQF51q2KWB00q9eVIesxOIt6uGKtyrmA0Um5
- 13SLoISyv_Ewmql5csdSk0i1_ONnIPu7.2vV.DmB4sZB2Jj2Fu2_h9GydiQZ.ee0vMxJFEowDmMV
- RJXngI2cSTjolGZ3URXnfci5SqnL2oyhl8OfkHH.op9ALyQ3dgUer7DDaBq18Y2l9zbqvd.qoUBF
- E1cCg9fmdu.ExiCzn7RjYcNWjcXeqmsxVZ90bmTmEMArRds6cR5kbFy5syACLv3Nq8OzDdxS.I.D
- DHF2vn6HFHiDBhdrZAlTJSPSwPwgjf88JJdYZ_nN6w02quW1uEsqykW62yrq4IWBaFRczmg3ij3e
- TnqAVtQ9qkyl5cOZqQ6oXuaPkcXz_A8FX9.NnUcDMC_F2WiseVRD7g1V6dDkd7SrFaRbodWYU0uG
- DHPYpliUgFUs7Cx2jVv5kgS_0KLJ6rHCqwYGpBpeJAjX9DM8xesFzufjEdTyH4_H6W3L3ohislkz
- tOcSlVHquSf34nPYbBRpryBojgVoQeDl5e2u0hWS4XoouVHuFz3bNaPvu4KxNomfoeruZPzp7uuW
- fgmysYlhMInuOeo1BjC5WBorYgfXasU8vmD_HjhO.ZH_OsK2qf38qDOfqnEJNfz945xL.GrM51tL
- XOD3b2buJkMNGX7EJYysN8G.C54eu8_BUZUcCRX5_jHOHXqznpiVTMW0dBpnO3MrpUj5HtZXzxfb
- W9_GEn1.YLMIErFg0ON.k0L1H3gTWu_IuLbXWDjAhj9SSjYamrNPvGcOK9Tus6jkgivg5cWS1EtE
- w97SdqpYxjgN5ffG7XKjtJYl6XgnSdyTKLxvsIk93A2BZQNXtQlO_KTyKafpQypYfO0CI5OYajTi
- MO_xBdf_hCJC69FG1_HHN1nTb8jJFdR14EOgODBIaiHvqLdzAg4jIggCaC9kfaibxL81uGWIeOwO
- ZLRnf2D_gr9mh_Vb2eK4jGzfMS.NSN1Ns7PedPpzdYYsthAJ53P9XfsyPP1VtoOqHJFOim8ZvUQd
- grno60yHpe_lauJXNtXldwXBJ.vD2MXrsCIwSwOC.NbAZ8SCkUb7jEZWYtMi1tcgUvFw.9m_Qz_t
- i85AzeiiTI8VzhJBazN5ImgrdsQS0gxQjouQpElxTgcVuf_Tl0X1N.0qlxSItmZPBUX_GGpunBC7
- jHvGPidZ_fAf8WGy2T8ui0uVw0Kw3YRasS0BgjNz9AxiFPClXSIBoOzhPD2lHGBGv.JLv0ZqVHVN
- xDtDNQkGL
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 21259a2a-9a13-44af-942d-555c071eab18
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 24 Jul 2024 20:56:35 +0000
-Received: by hermes--production-gq1-799bb7c8cf-l4fvm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1e7574de8c63b9acc091ed1cca9f592b;
-          Wed, 24 Jul 2024 20:36:18 +0000 (UTC)
-Message-ID: <26bb0c7b-e241-4239-8933-349115f3afdb@schaufler-ca.com>
-Date: Wed, 24 Jul 2024 13:36:16 -0700
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TX5MYsYU"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240724210021euoutp0231d7e8e05684c7fd4c00635de6447bfd~lQdZhL_N12009420094euoutp02z;
+	Wed, 24 Jul 2024 21:00:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240724210021euoutp0231d7e8e05684c7fd4c00635de6447bfd~lQdZhL_N12009420094euoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721854821;
+	bh=6BetKsi/JkRZ4DymqJrR3MQXQeSQizzSeZc0DIGgj2A=;
+	h=Date:From:To:CC:Subject:References:From;
+	b=TX5MYsYUAk/lCQnbloJX/1xyvmFoLoZq1rLyEKiXNvi8HcjkATrMtfJUG54sZ15uC
+	 3xRNQ1Rdi4G19n6puLWjeC/DJO7G8cwLdX5Soo4n/mz7MkjaVQmXRfMBI1Leutbp89
+	 tRWoWmCvNiNzvQdU2Ry8KKOp4aaf03qHXG2EXOng=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240724210021eucas1p14b3444339aa43fc76f8f3039d1a05213~lQdZG6ssu3068230682eucas1p1n;
+	Wed, 24 Jul 2024 21:00:21 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 10.90.09875.46B61A66; Wed, 24
+	Jul 2024 22:00:20 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240724210020eucas1p2db4a3e71e4b9696804ac8f1bad6e1c61~lQdYcJjOV1618116181eucas1p2F;
+	Wed, 24 Jul 2024 21:00:20 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240724210020eusmtrp23954d5dd21bfc13f1ff8cc809fa8fafb~lQdYZk0eX2668126681eusmtrp2q;
+	Wed, 24 Jul 2024 21:00:20 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-ea-66a16b64e8e4
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 94.8D.09010.46B61A66; Wed, 24
+	Jul 2024 22:00:20 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240724210019eusmtip13c5484587fc1cc980c2235c6d2fb06c1~lQdYCFWSP1854318543eusmtip18;
+	Wed, 24 Jul 2024 21:00:19 +0000 (GMT)
+Received: from localhost (106.210.248.226) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 24 Jul 2024 22:00:19 +0100
+Date: Wed, 24 Jul 2024 23:00:14 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Joel Granados <j.granados@samsung.com>, Thomas
+	=?utf-8?B?V2Vp77+9c2NodWg=?= <linux@weissschuh.net>, Luis Chamberlain
+	<mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Jakub Kicinski
+	<kuba@kernel.org>, Dave Chinner <david@fromorbit.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-s390@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<netdev@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-xfs@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+	<bpf@vger.kernel.org>, <kexec@lists.infradead.org>,
+	<linux-hardening@vger.kernel.org>, <bridge@lists.linux.dev>,
+	<mptcp@lists.linux.dev>, <lvs-devel@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <rds-devel@oss.oracle.com>,
+	<linux-sctp@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+	<apparmor@lists.ubuntu.com>
+Subject: [GIT PULL] sysctl constification changes for v6.11-rc1
+Message-ID: <20240724210014.mc6nima6cekgiukx@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] Refactor return value of two lsm hooks
-To: Xu Kuohai <xukuohai@huaweicloud.com>,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>, "Serge E . Hallyn" <serge@hallyn.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- James Morris <jmorris@namei.org>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240724020659.120353-1-xukuohai@huaweicloud.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240724020659.120353-1-xukuohai@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22501 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbZRTG8/Z+0qx46VBeGRZTw6KGIZKh7xxxLDHmqjEasg+VLK6xl68B
+	W1rYhDkdHxPHJtSCgZWvyyaUwdJKYR0Flg1CWwYyYANC5qwRSt2AytayOAIWKZdl++933nOe
+	85wneWlM2kKG0qmZWZwqU5EuJ8W42bY0vE15qD4p2nh+O8qz8QTy9tlJZL5wRoT+sxRhqN3m
+	AMjgHiZQ1+AjERoxlxDIND1BoO6rN3BUa1wC6HZnNYkcl1YJNHJ9kEBjlw04cvX+iCOzt5BE
+	mvoCDM3wcwR6cHaKRH3GIRx1rnRQaPmxS4SW//URqKDOg6FJzQxAvxnzKWTjX0AawwCObrZ5
+	CTRV4qbiw9mB85A1NZ8mWZNHS7H9lcs42/bLd+y9tnOAHa6sB+zE5J84617uF7EjjfMk6zXJ
+	2NIzNurTTV+I45RceupRTvXGuwfFKdPGIfJIyftfF5Q6qJNAu60YBNCQ2Q6tlVaiGIhpKdME
+	4E8jnaRQLAKo/eN3IBReAMfLbOCJpMRu3JjSA9hYe+Xp1Klxz0bnMoBNP9eSfgnORMCrPX9T
+	fiaZSDg8fxfzczATA733xtbdMUZDw/vGgnWPzcwu2Hx9eV0sYeKhpb8TFzgI3jjnXGdsbRHf
+	5Xej13gL1Pto4bxXoMPUjQl8Ag603xH590Pmohg6eA8uNN6D47NdpMCb4ay9nRI4DK5a6jYE
+	ZQBe8z2ghKJlLWjeI5EwtRMWjjkpvzNkdsPGK2kCBsJJd5BwWyDUmisw4VkCf/heKgi3whbH
+	PC48h8GbnkANkOueCaZ7JpjuaTAeYM0ghMtWZyRz6phM7liUWpGhzs5MjvrqcIYJrP3nQZ99
+	sQPoZx9G9QIRDXoBpDF5sMQ5W5MklSgVObmc6vCXqux0Tt0LttC4PEQSoQznpEyyIos7xHFH
+	ONWTrogOCD0pSsiSv1ia274Ql2/wlOkKy3/tf9iz/0IANrvpwKVTqsSzi9U10qRxqjj/rRg+
+	3i4RN6SVE/rKzxpuKZqfnzp2NyVs0rUQHJx12rdypyhi4aXVKn25rHrHCfcB88hxVpa79dr+
+	uH+4o1yiqjV2IATVHdzbVvrcR0GWKllNxfxrhYbB1nco3jOD7TbHJFgCbr16cVT7wXRPTNW3
+	Op9rqUwWG9lZc/xlsTOqwWplKdQ9tLrH0xpqGf0Qv/2xqykjX7lLvvNtG984l3g/Mjqh6BNL
+	Wk4qN5RX/Hl7/UR40FL3N9H849ix4KK/VuTWitE9MumEbCzH5+6w7gif29eX4oyYkePqFMWb
+	r2MqteJ/GkR62T4EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsVy+t/xu7op2QvTDLoPsFo0HlvAavH5yHE2
+	i22Lu5ks/u5sZ7bYcuweo8W6t+dZLXaf/spkcWFbH6vFpsfXWC327D3JYjFv/U9Gi8u75rBZ
+	3Fvzn9XiwoHTrBZXtq5jsXh2qJfFYtvnFjaLCQubmS2eLnjNavGh5xGbxZH1Z1ksdv3ZwW7x
+	+8czJovf3/+xWjTP/8RscWPCU0aLM+ub2C2OLRCzmLDuFIvFuc2fWS0e9b1ld5D3OLVIwmPT
+	qk42j02fJrF7nJjxm8Vj85J6jxebZzJ6nJ+xkNHj2o37LB5vf59g8riw7A2bx+dNch793cfY
+	A3ii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIe
+	rz/LVtDnVtHcf4+9gXGSbhcjJ4eEgIlE3/H1bF2MXBxCAksZJe707mCDSMhIbPxylRXCFpb4
+	c60Lqugjo8TXLcsZIZytjBJTdh4H62ARUJXYe/A5O4jNJqAjcf7NHWYQW0TASOLziyusIA3M
+	AhM4JC6ufcgEkhAWsJdYdeA3WDOvgIPEzhO7WCBsQYmTM5+A2cxAgxbs/gRUwwFkS0ss/8cB
+	cZGyxL1Ne5gh7FqJz3+fMU5gFJyFpHsWku5ZCN0LGJlXMYqklhbnpucWG+kVJ+YWl+al6yXn
+	525iBCadbcd+btnBuPLVR71DjEwcjIcYJTiYlUR4n7yamybEm5JYWZValB9fVJqTWnyI0RTo
+	5YnMUqLJ+cC0l1cSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fEwSnVwBTF
+	0tF7WtTqeM4ChtjpIvcenUz32ptZELVps1HFvY5tSxe9u1d9fEbQ5tCZc/+qufas3iv5JrJi
+	UYmw1RJxm7iw3RrFb+tWyV3qMFlc3n73gPrJk5W/M4t1E6PaGovOd97x9PhYxnFwWuf9728z
+	n69fJvnLtdOsStty/Y2H5y71dBfs8tklcFFT8c3NHfyBP004lYyVxfL43586pmehNHNxaFdT
+	yXL7it9h7D7RQb4Kj470CfDt4QkJzBApv3dczPzwsSexjw9ci9F7eOjKv3Qprr1Ha5T8c46u
+	9FyZwxO+c/PSXpecxOmT5WRit8ZNvS7hwag7PW6uySJztcdHzj+SNeNRUeyKmHmwrTJ0phJL
+	cUaioRZzUXEiAGTJglPDAwAA
+X-CMS-MailID: 20240724210020eucas1p2db4a3e71e4b9696804ac8f1bad6e1c61
+X-Msg-Generator: CA
+X-RootMTR: 20240724210020eucas1p2db4a3e71e4b9696804ac8f1bad6e1c61
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240724210020eucas1p2db4a3e71e4b9696804ac8f1bad6e1c61
+References: <CGME20240724210020eucas1p2db4a3e71e4b9696804ac8f1bad6e1c61@eucas1p2.samsung.com>
 
-On 7/23/2024 7:06 PM, Xu Kuohai wrote:
-> From: Xu Kuohai <xukuohai@huawei.com>
->
-> The BPF LSM program may cause a kernel panic if it returns an
-> unexpected value, such as a positive value on the hook
-> file_alloc_security.
->
-> To fix it, series [1] refactored the LSM hook return values and
-> added BPF return value checks.
->
-> [1] used two methods to refactor hook return values:
->
-> - converting positive return value to negative error code
->
-> - adding additional output parameter to store odd return values
->
-> Based on discussion in [1], only two hooks refactored with the
-> second method may be acceptable. Since the second method requires
-> extra work on BPF side to ensure that the output parameter is
-> set properly, the extra work does not seem worthwhile for just
-> two hooks. So this series includes only the two patches refactored
-> with the first method.
->
-> Changes to [1]:
-> - Drop unnecessary patches
-> - Rebase
-> - Remove redundant comments in the inode_copy_up_xattr patch
->
-> [1] https://lore.kernel.org/bpf/20240711111908.3817636-1-xukuohai@huaweicloud.com
->     https://lore.kernel.org/bpf/20240711113828.3818398-1-xukuohai@huaweicloud.com
->
-> Xu Kuohai (2):
->   lsm: Refactor return value of LSM hook vm_enough_memory
->   lsm: Refactor return value of LSM hook inode_copy_up_xattr
+Linus
 
-For the series:
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Constifying ctl_table structs will prevent the modification of
+proc_handler function pointers as they would reside in .rodata. To get
+there, the proc_handler arguments must first be const qualified which
+requires this (fairly large) treewide PR. Sending it in the tail end of
+of the merge window after a suggestion from Kees to avoid unneeded merge
+conflicts. It has been rebased on top of 7a3fad30fd8b4b5e370906b3c554f64026f56c2f.
+I can send it later if it makes more sense on your side; please tell me
+what you prefer.
 
->
->  fs/overlayfs/copy_up.c            |  6 +++---
->  include/linux/lsm_hook_defs.h     |  2 +-
->  include/linux/security.h          |  2 +-
->  security/commoncap.c              | 11 +++--------
->  security/integrity/evm/evm_main.c |  2 +-
->  security/security.c               | 22 ++++++++--------------
->  security/selinux/hooks.c          | 19 ++++++-------------
->  security/smack/smack_lsm.c        |  6 +++---
->  8 files changed, 26 insertions(+), 44 deletions(-)
->
+This PR applies on top of what I see as your latest master, but if you
+need to generate it, you can do so by executing two commands:
+1. Semantic patch: The coccinelle script is here [1]
+  `make coccicheck MODE=patch SPFLAGS="--in-place --include-headers --smpl-spacing" COCCI=COCCI_SCRIPT`
+2. Sed command: The sed script is here [2]
+  `sed --in-place -f SED_SCRIPT fs/xfs/xfs_sysctl.c kernel/watchdog.c`
+This is my first time sending out a semantic patch, so get back to me if
+you have issues or prefer some other way of receiving it.
+
+Testing was done in sysctl-testing (0-day) to avoid generating
+unnecessary merge conflicts in linux-next. I do not expect any
+error/regression given that all changes contained in this PR are
+non-functional.
+
+[1]
+```
+virtual patch
+
+@r1@
+identifier ctl, write, buffer, lenp, ppos;
+identifier func !~ "appldata_(timer|interval)_handler|sched_(rt|rr)_handler|rds_tcp_skbuf_handler|proc_sctp_do_(hmac_alg|rto_min|rto_max|udp_port|alpha_beta|auth|probe_interval)";
+@@
+
+int func(
+- struct ctl_table *ctl
++ const struct ctl_table *ctl
+  ,int write, void *buffer, size_t *lenp, loff_t *ppos);
+
+@r2@
+identifier func, ctl, write, buffer, lenp, ppos;
+@@
+
+int func(
+- struct ctl_table *ctl
++ const struct ctl_table *ctl
+  ,int write, void *buffer, size_t *lenp, loff_t *ppos)
+{ ... }
+
+@r3@
+identifier func;
+@@
+
+int func(
+- struct ctl_table *
++ const struct ctl_table *
+  ,int , void *, size_t *, loff_t *);
+
+@r4@
+identifier func, ctl;
+@@
+
+int func(
+- struct ctl_table *ctl
++ const struct ctl_table *ctl
+  ,int , void *, size_t *, loff_t *);
+
+@r5@
+identifier func, write, buffer, lenp, ppos;
+@@
+
+int func(
+- struct ctl_table *
++ const struct ctl_table *
+  ,int write, void *buffer, size_t *lenp, loff_t *ppos);
+```
+
+[2]
+```
+s/^xfs_stats_clear_proc_handler(const struct ctl_table \*ctl,$/xfs_stats_clear_proc_handler(\
+\tconst struct ctl_table\t*ctl,/
+s/^xfs_panic_mask_proc_handler(const struct ctl_table \*ctl,$/xfs_panic_mask_proc_handler(\
+\tconst struct ctl_table\t*ctl,/
+s/^xfs_deprecated_dointvec_minmax(const struct ctl_table \*ctl,$/xfs_deprecated_dointvec_minmax(\
+\tconst struct ctl_table\t*ctl,/
+s/proc_watchdog_common(int which, struct ctl_table \*table/proc_watchdog_common(int which, const struct ctl_table *table/
+```
+
+The following changes since commit 7a3fad30fd8b4b5e370906b3c554f64026f56c2f:
+
+  Merge tag 'random-6.11-rc1-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/crng/random (2024-07-24 10:29:50 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/constfy-sysctl-6.11-rc1
+
+for you to fetch changes up to 78eb4ea25cd5fdbdae7eb9fdf87b99195ff67508:
+
+  sysctl: treewide: constify the ctl_table argument of proc_handlers (2024-07-24 20:59:29 +0200)
+
+----------------------------------------------------------------
+sysctl: treewide: constify the ctl_table argument of proc_handlers
+
+Summary
+- const qualify struct ctl_table args in proc_handlers:
+  This is a prerequisite to moving the static ctl_table structs into .rodata
+  data which will ensure that proc_handler function pointers cannot be
+  modified.
+
+----------------------------------------------------------------
+Joel Granados (1):
+      sysctl: treewide: constify the ctl_table argument of proc_handlers
+
+ arch/arm64/kernel/armv8_deprecated.c      |  2 +-
+ arch/arm64/kernel/fpsimd.c                |  2 +-
+ arch/s390/appldata/appldata_base.c        | 10 ++---
+ arch/s390/kernel/debug.c                  |  2 +-
+ arch/s390/kernel/topology.c               |  2 +-
+ arch/s390/mm/cmm.c                        |  6 +--
+ arch/x86/kernel/itmt.c                    |  2 +-
+ drivers/cdrom/cdrom.c                     |  4 +-
+ drivers/char/random.c                     |  4 +-
+ drivers/macintosh/mac_hid.c               |  2 +-
+ drivers/net/vrf.c                         |  2 +-
+ drivers/parport/procfs.c                  | 12 +++---
+ drivers/perf/arm_pmuv3.c                  |  2 +-
+ drivers/perf/riscv_pmu_sbi.c              |  2 +-
+ fs/coredump.c                             |  2 +-
+ fs/dcache.c                               |  2 +-
+ fs/drop_caches.c                          |  2 +-
+ fs/exec.c                                 |  2 +-
+ fs/file_table.c                           |  2 +-
+ fs/fs-writeback.c                         |  2 +-
+ fs/inode.c                                |  2 +-
+ fs/pipe.c                                 |  2 +-
+ fs/quota/dquot.c                          |  2 +-
+ fs/xfs/xfs_sysctl.c                       |  6 +--
+ include/linux/ftrace.h                    |  4 +-
+ include/linux/mm.h                        |  8 ++--
+ include/linux/perf_event.h                |  6 +--
+ include/linux/security.h                  |  2 +-
+ include/linux/sysctl.h                    | 34 ++++++++--------
+ include/linux/vmstat.h                    |  4 +-
+ include/linux/writeback.h                 |  2 +-
+ include/net/ndisc.h                       |  2 +-
+ include/net/neighbour.h                   |  6 +--
+ include/net/netfilter/nf_hooks_lwtunnel.h |  2 +-
+ ipc/ipc_sysctl.c                          |  6 +--
+ kernel/bpf/syscall.c                      |  4 +-
+ kernel/delayacct.c                        |  2 +-
+ kernel/events/callchain.c                 |  2 +-
+ kernel/events/core.c                      |  4 +-
+ kernel/fork.c                             |  2 +-
+ kernel/hung_task.c                        |  2 +-
+ kernel/kexec_core.c                       |  2 +-
+ kernel/kprobes.c                          |  2 +-
+ kernel/latencytop.c                       |  2 +-
+ kernel/pid_namespace.c                    |  2 +-
+ kernel/pid_sysctl.h                       |  2 +-
+ kernel/printk/internal.h                  |  2 +-
+ kernel/printk/printk.c                    |  2 +-
+ kernel/printk/sysctl.c                    |  2 +-
+ kernel/sched/core.c                       |  6 +--
+ kernel/sched/rt.c                         |  8 ++--
+ kernel/sched/topology.c                   |  2 +-
+ kernel/seccomp.c                          |  2 +-
+ kernel/stackleak.c                        |  2 +-
+ kernel/sysctl.c                           | 64 +++++++++++++++----------------
+ kernel/time/timer.c                       |  2 +-
+ kernel/trace/ftrace.c                     |  2 +-
+ kernel/trace/trace.c                      |  2 +-
+ kernel/trace/trace_events_user.c          |  2 +-
+ kernel/trace/trace_stack.c                |  2 +-
+ kernel/umh.c                              |  2 +-
+ kernel/utsname_sysctl.c                   |  2 +-
+ kernel/watchdog.c                         | 12 +++---
+ mm/compaction.c                           |  6 +--
+ mm/hugetlb.c                              |  6 +--
+ mm/page-writeback.c                       | 10 ++---
+ mm/page_alloc.c                           | 14 +++----
+ mm/util.c                                 |  6 +--
+ mm/vmstat.c                               |  4 +-
+ net/bridge/br_netfilter_hooks.c           |  2 +-
+ net/core/neighbour.c                      | 18 ++++-----
+ net/core/sysctl_net_core.c                | 20 +++++-----
+ net/ipv4/devinet.c                        |  6 +--
+ net/ipv4/route.c                          |  2 +-
+ net/ipv4/sysctl_net_ipv4.c                | 30 +++++++--------
+ net/ipv6/addrconf.c                       | 16 ++++----
+ net/ipv6/ndisc.c                          |  2 +-
+ net/ipv6/route.c                          |  2 +-
+ net/ipv6/sysctl_net_ipv6.c                |  4 +-
+ net/mpls/af_mpls.c                        |  4 +-
+ net/mptcp/ctrl.c                          |  4 +-
+ net/netfilter/ipvs/ip_vs_ctl.c            | 12 +++---
+ net/netfilter/nf_conntrack_standalone.c   |  2 +-
+ net/netfilter/nf_hooks_lwtunnel.c         |  2 +-
+ net/netfilter/nf_log.c                    |  2 +-
+ net/phonet/sysctl.c                       |  2 +-
+ net/rds/tcp.c                             |  4 +-
+ net/sctp/sysctl.c                         | 28 +++++++-------
+ net/sunrpc/sysctl.c                       |  4 +-
+ net/sunrpc/xprtrdma/svc_rdma.c            |  2 +-
+ security/apparmor/lsm.c                   |  2 +-
+ security/min_addr.c                       |  2 +-
+ security/yama/yama_lsm.c                  |  2 +-
+ 93 files changed, 258 insertions(+), 258 deletions(-)
+
+-- 
+
+Joel Granados
