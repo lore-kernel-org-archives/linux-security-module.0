@@ -1,146 +1,118 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30474C9A;
-	Wed, 24 Jul 2024 01:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D1CC156;
+	Wed, 24 Jul 2024 01:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721783874; cv=none; b=QS0ntqcplScMAbzXdf01lXU8o6cD46WpnBIu/65Brxq/tBiqpOKbsGzvRCdmrtKIl5WWZwuCRqY3zV8Xtc5gMxZUcQpAtmFziuh+qUD9Kw/FgFrj3iLIbsdSC+KpLfGwl4bdBwnL+gBRufzyUDrN7zHt6blwro5f/D2woeZHzOw=
+	t=1721786217; cv=none; b=X3sO5Bhb/18vLZpe03QE+exaTjuWUIoI/GQMagyApDIzbrwvsxBrREy1TZkbX+lCFDEih8xuMTHuSGZDEPMQ+GgBP0ecWD4gWLcszPSjLHiVYb/B0jZP3VmVEP7rBywbLZYqtjWETxWAfqSGF+RshyC5FYHfPuGfZGhV+8Savks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721783874; c=relaxed/simple;
-	bh=KkecNZKY3nbMCSSkETEzc/mfnZaV7kZfSSY4gRjGJRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W1LcztLkmhY23pMAsMc6l0UaTl4Dsn03mxvy4J9RDXzRx+rt4DooUHl0+So9H3lqu5hwipRb0c1/uym1lDdppumJI5Mu3Do/GnH4Nwzv50AVsDASKgjJuKSzEEEMaYaoJA68TRnN4WeZfH2BjzcXYX7uSRdqVL69Jlee+/rDZLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MpAhEJ2E; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpAhEJ2E"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so45932005e9.1;
-        Tue, 23 Jul 2024 18:17:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721783871; x=1722388671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rpc/2SwkiTZTr0tB2COZXlj9ID1K7BEkSuF6F5pqIeU=;
-        b=MpAhEJ2EKPqPplis5PuUfb5x05eTQUTy3ORtPhj7SkC8z0jpy3NWHLMclbKHDzZOB8
-         M0ejq/22FdJLrkJGzPCvs9AqAU2lvb0deYyWjgMnL+RKY3zgIAA3zZQvddE70YbxS0zt
-         5DKHKDnU0f+tZrQQmR8kQfxiMbLCiOcytZkVp3nrfXVlzkNhtIX/yoxHtJR//U6Dh7eR
-         e9Gr6v4VWuNeP+WTY1W6gLu8exUPGz86YeQeREUw6GsXzs+1lmrnpe9p7DltAMinT+PR
-         7485hcafXm7WWCpQWd1WhypiNH8CYl3KddNXGNqb9txPfrJx6SSvDA11pspRs09SqvQC
-         WX2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721783871; x=1722388671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rpc/2SwkiTZTr0tB2COZXlj9ID1K7BEkSuF6F5pqIeU=;
-        b=kW7KkgUJWUQfMpZVjHZ/C980/c+R/Fl0XvTLVzOu5Qs2ZvkRajeCy/yJ896F/xsFAb
-         FL+UMI0cHJQ5U7I1Ky46xgQwNbn4nfnrk8prAAxO3td0IbUC/bd0lsTHg+mNWfyOJNUX
-         FRdhAx9RnZsv8/PWn+Ud6hoZs8GoID9MFJGMCBHBgOvtHc2LSIJmksqJ3TGlXh7QUPuH
-         vs4AbQHp8HK83DKkHouZHq9ofdbnSWN8noOf37n0VRd68oA8VqlhA9Ka62xmaIwYZfPF
-         xMeY09GNHzOVo0UdkacaDri3ULWh1CSX3QMNxGOv5cy0UA3ZvgfEWNbU6Uzkrp3zByYK
-         bpzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNir4Bt3UrU16JbOC+j7DWSeWvBUGDmxYZUCZIjzktAZtpCFLfgwQ4/kBsYCDe5Y4X96SQTqxe3SKSKPqvakJ7E2Up7C6hQZEOs/nEuvVyusr67/9jqmDO8jejtoZ+RpxkUnRbLWEdUTIIgegXjM8T6kaKCSFYTq05HMZxbfHKuWbA
-X-Gm-Message-State: AOJu0YzOy0PC+Li7H2SOa3VFxWesUs+IgIse5ZS5isRPMvtuK1MiwaeI
-	3qB23FsFHG8KAkJ3/6RpNN8XqxyphDZFi3+xrLp/RMCOInTiKN6AgQBZDvTIRhi+67OXpb4jXBS
-	yZ3gSInKVbbJSG0rsr8hHI+QtoHA=
-X-Google-Smtp-Source: AGHT+IHy0gPavcCN7w+YuH/0mLjZRQm5fwtPN9TUK6LYu1xWYik/PO4O2Ozh9BgSdVar1Jki8LWGHqUKAwwdc8vHvaQ=
-X-Received: by 2002:a05:600c:5487:b0:427:9dad:8063 with SMTP id
- 5b1f17b1804b1-427dc51d315mr64923375e9.12.1721783870879; Tue, 23 Jul 2024
- 18:17:50 -0700 (PDT)
+	s=arc-20240116; t=1721786217; c=relaxed/simple;
+	bh=UQJ+55jwzMY3RMPrkREMJWDnNHzLUS4fHtHSMzgV0JE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YyGetm3YOT+N7B8/aiNTN8ZR1PnUj509ren9ejofG1Dgxpovt+CwZ8bitqDCVfbS/oGVZGtfcIkYinE2TjofKSWDTKmwTO4dS728p8sBpOda2EqIoL6iF3gNi/Qs0UHwTaX8927qQONend2BZrUbEJpRr9MLhLMI/D+VAY++EKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WTHF3483Zz4f3jsH;
+	Wed, 24 Jul 2024 09:56:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 00F361A07BA;
+	Wed, 24 Jul 2024 09:56:51 +0800 (CST)
+Received: from k01.huawei.com (unknown [10.67.174.197])
+	by APP1 (Coremail) with SMTP id cCh0CgDXw3VgX6BmaKTZAw--.12072S2;
+	Wed, 24 Jul 2024 09:56:49 +0800 (CST)
+From: Xu Kuohai <xukuohai@huaweicloud.com>
+To: linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	James Morris <jmorris@namei.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [PATCH v1 0/2] Refactor return value of two lsm hooks
+Date: Wed, 24 Jul 2024 10:06:57 +0800
+Message-Id: <20240724020659.120353-1-xukuohai@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719110059.797546-1-xukuohai@huaweicloud.com>
- <20240719110059.797546-6-xukuohai@huaweicloud.com> <a5afdfca337a59bfe8f730a59ea40cd48d9a3d6b.camel@gmail.com>
- <wjvdnep2od4kf3f7fiteh73s4gnktcfsii4lbb2ztvudexiyqw@hxqowhgokxf3>
- <0e46dcf652ff0b1168fc82e491c3d20eae18b21d.camel@gmail.com>
- <CAADnVQJ2bE0cAp8DNh1m6VqphNvWLkq8p=gwyPbbcdopaKcCCA@mail.gmail.com>
- <2k3v5ywz5hgwc2istobhath7i76azg5yqvbgfgzfvqvyd72zv5@4g3synjlqha4> <cgarsuloniffcqn5zjjomhmm5xd72t4cdiwavjqnvmgqfuc7dd@2itjdtwcq7gk>
-In-Reply-To: <cgarsuloniffcqn5zjjomhmm5xd72t4cdiwavjqnvmgqfuc7dd@2itjdtwcq7gk>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 23 Jul 2024 18:17:39 -0700
-Message-ID: <CAADnVQLZ+fDDR9cFSD8QZghXP6nEmmPP23YWd5-ysA1sZ9ZsGA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 5/9] bpf, verifier: improve signed ranges
- inference for BPF_AND
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, Xu Kuohai <xukuohai@huaweicloud.com>, 
-	bpf <bpf@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Yafang Shao <laoar.shao@gmail.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	"Jose E . Marchesi" <jose.marchesi@oracle.com>, James Morris <jamorris@linux.microsoft.com>, 
-	Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>, 
-	Florent Revest <revest@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDXw3VgX6BmaKTZAw--.12072S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFyfZFy7GryUAFWktr1xAFb_yoW8WFyUpF
+	4SkF13Arn8uFyxZrn3CF17Ca1Fk3yrGF1jy39rtw1093WqvF1UGF17Kw409ryxuFyfKr10
+	yF429rs8AFyDJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU17KsUUUUUU==
+X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
 
-On Tue, Jul 23, 2024 at 12:07=E2=80=AFAM Shung-Hsi Yu <shung-hsi.yu@suse.co=
-m> wrote:
->
-> On Tue, Jul 23, 2024 at 02:36:18PM GMT, Shung-Hsi Yu wrote:
-> [...]
-> > > +1
-> > > Pls document the logic in the code.
-> > > commit log is good, but good chunk of it probably should be copied
-> > > as a comment.
-> > >
-> > > I've applied the rest of the patches and removed 'test 3' selftest.
-> > > Pls respin this patch and a test.
-> > > More than one test would be nice too.
-> >
-> > Ack. Will send send another series that:
-> >
-> > 1. update current patch
-> >   - add code comment explanation how signed ranges are deduced in
-> >     scalar*_min_max_and()
-> >   - revert 229d6db14942 "selftests/bpf: Workaround strict bpf_lsm retur=
-n
-> >     value check."
-> > 2. reintroduce Xu Kuohai's "test 3" into verifier_lsm.c
-> > 3. add a few tests for BPF_AND's signed range deduction
-> >    - should it be added to verifier_bounds*.c or verifier_and.c?
-> >
-> >      I think former, because if we later add signed range deduction for
-> >      BPF_OR as well...
->
-> I was curious whether there would be imminent need for signed range
-> deduction for BPF_OR, though looks like there is _not_.
->
-> Looking at DAGCombiner::SimplifySelectCC() it does not do the
-> bitwise-OR variant of what we've encountered[1,2], that is
->
->     fold (select_cc seteq (and x, y), 0, A, -1) -> (or (sra (shl x)) A)
->
-> In other words, transforming the following theoretial C code that
-> returns -EACCES when certain bit is unset, and -1 when certain bit is
-> set
->
->     if (fmode & FMODE_WRITE)
->         return -1;
->
->     return -EACCESS;
->
-> into the following instructions
->
->     r0  <<=3D 62
->     r0 s>>=3D 63 /* set =3D> r0 =3D -1, unset =3D> r0 =3D 0 */
->     r0  |=3D -13 /* set =3D> r0 =3D (-1 | -13) =3D -1, unset =3D> r0 =3D =
-(0 | -13) =3D -13 =3D -EACCESS */
->         exit       /* returns either -1 or -EACCESS */
->
-> So signed ranged deduction with BPF_OR is probably just a nice-to-have
-> for now.
+From: Xu Kuohai <xukuohai@huawei.com>
 
-Yeah. Let's not complicate the verifier until really necessary.
+The BPF LSM program may cause a kernel panic if it returns an
+unexpected value, such as a positive value on the hook
+file_alloc_security.
 
-But I wonder whether we should override shouldFoldSelectWithSingleBitTest()
-in the backend to suppress this optimization.
-I guess not, since removal of a branch is a good thing.
+To fix it, series [1] refactored the LSM hook return values and
+added BPF return value checks.
+
+[1] used two methods to refactor hook return values:
+
+- converting positive return value to negative error code
+
+- adding additional output parameter to store odd return values
+
+Based on discussion in [1], only two hooks refactored with the
+second method may be acceptable. Since the second method requires
+extra work on BPF side to ensure that the output parameter is
+set properly, the extra work does not seem worthwhile for just
+two hooks. So this series includes only the two patches refactored
+with the first method.
+
+Changes to [1]:
+- Drop unnecessary patches
+- Rebase
+- Remove redundant comments in the inode_copy_up_xattr patch
+
+[1] https://lore.kernel.org/bpf/20240711111908.3817636-1-xukuohai@huaweicloud.com
+    https://lore.kernel.org/bpf/20240711113828.3818398-1-xukuohai@huaweicloud.com
+
+Xu Kuohai (2):
+  lsm: Refactor return value of LSM hook vm_enough_memory
+  lsm: Refactor return value of LSM hook inode_copy_up_xattr
+
+ fs/overlayfs/copy_up.c            |  6 +++---
+ include/linux/lsm_hook_defs.h     |  2 +-
+ include/linux/security.h          |  2 +-
+ security/commoncap.c              | 11 +++--------
+ security/integrity/evm/evm_main.c |  2 +-
+ security/security.c               | 22 ++++++++--------------
+ security/selinux/hooks.c          | 19 ++++++-------------
+ security/smack/smack_lsm.c        |  6 +++---
+ 8 files changed, 26 insertions(+), 44 deletions(-)
+
+-- 
+2.39.2
+
