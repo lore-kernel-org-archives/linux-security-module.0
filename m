@@ -1,84 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB83D196DA2;
-	Thu, 25 Jul 2024 10:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408991991AA
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 12:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721904754; cv=none; b=uZ/RxuKlPTrPcUjZuOi4M+x50FMZJ0e2Tia2c3qN5St+dOG6D/4/KMcJPlxTxjw2dZFlcnSSsMjFSgHJsDLQm9tTKeICwUpbNY6TYvDuAKbj4S5JbdIAuXoendQqxkAsqqNcFwQ3EMbdzQLIkdVesvg/2dKZRM47ETzDoLsPQW8=
+	t=1721909297; cv=none; b=TDmtzp/0e8PHUIRrjWkXtMu499YxfHZ4pybGU5xJeZS9yqS9Qj7928SMZzIKzwsDPFBLqg37QQr7Ll3FMdiH5znP7AADHN/IcBGfRp5GbxNNehdYH+c9PUe49Ug/51rpaeqiWQ/AR9IUH5JzyVXvUjFmhjxBbw5y0pVIZpwq9rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721904754; c=relaxed/simple;
-	bh=orI0y/Mhi6lniFE6Cm8wx3n7KGGIG+Ptki0lBsAGo7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZUe+iyZkehClW7X6gurXLYbGIImz8G6LP1skceLkDdsTWzrf6cJo9NDEBZRQ8Ftj2VYfBj/Pz5Ik2zZLlehdB+vhbWTFHgxjVMgvDJGSYvmpAFzmImh5OVcd0E5w/1M9m91l1Pb5Ny7BAsJb1gjIKP2bfjjywsIHxUmw1XiE44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDAK1yrG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721909297; c=relaxed/simple;
+	bh=ioduvqYVGgbgC6jMMeBNN6IfPN5LLvDKelGy+hAVfsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aCdVxVc3aVMrFGUOO6rT1olE35BmnTs51YogX6YmupHW4ucM/4uFvFBiLHL2XegW08jbkWW1IfrAiMVCQ9LYGLTP+WV9Su9dGiB3J1Dn5Ks2EBKtsGMqrPauhWbWgRvmRkB96yzHBAAH5WsGve8t9WMYEmyXcndKEA3XChlMBZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB5e54GP; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDAK1yrG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A42C32786;
-	Thu, 25 Jul 2024 10:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721904754;
-	bh=orI0y/Mhi6lniFE6Cm8wx3n7KGGIG+Ptki0lBsAGo7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iDAK1yrGcI7P9621NOblM06XqR+5bPdaBprhpbKXsOTiTasppP37INvd9f44zTz0w
-	 xY3apxLo5rUjb78IsAqsHtqbzN/hhlFtGE3ULNo5TuNTvreG/bGbm1319pvGrLRZCs
-	 8/rfb4slxOZoc+xf9tzVHHM8mHlmMLFjuQN4E8DWCBL95XuQ/8KRX2AOPyIYNDuNnh
-	 VKcWol3GMuqbixYrJQ7FH/OzDT/BbZQ5axVlzRpM975iDyqIq8fByXaP1LzmkxZ/+V
-	 vTaaVfhOaCH+YYwPOhFw24HZFy1YmSqnpBIRzvJrOANGVLvF3loF9feBD2tR8HxpJQ
-	 j5OII3aZo8DBA==
-Date: Thu, 25 Jul 2024 12:52:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Paul Moore <paul@paul-moore.com>, Matus Jokay <matus.jokay@stuba.sk>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
- implementation hook
-Message-ID: <20240725-normung-benzinkanister-0383a2f69b43@brauner>
-References: <20240710024029.669314-2-paul@paul-moore.com>
- <20240710.peiDu2aiD1su@digikod.net>
- <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
- <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
- <Zp8k1H/qeaVZOXF5@dread.disaster.area>
- <20240723-winkelmesser-wegschauen-4a8b00031504@brauner>
- <ZqA6CeCSXwIyNDMm@dread.disaster.area>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB5e54GP"
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6b5f46191b5so4257796d6.3
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 05:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721909295; x=1722514095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ioduvqYVGgbgC6jMMeBNN6IfPN5LLvDKelGy+hAVfsk=;
+        b=VB5e54GPVo/Cb5w1WDDd4yUwmJlHm4R6GLdajt7HRYND6bPKXPeNH+LModsuowaMf9
+         z35dWtRwX4eOI9xE0EprRdj2fsEdOzhi/6pVxEZQ8bxBC+vWKdr2aEKyfv2A4JHijP3a
+         bHqAlg1wyL2pAmElAwZL25tAaQ0v65TpjfgrA2+1sPr8fBz88qVI/6kerMjhLRuu8ij+
+         HDi1ewC+RT1So+KnMlabZzFJ/3WH5ozvGp8WHqnzlUDXwVbzxQ9JwhPFjik5RpP6pShi
+         XlBLnxj9vJYRcT7SOeDVBDFNbiey8PSrZQxG2T/N7SrHB8hkyEYEdefhp22EjWl1Gdqi
+         ZohQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721909295; x=1722514095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ioduvqYVGgbgC6jMMeBNN6IfPN5LLvDKelGy+hAVfsk=;
+        b=qqME3RqU0nJdeGpm/KOLs62LZB72lDQBEN0KcE489po6uGDTTgm+z1N1b7qgAIL0Y3
+         T7gvZ8fMg5WNsu3Du/P5QgzJsZC4thnEFflEg9+92s95Wv65WIUZepsuVnwGtfC6ENMI
+         N9L7WsI5vKmZdzrZU+gOUetMKyd0/8qqaEnIqHsGzvpYLofJu71rImPszeaZmXModlUh
+         XFqQLvRGHf5R5OCFP2dgal+uQ1hYgEc3MCXzWbdEyk4bwhkC5phTCGhD2059O8AWTfFj
+         eEBEiHden2lQOgM3ZwW2SaL1ya1HKNeCGp5/r6WPQ3pn/ttjjoH+J1NhBGZrEPc8PRWb
+         J1UA==
+X-Gm-Message-State: AOJu0YxEMAxwhmqBE1mtzqAii4DiW2ikJqTps50KAbq4u61ZA27XFIEy
+	/aDVGWvTVVxECyogqW7Pr3NJivZbF2XWT6+temAwwgHMneI4YSMx4tZpzROS4I2HgP/6c+FxDiq
+	m+uqPKdaidi/jmVP/BwB4npCap+0v7/ra
+X-Google-Smtp-Source: AGHT+IE7yIGqe9TMm2QHoaCm6X/pAmFyDVS2EPhmJ8/HqP38hnDq6tc4yZjnHX6xILJLwmZwLHtjS8Ygeb5FzWm4eAA=
+X-Received: by 2002:a05:6214:5193:b0:6b5:e099:4d69 with SMTP id
+ 6a1803df08f44-6bb3ca597bamr25040226d6.26.1721909295139; Thu, 25 Jul 2024
+ 05:08:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZqA6CeCSXwIyNDMm@dread.disaster.area>
+References: <20240725054216.18587-1-laoar.shao@gmail.com> <d4b034c5-4b22-47c1-afbb-8ea1852a5e83@I-love.SAKURA.ne.jp>
+In-Reply-To: <d4b034c5-4b22-47c1-afbb-8ea1852a5e83@I-love.SAKURA.ne.jp>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 25 Jul 2024 20:07:38 +0800
+Message-ID: <CALOAHbDs8Npu4kKwS32tAPyrGROw0j9JcM6Hhz=M+OXto88gOQ@mail.gmail.com>
+Subject: Re: [PATCH] security/tomoyo: Prevent message flooding if no Tomoyo
+ loader is present
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-security-module@vger.kernel.org, takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> The problem isn't the call into the filesystem - it's may_lookup()
-> passing the inode to security modules where we dereference
-> inode->i_security and assume that it is valid for the life of the
-> object access being made.
-> 
-> That's my point - if we have a lookup race and the inode is being
-> destroyed at this point (i.e. I_FREEING is set) inode->i_security
-> *is not valid* and should not be accessed by *anyone*.
+On Thu, Jul 25, 2024 at 2:34=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Hello.
+>
+> On 2024/07/25 14:42, Yafang Shao wrote:
+> > After upgrading our OS to Rocky Linux 9, we've noticed an abundance of
+> > Tomoyo-related messages in the dmesg output, specifically indicating th=
+at
+> > Mandatory Access Control is not being activated due to the absence of
+> > /sbin/tomoyo-init. These messages repeatedly appear as systemd periodic=
+ally
+> > checks for Tomoyo, but since the loader does not exist, it triggers the
+> > messages, as follows,
+>
+> TOMOYO requires zero modification of userspace programs (including system=
+d).
+> That is, systemd is not checking for TOMOYO periodically. It is some othe=
+r
+> program that is executing /usr/lib/systemd/systemd (maybe as a container'=
+s
+> init program), and TOMOYO is checking for /sbin/tomoyo-init when
+> /usr/lib/systemd/systemd is executed.
+>
+> > While disabling Tomoyo is a straightforward solution to prevent the mes=
+sage
+> > flooding, it's suboptimal as we're unsure if any system components rely=
+ on
+> > its functionality.
+>
+> No userspace programs rely on TOMOYO's functionality (except TOMOYO's man=
+agement
+> tools including /sbin/tomoyo-init ). It is safe to disable TOMOYO.
 
-It's valid. The inode_free_security hooks unlist or deregister the
-context as e.g., selinux_inode_free_security() does. It's fine to access
-inode->i_security after the individual hooks have been called; before or
-within the delayed freeing of i_security. And selinux and bpf are the
-only cases where deregistration happens while also implementing or in
-the case of bpf allowing to implement security_inode_permission().
+Thanks for your explanation. I will disable it.
 
-> If we decide that every pathwalk accessed object attached to the
-> inode needs to be RCU freed, then __destroy_inode() is the wrong
-> place to be freeing them - i_callback() (the call_rcu() inode
-
-The superblock might already be gone by the time free_inode() is called.
-And stuff like selinux accesses the superblock from inode->i_sb during
-security_inode_free_security(). So moving it in there isn't an option.
-It needs to be called before. If one wanted it in there the obvious way
-to do it would be to split deregistration and freeing into two hooks
-security_inode_deregister() and then move the rcu part of
-security_inode_free() into i_callback so it gets wasted together with
-the inode. But i_callback() isn't called for xfs and so the way it's
-currently done is so far the best.
+--=20
+Regards
+Yafang
