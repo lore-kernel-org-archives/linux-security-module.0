@@ -1,182 +1,443 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05561CFBE;
-	Thu, 25 Jul 2024 18:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B249D3B29D
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 18:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721931307; cv=none; b=IL9Ye3RPAEXbRF5FFgG9zIRd4iluPWt0x8aGXoYa/+9Gl3bFjHjUMbvnnBPo9yn6rFc7zGwgYDac/C0+jmpDi5DjY88Jg/toTgFWwdVuU2fLbyEQv/KU21PiJEXcIffDVd83qCM2Q7bhdW/ECrhvzNwYtmoAuCOF5KxGcyKqQds=
+	t=1721933617; cv=none; b=g1dyneA97j2NFUF00hiiud6qgvUpkdYQ9RPKJBGV0GMpfj11cCYMtF6+zlt+gR/VKNgkiRdzZ5m9NM5AqQ9bdKTP9MwJlQ/e0h3AQobxSZolSMS/+9epkC+DwPWz0Ta3sNM2aPDhXQBZ018ElA6+SVG6kFhc2zQ3tMfjKcuSvXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721931307; c=relaxed/simple;
-	bh=f9oPIuuZfcma+zZ7cmW+c4KNs72hYlD1U0n1FbGpWQk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=J8FRLeXnwVfwN+Ynk9yUSul+hWc0C6vAhZIKABLqmRjJNXQgP8Ega1lLkexlku5CylnEMDsgH/7qvHyGKqAlzkpxL1qoqkLA48GOF5rVdU7dKoDUuR3uilvPNDKh5m6zspaUNfmXrj2B0U0yNCnMIQ/vX/3esOvAlHKQ039Qz+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=aU6ZdjmL; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1721933617; c=relaxed/simple;
+	bh=2n3NvdW7ZZ5CBR3JsXIU8wAn+XVAnDi35Jo8wH4sgAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lew96fifZCsUkZWWlAU+xj+fo0cnhDIGijDJ9Pr5BB0s9oYEWfNfFEE40M2KQ3+2kP7zt/a1RaWN28MDxNr4dhb2BiexMJCJ1p8N0UX1rlIN38p18oorgC/HULgeiKSEzMxw7a2GvVfB4jPishDs18ehbE1cLpghtX9fZabmtcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=t8trRPBj; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="aU6ZdjmL"
-Received: from [192.168.192.84] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 051F93F22D;
-	Thu, 25 Jul 2024 18:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1721930791;
-	bh=kjl8LMrfWr6rVujED62zhlYN6A3G3U9WrClP7RazZas=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type;
-	b=aU6ZdjmLY1xlMQP7IAuRuZSXPB8gEpXmlsVL7xhv+xhWP8eeo0o51eFD97kqCtlo2
-	 XZbvUTbSBwRTxZXADHrX4qIlXbrwxBmqpFj3wgKi2HPk6xSHbJSLhjqEu3ybV850oF
-	 Dzm3vy7853NEb2SR50RJuRUTaRvCbhBJsVbMO1N09ztcoHJAglPGv3ZKO8cHhhzKkZ
-	 jpWxUYmATij1I43tqb/3uJHRiHweyH7T5KYUmLBU6x2slmU10Wx9qLp1y9tv1B2BXA
-	 OMz8d8POusroUChpSgZcC14G4o9Fr1DxiIxG/z+b8BvYcblZ6+YNkLkScFCn0dP0me
-	 k/C4VJzSfKFuw==
-Message-ID: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-Date: Thu, 25 Jul 2024 11:06:28 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="t8trRPBj"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WVKll11K4zplT;
+	Thu, 25 Jul 2024 20:53:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721933603;
+	bh=1NTO2YHsR6j9yghcJaFm/X3h4wCtvkpFPVHqyckGJxA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t8trRPBjfUYxtF9dcB/8Dq+SrwY6mlwkEwX6LvHoX/fKPmfAeqT0uH9QwhefmYdW/
+	 0dwNLYNitUeeH+ryNLiGT8zONMVX7YqxkSD9RB5hiE1y7/D9wEqLD8BoTTZs9XWYlE
+	 TpHKP7s/uX0XuEu964VTljy25SVowmNX4+0K7NYI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WVKlj4yxxzTPV;
+	Thu, 25 Jul 2024 20:53:21 +0200 (CEST)
+Date: Thu, 25 Jul 2024 20:53:19 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 2/4] selftests/landlock: Abstract unix socket
+ restriction tests
+Message-ID: <20240725.uagai2jeiN4i@digikod.net>
+References: <cover.1721269836.git.fahimitahera@gmail.com>
+ <121e8df376327d8039266db19e53b8ff994b8d74.1721269836.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: John Johansen <john.johansen@canonical.com>
-Subject: [GIT PULL] AppArmor updates for 6.11-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKLM <linux-kernel@vger.kernel.org>,
- "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Content-Language: en-US
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <121e8df376327d8039266db19e53b8ff994b8d74.1721269836.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hi Linus,
+On Wed, Jul 17, 2024 at 10:15:20PM -0600, Tahera Fahimi wrote:
+> The patch has three types of tests:
+>   1) unix_socket: base tests the scoping mechanism for a landlocked process,
+>      same as the ptrace test.
+>   2) optional_scoping: generates three processes with different domains and
+>      tests if a process with a non-scoped domain can connect to other processes.
+>   3) unix_sock_special_cases: since the socket's creator credentials are used
+>      for scoping datagram sockets, this test examines the cases where the
+>      socket's credentials are different from the process using it.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
 
-I know this is running extremely late so I have only included bug fixes
-and a few small cleanups.
+You need to add "---" here.  You can test the result by applying this
+patch with `git am`: the comments after these three dashes will not be
+inlcuded in the commit message.
 
-In particular the cleanup
-   optimization: try to avoid refing the label in apparmor_file_open
-is nice to have for scaling on large systems, as it avoids take a ref count when
-it isn't necessary. For the file open test resulting in
+> 
+> Changes in versions:
+> V7:
+>  - Introducing landlock ABI version 6.
+>  - Adding some edge test cases to optional_scoping test.
+>  - Using `enum` for different domains in optional_scoping tests.
+>  - Extend unix_sock_special_cases test cases for connected(SOCK_STREAM) sockets.
+>  - Modifying inline comments.
+> V6:
+>  - Introducing optional_scoping test which ensures a sandboxed process with a
+>    non-scoped domain can still connect to another abstract unix socket(either
+>    sandboxed or non-sandboxed).
+>  - Introducing unix_sock_special_cases test which tests examines scenarios where
+>    the connecting sockets have different domain than the process using them.
+> V4:
+>  - Introducing unix_socket to evaluate the basic scoping mechanism for abstract
+>    unix sockets.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+>  tools/testing/selftests/landlock/base_test.c  |   2 +-
+>  .../testing/selftests/landlock/ptrace_test.c  | 867 ++++++++++++++++++
+>  2 files changed, 868 insertions(+), 1 deletion(-)
 
-   kernel test robot noticed a 93.1% improvement of will-it-scale.per_process_ops on:
+Even if these tests are similar to the ptrace's ones, they don't share
+code.  For maintainance reasons and test flexibility, we should have
+these new tests in a "scoped_abstract_unix_test.c" file.
 
-
-These patches have all been merge tested against your tree as of
-this morning and regression tested against your tree as of yesterday.
-
-thanks
-- john
+> 
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 3c1e9f35b531..52b00472a487 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -75,7 +75,7 @@ TEST(abi_version)
+>  	const struct landlock_ruleset_attr ruleset_attr = {
+>  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+>  	};
+> -	ASSERT_EQ(5, landlock_create_ruleset(NULL, 0,
+> +	ASSERT_EQ(6, landlock_create_ruleset(NULL, 0,
+>  					     LANDLOCK_CREATE_RULESET_VERSION));
+>  
+>  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+> index a19db4d0b3bd..e7dcefda8ce0 100644
+> --- a/tools/testing/selftests/landlock/ptrace_test.c
+> +++ b/tools/testing/selftests/landlock/ptrace_test.c
 
 
+> +/* Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent, child
+> + * and grand child processes when they can have scoped or non-scoped
+> + * domains.
+> + **/
+> +TEST_F(optional_scoping, unix_scoping)
+> +{
+> +	pid_t child;
+> +	socklen_t addrlen;
+> +	int sock_len = 5;
+> +	int status;
+> +	struct sockaddr_un addr = {
+> +		.sun_family = AF_UNIX,
+> +	};
+> +	const char sun_path[8] = "\0test";
+> +	bool can_connect_to_parent, can_connect_to_child;
+> +	int pipe_parent[2];
+> +
+> +	if (variant->domain_grand_child == SCOPE_SANDBOX)
+> +		can_connect_to_child = false;
+> +	else
+> +		can_connect_to_child = true;
+> +
+> +	if (!can_connect_to_child || variant->domain_children == SCOPE_SANDBOX)
+> +		can_connect_to_parent = false;
+> +	else
+> +		can_connect_to_parent = true;
+> +
+> +	addrlen = offsetof(struct sockaddr_un, sun_path) + sock_len;
+> +	memcpy(&addr.sun_path, sun_path, sock_len);
+> +
+> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +
+> +	if (variant->domain_all == OTHER_SANDBOX)
+> +		create_domain(_metadata);
+> +	else if (variant->domain_all == SCOPE_SANDBOX)
+> +		create_unix_domain(_metadata);
+> +
+> +	child = fork();
+> +	ASSERT_LE(0, child);
+> +	if (child == 0) {
+> +		int pipe_child[2];
+> +		ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+> +		pid_t grand_child;
+> +		struct sockaddr_un child_addr = {
+> +			.sun_family = AF_UNIX,
+> +		};
+> +		const char child_sun_path[8] = "\0tsst";
 
+To avoid potential issues with conflicting names, we should use the same
+sun_path as in net_test.c:set_service().  Same for all use of sun_path.
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
-
-   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-07-25
-
-for you to fetch changes up to e0ff0cff1f6cdce0aa596aac04129893201c4162:
-
-   apparmor: unpack transition table if dfa is not present (2024-07-24 11:15:06 -0700)
-
-----------------------------------------------------------------
-apparmor-pr-2024-07-24 PR 2024-07-25
-
-+ Cleanups
-       - optimization: try to avoid refing the label in apparmor_file_open
-       - remove useless static inline function is_deleted
-       - use kvfree_sensitive to free data->data
-       - fix typo in kernel doc
-
-+ Bug fixes
-       - unpack transition table if dfa is not present
-       - test: add MODULE_DESCRIPTION()
-       - take nosymfollow flag into account
-       - fix possible NULL pointer dereference
-       - fix null pointer deref when receiving skb during sock creation
-
-----------------------------------------------------------------
-Alexander Mikhalitsyn (1):
-       apparmor: take nosymfollow flag into account
-
-Christian Göttsche (1):
-       apparmor: fix typo in kernel doc
-
-Colin Ian King (1):
-       apparmor: remove useless static inline function is_deleted
-
-Fedor Pchelkin (1):
-       apparmor: use kvfree_sensitive to free data->data
-
-Georgia Garcia (1):
-       apparmor: unpack transition table if dfa is not present
-
-Jeff Johnson (1):
-       apparmor: test: add MODULE_DESCRIPTION()
-
-Leesoo Ahn (1):
-       apparmor: fix possible NULL pointer dereference
-
-Mateusz Guzik (1):
-       apparmor: try to avoid refing the label in apparmor_file_open
-
-Xiao Liang (1):
-       apparmor: Fix null pointer deref when receiving skb during sock creation
-
-  security/apparmor/apparmorfs.c         |  4 ++++
-  security/apparmor/file.c               | 13 ----------
-  security/apparmor/include/cred.h       | 20 ++++++++++++++++
-  security/apparmor/lsm.c                | 14 ++++++++---
-  security/apparmor/mount.c              |  2 ++
-  security/apparmor/policy.c             |  2 +-
-  security/apparmor/policy_unpack.c      | 43 ++++++++++++++++++++--------------
-  security/apparmor/policy_unpack_test.c |  1 +
-  8 files changed, 65 insertions(+), 34 deletions(-)
-
+> +
+> +		memcpy(&child_addr.sun_path, child_sun_path, sock_len);
+> +
+> +		if (variant->domain_children == OTHER_SANDBOX)
+> +			create_domain(_metadata);
+> +		else if (variant->domain_children == SCOPE_SANDBOX)
+> +			create_unix_domain(_metadata);
+> +
+> +		grand_child = fork();
+> +		ASSERT_LE(0, grand_child);
+> +		if (grand_child == 0) {
+> +			ASSERT_EQ(0, close(pipe_parent[1]));
+> +			ASSERT_EQ(0, close(pipe_child[1]));
+> +
+> +			char buf1, buf2;
+> +			int err;
+> +
+> +			if (variant->domain_grand_child == OTHER_SANDBOX)
+> +				create_domain(_metadata);
+> +			else if (variant->domain_grand_child == SCOPE_SANDBOX)
+> +				create_unix_domain(_metadata);
+> +
+> +			self->client = socket(AF_UNIX, variant->type, 0);
+> +			ASSERT_NE(-1, self->client);
+> +
+> +			ASSERT_EQ(1, read(pipe_child[0], &buf2, 1));
+> +			err = connect(self->client,
+> +				      (struct sockaddr *)&child_addr, addrlen);
+> +			if (can_connect_to_child) {
+> +				EXPECT_EQ(0, err);
+> +			} else {
+> +				EXPECT_EQ(-1, err);
+> +				EXPECT_EQ(EPERM, errno);
+> +			}
+> +
+> +			if (variant->type == SOCK_STREAM) {
+> +				EXPECT_EQ(0, close(self->client));
+> +				self->client =
+> +					socket(AF_UNIX, variant->type, 0);
+> +				ASSERT_NE(-1, self->client);
+> +			}
+> +
+> +			ASSERT_EQ(1, read(pipe_parent[0], &buf1, 1));
+> +			err = connect(self->client, (struct sockaddr *)&addr,
+> +				      addrlen);
+> +			if (can_connect_to_parent) {
+> +				EXPECT_EQ(0, err);
+> +			} else {
+> +				EXPECT_EQ(-1, err);
+> +				EXPECT_EQ(EPERM, errno);
+> +			}
+> +			EXPECT_EQ(0, close(self->client));
+> +
+> +			_exit(_metadata->exit_code);
+> +			return;
+> +		}
+> +
+> +		ASSERT_EQ(0, close(pipe_child[0]));
+> +		if (variant->domain_child == OTHER_SANDBOX)
+> +			create_domain(_metadata);
+> +		else if (variant->domain_child == SCOPE_SANDBOX)
+> +			create_unix_domain(_metadata);
+> +
+> +		self->child_server = socket(AF_UNIX, variant->type, 0);
+> +		ASSERT_NE(-1, self->child_server);
+> +		ASSERT_EQ(0, bind(self->child_server,
+> +				  (struct sockaddr *)&child_addr, addrlen));
+> +		if (variant->type == SOCK_STREAM)
+> +			ASSERT_EQ(0, listen(self->child_server, 32));
+> +
+> +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+> +		ASSERT_EQ(grand_child, waitpid(grand_child, &status, 0));
+> +		return;
+> +	}
+> +	ASSERT_EQ(0, close(pipe_parent[0]));
+> +
+> +	if (variant->domain_parent == OTHER_SANDBOX)
+> +		create_domain(_metadata);
+> +	else if (variant->domain_parent == SCOPE_SANDBOX)
+> +		create_unix_domain(_metadata);
+> +
+> +	self->parent_server = socket(AF_UNIX, variant->type, 0);
+> +	ASSERT_NE(-1, self->parent_server);
+> +	ASSERT_EQ(0,
+> +		  bind(self->parent_server, (struct sockaddr *)&addr, addrlen));
+> +
+> +	if (variant->type == SOCK_STREAM)
+> +		ASSERT_EQ(0, listen(self->parent_server, 32));
+> +
+> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
+> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
+> +		_metadata->exit_code = KSFT_FAIL;
+> +}
+> +
+> +/*
+> + * Since the special case of scoping only happens when the connecting socket
+> + * is scoped, the client's domain is true for all the following test cases.
+> + */
+> +/* clang-format off */
+> +FIXTURE(unix_sock_special_cases) {
+> +	int server_socket, client;
+> +	int stream_server, stream_client;
+> +};
+> +
+> +/* clang-format on */
+> +FIXTURE_VARIANT(unix_sock_special_cases)
+> +{
+> +	const bool domain_server;
+> +	const bool domain_server_socket;
+> +	const int type;
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_dgram_server_sock_domain) {
+> +	/* clang-format on */
+> +	.domain_server = false,
+> +	.domain_server_socket = true,
+> +	.type = SOCK_DGRAM,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_dgram_server_domain) {
+> +	/* clang-format off */
+> +	.domain_server = true,
+> +	.domain_server_socket = false,
+> +	.type = SOCK_DGRAM,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_stream_server_sock_domain) {
+> +	/* clang-format on */
+> +	.domain_server = false,
+> +	.domain_server_socket = true,
+> +	.type = SOCK_STREAM,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_stream_server_domain) {
+> +        /* clang-format off */
+> +        .domain_server = true,
+> +        .domain_server_socket = false,
+> +        .type = SOCK_STREAM,
+> +};
+> +
+> +FIXTURE_SETUP(unix_sock_special_cases)
+> +{
+> +}
+> +
+> +FIXTURE_TEARDOWN(unix_sock_special_cases)
+> +{
+> +	close(self->client);
+> +	close(self->server_socket);
+> +	close(self->stream_server);
+> +	close(self->stream_client);
+> +}
+> +
+> +/* Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent and
+> + * child processes when connecting socket has different domain
+> + * than the process using it.
+> + **/
+> +TEST_F(unix_sock_special_cases, dgram_cases)
+> +{
+> +	pid_t child;
+> +	socklen_t addrlen;
+> +	int sock_len = 5;
+> +	struct sockaddr_un addr, addr_stream = {
+> +		.sun_family = AF_UNIX,
+> +	};
+> +	const char sun_path[8] = "\0test";
+> +	const char sun_path_stream[8] = "\0strm";
+> +	int err, status;
+> +	int pipe_child[2], pipe_parent[2];
+> +	char buf_parent;
+> +
+> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +
+> +	addrlen = offsetof(struct sockaddr_un, sun_path) + sock_len;
+> +	memcpy(&addr.sun_path, sun_path, sock_len);
+> +
+> +	child = fork();
+> +	ASSERT_LE(0, child);
+> +	if (child == 0) {
+> +		char buf_child;
+> +
+> +		ASSERT_EQ(0, close(pipe_parent[1]));
+> +		ASSERT_EQ(0, close(pipe_child[0]));
+> +
+> +		/* client always has domain */
+> +		create_unix_domain(_metadata);
+> +
+> +		if (variant->domain_server_socket) {
+> +			int data_socket;
+> +			int fd_sock = socket(AF_UNIX, variant->type, 0);
+> +
+> +			ASSERT_NE(-1, fd_sock);
+> +
+> +			self->stream_server = socket(AF_UNIX, SOCK_STREAM, 0);
+> +
+> +			ASSERT_NE(-1, self->stream_server);
+> +			memcpy(&addr_stream.sun_path, sun_path_stream,
+> +			       sock_len);
+> +			ASSERT_EQ(0, bind(self->stream_server,
+> +					  (struct sockaddr *)&addr_stream,
+> +					  addrlen));
+> +			ASSERT_EQ(0, listen(self->stream_server, 32));
+> +
+> +			ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+> +
+> +			data_socket = accept(self->stream_server, NULL, NULL);
+> +
+> +			ASSERT_EQ(0, send_fd(data_socket, fd_sock));
+> +			ASSERT_EQ(0, close(fd_sock));
+> +			TH_LOG("sending completed\n");
+> +		}
+> +
+> +		self->client = socket(AF_UNIX, variant->type, 0);
+> +		ASSERT_NE(-1, self->client);
+> +		/* wait for parent signal for connection */
+> +		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
+> +
+> +		err = connect(self->client, (struct sockaddr *)&addr, addrlen);
+> +		if (!variant->domain_server_socket) {
+> +			EXPECT_EQ(-1, err);
+> +			EXPECT_EQ(EPERM, errno);
+> +		} else {
+> +			EXPECT_EQ(0, err);
+> +		}
+> +		_exit(_metadata->exit_code);
+> +		return;
+> +	}
+> +
+> +	ASSERT_EQ(0, close(pipe_child[1]));
+> +	ASSERT_EQ(0, close(pipe_parent[0]));
+> +
+> +	if (!variant->domain_server_socket) {
+> +		self->server_socket = socket(AF_UNIX, variant->type, 0);
+> +	} else {
+> +		int cli = socket(AF_UNIX, SOCK_STREAM, 0);
+> +
+> +		ASSERT_NE(-1, cli);
+> +		memcpy(&addr_stream.sun_path, sun_path_stream, sock_len);
+> +		ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
+> +		ASSERT_EQ(0, connect(cli, (struct sockaddr *)&addr_stream,
+> +				     addrlen));
+> +
+> +		self->server_socket = recv_fd(cli);
+> +		ASSERT_LE(0, self->server_socket);
+> +	}
+> +
+> +	ASSERT_NE(-1, self->server_socket);
+> +
+> +	if (variant->domain_server)
+> +		create_unix_domain(_metadata);
+> +
+> +	ASSERT_EQ(0,
+> +		  bind(self->server_socket, (struct sockaddr *)&addr, addrlen));
+> +	if (variant->type == SOCK_STREAM)
+> +		ASSERT_EQ(0, listen(self->server_socket, 32));
+> +	/* signal to child that parent is listening */
+> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+> +
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +
+> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
+> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
+> +		_metadata->exit_code = KSFT_FAIL;
+> +}
+>  TEST_HARNESS_MAIN
+> -- 
+> 2.34.1
+> 
+> 
