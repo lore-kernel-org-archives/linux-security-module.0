@@ -1,94 +1,84 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754E61CA8A
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 06:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB83D196DA2;
+	Thu, 25 Jul 2024 10:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721889276; cv=none; b=RmdfSkQIv0CsMvbOAVHdKDSENN/yGr7i2Twz2MoF/btFemlNK+v0AddgUz4qJYlOGTdLG5AGBCvczwxfRlwholB7U91XhF0wSAEzh9yCsREclFhjmucoTVbggge/eWUgvWn8dzZEGy3CZ/Osq/Kwn+E4FoM0OV36VKbpwi7jcVg=
+	t=1721904754; cv=none; b=uZ/RxuKlPTrPcUjZuOi4M+x50FMZJ0e2Tia2c3qN5St+dOG6D/4/KMcJPlxTxjw2dZFlcnSSsMjFSgHJsDLQm9tTKeICwUpbNY6TYvDuAKbj4S5JbdIAuXoendQqxkAsqqNcFwQ3EMbdzQLIkdVesvg/2dKZRM47ETzDoLsPQW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721889276; c=relaxed/simple;
-	bh=IW5776Qd+17NPn98wMcoWCSRRXtSfhRzOdB/Q7Yztr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+oVmlDlw3cQ5ORgLuby9YnLAlf5VCDPJ/ud2sDD1LgcTA1VgQ7gwK8mYr1bAxbGl7vGg/Wee21QQ+25IMaz5FKvuvVIqb2gb1614KoobPyHRdS7CC0lwZvhxnOHEuuw6hdMj6Fw8JNUeRXk9+tST+0/tQO++S4PPEnnho5eCpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46P6YO5V016429;
-	Thu, 25 Jul 2024 15:34:24 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
- Thu, 25 Jul 2024 15:34:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46P6YNPt016425
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 25 Jul 2024 15:34:23 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d4b034c5-4b22-47c1-afbb-8ea1852a5e83@I-love.SAKURA.ne.jp>
-Date: Thu, 25 Jul 2024 15:34:23 +0900
+	s=arc-20240116; t=1721904754; c=relaxed/simple;
+	bh=orI0y/Mhi6lniFE6Cm8wx3n7KGGIG+Ptki0lBsAGo7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DZUe+iyZkehClW7X6gurXLYbGIImz8G6LP1skceLkDdsTWzrf6cJo9NDEBZRQ8Ftj2VYfBj/Pz5Ik2zZLlehdB+vhbWTFHgxjVMgvDJGSYvmpAFzmImh5OVcd0E5w/1M9m91l1Pb5Ny7BAsJb1gjIKP2bfjjywsIHxUmw1XiE44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDAK1yrG; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDAK1yrG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A42C32786;
+	Thu, 25 Jul 2024 10:52:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721904754;
+	bh=orI0y/Mhi6lniFE6Cm8wx3n7KGGIG+Ptki0lBsAGo7U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iDAK1yrGcI7P9621NOblM06XqR+5bPdaBprhpbKXsOTiTasppP37INvd9f44zTz0w
+	 xY3apxLo5rUjb78IsAqsHtqbzN/hhlFtGE3ULNo5TuNTvreG/bGbm1319pvGrLRZCs
+	 8/rfb4slxOZoc+xf9tzVHHM8mHlmMLFjuQN4E8DWCBL95XuQ/8KRX2AOPyIYNDuNnh
+	 VKcWol3GMuqbixYrJQ7FH/OzDT/BbZQ5axVlzRpM975iDyqIq8fByXaP1LzmkxZ/+V
+	 vTaaVfhOaCH+YYwPOhFw24HZFy1YmSqnpBIRzvJrOANGVLvF3loF9feBD2tR8HxpJQ
+	 j5OII3aZo8DBA==
+Date: Thu, 25 Jul 2024 12:52:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Paul Moore <paul@paul-moore.com>, Matus Jokay <matus.jokay@stuba.sk>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+Message-ID: <20240725-normung-benzinkanister-0383a2f69b43@brauner>
+References: <20240710024029.669314-2-paul@paul-moore.com>
+ <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+ <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+ <Zp8k1H/qeaVZOXF5@dread.disaster.area>
+ <20240723-winkelmesser-wegschauen-4a8b00031504@brauner>
+ <ZqA6CeCSXwIyNDMm@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security/tomoyo: Prevent message flooding if no Tomoyo
- loader is present
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: linux-security-module@vger.kernel.org, takedakn@nttdata.co.jp
-References: <20240725054216.18587-1-laoar.shao@gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20240725054216.18587-1-laoar.shao@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZqA6CeCSXwIyNDMm@dread.disaster.area>
 
-Hello.
+> The problem isn't the call into the filesystem - it's may_lookup()
+> passing the inode to security modules where we dereference
+> inode->i_security and assume that it is valid for the life of the
+> object access being made.
+> 
+> That's my point - if we have a lookup race and the inode is being
+> destroyed at this point (i.e. I_FREEING is set) inode->i_security
+> *is not valid* and should not be accessed by *anyone*.
 
-On 2024/07/25 14:42, Yafang Shao wrote:
-> After upgrading our OS to Rocky Linux 9, we've noticed an abundance of
-> Tomoyo-related messages in the dmesg output, specifically indicating that
-> Mandatory Access Control is not being activated due to the absence of
-> /sbin/tomoyo-init. These messages repeatedly appear as systemd periodically
-> checks for Tomoyo, but since the loader does not exist, it triggers the
-> messages, as follows,
+It's valid. The inode_free_security hooks unlist or deregister the
+context as e.g., selinux_inode_free_security() does. It's fine to access
+inode->i_security after the individual hooks have been called; before or
+within the delayed freeing of i_security. And selinux and bpf are the
+only cases where deregistration happens while also implementing or in
+the case of bpf allowing to implement security_inode_permission().
 
-TOMOYO requires zero modification of userspace programs (including systemd).
-That is, systemd is not checking for TOMOYO periodically. It is some other
-program that is executing /usr/lib/systemd/systemd (maybe as a container's
-init program), and TOMOYO is checking for /sbin/tomoyo-init when
-/usr/lib/systemd/systemd is executed.
+> If we decide that every pathwalk accessed object attached to the
+> inode needs to be RCU freed, then __destroy_inode() is the wrong
+> place to be freeing them - i_callback() (the call_rcu() inode
 
-> While disabling Tomoyo is a straightforward solution to prevent the message
-> flooding, it's suboptimal as we're unsure if any system components rely on
-> its functionality.
-
-No userspace programs rely on TOMOYO's functionality (except TOMOYO's management
-tools including /sbin/tomoyo-init ). It is safe to disable TOMOYO.
-
->                    A more elegant approach would be to modify the logging
-> mechanism to use pr_info_once() instead of the default one, which would
-> reduce the number of redundant messages without compromising the
-> functionality of the system. This change would ensure that the necessary
-> information is logged once, preventing the dmesg from being cluttered
-> with repetitive messages.
-
-The message your patch tries to limit typically appears when /usr/lib/systemd/systemd
-is executed from initramfs, for /sbin/tomoyo-init is installed inside the / filesystem
-which will be mounted by initramfs, and /sbin/tomoyo-init becomes ready to execute
-when initramfs transfers its execution to /usr/lib/systemd/systemd within
-the / filesystem.
-
-Therefore, this message is intended as a debug message that tells administrators that
-you might have forgotten to install TOMOYO's management tools. I didn't expect that
-administrators enable TOMOYO without installing TOMOYO's management tools.
-
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-
-Thank you for a patch. But so far I don't think we need this change.
-
+The superblock might already be gone by the time free_inode() is called.
+And stuff like selinux accesses the superblock from inode->i_sb during
+security_inode_free_security(). So moving it in there isn't an option.
+It needs to be called before. If one wanted it in there the obvious way
+to do it would be to split deregistration and freeing into two hooks
+security_inode_deregister() and then move the rcu part of
+security_inode_free() into i_callback so it gets wasted together with
+the inode. But i_callback() isn't called for xfs and so the way it's
+currently done is so far the best.
