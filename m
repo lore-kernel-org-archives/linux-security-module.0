@@ -1,125 +1,128 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9526B18040
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Jul 2024 21:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FFB17C91
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 05:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721858129; cv=none; b=VzHMUKgls1w6Gja25AeZ6g8XGgqYgVhI/mLMZ0FmpOMf/WNF15ifntpass3/jm5saEmkcDssyVoGskdsnuz0ob7QO/EJfIFnsPkTyrPaZPrB2i9Sr8mjho48ZIr2k9tk/dlJgUQeFj9Jad5H00TGxHvu8OwdtEJsjR9jiss9jd0=
+	t=1721886288; cv=none; b=un46TzDqIQHN0OFjovbN7rB6Ah+qEFCBCQFDXAKU5QVyv6rbZq/4/9epdF9cv1GDkPPoNCjmRjJSmlhGJb1GDOzGkr+segkC0cMJlqcl8gfei5dr3rMZxG+JYXr8zGVguaFUCsSz4/50ZruqRKZf2NoPPO5PjM8IlkvUq2AIF10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721858129; c=relaxed/simple;
-	bh=+mMd8KWa1udV1Q0WOLgzdraq2NYFnE9apCBA8B0M7J0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RurK9RWCu+bZbdLujJx24dBVdzW6zuxe6OoG/rYim+csu5Bc+Z1rsh95kUHpOJ8M3f9Jq7KWBkGkeQTuR97QhTlQ3cHN5JCizmQzLI3kS3INi/ySQdgX546/HiY1CjvTIpu65PxdjxpK71b+abOB2SI5xZuhX8dm5Pl5o1BhT/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=E6olU3Bz; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1721886288; c=relaxed/simple;
+	bh=rnMZufw172JYLMQqq5Nl1gT0fronYVdAub+e8XlBwmU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MWI6f80YXITTeOm4x4zdYmuaoD2i9YRTftdqCuYMxhTWk3YbfsZX3Qshb3zaPfcFb03tG3Q8USZF4Z1Lr0fIkXRyaM97sYS2jlhlxEYD35+CeDtzvCJth+XzPJPQDmoWx1v4Bkq65/2hUNwKBX4ZWitNW7YnNrcNCFdIMFzx9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MpHYYIu6; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="E6olU3Bz"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-65fdfd7b3deso3126307b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Jul 2024 14:55:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpHYYIu6"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d357040dbso464582b3a.1
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Jul 2024 22:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1721858125; x=1722462925; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sX2S+wkSh9PXj1mrFurJA9PykaHp11nkFTGDDdb5ssA=;
-        b=E6olU3BzexqV/EbGRySbKn/ll3xfNW8Bz4Nyrxod+GrBNwyNiV9Gdi2hFl5YS7zrXf
-         O21SL1u7PFhkYGexslfYNNtHWBg+1fyE1hsgdSvzySBJtDOy0iC1DQE3xhNFRhjWbQFI
-         hYllL6ZL6fX/bzkHQH2ITtIg9A5EP/23MKDjZOe5PiyC+WBPc+9qJYDPY1b7ZXaDuwOj
-         9V4dC0eb9xzCKpDZ1EtafvvIhzvZ+QN77D0rSyeOjCCfzVwZ7J0M6pQudzYhPrqwf7bz
-         lGK3KZoSwKoPAYE5BwlgBrcXHPEDTWkcHeSMTnzpO0jVdu2gtpCZj2s1QT0vbLq+DqzK
-         nreA==
+        d=gmail.com; s=20230601; t=1721886286; x=1722491086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GA4Q0PEAfW2jt86r/hAorSNxePdrjLgo3D0ZU/jn9Es=;
+        b=MpHYYIu6uO1/me5u3SnS1quLh3gksBZRftevnnRSwS6jR3upmp1p5+p5tLskj61/bp
+         dBBXD2G+coMY/Mp24KfSiFtdxujbPq90TSiWgXUD0ZIYajIxQVtYVz/eXI/tAZ++hvVP
+         y1lHdX2lzn1toAyyW1ixh+PYF/Er2oIU+ndJJtcLk0FUdkx2Cz29/LQlKnKCFOSDnWgT
+         DiDYqyHv1noRTNl7vdMuCjVvqFSxs/UXb4nYNau3tEO5z2bx8eWCUVUAqgZj5MLxn9LA
+         VMjp+pQF8vL9zxADJ4OC7b/EvfopQ9M3SefmEi9KoOz8x2IgwCGi7HQAU9r4UJjjGvSn
+         mgjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721858125; x=1722462925;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sX2S+wkSh9PXj1mrFurJA9PykaHp11nkFTGDDdb5ssA=;
-        b=UCoYMrObdREGMPyNQZy78/sIiLZbpvWbDE1NUDSbT69GrnnLVlW3oO4rYCngM0hAGW
-         r50o8yjJvEVFA6waiOylCQpzxglG4PJQW09EBm4nanBgevFPmZ50sWRUh/WDFIt/RsEY
-         aA6JABfAD3U8l5eRDTMqjKNPDk3frQU0/CVy/gmOFxFZ5ix5s8GmSWHcf003V6PwNTGh
-         yRdzZo7j8gRmSx/bsOsupxAuN8Uztv6vF2Ki/jPC9hcg7lTfbVuT2XVAwHpn48aqRP9e
-         afwOu3vYkN79a8/dGSg2iQ7Ci9dQtZLfitl8yof5KHCpOnMuMcLIsq9I+upy8LcJw1WS
-         0wFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxGGHpzHCiRoXJD0IwzLJVu+pNXvADSnv4zfdXofJ86bFcc+Z4DkQYi4+bB08zk/OexIckamXG4j+HeOpSqgeAti/gTYBlUGjy1rwqyiJeK4fCp0a2
-X-Gm-Message-State: AOJu0Yx4k8VehKhggUKnnaOFlUCwYJVwh0Lqm3B2iJbm171n08pFgfX7
-	RGZO1SASC+rejJ5W9IxbDDraSf/AeWmTVA8845Udfct/ypYVuBUj4QfZpNFjCoKW3EuaQLzuu7y
-	6uzh4Gc0lIpI5H/IUn1U0dABdkjPH0W/zs0ON
-X-Google-Smtp-Source: AGHT+IEvK2qDe3JpupN8A/TtWU8g9/xrVml3rY6g5rMwfVak/BD44/4JmQdOkWDHisL63uxy63dZ/n2jLT0o+6TyI2Y=
-X-Received: by 2002:a81:c24f:0:b0:665:657d:9847 with SMTP id
- 00721157ae682-675113b33a1mr8994327b3.13.1721858125677; Wed, 24 Jul 2024
- 14:55:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721886286; x=1722491086;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GA4Q0PEAfW2jt86r/hAorSNxePdrjLgo3D0ZU/jn9Es=;
+        b=wlC61vJ54E9fC6sYO9a7kN7Ke4VD/f9tASBWbQb1UQxEugoI2SoZ3qez+HUyko6goA
+         O4Sni7sZ/Xg1j6SZvLqxAjWT9WJoip7R9ZhBulUR79hXVkdHXm2ihPbFiz4XWUu15ccT
+         jl84sL28qqiAAeNP6JHWD8sIpKD/HZG3WFzJN+wYoycwmwlQI2t/L0bEKclodj3WJhO+
+         BhjXW6YEcZAuJNFdFX1lz11r6xzDx6hUmhN41+/Prcw1p2brs1V61F577Jymh/oSdQOh
+         sK7fIa1xRFyY3jnlPTI8dBuOhtG0BhY5M6GYZ1Osf72LMzWE8eek/MmNC0ULQfJEff5/
+         /gHw==
+X-Gm-Message-State: AOJu0YzS+T9+lvT4CzytIVkg70xhZ8L2gmu9nKO87x9f7ChUV+P60usE
+	o8afrVsMMO+ISEW7fze3ZboQSpw6/laW70fO3927AnBcThhpj+NJ
+X-Google-Smtp-Source: AGHT+IFr6rjW2cPduNWAbaqO1ie+Y121oaa/a1oFRj7tT4BAyHzWpnVilfXZPVuCAPW4TfYKqrNclA==
+X-Received: by 2002:a05:6a20:3954:b0:1be:cea:d381 with SMTP id adf61e73a8af0-1c472aa4b6fmr2649099637.18.1721886285684;
+        Wed, 24 Jul 2024 22:44:45 -0700 (PDT)
+Received: from localhost.localdomain ([39.144.45.37])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ef4490sm5280895ad.179.2024.07.24.22.44.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2024 22:44:45 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: takedakn@nttdata.co.jp,
+	penguin-kernel@I-love.SAKURA.ne.jp
+Cc: linux-security-module@vger.kernel.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH] security/tomoyo: Prevent message flooding if no Tomoyo loader is present
+Date: Thu, 25 Jul 2024 13:42:16 +0800
+Message-Id: <20240725054216.18587-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724020659.120353-1-xukuohai@huaweicloud.com> <26bb0c7b-e241-4239-8933-349115f3afdb@schaufler-ca.com>
-In-Reply-To: <26bb0c7b-e241-4239-8933-349115f3afdb@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 24 Jul 2024 17:55:14 -0400
-Message-ID: <CAHC9VhTfqhWe9g5Tfzqn2e2S8U3JrCJ2zjjgKKJF0La+ehwAaQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Refactor return value of two lsm hooks
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Xu Kuohai <xukuohai@huaweicloud.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, James Morris <jmorris@namei.org>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 24, 2024 at 4:36=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-> On 7/23/2024 7:06 PM, Xu Kuohai wrote:
-> > From: Xu Kuohai <xukuohai@huawei.com>
-> >
-> > The BPF LSM program may cause a kernel panic if it returns an
-> > unexpected value, such as a positive value on the hook
-> > file_alloc_security.
-> >
-> > To fix it, series [1] refactored the LSM hook return values and
-> > added BPF return value checks.
-> >
-> > [1] used two methods to refactor hook return values:
-> >
-> > - converting positive return value to negative error code
-> >
-> > - adding additional output parameter to store odd return values
-> >
-> > Based on discussion in [1], only two hooks refactored with the
-> > second method may be acceptable. Since the second method requires
-> > extra work on BPF side to ensure that the output parameter is
-> > set properly, the extra work does not seem worthwhile for just
-> > two hooks. So this series includes only the two patches refactored
-> > with the first method.
-> >
-> > Changes to [1]:
-> > - Drop unnecessary patches
-> > - Rebase
-> > - Remove redundant comments in the inode_copy_up_xattr patch
-> >
-> > [1] https://lore.kernel.org/bpf/20240711111908.3817636-1-xukuohai@huawe=
-icloud.com
-> >     https://lore.kernel.org/bpf/20240711113828.3818398-1-xukuohai@huawe=
-icloud.com
-> >
-> > Xu Kuohai (2):
-> >   lsm: Refactor return value of LSM hook vm_enough_memory
-> >   lsm: Refactor return value of LSM hook inode_copy_up_xattr
->
-> For the series:
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+After upgrading our OS to Rocky Linux 9, we've noticed an abundance of
+Tomoyo-related messages in the dmesg output, specifically indicating that
+Mandatory Access Control is not being activated due to the absence of
+/sbin/tomoyo-init. These messages repeatedly appear as systemd periodically
+checks for Tomoyo, but since the loader does not exist, it triggers the
+messages, as follows,
 
-Looks good to me too.  I'm going to merge this into lsm/dev-staging
-for testing with the expectation that I'll move them over to lsm/dev
-once the merge window closes.
+[2362655.988555] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2362956.054826] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2363256.123963] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2363556.176985] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2363856.239882] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2364041.613547] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2364155.298170] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2364455.361375] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2364755.411385] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[2364816.253043] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
 
-Thanks!
+The tomoyo configs in our kernel config are as follows,
 
---=20
-paul-moore.com
+  CONFIG_SECURITY_TOMOYO=y
+  CONFIG_SECURITY_TOMOYO_MAX_ACCEPT_ENTRY=2048
+  CONFIG_SECURITY_TOMOYO_MAX_AUDIT_LOG=1024
+  # CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER is not set
+  CONFIG_SECURITY_TOMOYO_POLICY_LOADER="/sbin/tomoyo-init"
+  CONFIG_SECURITY_TOMOYO_ACTIVATION_TRIGGER="/usr/lib/systemd/systemd"
+  # CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING is not set
+
+While disabling Tomoyo is a straightforward solution to prevent the message
+flooding, it's suboptimal as we're unsure if any system components rely on
+its functionality. A more elegant approach would be to modify the logging
+mechanism to use pr_info_once() instead of the default one, which would
+reduce the number of redundant messages without compromising the
+functionality of the system. This change would ensure that the necessary
+information is logged once, preventing the dmesg from being cluttered
+with repetitive messages.
+
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ security/tomoyo/load_policy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/tomoyo/load_policy.c b/security/tomoyo/load_policy.c
+index 363b65be87ab..4e64b5678abf 100644
+--- a/security/tomoyo/load_policy.c
++++ b/security/tomoyo/load_policy.c
+@@ -41,8 +41,8 @@ static bool tomoyo_policy_loader_exists(void)
+ 	if (!tomoyo_loader)
+ 		tomoyo_loader = CONFIG_SECURITY_TOMOYO_POLICY_LOADER;
+ 	if (kern_path(tomoyo_loader, LOOKUP_FOLLOW, &path)) {
+-		pr_info("Not activating Mandatory Access Control as %s does not exist.\n",
+-			tomoyo_loader);
++		pr_info_once("Not activating Mandatory Access Control as %s does not exist.\n",
++			     tomoyo_loader);
+ 		return false;
+ 	}
+ 	path_put(&path);
+-- 
+2.43.5
+
