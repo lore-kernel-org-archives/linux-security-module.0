@@ -1,108 +1,177 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408991991AA
-	for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 12:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA5E19D072
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 14:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721909297; cv=none; b=TDmtzp/0e8PHUIRrjWkXtMu499YxfHZ4pybGU5xJeZS9yqS9Qj7928SMZzIKzwsDPFBLqg37QQr7Ll3FMdiH5znP7AADHN/IcBGfRp5GbxNNehdYH+c9PUe49Ug/51rpaeqiWQ/AR9IUH5JzyVXvUjFmhjxBbw5y0pVIZpwq9rA=
+	t=1721917151; cv=none; b=TjVT8OFKhh6IkLZjelkhAh7CiLhjhcaQp7ETAK5c8su97cHYbvAJazCMLXkUXH/8k8YVO7rM74r7UoZCRT0sQyUKMtZOOaXwZzDxeSOjOX78iEhsg95ZoXHQzevx8cXtu2u3MxB9KIJXpnzCZy1z2wfD43FuflRdynt71xSYrQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721909297; c=relaxed/simple;
-	bh=ioduvqYVGgbgC6jMMeBNN6IfPN5LLvDKelGy+hAVfsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aCdVxVc3aVMrFGUOO6rT1olE35BmnTs51YogX6YmupHW4ucM/4uFvFBiLHL2XegW08jbkWW1IfrAiMVCQ9LYGLTP+WV9Su9dGiB3J1Dn5Ks2EBKtsGMqrPauhWbWgRvmRkB96yzHBAAH5WsGve8t9WMYEmyXcndKEA3XChlMBZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB5e54GP; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721917151; c=relaxed/simple;
+	bh=cyEcSr+BhonFVEnaLt8EGxFa7DNtRZULsVk42jLsu3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJNNJSYJoHtvRSFK/AKHIiNgU+YthwmWPUUHxZTzpRd0EqdJ88hbe/wcBmXwBVirkAh+XN1VCWQ+Jh6Jg2Ox7bTmupkA6QVNkR/VTdM6sLjY5q+RgLxbi+t/4qvoYAPqoqZf+8Clt6VurH9hD216OO1+3NCtuP8YTmK5A6q7nOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zcFW9nQ7; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB5e54GP"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6b5f46191b5so4257796d6.3
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Jul 2024 05:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721909295; x=1722514095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ioduvqYVGgbgC6jMMeBNN6IfPN5LLvDKelGy+hAVfsk=;
-        b=VB5e54GPVo/Cb5w1WDDd4yUwmJlHm4R6GLdajt7HRYND6bPKXPeNH+LModsuowaMf9
-         z35dWtRwX4eOI9xE0EprRdj2fsEdOzhi/6pVxEZQ8bxBC+vWKdr2aEKyfv2A4JHijP3a
-         bHqAlg1wyL2pAmElAwZL25tAaQ0v65TpjfgrA2+1sPr8fBz88qVI/6kerMjhLRuu8ij+
-         HDi1ewC+RT1So+KnMlabZzFJ/3WH5ozvGp8WHqnzlUDXwVbzxQ9JwhPFjik5RpP6pShi
-         XlBLnxj9vJYRcT7SOeDVBDFNbiey8PSrZQxG2T/N7SrHB8hkyEYEdefhp22EjWl1Gdqi
-         ZohQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721909295; x=1722514095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ioduvqYVGgbgC6jMMeBNN6IfPN5LLvDKelGy+hAVfsk=;
-        b=qqME3RqU0nJdeGpm/KOLs62LZB72lDQBEN0KcE489po6uGDTTgm+z1N1b7qgAIL0Y3
-         T7gvZ8fMg5WNsu3Du/P5QgzJsZC4thnEFflEg9+92s95Wv65WIUZepsuVnwGtfC6ENMI
-         N9L7WsI5vKmZdzrZU+gOUetMKyd0/8qqaEnIqHsGzvpYLofJu71rImPszeaZmXModlUh
-         XFqQLvRGHf5R5OCFP2dgal+uQ1hYgEc3MCXzWbdEyk4bwhkC5phTCGhD2059O8AWTfFj
-         eEBEiHden2lQOgM3ZwW2SaL1ya1HKNeCGp5/r6WPQ3pn/ttjjoH+J1NhBGZrEPc8PRWb
-         J1UA==
-X-Gm-Message-State: AOJu0YxEMAxwhmqBE1mtzqAii4DiW2ikJqTps50KAbq4u61ZA27XFIEy
-	/aDVGWvTVVxECyogqW7Pr3NJivZbF2XWT6+temAwwgHMneI4YSMx4tZpzROS4I2HgP/6c+FxDiq
-	m+uqPKdaidi/jmVP/BwB4npCap+0v7/ra
-X-Google-Smtp-Source: AGHT+IE7yIGqe9TMm2QHoaCm6X/pAmFyDVS2EPhmJ8/HqP38hnDq6tc4yZjnHX6xILJLwmZwLHtjS8Ygeb5FzWm4eAA=
-X-Received: by 2002:a05:6214:5193:b0:6b5:e099:4d69 with SMTP id
- 6a1803df08f44-6bb3ca597bamr25040226d6.26.1721909295139; Thu, 25 Jul 2024
- 05:08:15 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zcFW9nQ7"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WVCg75W6Vz6mt;
+	Thu, 25 Jul 2024 16:18:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721917139;
+	bh=A637sdMYYX6WYQ5znC+hqJDdcWKIM518ApZarQd9nwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zcFW9nQ7pI98dhdsjoDJXcYXA0xWq1pKaQp2dgMZRLQPY1XICzqreGW5nNnFNVt9g
+	 t+xSTi5rrQEj9HyDotsxUooDtgmwl0jAXhouWM8GVVlnzyWcX7D04UyT8auVzoKKez
+	 a7hN/QlVDcWRJMq3msmH2ZWUQvkMYuomZjUzRTZc=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WVCg71zk6zwKy;
+	Thu, 25 Jul 2024 16:18:59 +0200 (CEST)
+Date: Thu, 25 Jul 2024 16:18:57 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 3/4] samples/landlock: Support abstract unix socket
+ restriction
+Message-ID: <20240725.dei1Kaimi8ze@digikod.net>
+References: <cover.1721269836.git.fahimitahera@gmail.com>
+ <4f533a80d56d9f57d50a87d55101cfdeb03404c3.1721269836.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725054216.18587-1-laoar.shao@gmail.com> <d4b034c5-4b22-47c1-afbb-8ea1852a5e83@I-love.SAKURA.ne.jp>
-In-Reply-To: <d4b034c5-4b22-47c1-afbb-8ea1852a5e83@I-love.SAKURA.ne.jp>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 25 Jul 2024 20:07:38 +0800
-Message-ID: <CALOAHbDs8Npu4kKwS32tAPyrGROw0j9JcM6Hhz=M+OXto88gOQ@mail.gmail.com>
-Subject: Re: [PATCH] security/tomoyo: Prevent message flooding if no Tomoyo
- loader is present
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: linux-security-module@vger.kernel.org, takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4f533a80d56d9f57d50a87d55101cfdeb03404c3.1721269836.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Jul 25, 2024 at 2:34=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> Hello.
->
-> On 2024/07/25 14:42, Yafang Shao wrote:
-> > After upgrading our OS to Rocky Linux 9, we've noticed an abundance of
-> > Tomoyo-related messages in the dmesg output, specifically indicating th=
-at
-> > Mandatory Access Control is not being activated due to the absence of
-> > /sbin/tomoyo-init. These messages repeatedly appear as systemd periodic=
-ally
-> > checks for Tomoyo, but since the loader does not exist, it triggers the
-> > messages, as follows,
->
-> TOMOYO requires zero modification of userspace programs (including system=
-d).
-> That is, systemd is not checking for TOMOYO periodically. It is some othe=
-r
-> program that is executing /usr/lib/systemd/systemd (maybe as a container'=
-s
-> init program), and TOMOYO is checking for /sbin/tomoyo-init when
-> /usr/lib/systemd/systemd is executed.
->
-> > While disabling Tomoyo is a straightforward solution to prevent the mes=
-sage
-> > flooding, it's suboptimal as we're unsure if any system components rely=
- on
-> > its functionality.
->
-> No userspace programs rely on TOMOYO's functionality (except TOMOYO's man=
-agement
-> tools including /sbin/tomoyo-init ). It is safe to disable TOMOYO.
+On Wed, Jul 17, 2024 at 10:15:21PM -0600, Tahera Fahimi wrote:
+> - Adding IPC scoping to the sandbox demo by defining a new "LL_SCOPED"
+>   environment variable. "LL_SCOPED" gets value "a" to restrict abstract
+>   unix sockets.
+> - Change to LANDLOCK_ABI_LAST to 6.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+>  samples/landlock/sandboxer.c | 25 +++++++++++++++++++------
+>  1 file changed, 19 insertions(+), 6 deletions(-)
+> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index e8223c3e781a..d280616585d4 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -14,6 +14,7 @@
+>  #include <fcntl.h>
+>  #include <linux/landlock.h>
+>  #include <linux/prctl.h>
+> +#include <linux/socket.h>
+>  #include <stddef.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+> @@ -55,6 +56,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+>  #define ENV_FS_RW_NAME "LL_FS_RW"
+>  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+>  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+> +#define ENV_SCOPED_NAME "LL_SCOPED"
+>  #define ENV_DELIMITER ":"
+>  
+>  static int parse_path(char *env_path, const char ***const path_list)
+> @@ -208,7 +210,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>  
+>  /* clang-format on */
+>  
+> -#define LANDLOCK_ABI_LAST 5
+> +#define LANDLOCK_ABI_LAST 6
+>  
+>  int main(const int argc, char *const argv[], char *const *const envp)
+>  {
+> @@ -216,6 +218,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	char *const *cmd_argv;
+>  	int ruleset_fd, abi;
+>  	char *env_port_name;
+> +	char *env_scoped_name;
+>  	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
+>  	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
+>  
+> @@ -223,14 +226,15 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		.handled_access_fs = access_fs_rw,
+>  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>  				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
+>  	};
+>  
+>  	if (argc < 2) {
+>  		fprintf(stderr,
+> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
+> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
+>  			"<cmd> [args]...\n\n",
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, argv[0]);
+> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+>  		fprintf(stderr,
+>  			"Execute a command in a restricted environment.\n\n");
+>  		fprintf(stderr,
+> @@ -251,15 +255,18 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		fprintf(stderr,
+>  			"* %s: list of ports allowed to connect (client).\n",
+>  			ENV_TCP_CONNECT_NAME);
+> +		fprintf(stderr, "* %s: list of allowed restriction on IPCs.\n",
 
-Thanks for your explanation. I will disable it.
+"allowed restrictions" or "restrictions"?
 
---=20
-Regards
-Yafang
+> +			ENV_SCOPED_NAME);
+>  		fprintf(stderr,
+>  			"\nexample:\n"
+>  			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+>  			"%s=\"9418\" "
+>  			"%s=\"80:443\" "
+> +			"%s=\"a\" "
+>  			"%s bash -i\n\n",
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, argv[0]);
+> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+>  		fprintf(stderr,
+>  			"This sandboxer can use Landlock features "
+>  			"up to ABI version %d.\n",
+> @@ -326,7 +333,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	case 4:
+>  		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
+>  		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> -
+
+No need to remove this line.
+
+> +		__attribute__((fallthrough));
+> +	case 5:
+> +		/* Removes IPC scoping mechanism for ABI < 6 */
+> +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+
+There is an inconsistency here, please take a look at previous similar
+changes.
+
+>  		fprintf(stderr,
+>  			"Hint: You should update the running kernel "
+>  			"to leverage Landlock features "
+> @@ -357,7 +367,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		ruleset_attr.handled_access_net &=
+>  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>  	}
+> -
+> +	/* Removes IPC scoping attribute if not supported by a user. */
+> +	env_scoped_name = getenv(ENV_SCOPED_NAME);
+> +	if (!env_scoped_name)
+> +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+>  	ruleset_fd =
+>  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>  	if (ruleset_fd < 0) {
+> -- 
+> 2.34.1
+> 
+> 
