@@ -1,280 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378E22B9C4;
-	Fri, 26 Jul 2024 10:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CEE17BB0A
+	for <linux-security-module@vger.kernel.org>; Fri, 26 Jul 2024 12:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721989137; cv=none; b=vC99Dt3ivAJltkNAIk/UfEn3u2DUc3sDfIg/MkcIPPHUUcDyhrxuao4es8IMg4eM0TZfAdoDsQpxbVf4AOKHBd4k9rfcAlCzUUHfQ5nxWlX//6I3J0+3cUfvT02s9IjHD8tgbaRsaVXHtS5vCIy/IC1gVycfuy73lkaWIwJ6kRg=
+	t=1721997866; cv=none; b=fy08gFGHYRzKT0/4EmDVIFr9kLeYtsATdNishIsAHvVN3Yq1F+kXTyKk3tR9PC8lCh3U9jHcAEWSymHsZPhhWxFb0rFjdjJ0K0rXKNmt+zsaXp/Iu9FxFpHYuHeMPEordMi66DqkZh0tnf0rKOgkx3+AkSGkSPM1gOLWaNA7l70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721989137; c=relaxed/simple;
-	bh=Vl/Awbyoo4KAidoa5fcjjrV8769SV1OfqcUrdbgJFmY=;
+	s=arc-20240116; t=1721997866; c=relaxed/simple;
+	bh=ivSz3Dyal+GkU5kxkc0GC24zn+dmyvB5f7XdPLqkhqc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aCJ62ISFbOqJIgsFoyOBvTjVOHo6cB0hE+62J75t8QhU1vYgRRWmE1UB2MxChidvPQQ4x9BLD8xQZJJhlXSZA//FDeac+xeKk0K9On7tD/dWzwyTSH693sXncosVP8yJ8q2PdAyJZRFa4G9Psk3yLtniaKMZwmx8ZQBJOV3Zq74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlkI1ziY; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=QEZsRdJ2xEnmaYiVqb93KCsX/CtEUK4G/f0kKICZRh5xZ8nDVqNKngXyEJ/8VO1lEjaNxohcAmfQRE3N98lUF4qYQJjqQFhoFm5t467Z8pqLlPcJ0dZKVEWorv4YgjUvmGnTo3tDbAzXUIXyNimHx7kCXojFw8HnMnCtJWC2mhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EO95iTDI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlkI1ziY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3923C4AF07;
-	Fri, 26 Jul 2024 10:18:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721989136;
-	bh=Vl/Awbyoo4KAidoa5fcjjrV8769SV1OfqcUrdbgJFmY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KlkI1ziYE+BtmN/udhW+U9iFE9aQU6C7dc7vbhLkxAVYNmG7VnhkCEsOMGojBlXar
-	 mwmTpfwVOmLlq00D4Tw+U3/T9mJYBYa/wCEW74gNMmG5uVSu6/Rlp8IZPOGnv+1skW
-	 7eJsrckLpJcW0X4HRXQzXHBQ1cEQF3sOWqhTrjszpAYTjYpSut+kASy+8jnPM1Yyw1
-	 oFW0Ee1Eq/DG49Mm3T6nQPgFH9dGi8G2sBRCS0eNACnDFxb3c3CXkGdLJgjx5myqz7
-	 vRdOnLa7m2luRoQbLbjvYPpTP9nn5Nt9jS8BYCc8oQYwHTW/ZT2O7YYPfoP1vtx0EF
-	 l253am/EhZJ4w==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso1648293e87.2;
-        Fri, 26 Jul 2024 03:18:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVs7PEKo/iaU0dGNkcxpq02e9WANRWKYqfJuFiSGx6+l5JNDu8Z/0P/8MHFUvbqpGyh3zN/AyVIARtha/mmexPCCLuz/nyrVspuHILXkAnrEOe1OCAqKik+4waEkDTGI7qRSlBXyFPN4U5eNFKFwsGDQYIqr/LvsVsd+nBRTJ0YS1v7MvfALbCF/w7akuJK03L9mH/Z
-X-Gm-Message-State: AOJu0YztFaLlat2T080nBCf7vvtj9+Z2S/AwzFABYie26yE2yTAEhZjZ
-	dVGvV9cu6skdpwl/g0/1/0ybbppdrbJR6v3uwqJ+ilFe+GIrmK8SoUHNGreG0RY7uEGWNLfYyEd
-	7fMSzqVKjIEDLyg0K2DIzRHO9thg=
-X-Google-Smtp-Source: AGHT+IHe+AmLjrcRbmhxlqy6g4R3ho9sqPdtKPBE3G9WLql7LqDiIHh1LhiZdFLsSOvzHp/1EeI4dE7NaIAZx3LWcao=
-X-Received: by 2002:a05:6512:308d:b0:52e:be14:7012 with SMTP id
- 2adb3069b0e04-52fd3f24d19mr4009464e87.32.1721989135101; Fri, 26 Jul 2024
- 03:18:55 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EO95iTDI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721997863;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NzrxUvNCTcI6hUzK4kLRhdqlCUXjbl3RzRk2Ub6q4+c=;
+	b=EO95iTDIHw14ox8HUjcS2lN+1jfCaxScomFqCSwlcJcf1uRiqHMyX8TLfiIes6krlbcrUN
+	S6XUZXBwd0SaDd0jkdZys1zTzIPrWcZeJLvkjxJt0nMTJQGBqc5sCo39lpOLUwQ5FxjeZv
+	iLMjnijWObb4vU1fs025iQSqx0JsPq0=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-298-MdAd_EbyO0eMt5HRR61_zw-1; Fri, 26 Jul 2024 08:44:22 -0400
+X-MC-Unique: MdAd_EbyO0eMt5HRR61_zw-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2cb4c2276b6so1047550a91.1
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Jul 2024 05:44:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721997861; x=1722602661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NzrxUvNCTcI6hUzK4kLRhdqlCUXjbl3RzRk2Ub6q4+c=;
+        b=KWnMbJs9igDtR9h0MlX+ms8pQwN5kyQDQrNEuRxneMyE/JPsYLGfSPogsiy7/Yjphb
+         ZcOj7oleNj6Qg1FqS4il5r703zc05zayyaAsH0VygBXgA5uxPRfMGFGF9SCmlFd++LN3
+         1oGbxZI6fWyjQXtulXNL+2fdiAy6ADIXah0bRAHN2T728fbeWbcXHwfp2pU/XVeh8ZVu
+         cD1Vw1n0d6LCUsA4PAMyoxo5KgXza9RExl/BL18OGySCpOXZ+yD9mPnZIe6Ubu9KNfh/
+         40BzKYnl4iGxFuQ+1mZMo1d+K+USIK1CPBZV+dqkURxeIflNCuWziGxflMjCNQFqK+Lp
+         d4xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfhZPvvBoCnWKcaXl+zf7LmEsgUvNCtJVCRXY6u0mvzEDShRbatJa5vJYN/IceWTDMwqyqHUd6Vf14Sk//mImkeleHrHIufwcwp+y2E9olXPadZ6/s
+X-Gm-Message-State: AOJu0YwK8RWzaXGZGDRR7DVc0WFcXJsgoiu6Vp/PGv6VFgzRgFbAUnJU
+	HFXzvqyvWcVLF2h/9GvDOh8UMcDye5GQo4gh6QEnW8/1KbTKo58iPw4I/CPaap4hpSWjHaQgffJ
+	W4+O6RtwZCWY/x6eyh9NKOFYWmg9iLp6doSGe7/jqywSy4QuO2zZMhQWPdGo9v8A8/dj3PBuB3c
+	nHfReTeEUf8SeYMLVT+m3FjrEHp83PnFKfZwnSnDjVENJhmX8x
+X-Received: by 2002:a17:90a:ee8f:b0:2cb:6419:5b53 with SMTP id 98e67ed59e1d1-2cf237dc568mr7207736a91.24.1721997861000;
+        Fri, 26 Jul 2024 05:44:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETmA5FGd6JwdaTqVMDJGKDRghvF/hzgOQ6sMgXzz9gHgcjQAvU+30uXKW4YJ04AKNcVPJT2SmUvzPkuIs7g28=
+X-Received: by 2002:a17:90a:ee8f:b0:2cb:6419:5b53 with SMTP id
+ 98e67ed59e1d1-2cf237dc568mr7207714a91.24.1721997860587; Fri, 26 Jul 2024
+ 05:44:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726090858.71541-1-adrian.ratiu@collabora.com>
-In-Reply-To: <20240726090858.71541-1-adrian.ratiu@collabora.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 26 Jul 2024 12:18:44 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXE-MLYdckRptBzaLM26nFqOB9K2xLuKdVAzdkHOS=FFCA@mail.gmail.com>
-Message-ID: <CAMj1kXE-MLYdckRptBzaLM26nFqOB9K2xLuKdVAzdkHOS=FFCA@mail.gmail.com>
-Subject: Re: [PATCH v3] proc: add config & param to block forcing mem writes
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	kernel@collabora.com, gbiv@google.com, inglorion@google.com, 
-	ajordanr@google.com, Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, 
-	Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240607160753.1787105-1-omosnace@redhat.com> <171834962895.31068.8051988032320283876.git-patchwork-notify@kernel.org>
+ <CAHC9VhSRUW5hQNmXUGt2zd8hQUFB0wuXh=yZqAzH7t+erzqRKQ@mail.gmail.com>
+ <1902e638728.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <CAFqZXNsQQMxS=nVWmvUbepDL5NaXk679pNUTJqe8sKjB6yLyhg@mail.gmail.com> <CAHC9VhTwFyMhYK448gBpwO7M4bEBCOq-f=-ztn1vro9nQU9v0A@mail.gmail.com>
+In-Reply-To: <CAHC9VhTwFyMhYK448gBpwO7M4bEBCOq-f=-ztn1vro9nQU9v0A@mail.gmail.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Fri, 26 Jul 2024 14:44:09 +0200
+Message-ID: <CAFqZXNuwruVUeLV8PKBbxBqa9ubbvE+NGVnOumzH+BCXcRNZBw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
+ the CIPSO options
+To: Paul Moore <paul@paul-moore.com>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	patchwork-bot+netdevbpf@kernel.org, selinux@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 26 Jul 2024 at 11:11, Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
+On Thu, Jun 20, 2024 at 4:39=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> This adds a Kconfig option and boot param to allow removing
-> the FOLL_FORCE flag from /proc/pid/mem write calls because
-> it can be abused.
+> On Thu, Jun 20, 2024 at 6:03=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.=
+com> wrote:
+> > On Wed, Jun 19, 2024 at 4:46=E2=80=AFAM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On June 14, 2024 11:08:41 AM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Fri, Jun 14, 2024 at 3:20=E2=80=AFAM <patchwork-bot+netdevbpf@ke=
+rnel.org> wrote:
+> > > >>
+> > > >> Hello:
+> > > >>
+> > > >> This series was applied to netdev/net.git (main)
+> > > >> by David S. Miller <davem@davemloft.net>:
+> > > >
+> > > > Welp, that was premature based on the testing requests in the other
+> > > > thread, but what's done is done.
+> > > >
+> > > > Ondrej, please accelerate the testing if possible as this patchset =
+now
+> > > > in the netdev tree and it would be good to know if it need a fix or
+> > > > reverting before the next merge window.
+> > >
+> > > Ondrej, can you confirm that you are currently working on testing thi=
+s
+> > > patchset as requested?
 >
-> The traditional forcing behavior is kept as default because
-> it can break GDB and some other use cases.
+> [NOTE: adding SELinux list as a FYI for potential breakage in upcoming ke=
+rnels]
 >
-> Previously we tried a more sophisticated approach allowing
-> distributions to fine-tune /proc/pid/mem behavior, however
-> that got NAK-ed by Linus [1], who prefers this simpler
-> approach with semantics also easier to understand for users.
+> > Not really... I tried some more to get cloud-init to work on FreeBSD,
+> > but still no luck...
 >
-> Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Jeff Xu <jeffxu@google.com>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> ---
-> Changes in v3:
-> * Simplified code to use shorthand ifs and a
->   lookup_constant() table.
+> As mentioned previously, if you aren't able to fit the testing into
+> your automated framework, you'll need to do some manual testing to
+> verify the patches.
+
+Sigh... okay, I now did test the scenario with a FreeBSD system as B
+and it passed.
+
+> > Anyway, I still don't see why I should waste my
+> > time on testing this scenario, since you didn't provide any credible
+> > hypothesis on why/what should break there.
 >
-> Changes in v2:
-> * Added bootparam on top of Linus' patch.
-> * Slightly reworded commit msg.
-> ---
->  .../admin-guide/kernel-parameters.txt         | 10 ++++
->  fs/proc/base.c                                | 54 ++++++++++++++++++-
->  security/Kconfig                              | 32 +++++++++++
->  3 files changed, 95 insertions(+), 1 deletion(-)
+> I did share my concern about changes in packet length across the
+> network path and an uncertainty about how different clients might
+> react.  While you tested with Linux based systems, I requested that
+> you test with at least one non-Linux client to help verify that things
+> are handled properly.
 >
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index c1134ad5f06d..793301f360ec 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4791,6 +4791,16 @@
->         printk.time=    Show timing data prefixed to each printk message line
->                         Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+> Perhaps you don't view that concern as credible, but it is something
+> I'm worried about as a common use case is for non-Linux clients to
+> connect over an unlabeled, single label/level network to a Linux
+> gateway which then routes traffic over different networks, some with
+> explicit labeling.
 >
-> +       proc_mem.force_override= [KNL]
-> +                       Format: {always | ptrace | never}
-> +                       Traditionally /proc/pid/mem allows users to override memory
-> +                       permissions. This allows people to limit that.
+> If you don't believe that testing this is important Ondrej, trust
+> those who have worked with a number of users who have deployed these
+> types of systems that this is important.
 
-Better to use passive tense here rather than referring to 'users' and 'people'.
+I'm not saying the concern is not credible or that (in general)
+testing this use case is not important. What I'm missing is some
+explanation/reasoning that would make me think "Oh yeah, these patches
+really could break this scenario". You said something about consistent
+IP header overhead and bidirectional stream-based connections, but I
+don't understand how the former could cause an issue with the latter.
+Does it violate some specification? And I'm not arguing that there
+isn't a possible bug because I don't see it; I'm just arguing that if
+there is a mechanism through which the change could cause a bug in
+this scenario, you should be able to explain it (at least roughly) to
+someone who doesn't see it there.
 
-'Traditionally, /proc/pid/mem allows memory permissions to be
-overridden without restrictions.
-This option may be set to restrict that'
-
-> +                       Can be one of:
-> +                       - 'always' traditional behavior always allows mem overrides.
-
-punctuation please
-
-> +                       - 'ptrace' only allow for active ptracers.
-> +                       - 'never'  never allow mem permission overrides.
-
-Please be consistent: 'mem overrides' or 'mem permission overrides' in
-both instances.
-
-> +                       If not specified, default is always.
-
-'always'
-
-> +
->         processor.max_cstate=   [HW,ACPI]
->                         Limit processor to maximum C-state
->                         max_cstate=9 overrides any DMI blacklist limit.
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 72a1acd03675..0ca3fc3d9e0e 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -85,6 +85,7 @@
->  #include <linux/elf.h>
->  #include <linux/pid_namespace.h>
->  #include <linux/user_namespace.h>
-> +#include <linux/fs_parser.h>
->  #include <linux/fs_struct.h>
->  #include <linux/slab.h>
->  #include <linux/sched/autogroup.h>
-> @@ -117,6 +118,35 @@
->  static u8 nlink_tid __ro_after_init;
->  static u8 nlink_tgid __ro_after_init;
 >
-> +enum proc_mem_force {
-> +       PROC_MEM_FORCE_ALWAYS,
-> +       PROC_MEM_FORCE_PTRACE,
-> +       PROC_MEM_FORCE_NEVER
-> +};
-> +
-> +static enum proc_mem_force proc_mem_force_override __ro_after_init =
-> +       IS_ENABLED(CONFIG_PROC_MEM_ALWAYS_FORCE) ? PROC_MEM_FORCE_ALWAYS :
-> +       IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
-> +       PROC_MEM_FORCE_NEVER;
-> +
-> +struct constant_table proc_mem_force_table[] = {
-
-This can be static const __initconst
-
-> +       { "always", PROC_MEM_FORCE_ALWAYS },
-> +       { "ptrace", PROC_MEM_FORCE_PTRACE },
-> +       { }
-> +};
-> +
-> +static int __init early_proc_mem_force_override(char *buf)
-> +{
-> +       if (!buf)
-> +               return -EINVAL;
-> +
-
-Can this ever happen?
-
-> +       proc_mem_force_override = lookup_constant(proc_mem_force_table,
-> +                                                 buf, PROC_MEM_FORCE_NEVER);
-> +
-> +       return 0;
-> +}
-> +early_param("proc_mem.force_override", early_proc_mem_force_override);
-> +
->  struct pid_entry {
->         const char *name;
->         unsigned int len;
-> @@ -835,6 +865,26 @@ static int mem_open(struct inode *inode, struct file *file)
->         return ret;
->  }
+> > Convince me that there is a
+> > valid concern and I will be much more willing to put more effort into
+> > it.
 >
-> +static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
-> +{
-> +       switch (proc_mem_force_override) {
-> +       case PROC_MEM_FORCE_NEVER:
-> +               return false;
-> +       case PROC_MEM_FORCE_PTRACE: {
-> +               bool ptrace_active = false;
-> +               struct task_struct *task = get_proc_task(file_inode(file));
-> +
-> +               if (task) {
-> +                       ptrace_active = task->ptrace && task->mm == mm && task->parent == current;
-> +                       put_task_struct(task);
-> +               }
-> +               return ptrace_active;
-> +       }
+> I've shared my concerns with you, both in previous threads and now in
+> this thread.  This really shouldn't be about convincing you to do The
+> Right Thing and verify that your patch doesn't break existing users,
+> it should be about you wanting to do The Right Thing so your work
+> doesn't break the kernel.
+>
+> > You see something there that I don't, and I'd like to see and
+> > understand it, too. Let's turn it from *your* concern to *our* concern
+> > (or lack of it) and then the cooperation will work better.
+>
+> It's not about you or I, it's about all of the users who rely on this
+> functionality and not wanting to break things for them.
+>
+> Test your patches Ondrej, if you don't you'll find me increasingly
+> reluctant to accept anything from you in any of the trees I look
+> after.
 
-This indentation looks dodgy. If you move the local var declarations
-out of this block, and use assignments instead, you don't need to  { }
-at all.
+Paul, I don't want to break the kernel, but that doesn't mean I will
+do an excessive amount of work for someone else when there doesn't
+seem to be a logical reason to do so. IMHO, just because someone
+somewhere has a special hard-to-test use case that is very important
+to them doesn't mean that it is your job as a community project
+maintainer to force other contributors to do work to defend these
+peoples' use cases. The fact that we don't see any effort from them to
+have their use case tested upstream (they could either auto-run their
+tests on patches themselves and mail back the results or provide the
+test code and/or infrastructure and ask maintainers + contributors to
+run the tests on patches before they are merged) means that one of the
+following is true:
+1. They do care about upstream not breaking their use case, but expect
+that upstream will automatically ensure that "for free".
+2. They accept the fact that upstream may break their use case and
+they rely on testing at a later stage to find issues and
+reporting/fixing the bugs once they are found. Usually this is because
+they have calculated / assume that at the given time, the cost of
+implementing/facilitating testing on upstream level is higher than the
+cost of finding the bugs later and waiting for the upstream kernel to
+become usable again.
+In both cases it doesn't make sense for the community to self-impose
+the need to substitute the lack of effort from the consumer side, and
+much less so to push that effort to others (which will just drive
+contributors away, which is a far worse consequence than possibly
+breaking some complex scenario once in a while). However, as soon as
+someone comes and says "Hey, we have this test, this is how you can
+run it. Can you make sure patches touching X are tested with it? If
+it's too much of a hassle, let us help to make it work.", it's an
+entirely different situation and we (both contributors and
+maintainers) should very much do our best to fulfill the request.
 
+This is my idea of how the fine balance in the
+user-maintainer-contributor relationship could work best. I'm writing
+it here so that you can understand where I'm coming from and perhaps
+ponder about it a bit. But the main point here is that you requested a
+complicated scenario to be tested without adequately explaining what
+you assume to be possibly broken. And I also pointed out that the
+behavior you seem to think can cause breakage is already present in
+the current code - you didn't answer that. So I feel like you
+arbitrarily push some high-effort requirement on me and that's not
+nice.
 
-> +       default:
-> +               return true;
-> +       }
-> +}
-> +
->  static ssize_t mem_rw(struct file *file, char __user *buf,
->                         size_t count, loff_t *ppos, int write)
->  {
-> @@ -855,7 +905,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
->         if (!mmget_not_zero(mm))
->                 goto free;
->
-> -       flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-> +       flags = write ? FOLL_WRITE : 0;
-> +       if (proc_mem_foll_force(file, mm))
-> +               flags |= FOLL_FORCE;
->
->         while (count > 0) {
->                 size_t this_len = min_t(size_t, count, PAGE_SIZE);
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 412e76f1575d..a93c1a9b7c28 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
->
->           If you are unsure how to answer this question, answer N.
->
-> +choice
-> +       prompt "Allow /proc/pid/mem access override"
-> +       default PROC_MEM_ALWAYS_FORCE
-> +       help
-> +         Traditionally /proc/pid/mem allows users to override memory
-> +         permissions for users like ptrace, assuming they have ptrace
-> +         capability.
-> +
-> +         This allows people to limit that - either never override, or
-> +         require actual active ptrace attachment.
-> +
-> +         Defaults to the traditional behavior (for now)
-> +
-> +config PROC_MEM_ALWAYS_FORCE
-> +       bool "Traditional /proc/pid/mem behavior"
-> +       help
-> +         This allows /proc/pid/mem accesses to override memory mapping
-> +         permissions if you have ptrace access rights.
-> +
-> +config PROC_MEM_FORCE_PTRACE
-> +       bool "Require active ptrace() use for access override"
-> +       help
-> +         This allows /proc/pid/mem accesses to override memory mapping
-> +         permissions for active ptracers like gdb.
-> +
-> +config PROC_MEM_NO_FORCE
-> +       bool "Never"
-> +       help
-> +         Never override memory mapping permissions
-> +
-> +endchoice
-> +
->  config SECURITY
->         bool "Enable different security models"
->         depends on SYSFS
-> --
-> 2.44.2
->
->
+--
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
