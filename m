@@ -1,188 +1,166 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0983314A8F;
-	Fri, 26 Jul 2024 16:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B294CB2B
+	for <linux-security-module@vger.kernel.org>; Fri, 26 Jul 2024 19:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722010530; cv=none; b=hCAu3l6PM1o2L4aTuSZthvlVYF/FKCWtiRgOTSDwOSZaLEwjrOV1k5cCb4eVnvr5rn+9Tqey7ekpal77rgM0ENOQRE09dgyxo1crpygVHlgXbbK8QGFZid1KdHBD9dEuf6phxGVkRCN0kfV+sxb5FhD5xCMGCTOXLt+gUlkOt4M=
+	t=1722022910; cv=none; b=TH0OGxI51vd6s4ijm2TBZttlbIKi5AyxSYhmAJiO5coXd+tveXN3crvlrPDRU4hKMscazwBHpEAx2gmW9g+GOAQ52akrKgtyEMn8R0FBBNB/U6owJ4kz21fLSRD3hYexX/hvI47SMUPdCf7VXOnjSdp78qWTaaMOT//KsP8eU/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722010530; c=relaxed/simple;
-	bh=oiBSAVxN+28J9TUxzrNPVMGXKUjt5Et+zB978GWXo7c=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=TFnk3XMsJ37+lvR93lNtZSEAmRVv0ZrOm0Veo7koEI5D2t20aFxGajAdW6+p+19o33RJ+uafqqUM6h2GB/sQ9ab56+2Wxa7+68h9F+5pA5k+2WzYOJ7g9uyrOHoqMXm0wVSOa/QSSg/w0LClTfnn+tjlQVEx1OqoyhzFlhFGTWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 21F863780C1F;
-	Fri, 26 Jul 2024 16:15:26 +0000 (UTC)
-From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
-In-Reply-To: <CAMj1kXE-MLYdckRptBzaLM26nFqOB9K2xLuKdVAzdkHOS=FFCA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240726090858.71541-1-adrian.ratiu@collabora.com> <CAMj1kXE-MLYdckRptBzaLM26nFqOB9K2xLuKdVAzdkHOS=FFCA@mail.gmail.com>
-Date: Fri, 26 Jul 2024 17:15:25 +0100
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, inglorion@google.com, ajordanr@google.com, "Doug Anderson" <dianders@chromium.org>, "Jeff Xu" <jeffxu@google.com>, "Jann Horn" <jannh@google.com>, "Kees Cook" <kees@kernel.org>, "Christian Brauner" <brauner@kernel.org>, "Linus Torvalds" <torvalds@linux-foundation.org>
-To: "Ard Biesheuvel" <ardb@kernel.org>
+	s=arc-20240116; t=1722022910; c=relaxed/simple;
+	bh=eV6Yy+/c65ODYtFWkt1GujLZCm0b2U+qafWEg50toGI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P5c8NSwE9BRCSgyKSi4/rbr2nFMCS7KNIn3z2o0ab8k+2/fuIZNUNGsdW2bgts8tgZy4HEQmAe1F8fYA+KdcU5+MtQptTGDz3phvUPsJMNSxK3K3kpD1w+gT0zgWKLbIQRe9Vz2Lw9V/m5QvYPTBDfvLIY8Sjn6jQCvrdSKWzdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L6iU35Oa; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L6iU35Oa"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e087c7ef68bso30711276.3
+        for <linux-security-module@vger.kernel.org>; Fri, 26 Jul 2024 12:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1722022908; x=1722627708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HARFxWIFPEm9vWTWeOJWegog5BOk60egFlOmdNasrqk=;
+        b=L6iU35OajprD93F0DF48GWaFc4C0PcmmMrtY+KFxsAN7bmaCdiGVulqDRNqnwMXXDa
+         ntI0CXrHOxKtOE1MlLQdFhs81/0uxFlrJviQOVuq2CKBeIqibGerKAQf4xbXpXLx9mqe
+         mbTJ7B6CG1DZJvh7KGO4eSadRwc0pFW9V1ZRy7uMY/60qlGFpGvhqk+GknaGEBxk7w9r
+         RtL1GpNKQwbhlL5M0nqF0mgcFHM240y569gbET31gmMs5fzXRL0no6swn2tPaFKAodV/
+         CBOQ7+AOusevT/k+bd/MdOWqs2x3X1/pUw7XpxQYfxxJlft4Ko1r/4t+Sn1wzzxBc+Rr
+         8iXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722022908; x=1722627708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HARFxWIFPEm9vWTWeOJWegog5BOk60egFlOmdNasrqk=;
+        b=t8MAbijXpZN0+eGJot5FMs7+AMNzoA2Wot6cBRNduz5a46AquyZ7pO+9Hc70Pfe/lL
+         ZcbyzIMqxFokixrkzTy3ipXhBm1OJ2NO6TqWM0vTtNnQfBq3wCkc7i7aIevZOGft3QTy
+         2mCGjuNXw+0FtJwYUPSesw03UDc3LRxpKPy8+b7R6WpQ5Ptlg9dzEnUvAeC9nmVyepUV
+         vR+VYXDGZPcrmarn4KdF5zxPf/mAQeqa9+WcduQ1L4Rb6rmAZVhdVmtPamyalgofWRHT
+         +R60nwW1MhzxHOtpM0cTgeVDrY8aFFxDOVqX2qR3CrtTxp7lN27Yoz6dhzMwiKR3a9Nn
+         DXAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWaIFvEyFqrleY/1kV8NeNeQdi9XZoBSJjyyRkwzW8UKCOMlbGNahwzuR/qD2i/kyRpElvsb5QQSt1MtMBTe+OovPnT3UJgUir7BADzINWnnZ/uOHz
+X-Gm-Message-State: AOJu0Yya8PNOBblCczzTGLPUukrvYf9Q8vqo4d/n1G5AEDmLzV2jfi13
+	RTN3aqvYGF2ix2LQ42UNTf+UhB9Lgg2UjjaA1XiimVZq7HvHXLgD88J8V1O93clQim70rZKE0ca
+	fw3wTvLz2VdQpfNgKAfE/D+P0wZDKdIhA02Wl
+X-Google-Smtp-Source: AGHT+IHT02FMlg0Pdb4O1dWACOWR5w+ot1eBVewHBOXgqkXnR8YtOLgmhvt0jxizos97VmglFufrpBqIct6MnrWAuUM=
+X-Received: by 2002:a25:c502:0:b0:e08:6bb2:ed3d with SMTP id
+ 3f1490d57ef6-e0b54403a01mr868535276.12.1722022907866; Fri, 26 Jul 2024
+ 12:41:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1502ec-66a3cb80-9-1954e7c0@250617140>
-Subject: =?utf-8?q?Re=3A?= [PATCH v3] =?utf-8?q?proc=3A?= add config & param to 
- block forcing mem writes
-User-Agent: SOGoMail 5.10.0
+References: <20240607160753.1787105-1-omosnace@redhat.com> <171834962895.31068.8051988032320283876.git-patchwork-notify@kernel.org>
+ <CAHC9VhSRUW5hQNmXUGt2zd8hQUFB0wuXh=yZqAzH7t+erzqRKQ@mail.gmail.com>
+ <1902e638728.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <CAFqZXNsQQMxS=nVWmvUbepDL5NaXk679pNUTJqe8sKjB6yLyhg@mail.gmail.com>
+ <CAHC9VhTwFyMhYK448gBpwO7M4bEBCOq-f=-ztn1vro9nQU9v0A@mail.gmail.com> <CAFqZXNuwruVUeLV8PKBbxBqa9ubbvE+NGVnOumzH+BCXcRNZBw@mail.gmail.com>
+In-Reply-To: <CAFqZXNuwruVUeLV8PKBbxBqa9ubbvE+NGVnOumzH+BCXcRNZBw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 26 Jul 2024 15:41:36 -0400
+Message-ID: <CAHC9VhT4BSKfdgbYNnXsXkwrqxPAuEuJFf6tYYbMCPq4JxK+Jg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] cipso: make cipso_v4_skbuff_delattr() fully remove
+ the CIPSO options
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	patchwork-bot+netdevbpf@kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Friday, July 26, 2024 13:18 EEST, Ard Biesheuvel <ardb@kernel.org> w=
-rote:
-
-> On Fri, 26 Jul 2024 at 11:11, Adrian Ratiu <adrian.ratiu@collabora.co=
+On Fri, Jul 26, 2024 at 8:44=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
 m> wrote:
+> On Thu, Jun 20, 2024 at 4:39=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Thu, Jun 20, 2024 at 6:03=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
+t.com> wrote:
+> > > On Wed, Jun 19, 2024 at 4:46=E2=80=AFAM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > > > On June 14, 2024 11:08:41 AM Paul Moore <paul@paul-moore.com> wrote=
+:
+> > > > > On Fri, Jun 14, 2024 at 3:20=E2=80=AFAM <patchwork-bot+netdevbpf@=
+kernel.org> wrote:
+> > > > >>
+> > > > >> Hello:
+> > > > >>
+> > > > >> This series was applied to netdev/net.git (main)
+> > > > >> by David S. Miller <davem@davemloft.net>:
+> > > > >
+> > > > > Welp, that was premature based on the testing requests in the oth=
+er
+> > > > > thread, but what's done is done.
+> > > > >
+> > > > > Ondrej, please accelerate the testing if possible as this patchse=
+t now
+> > > > > in the netdev tree and it would be good to know if it need a fix =
+or
+> > > > > reverting before the next merge window.
+> > > >
+> > > > Ondrej, can you confirm that you are currently working on testing t=
+his
+> > > > patchset as requested?
 > >
-> > This adds a Kconfig option and boot param to allow removing
-> > the FOLL=5FFORCE flag from /proc/pid/mem write calls because
-> > it can be abused.
+> > [NOTE: adding SELinux list as a FYI for potential breakage in upcoming =
+kernels]
 > >
-> > The traditional forcing behavior is kept as default because
-> > it can break GDB and some other use cases.
+> > > Not really... I tried some more to get cloud-init to work on FreeBSD,
+> > > but still no luck...
 > >
-> > Previously we tried a more sophisticated approach allowing
-> > distributions to fine-tune /proc/pid/mem behavior, however
-> > that got NAK-ed by Linus [1], who prefers this simpler
-> > approach with semantics also easier to understand for users.
-> >
-> > Link: https://lore.kernel.org/lkml/CAHk-=3DwiGWLChxYmUA5HrT5aopZrB7=
-=5F2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Jeff Xu <jeffxu@google.com>
-> > Cc: Jann Horn <jannh@google.com>
-> > Cc: Kees Cook <kees@kernel.org>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> > ---
-> > Changes in v3:
-> > * Simplified code to use shorthand ifs and a
-> >   lookup=5Fconstant() table.
-> >
-> > Changes in v2:
-> > * Added bootparam on top of Linus' patch.
-> > * Slightly reworded commit msg.
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         | 10 ++++
-> >  fs/proc/base.c                                | 54 +++++++++++++++=
-+++-
-> >  security/Kconfig                              | 32 +++++++++++
-> >  3 files changed, 95 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Docu=
-mentation/admin-guide/kernel-parameters.txt
-> > index c1134ad5f06d..793301f360ec 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -4791,6 +4791,16 @@
-> >         printk.time=3D    Show timing data prefixed to each printk =
-message line
-> >                         Format: <bool>  (1/Y/y=3Denable, 0/N/n=3Ddi=
-sable)
-> >
-> > +       proc=5Fmem.force=5Foverride=3D [KNL]
-> > +                       Format: {always | ptrace | never}
-> > +                       Traditionally /proc/pid/mem allows users to=
- override memory
-> > +                       permissions. This allows people to limit th=
-at.
->=20
-> Better to use passive tense here rather than referring to 'users' and=
- 'people'.
->=20
-> 'Traditionally, /proc/pid/mem allows memory permissions to be
-> overridden without restrictions.
-> This option may be set to restrict that'
->=20
-> > +                       Can be one of:
-> > +                       - 'always' traditional behavior always allo=
-ws mem overrides.
->=20
-> punctuation please
->=20
-> > +                       - 'ptrace' only allow for active ptracers.
-> > +                       - 'never'  never allow mem permission overr=
-ides.
->=20
-> Please be consistent: 'mem overrides' or 'mem permission overrides' i=
+> > As mentioned previously, if you aren't able to fit the testing into
+> > your automated framework, you'll need to do some manual testing to
+> > verify the patches.
+>
+> Sigh... okay, I now did test the scenario with a FreeBSD system as B
+> and it passed.
+
+Great, thank you.
+
+> I'm not saying the concern is not credible or that (in general)
+> testing this use case is not important. What I'm missing is some
+> explanation/reasoning that would make me think "Oh yeah, these patches
+> really could break this scenario" ...
+
+One of the challenges to network testing is that you don't always know
+how other network stack implementations are going to react when you
+start getting into corner cases or lesser implemented protocols.  You
+just need to test your patches to make sure nothing breaks.
+
+> > > You see something there that I don't, and I'd like to see and
+> > > understand it, too. Let's turn it from *your* concern to *our* concer=
 n
-> both instances.
->=20
-> > +                       If not specified, default is always.
->=20
-> 'always'
->=20
-> > +
-> >         processor.max=5Fcstate=3D   [HW,ACPI]
-> >                         Limit processor to maximum C-state
-> >                         max=5Fcstate=3D9 overrides any DMI blacklis=
-t limit.
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 72a1acd03675..0ca3fc3d9e0e 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -85,6 +85,7 @@
-> >  #include <linux/elf.h>
-> >  #include <linux/pid=5Fnamespace.h>
-> >  #include <linux/user=5Fnamespace.h>
-> > +#include <linux/fs=5Fparser.h>
-> >  #include <linux/fs=5Fstruct.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/sched/autogroup.h>
-> > @@ -117,6 +118,35 @@
-> >  static u8 nlink=5Ftid =5F=5Fro=5Fafter=5Finit;
-> >  static u8 nlink=5Ftgid =5F=5Fro=5Fafter=5Finit;
+> > > (or lack of it) and then the cooperation will work better.
 > >
-> > +enum proc=5Fmem=5Fforce {
-> > +       PROC=5FMEM=5FFORCE=5FALWAYS,
-> > +       PROC=5FMEM=5FFORCE=5FPTRACE,
-> > +       PROC=5FMEM=5FFORCE=5FNEVER
-> > +};
-> > +
-> > +static enum proc=5Fmem=5Fforce proc=5Fmem=5Fforce=5Foverride =5F=5F=
-ro=5Fafter=5Finit =3D
-> > +       IS=5FENABLED(CONFIG=5FPROC=5FMEM=5FALWAYS=5FFORCE) ? PROC=5F=
-MEM=5FFORCE=5FALWAYS :
-> > +       IS=5FENABLED(CONFIG=5FPROC=5FMEM=5FFORCE=5FPTRACE) ? PROC=5F=
-MEM=5FFORCE=5FPTRACE :
-> > +       PROC=5FMEM=5FFORCE=5FNEVER;
-> > +
-> > +struct constant=5Ftable proc=5Fmem=5Fforce=5Ftable[] =3D {
->=20
-> This can be static const =5F=5Finitconst
->=20
-> > +       { "always", PROC=5FMEM=5FFORCE=5FALWAYS },
-> > +       { "ptrace", PROC=5FMEM=5FFORCE=5FPTRACE },
-> > +       { }
-> > +};
-> > +
-> > +static int =5F=5Finit early=5Fproc=5Fmem=5Fforce=5Foverride(char *=
-buf)
-> > +{
-> > +       if (!buf)
-> > +               return -EINVAL;
-> > +
->=20
-> Can this ever happen?
+> > It's not about you or I, it's about all of the users who rely on this
+> > functionality and not wanting to break things for them.
+> >
+> > Test your patches Ondrej, if you don't you'll find me increasingly
+> > reluctant to accept anything from you in any of the trees I look
+> > after.
+>
+> Paul, I don't want to break the kernel, but that doesn't mean I will
+> do an excessive amount of work for someone else when there doesn't
+> seem to be a logical reason to do so. IMHO, just because someone
+> somewhere has a special hard-to-test use case that is very important
+> to them doesn't mean that it is your job as a community project
+> maintainer to force other contributors to do work to defend these
+> peoples' use cases.
 
-Not sure, many calls simply ignore this case while others
-like this [1] printk example do test it. I'm inclined to think
-it can't happen however it's still to good to error check.
+I have a responsibility to ensure that we provide a stable, secure,
+maintainable kernel that is as bug-free as we can possibly make it.
+If I see a patch that I believe warrants a certain type of test to
+help meet those goals I'm going to ask for that testing.  Of course
+like many things, even things we believe to be very clear, there is
+always going to be a chance that disagreements will happen around what
+testing is relevant or necessary.  How you handle that disagreement is
+a choice you will need to make for yourself, but I would encourage you
+to consider that more testing is usually a good thing, and aggravating
+those who review/ACK your patches is generally not a good long term
+strategy.
 
-Thanks for all the suggestions, I'll leave this a bit for others
-to get a chance to review, then send another iteration.
-
-[1] https://elixir.bootlin.com/linux/v6.10.1/source/kernel/printk/print=
-k.c#L1051
-
+--=20
+paul-moore.com
