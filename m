@@ -1,157 +1,186 @@
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC661E519;
-	Sun, 28 Jul 2024 00:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53136FD5;
+	Sun, 28 Jul 2024 00:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722126392; cv=none; b=sx8UEU2SUOjd2Ll8TlRHXDATthz+jcMIOMcKwaOL+2FvIZw8UMaW+8ZvV0rUgZVUmjtuNWLeFK7u4z6XD5z1H6PKR7Ymf1hVAvdarwes6t8vzJIiWfVxp8SYiKhcppEi8sUarrPvgi1A3uy9HtXgYSYg7+vuFVONpdPQS69cQjQ=
+	t=1722127913; cv=none; b=Q06/R9nqjviZDw815tIqC8wObMEekU6rEyXrkCULUuwGgn9DiAv1lKxyG8XrCdn5TTNKnrVsp6fuhKdytCelUbLH2dZZrP2S7+19K9DaFWUV13JYgquyPkQi1RQORt+dVEmhUF38bb/BDE8apAIl3b4MiE7xvkC2ElbKgOjyFI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722126392; c=relaxed/simple;
-	bh=rSiJD6CB325ZcboYhNJAZRZM+QHB/FdTNMAAaT83eAE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aH4HOGxsB8cTLNVa0mMiIT/t86bEDcvWZtNHRW26Q4pu3m7P5Zq56j549STVH2hb9yiULJ9YkZ8yRYTGK1JaxCfynZv2NhV/X+XZnJxR0PYEShR3gcq8pxLHfosgOcoGDuWGMCJ84swUE13F7yeP2u9Qp50254J4vPPwlCHJYQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WWj313BXCzxVXS;
-	Sun, 28 Jul 2024 08:26:21 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 856FB180064;
-	Sun, 28 Jul 2024 08:26:28 +0800 (CST)
-Received: from mscphis02103.huawei.com (10.123.65.215) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 28 Jul 2024 08:26:26 +0800
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: <mic@digikod.net>
-CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-Subject: [RFC PATCH v1 9/9] samples/landlock: Support LANDLOCK_ACCESS_NET_LISTEN
-Date: Sun, 28 Jul 2024 08:26:02 +0800
-Message-ID: <20240728002602.3198398-10-ivanov.mikhail1@huawei-partners.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240728002602.3198398-1-ivanov.mikhail1@huawei-partners.com>
-References: <20240728002602.3198398-1-ivanov.mikhail1@huawei-partners.com>
+	s=arc-20240116; t=1722127913; c=relaxed/simple;
+	bh=QuNYQ5Rxf4SFUDj6mc+dZjtjbj/x4rBn0uVU72yFcAA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pe2iYas2Gix8M+N/XnfDg6CHnkw8fkdgBCRaeWwYfgfkc25erhTANVJjITxX4XmjufmRzv31OXJsjAOHBp0M5nEayEFNtFzPEQZdcXXDDBXYyaZkayxNMUPD5r29a+x4H4qksnXwMwDdd8uwZuXmalgnLDQUWdlzLLf/HXUyv0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=C35G3yS2; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mtfbOC9C; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="C35G3yS2";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mtfbOC9C"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CC99B21C3B;
+	Sun, 28 Jul 2024 00:51:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722127909; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K5ueq3FoJocMKyR/0Hi0c1XApOql0EEmP83iDFnPsUA=;
+	b=C35G3yS2L48DItjt3laWRp9nY71pJ3iRfFfiDfzURFsgVqphD+lHbQrD5jO44U7zkr5YWP
+	muH71nIPWkuPAL3zfQ3Qg0WCezySy1ePTTlv6QYOgwi5QomDSf3wf292lnSitrOg7vgvgF
+	lX9GiPc6r7ZypEa6gvDSma4kFZnkY8s=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=mtfbOC9C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722127908; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K5ueq3FoJocMKyR/0Hi0c1XApOql0EEmP83iDFnPsUA=;
+	b=mtfbOC9CXdBCBTZc5C33RxZcISSsxRGaY33SuuMoFfwLAvEojDdXLmWCicEf27qxtj7v8C
+	huy3oVSEGDj3o8NIlJkiCLqUnuX5GcfefMB/Lm/Nyj8klSIjychT92Dvk/3HibA09+msEf
+	Nup97/6fb41NPE98asmdH6jmnj8HkVo=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58C801379A;
+	Sun, 28 Jul 2024 00:51:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UZvZCSSWpWY5XAAAD6G6ig
+	(envelope-from <mpdesouza@suse.com>); Sun, 28 Jul 2024 00:51:48 +0000
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+Date: Sat, 27 Jul 2024 21:51:40 -0300
+Subject: [PATCH RFC] security: tomoyo: Add default builtin-policy.h for
+ default policy
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mscpeml100004.china.huawei.com (7.188.51.133) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240727-tomoyo-gen-file-v1-1-eb6439e837a1@suse.com>
+X-B4-Tracking: v=1; b=H4sIABuWpWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyNz3ZL83PzKfN301DzdtMycVN205LRk40SDZIM0EzMloK6CotS0zAq
+ widFKQW7OSrG1tQCJ50m4ZgAAAA==
+To: Kentaro Takeda <takedakn@nttdata.co.jp>, 
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ llvm@lists.linux.dev, Marcos Paulo de Souza <mpdesouza@suse.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722127906; l=2533;
+ i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
+ bh=QuNYQ5Rxf4SFUDj6mc+dZjtjbj/x4rBn0uVU72yFcAA=;
+ b=GqCX4MdOTflpcoUQsgYUwn6pHWOeVY8vo5195KVBI2khlZAZtj9jNhJC4TbbyLRX//AQc1bIR
+ QY2CfDoNmoTDsfvcLsNag6+mzLtzL7Xizp3FQvplE9nQnmmBVfdNOVw
+X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
+ pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: CC99B21C3B
+X-Spam-Score: -6.31
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-6.31 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim]
 
-Extend sample with TCP listen control logic.
+When checking tomoyo code there is an include for a file that is not
+included on kernel-source since it's generated at build time, and the
+kernel-source uses git archive to create the tarball.
 
-Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Having the source code referencing a file that is not included in the
+tarball can confuse tools that inspect/parse code, since the file is not
+there.
+
+The builtin-policy.h added is generated from the same default policy
+that already exists on policy/ directory, so it doesn't break the
+current usage of that file.
+
+Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 ---
- samples/landlock/sandboxer.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+Hello, I sent this patch because we saw some issues while running
+clang-extract[1] on tomoyo given CVE 2024-26622. Since clang-extract
+parses the C files it failed to find builtin-policy.h. As a bandaid, I
+had to add
+	-DCONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index e8223c3e781a..3f50cb3f8039 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -55,6 +55,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
- #define ENV_FS_RW_NAME "LL_FS_RW"
- #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
- #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
-+#define ENV_TCP_LISTEN_NAME "LL_TCP_LISTEN"
- #define ENV_DELIMITER ":"
- 
- static int parse_path(char *env_path, const char ***const path_list)
-@@ -208,7 +209,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
- 
- /* clang-format on */
- 
--#define LANDLOCK_ABI_LAST 5
-+#define LANDLOCK_ABI_LAST 6
- 
- int main(const int argc, char *const argv[], char *const *const envp)
- {
-@@ -222,15 +223,16 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	struct landlock_ruleset_attr ruleset_attr = {
- 		.handled_access_fs = access_fs_rw,
- 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
--				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+				      LANDLOCK_ACCESS_NET_CONNECT_TCP |
-+				      LANDLOCK_ACCESS_NET_LISTEN_TCP,
- 	};
- 
- 	if (argc < 2) {
- 		fprintf(stderr,
--			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
-+			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
- 			"<cmd> [args]...\n\n",
- 			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
--			ENV_TCP_CONNECT_NAME, argv[0]);
-+			ENV_TCP_CONNECT_NAME, ENV_TCP_LISTEN_NAME, argv[0]);
- 		fprintf(stderr,
- 			"Execute a command in a restricted environment.\n\n");
- 		fprintf(stderr,
-@@ -251,15 +253,19 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		fprintf(stderr,
- 			"* %s: list of ports allowed to connect (client).\n",
- 			ENV_TCP_CONNECT_NAME);
-+		fprintf(stderr,
-+			"* %s: list of ports allowed to listen (server).\n",
-+			ENV_TCP_LISTEN_NAME);
- 		fprintf(stderr,
- 			"\nexample:\n"
- 			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
- 			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
- 			"%s=\"9418\" "
- 			"%s=\"80:443\" "
-+			"%s=\"9418\" "
- 			"%s bash -i\n\n",
- 			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
--			ENV_TCP_CONNECT_NAME, argv[0]);
-+			ENV_TCP_CONNECT_NAME, ENV_TCP_LISTEN_NAME, argv[0]);
- 		fprintf(stderr,
- 			"This sandboxer can use Landlock features "
- 			"up to ABI version %d.\n",
-@@ -326,6 +332,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	case 4:
- 		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
- 		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+		__attribute__((fallthrough));
-+	case 5:
-+		/* Removes LANDLOCK_ACCESS_NET_LISTEN support for ABI < 6 */
-+		ruleset_attr.handled_access_net &=
-+			~(LANDLOCK_ACCESS_NET_LISTEN_TCP);
- 
- 		fprintf(stderr,
- 			"Hint: You should update the running kernel "
-@@ -357,6 +368,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		ruleset_attr.handled_access_net &=
- 			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
- 	}
-+	/* Removes listen access attribute if not supported by a user. */
-+	env_port_name = getenv(ENV_TCP_LISTEN_NAME);
-+	if (!env_port_name) {
-+		ruleset_attr.handled_access_net &=
-+			~LANDLOCK_ACCESS_NET_LISTEN_TCP;
-+	}
- 
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-@@ -380,6 +397,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
- 		goto err_close_ruleset;
- 	}
-+	if (populate_ruleset_net(ENV_TCP_LISTEN_NAME, ruleset_fd,
-+				 LANDLOCK_ACCESS_NET_LISTEN_TCP)) {
-+		goto err_close_ruleset;
-+	}
- 
- 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
- 		perror("Failed to restrict privileges");
+to clang-extract (we feed the gcc arguments used to compile common.c got
+from compile_commands.json on kernel-source).
+
+Per my tests it works with my patch, and I don't see why this would hurt
+to have builtin-policy.h on git, since it would regenerate the file if
+the policy scripts are changed.
+
+Please let me know if I'm missing something here.
+
+Thanks!
+
+[1]: https://github.com/SUSE/clang-extract
+---
+ security/tomoyo/.gitignore       |  1 -
+ security/tomoyo/builtin-policy.h | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/security/tomoyo/.gitignore b/security/tomoyo/.gitignore
+index 9f300cdce362..85d086c6502d 100644
+--- a/security/tomoyo/.gitignore
++++ b/security/tomoyo/.gitignore
+@@ -1,3 +1,2 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-builtin-policy.h
+ policy/*.conf
+diff --git a/security/tomoyo/builtin-policy.h b/security/tomoyo/builtin-policy.h
+new file mode 100644
+index 000000000000..781d35b3ccb3
+--- /dev/null
++++ b/security/tomoyo/builtin-policy.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++static char tomoyo_builtin_profile[] __initdata =
++	"";
++static char tomoyo_builtin_exception_policy[] __initdata =
++	"initialize_domain /sbin/modprobe from any\n"
++	"initialize_domain /sbin/hotplug from any\n"
++	"";
++static char tomoyo_builtin_domain_policy[] __initdata =
++	"";
++static char tomoyo_builtin_manager[] __initdata =
++	"";
++static char tomoyo_builtin_stat[] __initdata =
++	"";
+
+---
+base-commit: 910bfc26d16d07df5a2bfcbc63f0aa9d1397e2ef
+change-id: 20240727-tomoyo-gen-file-fcfc3a0c0f46
+
+Best regards,
 -- 
-2.34.1
+Marcos Paulo de Souza <mpdesouza@suse.com>
 
