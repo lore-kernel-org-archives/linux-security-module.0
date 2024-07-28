@@ -1,63 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7976E18643;
-	Sat, 27 Jul 2024 20:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03341A35;
+	Sun, 28 Jul 2024 00:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722112383; cv=none; b=EPFmAxuV2ieU0JjSuBL0dB+TtDPRSYTdScpvID30FdfA2If7rr7OBRWxGG9rZdamZMYuYh2VqxAunUHf6n25BI3YnxQTsXUYhFQq5XaZkijDeE6twfMUgbdBm18NyYUE8sidtAs3/MSOqr8XJffzL8xICoHpFYtCbR8CGpJKwEQ=
+	t=1722126383; cv=none; b=NwTV1bNbZq0xnprlVzWoV4WkF6/cwKYt/eOENKpgZFrewbw5YE+1cH5KOcn7ZlrKD9eEI5vtw6JPapYzv5E6ecKpdhYFT0gI7pJ6f2u4dBKrHbZ03wrnpGVFu+icL8KgjrDvIN0hbetrRYcrdkiBDvYtuXDOWSKndARGAFMkZvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722112383; c=relaxed/simple;
-	bh=DpSgpkZvuLUZVNBT3Vb4mqU32qmMylafuoxwCOAiLVA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GqcLnqaWBaMS4YkKAi2gVe3fI5QmSPXrQrYUlyVPseybfKIQrA5usrrzNWS+k1pz7gRTGoAGhBPH2aBNhYqQUPBc/oFev1zoH+pK4aNx9NJRtG72julPEvw2L8DQ397gSuNSXFYWdAfRN0BTVQWfa8RIJ16Y/QKaAHTMsrPEpM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAeiVayM; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAeiVayM"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 049F9C32781;
-	Sat, 27 Jul 2024 20:33:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722112383;
-	bh=DpSgpkZvuLUZVNBT3Vb4mqU32qmMylafuoxwCOAiLVA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=EAeiVayMuM9B5vjkfvNrJuZ7GWZxlUw71s4yjVIMZxrWWQYz9f24HMV6YF1IHSqrN
-	 CJ9jrR+6xaD4H1DffCCXExLrR+e8HINZ9TFWN/69bPNRqJTSTQ2T8jEzAtYqM9jtZZ
-	 F/ZvY7UoOuur6CiMmpPoYsFFIiOSweyDGlqEs85VyKfc7xONfrCqDmnhOuWkbDYg3w
-	 VVJ2C4h13st2+CbvQl5MkFstSEDVdck3rTxy/RYNUbDzzEBXu5jcnypcwx9VsBV4XV
-	 XOmZReuu04N1CFvB5nkUXlTdYMdK+HN2G8llle9iqcmqc3zvtff+u2F6n6SQT7cAHF
-	 /x9KZR4tSnu3w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EBD4DC43601;
-	Sat, 27 Jul 2024 20:33:02 +0000 (UTC)
-Subject: Re: [GIT PULL] AppArmor updates for 6.11-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-References: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <d6585289-6146-4a10-bbdc-7bdfa5b16ffb@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-07-25
-X-PR-Tracked-Commit-Id: e0ff0cff1f6cdce0aa596aac04129893201c4162
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ff30564411ffdcee49d579cb15eb13185a36e253
-Message-Id: <172211238295.32007.614550602116166247.pr-tracker-bot@kernel.org>
-Date: Sat, 27 Jul 2024 20:33:02 +0000
-To: John Johansen <john.johansen@canonical.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKLM <linux-kernel@vger.kernel.org>, "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+	s=arc-20240116; t=1722126383; c=relaxed/simple;
+	bh=ro4bdkgBTJxXixVQhErz0ISyv4OySIyBHEcBU6aJXSE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A+n3lbeLsrBWbEK31SsV17UptHPRlTSzC4fnuK1ZMJjuAf149JKAo+TaySLyLdhIhEhQ1g6zQS/PmpWYo7BeaiIO+eqGrV4d8jirHnQULzxSJhcRwiG8LP4kc5tILMlDmJ/OAGG+oM5QqZjeqp+LpOehyqIHQdhuZsIY9YZMu8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WWj2j6DvNz1L9BQ;
+	Sun, 28 Jul 2024 08:26:05 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id A80131800D0;
+	Sun, 28 Jul 2024 08:26:12 +0800 (CST)
+Received: from mscphis02103.huawei.com (10.123.65.215) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 28 Jul 2024 08:26:11 +0800
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+To: <mic@digikod.net>
+CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+Subject: [RFC PATCH v1 0/9] Support TCP listen access-control
+Date: Sun, 28 Jul 2024 08:25:53 +0800
+Message-ID: <20240728002602.3198398-1-ivanov.mikhail1@huawei-partners.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mscpeml100004.china.huawei.com (7.188.51.133) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-The pull request you sent on Thu, 25 Jul 2024 11:06:28 -0700:
+Hello! This is v1 RFC patch dedicated to restriction of listening sockets.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-07-25
+It is based on the landlock's mic-next branch on top of v6.10 kernel
+version.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ff30564411ffdcee49d579cb15eb13185a36e253
+Description
+===========
+LANDLOCK_ACCESS_NET_BIND_TCP is useful to limit the scope of "bindable"
+ports to forbid a malicious sandboxed process to impersonate a legitimate
+server process. However, bind(2) might be used by (TCP) clients to set the
+source port to a (legitimate) value. Controlling the ports that can be
+used for listening would allow (TCP) clients to explicitly bind to ports
+that are forbidden for listening.
 
-Thank you!
+Such control is implemented with a new LANDLOCK_ACCESS_NET_LISTEN_TCP
+access right that restricts listening on undesired ports with listen(2).
+
+It's worth noticing that this access right doesn't affect changing 
+backlog value using listen(2) on already listening socket. For this case
+test ipv4_tcp.double_listen is provided.
+
+Closes: https://github.com/landlock-lsm/linux/issues/15
+
+Code coverage
+=============
+Code coverage(gcov) report with the launch of all the landlock selftests:
+* security/landlock:
+lines......: 93.4% (759 of 813 lines)
+functions..: 95.3% (101 of 106 functions)
+
+* security/landlock/net.c:
+lines......: 100% (77 of 77 lines)
+functions..: 100% (9 of 9 functions)
+
+Mikhail Ivanov (9):
+  landlock: Refactor current_check_access_socket() access right check
+  landlock: Support TCP listen access-control
+  selftests/landlock: Support LANDLOCK_ACCESS_NET_LISTEN_TCP
+  selftests/landlock: Test listening restriction
+  selftests/landlock: Test listen on connected socket
+  selftests/landlock: Test listening without explicit bind restriction
+  selftests/landlock: Test listen on ULP socket without clone method
+  selftests/landlock: Test changing socket backlog with listen(2)
+  samples/landlock: Support LANDLOCK_ACCESS_NET_LISTEN
+
+ include/uapi/linux/landlock.h                |  23 +-
+ samples/landlock/sandboxer.c                 |  31 +-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/net.c                      | 131 +++++-
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/config      |   1 +
+ tools/testing/selftests/landlock/net_test.c  | 448 +++++++++++++++----
+ 8 files changed, 519 insertions(+), 121 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.34.1
+
