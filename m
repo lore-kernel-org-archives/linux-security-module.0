@@ -1,113 +1,105 @@
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DBD817;
-	Mon, 29 Jul 2024 11:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D436414901B
+	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 12:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253566; cv=none; b=OLDBGHsq1kuOkPMRqC5IiMkxu1l9kSx+LMdMALsoekBZHqt2wVqjJDFN47WStjWvedz8qmZuAME1Iq3Lp0DJmgVCyvl4cmKKDJsyZiF4hulny0TCiKOuPWOFOIMDbrBKMOjFZb4KZ+K3gdkWMDVvdkLKcgZS4Sw0N0R4JsrIH2A=
+	t=1722257955; cv=none; b=MYLBJiwI1vFbPRgJYevks0N5fOWN6QENjwhfesmGrSvUlZypd1GxBYJSFN70MxkWbmSOF1Iu4iGi6Gz7QXRL4uPLWrSIVfgrPgneow29MKxlDBUwrM5jgkEVwGBljbBsHiAin+2a0QMzZVajwyR7iu/YLif6vEfYgCXfjS38HtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253566; c=relaxed/simple;
-	bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZNRxi/aJRz+n4mOIBqgrbT1R0bGBqpBFJZYXClFbqDtcL1si2O4MqeaLm9Uv0lY43MCM9Orz9eQ0g/rS0TXErZoZhXu6zjpbWfO3ZhrPF5R7DhiVREN1syzkAgDkqd0WX2zSGtDN/gAW2QmzvBYEmM7SGsJnoNcarvDOrd0IxVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsWE2au6; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722257955; c=relaxed/simple;
+	bh=XKlc+8CoEMY68SA5HD1dhDI2QZ6bqbXTxL8bJTXP9hQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FX7mRJg0zdY7fI2vbNHXzkv+KuRUXCQkA+PHK2m1GsoDTYUjLmfmwKvUbqCggM3PvaquW72vLkJcuxh9/daRw08d6Z+yWEJhaD5GFHb017DZ+6aFJHf/cX++V/4lhmC3764mYYjJ0pynTG2Uou1dYNIT4ks79zQ8pqn0Y75ycGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AhqHR+ii; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsWE2au6"
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b7aed340daso20293126d6.3;
-        Mon, 29 Jul 2024 04:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722253564; x=1722858364; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
-        b=bsWE2au6C6+jukQE7t+bgHvw2VsGrSytNAxLuWy8WSTOc8Oy4gyrYJO0pxiORbGLzs
-         30Oy/JnLOSRIppu84wr9juFlxZca6fRky/BNRXZ4xlhqK299r8QvNohLF2n3ZR7QdCUU
-         QNb2RnfSBlu/ndkNHtXuzNsn+F7q39zg9TmwliHZwHRffLlMvAMoiO2tkHQPsi6dXnVA
-         oumA9sII4nqlzKy68971yjP62kCtileK4ZKRXpFRLSLVbvsbkq+IA7WqfcKRKom3+Yii
-         IHZN6g9BubIzXUWP5Y93NDfk6odrqY+Wz0vWxjaGQr94X0oK0+ciGpad1q5KoMST3v0b
-         hkMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722253564; x=1722858364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
-        b=d2zMhpIyzJIrLqPihSFHgtbQElaek8VNAnSfqjYl5vILv6yimZua6pqgIAN7oZwX7C
-         y/QShjqUF7HuhZWu4eWRaqNRL3knqM8xLDxvpIM9U6hEN/1dJSHf4rfXkv3/W33yUOA+
-         O4SQhTXXMb7io6V9aKadrLLt3f9J84MlLOWFRLWURtL7pnpwxVCRDnm3eh0WfNXNW+Az
-         b6G9VUAmxRQQE/AzslHxvCarAlhe1CrbnkLF6Gddh22TP1KICfNklTkhV++52CNnTEzO
-         y8vYkkRaPILv9hzDRGuhzmyUd4yDbcWRF4L738WuPJQv+vAo3LoUJamAF43g216IGhvI
-         C3Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFqwAF/TWLSSU8OHOQDT4dznTBUFJ1fupxh6EyTLcSfmBjU2FDMuZlTQOh2UM8laiWH02amMA4gdmiU1o3dW7XClLGx4QG8nnc2rV/PAoZTD+aoWRHC+5Hw7k5GnMLVOl+clj5UX9lFaVvEDeK+3y/7HlT59T7xE+GcYpmjxQK7SWcwY2oPi3W6FuATGHqvIyou7CsACdu/VYg7IXqtmvRLy0YJidZAGTJPV8CIpJYjqwwuC3XjiHRer5GMQTUn4XCBUPEt6UDe71H4mmiQflhodvbrRHmtkF0xr442rMT9HsZFfAgNkj9nE6YGX7QQjmyEdrg+Q==
-X-Gm-Message-State: AOJu0YzPsnvrpFXmZAt2AU1/l7hkdAPc+fe1+BOVhPyw27P90oup90UA
-	RcITrDhCj56FmEoPlrJ26RpqAzOZYmUm8NeMvmuJm7cCEXwJwlYqF7AzXK9y3UFDxG4Ze8v3mNL
-	wlOIoxfLp9OydATTIinb7qn8Yfks=
-X-Google-Smtp-Source: AGHT+IF5UmpKUFOnvoAK9lYxcwohmtfgqa1lFzGyA8Akl+YSskrOYOXqexc6VvI8Xmv0jJTGVagDPu5fB/SRGumTpvw=
-X-Received: by 2002:a05:6214:2425:b0:6b7:944f:3cef with SMTP id
- 6a1803df08f44-6bb55aa2fc3mr125032596d6.44.1722253564270; Mon, 29 Jul 2024
- 04:46:04 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AhqHR+ii"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WXdj422JYzVL3;
+	Mon, 29 Jul 2024 14:59:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722257944;
+	bh=8o4uEwOWvS/IvVBdL4/r7RNFUAox5TLdYs6gG1vGhNw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AhqHR+iibp0LjZzsZbjZq375eAvCBEWiV3MnaYwIGbug0amZd59JD84Ntcj6rtjQz
+	 qSVEnep2nrA3Itccm29AHZr44fbnQnQmNT3yaX/sJYAn8T0/3+XodIcOCXff76icHI
+	 zmY+6iczo5/F5ewctOx87Bz8GUrfW+gk8t2XAr3A=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WXdj33Z78zB8T;
+	Mon, 29 Jul 2024 14:59:03 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	James Morris <jmorris@namei.org>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	keyrings@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
+Date: Mon, 29 Jul 2024 14:58:46 +0200
+Message-ID: <20240729125846.1043211-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729023719.1933-1-laoar.shao@gmail.com> <87bk2gzgu0.fsf@intel.com>
-In-Reply-To: <87bk2gzgu0.fsf@intel.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 29 Jul 2024 19:45:27 +0800
-Message-ID: <CALOAHbCAKEwkDQSmyUqRs-EjM9=aF-QcORr1g=_CnFLoVXsSVg@mail.gmail.com>
-Subject: Re: [PATCH resend v4 00/11] Improve the copy of task comm
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	ebiederm@xmission.com, alexei.starovoitov@gmail.com, rostedt@goodmis.org, 
-	catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 29, 2024 at 5:29=E2=80=AFPM Jani Nikula <jani.nikula@linux.inte=
-l.com> wrote:
->
-> On Mon, 29 Jul 2024, Yafang Shao <laoar.shao@gmail.com> wrote:
-> > Hello Andrew,
-> >
-> > Is it appropriate for you to apply this to the mm tree?
-> >
-> > Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on t=
-he
-> > length of task comm. Changes in the task comm could result in a destina=
-tion
-> > string that is overflow. Therefore, we should explicitly ensure the des=
-tination
-> > string is always NUL-terminated, regardless of the task comm. This appr=
-oach
-> > will facilitate future extensions to the task comm.
->
-> Why are we normalizing calling double-underscore prefixed functions all
-> over the place? i.e. __get_task_comm().
->
-> get_task_comm() is widely used. At a glance, looks like it could be used
-> in many of the patches here too.
+A process can modify its parent's credentials with
+KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+doesn't take into account all possible access controls.
 
-There is a BUILD_BUG_ON() inside get_task_comm(), so when you use
-get_task_comm(), it implies that the BUILD_BUG_ON() is necessary.
-However, we don't want to impose this restriction on code where the
-length can be dynamically changed.
+Enforce the same access checks as for impersonating a process.
 
-One use case of get_task_comm() is in code that has already exposed
-the length to userspace. In such cases, we specifically add the
-BUILD_BUG_ON() to prevent developers from changing it. For more
-information, see commit 95af469c4f60 ("fs/binfmt_elf: replace
-open-coded string copy with get_task_comm").
+The current credentials checks are untouch because they check against
+EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
 
---=20
-Regards
-Yafang
+Cc: David Howells <dhowells@redhat.com>
+Cc: Günther Noack <gnoack@google.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Fixes: ee18d64c1f63 ("KEYS: Add a keyctl to install a process's session keyring on its parent [try #6]")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20240729125846.1043211-1-mic@digikod.net
+---
+ security/keys/keyctl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index ab927a142f51..511bf79fa14c 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -21,6 +21,7 @@
+ #include <linux/security.h>
+ #include <linux/uio.h>
+ #include <linux/uaccess.h>
++#include <linux/ptrace.h>
+ #include <keys/request_key_auth-type.h>
+ #include "internal.h"
+ 
+@@ -1687,6 +1688,10 @@ long keyctl_session_to_parent(void)
+ 	    !gid_eq(pcred->sgid, mycred->egid))
+ 		goto unlock;
+ 
++	/* The child must be allowed to impersonate its parent process. */
++	if (!ptrace_may_access(parent, PTRACE_MODE_ATTACH_REALCREDS))
++		goto unlock;
++
+ 	/* the keyrings must have the same UID */
+ 	if ((pcred->session_keyring &&
+ 	     !uid_eq(pcred->session_keyring->uid, mycred->euid)) ||
+
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+-- 
+2.45.2
+
