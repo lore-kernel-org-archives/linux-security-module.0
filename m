@@ -1,256 +1,238 @@
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50B512FB37
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 21:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60924653
+	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 22:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722290330; cv=none; b=rTPOf+ZyCP5+rz8hMziTgwVLbdMO9m46mHjBSUWj1Ta+JeRCuqBj30B1+izvz9SUOUclPxJBGFKk6/jOAVj4ONGe6+vU23ZK4LByLHhwsA468vxSqDXej46Wqxq2tBbuYQiLzH5TENE9UwvyU2zDXm4jZ00uaxz43tKDxngeFDA=
+	t=1722291594; cv=none; b=ruNTfqizIu1Vca2zA5qielzZLGVV31uuLWXwSQ82HynUdQjXS45EUTFrKJe4ROBooFF6xZUeFa1WEEgfnolUbR9zaGZFz4gVs44kfHuk/wONWjFslrJSldug7KD7/KHPE+DQB1b3Evr+m0cceS++ByZZGAcW4Amb3vmYcVMZ7Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722290330; c=relaxed/simple;
-	bh=7BFvgcGjVqum3vQTgwiHjqpZrH7kKbAZc/8wehcV0Rw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=nbnyUdsj+d8Kq7mIVlyJ8qW1AbsbuwQdjg9QqOEQBmnv7vMGxwpklj75nihXU3ZyCjqlNZOZ8W1HuJ23k9JpNrQdM6DEYI4VhHz/eU5xV9TrIgTYt62J6dObWFDaTLc0YvdhSeqdMv8sxk0JLS1poKbEVT3C8KAmG0bEkFN+Eww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YOzjka0+; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1722291594; c=relaxed/simple;
+	bh=uFue5T7p+msPSssmFDyg5SIwpfbf0gxBCnZxS95H45w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=u5WphFJSSVnkei5RBHbxDkVlRPVMkfFkU0qRVrakvExhMfgIHNgvSTnuRU/io9HYYF+mkbSwcqmACVRuvRPJZy9uQZc5oMXjMapEBICuSPtppsXzZVagLtUd7SSYa5YHRODILBw5lqDhgVDOcyJF1bvCST6dBTqq1Lk8XiffTMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=HHoNHj4E; arc=none smtp.client-ip=66.163.185.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YOzjka0+"
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1d0dc869bso285003085a.2
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 14:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1722290327; x=1722895127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/3iYBEMid67Mzpea60KXjhaxJYwaoNt058ly9sJZZT8=;
-        b=YOzjka0+78UECBidOsaAh11a6bsIJRWBDAjDimWsyj8LMVyecqZJwpoleJ2b+rbQht
-         VjW3hmAqOdh+AeauNhdtipqrQx6lMVAxTiJvJTBuP88tfnuv2rvlO+dflyDi6XlIWZdi
-         B9czPgckvhJMBH8amR/ZKpTRseyd6RLNUUmptHfTNy4IqcH+lBd2Z/3fbEa+OVqcdEQ3
-         dZRLDOQbnkUjbnONpATplmljP5PxiTb9XX165EUgLipSWJk/AwnLJ6RnkyQxPXsACZvl
-         HgytIQ5MjGjBRxR3cbW0vdjG/rhmlC/5rqoiSsDa6p1vqyrYwJqLVBkTOIOddrXn+EnI
-         1shQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722290327; x=1722895127;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/3iYBEMid67Mzpea60KXjhaxJYwaoNt058ly9sJZZT8=;
-        b=d7Ideeow91N6GaeKzOydCT49aYurf57xRQ3z00NyNlQ7FslH1q4olimmzTTedjiZSu
-         mzxOQxYI64PjbTPLWydN2wzL0ws5LS736Ds/wXOxzu76x+9ZqT2EKClgFnXNk1h6eHEy
-         0MAqQm87Ic1qHZEFaNK5HPoL4lBSGoHeSb01i1LXyBcVDUTk5WB2pmBfkiCB5ILUp3Vb
-         UvBV1d8JYOwnW8afZXfjRnMxr7B5H+Fq6RWKsNlKrgWtGrI+yPTtEf7VmPHQt0Sw75gf
-         IRBUfxC3ptQ2h328RS+Zo5Kub826MhCgTGJucQ6jA8kGFgfQd9miYEF4uUf3BnMTBDez
-         sz9g==
-X-Gm-Message-State: AOJu0Yykc2S0qJTzAaTadQpqU7eGOXgVtq7U812OlUt4DQP3rBrV51Ka
-	wkZ6sBhvnB3IUEf787MvSp4EgccJE1Nq2z2YLT9FPQVhG8NPAbs9QNV4Ft+d/aJ7nLFiH8g99ZU
-	=
-X-Google-Smtp-Source: AGHT+IHnd9V0wRm1F8Q7MNNXuzoB5C80nJ3aG8K0zKi5SmcEMoVNxZ/QJ9zuDNvyfyo5ovqP3Hxiww==
-X-Received: by 2002:a05:620a:269a:b0:79d:7ae3:4560 with SMTP id af79cd13be357-7a1e52e8affmr1325880185a.55.1722290327409;
-        Mon, 29 Jul 2024 14:58:47 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d7435227sm576691985a.82.2024.07.29.14.58.46
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 14:58:47 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: linux-security-module@vger.kernel.org
-Subject: [PATCH] lsm: add the inode_free_security_rcu() LSM implementation hook
-Date: Mon, 29 Jul 2024 17:58:41 -0400
-Message-ID: <20240729215840.319398-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="HHoNHj4E"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1722291591; bh=8Q1GEVNfsZZTVbEsPQqG0xM2GiBj4VrXV3uPepkDb4I=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=HHoNHj4EIFCT3iI8DNAsWe35z+w+KZnbuDG0xjk6SpBHTACiJebT9hN6Zsj88mXO4dKwrz8YWxTBCFgRzTMXAKFh3THVTkGL3KotoVU1J3MoPI06u6CqrmuMrPS6DW3HoGaKeRFWXvAPV8Hew+4ZLWBpHOh2ZJ13XTjxaLR76hxTYPR1ACjbwY3MaBlgN+FkqO0UgKKsw0CRuh817adnHckR620m4YvQWOs5H+fgZCjrqbcPWJfQg1s/+qJPMmHwx+BAWLYt/cfXsLiYEjsIy8c7iLfMAEHlAEZl4VcraaJlXLBirZNj5n6B2ldMw1kMZB3IAmYGE3seRGTAeqrmTA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1722291591; bh=JPHpt+dt67SOOVdQYBjeinTpbMNwdwZSX41VhjvlRu3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ssKrVwBb43DwD9tVWi6SrrNB7Zt4+gTIPfrHSOCnFrWo2gmoqTyuZI0JwjC4Md8Sw04gIWt2bNRwbPME2sP/Awog+jDyWTpAKXseXBKUoXRMxOK8HkaDu30Rnm3DzK+SQvXYg5zECM3bsu74XnPOPHNhXgRJK7AvxWOa90xmAJ7FNxr55T12l8Y6B5f9ZbYarH+UnIPW7qtAyxF42iysjARCcoJXNEkrdzWdb21FGi2e2Un8Dh3GN108cok4ppMj8UXPxZoe9uOpHZPbYh31xRscE0mFmSKaZewkiF4vWMpsQgSDWXzHqyEbXv+8WtfHbdUtYAeUnzolzq6vLu7aRw==
+X-YMail-OSG: d7VGCmMVM1nX4948aW_BFuH_FUdlhsOMUHGjS8qzYt_V3GmkCePILKIhH2F0cK6
+ 3aAj4wriNVmtUrZGGkruhbirMFwKKGcQ6Ymp_pxjYUBWOyhEnfOY_ff26TveKEUUPmifXbCMrZYp
+ qDX.DtrSHsHgBNEOaPE4mE3WaLpOFjJQL0c63yLcTPx045ZMVhHtRCpTD_Qe5YwXir7BKmM2XRd_
+ F.ObGlOE9cY9Kt8v1RT75i8N0J4brd923hDOmKM6naf.lzdt6r81c_Sov4iNM5UJrAkV7dosmKho
+ gA.HUnobELYrvujyx3NMvVbXkJE9AJwXSbWVMQsMVPaU6C0FqENl6xZHzMIrKpCuOOxNEexo592g
+ D9ygqtwfxfxkr0pykF3rqMguxq_EK8MKefNsZm9iitoitIFH97gMrzEtl8aYPMzacsCO8XIbFwy4
+ n5V0Ke5VcT69hyBlzfYAjaq4t1p5ja7xb2JE6xIiOKwVGSyxY_5LHsWvHal9LnyUHbsf3MFstcFh
+ ktskz_N1jB8887kWWvRT1DvUubsRaC9Gk55bjWUEmdYV7YT0CT6F22mrAMbFoQnV4NxpPMGRiRDy
+ F64rQRvmp.b8fax05qeh9Ix.YVrJy_8.ErgySPgRMD1usRcC6aYpbjoaiY6muE6QU2qvcpoHcuTR
+ 8Aq0.45Iq8LGOEtef4KJnFZnHyznUvH3QBxB62ZF9eKfoyN8efpcjqcWZ2c6Qmih7NO6X7.ZdpZt
+ yC1FuHkZvB4oPOEB1cXKMqD7FSMruPxZvMrrogj37.43_GUEOfDnV7IwKcWnNR7OS8FWa74q4aqX
+ aqIbKp9VcpSgdLLwrn7wbyL_anSfA52k_Av6lhnQm.hqykIPHvqvc7kUzSt4rZpJm7y2bXNoituZ
+ 9BAr_TNopQg3lHjXUjpjBVbP1Gml6c6QxFdDTWzxsHjQ.ql8bwfqF8.dgYjkJYR6rEhd9harmCdL
+ SvV4CIO9.o_pMJMSpkVJRXKPx4I0EmUl2mQS2LdpwJlg8MX2pm_m0Vuf_SMNI9P.eXD8mozSE_EU
+ 4vC.EKz1r42IBAHGC5UA5LCxHp6aJ_abID31CokYq9QdFt3lAT.fyWQ7TwNm.H1vmumJzc0E83cW
+ pXHykrrLwlef.g2G_J8l0cGGDRVkZ2nEz0rdKU127cvvHmlJuwQzjKXWQmRZ7yjan_MKSmGI.tOu
+ u6M6f9A4fBP.98yc5JrR5AGzHhlY97ZiibzaEXqAI1cJsuNMdxDaT2fbf4Ppf65T5Y6c09GZgG_d
+ iesa_Q5UKJD_5_OpDmXTLc5WfHFfbGJ.JiMcxXo89IxCK1ZOKDmDoIUVAOZRw5jBZH_WLohThJH0
+ oXRrHoPIUGFkKIjcSrIHb2eYwXEG_VUwZnrJPrbUbn1.18halTSpEKTD3ywK0pTxyWmnn5LndHcS
+ eb_pu8sXXs2caEzxvyauXS4W8cDPTvVsLcTCjr8EgVOW33q035.A4w277O_HC_.knuJi4o_SC4Nw
+ QBw0NFfx6IYHXfkKaxx8K5FmGt8cWOT0TdMk9QW6pu.jk0LOiU.rN0Ll6lir_rSpmxv5nLgIkzJd
+ kztR3KqY9AyVuVyozsjXf_Dj2IBIwcXJZWq0V1jKwkgjX_DQtI642DwaF4mHm.xdo9wyjtJ2T_6R
+ N34Ro1TjL_RTvtarZMCnZQhMTetEo9XAz9VO4SIvRdMlXjaGBQJI7quErhtDYXIsPjM_ZNOfprDj
+ 6YfInsGNcB8zAVWmXmWNP7GaY4kXqmCXpRaCgpuaZTlVFXLuP3mCCpMuImONZqsYceNlOJpF85QB
+ vZZ.7TxWJ3zzVIKM3altGp7GlA4DRRnR.nHnMgyC2wHtJtR8mwtXCSmLa1JCjHnUfDrE0y8DHFte
+ gyudj5DLC522Fr2Z6k2wlWITGFrsywymU5a9OF_13fGseGK.ENlCdUI_p72eYq7QxMAG7sumzTNM
+ 9W8gtzGf0.xRSJzbDsIj82pYqiv4nDOs8CR1ESvTrvXYsYdpkrto_aPLwBO0WjtBUnBoktr3tEml
+ 4SkIr5XQY7c8vCh4U6BSZkEkTWc.DM.tBDPGAzQx_51_ZE8oh4EFl3QW9o2SiiyvOTIgXcooIrCs
+ js1pxSE0cN_Ez.sx8z6oKkUMeW6s4QGcG_tb8sk01rvxVyd9e9bAfNjIxQeeJWdIDVollJujKr_u
+ gUc1eFXaEchSpoMZBxGjSXtJKM.M3uEALUAKeOILOeU_tKLyqul_4GmXIv4Ek4PIuTaSqW0lqjPU
+ nU6NqF041BCsW6_2kmpEHZ0J_9614EOSegTYljg65HJbWoif_zixzdVD5GCY.ZRafDAAwAPYpQoY
+ Mumg1
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 983562c8-dec7-4038-8297-1b24dc8a33e0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Mon, 29 Jul 2024 22:19:51 +0000
+Received: by hermes--production-gq1-799bb7c8cf-zh7nt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9edf7fb820238b006d648f0715dda5c7;
+          Mon, 29 Jul 2024 22:09:41 +0000 (UTC)
+Message-ID: <519e4173-56b4-4b0d-850c-ddb590a75e5d@schaufler-ca.com>
+Date: Mon, 29 Jul 2024 15:09:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7642; i=paul@paul-moore.com; h=from:subject; bh=7BFvgcGjVqum3vQTgwiHjqpZrH7kKbAZc/8wehcV0Rw=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBmqBCQATc7PO3sOL0bbhs5G/rz+bOuikzIuAadu wTHLUVc7ViJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZqgQkAAKCRDqIPLalzeJ c+OCD/wOdKz+D2o6OfdQwQdfyDNHOK+b2IJZfdyMC7NN8DRkllCszUCubj89l8+L8E/ARYS+8vY lnN6ATYYVBFAw9Xop0XA4wqWlnAF+6F6uJ2HjpKLqMWe7p7yQBNDKadN2Pzw011ljczcS7BJywZ BNowxpN3WWlxlFEb89EQNJPytwkNnSpotLC12Bm1X/SOo/3HGuPWIFFkcBtPA21dDLdQgIjgqEy CFSI309HfdtfcmZ1OEguAyI2dsDANaff6SPC98YamOAIInCXXD3xtEqsEwsOqHiRMUUKR09gFa7 WimcptBeQObjWPL6MUX40wPZPo77+PqkeB8B+5j319pmC1Avo6vw2cXxl06/db5nyrtsD4ibrZm 6Wt2A7PicL4Sd8zQtPqNEvH+c9EENFlW9OKHWbkCIV60tpdr1pDq11fi7jyFE1R1xrDMo/Zl4Ti //7JtbCzY+nE00iXDi6e05mhNFRkPft6S88ApDGDQwSJJYWz5X5MXeF3DUI6mxKavMQGnCA8biS ZrnnMJxDt7dtp8wafP8ayOVbTeRBa++sq73tHNhlYS82rUjLmF8zmsu6wIQ4EMrwWpir5tuw6y1 MgkAUGI4vgok/kZEhtKsVpA7vacST3Au5JcuYLCJn9MoapieezPJdB6+7p3XF9R5mJ1n6FoJip+ ZKfe3bPlI9wUp7A==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lsm: cleanup lsm_hooks.h
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+References: <20240729215702.318099-2-paul@paul-moore.com>
+Content-Language: en-US
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20240729215702.318099-2-paul@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-The LSM framework has an existing inode_free_security() hook which
-is used by LSMs that manage state associated with an inode, but
-due to the use of RCU to protect the inode, special care must be
-taken to ensure that the LSMs do not fully release the inode state
-until it is safe from a RCU perspective.
+On 7/29/2024 2:57 PM, Paul Moore wrote:
+> Some cleanup and style corrections for lsm_hooks.h.
+>
+>  * Drop the lsm_inode_alloc() extern declaration, it is not needed.
+>  * Relocate lsm_get_xattr_slot() and extern variables in the file to
+>    improve grouping of related objects.
+>  * Don't use tabs to needlessly align structure fields.
+>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 
-This patch implements a new inode_free_security_rcu() implementation
-hook which is called when it is safe to free the LSM's internal inode
-state.  Unfortunately, this new hook does not have access to the inode
-itself as it may already be released, so the existing
-inode_free_security() hook is retained for those LSMs which require
-access to the inode.
+Sense of aesthetics aside,
 
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/r/00000000000076ba3b0617f65cc8@google.com
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- include/linux/lsm_hook_defs.h     |  1 +
- security/integrity/ima/ima.h      |  2 +-
- security/integrity/ima/ima_iint.c | 20 ++++++++-----------
- security/integrity/ima/ima_main.c |  2 +-
- security/landlock/fs.c            |  9 ++++++---
- security/security.c               | 32 +++++++++++++++----------------
- 6 files changed, 33 insertions(+), 33 deletions(-)
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 8fd87f823d3a..40d2299f684f 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -114,6 +114,7 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
- 	 unsigned int obj_type)
- LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
- LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
-+LSM_HOOK(void, LSM_RET_VOID, inode_free_security_rcu, void *inode_security)
- LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
- 	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
- 	 int *xattr_count)
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 3e568126cd48..f093dc679084 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -223,7 +223,7 @@ static inline void ima_inode_set_iint(const struct inode *inode,
- 
- struct ima_iint_cache *ima_iint_find(struct inode *inode);
- struct ima_iint_cache *ima_inode_get(struct inode *inode);
--void ima_inode_free(struct inode *inode);
-+void ima_inode_free_rcu(void *inode_security);
- void __init ima_iintcache_init(void);
- 
- extern const int read_idmap[];
-diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
-index e23412a2c56b..00b249101f98 100644
---- a/security/integrity/ima/ima_iint.c
-+++ b/security/integrity/ima/ima_iint.c
-@@ -109,22 +109,18 @@ struct ima_iint_cache *ima_inode_get(struct inode *inode)
- }
- 
- /**
-- * ima_inode_free - Called on inode free
-- * @inode: Pointer to the inode
-+ * ima_inode_free_rcu - Called to free an inode via a RCU callback
-+ * @inode_security: The inode->i_security pointer
-  *
-- * Free the iint associated with an inode.
-+ * Free the IMA data associated with an inode.
-  */
--void ima_inode_free(struct inode *inode)
-+void ima_inode_free_rcu(void *inode_security)
- {
--	struct ima_iint_cache *iint;
-+	struct ima_iint_cache **iint_p = inode_security + ima_blob_sizes.lbs_inode;
- 
--	if (!IS_IMA(inode))
--		return;
--
--	iint = ima_iint_find(inode);
--	ima_inode_set_iint(inode, NULL);
--
--	ima_iint_free(iint);
-+	/* *iint_p should be NULL if !IS_IMA(inode) */
-+	if (*iint_p)
-+		ima_iint_free(*iint_p);
- }
- 
- static void ima_iint_init_once(void *foo)
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index f04f43af651c..5b3394864b21 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1193,7 +1193,7 @@ static struct security_hook_list ima_hooks[] __ro_after_init = {
- #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
- 	LSM_HOOK_INIT(kernel_module_request, ima_kernel_module_request),
- #endif
--	LSM_HOOK_INIT(inode_free_security, ima_inode_free),
-+	LSM_HOOK_INIT(inode_free_security_rcu, ima_inode_free_rcu),
- };
- 
- static const struct lsm_id ima_lsmid = {
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 22d8b7c28074..8b6c9d2facad 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1198,13 +1198,16 @@ static int current_check_refer_path(struct dentry *const old_dentry,
- 
- /* Inode hooks */
- 
--static void hook_inode_free_security(struct inode *const inode)
-+static void hook_inode_free_security_rcu(void *inode_security)
- {
-+	struct landlock_inode_security *inode_sec;
-+
- 	/*
- 	 * All inodes must already have been untied from their object by
- 	 * release_inode() or hook_sb_delete().
- 	 */
--	WARN_ON_ONCE(landlock_inode(inode)->object);
-+	inode_sec = inode_security + landlock_blob_sizes.lbs_inode;
-+	WARN_ON_ONCE(inode_sec->object);
- }
- 
- /* Super-block hooks */
-@@ -1628,7 +1631,7 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
- }
- 
- static struct security_hook_list landlock_hooks[] __ro_after_init = {
--	LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
-+	LSM_HOOK_INIT(inode_free_security_rcu, hook_inode_free_security_rcu),
- 
- 	LSM_HOOK_INIT(sb_delete, hook_sb_delete),
- 	LSM_HOOK_INIT(sb_mount, hook_sb_mount),
-diff --git a/security/security.c b/security/security.c
-index b52e81ac5526..72086c8ba89e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1596,9 +1596,8 @@ int security_inode_alloc(struct inode *inode)
- 
- static void inode_free_by_rcu(struct rcu_head *head)
- {
--	/*
--	 * The rcu head is at the start of the inode blob
--	 */
-+	/* The rcu head is at the start of the inode blob */
-+	call_void_hook(inode_free_security_rcu, head);
- 	kmem_cache_free(lsm_inode_cache, head);
- }
- 
-@@ -1606,23 +1605,24 @@ static void inode_free_by_rcu(struct rcu_head *head)
-  * security_inode_free() - Free an inode's LSM blob
-  * @inode: the inode
-  *
-- * Deallocate the inode security structure and set @inode->i_security to NULL.
-+ * Release any LSM resources associated with @inode, although due to the
-+ * inode's RCU protections it is possible that the resources will not be
-+ * fully released until after the current RCU grace period has elapsed.
-+ *
-+ * It is important for LSMs to note that despite being present in a call to
-+ * security_inode_free(), @inode may still be referenced in a VFS path walk
-+ * and calls to security_inode_permission() may be made during, or after,
-+ * a call to security_inode_free().  For this reason the inode->i_security
-+ * field is released via a call_rcu() callback and any LSMs which need to
-+ * retain inode state for use in security_inode_permission() should only
-+ * release that state in the inode_free_security_rcu() LSM hook callback.
-  */
- void security_inode_free(struct inode *inode)
- {
- 	call_void_hook(inode_free_security, inode);
--	/*
--	 * The inode may still be referenced in a path walk and
--	 * a call to security_inode_permission() can be made
--	 * after inode_free_security() is called. Ideally, the VFS
--	 * wouldn't do this, but fixing that is a much harder
--	 * job. For now, simply free the i_security via RCU, and
--	 * leave the current inode->i_security pointer intact.
--	 * The inode will be freed after the RCU grace period too.
--	 */
--	if (inode->i_security)
--		call_rcu((struct rcu_head *)inode->i_security,
--			 inode_free_by_rcu);
-+	if (!inode->i_security)
-+		return;
-+	call_rcu((struct rcu_head *)inode->i_security, inode_free_by_rcu);
- }
- 
- /**
--- 
-2.45.2
-
+> ---
+>  include/linux/lsm_hooks.h | 82 +++++++++++++++++++--------------------
+>  security/security.c       |  2 +-
+>  2 files changed, 41 insertions(+), 43 deletions(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 845457f0eeb7..f0dd453b39d5 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -79,8 +79,8 @@ struct lsm_static_calls_table {
+>   * Contains the information that identifies the LSM.
+>   */
+>  struct lsm_id {
+> -	const char	*name;
+> -	u64		id;
+> +	const char *name;
+> +	u64 id;
+>  };
+>  
+>  /*
+> @@ -93,48 +93,30 @@ struct lsm_id {
+>   * @lsm: The name of the lsm that owns this hook.
+>   */
+>  struct security_hook_list {
+> -	struct lsm_static_call	*scalls;
+> -	union security_list_options	hook;
+> -	const struct lsm_id		*lsmid;
+> +	struct lsm_static_call *scalls;
+> +	union security_list_options hook;
+> +	const struct lsm_id *lsmid;
+>  } __randomize_layout;
+>  
+>  /*
+>   * Security blob size or offset data.
+>   */
+>  struct lsm_blob_sizes {
+> -	int	lbs_cred;
+> -	int	lbs_file;
+> -	int	lbs_ib;
+> -	int	lbs_inode;
+> -	int	lbs_sock;
+> -	int	lbs_superblock;
+> -	int	lbs_ipc;
+> -	int	lbs_key;
+> -	int	lbs_msg_msg;
+> -	int	lbs_perf_event;
+> -	int	lbs_task;
+> -	int	lbs_xattr_count; /* number of xattr slots in new_xattrs array */
+> -	int	lbs_tun_dev;
+> +	int lbs_cred;
+> +	int lbs_file;
+> +	int lbs_ib;
+> +	int lbs_inode;
+> +	int lbs_sock;
+> +	int lbs_superblock;
+> +	int lbs_ipc;
+> +	int lbs_key;
+> +	int lbs_msg_msg;
+> +	int lbs_perf_event;
+> +	int lbs_task;
+> +	int lbs_xattr_count; /* number of xattr slots in new_xattrs array */
+> +	int lbs_tun_dev;
+>  };
+>  
+> -/**
+> - * lsm_get_xattr_slot - Return the next available slot and increment the index
+> - * @xattrs: array storing LSM-provided xattrs
+> - * @xattr_count: number of already stored xattrs (updated)
+> - *
+> - * Retrieve the first available slot in the @xattrs array to fill with an xattr,
+> - * and increment @xattr_count.
+> - *
+> - * Return: The slot to fill in @xattrs if non-NULL, NULL otherwise.
+> - */
+> -static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
+> -					       int *xattr_count)
+> -{
+> -	if (unlikely(!xattrs))
+> -		return NULL;
+> -	return &xattrs[(*xattr_count)++];
+> -}
+> -
+>  /*
+>   * LSM_RET_VOID is used as the default value in LSM_HOOK definitions for void
+>   * LSM hooks (in include/linux/lsm_hook_defs.h).
+> @@ -153,8 +135,6 @@ static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
+>  		.hook = { .NAME = HOOK }		\
+>  	}
+>  
+> -extern char *lsm_names;
+> -
+>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>  			       const struct lsm_id *lsmid);
+>  
+> @@ -176,9 +156,6 @@ struct lsm_info {
+>  	struct lsm_blob_sizes *blobs; /* Optional: for blob sharing. */
+>  };
+>  
+> -extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
+> -extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+> -
+>  #define DEFINE_LSM(lsm)							\
+>  	static struct lsm_info __lsm_##lsm				\
+>  		__used __section(".lsm_info.init")			\
+> @@ -189,7 +166,28 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+>  		__used __section(".early_lsm_info.init")		\
+>  		__aligned(sizeof(unsigned long))
+>  
+> -extern int lsm_inode_alloc(struct inode *inode);
+> +/* DO NOT tamper with these variables outside of the LSM framework */
+> +extern char *lsm_names;
+>  extern struct lsm_static_calls_table static_calls_table __ro_after_init;
+> +extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
+> +extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+> +
+> +/**
+> + * lsm_get_xattr_slot - Return the next available slot and increment the index
+> + * @xattrs: array storing LSM-provided xattrs
+> + * @xattr_count: number of already stored xattrs (updated)
+> + *
+> + * Retrieve the first available slot in the @xattrs array to fill with an xattr,
+> + * and increment @xattr_count.
+> + *
+> + * Return: The slot to fill in @xattrs if non-NULL, NULL otherwise.
+> + */
+> +static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
+> +					       int *xattr_count)
+> +{
+> +	if (unlikely(!xattrs))
+> +		return NULL;
+> +	return &xattrs[(*xattr_count)++];
+> +}
+>  
+>  #endif /* ! __LINUX_LSM_HOOKS_H */
+> diff --git a/security/security.c b/security/security.c
+> index 780b84f5d09c..7ac6765f9260 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -764,7 +764,7 @@ static int lsm_file_alloc(struct file *file)
+>   *
+>   * Returns 0, or -ENOMEM if memory can't be allocated.
+>   */
+> -int lsm_inode_alloc(struct inode *inode)
+> +static int lsm_inode_alloc(struct inode *inode)
+>  {
+>  	if (!lsm_inode_cache) {
+>  		inode->i_security = NULL;
