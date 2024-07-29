@@ -1,141 +1,157 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546101B86C2
-	for <linux-security-module@vger.kernel.org>; Sun, 28 Jul 2024 13:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA88335B5;
+	Mon, 29 Jul 2024 02:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722172794; cv=none; b=VKp1jFkshTeR8OhU8xdLW/VzJ4GnTlYkA2DYggQgevAHO4Eomr7ZpVeDHV1A77icy+LFQg25OHqTXVLc9o8tNvf0Y8ORmkwt/LwDvwtb3VMWI2ay/j5x00lYbcrE2Ujh3EixrlKG+xNBBDFzdJYO3cG/S2BpV/3gupZUr0KwyLY=
+	t=1722220704; cv=none; b=kTI/HZUEqvNmCs5yH7QZp9uQfeLlGsbIG5Tmf9EsuoTINQvJ/5SD73uQhQv3hJhOM/nDAsgVc4NnnS8LCyTtIDpYU7bvwbd3DSldBcB0hJhq823h+hpbTEJcqbzAKb03SjPotYP9U79aATc7fhN2uajrrZiYoKRhLHeXJTslcDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722172794; c=relaxed/simple;
-	bh=4n7BlQFvNPXtWW3eAjZuvpHz9cMZXEKyncS/gLZlVPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z2ah50KWWLf+FqRYYjMMooCxZ6lLnvU1vBJxDF6eDOi5Ud8gY5q9hIrNs+qbjc6tPQtwamzPY4leOQyRWcPJ2XyBkDwsufLAZKYeHdPbYhhlWIf+SE//pTi2nLzWFuNTwECvVRtvgkDE62bqLINfwfov1OAepIWutbK6i3pJReA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav118.sakura.ne.jp (fsav118.sakura.ne.jp [27.133.134.245])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46SDIoLn098749;
-	Sun, 28 Jul 2024 22:18:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav118.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp);
- Sun, 28 Jul 2024 22:18:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav118.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46SDIoTV098746
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 28 Jul 2024 22:18:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e57e3e18-4f40-462e-959a-f6a9f19b1fe9@I-love.SAKURA.ne.jp>
-Date: Sun, 28 Jul 2024 22:18:50 +0900
+	s=arc-20240116; t=1722220704; c=relaxed/simple;
+	bh=fHi1WKbG4rwo9K7JZ99t5n13jlcTwAYYxY3/86tkJzc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZj6/dwg/P9+QUg+9nDn0ej9OIHZkr9p7bRGpiND0/fzNoSNKUwxR70TMFvRZejR7eiFR2MUNPlr0Xf5Q0DR5CzEN5bHCgbTyfu45aY3wHfLO7NLDyi+YqO1Uv2OT96Y6tv0mJgtKk7+eR2BIu1d+weiQDrwKWFnxEFWthAuJSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VFDa6P7F; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFDa6P7F"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7163489149eso2111136a12.1;
+        Sun, 28 Jul 2024 19:38:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722220703; x=1722825503; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BoXVnJDl1DBrc1Y4CS2cvJgm86xrff8Hli3dvn72knc=;
+        b=VFDa6P7F57uEm75p0d8D4fulDN+V/TQzCllmI8dP+UJYkEDvklDFvO+kzlKOduIvLi
+         QklIeiJVjaZvW2K//oOhNQkZ0EBHrrJ0QSI8kjGJmvpUcuOWnPW6ACpxf+h5K2XxOhZ1
+         0NByg1pwfQZwZkj9SHoboaXEIHBYfGLTfdPSLai/L/iGscFLvJ8G9FLOCukmhxtdpiNL
+         CBhrQd3GwVHRKH3cmjHV84sTaVLWapMEzRjDK5eG72SZHF9+IH3Bew9sQL6x9xcCIL7h
+         aWRQsty5yH5nQJTclmMR/o6DJNxQnWn/9RLe7UZ2cWfWJ6SIY1FPpBsC73/7pDa9SVn2
+         7Ggw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722220703; x=1722825503;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BoXVnJDl1DBrc1Y4CS2cvJgm86xrff8Hli3dvn72knc=;
+        b=NwlZ5ZbYI7LGqq44sP6zW0JVy63oLP2dPpailVPvcNkXbfsy6aWfXeAdAvIZe90v3j
+         6f6faaoA3mADOUW/dArXgObXdNdFiRc919m36poBcmZTuvmzIlp5P3pbW5bvFapKIPGY
+         JGVfNiWVj30wGFBfDSqnAhgluIOjk9f9pb5TJhxFVPuyZoMuXs4BoKBlWVeavPMbCSoJ
+         wWjL4S6PpggTTR8erLxFWZJejbXr6q/NkvJjHZr7TBRMj8FP9GMSt+LJMA6wEDFTqulN
+         5TZpmlOiDm4O6lD/vcH1PkZvvTDqboGZVyasb5boJ9WeGRidVDkUkRAcokdJdHx05Ujz
+         DZ/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVOFBbsz+ncTdQ96HEnlJdf8GQpVMWH0fCly6YT6GAD0AJmDiaPtGxNiPNgnPS0nHKs/23SjvwsqetrZc8mnCKJXg983Qbrp/WJnzc6DfI+FlvqjIFa3p3MVn/dO9rQJJxRrukvaIMdosk15O2snlR100XYynvrF3s+zHlWA4zzQUCb7+zDfHwBbUQ8YfBxhQJYa2KPy+4bQ/ceGv+PC9y10RFxIHPQHPjuvPz12xEnYXlo/FgwQ/XVNWlPRIJjyi+J7qwcp5r6gRudGGjxZbUswGHDlgmaEPjAJjGTIF9tMDlZruLsa0EDby5SXsX8BzV0CTQ44Q==
+X-Gm-Message-State: AOJu0Yxi1jAPRWGCNYR33YxRkaLxW1KWXzySC9C3G+0rYvjGzHm02zpj
+	IIGgT2B8VMqq7jOVUvuUeqZK5wH0fOuECvRsDXYX6+o1OUIP6GX/padO1IQlskUZ3w==
+X-Google-Smtp-Source: AGHT+IHeVJuzyb2EwGW+50qWRtjvsFUnfcwe8AV+hJIj0aUlJNPkNbWdN0SRhTofBR2ODO0UIaMdgg==
+X-Received: by 2002:a17:90b:384d:b0:2c9:7f3d:6aea with SMTP id 98e67ed59e1d1-2cf7e5f4b7cmr7481617a91.32.1722220702568;
+        Sun, 28 Jul 2024 19:38:22 -0700 (PDT)
+Received: from localhost.localdomain ([223.104.210.31])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c55a38sm7332247a91.10.2024.07.28.19.37.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Jul 2024 19:38:22 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org
+Cc: torvalds@linux-foundation.org,
+	ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com,
+	rostedt@goodmis.org,
+	catalin.marinas@arm.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	audit@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH resend v4 00/11] Improve the copy of task comm
+Date: Mon, 29 Jul 2024 10:37:08 +0800
+Message-Id: <20240729023719.1933-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] security: tomoyo: Add default builtin-policy.h for
- default policy
-To: Michal Marek <mmarek@suse.cz>, Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        llvm@lists.linux.dev, Marcos Paulo de Souza <mpdesouza@suse.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling
- <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>
-References: <20240727-tomoyo-gen-file-v1-1-eb6439e837a1@suse.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20240727-tomoyo-gen-file-v1-1-eb6439e837a1@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello, Michal and Masahiro. What do you think on this proposal?
+Hello Andrew,
 
-I guess that .gitignore needs to keep builtin-policy.h included, or
-"git diff" will complain if builtin-policy.h was rebuilt due to
-changes in policy/*.conf files.
+Is it appropriate for you to apply this to the mm tree?
 
-Regarding having default security/tomoyo/builtin-policy.h , is there
-a pitfall with modification time of security/tomoyo/builtin-policy.h
-and files involved in generating security/tomoyo/builtin-policy.h ?
+Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
+length of task comm. Changes in the task comm could result in a destination
+string that is overflow. Therefore, we should explicitly ensure the destination
+string is always NUL-terminated, regardless of the task comm. This approach
+will facilitate future extensions to the task comm.
 
-On 2024/07/28 9:51, Marcos Paulo de Souza wrote:
-> When checking tomoyo code there is an include for a file that is not
-> included on kernel-source since it's generated at build time, and the
-> kernel-source uses git archive to create the tarball.
-> 
-> Having the source code referencing a file that is not included in the
-> tarball can confuse tools that inspect/parse code, since the file is not
-> there.
-> 
-> The builtin-policy.h added is generated from the same default policy
-> that already exists on policy/ directory, so it doesn't break the
-> current usage of that file.
-> 
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> ---
-> Hello, I sent this patch because we saw some issues while running
-> clang-extract[1] on tomoyo given CVE 2024-26622. Since clang-extract
-> parses the C files it failed to find builtin-policy.h. As a bandaid, I
-> had to add
-> 	-DCONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
-> 
-> to clang-extract (we feed the gcc arguments used to compile common.c got
-> from compile_commands.json on kernel-source).
-> 
-> Per my tests it works with my patch, and I don't see why this would hurt
-> to have builtin-policy.h on git, since it would regenerate the file if
-> the policy scripts are changed.
-> 
-> Please let me know if I'm missing something here.
-> 
-> Thanks!
-> 
-> [1]: https://github.com/SUSE/clang-extract
-> ---
->  security/tomoyo/.gitignore       |  1 -
->  security/tomoyo/builtin-policy.h | 13 +++++++++++++
->  2 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/tomoyo/.gitignore b/security/tomoyo/.gitignore
-> index 9f300cdce362..85d086c6502d 100644
-> --- a/security/tomoyo/.gitignore
-> +++ b/security/tomoyo/.gitignore
-> @@ -1,3 +1,2 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -builtin-policy.h
->  policy/*.conf
-> diff --git a/security/tomoyo/builtin-policy.h b/security/tomoyo/builtin-policy.h
-> new file mode 100644
-> index 000000000000..781d35b3ccb3
-> --- /dev/null
-> +++ b/security/tomoyo/builtin-policy.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +static char tomoyo_builtin_profile[] __initdata =
-> +	"";
-> +static char tomoyo_builtin_exception_policy[] __initdata =
-> +	"initialize_domain /sbin/modprobe from any\n"
-> +	"initialize_domain /sbin/hotplug from any\n"
-> +	"";
-> +static char tomoyo_builtin_domain_policy[] __initdata =
-> +	"";
-> +static char tomoyo_builtin_manager[] __initdata =
-> +	"";
-> +static char tomoyo_builtin_stat[] __initdata =
-> +	"";
-> 
-> ---
-> base-commit: 910bfc26d16d07df5a2bfcbc63f0aa9d1397e2ef
-> change-id: 20240727-tomoyo-gen-file-fcfc3a0c0f46
-> 
-> Best regards,
+As suggested by Linus [0], we can identify all relevant code with the
+following git grep command:
+
+  git grep 'memcpy.*->comm\>'
+  git grep 'kstrdup.*->comm\>'
+  git grep 'strncpy.*->comm\>'
+  git grep 'strcpy.*->comm\>'
+
+PATCH #2~#4:   memcpy
+PATCH #5~#6:   kstrdup
+PATCH #7~#9:   strncpy
+PATCH #10~#11: strcpy
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
+
+Changes:
+v3->v4:
+- Rename __kstrndup() to __kmemdup_nul() and define it inside mm/util.c
+  (Matthew)
+- Remove unused local varaible (Simon)
+
+v2->v3: https://lore.kernel.org/all/20240621022959.9124-1-laoar.shao@gmail.com/
+- Deduplicate code around kstrdup (Andrew)
+- Add commit log for dropping task_lock (Catalin)
+
+v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gmail.com/
+- Add comment for dropping task_lock() in __get_task_comm() (Alexei)
+- Drop changes in trace event (Steven)
+- Fix comment on task comm (Matus)
+
+v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.com/
+
+Yafang Shao (11):
+  fs/exec: Drop task_lock() inside __get_task_comm()
+  auditsc: Replace memcpy() with __get_task_comm()
+  security: Replace memcpy() with __get_task_comm()
+  bpftool: Ensure task comm is always NUL-terminated
+  mm/util: Fix possible race condition in kstrdup()
+  mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
+  mm/kmemleak: Replace strncpy() with __get_task_comm()
+  tsacct: Replace strncpy() with __get_task_comm()
+  tracing: Replace strncpy() with __get_task_comm()
+  net: Replace strcpy() with __get_task_comm()
+  drm: Replace strcpy() with __get_task_comm()
+
+ drivers/gpu/drm/drm_framebuffer.c     |  2 +-
+ drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
+ fs/exec.c                             | 10 ++++-
+ include/linux/sched.h                 |  4 +-
+ kernel/auditsc.c                      |  6 +--
+ kernel/trace/trace.c                  |  2 +-
+ kernel/trace/trace_events_hist.c      |  2 +-
+ kernel/tsacct.c                       |  2 +-
+ mm/kmemleak.c                         |  8 +---
+ mm/util.c                             | 61 ++++++++++++---------------
+ net/ipv6/ndisc.c                      |  2 +-
+ security/lsm_audit.c                  |  4 +-
+ security/selinux/selinuxfs.c          |  2 +-
+ tools/bpf/bpftool/pids.c              |  2 +
+ 14 files changed, 51 insertions(+), 58 deletions(-)
+
+-- 
+2.43.5
 
