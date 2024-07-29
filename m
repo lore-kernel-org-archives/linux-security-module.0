@@ -1,109 +1,94 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1465818D4A7
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 14:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E809C155391
+	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 15:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722262902; cv=none; b=tS9LAy+VFsD9hNrDgbbgHzhN0DNOAk6WHFISOlF4+EvQXGL/vT3PkXoczXDPeHBu79YCal+ZA5EHYeTrvIhm1SXYQYLUmW18FlOfX5b5NzTyBnIgsypfbg1BU4XxANHEhU/kZLNrGdHn0zbDcK4OqLfBZrflp0ix8ui7upK/0RY=
+	t=1722265376; cv=none; b=W4vcQ1rJWTD2xZIZB/P+URo0gxaRDRC1G0JE0KGwfHD4n1avJtT3YIAB5hVQUXzT2lRmZvpPaF23FZiJ+jfYndmLbD04ToPRn1z5rsV6kRivCdkOOunjTykahfmuCuyTzh0r3MYF0EDib59w+INjS/6ocXjZYx/V1Nq6U3OOX0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722262902; c=relaxed/simple;
-	bh=R2pg1QM5YjycBRpUMiPEewfK2eJSRXWCvjc02wn9TVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FhsnRLV1G0HxC9tHUqY27fVjivYCtGEmanefBv3Ow637sx3kZQ4iC3slfL7844yDk/QYy0KXnzPpHXpDHCOpMyZ/a0wgogvF/gyDV3XwGPdXpUap3nR6eb+6E0a/JjV7+9C8Y79BP3CN0/qr9jfbnr8yN3XnddkzVzcPBDvv0Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZMH+r1JK; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1722265376; c=relaxed/simple;
+	bh=onBbiaEWw8YNvIODJmcayzpy+8J+PVNXsDSfrhQlNes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDrdOjWfA9c+h8wkXvN4BPelLzscSbsdmcYbFsSUuLeghNsqOw3XlZZ2QXoDqt6DQKvydChZrvyyotxFyPG7vjPQAWo/HKKX20VD4GIpQ2hlFwphKqnN6fCdDbemehKb46k2Dv/EqGGR/XUrgcMgmKrpGA+Pd54R21IYmBm7xXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=k/8V+Utu; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZMH+r1JK"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so13107a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 07:21:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722262898; x=1722867698; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zmXQ5VQJHZgwk9qmWNV/4mIiXAO7E7BFXPo3AVaYCuA=;
-        b=ZMH+r1JK8GYVLTkrQDEsEVpCi/I9R21N2cB5UOXXbhusOkdT2jSM0auMPr7XBg/pLy
-         C7pjbfYWcavmPbFLiOwc/rFbTOoSyzF5lvXU5c/M4jKEG3KCPIJzRDR5IPNMnuD66E5v
-         8N1z8Hrw81P3LnOusrFPTAeJb46bSQo8UvIfgJ0DFNrsV3jkJfNiPtlA8EmnAnvLakF8
-         /ssLWs3TNQvNXeLwATbfEuZJGW4r6WtKLREpXXWOcnY4sOcm+KkeHZxmCuOf0NxKyp5/
-         PJsdujWmWIRl/4ibc22UIB+dIK6/dpRMef5wk4CQCvKfq4FgwzLx0otMcy6L162lzLT/
-         1/tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722262898; x=1722867698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zmXQ5VQJHZgwk9qmWNV/4mIiXAO7E7BFXPo3AVaYCuA=;
-        b=VgNziDV+ZY0nzKPKkd+5+RfIS/NSnttx6sKhJdHBuv599oIhMVvpjE/2Nftjke9K7s
-         cJm/7VUdsxWf3PPUwZ4UUogaToq+odzeJRpqoieXbZDO4ij7QEV+hak6h/5H6st7FgnY
-         quhuEywn4CiXRHh1vkQoQUwTCz1xOtXfc6invKmmgSiP3/rkL/WsqHVFa85fyZZRi/wp
-         lPj50k+MGQE9jqtv9xoXYCfAA9vpTZwRT8hvEitCLuD88J9u7S58jXt1tyJBaHWfeFEP
-         9maqtIuFiqNbXOsUF3GOIUeLncyzV5MflUnVSkGU4pblyzTOwOUGVfvUJre7b+Pw940W
-         93zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwUW4upYfsNaLX6RZqtCfFKIcQ6x65eTyqyDzRoCn52cygdALpv4rxkdb9xkgefJBnpAH0n9Xa8keQgF+j9BTICgGhrQXwWv2P5/al1LUr2KSzVU83
-X-Gm-Message-State: AOJu0YyaDItb22VY9YUuXuooUVR0lkafvEv3Oo4sFXY16gSqYVao5fN8
-	gP3KDVfex+HTyOkjQCHgkmzDbmY8l0G+KRDJV0liFPPXUHLuUq2dsfBUo59ukHHIHyPpfuoHKSK
-	DbxGLuoV1IqBu1PVdP4oGv5Dco72jIj0YSvAbEgdzcHcFJthZAGuktBw=
-X-Google-Smtp-Source: AGHT+IEhv3G8eAvhVOqvhekBIo7K/fTzlyqFGUCj1hgartQNRL4cM2n7OCQmD00ZYx7roI4Umf9zkVlbQhVOQO/mGK8=
-X-Received: by 2002:a05:6402:2554:b0:58b:93:b623 with SMTP id
- 4fb4d7f45d1cf-5b03425b2c5mr259393a12.5.1722262897861; Mon, 29 Jul 2024
- 07:21:37 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="k/8V+Utu"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WXhRm5vdzzWrC;
+	Mon, 29 Jul 2024 17:02:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722265364;
+	bh=9LGQN8Vc3Rs6TsiKBFEp9Lr0Cof6R+g+itZnhj1fmxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/8V+UtuS28xmHYtqebOtZ1h+gw0saUyWy9nNjqNzdJQMGh2tqUYuDTa1kHMWYr0c
+	 dpnU0keYfYF7c3K2Y0A5MFAD/7rp9OTFKT9b8V/D8Gliaam664/PMqKrHMq0u1hxpY
+	 D26x6Kn+Sk7GNFUJD/vlEwpzYkDufHqKq6dhO0fs=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WXhRm0dkYz6N6;
+	Mon, 29 Jul 2024 17:02:44 +0200 (CEST)
+Date: Mon, 29 Jul 2024 17:02:41 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
+ ptrace_may_access()
+Message-ID: <20240729.rayi3Chi9aef@digikod.net>
+References: <20240729125846.1043211-1-mic@digikod.net>
+ <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
+ <20240729.cho6saegoHei@digikod.net>
+ <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729125846.1043211-1-mic@digikod.net> <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
- <20240729.cho6saegoHei@digikod.net>
-In-Reply-To: <20240729.cho6saegoHei@digikod.net>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 29 Jul 2024 16:21:01 +0200
-Message-ID: <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 29, 2024 at 4:09=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
-> > On Mon, Jul 29, 2024 at 2:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > A process can modify its parent's credentials with
-> > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
-> > > doesn't take into account all possible access controls.
+On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
+> On Mon, Jul 29, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
+> > > On Mon, Jul 29, 2024 at 2:59 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > A process can modify its parent's credentials with
+> > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+> > > > doesn't take into account all possible access controls.
+> > > >
+> > > > Enforce the same access checks as for impersonating a process.
+> > > >
+> > > > The current credentials checks are untouch because they check against
+> > > > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
 > > >
-> > > Enforce the same access checks as for impersonating a process.
-> > >
-> > > The current credentials checks are untouch because they check against
-> > > EUID and EGID, whereas ptrace_may_access() checks against UID and GID=
-.
+> > > FWIW, my understanding is that the intended usecase of
+> > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
+> > > new_session" and "e4crypt new_session") want to be able to change the
+> > > keyring of the parent process that spawned them (which I think is
+> > > usually a shell?); and Yama LSM, which I think is fairly widely used
+> > > at this point, by default prevents a child process from using
+> > > PTRACE_MODE_ATTACH on its parent.
 > >
-> > FWIW, my understanding is that the intended usecase of
-> > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
-> > new_session" and "e4crypt new_session") want to be able to change the
-> > keyring of the parent process that spawned them (which I think is
-> > usually a shell?); and Yama LSM, which I think is fairly widely used
-> > at this point, by default prevents a child process from using
-> > PTRACE_MODE_ATTACH on its parent.
->
-> About Yama, the patched keyctl_session_to_parent() function already
-> check if the current's and the parent's credentials are the same before
-> this new ptrace_may_access() check.
+> > About Yama, the patched keyctl_session_to_parent() function already
+> > check if the current's and the parent's credentials are the same before
+> > this new ptrace_may_access() check.
+> 
+> prepare_exec_creds() in execve() always creates new credentials which
+> are stored in bprm->cred and then later committed in begin_new_exec().
+> Also, fork() always copies the credentials in copy_creds().
+> So the "mycred == pcred" condition in keyctl_session_to_parent()
+> basically never applies, I think.
+> Also: When that condition is true, the whole operation is a no-op,
+> since if the credentials are the same, then the session keyring that
+> the credentials point to must also be the same.
 
-prepare_exec_creds() in execve() always creates new credentials which
-are stored in bprm->cred and then later committed in begin_new_exec().
-Also, fork() always copies the credentials in copy_creds().
-So the "mycred =3D=3D pcred" condition in keyctl_session_to_parent()
-basically never applies, I think.
-Also: When that condition is true, the whole operation is a no-op,
-since if the credentials are the same, then the session keyring that
-the credentials point to must also be the same.
+Correct, it's not a content comparison.  We could compare the
+credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
+guess this should not be performance sensitive.
