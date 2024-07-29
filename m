@@ -1,94 +1,143 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452AA14EC5B
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 13:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261011; cv=none; b=lgqn/VVZ/5up+7cAmWgYNb9LZ0KxfzzkAajs7b78TEWjYAhrOg3by6b6WTu2vkTxGjjLWH2R/NHniUu2IEfd8n9ZDRmTzimm1atZzF3oK4jubEFhFiA2xprdLh3dlmki+lutKyJlmgJxToDqKuOOEV2KCHLR61jaroldvGRJ1aA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261011; c=relaxed/simple;
-	bh=Q5uRKdexl1FWIgeaecl12wpeJjOcyl1fYNvfHXWGAkM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OJ0l2DTfpT4ljS1PiO3NS2ZVLgGMNRoCdvzLWfDlBlXzDjCctSESjbJHOLHbjQL1O/fY9dRbCiMClFZxZSot0zzpj7Obv5kmcmIkfhUXtoXGjajh30KlYDZwN9gy/q8ipWRIO6Q7XuxXvEoDjlgMQRsiJGBnVefXwjmH5ureZ5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4vseqjZ/; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F096548F7;
+	Mon, 29 Jul 2024 14:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722261984; cv=pass; b=FRde3qGn/A9Tgrv/JYslXN6PNyr16babZAX2bD2Vly4qeXimNtQ9Q66aghmMEjCPdDctpffeCb5TiG4AdHJMD7/q/rdlX/gy2KpizAyHaIM/rA7nuSiyHB0eoVEsFxjwytpfoU494/zMf/PKiddeQYebvauw0WSJ6nrpc6aIjH8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722261984; c=relaxed/simple;
+	bh=0o3cxwVIX6W+JSBJZMsbzybCNjUAO646XscSaOWFHcM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=RPO7ErpND3eehexVy/nGiLLexh/keCRa61pbJNFjfG4XTL8YhdQkvL61zt7ovrFO+qerHaNOAui3azr2uEqnAmGsdaBZ2w1+8lubwKxBj/0OBZ2hLHpsbBxHFsGTCoYsNgzyxPULTdqR6X/3Lk5VLYhhAuzrD+bdBVY1eirG9Ag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=FYClwVgF; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4vseqjZ/"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so12380a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 06:50:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722261008; x=1722865808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GDb5V1QphvVrrCYy2ir9gaKSY7i3HzlEt0UMjL3m1Wo=;
-        b=4vseqjZ/lvUgR5siBsVk0eC3FjzIgRIDmpFqz2Sx8iXB6fP+oWbdQQMyMvwjPRL1i9
-         zTOrFaUtbBxRkyL0kJ+vvGbuvwLIFz6IyNllJ/l9sHsTZgcdpUHhLNTmz4e1jGeLPRkF
-         bq8esFig8O0MAR5mgQuJPL5aCJby7JIJgubajRqQEmSxz3oSEKwjKbgkv4DOhAOA8UNQ
-         najn5YnFbqy0L4fv6O8vJu7NlZ4NjMqPlKfPK5/4pVImK6LLrmdEy9NS7VXMJvLYn1Em
-         Pb+ZqnUa6BmvK3OvtSsTrZDBKl+k0rLGtJ47zDggBJUk3tD2fOclqv2SO8PV1KTy9+g6
-         SzoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722261008; x=1722865808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GDb5V1QphvVrrCYy2ir9gaKSY7i3HzlEt0UMjL3m1Wo=;
-        b=qQ9kooeuPj1IEc9IOK4w5rfi/s16IxBz12+vPGDMEIP1VERWQYRG80v/5JYzFoiGb6
-         sOSl4qMHxaodWXR2mvdrRp/2Ec3z/kDDZN2nn8ZT8RvhTfhVeP6xrzMTv+bUeLr8SF+5
-         8SgJhvB8mdFOkjvgWXjrySI8nXXIQ+yF778pF92BJKlbAMrR7CUlMTG6P8SlBUKwMPbb
-         bAz14t+AmaHvppT1f6fb58Wa9oZY1aW+AnYh+xH1u3T1lcpvsfORxWKez5OmJpZacJUU
-         dSwsT+/bF+OpsUkI7y03Wf4BXdwL++6UyEiAU885my7keDVcyxa7dbfeybIkD1fLuZ/n
-         za3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjOqZIHCG6A2uj1+kGR9rm3h2xl021iHdLCa0bPQ06tng6G4V/6Bv/pNudw9L9Oo5NzjWlR70jLLPTn55CC5pWiY/+nzgEVi1MYlwl0SpOrulfcC50
-X-Gm-Message-State: AOJu0YzVWwzpjR4BAXuV86GWy+13bFnmhI1FwEREs0MkyeL1MkR5dLnh
-	2RlBnKSDYPr/1HvdOiotmmI6tb1rLuHYJu0r6MnEraIl3dbBaJiBiEHB0d6MHqot+xBmx5PigfB
-	xdnNFNWNIZxBz+vaj/iBbYFTq2Ndkx1IEmkw9
-X-Google-Smtp-Source: AGHT+IG+KGgrjitU74w+Wuh3bTE7G0peIlECTBGCgPXSxL/avmg0YQ1+aMUr2y6hMEsjbkLoM8BTilae4DsdRUeStuo=
-X-Received: by 2002:a05:6402:2694:b0:5a1:4658:cb98 with SMTP id
- 4fb4d7f45d1cf-5aed459c474mr562712a12.0.1722261007675; Mon, 29 Jul 2024
- 06:50:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="FYClwVgF"
+Received: from localhost (91-154-92-171.elisa-laajakaista.fi [91.154.92.171])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WXgBb2tF7z49Pxq;
+	Mon, 29 Jul 2024 17:06:15 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1722261977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=58xFwHqBtPauSUnJMDeUcsN8ZTBzN4flN8E7xsxQpJg=;
+	b=FYClwVgFHKv02sXRaOC/ibIl0mC3QhLo/onAfUuqwzht9b1MdlyKDrzNZZFgWVgZgcFnhh
+	Dz3gslwvtgp2+UC85ypVjqAA4anHMW6YxoIkdTal13COuw6MPAcMX31yqpP89+lZaxa4zO
+	N1ZbKg1glD41auyQXvZra0BR/N6i8UaylUEx40bGvYdYOzvWC1sFBtqHK2SE00eaH+g9lo
+	majts9ymKHijqgwSEY7qQJLwNWRkQjCT+T+wWjG9JYK3LeNQabPBm8DFK4KiXqP7TTdgfX
+	lcuSNWNpRyTj1I27KEUV8LVAMIamXfMkR1jJXkzMZf6oyWfkbkAPJl1/fEHyfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1722261977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=58xFwHqBtPauSUnJMDeUcsN8ZTBzN4flN8E7xsxQpJg=;
+	b=cuTYR1eN2b37S5vLrAJxCP9GkBrE21BrlMNKBhXR1CmvuhbQpPKeHl+xf1xwt57AQekYdE
+	pj++tpWNvSao1wv/7/2oxeNlAIO76cZiAEnAiOZA88m17S7ABGk+t6tZ1BqOdPh7Q66z8V
+	10lqwBI/bMKuUWVCwzT//k1XofboxP92WCPvOCq/o5lCAFNepGZemCbWg/3Cf4FSf/W9P/
+	/3JHtDYNan4hIuGJQneZbjyFe9zURNIkDhp2y/WSnlXvtiHKemRU6onOyTPaX4SvGr1q2O
+	rgC8TzXGCskXvst9uPgcIygOgIXWRBsOuhxtbW6pBLvJvmsopcCxjaFbpVcjhA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1722261977; a=rsa-sha256;
+	cv=none;
+	b=lmx6rNhe5uPEUbPHVDLi9ffTrrvPbgmBMc1chO2Q2BLGJd31b19DCD+5TTiUpGgk01QxXm
+	7MsmQg2enUCQy2jw4Y+kxMwl18fZjUhk3swVh/1fv4xYSzxTLbCUVMlMW+RovNi7LryiBf
+	h3pdTcl7ScpE57ELLddpAH1n1hsj1C7EdLO+f+qg/aL2C1+DF8PO0U10ZLOwqt5upR8Xdn
+	ieCyvlhIwSo7d6NlcJUvxhpnzxafoln4J2i0w3jTp35atZtLwdgBsubHKpUooZqriDaqzI
+	swgQKlyGpU2lXNY2DAXdJ8KMVG8ekM2PJklXWnc+ccRhQHn1+VwHXbaZoc9Cpg==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 29 Jul 2024 17:06:14 +0300
+Message-Id: <D322X0D8UBYG.3FIRWQEBNURZF@iki.fi>
+Cc: =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, "James Morris"
+ <jmorris@namei.org>, "Jann Horn" <jannh@google.com>, "Kees Cook"
+ <kees@kernel.org>, "Paul Moore" <paul@paul-moore.com>,
+ <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
+ ptrace_may_access()
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, "David Howells"
+ <dhowells@redhat.com>, "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.18.0
 References: <20240729125846.1043211-1-mic@digikod.net>
 In-Reply-To: <20240729125846.1043211-1-mic@digikod.net>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 29 Jul 2024 15:49:29 +0200
-Message-ID: <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 2:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
+On Mon Jul 29, 2024 at 3:58 PM EEST, Micka=C3=ABl Sala=C3=BCn wrote:
 > A process can modify its parent's credentials with
 > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
 > doesn't take into account all possible access controls.
+
+Add a smoke test transcript here, which demonstrates the above
+for A/B testing sake so that there is no need to invent one by
+the reviewer.
+
+Otherwise, it is too involved to give tested-by tag to this patch.
+
 >
 > Enforce the same access checks as for impersonating a process.
 >
 > The current credentials checks are untouch because they check against
 > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
+>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: Kees Cook <kees@kernel.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Fixes: ee18d64c1f63 ("KEYS: Add a keyctl to install a process's session k=
+eyring on its parent [try #6]")
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20240729125846.1043211-1-mic@digikod.net
+> ---
+>  security/keys/keyctl.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index ab927a142f51..511bf79fa14c 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/security.h>
+>  #include <linux/uio.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/ptrace.h>
+>  #include <keys/request_key_auth-type.h>
+>  #include "internal.h"
+> =20
+> @@ -1687,6 +1688,10 @@ long keyctl_session_to_parent(void)
+>  	    !gid_eq(pcred->sgid, mycred->egid))
+>  		goto unlock;
+> =20
+> +	/* The child must be allowed to impersonate its parent process. */
+> +	if (!ptrace_may_access(parent, PTRACE_MODE_ATTACH_REALCREDS))
+> +		goto unlock;
+> +
+>  	/* the keyrings must have the same UID */
+>  	if ((pcred->session_keyring &&
+>  	     !uid_eq(pcred->session_keyring->uid, mycred->euid)) ||
+>
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
 
-FWIW, my understanding is that the intended usecase of
-KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
-new_session" and "e4crypt new_session") want to be able to change the
-keyring of the parent process that spawned them (which I think is
-usually a shell?); and Yama LSM, which I think is fairly widely used
-at this point, by default prevents a child process from using
-PTRACE_MODE_ATTACH on its parent.
 
-I think KEYCTL_SESSION_TO_PARENT is not a great design, but I'm not
-sure if we can improve it much without risking some breakage.
+BR, Jarkko
