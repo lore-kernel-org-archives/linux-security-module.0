@@ -1,105 +1,90 @@
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5CD146D55
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 15:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376C31534EC;
+	Mon, 29 Jul 2024 16:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722266274; cv=none; b=nn0ZcC7Gv0Oj420y/rt+1AE1T9u9vN0DShD7NJoRCeCdL5X7R5RcIoUf1r9CmxQsLGDy4HrOpsroTF/99pbY7/Zm6ESU8T9WTrfwbqvYMmty8DfWUI3wK304ifEDGJqCknu6hAAVosdrL2AVUkK5f18fuY21eq4CKWrE81ETsp4=
+	t=1722271180; cv=none; b=WjsjJNi31QGI277pVjUFlFVzWQ+jiHBNt1M6Rmlip0DWXdcAP4FLfZl/gaKJiGiS3EhtHuIxFXiGPVZb+Hc0evaHRK+soOxk1gFh8wgSSe6reHji64dm+3pQ2Y2k4MPTvjg/qehf9VthXUKyHwdiTOzqErda1pAROSy5TUaeq5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722266274; c=relaxed/simple;
-	bh=u9dyPTb0gAwiGa0yrudB3+QBXgE0RGfUvhqye/k4wVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOH5h4lp5El6Iu7WCBlrzLFbFrsbM1XrQgJ8F2oV7qMkIww5oaJbRLhCqm/1erCoXIhFj6nt397mYet1ZN5ffuq4WpKcAfR3hMyOaoiwJI2kmc7xgZPGMYA2/qVkqLQtzoRNPtytRTGPE6tWtfp6JkJ+ZjwlGy1IKFntlFCJS7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ni2TcSul; arc=none smtp.client-ip=83.166.143.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1722271180; c=relaxed/simple;
+	bh=ACOFD4CnvNQvgxH3c3fJIkYLBWpRIGrdoWdi94w0LGY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=O9d+GNMMWs0eMqVpSe76P8lJ9WIHzvyAYEsVKRN4BTb3I2Tu90iQBbmcf+hCqGbx7BdwTkGwS2ZJADReQfE26HcRphM9LNyCDaOMHso+e+XbZ93CCtzbZFy2elwIe8GrHbChS7FJzSvP6vvcGDY/fX0R/kAUiLOAdvi1OuduckA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxGffYre; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ni2TcSul"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WXhn33Sh1zpJV;
-	Mon, 29 Jul 2024 17:17:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1722266263;
-	bh=cvrnRoLlrlL+1LRDelSkErAcEHLAE3yf5aqc5ui4+mM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ni2TcSulDdo7nMTkXpAcKyP1X/orPO/fEzxTzhp/hxHMtSUycKdl1lKABuWjNLegb
-	 AZ1O7CRMr9tCyMYiVrDaOj/GsVxtCDj+WM4tLFHRkbTwhyFnogIuf0soZFegTcC3OP
-	 MO3BI3Z/s7y1vmFCuo/03U8pkUvTi5MNdcycE72w=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WXhn300fXz9jM;
-	Mon, 29 Jul 2024 17:17:42 +0200 (CEST)
-Date: Mon, 29 Jul 2024 17:17:40 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
- ptrace_may_access()
-Message-ID: <20240729.roSo6soogho8@digikod.net>
-References: <20240729125846.1043211-1-mic@digikod.net>
- <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
- <20240729.cho6saegoHei@digikod.net>
- <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
- <20240729.rayi3Chi9aef@digikod.net>
- <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxGffYre"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D5937C4AF0C;
+	Mon, 29 Jul 2024 16:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722271179;
+	bh=ACOFD4CnvNQvgxH3c3fJIkYLBWpRIGrdoWdi94w0LGY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MxGffYremrlYV7IoL+PFdzTVghbhUmYE24NoiOXwot130hJR092fMDPljyjOFHVdc
+	 BwOk8pSOjwwKbEdqNqxYUxpql4UoUKiFJ2lsCDqaei8fiv2nLmq0phzDybvS4Ruc8d
+	 z/XfJg+CKgAclYeW7CbbQLEE7gLL/hM0xFPcU/zrpTnoN8mAo4/WHGmlPe/dDySyr4
+	 +P5sQueNRxv+PdBs1m2FMKXNsYAKLBJPpcrqn+AXFKcM9NOrWmX7bCZDnXiuc8wZZk
+	 cgjYyQYbzjQhie1m/6w7FgPL23bO3WKyoer9qNey5Cb3pqkqUfzFfvK9OYAA6SDF3G
+	 K/Q0xuxSAzaPQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BBA0BC43613;
+	Mon, 29 Jul 2024 16:39:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Subject: Re: [GIT PULL] sysctl constification changes for v6.11-rc1
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <172227117976.3603.14526183264046270376.git-patchwork-notify@kernel.org>
+Date: Mon, 29 Jul 2024 16:39:39 +0000
+References: <20240724210014.mc6nima6cekgiukx@joelS2.panther.com>
+In-Reply-To: <20240724210014.mc6nima6cekgiukx@joelS2.panther.com>
+To: Joel Granados <j.granados@samsung.com>
+Cc: linux-riscv@lists.infradead.org, torvalds@linux-foundation.org,
+ linux@weissschuh.net, mcgrof@kernel.org, kees@kernel.org, kuba@kernel.org,
+ david@fromorbit.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-security-module@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, bpf@vger.kernel.org, kexec@lists.infradead.org,
+ linux-hardening@vger.kernel.org, bridge@lists.linux.dev,
+ mptcp@lists.linux.dev, lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
+ linux-nfs@vger.kernel.org, apparmor@lists.ubuntu.com
 
-On Mon, Jul 29, 2024 at 05:06:10PM +0200, Jann Horn wrote:
-> On Mon, Jul 29, 2024 at 5:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
-> > > On Mon, Jul 29, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
-> > > > > On Mon, Jul 29, 2024 at 2:59 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > A process can modify its parent's credentials with
-> > > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
-> > > > > > doesn't take into account all possible access controls.
-> > > > > >
-> > > > > > Enforce the same access checks as for impersonating a process.
-> > > > > >
-> > > > > > The current credentials checks are untouch because they check against
-> > > > > > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
-> > > > >
-> > > > > FWIW, my understanding is that the intended usecase of
-> > > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
-> > > > > new_session" and "e4crypt new_session") want to be able to change the
-> > > > > keyring of the parent process that spawned them (which I think is
-> > > > > usually a shell?); and Yama LSM, which I think is fairly widely used
-> > > > > at this point, by default prevents a child process from using
-> > > > > PTRACE_MODE_ATTACH on its parent.
-> > > >
-> > > > About Yama, the patched keyctl_session_to_parent() function already
-> > > > check if the current's and the parent's credentials are the same before
-> > > > this new ptrace_may_access() check.
-> > >
-> > > prepare_exec_creds() in execve() always creates new credentials which
-> > > are stored in bprm->cred and then later committed in begin_new_exec().
-> > > Also, fork() always copies the credentials in copy_creds().
-> > > So the "mycred == pcred" condition in keyctl_session_to_parent()
-> > > basically never applies, I think.
-> > > Also: When that condition is true, the whole operation is a no-op,
-> > > since if the credentials are the same, then the session keyring that
-> > > the credentials point to must also be the same.
-> >
-> > Correct, it's not a content comparison.  We could compare the
-> > credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
-> > guess this should not be performance sensitive.
+Hello:
+
+This pull request was applied to riscv/linux.git (fixes)
+by Linus Torvalds <torvalds@linux-foundation.org>:
+
+On Wed, 24 Jul 2024 23:00:14 +0200 you wrote:
+> Linus
 > 
-> Yeah, though I guess keyctl_session_to_parent() is already kind of
-> doing that for the UID information; and for LSMs that would mean
-> adding an extra LSM hook?
+> Constifying ctl_table structs will prevent the modification of
+> proc_handler function pointers as they would reside in .rodata. To get
+> there, the proc_handler arguments must first be const qualified which
+> requires this (fairly large) treewide PR. Sending it in the tail end of
+> of the merge window after a suggestion from Kees to avoid unneeded merge
+> conflicts. It has been rebased on top of 7a3fad30fd8b4b5e370906b3c554f64026f56c2f.
+> I can send it later if it makes more sense on your side; please tell me
+> what you prefer.
+> 
+> [...]
 
-I'm wondering why security_key_session_to_parent() was never used: see
-commit 3011a344cdcd ("security: remove dead hook key_session_to_parent")
+Here is the summary with links:
+  - [GIT,PULL] sysctl constification changes for v6.11-rc1
+    https://git.kernel.org/riscv/c/f8a8b94d0698
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
