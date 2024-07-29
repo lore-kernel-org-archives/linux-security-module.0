@@ -1,156 +1,113 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B47A13FD84;
-	Mon, 29 Jul 2024 09:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DBD817;
+	Mon, 29 Jul 2024 11:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245395; cv=none; b=PpG9YUdNWrKHpFBc3c+jdor5SvJ/3HXS4QnWAZ9WiGU42xN1UqBhurl5dgTG3u0ZoWfSCExXVKX/tM+bUt4dz5XtHcvREZeJ7iRpOAQeYyToacxuumHM1LMoIorn+DFQQLXXiL0isjK6BO6M/bRmiliLdC+0sibLnIKQTr6hIM4=
+	t=1722253566; cv=none; b=OLDBGHsq1kuOkPMRqC5IiMkxu1l9kSx+LMdMALsoekBZHqt2wVqjJDFN47WStjWvedz8qmZuAME1Iq3Lp0DJmgVCyvl4cmKKDJsyZiF4hulny0TCiKOuPWOFOIMDbrBKMOjFZb4KZ+K3gdkWMDVvdkLKcgZS4Sw0N0R4JsrIH2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245395; c=relaxed/simple;
-	bh=Okn6Hh7a8OxqdINhFpBMmcm+OFNUZUiCDEeJ7M45+Ag=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oYTi/9yTvzqBsJT95RdEpn/rLbh75h8czmABeXug2cp2z1mYhH4ZkIxU+qEgDpUIRDC3gPjjzawRZplVvSJE8T6fXOufheX6XihqrKWCK6BPReAoJ311LPm3P62WdakKBy5tiM/eQYiU9U0jxsPXAYL2D+N28iVWmi8N/qOQnB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FTz/vxVb; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1722253566; c=relaxed/simple;
+	bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZNRxi/aJRz+n4mOIBqgrbT1R0bGBqpBFJZYXClFbqDtcL1si2O4MqeaLm9Uv0lY43MCM9Orz9eQ0g/rS0TXErZoZhXu6zjpbWfO3ZhrPF5R7DhiVREN1syzkAgDkqd0WX2zSGtDN/gAW2QmzvBYEmM7SGsJnoNcarvDOrd0IxVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsWE2au6; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FTz/vxVb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722245393; x=1753781393;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Okn6Hh7a8OxqdINhFpBMmcm+OFNUZUiCDEeJ7M45+Ag=;
-  b=FTz/vxVbdaVtlhCyuYMslzKkZUiFuUBaYzqYn9LrxwM15kb81n5LYetM
-   u7VHgOIu1LDwy0B5gMcIjYhG2xkV89m95/lanGRU6mClaQjBMp6CiycTv
-   +RV+IypDCFxOdg8RqH8CjdPkkisJ7K8Z0kDfryjJ7hZ4OYurt7Whr1JSM
-   EN6dnqQR22gMSvmC0FzEipdP/2tDKz5w6rXpL3JCUx17ODXSAzQhZB6Jy
-   2kV73zLRiWhEGliUX6QnhJpNc17gu8W0wMxg4X8vnotDuKQEjEIlvpImC
-   2n78RUR9F4iFSH8pImfwcL8f4atWWFngoy8XNQ0XBmnXM5kEw6QiC8JNS
-   A==;
-X-CSE-ConnectionGUID: k4/ihfkhQ3+IZH/Ye47bnQ==
-X-CSE-MsgGUID: jEc1onOnT3mXlMbfxXEiBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="30606920"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="30606920"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:29:52 -0700
-X-CSE-ConnectionGUID: si+UUBxSQyyqZAevhhfeqw==
-X-CSE-MsgGUID: D2TdvVJKRvC0UDCGKJ8A3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="54513537"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.185])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:29:46 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
- alexei.starovoitov@gmail.com, rostedt@goodmis.org,
- catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- bpf@vger.kernel.org, netdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH resend v4 00/11] Improve the copy of task comm
-In-Reply-To: <20240729023719.1933-1-laoar.shao@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240729023719.1933-1-laoar.shao@gmail.com>
-Date: Mon, 29 Jul 2024 12:29:43 +0300
-Message-ID: <87bk2gzgu0.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsWE2au6"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b7aed340daso20293126d6.3;
+        Mon, 29 Jul 2024 04:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722253564; x=1722858364; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
+        b=bsWE2au6C6+jukQE7t+bgHvw2VsGrSytNAxLuWy8WSTOc8Oy4gyrYJO0pxiORbGLzs
+         30Oy/JnLOSRIppu84wr9juFlxZca6fRky/BNRXZ4xlhqK299r8QvNohLF2n3ZR7QdCUU
+         QNb2RnfSBlu/ndkNHtXuzNsn+F7q39zg9TmwliHZwHRffLlMvAMoiO2tkHQPsi6dXnVA
+         oumA9sII4nqlzKy68971yjP62kCtileK4ZKRXpFRLSLVbvsbkq+IA7WqfcKRKom3+Yii
+         IHZN6g9BubIzXUWP5Y93NDfk6odrqY+Wz0vWxjaGQr94X0oK0+ciGpad1q5KoMST3v0b
+         hkMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722253564; x=1722858364;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
+        b=d2zMhpIyzJIrLqPihSFHgtbQElaek8VNAnSfqjYl5vILv6yimZua6pqgIAN7oZwX7C
+         y/QShjqUF7HuhZWu4eWRaqNRL3knqM8xLDxvpIM9U6hEN/1dJSHf4rfXkv3/W33yUOA+
+         O4SQhTXXMb7io6V9aKadrLLt3f9J84MlLOWFRLWURtL7pnpwxVCRDnm3eh0WfNXNW+Az
+         b6G9VUAmxRQQE/AzslHxvCarAlhe1CrbnkLF6Gddh22TP1KICfNklTkhV++52CNnTEzO
+         y8vYkkRaPILv9hzDRGuhzmyUd4yDbcWRF4L738WuPJQv+vAo3LoUJamAF43g216IGhvI
+         C3Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFqwAF/TWLSSU8OHOQDT4dznTBUFJ1fupxh6EyTLcSfmBjU2FDMuZlTQOh2UM8laiWH02amMA4gdmiU1o3dW7XClLGx4QG8nnc2rV/PAoZTD+aoWRHC+5Hw7k5GnMLVOl+clj5UX9lFaVvEDeK+3y/7HlT59T7xE+GcYpmjxQK7SWcwY2oPi3W6FuATGHqvIyou7CsACdu/VYg7IXqtmvRLy0YJidZAGTJPV8CIpJYjqwwuC3XjiHRer5GMQTUn4XCBUPEt6UDe71H4mmiQflhodvbrRHmtkF0xr442rMT9HsZFfAgNkj9nE6YGX7QQjmyEdrg+Q==
+X-Gm-Message-State: AOJu0YzPsnvrpFXmZAt2AU1/l7hkdAPc+fe1+BOVhPyw27P90oup90UA
+	RcITrDhCj56FmEoPlrJ26RpqAzOZYmUm8NeMvmuJm7cCEXwJwlYqF7AzXK9y3UFDxG4Ze8v3mNL
+	wlOIoxfLp9OydATTIinb7qn8Yfks=
+X-Google-Smtp-Source: AGHT+IF5UmpKUFOnvoAK9lYxcwohmtfgqa1lFzGyA8Akl+YSskrOYOXqexc6VvI8Xmv0jJTGVagDPu5fB/SRGumTpvw=
+X-Received: by 2002:a05:6214:2425:b0:6b7:944f:3cef with SMTP id
+ 6a1803df08f44-6bb55aa2fc3mr125032596d6.44.1722253564270; Mon, 29 Jul 2024
+ 04:46:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240729023719.1933-1-laoar.shao@gmail.com> <87bk2gzgu0.fsf@intel.com>
+In-Reply-To: <87bk2gzgu0.fsf@intel.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 29 Jul 2024 19:45:27 +0800
+Message-ID: <CALOAHbCAKEwkDQSmyUqRs-EjM9=aF-QcORr1g=_CnFLoVXsSVg@mail.gmail.com>
+Subject: Re: [PATCH resend v4 00/11] Improve the copy of task comm
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	ebiederm@xmission.com, alexei.starovoitov@gmail.com, rostedt@goodmis.org, 
+	catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Jul 2024, Yafang Shao <laoar.shao@gmail.com> wrote:
-> Hello Andrew,
+On Mon, Jul 29, 2024 at 5:29=E2=80=AFPM Jani Nikula <jani.nikula@linux.inte=
+l.com> wrote:
 >
-> Is it appropriate for you to apply this to the mm tree?
+> On Mon, 29 Jul 2024, Yafang Shao <laoar.shao@gmail.com> wrote:
+> > Hello Andrew,
+> >
+> > Is it appropriate for you to apply this to the mm tree?
+> >
+> > Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on t=
+he
+> > length of task comm. Changes in the task comm could result in a destina=
+tion
+> > string that is overflow. Therefore, we should explicitly ensure the des=
+tination
+> > string is always NUL-terminated, regardless of the task comm. This appr=
+oach
+> > will facilitate future extensions to the task comm.
 >
-> Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
-> length of task comm. Changes in the task comm could result in a destination
-> string that is overflow. Therefore, we should explicitly ensure the destination
-> string is always NUL-terminated, regardless of the task comm. This approach
-> will facilitate future extensions to the task comm.
+> Why are we normalizing calling double-underscore prefixed functions all
+> over the place? i.e. __get_task_comm().
+>
+> get_task_comm() is widely used. At a glance, looks like it could be used
+> in many of the patches here too.
 
-Why are we normalizing calling double-underscore prefixed functions all
-over the place? i.e. __get_task_comm().
+There is a BUILD_BUG_ON() inside get_task_comm(), so when you use
+get_task_comm(), it implies that the BUILD_BUG_ON() is necessary.
+However, we don't want to impose this restriction on code where the
+length can be dynamically changed.
 
-get_task_comm() is widely used. At a glance, looks like it could be used
-in many of the patches here too.
+One use case of get_task_comm() is in code that has already exposed
+the length to userspace. In such cases, we specifically add the
+BUILD_BUG_ON() to prevent developers from changing it. For more
+information, see commit 95af469c4f60 ("fs/binfmt_elf: replace
+open-coded string copy with get_task_comm").
 
-
-BR,
-Jani.
-
-
->
-> As suggested by Linus [0], we can identify all relevant code with the
-> following git grep command:
->
->   git grep 'memcpy.*->comm\>'
->   git grep 'kstrdup.*->comm\>'
->   git grep 'strncpy.*->comm\>'
->   git grep 'strcpy.*->comm\>'
->
-> PATCH #2~#4:   memcpy
-> PATCH #5~#6:   kstrdup
-> PATCH #7~#9:   strncpy
-> PATCH #10~#11: strcpy
->
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
->
-> Changes:
-> v3->v4:
-> - Rename __kstrndup() to __kmemdup_nul() and define it inside mm/util.c
->   (Matthew)
-> - Remove unused local varaible (Simon)
->
-> v2->v3: https://lore.kernel.org/all/20240621022959.9124-1-laoar.shao@gmail.com/
-> - Deduplicate code around kstrdup (Andrew)
-> - Add commit log for dropping task_lock (Catalin)
->
-> v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gmail.com/
-> - Add comment for dropping task_lock() in __get_task_comm() (Alexei)
-> - Drop changes in trace event (Steven)
-> - Fix comment on task comm (Matus)
->
-> v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.com/
->
-> Yafang Shao (11):
->   fs/exec: Drop task_lock() inside __get_task_comm()
->   auditsc: Replace memcpy() with __get_task_comm()
->   security: Replace memcpy() with __get_task_comm()
->   bpftool: Ensure task comm is always NUL-terminated
->   mm/util: Fix possible race condition in kstrdup()
->   mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
->   mm/kmemleak: Replace strncpy() with __get_task_comm()
->   tsacct: Replace strncpy() with __get_task_comm()
->   tracing: Replace strncpy() with __get_task_comm()
->   net: Replace strcpy() with __get_task_comm()
->   drm: Replace strcpy() with __get_task_comm()
->
->  drivers/gpu/drm/drm_framebuffer.c     |  2 +-
->  drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
->  fs/exec.c                             | 10 ++++-
->  include/linux/sched.h                 |  4 +-
->  kernel/auditsc.c                      |  6 +--
->  kernel/trace/trace.c                  |  2 +-
->  kernel/trace/trace_events_hist.c      |  2 +-
->  kernel/tsacct.c                       |  2 +-
->  mm/kmemleak.c                         |  8 +---
->  mm/util.c                             | 61 ++++++++++++---------------
->  net/ipv6/ndisc.c                      |  2 +-
->  security/lsm_audit.c                  |  4 +-
->  security/selinux/selinuxfs.c          |  2 +-
->  tools/bpf/bpftool/pids.c              |  2 +
->  14 files changed, 51 insertions(+), 58 deletions(-)
-
--- 
-Jani Nikula, Intel
+--=20
+Regards
+Yafang
