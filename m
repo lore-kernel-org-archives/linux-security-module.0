@@ -1,124 +1,203 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220EB18DF99
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 20:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A2018DF9D;
+	Tue, 30 Jul 2024 21:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722371795; cv=none; b=bnC6QCFhDAbv6uKwF1QLQ7CNofqZECo+DBb+dBz8NSi12OasF3mPgCZeQivqFnLsKcA8QRH+BBrM/KfyXul8wr1CTkGkIsQBZ17JNbJrABS/Ii0qRZLUMH/yZpY1ct7c+qhwx4yh87aqv+vGUqBWiV/b64eu4/xFIqLiy3xZULU=
+	t=1722375681; cv=none; b=ctmUEwd/lWCCpAwSdfCQecqaPMDuXclCEu5vt18j7qbeE34pe8zJ+ka4hz3f24EZH7BUuhE5NyuPCCssdRRmh8X4kFia5Ghs+1NekwLMaUORVm8WIfVyIsKpGJv8mVo2uRbXHhJU4Q4986lYoeDdVkYrw9DxUSEiKJUcXFFmb/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722371795; c=relaxed/simple;
-	bh=GWv+ZFGY198S4GMsg1i1vpuKEpJESv8rIQXb72hP/CA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UhCxyn50WnNPqYWMbQsyQVXycq2gGiyncU9XYV8lWxsiSRmQi+Gr10byCwbSIRho8vahM76DDPyr022wvIhzei62+v0uo0FOTjOVuCKPkk5pKUYbuy/vHb+39IXr90qI+FSbcQEvf1VUWkHvkpnH7mVivJhXdR0JfMxsWfHgzSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BFT9sRVz; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1722375681; c=relaxed/simple;
+	bh=4pC6xzGT5WwjzhDI4qWpsh75dO6q2v+/sConbT8rVmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RkgL4OHyhvCOFnP5EixPtCbKr7/oYfAaSMKMm19wGbhVDNlSiC4IxpITZIxvS/75rGRDvehkE9/SbpH1TrRkaN1RrH4M8Zw8l+TZgFEtlsd1hJnLIfAR+p66xYdilU3Omt5FbGt6kToeMHz45r9LvXjWWnCTWF2qwuKB4ATykhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wnl2BKzU; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BFT9sRVz"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e026a2238d8so812537276.0
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 13:36:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wnl2BKzU"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d333d57cdso3517830b3a.3;
+        Tue, 30 Jul 2024 14:41:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1722371793; x=1722976593; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/CJpG48DfBkv73wDhS0TNI89h1uSGTQ6XB17w4gXvgA=;
-        b=BFT9sRVzS+M3hRAUVZde9e+57P4sZYZDCgnbJuAxpbwkHO8ZoUheOVqDF8JI9v8kpN
-         69ENBKiKb3vr5nLieR3nQd1pLT6zxaR/JNFPkdiEdchVUqP6mEZ4j6oPkW6MsOA1CADe
-         U8vri0rAg+yJuiGm9tLirEOUVVkwo/QxRadfGst2AEH1wJqKvZ7xoplYbn5iXFyD2jio
-         eieVaf23fXVfxty1baT172A4vIeX+NJfGmQcm/0ZUaWFEPKAPZqCp75S3zoqWJQz2kOY
-         TmR1722a9HIsXfLe11wKWaxtYy/AINwewuRi4bcgjXqgcSbTx5AwE84ewQxlIEiXPqHr
-         NJhw==
+        d=gmail.com; s=20230601; t=1722375679; x=1722980479; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vDHDlQoT1LUK3kA0AHu9dgucFO36otH5SCr/Prge0+c=;
+        b=Wnl2BKzUBJwLWWdEDgXhouP9fjPfbEkBBi0yq0vLM/IzhlkHC9kScg2F8EaNWfha83
+         qdiAqt/DgspmWOpElwKa9ejxRcDVv2Z7gEW0N6kxXoL8IX9HlomjBckKPsqWfKxUPVCN
+         Zg4lNUe6qIZ3wbKL0/5CfKU9EAXUWHRwYhAu3tMYJ+jTmJvo1x5mKDnJuQFyHC+4u7FR
+         fy39si6l7u1EsvwFnyYeyO5ICYTDTmYxjGpKxF/NtYIZbIR7AXrTdWllxVGP9SRZok7L
+         a2Vk8/c2+qlzXQRzz4PeKGOI7fQKiR/jvvAE8zWNc4aJ0uKiwyFSqE1/DVzq6KxCSSR0
+         IZlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722371793; x=1722976593;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/CJpG48DfBkv73wDhS0TNI89h1uSGTQ6XB17w4gXvgA=;
-        b=Rr/zgvkUJYviBN1VFzVkMF2WRlm17YziCfZ5nygD6hiRfV9qtFdjnQGEHEWJ/zkH2N
-         h41SfMPBPImhwmWpSBXApaqXsSRfrXGcoHg8W7KvIuYhB9mqFl+qUqIBy6nloPTLuBmF
-         ZYpW4wpcEXB2Pawg+hhI9pja07hDE8WPkrRXcrtqD4grqxGNUJ5eoX7iPDEZtijL4+xT
-         KdwnAQOP4prBGQlUUJAJDrJLA8/fa2IhNUoq5Nkc0/XVk4mnvrOply6facpGYSYRsv8I
-         FaBNZm8OyZRXziH7l2QkJ5dUdZGvYNgSObfRIlVQMwIx+ArxaGgSQ9tNdz+3qnFtyaLG
-         +s5g==
-X-Gm-Message-State: AOJu0YzNNVg29s0w92GrQlYf6BwU9zq17PVceYT6GFviHV9pPGoLV5zV
-	9rEaF50/7UQPRZKpCRIh3qVu9c65SUclK0qTGBJbvaAXJ3DWfHLdORURUkI0C4KnGgSIqHjxIWP
-	nYVEN+ARWFa2wH2xQK06OgDJrL8VdwqlS+jja
-X-Google-Smtp-Source: AGHT+IEZQw6rzIgi+g19tIdh7VmQzLO5da5JOokpAgfKAaG3jm3UEKihnEc/Is5zaLUy6SBuyPeJgwr2yEGK9pRCmx0=
-X-Received: by 2002:a05:6902:a83:b0:e08:8ecf:f563 with SMTP id
- 3f1490d57ef6-e0b544f1df1mr15138320276.16.1722371793005; Tue, 30 Jul 2024
- 13:36:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722375679; x=1722980479;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vDHDlQoT1LUK3kA0AHu9dgucFO36otH5SCr/Prge0+c=;
+        b=LEf58SOMjvdySirZ5M9V6hyt1SIUo+jjTCAXu9O3MgPdacPNAKNhBGN3c6x2rFqHoP
+         X4rOwBcW9V/8Fc3eqhsQY8czCl+uzfd07g51V/HWBq2v0t1c7PtvO+t+sgkoFb8xAoCy
+         l6xqU7PgDNwIrt2eqpO705lLqW9pnt7rZiRteylCR7HrvzRNB5cm9RgjMLT5qmRwtlwm
+         X6M7mFcQ1Jd5zGXNAHuBJ5ERl8vNAIprIO9BsFx77Y3VZnXt/uUCB4wLwmZJ//FALJfo
+         6yqohVsBnC8kUnRj3fdAMQQtzwdrcTCAwn61E2tR3dNvJbO+doHewkRo7UJuGb3JkeIO
+         LLRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUA5WvKwC7xAf5xWizL6zkHWE/I8K1IOkHWIqT3cojCni000ItKLGkZOOSuMLl1eq3m5gY6vQlw1YxmxcVOnLdL9Jy6ozXbmOqWNUBqG8V+GwS9y1O2XckqM/4pJtlJnLuVNNeK5LooEEMchnwxAVjea+8a5VtsDVSPirr8jTq4FwMVsCIwsRUpkDse
+X-Gm-Message-State: AOJu0YxQS+8zv6lDqRiwAfQH8gU/oKTHxWnC3npu2cDcy9XVcwRMGvHN
+	0hy2/QX92IiQ26A+X5pG72ZnlF//tWnean1+cky7ydKWFNtX74IE
+X-Google-Smtp-Source: AGHT+IGjRQKhxXwBH7xWRe2/ELl+5VxNoPQROhB+1zg6heUR4Gzti1+1Jxn13bXjj/tB6YlUvQ/Fug==
+X-Received: by 2002:a05:6a20:6a10:b0:1c2:8d33:af69 with SMTP id adf61e73a8af0-1c4a13afd31mr11605130637.41.1722375678712;
+        Tue, 30 Jul 2024 14:41:18 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead812316sm8883493b3a.101.2024.07.30.14.41.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 14:41:18 -0700 (PDT)
+Date: Tue, 30 Jul 2024 15:41:15 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com,
+	jannh@google.com, outreachy@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <Zqld+6wj8v0kLMBV@tahera-OptiPlex-5000>
+References: <cover.1721269836.git.fahimitahera@gmail.com>
+ <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
+ <20240730.Quei5io6sesh@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
- <CAHC9VhRnq81v=DYC3SC=oD2onittYTQbZqp5uoeU2MWuCh0-SA@mail.gmail.com> <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com>
-In-Reply-To: <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 30 Jul 2024 16:36:22 -0400
-Message-ID: <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com>
-Subject: Re: static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10'
- used before call to jump_label_init()
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Narasimhan V <Narasimhan.V@amd.com>, 
-	lkml <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240730.Quei5io6sesh@digikod.net>
 
-On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
-:
-> On Tue, Jul 30, 2024 at 5:03=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Tue, Jul 30, 2024 at 7:34=E2=80=AFAM Borislav Petkov <bp@alien8.de> =
-wrote:
-> > >
-> > > Hi,
-> > >
-> > > this is with today's linux-next:
-> > >
-> > > ...
-> > >
-> > > 09:44:13  [console-expect]#kexec -e
-> > > 09:44:13  kexec -e
-> > > 09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-next-202=
-40730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU=
- Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:55 UTC =
-2024
-> > > 09:44:16  [    0.000000] ------------[ cut here ]------------
-> > > 09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_call=
-_inline.c:153 __static_call_update+0x1c6/0x220
+On Tue, Jul 30, 2024 at 06:05:15PM +0200, Mickaël Salaün wrote:
+> On Wed, Jul 17, 2024 at 10:15:19PM -0600, Tahera Fahimi wrote:
+> > The patch introduces a new "scoped" attribute to the
+> > landlock_ruleset_attr that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET"
+> > to scope abstract unix sockets from connecting to a process outside of
+> > the same landlock domain.
+> > 
+> > This patch implement two hooks, "unix_stream_connect" and "unix_may_send" to
+> > enforce this restriction.
+> > 
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > 
+> > -------
+> > v7:
+> >  - Using socket's file credentials for both connected(STREAM) and
+> >    non-connected(DGRAM) sockets.
+> >  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
+> >    ptrace ensures that if a server's domain is accessible from the client's
+> >    domain (where the client is more privileged than the server), the client
+> >    can connect to the server in all edge cases.
+> >  - Removing debug codes.
+> > v6:
+> >  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
+> >    the same domain scoping as ptrace.
+> >  - code clean up.
+> > v5:
+> >  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
+> >  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
+> >    landlock_hierarchy to its respective landlock_ruleset.
+> >  - Using curr_ruleset to check if a domain is scoped while walking in the
+> >    hierarchy of domains.
+> >  - Modifying inline comments.
+> > V4:
+> >  - Rebased on Günther's Patch:
+> >    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
+> >    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
+> >  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
+> >  - Using file's FD credentials instead of credentials stored in peer_cred
+> >    for datagram sockets. (see discussion in [1])
+> >  - Modifying inline comments.
+> > V3:
+> >  - Improving commit description.
+> >  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
+> >    purpose, and adding related functions.
+> >  - Changing structure of ruleset based on "scoped".
+> >  - Removing rcu lock and using unix_sk lock instead.
+> >  - Introducing scoping for datagram sockets in unix_may_send.
+> > V2:
+> >  - Removing wrapper functions
+> > 
+> > [1]https://lore.kernel.org/outreachy/Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000/T/#m8cdf33180d86c7ec22932e2eb4ef7dd4fc94c792
+> > -------
+> > 
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > ---
+> >  include/uapi/linux/landlock.h |  29 +++++++++
+> >  security/landlock/limits.h    |   3 +
+> >  security/landlock/ruleset.c   |   7 ++-
+> >  security/landlock/ruleset.h   |  23 ++++++-
+> >  security/landlock/syscalls.c  |  14 +++--
+> >  security/landlock/task.c      | 112 ++++++++++++++++++++++++++++++++++
+> >  6 files changed, 181 insertions(+), 7 deletions(-)
+> 
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 849f5123610b..597d89e54aae 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> 
+> > +static int hook_unix_stream_connect(struct sock *const sock,
+> > +				    struct sock *const other,
+> > +				    struct sock *const newsk)
+> > +{
+> 
+> We must check if the unix sockets use an abstract address.  We need a
+> new test to check against a the three types of addresse: pathname,
+> unnamed (socketpair), and abstract.  This should result into 6 variants
+> because of the stream-oriented or dgram-oriented sockets to check both
+> hooks.  The test can do 3 checks: without any Landlock domain, with the
+> client being sandboxed with a Landlock domain for filesystem
+> restrictions only, and with a domain scoped for abstract unix sockets.
+correct. Since the current tests check all the possible scenarios for
+abstract unix sockets, we only need to add the scenarios where a socket
+with pathname or unnamed address and scoped domain wants to connect to a
+listening socket. In this case, the access should guaranteed since there
+is no scoping mechanism for these sockets yet.
 
-...
-
-> > KP, please take a look at this as soon as you can (lore link below for
-> > those who aren't on the list).  One obvious first thing to look at is
-> > simply moving the call to early_security_init(), but that requires
-> > some code audit to make sure it is safe and doesn't break something
-> > else.  Of course, if we can do something with how we setup/use static
-> > calls that is even better.  I'll take a look at it myself later today,
-> > but I'm busy with meetings for the next several hours.
-> >
-> > If we can't resolve this in the next day or two I'm going to
->
-> Thanks for the ping.
->
-> Taking a look, yeah it's possible that we need to move jump_label_init
-> before early_security_init / inside it.
->
-> I will do a repro and test my change and reply back.
-
-I'm pretty sure we don't want to move jump_label_init() inside
-early_security_init(), we likely want to keep those as distinct calls
-in start_kernel().  Shuffling the ordering around seems like a better
-solution if we can't solve this some other way.
-
-Regardless, thanks for looking into this, I'll hold off on digging
-into this and wait for your patch.
-
---
-paul-moore.com
+> For pathname you'll need to move the TMP_DIR define from fs_test.c into
+> common.h and create a static path for the named socket.  A fixture
+> teardown should remove the socket and the directory.
+Thanks for the help :) 
+> > +	if (sock_is_scoped(other))
+> > +		return 0;
+> > +
+> > +	return -EPERM;
+> > +}
+> > +
+> > +static int hook_unix_may_send(struct socket *const sock,
+> > +			      struct socket *const other)
+> > +{
+> 
+> Same here
+> 
+> > +	if (sock_is_scoped(other->sk))
+> > +		return 0;
+> > +
+> > +	return -EPERM;
+> > +}
+> > +
+> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
+> >  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
+> > +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
+> > +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
+> 
+> Future access controls dedicated to pathname unix sockets may need these
+> hooks too, but I guess we'll see where tehy fit the best when we'll be
+> there.
+> 
+> >  };
+> >  
+> >  __init void landlock_add_task_hooks(void)
+> > -- 
+> > 2.34.1
+> > 
+> > 
