@@ -1,238 +1,398 @@
-Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60924653
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Jul 2024 22:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F131922E9
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 08:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722291594; cv=none; b=ruNTfqizIu1Vca2zA5qielzZLGVV31uuLWXwSQ82HynUdQjXS45EUTFrKJe4ROBooFF6xZUeFa1WEEgfnolUbR9zaGZFz4gVs44kfHuk/wONWjFslrJSldug7KD7/KHPE+DQB1b3Evr+m0cceS++ByZZGAcW4Amb3vmYcVMZ7Lg=
+	t=1722327869; cv=none; b=X2CPo7m48FjDBv+2vQZy3QI7kdZ5xQk42qWfutBnOnkLOGW3Q11L63PK7+0dVo1ufPeEsGlfjy/b2WbbZPX5lueKMPp2CmKaiOlHL3OPmY8U7QGZ8hgkpb/hrl1t8bftc50ty9oc8dnkTU+BaTsLwMCiA+oNxHXKN1vysBiO3b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722291594; c=relaxed/simple;
-	bh=uFue5T7p+msPSssmFDyg5SIwpfbf0gxBCnZxS95H45w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=u5WphFJSSVnkei5RBHbxDkVlRPVMkfFkU0qRVrakvExhMfgIHNgvSTnuRU/io9HYYF+mkbSwcqmACVRuvRPJZy9uQZc5oMXjMapEBICuSPtppsXzZVagLtUd7SSYa5YHRODILBw5lqDhgVDOcyJF1bvCST6dBTqq1Lk8XiffTMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=HHoNHj4E; arc=none smtp.client-ip=66.163.185.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1722327869; c=relaxed/simple;
+	bh=2uHxQS5aKMWh2kPpovXZi27KIf/tDW3ergHMdyPuVgs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EawCuQ0Xsy9ejF9mVMUR+X5TRorUbYquIgw15TVjfPWXTorv1fXh0gkn0gOuBmGVHbqbg2FswXIOUSF+Jb7SqhgYm9OWhs39mjnuwhi8g/celZzzmekam40omFodfjN1g8mLmhQWuO4uni6hKa4JrcBrvwZendmNHzTSJe0dYQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zsE52QNo; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="HHoNHj4E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1722291591; bh=8Q1GEVNfsZZTVbEsPQqG0xM2GiBj4VrXV3uPepkDb4I=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=HHoNHj4EIFCT3iI8DNAsWe35z+w+KZnbuDG0xjk6SpBHTACiJebT9hN6Zsj88mXO4dKwrz8YWxTBCFgRzTMXAKFh3THVTkGL3KotoVU1J3MoPI06u6CqrmuMrPS6DW3HoGaKeRFWXvAPV8Hew+4ZLWBpHOh2ZJ13XTjxaLR76hxTYPR1ACjbwY3MaBlgN+FkqO0UgKKsw0CRuh817adnHckR620m4YvQWOs5H+fgZCjrqbcPWJfQg1s/+qJPMmHwx+BAWLYt/cfXsLiYEjsIy8c7iLfMAEHlAEZl4VcraaJlXLBirZNj5n6B2ldMw1kMZB3IAmYGE3seRGTAeqrmTA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1722291591; bh=JPHpt+dt67SOOVdQYBjeinTpbMNwdwZSX41VhjvlRu3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ssKrVwBb43DwD9tVWi6SrrNB7Zt4+gTIPfrHSOCnFrWo2gmoqTyuZI0JwjC4Md8Sw04gIWt2bNRwbPME2sP/Awog+jDyWTpAKXseXBKUoXRMxOK8HkaDu30Rnm3DzK+SQvXYg5zECM3bsu74XnPOPHNhXgRJK7AvxWOa90xmAJ7FNxr55T12l8Y6B5f9ZbYarH+UnIPW7qtAyxF42iysjARCcoJXNEkrdzWdb21FGi2e2Un8Dh3GN108cok4ppMj8UXPxZoe9uOpHZPbYh31xRscE0mFmSKaZewkiF4vWMpsQgSDWXzHqyEbXv+8WtfHbdUtYAeUnzolzq6vLu7aRw==
-X-YMail-OSG: d7VGCmMVM1nX4948aW_BFuH_FUdlhsOMUHGjS8qzYt_V3GmkCePILKIhH2F0cK6
- 3aAj4wriNVmtUrZGGkruhbirMFwKKGcQ6Ymp_pxjYUBWOyhEnfOY_ff26TveKEUUPmifXbCMrZYp
- qDX.DtrSHsHgBNEOaPE4mE3WaLpOFjJQL0c63yLcTPx045ZMVhHtRCpTD_Qe5YwXir7BKmM2XRd_
- F.ObGlOE9cY9Kt8v1RT75i8N0J4brd923hDOmKM6naf.lzdt6r81c_Sov4iNM5UJrAkV7dosmKho
- gA.HUnobELYrvujyx3NMvVbXkJE9AJwXSbWVMQsMVPaU6C0FqENl6xZHzMIrKpCuOOxNEexo592g
- D9ygqtwfxfxkr0pykF3rqMguxq_EK8MKefNsZm9iitoitIFH97gMrzEtl8aYPMzacsCO8XIbFwy4
- n5V0Ke5VcT69hyBlzfYAjaq4t1p5ja7xb2JE6xIiOKwVGSyxY_5LHsWvHal9LnyUHbsf3MFstcFh
- ktskz_N1jB8887kWWvRT1DvUubsRaC9Gk55bjWUEmdYV7YT0CT6F22mrAMbFoQnV4NxpPMGRiRDy
- F64rQRvmp.b8fax05qeh9Ix.YVrJy_8.ErgySPgRMD1usRcC6aYpbjoaiY6muE6QU2qvcpoHcuTR
- 8Aq0.45Iq8LGOEtef4KJnFZnHyznUvH3QBxB62ZF9eKfoyN8efpcjqcWZ2c6Qmih7NO6X7.ZdpZt
- yC1FuHkZvB4oPOEB1cXKMqD7FSMruPxZvMrrogj37.43_GUEOfDnV7IwKcWnNR7OS8FWa74q4aqX
- aqIbKp9VcpSgdLLwrn7wbyL_anSfA52k_Av6lhnQm.hqykIPHvqvc7kUzSt4rZpJm7y2bXNoituZ
- 9BAr_TNopQg3lHjXUjpjBVbP1Gml6c6QxFdDTWzxsHjQ.ql8bwfqF8.dgYjkJYR6rEhd9harmCdL
- SvV4CIO9.o_pMJMSpkVJRXKPx4I0EmUl2mQS2LdpwJlg8MX2pm_m0Vuf_SMNI9P.eXD8mozSE_EU
- 4vC.EKz1r42IBAHGC5UA5LCxHp6aJ_abID31CokYq9QdFt3lAT.fyWQ7TwNm.H1vmumJzc0E83cW
- pXHykrrLwlef.g2G_J8l0cGGDRVkZ2nEz0rdKU127cvvHmlJuwQzjKXWQmRZ7yjan_MKSmGI.tOu
- u6M6f9A4fBP.98yc5JrR5AGzHhlY97ZiibzaEXqAI1cJsuNMdxDaT2fbf4Ppf65T5Y6c09GZgG_d
- iesa_Q5UKJD_5_OpDmXTLc5WfHFfbGJ.JiMcxXo89IxCK1ZOKDmDoIUVAOZRw5jBZH_WLohThJH0
- oXRrHoPIUGFkKIjcSrIHb2eYwXEG_VUwZnrJPrbUbn1.18halTSpEKTD3ywK0pTxyWmnn5LndHcS
- eb_pu8sXXs2caEzxvyauXS4W8cDPTvVsLcTCjr8EgVOW33q035.A4w277O_HC_.knuJi4o_SC4Nw
- QBw0NFfx6IYHXfkKaxx8K5FmGt8cWOT0TdMk9QW6pu.jk0LOiU.rN0Ll6lir_rSpmxv5nLgIkzJd
- kztR3KqY9AyVuVyozsjXf_Dj2IBIwcXJZWq0V1jKwkgjX_DQtI642DwaF4mHm.xdo9wyjtJ2T_6R
- N34Ro1TjL_RTvtarZMCnZQhMTetEo9XAz9VO4SIvRdMlXjaGBQJI7quErhtDYXIsPjM_ZNOfprDj
- 6YfInsGNcB8zAVWmXmWNP7GaY4kXqmCXpRaCgpuaZTlVFXLuP3mCCpMuImONZqsYceNlOJpF85QB
- vZZ.7TxWJ3zzVIKM3altGp7GlA4DRRnR.nHnMgyC2wHtJtR8mwtXCSmLa1JCjHnUfDrE0y8DHFte
- gyudj5DLC522Fr2Z6k2wlWITGFrsywymU5a9OF_13fGseGK.ENlCdUI_p72eYq7QxMAG7sumzTNM
- 9W8gtzGf0.xRSJzbDsIj82pYqiv4nDOs8CR1ESvTrvXYsYdpkrto_aPLwBO0WjtBUnBoktr3tEml
- 4SkIr5XQY7c8vCh4U6BSZkEkTWc.DM.tBDPGAzQx_51_ZE8oh4EFl3QW9o2SiiyvOTIgXcooIrCs
- js1pxSE0cN_Ez.sx8z6oKkUMeW6s4QGcG_tb8sk01rvxVyd9e9bAfNjIxQeeJWdIDVollJujKr_u
- gUc1eFXaEchSpoMZBxGjSXtJKM.M3uEALUAKeOILOeU_tKLyqul_4GmXIv4Ek4PIuTaSqW0lqjPU
- nU6NqF041BCsW6_2kmpEHZ0J_9614EOSegTYljg65HJbWoif_zixzdVD5GCY.ZRafDAAwAPYpQoY
- Mumg1
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 983562c8-dec7-4038-8297-1b24dc8a33e0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Mon, 29 Jul 2024 22:19:51 +0000
-Received: by hermes--production-gq1-799bb7c8cf-zh7nt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9edf7fb820238b006d648f0715dda5c7;
-          Mon, 29 Jul 2024 22:09:41 +0000 (UTC)
-Message-ID: <519e4173-56b4-4b0d-850c-ddb590a75e5d@schaufler-ca.com>
-Date: Mon, 29 Jul 2024 15:09:38 -0700
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zsE52QNo"
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0879957a99so6032586276.1
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 01:24:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722327865; x=1722932665; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=09LrO9zJocW7sBgmr7f+qecRkcjOtNz8Q6JyiO8R0pc=;
+        b=zsE52QNot2n0Ug02UR+LSjgHRAjBb1vOVBZ2ZyrrwWROmA0Lno4scpowk72Ts3kxAI
+         BVZ6QXmBaqWhU5q6q6vq4JHa/0ftr2OpIO6ge16ds4sVegFXS5Iq5HfsILQIdb3d7p03
+         TMbGdKlmBIVtKWAP3YgEatLLZTbSuYqu4rG5MkNI4QPkQY0dm9uOcPD0ip+n73vAtL8t
+         TwYz404wh5u8CW4pKFvsNJ4hLpWnB+5sA8oZV2DgjTx2QFcDNx3Rr11zV9iwM9afGE2a
+         MnDyuBDObsCOJxM+wpjRz1/kIr6o+D9o6F97/6jbhRftZtYdkFulq9nffgTm3ZJGYT2z
+         uJUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722327865; x=1722932665;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=09LrO9zJocW7sBgmr7f+qecRkcjOtNz8Q6JyiO8R0pc=;
+        b=Sn1leW5PWKPdAGGaBPlRbWNEXL643L9y7Nb7O1UWuC8E0ZSUzKOZfxwMq2iHYBoX5n
+         Ezko9TklW1xf3HE3xKrLO+m1h2CdDWxm7g7zKumgBRslCnLuelpEdiWNNLdm9j0ZzmyJ
+         o+a35R/lBhTNSQjRpS4JnsbmDn1U4CK1E0rVBii2cyDWukET/CQSQnAPDm9mfw/S0JAb
+         XsgXzIyjaaGHvl+VT4lY6Y1J5UwoxMxUhXD8ALKlebL8q2OOmkhsfEmqQjYX4EziCYAs
+         Ma26jYgX+F9kuC1nMH/XAD8xc1Aeux1MEtVXjzoOsMykL2941l9gXYoQoqJ9I0Nf3XBZ
+         2Pzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsGUEs85vPJRxueWYVBmb461DhIw19A/nxWsywUg9+94kbWo3pj1DxD4KZE2hnhd2lNdPwoPGxGyRirBZLIcl8CwCV3Leq8Z0Nfs2pLxWTs8hfBpmS
+X-Gm-Message-State: AOJu0Yx1EgCV2PjFuYoAF0/c2qs6hKjF+DVgWonpL/oxqyBW8FmEbdF4
+	KAABUY5heek4oHc8RSIPK8TidK0V3k1uOstjChv2SfIi61ZYJWXXDUTNiPKK5QgSoVUvBEEnWhS
+	pgQ==
+X-Google-Smtp-Source: AGHT+IE0GdaENzmKS3iU3wF52+3rW+u0cpzuGOkE3HXo4IXpVdMBS8KYMnNu3L5OIimBGkKycHgWUFccoxk=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:6902:188a:b0:dfe:fe5e:990a with SMTP id
+ 3f1490d57ef6-e0b544ec634mr18964276.9.1722327865224; Tue, 30 Jul 2024 01:24:25
+ -0700 (PDT)
+Date: Tue, 30 Jul 2024 10:24:23 +0200
+In-Reply-To: <20240728002602.3198398-3-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: cleanup lsm_hooks.h
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
-References: <20240729215702.318099-2-paul@paul-moore.com>
-Content-Language: en-US
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240729215702.318099-2-paul@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Mime-Version: 1.0
+References: <20240728002602.3198398-1-ivanov.mikhail1@huawei-partners.com> <20240728002602.3198398-3-ivanov.mikhail1@huawei-partners.com>
+Message-ID: <ZqijJPrnCnGnVGkq@google.com>
+Subject: Re: [RFC PATCH v1 2/9] landlock: Support TCP listen access-control
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, alx@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/29/2024 2:57 PM, Paul Moore wrote:
-> Some cleanup and style corrections for lsm_hooks.h.
->
->  * Drop the lsm_inode_alloc() extern declaration, it is not needed.
->  * Relocate lsm_get_xattr_slot() and extern variables in the file to
->    improve grouping of related objects.
->  * Don't use tabs to needlessly align structure fields.
->
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+Hello!
 
-Sense of aesthetics aside,
+Thanks for sending these patches!
 
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Most comments are about documentation so far.
 
+In the implementation, I'm mostly unclear about the interaction with the
+uncommon Upper Layer Protocols.  I'm also not very familiar with the socket
+state machines, maybe someone from the netdev list would have time to doubl=
+e
+check that aspect?
+
+
+On Sun, Jul 28, 2024 at 08:25:55AM +0800, Mikhail Ivanov wrote:
+> LANDLOCK_ACCESS_NET_BIND_TCP is useful to limit the scope of "bindable"
+> ports to forbid a malicious sandboxed process to impersonate a legitimate
+> server process. However, bind(2) might be used by (TCP) clients to set th=
+e
+> source port to a (legitimate) value. Controlling the ports that can be
+> used for listening would allow (TCP) clients to explicitly bind to ports
+> that are forbidden for listening.
+>=20
+> Such control is implemented with a new LANDLOCK_ACCESS_NET_LISTEN_TCP
+> access right that restricts listening on undesired ports with listen(2).
+
+Nit: I would turn around the first two commit message paragraphs and descri=
+be
+your changes first, before explaining the problems in the bind(2) support. =
+ I
+was initially a bit confused that the description started talking about
+LANDLOCK_ACCESS_NET_BIND_TCP.
+
+General recommendations at:
+https://www.kernel.org/doc/html/v6.10/process/submitting-patches.html#descr=
+ibe-your-changes
+
+
+> It's worth noticing that this access right doesn't affect changing
+> backlog value using listen(2) on already listening socket.
+>=20
+> * Create new LANDLOCK_ACCESS_NET_LISTEN_TCP flag.
+> * Add hook to socket_listen(), which checks whether the socket is allowed
+>   to listen on a binded local port.
+> * Add check_tcp_socket_can_listen() helper, which validates socket
+>   attributes before the actual access right check.
+> * Update `struct landlock_net_port_attr` documentation with control of
+>   binding to ephemeral port with listen(2) description.
+> * Change ABI version to 6.
+>=20
+> Closes: https://github.com/landlock-lsm/linux/issues/15
+> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
 > ---
->  include/linux/lsm_hooks.h | 82 +++++++++++++++++++--------------------
->  security/security.c       |  2 +-
->  2 files changed, 41 insertions(+), 43 deletions(-)
->
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 845457f0eeb7..f0dd453b39d5 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -79,8 +79,8 @@ struct lsm_static_calls_table {
->   * Contains the information that identifies the LSM.
->   */
->  struct lsm_id {
-> -	const char	*name;
-> -	u64		id;
-> +	const char *name;
-> +	u64 id;
+>  include/uapi/linux/landlock.h                | 23 +++--
+>  security/landlock/limits.h                   |  2 +-
+>  security/landlock/net.c                      | 90 ++++++++++++++++++++
+>  security/landlock/syscalls.c                 |  2 +-
+>  tools/testing/selftests/landlock/base_test.c |  2 +-
+>  5 files changed, 108 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.=
+h
+> index 68625e728f43..6b8df3293eee 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -104,13 +104,16 @@ struct landlock_net_port_attr {
+>  	/**
+>  	 * @port: Network port in host endianness.
+>  	 *
+> -	 * It should be noted that port 0 passed to :manpage:`bind(2)` will
+> -	 * bind to an available port from a specific port range. This can be
+> -	 * configured thanks to the ``/proc/sys/net/ipv4/ip_local_port_range``
+> -	 * sysctl (also used for IPv6). A Landlock rule with port 0 and the
+> -	 * ``LANDLOCK_ACCESS_NET_BIND_TCP`` right means that requesting to bind
+> -	 * on port 0 is allowed and it will automatically translate to binding
+> -	 * on the related port range.
+
+Please rebase on a more recent revision, we have changed this phrasing in t=
+he meantime:
+
+ - s/a specific port range/the ephemeral port range/
+ - The paragraph was split in two.
+
+> +	 * It should be noted that some operations cause binding socket to a ra=
+ndom
+> +	 * available port from a specific port range. This can be configured th=
+anks
+> +	 * to the ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl (also used =
+for
+> +	 * IPv6). Following operation requests are automatically translate to
+> +	 * binding on the related port range:
+> +	 *
+> +	 * - A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP=
+``
+> +	 *   right means that binding on port 0 is allowed.
+> +	 * - A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_LISTEN_T=
+CP``
+> +	 *   right means listening without an explicit binding is allowed.
+
+There are some grammatical problems in this documentation section.
+
+Can I suggest an alternative?
+
+  Some socket operations will fall back to using a port from the ephemeral =
+port
+  range, if no specific port is requested by the caller.  Among others, thi=
+s
+  happens in the following cases:
+
+  - :manpage:`bind(2)` is invoked with a socket address that uses port 0.
+  - :manpage:`listen(2)` is invoked on a socket without previously calling
+    :manpage:`bind(2)`.
+
+  These two actions, which implicitly use an ephemeral port, can be allowed=
+ with
+  a Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP`` /
+  ``LANDLOCK_ACCESS_NET_LISTEN_TCP`` right.
+
+  The ephemeral port range is configured in the
+  ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl (also used for IPv6).
+
+When we have the documentation wording finalized,
+please send an update to the man pages as well,
+for this and other documentation updates.
+
+Small remarks on what I've done here:
+
+* I am avoiding the word "binding" when referring to the automatic assignme=
+nt to
+  an ephemeral port - IMHO, this is potentially confusing, since bind(2) is=
+ not
+  explicitly called.
+* I am also dropping the "It should be noted" / "Note that" phrase, which i=
+s
+  frowned upon in man pages.
+
+>  	 */
+>  	__u64 port;
 >  };
->  
->  /*
-> @@ -93,48 +93,30 @@ struct lsm_id {
->   * @lsm: The name of the lsm that owns this hook.
->   */
->  struct security_hook_list {
-> -	struct lsm_static_call	*scalls;
-> -	union security_list_options	hook;
-> -	const struct lsm_id		*lsmid;
-> +	struct lsm_static_call *scalls;
-> +	union security_list_options hook;
-> +	const struct lsm_id *lsmid;
->  } __randomize_layout;
->  
->  /*
->   * Security blob size or offset data.
->   */
->  struct lsm_blob_sizes {
-> -	int	lbs_cred;
-> -	int	lbs_file;
-> -	int	lbs_ib;
-> -	int	lbs_inode;
-> -	int	lbs_sock;
-> -	int	lbs_superblock;
-> -	int	lbs_ipc;
-> -	int	lbs_key;
-> -	int	lbs_msg_msg;
-> -	int	lbs_perf_event;
-> -	int	lbs_task;
-> -	int	lbs_xattr_count; /* number of xattr slots in new_xattrs array */
-> -	int	lbs_tun_dev;
-> +	int lbs_cred;
-> +	int lbs_file;
-> +	int lbs_ib;
-> +	int lbs_inode;
-> +	int lbs_sock;
-> +	int lbs_superblock;
-> +	int lbs_ipc;
-> +	int lbs_key;
-> +	int lbs_msg_msg;
-> +	int lbs_perf_event;
-> +	int lbs_task;
-> +	int lbs_xattr_count; /* number of xattr slots in new_xattrs array */
-> +	int lbs_tun_dev;
->  };
->  
-> -/**
-> - * lsm_get_xattr_slot - Return the next available slot and increment the index
-> - * @xattrs: array storing LSM-provided xattrs
-> - * @xattr_count: number of already stored xattrs (updated)
-> - *
-> - * Retrieve the first available slot in the @xattrs array to fill with an xattr,
-> - * and increment @xattr_count.
-> - *
-> - * Return: The slot to fill in @xattrs if non-NULL, NULL otherwise.
-> - */
-> -static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
-> -					       int *xattr_count)
-> -{
-> -	if (unlikely(!xattrs))
-> -		return NULL;
-> -	return &xattrs[(*xattr_count)++];
-> -}
-> -
->  /*
->   * LSM_RET_VOID is used as the default value in LSM_HOOK definitions for void
->   * LSM hooks (in include/linux/lsm_hook_defs.h).
-> @@ -153,8 +135,6 @@ static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
->  		.hook = { .NAME = HOOK }		\
->  	}
->  
-> -extern char *lsm_names;
-> -
->  extern void security_add_hooks(struct security_hook_list *hooks, int count,
->  			       const struct lsm_id *lsmid);
->  
-> @@ -176,9 +156,6 @@ struct lsm_info {
->  	struct lsm_blob_sizes *blobs; /* Optional: for blob sharing. */
->  };
->  
-> -extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
-> -extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
-> -
->  #define DEFINE_LSM(lsm)							\
->  	static struct lsm_info __lsm_##lsm				\
->  		__used __section(".lsm_info.init")			\
-> @@ -189,7 +166,28 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
->  		__used __section(".early_lsm_info.init")		\
->  		__aligned(sizeof(unsigned long))
->  
-> -extern int lsm_inode_alloc(struct inode *inode);
-> +/* DO NOT tamper with these variables outside of the LSM framework */
-> +extern char *lsm_names;
->  extern struct lsm_static_calls_table static_calls_table __ro_after_init;
-> +extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
-> +extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
-> +
-> +/**
-> + * lsm_get_xattr_slot - Return the next available slot and increment the index
-> + * @xattrs: array storing LSM-provided xattrs
-> + * @xattr_count: number of already stored xattrs (updated)
-> + *
-> + * Retrieve the first available slot in the @xattrs array to fill with an xattr,
-> + * and increment @xattr_count.
-> + *
-> + * Return: The slot to fill in @xattrs if non-NULL, NULL otherwise.
-> + */
-> +static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
-> +					       int *xattr_count)
-> +{
-> +	if (unlikely(!xattrs))
-> +		return NULL;
-> +	return &xattrs[(*xattr_count)++];
-> +}
->  
->  #endif /* ! __LINUX_LSM_HOOKS_H */
-> diff --git a/security/security.c b/security/security.c
-> index 780b84f5d09c..7ac6765f9260 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -764,7 +764,7 @@ static int lsm_file_alloc(struct file *file)
+> @@ -251,7 +254,7 @@ struct landlock_net_port_attr {
+>   * DOC: net_access
 >   *
->   * Returns 0, or -ENOMEM if memory can't be allocated.
+>   * Network flags
+> - * ~~~~~~~~~~~~~~~~
+> + * ~~~~~~~~~~~~~
+>   *
+>   * These flags enable to restrict a sandboxed process to a set of networ=
+k
+>   * actions. This is supported since the Landlock ABI version 4.
+> @@ -261,9 +264,13 @@ struct landlock_net_port_attr {
+>   * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
+>   * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
+>   *   a remote port.
+> + * - %LANDLOCK_ACCESS_NET_LISTEN_TCP: Listen for TCP socket connections =
+on
+> + *   a local port. This access right is available since the sixth versio=
+n
+> + *   of the Landlock ABI.
 >   */
-> -int lsm_inode_alloc(struct inode *inode)
-> +static int lsm_inode_alloc(struct inode *inode)
->  {
->  	if (!lsm_inode_cache) {
->  		inode->i_security = NULL;
+>  /* clang-format off */
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> +#define LANDLOCK_ACCESS_NET_LISTEN_TCP			(1ULL << 2)
+>  /* clang-format on */
+>  #endif /* _UAPI_LINUX_LANDLOCK_H */
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 4eb643077a2a..2ef147389474 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -22,7 +22,7 @@
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_F=
+S)
+> =20
+> -#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
+> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_LISTEN_TCP
+>  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_=
+NET)
+> =20
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index 669ba260342f..a29cb27c3f14 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -6,10 +6,12 @@
+>   * Copyright =C2=A9 2022-2023 Microsoft Corporation
+>   */
+> =20
+> +#include "net/sock.h"
+>  #include <linux/in.h>
+>  #include <linux/net.h>
+>  #include <linux/socket.h>
+>  #include <net/ipv6.h>
+> +#include <net/tcp.h>
+> =20
+>  #include "common.h"
+>  #include "cred.h"
+> @@ -194,9 +196,97 @@ static int hook_socket_connect(struct socket *const =
+sock,
+>  					   LANDLOCK_ACCESS_NET_CONNECT_TCP);
+>  }
+> =20
+> +/*
+> + * Checks that socket state and attributes are correct for listen.
+> + * It is required to not wrongfully return -EACCES instead of -EINVAL.
+      ^^^^^^^^^^^^^^
+
+Doc nit: I would just document that this function returns -EINVAL on failur=
+e?
+In this place, I would expect that the function interface is documented for
+callers.  (From that perspective, this is not a requirement, but a guarante=
+e
+that the function gives.)
+
+> + *
+> + * This checker requires sock->sk to be locked.
+> + */
+> +static int check_tcp_socket_can_listen(struct socket *const sock)
+> +{
+> +	struct sock *sk =3D sock->sk;
+> +	unsigned char cur_sk_state =3D sk->sk_state;
+> +	const struct tcp_ulp_ops *icsk_ulp_ops;
+> +
+> +	/* Allows only unconnected TCP socket to listen (cf. inet_listen). */
+> +	if (sock->state !=3D SS_UNCONNECTED)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * Checks sock state. This is needed to ensure consistency with inet st=
+ack
+> +	 * error handling (cf. __inet_listen_sk).
+> +	 */
+> +	if (WARN_ON_ONCE(!((1 << cur_sk_state) & (TCPF_CLOSE | TCPF_LISTEN))))
+> +		return -EINVAL;
+> +
+> +	icsk_ulp_ops =3D inet_csk(sk)->icsk_ulp_ops;
+> +
+> +	/*
+> +	 * ULP (Upper Layer Protocol) stands for protocols which are higher tha=
+n
+> +	 * transport protocol in OSI model. Linux has an infrastructure that
+> +	 * allows TCP sockets to support logic of some ULP (e.g. TLS ULP).
+> +	 *
+> +	 * Sockets can listen only if ULP control hook has clone method.
+> +	 */
+> +	if (icsk_ulp_ops && !icsk_ulp_ops->clone)
+> +		return -EINVAL;
+
+This seems like an implementation detail in the networking subsystem?
+
+If I understand correctly, these are cases where we use TCP on top of proto=
+cols
+that are not IP (or have an additional layer in the middle, like TLS?).  Th=
+is
+can not be recognized through the socket family or type?
+
+Do we have cases where we can run TCP on top of something else than plain I=
+Pv4
+or IPv6, where the clone method exists?
+
+> +	return 0;
+> +}
+> +
+> +static int hook_socket_listen(struct socket *const sock, const int backl=
+og)
+> +{
+> +	int err =3D 0;
+> +	int family;
+> +	__be16 port;
+> +	struct sock *sk;
+> +	const struct landlock_ruleset *const dom =3D get_current_net_domain();
+> +
+> +	if (!dom)
+> +		return 0;
+> +	if (WARN_ON_ONCE(dom->num_layers < 1))
+> +		return -EACCES;
+> +
+> +	/* Checks if it's a (potential) TCP socket. */
+> +	if (sock->type !=3D SOCK_STREAM)
+> +		return 0;
+> +
+> +	sk =3D sock->sk;
+> +	family =3D sk->__sk_common.skc_family;
+> +	/*
+> +	 * Socket cannot be assigned AF_UNSPEC because this type is used only
+> +	 * in the context of addresses.
+> +	 *
+> +	 * Doesn't restrict listening for non-TCP sockets.
+> +	 */
+> +	if (family !=3D AF_INET && family !=3D AF_INET6)
+> +		return 0;
+
+Aren't the socket type and family checks duplicated with existing logic tha=
+t we
+have for the connect(2) and bind(2) support?  Should it be deduplicated, or=
+ is
+that too messy?
+
+> +
+> +	lock_sock(sk);
+> +	/*
+> +	 * Calling listen(2) for a listening socket does nothing with its state=
+ and
+> +	 * only changes backlog value (cf. __inet_listen_sk). Checking of liste=
+n
+> +	 * access right is not required.
+> +	 */
+> +	if (sk->sk_state =3D=3D TCP_LISTEN)
+> +		goto release_nocheck;
+> +
+> +	err =3D check_tcp_socket_can_listen(sock);
+> +	if (unlikely(err))
+> +		goto release_nocheck;
+> +
+> +	port =3D htons(inet_sk(sk)->inet_num);
+> +	release_sock(sk);
+> +	return check_access_socket(dom, port, LANDLOCK_ACCESS_NET_LISTEN_TCP);
+> +
+> +release_nocheck:
+> +	release_sock(sk);
+> +	return err;
+> +}
+
+Thanks for sending these patches!
+
+=E2=80=94G=C3=BCnther
