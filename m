@@ -1,398 +1,165 @@
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F131922E9
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 08:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8700A187340;
+	Tue, 30 Jul 2024 11:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722327869; cv=none; b=X2CPo7m48FjDBv+2vQZy3QI7kdZ5xQk42qWfutBnOnkLOGW3Q11L63PK7+0dVo1ufPeEsGlfjy/b2WbbZPX5lueKMPp2CmKaiOlHL3OPmY8U7QGZ8hgkpb/hrl1t8bftc50ty9oc8dnkTU+BaTsLwMCiA+oNxHXKN1vysBiO3b0=
+	t=1722339281; cv=none; b=bsQrv+Zm6J15s7v4kHdypA/4v7GR4hEz7OCyRChGs8PMOJ228cK2jTxkZlrhwSqpPlZ8EBYYugFTzS/xKiOyLKMaZIZvtdSCbbqJwq06qpExM/ovMsr2eu6i1uKzZLZmZwW4FBC5mDLgAnHB1s9XAFkc5WetGoQlQ0c3fPRt8+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722327869; c=relaxed/simple;
-	bh=2uHxQS5aKMWh2kPpovXZi27KIf/tDW3ergHMdyPuVgs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EawCuQ0Xsy9ejF9mVMUR+X5TRorUbYquIgw15TVjfPWXTorv1fXh0gkn0gOuBmGVHbqbg2FswXIOUSF+Jb7SqhgYm9OWhs39mjnuwhi8g/celZzzmekam40omFodfjN1g8mLmhQWuO4uni6hKa4JrcBrvwZendmNHzTSJe0dYQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zsE52QNo; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1722339281; c=relaxed/simple;
+	bh=a/K2SrYzy1yPes3unN4a5mZP9ihrCOdoEUZtu/mNdFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CA8Xowfu1BxmaeiHf2JDZWUx0Gc/aA/AW2G4X2tuS+wu/+lM5ucE+lhR3FeiycEIMRZFCdKgZNgtEmyM1OpX8FpxXDqKcYVI12FYuQm0uZ0d+PnafUjYe7UYFVpXSV3RTZ5mAkzUgmPK522WNpFbggE750UJROmlogXwdr94t08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GnPrJSJ6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zsE52QNo"
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0879957a99so6032586276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 01:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722327865; x=1722932665; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=09LrO9zJocW7sBgmr7f+qecRkcjOtNz8Q6JyiO8R0pc=;
-        b=zsE52QNot2n0Ug02UR+LSjgHRAjBb1vOVBZ2ZyrrwWROmA0Lno4scpowk72Ts3kxAI
-         BVZ6QXmBaqWhU5q6q6vq4JHa/0ftr2OpIO6ge16ds4sVegFXS5Iq5HfsILQIdb3d7p03
-         TMbGdKlmBIVtKWAP3YgEatLLZTbSuYqu4rG5MkNI4QPkQY0dm9uOcPD0ip+n73vAtL8t
-         TwYz404wh5u8CW4pKFvsNJ4hLpWnB+5sA8oZV2DgjTx2QFcDNx3Rr11zV9iwM9afGE2a
-         MnDyuBDObsCOJxM+wpjRz1/kIr6o+D9o6F97/6jbhRftZtYdkFulq9nffgTm3ZJGYT2z
-         uJUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722327865; x=1722932665;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=09LrO9zJocW7sBgmr7f+qecRkcjOtNz8Q6JyiO8R0pc=;
-        b=Sn1leW5PWKPdAGGaBPlRbWNEXL643L9y7Nb7O1UWuC8E0ZSUzKOZfxwMq2iHYBoX5n
-         Ezko9TklW1xf3HE3xKrLO+m1h2CdDWxm7g7zKumgBRslCnLuelpEdiWNNLdm9j0ZzmyJ
-         o+a35R/lBhTNSQjRpS4JnsbmDn1U4CK1E0rVBii2cyDWukET/CQSQnAPDm9mfw/S0JAb
-         XsgXzIyjaaGHvl+VT4lY6Y1J5UwoxMxUhXD8ALKlebL8q2OOmkhsfEmqQjYX4EziCYAs
-         Ma26jYgX+F9kuC1nMH/XAD8xc1Aeux1MEtVXjzoOsMykL2941l9gXYoQoqJ9I0Nf3XBZ
-         2Pzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsGUEs85vPJRxueWYVBmb461DhIw19A/nxWsywUg9+94kbWo3pj1DxD4KZE2hnhd2lNdPwoPGxGyRirBZLIcl8CwCV3Leq8Z0Nfs2pLxWTs8hfBpmS
-X-Gm-Message-State: AOJu0Yx1EgCV2PjFuYoAF0/c2qs6hKjF+DVgWonpL/oxqyBW8FmEbdF4
-	KAABUY5heek4oHc8RSIPK8TidK0V3k1uOstjChv2SfIi61ZYJWXXDUTNiPKK5QgSoVUvBEEnWhS
-	pgQ==
-X-Google-Smtp-Source: AGHT+IE0GdaENzmKS3iU3wF52+3rW+u0cpzuGOkE3HXo4IXpVdMBS8KYMnNu3L5OIimBGkKycHgWUFccoxk=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:6902:188a:b0:dfe:fe5e:990a with SMTP id
- 3f1490d57ef6-e0b544ec634mr18964276.9.1722327865224; Tue, 30 Jul 2024 01:24:25
- -0700 (PDT)
-Date: Tue, 30 Jul 2024 10:24:23 +0200
-In-Reply-To: <20240728002602.3198398-3-ivanov.mikhail1@huawei-partners.com>
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GnPrJSJ6"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5102440E01B3;
+	Tue, 30 Jul 2024 11:34:36 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Bh0dKN8dxo4u; Tue, 30 Jul 2024 11:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1722339273; bh=2wFHuj+T12sSvdrDW5QZArPdPdVCyXj7fZ4YEuwTacM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GnPrJSJ6glIReM6vuNyXPrwDBzMd43awGG0IUlNr2cnF13KxfDaKAgM8GeTKFrdBm
+	 fuGdqfah/WbmsvDiSDg3hrS1BmYNJYr8Cq/de8NwdwErUqUiTbBvlc2cQnE+ezwtQs
+	 lhOSfPEqyIUWJBR4W2zimxw4I3Hr9G7c+ILrePZO/yVBQ2gnW2ekUM7he184mmEj+w
+	 xZs9gpD+Loe1wAf4d7Dtqqe2rJ1usS8i9quw4P5MuBRywH0g9QAgVLBVEgwMaPwOm4
+	 uxT/afFvCMsNpFudZdrTfey3UADjMp3m5IEjK3XqE7OZ2uv5SADXMTaGp2tU/sgVF0
+	 5ga0COmhJEZzZSo6kJCPLXcXQx9QFvJjy31ewkAaNkpOUo4WSFGQeqFoIagOiU0NBX
+	 XUTSXBgPVWKBgYQbQgeIjN1EYAdbliBp4hmz4eNp6CQNFpjDwGV4ErhR6e7znv1x3Z
+	 FgW6YTbm8LyKtZZn3MgKkurTPKboH94Ikd6DxSmvWbKRW4IjV7YkYRf9Kqy1sQG6xX
+	 3gRLKhemx7nUa7/SMCjoOFHd4kQIFsqurtOIQKvznI2NYkpUMdYQJcodCyOtLRTWwV
+	 6P9hE1jPXx6+iQ3Tb/JaVk5a3wHSaZ81NfRDwUyJKg5Em8p+Du4rSdTh8afXETpXlt
+	 FtMlq7BdnpiUzTvDbrpuIPo4=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D95D640E01A8;
+	Tue, 30 Jul 2024 11:34:26 +0000 (UTC)
+Date: Tue, 30 Jul 2024 13:34:19 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: linux-security-module@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Narasimhan V <Narasimhan.V@amd.com>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: static_key_enable_cpuslocked(): static key
+ 'security_hook_active_locked_down_0+0x0/0x10' used before call to
+ jump_label_init()
+Message-ID: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240728002602.3198398-1-ivanov.mikhail1@huawei-partners.com> <20240728002602.3198398-3-ivanov.mikhail1@huawei-partners.com>
-Message-ID: <ZqijJPrnCnGnVGkq@google.com>
-Subject: Re: [RFC PATCH v1 2/9] landlock: Support TCP listen access-control
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, alx@kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hello!
+Hi,
 
-Thanks for sending these patches!
+this is with today's linux-next:
 
-Most comments are about documentation so far.
+...
 
-In the implementation, I'm mostly unclear about the interaction with the
-uncommon Upper Layer Protocols.  I'm also not very familiar with the socket
-state machines, maybe someone from the netdev list would have time to doubl=
-e
-check that aspect?
+09:44:13  [console-expect]#kexec -e
+09:44:13  kexec -e
+09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-next-20240730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (GNU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:55 UTC 2024
+09:44:16  [    0.000000] ------------[ cut here ]------------
+09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_call_inline.c:153 __static_call_update+0x1c6/0x220
+09:44:16  [    0.000000] Modules linked in:
+09:44:16  [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc1-next-20240730-1722324631886 #1
+09:44:16  [    0.000000] RIP: 0010:__static_call_update+0x1c6/0x220
+09:44:16  [    0.000000] Code: 87 5b eb d9 00 a8 01 0f 85 6c ff ff ff 4c 89 ee 48 c7 c7 e0 fb a2 8c c6 05 44 63 2b 02 01 e8 b1 00 d9 ff 0f 0b e9 4f ff ff ff <0f> 0b 48 c7 c7 40 fc 40 8d e8 dc 52 e1 00 e8 a7 23 d9 ff 48 8b 45
+09:44:16  [    0.000000] RSP: 0000:ffffffff8d203dd0 EFLAGS: 00010046 ORIG_RAX: 0000000000000000
+09:44:16  [    0.000000] RAX: 0000000000000000 RBX: ffffffff8b7e3250 RCX: 000000006690cbe9
+09:44:16  [    0.000000] RDX: 0000000000000000 RSI: ffffffff8dbae58c RDI: ffffffff8d2867a0
+09:44:16  [    0.000000] RBP: ffffffff8d203e38 R08: 00000000ff6690cb R09: 2035353a30343a37
+09:44:16  [    0.000000] R10: 3230322043545520 R11: 35353a30343a3730 R12: ffffffff8c17a180
+09:44:16  [    0.000000] R13: ffffffff8c48db10 R14: ffffffff8d4c7030 R15: 0000000000000000
+09:44:16  [    0.000000] FS:  0000000000000000(0000) GS:ffffffff8d69c000(0000) knlGS:0000000000000000
+09:44:16  [    0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+09:44:16  [    0.000000] CR2: ff1100007047d000 CR3: 00000000745c2000 CR4: 00000000000010b0
+09:44:16  [    0.000000] Call Trace:
+09:44:16  [    0.000000]  <TASK>
+09:44:16  [    0.000000]  ? show_regs+0x6d/0x80
+09:44:16  [    0.000000]  ? __warn+0x91/0x140
+09:44:16  [    0.000000]  ? __static_call_update+0x1c6/0x220
+09:44:16  [    0.000000]  ? report_bug+0x193/0x1a0
+09:44:16  [    0.000000]  ? __pfx_lockdown_is_locked_down+0x10/0x10
+09:44:16  [    0.000000]  ? early_fixup_exception+0xa6/0xd0
+09:44:16  [    0.000000]  ? do_early_exception+0x27/0x70
+09:44:16  [    0.000000]  ? __SCT__lsm_static_call_bpf_token_capable_11+0x8/0x8
+09:44:17  [    0.000000]  ? early_idt_handler_common+0x2f/0x3a
+09:44:17  [    0.000000]  ? __SCT__lsm_static_call_bpf_token_capable_11+0x8/0x8
+09:44:17  [    0.000000]  ? __pfx_lockdown_is_locked_down+0x10/0x10
+09:44:17  [    0.000000]  ? __static_call_update+0x1c6/0x220
+09:44:17  [    0.000000]  ? __pfx_lockdown_is_locked_down+0x10/0x10
+09:44:17  [    0.000000]  ? vprintk_emit+0xb5/0x410
+09:44:17  [    0.000000]  security_add_hooks+0xbd/0x150
+09:44:17  [    0.000000]  lockdown_lsm_init+0x25/0x30
+09:44:17  [    0.000000]  initialize_lsm+0x38/0x90
+09:44:17  [    0.000000]  early_security_init+0x36/0x70
+09:44:17  [    0.000000]  start_kernel+0x5f/0xb50
+09:44:17  [    0.000000]  x86_64_start_reservations+0x1c/0x30
+09:44:17  [    0.000000]  x86_64_start_kernel+0xbf/0x110
+09:44:17  [    0.000000]  ? setup_ghcb+0x12/0x130
+09:44:17  [    0.000000]  common_startup_64+0x13e/0x141
+09:44:17  [    0.000000]  </TASK>
+09:44:17  [    0.000000] ---[ end trace 0000000000000000 ]---
+09:44:17  [    0.000000] ------------[ cut here ]------------
+09:44:17  [    0.000000] static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10' used before call to jump_label_init()
+09:44:17  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:199 static_key_enable_cpuslocked+0x99/0xb0
+09:44:17  [    0.000000] Modules linked in:
+09:44:17  [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Tainted: G        W          6.11.0-rc1-next-20240730-1722324631886 #1
+09:44:17  [    0.000000] Tainted: [W]=WARN
+09:44:17  [    0.000000] RIP: 0010:static_key_enable_cpuslocked+0x99/0xb0
+09:44:17  [    0.000000] Code: ff ff ff ff 48 89 df e8 45 fd ff ff c7 03 01 00 00 00 eb d5 48 89 da 48 c7 c6 e0 0a 44 8c 48 c7 c7 b8 00 a3 8c e8 87 f6 d6 ff <0f> 0b eb 8e 0f 0b eb 9c 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40
+09:44:17  [    0.000000] RSP: 0000:ffffffff8d203e10 EFLAGS: 00010086 ORIG_RAX: 0000000000000000
+09:44:17  [    0.000000] RAX: 0000000000000000 RBX: ffffffff8dd6aaf0 RCX: 0000000000000084
+09:44:17  [    0.000000] RDX: ffffffff8d349400 RSI: 00000000ffffe02c RDI: ffffffff8d203cb0
+09:44:17  [    0.000000] RBP: ffffffff8d203e20 R08: 000000000000007e R09: 6562616c5f706d75
+09:44:17  [    0.000000] R10: 6a206f74206c6c61 R11: 632065726f666562 R12: 0000000000000000
+09:44:17  [    0.000000] R13: ffffffff8c48db10 R14: ffffffff8cb0e2f8 R15: 0000000000000000
+09:44:17  [    0.000000] FS:  0000000000000000(0000) GS:ffffffff8d69c000(0000) knlGS:0000000000000000
+09:44:17  [    0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+09:44:17  [    0.000000] CR2: ff1100007047d000 CR3: 00000000745c2000 CR4: 00000000000010b0
+09:44:17  [    0.000000] Call Trace:
+09:44:17  [    0.000000]  <TASK>
+09:44:17  [    0.000000]  ? show_regs+0x6d/0x80
+09:44:17  [    0.000000]  ? __warn+0x91/0x140
+09:44:17  [    0.000000]  ? static_key_enable_cpuslocked+0x99/0xb0
+09:44:17  [    0.000000]  ? report_bug+0x193/0x1a0
+09:44:17  [    0.000000]  ? fixup_exception+0x2b/0x340
+09:44:17  [    0.000000]  ? early_fixup_exception+0xa6/0xd0
+09:44:17  [    0.000000]  ? do_early_exception+0x27/0x70
+09:44:17  [    0.000000]  ? early_idt_handler_common+0x2f/0x3a
+09:44:17  [    0.000000]  ? static_key_enable_cpuslocked+0x99/0xb0
+09:44:17  [    0.000000]  static_key_enable+0x1f/0x30
+09:44:17  [    0.000000]  security_add_hooks+0xce/0x150
+09:44:17  [    0.000000]  lockdown_lsm_init+0x25/0x30
+09:44:17  [    0.000000]  initialize_lsm+0x38/0x90
+09:44:17  [    0.000000]  early_security_init+0x36/0x70
+09:44:17  [    0.000000]  start_kernel+0x5f/0xb50
+09:44:17  [    0.000000]  x86_64_start_reservations+0x1c/0x30
+09:44:17  [    0.000000]  x86_64_start_kernel+0xbf/0x110
+09:44:17  [    0.000000]  ? setup_ghcb+0x12/0x130
+09:44:17  [    0.000000]  common_startup_64+0x13e/0x141
+09:44:17  [    0.000000]  </TASK>
+09:44:17  [    0.000000] ---[ end trace 0000000000000000 ]---
+...
 
+-- 
+Regards/Gruss,
+    Boris.
 
-On Sun, Jul 28, 2024 at 08:25:55AM +0800, Mikhail Ivanov wrote:
-> LANDLOCK_ACCESS_NET_BIND_TCP is useful to limit the scope of "bindable"
-> ports to forbid a malicious sandboxed process to impersonate a legitimate
-> server process. However, bind(2) might be used by (TCP) clients to set th=
-e
-> source port to a (legitimate) value. Controlling the ports that can be
-> used for listening would allow (TCP) clients to explicitly bind to ports
-> that are forbidden for listening.
->=20
-> Such control is implemented with a new LANDLOCK_ACCESS_NET_LISTEN_TCP
-> access right that restricts listening on undesired ports with listen(2).
-
-Nit: I would turn around the first two commit message paragraphs and descri=
-be
-your changes first, before explaining the problems in the bind(2) support. =
- I
-was initially a bit confused that the description started talking about
-LANDLOCK_ACCESS_NET_BIND_TCP.
-
-General recommendations at:
-https://www.kernel.org/doc/html/v6.10/process/submitting-patches.html#descr=
-ibe-your-changes
-
-
-> It's worth noticing that this access right doesn't affect changing
-> backlog value using listen(2) on already listening socket.
->=20
-> * Create new LANDLOCK_ACCESS_NET_LISTEN_TCP flag.
-> * Add hook to socket_listen(), which checks whether the socket is allowed
->   to listen on a binded local port.
-> * Add check_tcp_socket_can_listen() helper, which validates socket
->   attributes before the actual access right check.
-> * Update `struct landlock_net_port_attr` documentation with control of
->   binding to ephemeral port with listen(2) description.
-> * Change ABI version to 6.
->=20
-> Closes: https://github.com/landlock-lsm/linux/issues/15
-> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> ---
->  include/uapi/linux/landlock.h                | 23 +++--
->  security/landlock/limits.h                   |  2 +-
->  security/landlock/net.c                      | 90 ++++++++++++++++++++
->  security/landlock/syscalls.c                 |  2 +-
->  tools/testing/selftests/landlock/base_test.c |  2 +-
->  5 files changed, 108 insertions(+), 11 deletions(-)
->=20
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.=
-h
-> index 68625e728f43..6b8df3293eee 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -104,13 +104,16 @@ struct landlock_net_port_attr {
->  	/**
->  	 * @port: Network port in host endianness.
->  	 *
-> -	 * It should be noted that port 0 passed to :manpage:`bind(2)` will
-> -	 * bind to an available port from a specific port range. This can be
-> -	 * configured thanks to the ``/proc/sys/net/ipv4/ip_local_port_range``
-> -	 * sysctl (also used for IPv6). A Landlock rule with port 0 and the
-> -	 * ``LANDLOCK_ACCESS_NET_BIND_TCP`` right means that requesting to bind
-> -	 * on port 0 is allowed and it will automatically translate to binding
-> -	 * on the related port range.
-
-Please rebase on a more recent revision, we have changed this phrasing in t=
-he meantime:
-
- - s/a specific port range/the ephemeral port range/
- - The paragraph was split in two.
-
-> +	 * It should be noted that some operations cause binding socket to a ra=
-ndom
-> +	 * available port from a specific port range. This can be configured th=
-anks
-> +	 * to the ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl (also used =
-for
-> +	 * IPv6). Following operation requests are automatically translate to
-> +	 * binding on the related port range:
-> +	 *
-> +	 * - A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP=
-``
-> +	 *   right means that binding on port 0 is allowed.
-> +	 * - A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_LISTEN_T=
-CP``
-> +	 *   right means listening without an explicit binding is allowed.
-
-There are some grammatical problems in this documentation section.
-
-Can I suggest an alternative?
-
-  Some socket operations will fall back to using a port from the ephemeral =
-port
-  range, if no specific port is requested by the caller.  Among others, thi=
-s
-  happens in the following cases:
-
-  - :manpage:`bind(2)` is invoked with a socket address that uses port 0.
-  - :manpage:`listen(2)` is invoked on a socket without previously calling
-    :manpage:`bind(2)`.
-
-  These two actions, which implicitly use an ephemeral port, can be allowed=
- with
-  a Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP`` /
-  ``LANDLOCK_ACCESS_NET_LISTEN_TCP`` right.
-
-  The ephemeral port range is configured in the
-  ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl (also used for IPv6).
-
-When we have the documentation wording finalized,
-please send an update to the man pages as well,
-for this and other documentation updates.
-
-Small remarks on what I've done here:
-
-* I am avoiding the word "binding" when referring to the automatic assignme=
-nt to
-  an ephemeral port - IMHO, this is potentially confusing, since bind(2) is=
- not
-  explicitly called.
-* I am also dropping the "It should be noted" / "Note that" phrase, which i=
-s
-  frowned upon in man pages.
-
->  	 */
->  	__u64 port;
->  };
-> @@ -251,7 +254,7 @@ struct landlock_net_port_attr {
->   * DOC: net_access
->   *
->   * Network flags
-> - * ~~~~~~~~~~~~~~~~
-> + * ~~~~~~~~~~~~~
->   *
->   * These flags enable to restrict a sandboxed process to a set of networ=
-k
->   * actions. This is supported since the Landlock ABI version 4.
-> @@ -261,9 +264,13 @@ struct landlock_net_port_attr {
->   * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
->   * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
->   *   a remote port.
-> + * - %LANDLOCK_ACCESS_NET_LISTEN_TCP: Listen for TCP socket connections =
-on
-> + *   a local port. This access right is available since the sixth versio=
-n
-> + *   of the Landlock ABI.
->   */
->  /* clang-format off */
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
-> +#define LANDLOCK_ACCESS_NET_LISTEN_TCP			(1ULL << 2)
->  /* clang-format on */
->  #endif /* _UAPI_LINUX_LANDLOCK_H */
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index 4eb643077a2a..2ef147389474 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -22,7 +22,7 @@
->  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_F=
-S)
-> =20
-> -#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
-> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_LISTEN_TCP
->  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_=
-NET)
-> =20
-> diff --git a/security/landlock/net.c b/security/landlock/net.c
-> index 669ba260342f..a29cb27c3f14 100644
-> --- a/security/landlock/net.c
-> +++ b/security/landlock/net.c
-> @@ -6,10 +6,12 @@
->   * Copyright =C2=A9 2022-2023 Microsoft Corporation
->   */
-> =20
-> +#include "net/sock.h"
->  #include <linux/in.h>
->  #include <linux/net.h>
->  #include <linux/socket.h>
->  #include <net/ipv6.h>
-> +#include <net/tcp.h>
-> =20
->  #include "common.h"
->  #include "cred.h"
-> @@ -194,9 +196,97 @@ static int hook_socket_connect(struct socket *const =
-sock,
->  					   LANDLOCK_ACCESS_NET_CONNECT_TCP);
->  }
-> =20
-> +/*
-> + * Checks that socket state and attributes are correct for listen.
-> + * It is required to not wrongfully return -EACCES instead of -EINVAL.
-      ^^^^^^^^^^^^^^
-
-Doc nit: I would just document that this function returns -EINVAL on failur=
-e?
-In this place, I would expect that the function interface is documented for
-callers.  (From that perspective, this is not a requirement, but a guarante=
-e
-that the function gives.)
-
-> + *
-> + * This checker requires sock->sk to be locked.
-> + */
-> +static int check_tcp_socket_can_listen(struct socket *const sock)
-> +{
-> +	struct sock *sk =3D sock->sk;
-> +	unsigned char cur_sk_state =3D sk->sk_state;
-> +	const struct tcp_ulp_ops *icsk_ulp_ops;
-> +
-> +	/* Allows only unconnected TCP socket to listen (cf. inet_listen). */
-> +	if (sock->state !=3D SS_UNCONNECTED)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * Checks sock state. This is needed to ensure consistency with inet st=
-ack
-> +	 * error handling (cf. __inet_listen_sk).
-> +	 */
-> +	if (WARN_ON_ONCE(!((1 << cur_sk_state) & (TCPF_CLOSE | TCPF_LISTEN))))
-> +		return -EINVAL;
-> +
-> +	icsk_ulp_ops =3D inet_csk(sk)->icsk_ulp_ops;
-> +
-> +	/*
-> +	 * ULP (Upper Layer Protocol) stands for protocols which are higher tha=
-n
-> +	 * transport protocol in OSI model. Linux has an infrastructure that
-> +	 * allows TCP sockets to support logic of some ULP (e.g. TLS ULP).
-> +	 *
-> +	 * Sockets can listen only if ULP control hook has clone method.
-> +	 */
-> +	if (icsk_ulp_ops && !icsk_ulp_ops->clone)
-> +		return -EINVAL;
-
-This seems like an implementation detail in the networking subsystem?
-
-If I understand correctly, these are cases where we use TCP on top of proto=
-cols
-that are not IP (or have an additional layer in the middle, like TLS?).  Th=
-is
-can not be recognized through the socket family or type?
-
-Do we have cases where we can run TCP on top of something else than plain I=
-Pv4
-or IPv6, where the clone method exists?
-
-> +	return 0;
-> +}
-> +
-> +static int hook_socket_listen(struct socket *const sock, const int backl=
-og)
-> +{
-> +	int err =3D 0;
-> +	int family;
-> +	__be16 port;
-> +	struct sock *sk;
-> +	const struct landlock_ruleset *const dom =3D get_current_net_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +	if (WARN_ON_ONCE(dom->num_layers < 1))
-> +		return -EACCES;
-> +
-> +	/* Checks if it's a (potential) TCP socket. */
-> +	if (sock->type !=3D SOCK_STREAM)
-> +		return 0;
-> +
-> +	sk =3D sock->sk;
-> +	family =3D sk->__sk_common.skc_family;
-> +	/*
-> +	 * Socket cannot be assigned AF_UNSPEC because this type is used only
-> +	 * in the context of addresses.
-> +	 *
-> +	 * Doesn't restrict listening for non-TCP sockets.
-> +	 */
-> +	if (family !=3D AF_INET && family !=3D AF_INET6)
-> +		return 0;
-
-Aren't the socket type and family checks duplicated with existing logic tha=
-t we
-have for the connect(2) and bind(2) support?  Should it be deduplicated, or=
- is
-that too messy?
-
-> +
-> +	lock_sock(sk);
-> +	/*
-> +	 * Calling listen(2) for a listening socket does nothing with its state=
- and
-> +	 * only changes backlog value (cf. __inet_listen_sk). Checking of liste=
-n
-> +	 * access right is not required.
-> +	 */
-> +	if (sk->sk_state =3D=3D TCP_LISTEN)
-> +		goto release_nocheck;
-> +
-> +	err =3D check_tcp_socket_can_listen(sock);
-> +	if (unlikely(err))
-> +		goto release_nocheck;
-> +
-> +	port =3D htons(inet_sk(sk)->inet_num);
-> +	release_sock(sk);
-> +	return check_access_socket(dom, port, LANDLOCK_ACCESS_NET_LISTEN_TCP);
-> +
-> +release_nocheck:
-> +	release_sock(sk);
-> +	return err;
-> +}
-
-Thanks for sending these patches!
-
-=E2=80=94G=C3=BCnther
+https://people.kernel.org/tglx/notes-about-netiquette
