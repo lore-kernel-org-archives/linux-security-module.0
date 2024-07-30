@@ -1,203 +1,315 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A2018DF9D;
-	Tue, 30 Jul 2024 21:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07108191F81
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 23:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722375681; cv=none; b=ctmUEwd/lWCCpAwSdfCQecqaPMDuXclCEu5vt18j7qbeE34pe8zJ+ka4hz3f24EZH7BUuhE5NyuPCCssdRRmh8X4kFia5Ghs+1NekwLMaUORVm8WIfVyIsKpGJv8mVo2uRbXHhJU4Q4986lYoeDdVkYrw9DxUSEiKJUcXFFmb/M=
+	t=1722380958; cv=none; b=rhFWm1EuFH649IPw3ELD8Efj+OxiDSab74QiXD6rQvvN/3ssHh2hWBHqXY97OdOaCMlkrhLqQaZaeqJs8ZxZhuIrhNfzidCwKbw46NTc+pYgLJwAd+FlHKKy57V8bNd+Qc1Qut0nuCSiI2MRih47NOLnfLtwcKv3dcwX3hENKwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722375681; c=relaxed/simple;
-	bh=4pC6xzGT5WwjzhDI4qWpsh75dO6q2v+/sConbT8rVmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkgL4OHyhvCOFnP5EixPtCbKr7/oYfAaSMKMm19wGbhVDNlSiC4IxpITZIxvS/75rGRDvehkE9/SbpH1TrRkaN1RrH4M8Zw8l+TZgFEtlsd1hJnLIfAR+p66xYdilU3Omt5FbGt6kToeMHz45r9LvXjWWnCTWF2qwuKB4ATykhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wnl2BKzU; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722380958; c=relaxed/simple;
+	bh=CWVd7zM9rhEDHEgTLc2FZInKf8KJxygX6mGY0ypXKWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jaW/7kaqSPjg6zhP1Aa22iQXZKKVY6hDivAvqTrRDQXRu5dvkPlwICFqXJiMe+yXNTYqkwg19SN3X4wInFtYFprLihl5YOG3ytyQrEUJMXISTvgRadSiK+gzcqLGhmLV9QqP3bey8j7ufr+VlDKJRS6O6QgKF3M2SaisdXNQ27k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cmKg1I5m; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wnl2BKzU"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d333d57cdso3517830b3a.3;
-        Tue, 30 Jul 2024 14:41:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cmKg1I5m"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso6404a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Jul 2024 16:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722375679; x=1722980479; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vDHDlQoT1LUK3kA0AHu9dgucFO36otH5SCr/Prge0+c=;
-        b=Wnl2BKzUBJwLWWdEDgXhouP9fjPfbEkBBi0yq0vLM/IzhlkHC9kScg2F8EaNWfha83
-         qdiAqt/DgspmWOpElwKa9ejxRcDVv2Z7gEW0N6kxXoL8IX9HlomjBckKPsqWfKxUPVCN
-         Zg4lNUe6qIZ3wbKL0/5CfKU9EAXUWHRwYhAu3tMYJ+jTmJvo1x5mKDnJuQFyHC+4u7FR
-         fy39si6l7u1EsvwFnyYeyO5ICYTDTmYxjGpKxF/NtYIZbIR7AXrTdWllxVGP9SRZok7L
-         a2Vk8/c2+qlzXQRzz4PeKGOI7fQKiR/jvvAE8zWNc4aJ0uKiwyFSqE1/DVzq6KxCSSR0
-         IZlw==
+        d=google.com; s=20230601; t=1722380954; x=1722985754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EjNkuxlo0ObgZ1OMPHSYwFfZSih4s+xQbxCeuhHEjJ8=;
+        b=cmKg1I5mX37YPfk7J45ktgYwzynJb+rhhe2lT/qprMfu+0pcFepEhRg/JU7V+SMre/
+         Dj2CFCe+tWRUi/IphtxoU587VqrjoMDRU7Zru2PpXWYCH/RdKF+diI5ulV3zulZOGYXf
+         zNzLWTw9gUyKkxwW4wtvw5DQxBlDomWb2SBk3gbsXHxebYe7XkB/5b1Euf3VLL8DBS6n
+         k3cQ1f5Pq8swSSULg3BAom7lqx+kX8dcdGR6LsOsRKp/NGfa4PwimotFJFvPbwGxgXrc
+         YNbyrfZd68KFRGL9WR31B55HuMOV7RW2cVxCcG29oz1TYTKQ2l19HiKsMWPuJf/HDry2
+         0VNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722375679; x=1722980479;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vDHDlQoT1LUK3kA0AHu9dgucFO36otH5SCr/Prge0+c=;
-        b=LEf58SOMjvdySirZ5M9V6hyt1SIUo+jjTCAXu9O3MgPdacPNAKNhBGN3c6x2rFqHoP
-         X4rOwBcW9V/8Fc3eqhsQY8czCl+uzfd07g51V/HWBq2v0t1c7PtvO+t+sgkoFb8xAoCy
-         l6xqU7PgDNwIrt2eqpO705lLqW9pnt7rZiRteylCR7HrvzRNB5cm9RgjMLT5qmRwtlwm
-         X6M7mFcQ1Jd5zGXNAHuBJ5ERl8vNAIprIO9BsFx77Y3VZnXt/uUCB4wLwmZJ//FALJfo
-         6yqohVsBnC8kUnRj3fdAMQQtzwdrcTCAwn61E2tR3dNvJbO+doHewkRo7UJuGb3JkeIO
-         LLRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUA5WvKwC7xAf5xWizL6zkHWE/I8K1IOkHWIqT3cojCni000ItKLGkZOOSuMLl1eq3m5gY6vQlw1YxmxcVOnLdL9Jy6ozXbmOqWNUBqG8V+GwS9y1O2XckqM/4pJtlJnLuVNNeK5LooEEMchnwxAVjea+8a5VtsDVSPirr8jTq4FwMVsCIwsRUpkDse
-X-Gm-Message-State: AOJu0YxQS+8zv6lDqRiwAfQH8gU/oKTHxWnC3npu2cDcy9XVcwRMGvHN
-	0hy2/QX92IiQ26A+X5pG72ZnlF//tWnean1+cky7ydKWFNtX74IE
-X-Google-Smtp-Source: AGHT+IGjRQKhxXwBH7xWRe2/ELl+5VxNoPQROhB+1zg6heUR4Gzti1+1Jxn13bXjj/tB6YlUvQ/Fug==
-X-Received: by 2002:a05:6a20:6a10:b0:1c2:8d33:af69 with SMTP id adf61e73a8af0-1c4a13afd31mr11605130637.41.1722375678712;
-        Tue, 30 Jul 2024 14:41:18 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead812316sm8883493b3a.101.2024.07.30.14.41.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 14:41:18 -0700 (PDT)
-Date: Tue, 30 Jul 2024 15:41:15 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: gnoack@google.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com,
-	jannh@google.com, outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <Zqld+6wj8v0kLMBV@tahera-OptiPlex-5000>
-References: <cover.1721269836.git.fahimitahera@gmail.com>
- <d7bad636c2e3609ade32fd02875fa43ec1b1d526.1721269836.git.fahimitahera@gmail.com>
- <20240730.Quei5io6sesh@digikod.net>
+        d=1e100.net; s=20230601; t=1722380954; x=1722985754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EjNkuxlo0ObgZ1OMPHSYwFfZSih4s+xQbxCeuhHEjJ8=;
+        b=Hn1KzaeogYt7DC1COXHZajqBwpw0E9NYnrz/FfJqwOHe1RMUB7H5HEgBCpurqCD2qf
+         xeasEnpe8h7dq6My9ta/T1yZtE9JgRIlynNqvOMBJVQ9CgeEOhMjHLpmnejjF2RQGprb
+         +Tmq1kS8rZvY5/JKBlqPqEr0OMjOk8/djBoCXWBOdJ6WtGCBKcRB6izE5tRaLzlsRNoq
+         a5S34ylmqR1V48mbZresVkZv5QCwEc7qhBO40qOziclO1mwoPPC8XZo9W6OAkPeH7Hfn
+         LCZkzB7P92BJOh4Hy7iBdbIvYm6SLrZPAOqqupyLOd6+gAs0ERImEMBhB0JGVE2k8hJ8
+         zB7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUT6HPrafjwAxXmthwci5UNC6L1mUkFIc8jv5OkTT8kTgyAmnofo8lvMHprRJ7zD/mO3Q5MJn4NQ1q+il0dZXBRBntBBHg2tgqMWzl8qBNFcMPWPMa6
+X-Gm-Message-State: AOJu0YxrKI7pYnEEI0pPFOCxLjX7ygcLyQUuWkYDWPqvidxBSjjmo9xe
+	EccZ3A60qR+Rpn8yuXjH1hW91sNina51Kb7VLTVG+hWNjRbPmnMQoe7GvLRwDGpnBFeiHrk6A/x
+	eI3i8xJ2MAOw+J5b0HAMq61aYAny/weYMC3u5
+X-Google-Smtp-Source: AGHT+IH+kXuAL1vOqrJzmA/QRhTgNKgTz0m4/UBL6ewOha80SzsUMO+qu6d5uTxBn8caVXZ7VkevjmeYWxFQcqWsWcs=
+X-Received: by 2002:a05:6402:11cd:b0:5ac:4ce3:8f6a with SMTP id
+ 4fb4d7f45d1cf-5b58ea443d5mr73654a12.6.1722380953925; Tue, 30 Jul 2024
+ 16:09:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240730.Quei5io6sesh@digikod.net>
+References: <20240730132528.1143520-1-adrian.ratiu@collabora.com>
+In-Reply-To: <20240730132528.1143520-1-adrian.ratiu@collabora.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Tue, 30 Jul 2024 16:08:35 -0700
+Message-ID: <CALmYWFumfPxoEE-jJEadnep=38edT7KZaY7KO9HLod=tdsOG=w@mail.gmail.com>
+Subject: Re: [PATCH v4] proc: add config & param to block forcing mem writes
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	kernel@collabora.com, gbiv@google.com, inglorion@google.com, 
+	ajordanr@google.com, Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, 
+	Kees Cook <kees@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 06:05:15PM +0200, Mickaël Salaün wrote:
-> On Wed, Jul 17, 2024 at 10:15:19PM -0600, Tahera Fahimi wrote:
-> > The patch introduces a new "scoped" attribute to the
-> > landlock_ruleset_attr that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET"
-> > to scope abstract unix sockets from connecting to a process outside of
-> > the same landlock domain.
-> > 
-> > This patch implement two hooks, "unix_stream_connect" and "unix_may_send" to
-> > enforce this restriction.
-> > 
-> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > 
-> > -------
-> > v7:
-> >  - Using socket's file credentials for both connected(STREAM) and
-> >    non-connected(DGRAM) sockets.
-> >  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
-> >    ptrace ensures that if a server's domain is accessible from the client's
-> >    domain (where the client is more privileged than the server), the client
-> >    can connect to the server in all edge cases.
-> >  - Removing debug codes.
-> > v6:
-> >  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
-> >    the same domain scoping as ptrace.
-> >  - code clean up.
-> > v5:
-> >  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
-> >  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
-> >    landlock_hierarchy to its respective landlock_ruleset.
-> >  - Using curr_ruleset to check if a domain is scoped while walking in the
-> >    hierarchy of domains.
-> >  - Modifying inline comments.
-> > V4:
-> >  - Rebased on Günther's Patch:
-> >    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
-> >    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
-> >  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
-> >  - Using file's FD credentials instead of credentials stored in peer_cred
-> >    for datagram sockets. (see discussion in [1])
-> >  - Modifying inline comments.
-> > V3:
-> >  - Improving commit description.
-> >  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
-> >    purpose, and adding related functions.
-> >  - Changing structure of ruleset based on "scoped".
-> >  - Removing rcu lock and using unix_sk lock instead.
-> >  - Introducing scoping for datagram sockets in unix_may_send.
-> > V2:
-> >  - Removing wrapper functions
-> > 
-> > [1]https://lore.kernel.org/outreachy/Zmi8Ydz4Z6tYtpY1@tahera-OptiPlex-5000/T/#m8cdf33180d86c7ec22932e2eb4ef7dd4fc94c792
-> > -------
-> > 
-> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > ---
-> >  include/uapi/linux/landlock.h |  29 +++++++++
-> >  security/landlock/limits.h    |   3 +
-> >  security/landlock/ruleset.c   |   7 ++-
-> >  security/landlock/ruleset.h   |  23 ++++++-
-> >  security/landlock/syscalls.c  |  14 +++--
-> >  security/landlock/task.c      | 112 ++++++++++++++++++++++++++++++++++
-> >  6 files changed, 181 insertions(+), 7 deletions(-)
-> 
-> > diff --git a/security/landlock/task.c b/security/landlock/task.c
-> > index 849f5123610b..597d89e54aae 100644
-> > --- a/security/landlock/task.c
-> > +++ b/security/landlock/task.c
-> 
-> > +static int hook_unix_stream_connect(struct sock *const sock,
-> > +				    struct sock *const other,
-> > +				    struct sock *const newsk)
-> > +{
-> 
-> We must check if the unix sockets use an abstract address.  We need a
-> new test to check against a the three types of addresse: pathname,
-> unnamed (socketpair), and abstract.  This should result into 6 variants
-> because of the stream-oriented or dgram-oriented sockets to check both
-> hooks.  The test can do 3 checks: without any Landlock domain, with the
-> client being sandboxed with a Landlock domain for filesystem
-> restrictions only, and with a domain scoped for abstract unix sockets.
-correct. Since the current tests check all the possible scenarios for
-abstract unix sockets, we only need to add the scenarios where a socket
-with pathname or unnamed address and scoped domain wants to connect to a
-listening socket. In this case, the access should guaranteed since there
-is no scoping mechanism for these sockets yet.
+On Tue, Jul 30, 2024 at 6:25=E2=80=AFAM Adrian Ratiu <adrian.ratiu@collabor=
+a.com> wrote:
+>
+> This adds a Kconfig option and boot param to allow removing
+> the FOLL_FORCE flag from /proc/pid/mem write calls because
+> it can be abused.
+>
+> The traditional forcing behavior is kept as default because
+> it can break GDB and some other use cases.
+>
+> Previously we tried a more sophisticated approach allowing
+> distributions to fine-tune /proc/pid/mem behavior, however
+> that got NAK-ed by Linus [1], who prefers this simpler
+> approach with semantics also easier to understand for users.
+>
+> Link: https://lore.kernel.org/lkml/CAHk-=3DwiGWLChxYmUA5HrT5aopZrB7_2VTa0=
+NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Jeff Xu <jeffxu@google.com>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <kees@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> ---
+> Changes in v4:
+> * Fixed doc punctuation, used passive tense, improved
+>   wording consistency, fixed default value wording
+> * Made struct constant_table a static const __initconst
+> * Reworked proc_mem_foll_force() indentation and var
+>   declarations to make code clearer
+> * Reworked enum + struct definition so lookup_constant()
+>   defaults to 'always'.
+>
+> Changes in v3:
+> * Simplified code to use shorthand ifs and a
+>   lookup_constant() table
+>
+> Changes in v2:
+> * Added bootparam on top of Linus' patch
+> * Slightly reworded commit msg
+> ---
+>  .../admin-guide/kernel-parameters.txt         | 10 ++++
+>  fs/proc/base.c                                | 54 ++++++++++++++++++-
+>  security/Kconfig                              | 32 +++++++++++
+>  3 files changed, 95 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index f1384c7b59c9..8396e015aab3 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4788,6 +4788,16 @@
+>         printk.time=3D    Show timing data prefixed to each printk messag=
+e line
+>                         Format: <bool>  (1/Y/y=3Denable, 0/N/n=3Ddisable)
+>
+> +       proc_mem.force_override=3D [KNL]
+> +                       Format: {always | ptrace | never}
+> +                       Traditionally /proc/pid/mem allows memory permiss=
+ions to be
+> +                       overridden without restrictions. This option may =
+be set to
+> +                       restrict that. Can be one of:
+> +                       - 'always': traditional behavior always allows me=
+m overrides.
+> +                       - 'ptrace': only allow mem overrides for active p=
+tracers.
+> +                       - 'never':  never allow mem overrides.
+> +                       If not specified, default is the CONFIG_PROC_MEM_=
+* choice.
+> +
+>         processor.max_cstate=3D   [HW,ACPI]
+>                         Limit processor to maximum C-state
+>                         max_cstate=3D9 overrides any DMI blacklist limit.
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 72a1acd03675..daacb8070042 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -85,6 +85,7 @@
+>  #include <linux/elf.h>
+>  #include <linux/pid_namespace.h>
+>  #include <linux/user_namespace.h>
+> +#include <linux/fs_parser.h>
+>  #include <linux/fs_struct.h>
+>  #include <linux/slab.h>
+>  #include <linux/sched/autogroup.h>
+> @@ -117,6 +118,35 @@
+>  static u8 nlink_tid __ro_after_init;
+>  static u8 nlink_tgid __ro_after_init;
+>
+> +enum proc_mem_force {
+> +       PROC_MEM_FORCE_ALWAYS,
+> +       PROC_MEM_FORCE_PTRACE,
+> +       PROC_MEM_FORCE_NEVER
+> +};
+> +
+> +static enum proc_mem_force proc_mem_force_override __ro_after_init =3D
+> +       IS_ENABLED(CONFIG_PROC_MEM_NO_FORCE) ? PROC_MEM_FORCE_NEVER :
+> +       IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE =
+:
+> +       PROC_MEM_FORCE_ALWAYS;
+> +
+> +static const struct constant_table proc_mem_force_table[] __initconst =
+=3D {
+> +       { "never", PROC_MEM_FORCE_NEVER },
+> +       { "ptrace", PROC_MEM_FORCE_PTRACE },
+> +       { }
+> +};
+> +
+> +static int __init early_proc_mem_force_override(char *buf)
+> +{
+> +       if (!buf)
+> +               return -EINVAL;
+> +
+> +       proc_mem_force_override =3D lookup_constant(proc_mem_force_table,
+> +                                                 buf, PROC_MEM_FORCE_ALW=
+AYS);
+proc_mem_force_table has two entries, this means:
+if kernel cmdline has proc_mem.force_override=3D"invalid",
+    PROC_MEM_FORCE_ALWAYS will be used.
 
-> For pathname you'll need to move the TMP_DIR define from fs_test.c into
-> common.h and create a static path for the named socket.  A fixture
-> teardown should remove the socket and the directory.
-Thanks for the help :) 
-> > +	if (sock_is_scoped(other))
-> > +		return 0;
-> > +
-> > +	return -EPERM;
-> > +}
-> > +
-> > +static int hook_unix_may_send(struct socket *const sock,
-> > +			      struct socket *const other)
-> > +{
-> 
-> Same here
-> 
-> > +	if (sock_is_scoped(other->sk))
-> > +		return 0;
-> > +
-> > +	return -EPERM;
-> > +}
-> > +
-> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
-> >  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
-> >  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
-> > +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
-> > +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
-> 
-> Future access controls dedicated to pathname unix sockets may need these
-> hooks too, but I guess we'll see where tehy fit the best when we'll be
-> there.
-> 
-> >  };
-> >  
-> >  __init void landlock_add_task_hooks(void)
-> > -- 
-> > 2.34.1
-> > 
-> > 
+Another option is to have 3 entries in proc_mem_force_table: adding
+{"aways", PROC_MEM_FORCE_ALWAYS}
+
+and let lookup_constant return -1 when not found, and not override
+proc_mem_force_override.
+
+This enforces the kernel cmd line must be set to one of three choices
+"always|ptrace|never" to be effective.
+
+If you choose this path: please modify kernel-parameters.txt to
+"If not specified or invalid, default is the CONFIG_PROC_MEM_* choice."
+
+or else please clarify in the kernel-parameters.text:
+If not specified, default is the CONFIG_PROC_MEM_* choice
+If invalid str or empty string, PROC_MEM_FORCE_ALWAYS will be used
+regardless CONFIG_PROC_MEM_* choice
+
+> +
+> +       return 0;
+> +}
+> +early_param("proc_mem.force_override", early_proc_mem_force_override);
+> +
+>  struct pid_entry {
+>         const char *name;
+>         unsigned int len;
+> @@ -835,6 +865,26 @@ static int mem_open(struct inode *inode, struct file=
+ *file)
+>         return ret;
+>  }
+>
+> +static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+> +{
+> +       struct task_struct *task;
+> +       bool ptrace_active =3D false;
+> +
+> +       switch (proc_mem_force_override) {
+> +       case PROC_MEM_FORCE_NEVER:
+> +               return false;
+> +       case PROC_MEM_FORCE_PTRACE:
+> +               task =3D get_proc_task(file_inode(file));
+> +               if (task) {
+> +                       ptrace_active =3D task->ptrace && task->mm =3D=3D=
+ mm && task->parent =3D=3D current;
+Do we need to call "read_lock(&tasklist_lock);" ?
+see comments in ptrace_check_attach() of  kernel/ptrace.c
+
+
+
+> +                       put_task_struct(task);
+> +               }
+> +               return ptrace_active;
+> +       default:
+> +               return true;
+> +       }
+> +}
+> +
+>  static ssize_t mem_rw(struct file *file, char __user *buf,
+>                         size_t count, loff_t *ppos, int write)
+>  {
+> @@ -855,7 +905,9 @@ static ssize_t mem_rw(struct file *file, char __user =
+*buf,
+>         if (!mmget_not_zero(mm))
+>                 goto free;
+>
+> -       flags =3D FOLL_FORCE | (write ? FOLL_WRITE : 0);
+> +       flags =3D write ? FOLL_WRITE : 0;
+> +       if (proc_mem_foll_force(file, mm))
+> +               flags |=3D FOLL_FORCE;
+>
+>         while (count > 0) {
+>                 size_t this_len =3D min_t(size_t, count, PAGE_SIZE);
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 412e76f1575d..a93c1a9b7c28 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
+>
+>           If you are unsure how to answer this question, answer N.
+>
+> +choice
+> +       prompt "Allow /proc/pid/mem access override"
+> +       default PROC_MEM_ALWAYS_FORCE
+> +       help
+> +         Traditionally /proc/pid/mem allows users to override memory
+> +         permissions for users like ptrace, assuming they have ptrace
+> +         capability.
+> +
+> +         This allows people to limit that - either never override, or
+> +         require actual active ptrace attachment.
+> +
+> +         Defaults to the traditional behavior (for now)
+> +
+> +config PROC_MEM_ALWAYS_FORCE
+> +       bool "Traditional /proc/pid/mem behavior"
+> +       help
+> +         This allows /proc/pid/mem accesses to override memory mapping
+> +         permissions if you have ptrace access rights.
+> +
+> +config PROC_MEM_FORCE_PTRACE
+> +       bool "Require active ptrace() use for access override"
+> +       help
+> +         This allows /proc/pid/mem accesses to override memory mapping
+> +         permissions for active ptracers like gdb.
+> +
+> +config PROC_MEM_NO_FORCE
+> +       bool "Never"
+> +       help
+> +         Never override memory mapping permissions
+> +
+> +endchoice
+> +
+>  config SECURITY
+>         bool "Enable different security models"
+>         depends on SYSFS
+> --
+> 2.44.2
+>
