@@ -1,144 +1,155 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB4616C86D
-	for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2024 22:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9D416E88F;
+	Wed, 31 Jul 2024 23:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722465235; cv=none; b=WRDNXIV1ew0xSDY0WU+YEAqNoTmCPNFfZ4gyVYVs7QoBnwXHgwmw6KYAB/Tnl2kq4wMydJ24Q0Hnq6ZBJfTc+NnmhY73XQo/AzXYkBeszoaOC2kwcc3jLJ31dHCewRl8w6PYeHKWTaEB2f3jkD5IR9SswV+sJbKh/lbTGl1iqLE=
+	t=1722470160; cv=none; b=exQNJmHx91Bj+5SByh62Npt9bYH9gLyzDO7oW6lp+N/Nu1whY/yuRkMy3G3AM93X+Rd/YRmVYyyiXovtQ4kE7w5v7ek4k2CdkCqUpeFIBj8q3H4EJvfEKs0ul7FGLYbm62QTnbkT0T2mrfX/NBposJfSwCskGQWDDNmLxwfSDus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722465235; c=relaxed/simple;
-	bh=f6tsL8JBQOiIEWm0dBMmAi8XbIcgpoN4n5O0IPGl0Cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RcWWmWBPr/vnntV+B+p+vevEoFleuM4mk4zAMFkGYGtOr1eT9I/XMYcGq6QaLXkxPIchXB2XcMuBsp5bH6eYoXYBPX3J31fWSG/7L/+zNazx2YN9buhLmcqbT1wvN7Uh5cX6JDclielLORqydgTo7KP4XPVmdTNbPCBGnPeKm2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZgOe8YS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722470160; c=relaxed/simple;
+	bh=+Abq/rqdY1RUxDHUVYq5lWpkBS30D/0VHdh8rC1TNNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ddo7kVuxH7P6n2qWWIkLL+r9aGGh9QXUeRVbwSufdiOZDTRWNcpEYjvd20qhj26bQ/ZGxwdc4pO5m8Bl8A2Iph7v71oa4uiFkhnUwdU4X3P6BvbHxIjqZTyzcKj6id0rGVfVukkjSbxCuX3LLzV7jjoYivUZkyE7yEvNJFVVaxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWJxDY56; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZgOe8YS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE87C116B1
-	for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2024 22:33:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWJxDY56"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D387C116B1;
+	Wed, 31 Jul 2024 23:55:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722465234;
-	bh=f6tsL8JBQOiIEWm0dBMmAi8XbIcgpoN4n5O0IPGl0Cs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sZgOe8YS62+8Nr/lUIzmfvHgVmlFcTaFuJYhhWIQievbS0BuCwLkT2OmeYu6vlPl/
-	 NCPd5kCKyAa/OHJLdPK0ltCkjAQldd4pJ6WTnYagl0zk5wJFbtBailnfK2FQahuVdS
-	 ihoZDHd059DLfDV6z3ot73/UJkai4LjlYoabYeJtxvhF3/XZgkPL557U3CZx0I9Xex
-	 bype4usQpD+5RLCH3CaHMokn+CX98KPI6pJh57tclq3QlLCoxSfK7rRgWU9RMwjoOy
-	 2uIQq5FdUN3yp678MKI5t2vOXM6voIg0jOOUnIvcu1CHw5fh+WgYLz5BidFKzo2MXc
-	 8wUMcjNsbBzsQ==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so91740141fa.1
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2024 15:33:54 -0700 (PDT)
-X-Gm-Message-State: AOJu0YyVM0inKdv7W0WeXYVldGmOux5sfnuHwUfgnBCcOFIE//ddnm/O
-	sXnC0Hw1QzEf/U/ZCk8Htg0bSfYkaDOuv3z4nIi/IHlFtn/BMd00UX1hGNhJ91jipZEMNUOW0ST
-	6bxjMFZ22/fBB5q6wy6158QdRJk9WYHzit9Bt
-X-Google-Smtp-Source: AGHT+IEqkDYIUYgA+dpFwMbXnG49w+fYyvopH2UKs/YAoOj74cucLjjYPHzqoCnWIr422QeLxH1hwFJi16y2JHGIaA0=
-X-Received: by 2002:a2e:2d02:0:b0:2ef:24f3:fb9c with SMTP id
- 38308e7fff4ca-2f153399865mr5764941fa.38.1722465233242; Wed, 31 Jul 2024
- 15:33:53 -0700 (PDT)
+	s=k20201202; t=1722470160;
+	bh=+Abq/rqdY1RUxDHUVYq5lWpkBS30D/0VHdh8rC1TNNo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rWJxDY56RHASxGKfFIowfkJI+MOs3oLk4jFLqYx/rAdyPO/xMfsTqrL01KJNIf2Fb
+	 pTvj4ipjbmlchUNaiJC3e04/902z1fWIFLV51dgGgra819OGETCN0gZosqe7RNPI6q
+	 16iXhzcIGIxsLVnYx2iDI2Jd3idrBdJqedHIYoAAAceFWDG4EO8qC+TpsZgUTnQVgD
+	 UCmu6+OzZyVLFVkSLgqtJ4EZHraNdK+OMazVGIjEp+Dcvt8OSdKOuhyN9HDFjabnRU
+	 TEsJ9u/iv4C0V3jiVgVx8RXVq85ftM9kLBlZMHyxQVF5zoWCbAiqU9lFcjfgeUbhWr
+	 9gISeVX+l+WfA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Leesoo Ahn <lsahn@ooseel.net>,
+	John Johansen <john.johansen@canonical.com>,
+	Sasha Levin <sashal@kernel.org>,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 1/2] apparmor: fix possible NULL pointer dereference
+Date: Wed, 31 Jul 2024 19:55:55 -0400
+Message-ID: <20240731235557.3929433-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
- <CAHC9VhRnq81v=DYC3SC=oD2onittYTQbZqp5uoeU2MWuCh0-SA@mail.gmail.com>
- <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com>
- <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com> <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Thu, 1 Aug 2024 00:33:42 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
-Message-ID: <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
-Subject: Re: static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10'
- used before call to jump_label_init()
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Narasimhan V <Narasimhan.V@amd.com>, 
-	lkml <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Tue, Jul 30, 2024 at 4:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM KP Singh <kpsingh@kernel.org> w=
-rote:
-> > > On Tue, Jul 30, 2024 at 5:03=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > > On Tue, Jul 30, 2024 at 7:34=E2=80=AFAM Borislav Petkov <bp@alien8.=
-de> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > this is with today's linux-next:
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > 09:44:13  [console-expect]#kexec -e
-> > > > > 09:44:13  kexec -e
-> > > > > 09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-next=
--20240730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld =
-(GNU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:55 =
-UTC 2024
-> > > > > 09:44:16  [    0.000000] ------------[ cut here ]------------
-> > > > > 09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_=
-call_inline.c:153 __static_call_update+0x1c6/0x220
-> >
-> > ...
-> >
-> > > > KP, please take a look at this as soon as you can (lore link below =
-for
-> > > > those who aren't on the list).  One obvious first thing to look at =
-is
-> > > > simply moving the call to early_security_init(), but that requires
-> > > > some code audit to make sure it is safe and doesn't break something
-> > > > else.  Of course, if we can do something with how we setup/use stat=
-ic
-> > > > calls that is even better.  I'll take a look at it myself later tod=
-ay,
-> > > > but I'm busy with meetings for the next several hours.
-> > > >
-> > > > If we can't resolve this in the next day or two I'm going to
-> > >
-> > > Thanks for the ping.
-> > >
-> > > Taking a look, yeah it's possible that we need to move jump_label_ini=
-t
-> > > before early_security_init / inside it.
-> > >
-> > > I will do a repro and test my change and reply back.
-> >
-> > I'm pretty sure we don't want to move jump_label_init() inside
-> > early_security_init(), we likely want to keep those as distinct calls
-> > in start_kernel().  Shuffling the ordering around seems like a better
-> > solution if we can't solve this some other way.
-> >
-> > Regardless, thanks for looking into this, I'll hold off on digging
-> > into this and wait for your patch.
->
-> Since I don't want to leave linux-next broken any longer, I'm going to
-> yank the static-call patches from the lsm/next branch but I'll leave
-> them in lsm/dev so you can continue to use that as a basis for your
-> fix.  If we don't have a fix in hand by the first half of next week,
-> I'll drop the patches from lsm/dev too and we can revisit the patchset
-> when you have a fix ready.
->
-> For casual observers, the lsm/next is normally an automatically
-> composed branch made up of the latest lsm/stable-X.Y and lsm/dev
-> branches however in this particular case I'm going to manually update
-> the lsm/next branch.  The normal process is described here:
->
-> * https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
->
+From: Leesoo Ahn <lsahn@ooseel.net>
 
-I sent this a couple of minutes after you sent the email. I was trying
-to reproduce / confirm the original issue before posting the patch.
+[ Upstream commit 3dd384108d53834002be5630132ad5c3f32166ad ]
 
-https://lore.kernel.org/linux-security-module/20240731213429.2244234-1-kpsi=
-ngh@kernel.org/T/#u
+profile->parent->dents[AAFS_PROF_DIR] could be NULL only if its parent is made
+from __create_missing_ancestors(..) and 'ent->old' is NULL in
+aa_replace_profiles(..).
+In that case, it must return an error code and the code, -ENOENT represents
+its state that the path of its parent is not existed yet.
 
-> --
-> paul-moore.com
+BUG: kernel NULL pointer dereference, address: 0000000000000030
+PGD 0 P4D 0
+PREEMPT SMP PTI
+CPU: 4 PID: 3362 Comm: apparmor_parser Not tainted 6.8.0-24-generic #24
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:aafs_create.constprop.0+0x7f/0x130
+Code: 4c 63 e0 48 83 c4 18 4c 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9 45 31 d2 c3 cc cc cc cc <4d> 8b 55 30 4d 8d ba a0 00 00 00 4c 89 55 c0 4c 89 ff e8 7a 6a ae
+RSP: 0018:ffffc9000b2c7c98 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00000000000041ed RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000b2c7cd8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82baac10
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007be9f22cf740(0000) GS:ffff88817bc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000030 CR3: 0000000134b08000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ ? show_regs+0x6d/0x80
+ ? __die+0x24/0x80
+ ? page_fault_oops+0x99/0x1b0
+ ? kernelmode_fixup_or_oops+0xb2/0x140
+ ? __bad_area_nosemaphore+0x1a5/0x2c0
+ ? find_vma+0x34/0x60
+ ? bad_area_nosemaphore+0x16/0x30
+ ? do_user_addr_fault+0x2a2/0x6b0
+ ? exc_page_fault+0x83/0x1b0
+ ? asm_exc_page_fault+0x27/0x30
+ ? aafs_create.constprop.0+0x7f/0x130
+ ? aafs_create.constprop.0+0x51/0x130
+ __aafs_profile_mkdir+0x3d6/0x480
+ aa_replace_profiles+0x83f/0x1270
+ policy_update+0xe3/0x180
+ profile_load+0xbc/0x150
+ ? rw_verify_area+0x47/0x140
+ vfs_write+0x100/0x480
+ ? __x64_sys_openat+0x55/0xa0
+ ? syscall_exit_to_user_mode+0x86/0x260
+ ksys_write+0x73/0x100
+ __x64_sys_write+0x19/0x30
+ x64_sys_call+0x7e/0x25c0
+ do_syscall_64+0x7f/0x180
+ entry_SYSCALL_64_after_hwframe+0x78/0x80
+RIP: 0033:0x7be9f211c574
+Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
+RSP: 002b:00007ffd26f2b8c8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00005d504415e200 RCX: 00007be9f211c574
+RDX: 0000000000001fc1 RSI: 00005d504418bc80 RDI: 0000000000000004
+RBP: 0000000000001fc1 R08: 0000000000001fc1 R09: 0000000080000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00005d504418bc80
+R13: 0000000000000004 R14: 00007ffd26f2b9b0 R15: 00007ffd26f2ba30
+ </TASK>
+Modules linked in: snd_seq_dummy snd_hrtimer qrtr snd_hda_codec_generic snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq snd_seq_device i2c_i801 snd_timer i2c_smbus qxl snd soundcore drm_ttm_helper lpc_ich ttm joydev input_leds serio_raw mac_hid binfmt_misc msr parport_pc ppdev lp parport efi_pstore nfnetlink dmi_sysfs qemu_fw_cfg ip_tables x_tables autofs4 hid_generic usbhid hid ahci libahci psmouse virtio_rng xhci_pci xhci_pci_renesas
+CR2: 0000000000000030
+---[ end trace 0000000000000000 ]---
+RIP: 0010:aafs_create.constprop.0+0x7f/0x130
+Code: 4c 63 e0 48 83 c4 18 4c 89 e0 5b 41 5c 41 5d 41 5e 41 5f 5d 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9 45 31 d2 c3 cc cc cc cc <4d> 8b 55 30 4d 8d ba a0 00 00 00 4c 89 55 c0 4c 89 ff e8 7a 6a ae
+RSP: 0018:ffffc9000b2c7c98 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00000000000041ed RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000b2c7cd8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82baac10
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007be9f22cf740(0000) GS:ffff88817bc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000030 CR3: 0000000134b08000 CR4: 00000000000006f0
+
+Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/apparmor/apparmorfs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index bcfea073e3f2e..01b923d97a446 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -1692,6 +1692,10 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
+ 		struct aa_profile *p;
+ 		p = aa_deref_parent(profile);
+ 		dent = prof_dir(p);
++		if (!dent) {
++			error = -ENOENT;
++			goto fail2;
++		}
+ 		/* adding to parent that previously didn't have children */
+ 		dent = aafs_create_dir("profiles", dent);
+ 		if (IS_ERR(dent))
+-- 
+2.43.0
+
