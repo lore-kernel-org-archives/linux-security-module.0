@@ -1,168 +1,171 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FBC42049
-	for <linux-security-module@vger.kernel.org>; Thu,  1 Aug 2024 15:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D81719478;
+	Thu,  1 Aug 2024 15:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722526967; cv=none; b=tEMAz4NNer5moc1+MpJF5lw+4XSaC7gIwoQbA8zM3pstDP8PHRqYY7mCpX+r2jIq6MiRMpdZOjkitTqIIf20rv3dlMivj1upWKBlRa/V5Emo91K/NSUNsiBGFE1pIm+tS1GW1Fn6HnYGZeHuUr37nWDq4oJ17bFuh6TwPeaQj1M=
+	t=1722527291; cv=none; b=Nr/vZWiTH9983Ip7+X5jXfdy2O+8nf8b+YMl6hOFs5gWoxdrAszRiPwNpJ3QI5HopghbVbXew864yIZuqSOuEX023qft+zvwOfEAbKM7ARIgL02dmXr5JxOXs3gBlo1o6/+DJNlew48jtlWn10VJDH8mnFF0oqISxc/YcKg4tmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722526967; c=relaxed/simple;
-	bh=cDl6RN2bBIoFKiHj7VJYtw6XbTm0TAQroLX/vhciFkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5VH8zRi5FvMX/ud1UNivNQMWG2TMYklWDDogRF1v2wE3+4IOQh1KxX+sx5t0zDnJrUAzKxvCQhjuOg6EETkpGtqEsqAmXgHVslonKpHU5j2ElTF5wpuAam8yiXtaDbrR520OUpNa8UUNLdOhQrVMVqBMQt2ieeFHauzRUUxnHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pV0P8aex; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pV0P8aex"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WZY1M0DX7zsVm;
-	Thu,  1 Aug 2024 17:34:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1722526486;
-	bh=A1F5zQZorvNwly9Y8kuUv6R07sNlctROnahVJ8WF67o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pV0P8aexwGkvDEmlicisW25ex2jcKUEbnsi1BWyUaNH8VY5zIzP5c4ikbloRZp0Wn
-	 00qnhlQORTaApFlGR2/ELVg53YeW8AtUhnUsaBK3VqxGvJVJ5iJGpeAr/BPe+EcbSb
-	 QrFsP7iYx5/CJLfoaKvtHDsibuUDIC20IJkVbsrE=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WZY1L1VZpzy5S;
-	Thu,  1 Aug 2024 17:34:46 +0200 (CEST)
-Date: Thu, 1 Aug 2024 17:34:41 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
- ptrace_may_access()
-Message-ID: <20240801.Ais4tiethaus@digikod.net>
-References: <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
- <20240729.cho6saegoHei@digikod.net>
- <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
- <20240729.rayi3Chi9aef@digikod.net>
- <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
- <20240729.roSo6soogho8@digikod.net>
- <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
- <CAG48ez2bnvuX8i-D=5DxmfzEOKTWAf-DkgQq6aNC4WzSGoEGHg@mail.gmail.com>
- <CAHC9VhTk4X61K72FubR8ahNeGyzWKkF=vJZD+k-8+xO7RwZpgg@mail.gmail.com>
- <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
+	s=arc-20240116; t=1722527291; c=relaxed/simple;
+	bh=3b3teYOeMnKN/5gEkex+1dr1uybGX1tQ7lYOcPUoa4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ap3WwKas3hvR6F/w0I6sq38u6fkE7HWrFWyYXMVjBMGHnKHlyhsuJmHDjGhE9ZXbUI1bGatlkIMRJKyhS4H1fsJjx625WUhb0tGo+gswWyxrf/35pr74YN9VFz6sCp788iVgXmUDMv3QeZ2Kai/qt7WEUIXtRKKfy4KhF+uofds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WZYGX1zszzfZ2f;
+	Thu,  1 Aug 2024 23:46:12 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5BED11402CD;
+	Thu,  1 Aug 2024 23:48:03 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 23:47:59 +0800
+Message-ID: <af585335-9844-c9c1-5320-7751e0f3a97c@huawei-partners.com>
+Date: Thu, 1 Aug 2024 18:47:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 5/9] selftests/landlock: Test listen on connected
+ socket
+Content-Language: ru
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+References: <20240728002602.3198398-1-ivanov.mikhail1@huawei-partners.com>
+ <20240728002602.3198398-6-ivanov.mikhail1@huawei-partners.com>
+ <20240801.Ee3Cai7eeD1g@digikod.net>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20240801.Ee3Cai7eeD1g@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On Wed, Jul 31, 2024 at 11:33:04PM +0200, Jann Horn wrote:
-> On Wed, Jul 31, 2024 at 11:27 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Wed, Jul 31, 2024 at 4:54 PM Jann Horn <jannh@google.com> wrote:
-> > > On Wed, Jul 31, 2024 at 10:29 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Mon, Jul 29, 2024 at 11:17 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > On Mon, Jul 29, 2024 at 05:06:10PM +0200, Jann Horn wrote:
-> > > > > > On Mon, Jul 29, 2024 at 5:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
-> > > > > > > > On Mon, Jul 29, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
-> > > > > > > > > > On Mon, Jul 29, 2024 at 2:59 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > > > > A process can modify its parent's credentials with
-> > > > > > > > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
-> > > > > > > > > > > doesn't take into account all possible access controls.
-> > > > > > > > > > >
-> > > > > > > > > > > Enforce the same access checks as for impersonating a process.
-> > > > > > > > > > >
-> > > > > > > > > > > The current credentials checks are untouch because they check against
-> > > > > > > > > > > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
-> > > > > > > > > >
-> > > > > > > > > > FWIW, my understanding is that the intended usecase of
-> > > > > > > > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
-> > > > > > > > > > new_session" and "e4crypt new_session") want to be able to change the
-> > > > > > > > > > keyring of the parent process that spawned them (which I think is
-> > > > > > > > > > usually a shell?); and Yama LSM, which I think is fairly widely used
-> > > > > > > > > > at this point, by default prevents a child process from using
-> > > > > > > > > > PTRACE_MODE_ATTACH on its parent.
-> > > > > > > > >
-> > > > > > > > > About Yama, the patched keyctl_session_to_parent() function already
-> > > > > > > > > check if the current's and the parent's credentials are the same before
-> > > > > > > > > this new ptrace_may_access() check.
-> > > > > > > >
-> > > > > > > > prepare_exec_creds() in execve() always creates new credentials which
-> > > > > > > > are stored in bprm->cred and then later committed in begin_new_exec().
-> > > > > > > > Also, fork() always copies the credentials in copy_creds().
-> > > > > > > > So the "mycred == pcred" condition in keyctl_session_to_parent()
-> > > > > > > > basically never applies, I think.
-> > > > > > > > Also: When that condition is true, the whole operation is a no-op,
-> > > > > > > > since if the credentials are the same, then the session keyring that
-> > > > > > > > the credentials point to must also be the same.
-> > > > > > >
-> > > > > > > Correct, it's not a content comparison.  We could compare the
-> > > > > > > credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
-> > > > > > > guess this should not be performance sensitive.
-> > > > > >
-> > > > > > Yeah, though I guess keyctl_session_to_parent() is already kind of
-> > > > > > doing that for the UID information; and for LSMs that would mean
-> > > > > > adding an extra LSM hook?
-> > > > >
-> > > > > I'm wondering why security_key_session_to_parent() was never used: see
-> > > > > commit 3011a344cdcd ("security: remove dead hook key_session_to_parent")
-> > > >
-> > > > While I was looking at this in another off-list thread I think I came
-> > > > around to the same conclusion: I think we want the
-> > > > security_key_session_to_parent() hook back, and while I'm wearing my
-> > > > SELinux hat, I think we want a SELinux implementation.
-> > >
-> > > FYI: Those checks, including the hook that formerly existed there, are
-> > > (somewhat necessarily) racy wrt concurrent security context changes of
-> > > the parent because they come before asynchronous work is posted to the
-> > > parent to do the keyring update.
-> >
-> > I was wondering about something similar while looking at
-> > keyctl_session_to_parent(), aren't all of the parent's cred checks
-> > here racy?
+8/1/2024 5:46 PM, Mickaël Salaün wrote:
+> On Sun, Jul 28, 2024 at 08:25:58AM +0800, Mikhail Ivanov wrote:
+>> Test checks that listen(2) doesn't wrongfully return -EACCES instead
+>> of -EINVAL when trying to listen for an incorrect socket state.
+>>
+>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
 > 
-> Yeah...
+> Good to have this test!
 > 
-> > > In theory we could make them synchronous if we have the child wait for
-> > > the parent to enter task work... actually, with that we could probably
-> > > get rid of the whole cred_transfer hack and have the parent do
-> > > prepare_creds() and commit_creds() normally, and propagate any errors
-> > > back to the child, as long as we don't create any deadlocks with
-> > > this...
-> >
-> > Assuming that no problems are caused by waiting on the parent, this
-> > might be the best approach.  Should we also move, or duplicate, the
-> > cred checks into the parent's context to avoid any races?
+>> ---
+>>   tools/testing/selftests/landlock/net_test.c | 65 +++++++++++++++++++++
+>>   1 file changed, 65 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+>> index b6fe9bde205f..a8385f1373f6 100644
+>> --- a/tools/testing/selftests/landlock/net_test.c
+>> +++ b/tools/testing/selftests/landlock/net_test.c
+>> @@ -1644,6 +1644,71 @@ TEST_F(ipv4_tcp, with_fs)
+>>   	EXPECT_EQ(-EACCES, bind_variant(bind_fd, &self->srv1));
+>>   }
+>>   
+>> +TEST_F(ipv4_tcp, listen_on_connected)
 > 
-> Yeah, I think that'd probably be a reasonable way to do it. Post task
-> work to the parent, wait for the task work to finish (with an
-> interruptible sleep that cancels the work item on EINTR), and then do
-> the checks and stuff in the parent. I guess whether we should also do
-> racy checks in the child before that depends on whether we're worried
-> about a child without the necessary permissions being able to cause
-> spurious syscall restarts in the parent...
+> We should use the "protocol" fixture and its variants instead to test
+> with different protocols and also without sandboxing (which is crutial).
+> 
+> I guess espintcp_listen should use "protocol" too.
+> 
+> ipv4_tcp is to run tests that only make sense on an IPv4 socket, but
+> when we test EINVAL, we should make sure Landlock doesn't introduce
+> inconsistencies for other/unsupported protocols.
 
-Why doing the check only in the parent and reporting back the result to
-the child could be a security issue?  I guess duplicating the check
-would just avoid executing useless code in the parent side if the child
-doesn't have enough privileges right?
+Makes sense, let's use "protocol".
 
 > 
-> > > > Mickaël, is this something you want to work on?
+>> +{
+>> +	const struct landlock_ruleset_attr ruleset_attr = {
+>> +		.handled_access_net = ACCESS_ALL,
+>> +	};
+>> +	const struct landlock_net_port_attr tcp_not_restricted_p0 = {
+>> +		.allowed_access = ACCESS_ALL,
+>> +		.port = self->srv0.port,
+>> +	};
+>> +	const struct landlock_net_port_attr tcp_denied_listen_p1 = {
+>> +		.allowed_access = ACCESS_ALL & ~LANDLOCK_ACCESS_NET_LISTEN_TCP,
+>> +		.port = self->srv1.port,
+>> +	};
+>> +	int ruleset_fd;
+>> +	int bind_fd, status;
+>> +	pid_t child;
+>> +
+>> +	ruleset_fd =
+>> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>> +	ASSERT_LE(0, ruleset_fd);
+>> +
+>> +	/* Allows all actions for the first port. */
+>> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
+>> +				       &tcp_not_restricted_p0, 0));
+>> +
+>> +	/* Deny listen for the second port. */
+> 
+> nit: Denies listening
 
-I'll let you handle the new design of the hook, but I'll review it. :)
+will be fixed
 
-I guess we're not OK to tie the KEYCTL_SESSION_TO_PARENT call to a
-ptrace_may_access() mainly because of the Yama case?  I'm wondering if
-we should add an exception for Yama here, or if each LSM should
-implement its own new hook with the related new bit of security policy.
-I guess some systems with a fine-tuned SELinux policy could be an issue
-too.
+> 
+>> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
+>> +				       &tcp_denied_listen_p1, 0));
+>> +
+>> +	enforce_ruleset(_metadata, ruleset_fd);
+>> +	EXPECT_EQ(0, close(ruleset_fd));
+>> +
+>> +	/* Init listening socket. */
+> 
+> nit: Initializes
 
-Anyway, I wondering what was the motivation to only/mainly check
-EUID/EGID for keyring change.
+will be fixed
+
+> 
+>> +	bind_fd = socket_variant(&self->srv0);
+>> +	ASSERT_LE(0, bind_fd);
+>> +	EXPECT_EQ(0, bind_variant(bind_fd, &self->srv0));
+>> +	EXPECT_EQ(0, listen_variant(bind_fd, backlog));
+>> +
+>> +	child = fork();
+>> +	ASSERT_LE(0, child);
+>> +	if (child == 0) {
+>> +		int connect_fd;
+>> +
+>> +		/* Closes listening socket for the child. */
+>> +		EXPECT_EQ(0, close(bind_fd));
+>> +
+>> +		connect_fd = socket_variant(&self->srv1);
+>> +		ASSERT_LE(0, connect_fd);
+>> +		EXPECT_EQ(0, connect_variant(connect_fd, &self->srv0));
+>> +
+>> +		/* Tries to listen on connected socket. */
+>> +		EXPECT_EQ(-EINVAL, listen_variant(connect_fd, backlog));
+>> +
+>> +		EXPECT_EQ(0, close(connect_fd));
+>> +		_exit(_metadata->exit_code);
+>> +		return;
+>> +	}
+>> +
+>> +	EXPECT_EQ(child, waitpid(child, &status, 0));
+>> +	EXPECT_EQ(1, WIFEXITED(status));
+>> +	EXPECT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>> +
+>> +	EXPECT_EQ(0, close(bind_fd));
+>> +}
+>> +
+>>   FIXTURE(port_specific)
+>>   {
+>>   	struct service_fixture srv0;
+>> -- 
+>> 2.34.1
+>>
+>>
