@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86751E672A;
-	Thu,  1 Aug 2024 00:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971621A9D1D;
+	Thu,  1 Aug 2024 00:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722472793; cv=none; b=o2q0IrFYYO4p60h98oM4eUQdtsvd4IOpvaMvz8ZMw9sbJl6t8J79HPKpUYiC9NgwhqFuXXUo12sjp8TzDz7YDZvL1m1bduGVElkrfF/81z7SqKgHD9afN0dVVIv6MBVemAkbhPUS33etRygn2CMsbx/sR99uqBr1gwC5wQLm4G8=
+	t=1722472852; cv=none; b=LkP9KySz7KYlosnOiZ0qaoxBFdww7Y3ItbREQfAOlu4gPWeo3MEU4AUv9YcxylwI1VF8oEfAHuo0yOpMkDs44fkysk8pee1eAkkc2e58yhJohpoPBaru+6s1LetdFesxYLgslNdgPg/Cc78yr8p5KLonEzQslvsOXB9WYQkdtcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722472793; c=relaxed/simple;
-	bh=Ws+HXSKlCElIc8+FpImuch7iVk+Xs/7j2A2vf/PxU30=;
+	s=arc-20240116; t=1722472852; c=relaxed/simple;
+	bh=gC4+abmNMAF5g0LkhGJRgCKbkYJwH5npRoFm8eUWqow=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b6Zw7KgsNnjJaBtpcKyGBvQ5idySred6ZDYXs6g81lEWgepzV/26oDZnnVosYPEhDVgUxDAC9GXNld2YefmhPff9zLs47YWCn+EhLnf10E9Iws23MA3be9Wro1IUL7xcRXMHHJ50pBXXSc4YR7YkUHueBB+hhSBrj/7RzTa2m70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEvN3otC; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=nbp7hy/HOJbugh/hAwuDg06pgbuFb8n5gjBFuAR1HwGpkBJ8oeBrJ9M+paxq+dhgnDDbIi72DgWi00Bs4eLIDaf5OjyzR6wd3uQvvoM2+vNGTddxjO3JHvxv/m2XrZnrTD6FNHz3gCK3n0tI7EiXlCSwj/WnmWapGcWPFNoeE68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZBJWmQo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEvN3otC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9ECFC4AF0C;
-	Thu,  1 Aug 2024 00:39:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZBJWmQo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C03C32786;
+	Thu,  1 Aug 2024 00:40:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722472792;
-	bh=Ws+HXSKlCElIc8+FpImuch7iVk+Xs/7j2A2vf/PxU30=;
+	s=k20201202; t=1722472852;
+	bh=gC4+abmNMAF5g0LkhGJRgCKbkYJwH5npRoFm8eUWqow=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XEvN3otC1dyh3Mok7PjGENaotbgOJ1Fv4uEiIFb1YtYaXsCtPHy+rOHrLESv8mOuu
-	 +NvatRJKmgcKJG06i6e3TRu8vGup5sxRWRC+Rk2jan1huTQmK6e35F/eMrjmaJNoFv
-	 BhYPkKZPVMQki7AOo/W2qpCO6OAtR4+orKp0IYFb255zUva5Qex9U45WH1mj+nbRpk
-	 mD/Op7PJ6ZWVny9iO/Yr8Mub/xQOYRMZDpwam4cYkUdzQcT1GnrtJacSKWQRLcMW7/
-	 qOoun5jFkK17NtFQ4vdyVm8s1DWy53XY1ZjGTQkQnXHuhDURf+EMOTRUNeeS/Ta6pc
-	 AqSe3BRUumJvw==
+	b=uZBJWmQobL75W9AfaVdmmvvdTnr83kTyxe7IB3K+Sh1cbKUf0Jw+atU90hg9VHmCl
+	 4b/C+S7Z2jrVAp0hDIY2Qu9dqgsagwiTsFOqbk1ffTHqfh2YSZE+zK5qqNCK7aPNGb
+	 /3ohqcpOUeyBgCiQy9KrOJvly6d6kbtlZDzRyq3WAHmM5OGeaaKE1+bEESNiYLXyky
+	 ZGdf77XZ+ILbYfXqx9i07ZmdHyBfuKFXCD6VtCM4uxLpAVkjq7FZENehIIwhB9RpTp
+	 p10ZA2QHicWZITxy/yo4JxE0HPJBau7yMqy6U0stBVUpMFM7qF7ltkkzHsgqBauRqN
+	 hdOcSlupES5sw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -36,12 +36,12 @@ Cc: Casey Schaufler <casey@schaufler-ca.com>,
 	jmorris@namei.org,
 	serge@hallyn.com,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 09/22] smack: tcp: ipv4, fix incorrect labeling
-Date: Wed, 31 Jul 2024 20:38:38 -0400
-Message-ID: <20240801003918.3939431-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 05/14] smack: tcp: ipv4, fix incorrect labeling
+Date: Wed, 31 Jul 2024 20:40:13 -0400
+Message-ID: <20240801004037.3939932-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801003918.3939431-1-sashal@kernel.org>
-References: <20240801003918.3939431-1-sashal@kernel.org>
+In-Reply-To: <20240801004037.3939932-1-sashal@kernel.org>
+References: <20240801004037.3939932-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.281
+X-stable-base: Linux 4.19.319
 Content-Transfer-Encoding: 8bit
 
 From: Casey Schaufler <casey@schaufler-ca.com>
@@ -102,10 +102,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 072ce1ef6efb7..7d04b21737cf5 100644
+index d9bff4ba7f2e8..158f4df39be44 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -4196,7 +4196,7 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
+@@ -4291,7 +4291,7 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
  	rcu_read_unlock();
  
  	if (hskp == NULL)
