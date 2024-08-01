@@ -1,161 +1,114 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E38414F9D5
-	for <linux-security-module@vger.kernel.org>; Thu,  1 Aug 2024 01:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90BC13D60F
+	for <linux-security-module@vger.kernel.org>; Thu,  1 Aug 2024 01:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722474804; cv=none; b=JvQ1Hxb2UFUEgmzqGWghUz/ZO7o36QwYs2ZYiWZQzCQXMytZReZfp1W+3qX/rzbrsKobcUjY9oRdzxvcrXvxzHxThUDdSMEglNzFpTDaczqONfyi5d6gQuCikZgP2NmNKAEBvrmaDipjz16OM7UtxLD8S4I3V9l7xFdk6kUTwHw=
+	t=1722474917; cv=none; b=XLn/x1K+wv74DqEpf4WMrt4iZEngoXb0VWkmaGuRQePzlWxqfn/71YnwRBWxu8SNh/agsebOBhpktm/FSyX2/Enkv85ohvvAREGfxmculx3/AFqI1FSKCPwctyBUgaxJ4hnzrRi+AJ4dKpXEOWcAfz51a0vJN4KK9J2zQG4X4hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722474804; c=relaxed/simple;
-	bh=OnSsYvdBqSCc4TBDdCpfp4I+U0UhTeDr0zgNlOvyOSQ=;
+	s=arc-20240116; t=1722474917; c=relaxed/simple;
+	bh=SVgN9X5MN2Naoy6g3BbCxdj5ajlWUjJvw/VDf7KG5UY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZKz9YtNJUS5g68e4unLel9lhyNm+C1ONpC/1qmh0yNF9I2LnIURHcCB2Scd5t1mCmDheQNRyHFWiE0OHiu4K0VlIRdHnm/rmXD3TeEHQ+lEHmmtSYzLrlY+EkpyWGoWqKGHVHOP3c0/5LJQ2lfVFkmywnUXvMEHiOretnQUKMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BBo3Cpq0; arc=none smtp.client-ip=209.85.219.170
+	 To:Cc:Content-Type; b=h6bNKhXUglFYC4UWzWw0yMDglXL/hkz1egrX8TZBcX1LbzqtLK8NhWNFjtTEkMXW6IvPbx0GBwJLEmv1y4sTfbCMO963565SzdM8mCvHdwuJSuIUImkdGL8aFSIK3n63DhreRM8nmTWyBmmucJG2AyJsuP0lON7ehItIiNZlueU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LtMq90Ff; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BBo3Cpq0"
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0b167da277so4676231276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2024 18:13:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LtMq90Ff"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6510c0c8e29so48436017b3.0
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Jul 2024 18:15:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1722474801; x=1723079601; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1722474914; x=1723079714; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G0BQ8Evsp2ujGcmQXgR29t+nVAHCPZluf+918tPs5HU=;
-        b=BBo3Cpq0xhHPc4ON5tl3m79cOXHRrcI4u/gDX80+CIUhfdQOxNmZRthVhZssfYxhw8
-         NiCM5JPgJBD2ehfmgQsCdK6GDOPwHDZ378n9PeuuliEJZY1DRbQUYBXDA+HmYnihBT4d
-         5La4xrbMVIPtBsf6xmF8ux5cydiMFKmCK/aI8YUa2PaIZDF0YvzwHD/a514uthsrTXro
-         k7HbVZXav1QKMibDu2dnXoNkimp5OOzpzorX8UsMoNqMKdsFBUTV4ve+rDvZ9UBOzS8r
-         YEfongvRQ+HGQXs46ddSeVX6mVeL7Vms31stzmRpsejyJpYw6UctHcHtZSmlUd6kRJBM
-         e6Ew==
+        bh=380+7SLY0H8ozFzYirfka87loOWyMCcZqwS7osxD590=;
+        b=LtMq90FfoXJqpyIJgWu98Kqe8cNcEj9mBwaltQHdhHG4XeHaUqFDbFXQ0/KSSujNR1
+         0xZGqHJMB4wSBcDhuWKo+23GstKn8Ve3M94iMV08A/ZMVO/Vq6otskBK54LPymJuwW+P
+         dlGY280i3baeIliMC+jMrhuL9ejfr007+3jwM99mdy10nuPLEwUCJMjJiQh8o4qwPttV
+         fWdjIHFHHa1i7HbM8SRSIoIeeNBXMvGGefFSRTua0ENtYepXpjZcSYzM1DuNHCCs2rD/
+         jUC/1Cy4XNo2xravXK/JYhYr3V0MAngAzqtGekMfOZOP1fXgTt8GECAc/z9yxx8yClr4
+         a5dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722474801; x=1723079601;
+        d=1e100.net; s=20230601; t=1722474914; x=1723079714;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G0BQ8Evsp2ujGcmQXgR29t+nVAHCPZluf+918tPs5HU=;
-        b=Ni5jHSjcO3fCqqz46K4pCKV1J6KXVO9QTdYzSvB9e2sp6ac+sjcxHvnQwoDWtqLKUg
-         utMC4yn0WwzWuAX27hc4eS9wdAKGrJAFKUxUrV34Ufp5g5PRTf9ZXBa3G8JqSgJjjuEy
-         /qIAwAj9YxZI0g2olOclgaKzB8X0wZ/FOtWMBIgh5rj7kKukK0jj+x+PTvehUOi8gQ0G
-         ab7uDPpWOCPDE3ZquJqdJ4ixnLxi6Iz2lU1vxwPlI2NhGsU7wSOGlx/li5AKNlYiHFPj
-         6G8lMpRmdv2/iMhk49ZFHuMByWTOZ9mAVUexuuMYqq34IuB/qxAu3AhyP1j69YA+DeeN
-         fdFQ==
-X-Gm-Message-State: AOJu0YyYZIegzRgV4wXleDPkIgwC6sPZeszoP1TXGn2FY1JPnrdsqplz
-	OxY3EwtJq1asHe4XABoqiRgmRy7zUyRNJoOxk9HNHzMYzRC2DPAIEarOnpcEmdxEBpZZXxAhBwi
-	fhsq2A9uNBJj0cpG17XMoJAWeJ8/ttvKWzTAl
-X-Google-Smtp-Source: AGHT+IEVcS5Y1pQQ44fxDfqsv9wajVZz4s+9pi10Od+67a9dM1+LMq3MC4sbAmucR+3c2YU00r/3n34EJzp3v4TvEN8=
-X-Received: by 2002:a0d:c802:0:b0:64a:3e36:7fd1 with SMTP id
- 00721157ae682-6874c15ea29mr10497307b3.10.1722474801266; Wed, 31 Jul 2024
- 18:13:21 -0700 (PDT)
+        bh=380+7SLY0H8ozFzYirfka87loOWyMCcZqwS7osxD590=;
+        b=RFnKWfLgBNy9Pra2tFAIb8vcpdaihdnLrDU98jaw2OYDeplws4l/h1v40tBQK8W8q3
+         7bmw3MJ7m5Ymbj5CeMsVB6LHenRbm+KMNrI3spOIT7Enhh/Z2mUt0zDeouVXYeiFanO0
+         EmRjjMfh7tbdrjjsKq18X9CsQfxvMd1hWDZek9oiqW8IndY416iFvJSSwU5dK48Fc0Wn
+         pdyzsGHzmxLnbgH3aTLpBPdEnVRQIH7vjPPhsETWoNgsQkTsURZ0OHXEVmLs/jXVyM/1
+         rGSD2QE8oT6Ln0pwGiaOns47gCU0raIKNSh3jWC7U+WYV+4YWBy6zHnx5CSrvNbzQfCM
+         FV9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVV/9JicZj8bYK8Hxbp5SOVsrkSiUBKVRkNfoKQ9+w5do3/YAx6eguLUaBlS/7v/WWHErB34bepBVVQGt4IZEsVeZMRs/tByStrBM4pJNSW2o0ioWke
+X-Gm-Message-State: AOJu0YwJGKofr0IwLUxW14CnvMVyDhRnrTOo6Z0usdtl/f4ptE9c8Bmf
+	ls3Qxbpi+pVWKoSB8MPenmQEcRfn6GbeiiF5UqcYxwvsM91Q/KGuaj9XXHFba4p7pVr//cgppjG
+	TpVwYh+t78wXqrCpSxbDwTHrPc68+wRa3raXO
+X-Google-Smtp-Source: AGHT+IG+KigIi1ZwL6yi99ABagx3s36jnOVjsRDDCi4VPrvftlbYePPH9NniWpU2v6MTuDp5h9QJ1836JqjIPMDQSDE=
+X-Received: by 2002:a81:9c53:0:b0:665:b876:e35f with SMTP id
+ 00721157ae682-6874c73d438mr11780657b3.22.1722474914685; Wed, 31 Jul 2024
+ 18:15:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
- <CAHC9VhRnq81v=DYC3SC=oD2onittYTQbZqp5uoeU2MWuCh0-SA@mail.gmail.com>
- <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com>
- <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com>
- <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com> <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
-In-Reply-To: <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
+References: <20240731213429.2244234-1-kpsingh@kernel.org>
+In-Reply-To: <20240731213429.2244234-1-kpsingh@kernel.org>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 31 Jul 2024 21:13:10 -0400
-Message-ID: <CAHC9VhTZqccBF0TbvuDT1OyO4gPbx7D3C966ppXD_fLeeWoMYQ@mail.gmail.com>
-Subject: Re: static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10'
- used before call to jump_label_init()
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Narasimhan V <Narasimhan.V@amd.com>, 
-	lkml <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
+Date: Wed, 31 Jul 2024 21:15:04 -0400
+Message-ID: <CAHC9VhQEYutCiAMitEv0JY4PRY4tdLdqEy76qvY1xB5q8Y13mg@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Do jump_label_init before early_security_init
+To: Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>
+Cc: KP Singh <kpsingh@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 6:33=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+On Wed, Jul 31, 2024 at 5:34=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
 :
-> On Wed, Jul 31, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > On Tue, Jul 30, 2024 at 4:36=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM KP Singh <kpsingh@kernel.org>=
- wrote:
-> > > > On Tue, Jul 30, 2024 at 5:03=E2=80=AFPM Paul Moore <paul@paul-moore=
-.com> wrote:
-> > > > > On Tue, Jul 30, 2024 at 7:34=E2=80=AFAM Borislav Petkov <bp@alien=
-8.de> wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > this is with today's linux-next:
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > 09:44:13  [console-expect]#kexec -e
-> > > > > > 09:44:13  kexec -e
-> > > > > > 09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-ne=
-xt-20240730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU l=
-d (GNU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:5=
-5 UTC 2024
-> > > > > > 09:44:16  [    0.000000] ------------[ cut here ]------------
-> > > > > > 09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/stati=
-c_call_inline.c:153 __static_call_update+0x1c6/0x220
-> > >
-> > > ...
-> > >
-> > > > > KP, please take a look at this as soon as you can (lore link belo=
-w for
-> > > > > those who aren't on the list).  One obvious first thing to look a=
-t is
-> > > > > simply moving the call to early_security_init(), but that require=
-s
-> > > > > some code audit to make sure it is safe and doesn't break somethi=
-ng
-> > > > > else.  Of course, if we can do something with how we setup/use st=
-atic
-> > > > > calls that is even better.  I'll take a look at it myself later t=
-oday,
-> > > > > but I'm busy with meetings for the next several hours.
-> > > > >
-> > > > > If we can't resolve this in the next day or two I'm going to
-> > > >
-> > > > Thanks for the ping.
-> > > >
-> > > > Taking a look, yeah it's possible that we need to move jump_label_i=
-nit
-> > > > before early_security_init / inside it.
-> > > >
-> > > > I will do a repro and test my change and reply back.
-> > >
-> > > I'm pretty sure we don't want to move jump_label_init() inside
-> > > early_security_init(), we likely want to keep those as distinct calls
-> > > in start_kernel().  Shuffling the ordering around seems like a better
-> > > solution if we can't solve this some other way.
-> > >
-> > > Regardless, thanks for looking into this, I'll hold off on digging
-> > > into this and wait for your patch.
-> >
-> > Since I don't want to leave linux-next broken any longer, I'm going to
-> > yank the static-call patches from the lsm/next branch but I'll leave
-> > them in lsm/dev so you can continue to use that as a basis for your
-> > fix.  If we don't have a fix in hand by the first half of next week,
-> > I'll drop the patches from lsm/dev too and we can revisit the patchset
-> > when you have a fix ready.
-> >
-> > For casual observers, the lsm/next is normally an automatically
-> > composed branch made up of the latest lsm/stable-X.Y and lsm/dev
-> > branches however in this particular case I'm going to manually update
-> > the lsm/next branch.  The normal process is described here:
-> >
-> > * https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
 >
-> I sent this a couple of minutes after you sent the email. I was trying
-> to reproduce / confirm the original issue before posting the patch.
+> LSM indirect calls being are now replaced by static calls, this requires
+> a jumpt_table_init before early_security_init where LSM hooks and their
+> static calls and keys are initialized.
+>
+> Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static ca=
+lls")
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  init/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yes, I think our emails must have crossed paths.  Regardless, let's
-see if we can get some ACKs/Reviews from the static call folks just to
-make sure we are doing something silly by moving the init point.
+Does this look okay, static call folks?
+
+> diff --git a/init/main.c b/init/main.c
+> index 206acdde51f5..5bd45af7a49e 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -922,6 +922,8 @@ void start_kernel(void)
+>         boot_cpu_init();
+>         page_address_init();
+>         pr_notice("%s", linux_banner);
+> +       /* LSM and command line parameters use static keys */
+> +       jump_label_init();
+>         early_security_init();
+>         setup_arch(&command_line);
+>         setup_boot_config();
+> @@ -933,8 +935,6 @@ void start_kernel(void)
+>         boot_cpu_hotplug_init();
+>
+>         pr_notice("Kernel command line: %s\n", saved_command_line);
+> -       /* parameters may set static keys */
+> -       jump_label_init();
+>         parse_early_param();
+>         after_dashes =3D parse_args("Booting kernel",
+>                                   static_command_line, __start___param,
+> --
+> 2.46.0.rc2.264.g509ed76dc8-goog
 
 --=20
 paul-moore.com
