@@ -1,122 +1,147 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4F21E3CD9
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Aug 2024 13:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6637415C15E
+	for <linux-security-module@vger.kernel.org>; Fri,  2 Aug 2024 15:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722604404; cv=none; b=AFbMyE3MC4FT7u6oKryuttmfYzfIG2j+nReK1qjtlYVxsM27yOrSFH/ZKE6WfAK8EZkxCmmRhzesgeNed31kRKlzTZa3LfbLYigp0DTeFnwAtdCZbeFsPB/vKUoBa7o5lTYT3w7GUBuK+RtmlM8g/aaIVvGb16RJ/+NyLbJ5lF4=
+	t=1722611974; cv=none; b=hBITx96ouY4IGYnPLrQB3DlkyNZqcdH86UbQq1Zc/RCh5MlCU+Am/ra6VXCJjy0NpMinAJLAWA3due/VpsUr6rxBSXnxueW1Z1V25Th9OSPbyJgdZ5P48yGwxmrIjw71+br7PttFcq3z+8V58jS5pLUKTYEWFufSSOciF9LnIVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722604404; c=relaxed/simple;
-	bh=BwTpX4R7zkKwhLkBtH/hZIhBc3WcCtukHgkLY/3CyXg=;
+	s=arc-20240116; t=1722611974; c=relaxed/simple;
+	bh=yf3/DcLNflmZVVdGmRQQ3m5ZTvXvQqIBueCI1PWXdwg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R3RtWBlqj1El4ORpM1dKRJxcwZIoYFABDzVQp9gaaCeRQWfx1yYH6k4qsGgcKmuVG854uAgZS7VNb/1ePD4wrG2BOMShhmbodt4dE6DErT7XROYbiqRGXbl4YHa/gTr9WZsLOuLzqe3yLfyKQSXaWqyYLjajc6d+z+JJ1QETW3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S1BTIsiQ; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=qwKjnJ4s33Wjnse/27F63WFgd+KqnK9h4SCV8KoTTOwNeVwXbHrWr97RiOWQrhBB7x9gzukxglkpgbFQTDTZ4h8KSBCyyc858zsKtmhQomsVpU5u0eBnVIgx8ByQwmqvwIkxBJKjxIbVRtRCoqNs++VibFTsCkABGHevi0ibsBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BKvudFLM; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S1BTIsiQ"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so50943a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Aug 2024 06:13:23 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BKvudFLM"
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5e97b8a22so3475575eaf.2
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Aug 2024 08:19:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722604402; x=1723209202; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1722611970; x=1723216770; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y1lsq1MbHixArH6n0xuStRjT/KO7g8bnFRsAbnZpGsc=;
-        b=S1BTIsiQu2+g9uCop3KOzEhU9ET8TDRf7tdg6HXU+ydnzfUnhMNWpRlYCFRp+h+gHJ
-         VGJ1Fk3jhweevDoKmMWqzQ3fpehZwyClv07VnNaBH51ffWZdbhjf9KniIgeyWILBnXO2
-         HZ0JZ96BSTID90wmaroPV/mujRMZpc+UnEMaCi5yHoN4Icnln7CcOdCHCwZ62QGoGdlo
-         yAR5+qxn+NSNDe7r7LYG5RwRYVxOJC6pk6nsLk/PTj3PDfCN+sIt/ndyqJ86fafgQgry
-         lSPmXGZV/jIy9G6lgMDpynJ9Jl6hMIJf1y3QtTUlncTNb4WN9KLAzm51yMDqeHw5Aro5
-         9umQ==
+        bh=hVQxTJ6XiBlo2K6vivKGyjwtwzsISazu9ikSPPmJl/k=;
+        b=BKvudFLMgRl2q3rvuTbFgJvNchsosRZK4tIukjujKRw1dEr89Jz2GO8z9IurlGrvcP
+         Wjh5ti/uV11DwSPsTUIGYK5qVo/QekWR6Xhk9lcbuWearkuOEX6HWZgDHlTSIrsdYDah
+         xjdBbMymQPfOrplba70BKcxbvLeHMSmEFbKGw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722604402; x=1723209202;
+        d=1e100.net; s=20230601; t=1722611970; x=1723216770;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y1lsq1MbHixArH6n0xuStRjT/KO7g8bnFRsAbnZpGsc=;
-        b=kvRqIRmT6bBgUY60nDmroC1yvWWwvSKKySNyOm3r/haFuf0uh6aUSprbZSle2d2wFM
-         hBbStBVYwZoJTgMZia3EkSWcizfCl3ou4zWWo8Xdl1PENASOPBCcogx7w8sy3/26he3w
-         shETVk6OrV/jcVGQYVar8Kp3mFdZmhiJkRWEHD3cQWvpTFEvH7jfKaiNOgsqBCocC4Nq
-         Dm2SlUBw2lZJQNphQkhwKyZrfEZxtFA3UZS+A7yK1pgsUm8fW4MDnKeqh0gbWjK6Z8r+
-         XmpYihPnkUJpUwlXmZu15amthOCmVgFa5gNQfM8FnqO9WJ6tHMLFBpC4lramw/Hh78mF
-         akBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwt9KPFmrLJocMLne2r7P2k3Ysp1HZt1ZqUmVs3p5SxR0bnn+cZsFdQ4Vr0BhJBT/8hb62jO+fZLvSiB6Y46R0HvJ5SQKNqvB3GHThANywBXU31oPp
-X-Gm-Message-State: AOJu0YxEWge94GJq3gmwtUD+m6Ic0zGzPBQCR9QnYy0U4rg1L/6cvtEU
-	djRt4tJaF0z9CjG43KSTlNo7L14WVTWN51CXHo7GfO+RQ6Zr5B5UUfP5JKiaZaz2LRCZ/4cqQvW
-	zeh4vlzENehTHcbp2cKY3bNmZuGePXEW+5TVT
-X-Google-Smtp-Source: AGHT+IFYTrXmYI0k6b24zjW3CqG747URvtVJaY0p2tHnlsWe90ww1rp4IvxsCnMquQC7lV9N8ZofPfYaGnlnTfzCud4=
-X-Received: by 2002:a05:6402:268d:b0:57d:436b:68d6 with SMTP id
- 4fb4d7f45d1cf-5b870f72be0mr116158a12.7.1722604401009; Fri, 02 Aug 2024
- 06:13:21 -0700 (PDT)
+        bh=hVQxTJ6XiBlo2K6vivKGyjwtwzsISazu9ikSPPmJl/k=;
+        b=hQHVPqWaMHh0P20g3kjUoiRrGuz3nq26LTDNJxuCyY150YKwPzr4jECqV/bn/D2oOI
+         EdChGzxACQOJ6w7k0dFQw+ZciXc00vD+Bn3nj3tGtg8OM3jEWi7dfKaqeZfDH+Lv3E72
+         evApx0InaVzW3h+PruUOsqr+6sOTzehjexs7QJ3TSOkFzbfc1HvPwZUFMeUEHO3BL4o9
+         ijUfBfWKvp5d2IRjEROKu4i9/ZW+lsrkJRLi+893fGJ0rJXjk8PBJw5/EU5GuO1Sox3q
+         U+xvXMCMHaaDoJyYlLtCYEG2Kzns0AjQe74rMx7UiNdxkiupkXauioxz0CjYMK2Ukrm8
+         fzJg==
+X-Gm-Message-State: AOJu0YwKr0cGjioHxr6SIvn2xeq16ttkS91rPSLz03HW9Zey5ZgfTeOL
+	clZogKvZp+W141R84FZHgqIN75iG8/pz9fMHwSREeX87KQctvobWj3HZj5aVpWwzcEJd92lJc0o
+	=
+X-Google-Smtp-Source: AGHT+IGhBXi0P/Q9pqRshhZ4KpoWiGJDWcupJwZt/d9vqt2tuLI/AE/iLjxcDlizFLsNxatFGXIffA==
+X-Received: by 2002:a05:6820:502:b0:5d5:c805:acae with SMTP id 006d021491bc7-5d663ac5c0emr5113495eaf.5.1722611970044;
+        Fri, 02 Aug 2024 08:19:30 -0700 (PDT)
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com. [209.85.160.47])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d757196f9fsm354107eaf.11.2024.08.02.08.19.29
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Aug 2024 08:19:29 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2689f749649so390854fac.0
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Aug 2024 08:19:29 -0700 (PDT)
+X-Received: by 2002:a05:6870:b025:b0:25e:24b:e65b with SMTP id
+ 586e51a60fabf-26891f23fc9mr4898926fac.42.1722611968742; Fri, 02 Aug 2024
+ 08:19:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729125846.1043211-1-mic@digikod.net> <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
- <20240729.cho6saegoHei@digikod.net> <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
- <20240729.rayi3Chi9aef@digikod.net> <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
- <20240729.roSo6soogho8@digikod.net> <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
- <CAG48ez2bnvuX8i-D=5DxmfzEOKTWAf-DkgQq6aNC4WzSGoEGHg@mail.gmail.com>
- <CAHC9VhTk4X61K72FubR8ahNeGyzWKkF=vJZD+k-8+xO7RwZpgg@mail.gmail.com> <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
-In-Reply-To: <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 2 Aug 2024 15:12:43 +0200
-Message-ID: <CAG48ez2TVGzqS4RPSLJpLEsuqEPsxKfy+CoamGBD-1L8sWSAQQ@mail.gmail.com>
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
-To: Paul Moore <paul@paul-moore.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, keyrings@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240718202359.127482-1-jettrink@chromium.org>
+In-Reply-To: <20240718202359.127482-1-jettrink@chromium.org>
+From: Jett Rink <jettrink@chromium.org>
+Date: Fri, 2 Aug 2024 09:19:17 -0600
+X-Gmail-Original-Message-ID: <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
+Message-ID: <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
+Subject: Re: [PATCH v2] tpm: Add new device/vendor ID 0x50666666
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-security-module@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 11:33=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
-:
-> On Wed, Jul 31, 2024 at 11:27=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > On Wed, Jul 31, 2024 at 4:54=E2=80=AFPM Jann Horn <jannh@google.com> wr=
-ote:
-> > > FYI: Those checks, including the hook that formerly existed there, ar=
-e
-> > > (somewhat necessarily) racy wrt concurrent security context changes o=
-f
-> > > the parent because they come before asynchronous work is posted to th=
-e
-> > > parent to do the keyring update.
-> >
-> > I was wondering about something similar while looking at
-> > keyctl_session_to_parent(), aren't all of the parent's cred checks
-> > here racy?
->
-> Yeah...
->
-> > > In theory we could make them synchronous if we have the child wait fo=
-r
-> > > the parent to enter task work... actually, with that we could probabl=
-y
-> > > get rid of the whole cred_transfer hack and have the parent do
-> > > prepare_creds() and commit_creds() normally, and propagate any errors
-> > > back to the child, as long as we don't create any deadlocks with
-> > > this...
-> >
-> > Assuming that no problems are caused by waiting on the parent, this
-> > might be the best approach.  Should we also move, or duplicate, the
-> > cred checks into the parent's context to avoid any races?
->
-> Yeah, I think that'd probably be a reasonable way to do it. Post task
-> work to the parent, wait for the task work to finish (with an
-> interruptible sleep that cancels the work item on EINTR), and then do
-> the checks and stuff in the parent. I guess whether we should also do
-> racy checks in the child before that depends on whether we're worried
-> about a child without the necessary permissions being able to cause
-> spurious syscall restarts in the parent...
+Could I get some feedback on this patch please? Is there something I
+am not doing correctly?
 
-I hacked up an RFC patch for this approach:
-https://lore.kernel.org/r/20240802-remove-cred-transfer-v1-1-b3fef1ef2ade@g=
-oogle.com
+-Jett
+
+On Thu, Jul 18, 2024 at 2:24=E2=80=AFPM Jett Rink <jettrink@chromium.org> w=
+rote:
+>
+> Accept another DID:VID for the next generation Google TPM. This TPM
+> has the same Ti50 firmware and fulfills the same interface.
+>
+> Signed-off-by: Jett Rink <jettrink@chromium.org>
+> ---
+>
+> Changes in v2:
+> Patchset 2 applies cleanly
+>
+>  drivers/char/tpm/tpm_tis_i2c_cr50.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_t=
+is_i2c_cr50.c
+> index adf22992138e..b50005ccfc5e 100644
+> --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> @@ -31,7 +31,8 @@
+>  #define TPM_CR50_TIMEOUT_SHORT_MS      2               /* Short timeout =
+during transactions */
+>  #define TPM_CR50_TIMEOUT_NOIRQ_MS      20              /* Timeout for TP=
+M ready without IRQ */
+>  #define TPM_CR50_I2C_DID_VID           0x00281ae0L     /* Device and ven=
+dor ID reg value */
+> -#define TPM_TI50_I2C_DID_VID           0x504a6666L     /* Device and ven=
+dor ID reg value */
+> +#define TPM_TI50_DT_I2C_DID_VID                0x504a6666L     /* Device=
+ and vendor ID reg value */
+> +#define TPM_TI50_OT_I2C_DID_VID                0x50666666L     /* Device=
+ and vendor ID reg value */
+>  #define TPM_CR50_I2C_MAX_RETRIES       3               /* Max retries du=
+e to I2C errors */
+>  #define TPM_CR50_I2C_RETRY_DELAY_LO    55              /* Min usecs betw=
+een retries on I2C */
+>  #define TPM_CR50_I2C_RETRY_DELAY_HI    65              /* Max usecs betw=
+een retries on I2C */
+> @@ -741,14 +742,18 @@ static int tpm_cr50_i2c_probe(struct i2c_client *cl=
+ient)
+>         }
+>
+>         vendor =3D le32_to_cpup((__le32 *)buf);
+> -       if (vendor !=3D TPM_CR50_I2C_DID_VID && vendor !=3D TPM_TI50_I2C_=
+DID_VID) {
+> +       if (vendor !=3D TPM_CR50_I2C_DID_VID &&
+> +           vendor !=3D TPM_TI50_DT_I2C_DID_VID &&
+> +           vendor !=3D TPM_TI50_OT_I2C_DID_VID) {
+>                 dev_err(dev, "Vendor ID did not match! ID was %08x\n", ve=
+ndor);
+>                 tpm_cr50_release_locality(chip, true);
+>                 return -ENODEV;
+>         }
+>
+>         dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+> -                vendor =3D=3D TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
+> +                vendor =3D=3D TPM_CR50_I2C_DID_VID    ? "cr50" :
+> +                vendor =3D=3D TPM_TI50_DT_I2C_DID_VID ? "ti50 DT" :
+> +                                                    "ti50 OT",
+>                  client->addr, client->irq, vendor >> 16);
+>         return tpm_chip_register(chip);
+>  }
+> --
+> 2.45.2.1089.g2a221341d9-goog
+>
