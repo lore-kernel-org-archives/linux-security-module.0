@@ -1,208 +1,170 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD668136320
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Aug 2024 18:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1059E15AC4;
+	Fri,  2 Aug 2024 19:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722624040; cv=none; b=U/SvgyNDDog5ylSUREUNU1fMCu9sbWjOJ/+96IUEHshV7Bj73AFtLtlWi1mfEw/nlqlWjONkd5VY8nehZt7zqEdtU/blbXz111yF2F/vVSSFOBDwV/kbAN8GUO9OYLNPys5CmBC6qzGQTWcJYRdG/o+xCzRF4ycRr2QMej7H/As=
+	t=1722626145; cv=none; b=apIzhuxOTQ602bQdqT3+6viXqnNLgCn0OcIy5WGOwKJwTMb+Fia7TzlXGRQEE1fRlfFyPSVF4tz+gGA6/4/wupJ7Cpdoqn6WZa3oYbfJChOr6AXcRNP3h9bcqmOM7gaYty6i7roIWO/mpGOpa7FcOVQefwOAdr2udKJF9boKr3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722624040; c=relaxed/simple;
-	bh=bBk8dbvdFkgHztIsamj9A6yqrnV8rALDYulS6Vq771U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QgEZMpnQxrsKoP7TxHa8DZc3oYXDXg3FJwxIISJVqDMdNJlYofKtZmxlCrkQjffkKq4tZUzDJjxNxT8JV/yhKyelWjVSEfLNaClq3CfIptWUyZjt8ZXB7fkrT+14cQ+dpLQHyyHzg4UlcZd0xksC4JVmQLCdpD92smCXMNws128=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I6OCsT/U; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1722626145; c=relaxed/simple;
+	bh=DPcm9VpQDiXwdm+30uqoSz3rkdbNpnTdaG3j/y469E0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=QB/yOALynV2GYn8Z5ceJ/l1CCvvHQ8x5ec5mVW9/zNg4OaEyFDcBTNMeXBWuzv8cznBQvC1E4tCxtDSemjXIWIbZQ795V+5+UudCdhbm96q0rzlwDyatuzy0wGEuLefQLeKf0Kbyg4SccYBvVrO2fTfvm9wzOS8SK7jXDhpnpf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwUcYcf5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I6OCsT/U"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso58154a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Aug 2024 11:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722624035; x=1723228835; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MvGo9T3eyBjc8RzJ3B/6nw2VwxThF3mQa//XCX7dSjQ=;
-        b=I6OCsT/URFAZ39H4tJIQ9D+FnQIkN0EAEqXhna1AdaqoY74lPfeKAC0DZk2lD9lTSj
-         EZvbiynJSIRNGJwCKfS/sWo2cMkCXLcamrh4MJ1ByL9to5E3vLRgPXQpch1lIZOUZxya
-         vNvsBiEeY+yeARIVbELqX8QWDA9uOYBzaLlhdEa8igAowvG84gh5yjFEnDZftlbCLnxI
-         QrTAIwl9k3SXnEvBYDmETQ8hvlJlAvvOW7he6R83GMBNYXLU6K+DczdlP42bVebJl9Au
-         LEmpvg17Hv8K60htRgWcrJHKbvcS3RRVb61J2PYaniDSuoOZGDJ7TWTto3RNXgKnsM6z
-         yEQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722624035; x=1723228835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MvGo9T3eyBjc8RzJ3B/6nw2VwxThF3mQa//XCX7dSjQ=;
-        b=jJp49iGrFswhtHjqlgvQkPltoAo1tmVVJXagrphoIhE9fXNzKyP0LeExZ/VAsYMqbQ
-         ijW99U+1GcawYNUxeqksyFP9DovyMGzd2NLPqVlAqdqTVL9cTRZF3AkEoW8YQWfyZHzY
-         IXbEBNj0XJhHne1AbnWh8j+gq1f1HuCrik1OlKWN5q3ld3/nF8RtOQcpBE3OscEcIoYq
-         jcym7v7r3/8l+U0KMUQkBKxIggH0+LC7HYnAdr0TZwgf2Q1Li7z3EGBwSKmC3uDHaDC3
-         UuECg+jGgaizgZt0UfWKDXDp4jwQ8Xj9ofiinyaiElWluYEaWxMWByb4Ih/HckHdB/M8
-         SGCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoaKs+V+gryUaJTEwpXT/om2MlXz1T9qQTPJmE3v0XR/6baMdvZZ9Kvuaee6IuAlopI19lqGl5GTZ8KSb9cZ7OrwZ1j7vTY9tF8IkzW1ojhJ9ouGny
-X-Gm-Message-State: AOJu0Ywm0U1TUFUa+bGl+wXmH0P715PqgMKA5gPjWhKPoHiNT1xr6W8E
-	HU7TINPMg2o42aHhsden+madsPXZptj1eoTl0b5/qgx7tS4iDH6PyY3WTxfouDKDy6cRtiSCHa+
-	PGi9KVlHumGdarXEiFDB57pfNN9QFE/1L+3ID
-X-Google-Smtp-Source: AGHT+IE6a715lvD7e7H+jRBC/YC4Qmp0ZvYcNq+Z2J6Y52jOrAYsO1CDkNEmQVXxr6y4yqKqUpa8HB00+hEb3yiQVGc=
-X-Received: by 2002:a05:6402:51cb:b0:5b8:ccae:a8b8 with SMTP id
- 4fb4d7f45d1cf-5b99e0a517emr10054a12.3.1722624034462; Fri, 02 Aug 2024
- 11:40:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwUcYcf5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FADC32782;
+	Fri,  2 Aug 2024 19:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722626144;
+	bh=DPcm9VpQDiXwdm+30uqoSz3rkdbNpnTdaG3j/y469E0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RwUcYcf5vcPVAx6YCe2DGEDcMXm8ZNvo3kqZcRCYH+D952+5bQ0oHUr95Z9F+15IE
+	 eCHyS+clmAp5aUUxA5Eq0I7sWAviKl94PbJdw6/WH6Hzz1m0t/FlKDoApikNt/4VfN
+	 lObeO8Y730WjDeSl11h2qLXdhQ93BwIilkP2Jrsn5SNy2uUpRwHGRuIgO+tDXGO4UQ
+	 1EXaOt2NnmPrtIgAuBRjhIXo7TwNZgam7nBfybnLhFQ76RnAKBz8f5ebIlEbU9jyRN
+	 027qWO9Gy+x6yTHfD2dGhAfPDUKmeT4jsuF8numqWGIjCsGCkecm8BJd1PAaOqyAYu
+	 1LLV+v9iwBvsA==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240802-remove-cred-transfer-v1-1-b3fef1ef2ade@google.com> <D35ML45KMWK8.1E29IC0VZO4CL@iki.fi>
-In-Reply-To: <D35ML45KMWK8.1E29IC0VZO4CL@iki.fi>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 2 Aug 2024 20:39:56 +0200
-Message-ID: <CAG48ez1GFY5H1ujaDfcj-Ay5_Pm8MsBVL=vU4tEynXgzg5yduQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] security/KEYS: get rid of cred_alloc_blank and cred_transfer
-To: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, John Johansen <john.johansen@canonical.com>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	keyrings@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 02 Aug 2024 22:15:36 +0300
+Message-Id: <D35O025XJT9S.CO2QK3K59QO9@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jett Rink" <jettrink@chromium.org>, "LKML"
+ <linux-kernel@vger.kernel.org>
+Cc: <linux-security-module@vger.kernel.org>, "Jason Gunthorpe"
+ <jgg@ziepe.ca>, "Peter Huewe" <peterhuewe@gmx.de>,
+ <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH v2] tpm: Add new device/vendor ID 0x50666666
+X-Mailer: aerc 0.17.0
+References: <20240718202359.127482-1-jettrink@chromium.org>
+ <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
+In-Reply-To: <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
 
-On Fri, Aug 2, 2024 at 8:09=E2=80=AFPM Jarkko Sakkinen <jarkko.sakkinen@iki=
-.fi> wrote:
-> On Fri Aug 2, 2024 at 4:10 PM EEST, Jann Horn wrote:
-> > cred_alloc_blank and cred_transfer were only necessary so that keyctl c=
-an
-> > allocate creds in the child and then asynchronously have the parent fil=
-l
-> > them in and apply them.
+On Fri Aug 2, 2024 at 6:19 PM EEST, Jett Rink wrote:
+> Could I get some feedback on this patch please? Is there something I
+> am not doing correctly?
+
+Sorry, I just came from holidays.
+
+>
+> -Jett
+>
+> On Thu, Jul 18, 2024 at 2:24=E2=80=AFPM Jett Rink <jettrink@chromium.org>=
+ wrote:
 > >
-> > Get rid of them by letting the child synchronously wait for the task wo=
-rk
-> > executing in the parent's context. This way, any errors that happen in =
-the
-> > task work can be plumbed back into the syscall return value in the chil=
-d.
+> > Accept another DID:VID for the next generation Google TPM. This TPM
+> > has the same Ti50 firmware and fulfills the same interface.
 > >
-> > Note that this requires using TWA_SIGNAL instead of TWA_RESUME, so the
-> > parent might observe some spurious -EGAIN syscall returns or such; but =
-the
-> > parent likely anyway has to be ready to deal with the side effects of
-> > receiving signals (since it'll probably get SIGCHLD when the child dies=
-),
-> > so that probably isn't an issue.
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
+> > Signed-off-by: Jett Rink <jettrink@chromium.org>
 > > ---
-> > This is a quickly hacked up demo of the approach I proposed at
-> > <https://lore.kernel.org/all/CAG48ez2bnvuX8i-D=3D5DxmfzEOKTWAf-DkgQq6aN=
-C4WzSGoEGHg@mail.gmail.com/>
-> > to get rid of the cred_transfer stuff. Diffstat looks like this:
 > >
-> >  include/linux/cred.h          |   1 -
-> >  include/linux/lsm_hook_defs.h |   3 ---
-> >  include/linux/security.h      |  12 ------------
-> >  kernel/cred.c                 |  23 -----------------------
-> >  security/apparmor/lsm.c       |  19 -------------------
-> >  security/keys/internal.h      |   8 ++++++++
-> >  security/keys/keyctl.c        | 100 ++++++++++++++++++++++++++--------=
-------------------------------------------------------------------
-> >  security/keys/process_keys.c  |  86 ++++++++++++++++++++++++++++++++++=
-++++++++++++----------------------------------------
-> >  security/landlock/cred.c      |  11 ++---------
-> >  security/security.c           |  35 ----------------------------------=
--
-> >  security/selinux/hooks.c      |  12 ------------
-> >  security/smack/smack_lsm.c    |  32 --------------------------------
-> >  12 files changed, 82 insertions(+), 260 deletions(-)
+> > Changes in v2:
+> > Patchset 2 applies cleanly
 > >
-> > What do you think? Synchronously waiting for task work is a bit ugly,
-> > but at least this condenses the uglyness in the keys subsystem instead
-> > of making the rest of the security subsystem deal with this stuff.
->
-> Why does synchronously waiting is ugly? Not sarcasm, I genuineily
-> interested of breaking that down in smaller pieces.
->
-> E.g. what disadvantages would be there from your point of view?
->
-> Only trying to form a common picture, that's all.
+> >  drivers/char/tpm/tpm_tis_i2c_cr50.c | 11 ++++++++---
+> >  1 file changed, 8 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm=
+_tis_i2c_cr50.c
+> > index adf22992138e..b50005ccfc5e 100644
+> > --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> > +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> > @@ -31,7 +31,8 @@
+> >  #define TPM_CR50_TIMEOUT_SHORT_MS      2               /* Short timeou=
+t during transactions */
+> >  #define TPM_CR50_TIMEOUT_NOIRQ_MS      20              /* Timeout for =
+TPM ready without IRQ */
+> >  #define TPM_CR50_I2C_DID_VID           0x00281ae0L     /* Device and v=
+endor ID reg value */
+> > -#define TPM_TI50_I2C_DID_VID           0x504a6666L     /* Device and v=
+endor ID reg value */
+> > +#define TPM_TI50_DT_I2C_DID_VID                0x504a6666L     /* Devi=
+ce and vendor ID reg value */
+> > +#define TPM_TI50_OT_I2C_DID_VID                0x50666666L     /* Devi=
+ce and vendor ID reg value */
+> >  #define TPM_CR50_I2C_MAX_RETRIES       3               /* Max retries =
+due to I2C errors */
+> >  #define TPM_CR50_I2C_RETRY_DELAY_LO    55              /* Min usecs be=
+tween retries on I2C */
+> >  #define TPM_CR50_I2C_RETRY_DELAY_HI    65              /* Max usecs be=
+tween retries on I2C */
+> > @@ -741,14 +742,18 @@ static int tpm_cr50_i2c_probe(struct i2c_client *=
+client)
+> >         }
+> >
+> >         vendor =3D le32_to_cpup((__le32 *)buf);
+> > -       if (vendor !=3D TPM_CR50_I2C_DID_VID && vendor !=3D TPM_TI50_I2=
+C_DID_VID) {
+> > +       if (vendor !=3D TPM_CR50_I2C_DID_VID &&
+> > +           vendor !=3D TPM_TI50_DT_I2C_DID_VID &&
+> > +           vendor !=3D TPM_TI50_OT_I2C_DID_VID) {
+> >                 dev_err(dev, "Vendor ID did not match! ID was %08x\n", =
+vendor);
+> >                 tpm_cr50_release_locality(chip, true);
+> >                 return -ENODEV;
+> >         }
+> >
+> >         dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+> > -                vendor =3D=3D TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
+> > +                vendor =3D=3D TPM_CR50_I2C_DID_VID    ? "cr50" :
+> > +                vendor =3D=3D TPM_TI50_DT_I2C_DID_VID ? "ti50 DT" :
+> > +                                                    "ti50 OT",
 
-Two things:
+Whenever possible ternary operator should be avoided, unless the use
+case super trivial: this complexity brings us zero measurable benefit
+and unnecessarily obfuscates code.
 
-1. It means we have to send a pseudo-signal to the parent, to get the
-parent to bail out into signal handling context, which can lead to
-extra spurious -EGAIN in the parent. I think this is probably fine
-since _most_ parent processes will already expect to handle SIGCHLD
-signals...
+I'd suggest to simply add a helper:
 
-2. If the parent is blocked on some other killable wait, we won't be
-able to make progress - so in particular, if the parent was using a
-killable wait to wait for the child to leave its syscall, userspace
-=E1=BA=81ould deadlock (in a way that could be resolved by SIGKILLing one o=
-f
-the processes). Actually, I think that might happen if the parent uses
-ptrace() with sufficiently bad timing? We could avoid the issue by
-doing an interruptible wait instead of a killable one, but then that
-might confuse userspace callers of the keyctl() if they get an
--EINTR...
-I guess the way to do this cleanly is to use an interruptible wait and
-return -ERESTARTNOINTR if it gets interrupted?
+/*
+ * Maps VID to a name.
+ */
+const char *tpm_cr50_vid_to_name(u32 vendor)
+{
+	switch (vendor) {
+	case TPM_CR50_I2C_DID_VID:
+		return "cr50";
+	case TPM_TI50_DT_I2C_DID_VID:
+		return "ti50 DT";
+	case TPM_TI50_OT_I2C_DID_VID:
+		return "ti50 OT";
+	default:=09
+		break;
+	}
 
-> > Another approach to simplify things further would be to try to move
-> > the session keyring out of the creds entirely and just let the child
-> > update it directly with appropriate locking, but I don't know enough
-> > about the keys subsystem to know if that would maybe break stuff
-> > that relies on override_creds() also overriding the keyrings, or
-> > something like that.
-> > ---
-> >  include/linux/cred.h          |   1 -
-> >  include/linux/lsm_hook_defs.h |   3 --
-> >  include/linux/security.h      |  12 -----
-> >  kernel/cred.c                 |  23 ----------
-> >  security/apparmor/lsm.c       |  19 --------
-> >  security/keys/internal.h      |   8 ++++
-> >  security/keys/keyctl.c        | 100 +++++++++++-----------------------=
---------
-> >  security/keys/process_keys.c  |  86 +++++++++++++++++++---------------=
---
-> >  security/landlock/cred.c      |  11 +----
-> >  security/security.c           |  35 ---------------
-> >  security/selinux/hooks.c      |  12 -----
-> >  security/smack/smack_lsm.c    |  32 --------------
-> >  12 files changed, 82 insertions(+), 260 deletions(-)
->
-> Given the large patch size:
->
-> 1. If it is impossible to split some meaningful patches, i.e. patches
->    that transform kernel tree from working state to another, I can
->    cope with this.
-> 2. Even for small chunks that can be split into their own logical
->    pieces: please do that. Helps to review the main gist later on.
+	tpm_cr50_release_locality(chip, true);
+	return NULL;
+}
 
-There are basically two parts to this, it could be split up nicely into the=
-se:
+The code then transforms to:
 
-1. refactor code in security/keys/
-2. rip out all the code that is now unused (as you can see in the
-diffstat, basically everything outside security/keys/ is purely
-removals)
+	vendor =3D le32_to_cpup((__le32 *)buf);
 
-[...]
-> Not going through everything but can we e.g. make a separe SMACK patch
-> prepending?
+	name =3D tpm2_cr50_vid_to_name(vendor);
+	if (name =3D=3D NULL) {
+		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
+		return -ENODEV;
+	}
 
-I wouldn't want to split it up further: As long as the cred_transfer
-mechanism and LSM hook still exist, all the LSMs that currently have
-implementations of it should also still implement it.
+	dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n", name.
+		 client->addr, client->addr, client->irq, vendor >> 16);
 
-But I think if patch 2/2 is just ripping out unused infrastructure
-across the tree, that should be sufficiently reviewable? (Or we could
-split it up into ripping out one individual helper per patch, but IDK,
-that doesn't seem to me like it adds much reviewability.)
+[and add suggested-by]
+
+> >                  client->addr, client->irq, vendor >> 16);
+> >         return tpm_chip_register(chip);
+> >  }
+> > --
+> > 2.45.2.1089.g2a221341d9-goog
+> >
+
+
+BR, Jarkko
