@@ -1,63 +1,63 @@
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBFF74BE1
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Aug 2024 21:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2051A7404E
+	for <linux-security-module@vger.kernel.org>; Fri,  2 Aug 2024 21:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722632691; cv=none; b=JlfeazUu1VTWX9nbWb+cEyJWtsFb5xPQjomQUQao3saGGKlWBzwZnUMs5N6uYM3NfYEKSd+g5H0asQNpAgRp0zwgTcIp0zCobM4dYZzGPKQSDX1xA81hVSQtDvDGqdZBAVohEo+uDul15rKU5GkQWqrq2OzPtFmT/f2onTI47W8=
+	t=1722633002; cv=none; b=WR8Prx+9JP/tksH3+PmfUDZgbEdSyNw5KDaLBM1/hxM44mbanxy42pjLX6YRJBvT9oeXIEEL6HgdQS0P6J7zVAvTLkmucNU14Qzt2knyOftKig1zXs+QosV6iRKAjoFRaaCMY0k3JUhXW/Ugf0cW0IBQR3oOSK49bpVksvnjNWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722632691; c=relaxed/simple;
-	bh=z1RdEZ7A8nCpAdJiYNdv+o6BPnQVzKEX+9aqwiP/Jig=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G7GyoSbvt9aLbtUZnFIR3SzE44HuKUlJIMUkuV60VzPLHbZgl7vIrFDh51FMDNIAYz4T4Tla+fiXjvYYX0KayxbRBRavHZqlnOtUn9VtzX5XWaNBsCEoO2gZF2EynF+bmFtFa63Mtg3xY9te/M6I5naLHXrVNdHFW5tIDX6aRos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hdmolVEE; arc=none smtp.client-ip=209.85.166.51
+	s=arc-20240116; t=1722633002; c=relaxed/simple;
+	bh=QR7Wn2vDRe55ZkodaookIE2MGefBuwafHb8wooCogaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ofrVchkDaxsRA78OZbIQontY77S60ANuVCxXR8AwYA1MQxCtQ3asJeFxFmVby0Rm8TiGynG8/Hr9YYBJm6BrKlT6PBCZ/Js1XyzXRhRsMLPIDLtQ07j01Q/Z8uhnukmAY8/JHjPJarSly4FXtVQ66uVyMUh9fZO8wOg5ITApeto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RSUfow7Y; arc=none smtp.client-ip=209.85.166.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hdmolVEE"
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-81fd9251d99so40572839f.0
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Aug 2024 14:04:48 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RSUfow7Y"
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-81f8f0198beso358383339f.1
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Aug 2024 14:10:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722632687; x=1723237487; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1722633000; x=1723237800; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bizVYN62g2WR0h6WdBjGD7lztQUVqZACzgFg3ew1NZg=;
-        b=hdmolVEEz3F+RJMK0XoDpq4DHzYtDE48C+k1TzlEB82oZRtD2cAQ/W4mZKgG0P9itj
-         DfLFI3EmT8cl5zas7GmWLAvl3x78g0ob/r1oQyLyElpnF00LKaVFzZwoI0twQU48di2B
-         n6KYi5qkGPGL85W00E/yq6pqAncO7syKTcEiU=
+        bh=s/yfcznWxxx4DX0YlV9aqLeKa/e1pHrgY/gQ9qBV8dw=;
+        b=RSUfow7YpfUzXHtTeIXrvRQm1PAE45Eo7Rbr4xh+Dbl7ysE1VAX2r+eZkDZypnfO4f
+         JfcJG8CFnoJbYJXweX1mi5yshWSYnh8NK/YsY0rgcqnkwVUe+zTgaekCj/2IiqORRVtT
+         +z87YJOmfI7rdcb8gK7PU0qAYovo2G6w8vnxc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722632687; x=1723237487;
+        d=1e100.net; s=20230601; t=1722633000; x=1723237800;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bizVYN62g2WR0h6WdBjGD7lztQUVqZACzgFg3ew1NZg=;
-        b=aE4KleRpl2/r/Xj96A86DtC/RGFacExxH7L5GsxjmJDvy1OvfjhpMLnpKIeAkTMJo/
-         1nTECD+m9TmPrO/d2DsWRreB4Z9ioH2VNkxr76AXR0P+oY7h8ayJtAzXfzF3slPeKM6l
-         ifMntxq38jCP3+GHbstZEBjLq2+wG2L3Vq0r5yCQBSfU+nBYaZukVY0v60zPIJLAV8xs
-         jK0+KO716YI4cFQeXbhfZtUqx4K96uJWmN+JfeFKPCSt5hIFbKTMXsheDpi7Q9w8PzYZ
-         O4th8zBOlK4tsFXMxxjo/YeSz1QM7YNBwq0G6ndVwDM0iAKe2r1HQ4Y5avjI7idA4Pht
-         sIGw==
-X-Gm-Message-State: AOJu0Yx8PldEf/aGM3LpzaVmanD2NBkV5NUkybEOQxEysSWw10Y4NCX5
-	HMzHKp7JQUKs4lf+q2sra4/xWY4zBRCvJSXqoDQBOpQxPfDRFMtwHHvVbR+wE60JHmKM53rmjR8
-	67A==
-X-Google-Smtp-Source: AGHT+IHUFG1Og3qZnJuB+WHW/Mj9RyaQmwZbLxjxKt93uYCF5XTb9EODVbRysfl5tZk2LzoGN4JDew==
-X-Received: by 2002:a05:6602:3ca:b0:81f:9468:7c3c with SMTP id ca18e2360f4ac-81fd43e3415mr598235239f.12.1722632687275;
-        Fri, 02 Aug 2024 14:04:47 -0700 (PDT)
+        bh=s/yfcznWxxx4DX0YlV9aqLeKa/e1pHrgY/gQ9qBV8dw=;
+        b=IJ69UC6dgS9m9W5g3vjWyXex/YmpnLaS4EaobwJOai7CUf3vfWfC62XYusSi3ZA9Ie
+         p5El1Q5+rPSmv/EXYH+rqutu/2/lryMtndwLsfrO5Mmy09XUoq0GNk/NtL1XbqPVePdN
+         fVEKzJ4UYGfrJ5Y/Nmluj14r1vmAQ59KFm+hhvEpov0AVuf6f4Zht1NlBUhlyqI5gMjS
+         +Tst36EbUP9+QHI7PYsvQfokhzcqgxZvWs5zYQ3m35h3GiRd8siynnZcLYElExYzdHvb
+         NdCB3F07rkI/oAeJIxg33L3HX7FM4pr10Kz+UlpgB5QeDRbNxzSnZPqvi1LAS6tt3M/7
+         Gp4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8S5eitRgY0VijUlnJX1/zrTjixAMU+GDfgvV2n1Z3EZOV/p+w/NBQMzH9h3or+4qA42Zab3XSldVqbceFlDFzt3sVTlihIYsmoYPstulUofU7ZNc7
+X-Gm-Message-State: AOJu0YxY5YbSUnnPsT0xFUP9O4lnofP0JaedIIlnQnUc60XmvaeHIV6x
+	IfGinW1Qp9AC3DAc24s0b/Js3W5bv32d1vDQ7DOK0hvvJVge7XSrvG7DpZgSkw==
+X-Google-Smtp-Source: AGHT+IEe4BsGZ0ERqD25XGYDxPZckY6iYmRnz1fcfLEocufMVco8mQyaSdn+Ig7QKg9Z0RgVpQOgBw==
+X-Received: by 2002:a05:6602:6194:b0:807:f0fb:1192 with SMTP id ca18e2360f4ac-81fd435099emr598672039f.1.1722632999995;
+        Fri, 02 Aug 2024 14:09:59 -0700 (PDT)
 Received: from rink.c.googlers.com.com (212.165.232.35.bc.googleusercontent.com. [35.232.165.212])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81fd4d7223csm70159939f.42.2024.08.02.14.04.46
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a3e372sm617048173.144.2024.08.02.14.09.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 14:04:46 -0700 (PDT)
+        Fri, 02 Aug 2024 14:09:59 -0700 (PDT)
 From: Jett Rink <jettrink@chromium.org>
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-security-module@vger.kernel.org,
-	jettrink@chromium.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
+Cc: jettrink@chromium.org,
+	linux-security-module@vger.kernel.org,
+	jarkko@kernel.org,
 	Jason Gunthorpe <jgg@ziepe.ca>,
 	Peter Huewe <peterhuewe@gmx.de>,
 	linux-integrity@vger.kernel.org
-Subject: [PATCH v3] tpm: Add new device/vendor ID 0x50666666
-Date: Fri,  2 Aug 2024 21:04:32 +0000
-Message-ID: <20240802210441.625738-1-jettrink@chromium.org>
+Subject: [PATCH v4] tpm: Add new device/vendor ID 0x50666666
+Date: Fri,  2 Aug 2024 21:09:25 +0000
+Message-ID: <20240802210957.629455-1-jettrink@chromium.org>
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -70,8 +70,13 @@ Content-Transfer-Encoding: 8bit
 Accept another DID:VID for the next generation Google TPM. This TPM
 has the same Ti50 firmware and fulfills the same interface.
 
+Suggested-by: jarkko@kernel.org
+
 Signed-off-by: Jett Rink <jettrink@chromium.org>
 ---
+
+Changes in v4:
+Add Suggested-by tag. Sorry that I forget.
 
 Changes in v3:
 Refactor ternary operators into helper method.
