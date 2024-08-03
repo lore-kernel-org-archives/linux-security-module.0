@@ -1,28 +1,28 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DD114D45E;
-	Sat,  3 Aug 2024 06:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B697614C585;
+	Sat,  3 Aug 2024 06:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722665332; cv=none; b=eN8CTZ6VUprWii/i30oktHWYfxUu2DIQ/phYcwTSG/PDWmghliQA+wkGaKgBqCOBkJGFG48c6StlTxbxdGG8eXMZofo0bQNOqRvNfGUAPorrQGcqZcXrstv9H6Vgkzw2dY7Mr4pHqB1KXqHlauO+LmZX8/3HygpjhDjh41FfDtk=
+	t=1722665333; cv=none; b=DigRLVzaPFJJ6mJwjFg374cnDr64naTScilRciTdAy72So3ZFMwXGm72bOHT6bJm65gAHMkkJwfek6lIWuRn8ilkXMCr56HpZU8OCtC2EF2aITm5uh0hWYx5KlmgOtOj0gGvaNHofECy6a9yNIWRhYAb2SwCV3Zs7vezYhBZxwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722665332; c=relaxed/simple;
-	bh=4sFl5XakVXwi/+98kBc8tCA58VxmEkK0N0XCDexKDFE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=b8gZ+mRn3P+Vrk98tLzohLa4q1YL1UYGItRomxPWtZsbhxmI2Flmty+cVlnCHj2/UDnuHq+fK7t2ik2i2Lu4TQYsPVHUtLlJShSwTz4Uc0Ybi9XI6qcpa7+4+5vSrEoXu8lv2iSvwvyY+7vEI9cffaalrrF7wKp/qCwZegxzwO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IEOJix4L; arc=none smtp.client-ip=13.77.154.182
+	s=arc-20240116; t=1722665333; c=relaxed/simple;
+	bh=hNt9YKIiYbWRGDH8Un+/3lzsbdLnePPAKMRMAJxnGRo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=u2M2Bis8EwzFwmjNRbueR5pd5MDGgE8JpkvsBvG9ebsuM8kYVEzkRDk64wsxuUcUfRR24GqAbLT4OQDWjA9Docf4rddGnhJ2Dd/elNuTl0SVdcuFspckZGKyjzmpX7Lb/iTAWm/7gNK+r002Mtu0V4OCeh9RaMHT+Cmdw3k1ax4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hBejS61p; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IEOJix4L"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hBejS61p"
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-	id 213F820B7410; Fri,  2 Aug 2024 23:08:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 213F820B7410
+	id A325520B7400; Fri,  2 Aug 2024 23:08:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A325520B7400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722665321;
-	bh=s3JUdGQSlJel4z28gYW2ogYBq0FEoIoGIDT52A6YUkQ=;
+	s=default; t=1722665320;
+	bh=9UhLGDFVq6In/RiEvnlkIWofY50pprHYF0RowKYTFWc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IEOJix4L8/6CPlyLXVWagIaM4yfOjyXqxtv6urkFaw3a9rdhIBCzZhqugmg236ig4
-	 t799HFU7ofGLpv6HvTUr5LiXXe0yRzDqMFUazmDCe797eF6WdHNw17sHzIBlwbZyd4
-	 oFfpLm4ccZvhMtRmPU5kqbApr7ZmiQtLqFapeL6Q=
+	b=hBejS61p+aY6VywE/aMg1/kRU0BMZZBhftVx8dMOYJ2cF6jNVZZ4OcVBraYJ7iUrD
+	 ts4LEVB7xYWEe3mdbuc4YV4DR2+bbFyQWEC96QsdZkUKDdZPNODPIX47stE4JbeMeR
+	 fcMn58unQ137zgDrJFUs1R3wC7I/84fSFq3seJyk=
 From: Fan Wu <wufan@linux.microsoft.com>
 To: corbet@lwn.net,
 	zohar@linux.ibm.com,
@@ -46,9 +46,9 @@ Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Deven Bowers <deven.desai@linux.microsoft.com>,
 	Fan Wu <wufan@linux.microsoft.com>
-Subject: [PATCH v20 18/20] ipe: kunit test for parser
-Date: Fri,  2 Aug 2024 23:08:32 -0700
-Message-Id: <1722665314-21156-19-git-send-email-wufan@linux.microsoft.com>
+Subject: [PATCH v20 10/20] ipe: add permissive toggle
+Date: Fri,  2 Aug 2024 23:08:24 -0700
+Message-Id: <1722665314-21156-11-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
 References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
@@ -60,40 +60,99 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
 From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Add various happy/unhappy unit tests for both IPE's policy parser.
+IPE, like SELinux, supports a permissive mode. This mode allows policy
+authors to test and evaluate IPE policy without it affecting their
+programs. When the mode is changed, a 1404 AUDIT_MAC_STATUS will
+be reported.
 
-Besides, a test suite for IPE functionality is available at
-https://github.com/microsoft/ipe/tree/test-suite
+This patch adds the following audit records:
+
+    audit: MAC_STATUS enforcing=0 old_enforcing=1 auid=4294967295
+      ses=4294967295 enabled=1 old-enabled=1 lsm=ipe res=1
+    audit: MAC_STATUS enforcing=1 old_enforcing=0 auid=4294967295
+      ses=4294967295 enabled=1 old-enabled=1 lsm=ipe res=1
+
+The audit record only emit when the value from the user input is
+different from the current enforce value.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
 ---
-v1-v6:
-  + Not present
+v2:
+  + Split evaluation loop, access control hooks,
+    and evaluation loop from policy parser and userspace
+    interface to pass mailing list character limit
+
+v3:
+  + Move ipe_load_properties to patch 04.
+  + Remove useless 0-initializations
+  + Prefix extern variables with ipe_
+  + Remove kernel module parameters, as these are
+    exposed through sysctls.
+  + Add more prose to the IPE base config option
+    help text.
+  + Use GFP_KERNEL for audit_log_start.
+  + Remove unnecessary caching system.
+  + Remove comments from headers
+  + Use rcu_access_pointer for rcu-pointer null check
+  + Remove usage of reqprot; use prot only.
+  + Move policy load and activation audit event to 03/12
+
+v4:
+  + Remove sysctls in favor of securityfs nodes
+  + Re-add kernel module parameters, as these are now
+    exposed through securityfs.
+  + Refactor property audit loop to a separate function.
+
+v5:
+  + fix minor grammatical errors
+  + do not group rule by curly-brace in audit record,
+    reconstruct the exact rule.
+
+v6:
+  + No changes
 
 v7:
-  Introduced
+  + Further split lsm creation into a separate commit from the
+    evaluation loop and audit system, for easier review.
+  + Propagating changes to support the new ipe_context structure in the
+    evaluation loop.
+  + Split out permissive functionality into a separate patch for easier
+    review.
+  + Remove permissive switch compile-time configuration option - this
+    is trivial to add later.
 
 v8:
-  + Remove the kunit tests with respect to the fsverity digest, as these
-    require significant changes to work with the new method of acquiring
-    the digest at runtime.
+  + Remove "IPE" prefix from permissive audit record
+  + align fields to the linux-audit field dictionary. This causes the
+    following fields to change:
+      enforce -> permissive
+
+  + Remove duplicated information correlated with syscall record, that
+    will always be present in the audit event.
+  + Change audit types:
+    + AUDIT_TRUST_STATUS -> AUDIT_MAC_STATUS
+      + There is no significant difference in meaning between
+        these types.
 
 v9:
-  + Remove the kunit tests related to ipe_context
+  + Clean up ipe_context related code
 
 v10:
-  + No changes
+  + Change audit format to comform with the existing format selinux is
+    using
+  + Remove the audit record emission during init to align with selinux,
+    which does not perform this action.
 
 v11:
-  + No changes
+  + Remove redundant code
 
 v12:
-  + No changes
+  + Remove redundant code
 
 v13:
-  + No changes
+  + Remove audit format macro
 
 v14:
   + No changes
@@ -105,7 +164,6 @@ v16:
   + No changes
 
 v17:
-  + Add years to license header
   + Fix code and documentation style issues
 
 v18:
@@ -117,351 +175,224 @@ v19:
 v20:
   + No changes
 ---
- security/ipe/Kconfig        |  17 +++
- security/ipe/Makefile       |   3 +
- security/ipe/policy_tests.c | 296 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 316 insertions(+)
- create mode 100644 security/ipe/policy_tests.c
+ security/ipe/audit.c | 27 ++++++++++++++++--
+ security/ipe/audit.h |  1 +
+ security/ipe/eval.c  | 11 ++++++--
+ security/ipe/eval.h  |  1 +
+ security/ipe/fs.c    | 66 ++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 102 insertions(+), 4 deletions(-)
 
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index fccc69e66af1..3ab582606ed2 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -77,4 +77,21 @@ config IPE_PROP_FS_VERITY_BUILTIN_SIG
+diff --git a/security/ipe/audit.c b/security/ipe/audit.c
+index 5a859f88cfb4..5af150d99d63 100644
+--- a/security/ipe/audit.c
++++ b/security/ipe/audit.c
+@@ -97,8 +97,8 @@ void ipe_audit_match(const struct ipe_eval_ctx *const ctx,
+ 	if (!ab)
+ 		return;
  
- endmenu
+-	audit_log_format(ab, "ipe_op=%s ipe_hook=%s pid=%d comm=",
+-			 op, audit_hook_names[ctx->hook],
++	audit_log_format(ab, "ipe_op=%s ipe_hook=%s enforcing=%d pid=%d comm=",
++			 op, audit_hook_names[ctx->hook], READ_ONCE(enforce),
+ 			 task_tgid_nr(current));
+ 	audit_log_untrustedstring(ab, get_task_comm(comm, current));
  
-+config SECURITY_IPE_KUNIT_TEST
-+	bool "Build KUnit tests for IPE" if !KUNIT_ALL_TESTS
-+	depends on KUNIT=y
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the IPE KUnit tests.
-+
-+	  KUnit tests run during boot and output the results to the debug log
-+	  in TAP format (https://testanything.org/). Only useful for kernel devs
-+	  running KUnit test harness and are not for inclusion into a
-+	  production build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-+
- endif
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index 70eea140306b..2ffabfa63fe9 100644
---- a/security/ipe/Makefile
-+++ b/security/ipe/Makefile
-@@ -26,3 +26,6 @@ obj-$(CONFIG_SECURITY_IPE) += \
- 	audit.o \
+@@ -225,3 +225,26 @@ void ipe_audit_policy_load(const struct ipe_policy *const p)
  
- clean-files := boot_policy.c \
-+
-+obj-$(CONFIG_SECURITY_IPE_KUNIT_TEST) += \
-+	policy_tests.o \
-diff --git a/security/ipe/policy_tests.c b/security/ipe/policy_tests.c
-new file mode 100644
-index 000000000000..89521f6b9994
---- /dev/null
-+++ b/security/ipe/policy_tests.c
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/list.h>
-+#include <kunit/test.h>
-+#include "policy.h"
-+struct policy_case {
-+	const char *const policy;
-+	int errno;
-+	const char *const desc;
-+};
-+
-+static const struct policy_case policy_cases[] = {
-+	{
-+		"policy_name=allowall policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW",
-+		0,
-+		"basic",
-+	},
-+	{
-+		"policy_name=trailing_comment policy_version=152.0.0 #This is comment\n"
-+		"DEFAULT action=ALLOW",
-+		0,
-+		"trailing comment",
-+	},
-+	{
-+		"policy_name=allowallnewline policy_version=0.2.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"\n",
-+		0,
-+		"trailing newline",
-+	},
-+	{
-+		"policy_name=carriagereturnlinefeed policy_version=0.0.1\n"
-+		"DEFAULT action=ALLOW\n"
-+		"\r\n",
-+		0,
-+		"clrf newline",
-+	},
-+	{
-+		"policy_name=whitespace policy_version=0.0.0\n"
-+		"DEFAULT\taction=ALLOW\n"
-+		"     \t     DEFAULT \t    op=EXECUTE      action=DENY\n"
-+		"op=EXECUTE boot_verified=TRUE action=ALLOW\n"
-+		"# this is a\tcomment\t\t\t\t\n"
-+		"DEFAULT \t op=KMODULE\t\t\t  action=DENY\r\n"
-+		"op=KMODULE boot_verified=TRUE action=ALLOW\n",
-+		0,
-+		"various whitespaces and nested default",
-+	},
-+	{
-+		"policy_name=boot_verified policy_version=-1236.0.0\n"
-+		"DEFAULT\taction=ALLOW\n",
-+		-EINVAL,
-+		"negative version",
-+	},
-+	{
-+		"policy_name=$@!*&^%%\\:;{}() policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW",
-+		0,
-+		"special characters",
-+	},
-+	{
-+		"policy_name=test policy_version=999999.0.0\n"
-+		"DEFAULT action=ALLOW",
-+		-ERANGE,
-+		"overflow version",
-+	},
-+	{
-+		"policy_name=test policy_version=255.0\n"
-+		"DEFAULT action=ALLOW",
-+		-EBADMSG,
-+		"incomplete version",
-+	},
-+	{
-+		"policy_name=test policy_version=111.0.0.0\n"
-+		"DEFAULT action=ALLOW",
-+		-EBADMSG,
-+		"extra version",
-+	},
-+	{
-+		"",
-+		-EBADMSG,
-+		"0-length policy",
-+	},
-+	{
-+		"policy_name=test\0policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW",
-+		-EBADMSG,
-+		"random null in header",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"\0DEFAULT action=ALLOW",
-+		-EBADMSG,
-+		"incomplete policy from NULL",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=DENY\n\0"
-+		"op=EXECUTE dmverity_signature=TRUE action=ALLOW\n",
-+		0,
-+		"NULL truncates policy",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"op=EXECUTE dmverity_signature=abc action=ALLOW",
-+		-EBADMSG,
-+		"invalid property type",
-+	},
-+	{
-+		"DEFAULT action=ALLOW",
-+		-EBADMSG,
-+		"missing policy header",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n",
-+		-EBADMSG,
-+		"missing default definition",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"dmverity_signature=TRUE op=EXECUTE action=ALLOW",
-+		-EBADMSG,
-+		"invalid rule ordering"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"action=ALLOW op=EXECUTE dmverity_signature=TRUE",
-+		-EBADMSG,
-+		"invalid rule ordering (2)",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"op=EXECUTE dmverity_signature=TRUE action=ALLOW",
-+		-EBADMSG,
-+		"invalid version",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"op=UNKNOWN dmverity_signature=TRUE action=ALLOW",
-+		-EBADMSG,
-+		"unknown operation",
-+	},
-+	{
-+		"policy_name=asdvpolicy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n",
-+		-EBADMSG,
-+		"missing space after policy name",
-+	},
-+	{
-+		"policy_name=test\xFF\xEF policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"op=EXECUTE dmverity_signature=TRUE action=ALLOW",
-+		0,
-+		"expanded ascii",
-+	},
-+	{
-+		"policy_name=test\xFF\xEF policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"op=EXECUTE dmverity_roothash=GOOD_DOG action=ALLOW",
-+		-EBADMSG,
-+		"invalid property value (2)",
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"policy_name=test policy_version=0.1.0\n"
-+		"DEFAULT action=ALLOW",
-+		-EBADMSG,
-+		"double header"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"DEFAULT action=ALLOW\n",
-+		-EBADMSG,
-+		"double default"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"DEFAULT op=EXECUTE action=DENY\n"
-+		"DEFAULT op=EXECUTE action=ALLOW\n",
-+		-EBADMSG,
-+		"double operation default"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"DEFAULT op=EXECUTE action=DEN\n",
-+		-EBADMSG,
-+		"invalid action value"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"DEFAULT op=EXECUTE action\n",
-+		-EBADMSG,
-+		"invalid action value (2)"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"UNKNOWN value=true\n",
-+		-EBADMSG,
-+		"unrecognized statement"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"op=EXECUTE dmverity_roothash=1c0d7ee1f8343b7fbe418378e8eb22c061d7dec7 action=DENY\n",
-+		-EBADMSG,
-+		"old-style digest"
-+	},
-+	{
-+		"policy_name=test policy_version=0.0.0\n"
-+		"DEFAULT action=ALLOW\n"
-+		"op=EXECUTE fsverity_digest=1c0d7ee1f8343b7fbe418378e8eb22c061d7dec7 action=DENY\n",
-+		-EBADMSG,
-+		"old-style digest"
-+	}
-+};
-+
-+static void pol_to_desc(const struct policy_case *c, char *desc)
-+{
-+	strscpy(desc, c->desc, KUNIT_PARAM_DESC_SIZE);
-+}
-+
-+KUNIT_ARRAY_PARAM(ipe_policies, policy_cases, pol_to_desc);
+ 	audit_log_end(ab);
+ }
 +
 +/**
-+ * ipe_parser_unsigned_test - Test the parser by passing unsigned policies.
-+ * @test: Supplies a pointer to a kunit structure.
-+ *
-+ * This is called by the kunit harness. This test does not check the correctness
-+ * of the policy, but ensures that errors are handled correctly.
++ * ipe_audit_enforce() - Audit a change in IPE's enforcement state.
++ * @new_enforce: The new value enforce to be set.
++ * @old_enforce: The old value currently in enforce.
 + */
-+static void ipe_parser_unsigned_test(struct kunit *test)
++void ipe_audit_enforce(bool new_enforce, bool old_enforce)
 +{
-+	const struct policy_case *p = test->param_value;
-+	struct ipe_policy *pol;
++	struct audit_buffer *ab;
 +
-+	pol = ipe_new_policy(p->policy, strlen(p->policy), NULL, 0);
-+
-+	if (p->errno) {
-+		KUNIT_EXPECT_EQ(test, PTR_ERR(pol), p->errno);
++	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS);
++	if (!ab)
 +		return;
++
++	audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS,
++		  "enforcing=%d old_enforcing=%d auid=%u ses=%u"
++		  " enabled=1 old-enabled=1 lsm=ipe res=1",
++		  new_enforce, old_enforce,
++		  from_kuid(&init_user_ns, audit_get_loginuid(current)),
++		  audit_get_sessionid(current));
++
++	audit_log_end(ab);
++}
+diff --git a/security/ipe/audit.h b/security/ipe/audit.h
+index 3ba8b8a91541..ed2620846a79 100644
+--- a/security/ipe/audit.h
++++ b/security/ipe/audit.h
+@@ -14,5 +14,6 @@ void ipe_audit_match(const struct ipe_eval_ctx *const ctx,
+ void ipe_audit_policy_load(const struct ipe_policy *const p);
+ void ipe_audit_policy_activation(const struct ipe_policy *const op,
+ 				 const struct ipe_policy *const np);
++void ipe_audit_enforce(bool new_enforce, bool old_enforce);
+ 
+ #endif /* _IPE_AUDIT_H */
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+index b99ed4bb09cf..b14c95768550 100644
+--- a/security/ipe/eval.c
++++ b/security/ipe/eval.c
+@@ -18,6 +18,7 @@
+ 
+ struct ipe_policy __rcu *ipe_active_policy;
+ bool success_audit;
++bool enforce = true;
+ 
+ #define FILE_SUPERBLOCK(f) ((f)->f_path.mnt->mnt_sb)
+ 
+@@ -108,6 +109,7 @@ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
+ 	enum ipe_action_type action;
+ 	enum ipe_match match_type;
+ 	bool match = false;
++	int rc = 0;
+ 
+ 	rcu_read_lock();
+ 
+@@ -159,9 +161,12 @@ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
+ 	rcu_read_unlock();
+ 
+ 	if (action == IPE_ACTION_DENY)
+-		return -EACCES;
++		rc = -EACCES;
+ 
+-	return 0;
++	if (!READ_ONCE(enforce))
++		rc = 0;
++
++	return rc;
+ }
+ 
+ /* Set the right module name */
+@@ -172,3 +177,5 @@ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
+ 
+ module_param(success_audit, bool, 0400);
+ MODULE_PARM_DESC(success_audit, "Start IPE with success auditing enabled");
++module_param(enforce, bool, 0400);
++MODULE_PARM_DESC(enforce, "Start IPE in enforce or permissive mode");
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+index 42b74a7a7c2b..80b74f55fa69 100644
+--- a/security/ipe/eval.h
++++ b/security/ipe/eval.h
+@@ -16,6 +16,7 @@
+ 
+ extern struct ipe_policy __rcu *ipe_active_policy;
+ extern bool success_audit;
++extern bool enforce;
+ 
+ struct ipe_superblock {
+ 	bool initramfs;
+diff --git a/security/ipe/fs.c b/security/ipe/fs.c
+index 9e410982b759..b52fb6023904 100644
+--- a/security/ipe/fs.c
++++ b/security/ipe/fs.c
+@@ -16,6 +16,7 @@ static struct dentry *np __ro_after_init;
+ static struct dentry *root __ro_after_init;
+ struct dentry *policy_root __ro_after_init;
+ static struct dentry *audit_node __ro_after_init;
++static struct dentry *enforce_node __ro_after_init;
+ 
+ /**
+  * setaudit() - Write handler for the securityfs node, "ipe/success_audit"
+@@ -65,6 +66,58 @@ static ssize_t getaudit(struct file *f, char __user *data,
+ 	return simple_read_from_buffer(data, len, offset, result, 1);
+ }
+ 
++/**
++ * setenforce() - Write handler for the securityfs node, "ipe/enforce"
++ * @f: Supplies a file structure representing the securityfs node.
++ * @data: Supplies a buffer passed to the write syscall.
++ * @len: Supplies the length of @data.
++ * @offset: unused.
++ *
++ * Return:
++ * * Length of buffer written	- Success
++ * * %-EPERM			- Insufficient permission
++ */
++static ssize_t setenforce(struct file *f, const char __user *data,
++			  size_t len, loff_t *offset)
++{
++	int rc = 0;
++	bool new_value, old_value;
++
++	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
++		return -EPERM;
++
++	old_value = READ_ONCE(enforce);
++	rc = kstrtobool_from_user(data, len, &new_value);
++	if (rc)
++		return rc;
++
++	if (new_value != old_value) {
++		ipe_audit_enforce(new_value, old_value);
++		WRITE_ONCE(enforce, new_value);
 +	}
 +
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pol);
-+	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, pol->parsed);
-+	KUNIT_EXPECT_STREQ(test, pol->text, p->policy);
-+	KUNIT_EXPECT_PTR_EQ(test, NULL, pol->pkcs7);
-+	KUNIT_EXPECT_EQ(test, 0, pol->pkcs7len);
-+
-+	ipe_free_policy(pol);
++	return len;
 +}
 +
 +/**
-+ * ipe_parser_widestring_test - Ensure parser fail on a wide string policy.
-+ * @test: Supplies a pointer to a kunit structure.
++ * getenforce() - Read handler for the securityfs node, "ipe/enforce"
++ * @f: Supplies a file structure representing the securityfs node.
++ * @data: Supplies a buffer passed to the read syscall.
++ * @len: Supplies the length of @data.
++ * @offset: unused.
 + *
-+ * This is called by the kunit harness.
++ * Return: Length of buffer written
 + */
-+static void ipe_parser_widestring_test(struct kunit *test)
++static ssize_t getenforce(struct file *f, char __user *data,
++			  size_t len, loff_t *offset)
 +{
-+	const unsigned short policy[] = L"policy_name=Test policy_version=0.0.0\n"
-+					L"DEFAULT action=ALLOW";
-+	struct ipe_policy *pol = NULL;
++	const char *result;
 +
-+	pol = ipe_new_policy((const char *)policy, (ARRAY_SIZE(policy) - 1) * 2, NULL, 0);
-+	KUNIT_EXPECT_TRUE(test, IS_ERR_OR_NULL(pol));
++	result = ((READ_ONCE(enforce)) ? "1" : "0");
 +
-+	ipe_free_policy(pol);
++	return simple_read_from_buffer(data, len, offset, result, 1);
 +}
 +
-+static struct kunit_case ipe_parser_test_cases[] = {
-+	KUNIT_CASE_PARAM(ipe_parser_unsigned_test, ipe_policies_gen_params),
-+	KUNIT_CASE(ipe_parser_widestring_test),
+ /**
+  * new_policy() - Write handler for the securityfs node, "ipe/new_policy".
+  * @f: Supplies a file structure representing the securityfs node.
+@@ -123,6 +176,11 @@ static const struct file_operations audit_fops = {
+ 	.read = getaudit,
+ };
+ 
++static const struct file_operations enforce_fops = {
++	.write = setenforce,
++	.read = getenforce,
 +};
 +
-+static struct kunit_suite ipe_parser_test_suite = {
-+	.name = "ipe-parser",
-+	.test_cases = ipe_parser_test_cases,
-+};
+ /**
+  * ipe_init_securityfs() - Initialize IPE's securityfs tree at fsinit.
+  *
+@@ -149,6 +207,13 @@ static int __init ipe_init_securityfs(void)
+ 		goto err;
+ 	}
+ 
++	enforce_node = securityfs_create_file("enforce", 0600, root, NULL,
++					      &enforce_fops);
++	if (IS_ERR(enforce_node)) {
++		rc = PTR_ERR(enforce_node);
++		goto err;
++	}
 +
-+kunit_test_suite(ipe_parser_test_suite);
+ 	policy_root = securityfs_create_dir("policies", root);
+ 	if (IS_ERR(policy_root)) {
+ 		rc = PTR_ERR(policy_root);
+@@ -165,6 +230,7 @@ static int __init ipe_init_securityfs(void)
+ err:
+ 	securityfs_remove(np);
+ 	securityfs_remove(policy_root);
++	securityfs_remove(enforce_node);
+ 	securityfs_remove(audit_node);
+ 	securityfs_remove(root);
+ 	return rc;
 -- 
 2.44.0
 
