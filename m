@@ -1,85 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6061D540;
-	Mon,  5 Aug 2024 18:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7519D166F3B
+	for <linux-security-module@vger.kernel.org>; Mon,  5 Aug 2024 19:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722883895; cv=none; b=rV6IlLO2tY6Me+jmagYzXgwDOmnyctXAEjm5Ln0EhKjB+JldjJubRjuIhIQh/3GHZQgBpCPGgEZ0ATRnWpbIds5uZX458UPK1GVaosCv7t2MTe0j1RJW1YoaE/OYPH4DHH010nRBZSp4MVwkz/FlEV7xPniq+qVInSfJagjr1oY=
+	t=1722887883; cv=none; b=rDXvsNKzqOsKsevaSeyknPH/nBvYDsQiWnDGInWysSSUgbQEJIVK9eXP47z3lrp9xDmBRellCAlYQegNDvmxNoKw7JztNrsVjulpo1QQgHLuiUqdts6bn1otw+7cpGhSrRqqAfXTOsRQB57rtkAIAoxbzzv2Avmok/voWmdz1gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722883895; c=relaxed/simple;
-	bh=uf8ILAskZN/4P/S4F7SKa3SGrBWodGKtmv2kZoh7MLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AMsKY4XqP4toGx9mb03nqi6KmI/x0dlU076EHz7HoK4T9csZpZrFK/xIasHUaX1sUtJNMVb5JM2GErVDvunGba/p4ntmh0gi71cdJGXhigmdaTJjciD18Lz0a2o4ZXthrWW6GyW2RkcSAmiX87yMYUQYhaSvhi8YQOxl8lAw/+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3pyDbbA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722887883; c=relaxed/simple;
+	bh=rxeLc0f8DRhPsmh0FjjZBjED0NX11DTdFc6s6f4LPcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pGf6ooRCJZxqlsi7bc4YJ8jHSvfVd7AkZ9HJMcXfOVzAE4dxYzNu1LZ05MPn90Y7n8JADftvT0XpjkbGEkVFrMNlrUF+bZSTRgeJFVXC5ZGPokQi8SDEjBSEP4UvtYcanCb6YCiHvxDQcP9CmRbHe36eZUt8VQXB1Eltmgb+87g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DD+k/WVY; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3pyDbbA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25914C32782;
-	Mon,  5 Aug 2024 18:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722883894;
-	bh=uf8ILAskZN/4P/S4F7SKa3SGrBWodGKtmv2kZoh7MLg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F3pyDbbAzcvONmuquDw8PZ6flxoE46it5ePJVAuMwygCo/wGsmYpgJVJ7p9MzEJqD
-	 9ectkAhOEZoTUJz9r5RZ54q/pujI84cU6X4o3xzNRV4IGgUaRUgmwJJNrsBp7qoyPs
-	 RYtYLOXeyPac2aKqmsjr3M3MExOj8mVd4KC8mmd6Rhdx5KTd75sw3mlQ1vma60VRe6
-	 IJKXxmRXfMEvWGx9NpeG7XCIxv8XKud0y24Gs+GEQP30a1QLMTPE6vpcVCexMz+Frr
-	 71TZOsBY0fwczfFhAYylvjyHoCcCvIHjfrDun0Xl/r+rM0zxm5kqHEn2OHEGN/fIMA
-	 A9ZYjjwyFvq7Q==
-Date: Mon, 5 Aug 2024 11:51:32 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Fan Wu <wufan@linux.microsoft.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-	serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, eparis@redhat.com,
-	paul@paul-moore.com, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v20 15/20] fsverity: expose verified fsverity built-in
- signatures to LSMs
-Message-ID: <20240805185132.GC1564@sol.localdomain>
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-16-git-send-email-wufan@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DD+k/WVY"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso9614797276.2
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2024 12:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1722887880; x=1723492680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UPPnAP7qxMYZ1TKRWZYPmOYj/E8z7mPvmJgbldEEpHs=;
+        b=DD+k/WVYhaPVH6nzw7yZ71iNnISojbXnK81DAfHwDCforJH51cQlzhfHOZNsKK/CjN
+         3N/zRIvqXqM7S0kPAGXxYnzygainD+JbcLj+277t6SyFq/xLJhPkCj8QgRwIYufJrNr0
+         StHAUREUL7KfZLBM6Oz6JF0sL1qHqspPorYRHhIXhbHt8W+8ZyxgdGx3ng27gZ0EimyY
+         LNFopB8Jkoujt5iJBp/Ui4t99kSpYax+PXfgz0v5BhVMl80OhvEqr4jotQ6TZSR3G5MD
+         /VE0saSEKp+T7+MRuK7Isleg/NR5EBnxga23qduHr6xufEf/wY2UKbIkQj1CQpVB+ekA
+         ezow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722887880; x=1723492680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UPPnAP7qxMYZ1TKRWZYPmOYj/E8z7mPvmJgbldEEpHs=;
+        b=s8OWkPR0/b82IbqCo4RjaOcnEYBoMQAYzMt0umeQjtTaQRXAVs1RRIEbr6C5hrbLtf
+         fhP0ZyS6WCZYywVGllOsfB+bzW4nstj5gEncXb03sG+azzqtMTdbnpKkCOUTpdnYfrtq
+         n1VNQrMNSrD4slEPttbiCnITAu1ZhsDiljPOOO2yVw9nImeZfgv6Tx08wxHD8no7DMGZ
+         PH4EF44pw3ijYSvDfZleenU5abamVfh5qCLkoBrpvmDGvMmjjGYDja2F7JDI0TX6+sav
+         COTxKKuXz8ZgPYQQthH5zQx+C4I+Yg1Tejb+iZaWsGO1BXNOMrRuO6H15d6MFjqr3NPU
+         FuAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQaAG0txDkK3luPsJ/jaTAgUuuDSiV+FZCzAfM6KLcTxHa7u5Wg3YHB0Tx4u02gZfZV0I5+eNtfsVFXfCvdnTu+OfUuSH8q0GnONOi+Ohum2YBX6hu
+X-Gm-Message-State: AOJu0Yz06OYPox2s7Z103bKQBTHNT+xIDPf7fsvesFjCjkCToOPncY7r
+	wFcorwIQoC0OowtWZarRuX/s+o8nmrruNiwwL6D3rnV7fNEXa9unsrLJMbKp4X5r7dmu/VNDQjW
+	zzcHR8Fy2BirfzJC0/V8zw6zdZ1+YpcXFQ/Zb+BVG+I3Ks+s=
+X-Google-Smtp-Source: AGHT+IGa9SUejtgqxNEB5F9IenJObH511HYzk082Jg1xU2pMV2j06uhI6f3vEg6NNtPmhDJjw6qggd3g7GrSoM6h15c=
+X-Received: by 2002:a05:6902:725:b0:e0e:65e4:b7ef with SMTP id
+ 3f1490d57ef6-e0e65e4ba58mr2206966276.51.1722887880428; Mon, 05 Aug 2024
+ 12:58:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1722665314-21156-16-git-send-email-wufan@linux.microsoft.com>
+References: <20240801171747.3155893-1-kpsingh@kernel.org>
+In-Reply-To: <20240801171747.3155893-1-kpsingh@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 5 Aug 2024 15:57:49 -0400
+Message-ID: <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bp@alien8.de, sfr@canb.auug.org.au, peterz@infradead.org, nathan@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 02, 2024 at 11:08:29PM -0700, Fan Wu wrote:
-> This patch enhances fsverity's capabilities to support both integrity and
-> authenticity protection by introducing the exposure of built-in
-> signatures through a new LSM hook. This functionality allows LSMs,
-> e.g. IPE, to enforce policies based on the authenticity and integrity of
-> files, specifically focusing on built-in fsverity signatures. It enables
-> a policy enforcement layer within LSMs for fsverity, offering granular
-> control over the usage of authenticity claims. For instance, a policy
-> could be established to only permit the execution of all files with
-> verified built-in fsverity signatures.
-> 
-> The introduction of a security_inode_setintegrity() hook call within
-> fsverity's workflow ensures that the verified built-in signature of a file
-> is exposed to LSMs. This enables LSMs to recognize and label fsverity files
-> that contain a verified built-in fsverity signature. This hook is invoked
-> subsequent to the fsverity_verify_signature() process, guaranteeing the
-> signature's verification against fsverity's keyring. This mechanism is
-> crucial for maintaining system security, as it operates in kernel space,
-> effectively thwarting attempts by malicious binaries to bypass user space
-> stack interactions.
-> 
-> The second to last commit in this patch set will add a link to the IPE
-> documentation in fsverity.rst.
-> 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+On Thu, Aug 1, 2024 at 1:17=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
+>
+> With LSMs using static calls, early_lsm_init needs to wait for setup_arch
+> for architecture specific functionality which includes jump tables and
+> static calls to be initialized.
+>
+> This only affects "early LSMs" i.e. only lockdown when
+> CONFIG_SECURITY_LOCKDOWN_LSM_EARLY is set.
+>
+> Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static ca=
+lls")
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  init/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Eric Biggers <ebiggers@google.com>
+Considering the problems we've had, I'd like to hear more about how
+you've tested this and I'd like to see some reviews/ACKs from some
+arch people too.
 
-- Eric
+> diff --git a/init/main.c b/init/main.c
+> index 206acdde51f5..a0e3f3c720e6 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -922,8 +922,8 @@ void start_kernel(void)
+>         boot_cpu_init();
+>         page_address_init();
+>         pr_notice("%s", linux_banner);
+> -       early_security_init();
+>         setup_arch(&command_line);
+> +       early_security_init();
+>         setup_boot_config();
+>         setup_command_line(command_line);
+>         setup_nr_cpu_ids();
+> --
+> 2.46.0.rc2.264.g509ed76dc8-goog
+
+--=20
+paul-moore.com
