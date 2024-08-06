@@ -1,162 +1,161 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4F679B87;
-	Tue,  6 Aug 2024 18:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B394EB45
+	for <linux-security-module@vger.kernel.org>; Tue,  6 Aug 2024 18:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722967884; cv=none; b=VD5uy+yjCb8Fi6r+e8x2rV3ItHf0y42Zhc3yR/X6klPcJKb1GSdVcT38P285s/6lxLn/2B6RuFAL0zWwbO1UVO8FuAlTIeI2ZgsVaigRUgrLAXWMfSCi98MBi7x2L7H09rx46ynaCPLpWqFH+sXV7SFj7NuNkcihNF9xPMywZ9k=
+	t=1722970616; cv=none; b=pe0BrNmLzKAKDs4VswA+Nqdl5Xkdw7oTWLP92svzJTrBjQ1i6eyR2mJjjHnxCoNyPQ9qerpO8DkinKuV9LHJxApPw1XCKsJ+EwjDYi8scZn+dCo6oXEajCOPkl7b4cRN6kYGjUbecauXUpRdZpf9gHs7TYZ5TU1BcXoGJWYJpxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722967884; c=relaxed/simple;
-	bh=q9QLkZ/H/j6QTqNueNb0kSZDd/RQJbs+z7t4FIClwzo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VS9Gq1xKpSmAZ1q7iRX0lIezHfJ21NZzRum5Q7EFteUOxyDG6voVtEMb7GuJgNKRgk4y5Zc2YJ5D/KpuyinKHVrc/Yo9eSZgChCQ1b0cmAvEc7KBl+NEJZ86Erk0Xgme+MaJd/BsLVSajxyZFRxO/rfzVlx3uHWxIXNw2IsPoDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erkTNNf5; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722970616; c=relaxed/simple;
+	bh=DciIyaltMFYLMxZvjIfQj8LL3dvXxfc6HZ7aYdssDhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lHWYnYZKVYMxMUjD6hwq0iPZgU0AIA4lY9/2AhEQSfC+7G7+Vijj6VVt+MQSO06H/zxCQoYSnow46GlhpAEDpBhZ6T+HPmSFsjfGVQH15sYiOTJp6vHW0Jt8SQsKibiXUyMO3+tfawmWRbydFSt7uZQDxd1idYhuCTVlF9QjyUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aV+zU4PX; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erkTNNf5"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cd5e3c27c5so651247a91.3;
-        Tue, 06 Aug 2024 11:11:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aV+zU4PX"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso21654a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Aug 2024 11:56:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722967882; x=1723572682; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722970612; x=1723575412; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3VrsPTsD55P11qoYiWXSWqA/RANzLdJrHm5M8EK/YZ0=;
-        b=erkTNNf5e3OPpMpZByd0s44hWUWBs0Nrg0Uay5xKL+I01ZMC7pcD2hZZvvTvE74G/y
-         1ZOcvti4WXLVYagKJIkCweUOpeY/B+6ry6BbW1gC/4jdG9mtZUoaJOpGx59Y30B2cu+C
-         ldSeI+Oc3Lzl3hUq6xm4egwZBk1F3tHXBpAdF5UXR2cMHZbGSgmEJy2NbD3xHpm3U1vg
-         EgSkAYmr+HT4Dc4vp1Q58j6yMLt8Tenc0PUaUnPYc6NL5r8IPd8AT3OS8OWDIAzQCJ/I
-         T9qg8nnLU4BgbBX7LQ4RAkbRx0/hsiv4dGJAxgCA1Wo/0RGLxQLylEdk8owXlrUkDCqj
-         NSuw==
+        bh=8Hlr295kPt+eGh8NSlH0Dz/t5X1B6Heu59VkOJqUybg=;
+        b=aV+zU4PXNTM3fn7rhD4ZMQx/n/x65XZ+uP2lKo2ir5PY188Wb/if0lQbJT8F61dur0
+         1bCHxYpWmPB1Mx1bjzaF744Hc9kXkEAgZN+SZXnkOuN9N+wsyS2fWXeMASgw7cGMtGET
+         UvbtdDLmBk2Hss6GGok9oFW91Sf68TktMQ5BmTTOYrMEu2KDR9wvDjeZndP1ed39RuS9
+         0CXFKNP0aT06azyXqHt8LbliWdt0A7nb5Q4x8UeGIzLBfk7sU9eY9ZK21OatAl+4CNju
+         gn38DN4JZmihZ1mWzPGONn4cj/uCJrobJD/KgSp/WFoKX1SNJ2Ku5/rDZWfMplR0uc11
+         q6bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722967882; x=1723572682;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722970612; x=1723575412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3VrsPTsD55P11qoYiWXSWqA/RANzLdJrHm5M8EK/YZ0=;
-        b=sAZJbX5oCTP3tpbYjclzRboERdeGB0d69HczsWyID0J3EkNrT5oAmV8xDCvN5iN9fi
-         CUr30Dku+2TWL6jWMFlZGVTktlLRUt9phb2wZDqB+Uf7H1Qpih1j6GzKqhsls7Jn7PrV
-         N68VHKfb776Jq5glctCKVmSyMWxTwdO3z6sWuOHvm/kmA12ZpXHTjKnkhjtw9oqA7y0W
-         GPBo0FzQRbSXlcdsDYsOMZfvCf+sUJ7hQsciBSEINscTkjnrDW9z7MEAC0OgQiaeGYl0
-         20BPfy2idGGf2/85vJVLWeqQUdCMNYDJQ3Mn3zlyRWqwm5yM7+ahnOViTAyfGJjDFjXE
-         mMuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC0/6cXp4EHCoVJOpMNED76iggL8L0k3W+pYsrVKMRIqsO35H9S3EwXgV7sw0+NA8ulEL+9A9/1QYZndc=@vger.kernel.org, AJvYcCUFWyJZIXStBnV5P+btixTbVf04GI0j3LmkjsfUDxZ9hO9urKLxlfAdam7IJgebuGVyKuNsaqua@vger.kernel.org, AJvYcCV8JDqgKHPvTl0AOu2yetfrPcqYWmWJL1t7JjHjbmJufqpGGiEo2qoMnklA5VFcSvZI9wwI7sMPg+HotG3GSi1/0qhgIsdg@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywel59CIy1khLlwLAvlaE9g6KtzyU+8OQJYB1ZR6tMz2Ki/ZdKJ
-	UMAh9Ewsz2nZVHG8OtI4M9xnHorP8WM2Fj1W3mWa6FFVNmmSIOHC
-X-Google-Smtp-Source: AGHT+IGiT+hmqoEULYz2BBGUi4Gw+UHaG5Qkj+LXdSF6TXcbaZb0t8t/rendJeJxdT7efNmVye4TAg==
-X-Received: by 2002:a17:90b:4016:b0:2c8:8a5:c1b9 with SMTP id 98e67ed59e1d1-2cff94143f4mr15769258a91.13.1722967881560;
-        Tue, 06 Aug 2024 11:11:21 -0700 (PDT)
-Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc45b51esm12829504a91.32.2024.08.06.11.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 11:11:21 -0700 (PDT)
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: outreachy@lists.linux.dev
-Cc: mic@digikod.net,
-	gnoack@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com,
-	jannh@google.com,
-	netdev@vger.kernel.org,
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: [PATCH v2 4/4] Landlock: Document LANDLOCK_SCOPED_SIGNAL
-Date: Tue,  6 Aug 2024 12:10:43 -0600
-Message-Id: <e7d324cc4c256f8574b444c0c4c2899c78ed0c16.1722966592.git.fahimitahera@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1722966592.git.fahimitahera@gmail.com>
-References: <cover.1722966592.git.fahimitahera@gmail.com>
+        bh=8Hlr295kPt+eGh8NSlH0Dz/t5X1B6Heu59VkOJqUybg=;
+        b=MRO1jRnBVt+Wmj+/UxVIloqjA2p2nzMqLgjiSCaoJCHOHvJpOUL2ZZa9KWRWdz4h6P
+         la/Bub6qKOSjF06ce8rV0xTA+qSV2IdPwU4eMt9GZmPG7Oq801EpiFtg332Cu3+W2PRr
+         sM2RQdlocAknjV41dYHrKtxUMPyxywjUlKuB6hxB49jiOxehS5L6dH3QVTa/WHv+Hn2C
+         DcbKnd3+pRE2c6OENAQtWU0tekA8hjT/uD67qInJa5vk7Bg769hJ9V6b5NWrf65tMCb7
+         seWZ0HqmIxHbAMd0uXswNLfkSVQCPRnL8hpDbUFSvzYX8TheVVzeFtUD986dYxSDuo6X
+         ZhmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+2W1V+SpgPsYUlUaOq9AnrxWt6WO9ttOR0P2WQ9TsrKg7sHfT4Y3qQL+C/a7igFhN90/2yxBRhM1pjVZEMczgrxwzTArCKeOVknMNPRaXMKxnCS/8
+X-Gm-Message-State: AOJu0YxConqgZVgFOwNmTcU2uAhVqCY6dPr2cnuCaFPtFbwhD3SHimLq
+	wU8kDsb+LK/o6W6vUL/ewoIBCis/gCJJeVupmo+I4uTSYF4UvsvInNaaPLL/DQ6mNkNJR0HMxbu
+	uXB3l/bvynKo1S0eoDF86jyUa6M9XxjIEgTkL
+X-Google-Smtp-Source: AGHT+IGqnjXhVQ8xTsbaWkcVIDDJvOxlZLSRQjKaeRvd7cNiXjReNou5GDw7DnmVT3rHal8ocqevhsdfWvubnFMhvKc=
+X-Received: by 2002:a05:6402:84c:b0:59f:9f59:9b07 with SMTP id
+ 4fb4d7f45d1cf-5bba28bb22amr26688a12.4.1722970611142; Tue, 06 Aug 2024
+ 11:56:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1722966592.git.fahimitahera@gmail.com> <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+In-Reply-To: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 6 Aug 2024 20:56:15 +0200
+Message-ID: <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Improving Landlock ABI version 6 to support signal scoping
-with LANDLOCK_SCOPED_SIGNAL.
+On Tue, Aug 6, 2024 at 8:11=E2=80=AFPM Tahera Fahimi <fahimitahera@gmail.co=
+m> wrote:
+> Currently, a sandbox process is not restricted to send a signal
+> (e.g. SIGKILL) to a process outside of the sandbox environment.
+> Ability to sending a signal for a sandboxed process should be
+> scoped the same way abstract unix sockets are scoped. Therefore,
+> we extend "scoped" field in a ruleset with
+> "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
+> sending any signal from within a sandbox process to its
+> parent(i.e. any parent sandbox or non-sandboxed procsses).
+[...]
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 7e8579ebae83..a73cff27bb91 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -261,11 +261,54 @@ static int hook_unix_may_send(struct socket *const =
+sock,
+>         return -EPERM;
+>  }
+>
+> +static int hook_task_kill(struct task_struct *const p,
+> +                         struct kernel_siginfo *const info, const int si=
+g,
+> +                         const struct cred *const cred)
+> +{
+> +       bool is_scoped;
+> +       const struct landlock_ruleset *target_dom;
+> +
+> +       /* rcu is already locked */
+> +       target_dom =3D landlock_get_task_domain(p);
+> +       if (cred)
+> +               /* dealing with USB IO */
+> +               is_scoped =3D domain_IPC_scope(landlock_cred(cred)->domai=
+n,
+> +                                            target_dom,
+> +                                            LANDLOCK_SCOPED_SIGNAL);
+> +       else
+> +               is_scoped =3D domain_IPC_scope(landlock_get_current_domai=
+n(),
+> +                                            target_dom,
+> +                                            LANDLOCK_SCOPED_SIGNAL);
 
-Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 27 ++++++++++++++----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+This might be a bit more concise if you turn it into something like:
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 01bd62dc6bb1..1923abfd2007 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: July 2024
-+:Date: August 2024
- 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
- filesystem or network access) for a set of processes.  Because Landlock
-@@ -82,7 +82,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-         .scoped =
--            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
-+            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-+            LANDLOCK_SCOPED_SIGNAL,
-     };
- 
- Because we may not know on which kernel version an application will be
-@@ -123,7 +124,8 @@ version, and only use the available subset of access rights:
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-     case 5:
-         /* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
--        ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
-+        ruleset_attr.scoped &= ~(LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-+                                 LANDLOCK_SCOPED_SIGNAL);
-     }
- 
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -319,11 +321,14 @@ interactions between sandboxes. Each Landlock domain can be explicitly scoped
- for a set of actions by specifying it on a ruleset. For example, if a sandboxed
- process should not be able to :manpage:`connect(2)` to a non-sandboxed process
- through abstract :manpage:`unix(7)` sockets, we can specify such restriction
--with ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``.
-+with ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``. Moreover, if a sandboxed process
-+should not be able to send a signal to a non-sandboxed process, we can specify
-+this restriction with ``LANDLOCK_SCOPED_SIGNAL``.
- 
--A sandboxed process can connect to a non-sandboxed process when its domain is
--not scoped. If a process's domain is scoped, it can only connect to processes in
--the same scoped domain.
-+A sandboxed process can access to a non-sandboxed process when its domain is
-+not scoped. If a process's domain is scoped, it can only access to processes in
-+the same scoped domain. For example, If a process is scoped to send signal to
-+other processes, it can only send signals to processes in the same scoped domain.
- 
- IPC scoping does not support Landlock rules, so if a domain is scoped, no rules
- can be added to allow accessing to a resource outside of the scoped domain.
-@@ -563,12 +568,12 @@ earlier ABI.
- Starting with the Landlock ABI version 5, it is possible to restrict the use of
- :manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right.
- 
--Abstract Unix sockets Restriction  (ABI < 6)
----------------------------------------------
-+Abstract Unix sockets and Signal Restriction  (ABI < 6)
-+-------------------------------------------------------
- 
- With ABI version 6, it is possible to restrict connection to an abstract Unix socket
--through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``, thanks to the ``scoped`` ruleset
--attribute.
-+through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET`` and sending signal through
-+``LANDLOCK_SCOPED_SIGNAL``, thanks to the ``scoped`` ruleset attribute.
- 
- .. _kernel_support:
- 
--- 
-2.34.1
+/* only USB IO supplies creds */
+cred =3D cred ?: current_cred();
+is_scoped =3D domain_IPC_scope(landlock_cred(cred)->domain,
+    target_dom, LANDLOCK_SCOPED_SIGNAL);
 
+but that's just a question of style, feel free to keep it as-is
+depending on what you prefer.
+
+> +       if (is_scoped)
+> +               return 0;
+> +
+> +       return -EPERM;
+> +}
+> +
+> +static int hook_file_send_sigiotask(struct task_struct *tsk,
+> +                                   struct fown_struct *fown, int signum)
+> +{
+> +       bool is_scoped;
+> +       const struct landlock_ruleset *dom, *target_dom;
+> +       struct task_struct *result =3D get_pid_task(fown->pid, fown->pid_=
+type);
+
+I'm not an expert on how the fowner stuff works, but I think this will
+probably give you "result =3D NULL" if the file owner PID has already
+exited, and then the following landlock_get_task_domain() would
+probably crash? But I'm not entirely sure about how this works.
+
+I think the intended way to use this hook would be to instead use the
+"file_set_fowner" hook to record the owning domain (though the setup
+for that is going to be kind of a pain...), see the Smack and SELinux
+definitions of that hook. Or alternatively maybe it would be even
+nicer to change the fown_struct to record a cred* instead of a uid and
+euid and then use the domain from those credentials for this hook...
+I'm not sure which of those would be easier.
+
+> +       /* rcu is already locked! */
+> +       dom =3D landlock_get_task_domain(result);
+> +       target_dom =3D landlock_get_task_domain(tsk);
+> +       is_scoped =3D domain_IPC_scope(dom, target_dom, LANDLOCK_SCOPED_S=
+IGNAL);
+> +       put_task_struct(result);
+> +       if (is_scoped)
+> +               return 0;
+> +       return -EPERM;
+> +}
