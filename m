@@ -1,117 +1,118 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4310D17C203;
-	Tue,  6 Aug 2024 03:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD011C4618;
+	Tue,  6 Aug 2024 13:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722916279; cv=none; b=qJr8968gQbcWAQjCIvJWmq9q1KHXSSVMcn7Rc2+4wwnqkQWAS3L49AxBBlrsPNDMysY2Aw0bFtKt0oaCnm/Yf89qk2jI8rDkuh3E2Bxgz7617aAx30oZSviIhs8AUeqR55zbly7C4qQ6NVNXls5191KyIydZDRJW6pO4oKxkjU0=
+	t=1722951383; cv=none; b=IWfPH26hEqb8LDqRVO/eJakoVU6RYhTRT4RrRK6MF/82umg6gUXZoOCNsEXZk5jHbXW4cXyYN5+hyFAypLEzNMmWEx6C9JAeBGJsRYylNLBYOB+5DkY1Jv+zZO/drZu2p/7Uflp5auFNWhm/VKfr8agU9F0CnD7uObVNwp3ezDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722916279; c=relaxed/simple;
-	bh=o2qOFURtd6COH4J6FuPiVJ1ZknbpD5fuWh18UJ6DnM4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/lvq5Ach1gD+89H8EFPhKNrQvqI2rd+3rZKlOhSvAgvZcbRLNVFQcdCPwhiIcVHeuYRIEID7jM4NLL8FpyWaK++efhpd1Bbk2P9c6cu5mEDPzJtERQ7iwmlj2eELUOwizRsocHKM90DgxoP7ptH5LpI55SZCDSPfzGb0sYipVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVTmZjs5; arc=none smtp.client-ip=209.85.219.47
+	s=arc-20240116; t=1722951383; c=relaxed/simple;
+	bh=xoK3u6p5Pinh4bCMH8Qvee7uSsupNR3FkLr/Mki+zQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gp87owiGsw2W1wu4VkTuKTH3NJsxRhE0pF5iar30K768z1uYI0QN/z57lKwszRRKV5xfA5bQ5XxLB8qopVcLuZ1H8Qo/aQYYN6NNrZgAcwE37ecAOhnPtKNaKf8jEGw/Bz811UdwsMM7Ti/msv6lqUUleaLplpOhvZR29bYwUzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGAoIWjF; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVTmZjs5"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b797fb1c4aso1840246d6.2;
-        Mon, 05 Aug 2024 20:51:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGAoIWjF"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f035ae1083so7502301fa.3;
+        Tue, 06 Aug 2024 06:36:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722916277; x=1723521077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c/kd4WiMmD7cvf5H5grwZdB0fA+VVTIeAtsfQV3Ag+U=;
-        b=VVTmZjs5ps5PZ1tDWhb8RhFE1bgS9BEJ9OveKZV9cm36Mx9R4JgaQ9hJDwdOMjJMiv
-         /SG94mlrH/JLN9cz1cxXaZ1wVCa/4wketftPb4n5jEmy1lmY+nB0Fz4wdF4KPaotsNeB
-         Izwhu1/x/U8Vdua4sVdMt2MObws4WQarIIyfLiq/6ObFXasbIZe1ac+gRvYm28zrVW1o
-         VB+5qIbOHrmVlg6LEqc+4axVFmWwZkmo0NqKyLOHYcPHl6wVKZuLPe/qbJ/NPeOsMWIR
-         in5RphwO/PZF0KzgZZdNmltFOnS+VuM7Zo80SLXQ1hufIwkSIzDQJEW+ROY+RHEHvHxK
-         PqZg==
+        d=gmail.com; s=20230601; t=1722951380; x=1723556180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Ut6upCPAHGtdM401qJi3TYb4r5pf3c7Q0q5XDfXZJ8=;
+        b=MGAoIWjFqRXF2z7ubMbhtNna4BGi9IzcJkpve/eWCIh9cqLdObosMYZYScSQ0juasf
+         ZVA0jrzodkpWQKwWqcBG0Sacxz1Ffa8+BUcAXewwn7dbzj+XsRO1GbkjkMxE4TBEZJuw
+         n2p4N+syIJ7nRmd/12zd6iGBTu99SRDolg5JW8aQA6hU2eUzIi+rnv3moOE8UI1Os9dF
+         Qk3D1JixPPXsqGW34I7i6XLVxbTC0Stj47i8O0hYWDwTri3dnCFWIiZw5oCePxTIx8E0
+         xFqH0oaOhUS88oxb2k/MhPhrBp4dxhEwqpkUkSp1CDXq620FKCbvUvOgOAnemPb2oBJO
+         IbmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722916277; x=1723521077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c/kd4WiMmD7cvf5H5grwZdB0fA+VVTIeAtsfQV3Ag+U=;
-        b=iw/dVFNNbfZ5NJ+l8vXzNEF4f+eWPMpgIyM5eZ+xmXeKWe2NdBYzhC8RrQEdroMZkg
-         WjJdekYE6oXmRDBbwiWAbYOfM/4+g+w9QUtcbhzVbuaLEnk18j51jUjou8YBk/vADg9G
-         AxUvjan1vlpe7cIo5cqDt663ejthjBJZA4SS5pS6THwXzhtX7CXHH+1cpOn//Ey7Jvrf
-         6/MSCj+xtoDrSjaUgdcjAITJXlTqypcOACu4Wc0K+VQvnlmcl9DQ8jLKRcIZxVwQYcLD
-         Q0LyKvht/9+7LqR4mFdQZDGF4aqSr+XyO+vE6XuGRwtqYrSXSJVvwipLu6NGVQQjjeeM
-         KaYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGbB2URhxUzEnELooS88p8BSCxJ9lN8EBG5fu7UssUEKG7spao7IITZD3M1EX8QmeDHouGyxrdVhXKyze8Zc4VEj9m70dbwE9RIp9t7EPM+MVzJJws7nkftDeZEBeVgjFn11D4tp8ir2LCHyKCIqDr431BgeMVog/s8O6M75h83flN3JzrWpMv62O/VUCDvYO0WSLDrMVhQmnG53rBHUTg0oTGKbGdvrNs8zsxHtGnAfZzLNxDehVDeISR1jwbZhSs1lGqH6+WgqR2gyiKerjNpdJ/R2WZc97Z6IjJJM4a8HuEoknOXkSsYneDcWtVADdwyU783Q==
-X-Gm-Message-State: AOJu0YxsiQVXpPfa+UCtdefoQrgjd4z3toFYC24OBUmTm+zMEg1YOAlO
-	JVVT2iYoU+3CEzq7s5rhG+/SW6rBJvfPnUhMTQ33V05beFuAsvzifWk3NXRhaZdwoDuGLA5lIA5
-	AncdDMRJ0DWu2Oc80EDkUCuDxD5s=
-X-Google-Smtp-Source: AGHT+IE2RlAR/mG/tj72IoVOm1m9SyAB0Xj2ZC0vDvmPd0pDeOdqpJgJne85/B4nYiYlXvIL6sxOK+OpkyaCbeLF13M=
-X-Received: by 2002:a05:6214:5687:b0:6b4:f973:d423 with SMTP id
- 6a1803df08f44-6bb983477a8mr176949846d6.7.1722916276927; Mon, 05 Aug 2024
- 20:51:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722951380; x=1723556180;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8Ut6upCPAHGtdM401qJi3TYb4r5pf3c7Q0q5XDfXZJ8=;
+        b=anvFhKfwg3N5euqMmHJMnvZpZ/ZJ2CTluPEhLQUm9CiEnfMivWmlYuucrijlRcGAUg
+         okFzfrnJLpT4NYtqeDo/ruAdQnVTHQZqBy0tshnmA0i0xEjYdIIzvU9FQKGsWHV8OBDO
+         UzWtotnicb1dfnJGK3Tee5LWx7N1b6UUfLFDgjQ2N5ziySAWL53c/UsniZMszS5by3KQ
+         U7guiwc4qsoX+q2TcPXEmj76WKQAGqz3oUgnbXN1IF7ld5V7um/mZI13XPei5IZ5mqDr
+         E+jZj/YZw893xmOiUphSuSVM6hTDA4HztvjHife6LlStQ+j0A54wrLhHl0LUajILfCFX
+         9NOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVknEW/NywzbTzjVHQkgGT7raFRpqfwU5Au7gwpmU4oLOrBrYeu0Obp7Fi8gYkY5t5gQktr5SAm2NH5+LcMU/JhwrHmuuwFFpe7jQHZYkw0TDM9x1qfUOvBGGMFqhO9g8IR77n9+jZP0LJTG5pyGhXHzI6f9i+F
+X-Gm-Message-State: AOJu0YzNZY9iwulvue4JOKSg5dyGuNPaks+bBSvAyvAlFkOwu0sdjJ0n
+	3bcVRpNwrxn7h7cmgCqH737lcAICU7mhUAEFi7/ekIdTNawfsE8Y
+X-Google-Smtp-Source: AGHT+IEwlYKWkJ21WuDyAmxQ4rLymW9QgfgHwCqKEjHiMxkeWunseYbjVT9Uga29artIk1IChuvbBg==
+X-Received: by 2002:a05:6512:4024:b0:52e:f77b:bb58 with SMTP id 2adb3069b0e04-530bb385a75mr9183720e87.36.1722951379565;
+        Tue, 06 Aug 2024 06:36:19 -0700 (PDT)
+Received: from f.. (cst-prg-92-246.cust.vodafone.cz. [46.135.92.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80df8sm545913166b.160.2024.08.06.06.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 06:36:18 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] evm: stop avoidably reading i_writecount in evm_file_release
+Date: Tue,  6 Aug 2024 15:36:07 +0200
+Message-ID: <20240806133607.869394-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804075619.20804-1-laoar.shao@gmail.com> <CAHk-=whWtUC-AjmGJveAETKOMeMFSTwKwu99v7+b6AyHMmaDFA@mail.gmail.com>
- <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com> <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 6 Aug 2024 11:50:40 +0800
-Message-ID: <CALOAHbDPToZDrsB2wSp6Ss5L0ksrCb1ufx3SZ1GWeqQ2jP7Daw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: akpm@linux-foundation.org, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 6, 2024 at 11:10=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
-> >
-> > One concern about removing the BUILD_BUG_ON() is that if we extend
-> > TASK_COMM_LEN to a larger size, such as 24, the caller with a
-> > hardcoded 16-byte buffer may overflow.
->
-> No, not at all. Because get_task_comm() - and the replacements - would
-> never use TASK_COMM_LEN.
->
-> They'd use the size of the *destination*. That's what the code already do=
-es:
->
->   #define get_task_comm(buf, tsk) ({                      \
->   ...
->         __get_task_comm(buf, sizeof(buf), tsk);         \
->
-> note how it uses "sizeof(buf)".
->
-> Now, it might be a good idea to also verify that 'buf' is an actual
-> array, and that this code doesn't do some silly "sizeof(ptr)" thing.
->
-> We do have a helper for that, so we could do something like
->
->    #define get_task_comm(buf, tsk) \
->         strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
->
-> as a helper macro for this all.
->
-> (Although I'm not convinced we generally want the "_pad()" version,
-> but whatever).
->
+The EVM_NEW_FILE flag is unset if the file already existed at the time
+of open and this can be checked without looking at i_writecount.
 
-Will do it.
-Thanks for your explanation.
+Not accessing it reduces traffic on the cacheline during parallel open
+of the same file and drop the evm_file_release routine from second place
+to bottom of the profile.
 
---=20
-Regards
-Yafang
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+The context is that I'm writing a patch which removes one lockref
+get/put cycle on parallel open. An operational WIP reduces ping-pong in
+that area and made do_dentry_open skyrocket along with evm_file_release,
+due to i_writecount access. With the patch they go down again and
+apparmor takes the rightful first place.
+
+The patch accounts for about 5% speed up at 20 cores running open3 from
+will-it-scale on top of the above wip. (the apparmor + lockref thing
+really don't scale, that's next)
+
+I would provide better measurements, but the wip is not ready (as the
+description suggests) and I need evm out of the way for the actual
+patch.
+
+ security/integrity/evm/evm_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 62fe66dd53ce..309630f319e2 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -1084,7 +1084,8 @@ static void evm_file_release(struct file *file)
+ 	if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
+ 		return;
+ 
+-	if (iint && atomic_read(&inode->i_writecount) == 1)
++	if (iint && iint->flags & EVM_NEW_FILE &&
++	    atomic_read(&inode->i_writecount) == 1)
+ 		iint->flags &= ~EVM_NEW_FILE;
+ }
+ 
+-- 
+2.43.0
+
