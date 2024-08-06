@@ -1,79 +1,82 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B5E170A3A
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Aug 2024 21:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136F316F850;
+	Tue,  6 Aug 2024 22:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722981370; cv=none; b=J7R43K2TGVut2TyYeNEMX5HZyyaNNVAy8uPXpYTmrWKAEyizPQoncMX/y+s1oqMag0NqbdTh2poqMQfX7m17YlDqMiwvh7gE9Hehx0paWezl3Xds6GMfxgap5JXRvhpQUWSpo0b6WOsmHxepRD7NIWvPTFVmQgyvyDq8clICmtw=
+	t=1722981608; cv=none; b=sCcnkSCiUvXgfHjd2hrcDgEoFanB+vXXyNU2BJ9zNvUh7B+NBmfd9zbulpXjizQiEvnyO4rjo4jxfdOeD/7NG41PcGfSW5yJNp+1NS4W0mBbA49aZuK+DhjNYkS3nxBzsXyVI+rkhosAGD2odcJCOlm4eRVGUEwNOxkHzyzsAMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722981370; c=relaxed/simple;
-	bh=wmfgdQYdTGpqJb5pxWE0y8AYHfytkLr7bRVUJCeQ1rY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P/I3b0/xU7kCBzh55UxGnDP4XHgWSW615L2OukBhLn0Zikr8+GDn+BNC7MlTex9hsE5SPkX6rvsdvzAtZSKQfv1Lg9NLXCePjAeWjqCK5JJ3gDzB/mrYRG40hj2GqSLs3qKHSSgvZz1a9hEZuTt8znj6AtaDqpdtMIsVSU6iUDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vvk6TA0u; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1722981608; c=relaxed/simple;
+	bh=OwNLSN1W0J+6Dh8h5WKA9Oa1TE84Nv+86Y1dQJADOF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZysKZfXDpvrpAFhxlg5VmG/sdA4tzwWtV4yfvH7wB1CJfQmIAx6EimG9hlQVVDAqAo0r0CjAUnmJVoCrnKxaokh7wbvIvTXJ+oKON0tSB3ZbnsLdNSXNpt1gM+0qXGBWiWQScMxsSIpbtrGlrKdfoM3kut2vdWBvsARJW/CjhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXafEKAl; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vvk6TA0u"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso24626a12.0
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Aug 2024 14:56:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXafEKAl"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd70ba6a15so9089255ad.0;
+        Tue, 06 Aug 2024 15:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722981367; x=1723586167; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+sWPUIMGVUWcmjL98+oi0JS8IjtLhhZ9IWBSne+zhKM=;
-        b=vvk6TA0uxSAiqVtQyWO6hFBqwXPMl9LO79FM9m+mNwgub9BJJEppvt2jKNV67OpnF4
-         3DHYIDt4DGpvMF/6vk/QH/y7GsNExaCnktY3xFgStQVfoHVoJyw7AjhOSKAT57LRnq44
-         u7S3bIdPe1ND1g02GF25tqnJTUpcpWFVdrlOz33uRCcUOLPw+Ezn8dbIysBlXsNqQmEl
-         xJYXq/4HZLud1e9hBWimVxTm5HbYvYNAtBJmNgRbxSX2SLo2SuN2K2CXsbLALcRZ1aFV
-         cGIPqpLberytpCz8t93E1E/DA1wf0jK9/8CjfpLacapTEw5l1fgytJMg9oDi4BKZPxPJ
-         qt0w==
+        d=gmail.com; s=20230601; t=1722981606; x=1723586406; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/50Kbw9qcagQY5OojgELJFLSQm6KtoCpbcMKlofWHNk=;
+        b=AXafEKAlVlWmksIM88AV2AGeofTSXnIhNaFFHjWCPSNbdxqcozeNCYU+rPLT1nMt+L
+         DfrHoyI87Iuu6d8770uNK1sr1syBsCiXqit0iNV0B/adCmdrDN2zOokpWKxmuFeAHyIX
+         z7SulVK7mtjZRg8razn7DURoqxhTymNTmGYeYtSCNoxNCYXO7ZxoM6nYKBBugSbXVM2Y
+         r4h1XRFhvsL8fqPHt773kQm0so2kJpGBccO0yky5mFKJiHITy/rfDNmyKd1Y35N0m9Ko
+         nR3gz2Fh5YaAH0y4EM1svqvxdR7v3+VGG/3E9+2vHJyc2JbneT9PCWx7JpJkYMOv2HnG
+         OxEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722981367; x=1723586167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+sWPUIMGVUWcmjL98+oi0JS8IjtLhhZ9IWBSne+zhKM=;
-        b=wgGxXo6I97cC5jf1IjurZ2mwMlpQn2w4Ga6HQynbfyvW+DhInCGJIV4UubXPrZzmeE
-         0tHKbZuC2/24RZui3GoZI36YBMwMV0aMFhQaZqUNklisHjPvCvdopfgThwXOd1BYtEMl
-         cAbvWq+1crlUsOav4EgqCLdoD08ERnwjict0EOBStYrn4Nukn2hHBFO4FOxxP5dHedNX
-         t2T/RuJvNmm9RU7H725YqKNOgEaW60e2nM7KFCZcA00rF7BnNH6NZK1h3H/QdyPxf2yJ
-         6Kif5YVvw6d7S0bYyzWai18eVNOGkbh0jCzvKSAkIA2BkhrrTue+KOpJpSeRyQidnLYw
-         WXcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIlXZZYABeiLkYpcyXIRde+GJwU6JgdTP1hw4lPp0i6lVjlfYWFdPTdagFnIW1WZIq5EOyc8O5/yew0KkOT2PG/RBfPSoJMrKAmv8QggaBF2gchBKd
-X-Gm-Message-State: AOJu0YyXyFledvCnIhHGl5qvp/ig69j/DYS4fHzPDEarwrnCfzMjG6qs
-	gKRqzqA6DeKZIvLq0+LyIXxzRB3PHPsvMTgfdXl/TRaydAkUkjxy8MMRS60O/xSmuQJWkC0pby1
-	rO2TpgvYR8z1oYyPoQZJxQRFRFmHHb+vleqyr
-X-Google-Smtp-Source: AGHT+IHrdbF6ksKEP/0jX+HSSz9PUgh5mkW7R8u/LJHt8G4iQfLdba2Kwe1pQYLhXbf9Qp8tAYkNpUdj+svO6W0QJQs=
-X-Received: by 2002:a05:6402:84c:b0:59f:9f59:9b07 with SMTP id
- 4fb4d7f45d1cf-5bba28bb22amr74904a12.4.1722981366891; Tue, 06 Aug 2024
- 14:56:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722981606; x=1723586406;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/50Kbw9qcagQY5OojgELJFLSQm6KtoCpbcMKlofWHNk=;
+        b=Cy1sK/FtxFM5Gy0MhaTkucOTSUh0j9DpiFq+crgwiIhEYvSXLK2GZDwbjqASIhV0q8
+         UE2pxr77wRtIHjt3BzHDtRBGtb9PYawR8T1WeBPDv0apfEGlEIsMn3hY8s9NHY1i4iSS
+         LaMDQ7GZUvqhT9Gg4uB+IDjbXX1TjewSPLlkoZC15oN6t7358EWejF+436BATkPZQjaT
+         UQRhoZH7TbJiuZEO+zGLIzpA6IWmOvkVlmtHY4yvtuWBjgmzaInYC58vrVe+8WYUgdf/
+         k5iuUx8flcA2FRLwyEIC4Cd6DpvP4j16vhyzXGMrAAafPptPrDpCCuCAW9K/zY0agdX5
+         zDbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWbNWqpJRpTvgQ7APanVbv7eUfQAxY7Is6rzKE14ZjgOv6CyP7YEXujlqZXbWPVzqkNgnXIMIU3GJYEwFIZiDb/rV7llaeXRIrRIFD6Nh6sRUfJPFKJUfcxG1p+WIbS8Wi34TPCWAJWEAZoKcfM++VMPnS+56R8vet3N7LbKbcZ5h8VrFpxXNUtWui
+X-Gm-Message-State: AOJu0YzPHUoF0hR8V5hURMtbDoUqCeUsHQPBoBsYcMFOLb6qHB6qT+dO
+	mVUX034c0Q3OeaL4gqoDGFiANLWLtIP+i/DKCxbezrQsqZJ1Gj0xA5vX7M6T
+X-Google-Smtp-Source: AGHT+IHXa+LRVRm/C57MqrYOQ/Vf3v239GPhpPLFEDgIDJ84hO19cKAzIjegusu4uADCXlVAQQ3Wmg==
+X-Received: by 2002:a17:902:f68f:b0:1fc:6b8b:4918 with SMTP id d9443c01a7336-1ff573bfcacmr172334305ad.41.1722981606141;
+        Tue, 06 Aug 2024 15:00:06 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200775d1b92sm20453155ad.77.2024.08.06.15.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 15:00:05 -0700 (PDT)
+Date: Tue, 6 Aug 2024 16:00:02 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: Jann Horn <jannh@google.com>
+Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
+Message-ID: <ZrKc4i1PhdMwA77h@tahera-OptiPlex-5000>
+References: <cover.1722966592.git.fahimitahera@gmail.com>
+ <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+ <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1722966592.git.fahimitahera@gmail.com> <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 6 Aug 2024 23:55:27 +0200
-Message-ID: <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 6, 2024 at 8:56=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
-> On Tue, Aug 6, 2024 at 8:11=E2=80=AFPM Tahera Fahimi <fahimitahera@gmail.=
-com> wrote:
+On Tue, Aug 06, 2024 at 08:56:15PM +0200, Jann Horn wrote:
+> On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
 > > Currently, a sandbox process is not restricted to send a signal
 > > (e.g. SIGKILL) to a process outside of the sandbox environment.
 > > Ability to sending a signal for a sandboxed process should be
@@ -82,7 +85,45 @@ com> wrote:
 > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
 > > sending any signal from within a sandbox process to its
 > > parent(i.e. any parent sandbox or non-sandboxed procsses).
-[...]
+> [...]
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 7e8579ebae83..a73cff27bb91 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -261,11 +261,54 @@ static int hook_unix_may_send(struct socket *const sock,
+> >         return -EPERM;
+> >  }
+> >
+> > +static int hook_task_kill(struct task_struct *const p,
+> > +                         struct kernel_siginfo *const info, const int sig,
+> > +                         const struct cred *const cred)
+> > +{
+> > +       bool is_scoped;
+> > +       const struct landlock_ruleset *target_dom;
+> > +
+> > +       /* rcu is already locked */
+> > +       target_dom = landlock_get_task_domain(p);
+> > +       if (cred)
+> > +               /* dealing with USB IO */
+> > +               is_scoped = domain_IPC_scope(landlock_cred(cred)->domain,
+> > +                                            target_dom,
+> > +                                            LANDLOCK_SCOPED_SIGNAL);
+> > +       else
+> > +               is_scoped = domain_IPC_scope(landlock_get_current_domain(),
+> > +                                            target_dom,
+> > +                                            LANDLOCK_SCOPED_SIGNAL);
+> 
+> This might be a bit more concise if you turn it into something like:
+> 
+> /* only USB IO supplies creds */
+> cred = cred ?: current_cred();
+> is_scoped = domain_IPC_scope(landlock_cred(cred)->domain,
+>     target_dom, LANDLOCK_SCOPED_SIGNAL);
+> 
+> but that's just a question of style, feel free to keep it as-is
+> depending on what you prefer.
+Hi Jann,
+Thanks for the feedback:)
 > > +       if (is_scoped)
 > > +               return 0;
 > > +
@@ -90,19 +131,20 @@ com> wrote:
 > > +}
 > > +
 > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > +                                   struct fown_struct *fown, int signu=
-m)
+> > +                                   struct fown_struct *fown, int signum)
 > > +{
 > > +       bool is_scoped;
 > > +       const struct landlock_ruleset *dom, *target_dom;
-> > +       struct task_struct *result =3D get_pid_task(fown->pid, fown->pi=
-d_type);
->
+> > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
+> 
 > I'm not an expert on how the fowner stuff works, but I think this will
-> probably give you "result =3D NULL" if the file owner PID has already
+> probably give you "result = NULL" if the file owner PID has already
 > exited, and then the following landlock_get_task_domain() would
 > probably crash? But I'm not entirely sure about how this works.
->
+I considered since the file structure can always be obtained, then the
+file owner PID always exist. I can check if we can use the credentials
+stored in struct file instead.
+
 > I think the intended way to use this hook would be to instead use the
 > "file_set_fowner" hook to record the owning domain (though the setup
 > for that is going to be kind of a pain...), see the Smack and SELinux
@@ -110,13 +152,15 @@ d_type);
 > nicer to change the fown_struct to record a cred* instead of a uid and
 > euid and then use the domain from those credentials for this hook...
 > I'm not sure which of those would be easier.
-
-(For what it's worth, I think the first option would probably be
-easier to implement and ship for now, since you can basically copy
-what Smack and SELinux are already doing in their implementations of
-these hooks. I think the second option would theoretically result in
-nicer code, but it might require a bit more work, and you'd have to
-include the maintainers of the file locking code in the review of such
-refactoring and have them approve those changes. So if you want to get
-this patchset into the kernel quickly, the first option might be
-better for now?)
+Because Landlock does not use any security blob for this purpose, I am
+not sure how to record the owner's doamin.
+The alternative way looks nice.
+> > +       /* rcu is already locked! */
+> > +       dom = landlock_get_task_domain(result);
+> > +       target_dom = landlock_get_task_domain(tsk);
+> > +       is_scoped = domain_IPC_scope(dom, target_dom, LANDLOCK_SCOPED_SIGNAL);
+> > +       put_task_struct(result);
+> > +       if (is_scoped)
+> > +               return 0;
+> > +       return -EPERM;
+> > +}
