@@ -1,155 +1,225 @@
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB5747A4C
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Aug 2024 16:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E98F5339D;
+	Tue,  6 Aug 2024 17:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722963102; cv=none; b=I0Fxr4xEFYYkqH4FJdwFaN49NKFvt8a+2KvHhSreE+rBKuAEbGOp+8Q/+T2dm1GiY32RXBPsVPKcIx6PrK/jHU/c9vXwYOenwL6X3ccbvMVjEzXznCMnsa+C6vnYwo+IpeX7X4oHijvmgAFUpoZEMfTrqp3Mab2qJdr6pRF5XRE=
+	t=1722965320; cv=none; b=gHLTCYKB0RwoHLVQqOv2vooqfwrqbZF2n1E64HmNJh8AgHEKSRnw+4Za25TxYR5gGk7Qrv9oDgdbN7ZqjwJhUWGLrDtqJxCKSW7hxxeyP4s0dGgDiHAznRRTCflV9ughUc1QiizD3HJMHvvfe9k179eY+qTuXnHqlK6ElP4xLeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722963102; c=relaxed/simple;
-	bh=zwYrYMjd46tRAc1s8WfUpUtE5XVT9C0iCl5X9xL3yRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LkFtfB53PUO2B751GGvI/P6GU92p8fnF5mNb0tJbDW2sh8XJQAYwlLaRYLYt70F7Pwz+RXoMH+7/6vqK8mtQ63xIJFqYlk16UP1+nVLWBNIFUNNUHJ0olK5imkCaD+GQvmtR9vCarqIXZEKJQfvsc+ll/SeX+8RkRh0ATLMwLzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LefYejKC; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1722965320; c=relaxed/simple;
+	bh=Qi5WxmMVqmR0matvwiMljokUy+VSTuQ68dFhDYopPqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=T01016j0dgpAEoRn+WCPGEvcPtTnuAFP4m0fZ8oNhJMMIV8I+NYT9AKfoU2RTaku6YGfcH/aVRDiVgz3DQL6VXlO12CWqqAGl0zsk3BtReSAZd6CAhhtDTgTWmVT8boJhScLjQ+NPos4OcehdzegcSSqbkRl9u/YfWqKGre9RcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAXvUE0K; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LefYejKC"
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-45019dccc3aso5078171cf.1
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Aug 2024 09:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722963100; x=1723567900; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xwhrn6L/BEax4z8Y9Ps+jMGT26+SKh+43Sy/rMhIBig=;
-        b=LefYejKC+a7bQvRIXQJ+6GhzLhCDOzMEBf+BLGowb1TdSWIGkUThrrXuT3dPesLDOH
-         5tcwmXB8qh+nTS38kpXmrh1D0u8Ne5mGoM9VwEVkQJNWZpGvJjU0jW/3GAiAuZmlf/WK
-         B877QvQceuH5MuPc3dTkTuW4pqTbUp6yQczB0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722963100; x=1723567900;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xwhrn6L/BEax4z8Y9Ps+jMGT26+SKh+43Sy/rMhIBig=;
-        b=Y9HtXwsChj/PzIC+6cB6X2KMr7PvnLuq1Z38urzDjlmmnowW9hSlyQmm9mXMbI4Yqo
-         5gFP5NZw6V9G51KmryBRuUq2004taYKrWjtwGo00VYALdm6qDmCdJN0UearoUaCg9GWa
-         ZhPelmQkGNhSekIJy0Fsr1tRq/Fa57YD7bwBCpVD+cmIptjLqqTlfm+ySk/F2/3Udva/
-         xlAhu28mOoPYKueHqMAr/L2A2E7yYTRdUkFoUM5ImCzFwUVB+8xX6OZcKAaut2QGBAk+
-         GzBsuv17UPx6RvAfkUxL4DtaVbl6OdAaWLNt8Hrx0ZF/0zbCtBzdE2UJzvujkW0VjwIb
-         7sUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJuhsq38eEWaVDFR7Du0UvRGk9Z8+3cVCrX+8zwXFjer8CLasggkEraEHc17dpaAPwYA/NMlDYJed3r43kXYy+Y1Y1R3i3zCFb3WLhn2xpeqkVDo3y
-X-Gm-Message-State: AOJu0YwJi3c8eeEIFotWXTYh1nUIWV1dtcv+pSzhtdGSmxADSDb1qte4
-	MK4Wp1cnZ6TjfKhbm3MMIZBTyNbR6selE0+ZjDGAIQykeKmleW2yalTAL0JYXg==
-X-Google-Smtp-Source: AGHT+IEIJDB0Wd/AEg4ps8OtmLu1icwcxdK69nWNNqRPnsYe91O137kk69C/uJq5/hfxb5REkl/+gA==
-X-Received: by 2002:ac8:5a4a:0:b0:447:efb8:97f4 with SMTP id d75a77b69052e-45189208315mr162589391cf.2.1722963100004;
-        Tue, 06 Aug 2024 09:51:40 -0700 (PDT)
-Received: from rink.c.googlers.com.com (212.165.232.35.bc.googleusercontent.com. [35.232.165.212])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451ae326f9dsm18974831cf.38.2024.08.06.09.51.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 09:51:39 -0700 (PDT)
-From: Jett Rink <jettrink@chromium.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: jettrink@chromium.org,
-	linux-security-module@vger.kernel.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH v5] tpm: Add new device/vendor ID 0x50666666
-Date: Tue,  6 Aug 2024 16:51:10 +0000
-Message-ID: <20240806165134.1692428-1-jettrink@chromium.org>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAXvUE0K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A25ADC32786;
+	Tue,  6 Aug 2024 17:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722965320;
+	bh=Qi5WxmMVqmR0matvwiMljokUy+VSTuQ68dFhDYopPqQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=FAXvUE0KIKhlW+bPfH7nEjVfB9pnfTRAVLFxq3YBnRaBNeyQInhLUDkVNQ1Yne4fy
+	 1rji3IM/XkY/aW1PHguSfjzwzQu98iEfNi5pJJ3IUWyIkZ2yNjX/LoJRXFU5dO5thy
+	 QDjrU5CIX1ZsXeIt25qlgPx4T8POowARlFSSu32UltQi9hmb751L6+Dnoz1HzEqmAm
+	 dUZ7DRZuCUXA7cCWOngjT52mIrgqZxCQWprWnfRYF5/GqtCVIGmtwAcYK/b3UKXLSz
+	 pQp9ukAAaey9TMGScKUWq38FHIr/ODo+01aCy7rH6Q8pEXYnzbVNa3tBkdjai/iDOo
+	 Hd3b4NCiL9SPA==
+Date: Tue, 6 Aug 2024 19:28:34 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: akpm@linux-foundation.org, alexei.starovoitov@gmail.com, 
+	audit@vger.kernel.org, bpf@vger.kernel.org, catalin.marinas@arm.com, 
+	dri-devel@lists.freedesktop.org, ebiederm@xmission.com, laoar.shao@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
+Message-ID: <2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5wdo65dk4@srb3hsk72zwq>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d4izvc7wnp2wjet3"
+Content-Disposition: inline
 
-Accept another DID:VID for the next generation Google TPM. This TPM
-has the same Ti50 firmware and fulfills the same interface.
 
-Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jett Rink <jettrink@chromium.org>
----
+--d4izvc7wnp2wjet3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: akpm@linux-foundation.org, alexei.starovoitov@gmail.com, 
+	audit@vger.kernel.org, bpf@vger.kernel.org, catalin.marinas@arm.com, 
+	dri-devel@lists.freedesktop.org, ebiederm@xmission.com, laoar.shao@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
+MIME-Version: 1.0
 
-Changes in v5:
-Correct Suggested-by tag form.
+Hi Linus,
 
-Changes in v4:
-Add Suggested-by tag. Sorry that I forget.
+Serge let me know about this thread earlier today.
 
-Changes in v3:
-Refactor ternary operators into helper method.
+On 2024-08-05, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > One concern about removing the BUILD_BUG_ON() is that if we extend
+> > TASK_COMM_LEN to a larger size, such as 24, the caller with a
+> > hardcoded 16-byte buffer may overflow.
+>=20
+> No, not at all. Because get_task_comm() - and the replacements - would
+> never use TASK_COMM_LEN.
+>=20
+> They'd use the size of the *destination*. That's what the code already do=
+es:
+>=20
+>   #define get_task_comm(buf, tsk) ({                      \
+>   ...
+>         __get_task_comm(buf, sizeof(buf), tsk);         \
+>=20
+> note how it uses "sizeof(buf)".
 
-Changes in v2:
-Patchset 2 applies cleanly
+In shadow.git, we also implemented macros that are named after functions
+and calculate the appropriate number of elements internally.
 
- drivers/char/tpm/tpm_tis_i2c_cr50.c | 30 ++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+	$ grepc -h STRNCAT .
+	#define STRNCAT(dst, src)  strncat(dst, src, NITEMS(src))
+	$ grepc -h STRNCPY .
+	#define STRNCPY(dst, src)  strncpy(dst, src, NITEMS(dst))
+	$ grepc -h STRTCPY .
+	#define STRTCPY(dst, src)  strtcpy(dst, src, NITEMS(dst))
+	$ grepc -h STRFTIME .
+	#define STRFTIME(dst, fmt, tm)  strftime(dst, NITEMS(dst), fmt, tm)
+	$ grepc -h DAY_TO_STR .
+	#define DAY_TO_STR(str, day, iso)   day_to_str(NITEMS(str), str, day, iso)
 
-diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-index adf22992138e..1f83cfe2724c 100644
---- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-+++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-@@ -31,7 +31,8 @@
- #define TPM_CR50_TIMEOUT_SHORT_MS	2		/* Short timeout during transactions */
- #define TPM_CR50_TIMEOUT_NOIRQ_MS	20		/* Timeout for TPM ready without IRQ */
- #define TPM_CR50_I2C_DID_VID		0x00281ae0L	/* Device and vendor ID reg value */
--#define TPM_TI50_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
-+#define TPM_TI50_DT_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
-+#define TPM_TI50_OT_I2C_DID_VID		0x50666666L	/* Device and vendor ID reg value */
- #define TPM_CR50_I2C_MAX_RETRIES	3		/* Max retries due to I2C errors */
- #define TPM_CR50_I2C_RETRY_DELAY_LO	55		/* Min usecs between retries on I2C */
- #define TPM_CR50_I2C_RETRY_DELAY_HI	65		/* Max usecs between retries on I2C */
-@@ -668,6 +669,27 @@ static const struct of_device_id of_cr50_i2c_match[] = {
- MODULE_DEVICE_TABLE(of, of_cr50_i2c_match);
- #endif
- 
-+/**
-+ * tpm_cr50_vid_to_name() - Maps VID to name.
-+ * @vendor:	Vendor identifier to map to name
-+ *
-+ * Return:
-+ *	A valid string for the vendor or empty string
-+ */
-+static const char *tpm_cr50_vid_to_name(u32 vendor)
-+{
-+	switch (vendor) {
-+	case TPM_CR50_I2C_DID_VID:
-+		return "cr50";
-+	case TPM_TI50_DT_I2C_DID_VID:
-+		return "ti50 DT";
-+	case TPM_TI50_OT_I2C_DID_VID:
-+		return "ti50 OT";
-+	default:
-+		return "";
-+	}
-+}
-+
- /**
-  * tpm_cr50_i2c_probe() - Driver probe function.
-  * @client:	I2C client information.
-@@ -741,14 +763,16 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
- 	}
- 
- 	vendor = le32_to_cpup((__le32 *)buf);
--	if (vendor != TPM_CR50_I2C_DID_VID && vendor != TPM_TI50_I2C_DID_VID) {
-+	if (vendor != TPM_CR50_I2C_DID_VID &&
-+	    vendor != TPM_TI50_DT_I2C_DID_VID &&
-+	    vendor != TPM_TI50_OT_I2C_DID_VID) {
- 		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
- 		tpm_cr50_release_locality(chip, true);
- 		return -ENODEV;
- 	}
- 
- 	dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
--		 vendor == TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
-+		 tpm_cr50_vid_to_name(vendor),
- 		 client->addr, client->irq, vendor >> 16);
- 	return tpm_chip_register(chip);
- }
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+They're quite useful, and when implementing them we found and fixed
+several bugs thanks to them.
 
+> Now, it might be a good idea to also verify that 'buf' is an actual
+> array, and that this code doesn't do some silly "sizeof(ptr)" thing.
+
+I decided to use NITEMS() instead of sizeof() for that reason.
+(NITEMS() is just our name for ARRAY_SIZE().)
+
+	$ grepc -h NITEMS .
+	#define NITEMS(a)            (SIZEOF_ARRAY((a)) / sizeof((a)[0]))
+
+> We do have a helper for that, so we could do something like
+>=20
+>    #define get_task_comm(buf, tsk) \
+>         strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
+
+We have SIZEOF_ARRAY() for when you want the size of an array:
+
+	$ grepc -h SIZEOF_ARRAY .
+	#define SIZEOF_ARRAY(a)      (sizeof(a) + must_be_array(a))
+
+However, I don't think you want sizeof().  Let me explain why:
+
+-  Let's say you want to call wcsncpy(3) (I know nobody should be using
+   that function, not strncpy(3), but I'm using it as a standard example
+   of a wide-character string function).
+
+   You should call wcsncpy(dst, src, NITEMS(dst)).
+   A call wcsncpy(dst, src, sizeof(dst)) is bogus, since the argument is
+   the number of wide characters, not the number of bytes.
+
+   When translating that to normal characters, you want conceptually the
+   same operation, but on (normal) characters.  That is, you want
+   strncpy(dst, src, NITEMS(dst)).  While strncpy(3) with sizeof() works
+   just fine because sizeof(char)=3D=3D1 by definition, it is conceptually
+   wrong to use it.
+
+   By using NITEMS() (i.e., ARRAY_SIZE()), you get the __must_be_array()
+   check for free.
+
+In the end, SIZEOF_ARRAY() is something we very rarely use.  It's there
+only used in the following two cases at the moment:
+
+	#define NITEMS(a)            (SIZEOF_ARRAY((a)) / sizeof((a)[0]))
+	#define MEMZERO(arr)  memzero(arr, SIZEOF_ARRAY(arr))
+
+Does that sound convincing?
+
+For memcpy(3) for example, you do want sizeof(), because you're copying
+raw bytes, but with strings, in which characters are conceptually
+meaningful elements, NITEMS() makes more sense.
+
+BTW, I'm working on a __lengthof__ operator that will soon allow using
+it on function parameters declared with array notation.  That is,
+
+	size_t
+	f(size_t n, int a[n])
+	{
+		return __lengthof__(a);  // This will return n.
+	}
+
+If you're interested in it, I'm developing and discussing it here:
+<https://inbox.sourceware.org/gcc-patches/20240806122218.3827577-1-alx@kern=
+el.org/>
+
+>=20
+> as a helper macro for this all.
+>=20
+> (Although I'm not convinced we generally want the "_pad()" version,
+> but whatever).
+
+We had problems with it in shadow recently.  In user-space, it's similar
+to strncpy(3) (at least if you wrap it in a macro that makes sure that
+it terminates the string with a null byte).
+
+We had a lot of uses of strncpy(3), from old times where that was used
+to copy strings with truncation.  I audited all of that code (and
+haven't really finished yet), and translated to calls similar to
+strscpy(9) (we call it strtcpy(), as it _t_runcates).  The problem was
+that in some cases the padding was necessary, and in others it was not,
+and it was very hard to distinguish those.
+
+I recommend not zeroing strings unnecessarily, since that will make it
+hard to review the code later.  E.g., twenty years from now, someone
+takes a piece of code with a _pad() call, and has no clue if the zeroing
+was for a reason, or for no reason.
+
+On the other hand, not zeroing may make it easier to explot bugs, so
+whatever you think best.  In the kernel you may need to be more worried
+than in user space.  Whatever.  :)
+
+>=20
+>                     Linus
+
+Have a lovely day!
+Alex
+
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--d4izvc7wnp2wjet3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmayXTwACgkQnowa+77/
+2zKkGg//QGKZL+2Xhpb6wdoKoQMt5Ixm8AxcrhEng31CT2FlaXxnveqkjC9CXsUS
+hvuVRQFMFyhrARydHNtx/Ps5q5f/TSv4qX+5PI6hBFPAIJOuHCh2UfXqPEMrCXb5
+iAhq73HPqXL20Igr1+n9W9buunf2ow4fBxTsK+7eMZCPnTAuS3lMkRpmne8d7ks1
+iOHorYSEbJYJqWUyOCq7i/KNufR7nALJzBHzqPcAE47Gsp0/N0DA/NEzO6zbCRS4
+HLODuEC8T6iWnEh+qoBTS0Gn1ksmVNCQPVyLj4OurtSYeX0pGL6NQWxKjMgxCaQ9
+r0rN2v+o8ULJIOBI1ZVKAqlXZdPxtPpwPxyim82IB5Mok0bkqGSZQYMqEL27YkK0
+k/Ec5R/AkO8Zhc/i3YFzTwa8peXA9s4D2xFCB/hYTdTNL138ugVV1fevoPo6qt9t
+eqA/fKesf5pK9OXftXBdqHNqsDGe6Ps76ahK9FsQNj0ZEi1JLTmWoEGRQMHQ6iZ+
+yXlgOkn3625L2Q0Qofv3x943QicRe8eahFyW/YV7a+8B+n7PP9RQEo95DTv1QjGU
+wCP6XYatwx1uKgauYWE2if5RiXyhsUBbCjEAUrXTmLBAxk/5zJ+vSpDl3j3fr4D0
+hm5Pe6kB02HnX7NQKrnlgmPJi7PhBVGSRSDc+Lj4r4q7e3BYDuY=
+=TwdF
+-----END PGP SIGNATURE-----
+
+--d4izvc7wnp2wjet3--
