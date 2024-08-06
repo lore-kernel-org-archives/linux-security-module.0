@@ -1,61 +1,55 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E040356452
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Aug 2024 03:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4310D17C203;
+	Tue,  6 Aug 2024 03:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722913812; cv=none; b=cmWL13Ki1fqjyA7zfoR0Kg2sna6ZWCWj4zIUgVgB7GBJ39aEZrikRCYsZqcPPQnGRshiefplAIaH02SuZNntCEEd4wvoLuDaxPDKsoQ8qLbJQcJwjj83p9MmarVzaz9ZGC4IJ95vhEQ0GaWsVhdcgpGZXex/E6qddirAl9MmlCE=
+	t=1722916279; cv=none; b=qJr8968gQbcWAQjCIvJWmq9q1KHXSSVMcn7Rc2+4wwnqkQWAS3L49AxBBlrsPNDMysY2Aw0bFtKt0oaCnm/Yf89qk2jI8rDkuh3E2Bxgz7617aAx30oZSviIhs8AUeqR55zbly7C4qQ6NVNXls5191KyIydZDRJW6pO4oKxkjU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722913812; c=relaxed/simple;
-	bh=M8lCPbpz8MJ7MmX8w6ySSM335BKWQPUYdlyNM4pcNL8=;
+	s=arc-20240116; t=1722916279; c=relaxed/simple;
+	bh=o2qOFURtd6COH4J6FuPiVJ1ZknbpD5fuWh18UJ6DnM4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ntk34cyQziTkxNfGsavO7ZT531L6AjYeljdIT9YOlu0g1D9vEShwMqkoFaQuF2TfUUCPIv5ZU2w+4rSQpNN/9yznFTsB8ZBDp8LJsuymrGNiRXzqBHyUuBTtm1y35MFgrRJeulLcHgAK0tlqY+DcmuOvB5CWZeOlFiH941DBxGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AqIjGFxt; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=f/lvq5Ach1gD+89H8EFPhKNrQvqI2rd+3rZKlOhSvAgvZcbRLNVFQcdCPwhiIcVHeuYRIEID7jM4NLL8FpyWaK++efhpd1Bbk2P9c6cu5mEDPzJtERQ7iwmlj2eELUOwizRsocHKM90DgxoP7ptH5LpI55SZCDSPfzGb0sYipVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVTmZjs5; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AqIjGFxt"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so4331466b.3
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2024 20:10:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVTmZjs5"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b797fb1c4aso1840246d6.2;
+        Mon, 05 Aug 2024 20:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722913809; x=1723518609; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ddVwpujzlJzBqKH8my+rFJponoM7SG54MA80H5/+gq8=;
-        b=AqIjGFxtM0nFjNXxOr7KDYCUIJeYxKS32lAgjemtmmhh9bvx3RgcyRhtpne9s7jhkw
-         8JaHUpJqtcDLArsgJamUrkgkrJQk/mdyXVPUbfOYS9kY5bzsrpUHWNPaW1nz9o9qGaEK
-         HB5VZVGmFKgZ0VFV6k1d4LmCh5BFz3eqoS5cg=
+        d=gmail.com; s=20230601; t=1722916277; x=1723521077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c/kd4WiMmD7cvf5H5grwZdB0fA+VVTIeAtsfQV3Ag+U=;
+        b=VVTmZjs5ps5PZ1tDWhb8RhFE1bgS9BEJ9OveKZV9cm36Mx9R4JgaQ9hJDwdOMjJMiv
+         /SG94mlrH/JLN9cz1cxXaZ1wVCa/4wketftPb4n5jEmy1lmY+nB0Fz4wdF4KPaotsNeB
+         Izwhu1/x/U8Vdua4sVdMt2MObws4WQarIIyfLiq/6ObFXasbIZe1ac+gRvYm28zrVW1o
+         VB+5qIbOHrmVlg6LEqc+4axVFmWwZkmo0NqKyLOHYcPHl6wVKZuLPe/qbJ/NPeOsMWIR
+         in5RphwO/PZF0KzgZZdNmltFOnS+VuM7Zo80SLXQ1hufIwkSIzDQJEW+ROY+RHEHvHxK
+         PqZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722913809; x=1723518609;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ddVwpujzlJzBqKH8my+rFJponoM7SG54MA80H5/+gq8=;
-        b=uTJBmrqv2WO9Qqhdv5keKOoi1LajMHr5nsEJ6tZBH4M0N359WJO5i3kPSsGmjezob/
-         TCxjVRxbpiUuYljR3lGsKSH/N+aXX6XT7hE6jPCX+zLKUC+rqGJacpggHsZImUR8ecB0
-         LSF2D0DR6a8oNtdQhawuIe8eAZdVw6+ZHLS4rhz39XvVRl/PLowkSpYOhvdw86Omuaxu
-         bZIS0hdD2ZEbXk4Szz+lK83dZDHinr0wn4R4nnR3evZSG1JGUz4fmACvfJKJq+uLVZyz
-         Z4Ozei+aNRKKrZ7enYVDtrCe7Q2j5khxCfRtwh9p51DoEgYUkykq8VEh1J+mCV6Te+Wy
-         oTqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrggzPKOAgVS2PXvsEJBnPAgKeTTQcRjS6oKfz3ZH0x+kqApQMXJ8tJTf1rb5W/UBR4ZrXXpRkjO/94TioAr5VcenkfHrkm7JLswQ/ZxAG4S6HUAd2
-X-Gm-Message-State: AOJu0YzkTWNFbTZwTnKXT62Szw9ogrDyn2UEHcKyxBTyGH7ab0ywORUV
-	sdCzCx2QzHtCUPP8zAgx88umnR15Mpc6sfvfkMLQ2Fc1WXUPAshWIKinlZNYPreFUiKhjhugQYe
-	4H0K3OA==
-X-Google-Smtp-Source: AGHT+IFdI1+c3pfQrAk+tphLzFz2o/K3bobtyi8GJnoHfiVVitau02V/xll6ptZvsPnpwKH01bP7aQ==
-X-Received: by 2002:a17:906:6a0b:b0:a7a:a892:8e11 with SMTP id a640c23a62f3a-a7dc4fca327mr861276566b.32.1722913808993;
-        Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d433fesm515593766b.142.2024.08.05.20.10.08
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso5294866b.0
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXNsdlRIHU1bVN4Bpp+1/m2xfofOpwmHzdpHBS0Ng9R41bjoUrSaqvhbDZUGVChlf4LtlI6mBOaTlTJ38aSXNHh0dWlCSc3wZNS8hu5hr1a20quPYrG
-X-Received: by 2002:a17:907:da9:b0:a6f:4fc8:266b with SMTP id
- a640c23a62f3a-a7dc4db9f44mr1005005366b.3.1722913808064; Mon, 05 Aug 2024
- 20:10:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722916277; x=1723521077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c/kd4WiMmD7cvf5H5grwZdB0fA+VVTIeAtsfQV3Ag+U=;
+        b=iw/dVFNNbfZ5NJ+l8vXzNEF4f+eWPMpgIyM5eZ+xmXeKWe2NdBYzhC8RrQEdroMZkg
+         WjJdekYE6oXmRDBbwiWAbYOfM/4+g+w9QUtcbhzVbuaLEnk18j51jUjou8YBk/vADg9G
+         AxUvjan1vlpe7cIo5cqDt663ejthjBJZA4SS5pS6THwXzhtX7CXHH+1cpOn//Ey7Jvrf
+         6/MSCj+xtoDrSjaUgdcjAITJXlTqypcOACu4Wc0K+VQvnlmcl9DQ8jLKRcIZxVwQYcLD
+         Q0LyKvht/9+7LqR4mFdQZDGF4aqSr+XyO+vE6XuGRwtqYrSXSJVvwipLu6NGVQQjjeeM
+         KaYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGbB2URhxUzEnELooS88p8BSCxJ9lN8EBG5fu7UssUEKG7spao7IITZD3M1EX8QmeDHouGyxrdVhXKyze8Zc4VEj9m70dbwE9RIp9t7EPM+MVzJJws7nkftDeZEBeVgjFn11D4tp8ir2LCHyKCIqDr431BgeMVog/s8O6M75h83flN3JzrWpMv62O/VUCDvYO0WSLDrMVhQmnG53rBHUTg0oTGKbGdvrNs8zsxHtGnAfZzLNxDehVDeISR1jwbZhSs1lGqH6+WgqR2gyiKerjNpdJ/R2WZc97Z6IjJJM4a8HuEoknOXkSsYneDcWtVADdwyU783Q==
+X-Gm-Message-State: AOJu0YxsiQVXpPfa+UCtdefoQrgjd4z3toFYC24OBUmTm+zMEg1YOAlO
+	JVVT2iYoU+3CEzq7s5rhG+/SW6rBJvfPnUhMTQ33V05beFuAsvzifWk3NXRhaZdwoDuGLA5lIA5
+	AncdDMRJ0DWu2Oc80EDkUCuDxD5s=
+X-Google-Smtp-Source: AGHT+IE2RlAR/mG/tj72IoVOm1m9SyAB0Xj2ZC0vDvmPd0pDeOdqpJgJne85/B4nYiYlXvIL6sxOK+OpkyaCbeLF13M=
+X-Received: by 2002:a05:6214:5687:b0:6b4:f973:d423 with SMTP id
+ 6a1803df08f44-6bb983477a8mr176949846d6.7.1722916276927; Mon, 05 Aug 2024
+ 20:51:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -63,14 +57,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240804075619.20804-1-laoar.shao@gmail.com> <CAHk-=whWtUC-AjmGJveAETKOMeMFSTwKwu99v7+b6AyHMmaDFA@mail.gmail.com>
- <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com>
-In-Reply-To: <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Aug 2024 20:09:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
-Message-ID: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
+ <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com> <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 6 Aug 2024 11:50:40 +0800
+Message-ID: <CALOAHbDPToZDrsB2wSp6Ss5L0ksrCb1ufx3SZ1GWeqQ2jP7Daw@mail.gmail.com>
 Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
-To: Yafang Shao <laoar.shao@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: akpm@linux-foundation.org, ebiederm@xmission.com, 
 	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
 	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
@@ -79,35 +72,46 @@ Cc: akpm@linux-foundation.org, ebiederm@xmission.com,
 	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
 	dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
+On Tue, Aug 6, 2024 at 11:10=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> One concern about removing the BUILD_BUG_ON() is that if we extend
-> TASK_COMM_LEN to a larger size, such as 24, the caller with a
-> hardcoded 16-byte buffer may overflow.
+> On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > One concern about removing the BUILD_BUG_ON() is that if we extend
+> > TASK_COMM_LEN to a larger size, such as 24, the caller with a
+> > hardcoded 16-byte buffer may overflow.
+>
+> No, not at all. Because get_task_comm() - and the replacements - would
+> never use TASK_COMM_LEN.
+>
+> They'd use the size of the *destination*. That's what the code already do=
+es:
+>
+>   #define get_task_comm(buf, tsk) ({                      \
+>   ...
+>         __get_task_comm(buf, sizeof(buf), tsk);         \
+>
+> note how it uses "sizeof(buf)".
+>
+> Now, it might be a good idea to also verify that 'buf' is an actual
+> array, and that this code doesn't do some silly "sizeof(ptr)" thing.
+>
+> We do have a helper for that, so we could do something like
+>
+>    #define get_task_comm(buf, tsk) \
+>         strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
+>
+> as a helper macro for this all.
+>
+> (Although I'm not convinced we generally want the "_pad()" version,
+> but whatever).
+>
 
-No, not at all. Because get_task_comm() - and the replacements - would
-never use TASK_COMM_LEN.
+Will do it.
+Thanks for your explanation.
 
-They'd use the size of the *destination*. That's what the code already does:
-
-  #define get_task_comm(buf, tsk) ({                      \
-  ...
-        __get_task_comm(buf, sizeof(buf), tsk);         \
-
-note how it uses "sizeof(buf)".
-
-Now, it might be a good idea to also verify that 'buf' is an actual
-array, and that this code doesn't do some silly "sizeof(ptr)" thing.
-
-We do have a helper for that, so we could do something like
-
-   #define get_task_comm(buf, tsk) \
-        strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
-
-as a helper macro for this all.
-
-(Although I'm not convinced we generally want the "_pad()" version,
-but whatever).
-
-                    Linus
+--=20
+Regards
+Yafang
