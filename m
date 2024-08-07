@@ -1,195 +1,170 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2061C7B76;
-	Wed,  7 Aug 2024 07:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203DA1B8EB1
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Aug 2024 10:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723015278; cv=none; b=NlsWwN/c6rtCnrRH9K8Zb9kpIdEUQ7dARgZWg2Ya7XpYqnXJPpXlMwPSNmIG10O7DeQMrehl8bmqueob9K+eS0qpXsUpHSRelm5oyHDP1reViDp3cO+OZdRKaqBVzeOqBXi7RpFNT3K+v7IYFDsf49ejtPnQ9t5haiw1v+Rn/FI=
+	t=1723028144; cv=none; b=QQkpKGIWK4J9ZL/ji9tXW0/PHZs8CySAfXXK8vCTYo+ZngDmtql3jWMY6Q+CHqWnnGteqWS10iwBCmHgBPdczuKgEa8rsEFIKNUMMAQIxke8IXiBpBdzP2sQ1FqCsRZ7/o1vzXwkNXM/EiZC3bj3fo+0bLbB7yKVZVZ2LP+TFJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723015278; c=relaxed/simple;
-	bh=7GiOD3hAA5u3pX+4hiB33+FC3gICUOjC8VXRM5Uh38Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+lmmDpfncWzVzzZIapsimwN5IRFRt8ko12SQr8eCxDEbScXnGq7dno4x318Pebubi0i2KckyEshcoLuPOturcfGgsmd9xtx0GkXp4Dd/yU20Xx7eBJJXmEIXk74FTBs/njyu1Cx//o/pUzNkPlzu1nqcnRUMytfqR8afvfYtbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=o3yBmlWr; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1723028144; c=relaxed/simple;
+	bh=4VeYB/5KjZu1xP4yhehU2c+3ldJcBRoEhBeRIzBgB1M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qxD3ZvYnzdPSGOhwULaFWKjB+rpoyCPVjsT2PP1DhNfBrY3cFbLTptSntEcQ9zEcUhBzIMjfCFM4WQfyXLDTz4u+ThvZ9m9hfZM2wVuJf7v2TCEE5stiJ73GTprTnWXCCsq3GvNiG5lyVYOfjYb/mTUxCJ25K0BfOD2dU5inFXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UVEJLaFb; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="o3yBmlWr"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wf1n1016jzp2P;
-	Wed,  7 Aug 2024 09:21:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723015268;
-	bh=f6mO+1q8PwKecFRsqn5TluZM5OL5Ouz6M2O6XTeSBls=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o3yBmlWrwUnT0/LpaGMbiFtkJP2TpwalO8gphuckK1ZkYcx9S0LKPI4lQLomvEdkL
-	 hSYynCxLoo/r8IBdxaiezxyjBCDV8sn/X0F5JW3aXA66vUECSy7abj+h0wWwAsHRA2
-	 SNHkthlv+ufZKpD+iuoTytOUDo5waLHu+UGwYy50=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wf1mz65nKzF6C;
-	Wed,  7 Aug 2024 09:21:07 +0200 (CEST)
-Date: Wed, 7 Aug 2024 09:21:03 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
-	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240807.mieloh8bi8Ae@digikod.net>
-References: <cover.1722570749.git.fahimitahera@gmail.com>
- <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
- <20240803.iefooCha4gae@digikod.net>
- <20240806.nookoChoh2Oh@digikod.net>
- <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UVEJLaFb"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3686b554cfcso929229f8f.1
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Aug 2024 03:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723028141; x=1723632941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g1CfpUgJXS7BrN7tAFA68qWsxl5eht2ofVsjd8s8rPw=;
+        b=UVEJLaFbfMUwjaKEz2LQce5F3791HikaDXswCKrZ4hOJc8ztcyQ2E+WND5OYMbZyUL
+         LsH8vnQwF43e4E0segbL4u9sF1imxeOHgWD2/Hznj4EhGssd/QdpGTYVNxM+nvcxlveL
+         4R9Ufv+/6Dz8EZdQQhVsXNf3r3e3RbRYuxJN+NrXjWhe2I5v5Abx1tEywBF/AW4OiwOD
+         fuRWHXgQMHgAvtfqmnnOuDM/+hU2aUPp+lWe9bcOFHd3zDSy7YiKqCAIS/zaKLdLjMpj
+         I62lSoo0Z/LlKUAxDKHcl7DXySyVVT6ogZwshuwvIwjhyen37jBPOOzOhBhLmqDoW9Z0
+         aIUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723028141; x=1723632941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g1CfpUgJXS7BrN7tAFA68qWsxl5eht2ofVsjd8s8rPw=;
+        b=dOwFZdUGxSb1om+lSzNN3nXICffs8pNf4aMM5/AOLFsyxPWexxZspxymLOldeNe30y
+         f14fGqI7nZ+vLB9feEPaa+m6/HKlBAo6tLlk2jwlywwQXsWZ/eGkhwrZDJ8YDexRP1Ff
+         r/biE2lUkczG0U/cxwUvspdCFaK1MPU94/DHDchDiHza0XvdfUneL8IW8vLNeV6/Y70t
+         WJMvMxpvvk+sD4VCmCIcuHNgak21+8774tCfOeMRQwz70Dfa6e3a9qvbeZ35CAU+m6zY
+         FakUfIjCvxNdWkDm1sqk/FUsm+EjCekBXDOU5pofBT5nrOeZ4KbJH9jwHzinqDBicvl5
+         VRuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFpiHbJkm67PXfpph/x9QTinFqhnmNTNJmCB+1sLhmUH5lJxZJL7fWL2LPMdHCCMdVKfMXtUDwCjxQerL4tAl8cR6TwH1HWUnaN145hTBRrG84Fvsn
+X-Gm-Message-State: AOJu0YwLifueNDbe2lPRDX6ujdHWuwxbTjG26VOklzzpvjBR4KPX2UlN
+	knbG2yj3JRUBgQWmskls2CI13ux4SFyDnyRj0OeZVm5U/0jILl6Xvr9HwDK8srQ=
+X-Google-Smtp-Source: AGHT+IGt+z3jjIQ5JZ71Sm7Hm7Y023gn/0oFOumyjerqnx97PjhdWlctYsTLYdnmPaqcAi0kbDv17g==
+X-Received: by 2002:a05:6000:8:b0:368:747c:5a04 with SMTP id ffacd0b85a97d-36bbc10f6c5mr9798605f8f.25.1723028141352;
+        Wed, 07 Aug 2024 03:55:41 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd059891sm15644743f8f.73.2024.08.07.03.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 03:55:41 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: James Clark <james.clark@linaro.org>,
+	Al Grant <al.grant@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
+Date: Wed,  7 Aug 2024 11:54:41 +0100
+Message-Id: <20240807105441.2156738-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Tue, Aug 06, 2024 at 10:46:43PM +0200, Jann Horn wrote:
-> On Tue, Aug 6, 2024 at 9:36 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Sat, Aug 03, 2024 at 01:29:09PM +0200, Mickaël Salaün wrote:
-> > > On Thu, Aug 01, 2024 at 10:02:33PM -0600, Tahera Fahimi wrote:
-> > > > This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
-> > > > that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
-> > > > abstract Unix sockets from connecting to a process outside of
-> > > > the same landlock domain. It implements two hooks, unix_stream_connect
-> > > > and unix_may_send to enforce this restriction.
-> [...]
-> > Here is a refactoring that is easier to read and avoid potential pointer
-> > misuse:
-> >
-> > static bool domain_is_scoped(const struct landlock_ruleset *const client,
-> >                              const struct landlock_ruleset *const server,
-> >                              access_mask_t scope)
-> > {
-> >         int client_layer, server_layer;
-> >         struct landlock_hierarchy *client_walker, *server_walker;
-> >
-> >         if (WARN_ON_ONCE(!client))
-> >                 return false;
-> >
-> >         client_layer = client->num_layers - 1;
-> >         client_walker = client->hierarchy;
-> >
-> >         /*
-> >          * client_layer must be a signed integer with greater capacity than
-> >          * client->num_layers to ensure the following loop stops.
-> >          */
-> >         BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
-> >
-> >         if (!server) {
-> >                 /*
-> >                  * Walks client's parent domains and checks that none of these
-> >                  * domains are scoped.
-> >                  */
-> >                 for (; client_layer >= 0; client_layer--) {
-> >                         if (landlock_get_scope_mask(client, client_layer) &
-> >                             scope)
-> >                                 return true;
-> >                 }
-> >                 return false;
-> >         }
-> >
-> >         server_layer = server->num_layers - 1;
-> >         server_walker = server->hierarchy;
-> >
-> >         /*
-> >          * Walks client's parent domains down to the same hierarchy level as
-> >          * the server's domain, and checks that none of these client's parent
-> >          * domains are scoped.
-> >          */
-> >         for (; client_layer > server_layer; client_layer--) {
-> >                 if (landlock_get_scope_mask(client, client_layer) & scope)
-> >                         return true;
-> >
-> >                 client_walker = client_walker->parent;
-> >         }
-> >
-> >         /*
-> >          * Walks server's parent domains down to the same hierarchy level as
-> >          * the client's domain.
-> >          */
-> >         for (; server_layer > client_layer; server_layer--)
-> >                 server_walker = server_walker->parent;
-> >
-> >         for (; client_layer >= 0; client_layer--) {
-> >                 if (landlock_get_scope_mask(client, client_layer) & scope) {
-> >                         /*
-> >                          * Client and server are at the same level in the
-> >                          * hierarchy.  If the client is scoped, the request is
-> >                          * only allowed if this domain is also a server's
-> >                          * ancestor.
-> >                          */
+For other PMUs, PERF_SAMPLE_PHYS_ADDR requires perf_allow_kernel()
+rather than just perfmon_capable(). Because PMSCR_EL1_PA is another form
+of physical address, make it consistent and use perf_allow_kernel() for
+SPE as well. PMSCR_EL1_PCT and PMSCR_EL1_CX also get the same change.
 
-We can move this comment before the if and...
+This improves consistency and indirectly fixes the following error
+message which is misleading because perf_event_paranoid is not taken
+into account by perfmon_capable():
 
-> >                         if (server_walker == client_walker)
-> >                                 return false;
-> >
-> >                         return true;
+  $ perf record -e arm_spe/pa_enable/
 
-...add this without the curly braces:
+  Error:
+  Access to performance monitoring and observability operations is
+  limited. Consider adjusting /proc/sys/kernel/perf_event_paranoid
+  setting ...
 
-return server_walker != client_walker;
+Suggested-by: Al Grant <al.grant@arm.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ drivers/perf/arm_spe_pmu.c | 9 ++++-----
+ kernel/events/core.c       | 1 +
+ security/security.c        | 1 +
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
-> >                 }
-> >                 client_walker = client_walker->parent;
-> >                 server_walker = server_walker->parent;
-> >         }
-> >         return false;
-> > }
-> 
-> I think adding something like this change on top of your code would
-> make it more concise (though this is entirely untested):
-> 
-> --- /tmp/a      2024-08-06 22:37:33.800158308 +0200
-> +++ /tmp/b      2024-08-06 22:44:49.539314039 +0200
-> @@ -15,25 +15,12 @@
->           * client_layer must be a signed integer with greater capacity than
->           * client->num_layers to ensure the following loop stops.
->           */
->          BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
-> 
-> -        if (!server) {
-> -                /*
-> -                 * Walks client's parent domains and checks that none of these
-> -                 * domains are scoped.
-> -                 */
-> -                for (; client_layer >= 0; client_layer--) {
-> -                        if (landlock_get_scope_mask(client, client_layer) &
-> -                            scope)
-> -                                return true;
-> -                }
-> -                return false;
-> -        }
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 9100d82bfabc..3569050f9cf3 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -41,7 +41,7 @@
+ 
+ /*
+  * Cache if the event is allowed to trace Context information.
+- * This allows us to perform the check, i.e, perfmon_capable(),
++ * This allows us to perform the check, i.e, perf_allow_kernel(),
+  * in the context of the event owner, once, during the event_init().
+  */
+ #define SPE_PMU_HW_FLAGS_CX			0x00001
+@@ -50,7 +50,7 @@ static_assert((PERF_EVENT_FLAG_ARCH & SPE_PMU_HW_FLAGS_CX) == SPE_PMU_HW_FLAGS_C
+ 
+ static void set_spe_event_has_cx(struct perf_event *event)
+ {
+-	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && perfmon_capable())
++	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && !perf_allow_kernel(&event->attr))
+ 		event->hw.flags |= SPE_PMU_HW_FLAGS_CX;
+ }
+ 
+@@ -745,9 +745,8 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+ 
+ 	set_spe_event_has_cx(event);
+ 	reg = arm_spe_event_to_pmscr(event);
+-	if (!perfmon_capable() &&
+-	    (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT)))
+-		return -EACCES;
++	if (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT))
++		return perf_allow_kernel(&event->attr);
+ 
+ 	return 0;
+ }
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index aa3450bdc227..4a69583e329a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -417,6 +417,7 @@ static struct kmem_cache *perf_event_cache;
+  *   2 - disallow kernel profiling for unpriv
+  */
+ int sysctl_perf_event_paranoid __read_mostly = 2;
++EXPORT_SYMBOL_GPL(sysctl_perf_event_paranoid);
+ 
+ /* Minimum for 512 kiB + 1 user control page */
+ int sysctl_perf_event_mlock __read_mostly = 512 + (PAGE_SIZE / 1024); /* 'free' kiB per user */
+diff --git a/security/security.c b/security/security.c
+index 8cee5b6c6e6d..70cc9206e902 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5610,6 +5610,7 @@ int security_perf_event_open(struct perf_event_attr *attr, int type)
+ {
+ 	return call_int_hook(perf_event_open, attr, type);
+ }
++EXPORT_SYMBOL_GPL(security_perf_event_open);
+ 
+ /**
+  * security_perf_event_alloc() - Allocate a perf event LSM blob
+-- 
+2.34.1
 
-This loop is redundant with the following one, but it makes sure there
-is no issue nor inconsistencies with the server or server_walker
-pointers.  That's the only approach I found to make sure we don't go
-through a path that could use an incorrect pointer, and makes the code
-easy to review.
-
-> -
-> -        server_layer = server->num_layers - 1;
-> -        server_walker = server->hierarchy;
-> +        server_layer = server ? (server->num_layers - 1) : -1;
-> +        server_walker = server ? server->hierarchy : NULL;
-
-We would need to change the last loop to avoid a null pointer deref.
-
-> 
->          /*
->           * Walks client's parent domains down to the same hierarchy level as
->           * the server's domain, and checks that none of these client's parent
->           * domains are scoped.
-> 
