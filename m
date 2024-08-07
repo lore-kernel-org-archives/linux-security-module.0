@@ -1,204 +1,186 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272D83BB30
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Aug 2024 22:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3C12209B;
+	Wed,  7 Aug 2024 01:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722984987; cv=none; b=V4W3pSG8t5BIJCS28LIFYiQ+eycrxoFtoZHO8gbcuBwIqO4MF9FeT4iXwlfN7UO1GAucfvdgJpt1/s0G3a/cLitkMjUqmeLIlXayWxVc8pHpnbO8XkZgpR1zckmtXa3hq8J/KEVveu/7bI7QjrxxcKJWdnS/YPR1vBAQt1BzpaE=
+	t=1722993932; cv=none; b=F30gMoUw+x1DqVxfPGu1UFVaz1kNzq0t96kURIqRB+MzU5oQBW1tXV/I3n1mCGWyei5lCASPHKv6hnoDfHBduAai8RU0m1H1rpJg7AG+EMO01uqiB9sDoc417E7IOL4b+bvTNT4C+ParnSOUONUv+CulifqPj7pu+n8EiY1exsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722984987; c=relaxed/simple;
-	bh=aNMyv5u4iRth1dAkJiP4aTC7V9ydb+rlkqz1X9ydnK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GDVsOiED8th9j6Lk7R7OBwAfclFUfrRmzvCuUrp0ncNey21dbRHp7qpUNvbsGuAmf1j2hxf4AA3HTjihYyDt+8CBgJ8hrYYN30i9SMrynCx30u+cUSIsS0PDDe/9RBiHTqHvmvZEyYLbe5ZENLM+lAsaXyK6MF+PKsSq9TC06Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S3qtiVBz; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1722993932; c=relaxed/simple;
+	bh=RdmmaJIN/niCBudzuwUJhi0XTYmYEaNyimnVbmm6W3s=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=MfZjd2C+j61dGPbLI3OcWWWvwZISE+2QAZUqcVIk8ykvRn0rA0u/3XWG0HPFCb/65jBjE/y8/euSolIQvum7cDfYcP7hbNaM4fwQL6BeEdHkMnaQbweovsgdPvCNpE0jNTrEVLQWQ/xlEQxvwTd0xF805/1Msiuky675vTjxh1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aUoBESlx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S3qtiVBz"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so21077a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Aug 2024 15:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722984983; x=1723589783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m+9ez+DbuNqwjVco5Cgno4xixSp6vmg4G3LS18N1p4E=;
-        b=S3qtiVBz3NevpePd8EjFKTdC55ANdENHbW0XA6hIefCNnHE+PoKlb8JxN2XX7kBRSf
-         kd/eiYQb0vim3dovCh8YgMBZ6YPL8R+C/O6pEJ8l2M52cCwE9OWw5kg5TVM7wvAJsYLn
-         RPdImw1WU5b9nlloKhnSBkQN6ZxLmrQRkbStgZPui/Qi71G4Ln6v5oYghrIwquuBAiTK
-         ww74bTH0k21pebOVk4OAIr2JTQFcqBuhq/7ahIF0SD7B6XlcinLJoY/IGfnRZUOTPVQB
-         t9JJUHoz8KYhOLzzGpGzV7gNtU6mbEigGnYovLkw4jq5crOtC38kSWrEI5x7mo98VFqg
-         i+Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722984983; x=1723589783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m+9ez+DbuNqwjVco5Cgno4xixSp6vmg4G3LS18N1p4E=;
-        b=uzI3zUVJDDot18ApnRAVedwQnKCjnWiiJDdsUlaoARSBNTQ8oBikPcqlhzXSrNx2UR
-         5GrRJkWq7vZVPZQKUyk4SeOHM2aKERLrR4pUc80pcFMBDjfVVqCBpoyROkVwKD7MCy/S
-         nUbVmqb+21pfxpGaMmxbrcF3eNCbNo74ytN3qDvNfuQQsJlBj1GJEHdMglW2djp62xUf
-         ueF+f1E6KPuMdA0bvFob606AoKabGrVfMPqZnxthPodyvGBXwr8uTZiKeefexqBY0xIo
-         9a/tKCkKmGVPo5s1IYJVPBC9MlRSG+4PvBKqCaP7Tox6DsInl9fXptDoPzqRrjTET9mw
-         oXbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWasr82CV94Ij+JxAlvt+A8PV4xDLB7aDH1uC1m9S/XMVg2BdyNpjun56y4NB0nEiJ5gbuPMZaAmaJ7QmjQ/QVbUkBk5yhqbmt7iTOSkMJvVccJaMl9
-X-Gm-Message-State: AOJu0YyRnLRt7azaXM4WrQAPNFAEnEcNxeGzLjmQbAXSZb0dxhaeOtYJ
-	+2M0EtUa3ZlIkMac1WFuI4N+VvRhvan3fYHRCmWuSg4RCr6XEMJ6ROLMEo63YZrDIONlT2/z0M0
-	WNnLpslhd+Xzno2aEvcAU6wWqv4UYunMaApNQ
-X-Google-Smtp-Source: AGHT+IHdmoaV9xaEO4CcjSrPjVW5K+oaFl6xpiEgDz/ZpLfq51hclYinP1LbziYkKWQvucGfpgIXsD28vskGEw7k1zU=
-X-Received: by 2002:a05:6402:51cb:b0:5a0:d4ce:59a6 with SMTP id
- 4fb4d7f45d1cf-5bba2837e46mr75708a12.2.1722984982752; Tue, 06 Aug 2024
- 15:56:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aUoBESlx"
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4771MgHK019254;
+	Wed, 7 Aug 2024 01:24:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:in-reply-to:references
+	:content-type:date:content-transfer-encoding:mime-version; s=
+	pp1; bh=fw4+UNUefHB/ppv2FvnlJCX7lVBHlTTo++OcFFVaQxY=; b=aUoBESlx
+	iCVNMXTH44jMzaA+lHLZUZPvlTdSC2YMxAtc855YqD21moGPPnirkTKLl+FUsLTd
+	vpNdmWVfTeoMbXbHJNY6tRyCeQWXf7Bb6Hz1pPPRxDLF+TE/BjHJzk+98ItrvI6N
+	KPMNbsCnsHtH94s99+hn0Mc6x/63c7RvTTkrtX8hy2wccScO+BnhqVKvN6LqfERI
+	EVMtqu40vURz0oPHT6gCA/I1gsX1CoY2jZCZc4npPB7JTlw6LKf7klUPD815dcHi
+	E7ky6E36q4n3D5vVCNP1jtf5ap7nLBWmZ0Af6RZCtzjzLPNMlwA284ft91tjoAHw
+	dPBjERzU9lyx1g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uk02hkm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 01:24:59 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4771OwS7022695;
+	Wed, 7 Aug 2024 01:24:58 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uk02hkky-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 01:24:58 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 476M31fc024322;
+	Wed, 7 Aug 2024 01:24:57 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90prfy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 01:24:57 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4771OtOU11600506
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 7 Aug 2024 01:24:57 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7DC2A58066;
+	Wed,  7 Aug 2024 01:24:55 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8120A58054;
+	Wed,  7 Aug 2024 01:24:54 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.166.93])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  7 Aug 2024 01:24:54 +0000 (GMT)
+Message-ID: <80af3c293db64365bdadbec122c37de7194fbf51.camel@linux.ibm.com>
+Subject: Re: [RFC] integrity: wait for completion of i2c initialization
+ using late_initcall_sync()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Romain Naour <romain.naour@smile.fr>, Paul Menzel
+ <pmenzel@molgen.mpg.de>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        serge@hallyn.com, jmorris@namei.org, paul@paul-moore.com,
+        eric.snowberg@oracle.com, dmitry.kasatkin@gmail.com,
+        roberto.sassu@huawei.com, Romain Naour <romain.naour@skf.com>
+In-Reply-To: <785b9c89-a9a6-427d-8715-110cb638b645@smile.fr>
+References: <20240701133814.641662-1-romain.naour@smile.fr>
+	 <c090cd3c-f4c6-4923-a9fa-b54768ca2a26@molgen.mpg.de>
+	 <d7429218-7b48-4201-8ad9-63728e188be5@smile.fr>
+	 <e197920f27bc67df45327ef56ee509d113435b25.camel@linux.ibm.com>
+	 <b551f01f52d5cefea3992f6c75baa0683ed57ac9.camel@linux.ibm.com>
+	 <785b9c89-a9a6-427d-8715-110cb638b645@smile.fr>
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 06 Aug 2024 20:41:22 -0400
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DhmVbBoBCYMdNP3J7E0tbmgGZlAV5H3j
+X-Proofpoint-ORIG-GUID: DrPq6rqg9KKvAYz5LY2WR61b6OYgDctj
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1722966592.git.fahimitahera@gmail.com> <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com> <ZrKc4i1PhdMwA77h@tahera-OptiPlex-5000>
-In-Reply-To: <ZrKc4i1PhdMwA77h@tahera-OptiPlex-5000>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 7 Aug 2024 00:55:46 +0200
-Message-ID: <CAG48ez2OmOdMo7TCn4M8tSPSdXVwMDty6fMsHc9Q+NFQ-sfBUA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-06_20,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 clxscore=1011 mlxscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408070007
 
-Hi!
+On Thu, 2024-08-01 at 12:12 +0200, Romain Naour wrote:
+> Hi Mimi,
+>=20
+> Le 11/07/2024 =C3=A0 16:06, Mimi Zohar a =C3=A9crit=C2=A0:
+> > On Mon, 2024-07-01 at 22:37 -0400, Mimi Zohar wrote:
+> > > Hi Romain,
+> > >=20
+> > > Please limit the subject line to 70 - 75 characters.
+> > >=20
+> > >=20
+> > > On Mon, 2024-07-01 at 16:58 +0200, Romain Naour wrote:
+> > > > > > [1]
+> > > > > > https://lore.kernel.org/linux-integrity/9b98d912-ba78-402c-a5c8=
+-154bef8794f7@smile.fr/
+> > > > > > [2]
+> > > > > > https://e2e.ti.com/support/processors-group/processors/f/proces=
+sors-forum/1375425/tda4vm-ima-vs-tpm-builtin-driver-boot-order
+> > > > > >=20
+> > > > > > Signed-off-by: Romain Naour <romain.naour@skf.com>
+> > > > >=20
+> > > > > Should this get a Fixes: tag and be also applied to the stable se=
+ries?
+> > > >=20
+> > > > The current behavior can be reproduced on any released kernel (at l=
+east since
+> > > > 6.1). But I'm not sure if it should be backported to stable kernels=
+ since it
+> > > > delays the ima/evm initialization at runtime.
+> > >=20
+> > > With the IMA builtin measurement policy specified on the boot command=
+ line
+> > > ("ima_policy=3Dtcb"), moving init_ima from the late_initcall() to
+> > > late_initcall_sync() affects the measurement list order.  It's unlike=
+ly, but
+> > > possible, that someone is sealing the TPM to PCR-10.  It's probably n=
+ot a good
+> > > idea to backport the change.
+> > >=20
+> > > An alternative would be to continue using the late_initcall(), but re=
+try on
+> > > failure, instead of going directly into TPM-bypass mode.
+>=20
+> Indeed, it would be better if the IMA (and EVM) can use something like EP=
+ROBE_DEFER.
 
-On Wed, Aug 7, 2024 at 12:00=E2=80=AFAM Tahera Fahimi <fahimitahera@gmail.c=
-om> wrote:
-> On Tue, Aug 06, 2024 at 08:56:15PM +0200, Jann Horn wrote:
-> > On Tue, Aug 6, 2024 at 8:11=E2=80=AFPM Tahera Fahimi <fahimitahera@gmai=
-l.com> wrote:
-> > > +       if (is_scoped)
-> > > +               return 0;
-> > > +
-> > > +       return -EPERM;
-> > > +}
-> > > +
-> > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > > +                                   struct fown_struct *fown, int sig=
-num)
-> > > +{
-> > > +       bool is_scoped;
-> > > +       const struct landlock_ruleset *dom, *target_dom;
-> > > +       struct task_struct *result =3D get_pid_task(fown->pid, fown->=
-pid_type);
-> >
-> > I'm not an expert on how the fowner stuff works, but I think this will
-> > probably give you "result =3D NULL" if the file owner PID has already
-> > exited, and then the following landlock_get_task_domain() would
-> > probably crash? But I'm not entirely sure about how this works.
-> I considered since the file structure can always be obtained, then the
-> file owner PID always exist.
+Yes, "something like EPROBE_DEFER" sounds like the right direction.  Depend=
+ing
+on the environment, the TPM initialization delay might be acceptable and not
+introduce an integrity gap.
 
-I think the file owner "struct pid" always exists here; but I think
-the PID does not necessarily point to a task_struct.
+For now let's start with just late_initcall() and late_initcall_sync().  If=
+ the
+TPM hasn't been initialized, not all of ima_init() needs to be deferred to
+late_initcall_sync().
 
-I think you can have a scenario where userspace does something like this:
+>=20
+> > >=20
+> > > As far as I can tell, everything is still being measured and verified=
+, but more
+> > > testing is required.
+>=20
+> Agree, I'm still evaluating the TPM stack when time allows.
+>=20
+> >=20
+> > Romain, Paul, another report of IMA going into TPM-bypass mode is here:=
+=20
+> > https://github.com/raspberrypi/linux/issues/6217.  Deferring IMA initia=
+lization
+> > to late_initcall_sync() did not resolve the problem for them.  Please t=
+ake a
+> > look at the report.
+>=20
+> I don't think that the "mdelay(200)" is really needed when late_initcall_=
+sync()
+> is used. I guess the issue was the spi driver was not builtin, fixed by:
+>=20
+> CONFIG_SPI_DESIGNWARE=3Dy
+> CONFIG_SPI_DW_MMIO=3Dy
 
-int fd =3D <open some file descriptor somehow>;
-fcntl(fd, F_SETOWN, <PID of some other process>);
-pid_t child_pid =3D fork();
-if (child_pid =3D=3D 0) {
-  /* this executes in the child process */
-  sleep(5);
-  <do something on the fd that triggers send_sigio() or send_sigurg()>
-  sleep(5);
-  exit(0);
-}
-/* this continues executing in the parent process */
-exit(0);
+Good to know.
 
-At the fcntl(fd, F_SETOWN, ...) call, a reference-counted reference to
-the "struct pid" of the parent process will be stored in the file
-(this happens in "f_modown", which increments the reference count of
-the "struct pid" using "get_pid(...)"). But when the parent process
-exits, the pointer from the parent's "struct pid" to the parent's
-"task_struct" is removed, and the "task_struct" will eventually be
-deleted from memory.
+thanks,
 
-So when, at a later time, something triggers send_sigio() or
-send_sigurg() and enters this LSM hook, I think
-"get_pid_task(fown->pid, fown->pid_type)" can return NULL.
-
-> I can check if we can use the credentials
-> stored in struct file instead.
-
-(sort of relevant: The manpage
-https://man7.org/linux/man-pages/man2/fcntl.2.html says "Note: The
-F_SETOWN operation records the caller's credentials at the time of the
-fcntl() call, and it is these saved credentials that are used for the
-permission checks.")
-
-You mean the credentials in the "f_cred" member of "struct file", right? If=
- so:
-
-I don't think Landlock can use the existing credentials stored in
-file->f_cred for this. Consider the following scenario:
-
-1. A process (with no landlock restrictions so far) opens a file. At
-this point, the caller's credentials (which indicate no landlock
-restrictions) are recorded in file->f_cred.
-2. The process installs a landlock filter that restricts the ability
-to send signals. (This changes the credentials pointer of the process
-to a new set of credentials that points to the new landlock domain.)
-3. Malicious code starts executing in the sandboxed process.
-4. The malicious code uses F_SETOWN on the already-open file.
-5. Something causes sending of a signal via send_sigio() or
-send_sigurg() on this file.
-
-In this scenario, if the LSM hook used the landlock restrictions
-attached to file->f_cred, it would think the operation is not filtered
-by any landlock domain.
-
-> > I think the intended way to use this hook would be to instead use the
-> > "file_set_fowner" hook to record the owning domain (though the setup
-> > for that is going to be kind of a pain...), see the Smack and SELinux
-> > definitions of that hook. Or alternatively maybe it would be even
-> > nicer to change the fown_struct to record a cred* instead of a uid and
-> > euid and then use the domain from those credentials for this hook...
-> > I'm not sure which of those would be easier.
-> Because Landlock does not use any security blob for this purpose, I am
-> not sure how to record the owner's doamin.
-
-I think landlock already has a landlock_file_security blob attached to
-"struct file" that you could use to store an extra landlock domain
-pointer for this, kinda like the "fown_sid" in SELinux? But doing this
-for landlock would be a little more annoying because you'd have to
-store a reference-counted pointer to the landlock domain in the
-landlock_file_security blob, so you'd have to make sure to also
-decrement the reference count when the file is freed (with the
-file_free_security hook), and you'd have to use locking (or atomic
-operations) to make sure that two concurrent file_set_fowner calls
-don't race in a dangerous way...
-
-So I think it's fairly straightforward, but it would be kinda ugly.
-
-> The alternative way looks nice.
-
-Yeah, I agree that it looks nicer. (If you decide to implement it by
-refactoring the fown_struct, it would be a good idea to make that a
-separate patch in your patch series - partly because that way, the
-maintainers of that fs/fcntl.c code can review just the refactoring,
-and partly just because splitting logical changes into separate
-patches makes it easier to review the individual patches.)
-
-> > > +       /* rcu is already locked! */
-> > > +       dom =3D landlock_get_task_domain(result);
-> > > +       target_dom =3D landlock_get_task_domain(tsk);
-> > > +       is_scoped =3D domain_IPC_scope(dom, target_dom, LANDLOCK_SCOP=
-ED_SIGNAL);
-> > > +       put_task_struct(result);
-> > > +       if (is_scoped)
-> > > +               return 0;
-> > > +       return -EPERM;
-> > > +}
+Mimi
