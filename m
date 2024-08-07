@@ -1,131 +1,195 @@
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C1019066D;
-	Wed,  7 Aug 2024 04:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2061C7B76;
+	Wed,  7 Aug 2024 07:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723006174; cv=none; b=ObcmirSX4ms/Aks4wBwOrAc7T1hSyf2ZAbYcYgYYImP86pF+iMBavd5OvlgdvK3xXUvykIctX89aL9fW/4TT3u+sNYlx1tvJWZOcyAxNRSSU26LonA2o10jc4lv3pL49oMZOUccYoNwSHh1NBX6RtJ6XTGoVUwa4/GC7UObIkEU=
+	t=1723015278; cv=none; b=NlsWwN/c6rtCnrRH9K8Zb9kpIdEUQ7dARgZWg2Ya7XpYqnXJPpXlMwPSNmIG10O7DeQMrehl8bmqueob9K+eS0qpXsUpHSRelm5oyHDP1reViDp3cO+OZdRKaqBVzeOqBXi7RpFNT3K+v7IYFDsf49ejtPnQ9t5haiw1v+Rn/FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723006174; c=relaxed/simple;
-	bh=qa39epjqjdsOVNsHgEqDKXlLdppVmF7MiqUmOzTRPYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EF8cDiGg5EOwtW6MB53m2768zxfbRU5XMaQ5GPMP89z1O9mg/aTuB/f3i3kMZo5U+x+Vy2MBGVam1KUnjcX2VQ7zTzSgzb0rtGqahEi8/fVMcDIrxH03oH4S0NlFmTZ1TzC0812f7NinOF9ZavXGGFNxe2NfWGV4MojuulyJCKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.3] (ip5f5af7d2.dynamic.kabel-deutschland.de [95.90.247.210])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4D7E161E5FE01;
-	Wed,  7 Aug 2024 06:48:21 +0200 (CEST)
-Message-ID: <5880e801-e896-4bf0-9a69-2cf5acb51ec3@molgen.mpg.de>
-Date: Wed, 7 Aug 2024 06:48:20 +0200
+	s=arc-20240116; t=1723015278; c=relaxed/simple;
+	bh=7GiOD3hAA5u3pX+4hiB33+FC3gICUOjC8VXRM5Uh38Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+lmmDpfncWzVzzZIapsimwN5IRFRt8ko12SQr8eCxDEbScXnGq7dno4x318Pebubi0i2KckyEshcoLuPOturcfGgsmd9xtx0GkXp4Dd/yU20Xx7eBJJXmEIXk74FTBs/njyu1Cx//o/pUzNkPlzu1nqcnRUMytfqR8afvfYtbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=o3yBmlWr; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="o3yBmlWr"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wf1n1016jzp2P;
+	Wed,  7 Aug 2024 09:21:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723015268;
+	bh=f6mO+1q8PwKecFRsqn5TluZM5OL5Ouz6M2O6XTeSBls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o3yBmlWrwUnT0/LpaGMbiFtkJP2TpwalO8gphuckK1ZkYcx9S0LKPI4lQLomvEdkL
+	 hSYynCxLoo/r8IBdxaiezxyjBCDV8sn/X0F5JW3aXA66vUECSy7abj+h0wWwAsHRA2
+	 SNHkthlv+ufZKpD+iuoTytOUDo5waLHu+UGwYy50=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wf1mz65nKzF6C;
+	Wed,  7 Aug 2024 09:21:07 +0200 (CEST)
+Date: Wed, 7 Aug 2024 09:21:03 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <20240807.mieloh8bi8Ae@digikod.net>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+ <20240803.iefooCha4gae@digikod.net>
+ <20240806.nookoChoh2Oh@digikod.net>
+ <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 20/20] MAINTAINERS: ipe: add ipe maintainer
- information
-To: Paul Moore <paul@paul-moore.com>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com,
- jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
- axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
- eparis@redhat.com, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- fsverity@lists.linux.dev, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-21-git-send-email-wufan@linux.microsoft.com>
- <de7857fb-63d9-42fc-af1e-12ffcdfcdda8@molgen.mpg.de>
- <CAHC9VhRmcReVM_Le5bYor2deotnSe4OT08UYhL6xhiKCu0+3kA@mail.gmail.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <CAHC9VhRmcReVM_Le5bYor2deotnSe4OT08UYhL6xhiKCu0+3kA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Dear Paul,
+On Tue, Aug 06, 2024 at 10:46:43PM +0200, Jann Horn wrote:
+> On Tue, Aug 6, 2024 at 9:36 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Sat, Aug 03, 2024 at 01:29:09PM +0200, Mickaël Salaün wrote:
+> > > On Thu, Aug 01, 2024 at 10:02:33PM -0600, Tahera Fahimi wrote:
+> > > > This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
+> > > > that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
+> > > > abstract Unix sockets from connecting to a process outside of
+> > > > the same landlock domain. It implements two hooks, unix_stream_connect
+> > > > and unix_may_send to enforce this restriction.
+> [...]
+> > Here is a refactoring that is easier to read and avoid potential pointer
+> > misuse:
+> >
+> > static bool domain_is_scoped(const struct landlock_ruleset *const client,
+> >                              const struct landlock_ruleset *const server,
+> >                              access_mask_t scope)
+> > {
+> >         int client_layer, server_layer;
+> >         struct landlock_hierarchy *client_walker, *server_walker;
+> >
+> >         if (WARN_ON_ONCE(!client))
+> >                 return false;
+> >
+> >         client_layer = client->num_layers - 1;
+> >         client_walker = client->hierarchy;
+> >
+> >         /*
+> >          * client_layer must be a signed integer with greater capacity than
+> >          * client->num_layers to ensure the following loop stops.
+> >          */
+> >         BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+> >
+> >         if (!server) {
+> >                 /*
+> >                  * Walks client's parent domains and checks that none of these
+> >                  * domains are scoped.
+> >                  */
+> >                 for (; client_layer >= 0; client_layer--) {
+> >                         if (landlock_get_scope_mask(client, client_layer) &
+> >                             scope)
+> >                                 return true;
+> >                 }
+> >                 return false;
+> >         }
+> >
+> >         server_layer = server->num_layers - 1;
+> >         server_walker = server->hierarchy;
+> >
+> >         /*
+> >          * Walks client's parent domains down to the same hierarchy level as
+> >          * the server's domain, and checks that none of these client's parent
+> >          * domains are scoped.
+> >          */
+> >         for (; client_layer > server_layer; client_layer--) {
+> >                 if (landlock_get_scope_mask(client, client_layer) & scope)
+> >                         return true;
+> >
+> >                 client_walker = client_walker->parent;
+> >         }
+> >
+> >         /*
+> >          * Walks server's parent domains down to the same hierarchy level as
+> >          * the client's domain.
+> >          */
+> >         for (; server_layer > client_layer; server_layer--)
+> >                 server_walker = server_walker->parent;
+> >
+> >         for (; client_layer >= 0; client_layer--) {
+> >                 if (landlock_get_scope_mask(client, client_layer) & scope) {
+> >                         /*
+> >                          * Client and server are at the same level in the
+> >                          * hierarchy.  If the client is scoped, the request is
+> >                          * only allowed if this domain is also a server's
+> >                          * ancestor.
+> >                          */
 
+We can move this comment before the if and...
 
-Am 06.08.24 um 22:54 schrieb Paul Moore:
-> On Sat, Aug 3, 2024 at 4:15 AM Paul Menzel wrote:
+> >                         if (server_walker == client_walker)
+> >                                 return false;
+> >
+> >                         return true;
 
->> Thank you very much for your patch. Two nits, should you sent another
->> interation: A more specific summary would avoid people having to look at
->> the message body or diff, and `git log --oneline` would be enough.
->>
->> MAINTAINERS: Add IPE entry with M: Fan Wu
->>
->> MAINTAINERS: Add IPE entry with Fan Wu as maintainer
->>
->> Am 03.08.24 um 08:08 schrieb Fan Wu:
->>> Update MAINTAINERS to include ipe maintainer information.
->>
->> I’d at least mention Integrity Policy Enforcement. As you not only
->> include the maintainer information but add a new entry, I’d leave the
->> body out, or mention that a new entry is added.
->>
->>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+...add this without the curly braces:
+
+return server_walker != client_walker;
+
+> >                 }
+> >                 client_walker = client_walker->parent;
+> >                 server_walker = server_walker->parent;
+> >         }
+> >         return false;
+> > }
 > 
-> Working under the current assumption that a new revision is not
-> needed, I can fix this up during the merge.  Fan, other-Paul, are you
-> both okay with the following:
+> I think adding something like this change on top of your code would
+> make it more concise (though this is entirely untested):
 > 
->    "MAINTAINERS: add IPE entry with Fan Wu as maintainer
+> --- /tmp/a      2024-08-06 22:37:33.800158308 +0200
+> +++ /tmp/b      2024-08-06 22:44:49.539314039 +0200
+> @@ -15,25 +15,12 @@
+>           * client_layer must be a signed integer with greater capacity than
+>           * client->num_layers to ensure the following loop stops.
+>           */
+>          BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
 > 
->     Add a MAINTAINERS entry for the Integrity Policy Enforcement (IPE) LSM."
+> -        if (!server) {
+> -                /*
+> -                 * Walks client's parent domains and checks that none of these
+> -                 * domains are scoped.
+> -                 */
+> -                for (; client_layer >= 0; client_layer--) {
+> -                        if (landlock_get_scope_mask(client, client_layer) &
+> -                            scope)
+> -                                return true;
+> -                }
+> -                return false;
+> -        }
 
-Thank you. That is fine by me.
+This loop is redundant with the following one, but it makes sure there
+is no issue nor inconsistencies with the server or server_walker
+pointers.  That's the only approach I found to make sure we don't go
+through a path that could use an incorrect pointer, and makes the code
+easy to review.
 
+> -
+> -        server_layer = server->num_layers - 1;
+> -        server_walker = server->hierarchy;
+> +        server_layer = server ? (server->num_layers - 1) : -1;
+> +        server_walker = server ? server->hierarchy : NULL;
 
-Kind regards,
+We would need to change the last loop to avoid a null pointer deref.
 
-Paul
-
-
->>> --
->>> v1-v16:
->>>     + Not present
->>>
->>> v17:
->>>     + Introduced
->>>
->>> v18:
->>>     + No changes
->>>
->>> v19:
->>>     + No changes
->>>
->>> v20:
->>>     + No changes
->>> ---
->>>    MAINTAINERS | 10 ++++++++++
->>>    1 file changed, 10 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 8766f3e5e87e..4cdf2d5a2058 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -11118,6 +11118,16 @@ T:   git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
->>>    F:  security/integrity/
->>>    F:  security/integrity/ima/
->>>
->>> +INTEGRITY POLICY ENFORCEMENT (IPE)
->>> +M:   Fan Wu <wufan@linux.microsoft.com>
->>> +L:   linux-security-module@vger.kernel.org
->>> +S:   Supported
->>> +T:   git https://github.com/microsoft/ipe.git
->>> +F:   Documentation/admin-guide/LSM/ipe.rst
->>> +F:   Documentation/security/ipe.rst
->>> +F:   scripts/ipe/
->>> +F:   security/ipe/
->>> +
->>>    INTEL 810/815 FRAMEBUFFER DRIVER
->>>    M:  Antonino Daplas <adaplas@gmail.com>
->>>    L:  linux-fbdev@vger.kernel.org
+> 
+>          /*
+>           * Walks client's parent domains down to the same hierarchy level as
+>           * the server's domain, and checks that none of these client's parent
+>           * domains are scoped.
+> 
