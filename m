@@ -1,146 +1,91 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854391442E8
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Aug 2024 20:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708B82A1DF;
+	Thu,  8 Aug 2024 22:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723150162; cv=none; b=uheToW5CJZJ/Rliv62uNWiieXKOnCezxuTm4ofioQLrYrbvjE6pcWhXVNT8v54c012eopMjYu06pEQqTQ/8lin521hJmzyJKSUbZUBoXg6GNHoN9eaepjbI1AfIjLurjcdHpiiY6YDuVJSgW+MwAUh5/6GRzCWqmtt06T5/2ZmE=
+	t=1723154702; cv=none; b=FBSVdOgNnVM+gXbdDOT/hRLLFUMhVLZIFdwaysfMwlk+X6EuYCtcmLHfINT6/XddkSF0fgicGF1lxYGzoTFU3pWlv7qqTVzgcjn/nXbQNdtS8nWSdKFXw8l9dMJ9qnUGDq28C2ahOZELLEtMNi3n5VNynDp2+3QvJSCq89axXdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723150162; c=relaxed/simple;
-	bh=5fyWCTMF87sSrSOG+02bIogLgiJIUmr+yrtFrIc8DNA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CRIquuAv2t2OuANtlajBnRfrpoxQMQN9ZVx3GFPQhDgrNxOEUGi3ysbSd7Kt9D62Pp4U/QjjOVFRg4wGMfdko6NKzKnD/UqOGb3LLhPGVhk2niNukCswZOdGVUQXQUtKPtU3UTyDwct+/GiQftU8B1u4SOe6C/yL1GX19+uGLQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Xj0xR5h0; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1723154702; c=relaxed/simple;
+	bh=qnpZw+lFbLx8fiwo3zs7XLa7SwYU5KxtlLxuoVA7qLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=J6dnK7A+Stxz2syexvSHk6l3U2IYPtMzMEbYBybSWWBi6CkDh8O9YYjkFjgsu17ZhyjUgZoBS3pdIQz5p491ystBxA3XuMDvznTO6+GdaG9wQya2V24HYgKXWjox90Tg+plIk+L+Dx8c662/ij11y6h2oBlfuSwxBVeIjr2H+EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EShAfoJi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Xj0xR5h0"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0e88873825so1375519276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Aug 2024 13:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723150159; x=1723754959; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=31etNWpvhkl2loNVcBVHnptCNEhnuZUXotMLP3mpdfg=;
-        b=Xj0xR5h0HviwCZGmxmD6Dm6Rfar/NGap3HOffyIaeJL/rGMcRwegKpj0LjYo4yeMLC
-         k4cXNHsIKVEUEFjGuH5bzOzXjr8Pv+BF3ICm5WrGEkjEPWd3yWG99AkZ155YTVIWOeiE
-         c9UCCDKhNz4cWcGFJBT5ORyUDwm7eNCAlVer3Ww8f+csajVOdW1j66cZlu22LxRtM+M4
-         pbbA+zrwt0nl8DD99cuZqShwbLwkUiuKN3EOApkNbUTwcZlouV6yFRUer0ib6PfH5qAJ
-         tD72HpDxYFqGqpvmA0J09qO2p2jxiq9SyCITg1DrlewcqKvaAA74or+vM46a2PFe8MZH
-         sJuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723150159; x=1723754959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=31etNWpvhkl2loNVcBVHnptCNEhnuZUXotMLP3mpdfg=;
-        b=rqYnVmzUxbk7F/OlFC/wxLndbPb3aqh94qoBBf0HfepI4DRnvSxA+UiIiCOb52p5CF
-         A6mkcd1rnG8naIebpogOtnoQgDMPePz1Re53e8KQHo0vV+vMX0DvmZNCxF4sTSbL+pto
-         6hSkn/qTn9P8ojeyKts/NDA3lQbRUeHXoQpd2PWvo0l/yd3/cczMlxTSLWbGSFP4srUb
-         X3FIxPnpqAL3umNnj8DljsSoieOTi6feFhFiT0LYWZMeF3KiSMmblISN9/8DWIEsNRKT
-         ugBCM6iwh1TpR21jjDV4gKo/YEteeDHthxkRNrogqCYiVBh3x4HVV3+Bdsi53MvecjVB
-         IIRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGYONBicE00cDfkfce+YGJmOKzWt9Fz+M01md9LBC0aM4IUWqayYu+fDxgg4QbQ7n4Tr3Zj8bh0bINzVp6Aqw5nKGUA/Jfj7kPQite1jtSARUas6U7
-X-Gm-Message-State: AOJu0Yw/DJWDEm4b8Q5l9EaFypVC1CSjobjZDUvCa2IXfblpe+YwygEk
-	tGDC5KTyCVFhJ1yQa13maDyrHWJ3liArvHPULuc/o1/uljd5+oPwgSn005VFnsEumnqaWSvo8NF
-	h/5WHXKQG/CzLF3gZKuwMjbV7JtrjSklhuKuj
-X-Google-Smtp-Source: AGHT+IEUOdK/Fx/dEBbY87arC3ssO9rofH7XLSqG1jlUSOkkWvk2CfFONdiaN7t+2htvv0kuVq/0NDbcCXMb4MK8rvY=
-X-Received: by 2002:a05:6902:993:b0:e0b:1519:e0d3 with SMTP id
- 3f1490d57ef6-e0e9da703eamr3259095276.6.1723150159404; Thu, 08 Aug 2024
- 13:49:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EShAfoJi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06378C32782;
+	Thu,  8 Aug 2024 22:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723154702;
+	bh=qnpZw+lFbLx8fiwo3zs7XLa7SwYU5KxtlLxuoVA7qLU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EShAfoJi5V3DpuVchMO7eZNgNNT4VJ9FiGfBB6cdBOC2cPVddqPrWRSuRIB5u1WQJ
+	 GDDUegjSxWTNGxZ0aQjkc82DR7bUcjiuBKXUUehGhpLCLJL1d6wKbybV5L2Ws4Izdm
+	 k4hYsxJcPR8TL5DNmCWyfvfc1Rh8jhZufMAvZMHu5wkE4RGl0kAjOeBhXNQcLayo3c
+	 CTJmSb3EhUAfVuZFK3RPgalpgkVq4H83Ns74mrceou6oDZi0+F0JUqArh+FDTcdIla
+	 RzwKBDuqM9wxup9VwyW6WVPMumasLGINrO1guidJGhFtcMRyll/OXb81RdYNPkMe3m
+	 0AfRlQjPIw5mA==
+Date: Thu, 8 Aug 2024 16:04:59 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] integrity: Use static_assert() to check struct sizes
+Message-ID: <ZrVBC9dGwukjfhet@cute>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
- <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net>
-In-Reply-To: <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 8 Aug 2024 16:49:08 -0400
-Message-ID: <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: KP Singh <kpsingh@kernel.org>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Aug 8, 2024 at 2:00=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
-rote:
-> On Thu, Aug 08, 2024 at 01:32:37PM -0400, Paul Moore wrote:
-> > On Thu, Aug 8, 2024 at 12:43=E2=80=AFPM Guenter Roeck <linux@roeck-us.n=
-et> wrote:
-> > >
-> > > Also, there is a backtrace on ppc (also see below), but that is unrel=
-ated
-> > > to your patches and only seen now because I enabled the security modu=
-les
-> > > on that architecture. I'll bring that up with ppc maintainers.
-> >
-> > Thanks for all your help testing this Guenter.  I see you've also
-> > already submitted an AppArmor fix for the endian issue, that's very
-> > helpful and I'm sure John will be happy to see it.
-> >
-> > Beyond this work testing the static call patches from KP, would you be
-> > willing to add a LSM configuration to your normal testing?  While most
-> > of the LSM subsystem should be architecture agnostic, there are
-> > definitely bits and pieces that can vary (as you've seen), and I think
-> > it would be great to get more testing across a broad range of
-> > supported arches, even if it is just some simple "does it boot" tests.
-> >
->
-> That really depends. I already enabled some of the kernel security module=
-s.
->
-> CONFIG_SECURITY=3Dy
-> CONFIG_SECURITY_APPARMOR=3Dy
-> CONFIG_SECURITY_APPARMOR_KUNIT_TEST=3Dy
-> CONFIG_SECURITY_LANDLOCK=3Dy
-> CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=3Dy
-> CONFIG_SECURITY_LOCKDOWN_LSM=3Dy
-> CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=3Dy
-> CONFIG_SECURITY_YAMA=3Dy
-> CONFIG_SECURITY_LOADPIN=3Dy
-> CONFIG_SECURITY_SAFESETID=3Dy
-> CONFIG_BPF_LSM=3Dy
-> CONFIG_LSM=3D"landlock,lockdown,yama,loadpin,safesetid,bpf"
->
-> I can easily add more if you tell me what else I should enable.
+Commit 38aa3f5ac6d2 ("integrity: Avoid -Wflex-array-member-not-at-end
+warnings") introduced tagged `struct evm_ima_xattr_data_hdr` and
+`struct ima_digest_data_hdr`. We want to ensure that when new members
+need to be added to the flexible structures, they are always included
+within these tagged structs.
 
-Thanks, I just added a todo item to send you a list.  I appreciate the help=
-.
+So, we use `static_assert()` to ensure that the memory layout for
+both the flexible structure and the tagged struct is the same after
+any changes.
 
-> Userspace is more difficult. My root file systems are generated using
-> buildroot. I run some basic tests, such as network interface tests
-> and TPM tests, but those are just simple scripts utilizing packages
-> provided by buildroot. I can add more, but I would need to know what
-> exactly to add and how to execute it.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ security/integrity/integrity.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Of course.  As far as I'm concerned, simply enabling the LSMs and
-making sure the various arches boot without additional faults would be
-a nice boost in testing.
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 660f76cb69d3..c2c2da691123 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -37,6 +37,8 @@ struct evm_ima_xattr_data {
+ 	);
+ 	u8 data[];
+ } __packed;
++static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
++	      "struct member likely outside of __struct_group()");
+ 
+ /* Only used in the EVM HMAC code. */
+ struct evm_xattr {
+@@ -65,6 +67,8 @@ struct ima_digest_data {
+ 	);
+ 	u8 digest[];
+ } __packed;
++static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
++	      "struct member likely outside of __struct_group()");
+ 
+ /*
+  * Instead of wrapping the ima_digest_data struct inside a local structure
+-- 
+2.34.1
 
-> > Out of curiosity, do you have your test setup documented anywhere?  It
-> > sounds fairly impressive and I'd be curious to learn more about it.
->
-> Not really. The code is at https://github.com/groeck/linux-build-test.
-> My clone of buildroot is at https://github.com/groeck/buildroot (look
-> for local- branches to see my changes). Please feel free to have a look,
-> but documentation is seriously lacking (and README is completely out
-> of date).
-
-Thanks for the pointers.
-
---=20
-paul-moore.com
