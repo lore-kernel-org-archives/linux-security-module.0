@@ -1,55 +1,55 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1278C189B8D
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Aug 2024 17:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BF7190470
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Aug 2024 17:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137584; cv=none; b=fZk+na8PkETUUolOzxiNZ+9TmeVGFVOwLoqFPW2gQzcyxcfphPAFWZKsCxNZGUz5U5Kd0U3MoMrgUz0tgLeI3Zo7wfZD6fKFWDS3h/ruCHY/OnUX1QEfi2JbqGzh2QHIXEhBZR/FnF9T0zjSnyLYybQ77VWx+ltNu/QS44fUuKQ=
+	t=1723138370; cv=none; b=Jn8SJNsUp9z3eczUGd5Y7/1c2yh+t1IVWxyNSBOKD5y28ZEim7oBh5eib0eReqolKWCd5NcqenHnSeuhGqzGbZj1PWdvq6qg+WkRSSOzcxbuoPOZRFbtC25RCMgyzUOzinudCzIN68Azp6PfL7uZZQOiZJCK9nOC2mxNALmfpEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137584; c=relaxed/simple;
-	bh=UTK3MbTaCL1n1/5i9jTkY9GsZk+1O6VCjq62oiu9i98=;
+	s=arc-20240116; t=1723138370; c=relaxed/simple;
+	bh=ra9Tr8gTinwOfSl5zupa/2o60sqvU0CPOc2qEo8b/Nc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFzujKoyNTkjr25hyVuSjUbk5+lIdB9nzH/Yc89r7fFDkGPCrj3ddvWeNGWJOvKfE4ZbQA5oUpjvqrK8SQbUhaSuqzhoE3SwXtYMybM9Q/wu4XauqiY/t+THpPv8+f5NyfiNszwdCEUriiO9CFCazZ7C5htKuKL/JwC6X7TVmm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BMlXRMmq; arc=none smtp.client-ip=209.85.219.177
+	 To:Cc:Content-Type; b=iflgsDVRGTuDf+v7tQv1YVAi7hGJx2eoGI8C4udJt9DR03eS4MsKMAMCLoPjL1cTs/H/vqXy9WtXQxeAv7se0qXdh+X2LvC2TwMdYfeJhrXdfM/NUt6r5Ya0I+NhpYqfZsgSMqRVL07BroMeZXCS4OF1EKBVusvIabx0HXP72ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ae0qxf8S; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BMlXRMmq"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e0bf9b821e8so1105366276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Aug 2024 10:19:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ae0qxf8S"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-65fe1239f12so10696637b3.0
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Aug 2024 10:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723137582; x=1723742382; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1723138368; x=1723743168; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k7j4id+E0N59hINJSa1Ik/tq6mBYW9RIP0gt258DV/U=;
-        b=BMlXRMmqo3nNOfPAuzmFLhr9ar++2lcMfEqHyuhNHE7SUrvLeRzim3yjIlMKSJYiMl
-         s4U+1ufIfxI36brhEFrbDuFjQDN7f74tgPtVzcSui2gYT6OOXV+8f2udORV4fR2wQ9qH
-         Ee8glQm+tdYhbi7uNqvGCwnvR3q04eGqqZSIWktZtFpFskFjmb5kfXfNN5OillaJ43xa
-         caHxH/8HsPl9WtTXHiQZ6r2ugZV0vNWctSNdiQu5Qm6reEWZzc3+Vf34FU9HHlSav2vk
-         Cii2qi0g5VBy5o99YjTGC4gr3rckcEBtUOLTuqdUCUZgb0sIal2ZQMlWKOe36RLI/TG4
-         XA+w==
+        bh=snkmKAtsan0FJLgLs2dcvi/WMO4/avl1Z9NJwFjKlK4=;
+        b=ae0qxf8SpaYkuSbhmOZJKsxZg4LYbcm0aC6P7OPfsFcyS2qLEZ2UmQfXQysYWUxmkf
+         3WLdcVbu9PwirpvKj1mfSglTg1ULx7lzUy7QklTSu1TCYPMHuEApQGH3kA7PbGr9gheC
+         0lmX3yKQVGrc8mub21zu42CWv6xaYR+DAEsB0ymyPMYRs4O+YfYz3PpICnVmgXbzcNg7
+         VnNd5LHCoVZo7fOeGRzCyd5y1dQn8Dw9ByGqk8uzQLBtsgCJKMSYFxnmeN7Gl3swtLFs
+         Eqhf3FlZ2pGeZ4W6xKVBTgK73Af3rAM2Zl1DR6boGrczeVfteajN0sZRkjfIK4gYXQIg
+         57RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723137582; x=1723742382;
+        d=1e100.net; s=20230601; t=1723138368; x=1723743168;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k7j4id+E0N59hINJSa1Ik/tq6mBYW9RIP0gt258DV/U=;
-        b=qNS2ATGkHa7Isb+4cQPh03UDJ7Ff2AP5Kf07L0HpGTOGBX2VgFqOmcE6i80fgMTH9k
-         5gwqB33oRiHUPCdJnLWWbzT90tWC8vLD8USLhk4UrV941zp+cDFhPBRlZxf5CbI4SeQk
-         I3FBW/BthKOyj/9fRvi3dqjbBuKW7vrZG41X1C/lGh6fCPIXo3y0/jV2++LZibrwJKHf
-         33PkzvLhpX+SWEJIOvyJjpYIynCIUJ4YZio6sKvYpVm/DFL/Gar5qJGsa5eWpswyXmXf
-         LOsg7llYTi1Cp+V9XDtpJ+jljrj/Wq5fVzkcvXTp37yhU6vUgjsd90rlhB5DZ0uElCxw
-         4Avg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLF6g6wQtHI4n3p+1hEWqYYYCjpXx9Lpuhpo1kcvce01mt1cyiEHITpkdoPGrgji+jLPgZHCcO23HbzETmp0PBLbMJ7gZQlLu2FCs21WObwajPPtxn
-X-Gm-Message-State: AOJu0Yw6mXzIY0cOPz+BqjaVBr8b6VjTBCT/22K0mrzBrWmiyJ8ifSg/
-	IzMyvLJ2LwHouIJ2VZV989viFv55yTLtNQuUjcR9Ar1UPpNf+sPUVLf0ndFCJVfxZMyRDsC3Pzi
-	UI8sXvW6jl9dc+34iipKEHZ51Y4zHzmn0oI/9aSRNyfrFiN+IZg==
-X-Google-Smtp-Source: AGHT+IGFllm8smp8j3SS8Lkq9w2mfD8VByKiAxaIaEgk87F2tTSALoLQCwnk+1HhpjXBLzVARdifZYrNQLu26MduEDo=
-X-Received: by 2002:a05:690c:f83:b0:65f:7ac6:7f69 with SMTP id
- 00721157ae682-69bf7353562mr34263017b3.6.1723137582068; Thu, 08 Aug 2024
- 10:19:42 -0700 (PDT)
+        bh=snkmKAtsan0FJLgLs2dcvi/WMO4/avl1Z9NJwFjKlK4=;
+        b=ZnINOmZPRtLlbxRsjzJXWN3NKU9zC7Q+MQKfBWNRAsjXVknku6QOEftkafroJslMqU
+         1xKc+gcWvJlZC6x8SD/LBlO6uOAVDbkSSlRiWaB5akk13RHFUjvE28V1aWk+4lzskHtZ
+         G4Q4Wrgn4jePg4LxRNQFnsaJqFeIHIj6lbiXMYBdinAfiKw8LEanlZD8Tpl6eBdJ8WBw
+         fHVIsJzGX3oCgnE6xVEdXi7UZMn1Iv+YQAkdFy0lZqFkBReYKv+sGa+Us8gaEVZf9Y7v
+         GnF11PKw+kO2c/SiUOXJYSO2imvmTHXUXyDl1wwvxfLc1mkGv+d9kajH9wNFd14mXKzm
+         7wKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbvzx8VweX5b7KHnx0wtFRm1PtCrpn+qXVCSPVDDDkp64LQoHMkf5wtP+EK4DBUozP9OtRyldrCocHcm4w9sNONUgo2O+KU78UY7nByo1dwXW6rv9Z
+X-Gm-Message-State: AOJu0YzXKVL/9ZuTHUNecGLdzsqd83R3/rzhtB+rORoOjrGpHUGCsM8/
+	zC+QcoImEugvw3T39HGK3USPY8jpINBb75eiYfE7/kzRr47tWMCKMdo+lkXm3u0+f4BZZZK/edc
+	3aOv4qYCY8d1kOj0SQG6ZU/5mdg1CKmun0e+q
+X-Google-Smtp-Source: AGHT+IHgM3rguJYL14K9UckD4Em4UxPoS2Bfon3v0V4uVdTZxWcfMzLDpbZIRRdaN18as3F/6rOM4AHNH7Y+8kV5TfM=
+X-Received: by 2002:a05:690c:f81:b0:67a:f3d4:d9c1 with SMTP id
+ 00721157ae682-69bf6f7f1abmr27499777b3.2.1723138368376; Thu, 08 Aug 2024
+ 10:32:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,44 +64,39 @@ References: <20240801171747.3155893-1-kpsingh@kernel.org> <CAHC9VhRO-weTJPGcrkgn
  <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
  <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
  <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
-In-Reply-To: <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+ <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com> <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
+In-Reply-To: <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 8 Aug 2024 13:19:31 -0400
-Message-ID: <CAHC9VhTp0oy51Lnn8O2ffCTAxpu02pZwKdeJtww-LxTFkgEv8w@mail.gmail.com>
+Date: Thu, 8 Aug 2024 13:32:37 -0400
+Message-ID: <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
 Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: KP Singh <kpsingh@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: KP Singh <kpsingh@kernel.org>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
 	peterz@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 5:57=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote:
+On Thu, Aug 8, 2024 at 12:43=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
 >
-> This seems very odd for especially ARM as I don't see this error when
-> I do it on the next branch. Possibly something in setup_arch is
-> initializing jump_tables indirectly between v6.11-rc2 and linux-next
-> and/or this is a warning that does not immediately splash up on the
-> dmesg.
->
-> Both ARM64 and x86 (the architectures I really have access to)
-> initializes jump_tables and x86 is the only architecture that does an
-> explicit static_call_init is x86 and it's already in the setup_arch
-> code.
->
-> https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/arm64/kernel/setup=
-.c#L295
-> https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/x86/kernel/setup.c=
-#L783
->
-> Guenter, I have updated my tree, could you give it another run please?
+> Also, there is a backtrace on ppc (also see below), but that is unrelated
+> to your patches and only seen now because I enabled the security modules
+> on that architecture. I'll bring that up with ppc maintainers.
 
-KP, once we've got the ordering/fix sorted out, can you make sure the
-reasoning is well documented in the commit description?  From what I'm
-reading here it doesn't seem like it's something obvious, so providing
-a detailed description will help us several years down the road when
-someone changes something and it breaks again :)
+Thanks for all your help testing this Guenter.  I see you've also
+already submitted an AppArmor fix for the endian issue, that's very
+helpful and I'm sure John will be happy to see it.
+
+Beyond this work testing the static call patches from KP, would you be
+willing to add a LSM configuration to your normal testing?  While most
+of the LSM subsystem should be architecture agnostic, there are
+definitely bits and pieces that can vary (as you've seen), and I think
+it would be great to get more testing across a broad range of
+supported arches, even if it is just some simple "does it boot" tests.
+
+Out of curiosity, do you have your test setup documented anywhere?  It
+sounds fairly impressive and I'd be curious to learn more about it.
 
 --=20
 paul-moore.com
