@@ -1,61 +1,61 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC5B29AF;
-	Thu,  8 Aug 2024 01:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E8C33E1;
+	Thu,  8 Aug 2024 01:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723080050; cv=none; b=s0+uI3k2XfCDy823DnK/t/m7i1jFyHlydgOkeoI8CRkEibmPaGgDAPqFwBTUDLGkMNYOi5VIDAEsqpXoBuZwVIyT1x65tbKAz2l4Ga5obeVxwHG/bNc50hbnkjKzaK3TpEHliEDnnf42bVXQaVF8LUixymc0SmKRKeEjD631cik=
+	t=1723081264; cv=none; b=DUmcDwSUkq7PGN6To4XHxJ0w2riDgm/uv8uCGy3I7NYBANbzD63o3r/765NYzcNUozXKzn3/hWywVqC2o/93p54tybuoZyvbvrjjv7YRcUP51WIyeon+pIZFRscAZTFhveW8dWeeTt3m3dQGRLFfzP/qjY+6VgXiBZ/DY8OpWMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723080050; c=relaxed/simple;
-	bh=PiTMVtFCvUkRXQc4rHXnqEKEWQL1hazew2PlJGnCwXQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oddFMqtZq2oB4Vs9o+K9t/Zzz1bZJZU33SReefIttP187Of76PTwiu4Mk9339wQb3Y2JRq9sPhBJs4rR1V3GLI3Y8GDTWfo/354AE+3clKPbhhonKJgW79yWYQr7/4pPANUK4fWM13Q1WRqz4Fa6u9oLNUra5hlqovLsWucC5ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JXjv2xvY; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1723081264; c=relaxed/simple;
+	bh=IEAILzpzDQJbvJnA3zj3LZ+xLy+KZC9xEGdMZe9fyQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OiogV+mJ2wg+Pz4n1FH/iiRgYN1KeS67k3NAjEO5nQYmFHM+FRenvi3evH3GsUjbqso3R0XU8kTbKWvc3Em3YjlOExf2vThD9en9dxmun92bs0/UVTo2qRCQHBVr9nqnCxF6STqIO+CVPqZF51ko2i+V/BgFGM4QTkCNXCBVzXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DeD39hHi; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JXjv2xvY"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7a1843b4cdbso329774a12.2;
-        Wed, 07 Aug 2024 18:20:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DeD39hHi"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso389076b3a.2;
+        Wed, 07 Aug 2024 18:41:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723080048; x=1723684848; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=aA797QJuINXSA1D3rRoEwcKnwowbHzQO0G48HEPm+uE=;
-        b=JXjv2xvYMjBI3U25TykASKDWqoadTSQDIt1gfiiSsXWWYuQ936nyY2e9I53nAlpxrF
-         rQLHdHNKW6D7CNDyJkSVCZTAPj7ifrfCVXwSqdgYPg/IAfc0rV99zai/8L2AFMptrJq4
-         ApCki6eravXUaz1dKQFU+AKAPo9QKtei6WRRw5iInKWqsjVGpcI0ZXhkHNCEnlJZisgB
-         N+iuKfOAoYcD5XX3FNILaNbir1kbp8YPlq0QRONOsw1tJ04mgxTX8/vbH5BmjL/LVc8G
-         zxJgAW6D9QqNS1/9OqAU4qnkRE2xifGQkx1u7YC6K3tYo0RKJLdOLG1kNN+AL4aHHyOX
-         gqDg==
+        d=gmail.com; s=20230601; t=1723081262; x=1723686062; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=nglXbj3cjozR0F0kRJiW+Gb9pKTJXi/g+vFQQRkFt/8=;
+        b=DeD39hHi+P85SHLzR+EmbGxNOu0f1uCIgDa6kIIrhzhs7qP4K538TLmv7aRnstTzBR
+         ulQx/FsoUSOO/Jy73tM60hm7rGN1CkqnWNVY346sG3WY4iGgoRlZotEplO1io2RB/Mng
+         +tkTr6HKAc1YMyGuuV4Pgvl36sD2K23Ze+aeTyuuYRh2+44liB9b6dyqMS8MaKZoWA/+
+         U/rbg84+TP0mXmxz7NeElK3yAyUzLxtyuljgmLU/q3uEozQ68Tc4WCW6WZM/Y3CZOnNs
+         OATngyODtvj/D8ns1V9tgCAaFmVo8weK8wdFxqVpMCSK0rirFpc1v+U2Ght93TP/djM3
+         syFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723080048; x=1723684848;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1723081262; x=1723686062;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aA797QJuINXSA1D3rRoEwcKnwowbHzQO0G48HEPm+uE=;
-        b=s5ALS+GOfro9TldBJ1yKVuADOWnVjAejdEsHhginFziTuq+KnES1H/xVFEwWWpxlCY
-         pHFMQL0g5HZuj02kYfBqXHQyqvyxRTKkbZMUvNlqMqPxdAOYz9cHYJFjIcRGcEe4uQaV
-         p1xywNTEc6Cl6G3o7skulfLcIrXzKsYyvMRTJHfD0V8F7c39hClhIYqhCINKwd7i9d72
-         xb58YvCtjQ6gP6YuYdyTObxZnLycvgr/XE+sDzRHBRU5TTb7b2HlGnDkl/H33uGM1ELE
-         8jmNXmGcViD7g8vqg5nNLD3W3bo1ShfBhLXLLONUMXa/8h1/WU86Bxltvnj+yfMo6Ma6
-         UGDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaPZMTRUu7Gu4o9th+/KN3fd0EIZP4Q9jyoEILGJqNIfj+uFFCyNc3D3ll79JprBdEjm7HN1tXYR2HjBvXSWIS9T6bKmj+hyFAqpS4clGYKCZqA2fwA4TgU9OrDQ/EZBPHJJkWrka0eFH80EkcXLqVvPlM
-X-Gm-Message-State: AOJu0YweHyfntcD7GbnBlQdnviMAb/FVkR57NCww4O+lXehapaVyHe+I
-	Prqoc1jR+jJL346avCB2Vsbb8b0qgdo6NowoHe9ucZBzK0t055l/
-X-Google-Smtp-Source: AGHT+IElPqYXQ7pUX8RnEnFbOTe7S61PpEsGnj9Jo5JNI7EzY0r+FWro5U0oNZnvbr6to2UAEHVDFQ==
-X-Received: by 2002:a05:6a20:6a06:b0:1c6:ba8b:1e2e with SMTP id adf61e73a8af0-1c6fce8351emr331353637.1.1723080047959;
-        Wed, 07 Aug 2024 18:20:47 -0700 (PDT)
+        bh=nglXbj3cjozR0F0kRJiW+Gb9pKTJXi/g+vFQQRkFt/8=;
+        b=oQnSkpRxKDATJC9nQUyBRy2hy0j9yE/GywaPX0QwTv12WEjopf0/hSEtIMb5T8NR6G
+         G5in8f8ybmzl0352J9w2VijnikajsUv73vs9d9Cpl18TLPtSCpiFN4L1YcwVxUOG7ZtK
+         +YHGVt6M5xITcw5Lx2CL2O8Ii9iuzjaVScJ2mwfKmTyaDAdBXKc7esihdIyrw9VVzBBP
+         YuPun/5E75cYHeM4GxFqpdjQK93LcjG0cvV3fIGjWSVc/AKPj8VehzTjdBsejR4CcrOt
+         ja4LIZlBMBjVj8fEAq2TTR47OJngdZ/Z+Fp50ZMHocy6Rw+jwPTEt9NAhJGB+n/U4+0I
+         6K8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUu+iQ7QmWUfoDkP0DR6TMFn1YimvxTX5Oz9JiqJRvaKSTUgXDgZa34ntd1xPj4zle09XsSZdaKwfi2egc=@vger.kernel.org, AJvYcCVxaHagwrW83XKl2RFIaLVkmb12G0PORvHqWF5Li+bp5YCpYt5udefIRn3EfBTUMTycVel//YQNwjxI844zd4LQ7itcKqcL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO8HHD86i+GlMmXz58Lj4TSN1wXTA5nUnWWHoLVndWhE7a28sC
+	8gbn0kOSWQHjq0rb6i2+qwmsETGQkOKcBUsWkuDXP0IrgKB9Yior
+X-Google-Smtp-Source: AGHT+IEbLVCrpMUHmSKmWF6wukXtGIGPDRB/vDQrnMvPyvbSDYUiu6cZrfHtkmt/b5CQMgCyEagylg==
+X-Received: by 2002:a05:6a20:a11c:b0:1c0:e8a3:dbfa with SMTP id adf61e73a8af0-1c6fce838f7mr414312637.2.1723081261630;
+        Wed, 07 Aug 2024 18:41:01 -0700 (PDT)
 Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2e7421sm128109b3a.148.2024.08.07.18.20.46
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb20a03csm144206b3a.35.2024.08.07.18.40.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 18:20:47 -0700 (PDT)
+        Wed, 07 Aug 2024 18:41:00 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2c104e45-03f7-4ef3-ae42-989b67506a54@roeck-us.net>
-Date: Wed, 7 Aug 2024 18:20:45 -0700
+Message-ID: <9216940f-cee5-402e-a7f5-71e1df52f452@roeck-us.net>
+Date: Wed, 7 Aug 2024 18:40:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -63,10 +63,9 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: KP Singh <kpsingh@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Nathan Chancellor <nathan@kernel.org>,
+To: Paul Moore <paul@paul-moore.com>
+Cc: KP Singh <kpsingh@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
  linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
  bp@alien8.de, sfr@canb.auug.org.au, peterz@infradead.org
 References: <20240801171747.3155893-1-kpsingh@kernel.org>
@@ -78,8 +77,9 @@ References: <20240801171747.3155893-1-kpsingh@kernel.org>
  <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
  <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
  <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net>
- <CACYkzJ5qSe7f8xPr11dDUjQisbcc3wrC1buJSw9VMRL8MKm6xw@mail.gmail.com>
+ <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
 Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
 Autocrypt: addr=linux@roeck-us.net; keydata=
  xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
  RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
@@ -123,13 +123,12 @@ Autocrypt: addr=linux@roeck-us.net; keydata=
  WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
  HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
  mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CACYkzJ5qSe7f8xPr11dDUjQisbcc3wrC1buJSw9VMRL8MKm6xw@mail.gmail.com>
+In-Reply-To: <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 8/7/24 17:40, KP Singh wrote:
-> On Thu, Aug 8, 2024 at 2:34 AM Guenter Roeck <linux@roeck-us.net> wrote:
->>
+On 8/7/24 18:18, Paul Moore wrote:
+> On Wed, Aug 7, 2024 at 8:34 PM Guenter Roeck <linux@roeck-us.net> wrote:
 >> On 8/7/24 16:43, Paul Moore wrote:
 >>> On Wed, Aug 7, 2024 at 6:45 PM KP Singh <kpsingh@kernel.org> wrote:
 >>>> On Wed, Aug 7, 2024 at 10:45 PM Paul Moore <paul@paul-moore.com> wrote:
@@ -187,23 +186,36 @@ On 8/7/24 17:40, KP Singh wrote:
 >> to provide any useful signals. I can handle a patchset either on top of v6.10
 >> or v6.11-rc2 (meaning 6.10 passes through all my tests, and I can apply and
 >> revert patches to/from 6.11-rc2 to get it to pass).
->>
+> 
+> Thanks Guenter, it looks like KP already make up a branch for you to
+> pull, but if you have any problems or need something different let us
+> know.
+> 
 >> Question of course is if that really helps: I don't specifically test features
 >> such as LSM or BPF.
 > 
-> The changes would not be specific to BPF LSM, we just want to check if
-> our init/main.c refactoring breaks some arch stuff.
+> In this particular case we are most interested in testing the LSM
+> initializing code so I don't believe you need to worry much about
+> LSM/BPF configuration, it's a matter of ensuring the different arches
+> are able to boot without any panics/warnings/etc.
+> 
+> There is some Kconfig needed, KP provided a good snippet earlier in
+> this thread, the relevant portion is copied below:
+> 
+> % cat .config | grep -i LOCKDOWN
+> CONFIG_SECURITY_LOCKDOWN_LSM=y
+> CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=y
+> CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,bpf"
 > 
 
-Ok.
+Ah, that might be a bit more challenging. I don't explicitly enable
+security LSMs, so just building and loading them on various architectures
+might be problematic even without the changes discussed here.
 
-> I rebased my patches and pushed a branch based on v6.11-rc2:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/kpsingh/linux.git/log/?h=static_calls
-> 
-
-I merged your branch into my testing branch and pushed it into my testbed.
-It will run tonight. I'll send you the results tomorrow morning.
+I'll enable all security modules referenced above in my test builds.
+If we are lucky everything will pass; otherwise I may need a couple
+of runs to establish a baseline.
 
 Thanks,
 Guenter
+
