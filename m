@@ -1,340 +1,171 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635C9168B8
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Aug 2024 16:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCFB1CA94;
+	Fri,  9 Aug 2024 17:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220192; cv=none; b=ZwU+wriE39snhxNN+69NN4hFEq/ADFIsM186XDDkFGu6P2weJoKRYCFyvX34cOyr/2jNCchdpxPcQgdEAFFNmCyDqsq9bjQi6xyMGKOxsVeuktQD2m5EjoAb1PFQgdqhUjMSaRoo/w4DT/L8Vel4TMPkBOmQhkeyfsohKw/RCAk=
+	t=1723226061; cv=none; b=hh3QuE9NmJGYdIN8B+HjhhfOAA59x/GFU1kDDOae8KPoXa6KYN+GstwgaO5VgMcd6LqKF2+BNRGcZZUX+chdZbIfzi4Cw241pFFRRIccDjTtKkOMrkQlJHruwhPGrkQ7GzBZARPV8mEApMmPFsRDKETkpJiCIw77rg4rHWvbXJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220192; c=relaxed/simple;
-	bh=vtsj5wvSoVll1YUf1x6rxnBfwekwZDkX1NKUQ+hmB/c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLy70TowT/ZFaWKbqrk9of3wwrysld4cXt7z1gs0NJehaAD4sEjPiLgnZ1JMTI/3GByV+mAoTV5IIvY0+ve7cf2qYe9WP6uVxkIEIawcsP2RQsohfl1fvt3HZ0FND0VU7ICFmGdHQRPa9/oS62iM1YCzcIp333ef/0jGBufN72o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YJZcBUS5; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1723226061; c=relaxed/simple;
+	bh=w9dwPrdglNjb4CJuuomMjEb9PTsCXrE6sDFhrWPwxbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOKwKi+iutcS8YAhYFJPLAGjvsABfcZ+cMXp64uOw53jC0Hw6q9duV60w6u7V4zQT6qHcMMlHl2mpkuXYP/CnYFtmev8fw4SiMYbhMpEepjRvMVG5U0U3RM16yUI99VVB1kiE54oZqA5dZRKoKm88XmrV0tDA5RFR90TFIc/hJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXnV+S6E; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YJZcBUS5"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so11652a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Aug 2024 09:16:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXnV+S6E"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc569440e1so21670365ad.3;
+        Fri, 09 Aug 2024 10:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723220189; x=1723824989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xZYpvg30KBqeml0aLfdzOyX6A2jzs5hukakJb6/9ItY=;
-        b=YJZcBUS5oJ58JufdRA6QfpXlO1cBY51Uf/arsSUYI2jgWkzlmTYD/TJ/W46o5/5i57
-         MC2PMvlGxWttMVSfNmuFpAZ33PR40ZMFOFUh4tJTYSYkw4bHH6ze8IPUtdNeYyoIn/6q
-         FsD0ckR0gLBsoB0UEfENMyqwZ65EOTYybgs/nBNxSKEBe3YplJYD7oe2Io9Ml6axQ7N1
-         92pFGy6MeglYnusIntslP0zvMstIz60580+tq+Er6fp6SWgGsTtWcI3yoMeYROxITXKC
-         FO6L4vOu4EOhFH6EBhbc4edvlVWvfaHLoXJaa1CBdaDbWViKrvX6cmDsA5H4eggBT2I6
-         oFSw==
+        d=gmail.com; s=20230601; t=1723226059; x=1723830859; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=i79kJL7es86O5bR3t8PxNT/TfJeYLRkUdgp0cZ8YJDQ=;
+        b=HXnV+S6EW6Hv4B2VTlkxbFrPTbJF5HcrFJAFzYwCm2sOQuVkIPdMhIkD/UqzDAju96
+         tRX21ZhWigu7p78DN3gpQLeJUjf7mwPuyqobpInl8e35XFTe7QfAPhzoor6huYccemE9
+         dXOFIIFEcsLd/amI6q1heHgbQbNDU1awY4dvc7inW3eowB+G8j8xwI1TfI6wgeeUGowK
+         fxHXFWXhvitiQ1HfwEju5VHrrF/DPC3K7ytSfUZQRooY65UPcmEXJ0LYwZ65s9OSWGHk
+         NC+K2hifqqWP91u+HLNpQR4CLzVbIByY3bBBLP8pVBp+IwNKIlpfZDCDOY0fkFk86o5w
+         cKUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723220189; x=1723824989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xZYpvg30KBqeml0aLfdzOyX6A2jzs5hukakJb6/9ItY=;
-        b=TzTHkyxBWKZMXaHXMDqFpNghzg/JqfS2gDJJ/v8y+HwK0kQW4rdoxGkpVLBiXw22qO
-         ylVaLOajE57CPkaEQM9agsbpWf86gDjZJ5gD7lDVUvdRQPswfLCvPOqdQuKK+9CA+ELT
-         9tVeI7fM/maACX89dVn5+CbJXF0r7VxJUBzrPYcRrTDq7lVpWZYorMwhH415P3CFTNAZ
-         IMB6qtp6USiQQXOrRQuggvj5wZHDlAFbDGu5eFlazKX1Gv3Uv/vsUqheEOFCE4xV2hGE
-         dWVn7FE1Y92JTdq9GbY6GILLFbPQuKcrgmQnQsbI5gI28zN6NdafX62FDGmqNsMvPt4u
-         cVgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlbwSSDhRTIEr7fOewrVxuulr6DujsdLYzWfzg0moQBVOZlRTBI+6cqCZIg2rBzQnEsD9oBdq6y0sX5mCpHl+gGflEUI6BwpHUBhZ3FAjJGMTXjWA4
-X-Gm-Message-State: AOJu0Ywdq0ngvICHbW9SURLK8vs75HUsTolOqQtPRIupQcQ5bckYfceB
-	+Kw1erBJFH1tQTRozrt7euNHK+pGnrQADs2f3kHr7zidO2cweFDFSFRYFSPug5TRj2K6ylS+YL/
-	EO//TSngD0XtnKX4JskL+bcGPSGOFACr12Oa6
-X-Google-Smtp-Source: AGHT+IGLV2f7xz3HiASPgoXucNkkjSY0HlUpcr+1pRB8vDlxtZCp/4YEgM5Ck/9IgOs88u6eub6Gmvxv+P8wO7+gNTA=
-X-Received: by 2002:a05:6402:40cc:b0:5a7:7f0f:b70b with SMTP id
- 4fb4d7f45d1cf-5bbbc38adbemr223144a12.0.1723220188246; Fri, 09 Aug 2024
- 09:16:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723226059; x=1723830859;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i79kJL7es86O5bR3t8PxNT/TfJeYLRkUdgp0cZ8YJDQ=;
+        b=e4Cj93V3FQ4DmfOPcwQfrcpqPvFnSKmXY3MpsEg8C64lk20lFOZVLIeVsfjceH6iYs
+         lTaS3WnlXj1ndWTS6mie1jDqGcIhvuRy95f7LinskpReXvWow80Iw9MDhL68KGquPb76
+         BYnuOnQuP/DYTPtE9uHWJP6zKl0n/hpFansOiLVPmgusnquLW8ZdgC3f+xHqGSKd/cNL
+         SAHMiWLo2JKslpn2vjFe9asfE5IMlNMDoIrplCSuDFbcGtkFJOaU63Fu5dZJVvqqieKh
+         OzflKltsoXMHfVDEf4XyQtC8zQcmpt7YNxcV3gFb44FYxLw7O9SMuxtZW5mNp1Z3l9Gs
+         g2YA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGarJA/qCvhunQfAxX4MJsOUict2xOPXiQxn1ARjvK1APvcWMaShlPexKeFtgjDyZJfdgYhVTa2xJRaSziBl/fJLdcQnVUf/he8jl8hRhAlAHRrhw9Tr+WFYdiKblVjj6Pt8jfApXU/QHIrJ7/EAUhXlHBPfWXTC3yR3OBFFhyp0YZzbAd4l0nGQ6X
+X-Gm-Message-State: AOJu0YweE/d+zQKGY/ApWKBJHZUStdEvFdf5aYk3F/AAyWFIvv9iDNAS
+	c83CwhovPXjyBNOLJjZBmDasFquJyCNjwxSr9zdmdU+OBm/SRXMO
+X-Google-Smtp-Source: AGHT+IF6TgRVbkkS/8fWCgztwP8ah68LpZDibl4Zah5cJzKVfLC4DTZHFu319cogK1EsbydUK/ROvw==
+X-Received: by 2002:a17:902:d2ce:b0:1fd:9d0c:9996 with SMTP id d9443c01a7336-200ae589d28mr29785955ad.35.1723226059245;
+        Fri, 09 Aug 2024 10:54:19 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba3ffc7sm300555ad.244.2024.08.09.10.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 10:54:18 -0700 (PDT)
+Date: Fri, 9 Aug 2024 11:54:16 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <ZrZXyGLYSMnpMBfS@tahera-OptiPlex-5000>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+ <20240803.iefooCha4gae@digikod.net>
+ <20240806.nookoChoh2Oh@digikod.net>
+ <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
+ <20240807.mieloh8bi8Ae@digikod.net>
+ <CAG48ez3_u5ZkVY31h4J6Shap9kEsgDiLxF+s10Aea52EkrDMJg@mail.gmail.com>
+ <20240807.Be5aiChaf8ie@digikod.net>
+ <ZrVR9ni4qpFdF0iA@tahera-OptiPlex-5000>
+ <20240809.gooHaid7mo1b@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net> <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net> <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
- <20240719.sah7oeY9pha4@digikod.net> <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
- <20240723.beiTu0qui2ei@digikod.net> <CALmYWFtHQY41PbRwGxge1Wo=8D4ocZfQgRUO47-PF1eJCEr0Sw@mail.gmail.com>
- <20240809.Taiyah0ii7ph@digikod.net>
-In-Reply-To: <20240809.Taiyah0ii7ph@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Fri, 9 Aug 2024 09:15:49 -0700
-Message-ID: <CALmYWFvPxWyYdGvCcTPYrUtC0DVMGcmM+JsAe0KGE+3p2Jb=Ug@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240809.gooHaid7mo1b@digikod.net>
 
-On Fri, Aug 9, 2024 at 1:45=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> On Mon, Aug 05, 2024 at 11:35:09AM -0700, Jeff Xu wrote:
-> > On Tue, Jul 23, 2024 at 6:15=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
-> > > > On Fri, Jul 19, 2024 at 8:04=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
+On Fri, Aug 09, 2024 at 10:49:17AM +0200, Mickaël Salaün wrote:
+> On Thu, Aug 08, 2024 at 05:17:10PM -0600, Tahera Fahimi wrote:
+> > On Wed, Aug 07, 2024 at 04:44:36PM +0200, Mickaël Salaün wrote:
+> > > On Wed, Aug 07, 2024 at 03:45:18PM +0200, Jann Horn wrote:
+> > > > On Wed, Aug 7, 2024 at 9:21 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > On Tue, Aug 06, 2024 at 10:46:43PM +0200, Jann Horn wrote:
+> > > > > > I think adding something like this change on top of your code would
+> > > > > > make it more concise (though this is entirely untested):
+> > > > > >
+> > > > > > --- /tmp/a      2024-08-06 22:37:33.800158308 +0200
+> > > > > > +++ /tmp/b      2024-08-06 22:44:49.539314039 +0200
+> > > > > > @@ -15,25 +15,12 @@
+> > > > > >           * client_layer must be a signed integer with greater capacity than
+> > > > > >           * client->num_layers to ensure the following loop stops.
+> > > > > >           */
+> > > > > >          BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+> > > > > >
+> > > > > > -        if (!server) {
+> > > > > > -                /*
+> > > > > > -                 * Walks client's parent domains and checks that none of these
+> > > > > > -                 * domains are scoped.
+> > > > > > -                 */
+> > > > > > -                for (; client_layer >= 0; client_layer--) {
+> > > > > > -                        if (landlock_get_scope_mask(client, client_layer) &
+> > > > > > -                            scope)
+> > > > > > -                                return true;
+> > > > > > -                }
+> > > > > > -                return false;
+> > > > > > -        }
 > > > > >
-> > > > > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
-> > > > > > On Fri, Jul 19, 2024 at 1:45=E2=80=AFAM Micka=C3=ABl Sala=C3=BC=
-n <mic@digikod.net> wrote:
-> > > > > > >
-> > > > > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > > > > > > > On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=
-=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > >
-> > > > > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > > > > > > > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sa=
-la=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wro=
-te:
-> > > > > > > > > > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=AB=
-l Sala=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check i=
-f a file would be
-> > > > > > > > > > > > > allowed for execution.  The main use case is for =
-script interpreters and
-> > > > > > > > > > > > > dynamic linkers to check execution permission acc=
-ording to the kernel's
-> > > > > > > > > > > > > security policy. Another use case is to add conte=
-xt to access logs e.g.,
-> > > > > > > > > > > > > which script (instead of interpreter) accessed a =
-file.  As any
-> > > > > > > > > > > > > executable code, scripts could also use this chec=
-k [1].
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > This is different than faccessat(2) which only ch=
-ecks file access
-> > > > > > > > > > > > > rights, but not the full context e.g. mount point=
-'s noexec, stack limit,
-> > > > > > > > > > > > > and all potential LSM extra checks (e.g. argv, en=
-vp, credentials).
-> > > > > > > > > > > > > Since the use of AT_CHECK follows the exact kerne=
-l semantic as for a
-> > > > > > > > > > > > > real execution, user space gets the same error co=
-des.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > So we concluded that execveat(AT_CHECK) will be use=
-d to check the
-> > > > > > > > > > > > exec, shared object, script and config file (such a=
-s seccomp config),
-> > > > > > >
-> > > > > > > > > > > > I think binfmt_elf.c in the kernel needs to check t=
-he ld.so to make
-> > > > > > > > > > > > sure it passes AT_CHECK, before loading it into mem=
-ory.
-> > > > > > > > > > >
-> > > > > > > > > > > All ELF dependencies are opened and checked with open=
-_exec(), which
-> > > > > > > > > > > perform the main executability checks (with the __FMO=
-DE_EXEC flag).
-> > > > > > > > > > > Did I miss something?
-> > > > > > > > > > >
-> > > > > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binf=
-mt in the kernel.
-> > > > > > > > > > The app can choose its own dynamic linker path during b=
-uild, (maybe
-> > > > > > > > > > even statically link one ?)  This is another reason tha=
-t relying on a
-> > > > > > > > > > userspace only is not enough.
-> > > > > > > > >
-> > > > > > > > > The kernel calls open_exec() on all dependencies, includi=
-ng
-> > > > > > > > > ld-linux-x86-64.so.2, so these files are checked for exec=
-utability too.
-> > > > > > > > >
-> > > > > > > > This might not be entirely true. iiuc, kernel  calls open_e=
-xec for
-> > > > > > > > open_exec for interpreter, but not all its dependency (e.g.=
- libc.so.6)
-> > > > > > >
-> > > > > > > Correct, the dynamic linker is in charge of that, which is wh=
-y it must
-> > > > > > > be enlighten with execveat+AT_CHECK and securebits checks.
-> > > > > > >
-> > > > > > > > load_elf_binary() {
-> > > > > > > >    interpreter =3D open_exec(elf_interpreter);
-> > > > > > > > }
-> > > > > > > >
-> > > > > > > > libc.so.6 is opened and mapped by dynamic linker.
-> > > > > > > > so the call sequence is:
-> > > > > > > >  execve(a.out)
-> > > > > > > >   - open exec(a.out)
-> > > > > > > >   - security_bprm_creds(a.out)
-> > > > > > > >   - open the exec(ld.so)
-> > > > > > > >   - call open_exec() for interruptor (ld.so)
-> > > > > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so goi=
-ng through
-> > > > > > > > the same check and code path as libc.so below ?
-> > > > > > >
-> > > > > > > open_exec() checks are enough.  LSMs can use this information=
- (open +
-> > > > > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user sp=
-ace
-> > > > > > > request.
-> > > > > > >
-> > > > > > Then the ld.so doesn't go through the same security_bprm_creds(=
-) check
-> > > > > > as other .so.
+> > > > > This loop is redundant with the following one, but it makes sure there
+> > > > > is no issue nor inconsistencies with the server or server_walker
+> > > > > pointers.  That's the only approach I found to make sure we don't go
+> > > > > through a path that could use an incorrect pointer, and makes the code
+> > > > > easy to review.
+> > > > 
+> > > > My view is that this is a duplication of logic for one particular
+> > > > special case - after all, you can also end up walking up to the same
+> > > > state (client_layer==-1, server_layer==-1, client_walker==NULL,
+> > > > server_walker==NULL) with the loop at the bottom.
+> > > 
+> > > Indeed
+> > > 
+> > > > 
+> > > > But I guess my preference for more concise code is kinda subjective -
+> > > > if you prefer the more verbose version, I'm fine with that too.
+> > > > 
+> > > > > > -
+> > > > > > -        server_layer = server->num_layers - 1;
+> > > > > > -        server_walker = server->hierarchy;
+> > > > > > +        server_layer = server ? (server->num_layers - 1) : -1;
+> > > > > > +        server_walker = server ? server->hierarchy : NULL;
 > > > > >
-> > > > > Indeed, but...
-> > > > >
-> > > > My point is: we will want all the .so going through the same code
-> > > > path, so  security_ functions are called consistently across all th=
-e
-> > > > objects, And in the future, if we want to develop additional LSM
-> > > > functionality based on AT_CHECK, it will be applied to all objects.
-> > >
-> > > I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, whic=
-h
-> > > already is the common security check for all executable dependencies.
-> > > As extra information, they can get explicit requests by looking at
-> > > execveat+AT_CHECK call.
-> > >
-> > I agree that security_file_open + __FMODE_EXEC for checking all
-> > the .so (e.g for executable memfd) is a better option  than checking at
-> > security_bprm_creds_for_exec.
-> >
-> > But then maybe execveat( AT_CHECK) can return after  calling alloc_bprm=
- ?
-> > See below call graph:
-> >
-> > do_execveat_common (AT_CHECK)
-> > -> alloc_bprm
-> > ->->do_open_execat
-> > ->->-> do_filp_open (__FMODE_EXEC)
-> > ->->->->->->> security_file_open
-> > -> bprm_execve
-> > ->-> prepare_exec_creds
-> > ->->-> prepare_creds
-> > ->->->-> security_prepare_creds
-> > ->-> security_bprm_creds_for_exec
-> >
-> > What is the consideration to mark the end at
-> > security_bprm_creds_for_exec ? i.e. including brpm_execve,
-> > prepare_creds, security_prepare_creds, security_bprm_creds_for_exec.
->
-> This enables LSMs to know/log an explicit execution request, including
-> context with argv and envp.
->
-> >
-> > Since dynamic linker doesn't load ld.so (it is by kernel),  ld.so
-> > won't go through those  security_prepare_creds and
-> > security_bprm_creds_for_exec checks like other .so do.
->
-> Yes, but this is not an issue nor an explicit request. ld.so is only one
-> case of this patch series.
->
-> >
-> > > >
-> > > > Another thing to consider is:  we are asking userspace to make
-> > > > additional syscall before  loading the file into memory/get execute=
-d,
-> > > > there is a possibility for future expansion of the mechanism, witho=
-ut
-> > > > asking user space to add another syscall again.
-> > >
-> > > AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
-> > > LSM policies) could enforce other restrictions following the same
-> > > semantic.  We need to keep in mind backward compatibility.
-> > >
-> > > >
-> > > > I m still not convinced yet that execveat(AT_CHECK) fits more than
-> > > > faccessat(AT_CHECK)
-> > >
-> > > faccessat2(2) is dedicated to file permission/attribute check.
-> > > execveat(2) is dedicated to execution, which is a superset of file
-> > > permission for executability, plus other checks (e.g. noexec).
-> > >
-> > That sounds reasonable, but if execveat(AT_CHECK) changes behavior of
-> > execveat(),  someone might argue that faccessat2(EXEC_CHECK) can be
-> > made for the executability.
->
-> AT_CHECK, as any other syscall flags, changes the behavior of execveat,
-> but the overall semantic is clearly defined.
->
-> Again, faccessat2 is only dedicated to file attributes/permissions, not
-> file executability.
->
-> >
-> > I think the decision might depend on what this PATCH intended to
-> > check, i.e. where we draw the line.
->
-> The goal is clearly defined in the cover letter and patches: makes it
-> possible to control (or log) script execution.
->
-> >
-> > do_open_execat() seems to cover lots of checks for executability, if
-> > we are ok with the thing that do_open_execat() checks, then
-> > faccessat(AT_CHECK) calling do_open_execat() is an option, it  won't
-> > have those "unrelated" calls  in execve path, e.g.  bprm_stack_limits,
-> > copy argc/env .
->
-> I don't thing there is any unrelated calls in execve path, quite the
-> contrary, it follows the same semantic as for a full execution, and
-> that's another argument to use the execveat interface.  Otherwise, we
-> couldn't argue that `./script.sh` can be the same as `sh script.sh`
->
-It is a good point from the  "scrip.sh/exec" perspective that we want
-it to go through the same execve path.
-The reasoning is not obvious from the ".so" which doesn't go through
-stack/env check.
-Since execveat(AT_CHECK) wants to cover both cases, it is fine.
-
-> The only difference is that user space is in charge of parsing and
-> interpreting the file's content.
->
-> >
-> > However, you mentioned superset of file permission for executability,
-> > can you elaborate on that ? Is there something not included in
-> > do_open_execat() but still necessary for execveat(AT_CHECK)? maybe
-> > security_bprm_creds_for_exec? (this goes back to my  question above)
->
-> As explained above, the goal is to have the same semantic as a full
-> execveat call, taking into account all the checks (e.g. stack limit,
-> argv/envp...).
->
-I'm fine with this, thanks for taking time to explain the design.
-
-Regarding the future LSM based on this patch series:
-For .so,  security_file_open is recommended for LSM.
-For scripts/exec (that needs a full exec code path),
-security_file_open and security_bprm_creds_for_exec can both be used.
-
-Thanks
-Best regards,
--Jeff
+> > > > > We would need to change the last loop to avoid a null pointer deref.
+> > > > 
+> > > > Why? The first loop would either exit or walk the client_walker up
+> > > > until client_layer is -1 and client_walker is NULL; the second loop
+> > > > wouldn't do anything because the walkers are at the same layer; the
+> > > > third loop's body wouldn't be executed because client_layer is -1.
+> > > 
+> > > Correct, I missed that client_layer would always be greater than
+> > > server_layer (-1).
+> > > 
+> > > Tahera, could you please take Jann's proposal?
+> > Done.
+> > We will have duplicate logic, but it would be easier to read and review.
+> 
+> With Jann's proposal we don't have duplicate logic.
+Still the first two for loops apply the same logic for client and server
+domains, but I totally understand that it is much easier to review and
+understand.
+> > > 
+> > > > 
+> > > > The case where the server is not in any Landlock domain is just one
+> > > > subcase of the more general case "client and server do not have a
+> > > > common ancestor domain".
+> > > > 
+> > > > > >
+> > > > > >          /*
+> > > > > >           * Walks client's parent domains down to the same hierarchy level as
+> > > > > >           * the server's domain, and checks that none of these client's parent
+> > > > > >           * domains are scoped.
+> > > > > >
+> > > > 
+> > 
