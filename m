@@ -1,85 +1,98 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116972599
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 19:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863E317A5B5
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 19:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723491267; cv=none; b=PM8asbdhMVcrN3vAkq9YaBZZrXlYSPe9aE/YRPyZcLaR58tu+WvZMi8BbCMGmosKjOy+WfiMfvfqPay0rfpnOF1LfKvu52hOq9mBacXrhMuWvP5b7l0iSfDTy1ZHZdHVL/RcER8/I0G+ha8ivtxoNwl3nQl/cHKXsbmJEnJ7PhI=
+	t=1723491445; cv=none; b=JZQ10Eurfd8jXWCsgC1L1jcweqrJXKTa7Hls9k1fVnXPpx+oXNb48TGanG75uRAEweYz3Niy9iomY6meJnSssRxrzN/peP+CyMhoYRwhrluZViA+Rm/M7T6HPwE4C0XOSA5+od742EN0KsoCeWzG66jA/mAu+LS8LQ2nKTorRBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723491267; c=relaxed/simple;
-	bh=5ll/RnN5CSa3huloi/E7ODBFlk3+9udHnADQ2A9jSWE=;
+	s=arc-20240116; t=1723491445; c=relaxed/simple;
+	bh=Ee/lx/KaJjg9FUXRFp5zcIm6ZhPGSG4qyOR3WLor29s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=tCFFscDCU7zqSLB57cZpjgSd4gY076IhMQq75aWXATBK2PKvOdp9g5kIDvFWwqr1kCxt9b3teAMmU+usVWToCxi0CluVyS76FTYkqflGdRMSOK9wpM2s1oaHXpw1ey2t8NuVZB0at4AtgMlbKuYY1l3iKOqRI2eFnbf/f9ROsaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Pe1qq5YN; arc=none smtp.client-ip=209.85.219.172
+	 To:Content-Type; b=Jg6//PNUjaSFy9WMj4nb/dysHLgUihb7Lumvs0R2ltsY7CwgiuhiifUq671lzbZsxRfxdYTz687o/npmDuCxdZBtq3Tr/ItAgpCxKNTRWFsyy0bdtLfoalWXqE1WtP4g6yC3dgMo9+z784D8gCjjZt6j0n6kQBbnNeDinkh+N6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eGFG1cR7; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Pe1qq5YN"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0e6cbec8caso4464843276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 12:34:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eGFG1cR7"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e0ec934a1fdso2167062276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 12:37:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723491264; x=1724096064; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1723491442; x=1724096242; darn=vger.kernel.org;
         h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jn0bAMYBH/wp1bamvdW//YivlHMzsXTAiGRF/WgQc1Q=;
-        b=Pe1qq5YN9XOD0UV4XyAw8UDNNnEzjmmDt+0cBbuPBZ/uq8E1jQxaRUA5yUFbiMGQgA
-         zX3TBa6Fb+l5Pq3qMUmbXM/nVDD9yho9ieby9WS7ARcJoDxBcqcxkIpb+7od+tzoiq8w
-         m5PJDCYf2Tydcp8XJmnnyPz++ZvgZRzU2mIaAIJE5fay5ufrrnJhla1KYexNBPTnjNw4
-         9rUKAISU85bNANq7ratTQ+7v+eKjA3AJByDWzitMd3krFKntmh7F7SM6QvQ6ajQxgccV
-         H8+lO1t1rxtzqihTVUDKWEu0bBK8CQNKNjh/ezJ2t12svX3Ul8GnBrWUPr182KmNLxu+
-         gEfQ==
+        bh=PRXchTvscnk8lG+agBroPlH7oOuOBH7zuKSQ1dSsRZg=;
+        b=eGFG1cR7QbR/vFUmF/oU91n+2obiTNCUYBd81/1I7UpHfuiXfrPv2iYPmfoCskGLYN
+         dS67pAB1SK6xcMiGex/p0F6DWZsNM/3re5sgT9skCQRPm40lGcc0bFHQb7sIQyF1DN5U
+         MUSARF9HxMX1pUFmbeb32k6S+o5SlDveo+klo+L105HbQQj0EhjEb/KZqnQS7PjhVjE1
+         LPbj7M//qHd9jkyoc8kJ36Yl5c7MPaDqeNZ0brenPfGP5pcyGktFXMXSqnBcyPg+H7a6
+         CJxyAFUhC0Helt2qF7adaXX7bGMZOHyoVi8WZtrOBQueIPMrR6m50fX/ncdVqxNDsNoc
+         FYGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723491264; x=1724096064;
+        d=1e100.net; s=20230601; t=1723491442; x=1724096242;
         h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jn0bAMYBH/wp1bamvdW//YivlHMzsXTAiGRF/WgQc1Q=;
-        b=LmWP0lO+ojR3zoroz0UdLX2GMveiuGdwk4oaEGokYLFFK5c8GKshukvQqQ5Q3nx6P3
-         Sk1rkCpvkhfHVRmuuxTLjMl6h+IyoZCnkuHX6hoY10Tr1PLYaMd6MLoPS6GdqND7JLOA
-         lcuv6WC9hTyZpnatPDCPFSZjX+w3YgmDRkjDX89T+eDu0fbVozh0x3aZWp8KTcH57EaQ
-         14TKIpTv+fadpuHQfdhjMYgU8AHOMZz7aE6dZQerheg/1pncwDyG80Etj1AKOSxjQUDM
-         dF9opcyktgec+G07R8YCm1WN1Vh7Iv34B8HLyX0avwbyikU9W35waZYl2elJli30ysTT
-         rIHg==
-X-Gm-Message-State: AOJu0Yy13LZoZyS1tmT2sL+wSglai/YDCFZZ03y6i86uVmhVnI/k7C2v
-	tnsV9Thk9jTMIqm6p63ANpnUR1BBTddyotn/+tku/N9jkn1wjEJa+VSg8Gz51x4Y7q5eEAAFnAO
-	oqoGFY8kidD3ILtLL7txiRy/mvBvqtZrJa51y89gBt6cMXOk=
-X-Google-Smtp-Source: AGHT+IEupBIY2FNEz7fEuwpEEkicjxVvEygNcDGjD9uhhg92OcmQjsN1pRc4JVCPyKpfrTIEUFhPpy/KpcPrCiMfS18=
-X-Received: by 2002:a05:6902:982:b0:e0b:eb96:fd90 with SMTP id
- 3f1490d57ef6-e113d2902c5mr1711204276.45.1723491263871; Mon, 12 Aug 2024
- 12:34:23 -0700 (PDT)
+        bh=PRXchTvscnk8lG+agBroPlH7oOuOBH7zuKSQ1dSsRZg=;
+        b=WR5EgpqrjFVP+drT7vI/D7D9TNXB8D7aSrLRmkwoNkr43x+QylpUrdKq3xUCzCWt5y
+         GXGbvu1Sl7KuWCZ1BadgipjjeXMbZj677Tsn4YOCRxlEX4U6HroaXneYCKNXeARvtfS7
+         m8DYV9jeXRIm+GFC83engrExSVbAltpMvBf0Bl0wUZ6/62P/iYYGTd8qcb3rYhbexW3G
+         F96Sel7Jpbel9DnJdIMhOqJVihWJc5tNn4qU+ZL2fj81OirgH9lSjL3sIUWlC7r7CkyC
+         uJXxi0wE+fRL9lr85pOyP9AI2Svjf0RbPeu+0gpj+jWyT+VneFbJ1YpoeYHlAesyl9/w
+         YLzw==
+X-Gm-Message-State: AOJu0YwhumLYJMkP6peIcmcDYWu8vF+jYaHZf9zXm5/3/p2EY8vkXmVb
+	xL2OxGKFYQXLZAhoKJkzEsJ78gTsRpujHVAm0lvsqhSvcBEGVva+CLZ0dvDEj1X2Gc0LtqgshCv
+	m39NdlJrC7CGpSEkJKLJz83j++UvZMxVBreuJhCP3qfHD4ps=
+X-Google-Smtp-Source: AGHT+IHyvaH1YUBlfM5JdT1PeUi/jaJoQUERpm0wHuNiYQylnouO6V4zFj7lwJhYb7t8c6Bug7vrq5/xBkfd9ajaT58=
+X-Received: by 2002:a05:6902:18d0:b0:e03:5bca:aee6 with SMTP id
+ 3f1490d57ef6-e113d2bdac8mr2370289276.54.1723491442315; Mon, 12 Aug 2024
+ 12:37:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729215702.318099-2-paul@paul-moore.com>
-In-Reply-To: <20240729215702.318099-2-paul@paul-moore.com>
+References: <20240729215840.319398-2-paul@paul-moore.com>
+In-Reply-To: <20240729215840.319398-2-paul@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Aug 2024 15:34:13 -0400
-Message-ID: <CAHC9VhSbuK-MLt3uMxZ1MecfcNY_aQAR5CYox5fxGsr_QbZjCw@mail.gmail.com>
-Subject: Re: [PATCH] lsm: cleanup lsm_hooks.h
+Date: Mon, 12 Aug 2024 15:37:11 -0400
+Message-ID: <CAHC9VhTSsNkm2ULcW9Yo1e0zxHQEF2xcHFb=yiXvc34g8-4rTg@mail.gmail.com>
+Subject: Re: [PATCH] lsm: add the inode_free_security_rcu() LSM implementation hook
 To: linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 5:57=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+On Mon, Jul 29, 2024 at 5:58=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
 ote:
 >
-> Some cleanup and style corrections for lsm_hooks.h.
+> The LSM framework has an existing inode_free_security() hook which
+> is used by LSMs that manage state associated with an inode, but
+> due to the use of RCU to protect the inode, special care must be
+> taken to ensure that the LSMs do not fully release the inode state
+> until it is safe from a RCU perspective.
 >
->  * Drop the lsm_inode_alloc() extern declaration, it is not needed.
->  * Relocate lsm_get_xattr_slot() and extern variables in the file to
->    improve grouping of related objects.
->  * Don't use tabs to needlessly align structure fields.
+> This patch implements a new inode_free_security_rcu() implementation
+> hook which is called when it is safe to free the LSM's internal inode
+> state.  Unfortunately, this new hook does not have access to the inode
+> itself as it may already be released, so the existing
+> inode_free_security() hook is retained for those LSMs which require
+> access to the inode.
 >
+> Cc: stable@vger.kernel.org
+> Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/r/00000000000076ba3b0617f65cc8@google.com
 > Signed-off-by: Paul Moore <paul@paul-moore.com>
 > ---
->  include/linux/lsm_hooks.h | 82 +++++++++++++++++++--------------------
->  security/security.c       |  2 +-
->  2 files changed, 41 insertions(+), 43 deletions(-)
+>  include/linux/lsm_hook_defs.h     |  1 +
+>  security/integrity/ima/ima.h      |  2 +-
+>  security/integrity/ima/ima_iint.c | 20 ++++++++-----------
+>  security/integrity/ima/ima_main.c |  2 +-
+>  security/landlock/fs.c            |  9 ++++++---
+>  security/security.c               | 32 +++++++++++++++----------------
+>  6 files changed, 33 insertions(+), 33 deletions(-)
 
 Merged into lsm/dev.
 
