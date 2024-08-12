@@ -1,144 +1,162 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F09F15853B
-	for <linux-security-module@vger.kernel.org>; Sun, 11 Aug 2024 22:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F6461FE9;
+	Mon, 12 Aug 2024 02:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723413887; cv=none; b=iOeSRZOHzOoVW2gus7OJnXbMwi7BjIPzaZzE5ZMiTup4jeKW7nj6fAL3ttg30ll/xv8qX8r1ZWVse63mvlaGg+Cu8KC20WXWThPyII7ZtvS0R5Xy9peaLMsiQlee6EKCmv0hlEhMZwpIZZZlkQGNwMU9HFqB9D1Xv5+2+0asMAM=
+	t=1723429805; cv=none; b=HabHkVIQpkxcdHuOSh8sxDd0oupWbYEc6tszpyxNcuWTz0qcyrAsB+xtBVl5/d5amStgYj849GSRGapzrG+Boi6Wu3sXEWTO+THnlrs7UdehLOW2215mxgzODUbdD6ipGSjR0C+AIX96jTlCm/LaB1Qvpyv+XxS4f5EWagp1NRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723413887; c=relaxed/simple;
-	bh=mjPzQh3zJdKltirt+QHNSwjQaJ8ZHl0cmjRwRp4LBeY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TTchopfVXfFB1b91sIdx0IC+znbAzdOyVndxhb8RsnQqspcNEG3Y/01BzQMDUGXFOCxFUHYFm8gfqCqZzVAZlKFjtaxNRAr2a/5Ugw+J66H1W8IufC2BooA6xzR0r+DWXFDm8sbyh+QS068mrAmO6Q+Pq9XrCn5ITCRu6eR714o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d3uGLSBm; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1723429805; c=relaxed/simple;
+	bh=qrFhDBoxjeR+uUI0kPeuVPn5TUPX509p72xmhgEo0yM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PiOj210oQuGVKERaVE72KnZXCGCeo1Ckwpn1/7NSQ6t8SqewcG4hbLwJQwqgNU6spCgYzDSdJjCdY84qVooTkpNS94U85GyoB4Qo/e9KS0WhrFgFjjJ0FNXay0XLrAGlL7VhMEo1eOEpriLV5Tmb146Cx6t7GzOA7G/cKH9B8VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8z1iV6r; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d3uGLSBm"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-661d7e68e89so28106467b3.0
-        for <linux-security-module@vger.kernel.org>; Sun, 11 Aug 2024 15:04:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8z1iV6r"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc52394c92so36124215ad.1;
+        Sun, 11 Aug 2024 19:30:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723413885; x=1724018685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8MTvCp16xe4s8tj8cdyJ3RRjmDsFaj02tw+pbvvViL0=;
-        b=d3uGLSBmkqbWvkR9emtvfFpAd758ZUmUQ6/ghSCxp997M0jUpfsn+vP9WbxS2m6uBx
-         jOThi5s09frpxhZRw3t6gcd8UvLLQrV4Bd6PZzytOF0fBMstmfGyTV1J9/z9d3D/VyAD
-         A0Q/iYXmS50uPLXbEtcsDljSeys9gR72IDxRgxnqoVdUJB3TbVtTdda0pWQGjt0Z6ova
-         YzocJ4ePYwC9zBkmQEAcGnhO++TKa/71wUX+GbdNcfWau0AmzsGSa4NIqorPjINyRHWK
-         /+3JHNZi0KoyVRW6xkkPhtxDlozGS6hER7qlOjOdhPwPTyXtJ1LwteuBBQlo7fmgu+PB
-         q/4Q==
+        d=gmail.com; s=20230601; t=1723429804; x=1724034604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CPcfP+fHyMLz6sCkXjXj/fN1cAsrryKdxQYaf/+RRmQ=;
+        b=O8z1iV6r/rAgFSYMSBzj1TOYK/tczo/bTX4r6znPybKuYpA7I45sQU1KvcEJY86kau
+         mcBJaIYNCteyjvVNBdvsH0atYNAYlW1xDj/ZwR3xeOcMcvV/x6BOyBrE/By/TlDNjn8i
+         xMpzKsj0tbpOmkxfPMCTwAK+We6RX3SW2rQpiI368MjWP+d828I/HPanOhMg+QHFfbTQ
+         EDpGvYPlxwlmfTw8NPVVj3zbSxtI7BfQxH/H+3undPt+iGFjfa+PNUd4Q/uRbcYwxD1U
+         lcTfwv88kEkbGapLF7UtrrUwemsuPKu1/N9M0W1lVbIQEzOGbfm9DTZeV51k/AJZH5Sk
+         A+cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723413885; x=1724018685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8MTvCp16xe4s8tj8cdyJ3RRjmDsFaj02tw+pbvvViL0=;
-        b=o17+R1xwngBSk/en8P+y6w+hDX5CN4YQToghZ44Bq6c6d4ehAwl4oxLEhRsGmyRSXh
-         v3QraVgsftCszG8AOxp0GvbvyDXm56EWvsIEAfcOazh67MqMHHfdXtRg+HhFpvwmDbN5
-         koE5IUoo5a7Orent7syla0vS4CX1c9ISG9zWaZryksuEM1TQTvsz4NsoSjAEVfjZsi8z
-         29ICb8MJzx3p70p5PF7DyrNSYbjrYv2SVQ4uvcW/G0kdNHcYgwEYngHtWG7xRrXrG0bA
-         4mRKJ4kGUmkMqgxhD5vFxFs5p2jWlCd/KsGd30oKxK5I79/JaRSQZlglQLaeueT7lXwB
-         GvJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV450OnilTW8kC6/T1O2y0/JfeptoruDNS5Ywy+ot0QvxHVYUCDivBLDyMzSRCkRwf0FZlIBQbOTkFyODcr/8r0syffrkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7OiIBQY+SabvKQz+bPDajvVMpOj8h4jd1vzWII5hw4fj3EEkI
-	x8lmE9H41lUiyydFfGildK6kWSTXS7tWXw5BURLiM270oSEIxgnvcA5TbKDEVGIfDMueHTKX4ox
-	WgwxCdPFszwB00q/sapUtNcb/LIsEDMApzYgl
-X-Google-Smtp-Source: AGHT+IHyjpnn1PIJQvOaEQGSYhVNf1jkFokG+Mtlcnvj9pmFNQeJBtS+bJqawYBxtJdKf9F1jwGjp9W8zNFTE0mREac=
-X-Received: by 2002:a05:690c:4d05:b0:665:71a4:21ac with SMTP id
- 00721157ae682-69c0e36eab8mr89308447b3.10.1723413885015; Sun, 11 Aug 2024
- 15:04:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723429804; x=1724034604;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CPcfP+fHyMLz6sCkXjXj/fN1cAsrryKdxQYaf/+RRmQ=;
+        b=KeYt9O2HKAAN8Ev+edzRc0JPOZbzy9/6q6/SI+Iou6uanmMjqoOPKYTsRGhrB2tXPc
+         nAFq5Fnc3+P4QELq+iOsnW7SIBcdQY5u/XZErWl/JoQPDY1zpiOeY9VqneuWKfx5O588
+         h5NcNCBMlDNmuf98PmjlH9CiisOXQ3OlyXEoeEZMxTLzvchm/GiJ0tpaP1vgRkMsijnO
+         XYtkBeXH+TYe/QBXOTlsruyNjaw1LTgA0gABL7pVRMKH5pkY8VeSVrwgOAYJkibuPvgv
+         2OxFVLNgoODi4l2guevAvcM38R1WYv4PzRNlwxOmMqSzBWR1MHpBQynkPXSrBMd0ehoG
+         1Bug==
+X-Forwarded-Encrypted: i=1; AJvYcCUg+jTDF1XEexXok+d71NSrwzwr/CnG6pWEVrIYkShULSDn9CuGrT3XkJw+yf/4vXC4DsbJ0QqXmvOvG7Ura0WuTXX6QgvRm86Krx2FFFa/Kij0zF6NEg1zo5+lnZTxeoZu1Bvl19Gq/pP1QYZgIw8CN0PEv/vzY/ltrurIwMHjfVyyaLMMcGDjdp1Iwi7xJ1AXmGLAYO9p3o717blpgg0nst0ANn6musKA3wfRlm3tNFbiORoaJkU4ZmjrrYesLNd4qWYd3ZNDeO6CY1TtqO4geUGV44kskNbMylqLLpGG3d+MecUy3FS/v+vwh1dr/d8jErTl/A==
+X-Gm-Message-State: AOJu0YzI2yOaVT1b+1NJlfNaFSPlP5U0ujKk2s5GHDebm9IZDsTjUAO1
+	soKf2PQruMPNBnF0BW0oDL1XHt/eUYdRcTYt3L72Pv6IIYVLvKxT
+X-Google-Smtp-Source: AGHT+IHWjfWk9Yvp8Xz47EmfqTOyYIqZTpLYHww0hZawPQZt6bgoSLmdtP7yW5PiZUmHJmuoGirzew==
+X-Received: by 2002:a17:902:ce03:b0:1fb:7b01:7980 with SMTP id d9443c01a7336-200ae250234mr122466755ad.0.1723429803589;
+        Sun, 11 Aug 2024 19:30:03 -0700 (PDT)
+Received: from localhost.localdomain ([39.144.39.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9fed69sm27884765ad.188.2024.08.11.19.29.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Aug 2024 19:30:02 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org
+Cc: torvalds@linux-foundation.org,
+	ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com,
+	rostedt@goodmis.org,
+	catalin.marinas@arm.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	audit@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v6 0/9] Improve the copy of task comm
+Date: Mon, 12 Aug 2024 10:29:24 +0800
+Message-Id: <20240812022933.69850-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
- <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
-In-Reply-To: <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 11 Aug 2024 18:04:34 -0400
-Message-ID: <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
-Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-To: Jann Horn <jannh@google.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 9, 2024 at 10:01=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
-> On Fri, Aug 9, 2024 at 3:18=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> > Talking about f_modown() and security_file_set_fowner(), it looks like
-> > there are some issues:
-> >
-> > On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
-> > > On Fri, Aug 9, 2024 at 12:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
-@digikod.net> wrote:
-> >
-> > [...]
-> >
-> > > > BTW, I don't understand why neither SELinux nor Smack use (explicit=
-)
-> > > > atomic operations nor lock.
-> > >
-> > > Yeah, I think they're sloppy and kinda wrong - but it sorta works in
-> > > practice mostly because they don't have to do any refcounting around
-> > > this?
-> > >
-> > > > And it looks weird that
-> > > > security_file_set_fowner() isn't called by f_modown() with the same
-> > > > locking to avoid races.
-> > >
-> > > True. I imagine maybe the thought behind this design could have been
-> > > that LSMs should have their own locking, and that calling an LSM hook
-> > > with IRQs off is a little weird? But the way the LSMs actually use th=
-e
-> > > hook now, it might make sense to call the LSM with the lock held and
-> > > IRQs off...
-> > >
-> >
-> > Would it be OK (for VFS, SELinux, and Smack maintainers) to move the
-> > security_file_set_fowner() call into f_modown(), especially where
-> > UID/EUID are populated.  That would only call security_file_set_fowner(=
-)
-> > when the fown is actually set, which I think could also fix a bug for
-> > SELinux and Smack.
-> >
-> > Could we replace the uid and euid fields with a pointer to the current
-> > credentials?  This would enables LSMs to not copy the same kind of
-> > credential informations and save some memory, simplify credential
-> > management, and improve consistency.
->
-> To clarify: These two paragraphs are supposed to be two alternative
-> options, right? One option is to call security_file_set_fowner() with
-> the lock held, the other option is to completely rip out the
-> security_file_set_fowner() hook and instead let the VFS provide LSMs
-> with the creds they need for the file_send_sigiotask hook?
+Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
+length of task comm. Changes in the task comm could result in a destination
+string that is overflow. Therefore, we should explicitly ensure the
+destination string is always NUL-terminated, regardless of the task comm.
+This approach will facilitate future extensions to the task comm.
 
-I'm not entirely clear on what is being proposed either.  Some quick
-pseudo code might do wonders here to help clarify things.
+As suggested by Linus [0], we can identify all relevant code with the
+following git grep command:
 
-From a LSM perspective I suspect we are always going to need some sort
-of hook in the F_SETOWN code path as the LSM needs to potentially
-capture state/attributes/something-LSM-specific at that
-context/point-in-time.  While I think it is okay if we want to
-consider relocating the security_file_set_fowner() within the F_SETOWN
-call path, I don't think we can remove it, even if we add additional
-LSM security blobs.
+  git grep 'memcpy.*->comm\>'
+  git grep 'kstrdup.*->comm\>'
+  git grep 'strncpy.*->comm\>'
+  git grep 'strcpy.*->comm\>'
 
---=20
-paul-moore.com
+PATCH #2~#4:   memcpy
+PATCH #5~#6:   kstrdup
+PATCH #7:      strncpy
+PATCH #8~#9:   strcpy
+
+In this series, we have removed __get_task_comm() because the task_lock()
+and BUILD_BUG_ON() within it are unnecessary.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
+
+Changes:
+v5->v6:
+- Get rid of __get_task_comm() (Linus)
+- Use ARRAY_SIZE() in get_task_comm() (Alejandro)
+
+v4->v5: https://lore.kernel.org/all/20240804075619.20804-1-laoar.shao@gmail.com/
+- Drop changes in the mm/kmemleak.c as it was fixed by
+  commit 0b84780134fb ("mm/kmemleak: replace strncpy() with strscpy()")
+- Drop changes in kernel/tsacct.c as it was fixed by
+  commmit 0fe2356434e ("tsacct: replace strncpy() with strscpy()")
+
+v3->v4: https://lore.kernel.org/linux-mm/20240729023719.1933-1-laoar.shao@gmail.com/
+- Rename __kstrndup() to __kmemdup_nul() and define it inside mm/util.c
+  (Matthew)
+- Remove unused local varaible (Simon)
+
+v2->v3: https://lore.kernel.org/all/20240621022959.9124-1-laoar.shao@gmail.com/
+- Deduplicate code around kstrdup (Andrew)
+- Add commit log for dropping task_lock (Catalin)
+
+v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gmail.com/
+- Add comment for dropping task_lock() in __get_task_comm() (Alexei)
+- Drop changes in trace event (Steven)
+- Fix comment on task comm (Matus)
+
+Yafang Shao (9):
+  Get rid of __get_task_comm()
+  auditsc: Replace memcpy() with strscpy()
+  security: Replace memcpy() with get_task_comm()
+  bpftool: Ensure task comm is always NUL-terminated
+  mm/util: Fix possible race condition in kstrdup()
+  mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
+  tracing: Replace strncpy() with strscpy()
+  net: Replace strcpy() with strscpy()
+  drm: Replace strcpy() with strscpy()
+
+ drivers/gpu/drm/drm_framebuffer.c     |  2 +-
+ drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
+ fs/exec.c                             | 10 -----
+ fs/proc/array.c                       |  2 +-
+ include/linux/sched.h                 | 31 +++++++++++---
+ kernel/auditsc.c                      |  6 +--
+ kernel/kthread.c                      |  2 +-
+ kernel/trace/trace.c                  |  2 +-
+ kernel/trace/trace_events_hist.c      |  2 +-
+ mm/util.c                             | 61 ++++++++++++---------------
+ net/ipv6/ndisc.c                      |  2 +-
+ security/lsm_audit.c                  |  4 +-
+ security/selinux/selinuxfs.c          |  2 +-
+ tools/bpf/bpftool/pids.c              |  2 +
+ 14 files changed, 66 insertions(+), 64 deletions(-)
+
+-- 
+2.43.5
+
