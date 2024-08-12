@@ -1,100 +1,98 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863E317A5B5
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 19:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F0116C684
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 21:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723491445; cv=none; b=JZQ10Eurfd8jXWCsgC1L1jcweqrJXKTa7Hls9k1fVnXPpx+oXNb48TGanG75uRAEweYz3Niy9iomY6meJnSssRxrzN/peP+CyMhoYRwhrluZViA+Rm/M7T6HPwE4C0XOSA5+od742EN0KsoCeWzG66jA/mAu+LS8LQ2nKTorRBM=
+	t=1723497281; cv=none; b=ct+CFtNY6DkcepGm+VZ3DuoLqugevBwoHnf/+AJQNrEev4zgi+oxhoQK9Cn6+tsssr+vbv5+ic0Mnli0tD1C3ETpyqh2N6WFWK6ghf6eaDytyz948PO2yvVHfbdDKgIFqKGbSJvaJBEIyL9fU9vuc9E62z3HlTegAB8vA9whCqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723491445; c=relaxed/simple;
-	bh=Ee/lx/KaJjg9FUXRFp5zcIm6ZhPGSG4qyOR3WLor29s=;
+	s=arc-20240116; t=1723497281; c=relaxed/simple;
+	bh=U/wIq7aEp0El9u2mq5CsMTPXjOHii2eHLcx60+uN+mI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Jg6//PNUjaSFy9WMj4nb/dysHLgUihb7Lumvs0R2ltsY7CwgiuhiifUq671lzbZsxRfxdYTz687o/npmDuCxdZBtq3Tr/ItAgpCxKNTRWFsyy0bdtLfoalWXqE1WtP4g6yC3dgMo9+z784D8gCjjZt6j0n6kQBbnNeDinkh+N6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eGFG1cR7; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=esPhhvq5iCNGlpLlMNPE9AXC4QNU2z1iV0ksyCjK5AkGJq3UDmH4w01OeQCZrC9qOCyWMB/WKMKX7G7ZrA11z8v/ELG7/mWiWYC6vR571N/ab5809Dtix2Z5wPlz+5ES32aX7dAM8OOpkvyphepP69vfL5pVNAB9h1gRJNBD65c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGsv9Nky; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eGFG1cR7"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e0ec934a1fdso2167062276.0
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 12:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723491442; x=1724096242; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PRXchTvscnk8lG+agBroPlH7oOuOBH7zuKSQ1dSsRZg=;
-        b=eGFG1cR7QbR/vFUmF/oU91n+2obiTNCUYBd81/1I7UpHfuiXfrPv2iYPmfoCskGLYN
-         dS67pAB1SK6xcMiGex/p0F6DWZsNM/3re5sgT9skCQRPm40lGcc0bFHQb7sIQyF1DN5U
-         MUSARF9HxMX1pUFmbeb32k6S+o5SlDveo+klo+L105HbQQj0EhjEb/KZqnQS7PjhVjE1
-         LPbj7M//qHd9jkyoc8kJ36Yl5c7MPaDqeNZ0brenPfGP5pcyGktFXMXSqnBcyPg+H7a6
-         CJxyAFUhC0Helt2qF7adaXX7bGMZOHyoVi8WZtrOBQueIPMrR6m50fX/ncdVqxNDsNoc
-         FYGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723491442; x=1724096242;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PRXchTvscnk8lG+agBroPlH7oOuOBH7zuKSQ1dSsRZg=;
-        b=WR5EgpqrjFVP+drT7vI/D7D9TNXB8D7aSrLRmkwoNkr43x+QylpUrdKq3xUCzCWt5y
-         GXGbvu1Sl7KuWCZ1BadgipjjeXMbZj677Tsn4YOCRxlEX4U6HroaXneYCKNXeARvtfS7
-         m8DYV9jeXRIm+GFC83engrExSVbAltpMvBf0Bl0wUZ6/62P/iYYGTd8qcb3rYhbexW3G
-         F96Sel7Jpbel9DnJdIMhOqJVihWJc5tNn4qU+ZL2fj81OirgH9lSjL3sIUWlC7r7CkyC
-         uJXxi0wE+fRL9lr85pOyP9AI2Svjf0RbPeu+0gpj+jWyT+VneFbJ1YpoeYHlAesyl9/w
-         YLzw==
-X-Gm-Message-State: AOJu0YwhumLYJMkP6peIcmcDYWu8vF+jYaHZf9zXm5/3/p2EY8vkXmVb
-	xL2OxGKFYQXLZAhoKJkzEsJ78gTsRpujHVAm0lvsqhSvcBEGVva+CLZ0dvDEj1X2Gc0LtqgshCv
-	m39NdlJrC7CGpSEkJKLJz83j++UvZMxVBreuJhCP3qfHD4ps=
-X-Google-Smtp-Source: AGHT+IHyvaH1YUBlfM5JdT1PeUi/jaJoQUERpm0wHuNiYQylnouO6V4zFj7lwJhYb7t8c6Bug7vrq5/xBkfd9ajaT58=
-X-Received: by 2002:a05:6902:18d0:b0:e03:5bca:aee6 with SMTP id
- 3f1490d57ef6-e113d2bdac8mr2370289276.54.1723491442315; Mon, 12 Aug 2024
- 12:37:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGsv9Nky"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7E8C4AF13
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 21:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723497281;
+	bh=U/wIq7aEp0El9u2mq5CsMTPXjOHii2eHLcx60+uN+mI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TGsv9NkyHdPk09hIaMWQKTNYJrhgf4KZ+w6uZ55AjIUfx+Yl3CH6s3ErAdCLJGgXU
+	 Bzpo/KCnMEB7p69DY9djAiAnT/smichx90cv7F93V+UNs+V75jM4v1sr1PA7ZmGNsh
+	 83qt4UbwFsA2GlfUs2B2VpTi0o2wI3ljsUXG6XREx6fPqQ8Zjbvv2IXKG2Ppj4tKwC
+	 BA5HQXfose8LYM0WUHqZgBCc1dS2xuerIo3rMAMW6jBdwgBKcIqmfjcf0SYD7A7O81
+	 kKYVr13NmyrmcQJ9xPWsHf+zW4OecyGXzCtJZU3+QuYcGiLD9sEc+dJSS46AqeD8aY
+	 i3zDi6VdJchQg==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bd13ea7604so3085711a12.1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 14:14:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWK8HMmsRQ+M7zcHZ4UnS1HhGgpvIVzL/vADlYaII8EU1eLOyQ/zJblsyC6Mp+csDGzo6BZjl/X0BgmKYjcIVkfC5b5wL+621PxyzTeaqg/Y+pefVhj
+X-Gm-Message-State: AOJu0YwnEdyoPKx2CjbMX58vBp10oyAWzRY4BarYpZxhAdEkkx+m44uy
+	/TN13Irp0jtR2Dks0BgQ4t90tjiHCQhQK1JD1VbX53CYVnrjl8GTl3bQosh9ZIQZeZMLqdRjwCP
+	R/Sd4Wftp8h2Z1ewTcoa2GI22NpWOYkrWJXyb
+X-Google-Smtp-Source: AGHT+IGIb4/rfhmtq5OzXCtJRCFSdY/UlCa8r3+gAcwb9Hkqu8BJzG/6izGO2L9ihJ1RyJ4z0U9vxGuPOC7FZDXlXtg=
+X-Received: by 2002:a05:6402:354f:b0:5a1:7570:8914 with SMTP id
+ 4fb4d7f45d1cf-5bd44c27370mr1098830a12.11.1723497280058; Mon, 12 Aug 2024
+ 14:14:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729215840.319398-2-paul@paul-moore.com>
-In-Reply-To: <20240729215840.319398-2-paul@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Aug 2024 15:37:11 -0400
-Message-ID: <CAHC9VhTSsNkm2ULcW9Yo1e0zxHQEF2xcHFb=yiXvc34g8-4rTg@mail.gmail.com>
-Subject: Re: [PATCH] lsm: add the inode_free_security_rcu() LSM implementation hook
-To: linux-security-module@vger.kernel.org
+References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
+ <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
+ <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
+ <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
+ <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
+ <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+ <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
+ <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
+ <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com> <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
+In-Reply-To: <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Mon, 12 Aug 2024 23:14:29 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com>
+Message-ID: <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: Paul Moore <paul@paul-moore.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
+	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 5:58=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+On Mon, Aug 12, 2024 at 9:33=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
 ote:
 >
-> The LSM framework has an existing inode_free_security() hook which
-> is used by LSMs that manage state associated with an inode, but
-> due to the use of RCU to protect the inode, special care must be
-> taken to ensure that the LSMs do not fully release the inode state
-> until it is safe from a RCU perspective.
+> On Mon, Aug 12, 2024 at 1:12=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> >
+> > JFYI, I synced with Guenter and all arch seem to pass and alpha does
+> > not work due to a reason that I am unable to debug. I will try doing
+> > more debugging but I will need more alpha help here (Added the
+> > maintainers to this thread).
 >
-> This patch implements a new inode_free_security_rcu() implementation
-> hook which is called when it is safe to free the LSM's internal inode
-> state.  Unfortunately, this new hook does not have access to the inode
-> itself as it may already be released, so the existing
-> inode_free_security() hook is retained for those LSMs which require
-> access to the inode.
+> Thanks for the update; I was hoping that we might have a resolution
+> for the Alpha failure by now but it doesn't look like we're that
+> lucky.  Hopefully the Alpha devs will be able to help resolve this
+> without too much trouble.
 >
-> Cc: stable@vger.kernel.org
-> Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/r/00000000000076ba3b0617f65cc8@google.com
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  include/linux/lsm_hook_defs.h     |  1 +
->  security/integrity/ima/ima.h      |  2 +-
->  security/integrity/ima/ima_iint.c | 20 ++++++++-----------
->  security/integrity/ima/ima_main.c |  2 +-
->  security/landlock/fs.c            |  9 ++++++---
->  security/security.c               | 32 +++++++++++++++----------------
->  6 files changed, 33 insertions(+), 33 deletions(-)
+> Unfortunately, this does mean that I'm going to drop the static call
+> patches from the lsm/dev branch so that we can continue merging other
+> things.  Of course this doesn't mean the static call patches can't
+> come back in later during this dev cycle once everything is solved if
+> there is still time, and worst case there is always the next dev
+> cycle.
+>
 
-Merged into lsm/dev.
+Do we really want to drop them for alpha? I would rather disable
+CONFIG_SECURITY for alpha and if people really care for alpha we can
+enable it. Alpha folks, what do you think?
 
---=20
-paul-moore.com
+
+
+> --
+> paul-moore.com
