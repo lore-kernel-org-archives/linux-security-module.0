@@ -1,454 +1,281 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B05175D45
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 13:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BF117C7B9;
+	Mon, 12 Aug 2024 13:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468191; cv=none; b=k0DqFbrdxBu9mciMS6VDjsU4HsEPdPn7iPhtQvV3C6tSILqDIgB9hEflVUKOXX2xO6/xpI/1FlmtLizpl8mX1pllcFi/fXBqew+ItLiNWqMqQLkFIoXPG5irtODMzoohFMbhRa4gHwSRP03XX8EvB+Dhes6Vj+6TJSKiztSacFc=
+	t=1723468897; cv=none; b=r/HBUeCAp5vftPLq/hobU60mdjybaAlpPI/IGzGRK1VcJym2ysiW2EaiiPvtBsYqWjP07uB19JNK/1HQ9nindPmYYhgropFIhedlw0+4jjK19byEFV2YMGoLZq6p/T0ZR80ZLt61Sh+p5pixQ6LCu3n2Qxm28N/xGKbpAm3neV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468191; c=relaxed/simple;
-	bh=XuSOayIH70o7IVhRaPmRuIBaK0yehYX0NvvYSDsICQY=;
+	s=arc-20240116; t=1723468897; c=relaxed/simple;
+	bh=9tDCZscCvY5hEFTSTcbkZLdNaN18qRijSaHg1zfRqS4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P8INuclkIoCiQ3KLpX11TJGeWWbJ/ZfEO92vHroeEpCgbeY+IABwJG1d8O/85+GvlKVs/C8yLoXz8YHFy1KSnlcfvq9pmCGYGt7XpAzwCjMaeVrayt5Z5Pxf6e1lyYNuTfRF7InIr+sb1POKrB3w2mEY3pkLVqr1FPoGz49dIK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jy8mZvhJ; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=mwx96wMUOkmPaQZurzYMEP7DR1Gh8vtw6S93OscNV6MOq/26bWETX4u+QyvN1+YIdaaCjoR5DZ1Bi6OeN5bq8uV95xzDP02LuoAwFr6ofrH7Z7eNbId0ywa0Ws134MhJT4q1joDDHOaT9U/wnIfiIsQ2ni2VLuoxptamA8jBcdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jzk+jSTS; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jy8mZvhJ"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso16072a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 06:09:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jzk+jSTS"
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70968db52d0so4516144a34.3;
+        Mon, 12 Aug 2024 06:21:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723468187; x=1724072987; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723468895; x=1724073695; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ls1EQum4EqEz/9DOCbL3uNQIUCvLdyOyGXLo6Ssqbkw=;
-        b=jy8mZvhJO7clulRD8kEup/o1bq7QpUc5N004tCbSR5Exoy5eHvyxVo6CJCZq4mC1BU
-         QBXMxlEgYx9s0vSxotoyIFFz/9CmM1KZJL8HokXGdVMuq8vEm0ksQ5Spm2G1kS8Dv+Rg
-         b6FrIXSA9jlNELNmLGl2P4BpePN4hEdXnnISJBiNT8SpYiXeqWKKmaX4qOoiEOcBTZ/o
-         IZoysJMRO3jMMKE9H3OsnwevmKKm07e1oZTR4bkTMs1bR/EwO0nG8JyB8ekjVCTLwIv5
-         VvMm/u8iOo0SFYtzVOXXF2VAd35RH4Ty52+KmOVVJSfZ3GcUR4UPAssjfP9+jth3D0vj
-         FMPQ==
+        bh=ntaXkWZopfKg+6j7rnXEQlGZAwKedjmgSjz6FEutgS8=;
+        b=Jzk+jSTSf2RXGpLuQWXDI/X2DTn+EbgwoqZZC/4TNIr8r8uRNqAxQ9HTpWVrV0dwIe
+         G06XpqMRqVau7ztMRu3e4ibnQ9cRO8LQAxESLQYqQvdnuqZOY46h9CFJ0Aaq6v4kq54u
+         ZVcM3OkfKLbAykmsnL6gUSHPm+FiVbog7Bkh8ulgpj6XFQYw/gBdROr96n/KXbVSIZJW
+         qhvL8prpw9w4+X1dGhhVUASi7yP+c0ApvU4e15rx5GqL9SxW2aoldikIGQBD2+yG5vFj
+         24doDWU9LFHnqlOGM9LdrU9OWYc1CfTJi5qamBMSn425Geo9vUR8AjQPKAwTb0l87RKc
+         6izg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723468187; x=1724072987;
+        d=1e100.net; s=20230601; t=1723468895; x=1724073695;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ls1EQum4EqEz/9DOCbL3uNQIUCvLdyOyGXLo6Ssqbkw=;
-        b=nEqjcG/BYtc0TGbeLPzKhFUQLmlTybAosGdubdLnPewKmyz54OFw1l+hP9SA0JJ3a7
-         BxQthVzHH/Ovuhz6ylVR1z3mnMaeFr+wO2fYJSqxMC6Sbb0cIhmC6HEG/3V5YfB6KnrV
-         iNQfnXuBRZ3BEG3zhfv7KwLoS5ci+1wFhKg2/T0MR/HoUdypKm21GwjTDG9myaeFO3uI
-         oVvOoUn7hXX1uiNFd48cq//xf3Rn5yCBFJP0PHnuJHsDd6H9mm8OAJ9CY+7sLOeLNHG2
-         +icmK6U1anY3buzpiLNGsG30QTXLVNPm0c5NM85Fkfijz7xa3tjklXGEEG8NQU6eMBaY
-         Gy2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUnrZLh6WYrBOUGvns562DF/dPXHQoWAAkbxdMOFiRGIpuRW+pBNV4/Ch29alOS8YYYZnIrCYztLaYLD2/dpugdZOypQnV5SzASDkha5FkH4Krcuj1P
-X-Gm-Message-State: AOJu0YzwDfbrTvM70wHhOxsbdBM3dsjXYXg/Yaai0ZgfrcwnIUwUvvNu
-	kPpBUvgtLXKt/qMT5b6JURq8u84pH10dbpi9lEwpbk4jfd7i6nmJ0SN33ux+37Z4X7dzdRLlITi
-	Jzcg4XDlBY7T54v6MliqMrC+adEpYHNDYScfPXfraQkNg78/uM0cB2HE=
-X-Google-Smtp-Source: AGHT+IF4O9MWp/TaJmKD/SC7ej+tWIMifYSlqDVKCENSkDWUvlwhjGdHM4/J9PaotRqXm/Y4AhC2MpoGk6Y/5sVHXaI=
-X-Received: by 2002:a05:6402:50cd:b0:5a0:d4ce:59a6 with SMTP id
- 4fb4d7f45d1cf-5bd14b96b81mr249635a12.2.1723468186566; Mon, 12 Aug 2024
- 06:09:46 -0700 (PDT)
+        bh=ntaXkWZopfKg+6j7rnXEQlGZAwKedjmgSjz6FEutgS8=;
+        b=tde+Wg/BvBTUhlA4Z8twGtUd2HkESaejNCl1aOS3JakC4zmrgsc18HwZoTlgIpfkdA
+         A+NsB9H7zPj0MCl26OReJ/qmu6K7i4BZG2bcF935I93NvIVlYmGgejn7e+kPt6Fza96B
+         s8VmhQshaPjwE8MrCNUSnz37dmVmpFO4jCaWjxNMKyVSXhvWWfP1C6sawOFYSgpqT0KQ
+         Rc1fcVQvXo17UjJ0PfyCba45ZvOP3RZlfprkj5kHnYEKfVrw4GJJA4rdRrVPsRRDhsns
+         W4/48hs0hizqbgf5m8yOGTk99k9agRqwUN7oartROcqOBQJW587kDzCyhwtdcXmACC+o
+         6NUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUT74V1Y2Jl/zCNcVvtC6K6BNk5z/ZdRjyxmc3OnsT1B11Gydl5970mH7eRn1inZ8IrREnEZMyiolcEG28qi50xfV0LBHml5VpU/0T8Zxnx5R9VPjwRKeiFkBN4YbnywzrmNMqk4kXmddg3Nice11usy1n0T60ZCglM/oSomnPSqrFLDrsEmLIY4Cr1jR6v5TD4hWIsq4Z2PypUThD5QwFku+ljtCEt1jvr53VONvg5iIxw1ox6vVTpIBdp8Uy4cpBBqvqdD6o3uJJrYcOhENc0k5LC1jSVgJ7PRHCYU888DHbIglZNxwRjodgKu6kAQZaxvrU8hg==
+X-Gm-Message-State: AOJu0YzG/H7Lec1IpDcL9hiXjsA38UG2zWIlRrHqNKTxsuNhpkRkgisz
+	9bTNxc63ubNNudgNw6Vj64s1aMaNRrGfOIqbKvenqtm5Tqp7osSrCmX6ivk3GaKsVB4C4igtUdM
+	WAr/X4a9V2ZYdNNkVlDXuboLoIYk=
+X-Google-Smtp-Source: AGHT+IGVQve+llYsp0AugSRGeMMoIczqwy8oRpZMYGNh2sJDxIw1ZBHkds1sjMf3hXZlB+uLcjMVRoLPG20nTXUm0IM=
+X-Received: by 2002:a05:6830:34a6:b0:703:651b:382f with SMTP id
+ 46e09a7af769-70c9387ae3fmr240831a34.3.1723468894738; Mon, 12 Aug 2024
+ 06:21:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
- <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
- <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
-In-Reply-To: <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 12 Aug 2024 15:09:08 +0200
-Message-ID: <CAG48ez1fVS=Hg0szXxQym9Yfw4Pgs1THeviXO7wLXbC2-YrLEg@mail.gmail.com>
-Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-To: Paul Moore <paul@paul-moore.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20240812022933.69850-1-laoar.shao@gmail.com> <20240812022933.69850-2-laoar.shao@gmail.com>
+ <qztvfvesnxkaol6n3ucf5ovp2ssq4hzxceaedgfexieggzj6zh@pyd5f43pccyh>
+In-Reply-To: <qztvfvesnxkaol6n3ucf5ovp2ssq4hzxceaedgfexieggzj6zh@pyd5f43pccyh>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 12 Aug 2024 21:20:57 +0800
+Message-ID: <CALOAHbA5MVVhSAm-atWxigaceWBDo4h5ucRv09onnMYFVWsOzQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/9] Get rid of __get_task_comm()
+To: Alejandro Colomar <alx@kernel.org>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	ebiederm@xmission.com, alexei.starovoitov@gmail.com, rostedt@goodmis.org, 
+	catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <keescook@chromium.org>, Matus Jokay <matus.jokay@stuba.sk>, 
+	"Serge E. Hallyn" <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 12:04=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
-rote:
+On Mon, Aug 12, 2024 at 4:05=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
+wrote:
 >
-> On Fri, Aug 9, 2024 at 10:01=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
-e:
-> > On Fri, Aug 9, 2024 at 3:18=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@di=
-gikod.net> wrote:
-> > > Talking about f_modown() and security_file_set_fowner(), it looks lik=
-e
-> > > there are some issues:
-> > >
-> > > On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
-> > > > On Fri, Aug 9, 2024 at 12:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > >
-> > > [...]
-> > >
-> > > > > BTW, I don't understand why neither SELinux nor Smack use (explic=
-it)
-> > > > > atomic operations nor lock.
-> > > >
-> > > > Yeah, I think they're sloppy and kinda wrong - but it sorta works i=
-n
-> > > > practice mostly because they don't have to do any refcounting aroun=
-d
-> > > > this?
-> > > >
-> > > > > And it looks weird that
-> > > > > security_file_set_fowner() isn't called by f_modown() with the sa=
-me
-> > > > > locking to avoid races.
-> > > >
-> > > > True. I imagine maybe the thought behind this design could have bee=
-n
-> > > > that LSMs should have their own locking, and that calling an LSM ho=
-ok
-> > > > with IRQs off is a little weird? But the way the LSMs actually use =
-the
-> > > > hook now, it might make sense to call the LSM with the lock held an=
-d
-> > > > IRQs off...
-> > > >
-> > >
-> > > Would it be OK (for VFS, SELinux, and Smack maintainers) to move the
-> > > security_file_set_fowner() call into f_modown(), especially where
-> > > UID/EUID are populated.  That would only call security_file_set_fowne=
-r()
-> > > when the fown is actually set, which I think could also fix a bug for
-> > > SELinux and Smack.
-> > >
-> > > Could we replace the uid and euid fields with a pointer to the curren=
-t
-> > > credentials?  This would enables LSMs to not copy the same kind of
-> > > credential informations and save some memory, simplify credential
-> > > management, and improve consistency.
+> Hi Yafang,
+>
+> On Mon, Aug 12, 2024 at 10:29:25AM GMT, Yafang Shao wrote:
+> > We want to eliminate the use of __get_task_comm() for the following
+> > reasons:
 > >
-> > To clarify: These two paragraphs are supposed to be two alternative
-> > options, right? One option is to call security_file_set_fowner() with
-> > the lock held, the other option is to completely rip out the
-> > security_file_set_fowner() hook and instead let the VFS provide LSMs
-> > with the creds they need for the file_send_sigiotask hook?
->
-> I'm not entirely clear on what is being proposed either.  Some quick
-> pseudo code might do wonders here to help clarify things.
->
-> From a LSM perspective I suspect we are always going to need some sort
-> of hook in the F_SETOWN code path as the LSM needs to potentially
-> capture state/attributes/something-LSM-specific at that
-> context/point-in-time.
-
-The only thing LSMs currently do there is capture state from
-current->cred. So if the VFS takes care of capturing current->cred
-there, we should be able to rip out all the file_set_fowner stuff.
-Something like this (totally untested):
-
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 300e5d9ad913..17f159bf625f 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -98,8 +98,9 @@ static void f_modown(struct file *filp, struct pid
-*pid, enum pid_type type,
-
-                 if (pid) {
-                         const struct cred *cred =3D current_cred();
--                        filp->f_owner.uid =3D cred->uid;
--                        filp->f_owner.euid =3D cred->euid;
-+                        if (filp->f_owner.owner_cred)
-+                                put_cred(filp->f_owner.owner_cred);
-+                        filp->f_owner.owner_cred =3D get_current_cred();
-                 }
-         }
-         write_unlock_irq(&filp->f_owner.lock);
-@@ -108,7 +109,6 @@ static void f_modown(struct file *filp, struct pid
-*pid, enum pid_type type,
- void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
-                 int force)
- {
--        security_file_set_fowner(filp);
-         f_modown(filp, pid, type, force);
- }
- EXPORT_SYMBOL(__f_setown);
-diff --git a/fs/file_table.c b/fs/file_table.c
-index ca7843dde56d..440796fc8e91 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -426,6 +426,8 @@ static void __fput(struct file *file)
-         }
-         fops_put(file->f_op);
-         put_pid(file->f_owner.pid);
-+        if (file->f_owner.owner_cred)
-+                put_cred(file->f_owner.owner_cred);
-         put_file_access(file);
-         dput(dentry);
-         if (unlikely(mode & FMODE_NEED_UNMOUNT))
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd34b5755c0b..43bfad373bf9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -950,7 +950,7 @@ struct fown_struct {
-         rwlock_t lock;          /* protects pid, uid, euid fields */
-         struct pid *pid;        /* pid or -pgrp where SIGIO should be sent=
- */
-         enum pid_type pid_type;        /* Kind of process group SIGIO
-should be sent to */
--        kuid_t uid, euid;        /* uid/euid of process setting the owner =
-*/
-+        const struct cred __rcu *owner_cred;
-         int signum;                /* posix.1b rt signal to be
-delivered on IO */
- };
-
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 855db460e08b..2c0935dd079e 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -197,7 +197,6 @@ LSM_HOOK(int, 0, file_mprotect, struct vm_area_struct *=
-vma,
- LSM_HOOK(int, 0, file_lock, struct file *file, unsigned int cmd)
- LSM_HOOK(int, 0, file_fcntl, struct file *file, unsigned int cmd,
-          unsigned long arg)
--LSM_HOOK(void, LSM_RET_VOID, file_set_fowner, struct file *file)
- LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
-          struct fown_struct *fown, int sig)
- LSM_HOOK(int, 0, file_receive, struct file *file)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1390f1efb4f0..3343db05fa2e 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1079,11 +1079,6 @@ static inline int security_file_fcntl(struct
-file *file, unsigned int cmd,
-         return 0;
- }
-
--static inline void security_file_set_fowner(struct file *file)
--{
--        return;
--}
--
- static inline int security_file_send_sigiotask(struct task_struct *tsk,
-                                                struct fown_struct *fown,
-                                                int sig)
-diff --git a/security/security.c b/security/security.c
-index 8cee5b6c6e6d..a53d8d7fe815 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2924,20 +2924,6 @@ int security_file_fcntl(struct file *file,
-unsigned int cmd, unsigned long arg)
-         return call_int_hook(file_fcntl, file, cmd, arg);
- }
-
--/**
-- * security_file_set_fowner() - Set the file owner info in the LSM blob
-- * @file: the file
-- *
-- * Save owner security information (typically from current->security) in
-- * file->f_security for later use by the send_sigiotask hook.
-- *
-- * Return: Returns 0 on success.
-- */
--void security_file_set_fowner(struct file *file)
--{
--        call_void_hook(file_set_fowner, file);
--}
--
- /**
-  * security_file_send_sigiotask() - Check if sending SIGIO/SIGURG is allow=
-ed
-  * @tsk: target task
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 55c78c318ccd..37675d280837 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3649,7 +3649,6 @@ static int selinux_file_alloc_security(struct file *f=
-ile)
-         u32 sid =3D current_sid();
-
-         fsec->sid =3D sid;
--        fsec->fown_sid =3D sid;
-
-         return 0;
- }
-@@ -3923,24 +3922,16 @@ static int selinux_file_fcntl(struct file
-*file, unsigned int cmd,
-         return err;
- }
-
--static void selinux_file_set_fowner(struct file *file)
--{
--        struct file_security_struct *fsec;
--
--        fsec =3D selinux_file(file);
--        fsec->fown_sid =3D current_sid();
--}
--
- static int selinux_file_send_sigiotask(struct task_struct *tsk,
-                                        struct fown_struct *fown, int signu=
-m)
- {
--        struct file *file;
-+        /* struct fown_struct is never outside the context of a struct fil=
-e */
-+        struct file *file =3D container_of(fown, struct file, f_owner);
-         u32 sid =3D task_sid_obj(tsk);
-         u32 perm;
-         struct file_security_struct *fsec;
--
--        /* struct fown_struct is never outside the context of a struct fil=
-e */
--        file =3D container_of(fown, struct file, f_owner);
-+        struct cred_struct *fown_cred =3D rcu_dereference(fown->owner_cred=
-);
-+        u32 fown_sid =3D cred_sid(fown_cred ?: file->f_cred);
-
-         fsec =3D selinux_file(file);
-
-@@ -3949,7 +3940,7 @@ static int selinux_file_send_sigiotask(struct
-task_struct *tsk,
-         else
-                 perm =3D signal_to_av(signum);
-
--        return avc_has_perm(fsec->fown_sid, sid,
-+        return avc_has_perm(fown_sid, sid,
-                             SECCLASS_PROCESS, perm, NULL);
- }
-
-diff --git a/security/selinux/include/objsec.h
-b/security/selinux/include/objsec.h
-index dea1d6f3ed2d..d55b7f8d3a3d 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -56,7 +56,6 @@ struct inode_security_struct {
-
- struct file_security_struct {
-         u32 sid; /* SID of open file description */
--        u32 fown_sid; /* SID of file owner (for SIGIO) */
-         u32 isid; /* SID of inode at the time of file open */
-         u32 pseqno; /* Policy seqno at the time of file open */
- };
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 041688e5a77a..06bac00cc796 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -328,12 +328,6 @@ static inline struct task_smack *smack_cred(const
-struct cred *cred)
-         return cred->security + smack_blob_sizes.lbs_cred;
- }
-
--static inline struct smack_known **smack_file(const struct file *file)
--{
--        return (struct smack_known **)(file->f_security +
--                                       smack_blob_sizes.lbs_file);
--}
--
- static inline struct inode_smack *smack_inode(const struct inode *inode)
- {
-         return inode->i_security + smack_blob_sizes.lbs_inode;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 4164699cd4f6..02caa8b9d456 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1675,26 +1675,6 @@ static void smack_inode_getsecid(struct inode
-*inode, u32 *secid)
-  * label changing that SELinux does.
-  */
-
--/**
-- * smack_file_alloc_security - assign a file security blob
-- * @file: the object
-- *
-- * The security blob for a file is a pointer to the master
-- * label list, so no allocation is done.
-- *
-- * f_security is the owner security information. It
-- * isn't used on file access checks, it's for send_sigio.
-- *
-- * Returns 0
-- */
--static int smack_file_alloc_security(struct file *file)
--{
--        struct smack_known **blob =3D smack_file(file);
--
--        *blob =3D smk_of_current();
--        return 0;
--}
--
- /**
-  * smack_file_ioctl - Smack check on ioctls
-  * @file: the object
-@@ -1913,18 +1893,6 @@ static int smack_mmap_file(struct file *file,
-         return rc;
- }
-
--/**
-- * smack_file_set_fowner - set the file security blob value
-- * @file: object in question
-- *
-- */
--static void smack_file_set_fowner(struct file *file)
--{
--        struct smack_known **blob =3D smack_file(file);
--
--        *blob =3D smk_of_current();
--}
--
- /**
-  * smack_file_send_sigiotask - Smack on sigio
-  * @tsk: The target task
-@@ -1946,6 +1914,7 @@ static int smack_file_send_sigiotask(struct
-task_struct *tsk,
-         struct file *file;
-         int rc;
-         struct smk_audit_info ad;
-+        struct cred_struct *fown_cred =3D rcu_dereference(fown->owner_cred=
-);
-
-         /*
-          * struct fown_struct is never outside the context of a struct fil=
+> > - The task_lock() is unnecessary
+> >   Quoted from Linus [0]:
+> >   : Since user space can randomly change their names anyway, using lock=
+ing
+> >   : was always wrong for readers (for writers it probably does make sen=
+se
+> >   : to have some lock - although practically speaking nobody cares ther=
 e
-@@ -1953,8 +1922,7 @@ static int smack_file_send_sigiotask(struct
-task_struct *tsk,
-         file =3D container_of(fown, struct file, f_owner);
+> >   : either, but at least for a writer some kind of race could have
+> >   : long-term mixed results
+> >
+> > - The BUILD_BUG_ON() doesn't add any value
+> >   The only requirement is to ensure that the destination buffer is a va=
+lid
+> >   array.
+> >
+> > - Zeroing is not necessary in current use cases
+> >   To avoid confusion, we should remove it. Moreover, not zeroing could
+> >   potentially make it easier to uncover bugs. If the caller needs a
+> >   zero-padded task name, it should be explicitly handled at the call si=
+te.
+> >
+> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Link: https://lore.kernel.org/all/CAHk-=3DwivfrF0_zvf+oj6=3D=3DSh=3D-np=
+JooP8chLPEfaFV0oNYTTBA@mail.gmail.com [0]
+> > Link: https://lore.kernel.org/all/CAHk-=3DwhWtUC-AjmGJveAETKOMeMFSTwKwu=
+99v7+b6AyHMmaDFA@mail.gmail.com/
+> > Suggested-by: Alejandro Colomar <alx@kernel.org>
+> > Link: https://lore.kernel.org/all/2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurf=
+bosf5wdo65dk4@srb3hsk72zwq
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Eric Biederman <ebiederm@xmission.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> > Cc: Matus Jokay <matus.jokay@stuba.sk>
+> > Cc: Alejandro Colomar <alx@kernel.org>
+> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > ---
+> >  fs/exec.c             | 10 ----------
+> >  fs/proc/array.c       |  2 +-
+> >  include/linux/sched.h | 31 +++++++++++++++++++++++++------
+> >  kernel/kthread.c      |  2 +-
+> >  4 files changed, 27 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index a47d0e4c54f6..2e468ddd203a 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -1264,16 +1264,6 @@ static int unshare_sighand(struct task_struct *m=
+e)
+> >       return 0;
+> >  }
+> >
+> > -char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *=
+tsk)
+> > -{
+> > -     task_lock(tsk);
+> > -     /* Always NUL terminated and zero-padded */
+> > -     strscpy_pad(buf, tsk->comm, buf_size);
+>
+> This comment is correct (see other comments below).
+>
+> (Except that pedantically, I'd write it as NUL-terminated with a hyphen,
+>  just like zero-padded.)
+>
+> > -     task_unlock(tsk);
+> > -     return buf;
+> > -}
+> > -EXPORT_SYMBOL_GPL(__get_task_comm);
+> > -
+> >  /*
+> >   * These functions flushes out all traces of the currently running exe=
+cutable
+> >   * so that a new one can be started
+> > diff --git a/fs/proc/array.c b/fs/proc/array.c
+> > index 34a47fb0c57f..55ed3510d2bb 100644
+> > --- a/fs/proc/array.c
+> > +++ b/fs/proc/array.c
+> > @@ -109,7 +109,7 @@ void proc_task_name(struct seq_file *m, struct task=
+_struct *p, bool escape)
+> >       else if (p->flags & PF_KTHREAD)
+> >               get_kthread_comm(tcomm, sizeof(tcomm), p);
+> >       else
+> > -             __get_task_comm(tcomm, sizeof(tcomm), p);
+> > +             get_task_comm(tcomm, p);
+>
+> LGTM.  (This would have been good even if not removing the helper.)
+>
+> >
+> >       if (escape)
+> >               seq_escape_str(m, tcomm, ESCAPE_SPACE | ESCAPE_SPECIAL, "=
+\n\\");
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 33dd8d9d2b85..e0e26edbda61 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -1096,9 +1096,11 @@ struct task_struct {
+> >       /*
+> >        * executable name, excluding path.
+> >        *
+> > -      * - normally initialized setup_new_exec()
+> > -      * - access it with [gs]et_task_comm()
+> > -      * - lock it with task_lock()
+> > +      * - normally initialized begin_new_exec()
+> > +      * - set it with set_task_comm()
+> > +      *   - strscpy_pad() to ensure it is always NUL-terminated
+>
+> The comment above is inmprecise.
+> It should say either
+> "strscpy() to ensure it is always NUL-terminated", or
+> "strscpy_pad() to ensure it is NUL-terminated and zero-padded".
 
-         /* we don't log here as rc can be overriden */
--        blob =3D smack_file(file);
--        skp =3D *blob;
-+        skp =3D smk_of_task(fown_cred ?: file->f_cred);
-         rc =3D smk_access(skp, tkp, MAY_DELIVER, NULL);
-         rc =3D smk_bu_note("sigiotask", skp, tkp, MAY_DELIVER, rc);
+will change it.
 
-@@ -5045,7 +5013,6 @@ static int smack_uring_cmd(struct io_uring_cmd *ioucm=
-d)
+>
+> > +      *   - task_lock() to ensure the operation is atomic and the name=
+ is
+> > +      *     fully updated.
+> >        */
+> >       char                            comm[TASK_COMM_LEN];
+> >
+> > @@ -1912,10 +1914,27 @@ static inline void set_task_comm(struct task_st=
+ruct *tsk, const char *from)
+> >       __set_task_comm(tsk, from, false);
+> >  }
+> >
+> > -extern char *__get_task_comm(char *to, size_t len, struct task_struct =
+*tsk);
+> > +/*
+> > + * - Why not use task_lock()?
+> > + *   User space can randomly change their names anyway, so locking for=
+ readers
+> > + *   doesn't make sense. For writers, locking is probably necessary, a=
+s a race
+> > + *   condition could lead to long-term mixed results.
+> > + *   The strscpy_pad() in __set_task_comm() can ensure that the task c=
+omm is
+> > + *   always NUL-terminated.
+>
+> This comment has the same imprecission that I noted above.
 
- struct lsm_blob_sizes smack_blob_sizes __ro_after_init =3D {
-         .lbs_cred =3D sizeof(struct task_smack),
--        .lbs_file =3D sizeof(struct smack_known *),
-         .lbs_inode =3D sizeof(struct inode_smack),
-         .lbs_ipc =3D sizeof(struct smack_known *),
-         .lbs_msg_msg =3D sizeof(struct smack_known *),
-@@ -5104,7 +5071,6 @@ static struct security_hook_list smack_hooks[]
-__ro_after_init =3D {
-         LSM_HOOK_INIT(file_fcntl, smack_file_fcntl),
-         LSM_HOOK_INIT(mmap_file, smack_mmap_file),
-         LSM_HOOK_INIT(mmap_addr, cap_mmap_addr),
--        LSM_HOOK_INIT(file_set_fowner, smack_file_set_fowner),
-         LSM_HOOK_INIT(file_send_sigiotask, smack_file_send_sigiotask),
-         LSM_HOOK_INIT(file_receive, smack_file_receive),
+will change it.
 
+>
+> > Therefore the race condition between reader and
+> > + *   writer is not an issue.
+> > + *
+> > + * - Why not use strscpy_pad()?
+> > + *   While strscpy_pad() prevents writing garbage past the NUL termina=
+tor, which
+> > + *   is useful when using the task name as a key in a hash map, most u=
+se cases
+> > + *   don't require this. Zero-padding might confuse users if it=E2=80=
+=99s unnecessary,
+> > + *   and not zeroing might even make it easier to expose bugs. If you =
+need a
+> > + *   zero-padded task name, please handle that explicitly at the call =
+site.
+> > + *
+> > + * - ARRAY_SIZE() can help ensure that @buf is indeed an array.
+> > + */
+> >  #define get_task_comm(buf, tsk) ({                   \
+> > -     BUILD_BUG_ON(sizeof(buf) !=3D TASK_COMM_LEN);     \
+> > -     __get_task_comm(buf, sizeof(buf), tsk);         \
+> > +     strscpy(buf, (tsk)->comm, ARRAY_SIZE(buf));     \
+> > +     buf;                                            \
+> >  })
+> >
+> >  #ifdef CONFIG_SMP
+> > diff --git a/kernel/kthread.c b/kernel/kthread.c
+> > index f7be976ff88a..7d001d033cf9 100644
+> > --- a/kernel/kthread.c
+> > +++ b/kernel/kthread.c
+> > @@ -101,7 +101,7 @@ void get_kthread_comm(char *buf, size_t buf_size, s=
+truct task_struct *tsk)
+> >       struct kthread *kthread =3D to_kthread(tsk);
+> >
+> >       if (!kthread || !kthread->full_name) {
+> > -             __get_task_comm(buf, buf_size, tsk);
+> > +             strscpy(buf, tsk->comm, buf_size);
+> >               return;
+> >       }
+>
+> Other than that, LGTM.
 
-> While I think it is okay if we want to
-> consider relocating the security_file_set_fowner() within the F_SETOWN
-> call path, I don't think we can remove it, even if we add additional
-> LSM security blobs.
+Thanks for your review.
+
+--=20
+Regards
+Yafang
