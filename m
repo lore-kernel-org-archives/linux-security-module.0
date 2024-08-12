@@ -1,138 +1,166 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C012A183CD3
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 16:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F76F6CDBA;
+	Mon, 12 Aug 2024 17:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723480217; cv=none; b=FyZfqZ8OwX7juMIIonWdrBUo0JJUYosRCXiWQ4En3Og5Di0hT4di3UIq0OAiUH/OKVXIQ8qlnUpoPhTPJo5Z1a4NH9Ej/pBDGqQNRzFZr7t3i8O4O33682MX3/BTOgo9tgVwoN/TAy7/2wpL7HiZKsoeSHP6ScUFF17GGVPWG1k=
+	t=1723482307; cv=none; b=diCfBTWgZYZRldV5uvVcQG4FfMwdZpP5mojqNlB8Uk2Gh6r1ETKKipzWsc/fBnTf1XuQuf6YjVrem00cLqpqrvhXXC+PbDmbriOBHZHl/CErc/6Z52V77Mmg8RED+5hPcsvFbV4tkXMXgici184TDN3gndqJyzEaBonU181FlM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723480217; c=relaxed/simple;
-	bh=pI3b2F23yTc0ZJIxRjaRPML+T+3j/qumlRnHsT3WJjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jk9gniM6vbGQKbjGH901tXNIFLlHTwEqiGLShefFCXt5mj90WNBG3I1dzVSUbPIgwayAwfmTf5wvhIpDwaLgis+fTRoy6yS5qu7neGyZUe9s/uPJ6nQC7yRjhPTqc873A290DgjqH/Tpe/BLIFcet3TnydUhaUjKp0Yz6Q0ojgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DHQSnxT7; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1723482307; c=relaxed/simple;
+	bh=hBlsh2CO+Iqi6onlN7q+a10gM+tJiKbpXfKeVuOY/Zs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rUes3TCZiH5Ol9OPjBNYEp7Q3KmT3VIXXq7wJziPLVmp2QBYyNpbiI6cqBLkut51IvV66efNOLMDRGSDfL8CTz39u+wYRC6hHbB7Dv85U0kxz15vA46+AI6a/FxQ9QHc8bIJRWPPwL66IymTdkv7PAL3O+13liG1ph3RJMvWYFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ACfCGP+R; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DHQSnxT7"
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso3786066276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 09:30:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723480215; x=1724085015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cIeK2Fg1hKXf5ChuuEo0tuaD3odgjAn6dYDI3lZpdhs=;
-        b=DHQSnxT7leWutgYlBn34fhynViNeDJnxWxuCaGxu928RAGcsEFkAg/9B3+USU0cCqh
-         hy+QcFfGZxav43Y7GxPHCSiYTA1BsRRgRfUwSno5VW0hNgyUyHtb4jmoy5XOCEPV7YIf
-         xL/rrPHPGlvWI4vEUiw+qCK2Le633KNDn0pnGqA0e5Jffw30ZQdhg/sDH08Jm48iD/GI
-         K2qRpr5h23WXOYKFY/YI7KZNKUJOayWcnZ1mMBgROD5lG6YwPrv9b2+uPdJpeE6ofuZf
-         y/N3H2VF9OFtoiixVMcBzyX+bJvx2HpVQaRAshBTV05tFa4Riv3RD9glq/DkzdLfbvqS
-         upxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723480215; x=1724085015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cIeK2Fg1hKXf5ChuuEo0tuaD3odgjAn6dYDI3lZpdhs=;
-        b=pHcotkNfLJk0hLmDuTk0iiISLTAXxq43VkxMmz4/CB3q49MfpIQB1jpNoO2m/73JMG
-         Osq5LE3jVozM+Ou7GCIT94AkR3Bocj3TfJidZgHtIOdffgyHF08oSV9FOGQmZ+yrmyBw
-         ZZ42rlW0VxeTikCdl6I0+rD1ShMlBkNbuJ/3zkhOzpg9Wl7Su373G4tLwBDJ/iQ9RNVG
-         g/7QVJfb0ZW56us+3hGHL3X9ir0QvCDekHObBOnKFVnGUdMHEMINQ1b5QfIo13yG9K/z
-         8GPgo+gaCRG5hm0fj6lhVCu3gKqg5dEFUfJJJ9KYOm+w04nc1zA4/RRAG8hNnxWFdqRm
-         KNyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUURCxEoSJi3bCQHnimBtJHCV6JMR5wBT6g1akmnlgCS66ZjG/OOZS769UJlYwx0xQWQz2VddXa3U8l7Qt6EHiTOPBxsTil0uTa0DxQN0gSwUHPDve
-X-Gm-Message-State: AOJu0Yz29axXOfoDlbftz2w5VLEU3L3khnWQrklBOuTlaNx88oVIM3mT
-	DOzL9li0XqquSIQr1kcd+ho6ewYA6GQRKrTjP9AkfsCwiIJblOmK6PJ18cQlnA2HieKAeVKNdnD
-	g8HVD3+6g58Sp72rkfztFDZHuQaQmv2axpEVr
-X-Google-Smtp-Source: AGHT+IGpVnCsdmUNUi7WGZpBIrJoz8yIa/TuWZlTMslOadKwxRt1BZeiXT7E9WrMn4XRsUdmhp7XHnN8BgL4SH5U/nM=
-X-Received: by 2002:a05:6902:18d0:b0:e03:5bca:aee6 with SMTP id
- 3f1490d57ef6-e113d2bdac8mr1514498276.54.1723480214767; Mon, 12 Aug 2024
- 09:30:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ACfCGP+R"
+Received: from [10.0.0.89] (S0106f8790ad4bcee.lb.shawcable.net [68.144.204.128])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 83C513F1C6;
+	Mon, 12 Aug 2024 16:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723481756;
+	bh=Ecb8WhQZ8tF5AmHlMe/3X72oi/AP77OCQiNYqYGsiDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=ACfCGP+RIjeQpVcMyEbEWJSbPrHuRCjuJQz43ay1JpDfGYeisAayne+7WuZWxCPJw
+	 2luvKnqmy5ACC2pYGVz4lZdkD5VklRboyfFd8pFh4GrAbKBQ3hIw0UkzmJzbweLq/p
+	 fNx+Dy8pHmCBYjGERDaySWoYlYXLEjGXA0Mc7ZAh5BM5xNzFoWb4T6SFc1cOI+rESF
+	 IFeZkO621kdhD1TJ6M8WMwSTJ75zveIlRljT/mUNQFyldoGWLXVxxYNzttPpuyaTlv
+	 19sFcyZiQtNl7E+S8YsI2jWBCGx9cwBjZ+n+kWRyYo9QDl4tqVhBMsgupDOIUasCX2
+	 Ki7BoElLwsPJw==
+Message-ID: <6a0c69d4-f614-4348-a28f-0d4a6fe08df8@canonical.com>
+Date: Mon, 12 Aug 2024 09:55:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
- <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
- <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
- <CAG48ez1fVS=Hg0szXxQym9Yfw4Pgs1THeviXO7wLXbC2-YrLEg@mail.gmail.com>
- <CAHC9VhS6=s9o4niaLzkDG6Egir4WL=ieDdyeKk4qzQo1WFi=WQ@mail.gmail.com> <CAG48ez2tvHgv7sOVP14gCF1MAGE-UzJoMCfZqdmY1nXX4FFV4Q@mail.gmail.com>
-In-Reply-To: <CAG48ez2tvHgv7sOVP14gCF1MAGE-UzJoMCfZqdmY1nXX4FFV4Q@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Aug 2024 12:30:03 -0400
-Message-ID: <CAHC9VhQY+H7n2zCn8ST0Vu672UA=_eiUikRDW2sUDSN3c=gVQw@mail.gmail.com>
-Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-To: Jann Horn <jannh@google.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: fix policy_unpack_test on big endian systems
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Brendan Higgins <brendanhiggins@google.com>,
+ Kees Cook <keescook@chromium.org>
+References: <20240808155931.1290349-1-linux@roeck-us.net>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20240808155931.1290349-1-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 11:06=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
-:
-> On Mon, Aug 12, 2024 at 4:57=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Mon, Aug 12, 2024 at 9:09=E2=80=AFAM Jann Horn <jannh@google.com> wr=
-ote:
-> > > On Mon, Aug 12, 2024 at 12:04=E2=80=AFAM Paul Moore <paul@paul-moore.=
-com> wrote:
-> >
-> > ...
-> >
-> > > > From a LSM perspective I suspect we are always going to need some s=
-ort
-> > > > of hook in the F_SETOWN code path as the LSM needs to potentially
-> > > > capture state/attributes/something-LSM-specific at that
-> > > > context/point-in-time.
-> > >
-> > > The only thing LSMs currently do there is capture state from
-> > > current->cred. So if the VFS takes care of capturing current->cred
-> > > there, we should be able to rip out all the file_set_fowner stuff.
-> > > Something like this (totally untested):
-> >
-> > I've very hesitant to drop the LSM hook from the F_SETOWN path both
-> > because it is reasonable that other LSMs may want to do other things
-> > here,
->
-> What is an example for other things an LSM might want to do there? As
-> far as I understand, the whole point of this hook is to record the
-> identity of the sender of signals - are you talking about an LSM that
-> might not be storing credentials in struct cred, or something like
-> that?
+On 8/8/24 08:59, Guenter Roeck wrote:
+> policy_unpack_test fails on big endian systems because data byte order
+> is expected to be little endian but is generated in host byte order.
+> This results in test failures such as:
+> 
+>   # policy_unpack_test_unpack_array_with_null_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:150
+>      Expected array_size == (u16)16, but
+>          array_size == 4096 (0x1000)
+>          (u16)16 == 16 (0x10)
+>      # policy_unpack_test_unpack_array_with_null_name: pass:0 fail:1 skip:0 total:1
+>      not ok 3 policy_unpack_test_unpack_array_with_null_name
+>      # policy_unpack_test_unpack_array_with_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:164
+>      Expected array_size == (u16)16, but
+>          array_size == 4096 (0x1000)
+>          (u16)16 == 16 (0x10)
+>      # policy_unpack_test_unpack_array_with_name: pass:0 fail:1 skip:0 total:1
+> 
+> Add the missing endianness conversions when generating test data.
+> 
+> Fixes: 4d944bcd4e73 ("apparmor: add AppArmor KUnit tests for policy unpack")
+> Cc: Brendan Higgins <brendanhiggins@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Sure.  The LSM framework is intentionally very vague and limited on
-what restrictions it places on individual LSMs; we want to be able to
-support a wide range of security models and concepts.  I view the
-F_SETOWN hook are important because it is a control point that is used
-to set/copy/transfer/whatever security attributes from the current
-process to a file/fd for the purpose of managing signals on the fd.
+Looks good
 
-> > and adding a LSM hook to the kernel, even if it is re-adding a
-> > hook that was previously removed, is a difficult and painful process
-> > with an uncertain outcome.
->
-> Do you mean that even if the LSM hook ends up with zero users
-> remaining, you'd still want to keep it around in case it's needed
-> again later?
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-I want the security_file_set_fowner() hook to remain a viable hook for
-capturing the current task's security attributes, regardless of what
-security attributes the LSM is interested in capturing and where those
-attributes are stored.
+I will pull this into my tree
 
---=20
-paul-moore.com
+> ---
+>   security/apparmor/policy_unpack_test.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> index 874fcf97794e..c64733d6c98f 100644
+> --- a/security/apparmor/policy_unpack_test.c
+> +++ b/security/apparmor/policy_unpack_test.c
+> @@ -80,14 +80,14 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+>   	*(buf + 1) = strlen(TEST_U32_NAME) + 1;
+>   	strscpy(buf + 3, TEST_U32_NAME, e->end - (void *)(buf + 3));
+>   	*(buf + 3 + strlen(TEST_U32_NAME) + 1) = AA_U32;
+> -	*((u32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = TEST_U32_DATA;
+> +	*((__le32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = cpu_to_le32(TEST_U32_DATA);
+>   
+>   	buf = e->start + TEST_NAMED_U64_BUF_OFFSET;
+>   	*buf = AA_NAME;
+>   	*(buf + 1) = strlen(TEST_U64_NAME) + 1;
+>   	strscpy(buf + 3, TEST_U64_NAME, e->end - (void *)(buf + 3));
+>   	*(buf + 3 + strlen(TEST_U64_NAME) + 1) = AA_U64;
+> -	*((u64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = TEST_U64_DATA;
+> +	*((__le64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = cpu_to_le64(TEST_U64_DATA);
+>   
+>   	buf = e->start + TEST_NAMED_BLOB_BUF_OFFSET;
+>   	*buf = AA_NAME;
+> @@ -103,7 +103,7 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+>   	*(buf + 1) = strlen(TEST_ARRAY_NAME) + 1;
+>   	strscpy(buf + 3, TEST_ARRAY_NAME, e->end - (void *)(buf + 3));
+>   	*(buf + 3 + strlen(TEST_ARRAY_NAME) + 1) = AA_ARRAY;
+> -	*((u16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = TEST_ARRAY_SIZE;
+> +	*((__le16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = cpu_to_le16(TEST_ARRAY_SIZE);
+>   
+>   	return e;
+>   }
+
