@@ -1,150 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092C0187FE6
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 17:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CDD18953F
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 17:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723482750; cv=none; b=fcQ8FMGNON4PV43w3HM0/6bD1ckJy8HEI4tJqN2hheRRaVj01gQ0UgWy7O6rm59IS5Hu1SV6AjWciYJW1vErKL87jOHcmEHo+WD+IAAKfNdnx8CCQXX2WCDuqp+OSstXH2ll08tu7Y7F9CFEk0ME/8z69pPx/aoF2Uq1v/2Wr8w=
+	t=1723483691; cv=none; b=rf16jO142xxkiyIu5OHVM9DYqDoC0xCXPuR/T4A5SIltshGIrLwNFgQaBo+CJKSUAHTaYb6pwGSnqMocW/flYVVh4Ve26++q0nZXk58HEzCLdZUZRZ+FEVW7YJHOJWOkGmWEavb4iYaVxavKSzokjrLRK81jcXTlGgkiV+XiC/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723482750; c=relaxed/simple;
-	bh=8yHdW4ydlVda22NnDC+U1b2MHPLhbwDjGEoQoIRmfJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iNzOEPX1O4iHHWvne5u+r/KVosfl2pfBfzBGheZrnjPnFOdv1xETcQJ53jvFV3JK7xM9IMO42lyrN8Uf7qDxRBmocqNJX5+8G/pMUSW426trklGF3GPbtkVA/gDUbDnLdMAuTWEztsF68MLjkRr2lalR6tu9Kv+aJ8zLJYV0YlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfesSTZw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723483691; c=relaxed/simple;
+	bh=CKc3b6exLQErC5hRcitRGhW8g1CQ1KFfDiPZ6Q2KZDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TAAIa/sW0slETk6hRkMFvcJy1cF83nFe75AMB+4HaZPNxJunR9OFMg9Sx4BKloWp3xfkdYT+zsVs0eWBM2D7859D/LaYmcgLlwVpCWlpBxFiw7PWBAO6vXphcj7ygxyZJbaVLwkUoVIhvCNb5ZOwMTwGFkOyYCrobP++q9iOlhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wBgHZx9m; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfesSTZw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F548C32782
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 17:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723482749;
-	bh=8yHdW4ydlVda22NnDC+U1b2MHPLhbwDjGEoQoIRmfJg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kfesSTZwHTrBiFaLuPDwvr27ASE5jekpBUPczFc5xSc18MS6m12L6U+74J1wTa8Ad
-	 L1dMIYAYkmdVCEQc3FYCB0jvOPHFbfJIcJsTflp52ekfrNzVKsDm1e8eg9sim5Ddg7
-	 lEFHlL6kCYE+3z02avS6Pt1cZszNSdnkhICxc+Thglr5x3QlJKCJo6HmKoh7qI62zj
-	 e/Og6B+nLsfU9tis91h/ETCYyoW9+hqK+qVU/44xn7W7LhZ/W+4EWcCZ+DBDRrrtw4
-	 bn+P4k9WNwRRroI/Z83HjEVU+cLOfZfGOE4luWaUdAYzvrgnMqKUiQr+qfY34iG41U
-	 OLXcmSlxo/yVA==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f189a2a7f8so47215811fa.2
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 10:12:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWFmdYBoi1k7764RQwoRJFXcVfRWjlfq0ji2Id9WwFurHC9m1O6hRfnywQ4l8V536Fjh+9z07lZaonxV+rxqC8ZQSGBL15oKFozcykgsS+9zu/4fcsK
-X-Gm-Message-State: AOJu0YwCBC/Lg84pQuUPDHjZdmmdrpaZ4dqxUVCswYXNmqdRv5/dKAY/
-	5w8H8MlrEgw1IY19LGw3Fm8cLjRLXE8zdhPUBNwkASqfYqJbAk5OjrBOdUaeqorOtQirWU6ArHC
-	qvK2/i9VyM0U0q+Fo8ilmhPzw4/7odPwkVUK9
-X-Google-Smtp-Source: AGHT+IEi4x2lKyzSlBdDqyzNvP1WkxgKGyo1LKUTYnu8D717dYjlPG7KYanK/LSOMd8pZXkQOcvI64ymMk//DOzcflQ=
-X-Received: by 2002:a2e:a550:0:b0:2ef:2c87:3bd7 with SMTP id
- 38308e7fff4ca-2f2b7178548mr8639581fa.37.1723482747964; Mon, 12 Aug 2024
- 10:12:27 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wBgHZx9m"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WjM0w1r3yzRZZ;
+	Mon, 12 Aug 2024 19:28:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723483680;
+	bh=XKWk/ou9xWXyXZf/+83XFP+2SHkLmUCIRL9GwmSi0ho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wBgHZx9mwNsybst5E8+VFldSlu+WZDbFIw9eRnd9XAdvklasRu+i5pT+FIacs5Go7
+	 3pRp48jTWuZtV8x2p5mO+1i1V9TUNq4/WibP8MlWZq/MjWOkE36609GIvPoSAWGhus
+	 G/iGuRjgbZ6FmP2WmUzPuySQ20Tt+UxLF+uyWBZk=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WjM0t5Tp4z5Lg;
+	Mon, 12 Aug 2024 19:27:58 +0200 (CEST)
+Date: Mon, 12 Aug 2024 19:27:53 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
+ signal control)
+Message-ID: <20240812.Fie3aCh2eiwi@digikod.net>
+References: <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
+ <20240809.eejeekoo4Quo@digikod.net>
+ <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
+ <20240809.se0ha8tiuJai@digikod.net>
+ <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
+ <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
+ <CAG48ez1fVS=Hg0szXxQym9Yfw4Pgs1THeviXO7wLXbC2-YrLEg@mail.gmail.com>
+ <CAHC9VhS6=s9o4niaLzkDG6Egir4WL=ieDdyeKk4qzQo1WFi=WQ@mail.gmail.com>
+ <CAG48ez2tvHgv7sOVP14gCF1MAGE-UzJoMCfZqdmY1nXX4FFV4Q@mail.gmail.com>
+ <CAHC9VhQY+H7n2zCn8ST0Vu672UA=_eiUikRDW2sUDSN3c=gVQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
- <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
-In-Reply-To: <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Mon, 12 Aug 2024 19:12:16 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
-Message-ID: <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Paul Moore <paul@paul-moore.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQY+H7n2zCn8ST0Vu672UA=_eiUikRDW2sUDSN3c=gVQw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Aug 8, 2024 at 10:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Thu, Aug 8, 2024 at 2:00=E2=80=AFPM Guenter Roeck <linux@roeck-us.net>=
- wrote:
-> > On Thu, Aug 08, 2024 at 01:32:37PM -0400, Paul Moore wrote:
-> > > On Thu, Aug 8, 2024 at 12:43=E2=80=AFPM Guenter Roeck <linux@roeck-us=
-.net> wrote:
+On Mon, Aug 12, 2024 at 12:30:03PM -0400, Paul Moore wrote:
+> On Mon, Aug 12, 2024 at 11:06 AM Jann Horn <jannh@google.com> wrote:
+> > On Mon, Aug 12, 2024 at 4:57 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Mon, Aug 12, 2024 at 9:09 AM Jann Horn <jannh@google.com> wrote:
+> > > > On Mon, Aug 12, 2024 at 12:04 AM Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > ...
+> > >
+> > > > > From a LSM perspective I suspect we are always going to need some sort
+> > > > > of hook in the F_SETOWN code path as the LSM needs to potentially
+> > > > > capture state/attributes/something-LSM-specific at that
+> > > > > context/point-in-time.
 > > > >
-> > > > Also, there is a backtrace on ppc (also see below), but that is unr=
-elated
-> > > > to your patches and only seen now because I enabled the security mo=
-dules
-> > > > on that architecture. I'll bring that up with ppc maintainers.
+> > > > The only thing LSMs currently do there is capture state from
+> > > > current->cred. So if the VFS takes care of capturing current->cred
+> > > > there, we should be able to rip out all the file_set_fowner stuff.
+> > > > Something like this (totally untested):
 > > >
-> > > Thanks for all your help testing this Guenter.  I see you've also
-> > > already submitted an AppArmor fix for the endian issue, that's very
-> > > helpful and I'm sure John will be happy to see it.
-> > >
-> > > Beyond this work testing the static call patches from KP, would you b=
-e
-> > > willing to add a LSM configuration to your normal testing?  While mos=
-t
-> > > of the LSM subsystem should be architecture agnostic, there are
-> > > definitely bits and pieces that can vary (as you've seen), and I thin=
-k
-> > > it would be great to get more testing across a broad range of
-> > > supported arches, even if it is just some simple "does it boot" tests=
-.
-> > >
+> > > I've very hesitant to drop the LSM hook from the F_SETOWN path both
+> > > because it is reasonable that other LSMs may want to do other things
+> > > here,
 > >
-> > That really depends. I already enabled some of the kernel security modu=
-les.
+> > What is an example for other things an LSM might want to do there? As
+> > far as I understand, the whole point of this hook is to record the
+> > identity of the sender of signals - are you talking about an LSM that
+> > might not be storing credentials in struct cred, or something like
+> > that?
+> 
+> Sure.  The LSM framework is intentionally very vague and limited on
+> what restrictions it places on individual LSMs; we want to be able to
+> support a wide range of security models and concepts.  I view the
+> F_SETOWN hook are important because it is a control point that is used
+> to set/copy/transfer/whatever security attributes from the current
+> process to a file/fd for the purpose of managing signals on the fd.
+> 
+> > > and adding a LSM hook to the kernel, even if it is re-adding a
+> > > hook that was previously removed, is a difficult and painful process
+> > > with an uncertain outcome.
 > >
-> > CONFIG_SECURITY=3Dy
-> > CONFIG_SECURITY_APPARMOR=3Dy
-> > CONFIG_SECURITY_APPARMOR_KUNIT_TEST=3Dy
-> > CONFIG_SECURITY_LANDLOCK=3Dy
-> > CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=3Dy
-> > CONFIG_SECURITY_LOCKDOWN_LSM=3Dy
-> > CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=3Dy
-> > CONFIG_SECURITY_YAMA=3Dy
-> > CONFIG_SECURITY_LOADPIN=3Dy
-> > CONFIG_SECURITY_SAFESETID=3Dy
-> > CONFIG_BPF_LSM=3Dy
-> > CONFIG_LSM=3D"landlock,lockdown,yama,loadpin,safesetid,bpf"
-> >
-> > I can easily add more if you tell me what else I should enable.
->
-> Thanks, I just added a todo item to send you a list.  I appreciate the he=
-lp.
->
-> > Userspace is more difficult. My root file systems are generated using
-> > buildroot. I run some basic tests, such as network interface tests
-> > and TPM tests, but those are just simple scripts utilizing packages
-> > provided by buildroot. I can add more, but I would need to know what
-> > exactly to add and how to execute it.
->
-> Of course.  As far as I'm concerned, simply enabling the LSMs and
-> making sure the various arches boot without additional faults would be
-> a nice boost in testing.
->
-> > > Out of curiosity, do you have your test setup documented anywhere?  I=
-t
-> > > sounds fairly impressive and I'd be curious to learn more about it.
-> >
-> > Not really. The code is at https://github.com/groeck/linux-build-test.
-> > My clone of buildroot is at https://github.com/groeck/buildroot (look
-> > for local- branches to see my changes). Please feel free to have a look=
-,
-> > but documentation is seriously lacking (and README is completely out
-> > of date).
->
+> > Do you mean that even if the LSM hook ends up with zero users
+> > remaining, you'd still want to keep it around in case it's needed
+> > again later?
+> 
+> I want the security_file_set_fowner() hook to remain a viable hook for
+> capturing the current task's security attributes, regardless of what
+> security attributes the LSM is interested in capturing and where those
+> attributes are stored.
 
-JFYI, I synced with Guenter and all arch seem to pass and alpha does
-not work due to a reason that I am unable to debug. I will try doing
-more debugging but I will need more alpha help here (Added the
-maintainers to this thread).
-
-
-
-> Thanks for the pointers.
->
-> --
-> paul-moore.com
+I don't see the point to keep an unused hook, we could add it back later
+if there is a valid use case, but I'll send a v2 without this removal.
