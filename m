@@ -1,166 +1,259 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F76F6CDBA;
-	Mon, 12 Aug 2024 17:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9938518754F
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 17:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723482307; cv=none; b=diCfBTWgZYZRldV5uvVcQG4FfMwdZpP5mojqNlB8Uk2Gh6r1ETKKipzWsc/fBnTf1XuQuf6YjVrem00cLqpqrvhXXC+PbDmbriOBHZHl/CErc/6Z52V77Mmg8RED+5hPcsvFbV4tkXMXgici184TDN3gndqJyzEaBonU181FlM8=
+	t=1723482415; cv=none; b=Un6fnfdNSlxoPwh6wfK04mXJDMGdf+ZtrN57qd4jfS8c0+Zmbrf45Grh8BBttyVh0YOprgaEl2cOUCqh6dTQY5oHalANpr4TtazJmZTdO3XPCeF11ugde9fNYJaNYS636zetpyXA3TXGk+HCSYqMyjtHCb6+FWSB04B4ho2haSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723482307; c=relaxed/simple;
-	bh=hBlsh2CO+Iqi6onlN7q+a10gM+tJiKbpXfKeVuOY/Zs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rUes3TCZiH5Ol9OPjBNYEp7Q3KmT3VIXXq7wJziPLVmp2QBYyNpbiI6cqBLkut51IvV66efNOLMDRGSDfL8CTz39u+wYRC6hHbB7Dv85U0kxz15vA46+AI6a/FxQ9QHc8bIJRWPPwL66IymTdkv7PAL3O+13liG1ph3RJMvWYFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ACfCGP+R; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1723482415; c=relaxed/simple;
+	bh=y3DW0EDeUvsEd3PRWHJDWn5wfZ2vluxQhHQzCiBtq2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/k2aAs0AKpOMGqatBMfbMjgE5iTiB6Xnf4OjeXMHm/Ze+L1hrKIERMc7CGgFST9e5SIrtdLHklFS0F7aTuL2fKZNC94vUki3lFuk7yarOTf5PXWshAcbjgTjKlsU8XFVnIn2euXamkS2/iUjRz1FUbI+qzbvmibabnhVLozGzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RwvXhpgs; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ACfCGP+R"
-Received: from [10.0.0.89] (S0106f8790ad4bcee.lb.shawcable.net [68.144.204.128])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 83C513F1C6;
-	Mon, 12 Aug 2024 16:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723481756;
-	bh=Ecb8WhQZ8tF5AmHlMe/3X72oi/AP77OCQiNYqYGsiDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=ACfCGP+RIjeQpVcMyEbEWJSbPrHuRCjuJQz43ay1JpDfGYeisAayne+7WuZWxCPJw
-	 2luvKnqmy5ACC2pYGVz4lZdkD5VklRboyfFd8pFh4GrAbKBQ3hIw0UkzmJzbweLq/p
-	 fNx+Dy8pHmCBYjGERDaySWoYlYXLEjGXA0Mc7ZAh5BM5xNzFoWb4T6SFc1cOI+rESF
-	 IFeZkO621kdhD1TJ6M8WMwSTJ75zveIlRljT/mUNQFyldoGWLXVxxYNzttPpuyaTlv
-	 19sFcyZiQtNl7E+S8YsI2jWBCGx9cwBjZ+n+kWRyYo9QDl4tqVhBMsgupDOIUasCX2
-	 Ki7BoElLwsPJw==
-Message-ID: <6a0c69d4-f614-4348-a28f-0d4a6fe08df8@canonical.com>
-Date: Mon, 12 Aug 2024 09:55:23 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RwvXhpgs"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WjLXL4jYhzNnH;
+	Mon, 12 Aug 2024 19:06:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723482402;
+	bh=eWO8y4ow42QS6ibUFWSVvRwzqIRDIPIDZPm7Q1wmqHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RwvXhpgsPJtvVGxu/D9DhI95TtlBM27OWFiiG9ferYWiEIzhxJ4YMVBVb7LNEBUYz
+	 vXmWq3U6Cswes9olhDqR9UX9RKSCiomk/nH6se+TovroxI0hKLpSTRd8NO9a+KQSd3
+	 luEquFwNd6jZY6P7Gpboojb/fg6vdIB5HX9vTrb8=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WjLXK6Hyxz6R3;
+	Mon, 12 Aug 2024 19:06:41 +0200 (CEST)
+Date: Mon, 12 Aug 2024 19:06:36 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 3/4] sample/Landlock: Support abstract unix socket
+ restriction
+Message-ID: <20240812.Inohgai2eenu@digikod.net>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <2b1ac6822d852ea70dd2dcdf41065076d9ee8028.1722570749.git.fahimitahera@gmail.com>
+ <20240809.uupaip5Iepho@digikod.net>
+ <ZrZdBZUMnCd81pY3@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix policy_unpack_test on big endian systems
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Brendan Higgins <brendanhiggins@google.com>,
- Kees Cook <keescook@chromium.org>
-References: <20240808155931.1290349-1-linux@roeck-us.net>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240808155931.1290349-1-linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrZdBZUMnCd81pY3@tahera-OptiPlex-5000>
+X-Infomaniak-Routing: alpha
 
-On 8/8/24 08:59, Guenter Roeck wrote:
-> policy_unpack_test fails on big endian systems because data byte order
-> is expected to be little endian but is generated in host byte order.
-> This results in test failures such as:
+On Fri, Aug 09, 2024 at 12:16:37PM -0600, Tahera Fahimi wrote:
+> On Fri, Aug 09, 2024 at 04:11:47PM +0200, Mickaël Salaün wrote:
+> > On Thu, Aug 01, 2024 at 10:02:35PM -0600, Tahera Fahimi wrote:
+> > > A sandboxer can receive the character "a" as input from the environment
+> > > variable LL_SCOPE to restrict the abstract unix sockets from connecting
+> > > to a process outside its scoped domain.
+> > > 
+> > > Example
+> > > =======
+> > > Create an abstract unix socket to listen with socat(1):
+> > > socat abstract-listen:mysocket -
+> > > Create a sandboxed shell and pass the character "a" to LL_SCOPED:
+> > > LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
+> > > If the sandboxed process tries to connect to the listening socket
+> > > with command "socat - abstract-connect:mysocket", the connection
+> > > will fail.
+> > > 
+> > > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > > 
+> > > ---
+> > > v8:
+> > > - Adding check_ruleset_scope function to parse the scope environment
+> > >   variable and update the landlock attribute based on the restriction
+> > >   provided by the user.
+> > > - Adding Mickaël Salaün reviews on version 7.
+> > > 
+> > > v7:
+> > > - Adding IPC scoping to the sandbox demo by defining a new "LL_SCOPED"
+> > >   environment variable. "LL_SCOPED" gets value "a" to restrict abstract
+> > >   unix sockets.
+> > > - Change LANDLOCK_ABI_LAST to 6.
+> > > ---
+> > >  samples/landlock/sandboxer.c | 56 +++++++++++++++++++++++++++++++++---
+> > >  1 file changed, 52 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> > > index e8223c3e781a..98132fd823ad 100644
+> > > --- a/samples/landlock/sandboxer.c
+> > > +++ b/samples/landlock/sandboxer.c
+> > > @@ -14,6 +14,7 @@
+> > >  #include <fcntl.h>
+> > >  #include <linux/landlock.h>
+> > >  #include <linux/prctl.h>
+> > > +#include <linux/socket.h>
+> > >  #include <stddef.h>
+> > >  #include <stdio.h>
+> > >  #include <stdlib.h>
+> > > @@ -22,6 +23,7 @@
+> > >  #include <sys/stat.h>
+> > >  #include <sys/syscall.h>
+> > >  #include <unistd.h>
+> > > +#include <stdbool.h>
+> > >  
+> > >  #ifndef landlock_create_ruleset
+> > >  static inline int
+> > > @@ -55,6 +57,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+> > >  #define ENV_FS_RW_NAME "LL_FS_RW"
+> > >  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+> > >  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+> > > +#define ENV_SCOPED_NAME "LL_SCOPED"
+> > >  #define ENV_DELIMITER ":"
+> > >  
+> > >  static int parse_path(char *env_path, const char ***const path_list)
+> > > @@ -184,6 +187,38 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +static bool check_ruleset_scope(const char *const env_var,
+> > > +				struct landlock_ruleset_attr *ruleset_attr)
+> > > +{
+> > > +	bool ret = true;
+> > > +	char *env_type_scope, *env_type_scope_next, *ipc_scoping_name;
+> > > +
+> > > +	ruleset_attr->scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+> > 
+> > Why always removing the suported scope?
+> > What happen if ABI < 6 ?
+> Right, I will add this check before calling chek_ruleset_scope function.
 > 
->   # policy_unpack_test_unpack_array_with_null_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:150
->      Expected array_size == (u16)16, but
->          array_size == 4096 (0x1000)
->          (u16)16 == 16 (0x10)
->      # policy_unpack_test_unpack_array_with_null_name: pass:0 fail:1 skip:0 total:1
->      not ok 3 policy_unpack_test_unpack_array_with_null_name
->      # policy_unpack_test_unpack_array_with_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:164
->      Expected array_size == (u16)16, but
->          array_size == 4096 (0x1000)
->          (u16)16 == 16 (0x10)
->      # policy_unpack_test_unpack_array_with_name: pass:0 fail:1 skip:0 total:1
+> > > +	env_type_scope = getenv(env_var);
+> > > +	/* scoping is not supported by the user */
+> > > +	if (!env_type_scope)
+> > > +		return true;
+> > > +	env_type_scope = strdup(env_type_scope);
+> > > +	unsetenv(env_var);
+> > > +
+> > > +	env_type_scope_next = env_type_scope;
+> > > +	while ((ipc_scoping_name =
+> > > +			strsep(&env_type_scope_next, ENV_DELIMITER))) {
+> > > +		if (strcmp("a", ipc_scoping_name) == 0) {
+> > > +			ruleset_attr->scoped |=
+> > > +				LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+> > 
+> > There are two issues here:
+> > 1. this would not work for ABI < 6
+> > 2. "a" can be repeated several times, which should probably not be
+> >    allowed because we don't want to support this
+> >    unspecified/undocumented behavior.
+> For the second note, I think even if the user provides multiple "a"
+> (something like "a:a"), It would not have a different effect (for now).
+> Do you suggest that I change this way of handeling this environment
+> variable or add documents that mention this note?
+
+We should have a stricter approach to only allow zero or one "a" letter.
+
+
+> > 
+> > > +		} else {
+> > > +			fprintf(stderr, "Unsupported scoping \"%s\"\n",
+> > > +				ipc_scoping_name);
+> > > +			ret = false;
+> > > +			goto out_free_name;
+> > > +		}
+> > > +	}
+> > > +out_free_name:
+> > > +	free(env_type_scope);
+> > > +	return ret;
+> > > +}
+> > > +
+> > >  /* clang-format off */
+> > >  
+> > >  #define ACCESS_FS_ROUGHLY_READ ( \
+> > > @@ -208,7 +243,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+> > >  
+> > >  /* clang-format on */
+> > >  
+> > > -#define LANDLOCK_ABI_LAST 5
+> > > +#define LANDLOCK_ABI_LAST 6
+> > >  
+> > >  int main(const int argc, char *const argv[], char *const *const envp)
+> > >  {
+> > > @@ -223,14 +258,15 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> > >  		.handled_access_fs = access_fs_rw,
+> > >  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+> > >  				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> > > +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
+> > >  	};
+> > >  
+> > >  	if (argc < 2) {
+> > >  		fprintf(stderr,
+> > > -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
+> > > +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
+> > >  			"<cmd> [args]...\n\n",
+> > >  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> > > -			ENV_TCP_CONNECT_NAME, argv[0]);
+> > > +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+> > >  		fprintf(stderr,
+> > >  			"Execute a command in a restricted environment.\n\n");
+> > >  		fprintf(stderr,
+> > > @@ -251,15 +287,18 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> > >  		fprintf(stderr,
+> > >  			"* %s: list of ports allowed to connect (client).\n",
+> > >  			ENV_TCP_CONNECT_NAME);
+> > > +		fprintf(stderr, "* %s: list of restrictions on IPCs.\n",
+> > > +			ENV_SCOPED_NAME);
+> > >  		fprintf(stderr,
+> > >  			"\nexample:\n"
+> > >  			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+> > >  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+> > >  			"%s=\"9418\" "
+> > >  			"%s=\"80:443\" "
+> > > +			"%s=\"a\" "
+> > >  			"%s bash -i\n\n",
+> > >  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> > > -			ENV_TCP_CONNECT_NAME, argv[0]);
+> > > +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+> > >  		fprintf(stderr,
+> > >  			"This sandboxer can use Landlock features "
+> > >  			"up to ABI version %d.\n",
+> > > @@ -327,6 +366,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> > >  		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
+> > >  		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> > >  
+> > > +		__attribute__((fallthrough));
+> > > +	case 5:
+> > > +		/* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
+> > > +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+> > >  		fprintf(stderr,
+> > >  			"Hint: You should update the running kernel "
+> > >  			"to leverage Landlock features "
+> > > @@ -358,6 +401,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> > >  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+> > >  	}
+> > >  
+> > > +	if (!check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr)) {
+> > 
+> > You should use the same pattern as for TCP access rigths: if the
+> > environment variable is not set then remove the ruleset's scopes.
+> I think this happens in check_ruleset_scope function. However, I will
+> add a condition (abi >=6) to this "if" statement.
 > 
-> Add the missing endianness conversions when generating test data.
+> > > +		perror("Unsupported IPC scoping requested");
+> > > +		return 1;
+> > > +	}
+> > > +
+> > >  	ruleset_fd =
+> > >  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> > >  	if (ruleset_fd < 0) {
+> > > -- 
+> > > 2.34.1
+> > > 
+> > > 
 > 
-> Fixes: 4d944bcd4e73 ("apparmor: add AppArmor KUnit tests for policy unpack")
-> Cc: Brendan Higgins <brendanhiggins@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-
-Looks good
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I will pull this into my tree
-
-> ---
->   security/apparmor/policy_unpack_test.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-> index 874fcf97794e..c64733d6c98f 100644
-> --- a/security/apparmor/policy_unpack_test.c
-> +++ b/security/apparmor/policy_unpack_test.c
-> @@ -80,14 +80,14 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
->   	*(buf + 1) = strlen(TEST_U32_NAME) + 1;
->   	strscpy(buf + 3, TEST_U32_NAME, e->end - (void *)(buf + 3));
->   	*(buf + 3 + strlen(TEST_U32_NAME) + 1) = AA_U32;
-> -	*((u32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = TEST_U32_DATA;
-> +	*((__le32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = cpu_to_le32(TEST_U32_DATA);
->   
->   	buf = e->start + TEST_NAMED_U64_BUF_OFFSET;
->   	*buf = AA_NAME;
->   	*(buf + 1) = strlen(TEST_U64_NAME) + 1;
->   	strscpy(buf + 3, TEST_U64_NAME, e->end - (void *)(buf + 3));
->   	*(buf + 3 + strlen(TEST_U64_NAME) + 1) = AA_U64;
-> -	*((u64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = TEST_U64_DATA;
-> +	*((__le64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = cpu_to_le64(TEST_U64_DATA);
->   
->   	buf = e->start + TEST_NAMED_BLOB_BUF_OFFSET;
->   	*buf = AA_NAME;
-> @@ -103,7 +103,7 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
->   	*(buf + 1) = strlen(TEST_ARRAY_NAME) + 1;
->   	strscpy(buf + 3, TEST_ARRAY_NAME, e->end - (void *)(buf + 3));
->   	*(buf + 3 + strlen(TEST_ARRAY_NAME) + 1) = AA_ARRAY;
-> -	*((u16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = TEST_ARRAY_SIZE;
-> +	*((__le16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = cpu_to_le16(TEST_ARRAY_SIZE);
->   
->   	return e;
->   }
-
