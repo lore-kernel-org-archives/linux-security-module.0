@@ -1,129 +1,140 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B4B4D112;
-	Mon, 12 Aug 2024 21:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7152E16A92E
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 22:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723499143; cv=none; b=fP/dZqaUiC4Totp+v6+NK8jyJ7UAtwfg1lHdnaPInLo8we55qxv/BiP0rL8iStIpPBMfUTX88LOu4bBCTvlnADiY/dPmAbDmW0FVYQm0wx7KqEfn5hMrwJ1ZlIURYH4USUd5eSoFpKnOt6wJtJ+agz5kXKdnKGBskIy7A1+STig=
+	t=1723500175; cv=none; b=MgkIvH3X7woNwI1reycLfpLMNPQtiXoUMymLe476Foz5lKm/J87xZi7Q+apJreuwQrh3SAVcxB+x6Xpa75yZM8sFs6gTbxwzh3YClXbX2LLI1oYlSYlEllUqJi9X+wVn4XjlyQX5hdHgUO5ceiJunKCKmAUxq7kpz3+IGpBngFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723499143; c=relaxed/simple;
-	bh=+/dmCtTKtDCmF8v9S+Xz2eif5t/bIIfoP2HPW6FRZSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5YrWDacbIP68lObTjLQ/wMjrEto2tZTSAhmK6Mact8rtST0vHAlK010EdCqFc1+uFSWTixiZa7a5VG6vd9SyTZLcywZqYy5EgTpwlU/7bEVgV45CxWvmckh83yWHnoV4xNS4H0odbZnM33vvRTLl9NM1Po7Pp8t+8WLHCdYqGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPr1R2pq; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1723500175; c=relaxed/simple;
+	bh=O2akboDJIEh8Nd3HZXbrNHkmzz+22fYpF1PWKSyWaQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OC+ObOzi96B7w0vIF42/idqZpckEL9BiuP1ykidlfTq9vlQWUdgzCzXEK+3Lr5+tjwrCuUaihGgfg8+pRyDSdJ1Rf37teVHhNZOprcHZZRPdwfnRQBrsgJc0FGvtj841y3Gf7PtMwPRBe0a9ubmedjn0T+KkFmwfp+PZ3EFC5ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2OqgoTE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPr1R2pq"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso52355571fa.2;
-        Mon, 12 Aug 2024 14:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723499140; x=1724103940; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=77UTgNM+g1Q/AdgNsjql77qvhxjCiN6U5tIJiUV1daA=;
-        b=aPr1R2pqncfN7CoHRI9Wqfjle5mPbJwu7JF1WpsLvXfhHcDHsLosu34/YoFaZxahTm
-         JX0RDRizQoGMrkXlx2+8uoEdwhdn1rOTEK22/xb1+85SIhX6qtFjGnKWziNQiobae1bG
-         TlSWwDz9fyFghtV6qq/kdQtDtzPCpd+6f54SBwB/SyEHyJe+BiF0YKo8+tuB2xpjPGbE
-         i33xYS5btOmpH5iyydIbgmLthovvAaa4o9tG0ibozfV97UljG72RHMelPnqK4mcAFNZM
-         j1aUrUWgs3OH9HAGY2fXugvl7WVb/LIAQvYy6q8gUrZpR73NHoAoQ76uT12/6xJYLtUM
-         IqLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723499140; x=1724103940;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=77UTgNM+g1Q/AdgNsjql77qvhxjCiN6U5tIJiUV1daA=;
-        b=jkBtI4RnKlF2CAk/pedv8577PBBHwoOb+4Us+zGvgR25DOE3ly5zJoUNst9ofE40wQ
-         ZOdOvE91EvVG2wt/fg1UTbc+HRJ9Dw1xATEb2H8q3bcfUsjWBOYvLaWZYRqtVnghZGBH
-         Zl3sucJmycXfRlktrS0RygPks4o7/Oy5ezdi8chKodKX6JFW3Dkm6t5tPT9f8Vb374Dh
-         t5WP3HvqDy6tj3MmyQY51HyaKCwfY6YxBK67JLVdFYo2+sbtTGZc7iEzyH1OLmuMDQwg
-         lqLuxUDVYGKzme9vJz7bKTAu4RlQ2s4Hft3mXdCP81kYYLtjsOLF3QlUvnCvCWEwOPbz
-         I02A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMpA7l6bPhnujeBGPtRLPn2KEr3Kcp5pwVEQDXLWhg1sZIF2/Y+CFCTVt3eMq0PgeIsubnp6SLfuVrAhbSmOizuI3bu586YNkClmmWbiKmlo4yYZn9cnpLaP+O1HVKKuh7Mo7XvHguDsZ7xq6KyDUVkRVgOx8JlZhhwD8nfdpi6MOu53eKn0X98NeLnYSBLGqkBoaw7j2g+ZKzRpHa0lhTE9EkgQDbUyoOwiI=
-X-Gm-Message-State: AOJu0YzQYa4OrWZnbsI5oGCDLn8kHAM3A1fIx/6dTcMIVX4Jlw/DY8O+
-	T3r2ZKviza2KLjgvm5GCsZZYx3aCsH3XYm6YzkZRBUSwSLyEOtQE
-X-Google-Smtp-Source: AGHT+IHCSQ3xvWb16BnUlSYfXiHKUOHGnsKamZs/Kpv5QaNE4OmNJeTQrTUdakPuoFumAh+64CDR9A==
-X-Received: by 2002:a2e:bc09:0:b0:2ef:23ec:9357 with SMTP id 38308e7fff4ca-2f2b70d3805mr11647201fa.0.1723499139891;
-        Mon, 12 Aug 2024 14:45:39 -0700 (PDT)
-Received: from f (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5dfc9fsm2420031a12.66.2024.08.12.14.45.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 14:45:39 -0700 (PDT)
-Date: Mon, 12 Aug 2024 23:45:29 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook
- inconsistencies
-Message-ID: <o6ptrfa7gjdukphqtp6dakq3ykndrjusuhi4fyvpc5ne6amcig@lqbdb2dg7yzv>
-References: <20240812174421.1636724-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2OqgoTE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18534C4AF13
+	for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 22:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723500175;
+	bh=O2akboDJIEh8Nd3HZXbrNHkmzz+22fYpF1PWKSyWaQc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=l2OqgoTEKp4NmGqFi458SRI4gluNCiXgM5dmYMINAdYh45ZPFYi2YPTg77/DXLfOb
+	 TzMngkSl+ud3CEk45VUZ4O5r0dqDJ7LtURp5tFfT9x1rx89OWI9hTx8AUD9E+kBZJU
+	 8Dw9oiD6NZ0RGGoIKYvjqUXqs6LhhzxkR7tCNBT9M5I5WR98UAkQBO6LmRhghCHgWp
+	 ZFp0O0gSSu5tT0cGpUL9EA1WDm4Ip8ZFJkut+EaIlaDDR60NpSJIxmokx3ySWZr7uq
+	 vDIGYLQylAENq5wWntWBsi5jLQ9a/1dkkUflnmseHAt9vOE3G3s357s3vf1b+8QZrZ
+	 vbru6yR6etjkw==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1133422a12.1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Aug 2024 15:02:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUhQOArSwzqLyK4+BqW3zxiDV+itp2ylNtQyIaN2mN76HdXYCArwjmlsTJfG/cY6xRPkJFVwundIO6btpvlC5YvHi+bAsskgFxgZJXosicwulLQNlK7
+X-Gm-Message-State: AOJu0YwqzzGBfUprx1snKLLZlbLSVzPT9MeBSCJA26NF579xvcNkSNiR
+	gD8z7evZ4r96hOv9FfEuhUHoILFgNndakUwbOV86baXTiuPDc/EJbvcaQGaDgLAfO3UUppkfn1U
+	NxYDWQzKoKVYRV1K4lXYTOq67J4XIx9j5KdBZ
+X-Google-Smtp-Source: AGHT+IGEzzK8lUbL2BKdbvhUGvMXkJafhinn84c+jnXZlrrZX4BZDnaa33VL18lOtCdmW7PtFGbbrSPRhGW/DlgOw44=
+X-Received: by 2002:a05:6402:190e:b0:58b:bb69:763e with SMTP id
+ 4fb4d7f45d1cf-5bd4619735amr970724a12.7.1723500173628; Mon, 12 Aug 2024
+ 15:02:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240812174421.1636724-1-mic@digikod.net>
+References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
+ <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
+ <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
+ <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
+ <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
+ <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+ <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
+ <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
+ <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
+ <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
+ <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com> <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
+In-Reply-To: <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 13 Aug 2024 00:02:42 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
+Message-ID: <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: Paul Moore <paul@paul-moore.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
+	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 07:44:17PM +0200, Mickaël Salaün wrote:
+On Mon, Aug 12, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Mon, Aug 12, 2024 at 5:14=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> > On Mon, Aug 12, 2024 at 9:33=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Mon, Aug 12, 2024 at 1:12=E2=80=AFPM KP Singh <kpsingh@kernel.org>=
+ wrote:
+> > > >
+> > > > JFYI, I synced with Guenter and all arch seem to pass and alpha doe=
+s
+> > > > not work due to a reason that I am unable to debug. I will try doin=
+g
+> > > > more debugging but I will need more alpha help here (Added the
+> > > > maintainers to this thread).
+> > >
+> > > Thanks for the update; I was hoping that we might have a resolution
+> > > for the Alpha failure by now but it doesn't look like we're that
+> > > lucky.  Hopefully the Alpha devs will be able to help resolve this
+> > > without too much trouble.
+> > >
+> > > Unfortunately, this does mean that I'm going to drop the static call
+> > > patches from the lsm/dev branch so that we can continue merging other
+> > > things.  Of course this doesn't mean the static call patches can't
+> > > come back in later during this dev cycle once everything is solved if
+> > > there is still time, and worst case there is always the next dev
+> > > cycle.
+> > >
+> >
+> > Do we really want to drop them for alpha? I would rather disable
+> > CONFIG_SECURITY for alpha and if people really care for alpha we can
+> > enable it. Alpha folks, what do you think?
+>
+> Seriously?  I realize Alpha is an older, lesser used arch, but it is
+> still a supported arch and we are not going to cause a regression for
+> the sake of a new feature.  As I mentioned earlier, once the problem
+> is resolved we can bring the patchset back into lsm/dev; if it gets
+> resolved soon enough we can even do it during this dev cycle.
+>
 
-No opinion about the core idea, I'll note though that this conflicts
-with a patch to move f_owner out of the struct:
-https://lore.kernel.org/linux-fsdevel/20240809-koriander-biobauer-6237cbc106f3@brauner/
+Okay, more data for the alpha folks, when I moved trap_init() before
+early_security_init() everything seemed to work, I think we might need
+to call trap_init() from setup_arch and this would fix the issue. As
+to why? I don't know :)
 
-Presumably nothing which can't get sorted out with some shoveling.
+Would alpha folks be okay with this patch:
 
-I do have actionable remark concerning creds though: both get_cred and
-put_cred are slow. Sorting that out is on my todo list.
+kpsingh@kpsingh:~/projects/linux$ git diff
+diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+index bebdffafaee8..53909c1be4cf 100644
+--- a/arch/alpha/kernel/setup.c
++++ b/arch/alpha/kernel/setup.c
+@@ -657,6 +657,7 @@ setup_arch(char **cmdline_p)
+        setup_smp();
+ #endif
+        paging_init();
++       trap_init();
+ }
 
-In the meantime adding more calls can be avoided:
 
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 4f03beed4737..d28b76aef4f3 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -66,6 +66,7 @@ static inline void file_free(struct file *f)
->  	if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
->  		percpu_counter_dec(&nr_files);
->  	put_cred(f->f_cred);
-> +	put_cred(f->f_owner.cred);
+and provide me some reason as to why this works, it would be great for
+a patch description
 
-	if (likely(f->f_cred == f->f_owner.cred)) {
-		put_cred_many(f->f_cred, 2);
-	} else {
-		put_cred(f->f_cred);
-		put_cred(f->f_owner.cred);
-	}
+- KP
 
->  	if (unlikely(f->f_mode & FMODE_BACKING)) {
->  		path_put(backing_file_user_path(f));
->  		kfree(backing_file(f));
-> @@ -149,9 +150,11 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
->  	int error;
->  
->  	f->f_cred = get_cred(cred);
-> +	f->f_owner.cred = get_cred(cred);
 
-	f->f_cred = f->f_owner.cred = get_cred_many(cred, 2);
 
->  	error = security_file_alloc(f);
->  	if (unlikely(error)) {
->  		put_cred(f->f_cred);
-> +		put_cred(f->f_owner.cred);
 
-		put_cred_many(cred, 2);
 
->  		return error;
->  	}
+> --
+> paul-moore.com
