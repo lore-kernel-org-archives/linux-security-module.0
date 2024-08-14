@@ -1,41 +1,37 @@
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618A9757F3;
-	Wed, 14 Aug 2024 03:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B58383A1;
+	Wed, 14 Aug 2024 03:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723604541; cv=none; b=pw5jb+zN4GbWyUZ0sdnFLg4NCdFEs8IUpLMMsWo9/2sRMpXQ522K0c6bz4z0huKKosl35uUcR2blQ/nH7EfGUA47YDeN+PRW+qgWJ/y3P5bxhavMfXu8gHNaFl/8HMn6onyOysAjCXkepxvm8Ze+R+GrkGSSYpIbl2WrQm6ChdY=
+	t=1723606373; cv=none; b=Pe0Ab1CNZNSlfPAM25K1sRtbZ4InTZcZkqxi+gxqcrWUlEfbMfecbMwhkKZhSqPePFlGpj+zQfdOQ3gaXKbUQc/vEALKdB51BDJk38kab5voFlPFRVLPmwxz/G3eAhe2rr3anqdJVbSwLKZeE5OA3cLudrllXHhl3JZsac0fcPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723604541; c=relaxed/simple;
-	bh=rSiJD6CB325ZcboYhNJAZRZM+QHB/FdTNMAAaT83eAE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LNmfNkBwGwmdSbvvBwZrjNYJzFULFvzAeE3E4u0+wmO9kbgoANry6iEtMeJr1760PDNcKSNzzsw1gFCR3ltl5w3YmdzWDUYb4HnuzAGjRA9LwbXValfHGSyTf2BRt55l8ylHJfaoVOZsmSS3q5D2DqYItW+tZd2lfvnyJDcs0XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WkCbS5grKz1S7k1;
-	Wed, 14 Aug 2024 10:57:24 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id B461C1402CF;
-	Wed, 14 Aug 2024 11:02:16 +0800 (CST)
-Received: from mscphis02103.huawei.com (10.123.65.215) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 14 Aug 2024 11:02:14 +0800
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: <mic@digikod.net>
-CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-Subject: [RFC PATCH v2 9/9] samples/landlock: Support LANDLOCK_ACCESS_NET_LISTEN
-Date: Wed, 14 Aug 2024 11:01:51 +0800
-Message-ID: <20240814030151.2380280-10-ivanov.mikhail1@huawei-partners.com>
+	s=arc-20240116; t=1723606373; c=relaxed/simple;
+	bh=Lia4Kv2kecsf1cNt3ZjZldSU6RpnWmqSZ7NCHhPeP4U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ug0aEttUAxLazJSgdVf8h0Mte58Cu8Nt52IhBuaik9CwtkMzlhxi/ZkeyJJa34dqI7rTgLSwft7Ax06lgXJ/snL3OQCzyZvgerZ4CjP45RJmRxNL1thnU85mkEswUXeFt700J0KeE1z6IK1VH0bxpxWpXzDluc0xRbzViybOWK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WkDLl1rQfzndxL;
+	Wed, 14 Aug 2024 11:31:27 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8A118180105;
+	Wed, 14 Aug 2024 11:32:47 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 Aug
+ 2024 11:32:47 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+	<kees@kernel.org>, <casey@schaufler-ca.com>
+CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH -next] lockdown: Make lockdown_lsmid static
+Date: Wed, 14 Aug 2024 11:30:04 +0800
+Message-ID: <20240814033004.2216000-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com>
-References: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -44,114 +40,32 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: mscpeml500004.china.huawei.com (7.188.26.250) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Extend sample with TCP listen control logic.
+Fix sparse warning:
 
-Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+security/lockdown/lockdown.c:79:21: warning:
+ symbol 'lockdown_lsmid' was not declared. Should it be static?
+
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 ---
- samples/landlock/sandboxer.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+ security/lockdown/lockdown.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index e8223c3e781a..3f50cb3f8039 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -55,6 +55,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
- #define ENV_FS_RW_NAME "LL_FS_RW"
- #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
- #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
-+#define ENV_TCP_LISTEN_NAME "LL_TCP_LISTEN"
- #define ENV_DELIMITER ":"
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index cd84d8ea1dfb..f2bdbd55aa2b 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -76,7 +76,7 @@ static struct security_hook_list lockdown_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
+ };
  
- static int parse_path(char *env_path, const char ***const path_list)
-@@ -208,7 +209,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
- 
- /* clang-format on */
- 
--#define LANDLOCK_ABI_LAST 5
-+#define LANDLOCK_ABI_LAST 6
- 
- int main(const int argc, char *const argv[], char *const *const envp)
- {
-@@ -222,15 +223,16 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	struct landlock_ruleset_attr ruleset_attr = {
- 		.handled_access_fs = access_fs_rw,
- 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
--				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+				      LANDLOCK_ACCESS_NET_CONNECT_TCP |
-+				      LANDLOCK_ACCESS_NET_LISTEN_TCP,
- 	};
- 
- 	if (argc < 2) {
- 		fprintf(stderr,
--			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
-+			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
- 			"<cmd> [args]...\n\n",
- 			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
--			ENV_TCP_CONNECT_NAME, argv[0]);
-+			ENV_TCP_CONNECT_NAME, ENV_TCP_LISTEN_NAME, argv[0]);
- 		fprintf(stderr,
- 			"Execute a command in a restricted environment.\n\n");
- 		fprintf(stderr,
-@@ -251,15 +253,19 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		fprintf(stderr,
- 			"* %s: list of ports allowed to connect (client).\n",
- 			ENV_TCP_CONNECT_NAME);
-+		fprintf(stderr,
-+			"* %s: list of ports allowed to listen (server).\n",
-+			ENV_TCP_LISTEN_NAME);
- 		fprintf(stderr,
- 			"\nexample:\n"
- 			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
- 			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
- 			"%s=\"9418\" "
- 			"%s=\"80:443\" "
-+			"%s=\"9418\" "
- 			"%s bash -i\n\n",
- 			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
--			ENV_TCP_CONNECT_NAME, argv[0]);
-+			ENV_TCP_CONNECT_NAME, ENV_TCP_LISTEN_NAME, argv[0]);
- 		fprintf(stderr,
- 			"This sandboxer can use Landlock features "
- 			"up to ABI version %d.\n",
-@@ -326,6 +332,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	case 4:
- 		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
- 		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-+		__attribute__((fallthrough));
-+	case 5:
-+		/* Removes LANDLOCK_ACCESS_NET_LISTEN support for ABI < 6 */
-+		ruleset_attr.handled_access_net &=
-+			~(LANDLOCK_ACCESS_NET_LISTEN_TCP);
- 
- 		fprintf(stderr,
- 			"Hint: You should update the running kernel "
-@@ -357,6 +368,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		ruleset_attr.handled_access_net &=
- 			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
- 	}
-+	/* Removes listen access attribute if not supported by a user. */
-+	env_port_name = getenv(ENV_TCP_LISTEN_NAME);
-+	if (!env_port_name) {
-+		ruleset_attr.handled_access_net &=
-+			~LANDLOCK_ACCESS_NET_LISTEN_TCP;
-+	}
- 
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-@@ -380,6 +397,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
- 		goto err_close_ruleset;
- 	}
-+	if (populate_ruleset_net(ENV_TCP_LISTEN_NAME, ruleset_fd,
-+				 LANDLOCK_ACCESS_NET_LISTEN_TCP)) {
-+		goto err_close_ruleset;
-+	}
- 
- 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
- 		perror("Failed to restrict privileges");
+-const struct lsm_id lockdown_lsmid = {
++static const struct lsm_id lockdown_lsmid = {
+ 	.name = "lockdown",
+ 	.id = LSM_ID_LOCKDOWN,
+ };
 -- 
 2.34.1
 
