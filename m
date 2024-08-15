@@ -1,389 +1,105 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB416F2F6
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Aug 2024 19:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A0D1448F6
+	for <linux-security-module@vger.kernel.org>; Thu, 15 Aug 2024 19:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723749574; cv=none; b=pT6DerqZc10qEyqJ2LNqV5nRYKCODchXYTdc3ujWtJtXxjo9ATho6OkvZZwDQI3vPw4swmIc60JczXloj9qVEthCewDDo69Kh6d3rC4ezpgw87Kf4kSEYPz0KhimSE6keDILH04jQjjjobc6FG3Dy45e4mQwiMJK22CaSnfHZcw=
+	t=1723751205; cv=none; b=ogbHSnGSWobVG7ZUGRhBWqI/dVYvy2BLuizgLYz68WSWW2Dyolij7AdKShZY3+nl1eTFprkN0PKwqIb5pE0n3oATeoHMe8SPHYXLksk4Ew3S6uaJjUFAY4+ZODPxEl9pMAdpce28daFR93d42PVo6PIy0mC04wwjs1BZUMq+tJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723749574; c=relaxed/simple;
-	bh=SbZHk1oE4YjfHvEGvCc6lxbgHJVuoZ7v5vaCTK8aF8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Piy/MLEapK+GpraDI4h3te/4VFzCowMiJYUSs1NUkqHg609NVZd1PerNHgWwj7+asXZLDzcDaKYrfdVo6QcncUMWHGnUwgIlIVJGVcrio+UORAZ7NfdKQROXrBQDUGl5fU3MHJkszi1ADNkTkeHxqWlfu9DRM6PYgM5fGkIbMWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=U5APwX8E; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1723751205; c=relaxed/simple;
+	bh=r9BUfohUq44ghTk7Ggo5cn7xGSmzUposKb2aPQJ6cPo=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=E3bsftJONIK4pEDD6VzozP5R+blsCjLn9EWfmT2HmfMq7pIklLdEIwMo3cLfLYG0hwqFhP+Tft/F92P2FXrLoKLge6/jx59BOG/iU3hEaRpUEPVcwFcM55+lA8KhfnZWYVSizkYc6ies/HHlcRgvD9zwvjbWoYKO8jYJShLDItU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SMy0qvNq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="U5APwX8E"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso1332948276.2
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Aug 2024 12:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723749571; x=1724354371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dmJ/U6oso6NBeJGhn3TIkS50+Qahr6/dljLdoPN7uPY=;
-        b=U5APwX8E/azTdFyT9kJzOkgw/gSKztknJ3zUB0xirfG7gjhWUmWYqZ6v/x93jbuOg3
-         1Df/nHDpJMAdeMNBLPcawYn2+X8M4OqS/VWSNPO8nWwZMuqCmbWIM3v9Xytn0DH1Y36V
-         sBBANvtauD3f2sQEMMl4/8sri4bUiEgL4jPEEUlXu3LCs9yUkfXozWegUWMrCQgGxaGP
-         Hqxz5hJLjlJ702rjQLvDOHVEvdo6sYfBWn6xJY30iUmP5kh3zcZEJ+xkhhcpkuUo8WCx
-         Gki23R2o3xZVklrWrSKwfcYspU0GrQ+LYx8NCKf+PwaxvHt692HM9z5mqfbCXT1NwXqL
-         OXvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723749571; x=1724354371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dmJ/U6oso6NBeJGhn3TIkS50+Qahr6/dljLdoPN7uPY=;
-        b=D/QeJC0xeobRvG/rEcMRcWt3poWeyWwfeVvtP+WQfpAKCQ3ZVDU3+0pn2tMgQNihR1
-         m5EvVuzvlWoXfi2xUkQax71/7DG34zpg6fFv3jKx0yn3aaFQwGrFDwEE+0SEo5N5jQOJ
-         CdbN9KIOUSpbh1y/v9RcFPbOppX90k1wx6UePwKzTJA5NAyTVgQW3iWlP0qeEUT7aClq
-         NwyZK51NWkai4/OojDlTFVwi7kw/QzWxF6YBuQvmRjDqSfDy9CT7650HqsCBslio/Wn7
-         gEXTrsAn8eLLgTANvlMupBuBf1imVD9Bjg2TIBqwvLt9vaZ1FYyi0bnC++A4g+fAnIop
-         /NoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVciUohS0qKJNvYhXDpUZKrutKdUbQ5V7S7X86n1YsoWPqeDbNiZTsJF+HJBVnmA9l9OqwsFpJZ8sm4joabF0LJz/FqDCuSSRqDvYTmxT3FRceGm8Gi
-X-Gm-Message-State: AOJu0YwJdFr86Y+ZNHaf3YV9VvSQ4DiNdq3L3bKYzaCWqyerCK8CPlGg
-	ilOew3B7CIjt8lAbvB3nenqNhWWtmQgAUUAcri81ySRJ2prZ6FumHvByazZ+cFzCrXI4wrGDhff
-	0jvMHgpt9Ac0fzwadI85MwqerhoueK8yT2NpsHKVJ5trPVvyMtg==
-X-Google-Smtp-Source: AGHT+IFRYVjjf2rtsZ0DyXa1m00KXA39o8EICR0pfI/3jm6Xtm5EJ6DWPa9xtJ2UUS6AmdDcjWbNeaxbcw/BVpXnv5o=
-X-Received: by 2002:a05:6902:240a:b0:e11:7e70:a9b2 with SMTP id
- 3f1490d57ef6-e1180fa47bbmr989460276.42.1723749571251; Thu, 15 Aug 2024
- 12:19:31 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SMy0qvNq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723751202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hscydfmGaytB0tY5NrMFG6FDivDIrO/rS4k+FVJY0Sw=;
+	b=SMy0qvNqM2CFarWnZPfH6/8DXytDIestNEm0LLxzKLd8mu2dIqnCGMHjYg8dX4f/41x/eI
+	+yj+KN5mm3W94a0BM9v//vtWqDoJqAGEXurjsu2hFD5+yJKrxg7FG0b1zHmgR6Ag3Yohij
+	OKsmJQyOFUBmv2OdSHHqoVGA9Gs+T4A=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-ntn8nMOUNz6pSvDV7rlhtg-1; Thu,
+ 15 Aug 2024 15:46:38 -0400
+X-MC-Unique: ntn8nMOUNz6pSvDV7rlhtg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 280C9190ECEE;
+	Thu, 15 Aug 2024 19:46:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A56419560AA;
+	Thu, 15 Aug 2024 19:46:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+References: <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com> <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
+To: Jann Horn <jannh@google.com>, Jeffrey Altman <jaltman@auristor.com>,
+    openafs-devel@openafs.org
+Cc: dhowells@redhat.com, Paul Moore <paul@paul-moore.com>,
+    James Morris <jmorris@namei.org>,
+    "Serge E. Hallyn" <serge@hallyn.com>,
+    John Johansen <john.johansen@canonical.com>,
+    Jarkko Sakkinen <jarkko@kernel.org>,
+    =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+    =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+    Stephen Smalley <stephen.smalley.work@gmail.com>,
+    Ondrej Mosnacek <omosnace@redhat.com>,
+    Casey Schaufler <casey@schaufler-ca.com>,
+    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+    linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
+    keyrings@vger.kernel.org, selinux@vger.kernel.org
+Subject: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re: [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com> <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
-In-Reply-To: <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Aug 2024 15:19:20 -0400
-Message-ID: <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
-Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
- signature data to LSMs
-To: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-	Alasdair Kergon <agk@redhat.com>
-Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2494948.1723751188.1@warthog.procyon.org.uk>
+Date: Thu, 15 Aug 2024 20:46:28 +0100
+Message-ID: <2494949.1723751188@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Aug 8, 2024 at 6:38=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> w=
-rote:
->
-> Hi Mikulas,
->
-> I hope you=E2=80=99re doing well. I wanted to thank you again for your th=
-orough
-> review for the last version. I=E2=80=99ve since made some minor updates f=
-or this
-> version, including adding more comments and refactoring the way the hash
-> algorithm name is obtained due to recent changes in dm-verity.
->
-> Would you mind if we keep the Review-by tag on the latest version since
-> the changes are minor? Your feedback is greatly valued, and I=E2=80=99d
-> appreciate it if you could take a quick look when you have a moment.
+Jann Horn <jannh@google.com> wrote:
 
-To add a bit more to this, this patchset now looks like it is in a
-state where we would like to merge it into the LSM tree for the
-upcoming merge window, but I would really like to make sure that the
-device-mapper folks are okay with these changes; an
-Acked-by/Reviewed-by on this patch would be appreciated, assuming you
-are still okay with this patch.
+> Rewrite keyctl_session_to_parent() to run task work on the parent
+> synchronously, so that any errors that happen in the task work can be
+> plumbed back into the syscall return value in the child.
 
-For those who may be missing the context, the full patchset can be
-found on lore at the link below:
+The main thing I worry about is if there's a way to deadlock the child and the
+parent against each other.  vfork() for example.
 
-https://lore.kernel.org/linux-security-module/1722665314-21156-1-git-send-e=
-mail-wufan@linux.microsoft.com
+> +	if (task_work_cancel(parent, &ctx.work)) {
+> +		/*
+> +		 * We got interrupted and the task work was canceled before it
+> +		 * could execute.
+> +		 * Use -ERESTARTNOINTR instead of -ERESTARTSYS for
+> +		 * compatibility - the manpage does not list -EINTR as a
+> +		 * possible error for keyctl().
+> +		 */
 
-> On 8/2/2024 11:08 PM, Fan Wu wrote:
-> > From: Deven Bowers <deven.desai@linux.microsoft.com>
-> >
-> > dm-verity provides a strong guarantee of a block device's integrity. As
-> > a generic way to check the integrity of a block device, it provides
-> > those integrity guarantees to its higher layers, including the filesyst=
-em
-> > level.
-> >
-> > However, critical security metadata like the dm-verity roothash and its
-> > signing information are not easily accessible to the LSMs.
-> > To address this limitation, this patch introduces a mechanism to store
-> > and manage these essential security details within a newly added LSM bl=
-ob
-> > in the block_device structure.
-> >
-> > This addition allows LSMs to make access control decisions on the integ=
-rity
-> > data stored within the block_device, enabling more flexible security
-> > policies. For instance, LSMs can now revoke access to dm-verity devices
-> > based on their roothashes, ensuring that only authorized and verified
-> > content is accessible. Additionally, LSMs can enforce policies to only
-> > allow files from dm-verity devices that have a valid digital signature =
-to
-> > execute, effectively blocking any unsigned files from execution, thus
-> > enhancing security against unauthorized modifications.
-> >
-> > The patch includes new hook calls, `security_bdev_setintegrity()`, in
-> > dm-verity to expose the dm-verity roothash and the roothash signature t=
-o
-> > LSMs via preresume() callback. By using the preresume() callback, it
-> > ensures that the security metadata is consistently in sync with the
-> > metadata of the dm-verity target in the current active mapping table.
-> > The hook calls are depended on CONFIG_SECURITY.
-> >
-> > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> > ---
-> ...
-> >
-> > v20:
-> >    + Adding more documentation regarding the new setintegrity hook call
-> >    + Update the code for getting hash algorithm from either v->ahash_tf=
-m
-> >      or v->shash_tfm
-> > ---
-> >   drivers/md/dm-verity-target.c | 118 +++++++++++++++++++++++++++++++++=
-+
-> >   drivers/md/dm-verity.h        |   6 ++
-> >   include/linux/security.h      |   9 ++-
-> >   3 files changed, 132 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-targe=
-t.c
-> > index cf659c8feb29..24ba9a10444c 100644
-> > --- a/drivers/md/dm-verity-target.c
-> > +++ b/drivers/md/dm-verity-target.c
-> > @@ -22,6 +22,7 @@
-> >   #include <linux/scatterlist.h>
-> >   #include <linux/string.h>
-> >   #include <linux/jump_label.h>
-> > +#include <linux/security.h>
-> >
-> >   #define DM_MSG_PREFIX                       "verity"
-> >
-> > @@ -930,6 +931,41 @@ static void verity_io_hints(struct dm_target *ti, =
-struct queue_limits *limits)
-> >       limits->dma_alignment =3D limits->logical_block_size - 1;
-> >   }
-> >
-> > +#ifdef CONFIG_SECURITY
-> > +
-> > +static int verity_init_sig(struct dm_verity *v, const void *sig,
-> > +                        size_t sig_size)
-> > +{
-> > +     v->sig_size =3D sig_size;
-> > +
-> > +     if (sig) {
-> > +             v->root_digest_sig =3D kmemdup(sig, v->sig_size, GFP_KERN=
-EL);
-> > +             if (!v->root_digest_sig)
-> > +                     return -ENOMEM;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void verity_free_sig(struct dm_verity *v)
-> > +{
-> > +     kfree(v->root_digest_sig);
-> > +}
-> > +
-> > +#else
-> > +
-> > +static inline int verity_init_sig(struct dm_verity *v, const void *sig=
-,
-> > +                               size_t sig_size)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> > +static inline void verity_free_sig(struct dm_verity *v)
-> > +{
-> > +}
-> > +
-> > +#endif /* CONFIG_SECURITY */
-> > +
-> >   static void verity_dtr(struct dm_target *ti)
-> >   {
-> >       struct dm_verity *v =3D ti->private;
-> > @@ -949,6 +985,7 @@ static void verity_dtr(struct dm_target *ti)
-> >       kfree(v->initial_hashstate);
-> >       kfree(v->root_digest);
-> >       kfree(v->zero_digest);
-> > +     verity_free_sig(v);
-> >
-> >       if (v->ahash_tfm) {
-> >               static_branch_dec(&ahash_enabled);
-> > @@ -1418,6 +1455,13 @@ static int verity_ctr(struct dm_target *ti, unsi=
-gned int argc, char **argv)
-> >               ti->error =3D "Root hash verification failed";
-> >               goto bad;
-> >       }
-> > +
-> > +     r =3D verity_init_sig(v, verify_args.sig, verify_args.sig_size);
-> > +     if (r < 0) {
-> > +             ti->error =3D "Cannot allocate root digest signature";
-> > +             goto bad;
-> > +     }
-> > +
-> >       v->hash_per_block_bits =3D
-> >               __fls((1 << v->hash_dev_block_bits) / v->digest_size);
-> >
-> > @@ -1559,8 +1603,79 @@ int dm_verity_get_root_digest(struct dm_target *=
-ti, u8 **root_digest, unsigned i
-> >       return 0;
-> >   }
-> >
-> > +#ifdef CONFIG_SECURITY
-> > +
-> > +#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
-> > +
-> > +static int verity_security_set_signature(struct block_device *bdev,
-> > +                                      struct dm_verity *v)
-> > +{
-> > +     /*
-> > +      * if the dm-verity target is unsigned, v->root_digest_sig will
-> > +      * be NULL, and the hook call is still required to let LSMs mark
-> > +      * the device as unsigned. This information is crucial for LSMs t=
-o
-> > +      * block operations such as execution on unsigned files
-> > +      */
-> > +     return security_bdev_setintegrity(bdev,
-> > +                                       LSM_INT_DMVERITY_SIG_VALID,
-> > +                                       v->root_digest_sig,
-> > +                                       v->sig_size);
-> > +}
-> > +
-> > +#else
-> > +
-> > +static inline int verity_security_set_signature(struct block_device *b=
-dev,
-> > +                                             struct dm_verity *v)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> > +#endif /* CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG */
-> > +
-> > +/*
-> > + * Expose verity target's root hash and signature data to LSMs before =
-resume.
-> > + *
-> > + * Returns 0 on success, or -ENOMEM if the system is out of memory.
-> > + */
-> > +static int verity_preresume(struct dm_target *ti)
-> > +{
-> > +     struct block_device *bdev;
-> > +     struct dm_verity_digest root_digest;
-> > +     struct dm_verity *v;
-> > +     int r;
-> > +
-> > +     v =3D ti->private;
-> > +     bdev =3D dm_disk(dm_table_get_md(ti->table))->part0;
-> > +     root_digest.digest =3D v->root_digest;
-> > +     root_digest.digest_len =3D v->digest_size;
-> > +     if (static_branch_unlikely(&ahash_enabled) && !v->shash_tfm)
-> > +             root_digest.alg =3D crypto_ahash_alg_name(v->ahash_tfm);
-> > +     else
-> > +             root_digest.alg =3D crypto_shash_alg_name(v->shash_tfm);
-> > +
-> > +     r =3D security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH,=
- &root_digest,
-> > +                                    sizeof(root_digest));
-> > +     if (r)
-> > +             return r;
-> > +
-> > +     r =3D  verity_security_set_signature(bdev, v);
-> > +     if (r)
-> > +             goto bad;
-> > +
-> > +     return 0;
-> > +
-> > +bad:
-> > +
-> > +     security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, NULL,=
- 0);
-> > +
-> > +     return r;
-> > +}
-> > +
-> > +#endif /* CONFIG_SECURITY */
-> > +
-> >   static struct target_type verity_target =3D {
-> >       .name           =3D "verity",
-> > +/* Note: the LSMs depend on the singleton and immutable features */
-> >       .features       =3D DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
-> >       .version        =3D {1, 10, 0},
-> >       .module         =3D THIS_MODULE,
-> > @@ -1571,6 +1686,9 @@ static struct target_type verity_target =3D {
-> >       .prepare_ioctl  =3D verity_prepare_ioctl,
-> >       .iterate_devices =3D verity_iterate_devices,
-> >       .io_hints       =3D verity_io_hints,
-> > +#ifdef CONFIG_SECURITY
-> > +     .preresume      =3D verity_preresume,
-> > +#endif /* CONFIG_SECURITY */
-> >   };
-> >   module_dm(verity);
-> >
-> > diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-> > index aac3a1b1d94a..ea2da450f173 100644
-> > --- a/drivers/md/dm-verity.h
-> > +++ b/drivers/md/dm-verity.h
-> > @@ -45,6 +45,9 @@ struct dm_verity {
-> >       u8 *salt;               /* salt: its size is salt_size */
-> >       u8 *initial_hashstate;  /* salted initial state, if shash_tfm is =
-set */
-> >       u8 *zero_digest;        /* digest for a zero block */
-> > +#ifdef CONFIG_SECURITY
-> > +     u8 *root_digest_sig;    /* signature of the root digest */
-> > +#endif /* CONFIG_SECURITY */
-> >       unsigned int salt_size;
-> >       sector_t data_start;    /* data offset in 512-byte sectors */
-> >       sector_t hash_start;    /* hash start in blocks */
-> > @@ -58,6 +61,9 @@ struct dm_verity {
-> >       bool hash_failed:1;     /* set if hash of any block failed */
-> >       bool use_bh_wq:1;       /* try to verify in BH wq before normal w=
-ork-queue */
-> >       unsigned int digest_size;       /* digest size for the current ha=
-sh algorithm */
-> > +#ifdef CONFIG_SECURITY
-> > +     unsigned int sig_size;  /* root digest signature size */
-> > +#endif /* CONFIG_SECURITY */
-> >       unsigned int hash_reqsize; /* the size of temporary space for cry=
-pto */
-> >       enum verity_mode mode;  /* mode for handling verification errors =
-*/
-> >       unsigned int corrupted_errs;/* Number of errors for corrupted blo=
-cks */
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index 39aec1c96d6a..0604893f2f9e 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -83,8 +83,15 @@ enum lsm_event {
-> >       LSM_POLICY_CHANGE,
-> >   };
-> >
-> > +struct dm_verity_digest {
-> > +     const char *alg;
-> > +     const u8 *digest;
-> > +     size_t digest_len;
-> > +};
-> > +
-> >   enum lsm_integrity_type {
-> > -     __LSM_INT_MAX
-> > +     LSM_INT_DMVERITY_SIG_VALID,
-> > +     LSM_INT_DMVERITY_ROOTHASH,
-> >   };
-> >
-> >   /*
+I think returning EINTR is fine, provided that if we return EINTR, the change
+didn't happen.  KEYCTL_SESSION_TO_PARENT is only used by the aklog, dlog and
+klog* OpenAFS programs AFAIK, and only if "-setpag" is set as a command line
+option.  It also won't be effective if you strace the program.
 
+Maybe the AFS people can say whether it's even worth keeping the functionality
+rather than just dropping KEYCTL_SESSION_TO_PARENT?
 
+David
 
---=20
-paul-moore.com
