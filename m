@@ -1,98 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125B13DBB7;
-	Fri, 16 Aug 2024 10:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A6143757;
+	Fri, 16 Aug 2024 11:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805524; cv=none; b=P1lhppFTbPBaOUu6VzQwyXk0qVU6bb3JBm1SyWwXf/gf8l/+pS0ZYaieP/xDEMzuIQcT+6OdJFTs6Y3FdpQxKF8smq3tJn/zsFAUgKRsWCmxyUsaASS1mF5VnSy+k+42lOs+VpAF/IShHvYJCUXs/Y7uVD4b+LSjHCIbtWwAFXI=
+	t=1723809236; cv=none; b=DvCdlDrsADh4rGKvcd9yHGeMyNGiskUWLPIs3ZNuX6GG9bPwqu/muoP81pysdrOcuTSKIPwEZa20Zz4NBYblym7vasnzpYBpbV6Z7ZUd8y56mmw/9/TnKOBAc7OmbWigpbdL31EzB7hUN1CSHjhNBrX/k8MbiyMi++5VdwWmbOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805524; c=relaxed/simple;
-	bh=1sR3kzfqGCPk6o6xpt/iBSsdvNffZQycm96/GnQwgFQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=kAAr9xT8sGBFy1pTDHD9OspM9cBFc6pMKQ7pezH1HjkFVfO7mygXyHBLBVNN6LkTRgJOyrcChxWpQEcaFfRphXpUukV8FkN3Ykw8mJE/H33l/SD3v+p0kt3Z6cgi74P9Q6W035Euuvj9GVcAJCrrOg/GZvgPtjxcdoJfJX1cRLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/Q293h/; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/Q293h/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4294C4AF09;
-	Fri, 16 Aug 2024 10:52:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723805524;
-	bh=1sR3kzfqGCPk6o6xpt/iBSsdvNffZQycm96/GnQwgFQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=M/Q293h/7CNIPdkkW/W0u/9moWvk6RkJxcXowaU3rwpsD4R2Je1UfPslzhChK6F9v
-	 /mnXbPGzPQIwpGhvtj9PlQ29hK29YCR/wYhLWGkcLkbUpWHK1E8lsfSU7nK+qh9gWR
-	 DR/5Fjw1B3arA2dG8TkxYArMdGmzuesv3KQBH40Ye/6eCMg9SJonMISSQgqoDWT9X1
-	 9mEt6MC5gd+/oNLnyIqx1puxhGQ8zjtGAYOEJN2Hns+hHmPX0dF6X7nd266XtMzoa1
-	 ZaSX9OwZJYheW4TvwFFTcufk622HKPIg4/oC1f52yUto7qP/4ueex54ie4apjbcDw0
-	 Pk7PXF+BtJZHQ==
+	s=arc-20240116; t=1723809236; c=relaxed/simple;
+	bh=eojZLNJ54T7C1telZ/KLrA0gUmF3UJrn5dZ7ljL4lTs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WeT+aaVBBl5XlLROWN3KATDXcxQZ65aPrwlb7mWCgbjvEQDL99RXX41RjXjD184JTXwUKHoBgCM8OiVYn1F9GN7u7NFSugvVFIQGFf5+SLT1mAV1FZxTGm2gcSPQetBztIiaqXbrxdRhaU0HWMLo3t646rPNn6WFQcY9qlpv5MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Wlfzg42L7z9v7NK;
+	Fri, 16 Aug 2024 19:34:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id C0BA514037F;
+	Fri, 16 Aug 2024 19:53:50 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAn98PHPb9mV9RPAQ--.34928S2;
+	Fri, 16 Aug 2024 12:53:50 +0100 (CET)
+Message-ID: <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
+Subject: Re: [PATCH] evm: stop avoidably reading i_writecount in
+ evm_file_release
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, zohar@linux.ibm.com, 
+ roberto.sassu@huawei.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Date: Fri, 16 Aug 2024 13:53:39 +0200
+In-Reply-To: <20240806133607.869394-1-mjguzik@gmail.com>
+References: <20240806133607.869394-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 16 Aug 2024 13:52:00 +0300
-Message-Id: <D3HA23RMEIJ8.2AHOMIYR3J6F3@kernel.org>
-Cc: "Jeffrey Altman" <jaltman@auristor.com>, <openafs-devel@openafs.org>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, "John Johansen"
- <john.johansen@canonical.com>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>, "Ondrej Mosnacek"
- <omosnace@redhat.com>, "Casey Schaufler" <casey@schaufler-ca.com>,
- <linux-afs@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
- <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>
-Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
- [PATCH v2 1/2] KEYS: use synchronous task work for changing parent
- credentials
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jann Horn" <jannh@google.com>, "David Howells" <dhowells@redhat.com>
-X-Mailer: aerc 0.17.0
-References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
- <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
- <2494949.1723751188@warthog.procyon.org.uk>
- <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
-In-Reply-To: <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+MIME-Version: 1.0
+X-CM-TRANSID:GxC2BwAn98PHPb9mV9RPAQ--.34928S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFW3Zw1xuF43Jry8Ary7ZFb_yoW8Zr43pF
+	Wftan7JFn5tryfCF92y3W7uFyru340qr18Zas5WF12vFn8JrZYqr48tr1jgFnxKrZ5Cr1f
+	X3yIka45A3WDuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrPEfUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGa+tfgI+QAAsz
 
-On Thu Aug 15, 2024 at 10:59 PM EEST, Jann Horn wrote:
-> On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.co=
-m> wrote:
-> > Jann Horn <jannh@google.com> wrote:
-> >
-> > > Rewrite keyctl_session_to_parent() to run task work on the parent
-> > > synchronously, so that any errors that happen in the task work can be
-> > > plumbed back into the syscall return value in the child.
-> >
-> > The main thing I worry about is if there's a way to deadlock the child =
-and the
-> > parent against each other.  vfork() for example.
->
-> Yes - I think it would work fine for scenarios like using
-> KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
-> launched the helper (which I think is the intended usecase?), but
-> there could theoretically be constellations where it would cause an
-> (interruptible) hang if the parent is stuck in
-> uninterruptible/killable sleep.
->
-> I think vfork() is rather special in that it does a killable wait for
-> the child to exit or execute; and based on my understanding of the
-> intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
-> KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
-> through execve?
+On Tue, 2024-08-06 at 15:36 +0200, Mateusz Guzik wrote:
+> The EVM_NEW_FILE flag is unset if the file already existed at the time
+> of open and this can be checked without looking at i_writecount.
 
-Could this encapsulated to a kselftest? Like having host process
-that forks the payload and send SIGINT. That could be deployed e.g
-to tools/testing/selftests/keys. Would be nice to be able to try
-this out with a low barrier.
+Agreed. EVM_NEW_FILE is not going to be set during the open(), only
+before, in evm_post_path_mknod().
 
-Doing this type of testing is different axis than keyutils test suite
-IMHO. That would be also great starting point for adding concurrency
-tests in future.
+Looks good to me.
 
-Could be done either in C or Python.
+Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-BR, Jarkko
+Thanks
+
+Roberto
+
+> Not accessing it reduces traffic on the cacheline during parallel open
+> of the same file and drop the evm_file_release routine from second place
+> to bottom of the profile.
+>=20
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>=20
+> The context is that I'm writing a patch which removes one lockref
+> get/put cycle on parallel open. An operational WIP reduces ping-pong in
+> that area and made do_dentry_open skyrocket along with evm_file_release,
+> due to i_writecount access. With the patch they go down again and
+> apparmor takes the rightful first place.
+>=20
+> The patch accounts for about 5% speed up at 20 cores running open3 from
+> will-it-scale on top of the above wip. (the apparmor + lockref thing
+> really don't scale, that's next)
+>=20
+> I would provide better measurements, but the wip is not ready (as the
+> description suggests) and I need evm out of the way for the actual
+> patch.
+>=20
+>  security/integrity/evm/evm_main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
+vm_main.c
+> index 62fe66dd53ce..309630f319e2 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -1084,7 +1084,8 @@ static void evm_file_release(struct file *file)
+>  	if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
+>  		return;
+> =20
+> -	if (iint && atomic_read(&inode->i_writecount) =3D=3D 1)
+> +	if (iint && iint->flags & EVM_NEW_FILE &&
+> +	    atomic_read(&inode->i_writecount) =3D=3D 1)
+>  		iint->flags &=3D ~EVM_NEW_FILE;
+>  }
+> =20
+
