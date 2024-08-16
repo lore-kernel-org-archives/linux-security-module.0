@@ -1,40 +1,42 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A6143757;
-	Fri, 16 Aug 2024 11:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900F41991BB;
+	Fri, 16 Aug 2024 12:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809236; cv=none; b=DvCdlDrsADh4rGKvcd9yHGeMyNGiskUWLPIs3ZNuX6GG9bPwqu/muoP81pysdrOcuTSKIPwEZa20Zz4NBYblym7vasnzpYBpbV6Z7ZUd8y56mmw/9/TnKOBAc7OmbWigpbdL31EzB7hUN1CSHjhNBrX/k8MbiyMi++5VdwWmbOQ=
+	t=1723812419; cv=none; b=Ghcb3e8ZjtD39Q8wCC/FZE8Nmi97Nnbn3uB90PFDk2Dxq75JNx2hpoWQc/C5fbC+J/3Nc/fI7IzY0JbvJJ5vd0VWwpUihXO4t5R95ER8PHWrrHtcSaWeY1T4D9QB0EdvuA0Eo5HYpkZzr9XmmHNAmqekHoUVAVQebMV4j0gKdxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809236; c=relaxed/simple;
-	bh=eojZLNJ54T7C1telZ/KLrA0gUmF3UJrn5dZ7ljL4lTs=;
+	s=arc-20240116; t=1723812419; c=relaxed/simple;
+	bh=jFD73xGsQIz18ke3m88ajT/gZe74KPkUJca2QFGcGLU=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WeT+aaVBBl5XlLROWN3KATDXcxQZ65aPrwlb7mWCgbjvEQDL99RXX41RjXjD184JTXwUKHoBgCM8OiVYn1F9GN7u7NFSugvVFIQGFf5+SLT1mAV1FZxTGm2gcSPQetBztIiaqXbrxdRhaU0HWMLo3t646rPNn6WFQcY9qlpv5MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+	 Content-Type:MIME-Version; b=ptGzsmjsUa0RMlXC4IRYBZCn+Lcv2FtHDiO3UCHCfJt0RT+9uvQzsw6yz6kNe0o6QzHNOGBYy0GU765grj25IDsbFRm5f6gNqgE/nPnxWEOK0c+pQidERgQIzT1WL5yykcfONs17Xd4v166y6xs7HLccEYdsNSj7JLXx6URqGW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Wlfzg42L7z9v7NK;
-	Fri, 16 Aug 2024 19:34:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id C0BA514037F;
-	Fri, 16 Aug 2024 19:53:50 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4WlgdN2WLLz9v7Jf;
+	Fri, 16 Aug 2024 20:04:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id B6534140B34;
+	Fri, 16 Aug 2024 20:28:28 +0800 (CST)
 Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAn98PHPb9mV9RPAQ--.34928S2;
-	Fri, 16 Aug 2024 12:53:50 +0100 (CET)
-Message-ID: <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: stop avoidably reading i_writecount in
- evm_file_release
+	by APP1 (Coremail) with SMTP id LxC2BwCHCoXjRb9mHDdNAQ--.2087S2;
+	Fri, 16 Aug 2024 13:28:28 +0100 (CET)
+Message-ID: <3b04a8fc177eee5ce2eaa24ae8164140188478c0.camel@huaweicloud.com>
+Subject: Re: [PATCH][next] integrity: Use static_assert() to check struct
+ sizes
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, zohar@linux.ibm.com, 
- roberto.sassu@huawei.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Date: Fri, 16 Aug 2024 13:53:39 +0200
-In-Reply-To: <20240806133607.869394-1-mjguzik@gmail.com>
-References: <20240806133607.869394-1-mjguzik@gmail.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Mimi Zohar
+ <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Date: Fri, 16 Aug 2024 14:28:16 +0200
+In-Reply-To: <ZrVBC9dGwukjfhet@cute>
+References: <ZrVBC9dGwukjfhet@cute>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2 
@@ -44,76 +46,74 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAn98PHPb9mV9RPAQ--.34928S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFW3Zw1xuF43Jry8Ary7ZFb_yoW8Zr43pF
-	Wftan7JFn5tryfCF92y3W7uFyru340qr18Zas5WF12vFn8JrZYqr48tr1jgFnxKrZ5Cr1f
-	X3yIka45A3WDuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:LxC2BwCHCoXjRb9mHDdNAQ--.2087S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFWDAFWUuF1UAF43ZFyxZrb_yoW8Ar1fpF
+	yqga4UCrWjqr1I9FnrAFW3ZF4Sg3y0qr1UXr45Jw1FyFnIyr10qF9YyryrCa43KrWDKr1S
+	yFs0qr45AwsrtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
 	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
 	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
 	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrPEfUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGa+tfgI+QAAsz
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGa+tfgJSAAAsD
 
-On Tue, 2024-08-06 at 15:36 +0200, Mateusz Guzik wrote:
-> The EVM_NEW_FILE flag is unset if the file already existed at the time
-> of open and this can be checked without looking at i_writecount.
-
-Agreed. EVM_NEW_FILE is not going to be set during the open(), only
-before, in evm_post_path_mknod().
+On Thu, 2024-08-08 at 16:04 -0600, Gustavo A. R. Silva wrote:
+> Commit 38aa3f5ac6d2 ("integrity: Avoid -Wflex-array-member-not-at-end
+> warnings") introduced tagged `struct evm_ima_xattr_data_hdr` and
+> `struct ima_digest_data_hdr`. We want to ensure that when new members
+> need to be added to the flexible structures, they are always included
+> within these tagged structs.
+>=20
+> So, we use `static_assert()` to ensure that the memory layout for
+> both the flexible structure and the tagged struct is the same after
+> any changes.
 
 Looks good to me.
 
+Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
 Thanks
 
 Roberto
 
-> Not accessing it reduces traffic on the cacheline during parallel open
-> of the same file and drop the evm_file_release routine from second place
-> to bottom of the profile.
->=20
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 > ---
+>  security/integrity/integrity.h | 4 ++++
+>  1 file changed, 4 insertions(+)
 >=20
-> The context is that I'm writing a patch which removes one lockref
-> get/put cycle on parallel open. An operational WIP reduces ping-pong in
-> that area and made do_dentry_open skyrocket along with evm_file_release,
-> due to i_writecount access. With the patch they go down again and
-> apparmor takes the rightful first place.
->=20
-> The patch accounts for about 5% speed up at 20 cores running open3 from
-> will-it-scale on top of the above wip. (the apparmor + lockref thing
-> really don't scale, that's next)
->=20
-> I would provide better measurements, but the wip is not ready (as the
-> description suggests) and I need evm out of the way for the actual
-> patch.
->=20
->  security/integrity/evm/evm_main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
-vm_main.c
-> index 62fe66dd53ce..309630f319e2 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -1084,7 +1084,8 @@ static void evm_file_release(struct file *file)
->  	if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
->  		return;
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrit=
+y.h
+> index 660f76cb69d3..c2c2da691123 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -37,6 +37,8 @@ struct evm_ima_xattr_data {
+>  	);
+>  	u8 data[];
+>  } __packed;
+> +static_assert(offsetof(struct evm_ima_xattr_data, data) =3D=3D sizeof(st=
+ruct evm_ima_xattr_data_hdr),
+> +	      "struct member likely outside of __struct_group()");
 > =20
-> -	if (iint && atomic_read(&inode->i_writecount) =3D=3D 1)
-> +	if (iint && iint->flags & EVM_NEW_FILE &&
-> +	    atomic_read(&inode->i_writecount) =3D=3D 1)
->  		iint->flags &=3D ~EVM_NEW_FILE;
->  }
+>  /* Only used in the EVM HMAC code. */
+>  struct evm_xattr {
+> @@ -65,6 +67,8 @@ struct ima_digest_data {
+>  	);
+>  	u8 digest[];
+>  } __packed;
+> +static_assert(offsetof(struct ima_digest_data, digest) =3D=3D sizeof(str=
+uct ima_digest_data_hdr),
+> +	      "struct member likely outside of __struct_group()");
 > =20
+>  /*
+>   * Instead of wrapping the ima_digest_data struct inside a local structu=
+re
 
