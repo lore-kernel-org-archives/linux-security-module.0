@@ -1,155 +1,98 @@
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2CEECC;
-	Fri, 16 Aug 2024 01:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125B13DBB7;
+	Fri, 16 Aug 2024 10:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723770026; cv=none; b=lHICqadG0o7fbB6vXuJwQOfiSsfNpY2HjTQrxtKWeNWKj/7ULeU4yhh/vw0nC1iXxUfMb6SIR0whJxuqxss3xqJcdPikfMG5upsFsaVcqNrMjmpsc+1ysSklGE+oIjUS8Z0/F5ecuSIpnpOgOTYWNejA5b2jmn+8GSRtZ56pokY=
+	t=1723805524; cv=none; b=P1lhppFTbPBaOUu6VzQwyXk0qVU6bb3JBm1SyWwXf/gf8l/+pS0ZYaieP/xDEMzuIQcT+6OdJFTs6Y3FdpQxKF8smq3tJn/zsFAUgKRsWCmxyUsaASS1mF5VnSy+k+42lOs+VpAF/IShHvYJCUXs/Y7uVD4b+LSjHCIbtWwAFXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723770026; c=relaxed/simple;
-	bh=jYu1hQ3GbO6rFkdtn1RqFe9xx1Q1L0UDXL3rPi7xvPk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fLDkcM5iRuKbAmtk03iD0nYXMWpp2s3gAa4WS3yzO8mfms7RfepQjV9Vk1r8pcHsEJvdWqWl0XRoxJ4KV5TRWt95I/qmgjJCZ70uWD1yll+k+zZduH2z48LnMr1coMX6LZIT78SJl8NZOFvT2EnedJPYqMdhCqCr8NeiLAnEHmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WlNts326Lz1T7PK;
-	Fri, 16 Aug 2024 08:59:49 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4500C18010A;
-	Fri, 16 Aug 2024 09:00:21 +0800 (CST)
-Received: from mscphis02103.huawei.com (10.123.65.215) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 16 Aug 2024 09:00:19 +0800
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: <mic@digikod.net>
-CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-Subject: [RFC PATCH v1 4/4] selftests/landlock: Add realworld workload based on find tool
-Date: Fri, 16 Aug 2024 08:59:43 +0800
-Message-ID: <20240816005943.1832694-5-ivanov.mikhail1@huawei-partners.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240816005943.1832694-1-ivanov.mikhail1@huawei-partners.com>
-References: <20240816005943.1832694-1-ivanov.mikhail1@huawei-partners.com>
+	s=arc-20240116; t=1723805524; c=relaxed/simple;
+	bh=1sR3kzfqGCPk6o6xpt/iBSsdvNffZQycm96/GnQwgFQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=kAAr9xT8sGBFy1pTDHD9OspM9cBFc6pMKQ7pezH1HjkFVfO7mygXyHBLBVNN6LkTRgJOyrcChxWpQEcaFfRphXpUukV8FkN3Ykw8mJE/H33l/SD3v+p0kt3Z6cgi74P9Q6W035Euuvj9GVcAJCrrOg/GZvgPtjxcdoJfJX1cRLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/Q293h/; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/Q293h/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4294C4AF09;
+	Fri, 16 Aug 2024 10:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723805524;
+	bh=1sR3kzfqGCPk6o6xpt/iBSsdvNffZQycm96/GnQwgFQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=M/Q293h/7CNIPdkkW/W0u/9moWvk6RkJxcXowaU3rwpsD4R2Je1UfPslzhChK6F9v
+	 /mnXbPGzPQIwpGhvtj9PlQ29hK29YCR/wYhLWGkcLkbUpWHK1E8lsfSU7nK+qh9gWR
+	 DR/5Fjw1B3arA2dG8TkxYArMdGmzuesv3KQBH40Ye/6eCMg9SJonMISSQgqoDWT9X1
+	 9mEt6MC5gd+/oNLnyIqx1puxhGQ8zjtGAYOEJN2Hns+hHmPX0dF6X7nd266XtMzoa1
+	 ZaSX9OwZJYheW4TvwFFTcufk622HKPIg4/oC1f52yUto7qP/4ueex54ie4apjbcDw0
+	 Pk7PXF+BtJZHQ==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: mscpeml500003.china.huawei.com (7.188.49.51) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 16 Aug 2024 13:52:00 +0300
+Message-Id: <D3HA23RMEIJ8.2AHOMIYR3J6F3@kernel.org>
+Cc: "Jeffrey Altman" <jaltman@auristor.com>, <openafs-devel@openafs.org>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, "John Johansen"
+ <john.johansen@canonical.com>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>, "Ondrej Mosnacek"
+ <omosnace@redhat.com>, "Casey Schaufler" <casey@schaufler-ca.com>,
+ <linux-afs@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
+ <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>
+Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
+ [PATCH v2 1/2] KEYS: use synchronous task work for changing parent
+ credentials
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jann Horn" <jannh@google.com>, "David Howells" <dhowells@redhat.com>
+X-Mailer: aerc 0.17.0
+References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
+ <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+ <2494949.1723751188@warthog.procyon.org.uk>
+ <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+In-Reply-To: <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
 
-Implement script that measures Landlock overhead for workload in which
-find tool is executed on Linux source code folder. This workload is tested
-with 5, 10 depth values and few number of layers.
+On Thu Aug 15, 2024 at 10:59 PM EEST, Jann Horn wrote:
+> On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.co=
+m> wrote:
+> > Jann Horn <jannh@google.com> wrote:
+> >
+> > > Rewrite keyctl_session_to_parent() to run task work on the parent
+> > > synchronously, so that any errors that happen in the task work can be
+> > > plumbed back into the syscall return value in the child.
+> >
+> > The main thing I worry about is if there's a way to deadlock the child =
+and the
+> > parent against each other.  vfork() for example.
+>
+> Yes - I think it would work fine for scenarios like using
+> KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
+> launched the helper (which I think is the intended usecase?), but
+> there could theoretically be constellations where it would cause an
+> (interruptible) hang if the parent is stuck in
+> uninterruptible/killable sleep.
+>
+> I think vfork() is rather special in that it does a killable wait for
+> the child to exit or execute; and based on my understanding of the
+> intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
+> KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
+> through execve?
 
-This workload is useful to measure Landlock overhead under different
-number of layers and different keys of the filesystem ruleset.
+Could this encapsulated to a kselftest? Like having host process
+that forks the payload and send SIGINT. That could be deployed e.g
+to tools/testing/selftests/keys. Would be nice to be able to try
+this out with a low barrier.
 
-Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
----
- .../landlock/bench/bench_find_on_linux.sh     | 84 +++++++++++++++++++
- 1 file changed, 84 insertions(+)
- create mode 100755 tools/testing/selftests/landlock/bench/bench_find_on_linux.sh
+Doing this type of testing is different axis than keyutils test suite
+IMHO. That would be also great starting point for adding concurrency
+tests in future.
 
-diff --git a/tools/testing/selftests/landlock/bench/bench_find_on_linux.sh b/tools/testing/selftests/landlock/bench/bench_find_on_linux.sh
-new file mode 100755
-index 000000000000..ae53c265c444
---- /dev/null
-+++ b/tools/testing/selftests/landlock/bench/bench_find_on_linux.sh
-@@ -0,0 +1,84 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright © 2024 Huawei Tech. Co., Ltd.
-+#
-+# Measure openat(2) overhead for workload that executes find tool on Linux source
-+# code with different depths and numbers of ruleset layers.
-+
-+# cf. tools/testing/selftests/kselftest.h
-+KSFT_PASS=0
-+KSFT_FAIL=1
-+KSFT_XFAIL=2
-+KSFT_XPASS=3
-+KSFT_SKIP=4
-+
-+REL_DIR=$(dirname $(realpath $0))
-+FIND=/usr/bin/find
-+LINUX_SRC=$(realpath $REL_DIR/../../../../../)
-+BENCH_CMD=$REL_DIR/run.sh
-+TOPOLOGY=.topology
-+TMP=.tmp
-+
-+# read
-+READ_ACCESS=4
-+
-+# $1 - Linux src files path
-+# $2 - Maximum depth of files
-+# $3 - If $3 == 0 then only files of depth $2 is used in ruleset.
-+#      Otherwise, ruleset uses files of depth 1-$2 and ruleset layer
-+#      of each file matches depth of the file.
-+# $4 - Name of the file in which topology would be saved
-+gen_linux_src_topology()
-+{
-+	n_layers=$2
-+	if [[ $3 -eq 0 ]]; then
-+		n_layers=1
-+		find $1 -mindepth $2 -maxdepth $2 -fprintf $4 '1 %p\n'
-+	else
-+		find $1 -mindepth 1 -maxdepth $2 -fprintf $4 '%d %p\n'
-+	fi
-+
-+	# Allow access to FIND
-+	for depth in $(seq 1 $n_layers);
-+	do
-+		echo $depth /usr/bin/find >> $4
-+		echo $depth /usr/bin/file >> $4
-+		echo $depth /lib >> $4
-+		echo $depth /etc >> $4
-+	done
-+}
-+
-+if [ ! -f "$BENCH_CMD" ]; then
-+	echo $BENCH_CMD does not exist
-+	exit $KSFT_SKIP
-+fi
-+
-+if [ ! -f "$FIND" ]; then
-+	echo $FIND does not exist
-+	exit $KSFT_SKIP
-+fi
-+
-+# $1 - depth
-+# $2 - If $2 == 0 then only files of depth $2 is used in ruleset.
-+#      Otherwise, ruleset uses files of depth 1-$2 and ruleset layer
-+#      of each file matches depth of the file.
-+# $3 - Number of iterations of this sample
-+run_sample()
-+{
-+	n_layers=$1
-+	if [[ $2 -eq 0 ]]; then
-+		n_layers=1
-+	fi
-+
-+	echo Running find on $n_layers layers, $1 depth, $3 iterations...
-+	gen_linux_src_topology $LINUX_SRC $1 $2 $TOPOLOGY
-+
-+	$BENCH_CMD -s -r $3 -b -t fs:$TOPOLOGY:$READ_ACCESS -e openat \
-+		$FIND $LINUX_SRC -mindepth $1 -maxdepth $1 -exec file '{}' \;
-+}
-+
-+run_sample 5 0 10
-+run_sample 5 1 10
-+run_sample 10 0 500
-+run_sample 10 1 500
--- 
-2.34.1
+Could be done either in C or Python.
 
+BR, Jarkko
