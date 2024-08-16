@@ -1,167 +1,152 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF13C14D708;
-	Thu, 15 Aug 2024 23:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889D5BA33;
+	Fri, 16 Aug 2024 01:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723763172; cv=none; b=sFSD9AMexrlAliPupFJJbKuIQJvLxl7VXxP9PKlJ9H1d6HzwSHFNCsIIrN6J7MNgGNQuuvp2Fa3/2MgHKOVXsu1pIqFjTQTB4BdCRuPPPTwY3r54ejbhDb8UsbQmO05kIPtJVxEuf4m8TdjxSw0NxKIVcy0TJLOO3jT0vO0EO7I=
+	t=1723770021; cv=none; b=nAfKAkNQhGcH4b7o1qyGFp8yNo5jW4SHOXcAxQ6FSJ7UW604T0wncMvX7Re44SIrXzaymEQuN11xcqiNRA9nt7/QdozM7jze8I4Tt9sr70UifSwMMGjKWtwP0zAuXGCx9IQeKqoCzgudvX8VYpPfhqG5Cb06oqY5eAKqyZifGNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723763172; c=relaxed/simple;
-	bh=bvTlhlXNaVe0JPjLpRuKFXfFp3CAjwWT83vZcv58etE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvXJmSSzqrOmQNYw0ukL3eR5YQ8Cad3Q0FOaG/P+i+STkccGJHAM+M7q3eRRbtMeBzra438sM7hAwTymUgIkRCKElT1AyVHd1p5mmOJgExuygNzZ8qV5xRBasGeqWJxLW95wtZ4NOexesRpRGpL0936PxWZ+KDa3VDj2M2/+P70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQ+tHLEx; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQ+tHLEx"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7a115c427f1so1081923a12.0;
-        Thu, 15 Aug 2024 16:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723763170; x=1724367970; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=r2MVp98bZo761S4wGmdjk4zKZB2eYXUc53AD4ygWeNY=;
-        b=RQ+tHLExtDFgEIvQB38drETN4qTFmF4hu1SoVfvd+SBfR5rL3eQOBrUHSoxJYu/Imz
-         WIYeBcgmiz2j08qxos4TKiZCXgLQVxnoRzhx4FiEdInd+Qle2jild4Vhsfo2swZ0K2lW
-         MB/OPhjZc3cUb2mLi2AAF9ffjYJmtScBIaAMc1Cpwr6o0a0/Hx0aRujSn8TJSLcc4t8u
-         ClhOYJ0bpoFd46ifg7yrkoGXpQYp257trt2AYNhrzdZJ7zG7QcdbJUKe4PZfj459ZO3m
-         /BXZ1NiJUdBnMsLXr37D1kCA3O/FWDPzo9HcddQ7wNzBEFQBfm7thLRg8x4G/1iejB8/
-         fmuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723763170; x=1724367970;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r2MVp98bZo761S4wGmdjk4zKZB2eYXUc53AD4ygWeNY=;
-        b=qHuKSLIlzs/3yaiX+wSubDipZ0ax7vEoPu5yDzY1rGBF3L6VDhvfEgxHLmX4zTR9Ss
-         E3bvpDlidXjHDntkj3Q/RqK6ZSsCEkOwZ27oHhZxxOMDVN4i6do3R4UCXzv0a2BLUXcg
-         AGj4QExoguE2slcmlhQzhcOH8BcSUuEykTM17CX7traJGbIEk23dyytC/iNgNWlPWoMJ
-         vkC8JElzJFI5q01xP62W5UyNWzjrpjfRBOPty5MCyxfRxaQp60H4hXHcjuJ+FJ+2TrrP
-         58B3Dtb8olPY0bJYYwZ7nzh/vUPPmjTjOBQjzw9venoiW4H6Kf7P09pY6m28yu/WqT6k
-         kv6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXdsc/yj17EvWbQ5G/bJw53fK2IS2F6wxkr6XxVUTvOCoRCi2JGWHPz04N70qptLH3bblqCmZF2qF7eWLAOYX08U8tmQxQTU58HCTdK8ACo24Pojm9tzL52t6K/he1YaVN1KU+4zeAirLfL/XHhMMDUxIo63ynhIWwd/qZrQcwqlRo2IkvlaMybWewK
-X-Gm-Message-State: AOJu0YxYwO6a9ns+sow12OQpfSqTyAUWzIzzA48s+mH/92BFODqlXJgU
-	8nshlbPzPoEsfhOBuiMqavY+3izwcLZ1c+VH6P/wA23a3PRD3rKx
-X-Google-Smtp-Source: AGHT+IGXM/Mqg9qSgfOA6fMJ1xt6FPn83RQRVebx68PrCIT9+I7807vn1nG8ky9ebKzf39dbjaw4Wg==
-X-Received: by 2002:a05:6a20:c88a:b0:1c8:95c9:307c with SMTP id adf61e73a8af0-1c904fb6489mr1756065637.28.1723763170085;
-        Thu, 15 Aug 2024 16:06:10 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae0756dsm1508384b3a.47.2024.08.15.16.06.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 16:06:09 -0700 (PDT)
-Date: Thu, 15 Aug 2024 17:06:07 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: Jann Horn <jannh@google.com>
-Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] Landlock: Adding file_send_sigiotask signal
- scoping support
-Message-ID: <Zr6J31ewINPtPtTD@tahera-OptiPlex-5000>
-References: <cover.1723680305.git.fahimitahera@gmail.com>
- <d04bc943e8d275e8d00bb7742bcdbabc7913abbe.1723680305.git.fahimitahera@gmail.com>
- <CAG48ez2Sw0Cy3RYrgrsEDKyWoxMmMbzX6yY-OEfZqeyGDQhy9w@mail.gmail.com>
- <Zr5y53Bl6cgdLKjj@tahera-OptiPlex-5000>
- <CAG48ez1PcHRDhRjtsq_JAr5e6z=XNjB1Mi_jjtr8EsRphnnb2g@mail.gmail.com>
+	s=arc-20240116; t=1723770021; c=relaxed/simple;
+	bh=6Z1VJolCoXQLTemHjcVrm7KRpDaT1/mtr2A5nye3pUg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=arqSQZkMAjAlTpaEOopc8ScnaB0g4w8PezDP40+sVWWibWoGJN1mO1R0Exev/vZp9nJjtteNxb35mIDyvL3u7LgId+PvXOW8XSuOjcTXCcvsude2URnYYz4I2lcIIJT1fF4ggU/UtioRJruj1qz6wA+UneFSLLoBfVNuvg8salc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WlNp26qBSz20ldC;
+	Fri, 16 Aug 2024 08:55:38 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id A80CA180043;
+	Fri, 16 Aug 2024 09:00:14 +0800 (CST)
+Received: from mscphis02103.huawei.com (10.123.65.215) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 16 Aug 2024 09:00:12 +0800
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+To: <mic@digikod.net>
+CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+Subject: [RFC PATCH v1 0/4] Implement performance impact measurement tool
+Date: Fri, 16 Aug 2024 08:59:39 +0800
+Message-ID: <20240816005943.1832694-1-ivanov.mikhail1@huawei-partners.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1PcHRDhRjtsq_JAr5e6z=XNjB1Mi_jjtr8EsRphnnb2g@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: mscpeml500003.china.huawei.com (7.188.49.51) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On Fri, Aug 16, 2024 at 12:10:44AM +0200, Jann Horn wrote:
-> On Thu, Aug 15, 2024 at 11:28 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> >
-> > On Thu, Aug 15, 2024 at 10:25:15PM +0200, Jann Horn wrote:
-> > > On Thu, Aug 15, 2024 at 8:29 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > This patch adds two new hooks "hook_file_set_fowner" and
-> > > > "hook_file_free_security" to set and release a pointer to the
-> > > > domain of the file owner. This pointer "fown_domain" in
-> > > > "landlock_file_security" will be used in "file_send_sigiotask"
-> > > > to check if the process can send a signal.
-> > > >
-> > > > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > > > ---
-> > > >  security/landlock/fs.c   | 18 ++++++++++++++++++
-> > > >  security/landlock/fs.h   |  6 ++++++
-> > > >  security/landlock/task.c | 27 +++++++++++++++++++++++++++
-> > > >  3 files changed, 51 insertions(+)
-> > > >
-> > > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > > index 7877a64cc6b8..d05f0e9c5e54 100644
-> > > > --- a/security/landlock/fs.c
-> > > > +++ b/security/landlock/fs.c
-> > > > @@ -1636,6 +1636,21 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
-> > > >         return -EACCES;
-> > > >  }
-> > > >
-> > > > +static void hook_file_set_fowner(struct file *file)
-> > > > +{
-> > > > +       write_lock_irq(&file->f_owner.lock);
-> > >
-> > > Before updating landlock_file(file)->fown_domain, this hook must also
-> > > drop a reference on the old domain - maybe by just calling
-> > > landlock_put_ruleset_deferred(landlock_file(file)->fown_domain) here.
-> > Hi Jann,
-> >
-> > Thanks for the feedback :)
-> > It totally make sense.
-> > > > +       landlock_file(file)->fown_domain = landlock_get_current_domain();
-> > > > +       landlock_get_ruleset(landlock_file(file)->fown_domain);
-> > > > +       write_unlock_irq(&file->f_owner.lock);
-> > > > +}
-> > > > +
-> > > > +static void hook_file_free_security(struct file *file)
-> > > > +{
-> > > > +       write_lock_irq(&file->f_owner.lock);
-> > > > +       landlock_put_ruleset(landlock_file(file)->fown_domain);
-> > I was thinking of if we can replace this landlock_put_ruleset with
-> > landlock_put_ruleset_deferred. In this case, it would be better use of
-> > handling the lock?
-> 
-> I don't think you have to take the "file->f_owner.lock" in this hook -
-> the file has already been torn down pretty far, nothing is going to be
-> able to trigger the file_set_fowner hook anymore.
-That's right. Thanks.
+Hello! This is v1 RFC patch dedicated to Landlock performance measurement.
 
-> But either way, you're right that we can't just use
-> landlock_put_ruleset() here because landlock_put_ruleset() can sleep
-> and the file_free_security hook can be invoked from non-sleepable
-> context. (This only happens when fput() directly calls file_free(),
-> and I think that only happens with ->fown_domain==NULL, so technically
-> it would also be fine to do something like "if (domain)
-> landlock_put_ruleset(domain);".)
-> If you test your current code in a kernel that was built with
-> CONFIG_DEBUG_ATOMIC_SLEEP=y, this will probably print an warning
-> message in the kernel log (dmesg). You're right that using
-> landlock_put_ruleset_deferred() instead would fix that.
-> 
-> I think the right solution here is probably just to do:
-> 
-> static void hook_file_free_security(struct file *file)
-> {
->   landlock_put_ruleset_deferred(landlock_file(file)->fown_domain);
-> }
-I think I will stick to this one since it is easier to understand. 
-> Alternatively it would also work to do this - this code is probably a
-> bit more efficient but also a little less clear:
-> 
-> static void hook_file_free_security(struct file *file)
-> {
->   /* don't trigger might_sleep() for tearing down unopened file */
->   if (landlock_file(file)->fown_domain)
->     landlock_put_ruleset(landlock_file(file)->fown_domain);
-> }
-> 
-> >
-> > > > +       write_unlock_irq(&file->f_owner.lock);
-> > > > +}
+Landlock LSM hooks are executed with many operations on Linux internal
+objects (files, sockets). This hooks can noticeably affect performance
+of such operations as it was demonstrated in the filesystem caching
+patchset [1]. Having ability to calculate Landlock performance overhead
+allows to compare kernel changes and estimate the acceptability
+of new features (e.g. [2], [3], [4]).
+
+A syscall execution time was chosen as the measured metric.
+Landlock performance overhead is defined as the difference between syscall
+duration in sandboxed mode and default mode.
+
+Initially, perf trace was chosen as tracer that measures syscalls
+durations. I've figured out that it can show imprecise values.
+It doesn't affect real overhead value, but it shows the wrong
+proportion of overhead relative to syscall baseline duration. Moreover,
+using perf trace caused some measurement noise.
+
+AFAICS all this happens due to its implementation and perf event handlers.
+Until someone figures out if it's possible to fix this issues somehow I
+suggest using libbpf-based simple program provided in this patchset
+that uses per-syscall tracepoints and calculates average durations for
+specified syscalls. In fact it has simple implementation based on a small
+BPF programs and provides more precise metrics.
+
+This patchset implements Landlock sandboxer which provides the ability to
+customize the ruleset in a variable way.
+
+Currently, following workloads are implemented:
+* Simple script for syscalls microbenchmarking with `openat` support.
+* Script that executes find tool under Linux source files with various
+  depth and sandboxer configurations.
+
+Microbenchmarks can have only simple rulesets with few number
+of rules but in the next patches they should be extended with support of
+large rulesets with different number of layers.
+
+Here is an example of how this tool can be used to measure read access
+Landlock overhead for workload that uses find tool on linux source files
+(with depth 5):
+
+    # ./bench/run.sh -t fs:.topology:4 -e openat -s -b \
+    #    $FIND $LINUX_SRC -mindepth 5 -maxdepth 5 -exec file '{}' \;
+
+    Tracing baseline workload...
+    376.294s elapsed
+    Tracing sandboxed workload...
+    381.298s elapsed
+
+    Tracing results
+    ===============
+    cmd: /usr/bin/find /root/linux -mindepth 5 -maxdepth 5 -exec file '{}' \;
+    syscalls: openat
+    access: 4
+    overhead:
+        syscall                  bcalls     scalls   duration+overhead(us)
+        =======                  ======     ======   =====================
+        syscall-257             1498623    1770882       1.88+0.46(+24.0%)
+
+Please, share your opinion on the design of the tool and your ideas for
+improving measurement and workloads!
+
+[1] https://lore.kernel.org/all/20210630224856.1313928-1-mic@digikod.net/
+[2] https://github.com/landlock-lsm/linux/issues/10
+[3] https://github.com/landlock-lsm/linux/issues/19
+[4] https://github.com/landlock-lsm/linux/issues/1
+
+Closes: https://github.com/landlock-lsm/linux/issues/24
+
+Mikhail Ivanov (4):
+  selftests/landlock: Implement performance impact measurement tool
+  selftests/landlock: Implement per-syscall microbenchmarks
+  selftests/landlock: Implement custom libbpf-based tracer
+  selftests/landlock: Add realworld workload based on find tool
+
+ tools/testing/selftests/Makefile              |   1 +
+ .../testing/selftests/landlock/bench/Makefile | 179 ++++++++
+ .../landlock/bench/bench_find_on_linux.sh     |  84 ++++
+ .../testing/selftests/landlock/bench/common.c | 283 ++++++++++++
+ .../testing/selftests/landlock/bench/common.h |  18 +
+ tools/testing/selftests/landlock/bench/config |  10 +
+ .../selftests/landlock/bench/microbench.c     | 192 ++++++++
+ .../selftests/landlock/bench/progs/tracer.c   | 126 ++++++
+ tools/testing/selftests/landlock/bench/run.sh | 409 ++++++++++++++++++
+ .../selftests/landlock/bench/sandboxer.c      | 117 +++++
+ .../testing/selftests/landlock/bench/tracer.c | 278 ++++++++++++
+ .../selftests/landlock/bench/tracer_common.h  |  15 +
+ 12 files changed, 1712 insertions(+)
+ create mode 100644 tools/testing/selftests/landlock/bench/Makefile
+ create mode 100755 tools/testing/selftests/landlock/bench/bench_find_on_linux.sh
+ create mode 100644 tools/testing/selftests/landlock/bench/common.c
+ create mode 100644 tools/testing/selftests/landlock/bench/common.h
+ create mode 100644 tools/testing/selftests/landlock/bench/config
+ create mode 100644 tools/testing/selftests/landlock/bench/microbench.c
+ create mode 100644 tools/testing/selftests/landlock/bench/progs/tracer.c
+ create mode 100755 tools/testing/selftests/landlock/bench/run.sh
+ create mode 100644 tools/testing/selftests/landlock/bench/sandboxer.c
+ create mode 100644 tools/testing/selftests/landlock/bench/tracer.c
+ create mode 100644 tools/testing/selftests/landlock/bench/tracer_common.h
+
+
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+-- 
+2.34.1
+
