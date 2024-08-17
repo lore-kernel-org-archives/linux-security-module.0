@@ -1,294 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70EF2107;
-	Sat, 17 Aug 2024 09:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B17B8BE8
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Aug 2024 16:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723885513; cv=none; b=pPYnQu/ndU8y1Pldn1eP0/CTxBw4MVszWm0rifBwtw5As+v6+NrzsJg4Nh9zEdhDcOUMr1+E5R9x/LjAMBhTdkmQWBrv2HIA0rY0WziiNpeviOF/gmpjfs8aIi9y8BJ5+VMV4eOJ+nLiG9vRvmRZDqZbafOSBIZi8nN2FXcbVjg=
+	t=1723910727; cv=none; b=Ne86jDDRVJ0csQuojkb+N9Zx0XnJGXZxDvH8oDeSu4aCfJmBTI7bN44CE7vBSIR+YtAWLBxlhda/5zR3wV6UmHYYyPDgMHQvb/Grt+E8SXJNmNp9XHEXJSH+Wus9oVJz1ZZhRdzv/nvg4RlKYrgyC4/kbJIu/zOi0LXMHM/C5oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723885513; c=relaxed/simple;
-	bh=v/bo9jddffzD66AkTiZN77T4QpmXWOzZY5qpNjnaKaQ=;
+	s=arc-20240116; t=1723910727; c=relaxed/simple;
+	bh=4wS9wZSgmNqpZU3hiXgfvkGGfmC4w3gRWJqw8PfIWrU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3W/+v1pGlVgv+RjpRRpnPgZ5jz4bU7zTN4QGkj9aTR1xJEFgttlT+uTmB1vCERBDsnbp85asm1N89bG5S2l/CmCFSVs2+ndOApz3GtRzxLCN+ulokLiyB/1M7Xav/tg4a3ZklFNDcLjFmdRedar+0FVQRKFdHD57Xx45lFn/Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHZuxKob; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UiSAXFev3NBGM0H7BbBTCV+Det57ckEg7sJYjCF/Lv78dFdN4KvR6biIvnZfem4nPU2atxUwDCGIwTjp5+ibSmOQHcm2+4Iq9wwvNSaWK4sRx58HAK17Zi0XmWjg+0d7wmX7gZ9T/BUozx3AzqPD5cKLKFySZhcVPIvsQEDl2vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Xoc11i2p; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHZuxKob"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA74EC116B1;
-	Sat, 17 Aug 2024 09:05:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723885512;
-	bh=v/bo9jddffzD66AkTiZN77T4QpmXWOzZY5qpNjnaKaQ=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Xoc11i2p"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WmNkj0BVszS9L;
+	Sat, 17 Aug 2024 17:56:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723910172;
+	bh=FW4Rtyh8r6fKpJGsz9C2GsN1N9DDm5fwxdou/Sd1Gf8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uHZuxKobkZPexs4wQXgy+BigHynUnVn2wGZXIYK3rG4h1ghhRi91iSqYmk1RnU63k
-	 MYVCdI6WXmjOKe7vXj9nBcdZr2YbbrM+4cxYpWJnBOzHYN8WBZYmnx6wTiP4pjScM+
-	 a/38aDduZcDlZxZVablIYLfBKHjroH/uEmZroFJijBXpSek36A1Vq0124G01TH8w0V
-	 349jwsrENGcMoLN4tKqn/Ly5mzH+uaU1bEjYR6cmhq5vnxcfuxX9XmftRtil9AjQ5X
-	 ZZp+c56fp7/mSI3ovhzAorNflOdFGMQvkdTuHSISLpP32Gg7Nqy6zjelHnwHbFIEv+
-	 WQ4Hzf798ofiA==
-Date: Sat, 17 Aug 2024 11:05:06 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in
- {kstrdup,kstrndup,kmemdup_nul}
-Message-ID: <qdzuvazxkvueook2a64qo2jcdrrbnkp2pn2dbury34ad47jvno@eu6ul4fso6yi>
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-7-laoar.shao@gmail.com>
- <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
+	b=Xoc11i2p2N434ckky24HXkjOzqrVWYsNNl5e/7melw7Ro1aP476Sm1bITVRumqhfL
+	 sZLHDOL20OjWkUdxoKsqIKvVDpcRdAFIuR0gTMTk19niDAGcyr9bfhiW+gQ89jL/7V
+	 HeA9Gfz4c8lH7sRgQx5/Zwf+juHaVqA2gpCjb1/c=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WmNkh27S2z9Yt;
+	Sat, 17 Aug 2024 17:56:12 +0200 (CEST)
+Date: Sat, 17 Aug 2024 17:56:11 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: landlock@lists.linux.dev, oss-security@lists.openwall.com
+Cc: Jann Horn <jannh@google.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-security-module@vger.kernel.org
+Subject: Landlock Houdini fix: CVE-2024-42318
+Message-ID: <20240817.shahka3Ee1iy@digikod.net>
+References: <2024081754-CVE-2024-42318-f0c9@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4u7yqqf3o53fozhu"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024081754-CVE-2024-42318-f0c9@gregkh>
+X-Infomaniak-Routing: alpha
 
+Hi,
 
---4u7yqqf3o53fozhu
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in
- {kstrdup,kstrndup,kmemdup_nul}
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-7-laoar.shao@gmail.com>
- <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
-MIME-Version: 1.0
-In-Reply-To: <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
+On July 24, Jann Horn reported [1] a security issue in Landlock [2].  He
+provided a fix and a proof of concept.  Many thanks for all this work!
+He discovered a logical bug that makes it possible for a process to
+escape its sandbox and bypass any Landlock restrictions.  This is due to
+a missing LSM hook implementation for the special case of keyctl(2)'s
+KEYCTL_SESSION_TO_PARENT.  This issue is now identified as
+CVE-2024-42318 [2].
 
-On Sat, Aug 17, 2024 at 10:58:02AM GMT, Alejandro Colomar wrote:
-> Hi Yafang,
->=20
-> On Sat, Aug 17, 2024 at 10:56:22AM GMT, Yafang Shao wrote:
-> > These three functions follow the same pattern. To deduplicate the code,
-> > let's introduce a common helper __kmemdup_nul().
-> >=20
-> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Cc: Simon Horman <horms@kernel.org>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > ---
-> >  mm/util.c | 67 +++++++++++++++++++++----------------------------------
-> >  1 file changed, 26 insertions(+), 41 deletions(-)
-> >=20
-> > diff --git a/mm/util.c b/mm/util.c
-> > index 4542d8a800d9..310c7735c617 100644
-> > --- a/mm/util.c
-> > +++ b/mm/util.c
-> > @@ -45,33 +45,40 @@ void kfree_const(const void *x)
-> >  EXPORT_SYMBOL(kfree_const);
-> > =20
-> >  /**
-> > - * kstrdup - allocate space for and copy an existing string
-> > - * @s: the string to duplicate
-> > + * __kmemdup_nul - Create a NUL-terminated string from @s, which might=
- be unterminated.
-> > + * @s: The data to copy
-> > + * @len: The size of the data, including the null terminator
-> >   * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-> >   *
-> > - * Return: newly allocated copy of @s or %NULL in case of error
-> > + * Return: newly allocated copy of @s with NUL-termination or %NULL in
-> > + * case of error
-> >   */
-> > -noinline
-> > -char *kstrdup(const char *s, gfp_t gfp)
-> > +static __always_inline char *__kmemdup_nul(const char *s, size_t len, =
-gfp_t gfp)
-> >  {
-> > -	size_t len;
-> >  	char *buf;
-> > =20
-> > -	if (!s)
-> > +	buf =3D kmalloc_track_caller(len, gfp);
-> > +	if (!buf)
-> >  		return NULL;
-> > =20
-> > -	len =3D strlen(s) + 1;
-> > -	buf =3D kmalloc_track_caller(len, gfp);
-> > -	if (buf) {
-> > -		memcpy(buf, s, len);
-> > -		/* During memcpy(), the string might be updated to a new value,
-> > -		 * which could be longer than the string when strlen() is
-> > -		 * called. Therefore, we need to add a null termimator.
-> > -		 */
-> > -		buf[len - 1] =3D '\0';
-> > -	}
-> > +	memcpy(buf, s, len);
-> > +	/* Ensure the buf is always NUL-terminated, regardless of @s. */
-> > +	buf[len - 1] =3D '\0';
-> >  	return buf;
-> >  }
-> > +
-> > +/**
-> > + * kstrdup - allocate space for and copy an existing string
-> > + * @s: the string to duplicate
-> > + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-> > + *
-> > + * Return: newly allocated copy of @s or %NULL in case of error
-> > + */
-> > +noinline
-> > +char *kstrdup(const char *s, gfp_t gfp)
-> > +{
-> > +	return s ? __kmemdup_nul(s, strlen(s) + 1, gfp) : NULL;
-> > +}
-> >  EXPORT_SYMBOL(kstrdup);
-> > =20
-> >  /**
-> > @@ -106,19 +113,7 @@ EXPORT_SYMBOL(kstrdup_const);
-> >   */
-> >  char *kstrndup(const char *s, size_t max, gfp_t gfp)
-> >  {
-> > -	size_t len;
-> > -	char *buf;
-> > -
-> > -	if (!s)
-> > -		return NULL;
-> > -
-> > -	len =3D strnlen(s, max);
-> > -	buf =3D kmalloc_track_caller(len+1, gfp);
-> > -	if (buf) {
-> > -		memcpy(buf, s, len);
-> > -		buf[len] =3D '\0';
-> > -	}
-> > -	return buf;
-> > +	return s ? __kmemdup_nul(s, strnlen(s, max) + 1, gfp) : NULL;
-> >  }
-> >  EXPORT_SYMBOL(kstrndup);
-> > =20
-> > @@ -192,17 +187,7 @@ EXPORT_SYMBOL(kvmemdup);
-> >   */
-> >  char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> >  {
-> > -	char *buf;
-> > -
-> > -	if (!s)
-> > -		return NULL;
-> > -
-> > -	buf =3D kmalloc_track_caller(len + 1, gfp);
-> > -	if (buf) {
-> > -		memcpy(buf, s, len);
-> > -		buf[len] =3D '\0';
-> > -	}
-> > -	return buf;
-> > +	return s ? __kmemdup_nul(s, len + 1, gfp) : NULL;
-> >  }
-> >  EXPORT_SYMBOL(kmemdup_nul);
->=20
-> I like the idea of the patch, but it's plagued with all those +1 and -1.
-> I think that's due to a bad choice of value being passed by.  If you
-> pass the actual length of the string (as suggested in my reply to the
-> previous patch) you should end up with a cleaner set of APIs.
->=20
-> The only remaining +1 is for kmalloc_track_caller(), which I ignore what
-> it does.
+[1] https://bugs.chromium.org/p/project-zero/issues/detail?id=2566
+[2] https://landlock.io/
+[3] https://cve.org/CVERecord/?id=CVE-2024-42318
 
-D'oh, of course that's the malloc.  Yes, it makes sense to have a +1
-there.
+The issue was fixed a few hours later [4] and we developed a dedicated
+test [5] to make sure the fix works as expected and that the issue never
+happens again. This was merged in Linux 6.11-rc1 [6] published July 28.
 
->=20
-> 	char *
-> 	__kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> 	{
-> 		char *buf;
->=20
-> 		buf =3D kmalloc_track_caller(len + 1, gfp);
-> 		if (!buf)
-> 			return NULL;
->=20
-> 		strcpy(mempcpy(buf, s, len), "");
-> 		return buf;
+[4] https://git.kernel.org/torvalds/c/39705a6c29f8a2b93cf5b99528a55366c50014d1
+[5] https://git.kernel.org/torvalds/c/cc374782b6ca0fd634482391da977542443d3368
+[6] https://git.kernel.org/torvalds/c/86b405ad8d0d2994a7ffbacb8fcf83be8afb952c
 
-Alternatively, you can also rewrite the above two lines into one as:
+The fix has also been backported to:
+- Linux 6.10.3 (released on August 3)
+- Linux 6.6.44 (released on August 3)
+- Linux 6.1.103 (released on August 3)
+- Linux 5.15.165 (will be released in a few days, but in the meantime
+  you can cherry-pick
+  https://git.kernel.org/stable/c/0d74fd54db0bd0c0c224bef0da8fc95ea9c9f36c)
 
-		return strncat(strcpy(buf, ""), s, len);
+This vulnerability only impacts sandboxing put in place by Landlock, but
+the kernel is not at risk, nor system services.  The impact is limited
+thanks to the stackable LSM infrastructure.
 
-The good thing is that you have strncat() in the kernel, AFAICS.
-I reminded myself when checking the definitions that I wrote in shadow:
+To fix this vulnerability, only the kernel needs to be updated, not the
+sandboxed programs which will automatically be well-sandboxed with an
+up-to-date kernel.  Sandboxing with Landlock is really an investment to
+leverage current and future Landlock features.
 
-	#define XSTRNDUP(s)                                           \
-	(                                                             \
-	    STRNCAT(strcpy(XMALLOC(strnlen(s, NITEMS(s)) + 1, char), ""), s) \
-	)
-	#define STRNDUPA(s)                                           \
-	(                                                             \
-	    STRNCAT(strcpy(alloca(strnlen(s, NITEMS(s)) + 1), ""), s) \
-	)
+To exploit this vulnerability, an attacker needs to have full code
+execution including the ability to perform arbitrary syscalls,
+especially keyctl(2).  Complementary security mechanisms can be put in
+place to avoid arbitrary code execution or arbitrary syscalls (e.g.
+with seccomp filters).
 
+To test the fix, here are simple steps to run on an up-to-date kernel
+source tree (Linux 6.6.44 to run these tests with an unprivileged user):
+  make alldefconfig
+  make TARGETS=landlock kselftest-install
+  ./tools/testing/selftests/kselftest_install/landlock/base_test
+  # The global.cred_transfer test should pass.
 
-Cheers,
-Alex
+Landlock is a defense-in-depth security mechanism.  Even if it is
+already useful to protect users and applications, it should not be the
+only security layer for the system, mainly because it is not a full
+feature access control system yet.  As explained in the documentation
+[7], some actions may not be restricted yet, which may also be the case
+for other security modules.  We are working to extend the access control
+types [8], but it takes time and resources to build a new unprivileged
+access control system properly handling Linux specificities.
 
-> 	}
->=20
-> 	char *
-> 	kstrdup(const char *s, gfp_t gfp)
-> 	{
-> 		return s ? __kmemdup_nul(s, strlen(s), gfp) : NULL;
-> 	}
->=20
-> 	char *
-> 	kstrndup(const char *s, size_t n, gfp_t gfp)
-> 	{
-> 		return s ? __kmemdup_nul(s, strnlen(s, n), gfp) : NULL;
-> 	}
->=20
-> 	char *
-> 	kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> 	{
-> 		return s ? __kmemdup_nul(s, len, gfp) : NULL;
-> 	}
->=20
-> Have a lovely day!
-> Alex
->=20
-> --=20
-> <https://www.alejandro-colomar.es/>
+[7] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+[8] https://github.com/orgs/landlock-lsm/projects/1
 
+Looking at the other side, it is interesting to note that Landlock can
+also limit the impact of similar potential vulnerabilities affecting
+other access control systems.
 
+This issue also started a discussion to improve (or remove) the
+KEYCTL_SESSION_TO_PARENT special case [9].
 
---=20
-<https://www.alejandro-colomar.es/>
+[9] https://lore.kernel.org/r/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com
 
---4u7yqqf3o53fozhu
-Content-Type: application/pgp-signature; name="signature.asc"
+We are two official reviewers for Landlock, but contributors and other
+reviewers such as Jann (who previously reviewed the initial Landlock
+code) also work on making changes as safe and secure as possible.  The
+Linux kernel needs more eyes, time, and experts to proactively find
+these kind of issues.  If you are interested, reward programs [10] may
+help.
 
------BEGIN PGP SIGNATURE-----
+[10] https://alpha-omega.dev/
 
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbAZ8IACgkQnowa+77/
-2zLvOA//Z/lDWnXjHMZFqj20EeCk/sOJvw2j0zS6ByjjhPwbF0QB4deovmQwO1rB
-UfUFQNBO+A+m7nw8x/mLrYWRp9QX1koU8+XGacYS2fA/3zREzEbEDkWgaRej0TkD
-lI5oQJysXdRk4zv0t+oSPS42Ga+OLoqOogKapp40DpFcY/PfC0lI/dP32nYeKIpL
-H6XRqcEwqTOSNl8LOg3YkNO6Z93l+zsqDRCeiqze77O0QnrxDYY5gZdQkBfTiWDv
-w5CzMOKn55JzbPrbPiQID2PKvokrMvtE0cS6WpBOjLNguoEyrPWaOJY9wTe3zJx0
-jYczxxaqMVJOy+e/JzejKO7/8UaL4BjsKRkQxDUqX9JT2M1Mx94U/x4NdJ74Qpjg
-BT5tAy0REvgQ5nfchZzwMxj94NK8fQ1kls54V3RcZ4SwF8Y8TL/UIXO0n3OHbHAZ
-dDSam/sQaJCtIDEfeSjIAMISt2mUPaSu+K9IUQl5xlL+7hvtP7YJzOy0W5cP87uT
-OIswibfrvvKaeBSmpPx2reAdydjV0ErJia59TA8Qr1gbtFl5N4y6V6KCAojgjKL/
-RMowH5Jeai7WuTHla5CCBRc9sSpx2BFHpdcfW1+Kt8SvhOQ9BOcEq42xaM2megcd
-weFqBQ6+YsgwWcVz7UNoMIi2UfQQpAvIflidVV9krOZsjk3OT9s=
-=BouQ
------END PGP SIGNATURE-----
-
---4u7yqqf3o53fozhu--
+Regards,
+ Mickaël
