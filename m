@@ -1,148 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD964134B2;
-	Sun, 18 Aug 2024 08:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39C71386C6
+	for <linux-security-module@vger.kernel.org>; Sun, 18 Aug 2024 17:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723969537; cv=none; b=dB7Ouxn84zDLYwo7sCHwGLv2g3MaQCnknqf47H4XFAd1tvSgg6jctY71rXr1YxQscgnwz4d3VNspW197zPgkhkK847KeaD9Vg07RtB7P2POPvlYenX/tFQXb1vszhjAjtNQaKYqtH8/XdQMToQ1nM+ww4qECY6o3Iyx4Sj0Vacw=
+	t=1724001782; cv=none; b=cwA+mRT0rqbpy3HCZJh9hkcCiVTAUkqvhUCBnlf0/Wjwl4RFw61GL6cPIAQ69yDaSCpvX/FzZsjH+9LtQp8herv0qhwlpTtPRpP9v01qa638gtiz4IxfcBt8QY2n9elID+c7Xc7hwMRQDCgkkaSkiNEoZlSk5XTc8Q1G/SRQCIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723969537; c=relaxed/simple;
-	bh=HNPlU0M/3vqiQI+da9DTWN8QwJm2bLjTnAaFdwzaWig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KPttER1GaWchJ4kvblETLq+25BF4I2PXCI0HeMjCyrUXpZ+FYvTy+zSoXufvpk6/JY6E44icWs+FS1+V4BJqqTGXlSNEhqK/LstB4YFBj+IjOQpMPHl4zlWtIjZVoYGR5pGrDhNg2hZOwbeTs2ZtYi9D8tknvQTLK9XHOoeZylk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHZkHNV5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724001782; c=relaxed/simple;
+	bh=PRdiw6GJWM/P370VLjhMZ0dhU6tZKbF78aSZqYEGp5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yuu49qrD4Zp07BYyPcy4O/royO6vRiRcNJaseZp9iYSLXOW74eUR0W3Po4L3Xp8nM2jvpLnSF6Nz89KNoi+bk+mhtdaOG7LuOofAi7cL65cfpen6OlkF6Dcx9DnohEwBB8Qu/0SB1r8mSPlNvTfrMdYx/rrVq+wFitnfxslF59U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f3X054ET; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHZkHNV5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79F9C32786;
-	Sun, 18 Aug 2024 08:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723969536;
-	bh=HNPlU0M/3vqiQI+da9DTWN8QwJm2bLjTnAaFdwzaWig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vHZkHNV5oUFehXU9H208C3BbvikBh69Map7MNwYhsAz/H+RCy1qVmhkneBJXg6XjJ
-	 A4yHeH0HSJKwxa7FLYPOTmemN1bnz5cRIh6lcVsrPvla+TthtasHx5rjtn8C4jsDQk
-	 yFp0s7cOZozpGsEjAghDarTvbyerVUBwdhHxnSfOD9KlTBerTrANtAUJssjdzPrjNl
-	 EhSD2ZYUuJmNQNe1xBJ/twr+KdnK0XkPc9svL3TfLFPiHpoxVJoRf5gEij63/YgQR2
-	 vdZEieAN5ajY1WQBCTOuo56n3Dt/ZdoRgYqRpXRd3S9XddtW7UgbZC41BpdvWHqRIm
-	 XHhHkzQ8KNsPg==
-Date: Sun, 18 Aug 2024 10:25:30 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
-Message-ID: <gmhyl3zdnxy6q2tn5wtasqbuhxpfbejmh7qxeuk7lnbhcdlfsc@b3b56vgdrzgm>
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-5-laoar.shao@gmail.com>
- <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
- <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f3X054ET"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-69df49d92b8so33627247b3.3
+        for <linux-security-module@vger.kernel.org>; Sun, 18 Aug 2024 10:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724001779; x=1724606579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rea1kNp4EkbAOzAU8f/a10Vwm+fxF1V1CIr9tWa1sDQ=;
+        b=f3X054ETV7yigtr0M5N3HUiRAAE+GS1VunwBvvTJL3GlmEqi97mnC9yoJnXb7Rojen
+         PMwtRmBw52jh/OPas2uIFSpi2wmLB60XDgnSq8lbzpzd3ICq5DpP7Zps52Y1owwUeylv
+         A5+MGFnRO/ZsKqkhEyfafUIVWSz7k1wC5HvuIbCjR1KzFOAkvmzuJDl1EqS4Wyg6+VF7
+         ao2VZPZQPP3er9vJC4duFXTTopdGJVPTFNX30xslqJI1WzdKebGIOt0pzdsWhDYUzsXy
+         hexKTjrJF7q1AJ3GLKTo3qtNNH/BGPqrpgO+QVMzR1XLbjHk843zxBth2qF4DACVkGUD
+         2aVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724001779; x=1724606579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rea1kNp4EkbAOzAU8f/a10Vwm+fxF1V1CIr9tWa1sDQ=;
+        b=DS5ivV/kN/yhdskLweDK7LxNbRDZBBwTaTuYTA4cL7CZt7MN0trRo+GsuD6eci/6XT
+         69jPxP2boi/0e26+SA3nixR/G6AKs2JroLL5i5twhebd1voYk+Z3FYccgXdM1lmK3zRW
+         Zd8ISor79ZA5ycILgeYStMlwdF0Zkn72o5Lp5TtTtgtcI5jyAZyxD25rUeVa4hXqN0KK
+         trSvAlsR+gWYowtuJCyytz2dbJtlm6fB2cPdSFXNwk9AghIePxfVOz08tkMDfP6Fo9lt
+         dGINFDOjvFihDygi3tTB2k4bu3l5o46Rl4q6UXR+egRV3awCRa514vntFqwTjcTRwVOQ
+         jcng==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ3cmQ2OmKTn5N4mKQa6yhDiVwm1Pnt2i404NnqQJwKQ3J9VX/uZBsbf2zclXyB8/vYVX+rWiYadJ0w4O/h9X60zwQpde3BuJRrfiisQymQRcbWOdO
+X-Gm-Message-State: AOJu0YzuoBUaz4tlpSEdhIit7afzfDu1Cyi9xqjjBgXuUd5vhzDw0JPS
+	R2y2ObOEKZHYF8KVrkdaJau6izr/LSbksKP0TpNBoWeIscVsN47pYBzPWCSvLxVH4JHyzav8Io/
+	I/IZ4PVPpj2w5LU2KAUIK1r2+eugDbqXsdNX1
+X-Google-Smtp-Source: AGHT+IFjiqllbtZbfh6H7hOfR01xf4G8PNDyn1RyHhO2ITzkhGOqhIPLS7VFIHAGqVDoJDMdk8WysOY4o+NEDwrxuHA=
+X-Received: by 2002:a05:690c:ec5:b0:64b:7500:2e9 with SMTP id
+ 00721157ae682-6b1b759714bmr105555907b3.9.1724001779618; Sun, 18 Aug 2024
+ 10:22:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bqpbjdxuldrazcxq"
-Content-Disposition: inline
-In-Reply-To: <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
-
-
---bqpbjdxuldrazcxq
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com>
+ <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
+ <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
+ <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com> <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
+In-Reply-To: <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 18 Aug 2024 13:22:48 -0400
+Message-ID: <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
+Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
+ signature data to LSMs
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+	Alasdair Kergon <agk@redhat.com>, linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-5-laoar.shao@gmail.com>
- <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
- <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
 
-Hi Yafang,
+On Fri, Aug 16, 2024 at 3:11=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
+wrote:
+> On 8/16/2024 6:35 AM, Mikulas Patocka wrote:
 
-On Sun, Aug 18, 2024 at 10:27:01AM GMT, Yafang Shao wrote:
-> On Sat, Aug 17, 2024 at 4:39=E2=80=AFPM Alejandro Colomar <alx@kernel.org=
-> wrote:
+...
+
+> >>>>
+> >>>> +#ifdef CONFIG_SECURITY
+> >>>> +     u8 *root_digest_sig;    /* signature of the root digest */
+> >>>> +#endif /* CONFIG_SECURITY */
+> >>>>        unsigned int salt_size;
+> >>>>        sector_t data_start;    /* data offset in 512-byte sectors */
+> >>>>        sector_t hash_start;    /* hash start in blocks */
+> >>>> @@ -58,6 +61,9 @@ struct dm_verity {
+> >>>>        bool hash_failed:1;     /* set if hash of any block failed */
+> >>>>        bool use_bh_wq:1;       /* try to verify in BH wq before norm=
+al work-queue */
+> >>>>        unsigned int digest_size;       /* digest size for the curren=
+t hash algorithm */
+> >>>> +#ifdef CONFIG_SECURITY
+> >>>> +     unsigned int sig_size;  /* root digest signature size */
+> >>>> +#endif /* CONFIG_SECURITY */
+> >>>>        unsigned int hash_reqsize; /* the size of temporary space for=
+ crypto */
+> >>>>        enum verity_mode mode;  /* mode for handling verification err=
+ors */
+> >>>>        unsigned int corrupted_errs;/* Number of errors for corrupted=
+ blocks */
 > >
-> > Hi Yafang,
+> > Just nit-picking: I would move "unsigned int sig_size" up, after "u8
+> > *root_digest_sig" entry.
 > >
-> > On Sat, Aug 17, 2024 at 10:56:20AM GMT, Yafang Shao wrote:
-> > > Let's explicitly ensure the destination string is NUL-terminated. Thi=
-s way,
-> > > it won't be affected by changes to the source string.
-> > >
-> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> > > ---
-> > >  tools/bpf/bpftool/pids.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
-> > > index 9b898571b49e..23f488cf1740 100644
-> > > --- a/tools/bpf/bpftool/pids.c
-> > > +++ b/tools/bpf/bpftool/pids.c
-> > > @@ -54,6 +54,7 @@ static void add_ref(struct hashmap *map, struct pid=
-_iter_entry *e)
-> > >               ref =3D &refs->refs[refs->ref_cnt];
-> > >               ref->pid =3D e->pid;
-> > >               memcpy(ref->comm, e->comm, sizeof(ref->comm));
-> > > +             ref->comm[sizeof(ref->comm) - 1] =3D '\0';
-> >
-> > Why doesn't this use strscpy()?
->=20
-> bpftool is a userspace tool, so strscpy() is only applicable in kernel
-> code, correct?
+> > Mikulas
+>
+> Sure, I can make these two fields together.
 
-Ahh, makes sense.  LGTM, then.  Maybe the closest user-space function to
-strscpy(9) would be strlcpy(3), but I don't know how old of a glibc you
-support.  strlcpy(3) is currently in POSIX, and supported by both glibc
-and musl, but that's too recent.
-
-Have a lovely day!
-Alex
-
-> --
-> Regards
-> Yafang
+Fan, do you want me to move the @sig_size field when merging or are
+you planning to submit another revision?  I'm happy to do it during
+the merge, but I don't want to bother if you are going to post another
+patchset.
 
 --=20
-<https://www.alejandro-colomar.es/>
-
---bqpbjdxuldrazcxq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbBr/oACgkQnowa+77/
-2zKlWg//bIam9Z2S2oGYdx1Es2yhqgRhsYrxX1OVGAonZ9d+7XaXBTpsSjfcy8AT
-EqipznL0pk8B0uQ+sagT8w6h0H2StHg59E+gR4M8YKp5s/X6Rhq+aim+k19Qh53S
-afYHd+jfvzFBe1dXQXm5Pe80X1ncmIcISMqXh/O3ykzqpuPWanKo4torJlbqtXMM
-yGxL8yJu15D00/cwjEwT9mh7KB9zsmVNyHPiY3aTvtjd0F/tNlP9qvnxgi+81duU
-ciTElwVWSG14g9TcDFWHkNBarUuBiHe240JQE7ARDPJmPkZrzHo6GcpC4AdydU6Q
-yvA/1Hp4dCFLoiXspmTWmAyR3Q+Nnn1wetdU555oIpEhYk+dpgAdO1MAYOJ+izdh
-f71cefEGfG60FG0tkzgwkbpa4xPUaCEi5L/5Voms4yRIoj5eYvmQs0+/N8IM2Fbk
-HSLIjf+5YiMw0SycNUP0XKFZGJ2MbXU8c+MBM4pTwfl4MFhgVPvI53j0J+5D43x8
-AgvgLJ3kp44JOC+FoeCDgraJ7ZD5nasDl1YBaNUS7lCxAAJ80V4CMWzi9kX0YOrG
-HRB6XOquSAF0pGarE6FLeKCmwKRTcsrDTrVPRgkrHgxt/lYqJJFnaWY1lLKDQViF
-zUzZFqndM8ocPo0p3o645SxxtVDEvxgJolM+5sdOdjqMKUmKg+U=
-=rl7R
------END PGP SIGNATURE-----
-
---bqpbjdxuldrazcxq--
+paul-moore.com
