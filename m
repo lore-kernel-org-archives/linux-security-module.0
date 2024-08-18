@@ -1,127 +1,75 @@
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4257B4C80;
-	Sun, 18 Aug 2024 02:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B27442C
+	for <linux-security-module@vger.kernel.org>; Sun, 18 Aug 2024 05:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723948063; cv=none; b=N+cuGkGfxtUmDu8MaXbjWEKN+lgKAOhTiBJkHvUPKT7GX/djXFvS1qSJKFJR6ZJnOUq43WqDOJEZHpAEdyxJV8r8+4ktNj56wNKZUDlvAhB+gWyhz+izQQ3dOvnGRHggXEWsSd43lBEzDpllcZqPj00Am2vl0k96a/CRuB6YI2o=
+	t=1723958071; cv=none; b=PmPl33z/0rTgNd6Bz2Q31bgK4MP7uEE6SGAyRfXdfYwUcCACv+48XZuDjddfB3uCEeCp/ARh5pdZdTr8sco+JHmWxGtDa47VtDd6f24iawR6cmwzxLEZCUwIy6F9LxDUvI2bokOPyvVyRtls5sN+1AMMmVTIBS2yx0iHZx7lzV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723948063; c=relaxed/simple;
-	bh=04pUGq8xn6AO/pvOuW9ABo1fxGcbZbzmTxra89/hpZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MQH84NyqqMTcwYIYNSbjwW5BT/ex42hhN+aI+u+FZcF9SZZezIzmmEEybD2dzyX/jZrwyodyC9df1edEcVTsKwXfWAPj4L8Ij8cMhV2dWV4XeiKPKINCA6r/PI8xBWmHTWfQiZGMqw9lDfTNbPALTqvM09GgXVZOJu2VYuuqwsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWJeMW2k; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWJeMW2k"
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a1d3e93cceso411071185a.1;
-        Sat, 17 Aug 2024 19:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723948061; x=1724552861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wCUZss5UGlk8Yb6DPWfInlcX9mugrcEG4f0aPMm2bCE=;
-        b=KWJeMW2kz15Yw/Ko2jmU1/QIf44RDV+ZitksmGohJ8EDVMJPr2bO4HDTZU4yDRuFMX
-         YOxPbhWKRpe79gea0hU4UM4G/8EYNs3fGH07o2K5xrKyVJ1d1CMTRvfeyYnQm/x0Lom5
-         j/5zArNBU1yOkbbcOinxqWBf+f3VorRsacz8XRMxayvvSRyHdej27oUJuPGkxurQNPzv
-         f1S808OZLHTIENxmdIR4BjnTs70fhl2BOh+wpgKB1oe32ymZqKPBJ7axS0mMCs7HXqw9
-         UBnLarmhUY+R5xY+9WWkF+UVU7Yjn8B3CzqpQH7DzVHpi3i8frqxcW/5jvhlfX6yqlYb
-         BZyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723948061; x=1724552861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wCUZss5UGlk8Yb6DPWfInlcX9mugrcEG4f0aPMm2bCE=;
-        b=XF4Xddrky2u+lM2y1zm6a85snS8YBP1wWJFa5C0yj++APmKmHeMwdz3EGAFhKkujfk
-         SLQnKk3nlM8OP9RThMbqQWg4L832DF0SkwQLstcJ7fwhOF0Ch2ffvwy0WPVCtlVjcmPo
-         OVO6rf5Lh2R4wzMtbQz3W0zWZcH/lA6KcDP668tHVVu+MQWe2XSkPdCejmQIpQaqLwSP
-         9hwEqSJPjpIvoBqLGlSoo5vAhguJ7ih91Pei/nIeTXga7hCwj1gr2w96uGCvjdNWfxy2
-         AX/f6mPW8kxNsMr3IMdSFjrqPAPIqnHZB/8fg1OHtdxs+SnDOp5JK71qdrP/FfPRjVGY
-         Ofvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfmC0oUFus7AGAOv8tTa7MhhEfFRmuM0LQeP0d/bm1PpUirB7J3N3j5h/PHZj6wxZSZr9/fengtXMY7KaF7LzlP63Xf5xhr0A2NkIOWZMFNa4lcqKRKH+kfCzzrHSpkCw7dz5/xU1c5qpkRzdkrsMOwyVVvBEtmJMR2/x486xvW2QbbjenKzjfof4uf0PkLA4m5zjGevgRnYC34KIFFiFg5XPXO09vg4lPasglN2ivFh1vRX05HaDAmI0I4WZMMTMMdufkpMZzFF1c/hyhmVPaxaEwFvuB+J4yLsmN2A7x/n8YGhWYYRFrT/+6un0UY5fQJwGzMQ==
-X-Gm-Message-State: AOJu0YwFWnJteLc7LVrcW325GHdf9sVR/h4JRPWW5iAymluJRgm7xrs5
-	rR7Md3aRLMzYVV1xkK7heHWtocGABbMGyBka9AGguV6SVNIYlmS9Qd+hhdpiwa5VZHgOz/MGDMM
-	on42UBFOi2egJhVHF7m4d5hv8QkE=
-X-Google-Smtp-Source: AGHT+IF6fsYhsqIGmUj8T8nAX8ZPHa9aPPiBT0MCECGu/PEHdrCH4USnvIhXgIzMD1DqBj/lqnH5UAtX5RLYSKjl0r4=
-X-Received: by 2002:ad4:5894:0:b0:6bf:7ae1:9a8f with SMTP id
- 6a1803df08f44-6bf7ae19b89mr122178546d6.19.1723948061122; Sat, 17 Aug 2024
- 19:27:41 -0700 (PDT)
+	s=arc-20240116; t=1723958071; c=relaxed/simple;
+	bh=CP/UUb9OK861jB+q5hDHU0iwUw1AWWMFLiJdlrXLEbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cxOGB0xfGuKONaeYBsXjKr6lK01pTZ8EcMYiG1QYrLf/beTGYqAfeXo56scNvebjOjdU5YNAhRAQwPhojjy6sLqktNrbENx23xhrHB7k2sYTGPPYb5v0bmzCEOB+PeHfQs/Envfa+CzcGf8LsqCmWHETcJYKPZNr5FwaFUbyROU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 47I4baax016990;
+	Sun, 18 Aug 2024 13:37:36 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
+ Sun, 18 Aug 2024 13:37:36 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 47I4bZ6h016984
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 18 Aug 2024 13:37:36 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <c9ec24cb-f0f0-4666-af4b-584def5b6b2e@I-love.SAKURA.ne.jp>
+Date: Sun, 18 Aug 2024 13:37:37 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817025624.13157-1-laoar.shao@gmail.com> <20240817025624.13157-5-laoar.shao@gmail.com>
- <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
-In-Reply-To: <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 18 Aug 2024 10:27:01 +0800
-Message-ID: <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
-Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
-To: Alejandro Colomar <alx@kernel.org>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 0/4] Reduce overhead of LSMs with static calls
+To: KP Singh <kpsingh@kernel.org>, linux-security-module@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc: ast@kernel.org, paul@paul-moore.com, casey@schaufler-ca.com,
+        andrii@kernel.org, keescook@chromium.org, daniel@iogearbox.net,
+        renauld@google.com, revest@chromium.org, song@kernel.org,
+        linux@roeck-us.net
+References: <20240816154307.3031838-1-kpsingh@kernel.org>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20240816154307.3031838-1-kpsingh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 17, 2024 at 4:39=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
-wrote:
->
-> Hi Yafang,
->
-> On Sat, Aug 17, 2024 at 10:56:20AM GMT, Yafang Shao wrote:
-> > Let's explicitly ensure the destination string is NUL-terminated. This =
-way,
-> > it won't be affected by changes to the source string.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> > ---
-> >  tools/bpf/bpftool/pids.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
-> > index 9b898571b49e..23f488cf1740 100644
-> > --- a/tools/bpf/bpftool/pids.c
-> > +++ b/tools/bpf/bpftool/pids.c
-> > @@ -54,6 +54,7 @@ static void add_ref(struct hashmap *map, struct pid_i=
-ter_entry *e)
-> >               ref =3D &refs->refs[refs->ref_cnt];
-> >               ref->pid =3D e->pid;
-> >               memcpy(ref->comm, e->comm, sizeof(ref->comm));
-> > +             ref->comm[sizeof(ref->comm) - 1] =3D '\0';
->
-> Why doesn't this use strscpy()?
+On 2024/08/17 0:43, KP Singh wrote:
+> # v13 to v14
+> 
+> * Dropped Patch 5 based on the ongoing discussion in
+>   https://lore.kernel.org/linux-security-module/20240629084331.3807368-4-kpsingh@kernel.org/, BPF
+>   LSM will still have default callbacks enabled.
 
-bpftool is a userspace tool, so strscpy() is only applicable in kernel
-code, correct?
+Why not use
 
-> Isn't the source terminated?
+struct lsm_callback {
+	struct list_head list;
+	struct static_call_key key;
+}
 
-It is currently terminated, but I believe we should avoid relying on
-the source. Making it independent of the source would reduce potential
-errors.
+for each callback given that the latency is mostly caused by use of indirect function call?
 
->
-> Both the source and the destination measure 16 characters.  If it is
-> true that the source is not terminated, then this copy might truncate
-> the (non-)string by overwriting the last byte with a NUL.  Is that
-> truncation a good thing?
+Then, we don't need "lsm: count the LSMs enabled at compile time" (which I'm NACKing).
 
-It's not ideal, but we should still convert it to a string, even if it
-ends up being truncated.
+> * Dropped Patch 4 as recommended by Paul, indirect calls will remain in some LSM hooks for now.
+>   https://lore.kernel.org/linux-security-module/20240629084331.3807368-5-kpsingh@kernel.org/
+> * Fixed minor nits in Patch 3
 
---
-Regards
-Yafang
