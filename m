@@ -1,57 +1,57 @@
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A391514EE
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 21:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D451514EE
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 21:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724104362; cv=none; b=BA7XUNLxL5VfKM29qmQHbodz8nOFs0czfxcf4UON+cMlWuaRvv8ncSHddeLs7yRRdW6a+F0+8iJ1mTz9yxPtSmf8capuHbCZJaUVPyzCtpaoKKiSkCfCwcKkz9TWNH/qjRb0hL8yhfXjcqBSBSIheAxXFCWSQhVstda0127zoEM=
+	t=1724104431; cv=none; b=sQ9MCyK7L7rcxOUcGlpdcaaMbk1991OOF26DRuK6hBW1GI8jhapgvBIvakuGtLbBFMU8HlUEOlasvpfDmuF6Uo64l7K4y0qGWNUIE8yIJzPnWl2lCqDD9tk0n36ZpPNB0Z5L9y7wR1yrbHcfA0BRHOF0+KjkYEE1nJSBG7Ly6/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724104362; c=relaxed/simple;
-	bh=KHGw8auXTrIKdKpRw8P+WjAwcmgkyhvREKNkvqDSFAU=;
+	s=arc-20240116; t=1724104431; c=relaxed/simple;
+	bh=B9CBBxmENm+hkJfUpva6l/DxI7LdYprG9Cs40gfK3hc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ibv8q+SB8WQqLgIQKnRrPZJGQH9j5F7iEoGzXJU9Idx01KqgbTtwTHC0KdFfO8PfLhYQNYIUH1MvlTgYL28bZDnPuIUaufBxusfu9HJZuNv/RSW611r0GoPgTlquF1KzDQ7xpY1aphwcPghtINGAJ09cuZH+Nwc9pHXyi6l0aZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m0AffOGI; arc=none smtp.client-ip=209.85.218.73
+	 To:Cc:Content-Type; b=MqaiNkKlMciFLNOneb6+YgRmRE2SKakvmr8tQ7FbJCG2Azhz8LxJjjb44fxBfncICLAshK84FvALK0Q1cjTl7n9/Zjwz98eVOG6xP3pVo5tT7YKjoIR9P1ipfs2mejNvFS8KTvs1nH0xl+Q+646O2CcfVWYxA33vXMIzQtPttrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IbkCTayd; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m0AffOGI"
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a80c12dede1so623939066b.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 14:52:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IbkCTayd"
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5bee75ca694so1795975a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 14:53:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724104359; x=1724709159; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724104427; x=1724709227; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BJlHoejZtUeKl4kaK6eAwjps3ryi8Mxu/1WFERYSam4=;
-        b=m0AffOGIC1KXRRdxZqxF6SZ+McHBGEDBilZJtBhkWfRbulhEF+qHEdUn88MaCavBVn
-         y5pE5rCP8tUzcavAJR0wgFPBQ2qQxmGxtolG6YUF6l4r+RDSj3FtMvwmY/JWzG1J7x+J
-         3fi+hZPaaaHjTn4wvJ+tj6RtB6IlhgI08jSpd+buTJREy/cocz5kdaSLrYxXHhz/Jx64
-         /JbGIkkAcTfEvBFV4tTRIVSwYBYYO0+d9ua+Mxi5dZ2c/u5Cb1XbqG2WT/U2unHcU9Rn
-         6NiP7DtUVoktQdMUj/wgXqNvAl4XY/2ar2Sg8KPXrKpTxx75ayjnMU1cZCkZiWJ/uxRc
-         zEvA==
+        bh=KmkZ4KEQdutgI8632letNnSaNiIG6gjx88DZgPNcRzA=;
+        b=IbkCTaydd3B2HHmAu44+DgOUOjIn885pyoU+vZ91Phg0/klfZycN799V2kg/JmUX30
+         O9ytL1+bAznPxIcNewi3EfFNfyGRK+5ZC244UYuL4XNrOL/tsdleSZVVi7GdwL2K40IW
+         +YLeD2M+bzxd6ZXU8OuZqShY2tcgFrdIslxccwEd/a2JAEqL3HDN1Ij+gladQgzKLkSi
+         697NNZaYcMfeGDdfjlKfI0YP3e3ZGoGK11RW9SfbLGA9/oC/DhMyHhghxAvOh8dkt2Jx
+         8wVodmiNk+isNZxRKd0+wqxLTbJklYCaQb+9JiXMOyqIgus45RRnfeuMx/mSzigwyJ1G
+         pe4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724104359; x=1724709159;
+        d=1e100.net; s=20230601; t=1724104427; x=1724709227;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=BJlHoejZtUeKl4kaK6eAwjps3ryi8Mxu/1WFERYSam4=;
-        b=JXSZJ2hA8rmUNibCE7U64dvPEx7wvIuSY8odwtoXlc5lFft/Xns4pF6N262d/TtusO
-         0aAAbv8H1XRoboWqc+CKsz72vnk8vpcf5gEIH6CeMhhqHkMjd5BXfnWkng2rEW9i2Q0g
-         VOfAb2Mk0BwQM8Mdh+oNRHE5yn7tGr7pOob38X0sIeZcRy90ej7Hrrz92jiulXOvSlqx
-         K/ofdGxzITz+YokfoCdOrCvXPv/RJLukTyspghOuRvTNSSiE8i1OdknLrMdo/TmZ9SiW
-         sDNfvbHANfvDKmRoG/8KatP3uLwqudnMu8eOmhV9aRJvAIxaDoaHBtwRBSYqe//rGJLf
-         zI7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUUaP0GxKuFxhpGSO3cSYsRr7SAs6ef4xc39sdWTnFhRBG5RprGoDOjTyQWtWXruOoLpvO3s9z3OtMf2v0ES4PSbUFIYBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwifNCo2kO91l2e9ZRVVKwhWt7OLlUoT96zRkx7D/4EzLvEiv9j
-	HMs+sbuVUfHk4vluLycw3rh2cr5xnQpZHqODB+9G+ApDqiwagzpv38vpjJqVJmdHGzTqRhxlb4p
-	URg==
-X-Google-Smtp-Source: AGHT+IFAdVzWwIZWt7EsRLtpPlIkSKBXvMPotCsBkIUvay9MgKIquncBMJc6Q/G9Xk8GB5iaSZkxGdaeLNQ=
+        bh=KmkZ4KEQdutgI8632letNnSaNiIG6gjx88DZgPNcRzA=;
+        b=mfnbrIWnEnWKGSVb3kG6X9NvQ5vATAbGZ/JWL8fvoHtpK0XB+uHE4W9/PA2+Qf9Jb3
+         PqJnA56KZEH47HyXLFIQAd8xY4I+oXX0TBSBWZjYig7qhuNkxHZWADlI3IRQ7v6Thp8H
+         w/ih4E7HhVgiaG5TMqq2ZlqMoAjA8+eoGOjp8IsFrR1eNyRV2FUh5yQzVg3gbUu9W0Ke
+         ivdXdPE8rQGFhiUepzVE3if2xwYcfSx7Pz5gzT3D8l/sL1OVDfHMFUqATfV34fcYVX/w
+         x6H9OP69OhEFhpnUZ4CIpw4bzwfVV7APJR3QfvH/f1TbP5M9p/zfAckQJac/b961FFb0
+         wDOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHUYxSRjtEWhxFfKQUHeBNLFkeMUDGP+w7EPracJKP3XqqK6KQ7xGyozy8fSHj9kT/8cqSB2Gu8KVVk6BSKIaOXuPbVI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7gkPLZeuMuIpDO3S9k6NOv0wOBPq5lthgmvBYYrQUsf/vjg71
+	QjtXRAaBeocBecmy2ooD507kYZRA7qafS+lRyYx3NyJuVu2uJK8DlmBn3X+yQlNTwW7AkFfpKWJ
+	hzA==
+X-Google-Smtp-Source: AGHT+IGkSuSNa+k6El0+D1UJf0EsfFtxBV18YKFMRVSEC88F73OKl0z9LhFXnDvvY6eX99x6u1eE0Bd4Iqw=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a17:906:6acc:b0:a7a:854f:819f with SMTP id
- a640c23a62f3a-a8643f3f466mr96366b.2.1724104358700; Mon, 19 Aug 2024 14:52:38
- -0700 (PDT)
-Date: Mon, 19 Aug 2024 23:52:36 +0200
+ (user=gnoack job=sendgmr) by 2002:a05:6402:3891:b0:59f:6a18:e058 with SMTP id
+ 4fb4d7f45d1cf-5beca2686e5mr13045a12.0.1724104426934; Mon, 19 Aug 2024
+ 14:53:46 -0700 (PDT)
+Date: Mon, 19 Aug 2024 23:53:44 +0200
 In-Reply-To: <20240814030151.2380280-4-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -60,7 +60,7 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com> <20240814030151.2380280-4-ivanov.mikhail1@huawei-partners.com>
-Message-ID: <ZsO-pIGsTl6T5AL1@google.com>
+Message-ID: <ZsO-6EC1UYX5pHxl@google.com>
 Subject: Re: [RFC PATCH v2 3/9] selftests/landlock: Support LANDLOCK_ACCESS_NET_LISTEN_TCP
 From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
 To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
@@ -70,6 +70,8 @@ Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
 	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+
+Some comment nits I forgot, see below.
 
 On Wed, Aug 14, 2024 at 11:01:45AM +0800, Mikhail Ivanov wrote:
 > * Add listen_variant() to simplify listen(2) return code checking.
@@ -123,22 +125,6 @@ selftests/landlock/net_test.c
 >  }
 > =20
 > +static int listen_variant(const int sock_fd, const int backlog)
-
-I believe socket_variant(), connect_variant() and bind_variant() were calle=
-d
-like that because they got an instance of a service_fixture as an argument.=
-  The
-fixture instances are called variants.  But we don't use these fixtures her=
-e.
-
-In fs_test.c, we also have some functions that behave much like system call=
-s,
-but clean up after themselves and return errno, for easier use in assert.  =
-The
-naming scheme we have used there is "test_foo" (e.g. test_open()).  I think=
- this
-would be more appropriate here as a name?
-
 > +{
 > +	int ret;
 > +
@@ -183,15 +169,6 @@ data *const _metadata,
 > +			} else {
 > +				EXPECT_EQ(0, ret);
 > +			}
-
-Hmm, passing the expected error code instead of a boolean to this function =
-was not possible?
-Then you could just write
-
-  EXPECT_EQ(expected_listen_error, listen_variant(bind_fd, backlog));
-
-?  (Apologies if this was discussed already.)
-
 > +		}
 >  	}
 > =20
@@ -252,6 +229,9 @@ ata *const _metadata,
 > =20
 > -		/* Allows connect and denies bind for the second port. */
 > +		/* Allows all actions despite bind. */
+
+s/despite/except/ would be more conventional English, I believe.
+
 >  		ASSERT_EQ(0,
 >  			  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
 > -					    &tcp_connect_p1, 0));
@@ -318,6 +298,9 @@ ata *const _metadata,
 > =20
 > -		/* Allows bind and denies connect for the second port. */
 > +		/* Allows all actions despite connect. */
+
+Same here.
+
 >  		ASSERT_EQ(0,
 >  			  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
 > -					    &tcp_bind_p1, 0));
@@ -542,5 +525,3 @@ ata *const _metadata,
 > --=20
 > 2.34.1
 >=20
-
-=E2=80=94G=C3=BCnther
