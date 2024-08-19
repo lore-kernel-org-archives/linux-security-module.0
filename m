@@ -1,90 +1,133 @@
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0633D1DC462
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 19:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE2E1DC479
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 19:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096143; cv=none; b=sLNavzthTCT3n5+cp7btpyMPJBgsoR+yyC2iZpfZgAfdHvjKN0CIQ+NKjSZuW3//s2fAPtDGicBbXfcmxPAqIcOC5ANBDBb9mcI64SW1dEyoyS3HEDzWydN6Trz3wASE1CcEL9oMh6fiExCVU5QCYv7c38pvhvAyYjizrJGuzL0=
+	t=1724096472; cv=none; b=inVaS4jd9PT9j269TJ+VYFL6IT6gB7nBFk1Fq2UwVNcJYSIJCI8mZmJC+4Sm7E5ZJSElGR/ZdGteoGn//dqeAD/BHOHrycEEbr2iN9+HaarxvVvwsDWq2O1so9ouOSNt3flVFoWMbN5Pzsd+tkPytTolSXLGNdIFiSe9EWHkIb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096143; c=relaxed/simple;
-	bh=+OduYjndWEcDGzbPt9anuSkV41/HMehd87djU29DX1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fq0Qn0lfbt0G3A5jJls17M8KIr/IDnNn/oJ6Jxuj7j6AgU9OMeJrvEdAdRxYO2FxIdNTmAdiNgszTLH/NmRprx5zc7DbTTiukg3sQ09clVEGn+n0HzOrPkMIT90tJqBD4f8OVollmM0qhBmMedXSBIDAXt270WpEmckB562dGoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NN1MTT5i; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1724096472; c=relaxed/simple;
+	bh=hcSbya+lQiysjoDdhMa2fNXAwE9cTf3HMVXCOHk8tdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UzPuP3YqdScBbTbGitwafOg8k7VkLy4GldMxeeAII+deD5lNQ8Fb6t1vjUMVx/fkQjuQo7FmghFligdXybQRh++C/L4N7b2/EvAR3WyKZEVliYIA4tLXyQ7acpVKuqYY+J29l1DjL0AMwLZq9jtWy6zZsvJr02FEmtMgEDEx7wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ml+q0awz; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NN1MTT5i"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WnjVw0JMvzqX9;
-	Mon, 19 Aug 2024 21:35:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724096135;
-	bh=kftjJDEQR6D2YRsmwipISiaWD9LCAgzCHPuYKHHQ+v4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NN1MTT5i0P2mpf3bAbV7biTOHt6zSx2wXDXXO/fkx3Lr0MrhQD8+QBkb5QWnI0a69
-	 7a/U/ctOYDvz9/jUw0reXobAg7TdieYVz6TtmT0/D384CuoQraCnlgLAxNNr64o8J6
-	 JV7DTbSMzdjW5MviquiGu/+iSLj3PAw/ldZq3yfA=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WnjVt5WmqznwR;
-	Mon, 19 Aug 2024 21:35:34 +0200 (CEST)
-Date: Mon, 19 Aug 2024 21:35:29 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v9 1/5] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240819.Noon6Ewoodoh@digikod.net>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
- <603cf546392f0cd35227f696527fd8f1d644cb31.1723615689.git.fahimitahera@gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ml+q0awz"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6bd3407a12aso6284787b3.3
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 12:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724096469; x=1724701269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gkyhANmIfoPUx8Ztj0L2oahwdkEC/9ySCXObPcfO7yE=;
+        b=Ml+q0awz6T48Y28kUNsbAqMvhhLu1OT+Fw0Q2W4JkWxl6hDRrIwmMXiTtCI3BM0wIB
+         1BVfrpdC+pdrXFrjxZwmwJFVXe2FvKLOAkCUsevU5fsIR8YHyKsuzbmjkOEMS8MP4+Lk
+         8T3xNnHOfBccmUSlGwU7APIbe5Et5SRGxoFtbt3NNXi+lr16eHzU7wz5ZUvkkjBrRb+F
+         AhpD6as2bkTGucQwCHteWPpgiSO2gB1pUHhKdN9s8rVBS7IuVWySrYAIfT8IqRLWhjZI
+         jcB/TLJSRxgOP1IrerDKgY/ZwjTf/tzaD3GmGNNqb1jVXyaZ0IVvTy/M1SIslKmTSQFg
+         RqsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724096469; x=1724701269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gkyhANmIfoPUx8Ztj0L2oahwdkEC/9ySCXObPcfO7yE=;
+        b=nQjfGsxJXFRZxo/4upvcz3Pq62gWSvUZLBIrZ0NjwUOSAZ0r1XMMCUhMphNdM50YTD
+         0aWmpUaPBhP+5AkiyjXLjlgMqHGf6sJNyfv/PXk7q82V27Gpe9mk2W5PjKdQVPCRGRq4
+         S4Je1MzLgGH1aA+sG8vU9SUeFmX6mzw7yBT+fe3kOhPEAwO1JP+gi6/sT6vPdIZqEuTK
+         6xG9EDfvSIvcxK7fZDq+4JY2N9uDjpdcujCFx6FaA5pUo1smqKpd6w58NlnabSaUnBJ3
+         6QJDNrvrHz0o295rZDpnubY9JGIQGu91Ym7GbrqLXaphAkwDJwEgt6fA8lSIP42L5qzv
+         gugg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTHLys+Ho/yqRZTUr+MUIngo2DfkX/JjWJDntA46Y0cqpPCxsXo9K1dJXrJ7Uxe+DZcR/IKjGxB4S7EmE38tiWeY56FjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQK/wd61mGuBfEXxLpbYqUSAykCj2y6xCT7oZ6i9vD+oEqPBzs
+	wfRG1UWgD2Z4ik9p6ud4d1B/IIaqxgqLhdXzmgcX5a/TTA1v8OJYah6p5Xga3wNtaejilMc74A2
+	glS6CTG8vxrWtoyxqkdKYZlhujC4DwraAu1O6
+X-Google-Smtp-Source: AGHT+IGNxAzznyZ+b7siXNq+DgYF6mU9BKHCBgzIgMxr5gD2jPGN9khm6ib1o830lq2PyGnu1xXnHmPm9H/tqvZOtYQ=
+X-Received: by 2002:a05:690c:f8a:b0:64b:69f0:f8f2 with SMTP id
+ 00721157ae682-6b1b9b5ad78mr147420827b3.3.1724096469531; Mon, 19 Aug 2024
+ 12:41:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <603cf546392f0cd35227f696527fd8f1d644cb31.1723615689.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com>
+ <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
+ <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
+ <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com> <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
+ <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com> <8421b247-41d2-4bf5-ba80-f356a2b696fd@linux.microsoft.com>
+In-Reply-To: <8421b247-41d2-4bf5-ba80-f356a2b696fd@linux.microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 19 Aug 2024 15:40:58 -0400
+Message-ID: <CAHC9VhR1gkiB=etUwgqnkZuBiSy1VD4ZgyUeTWvLQTowgQchFg@mail.gmail.com>
+Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
+ signature data to LSMs
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+	Alasdair Kergon <agk@redhat.com>, linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 12:22:19AM -0600, Tahera Fahimi wrote:
-> This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
-> that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
-> abstract Unix sockets from connecting to a process outside of
-> the same landlock domain. It implements two hooks, unix_stream_connect
-> and unix_may_send to enforce this restriction.
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
-> ---
+On Mon, Aug 19, 2024 at 1:47=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
+wrote:
+> On 8/18/2024 10:22 AM, Paul Moore wrote:
+> > On Fri, Aug 16, 2024 at 3:11=E2=80=AFPM Fan Wu <wufan@linux.microsoft.c=
+om> wrote:
+> >> On 8/16/2024 6:35 AM, Mikulas Patocka wrote:
+> >
+> > ...
+> >
+> >>>>>>
+> >>>>>> +#ifdef CONFIG_SECURITY
+> >>>>>> +     u8 *root_digest_sig;    /* signature of the root digest */
+> >>>>>> +#endif /* CONFIG_SECURITY */
+> >>>>>>         unsigned int salt_size;
+> >>>>>>         sector_t data_start;    /* data offset in 512-byte sectors=
+ */
+> >>>>>>         sector_t hash_start;    /* hash start in blocks */
+> >>>>>> @@ -58,6 +61,9 @@ struct dm_verity {
+> >>>>>>         bool hash_failed:1;     /* set if hash of any block failed=
+ */
+> >>>>>>         bool use_bh_wq:1;       /* try to verify in BH wq before n=
+ormal work-queue */
+> >>>>>>         unsigned int digest_size;       /* digest size for the cur=
+rent hash algorithm */
+> >>>>>> +#ifdef CONFIG_SECURITY
+> >>>>>> +     unsigned int sig_size;  /* root digest signature size */
+> >>>>>> +#endif /* CONFIG_SECURITY */
+> >>>>>>         unsigned int hash_reqsize; /* the size of temporary space =
+for crypto */
+> >>>>>>         enum verity_mode mode;  /* mode for handling verification =
+errors */
+> >>>>>>         unsigned int corrupted_errs;/* Number of errors for corrup=
+ted blocks */
+> >>>
+> >>> Just nit-picking: I would move "unsigned int sig_size" up, after "u8
+> >>> *root_digest_sig" entry.
+> >>>
+> >>> Mikulas
+> >>
+> >> Sure, I can make these two fields together.
+> >
+> > Fan, do you want me to move the @sig_size field when merging or are
+> > you planning to submit another revision?  I'm happy to do it during
+> > the merge, but I don't want to bother if you are going to post another
+> > patchset.
+>
+> Thanks, Paul. It seems moving the field during the merge can expedite
+> the process. Please go ahead with that. I appreciate your help with this!
 
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index 03b470f5a85a..20d2a8b5aa42 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -97,8 +97,9 @@ static void build_check_abi(void)
->  	 */
->  	ruleset_size = sizeof(ruleset_attr.handled_access_fs);
->  	ruleset_size += sizeof(ruleset_attr.handled_access_net);
-> +	ruleset_size += sizeof(ruleset_attr.scoped);
->  	BUILD_BUG_ON(sizeof(ruleset_attr) != ruleset_size);
-> -	BUILD_BUG_ON(sizeof(ruleset_attr) != 16);
-> +	BUILD_BUG_ON(sizeof(ruleset_attr) != 24);
->  
->  	path_beneath_size = sizeof(path_beneath_attr.allowed_access);
->  	path_beneath_size += sizeof(path_beneath_attr.parent_fd);
-> @@ -149,7 +150,7 @@ static const struct file_operations ruleset_fops = {
->  	.write = fop_dummy_write,
->  };
->  
-> -#define LANDLOCK_ABI_VERSION 5
-> +#define LANDLOCK_ABI_VERSION 6
+No problem.  I'm going to merge these this afternoon, I'll send
+another note when they are in the repo.
 
-Each test need to pass with each commit (not only this one BTW), so we
-need to update the abi_version test with this commit.  To be sure that
-everything is OK, you can run `check-linux.sh all` on each commit.
+--=20
+paul-moore.com
