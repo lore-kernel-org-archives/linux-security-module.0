@@ -1,100 +1,63 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEAB482EB;
-	Mon, 19 Aug 2024 17:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0E6146D6B
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 17:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724089623; cv=none; b=m2J2VG3SBl1t8bRL9i3ouqO3Cpj3loHFjQHIlynrmX8rFqMs0QWhTK2teXd8+B5H+t6sVgxx5jRDXmGtcGwljFSQKD4DuT9iUpVY41q1cgrosyjsC9o+JPdfi64m3RAGG4Z+kUly0CHIZSH5ZBwuITP2CqBGr//NJ2U0O6bDICo=
+	t=1724090262; cv=none; b=XNwiWvzA/sq4kUhVQ3wPTS5dCJYRMwix8QXu3nIOJscR5le4Bnm9lJcKuZE2wod/FprX9beMHFZp8ByZmIQcywOK0/8oZLYBRoTA4rxs3ypqt4BDVr2mfbIEgzvto8iwMFlYCITBs7Y7oTB6xatQwIkZC4kXshiLnLUehJoNy8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724089623; c=relaxed/simple;
-	bh=O/u/0h4UDWXzTlG+fyAEIwqdpcRuWTE+gYKDPyVqXGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UVUVV/sFbvDv3GbOLaViNMz2spWguXn3Xbiyp6Cje6aYUfBHGiSTLqIz/HWqsdGgf/2QSWEEfqGTkjqpLxjO2eMCw0WYg6TKC0afz+PbsqFRj0FEVqAYmJ+2N4M1NROylJUwPeG3MmsgJ2iPRSI3OrcrkqfmOFc7Rt5M1fbgp7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fYyF7sjJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1724090262; c=relaxed/simple;
+	bh=o35qCvEZbu4T5kA4SvRlTOdbqIKV9iz8xf1om4OGwIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iv3l5B2Iw12g81jIPmqwllBPIQFjIncLZNceEBazPlScAiBs1+VTpK7VD9QGhGu8YDK0b248AbsblUhyRUAg+szawp58ibgTVMH5+uVRqDCwkrWGgWmSVI7VrAN9Vm947h8Kovy3vogRTxCmcqMQi59bevJi25FCw0/e+0P8008=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NClCAvsR; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fYyF7sjJ"
-Received: from [10.137.106.151] (unknown [131.107.174.23])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A692F20B7165;
-	Mon, 19 Aug 2024 10:47:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A692F20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724089621;
-	bh=/Fg+0/px+hqNYUUfsmTiu8GgatTWcJCL0lwQFJVQ/tA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fYyF7sjJlyEoM0JAIp8iI+WSf7amJf7ETBZwTv6JAFSIU+FKmhSsw4HNzrhAYxlT4
-	 A5vyAPdyo2uFW5TfPI/HoeyeIVBWMk7SzosB2aa+PakJwYBTQzHf3wFXB4SYdLGd6N
-	 AUz5EsqW9VbFKhs/h6K9lmyUTJIROMLqTNlh8tQw=
-Message-ID: <8421b247-41d2-4bf5-ba80-f356a2b696fd@linux.microsoft.com>
-Date: Mon, 19 Aug 2024 10:47:01 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NClCAvsR"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WngKk3dMMzxMs;
+	Mon, 19 Aug 2024 19:57:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1724090250;
+	bh=Mkv7N3eK+fsZD7USRF4qFft68VEC4BZLCWR/hmSXw0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NClCAvsRfZN0erdn5kwTp7MikRRs9KgfMhRrRWHxPHG6afsYPRuJe3pZMUds/pkJw
+	 W6WZCKmnvwHsIEHemS2lzqHUixQdgw8HdKs7xrdB8AcebslnEufnL++Q/mYWXvaxCj
+	 3ioiU8Otfy+lyH06pHvw2peza0KgU1Gf9Tf0QYto=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WngKj30pnzgrn;
+	Mon, 19 Aug 2024 19:57:29 +0200 (CEST)
+Date: Mon, 19 Aug 2024 19:57:26 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] Landlock: Adding file_send_sigiotask signal
+ scoping support
+Message-ID: <20240819.eiDie8sienah@digikod.net>
+References: <cover.1723680305.git.fahimitahera@gmail.com>
+ <d04bc943e8d275e8d00bb7742bcdbabc7913abbe.1723680305.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
- signature data to LSMs
-To: Paul Moore <paul@paul-moore.com>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Alasdair Kergon <agk@redhat.com>, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- fsverity@lists.linux.dev, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com>
- <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
- <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
- <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com>
- <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
- <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
-Content-Language: en-US
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d04bc943e8d275e8d00bb7742bcdbabc7913abbe.1723680305.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
+On Thu, Aug 15, 2024 at 12:29:21PM -0600, Tahera Fahimi wrote:
+> This patch adds two new hooks "hook_file_set_fowner" and
+> "hook_file_free_security" to set and release a pointer to the
+> domain of the file owner. This pointer "fown_domain" in
+> "landlock_file_security" will be used in "file_send_sigiotask"
+> to check if the process can send a signal.
 
-
-On 8/18/2024 10:22 AM, Paul Moore wrote:
-> On Fri, Aug 16, 2024 at 3:11 PM Fan Wu <wufan@linux.microsoft.com> wrote:
->> On 8/16/2024 6:35 AM, Mikulas Patocka wrote:
-> 
-> ...
-> 
->>>>>>
->>>>>> +#ifdef CONFIG_SECURITY
->>>>>> +     u8 *root_digest_sig;    /* signature of the root digest */
->>>>>> +#endif /* CONFIG_SECURITY */
->>>>>>         unsigned int salt_size;
->>>>>>         sector_t data_start;    /* data offset in 512-byte sectors */
->>>>>>         sector_t hash_start;    /* hash start in blocks */
->>>>>> @@ -58,6 +61,9 @@ struct dm_verity {
->>>>>>         bool hash_failed:1;     /* set if hash of any block failed */
->>>>>>         bool use_bh_wq:1;       /* try to verify in BH wq before normal work-queue */
->>>>>>         unsigned int digest_size;       /* digest size for the current hash algorithm */
->>>>>> +#ifdef CONFIG_SECURITY
->>>>>> +     unsigned int sig_size;  /* root digest signature size */
->>>>>> +#endif /* CONFIG_SECURITY */
->>>>>>         unsigned int hash_reqsize; /* the size of temporary space for crypto */
->>>>>>         enum verity_mode mode;  /* mode for handling verification errors */
->>>>>>         unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
->>>
->>> Just nit-picking: I would move "unsigned int sig_size" up, after "u8
->>> *root_digest_sig" entry.
->>>
->>> Mikulas
->>
->> Sure, I can make these two fields together.
-> 
-> Fan, do you want me to move the @sig_size field when merging or are
-> you planning to submit another revision?  I'm happy to do it during
-> the merge, but I don't want to bother if you are going to post another
-> patchset.
-> 
-
-Thanks, Paul. It seems moving the field during the merge can expedite 
-the process. Please go ahead with that. I appreciate your help with this!
-
--Fan
+We need to make sure this file_send_sigiotask hook is useful and can be
+triggered by user space code.  Currently, all tests pass without this
+patch.
