@@ -1,34 +1,34 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDD92941B
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 15:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C1813AA38
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724081931; cv=none; b=RkJ8Qhb3oLrO9/QJ7X+ZHBf9hARCZtOYA2IVnbtol892f2nb4BloCKQOI4lqUfnotjELwyk3KsMOQewvCJnedXXLbJXD7BQSNlAKb7GQl2ySVVbtvwN1i569DVaHBXnwR8s0f2FWPdmmJkWal5CXuZL3eymRtZ8eIcwu5sEW8QY=
+	t=1724082193; cv=none; b=V9T8tFzcIukl/vaY4Ra7krdYjO3ZxtfiJ0IMNeWOxLCIMQ5YmAobnNp76XuhJM1gVWAWAVYB1uvtDhHtBhAmeEdwpNhfQTfeBJkpS4lwAmMe3P9Kf1oCWu4c5jAoXXbSRZkmKycvu11XA4wtSsIsvnUCtx9JGTsO2odTlsp4aDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724081931; c=relaxed/simple;
-	bh=BLvxj+/0RCGbtc6CYfZNZBJt1VO9J2g+FP9SJ4HIHE0=;
+	s=arc-20240116; t=1724082193; c=relaxed/simple;
+	bh=cfOi2EqN2wbz5WESbiQrgJNbC2uGzCRVgxqHEayf5VQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GU3PQT7eNPuck4fs4AfbHuzhiYffk2ASniooTKrhj4ObKTZxDoURV8qL3ju7V7Kv8ucaQ+rVFZElD/3ByQN/bvOsIuPVLqqvFex2axSjqfzFyWQLa2+OsNHnSsjRXGur4Di73GHLUMenrNNS1d3qlHbZHoSu1xs5wLBKQlxOL9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DOE1Ktja; arc=none smtp.client-ip=185.125.25.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1h4fLtx+bx19OFm6CkWA8LjQ6dCV6suej9YibOjipfpMXiQbfLM+KWkaeUDlO5wN7jfEX9W1octKK9pzNkmyug1GcWP5VL6yvJYDklNwmx8f0t+Y62/2nTRVUL8AaOmP4C4lUwB6OixqJm1fgL8+Ygnle/Kgw5eOl1xmQOU20Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=SmFr9kQK; arc=none smtp.client-ip=185.125.25.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DOE1Ktja"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WncFd0j7DzHbv;
-	Mon, 19 Aug 2024 17:38:45 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="SmFr9kQK"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WncLb1HyTzmky;
+	Mon, 19 Aug 2024 17:43:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724081924;
-	bh=TjcDKweBLObPuBGnmTc+trsNMm+NkLsfMLYl1jX+OBg=;
+	s=20191114; t=1724082183;
+	bh=bHUJCTUzyBNVaOte3ZrKbREiOQ+ZAWWBO7szS17bYlM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DOE1KtjankLRBcB9+v9cbONG/bKb6ZsC2+PXUknInd7BfX13JfEb2Ski1/G26Y2Lm
-	 B0nI0DybN48kYlcyMvGtsAeDofr+kKpWzp4L/GUhclFBCs+rR+I5+piXMhNnEroT4+
-	 fAKQmJV04XmPMkej8yteSvDmj8/W6e39SmIPPvDs=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WncFc3fMGzFlf;
-	Mon, 19 Aug 2024 17:38:44 +0200 (CEST)
-Date: Mon, 19 Aug 2024 17:38:41 +0200
+	b=SmFr9kQKTAHPFbX6Vp8dGrlYOp6wvDJEr8EGcYq9uHhbeSr533YvaB+hCzu+vhGte
+	 Q569kTLc8Yr7PKh8KM8YQn9nncsrQoDk8/79PxNUzMoCiCmR/lLvp4XWSetaN2/qgF
+	 gIMZyvWWYDoW8vZe2FnJC0ayMK1jFkjckw01Jsbs=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WncLZ3kmczP6s;
+	Mon, 19 Aug 2024 17:43:02 +0200 (CEST)
+Date: Mon, 19 Aug 2024 17:42:59 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Tahera Fahimi <fahimitahera@gmail.com>
 Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
@@ -37,11 +37,9 @@ Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
 	netdev@vger.kernel.org
 Subject: Re: [PATCH v9 2/5] selftests/Landlock: Abstract unix socket
  restriction tests
-Message-ID: <20240819.jooTheeng2Ah@digikod.net>
+Message-ID: <20240819.ig5eekohQuoh@digikod.net>
 References: <cover.1723615689.git.fahimitahera@gmail.com>
  <2fb401d2ee04b56c693bba3ebac469f2a6785950.1723615689.git.fahimitahera@gmail.com>
- <20240816.His9oihaigei@digikod.net>
- <Zr/b6j5V2IS4jpe8@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,304 +49,44 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zr/b6j5V2IS4jpe8@tahera-OptiPlex-5000>
+In-Reply-To: <2fb401d2ee04b56c693bba3ebac469f2a6785950.1723615689.git.fahimitahera@gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Fri, Aug 16, 2024 at 05:08:26PM -0600, Tahera Fahimi wrote:
-> On Fri, Aug 16, 2024 at 11:23:05PM +0200, Mickaël Salaün wrote:
-> > Please make sure all subject's prefixes have "landlock", not "Landlock"
-> > for consistency with current commits.
-> > 
-> > On Wed, Aug 14, 2024 at 12:22:20AM -0600, Tahera Fahimi wrote:
-> > > The patch introduces Landlock ABI version 6 and has three types of tests
-> > > that examines different scenarios for abstract unix socket connection:
-> > > 1) unix_socket: base tests of the abstract socket scoping mechanism for a
-> > >    landlocked process, same as the ptrace test.
-> > > 2) optional_scoping: generates three processes with different domains and
-> > >    tests if a process with a non-scoped domain can connect to other
-> > >    processes.
-> > > 3) unix_sock_special_cases: since the socket's creator credentials are used
-> > >    for scoping sockets, this test examines the cases where the socket's
-> > >    credentials are different from the process using it.
-> > > 
-> > > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > > ---
-> > > Changes in versions:
-> > > v9:
-> > > - Move pathname_address_sockets to a different patch.
-> > > - Extend optional_scoping test scenarios.
-> > > - Removing hardcoded numbers and using "backlog" instead.
-> > 
-> > You may have missed some parts of my previous review (e.g. local
-> > variables).
-> Hi Mickaël,
-> Thanks for the feedback. I actually did not apply the local variable for
-> the reason below.
-> > > V8:
-> > > - Move tests to scoped_abstract_unix_test.c file.
-> > > - To avoid potential conflicts among Unix socket names in different tests,
-> > >   set_unix_address is added to common.h to set different sun_path for Unix sockets.
-> > > - protocol_variant and service_fixture structures are also moved to common.h
-> > > - Adding pathname_address_sockets to cover all types of address formats
-> > >   for unix sockets, and moving remove_path() to common.h to reuse in this test.
-> > > V7:
-> > > - Introducing landlock ABI version 6.
-> > > - Adding some edge test cases to optional_scoping test.
-> > > - Using `enum` for different domains in optional_scoping tests.
-> > > - Extend unix_sock_special_cases test cases for connected(SOCK_STREAM) sockets.
-> > > - Modifying inline comments.
-> > > V6:
-> > > - Introducing optional_scoping test which ensures a sandboxed process with a
-> > >   non-scoped domain can still connect to another abstract unix socket(either
-> > >   sandboxed or non-sandboxed).
-> > > - Introducing unix_sock_special_cases test which tests examines scenarios where
-> > >   the connecting sockets have different domain than the process using them.
-> > > V4:
-> > > - Introducing unix_socket to evaluate the basic scoping mechanism for abstract
-> > >   unix sockets.
-> > > ---
-> > >  tools/testing/selftests/landlock/base_test.c  |   2 +-
-> > >  tools/testing/selftests/landlock/common.h     |  38 +
-> > >  tools/testing/selftests/landlock/net_test.c   |  31 +-
-> > >  .../landlock/scoped_abstract_unix_test.c      | 942 ++++++++++++++++++
-> > >  4 files changed, 982 insertions(+), 31 deletions(-)
-> > >  create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-> > > 
-> > 
-> > > +static void create_unix_domain(struct __test_metadata *const _metadata)
-> > > +{
-> > > +	int ruleset_fd;
-> > > +	const struct landlock_ruleset_attr ruleset_attr = {
-> > > +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
-> > > +	};
-> > > +
-> > > +	ruleset_fd =
-> > > +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> > > +	EXPECT_LE(0, ruleset_fd)
-> > > +	{
-> > > +		TH_LOG("Failed to create a ruleset: %s", strerror(errno));
-> > > +	}
-> > > +	enforce_ruleset(_metadata, ruleset_fd);
-> > > +	EXPECT_EQ(0, close(ruleset_fd));
-> > > +}
-> > > +
-> > > +/* clang-format off */
-> > 
-> > It should not be required to add this clang-format comment here nor in
-> > most places, except variant declarations (that might change if we remove
-> > variables though).
-> > 
-> > > +FIXTURE(unix_socket)
-> > > +{
-> > > +	struct service_fixture stream_address, dgram_address;
-> > > +	int server, client, dgram_server, dgram_client;
-> > 
-> > These variables don't need to be in the fixture but they should be local
-> > instead (and scoped to the if/else condition where they are used).
-> > 
-> > > +};
-> > > +
-> > > +/* clang-format on */
-> > > +FIXTURE_VARIANT(unix_socket)
-> > > +{
-> > > +	bool domain_both;
-> > > +	bool domain_parent;
-> > > +	bool domain_child;
-> > > +	bool connect_to_parent;
-> > > +};
-> > 
-> > > +/* 
-> > > + * Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent and child,
-> > > + * when they have scoped domain or no domain.
-> > > + */
-> > > +TEST_F(unix_socket, abstract_unix_socket)
-> > > +{
-> > > +	int status;
-> > > +	pid_t child;
-> > > +	bool can_connect_to_parent, can_connect_to_child;
-> > > +	int err, err_dgram;
-> > > +	int pipe_child[2], pipe_parent[2];
-> > > +	char buf_parent;
-> > > +
-> > > +	/*
-> > > +	 * can_connect_to_child is true if a parent process can connect to its
-> > > +	 * child process. The parent process is not isolated from the child
-> > > +	 * with a dedicated Landlock domain.
-> > > +	 */
-> > > +	can_connect_to_child = !variant->domain_parent;
-> > > +	/*
-> > > +	 * can_connect_to_parent is true if a child process can connect to its
-> > > +	 * parent process. This depends on the child process is not isolated from
-> > > +	 * the parent with a dedicated Landlock domain.
-> > > +	 */
-> > > +	can_connect_to_parent = !variant->domain_child;
-> > > +
-> > > +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> > > +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-> > > +	if (variant->domain_both) {
-> > > +		create_unix_domain(_metadata);
-> > > +		if (!__test_passed(_metadata))
-> > > +			return;
-> > > +	}
-> > > +
-> > > +	child = fork();
-> > > +	ASSERT_LE(0, child);
-> > > +	if (child == 0) {
-> > > +		char buf_child;
-> > > +
-> > > +		ASSERT_EQ(0, close(pipe_parent[1]));
-> > > +		ASSERT_EQ(0, close(pipe_child[0]));
-> > > +		if (variant->domain_child)
-> > > +			create_unix_domain(_metadata);
-> > > +
-> > > +		/* Waits for the parent to be in a domain, if any. */
-> > > +		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-> > > +
-> > > +		if (variant->connect_to_parent) {
-> > > +			self->client = socket(AF_UNIX, SOCK_STREAM, 0);
-> > 
-> > int stream_client;
-> > 
-> > stream_client = socket(AF_UNIX, SOCK_STREAM, 0);
-> > 
-> > ditto for dgram_client
-> > 
-> > > +			self->dgram_client = socket(AF_UNIX, SOCK_DGRAM, 0);
-> > > +
-> > > +			ASSERT_NE(-1, self->client);
-> > > +			ASSERT_NE(-1, self->dgram_client);
-> > > +			ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-> > > +
-> > > +			err = connect(self->client,
-> > > +				      &self->stream_address.unix_addr,
-> > > +				      (self->stream_address).unix_addr_len);
-> > > +			err_dgram =
-> > > +				connect(self->dgram_client,
-> > > +					&self->dgram_address.unix_addr,
-> > > +					(self->dgram_address).unix_addr_len);
-> > > +
-> > > +			if (can_connect_to_parent) {
-> > > +				EXPECT_EQ(0, err);
-> > > +				EXPECT_EQ(0, err_dgram);
-> > > +			} else {
-> > > +				EXPECT_EQ(-1, err);
-> > > +				EXPECT_EQ(-1, err_dgram);
-> > > +				EXPECT_EQ(EPERM, errno);
-> > > +			}
-> > 
-> > EXPECT_EQ(0, close(stream_client));
-> > EXPECT_EQ(0, close(dgram_client));
-> > 
-> > > +		} else {
-> > > +			self->server = socket(AF_UNIX, SOCK_STREAM, 0);
-> > 
-> > int stream_server;
-> > 
-> > server = socket(AF_UNIX, SOCK_STREAM, 0);
-> > 
-> > ditto for dgram_server
-> > 
-> > > +			self->dgram_server = socket(AF_UNIX, SOCK_DGRAM, 0);
-> > > +			ASSERT_NE(-1, self->server);
-> > > +			ASSERT_NE(-1, self->dgram_server);
-> > > +
-> > > +			ASSERT_EQ(0,
-> > > +				  bind(self->server,
-> > > +				       &self->stream_address.unix_addr,
-> > > +				       (self->stream_address).unix_addr_len));
-> > > +			ASSERT_EQ(0, bind(self->dgram_server,
-> > > +					  &self->dgram_address.unix_addr,
-> > > +					  (self->dgram_address).unix_addr_len));
-> > > +			ASSERT_EQ(0, listen(self->server, backlog));
-> > > +
-> > > +			/* signal to parent that child is listening */
-> > > +			ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> > > +			/* wait to connect */
-> > > +			ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-> > 
-> > ditto
-> > 
-> > > +		}
-> > > +		_exit(_metadata->exit_code);
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	ASSERT_EQ(0, close(pipe_child[1]));
-> > > +	ASSERT_EQ(0, close(pipe_parent[0]));
-> > > +
-> > > +	if (variant->domain_parent)
-> > > +		create_unix_domain(_metadata);
-> > > +
-> > > +	/* Signals that the parent is in a domain, if any. */
-> > > +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> > > +
-> > > +	if (!variant->connect_to_parent) {
-> > > +		self->client = socket(AF_UNIX, SOCK_STREAM, 0);
-> > > +		self->dgram_client = socket(AF_UNIX, SOCK_DGRAM, 0);
-> > 
-> > ditto
-> > 
-> > > +
-> > > +		ASSERT_NE(-1, self->client);
-> > > +		ASSERT_NE(-1, self->dgram_client);
-> > > +
-> > > +		/* Waits for the child to listen */
-> > > +		ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
-> > > +		err = connect(self->client, &self->stream_address.unix_addr,
-> > > +			      (self->stream_address).unix_addr_len);
-> > > +		err_dgram = connect(self->dgram_client,
-> > > +				    &self->dgram_address.unix_addr,
-> > > +				    (self->dgram_address).unix_addr_len);
-> > > +
-> > > +		if (can_connect_to_child) {
-> > > +			EXPECT_EQ(0, err);
-> > > +			EXPECT_EQ(0, err_dgram);
-> > > +		} else {
-> > > +			EXPECT_EQ(-1, err);
-> > > +			EXPECT_EQ(-1, err_dgram);
-> > > +			EXPECT_EQ(EPERM, errno);
-> > > +		}
-> > > +		ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> > 
-> > ditto
-> > 
-> > > +	} else {
-> > > +		self->server = socket(AF_UNIX, SOCK_STREAM, 0);
-> > > +		self->dgram_server = socket(AF_UNIX, SOCK_DGRAM, 0);
-> > 
-> > ditto
-> > 
-> > > +		ASSERT_NE(-1, self->server);
-> > > +		ASSERT_NE(-1, self->dgram_server);
-> > > +		ASSERT_EQ(0, bind(self->server, &self->stream_address.unix_addr,
-> > > +				  (self->stream_address).unix_addr_len));
-> > > +		ASSERT_EQ(0, bind(self->dgram_server,
-> > > +				  &self->dgram_address.unix_addr,
-> > > +				  (self->dgram_address).unix_addr_len));
-> > > +		ASSERT_EQ(0, listen(self->server, backlog));
-> > > +
-> > > +		/* signal to child that parent is listening */
-> > > +		ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> > 
-> > ditto
-> I think if I define "server" and "dgram_server" as local variables, then
-> in here, we should ensure that the clients connections are finished and
-> then close the server sockets. The client can write on the pipe after the
-> connection test is finished and then servers can close the sockets, but
-> the current version is much easier. Simply when the test is finished,
-> the FIXTURE_TEARDOWN closes all the sockets. What do you think about this?
+On Wed, Aug 14, 2024 at 12:22:20AM -0600, Tahera Fahimi wrote:
+> The patch introduces Landlock ABI version 6 and has three types of tests
 
-Right, a close() call here would not work, but calling
-close(stream_server) and close(dgram_server) at the end of this TEST_F()
-will be OK and cleaner than in the teardown.  The scope of these
-variable should then be TEST_F() too.
+"and adds three types" ?
 
-> > > +	}
-> > > +
-> > > +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> > > +
-> > > +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> > > +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> > > +		_metadata->exit_code = KSFT_FAIL;
-> > > +}
-> > > +
+> that examines different scenarios for abstract unix socket connection:
+
+Not only connection.
+
+> 1) unix_socket: base tests of the abstract socket scoping mechanism for a
+>    landlocked process, same as the ptrace test.
+> 2) optional_scoping: generates three processes with different domains and
+>    tests if a process with a non-scoped domain can connect to other
+>    processes.
+> 3) unix_sock_special_cases: since the socket's creator credentials are used
+
+"unix_sock_special_cases" seems a bit too generic and is not
+self-explanatory.  What about "outside_socket"?
+
+>    for scoping sockets, this test examines the cases where the socket's
+>    credentials are different from the process using it.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+
+> --- /dev/null
+> +++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+> @@ -0,0 +1,942 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Landlock tests - Abstract Unix Socket
+> + *
+> + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+> + * Copyright © 2019-2020 ANSSI
+
+You can replace these two lines with your copyright (same for the signal
+test file):
+Copyright © 2024 Tahera Fahimi <fahimitahera@gmail.com>
