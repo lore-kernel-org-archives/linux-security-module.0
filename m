@@ -1,92 +1,100 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C1813AA38
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Aug 2024 15:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEAB482EB;
+	Mon, 19 Aug 2024 17:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082193; cv=none; b=V9T8tFzcIukl/vaY4Ra7krdYjO3ZxtfiJ0IMNeWOxLCIMQ5YmAobnNp76XuhJM1gVWAWAVYB1uvtDhHtBhAmeEdwpNhfQTfeBJkpS4lwAmMe3P9Kf1oCWu4c5jAoXXbSRZkmKycvu11XA4wtSsIsvnUCtx9JGTsO2odTlsp4aDQ=
+	t=1724089623; cv=none; b=m2J2VG3SBl1t8bRL9i3ouqO3Cpj3loHFjQHIlynrmX8rFqMs0QWhTK2teXd8+B5H+t6sVgxx5jRDXmGtcGwljFSQKD4DuT9iUpVY41q1cgrosyjsC9o+JPdfi64m3RAGG4Z+kUly0CHIZSH5ZBwuITP2CqBGr//NJ2U0O6bDICo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082193; c=relaxed/simple;
-	bh=cfOi2EqN2wbz5WESbiQrgJNbC2uGzCRVgxqHEayf5VQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1h4fLtx+bx19OFm6CkWA8LjQ6dCV6suej9YibOjipfpMXiQbfLM+KWkaeUDlO5wN7jfEX9W1octKK9pzNkmyug1GcWP5VL6yvJYDklNwmx8f0t+Y62/2nTRVUL8AaOmP4C4lUwB6OixqJm1fgL8+Ygnle/Kgw5eOl1xmQOU20Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=SmFr9kQK; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1724089623; c=relaxed/simple;
+	bh=O/u/0h4UDWXzTlG+fyAEIwqdpcRuWTE+gYKDPyVqXGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UVUVV/sFbvDv3GbOLaViNMz2spWguXn3Xbiyp6Cje6aYUfBHGiSTLqIz/HWqsdGgf/2QSWEEfqGTkjqpLxjO2eMCw0WYg6TKC0afz+PbsqFRj0FEVqAYmJ+2N4M1NROylJUwPeG3MmsgJ2iPRSI3OrcrkqfmOFc7Rt5M1fbgp7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fYyF7sjJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="SmFr9kQK"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WncLb1HyTzmky;
-	Mon, 19 Aug 2024 17:43:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724082183;
-	bh=bHUJCTUzyBNVaOte3ZrKbREiOQ+ZAWWBO7szS17bYlM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SmFr9kQKTAHPFbX6Vp8dGrlYOp6wvDJEr8EGcYq9uHhbeSr533YvaB+hCzu+vhGte
-	 Q569kTLc8Yr7PKh8KM8YQn9nncsrQoDk8/79PxNUzMoCiCmR/lLvp4XWSetaN2/qgF
-	 gIMZyvWWYDoW8vZe2FnJC0ayMK1jFkjckw01Jsbs=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WncLZ3kmczP6s;
-	Mon, 19 Aug 2024 17:43:02 +0200 (CEST)
-Date: Mon, 19 Aug 2024 17:42:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v9 2/5] selftests/Landlock: Abstract unix socket
- restriction tests
-Message-ID: <20240819.ig5eekohQuoh@digikod.net>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
- <2fb401d2ee04b56c693bba3ebac469f2a6785950.1723615689.git.fahimitahera@gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fYyF7sjJ"
+Received: from [10.137.106.151] (unknown [131.107.174.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A692F20B7165;
+	Mon, 19 Aug 2024 10:47:01 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A692F20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724089621;
+	bh=/Fg+0/px+hqNYUUfsmTiu8GgatTWcJCL0lwQFJVQ/tA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fYyF7sjJlyEoM0JAIp8iI+WSf7amJf7ETBZwTv6JAFSIU+FKmhSsw4HNzrhAYxlT4
+	 A5vyAPdyo2uFW5TfPI/HoeyeIVBWMk7SzosB2aa+PakJwYBTQzHf3wFXB4SYdLGd6N
+	 AUz5EsqW9VbFKhs/h6K9lmyUTJIROMLqTNlh8tQw=
+Message-ID: <8421b247-41d2-4bf5-ba80-f356a2b696fd@linux.microsoft.com>
+Date: Mon, 19 Aug 2024 10:47:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
+ signature data to LSMs
+To: Paul Moore <paul@paul-moore.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Alasdair Kergon <agk@redhat.com>, linux-doc@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ fsverity@lists.linux.dev, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com>
+ <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
+ <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
+ <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com>
+ <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
+ <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
+Content-Language: en-US
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2fb401d2ee04b56c693bba3ebac469f2a6785950.1723615689.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Wed, Aug 14, 2024 at 12:22:20AM -0600, Tahera Fahimi wrote:
-> The patch introduces Landlock ABI version 6 and has three types of tests
 
-"and adds three types" ?
 
-> that examines different scenarios for abstract unix socket connection:
-
-Not only connection.
-
-> 1) unix_socket: base tests of the abstract socket scoping mechanism for a
->    landlocked process, same as the ptrace test.
-> 2) optional_scoping: generates three processes with different domains and
->    tests if a process with a non-scoped domain can connect to other
->    processes.
-> 3) unix_sock_special_cases: since the socket's creator credentials are used
-
-"unix_sock_special_cases" seems a bit too generic and is not
-self-explanatory.  What about "outside_socket"?
-
->    for scoping sockets, this test examines the cases where the socket's
->    credentials are different from the process using it.
+On 8/18/2024 10:22 AM, Paul Moore wrote:
+> On Fri, Aug 16, 2024 at 3:11 PM Fan Wu <wufan@linux.microsoft.com> wrote:
+>> On 8/16/2024 6:35 AM, Mikulas Patocka wrote:
 > 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
+> ...
+> 
+>>>>>>
+>>>>>> +#ifdef CONFIG_SECURITY
+>>>>>> +     u8 *root_digest_sig;    /* signature of the root digest */
+>>>>>> +#endif /* CONFIG_SECURITY */
+>>>>>>         unsigned int salt_size;
+>>>>>>         sector_t data_start;    /* data offset in 512-byte sectors */
+>>>>>>         sector_t hash_start;    /* hash start in blocks */
+>>>>>> @@ -58,6 +61,9 @@ struct dm_verity {
+>>>>>>         bool hash_failed:1;     /* set if hash of any block failed */
+>>>>>>         bool use_bh_wq:1;       /* try to verify in BH wq before normal work-queue */
+>>>>>>         unsigned int digest_size;       /* digest size for the current hash algorithm */
+>>>>>> +#ifdef CONFIG_SECURITY
+>>>>>> +     unsigned int sig_size;  /* root digest signature size */
+>>>>>> +#endif /* CONFIG_SECURITY */
+>>>>>>         unsigned int hash_reqsize; /* the size of temporary space for crypto */
+>>>>>>         enum verity_mode mode;  /* mode for handling verification errors */
+>>>>>>         unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
+>>>
+>>> Just nit-picking: I would move "unsigned int sig_size" up, after "u8
+>>> *root_digest_sig" entry.
+>>>
+>>> Mikulas
+>>
+>> Sure, I can make these two fields together.
+> 
+> Fan, do you want me to move the @sig_size field when merging or are
+> you planning to submit another revision?  I'm happy to do it during
+> the merge, but I don't want to bother if you are going to post another
+> patchset.
+> 
 
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-> @@ -0,0 +1,942 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Landlock tests - Abstract Unix Socket
-> + *
-> + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2019-2020 ANSSI
+Thanks, Paul. It seems moving the field during the merge can expedite 
+the process. Please go ahead with that. I appreciate your help with this!
 
-You can replace these two lines with your copyright (same for the signal
-test file):
-Copyright © 2024 Tahera Fahimi <fahimitahera@gmail.com>
+-Fan
