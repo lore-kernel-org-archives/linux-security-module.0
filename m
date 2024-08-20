@@ -1,66 +1,67 @@
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E5B2BAEB
-	for <linux-security-module@vger.kernel.org>; Tue, 20 Aug 2024 13:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2434D18E023
+	for <linux-security-module@vger.kernel.org>; Tue, 20 Aug 2024 13:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724158957; cv=none; b=Kh8ypJ+IxundBh5HcYh26E2GDth4832lw/1TNaPJP7tjFYrwTRBM4foMsRT0h8UnPG4Y5KIFuRtoUj31T5r8EzPYhS7C+2x/yLvt4lxngIklrcRCF3gP/K3UyohdX42xvXTSp5CbU7yp/m07wD6fSKq3LpD86ToGDXOcgPIr5No=
+	t=1724159472; cv=none; b=Y01c/Quszpb6JRpTZpnb/0Yo0Sk4LSdEgjKe1kmw+1sSCHi72bj/+kYOGpqbHE8pIQ2haY/lnvhSfHtc3xSOFG4Ra87LQByB1yDkxXDvGxjKaqdsd6l8NjFRdl2NgVjFpo/do1YQZfqpxdvg5y+cBQfCME6DRmh5y8NhCzrlfzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724158957; c=relaxed/simple;
-	bh=nCzMRGlo1hLxPcT+mtDFksiwrIQ/bdUP6HbK+zoJmeA=;
+	s=arc-20240116; t=1724159472; c=relaxed/simple;
+	bh=3qafc2OtfbKMD67zdtCMW7d/5pfl70D+vhA8CVrXaco=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ttP+kfwEC0azoK6af11JDDNmbphh3Z2l0hdFqdfpxhXsxKZRV47VvyQF7yFew6k8PVHQb+VMpnIZh9FNuGGIFT1u/CCCvvu+cpsfyYZcdPId4WKwmwzeEeQrO3MgaeyEQq5PgvGjePg4vifTUtjILKpfSojZHtR4RquaYsW9DOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yjWdjhdQ; arc=none smtp.client-ip=209.85.218.74
+	 To:Cc:Content-Type; b=UDTgZ8TWmie9dxxlI+Jzszmm1ORXTdYCAHWU80E2BOhBF/09hlioZNOOoMmpVdzkxAMgOBolufahw3KfJUIH8UaWodnkeVamTOBeJQwb9trcdIwT5NYDalyHFmQDCQvEFeJDf9TMy+7UO9mvkmBLdiPFiFeDg6olC89kIRt39bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I7yxTLBa; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yjWdjhdQ"
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a7d2d414949so428503466b.0
-        for <linux-security-module@vger.kernel.org>; Tue, 20 Aug 2024 06:02:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I7yxTLBa"
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b41e02c293so68676807b3.0
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Aug 2024 06:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724158954; x=1724763754; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QXABJiHoMlyY3OaJbpW4PBh0OFZruP2cOuAYtilLvGk=;
-        b=yjWdjhdQF/LuYz/nDarJRwcyhELF1O7tWY19GzmybXwU/q0bARAIgiMa1qmG/V/Vms
-         fTITH9YXlDSFtyABzPZxagQEEISBGLfIvTSIXXrHNX7Nhgix25eJ9T29NxlnkD/vY68i
-         OyXWaLvJmb9RYxdXUZvFOJMQoSme2+Cmd1YhSv5/o4anqLMhZX0ujuKdaAe7nIsn1cZY
-         KnVGxW6OofzpQokcwsu8M7V4mF+2F7PG3k/Qnflld3ZgCWXHkIj19iobrFKdTAqVYA9n
-         ev3Bi6s3N5Zws3T86r31UTlnK0xDjC/jRscEDnwyyCYWAfPCkHEtes7rvF9zrKnZbrNt
-         BH2Q==
+        d=google.com; s=20230601; t=1724159470; x=1724764270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lN3Gj5I1BDXWTy6NzwpPJel+5B5UpY04jbUUblrWOvE=;
+        b=I7yxTLBa830HckJCV1o92/ReyjfJkaSKi8RV3ynL4Hnz/vSrY+u5sFo+mIeyW9JJ5f
+         Tew/WjTqx0DajkvBuSFkBIciDXCRnTgK7YoH9dCIgeBUYPiZ5dmqmHeqm7EHfBj4sKe1
+         eeMXkl9yzW9ZMkoLGgTrCd3OE6sYS941HoZ5wo9xw8nA5QLL+1Oo7CDkH+7VsxldDinG
+         5ymRd+ZVaGcVVllc9j4Hyb79UGoCPi3PHjcNoe510Ph1asxvCXpUzu1rvLababm6H5Js
+         7HDmW+djbkl+x5EfRq9TjwbIMTSrQcF/uMWo+sd/Zlten+20g9CYiMglUHz/fSBmJBdQ
+         9ioQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724158954; x=1724763754;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QXABJiHoMlyY3OaJbpW4PBh0OFZruP2cOuAYtilLvGk=;
-        b=O9NPFLO8CQTRJV6nSlKS/r904TcYRGmCKpIeBso72qUH/JasuSLsNfAOV/DRm8nKYJ
-         McGWy/LFfqDjQReAUX5fGZwaOlBKAjTETzSLOb+OhgUZ6A/uRToBMOKGYbqaMEJuy5zp
-         mChizCDoh0WUPrq4M78nQy1e4q8cfII/HX4XzI1rhRQaEQO2FuSEIM58hV+dmlWxcNse
-         oIgKEAe/tGkj7w4bN0d22hrnsEJi0S61nifY8BGNEOxOJUL+zz7TEnEiYocNgnSFL7dz
-         HTN+rv27GgVsHYESM0koBXNSrJZyVY8K+gpEz97mAVXF4nuGhQ3d2J/1JbkvITPTaD9q
-         uOXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6UQ8NwvDEAg29kW6IrvYSdEaobvTZdWJQaS3wD7jHJ/6gnGyVmoqw2maYwoJm5cYxWIGpaPi/e9Ov7mPGoqL05IIIf+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOEEaqThBnbszr6qqmQp4tgsRebERoKspTy22f93zqAIcEOpz7
-	tqA5nz4glG3RsVfclkr/9SddBq3ynSIt64BqbQy4wcwADGlWx5cmB+mIhxvC8ckOXP4DHI6OjvP
-	puw==
-X-Google-Smtp-Source: AGHT+IGpqNzD8f22S0nBAMoR+qGi2YC0P1pmjeA6oVWDLRjXL1FDhDBfBouvbrfCFfwIBheLAbfT0yBJvLY=
+        d=1e100.net; s=20230601; t=1724159470; x=1724764270;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lN3Gj5I1BDXWTy6NzwpPJel+5B5UpY04jbUUblrWOvE=;
+        b=AJdAmCfnGAI0tJWNR+WJY3O86WOs+f1UoAoRjPEzuJSayNbeYhzGpnXgfSBCxzuXkk
+         SIB20zjnFY0DlfqNPQ/fQWfhY9mRTh9OXsVgAAPQXyTm7nvpEVzLY97FGKEk1Pn12aK6
+         Y9tAq5y2A4DEZcGwY+r66tLpbN/qHjbcr32nuXshqF6N2CWr7aKcTKikrJoUa828LGAM
+         hv2+kEuIBPBJ8ItWDZgLtvVTLmAEIdkiXcwyXujHdUzpspjAhMhaiE59aSY9vc5tgdXC
+         slC5DiHKdVueeh7uBCG3HosZaDk+x053cqNc1RADX9YJIbjREbUpGt1Ilsk1TNOVLdLy
+         8A9A==
+X-Forwarded-Encrypted: i=1; AJvYcCX1EVGecEoAf0/FcTDZgYZ5/TMbAk0UYW3jtFYYKU5wD+Ixiu0Vtxa8WNx808fbC8KYYIAvq+AXMm2ecNaTdVGl9A6CtWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0Q3+p3lSdV+RwlGJiLHGvYg3WjobZzmPw6BuXjFa7C2JreFMJ
+	9udPy7FZZBzn7qEA2zhvS/QLiqYXERzLmZ2A4ztH37FIBPvOTXdG/eQpjwet6/4JC/iZwx0UU5Q
+	FBA==
+X-Google-Smtp-Source: AGHT+IGd0tHf+ddVWWyu0feS9WCvfyhikk3VUfmkmDZIVdINwxfp8bFrvgSQd145+65vuI0fKXQsQlsYiX0=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a17:906:f158:b0:a7a:859e:fa83 with SMTP id
- a640c23a62f3a-a8392a05303mr1103866b.9.1724158954049; Tue, 20 Aug 2024
- 06:02:34 -0700 (PDT)
-Date: Tue, 20 Aug 2024 15:02:32 +0200
-In-Reply-To: <20240814030151.2380280-7-ivanov.mikhail1@huawei-partners.com>
+ (user=gnoack job=sendgmr) by 2002:a05:690c:4e0e:b0:64a:d1b0:4f24 with SMTP id
+ 00721157ae682-6b1bba55dd5mr2667257b3.7.1724159470085; Tue, 20 Aug 2024
+ 06:11:10 -0700 (PDT)
+Date: Tue, 20 Aug 2024 15:11:07 +0200
+In-Reply-To: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com> <20240814030151.2380280-7-ivanov.mikhail1@huawei-partners.com>
-Message-ID: <ZsST6Nk3Bf8F5lmJ@google.com>
-Subject: Re: [RFC PATCH v2 6/9] selftests/landlock: Test listening without
- explicit bind restriction
+References: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com>
+Message-ID: <ZsSV6-o1guJdpPfu@google.com>
+Subject: Re: [RFC PATCH v2 0/9] Support TCP listen access-control
 From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
 To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
 Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
@@ -68,114 +69,57 @@ Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com,
 	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
 	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 11:01:48AM +0800, Mikhail Ivanov wrote:
-> Test scenarios where listen(2) call without explicit bind(2) is allowed
-> and forbidden.
-> 
-> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> ---
->  tools/testing/selftests/landlock/net_test.c | 83 +++++++++++++++++++++
->  1 file changed, 83 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-> index 551891b18b7a..92c042349596 100644
-> --- a/tools/testing/selftests/landlock/net_test.c
-> +++ b/tools/testing/selftests/landlock/net_test.c
-> @@ -1851,6 +1851,89 @@ TEST_F(port_specific, bind_connect_zero)
->  	EXPECT_EQ(0, close(bind_fd));
->  }
->  
-> +TEST_F(port_specific, listen_without_bind_allowed)
-> +{
-> +	if (variant->sandbox == TCP_SANDBOX) {
-> +		const struct landlock_ruleset_attr ruleset_attr = {
-> +			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-> +					      LANDLOCK_ACCESS_NET_LISTEN_TCP
-> +		};
-> +		const struct landlock_net_port_attr tcp_listen_zero = {
-> +			.allowed_access = LANDLOCK_ACCESS_NET_LISTEN_TCP,
-> +			.port = 0,
-> +		};
-> +		int ruleset_fd;
-> +
-> +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-> +						     sizeof(ruleset_attr), 0);
-> +		ASSERT_LE(0, ruleset_fd);
-> +
-> +		/*
-> +		 * Allow listening without explicit bind
-> +		 * (cf. landlock_net_port_attr).
-> +		 */
-> +		EXPECT_EQ(0,
-> +			  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-> +					    &tcp_listen_zero, 0));
-> +
-> +		enforce_ruleset(_metadata, ruleset_fd);
-> +		EXPECT_EQ(0, close(ruleset_fd));
-> +	}
-> +	int listen_fd, connect_fd;
-> +	__u64 port;
-> +
-> +	listen_fd = socket_variant(&self->srv0);
-> +	ASSERT_LE(0, listen_fd);
-> +
-> +	connect_fd = socket_variant(&self->srv0);
-> +	ASSERT_LE(0, connect_fd);
-> +	/*
-> +	 * Allow listen(2) to select a random port for the socket,
-> +	 * since bind(2) wasn't called.
-> +	 */
-> +	EXPECT_EQ(0, listen_variant(listen_fd, backlog));
-> +
-> +	/* Connects on the binded port. */
-> +	port = get_binded_port(listen_fd, &variant->prot);
+Hello!
 
-Please rename "binded" to "bound" when you come across it.
+Thanks for sending v2 of this patchset!
+
+On Wed, Aug 14, 2024 at 11:01:42AM +0800, Mikhail Ivanov wrote:
+> Hello! This is v2 RFC patch dedicated to restriction of listening sockets=
+.
+>=20
+> It is based on the landlock's mic-next branch on top of 6.11-rc1 kernel
+> version.
+>=20
+> Description
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> LANDLOCK_ACCESS_NET_BIND_TCP is useful to limit the scope of "bindable"
+> ports to forbid a malicious sandboxed process to impersonate a legitimate
+> server process. However, bind(2) might be used by (TCP) clients to set th=
+e
+> source port to a (legitimate) value. Controlling the ports that can be
+> used for listening would allow (TCP) clients to explicitly bind to ports
+> that are forbidden for listening.
+>=20
+> Such control is implemented with a new LANDLOCK_ACCESS_NET_LISTEN_TCP
+> access right that restricts listening on undesired ports with listen(2).
+>=20
+> It's worth noticing that this access right doesn't affect changing=20
+> backlog value using listen(2) on already listening socket. For this case
+> test ipv4_tcp.double_listen is provided.
+
+This is a good catch, btw, that seems like the right thing to do. =F0=9F=91=
+=8D
 
 
-> +	EXPECT_NE(0, port);
-> +	set_port(&self->srv0, port);
-> +	EXPECT_EQ(0, connect_variant(connect_fd, &self->srv0));
-> +
-> +	EXPECT_EQ(0, close(connect_fd));
-> +	EXPECT_EQ(0, close(listen_fd));
-> +}
-> +
-> +TEST_F(port_specific, listen_without_bind_denied)
-> +{
-> +	if (variant->sandbox == TCP_SANDBOX) {
-> +		const struct landlock_ruleset_attr ruleset_attr = {
-> +			.handled_access_net = LANDLOCK_ACCESS_NET_LISTEN_TCP
-> +		};
-> +		int ruleset_fd;
-> +
-> +		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-> +						     sizeof(ruleset_attr), 0);
-> +		ASSERT_LE(0, ruleset_fd);
-> +
-> +		/* Deny listening. */
-> +		enforce_ruleset(_metadata, ruleset_fd);
-> +		EXPECT_EQ(0, close(ruleset_fd));
-> +	}
-> +	int listen_fd, ret;
-> +
-> +	listen_fd = socket_variant(&self->srv0);
-> +	ASSERT_LE(0, listen_fd);
-> +
-> +	/* Checks that listening without explicit binding is prohibited. */
-> +	ret = listen_variant(listen_fd, backlog);
-> +	if (is_restricted(&variant->prot, variant->sandbox)) {
-> +		/* Denied by Landlock. */
-> +		EXPECT_EQ(-EACCES, ret);
-> +	} else {
-> +		EXPECT_EQ(0, ret);
-> +	}
-> +}
-> +
->  TEST_F(port_specific, port_1023)
->  {
->  	int bind_fd, connect_fd, ret;
-> -- 
-> 2.34.1
-> 
+I am overall happy with this patch set, but left a few remarks in the tests=
+ so
+far.  There are a few style nits here and there.
+
+A thing that makes me uneasy is that the tests have a lot of logic in
+test_restricted_net_fixture(), where instead of the test logic being
+straightforward, there are conditionals to tell apart different scenarios a=
+nd
+expect different results.  I wish that the style of these tests was more li=
+near.
+This patch set is making it a little bit worse, because the logic in
+test_restricted_net_fixture() increases.
+
+I have also made some restructuring suggestions for the kernel code, in the=
+ hope
+that they simplify things.  If they don't because I overlooked something, w=
+e can
+skip that though.
+
+=E2=80=94G=C3=BCnther
