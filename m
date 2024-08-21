@@ -1,173 +1,96 @@
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E6A134AC;
-	Wed, 21 Aug 2024 11:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE7185953
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 12:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724241176; cv=none; b=KIEO2uwXvVhRT64dyYNnU1qrjWHgFWuaz1fJVoEiP6wiNqvXh6erEjVsbV27lRk2Ore9fAxwx+jjUnLcTvkY0jl85xchf3aDUXAjw8pnjh66N9tn0Pi7cHl7A+Nw3d9XIJRWbVfO2VKUek32tyQpNtnnfvh2VvEcCUeNqfp0y7A=
+	t=1724243791; cv=none; b=P/Jrxj5xNflMYif/VO4dIlXVagc2JRXR3pN4VAHP6MU0y/E3Zy5w8kccU/yMEwQdgWH6ndWJlbkEOcFqhdqjiLdMVwcXRHj0YLWMhDv1YlQ3xRijoC56ttyRM9sSupPmLA51iXkC2l/vAuAiPT2l7JORqLyBkKLMwg4U6EAPkao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724241176; c=relaxed/simple;
-	bh=r4TmNIC6JJelSj6jfu58Oaz4qMKQPjqXVKp4zwQxDOo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=X6z8Jsa7SftwsSgZ5tOHKJssDaW4Jb5W3OKZVp/5OAFySOHnHeMcpUA1kz8/iEM0JJevHa42+gFjru4JuChfgIQIxE+E0XLneZdb6sLgYG9kceyjixKqwzJ/TL1gQwpXlgWNgWUasjnZ0JCswqSGFMWN8c3hk1a7FS9lQmBbMFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wpl780ZkYz13Vj2;
-	Wed, 21 Aug 2024 19:52:04 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1C38518009B;
-	Wed, 21 Aug 2024 19:52:43 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 21 Aug 2024 19:52:39 +0800
-Message-ID: <4aae6528-cfed-efc5-a7bc-d967a8d43153@huawei-partners.com>
-Date: Wed, 21 Aug 2024 14:52:34 +0300
+	s=arc-20240116; t=1724243791; c=relaxed/simple;
+	bh=iPAgneh8d06fCeRW00UqhEOvyxYtOrl8jJrAAPmiQfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pqYvDqqXFSvqeg4fu6kO4sQuy208Y4NtlUEGIeEvR+3vBv8d7s6w49cVCakzruzsAR963ntVHTDjOhy+CDHpbKEUifRfqYi7Fqf+rWx4jYAEMQTSMVAImJzmCOwk6cZAYT4TIyLDDDy45l7a6PHuuiTka8N7SM6o9+F+pSSeecg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OQ0Q4Zxz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OQ0Q4Zxz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724243788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vG/ZDsrU8oiDjbsJ4bObMRa3sGVEeffwvXpjidw8y40=;
+	b=OQ0Q4ZxzBeZzRQfqhPONpa5HkBJgv1OB1JLlyIM5Ux6ApciE9tYjHNh8U93N5PcR6sKM0c
+	H9D9qXcJLfAYZzd+pTU/wWqxjcfYVkNfhQCCfQgGGtF8KpEQGqI69Ijse3hadEidNarPEq
+	t0rGCVRhp9AigVwwnUYC+3c+EK1sWWU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-ZgwmLf_7Mhm2TVGlkD_0WA-1; Wed,
+ 21 Aug 2024 08:36:25 -0400
+X-MC-Unique: ZgwmLf_7Mhm2TVGlkD_0WA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 793C81955D54;
+	Wed, 21 Aug 2024 12:36:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CC6F519560A3;
+	Wed, 21 Aug 2024 12:36:22 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: David Howells <dhowells@redhat.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] keys: Add tracepoints
+Date: Wed, 21 Aug 2024 13:36:08 +0100
+Message-ID: <20240821123616.60401-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 6/9] selftests/landlock: Test listening without
- explicit bind restriction
-Content-Language: ru
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
-	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com>
- <20240814030151.2380280-7-ivanov.mikhail1@huawei-partners.com>
- <ZsST6Nk3Bf8F5lmJ@google.com>
- <58b328fc-aa98-c4f1-eb11-2d59e50ec407@huawei-partners.com>
-In-Reply-To: <58b328fc-aa98-c4f1-eb11-2d59e50ec407@huawei-partners.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-8/20/2024 4:46 PM, Mikhail Ivanov wrote:
-> 8/20/2024 4:02 PM, Günther Noack wrote:
->> On Wed, Aug 14, 2024 at 11:01:48AM +0800, Mikhail Ivanov wrote:
->>> Test scenarios where listen(2) call without explicit bind(2) is allowed
->>> and forbidden.
->>>
->>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
->>> ---
->>>   tools/testing/selftests/landlock/net_test.c | 83 +++++++++++++++++++++
->>>   1 file changed, 83 insertions(+)
->>>
->>> diff --git a/tools/testing/selftests/landlock/net_test.c 
->>> b/tools/testing/selftests/landlock/net_test.c
->>> index 551891b18b7a..92c042349596 100644
->>> --- a/tools/testing/selftests/landlock/net_test.c
->>> +++ b/tools/testing/selftests/landlock/net_test.c
->>> @@ -1851,6 +1851,89 @@ TEST_F(port_specific, bind_connect_zero)
->>>       EXPECT_EQ(0, close(bind_fd));
->>>   }
->>> +TEST_F(port_specific, listen_without_bind_allowed)
->>> +{
->>> +    if (variant->sandbox == TCP_SANDBOX) {
->>> +        const struct landlock_ruleset_attr ruleset_attr = {
->>> +            .handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
->>> +                          LANDLOCK_ACCESS_NET_LISTEN_TCP
->>> +        };
->>> +        const struct landlock_net_port_attr tcp_listen_zero = {
->>> +            .allowed_access = LANDLOCK_ACCESS_NET_LISTEN_TCP,
->>> +            .port = 0,
->>> +        };
->>> +        int ruleset_fd;
->>> +
->>> +        ruleset_fd = landlock_create_ruleset(&ruleset_attr,
->>> +                             sizeof(ruleset_attr), 0);
->>> +        ASSERT_LE(0, ruleset_fd);
->>> +
->>> +        /*
->>> +         * Allow listening without explicit bind
->>> +         * (cf. landlock_net_port_attr).
->>> +         */
->>> +        EXPECT_EQ(0,
->>> +              landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
->>> +                        &tcp_listen_zero, 0));
->>> +
->>> +        enforce_ruleset(_metadata, ruleset_fd);
->>> +        EXPECT_EQ(0, close(ruleset_fd));
->>> +    }
->>> +    int listen_fd, connect_fd;
->>> +    __u64 port;
->>> +
->>> +    listen_fd = socket_variant(&self->srv0);
->>> +    ASSERT_LE(0, listen_fd);
->>> +
->>> +    connect_fd = socket_variant(&self->srv0);
->>> +    ASSERT_LE(0, connect_fd);
->>> +    /*
->>> +     * Allow listen(2) to select a random port for the socket,
->>> +     * since bind(2) wasn't called.
->>> +     */
->>> +    EXPECT_EQ(0, listen_variant(listen_fd, backlog));
->>> +
->>> +    /* Connects on the binded port. */
->>> +    port = get_binded_port(listen_fd, &variant->prot);
->>
->> Please rename "binded" to "bound" when you come across it.
-> 
-> Can I do such refactoring in the 3/9 patch?
+Hi Jarkko,
 
-I mean, can I replace all "binded" occurrences in net_test in 3/9 patch?
+Here's a patch to add some tracepoints to keyrings to make it easier to
+debug what's going on, plus a bunch of preliminary patches to move things
+about a bit to make that easier.
 
-> 
->>
->>
->>> +    EXPECT_NE(0, port);
->>> +    set_port(&self->srv0, port);
->>> +    EXPECT_EQ(0, connect_variant(connect_fd, &self->srv0));
->>> +
->>> +    EXPECT_EQ(0, close(connect_fd));
->>> +    EXPECT_EQ(0, close(listen_fd));
->>> +}
->>> +
->>> +TEST_F(port_specific, listen_without_bind_denied)
->>> +{
->>> +    if (variant->sandbox == TCP_SANDBOX) {
->>> +        const struct landlock_ruleset_attr ruleset_attr = {
->>> +            .handled_access_net = LANDLOCK_ACCESS_NET_LISTEN_TCP
->>> +        };
->>> +        int ruleset_fd;
->>> +
->>> +        ruleset_fd = landlock_create_ruleset(&ruleset_attr,
->>> +                             sizeof(ruleset_attr), 0);
->>> +        ASSERT_LE(0, ruleset_fd);
->>> +
->>> +        /* Deny listening. */
->>> +        enforce_ruleset(_metadata, ruleset_fd);
->>> +        EXPECT_EQ(0, close(ruleset_fd));
->>> +    }
->>> +    int listen_fd, ret;
->>> +
->>> +    listen_fd = socket_variant(&self->srv0);
->>> +    ASSERT_LE(0, listen_fd);
->>> +
->>> +    /* Checks that listening without explicit binding is prohibited. */
->>> +    ret = listen_variant(listen_fd, backlog);
->>> +    if (is_restricted(&variant->prot, variant->sandbox)) {
->>> +        /* Denied by Landlock. */
->>> +        EXPECT_EQ(-EACCES, ret);
->>> +    } else {
->>> +        EXPECT_EQ(0, ret);
->>> +    }
->>> +}
->>> +
->>>   TEST_F(port_specific, port_1023)
->>>   {
->>>       int bind_fd, connect_fd, ret;
->>> -- 
->>> 2.34.1
->>>
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-next
+
+Thanks,
+David
+
+David Howells (7):
+  keys: Out of line key_is_dead() so it can have tracepoints added in
+  keys: Extract struct key_user to its own header for tracing purposes
+  keys: Move key_get() out of line so a tracepoint can be added
+  keys: Add a key_ref_get() wrapper
+  keys: Use key_get() instead of __key_get()
+  keys: Provide a key_try_get() function and use it
+  keys: Add tracepoints for the keyrings facility
+
+ Documentation/security/keys/core.rst |   1 -
+ crypto/asymmetric_keys/restrict.c    |   6 +-
+ include/keys/key_user.h              |  35 +++
+ include/linux/key.h                  |  16 +-
+ include/trace/events/key.h           | 401 +++++++++++++++++++++++++++
+ security/keys/gc.c                   |   4 +
+ security/keys/internal.h             |  41 +--
+ security/keys/key.c                  |  70 ++++-
+ security/keys/keyctl.c               |   2 +
+ security/keys/keyring.c              |  45 ++-
+ security/keys/process_keys.c         |  15 +-
+ 11 files changed, 566 insertions(+), 70 deletions(-)
+ create mode 100644 include/keys/key_user.h
+ create mode 100644 include/trace/events/key.h
+
