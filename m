@@ -1,813 +1,243 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E544199FD8
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 12:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24A614D2AC
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 15:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724243812; cv=none; b=XBEIDZa2Mv8ZeQTTbtKEAC4pvj5tpjkTXsEa+LwuvlGF8Eca4UzTUNMt+Z0I3t1mrhTHcEZgwt8XHuKlmlfOTDFDRXqd6HGigednf79k/3Ii/qdHCFdeLxdYQwDQLiS0gZLnk6jPQB8lv/buWtSgz10z8N/pVJ3N/0s0ZfVnHHQ=
+	t=1724255965; cv=none; b=d88+B4o6BzIfc6VbbzrZeM6P/UwlTPuXAl7scigfJtLJCdLLzqvmvWbu5VBZcJk6cpuu9kwhAKwOvqzBYIua23j/d4g3hJcMbCzqqdLeN4npmEsMkBQ0DbZgpdRiEnhE2y70JRxlZsx4JM2Nj0Dfi8+U0YOG4bkkK9tQDHb+Pwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724243812; c=relaxed/simple;
-	bh=X5nsFJTEE8s4DdMQ/RXYKMuPcMF2/FYLF2Uhe2bQ7W4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sYq8boCob/pfWnQFedwFg8sjs/T2lqPIHQcxuXO4kzJ/E46Ag/4NspeTYtXMgoL2iVoYmGUsurzyjmF5utQ/YHsf3sV4QnEr98Kgu4q6N/FtEZ+8SZe+qNMp4GNTMZSfnBUaJrTMBDILB1299dpRnxNCpkBSDUgsXpTRep4yiJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LRLj5qgH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1724255965; c=relaxed/simple;
+	bh=hGfKAlZVSBcIYYJUmJQSl4br7LwKO3q2JmCk10knnAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCRu3CSuCWN85yguo0MTr7cWb6cgTp9WBOEQvr4Job1RQ8p33PLoBwcQUUnyA+YJ9o4we6i6NCuTXmYx3sBDxhVyRQczTt8/RPupHMuNnXSdiWAZt9bSPksgbltv5CRNx51AawFeyCwj8Mo4xgk5OfLIayRpW5p11sQ/HKrFTts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=apZR2uK8; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LRLj5qgH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724243809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=80E3kMIdbPaX7pELb4jvn2qp6xAsau9eGcp/ZZnpqD0=;
-	b=LRLj5qgHy9NQ4jsyiE+ypXLgSpKcG+JnqcaX2HdOf4AYxd/igLBQIyNlT+OcHqHNaDgKWs
-	3nP4ImxkvQU+ylpS1aQtp+LKHiU19nhGl9tsFWDFe3IyDGa9KgWFAjEjlRCg/ZbNSZJyCn
-	bjl4ZJ4qyIip2lXapYe8QLffNg/nmak=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-177-lER6gba3Poe28hKS5aL1_A-1; Wed,
- 21 Aug 2024 08:36:46 -0400
-X-MC-Unique: lER6gba3Poe28hKS5aL1_A-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3AA1F1955D56;
-	Wed, 21 Aug 2024 12:36:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 487801955E8C;
-	Wed, 21 Aug 2024 12:36:43 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] keys: Add tracepoints for the keyrings facility
-Date: Wed, 21 Aug 2024 13:36:15 +0100
-Message-ID: <20240821123616.60401-8-dhowells@redhat.com>
-In-Reply-To: <20240821123616.60401-1-dhowells@redhat.com>
-References: <20240821123616.60401-1-dhowells@redhat.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="apZR2uK8"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WprcJ5yRxz2bM;
+	Wed, 21 Aug 2024 17:59:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1724255952;
+	bh=rmYhcpPuAiqn2G75cLrm2Cpv+qTmSyMAG75h0OHJo/s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=apZR2uK8Gign6hQTbe9OiKScvIm82Ggc3GN47SOa6igsqqoYZWxu1u7FGU3hae11u
+	 UpizzNkNePzDolMYcysr4uEX71QZU9QK4iZQPE2fdsVCnK2ga1+wD7SCUu7MzhXm9w
+	 mIWBe9hsTGPIjSxAT3SBrrW42LEQ041jy5742zkY=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WprcH2w0rzTLQ;
+	Wed, 21 Aug 2024 17:59:11 +0200 (CEST)
+Date: Wed, 21 Aug 2024 17:59:07 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v10 5/6] sample/Landlock: Support abstract unix socket
+ restriction
+Message-ID: <20240821.Ohph8see3ru2@digikod.net>
+References: <cover.1724125513.git.fahimitahera@gmail.com>
+ <72945c1bf5ad016642b678764f44a3dcc5cb040b.1724125513.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <72945c1bf5ad016642b678764f44a3dcc5cb040b.1724125513.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-Add some tracepoints to aid in debuggin the keyrings facility and
-applications that use it.  A number of events and operations are traceable,
-including:
+On Mon, Aug 19, 2024 at 10:08:55PM -0600, Tahera Fahimi wrote:
+> A sandboxer can receive the character "a" as input from the environment
+> variable LL_SCOPE to restrict the abstract UNIX sockets from connecting
+> to a process outside its scoped domain.
+> 
+> Example
+> =======
+> Create an abstract unix socket to listen with socat(1):
+> socat abstract-listen:mysocket -
+> 
+> Create a sandboxed shell and pass the character "a" to LL_SCOPED:
+> LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
+> 
+> If the sandboxed process tries to connect to the listening socket
+> with command "socat - abstract-connect:mysocket", the connection
+> will fail.
+> 
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> ---
+> v10:
+> - Minor improvement in code based on v9.
+> v9:
+> - Add a restrict approach on input of LL_SCOPED, so it only allows zero
+>   or one "a" to be the input.
+> v8:
+> - Adding check_ruleset_scope function to parse the scope environment
+>   variable and update the landlock attribute based on the restriction
+>   provided by the user.
+> - Adding Mickaël Salaün reviews on version 7.
+> 
+> v7:
+> - Adding IPC scoping to the sandbox demo by defining a new "LL_SCOPED"
+>   environment variable. "LL_SCOPED" gets value "a" to restrict abstract
+>   unix sockets.
+> - Change LANDLOCK_ABI_LAST to 6.
+> ---
+>  samples/landlock/sandboxer.c | 56 +++++++++++++++++++++++++++++++++---
+>  1 file changed, 52 insertions(+), 4 deletions(-)
+> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index e8223c3e781a..0564d0a40c67 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -14,6 +14,7 @@
+>  #include <fcntl.h>
+>  #include <linux/landlock.h>
+>  #include <linux/prctl.h>
+> +#include <linux/socket.h>
+>  #include <stddef.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+> @@ -22,6 +23,7 @@
+>  #include <sys/stat.h>
+>  #include <sys/syscall.h>
+>  #include <unistd.h>
+> +#include <stdbool.h>
+>  
+>  #ifndef landlock_create_ruleset
+>  static inline int
+> @@ -55,6 +57,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+>  #define ENV_FS_RW_NAME "LL_FS_RW"
+>  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+>  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+> +#define ENV_SCOPED_NAME "LL_SCOPED"
+>  #define ENV_DELIMITER ":"
+>  
+>  static int parse_path(char *env_path, const char ***const path_list)
+> @@ -184,6 +187,40 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>  	return ret;
+>  }
+>  
+> +static bool check_ruleset_scope(const char *const env_var,
+> +				struct landlock_ruleset_attr *ruleset_attr)
+> +{
+> +	bool abstract_scoping = false;
+> +	bool ret = true;
+> +	char *env_type_scope, *env_type_scope_next, *ipc_scoping_name;
+> +
+> +	ruleset_attr->scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
 
-  - Allocation
-  - Refcounting
-  - Instantiation and negative instantiation/rejection
-  - Update
-  - Detection of key being dead
-  - Key quota changes
-  - Key quota failure
-  - Link, unlink and move
-  - Keyring clearance
-  - Revocation and invalidation
-  - Garbage collection
+This is bug prone because it removes the scope flags but doesn't store
+the initial state.  It would be better to use the abstract_scoping
+variable to unset the related flag at the end of this function.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jarkko Sakkinen <jarkko@kernel.org>
-cc: keyrings@vger.kernel.org
-cc: linux-security-module@vger.kernel.org
----
- include/trace/events/key.h | 401 +++++++++++++++++++++++++++++++++++++
- security/keys/gc.c         |   4 +
- security/keys/internal.h   |   1 +
- security/keys/key.c        |  50 ++++-
- security/keys/keyctl.c     |   2 +
- security/keys/keyring.c    |  27 ++-
- 6 files changed, 472 insertions(+), 13 deletions(-)
- create mode 100644 include/trace/events/key.h
+> +	env_type_scope = getenv(env_var);
+> +	/* scoping is not supported by the user */
+> +	if (!env_type_scope || strcmp("", env_type_scope) == 0)
+> +		return true;
+> +
+> +	env_type_scope = strdup(env_type_scope);
+> +	unsetenv(env_var);
+> +	env_type_scope_next = env_type_scope;
+> +	while ((ipc_scoping_name =
+> +			strsep(&env_type_scope_next, ENV_DELIMITER))) {
+> +		if (strcmp("a", ipc_scoping_name) == 0 && !abstract_scoping) {
+> +			abstract_scoping = true;
+> +			ruleset_attr->scoped |=
+> +				LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+> +		} else {
+> +			fprintf(stderr, "Unsupported scoping \"%s\"\n",
+> +				ipc_scoping_name);
+> +			ret = false;
+> +			goto out_free_name;
+> +		}
+> +	}
+> +out_free_name:
+> +	free(env_type_scope);
+> +	return ret;
+> +}
+> +
+>  /* clang-format off */
+>  
+>  #define ACCESS_FS_ROUGHLY_READ ( \
+> @@ -208,7 +245,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>  
+>  /* clang-format on */
+>  
+> -#define LANDLOCK_ABI_LAST 5
+> +#define LANDLOCK_ABI_LAST 6
+>  
+>  int main(const int argc, char *const argv[], char *const *const envp)
+>  {
+> @@ -223,14 +260,15 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		.handled_access_fs = access_fs_rw,
+>  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+>  				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
+>  	};
+>  
+>  	if (argc < 2) {
+>  		fprintf(stderr,
+> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
+> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
+>  			"<cmd> [args]...\n\n",
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, argv[0]);
+> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+>  		fprintf(stderr,
+>  			"Execute a command in a restricted environment.\n\n");
+>  		fprintf(stderr,
+> @@ -251,15 +289,18 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		fprintf(stderr,
+>  			"* %s: list of ports allowed to connect (client).\n",
+>  			ENV_TCP_CONNECT_NAME);
+> +		fprintf(stderr, "* %s: list of restrictions on IPCs.\n",
+> +			ENV_SCOPED_NAME);
+>  		fprintf(stderr,
+>  			"\nexample:\n"
+>  			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+>  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+>  			"%s=\"9418\" "
+>  			"%s=\"80:443\" "
+> +			"%s=\"a\" "
+>  			"%s bash -i\n\n",
+>  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, argv[0]);
+> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+>  		fprintf(stderr,
+>  			"This sandboxer can use Landlock features "
+>  			"up to ABI version %d.\n",
+> @@ -327,6 +368,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
+>  		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
+>  
+> +		__attribute__((fallthrough));
+> +	case 5:
+> +		/* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
+> +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+>  		fprintf(stderr,
+>  			"Hint: You should update the running kernel "
+>  			"to leverage Landlock features "
+> @@ -358,6 +403,9 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>  	}
+>  
+> +	if (abi >= 6 && !check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr))
 
-diff --git a/include/trace/events/key.h b/include/trace/events/key.h
-new file mode 100644
-index 000000000000..b3f8c39cc0e8
---- /dev/null
-+++ b/include/trace/events/key.h
-@@ -0,0 +1,401 @@
-+/* Keyrings tracepoints
-+ *
-+ * Copyright (C) 2024 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM key
-+
-+#if !defined(_TRACE_KEY_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_KEY_H
-+
-+#include <linux/tracepoint.h>
-+
-+struct key;
-+
-+/*
-+ * Declare tracing information enums and their string mappings for display.
-+ */
-+#define key_ref_traces \
-+	EM(key_trace_ref_alloc,			"ALLOC") \
-+	EM(key_trace_ref_free,			"FREE ") \
-+	EM(key_trace_ref_gc,			"GC   ") \
-+	EM(key_trace_ref_get,			"GET  ") \
-+	EM(key_trace_ref_put,			"PUT  ") \
-+	E_(key_trace_ref_try_get,		"GET  ")
-+
-+#define key_dead_traces \
-+	EM(key_trace_dead_type_removed,		"TYPR") \
-+	EM(key_trace_dead_domain_removed,	"DOMR") \
-+	EM(key_trace_dead_expired,		"EXPD") \
-+	E_(key_trace_dead_invalidated,		"INVL")
-+
-+/*
-+ * Generate enums for tracing information.
-+ */
-+#ifndef __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+#define __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+
-+#undef EM
-+#undef E_
-+#define EM(a, b) a,
-+#define E_(a, b) a
-+
-+enum key_dead_trace	{ key_dead_traces } __mode(byte);
-+enum key_ref_trace	{ key_ref_traces } __mode(byte);
-+
-+#endif /* end __RXRPC_DECLARE_TRACE_ENUMS_ONCE_ONLY */
-+
-+/*
-+ * Export enum symbols via userspace.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b) TRACE_DEFINE_ENUM(a);
-+#define E_(a, b) TRACE_DEFINE_ENUM(a);
-+
-+key_dead_traces;
-+key_ref_traces;
-+
-+/*
-+ * Now redefine the EM() and E_() macros to map the enums to the strings that
-+ * will be printed in the output.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b)	{ a, b },
-+#define E_(a, b)	{ a, b }
-+
-+TRACE_EVENT(key_alloc,
-+	    TP_PROTO(const struct key *key),
-+
-+	    TP_ARGS(key),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,		key)
-+		    __field(uid_t,			uid)
-+		    __array(char,			type, 8)
-+		    __array(char,			desc, 24)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+		    __entry->uid = from_kuid(&init_user_ns, key->uid);
-+		    strncpy(__entry->type, key->type->name, sizeof(__entry->type) - 1);
-+		    strncpy(__entry->desc, key->description ?: "", sizeof(__entry->desc) - 1);
-+		    __entry->type[sizeof(__entry->type) - 1] = 0;
-+		    __entry->desc[sizeof(__entry->desc) - 1] = 0;
-+			   ),
-+
-+	    TP_printk("key=%08x uid=%08x t=%s d=%s",
-+		      __entry->key,
-+		      __entry->uid,
-+		      __entry->type,
-+		      __entry->desc)
-+	    );
-+
-+TRACE_EVENT(key_ref,
-+	    TP_PROTO(key_serial_t key, unsigned int ref, enum key_ref_trace trace,
-+		     const void *where),
-+
-+	    TP_ARGS(key, ref, trace, where),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,		key)
-+		    __field(enum key_ref_trace,		trace)
-+		    __field(unsigned int,		ref)
-+		    __field(const void *,		where)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->key = key;
-+		    __entry->trace = trace;
-+		    __entry->ref = ref;
-+		    __entry->where = where;
-+			   ),
-+
-+	    TP_printk("key=%08x %s r=%d pc=%pSR",
-+		      __entry->key,
-+		      __print_symbolic(__entry->trace, key_ref_traces),
-+		      __entry->ref,
-+		      __entry->where)
-+	    );
-+
-+TRACE_EVENT(key_instantiate,
-+	    TP_PROTO(const struct key *key, const struct key_preparsed_payload *prep),
-+
-+	    TP_ARGS(key, prep),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	key)
-+		    __field(unsigned int,	datalen)
-+		    __field(unsigned int,	quotalen)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+		    __entry->datalen = prep->datalen;
-+		    __entry->quotalen = prep->quotalen;
-+			   ),
-+
-+	    TP_printk("key=%08x dlen=%u qlen=%u",
-+		      __entry->key,
-+		      __entry->datalen,
-+		      __entry->quotalen)
-+	    );
-+
-+TRACE_EVENT(key_reject,
-+	    TP_PROTO(const struct key *key, int error),
-+
-+	    TP_ARGS(key, error),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	key)
-+		    __field(int,		error)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+		    __entry->error = error;
-+			   ),
-+
-+	    TP_printk("key=%08x err=%d",
-+		      __entry->key,
-+		      __entry->error)
-+	    );
-+
-+TRACE_EVENT(key_update,
-+	    TP_PROTO(const struct key *key, const struct key_preparsed_payload *prep),
-+
-+	    TP_ARGS(key, prep),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	key)
-+		    __field(unsigned int,	datalen)
-+		    __field(unsigned int,	quotalen)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+		    __entry->datalen = prep->datalen;
-+		    __entry->quotalen = prep->quotalen;
-+			   ),
-+
-+	    TP_printk("key=%08x dlen=%u qlen=%u",
-+		      __entry->key,
-+		      __entry->datalen,
-+		      __entry->quotalen)
-+	    );
-+
-+TRACE_EVENT(key_dead,
-+	    TP_PROTO(const struct key *key, enum key_dead_trace trace),
-+
-+	    TP_ARGS(key, trace),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,		key)
-+		    __field(enum key_dead_trace,	trace)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+		    __entry->trace = trace;
-+			   ),
-+
-+	    TP_printk("key=%08x %s",
-+		      __entry->key,
-+		      __print_symbolic(__entry->trace, key_dead_traces))
-+	    );
-+
-+TRACE_EVENT(key_quota,
-+	    TP_PROTO(const struct key_user *user, int change_keys, int change_bytes),
-+
-+	    TP_ARGS(user, change_keys, change_bytes),
-+
-+	    TP_STRUCT__entry(
-+		    __field(uid_t,		uid)
-+		    __field(unsigned int,	nkeys)
-+		    __field(unsigned int,	nikeys)
-+		    __field(unsigned int,	qnkeys)
-+		    __field(unsigned int,	qnbytes)
-+		    __field(int,		change_keys)
-+		    __field(int,		change_bytes)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->uid = from_kuid(&init_user_ns, user->uid);
-+		    __entry->nkeys = atomic_read(&user->nkeys);
-+		    __entry->nikeys = atomic_read(&user->nikeys);
-+		    __entry->qnkeys = user->qnkeys;
-+		    __entry->qnbytes = user->qnbytes;
-+		    __entry->change_keys = change_keys;
-+		    __entry->change_bytes = change_bytes;
-+			   ),
-+
-+	    TP_printk("uid=%d nkeys=%u/%u qkeys=%u qpay=%u ckeys=%d cpay=%d",
-+		      __entry->uid,
-+		      __entry->nikeys, __entry->nkeys,
-+		      __entry->qnkeys,
-+		      __entry->qnbytes,
-+		      __entry->change_keys, __entry->change_bytes)
-+	    );
-+
-+TRACE_EVENT(key_edquot,
-+	    TP_PROTO(const struct key_user *user, unsigned int maxkeys,
-+		     unsigned int maxbytes, unsigned int reqbytes),
-+
-+	    TP_ARGS(user, maxkeys, maxbytes, reqbytes),
-+
-+	    TP_STRUCT__entry(
-+		    __field(uid_t,		uid)
-+		    __field(unsigned int,	nkeys)
-+		    __field(unsigned int,	nikeys)
-+		    __field(unsigned int,	qnkeys)
-+		    __field(unsigned int,	qnbytes)
-+		    __field(unsigned int,	maxkeys)
-+		    __field(unsigned int,	maxbytes)
-+		    __field(unsigned int,	reqbytes)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->uid = from_kuid(&init_user_ns, user->uid);
-+		    __entry->nkeys = atomic_read(&user->nkeys);
-+		    __entry->nikeys = atomic_read(&user->nikeys);
-+		    __entry->qnkeys = user->qnkeys;
-+		    __entry->qnbytes = user->qnbytes;
-+		    __entry->maxkeys = maxkeys;
-+		    __entry->maxbytes = maxbytes;
-+		    __entry->reqbytes = reqbytes;
-+			   ),
-+
-+	    TP_printk("u=%d nkeys=%u/%u qkeys=%u/%u qpay=%u/%u cpay=%u",
-+		      __entry->uid,
-+		      __entry->nikeys, __entry->nkeys,
-+		      __entry->qnkeys, __entry->maxkeys,
-+		      __entry->qnbytes, __entry->maxbytes,
-+		      __entry->reqbytes)
-+	    );
-+
-+TRACE_EVENT(key_link,
-+	    TP_PROTO(const struct key *keyring, const struct key *key),
-+
-+	    TP_ARGS(keyring, key),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	keyring)
-+		    __field(key_serial_t,	key)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->keyring = keyring->serial;
-+		    __entry->key = key->serial;
-+			   ),
-+
-+	    TP_printk("key=%08x to=%08x",
-+		      __entry->key, __entry->keyring)
-+	    );
-+
-+TRACE_EVENT(key_unlink,
-+	    TP_PROTO(const struct key *keyring, const struct key *key),
-+
-+	    TP_ARGS(keyring, key),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	keyring)
-+		    __field(key_serial_t,	key)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->keyring = keyring->serial;
-+		    __entry->key = key->serial;
-+			   ),
-+
-+	    TP_printk("key=%08x from=%08x",
-+		      __entry->key, __entry->keyring)
-+	    );
-+
-+TRACE_EVENT(key_move,
-+	    TP_PROTO(const struct key *from, const struct key *to,
-+		     const struct key *key),
-+
-+	    TP_ARGS(from, to, key),
-+
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	from)
-+		    __field(key_serial_t,	to)
-+		    __field(key_serial_t,	key)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->from = from->serial;
-+		    __entry->to = to->serial;
-+		    __entry->key = key->serial;
-+			   ),
-+
-+	    TP_printk("key=%08x from=%08x to=%08x",
-+		      __entry->key, __entry->from, __entry->to)
-+	    );
-+
-+TRACE_EVENT(key_clear,
-+	    TP_PROTO(const struct key *keyring),
-+	    TP_ARGS(keyring),
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	keyring)
-+			     ),
-+	    TP_fast_assign(
-+		    __entry->keyring = keyring->serial;
-+			   ),
-+	    TP_printk("key=%08x",
-+		      __entry->keyring)
-+	    );
-+
-+TRACE_EVENT(key_revoke,
-+	    TP_PROTO(const struct key *key),
-+	    TP_ARGS(key),
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	key)
-+			     ),
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+			   ),
-+	    TP_printk("key=%08x",
-+		      __entry->key)
-+	    );
-+
-+TRACE_EVENT(key_invalidate,
-+	    TP_PROTO(const struct key *key),
-+	    TP_ARGS(key),
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	key)
-+			     ),
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+			   ),
-+	    TP_printk("key=%08x",
-+		      __entry->key)
-+	    );
-+
-+TRACE_EVENT(key_gc,
-+	    TP_PROTO(const struct key *key),
-+	    TP_ARGS(key),
-+	    TP_STRUCT__entry(
-+		    __field(key_serial_t,	key)
-+			     ),
-+	    TP_fast_assign(
-+		    __entry->key = key->serial;
-+			   ),
-+	    TP_printk("key=%08x",
-+		      __entry->key)
-+	    );
-+
-+#undef EM
-+#undef E_
-+#endif /* _TRACE_KEY_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index 7d687b0962b1..47f857653854 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -141,6 +141,7 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
- 
- 		list_del(&key->graveyard_link);
- 
-+		trace_key_gc(key);
- 		kdebug("- %u", key->serial);
- 		key_check(key);
- 
-@@ -163,6 +164,8 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
- 		key_put_tag(key->domain_tag);
- 		kfree(key->description);
- 
-+		trace_key_ref(key->serial, refcount_read(&key->usage),
-+			      key_trace_ref_free, 0);
- 		memzero_explicit(key, sizeof(*key));
- 		kmem_cache_free(key_jar, key);
- 	}
-@@ -331,6 +334,7 @@ static void key_garbage_collector(struct work_struct *work)
- 	 */
- found_unreferenced_key:
- 	kdebug("unrefd key %d", key->serial);
-+	trace_key_ref(key->serial, refcount_read(&key->usage), key_trace_ref_gc, 0);
- 	rb_erase(&key->serial_node, &key_serial_tree);
- 	spin_unlock(&key_serial_lock);
- 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 33c929a6bb97..87600683a7f5 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -20,6 +20,7 @@
- #include <linux/mm.h>
- #include <linux/vmalloc.h>
- #include <keys/key_user.h>
-+#include <trace/events/key.h>
- 
- struct iovec;
- 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 59cffb6f9b94..abb8d60a0dc2 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -14,6 +14,7 @@
- #include <linux/workqueue.h>
- #include <linux/random.h>
- #include <linux/err.h>
-+#define CREATE_TRACE_POINTS
- #include "internal.h"
- 
- struct kmem_cache *key_jar;
-@@ -264,12 +265,15 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 		if (!(flags & KEY_ALLOC_QUOTA_OVERRUN)) {
- 			if (user->qnkeys + 1 > maxkeys ||
- 			    user->qnbytes + quotalen > maxbytes ||
--			    user->qnbytes + quotalen < user->qnbytes)
-+			    user->qnbytes + quotalen < user->qnbytes) {
-+				trace_key_edquot(user, maxkeys, maxbytes, quotalen);
- 				goto no_quota;
-+			}
- 		}
- 
- 		user->qnkeys++;
- 		user->qnbytes += quotalen;
-+		trace_key_quota(user, +1, quotalen);
- 		spin_unlock_irqrestore(&user->lock, irqflags);
- 	}
- 
-@@ -319,7 +323,10 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 	/* publish the key by giving it a serial number */
- 	refcount_inc(&key->domain_tag->usage);
- 	atomic_inc(&user->nkeys);
-+	trace_key_quota(user, 0, 0);
- 	key_alloc_serial(key);
-+	trace_key_alloc(key);
-+	trace_key_ref(key->serial, 1, key_trace_ref_alloc, __builtin_return_address(0));
- 
- error:
- 	return key;
-@@ -331,6 +338,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 		spin_lock_irqsave(&user->lock, irqflags);
- 		user->qnkeys--;
- 		user->qnbytes -= quotalen;
-+		trace_key_quota(user, -1, -quotalen);
- 		spin_unlock_irqrestore(&user->lock, irqflags);
- 	}
- 	key_user_put(user);
-@@ -344,6 +352,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 		spin_lock_irqsave(&user->lock, irqflags);
- 		user->qnkeys--;
- 		user->qnbytes -= quotalen;
-+		trace_key_quota(user, -1, quotalen);
- 		spin_unlock_irqrestore(&user->lock, irqflags);
- 	}
- 	key_user_put(user);
-@@ -388,11 +397,13 @@ int key_payload_reserve(struct key *key, size_t datalen)
- 		if (delta > 0 &&
- 		    (key->user->qnbytes + delta > maxbytes ||
- 		     key->user->qnbytes + delta < key->user->qnbytes)) {
-+			trace_key_edquot(key->user, 0, maxbytes, datalen);
- 			ret = -EDQUOT;
- 		}
- 		else {
- 			key->user->qnbytes += delta;
- 			key->quotalen += delta;
-+			trace_key_quota(key->user, 0, delta);
- 		}
- 		spin_unlock_irqrestore(&key->user->lock, flags);
- 	}
-@@ -447,6 +458,7 @@ static int __key_instantiate_and_link(struct key *key,
- 		if (ret == 0) {
- 			/* mark the key as being instantiated */
- 			atomic_inc(&key->user->nikeys);
-+			trace_key_instantiate(key, prep);
- 			mark_key_instantiated(key, 0);
- 			notify_key(key, NOTIFY_KEY_INSTANTIATED, 0);
- 
-@@ -604,6 +616,7 @@ int key_reject_and_link(struct key *key,
- 	if (key->state == KEY_IS_UNINSTANTIATED) {
- 		/* mark the key as being negatively instantiated */
- 		atomic_inc(&key->user->nikeys);
-+		trace_key_reject(key, -error);
- 		mark_key_instantiated(key, -error);
- 		notify_key(key, NOTIFY_KEY_INSTANTIATED, -error);
- 		key_set_expiry(key, ktime_get_real_seconds() + timeout);
-@@ -641,10 +654,15 @@ EXPORT_SYMBOL(key_reject_and_link);
-  *
-  * Get a reference on a key, if not NULL, and return the parameter.
-  */
--struct key *key_get(struct key *key)
-+noinline struct key *key_get(struct key *key)
- {
--	if (key)
--		refcount_inc(&key->usage);
-+	if (key) {
-+		int r;
-+
-+		__refcount_inc(&key->usage, &r);
-+		trace_key_ref(key->serial, r + 1, key_trace_ref_get,
-+			      __builtin_return_address(0));
-+	}
- 	return key;
- }
- EXPORT_SYMBOL(key_get);
-@@ -656,10 +674,14 @@ EXPORT_SYMBOL(key_get);
-  * Get a reference on a key unless it has no references and return true if
-  * successful.  @key must not be NULL.
-  */
--struct key *key_try_get(struct key *key)
-+noinline struct key *key_try_get(struct key *key)
- {
--	if (!refcount_inc_not_zero(&key->usage))
-+	int r;
-+
-+	if (!__refcount_inc_not_zero(&key->usage, &r))
- 		return NULL;
-+	trace_key_ref(key->serial, r + 1, key_trace_ref_try_get,
-+		      __builtin_return_address(0));
- 	return key;
- }
- 
-@@ -671,12 +693,19 @@ struct key *key_try_get(struct key *key)
-  * schedule the cleanup task to come and pull it out of the tree in process
-  * context at some later time.
-  */
--void key_put(struct key *key)
-+noinline void key_put(struct key *key)
- {
- 	if (key) {
-+		key_serial_t serial = key->serial;
-+		bool zero;
-+		int r;
-+
- 		key_check(key);
- 
--		if (refcount_dec_and_test(&key->usage)) {
-+		zero = __refcount_dec_and_test(&key->usage, &r);
-+		trace_key_ref(serial, r - 1, key_trace_ref_put,
-+			      __builtin_return_address(0));
-+		if (zero) {
- 			unsigned long flags;
- 
- 			/* deal with the user's key tracking and quota */
-@@ -684,6 +713,7 @@ void key_put(struct key *key)
- 				spin_lock_irqsave(&key->user->lock, flags);
- 				key->user->qnkeys--;
- 				key->user->qnbytes -= key->quotalen;
-+				trace_key_quota(key->user, -1, -key->quotalen);
- 				spin_unlock_irqrestore(&key->user->lock, flags);
- 			}
- 			schedule_work(&key_gc_work);
-@@ -807,6 +837,7 @@ static inline key_ref_t __key_update(key_ref_t key_ref,
- 	ret = key->type->update(key, prep);
- 	if (ret == 0) {
- 		/* Updating a negative key positively instantiates it */
-+		trace_key_update(key, prep);
- 		mark_key_instantiated(key, 0);
- 		notify_key(key, NOTIFY_KEY_UPDATED, 0);
- 	}
-@@ -1131,6 +1162,7 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
- 	ret = key->type->update(key, &prep);
- 	if (ret == 0) {
- 		/* Updating a negative key positively instantiates it */
-+		trace_key_update(key, &prep);
- 		mark_key_instantiated(key, 0);
- 		notify_key(key, NOTIFY_KEY_UPDATED, 0);
- 	}
-@@ -1166,6 +1198,7 @@ void key_revoke(struct key *key)
- 	 */
- 	down_write_nested(&key->sem, 1);
- 	if (!test_and_set_bit(KEY_FLAG_REVOKED, &key->flags)) {
-+		trace_key_revoke(key);
- 		notify_key(key, NOTIFY_KEY_REVOKED, 0);
- 		if (key->type->revoke)
- 			key->type->revoke(key);
-@@ -1198,6 +1231,7 @@ void key_invalidate(struct key *key)
- 	if (!test_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
- 		down_write_nested(&key->sem, 1);
- 		if (!test_and_set_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
-+			trace_key_invalidate(key);
- 			notify_key(key, NOTIFY_KEY_INVALIDATED, 0);
- 			key_schedule_gc_links();
- 		}
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index ab927a142f51..f2ef898209e6 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1020,11 +1020,13 @@ long keyctl_chown_key(key_serial_t id, uid_t user, gid_t group)
- 
- 			newowner->qnkeys++;
- 			newowner->qnbytes += key->quotalen;
-+			trace_key_quota(newowner, +1, key->quotalen);
- 			spin_unlock_irqrestore(&newowner->lock, flags);
- 
- 			spin_lock_irqsave(&key->user->lock, flags);
- 			key->user->qnkeys--;
- 			key->user->qnbytes -= key->quotalen;
-+			trace_key_quota(newowner, -1, -key->quotalen);
- 			spin_unlock_irqrestore(&key->user->lock, flags);
- 		}
- 
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index a09a4c2b1bcb..d67a60142318 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -1368,6 +1368,7 @@ void __key_link(struct key *keyring, struct key *key,
- 		struct assoc_array_edit **_edit)
- {
- 	key_get(key);
-+	trace_key_link(keyring, key);
- 	assoc_array_insert_set_object(*_edit, keyring_key_to_ptr(key));
- 	assoc_array_apply_edit(*_edit);
- 	*_edit = NULL;
-@@ -1506,6 +1507,7 @@ static int __key_unlink_begin(struct key *keyring, struct key *key,
- static void __key_unlink(struct key *keyring, struct key *key,
- 			 struct assoc_array_edit **_edit)
- {
-+	trace_key_unlink(keyring, key);
- 	assoc_array_apply_edit(*_edit);
- 	notify_key(keyring, NOTIFY_KEY_UNLINKED, key_serial(key));
- 	*_edit = NULL;
-@@ -1625,6 +1627,7 @@ int key_move(struct key *key,
- 	if (ret < 0)
- 		goto error;
- 
-+	trace_key_move(from_keyring, to_keyring, key);
- 	__key_unlink(from_keyring, key, &from_edit);
- 	__key_link(to_keyring, key, &to_edit);
- error:
-@@ -1654,6 +1657,7 @@ int keyring_clear(struct key *keyring)
- 
- 	down_write(&keyring->sem);
- 
-+	trace_key_clear(keyring);
- 	edit = assoc_array_clear(&keyring->keys, &keyring_assoc_array_ops);
- 	if (IS_ERR(edit)) {
- 		ret = PTR_ERR(edit);
-@@ -1697,14 +1701,27 @@ static bool key_is_dead(const struct key *key, time64_t limit)
- 	if (expiry != TIME64_MAX) {
- 		if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
- 			expiry += key_gc_delay;
--		if (expiry <= limit)
-+		if (expiry <= limit) {
-+			trace_key_dead(key, key_trace_dead_expired);
- 			return true;
-+		}
-+	}
-+
-+	if (test_bit(KEY_FLAG_DEAD, &key->flags)) {
-+		trace_key_dead(key, key_trace_dead_type_removed);
-+		return true;
-+	}
-+
-+	if (test_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
-+		trace_key_dead(key, key_trace_dead_invalidated);
-+		return true;
- 	}
- 
--	return
--		key->flags & ((1 << KEY_FLAG_DEAD) |
--			      (1 << KEY_FLAG_INVALIDATED)) ||
--		key->domain_tag->removed;
-+	if (key->domain_tag->removed) {
-+		trace_key_dead(key, key_trace_dead_domain_removed);
-+		return true;
-+	}
-+	return false;
- }
- 
- static bool keyring_gc_select_iterator(void *object, void *iterator_data)
+Instead of explicitly re-checking the ABI, check_ruleset_scope() should
+check ruleset_attr.scoped & LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
 
+> +		return 1;
+> +
+>  	ruleset_fd =
+>  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>  	if (ruleset_fd < 0) {
+> -- 
+> 2.34.1
+> 
+> 
