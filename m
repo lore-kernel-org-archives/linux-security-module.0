@@ -1,53 +1,57 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE7185953
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 12:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618C0191F6A
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 12:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724243791; cv=none; b=P/Jrxj5xNflMYif/VO4dIlXVagc2JRXR3pN4VAHP6MU0y/E3Zy5w8kccU/yMEwQdgWH6ndWJlbkEOcFqhdqjiLdMVwcXRHj0YLWMhDv1YlQ3xRijoC56ttyRM9sSupPmLA51iXkC2l/vAuAiPT2l7JORqLyBkKLMwg4U6EAPkao=
+	t=1724243794; cv=none; b=j/2mlYm1aM3FosmFrp00Zi80Y2ihcXBx6QdabjHcdoT8p/Wt+itUp8REHKlbYTL997hZPYLTLeaR3ggVInqHQze7neDSgiRLVS/WsehEGtkPsuhVjG8FFhAXudhgPTYWItRemjODo8i5MymUFG/3xuHqc9LCVhfmoIqpNcE8kBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724243791; c=relaxed/simple;
-	bh=iPAgneh8d06fCeRW00UqhEOvyxYtOrl8jJrAAPmiQfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pqYvDqqXFSvqeg4fu6kO4sQuy208Y4NtlUEGIeEvR+3vBv8d7s6w49cVCakzruzsAR963ntVHTDjOhy+CDHpbKEUifRfqYi7Fqf+rWx4jYAEMQTSMVAImJzmCOwk6cZAYT4TIyLDDDy45l7a6PHuuiTka8N7SM6o9+F+pSSeecg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OQ0Q4Zxz; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1724243794; c=relaxed/simple;
+	bh=vxY1xD4PYBOudJSOqSNC2Vu4G+cS92ZDHn4k+kBjiTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sLJFEUoqfmZ0q8O+XhBg/A8iq4+mkQ29FpHfctqpbE5oDghxTGCm5iooJp2P8uyj0vzOn39WzGneoAyVmyBU9s5RLmHjphKNKRoc3NGcuf5Fh6BdBoNpnsauiqWhLlaTgbcvcoExHpW7gY3pZBDGbHs/3AbDWDrqYnX60oAnYNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CHKniEQ9; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OQ0Q4Zxz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CHKniEQ9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724243788;
+	s=mimecast20190719; t=1724243791;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vG/ZDsrU8oiDjbsJ4bObMRa3sGVEeffwvXpjidw8y40=;
-	b=OQ0Q4ZxzBeZzRQfqhPONpa5HkBJgv1OB1JLlyIM5Ux6ApciE9tYjHNh8U93N5PcR6sKM0c
-	H9D9qXcJLfAYZzd+pTU/wWqxjcfYVkNfhQCCfQgGGtF8KpEQGqI69Ijse3hadEidNarPEq
-	t0rGCVRhp9AigVwwnUYC+3c+EK1sWWU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x9bQJ2co3elsRL5KhC8W7d+SgjU49zr7xREsgM6Vv2Q=;
+	b=CHKniEQ9EzxH8hH4hvSnlQiVLphmTiQB+ZF/cqStKvFX/v5wuzbqhrJSSF7nyKcdvyn1eJ
+	atQz8rh4oKqLjWKUAtEQQ6183MFc2UQ7jpZEdXl/Hu/iEJhmpK6wX9aFah/11I9621yaXC
+	P9NPasdl/v21gaW0pbLhKxYxVGMqB1o=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-ZgwmLf_7Mhm2TVGlkD_0WA-1; Wed,
- 21 Aug 2024 08:36:25 -0400
-X-MC-Unique: ZgwmLf_7Mhm2TVGlkD_0WA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-259-l2A2HIDUPR-LvjBZbaP7-Q-1; Wed,
+ 21 Aug 2024 08:36:28 -0400
+X-MC-Unique: l2A2HIDUPR-LvjBZbaP7-Q-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 793C81955D54;
-	Wed, 21 Aug 2024 12:36:24 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30E6E195608A;
+	Wed, 21 Aug 2024 12:36:27 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CC6F519560A3;
-	Wed, 21 Aug 2024 12:36:22 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A1ACB19560AE;
+	Wed, 21 Aug 2024 12:36:25 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Jarkko Sakkinen <jarkko@kernel.org>
 Cc: David Howells <dhowells@redhat.com>,
 	keyrings@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] keys: Add tracepoints
-Date: Wed, 21 Aug 2024 13:36:08 +0100
-Message-ID: <20240821123616.60401-1-dhowells@redhat.com>
+Subject: [PATCH 1/7] keys: Out of line key_is_dead() so it can have tracepoints added in
+Date: Wed, 21 Aug 2024 13:36:09 +0100
+Message-ID: <20240821123616.60401-2-dhowells@redhat.com>
+In-Reply-To: <20240821123616.60401-1-dhowells@redhat.com>
+References: <20240821123616.60401-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -55,42 +59,81 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Jarkko,
+Move key_is_dead() out of line so that tracepoints can be added in to it
+without incurring circular #includes.  Also, it is only used from the file
+it is moved into.
 
-Here's a patch to add some tracepoints to keyrings to make it easier to
-debug what's going on, plus a bunch of preliminary patches to move things
-about a bit to make that easier.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jarkko Sakkinen <jarkko@kernel.org>
+cc: keyrings@vger.kernel.org
+cc: linux-security-module@vger.kernel.org
+---
+ security/keys/internal.h | 20 --------------------
+ security/keys/keyring.c  | 20 ++++++++++++++++++++
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
-The patches can also be found here:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-next
-
-Thanks,
-David
-
-David Howells (7):
-  keys: Out of line key_is_dead() so it can have tracepoints added in
-  keys: Extract struct key_user to its own header for tracing purposes
-  keys: Move key_get() out of line so a tracepoint can be added
-  keys: Add a key_ref_get() wrapper
-  keys: Use key_get() instead of __key_get()
-  keys: Provide a key_try_get() function and use it
-  keys: Add tracepoints for the keyrings facility
-
- Documentation/security/keys/core.rst |   1 -
- crypto/asymmetric_keys/restrict.c    |   6 +-
- include/keys/key_user.h              |  35 +++
- include/linux/key.h                  |  16 +-
- include/trace/events/key.h           | 401 +++++++++++++++++++++++++++
- security/keys/gc.c                   |   4 +
- security/keys/internal.h             |  41 +--
- security/keys/key.c                  |  70 ++++-
- security/keys/keyctl.c               |   2 +
- security/keys/keyring.c              |  45 ++-
- security/keys/process_keys.c         |  15 +-
- 11 files changed, 566 insertions(+), 70 deletions(-)
- create mode 100644 include/keys/key_user.h
- create mode 100644 include/trace/events/key.h
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 2cffa6dc8255..8ba87127e446 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -211,26 +211,6 @@ extern struct key *request_key_auth_new(struct key *target,
+ 
+ extern struct key *key_get_instantiation_authkey(key_serial_t target_id);
+ 
+-/*
+- * Determine whether a key is dead.
+- */
+-static inline bool key_is_dead(const struct key *key, time64_t limit)
+-{
+-	time64_t expiry = key->expiry;
+-
+-	if (expiry != TIME64_MAX) {
+-		if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
+-			expiry += key_gc_delay;
+-		if (expiry <= limit)
+-			return true;
+-	}
+-
+-	return
+-		key->flags & ((1 << KEY_FLAG_DEAD) |
+-			      (1 << KEY_FLAG_INVALIDATED)) ||
+-		key->domain_tag->removed;
+-}
+-
+ /*
+  * keyctl() functions
+  */
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 4448758f643a..0eed018448cb 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -1687,6 +1687,26 @@ static void keyring_revoke(struct key *keyring)
+ 	}
+ }
+ 
++/*
++ * Determine whether a key is dead.
++ */
++static bool key_is_dead(const struct key *key, time64_t limit)
++{
++	time64_t expiry = key->expiry;
++
++	if (expiry != TIME64_MAX) {
++		if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
++			expiry += key_gc_delay;
++		if (expiry <= limit)
++			return true;
++	}
++
++	return
++		key->flags & ((1 << KEY_FLAG_DEAD) |
++			      (1 << KEY_FLAG_INVALIDATED)) ||
++		key->domain_tag->removed;
++}
++
+ static bool keyring_gc_select_iterator(void *object, void *iterator_data)
+ {
+ 	struct key *key = keyring_ptr_to_key(object);
 
