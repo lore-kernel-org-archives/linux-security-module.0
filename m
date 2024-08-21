@@ -1,243 +1,178 @@
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24A614D2AC
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 15:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E377D14E2D4
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 16:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724255965; cv=none; b=d88+B4o6BzIfc6VbbzrZeM6P/UwlTPuXAl7scigfJtLJCdLLzqvmvWbu5VBZcJk6cpuu9kwhAKwOvqzBYIua23j/d4g3hJcMbCzqqdLeN4npmEsMkBQ0DbZgpdRiEnhE2y70JRxlZsx4JM2Nj0Dfi8+U0YOG4bkkK9tQDHb+Pwk=
+	t=1724257949; cv=none; b=HvgXiCoaSxkM72jR/lVCZGpcvJmpXxFS6Re9Oj1BDuv2V9Hv1xiSehFiHJo4KuklJd79TLFii2TNeA4Dz56iQej9lMARH1jB8D+9RFZ3peDMp1nKoBIEoJAgNSPPjBS8j0/6TmeMFtJzxNelIbIRNZuwZv+1i2qrrF4cTdyjpAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724255965; c=relaxed/simple;
-	bh=hGfKAlZVSBcIYYJUmJQSl4br7LwKO3q2JmCk10knnAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iCRu3CSuCWN85yguo0MTr7cWb6cgTp9WBOEQvr4Job1RQ8p33PLoBwcQUUnyA+YJ9o4we6i6NCuTXmYx3sBDxhVyRQczTt8/RPupHMuNnXSdiWAZt9bSPksgbltv5CRNx51AawFeyCwj8Mo4xgk5OfLIayRpW5p11sQ/HKrFTts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=apZR2uK8; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1724257949; c=relaxed/simple;
+	bh=y0LywhCmh47VypaLFq+kEyR/qD8qT8iwJl5GVT+ZjgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oAiicIscRhaOUOmLoWzr2B1Vnuy4NLEJMdATCGY7yGJnTVjoYo8wlwWtDd1QFtKSQpU6XeqWT1dB8KaSpDcJG0GbgU6AAHH2OG82NDBjjWeu6VP6fHGry3wRVEIOEAXr6x6mSi2B6Z9If/EEC6suQREisRwOwNakrDUfx/WZF0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fBcubZHl; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="apZR2uK8"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WprcJ5yRxz2bM;
-	Wed, 21 Aug 2024 17:59:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724255952;
-	bh=rmYhcpPuAiqn2G75cLrm2Cpv+qTmSyMAG75h0OHJo/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=apZR2uK8Gign6hQTbe9OiKScvIm82Ggc3GN47SOa6igsqqoYZWxu1u7FGU3hae11u
-	 UpizzNkNePzDolMYcysr4uEX71QZU9QK4iZQPE2fdsVCnK2ga1+wD7SCUu7MzhXm9w
-	 mIWBe9hsTGPIjSxAT3SBrrW42LEQ041jy5742zkY=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WprcH2w0rzTLQ;
-	Wed, 21 Aug 2024 17:59:11 +0200 (CEST)
-Date: Wed, 21 Aug 2024 17:59:07 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v10 5/6] sample/Landlock: Support abstract unix socket
- restriction
-Message-ID: <20240821.Ohph8see3ru2@digikod.net>
-References: <cover.1724125513.git.fahimitahera@gmail.com>
- <72945c1bf5ad016642b678764f44a3dcc5cb040b.1724125513.git.fahimitahera@gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fBcubZHl"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6aab656687cso8527607b3.1
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 09:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724257945; x=1724862745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FKjQ6emtyPrVDj7dWj9Yt0Rk11OdLkP0YY5ZqjmKqLI=;
+        b=fBcubZHlN2QMKZFq5CpzyjFAB2tiH9uV96sIzPZKB98i4e/2bsr5SN9faq9iEbK5pN
+         4qMwjofgBWfDXHK5pbQm0fuhyFnjfhXvy0d+gs4gPcgkToAFtju/sKhZcQnaOyP5wCNN
+         SpiFKG6nZbcyoHFXl04TT9MuKXb8F5gueWYid0M4SrfBV2rmCz0PaVBgn/JTZ2mnlC91
+         N5rMEkRLdDSAJ1zSwczEV/KoL5YawJj8Wm+sT80loWm4w6DeueosadS582iMaVci5CCV
+         IGKB7458UsdDqrbD2A1+YdOXMAhx0lmOKb09Kfcan9KofMy3afq5zRu5dTnr7eQEYMhE
+         stKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724257945; x=1724862745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FKjQ6emtyPrVDj7dWj9Yt0Rk11OdLkP0YY5ZqjmKqLI=;
+        b=C+6re2KTugAaF+lLqCmwKqzvIflLI9A9vcUjHc2JaLDS7kVs1ZgEXa2jJPvDFExmeX
+         o/786o2PVhpQ/XMqm+y0Vl0Ggjw49inku+6N6X5ladUQrPWhm9njKby+inJeY57Alg9e
+         QAZ+EDdUa1K4xv+T6LBo1R9GaBmsxCHBv5THoGuUaqLp997PuDrax1XEXrsNJ4Nhl6d2
+         Wlq+AEDVWJ78RjhEFLT5ONwej5YoUeuOSMFtujHqDafWPSqGOR05lLDJBOMXKj3RiA6r
+         mqeN6lrJ3HSH/JjS2GYaKAqOSS3bYtuh/P5Bo9s45g8tIZ6vpjvydwFiYL6GLHVvP+SE
+         NT1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQcENA3BviNHQ7vV8HH+d5z5w1zq4erPVCEPq8PlPAA5rm7jX7NBQjwhf8SePjBvNMrxJjcLXjAAgNdBTYUJZwWAYvQEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZFHCVgt2UUJYE8qKZ+BApbAmByds9FU3cx81siasHZHmauWyd
+	LMgTuw1RKJA7Smi22RJ0rymfwry0j2YtaglucCcT9IwrE2V4Qy2U+ZGPEtuaeCQ2EbwAcLnMapv
+	+jvud0z3au5Uicsgm7pKhOcVAH1bQGIuTWywJ
+X-Google-Smtp-Source: AGHT+IHqtEaRs3bfyjoduUwqbGszfFJZ/MXDKylcokqkjlSrKLoHtDO/7RqpwJwZHHVzLv9J+rL+3ZDsUcQ+ap2YLkU=
+X-Received: by 2002:a05:690c:908:b0:627:7f2a:3b0d with SMTP id
+ 00721157ae682-6c304879b22mr2005647b3.14.1724257944842; Wed, 21 Aug 2024
+ 09:32:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <72945c1bf5ad016642b678764f44a3dcc5cb040b.1724125513.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20240821095609.365176-1-mic@digikod.net>
+In-Reply-To: <20240821095609.365176-1-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 Aug 2024 12:32:17 -0400
+Message-ID: <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 10:08:55PM -0600, Tahera Fahimi wrote:
-> A sandboxer can receive the character "a" as input from the environment
-> variable LL_SCOPE to restrict the abstract UNIX sockets from connecting
-> to a process outside its scoped domain.
-> 
-> Example
-> =======
-> Create an abstract unix socket to listen with socat(1):
-> socat abstract-listen:mysocket -
-> 
-> Create a sandboxed shell and pass the character "a" to LL_SCOPED:
-> LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
-> 
-> If the sandboxed process tries to connect to the listening socket
-> with command "socat - abstract-connect:mysocket", the connection
-> will fail.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+On Wed, Aug 21, 2024 at 5:56=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> for the related file descriptor.  Before this change, the
+> file_set_fowner LSM hook was always called, ignoring the VFS logic which
+> may not actually change the process that handles SIGIO (e.g. TUN, TTY,
+> dnotify), nor update the related UID/EUID.
+>
+> Moreover, because security_file_set_fowner() was called without lock
+> (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
+> condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
+> to struct fown_struct's UID/EUID.
+>
+> This change makes sure the LSM states are always in sync with the VFS
+> state by moving the security_file_set_fowner() call close to the
+> UID/EUID updates and using the same f_owner.lock .
+>
+> Rename f_modown() to __f_setown() to simplify code.
+>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 > ---
-> v10:
-> - Minor improvement in code based on v9.
-> v9:
-> - Add a restrict approach on input of LL_SCOPED, so it only allows zero
->   or one "a" to be the input.
-> v8:
-> - Adding check_ruleset_scope function to parse the scope environment
->   variable and update the landlock attribute based on the restriction
->   provided by the user.
-> - Adding Mickaël Salaün reviews on version 7.
-> 
-> v7:
-> - Adding IPC scoping to the sandbox demo by defining a new "LL_SCOPED"
->   environment variable. "LL_SCOPED" gets value "a" to restrict abstract
->   unix sockets.
-> - Change LANDLOCK_ABI_LAST to 6.
+>
+> Changes since v2:
+> https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
+> - Only keep the LSM hook move.
+>
+> Changes since v1:
+> https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> - Add back the file_set_fowner hook (but without user) as
+>   requested by Paul, but move it for consistency.
 > ---
->  samples/landlock/sandboxer.c | 56 +++++++++++++++++++++++++++++++++---
->  1 file changed, 52 insertions(+), 4 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index e8223c3e781a..0564d0a40c67 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -14,6 +14,7 @@
->  #include <fcntl.h>
->  #include <linux/landlock.h>
->  #include <linux/prctl.h>
-> +#include <linux/socket.h>
->  #include <stddef.h>
->  #include <stdio.h>
->  #include <stdlib.h>
-> @@ -22,6 +23,7 @@
->  #include <sys/stat.h>
->  #include <sys/syscall.h>
->  #include <unistd.h>
-> +#include <stdbool.h>
->  
->  #ifndef landlock_create_ruleset
->  static inline int
-> @@ -55,6 +57,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
->  #define ENV_FS_RW_NAME "LL_FS_RW"
->  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
->  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
-> +#define ENV_SCOPED_NAME "LL_SCOPED"
->  #define ENV_DELIMITER ":"
->  
->  static int parse_path(char *env_path, const char ***const path_list)
-> @@ -184,6 +187,40 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  	return ret;
+>  fs/fcntl.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+
+This looks reasonable to me, and fixes a potential problem with
+existing LSMs.  Unless I hear any strong objections I'll plan to merge
+this, and patch 2/2, into the LSM tree tomorrow.
+
+> diff --git a/fs/fcntl.c b/fs/fcntl.c
+> index 300e5d9ad913..c28dc6c005f1 100644
+> --- a/fs/fcntl.c
+> +++ b/fs/fcntl.c
+> @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned i=
+nt arg)
+>         return error;
 >  }
->  
-> +static bool check_ruleset_scope(const char *const env_var,
-> +				struct landlock_ruleset_attr *ruleset_attr)
-> +{
-> +	bool abstract_scoping = false;
-> +	bool ret = true;
-> +	char *env_type_scope, *env_type_scope_next, *ipc_scoping_name;
-> +
-> +	ruleset_attr->scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
-
-This is bug prone because it removes the scope flags but doesn't store
-the initial state.  It would be better to use the abstract_scoping
-variable to unset the related flag at the end of this function.
-
-> +	env_type_scope = getenv(env_var);
-> +	/* scoping is not supported by the user */
-> +	if (!env_type_scope || strcmp("", env_type_scope) == 0)
-> +		return true;
-> +
-> +	env_type_scope = strdup(env_type_scope);
-> +	unsetenv(env_var);
-> +	env_type_scope_next = env_type_scope;
-> +	while ((ipc_scoping_name =
-> +			strsep(&env_type_scope_next, ENV_DELIMITER))) {
-> +		if (strcmp("a", ipc_scoping_name) == 0 && !abstract_scoping) {
-> +			abstract_scoping = true;
-> +			ruleset_attr->scoped |=
-> +				LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
-> +		} else {
-> +			fprintf(stderr, "Unsupported scoping \"%s\"\n",
-> +				ipc_scoping_name);
-> +			ret = false;
-> +			goto out_free_name;
-> +		}
-> +	}
-> +out_free_name:
-> +	free(env_type_scope);
-> +	return ret;
-> +}
-> +
->  /* clang-format off */
->  
->  #define ACCESS_FS_ROUGHLY_READ ( \
-> @@ -208,7 +245,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  
->  /* clang-format on */
->  
-> -#define LANDLOCK_ABI_LAST 5
-> +#define LANDLOCK_ABI_LAST 6
->  
->  int main(const int argc, char *const argv[], char *const *const envp)
+>
+> -static void f_modown(struct file *filp, struct pid *pid, enum pid_type t=
+ype,
+> -                     int force)
+> +void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> +               int force)
 >  {
-> @@ -223,14 +260,15 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  		.handled_access_fs = access_fs_rw,
->  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
->  				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
->  	};
->  
->  	if (argc < 2) {
->  		fprintf(stderr,
-> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
-> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
->  			"<cmd> [args]...\n\n",
->  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, argv[0]);
-> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
->  		fprintf(stderr,
->  			"Execute a command in a restricted environment.\n\n");
->  		fprintf(stderr,
-> @@ -251,15 +289,18 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  		fprintf(stderr,
->  			"* %s: list of ports allowed to connect (client).\n",
->  			ENV_TCP_CONNECT_NAME);
-> +		fprintf(stderr, "* %s: list of restrictions on IPCs.\n",
-> +			ENV_SCOPED_NAME);
->  		fprintf(stderr,
->  			"\nexample:\n"
->  			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
->  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
->  			"%s=\"9418\" "
->  			"%s=\"80:443\" "
-> +			"%s=\"a\" "
->  			"%s bash -i\n\n",
->  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, argv[0]);
-> +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
->  		fprintf(stderr,
->  			"This sandboxer can use Landlock features "
->  			"up to ABI version %d.\n",
-> @@ -327,6 +368,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
->  		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
->  
-> +		__attribute__((fallthrough));
-> +	case 5:
-> +		/* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
-> +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
->  		fprintf(stderr,
->  			"Hint: You should update the running kernel "
->  			"to leverage Landlock features "
-> @@ -358,6 +403,9 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->  	}
->  
-> +	if (abi >= 6 && !check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr))
+>         write_lock_irq(&filp->f_owner.lock);
+>         if (force || !filp->f_owner.pid) {
+> @@ -98,19 +98,13 @@ static void f_modown(struct file *filp, struct pid *p=
+id, enum pid_type type,
+>
+>                 if (pid) {
+>                         const struct cred *cred =3D current_cred();
+> +                       security_file_set_fowner(filp);
+>                         filp->f_owner.uid =3D cred->uid;
+>                         filp->f_owner.euid =3D cred->euid;
+>                 }
+>         }
+>         write_unlock_irq(&filp->f_owner.lock);
+>  }
+> -
+> -void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> -               int force)
+> -{
+> -       security_file_set_fowner(filp);
+> -       f_modown(filp, pid, type, force);
+> -}
+>  EXPORT_SYMBOL(__f_setown);
+>
+>  int f_setown(struct file *filp, int who, int force)
+> @@ -146,7 +140,7 @@ EXPORT_SYMBOL(f_setown);
+>
+>  void f_delown(struct file *filp)
+>  {
+> -       f_modown(filp, NULL, PIDTYPE_TGID, 1);
+> +       __f_setown(filp, NULL, PIDTYPE_TGID, 1);
+>  }
+>
+>  pid_t f_getown(struct file *filp)
+> --
+> 2.46.0
 
-Instead of explicitly re-checking the ABI, check_ruleset_scope() should
-check ruleset_attr.scoped & LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
-
-> +		return 1;
-> +
->  	ruleset_fd =
->  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
->  	if (ruleset_fd < 0) {
-> -- 
-> 2.34.1
-> 
-> 
+--=20
+paul-moore.com
