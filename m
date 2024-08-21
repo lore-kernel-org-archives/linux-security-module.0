@@ -1,33 +1,32 @@
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702101B3B12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE711B2EC1
 	for <linux-security-module@vger.kernel.org>; Wed, 21 Aug 2024 09:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724234207; cv=none; b=lsvm4n0CltUysOjGsd/CGlGrQsn5SE4wHuWwILcc/aIhuekqkN/3LFA8ZdQFWE6lTX3NIDlPO3XJtKwT6qiG7rHG/PNT44QYXttWmLx5GZdkZ7z8zaptRrSBR5+ngOiqVQFgw1mE6Nmnw0EZOi2kYNzxyNdhn2NE2V59T8pVsHk=
+	t=1724234210; cv=none; b=r2hFgqYHtOl8aVgNrnsLf0hZzCe/kNLRyr8L/fg6Fy5DVaxwwk1pBee0uwrDjdWGyAHbI7aTTQD/3og6/SlOOEzYgZ8HskN5DigwAa+NnHoeGbQe0A15lhwML27Z1nOeuil0M4xStD/eGAsGVMppSlhNIGhqXjQoYPrCNoeN9LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724234207; c=relaxed/simple;
-	bh=QWrZEraJ1HdvGTLjL05egrMJ/0TxPWXDxYriLvhDu0w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AFa2h3LW5kjctrDMu73NDnZpw1oxfUoqYtppjlghtJsJFEPrEfz4kiq/xtsDWYE4Lz5SbouhNuT/BBwfnueMmhfsY1EpdL1u3SQPMIuj2mw/Cjab6AnjJdkS7sYQLTm5cpWYMysMmSjR2MjkMxorJFKBVP8QsoJ7ZXdjLl9Bxho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Ox60FBZB; arc=none smtp.client-ip=185.125.25.13
+	s=arc-20240116; t=1724234210; c=relaxed/simple;
+	bh=HWH25yedLYdz8ph8RY73eXm+N0rL0t6KkJUIcf82vuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Nj2A+MOrpVfun1c+Ojc/YFf9eCcIxGkfPnHdIPrI88tQ+YK8EmYZ1jRge7vOvUVnlvAJFsATeJzV4Be2vTrcp9sh8GkgIe0h59as/U0sC+naqu+xIu1bFHJTlCG4bhh1NcdkuCCt45nGK6P8k7M6dr0r9D5DHD2CWXEdsHyKonU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zDSvhaKH; arc=none smtp.client-ip=84.16.66.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Ox60FBZB"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zDSvhaKH"
 Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WphYn0kLFzWr;
-	Wed, 21 Aug 2024 11:56:29 +0200 (CEST)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WphYl4rvFz19Jt;
+	Wed, 21 Aug 2024 11:56:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724234188;
-	bh=nSXgzhxaLWXtS2g1+LQLG+mkFQcvxD/SuRCRuRZ9I3w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ox60FBZBAhLUmU0Qbe8PAyseSF2sVRUoG3ei5pRkq/l8y3kMj2h31WAJ6Lq79E/UR
-	 VEpapKtSqCn8b4g2xBCTmnQ96qIipyR5rXApErtx0BCUoEWmZiYrKrPuIG3vM5KO1z
-	 mjLnD3zJclWQb6ofxDhrPKpyrGKxV314B6+5mt88=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WphYm1kMYzK84;
-	Wed, 21 Aug 2024 11:56:28 +0200 (CEST)
+	s=20191114; t=1724234187;
+	bh=yUyLTvLEaoLUHEgIZFvmpeRx32nYNt81EVAXTRpMemc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=zDSvhaKHu+Wm4cRqIZyQdDaiV70hi7RZnioobuXfjPbQWQyiitSvNxM2OBuyrm8Uq
+	 jzw0avdMOz3+AQuLuQZEKyaFyUo0xT7FlRt1qTZOf2TldRDmzF9ik+HRLKHekELdOB
+	 CmfjJB4Q4y6FRPwOTmk7c541fWPTfFWuIaqWxgEM=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WphYk49KczLLf;
+	Wed, 21 Aug 2024 11:56:26 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Christian Brauner <brauner@kernel.org>,
 	Paul Moore <paul@paul-moore.com>
@@ -46,11 +45,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Ondrej Mosnacek <omosnace@redhat.com>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
 	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [PATCH v3 2/2] security: Update file_set_fowner documentation
-Date: Wed, 21 Aug 2024 11:56:06 +0200
-Message-ID: <20240821095609.365176-2-mic@digikod.net>
-In-Reply-To: <20240821095609.365176-1-mic@digikod.net>
-References: <20240821095609.365176-1-mic@digikod.net>
+Subject: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
+Date: Wed, 21 Aug 2024 11:56:05 +0200
+Message-ID: <20240821095609.365176-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -61,7 +58,22 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Highlight that the file_set_fowner hook is now called with a lock held.
+The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+for the related file descriptor.  Before this change, the
+file_set_fowner LSM hook was always called, ignoring the VFS logic which
+may not actually change the process that handles SIGIO (e.g. TUN, TTY,
+dnotify), nor update the related UID/EUID.
+
+Moreover, because security_file_set_fowner() was called without lock
+(e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
+condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
+to struct fown_struct's UID/EUID.
+
+This change makes sure the LSM states are always in sync with the VFS
+state by moving the security_file_set_fowner() call close to the
+UID/EUID updates and using the same f_owner.lock .
+
+Rename f_modown() to __f_setown() to simplify code.
 
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Casey Schaufler <casey@schaufler-ca.com>
@@ -72,28 +84,67 @@ Cc: Ondrej Mosnacek <omosnace@redhat.com>
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: Serge E. Hallyn <serge@hallyn.com>
 Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
 Changes since v2:
-- Split the doc update into a separate patch to ease backporting.
----
- security/security.c | 2 ++
- 1 file changed, 2 insertions(+)
+https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
+- Only keep the LSM hook move.
 
-diff --git a/security/security.c b/security/security.c
-index 8cee5b6c6e6d..dc2cd7354015 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2931,6 +2931,8 @@ int security_file_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
-  * Save owner security information (typically from current->security) in
-  * file->f_security for later use by the send_sigiotask hook.
-  *
-+ * This hook is called with file->f_owner.lock held.
-+ *
-  * Return: Returns 0 on success.
-  */
- void security_file_set_fowner(struct file *file)
+Changes since v1:
+https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+- Add back the file_set_fowner hook (but without user) as
+  requested by Paul, but move it for consistency.
+---
+ fs/fcntl.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 300e5d9ad913..c28dc6c005f1 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
+ 	return error;
+ }
+ 
+-static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+-                     int force)
++void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
++		int force)
+ {
+ 	write_lock_irq(&filp->f_owner.lock);
+ 	if (force || !filp->f_owner.pid) {
+@@ -98,19 +98,13 @@ static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+ 
+ 		if (pid) {
+ 			const struct cred *cred = current_cred();
++			security_file_set_fowner(filp);
+ 			filp->f_owner.uid = cred->uid;
+ 			filp->f_owner.euid = cred->euid;
+ 		}
+ 	}
+ 	write_unlock_irq(&filp->f_owner.lock);
+ }
+-
+-void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+-		int force)
+-{
+-	security_file_set_fowner(filp);
+-	f_modown(filp, pid, type, force);
+-}
+ EXPORT_SYMBOL(__f_setown);
+ 
+ int f_setown(struct file *filp, int who, int force)
+@@ -146,7 +140,7 @@ EXPORT_SYMBOL(f_setown);
+ 
+ void f_delown(struct file *filp)
+ {
+-	f_modown(filp, NULL, PIDTYPE_TGID, 1);
++	__f_setown(filp, NULL, PIDTYPE_TGID, 1);
+ }
+ 
+ pid_t f_getown(struct file *filp)
 -- 
 2.46.0
 
