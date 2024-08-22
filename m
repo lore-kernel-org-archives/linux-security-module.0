@@ -1,116 +1,147 @@
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF322AD00
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 21:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDA813B5A1;
+	Thu, 22 Aug 2024 21:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724361199; cv=none; b=Voo366lZyY0D+y8aL28GW2XZbe2vPNXmw1EQ/V3kd+aWbdW3gBGUfIv1OOelaMA/WXukhEUtVj7XD1PbtkmQfgI/6n6R/VAP7fe8dygIcgkLJCtVp5vqfarjvN215K3NNbveuanx3lHoR/XmpBqAJn2h6SQU2BAAkVZb2NizGF0=
+	t=1724362315; cv=none; b=DH5TFk48jhLZ3kq2Rk+9DPNPpZ3CxmUDfSbAgG92661p1+N7f6584XEkB8ERxtl0OExo7b2faHKxeS6VN/tA2wBWFdO5xQuIlK42fjkck7rPWpsWQyLh5T4EZOpEqUS1rgbqZ0uHQAtfSQENjr+Tytw4iwGBbPZCMvyo1fcHxAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724361199; c=relaxed/simple;
-	bh=VVH1QrIy1uE91YAhu53plArfDsUU6iUuK27CcmF8P3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=oZEXXRa+NK2W3XHQckWRYyylujiHY70Oqw8fc8zdMVNdKou9BG7MKec9P8089PtWz2ssDla586YB55BJ7fbRqzqfUf5XW+kyZOWD2jb9phBWDljfT+C9jwebo1zwzUfV5I4IumxlCE/KVFFvPUbfn8ccBCMgQbOPxlfis0yPMdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=am3NBqVO; arc=none smtp.client-ip=66.163.189.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1724362315; c=relaxed/simple;
+	bh=o8Qj+w+x9UMJXl3RzSGXawpnsiM0owFaCBJxVCdA9IE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VeCsvbSUe8bpep8ATTyI8YWCflWLuRBWZ7/ItnFp0Ir8YDSd/Cm0EbmwG+RJsFiLIFM+WULVVEb4bqbJm4sIYkA64q0hpwN4FFIWJOKgheNwCpIorPfB1DJpGgJVLSbB3MWcA92mfpPhc4uLtDvMMyG3vmW411OqVP9p2bTsJZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0dR7fqf; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="am3NBqVO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724361196; bh=qzdyWvoN4h7ir3vjK8yOsOtv30O4tZsk5SfOzU0/DcM=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=am3NBqVOPWux4Wvvu4vrcYyaCBZozvFmndXRC0p91+3oJPbzwLZSgoXGYbYZm++RAAPL+50I+MuBuQZHMwURlnwpVH+d9W7k2KW0I7AHX+Ir92mnRwo1vv21kunGLlX5vaUdh6/cEgLByMGp1YEm8GIXvHph5a8FlCPPmiPi8KDbJ/Kt2dy/oEiG5TYtnskYKJ+5cX2Wj0e1UhcqNoB8GuTGk2LISfVcKq7vTj3aQ2+ObL7ywhXhSJOG8lVBvBEkQcIbiAL0FVs+mBCWjWQ1TJuhN5qP4UBKUC0kCPtM3oeDLtynq92Fw+vpc7w6Jj4FTFTdq+WT52xIraOF8EtW0g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724361196; bh=bE+uy/0yJc6QJo6RMLuZgihwSarY3c4pE8bDetCSAzm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ak1JjXbDv9lBSA/hSGWlX9w0b2RPcfI2YsOgaT0j+SliF/n+dJmR3q4ud1uqJq6zu8Rgi89Oc4d49ZcUJVArPZZtRY2g79KYiHkVPPPWexeGB/iqbg7zv0sAZqDaZpWQlEGvgjFCXMU/c9ApPOzXFbOksOHKyDpAnTLABCd0TE7puL3XZJq+uvRWs81AQTpVRIjJEuD5PLZLc23G4vO8+ujsjN445ehEOpHieB9cfvLBclQi/pbe0IB5lsLTGrHTyvbOp8kY8ojfgzJS1wGuGKV8hUcM9+icxN5jqjGpNEBQzr/bfxjL91ngtRMeZIpIsvjFsB7/RM4ByMy75XWI0Q==
-X-YMail-OSG: MPdRytkVM1kd5rl.1ws_i0MTps2UzmXzD5FpdEG95YuGi9Y2QWlD7.DWhFkTGbu
- b84btcLDAQtH7jSm5qJ189eHXVHHK7sDZ6HI4GqjcKugqI9jLV3HcFpkm4PfmJQTrlrltaiP_EXs
- IaiYBNIoT0hoYIxoSQ1nzRqvjDjHJ0RrNu9cDb4LVuWS__8DC2HSJbML6WkhYq_X8tTT9BIyVIDm
- .m0Kp854it6Yes97ieITko8TWasni1u8OM9HXBG9V0fB.qt5z441lk2gs6dKRmQJGTiuBwFnUc7o
- jjOgsXsgvUfY5barXUX6m6RYI4QFJGhE_50v4eVfnNA0nIn9I7MoDNQ0nPR1ZbNXEwfDCER3XNBZ
- Z1o4se4F9xGzGlZJ1lx3nQ0iOi40Or69VQfCMYmBTG.0s6awQEGvjBhRr7CjRkf3jYwzavAH6uSi
- XO41wfwvruSrK4JV3WKNsTGGmteDJp0g3NVifULbC02kuc_8c_72LQyZ5EIzv7q6LHHxb7LQ3vBn
- 2cBFGVY41sWwRe.zwRy2gR_yfmI9aYqRYCRe_Ra8ru_5tZCm29mNngEaMas6mHbAnVY44i29wUsa
- sENWsCoTq57wV.fOWrTTeUSLBdfruCi3n6lg0Sa3LNRvsnt7fnU1wC0n8lvsFERzGVaJ3eHfTh0.
- hZT4HC7GHPG7ZnEAjKsdRFAwonxCsujK1uF4T7I5W3vbC_3kYfJxhmYK1SCf.ScSCI3G6h2CwX6h
- InWYTPHRU1yta9knKHDxRBvPlklyELisNx2ztgQv7U6HpQGzaMrWUhIDTpI9NiL4ZNT_r8D_IdKR
- bwhE34NaCzUx7GdAEoSRcLRz30HrvyXq0.JwAvumoZbi1kbszNtJTwqm0VB1pp3aprcvioNO3xkV
- cGhTkErIoZVkgg2McD0ka7Ldil_YkEHSym42jwIaHuJQKU0XiC8eIBkWyDliWfFSNRK_lDePBH4N
- YnM5IroQEnSmrav8TINakI1hIWsk3yVZwwN.W8bD72W_ZibU_G0M1iBHKL6fLimer44f3EvLy.dh
- NKNEeF042RtDaA5eGbePSUxmGxpEHfiNArZNY7m8bz9_JVJGNfklE3mBlnm_gQYtAQhjqKe9a8YH
- wrXUqrX4D8mAhHF42QTzeaWfXDajrSQqkeJGzRkKR4R6a75e3MpNPTXzwWiwSkjhIZjFvt4jaz9c
- w6s7k_FNVoFmCP87ZaAgYM5UPUETQZRmPylwIm0J9rKQqy7QOqlRTG8IEVQ_kZS1tKQOjLdtQcd.
- I1R4Ph80pNhiQLgWM7X3R2P7JAnTkGTaCILdaTeFR1gclaXfufqnnLp.dvS1V2UVCpMux0VoGv66
- Y8aVw_kTDy_kHmrsXIQJlLUke5yhy_y6UhtpvsJRy8vvpu3kQJvGgb8453QILv8AWTqvfV9y2SaL
- Fq._2VB_C2ohMfsrKSiDep1tro4BgHJL4KjcaSmp11wDNi2ATtsK1o6hYhrKi7o_2NV99biLgdXM
- 9uKQtqMb5j3iKIxOFrgG_m36GmRS6kayjPOqPlN10yO9onoOyLIJMrDy9yAqLndf5BxU8.DjinSk
- 7HR.QGoRQrFeGDXpYn6n6UwfIgDnNVf7qVKS52QuJXSWY8M7Yc2A.KCD0J3sPyMCPJi7Vq5ZUBYH
- 1REt8DcyJVWl30281bzMAoRcHC7ulibgfAxmRcrDbVijhawGndt81qKRyharhiRokfXg2QWr74fx
- Yce.GM9pFjWL66tu8dE_3B96hm4PbNmcjZ.Som3MbyjXsxPdL31jLfCd1qvKbNkFHbx_kl.xd4FR
- olIUlLOOAsywBzwG.NU.woo0.WM2oPZ5M.4Wj2iWWXz.lgJ4YlEnFIHZ4pdNeQGd0eDwhD.gr.eA
- pyopP89xc.WklCi4HSdtljCeU5yc6ZtvsppOyiuxVtoe8tf0oioa4Uv2.i5BXseuCylU32x_M9_Z
- FSjCS49hU9Wenye5Oy8w1yoJpCZMh8wwgcKf.iTunyVUDNJNygLqmTCcaiwTEcmhjO.DSj42hTYY
- J_WeSN.iSbn2zYJ8Gpw3Ef5ASoPZdfazxLJ72lU9l1cxvL.JoWRmCak8JHLo9TMhATaTXm9vaJtV
- gNsOCSZ5o3o45JCq5wnQsZ05SKaEstI9.L9HApX5tWmI5y53CjstXshAjAclIILGeP3yo1Gj_Men
- qZ6sR_7XdxwR3aFQnzCDGu5PeVkkvn9M15UenjNdgaWuiHliqrGKQ3VFKZ2ziaCHUNQ8W3eh2JUK
- TXt0QgvsBMgFr.UArGBBs35Bm2AsZYJLxUxeivLEI_JJvaL7G8y5e1mEioaHq5gJMXhzDN.rIePB
- LKRVB3PpwfYxvD7O3zDKCxL6kgQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 42b73cdb-47ab-4973-8cd7-4a0490d0cb7d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 22 Aug 2024 21:13:16 +0000
-Received: by hermes--production-gq1-5d95dc458-b574z (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 965997a897c4bf0674c6cdac05093446;
-          Thu, 22 Aug 2024 20:42:52 +0000 (UTC)
-Message-ID: <7bb43c87-095c-4478-bb7d-38ab55edd8a7@schaufler-ca.com>
-Date: Thu, 22 Aug 2024 13:42:50 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0dR7fqf"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so1784559a12.2;
+        Thu, 22 Aug 2024 14:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724362312; x=1724967112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VmOMLAP/sV89r0M1To4cfWqKrxz5e4Moq2BBvNUXlKg=;
+        b=L0dR7fqfaF/LmeBym2rEyagHkzOAsZJyV1/LCDADO0fh3fsFlsYWGscMDGcNKdHHD3
+         3pMXthPGu+wtIRQhazAdAIDuRKwm2MZmCbv2c+mw1x13hEjFRSh3lo/pieHq/ZaC/x6r
+         op8KRXtX8PEeh08MxK54F8sue6E+kKo8mP8c+/EYnoMj+0nFa9/Xf1x6eqM9y03COQIC
+         aFcfLSs8V1wT2Y/1CEuY6/7zCNNqFiGyQUY2c5+ZZ5653By0/+bXVxsWJBjvqkvCgjQQ
+         l6X7YCh29b7xOLUqKmxzG7KIiMqxIzwGcmdRmFxWcNIJgI723JyblA6+s+Z27m6F7oPC
+         o50Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724362312; x=1724967112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VmOMLAP/sV89r0M1To4cfWqKrxz5e4Moq2BBvNUXlKg=;
+        b=m993Ea0FwJErj6gyUZJ4mk3D21RXiqh6ICM44TMX7kCSfc1aYsFM8rYofT8JJv966y
+         8cBp/71voBndoiMLl1DrNCmaR+E7J+mYPBv2Ki+5W0ue+4a6/0uYbPEbkZbHpWCywQ+L
+         qMkWLYRZQJAmqF51fLzrmZZYFxXdXO55BllQUtYCkCBYWlWAV0oA/N40zXb0C3vvGzRc
+         VpPx1yALIV8UM2L60uauEPLKq54fGFp6kra840hPAzckWUZer9LDqJ9OT1nba+YL8nce
+         NsnB/q5rHTHa0JPGQIiPyL+AJvYwo1LpZHoYwYxOziD0AOBxI54oYiu5T5Z7W7NV9lQi
+         Fn2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVIBDFXOMlNbLNmk/5iWnNF5Ap6l3FozVlIFyuwj33vWB4B41tUMeOpP0An8bLQvzi0i6yufDPDmXPNH+075QlaqzMFaCAa@vger.kernel.org, AJvYcCWx/02ZopN/cffcKsCWNycTfk/e2uq9hFg0HIUs/y3yTv7mGJE/yvr3eFLR6e9ttCTtliZ5i2mEvcrqq08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyACIB3BtUdtP895WXEu5BuKCT0LTkQCsfs5AdGnr62woUOz8FS
+	E21x6PgyOwsf2E26Rwolev1KxxlDCreWh52ftGdGEFmS2zKSsWSUFsvnqacuw0SR1mxVfun/KC/
+	0l5Ann04k75BV/yZraVNCRCy5ZLrMe2Sk
+X-Google-Smtp-Source: AGHT+IEOYNTXCdnQItNSdCJflQBUw9Kb33nbjN+cNoB0BQpwT9rRPkJBHs4hkTlkQMrpV53uMKgNMEPiXIlIY5ff4ik=
+X-Received: by 2002:a17:907:2d07:b0:a77:dde0:d669 with SMTP id
+ a640c23a62f3a-a86a54d137dmr842366b.45.1724362312017; Thu, 22 Aug 2024
+ 14:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security: smack: Fix indentation in smack_netfilter.c
-To: GiSeong Ji <jiggyjiggy0323@gmail.com>,
- linux-security-module@vger.kernel.org
-References: <20240822091806.89425-1-jiggyjiggy0323@gmail.com>
- <7680815b-1f40-47fa-a0b9-ef8f7fdcc457@schaufler-ca.com>
-Content-Language: en-US
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <7680815b-1f40-47fa-a0b9-ef8f7fdcc457@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20240822131542.785546-1-mjguzik@gmail.com> <CAHC9VhRNMMtZ-_-sON_jz5_pkyFTyH5VOOVmPem=AbLpA5Y6dg@mail.gmail.com>
+In-Reply-To: <CAHC9VhRNMMtZ-_-sON_jz5_pkyFTyH5VOOVmPem=AbLpA5Y6dg@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 22 Aug 2024 23:31:39 +0200
+Message-ID: <CAGudoHGJKUkYkrG514YzghV4mBMKGW6N4njdQViBnKiLwoN4SQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
+To: Paul Moore <paul@paul-moore.com>
+Cc: torvalds@linux-foundation.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/22/2024 8:34 AM, Casey Schaufler wrote:
-> On 8/22/2024 2:18 AM, GiSeong Ji wrote:
->> Aligned parameters in the function declaration of smack_ip_output
->> to adhere to the Linux kernel coding style guidelines.
->>
->> The parameters of the smack_ip_output function were previously misaligned,
->> with the second and third parameters not aligned under the first parameter.
->> This change corrects the indentation, improving code readability and
->> maintaining consistency with the rest of the codebase.
->>
->> Signed-off-by: GiSeong Ji <jiggyjiggy0323@gmail.com>
-> Thanks. I'll take this in the Smack tree.
-
-Your patch was whitespace damaged. The tabs in your change were
-replaced by spaces. I fixed that, and have applied the change to
-smack-next. 
-
+On Thu, Aug 22, 2024 at 10:58=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
 >
->> ---
->>  security/smack/smack_netfilter.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
->> index b945c1d3a743..ce06cd268d81 100644
->> --- a/security/smack/smack_netfilter.c
->> +++ b/security/smack/smack_netfilter.c
->> @@ -19,8 +19,8 @@
->>  #include "smack.h"
->>  
->>  static unsigned int smack_ip_output(void *priv,
->> -					struct sk_buff *skb,
->> -					const struct nf_hook_state *state)
->> +                                    struct sk_buff *skb,
->> +                                    const struct nf_hook_state *state)
->>  {
->>  	struct sock *sk = skb_to_full_sk(skb);
->>  	struct socket_smack *ssp;
+> On Thu, Aug 22, 2024 at 9:15=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com>=
+ wrote:
+> >
+> > The refcount shares the cacheline with uid, gid and other frequently
+> > read fields.
+> >
+> > Said counter gest modified a lot (for example every time a file is
+> > closed or opened) in turn causing avoidable bounces when another thread
+> > tries to do permission checks. Said bouncing can be avoided without
+> > growing the struct by reordering the fields -- keyring (enabled by
+> > default) is comparatively rarely used and can suffer bouncing instead.
+> >
+> > An additional store is performed to clear the non_rcu flag. Since the
+> > flag is rarely set (a special case in the access(2) system call) and
+> > transitions at most once, it can get placed in a read-mostly area and i=
+s
+> > only conditionally written to.
+> >
+> > With this in place regular permission checks no longer bounce cacheline=
+s
+> > in face of refcount changes.
+> >
+> > Validated with a simple test where one thread opens and closes a file
+> > (dirtying creds twice), while another keeps re-reading *another* file i=
+n
+> > a loop (ops/s):
+> > before: 4353763
+> > after:  4742792 (+9%)
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >
+> > This is a resend with a reworded commit message and added Linus since h=
+e
+> > wrote the non_rcu thing.
+> >
+> > Note each process has its on creds, so this is not causing bounces
+> > globally.
+> >
+> > Even so, there is stuff I plan to do in the area and this patch can be
+> > considered prep (only one store to non_rcu).
+> >
+> > I'll also note I don't see a way to *whack* non_rcu either. :)
+> >
+> > 0 rush
+> >
+> >  fs/open.c            |  2 +-
+> >  include/linux/cred.h | 31 +++++++++++++++----------------
+> >  kernel/cred.c        |  6 +++---
+> >  3 files changed, 19 insertions(+), 20 deletions(-)
+>
+> [NOTE: no comment on the patch context yet, just process comments below]
+>
+> FWIW, I really haven't commented on these last couple of cred patches
+> mostly because I've been assuming someone else would emerge from the
+> shadows as the cred maintainer, or at least someone who felt strongly
+> enough about these changes would merge them.  Unfortunately, I worry
+> that isn't really going to happen and I'd hate for some of the cred
+> improvements to die on the lists.
+>
+> If no one starts grabbing your cred patches I can start taking cred
+> patches as part of the LSM tree, I've done it a couple of times in the
+> past and Linus didn't seem to mind.
+>
+
+ye I remember trouble getting any response in the past.
+
+fwiw I expect to write one more patch (maybe split into two) to
+distribute the refcount into task_struct, then modulo a bugfix should
+someone find a problem hopefully I wont be submitting any more cred
+stuff :)
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
