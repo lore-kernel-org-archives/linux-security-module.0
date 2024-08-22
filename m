@@ -1,110 +1,143 @@
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5C42C87A
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 15:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DE61CCEC9
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 16:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724340907; cv=none; b=GUQ5UlCPCXWVjj60JrIyhY2Qgc1EZ8Ld2ucSyzgKdwvN9HPZNLtBwP4DaxHsetz03n6VAJIbbfJbT7/tvxwjWi+s13V1NjDppeieIsEEVhptvBaAplisGnOf+UjYiPV1uWK1c+cByBvszmhDVtFsZFCC9rGm6SWkcA88I3rjTdY=
+	t=1724344059; cv=none; b=t0G7awTlF6TjvfxUSa+yCxpI+AjHHmNw9Zud8N9sO6D2sAThqjTRiOA8SBWrjrGbOzuT9SX1rmMzVlev6Djwr9fU1xaf3O5KfvmYlyf9fx3J61VMz+Ctm7LWNBTP2bZMiIPfZ5EK9SxNSNmXnKQZz7824ISuCYcfXjuwlga5j5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724340907; c=relaxed/simple;
-	bh=LXL4fx28/hT/LAUEZ1ykMATKvM5QbHTLtfey0LD5lvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=LWJY7LtwO4311u5SoOn4J5ZIuSMUcRVHhH5xW/eDJWTmnM94PheVFjiluJjHPedXQgzbc88SF1eh0ATmORjON89tyKixjzVqnAMRS/6ha6E5julFZuiXhZ2E/DJoy188vdqTYrxyQrqNukpEhVLu+SLwZeNBhyHGrosw8rUl4Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=fDdMJwuT; arc=none smtp.client-ip=66.163.189.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1724344059; c=relaxed/simple;
+	bh=/r98ROwev/jnRYgKVKK60ItlcEsAtB6Ak/Bqy+2sao8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eTON89+TQSGV4dEkXLIIcsMPQyeJvi5r9Jgkt6Lg4UZfOvlfSRwXxg4nEsFUOmWJQSIA03/MigDaRxsxErKld5xn1+gjLiMXpi9D+8NCq29oxNPgMqlypesWX8nGn5mQXO/m1jDdixx6BdNZJH45iBrRw7ZSibGOdn6vdtryc48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BRCM2yBX; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="fDdMJwuT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724340898; bh=SMHYMPHnqpQW/IWVang3vZTGNn8xdM1VbrgfyoTZEj8=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=fDdMJwuTPn7PXTRAmarfPHa+bQvp51bOCJbxhEZn0VL/Saaj6fBOgotqBFy9DFZw9cpqOlEvJAlTED389fUWe/pzsZXDZwcdd0MxDGifg55ZkhNa4Q6j9e7NQ0GNKo+65Q0DN2o6geyfqNcKycDsoeOeOsT6L2UJ9AA9qX1HXy/DPFyACf7BHI8djf0XWBKMKAo7UyXUdYIWrn3z4nqSXE6rG9gaXgpt2P2kM3lXqvn7raGeBgxl0d5MOSUO7676faDZZhkQSKI9vAMlhlFaZUme9SnM41BE3BkQsrYWFq1weDMgckxW6AcK+HxZ0djaFym2kyzN31DHh2TMs9hZwQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724340898; bh=fRFS2HAd2RELxVPswHXQs2cMFCQUSWaw6fJkjC88qpu=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=mXM9OyFI0Cw/uBiEnCRecM2pDLxc2sz3GByAqytCuSDiXMldgQzNIewnDMbtd3IoDD1CCARpmrO6g0HZQ1Dy4tPtWQm47FK2NDi0WkZzmt15HCGxnLHnCx4oK7JWXyU1dP4kT7eVyfIE9LEOoMiNEsKZBlXTT0V0NhE0ddfROMkvO6bPAjhXXq0ANnb0KHSMqejWI9D07LhYZ+lD0/7W0CHsEhgs6NF9zJcULD+1InuvBZhggdqnSIIAbrxH5vO7McCBVO+cVcUHJHvWe9QrsZ8vJpsldIXhjNA8a2th2mvBUGDB+0n84wYuuzIntquFfCqDJzO3z4pAwq54/qD5dA==
-X-YMail-OSG: At01VsYVM1k8WAtTlUsfcBuw1KU.pmmQYiHCSXVz5n8GnoFXbSR3D0P0MiYTzx9
- 6.v20IDMk0Iu99Z2ug2C6bIGsgFjX86dVeJb3E0Br9g2Bui3fWdHn8_Za6lyYNSrLIkQXQQ7qxd7
- cgb0zOzm8vv_WXxo8d8.9fPKucjhNd5i6EZLL31FpSfG1xGZrtlsyXRbN6jNoedsk_BoXG2AxG3M
- h09MtVVhy2j6z0BX_Jigm_s0BtlBEkCA5tdeOFD1nhL67KFHtukC.IhDSoDrE8mWSl3.oZCqZX1U
- DCYwFP9Iu4Vt1F4FZRxc3L5h03FiIg_QFJ2xYbzXWL.OwZpqcm99HIKEbZIsyWdujWAx1F0UFWya
- KhDfQhRbGGpO4aKy6_BLEQjSxQtWiRfE1wxl3EfqiqDZtg2GYhhVrL0sVgvUFnF3yhCJeyQtXLVm
- xvf0uZt_qsGbvCQiymhz5CsT6WuXlHemdnIU.qOIFxYetpZXpnCFgh4qRrla3ye12tphkXCq33lA
- uw8CcIqcHf_7QEm047lkNgIcTJC.d5FZU2yJ_EaV1KB.1GBhpg_ADOVljTozg8MGGkxvKN632CMn
- n3d8ZGWHH2yryjjo2SzLLcZ7zi1Pj63VBsBUnZmdv1VwvSGozqTsNBNJ2X94ABDS0eydFqJkF15K
- WLU7Ep7jJviJRPT28UmjGdZNc4JPXfkZYgjwTq1wgcWTD7NOzzWst99lB5J7oQXENqCAv_ah9kVC
- _veWlsAqx51xB0qOc2B0HGUugtGyIhDYSne2xc5NmEvqK7Gg4t8rdIjhzAuHbA7_UCtVGtfuFINS
- qYp8fUUC5t1IG1t1gEiDSNKUg35.AY_z9rA2zAWbsV8PV0pcWWVUZd.qGG7OhdYO0A00q586Oi9e
- .J3xrnjPab.2JUlmYHgKHRRh6zTITcR.vbDLcOYjxuZ3DILeitovawTeh22wfJAvryGmvpI_rthW
- XxzVwGUphAiFt2rECOl5m9GUNLgz822a_Xc.J84JXtmRtYiqHvuqlhryB0aA6x4X.UI50XT3g8x.
- nxXXkNSd.ibDq6umj02vozEVL4zdNkAmFfNvFdfQtiNQFhXPI6_99tPejYPw0Yuu8r9Usl1pem2n
- .Jhx9bV6NeYyVWg7ty5mKmvuLRjpLUUcW1zUTzOi7mThlNkjxThcyhDLcjp5ZpiZpR_o6nBMn1sH
- 8lzF4L8tVh0nKJq4vDbwHvz0xNft0.KuPTrAu_5KA9nzZnAx8ElGUrD6UdZKfaraunPyaoc4M9mn
- XYd1bRbeGOBcTlaoE1XELsmgI6bUoxendZAWm.CnUZjYCPmMS8SnRc.QUQsBkj1EmES.REzeNoj8
- iVKXh4yXJbQmXzVgfK6Y_IY6ERz3cYz7kMY066L1Waw_v7cLmwyvVgIP70FBvb4GSKWv5CEhmQJH
- TzuL0KDwwFFykkWd6YM8wUAMEe2xSiSJIymPrmynO_1BXKShZsFtjP_phHrAvLrdw3rdUWpo5Ee0
- 4jK4ob6VL3EvzeudFVqOOrcQlFiCSlTI8fotPIdE9pg3hP.SgBgRCPaNIhcpJKLFDi0OIldboGeh
- 4qZyZOpiLjWLQYNO15cO_sA4OG_kMGdxc4QKLXPhM02Vhwip06wmtqBp.sEzQvdcuU7g3.Y70Hu8
- aQGUPtlqOORmc5h__OU7Qyyy_c51RHk._W.nfjTPlgzE2RnNTmzGdQkbl9o9MKmk22WX_dOsaPLU
- 6DtCF00nAE.hEgXgzHb0Gyhk7XbWRhKyXnQb4eQ4DVTHnfHbL3UQBxXVtv8iYLvxWJM8.ISCWQ1.
- FgCUeewA8lozcL5CWbEtqkC0A5BmPxTDY0pbXFRtsbn7b7_uhkQBhlaWDucavqEVpyzeL_KLGkcH
- Yj9f2vL7RLYFnaR3URJ5FyMNQ_jqkTEG4i5zKZcgE6AdVZhdhy_fizmebstP2uEJIEfHZnqpkTmO
- ieYGIxZXxspaH.INzF9JeCHIXuipHN_RAslFH.Oqyfkqw.f2eQOODOVA3eQAs5clBxm0RHCF4PHw
- fOqgii2mkLlCiZTRjIH4JTcUvxLud9S_ILPT1dALKw4vAQf.C9a2kcJnKYWDj.KdUPI9ZY0oO8Vr
- gJRMZ_WyrPmNUNpKNLA0b72qM5.KQCMX9Eqdel58SGPFCGLlQ1yVH5Mc4MG3J2kzjiPPmMribXDB
- Mgg3tvb7uYyTrnk2XeUcyU0AhId64VaWuqOJHfQxQbpsTs3079iUCIGf0yHAiG9jgjbt42yHywlN
- RJQrrfC1uqxfAvV5LgJ2tb4YWQyNuKysdWLiyep2uftJxDmX9nCJA1hs_vxP7WdatzAZuuCmlbcm
- 7mkXhmnHdH3wNHyvD
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 8eadac3b-70c9-4fda-aee6-d00d6c09292c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 22 Aug 2024 15:34:58 +0000
-Received: by hermes--production-gq1-5d95dc458-24x88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0ca2964bdbd1343241fc3ce26dd3e4d4;
-          Thu, 22 Aug 2024 15:34:56 +0000 (UTC)
-Message-ID: <7680815b-1f40-47fa-a0b9-ef8f7fdcc457@schaufler-ca.com>
-Date: Thu, 22 Aug 2024 08:34:54 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BRCM2yBX"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e16518785c2so874140276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 09:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724344055; x=1724948855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z179nEdp6MHIRUAsTk7YI6gwzjTXq2xOdFVOnRR/ORg=;
+        b=BRCM2yBXUAqJC76G7+HrqsSIa3tKtWepyfldqt3Sej9qxfq+ZuAFRRR7K9D4zA9pVG
+         Djl1tDlKcJ6SBANTc7c5+RCeGS3h7KYnNR6wxpcLjp1cO6vYvcRsShF7/XDj47MGSlM4
+         tmCEQKB/nHZzTGW8gy4Y8BzhEQYWxcJ3XwF76quxkangxjS4JzUF7HWK+M41T8IQpcX3
+         ZP7nP+YYdqvcCa8d29w7VrMraYVHUsGUKkOpYB6us6TOrLbZ9TYjuuOCiUEYqq/Vf+4/
+         esnWapl20LmiMfTscO+WsU7wRa2ZSwCaLSTcBQs2/VXCNDdRC/DXk+D2IHOUbjdW2doP
+         B5uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724344055; x=1724948855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z179nEdp6MHIRUAsTk7YI6gwzjTXq2xOdFVOnRR/ORg=;
+        b=wQ2Ah6rtlVF9swPzytC6YlhopcRV0rPb9qtJ6DFMLDy6zxWeD09IVQRiCMf5Tr7ACj
+         pvJcuZGlM9OaDaWrflxATmUfw5gnUiaLm0PqTP1LzbN2PULq+pm5MnJZhNBR3Zuf7bP2
+         ACeER5Ej+fdUcdAvdhEZG0/IL6fs7hRNf5SViuc3I6opqq7Hi08IggJX1uccnmi5HGNs
+         ks5wSis8zEw+8dSs10p7j9YCcxWMIq9Lc2jV8lz3eC3zTMpFvcaIuUh+7L9NEmSyG3th
+         O3cc/bQY0uMJJnIuubpKWSh0e0YRXZbbF8eX2CCu4f/Oh/B3iak62dFk2BezNMR9r9c0
+         3PyQ==
+X-Gm-Message-State: AOJu0YxzAm7g6D1uxxd9U6wb//YyT/FZsYAJDtgK81nLUSYM/x9F9a0b
+	ZvAPnFtbKI4IjiXLD4IaeXsbjTm2NAhxIYvvFpOzA66oRXm66VE+I5LUNFmDVdIL2fM8n1mIMIH
+	1xK4H87ZIxjbbaVoqfaSSJ+IQ0sD7Bbaf0CWWghK1kUtMJWk=
+X-Google-Smtp-Source: AGHT+IHbuNlT8o2Tf3GmwDyhrC662qWbabqzb4WX4jdb3C79i3cJ+Vn+iCpk4YFIVj2gOREtdj/R4hx4Jmrpr7d6N8g=
+X-Received: by 2002:a05:6902:2e0f:b0:e16:5177:7598 with SMTP id
+ 3f1490d57ef6-e17902d8038mr2700324276.16.1724344055212; Thu, 22 Aug 2024
+ 09:27:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security: smack: Fix indentation in smack_netfilter.c
-To: GiSeong Ji <jiggyjiggy0323@gmail.com>,
- linux-security-module@vger.kernel.org
-References: <20240822091806.89425-1-jiggyjiggy0323@gmail.com>
-Content-Language: en-US
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240822091806.89425-1-jiggyjiggy0323@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20240816154307.3031838-1-kpsingh@kernel.org> <20240816154307.3031838-4-kpsingh@kernel.org>
+In-Reply-To: <20240816154307.3031838-4-kpsingh@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 22 Aug 2024 12:27:24 -0400
+Message-ID: <CAHC9VhTjasfP3YMP8xD1jgaY8KFsZuzRCzeVMK73DTxm538x_w@mail.gmail.com>
+Subject: Re: [PATCH v15 3/4] lsm: count the LSMs enabled at compile time
+To: KP Singh <kpsingh@kernel.org>, wufan@linux.microsoft.com
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	casey@schaufler-ca.com, andrii@kernel.org, keescook@chromium.org, 
+	daniel@iogearbox.net, renauld@google.com, revest@chromium.org, 
+	song@kernel.org, linux@roeck-us.net, Kui-Feng Lee <sinquersw@gmail.com>, 
+	John Johansen <john.johansen@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/22/2024 2:18 AM, GiSeong Ji wrote:
-> Aligned parameters in the function declaration of smack_ip_output
-> to adhere to the Linux kernel coding style guidelines.
+On Fri, Aug 16, 2024 at 11:43=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrot=
+e:
 >
-> The parameters of the smack_ip_output function were previously misaligned,
-> with the second and third parameters not aligned under the first parameter.
-> This change corrects the indentation, improving code readability and
-> maintaining consistency with the rest of the codebase.
+> These macros are a clever trick to determine a count of the number of
+> LSMs that are enabled in the config to ascertain the maximum number of
+> static calls that need to be configured per LSM hook.
 >
-> Signed-off-by: GiSeong Ji <jiggyjiggy0323@gmail.com>
-
-Thanks. I'll take this in the Smack tree.
-
+> Without this one would need to generate static calls for the total
+> number of LSMs in the kernel (even if they are not compiled) times the
+> number of LSM hooks which ends up being quite wasteful.
+>
+> Suggested-by: Kui-Feng Lee <sinquersw@gmail.com>
+> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+> Acked-by: Song Liu <song@kernel.org>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> [PM: subj tweaks]
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 > ---
->  security/smack/smack_netfilter.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
-> index b945c1d3a743..ce06cd268d81 100644
-> --- a/security/smack/smack_netfilter.c
-> +++ b/security/smack/smack_netfilter.c
-> @@ -19,8 +19,8 @@
->  #include "smack.h"
->  
->  static unsigned int smack_ip_output(void *priv,
-> -					struct sk_buff *skb,
-> -					const struct nf_hook_state *state)
-> +                                    struct sk_buff *skb,
-> +                                    const struct nf_hook_state *state)
->  {
->  	struct sock *sk = skb_to_full_sk(skb);
->  	struct socket_smack *ssp;
+>  include/linux/args.h      |   6 +-
+>  include/linux/lsm_count.h | 128 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 131 insertions(+), 3 deletions(-)
+>  create mode 100644 include/linux/lsm_count.h
+
+...
+
+> diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
+> new file mode 100644
+> index 000000000000..73c7cc81349b
+> --- /dev/null
+> +++ b/include/linux/lsm_count.h
+> @@ -0,0 +1,128 @@
+
+...
+
+> +/*
+> + *  There is a trailing comma that we need to be accounted for. This is =
+done by
+> + *  using a skipped argument in __COUNT_LSMS
+> + */
+> +#define __COUNT_LSMS(skipped_arg, args...) COUNT_ARGS(args...)
+> +#define COUNT_LSMS(args...) __COUNT_LSMS(args)
+> +
+> +#define MAX_LSM_COUNT                  \
+> +       COUNT_LSMS(                     \
+> +               CAPABILITIES_ENABLED    \
+> +               SELINUX_ENABLED         \
+> +               SMACK_ENABLED           \
+> +               APPARMOR_ENABLED        \
+> +               TOMOYO_ENABLED          \
+> +               YAMA_ENABLED            \
+> +               LOADPIN_ENABLED         \
+> +               LOCKDOWN_ENABLED        \
+> +               SAFESETID_ENABLED       \
+> +               BPF_LSM_ENABLED         \
+> +               LANDLOCK_ENABLED        \
+> +               IMA_ENABLED             \
+> +               EVM_ENABLED)
+
+The above is missing an entry for IPE; I missed this during the merge,
+thanks to Fan for pointing it out.  As the IPE patchset was merged
+into the lsm/dev tree only a few hours before this patchset, that
+isn't your fault, it's mine :)
+
+Regardless, it should be fixed in lsm/dev now.
+
+--=20
+paul-moore.com
