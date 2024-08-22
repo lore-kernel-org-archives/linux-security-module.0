@@ -1,132 +1,116 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB9A43165
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 20:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF322AD00
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 21:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724360339; cv=none; b=lYrzpT6yPZIX+alpiNe9On8P9v6zqfYHIGnS8H8jEUoj3FlgHVp9s8c0I4WU5ta6lVZlcbX2ywHHMsyTdcn4UHqWEjcw0AQGv2tKR/DXClPoCd9ZJsq5FVHuioV7LHbIRLlB5/zFknfTld1RpEKcr3Auci2Ih97oPSjtVX2/Gzo=
+	t=1724361199; cv=none; b=Voo366lZyY0D+y8aL28GW2XZbe2vPNXmw1EQ/V3kd+aWbdW3gBGUfIv1OOelaMA/WXukhEUtVj7XD1PbtkmQfgI/6n6R/VAP7fe8dygIcgkLJCtVp5vqfarjvN215K3NNbveuanx3lHoR/XmpBqAJn2h6SQU2BAAkVZb2NizGF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724360339; c=relaxed/simple;
-	bh=dEwsnfjXIyI6z712CyPIkoA/TgzpBgSIgyyAUGvh91Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N9w0mw1OnfXD163z83vJKo5aa9XSPlYfd0pMI9y2+a2vOcf1aE6IJnEXNQ52mPYAHD+c3nepj7uzECdL8VW0r+8340q8YkE+HL1nbUwHVAbL/pR40hgXqIYWGR2atIy3wSruG12XWxk4CyHRgIlOIXDZKkbvsPXJ1w6Q8ACkeJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LXHle41i; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1724361199; c=relaxed/simple;
+	bh=VVH1QrIy1uE91YAhu53plArfDsUU6iUuK27CcmF8P3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=oZEXXRa+NK2W3XHQckWRYyylujiHY70Oqw8fc8zdMVNdKou9BG7MKec9P8089PtWz2ssDla586YB55BJ7fbRqzqfUf5XW+kyZOWD2jb9phBWDljfT+C9jwebo1zwzUfV5I4IumxlCE/KVFFvPUbfn8ccBCMgQbOPxlfis0yPMdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=am3NBqVO; arc=none smtp.client-ip=66.163.189.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LXHle41i"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso1271746276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 13:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724360336; x=1724965136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z8N8bN2ci9nm0ep6oCOlsfU0RlABxLI550Pt8fOG+QY=;
-        b=LXHle41ip0UJJQzSEaH+kTddNAncFD9X2kbX08mVW4kF1wCoGJnjpN9BVo5CbfNoHn
-         hcUlGvUXM8wW/maFWUBwpDbSOGdu804BOqzwEJNMY4/NE0f/lpWUrB1O8rxa8NdcHuxy
-         JV14srjn+wj9if88SaIOWHFpmRpuJD3gtEMm6zWOTSxYpHTJ8/JddpNsTyqd43TSXt5y
-         eKKQiTSyMdTfHTf9V8UKeNEcpkqUIjuuA0wdNNcz42tCm8IJKZBAN0kwOiX0bxSeroTL
-         qCsDTjbN1PmfV88wZ5aSQIj1t39k93/JAlRVTh/w1X9BBHjmVD8mBhLsrVd2de9A58qa
-         p25w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724360336; x=1724965136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z8N8bN2ci9nm0ep6oCOlsfU0RlABxLI550Pt8fOG+QY=;
-        b=WGGP3nBHVJPsBfK+A6FyiDry6KC9TnReLj7hB0smklTCU7tr5bTijftLs/fECTbA/r
-         PoJadX5uJV+RVYFiKnBpvcShApuXIiqJlaOgr5maW4bgvCPbuWitZnUWHqShI7DKzJMZ
-         tFtzJhssXrrVT8TBcMlhDclODST9inh456FIPd+SXyQkziajiTSr5WM1VCpWhFEwujwN
-         xv8sK6OqaXcsccg0I2nDlLHe9iWssIBE6NvdnySzd9dh6O43syFd8GX7LKvftCZDtuwp
-         g90U3rFT2qZwVKmSmOKicOUN3w35ZVT/QlDiCmoReSg9+JDFmLJ62aHVt6fAilR6dwyr
-         jsgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDr4XMoYqE6DhJhV2Yjsf0ZB0Pqw4TvSJofllqp9YVHUoLmN3fF6Ht6MWuaFDWb5rdoCNwWHyc3OQwh6FVxI1Gi/S1/yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKY84fN4SyB00K77dGfw7sUMqLK58G4TuYrRDbMLg8t0x3js5L
-	ETzN7GgI0rGnL2nKezcWtSJHfJSd2/FsPcVN6TJKNAesekvmf11+2oBYVPT8TCYPTAY9tTnGRgQ
-	tF89RV2Q3OZie5+A9kR3ajMBJk7IVEdz5B35vUqs3pUeRjS4=
-X-Google-Smtp-Source: AGHT+IFUzoqh5If8UewR14wwjbtLRahoz/yxEpbOFIRw01N1HKbimey3PkySJkjy03S76hs2Ti6RicZKOHQVJqmZkdI=
-X-Received: by 2002:a05:6902:727:b0:e11:7fcf:40d with SMTP id
- 3f1490d57ef6-e17a83d0b16mr274259276.16.1724360336240; Thu, 22 Aug 2024
- 13:58:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="am3NBqVO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724361196; bh=qzdyWvoN4h7ir3vjK8yOsOtv30O4tZsk5SfOzU0/DcM=; h=Date:Subject:To:References:Cc:From:In-Reply-To:From:Subject:Reply-To; b=am3NBqVOPWux4Wvvu4vrcYyaCBZozvFmndXRC0p91+3oJPbzwLZSgoXGYbYZm++RAAPL+50I+MuBuQZHMwURlnwpVH+d9W7k2KW0I7AHX+Ir92mnRwo1vv21kunGLlX5vaUdh6/cEgLByMGp1YEm8GIXvHph5a8FlCPPmiPi8KDbJ/Kt2dy/oEiG5TYtnskYKJ+5cX2Wj0e1UhcqNoB8GuTGk2LISfVcKq7vTj3aQ2+ObL7ywhXhSJOG8lVBvBEkQcIbiAL0FVs+mBCWjWQ1TJuhN5qP4UBKUC0kCPtM3oeDLtynq92Fw+vpc7w6Jj4FTFTdq+WT52xIraOF8EtW0g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724361196; bh=bE+uy/0yJc6QJo6RMLuZgihwSarY3c4pE8bDetCSAzm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ak1JjXbDv9lBSA/hSGWlX9w0b2RPcfI2YsOgaT0j+SliF/n+dJmR3q4ud1uqJq6zu8Rgi89Oc4d49ZcUJVArPZZtRY2g79KYiHkVPPPWexeGB/iqbg7zv0sAZqDaZpWQlEGvgjFCXMU/c9ApPOzXFbOksOHKyDpAnTLABCd0TE7puL3XZJq+uvRWs81AQTpVRIjJEuD5PLZLc23G4vO8+ujsjN445ehEOpHieB9cfvLBclQi/pbe0IB5lsLTGrHTyvbOp8kY8ojfgzJS1wGuGKV8hUcM9+icxN5jqjGpNEBQzr/bfxjL91ngtRMeZIpIsvjFsB7/RM4ByMy75XWI0Q==
+X-YMail-OSG: MPdRytkVM1kd5rl.1ws_i0MTps2UzmXzD5FpdEG95YuGi9Y2QWlD7.DWhFkTGbu
+ b84btcLDAQtH7jSm5qJ189eHXVHHK7sDZ6HI4GqjcKugqI9jLV3HcFpkm4PfmJQTrlrltaiP_EXs
+ IaiYBNIoT0hoYIxoSQ1nzRqvjDjHJ0RrNu9cDb4LVuWS__8DC2HSJbML6WkhYq_X8tTT9BIyVIDm
+ .m0Kp854it6Yes97ieITko8TWasni1u8OM9HXBG9V0fB.qt5z441lk2gs6dKRmQJGTiuBwFnUc7o
+ jjOgsXsgvUfY5barXUX6m6RYI4QFJGhE_50v4eVfnNA0nIn9I7MoDNQ0nPR1ZbNXEwfDCER3XNBZ
+ Z1o4se4F9xGzGlZJ1lx3nQ0iOi40Or69VQfCMYmBTG.0s6awQEGvjBhRr7CjRkf3jYwzavAH6uSi
+ XO41wfwvruSrK4JV3WKNsTGGmteDJp0g3NVifULbC02kuc_8c_72LQyZ5EIzv7q6LHHxb7LQ3vBn
+ 2cBFGVY41sWwRe.zwRy2gR_yfmI9aYqRYCRe_Ra8ru_5tZCm29mNngEaMas6mHbAnVY44i29wUsa
+ sENWsCoTq57wV.fOWrTTeUSLBdfruCi3n6lg0Sa3LNRvsnt7fnU1wC0n8lvsFERzGVaJ3eHfTh0.
+ hZT4HC7GHPG7ZnEAjKsdRFAwonxCsujK1uF4T7I5W3vbC_3kYfJxhmYK1SCf.ScSCI3G6h2CwX6h
+ InWYTPHRU1yta9knKHDxRBvPlklyELisNx2ztgQv7U6HpQGzaMrWUhIDTpI9NiL4ZNT_r8D_IdKR
+ bwhE34NaCzUx7GdAEoSRcLRz30HrvyXq0.JwAvumoZbi1kbszNtJTwqm0VB1pp3aprcvioNO3xkV
+ cGhTkErIoZVkgg2McD0ka7Ldil_YkEHSym42jwIaHuJQKU0XiC8eIBkWyDliWfFSNRK_lDePBH4N
+ YnM5IroQEnSmrav8TINakI1hIWsk3yVZwwN.W8bD72W_ZibU_G0M1iBHKL6fLimer44f3EvLy.dh
+ NKNEeF042RtDaA5eGbePSUxmGxpEHfiNArZNY7m8bz9_JVJGNfklE3mBlnm_gQYtAQhjqKe9a8YH
+ wrXUqrX4D8mAhHF42QTzeaWfXDajrSQqkeJGzRkKR4R6a75e3MpNPTXzwWiwSkjhIZjFvt4jaz9c
+ w6s7k_FNVoFmCP87ZaAgYM5UPUETQZRmPylwIm0J9rKQqy7QOqlRTG8IEVQ_kZS1tKQOjLdtQcd.
+ I1R4Ph80pNhiQLgWM7X3R2P7JAnTkGTaCILdaTeFR1gclaXfufqnnLp.dvS1V2UVCpMux0VoGv66
+ Y8aVw_kTDy_kHmrsXIQJlLUke5yhy_y6UhtpvsJRy8vvpu3kQJvGgb8453QILv8AWTqvfV9y2SaL
+ Fq._2VB_C2ohMfsrKSiDep1tro4BgHJL4KjcaSmp11wDNi2ATtsK1o6hYhrKi7o_2NV99biLgdXM
+ 9uKQtqMb5j3iKIxOFrgG_m36GmRS6kayjPOqPlN10yO9onoOyLIJMrDy9yAqLndf5BxU8.DjinSk
+ 7HR.QGoRQrFeGDXpYn6n6UwfIgDnNVf7qVKS52QuJXSWY8M7Yc2A.KCD0J3sPyMCPJi7Vq5ZUBYH
+ 1REt8DcyJVWl30281bzMAoRcHC7ulibgfAxmRcrDbVijhawGndt81qKRyharhiRokfXg2QWr74fx
+ Yce.GM9pFjWL66tu8dE_3B96hm4PbNmcjZ.Som3MbyjXsxPdL31jLfCd1qvKbNkFHbx_kl.xd4FR
+ olIUlLOOAsywBzwG.NU.woo0.WM2oPZ5M.4Wj2iWWXz.lgJ4YlEnFIHZ4pdNeQGd0eDwhD.gr.eA
+ pyopP89xc.WklCi4HSdtljCeU5yc6ZtvsppOyiuxVtoe8tf0oioa4Uv2.i5BXseuCylU32x_M9_Z
+ FSjCS49hU9Wenye5Oy8w1yoJpCZMh8wwgcKf.iTunyVUDNJNygLqmTCcaiwTEcmhjO.DSj42hTYY
+ J_WeSN.iSbn2zYJ8Gpw3Ef5ASoPZdfazxLJ72lU9l1cxvL.JoWRmCak8JHLo9TMhATaTXm9vaJtV
+ gNsOCSZ5o3o45JCq5wnQsZ05SKaEstI9.L9HApX5tWmI5y53CjstXshAjAclIILGeP3yo1Gj_Men
+ qZ6sR_7XdxwR3aFQnzCDGu5PeVkkvn9M15UenjNdgaWuiHliqrGKQ3VFKZ2ziaCHUNQ8W3eh2JUK
+ TXt0QgvsBMgFr.UArGBBs35Bm2AsZYJLxUxeivLEI_JJvaL7G8y5e1mEioaHq5gJMXhzDN.rIePB
+ LKRVB3PpwfYxvD7O3zDKCxL6kgQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 42b73cdb-47ab-4973-8cd7-4a0490d0cb7d
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 22 Aug 2024 21:13:16 +0000
+Received: by hermes--production-gq1-5d95dc458-b574z (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 965997a897c4bf0674c6cdac05093446;
+          Thu, 22 Aug 2024 20:42:52 +0000 (UTC)
+Message-ID: <7bb43c87-095c-4478-bb7d-38ab55edd8a7@schaufler-ca.com>
+Date: Thu, 22 Aug 2024 13:42:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822131542.785546-1-mjguzik@gmail.com>
-In-Reply-To: <20240822131542.785546-1-mjguzik@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 22 Aug 2024 16:58:45 -0400
-Message-ID: <CAHC9VhRNMMtZ-_-sON_jz5_pkyFTyH5VOOVmPem=AbLpA5Y6dg@mail.gmail.com>
-Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: torvalds@linux-foundation.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] security: smack: Fix indentation in smack_netfilter.c
+To: GiSeong Ji <jiggyjiggy0323@gmail.com>,
+ linux-security-module@vger.kernel.org
+References: <20240822091806.89425-1-jiggyjiggy0323@gmail.com>
+ <7680815b-1f40-47fa-a0b9-ef8f7fdcc457@schaufler-ca.com>
+Content-Language: en-US
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <7680815b-1f40-47fa-a0b9-ef8f7fdcc457@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Aug 22, 2024 at 9:15=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> The refcount shares the cacheline with uid, gid and other frequently
-> read fields.
->
-> Said counter gest modified a lot (for example every time a file is
-> closed or opened) in turn causing avoidable bounces when another thread
-> tries to do permission checks. Said bouncing can be avoided without
-> growing the struct by reordering the fields -- keyring (enabled by
-> default) is comparatively rarely used and can suffer bouncing instead.
->
-> An additional store is performed to clear the non_rcu flag. Since the
-> flag is rarely set (a special case in the access(2) system call) and
-> transitions at most once, it can get placed in a read-mostly area and is
-> only conditionally written to.
->
-> With this in place regular permission checks no longer bounce cachelines
-> in face of refcount changes.
->
-> Validated with a simple test where one thread opens and closes a file
-> (dirtying creds twice), while another keeps re-reading *another* file in
-> a loop (ops/s):
-> before: 4353763
-> after:  4742792 (+9%)
->
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->
-> This is a resend with a reworded commit message and added Linus since he
-> wrote the non_rcu thing.
->
-> Note each process has its on creds, so this is not causing bounces
-> globally.
->
-> Even so, there is stuff I plan to do in the area and this patch can be
-> considered prep (only one store to non_rcu).
->
-> I'll also note I don't see a way to *whack* non_rcu either. :)
->
-> 0 rush
->
->  fs/open.c            |  2 +-
->  include/linux/cred.h | 31 +++++++++++++++----------------
->  kernel/cred.c        |  6 +++---
->  3 files changed, 19 insertions(+), 20 deletions(-)
+On 8/22/2024 8:34 AM, Casey Schaufler wrote:
+> On 8/22/2024 2:18 AM, GiSeong Ji wrote:
+>> Aligned parameters in the function declaration of smack_ip_output
+>> to adhere to the Linux kernel coding style guidelines.
+>>
+>> The parameters of the smack_ip_output function were previously misaligned,
+>> with the second and third parameters not aligned under the first parameter.
+>> This change corrects the indentation, improving code readability and
+>> maintaining consistency with the rest of the codebase.
+>>
+>> Signed-off-by: GiSeong Ji <jiggyjiggy0323@gmail.com>
+> Thanks. I'll take this in the Smack tree.
 
-[NOTE: no comment on the patch context yet, just process comments below]
+Your patch was whitespace damaged. The tabs in your change were
+replaced by spaces. I fixed that, and have applied the change to
+smack-next. 
 
-FWIW, I really haven't commented on these last couple of cred patches
-mostly because I've been assuming someone else would emerge from the
-shadows as the cred maintainer, or at least someone who felt strongly
-enough about these changes would merge them.  Unfortunately, I worry
-that isn't really going to happen and I'd hate for some of the cred
-improvements to die on the lists.
-
-If no one starts grabbing your cred patches I can start taking cred
-patches as part of the LSM tree, I've done it a couple of times in the
-past and Linus didn't seem to mind.
-
---=20
-paul-moore.com
+>
+>> ---
+>>  security/smack/smack_netfilter.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+>> index b945c1d3a743..ce06cd268d81 100644
+>> --- a/security/smack/smack_netfilter.c
+>> +++ b/security/smack/smack_netfilter.c
+>> @@ -19,8 +19,8 @@
+>>  #include "smack.h"
+>>  
+>>  static unsigned int smack_ip_output(void *priv,
+>> -					struct sk_buff *skb,
+>> -					const struct nf_hook_state *state)
+>> +                                    struct sk_buff *skb,
+>> +                                    const struct nf_hook_state *state)
+>>  {
+>>  	struct sock *sk = skb_to_full_sk(skb);
+>>  	struct socket_smack *ssp;
