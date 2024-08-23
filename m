@@ -1,97 +1,132 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A30195
-	for <linux-security-module@vger.kernel.org>; Fri, 23 Aug 2024 00:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C378493;
+	Fri, 23 Aug 2024 05:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724371566; cv=none; b=Wne6DQyMMCQAhaQyh1WX3DYcO9s8jW1UCgS8GN4l0W19ST1TC82bfyfmQdPa5bAcMQtDjyXy0mZKpvBT7CDf+GMhCZQcFVJF3ADqaqyUs4nY8yrNPqVdt0Urb3BNN1qpSt30vCblTfeXsIlwNrEYSV4KTwOe0L29dsrRFAeYadA=
+	t=1724389710; cv=none; b=Mzx6qGN1EDW2yFmxngv8GM9XGFl9IBcKsXZZU1jMnqkVdflsxH1IUQn8x+9QwDjWSdjT3wYPeSZSlDWXsk0g9QDcnVVfjqRl4Pi+mZ2BqjNKJ6JM52jqheJ5VswHudvcKSYRmeNj5d+7v3k4bwLFW4uQ419dwCtOE4Kbtj644/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724371566; c=relaxed/simple;
-	bh=4iv64pRtCw7dW8hTYbxzB/BoF83GDOhTtw/b5ukR+O0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c6p+g7qtwxxIKhZg2k0NQjtXewiwPh29K95iF4oI2nuY9OK9oEDZSlwJ6eaCJZywzgIHTrfllepIRBJMC30JH6sSFl9U8X8RsR+aTd/ES/2D9V0HxQ18Z8ggo+7gakmTcQDAknkrlsCOhcRA6LcXHafApDhuXs0iw4KpkA6+uIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gMxmBpXG; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1724389710; c=relaxed/simple;
+	bh=u41TN4fWsUuqEu+S8B7BBgs1qEp2OAxQEOHmP2i5vow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QEa916GkqHN6PnD93LAaorCeQvCVGVLYsv/yQBB0tnz4vvMTWQ9ePqUIBJgxMa4t95YMvlZq+4DvDHF1nMV80XKxnSBNrvy2xKEFemy4xZLU6JQJekMehzy4z4/bjd5XzGcrEilLAbvvck20l6scStxNFgDRqQHcoEIpKUmZFAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z4ztqpq2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gMxmBpXG"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a868b739cd9so178888966b.2
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 17:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724371561; x=1724976361; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=G2PT7YMor9FcgwOjC3cZXMnMxjtj8zbdFSuetCOJ+xA=;
-        b=gMxmBpXGsZMhwERbfNd37JAcsZCeOUu1mxqS7VWbQjHvugFXYZJccq9uq033IU379u
-         dk7f+SeDbzTy5nTv9sok7ewsT6RXv6iEOcRam2BZrvLao/iki5TSN6ajcII+leqn4/5z
-         zGzAie9XQUsbAsKjVQ1ajb1dgLwrQ98vm/DvE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724371561; x=1724976361;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G2PT7YMor9FcgwOjC3cZXMnMxjtj8zbdFSuetCOJ+xA=;
-        b=F9t8KuY+vJFrB6zH4Kit6BCoxbiLi3urYvUuDhxt6vLTvoWr0n/FUfIsM0lSC05+Iq
-         Mi7gWk4vOyaCBpppKEJ6p1vbQHx26ns5kNiVR9NAK0R5MZN0HbI+gt4HpCQu1VEO4qlT
-         4WLPshJdLzqWTUnZ9joZKX62SBwxuAduIF73R0WIupbNTQB8vfxW1TdLe/hdRN9Ilb4v
-         YTBZuTxHue9Xs0883mopnYDJrM9R7pXZI8xOwFO65rJwCT/c6W0XeQbdCzG2fd3vIgMk
-         MnCQcZR30M236Zu6uyrBwJ2KypBcFW2QqkcCFy8ePl6Y4wGw4+G7nCBG6aWJQZ3YEBWA
-         6llQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6n08S4dn4lO8ZPvgqtAsFEklbR+GiA2rhorWb74KKnwGcN0l3IG8kMpqZIisxppd3Hzot+TIrT5rIBwXttos5xbpf2/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRhOrLqlPb4yyTYVgZJO8sgChrS8Ln7FPVCruTUrUoa3w/9OfD
-	O+P+i90EL7uV3vcZPpuU5PMYIulrkIjaNC8qgvAp9/HgCsKjeA58ptwaRQamVnUS21/BfO3sRc6
-	iWa7gGQ==
-X-Google-Smtp-Source: AGHT+IGwNQ6u+0FJCE1uT4oVDxDJ9VaeuIdgsCBMv1X3cd0hgA3VF5BN14fW2oqMmDvmX1PvX5WbMQ==
-X-Received: by 2002:a17:907:7ea5:b0:a7a:a7b8:adae with SMTP id a640c23a62f3a-a86a5189e00mr34255166b.4.1724371560792;
-        Thu, 22 Aug 2024 17:06:00 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f222b23sm183357766b.19.2024.08.22.17.06.00
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 17:06:00 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bed83487aeso1643095a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Aug 2024 17:06:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUpTaOZSYFCSZItsW5MKXJd1kEb3C2D9Y2+0uArbq8Wy+nwF/qWr80WxYmvHgDnPJlzui3I90OeZPGPVneDQk8mcm3/2JU=@vger.kernel.org
-X-Received: by 2002:aa7:c68e:0:b0:5bf:17f:4b7b with SMTP id
- 4fb4d7f45d1cf-5c0891b21aemr159924a12.32.1724371559743; Thu, 22 Aug 2024
- 17:05:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z4ztqpq2"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N0UYgP030649;
+	Fri, 23 Aug 2024 05:08:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WdGvVpsXCRq9JxOvfcDfeqqfX4yOBVQw2SCwliCTMWE=; b=Z4ztqpq2w89F4Xz7
+	kt7MuI4buGpyHxF7RxrvF6TplDYIPbPTXtbc45gtc9eGQEKAsYhrmH0XFGjY+O2e
+	zqz19mp6YR70z9GeR0/1lzlATnLA+uIg+QVZnAkCehK020f01vXZjqje9dHK5ar0
+	k1cNiOSNa7PRK3UavclX+ae+n4Hl68S1MkvpbkxWmnCBlzIzSTtLNrr1kUlo5FxT
+	ta/CaPdBXEIp03IYj9E3u+3M1xUsT5l0KjnuoDPh/z47u30gG45P83Ls+4zb60w5
+	UyA3BhTy9qOCSOuxGvpWNU16GzhIBZs9v8wudj4IwaDoCUrTYFGum1kHfxwp3/be
+	xJolhQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pdmj2tk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 05:08:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47N5871i026948
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 05:08:07 GMT
+Received: from [10.111.171.60] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
+ 2024 22:08:02 -0700
+Message-ID: <7c977de1-fdfd-47c8-a117-5dd510849f57@quicinc.com>
+Date: Thu, 22 Aug 2024 23:07:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822131542.785546-1-mjguzik@gmail.com>
-In-Reply-To: <20240822131542.785546-1-mjguzik@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 23 Aug 2024 08:05:43 +0800
-X-Gmail-Original-Message-ID: <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
-Message-ID: <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
-Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 06/13] net: qualcomm: rmnet: Correct spelling in
+ if_rmnet.h
+To: Simon Horman <horms@kernel.org>,
+        Willem de Bruijn
+	<willemdebruijn.kernel@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        "Paolo
+ Abeni" <pabeni@redhat.com>,
+        Alexandra Winter <wintera@linux.ibm.com>,
+        "Thorsten Winkler" <twinkler@linux.ibm.com>,
+        David Ahern
+	<dsahern@kernel.org>, "Jay Vosburgh" <jv@jvosburgh.net>,
+        Andy Gospodarek
+	<andy@greyhouse.net>,
+        "Sean Tranchetti" <quic_stranche@quicinc.com>,
+        Paul
+ Moore <paul@paul-moore.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jamal
+ Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>, Jiri
+ Pirko <jiri@resnulli.us>,
+        "Marcelo Ricardo Leitner"
+	<marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>, Martin Schiller
+	<ms@dev.tdt.de>
+CC: <netdev@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <linux-sctp@vger.kernel.org>,
+        <linux-x25@vger.kernel.org>
+References: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
+ <20240822-net-spell-v1-6-3a98971ce2d2@kernel.org>
+Content-Language: en-US
+From: "Subash Abhinov Kasiviswanathan (KS)" <quic_subashab@quicinc.com>
+In-Reply-To: <20240822-net-spell-v1-6-3a98971ce2d2@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nxn1AxiIUR23V32pf7IK2RKtu1Ne5L5l
+X-Proofpoint-ORIG-GUID: nxn1AxiIUR23V32pf7IK2RKtu1Ne5L5l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_02,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408230034
 
-On Thu, 22 Aug 2024 at 21:15, Mateusz Guzik <mjguzik@gmail.com> wrote:
->
-> The refcount shares the cacheline with uid, gid and other frequently
-> read fields.
 
-So moving the refcount around looks sensible, but I don't see why you
-moved 'non_rcu' away from the rcu head union.
+On 8/22/2024 6:57 AM, Simon Horman wrote:
+> Correct spelling in if_rmnet.h
+> As reported by codespell.
+> 
+> Cc: Subash Abhinov Kasiviswanathan <quic_subashab@quicinc.com>
+> Cc: Sean Tranchetti <quic_stranche@quicinc.com>
+> Signed-off-by: Simon Horman <horms@kernel.org>
+> ---
+>   include/linux/if_rmnet.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/if_rmnet.h b/include/linux/if_rmnet.h
+> index 839d1e48b85e..c44bf6e80ecb 100644
+> --- a/include/linux/if_rmnet.h
+> +++ b/include/linux/if_rmnet.h
+> @@ -42,7 +42,7 @@ struct rmnet_map_ul_csum_header {
+>   
+>   /* csum_info field:
+>    *  OFFSET:	where (offset in bytes) to insert computed checksum
+> - *  UDP:	1 = UDP checksum (zero checkum means no checksum)
+> + *  UDP:	1 = UDP checksum (zero checksum means no checksum)
+>    *  ENABLED:	1 = checksum computation requested
+>    */
+>   #define MAP_CSUM_UL_OFFSET_MASK		GENMASK(13, 0)
+> 
 
-Isn't 'non_rcu' accessed exactly when the refcount is accessed too? So
-putting it in the same cacheline with ->usage would seem to make
-sense, and you literally moved the RCU head there.
-
-Why not move it as a union, and keep the non-rcu bit with the RCU head?
-
-Yes, it is rarely actually written to and as such can be "mostly
-read-only", but since it is both read and written next to refcounts,
-why do that?
-
-Did I miss some common use?
-
-               Linus
+Reviewed-by: Subash Abhinov Kasiviswanathan <quic_subashab@quicinc.com>
