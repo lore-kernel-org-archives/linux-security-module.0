@@ -1,98 +1,114 @@
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D21C2AD13;
-	Fri, 23 Aug 2024 05:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0C146A8A
+	for <linux-security-module@vger.kernel.org>; Fri, 23 Aug 2024 10:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724391938; cv=none; b=YKFR1/o4+82JO/wOtZg42/GNCOJ/uKf+FS6R64ouTE2iRRb8X7w2bOzdd5PgSd+o0uZow2S5elT9ZQsykwsFWLWAK7h0XacwITNk1ZNp+coZ9xFZWzKGj952/2zML926F3GYmQ0twhYqd9OR/wZJMC4fewOdyzyEfmuv5ASKbyQ=
+	t=1724409534; cv=none; b=Hwwbm+ILtv0k3OTrZ/WVy5yo5lVpwijjgMJsDN47FSKx1tLDYt9269GdEATvXD+odgQ2Xo8vHuFm+tv/+Aj6lCXebY+vRoUCvM0sj7AyfCsLAZLGv0AJI8EXQRlboxN9cyzal8uNC50QNDvc/r8IXBuXR1saFBPCgWSW0Mq+JNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724391938; c=relaxed/simple;
-	bh=1l9KiEndT9zt6GVmnb63XbT8mlKSHSFifT/I4dlh/sA=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=LISqZ4iOGOXft9WMQ6U/b+sQilL+8dIxXjMlg1i2B+mPm6U6AGox6/E/faApsZ7LZttomJHq+pKPYddkGGXzPnaxDkrSzE3SpM1d9fwghp+TcqtUklCPIxfG356Ue36Bf34sQyo1wZhooc2D/HKx9eGE6Rd5l1uVyeHgwVQ+zvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=297933add1=ms@dev.tdt.de>)
-	id 1shMpm-00Ermz-Hw; Fri, 23 Aug 2024 07:27:38 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1shMpm-000Bnw-01; Fri, 23 Aug 2024 07:27:38 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 8ABF9240042;
-	Fri, 23 Aug 2024 07:27:37 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 4CD8D240036;
-	Fri, 23 Aug 2024 07:27:37 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 6B6FC39D24;
-	Fri, 23 Aug 2024 07:27:36 +0200 (CEST)
+	s=arc-20240116; t=1724409534; c=relaxed/simple;
+	bh=YBqL3sN6Z30EdGp/SNi7tkoBNbgiS7ggY2BAQok1vVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqdP8knrrC3bfbWG8w8oUs74hT37x08Dr5hV6agbqCAJIr9QWB7XRZr0RASyvcApdNpwGb/zeo1W4egakzBgn8PrhdaM8uE2BqES5jGm8awq/N4uk3R/kYg0QeN1bbj1VcDD5V4G+/SsoT5TU6uNNbtehTcBzvHBAw3HIKEcesw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pjAkK2Oi; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pjAkK2Oi"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WqxPZ3rgHz6bJ;
+	Fri, 23 Aug 2024 12:38:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1724409522;
+	bh=ZJi/0dhpThM5/X8AiDcSNY58hEt/BED8l/BaMzmo8kQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pjAkK2OiTa6P9V+HF4aDH6oUsbs6RfZZypdrCxIpWzDoLxMBuRbN75o+RXX3hilRb
+	 jrNOqAv91KVir9uprm/0rqhF4+pNLj7HG7y6iUIYh+LDiFkHcIqqXbDiN1RHAQJ+yb
+	 iPOpD4bBGkIoAZmYQIO+Gy17jUv3AcRaCxZsV5Aw=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WqxPY24mmzCRw;
+	Fri, 23 Aug 2024 12:38:41 +0200 (CEST)
+Date: Fri, 23 Aug 2024 12:38:36 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <songliubraving@meta.com>
+Cc: Paul Moore <paul@paul-moore.com>, 
+	Christian Brauner <brauner@kernel.org>, Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	Liam Wisehart <liamwisehart@meta.com>, Liang Tang <lltang@meta.com>, 
+	Shankaran Gnanashanmugam <shankaran@meta.com>, LSM List <linux-security-module@vger.kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
+ bpf_get_dentry_xattr
+Message-ID: <20240823.zeiC0zauhah1@digikod.net>
+References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+ <8DFC3BD2-84DC-4A0C-A997-AA9F57771D92@fb.com>
+ <20240819-keilen-urlaub-2875ef909760@brauner>
+ <20240819.Uohee1oongu4@digikod.net>
+ <370A8DB0-5636-4365-8CAC-EF35F196B86F@fb.com>
+ <20240820.eeshaiz3Zae6@digikod.net>
+ <1FFB2F15-EB60-4EAD-AEB0-6895D3E216C1@fb.com>
+ <CAHC9VhQ3Sq_vOCo_XJ4hEo6fA8RvRn28UDaxwXAM52BAdCkUSg@mail.gmail.com>
+ <7A37AEE2-7DEA-4CC4-B0DB-6F6326BE6596@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 23 Aug 2024 07:27:36 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Simon Horman <horms@kernel.org>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexandra Winter
- <wintera@linux.ibm.com>, Thorsten Winkler <twinkler@linux.ibm.com>, David
- Ahern <dsahern@kernel.org>, Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek
- <andy@greyhouse.net>, Subash Abhinov Kasiviswanathan
- <quic_subashab@quicinc.com>, Sean Tranchetti <quic_stranche@quicinc.com>,
- Paul Moore <paul@paul-moore.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, Marcelo Ricardo Leitner
- <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>,
- netdev@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-x25@vger.kernel.org
-Subject: Re: [PATCH net-next 11/13] x25: Correct spelling in x25.h
-Organization: TDT AG
-In-Reply-To: <20240822-net-spell-v1-11-3a98971ce2d2@kernel.org>
-References: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
- <20240822-net-spell-v1-11-3a98971ce2d2@kernel.org>
-Message-ID: <63470d95781b010695d97dcd8c1c9fe0@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate-ID: 151534::1724390858-93C5B34D-86652F55/0/0
-X-purgate: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7A37AEE2-7DEA-4CC4-B0DB-6F6326BE6596@fb.com>
+X-Infomaniak-Routing: alpha
 
-On 2024-08-22 14:57, Simon Horman wrote:
-> Correct spelling in x25.h
-> As reported by codespell.
+On Wed, Aug 21, 2024 at 03:43:48AM +0000, Song Liu wrote:
 > 
-> Cc: Martin Schiller <ms@dev.tdt.de>
-> Cc: linux-x25@vger.kernel.org
-> Signed-off-by: Simon Horman <horms@kernel.org>
-> ---
->  include/net/x25.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/net/x25.h b/include/net/x25.h
-> index 597eb53c471e..5e833cfc864e 100644
-> --- a/include/net/x25.h
-> +++ b/include/net/x25.h
-> @@ -81,7 +81,7 @@ enum {
-> 
->  #define	X25_DEFAULT_WINDOW_SIZE	2			/* Default Window Size	*/
->  #define	X25_DEFAULT_PACKET_SIZE	X25_PS128		/* Default Packet Size */
-> -#define	X25_DEFAULT_THROUGHPUT	0x0A			/* Deafult Throughput */
-> +#define	X25_DEFAULT_THROUGHPUT	0x0A			/* Default Throughput */
->  #define	X25_DEFAULT_REVERSE	0x00			/* Default Reverse Charging */
-> 
->  #define X25_SMODULUS 		8
+> > On Aug 20, 2024, at 2:11 PM, Paul Moore <paul@paul-moore.com> wrote:
+> > 
+> > On Tue, Aug 20, 2024 at 1:43 PM Song Liu <songliubraving@meta.com> wrote:
+> >>> On Aug 20, 2024, at 5:45 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> > 
+> > ...
+> > 
+> >>> What about adding BPF hooks to Landlock?  User space could create
+> >>> Landlock sandboxes that would delegate the denials to a BPF program,
+> >>> which could then also allow such access, but without directly handling
+> >>> nor reimplementing filesystem path walks.  The Landlock user space ABI
+> >>> changes would mainly be a new landlock_ruleset_attr field to explicitly
+> >>> ask for a (system-wide) BPF program to handle access requests if no
+> >>> Landlock rule allow them.  We could also tie a BPF data (i.e. blob) to
+> >>> Landlock domains for consistent sandbox management.  One of the
+> >>> advantage of this approach is to only run related BPF programs if the
+> >>> sandbox policy would deny the request.  Another advantage would be to
+> >>> leverage the Landlock user space interface to let any program partially
+> >>> define and extend their security policy.
+> >> 
+> >> Given there is BPF LSM, I have never thought about adding BPF hooks to
+> >> Landlock or other LSMs. I personally would prefer to have a common API
+> >> to walk the path, maybe something like vma_iterator. But I need to read
+> >> more code to understand whether this makes sense?
 
-Reviewed-by: Martin Schiller <ms@dev.tdt.de>
+I think it would not be an issue to use BPF Landlock hooks along with
+BPF LSM hooks for the same global policy.  This could also use the
+Landlock domain concept for your use case, including domain inheritance,
+domain identification, cross-domain protections... to avoid
+reimplementing the same semantic (and going through the same issues).
+Limiting the BPF program calls could also improve performance.
+
+> > 
+> > Just so there isn't any confusion, I want to make sure that everyone
+> > is clear that "adding BPF hooks to Landlock" should mean "add a new
+> > Landlock specific BPF hook inside Landlock" and not "reuse existing
+> > BPF LSM hooks inside Landlock".
+> 
+> I think we are on the same page. My understanding of Mickaël's idea is
+> to add some brand new hooks to Landlock code, so that Landlock can
+> use BPF program to make some decisions. 
+
+Correct
