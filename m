@@ -1,118 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492B017F4F2;
-	Fri, 23 Aug 2024 13:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24053188A0F
+	for <linux-security-module@vger.kernel.org>; Fri, 23 Aug 2024 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420427; cv=none; b=QNApb59EqGTPi+GaGHd1k5bNXDUW6lEn9BdVp9SP2oUirgCGYZnWwRe2k7d3qyblaJKGOvTOJxDjninD4CwR8tB9mBYNfVM0K8oHgmKm23TZ55+VzNJp8UM6ByNcvcIc1YZz+FDhvg9juO0jJnHX88qJAZf5fpD1yaOF7lz5eFg=
+	t=1724426777; cv=none; b=q4XAu29TkwYKTB4l1XEmnAuvaUvb0GJQChNgX2CRcDkC+l3DjXUEEnMv9vBMNfRI1X4n+6XEW8/JdR/sJqhAoC0FfbzBDw//Syrv6KD2+3sFKWrTGs/Ef0KEa6AQAxyaMWZsFhB9ajvhdQ49pat3p/SC5YfdHQV+vEZzs8kc52U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420427; c=relaxed/simple;
-	bh=l0HKeAxOAIRTRBrz1R775BtHSONsISCQkRP6B71ZC+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CgC/m4hL7ZMFzcsH+T4gP2rZhDcJsCbdnAANLebPR441nh0pqHY9ERlnFp1bVcgeTa3HEMA2VP9aHWu2ItVNu3s3//E4864yotLtH70poQOD63BOd9thgVqgLNPMGHk2xdxNFbd0FgXYc2dAsxzbwXfaEL8iW67+KQ31TKMsIOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNeYGG9m; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724426777; c=relaxed/simple;
+	bh=2GYOLw30+luEJg/tFmrxHlNaXFRBGL5NLd68jN4yGL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DiZFgNAPxHwpfvEQ9lYJrcTIA0+CuzOGlGIoWVZmaVJZeSgOpsI5a0lMMbu4+UixatMqTFM6PIASKhqrJJlEXkVSXqS4J47ppBFCORjcT+zULZNBhHOdBtqcN04q1rMlYKN+ipq6BAySGOglRte5DufPsEUwVj7HbhEK7NMCBl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JcuhpfdY; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNeYGG9m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7E3C32786;
-	Fri, 23 Aug 2024 13:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724420426;
-	bh=l0HKeAxOAIRTRBrz1R775BtHSONsISCQkRP6B71ZC+4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pNeYGG9maN3vG/jQYkHlUg4tGQzrMLmfKnmwJnVPU2HoqTOst79R895F+s9DO5X5d
-	 3pxr1s8fTRcxTPZCohj9TrpqRF46l+6wwGxbTucLoTWls1de0Q3LyZ6xdCTYGrmM8P
-	 wkLwX0kcj6YeS7J6In0Q38GQUY5fY/WOeV75xNYwrrrjvbdH4w7CX247JJmf9lEmwc
-	 S0efUTeMpPIR/EjFCdBUsDHCI0OpA1wgSWfWLKiYDJesZnROj2s93agM+Co19w8aME
-	 Q5FS8sliXlQBaGfFgaC9qCvbpfZWPTlrZxprrWyLF51S//uQeKdykDwsngcjCpX7vZ
-	 6s1LqD62Akg7w==
-Message-ID: <19283321-dd3d-4eb8-81e2-2504d40b3999@kernel.org>
-Date: Fri, 23 Aug 2024 15:40:15 +0200
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JcuhpfdY"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53349d3071eso2615519e87.2
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Aug 2024 08:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724426773; x=1725031573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Szc69PtQ71Cbgpu7+pqMqmqQ4A3cQ2x6GOUbmqVp4eo=;
+        b=JcuhpfdY4syLc1pht8M8nFc19b4AXN2lHLVuM+CX8JRmAG1CPBCPa1ChRDCa1DNYVG
+         QK5ydrx4jUEKrqyh6PFsVM4g7b5WnWqsgLoeNmIW5i7zM5c4Zj4eDwydfeT8d4blPj57
+         Mya3lZOD5m6SnrxH6IGK87OJWaQIqM1alR+20=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724426773; x=1725031573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Szc69PtQ71Cbgpu7+pqMqmqQ4A3cQ2x6GOUbmqVp4eo=;
+        b=YeX1xcY5RA3U/ZBsdWMRKuv9xSk+7mYtiVY4LPLZ2l4MQ+aOnITeCaBaHr8BsRQahs
+         TI4gXT+9PlV6M862YKDSLzPngqt0qZGUqpjct12W6gWMCUNKxhi3roHjDxB7q8+bdhUv
+         gijG0haKd2ojmcyZ1T/gdy5kB/v83BbYgArmMBL8FrAIX/hLDOBwyTz9uPc19Svvf/Hi
+         ZHWMVbGbpTXPCye74glCxjTQsegzetNTkX1MyrHBG4Z96DSLGw3LTyN1YPlGz+d7o+Wr
+         xOHb3PmQCz8AomXYe6CS+NRr+1dD6tOnjHm3mS1g1w3Cg92DJFVfiWjZJwTJaRqReji3
+         csUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeFEv2J3q141JwmLKjs4kUFjKxLm6JIobXcNhFJAuQ58nUQSe8OA1vqs3uK4GBh4iQ9MfbrhU2fpf5RUCRnqj6rfjFmug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOIidNJIYoPdvH7pLRWRQHfnkp1qaNfbKkVy12eZ0mmIYnWDbC
+	SEPCr+lCQJVmfTxh56UArHYygqg1pm4d54zuhgLOILEN3OlwTyLwACW0433KRxz6aT9B5ELaBXR
+	8tTXZqw==
+X-Google-Smtp-Source: AGHT+IHETuYBERCAblBB10XEnACwDlKjxVydl2PxgdBUef17ark0urvTFD1b124qoJz1CxAFCMgfTw==
+X-Received: by 2002:a05:6512:3e1b:b0:533:d3e:16e6 with SMTP id 2adb3069b0e04-53438784950mr2017693e87.25.1724426772484;
+        Fri, 23 Aug 2024 08:26:12 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea297casm569540e87.39.2024.08.23.08.26.11
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 08:26:11 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f3e2f07f41so21867461fa.3
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Aug 2024 08:26:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWyHu0xdAG9oic4rwQ7sXgwLuvlCcZN9I2sY4wVmFG1bVO9+az8AuJIMarhmAaV0ZScLLacPRVn00S3fjM8FiZT6DJU5Lk=@vger.kernel.org
+X-Received: by 2002:a2e:9c55:0:b0:2ef:2883:2746 with SMTP id
+ 38308e7fff4ca-2f4f4965089mr17361201fa.48.1724426771254; Fri, 23 Aug 2024
+ 08:26:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 08/13] NFC: Correct spelling in headers
-To: Simon Horman <horms@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexandra Winter <wintera@linux.ibm.com>,
- Thorsten Winkler <twinkler@linux.ibm.com>, David Ahern <dsahern@kernel.org>,
- Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek <andy@greyhouse.net>,
- Subash Abhinov Kasiviswanathan <quic_subashab@quicinc.com>,
- Sean Tranchetti <quic_stranche@quicinc.com>, Paul Moore
- <paul@paul-moore.com>, Jamal Hadi Salim <jhs@mojatatu.com>,
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Xin Long <lucien.xin@gmail.com>, Martin Schiller <ms@dev.tdt.de>
-Cc: netdev@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-x25@vger.kernel.org
-References: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
- <20240822-net-spell-v1-8-3a98971ce2d2@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240822-net-spell-v1-8-3a98971ce2d2@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240822131542.785546-1-mjguzik@gmail.com> <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
+ <CAGudoHEjjuGOwf=KkZjNUTPXSr6E8w8Dvz6=_CiKVHsUOY8KeA@mail.gmail.com>
+In-Reply-To: <CAGudoHEjjuGOwf=KkZjNUTPXSr6E8w8Dvz6=_CiKVHsUOY8KeA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Aug 2024 23:25:54 +0800
+X-Gmail-Original-Message-ID: <CAHk-=wh84ATUBUZG4DtoY-=Jo-WKwDcfNUdOGw0_PzEr85rLqw@mail.gmail.com>
+Message-ID: <CAHk-=wh84ATUBUZG4DtoY-=Jo-WKwDcfNUdOGw0_PzEr85rLqw@mail.gmail.com>
+Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/08/2024 14:57, Simon Horman wrote:
-> Correct spelling in NFC headers.
-> As reported by codespell.
-> 
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Simon Horman <horms@kernel.org>
-> ---
+On Fri, 23 Aug 2024 at 20:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> On Fri, Aug 23, 2024 at 2:06=E2=80=AFAM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> >
+> > Yes, it is rarely actually written to and as such can be "mostly
+> > read-only", but since it is both read and written next to refcounts,
+> > why do that?
+> >
+> > Did I miss some common use?
+> >
+>
+> It gets looked at every time you grab a ref.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Mateusz - read my email. That's what I daid.
 
-Best regards,
-Krzysztof
+But the *ref* is already in cacheline 0. With your change it looked like th=
+is:
 
+   struct cred {
+        atomic_long_t   usage;
+        struct rcu_head rcu;            /* RCU deletion hook */
+
+and if you had kept the union with that 'struct rcu_head', then
+'non_rcu' would be RIGHT THERE.
+
+> Thus consumers which grab the ref and then look at the most commonly
+> used fields get the non_rcu + rest combo "for free".
+
+They'd get it for free JUST BECAUSE IT'S NEXT TO THE REF. In cacheline
+0 - that is already dirtied by the reference count. Which makes a
+*store* cheaper.
+
+And you also wouldn't waste separate space for it.
+
+> consumers which already had a ref don't suffer any extra misses
+
+Consumers that already had a ref don't touch 'non_rcu' at all as far
+as I can see, so they have no reason to have it next to those "most
+commonly used fields".
+
+See my argument? You seem to have pointlessly separated out the
+'non_rcu' from being together with the rcu_head, and thus wasted
+potentially useful space in the structure.
+
+Your own email even had that:
+
+>        bool                       non_rcu;              /*   100     1 */
+>
+>        /* XXX 3 bytes hole, try to pack */
+
+which would have been a /* 4 byte hole, try to pack */
+
+A 4-byte hole is more useful than a 3-byte one. A 3-byte one is much
+harder to use.
+
+In fact, even without the union, I think your current cacheline 0 ends
+up having a 3-byte hole due to that
+
+        unsigned char   jit_keyring;    /* default keyring to attach reques=
+ted
+
+with CONFIG_KEYS.
+
+Without CONFIG_KEYS, you have something like a 40-byte hole there due to th=
+e
+
+    kuid_t uid ____cacheline_aligned_in_smp;
+
+which seems very wasteful, but I guess CONFIG_KEYS is the common case.
+
+So I repeat: what did I miss?
+
+       Linus
