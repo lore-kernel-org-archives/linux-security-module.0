@@ -1,60 +1,60 @@
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6DD1803A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3849F383BF
 	for <linux-security-module@vger.kernel.org>; Sun, 25 Aug 2024 19:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724613069; cv=none; b=i6khLUPhsPt8IRjlsjlcAfmxdWUjmnYB1BL55FzKZoKg2OoKp/vme0POe1CQ6SlhT8qUoOBUiD8AxFzp2mz5Dr/MfrWdwCuW10yMua+7MH0AGcUK+b/yXRo8toKfToU4wrtsK9v2YnIBaqXB3GGLiEFcclaDgQg6bPr7grmthrw=
+	t=1724613070; cv=none; b=Bo5hHNXW0hukhL3glQoTEKklrS9gglmQqTgEAtFLrqH1gaulBfnG180uNb0auxXTaQNYcw+9RlPbRgK53olOzVmYnNbY6CWTUEG116FwjXufN3mEaPrn/8k3uNAhqpBio74dDdTUEawrH6v/kaop58gVPMMgPLHo1K6CCg3+AQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724613069; c=relaxed/simple;
-	bh=0zxDquNpcXYMX0VzwwYvvIHYhYqJ2dLHjSTsBAJadMw=;
+	s=arc-20240116; t=1724613070; c=relaxed/simple;
+	bh=LeB8X7+ZJITov5x6L6aFo3j/PNTvgzI7vPg4NLbRQWY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=togsK3FVTbY8j4YozBdixxHs5Rujo5LSKx0IFpATPj+lOVd67rQcNJpdQmp2U3rekNkOg13Wthjkoh/zu/P7yZWF1ykKmLiqCRPktaECZnvwQNdsLlh+N644SkPYLyLq+G7gIszIYprDALQ1bpeAurv+BF59MUGTyxm0d1tlDEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=cU2Zu+DU; arc=none smtp.client-ip=66.163.189.153
+	 MIME-Version; b=fTxA9ZYJCmYy0S0HOInQYpu7Cv/QYv/U9mcBetJ75LnRR3y3bera8e8YbqmwdAMLcqucV9iVg4zet4mVCdATP4ILCURC5oL9NJGrENkEWAkVq4oQ5U5DdD+A/qNWjBliXb9oHBzEDrvhWg2nVK26tP7lCKkJcEv+XWlE4G8ffzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=e9o8tz8x; arc=none smtp.client-ip=66.163.187.38
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cU2Zu+DU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724613066; bh=K8ngif8BbH+uQhs46NfpiBquT6dHItO3b9MLzJbd82s=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=cU2Zu+DUVTfLCM2bP72FC56B2wIu48W1j2YBSGQsZil24bL5juaXeIzo7DLeUh7hiIkWn6r/GoiagjDlPyUo30Wc4F9vV8Qao3hP8CJj99xogu8oIwTxBzw6qg+WIiMsJTZTSa4+QqnednJlxvqtPT20qXhlUOsO0HW5MWIc+TItuZpGGwoJ6G80Vwztnt85rFRdKbwB6uTEgw1akyEg/tjQJ4ed7xigrfQj6rpZEoZ+cWRFJojQHInB8Xsl4Ogvt+gqG+IoPU90fkXc6k5uOLf4XEBQKaL8oW8Jxp7TdKJCcE8rPyOuzDZ1vJqMwDdbuLmInx8nI7QCIVVI1d6F9w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724613066; bh=X+TZkBkmkToe4x5WsAhcQFP3biMC/QJ18juOIAdFOHO=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=ZHSB+V7y1xxbTrEVBiHd1edlrPVuOiRUwDx1HNv3ddf1ICh1YZf7f4Knbky0U6en7CjTmwgRw804kVasTQcetNTBiBz9a75K8E4yX9/+GbPlhn8da2xAc1s5x+e9GPl7aooBdizd/KDI8IoRHScjdLpEvn5YPfydkqXA6rg/M5j7kE5/UZTddIDBFG4Z60/pQgG769RJ4jiRrT2b5/9/uXGsPKMkt1MhAvdP9O7z2MMA+TvECnjdASns3IJKsL9O5VgFvWQqJLrLrAFYynLOnwMCzueUSunnVeekZHzk27Qx5xdsl7AD/61C9d4hozdT/LZjoumGyl6HDunzfasuUw==
-X-YMail-OSG: 5zCNsycVM1nq4nY.1QbbNZKWAHg5Z.8KzQzhjAfQ3jRj1RPmSRV7mpcxVw4aQ1r
- _BLE1NF6mp2rlWh.vs6w_C9tEQj5pqNTP.qCkN3p7F3AK7xcXidxM888pH2aNUjJjKek731rBv9q
- YaKzqvcQ7M4rFk5aqenJ8mL40e8JOValLrTLtPEjC8BkhiCNFNIoqEZNOJx6YQb0KfBShiqxVIEn
- H2D.77NMBy.WajvAD93wIidlg.Nel_BB3Yo.sP2lMdZ05t5fYCjECdBK_axG_vKLIo9yjEoVAXZe
- HXqNlEViu5AbHQPSw2ujaGlAsr4_pbAdy2xRz7O5oDzJ1Qb6JhfL3kZrZ_LrNJ7IVPcCZOrKrQGb
- r1GXkZ4nwVtUmfokF1WfLCsAIJ56qYJ5AA7g2_1Ohwe1Z9LgDWzux9B2EwYLaPtY3aVIrmjTWI.1
- RIwwJGGxYX3KYX0VAXeDMLIFCOYURrUs7clhUN5PCcf.5qvwW87DPsMAP3LOFNumsnXTkHYhU5Yd
- LwjV9kNpGDd8IrWwuw28FyriJ3Ww7wUkVI5ZZClBvCIrGcBhP9dZ9D_3w_QWb9BBPpq_8PiEAmVk
- 8qQotRJay8etN2PBoM_5NV5AdM5.LH5ZkT6LqB.3ZRQ1knuyrt0SonoWEoetjGR7rcOJafAKyX1u
- IVj5dGDCBKtVyI9jKr64_0QzZXSrRxLIUhQuVRTfZF8Sja60_Os0FtyTsTAkjPECs3SHgOFQ8W81
- KMVbZ4qRDcCAejkDPqND5Ycj2D7f_rf4unr94mqopRXy6mqMcpCb3lN0dAL9hnnwMVTf05IE1VKR
- vE12.LJ8knzJFWESGXDrZplBMm00jTDE2F07Rqb5liwChhr0UXdtFw8jyF9FffGnODCPzeXGeGW.
- jz1WC0sQQ0kdZPKYXBzT5Ynufj5.G2qwwFt7PCU4NOwG9Aez2xQCTputgZcNFeBe_vQ3D0czVYA.
- VIxGcGj.pHbcw3CUEqlbF93BucItv16_ken7FsDZMB_8WjhMfT5r2VOg7OLXSHztPHSRhOm3uEQV
- 2blUnEbXDNnaIByZ_bdnWSZTKoJ4kwzJS6QQSXvAxCzjR4PtpCl2awgQWTrDYiWMNWqxfBfN55HR
- JVtLSzvD_zXc3kzpeVRA0MPQ__qSaGnzrRrIzP3DoV1HByNAjLDiA.r437A1pwVv5SgHQmefDXAq
- mHg7FRpqMPlfWXfL067OUXgvhh54NewyA1o6.aaVifslvRwZZOxRWWlQLzkXwUFwTzxwVEAQxlRX
- sAgSLOzeKn2TpF0Exk.f37qShtBv0tTfqxphpaaLpXF0MX6e2oz6P3_1mNLqoCya6uWXgbqE0pTD
- ThvbOvzA3r9ZIK3T..piwDOlu_OE7szIJ.i9fYMqWYS8HW8kmGAoo1OTkLlwZEfm0WSIhOXo6mEw
- dx7S3SV0iibVOE_hkf7Og2MMdw9t51nHoeLXtiHKOsCv3dkQMb0q6PtKcwkDsQv4bdoK8Q6ZojQw
- 9bOFPiC5ANojAwe.QHQIlxB7bOTJTQQ9AO8gXsY1vRm5F2SR4m3QY9h35U9efXbQrzltXwUUkHER
- JCTlgL_h3E04wYWJ_SlBeJsjuA1Go_D0hbEN83XOzSy83UYEjmBZOFiFmMNRdCPTFLnlWQnTz1AY
- DWoj23yFCQed3FVL25Up8rfvdif95kQm88bVk8smgzTmBqBJN9mNYd0w2t4W5pxBZ79XqibHeeY3
- SZe9ddab.suep5GIAG0x.h8vhaMfDwlzR9TZw699r97E2E04ABAv4_GLxtJIkCK04td6me0xCz9F
- x2vrvOHrHwR9MIZ8jfalwQpJ2NRd6Xysuv05zuZuYfKf2XWehp7dgFmWWIly04wr2G6Woawjq4Jw
- WC_0qX6JzOqu5hBV3veVwPootiPelD4eEBKmCuldfa1FLgRhmiUIGFlO3LTsxZys22veVCjVd__8
- QG2oIeGIpZsmcuwOoASE6KDWPX_UvvP7ogpqzToSqqCA60dXDr_PlGDdza7uNBDlGm6I627x79Tv
- q2Ej33SknoOotY0_RhKMn6r4_DCyaEXN9TzDcuZ7XH6gEBGjWxGRJaVFwEOCKROMBdYaTGVFeZiL
- 19fDcJFgSF0mRZP14c8xTz3dhBW0UZkNr3DBzZhgfIK0LC53BbRFoy853Ed21CeGsQOcphkD4lwa
- NVQ2fSIRcPY63.O1tE3fPcyX6sADtHTIfrxNLORNizQc6Fh4PqNz29C_ltVhNpHD6_KyxO_g7sCk
- lFU5gRrS4r15gcgrUHENZ_QOOpGadjtsS939N7rGDAhpcys5_O93guHEAqNolt.yD12ot.3GhnHj
- vYqhK6XHPg_xo6Sgvlsfgg7z8CqYGufFHHA--
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="e9o8tz8x"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724613067; bh=UimBTnRsvOOlheUTsD/8wlPBEHMvbpszab7VOu1lPs8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=e9o8tz8xZ8dpUz3BCII9UBBhPcXU0vZpUQWDtv/SvTxsSv/dleocyEMKPXA/gPPOL7ZozoezsKbN15PzDC+Twf/2+NTGD5Bgkj5qsQDzx7JqrWUdreWJdF7zb6wo21/bB9D5B3UHuqXKpYDmC6QcJqI0f+9MRUFmnFdXA8BjSGtuVReqSjDPk+dJDvR8YqWs+fsfoIPyPuAZG/VnF1dqd5LuCkhGYJO5Qk/e0JsyLrZ1K2ibddsAHKkMPRhUqPWpf3/K0wS9qhbyvYZnQNAPd4mAB+C5/an3JD1u4McBGtrHYsbqfmn28g+aYxydUImCxeQU9ynCivh+RfrssjTxYQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724613067; bh=o93hdrto2CHERWGz3rP4R6vtHi8AjRTkAEO1tMDq6vE=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=b3lf0III45V2HPfwUSneV21QIsPL/Ytse7KqDpOAG39jv50KXcQpv8SPw9dWX1GK07SXAqQefZssFOwyamDLmjxVAHvMzyLVtmNp/CzTJXivSMco6hvPonobCA3OhwKSUFlDZnLcRwsLNwPIqLkkKen5StdxVdre21/ayxDVQi5lM2S4gtmYTEooRVP5Sgxza7JKD12fy8zvDHGlnDdg1GinMB/mS48aM2DwbJqTRMQ09KuZna4QHHiXYo4TRqJbwW4bD8K4BnhW0Qpsx3I9yRxzPagh33TVSmiogvhTSdbP+0cfSJa7wSfAXBWMqVlbZplaLxdldGxSwv2ZmS1Eiw==
+X-YMail-OSG: WR.JJOYVM1noQokXfDLr1Qh73B74.m6Vz9GDe1UpUirQdDLpu0BPnKKfSfAtjcS
+ GlxdLjXosxgPsYUKM2SB5gsqN98m2Pi3LWxoFQvNvhsdAsFpdFF3r7TGjOOREfjYM5ZV950yg4uK
+ k6G49r8wf6Mx8cezrjPLZ4r2ZFoG2asHxie9UP.4bNtxAG4IM.mqwVnlTKekZqQiZTLz_Bj17cwm
+ xKm63qMjOIk7DOa.6LtqvpRUtBURXUvaeM_Ht3zxOiFzNti2uIWHe_TgLB1Oxwuq9AjVjbbS765t
+ bmrABiV9Fo7vSjQsz05BUF.hDGGJ0J8P6FglBUsZQ8_RjvQQf3bqBCtaDxY.FxRJccLqYtld1LTN
+ 8sxCBg5p7ROZkfm.4eKQWZxKCU95dGOMQ2UZ4_W4iouCxnvHopWaEH_LbbF9D2X7ppTGEfhZemHG
+ YRk63E5.nbUzhbMMb7tJ2uD5wGRNWB.xP82Pvu0T43GjWF1RqQTcOUQ05fFKH8oM7yWn2r08qrde
+ YlGzM6h._K2AZhQVtmtOz1V4Tw7A6L_PJoW3k9yXZPKOExpa4w9fQwC_07nbL2zINBUcK.M3hZXU
+ HqBAwNtymZrEDBBbBx0KalXzHjanLecpqJM_17hkjgGAUZLztlqVfVXhe9n_wE9ENkxu4yE1Nx3.
+ XPp7mampixioco7rJHMcn2zniC3hMo5.jR5sKDv9zmE2vNhg0S.OktibbTIykMbBrwqReeZc2g0q
+ 9qmXJG28iujmdsPmPwQw9T37Vd_fEVhq11S9ekqxXWc3PxY9Dm0Ah7HFb3_LK1TBreivRlsd.nnU
+ A8zgc3ZFHfiMAZTwUBVZHdXfQepIBDY.vkg5LKsRKGVyOsTC5UnydFs2D0HeLjrWn6WmI7gyMTZH
+ TfvDXS69cZnJmf_1VbHANsbRlSF6lxu0zx1VPg_tHnRBx_w.Cg8G58G6aIIgRAWc.h7T6jUuurCX
+ eNk7crVu1iNuKwUSVQC5EPq52YD_pmpcAoyD7sViTckmRgMtaASfTHXrXLfRQC1EBLfA4T4AJHYY
+ BUBAJextuet6hlSb7xEUaWTDw3aiztRj0zYg9zQA38vvR729LKxRFpMlGFdV7mk1ylxyUUU5T_bC
+ DTrn7pMS0C5pSTNUrV6236XgJBfGsaBvmuSuE9Jzzg3LtHF6jvaZSKt2vGIHz2b72URYgnNop8np
+ O0.1b_f4ONADTWqSKxq2sH6f8r7HrbUAQMACtFgQcnMBVDHmrPcQTlfoq7hPXLRYgpADq51In5Fh
+ yR6HF_Q_3HM.mr2YGNjRz99HEzq6Vw7Muqp4rvXXOgx4ummfcxfYK6Crh8zLUU8g6sdK_sUdfLP_
+ aCD1LlGg39BoQJBX8kWIoO9XbhAQG.P2cBmd2kqlF8qJu7Lcu.g5D0en9GRKCyd9Vdygx8HgGjs5
+ 7yNj2A0qkVcEEek6BLKZ4L2nYuVtBL0zov7pabYkTS8.JhW1djxw6L0qowZrfqiAcYoG87Ht.Vsb
+ Nr3MAigt3RrfN1IVPrLmMD3uhpBEAOIc4DKJ8gnN_e1y10YOWmh68FloWXYNE.i_2HbRMxhg0Qz7
+ m3v9vVBlTRQLNlWBta0q9EkkGGQO5tmldCxCOf8RM.zzM3bMcOa45ZAhUHu9DSLrSWZg39lgm3Nh
+ W5PAl.pZQRlhAF7XqOazadvHZ1Tv.mMgnW.fdqAvXQ4FWpNoNPfyKV1Jl31HlRF6I42MU0AWoJua
+ XynMGfDBwr581SQw5mrxmKLAlK01iMseKpPxbWG8kazswaSh_uA0DbHbn6elNw24It3Jizvu72gk
+ HuztlFpbExSkw_hDr8z5MCQ7xuy5kiu.s3ZlWVxrZAVpqsFagMe8TBrB76kMRlsMvhf9Glr3vb0i
+ lYqmiYQr2QIX99ueYT3TcIvsbmTnBGXywWL14jQ7GgZctdUPz.pJcBrj_n13aqQRyU2F0oNoE7fQ
+ .hESdWSJNTIL8uGz5TaX6_HLvrLXGh58PS1wZ2c8kikNqPN_SMxHJYChugaVLVmnPfCwQyR6svNu
+ VYm1y3GYxPz4zoHTOkXl2lljj2c7eLVz2ow1L6z7Kg.NFi2opK3N1RbmtTELPcoMb.8w7vE.O8A2
+ D8s8QNzXpdQh_9lsgDt8FwSEALh56nenFk_Ms15tNNWCbbvQsR3x65Y13rFVv6vyI8QgqY2DwlO8
+ wOTiOe2CoObkAjzsV_A_3.fbdDEb6Swhdly6l1Df_wb_nrSyPbfWGvP_5fgOjcO_OXjytfz2mm.J
+ wlEMbRy7WyQr8JuIn7lqR._UONYP4sOyWltxk9d5ZgD9ddTnLgo_4IzYSwnjUJ_pPM9auCogb7_9
+ y1DIyr3X8QfExue40.bFS.G8l45v5t8F4MN.E
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 75c47b77-9dc4-449b-a3dd-0f89cbb378f9
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Sun, 25 Aug 2024 19:11:06 +0000
+X-Sonic-ID: 180a0a24-8275-41a3-a658-e31d44370de4
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Sun, 25 Aug 2024 19:11:07 +0000
 Received: by hermes--production-gq1-5d95dc458-rvnnh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6fc1ee0505485e3267054d717b5fc74f;
-          Sun, 25 Aug 2024 19:00:56 +0000 (UTC)
+          Sun, 25 Aug 2024 19:00:57 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -67,9 +67,9 @@ Cc: jmorris@namei.org,
 	stephen.smalley.work@gmail.com,
 	linux-kernel@vger.kernel.org,
 	mic@digikod.net
-Subject: [PATCH 01/13] LSM: Add the lsmblob data structure.
-Date: Sun, 25 Aug 2024 12:00:36 -0700
-Message-ID: <20240825190048.13289-2-casey@schaufler-ca.com>
+Subject: [PATCH 02/13] LSM: Use lsmblob in security_audit_rule_match
+Date: Sun, 25 Aug 2024 12:00:37 -0700
+Message-ID: <20240825190048.13289-3-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240825190048.13289-1-casey@schaufler-ca.com>
 References: <20240825190048.13289-1-casey@schaufler-ca.com>
@@ -81,161 +81,348 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When more than one security module is exporting data to audit and
-networking sub-systems a single 32 bit integer is no longer
-sufficient to represent the data. Add a structure to be used instead.
+Change the secid parameter of security_audit_rule_match
+to a lsmblob structure pointer. Pass the entry from the
+lsmblob structure for the approprite slot to the LSM hook.
 
-The lsmblob structure definition is intended to keep the LSM
-specific information private to the individual security modules.
-The module specific information is included in a new set of
-header files under include/lsm. Each security module is allowed
-to define the information included for its use in the lsmblob.
-SELinux includes a u32 secid. Smack includes a pointer into its
-global label list. The conditional compilation based on feature
-inclusion is contained in the include/lsm files.
+Change the users of security_audit_rule_match to use the
+lsmblob instead of a u32. The scaffolding function lsmblob_init()
+fills the blob with the value of the old secid, ensuring that
+it is available to the appropriate module hook. The sources of
+the secid, security_task_getsecid() and security_inode_getsecid(),
+will be converted to use the blob structure later in the series.
+At the point the use of lsmblob_init() is dropped.
 
-Suggested-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- include/linux/lsm/apparmor.h | 17 +++++++++++++++++
- include/linux/lsm/bpf.h      | 16 ++++++++++++++++
- include/linux/lsm/selinux.h  | 16 ++++++++++++++++
- include/linux/lsm/smack.h    | 17 +++++++++++++++++
- include/linux/security.h     | 20 ++++++++++++++++++++
- 5 files changed, 86 insertions(+)
- create mode 100644 include/linux/lsm/apparmor.h
- create mode 100644 include/linux/lsm/bpf.h
- create mode 100644 include/linux/lsm/selinux.h
- create mode 100644 include/linux/lsm/smack.h
+ include/linux/lsm_hook_defs.h       |  3 ++-
+ include/linux/security.h            |  7 ++++---
+ kernel/auditfilter.c                | 11 +++++++----
+ kernel/auditsc.c                    | 18 ++++++++++++++----
+ security/apparmor/audit.c           |  8 ++++++--
+ security/apparmor/include/audit.h   |  2 +-
+ security/integrity/ima/ima_policy.c | 11 +++++++----
+ security/security.c                 |  7 ++++---
+ security/selinux/include/audit.h    |  5 +++--
+ security/selinux/ss/services.c      | 11 ++++++++---
+ security/smack/smack_lsm.c          | 11 ++++++++---
+ 11 files changed, 64 insertions(+), 30 deletions(-)
 
-diff --git a/include/linux/lsm/apparmor.h b/include/linux/lsm/apparmor.h
-new file mode 100644
-index 000000000000..8ff1cd899a20
---- /dev/null
-+++ b/include/linux/lsm/apparmor.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Linux Security Module interface to other subsystems.
-+ * AppArmor presents a single u32 value which is known as a secid.
-+ */
-+#ifndef __LINUX_LSM_APPARMOR_H
-+#define __LINUX_LSM_APPARMOR_H
-+
-+struct aa_label;
-+
-+struct lsmblob_apparmor {
-+#ifdef CONFIG_SECURITY_APPARMOR
-+	struct aa_label *label;
-+#endif
-+};
-+
-+#endif /* ! __LINUX_LSM_APPARMOR_H */
-diff --git a/include/linux/lsm/bpf.h b/include/linux/lsm/bpf.h
-new file mode 100644
-index 000000000000..48abdcd82ded
---- /dev/null
-+++ b/include/linux/lsm/bpf.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Linux Security Module interface to other subsystems.
-+ * BPF may present a single u32 value.
-+ */
-+#ifndef __LINUX_LSM_BPF_H
-+#define __LINUX_LSM_BPF_H
-+#include <linux/types.h>
-+
-+struct lsmblob_bpf {
-+#ifdef CONFIG_BPF_LSM
-+	u32 secid;
-+#endif
-+};
-+
-+#endif /* ! __LINUX_LSM_BPF_H */
-diff --git a/include/linux/lsm/selinux.h b/include/linux/lsm/selinux.h
-new file mode 100644
-index 000000000000..fd16456b36ac
---- /dev/null
-+++ b/include/linux/lsm/selinux.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Linux Security Module interface to other subsystems.
-+ * SELinux presents a single u32 value which is known as a secid.
-+ */
-+#ifndef __LINUX_LSM_SELINUX_H
-+#define __LINUX_LSM_SELINUX_H
-+#include <linux/types.h>
-+
-+struct lsmblob_selinux {
-+#ifdef CONFIG_SECURITY_SELINUX
-+	u32 secid;
-+#endif
-+};
-+
-+#endif /* ! __LINUX_LSM_SELINUX_H */
-diff --git a/include/linux/lsm/smack.h b/include/linux/lsm/smack.h
-new file mode 100644
-index 000000000000..2018f288302f
---- /dev/null
-+++ b/include/linux/lsm/smack.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Linux Security Module interface to other subsystems.
-+ * Smack presents a pointer into the global Smack label list.
-+ */
-+#ifndef __LINUX_LSM_SMACK_H
-+#define __LINUX_LSM_SMACK_H
-+
-+struct smack_known;
-+
-+struct lsmblob_smack {
-+#ifdef CONFIG_SECURITY_SMACK
-+	struct smack_known *skp;
-+#endif
-+};
-+
-+#endif /* ! __LINUX_LSM_SMACK_H */
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 855db460e08b..1d3bdf71109e 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -416,7 +416,8 @@ LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
+ LSM_HOOK(int, 0, audit_rule_init, u32 field, u32 op, char *rulestr,
+ 	 void **lsmrule, gfp_t gfp)
+ LSM_HOOK(int, 0, audit_rule_known, struct audit_krule *krule)
+-LSM_HOOK(int, 0, audit_rule_match, u32 secid, u32 field, u32 op, void *lsmrule)
++LSM_HOOK(int, 0, audit_rule_match, struct lsmblob *blob, u32 field, u32 op,
++	 void *lsmrule)
+ LSM_HOOK(void, LSM_RET_VOID, audit_rule_free, void *lsmrule)
+ #endif /* CONFIG_AUDIT */
+ 
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 1390f1efb4f0..0057a22137e8 100644
+index 0057a22137e8..c0ed2119a622 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -34,6 +34,10 @@
- #include <linux/sockptr.h>
- #include <linux/bpf.h>
- #include <uapi/linux/lsm.h>
-+#include <linux/lsm/selinux.h>
-+#include <linux/lsm/smack.h>
-+#include <linux/lsm/apparmor.h>
-+#include <linux/lsm/bpf.h>
+@@ -2071,7 +2071,8 @@ static inline void security_key_post_create_or_update(struct key *keyring,
+ int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule,
+ 			     gfp_t gfp);
+ int security_audit_rule_known(struct audit_krule *krule);
+-int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
++int security_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
++			      void *lsmrule);
+ void security_audit_rule_free(void *lsmrule);
  
- struct linux_binprm;
- struct cred;
-@@ -140,6 +144,22 @@ enum lockdown_reason {
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
+ #else
+@@ -2087,8 +2088,8 @@ static inline int security_audit_rule_known(struct audit_krule *krule)
+ 	return 0;
+ }
  
-+/* scaffolding */
-+struct lsmblob_scaffold {
-+	u32 secid;
-+};
+-static inline int security_audit_rule_match(u32 secid, u32 field, u32 op,
+-					    void *lsmrule)
++static inline int security_audit_rule_match(struct lsmblob *blob, u32 field,
++					    u32 op, void *lsmrule)
+ {
+ 	return 0;
+ }
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index d6ef4f4f9cba..c4c7cda3b846 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1339,8 +1339,8 @@ int audit_filter(int msgtype, unsigned int listtype)
+ 
+ 		for (i = 0; i < e->rule.field_count; i++) {
+ 			struct audit_field *f = &e->rule.fields[i];
++			struct lsmblob blob = { };
+ 			pid_t pid;
+-			u32 sid;
+ 
+ 			switch (f->type) {
+ 			case AUDIT_PID:
+@@ -1370,9 +1370,12 @@ int audit_filter(int msgtype, unsigned int listtype)
+ 			case AUDIT_SUBJ_SEN:
+ 			case AUDIT_SUBJ_CLR:
+ 				if (f->lsm_rule) {
+-					security_current_getsecid_subj(&sid);
+-					result = security_audit_rule_match(sid,
+-						   f->type, f->op, f->lsm_rule);
++					/* scaffolding */
++					security_current_getsecid_subj(
++							&blob.scaffold.secid);
++					result = security_audit_rule_match(
++						   &blob, f->type, f->op,
++						   f->lsm_rule);
+ 				}
+ 				break;
+ 			case AUDIT_EXE:
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 6f0d6fb6523f..23adb15cae43 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -471,6 +471,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 	const struct cred *cred;
+ 	int i, need_sid = 1;
+ 	u32 sid;
++	struct lsmblob blob = { };
+ 	unsigned int sessionid;
+ 
+ 	if (ctx && rule->prio <= ctx->prio)
+@@ -681,7 +682,10 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 					security_current_getsecid_subj(&sid);
+ 					need_sid = 0;
+ 				}
+-				result = security_audit_rule_match(sid, f->type,
++				/* scaffolding */
++				blob.scaffold.secid = sid;
++				result = security_audit_rule_match(&blob,
++								   f->type,
+ 								   f->op,
+ 								   f->lsm_rule);
+ 			}
+@@ -696,15 +700,19 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 			if (f->lsm_rule) {
+ 				/* Find files that match */
+ 				if (name) {
++					/* scaffolding */
++					blob.scaffold.secid = name->osid;
+ 					result = security_audit_rule_match(
+-								name->osid,
++								&blob,
+ 								f->type,
+ 								f->op,
+ 								f->lsm_rule);
+ 				} else if (ctx) {
+ 					list_for_each_entry(n, &ctx->names_list, list) {
++						/* scaffolding */
++						blob.scaffold.secid = n->osid;
+ 						if (security_audit_rule_match(
+-								n->osid,
++								&blob,
+ 								f->type,
+ 								f->op,
+ 								f->lsm_rule)) {
+@@ -716,7 +724,9 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 				/* Find ipc objects that match */
+ 				if (!ctx || ctx->type != AUDIT_IPC)
+ 					break;
+-				if (security_audit_rule_match(ctx->ipc.osid,
++				/* scaffolding */
++				blob.scaffold.secid = ctx->ipc.osid;
++				if (security_audit_rule_match(&blob,
+ 							      f->type, f->op,
+ 							      f->lsm_rule))
+ 					++result;
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 6b5181c668b5..758b75a9c1c5 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -264,13 +264,17 @@ int aa_audit_rule_known(struct audit_krule *rule)
+ 	return 0;
+ }
+ 
+-int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
++int aa_audit_rule_match(struct lsmblob *blob, u32 field, u32 op, void *vrule)
+ {
+ 	struct aa_audit_rule *rule = vrule;
+ 	struct aa_label *label;
+ 	int found = 0;
+ 
+-	label = aa_secid_to_label(sid);
++	/* scaffolding */
++	if (!blob->apparmor.label && blob->scaffold.secid)
++		label = aa_secid_to_label(blob->scaffold.secid);
++	else
++		label = blob->apparmor.label;
+ 
+ 	if (!label)
+ 		return -ENOENT;
+diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
+index 0c8cc86b417b..c5a516e61318 100644
+--- a/security/apparmor/include/audit.h
++++ b/security/apparmor/include/audit.h
+@@ -202,6 +202,6 @@ static inline int complain_error(int error)
+ void aa_audit_rule_free(void *vrule);
+ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule, gfp_t gfp);
+ int aa_audit_rule_known(struct audit_krule *rule);
+-int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule);
++int aa_audit_rule_match(struct lsmblob *blob, u32 field, u32 op, void *vrule);
+ 
+ #endif /* __AA_AUDIT_H */
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 09da8e639239..40119816b848 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -635,7 +635,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+ 		return false;
+ 	for (i = 0; i < MAX_LSM_RULES; i++) {
+ 		int rc = 0;
+-		u32 osid;
++		struct lsmblob blob = { };
+ 
+ 		if (!lsm_rule->lsm[i].rule) {
+ 			if (!lsm_rule->lsm[i].args_p)
+@@ -649,15 +649,18 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+ 		case LSM_OBJ_USER:
+ 		case LSM_OBJ_ROLE:
+ 		case LSM_OBJ_TYPE:
+-			security_inode_getsecid(inode, &osid);
+-			rc = ima_filter_rule_match(osid, lsm_rule->lsm[i].type,
++			/* scaffolding */
++			security_inode_getsecid(inode, &blob.scaffold.secid);
++			rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
+ 						   Audit_equal,
+ 						   lsm_rule->lsm[i].rule);
+ 			break;
+ 		case LSM_SUBJ_USER:
+ 		case LSM_SUBJ_ROLE:
+ 		case LSM_SUBJ_TYPE:
+-			rc = ima_filter_rule_match(secid, lsm_rule->lsm[i].type,
++			/* scaffolding */
++			blob.scaffold.secid = secid;
++			rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
+ 						   Audit_equal,
+ 						   lsm_rule->lsm[i].rule);
+ 			break;
+diff --git a/security/security.c b/security/security.c
+index 8cee5b6c6e6d..64a6d6bbd1f4 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5399,7 +5399,7 @@ void security_audit_rule_free(void *lsmrule)
+ 
+ /**
+  * security_audit_rule_match() - Check if a label matches an audit rule
+- * @secid: security label
++ * @lsmblob: security label
+  * @field: LSM audit field
+  * @op: matching operator
+  * @lsmrule: audit rule
+@@ -5410,9 +5410,10 @@ void security_audit_rule_free(void *lsmrule)
+  * Return: Returns 1 if secid matches the rule, 0 if it does not, -ERRNO on
+  *         failure.
+  */
+-int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
++int security_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
++			      void *lsmrule)
+ {
+-	return call_int_hook(audit_rule_match, secid, field, op, lsmrule);
++	return call_int_hook(audit_rule_match, blob, field, op, lsmrule);
+ }
+ #endif /* CONFIG_AUDIT */
+ 
+diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
+index 29c7d4c86f6d..104165e4c931 100644
+--- a/security/selinux/include/audit.h
++++ b/security/selinux/include/audit.h
+@@ -41,7 +41,7 @@ void selinux_audit_rule_free(void *rule);
+ 
+ /**
+  *	selinux_audit_rule_match - determine if a context ID matches a rule.
+- *	@sid: the context ID to check
++ *	@blob: includes the context ID to check
+  *	@field: the field this rule refers to
+  *	@op: the operator the rule uses
+  *	@rule: pointer to the audit rule to check against
+@@ -49,7 +49,8 @@ void selinux_audit_rule_free(void *rule);
+  *	Returns 1 if the context id matches the rule, 0 if it does not, and
+  *	-errno on failure.
+  */
+-int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *rule);
++int selinux_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
++			     void *rule);
+ 
+ /**
+  *	selinux_audit_rule_known - check to see if rule contains selinux fields.
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index e33e55384b75..43eb1d46942c 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -3633,7 +3633,8 @@ int selinux_audit_rule_known(struct audit_krule *rule)
+ 	return 0;
+ }
+ 
+-int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
++int selinux_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
++			     void *vrule)
+ {
+ 	struct selinux_state *state = &selinux_state;
+ 	struct selinux_policy *policy;
+@@ -3659,10 +3660,14 @@ int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
+ 		goto out;
+ 	}
+ 
+-	ctxt = sidtab_search(policy->sidtab, sid);
++	/* scaffolding */
++	if (!blob->selinux.secid && blob->scaffold.secid)
++		blob->selinux.secid = blob->scaffold.secid;
 +
-+/*
-+ * Data exported by the security modules
-+ */
-+struct lsmblob {
-+	struct lsmblob_selinux selinux;
-+	struct lsmblob_smack smack;
-+	struct lsmblob_apparmor apparmor;
-+	struct lsmblob_bpf bpf;
-+	struct lsmblob_scaffold scaffold;
-+};
-+
- extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
- extern u32 lsm_active_cnt;
- extern const struct lsm_id *lsm_idlist[];
++	ctxt = sidtab_search(policy->sidtab, blob->selinux.secid);
+ 	if (unlikely(!ctxt)) {
+ 		WARN_ONCE(1, "selinux_audit_rule_match: unrecognized SID %d\n",
+-			  sid);
++			  blob->selinux.secid);
+ 		match = -ENOENT;
+ 		goto out;
+ 	}
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4164699cd4f6..52d5ef986db8 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4776,7 +4776,7 @@ static int smack_audit_rule_known(struct audit_krule *krule)
+ 
+ /**
+  * smack_audit_rule_match - Audit given object ?
+- * @secid: security id for identifying the object to test
++ * @blob: security id for identifying the object to test
+  * @field: audit rule flags given from user-space
+  * @op: required testing operator
+  * @vrule: smack internal rule presentation
+@@ -4784,7 +4784,8 @@ static int smack_audit_rule_known(struct audit_krule *krule)
+  * The core Audit hook. It's used to take the decision of
+  * whether to audit or not to audit a given object.
+  */
+-static int smack_audit_rule_match(u32 secid, u32 field, u32 op, void *vrule)
++static int smack_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
++				  void *vrule)
+ {
+ 	struct smack_known *skp;
+ 	char *rule = vrule;
+@@ -4797,7 +4798,11 @@ static int smack_audit_rule_match(u32 secid, u32 field, u32 op, void *vrule)
+ 	if (field != AUDIT_SUBJ_USER && field != AUDIT_OBJ_USER)
+ 		return 0;
+ 
+-	skp = smack_from_secid(secid);
++	/* scaffolding */
++	if (!blob->smack.skp && blob->scaffold.secid)
++		skp = smack_from_secid(blob->scaffold.secid);
++	else
++		skp = blob->smack.skp;
+ 
+ 	/*
+ 	 * No need to do string comparisons. If a match occurs,
 -- 
 2.41.0
 
