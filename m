@@ -1,135 +1,186 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx5.ucr.edu (mx5.ucr.edu [138.23.62.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E0518892E;
-	Fri, 23 Aug 2024 15:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572522A1DC
+	for <linux-security-module@vger.kernel.org>; Sun, 25 Aug 2024 05:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427748; cv=none; b=gNzcyrHb9uKf2YfQtTfhyAaKNk+0jVsa2VmWgw39xt2B7MAXQIdUP0sueCovX3FBy0OnpLp25QesgxoGoFEi1I0sodaPNIgH7D5Kyz42ZsJTvCtknKvnal2VUx+0g76xPBomiFdbxR6/86ZaPanDhprZEWSRQG/kECGD72f41bA=
+	t=1724563409; cv=none; b=ar/HuGzEN67W/tIskMC5FLkbkr9MeCtlT1iPUoyab0HHsV69V//qXIk5ion2sskSPD5e91+nXB33Np7738LqY/v37Nc2OkmD6RtPySp+RyhzOKiyCAvGnzRGPtUdxM6z4yMvPdhW62+NC+l96YNJpWmV9je/zWHf3h0HjhQSEX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427748; c=relaxed/simple;
-	bh=ozVaMZMzlEunYoalye+a5ILWxPlPLHjRr4DnIYFUsvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d6ejNImELhb4xq+ok7TYPfd/E+pul1KzffC90uA3PJgef/Xnaz16ENC8zTC2OSrV+nmjsQxH/PQGtRyxDFCe0TC1mEVjSapb1D7GcnApkhr1EovOxviOhHZcgEqOP/pjpBG6pCHgoQJGwoRVko5YOAveOhvGXBNyO97PB+RWF9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIBQAKx1; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724563409; c=relaxed/simple;
+	bh=5bRKrr+T/+bhtWSuhnwGY6n4BSJoLjmfHeNbXUOCK9A=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=URiArnijlAETwOAw6wxzIfFw87OFpobpywT8e6NEcUi4b3iPmHUttU3EM7b+aC3f91nbWDEerACENpb29xUcus7ZR3Um5YjqWz1snb2sTKbnyHsQ2+ZL/2Lk0zzXpAWwpBeVgc06bwJoP+pdV7aUd7cFcxszGuhy/kQB4zKodqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=pBJ0Ylue; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=QKxExIX2; arc=none smtp.client-ip=138.23.62.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIBQAKx1"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a869f6ce2b9so164459866b.2;
-        Fri, 23 Aug 2024 08:42:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="pBJ0Ylue";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="QKxExIX2"
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724563408; x=1756099408;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:content-type:content-transfer-encoding:
+   x-cse-connectionguid:x-cse-msgguid;
+  bh=5bRKrr+T/+bhtWSuhnwGY6n4BSJoLjmfHeNbXUOCK9A=;
+  b=pBJ0YlueG4OwGl55DBkaRPBHetYWjQEwe6RqIMyi3+kF1m8jDk+8NUsg
+   NBhhz3tqJtpnRC7DdktCUX26evHEahyFBqmKtZwK4/+5UUCvMswmjbhFI
+   xd1g7WibaHuX473m4RjB2hQpaTlbq/loL0i19/bdHh19ZRyKPWaCvOA9z
+   pYB9WTBa9xf0dDYDCVWxE5KXUSUs/tCvYR/KiAdFZ/cODm+K93Ly7zj6S
+   bk1os1PcwTJ3D8kdDmPByypLL8EiEjntWMgFXqPaZ8iK/A7kmKnSMyMQR
+   aoNri5vUzYhi0AfN5VuwC2qP3B8kdOi2HZMBLM24mPQAPEpThpubOer2K
+   Q==;
+X-CSE-ConnectionGUID: ZFytQbAdQSi64k60EXshxQ==
+X-CSE-MsgGUID: 3hMMr8WnTA+TQbc8Fch0UQ==
+Received: from mail-ot1-f69.google.com ([209.85.210.69])
+  by smtpmx5.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 24 Aug 2024 22:23:27 -0700
+Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-7094db8ec7dso5091452a34.0
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Aug 2024 22:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724427745; x=1725032545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0TYS+xEsshX9UAS+TaWrNxlareZOo0Dp8nInchxHJ2I=;
-        b=gIBQAKx1VJNoV8pjcgksZgLelDgpV3QSjw50NdzJcIEQWMpoOjPIgkjDt/sl29Y5J2
-         SpqTm39vTMQCrGy8CA4cXkXDNa5FINuZMjzP/0DaMhAFeQgl8G58edpgDi2TwAH7g4ht
-         Z69rBQv65XJVRok8NUQaMTIc/LusSis98lMMbPhtEivfvybaRSfegZWpVQkGhu/3wvwH
-         iprUS+gtICodB4rsfbhvizCffldPLoyOsOoVRS72+FyvxZLegRzMvTBMyNVSTDcoxO/8
-         fFlV6FHneM189HV8voUW+wTSFzbrEVLffbdU2tNv6uKmTH7Dda7UuKv/rupS4iP/JeDV
-         FiIg==
+        d=ucr.edu; s=rmail; t=1724563407; x=1725168207; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bx/YNFW2qlZwtm15Rp0Dif01ECRBK53Yl/ExQSV8X9c=;
+        b=QKxExIX2yweeZk9skpXHW8ez3QUcaMGaSXNSd/To60byA86Gjci3fYEJM9boK1uX57
+         wDkJVUqiEx9FoNC+XB7vFs2pCVtiXWX8Wf/H+LbSdZXsB4S2Y47QKqlWiG7ybsfJYA6n
+         BNrXwg6jPZGC3wEDVQY82ZkMPT+MW9FdYJp0g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427745; x=1725032545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0TYS+xEsshX9UAS+TaWrNxlareZOo0Dp8nInchxHJ2I=;
-        b=Mb6CX5inPZs7j6cz87+GYJQBGvcK6gdlqE1MMs51wAmLnFsP4RGD1bwgSuDtXybJfT
-         VAOimVyew4cefu3aUtZnxEe6nbvB8pjOpt8BQEx1hbWp04VjW0L15Sv//h764mQrTj7d
-         zVdOdYnc2VqxRPfqLp8+w0uREwOp+b3/qJf17W5C6VuQ2zofCXWAayHIvtGCV/Tnzou+
-         mhlewt3G/MxcvsBkiaieDGKSURdiaxgKKE7OUCBL+Cx5h2FSlzIxrsrCYVCd8aE2hE0g
-         PGwVRQ0FuFSEjzi5Tyd9zkVJ+37iegF8OvAlJOG3o7loViw3eWQp1rr4Y9NxlEHo/gYd
-         nCEw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6PNv/xAdrgWvFd1K/Z81rzLmB+Rz1VMuSiQYO8hpe+1cfb1XR0nALoMiXmrZUiRRq8wgFOMj8703tr3AE/vW2n1ObMNEm@vger.kernel.org, AJvYcCXj2DJHCDPrKhZryIVh4juy1atWVAXaeJF3w/tjGi73Vhn114YH+5pky4+hbvnoKfFDvkwLOgkEC0TieDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm+Co6PyofRAiJpzJ+YjURF5dPlNYFGgL5F/jOvg0elvF/fbEq
-	cTI9XKcJmgqCI5zD1ehA45AYn5UKq5IUddyOFJBVmZRbI13n0Jt240MCbmxhaJgrCkBINsQaBwQ
-	FvEx4rq41k7Stpj3Ym53PtPx8PNU=
-X-Google-Smtp-Source: AGHT+IE36zvLW744blLQ8uj+7EabB3QmizofjvMCYCI1USiH3IqIsUqxQKRNS5nJdNqbpIUGaDr/2f1EX4gqiJ7gUnw=
-X-Received: by 2002:a17:906:cac7:b0:a86:9cff:6798 with SMTP id
- a640c23a62f3a-a86a52ec035mr192799266b.30.1724427744985; Fri, 23 Aug 2024
- 08:42:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724563407; x=1725168207;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bx/YNFW2qlZwtm15Rp0Dif01ECRBK53Yl/ExQSV8X9c=;
+        b=ZB336UmUNh2RH4iab+BiRwomAmxCbPxwvIudGSHsnGZoxGlhSOH9CPwfr4mRl1c7Nw
+         9YvAlNlVzQFrdMy2ZKQGc4ypp3g7w23CCwyqrc1782EKAsUSA1XjrnTIioclrZsBMoBI
+         fNmxsAvHZVNtVprUaGZyy7w2nvXawed8Wbuc+Fa7a5yecuU+0Jegb1rnMH6LLVi+yK/w
+         QpncWnn9DnnSptqBkGck55cHgrtReRK3Ity5d2EXphShyniPhq5qq9IzdClMnrYSTdaB
+         evk9jB99WB/O9hj+FL27BZlbixvmbOkRodGZWoeIxh4h36WIcUE+mGwSdKDAEVR4+qFk
+         Q6aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOsd+pOMyOzLCl7b+dJ+n9QB+DdZyYca5wFOpcZ6Yg0IjdPUGNcGiN29OngnkUVCvUVe+T2noXehMCo9VNuBjOcg8be8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDA0kzrF8ny9tuQqW7qfqmq2Ei2J7VQHyrpzoiwtzWmCUnl2ec
+	Ia/YIH+vD41r9EkEKbltOtxMnnNWNRGMc8fKVsuojI89Pwogg7YnYlp94TxDm5mg4Ahiwbe1eV7
+	4l44lZKt83NNc+S8ftBi8556hb41ZNJcXs0WcToRA6x6czF3+ICwA10gIkrZHkHr5IScvResU4U
+	NHkGH2QiDpSTWI0Pv7WcOeimgvQxjNb1KuBJ6+4GlgRGa6Np3yfQ==
+X-Received: by 2002:a05:6830:d8b:b0:709:3fb0:3bee with SMTP id 46e09a7af769-70e0ec110e4mr9872722a34.27.1724563406748;
+        Sat, 24 Aug 2024 22:23:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBiMSgpHxK06kD9SbKkHv+QsYVEql8gZ8Qo1CNJ+QEw5jIlBgYUTA/WOvCzDBatR/JWP2fjNfem28jbFF+WCg=
+X-Received: by 2002:a05:6830:d8b:b0:709:3fb0:3bee with SMTP id
+ 46e09a7af769-70e0ec110e4mr9872711a34.27.1724563406431; Sat, 24 Aug 2024
+ 22:23:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822131542.785546-1-mjguzik@gmail.com> <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
- <CAGudoHEjjuGOwf=KkZjNUTPXSr6E8w8Dvz6=_CiKVHsUOY8KeA@mail.gmail.com> <CAHk-=wh84ATUBUZG4DtoY-=Jo-WKwDcfNUdOGw0_PzEr85rLqw@mail.gmail.com>
-In-Reply-To: <CAHk-=wh84ATUBUZG4DtoY-=Jo-WKwDcfNUdOGw0_PzEr85rLqw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 23 Aug 2024 17:42:11 +0200
-Message-ID: <CAGudoHGBuSL2p_mWOcaY+T9TV_2zRrPjk+E3BFJu6o4iHcBL4w@mail.gmail.com>
-Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+From: Xingyu Li <xli399@ucr.edu>
+Date: Sat, 24 Aug 2024 22:23:16 -0700
+Message-ID: <CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com>
+Subject: WARNING in process_measurement
+To: zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 5:26=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, 23 Aug 2024 at 20:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > On Fri, Aug 23, 2024 at 2:06=E2=80=AFAM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > >
-> > > Yes, it is rarely actually written to and as such can be "mostly
-> > > read-only", but since it is both read and written next to refcounts,
-> > > why do that?
-> > >
-> > > Did I miss some common use?
-> > >
-> >
-> > It gets looked at every time you grab a ref.
->
-> Mateusz - read my email. That's what I daid.
->
-> But the *ref* is already in cacheline 0. With your change it looked like =
-this:
->
->    struct cred {
->         atomic_long_t   usage;
->         struct rcu_head rcu;            /* RCU deletion hook */
->
-> and if you had kept the union with that 'struct rcu_head', then
-> 'non_rcu' would be RIGHT THERE.
->
+Hi,
 
-Huh, it's been a while since I wrote this patch. the rcu thing used to
-be at the end I forgot I moved *that* var as well (apart from just
-keys stuff), but I still support non_rcu being elsewhere (see below)
+We found a bug in Linux 6.10. This is likely a mutex corruption bug,
+where the mutex's internal state has been compromised, leading to an
+integrity check failure. The bug occurs in
+https://elixir.bootlin.com/linux/v6.10/source/security/integrity/ima/ima_ma=
+in.c#L269.
 
-> > Thus consumers which grab the ref and then look at the most commonly
-> > used fields get the non_rcu + rest combo "for free".
->
-> They'd get it for free JUST BECAUSE IT'S NEXT TO THE REF. In cacheline
-> 0 - that is already dirtied by the reference count. Which makes a
-> *store* cheaper.
->
+The bug report and syzkaller reproducer are as follows:
 
-The store to the non_rcu var happens at most once.
+Bug report:
 
-Suppose multiple threads open and close file objs, this results in a
-stream of atomics on ->usage. With the proposed layout only accesses
-there are rmw within the atomic.
+DEBUG_LOCKS_WARN_ON(lock->magic !=3D lock)
+WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
+__mutex_lock_common kernel/locking/mutex.c:587 [inline]
+WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
+__mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
+Modules linked in:
+CPU: 0 PID: 8057 Comm: cron Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014
+RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
+RIP: 0010:__mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
+Code: 04 20 84 c0 0f 85 13 01 00 00 83 3d fc e5 23 04 00 0f 85 e9 f4
+ff ff 48 c7 c7 60 70 4c 8b 48 c7 c6 e0 70 4c 8b e8 83 f4 54 f6 <0f> 0b
+e9 cf f4 ff ff 0f 0b e9 dc f8 ff ff 0f 0b e9 5b f5 ff ff 48
+RSP: 0018:ffffc9000aa77380 EFLAGS: 00010246
+RAX: 26a6b2d2d0cdac00 RBX: 0000000000000000 RCX: ffff8880241e5a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000aa774d0 R08: ffffffff8155a25a R09: 1ffff1100c74519a
+R10: dffffc0000000000 R11: ffffed100c74519b R12: dffffc0000000000
+R13: ffff888020efc330 R14: 0000000000000000 R15: 1ffff9200154eeb8
+FS:  00007f902ffb1840(0000) GS:ffff888063a00000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f902fb7e06a CR3: 0000000018c3c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ process_measurement+0x536/0x1ff0 security/integrity/ima/ima_main.c:269
+ ima_file_check+0xec/0x170 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0x51/0xb0 security/security.c:2982
+ do_open fs/namei.c:3656 [inline]
+ path_openat+0x2c0b/0x3580 fs/namei.c:3813
+ do_filp_open+0x22d/0x480 fs/namei.c:3840
+ do_sys_openat2+0x13a/0x1c0 fs/open.c:1413
+ do_sys_open fs/open.c:1428 [inline]
+ __do_sys_openat fs/open.c:1444 [inline]
+ __se_sys_openat fs/open.c:1439 [inline]
+ __x64_sys_openat+0x243/0x290 fs/open.c:1439
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7f903019a167
+Code: 25 00 00 41 00 3d 00 00 41 00 74 47 64 8b 04 25 18 00 00 00 85
+c0 75 6b 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d
+00 f0 ff ff 0f 87 95 00 00 00 48 8b 4c 24 28 64 48 2b 0c 25
+RSP: 002b:00007fff194600a0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000564dd2fb9cf0 RCX: 00007f903019a167
+RDX: 0000000000000000 RSI: 00007f902fb7e103 RDI: 00000000ffffff9c
+RBP: 00007f902fb7e103 R08: 0000000000000008 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000564dd2fb9cf0 R14: 0000000000000001 R15: 0000000000000000
+ </TASK>
 
-If non_rcu hangs around in the same cacheline there is additional
-ping-pong to check the field.
 
-> And you also wouldn't waste separate space for it.
->
+Syzkaller reproducer:
+# {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
+Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
+NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
+KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
+Wifi:false IEEE802154:true Sysctl:true Swap:false UseTmpDir:true
+HandleSegv:true Trace:false LegacyOptions:{Collide:false Fault:false
+FaultCall:0 FaultNth:0}}
+r0 =3D openat$ptmx(0xffffffffffffff9c, 0x0, 0x141040, 0x0)
+ioctl$TIOCSETD(r0, 0x5423, 0x0)
+mmap$IORING_OFF_CQ_RING(&(0x7f0000ffc000/0x4000)=3Dnil, 0x4000, 0x2,
+0x20031, 0xffffffffffffffff, 0x8000000)
+mmap$IORING_OFF_SQ_RING(&(0x7f0000ff4000/0xc000)=3Dnil, 0xc000, 0xe,
+0x12, 0xffffffffffffffff, 0x0)
+openat$sndseq(0xffffffffffffff9c, 0x0, 0x902)
+write$syz_spec_18446744072532934322_80(0xffffffffffffffff,
+&(0x7f0000000000)=3D"2b952480c7ca55097d1707935ba64b20f3026c03d658026b81bf26=
+4340512b3cb4e01afda2de754299ea7a113343ab7b9bda2fc0a2e2cdbfecbca0233a0772b12=
+ebde5d98a1203cb871672dff7e4c86ec1dccef0a76312fbe8d45dc2bd0f8fc2ebeb2a6be6a3=
+00916c5281da2c1ef64d66267091b82429976c019da3645557ed1d439c5a637f6bf58c53bc4=
+14539dd87c69098d671402586b631f9ac5c2fe9cedc281a6f005b5c4d1dd5ed9be400",
+0xb4)
+r1 =3D syz_open_dev$sg(&(0x7f00000003c0), 0x0, 0x8000)
+ioctl$syz_spec_1724254976_2866(r1, 0x1, &(0x7f0000000080)=3D{0x0, 0x2,
+[0x85, 0x8, 0x15, 0xd]})
+ioctl$KDGKBDIACR(0xffffffffffffffff, 0x4bfa, 0x0)
 
-I agree space is getting wasted (or rather a hole is there when it
-does not have to be), I just don't think in the current layout this
-matters.
 
-I am not going to die on this hill though, if you insist on non_rcu
-going back to the union I send a v2, but as is this would come with
-*some* loss.
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+Yours sincerely,
+Xingyu
