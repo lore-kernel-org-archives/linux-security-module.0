@@ -1,30 +1,30 @@
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204DF170A11;
-	Mon, 26 Aug 2024 10:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1531714B3;
+	Mon, 26 Aug 2024 10:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669427; cv=none; b=QDvrcZBxNZFMpsf1yhFBgPGnQOOAE3RrNlUmTpYzniSqqFCZ0qR8w1UrkwBtoqW98aYDhYC5El3sWX9i+1YNkaQZCv+LHuS9uJniwMwMgQcRpgp8/GzG7Ef3BeE4SFx3pobwU/spF9uRWY64zAwujxOmpuymHTer1HIeg69LmKA=
+	t=1724669430; cv=none; b=HHNtV3pZ5T1T+y4nley7KYS+jsQ8DBtT2vZZ69bugeNV5/YQ4pgKVnXlriFCO3Hp7KdCyuztxd4OnZ7WfjK7voAkNYO7UiDWG8T1sCwvxNsauBx9aBW2zdRY+1v25XQk3jzhb2W8sIdjXD8tR7IamMlhMr8HFlgAPvP/WEAv/BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669427; c=relaxed/simple;
-	bh=aVJOlXiet+dgYttI41OTey+YsAuz9WNL+K8Ty3dGVJU=;
+	s=arc-20240116; t=1724669430; c=relaxed/simple;
+	bh=3LssYctTpg/gzClVmDqIZ5f7/5HW7bsMHzLhYZuLblc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F787m+ETkMUBP64NCDM/TyERn8J2DA1Mq8h4X74K+kCrzAJHTUDFQ3giqyIHru7OuXV2tFwZj5PXv+Nocf2b98z/SDmq7jdbkdkhgpp9V1IZ3W5D/nGWIdV725+IOcq91zT53g2f3pSabADRIIpk5OvXLmWoj8rcrhL0uIXlkTQ=
+	 MIME-Version; b=FrSUFVmhYY0I8yqRgbeT2Z8r3a0AeP8FhnK3VDGrzGMyNGOoVzLgG2NQle6Nv0Rb8cgFiQ221JTzTCx1PenCJrPv9LEjA2c/0Wkk4TPaCghbxI3+ChDhlO5rFSKZVBpBeubsJgx5+7vCeIaQqoMSe4Niwo8CD5ZWUxnYn2iRXgY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbVw6003429;
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbVex003445;
 	Mon, 26 Aug 2024 05:37:31 -0500
 Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbVdv003428;
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbVW8003444;
 	Mon, 26 Aug 2024 05:37:31 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From: Greg Wettstein <greg@enjellic.com>
 To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jmorris@namei.org
-Subject: [PATCH v4 07/14] Add namespace implementation.
-Date: Mon, 26 Aug 2024 05:37:21 -0500
-Message-Id: <20240826103728.3378-8-greg@enjellic.com>
+Subject: [PATCH v4 11/14] Implement the internal Trusted Modeling Agent.
+Date: Mon, 26 Aug 2024 05:37:25 -0500
+Message-Id: <20240826103728.3378-12-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240826103728.3378-1-greg@enjellic.com>
 References: <20240826103728.3378-1-greg@enjellic.com>
@@ -36,587 +36,822 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TSEM LSM has its own 'namespace' implementation for
-restricting the scope of a security model that is independent of
-other resource namespaces but which acts in much the same manner.
+The model.c file is responsible for managing the security state
+information for a security modeling namespace.  Important to note
+is that the map.c file is responsible for generating the
+coefficients and hence the implementation of the model.  The
+model.c file maintains the state information and makes the
+decision with respect to whether or not a presented event is
+consistent with the model being enforced.
 
-The TSEM control plane is used to signal that a process should
-leave the root security modeling namespace and institute a new
-subordinate modeling namespace.  Process that derive from the
-lead process all contribute security event descriptions to the
-model that is being used to prove the security behavior of the
+By default the TMA runs in free modeling mode where all security
+coefficients and there associated descriptions are considered
+valid and retained as the security execution trajectory for the
 namespace.
 
-Each modeling domain has a unique numeric identifier that is
-implemented as an unsigned 64 bit value that is incremented each
-time a new security modeling namespace is created.  This
-guarantees that every security modeling namespace will have a
-unique identifier associated with it.   The id value of 0 is
-reserved for the root security modeling namespace.
+The model implementation can be 'sealed' through the TSEM control
+plane, a condition that causes any state points not registered in
+the model to be considered a 'forensics' event.  The description
+of such an event is added to the forensics execution trajectory
+for the model.  A forensics event does not result in permission
+to the event to be denied unless the model is placed in
+'enforcing' mode.
 
-Each modeling domain is designated as either internally or
-externally modeled.  An internally modeled domain has its
-security model implemented by a Trusted Modeling Agent (TMA)
-implementation that is run in the context of the kernel.
+The TMA implementation also supports the definition of 'base'
+point that is binary value equal in length to the cryptographic
+hash function being used by the security modeling namespace.
+This base point is used to linear extend each security state
+coefficient before it is added to the model.  This allows a
+relying part to confirm the 'freshnes' of the functional state of
+the model.
 
-Externally modeled domains have a description of the security
-event exported to a trust orchestrator running in userspace.
-That trust orchestrator has an associated Trusted Modeling Agent
-that implements the root of trust for the security namespace.
+The modeling implementation supports two different functional
+values for the model being implemented.  The classic linear
+extension sum of all the security state points and a value
+referred to as the 'state' of the security model.
 
-A process that exports a security event description is scheduled
-away into an interruptible sleep state, with the exception of
-event handlers that are running in atomic context.  The trust
-orchestrator that created the external modeling domain is
-responsible for using the TSEM control plane to wake the process
-up and set the trust status of the process to be trusted or
-untrusted.  The trust orchestrator also has the responsibility of
-addressing the status of a workload that has generated a model
-violating event that occurs in atomic context.
+The classic linear extension sum is similar to what would be
+implemented by a Platform Configuration Register in a Trusted
+Platform Module.  It can be used verify the order in which
+security event occurred but is also fragile with respect to
+process scheduling dependencies, particularly on SMP platforms.
 
-The namespace exists until the last task running in the context
-of the namespace exits.  The resources associated with the
-namespace are released at that time.
+The 'state' value is designed to make the measurement value
+invariant to these scheduling induced variations.  The state
+value is computed by sorting the security event state points in
+the model in big-endian (natural hash byte order) format and then
+computing the extension sum over this sorted vector of points.
+
+This value verifies that the model has only existed in a
+prescribed set of security states.
 ---
- security/tsem/namespace.c | 530 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 530 insertions(+)
- create mode 100644 security/tsem/namespace.c
+ security/tsem/model.c | 758 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 758 insertions(+)
+ create mode 100644 security/tsem/model.c
 
-diff --git a/security/tsem/namespace.c b/security/tsem/namespace.c
+diff --git a/security/tsem/model.c b/security/tsem/model.c
 new file mode 100644
-index 000000000000..e265a1cc7d09
+index 000000000000..013a24b88c83
 --- /dev/null
-+++ b/security/tsem/namespace.c
-@@ -0,0 +1,530 @@
++++ b/security/tsem/model.c
+@@ -0,0 +1,758 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
 +/*
 + * Copyright (C) 2024 Enjellic Systems Development, LLC
 + * Author: Dr. Greg Wettstein <greg@enjellic.com>
++
++ * This file is responsible for maintaining the security model state
++ * information for the internal trusted modeling agent implementation.
 + *
-+ * This file is responsible for managing the TSEM namespace
-+ * implementation that allows security models to be implemented for
-+ * workloads that are isolated from the root security modeling
-+ * namespace.  The namespaces that TSEM implements are
-+ * non-heirarchical and are at only a single depth below the root
-+ * security modeling namespace.
++ * The state information consists of security event descriptions that
++ * have been experienced by a security modeling namespace and the
++ * security state coefficients that they map into.  Only unique
++ * descriptions and their coefficients are maintained for maintained
++ * for each security modeling namespace.
 + *
-+ * Security modeling namespaces are identified by a 64-bit context
-+ * identity with context identity 0 being reserved for the root
-+ * security modeling namespace.
++ * An important point to note is that the routines in this file do not
++ * implement a security model.  The mapping of security event
++ * descriptions into coefficients, in the map.c file, is the
++ * functionality that actually implements the model.  Future
++ * implementations of TSEM are anticipated to provide alternate models
++ * by providing alternative implementations of the mapping routines.
 + *
-+ * The modeling of a namspace can be done by either an internal
-+ * trusted modeling agent implementation or by a trusted modeling
-+ * agent implementation associated with an external trust
-+ * orchestrator.
++ * The generative functions used to create the security state
++ * coefficients managed by this file are fully described in the
++ * primary TSEM documentation file.
 + *
-+ * This file is responsible for creating and setting up a tsem_context
-+ * structure that defines the modeling context being used by a
-+ * security modeling namespace.  This structure encapsulates
-+ * functionality that is generic to the namespace, such as the
-+ * cryptographic digest function that is used for security coefficient
-+ * mapping.
++ * As with the event.c and export.c files this file must handle events
++ * that run in both atomic and non-atomic context.  For processes that
++ * run in non-atomic context the structures that represent a security
++ * state coefficient are provided by the kmem_cache structure
++ * implement in this file.
 + *
-+ * Information for managing externally modeled namespaces are
-+ * maintained in the tsem_context structure while information for
-+ * internally modeled namespaces is maintained in the tsem_model
-+ * structure.  These structures are populated in the tsem_context
-+ * structure depending on whether or not an internal or externally
-+ * modeled namespace is being created.
-+ *
-+ * A tsem_context structure has a kref structure that is used to track
-+ * the number of uses of a context.  This reference count is
-+ * incremented each time a task is allocated in the context of a
-+ * security modeling namespace and decremented when a task exists.
-+ *
-+ * The release of the last reference to a context causes the structure
-+ * and its embedded structures to be released, thus freeing the
-+ * resources that have been allocated for modeling the namespace.
++ * In order to support processes that are running in atomic context a
++ * magazine of structure is maintained as well.  Allocations from this
++ * magazine are replaced with a function that runs in the context of
++ * an asynchronous workqueue.
 + */
 +
++#include <linux/sort.h>
++#include <linux/vmalloc.h>
++
 +#include "tsem.h"
-+#include "nsmgr.h"
 +
-+static u64 context_id;
-+
-+struct context_key {
++struct pseudonym {
 +	struct list_head list;
-+	u64 context_id;
-+	u8 key[HASH_MAX_DIGESTSIZE];
++	u8 mapping[HASH_MAX_DIGESTSIZE];
 +};
 +
-+DEFINE_MUTEX(context_id_mutex);
-+LIST_HEAD(context_id_list);
++static struct kmem_cache *point_cachep;
 +
-+static void remove_task_key(u64 context_id)
++static void refill_point_magazine(struct work_struct *work)
 +{
-+	struct context_key *entry, *tmp_entry;
++	struct tsem_event_point *tep;
++	struct tsem_work *ws;
 +
-+	list_for_each_entry_safe(entry, tmp_entry, &context_id_list, list) {
-+		if (context_id == entry->context_id) {
-+			list_del(&entry->list);
-+			kfree(entry);
-+			break;
-+		}
++	ws = container_of(work, struct tsem_work, work);
++
++	tep = kmem_cache_zalloc(point_cachep, GFP_KERNEL);
++	if (!tep) {
++		pr_warn("tsem: Cannot refill model point magazine.\n");
++		return;
 +	}
++
++	spin_lock(&ws->u.model->magazine_lock);
++	ws->u.model->magazine[ws->index] = tep;
++	clear_bit(ws->index, ws->u.model->magazine_index);
++
++	/*
++	 * The following memory barrier is used to cause the magazine
++	 * index to be visible after the refill of the cache slot.
++	 */
++	smp_mb__after_atomic();
++
++	spin_unlock(&ws->u.model->magazine_lock);
 +}
 +
-+static int generate_task_key(const char *keystr, u64 context_id,
-+			     struct tsem_task *t_ttask,
-+			     struct tsem_task *p_ttask)
++static struct tsem_event_point *alloc_event_point(struct tsem_model *model,
++						  bool locked)
 +{
-+	int retn;
-+	bool found_key, valid_key = false;
-+	unsigned int size = tsem_digestsize();
-+	struct context_key *entry;
++	unsigned int index;
++	struct tsem_event_point *tep = NULL;
 +
-+	while (!valid_key) {
-+		get_random_bytes(t_ttask->task_key, size);
-+		retn = tsem_ns_event_key(t_ttask->task_key, keystr,
-+					 p_ttask->task_key);
-+		if (retn)
-+			goto done;
++	if (!locked)
++		return kmem_cache_zalloc(point_cachep, GFP_KERNEL);
 +
-+		if (list_empty(&context_id_list))
-+			break;
++	spin_lock(&model->magazine_lock);
++	index = find_first_zero_bit(model->magazine_index,
++				    model->magazine_size);
++	if (index < model->magazine_size) {
++		tep = model->magazine[index];
++		model->ws[index].index = index;
++		model->ws[index].u.model = model;
++		set_bit(index, model->magazine_index);
 +
-+		found_key = false;
-+		list_for_each_entry(entry, &context_id_list, list) {
-+			if (!memcmp(entry->key, p_ttask->task_key, size)) {
-+				found_key = true;
-+				break;
-+			}
-+		}
-+		if (!found_key)
-+			valid_key = true;
++		/*
++		 * Similar to the issue noted in the refill_point_magazine(),
++		 * function, this barrier is used to cause the consumption
++		 * of the cache entry to become visible.
++		 */
++		smp_mb__after_atomic();
++	}
++	spin_unlock(&model->magazine_lock);
++
++	if (tep) {
++		INIT_WORK(&model->ws[index].work, refill_point_magazine);
++		queue_work(system_wq, &model->ws[index].work);
++		return tep;
 +	}
 +
-+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+	if (!entry) {
-+		retn = -ENOMEM;
++	pr_warn("tsem: Fail model point allocation comm %s ns %llu cs %u.\n",
++		current->comm, tsem_context(current)->id,
++		model->magazine_size);
++	return NULL;
++
++}
++
++static int magazine_allocate(struct tsem_model *model, size_t size)
++{
++	unsigned int lp;
++	int retn = -ENOMEM;
++
++	model->magazine_size = size;
++
++	spin_lock_init(&model->magazine_lock);
++
++	model->magazine_index = bitmap_zalloc(model->magazine_size,
++					      GFP_KERNEL);
++	if (!model->magazine_index)
++		return retn;
++
++	model->magazine = kcalloc(model->magazine_size,
++				  sizeof(*model->magazine), GFP_KERNEL);
++	if (!model->magazine)
 +		goto done;
++
++	for (lp = 0; lp < model->magazine_size; ++lp) {
++		model->magazine[lp] = kmem_cache_zalloc(point_cachep,
++							GFP_KERNEL);
++		if (!model->magazine[lp])
++			goto done;
 +	}
 +
-+	entry->context_id = context_id;
-+	memcpy(entry->key, p_ttask->task_key, size);
-+	list_add_tail(&entry->list, &context_id_list);
-+	retn = 0;
++	model->ws = kcalloc(model->magazine_size, sizeof(*model->ws),
++			    GFP_KERNEL);
++	if (model->ws)
++		retn = 0;
 +
 + done:
++	if (retn)
++		tsem_model_magazine_free(model);
++
 +	return retn;
 +}
 +
-+static struct tsem_external *allocate_external(u64 context_id,
-+					       const char *keystr)
++static int generate_pseudonym(char *pathname, u8 *pseudonym)
 +{
-+	int retn = -ENOMEM;
-+	char bufr[20 + 1];
-+	struct tsem_external *external;
-+	struct tsem_task *t_ttask = tsem_task(current);
-+	struct tsem_task *p_ttask = tsem_task(current->real_parent);
-+
-+	external = kzalloc(sizeof(*external), GFP_KERNEL);
-+	if (!external)
-+		goto done;
-+
-+	retn = generate_task_key(keystr, context_id, t_ttask, p_ttask);
-+	if (retn)
-+		goto done;
-+
-+	spin_lock_init(&external->export_lock);
-+	INIT_LIST_HEAD(&external->export_list);
-+
-+	init_waitqueue_head(&external->wq);
-+
-+	scnprintf(bufr, sizeof(bufr), "%llu", context_id);
-+	external->dentry = tsem_fs_create_external(bufr);
-+	if (IS_ERR(external->dentry)) {
-+		retn = PTR_ERR(external->dentry);
-+		external->dentry = NULL;
-+	} else
-+		retn = 0;
-+
-+ done:
-+	if (retn) {
-+		memset(t_ttask->task_key, '\0', tsem_digestsize());
-+		memset(p_ttask->task_key, '\0', tsem_digestsize());
-+		kfree(external);
-+		remove_task_key(context_id);
-+		external = ERR_PTR(retn);
-+	} else
-+		p_ttask->tma_for_ns = context_id;
-+
-+	return external;
-+}
-+
-+static struct tsem_external *allocate_export(u64 context_id)
-+{
-+	int retn = -ENOMEM;
-+	char bufr[20 + 1];
-+	struct tsem_external *external;
-+
-+	external = kzalloc(sizeof(*external), GFP_KERNEL);
-+	if (!external)
-+		goto done;
-+
-+	spin_lock_init(&external->export_lock);
-+	INIT_LIST_HEAD(&external->export_list);
-+
-+	init_waitqueue_head(&external->wq);
-+
-+	scnprintf(bufr, sizeof(bufr), "%llu", context_id);
-+	external->dentry = tsem_fs_create_external(bufr);
-+	if (IS_ERR(external->dentry)) {
-+		retn = PTR_ERR(external->dentry);
-+		external->dentry = NULL;
-+	} else
-+		retn = 0;
-+
-+ done:
-+	if (retn) {
-+		kfree(external);
-+		external = ERR_PTR(retn);
-+	}
-+	return external;
-+}
-+
-+static void _release_inode_instances(u64 id, struct tsem_inode *tsip)
-+{
-+	struct tsem_inode_instance *owner, *tmp_owner;
-+
-+	mutex_lock(&tsip->instance_mutex);
-+	list_for_each_entry_safe(owner, tmp_owner, &tsip->instance_list,
-+				 list) {
-+		if (id == owner->creator) {
-+			list_del(&owner->list);
-+			kfree(owner);
-+		}
-+	}
-+	mutex_unlock(&tsip->instance_mutex);
-+}
-+
-+static void wq_put(struct work_struct *work)
-+{
-+	struct tsem_context *ctx;
-+	struct tsem_inode_entry *ie, *tmp_ie;
-+
-+	ctx = container_of(work, struct tsem_context, work);
-+
-+	mutex_lock(&ctx->inode_mutex);
-+	list_for_each_entry_safe(ie, tmp_ie, &ctx->inode_list, list) {
-+		list_del(&ie->list);
-+		_release_inode_instances(ctx->id, ie->tsip);
-+		kfree(ie);
-+	}
-+	mutex_unlock(&ctx->inode_mutex);
-+
-+	if (ctx->external) {
-+		mutex_lock(&context_id_mutex);
-+		remove_task_key(ctx->id);
-+		mutex_unlock(&context_id_mutex);
-+
-+		securityfs_remove(ctx->external->dentry);
-+		tsem_export_magazine_free(ctx->external);
-+		kfree(ctx->external);
-+	} else
-+		tsem_model_free(ctx);
-+
-+	tsem_nsmgr_put(ctx->ops);
-+
-+	crypto_free_shash(ctx->tfm);
-+	tsem_event_magazine_free(ctx);
-+	kfree(ctx->digestname);
-+	kfree(ctx);
-+}
-+
-+static void ns_free(struct kref *kref)
-+{
-+	struct tsem_context *ctx;
-+
-+	ctx = container_of(kref, struct tsem_context, kref);
-+
-+	INIT_WORK(&ctx->work, wq_put);
-+	if (!queue_work(system_wq, &ctx->work))
-+		WARN_ON_ONCE(1);
-+}
-+
-+/**
-+ * tsem_ns_put() - Release a reference to a modeling context.
-+ * @ctx: A pointer to the TMA context for which a reference is
-+ *	 to be released.
-+ *
-+ * This function is called to release a reference to a TMA modeling
-+ * domain.  The release of the last reference calls the ns_free()
-+ * function that schedules the actual work to release the resources
-+ * associated with the namespace to a workqueue.
-+ */
-+void tsem_ns_put(struct tsem_context *ctx)
-+{
-+	kref_put(&ctx->kref, ns_free);
-+}
-+
-+/**
-+ * tsem_ns_event_key() - Generate TMA authentication key.
-+ * @task_key: A pointer to the buffer containing the task identification
-+ *	      key that was randomly generated for the modeling domain.
-+ * @keystr: A pointer to the buffer containing the TMA authentication key
-+ *	    in ASCII hexadecimal form.
-+ *
-+ * This function generates the authentication key that will be used
-+ * to validate a call by a TMA to set the trust status of the process.
-+ *
-+ * Return: This function returns 0 if the key was properly generated
-+ *	   or a negative value if a hashing error occurred.
-+ */
-+int tsem_ns_event_key(u8 *task_key, const char *keystr, u8 *key)
-+{
-+	bool retn;
-+	u8 tma_key[HASH_MAX_DIGESTSIZE];
++	int retn = 0;
++	u32 size;
 +	SHASH_DESC_ON_STACK(shash, tfm);
-+
-+	retn = hex2bin(tma_key, keystr, tsem_digestsize());
-+	if (retn)
-+		return -EINVAL;
 +
 +	shash->tfm = tsem_digest();
 +	retn = crypto_shash_init(shash);
 +	if (retn)
-+		return retn;
++		goto done;
 +
-+	retn = crypto_shash_update(shash, task_key, tsem_digestsize());
-+	if (retn)
-+		return retn;
-+
-+	return crypto_shash_finup(shash, tma_key, tsem_digestsize(), key);
-+}
-+
-+static struct crypto_shash *configure_digest(const char *digest,
-+					     char **digestname,
-+					     u8 *zero_digest)
-+{
-+	int retn;
-+	struct crypto_shash *tfm;
-+	SHASH_DESC_ON_STACK(shash, tfm);
-+
-+	*digestname = kstrdup(digest, GFP_KERNEL);
-+	if (!*digestname)
-+		return ERR_PTR(-ENOMEM);
-+
-+	tfm = crypto_alloc_shash(digest, 0, 0);
-+	if (IS_ERR(tfm))
-+		return tfm;
-+
-+	shash->tfm = tfm;
-+	retn = crypto_shash_digest(shash, NULL, 0, zero_digest);
-+	if (retn) {
-+		crypto_free_shash(tfm);
-+		tfm = NULL;
-+	}
-+
-+	return tfm;
-+}
-+
-+/**
-+ * tsem_ns_create() - Create a TSEM modeling namespace.
-+ * @type:   The type of namespace being created.
-+ * @digest: A null terminated character buffer containing the name
-+ *	    of the hash function that is to be used for the modeling
-+ *	    domain.
-+ * @ns:     The enumeration type that specifies whether the security
-+ *	    event descriptions should reference the initial user
-+ *	    namespace or the current user namespace.
-+ * @key:    A pointer to a null-terminated buffer containing the key
-+ *	    that will be used to authenticate the TMA's ability to set
-+ *	    the trust status of a process.
-+ * @cache_size: The number of entries to be implemented in the
-+ *		atomic allocation magazines for the security modeling
-+ *		namespace being created.
-+ * @ops:    A pointer to the security namespace definitions and
-+ *	    operations for the namespace being created.
-+ *
-+ * This function is used to create either an internally or externally
-+ * modeled TSEM namespace.  The type of the namespace to be created
-+ * is specified with the tsem_control_type enumeration value.  A
-+ * request for an internally model namespace causes a new structure to be
-+ * allocated that will hold the description of the security model.
-+ * An externally modeled domain will have a control structure allocated
-+ * that manages the export of security event descriptions to the
-+ * trust orchestrator that is responsible for running the TMA
-+ * implementation.
-+ *
-+ * Return: This function returns 0 if the namespace was created and
-+ *	   a negative error value on error.
-+ */
-+int tsem_ns_create(const enum tsem_control_type type, const char *digest,
-+		   const enum tsem_ns_reference ns, const char *key,
-+		   unsigned int cache_size, const struct tsem_context_ops *ops)
-+{
-+	u8 zero_digest[HASH_MAX_DIGESTSIZE];
-+	char *use_digest;
-+	int retn = -ENOMEM;
-+	u64 new_id;
-+	struct tsem_task *tsk = tsem_task(current);
-+	struct tsem_context *new_ctx;
-+	struct tsem_model *model = NULL;
-+	struct crypto_shash *tfm;
-+
-+	tfm = configure_digest(digest, &use_digest, zero_digest);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	new_ctx = kzalloc(sizeof(*new_ctx), GFP_KERNEL);
-+	if (!new_ctx)
-+		return retn;
-+
-+	mutex_lock(&context_id_mutex);
-+	new_id = context_id + 1;
-+
-+	retn = tsem_event_magazine_allocate(new_ctx, cache_size);
++	size = strlen(pathname);
++	retn = crypto_shash_update(shash, (u8 *) &size, sizeof(size));
 +	if (retn)
 +		goto done;
 +
-+	if (type == TSEM_CONTROL_INTERNAL) {
-+		model = tsem_model_allocate(cache_size);
-+		if (!model)
-+			goto done;
-+		new_ctx->model = model;
-+	}
-+	if (type == TSEM_CONTROL_EXTERNAL) {
-+		if (crypto_shash_digestsize(tfm)*2 != strlen(key)) {
-+			retn = -EINVAL;
-+			goto done;
-+		}
++	retn = crypto_shash_finup(shash, pathname, size, pseudonym);
 +
-+		new_ctx->external = allocate_external(new_id, key);
-+		if (IS_ERR(new_ctx->external)) {
-+			retn = PTR_ERR(new_ctx->external);
-+			new_ctx->external = NULL;
-+			goto done;
-+		}
++ done:
++	return retn;
++}
 +
-+		retn = tsem_export_magazine_allocate(new_ctx->external,
-+						     cache_size);
-+		if (retn)
-+			goto done;
-+	}
-+	if (type == TSEM_CONTROL_EXPORT) {
-+		new_ctx->external = allocate_export(new_id);
-+		if (IS_ERR(new_ctx->external)) {
-+			retn = PTR_ERR(new_ctx->external);
-+			new_ctx->external = NULL;
++static struct tsem_event_point *have_point(u8 *point)
++{
++	struct tsem_event_point *entry, *retn = NULL;
++	struct tsem_context *ctx = tsem_context(current);
++	struct tsem_model *model = ctx->model;
++
++	spin_lock(&model->point_lock);
++	list_for_each_entry(entry, &model->point_list, list) {
++		if (!memcmp(entry->point, point, tsem_digestsize())) {
++			retn = entry;
 +			goto done;
 +		}
-+
-+		retn = tsem_export_magazine_allocate(new_ctx->external,
-+						     cache_size);
-+		if (retn)
-+			goto done;
-+
-+		new_ctx->external->export_only = true;
 +	}
 +
++ done:
++	spin_unlock(&model->point_lock);
++	return retn;
++}
 +
-+	kref_init(&new_ctx->kref);
++static struct tsem_event_point *add_event_point(u8 *point, bool valid,
++						bool locked)
++{
++	struct tsem_event_point *entry;
++	struct tsem_model *model = tsem_model(current);
 +
-+	new_ctx->id = new_id;
-+	new_ctx->tfm = tfm;
-+	new_ctx->ops = ops;
-+	new_ctx->digestname = use_digest;
-+	new_ctx->timestamp = ktime_get_boottime_ns();
-+	memcpy(new_ctx->zero_digest, zero_digest,
-+	       crypto_shash_digestsize(tfm));
++	entry = alloc_event_point(model, locked);
++	if (!entry)
++		return ERR_PTR(-ENOMEM);
 +
-+	mutex_init(&new_ctx->inode_mutex);
-+	INIT_LIST_HEAD(&new_ctx->inode_list);
++	entry->valid = valid;
++	memcpy(entry->point, point, tsem_digestsize());
 +
-+	if (ns == TSEM_NS_CURRENT)
-+		new_ctx->use_current_ns = true;
-+	memcpy(new_ctx->actions, tsk->context->actions,
-+	       sizeof(new_ctx->actions));
++	spin_lock(&model->point_lock);
++	++model->point_count;
++	list_add_tail(&entry->list, &model->point_list);
++	spin_unlock(&model->point_lock);
++
++	return entry;
++}
++
++static int add_trajectory_point(struct tsem_event *ep)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	ep->pid = 0;
++	tsem_event_get(ep);
++
++	spin_lock(&model->trajectory_lock);
++	list_add_tail(&ep->list, &model->trajectory_list);
++	spin_unlock(&model->trajectory_lock);
++
++	return 0;
++}
++
++static int add_forensic_point(struct tsem_event *ep)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	ep->pid = 0;
++	tsem_event_get(ep);
++
++	spin_lock(&model->forensics_lock);
++	list_add_tail(&ep->list, &model->forensics_list);
++	spin_unlock(&model->forensics_lock);
++
++	return 0;
++}
++
++static int get_host_measurement(u8 *id, u8 *digest)
++{
++	int retn;
++	struct tsem_model *model = tsem_model(current);
++	SHASH_DESC_ON_STACK(shash, tfm);
++
++	shash->tfm = tsem_digest();
++	retn = crypto_shash_init(shash);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, model->base, tsem_digestsize());
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_finup(shash, id, tsem_digestsize(), digest);
++
++ done:
++	return retn;
++}
++
++static int update_events_measurement(struct tsem_event *ep)
++{
++	int retn;
++	u8 digest[HASH_MAX_DIGESTSIZE];
++	struct tsem_context *ctx = tsem_context(current);
++	struct tsem_model *model = ctx->model;
++	SHASH_DESC_ON_STACK(shash, tfm);
++
++	retn = get_host_measurement(ep->mapping, digest);
++	if (retn)
++		goto done;
++
++	shash->tfm = tsem_digest();
++	retn = crypto_shash_init(shash);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_update(shash, model->measurement,
++				   tsem_digestsize());
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_finup(shash, digest, tsem_digestsize(),
++				  model->measurement);
++	if (retn)
++		goto done;
++
++	if (!tsem_context(current)->id)
++		retn = tsem_trust_add_event(ep);
++
++ done:
++	return retn;
++}
++
++static int state_sort(const void *a, const void *b)
++{
++	unsigned int lp, retn = 0;
++	struct tsem_event_point *ap, *bp;
++
++	ap = *((struct tsem_event_point **) a);
++	bp = *((struct tsem_event_point **) b);
++
++	for (lp = 0; lp < tsem_digestsize(); ++lp) {
++		if (ap->point[lp] == bp->point[lp])
++			continue;
++
++		if (ap->point[lp] < bp->point[lp])
++			retn = -1;
++		else
++			retn = 1;
++		goto done;
++	}
++
++ done:
++	return retn;
++}
++
++/**
++ * tesm_model_compute_state() - Calculate a security model state value.
++ *
++ * The function generates the state value of the current modeling domain.
++ */
++void tsem_model_compute_state(void)
++{
++	u8 state[HASH_MAX_DIGESTSIZE];
++	int retn;
++	unsigned int lp, count, pt_count = 0;
++	struct list_head *end;
++	struct tsem_event_point *end_point, *entry, **points = NULL;
++	struct tsem_model *model = tsem_model(current);
++	SHASH_DESC_ON_STACK(shash, tfm);
++
++	shash->tfm = tsem_digest();
++	retn = crypto_shash_init(shash);
++	if (retn)
++		goto done;
++
++	memset(state, '\0', sizeof(state));
++	retn = crypto_shash_update(shash, state, tsem_digestsize());
++	if (retn)
++		goto done;
++
++	retn = get_host_measurement(tsem_trust_aggregate(), state);
++	if (retn)
++		goto done;
++
++	retn = crypto_shash_finup(shash, state, tsem_digestsize(), state);
++	if (retn)
++		goto done;
++
++	spin_lock(&model->point_lock);
++	end = model->point_list.prev;
++	count = model->point_count;
++	spin_unlock(&model->point_lock);
++
++	points = vmalloc(sizeof(*points) * count);
++	if (!points) {
++		retn = -ENOMEM;
++		goto done;
++	}
++
++	end_point = container_of(end, struct tsem_event_point, list);
++	list_for_each_entry(entry, &model->point_list, list) {
++		points[pt_count++] = entry;
++		if (end_point == entry)
++			break;
++	}
++	sort(points, count, sizeof(*points), state_sort, NULL);
++
++	memcpy(model->state, state, tsem_digestsize());
++	for (lp = 0; lp < pt_count; ++lp) {
++		entry = points[lp];
++
++		if (get_host_measurement(entry->point, state))
++			goto done;
++
++		if (crypto_shash_init(shash))
++			goto done;
++		if (crypto_shash_update(shash, model->state,
++					tsem_digestsize()))
++			goto done;
++		if (crypto_shash_finup(shash, state, tsem_digestsize(),
++				       model->state))
++			goto done;
++	}
++
++ done:
++	if (retn)
++		memset(model->state, '\0', tsem_digestsize());
++
++	vfree(points);
++}
++
++/**
++ * tsem_model_has_pseudonym() - Test for a model pseudonym.
++ * @tsip: A pointer to the TSEM inode security structure.
++ * @file: A pointer to the tsem_file_args structure characterizing the
++ *	  file whose pseudonym is to be checked.
++ *
++ * This function is used to test whether a pseudonym has been
++ * declared for a modeling domain.  It is up to the caller to
++ * populate the event description structure with a suitable
++ * value for the pseudonym digest.
++ *
++ * Return: If an error occurs during the pseudonym probe a negative
++ *	   return value is returned.  A zero return value indicates that
++ *	   a pseudonym was not present.  A value of one indicates that a
++ *	   pseudonym has been defined.
++ */
++int tsem_model_has_pseudonym(struct tsem_inode *tsip, char *pathname)
++{
++	int retn = 0;
++	u8 pseudo_mapping[HASH_MAX_DIGESTSIZE];
++	struct tsem_model *model = tsem_model(current);
++	struct pseudonym *entry;
++
++	retn = generate_pseudonym(pathname, pseudo_mapping);
++	if (retn)
++		goto done;
++
++	mutex_lock(&model->pseudonym_mutex);
++	list_for_each_entry(entry, &model->pseudonym_list, list) {
++		if (!memcmp(entry->mapping, pseudo_mapping,
++			    tsem_digestsize())) {
++			retn = 1;
++			goto done;
++		}
++	}
 +	retn = 0;
 +
 + done:
-+	if (retn) {
-+		if (type != TSEM_CONTROL_EXPORT)
-+			remove_task_key(new_id);
-+		crypto_free_shash(tfm);
-+		tsem_event_magazine_free(new_ctx);
-+		kfree(use_digest);
-+		if (new_ctx->external)
-+			tsem_export_magazine_free(new_ctx->external);
-+		kfree(new_ctx->external);
-+		kfree(new_ctx);
-+		kfree(model);
-+	} else {
-+		context_id = new_id;
-+		tsk->context = new_ctx;
-+		if (type == TSEM_CONTROL_EXTERNAL)
-+			retn = tsem_export_aggregate();
-+		if (type == TSEM_CONTROL_INTERNAL)
-+			retn = tsem_model_add_aggregate();
-+	}
-+
-+	mutex_unlock(&context_id_mutex);
++	mutex_unlock(&model->pseudonym_mutex);
 +	return retn;
 +}
 +
 +/**
-+ * tsem_ns_export_root() - Configure root namespace for export only modeling.
-+ * @magazine_size:  The number of entries to be implemented in the event
-+ *		    cache.
++ * tesm_model_event() - Inject a security event into a modeling domain.
++ * @ep: A pointer to the event description structure.
 + *
-+ * This function is called to setup the root security modeling namespace
-+ * for the export of security event descriptions in tsem_mode=2
-+ * operation.
++ * This function is the entry point for the in kernel Trusted Modeling
++ * Agent (TMA).  It takes a description of an event encoded in a
++ * tsem_event structure and generates and updates the security model
++ * description.
 + *
-+ * Return: This function returns 0 if the setup of the root namespace
-+ *	   for export was successul and a negative error value if
-+ *	   the setup fails.
++ * Return: If an error occurs during the injection of an event into a
++ *	   model a negative error value is returned.  A value of zero
++ *	   is returned if the event was successfully modeled.  The
++ *	   security status of the event is returned by encoding the value
++ *	   in the bad_COE member of the tsem_task structure.
 + */
-+int tsem_ns_export_root(unsigned int magazine_size)
++int tsem_model_event(struct tsem_event *ep)
++{
++	int retn;
++	struct tsem_event_point *point;
++	struct tsem_task *task = tsem_task(current);
++	struct tsem_context *ctx = task->context;
++
++	retn = ctx->ops->map(ep);
++	if (retn)
++		return retn;
++
++	point = have_point(ep->mapping);
++	if (point) {
++		++point->count;
++		if (!point->valid)
++			task->trust_status = TSEM_TASK_UNTRUSTED;
++		return 0;
++	}
++
++	retn = update_events_measurement(ep);
++	if (retn)
++		return retn;
++
++	retn = -ENOMEM;
++	if (ctx->sealed) {
++		point = add_event_point(ep->mapping, false, ep->locked);
++		if (point) {
++			retn = add_forensic_point(ep);
++			task->trust_status = TSEM_TASK_UNTRUSTED;
++		}
++	} else {
++		point = add_event_point(ep->mapping, true, ep->locked);
++		if (point)
++			retn = add_trajectory_point(ep);
++	}
++
++	if (!retn)
++		++point->count;
++	return retn;
++}
++
++/**
++ * tesm_model_load_point() - Load a security state event into a model.
++ * @point: A pointer to the array containing the security state
++ *	   point to be added to the model.
++ *
++ * This function takes the binary representation of a security state
++ * point and loads it into the current model domain.
++ *
++ * Return: If an error occurs during the processing of the security state
++ *	   point a negative return value is returned.  A return value of
++ *	   zero indicates the point was successfully loaded into the domain.
++ */
++int tsem_model_load_point(u8 *point)
 +{
 +	int retn = -ENOMEM;
-+	struct tsem_context *new_ctx;
-+	struct tsem_task *tsk = tsem_task(current);
++	struct tsem_event *ep;
++	struct tsem_context *ctx = tsem_context(current);
 +
-+	new_ctx = kzalloc(sizeof(*new_ctx), GFP_KERNEL);
-+	if (!new_ctx)
++	if (have_point(point))
++		return 0;
++
++	if (!add_event_point(point, true, false))
 +		return retn;
-+	*new_ctx = *tsem_context(current);
 +
-+	new_ctx->external = allocate_export(tsem_context(current)->id);
-+	if (IS_ERR(new_ctx->external)) {
-+		retn = PTR_ERR(new_ctx->external);
-+		new_ctx->external = NULL;
-+		goto done;
++	if (!ctx->model->have_aggregate) {
++		retn = tsem_model_add_aggregate();
++		if (retn)
++			return retn;
++
++		ctx->model->have_aggregate = true;
 +	}
 +
-+	retn = tsem_export_magazine_allocate(new_ctx->external, magazine_size);
-+	if (retn)
-+		goto done;
++	ep = tsem_event_allocate(0, false);
++	if (!ep)
++		return retn;
 +
-+	new_ctx->external->export_only = true;
++	kref_init(&ep->kref);
++	memcpy(ep->mapping, point, tsem_digestsize());
++	retn = update_events_measurement(ep);
 +
-+ done:
-+	if (retn) {
-+		tsem_event_magazine_free(new_ctx);
-+		if (new_ctx->external)
-+			tsem_export_magazine_free(new_ctx->external);
-+		kfree(new_ctx);
-+	} else {
-+		new_ctx->tfm = tsk->context->tfm;
-+		new_ctx->timestamp = ktime_get_boottime_ns();
-+		new_ctx->digestname = tsk->context->digestname;
-+		memcpy(new_ctx->zero_digest, tsk->context->zero_digest,
-+		       crypto_shash_digestsize(tsk->context->tfm));
++	tsem_event_put(ep);
++	return retn;
++}
 +
-+		mutex_init(&new_ctx->inode_mutex);
-+		INIT_LIST_HEAD(&new_ctx->inode_list);
++/**
++ * tesm_model_load_pseudonym() - Load a pseudonym state point to a model.
++ * @mapping: A pointer to the array containing the pseudonym state
++ *	     point that is to be added to the model.
++ *
++ * This function takes the binary representation of a file pseudonym
++ * and declares the presence of the pseudonym in the modeling domain.
++ *
++ * Return: If an error occurs during the processing of the pseudonym
++ *	   state point a negative return value is returned.  A return
++ *	   value of zero indicates the point was successfully loaded
++ *	   into the model.
++ */
++int tsem_model_load_pseudonym(u8 *mapping)
++{
++	struct pseudonym *psp = NULL;
++	struct tsem_model *model = tsem_model(current);
 +
-+		tsk->context = new_ctx;
-+	}
++	psp = kzalloc(sizeof(*psp), GFP_KERNEL);
++	if (!psp)
++		return -ENOMEM;
++	memcpy(psp->mapping, mapping, tsem_digestsize());
++
++	mutex_lock(&model->pseudonym_mutex);
++	list_add_tail(&psp->list, &model->pseudonym_list);
++	mutex_unlock(&model->pseudonym_mutex);
++	return 0;
++}
++
++/**
++ * tesm_model_load_base() - Load a model base point.
++ * @mapping: A pointer to the array containing the base point to be
++ *	     set for the model.
++ *
++ * This function takes the binary representation of a base point and
++ * sets this point as the base point for the model.
++ */
++void tsem_model_load_base(u8 *mapping)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	memcpy(model->base, mapping, tsem_digestsize());
++}
++
++/**
++ * tesm_model_add_aggregate() - Add the hardware aggregate to a model.
++ *
++ * This function adds the hardware aggregate value to an internally
++ * modeled security domain.
++ *
++ * Return: If an error occurs during the injection of the aggregate
++ *	   value into the model a negative error value is returned.
++ *	   A return value of zero indicates the aggregate was
++ *	   successfully added.
++ */
++int tsem_model_add_aggregate(void)
++{
++	int retn;
++	struct tsem_event *ep;
++
++	ep = tsem_event_allocate(0, false);
++	if (!ep)
++		return -ENOMEM;
++
++	kref_init(&ep->kref);
++	ep->digestsize = tsem_digestsize();
++	memcpy(ep->mapping, tsem_trust_aggregate(), ep->digestsize);
++
++	retn = update_events_measurement(ep);
++	tsem_event_put(ep);
 +
 +	return retn;
++}
++
++/**
++ * tsem_model_allocate() - Allocates a kernel TMA modeling structure.
++ * @size: The number of slots in the event point magazine for the model.
++ *
++ * This function allocates and initializes a tsem_model structure
++ * that is used to hold modeling information for an in kernel
++ * modeling domain.
++ *
++ * Return: On success a pointer to the model description structure is
++ *	   returned.  If an error occurs an error return value is
++ *	   encoded in the returned pointer.
++ */
++struct tsem_model *tsem_model_allocate(size_t size)
++{
++	struct tsem_model *model = NULL;
++
++	model = kzalloc(sizeof(*model), GFP_KERNEL);
++	if (!model)
++		return NULL;
++
++	spin_lock_init(&model->point_lock);
++	INIT_LIST_HEAD(&model->point_list);
++	mutex_init(&model->point_end_mutex);
++
++	spin_lock_init(&model->trajectory_lock);
++	INIT_LIST_HEAD(&model->trajectory_list);
++	mutex_init(&model->trajectory_end_mutex);
++
++	spin_lock_init(&model->forensics_lock);
++	INIT_LIST_HEAD(&model->forensics_list);
++	mutex_init(&model->forensics_end_mutex);
++
++	mutex_init(&model->pseudonym_mutex);
++	INIT_LIST_HEAD(&model->pseudonym_list);
++
++	mutex_init(&model->mount_mutex);
++	INIT_LIST_HEAD(&model->mount_list);
++
++	if (magazine_allocate(model, size)) {
++		kfree(model);
++		model = NULL;
++	}
++
++	return model;
++}
++
++/**
++ * tsem_model_free() - Frees an a kernel TMA description structure.
++ * @ctx: A pointer to the TMA modeling description structure whose
++ *	 model definition is to be deleted.
++ *
++ * This function is called when the last reference to a kernel
++ * based TMA model description structure is released.
++ */
++void tsem_model_free(struct tsem_context *ctx)
++{
++	struct tsem_event_point *ep, *tmp_ep;
++	struct tsem_event *tentry, *tmp_tentry;
++	struct pseudonym *sentry, *tmp_sentry;
++	struct tsem_inode_instance *ientry, *tmp_ientry;
++	struct tsem_model *model = ctx->model;
++
++	list_for_each_entry_safe(ep, tmp_ep, &model->point_list, list) {
++		list_del(&ep->list);
++		kmem_cache_free(point_cachep, ep);
++	}
++
++	list_for_each_entry_safe(sentry, tmp_sentry, &model->pseudonym_list,
++				 list) {
++		list_del(&sentry->list);
++		kfree(sentry);
++	}
++
++	list_for_each_entry_safe(tentry, tmp_tentry, &model->trajectory_list,
++				 list) {
++		list_del(&tentry->list);
++		tsem_event_put(tentry);
++	}
++
++	list_for_each_entry_safe(ientry, tmp_ientry, &model->mount_list,
++				 list) {
++		list_del(&ientry->list);
++		kfree(ientry);
++	}
++
++	if (ctx->sealed) {
++		list_for_each_entry_safe(tentry, tmp_tentry,
++					 &model->forensics_list, list) {
++			list_del(&tentry->list);
++			tsem_event_put(tentry);
++		}
++	}
++
++	tsem_model_magazine_free(model);
++	kfree(model);
++}
++
++/**
++ * tsem_model_magazine_free: Free the event point magazine for a model domain.
++ * @model: A pointer to the model whose magazine is to be freed.
++ *
++ * This function releases all of the components of an event point
++ * magazine that has been allocated for a modeling domain.
++ */
++void tsem_model_magazine_free(struct tsem_model *model)
++{
++	unsigned int lp;
++
++	for (lp = 0; lp < model->magazine_size; ++lp)
++		kmem_cache_free(point_cachep, model->magazine[lp]);
++
++	bitmap_free(model->magazine_index);
++	kfree(model->ws);
++	kfree(model->magazine);
++}
++
++/**
++ * tsem model_init() - Initialize the TSEM event point cache.
++ * @model: A pointer to the model that is being initialized.
++ * @size: The number of slots in the event point magazine for the root
++ *	  model.
++ *
++ * This function is called by the primary TSEM initialization function
++ * and sets up the cache that will be used to dispense tsem_event_point
++ * structures for security events that are called in atomic context.
++ *
++ * Return: This function returns a value of zero on success and a negative
++ *	   error code on failure.
++ */
++int __init tsem_model_cache_init(struct tsem_model *model, size_t size)
++{
++	point_cachep = kmem_cache_create("tsem_event_point_cache",
++					 sizeof(struct tsem_event_point), 0,
++					 SLAB_PANIC, 0);
++	if (!point_cachep)
++		return -ENOMEM;
++
++	if (magazine_allocate(model, size)) {
++		kmem_cache_destroy(point_cachep);
++		return -ENOMEM;
++	}
++
++	return 0;
 +}
 -- 
 2.39.1
