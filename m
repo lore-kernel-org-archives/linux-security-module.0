@@ -1,118 +1,150 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD55D19D07D
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 22:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEA119AA75
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 22:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724711359; cv=none; b=SUVj4NQ1ECf6C/mScZ5a1JMySH46aPaZ+nCQNwSfxgCDrFpoHzM7kZMzVeoXtgw0PhAvmJObR0bHrB1e829ELyBr8cf9OBxSZ6x3q60xleds6cNoycwOWrOzT9u/JA+rZz6T9tlddj3yGOeEUANKhW7PaKVL6IqdKQ3rQDHGhLs=
+	t=1724712571; cv=none; b=BMHrrWNJx4KBCSgl/6OVX7XeHvtsgmZ87djPkOeho2tr+rIVFJKHWdJtjVOSdxjEnGoy4fWBHXadLJ5dPFSM/fYbLctmNZ8T3V/ueeyKdJB0TrE6a3vP//002VzSlci6ZCDdyn3pcO+LamCRKTkQ7x8dNcdYcSA0VTZiaPGW/eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724711359; c=relaxed/simple;
-	bh=NSc4Okt+VC5KhhcI4GjwMNyiCG8ff6DKOAXyZDKWKwg=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=hfxxX2RtGzmIH+7IIWFQlEJyl6nQzMeVMP2eieyDTRnAWSvNkcAdoyaLLUo6VHTMlaDThWBmsTnDSwQCcQ7hcjic75e6sIKXVH6VMpf+yGA03kAQJ8djD5jzkAunuZ03jrsqyFA+YQkUtKUgYHv+fF3mi3ZP6eRKL0HPte7jOvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WJZ3qFsE; arc=none smtp.client-ip=209.85.219.45
+	s=arc-20240116; t=1724712571; c=relaxed/simple;
+	bh=4riBHCy/ul0psyvOkTn7BvHgTDelnSNQyniXCwOavsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uy9K4Q2vRVS8Ztgv0EKE+v91bkD59/MWiDoiKpsIQPB6GYSFkn8fkZQw7fGml1C8FKMXE6c8/BMs41uNdsy8D5/ym07mTSkHxn834Y4fhmYyPxn5FjXO6USwsTSvOuqZQPctUqHJ9En4oEQptljEtCmkTw56giIlbebBvAI6O4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GDk9DFy1; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WJZ3qFsE"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6bf7b48d2feso26341846d6.0
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 15:29:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GDk9DFy1"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e17c1881a52so1819364276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 15:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724711356; x=1725316156; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3N09dlUeLDWnGTOZ4n6d5/3QJlaJZT1Youw+FJ2C4po=;
-        b=WJZ3qFsEJlCOjjVv70lDYOGCojujLiMZFHAc55qUEIpvOwN6zAUz/oyCLv6nTn2gva
-         v9I8lO2w20KUj6tsgMpBIWCggmiswdcrYqhr0RNXSoVFhvtiWmf0IjZk1JMAjhVBVShK
-         4E4FUzp1y9VGo6ylEKDpsUIQEntHQuD8OBsKgg5fCDnlr2nm4YZH8TK19Pk7owAwU3GY
-         6prh89062RpF4CDYIyQ1T92O15fGO1y0A8/mf5aDeGHYyV81+FHGrdRHHrRg+9gNa6Km
-         gFZc/+NKvrIqRf2wOewBb6uIDACZnnDD7O3bKHBEhqJMQgAFWRUFxqEvBGl+a5PrSlRa
-         JaJQ==
+        d=paul-moore.com; s=google; t=1724712569; x=1725317369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nWTFl5f8OPZ9kYIvj+M7W9eYYEXfjlTCvvmN9eeNnFM=;
+        b=GDk9DFy1uU5DEevxf++6WuIvZZ73OSd9X3L1keRyQJcWJE1u6gMs9mSkyo+wW34q7v
+         3Qc1tPefjxRgoUEoNXahf/fPq115S7AyyFTtmSD59YXxRTKb+u3yaSoRA2w//KesDMOS
+         K6xV0y/d/7tx8szAfjEupd2n3oRYlldJMEY+vEo4UIUW/cw/kprydvfFUn17TmGxx2pM
+         R6NefIsW1LMf7WJI1Wee+mSSKx9wnlL4p5TM8v0lOzxMgQ0JaU7IMC3RIbdXYj/X6i8H
+         TMpNiuD+0Nd32e/eZ1HAZo4EouMkv2OcpkeAhKxX1nrHlLKKboztdWFnXzJVCmQGAREN
+         c9/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724711356; x=1725316156;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3N09dlUeLDWnGTOZ4n6d5/3QJlaJZT1Youw+FJ2C4po=;
-        b=XciccuPmWCACzC3VO8WSg/iHQs3nHXub/57sEVcRfihPePSGQQ2FkF+OV+9p7Umnvy
-         v7wz3v+mwVYxURQfaEUn5Z7VUpV8AMIWuFIxh4dWvx2frv08r9dzOo9xHdoy3ywcIskz
-         QlLPrEqQOWC1ApQeryonrnOgtURnI3gUVE38g7CeDZcqOl0RoV/T+hmoOdk8LUG+RVAw
-         gLLvGrg9gqeCln7b/Laq2V3qDS7RxirNLXye66C3hVYd3nQ/kcfCr3mJMEA+H/LjVHyw
-         7PV14C8qaLLwhQLJ3axBLkG2VvuzNMOCCwZxvEIAeV8yBneqmxMkQC0T+TlxFyxCD6oU
-         /10g==
-X-Forwarded-Encrypted: i=1; AJvYcCU0iFlexp2hlDIzgVHwAdq4xmdTJwL1j2TEbNV6lx94FnrrTjYtbJtPMNPbBEST4HsA+78+fE415ZFHaVGhoes+R+8cdd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGZGAGgEOZcz45WXrfXelE63rGvkj9hEVkpQdm29DR/vYhcggT
-	rjncvYOLOSX9/ZC2Rwsq0s1wsUxmbruvrgScUbrNnRCOH4EcCMJjASP52BGowA==
-X-Google-Smtp-Source: AGHT+IFQn+z4i4PvF96htJxu0pzdb+NNPCs7QRfIEw0WlBnCJXtMyEadU8DR0+0TjKzAkjXI62fJtA==
-X-Received: by 2002:a05:6214:3c98:b0:6bf:95a7:e230 with SMTP id 6a1803df08f44-6c32b8094b0mr11868556d6.36.1724711355689;
-        Mon, 26 Aug 2024 15:29:15 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d1d27bsm50635416d6.7.2024.08.26.15.29.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 15:29:15 -0700 (PDT)
-Date: Mon, 26 Aug 2024 18:29:14 -0400
-Message-ID: <a769ce9fc949c03f91a4ee1d1cc6ebf6@paul-moore.com>
+        d=1e100.net; s=20230601; t=1724712569; x=1725317369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nWTFl5f8OPZ9kYIvj+M7W9eYYEXfjlTCvvmN9eeNnFM=;
+        b=ZiNAwC/+lZ4hQ75rJw5S4R49MaQc7HyWHDJxxxXl3uwwcIQKC7VMS81FRA8NehZUnF
+         v+OxfxnWhe71DzjGJohokvlCHHpBEO41zTCtJfFDSoDeyHreOfhjvtrKW/90FzQbcK/8
+         VNKtmGKMyG7UJt7GOL3+9/982ogxS3gMXeTn8u9THUZvC+OfFdK2Vw/wQpWualu9MaWn
+         Nhy3u2rE80xrmD9DLF1bIyF4GHpdlREJprV6WueGpCSF9CJlo3qjS9CEzS8g67+gSaf8
+         OnbtW+0MwxFf60yQcZ9EhhDXx6cCab1KX76W+cqvNK/1KpJCDSK+uXCxCzoVUSVb/hF2
+         +w6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXYZ/JAWi46XXpbgNeoZbY5XsjpDSGlSI3FzXN2Fg7PdwGT3QdyfHf8Hduqtu1g37S+HSjvUKHLcOjQjRPNqwWwZFB/T2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2AibDZYWY3CXmgocg3TJmJdWAhPemvwRjmqpqVcsXocrf/Ix5
+	3nSenK9qY89db1wGQWH2/JE3x8mEu5zKfzgt6FEErnfOFs3s4lF9Vb5b9Km7fmizi/xmf8TVght
+	AHUxhd8E5rMAygTwAJNsq1A+vBxnxJJn6yGFA
+X-Google-Smtp-Source: AGHT+IFdXwGDNkQJWX/aeiki5niUl6YsOZL7hcKl1t9UskkQFhTdxuBmqzMkoxujlay9La0l7/VeNVTc31ug5dspjrg=
+X-Received: by 2002:a05:6902:1283:b0:e08:6373:dfc8 with SMTP id
+ 3f1490d57ef6-e1a2984666bmr1176664276.23.1724712568754; Mon, 26 Aug 2024
+ 15:49:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20240826120449.1666461-1-yukaixiong@huawei.com> <20240826120449.1666461-8-yukaixiong@huawei.com>
+In-Reply-To: <20240826120449.1666461-8-yukaixiong@huawei.com>
 From: Paul Moore <paul@paul-moore.com>
-To: Ondrej Mosnacek <omosnace@redhat.com>, netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org
-Cc: Xin Long <lucien.xin@gmail.com>, Vlad Yasevich <vyasevich@gmail.com>, Neil Horman <nhorman@tuxdriver.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, linux-sctp@vger.kernel.org, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sctp: fix association labeling in the duplicate  COOKIE-ECHO case
-References: <20240826130711.141271-1-omosnace@redhat.com>
-In-Reply-To: <20240826130711.141271-1-omosnace@redhat.com>
+Date: Mon, 26 Aug 2024 18:49:17 -0400
+Message-ID: <CAHC9VhS=5k3zZyuuon2c6Lsf5GixAra6+d3A4bG2FVytv33n_w@mail.gmail.com>
+Subject: Re: [PATCH -next 07/15] security: min_addr: move sysctl into its own file
+To: Kaixiong Yu <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, ysato@users.sourceforge.jp, 
+	dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
+	j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jmorris@namei.org, 
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	wangkefeng.wang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Aug 26, 2024 Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> 
-> sctp_sf_do_5_2_4_dupcook() currently calls security_sctp_assoc_request()
-> on new_asoc, but as it turns out, this association is always discarded
-> and the LSM labels never get into the final association (asoc).
-> 
-> This can be reproduced by having two SCTP endpoints try to initiate an
-> association with each other at approximately the same time and then peel
-> off the association into a new socket, which exposes the unitialized
-> labels and triggers SELinux denials.
-> 
-> Fix it by calling security_sctp_assoc_request() on asoc instead of
-> new_asoc. Xin Long also suggested limit calling the hook only to cases
-> A, B, and D, since in cases C and E the COOKIE ECHO chunk is discarded
-> and the association doesn't enter the ESTABLISHED state, so rectify that
-> as well.
-> 
-> One related caveat with SELinux and peer labeling: When an SCTP
-> connection is set up simultaneously in this way, we will end up with an
-> association that is initialized with security_sctp_assoc_request() on
-> both sides, so the MLS component of the security context of the
-> association will get swapped between the peers, instead of just one side
-> setting it to the other's MLS component. However, at that point
-> security_sctp_assoc_request() had already been called on both sides in
-> sctp_sf_do_unexpected_init() (on a temporary association) and thus if
-> the exchange didn't fail before due to MLS, it won't fail now either
-> (most likely both endpoints have the same MLS range).
-> 
-> Tested by:
->  - reproducer from https://src.fedoraproject.org/tests/selinux/pull-request/530
->  - selinux-testsuite (https://github.com/SELinuxProject/selinux-testsuite/)
->  - sctp-tests (https://github.com/sctp/sctp-tests) - no tests failed
->    that wouldn't fail also without the patch applied
-> 
-> Fixes: c081d53f97a1 ("security: pass asoc to sctp_assoc_request and sctp_sk_clone")
-> Suggested-by: Xin Long <lucien.xin@gmail.com>
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> Acked-by: Xin Long <lucien.xin@gmail.com>
+On Mon, Aug 26, 2024 at 8:05=E2=80=AFAM Kaixiong Yu <yukaixiong@huawei.com>=
+ wrote:
+>
+> The dac_mmap_min_addr belongs to min_addr.c, move it into
+> its own file from /kernel/sysctl.c. In the previous Linux kernel
+> boot process, sysctl_init_bases needs to be executed before
+> init_mmap_min_addr, So, register_sysctl_init should be executed
+> before update_mmap_min_addr in init_mmap_min_addr.
+>
+> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 > ---
->  net/sctp/sm_statefuns.c | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
+>  kernel/sysctl.c     |  9 ---------
+>  security/min_addr.c | 11 +++++++++++
+>  2 files changed, 11 insertions(+), 9 deletions(-)
+>
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 41d4afc978e6..0c0bab3dad7d 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2059,15 +2059,6 @@ static struct ctl_table vm_table[] =3D {
+>                 .proc_handler   =3D proc_dointvec_minmax,
+>                 .extra1         =3D SYSCTL_ZERO,
+>         },
+> -#ifdef CONFIG_MMU
+> -       {
+> -               .procname       =3D "mmap_min_addr",
+> -               .data           =3D &dac_mmap_min_addr,
+> -               .maxlen         =3D sizeof(unsigned long),
+> -               .mode           =3D 0644,
+> -               .proc_handler   =3D mmap_min_addr_handler,
+> -       },
+> -#endif
+>  #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
+>     (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
+>         {
+> diff --git a/security/min_addr.c b/security/min_addr.c
+> index 0ce267c041ab..b2f61649e110 100644
+> --- a/security/min_addr.c
+> +++ b/security/min_addr.c
+> @@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *tabl=
+e, int write,
+>         return ret;
+>  }
+>
+> +static struct ctl_table min_addr_sysctl_table[] =3D {
+> +       {
+> +               .procname       =3D "mmap_min_addr",
+> +               .data           =3D &dac_mmap_min_addr,
+> +               .maxlen         =3D sizeof(unsigned long),
+> +               .mode           =3D 0644,
+> +               .proc_handler   =3D mmap_min_addr_handler,
+> +       },
+> +};
 
-Acked-by: Paul Moore <paul@paul-moore.com> (LSM/SELinux)
+I haven't chased all of the Kconfig deps to see if there is a problem,
+but please provide a quick explanation in the commit description about
+why it is okay to drop the CONFIG_MMU check.
 
---
+>  static int __init init_mmap_min_addr(void)
+>  {
+> +       register_sysctl_init("vm", min_addr_sysctl_table);
+>         update_mmap_min_addr();
+>
+>         return 0;
+> --
+> 2.25.1
+
+--=20
 paul-moore.com
