@@ -1,108 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA2E1946BB;
-	Mon, 26 Aug 2024 16:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214DE450EE
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 16:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724691028; cv=none; b=KaeFelZOoaD3Rh0ehgBozAXpxG7jgTko/gYpA1pi2mXz/tJmMyTdg8jBOjN/tCV7hMg1dYAwa2xLA6eV+E7low3oC9+lFmSjWB0AUPHX25wQlyj/CWa05jvhvVDRmjllMPiUN4iiZHqJPIdgX5UtSnta8x6uf8rDrexfZRfypYo=
+	t=1724691119; cv=none; b=YbN2A06tPmQQNgA/RGvkxEmwZEbfnBvHvKcHzOsdHAIXwwbYQbDMToYDfyzMKdz8Ubp8Jv6aRue8JxGNTYVXVT+JE/qu+nQUNqhazKfXk64gN1dnU8gO3RkyKXA3setSZK/6mhHdBjlnXU4oDRrvjTdEXWyeaU85saHh6PQw844=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724691028; c=relaxed/simple;
-	bh=Z+nM13pnLmDsTBNfVDKA+YqeuZzbs5Ifw349S3oky7Y=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=h8rhIWOvvSZcZ5xXYK85NAkzeX76TsWS9GdkQH0N6KWZtj93ZMHgLpbr1kjS3aGjQtC5EIcIx8GzSI+vsHLAZaa2Lx8hEqDKmgKFd74SoOWVaKEVAjs9dm/NDujFsA0B+vp+GqnzHs1IGmwA3+mduJwsd+6qLf5K3fFcyQp2TW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q45WC5lK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724691119; c=relaxed/simple;
+	bh=+L4oNHMCNWpuHYOaMMKItyPNozrAbfcW8AOsRv3DNvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fV4/whpW5als9i5qjxpc8aAp8gH95FjBCqvq0YWoOaX7Bzn4Bv74ChbtmizfR6QtutXss42ZaYfI5d/WLTG+zOvzwtc0iFr1zf/sKf6ni/QYkXiX275kblvMFYTZVDfb9Qzr3hUWH+i2zCOEOMqlBV2Zp1sxvyIGkwJ3sVa5qFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ReH+1kMB; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q45WC5lK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397DAC52FC5;
-	Mon, 26 Aug 2024 16:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724691028;
-	bh=Z+nM13pnLmDsTBNfVDKA+YqeuZzbs5Ifw349S3oky7Y=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Q45WC5lKg/LkyteFnRbpI1iVwrc9eTD/Da68nGGe2YlnxLncY/jJgOsVR9s3Titvd
-	 dBgkZNU1Rqw4anGmADeZa5HXJuVBAfr6oMEf6Xt5OhVrePmo3B8G4k53Sk2NiRloQB
-	 ISL+3I8b6r3AGuf2gw+HmJnL4NgRx4YOmnrQ4ywPT+JczgW+zKi53lxtvc0ysLApRZ
-	 upSfKB+5eyy9Wnxntr1Ryfs4oCeUgPQ5+BjVVBpb9cbnBU2kFiULsTV5g+aKNM0RR7
-	 PYQ0zCLA1X0W9EQOIn5lgEOi/Lg9lDUfBldl120A973U/vmbbqnWAYmKVA63ccJr9J
-	 KQg6V3VRGYL7w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710CA3822D6D;
-	Mon, 26 Aug 2024 16:50:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ReH+1kMB"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso4881368a12.3
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 09:51:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724691116; x=1725295916; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yGTcWYcxKa7/MM+pYx91vIxpflLbKrK+tQNtIyIYCsw=;
+        b=ReH+1kMBGLMwUaoYhCeOJgw9epKNiCjltcpXXw4YFoRGCyoXPe87LnlUvuFS19U7BW
+         VQTcHLfvymEygRRjLKV2VzZexMfBCOzQMoUw1eP+HT8nYcJJU9KaINjH/4NlNL3kHNrn
+         hVnQ6A0IJZ3BXm3dq4Z0ztImV6BGgXIuZNz2QbVhfxf28TwjwHjyxPVIuNME3cuqIDwm
+         S5cZR2KXKeq868JZc62wVVnZ0xdaSpsKWdm8YIEAOyoy1Rtm3eu2qm3Cx794v/Ka+bvt
+         8CziOvolrHjMqZ0/F5udWbz8HqS5TmXuw+9LPkutjVYkmMD6wRrzUIYfLl77fnUGbxH+
+         61Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724691116; x=1725295916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yGTcWYcxKa7/MM+pYx91vIxpflLbKrK+tQNtIyIYCsw=;
+        b=ZCJvXCKMXZohW3S4w0xQvlw+6TPti63nZ3leNtps4bYvPbLyyoe9i1OVT8ZuN7EeCC
+         RKhXNSuSGNZ2O28DsnYwUZsWIjukQU8s8+Ke0mG5VbYCdWXQ1N92DGUwwvzhlkaVvuzn
+         XfH+ZYdsXA4QYhRkxXmhsc+4JL3yd2zmbwpc2O/UgJoDy0+3kP28G67mmX/jOKK+Na++
+         geVlfwcrLB66LhLjw5m8BvTePwVRpUYA3PaZDvvNRkpHCyrxrAW7Tsgq0aSDvv2rqBeE
+         lgrrX8VjbLSUu0kFwwuaONC/NGfBoQZSLSrLuhyFYlCpi/Xa+7IkNXSu4oiaQPH1F3Vf
+         V8jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWk9qs9LgzwiadOIrHAG8xJNKjgswrnmtiS6PemRNaHGwv2uMrssFrRdZzmV6A11ixPcOZbM3Qpr1k5gSWkKIZoK7Ly/bI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziQURbGDkCgbYdEtyxvvF+gC8jNa/Cvosm0vgVEs/0vR1Oi3VJ
+	95B2/S1O33orkvugMwl17Nbv7v626mH1Zl2SFpZoGPvYq79xS8nzCNxyH/GiRMk=
+X-Google-Smtp-Source: AGHT+IGad1dbexVhTpYCO13uCMg2SLCPwC55Yto2UhY1VO9tgHVcIhFpdgXzbXOnyKLfVkpECVPV8Q==
+X-Received: by 2002:a05:6402:1e89:b0:5be:db8a:7f5e with SMTP id 4fb4d7f45d1cf-5c0891abb09mr7263514a12.37.1724691116442;
+        Mon, 26 Aug 2024 09:51:56 -0700 (PDT)
+Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3cb04csm5819961a12.31.2024.08.26.09.51.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 09:51:56 -0700 (PDT)
+Date: Mon, 26 Aug 2024 18:51:55 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
+Message-ID: <ZsyyqxSv3-IbaAAO@tiehlicka>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-3-mhocko@kernel.org>
+ <ZsyKQSesqc5rDFmg@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/13] net: header and core spelling corrections
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172469102801.67399.18155018116632832948.git-patchwork-notify@kernel.org>
-Date: Mon, 26 Aug 2024 16:50:28 +0000
-References: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
-In-Reply-To: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
-To: Simon Horman <horms@kernel.org>
-Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, wintera@linux.ibm.com,
- twinkler@linux.ibm.com, dsahern@kernel.org, jv@jvosburgh.net,
- andy@greyhouse.net, quic_subashab@quicinc.com, quic_stranche@quicinc.com,
- paul@paul-moore.com, krzk@kernel.org, jhs@mojatatu.com,
- xiyou.wangcong@gmail.com, jiri@resnulli.us, marcelo.leitner@gmail.com,
- lucien.xin@gmail.com, ms@dev.tdt.de, netdev@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-sctp@vger.kernel.org, linux-x25@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsyKQSesqc5rDFmg@casper.infradead.org>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 22 Aug 2024 13:57:21 +0100 you wrote:
-> This patchset addresses a number of spelling errors in comments in
-> Networking files under include/, and files in net/core/. Spelling
-> problems are as flagged by codespell.
+On Mon 26-08-24 14:59:29, Matthew Wilcox wrote:
+> On Mon, Aug 26, 2024 at 10:47:13AM +0200, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > There is no existing user of the flag and the flag is dangerous because
+> > a nested allocation context can use GFP_NOFAIL which could cause
+> > unexpected failure. Such a code would be hard to maintain because it
+> > could be deeper in the call chain.
+> > 
+> > PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
+> > that such a allocation contex is inherently unsafe if the context
+> > doesn't fully control all allocations called from this context.
 > 
-> It aims to provide patches that can be accepted directly into net-next.
-> And splits patches up based on maintainer boundaries: many things
-> feed directly into net-next. This is a complex process and I apologise
-> for any errors.
-> 
-> [...]
+> Wouldn't a straight-up revert of eab0af905bfc be cleaner?  Or is there
+> a reason to keep PF_MEMALLOC_NOWARN?
 
-Here is the summary with links:
-  - [net-next,01/13] packet: Correct spelling in if_packet.h
-    https://git.kernel.org/netdev/net-next/c/d24dac8eb811
-  - [net-next,02/13] s390/iucv: Correct spelling in iucv.h
-    https://git.kernel.org/netdev/net-next/c/c34944603248
-  - [net-next,03/13] ip_tunnel: Correct spelling in ip_tunnels.h
-    https://git.kernel.org/netdev/net-next/c/d0193b167f27
-  - [net-next,04/13] ipv6: Correct spelling in ipv6.h
-    https://git.kernel.org/netdev/net-next/c/507285b7f9b2
-  - [net-next,05/13] bonding: Correct spelling in headers
-    https://git.kernel.org/netdev/net-next/c/e8ac2dba93ea
-  - [net-next,06/13] net: qualcomm: rmnet: Correct spelling in if_rmnet.h
-    https://git.kernel.org/netdev/net-next/c/19f1f11c9a8e
-  - [net-next,07/13] netlabel: Correct spelling in netlabel.h
-    https://git.kernel.org/netdev/net-next/c/6899c2549cf7
-  - [net-next,08/13] NFC: Correct spelling in headers
-    https://git.kernel.org/netdev/net-next/c/10d0749a38c3
-  - [net-next,09/13] net: sched: Correct spelling in headers
-    https://git.kernel.org/netdev/net-next/c/a7a45f02a093
-  - [net-next,10/13] sctp: Correct spelling in headers
-    https://git.kernel.org/netdev/net-next/c/7f47fcea8c6b
-  - [net-next,11/13] x25: Correct spelling in x25.h
-    https://git.kernel.org/netdev/net-next/c/01d86846a5a5
-  - [net-next,12/13] net: Correct spelling in headers
-    https://git.kernel.org/netdev/net-next/c/70d0bb45fae8
-  - [net-next,13/13] net: Correct spelling in net/core
-    https://git.kernel.org/netdev/net-next/c/a8c924e98738
+I wanted to make it PF_MEMALLOC_NORECLAIM specific. I do not have a
+strong case against PF_MEMALLOC_NOWARN TBH. It is a hack because the
+scope is claiming something about all allocations within the scope
+without necessarily knowing all of them (including potential future
+changes). But NOWARN is not really harmful so I do not care strongly.
 
-You are awesome, thank you!
+If a plan revert is preferably, I will go with it.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Michal Hocko
+SUSE Labs
