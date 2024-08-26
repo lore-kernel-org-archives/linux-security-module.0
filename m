@@ -1,280 +1,180 @@
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F267A1DFFB
-	for <linux-security-module@vger.kernel.org>; Sun, 25 Aug 2024 19:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB6418E1A;
+	Mon, 26 Aug 2024 02:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724613170; cv=none; b=IUcnP9ei10q/o24u7D+HGDkhkYaLvVaEWrXIiRmdA62pEWLWwlQc+LqLkYl9NDj9OqOc+82dwUHg6ElrNm8Sk6+KOwiSukqYxPebLbhvzvZe10KSbHUvd6HwuCKjBmi+8lx8cerwvYtQCT2KHxHP964E/JanCFl4iWQEQ+6O0Wg=
+	t=1724639493; cv=none; b=ASXRj0F4TSHTpH1pE7pSrMBprV8wohUbQGbB0PvadvoHfgylawM+x4GfIldnNfmwURmifvG7tmyWNnJMd6FC2hc75vyd1ofjNzMzU6E6qAiOSK1qiUIrMOdFwXG7QN4uyyM8+5Vleuuq3MZzy+rslJvV8Zoha1GTxOE0Hn5XVMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724613170; c=relaxed/simple;
-	bh=67ymlQDOa1Der05uWcWmKFyIg/qwS1ENd9dk4rFsI2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hb9LxRK8ae9bKZNou5PHrCXJGHW/VX2GUvg1T48g6nigV0dl5CFwKbh99Min3h5c5rCeTqqE/kTp5fkJJa0oJsJ14BXZatSI5FFv5wm3XjtTXNz1VSlmjHrV0BDaLH1Yhxh5+mpoDwHttyK4BtBUtUD4U7vHjRgAmpp2e56OvNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=C+WjFqNZ; arc=none smtp.client-ip=66.163.185.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1724639493; c=relaxed/simple;
+	bh=auvGWweHPionxG3Y2RIot08h1IaHqLUTT7XYr7Bux+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HkeGYKGCx+dCczcVMOOGo9ZWrNrzAf4lejUBYG1qD9BDQ1HtR6ESdgX4cp+LEGrJCGg3Rg45EGWz1AD3gMyXRr9s9t5c43HNJ3sIMZEyCGvvW7H/bYgsD4vnyXimllRwta5FHlXUOAlt5wf+5Bl3p6pDXMHJgHbjQxEjjPLu978=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J33EkjvU; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="C+WjFqNZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724613167; bh=dqraIuMpwR6bHt3tfUB7hIAQsUylj3oQRwTA/i7LrWI=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=C+WjFqNZS5euSGhR1O6yH1jVp159gjJQqIndjNBkHXyd80KVb5jxPqXo0q5LwRPigBmKtn2BfdGZWRzzA/W/cOmmGH0KU6PgxJ4qpgdkMeDl8f8522bCn0Obc7sQ/1zZ4OEif65oWWYosIsB94P3AS75EBwKbN6z4vecOYWOkTBhxPwI/UHLlgEkWn+gOcbZL7aKwVuT6noLv/iV8A9j7OhcHgzSW2PMgezSRfcbxQpLH5uBi3sYhaR3yZHvy1HtDsWeoZ8ML0H0eOfz6dWTfw5xRydaUj+rkfvYrbGx+CPDmYFMx6pKqajMWmgBK0TKoUA5agj7YlCWM8ismRqb3A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724613167; bh=eO1PYtKjZ6ioD1d3/AkG8BKGwfiw77zAsgAMVORv6KT=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=MHZ7E9jCbYvw60nL2f6t+KTQlIzb1yciDHIN3YNkbktGXYsJ6srY0uO/dqXoY4WqUyYU0G4WQV/y1v3Wqc1Kc2g1fChnps9t1z9fx3lfXrOm9byjiHF7gI/BB2mh3MH207jXaifws+vdqHa+3Qsksvlqr7jpozk/QqFGT3kOvtZj90yLWqibVn/YeixF9JwkPIA/WAPW2liSNuMuqRnAipXn1PWUN+jyN3vfr6pNTpUpnTuC1VqIwS1oStLWttNlDO2HW3TIocTAoXl3rH8fXQ1F5ABTY1WFE6ssDZbInlCgfAJWWmsy1a1JnH8+DozCMUSovOpuh+SzGdoOIcN86Q==
-X-YMail-OSG: g1nSUcsVM1nuk8omOIYAZrp6oAtG34T6J7m_VcyzLD6qPqL4_zCN2Xq5Z8Gh_2G
- Y5DlxRp.uwA5zMDe93vrRpLImIS2P9j_EFxP0b0M1Q36bxuO1V7RDjx.tuUaJ4Z7_yxKX6z5jbjO
- 1dY92_U_JGPYpshkJWUPTeaR16TFrwCf28dEZv3TLvUcmub_PHYQ58mCGf6w0Ctu0BMl1WiEyBzX
- qBcK_7cDqsPV2033yDB_CNCv166TUA94S.Y5A.HeExyqB74H2SwHkYHO9XUSEzLCTxBz9GbYxCa1
- EZO497rFG_l96RL7IOr5Z5XV2MmmaQFhJ9B1w0fWNkssfutmd9bZkjK.jK.RWhLgUo.5Z30QsZru
- rs31n.lx1enLKwzjD99r1F6wWEvCm91a42dGeChzTQn601YY1xjbyrNtdWD9bvSSlE.6xTHekuTB
- 9ijwz1TpdLvIHyPCnM7ZpDO0D9A2vDpp3sUWVQcv_eFluQGoaxzXc3FDlWuveo6dzWK5a_S8KYLg
- TehiuTnbS1GVOgxLOSFPElnj4bjku62OKNUPJk8.zNzkgSfAX8iULPo7wf.8vw2VgWogjP324rME
- 0NwVIMKID1jp1QPd7CRhLqGuNXLpXlbs0KGmPNbZ7xbjrg2VPwUeD3ozuvliXeTqshO3ghRDnD41
- .uHVThf67KPI6ZV0KyUcQpm57MxXCujh6s2P5ReFm8g7sOQIAPeqxjBYVlwoiSPYW6Z5oyRuDI67
- v6xS6dL.UKL6vefWozd2xpDXkBOo8kEjEFhGkhYSy5Dw0D2HcSZI1H8tnUuy5Anwq565.2VO9C.u
- 5RSkKnsqmbrsPUmw2SJhRmlbvMIpB9.cRC7Sul5PJVViAqv8GJeb4tQ4TiQwgF2bnKGtcUOkUCm2
- loSDbc7afbNflo12CJs58sDR3aA97XCwRGRUFFrlfdQDvYFMMLg3GzN85091qpNNch8jhoEqTMkZ
- Udv6X6.yDO9MRGf_bFgXnLBFQK7sTc1BgFnc8J.2kACTZT9iVkDbWZI35inwBM.89gfVQoRdpAvx
- kglqYUV3bSHpVQvacN3H8k88PGWBoXzLRZXx0F7UmSb62M6PcPAIp8zXAnf0U3il71e3.kYbHbZE
- sf8Ro9apSUGZ0EZ.xtGE4CDBJZNxV0z1tjFKCJPUBZQvc.K0AHkJahgu01J8UdKC2jNXF82Qre4Y
- lu._RanL1TWU88fIEsDhniXw3mDdkGveO4d9FOEN0Z6w6Uy7bzfXYsSjzYR37Ql4uvICqowVAbYl
- 3Mv2gZE3gPh0qClU.Johb.JS9Lm8zsCRSHIgWo0AYKnlQwb_7R1g9uLbgALiD0Gw55YIMTBMZ4oJ
- ECWLGmnL8bGSrx8QKk3J_jAPLmQv0GT6F81DKZggTForY.53r5wX9aosyx_i2WJCClV3bfx60.uS
- 57ptovSGajQI7PyWfdZfvSNVHB9x9dxJwYwdQ_eUg_SkxyC0X7AH76j8crDqbVszNz_u_RPP2j1W
- DaANd_CfuqVgZ8_7tbCeNFA1g6G.iSJEigq.PELM4ac0wPVSvuRkz0wQXwLdouJcKKfa636SVMcn
- 5SMUMfs_pC6wNnZUgGnCAEJ.Gq11W8Itas74_sebiWcFO5v4ZubYpf9c1txc2t4GHkXOHoOV9brn
- 3Cshj1sSbm6MygXgafGUcBfsSKmn7XXLJPEfWOoUXJDVD0s.E4h41m4eiwxZvQn1Nk_xiFXghoOq
- AlLIc7OMmrGtPIlmv1cB4vF8tzUGDakgs1cOlIvn6n8vbAcm174ObC.ISL.Sygp7cyQSFIopk_nI
- 2IcXp513MRJl8NhWL78.u4_ru0ssQ0rCUgmAgpxf9dQwHdAe2lqsBRIX1Zf2EG9dKdzX6_xzRn_v
- IJ6qiJuYQQgGkYxmP91vR6jKhR_Dh02bdUC3..lya8eB0AnLJTaauQGqQvkmc7XeDtuaL2.z_bxf
- x1IbjzAFyLEfW4XDQ1nByKKW4uGO.VVaQn2slqIhnDgLncv3BBxdDLn83wulIdoO43CqcLEnSbl.
- 4IOsIdsJ2bWiEFZpOq4a7RfxShZoz05uXLUvGMQJuTDvgvehipsTYUjrI23aZuuYn8AY4b04ugPE
- UPKr9ItgVqg3u4YyjCrRVv2l.mBNDVvg7uxCAUbait5u1nD7eWQARUORjipF2QcqLYQbyG3UDFTr
- 2p6vWEFHB.YP_CP.zzPSjj4gI.TwAJR4gRzM1i4Ze8TsCp0iZwOeskj6FCfqBNkw5prBo_c5JDX0
- WjSgBm5j._ibL7sdZyMIhu_ZFnPtmbQiZBeJH5DCGBwHiQeRfGkV43s36Tg3bQ.l9.bRgRiLuwAP
- uhzFvsvz1MCsxgUTME5Umr6pL97RzcR0FoEdz
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 54319396-7e8c-4c84-a22d-16d7a6eb5d5a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Sun, 25 Aug 2024 19:12:47 +0000
-Received: by hermes--production-gq1-5d95dc458-24x88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9a60282a87ef6e0dec5cdda503c29ed7;
-          Sun, 25 Aug 2024 19:02:35 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	mic@digikod.net,
-	linux-audit@redhat.com,
-	audit@vger.kernel.org
-Subject: [PATCH 05/13] LSM: Use lsmblob in security_ipc_getsecid
-Date: Sun, 25 Aug 2024 12:00:40 -0700
-Message-ID: <20240825190048.13289-6-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240825190048.13289-1-casey@schaufler-ca.com>
-References: <20240825190048.13289-1-casey@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J33EkjvU"
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6bf784346b9so18220586d6.2;
+        Sun, 25 Aug 2024 19:31:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724639490; x=1725244290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0XScue1slDHBjUXVjmPax26pz/WL1rKHeatxMpCgrfI=;
+        b=J33EkjvUneEAQ7IrY04ueDnx8p5tDlmKPlIa+IxlvcpTc214iqMgSCbNDrmrZgBNSG
+         kKBTk7P6USq53BZHqkiu+KskQV4Jqv4MaUp17DkydRStK2+/rF7Mq7EihpRJc3768RUr
+         cBCioSfjcZdqGiyb2rakf1LvaHUR2yIeWeAMpvZ/elEwBTtboSDip6PPWHyoj6QtEyBI
+         LY4VoNXkoRrHwT/Da1/ojp7nFS6GfX3jrhKUKOnMIE6tdw96/679XDwHId07EBD0SbvO
+         P9OyjS+dBdw9sYk6XP3NisNBeRL8JgNkJAGPFuNPq7Vma8caACa6VlBJFGhvH0tm/JVA
+         FSdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724639490; x=1725244290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0XScue1slDHBjUXVjmPax26pz/WL1rKHeatxMpCgrfI=;
+        b=RBOQNrVHQubUIRt/FxaVdir15QuETP9+0S5K7df+kpK+VUbXaBtG+nDzcqoeRwadif
+         NMkn55Fe2zZOa6mXlCxQtaBn5ZM3n1YFyOC8D7xtu6fEfOJB9R1xrRuhRWZILxQCV+uy
+         XZ/vBS5Uiwfk0bR4S6tAGSKEWIHOC2mKpJlQYjy+spuv9mTLzqMFbrW6w+L4gRDP2KwQ
+         Ef6T/x/8++1hzpgAVv71zW9gL5zTYZcFuG2VH+EG7ToWLOfR4g/q/fDzI6oQo0ZfKyNo
+         KIaDEcx5JHwg47TP0AJK+BQgUfBbjcZ1Pir3QgQGIxpRTQalnDhs2st7lAcGLQgxgzQh
+         RmPg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+LLwmWF7SwxB4dhtHT73RfdD8s0GmnOkZ93FZNn7CYTInwiCupLKtiFwut6NsrmmX9kt+fSHT/A==@vger.kernel.org, AJvYcCU+Q2/qpK+CC3onhcQ7BwDX8R7kJCWIvu+enJ5zaRKoNJMWXX8lssgglf4CdzynpVesq+3okUkf0sbYibIO5r7fH9jo@vger.kernel.org, AJvYcCUfTuanryljPhtyo7jpioBGWFTefyUWB13kAqnHyFmFkHLpFPMmdabVjly+879hzf2+uSS9BvltB7w9EUd59A==@vger.kernel.org, AJvYcCVGs+GZ97iiVWrJbXD0ixBPqz30a5cBEefL8rgWKg/nlWF6+rRLy8Pd4ZoF7J7/wGSKNnBrcD8+s7SFlTPP1zHVbV8fxHdu@vger.kernel.org, AJvYcCVVgQWRNuPmfbgquVfn7PfcPR/1YFtC3SoPpM+4LTxn+fAvQR7b4Zu/LlsWj+HoWsHo48DheA==@vger.kernel.org, AJvYcCVwKBQ8X/SKwIzbn4/0wrGIsDmu20yZjWMKsKb09eyMQQt9IL5+o82XYenMVg1LFub5T3iw@vger.kernel.org, AJvYcCX72G27jpTwaedK8xNmFKpTSImxtiOn82cpZOjNhqzLfYYFSdqncKzFjl3vowXhoGJTdaRK529N@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNkPg/QJ2Usa76CXkYTozsNnc2VoxrIDmBk1Qj0N6H+C2u674W
+	TYyfzLSd0rJ+xxQdJ9iSt5jA/wrt/cFTnqMj7OwXUnVQk14etHnJgd4W8HPOE1yC5XFuUTPDSfo
+	bxqSC79ZxycwGNhaisyufaQMgYNU=
+X-Google-Smtp-Source: AGHT+IGarR35eqB+ZCiektfid3NknQ5udphouR14HCsBw/jqFbYUFfZCBajx/1hzRrP8EuX3DNE+IOmZVcAYGIL4Z2k=
+X-Received: by 2002:a05:6214:318d:b0:6bb:84d9:8f91 with SMTP id
+ 6a1803df08f44-6c16dc2615cmr95291406d6.6.1724639490512; Sun, 25 Aug 2024
+ 19:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+In-Reply-To: <20240817025624.13157-1-laoar.shao@gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 26 Aug 2024 10:30:54 +0800
+Message-ID: <CALOAHbA7VW3_gYzqzb+Pp2T3BqWb5x2sWPmUj2N+SzbYchEBBA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/8] Improve the copy of task comm
+To: akpm@linux-foundation.org
+Cc: torvalds@linux-foundation.org, alx@kernel.org, justinstitt@google.com, 
+	ebiederm@xmission.com, alexei.starovoitov@gmail.com, rostedt@goodmis.org, 
+	catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There may be more than one LSM that provides IPC data for auditing.
-Change security_ipc_getsecid() to fill in a lsmblob structure instead
-of the u32 secid.  Change the name to security_ipc_getlsmblob() to
-reflect the change.  The audit data structure containing the secid
-will be updated later, so there is a bit of scaffolding here.
+On Sat, Aug 17, 2024 at 10:56=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com>=
+ wrote:
+>
+> Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
+> length of task comm. Changes in the task comm could result in a destinati=
+on
+> string that is overflow. Therefore, we should explicitly ensure the
+> destination string is always NUL-terminated, regardless of the task comm.
+> This approach will facilitate future extensions to the task comm.
+>
+> As suggested by Linus [0], we can identify all relevant code with the
+> following git grep command:
+>
+>   git grep 'memcpy.*->comm\>'
+>   git grep 'kstrdup.*->comm\>'
+>   git grep 'strncpy.*->comm\>'
+>   git grep 'strcpy.*->comm\>'
+>
+> PATCH #2~#4:   memcpy
+> PATCH #5~#6:   kstrdup
+> PATCH #7~#8:   strcpy
+>
+> Please note that strncpy() is not included in this series as it is being
+> tracked by another effort. [1]
+>
+> In this series, we have removed __get_task_comm() because the task_lock()
+> and BUILD_BUG_ON() within it are unnecessary.
+>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Link: https://lore.kernel.org/all/CAHk-=3DwjAmmHUg6vho1KjzQi2=3DpsR30+Cog=
+Fd4aXrThr2gsiS4g@mail.gmail.com/ [0]
+>
+> Changes:
+> v6->v7:
+> - Improve the comment (Alejandro)
+> - Drop strncpy as it is being tracked by another effort (Justin)
+>   https://github.com/KSPP/linux/issues/90 [1]
+>
+> v5->v6: https://lore.kernel.org/linux-mm/20240812022933.69850-1-laoar.sha=
+o@gmail.com/
+> - Get rid of __get_task_comm() (Linus)
+> - Use ARRAY_SIZE() in get_task_comm() (Alejandro)
+>
+> v4->v5: https://lore.kernel.org/all/20240804075619.20804-1-laoar.shao@gma=
+il.com/
+> - Drop changes in the mm/kmemleak.c as it was fixed by
+>   commit 0b84780134fb ("mm/kmemleak: replace strncpy() with strscpy()")
+> - Drop changes in kernel/tsacct.c as it was fixed by
+>   commmit 0fe2356434e ("tsacct: replace strncpy() with strscpy()")
+>
+> v3->v4: https://lore.kernel.org/linux-mm/20240729023719.1933-1-laoar.shao=
+@gmail.com/
+> - Rename __kstrndup() to __kmemdup_nul() and define it inside mm/util.c
+>   (Matthew)
+> - Remove unused local varaible (Simon)
+>
+> v2->v3: https://lore.kernel.org/all/20240621022959.9124-1-laoar.shao@gmai=
+l.com/
+> - Deduplicate code around kstrdup (Andrew)
+> - Add commit log for dropping task_lock (Catalin)
+>
+> v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gma=
+il.com/
+> - Add comment for dropping task_lock() in __get_task_comm() (Alexei)
+> - Drop changes in trace event (Steven)
+> - Fix comment on task comm (Matus)
+>
+> v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.c=
+om/
+>
+> Yafang Shao (8):
+>   Get rid of __get_task_comm()
+>   auditsc: Replace memcpy() with strscpy()
+>   security: Replace memcpy() with get_task_comm()
+>   bpftool: Ensure task comm is always NUL-terminated
+>   mm/util: Fix possible race condition in kstrdup()
+>   mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
+>   net: Replace strcpy() with strscpy()
+>   drm: Replace strcpy() with strscpy()
+>
+>  drivers/gpu/drm/drm_framebuffer.c     |  2 +-
+>  drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
+>  fs/exec.c                             | 10 -----
+>  fs/proc/array.c                       |  2 +-
+>  include/linux/sched.h                 | 32 +++++++++++---
+>  kernel/auditsc.c                      |  6 +--
+>  kernel/kthread.c                      |  2 +-
+>  mm/util.c                             | 61 ++++++++++++---------------
+>  net/ipv6/ndisc.c                      |  2 +-
+>  security/lsm_audit.c                  |  4 +-
+>  security/selinux/selinuxfs.c          |  2 +-
+>  tools/bpf/bpftool/pids.c              |  2 +
+>  12 files changed, 65 insertions(+), 62 deletions(-)
+>
+> --
+> 2.43.5
+>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-audit@redhat.com
-Cc: audit@vger.kernel.org
----
- include/linux/lsm_hook_defs.h |  4 ++--
- include/linux/security.h      | 18 +++++++++++++++---
- kernel/auditsc.c              |  3 +--
- security/security.c           | 14 +++++++-------
- security/selinux/hooks.c      |  9 ++++++---
- security/smack/smack_lsm.c    | 17 ++++++++++-------
- 6 files changed, 41 insertions(+), 24 deletions(-)
+Hello Andrew,
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 3e5f6baa7b9f..c3ffc3f98343 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -253,8 +253,8 @@ LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
- 	 struct inode *inode)
- LSM_HOOK(int, 0, userns_create, const struct cred *cred)
- LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
--LSM_HOOK(void, LSM_RET_VOID, ipc_getsecid, struct kern_ipc_perm *ipcp,
--	 u32 *secid)
-+LSM_HOOK(void, LSM_RET_VOID, ipc_getlsmblob, struct kern_ipc_perm *ipcp,
-+	 struct lsmblob *blob)
- LSM_HOOK(int, 0, msg_msg_alloc_security, struct msg_msg *msg)
- LSM_HOOK(void, LSM_RET_VOID, msg_msg_free_security, struct msg_msg *msg)
- LSM_HOOK(int, 0, msg_queue_alloc_security, struct kern_ipc_perm *perm)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index a0b23b6e8734..ebe8edaae953 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -290,6 +290,17 @@ static inline bool lsmblob_is_set(struct lsmblob *blob)
- 	return !!memcmp(blob, &empty, sizeof(*blob));
- }
- 
-+/**
-+ * lsmblob_init - initialize a lsmblob structure
-+ * @blob: Pointer to the data to initialize
-+ *
-+ * Set all secid for all modules to the specified value.
-+ */
-+static inline void lsmblob_init(struct lsmblob *blob)
-+{
-+	memset(blob, 0, sizeof(*blob));
-+}
-+
- #ifdef CONFIG_SECURITY
- 
- int call_blocking_lsm_notifier(enum lsm_event event, void *data);
-@@ -500,7 +511,7 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- void security_task_to_inode(struct task_struct *p, struct inode *inode);
- int security_create_user_ns(const struct cred *cred);
- int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
--void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
-+void security_ipc_getlsmblob(struct kern_ipc_perm *ipcp, struct lsmblob *blob);
- int security_msg_msg_alloc(struct msg_msg *msg);
- void security_msg_msg_free(struct msg_msg *msg);
- int security_msg_queue_alloc(struct kern_ipc_perm *msq);
-@@ -1340,9 +1351,10 @@ static inline int security_ipc_permission(struct kern_ipc_perm *ipcp,
- 	return 0;
- }
- 
--static inline void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
-+static inline void security_ipc_getlsmblob(struct kern_ipc_perm *ipcp,
-+					   struct lsmblob *blob)
- {
--	*secid = 0;
-+	lsmblob_init(blob);
- }
- 
- static inline int security_msg_msg_alloc(struct msg_msg *msg)
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 84f6e9356b8f..94b7ef89da2e 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2638,8 +2638,7 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
- 	context->ipc.gid = ipcp->gid;
- 	context->ipc.mode = ipcp->mode;
- 	context->ipc.has_perm = 0;
--	/* scaffolding */
--	security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
-+	security_ipc_getlsmblob(ipcp, &context->ipc.oblob);
- 	context->type = AUDIT_IPC;
- }
- 
-diff --git a/security/security.c b/security/security.c
-index bb541a3be410..6e72e678b5b4 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3611,17 +3611,17 @@ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- }
- 
- /**
-- * security_ipc_getsecid() - Get the sysv ipc object's secid
-+ * security_ipc_getlsmblob() - Get the sysv ipc object LSM data
-  * @ipcp: ipc permission structure
-- * @secid: secid pointer
-+ * @blob: pointer to lsm information
-  *
-- * Get the secid associated with the ipc object.  In case of failure, @secid
-- * will be set to zero.
-+ * Get the lsm information associated with the ipc object.
-  */
--void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
-+
-+void security_ipc_getlsmblob(struct kern_ipc_perm *ipcp, struct lsmblob *blob)
- {
--	*secid = 0;
--	call_void_hook(ipc_getsecid, ipcp, secid);
-+	lsmblob_init(blob);
-+	call_void_hook(ipc_getlsmblob, ipcp, blob);
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 102489e6d579..1b34b86426e8 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6328,10 +6328,13 @@ static int selinux_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- 	return ipc_has_perm(ipcp, av);
- }
- 
--static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
-+static void selinux_ipc_getlsmblob(struct kern_ipc_perm *ipcp,
-+				   struct lsmblob *blob)
- {
- 	struct ipc_security_struct *isec = selinux_ipc(ipcp);
--	*secid = isec->sid;
-+	blob->selinux.secid = isec->sid;
-+	/* scaffolding */
-+	blob->scaffold.secid = isec->sid;
- }
- 
- static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
-@@ -7252,7 +7255,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(userns_create, selinux_userns_create),
- 
- 	LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
--	LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
-+	LSM_HOOK_INIT(ipc_getlsmblob, selinux_ipc_getlsmblob),
- 
- 	LSM_HOOK_INIT(msg_queue_associate, selinux_msg_queue_associate),
- 	LSM_HOOK_INIT(msg_queue_msgctl, selinux_msg_queue_msgctl),
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 5d74d8590862..370ca7fb1843 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3442,16 +3442,19 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
- }
- 
- /**
-- * smack_ipc_getsecid - Extract smack security id
-+ * smack_ipc_getlsmblob - Extract smack security data
-  * @ipp: the object permissions
-- * @secid: where result will be saved
-+ * @blob: where result will be saved
-  */
--static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
-+static void smack_ipc_getlsmblob(struct kern_ipc_perm *ipp,
-+				 struct lsmblob *blob)
- {
--	struct smack_known **blob = smack_ipc(ipp);
--	struct smack_known *iskp = *blob;
-+	struct smack_known **iskpp = smack_ipc(ipp);
-+	struct smack_known *iskp = *iskpp;
- 
--	*secid = iskp->smk_secid;
-+	blob->smack.skp = iskp;
-+	/* scaffolding */
-+	blob->scaffold.secid = iskp->smk_secid;
- }
- 
- /**
-@@ -5157,7 +5160,7 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(task_to_inode, smack_task_to_inode),
- 
- 	LSM_HOOK_INIT(ipc_permission, smack_ipc_permission),
--	LSM_HOOK_INIT(ipc_getsecid, smack_ipc_getsecid),
-+	LSM_HOOK_INIT(ipc_getlsmblob, smack_ipc_getlsmblob),
- 
- 	LSM_HOOK_INIT(msg_msg_alloc_security, smack_msg_msg_alloc_security),
- 
--- 
-2.41.0
+Could you please apply this series to the mm tree ?
 
+--=20
+Regards
+Yafang
