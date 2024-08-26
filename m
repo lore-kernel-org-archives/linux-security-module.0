@@ -1,30 +1,30 @@
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBE914EC4E;
-	Mon, 26 Aug 2024 10:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608B1155C87;
+	Mon, 26 Aug 2024 10:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669409; cv=none; b=RgL7eFPN77iwV1YKalpjqfTzoxhecbM5Q8aXNpDPFLu6YI8f5tHLcwUkRrryJGxF/bGKB4tD6AGGmS2WSUUraRMG0IFMqKRK1y+IKxZWFo0BPtYw1OxUOwBr0qWavbD/BAqSOzOI333QTVJhMikXu9lwdopLTheA0E154yE9oOc=
+	t=1724669414; cv=none; b=KaHQqIUxBkA+wSEtxnReVcH5pQgznxEaGFnVWBAWKGQvDO1HRuqlBxKzsRP3kdj48rMVOABgm6YoYmAF1bg1JO7dScDwI/OCcCM/VfrbSVDxg4CbBG9Jj8rac3nWJyNA5bdW0JQNiNN2BjF4XOUPw5sM+2qty5nJ6F+V2BqhMVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669409; c=relaxed/simple;
-	bh=+8yWqdXXLHGTFoBRqwclamyaWePmRERrr6FXaYFygho=;
+	s=arc-20240116; t=1724669414; c=relaxed/simple;
+	bh=g9whlb+2ufFaVEpQMZxnUUuaozKwg0yP2/yN1qqfTDs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Na27IwKosyxDT/Jk2QEFDQwV0Iqw0B/XSgKlMzvLljUrJOAvMrXYyXMSXbRtUT/fHJ54uk1QYPYm4Pu2Kmbbwi2GWa1uZZ1kIRdD8iwsqp2k4dDOZ5kJJG3Fhx9SWMe+rIWiYbyX4YTD0wQYenejsvdgIk/XLz9KfdiMqRIgp70=
+	 MIME-Version; b=U+CXPYJ5Xpk92P9xJb4YbjiwZCcRwP3r5nL4bUSt6qYDGDR5WH78iXEmDr7rgPf1mnKxOwgGeuji31j1LyxeIAYU8YenWwHTLaJ7Cvd7/KhHHRe321+rrApfLq38EQwc7Qj/8kUys3Na8xoozh6G19iw+RkmawuaN0UK7k5BZSg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbVfg003421;
-	Mon, 26 Aug 2024 05:37:31 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbWqB003453;
+	Mon, 26 Aug 2024 05:37:32 -0500
 Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbVYw003420;
-	Mon, 26 Aug 2024 05:37:31 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbW2c003452;
+	Mon, 26 Aug 2024 05:37:32 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From: Greg Wettstein <greg@enjellic.com>
 To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jmorris@namei.org
-Subject: [PATCH v4 05/14] Add root domain trust implementation.
-Date: Mon, 26 Aug 2024 05:37:19 -0500
-Message-Id: <20240826103728.3378-6-greg@enjellic.com>
+Subject: [PATCH v4 13/14] Implement infrastructure for loadable security models.
+Date: Mon, 26 Aug 2024 05:37:27 -0500
+Message-Id: <20240826103728.3378-14-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240826103728.3378-1-greg@enjellic.com>
 References: <20240826103728.3378-1-greg@enjellic.com>
@@ -36,293 +36,356 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The trust.c contains the support infrastructure for anchoring the
-root modeling domain to a Trusted Platform Modul (TPM)
-implementation if one is available.
+The default deterministic security model can be replaced through
+the use of models that are implemented with kernel loadable
+modules.  Kernel loadable modules can be used to replace the
+following components of the TSEM modeling infrastructure:
 
-The Platform Configuation Register (PCR) that is selected for the
-trust root is extended with the security state coefficients that
-each security event maps into.
+- event bypasses
 
-Also included is functionality that computes the hardware
-platform aggregate measurement that is the linear extension sum
-over PCR register 0 through 8.  The hardware aggregate
-measurement is generated and maintained in multiple cryptographic
-digest forms depending on the cryptographic hash functions used
-in the security modeling namespaces that request the value of the
-hardware aggregate.
+- event initialization
+
+- event mapping
+
+An alternate security model is specified for a security modeling
+namespace by using the following key/value pair as an argument to
+the creation of the security modeling namespace:
+
+model=MODEL_NAME
+
+Where MODEL_NAME is the name of the model compiled into the
+kernel loadable model that implements the model.
+
+Befor any model can be used it must be registered through the
+infrastructure supplied by this commit, namely the nsmgr.c file.
+
+Addition or removal of modules can be locked, either through the
+TSEM control plame or by the 'tsem_locked' kernel command-line
+parameter.  Locking of the registation process is an irreversible
+process, once locked the registration/removal process will be
+locked until the system is rebooted.
 ---
- security/tsem/trust.c | 261 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 261 insertions(+)
- create mode 100644 security/tsem/trust.c
+ security/tsem/nsmgr.c | 255 ++++++++++++++++++++++++++++++++++++++++++
+ security/tsem/nsmgr.h |  48 ++++++++
+ 2 files changed, 303 insertions(+)
+ create mode 100644 security/tsem/nsmgr.c
+ create mode 100644 security/tsem/nsmgr.h
 
-diff --git a/security/tsem/trust.c b/security/tsem/trust.c
+diff --git a/security/tsem/nsmgr.c b/security/tsem/nsmgr.c
 new file mode 100644
-index 000000000000..762bca735afc
+index 000000000000..0b34c18feb01
 --- /dev/null
-+++ b/security/tsem/trust.c
-@@ -0,0 +1,261 @@
++++ b/security/tsem/nsmgr.c
+@@ -0,0 +1,255 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
 +/*
 + * Copyright (C) 2024 Enjellic Systems Development, LLC
 + * Author: Dr. Greg Wettstein <greg@enjellic.com>
 + *
-+ * On a platform that has access to a TPM device, this file is
-+ * responsible for maintaining a root of trust based on that device.
++ * This file contains infrastructure for managing the security models
++ * for TSEM that are implemented by kernel loadable modules. Any model
++ * provided by a kernel loadable module must be registered before it
++ * can be specified for a security modeling namespace.
 + *
-+ * As with other trusted platform implementations the root of trust is
-+ * a linear extension measurement maintained in a Platform
-+ * Configuration Register (PCR) on the TPM device.
-+ *
-+ * The PCR is extended with each unique security state coefficient
-+ * that is generated by the model being implemented for the
-+ * root security modeling namespace.  As with other trusted systems
-+ * the value of the PCR will be variable depending on scheduling
-+ * artifacts that are experienced by the root modeling namespace.
-+ *
-+ * TSEM uses a strategy of executing the TPM extension transactions
-+ * using an ordered workqueue rather than doing them at the time the
-+ * security event is processed.  This is done both for performance
-+ * reasons and the fact that the coefficient extensions may arise from
-+ * security events that are being invoked by processes running in
-+ * atomic context.
-+ *
-+ * If the trust_init() function detects the presence of a TPM an
-+ * ordered workqueue with the following name is created:
-+ *
-+ * tsem_tpm
-+ *
-+ * The tsem_trust_add_event() function places a work request
-+ * containing a description of the event on this workqueue that will
-+ * then asynchronously extend the security state coefficient of the
-+ * event into the PCR being used to measure the trust state of
-+ * the root security modeling namespace.
-+ *
-+ * This file is also responsible for providing the hardware aggregate
-+ * measurement for injection into both internally and externally
-+ * modeled namespaces.  The hardware aggregate value is the linear
-+ * extension sum of PCR registers 0 through 8.
-+ *
-+ * Since TSEM supports multiple cryptographic digest functions on a
-+ * namespace by namespace basis the hardware aggregate value is
-+ * maintained in multiple digest forms.  The tsem_trust_aggregate()
-+ * function returns a pointer to the digest value for the
-+ * cryptographic digest function that is being used by the security
-+ * modeling namespace in effect for the calling process.
++ * The registration of additional models, or the removal of existing
++ * models, can be prevented by 'locking' the registration process.
++ * This locking can be implemented either through the TSEM control
++ * plane or by specifying the 'tsem_locked' kernel command-line
++ * parameter.
 + */
-+
-+#include <linux/tpm.h>
 +
 +#include "tsem.h"
++#include "nsmgr.h"
 +
-+static struct workqueue_struct *tpm_update_wq;
++static bool locked;
++static bool setup_locked __ro_after_init;
 +
-+static u8 zero_aggregate[HASH_MAX_DIGESTSIZE];
-+
-+static struct tpm_chip *tpm;
-+
-+static struct tpm_digest *digests;
-+
-+struct hardware_aggregate {
++struct model {
 +	struct list_head list;
-+	char *name;
-+	u8 value[HASH_MAX_DIGESTSIZE];
++	const struct tsem_context_ops *ops;
++	struct module *module;
 +};
 +
-+DEFINE_MUTEX(hardware_aggregate_mutex);
-+LIST_HEAD(hardware_aggregate_list);
++DEFINE_MUTEX(model_list_mutex);
++LIST_HEAD(model_list);
 +
-+static struct hardware_aggregate *find_aggregate(void)
++
++static struct model *find_model(const char *name)
 +{
-+	struct hardware_aggregate *aggregate;
++	struct model *found = NULL, *entry = NULL;
 +
-+	list_for_each_entry(aggregate, &hardware_aggregate_list, list) {
-+		if (!strcmp(aggregate->name,
-+			    tsem_context(current)->digestname))
-+			goto done;
-+	}
-+	aggregate = NULL;
-+
-+ done:
-+	return aggregate;
-+}
-+
-+static struct hardware_aggregate *add_aggregate(u8 *new_aggregate)
-+{
-+	struct hardware_aggregate *aggregate;
-+
-+	aggregate = kzalloc(sizeof(*aggregate), GFP_KERNEL);
-+	if (!aggregate)
-+		return NULL;
-+
-+	aggregate->name = kstrdup(tsem_context(current)->digestname,
-+				  GFP_KERNEL);
-+	if (!aggregate->name) {
-+		kfree(aggregate);
-+		return NULL;
-+	}
-+	memcpy(aggregate->value, new_aggregate, tsem_digestsize());
-+
-+	list_add(&aggregate->list, &hardware_aggregate_list);
-+
-+	return aggregate;
-+}
-+
-+/**
-+ * tsem_trust_aggregate() - Return a pointer to the hardware aggregate.
-+ *
-+ * This function returns a pointer to the hardware aggregate encoded
-+ * with the hash function for the current modeling domain.
-+ *
-+ * Return: A pointer is returned to the hardware aggregate value that
-+ *	   has been cached.
-+ */
-+u8 *tsem_trust_aggregate(void)
-+{
-+	u8 aggregate[HASH_MAX_DIGESTSIZE], *retn = zero_aggregate;
-+	u16 size;
-+	unsigned int lp;
-+	struct tpm_digest pcr;
-+	struct hardware_aggregate *hw_aggregate;
-+	SHASH_DESC_ON_STACK(shash, tfm);
-+
-+	if (!tpm)
-+		return retn;
-+
-+	mutex_lock(&hardware_aggregate_mutex);
-+
-+	hw_aggregate = find_aggregate();
-+	if (hw_aggregate) {
-+		retn = hw_aggregate->value;
-+		goto done;
-+	}
-+
-+	shash->tfm = tsem_digest();
-+	if (crypto_shash_init(shash))
-+		goto done;
-+
-+	if (tpm_is_tpm2(tpm))
-+		pcr.alg_id = TPM_ALG_SHA256;
-+	else
-+		pcr.alg_id = TPM_ALG_SHA1;
-+	memset(pcr.digest, '\0', TPM_MAX_DIGEST_SIZE);
-+
-+	for (lp = 0; lp < tpm->nr_allocated_banks; lp++) {
-+		if (pcr.alg_id == tpm->allocated_banks[lp].alg_id) {
-+			size = tpm->allocated_banks[lp].digest_size;
++	list_for_each_entry(entry, &model_list, list) {
++		if (!strcmp(entry->ops->name, name)) {
++			found = entry;
 +			break;
 +		}
 +	}
-+
-+	for (lp = 0; lp < 8; ++lp) {
-+		if (tpm_pcr_read(tpm, lp, &pcr))
-+			goto done;
-+		if (crypto_shash_update(shash, pcr.digest, size))
-+			goto done;
-+	}
-+	if (!crypto_shash_final(shash, aggregate)) {
-+		hw_aggregate = add_aggregate(aggregate);
-+		if (hw_aggregate)
-+			retn = hw_aggregate->value;
-+	}
-+
-+ done:
-+	mutex_unlock(&hardware_aggregate_mutex);
-+
-+	if (retn == zero_aggregate)
-+		pr_warn("tsem: Error generating platform aggregate\n");
-+
-+	return retn;
-+}
-+
-+static void tpm_update_worker(struct work_struct *work)
-+{
-+	int amt, bank, digestsize;
-+	struct tsem_event *ep;
-+
-+	ep = container_of(work, struct tsem_event, work);
-+	digestsize = ep->digestsize;
-+
-+	for (bank = 0; bank < tpm->nr_allocated_banks; bank++) {
-+		if (tpm->allocated_banks[bank].digest_size > digestsize) {
-+			amt = digestsize;
-+			memset(digests[bank].digest, '\0',
-+			       tpm->allocated_banks[bank].digest_size);
-+		} else
-+			amt = tpm->allocated_banks[bank].digest_size;
-+		memcpy(digests[bank].digest, ep->mapping, amt);
-+	}
-+
-+	if (tpm_pcr_extend(tpm, CONFIG_SECURITY_TSEM_ROOT_MODEL_PCR,
-+			   digests))
-+		pr_warn("tsem: Failed TPM update.\n");
-+
-+	tsem_event_put(ep);
++	return found;
 +}
 +
 +/**
-+ * tsem_trust_add_point() - Add a measurement to the trust root.
-+ * @ep: A pointer to the security event description whose measurement
-+ *	is to be extended into the TPM.
++ * tsem_nsmgr_put() - Release a reference to a TSEM security model.
 + *
-+ * This function extends the platform configuration register being
-+ * used to document the hardware root of trust for internally modeled
-+ * domains with a security event coefficient value.
++ * @ops: A pointer to the tsem_context_ops structure that defines
++ *	 this model.
 + *
-+ * Return: If the extension fails the error return value from the
-+ *	   TPM command is returned, otherwise a value of zero is
-+ *	   returned.
++ * This function is the counter part to tsem_nsmgr_get() function.
++ * A check is made to determine if a module is supplying this model and
++ * if so the reference that was taken to the module when the security
++ * namespace is created is released.
 + */
-+int tsem_trust_add_event(struct tsem_event *ep)
++void tsem_nsmgr_put(const struct tsem_context_ops *ops)
 +{
-+	bool retn;
++	struct model *model;
 +
-+	if (!tpm)
-+		return 0;
++	if (!strcmp(tsem_model0_ops.name, ops->name))
++		return;
 +
-+	tsem_event_get(ep);
-+	ep->digestsize = tsem_digestsize();
-+
-+	INIT_WORK(&ep->work, tpm_update_worker);
-+	retn = queue_work(tpm_update_wq, &ep->work);
-+
-+	return 0;
-+}
-+
-+static int __init trust_init(void)
-+{
-+	int retn = -EINVAL, lp;
-+
-+	tpm = tpm_default_chip();
-+	if (!tpm)
-+		return retn;
-+
-+	tpm_update_wq = alloc_ordered_workqueue("tsem_tpm", 0);
-+	if (IS_ERR(tpm_update_wq)) {
-+		retn = PTR_ERR(tpm_update_wq);
++	mutex_lock(&model_list_mutex);
++	model = find_model(ops->name);
++	if (!model) {
++		pr_warn("tsem: Attempt to put an unknown model.\n");
 +		goto done;
 +	}
-+
-+	digests = kcalloc(tpm->nr_allocated_banks, sizeof(*digests), GFP_NOFS);
-+	if (!digests) {
-+		tpm = NULL;
-+		return retn;
-+	}
-+	for (lp = 0; lp < tpm->nr_allocated_banks; lp++)
-+		digests[lp].alg_id = tpm->allocated_banks[lp].alg_id;
-+	retn = 0;
++	if (model->module)
++		module_put(model->module);
 +
 + done:
-+	if (retn) {
-+		destroy_workqueue(tpm_update_wq);
-+		kfree(digests);
++	mutex_unlock(&model_list_mutex);
++}
++
++/**
++ * tsem_nsmgr_get() - Obtain a reference to a TSEM security model.
++ *
++ * @name: A null terminated character buffer containing the name of
++ *	  the security model to obtain a reference for.
++ *
++ * This function is used to determine whether or not TSEM has access
++ * to a security model named by the called.  Upon success of locating
++ * the named security model a tsem_context_ops structure is returned
++ * that implements the model.  In addition a reference is taken to
++ * the module in order to prevent its release while a security modeling
++ * namespace is using the model.
++ *
++ * Return: If the named security model is not available a NULL pointer
++ *	   is returned.  If the model is available a pointer to the
++ *	   tsem_context_ops structure that implements the model is
++ *	   returned.
++ */
++const struct tsem_context_ops *tsem_nsmgr_get(const char *name)
++{
++	struct model *model;
++	const struct tsem_context_ops *retn = NULL;
++
++	mutex_lock(&model_list_mutex);
++	model = find_model(name);
++	mutex_unlock(&model_list_mutex);
++
++	if (!model) {
++		if (request_module("%s", name))
++			return NULL;
++
++		mutex_lock(&model_list_mutex);
++		model = find_model(name);
++		mutex_unlock(&model_list_mutex);
++		if (!model)
++			return NULL;
 +	}
 +
++	if (model && try_module_get(model->module))
++		retn = model->ops;
 +	return retn;
 +}
 +
-+device_initcall_sync(trust_init);
++/**
++ * tsem_nsmgr_lock() - Lock the TSEM loadable module infrastructure.
++ *
++ * @by_setup: This boolean value is used to signal that the request to
++ *	      lock the model state is being done by the system setup.
++ *
++ * This function disables the registration of additional loadable
++ * modules for model implementation.  It also raises the reference count
++ * for each modules that is loaded to prevent the current modules from
++ * being unloaded.
++ *
++ * Return: This function returns 0 if the modeling infrastructure was
++ *	   locked or a negative value if locking fails.
++ */
++int tsem_nsmgr_lock(const bool by_setup)
++{
++	struct model *entry = NULL;
++
++	if (by_setup) {
++		setup_locked = true;
++		return 0;
++	}
++
++	if (setup_locked)
++		return -EINVAL;
++	if (!capable(CAP_MAC_ADMIN))
++		return -EPERM;
++	if (tsem_context(current)->id)
++		return -EINVAL;
++	if (locked)
++		return -EINVAL;
++	locked = true;
++
++	mutex_lock(&model_list_mutex);
++	list_for_each_entry(entry, &model_list, list) {
++		__module_get(entry->module);
++	}
++	mutex_unlock(&model_list_mutex);
++
++	pr_info("tsem: Model state is now locked.\n");
++	return 0;
++}
++
++/**
++ * tsem_nsmgr_register() - Register a TSEM security namespace model.
++ * @ops:    A pointer to a tsem_context_ops structure that describes
++ *	    the model that will be implemented.
++ * @module: A pointer to the module implementing the security namespace
++ *	    model.
++ *
++ * This function is used by loadable modules to register a security
++ * model that is to be available for use by security modeling namespaces.
++ *
++ * Return: This function returns 0 if the model was successfully registered
++ *	   or a negative error value if registration failed.
++ */
++int tsem_nsmgr_register(const struct tsem_context_ops *ops,
++			struct module *module)
++{
++	int retn = 0;
++	struct model *model = NULL;
++
++	if (setup_locked || locked) {
++		pr_warn("tsem: Attempt to register model in locked state.\n");
++		return -EINVAL;
++	}
++	if (!capable(CAP_MAC_ADMIN))
++		return -EPERM;
++	if (!strcmp(tsem_model0_ops.name, ops->name))
++		return -EINVAL;
++
++	mutex_lock(&model_list_mutex);
++	if (find_model(ops->name)) {
++		pr_warn("tsem: Attempt to insert identical model: %s\n",
++			ops->name);
++		retn = -EEXIST;
++		goto done;
++	}
++
++	model = kzalloc(sizeof(*model), GFP_KERNEL);
++	if (!model) {
++		retn = -ENOMEM;
++		goto done;
++	}
++
++	model->ops = ops;
++	model->module = module;
++	list_add_tail(&model->list, &model_list);
++	pr_info("tsem: Registered model: '%s'\n", ops->name);
++
++ done:
++	mutex_unlock(&model_list_mutex);
++	return retn;
++}
++EXPORT_SYMBOL_GPL(tsem_nsmgr_register);
++
++/**
++ * tsem_nsmgr_release() - Release a TSEM security namespace model.
++ * @name:   A null terminated character buffer containing the name
++ *	    of the model being implemented.
++ *
++ * This function is used to release the use of security modeling
++ * namespace model.
++ *
++ * Return: This function returns 0 if the model was successfully released
++ *	   or a negative error value if release failed.
++ */
++int tsem_nsmgr_release(const struct tsem_context_ops *ops)
++{
++	int retn = 0;
++	struct model *model;
++
++	if (setup_locked || locked) {
++		pr_warn("tsem: Attempt to release model in locked state.\n");
++		return -EINVAL;
++	}
++
++	mutex_lock(&model_list_mutex);
++
++	model = find_model(ops->name);
++	if (!model) {
++		pr_warn("tsem: Model '%s' not found for release.\n",
++			ops->name);
++		retn = -EINVAL;
++		goto done;
++	}
++	list_del(&model->list);
++
++ done:
++	mutex_unlock(&model_list_mutex);
++	pr_info("tsem: Released model: '%s'\n", ops->name);
++	return retn;
++}
++EXPORT_SYMBOL_GPL(tsem_nsmgr_release);
+diff --git a/security/tsem/nsmgr.h b/security/tsem/nsmgr.h
+new file mode 100644
+index 000000000000..cb4d30a4962d
+--- /dev/null
++++ b/security/tsem/nsmgr.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++/*
++ * Copyright (C) 2024 Enjellic Systems Development, LLC
++ * Author: Dr. Greg Wettstein <greg@enjellic.com>
++ *
++ * This header file contains declarations for globally visible
++ * functionality surrounding the registration of security models
++ * provided in the form of loadable modules.
++ *
++ * This header file detects whether or not kernel modules are enabled
++ * and if not provides a stub function that causes an attempt to
++ * specify an alternate security model to fail.
++ */
++
++#ifdef CONFIG_MODULES
++extern void tsem_nsmgr_put(const struct tsem_context_ops *ops);
++extern const struct tsem_context_ops *tsem_nsmgr_get(const char *name);
++extern int tsem_nsmgr_lock(const bool);
++extern int tsem_nsmgr_register(const struct tsem_context_ops *ops,
++			       struct module *module);
++extern int tsem_nsmgr_release(const struct tsem_context_ops *ops);
++#else
++static inline void tsem_nsmgr_put(const struct tsem_context_ops *ops)
++{
++}
++
++static inline int tsem_nsmgr_lock(const bool by_setup)
++{
++	return EOPNOTSUPP;
++}
++
++static inline const struct tsem_context_ops *tsem_nsmgr_get(const char *name)
++{
++	return NULL;
++}
++
++static inline int tsem_nsmgr_register(const struct tsem_context_ops *ops,
++				      struct module *module)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int tsem_nsmgr_release(const struct tsem_context_ops *ops)
++{
++	return -EOPNOTSUPP;
++}
++#endif
 -- 
 2.39.1
 
