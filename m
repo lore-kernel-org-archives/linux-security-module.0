@@ -1,128 +1,281 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ED282D7F;
-	Mon, 26 Aug 2024 08:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8FC14375D;
+	Mon, 26 Aug 2024 09:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662440; cv=none; b=Y7B+4Q3MsET7XPCg0XwSviCKbjReVWCNmaHmbjOddS2CmCa1sM0tmcZIRq19TMAG9lpwdebGPlY2Nu2x2jj/RbSe5Tt9Xgf0+r910wmzLQhgR6agxjnDDfLq66Q+9i5XHiOMXN3e2x+u/YBYdQTMdLHqPWEtxHe8SWQaRppPFm4=
+	t=1724664033; cv=none; b=PWzF0hE9TwBQq6//IHE84onOZcarVS8iMhQ6s7yTOfokW9DZa4wHHO0vY/F5orsNW5vtJFUATpg5SRaThFHZRf2NZBpFrSwhKcJ64y3kcqgt1i5pnWXKQrmUVlzd/qs5i8Mobzcgi7iD8nWb9XQF24URuY1H+ggR/QPmlorhDNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662440; c=relaxed/simple;
-	bh=GuuW1WL+3o/YlrQrEDV2HHdlgrpjkOAllVC8EiRa6m0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=avLa3gnM9QNwVWzDSUOXuyVCud5houlk7QRQTA14PBXqGd/5KcGEAqKX67sC4DaO+w1XdvrUFwz8ta+6y98vsEciaI9dWu2KJtgOYPLVRfRIWrRKWUopXg/28u2XE+kSURYvSzA6QMv6Fd16mPLVdzmk8ALBeOBqhssosx7Wv2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so8145687a12.0;
-        Mon, 26 Aug 2024 01:53:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724662437; x=1725267237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E4kEvuNqKI0xTjj6I4wqTHJS1sNMpYcp7Dr6Uq95pto=;
-        b=IdCikk2emG+PWI0q1jcm03OzfrlnwITsbXVZ31CTCm7eIyRpeNqwlRX9EPW81867/i
-         gS9153ZCKwgO6hfrXeetkgogGjMQoD5eoX7U+Fck2b1gj0I5ufVv7hLk/8muomOrRviu
-         QVYY5hkoXkvq3MroKLxc8+A7oHpVhBBTMcJHTy11hbD9ipbL0p2V89NiHGHo8ObDIQ+u
-         zUUqBzTmjviZjcQZfXVeqPuM/lF3nhOJjNVlC6pvfK+Gce+QGUpiTC1jAx8FvZqAOpD4
-         tfQas+QNg2NLx37pfR08uYUbhxMce0UBDVZt9WCp2LRyvcNJS0KaFl3EbSqmIYIear7m
-         weLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIdyYbSANelapFh4QTlyg5Yzw6NGJPCroZL3QnloTxmRz7zr4w1OE9WeZTXcTj4ZVFUpmRKPCdfkFtdCym8Q==@vger.kernel.org, AJvYcCV9rsLteeQsiW0l5Y/ZPM7a7qg0IC71rht42Xeuv2J9+Utlk8TIdHv4U09dv4tDMRyj45F+G7/DkQSsj6AE@vger.kernel.org, AJvYcCX74Ar/o8KcMLn5Ryc4wgS0Py9KWrHCc2KTYQFwRZJat/5YSnQYcuDT0mAiASG3/I6eAW4nH5rlyI9X1NNBlEDzxmqcE1TO@vger.kernel.org, AJvYcCXCKN393U5jKXaOf5mR5ZK7CY8bzcOMvyDto1XY3XVg6Lv19nRs6ZkSuFQUVTUF4ZefXlP+uD105E7m+tF7ug==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhZ92FqSF8Vvl64R/BsxOglZMGu6adMamb73PTPXvKwInGgeR3
-	t4bk8i6Yr6tdNVPsZePyyE2FNwlndAfpzzAV+e95f8vzPx8gsIpL
-X-Google-Smtp-Source: AGHT+IF1fJpfy3mPNIRs30Wnajmd99gCu+0+b/DeTT6aTwMVnETwc04A+X+3AnJTgxAHcIGYmfyZ+g==
-X-Received: by 2002:a17:907:1c8e:b0:a75:7a8:d70c with SMTP id a640c23a62f3a-a86a2f14394mr1133364766b.4.1724662436552;
-        Mon, 26 Aug 2024 01:53:56 -0700 (PDT)
-Received: from localhost.localdomain ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f21fe18sm630636866b.29.2024.08.26.01.53.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 01:53:56 -0700 (PDT)
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
-Date: Mon, 26 Aug 2024 10:47:13 +0200
-Message-ID: <20240826085347.1152675-3-mhocko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826085347.1152675-1-mhocko@kernel.org>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
+	s=arc-20240116; t=1724664033; c=relaxed/simple;
+	bh=rwXP+5eSF7J7wNGs6IQQcMn0Z+ZA7RlktZ3B5d40Kzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnof7Wrt6UtCq/2+bmv6CSc7GfsKyi0hrzegnUxuRR9SJzhXnu19jST+ViS/87DCuhbgMp98e8CLQY0GNYId7gJeNuADGOAJFXNWZcsdTD5xJAapUHm76+ZKS/hFHxZwRIT0fm2oHFYZPjjcWKzn5uEwP2DDvTYKGW+JjiCMVrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBKObYzu; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBKObYzu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D866AC567F3;
+	Mon, 26 Aug 2024 09:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724664032;
+	bh=rwXP+5eSF7J7wNGs6IQQcMn0Z+ZA7RlktZ3B5d40Kzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iBKObYzuSp3BAhGOIaeeqPeyFwX6izp/CzVO7M8RvdNK3JPks06o2TiJ+t8CcU1m3
+	 XC2jxvvLE+LrcQsgITEHaeINvLSs3UupG1w1zm7DJVCemGYK8PyENOjRP+4VWyK4rW
+	 6+96F9UQ66WtJDHBUhXDroLekZ1v9QlaDlSf7WyqIV33fYeV/H/LAj2gZ4XB5nQq9g
+	 0csBKvjOUBdCLOE8XGNGPoYI2Q5lXCvZd0ZkB+xpUwXtoitcg0Cap60IRO4xzF+pY2
+	 zKBYqCf+TuOJOF9hFXPAXseDtApOVbZA4ykbdbiPOrERygoEXm94IYMk4f1Ml1OAvd
+	 ou7qaxJH4vXgg==
+Date: Mon, 26 Aug 2024 11:20:26 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in
+ {kstrdup,kstrndup,kmemdup_nul}
+Message-ID: <ep44ahlsa2krmpjcqrsvoi5vfoesvnvly44icavup7dsfolewm@flnm5rl23diz>
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-7-laoar.shao@gmail.com>
+ <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fr6yymnvpqcqqdt5"
+Content-Disposition: inline
+In-Reply-To: <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
 
-From: Michal Hocko <mhocko@suse.com>
 
-There is no existing user of the flag and the flag is dangerous because
-a nested allocation context can use GFP_NOFAIL which could cause
-unexpected failure. Such a code would be hard to maintain because it
-could be deeper in the call chain.
+--fr6yymnvpqcqqdt5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in
+ {kstrdup,kstrndup,kmemdup_nul}
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-7-laoar.shao@gmail.com>
+ <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
+MIME-Version: 1.0
+In-Reply-To: <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
 
-PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
-that such a allocation contex is inherently unsafe if the context
-doesn't fully control all allocations called from this context.
+Hi Yafang,
 
-[1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
+On Sat, Aug 17, 2024 at 10:58:02AM GMT, Alejandro Colomar wrote:
+> Hi Yafang,
+>=20
+> On Sat, Aug 17, 2024 at 10:56:22AM GMT, Yafang Shao wrote:
+> > These three functions follow the same pattern. To deduplicate the code,
+> > let's introduce a common helper __kmemdup_nul().
+> >=20
+> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Simon Horman <horms@kernel.org>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > ---
+> >  mm/util.c | 67 +++++++++++++++++++++----------------------------------
+> >  1 file changed, 26 insertions(+), 41 deletions(-)
+> >=20
+> > diff --git a/mm/util.c b/mm/util.c
+> > index 4542d8a800d9..310c7735c617 100644
+> > --- a/mm/util.c
+> > +++ b/mm/util.c
+> > @@ -45,33 +45,40 @@ void kfree_const(const void *x)
+> >  EXPORT_SYMBOL(kfree_const);
+> > =20
+> >  /**
+> > - * kstrdup - allocate space for and copy an existing string
+> > - * @s: the string to duplicate
+> > + * __kmemdup_nul - Create a NUL-terminated string from @s, which might=
+ be unterminated.
+> > + * @s: The data to copy
+> > + * @len: The size of the data, including the null terminator
+> >   * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> >   *
+> > - * Return: newly allocated copy of @s or %NULL in case of error
+> > + * Return: newly allocated copy of @s with NUL-termination or %NULL in
+> > + * case of error
+> >   */
+> > -noinline
+> > -char *kstrdup(const char *s, gfp_t gfp)
+> > +static __always_inline char *__kmemdup_nul(const char *s, size_t len, =
+gfp_t gfp)
+> >  {
+> > -	size_t len;
+> >  	char *buf;
+> > =20
+> > -	if (!s)
+> > +	buf =3D kmalloc_track_caller(len, gfp);
+> > +	if (!buf)
+> >  		return NULL;
+> > =20
+> > -	len =3D strlen(s) + 1;
+> > -	buf =3D kmalloc_track_caller(len, gfp);
+> > -	if (buf) {
+> > -		memcpy(buf, s, len);
+> > -		/* During memcpy(), the string might be updated to a new value,
+> > -		 * which could be longer than the string when strlen() is
+> > -		 * called. Therefore, we need to add a null termimator.
+> > -		 */
+> > -		buf[len - 1] =3D '\0';
+> > -	}
+> > +	memcpy(buf, s, len);
+> > +	/* Ensure the buf is always NUL-terminated, regardless of @s. */
+> > +	buf[len - 1] =3D '\0';
+> >  	return buf;
+> >  }
+> > +
+> > +/**
+> > + * kstrdup - allocate space for and copy an existing string
+> > + * @s: the string to duplicate
+> > + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> > + *
+> > + * Return: newly allocated copy of @s or %NULL in case of error
+> > + */
+> > +noinline
+> > +char *kstrdup(const char *s, gfp_t gfp)
+> > +{
+> > +	return s ? __kmemdup_nul(s, strlen(s) + 1, gfp) : NULL;
+> > +}
+> >  EXPORT_SYMBOL(kstrdup);
+> > =20
+> >  /**
+> > @@ -106,19 +113,7 @@ EXPORT_SYMBOL(kstrdup_const);
+> >   */
+> >  char *kstrndup(const char *s, size_t max, gfp_t gfp)
+> >  {
+> > -	size_t len;
+> > -	char *buf;
+> > -
+> > -	if (!s)
+> > -		return NULL;
+> > -
+> > -	len =3D strnlen(s, max);
+> > -	buf =3D kmalloc_track_caller(len+1, gfp);
+> > -	if (buf) {
+> > -		memcpy(buf, s, len);
+> > -		buf[len] =3D '\0';
+> > -	}
+> > -	return buf;
+> > +	return s ? __kmemdup_nul(s, strnlen(s, max) + 1, gfp) : NULL;
+> >  }
+> >  EXPORT_SYMBOL(kstrndup);
+> > =20
+> > @@ -192,17 +187,7 @@ EXPORT_SYMBOL(kvmemdup);
+> >   */
+> >  char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+> >  {
+> > -	char *buf;
+> > -
+> > -	if (!s)
+> > -		return NULL;
+> > -
+> > -	buf =3D kmalloc_track_caller(len + 1, gfp);
+> > -	if (buf) {
+> > -		memcpy(buf, s, len);
+> > -		buf[len] =3D '\0';
+> > -	}
+> > -	return buf;
+> > +	return s ? __kmemdup_nul(s, len + 1, gfp) : NULL;
+> >  }
+> >  EXPORT_SYMBOL(kmemdup_nul);
+>=20
+> I like the idea of the patch, but it's plagued with all those +1 and -1.
+> I think that's due to a bad choice of value being passed by.  If you
+> pass the actual length of the string (as suggested in my reply to the
+> previous patch) you should end up with a cleaner set of APIs.
+>=20
+> The only remaining +1 is for kmalloc_track_caller(), which I ignore what
+> it does.
+>=20
+> 	char *
+> 	__kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+> 	{
+> 		char *buf;
+>=20
+> 		buf =3D kmalloc_track_caller(len + 1, gfp);
+> 		if (!buf)
+> 			return NULL;
+>=20
+> 		strcpy(mempcpy(buf, s, len), "");
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- include/linux/sched.h    | 1 -
- include/linux/sched/mm.h | 7 ++-----
- 2 files changed, 2 insertions(+), 6 deletions(-)
+Changing these strcpy(, "") to the usual; =3D'\0' or =3D0, but I'd still
+recommend the rest of the changes, that is, changing the value passed in
+len, to remove several +1 and -1s.
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f8d150343d42..72dad3a6317a 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1657,7 +1657,6 @@ extern struct pid *cad_pid;
- 						 * I am cleaning dirty pages from some other bdi. */
- #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
--#define PF_MEMALLOC_NORECLAIM	0x00800000	/* All allocation requests will clear __GFP_DIRECT_RECLAIM */
- #define PF_MEMALLOC_NOWARN	0x01000000	/* All allocation requests will inherit __GFP_NOWARN */
- #define PF__HOLE__02000000	0x02000000
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 91546493c43d..c49f2b24acb9 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -260,16 +260,13 @@ static inline gfp_t current_gfp_context(gfp_t flags)
- 
- 	if (unlikely(pflags & (PF_MEMALLOC_NOIO |
- 			       PF_MEMALLOC_NOFS |
--			       PF_MEMALLOC_NORECLAIM |
- 			       PF_MEMALLOC_NOWARN |
- 			       PF_MEMALLOC_PIN))) {
- 		/*
- 		 * Stronger flags before weaker flags:
--		 * NORECLAIM implies NOIO, which in turn implies NOFS
-+		 * NOIO implies NOFS
- 		 */
--		if (pflags & PF_MEMALLOC_NORECLAIM)
--			flags &= ~__GFP_DIRECT_RECLAIM;
--		else if (pflags & PF_MEMALLOC_NOIO)
-+		if (pflags & PF_MEMALLOC_NOIO)
- 			flags &= ~(__GFP_IO | __GFP_FS);
- 		else if (pflags & PF_MEMALLOC_NOFS)
- 			flags &= ~__GFP_FS;
--- 
-2.46.0
+What do you think?
 
+Have a lovely day!
+Alex
+
+> 		return buf;
+> 	}
+>=20
+> 	char *
+> 	kstrdup(const char *s, gfp_t gfp)
+> 	{
+> 		return s ? __kmemdup_nul(s, strlen(s), gfp) : NULL;
+> 	}
+>=20
+> 	char *
+> 	kstrndup(const char *s, size_t n, gfp_t gfp)
+> 	{
+> 		return s ? __kmemdup_nul(s, strnlen(s, n), gfp) : NULL;
+> 	}
+>=20
+> 	char *
+> 	kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+> 	{
+> 		return s ? __kmemdup_nul(s, len, gfp) : NULL;
+> 	}
+>=20
+> Have a lovely day!
+> Alex
+>=20
+> --=20
+> <https://www.alejandro-colomar.es/>
+
+
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--fr6yymnvpqcqqdt5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbMSNoACgkQnowa+77/
+2zLIExAAowwDvn4fGttE88cvxlhQwOy8jHj4erHbWDOLMcKFNLpWhwWRqOaVZyMN
+dseuMqjKxp0vlIjA+QRvwtCSfMPrfGFrF+hSal8nEVG5YPp02IJFeKPVs2UIMirG
+WQfz7OkEGY6BN61CHuNhXQL+WLCzEuP/jqqh6bZ5/l9elU7H+CAEGJgWMq5QeyRo
+eVljlfkFRxJkdzcKPJJFc/wK95vSKXFPe5mE7UGfJx1oO3m6q3j5i2aaBFQcIjm3
+QiBGQ8aXepDV7L3XLJaRPa/Tkm7Cc5fdL6B9KEN4SvxOXn7V5VDRVOlrT8Du9YQ1
+G77o8rFyZ9MNFsPcZh5g6DgqQyK7RWTZLm/Xq8GjfB5/iQ8FeZ7gaLye6d52vDub
+vsvIk9D/L3iWDeGTahM9+5bHe8AHr3sI9eCnKbLayJrZ0TA03KgCEKhj8Sp1kkdu
+hai6+ym4Wc9aAYAGEHdJFI/8Gu93uqXT35bT270ov2E77VMyhVltprOCW6qbziTr
+ebt5iKyJ6f2e/rXOCOlqP4CTLSTtRfo2padaLlAJCSEJLs4Q1YsqZMIyLbn7PYuD
+MpkrWxeysR2d3KsKcb1MYCZoKqsQ+hWtkEHZWqHgygI3fbBPE5tkmCS/ustkAk1s
+15ry+Az65a6wiEv5w38JrVCJnzZ/x0aPwOCDNdgYwS/amQEQP10=
+=I3ve
+-----END PGP SIGNATURE-----
+
+--fr6yymnvpqcqqdt5--
