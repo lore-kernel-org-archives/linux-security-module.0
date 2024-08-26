@@ -1,83 +1,201 @@
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C2913B58F
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 21:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FA718D64D
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 21:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724706638; cv=none; b=O6zqoRLuy+2YKlrJp+wAuzwtP95JZ3JQtPf9kj0k8LCknmICWqx7SX9mGahpJy8mUiXac1GBeMyoYhOB7kq5r0PvplFXLlbs5wUP0EEe8hGWP29YhT+LaTyNvjXyfyZhQQd7zFAHAkChkJlDRO+5kygNwif+ofnq0R71M5j2SCI=
+	t=1724706884; cv=none; b=ntB+CvA2x/IVP4fI5du3dsSN+Qg9upFmY57dJe2qCtOBfHRXZcFvYN4MQqyDcK9SWhPWoAFSIjfhym/oh9H/s8XqSWjjAVEl8jtkMtPldKgSt9u3+hek4dDuODg8dTLtxTCzj4gJbBBH3nf7xojKEzsBBs0w6wXHrp6edMpwb48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724706638; c=relaxed/simple;
-	bh=/YtAljW6FyyCqwibkLo/DqUDbvDheWGWuWNA6OLT48c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ITjbiCBY16uTHHjh9IN6uq92UYfwTIAcEuhJCKMoBJqa9VUxoxD3a9vEqzTzB9aaPdy80rvkctwZLVXSb7yud0IRwVMMq8TeQK83XsHdOipU3GdwpQb57GikvGg5a9Z5DFyoa0nZOYhsy7E2xUSChdXRllCRo/gMXJstKqo8BfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B4x3oswD; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1724706884; c=relaxed/simple;
+	bh=JuLtfOwvgl3pJIhDThLbctL8y8rm4Fsrz4XE2hyJElo=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=Ur7t9UjTn6uYVUboVjpV1wwo8a/98p3BDQUaG8W1LDHshG3hzzM/9YG+gcFTdtFDIz4xypJrqWxAH/aIa+xYhipBlVXl2FZm5OnMztp/8sUPrAsvzralggF+5VVZnKEfPUIWEHuGCNvAfKoWrIkGf+hIHEv09M6gacvgJ7J91QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=V9a/VK0P; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B4x3oswD"
-Date: Mon, 26 Aug 2024 17:10:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724706635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zaC8aYnnshYDuXB3xkqDStpn4QcjqPwT2qzAlFZm4bw=;
-	b=B4x3oswDfTQKT5G32KZlZvBiJs4+mierzENSMOLxZqtGz0ZXwgY7VcpSr8oJ8+4GIfGY0I
-	zzu5vsDPI7Q6k46Dg5g4e4evPMhvcTMFBUTOmJLNS7cGeefTjJSh9dXrWB0qlWlNwPG0or
-	Mh9AbSxrs2fzaatiW0LPKlxSx+sYluM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <jf6dh7icf4vt4dgt4o2h6xvvdlyjewa5wmtn6brumh2tqzlrts@lb7xxthxh7uc>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
- <ZszeUAMgGkGNz8H9@tiehlicka>
- <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
- <ZszlQEqdDl4vt43M@tiehlicka>
- <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="V9a/VK0P"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a1d024f775so317540185a.2
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 14:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724706881; x=1725311681; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=C48ESkY/3prngSsdeTe5LzrMXXBR01WzruehC6SW7PU=;
+        b=V9a/VK0PyahwbzmIMfG0KhG3uEz+yYrL/CXp2Zefkt/hKRr2IT0ufsfUOvjuWW9Nz7
+         /QbLrL36F3Pjg3ZTt54pgLU1vU7OjsPpW7ORezbFuAZhovvyLAmwCWoZ17aCghsnWkVr
+         iZr4hSrood+iEtQGSVP365+xVNaTmih+LI416IIslN5cbABrPlPV/xyO1G6e1R6k6uKc
+         IrlptqEbwq6Lf3jZwb7GXegos62oovY1i4wgEo1db1R0Qx08vWcyo7uAaGITPG6ZRtek
+         yTMpSe45sr38EihA4AIN1X3hPx2LmJMfbmSzd0bKLlH34PFVwbEg7OinixjNFcanSCTi
+         aO1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724706881; x=1725311681;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C48ESkY/3prngSsdeTe5LzrMXXBR01WzruehC6SW7PU=;
+        b=BIcvsl/8DGAeO/ULH3mBpvEJUhbpw7iNlTVz7tzZ9fWEq4jrGalS202pyKw7PN+HNx
+         wS4u2CzkYEI9hLEZPwDYuCNuxN9S4nMPjLDjaZ7zLfhKz/AvSfA5w/aM+7C32R5cOygI
+         XXZQd2xd0xuMvgn6uNJ8NZgLTMgSzJt3So5ARmH8P8x57vdyLDM1NJ6S/nDm7TNSLUEu
+         3Q8k/22MwCggfQrouqFL6YTK5JCnQOVowYdFuHdQba+rBWY2cFIOwDFX8bB2XZdvhMBA
+         qag/+EkEOfO25tjVAkj6JNrQIU4F1bRpbASZIvkqRQY0xnN+arLXeDLuT2gska1oZxXZ
+         FH9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXG1xB9H3wOlF9P9N7gfUmfkUdeGFdspcAz1dm5Ba/Y2wbvis0tSr70LmpbgP8p5709Z8VZ2XT1CImIEPyg0o0lbMD0NRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz96BGMzJ0eV1VJF4P3mJztEAlfKZI6oBkaW1/Nx/YyEs5hwq9X
+	FxY2lQnpy6ptzpNqkjgyw/aA/Y1uQYLbOVqTXYnNziUiT3/kA5gMreYwWVZ9Zw==
+X-Google-Smtp-Source: AGHT+IE1LxRd31YUhWAJ8z/HbxLsK9gCNJ4OLgZ+X7GsNtITcyo5P0zQWh0jVGZfAlqMnphQyvha8A==
+X-Received: by 2002:a05:620a:28d4:b0:7a1:e250:52b9 with SMTP id af79cd13be357-7a7e4dfe12emr96769685a.30.1724706881248;
+        Mon, 26 Aug 2024 14:14:41 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3fca30sm492040285a.111.2024.08.26.14.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 14:14:40 -0700 (PDT)
+Date: Mon, 26 Aug 2024 17:14:40 -0400
+Message-ID: <317c7d20ab8a72975571cb554589522b@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-security-module@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, selinux@vger.kernel.org
+Subject: Re: [PATCH 1/2] selinux: do not include <linux/*.h> headers from host  programs
+References: <20240809122007.1220219-2-masahiroy@kernel.org>
+In-Reply-To: <20240809122007.1220219-2-masahiroy@kernel.org>
 
-On Mon, Aug 26, 2024 at 04:44:01PM GMT, Kent Overstreet wrote:
-> No, I explained why GFP_NORECLAIM/PF_MEMALLOC_NORECLAIM can absolutely
-> apply to a context, not a callsite, and why vmalloc() and kvmalloc()
-> ignoring gfp flags is a much more serious issue.
+On Aug  9, 2024 Masahiro Yamada <masahiroy@kernel.org> wrote:
 > 
-> If you want to do something useful, figure out what we're going to do
-> about _that_. If you really don't want PF_MEMALLOC_NORECLAIM to exist,
-> then see if Linus will let you plumb gfp flags down to pte allocation -
-> and beware, that's arch code that you'll have to fix.
+> Commit bfc5e3a6af39 ("selinux: use the kernel headers when building
+> scripts/selinux") is not the right thing to do.
 > 
-> Reminder: kvmalloc() is a thing, and it's steadily seeing wider use.
+> It is clear from the warning in include/uapi/linux/types.h:
 > 
-> Otherwise, PF_MEMALLOC_NORECLAIM needs to stay; and thank you for
-> bringing this to my attention, because it's made me realize all the
-> other places in bcachefs that use gfp flags for allocating memory with
-> btree locks held need to be switch to memalloc_flags_do().
+>   #ifndef __EXPORTED_HEADERS__
+>   #warning "Attempt to use kernel headers from user space, see https://kernelnewbies.org/KernelHeaders"
+>   #endif /* __EXPORTED_HEADERS__ */
+> 
+> If you are inclined to define __EXPORTED_HEADERS__, you are likely doing
+> wrong.
+> 
+> Adding the comment:
+> 
+>   /* NOTE: we really do want to use the kernel headers here */
+> 
+> does not justify the hack in any way.
+> 
+> Currently, <linux/*.h> headers are included for the following purposes:
+> 
+>  - <linux/capability.h> is included to check CAP_LAST_CAP
+>  - <linux/socket.h> in included to check PF_MAX
+> 
+> We can skip these checks when building host programs, as they will
+> be eventually tested when building the kernel space.
+> 
+> I got rid of <linux/stddef.h> from initial_sid_to_string.h because
+> it is likely that NULL is already defined. If you insist on making
+> it self-contained, you can add the following:
+> 
+>   #ifdef __KERNEL__
+>   #include <linux/stddef.h>
+>   #else
+>   #include <stddef.h>
+>   #endif
+> 
+> scripts/selinux/mdp/mdp.c still includes <linux/kconfig.h>, which is
+> also discouraged and should be fixed by a follow-up refactoring.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>  scripts/selinux/genheaders/Makefile           |  4 +---
+>  scripts/selinux/genheaders/genheaders.c       |  3 ---
+>  scripts/selinux/mdp/Makefile                  |  2 +-
+>  scripts/selinux/mdp/mdp.c                     |  4 ----
+>  security/selinux/include/classmap.h           | 19 ++++++++++++-------
+>  .../selinux/include/initial_sid_to_string.h   |  2 --
+>  6 files changed, 14 insertions(+), 20 deletions(-)
 
-Additionally: plumbing gfp flags to pte allocation is something we do
-need to do. I proposed it before kvmalloc() was a thing, but now it's
-become much more of a lurking landmine.
+I'm not going to argue with the general idea behind this commit, but I
+am going to complain about the writing style in that commit description,
+it's not something I'm going to pull via the SELinux tree and I'm going
+to object to it going in via any other tree.
 
-Even with that I'd still be against this series, though. GFP_NOFAIL
-interacting badly with other gfp/memalloc flags is going to continue to
-be an issue, and I think the only answer to that is stricter runtime
-checks (which, thank you mm guys for adding recently).
+Please rewrite the commit description to simply state the problem (e.g.
+"we do not need to include the kernel headers when building the userspace
+SELinux scripts") and the fix (e.g "we resolve this by making the kernel
+specific portions protected by a __KERNEL__ macro check").  If you want
+to preserve the snarky commentary you can do so in the cover letter.
+
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index 7229c9bf6c27..518209e1beb0 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -1,8 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  
+> -#include <linux/capability.h>
+> -#include <linux/socket.h>
+> -
+>  #define COMMON_FILE_SOCK_PERMS                                            \
+>  	"ioctl", "read", "write", "create", "getattr", "setattr", "lock", \
+>  		"relabelfrom", "relabelto", "append", "map"
+> @@ -36,10 +33,6 @@
+>  	"mac_override", "mac_admin", "syslog", "wake_alarm", "block_suspend", \
+>  		"audit_read", "perfmon", "bpf", "checkpoint_restore"
+>  
+> -#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
+> -#error New capability defined, please update COMMON_CAP2_PERMS.
+> -#endif
+> -
+>  /*
+>   * Note: The name for any socket class should be suffixed by "socket",
+>   *	 and doesn't contain more than one substr of "socket".
+> @@ -181,6 +174,18 @@ const struct security_class_mapping secclass_map[] = {
+>  	{ NULL }
+>  };
+>  
+> +#ifdef __KERNEL__ /* avoid this check when building host programs */
+> +
+> +#include <linux/capability.h>
+> +
+> +#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
+> +#error New capability defined, please update COMMON_CAP2_PERMS.
+> +#endif
+> +
+> +#include <linux/socket.h>
+> +
+>  #if PF_MAX > 46
+>  #error New address family defined, please update secclass_map.
+>  #endif
+> +
+> +#endif /* __KERNEL__ */
+
+Please keep both the CAP_LAST_CAP and PF_MAX checks where they are now,
+closer to the affected code.
+
+> diff --git a/security/selinux/include/initial_sid_to_string.h b/security/selinux/include/initial_sid_to_string.h
+> index 99b353b2abb4..f683a78b21fd 100644
+> --- a/security/selinux/include/initial_sid_to_string.h
+> +++ b/security/selinux/include/initial_sid_to_string.h
+> @@ -1,7 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  
+> -#include <linux/stddef.h>
+
+Yes, we don't need the kernel's stddef.h here, but I would like us to
+have some type of stdddef.h included here so we have NULL defined.
+
+>  static const char *const initial_sid_to_string[] = {
+>  	NULL, /* zero placeholder, not used */
+>  	"kernel", /* kernel / SECINITSID_KERNEL */
+> -- 
+> 2.43.0
+
+--
+paul-moore.com
