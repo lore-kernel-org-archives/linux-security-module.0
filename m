@@ -1,30 +1,30 @@
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAA117A599;
-	Mon, 26 Aug 2024 10:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1799C17BEA7;
+	Mon, 26 Aug 2024 10:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669444; cv=none; b=mT00BU6Yuegqtzt1c7T/aInKpg41fnd7Lcd71kdforOv+pJjfklJw6QXMLi32zeYOxTpBDzgc/1fFHKHFFpCrLuMJhSTij9Ktg6jgZ1hholXgeUGIbmaeaOE2GVMVbX+iQr3X7pzRggvFnRlsbLW/62vMW5KcTb9WDYmZDUMSgM=
+	t=1724669449; cv=none; b=kIS6AxhqwalJzACSN+oiO+ug43C817pysTCvUJyvMGGEXx40VfiW+Zbbqkzj3qZt+JyVtFP8LX9gO6QuynfIzAGj9gvvOB1VBiMJApXBm8YaZpvzi+ynucalUo0jS6cUHQQPBUKzXzYAtAGMWEpQW3p3Hyplm6KgrkORDXIom1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669444; c=relaxed/simple;
-	bh=9YUNiymeyRMuAuOZQUKTPtfNJ7SkfhZmgQxyGMsIEv8=;
+	s=arc-20240116; t=1724669449; c=relaxed/simple;
+	bh=voJSXXHd61ZTmOlbPSqR+RzaCi6fmvrfPwJ0oHpsFXQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T9DmRGzvbF95hkt6lgBsxLjVJHm3Jf6mgt4oeJ2c1Yqkh6r5UjT8azeZgppO4o8K3pw9Zpd2BciNTxBYekvmjBBvMS1mxy1dLpxkDha37aDdkT+/Ljhs14J+q9Np7AmJHcemnxqmgAKZNTbNSRGDwWi+ObBVGExmjq4TQ78IEso=
+	 MIME-Version; b=JnCnRZB/GWCgeV6evFjGabilNw03yfffJGI4PvRfYaXVbLoy9vHrk5r5xHSFtwYmci/n1fu3hHe/hXsCZ8UQnEtChCVyJljmanTZJvogrCs744zHKMIw3rViD91DWy3ATTeObD/1WtvOrsNqMGKpabtikDTWA02WYVGY7I6bETg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbUYr003417;
-	Mon, 26 Aug 2024 05:37:30 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbVKL003425;
+	Mon, 26 Aug 2024 05:37:31 -0500
 Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbUZf003416;
-	Mon, 26 Aug 2024 05:37:30 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbVBd003424;
+	Mon, 26 Aug 2024 05:37:31 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From: Greg Wettstein <greg@enjellic.com>
 To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jmorris@namei.org
-Subject: [PATCH v4 04/14] Add primary TSEM implementation file.
-Date: Mon, 26 Aug 2024 05:37:18 -0500
-Message-Id: <20240826103728.3378-5-greg@enjellic.com>
+Subject: [PATCH v4 06/14] Implement TSEM control plane.
+Date: Mon, 26 Aug 2024 05:37:20 -0500
+Message-Id: <20240826103728.3378-7-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240826103728.3378-1-greg@enjellic.com>
 References: <20240826103728.3378-1-greg@enjellic.com>
@@ -36,2466 +36,2351 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The tsem.c file is the 'master' file in the TSEM implementation. It is
-responsible for initializing the LSM and providing the implementation of the
-security event handlers.
----
- security/tsem/tsem.c | 2446 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 2446 insertions(+)
- create mode 100644 security/tsem/tsem.c
+The fs.c file contains the implementation of the TSEM control
+plane that is surfaced through the following directory heirarchy
+in the securityfs filesystem mount
 
-diff --git a/security/tsem/tsem.c b/security/tsem/tsem.c
+/sys/kernel/security/tsem
+
+The following file documents the interfaces provided by the
+control plane:
+
+Documentation/ABI/testing/tsem
+
+The directory heirarchy partitions into the following two
+branches
+
+/sys/kernel/security/tsem/internal_tma
+
+/sys/kernel/security/tsem/external_tma
+
+Where the internal_tma directory surfaces the characteristics of
+the in kernel Trusted Modeling Agent implementation.
+
+When an externally modeled namespace is created a file is created
+in the external_tma directory that is named for the security
+context identifier of the namespace that was created.  An
+external trust orchestrator uses this file to read security
+events that occur in the context of the namespace.
+
+This file also contains the functionality that generates the JSON
+encoded security event descriptions.  These descriptions encode
+the information used as input to TSEM security models.
+---
+ security/tsem/fs.c | 2304 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 2304 insertions(+)
+ create mode 100644 security/tsem/fs.c
+
+diff --git a/security/tsem/fs.c b/security/tsem/fs.c
 new file mode 100644
-index 000000000000..76d65b3e62b3
+index 000000000000..04762dd5fd5c
 --- /dev/null
-+++ b/security/tsem/tsem.c
-@@ -0,0 +1,2446 @@
++++ b/security/tsem/fs.c
+@@ -0,0 +1,2304 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
 +/*
 + * Copyright (C) 2024 Enjellic Systems Development, LLC
 + * Author: Dr. Greg Wettstein <greg@enjellic.com>
 + *
-+ * This file is the primary implementation file for the tsem LSM.
++ * This file implements the TSEM control plane that is surfaced
++ * through the following directory heirarchy:
 + *
-+ * It implements initialization and setup functions that interpret
-+ * kernel command-line arguments and prepares TSEM for operation.
++ * /sys/kernel/security/tsem
 + *
-+ * In addition it contains all of the TSEM specific security event
-+ * handlers that are responsible for handling the LSM events that TSEM
-+ * models.
++ * The TSEM ABI documentation documents the directories and files that
++ * are implemented in this directory heirarchy.
 + *
-+ * Each TSEM event handler calls the tsem_allocate_event() function to
-+ * allocate a structure that will be used to describe the event.  The
-+ * CELL union of this structure contains various structures that are
-+ * used to hold these parameters.
++ * A significant portion of the functions in this file are used to
++ * generate the JSON encoding of a security event description.  This
++ * encoding is surfaced to the tsem_export_show() function through the
++ * tsem_fs_show_trajectory() function.  This latter function is also
++ * used by the trajectory and forensics pseudo files that output the
++ * characteristics of security events modeled by the internal trusted
++ * modeling agent implementation.
 + *
-+ * Since the event characterization parameters need to be retained for
-+ * the lifetime of the tsem_event structure that is allocated.  In the
-+ * case of internally modeled namespaces this lifespan is the lifetime
-+ * of the security modeling namespace.  In the case of externally
-+ * modeled namespaces, the lifespan is until the security event
-+ * description is exported to an external trust orchestrator.
-+ *
-+ * In order to support this model, the event description structures
-+ * are typically composed of a union over 'in' and 'out' structures.
-+ * The 'in' structures are used to hold arguments to the event handler
-+ * that may only be relevant for the duration of the call.  These
-+ * values are translated into members of the 'out' structure that
-+ * retain the values until the end of the lifetime of the tsem_event
-+ * structure.
-+ *
-+ * Each TSEM event handler is responsible for allocating a tsem_event
-+ * structure and populating the appropriate CELL structure with the
-+ * input characteristics of the event.  The dispatch_event() function
-+ * is called to handle the modeling of the event.  This function
-+ * returns the permission value that is returned as the result of the
-+ * LSM event handler.
-+ *
-+ * The dispatch_event() calls the tsem_event_init() function that is
-+ * responsible for translating the input parameters into values that
-+ * will be retained for the lifetime of the security event
-+ * description.  The populated event description is then dispatched to
-+ * either the tsem_model_event() or the tsem_export_event() for
-+ * modeling by either the internal TMA or by a TMA associated with an
-+ * external trust orchestrator.
++ * The pseudo-files implemented are context sensitive in that they
++ * provide output describing the security modeling namespace that the
++ * process that accesses the file is running in.
 + */
 +
-+#define LOCK true
-+#define NOLOCK false
-+
-+#include <linux/magic.h>
-+#include <linux/mman.h>
-+#include <linux/binfmts.h>
-+#include <linux/bpf.h>
-+#include <linux/mount.h>
-+#include <linux/security.h>
++#include <linux/seq_file.h>
++#include <linux/poll.h>
 +
 +#include "tsem.h"
 +#include "nsmgr.h"
 +
-+static const struct lsm_id tsem_lsmid = {
-+	.name = "tsem",
-+	.id = LSM_ID_TSEM
++static struct dentry *tsem_dir;
++static struct dentry *control;
++static struct dentry *id;
++static struct dentry *aggregate;
++static struct dentry *internal_tma;
++static struct dentry *model;
++static struct dentry *forensics;
++static struct dentry *forensics_counts;
++static struct dentry *forensics_coeff;
++static struct dentry *trajectory;
++static struct dentry *trajectory_counts;
++static struct dentry *trajectory_coeff;
++static struct dentry *measurement;
++static struct dentry *state;
++static struct dentry *external_tma;
++
++struct control_commands {
++	char *cmd;
++	enum tsem_control_type type;
 +};
 +
-+struct lsm_blob_sizes tsem_blob_sizes __ro_after_init = {
-+	.lbs_task = sizeof(struct tsem_task),
-+	.lbs_inode = sizeof(struct tsem_inode),
-+	.lbs_ipc = sizeof(struct tsem_ipc),
-+	.lbs_xattr_count = 1
++static const char * const control_commands[] = {
++	"internal",
++	"external",
++	"export",
++	"enforce",
++	"seal",
++	"trusted",
++	"untrusted",
++	"state",
++	"pseudonym",
++	"base",
++	"lock"
 +};
 +
-+enum tsem_action_type tsem_root_actions[TSEM_EVENT_CNT] = {
-+	TSEM_ACTION_EPERM	/* Undefined. */
++enum namespace_argument_type {
++	NS_MODEL = 0,
++	NS_REF,
++	NS_DIGEST,
++	NS_KEY,
++	NS_CACHE
 +};
 +
-+static atomic64_t task_instance;
-+
-+static struct tsem_model root_model = {
-+	.point_lock = __SPIN_LOCK_INITIALIZER(root_model.point_lock),
-+	.point_list = LIST_HEAD_INIT(root_model.point_list),
-+	.point_end_mutex = __MUTEX_INITIALIZER(root_model.point_end_mutex),
-+
-+	.trajectory_lock = __SPIN_LOCK_INITIALIZER(root_model.trajectory_lock),
-+	.trajectory_list = LIST_HEAD_INIT(root_model.trajectory_list),
-+	.trajectory_end_mutex = __MUTEX_INITIALIZER(root_model.trajectory_end_mutex),
-+
-+	.forensics_lock = __SPIN_LOCK_INITIALIZER(root_model.forensics_lock),
-+	.forensics_list = LIST_HEAD_INIT(root_model.forensics_list),
-+	.forensics_end_mutex = __MUTEX_INITIALIZER(root_model.forensics_end_mutex),
-+
-+	.pseudonym_mutex = __MUTEX_INITIALIZER(root_model.pseudonym_mutex),
-+	.pseudonym_list = LIST_HEAD_INIT(root_model.pseudonym_list),
-+
-+	.mount_mutex = __MUTEX_INITIALIZER(root_model.mount_mutex),
-+	.mount_list = LIST_HEAD_INIT(root_model.mount_list)
++static const char * const namespace_arguments[] = {
++	"model",
++	"nsref",
++	"digest",
++	"key",
++	"cache"
 +};
 +
-+static struct tsem_context root_context;
-+
-+DEFINE_STATIC_KEY_TRUE(tsem_not_ready);
-+
-+static bool tsem_available __ro_after_init;
-+
-+static unsigned int magazine_size __ro_after_init = TSEM_ROOT_MAGAZINE_SIZE;
-+
-+static enum mode_type {
-+	FULL_MODELING,
-+	NO_ROOT_MODELING,
-+	ROOT_EXPORT_ONLY
-+} tsem_mode __ro_after_init;
-+
-+static char *default_hash_function __ro_after_init;
-+
-+static const struct {
-+	char *key;
-+	enum mode_type mode;
-+} mode_arguments[] __ro_after_init = {
-+	{"no_root_modeling", NO_ROOT_MODELING},
-+	{"root_export_only", ROOT_EXPORT_ONLY}
++enum control_argument_type {
++	CONTROL_KEY = 0,
++	CONTROL_PID
 +};
 +
-+/*
-+ * NOTE:
-+ * The tsem_event_type enumerations are used to select the
-+ * member of the tsem_names array that is to be used.  If the members
-+ * of this array change position, or there are additions or deletions
-+ * to this array, there needs to be coordinated changes made to the
-+ * tsem_event_type enumeration in the tsem.h file.
-+ */
-+const char * const tsem_names[TSEM_EVENT_CNT] = {
-+	"undefined",
-+	"bprm_committed_creds",		/* TSEM_BPRM_COMMITTED_CREDS */
-+	"task_kill",			/* TSEM_TASK_KILL */
-+	"task_setpgid",			/* TSEM_TASK_SETPGID */
-+	"task_getpgid",			/* TSEM_TASK_GETPGID */
-+	"task_getsid",			/* TSEM_TASK_GETSID */
-+	"task_setnice",			/* TSEM_TASK_SETNICE */
-+	"task_setioprio",		/* TSEM_TASK_SETIOPRIO */
-+	"task_getioprio",		/* TSEM_TASK_GETIOPRIO */
-+	"task_prlimit",			/* TSEM_TASK_PRLIMIT */
-+	"task_setrlimit",		/* TSEM_TASK_SETRLIMIT */
-+	"task_setscheduler",		/* TSEM_TASK_SETSCHEDULER */
-+	"task_getscheduler",		/* TSEM_TASK_GETSCHEDULER */
-+	"task_prctl",			/* TSEM_TASK_PRCTL */
-+	"file_open",			/* TSEM_FILE_OPEN */
-+	"mmap_file",			/* TSEM_MMAP_FILE */
-+	"file_ioctl",			/* TSEM_FILE_IOCTL */
-+	"file_lock",			/* TSEM_FILE_LOCK */
-+	"file_fcntl",			/* TSEM_FILE_FCNTL */
-+	"file_receive",			/* TSEM_FILE_RECEIVE */
-+	"unix_stream_connect",		/* TSEM_UNIX_STREAM_CONNECT */
-+	"unix_may_send",		/* TSEM_UNIX_MAY_SEND */
-+	"socket_create",		/* TSEM_SOCKET_CREATE */
-+	"socket_connect",		/* TSEM_SOCKET_CONNECT */
-+	"socket_bind",			/* TSEM_SOCKET_BIND */
-+	"socket_accept",		/* TSEM_SOCKET_ACCEPT */
-+	"socket_listen",		/* TSEM_SOCKET_LISTEN */
-+	"socket_socketpair",		/* TSEM_SOCKET_SOCKETPAIR */
-+	"socket_sendmsg",		/* TSEM_SOCKET_SENDMSG */
-+	"socket_recvmsg",		/* TSEM_SOCKET_RECVMSG */
-+	"socket_getsockname",		/* TSEM_SOCKET_GETSOCKNAME */
-+	"socket_getpeername",		/* TSEM_SOCKET_GETPEERNAME */
-+	"socket_setsockopt",		/* TSEM_SOCKET_SETSOCKOPT */
-+	"socket_shutdown",		/* TSEM_SOCKET_SHUTDOWN */
-+	"ptrace_traceme",		/* TSEM_PTRACE_TRACEME */
-+	"kernel_module_request",	/* TSEM_KERNEL_MODULE_REQUEST */
-+	"kernel_load_data",		/* TSEM_KERNEL_LOAD_DATA */
-+	"kernel_read_file",		/* TSEM_KERNEL_READ_FILE */
-+	"sb_mount",			/* TSEM_SB_MOUNT */
-+	"sb_umount",			/* TSEM_SB_UMOUNT */
-+	"sb_remount",			/* TSEM_SB_REMOUNT */
-+	"sb_pivotroot",			/* TSEM_SB_PIVOTROOT */
-+	"sb_statfs",			/* TSEM_SB_STATFS */
-+	"move_mount",			/* TSEM_MOVE_MOUNT */
-+	"shm_associate",		/* TSEM_SHM_ASSOCIATE */
-+	"shm_shmctl",			/* TSEM_SHM_SHMCTL */
-+	"shm_shmat",			/* TSEM_SHM_SHMAT */
-+	"sem_associate",		/* TSEM_SEM_ASSOCIATE */
-+	"sem_semctl",			/* TSEM_SEM_SEMCTL */
-+	"sem_semop",			/* TSEM_SEM_SEMOP */
-+	"syslog",			/* TSEM_SYSLOG */
-+	"settime",			/* TSEM_SETTIME */
-+	"quotactl",			/* TSEM_QUOTACTL */
-+	"quota_on",			/* TSEM_QUOTA_ON */
-+	"msg_queue_associate",		/* TSEM_MSG_QUEUE_ASSOCIATE */
-+	"msg_queue_msgctl",		/* TSEM_MSG_QUEUE_MSGCTL */
-+	"msg_queue_msgsnd",		/* TSEM_MSG_QUEUE_MSGSND */
-+	"msg_queue_msgrcv",		/* TSEM_MSG_QUEUE_MSGRCV */
-+	"ipc_permission",		/* TSEM_IPC_PERMISSION */
-+	"key_alloc",			/* TSEM_KEY_ALLOC */
-+	"key_permission",		/* TSEM_KEY_PERMISSION */
-+	"netlink_send",			/* TSEM_NETLINK_SEND */
-+	"inode_create",			/* TSEM_INODE_CREATE */
-+	"inode_link",			/* TSEM_INODE_LINK */
-+	"inode_unlink",			/* TSEM_INODE_UNLINK */
-+	"inode_symlink",		/* TSEM_INODE_SYMLINK */
-+	"inode_mkdir",			/* TSEM_INODE_MKDIR */
-+	"inode_rmdir",			/* TSEM_INODE_RMDIR */
-+	"inode_mknod",			/* TSEM_INODE_MKNOD */
-+	"inode_rename",			/* TSEM_INODE_RENAME */
-+	"inode_setattr",		/* TSEM_INODE_SETATTR */
-+	"inode_getattr",		/* TSEM_INODE_GETATTR */
-+	"inode_setxattr",		/* TSEM_INODE_SETXATTR */
-+	"inode_getxattr",		/* TSEM_INODE_GETXATTR */
-+	"inode_listxattr",		/* TSEM_INODE_LISTXATTR */
-+	"inode_removexattr",		/* TSEM_INODE_REMOVEXATTR */
-+	"inode_killpriv",		/* TSEM_INODE_KILLPRIV */
-+	"tun_dev_create",		/* TSEM_TUN_DEV_CREATE */
-+	"tun_dev_attach_queue",		/* TSEM_TUN_DEV_ATTACH_QUEUE */
-+	"tun_dev_attach",		/* TSEM_TUN_DEV_ATTACH */
-+	"tun_dev_open",			/* TSEM_TUN_DEV_OPEN */
-+	"bpf",				/* TSEM_BPF */
-+	"bpf_map",			/* TSEM_BPF_MAP */
-+	"bpf_prog",			/* TSEM_BPF_PROG */
-+	"ptrace_access_check",		/* TSEM_PTRACE_ACCESS_CHECK */
-+	"capable",			/* TSEM_CAPABLE */
-+	"capget",			/* TSEM_CAPGET */
-+	"capset"			/* TSEM_CAPSET */
++static const char * const control_arguments[] = {
++	"key",
++	"pid"
 +};
 +
-+static const unsigned long pseudo_filesystems[] = {
-+	PROC_SUPER_MAGIC,
-+	SYSFS_MAGIC,
-+	DEBUGFS_MAGIC,
-+	TMPFS_MAGIC,
-+	DEVPTS_SUPER_MAGIC,
-+	BINFMTFS_MAGIC,
-+	SECURITYFS_MAGIC,
-+	SELINUX_MAGIC,
-+	SMACK_MAGIC,
-+	CGROUP_SUPER_MAGIC,
-+	CGROUP2_SUPER_MAGIC,
-+	NSFS_MAGIC,
-+	EFIVARFS_MAGIC
-+};
-+
-+static int __init set_magazine_size(char *magazine_value)
++static bool can_access_fs(void)
 +{
-+	if (kstrtouint(magazine_value, 0, &magazine_size))
-+		pr_warn("tsem: Failed to parse root cache size.\n");
-+
-+	if (!magazine_size) {
-+		pr_warn("tsem: Forcing non-zero cache size.\n");
-+		magazine_size = TSEM_ROOT_MAGAZINE_SIZE;
-+	}
-+
-+	pr_info("tsem: Setting default root cache size to %u.\n",
-+		magazine_size);
-+	return 1;
-+}
-+__setup("tsem_cache=", set_magazine_size);
-+
-+static int __init set_modeling_mode(char *mode_argument)
-+{
-+	unsigned int lp;
-+
-+	for (lp = 0; lp < ARRAY_SIZE(mode_arguments); ++lp) {
-+		if (!strcmp(mode_argument, mode_arguments[lp].key)) {
-+			tsem_mode = mode_arguments[lp].mode;
-+			return 1;
-+		}
-+	}
-+
-+	pr_warn("tsem: Unknown tsem_mode %s specified, using full modeling.\n",
-+		mode_argument);
-+	return 1;
-+}
-+__setup("tsem_mode=", set_modeling_mode);
-+
-+static int __init set_default_hash_function(char *hash_function)
-+{
-+
-+	default_hash_function = hash_function;
-+	return 1;
-+}
-+__setup("tsem_digest=", set_default_hash_function);
-+
-+static int __init set_locked_status(char *str)
-+{
-+	tsem_nsmgr_lock(true);
-+	pr_info("tsem: Model state locked by command-line request.\n");
-+	return 1;
-+}
-+__setup("tsem_locked", set_locked_status);
-+
-+static bool bypass_event(const enum tsem_event_type event)
-+{
-+	if (tsem_context(current)->ops->bypasses[event])
-+		return true;
-+	if (tsem_mode == NO_ROOT_MODELING && !tsem_context(current)->id)
-+		return true;
-+	return false;
-+}
-+
-+static bool pseudo_filesystem(struct inode *inode)
-+{
-+	unsigned int lp;
-+
-+	for (lp = 0; lp < ARRAY_SIZE(pseudo_filesystems); ++lp)
-+		if (inode->i_sb->s_magic == pseudo_filesystems[lp])
-+			return true;
-+	return false;
-+}
-+
-+static int untrusted_task(struct tsem_event *ep)
-+{
-+	int retn = 0;
 +	struct tsem_context *ctx = tsem_context(current);
 +
-+	if (ctx->external) {
-+		retn = tsem_export_action(ep->event, ep->locked);
-+		if (retn)
-+			return retn;
-+	} else
-+		pr_warn("Untrusted event %s: model_ns=%lld, comm=%s, pid=%d\n",
-+			tsem_names[ep->event], ctx->id, current->comm,
-+			task_pid_nr(current));
-+
-+	if (ctx->actions[ep->event] == TSEM_ACTION_EPERM)
-+		retn = -EPERM;
-+	return retn;
++	if (ctx->external)
++		return false;
++	if (capable(CAP_MAC_ADMIN))
++		return true;
++	if (ctx->sealed)
++		return false;
++	return true;
 +}
 +
-+static int dispatch_event(struct tsem_event *ep)
++static int control_COE(unsigned long cmd, pid_t pid, char *keystr)
 +{
-+	int retn;
++	bool wakeup = false;
++	int retn = -ESRCH;
++	u8 event_key[HASH_MAX_DIGESTSIZE];
++	struct task_struct *COE;
++	struct tsem_task *task;
++	struct tsem_task *tma = tsem_task(current);
 +
-+	if (unlikely(tsem_task_untrusted(current))) {
-+		retn = untrusted_task(ep);
-+		goto done;
-+	}
++	rcu_read_lock();
++	COE = find_task_by_vpid(pid);
++	if (COE != NULL) {
++		task = tsem_task(COE);
++		if (tsem_context(COE)->id != tma->tma_for_ns) {
++			retn = -EINVAL;
++			goto done;
++		}
 +
-+	retn = tsem_event_init(ep);
-+	if (retn > 0) {
-+		if (!tsem_context(current)->external)
-+			retn = tsem_model_event(ep);
-+		else
-+			retn = tsem_export_event(ep);
++		retn = tsem_ns_event_key(task->task_key, keystr, event_key);
++		if (retn)
++			goto done;
++
++		if (memcmp(tma->task_key, event_key, tsem_digestsize())) {
++			retn = -EINVAL;
++			goto done;
++		}
++
++		if (cmd == TSEM_CONTROL_UNTRUSTED)
++			task->trust_status = TSEM_TASK_UNTRUSTED;
++		if (cmd == TSEM_CONTROL_TRUSTED) {
++			task->trust_status &= ~TSEM_TASK_TRUST_PENDING;
++			if (tsem_task_trusted(COE))
++				task->trust_status = TSEM_TASK_TRUSTED;
++		}
++		retn = 0;
++		wakeup = true;
 +	}
 +
 + done:
-+	tsem_event_put(ep);
++	rcu_read_unlock();
++
++	if (retn == -EINVAL)
++		pr_warn("tsem: Invalid process release request.\n");
++
++	if (wakeup)
++		wake_up_process(COE);
++
 +	return retn;
 +}
 +
-+static int tsem_file_open(struct file *file)
++static int config_COE(unsigned long cmd, char *arg)
 +{
-+	struct inode *inode = file_inode(file);
-+	struct tsem_event *ep;
++	char **argv, *argp, *key = NULL;
++	int argc, retn = -EINVAL;
++	unsigned int lp;
++	long pid = 0;
++	enum control_argument_type control_arg;
 +
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_FILE_OPEN))
-+		return 0;
-+	if (unlikely(tsem_inode(inode)->status == TSEM_INODE_CONTROL_PLANE)) {
-+		if (capable(CAP_MAC_ADMIN))
-+			return 0;
-+		else
-+			return -EPERM;
-+	}
++	if (!*arg)
++		return retn;
 +
-+	if (!S_ISREG(inode->i_mode))
-+		return 0;
-+	if (tsem_inode(inode)->status == TSEM_INODE_COLLECTING)
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_FILE_OPEN, NOLOCK);
-+	if (!ep)
++	argv = argv_split(GFP_KERNEL, arg, &argc);
++	if (!argv)
 +		return -ENOMEM;
 +
-+	ep->CELL.file.in.file = file;
-+	ep->CELL.file.in.pseudo_file = pseudo_filesystem(inode);
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_mmap_file(struct file *file, unsigned long prot,
-+			  unsigned long flags, unsigned long extra)
-+{
-+	struct inode *inode = NULL;
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_MMAP_FILE))
-+		return 0;
-+
-+	if (!file && !(prot & PROT_EXEC))
-+		return 0;
-+	if (file) {
-+		inode = file_inode(file);
-+		if (!S_ISREG(inode->i_mode))
-+			return 0;
-+		if (pseudo_filesystem(inode))
-+			return 0;
-+	}
-+
-+	ep = tsem_event_allocate(TSEM_MMAP_FILE, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.mmap_file.anonymous = file == NULL ? 1 : 0;
-+	ep->CELL.mmap_file.file.in.file = file;
-+	ep->CELL.mmap_file.prot = prot;
-+	ep->CELL.mmap_file.flags = flags;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_file_ioctl(struct file *file, unsigned int cmd,
-+			   unsigned long arg)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_FILE_IOCTL))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_FILE_IOCTL, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.file.cmd = cmd;
-+	ep->CELL.file.in.file = file;
-+	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_file_lock(struct file *file, unsigned int cmd)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_FILE_LOCK))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_FILE_LOCK, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.file.cmd = cmd;
-+	ep->CELL.file.in.file = file;
-+	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_file_fcntl(struct file *file, unsigned int cmd,
-+			   unsigned long arg)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_FILE_FCNTL))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_FILE_FCNTL, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.file.cmd = cmd;
-+	ep->CELL.file.in.file = file;
-+	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_file_receive(struct file *file)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_FILE_RECEIVE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_FILE_RECEIVE, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.file.in.file = file;
-+	ep->CELL.file.in.pseudo_file = pseudo_filesystem(file_inode(file));
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_alloc(struct task_struct *new, unsigned long flags)
-+{
-+	struct tsem_task *old_task = tsem_task(current);
-+	struct tsem_task *new_task = tsem_task(new);
-+
-+	new_task->instance = old_task->instance;
-+	new_task->p_instance = old_task->instance;
-+
-+	new_task->trust_status = old_task->trust_status;
-+	new_task->context = old_task->context;
-+	memcpy(new_task->task_id, old_task->task_id, HASH_MAX_DIGESTSIZE);
-+	memcpy(new_task->p_task_id, old_task->task_id, HASH_MAX_DIGESTSIZE);
-+
-+	if (!new_task->context->id)
-+		return 0;
-+
-+	kref_get(&new_task->context->kref);
-+	memcpy(new_task->task_key, old_task->task_key, HASH_MAX_DIGESTSIZE);
-+	return 0;
-+}
-+
-+static void tsem_task_free(struct task_struct *task)
-+{
-+	struct tsem_context *ctx = tsem_context(task);
-+
-+	if (ctx->id)
-+		tsem_ns_put(ctx);
-+}
-+
-+static int tsem_task_kill(struct task_struct *target,
-+			  struct kernel_siginfo *info, int sig,
-+			  const struct cred *cred)
-+{
-+	bool cross_model;
-+	struct tsem_event *ep;
-+	struct tsem_context *src_ctx = tsem_context(current);
-+	struct tsem_context *tgt_ctx = tsem_context(target);
-+
-+	if (bypass_event(TSEM_TASK_KILL))
-+		return 0;
-+
-+	cross_model = src_ctx->id != tgt_ctx->id;
-+
-+	if (info != SEND_SIG_NOINFO && SI_FROMKERNEL(info))
-+		return 0;
-+	if (sig == SIGURG)
-+		return 0;
-+	if (!capable(CAP_MAC_ADMIN) &&
-+	    has_capability_noaudit(target, CAP_MAC_ADMIN))
-+		return -EPERM;
-+	if (!capable(CAP_MAC_ADMIN) && cross_model)
-+		return -EPERM;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_KILL, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.task_kill.signal = sig;
-+	ep->CELL.task_kill.cross_model = cross_model;
-+	memcpy(ep->CELL.task_kill.target, tsem_task(target)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_ptrace_access_check(struct task_struct *child,
-+				    unsigned int mode)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_PTRACE_ACCESS_CHECK))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_PTRACE_ACCESS_CHECK, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.task_kill.u.resource = mode;
-+	memcpy(ep->CELL.task_kill.target, tsem_task(child)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_ptrace_traceme(struct task_struct *parent)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_PTRACE_TRACEME))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_PTRACE_TRACEME, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	memcpy(ep->CELL.task_kill.source, tsem_task(parent)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_capget(const struct task_struct *target,
-+		       kernel_cap_t *effective, kernel_cap_t *inheritable,
-+		       kernel_cap_t *permitted)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_CAPGET))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_CAPGET, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.capability.effective = *effective;
-+	ep->CELL.capability.inheritable = *inheritable;
-+	ep->CELL.capability.permitted = *permitted;
-+	memcpy(ep->CELL.capability.target, tsem_task(target)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_capset(struct cred *new, const struct cred *old,
-+		       const kernel_cap_t *effective,
-+		       const kernel_cap_t *inheritable,
-+		       const kernel_cap_t *permitted)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_CAPSET))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_CAPSET, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.capability.effective = *effective;
-+	ep->CELL.capability.inheritable = *inheritable;
-+	ep->CELL.capability.permitted = *permitted;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_capable(const struct cred *cred, struct user_namespace *ns,
-+			int cap, unsigned int opts)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_CAPABLE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_CAPABLE, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.capability.cap = cap;
-+	ep->CELL.capability.opts = opts;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_setpgid(struct task_struct *p, pid_t pgid)
-+{
-+	struct tsem_event *ep;
-+	struct task_struct *src;
-+
-+	if (bypass_event(TSEM_TASK_SETPGID))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_SETPGID, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	if (!pgid)
-+		memcpy(ep->CELL.task_kill.source, tsem_task(p)->task_id,
-+		       tsem_digestsize());
-+	else {
-+		rcu_read_lock();
-+		src = find_task_by_vpid(pgid);
-+		rcu_read_unlock();
-+		if (src)
-+			memcpy(ep->CELL.task_kill.source,
-+			       tsem_task(src)->task_id, tsem_digestsize());
-+	}
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_getpgid(struct task_struct *p)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_GETPGID))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_GETPGID, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_getsid(struct task_struct *p)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_GETSID))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_GETSID, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_setnice(struct task_struct *p, int nice)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_SETNICE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_SETNICE, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.task_kill.u.value = nice;
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_setioprio(struct task_struct *p, int ioprio)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_SETIOPRIO))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_SETIOPRIO, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.task_kill.u.value = ioprio;
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_getioprio(struct task_struct *p)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_GETIOPRIO))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_GETIOPRIO, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_prlimit(const struct cred *cred, const struct cred *tcred,
-+			     unsigned int flags)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_PRLIMIT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_PRLIMIT, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.task_prlimit.flags = flags;
-+	ep->CELL.task_prlimit.in.cred = cred;
-+	ep->CELL.task_prlimit.in.tcred = tcred;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_setrlimit(struct task_struct *p, unsigned int resource,
-+			       struct rlimit *new_rlim)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_SETRLIMIT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_SETRLIMIT, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.task_kill.u.resource = resource;
-+	ep->CELL.task_kill.cur = new_rlim->rlim_cur;
-+	ep->CELL.task_kill.max = new_rlim->rlim_max;
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_setscheduler(struct task_struct *p)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_SETSCHEDULER))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_SETSCHEDULER, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_getscheduler(struct task_struct *p)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_GETSCHEDULER))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_GETSCHEDULER, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	memcpy(ep->CELL.task_kill.target, tsem_task(p)->task_id,
-+	       tsem_digestsize());
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_task_prctl(int option, unsigned long arg2, unsigned long arg3,
-+			   unsigned long arg4, unsigned long arg5)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TASK_PRCTL))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TASK_PRCTL, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.task_prctl.option = option;
-+	ep->CELL.task_prctl.arg2 = arg2;
-+	ep->CELL.task_prctl.arg3 = arg3;
-+	ep->CELL.task_prctl.arg4 = arg4;
-+	ep->CELL.task_prctl.arg5 = arg5;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static void tsem_bprm_committed_creds(const struct linux_binprm *bprm)
-+{
-+	u8 task_id[HASH_MAX_DIGESTSIZE];
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return;
-+
-+	if (tsem_map_task(bprm->file, task_id))
-+		memset(task_id, 0xff, sizeof(task_id));
-+
-+	tsem_task(current)->instance = atomic64_inc_return(&task_instance);
-+	memcpy(tsem_task(current)->task_id, task_id, tsem_digestsize());
-+}
-+
-+static int tsem_inode_alloc_security(struct inode *inode)
-+{
-+	struct tsem_inode *tsip = tsem_inode(inode);
-+
-+	mutex_init(&tsip->digest_mutex);
-+	INIT_LIST_HEAD(&tsip->digest_list);
-+
-+	mutex_init(&tsip->create_mutex);
-+	INIT_LIST_HEAD(&tsip->create_list);
-+
-+	mutex_init(&tsip->instance_mutex);
-+	INIT_LIST_HEAD(&tsip->instance_list);
-+
-+	return 0;
-+}
-+
-+static int tsem_inode_init_security(struct inode *inode, struct inode *dir,
-+				    const struct qstr *qstr,
-+				    struct xattr *xattrs, int *xattr_count)
-+{
-+	u8 *owner = tsem_task(current)->task_id;
-+	struct tsem_inode *tsip = tsem_inode(inode);
-+	struct tsem_inode_instance *entry, *retn = NULL;
-+
-+	mutex_lock(&tsem_inode(dir)->create_mutex);
-+	list_for_each_entry(entry, &tsem_inode(dir)->create_list, list) {
-+		if (!memcmp(entry->owner, owner, tsem_digestsize()) &&
-+		    !strcmp(qstr->name, entry->pathname)) {
-+			retn = entry;
++	for (lp = 0; lp < argc; ++lp) {
++		argp = strchr(argv[lp], '=');
++		if (!argp)
++			goto done;
++		*argp++ = '\0';
++
++		control_arg = match_string(control_arguments,
++					   ARRAY_SIZE(control_arguments),
++					   argv[lp]);
++		if (control_arg < 0)
++			goto done;
++
++		switch (control_arg) {
++		case CONTROL_KEY:
++			key = argp;
++			if (strlen(key) != tsem_digestsize()*2)
++				goto done;
++			break;
++		case CONTROL_PID:
++			if (kstrtol(argp, 0, &pid))
++				goto done;
 +			break;
 +		}
 +	}
 +
-+	if (retn) {
-+		tsip->created = true;
-+		tsip->creator = retn->creator;
-+		tsip->instance = retn->instance;
-+		memcpy(tsip->owner, retn->owner, tsem_digestsize());
-+		list_del(&retn->list);
-+	}
-+	mutex_unlock(&tsem_inode(dir)->create_mutex);
++	if (!key || !pid)
++		goto done;
++	retn = control_COE(cmd, pid, key);
 +
-+	return -EOPNOTSUPP;
++ done:
++	argv_free(argv);
++	return retn;
 +}
 +
-+static void _release_inode_instances(u64 id, struct tsem_inode *tsip)
++static int config_context(unsigned long cmd, char *bufr)
 +{
-+	struct tsem_inode_instance *owner, *tmp_owner;
-+
-+	mutex_lock(&tsip->instance_mutex);
-+	list_for_each_entry_safe(owner, tmp_owner, &tsip->instance_list,
-+				 list) {
-+		if (id == owner->creator) {
-+			list_del(&owner->list);
-+			kfree(owner);
-+		}
-+	}
-+	mutex_unlock(&tsip->instance_mutex);
-+}
-+
-+static void tsem_inode_free_security(struct inode *inode)
-+{
-+	struct tsem_inode_instance *owner, *tmp_owner;
-+	struct tsem_inode_digest *digest, *tmp_digest;
-+	struct tsem_inode_entry *entry, *tmp_entry;
++	int retn = -EINVAL;
++	unsigned int lp;
 +	struct tsem_context *ctx = tsem_context(current);
 +
-+	mutex_lock(&ctx->inode_mutex);
-+	list_for_each_entry_safe(entry, tmp_entry, &ctx->inode_list, list) {
-+		if (entry->tsip == tsem_inode(inode)) {
-+			list_del(&entry->list);
-+			_release_inode_instances(ctx->id, entry->tsip);
-+			kfree(entry);
++	if (ctx->sealed)
++		return -EPERM;
++
++	if (cmd == TSEM_CONTROL_SEAL) {
++		ctx->sealed = true;
++		retn = 0;
++	}
++
++	if (cmd == TSEM_CONTROL_ENFORCE) {
++		for (lp = 0; lp < ARRAY_SIZE(tsem_root_actions); ++lp)
++			ctx->actions[lp] = TSEM_ACTION_EPERM;
++		retn = 0;
++	}
++
++	return retn;
++}
++
++static int config_point(enum tsem_control_type type, char *arg)
++{
++	char *argp;
++	int retn = -EINVAL;
++	u8 mapping[HASH_MAX_DIGESTSIZE];
++
++	if (!arg)
++		goto done;
++
++	argp = strchr(arg, '=');
++	if (!argp)
++		goto done;
++	*argp++ = '\0';
++
++	if (strcmp(arg, "value"))
++		goto done;
++
++	if (strlen(argp) != tsem_digestsize()*2)
++		goto done;
++	if (hex2bin(mapping, argp, tsem_digestsize()))
++		goto done;
++
++	if (type == TSEM_CONTROL_MAP_STATE)
++		retn = tsem_model_load_point(mapping);
++	else if (type == TSEM_CONTROL_MAP_PSEUDONYM)
++		retn = tsem_model_load_pseudonym(mapping);
++	else {
++		tsem_model_load_base(mapping);
++		retn = 0;
++	}
++
++ done:
++	return retn;
++}
++
++static int config_namespace(enum tsem_control_type type, const char *arg)
++{
++	char **argv, *argp, *digest = "sha256", *key = NULL;
++	int argc, retn = -EINVAL;
++	unsigned int lp, cache_size = TSEM_MAGAZINE_SIZE_INTERNAL;
++	enum namespace_argument_type ns_arg;
++	enum tsem_ns_reference ns_ref = TSEM_NS_INITIAL;
++	const struct tsem_context_ops *ops = &tsem_model0_ops;
++
++	if (type == TSEM_CONTROL_EXTERNAL || type == TSEM_CONTROL_EXPORT)
++		cache_size = TSEM_MAGAZINE_SIZE_EXTERNAL;
++
++	if (!arg) {
++		if (type == TSEM_CONTROL_EXTERNAL)
++			return retn;
++		return tsem_ns_create(type, digest, ns_ref, key, cache_size,
++				      ops);
++	}
++
++	argv = argv_split(GFP_KERNEL, arg, &argc);
++	if (!argv)
++		return -ENOMEM;
++
++	for (lp = 0; lp < argc; ++lp) {
++		argp = strchr(argv[lp], '=');
++		if (!argp)
++			goto done;
++		*argp++ = '\0';
++
++		ns_arg = match_string(namespace_arguments,
++				    ARRAY_SIZE(namespace_arguments), argv[lp]);
++		if (ns_arg < 0)
++			goto done;
++
++		switch (ns_arg) {
++		case NS_MODEL:
++			ops = tsem_nsmgr_get(argp);
++			if (!ops)
++				goto done;
++			break;
++		case NS_REF:
++			if (!strcmp(argp, "current"))
++				ns_ref = TSEM_NS_CURRENT;
++			else if (!strcmp(argp, "initial"))
++				ns_ref = TSEM_NS_INITIAL;
++			else
++				goto done;
++			break;
++		case NS_DIGEST:
++			digest = argp;
++			if (!crypto_has_shash(digest, 0, 0))
++				goto done;
++			break;
++		case NS_KEY:
++			key = argp;
++			if (strlen(key) % 2)
++				goto done;
++			break;
++		case NS_CACHE:
++			if (kstrtouint(argp, 0, &cache_size))
++				goto done;
++			if (!cache_size)
++				goto done;
++			break;
++		default:
++			break;
 +		}
 +	}
-+	mutex_unlock(&ctx->inode_mutex);
 +
-+	list_for_each_entry_safe(digest, tmp_digest,
-+				 &tsem_inode(inode)->digest_list, list) {
-+		list_del(&digest->list);
-+		kfree(digest->name);
-+		kfree(digest);
++	if (type == TSEM_CONTROL_EXTERNAL && !key)
++		goto done;
++
++	retn = tsem_ns_create(type, digest, ns_ref, key, cache_size, ops);
++
++ done:
++	argv_free(argv);
++	return retn;
++}
++
++static void show_creds(struct seq_file *c, char *key, char *term,
++		       struct tsem_COE *cp)
++{
++	tsem_fs_show_field(c, key);
++	tsem_fs_show_key(c, "uid", ",", "%u", cp->uid);
++	tsem_fs_show_key(c, "euid", ",", "%u", cp->euid);
++	tsem_fs_show_key(c, "suid", ",", "%u", cp->suid);
++	tsem_fs_show_key(c, "gid", ",", "%u", cp->gid);
++	tsem_fs_show_key(c, "egid", ",", "%u", cp->egid);
++	tsem_fs_show_key(c, "sgid", ",", "%u", cp->sgid);
++	tsem_fs_show_key(c, "fsuid", ",", "%u", cp->fsuid);
++	tsem_fs_show_key(c, "fsgid", ",", "%u", cp->fsgid);
++	tsem_fs_show_key(c, "capeff", ",", "0x%llx", cp->capeff.value);
++	tsem_fs_show_key(c, "securebits", "}", "%u", cp->securebits);
++
++	seq_puts(c, term);
++}
++
++static void show_event(struct seq_file *c, struct tsem_event *ep)
++{
++	tsem_fs_show_field(c, "event");
++	if (ep->pid)
++		tsem_fs_show_key(c, "pid", ",", "%u", ep->pid);
++	tsem_fs_show_key(c, "context", ",", "%llu", ep->context);
++	tsem_fs_show_key(c, "number", ",", "%llu", ep->event_number);
++	tsem_fs_show_key(c, "process", ",", "%s", ep->comm);
++	tsem_fs_show_key(c, "type", ",", "%s", tsem_names[ep->event]);
++	tsem_fs_show_key(c, "ttd", ",", "%llu", ep->instance);
++	tsem_fs_show_key(c, "p_ttd", ",", "%llu", ep->p_instance);
++	tsem_fs_show_key(c, "task_id", ",", "%*phN", tsem_digestsize(),
++			 ep->task_id);
++	tsem_fs_show_key(c, "p_task_id", ",", "%*phN", tsem_digestsize(),
++			 ep->p_task_id);
++	tsem_fs_show_key(c, "ts", "}, ", "%llu", ep->timestamp);
++
++	tsem_fs_show_field(c, "COE");
++	tsem_fs_show_key(c, "uid", ",", "%u", ep->COE.uid);
++	tsem_fs_show_key(c, "euid", ",", "%u", ep->COE.euid);
++	tsem_fs_show_key(c, "suid", ",", "%u", ep->COE.suid);
++	tsem_fs_show_key(c, "gid", ",", "%u", ep->COE.gid);
++	tsem_fs_show_key(c, "egid", ",", "%u", ep->COE.egid);
++	tsem_fs_show_key(c, "sgid", ",", "%u", ep->COE.sgid);
++	tsem_fs_show_key(c, "fsuid", ",", "%u", ep->COE.fsuid);
++	tsem_fs_show_key(c, "fsgid", ",", "%u", ep->COE.fsgid);
++	tsem_fs_show_key(c, "capeff", "}, ", "0x%llx", ep->COE.capeff.value);
++
++	tsem_fs_show_field(c, tsem_names[ep->event]);
++}
++
++static void show_path(struct seq_file *c, char *key, char *term,
++		      struct tsem_path *path)
++{
++	tsem_fs_show_field(c, key);
++
++	if (path->dev) {
++		tsem_fs_show_field(c, "dev");
++		tsem_fs_show_key(c, "major", ",", "%u", MAJOR(path->dev));
++		tsem_fs_show_key(c, "minor", "}, ", "%u", MINOR(path->dev));
 +	}
 +
-+	list_for_each_entry_safe(owner, tmp_owner,
-+				 &tsem_inode(inode)->create_list, list) {
-+		list_del(&owner->list);
-+		kfree(owner);
++	if (path->created) {
++		tsem_fs_show_key(c, "owner", ",", "%*phN", tsem_digestsize(),
++				 path->owner);
++		tsem_fs_show_key(c, "instance", ",", "%llu", path->instance);
 +	}
 +
-+	list_for_each_entry_safe(owner, tmp_owner,
-+				 &tsem_inode(inode)->instance_list, list) {
-+		list_del(&owner->list);
-+		kfree(owner);
++	tsem_fs_show_key(c, "pathname", "}", "%s", path->pathname);
++	seq_puts(c, term);
++}
++
++static void show_inode(struct seq_file *c, char *key, char *term,
++		       struct tsem_inode_cell *inode)
++{
++	tsem_fs_show_field(c, key);
++	tsem_fs_show_key(c, "uid", ",", "%u", inode->uid);
++	tsem_fs_show_key(c, "gid", ",", "%u", inode->gid);
++	tsem_fs_show_key(c, "mode", ",", "0%o", inode->mode);
++	tsem_fs_show_key(c, "s_magic", ",", "0x%0x", inode->s_magic);
++	tsem_fs_show_key(c, "s_id", ",", "%s", inode->s_id);
++	tsem_fs_show_key(c, "s_uuid", "}", "%*phN", sizeof(inode->s_uuid),
++			 inode->s_uuid);
++
++	seq_puts(c, term);
++}
++
++static void show_dentry(struct seq_file *c, char *key, char *term,
++			struct tsem_dentry *dentry)
++{
++	tsem_fs_show_field(c, key);
++	if (dentry->have_inode)
++		show_inode(c, "inode", ", ", &dentry->inode);
++
++	show_path(c, "path", "}", &dentry->path);
++
++	seq_puts(c, term);
++}
++
++static void show_file(struct seq_file *c, char *term,
++		      struct tsem_file_args *args)
++{
++	tsem_fs_show_field(c, "file");
++	tsem_fs_show_key(c, "flags", ",", "%u", args->out.flags);
++
++	show_inode(c, "inode", ", ", &args->out.inode);
++	show_path(c, "path", ", ", &args->out.path);
++	tsem_fs_show_key(c, "digest", "}", "%*phN", tsem_digestsize(),
++			 args->out.digest);
++
++	seq_puts(c, term);
++}
++
++static void show_inode_create(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	show_event(c, ep);
++
++	show_inode(c, "dir", ", ", &args->out.dir);
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "mode", "}", "0%o", args->mode);
++}
++
++static void show_inode_remove(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	show_event(c, ep);
++
++	show_inode(c, "dir", ", ", &args->out.dir);
++	show_dentry(c, "dentry", "}", &args->out.dentry);
++}
++
++static void show_inode_link(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	show_event(c, ep);
++
++	show_dentry(c, "old_dentry", ", ", &args->out.dentry);
++	show_inode(c, "dir", ", ", &args->out.dir);
++	show_dentry(c, "new_dentry", "}", &args->out.new_dentry);
++}
++
++static void show_syslog(struct seq_file *c, struct tsem_event *ep)
++{
++	show_event(c, ep);
++	tsem_fs_show_key(c, "type", "}", "%d", ep->CELL.value);
++}
++
++static void show_settime(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_time_args *args = &ep->CELL.time;
++
++	show_event(c, ep);
++
++	if (args->have_ts) {
++		tsem_fs_show_field(c, "ts");
++		tsem_fs_show_key(c, "seconds", ",", "%d", args->seconds);
++		tsem_fs_show_key(c, "nsecs", args->have_tz ? "}, " : "}",
++				 "%d", args->nsecs);
++	}
++
++	if (args->have_tz) {
++		tsem_fs_show_field(c, "tz");
++		tsem_fs_show_key(c, "minuteswest", ",", "%d",
++				 args->minuteswest);
++		tsem_fs_show_key(c, "dsttime", "}", "%d", args->dsttime);
++	}
++
++	seq_putc(c, '}');
++}
++
++static void show_inode_symlink(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	show_event(c, ep);
++
++	show_inode(c, "dir", ", ", &args->out.dir);
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "old_name", "}", "%s", args->out.old_name);
++}
++
++static void show_inode_mknod(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	show_event(c, ep);
++
++	show_inode(c, "dir", ", ", &args->out.dir);
++
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "mode", ",", "0%o", args->mode);
++	tsem_fs_show_field(c, "dev");
++	tsem_fs_show_key(c, "major", ",", "%u", MAJOR(args->dev));
++	tsem_fs_show_key(c, "minor", "}}", "%u", MINOR(args->dev));
++}
++
++static void show_inode_rename(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	show_event(c, ep);
++
++	show_inode(c, "old_dir", ", ", &args->out.dir);
++	show_dentry(c, "old_dentry", ", ", &args->out.dentry);
++	show_inode(c, "new_dir", ", ", &args->out.new_dir);
++	show_dentry(c, "new_dentry", "}", &args->out.new_dentry);
++}
++
++static void show_inode_killpriv(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_args *args = &ep->CELL.inode;
++
++	show_event(c, ep);
++
++	show_dentry(c, "dentry", "}", &args->out.dentry);
++}
++
++static void show_file_open(struct seq_file *c, struct tsem_event *ep)
++{
++	show_event(c, ep);
++
++	show_file(c, "}", &ep->CELL.file);
++}
++
++static void show_mmap(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_mmap_file_args *args = &ep->CELL.mmap_file;
++
++	show_event(c, ep);
++
++	if (!args->anonymous)
++		show_file(c, ", ", &args->file);
++	tsem_fs_show_key(c, "prot", ",", "%u", args->prot);
++	tsem_fs_show_key(c, "flags", "}", "%u", args->flags);
++}
++
++static void show_file_ioctl(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_file_args *args = &ep->CELL.file;
++
++	show_event(c, ep);
++
++	show_file(c, ", ", args);
++	tsem_fs_show_key(c, "cmd", "}", "%u", args->cmd);
++}
++
++static void show_socket_info(struct seq_file *c, const char *key, char *term,
++			     struct tsem_socket *args)
++{
++	tsem_fs_show_field(c, key);
++	tsem_fs_show_key(c, "family", ",", "%d", args->family);
++	tsem_fs_show_key(c, "type", ",", "%d", args->type);
++	tsem_fs_show_key(c, "protocol", ",", "%d", args->protocol);
++	tsem_fs_show_key(c, "owner", "}", "%*phN", tsem_digestsize(),
++			 args->owner);
++
++	seq_puts(c, term);
++}
++
++static void show_netlink(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_netlink_args *args = &ep->CELL.netlink;
++
++	show_event(c, ep);
++
++	show_socket_info(c, "sock", ", ", &args->out.sock);
++	tsem_fs_show_key(c, "uid", ",", "%u", args->out.uid);
++	tsem_fs_show_key(c, "gid", ",", "%u", args->out.gid);
++	tsem_fs_show_key(c, "portid", ",", "%u", args->out.portid);
++	tsem_fs_show_key(c, "dst_group", ",", "%u", args->out.dst_group);
++	tsem_fs_show_key(c, "flags", ",", "%u", args->out.flags);
++	tsem_fs_show_key(c, "nsid_set", ",", "%u", args->out.nsid_set);
++	tsem_fs_show_key(c, "nsid", "}", "%d", args->out.nsid);
++}
++
++static void show_ipc_cred(struct seq_file *c, char *key, char *term,
++			  struct tsem_ipc_args *args)
++{
++	tsem_fs_show_field(c, key);
++	tsem_fs_show_key(c, "uid", ",", "%u", args->out.perm.uid);
++	tsem_fs_show_key(c, "gid", ",", "%u", args->out.perm.gid);
++	tsem_fs_show_key(c, "cuid", ",", "%u", args->out.perm.cuid);
++	tsem_fs_show_key(c, "cgid", ",", "%u", args->out.perm.cgid);
++	tsem_fs_show_key(c, "mode", ",", "0%o", args->out.perm.mode);
++	tsem_fs_show_key(c, "owner", "}", "%*phN", tsem_digestsize(),
++			 args->out.owner);
++
++	seq_puts(c, term);
++}
++
++static void show_ipc_permission(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_ipc_args *args = &ep->CELL.ipc;
++
++	show_event(c, ep);
++
++	show_ipc_cred(c, "ipcp", ", ", args);
++	tsem_fs_show_key(c, "flag", "}", "%u", args->perm_flag);
++}
++
++static void show_ipc_shm_value(struct seq_file *c, struct tsem_event *ep,
++			       char *name)
++{
++	struct tsem_ipc_args *args = &ep->CELL.ipc;
++
++	show_event(c, ep);
++
++	show_ipc_cred(c, "perm", ", ", args);
++	tsem_fs_show_key(c, name, "}", "%d", args->perm_flag);
++}
++
++static void show_msg_queue_msgrcv(struct seq_file *c, struct tsem_event *ep)
++
++{
++	struct tsem_ipc_args *args = &ep->CELL.ipc;
++
++	show_event(c, ep);
++
++	show_ipc_cred(c, "perm", ", ", args);
++	tsem_fs_show_key(c, "target", ",", "%*phN", tsem_digestsize(),
++			 args->out.target);
++	tsem_fs_show_key(c, "type", ",", "%ld", args->type);
++	tsem_fs_show_key(c, "mode", "}", "%d", args->value);
++}
++
++static void show_sem_semop(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_ipc_args *args = &ep->CELL.ipc;
++
++	show_event(c, ep);
++
++	show_ipc_cred(c, "perm", ", ", args);
++	tsem_fs_show_key(c, "nsops", ",", "%u", args->nsops);
++	tsem_fs_show_key(c, "alter", "}", "%d", args->value);
++}
++
++static void show_socket_pair(struct seq_file *c, struct tsem_event *ep,
++			     char *first, char *second)
++{
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	show_event(c, ep);
++
++	show_socket_info(c, first, ", ", &args->out.socka);
++	show_socket_info(c, second, "}", &args->out.sockb);
++}
++
++static void show_socket_create(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "family", ",", "%u", args->out.socka.family);
++	tsem_fs_show_key(c, "type", ",", "%u", args->out.socka.type);
++	tsem_fs_show_key(c, "protocol", ",", "%u", args->out.socka.protocol);
++	tsem_fs_show_key(c, "kern", "}", "%u", args->out.socka.kern);
++}
++
++static void show_socket_connect_bind(struct seq_file *c, struct tsem_event *ep)
++{
++	struct sockaddr_in *ipv4;
++	struct sockaddr_in6 *ipv6;
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	show_event(c, ep);
++
++	show_socket_info(c, "sock", ", ", &args->out.socka);
++
++	tsem_fs_show_field(c, "addr");
++	switch (args->out.socka.family) {
++	case AF_INET:
++		ipv4 = (struct sockaddr_in *) &args->out.ipv4;
++		tsem_fs_show_field(c, "af_inet");
++		tsem_fs_show_key(c, "port", ",", "%u", ipv4->sin_port);
++		tsem_fs_show_key(c, "address", "}}}", "%u",
++				 ipv4->sin_addr.s_addr);
++		break;
++	case AF_INET6:
++		ipv6 = (struct sockaddr_in6 *) &args->out.ipv6;
++		tsem_fs_show_field(c, "af_inet6");
++		tsem_fs_show_key(c, "port", ",", "%u", ipv6->sin6_port);
++		tsem_fs_show_key(c, "flow", ",", "%u", ipv6->sin6_flowinfo);
++		tsem_fs_show_key(c, "scope", ",", "%u", ipv6->sin6_scope_id);
++		tsem_fs_show_key(c, "address", "}}}", "%*phN",
++			 (int) sizeof(ipv6->sin6_addr.in6_u.u6_addr8),
++			 ipv6->sin6_addr.in6_u.u6_addr8);
++		break;
++	case AF_UNIX:
++		tsem_fs_show_field(c, "af_unix");
++		tsem_fs_show_key(c, "address", "}}}", "%s", args->out.path);
++		break;
++	default:
++		tsem_fs_show_field(c, "af_other");
++		tsem_fs_show_key(c, "address", "}}}", "%*phN",
++				 tsem_digestsize(), args->out.mapping);
++		break;
 +	}
 +}
 +
-+static int tsem_unix_stream_connect(struct sock *sock, struct sock *other,
-+				    struct sock *newsk)
++static void show_socket_accept(struct seq_file *c, struct tsem_event *ep)
++{
++	char *p;
++	int size;
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	show_event(c, ep);
++
++	show_socket_info(c, "sock", ", ", &args->out.socka);
++
++	tsem_fs_show_field(c, "addr");
++	switch (args->out.socka.family) {
++	case AF_INET:
++		tsem_fs_show_field(c, "af_inet");
++		tsem_fs_show_key(c, "port", ",", "%u",
++				 args->out.ipv4.sin_port);
++		tsem_fs_show_key(c, "address", "}}}", "%u",
++				 args->out.ipv4.sin_addr);
++		break;
++	case AF_INET6:
++		tsem_fs_show_field(c, "af_inet6");
++		tsem_fs_show_key(c, "port", ",", "%u",
++				 args->out.ipv6.sin6_port);
++		p = args->out.ipv6.sin6_addr.in6_u.u6_addr8;
++		size = sizeof(args->out.ipv6.sin6_addr.in6_u.u6_addr8);
++		tsem_fs_show_key(c, "address", "}}}", "%*phN", size, p);
++		break;
++	case AF_UNIX:
++		tsem_fs_show_field(c, "af_unix");
++		tsem_fs_show_key(c, "address", "}}}", "%s", args->out.path);
++		break;
++	default:
++		tsem_fs_show_field(c, "af_other");
++		tsem_fs_show_key(c, "address", "}}}", "%*phN",
++				 tsem_digestsize(), args->out.mapping);
++		break;
++	}
++}
++
++static void show_socket_value(struct seq_file *c, struct tsem_event *ep,
++			      char *key)
++{
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	show_event(c, ep);
++
++	show_socket_info(c, "sock", ", ", &args->out.socka);
++	tsem_fs_show_key(c, key, "}", "%d", args->value);
++}
++
++static void show_socket_msg(struct seq_file *c, struct tsem_event *ep)
++{
++	int size;
++	struct sockaddr_in *ipv4;
++	struct sockaddr_in6 *ipv6;
++	struct tsem_socket_args *args = &ep->CELL.socket;
++
++	show_event(c, ep);
++
++	show_socket_info(c, "sock", args->out.have_addr ? ", " : "}",
++			 &args->out.socka);
++
++	if (args->out.have_addr) {
++		tsem_fs_show_field(c, "addr");
++		switch (args->out.socka.family) {
++		case AF_INET:
++			ipv4 = &args->out.ipv4;
++			tsem_fs_show_field(c, "af_inet");
++			tsem_fs_show_key(c, "port", ",", "%u", ipv4->sin_port);
++			tsem_fs_show_key(c, "address", "}}}", "%u",
++					 ipv4->sin_addr.s_addr);
++			break;
++		case AF_INET6:
++			ipv6 = &args->out.ipv6;
++			size = sizeof(ipv6->sin6_addr.in6_u.u6_addr8);
++			tsem_fs_show_field(c, "af_inet6");
++			tsem_fs_show_key(c, "port", ",", "%u",
++					 ipv6->sin6_port);
++			tsem_fs_show_key(c, "address", "}}}", "%*phN", size,
++					 ipv6->sin6_addr.in6_u.u6_addr8);
++			break;
++		}
++	}
++}
++
++static void show_socket_argument(struct seq_file *c, struct tsem_event *ep)
++{
++	show_event(c, ep);
++
++	show_socket_info(c, "sock", "}", &ep->CELL.socket.out.socka);
++}
++
++static void show_socket_setsockopt(struct seq_file *c, struct tsem_event *ep)
++{
++	show_event(c, ep);
++
++	show_socket_info(c, "sock", ", ", &ep->CELL.socket.out.socka);
++	tsem_fs_show_key(c, "level", ",", "%d", ep->CELL.socket.value);
++	tsem_fs_show_key(c, "optname", "}", "%d", ep->CELL.socket.optname);
++}
++
++static void show_kernel_module_request(struct seq_file *c,
++				       struct tsem_event *ep)
++{
++	struct tsem_kernel_args *args = &ep->CELL.kernel;
++
++	show_event(c, ep);
++	tsem_fs_show_key(c, "kmod_name", "}", "%s", args->out.kmod_name);
++}
++
++static void show_kernel_load_data(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_kernel_args *args = &ep->CELL.kernel;
++
++	show_event(c, ep);
++	tsem_fs_show_key(c, "id", ",", "%d", args->id);
++	tsem_fs_show_key(c, "contents", "}", "%d", args->contents);
++}
++
++static void show_kernel_read_file(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_kernel_args *args = &ep->CELL.kernel;
++
++	show_event(c, ep);
++
++	show_file(c, ", ", &args->out.file);
++	tsem_fs_show_key(c, "id", ",", "%d", args->id);
++	tsem_fs_show_key(c, "contents", "}", "%d", args->contents);
++}
++
++static void show_task_kill(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "target", ",", "%*phN", tsem_digestsize(),
++			 args->target);
++	tsem_fs_show_key(c, "sig", ",", "%u", args->signal);
++	tsem_fs_show_key(c, "cross_ns", "}", "%u", args->cross_model);
++}
++
++static void show_ptrace_access_check(struct seq_file *c,
++				     struct tsem_event *ep)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "child", ", ", "%*phN", tsem_digestsize(),
++			 args->target);
++	tsem_fs_show_key(c, "mode", "}", "%u", args->u.resource);
++}
++
++static void show_task_ptraceme(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "source", "}", "%*phN", tsem_digestsize(),
++			 args->source);
++}
++
++static void show_capget(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_capability_args *args = &ep->CELL.capability;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "target", ",", "%*phN", tsem_digestsize(),
++			 args->target);
++	tsem_fs_show_key(c, "effective", ",", "0x%llx", args->effective);
++	tsem_fs_show_key(c, "inheritable", ",", "0x%llx", args->inheritable);
++	tsem_fs_show_key(c, "permitted", "}", "0x%llx", args->permitted);
++}
++
++static void show_capset(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_capability_args *args = &ep->CELL.capability;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "effective", ",", "0x%llx", args->effective);
++	tsem_fs_show_key(c, "inheritable", ",", "0x%llx", args->inheritable);
++	tsem_fs_show_key(c, "permitted", "}", "0x%llx", args->permitted);
++}
++
++static void show_capable(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_capability_args *args = &ep->CELL.capability;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "cap", ",", "%d", args->cap);
++	tsem_fs_show_key(c, "opts", "}", "%u", args->opts);
++}
++
++static void show_task_setpgid(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "task", ",", "%*phN", tsem_digestsize(),
++			 args->target);
++	tsem_fs_show_key(c, "source", "}", "%*phN", tsem_digestsize(),
++			 args->source);
++}
++
++static void show_task_getpgid(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "task", "}", "%*phN", tsem_digestsize(),
++			 args->target);
++}
++
++static void show_task_nice(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "task", ",", "%*phN", tsem_digestsize(),
++			 args->target);
++	tsem_fs_show_key(c, "nice", "}", "%d", args->u.value);
++}
++
++static void show_task_prlimit(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_prlimit_args *args = &ep->CELL.task_prlimit;
++
++	show_event(c, ep);
++
++	show_creds(c, "cred", ", ", &args->out.cred);
++	show_creds(c, "tcred", ", ", &args->out.tcred);
++	tsem_fs_show_key(c, "flags", "}", "%d", args->flags);
++}
++
++static void show_task_setrlimit(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "task", ",", "%*phN", tsem_digestsize(),
++			 args->target);
++	tsem_fs_show_field(c, "new_rlim");
++	tsem_fs_show_key(c, "resource", ",", "%u", args->u.resource);
++	tsem_fs_show_key(c, "current", ",", "%llu", args->cur);
++	tsem_fs_show_key(c, "max", "}", "%llu", args->max);
++	seq_putc(c, '}');
++}
++
++static void show_task_prctl(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_task_prctl_args *args = &ep->CELL.task_prctl;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "option", ",", "%d", args->option);
++	tsem_fs_show_key(c, "arg2", ",", "%llu", args->arg2);
++	tsem_fs_show_key(c, "arg3", ",", "%llu", args->arg3);
++	tsem_fs_show_key(c, "arg4", ",", "%llu", args->arg4);
++	tsem_fs_show_key(c, "arg5", "}", "%llu", args->arg5);
++}
++
++static void show_task_value(struct seq_file *c, struct tsem_event *ep,
++			    char *key)
++{
++	struct tsem_task_kill_args *args = &ep->CELL.task_kill;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "task", ",", "%*phN", tsem_digestsize(),
++			 args->target);
++	tsem_fs_show_key(c, key, "}", "%d", args->u.value);
++}
++
++static void show_inode_getattr(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_attr_args *args = &ep->CELL.inode_attr;
++
++	show_event(c, ep);
++
++	show_dentry(c, "path", "}", &args->out.dentry);
++}
++
++static void show_inode_setattr(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_attr_args *args = &ep->CELL.inode_attr;
++
++	show_event(c, ep);
++
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_field(c, "attr");
++	tsem_fs_show_key(c, "valid", ",", "%u", args->out.valid);
++	tsem_fs_show_key(c, "mode", ",", "0%o", args->out.mode);
++	tsem_fs_show_key(c, "uid", ",", "%u", args->out.uid);
++	tsem_fs_show_key(c, "gid", ",", "%u", args->out.gid);
++	tsem_fs_show_key(c, "size", "}", "%lu", args->out.size);
++	seq_putc(c, '}');
++}
++
++static void show_inode_setxattr(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_xattr_args *args = &ep->CELL.inode_xattr;
++
++	show_event(c, ep);
++
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "name", ",", "%s", args->out.name);
++	tsem_fs_show_key(c, "value", ",", "%s", args->out.encoded_value);
++	tsem_fs_show_key(c, "flags", "}", "%d", args->out.flags);
++}
++
++static void show_inode_getxattr(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_xattr_args *args = &ep->CELL.inode_xattr;
++
++	show_event(c, ep);
++
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "name", "}", "%s", args->out.name);
++}
++
++static void show_inode_listxattr(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_inode_xattr_args *args = &ep->CELL.inode_xattr;
++
++	show_event(c, ep);
++
++	show_dentry(c, "dentry", "}", &args->out.dentry);
++}
++
++static void show_key_alloc(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_key_args *args = &ep->CELL.key;
++
++	show_event(c, ep);
++
++	show_creds(c, "cred", ", ", &args->out.cred);
++	tsem_fs_show_key(c, "flags", "}", "%llu", args->flags);
++}
++
++static void show_key_permission(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_key_args *args = &ep->CELL.key;
++
++	show_event(c, ep);
++
++	tsem_fs_show_field(c, "key_ref");
++	tsem_fs_show_key(c, "possessed", ",", "%u", args->out.possessed);
++	tsem_fs_show_key(c, "uid", ",", "%u", args->out.uid);
++	tsem_fs_show_key(c, "gid", ",", "%u", args->out.gid);
++	tsem_fs_show_key(c, "flags", "}, ", "%lu", args->out.flags);
++	show_creds(c, "cred", ", ", &args->out.cred);
++	tsem_fs_show_key(c, "perm", "}", "%u", args->out.perm);
++}
++
++static void show_sb_mount(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	show_event(c, ep);
++
++	if (args->out.dev_name)
++		tsem_fs_show_key(c, "dev_name", ",", "%s", args->out.dev_name);
++
++	show_path(c, "path", ", ", &args->out.path);
++
++	if (args->out.type)
++		tsem_fs_show_key(c, "type", ",", "%s", args->out.type);
++
++	tsem_fs_show_key(c, "flags", "}", "%lu", args->flags);
++}
++
++static void show_sb_umount(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	show_event(c, ep);
++
++	show_dentry(c, "mnt", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "flags", "}", "%d", args->flags);
++}
++
++static void show_sb_remount(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	show_event(c, ep);
++
++	tsem_fs_show_field(c, "sb");
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "fstype", ",", "%s", args->out.type);
++	tsem_fs_show_key(c, "s_flags", "}", "%lu", args->flags);
++	seq_putc(c, '}');
++}
++
++static void show_sb_statfs(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	show_event(c, ep);
++
++	show_dentry(c, "dentry", "}", &args->out.dentry);
++}
++
++static void show_move_path(struct seq_file *c, struct tsem_event *ep,
++			   char *path1, char *path2)
++{
++	struct tsem_sb_args *args = &ep->CELL.sb;
++
++	show_event(c, ep);
++
++	show_path(c, path1, ", ", &args->out.path);
++	show_path(c, path2, "}", &args->out.path2);
++}
++
++static void show_quotactl(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_quota_args *args = &ep->CELL.quota;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "cmds", ",", "%d", args->cmds);
++	tsem_fs_show_key(c, "type", ",", "%d", args->type);
++	tsem_fs_show_key(c, "id", ",", "%d", args->id);
++
++	tsem_fs_show_field(c, "sb");
++	show_dentry(c, "dentry", ", ", &args->out.dentry);
++	tsem_fs_show_key(c, "fstype", ",", "%s", args->out.fstype);
++	tsem_fs_show_key(c, "s_flags", "}", "%d", args->out.s_flags);
++	seq_putc(c, '}');
++}
++
++static void show_quotaon(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_quota_args *args = &ep->CELL.quota;
++
++	show_event(c, ep);
++
++	show_dentry(c, "dentry", "}", &args->out.dentry);
++}
++
++static void show_bpf(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_bpf_args *args = &ep->CELL.bpf;
++
++	show_event(c, ep);
++
++	tsem_fs_show_key(c, "cmd", ",", "%d", args->bpf.cmd);
++	tsem_fs_show_field(c, "attr");
++	tsem_fs_show_key(c, "size", "}", "%u", args->bpf.size);
++	seq_putc(c, '}');
++}
++
++static void show_bpf_map(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_bpf_args *args = &ep->CELL.bpf;
++
++	show_event(c, ep);
++
++	tsem_fs_show_field(c, "map");
++	tsem_fs_show_key(c, "map_type", "}, ", "%d", args->map.map_type);
++	tsem_fs_show_key(c, "fmode", "}", "%u", args->map.fmode);
++}
++
++static void show_bpf_prog(struct seq_file *c, struct tsem_event *ep)
++{
++	struct tsem_bpf_args *args = &ep->CELL.bpf;
++
++	show_event(c, ep);
++
++	tsem_fs_show_field(c, "prog");
++	tsem_fs_show_key(c, "type", ",", "%d", args->prog.type);
++	tsem_fs_show_key(c, "attach_type", "}", "%d", args->prog.attach_type);
++	seq_putc(c, '}');
++}
++
++static void show_event_generic(struct seq_file *c, struct tsem_event *ep)
++{
++	show_event(c, ep);
++	seq_putc(c, '}');
++}
++
++static void *trajectory_start(struct seq_file *c, loff_t *pos)
++{
++	struct list_head *end;
++	struct tsem_model *model = tsem_model(current);
++
++	spin_lock(&model->trajectory_lock);
++	end = model->trajectory_list.prev;
++	spin_unlock(&model->trajectory_lock);
++
++	mutex_lock(&model->trajectory_end_mutex);
++	model->trajectory_end = end;
++
++	return seq_list_start(&model->trajectory_list, *pos);
++}
++
++static void *trajectory_next(struct seq_file *c, void *p, loff_t *pos)
++{
++	struct list_head *next = ((struct list_head *) p)->next;
++	struct tsem_model *model = tsem_model(current);
++
++	if (!model->trajectory_end) {
++		++*pos;
++		return NULL;
++	}
++
++	if (next == model->trajectory_end)
++		model->trajectory_end = NULL;
++
++	return seq_list_next(p, &model->trajectory_list, pos);
++}
++
++static void trajectory_stop(struct seq_file *c, void *pos)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	mutex_unlock(&model->trajectory_end_mutex);
++}
++
++static int trajectory_show(struct seq_file *c, void *trajectory)
 +{
 +	struct tsem_event *ep;
 +
-+	if (bypass_event(TSEM_UNIX_STREAM_CONNECT))
-+		return 0;
++	ep = list_entry(trajectory, struct tsem_event, list);
 +
-+	ep = tsem_event_allocate(TSEM_UNIX_STREAM_CONNECT, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
++	seq_putc(c, '{');
++	tsem_fs_show_trajectory(c, ep);
++	seq_puts(c, "}\n");
 +
-+	ep->CELL.socket.in.socka = sock;
-+	ep->CELL.socket.in.sockb = other;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_unix_may_send(struct socket *sock, struct socket *other)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_UNIX_MAY_SEND))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_UNIX_MAY_SEND, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sock->sk;
-+	ep->CELL.socket.in.sockb = other->sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_post_create(struct socket *sock, int family, int type,
-+				   int protocol, int kern)
-+{
-+	struct tsem_inode *tsip = tsem_inode(SOCK_INODE(sock));
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+
-+	memcpy(tsip->owner, tsem_task(current)->task_id, tsem_digestsize());
 +	return 0;
 +}
 +
-+static int tsem_socket_create(int family, int type, int protocol, int kern)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_SOCKET_CREATE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_CREATE, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.out.socka.family = family;
-+	ep->CELL.socket.out.socka.type = type;
-+	ep->CELL.socket.out.socka.protocol = protocol;
-+	ep->CELL.socket.out.socka.kern = kern;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_connect(struct socket *sock, struct sockaddr *addr,
-+			     int addr_len)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_CONNECT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_CONNECT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sock->sk;
-+	ep->CELL.socket.in.addr = addr;
-+	ep->CELL.socket.value = addr_len;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_bind(struct socket *sock, struct sockaddr *addr,
-+			    int addr_len)
-+
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_BIND))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_BIND, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sock->sk;
-+	ep->CELL.socket.in.addr = addr;
-+	ep->CELL.socket.value = addr_len;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_accept(struct socket *sock, struct socket *newsock)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_ACCEPT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_ACCEPT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sock->sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_listen(struct socket *sock, int backlog)
-+
-+{
-+	struct sock *sk = sock->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_LISTEN))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_LISTEN, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.value = backlog;
-+	ep->CELL.socket.in.socka = sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_socketpair(struct socket *socka, struct socket *sockb)
-+{
-+	struct sock *ska = socka->sk, *skb = sockb->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_SOCKETPAIR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_SOCKETPAIR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = ska;
-+	ep->CELL.socket.in.sockb = skb;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_sendmsg(struct socket *sock, struct msghdr *msgmsg,
-+			       int size)
-+{
-+	struct sock *sk = sock->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_SENDMSG))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_SENDMSG, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sk;
-+	ep->CELL.socket.in.addr = msgmsg->msg_name;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_recvmsg(struct socket *sock, struct msghdr *msgmsg,
-+			       int size, int flags)
-+{
-+	struct sock *sk = sock->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_RECVMSG))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_RECVMSG, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sk;
-+	if (msgmsg->msg_name && msgmsg->msg_namelen > 0)
-+		ep->CELL.socket.in.addr = msgmsg->msg_name;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_getsockname(struct socket *sock)
-+{
-+	struct sock *sk = sock->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_GETSOCKNAME))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_GETSOCKNAME, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_getpeername(struct socket *sock)
-+{
-+	struct sock *sk = sock->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_GETPEERNAME))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_GETPEERNAME, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_setsockopt(struct socket *sock, int level, int optname)
-+{
-+	struct sock *sk = sock->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_SETSOCKOPT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_SETSOCKOPT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.value = level;
-+	ep->CELL.socket.optname = optname;
-+	ep->CELL.socket.in.socka = sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_socket_shutdown(struct socket *sock, int how)
-+{
-+	struct sock *sk = sock->sk;
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SOCKET_SHUTDOWN))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SOCKET_SHUTDOWN, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.value = how;
-+	ep->CELL.socket.in.socka = sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_kernel_module_request(char *kmod_name)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_KERNEL_MODULE_REQUEST))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_KERNEL_MODULE_REQUEST, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.kernel.in.kmod_name = kmod_name;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_kernel_load_data(enum kernel_load_data_id id, bool contents)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_KERNEL_LOAD_DATA))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_KERNEL_LOAD_DATA, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.kernel.id = id;
-+	ep->CELL.kernel.contents = contents;
-+
-+	return dispatch_event(ep);
-+}
-+
-+
-+static int tsem_kernel_read_file(struct file *file,
-+				 enum kernel_read_file_id id, bool contents)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_KERNEL_READ_FILE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_KERNEL_READ_FILE, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.kernel.id = id;
-+	ep->CELL.kernel.contents = contents;
-+	ep->CELL.kernel.in.file = file;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_sb_mount(const char *dev_name, const struct path *path,
-+			 const char *type, unsigned long flags, void *data)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_SB_MOUNT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SB_MOUNT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.sb.flags = flags;
-+	ep->CELL.sb.in.dev_name = dev_name;
-+	ep->CELL.sb.in.path = path;
-+	ep->CELL.sb.in.type = type;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static	int tsem_sb_umount(struct vfsmount *mnt, int flags)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SB_UMOUNT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SB_UMOUNT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.sb.flags = flags;
-+	ep->CELL.sb.in.dentry = mnt->mnt_root;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_sb_remount(struct super_block *sb, void *mnt_opts)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_SB_REMOUNT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SB_REMOUNT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.sb.in.sb = sb;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_sb_pivotroot(const struct path *old_path,
-+			     const struct path *new_path)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SB_PIVOTROOT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SB_PIVOTROOT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.sb.in.path = old_path;
-+	ep->CELL.sb.in.path2 = new_path;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_sb_statfs(struct dentry *dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SB_STATFS))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SB_STATFS, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.sb.in.dentry = dentry;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_move_mount(const struct path *from_path,
-+			   const struct path *to_path)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_MOVE_MOUNT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_MOVE_MOUNT, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.sb.in.path = from_path;
-+	ep->CELL.sb.in.path2 = to_path;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_shm_associate(struct kern_ipc_perm *perm, int shmflg)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SHM_ASSOCIATE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SHM_ASSOCIATE, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = shmflg;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_shm_shmctl(struct kern_ipc_perm *perm, int cmd)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SHM_SHMCTL))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SHM_SHMCTL, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = cmd;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_shm_shmat(struct kern_ipc_perm *perm, char __user *shmaddr,
-+			  int shmflg)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SHM_SHMAT))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SHM_SHMAT, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = shmflg;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_sem_associate(struct kern_ipc_perm *perm, int semflg)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SEM_ASSOCIATE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SEM_ASSOCIATE, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = semflg;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_sem_semctl(struct kern_ipc_perm *perm, int cmd)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SEM_SEMCTL))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SEM_SEMCTL, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = cmd;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_sem_semop(struct kern_ipc_perm *perm, struct sembuf *sops,
-+			  unsigned int nsops, int alter)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SEM_SEMOP))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SEM_SEMOP, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.nsops = nsops;
-+	ep->CELL.ipc.value = alter;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_syslog(int type)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SYSLOG))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SYSLOG, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.value = type;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_settime(const struct timespec64 *ts, const struct timezone *tz)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_SETTIME))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_SETTIME, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	if (ts) {
-+		ep->CELL.time.have_ts = true;
-+		ep->CELL.time.seconds = ts->tv_sec;
-+		ep->CELL.time.nsecs = ts->tv_nsec;
-+	}
-+	if (tz) {
-+		ep->CELL.time.have_tz = true;
-+		ep->CELL.time.minuteswest = tz->tz_minuteswest;
-+		ep->CELL.time.dsttime = tz->tz_dsttime;
-+	}
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_quotactl(int cmds, int type, int id,
-+			 const struct super_block *sb)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_QUOTACTL))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_QUOTACTL, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.quota.cmds = cmds;
-+	ep->CELL.quota.type = type;
-+	ep->CELL.quota.id = id;
-+	ep->CELL.quota.in.sb = sb;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_quota_on(struct dentry *dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_QUOTA_ON))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_QUOTA_ON, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.quota.in.dentry = dentry;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_msg_queue_associate(struct kern_ipc_perm *perm, int msqflg)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_MSG_QUEUE_ASSOCIATE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_MSG_QUEUE_ASSOCIATE, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = msqflg;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_msg_queue_msgsnd(struct kern_ipc_perm *perm,
-+				 struct msg_msg *msgmsg, int msqflg)
-+
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_MSG_QUEUE_MSGSND))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_MSG_QUEUE_MSGSND, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = msqflg;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_msg_queue_msgctl(struct kern_ipc_perm *perm, int cmd)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_MSG_QUEUE_MSGCTL))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_MSG_QUEUE_MSGCTL, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.value = cmd;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_msg_queue_msgrcv(struct kern_ipc_perm *perm,
-+				 struct msg_msg *msgmsg,
-+				 struct task_struct *target, long type,
-+				 int mode)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_MSG_QUEUE_MSGRCV))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_MSG_QUEUE_MSGRCV, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.in.perm = perm;
-+	ep->CELL.ipc.in.target = target;
-+	ep->CELL.ipc.type = type;
-+	ep->CELL.ipc.value = mode;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_ipc_alloc(struct kern_ipc_perm *kipc)
-+{
-+	struct tsem_ipc *tipc = tsem_ipc(kipc);
-+
-+	memcpy(tipc->owner, tsem_task(current)->task_id, tsem_digestsize());
-+	return 0;
-+}
-+
-+static int tsem_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_IPC_PERMISSION))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_IPC_PERMISSION, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.ipc.perm_flag = flag;
-+	ep->CELL.ipc.in.perm = ipcp;
-+
-+	return dispatch_event(ep);
-+}
-+
-+#ifdef CONFIG_KEYS
-+static int tsem_key_alloc(struct key *key, const struct cred *cred,
-+			  unsigned long flags)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_KEY_ALLOC))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_KEY_ALLOC, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.key.flags = flags;
-+	ep->CELL.key.in.cred = cred;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_key_permission(key_ref_t key_ref, const struct cred *cred,
-+			       unsigned int perm)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_KEY_PERMISSION))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_KEY_PERMISSION, LOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.key.flags = perm;
-+	ep->CELL.key.in.cred = cred;
-+	ep->CELL.key.in.ref = key_ref;
-+
-+	return dispatch_event(ep);
-+}
-+#endif
-+
-+static int tsem_netlink_send(struct sock *sk, struct sk_buff *skb)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_NETLINK_SEND))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_NETLINK_SEND, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.netlink.in.sock = sk;
-+	ep->CELL.netlink.in.parms = (struct netlink_skb_parms *) skb->cb;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_create(struct inode *dir, struct dentry *dentry,
-+			     umode_t mode)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_CREATE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_CREATE, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = dir;
-+	ep->CELL.inode.in.dentry = dentry;
-+	ep->CELL.inode.mode = mode;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_link(struct dentry *old_dentry, struct inode *dir,
-+			   struct dentry *new_dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_LINK))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_LINK, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = dir;
-+	ep->CELL.inode.in.dentry = old_dentry;
-+	ep->CELL.inode.in.new_dentry = new_dentry;
-+	ep->CELL.inode.mode = 0;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_unlink(struct inode *dir, struct dentry *dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_UNLINK))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_UNLINK, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = dir;
-+	ep->CELL.inode.in.dentry = dentry;
-+	ep->CELL.inode.mode = 0;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_symlink(struct inode *dir, struct dentry *dentry,
-+			      const char *old_name)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_SYMLINK))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_SYMLINK, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = dir;
-+	ep->CELL.inode.in.dentry = dentry;
-+	ep->CELL.inode.in.old_name = old_name;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_mkdir(struct inode *dir, struct dentry *dentry,
-+			    umode_t mode)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_MKDIR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_MKDIR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = dir;
-+	ep->CELL.inode.in.dentry = dentry;
-+	ep->CELL.inode.mode = mode;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_rmdir(struct inode *dir, struct dentry *dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_INODE_RMDIR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_RMDIR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = dir;
-+	ep->CELL.inode.in.dentry = dentry;
-+	ep->CELL.inode.mode = 0;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_rename(struct inode *old_dir, struct dentry *old_dentry,
-+			     struct inode *new_dir, struct dentry *new_dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_INODE_RENAME))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_RENAME, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = old_dir;
-+	ep->CELL.inode.in.new_dir = new_dir;
-+	ep->CELL.inode.in.dentry = old_dentry;
-+	ep->CELL.inode.in.new_dentry = new_dentry;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_mknod(struct inode *dir, struct dentry *dentry,
-+			    umode_t mode, dev_t dev)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_MKNOD))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_MKNOD, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dir = dir;
-+	ep->CELL.inode.in.dentry = dentry;
-+	ep->CELL.inode.mode = mode;
-+	ep->CELL.inode.dev = dev;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+			      struct iattr *attr)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_SETATTR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_SETATTR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode_attr.in.dentry = dentry;
-+	ep->CELL.inode_attr.in.iattr = attr;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_getattr(const struct path *path)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_GETATTR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_GETATTR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode_attr.in.path = path;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_setxattr(struct mnt_idmap *idmap,
-+			       struct dentry *dentry, const char *name,
-+			       const void *value, size_t size, int flags)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_INODE_SETXATTR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_SETXATTR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode_xattr.in.dentry = dentry;
-+	ep->CELL.inode_xattr.in.name = name;
-+	ep->CELL.inode_xattr.in.value = value;
-+	ep->CELL.inode_xattr.in.size = size;
-+	ep->CELL.inode_xattr.in.flags = flags;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_getxattr(struct dentry *dentry, const char *name)
-+{
-+	struct tsem_event *ep = NULL;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_GETXATTR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_GETXATTR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode_xattr.in.dentry = dentry;
-+	ep->CELL.inode_xattr.in.name = name;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_listxattr(struct dentry *dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (static_branch_unlikely(&tsem_not_ready))
-+		return 0;
-+	if (bypass_event(TSEM_INODE_LISTXATTR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_LISTXATTR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode_xattr.in.dentry = dentry;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_removexattr(struct mnt_idmap *idmap,
-+				  struct dentry *dentry, const char *name)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_INODE_REMOVEXATTR))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_REMOVEXATTR, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode_xattr.in.dentry = dentry;
-+	ep->CELL.inode_xattr.in.name = name;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_inode_killpriv(struct mnt_idmap *idmap,
-+			       struct dentry *dentry)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_INODE_KILLPRIV))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_INODE_KILLPRIV, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.inode.in.dentry = dentry;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_tun_dev_create(void)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TUN_DEV_CREATE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TUN_DEV_CREATE, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+	ep->no_params = true;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_tun_dev_attach_queue(void *security)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TUN_DEV_ATTACH_QUEUE))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TUN_DEV_ATTACH_QUEUE, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+	ep->no_params = true;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_tun_dev_attach(struct sock *sk, void *security)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TUN_DEV_ATTACH))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TUN_DEV_ATTACH, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.socket.in.socka = sk;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_tun_dev_open(void *security)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_TUN_DEV_OPEN))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_TUN_DEV_OPEN, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+	ep->no_params = true;
-+
-+	return dispatch_event(ep);
-+}
-+
-+#ifdef CONFIG_BPF_SYSCALL
-+static int tsem_bpf(int cmd, union bpf_attr *attr, unsigned int size)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_BPF))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_BPF, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.bpf.bpf.cmd = cmd;
-+	ep->CELL.bpf.bpf.size = size;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_bpf_map(struct bpf_map *map, fmode_t fmode)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_BPF_MAP))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_BPF_MAP, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.bpf.map.fmode = fmode;
-+	ep->CELL.bpf.map.map_type = map->map_type;
-+
-+	return dispatch_event(ep);
-+}
-+
-+static int tsem_bpf_prog(struct bpf_prog *prog)
-+{
-+	struct tsem_event *ep;
-+
-+	if (bypass_event(TSEM_BPF_PROG))
-+		return 0;
-+
-+	ep = tsem_event_allocate(TSEM_BPF_PROG, NOLOCK);
-+	if (!ep)
-+		return -ENOMEM;
-+
-+	ep->CELL.bpf.prog.type = prog->type;
-+	ep->CELL.bpf.prog.attach_type = prog->expected_attach_type;
-+
-+	return dispatch_event(ep);
-+}
-+#endif
-+
-+static struct security_hook_list tsem_hooks[] __ro_after_init = {
-+	LSM_HOOK_INIT(task_alloc, tsem_task_alloc),
-+	LSM_HOOK_INIT(task_free, tsem_task_free),
-+	LSM_HOOK_INIT(task_kill, tsem_task_kill),
-+	LSM_HOOK_INIT(task_setpgid, tsem_task_setpgid),
-+	LSM_HOOK_INIT(task_getpgid, tsem_task_getpgid),
-+	LSM_HOOK_INIT(task_getsid, tsem_task_getsid),
-+	LSM_HOOK_INIT(task_setnice, tsem_task_setnice),
-+	LSM_HOOK_INIT(task_setioprio, tsem_task_setioprio),
-+	LSM_HOOK_INIT(task_getioprio, tsem_task_getioprio),
-+	LSM_HOOK_INIT(task_prlimit, tsem_task_prlimit),
-+	LSM_HOOK_INIT(task_setrlimit, tsem_task_setrlimit),
-+	LSM_HOOK_INIT(task_setscheduler, tsem_task_setscheduler),
-+	LSM_HOOK_INIT(task_getscheduler, tsem_task_getscheduler),
-+	LSM_HOOK_INIT(task_prctl, tsem_task_prctl),
-+
-+	LSM_HOOK_INIT(ptrace_access_check, tsem_ptrace_access_check),
-+	LSM_HOOK_INIT(ptrace_traceme, tsem_ptrace_traceme),
-+
-+	LSM_HOOK_INIT(capget, tsem_capget),
-+	LSM_HOOK_INIT(capset, tsem_capset),
-+	LSM_HOOK_INIT(capable, tsem_capable),
-+
-+	LSM_HOOK_INIT(bprm_committed_creds, tsem_bprm_committed_creds),
-+
-+	LSM_HOOK_INIT(inode_alloc_security, tsem_inode_alloc_security),
-+	LSM_HOOK_INIT(inode_init_security, tsem_inode_init_security),
-+	LSM_HOOK_INIT(inode_free_security, tsem_inode_free_security),
-+
-+	LSM_HOOK_INIT(file_open, tsem_file_open),
-+	LSM_HOOK_INIT(mmap_file, tsem_mmap_file),
-+	LSM_HOOK_INIT(file_ioctl, tsem_file_ioctl),
-+	LSM_HOOK_INIT(file_lock, tsem_file_lock),
-+	LSM_HOOK_INIT(file_fcntl, tsem_file_fcntl),
-+	LSM_HOOK_INIT(file_receive, tsem_file_receive),
-+
-+	LSM_HOOK_INIT(unix_stream_connect, tsem_unix_stream_connect),
-+	LSM_HOOK_INIT(unix_may_send, tsem_unix_may_send),
-+
-+	LSM_HOOK_INIT(socket_post_create, tsem_socket_post_create),
-+	LSM_HOOK_INIT(socket_create, tsem_socket_create),
-+	LSM_HOOK_INIT(socket_connect, tsem_socket_connect),
-+	LSM_HOOK_INIT(socket_bind, tsem_socket_bind),
-+	LSM_HOOK_INIT(socket_accept, tsem_socket_accept),
-+	LSM_HOOK_INIT(socket_listen, tsem_socket_listen),
-+	LSM_HOOK_INIT(socket_socketpair, tsem_socket_socketpair),
-+	LSM_HOOK_INIT(socket_sendmsg, tsem_socket_sendmsg),
-+	LSM_HOOK_INIT(socket_recvmsg, tsem_socket_recvmsg),
-+	LSM_HOOK_INIT(socket_getsockname, tsem_socket_getsockname),
-+	LSM_HOOK_INIT(socket_getpeername, tsem_socket_getpeername),
-+	LSM_HOOK_INIT(socket_setsockopt, tsem_socket_setsockopt),
-+	LSM_HOOK_INIT(socket_shutdown, tsem_socket_shutdown),
-+
-+	LSM_HOOK_INIT(kernel_module_request, tsem_kernel_module_request),
-+	LSM_HOOK_INIT(kernel_load_data, tsem_kernel_load_data),
-+	LSM_HOOK_INIT(kernel_read_file, tsem_kernel_read_file),
-+
-+	LSM_HOOK_INIT(sb_mount, tsem_sb_mount),
-+	LSM_HOOK_INIT(sb_umount, tsem_sb_umount),
-+	LSM_HOOK_INIT(sb_remount, tsem_sb_remount),
-+	LSM_HOOK_INIT(sb_pivotroot, tsem_sb_pivotroot),
-+	LSM_HOOK_INIT(sb_statfs, tsem_sb_statfs),
-+	LSM_HOOK_INIT(move_mount, tsem_move_mount),
-+
-+	LSM_HOOK_INIT(shm_alloc_security, tsem_ipc_alloc),
-+	LSM_HOOK_INIT(shm_associate, tsem_shm_associate),
-+	LSM_HOOK_INIT(shm_shmctl, tsem_shm_shmctl),
-+	LSM_HOOK_INIT(shm_shmat, tsem_shm_shmat),
-+
-+	LSM_HOOK_INIT(sem_alloc_security, tsem_ipc_alloc),
-+	LSM_HOOK_INIT(sem_associate, tsem_sem_associate),
-+	LSM_HOOK_INIT(sem_semctl, tsem_sem_semctl),
-+	LSM_HOOK_INIT(sem_semop, tsem_sem_semop),
-+
-+	LSM_HOOK_INIT(syslog, tsem_syslog),
-+	LSM_HOOK_INIT(settime, tsem_settime),
-+
-+	LSM_HOOK_INIT(quotactl, tsem_quotactl),
-+	LSM_HOOK_INIT(quota_on, tsem_quota_on),
-+
-+	LSM_HOOK_INIT(msg_queue_alloc_security, tsem_ipc_alloc),
-+	LSM_HOOK_INIT(msg_queue_associate, tsem_msg_queue_associate),
-+	LSM_HOOK_INIT(msg_queue_msgctl, tsem_msg_queue_msgctl),
-+	LSM_HOOK_INIT(msg_queue_msgsnd, tsem_msg_queue_msgsnd),
-+	LSM_HOOK_INIT(msg_queue_msgrcv, tsem_msg_queue_msgrcv),
-+
-+	LSM_HOOK_INIT(ipc_permission, tsem_ipc_permission),
-+
-+#ifdef CONFIG_KEYS
-+	LSM_HOOK_INIT(key_alloc, tsem_key_alloc),
-+	LSM_HOOK_INIT(key_permission, tsem_key_permission),
-+#endif
-+
-+	LSM_HOOK_INIT(netlink_send, tsem_netlink_send),
-+
-+	LSM_HOOK_INIT(inode_create, tsem_inode_create),
-+	LSM_HOOK_INIT(inode_link, tsem_inode_link),
-+	LSM_HOOK_INIT(inode_unlink, tsem_inode_unlink),
-+	LSM_HOOK_INIT(inode_symlink, tsem_inode_symlink),
-+	LSM_HOOK_INIT(inode_mkdir, tsem_inode_mkdir),
-+	LSM_HOOK_INIT(inode_rmdir, tsem_inode_rmdir),
-+	LSM_HOOK_INIT(inode_mknod, tsem_inode_mknod),
-+	LSM_HOOK_INIT(inode_rename, tsem_inode_rename),
-+	LSM_HOOK_INIT(inode_setattr, tsem_inode_setattr),
-+	LSM_HOOK_INIT(inode_getattr, tsem_inode_getattr),
-+	LSM_HOOK_INIT(inode_setxattr, tsem_inode_setxattr),
-+	LSM_HOOK_INIT(inode_getxattr, tsem_inode_getxattr),
-+	LSM_HOOK_INIT(inode_listxattr, tsem_inode_listxattr),
-+	LSM_HOOK_INIT(inode_removexattr, tsem_inode_removexattr),
-+	LSM_HOOK_INIT(inode_killpriv, tsem_inode_killpriv),
-+
-+	LSM_HOOK_INIT(tun_dev_create, tsem_tun_dev_create),
-+	LSM_HOOK_INIT(tun_dev_attach_queue, tsem_tun_dev_attach_queue),
-+	LSM_HOOK_INIT(tun_dev_attach, tsem_tun_dev_attach),
-+	LSM_HOOK_INIT(tun_dev_open, tsem_tun_dev_open),
-+
-+#ifdef CONFIG_BPF_SYSCALL
-+	LSM_HOOK_INIT(bpf, tsem_bpf),
-+	LSM_HOOK_INIT(bpf_map, tsem_bpf_map),
-+	LSM_HOOK_INIT(bpf_prog, tsem_bpf_prog)
-+#endif
++static const struct seq_operations trajectory_seqops = {
++	.start = trajectory_start,
++	.next = trajectory_next,
++	.stop = trajectory_stop,
++	.show = trajectory_show
 +};
 +
-+static int configure_root_digest(void)
++static int trajectory_open(struct inode *inode, struct file *file)
 +{
-+	int retn = 0;
-+	char *digest = NULL;
-+	u8 zero_digest[HASH_MAX_DIGESTSIZE];
-+	struct crypto_shash *tfm;
-+	SHASH_DESC_ON_STACK(shash, tfm);
-+
-+	if (default_hash_function && crypto_has_shash(default_hash_function,
-+						      0, 0)) {
-+		digest = default_hash_function;
-+		pr_warn("tsem: Using digest %s from command-line.\n", digest);
-+	}
-+	if (!digest && default_hash_function)
-+		pr_warn("tsem: Unknown root digest %s, using sha256.\n",
-+			default_hash_function);
-+	if (!digest)
-+		digest = "sha256";
-+
-+	tsem_context(current)->digestname = kstrdup(digest, GFP_KERNEL);
-+	if (!tsem_context(current)->digestname)
-+		return -ENOMEM;
-+
-+	tfm = crypto_alloc_shash(digest, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	shash->tfm = tfm;
-+	retn = crypto_shash_digest(shash, NULL, 0, zero_digest);
-+	if (retn)
-+		goto done;
-+
-+	tsem_context(current)->tfm = tfm;
-+	memcpy(root_context.zero_digest, zero_digest,
-+	       crypto_shash_digestsize(tfm));
-+
-+ done:
-+	if (retn) {
-+		kfree(tsem_context(current)->digestname);
-+		crypto_free_shash(tfm);
-+	}
-+
-+	return retn;
++	if (!can_access_fs())
++		return -EACCES;
++	return seq_open(file, &trajectory_seqops);
 +}
 +
-+static int __init set_ready(void)
-+{
-+	int retn;
++static const struct file_operations trajectory_ops = {
++	.open = trajectory_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
 +
-+	if (!tsem_available)
++static void *trajectory_count_start(struct seq_file *c, loff_t *pos)
++{
++	struct list_head *end;
++	struct tsem_model *model = tsem_model(current);
++
++	spin_lock(&model->point_lock);
++	end = model->point_list.prev;
++	spin_unlock(&model->point_lock);
++
++	mutex_lock(&model->point_end_mutex);
++	model->point_end = end;
++
++	return seq_list_start(&model->point_list, *pos);
++}
++
++static void *trajectory_count_next(struct seq_file *c, void *p, loff_t *pos)
++{
++	struct list_head *next = ((struct list_head *) p)->next;
++	struct tsem_model *model = tsem_model(current);
++
++	if (!model->point_end) {
++		++*pos;
++		return NULL;
++	}
++
++	if (next == model->point_end)
++		model->point_end = NULL;
++
++	return seq_list_next(p, &model->point_list, pos);
++}
++
++static void trajectory_count_stop(struct seq_file *c, void *pos)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	mutex_unlock(&model->point_end_mutex);
++}
++
++static int trajectory_count_show(struct seq_file *c, void *point)
++{
++	struct tsem_event_point *pt;
++
++	pt = list_entry(point, struct tsem_event_point, list);
++	if (!pt->valid)
 +		return 0;
 +
-+	retn = configure_root_digest();
-+	if (retn)
-+		goto done;
++	seq_printf(c, "%llu\n", pt->count);
++	return 0;
++}
 +
-+	retn = tsem_model_add_aggregate();
-+	if (retn)
-+		goto done;
++static const struct seq_operations trajectory_count_seqops = {
++	.start = trajectory_count_start,
++	.next = trajectory_count_next,
++	.stop = trajectory_count_stop,
++	.show = trajectory_count_show
++};
 +
-+	retn = tsem_fs_init();
-+	if (retn)
-+		goto done;
++static int trajectory_count_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return seq_open(file, &trajectory_count_seqops);
++}
 +
-+	if (tsem_mode == ROOT_EXPORT_ONLY) {
-+		retn = tsem_ns_export_root(magazine_size);
-+		if (retn)
-+			goto done;
++static const struct file_operations trajectory_count_ops = {
++	.open = trajectory_count_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static void *trajectory_point_start(struct seq_file *c, loff_t *pos)
++{
++	struct list_head *end;
++	struct tsem_model *model = tsem_model(current);
++
++	spin_lock(&model->point_lock);
++	end = model->point_list.prev;
++	spin_unlock(&model->point_lock);
++
++	mutex_lock(&model->point_end_mutex);
++	model->point_end = end;
++
++	return seq_list_start(&model->point_list, *pos);
++}
++
++static void *trajectory_point_next(struct seq_file *c, void *p, loff_t *pos)
++{
++	struct list_head *next = ((struct list_head *) p)->next;
++	struct tsem_model *model = tsem_model(current);
++
++	if (!model->point_end) {
++		++*pos;
++		return NULL;
 +	}
 +
-+	pr_info("tsem: Now active.\n");
-+	static_branch_disable(&tsem_not_ready);
++	if (next == model->point_end)
++		model->point_end = NULL;
 +
-+ done:
++	return seq_list_next(p, &model->point_list, pos);
++}
++
++static void trajectory_point_stop(struct seq_file *c, void *pos)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	mutex_unlock(&model->point_end_mutex);
++}
++
++static int trajectory_point_show(struct seq_file *c, void *point)
++{
++	struct tsem_event_point *pt;
++
++	pt = list_entry(point, struct tsem_event_point, list);
++	if (!pt->valid)
++		return 0;
++
++	seq_printf(c, "%*phN\n", tsem_digestsize(), pt->point);
++	return 0;
++}
++
++static const struct seq_operations trajectory_point_seqops = {
++	.start = trajectory_point_start,
++	.next = trajectory_point_next,
++	.stop = trajectory_point_stop,
++	.show = trajectory_point_show
++};
++
++static int trajectory_point_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return seq_open(file, &trajectory_point_seqops);
++}
++
++static const struct file_operations trajectory_point_ops = {
++	.open = trajectory_point_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static int open_control(struct inode *inode, struct file *filp)
++{
++	if (!capable(CAP_MAC_ADMIN))
++		return -EACCES;
++	if (!(filp->f_flags & O_WRONLY))
++		return -EACCES;
++	return 0;
++}
++
++static ssize_t write_control(struct file *file, const char __user *buf,
++			     size_t datalen, loff_t *ppos)
++{
++	char *p, *arg, cmdbufr[128];
++	ssize_t retn = -EINVAL;
++	enum tsem_control_type type;
++
++	if (*ppos != 0)
++		goto done;
++	if (datalen > sizeof(cmdbufr)-1)
++		goto done;
++
++	memset(cmdbufr, '\0', sizeof(cmdbufr));
++	if (copy_from_user(cmdbufr, buf, datalen)) {
++		retn = -EFAULT;
++		goto done;
++	}
++
++	p = strchr(cmdbufr, '\n');
++	if (!p)
++		goto done;
++	*p = '\0';
++
++	arg = strchr(cmdbufr, ' ');
++	if (arg != NULL) {
++		*arg = '\0';
++		++arg;
++	}
++
++	type = match_string(control_commands, ARRAY_SIZE(control_commands),
++			    cmdbufr);
++	if (type < 0)
++		goto done;
++
++	switch (type) {
++	case TSEM_CONTROL_EXTERNAL:
++	case TSEM_CONTROL_INTERNAL:
++	case TSEM_CONTROL_EXPORT:
++		retn = config_namespace(type, arg);
++		break;
++	case TSEM_CONTROL_ENFORCE:
++	case TSEM_CONTROL_SEAL:
++		retn = config_context(type, cmdbufr);
++		break;
++	case TSEM_CONTROL_TRUSTED:
++	case TSEM_CONTROL_UNTRUSTED:
++		retn = config_COE(type, arg);
++		break;
++	case TSEM_CONTROL_MAP_STATE:
++	case TSEM_CONTROL_MAP_PSEUDONYM:
++	case TSEM_CONTROL_MAP_BASE:
++		retn = config_point(type, arg);
++		break;
++	case TSEM_CONTROL_LOCK:
++		retn = tsem_nsmgr_lock(false);
++		break;
++	}
++
++done:
++	if (!retn)
++		retn = datalen;
 +	return retn;
 +}
 +
-+late_initcall(set_ready);
++static int release_control(struct inode *inode, struct file *file)
++{
++	return 0;
++}
++
++static const struct file_operations control_ops = {
++	.open = open_control,
++	.write = write_control,
++	.release = release_control,
++	.llseek = generic_file_llseek,
++};
++
++static void *forensics_start(struct seq_file *c, loff_t *pos)
++{
++	struct list_head *end;
++	struct tsem_model *model = tsem_model(current);
++
++	spin_lock(&model->forensics_lock);
++	end = model->forensics_list.prev;
++	spin_unlock(&model->forensics_lock);
++
++	mutex_lock(&model->forensics_end_mutex);
++	model->forensics_end = end;
++
++	return seq_list_start(&model->forensics_list, *pos);
++}
++
++static void *forensics_next(struct seq_file *c, void *p, loff_t *pos)
++{
++	struct list_head *next = ((struct list_head *) p)->next;
++	struct tsem_model *model = tsem_model(current);
++
++	if (!model->forensics_end) {
++		++*pos;
++		return NULL;
++	}
++
++	if (next == model->forensics_end)
++		model->forensics_end = NULL;
++
++	return seq_list_next(p, &model->forensics_list, pos);
++}
++
++static void forensics_stop(struct seq_file *c, void *pos)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	mutex_unlock(&model->forensics_end_mutex);
++}
++
++static int forensics_show(struct seq_file *c, void *event)
++{
++	struct tsem_event *ep;
++
++	ep = list_entry(event, struct tsem_event, list);
++
++	seq_putc(c, '{');
++	tsem_fs_show_trajectory(c, ep);
++	seq_puts(c, "}\n");
++
++	return 0;
++}
++
++static const struct seq_operations forensics_seqops = {
++	.start = forensics_start,
++	.next = forensics_next,
++	.stop = forensics_stop,
++	.show = forensics_show
++};
++
++static int forensics_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return seq_open(file, &forensics_seqops);
++}
++
++static const struct file_operations forensics_ops = {
++	.open = forensics_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static void *forensics_point_start(struct seq_file *c, loff_t *pos)
++{
++	struct list_head *end;
++	struct tsem_model *model = tsem_model(current);
++
++	spin_lock(&model->point_lock);
++	end = model->point_list.prev;
++	spin_unlock(&model->point_lock);
++
++	mutex_lock(&model->point_end_mutex);
++	model->point_end = end;
++
++	return seq_list_start(&model->point_list, *pos);
++}
++
++static void *forensics_point_next(struct seq_file *c, void *p, loff_t *pos)
++{
++	struct list_head *next = ((struct list_head *) p)->next;
++	struct tsem_model *model = tsem_model(current);
++
++	if (!model->point_end) {
++		++*pos;
++		return NULL;
++	}
++
++	if (next == model->point_end)
++		model->point_end = NULL;
++
++	return seq_list_next(p, &model->point_list, pos);
++}
++
++static void forensics_point_stop(struct seq_file *c, void *pos)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	mutex_unlock(&model->point_end_mutex);
++}
++
++static int forensics_point_show(struct seq_file *c, void *point)
++{
++	struct tsem_event_point *pt;
++
++	pt = list_entry(point, struct tsem_event_point, list);
++	if (pt->valid)
++		return 0;
++
++	seq_printf(c, "%*phN\n", tsem_digestsize(), pt->point);
++	return 0;
++}
++
++static const struct seq_operations forensics_point_seqops = {
++	.start = forensics_point_start,
++	.next = forensics_point_next,
++	.stop = forensics_point_stop,
++	.show = forensics_point_show
++};
++
++static int forensics_point_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return seq_open(file, &forensics_point_seqops);
++}
++
++static const struct file_operations forensics_point_ops = {
++	.open = forensics_point_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static void *forensics_count_start(struct seq_file *c, loff_t *pos)
++{
++	struct list_head *end;
++	struct tsem_model *model = tsem_model(current);
++
++	spin_lock(&model->point_lock);
++	end = model->point_list.prev;
++	spin_unlock(&model->point_lock);
++
++	mutex_lock(&model->point_end_mutex);
++	model->point_end = end;
++
++	return seq_list_start(&model->point_list, *pos);
++}
++
++static void *forensics_count_next(struct seq_file *c, void *p, loff_t *pos)
++{
++	struct list_head *next = ((struct list_head *) p)->next;
++	struct tsem_model *model = tsem_model(current);
++
++	if (!model->point_end) {
++		++*pos;
++		return NULL;
++	}
++
++	if (next == model->point_end)
++		model->point_end = NULL;
++
++	return seq_list_next(p, &model->point_list, pos);
++}
++
++static void forensics_count_stop(struct seq_file *c, void *pos)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	mutex_unlock(&model->point_end_mutex);
++}
++
++static int forensics_count_show(struct seq_file *c, void *point)
++{
++	struct tsem_event_point *pt;
++
++	pt = list_entry(point, struct tsem_event_point, list);
++	if (pt->valid)
++		return 0;
++
++	seq_printf(c, "%llu\n", pt->count);
++	return 0;
++}
++
++static const struct seq_operations forensics_count_seqops = {
++	.start = forensics_count_start,
++	.next = forensics_count_next,
++	.stop = forensics_count_stop,
++	.show = forensics_count_show
++};
++
++static int forensics_count_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return seq_open(file, &forensics_count_seqops);
++}
++
++static const struct file_operations forensics_count_ops = {
++	.open = forensics_count_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static int measurement_show(struct seq_file *c, void *event)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	seq_printf(c, "%*phN\n", tsem_digestsize(), model->measurement);
++	return 0;
++}
++
++static int measurement_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return single_open(file, &measurement_show, NULL);
++}
++
++static const struct file_operations measurement_ops = {
++	.open = measurement_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static int id_show(struct seq_file *c, void *event)
++{
++	seq_printf(c, "%llu\n", tsem_context(current)->id);
++	return 0;
++}
++
++static int id_open(struct inode *inode, struct file *file)
++{
++	struct tsem_context *ctx = tsem_context(current);
++
++	if (ctx->sealed)
++		return -EACCES;
++	return single_open(file, &id_show, NULL);
++}
++
++static const struct file_operations id_ops = {
++	.open = id_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static int state_show(struct seq_file *m, void *v)
++{
++	struct tsem_model *model = tsem_model(current);
++
++	tsem_model_compute_state();
++	seq_printf(m, "%*phN\n", tsem_digestsize(), model->state);
++	return 0;
++}
++
++static int state_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return single_open(file, &state_show, NULL);
++}
++
++static const struct file_operations state_ops = {
++	.open = state_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static int aggregate_show(struct seq_file *m, void *v)
++{
++	seq_printf(m, "%*phN\n", tsem_digestsize(), tsem_trust_aggregate());
++	return 0;
++}
++
++static int aggregate_open(struct inode *inode, struct file *file)
++{
++	if (!can_access_fs())
++		return -EACCES;
++	return single_open(file, &aggregate_show, NULL);
++}
++
++static const struct file_operations aggregate_ops = {
++	.open = aggregate_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static __poll_t export_poll(struct file *file, struct poll_table_struct *wait)
++{
++	struct tsem_context *ctx = tsem_context(current);
++
++	if (!ctx->external)
++		return -ENOENT;
++
++	poll_wait(file, &ctx->external->wq, wait);
++
++	if (ctx->external->have_event) {
++		ctx->external->have_event = false;
++		return EPOLLIN | EPOLLRDNORM;
++	}
++	return 0;
++}
++
++static int export_open(struct inode *inode, struct file *file)
++{
++	if (!capable(CAP_MAC_ADMIN))
++		return -EACCES;
++	return single_open(file, &tsem_export_show, NULL);
++}
++
++static const struct file_operations export_ops = {
++	.open = export_open,
++	.poll = export_poll,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
 +
 +/**
-+ * tesm_init() - Register Trusted Security Event Modeling LSM.
++ * tsem_fs_create_external() - Create an external TMA update file.
++ * @id: A pointer to the ASCII representation of the modeling domain
++ *      that the export file is being created for.
 + *
-+ * This function is responsible for initializing the TSEM LSM.  It is
-+ * invoked at the fs_initcall level.  In addition to configuring the
-+ * LSM hooks this function initializes the Trusted Modeling Agent
-+ * context including the event actions.  The cache from which
-+ * the tsem_event description structures is also initialized.
++ * This function is used to create a pseudo-file that will output security
++ * event descriptions for a namespace.  This routine will create the
++ * following file:
 + *
-+ * Return: If the TSEM LSM is successfully initialized a value of zero
-+ *	   is returned.  A non-zero error code is returned if
-+ *	   initialization fails.  Currently the only failure mode can
-+ *	   come from the initialization of the tsem_event cache.
++ * /sys/kernel/security/tsem/ExternalTMA/N
++ *
++ * Where N is replaced with the security model context identifier.
++ *
++ * Return: If creation of the update file is successful a pointer to the
++ *	   dentry of the file is returned.  If an error was encountered
++ *	   the pointer with an encoded code will be returned.
 + */
-+static int __init tsem_init(void)
++struct dentry *tsem_fs_create_external(const char *name)
 +{
-+	int retn;
-+	char *msg;
-+	struct tsem_task *tsk = tsem_task(current);
-+	struct tsem_context *ctx = &root_context;
-+	struct tsem_model *model = &root_model;
++	struct dentry *dentry;
 +
-+	security_add_hooks(tsem_hooks, ARRAY_SIZE(tsem_hooks), &tsem_lsmid);
++	dentry = securityfs_create_file(name, 0400, external_tma, NULL,
++					&export_ops);
++	if (!IS_ERR(dentry))
++		tsem_inode(dentry->d_inode)->status = TSEM_INODE_CONTROL_PLANE;
++	return dentry;
++}
 +
-+	tsk->context = ctx;
-+	kref_init(&ctx->kref);
-+	kref_get(&ctx->kref);
++/**
++ * tsem_fs_show_trajectory() - Generate the output of a security event.
++ * @sf: A pointer to the seq_file structure to which output will
++ *      be set.
++ * @ep: A pointer to the event description that is to be output.
++ *
++ * This function is used to generate a record that will be output to
++ * the pseudo-file that outputs the security events for the
++ * domain being modeled.
++ */
++void tsem_fs_show_trajectory(struct seq_file *c, struct tsem_event *ep)
++{
++	if (ep->no_params)
++		show_event_generic(c, ep);
 +
-+	mutex_init(&ctx->inode_mutex);
-+	INIT_LIST_HEAD(&ctx->inode_list);
-+
-+	root_context.ops = &tsem_model0_ops;
-+	root_context.model = &root_model;
-+
-+	retn = tsem_event_cache_init();
-+	if (retn)
-+		return retn;
-+
-+	retn = tsem_model_cache_init(model, magazine_size);
-+	if (retn)
-+		goto done;
-+
-+	retn = tsem_export_cache_init();
-+	if (retn)
-+		goto done;
-+
-+	retn = tsem_event_magazine_allocate(ctx, magazine_size);
-+	if (retn)
-+		goto done;
-+	memcpy(ctx->actions, tsem_root_actions, sizeof(tsem_root_actions));
-+
-+	switch (tsem_mode) {
-+	case FULL_MODELING:
-+		msg = "full modeling";
++	switch (ep->event) {
++	case TSEM_SYSLOG:
++		show_syslog(c, ep);
 +		break;
-+	case NO_ROOT_MODELING:
-+		msg = "namespace only modeling";
++	case TSEM_SETTIME:
++		show_settime(c, ep);
 +		break;
-+	case ROOT_EXPORT_ONLY:
-+		msg = "root export only";
++	case TSEM_NETLINK_SEND:
++		show_netlink(c, ep);
++		break;
++	case TSEM_IPC_PERMISSION:
++		show_ipc_permission(c, ep);
++		break;
++	case TSEM_SHM_ASSOCIATE:
++	case TSEM_SHM_SHMAT:
++		show_ipc_shm_value(c, ep, "shmflg");
++		break;
++	case TSEM_SHM_SHMCTL:
++	case TSEM_SEM_SEMCTL:
++	case TSEM_MSG_QUEUE_MSGCTL:
++		show_ipc_shm_value(c, ep, "cmd");
++		break;
++	case TSEM_SEM_SEMOP:
++		show_sem_semop(c, ep);
++		break;
++	case TSEM_SEM_ASSOCIATE:
++		show_ipc_shm_value(c, ep, "semflg");
++		break;
++	case TSEM_MSG_QUEUE_ASSOCIATE:
++	case TSEM_MSG_QUEUE_MSGSND:
++		show_ipc_shm_value(c, ep, "msqflg");
++		break;
++	case TSEM_MSG_QUEUE_MSGRCV:
++		show_msg_queue_msgrcv(c, ep);
++		break;
++	case TSEM_INODE_CREATE:
++	case TSEM_INODE_MKDIR:
++		show_inode_create(c, ep);
++		break;
++	case TSEM_INODE_RMDIR:
++	case TSEM_INODE_UNLINK:
++		show_inode_remove(c, ep);
++		break;
++	case TSEM_INODE_LINK:
++		show_inode_link(c, ep);
++		break;
++	case TSEM_INODE_SYMLINK:
++		show_inode_symlink(c, ep);
++		break;
++	case TSEM_INODE_MKNOD:
++		show_inode_mknod(c, ep);
++		break;
++	case TSEM_INODE_RENAME:
++		show_inode_rename(c, ep);
++		break;
++	case TSEM_INODE_KILLPRIV:
++		show_inode_killpriv(c, ep);
++		break;
++	case TSEM_FILE_OPEN:
++	case TSEM_FILE_RECEIVE:
++		show_file_open(c, ep);
++		break;
++	case TSEM_MMAP_FILE:
++		show_mmap(c, ep);
++		break;
++	case TSEM_FILE_IOCTL:
++	case TSEM_FILE_LOCK:
++	case TSEM_FILE_FCNTL:
++		show_file_ioctl(c, ep);
++		break;
++	case TSEM_UNIX_STREAM_CONNECT:
++	case TSEM_UNIX_MAY_SEND:
++		show_socket_pair(c, ep, "sock", "other");
++		break;
++	case TSEM_SOCKET_SOCKETPAIR:
++		show_socket_pair(c, ep, "socka", "sockb");
++		break;
++	case TSEM_SOCKET_CREATE:
++		show_socket_create(c, ep);
++		break;
++	case TSEM_SOCKET_CONNECT:
++	case TSEM_SOCKET_BIND:
++		show_socket_connect_bind(c, ep);
++		break;
++	case TSEM_SOCKET_SENDMSG:
++	case TSEM_SOCKET_RECVMSG:
++		show_socket_msg(c, ep);
++		break;
++	case TSEM_SOCKET_GETSOCKNAME:
++	case TSEM_SOCKET_GETPEERNAME:
++	case TSEM_TUN_DEV_ATTACH_QUEUE:
++		show_socket_argument(c, ep);
++		break;
++	case TSEM_SOCKET_SETSOCKOPT:
++		show_socket_setsockopt(c, ep);
++		break;
++	case TSEM_SOCKET_ACCEPT:
++		show_socket_accept(c, ep);
++		break;
++	case TSEM_SOCKET_LISTEN:
++		show_socket_value(c, ep, "backlog");
++		break;
++	case TSEM_SOCKET_SHUTDOWN:
++		show_socket_value(c, ep, "how");
++		break;
++	case TSEM_KERNEL_MODULE_REQUEST:
++		show_kernel_module_request(c, ep);
++		break;
++	case TSEM_KERNEL_LOAD_DATA:
++		show_kernel_load_data(c, ep);
++		break;
++	case TSEM_KERNEL_READ_FILE:
++		show_kernel_read_file(c, ep);
++		break;
++	case TSEM_TASK_KILL:
++		show_task_kill(c, ep);
++		break;
++	case TSEM_PTRACE_ACCESS_CHECK:
++		show_ptrace_access_check(c, ep);
++		break;
++	case TSEM_PTRACE_TRACEME:
++		show_task_ptraceme(c, ep);
++		break;
++	case TSEM_CAPGET:
++		show_capget(c, ep);
++		break;
++	case TSEM_CAPSET:
++		show_capset(c, ep);
++		break;
++	case TSEM_CAPABLE:
++		show_capable(c, ep);
++		break;
++	case TSEM_TASK_SETPGID:
++		show_task_setpgid(c, ep);
++		break;
++	case TSEM_TASK_GETPGID:
++	case TSEM_TASK_GETSID:
++	case TSEM_TASK_GETIOPRIO:
++	case TSEM_TASK_SETSCHEDULER:
++	case TSEM_TASK_GETSCHEDULER:
++		show_task_getpgid(c, ep);
++		break;
++	case TSEM_TASK_SETNICE:
++		show_task_nice(c, ep);
++		break;
++	case TSEM_TASK_SETIOPRIO:
++		show_task_value(c, ep, "ioprio");
++		break;
++	case TSEM_TASK_PRLIMIT:
++		show_task_prlimit(c, ep);
++		break;
++	case TSEM_TASK_SETRLIMIT:
++		show_task_setrlimit(c, ep);
++		break;
++	case TSEM_TASK_PRCTL:
++		show_task_prctl(c, ep);
++		break;
++	case TSEM_INODE_GETATTR:
++		show_inode_getattr(c, ep);
++		break;
++	case TSEM_INODE_SETATTR:
++		show_inode_setattr(c, ep);
++		break;
++	case TSEM_INODE_SETXATTR:
++		show_inode_setxattr(c, ep);
++		break;
++	case TSEM_INODE_GETXATTR:
++	case TSEM_INODE_REMOVEXATTR:
++		show_inode_getxattr(c, ep);
++		break;
++	case TSEM_INODE_LISTXATTR:
++		show_inode_listxattr(c, ep);
++		break;
++	case TSEM_KEY_ALLOC:
++		show_key_alloc(c, ep);
++		break;
++	case TSEM_KEY_PERMISSION:
++		show_key_permission(c, ep);
++		break;
++	case TSEM_SB_MOUNT:
++		show_sb_mount(c, ep);
++		break;
++	case TSEM_SB_UMOUNT:
++		show_sb_umount(c, ep);
++		break;
++	case TSEM_SB_REMOUNT:
++		show_sb_remount(c, ep);
++		break;
++	case TSEM_SB_STATFS:
++		show_sb_statfs(c, ep);
++		break;
++	case TSEM_SB_PIVOTROOT:
++		show_move_path(c, ep, "old_path", "new_path");
++		break;
++	case TSEM_MOVE_MOUNT:
++		show_move_path(c, ep, "from_path", "to_path");
++		break;
++	case TSEM_QUOTACTL:
++		show_quotactl(c, ep);
++		break;
++	case TSEM_QUOTA_ON:
++		show_quotaon(c, ep);
++		break;
++	case TSEM_BPF:
++		show_bpf(c, ep);
++		break;
++	case TSEM_BPF_MAP:
++		show_bpf_map(c, ep);
++		break;
++	case TSEM_BPF_PROG:
++		show_bpf_prog(c, ep);
++		break;
++	default:
 +		break;
 +	}
-+	pr_info("tsem: Initialized %s.\n", msg);
++}
 +
-+	tsem_available = true;
-+	tsk->trust_status = TSEM_TASK_TRUSTED;
++/**
++ * tesm_fs_show_field() - Output a JSON field description
++ * @sf: A pointer to the seq_file structure that the field description
++ *	is to be written to.
++ * @f:  A pointer to null terminated character buffer containing the
++ *      name of the field to encode
++ *
++ * This function is used to generate a JSON field description that
++ * is used to name a sequence of key/value pairs describing the
++ * characteristcis of the field.
++ */
++void tsem_fs_show_field(struct seq_file *c, const char *field)
++{
++	seq_printf(c, "\"%s\": {", field);
++}
++
++/**
++ * tesm_fs_tsem_fs_show_key() - Output a JSON key/value pair
++ * @sf: A pointer to the seq_file structure that the field description
++ *	is to be written to.
++ * @key: A pointer to the null-terminated character buffer containing
++ *	 the key description.
++ * @term: A pointer to a null-terminated character buffer containing
++ *	  the string that is to be used for terminating the key/value
++ *	  pair.
++ * @fmt: The printf format that is to be used for formatting the
++ *	 value of the key.
++ *
++ * This function is a variadic function that is used to encode a
++ * JSON key/value pair that provides one of characteristics of an
++ * event description field.
++ */
++void tsem_fs_show_key(struct seq_file *c, char *key, char *term, char *fmt,
++		      ...)
++{
++	va_list args;
++
++	seq_printf(c, "\"%s\": \"", key);
++
++	va_start(args, fmt);
++	seq_vprintf(c, fmt, args);
++	va_end(args);
++
++	if (term[0] == ',')
++		seq_printf(c, "\"%s ", term);
++	else
++		seq_printf(c, "\"%s", term);
++}
++
++static bool _init_inode(struct dentry *dp)
++{
++	if (IS_ERR(dp))
++		return false;
++
++	tsem_inode(dp->d_inode)->status = TSEM_INODE_CONTROL_PLANE;
++	return true;
++}
++
++/**
++ * tesm_fs_init() - Initialize the TSEM control filesystem heirarchy
++ *
++ * This function is called as part of the TSEM LSM initialization
++ * process.  The purpose of this function is to create the TSEM
++ * control plane, based on the securityfs filesystem, by creating the
++ * /sys/kernel/security/tsem directory and populating that directory
++ * with the control plane files and internal TMA model information
++ * files.  The /sys/kernel/security/tsem/ExternalTMA directory is
++ * also created.  This directory will be used to hold the modeling
++ * domain specific files that will emit the security event descriptions
++ * for the domain.
++ *
++ * Return: If filesystem initialization is successful a return code of 0
++ *	   is returned.  A negative return value is returned if an error
++ *	   is encountered.
++ */
++int __init tsem_fs_init(void)
++{
++	int retn = -1;
++
++	tsem_dir = securityfs_create_dir("tsem", NULL);
++	if (!_init_inode(tsem_dir))
++		goto done;
++
++	control = securityfs_create_file("control", 0200, tsem_dir, NULL,
++					 &control_ops);
++	if (!_init_inode(control))
++		goto err;
++
++	id = securityfs_create_file("id", 0400, tsem_dir, NULL, &id_ops);
++	if (!_init_inode(id))
++		goto err;
++
++	aggregate = securityfs_create_file("aggregate", 0400, tsem_dir, NULL,
++					   &aggregate_ops);
++	if (!_init_inode(aggregate))
++		goto err;
++
++	internal_tma = securityfs_create_dir("internal_tma", tsem_dir);
++	if (!_init_inode(internal_tma))
++		goto err;
++
++	model = securityfs_create_dir("model0", internal_tma);
++	if (!_init_inode(model))
++		goto err;
++
++	forensics = securityfs_create_file("forensics", 0400, model, NULL,
++					   &forensics_ops);
++	if (!_init_inode(forensics))
++		goto err;
++
++	forensics_counts = securityfs_create_file("forensics_counts", 0400,
++						 model, NULL,
++						 &forensics_count_ops);
++	if (!_init_inode(forensics_counts))
++		goto err;
++
++	forensics_coeff = securityfs_create_file("forensics_coefficients",
++						 0400, model, NULL,
++						 &forensics_point_ops);
++	if (!_init_inode(forensics_coeff))
++		goto err;
++
++	trajectory = securityfs_create_file("trajectory", 0400, model, NULL,
++					     &trajectory_ops);
++	if (!_init_inode(trajectory))
++		goto err;
++
++	trajectory_counts = securityfs_create_file("trajectory_counts", 0400,
++						   model, NULL,
++						   &trajectory_count_ops);
++	if (!_init_inode(trajectory_counts))
++		goto err;
++
++	trajectory_coeff = securityfs_create_file("trajectory_coefficients",
++						  0400, model, NULL,
++						  &trajectory_point_ops);
++	if (!_init_inode(trajectory_coeff))
++		goto err;
++
++	measurement = securityfs_create_file("measurement", 0400,
++						  model, NULL,
++						  &measurement_ops);
++	if (!_init_inode(measurement))
++		goto err;
++
++	state = securityfs_create_file("state", 0400, model, NULL,
++					&state_ops);
++	if (!_init_inode(state))
++		goto err;
++
++	external_tma = securityfs_create_dir("external_tma", tsem_dir);
++	if (!_init_inode(external_tma))
++		goto err;
++
 +	retn = 0;
 +
 + done:
-+	if (retn) {
-+		tsem_event_magazine_free(ctx);
-+		tsem_model_magazine_free(model);
-+	}
++	return retn;
++
++ err:
++	securityfs_remove(tsem_dir);
++	securityfs_remove(control);
++	securityfs_remove(id);
++	securityfs_remove(aggregate);
++	securityfs_remove(internal_tma);
++	securityfs_remove(model);
++	securityfs_remove(forensics);
++	securityfs_remove(forensics_counts);
++	securityfs_remove(forensics_coeff);
++	securityfs_remove(trajectory);
++	securityfs_remove(trajectory_counts);
++	securityfs_remove(trajectory_coeff);
++	securityfs_remove(measurement);
++	securityfs_remove(state);
++	securityfs_remove(external_tma);
++
 +	return retn;
 +}
-+
-+DEFINE_LSM(tsem) = {
-+	.name = "tsem",
-+	.init = tsem_init,
-+	.blobs = &tsem_blob_sizes,
-+};
 -- 
 2.39.1
 
