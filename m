@@ -1,251 +1,118 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B8C13DBB6
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 13:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EDD15CD52;
+	Mon, 26 Aug 2024 13:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724679290; cv=none; b=qLcRTJjSYMmlwol7tUtlyLJ4qMUkbRzjLPccODn594/7AdXn515ndc/1U0cZn+yJhkDZ33Vv3G/X+auEnRFC1Ao3Dd7aBoP3wjFxjq/49jdqlPB+eY4OukNyNEM5+axgtMeC5hUMaHpe82eBEV7UCsPtztyhnx60cJFbxVfKz24=
+	t=1724680153; cv=none; b=vGV6k82VE9VywVEDoOKRiZGuC54lwiWvW0eV1RTQMDli5feL+TpOI7JYwmJzH0HzgIKkCHEVmJe5WoGl/IBtJiel2ls7KRMwxMrHKUBvVKSpaxN+vryQWQ5qB16WRElLQFFguIKM8Sx4tkHJrqdrWUwPomGa5P3Ke4TafacH5ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724679290; c=relaxed/simple;
-	bh=sj8FjlDhb8FrCpLrXqSGR+t1pa2ldUyCypN0rEuuhdU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ffW3dfIE3V0nP/kV6VLTDN6dPBWdDw1l3t4YVzh8IdCfTfbgWLt/9Qj0169IIRBAYPK0zUBvnsOOFNHr2qovdQ0KLYljhRj1Mq4IbLc05Smy4f381YjFg3hzKRz8mkjuVwqdPlXoIj71rYaYeQ4hPJ9+m+KtS/84bTLvE0vBvik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=R6dTqiCp; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1724680153; c=relaxed/simple;
+	bh=AHXgbLM7oRnPm5/UkiMs59q0RJBlaAsbhTbSHfilH5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dGPacY/FHDU9HJOZXvwFBB6/7JwqMbgsEeyv/iu1VedywF1OcJe82e3v+jXt0Rhy4U4eN45fUwMJ56+ZFVAv4qcDJIzRrr/hwQaoJUfSEUAstqak0mPySD1xXwMSsyDEp5louIS9KrJgJAMmG5OxRAkE+VKLGeIZ4kF7wrHhKxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=if/p2FAD; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="R6dTqiCp"
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 85E6B3F17F
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 13:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724679284;
-	bh=wa2RMhR78BaHm2VHuwhjPWdcU8rO0GKC1FkCDsO20v8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version;
-	b=R6dTqiCpvPthUknoKTwdd3zWHOun355C+qyHvSvPgOh+Mz9xJlPT24FQu2RmeSX5y
-	 yJMrkAyz4qcEbp1B7BDL2EIlrfMJNHHZ/JH55en9vQOuFDLP2q1+nJ1sNd8+a0OG5e
-	 gStvecpojoLAUSxkbxhCZIi2olPAQAIjHzaixoDy1rDa+1rvAPuk/jXbIYlU3Me5Tb
-	 0/Ko6j3m/QfLqc/uKXzIggkLXIDoaxwKv+twqtOqcjHXBIqfRpSkzvTAjfrcY4a/TT
-	 BQEUmbLoHe7NlDdCRn7h1QdgIexItt4vJ3N1g9RpZrJ99Sj8T0oOf4zFnXrEF20Tti
-	 U0iUkSFHzigHA==
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7143b3025caso4779487b3a.2
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 06:34:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="if/p2FAD"
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6bf6721aae5so21468356d6.2;
+        Mon, 26 Aug 2024 06:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724680150; x=1725284950; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gMZYUnIgKkaD/MfzkLUl+wvAmEY2GmZ1AF06Oeo2Zdw=;
+        b=if/p2FAD+/QUQpKHXKyyieHjUYrbNFQYq2UwC5fCIs5fTFHulIkZTYKWoZe36spyWF
+         Do+GTKpgzGTvAWQZRcZ13Md0EUeaflCzMOI5+UI83+y9ABtRKTfVdr8aR+4rlkhhr9vr
+         UuVVNxxIOFftm0PlivGuwQVZqiK+Flgpj+HB+h0NCjdAA/h/EDTir7bUiouy4zC5D8FD
+         7RWLTfWp1tDmMUdbP2TIb2mj/Vy/Eu8+TM4PrapnGOD5RfTD41LmbNO5GfCCrWF7onNV
+         Zb/1pqMCnhiHlLL03b8lZCPwN+NlQMmTiEJL7QjODqqMCCSk7U+AF7+0mShCp3CzlsfY
+         YF9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724679283; x=1725284083;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wa2RMhR78BaHm2VHuwhjPWdcU8rO0GKC1FkCDsO20v8=;
-        b=wG+NCkqfXwimCGmlz2ar47PYaek5qK1nFE/i0MSeZgZ6zq05zxngDVUZXLfY6eUcwr
-         oOlC7fd2+AHyqdi8z5cmBAuwu5o7U6wC5UbD7yPHjQfWGW0GfDRIJx27/qbh5VmXDQkx
-         1NPtv087Nt63kDD5iEueyNQ+kr8cvS5I/C2kkVGr9kFrbNuReFvrkJKChLHJy4LSK/63
-         NRKtU5E8mSFVycIHpmYvYazZP7g4w5dyK6shjzQSDRUJQCU5JTxilYikpiLQfPRaWdhC
-         Io67PzdTW9b2FhrfKxZT7FqTTfU3ImyREFSkYL+K3BpWKNaAYyLOrYV4ENt/G79I4/F6
-         WZcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWRhMcOCPd++2/TDm8Mtijm9wM/U4mpCzRw9h3++ENOkD4Ds26cg0yd8/Xpsp3jUSIA9EUFfHMAagUov/94wWwfoCc6es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHyBdty52RynQCAsHaKskkv5gtXG8slwHR0dFMadAMTG4B2Hq9
-	qvFz0Qdt6hYe4OJwFIdSwQx2PwrAElL95dIX6x56HRkt7+s1oCOiI6zkN0Tz6r4RzI4kNWchq9P
-	9Dcjss5KCw7Wv3qiHVJw9YL7YvtJZXZ+aBgx5D/ulGRBgPV6r4lpq0bKqnKZw4KiDvyvBCnzgtg
-	5bcFqUmrbj4fMn4g==
-X-Received: by 2002:a05:6a00:91d0:b0:714:10d2:baae with SMTP id d2e1a72fcca58-714457d3456mr10981277b3a.14.1724679283023;
-        Mon, 26 Aug 2024 06:34:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtDq3UfRYa9zSSlw5VssnEWk7ArsIMz2I5L9LZu9eHCrFMen2AJcPpBmKw28y/w5pZfYNrfQ==
-X-Received: by 2002:a05:6a00:91d0:b0:714:10d2:baae with SMTP id d2e1a72fcca58-714457d3456mr10981241b3a.14.1724679282479;
-        Mon, 26 Aug 2024 06:34:42 -0700 (PDT)
-Received: from ?IPv6:2001:1284:f502:1ed0:dd4a:fefa:915f:4c09? ([2001:1284:f502:1ed0:dd4a:fefa:915f:4c09])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434336fb3sm6966847b3a.201.2024.08.26.06.34.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 06:34:41 -0700 (PDT)
-Message-ID: <63b777bb7b200f26f06211d62e2be8e5e571666d.camel@canonical.com>
-Subject: Re: [PATCH 01/13] LSM: Add the lsmblob data structure.
-From: Georgia Garcia <georgia.garcia@canonical.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com, 
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- mic@digikod.net
-Date: Mon, 26 Aug 2024 10:34:36 -0300
-In-Reply-To: <20240825190048.13289-2-casey@schaufler-ca.com>
-References: <20240825190048.13289-1-casey@schaufler-ca.com>
-	 <20240825190048.13289-2-casey@schaufler-ca.com>
-Organization: Canonical
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        d=1e100.net; s=20230601; t=1724680150; x=1725284950;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gMZYUnIgKkaD/MfzkLUl+wvAmEY2GmZ1AF06Oeo2Zdw=;
+        b=tLMFUX6mHqc9nfnPfHdPzHzM+FQ5p6OalM9jqZfboAs1l7HEJHC8MgbtanlF/n7zFm
+         0IBn0U3Aq0gne0360L708OT8uXl1RyM7ojC10H5bMzAe0t1lcNDlJRVyHCCr73/wTA52
+         pdehH4OqfHZPCqTooKJdmbcYaUQpnTJRv8zLFO+ahni9QavDQsBaJ+idYXh6ROgqbw5f
+         2JqKE+RF+o1uc6cEVC8CL0b1tRWJC/A4NRMtXrRmSGzWWHhCb3T+o1NB4quVbukNh4DB
+         vX2sCyfEglJErt1h54ww8TflcqjE1lRUlNPPSNpD8MioSLFG+1U0IS2bjHm8SM7uCEkF
+         R9iA==
+X-Forwarded-Encrypted: i=1; AJvYcCU35dotnP7b0IHRud+kbqW5M4Kk5SuxSKnjjkAphY6GI9OngcFuHfESPKEinqsc+aaNcXqhqBWxqddhQqv7@vger.kernel.org, AJvYcCVxJfZZAAVC4RFaRk2DdoCqzHjjvP1TemNf3Cd8hPdl7sA0pbfhXe/jusR/BDOHIcj59rIRNppvhkerozHBU8bDUcetZ1wh@vger.kernel.org, AJvYcCWccEOK7KuYW6uAVsjf6yBSbECFOkoN24sH4jO4miu2SkbFsD3YZaBibCu174nYGeB3ehQFbxDT3BtwDsqRMw==@vger.kernel.org, AJvYcCXWFtI6tNf68Z/uakpLlA01ZBzaxHq5haRFzZxlnXIUkKD2OUPNKok+hxVtFGvQj/hoIGdrnqTOCh3GJJvHZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvywONcXWeR2N7hSYUqhyfJakNezJCCfB5HrE3WCar6g0PhXYj
+	Kjeb1ZX+PfMrpdS1diTzY7cuJCC4pjoi7qHaMedy9oimIclK4yF/PdiA6M+uJGkiswd2KpwWleM
+	csLiNPYoX5yGgQt8q7VGEU72seiI=
+X-Google-Smtp-Source: AGHT+IHhatENG6fs2WRBlGagcLBUJVyB1UfWCUwlHlPUXJUhhWRHTDmi04wsvYcpBCIgnGxGVRbqKLCBbwHEGJFWnWM=
+X-Received: by 2002:a05:6214:311a:b0:6bd:9622:4972 with SMTP id
+ 6a1803df08f44-6c16dc39d7fmr113979446d6.14.1724680150391; Mon, 26 Aug 2024
+ 06:49:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240826085347.1152675-1-mhocko@kernel.org> <20240826085347.1152675-3-mhocko@kernel.org>
+In-Reply-To: <20240826085347.1152675-3-mhocko@kernel.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 26 Aug 2024 21:48:34 +0800
+Message-ID: <CALOAHbAU6XwN9ti0A1_KywpPqzgKxykWTxHYcYPQOywJo7FePQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Casey,
-
-On Sun, 2024-08-25 at 12:00 -0700, Casey Schaufler wrote:
-> When more than one security module is exporting data to audit and
-> networking sub-systems a single 32 bit integer is no longer
-> sufficient to represent the data. Add a structure to be used instead.
->=20
-> The lsmblob structure definition is intended to keep the LSM
-> specific information private to the individual security modules.
-> The module specific information is included in a new set of
-> header files under include/lsm. Each security module is allowed
-> to define the information included for its use in the lsmblob.
-> SELinux includes a u32 secid. Smack includes a pointer into its
-> global label list. The conditional compilation based on feature
-> inclusion is contained in the include/lsm files.
->=20
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+On Mon, Aug 26, 2024 at 4:53=E2=80=AFPM Michal Hocko <mhocko@kernel.org> wr=
+ote:
+>
+> From: Michal Hocko <mhocko@suse.com>
+>
+> There is no existing user of the flag and the flag is dangerous because
+> a nested allocation context can use GFP_NOFAIL which could cause
+> unexpected failure. Such a code would be hard to maintain because it
+> could be deeper in the call chain.
+>
+> PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
+> that such a allocation contex is inherently unsafe if the context
+> doesn't fully control all allocations called from this context.
+>
+> [1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
+>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 > ---
->  include/linux/lsm/apparmor.h | 17 +++++++++++++++++
->  include/linux/lsm/bpf.h      | 16 ++++++++++++++++
->  include/linux/lsm/selinux.h  | 16 ++++++++++++++++
->  include/linux/lsm/smack.h    | 17 +++++++++++++++++
->  include/linux/security.h     | 20 ++++++++++++++++++++
->  5 files changed, 86 insertions(+)
->  create mode 100644 include/linux/lsm/apparmor.h
->  create mode 100644 include/linux/lsm/bpf.h
->  create mode 100644 include/linux/lsm/selinux.h
->  create mode 100644 include/linux/lsm/smack.h
->=20
-> diff --git a/include/linux/lsm/apparmor.h b/include/linux/lsm/apparmor.h
-> new file mode 100644
-> index 000000000000..8ff1cd899a20
-> --- /dev/null
-> +++ b/include/linux/lsm/apparmor.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Linux Security Module interface to other subsystems.
-> + * AppArmor presents a single u32 value which is known as a secid.
+>  include/linux/sched.h    | 1 -
+>  include/linux/sched/mm.h | 7 ++-----
+>  2 files changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index f8d150343d42..72dad3a6317a 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1657,7 +1657,6 @@ extern struct pid *cad_pid;
+>                                                  * I am cleaning dirty pa=
+ges from some other bdi. */
+>  #define PF_KTHREAD             0x00200000      /* I am a kernel thread *=
+/
+>  #define PF_RANDOMIZE           0x00400000      /* Randomize virtual addr=
+ess space */
+> -#define PF_MEMALLOC_NORECLAIM  0x00800000      /* All allocation request=
+s will clear __GFP_DIRECT_RECLAIM */
 
-Just a small nitpick: this comment doesn't match the code since it's
-using aa_label instead of a u32 secid.
+To maintain consistency with the other unused bits, it would be better
+to define PF__HOLE__00800000 instead.
 
-> + */
-> +#ifndef __LINUX_LSM_APPARMOR_H
-> +#define __LINUX_LSM_APPARMOR_H
-> +
-> +struct aa_label;
-> +
-> +struct lsmblob_apparmor {
-> +#ifdef CONFIG_SECURITY_APPARMOR
-> +	struct aa_label *label;
-> +#endif
-> +};
-> +
-> +#endif /* ! __LINUX_LSM_APPARMOR_H */
-> diff --git a/include/linux/lsm/bpf.h b/include/linux/lsm/bpf.h
-> new file mode 100644
-> index 000000000000..48abdcd82ded
-> --- /dev/null
-> +++ b/include/linux/lsm/bpf.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Linux Security Module interface to other subsystems.
-> + * BPF may present a single u32 value.
-> + */
-> +#ifndef __LINUX_LSM_BPF_H
-> +#define __LINUX_LSM_BPF_H
-> +#include <linux/types.h>
-> +
-> +struct lsmblob_bpf {
-> +#ifdef CONFIG_BPF_LSM
-> +	u32 secid;
-> +#endif
-> +};
-> +
-> +#endif /* ! __LINUX_LSM_BPF_H */
-> diff --git a/include/linux/lsm/selinux.h b/include/linux/lsm/selinux.h
-> new file mode 100644
-> index 000000000000..fd16456b36ac
-> --- /dev/null
-> +++ b/include/linux/lsm/selinux.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Linux Security Module interface to other subsystems.
-> + * SELinux presents a single u32 value which is known as a secid.
-> + */
-> +#ifndef __LINUX_LSM_SELINUX_H
-> +#define __LINUX_LSM_SELINUX_H
-> +#include <linux/types.h>
-> +
-> +struct lsmblob_selinux {
-> +#ifdef CONFIG_SECURITY_SELINUX
-> +	u32 secid;
-> +#endif
-> +};
-> +
-> +#endif /* ! __LINUX_LSM_SELINUX_H */
-> diff --git a/include/linux/lsm/smack.h b/include/linux/lsm/smack.h
-> new file mode 100644
-> index 000000000000..2018f288302f
-> --- /dev/null
-> +++ b/include/linux/lsm/smack.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Linux Security Module interface to other subsystems.
-> + * Smack presents a pointer into the global Smack label list.
-> + */
-> +#ifndef __LINUX_LSM_SMACK_H
-> +#define __LINUX_LSM_SMACK_H
-> +
-> +struct smack_known;
-> +
-> +struct lsmblob_smack {
-> +#ifdef CONFIG_SECURITY_SMACK
-> +	struct smack_known *skp;
-> +#endif
-> +};
-> +
-> +#endif /* ! __LINUX_LSM_SMACK_H */
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 1390f1efb4f0..0057a22137e8 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -34,6 +34,10 @@
->  #include <linux/sockptr.h>
->  #include <linux/bpf.h>
->  #include <uapi/linux/lsm.h>
-> +#include <linux/lsm/selinux.h>
-> +#include <linux/lsm/smack.h>
-> +#include <linux/lsm/apparmor.h>
-> +#include <linux/lsm/bpf.h>
-> =20
->  struct linux_binprm;
->  struct cred;
-> @@ -140,6 +144,22 @@ enum lockdown_reason {
->  	LOCKDOWN_CONFIDENTIALITY_MAX,
->  };
-> =20
-> +/* scaffolding */
-> +struct lsmblob_scaffold {
-> +	u32 secid;
-> +};
-> +
-> +/*
-> + * Data exported by the security modules
-> + */
-> +struct lsmblob {
-> +	struct lsmblob_selinux selinux;
-> +	struct lsmblob_smack smack;
-> +	struct lsmblob_apparmor apparmor;
-> +	struct lsmblob_bpf bpf;
-> +	struct lsmblob_scaffold scaffold;
-> +};
-> +
->  extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1=
-];
->  extern u32 lsm_active_cnt;
->  extern const struct lsm_id *lsm_idlist[];
+--
+Regards
 
+Yafang
