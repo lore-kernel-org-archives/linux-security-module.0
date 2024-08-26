@@ -1,30 +1,30 @@
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CF216EBF6;
-	Mon, 26 Aug 2024 10:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204DF170A11;
+	Mon, 26 Aug 2024 10:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669422; cv=none; b=earGbvlDvU1tstO7p6m7lzZ3eJsHDEvaTpjuwzvF8VJtyJYhN8BPHp8k8qPq3Mb8LCToULzI6PFwlDKR4c38eeO3vRCKeAhP6r+j1vhwoE+Ek4yKKGRW5aZZ1j4SMDbhOGOH34BLdtD2A1iRvdCd2jvyXWkaJcqwoWmel/sYrhU=
+	t=1724669427; cv=none; b=QDvrcZBxNZFMpsf1yhFBgPGnQOOAE3RrNlUmTpYzniSqqFCZ0qR8w1UrkwBtoqW98aYDhYC5El3sWX9i+1YNkaQZCv+LHuS9uJniwMwMgQcRpgp8/GzG7Ef3BeE4SFx3pobwU/spF9uRWY64zAwujxOmpuymHTer1HIeg69LmKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669422; c=relaxed/simple;
-	bh=/z+JnqtbVSHg9W4PWhw3uBaucGxOC9eOIFDgNO4XJMk=;
+	s=arc-20240116; t=1724669427; c=relaxed/simple;
+	bh=aVJOlXiet+dgYttI41OTey+YsAuz9WNL+K8Ty3dGVJU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aHSDbsdTtnu0bw4mCZplgKSr0kI/yxRc2GbJ7LmMsVRnvsSTeC98S5yGEwTOw/YGO79P0HlXIvtSMI75gW+m73xUgb6O3SxG94fUeLOH4DcjhdEm/qSMhN2QmA9U3GPEt7gqEOxL+/InB1xNwH9+LlVnJNTKELUjSnJ2up3zR4Q=
+	 MIME-Version; b=F787m+ETkMUBP64NCDM/TyERn8J2DA1Mq8h4X74K+kCrzAJHTUDFQ3giqyIHru7OuXV2tFwZj5PXv+Nocf2b98z/SDmq7jdbkdkhgpp9V1IZ3W5D/nGWIdV725+IOcq91zT53g2f3pSabADRIIpk5OvXLmWoj8rcrhL0uIXlkTQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbVss003433;
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbVw6003429;
 	Mon, 26 Aug 2024 05:37:31 -0500
 Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbVqG003432;
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbVdv003428;
 	Mon, 26 Aug 2024 05:37:31 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From: Greg Wettstein <greg@enjellic.com>
 To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jmorris@namei.org
-Subject: [PATCH v4 08/14] Add security event description export facility.
-Date: Mon, 26 Aug 2024 05:37:22 -0500
-Message-Id: <20240826103728.3378-9-greg@enjellic.com>
+Subject: [PATCH v4 07/14] Add namespace implementation.
+Date: Mon, 26 Aug 2024 05:37:21 -0500
+Message-Id: <20240826103728.3378-8-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240826103728.3378-1-greg@enjellic.com>
 References: <20240826103728.3378-1-greg@enjellic.com>
@@ -36,499 +36,587 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The functionality for surfacing security model events to an
-external modeling domain is implemented in the export.c file.
+The TSEM LSM has its own 'namespace' implementation for
+restricting the scope of a security model that is independent of
+other resource namespaces but which acts in much the same manner.
 
-ASCII descriptions of the events are presented to a userspace
-trust orchestrator through the following pseudo-files:
+The TSEM control plane is used to signal that a process should
+leave the root security modeling namespace and institute a new
+subordinate modeling namespace.  Process that derive from the
+lead process all contribute security event descriptions to the
+model that is being used to prove the security behavior of the
+namespace.
 
-/sys/kernel/security/tsem/external_tma/N
+Each modeling domain has a unique numeric identifier that is
+implemented as an unsigned 64 bit value that is incremented each
+time a new security modeling namespace is created.  This
+guarantees that every security modeling namespace will have a
+unique identifier associated with it.   The id value of 0 is
+reserved for the root security modeling namespace.
 
-Where N is replaced with security namespace identifier.  This
-identifier is a 64-bit integer value incremented each time a
-namespace is created
+Each modeling domain is designated as either internally or
+externally modeled.  An internally modeled domain has its
+security model implemented by a Trusted Modeling Agent (TMA)
+implementation that is run in the context of the kernel.
 
-The following event types are exported:
+Externally modeled domains have a description of the security
+event exported to a trust orchestrator running in userspace.
+That trust orchestrator has an associated Trusted Modeling Agent
+that implements the root of trust for the security namespace.
 
-export_event
+A process that exports a security event description is scheduled
+away into an interruptible sleep state, with the exception of
+event handlers that are running in atomic context.  The trust
+orchestrator that created the external modeling domain is
+responsible for using the TSEM control plane to wake the process
+up and set the trust status of the process to be trusted or
+untrusted.  The trust orchestrator also has the responsibility of
+addressing the status of a workload that has generated a model
+violating event that occurs in atomic context.
 
-async_event
-
-aggregate_event
-
-log_event
-
-An export_event is used to surface the JSON encoded description
-of a security event to the trust orchestrator responsible for
-managing the security modeling namespace.
-
-The async_event is identical to an export_event but the alternate
-definition is used to indicate to the trust orchestrator that the
-process that generated the event is running in atomic context.
-
-The aggregate_event is used to provide the hardware platform
-measurement value to the trust orchestrator for integration into
-the security model by the associated trusted modeling agent.
-
-A log_event is used to provide descriptions of security events
-that are invoked by untrusted processes.
-
-The /sys/kernel/security/tsem/external_tma/N pseudo-files
-implement a pollable interface that the trust orchestrators can
-use to wait on events.  After placing the event description into
-the device queue a process that is not running in atomic context
-is placed in an interruptible sleep state.
-
-After the TMA completes modeling of the event, the trust
-orchestrator is responsible for using the TSEM control plane to
-wake the process that exported the event and set its status to
-either trusted or untrusted.
-
-Security modeling namespaces, including the root modeling
-namespace, can be configured to run in export only mode.  In this
-mode the security event descriptions are asynchronously exported
-to the trust orchestrator for driving applications such as
-machine learning models or other Host Intrusion Detection
-schemes.
+The namespace exists until the last task running in the context
+of the namespace exits.  The resources associated with the
+namespace are released at that time.
 ---
- security/tsem/export.c | 429 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 429 insertions(+)
- create mode 100644 security/tsem/export.c
+ security/tsem/namespace.c | 530 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 530 insertions(+)
+ create mode 100644 security/tsem/namespace.c
 
-diff --git a/security/tsem/export.c b/security/tsem/export.c
+diff --git a/security/tsem/namespace.c b/security/tsem/namespace.c
 new file mode 100644
-index 000000000000..ce2a1a967a87
+index 000000000000..e265a1cc7d09
 --- /dev/null
-+++ b/security/tsem/export.c
-@@ -0,0 +1,429 @@
++++ b/security/tsem/namespace.c
+@@ -0,0 +1,530 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +
 +/*
 + * Copyright (C) 2024 Enjellic Systems Development, LLC
 + * Author: Dr. Greg Wettstein <greg@enjellic.com>
 + *
-+ * This file implements the export of security relevant events to
-+ * an external trust orchestrator.  The primary TSEM security
-+ * documentation describes the types of events that are exported.
++ * This file is responsible for managing the TSEM namespace
++ * implementation that allows security models to be implemented for
++ * workloads that are isolated from the root security modeling
++ * namespace.  The namespaces that TSEM implements are
++ * non-heirarchical and are at only a single depth below the root
++ * security modeling namespace.
 + *
-+ * The structures used to export each event are provided either by the
-+ * kmem_cache implementation maintained in this file or from a
-+ * magazine of structures that are maintained for events that are
-+ * running in atomic context.
++ * Security modeling namespaces are identified by a 64-bit context
++ * identity with context identity 0 being reserved for the root
++ * security modeling namespace.
 + *
-+ * The events are exported through the following control plane file:
++ * The modeling of a namspace can be done by either an internal
++ * trusted modeling agent implementation or by a trusted modeling
++ * agent implementation associated with an external trust
++ * orchestrator.
 + *
-+ * /sys/kernel/security/tsem/external_tma/N
++ * This file is responsible for creating and setting up a tsem_context
++ * structure that defines the modeling context being used by a
++ * security modeling namespace.  This structure encapsulates
++ * functionality that is generic to the namespace, such as the
++ * cryptographic digest function that is used for security coefficient
++ * mapping.
 + *
-+ * Where N is a filename consisting of the context identifier of the
-+ * security modeling namespace that generated the event.
++ * Information for managing externally modeled namespaces are
++ * maintained in the tsem_context structure while information for
++ * internally modeled namespaces is maintained in the tsem_model
++ * structure.  These structures are populated in the tsem_context
++ * structure depending on whether or not an internal or externally
++ * modeled namespace is being created.
 + *
-+ * A description of the security relevant event being exported is
-+ * encoded in JSON format.  The TSEM ABI documentation has a
-+ * description of the encoding that is used.
++ * A tsem_context structure has a kref structure that is used to track
++ * the number of uses of a context.  This reference count is
++ * incremented each time a task is allocated in the context of a
++ * security modeling namespace and decremented when a task exists.
 + *
-+ * For export events that describe a security event the JSON encoding
-+ * of the event description is provided by the
-+ * tsem_fs_show_trajectory() function.  This is the same function that
-+ * is used to generate the security event descriptions for internally
-+ * modeled namespaces.
-+ *
-+ * Processes that are generating security events in non-atomic context
-+ * are put to sleep and placed on a wait queue to be scheduled back
-+ * into execution by the external trust orchestrator after the event
-+ * is modeled for conformance with the enforced security model.
-+ *
-+ * Processes running in atomic context export the event and continue
-+ * to run.  A trust orchestrator is responsible for determing how to
-+ * address a workload that generates a model violating event, either
-+ * by shutting down the workload or generating a security alert via
-+ * the trust orchestration
-+ *
-+ * Security modeling namespaces, including the root namespace, can
-+ * also be configured for export only mode where the only purpose of
-+ * the export event is to hand a description of the event to
-+ * userspace.  This type of export is handled in the same manner as
-+ * an event being modeled that is running in atomic context.
++ * The release of the last reference to a context causes the structure
++ * and its embedded structures to be released, thus freeing the
++ * resources that have been allocated for modeling the namespace.
 + */
-+
-+#include <linux/seq_file.h>
 +
 +#include "tsem.h"
++#include "nsmgr.h"
 +
-+enum export_type {
-+	AGGREGATE_EVENT = 1,
-+	EXPORT_EVENT,
-+	EXPORT_ASYNC_EVENT,
-+	LOG_EVENT
-+};
++static u64 context_id;
 +
-+struct action_description {
-+	enum export_type type;
-+	enum tsem_action_type action;
-+	char comm[TASK_COMM_LEN];
-+};
-+
-+struct export_event {
++struct context_key {
 +	struct list_head list;
-+	enum export_type type;
-+	union {
-+		u8 *aggregate[HASH_MAX_DIGESTSIZE];
-+		struct tsem_event *ep;
-+		struct action_description action;
-+	} u;
++	u64 context_id;
++	u8 key[HASH_MAX_DIGESTSIZE];
 +};
 +
-+static const char * const tsem_actions[TSEM_ACTION_CNT] = {
-+	"LOG",
-+	"DENY"
-+};
++DEFINE_MUTEX(context_id_mutex);
++LIST_HEAD(context_id_list);
 +
-+static struct kmem_cache *export_cachep;
-+
-+static void refill_export_magazine(struct work_struct *work)
++static void remove_task_key(u64 context_id)
 +{
-+	struct export_event *exp;
-+	struct tsem_external *ext;
-+	struct tsem_work *ws;
++	struct context_key *entry, *tmp_entry;
 +
-+	ws = container_of(work, struct tsem_work, work);
-+	ext = ws->u.ext;
-+
-+	exp = kmem_cache_zalloc(export_cachep, GFP_KERNEL);
-+	if (!exp) {
-+		pr_warn("tsem: Cannot refill event magazine.\n");
-+		return;
-+	}
-+
-+	spin_lock(&ws->u.ext->magazine_lock);
-+	ws->u.ext->magazine[ws->index] = exp;
-+	clear_bit(ws->index, ws->u.ext->magazine_index);
-+
-+	/*
-+	 * The following memory barrier is used to cause the magazine
-+	 * index to be visible after the refill of the cache slot.
-+	 */
-+	smp_mb__after_atomic();
-+	spin_unlock(&ws->u.ext->magazine_lock);
-+}
-+
-+static struct export_event *allocate_export(bool locked)
-+{
-+	unsigned int index;
-+	struct export_event *exp = NULL;
-+	struct tsem_external *ext = tsem_context(current)->external;
-+
-+	if (!locked)
-+		return kmem_cache_zalloc(export_cachep, GFP_KERNEL);
-+
-+	spin_lock(&ext->magazine_lock);
-+	index = find_first_zero_bit(ext->magazine_index, ext->magazine_size);
-+	if (index < ext->magazine_size) {
-+		exp = ext->magazine[index];
-+		ext->ws[index].index = index;
-+		ext->ws[index].u.ext = ext;
-+		set_bit(index, ext->magazine_index);
-+
-+		/*
-+		 * Similar to the issue noted in the refill_event_magazine()
-+		 * function, this barrier is used to cause the consumption
-+		 * of the cache entry to become visible.
-+
-+		 */
-+		smp_mb__after_atomic();
-+	}
-+
-+	spin_unlock(&ext->magazine_lock);
-+
-+	if (exp) {
-+		INIT_WORK(&ext->ws[index].work, refill_export_magazine);
-+		queue_work(system_highpri_wq, &ext->ws[index].work);
-+		return exp;
-+	}
-+
-+	pr_warn("tsem: Fail export allocation comm %s ns %llu cs %u.\n",
-+		current->comm, tsem_context(current)->id, ext->magazine_size);
-+	return NULL;
-+}
-+
-+static void trigger_event(struct tsem_context *ctx)
-+{
-+	ctx->external->have_event = true;
-+	wake_up_interruptible(&ctx->external->wq);
-+}
-+
-+int tsem_export_show(struct seq_file *sf, void *v)
-+{
-+	struct export_event *exp = NULL;
-+	struct tsem_context *ctx = tsem_context(current);
-+
-+	if (!ctx->id && !ctx->external)
-+		return -ENODATA;
-+
-+	spin_lock(&ctx->external->export_lock);
-+	if (!list_empty(&ctx->external->export_list)) {
-+		exp = list_first_entry(&ctx->external->export_list,
-+				       struct export_event, list);
-+		list_del(&exp->list);
-+	}
-+	spin_unlock(&ctx->external->export_lock);
-+
-+	if (!exp)
-+		return -ENODATA;
-+
-+	seq_putc(sf, '{');
-+	tsem_fs_show_field(sf, "export");
-+
-+	switch (exp->type) {
-+	case AGGREGATE_EVENT:
-+		tsem_fs_show_key(sf, "type", "}, ", "%s", "aggregate");
-+		tsem_fs_show_field(sf, "aggregate");
-+		tsem_fs_show_key(sf, "value", "}", "%*phN", tsem_digestsize(),
-+				 exp->u.aggregate);
-+		break;
-+
-+	case EXPORT_EVENT:
-+		tsem_fs_show_key(sf, "type", "}, ", "%s", "event");
-+		tsem_fs_show_trajectory(sf, exp->u.ep);
-+		tsem_event_put(exp->u.ep);
-+		break;
-+
-+	case EXPORT_ASYNC_EVENT:
-+		tsem_fs_show_key(sf, "type", "}, ", "%s", "async_event");
-+		tsem_fs_show_trajectory(sf, exp->u.ep);
-+		tsem_event_put(exp->u.ep);
-+		break;
-+
-+	case LOG_EVENT:
-+		tsem_fs_show_key(sf, "type", "}, ", "%s", "log");
-+		tsem_fs_show_field(sf, "log");
-+		tsem_fs_show_key(sf, "process", ",", "%s", exp->u.action.comm);
-+		tsem_fs_show_key(sf, "event", ",", "%s",
-+				 tsem_names[exp->u.action.type]);
-+		tsem_fs_show_key(sf, "action", "}", "%s",
-+				 tsem_actions[exp->u.action.action]);
-+		break;
-+	}
-+	seq_puts(sf, "}\n");
-+
-+	kmem_cache_free(export_cachep, exp);
-+	return 0;
-+}
-+
-+/**
-+ * tsem_export_event() - Export a security event description.
-+ * @event: The TSEM event type number for which the log event is being
-+ *	   generated.
-+ *
-+ * This function queues for export to an external modeling agent a
-+ * security event description.
-+ *
-+ * Return: This function returns 0 if the export was successful or
-+ *	   an error value if it was not.
-+ */
-+int tsem_export_event(struct tsem_event *ep)
-+{
-+	int retn = 0;
-+	struct tsem_task *task = tsem_task(current);
-+	struct tsem_context *ctx = task->context;
-+	struct export_event *exp;
-+
-+	exp = allocate_export(ep->locked);
-+	if (!exp)
-+		return -ENOMEM;
-+
-+	exp->type = ep->locked ? EXPORT_ASYNC_EVENT : EXPORT_EVENT;
-+	exp->u.ep = ep;
-+	tsem_event_get(ep);
-+
-+	spin_lock(&ctx->external->export_lock);
-+	list_add_tail(&exp->list, &ctx->external->export_list);
-+	spin_unlock(&ctx->external->export_lock);
-+
-+	if (ctx->external->export_only || ep->locked) {
-+		trigger_event(ctx);
-+		return 0;
-+	}
-+
-+	task->trust_status |= TSEM_TASK_TRUST_PENDING;
-+	trigger_event(ctx);
-+
-+	while (task->trust_status & TSEM_TASK_TRUST_PENDING) {
-+		set_current_state(TASK_INTERRUPTIBLE);
-+		schedule();
-+		if (signal_pending(current)) {
-+			if (sigismember(&current->pending.signal, SIGKILL) ||
-+			    sigismember(&current->signal->shared_pending.signal,
-+					SIGKILL))
-+				task->trust_status = TSEM_TASK_UNTRUSTED;
++	list_for_each_entry_safe(entry, tmp_entry, &context_id_list, list) {
++		if (context_id == entry->context_id) {
++			list_del(&entry->list);
++			kfree(entry);
++			break;
 +		}
 +	}
++}
 +
++static int generate_task_key(const char *keystr, u64 context_id,
++			     struct tsem_task *t_ttask,
++			     struct tsem_task *p_ttask)
++{
++	int retn;
++	bool found_key, valid_key = false;
++	unsigned int size = tsem_digestsize();
++	struct context_key *entry;
++
++	while (!valid_key) {
++		get_random_bytes(t_ttask->task_key, size);
++		retn = tsem_ns_event_key(t_ttask->task_key, keystr,
++					 p_ttask->task_key);
++		if (retn)
++			goto done;
++
++		if (list_empty(&context_id_list))
++			break;
++
++		found_key = false;
++		list_for_each_entry(entry, &context_id_list, list) {
++			if (!memcmp(entry->key, p_ttask->task_key, size)) {
++				found_key = true;
++				break;
++			}
++		}
++		if (!found_key)
++			valid_key = true;
++	}
++
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (!entry) {
++		retn = -ENOMEM;
++		goto done;
++	}
++
++	entry->context_id = context_id;
++	memcpy(entry->key, p_ttask->task_key, size);
++	list_add_tail(&entry->list, &context_id_list);
++	retn = 0;
++
++ done:
 +	return retn;
 +}
 +
-+/**
-+ * tsem_export_action() - Exports the action taken to a security violation.
-+ * @event: The TSEM event type number for which the log event is being
-+ *	   generated.
-+ * @locked: A boolean flag indicating whether or not the security hook
-+ *	    being reported on is called in atomic context.
-+ *
-+ * This function queues for export a description of an event that
-+ * was being disciplined.
-+ *
-+ * Return: This function returns 0 if the export was successful or
-+ *	   an error value if it was not.
-+ */
-+int tsem_export_action(enum tsem_event_type event, bool locked)
++static struct tsem_external *allocate_external(u64 context_id,
++					       const char *keystr)
 +{
-+	struct tsem_context *ctx = tsem_context(current);
-+	struct export_event *exp;
-+
-+	exp = allocate_export(locked);
-+	if (!exp) {
-+		pr_warn("tsem: domain %llu failed export allocation.\n",
-+			ctx->id);
-+		return -ENOMEM;
-+	}
-+
-+	exp->type = LOG_EVENT;
-+	exp->u.action.type = event;
-+	exp->u.action.action = ctx->actions[event];
-+	strscpy(exp->u.action.comm, current->comm, sizeof(exp->u.action.comm));
-+
-+	spin_lock(&ctx->external->export_lock);
-+	list_add_tail(&exp->list, &ctx->external->export_list);
-+	spin_unlock(&ctx->external->export_lock);
-+
-+	trigger_event(ctx);
-+
-+	return 0;
-+}
-+
-+/**
-+ * tsem_export_aggregate() - Exports the hardware aggregate value.
-+ *
-+ * This function exports the hardware aggregate measurement for
-+ * the platform on which the TSEM LSM is being run on.
-+ *
-+ * Return: This function returns a value of 0 if the export was
-+ *	   successful or a non-zero return value if the export was
-+ *	   not successful.
-+ */
-+int tsem_export_aggregate(void)
-+{
-+	struct tsem_context *ctx = tsem_context(current);
-+	struct export_event *exp;
-+
-+	exp = kmem_cache_zalloc(export_cachep, GFP_KERNEL);
-+	if (!exp)
-+		return -ENOMEM;
-+
-+	exp->type = AGGREGATE_EVENT;
-+	memcpy(exp->u.aggregate, tsem_trust_aggregate(), tsem_digestsize());
-+
-+	spin_lock(&ctx->external->export_lock);
-+	list_add_tail(&exp->list, &ctx->external->export_list);
-+	spin_unlock(&ctx->external->export_lock);
-+
-+	trigger_event(ctx);
-+
-+	return 0;
-+}
-+
-+/**
-+ * tsem export_magazine_allocate() - Allocate a TSEM export magazine.
-+ * @ctx: A pointer to the external modeling context that the magazine is
-+ *	 to be allocated for.
-+ * @size: The number of entries to be created in the magazine.
-+
-+ * The security event export magazine is an array of export_event
-+ * structures that are used to service security hooks that are called
-+ * in atomic context.  Each external modeling domain has a magazine
-+ * allocated to it and this function allocates and initializes the
-+ * memory structures needed to manage that magazine.
-+
-+ * Return: This function returns a value of zero on success and a negative
-+ *	   error code on failure.
-+ */
-+int tsem_export_magazine_allocate(struct tsem_external *ext, size_t size)
-+{
-+	unsigned int lp;
 +	int retn = -ENOMEM;
++	char bufr[20 + 1];
++	struct tsem_external *external;
++	struct tsem_task *t_ttask = tsem_task(current);
++	struct tsem_task *p_ttask = tsem_task(current->real_parent);
 +
-+	ext->magazine_size = size;
-+
-+	spin_lock_init(&ext->magazine_lock);
-+
-+	ext->magazine_index = bitmap_zalloc(ext->magazine_size, GFP_KERNEL);
-+	if (!ext->magazine_index)
-+		return retn;
-+
-+	ext->magazine = kcalloc(ext->magazine_size, sizeof(*ext->magazine),
-+				GFP_KERNEL);
-+	if (!ext->magazine)
++	external = kzalloc(sizeof(*external), GFP_KERNEL);
++	if (!external)
 +		goto done;
 +
-+	for (lp = 0; lp < ext->magazine_size; ++lp) {
-+		ext->magazine[lp] = kmem_cache_zalloc(export_cachep,
-+						      GFP_KERNEL);
-+		if (!ext->magazine[lp])
-+			goto done;
-+	}
++	retn = generate_task_key(keystr, context_id, t_ttask, p_ttask);
++	if (retn)
++		goto done;
 +
-+	ext->ws = kcalloc(ext->magazine_size, sizeof(*ext->ws), GFP_KERNEL);
-+	if (ext->ws)
++	spin_lock_init(&external->export_lock);
++	INIT_LIST_HEAD(&external->export_list);
++
++	init_waitqueue_head(&external->wq);
++
++	scnprintf(bufr, sizeof(bufr), "%llu", context_id);
++	external->dentry = tsem_fs_create_external(bufr);
++	if (IS_ERR(external->dentry)) {
++		retn = PTR_ERR(external->dentry);
++		external->dentry = NULL;
++	} else
 +		retn = 0;
 +
 + done:
-+	if (retn)
-+		tsem_export_magazine_free(ext);
++	if (retn) {
++		memset(t_ttask->task_key, '\0', tsem_digestsize());
++		memset(p_ttask->task_key, '\0', tsem_digestsize());
++		kfree(external);
++		remove_task_key(context_id);
++		external = ERR_PTR(retn);
++	} else
++		p_ttask->tma_for_ns = context_id;
 +
++	return external;
++}
++
++static struct tsem_external *allocate_export(u64 context_id)
++{
++	int retn = -ENOMEM;
++	char bufr[20 + 1];
++	struct tsem_external *external;
++
++	external = kzalloc(sizeof(*external), GFP_KERNEL);
++	if (!external)
++		goto done;
++
++	spin_lock_init(&external->export_lock);
++	INIT_LIST_HEAD(&external->export_list);
++
++	init_waitqueue_head(&external->wq);
++
++	scnprintf(bufr, sizeof(bufr), "%llu", context_id);
++	external->dentry = tsem_fs_create_external(bufr);
++	if (IS_ERR(external->dentry)) {
++		retn = PTR_ERR(external->dentry);
++		external->dentry = NULL;
++	} else
++		retn = 0;
++
++ done:
++	if (retn) {
++		kfree(external);
++		external = ERR_PTR(retn);
++	}
++	return external;
++}
++
++static void _release_inode_instances(u64 id, struct tsem_inode *tsip)
++{
++	struct tsem_inode_instance *owner, *tmp_owner;
++
++	mutex_lock(&tsip->instance_mutex);
++	list_for_each_entry_safe(owner, tmp_owner, &tsip->instance_list,
++				 list) {
++		if (id == owner->creator) {
++			list_del(&owner->list);
++			kfree(owner);
++		}
++	}
++	mutex_unlock(&tsip->instance_mutex);
++}
++
++static void wq_put(struct work_struct *work)
++{
++	struct tsem_context *ctx;
++	struct tsem_inode_entry *ie, *tmp_ie;
++
++	ctx = container_of(work, struct tsem_context, work);
++
++	mutex_lock(&ctx->inode_mutex);
++	list_for_each_entry_safe(ie, tmp_ie, &ctx->inode_list, list) {
++		list_del(&ie->list);
++		_release_inode_instances(ctx->id, ie->tsip);
++		kfree(ie);
++	}
++	mutex_unlock(&ctx->inode_mutex);
++
++	if (ctx->external) {
++		mutex_lock(&context_id_mutex);
++		remove_task_key(ctx->id);
++		mutex_unlock(&context_id_mutex);
++
++		securityfs_remove(ctx->external->dentry);
++		tsem_export_magazine_free(ctx->external);
++		kfree(ctx->external);
++	} else
++		tsem_model_free(ctx);
++
++	tsem_nsmgr_put(ctx->ops);
++
++	crypto_free_shash(ctx->tfm);
++	tsem_event_magazine_free(ctx);
++	kfree(ctx->digestname);
++	kfree(ctx);
++}
++
++static void ns_free(struct kref *kref)
++{
++	struct tsem_context *ctx;
++
++	ctx = container_of(kref, struct tsem_context, kref);
++
++	INIT_WORK(&ctx->work, wq_put);
++	if (!queue_work(system_wq, &ctx->work))
++		WARN_ON_ONCE(1);
++}
++
++/**
++ * tsem_ns_put() - Release a reference to a modeling context.
++ * @ctx: A pointer to the TMA context for which a reference is
++ *	 to be released.
++ *
++ * This function is called to release a reference to a TMA modeling
++ * domain.  The release of the last reference calls the ns_free()
++ * function that schedules the actual work to release the resources
++ * associated with the namespace to a workqueue.
++ */
++void tsem_ns_put(struct tsem_context *ctx)
++{
++	kref_put(&ctx->kref, ns_free);
++}
++
++/**
++ * tsem_ns_event_key() - Generate TMA authentication key.
++ * @task_key: A pointer to the buffer containing the task identification
++ *	      key that was randomly generated for the modeling domain.
++ * @keystr: A pointer to the buffer containing the TMA authentication key
++ *	    in ASCII hexadecimal form.
++ *
++ * This function generates the authentication key that will be used
++ * to validate a call by a TMA to set the trust status of the process.
++ *
++ * Return: This function returns 0 if the key was properly generated
++ *	   or a negative value if a hashing error occurred.
++ */
++int tsem_ns_event_key(u8 *task_key, const char *keystr, u8 *key)
++{
++	bool retn;
++	u8 tma_key[HASH_MAX_DIGESTSIZE];
++	SHASH_DESC_ON_STACK(shash, tfm);
++
++	retn = hex2bin(tma_key, keystr, tsem_digestsize());
++	if (retn)
++		return -EINVAL;
++
++	shash->tfm = tsem_digest();
++	retn = crypto_shash_init(shash);
++	if (retn)
++		return retn;
++
++	retn = crypto_shash_update(shash, task_key, tsem_digestsize());
++	if (retn)
++		return retn;
++
++	return crypto_shash_finup(shash, tma_key, tsem_digestsize(), key);
++}
++
++static struct crypto_shash *configure_digest(const char *digest,
++					     char **digestname,
++					     u8 *zero_digest)
++{
++	int retn;
++	struct crypto_shash *tfm;
++	SHASH_DESC_ON_STACK(shash, tfm);
++
++	*digestname = kstrdup(digest, GFP_KERNEL);
++	if (!*digestname)
++		return ERR_PTR(-ENOMEM);
++
++	tfm = crypto_alloc_shash(digest, 0, 0);
++	if (IS_ERR(tfm))
++		return tfm;
++
++	shash->tfm = tfm;
++	retn = crypto_shash_digest(shash, NULL, 0, zero_digest);
++	if (retn) {
++		crypto_free_shash(tfm);
++		tfm = NULL;
++	}
++
++	return tfm;
++}
++
++/**
++ * tsem_ns_create() - Create a TSEM modeling namespace.
++ * @type:   The type of namespace being created.
++ * @digest: A null terminated character buffer containing the name
++ *	    of the hash function that is to be used for the modeling
++ *	    domain.
++ * @ns:     The enumeration type that specifies whether the security
++ *	    event descriptions should reference the initial user
++ *	    namespace or the current user namespace.
++ * @key:    A pointer to a null-terminated buffer containing the key
++ *	    that will be used to authenticate the TMA's ability to set
++ *	    the trust status of a process.
++ * @cache_size: The number of entries to be implemented in the
++ *		atomic allocation magazines for the security modeling
++ *		namespace being created.
++ * @ops:    A pointer to the security namespace definitions and
++ *	    operations for the namespace being created.
++ *
++ * This function is used to create either an internally or externally
++ * modeled TSEM namespace.  The type of the namespace to be created
++ * is specified with the tsem_control_type enumeration value.  A
++ * request for an internally model namespace causes a new structure to be
++ * allocated that will hold the description of the security model.
++ * An externally modeled domain will have a control structure allocated
++ * that manages the export of security event descriptions to the
++ * trust orchestrator that is responsible for running the TMA
++ * implementation.
++ *
++ * Return: This function returns 0 if the namespace was created and
++ *	   a negative error value on error.
++ */
++int tsem_ns_create(const enum tsem_control_type type, const char *digest,
++		   const enum tsem_ns_reference ns, const char *key,
++		   unsigned int cache_size, const struct tsem_context_ops *ops)
++{
++	u8 zero_digest[HASH_MAX_DIGESTSIZE];
++	char *use_digest;
++	int retn = -ENOMEM;
++	u64 new_id;
++	struct tsem_task *tsk = tsem_task(current);
++	struct tsem_context *new_ctx;
++	struct tsem_model *model = NULL;
++	struct crypto_shash *tfm;
++
++	tfm = configure_digest(digest, &use_digest, zero_digest);
++	if (IS_ERR(tfm))
++		return PTR_ERR(tfm);
++
++	new_ctx = kzalloc(sizeof(*new_ctx), GFP_KERNEL);
++	if (!new_ctx)
++		return retn;
++
++	mutex_lock(&context_id_mutex);
++	new_id = context_id + 1;
++
++	retn = tsem_event_magazine_allocate(new_ctx, cache_size);
++	if (retn)
++		goto done;
++
++	if (type == TSEM_CONTROL_INTERNAL) {
++		model = tsem_model_allocate(cache_size);
++		if (!model)
++			goto done;
++		new_ctx->model = model;
++	}
++	if (type == TSEM_CONTROL_EXTERNAL) {
++		if (crypto_shash_digestsize(tfm)*2 != strlen(key)) {
++			retn = -EINVAL;
++			goto done;
++		}
++
++		new_ctx->external = allocate_external(new_id, key);
++		if (IS_ERR(new_ctx->external)) {
++			retn = PTR_ERR(new_ctx->external);
++			new_ctx->external = NULL;
++			goto done;
++		}
++
++		retn = tsem_export_magazine_allocate(new_ctx->external,
++						     cache_size);
++		if (retn)
++			goto done;
++	}
++	if (type == TSEM_CONTROL_EXPORT) {
++		new_ctx->external = allocate_export(new_id);
++		if (IS_ERR(new_ctx->external)) {
++			retn = PTR_ERR(new_ctx->external);
++			new_ctx->external = NULL;
++			goto done;
++		}
++
++		retn = tsem_export_magazine_allocate(new_ctx->external,
++						     cache_size);
++		if (retn)
++			goto done;
++
++		new_ctx->external->export_only = true;
++	}
++
++
++	kref_init(&new_ctx->kref);
++
++	new_ctx->id = new_id;
++	new_ctx->tfm = tfm;
++	new_ctx->ops = ops;
++	new_ctx->digestname = use_digest;
++	new_ctx->timestamp = ktime_get_boottime_ns();
++	memcpy(new_ctx->zero_digest, zero_digest,
++	       crypto_shash_digestsize(tfm));
++
++	mutex_init(&new_ctx->inode_mutex);
++	INIT_LIST_HEAD(&new_ctx->inode_list);
++
++	if (ns == TSEM_NS_CURRENT)
++		new_ctx->use_current_ns = true;
++	memcpy(new_ctx->actions, tsk->context->actions,
++	       sizeof(new_ctx->actions));
++	retn = 0;
++
++ done:
++	if (retn) {
++		if (type != TSEM_CONTROL_EXPORT)
++			remove_task_key(new_id);
++		crypto_free_shash(tfm);
++		tsem_event_magazine_free(new_ctx);
++		kfree(use_digest);
++		if (new_ctx->external)
++			tsem_export_magazine_free(new_ctx->external);
++		kfree(new_ctx->external);
++		kfree(new_ctx);
++		kfree(model);
++	} else {
++		context_id = new_id;
++		tsk->context = new_ctx;
++		if (type == TSEM_CONTROL_EXTERNAL)
++			retn = tsem_export_aggregate();
++		if (type == TSEM_CONTROL_INTERNAL)
++			retn = tsem_model_add_aggregate();
++	}
++
++	mutex_unlock(&context_id_mutex);
 +	return retn;
 +}
 +
 +/**
-+ * tsem export_magazine_free() - Releases a TSEM export magazine
-+ * @ctx: A pointer to the external modeling context whose magazine is
-+ *	 to be released.
++ * tsem_ns_export_root() - Configure root namespace for export only modeling.
++ * @magazine_size:  The number of entries to be implemented in the event
++ *		    cache.
 + *
-+ * The function is used to free the memory that was allocated by
-+ * the tsem_export_magazine_allocate() function for an extenral
-+ * modeling context.
++ * This function is called to setup the root security modeling namespace
++ * for the export of security event descriptions in tsem_mode=2
++ * operation.
++ *
++ * Return: This function returns 0 if the setup of the root namespace
++ *	   for export was successul and a negative error value if
++ *	   the setup fails.
 + */
-+void tsem_export_magazine_free(struct tsem_external *ext)
++int tsem_ns_export_root(unsigned int magazine_size)
 +{
-+	unsigned int lp;
++	int retn = -ENOMEM;
++	struct tsem_context *new_ctx;
++	struct tsem_task *tsk = tsem_task(current);
 +
-+	for (lp = 0; lp < ext->magazine_size; ++lp)
-+		kmem_cache_free(export_cachep, ext->magazine[lp]);
++	new_ctx = kzalloc(sizeof(*new_ctx), GFP_KERNEL);
++	if (!new_ctx)
++		return retn;
++	*new_ctx = *tsem_context(current);
 +
-+	bitmap_free(ext->magazine_index);
-+	kfree(ext->ws);
-+	kfree(ext->magazine);
-+}
++	new_ctx->external = allocate_export(tsem_context(current)->id);
++	if (IS_ERR(new_ctx->external)) {
++		retn = PTR_ERR(new_ctx->external);
++		new_ctx->external = NULL;
++		goto done;
++	}
 +
-+/**
-+ * tsem export_cache_init() - Initialize the TSEM export cache.
-+ *
-+ * This function is called by the TSEM initialization function and sets
-+ * up a cache for export structures that are called by security event
-+ * descriptions that are generated in atomix context
-+ *
-+ * Return: This function returns a value of zero on success and a negative
-+ *	   error code on failure.
-+ */
-+int __init tsem_export_cache_init(void)
-+{
++	retn = tsem_export_magazine_allocate(new_ctx->external, magazine_size);
++	if (retn)
++		goto done;
 +
-+	export_cachep = kmem_cache_create("tsem_export_cache",
-+					 sizeof(struct export_event), 0,
-+					 SLAB_PANIC, 0);
-+	if (!export_cachep)
-+		return -ENOMEM;
++	new_ctx->external->export_only = true;
 +
-+	return 0;
++ done:
++	if (retn) {
++		tsem_event_magazine_free(new_ctx);
++		if (new_ctx->external)
++			tsem_export_magazine_free(new_ctx->external);
++		kfree(new_ctx);
++	} else {
++		new_ctx->tfm = tsk->context->tfm;
++		new_ctx->timestamp = ktime_get_boottime_ns();
++		new_ctx->digestname = tsk->context->digestname;
++		memcpy(new_ctx->zero_digest, tsk->context->zero_digest,
++		       crypto_shash_digestsize(tsk->context->tfm));
++
++		mutex_init(&new_ctx->inode_mutex);
++		INIT_LIST_HEAD(&new_ctx->inode_list);
++
++		tsk->context = new_ctx;
++	}
++
++	return retn;
 +}
 -- 
 2.39.1
