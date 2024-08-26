@@ -1,240 +1,251 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBA7183CDA;
-	Mon, 26 Aug 2024 13:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B8C13DBB6
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 13:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678035; cv=none; b=MaE+grUPrJEEJMVMHdk3eOZ9e3pg0cx2Qd8eRUwajSOH+a5KCm0ADGSzJc/I6xLHFXXuQi92163T1AtDskj16pHx7pVNut4ij08+TX+KpL86m4ToCVo90r1sRPIJ8RCX0cgOX8m2AK8XarWPK3WjccDoMeVn9GN6fhd6I0Fa4uE=
+	t=1724679290; cv=none; b=qLcRTJjSYMmlwol7tUtlyLJ4qMUkbRzjLPccODn594/7AdXn515ndc/1U0cZn+yJhkDZ33Vv3G/X+auEnRFC1Ao3Dd7aBoP3wjFxjq/49jdqlPB+eY4OukNyNEM5+axgtMeC5hUMaHpe82eBEV7UCsPtztyhnx60cJFbxVfKz24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678035; c=relaxed/simple;
-	bh=uXndQDCUvnx0Z+cralt3H9P3W4x5FKSzMQBt52DRN90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbdsifLh+Bssk78WABghf0ZWcZlft1NCMo5ruWx+BdIOSp0jjY8SSJa1dGiGVwfjQNe6ylAQodlwTXOtw5aYRqwy/tRgDKjEcuMOxv6dXQUrO75ZzfF0qve0NAmOU1nJr4DtmAMBmjRMUlBg5jedcBn9S1RQjVD3DVyZMvpkYoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2aFi+kO; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724679290; c=relaxed/simple;
+	bh=sj8FjlDhb8FrCpLrXqSGR+t1pa2ldUyCypN0rEuuhdU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ffW3dfIE3V0nP/kV6VLTDN6dPBWdDw1l3t4YVzh8IdCfTfbgWLt/9Qj0169IIRBAYPK0zUBvnsOOFNHr2qovdQ0KLYljhRj1Mq4IbLc05Smy4f381YjFg3hzKRz8mkjuVwqdPlXoIj71rYaYeQ4hPJ9+m+KtS/84bTLvE0vBvik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=R6dTqiCp; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2aFi+kO"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6bf7f4a133aso23042536d6.2;
-        Mon, 26 Aug 2024 06:13:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724678033; x=1725282833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vSwJhEnVRbE/lc1fBQhKHoYSdjJMMB9ydQkFXZg7Wl0=;
-        b=G2aFi+kOco8F7A7ev4siqM77VYWHD1SS+N9xARzk9mXa5Z7M7vt+omxkuFb8DdcgF9
-         zXPRGYJqqrzBLfS1Cas03+0K4qYSKwBBSFD6Bq8nRK5EbZZGNqT1lbQ/l6U/SvIXMV9j
-         zAUTSlgkhhszD4hIHfQENG1EIfyG8eEdi7xPlkqHtO8XHwk4RVSJ1YKHnKCVfbqr2oh0
-         94NBVtwYwm2YjN16k5guBkdrWHDmxpSOXoczIq3F3cCVhfkpkcuLHzyd3pFmkT7n5/8d
-         nKZJUf38vCZMggus3JMlzpoKge0iV5vKealnTfCY5EFgt2EQ4Cr7H76zd3KoY9/DLw/N
-         +WAw==
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="R6dTqiCp"
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 85E6B3F17F
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 13:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1724679284;
+	bh=wa2RMhR78BaHm2VHuwhjPWdcU8rO0GKC1FkCDsO20v8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version;
+	b=R6dTqiCpvPthUknoKTwdd3zWHOun355C+qyHvSvPgOh+Mz9xJlPT24FQu2RmeSX5y
+	 yJMrkAyz4qcEbp1B7BDL2EIlrfMJNHHZ/JH55en9vQOuFDLP2q1+nJ1sNd8+a0OG5e
+	 gStvecpojoLAUSxkbxhCZIi2olPAQAIjHzaixoDy1rDa+1rvAPuk/jXbIYlU3Me5Tb
+	 0/Ko6j3m/QfLqc/uKXzIggkLXIDoaxwKv+twqtOqcjHXBIqfRpSkzvTAjfrcY4a/TT
+	 BQEUmbLoHe7NlDdCRn7h1QdgIexItt4vJ3N1g9RpZrJ99Sj8T0oOf4zFnXrEF20Tti
+	 U0iUkSFHzigHA==
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7143b3025caso4779487b3a.2
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 06:34:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724678033; x=1725282833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vSwJhEnVRbE/lc1fBQhKHoYSdjJMMB9ydQkFXZg7Wl0=;
-        b=gs+3hEUa9f7CI0POgR9qS3NcEjGNtCssdrN7CQtTayV1nVcalh9QryoctEctsPGZ7k
-         TMnab61DgsArompmA7uydEewDQEVdPkhyEpACrVSA3cvM0VnmPbYy40RFSvY2dOjZix0
-         EdNPod7kn1rKtxhD7lQbxdKtF58khDCTdW+g/43qcvg6OXDvoML/AyiuNFITehpqZSAT
-         UN4ly2vaWvFM67ugLDggFVAFAsnj3XuMXyJpYUCBxSOfZkGZFpj7OSGmWjPFV4kOKFQb
-         iYzV9BxXE4c2hXNxHU2OUvNHu/YZu/dTQUcGegzQQkp8GiisvUSsI0NTVD5txLNpIkV0
-         6e7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ClygvLS3mjyt7se83bpFk5tbJjFXdDmm1opJ3v9PS74Ejhon0MuuTu2wAiMKGu+FIFeOQdbbiNK6yco6/saFzwWf@vger.kernel.org, AJvYcCU3p4xPq/zisqMnlMG5IMvdjAz49G7QtULEcD3tBDNl2cYIdDvsqvVN5mRDS4Q/D+T9BQ0+nTIX4e4JT/x7i8eS//EycQeV@vger.kernel.org, AJvYcCULhyl27VLZnSINwLuse687eE1Z/m7G6b14F1vuZoX3UfjlRC1VGsj4tKnVU5lwAM8UpJgpvX4GpMBrHPS8EA==@vger.kernel.org, AJvYcCUsKzmbvn/BTyybb5sUYnPxC7bFDTMi9woll1o+j9UMd+lscRYrkUkRc/R9eogDBA2XpB7rlnFj@vger.kernel.org, AJvYcCVzfSzxNbPxr0OBavXpBvqeNWuUQ2ESoDPgqDH6V7OwMSYs6YPgo18hAXk6YbSQSJwKoNgd@vger.kernel.org, AJvYcCWLflpr/Iba5wwF+1l+jBHBfSCEaqjX5whECpSSKCxyMJdlHDkCoECIltQBoJuSixUsIFAzSQ==@vger.kernel.org, AJvYcCWQK4kkZj9NqeYD7EQUF7bmfLR2E5exJYll96FnCkTFB/FdyajKDqYcLCN5vpsT52zSDxm46O1O3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw65lRZS6hAqREgZ7Haf0AsuxNGiOYB3+S7CQT4ie0ifahAt/LB
-	mF9Mwmduu48rJe9NQh4rLK+cxc9GOcB8FXMX+nO8xnSYy3QJgk8XAd07fYBNa407ZxvtyZoojN5
-	tzehKJK7BU1WH6jxTTMmeYk0CUw4=
-X-Google-Smtp-Source: AGHT+IEMzX23pNCTwUB3oEFnjtXMwQslYwQseElwS5dsww3heTV7mBPQDdBjGem5UqseBxKdUwlhHXFriIKrdvm/EEk=
-X-Received: by 2002:a05:6214:2b82:b0:6bf:78e1:74e7 with SMTP id
- 6a1803df08f44-6c16deb3b70mr122308516d6.50.1724678032741; Mon, 26 Aug 2024
- 06:13:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724679283; x=1725284083;
+        h=mime-version:user-agent:content-transfer-encoding:organization
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wa2RMhR78BaHm2VHuwhjPWdcU8rO0GKC1FkCDsO20v8=;
+        b=wG+NCkqfXwimCGmlz2ar47PYaek5qK1nFE/i0MSeZgZ6zq05zxngDVUZXLfY6eUcwr
+         oOlC7fd2+AHyqdi8z5cmBAuwu5o7U6wC5UbD7yPHjQfWGW0GfDRIJx27/qbh5VmXDQkx
+         1NPtv087Nt63kDD5iEueyNQ+kr8cvS5I/C2kkVGr9kFrbNuReFvrkJKChLHJy4LSK/63
+         NRKtU5E8mSFVycIHpmYvYazZP7g4w5dyK6shjzQSDRUJQCU5JTxilYikpiLQfPRaWdhC
+         Io67PzdTW9b2FhrfKxZT7FqTTfU3ImyREFSkYL+K3BpWKNaAYyLOrYV4ENt/G79I4/F6
+         WZcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWRhMcOCPd++2/TDm8Mtijm9wM/U4mpCzRw9h3++ENOkD4Ds26cg0yd8/Xpsp3jUSIA9EUFfHMAagUov/94wWwfoCc6es=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHyBdty52RynQCAsHaKskkv5gtXG8slwHR0dFMadAMTG4B2Hq9
+	qvFz0Qdt6hYe4OJwFIdSwQx2PwrAElL95dIX6x56HRkt7+s1oCOiI6zkN0Tz6r4RzI4kNWchq9P
+	9Dcjss5KCw7Wv3qiHVJw9YL7YvtJZXZ+aBgx5D/ulGRBgPV6r4lpq0bKqnKZw4KiDvyvBCnzgtg
+	5bcFqUmrbj4fMn4g==
+X-Received: by 2002:a05:6a00:91d0:b0:714:10d2:baae with SMTP id d2e1a72fcca58-714457d3456mr10981277b3a.14.1724679283023;
+        Mon, 26 Aug 2024 06:34:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtDq3UfRYa9zSSlw5VssnEWk7ArsIMz2I5L9LZu9eHCrFMen2AJcPpBmKw28y/w5pZfYNrfQ==
+X-Received: by 2002:a05:6a00:91d0:b0:714:10d2:baae with SMTP id d2e1a72fcca58-714457d3456mr10981241b3a.14.1724679282479;
+        Mon, 26 Aug 2024 06:34:42 -0700 (PDT)
+Received: from ?IPv6:2001:1284:f502:1ed0:dd4a:fefa:915f:4c09? ([2001:1284:f502:1ed0:dd4a:fefa:915f:4c09])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434336fb3sm6966847b3a.201.2024.08.26.06.34.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 06:34:41 -0700 (PDT)
+Message-ID: <63b777bb7b200f26f06211d62e2be8e5e571666d.camel@canonical.com>
+Subject: Re: [PATCH 01/13] LSM: Add the lsmblob data structure.
+From: Georgia Garcia <georgia.garcia@canonical.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com, 
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ mic@digikod.net
+Date: Mon, 26 Aug 2024 10:34:36 -0300
+In-Reply-To: <20240825190048.13289-2-casey@schaufler-ca.com>
+References: <20240825190048.13289-1-casey@schaufler-ca.com>
+	 <20240825190048.13289-2-casey@schaufler-ca.com>
+Organization: Canonical
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817025624.13157-1-laoar.shao@gmail.com> <20240817025624.13157-7-laoar.shao@gmail.com>
- <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre> <ep44ahlsa2krmpjcqrsvoi5vfoesvnvly44icavup7dsfolewm@flnm5rl23diz>
-In-Reply-To: <ep44ahlsa2krmpjcqrsvoi5vfoesvnvly44icavup7dsfolewm@flnm5rl23diz>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 26 Aug 2024 21:13:16 +0800
-Message-ID: <CALOAHbA5VDjRYcoMOMKcLMVR0=ZwTz5FBTvQZExi6w8We9JPHg@mail.gmail.com>
-Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
-To: Alejandro Colomar <alx@kernel.org>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 5:25=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
-wrote:
->
-> Hi Yafang,
->
-> On Sat, Aug 17, 2024 at 10:58:02AM GMT, Alejandro Colomar wrote:
-> > Hi Yafang,
-> >
-> > On Sat, Aug 17, 2024 at 10:56:22AM GMT, Yafang Shao wrote:
-> > > These three functions follow the same pattern. To deduplicate the cod=
-e,
-> > > let's introduce a common helper __kmemdup_nul().
-> > >
-> > > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > Cc: Simon Horman <horms@kernel.org>
-> > > Cc: Matthew Wilcox <willy@infradead.org>
-> > > ---
-> > >  mm/util.c | 67 +++++++++++++++++++++--------------------------------=
---
-> > >  1 file changed, 26 insertions(+), 41 deletions(-)
-> > >
-> > > diff --git a/mm/util.c b/mm/util.c
-> > > index 4542d8a800d9..310c7735c617 100644
-> > > --- a/mm/util.c
-> > > +++ b/mm/util.c
-> > > @@ -45,33 +45,40 @@ void kfree_const(const void *x)
-> > >  EXPORT_SYMBOL(kfree_const);
-> > >
-> > >  /**
-> > > - * kstrdup - allocate space for and copy an existing string
-> > > - * @s: the string to duplicate
-> > > + * __kmemdup_nul - Create a NUL-terminated string from @s, which mig=
-ht be unterminated.
-> > > + * @s: The data to copy
-> > > + * @len: The size of the data, including the null terminator
-> > >   * @gfp: the GFP mask used in the kmalloc() call when allocating mem=
-ory
-> > >   *
-> > > - * Return: newly allocated copy of @s or %NULL in case of error
-> > > + * Return: newly allocated copy of @s with NUL-termination or %NULL =
-in
-> > > + * case of error
-> > >   */
-> > > -noinline
-> > > -char *kstrdup(const char *s, gfp_t gfp)
-> > > +static __always_inline char *__kmemdup_nul(const char *s, size_t len=
-, gfp_t gfp)
-> > >  {
-> > > -   size_t len;
-> > >     char *buf;
-> > >
-> > > -   if (!s)
-> > > +   buf =3D kmalloc_track_caller(len, gfp);
-> > > +   if (!buf)
-> > >             return NULL;
-> > >
-> > > -   len =3D strlen(s) + 1;
-> > > -   buf =3D kmalloc_track_caller(len, gfp);
-> > > -   if (buf) {
-> > > -           memcpy(buf, s, len);
-> > > -           /* During memcpy(), the string might be updated to a new =
-value,
-> > > -            * which could be longer than the string when strlen() is
-> > > -            * called. Therefore, we need to add a null termimator.
-> > > -            */
-> > > -           buf[len - 1] =3D '\0';
-> > > -   }
-> > > +   memcpy(buf, s, len);
-> > > +   /* Ensure the buf is always NUL-terminated, regardless of @s. */
-> > > +   buf[len - 1] =3D '\0';
-> > >     return buf;
-> > >  }
-> > > +
-> > > +/**
-> > > + * kstrdup - allocate space for and copy an existing string
-> > > + * @s: the string to duplicate
-> > > + * @gfp: the GFP mask used in the kmalloc() call when allocating mem=
-ory
-> > > + *
-> > > + * Return: newly allocated copy of @s or %NULL in case of error
-> > > + */
-> > > +noinline
-> > > +char *kstrdup(const char *s, gfp_t gfp)
-> > > +{
-> > > +   return s ? __kmemdup_nul(s, strlen(s) + 1, gfp) : NULL;
-> > > +}
-> > >  EXPORT_SYMBOL(kstrdup);
-> > >
-> > >  /**
-> > > @@ -106,19 +113,7 @@ EXPORT_SYMBOL(kstrdup_const);
-> > >   */
-> > >  char *kstrndup(const char *s, size_t max, gfp_t gfp)
-> > >  {
-> > > -   size_t len;
-> > > -   char *buf;
-> > > -
-> > > -   if (!s)
-> > > -           return NULL;
-> > > -
-> > > -   len =3D strnlen(s, max);
-> > > -   buf =3D kmalloc_track_caller(len+1, gfp);
-> > > -   if (buf) {
-> > > -           memcpy(buf, s, len);
-> > > -           buf[len] =3D '\0';
-> > > -   }
-> > > -   return buf;
-> > > +   return s ? __kmemdup_nul(s, strnlen(s, max) + 1, gfp) : NULL;
-> > >  }
-> > >  EXPORT_SYMBOL(kstrndup);
-> > >
-> > > @@ -192,17 +187,7 @@ EXPORT_SYMBOL(kvmemdup);
-> > >   */
-> > >  char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> > >  {
-> > > -   char *buf;
-> > > -
-> > > -   if (!s)
-> > > -           return NULL;
-> > > -
-> > > -   buf =3D kmalloc_track_caller(len + 1, gfp);
-> > > -   if (buf) {
-> > > -           memcpy(buf, s, len);
-> > > -           buf[len] =3D '\0';
-> > > -   }
-> > > -   return buf;
-> > > +   return s ? __kmemdup_nul(s, len + 1, gfp) : NULL;
-> > >  }
-> > >  EXPORT_SYMBOL(kmemdup_nul);
-> >
-> > I like the idea of the patch, but it's plagued with all those +1 and -1=
-.
-> > I think that's due to a bad choice of value being passed by.  If you
-> > pass the actual length of the string (as suggested in my reply to the
-> > previous patch) you should end up with a cleaner set of APIs.
-> >
-> > The only remaining +1 is for kmalloc_track_caller(), which I ignore wha=
-t
-> > it does.
-> >
-> >       char *
-> >       __kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> >       {
-> >               char *buf;
-> >
-> >               buf =3D kmalloc_track_caller(len + 1, gfp);
-> >               if (!buf)
-> >                       return NULL;
-> >
-> >               strcpy(mempcpy(buf, s, len), "");
->
-> Changing these strcpy(, "") to the usual; =3D'\0' or =3D0, but I'd still
-> recommend the rest of the changes, that is, changing the value passed in
-> len, to remove several +1 and -1s.
->
-> What do you think?
+Hi Casey,
 
-I will update it. Thanks for your suggestion.
+On Sun, 2024-08-25 at 12:00 -0700, Casey Schaufler wrote:
+> When more than one security module is exporting data to audit and
+> networking sub-systems a single 32 bit integer is no longer
+> sufficient to represent the data. Add a structure to be used instead.
+>=20
+> The lsmblob structure definition is intended to keep the LSM
+> specific information private to the individual security modules.
+> The module specific information is included in a new set of
+> header files under include/lsm. Each security module is allowed
+> to define the information included for its use in the lsmblob.
+> SELinux includes a u32 secid. Smack includes a pointer into its
+> global label list. The conditional compilation based on feature
+> inclusion is contained in the include/lsm files.
+>=20
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  include/linux/lsm/apparmor.h | 17 +++++++++++++++++
+>  include/linux/lsm/bpf.h      | 16 ++++++++++++++++
+>  include/linux/lsm/selinux.h  | 16 ++++++++++++++++
+>  include/linux/lsm/smack.h    | 17 +++++++++++++++++
+>  include/linux/security.h     | 20 ++++++++++++++++++++
+>  5 files changed, 86 insertions(+)
+>  create mode 100644 include/linux/lsm/apparmor.h
+>  create mode 100644 include/linux/lsm/bpf.h
+>  create mode 100644 include/linux/lsm/selinux.h
+>  create mode 100644 include/linux/lsm/smack.h
+>=20
+> diff --git a/include/linux/lsm/apparmor.h b/include/linux/lsm/apparmor.h
+> new file mode 100644
+> index 000000000000..8ff1cd899a20
+> --- /dev/null
+> +++ b/include/linux/lsm/apparmor.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Linux Security Module interface to other subsystems.
+> + * AppArmor presents a single u32 value which is known as a secid.
 
---=20
-Regards
-Yafang
+Just a small nitpick: this comment doesn't match the code since it's
+using aa_label instead of a u32 secid.
+
+> + */
+> +#ifndef __LINUX_LSM_APPARMOR_H
+> +#define __LINUX_LSM_APPARMOR_H
+> +
+> +struct aa_label;
+> +
+> +struct lsmblob_apparmor {
+> +#ifdef CONFIG_SECURITY_APPARMOR
+> +	struct aa_label *label;
+> +#endif
+> +};
+> +
+> +#endif /* ! __LINUX_LSM_APPARMOR_H */
+> diff --git a/include/linux/lsm/bpf.h b/include/linux/lsm/bpf.h
+> new file mode 100644
+> index 000000000000..48abdcd82ded
+> --- /dev/null
+> +++ b/include/linux/lsm/bpf.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Linux Security Module interface to other subsystems.
+> + * BPF may present a single u32 value.
+> + */
+> +#ifndef __LINUX_LSM_BPF_H
+> +#define __LINUX_LSM_BPF_H
+> +#include <linux/types.h>
+> +
+> +struct lsmblob_bpf {
+> +#ifdef CONFIG_BPF_LSM
+> +	u32 secid;
+> +#endif
+> +};
+> +
+> +#endif /* ! __LINUX_LSM_BPF_H */
+> diff --git a/include/linux/lsm/selinux.h b/include/linux/lsm/selinux.h
+> new file mode 100644
+> index 000000000000..fd16456b36ac
+> --- /dev/null
+> +++ b/include/linux/lsm/selinux.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Linux Security Module interface to other subsystems.
+> + * SELinux presents a single u32 value which is known as a secid.
+> + */
+> +#ifndef __LINUX_LSM_SELINUX_H
+> +#define __LINUX_LSM_SELINUX_H
+> +#include <linux/types.h>
+> +
+> +struct lsmblob_selinux {
+> +#ifdef CONFIG_SECURITY_SELINUX
+> +	u32 secid;
+> +#endif
+> +};
+> +
+> +#endif /* ! __LINUX_LSM_SELINUX_H */
+> diff --git a/include/linux/lsm/smack.h b/include/linux/lsm/smack.h
+> new file mode 100644
+> index 000000000000..2018f288302f
+> --- /dev/null
+> +++ b/include/linux/lsm/smack.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Linux Security Module interface to other subsystems.
+> + * Smack presents a pointer into the global Smack label list.
+> + */
+> +#ifndef __LINUX_LSM_SMACK_H
+> +#define __LINUX_LSM_SMACK_H
+> +
+> +struct smack_known;
+> +
+> +struct lsmblob_smack {
+> +#ifdef CONFIG_SECURITY_SMACK
+> +	struct smack_known *skp;
+> +#endif
+> +};
+> +
+> +#endif /* ! __LINUX_LSM_SMACK_H */
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 1390f1efb4f0..0057a22137e8 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -34,6 +34,10 @@
+>  #include <linux/sockptr.h>
+>  #include <linux/bpf.h>
+>  #include <uapi/linux/lsm.h>
+> +#include <linux/lsm/selinux.h>
+> +#include <linux/lsm/smack.h>
+> +#include <linux/lsm/apparmor.h>
+> +#include <linux/lsm/bpf.h>
+> =20
+>  struct linux_binprm;
+>  struct cred;
+> @@ -140,6 +144,22 @@ enum lockdown_reason {
+>  	LOCKDOWN_CONFIDENTIALITY_MAX,
+>  };
+> =20
+> +/* scaffolding */
+> +struct lsmblob_scaffold {
+> +	u32 secid;
+> +};
+> +
+> +/*
+> + * Data exported by the security modules
+> + */
+> +struct lsmblob {
+> +	struct lsmblob_selinux selinux;
+> +	struct lsmblob_smack smack;
+> +	struct lsmblob_apparmor apparmor;
+> +	struct lsmblob_bpf bpf;
+> +	struct lsmblob_scaffold scaffold;
+> +};
+> +
+>  extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1=
+];
+>  extern u32 lsm_active_cnt;
+>  extern const struct lsm_id *lsm_idlist[];
+
