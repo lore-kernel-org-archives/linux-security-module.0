@@ -1,124 +1,108 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A66197548
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 16:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA2E1946BB;
+	Mon, 26 Aug 2024 16:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690916; cv=none; b=YJeVDxpNttplHk1bSpF+fjtWPog1ScKPPojmQJNTI9saFR/BytHxGkpNFJvnfweJjXS3zB3Z2NmEp8ysGxPR+TfI/fxBk1kto9apikSqpxsLvBAq7p/1N3Q0PtYecSvDnL5cw9UeD+Sme0XWBKNFbXM/6rZbaAEvvxgBQkmv25w=
+	t=1724691028; cv=none; b=KaeFelZOoaD3Rh0ehgBozAXpxG7jgTko/gYpA1pi2mXz/tJmMyTdg8jBOjN/tCV7hMg1dYAwa2xLA6eV+E7low3oC9+lFmSjWB0AUPHX25wQlyj/CWa05jvhvVDRmjllMPiUN4iiZHqJPIdgX5UtSnta8x6uf8rDrexfZRfypYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690916; c=relaxed/simple;
-	bh=PARDisZ2Koi33bFaMpmqQpE48LzRtUF2GFwOC6ibJQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHUuEFwEYiQoAC3cD/MLoHr+XJbYm0wC3SqTEHKrnxmXnZ22yOJZ1csnsiID67Y8rFSMxCD8gn+njWvPiE0eL1rvNETM1K8DbjzxKHFOtHM3KUtbUfUpAVxn6WwixMdUftkWG6TEp5asil+qkkugyYT8NyNeVmn5ywauBlMehGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dfYIma/G; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1724691028; c=relaxed/simple;
+	bh=Z+nM13pnLmDsTBNfVDKA+YqeuZzbs5Ifw349S3oky7Y=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=h8rhIWOvvSZcZ5xXYK85NAkzeX76TsWS9GdkQH0N6KWZtj93ZMHgLpbr1kjS3aGjQtC5EIcIx8GzSI+vsHLAZaa2Lx8hEqDKmgKFd74SoOWVaKEVAjs9dm/NDujFsA0B+vp+GqnzHs1IGmwA3+mduJwsd+6qLf5K3fFcyQp2TW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q45WC5lK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dfYIma/G"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8679f534c3so511201966b.0
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 09:48:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724690911; x=1725295711; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2US3quHF4FGj36QLp9HjPVeknmBzXwXeyiUwSXj0dY=;
-        b=dfYIma/GXDlVoz1XNhWVmSJmBl2sz4C2bhp203SeSJVyz/bAh5j8ziky/R6JsUC0/c
-         nqKf+sZnTZLBxc6xhJm/J98IYVjHeO8YxCIRvTKE3jiyabnTSkRX587heqK+BVEY+ReP
-         UsbQkO3YMHuR3eAz6QRRmr+NZc/wl2oo5Pqe9CQM6twWH+QMmb6DnfQrRVep7opVr89d
-         HinC/s/Ah7IK5F/gCqruXVBWfbQ8+Wa8/4Ve2iQwjXzeWn2so1g6pA/eBsoEuyXRn3PH
-         ohThMKJWR81b9/q6lySsEezTq9HZpEcqSRclEBLQu+WqZIDPA4T+M2015rsalqgTjjGR
-         6m1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724690911; x=1725295711;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p2US3quHF4FGj36QLp9HjPVeknmBzXwXeyiUwSXj0dY=;
-        b=i8Y1UVhTJ+H0b4EN4JmIvnOl99uUO45pXtUW8nz2Ns6G21laKy5l8LV3ZZjGSN/t+h
-         /2ERm37CTQa8PuSo5TffBqfwSywuPcR2ieD3a6Z08ZbiZyrB0+T7aYcuP4QccxEd1IUg
-         l0c+b5nfvW0/S3Q0IHPfffBVxGlo9FBDut19dHVAr9jZQqS71hAmPxasJygD48ugmaR0
-         dQswp26js6DkBbhKQANLKnN2srcMa/SuASFmTCDHvRg/UQ4WVgR7iadyrzuwqS0YzbRR
-         M1bXOH6XRERAtXPxQ+7A92DhMTjlmGsh4qEzB6IIcGJAPLnoCFze9e7MMpwxHaCDsaL+
-         dIbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+9SPfaQD640RKnI4hCX4p00iqzjFFaHtA1TvnwDxdN5iPUDqOWusGIzHY9MwQgGIaFHenn1O3lVh10SSB6ij/01ReYZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo8Tb9rXsyW1E2E7lOuS2l3/aVLua5sTQ0L8Ffc0yKJZtcjiTl
-	DsdgXQ/by782NwqePOpHzzwjNpTyHAwhd83SJ9pLtjWvOiDY0Dt0FK0sO7tlcSU=
-X-Google-Smtp-Source: AGHT+IG4RhYrAmiaKC8by+8hzzm8ayqsOf70yu/Jj7guOgp1pyGhZgvl9T107oQfHo/SuMj/vaWTvA==
-X-Received: by 2002:a17:907:9816:b0:a7a:9f0f:ab2c with SMTP id a640c23a62f3a-a86a52c71f9mr684278266b.29.1724690911285;
-        Mon, 26 Aug 2024 09:48:31 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a869cdd4ef4sm567776066b.166.2024.08.26.09.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 09:48:31 -0700 (PDT)
-Date: Mon, 26 Aug 2024 18:48:30 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <Zsyx3m-J1U4XF5bX@tiehlicka>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <Zsx_C0QuecO1C0dB@casper.infradead.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q45WC5lK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397DAC52FC5;
+	Mon, 26 Aug 2024 16:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724691028;
+	bh=Z+nM13pnLmDsTBNfVDKA+YqeuZzbs5Ifw349S3oky7Y=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Q45WC5lKg/LkyteFnRbpI1iVwrc9eTD/Da68nGGe2YlnxLncY/jJgOsVR9s3Titvd
+	 dBgkZNU1Rqw4anGmADeZa5HXJuVBAfr6oMEf6Xt5OhVrePmo3B8G4k53Sk2NiRloQB
+	 ISL+3I8b6r3AGuf2gw+HmJnL4NgRx4YOmnrQ4ywPT+JczgW+zKi53lxtvc0ysLApRZ
+	 upSfKB+5eyy9Wnxntr1Ryfs4oCeUgPQ5+BjVVBpb9cbnBU2kFiULsTV5g+aKNM0RR7
+	 PYQ0zCLA1X0W9EQOIn5lgEOi/Lg9lDUfBldl120A973U/vmbbqnWAYmKVA63ccJr9J
+	 KQg6V3VRGYL7w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710CA3822D6D;
+	Mon, 26 Aug 2024 16:50:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zsx_C0QuecO1C0dB@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 00/13] net: header and core spelling corrections
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172469102801.67399.18155018116632832948.git-patchwork-notify@kernel.org>
+Date: Mon, 26 Aug 2024 16:50:28 +0000
+References: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
+In-Reply-To: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
+To: Simon Horman <horms@kernel.org>
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, wintera@linux.ibm.com,
+ twinkler@linux.ibm.com, dsahern@kernel.org, jv@jvosburgh.net,
+ andy@greyhouse.net, quic_subashab@quicinc.com, quic_stranche@quicinc.com,
+ paul@paul-moore.com, krzk@kernel.org, jhs@mojatatu.com,
+ xiyou.wangcong@gmail.com, jiri@resnulli.us, marcelo.leitner@gmail.com,
+ lucien.xin@gmail.com, ms@dev.tdt.de, netdev@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-sctp@vger.kernel.org, linux-x25@vger.kernel.org
 
-On Mon 26-08-24 14:11:39, Matthew Wilcox wrote:
-> On Mon, Aug 26, 2024 at 10:47:12AM +0200, Michal Hocko wrote:
-> > @@ -258,12 +258,10 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
-> >   */
-> >  static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
-> >  {
-> > -	struct bch_inode_info *inode =
-> > -		memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN,
-> > -				  __bch2_new_inode(trans->c));
-> > +	struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWARN | GFP_NOWAIT);
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 22 Aug 2024 13:57:21 +0100 you wrote:
+> This patchset addresses a number of spelling errors in comments in
+> Networking files under include/, and files in net/core/. Spelling
+> problems are as flagged by codespell.
 > 
-> GFP_NOWAIT include GFP_NOWARN these days (since 16f5dfbc851b)
-
-Ohh, I was not aware of that. I will drop NOWARN then.
-
-> > +++ b/fs/inode.c
-> > @@ -153,7 +153,7 @@ static int no_open(struct inode *inode, struct file *file)
-> >   * These are initializations that need to be done on every inode
-> >   * allocation as the fields are not initialised by slab allocation.
-> >   */
-> > -int inode_init_always(struct super_block *sb, struct inode *inode)
-> > +int inode_init_always(struct super_block *sb, struct inode *inode, gfp_t gfp)
+> It aims to provide patches that can be accepted directly into net-next.
+> And splits patches up based on maintainer boundaries: many things
+> feed directly into net-next. This is a complex process and I apologise
+> for any errors.
 > 
-> Did you send the right version of this patch?  There should be a "_gfp"
-> appended to this function name.
+> [...]
 
-yes, screw up on my end.
+Here is the summary with links:
+  - [net-next,01/13] packet: Correct spelling in if_packet.h
+    https://git.kernel.org/netdev/net-next/c/d24dac8eb811
+  - [net-next,02/13] s390/iucv: Correct spelling in iucv.h
+    https://git.kernel.org/netdev/net-next/c/c34944603248
+  - [net-next,03/13] ip_tunnel: Correct spelling in ip_tunnels.h
+    https://git.kernel.org/netdev/net-next/c/d0193b167f27
+  - [net-next,04/13] ipv6: Correct spelling in ipv6.h
+    https://git.kernel.org/netdev/net-next/c/507285b7f9b2
+  - [net-next,05/13] bonding: Correct spelling in headers
+    https://git.kernel.org/netdev/net-next/c/e8ac2dba93ea
+  - [net-next,06/13] net: qualcomm: rmnet: Correct spelling in if_rmnet.h
+    https://git.kernel.org/netdev/net-next/c/19f1f11c9a8e
+  - [net-next,07/13] netlabel: Correct spelling in netlabel.h
+    https://git.kernel.org/netdev/net-next/c/6899c2549cf7
+  - [net-next,08/13] NFC: Correct spelling in headers
+    https://git.kernel.org/netdev/net-next/c/10d0749a38c3
+  - [net-next,09/13] net: sched: Correct spelling in headers
+    https://git.kernel.org/netdev/net-next/c/a7a45f02a093
+  - [net-next,10/13] sctp: Correct spelling in headers
+    https://git.kernel.org/netdev/net-next/c/7f47fcea8c6b
+  - [net-next,11/13] x25: Correct spelling in x25.h
+    https://git.kernel.org/netdev/net-next/c/01d86846a5a5
+  - [net-next,12/13] net: Correct spelling in headers
+    https://git.kernel.org/netdev/net-next/c/70d0bb45fae8
+  - [net-next,13/13] net: Correct spelling in net/core
+    https://git.kernel.org/netdev/net-next/c/a8c924e98738
 
-> > +++ b/include/linux/fs.h
-> > @@ -3027,7 +3027,12 @@ extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
-> >  
-> >  extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
-> >  
-> > -extern int inode_init_always(struct super_block *, struct inode *);
-> > +extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
-> 
-> You can drop the "extern" while you're changing this line.
-
-OK, I can. I just kept the usual style in this file.
-
-Thanks!
+You are awesome, thank you!
 -- 
-Michal Hocko
-SUSE Labs
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
