@@ -1,30 +1,30 @@
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5539A39ACC;
-	Mon, 26 Aug 2024 10:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7223C152160;
+	Mon, 26 Aug 2024 10:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669398; cv=none; b=IAoa/yaupTOAX8ONdfCq9aa4R41hhwybx0KEmb1Rne4xZYXX/cphof+cv09uVx+UhWo08eTDpflHLfTRL6KeU2AquXDDQD846EDidvsXGZ4k805YdfPtYFbHeePUGZBTvPVRZvH83wWUTniHGFZrZYz+NJEh552BK6JWh07tNq0=
+	t=1724669401; cv=none; b=aFjKIYjde8Y4jZSo+krpncui0bd3fGHboPvvxlfgDPTICJ4WY2AbPha5NnvgqYH6kcLyf1AGmQkt0z3AaJ+BhDl08iycF3g3vaZ0GSXcHuo08546z2pGJb7jSFAbJhOA1szk7zdogzc0gJVH20tphECl8weYCsrjgRDOLigMHkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669398; c=relaxed/simple;
-	bh=rbU4Y17++Pv9h75lBxpFvTz5+XkNgT7DcwoBJKeq984=;
+	s=arc-20240116; t=1724669401; c=relaxed/simple;
+	bh=H1sKbPQmQY8ikHWY6DyWg8kD7vsi9dQ7844hbzNVmHo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iIYf0OhMIcB5Ud78DMjVdhvkCrAmoQceKdzUakvvECQ7FPRBo7BIWr+HVhy9vFaNeUcubAPORpshNeX9WAGuKS2xq6iXI3q/N6MD7MIjSVFPq5RZv0oh1zRPwieptaZRPxhrTl87E6X+48uHSeOXID9zlIR+G3t32vK7J4WCyTE=
+	 MIME-Version; b=j6hsOKbKRhHDA0fDyK9hcitRvvvxCPKIyM6SgZZCOrOs8oiHbWBXQWj6EggR+U72GguaJdoyol9petI55kfE9JvqlmfiP8Qvk7VrLl5Dbul5dZbCZxUsr+jT6faJZ8FbtKhv56h0WJrfXqaf5XKn9O4oPh/at1jhLYSNyladIKk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbU7q003405;
-	Mon, 26 Aug 2024 05:37:30 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbVZa003449;
+	Mon, 26 Aug 2024 05:37:31 -0500
 Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbUsB003404;
-	Mon, 26 Aug 2024 05:37:30 -0500
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbVEM003448;
+	Mon, 26 Aug 2024 05:37:31 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From: Greg Wettstein <greg@enjellic.com>
 To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jmorris@namei.org
-Subject: [PATCH v4 01/14] Update MAINTAINERS file.
-Date: Mon, 26 Aug 2024 05:37:15 -0500
-Message-Id: <20240826103728.3378-2-greg@enjellic.com>
+Subject: [PATCH v4 12/14] Implement configuration and methods for default model.
+Date: Mon, 26 Aug 2024 05:37:26 -0500
+Message-Id: <20240826103728.3378-13-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240826103728.3378-1-greg@enjellic.com>
 References: <20240826103728.3378-1-greg@enjellic.com>
@@ -36,29 +36,59 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+The implementation of a TSEM model consists of three separate
+components:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 958e935449e5..f4a5772ea255 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22824,6 +22824,14 @@ S:	Maintained
- F:	Documentation/tee/ts-tee.rst
- F:	drivers/tee/tstee/
- 
-+TSEM SECURITY MODULE
-+M:	Greg Wettstein <greg@enjellic.com>
-+S:	Maintained
-+L:	linux-security-module@vger.kernel.org
-+F:	Documentation/admin-guide/LSM/tsem.rst
-+F:	Documentation/ABI/testing/tsem
-+F:	security/tsem/
+- bypasses array
+
+- event initialization method
+
+- event coefficient mapping method.
+
+Boolean true values in the bypasses array is used to indicate
+that the event should be completely bypassed.
+
+The event initialization initializes the event description
+structure using the characteristics of the event.
+
+The event coefficient mapping method is responsible for
+generating the security event coefficient from the event
+description structure.
+
+The model0.c file provides the model components for the default
+deterministic model implemented by the kernel.
+---
+ security/tsem/model0.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 security/tsem/model0.c
+
+diff --git a/security/tsem/model0.c b/security/tsem/model0.c
+new file mode 100644
+index 000000000000..347ed8584842
+--- /dev/null
++++ b/security/tsem/model0.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +
- TTY LAYER AND SERIAL DRIVERS
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- M:	Jiri Slaby <jirislaby@kernel.org>
++/*
++ * Copyright (C) 2024 Enjellic Systems Development, LLC
++ * Author: Dr. Greg Wettstein <greg@enjellic.com>
++ *
++ * This file contains methods and definitions for the 'model0'
++ * security model implementation.  This is the default model that
++ * TSEM implements.
++ */
++
++#include "tsem.h"
++
++static bool event_bypasses[TSEM_EVENT_CNT];
++
++const struct tsem_context_ops tsem_model0_ops = {
++	.name = "model0",
++	.bypasses = event_bypasses,
++	.init = tsem_event_generate,
++	.map = tsem_map_event
++};
 -- 
 2.39.1
 
