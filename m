@@ -1,125 +1,118 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE85E13C8EA;
-	Mon, 26 Aug 2024 21:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD55D19D07D
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 22:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707477; cv=none; b=WS9Kzm+cDsUqWhmjafrMj2zYn6wWqzvlyTUtSgJUQQBzgOkbNtlj+9XVAnp33ppro2lq0GUAO9UH3jXFn7vrtykDSHRZe5sTYrADAzBOgW/X1Aw7W+SnK5fAWN+e1l+i3+bN6beDGNHWYo6ax/wCfCGuEXi7X/vWTzIsgU1fuOY=
+	t=1724711359; cv=none; b=SUVj4NQ1ECf6C/mScZ5a1JMySH46aPaZ+nCQNwSfxgCDrFpoHzM7kZMzVeoXtgw0PhAvmJObR0bHrB1e829ELyBr8cf9OBxSZ6x3q60xleds6cNoycwOWrOzT9u/JA+rZz6T9tlddj3yGOeEUANKhW7PaKVL6IqdKQ3rQDHGhLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707477; c=relaxed/simple;
-	bh=J1sh0JGMwBFt+RuTIyEsiQH6h/297F/9Mo1VkS8wDQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUi5NVPf7TTosHn5NPA86BwgrjyFntLFyov5yII/r+M6WOdmLouqKsT5x4Ut0bAxqGTP/Evgabo6ZTA05uH3LYXKEtP9A96h7sT6j3sLtgD1KOmbB9lQ8PYQCejB+HDEyC1dCCo6jSOMT3BHixrffF/EflHISZX74RnIxsQUtmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iAtXZjz3; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1724711359; c=relaxed/simple;
+	bh=NSc4Okt+VC5KhhcI4GjwMNyiCG8ff6DKOAXyZDKWKwg=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=hfxxX2RtGzmIH+7IIWFQlEJyl6nQzMeVMP2eieyDTRnAWSvNkcAdoyaLLUo6VHTMlaDThWBmsTnDSwQCcQ7hcjic75e6sIKXVH6VMpf+yGA03kAQJ8djD5jzkAunuZ03jrsqyFA+YQkUtKUgYHv+fF3mi3ZP6eRKL0HPte7jOvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WJZ3qFsE; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iAtXZjz3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724707476; x=1756243476;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J1sh0JGMwBFt+RuTIyEsiQH6h/297F/9Mo1VkS8wDQ0=;
-  b=iAtXZjz3EOd1S6HLYg6PCD4zCWiYtDtpuLzYG0mTCDgAB8cwljRQTQvx
-   hi3hdqrUEsMNZhMplRoSEsor6FJsnBmCetgJlj65ljmbEYJCi3PUpmYkR
-   cMzYI1G+j8X7GgVLIGWSTYXEpLYLldOS28/8oEO53if59fbhCpVb4ZNd8
-   0ob2TQozPNkPhM3XBsW07/O1Y+3Zh5h9urwko/Od8b6nRxdFksmZnzgbp
-   R0D47GfxDZ0fbfvzlgYXlSLzRrNnhsfG66sBvgH0o08TY9pBOhH0yz01w
-   VcicIbliM2bEorcy3sVLEuXU/Hyk2DX1zJv7Wy9Bk0wn6EmgImbIO1yLV
-   w==;
-X-CSE-ConnectionGUID: g6QesiqmSvynN0KJifAGMg==
-X-CSE-MsgGUID: yEwqeXOoTQOmmtV7XmKPoA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23337144"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="23337144"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 14:24:35 -0700
-X-CSE-ConnectionGUID: /Epz5TVJRmKWkjh2VxUsjg==
-X-CSE-MsgGUID: Dct1gWmaT0eV6Pz1/y1SBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="93369759"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 26 Aug 2024 14:24:31 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sihCO-000Hc2-0L;
-	Mon, 26 Aug 2024 21:24:28 +0000
-Date: Tue, 27 Aug 2024 05:24:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
-	keescook@chromium.org, john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org, mic@digikod.net,
-	linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 07/13] LSM: Use lsmblob in security_current_getsecid
-Message-ID: <202408270512.9cZ78Eog-lkp@intel.com>
-References: <20240825190048.13289-8-casey@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WJZ3qFsE"
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6bf7b48d2feso26341846d6.0
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 15:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724711356; x=1725316156; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3N09dlUeLDWnGTOZ4n6d5/3QJlaJZT1Youw+FJ2C4po=;
+        b=WJZ3qFsEJlCOjjVv70lDYOGCojujLiMZFHAc55qUEIpvOwN6zAUz/oyCLv6nTn2gva
+         v9I8lO2w20KUj6tsgMpBIWCggmiswdcrYqhr0RNXSoVFhvtiWmf0IjZk1JMAjhVBVShK
+         4E4FUzp1y9VGo6ylEKDpsUIQEntHQuD8OBsKgg5fCDnlr2nm4YZH8TK19Pk7owAwU3GY
+         6prh89062RpF4CDYIyQ1T92O15fGO1y0A8/mf5aDeGHYyV81+FHGrdRHHrRg+9gNa6Km
+         gFZc/+NKvrIqRf2wOewBb6uIDACZnnDD7O3bKHBEhqJMQgAFWRUFxqEvBGl+a5PrSlRa
+         JaJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724711356; x=1725316156;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3N09dlUeLDWnGTOZ4n6d5/3QJlaJZT1Youw+FJ2C4po=;
+        b=XciccuPmWCACzC3VO8WSg/iHQs3nHXub/57sEVcRfihPePSGQQ2FkF+OV+9p7Umnvy
+         v7wz3v+mwVYxURQfaEUn5Z7VUpV8AMIWuFIxh4dWvx2frv08r9dzOo9xHdoy3ywcIskz
+         QlLPrEqQOWC1ApQeryonrnOgtURnI3gUVE38g7CeDZcqOl0RoV/T+hmoOdk8LUG+RVAw
+         gLLvGrg9gqeCln7b/Laq2V3qDS7RxirNLXye66C3hVYd3nQ/kcfCr3mJMEA+H/LjVHyw
+         7PV14C8qaLLwhQLJ3axBLkG2VvuzNMOCCwZxvEIAeV8yBneqmxMkQC0T+TlxFyxCD6oU
+         /10g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0iFlexp2hlDIzgVHwAdq4xmdTJwL1j2TEbNV6lx94FnrrTjYtbJtPMNPbBEST4HsA+78+fE415ZFHaVGhoes+R+8cdd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGZGAGgEOZcz45WXrfXelE63rGvkj9hEVkpQdm29DR/vYhcggT
+	rjncvYOLOSX9/ZC2Rwsq0s1wsUxmbruvrgScUbrNnRCOH4EcCMJjASP52BGowA==
+X-Google-Smtp-Source: AGHT+IFQn+z4i4PvF96htJxu0pzdb+NNPCs7QRfIEw0WlBnCJXtMyEadU8DR0+0TjKzAkjXI62fJtA==
+X-Received: by 2002:a05:6214:3c98:b0:6bf:95a7:e230 with SMTP id 6a1803df08f44-6c32b8094b0mr11868556d6.36.1724711355689;
+        Mon, 26 Aug 2024 15:29:15 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d1d27bsm50635416d6.7.2024.08.26.15.29.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 15:29:15 -0700 (PDT)
+Date: Mon, 26 Aug 2024 18:29:14 -0400
+Message-ID: <a769ce9fc949c03f91a4ee1d1cc6ebf6@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240825190048.13289-8-casey@schaufler-ca.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>, netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org
+Cc: Xin Long <lucien.xin@gmail.com>, Vlad Yasevich <vyasevich@gmail.com>, Neil Horman <nhorman@tuxdriver.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, linux-sctp@vger.kernel.org, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sctp: fix association labeling in the duplicate  COOKIE-ECHO case
+References: <20240826130711.141271-1-omosnace@redhat.com>
+In-Reply-To: <20240826130711.141271-1-omosnace@redhat.com>
 
-Hi Casey,
+On Aug 26, 2024 Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> 
+> sctp_sf_do_5_2_4_dupcook() currently calls security_sctp_assoc_request()
+> on new_asoc, but as it turns out, this association is always discarded
+> and the LSM labels never get into the final association (asoc).
+> 
+> This can be reproduced by having two SCTP endpoints try to initiate an
+> association with each other at approximately the same time and then peel
+> off the association into a new socket, which exposes the unitialized
+> labels and triggers SELinux denials.
+> 
+> Fix it by calling security_sctp_assoc_request() on asoc instead of
+> new_asoc. Xin Long also suggested limit calling the hook only to cases
+> A, B, and D, since in cases C and E the COOKIE ECHO chunk is discarded
+> and the association doesn't enter the ESTABLISHED state, so rectify that
+> as well.
+> 
+> One related caveat with SELinux and peer labeling: When an SCTP
+> connection is set up simultaneously in this way, we will end up with an
+> association that is initialized with security_sctp_assoc_request() on
+> both sides, so the MLS component of the security context of the
+> association will get swapped between the peers, instead of just one side
+> setting it to the other's MLS component. However, at that point
+> security_sctp_assoc_request() had already been called on both sides in
+> sctp_sf_do_unexpected_init() (on a temporary association) and thus if
+> the exchange didn't fail before due to MLS, it won't fail now either
+> (most likely both endpoints have the same MLS range).
+> 
+> Tested by:
+>  - reproducer from https://src.fedoraproject.org/tests/selinux/pull-request/530
+>  - selinux-testsuite (https://github.com/SELinuxProject/selinux-testsuite/)
+>  - sctp-tests (https://github.com/sctp/sctp-tests) - no tests failed
+>    that wouldn't fail also without the patch applied
+> 
+> Fixes: c081d53f97a1 ("security: pass asoc to sctp_assoc_request and sctp_sk_clone")
+> Suggested-by: Xin Long <lucien.xin@gmail.com>
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> Acked-by: Xin Long <lucien.xin@gmail.com>
+> ---
+>  net/sctp/sm_statefuns.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
 
-kernel test robot noticed the following build warnings:
+Acked-by: Paul Moore <paul@paul-moore.com> (LSM/SELinux)
 
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on zohar-integrity/next-integrity linus/master pcmoore-audit/next v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Add-the-lsmblob-data-structure/20240826-170520
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-patch link:    https://lore.kernel.org/r/20240825190048.13289-8-casey%40schaufler-ca.com
-patch subject: [PATCH 07/13] LSM: Use lsmblob in security_current_getsecid
-config: arc-randconfig-001-20240827 (https://download.01.org/0day-ci/archive/20240827/202408270512.9cZ78Eog-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270512.9cZ78Eog-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408270512.9cZ78Eog-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> security/smack/smack_lsm.c:2265: warning: Function parameter or struct member 'blob' not described in 'smack_task_getlsmblob_obj'
->> security/smack/smack_lsm.c:2265: warning: Excess function parameter 'secid' description in 'smack_task_getlsmblob_obj'
-
-
-vim +2265 security/smack/smack_lsm.c
-
-1fb057dcde11b35 Paul Moore      2021-02-19  2255  
-1fb057dcde11b35 Paul Moore      2021-02-19  2256  /**
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2257   * smack_task_getlsmblob_obj - get the objective data of the task
-1fb057dcde11b35 Paul Moore      2021-02-19  2258   * @p: the task
-1fb057dcde11b35 Paul Moore      2021-02-19  2259   * @secid: where to put the result
-1fb057dcde11b35 Paul Moore      2021-02-19  2260   *
-1fb057dcde11b35 Paul Moore      2021-02-19  2261   * Sets the secid to contain a u32 version of the task's objective smack label.
-e114e473771c848 Casey Schaufler 2008-02-04  2262   */
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2263  static void smack_task_getlsmblob_obj(struct task_struct *p,
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2264  				      struct lsmblob *blob)
-e114e473771c848 Casey Schaufler 2008-02-04 @2265  {
-1fb057dcde11b35 Paul Moore      2021-02-19  2266  	struct smack_known *skp = smk_of_task_struct_obj(p);
-2f823ff8bec03a1 Casey Schaufler 2013-05-22  2267  
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2268  	blob->smack.skp = skp;
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2269  	/* scaffolding */
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2270  	blob->scaffold.secid = skp->smk_secid;
-e114e473771c848 Casey Schaufler 2008-02-04  2271  }
-e114e473771c848 Casey Schaufler 2008-02-04  2272  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+paul-moore.com
