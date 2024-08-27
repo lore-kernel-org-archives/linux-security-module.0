@@ -1,86 +1,137 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD280487A5
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 23:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A31322E;
+	Tue, 27 Aug 2024 01:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724713941; cv=none; b=HcaMN1dDM/Dhe9yGAxLCpmx/ZhV42tQdkuxcovOjZEusTW936Vz+MfOHYaCmXCitm0i6xOcH7k8kQldMyL8vTGEstzt6CXvPixmVK5u0keb0LbSaa8inm3UVJ0ULKAGZbAmoEsRQkN8ecEEtickie3PGHm67LTvYVFuPm/TNG2c=
+	t=1724722711; cv=none; b=UIPJYoQt/dkifSmjmMMEC7BoFCsH4vqeNhXD2WZ2y6J4OdhQoOBPz92XUmMvrn5NffMoJuJYGns9JLLLN19wIIIgXgmy4/i4rMWILAhKy+U0VKz8wE1W5h2yaxe8cnrHt0iGvbdM2FhbaqObmMQU4UNWd1q8rzPdQVcHwqwHKYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724713941; c=relaxed/simple;
-	bh=lseX8yr7Fml4IWKAtwb0sHKRoGS7250CgLsHSbFH5ds=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Subject:References:In-Reply-To; b=VZZNQesNxonYbwYpKd8QznqQO40Ndk/eV64qWgdjy9bI0Ug2PCb941aaR3Qo9/SGZjym6XCIvvaB6goB9gl+h1MdUqdRodIc/feZF0UjVTVzSXrMJNGCa/BxsgUbrIhdRjZlXFmEBUASdYUpma/d9Mo6CFD6serJGos8EMSSDMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RBnL0e5E; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RBnL0e5E"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6bf784346b9so23178736d6.2
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 16:12:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724713938; x=1725318738; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wL9Cvaz0fKLd2JXQCXyQoEx3DlkMZpEiJncmtLe9tuE=;
-        b=RBnL0e5EcBMFu1XJOjVf5CS85Vu5L6DNBeix3YM8y6ZHKePHkp455b71NMIGPdTKmH
-         AIHxosOBHImegoSQixtPJlsi9EeVug5xZjH7/R+EaktdxCH2vEI3bYer3LqJG9XsqS3r
-         oCOeSxtBDWGpx73Jc5uFFlWPMPy3yLMlvO1YDQ2/kifo70XHjyZR42Lp11yZmvz8xizY
-         fN4yTNz70b+UV/5Bj+cpzSQRvRfmuwzj623CEXG1OohPbKWhiy6c1MkaIRMm/sVEC0Za
-         3sFZC1UmAT/WuHogZPaKrhhRaK+Pkm14qudSoZeiutJiVvrl6ycTtPJdp4IrSziqjT+P
-         cxzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724713938; x=1725318738;
-        h=in-reply-to:references:subject:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wL9Cvaz0fKLd2JXQCXyQoEx3DlkMZpEiJncmtLe9tuE=;
-        b=n7fuvgUc0qmSEnM9zwOgkrGdahxqPOXONjN5LwQE9HIRUlr5XzafHvP5LTQaFUG0IA
-         uQfXLPvOb9BBwmtyYaOx+zBPwzsoY8zo3E2NxuTPhOMkZCOQtWPcj6T6zHJThhxRV/S1
-         MVL6TTLwoyQZ8zaQbToNuBSXvsf++COqbSns9VSLhazvsN92P7vMqoEzL1wJAXNUCG+I
-         dPzBEY1DDTaNZc3Umdx+MEw0J8wSOW5jTjx5tORxAhGBCw2/OjAjmxL1okANYuKGPpfo
-         X6wMi4nS20m9DefYB3POWcOpb0Ksm43ftY5x5pn7pi6Wx8ZAAYUH2RGj812a7PiwHnrH
-         Sa6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU/gNT1p84CjB4fAilfCSgkuNzxRSOcG525kIr4WZS6/mSN6QjjLV+0fTY1JHsyjq+mAN4gDIlo38fhCAh8CmuF06q9rgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPacJxkMt9XNdkHPvX6q9xTH5F95ZHjSXcv933QbW0CSwnUeZO
-	HW1y/HBu8Pk3fXiBLc31Xuq1tTx76Rn3Ag8y/wcrR4Dy5yOyA/2WJi4jAl/6EwdHHb1rBpndFXY
-	=
-X-Google-Smtp-Source: AGHT+IEz6zVMvxURroYpWnRSPaRvAcVKUUxC5ncSrLQk0/bgrzo48/FNShObtAYtXt8tmM/Vf4jQrQ==
-X-Received: by 2002:a05:6214:310b:b0:6bf:6e27:f0fe with SMTP id 6a1803df08f44-6c32b6a1dcbmr8981336d6.23.1724713938435;
-        Mon, 26 Aug 2024 16:12:18 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162db0964sm50554116d6.79.2024.08.26.16.12.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 16:12:18 -0700 (PDT)
-Date: Mon, 26 Aug 2024 19:12:17 -0400
-Message-ID: <024d26e3590a84ee81fe66050aae52dc@paul-moore.com>
+	s=arc-20240116; t=1724722711; c=relaxed/simple;
+	bh=kLxL0xqbxKhqAeTPLBKCcg9MsVjitp4RbhV6j3qsYho=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=umbTLUeCXb9B5cDW73DqICnAx8520IkCsvwFdNhW7lcBTTshLt/4MA4SObdoI6j0mHjigeyT0jYRHFyBiUTlOfbTvYE8B1ZSvQBWAw0oKZRpWxMDHFVH3owYHEkloBgVMkZdnlqLUvwcgF2J7TrqbCNCBMVjhWoXIFkprWgVjgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wt96n1CSJz20mqk;
+	Tue, 27 Aug 2024 09:33:37 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id EFFF7140120;
+	Tue, 27 Aug 2024 09:38:24 +0800 (CST)
+Received: from [10.174.178.75] (10.174.178.75) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 27 Aug 2024 09:38:22 +0800
+Subject: Re: [PATCH -next 07/15] security: min_addr: move sysctl into its own
+ file
+To: Paul Moore <paul@paul-moore.com>
+References: <20240826120449.1666461-1-yukaixiong@huawei.com>
+ <20240826120449.1666461-8-yukaixiong@huawei.com>
+ <CAHC9VhS=5k3zZyuuon2c6Lsf5GixAra6+d3A4bG2FVytv33n_w@mail.gmail.com>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
+	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<kees@kernel.org>, <j.granados@samsung.com>, <willy@infradead.org>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
+	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
+	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+Message-ID: <aeb685e9-3a2d-13b4-4ec8-0752ded06d61@huawei.com>
+Date: Tue, 27 Aug 2024 09:38:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhS=5k3zZyuuon2c6Lsf5GixAra6+d3A4bG2FVytv33n_w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] lsm: remove LSM_COUNT and LSM_CONFIG_COUNT
-References: <5089fc1c-0172-4ccf-9ad1-28ff1b649597@I-love.SAKURA.ne.jp>
-In-Reply-To: <5089fc1c-0172-4ccf-9ad1-28ff1b649597@I-love.SAKURA.ne.jp>
+X-ClientProxiedBy: dggpeml500020.china.huawei.com (7.185.36.88) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-On Aug 25, 2024 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> 
-> Because these are equals to MAX_LSM_COUNT. Also, we can avoid dynamic
-> memory allocation for ordered_lsms because MAX_LSM_COUNT is a constant.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
->  security/security.c | 37 ++++---------------------------------
->  1 file changed, 4 insertions(+), 33 deletions(-)
 
-Looks reasonable to me, merged into lsm/dev, thanks.
 
---
-paul-moore.com
+On 2024/8/27 6:49, Paul Moore wrote:
+> On Mon, Aug 26, 2024 at 8:05 AM Kaixiong Yu <yukaixiong@huawei.com> wrote:
+>> The dac_mmap_min_addr belongs to min_addr.c, move it into
+>> its own file from /kernel/sysctl.c. In the previous Linux kernel
+>> boot process, sysctl_init_bases needs to be executed before
+>> init_mmap_min_addr, So, register_sysctl_init should be executed
+>> before update_mmap_min_addr in init_mmap_min_addr.
+>>
+>> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+>> ---
+>>   kernel/sysctl.c     |  9 ---------
+>>   security/min_addr.c | 11 +++++++++++
+>>   2 files changed, 11 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>> index 41d4afc978e6..0c0bab3dad7d 100644
+>> --- a/kernel/sysctl.c
+>> +++ b/kernel/sysctl.c
+>> @@ -2059,15 +2059,6 @@ static struct ctl_table vm_table[] = {
+>>                  .proc_handler   = proc_dointvec_minmax,
+>>                  .extra1         = SYSCTL_ZERO,
+>>          },
+>> -#ifdef CONFIG_MMU
+>> -       {
+>> -               .procname       = "mmap_min_addr",
+>> -               .data           = &dac_mmap_min_addr,
+>> -               .maxlen         = sizeof(unsigned long),
+>> -               .mode           = 0644,
+>> -               .proc_handler   = mmap_min_addr_handler,
+>> -       },
+>> -#endif
+>>   #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
+>>      (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
+>>          {
+>> diff --git a/security/min_addr.c b/security/min_addr.c
+>> index 0ce267c041ab..b2f61649e110 100644
+>> --- a/security/min_addr.c
+>> +++ b/security/min_addr.c
+>> @@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *table, int write,
+>>          return ret;
+>>   }
+>>
+>> +static struct ctl_table min_addr_sysctl_table[] = {
+>> +       {
+>> +               .procname       = "mmap_min_addr",
+>> +               .data           = &dac_mmap_min_addr,
+>> +               .maxlen         = sizeof(unsigned long),
+>> +               .mode           = 0644,
+>> +               .proc_handler   = mmap_min_addr_handler,
+>> +       },
+>> +};
+> I haven't chased all of the Kconfig deps to see if there is a problem,
+> but please provide a quick explanation in the commit description about
+> why it is okay to drop the CONFIG_MMU check.
+
+According to the compilation condition in security/Makefile:
+
+               obj-$(CONFIG_MMU)            += min_addr.o
+
+if CONFIG_MMU is not defined, min_addr.c would not be included in the 
+compilation process.
+So，it is okay to drop the CONFIG_MMU check.
+>>   static int __init init_mmap_min_addr(void)
+>>   {
+>> +       register_sysctl_init("vm", min_addr_sysctl_table);
+>>          update_mmap_min_addr();
+>>
+>>          return 0;
+>> --
+>> 2.25.1
+
