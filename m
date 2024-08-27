@@ -1,97 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF85155CA5;
-	Tue, 27 Aug 2024 08:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CC219D88C;
+	Tue, 27 Aug 2024 09:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724747151; cv=none; b=QDJI8lR+Gz5X/zXbi/erICzCRW5TgzzKWE0T/LoLlIyRfnDBxgnEGAy4XW3Zz3ygpXJmsvqAwLzccYmSPE8USu6QYKiC/ndhhlFtmaCMeNsHVGaZseRrFefJJgD2plkOHs18Lt4xfK8kwXOjgaRkEpjEoAcMYrd2yQvUOPoiL/4=
+	t=1724750542; cv=none; b=g9wi5TffzLPmPPPWqJAYpLoWMsFfLz8liRZXtIt5yXauYGPYggJL2C5Bkk3ipfj/mXC9vlUVG+hg2MC2zC85MBC0Q9KqiiApCQLRDclC48wWtDB9XTDc8Rsq2MeMGYLzGY1ZkBSWDV9MqpctuzXh/VKAhbu5ngonhf7zbfIrvik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724747151; c=relaxed/simple;
-	bh=cSgYL2C+Be6PlHsZrQwwp0Z58ST9hJrstxvB+ojHAsw=;
+	s=arc-20240116; t=1724750542; c=relaxed/simple;
+	bh=0R4XbqHF/qK0cbkRUjsQVcb1iil5hOvrNzGLT1ymz9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFk+ubBDuAFXCIpJObles+k8ld5s/WxCkKm5dpy8ML7KUk6iD0GsXo2iWR14IrZ1GP3W0P/EmOgIh8htToJFc4xV8y0RXShlEyFKPtpQt7du740ee2foixnlwEUseAfjHp3Cg9AX35qKmnemIFxSaVSlWT2iHlF9nlxMXvI2mwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LD4sljTP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=U1cvZ4pMhifs3LNlmh82+WcOktZM6RjUIW89TlCI+z/hCUrgPQdi4BtyNP0XUIHCOmHJ1g5PZVZ3ThtfKxvV3JAUj7/wD48xRtGd9oVGRZMF2d4xsQT7jZKkfo71PgnNS+dwiQmGlrtF1+zH/6kPq54GzWbXxOSu4aASADY4Fv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQg0s6q8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LD4sljTP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC324C8B7A9;
-	Tue, 27 Aug 2024 08:25:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQg0s6q8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CAEEC8B7AB;
+	Tue, 27 Aug 2024 09:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724747150;
-	bh=cSgYL2C+Be6PlHsZrQwwp0Z58ST9hJrstxvB+ojHAsw=;
+	s=k20201202; t=1724750542;
+	bh=0R4XbqHF/qK0cbkRUjsQVcb1iil5hOvrNzGLT1ymz9U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LD4sljTPGqGm2NtQDVttali8km+cie9dqvFExpWAy8iF+Mhzvo3EztFLufpDsDyV/
-	 OwNsTyZxk+tAwAS7aMd9m55V/n7NE3YEFGGDvsZbRGlQspylHIaOOq7vjilYRxKP16
-	 nCPx87hXOuC3AIH76iFmpILMP8VT3eixvT+wt2AdLajD3lTMGV4e4sAnD1y35a4a88
-	 bNejLV/L3CY9v3cTKJAuvyCtn8vDwwJM8rt6S5No0xY/QDhQxHIuG/4fFVyT1u5OQW
-	 P1XB/J7rCu+fsAMrrRGrbeiIj9Hqm/T9W+g3eX/S/r9HqEq7pVYrjYGl4IKIU7yZFF
-	 AeIuPUsm38GaA==
-Date: Tue, 27 Aug 2024 09:25:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandra Winter <wintera@linux.ibm.com>,
-	Thorsten Winkler <twinkler@linux.ibm.com>,
-	David Ahern <dsahern@kernel.org>, Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Subash Abhinov Kasiviswanathan <quic_subashab@quicinc.com>,
-	Sean Tranchetti <quic_stranche@quicinc.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>, Martin Schiller <ms@dev.tdt.de>,
-	netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-sctp@vger.kernel.org,
-	linux-x25@vger.kernel.org
-Subject: Re: [PATCH net-next 12/13] net: Correct spelling in headers
-Message-ID: <20240827082543.GA1368797@kernel.org>
-References: <20240822-net-spell-v1-0-3a98971ce2d2@kernel.org>
- <20240822-net-spell-v1-12-3a98971ce2d2@kernel.org>
- <20240826094507.4b5798ef@kernel.org>
+	b=tQg0s6q8JNXYV+gi3vQFMKaMWWxYgKh7mcqmGyv3oJE28XKPhg4/ELokWru63puW1
+	 sda7hdpSomT67Knvxn+hkvd1mF4L8qoqbEg2f2MbtNjIePNqUZn/agUMO/v+f/P/LX
+	 q89QUbttD5SIFbjyjnbNkHXlvep1QXzDBdK2uYoPE7DRVnGpqrrEv6/dVZXfZSb/X1
+	 D4Xlo4olAqDhDJu1rcf2WDEbbXH9t0IIkj1O1YkdF9fAMSCG+Z+nlymfkTngC+I0ke
+	 AN3X9JBhBbvTdXQuscOErQk9MoChz3wKHiQmr52LUXXvlKdPCEdAIdL/MaEw0aKt2y
+	 Vh0DecGH7rAPw==
+Date: Tue, 27 Aug 2024 11:22:17 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Hongbo Li <lihongbo22@huawei.com>, jack@suse.cz, 
+	viro@zeniv.linux.org.uk, gnoack@google.com, mic@digikod.net, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
+ directly
+Message-ID: <20240827-abmelden-erbarmen-775c12ce2ae5@brauner>
+References: <20240827014108.222719-1-lihongbo22@huawei.com>
+ <20240827021300.GK6043@frogsfrogsfrogs>
+ <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+ <20240827053712.GL6043@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240826094507.4b5798ef@kernel.org>
+In-Reply-To: <20240827053712.GL6043@frogsfrogsfrogs>
 
-On Mon, Aug 26, 2024 at 09:45:07AM -0700, Jakub Kicinski wrote:
-> On Thu, 22 Aug 2024 13:57:33 +0100 Simon Horman wrote:
-> > diff --git a/include/net/dropreason-core.h b/include/net/dropreason-core.h
-> > index 9707ab54fdd5..4748680e8c88 100644
-> > --- a/include/net/dropreason-core.h
-> > +++ b/include/net/dropreason-core.h
-> > @@ -155,8 +155,8 @@ enum skb_drop_reason {
-> >  	/** @SKB_DROP_REASON_SOCKET_RCVBUFF: socket receive buff is full */
-> >  	SKB_DROP_REASON_SOCKET_RCVBUFF,
-> >  	/**
-> > -	 * @SKB_DROP_REASON_PROTO_MEM: proto memory limition, such as udp packet
-> > -	 * drop out of udp_memory_allocated.
-> > +	 * @SKB_DROP_REASON_PROTO_MEM: proto memory limitation, such as
-> > +	 * udp packet drop out of udp_memory_allocated.
-> >  	 */
-> >  	SKB_DROP_REASON_PROTO_MEM,
-> >  	/**
-> > @@ -217,7 +217,7 @@ enum skb_drop_reason {
-> >  	 */
-> >  	SKB_DROP_REASON_TCP_ZEROWINDOW,
-> >  	/**
-> > -	 * @SKB_DROP_REASON_TCP_OLD_DATA: the TCP data reveived is already
-> > +	 * @SKB_DROP_REASON_TCP_OLD_DATA: the TCP data received is already
-> >  	 * received before (spurious retrans may happened), see
-> >  	 * LINUX_MIB_DELAYEDACKLOST
-> >  	 */
+On Mon, Aug 26, 2024 at 10:37:12PM GMT, Darrick J. Wong wrote:
+> On Tue, Aug 27, 2024 at 10:32:38AM +0800, Hongbo Li wrote:
+> > 
+> > 
+> > On 2024/8/27 10:13, Darrick J. Wong wrote:
+> > > On Tue, Aug 27, 2024 at 01:41:08AM +0000, Hongbo Li wrote:
+> > > > Many mainstream file systems already support the GETVERSION ioctl,
+> > > > and their implementations are completely the same, essentially
+> > > > just obtain the value of i_generation. We think this ioctl can be
+> > > > implemented at the VFS layer, so the file systems do not need to
+> > > > implement it individually.
+> > > 
+> > > What if a filesystem never touches i_generation?  Is it ok to advertise
+> > > a generation number of zero when that's really meaningless?  Or should
+> > > we gate the generic ioctl on (say) whether or not the fs implements file
+> > > handles and/or supports nfs?
+> > 
+> > This ioctl mainly returns the i_generation, and whether it has meaning is up
+> > to the specific file system. Some tools will invoke IOC_GETVERSION, such as
+> > `lsattr -v`(but if it's lattr, it won't), but users may not necessarily
+> > actually use this value.
 > 
-> I'd have been tempted to improve the grammar of these while at it.
-> But I guess that'd make the patch more than a spelling fix.
+> That's not how that works.  If the kernel starts exporting a datum,
+> people will start using it, and then the expectation that it will
+> *continue* to work becomes ingrained in the userspace ABI forever.
+> Be careful about establishing new behaviors for vfat.
 
-Thanks. I was trying to stick to strictly spelling fixes.
-I'll submit a follow-up for this to (hopefully) improve the grammar.
-You can take it or leave it :)
+Is the meaning even the same across all filesystems? And what is the
+meaning of this anyway? Is this described/defined for userspace
+anywhere?
