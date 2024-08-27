@@ -1,43 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EAE219FF;
-	Tue, 27 Aug 2024 05:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEC740BF2
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2024 06:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724737033; cv=none; b=GqCDPj8yzcPoeS4WetCrOKbI26fZ7CUkRnXF0DE10foheK1NUQJHJf34FDzvwID5gZt+6PvjFBSlk3/F6kxE6famsWKVeSJAs0gmITSf6lb2HZSn9gzI7WkpAvtYDC5OHfNe6e4PCX5Y4KX/bP2zlgpCuYmiWDIq8rpYa9mPa9E=
+	t=1724738499; cv=none; b=kF1Vfktnb4y/DCYeQjlt3c6wn41lKPjnpB2ViQYHHXHsUISuQg9z/5uekR4h+IoD0Zb1tiDmqD7dof/+KK2mF/atQUY+0IGvUmezcM8mbfse6X9VuG4arrJlpdjBCzwZZB1HiD7sccpudDK/sTVmLJsGFUthEDV5PbJaPplC6DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724737033; c=relaxed/simple;
-	bh=FL8QMhvmY7D4W97mKq5c6qB6W77X4e851Ydl4kL/M9A=;
+	s=arc-20240116; t=1724738499; c=relaxed/simple;
+	bh=ZpgYtWXWQX1RlXoxt9WyOaOIHSiZV5dnIWN7iBw/Ez0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLiqaNwHqQ2pcKcW7jGtn6YIrGKq2JXMqxyroL4xIT4oTsPZyvOzVnsnLCJLH4JxRDPcEF1xQTLB4lAIGeh0YCSUMM4imWw7mDdHjOJoBvJ3KtI9j6LRs0n3VfIsWYuePyLXY8lLNEGcUPb90qAHIM/OZ0t2cvZIHZnRFq1F3HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oofV1dnx; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=oaPdzdvk3RVhyH1Lu19yJ1JhMBqEddLBB4wjkNnkzyjeZpJVaIMW6dPky54mqPVrbF8b8CYc6igkx5NY+zGDdzVP/KdTmTlpgLpTG/FHZvcn9vxVqfSmUeFYD8OMFej5TYex24pCIEJPeSPCo40KSKMTyTFMSQ6G/r6gSfRVdY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Is6H7dMM; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oofV1dnx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7021BC8B7A0;
-	Tue, 27 Aug 2024 05:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724737033;
-	bh=FL8QMhvmY7D4W97mKq5c6qB6W77X4e851Ydl4kL/M9A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oofV1dnx5iaw+EB5Lg06Cavz+fw+Qz1r1U1b5YuJySn/0PU6VI8HbGFWOPm0d5Wi5
-	 0AKg5SKF241FKo76FFdO8y29f2HJGF4WVkRZYMdRknj4M/isIh15bAMHyqG50g/VjB
-	 VR6WPhTXWBLgoL0FwBjyLHQScnV4N7KOtlEh07mX1WTk8/PAirmjtSDW+cPZ3Gxdf+
-	 LhT6zvU8dW9hhEP/jNbxM8ZKCbIq/dh77Rwd770k9q0W6fe78NuD4Rtra3iUcMTGXg
-	 z8Tg07PO35RdOK0QJBtCKCC/oy20JGmHlAWYhVgVpwtL7TneRHRiq09CgX6jIYc4Dg
-	 xz4yjZ2zJ6FKg==
-Date: Mon, 26 Aug 2024 22:37:12 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-	gnoack@google.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
- directly
-Message-ID: <20240827053712.GL6043@frogsfrogsfrogs>
-References: <20240827014108.222719-1-lihongbo22@huawei.com>
- <20240827021300.GK6043@frogsfrogsfrogs>
- <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Is6H7dMM"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c0ba8c7c17so518298a12.3
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Aug 2024 23:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724738495; x=1725343295; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2V26ymBzYP2Z7GWKZsLXO+lAp6n0aHmQIkOVXPd0pbM=;
+        b=Is6H7dMMviJHa5j8LkOEErNvwLCq14O7NJvvKb55bwIILNBqJHHXrcJlF78H5FDWI/
+         sWk/qq1VN1Hqczv7JIgJ03xQYQmcns7+cANgKqJ678C76CuS5EtP0zn0kqV4xKljKdsM
+         mgOlnGxC5KDPx/azqnz3NeV9aABZHXBXdFOih6cu927V4TI9IXGU6b981K/i2qCaVFe3
+         0wbG+AoEe+5zU4/Op8VzXvL9OEOQKqJl2J7WCHv3EM0YqvyX/2K+IO7pVAtP4axE99nx
+         EN+r+BTJ2NsWHSbOrwTjT87AusqLW8Y1/cxhvNXTE1jHUF2ox0iIFJAVFswcyU1gJ8mZ
+         SO+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724738495; x=1725343295;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2V26ymBzYP2Z7GWKZsLXO+lAp6n0aHmQIkOVXPd0pbM=;
+        b=jcQqpzt8ZD/zOfKOTOI1x3LMa1Mn8PRLVsYNsJCZuVcWKWWhBkuGOhYz75LwB7MTYu
+         tBE8gr+vN+MPX6qQBO29/rWwGSm4G+OonmgpRQxkahXYUge5SW5kUgBVgib8R2aGwhHN
+         DMSlM+Bg2Uxypmxb+sUVDvdqZ52H8rxSPFedgFVslx0nwxbpmiHdSCWgEsEeLl+weSS9
+         cBVvkOmbeED33xVT+y9qFjT5LcpjLqIz5j/K3ClFl1LuJAkXU17ZTuUCzgvfSZE+kUsZ
+         L4aFohVPT97gg7rRgTTZOlCkCSQjBirqilRqdNtr9K5/lQTM2BI56cGJPRqF8gj3QQzo
+         BaKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJee/XCt5I1lWpItnt2AJ9TX+z7fymekDft45zHfUJeAQxAunA/+2Y/xR/Ajom2i6LeEYGZ+Ru7+dzAc2g12clcWLDy5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG4Zgy39Qwr74wottpSyfZp9aTyqC3p0ZkeYl5aASMk6rYqRL3
+	Pw1XN1qTCxmh9xXLqaLLafOkTIelnMb/C3MFzrZS14nNI6c9vUqrCMP8T8Sj164kcC7QUHQap5n
+	u
+X-Google-Smtp-Source: AGHT+IF2gqL09d/X0zV5rFVkiVrS2Z5bbUz8sAze/K0DL8uePv7zb38gZRMFPwimQZSTcgTR1WWbYw==
+X-Received: by 2002:a05:6402:26d3:b0:5a1:2ce9:f416 with SMTP id 4fb4d7f45d1cf-5c0891b4825mr11035852a12.37.1724738494768;
+        Mon, 26 Aug 2024 23:01:34 -0700 (PDT)
+Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1c5b39sm602082a12.20.2024.08.26.23.01.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 23:01:34 -0700 (PDT)
+Date: Tue, 27 Aug 2024 08:01:32 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <Zs1rvLlk0mXklHyf@tiehlicka>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
+ <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+ <ZszeUAMgGkGNz8H9@tiehlicka>
+ <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
+ <ZszlQEqdDl4vt43M@tiehlicka>
+ <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,72 +80,80 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+In-Reply-To: <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
 
-On Tue, Aug 27, 2024 at 10:32:38AM +0800, Hongbo Li wrote:
-> 
-> 
-> On 2024/8/27 10:13, Darrick J. Wong wrote:
-> > On Tue, Aug 27, 2024 at 01:41:08AM +0000, Hongbo Li wrote:
-> > > Many mainstream file systems already support the GETVERSION ioctl,
-> > > and their implementations are completely the same, essentially
-> > > just obtain the value of i_generation. We think this ioctl can be
-> > > implemented at the VFS layer, so the file systems do not need to
-> > > implement it individually.
-> > 
-> > What if a filesystem never touches i_generation?  Is it ok to advertise
-> > a generation number of zero when that's really meaningless?  Or should
-> > we gate the generic ioctl on (say) whether or not the fs implements file
-> > handles and/or supports nfs?
-> 
-> This ioctl mainly returns the i_generation, and whether it has meaning is up
-> to the specific file system. Some tools will invoke IOC_GETVERSION, such as
-> `lsattr -v`(but if it's lattr, it won't), but users may not necessarily
-> actually use this value.
-
-That's not how that works.  If the kernel starts exporting a datum,
-people will start using it, and then the expectation that it will
-*continue* to work becomes ingrained in the userspace ABI forever.
-Be careful about establishing new behaviors for vfat.
-
---D
-
-> Thanks,
-> Hongbo
-> 
-> > 
-> > --D
-> > 
-> > > Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> > > ---
-> > >   fs/ioctl.c | 6 ++++++
-> > >   1 file changed, 6 insertions(+)
+On Mon 26-08-24 16:43:55, Kent Overstreet wrote:
+> On Mon, Aug 26, 2024 at 10:27:44PM GMT, Michal Hocko wrote:
+> > On Mon 26-08-24 16:00:56, Kent Overstreet wrote:
+> > > On Mon, Aug 26, 2024 at 09:58:08PM GMT, Michal Hocko wrote:
+> > > > On Mon 26-08-24 15:39:47, Kent Overstreet wrote:
+> > > > > On Mon, Aug 26, 2024 at 10:47:12AM GMT, Michal Hocko wrote:
+> > > > > > From: Michal Hocko <mhocko@suse.com>
+> > > > > > 
+> > > > > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> > > > > > inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> > > > > > allocation fails it will drop locks and use GFP_NOFS allocation context.
+> > > > > > 
+> > > > > > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> > > > > > dangerous to use if the caller doesn't control the full call chain with
+> > > > > > this flag set. E.g. if any of the function down the chain needed
+> > > > > > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> > > > > > cause unexpected failure.
+> > > > > > 
+> > > > > > While this is not the case in this particular case using the scoped gfp
+> > > > > > semantic is not really needed bacause we can easily pus the allocation
+> > > > > > context down the chain without too much clutter.
+> > > > > 
+> > > > > yeah, eesh, nack.
+> > > > 
+> > > > Sure, you can NAK this but then deal with the lack of the PF flag by
+> > > > other means. We have made it clear that PF_MEMALLOC_NORECLAIM is not we
+> > > > are going to support at the MM level. 
+> > > > 
+> > > > I have done your homework and shown that it is really easy
+> > > > to use gfp flags directly. The net result is passing gfp flag down to
+> > > > two functions. Sure part of it is ugglier by having several different
+> > > > callbacks implementing it but still manageable. Without too much churn.
+> > > > 
+> > > > So do whatever you like in the bcache code but do not rely on something
+> > > > that is unsupported by the MM layer which you have sneaked in without an
+> > > > agreement.
 > > > 
-> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > > index 64776891120c..dff887ec52c4 100644
-> > > --- a/fs/ioctl.c
-> > > +++ b/fs/ioctl.c
-> > > @@ -878,6 +878,9 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-> > >   	case FS_IOC_GETFSUUID:
-> > >   		return ioctl_getfsuuid(filp, argp);
-> > > +	case FS_IOC_GETVERSION:
-> > > +		return put_user(inode->i_generation, (int __user *)argp);
-> > > +
-> > >   	case FS_IOC_GETFSSYSFSPATH:
-> > >   		return ioctl_get_fs_sysfs_path(filp, argp);
-> > > @@ -992,6 +995,9 @@ COMPAT_SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd,
-> > >   		cmd = (cmd == FS_IOC32_GETFLAGS) ?
-> > >   			FS_IOC_GETFLAGS : FS_IOC_SETFLAGS;
-> > >   		fallthrough;
-> > > +	case FS_IOC32_GETVERSION:
-> > > +		cmd = FS_IOC_GETVERSION;
-> > > +		fallthrough;
-> > >   	/*
-> > >   	 * everything else in do_vfs_ioctl() takes either a compatible
-> > >   	 * pointer argument or no argument -- call it with a modified
-> > > -- 
-> > > 2.34.1
+> > > Michal, you're being damned hostile, while posting code you haven't even
+> > > tried to compile. Seriously, dude?
 > > > 
-> > > 
+> > > How about sticking to the technical issues at hand instead of saying
+> > > "this is mm, so my way or the highway?". We're all kernel developers
+> > > here, this is not what we do.
 > > 
+> > Kent, we do respect review feedback. You are clearly fine ignoring it
+> > when you feels like it (eab0af905bfc ("mm: introduce
+> > PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") is a clear example of it).
+> > 
+> > I have already made my arguments (repeatedly) why implicit nowait
+> > allocation context is tricky and problematic. Your response is that you
+> > simply "do no buy it" which is a highly technical argument.
 > 
+> No, I explained why GFP_NORECLAIM/PF_MEMALLOC_NORECLAIM can absolutely
+> apply to a context, not a callsite, and why vmalloc() and kvmalloc()
+> ignoring gfp flags is a much more serious issue.
+
+You are not really answering the main concern I have brought up though.
+I.e. GFP_NOFAIL being fundamentally incompatible with NORECLAIM semantic
+because the page allocator doesn't and will not support this allocation
+mode.  Scoped noreclaim semantic makes such a use much less visible
+because it can be deep in the scoped context there more error prone to
+introduce thus making the code harder to maintain. 
+
+I do see why you would like to have NOWAIT kvmalloc support available
+and I also do see challenges in achieving that. But I completely fail to
+see why you are bring that up _here_ as that is not really relevant to
+PF_MEMALLOC_NORECLAIM use by bcachefs because it demonstrably doesn't
+need that. There is no other user of the flag at the moment so dropping
+the flag before there is more misuse is a reasonable goal. If you want
+to bring up vmalloc NOWAIT support then feel free to do that in another
+context and we can explore potential ways to achieve that.
+
+-- 
+Michal Hocko
+SUSE Labs
