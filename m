@@ -1,224 +1,184 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68E31C3F19
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2024 15:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079D81C6F55
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2024 15:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724771315; cv=none; b=Az3FBf+jfKwM27dVDpgkxCDsFTgxk2VUP/rl/RSVB+LzZ53KH2fqyHuRR4pJYYwoX/bzhzQu/FzHaUxbng+DLTq1yOgIYxr12hRU0KMgklzXdKGSl9YpiEZpF6xdBq9iOvCSk2GtVj3BpZzBZ1vRd3yRLoG8+PO/Lt1gC17PBCw=
+	t=1724773735; cv=none; b=MYZU9Vge6MHJAEIohGcuAHIgV4fcUk3CNySQgp26PxoO+9aABu3oTya8J96QeowYiNXTEOLkGdV56lHrwFBNP+P/PruUWaSkwDxCtWkktCx46dhNaCP2BjoH0vpRWwep3ROFwBdYKthhIAN7Fjsgu1Xgy1J++f6SU8sZbnebWtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724771315; c=relaxed/simple;
-	bh=wcV0zV6VazbjOKL6E4PWIqqIZADqEUvdtVT4mtA2lp8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AZqFhz0q3LRH+zqmNsXuo8uaOIXctx4rSwGIuxigx4Q8A6R12FsgMGSFHSkvHj4hIFO2AVuMjuMZZbOQW6xvWbeo9jsKguMntsf3cz2H1+95dIRh2Gr+jMpDWksXVxAQGq40GgPnjKL9WivzX9nYrglfUNsn3aGx4IB8yojAHWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ousbzO2U; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1724773735; c=relaxed/simple;
+	bh=yMIqIqsHc58PbYXTEzoWmcGe7WxkG66Dfoev7TszcS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NpiXHtDR8RQ0ELxpRfued48wFmHJ7Ui2K5vIzEVMfKJxW7B2Uu79VwTQ1EjLwZF9ktdR9X5aLKVLjT8FWpG/ADZ4pcLtOp4LJLt5Cqajyxlr2eu2mdiiBUdfYWath+eJvMR9Rvqd6ArrIT7BrKsstfsId6KirQwHl0pvf1RqIkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MdltamPQ; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ousbzO2U"
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 316693F6B9
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2024 15:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724771311;
-	bh=2HRLF9mhfqSozw/W7Ek8yQVE7MsvHVUb3zolIkNBqZc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version;
-	b=ousbzO2UpW1yGP8xLPbmVvgp/82xWusU30zwru37xC5guEGyDkg7Q2fa1oTVHm+/J
-	 zQa50pxntyHBQgcVH7gf057quM1wrKKzu9GRfymfOIPKL9TfHJskFkh87+I0TwxpD3
-	 Qhvds5yb2X4mPf/k0FECmDrSjn1DbX6lRpiSpkkRYfEAKtebto8TDB7pGo1kopnvSP
-	 wTdXOli+/HBJeJzQHkwhbo+U5tA4LxKrYCghia42/wKQ2BCyZsmNX/wCbVDXHzhLef
-	 3oWkFmwXkWMb6Cza8vX7SmECG5HF7lMZai+BsS1MEPnfZQVKD5JdH080uS3ob+s1Lk
-	 rskaLeA8dTbrw==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d45935fed4so7266935a91.3
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2024 08:08:31 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MdltamPQ"
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39d47a9ffd5so19644325ab.2
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2024 08:48:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724773733; x=1725378533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MyZU/kJprJK+uVidaloko4y85cSY8MDsjFf1FeduaFk=;
+        b=MdltamPQciG6RU3dSTnCanxGx2xuSZDcHIE0JQ7fNxJnrpJm5983BtfBWiO0MzihhN
+         QxOXlUtBIbKr0ixV43oQmZW5+a8qSLYCpSh5mkObweiE4nyKGhHsy/0G+/eLpAIQbA0D
+         F8pjxsgKEI26w0vtowJxpM+g1vS9bfzDLUsf0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724771310; x=1725376110;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2HRLF9mhfqSozw/W7Ek8yQVE7MsvHVUb3zolIkNBqZc=;
-        b=GXAJfr9VTW0MC+fjPNGFDXBWyJLy6fHh/MsrS0sfue+Rwh0N69QDXypnwGNbYZ6z+X
-         n2rlR+Pu7uC7OM9wjW8B25CvKlXBzXwiooFQSteu0cvg9TlNDdvfTl7ta83/a7udN42G
-         TKwr2ol8+ZNJr8K3ury9e5M6Gwn56J7oVCDOpGJ9POahQogMBaHZbatWx+l4DPd0ABhz
-         CdtB1ZzIB15trhkmaMdHkdcoo+rQur42ltnW00RKwuW53sX1CH0Xl+ZcXWrF2PSVY85X
-         CCOpCp81DoIF2JccXhwzM2pxcShBV7QUM9HbBYD+WIfrBH6ua99uluudNcz5yVH+vvj5
-         B82A==
-X-Forwarded-Encrypted: i=1; AJvYcCWpifStOsFriFwzgWu6/TC9UJ3g+CsPPEjt8yoBcs50Vh8RXI95MTl6G/N9j+HT2jywpkAgxEGcbb0IeVSU/yceYxkHt4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymB9p4n8DIaedZyZI6Fi0VkVohOUsUUtVg0TcPnkkqtTMJSTTr
-	HXXg+TpHrJbZYiOfBWkZytS1JIFvVPntwXsJksT5J/WaOweFl+7opBhfuypkmmaBP4wvvxu+8Uo
-	G0o24EgguXoSWhLQ7Bsm980KvHxgp1n1f7tp2Yi/ushKTJ1EkIzx4cGF2u374c32v2trMlOWXJx
-	SuuGDxB9UFaCQ1wA==
-X-Received: by 2002:a17:90a:5e01:b0:2c9:7aa6:e15d with SMTP id 98e67ed59e1d1-2d646c26ccfmr13728479a91.20.1724771309733;
-        Tue, 27 Aug 2024 08:08:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSeQR3bVBwiGnjQtNSUz5tGUexHWkG/wNu8i+jJ2qrakYsJ/2kCGWTQtYbQWRb/zwz7IvPhg==
-X-Received: by 2002:a17:90a:5e01:b0:2c9:7aa6:e15d with SMTP id 98e67ed59e1d1-2d646c26ccfmr13728445a91.20.1724771309267;
-        Tue, 27 Aug 2024 08:08:29 -0700 (PDT)
-Received: from ?IPv6:2001:1284:f502:1ed0:3614:22f:7b0b:19c1? ([2001:1284:f502:1ed0:3614:22f:7b0b:19c1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613941ee7sm12286853a91.24.2024.08.27.08.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 08:08:28 -0700 (PDT)
-Message-ID: <e0fc63dea4db21f53dd3358334029aae3981fc5f.camel@canonical.com>
-Subject: Re: [PATCH 04/13] Audit: maintain an lsmblob in audit_context
-From: Georgia Garcia <georgia.garcia@canonical.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com, 
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- mic@digikod.net
-Date: Tue, 27 Aug 2024 12:08:23 -0300
-In-Reply-To: <a8aeacdc4afec5855fa4b80f0f5f43e8f7d3b5cb.camel@canonical.com>
-References: <20240825190048.13289-1-casey@schaufler-ca.com>
-	 <20240825190048.13289-5-casey@schaufler-ca.com>
-	 <a8aeacdc4afec5855fa4b80f0f5f43e8f7d3b5cb.camel@canonical.com>
-Organization: Canonical
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        d=1e100.net; s=20230601; t=1724773733; x=1725378533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MyZU/kJprJK+uVidaloko4y85cSY8MDsjFf1FeduaFk=;
+        b=u2tEizish9YdZeLSo1lLNxtJS9HGD9XGpAEdh55DeqURxAjvrMyUquFfjETi8XVjjx
+         xMBcSGCdn+DBfpKp7nefqQoK3xqOLGXu9FmpmhJy67ddg6PJ3f2u7rM3nFwiCSHKDFDH
+         35/mZApMjSiE3ruDLaC3mPOS/fmz/I4udLxl+RLJJsfJwrwWWbPh6SJ+Yi4+cjQiDpnr
+         y08bDbKERpxAzX2keBNLiQpuPgXiMNGVL2Q9EsUXhd9vwmYQqJ9Qw8+CiXNTok8E9KiD
+         uunNHgnCKgU6Kof7ujuGEVJO/jeXfo5O3leCNsvG3O6A6Q6m773izVJlu75R9+jdHmA4
+         4yOQ==
+X-Gm-Message-State: AOJu0YxBy407dE3g737BuhDoo9Io647/v8g3R7pPL5SsJT812rBwJr0R
+	4BHvs0UfAY1lJeGp4BiVAv6NauR2PT6tgVRovTJW3USioKoU4qUMLtx4voNjz2RfC9PwNPPRD/L
+	a3pnD
+X-Google-Smtp-Source: AGHT+IFratU3IMOoEgFZa13zQbCNM1TKm6ZgDQDvwWLHn8vTFnlb+Ug41G4qvr2ljHD7L4wRW0FjeA==
+X-Received: by 2002:a05:6e02:1547:b0:374:a781:64b9 with SMTP id e9e14a558f8ab-39e3c989d00mr155011315ab.13.1724773732683;
+        Tue, 27 Aug 2024 08:48:52 -0700 (PDT)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad54fe5sm8094169a12.65.2024.08.27.08.48.51
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 08:48:52 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-202018541afso229785ad.1
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Aug 2024 08:48:51 -0700 (PDT)
+X-Received: by 2002:a17:902:d4c6:b0:1fa:fe30:8fce with SMTP id
+ d9443c01a7336-204e50afb1emr3053325ad.23.1724773730828; Tue, 27 Aug 2024
+ 08:48:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240806165134.1692428-1-jettrink@chromium.org>
+In-Reply-To: <20240806165134.1692428-1-jettrink@chromium.org>
+From: Jett Rink <jettrink@chromium.org>
+Date: Tue, 27 Aug 2024 09:48:39 -0600
+X-Gmail-Original-Message-ID: <CAK+PMK62crXQurf1R3vQ=4mtC3pLCKUjA3Vw-qZggcK2ucdrBQ@mail.gmail.com>
+Message-ID: <CAK+PMK62crXQurf1R3vQ=4mtC3pLCKUjA3Vw-qZggcK2ucdrBQ@mail.gmail.com>
+Subject: Re: [PATCH v5] tpm: Add new device/vendor ID 0x50666666
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-security-module@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-08-27 at 12:01 -0300, Georgia Garcia wrote:
-> On Sun, 2024-08-25 at 12:00 -0700, Casey Schaufler wrote:
-> > Replace the secid value stored in struct audit_context with a struct
-> > lsmblob. Change the code that uses this value to accommodate the
-> > change. security_audit_rule_match() expects a lsmblob, so existing
-> > scaffolding can be removed. A call to security_secid_to_secctx()
-> > is changed to security_lsmblob_to_secctx().  The call to
-> > security_ipc_getsecid() is scaffolded.
-> >=20
-> > A new function lsmblob_is_set() is introduced to identify whether
-> > an lsmblob contains a non-zero value.
-> >=20
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > ---
-> >  include/linux/security.h | 13 +++++++++++++
-> >  kernel/audit.h           |  3 ++-
-> >  kernel/auditsc.c         | 19 ++++++++-----------
-> >  3 files changed, 23 insertions(+), 12 deletions(-)
-> >=20
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index 457fafc32fb0..a0b23b6e8734 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -277,6 +277,19 @@ static inline const char *kernel_load_data_id_str(=
-enum kernel_load_data_id id)
-> >  	return kernel_load_data_str[id];
-> >  }
-> > =20
-> > +/**
-> > + * lsmblob_is_set - report if there is a value in the lsmblob
-> > + * @blob: Pointer to the exported LSM data
-> > + *
-> > + * Returns true if there is a value set, false otherwise
-> > + */
-> > +static inline bool lsmblob_is_set(struct lsmblob *blob)
-> > +{
-> > +	const struct lsmblob empty =3D {};
-> > +
-> > +	return !!memcmp(blob, &empty, sizeof(*blob));
-> > +}
-> > +
-> >  #ifdef CONFIG_SECURITY
-> > =20
-> >  int call_blocking_lsm_notifier(enum lsm_event event, void *data);
-> > diff --git a/kernel/audit.h b/kernel/audit.h
-> > index a60d2840559e..b1f2de4d4f1e 100644
-> > --- a/kernel/audit.h
-> > +++ b/kernel/audit.h
-> > @@ -11,6 +11,7 @@
-> > =20
-> >  #include <linux/fs.h>
-> >  #include <linux/audit.h>
-> > +#include <linux/security.h>
-> >  #include <linux/skbuff.h>
-> >  #include <uapi/linux/mqueue.h>
-> >  #include <linux/tty.h>
-> > @@ -160,7 +161,7 @@ struct audit_context {
-> >  			kuid_t			uid;
-> >  			kgid_t			gid;
-> >  			umode_t			mode;
-> > -			u32			osid;
-> > +			struct lsmblob		oblob;
-> >  			int			has_perm;
-> >  			uid_t			perm_uid;
-> >  			gid_t			perm_gid;
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index 23adb15cae43..84f6e9356b8f 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *t=
-sk,
-> >  				/* Find ipc objects that match */
-> >  				if (!ctx || ctx->type !=3D AUDIT_IPC)
-> >  					break;
-> > -				/* scaffolding */
-> > -				blob.scaffold.secid =3D ctx->ipc.osid;
-> > -				if (security_audit_rule_match(&blob,
-> > +				if (security_audit_rule_match(&ctx->ipc.oblob,
-> >  							      f->type, f->op,
-> >  							      f->lsm_rule))
-> >  					++result;
-> > @@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *=
-context, int *call_panic)
-> >  			audit_log_format(ab, " a%d=3D%lx", i,
-> >  				context->socketcall.args[i]);
-> >  		break; }
-> > -	case AUDIT_IPC: {
-> > -		u32 osid =3D context->ipc.osid;
-> > -
-> > +	case AUDIT_IPC:
-> >  		audit_log_format(ab, "ouid=3D%u ogid=3D%u mode=3D%#ho",
-> >  				 from_kuid(&init_user_ns, context->ipc.uid),
-> >  				 from_kgid(&init_user_ns, context->ipc.gid),
-> >  				 context->ipc.mode);
-> > -		if (osid) {
-> > +		if (lsmblob_is_set(&context->ipc.oblob)) {
-> >  			char *ctx =3D NULL;
-> >  			u32 len;
-> > =20
-> > -			if (security_secid_to_secctx(osid, &ctx, &len)) {
-> > -				audit_log_format(ab, " osid=3D%u", osid);
-> > +			if (security_lsmblob_to_secctx(&context->ipc.oblob,
-> > +						       &ctx, &len)) {
->=20
-> Is there any reason to stop auditing secid when we fail to get the
-> security context?
+I just wanted to follow up to ensure this patch got accepted. Is there
+anything else I need to do?
 
-Well, yes, if we're moving away from using secid for all LSMs, then it
-doesn't make sense to audit it here anymore, so nevermind :)
+-Jett
 
->=20
-> >  				*call_panic =3D 1;
-> >  			} else {
-> >  				audit_log_format(ab, " obj=3D%s", ctx);
-> > @@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *co=
-ntext, int *call_panic)
-> >  				context->ipc.perm_gid,
-> >  				context->ipc.perm_mode);
-> >  		}
-> > -		break; }
-> > +		break;
-> >  	case AUDIT_MQ_OPEN:
-> >  		audit_log_format(ab,
-> >  			"oflag=3D0x%x mode=3D%#ho mq_flags=3D0x%lx mq_maxmsg=3D%ld "
-> > @@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
-> >  	context->ipc.gid =3D ipcp->gid;
-> >  	context->ipc.mode =3D ipcp->mode;
-> >  	context->ipc.has_perm =3D 0;
-> > -	security_ipc_getsecid(ipcp, &context->ipc.osid);
-> > +	/* scaffolding */
-> > +	security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
-> >  	context->type =3D AUDIT_IPC;
-> >  }
-> > =20
->=20
-
+On Tue, Aug 6, 2024 at 10:51=E2=80=AFAM Jett Rink <jettrink@chromium.org> w=
+rote:
+>
+> Accept another DID:VID for the next generation Google TPM. This TPM
+> has the same Ti50 firmware and fulfills the same interface.
+>
+> Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Jett Rink <jettrink@chromium.org>
+> ---
+>
+> Changes in v5:
+> Correct Suggested-by tag form.
+>
+> Changes in v4:
+> Add Suggested-by tag. Sorry that I forget.
+>
+> Changes in v3:
+> Refactor ternary operators into helper method.
+>
+> Changes in v2:
+> Patchset 2 applies cleanly
+>
+>  drivers/char/tpm/tpm_tis_i2c_cr50.c | 30 ++++++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_t=
+is_i2c_cr50.c
+> index adf22992138e..1f83cfe2724c 100644
+> --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> @@ -31,7 +31,8 @@
+>  #define TPM_CR50_TIMEOUT_SHORT_MS      2               /* Short timeout =
+during transactions */
+>  #define TPM_CR50_TIMEOUT_NOIRQ_MS      20              /* Timeout for TP=
+M ready without IRQ */
+>  #define TPM_CR50_I2C_DID_VID           0x00281ae0L     /* Device and ven=
+dor ID reg value */
+> -#define TPM_TI50_I2C_DID_VID           0x504a6666L     /* Device and ven=
+dor ID reg value */
+> +#define TPM_TI50_DT_I2C_DID_VID                0x504a6666L     /* Device=
+ and vendor ID reg value */
+> +#define TPM_TI50_OT_I2C_DID_VID                0x50666666L     /* Device=
+ and vendor ID reg value */
+>  #define TPM_CR50_I2C_MAX_RETRIES       3               /* Max retries du=
+e to I2C errors */
+>  #define TPM_CR50_I2C_RETRY_DELAY_LO    55              /* Min usecs betw=
+een retries on I2C */
+>  #define TPM_CR50_I2C_RETRY_DELAY_HI    65              /* Max usecs betw=
+een retries on I2C */
+> @@ -668,6 +669,27 @@ static const struct of_device_id of_cr50_i2c_match[]=
+ =3D {
+>  MODULE_DEVICE_TABLE(of, of_cr50_i2c_match);
+>  #endif
+>
+> +/**
+> + * tpm_cr50_vid_to_name() - Maps VID to name.
+> + * @vendor:    Vendor identifier to map to name
+> + *
+> + * Return:
+> + *     A valid string for the vendor or empty string
+> + */
+> +static const char *tpm_cr50_vid_to_name(u32 vendor)
+> +{
+> +       switch (vendor) {
+> +       case TPM_CR50_I2C_DID_VID:
+> +               return "cr50";
+> +       case TPM_TI50_DT_I2C_DID_VID:
+> +               return "ti50 DT";
+> +       case TPM_TI50_OT_I2C_DID_VID:
+> +               return "ti50 OT";
+> +       default:
+> +               return "";
+> +       }
+> +}
+> +
+>  /**
+>   * tpm_cr50_i2c_probe() - Driver probe function.
+>   * @client:    I2C client information.
+> @@ -741,14 +763,16 @@ static int tpm_cr50_i2c_probe(struct i2c_client *cl=
+ient)
+>         }
+>
+>         vendor =3D le32_to_cpup((__le32 *)buf);
+> -       if (vendor !=3D TPM_CR50_I2C_DID_VID && vendor !=3D TPM_TI50_I2C_=
+DID_VID) {
+> +       if (vendor !=3D TPM_CR50_I2C_DID_VID &&
+> +           vendor !=3D TPM_TI50_DT_I2C_DID_VID &&
+> +           vendor !=3D TPM_TI50_OT_I2C_DID_VID) {
+>                 dev_err(dev, "Vendor ID did not match! ID was %08x\n", ve=
+ndor);
+>                 tpm_cr50_release_locality(chip, true);
+>                 return -ENODEV;
+>         }
+>
+>         dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+> -                vendor =3D=3D TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
+> +                tpm_cr50_vid_to_name(vendor),
+>                  client->addr, client->irq, vendor >> 16);
+>         return tpm_chip_register(chip);
+>  }
+> --
+> 2.46.0.rc2.264.g509ed76dc8-goog
+>
