@@ -1,198 +1,292 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07EE19753F;
-	Tue, 27 Aug 2024 10:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FAA1B0122;
+	Tue, 27 Aug 2024 12:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724755971; cv=none; b=otm1aIZRDKTXwodfwZPRT05WuD7TD48CihcxGbfFOXYV7eGSE0WGgUCSRNdUSmfAg6XYL4K3VZXJpS8AWZmrPBtwxl7Bq7iPBRuA37VlwGslK9MptAAXSvb+aOEdRALt5TcwC4l7qBa/FqmTnTuYhgV94c4Ez4DymJDaEHVTWl8=
+	t=1724761451; cv=none; b=P+YcTYDeCTnMTBUh2oYG6vF0NteQ1W4xabRIA+Gw+TsuXTMLo6uxtw8U4Z4baz1JiGsltgqeFTEJk+nbwtnfS+RI09J4weThtfMkrZxLJMe1GOzL/x6w1wSTRlCKxg7FQcz2bfQyNcU2GpkMYTEbPDi/EezjWVm//NuQdjqkz8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724755971; c=relaxed/simple;
-	bh=BAb9f/JMOQQT7cQQjeHp1XzCusfpVObNBohFIn3JObY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+DQLs0tN75OqjdFD+EfxMr+1fWttffbb7gnTMe/ZAe15uBFDdTkV75CLyi+PKxINbVV9O7cL46rDXED0NkTEhMIQQ8qwA0dZ/zAAPwxsnOT45U7CxtfFOImW6yhzxNyUU7whtzmUtEjtemm7x8mw11Ax9Ar8K8fZIOLAUycdHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 47RAqGMh004847;
-	Tue, 27 Aug 2024 05:52:16 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 47RAqFUh004846;
-	Tue, 27 Aug 2024 05:52:15 -0500
-Date: Tue, 27 Aug 2024 05:52:15 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmorris@namei.org
-Subject: Re: [PATCH v4 04/14] Add primary TSEM implementation file.
-Message-ID: <20240827105214.GA4769@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240826103728.3378-1-greg@enjellic.com> <20240826103728.3378-5-greg@enjellic.com> <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
+	s=arc-20240116; t=1724761451; c=relaxed/simple;
+	bh=qnOIMBwJ22TK2Fz+NCBsm8Fz01GgZhvPdfqhM41/OFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hvgY6IkzBwuuEcxNXobS+s/OP2jOqylKR8UAsAtIpwdvb9lLePWMHfj62ID/wMTiz6WHwirQvhMOyXneLyQi3eorBUZiv4YS7cA1KGcAUELw1RvIFRA/iR4rkgZNEQIOKEMOUggAZwlBXKQfdh9FDXYvJhtokzewvSn0KHgdIvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iY1ykIDl; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iY1ykIDl"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-76cb5b6b3e4so3398874a12.1;
+        Tue, 27 Aug 2024 05:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724761449; x=1725366249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rPnsNcQSfJlRrejA+n4cbheHsYk/EilnCWd0u+6eBhM=;
+        b=iY1ykIDlGXIBEkoBME3A6d131cIeakgaknZu5FA5YEuCIeAE9PVBIqfo2npgDkwQIE
+         KOveco9Sa1DtO73TNcKIJxUEIeDWXqQxo32MtakNh7FiLt3kKASYsIm07XpksEd8b68j
+         Lj2YXaUoHzZcpY/78wLo7me+Vy3gmnP7fF5Vvlyff6AybJkFVhtJzIqnso0eUJ/nWVA4
+         ibI+jNZryuzS8dq4f54Gao1ttUURxIOW6ZdWTCgcIi55nzdlRONbOws/8lVd/0/qOzjh
+         KE5xTQu0vuulF1BjGNoHAVYYDXw8ScoALopiYYgAXKGvd3+CoclxilpcEfBpf3/dn4y7
+         WCPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724761449; x=1725366249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rPnsNcQSfJlRrejA+n4cbheHsYk/EilnCWd0u+6eBhM=;
+        b=w4aAxPbElwjS3ppnwqEG3rcZvuDRn14ntgDMmNQsjGOIFknxNKyY/nmHuETW0trnVS
+         DswEYHz7AtXxltVn4xjqBr9jHC1PoHaWez7mkKFNi6+xOuLMLmnN4kRPuTF9JC+v/W5e
+         VgtAe9ocsjq1V/TvqwBjP2Z9gCbUvgaDFKWwI8Trm/KagcT006LOWIgHr67lzW3WS30m
+         Vmpaq1QpbKORd8ta5fNw/U/Cl7JhubX75YsM4H54zIjqLOEABJPu2p31uJwaWj6IC0oE
+         HO0KvTZWh+hxm3KFQDC6mDrSWjruWS9mIFBqripgB7Zo5Cu3UclueHg2Hi2fS6NDg4Tv
+         +m2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKkbozI2A6IMzOXmBSIcLwUhO5U8kighHtTOJseXq5UMEKqmFK37TewO1fdy/jzF+kRcuiKOAKRojJgJmzECiJ13s0MHHK@vger.kernel.org, AJvYcCUwqr5/gxv6p3MXrtCYE1unnzIzYNpkbf7Z+Q7UI/iXlo5bjV98GJQUCNXkW/Pjtq/w7lnEV86q70+Obx2N@vger.kernel.org, AJvYcCXefNlGHpI230wjO8dS2ObHFNLfl2B5f7HuVSPu2QkdG1OSF2XheeTPpt2BpSoxqfbsiqE32w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGw+FS0JgXf5QF/0D+cKWs1GfRyuaZJcf4eRZewdy903hHl/rC
+	3Z4kHIFZELEoSVbGgWV69YMy7pfWsMgwAKhQT/fV28ARGO4d3DmW3n6GgZeCOQxxWS3epOkftXJ
+	gjZvbCDnNs/SAHVvpOacPYNN9uCTYPQ==
+X-Google-Smtp-Source: AGHT+IE50bFJybQFHzw2hRxY/1ojWCGwqUvWY16IkkuMjotIHvQh0Y0uMuuLQ8mareKU6CCatKdYtSC68k9WwDZJaC4=
+X-Received: by 2002:a17:90a:8a15:b0:2d3:c4d1:c95d with SMTP id
+ 98e67ed59e1d1-2d646bf62d2mr12188862a91.21.1724761448677; Tue, 27 Aug 2024
+ 05:24:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 27 Aug 2024 05:52:16 -0500 (CDT)
+MIME-Version: 1.0
+References: <20240825190048.13289-1-casey@schaufler-ca.com> <20240825190048.13289-6-casey@schaufler-ca.com>
+In-Reply-To: <20240825190048.13289-6-casey@schaufler-ca.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Tue, 27 Aug 2024 08:23:56 -0400
+Message-ID: <CAEjxPJ49Q1od7XXJ2bepGc=6O_FA+1fz=W+_4vLhFcCyakPUqw@mail.gmail.com>
+Subject: Re: [PATCH 05/13] LSM: Use lsmblob in security_ipc_getsecid
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-kernel@vger.kernel.org, mic@digikod.net, linux-audit@redhat.com, 
+	audit@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 08:53:31AM -0700, Casey Schaufler wrote:
+On Sun, Aug 25, 2024 at 3:02=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+>
+> There may be more than one LSM that provides IPC data for auditing.
+> Change security_ipc_getsecid() to fill in a lsmblob structure instead
+> of the u32 secid.  Change the name to security_ipc_getlsmblob() to
+> reflect the change.  The audit data structure containing the secid
+> will be updated later, so there is a bit of scaffolding here.
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: linux-audit@redhat.com
+> Cc: audit@vger.kernel.org
 
-Good morning Casey, I hope this note finds your day starting well.
+1. Need to cc selinux list on patches that modify it.
+2. Can't retain Acked-by or Reviewed-by lines if the patch has changed
+since the review.
 
-Greetings to others on this 'last' week of summer.
-
-> On 8/26/2024 3:37 AM, Greg Wettstein wrote:
-> > The tsem.c file is the 'master' file in the TSEM implementation. It is
-> > responsible for initializing the LSM and providing the implementation of the
-> > security event handlers.
-> > ---
-> >  security/tsem/tsem.c | 2446 ++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 2446 insertions(+)
-> >  create mode 100644 security/tsem/tsem.c
-> >
-> > diff --git a/security/tsem/tsem.c b/security/tsem/tsem.c
-> > new file mode 100644
-> > index 000000000000..76d65b3e62b3
-> > --- /dev/null
-> > +++ b/security/tsem/tsem.c
-> > @@ -0,0 +1,2446 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +/*
-> > + * Copyright (C) 2024 Enjellic Systems Development, LLC
-> > + * Author: Dr. Greg Wettstein <greg@enjellic.com>
-> > + *
-> > + * This file is the primary implementation file for the tsem LSM.
-> > + *
-> > + * It implements initialization and setup functions that interpret
-> > + * kernel command-line arguments and prepares TSEM for operation.
-> > + *
-> > + * In addition it contains all of the TSEM specific security event
-> > + * handlers that are responsible for handling the LSM events that TSEM
-> > + * models.
-> > + *
-> > + * Each TSEM event handler calls the tsem_allocate_event() function to
-> > + * allocate a structure that will be used to describe the event.  The
-> > + * CELL union of this structure contains various structures that are
-> > + * used to hold these parameters.
-> > + *
-> > + * Since the event characterization parameters need to be retained for
-> > + * the lifetime of the tsem_event structure that is allocated.  In the
-> > + * case of internally modeled namespaces this lifespan is the lifetime
-> > + * of the security modeling namespace.  In the case of externally
-> > + * modeled namespaces, the lifespan is until the security event
-> > + * description is exported to an external trust orchestrator.
-> > + *
-> > + * In order to support this model, the event description structures
-> > + * are typically composed of a union over 'in' and 'out' structures.
-> > + * The 'in' structures are used to hold arguments to the event handler
-> > + * that may only be relevant for the duration of the call.  These
-> > + * values are translated into members of the 'out' structure that
-> > + * retain the values until the end of the lifetime of the tsem_event
-> > + * structure.
-> > + *
-> > + * Each TSEM event handler is responsible for allocating a tsem_event
-> > + * structure and populating the appropriate CELL structure with the
-> > + * input characteristics of the event.  The dispatch_event() function
-> > + * is called to handle the modeling of the event.  This function
-> > + * returns the permission value that is returned as the result of the
-> > + * LSM event handler.
-> > + *
-> > + * The dispatch_event() calls the tsem_event_init() function that is
-> > + * responsible for translating the input parameters into values that
-> > + * will be retained for the lifetime of the security event
-> > + * description.  The populated event description is then dispatched to
-> > + * either the tsem_model_event() or the tsem_export_event() for
-> > + * modeling by either the internal TMA or by a TMA associated with an
-> > + * external trust orchestrator.
-> > + */
-> > +
-> > + ...
-> > +
-> > +static int tsem_file_open(struct file *file)
-> > +{
-> > +	struct inode *inode = file_inode(file);
-> > +	struct tsem_event *ep;
-> > +
-> > +	if (static_branch_unlikely(&tsem_not_ready))
-> > +		return 0;
-> > +	if (bypass_event(TSEM_FILE_OPEN))
-> > +		return 0;
-> > +	if (unlikely(tsem_inode(inode)->status == TSEM_INODE_CONTROL_PLANE)) {
-> > +		if (capable(CAP_MAC_ADMIN))
-
-> Don't you mean CAP_MAC_OVERRIDE? CAP_MAC_ADMIN is for changes to the
-> security state of the system, where CAP_MAC_OVERRIDE is for access
-> control decision exceptions. Here (and elsewhere) you use the former
-> in access checks.
-
-You are clearly the mechanistic expert on capabilities so we would
-take your lead on this.
-
-Some background information to hopefully assist in a discussion on the
-types of capability checks that should be implemented.
-
-The capability checks we apply in TSEM gate the following five types
-of actions:
-
-1.) The ability to issue TSEM control commands.
-
-2.) The ability to register an event processing module.
-
-3.) Access to state information on kernel based modeling agent instances.
-
-4.) The ability to send signals to trust orchestration processes.
-
-5.) The ability to send a signal to a different security modeling namespace.
-
-If we understand the differentiation that you suggest between
-CAP_MAC_ADMIN and CAP_MAC_OVERRIDE we would conclude the following:
-
-Checks 1, 2 and 4 would seem, in our opinion, have the ability to
-change the security state of a system.  As such it would seem
-appropriate to use CAP_MAC_ADMIN for those checks.
-
-Rather than belabor the issue now, we can entertain a subsequent
-discussion, if needed, on why we believe that actions 1, 2 and 4 can
-change the security state of the system.
-
-By your definition, check type 3 would seem to be consistent with
-CAP_MAC_OVERRIDE, since it is gating access to potentially security
-sensitive information but which does not imply the ability to change
-the security state of the system.
-
-That leaves category 5 as a possible open question.  Given the trust
-orchestration model for externally modeled namespaces, we concluded
-that the only entities that should be able to issue signals that can
-manipulate, particularly terminate a process, should only come from
-within the security modeling namespace that the target process is
-running in.  Given that, we would consider such operations as possibly
-affecting the security state of the system and thus suitable for
-CAP_MAC_ADMIN.
-
-Based on what we have always understood, and that is confirmed by 'git
-grep', the only thing at this time that is using CAP_MAC_OVERRIDE is
-SMACK.  If our analysis is correct, would you have any issues with us
-changing the type 3 checks to CAP_MAC_OVERRIDE?
-
-With respect to the check that you call out in
-tsem.c:tsem_open_file(), the capability check is to avoid a model
-deadlock situation.  If we adopt the model we discuss above, we would
-need to unequivocably allow the open if the process is carrying
-CAP_MAC_ADMIN or CAP_MAC_OVERRIDE in order to avoid a control
-deadlock.
-
-We will look forward to your thoughts on if we should proceed with the
-above changes.
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+> ---
+>  include/linux/lsm_hook_defs.h |  4 ++--
+>  include/linux/security.h      | 18 +++++++++++++++---
+>  kernel/auditsc.c              |  3 +--
+>  security/security.c           | 14 +++++++-------
+>  security/selinux/hooks.c      |  9 ++++++---
+>  security/smack/smack_lsm.c    | 17 ++++++++++-------
+>  6 files changed, 41 insertions(+), 24 deletions(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 3e5f6baa7b9f..c3ffc3f98343 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -253,8 +253,8 @@ LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct ta=
+sk_struct *p,
+>          struct inode *inode)
+>  LSM_HOOK(int, 0, userns_create, const struct cred *cred)
+>  LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
+> -LSM_HOOK(void, LSM_RET_VOID, ipc_getsecid, struct kern_ipc_perm *ipcp,
+> -        u32 *secid)
+> +LSM_HOOK(void, LSM_RET_VOID, ipc_getlsmblob, struct kern_ipc_perm *ipcp,
+> +        struct lsmblob *blob)
+>  LSM_HOOK(int, 0, msg_msg_alloc_security, struct msg_msg *msg)
+>  LSM_HOOK(void, LSM_RET_VOID, msg_msg_free_security, struct msg_msg *msg)
+>  LSM_HOOK(int, 0, msg_queue_alloc_security, struct kern_ipc_perm *perm)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index a0b23b6e8734..ebe8edaae953 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -290,6 +290,17 @@ static inline bool lsmblob_is_set(struct lsmblob *bl=
+ob)
+>         return !!memcmp(blob, &empty, sizeof(*blob));
+>  }
+>
+> +/**
+> + * lsmblob_init - initialize a lsmblob structure
+> + * @blob: Pointer to the data to initialize
+> + *
+> + * Set all secid for all modules to the specified value.
+> + */
+> +static inline void lsmblob_init(struct lsmblob *blob)
+> +{
+> +       memset(blob, 0, sizeof(*blob));
+> +}
+> +
+>  #ifdef CONFIG_SECURITY
+>
+>  int call_blocking_lsm_notifier(enum lsm_event event, void *data);
+> @@ -500,7 +511,7 @@ int security_task_prctl(int option, unsigned long arg=
+2, unsigned long arg3,
+>  void security_task_to_inode(struct task_struct *p, struct inode *inode);
+>  int security_create_user_ns(const struct cred *cred);
+>  int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+> -void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
+> +void security_ipc_getlsmblob(struct kern_ipc_perm *ipcp, struct lsmblob =
+*blob);
+>  int security_msg_msg_alloc(struct msg_msg *msg);
+>  void security_msg_msg_free(struct msg_msg *msg);
+>  int security_msg_queue_alloc(struct kern_ipc_perm *msq);
+> @@ -1340,9 +1351,10 @@ static inline int security_ipc_permission(struct k=
+ern_ipc_perm *ipcp,
+>         return 0;
+>  }
+>
+> -static inline void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32=
+ *secid)
+> +static inline void security_ipc_getlsmblob(struct kern_ipc_perm *ipcp,
+> +                                          struct lsmblob *blob)
+>  {
+> -       *secid =3D 0;
+> +       lsmblob_init(blob);
+>  }
+>
+>  static inline int security_msg_msg_alloc(struct msg_msg *msg)
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 84f6e9356b8f..94b7ef89da2e 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2638,8 +2638,7 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>         context->ipc.gid =3D ipcp->gid;
+>         context->ipc.mode =3D ipcp->mode;
+>         context->ipc.has_perm =3D 0;
+> -       /* scaffolding */
+> -       security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
+> +       security_ipc_getlsmblob(ipcp, &context->ipc.oblob);
+>         context->type =3D AUDIT_IPC;
+>  }
+>
+> diff --git a/security/security.c b/security/security.c
+> index bb541a3be410..6e72e678b5b4 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -3611,17 +3611,17 @@ int security_ipc_permission(struct kern_ipc_perm =
+*ipcp, short flag)
+>  }
+>
+>  /**
+> - * security_ipc_getsecid() - Get the sysv ipc object's secid
+> + * security_ipc_getlsmblob() - Get the sysv ipc object LSM data
+>   * @ipcp: ipc permission structure
+> - * @secid: secid pointer
+> + * @blob: pointer to lsm information
+>   *
+> - * Get the secid associated with the ipc object.  In case of failure, @s=
+ecid
+> - * will be set to zero.
+> + * Get the lsm information associated with the ipc object.
+>   */
+> -void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
+> +
+> +void security_ipc_getlsmblob(struct kern_ipc_perm *ipcp, struct lsmblob =
+*blob)
+>  {
+> -       *secid =3D 0;
+> -       call_void_hook(ipc_getsecid, ipcp, secid);
+> +       lsmblob_init(blob);
+> +       call_void_hook(ipc_getlsmblob, ipcp, blob);
+>  }
+>
+>  /**
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 102489e6d579..1b34b86426e8 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6328,10 +6328,13 @@ static int selinux_ipc_permission(struct kern_ipc=
+_perm *ipcp, short flag)
+>         return ipc_has_perm(ipcp, av);
+>  }
+>
+> -static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
+> +static void selinux_ipc_getlsmblob(struct kern_ipc_perm *ipcp,
+> +                                  struct lsmblob *blob)
+>  {
+>         struct ipc_security_struct *isec =3D selinux_ipc(ipcp);
+> -       *secid =3D isec->sid;
+> +       blob->selinux.secid =3D isec->sid;
+> +       /* scaffolding */
+> +       blob->scaffold.secid =3D isec->sid;
+>  }
+>
+>  static void selinux_d_instantiate(struct dentry *dentry, struct inode *i=
+node)
+> @@ -7252,7 +7255,7 @@ static struct security_hook_list selinux_hooks[] __=
+ro_after_init =3D {
+>         LSM_HOOK_INIT(userns_create, selinux_userns_create),
+>
+>         LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
+> -       LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
+> +       LSM_HOOK_INIT(ipc_getlsmblob, selinux_ipc_getlsmblob),
+>
+>         LSM_HOOK_INIT(msg_queue_associate, selinux_msg_queue_associate),
+>         LSM_HOOK_INIT(msg_queue_msgctl, selinux_msg_queue_msgctl),
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 5d74d8590862..370ca7fb1843 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3442,16 +3442,19 @@ static int smack_ipc_permission(struct kern_ipc_p=
+erm *ipp, short flag)
+>  }
+>
+>  /**
+> - * smack_ipc_getsecid - Extract smack security id
+> + * smack_ipc_getlsmblob - Extract smack security data
+>   * @ipp: the object permissions
+> - * @secid: where result will be saved
+> + * @blob: where result will be saved
+>   */
+> -static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
+> +static void smack_ipc_getlsmblob(struct kern_ipc_perm *ipp,
+> +                                struct lsmblob *blob)
+>  {
+> -       struct smack_known **blob =3D smack_ipc(ipp);
+> -       struct smack_known *iskp =3D *blob;
+> +       struct smack_known **iskpp =3D smack_ipc(ipp);
+> +       struct smack_known *iskp =3D *iskpp;
+>
+> -       *secid =3D iskp->smk_secid;
+> +       blob->smack.skp =3D iskp;
+> +       /* scaffolding */
+> +       blob->scaffold.secid =3D iskp->smk_secid;
+>  }
+>
+>  /**
+> @@ -5157,7 +5160,7 @@ static struct security_hook_list smack_hooks[] __ro=
+_after_init =3D {
+>         LSM_HOOK_INIT(task_to_inode, smack_task_to_inode),
+>
+>         LSM_HOOK_INIT(ipc_permission, smack_ipc_permission),
+> -       LSM_HOOK_INIT(ipc_getsecid, smack_ipc_getsecid),
+> +       LSM_HOOK_INIT(ipc_getlsmblob, smack_ipc_getlsmblob),
+>
+>         LSM_HOOK_INIT(msg_msg_alloc_security, smack_msg_msg_alloc_securit=
+y),
+>
+> --
+> 2.41.0
+>
