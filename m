@@ -1,50 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9746168489;
-	Wed, 28 Aug 2024 14:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993741891AC;
+	Wed, 28 Aug 2024 15:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854257; cv=none; b=AjjwJENaHKnLSm698l7VIPb4Epo4iaYWh6IpD5U4uCLg5b59R4G6+zs7Uy8ifT5SU8OyU2TqHyWby8Fg10cJXkGzGtUWy6ztg3dUSB//mWP5EbOjL0sl1UZA5HhTfGlFO6O3Xf2AyswwdMbOir7WwL7hWiG8Unp0SD31VBjyBdk=
+	t=1724857755; cv=none; b=ecjiVYLEV6kDp841C4eq/OSj5O50VqD+XWXqdpcCl6i5yiZjDRkq0myLNS6jILxlao7dGCpdrL2sDm3RY1EAt75MA6JkbkmjTcr/dn70JxY9IPNZpzz5bQ0fG7J2hBpeOnhLEJLRUAZaeFS2J/MTTJ5QRydrods96FYfKf4grGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854257; c=relaxed/simple;
-	bh=qp4XkaS0PrbdLwrhGw+MAEDZjVMGB9Unfk/C47vHb70=;
+	s=arc-20240116; t=1724857755; c=relaxed/simple;
+	bh=2dSGJx9DwCGU9inaMNC9w/ZuZvcpZXpFhNbyIbDXFXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/UoDRrnuqkCC0J8YhqM7igEVMqZTVDSi+FWYsYoqoCRwSk6l0lBWLT5H8Ac4HvcNADxKhoH32G0MG1iLqBwHynT3/vgAAdzvlkITChc6zbwsLqavcAzRArB0ffS9BoiJoqaVdUYsw6TgtEMtYUArfNADdOJGhmTqY4NcZCFqZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrGd79/b; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=HM9vWhQm8Db/vZumyL9kYmuyu7y9Lmz7/y2dETXiVKeGhMr1fdAFE+O8SNWXAiozocsdm8OeOyum3MSCitz7S4Ob/s7q4hiw6rc0k3SSE91XPALYkyYLYPZIRWscz1ytP+nMUvuCkj8b6L3AeMo5Og/21qQJEy7Zvj6gh98HuDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MzX2mLfI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrGd79/b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1587FC58190;
-	Wed, 28 Aug 2024 14:10:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzX2mLfI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B325CC4CEC1;
+	Wed, 28 Aug 2024 15:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724854256;
-	bh=qp4XkaS0PrbdLwrhGw+MAEDZjVMGB9Unfk/C47vHb70=;
+	s=k20201202; t=1724857755;
+	bh=2dSGJx9DwCGU9inaMNC9w/ZuZvcpZXpFhNbyIbDXFXg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NrGd79/bkxy5uNQSg/aQYVCZzUtcQChkqi1vHEE8JgYEoneD4TVnVrA1U7uCyOu2P
-	 pc4jhnotRJpVsL81E5tXJPcCEgMj9RXQkul0ZZ9KDmng9yDoTCIFM3N1mg/mFvBl+q
-	 pPA9Aqo/x1Hi0n02i143QiN7a7ZonIkfp0w1wH1rqSzGhfEhNlOQwqP+9Jsk8htbdA
-	 On0mqHZtaVndCmx7CgTwOUvNp7/5tqCwJhPtO+fjMwkA8elE4/u2nkJXf6keavdJY9
-	 zZBHjrCKs8/25LXBlgtf6MsU7IvAviSPZoTamroPsID1x8qWzjRcU88z2D0pRjvMbx
-	 7MGTLq6mfNUvA==
-Date: Wed, 28 Aug 2024 16:10:49 +0200
+	b=MzX2mLfIg6MsGjolLr+V4iGnkKTQUdjm/EaJhLDbZvuJ66i2qkoGxZkO0ahAeXSdZ
+	 w0oCrFV6JtXAsleAblrSSNSVD9dFHJ0vrg3QkfqAS1/8U20Rzb14APD9K3tmZDJ6GK
+	 CR4Dl1yuEAannx47U0uCzgYJILYF9LdXJXWNUfl7nNIE49/dESf9Abd7xAUmTxni17
+	 nc95Xa/TzQiWQ+tq/H0ZbZrk7Htb3mVLOLBSQS2h3kJfVSREuRRDhSrxAxG8RtEwvG
+	 8Yo853oQ5RDwkuAxKSPdqth8jdfeROhvvFlts3CkhJ2C/SW9eezgX8my3EQlKOcR+8
+	 iHTOc/MxGSYRg==
+Date: Wed, 28 Aug 2024 17:09:08 +0200
 From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+To: Kees Cook <kees@kernel.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
+	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
 	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
 	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
 	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>, 
 	Matus Jokay <matus.jokay@stuba.sk>, "Serge E. Hallyn" <serge@hallyn.com>
 Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
-Message-ID: <hxwogrharokumnbphayi22qnl4yxeqxkxdddjkshso3nztroq5@lb3wbcsp3vhf>
+Message-ID: <ynrircglkinhherehtjz7woq55te55y4ol4rtxhfh75pvle3d5@uxp5esxt4slq>
 References: <20240828030321.20688-1-laoar.shao@gmail.com>
  <20240828030321.20688-2-laoar.shao@gmail.com>
  <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
  <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
  <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
+ <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -52,21 +53,21 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="egnngjetwmt4ba2t"
+	protocol="application/pgp-signature"; boundary="utmrbzzw4vz6dwo3"
 Content-Disposition: inline
-In-Reply-To: <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
+In-Reply-To: <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
 
 
---egnngjetwmt4ba2t
+--utmrbzzw4vz6dwo3
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+To: Kees Cook <kees@kernel.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
+	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
 	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
 	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
 	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -78,144 +79,93 @@ References: <20240828030321.20688-1-laoar.shao@gmail.com>
  <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
  <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
  <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
+ <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
+In-Reply-To: <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
 
-Hi Yafang,
+Hi Kees,
 
-On Wed, Aug 28, 2024 at 09:40:35PM GMT, Yafang Shao wrote:
-> > Ahh, the actual generic definition is in <include/linux/string.h>.
-> > You could do
+On Wed, Aug 28, 2024 at 06:48:39AM GMT, Kees Cook wrote:
+
+[...]
+
+> >Thank you for your suggestion. How does the following commit log look
+> >to you? Does it meet your expectations?
 > >
-> >         diff --git i/include/linux/string.h w/include/linux/string.h
-> >         index 9edace076ddb..060504719904 100644
-> >         --- i/include/linux/string.h
-> >         +++ w/include/linux/string.h
-> >         @@ -76,11 +76,11 @@ ssize_t sized_strscpy(char *, const char *,=
- size_t);
-> >           * known size.
-> >           */
-> >          #define __strscpy0(dst, src, ...)      \
-> >         -       sized_strscpy(dst, src, sizeof(dst) + __must_be_array(d=
-st))
-> >         +       sized_strscpy(dst, src, ARRAY_SIZE(dst))
-> >          #define __strscpy1(dst, src, size)     sized_strscpy(dst, src,=
- size)
+> >    string: Use ARRAY_SIZE() in strscpy()
 > >
-> >          #define __strscpy_pad0(dst, src, ...)  \
-> >         -       sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_arr=
-ay(dst))
-> >         +       sized_strscpy_pad(dst, src, ARRAY_SIZE(dst))
-> >          #define __strscpy_pad1(dst, src, size) sized_strscpy_pad(dst, =
-src, size)
+> >    We can use ARRAY_SIZE() instead to clarify that they are regular cha=
+racters.
 > >
-> >          /**
+> >    Co-developed-by: Alejandro Colomar <alx@kernel.org>
+> >    Signed-off-by: Alejandro Colomar <alx@kernel.org>
+> >    Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> >
+> >diff --git a/arch/um/include/shared/user.h b/arch/um/include/shared/user=
+=2Eh
+> >index bbab79c0c074..07216996e3a9 100644
+> >--- a/arch/um/include/shared/user.h
+> >+++ b/arch/um/include/shared/user.h
+> >@@ -14,7 +14,7 @@
+> >  * copying too much infrastructure for my taste, so userspace files
+> >  * get less checking than kernel files.
+> >  */
+> >-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+> >+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]) + __must_be_array(x))
+> >
+> > /* This is to get size_t and NULL */
+> > #ifndef __UM_HOST__
+> >@@ -60,7 +60,7 @@ static inline void print_hex_dump(const char *level,
+> >const char *prefix_str,
+> > extern int in_aton(char *str);
+> > extern size_t strlcat(char *, const char *, size_t);
+> > extern size_t sized_strscpy(char *, const char *, size_t);
+> >-#define strscpy(dst, src)      sized_strscpy(dst, src, sizeof(dst))
+> >+#define strscpy(dst, src)      sized_strscpy(dst, src, ARRAY_SIZE(dst))
 >=20
-> Thank you for your suggestion. How does the following commit log look
-> to you? Does it meet your expectations?
+> Uh, but why? strscpy() copies bytes, not array elements. Using sizeof() i=
+s already correct and using ARRAY_SIZE() could lead to unexpectedly small c=
+ounts (in admittedly odd situations).
 >=20
->     string: Use ARRAY_SIZE() in strscpy()
->=20
->     We can use ARRAY_SIZE() instead to clarify that they are regular char=
-acters.
+> What is the problem you're trying to solve here?
 
-I would write the following:
+I suggested that here:
+<https://lore.kernel.org/all/2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5wdo6=
+5dk4@srb3hsk72zwq/>
 
-For symmetry with wide-character string functions, ARRAY_SIZE() is more
-appropriate than sizeof().
+There, you'll find the rationale (and also for avoiding the _pad calls
+where not necessary --I ignore if it's necessary here--).
 
-For example, one would call wcs*cpy(dst, src, ARRAY_SIZE(dst)).
-The call wcs*cpy(dst, src, sizeof(dst)) would be bogus, since the
-argument is the number of wide characters, not the number of bytes.
-
-When translating that to normal characters, one wants conceptually the
-same operation, but on (normal) characters.  That is, one wants
-strscpy(dst, src, ARRAY_SIZE(dst)).  While strscpy() with sizeof() works
-just fine because sizeof(char)=3D=3D1 by definition, it is conceptually
-wrong to use it.
-
-By using ARRAY_SIZE(), we get the __must_be_array() check for free.
-
->=20
->     Co-developed-by: Alejandro Colomar <alx@kernel.org>
->     Signed-off-by: Alejandro Colomar <alx@kernel.org>
->     Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->=20
-> diff --git a/arch/um/include/shared/user.h b/arch/um/include/shared/user.h
-> index bbab79c0c074..07216996e3a9 100644
-> --- a/arch/um/include/shared/user.h
-> +++ b/arch/um/include/shared/user.h
-> @@ -14,7 +14,7 @@
->   * copying too much infrastructure for my taste, so userspace files
->   * get less checking than kernel files.
->   */
-> -#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-> +#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]) + __must_be_array(x))
->=20
->  /* This is to get size_t and NULL */
->  #ifndef __UM_HOST__
-> @@ -60,7 +60,7 @@ static inline void print_hex_dump(const char *level,
-> const char *prefix_str,
->  extern int in_aton(char *str);
->  extern size_t strlcat(char *, const char *, size_t);
->  extern size_t sized_strscpy(char *, const char *, size_t);
-> -#define strscpy(dst, src)      sized_strscpy(dst, src, sizeof(dst))
-> +#define strscpy(dst, src)      sized_strscpy(dst, src, ARRAY_SIZE(dst))
->=20
->  /* Copied from linux/compiler-gcc.h since we can't include it directly */
->  #define barrier() __asm__ __volatile__("": : :"memory")
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 9edace076ddb..060504719904 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
->=20
-> @@ -76,11 +76,11 @@ ssize_t sized_strscpy(char *, const char *, size_t);
->   * known size.
->   */
->  #define __strscpy0(dst, src, ...)      \
-> -       sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst))
-> +       sized_strscpy(dst, src, ARRAY_SIZE(dst))
->  #define __strscpy1(dst, src, size)     sized_strscpy(dst, src, size)
->=20
->  #define __strscpy_pad0(dst, src, ...)  \
-> -       sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst))
-> +       sized_strscpy_pad(dst, src, ARRAY_SIZE(dst))
->  #define __strscpy_pad1(dst, src, size) sized_strscpy_pad(dst, src, size)
-
-The diff looks good to me.  Thanks!
-
-Cheers,
+Have a lovely day!
 Alex
 
 >=20
->  /**
+> -Kees
 >=20
-> --
-> Regards
->=20
-> Yafang
+> --=20
+> Kees Cook
 
 --=20
 <https://www.alejandro-colomar.es/>
 
---egnngjetwmt4ba2t
+--utmrbzzw4vz6dwo3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbPL+QACgkQnowa+77/
-2zJobg//W3RHrDHVBPuZSKc3m1rr+m7+7TxlOxTaXg8qwoJHeHq4f/sbSV5l1HR4
-UF2gEJicrF4OknzCcegkXqdjxs1MUkzlaMxIQmj0yPgQmZ1Upg9aoGlVJNyjynvD
-09twa1O3azCA8YvuZc+vn0YoqbGkM54+OPWJaBsSERqgcVF57/vXgS702rKBqwhw
-3CrAWa/WTX5z10Q6yX+kwV8gWrtOBsMyAQRk53Yr3ZRR8DhCyK1ImS8BSHROV8+T
-Dz5g8o2WzPkvKZiLq/Slxa9UpRvw5j5RBh3GBGxhZcubv8arya/FMwXotUa2L3Rr
-uvfxbQw6lCR15FlHrI8984b99T7YkIr/pxYmrQABScUz7uMqJAhVutei6YJJgkUs
-jpEsNQeOiDgJoQUU7xcVuP1ME6sgdU7/vxYfcjiybYX0rvaVjKTRWRAQt6NmmvqX
-L6sZ94Tmba4wN92Akga5S3wnEadpbFHZtVGOVbc6tHz9ee0uVksD+DWSQVz7F8pw
-vMu73OMlE/cp9AFZhtVDuUCqneXgvgEGs86akKQuVdx2fSeZG3CVkTH5L8vSlTGi
-AlUtf5jlr8oHAP3g6Jl5KTxgGQXaXybO0RlbyVgM1ZrT+vrHLIB0mwBTJ3cIBKLS
-jAh4WPx1tmvxpQw9/G3igu98xN7ttGBv7Lc+WxmGK/aQfJtl6T4=
-=TaLj
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbPPZQACgkQnowa+77/
+2zLbhBAAlmo97hSALOMFZhNvjtiifi8OS3Fmi4WyEj8YDnX4pfh+3drVAhe2b44u
+nrvjsBMEM1AHDiXa+gp3sUheR3N1kFuX1oyxlPsb9crUH3IfubT4kG0tQ6qLqE8M
+Tv0OfPWGdqeGMgvvTEiQVb4xcs/OMT5T4hVdwAtws8Lw0f1ofW5uE5Vlhu5GUXUB
+Mbz0DBwkRwBtEmnOCDeZE8zBL8ifIc7k5lQ7Kp1hr4gg/89oLXSABSSxtkyx2U20
+8Q1u2OXUiGq4J1BPkNs/5REFb+DJ5bpor7fMecfxoIKms1HXU4w3BjLO6x0ijCTc
+cKtZD6eMdpBVNhzXDsJpwMEePaKmJ8k9M4XEVFzBGvdKZ7nAx2meA0rmRssG8tVN
+PkNk/kswZIw0qi+m7Lo5uoWOoyKt/s3/UxyUehrIs2k836Zxc9gNdXzX3V9l/R7l
+KStxOPruRK2CjPtIE+OBeCpkVxVpFnNhyOVRADi9sWf4ztjwoo8acuXuDNjBDRoP
+ggNzOacqXIv8N0Ly6pn+01O6jUg5VNLndq9hOMveyamHwRAZVTDiJMh2xmJqBW41
+jIckyXwpnHly1Ag/DEWDiLlgjL0KTcqLGn3Y3oG4jd6PKxqUpxZHGw5UvLPq4QOk
+Oy6ZjqF9XGRi8kCgo0hGVLIKxJX7RfAZydaWmAjQVouEODj3TvU=
+=wcL8
 -----END PGP SIGNATURE-----
 
---egnngjetwmt4ba2t--
+--utmrbzzw4vz6dwo3--
