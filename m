@@ -1,137 +1,82 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13CC1332A1;
-	Wed, 28 Aug 2024 03:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED0013D899
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2024 03:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724814285; cv=none; b=gttHFE7SjeWAZ9bwyuVy4YuBmdjcOMXkNZFxQCGBzsJnCnH4XOhAhY76wglzrrL5i77sr4FrWpqByJCaueNW+PajDQJPWnE5zkIqHla3TaAFTESZOpBw4XAmzhE2qjEBe0RUe2u6MyUi/ou0wXDpoifaGohmq5gA7AK1osNSalc=
+	t=1724816719; cv=none; b=DEekvTqyk3csUpNvNHaWlxFLQAuRDTj/WeOUhRc5QV5m1Mnfc8YYduusyY7YwUEa46yQFMgAOYDqzDWXV0e30h7DBvveeh03FQnup/5fNlFW/Pv0Z21Q+BN75ONM+GkIHrSwLigtuhsy2h5r2zHOlyq1V41mhHPgL8jWpv0Xwo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724814285; c=relaxed/simple;
-	bh=iqRY1P34qqoNfGxtLuvfxUNzgKq34JOZhG+axK8tdYs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o3a99nFEzVdjc5n5gwq6oplLYyPEXwLrvJI+77i4njMPKaIV+FS1xNnG7neNcB4Rk5DCXconwRQ0fzUTgFMkVOuczcySUVgXK+u7gA+Lw/ChyKmWrNntdBS4HY0bpRIVeggv23Z5EM40Ps1Bqh2nIKrnR0hY0qFeG+T0f2U8i+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e81pcOe8; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724816719; c=relaxed/simple;
+	bh=olGyObC/pNWdjCOWjhvhkAzzCytLDWIL4PH/8OIefGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDbGETLb38XrzzotpIlFWFkF/lSVWE8k9IjvWSpc/B75FPiit1XUKVbCu6+CGQnMHNM+efqVtOv9Ptv+dIzk55G5VeHTjN+wfKC0YuexdD97tXhmFUcLFHlfd2/QLB2My7NezDS0tJZsN4XufHTGPs/J8tFAhg4tHM03Px1Haw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=NyjfLId7; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e81pcOe8"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d3e44b4613so4566704a91.3;
-        Tue, 27 Aug 2024 20:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724814283; x=1725419083; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8OBLeQ9F541pwxbn8dEubiWANdxJtGv9ekHxWl5Hwac=;
-        b=e81pcOe8iwoPu+A0y/ykVmzG0XbGCoDPD3x1pK4ijYyA38MjqT5iPwWGRTo3gMouOq
-         fORnaPq1otZXtBwWkq6Hl5NO+84dnKiddILYgBVsGXBY4EalgGUqZgR/ZseHbEUrJ+sW
-         0UeGYOkLTOolfvWyKFTtJWF0KXvyN/pA2LOMU3MWc0WGl/Pif7uoAOhZLXC5mhOG97xv
-         FXfCd8jf9xyTlhxinjyfDqJH4iRSnQ2YUT3w48Cu0LeiPyLMLpJ6UD3/Ws2i+XMUxZ1/
-         /gZE3UV/fnsBmQBRrMKUAoVH26uISzrqxOOaSN7oPIzio093HFzDzG0dhUczUhiA1n/+
-         g7cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724814283; x=1725419083;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8OBLeQ9F541pwxbn8dEubiWANdxJtGv9ekHxWl5Hwac=;
-        b=hDv8YGuMVd3hIa16OeVDea+XUEnulFDjScHhfTN7+SQ0rRuXNf6yVxXAvZmfrkYs0Z
-         1oIKGUUf5HyqU9Y8o5Q/AsBt6crDazMBTLnOljjV6K1fZYuooLWlLV9FW2BKl1AFNFXj
-         UUfb0zrlQNSEjymlFyB5JhPmEKwMyq9haVRDt3xRL835YyoWvMjaRhulYbe/6fQ7imXP
-         FBFIWf/iboK1lk8d2033BwAdKJJDO/zqC5Si632J4jTKCzZXNXrZJEbmYfAlU3FLmDhU
-         NUpLT+BLe6btCQmcyuKclq6h9kbUQJ+bqq8h69uLb8JMH54nm7aUnyqwrqD4hzSES81i
-         Cz0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7RXAn3SnBWchTm7cn5EACoxvazW6Mqj080VvMqbhgiSDMt8T4AB13qM8lKjNLawF7ok2YKzkl9qC61VrjwQ==@vger.kernel.org, AJvYcCUDBo+MRnxSMM0hfY91EbCw3LBnVHv3pmsgOsqskFJ+M5i1tyPdeL06N/xBJFVIdDIboencYbas2w==@vger.kernel.org, AJvYcCUsg43SnC9LJHdmCikaBq7/Y2xDKt+mhIaLvx0+3TXyQhMBmIj2Dzhzh4K2Xu/xcQ91xrb2bQ==@vger.kernel.org, AJvYcCV7IeGckOCnWGu66drMWPaX6HZpP68TZq20DWo5WHVZgms+bYtrQm0ztOw12G3fgWIhOJ61FIwiSI/ufub1kO2GRN7b@vger.kernel.org, AJvYcCWBpfYGuGnH6MpDGW44zEVVIoZJe8zIF5/FbkocG3p3gNVQpRDcwg3gJtHPJ2+3z0eKFS9tjE67@vger.kernel.org, AJvYcCWz4aNoDo85wLpuY6ffxsyKkngAAl0YMzIw8jESsnMc1yyMTCjrDQ5v+mIydtykQKihoIKw@vger.kernel.org, AJvYcCXIkqS7k9zP01l+YsqGIS5eFOEG/Hzk7/dDbSX47YaRmXV3dyw5GaAcS/eIWyaZuHmnRlmM0xA2D7Q3gABPZSdOxhGP5Kha@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9HGif0oSVAktneJr8j+554uz8Cw/5v+1VmErWHm5pSXcmBbkB
-	uehyLe2fTHpFwGR+bL+0vSGteML7kLWDKNPtwRovks38N+3SmSGy
-X-Google-Smtp-Source: AGHT+IG9WCG/sJqfIUmD5L1QkWASIgz28eaxuJrS0TfQtB7xTFo8bkGI6Rj777tc/95CgBuyWlEpcw==
-X-Received: by 2002:a17:90b:390e:b0:2c8:e888:26a2 with SMTP id 98e67ed59e1d1-2d646bcd147mr17296354a91.13.1724814282792;
-        Tue, 27 Aug 2024 20:04:42 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.104.43])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445db8f6sm317977a91.1.2024.08.27.20.04.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2024 20:04:42 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org
-Cc: torvalds@linux-foundation.org,
-	alx@kernel.org,
-	justinstitt@google.com,
-	ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org,
-	catalin.marinas@arm.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>
-Subject: [PATCH v8 8/8] drm: Replace strcpy() with strscpy()
-Date: Wed, 28 Aug 2024 11:03:21 +0800
-Message-Id: <20240828030321.20688-9-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20240828030321.20688-1-laoar.shao@gmail.com>
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="NyjfLId7"
+Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47S3icJN013986
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 23:44:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1724816682; bh=fPLsyPvjLqRwSFvB9BZOO6c6tjlD9gjUehKmT9DuOnQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=NyjfLId7vqU22f9gjSHMfxsxs6/DT10NAIXYdf1ye9kJjtqE4CoDBaN3poS5NRkYm
+	 pAm8qextppKJ7LFibtnDu6scAW51nlTMHqiXWXW6mfSdgN+r8NOTLiRT/x1PuBkUXn
+	 auLhWuAngtEOEcVlyQPY4WMLcDORuz/KZzDLdPtBahxvBEloz++Pfam4dr1Ob1aQyq
+	 7aXpO634uQ3YZwiY3bX+Y7Up0QPTNz0Wgwl8Y7LVAHKjXhjZ7yuz9Y+MyvZnSi4w7g
+	 mu0l6+ObSmv4sv9+L48ZECWwK8/iChkz2wAHFAHfzL+ZGo1GNkGSX1Ibx7nyo6t4Rl
+	 6VV7cFE061Fcg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 69DC815C02C1; Tue, 27 Aug 2024 23:44:38 -0400 (EDT)
+Date: Tue, 27 Aug 2024 23:44:38 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Hongbo Li <lihongbo22@huawei.com>,
+        jack@suse.cz, viro@zeniv.linux.org.uk, gnoack@google.com,
+        mic@digikod.net, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
+ directly
+Message-ID: <20240828034438.GB9627@mit.edu>
+References: <20240827014108.222719-1-lihongbo22@huawei.com>
+ <20240827021300.GK6043@frogsfrogsfrogs>
+ <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+ <20240827053712.GL6043@frogsfrogsfrogs>
+ <20240827-abmelden-erbarmen-775c12ce2ae5@brauner>
+ <20240827171148.GN6043@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240827171148.GN6043@frogsfrogsfrogs>
 
-To prevent erros from occurring when the src string is longer than the
-dst string in strcpy(), we should use strscpy() instead. This
-approach also facilitates future extensions to the task comm.
+On Tue, Aug 27, 2024 at 10:11:48AM -0700, Darrick J. Wong wrote:
+> 
+> But in seriousness, the usual four filesystems return i_generation.
+> That is changed every time an inumber gets reused so that anyone with an
+> old file handle cannot accidentally open the wrong file.  In theory one
+> could use GETVERSION to construct file handles (if you do, UHLHAND!)
+> instead of using name_to_handle_at, which is why it's dangerous to
+> implement GETVERSION for everyone without checking if i_generation makes
+> sense.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>
----
- drivers/gpu/drm/drm_framebuffer.c     | 2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I believe the primary use case for {FS,EXT4}_IOC_GETVERSION was for
+userspace NFS servers to construt file handles.
 
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 888aadb6a4ac..2d6993539474 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
- 	INIT_LIST_HEAD(&fb->filp_head);
- 
- 	fb->funcs = funcs;
--	strcpy(fb->comm, current->comm);
-+	strscpy(fb->comm, current->comm);
- 
- 	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
- 				    false, drm_framebuffer_free);
-diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-index 96c6cafd5b9e..afa9dae39378 100644
---- a/drivers/gpu/drm/i915/i915_gpu_error.c
-+++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-@@ -1412,7 +1412,7 @@ static bool record_context(struct i915_gem_context_coredump *e,
- 	rcu_read_lock();
- 	task = pid_task(ctx->pid, PIDTYPE_PID);
- 	if (task) {
--		strcpy(e->comm, task->comm);
-+		strscpy(e->comm, task->comm);
- 		e->pid = task->pid;
- 	}
- 	rcu_read_unlock();
--- 
-2.43.5
+For file systems that don't store persistent i_generation numbers, I
+think it would be absolutely wrong that FS_IOC_GETVERSION to return
+zero, or some nonsense random number.  The right thing to do would be
+to have it return an ENOTTY error if somene tries to call
+FS_IOC_GETVERSION on a vfat file system.  Otherwise this could lead to
+potential user data loss/corruption for users of userspace nfs servers.
 
+	       	    		    	      	 - Ted
