@@ -1,246 +1,68 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0692B158DC2;
-	Wed, 28 Aug 2024 10:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF90315958D
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Aug 2024 12:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724841217; cv=none; b=BIaXRq34G3gOE2H2MR3yep9olt0J2QUe3s/ywntFUoeVOMs0gn/MZgKrDJxlD8XrHn44zcxDue18LXjlnKjn5UntLa25+Tdns/RDSKjHIfAjEopaX9UAPC7AlcT6zPI3GF/9CmeZjnv3CJE5nAzRh8G/zUnuYk9NMN14vIIcd9U=
+	t=1724847413; cv=none; b=Sm9lTyVKYAwEbHgxCfoMTS7uA3q3NErshiI8QCi5Iw4yzOe5U5jGHOjHwhi8wRaeVX1sGKK1pWN3NyzzU9r8flPy8E9NxmpRrxfrhyN6QM7S2luv8bCwH0t/tdFhlaVBj+r2SYNP6AOH1TxOuwBM9t+FjSb6g8bb6TQFJ94a1Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724841217; c=relaxed/simple;
-	bh=cPZgE31BSHwwP95dmqEz0ZNgyoyAIhKJPLIMk9rRdfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bWEl/pIjfVmu98CZEreiNpiKgaXpv2i3dawDClmoJZIeOEnXUr2owtPEL6OPfLIKr7HvpBz3KfCnCAqR6BuwGsfUh+usclFvz4xyCKq3FlY1bsI+1rqfs7PBJX5IOuAI9Xa5iUjiVCz5lXaRY7kyGBV3zJZd7JI95O1DkQKNPs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfAUOrA4; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfAUOrA4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC6B1C98EC0;
-	Wed, 28 Aug 2024 10:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724841216;
-	bh=cPZgE31BSHwwP95dmqEz0ZNgyoyAIhKJPLIMk9rRdfE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZfAUOrA4+4PzUIlLfwx0pZzjjMSWEwQzTUICw7S+nyRjSvVasQjwzTTKkWt5+VGUU
-	 snpNxm8aDorQtx2+eoDhq5hjE7V2fmP1Y4yVZkDZ7Az3sQBzwKR4QqC3jX+LM9X3Rp
-	 byiEdTEwUHqvU3eO792QkR3MI00yEyYXKsmZK2FPPX6nutKv/IgkOujyyNDE47XTjG
-	 3GcB+TQpnQVHPf6o7tRjIEnqzPMK7Yvci5uJeqREZ9I18yHVzTq7HrZ62RMHkAYsd+
-	 TPAVJgCyAb24sCuJGpMQUAIqQAVLxRiEHdDtD5g/WI34U22SQM0IrmtRGgQM3jEOj+
-	 izlByCP+HD/Tw==
-Date: Wed, 28 Aug 2024 12:33:30 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v8 6/8] mm/util: Deduplicate code in
- {kstrdup,kstrndup,kmemdup_nul}
-Message-ID: <bbdhr62fk7jts6b4wok6hpbjtoiyzofbithwlq7kl5dkabn3bz@3lf47k4xrmhc>
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
- <20240828030321.20688-7-laoar.shao@gmail.com>
- <byi4tx6l2lrbs5w6oxypr44ldntlh4kp56vnsza3iuztwb37oa@2qtdx2kgz4bq>
+	s=arc-20240116; t=1724847413; c=relaxed/simple;
+	bh=NxnQdjW+LrD/et8Tw4sG0M6wydIpNF1+T/UwCShLOH0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q4Wv/Wu4TBubQFLR1C6DHtx2aqvyPXcp/cjqtMBbiwDWCM6EZAooNQIcYPkX/EfZiL/t/To0AvMEwRUCrwvxAeX6ubo5HYYRGGVNfJH4zS3OfwpsyDMu77Z6a/mg7OvEFn9dST72hRO15L4f/lfW7A32WuXnggB2PX2FFuFw4x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wv3Dv2zFtzQqmR;
+	Wed, 28 Aug 2024 20:11:59 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 499F818010B;
+	Wed, 28 Aug 2024 20:16:49 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
+ 2024 20:16:49 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
+CC: <linux-security-module@vger.kernel.org>, <lihongbo22@huawei.com>
+Subject: [PATCH -next] lsm: Use IS_ERR_OR_NULL() helper function
+Date: Wed, 28 Aug 2024 20:24:50 +0800
+Message-ID: <20240828122450.3697314-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xaakvknay6p4srmg"
-Content-Disposition: inline
-In-Reply-To: <byi4tx6l2lrbs5w6oxypr44ldntlh4kp56vnsza3iuztwb37oa@2qtdx2kgz4bq>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
+Use the IS_ERR_OR_NULL() helper instead of open-coding a
+NULL and an error pointer checks to simplify the code and
+improve readability.
 
---xaakvknay6p4srmg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v8 6/8] mm/util: Deduplicate code in
- {kstrdup,kstrndup,kmemdup_nul}
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
- <20240828030321.20688-7-laoar.shao@gmail.com>
- <byi4tx6l2lrbs5w6oxypr44ldntlh4kp56vnsza3iuztwb37oa@2qtdx2kgz4bq>
-MIME-Version: 1.0
-In-Reply-To: <byi4tx6l2lrbs5w6oxypr44ldntlh4kp56vnsza3iuztwb37oa@2qtdx2kgz4bq>
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ security/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Aug 28, 2024 at 12:32:53PM GMT, Alejandro Colomar wrote:
-> On Wed, Aug 28, 2024 at 11:03:19AM GMT, Yafang Shao wrote:
-> > These three functions follow the same pattern. To deduplicate the code,
-> > let's introduce a common helper __kmemdup_nul().
-> >=20
-> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Cc: Simon Horman <horms@kernel.org>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: Alejandro Colomar <alx@kernel.org>
-> > ---
->=20
-> Reviewed-by: Alejandro Colomar <alx@kernel.org>
+diff --git a/security/inode.c b/security/inode.c
+index f21847badb7d..da3ab44c8e57 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -296,7 +296,7 @@ void securityfs_remove(struct dentry *dentry)
+ {
+ 	struct inode *dir;
+ 
+-	if (!dentry || IS_ERR(dentry))
++	if (IS_ERR_OR_NULL(dentry))
+ 		return;
+ 
+ 	dir = d_inode(dentry->d_parent);
+-- 
+2.34.1
 
-(Or maybe I should say
-
-Co-developed-by: Alejandro Colomar <alx@kernel.org>
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
-
-)
-
-
->=20
-> Cheers,
-> Alex
->=20
-> >  mm/util.c | 68 ++++++++++++++++++++++---------------------------------
-> >  1 file changed, 27 insertions(+), 41 deletions(-)
-> >=20
-> > diff --git a/mm/util.c b/mm/util.c
-> > index 9a77a347c385..42714fe13e24 100644
-> > --- a/mm/util.c
-> > +++ b/mm/util.c
-> > @@ -45,33 +45,41 @@ void kfree_const(const void *x)
-> >  EXPORT_SYMBOL(kfree_const);
-> > =20
-> >  /**
-> > - * kstrdup - allocate space for and copy an existing string
-> > - * @s: the string to duplicate
-> > + * __kmemdup_nul - Create a NUL-terminated string from @s, which might=
- be unterminated.
-> > + * @s: The data to copy
-> > + * @len: The size of the data, not including the NUL terminator
-> >   * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-> >   *
-> > - * Return: newly allocated copy of @s or %NULL in case of error
-> > + * Return: newly allocated copy of @s with NUL-termination or %NULL in
-> > + * case of error
-> >   */
-> > -noinline
-> > -char *kstrdup(const char *s, gfp_t gfp)
-> > +static __always_inline char *__kmemdup_nul(const char *s, size_t len, =
-gfp_t gfp)
-> >  {
-> > -	size_t len;
-> >  	char *buf;
-> > =20
-> > -	if (!s)
-> > +	/* '+1' for the NUL terminator */
-> > +	buf =3D kmalloc_track_caller(len + 1, gfp);
-> > +	if (!buf)
-> >  		return NULL;
-> > =20
-> > -	len =3D strlen(s) + 1;
-> > -	buf =3D kmalloc_track_caller(len, gfp);
-> > -	if (buf) {
-> > -		memcpy(buf, s, len);
-> > -		/* During memcpy(), the string might be updated to a new value,
-> > -		 * which could be longer than the string when strlen() is
-> > -		 * called. Therefore, we need to add a NUL termimator.
-> > -		 */
-> > -		buf[len - 1] =3D '\0';
-> > -	}
-> > +	memcpy(buf, s, len);
-> > +	/* Ensure the buf is always NUL-terminated, regardless of @s. */
-> > +	buf[len] =3D '\0';
-> >  	return buf;
-> >  }
-> > +
-> > +/**
-> > + * kstrdup - allocate space for and copy an existing string
-> > + * @s: the string to duplicate
-> > + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-> > + *
-> > + * Return: newly allocated copy of @s or %NULL in case of error
-> > + */
-> > +noinline
-> > +char *kstrdup(const char *s, gfp_t gfp)
-> > +{
-> > +	return s ? __kmemdup_nul(s, strlen(s), gfp) : NULL;
-> > +}
-> >  EXPORT_SYMBOL(kstrdup);
-> > =20
-> >  /**
-> > @@ -106,19 +114,7 @@ EXPORT_SYMBOL(kstrdup_const);
-> >   */
-> >  char *kstrndup(const char *s, size_t max, gfp_t gfp)
-> >  {
-> > -	size_t len;
-> > -	char *buf;
-> > -
-> > -	if (!s)
-> > -		return NULL;
-> > -
-> > -	len =3D strnlen(s, max);
-> > -	buf =3D kmalloc_track_caller(len+1, gfp);
-> > -	if (buf) {
-> > -		memcpy(buf, s, len);
-> > -		buf[len] =3D '\0';
-> > -	}
-> > -	return buf;
-> > +	return s ? __kmemdup_nul(s, strnlen(s, max), gfp) : NULL;
-> >  }
-> >  EXPORT_SYMBOL(kstrndup);
-> > =20
-> > @@ -192,17 +188,7 @@ EXPORT_SYMBOL(kvmemdup);
-> >   */
-> >  char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> >  {
-> > -	char *buf;
-> > -
-> > -	if (!s)
-> > -		return NULL;
-> > -
-> > -	buf =3D kmalloc_track_caller(len + 1, gfp);
-> > -	if (buf) {
-> > -		memcpy(buf, s, len);
-> > -		buf[len] =3D '\0';
-> > -	}
-> > -	return buf;
-> > +	return s ? __kmemdup_nul(s, len, gfp) : NULL;
-> >  }
-> >  EXPORT_SYMBOL(kmemdup_nul);
-> > =20
-> > --=20
-> > 2.43.5
-> >=20
->=20
-> --=20
-> <https://www.alejandro-colomar.es/>
-
-
-
---=20
-<https://www.alejandro-colomar.es/>
-
---xaakvknay6p4srmg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbO/PoACgkQnowa+77/
-2zLPnw/6A+aBCutQmKak+5R0meV1Cxil2Ncoh02Vf0xc2uWghVz4ES9qrmIq3vsF
-s+1JFTqZm983+114HxnK1NGfs30MiLs9PSiFvqtK77V4LW4I6V+eSKfjCywWH3ep
-s+0O51nVwX4a6ys2pW6q1Jb1JNPSjZovOQi1OVe+TWTtpHJSdqvsiYoLyEK9b41L
-f0wj/lJ4R7XhNBo/9WqpOW73pOub4Lx+RQThi87449z+mpiaKsaFZIZSlLv0nEvH
-9VNnxKYmTQOzE7kHiEUoVSL7sC0DTU+FIsw1nF7an9UmEpTcvCHmEKQHpPerKs1T
-EoGHKtPiLY3U23B5fw4zxheJaIAQCDFM73XwYGhtluwQToyS4nswC2sjYJXB0Tyy
-8SrkG+Lubl3mMRHY/WlBBkBumKo9GYRbIiuVU2N/Xsn0AdNViOy7mQTGdeGmh9qz
-l0pU6qnyso0Bdeaum22hOW/SgHwU1zvy8LVZwYkaWjMpDkuJKM2W5rvA1MGnHisR
-DkXA953cx17eO33YRMFpuRthuA7X2/qNmEj3d6elhUP3x9ea9YLRl1PC9j0jIgRA
-PiZXrJuFNeQpp27Qz6k4PxWbBmPjzZyleFwGtvZ86qbaRzFWZo2gCQZrrPckac2X
-6fs3M2nM+8tZ6ZaqFeEb+kMnIRB3fZo7I59kFr6OEmgHSZsWCGM=
-=+lO+
------END PGP SIGNATURE-----
-
---xaakvknay6p4srmg--
