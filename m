@@ -1,204 +1,156 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0099474;
-	Thu, 29 Aug 2024 00:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0841D8814;
+	Thu, 29 Aug 2024 01:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724891107; cv=none; b=uKy12cj72ZObc5AXxE2CknTLbrALmshn/1xpOh8XvDZ+1x2RqNn8mAtslBUJq6BWkX+AuyuHDmzgvgMBXFE8WnkuifbIbRWPkzLD7c7lArm90iB5ZEIQ+ookc7HYwjU6t68UaatoXdr24QsFt89Rwcd9CCOltEAz7rtq43h8bA4=
+	t=1724895999; cv=none; b=VJnrqloohcqMNozCP3NKpR9wjoERWqN3N4Y87Ghh5vd+TDgWpwlzsatmvZ8MVcPMDjbJ9QKgGBvFcxdKKqOStAMXrM3K2ChoF6MDaRDtbq1LHFATjNMeb/BXvgM7EZhutwqr87+e+EeAKuxA7xU8nS2fn9ngSu9S/33FsqMuoPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724891107; c=relaxed/simple;
-	bh=nCM8XvqCff53EEr64RnHMSHTUq4K5/SJ/d7fShpXRWA=;
+	s=arc-20240116; t=1724895999; c=relaxed/simple;
+	bh=LBGvbU9Ahk60LnwOybNrMK4GrZQInCZs70x5HnonAfA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aeya4sFpWSYXo65Huz9yXThz9K943E000DOU76vXAxhMojMRKC7EQGWm8EY6IgOxM908Achf6eY41dFlivI7chHFlOvOVU0A830s5wiutWxYi7DhV/JMxcwRtNyajp96HUFuQyAh7goBmQbufcILa/8CT6jxlGuntFvWE3JPRqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4lHRAJg; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=jFDQdyPoynUSJb6oYr2oqokaK8z8amzXGtAqCaDg3yDlskLPAN11tDkI9u9QNpsBWbt3/Md6TlMbK7a8U8NC2M2IBmxfnsZ1fBd/+JexB8yekuVsgJTjGWdn20YrtrkgCLQNXyx3mjVA6n8ReW1Ut6rdBobsQhpslqI2MbM+Fno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqvKCwvC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4lHRAJg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C767C4CEC0;
-	Thu, 29 Aug 2024 00:25:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqvKCwvC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68373C4CEC0;
+	Thu, 29 Aug 2024 01:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724891107;
-	bh=nCM8XvqCff53EEr64RnHMSHTUq4K5/SJ/d7fShpXRWA=;
+	s=k20201202; t=1724895998;
+	bh=LBGvbU9Ahk60LnwOybNrMK4GrZQInCZs70x5HnonAfA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B4lHRAJg6X7XqkRKlrJ+YCiTKqMVqdBCKwXygNvBCntYpT5Vq6fZbbC+Nl0QovgDE
-	 BFcwORztl1ocSysdnEElSTbXDVJQ9CxTFxF+BSpUYXYJtMKiShrT5IEZ1V38H8RA6N
-	 Hf/pEQMJVXY5VRKwDto8lQoZMKdmlkI5keOQcIeRZZGqi8FY16e8TvC2FYJQmAJuYW
-	 yf/9525rDiO7baZJw4ny+zdrGylPp6H1khY2PrsBSc200YRIlkH5k14t2QGtrQI5BA
-	 HkIXGqgoBXNSYKoma2iEL73nWmWUkWMtVdW2JxHb5ffcxRp0a7mDeklktF8oiSQ0S3
-	 MQmp6Wq+CgrJQ==
-Date: Thu, 29 Aug 2024 02:25:00 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
-	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matus Jokay <matus.jokay@stuba.sk>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
-Message-ID: <q6xvpwqj7dkgu2cay5mgahscfgdwu2ohzxs7xd3nw3xa622sh4@u35topnxx36b>
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
- <20240828030321.20688-2-laoar.shao@gmail.com>
- <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
- <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
- <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
- <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
- <ynrircglkinhherehtjz7woq55te55y4ol4rtxhfh75pvle3d5@uxp5esxt4slq>
- <202408281712.F78440FF@keescook>
+	b=qqvKCwvC0zFHQSXoPyvNGaYcw2isNVHsbXu0whX1qATt7PLF1vTDHK7uM15j2bnCB
+	 VOPTBM2QTWtZO+FNc/Nty3TjVKwPvwBOq1myGSAH1555GEm/5NvH9+JwL9tl3zXYOf
+	 PzzXLHgpDls/ZDAXRyNmnshuWSHJLtLXory8t3cZyQzmJ/fUyJb3uArJvBGlbTvdvx
+	 5XeCXOY7zHWsLrw/kv9FHssSpuOMKCTpLUvRoCigTDHat8HohZeZeSRG6vsx7vRWWf
+	 hSKJb+rCW2cKHTJU3g284Bw2DM/IT2MAYDK53+9TuufLLcrC5ZFTSM11DHBPwa10lT
+	 gKvosfxxT7vfA==
+Date: Wed, 28 Aug 2024 18:46:37 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Hongbo Li <lihongbo22@huawei.com>, viro@zeniv.linux.org.uk,
+	gnoack@google.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
+ directly
+Message-ID: <20240829014637.GA6216@frogsfrogsfrogs>
+References: <20240827014108.222719-1-lihongbo22@huawei.com>
+ <20240827021300.GK6043@frogsfrogsfrogs>
+ <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+ <20240827053712.GL6043@frogsfrogsfrogs>
+ <20240827-abmelden-erbarmen-775c12ce2ae5@brauner>
+ <20240827171148.GN6043@frogsfrogsfrogs>
+ <Zs636Wi+UKAEU2F4@dread.disaster.area>
+ <20240828155528.77lz5l7pmwj5sgsc@quack3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o6w5uwkuyqtfps7p"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202408281712.F78440FF@keescook>
+In-Reply-To: <20240828155528.77lz5l7pmwj5sgsc@quack3>
 
+On Wed, Aug 28, 2024 at 05:55:28PM +0200, Jan Kara wrote:
+> On Wed 28-08-24 15:38:49, Dave Chinner wrote:
+> > On Tue, Aug 27, 2024 at 10:11:48AM -0700, Darrick J. Wong wrote:
+> > > On Tue, Aug 27, 2024 at 11:22:17AM +0200, Christian Brauner wrote:
+> > > > On Mon, Aug 26, 2024 at 10:37:12PM GMT, Darrick J. Wong wrote:
+> > > > > On Tue, Aug 27, 2024 at 10:32:38AM +0800, Hongbo Li wrote:
+> > > > > > 
+> > > > > > 
+> > > > > > On 2024/8/27 10:13, Darrick J. Wong wrote:
+> > > > > > > On Tue, Aug 27, 2024 at 01:41:08AM +0000, Hongbo Li wrote:
+> > > > > > > > Many mainstream file systems already support the GETVERSION ioctl,
+> > > > > > > > and their implementations are completely the same, essentially
+> > > > > > > > just obtain the value of i_generation. We think this ioctl can be
+> > > > > > > > implemented at the VFS layer, so the file systems do not need to
+> > > > > > > > implement it individually.
+> > > > > > > 
+> > > > > > > What if a filesystem never touches i_generation?  Is it ok to advertise
+> > > > > > > a generation number of zero when that's really meaningless?  Or should
+> > > > > > > we gate the generic ioctl on (say) whether or not the fs implements file
+> > > > > > > handles and/or supports nfs?
+> > > > > > 
+> > > > > > This ioctl mainly returns the i_generation, and whether it has meaning is up
+> > > > > > to the specific file system. Some tools will invoke IOC_GETVERSION, such as
+> > > > > > `lsattr -v`(but if it's lattr, it won't), but users may not necessarily
+> > > > > > actually use this value.
+> > > > > 
+> > > > > That's not how that works.  If the kernel starts exporting a datum,
+> > > > > people will start using it, and then the expectation that it will
+> > > > > *continue* to work becomes ingrained in the userspace ABI forever.
+> > > > > Be careful about establishing new behaviors for vfat.
+> > > > 
+> > > > Is the meaning even the same across all filesystems? And what is the
+> > > > meaning of this anyway? Is this described/defined for userspace
+> > > > anywhere?
+> > > 
+> > > AFAICT there's no manpage so I guess we could return getrandom32() if we
+> > > wanted to. ;)
+> > > 
+> > > But in seriousness, the usual four filesystems return i_generation.
+> > 
+> > We do? 
+> > 
+> > I thought we didn't expose it except via bulkstat (which requires
+> > CAP_SYS_ADMIN in the initns).
+> > 
+> > /me goes looking
+> > 
+> > Ugh. Well, there you go. I've been living a lie for 20 years.
+> > 
+> > > That is changed every time an inumber gets reused so that anyone with an
+> > > old file handle cannot accidentally open the wrong file.  In theory one
+> > > could use GETVERSION to construct file handles
+> > 
+> > Not theory. We've been constructing XFS filehandles in -privileged-
+> > userspace applications since the late 90s. Both DMAPI applications
+> > (HSMs) and xfsdump do this in combination with bulkstat to retreive
+> > the generation to enable full filesystem access without directory
+> > traversal being necessary.
+> > 
+> > I was completely unaware that FS_IOC_GETVERSION was implemented by
+> > XFS and so this information is available to unprivileged users...
+> > 
+> > > (if you do, UHLHAND!)
+> > Not familiar with that acronym.
 
---o6w5uwkuyqtfps7p
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
-	torvalds@linux-foundation.org, justinstitt@google.com, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matus Jokay <matus.jokay@stuba.sk>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v8 1/8] Get rid of __get_task_comm()
-References: <20240828030321.20688-1-laoar.shao@gmail.com>
- <20240828030321.20688-2-laoar.shao@gmail.com>
- <lql4y2nvs3ewadszhmv4m6fnqja4ff4ymuurpidlwvgf4twvru@esnh37a2jxbd>
- <n2fxqs3tekvljezaqpfnwhsmjymch4vb47y744zwmy7urf3flv@zvjtepkem4l7>
- <CALOAHbBAYHjDnKBVw63B8JBFc6U-2RNUX9L=ryA2Gbz7nnJfsQ@mail.gmail.com>
- <7839453E-CA06-430A-A198-92EB906F94D9@kernel.org>
- <ynrircglkinhherehtjz7woq55te55y4ol4rtxhfh75pvle3d5@uxp5esxt4slq>
- <202408281712.F78440FF@keescook>
-MIME-Version: 1.0
-In-Reply-To: <202408281712.F78440FF@keescook>
+U Have Lost, Have A Nice Day!
 
-Hi Kees,
+> > 
+> > > instead of using name_to_handle_at, which is why it's dangerous to
+> > > implement GETVERSION for everyone without checking if i_generation makes
+> > > sense.
+> > 
+> > Yup. If you have predictable generation numbers then it's trivial to
+> > guess filehandles once you know the inode number. Exposing
+> > generation numbers to unprivileged users allows them to determine if
+> > the generation numbers are predictable. Determining patterns is
+> > often as simple as a loop doing open(create); get inode number +
+> > generation; unlink().
+> 
+> As far as VFS goes, we have always assumed that a valid file handles can be
+> easily forged by unpriviledged userspace and hence all syscalls taking file
+> handle are gated by CAP_DAC_READ_SEARCH capability check. That means
+> userspace can indeed create a valid file handle but unless the process has
+> sufficient priviledges to crawl the whole filesystem, VFS will not allow it
+> to do anything special with it.
+> 
+> I don't know what XFS interfaces use file handles and what are the
+> permission requirements there but effectively relying on a 32-bit cookie
+> value for security seems like a rather weak security these days to me...
 
-On Wed, Aug 28, 2024 at 05:17:55PM GMT, Kees Cook wrote:
-> On Wed, Aug 28, 2024 at 05:09:08PM +0200, Alejandro Colomar wrote:
-> > Hi Kees,
-> >=20
-> > On Wed, Aug 28, 2024 at 06:48:39AM GMT, Kees Cook wrote:
-> >=20
-> > [...]
-> >=20
-> > > >Thank you for your suggestion. How does the following commit log look
-> > > >to you? Does it meet your expectations?
-> > > >
-> > > >    string: Use ARRAY_SIZE() in strscpy()
-> > > >
-> > > >    We can use ARRAY_SIZE() instead to clarify that they are regular=
- characters.
-> > > >
-> > > >    Co-developed-by: Alejandro Colomar <alx@kernel.org>
-> > > >    Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> > > >    Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > >
-> > > >diff --git a/arch/um/include/shared/user.h b/arch/um/include/shared/=
-user.h
-> > > >index bbab79c0c074..07216996e3a9 100644
-> > > >--- a/arch/um/include/shared/user.h
-> > > >+++ b/arch/um/include/shared/user.h
-> > > >@@ -14,7 +14,7 @@
-> > > >  * copying too much infrastructure for my taste, so userspace files
-> > > >  * get less checking than kernel files.
-> > > >  */
-> > > >-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-> > > >+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]) + __must_be_array=
-(x))
-> > > >
-> > > > /* This is to get size_t and NULL */
-> > > > #ifndef __UM_HOST__
-> > > >@@ -60,7 +60,7 @@ static inline void print_hex_dump(const char *leve=
-l,
-> > > >const char *prefix_str,
-> > > > extern int in_aton(char *str);
-> > > > extern size_t strlcat(char *, const char *, size_t);
-> > > > extern size_t sized_strscpy(char *, const char *, size_t);
-> > > >-#define strscpy(dst, src)      sized_strscpy(dst, src, sizeof(dst))
-> > > >+#define strscpy(dst, src)      sized_strscpy(dst, src, ARRAY_SIZE(d=
-st))
-> > >=20
-> > > Uh, but why? strscpy() copies bytes, not array elements. Using sizeof=
-() is already correct and using ARRAY_SIZE() could lead to unexpectedly sma=
-ll counts (in admittedly odd situations).
-> > >=20
-> > > What is the problem you're trying to solve here?
-> >=20
-> > I suggested that here:
-> > <https://lore.kernel.org/all/2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5=
-wdo65dk4@srb3hsk72zwq/>
-> >=20
-> > There, you'll find the rationale (and also for avoiding the _pad calls
-> > where not necessary --I ignore if it's necessary here--).
->=20
-> Right, so we only use byte strings for strscpy(), so sizeof() is
-> sufficient. There's no technical need to switch to ARRAY_SIZE(), and I'd
-> like to minimize any changes to such core APIs without a good reason.
+CAP_SYS_ADMIN.
 
-Makes sense.  My original proposal was ignoring that the wrapper was
-already using __must_be_array().  Having already sizeof() +
-__must_be_array(), I'd leave it like that, since both do effectively the
-same.
+--D
 
-> And for the _pad change, we are also doing strncpy() replacement via
-> case-by-case analysis, but with a common function like get_task_comm(),
-> I don't want to change the behavior without a complete audit of the
-> padding needs of every caller.
-
-Agree.  I had the same problem with shadow.  Removing padding was the
-worst part, because it was hard to justify that nothing was relying on
-the padding.
-
-> Since that's rather a lot for this series,
-> I'd rather we just leave the existing behavior as-is, and if padding
-> removal is wanted after that, we can do it on a case-by-case basis then.
->=20
-> -Kees
-
-Have a lovely night!
-Alex
-
->=20
-> --=20
-> Kees Cook
-
---=20
-<https://www.alejandro-colomar.es/>
-
---o6w5uwkuyqtfps7p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbPv9wACgkQnowa+77/
-2zLmfhAAqsMngDf8es0F6qRd7cwzD5RwLYJ8tk1KfFfVJjLJN6kb3mV29YiA0pl7
-LsZlkqQ/rmDcqE2Ex9UoiAlIrJw154+Dg63MqkrOYnXf3vDpMopi4jtGlBSG3cJn
-Jm9toPA7lNWwiDe6q19RzLraVFl4+t2ik2wUWtC+SYxBN/vFkU0CRQqwbSg78DMJ
-S3ZIJfLKdkkSeSV9wbddJTwtolje98WEKLtGxbnc7urnmtlvIFqcYACYe9MGVeqf
-kuq//H0SGfCjVEpzizecG93wlp5B2q1Q1sulb1l7mj5rfgaaNE/NilFGv7y/+GwY
-zEyhm6rEjbWZjsh1PxuofuN4ftlJyqlpioondQryrcE370W1Ugfcac6oP5t8ornD
-pdjU1JgIVwY+3Nug3vBKggFwOuy3aQOYP2s6E06KnDEP7GYY1xpzVE6WRbPPzO/T
-FNisBNfvY1FE9M09QiaSkbbePpvTbvYK3RSR7goiKWRMj7gB5NyTuimpZX4Z3Hxa
-y190DotOM8xuALV0EQnx/2quq2+GgT0+N2Et4UdB0U9ENq0X8hAcYYtF1MGnOsCj
-cn3A+JU5VJjLEkFyLF9g9j2dimru4mnxyT7IKtO0NqPjEb7R7TLQPWA1yqwt0Sfm
-pf5ipWUVNTfZ/CEKirXNhGKFwGyva449J3Pu8od1GEbyS8yEj7Q=
-=UqVz
------END PGP SIGNATURE-----
-
---o6w5uwkuyqtfps7p--
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+> 
