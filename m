@@ -1,98 +1,86 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D164918DF87
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 14:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC25189F41
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 15:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943133; cv=none; b=MsPhvVoNhv8LnNvEMVYoQmNKBVTcTGcSmWDHQuFP1tIWQrXHDpFTjhAgzoXPimnv+EXXxeHiKmQhfr3k100rKY3WFFTE9rD11UKuCieKUXXmnctK9SfFgNEjutV86fyYcNzoOo9UVPIJIB1KYaSfHIdFsjUYAwAnZ+5b4RlNlkE=
+	t=1724944335; cv=none; b=NeQPQCg3x6AFgdvaa5vtz48zn5HCjYmaPNBwg3WWNbqE70m5SdS6rG/1pXfWo0R85eSUp/SxONQcxukgYY0guW2dv7n4N015oO6geznuHZ7rKF1QR10rAb/Zc3Agji8TLYhIiYaUlx7R2v2Xju6dFPhaVmHCr0WKwFC1oXGEY0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943133; c=relaxed/simple;
-	bh=uEAB6ta2JZwjFZ7plQrRuqXV6ei6Dpsz9poZgoZwKkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YeKO8o7W7QV5aaZHRIemmc9PRPmImXU5ra8NnQeydhfPa+DKm4GfL60AXdoV/KnmlPyy60rzjiCSIVE8sECytonRXsAWZB94poyljSCc1czx/2g/Vapj1bCQfqgllSnGfzomHc7dbgU+nztjB8yzDUfDU445Kzzw7hRthM4V8cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ymo5fg1i; arc=none smtp.client-ip=209.85.219.171
+	s=arc-20240116; t=1724944335; c=relaxed/simple;
+	bh=/Yp+bwk44R3Zd4P6GSVxI+KdePMTZmk/iFeGqi7nHY8=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=P8vkf75Rb/lRxrCoDif9qhrOnR7kRRHKXjWg72PoCZ3z6zOMbR3ftQotXWVN5TJO8uiXpNgoOzTdkBR/aFxNT8H2Pos/z+fHDEugyX94EitJZoGPjJ3qB0VZ9QvLnFkRtPEmBxrSEdd8x2+xxLZPUOK/y2lR9OIRP/e4X/laIag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GuqUtLH7; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ymo5fg1i"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e13cda45037so791306276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 07:52:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GuqUtLH7"
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-45654a915c3so4212901cf.1
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 08:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724943130; x=1725547930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=heXj/PLtLCheEdpzHoOrFp/LD19hFuENsctMARZGC64=;
-        b=Ymo5fg1iJzDjVRXG53SnAvhhJQR4YN1H282FwU8cXfZENQ4wzVHmsmMAcE8z7j8F9Q
-         njlmqE2fdF/Ne775Wk1KjnWmO+Jf6OuJgOE7lPmH5uavmwZV1ltFJFtofR0l+xig4dLM
-         tLbEphL9tGNHvri1U5x3X/YXz0pNOKWM9A3mt7ytnJPEe888jN2seuryYsBcK/9+Bf1N
-         SXjsSOfgWmz4847u01DkSn81AOKvirtApx5SxTp7FGvDuBR6xYVe5nMZIWL6SUnUmb3E
-         5laZQMqlbj8j2hq2TtTj1l6Nsh/2laAES37WG9U+FFBU0wYUPlaTERzWMAciuDNv7+Oa
-         RbQw==
+        d=paul-moore.com; s=google; t=1724944333; x=1725549133; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cbvpryYGeiuR6tYhqF1TKuD/yK44f6YMqpze+p/SGoE=;
+        b=GuqUtLH7nwY8yG/8f3mVov6tldNu2IxVheu+LA2yQIRJC7gunR863QrrNefoddL/3c
+         gziXgwsUH9Q6O9KUgkhauwJTlcETQ8ouX0q34Olm5N4YKBOWzaHbifs/C2N78AnlI/aq
+         nuH9t9rOT3DbfIieuksyC74qPQVgEqrp0UmcfVZ7AtY4b5kEwDX3bcILWdoGvLnnt+M1
+         K1dOjAowdNI4N8WCdM3N0mZeGpSQ6j6XIgpkhtFhGhBp8p87FdxD/NV0ZG8HWv1GN6GG
+         ZZ5d3DcyX6N8ksCo9VJeMupn6bLWLcBQ+gGrPLpRk/pquUi8YCJxIkxpbN344xdwCUON
+         huzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724943130; x=1725547930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=heXj/PLtLCheEdpzHoOrFp/LD19hFuENsctMARZGC64=;
-        b=SdGdoGCvTSMsbVxXF8z5EUpV/LEpiCrFVKi6/XBRnNZ0HHx6yGN6HgOueipglnb8PG
-         JqOZ8pbWEEdcNBKH8noL0/WRY9Fv8k8s23nAoZlAW0jG3bhS2of11hs0ckEIeElJ3mqq
-         hzOn+qtHrUcOCxYl/7P9sL2wrKnlHtlBS6zdS1ajMNgTNGcb4ROFUAxO/TuhWL4ebnVa
-         43ypAaGz4bHG0kws6PsK5GpvIDonyy/7gkZsBHA5meJbEQR/qi0Mz7ggpFyEYeLVy9ts
-         xNkOejMepvPCsl7O8EdKPZL5VFIEQFonGxc/H25Ol2wmfVxRznRUzloTZhgh1GNTQ1GI
-         +Q4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWLfPQ+EDRIJFSkwGiyFfCG9/zNjn/wpgOibKg/hTiFjRp1kYbDu6kRUVMBlyxP+dEUzPldcgP2WIqJlj52ZP5+fV4kdj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU1fotA0jpUMtXDA43orVF4X+pgAEmMVJemcZnOJDSZUBnrxVp
-	W6svWNymClaH/9XG2LLcdAbdDFTZSLOGefpjRaIz89QyOmcuWpVbtxkMzmqV2d3YJOGbw/+60V6
-	jd9RPii3AI5Ge+X9/040zFaOcGH/ESHgxONpP
-X-Google-Smtp-Source: AGHT+IFff2XbuR3O9v38KhfG2mcj8LpUQiMK+cRSxdux07tWdh+BIWmOr7/roSvogIAeRxJfaBMgjQZ3Q0/rAqHEsqs=
-X-Received: by 2002:a05:6902:1b86:b0:e13:ca39:f7f1 with SMTP id
- 3f1490d57ef6-e1a5ab72e0dmr3164785276.16.1724943129841; Thu, 29 Aug 2024
- 07:52:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724944333; x=1725549133;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cbvpryYGeiuR6tYhqF1TKuD/yK44f6YMqpze+p/SGoE=;
+        b=O6GwxumJ1Y1Tl52MoMyHallr79Tz2hcwfLpyVZTpqIpA734D87xa9pCIHI9SnfzeXi
+         c7pB7iXBSDQOMvFFJ7FgA+Pvcyx6gD/3OJ961docriKh/gmg8rhP5feEovQUCh4ypLtx
+         F8QCYMNpg4wQriKhmD68xn0QuPbxpZUfJa4/315fjH+soJnEpJ86k2ia71FAyvjbXFiy
+         cGTkVuu9aZVYWQD0FYz4nPxhx6azYmZsXkI5Y0Oiv9efBKQPaqzggWuZu9HIrlak8IQ9
+         yK9lOSIuDHLR0thEoeN8QTo3UEBsv+5hOvm2xbbnZ7cktszUoewlEiEPnP3FIFokOiP/
+         vnqw==
+X-Gm-Message-State: AOJu0Yydaq8dOoF2vRyeY86dDqFq78B0eJdbLvkLuzQU5oKKwxrIMynZ
+	vvIehRHKePbBMWHCgYolT5SOqvnIWjE1y4yPxDckUGq2Aw45pCsddyWcw3oHcw==
+X-Google-Smtp-Source: AGHT+IEFjLGATfyJ0GhsYZoW469t+2OHMx+ZcSN+6Xc4Bb3aj9Zae6odMfcLhU5M5YEVkzI6A3q70A==
+X-Received: by 2002:a05:622a:4a8c:b0:453:6cb2:c8c6 with SMTP id d75a77b69052e-4567f6e8b2fmr39316511cf.47.1724944332864;
+        Thu, 29 Aug 2024 08:12:12 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682d66c9dsm5565071cf.76.2024.08.29.08.12.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 08:12:12 -0700 (PDT)
+Date: Thu, 29 Aug 2024 11:12:12 -0400
+Message-ID: <33a963ec7be7aeab15397e2f2c4a1d05@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240828195129.223395-1-smayhew@redhat.com> <20240828195129.223395-2-smayhew@redhat.com>
- <CAHC9VhTCpm0=QrvBq_rHaRXNqu7iRcW7kqxjL8Jq9g=ZypfzsQ@mail.gmail.com>
- <CAHC9VhS3yhOxZYD1gZ-HF5XkGq0Qr8h4n+XrttUBsHL4cg0Xww@mail.gmail.com> <288CD342-1534-4FF3-9B2D-7E824FF4AA20@oracle.com>
-In-Reply-To: <288CD342-1534-4FF3-9B2D-7E824FF4AA20@oracle.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 29 Aug 2024 10:51:59 -0400
-Message-ID: <CAHC9VhTFU7feDZ5bE+gefYn0jpxmH5KV2xtydEyKijkJusN3mA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] selinux,smack: don't bypass permissions check in
- inode_setsecctx hook
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Scott Mayhew <smayhew@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, 
-	"marek.gresko@protonmail.com" <marek.gresko@protonmail.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Hongbo Li <lihongbo22@huawei.com>, <jmorris@namei.org>, <serge@hallyn.com>
+Cc: <linux-security-module@vger.kernel.org>, <lihongbo22@huawei.com>
+Subject: Re: [PATCH] lsm: Use IS_ERR_OR_NULL() helper function
+References: <20240828122450.3697314-1-lihongbo22@huawei.com>
+In-Reply-To: <20240828122450.3697314-1-lihongbo22@huawei.com>
 
-On Thu, Aug 29, 2024 at 10:16=E2=80=AFAM Chuck Lever III <chuck.lever@oracl=
-e.com> wrote:
-> > On Aug 28, 2024, at 7:19=E2=80=AFPM, Paul Moore <paul@paul-moore.com> w=
-rote:
-> >
-> > Merged into lsm/stable-6.11 so we can get this into linux-next and the
-> > automated SELinux testing, assuming all goes we'll I'll send this up
-> > to Linus later this week.  Thanks all!
->
-> Paul, may I recommend adding Cc: stable once your testing passes?
+On Aug 28, 2024 Hongbo Li <lihongbo22@huawei.com> wrote:
+> 
+> Use the IS_ERR_OR_NULL() helper instead of open-coding a
+> NULL and an error pointer checks to simplify the code and
+> improve readability.
+> 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> ---
+>  security/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yep, I did that yesterday before merging.  Typically if I merge
-anything into one of the stable-X.Y branches it gets a stable too.
-I'll update the commit in a few minutes with the tags from Jeff and
-Stephen.
+Merged into lsm/dev, thanks.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/log/?h=3Dst=
-able-6.11
-
---=20
+--
 paul-moore.com
