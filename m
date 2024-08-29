@@ -1,159 +1,131 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B8D22339;
-	Thu, 29 Aug 2024 13:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0861A3BDD
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 13:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724936621; cv=none; b=Q/TD3pAc0JMXnMCLF8kN3CtFLdOKkyFZ153imr2am4KP/+a+dfJzoGJ0jp8MAUT879Scszq0QlaVIWwSp2fnnTbNrZTtAcUmjItqD33ZCV9iaoT3zQeII0ZcY2Z+R7xkTYK1WLp2kRcBBRDIzwSKEh0M97lBS8KPEh95v49U1ek=
+	t=1724937146; cv=none; b=GZALYhocr61OdSxS2knXj8A432ZQnMAse4yLVIMifZm8TCMdSTkmnOQGZn9P+zRXbWxIr07VJ/s0ZyMC3l5GFpzcxeT5tRUP9JBFi2lUUd/ZcmhoIC2j3HwWaxkrdfyu1T78oR3YfWpXkgHWoURTKVze14RUP++bINtjXUbE41M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724936621; c=relaxed/simple;
-	bh=ywBHh/JxTt6YtGlc4uMSl9mEGuK+/Sv7BhGHLqH9AWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g7w89MzcB/6Y+Ei2xsDbym6yr8egUyi0aCS+PXiUtCBKb8SqdUHmri9cON/OoZpgs56rM29fShIuLM5k9NlearTYvc24e/PXjuNFF0iX0uc9L1dom9cno/Y+AGW2HmofOu3wRDnCOu9I9XvnZC4Pxxvrdm/HAIbPMM1RruuDoTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAep5L+M; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724937146; c=relaxed/simple;
+	bh=A/ukJ4jBr8jJQwS6YKUvYcuWgw8ce4anDS07GtBUeqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WsNdPq1mNQZZk8oTkcFkz8ULPavNrIaTfkEkwcmt1eeqHRmfgHnMUck9/y1Wu2Yozz91KN0fKKwEe3GTnnJggS9i8hMn8dxvmsKSKbDaQKAXXmGGtkimy0cVpsWSAeCqce6noXyOqclNUM1q6HmtyY8c1I8aA5mvVL4d1R6cMJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=cC025rxp; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAep5L+M"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5dfa315ffbdso221593eaf.3;
-        Thu, 29 Aug 2024 06:03:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="cC025rxp"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso476470a91.1
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 06:12:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724936619; x=1725541419; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XgPkNNrjHTsfiVhNKwoTvKC+dngWh8S1qXD5HQVi94w=;
-        b=JAep5L+Mks8rZEsURm2GZColXYle//QVttVl8ZJ6fp9MTfVfxa4D24tUKNYs7EpDEk
-         Jnw5L9JOjwOCVeGov26e1bAwXOwnEksCJ7XH1aTCwOwRhJSGpFbjjRUo3Mk/2GHENk38
-         xk2oSnLnig5WbzBfBupFikwTexJftl+yj6pCsJVSy+qhxYW1NyDVtZJPugYXThpKo4jI
-         rYsY7toZb65QJx8Bw7XLgrgeMxMnnVu2hny06SlDFGJ3VCWpxeeYI5D4NufyRMjS4GgF
-         uus0RAs2MYlyjUqNDnUqSQZYvzmeWfh7fpIafTcWf3ag7kSnN0rXZnQNN3TjUC9m8eaT
-         n4nw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724937143; x=1725541943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qX/f6dofDtGfqoUjh7wF0DGgkcB4Ol606CTys8bLCc=;
+        b=cC025rxp2s0f9GU8p4vFM6gK/4CEuAH6aoyzZVG8TzaHQKelvBm+U9hT0BRgzwgDR+
+         kABSDebTyiEq/IJ11jRgRMkAdcrQmWqqTKbHsLB+XyWVgv3aXDNwND1ac5zT49GaBQuy
+         We/n4Is49FIPa2ssOupls8mNrbPnHleE+x9mLiZLokPnEDhe7PtVSRycuXJ7noZrlLMl
+         DhM5WSSCbQZN4QsYUVw4ELdyVw0v9f+3TcrcQAbz1tg35HcgpY/XHlUebzmx2sO7uGjX
+         IwpeXFw3oHa77o5TM3pEqgZvJaug/Km4747KQweRsFHIFJ5sFLqVG5ii0gLQxQidO2B/
+         NIow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724936619; x=1725541419;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XgPkNNrjHTsfiVhNKwoTvKC+dngWh8S1qXD5HQVi94w=;
-        b=YFEGugqxmtkPqT1erEuWtPsijjl0OHQa49ReJo9cE/ihGmkIm7ycu/OQewR8GEQRH0
-         z1nYJGBTlkl/gEzmSN4jxO81tkbOdPyZRTUaxISxEckm8QXQmKcID90In+5hPJmyG4rR
-         LGvhiyuB24nKBt6A6amh/Rt5VWlfX85HXvdIitjlKamNouEqRnC7YjcgWYveq18m6Yjp
-         LA85SAbR3Xmb4FgNLtaqZJZSn0XYnYkShsUruNm/FLc7oEWSzLeeMEa7TUDRI8EQcbJw
-         o2o6aJ0W7MdAQleOYMS4/OZ0E1RAmBe+v+JTQI9gxDM4NYxxwDrRo/Xw/m7A33JyXMD3
-         FnKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsDlcENBvxmvK0G8G56xPMxRH5paKeCpe3H6LQqlYGp4/+H6ypxhdj4AHDBk+wy7PiohWlfHvhmtGI3bxUx7VGzAw2mj/0@vger.kernel.org, AJvYcCVjFK5X4aDPPbXXFBazUKZEA/O3jabG9WgEFabqzmHN9iTcye2J1k1xV2hNsnDru7PAkelDc6ufJg==@vger.kernel.org, AJvYcCXDwPJBfYfo8OcFDE5W6QA6DUS7tH9oGrWAyyI9s49ybThfGJmkB4pFkbkvu1telLkwBQZu6ikgsk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKGUH76oMYdSZFYiEW4T683uqlSMFYYCCqa/681wOP0DlFBONC
-	eKI4BRwklC0Jz1+QpQ65T4LSR+MClC9gzNZMeG6VZVK3pg25oIHJhhc6IDRN/eG6SKwKmC8fJUC
-	biCCFStJTzjZH29pKphk63sIRlAs=
-X-Google-Smtp-Source: AGHT+IGS245lP9KZgpIxgJhwvHOxjn1YcH7WR7eVns7BHxRAJv4FhnyTZpanlEUZI1VaqEQ1vrmMfq53yo3lxpxdhp8=
-X-Received: by 2002:a05:6358:7253:b0:1b1:a803:d9f7 with SMTP id
- e5c5f4694b2df-1b603c2024fmr359532355d.7.1724936618733; Thu, 29 Aug 2024
- 06:03:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724937143; x=1725541943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8qX/f6dofDtGfqoUjh7wF0DGgkcB4Ol606CTys8bLCc=;
+        b=pBeVMaM2KHzbydDKs9eBGbOqld98z3/0olnstYtxKvFWOrQSXfhzV2Fyi8AkEIP9W/
+         jjb/3UgQCj5+AczFQMAo5Z6PJ3gG/U80Ce/rey8XGg6veDEHEKPAZp2TUEo3YmoqXrWg
+         UdJsrJgh6n1hrLmCDAC3Ophr68AnPDBT0NYwHZns1uQ4RfQeVn2hzYdSYXkk/ewCTQ2X
+         ZmXAoJuxn6IVhu5hNWE8Kq4i2dczlyhNXYkVA9GlrAtJvZshuYwn/XSjrDL9Gwr+cdOG
+         hTZMI/NQF5mNkgPKUEeVvMGf041xRqZJEuFEQLAzBhJoqrBE4AgLUutz+LFrevHmUnWI
+         xMGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6FQlO9LI+gZtVdv6zGjXW+3m4E9vof+vE7lrFOTaUZ/P8qOZ+/T3p0Jd6HKtE31633tLguKo56P5T3VOSfFqWaRbmS5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo8NuWJ7n6hxI5FFVocn0uZj6V5c6M5i0r24w8ojmW7Kd1zJkr
+	OMctzb4Cyz3aW3WwS1+A9W7z37KJZ/DjZqdsTBmjcNfEaIg9Y7maZM2yktvsvNo=
+X-Google-Smtp-Source: AGHT+IE5og1QyFjbYL+fjlxeemY0chdVMvPBO6yd0H47y0vJ8/ygu0YjmhWpP08sTZ8j5BBHBY/dlw==
+X-Received: by 2002:a17:90b:c12:b0:2cb:5829:a491 with SMTP id 98e67ed59e1d1-2d85c7d28c3mr2403333a91.20.1724937142595;
+        Thu, 29 Aug 2024 06:12:22 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515542376sm10955575ad.204.2024.08.29.06.12.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 06:12:22 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sjewk-00GwzF-1j;
+	Thu, 29 Aug 2024 23:12:18 +1000
+Date: Thu, 29 Aug 2024 23:12:18 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtBzstXltxowPOhR@dread.disaster.area>
+References: <20240826085347.1152675-2-mhocko@kernel.org>
+ <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828195129.223395-1-smayhew@redhat.com> <20240828195129.223395-2-smayhew@redhat.com>
- <3647023f1f4c1326ba3d67ff04c5b84b4896c1bc.camel@kernel.org>
-In-Reply-To: <3647023f1f4c1326ba3d67ff04c5b84b4896c1bc.camel@kernel.org>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 29 Aug 2024 09:03:25 -0400
-Message-ID: <CAEjxPJ49pt9QMXt=Ssf83kcJ5r3tF6_Hp4sVn_5OT=uNVkCy3g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] selinux,smack: don't bypass permissions check in
- inode_setsecctx hook
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Scott Mayhew <smayhew@redhat.com>, paul@paul-moore.com, casey@schaufler-ca.com, 
-	chuck.lever@oracle.com, marek.gresko@protonmail.com, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
 
-On Thu, Aug 29, 2024 at 7:15=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Wed, 2024-08-28 at 15:51 -0400, Scott Mayhew wrote:
-> > Marek Gresko reports that the root user on an NFS client is able to
-> > change the security labels on files on an NFS filesystem that is
-> > exported with root squashing enabled.
-> >
-> > The end of the kerneldoc comment for __vfs_setxattr_noperm() states:
-> >
-> >  *  This function requires the caller to lock the inode's i_mutex befor=
-e it
-> >  *  is executed. It also assumes that the caller will make the appropri=
-ate
-> >  *  permission checks.
-> >
-> > nfsd_setattr() does do permissions checking via fh_verify() and
-> > nfsd_permission(), but those don't do all the same permissions checks
-> > that are done by security_inode_setxattr() and its related LSM hooks do=
-.
-> >
-> > Since nfsd_setattr() is the only consumer of security_inode_setsecctx()=
-,
-> > simplest solution appears to be to replace the call to
-> > __vfs_setxattr_noperm() with a call to __vfs_setxattr_locked().  This
-> > fixes the above issue and has the added benefit of causing nfsd to
-> > recall conflicting delegations on a file when a client tries to change
-> > its security label.
-> >
-> > Reported-by: Marek Gresko <marek.gresko@protonmail.com>
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218809
-> > Signed-off-by: Scott Mayhew <smayhew@redhat.com>
-> > ---
-> >  security/selinux/hooks.c   | 4 ++--
-> >  security/smack/smack_lsm.c | 4 ++--
-> >  2 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index bfa61e005aac..400eca4ad0fb 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -6660,8 +6660,8 @@ static int selinux_inode_notifysecctx(struct inod=
-e *inode, void *ctx, u32 ctxlen
-> >   */
-> >  static int selinux_inode_setsecctx(struct dentry *dentry, void *ctx, u=
-32 ctxlen)
-> >  {
-> > -     return __vfs_setxattr_noperm(&nop_mnt_idmap, dentry, XATTR_NAME_S=
-ELINUX,
-> > -                                  ctx, ctxlen, 0);
-> > +     return __vfs_setxattr_locked(&nop_mnt_idmap, dentry, XATTR_NAME_S=
-ELINUX,
-> > +                                  ctx, ctxlen, 0, NULL);
-> >  }
-> >
-> >  static int selinux_inode_getsecctx(struct inode *inode, void **ctx, u3=
-2 *ctxlen)
-> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > index 4164699cd4f6..002a1b9ed83a 100644
-> > --- a/security/smack/smack_lsm.c
-> > +++ b/security/smack/smack_lsm.c
-> > @@ -4880,8 +4880,8 @@ static int smack_inode_notifysecctx(struct inode =
-*inode, void *ctx, u32 ctxlen)
-> >
-> >  static int smack_inode_setsecctx(struct dentry *dentry, void *ctx, u32=
- ctxlen)
-> >  {
-> > -     return __vfs_setxattr_noperm(&nop_mnt_idmap, dentry, XATTR_NAME_S=
-MACK,
-> > -                                  ctx, ctxlen, 0);
-> > +     return __vfs_setxattr_locked(&nop_mnt_idmap, dentry, XATTR_NAME_S=
-MACK,
-> > +                                  ctx, ctxlen, 0, NULL);
-> >  }
-> >
-> >  static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 =
-*ctxlen)
->
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+On Thu, Aug 29, 2024 at 06:02:32AM -0400, Kent Overstreet wrote:
+> On Wed, Aug 28, 2024 at 02:09:57PM GMT, Dave Chinner wrote:
+> > On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko wrote:
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> > > inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> > > allocation fails it will drop locks and use GFP_NOFS allocation context.
+> > > 
+> > > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> > > dangerous to use if the caller doesn't control the full call chain with
+> > > this flag set. E.g. if any of the function down the chain needed
+> > > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> > > cause unexpected failure.
+> > > 
+> > > While this is not the case in this particular case using the scoped gfp
+> > > semantic is not really needed bacause we can easily pus the allocation
+> > > context down the chain without too much clutter.
+> > > 
+> > > Acked-by: Christoph Hellwig <hch@lst.de>
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > Looks good to me.
+> > 
+> > Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> 
+> Reposting what I wrote in the other thread:
 
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+I've read the thread. I've heard what you have had to say. Like
+several other people, I think your position is just not practical or
+reasonable.
 
-Passes all the NFS tests in the selinux-testsuite, and also correctly
-denies root the ability to relabel a file on a root_squash mount but
-allows a normal user to do so (as expected).
+I don't care about the purity or the safety of the API - the
+practical result of PF_MEMALLOC_NORECLAIM is that __GFP_NOFAIL
+allocation can now fail and that will cause unexpected kernel
+crashes.  Keeping existing code and API semantics working correctly
+(i.e. regression free) takes precedence over new functionality or
+API features that people want to introduce.
+
+That's all there is to it. This is not a hill you need to die on.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
