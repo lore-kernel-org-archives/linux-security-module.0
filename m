@@ -1,48 +1,80 @@
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4431AC883;
-	Thu, 29 Aug 2024 13:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094771A76A8
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 13:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938381; cv=none; b=FE8DW+/YzT7afkkRCifi3lb+Ta6RvIXMYX67ClXl3HjNqXAp8301tP7d1A571KR5IHy7+oyprONzjQObGZ3dMi2O3v7GOXrfQjnSKW0TmKC+42gypPBk5xIvtnAXfz02EnASIJTP+0x1QqtvIpHb1QZsMS4OmbS6V01T/Mx9v00=
+	t=1724938508; cv=none; b=RM6tEZ18je1BENa1MqKoqfIuai8yRvN5YwR9TbubNeotkI4nee98QntZinmJiLTLZnNfjEnlMVv4fKhts2/frha9ypqzFNVu4iUD5KpVGnb8AwalsiDP0xsGwPUCQ7GB7eojk66y0DGKEly8L6pS3E7yJDzNZgbRLP2f9cgkXIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938381; c=relaxed/simple;
-	bh=Ei5nGh3aP7XlmeeonQ5fBYgrdr2m+tmjjLP1aSXD12Y=;
+	s=arc-20240116; t=1724938508; c=relaxed/simple;
+	bh=sTMFvNV06/zwz/V10/ORBXRQBHotCy5JRGNXWoNGqAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWcQIyA9ZhEPJGTOsxStnDXkB0CqKjko7j95Ch4J30WIJt8lwY3kqBLXIZYmhik0cgR44rwKosMk01nIE5kqZpX6GYYiAYiSvKHtS/l4HlYNPpVn3HM1HuCEPvUBRu7ht8SL3UD6msHk6LsuJuFOBVoWd4lWm2Tsya41xbZxFu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T6TED+FM; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=rqBGLf7d0L9jO494zcCuJsDPH2dl55e3y5FoDQTTa8b585QUXNuEZKjIoZppv0TRw4J4mZvvbPU3TamauxH0OeO8DvTOhIh2J2N3OWI1sAojtHrjhO50anEuFzj/ooI8wXCXif+d1PVoqLMW8mF3HHUmAGrr9i7jshpEDyXEDnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YafxVHO5; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T6TED+FM"
-Date: Thu, 29 Aug 2024 09:32:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724938377;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FMYh2t/Xz06IccaIYuj8PThdY4q4wdLBkOxrHA87gG0=;
-	b=T6TED+FMht0q0Dk5tidPaathkn2+ohL6nI1MGeFi5us1haLo+ggRUNhu0qAUGwtH9Hp5rB
-	eblF+eWaDFMMxxJhCwe7KQxVGHZu9wXtip0wmFtBgOyjN5F06V9a+PM/SQlwjlcOeId2Ek
-	UUUYcOya0qr4wKo+OFZ0keJMADwF7dg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
-References: <20240826085347.1152675-2-mhocko@kernel.org>
- <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
- <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YafxVHO5"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4567dd6f77fso9865571cf.0
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 06:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724938506; x=1725543306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CtISLUO5EP2NsKvBcM5qfQlSfPZqpo47XVjo1uXCz4w=;
+        b=YafxVHO5K7aagj5y09Es93Ody0ZYeqxa6f1lBKFvMl5PLZ5TGPXlA/IcvcYCyHWcpV
+         8PWJ8l48H6AqIzByq/7tspz0ANnCDNrzZJV6uG0Q2kTQwZxVUDUji11r/MrGBcm05djM
+         F3BhFatn92PdUpgV7I3/LjNyowGafmrUqZHTwafiU2o7Xp8dNNyeJPdFPUOgMjsJ/G+u
+         hxyGudDSEAmcmEv95x2iClmEhVVFCAXc47QEcxyOesCFFyT2wrniwODM98MHSxwJqahk
+         CRhH5ZKgEzMer1XCapuW70kh+mhXGagMgHw1SGrMIJIGg/5Ysz6Q/t4XltQdFHun3Ru1
+         0VDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724938506; x=1725543306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CtISLUO5EP2NsKvBcM5qfQlSfPZqpo47XVjo1uXCz4w=;
+        b=VSX1EaTj5Hh1eGKuvb+8IlmK3O9K47Tu+ZHIcTiM1m2CVkADTmuA9mV0lLSUBNwMfd
+         Vf2NofbUAJM2Reyugh8HpcxYm9mW4x0Aj6xIG9uK7eXiUw42K7C2UQ1gymp0YeqMSxCh
+         nlKgWfUTcFy/DEI1iOJLq20DN3KgZnv7bDwK/7jxwm9CB69Pve0zDLIYuMTImmbp7rr1
+         M39re79rEkJqS6YEsTOi8P0f/380HsxXHkunqBHnlc6FCH7yjVa45emoFtSduzdl/RJ3
+         p+FSqKblqh39Sd0CFNELacVcg1Yn/tpJNKpNurxwAIBjptbeSVicZ7QxCScMSWX7s2Xh
+         Li5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWMygb0KU7gCQr7dO+D87HkxDcmh2de6VLpRwryfy/0iewCBitY2ty35fBsQq6W7NTJSJ5DLmGVQ/sfhii1oOJXptce+Sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPa+CrGkyoQ98t/Zwoee8j6Gm8sZgzkhMzE9zkUWZffCC8mxl6
+	OrQF2Pkp5k/CT1elaEztU0kYD7FokbUnD5uH1q6nz4u1siERvIjluWPxrUYDXM2+D9nVnLyXORp
+	Z
+X-Google-Smtp-Source: AGHT+IHi0ePL4nHYzDmd8C6feL1XGdxlqeggsT/N5P+vvi4GErra6t4ye1NvvsSOEwWgVZFjJ3iRSQ==
+X-Received: by 2002:a05:6a00:92a3:b0:714:228d:e9f2 with SMTP id d2e1a72fcca58-715e7819bf4mr3459352b3a.3.1724938493726;
+        Thu, 29 Aug 2024 06:34:53 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9bd58asm1212974a12.72.2024.08.29.06.34.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 06:34:53 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sjfIY-00GyD7-0H;
+	Thu, 29 Aug 2024 23:34:50 +1000
+Date: Thu, 29 Aug 2024 23:34:50 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Hongbo Li <lihongbo22@huawei.com>, viro@zeniv.linux.org.uk,
+	gnoack@google.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: obtain the inode generation number from vfs
+ directly
+Message-ID: <ZtB4+sMr8Vbcs9VD@dread.disaster.area>
+References: <20240827014108.222719-1-lihongbo22@huawei.com>
+ <20240827021300.GK6043@frogsfrogsfrogs>
+ <1183f4ae-4157-4cda-9a56-141708c128fe@huawei.com>
+ <20240827053712.GL6043@frogsfrogsfrogs>
+ <20240827-abmelden-erbarmen-775c12ce2ae5@brauner>
+ <20240827171148.GN6043@frogsfrogsfrogs>
+ <Zs636Wi+UKAEU2F4@dread.disaster.area>
+ <20240828155528.77lz5l7pmwj5sgsc@quack3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,62 +83,44 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtBzstXltxowPOhR@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240828155528.77lz5l7pmwj5sgsc@quack3>
 
-On Thu, Aug 29, 2024 at 11:12:18PM GMT, Dave Chinner wrote:
-> On Thu, Aug 29, 2024 at 06:02:32AM -0400, Kent Overstreet wrote:
-> > On Wed, Aug 28, 2024 at 02:09:57PM GMT, Dave Chinner wrote:
-> > > On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko wrote:
-> > > > From: Michal Hocko <mhocko@suse.com>
-> > > > 
-> > > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
-> > > > inode to achieve GFP_NOWAIT semantic while holding locks. If this
-> > > > allocation fails it will drop locks and use GFP_NOFS allocation context.
-> > > > 
-> > > > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
-> > > > dangerous to use if the caller doesn't control the full call chain with
-> > > > this flag set. E.g. if any of the function down the chain needed
-> > > > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
-> > > > cause unexpected failure.
-> > > > 
-> > > > While this is not the case in this particular case using the scoped gfp
-> > > > semantic is not really needed bacause we can easily pus the allocation
-> > > > context down the chain without too much clutter.
-> > > > 
-> > > > Acked-by: Christoph Hellwig <hch@lst.de>
-> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > Looks good to me.
-> > > 
-> > > Reviewed-by: Dave Chinner <dchinner@redhat.com>
+On Wed, Aug 28, 2024 at 05:55:28PM +0200, Jan Kara wrote:
+> On Wed 28-08-24 15:38:49, Dave Chinner wrote:
+> > > instead of using name_to_handle_at, which is why it's dangerous to
+> > > implement GETVERSION for everyone without checking if i_generation makes
+> > > sense.
 > > 
-> > Reposting what I wrote in the other thread:
+> > Yup. If you have predictable generation numbers then it's trivial to
+> > guess filehandles once you know the inode number. Exposing
+> > generation numbers to unprivileged users allows them to determine if
+> > the generation numbers are predictable. Determining patterns is
+> > often as simple as a loop doing open(create); get inode number +
+> > generation; unlink().
 > 
-> I've read the thread. I've heard what you have had to say. Like
-> several other people, I think your position is just not practical or
-> reasonable.
-> 
-> I don't care about the purity or the safety of the API - the
-> practical result of PF_MEMALLOC_NORECLAIM is that __GFP_NOFAIL
-> allocation can now fail and that will cause unexpected kernel
-> crashes.  Keeping existing code and API semantics working correctly
-> (i.e. regression free) takes precedence over new functionality or
-> API features that people want to introduce.
-> 
-> That's all there is to it. This is not a hill you need to die on.
+> As far as VFS goes, we have always assumed that a valid file handles can be
+> easily forged by unpriviledged userspace and hence all syscalls taking file
+> handle are gated by CAP_DAC_READ_SEARCH capability check. That means
+> userspace can indeed create a valid file handle but unless the process has
+> sufficient priviledges to crawl the whole filesystem, VFS will not allow it
+> to do anything special with it.
 
-And more than that, this is coming from you saying "We didn't have to
-handle memory allocation failures in IRIX, why can't we be like IRIX?
-All those error paths are a pain to test, why can't we get rid of them?"
+Yup.
 
-Except that's bullshit; at the very least any dynamically sized
-allocation _definitely_ has to have an error path that's tested, and if
-there's questions about the context a code path might run in, that
-that's another reason.
+The issue that was raised back in ~2008 was to do with rogue
+machines on the network being able to trivially spoof NFS
+filehandles to bypass directory access permission checks on the
+server side. Once the generation numbers are randomised, this sort
+of attack is easily detected as the ESTALE counter on the server
+side goes through the roof...
 
-GFP_NOFAIL is the problem here, and if it's encouraging this brain
-damaged "why can't we just get rid of error paths?" thinking, then it
-should be removed.
+> I don't know what XFS interfaces use file handles and what are the
+> permission requirements there but effectively relying on a 32-bit cookie
+> value for security seems like a rather weak security these days to me...
 
-Error paths have to exist, and they have to be tested.
+It's always been CAP_SYS_ADMIN for local filehandle interfaces.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
