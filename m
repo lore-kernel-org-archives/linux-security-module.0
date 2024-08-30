@@ -1,233 +1,222 @@
-Received: from sonic312-31.consmr.mail.ne1.yahoo.com (sonic312-31.consmr.mail.ne1.yahoo.com [66.163.191.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DEFD2FA
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Aug 2024 00:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.212
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724978961; cv=none; b=hDvsKe4AuYrrsIkwwktkrR3kreXojRrqG0IWKVGcw1ZzjIMOgAkAjU+x1YcgjJDTu//dfSGy6LfG+SXUr9gVpiMYfKfdWVi4hGee9arOxiDnZlM4VtjLzHfTimZeoEETmjOQecf4nVF9MKg8ZE5NjDJd0/iW6G+1IrMzO162Aa4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724978961; c=relaxed/simple;
-	bh=WOgb0l3+mNTEJgc9hmsiRiCiiWeY0qj2It6RPDfGCMI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4908614E2C9;
+	Fri, 30 Aug 2024 04:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724990532; cv=fail; b=kooRAyE7rDsWxDBniOjO0IZdMGUzt+S+lK02p9kq6TcLnCMdvxkCcY0qXDm9vaKIgueWd+Jq/QBJoqYCM2UKZ4kJTvR1UFhy3ooGUK0ADBdFygAiSHxFcXLDo8IuAkVBZQ3xE8h9lwfub28Dri6dorIvp4eXwxPslwnPQV81Cc0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724990532; c=relaxed/simple;
+	bh=jy2CptCrzMacNUzsOBU4+1ShZQi4OmSKl+ctyA0PRXM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YDEECcsVJ9TMt88OGiW0hNiTWrJ/J4T+W9LPAxqHbtUyajWSdDXlkdxufXyqtkp0gOC82wrMeYg+7Z4cPTy8axlAYmlIwWeuPdc+mMxtxR9b3lx/hcpkmHK5ItfjBzZRjj6WIYUEIvZ0pXCIOa/j2eOwrHrd2qmWj8SNtXik91k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=EOZ3/oJM; arc=none smtp.client-ip=66.163.191.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	 Content-Type:MIME-Version; b=QdpC5Y1Ux/3InA53WKIzRTCliyFw9lt0bb02ei3f78Q+QXsgHLggGahOCtq40RQx2eJ747QpeIWz6DoPI2slgeJXVgwnevCEqb492VSnk5cKEtcRVfBEel8t39MLbLAC0G1+7ch656KNcMi1Z/hER3eNChURkWVzGmUVzwgqL18=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AW8qP50Z; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=zOX0Lq1h; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EOZ3/oJM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978959; bh=2r/dWdCbRvU4etEW6v9mydXKfVO+AeWq12qn+jOgxk4=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=EOZ3/oJMq57vaSx0BpugqKY9Oa0huNqQa3yyBjnl/qroQz+mnz3A4izfF//n6gZUL8rHHmjY8YuJjFiuJqiz87p56bRkzxxwoYqkEi8N9p8hIlor3ovujLr5N+YsVvtrfJdwl+mhmJTb5h2jF1uBYx1EgH7pw/+kwgv58gP4cgZ84sFFRxgf3+EaFzvBndwoLO3E8s9L5fLJBOLmlx47qXLP9oG2/AbQyOBl7L/VF5i+3k914LxKM4Yaz2YZ9g/BM0Y/GTmjuGyFyPkxO7e79FEjjJr5xP1j3qQF7yi2MNwPktPVvyzkItKs+fZCHENFb1FiWSU4ByQpzU4uf/Ndvw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978959; bh=oXCDCBykpToqKHKSSJQOvjb5ldR3xGPzo9Ko+As/zO0=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=iXyYhSclHMsSXjKHl9/N0aUwLnkJU4h2Dq5aHYJkDhqH6VkARHKe1AMBebQbVixRp33fexuHVcvstXD2L7fAsTydws0c0jZDk7JwZgdkLPnqBfAjKachn/VVq6WKfU+1cse3ccfoPhiqzJ8AV++H5HwDN0dkWzwtWD7ifBsPW17B+6zF1coqjsMqdzsM0T2vx14+zJqvorgRH45kZKHax1BPPRY9mD1SU1KbIXLibtnKWMeT+hP/wsu/zqj3/jIS6CpV7kT8HK6IxyS/wbPQvsvqa444K6uC04Z2xnEqoHsE1q9w5gz5L/ELD9P2ZPuK1IFy1D6Sp+zioDqzCAUVaw==
-X-YMail-OSG: sbHVq2EVM1kj_I5b8rvftmXOnBJ_IPiiE.gCBDeRXeJTE8L4RRRpNcmHUdUeCpR
- wftLbSWU6J_6AxGcq4rSebQS8C5q069CR.cC_HUiLA5OM_9jNj5yIoLwfWOM8IfRtnPbj1kBrltA
- UyARgnXcpu5arEAOTm84BLxFKUA3OoFsPtnGetIH2EwcjDXLRZy3NRzgWVtIP9ZVlaWsHbzb1MAl
- 2KN5q393M1lK2ov_7Xo.3j9TJOBdcoGz5vMHg3wspSI9cJoL5_8FkAl4_F3O5r.hygvSzHh5Qh8s
- FTuatcgIBJWw8VNHr3voZO262l1Bz7pZyEPD_Oq_0z9HU0Pyo1regh8FhmCuJyjZimzc0Pk2yplv
- zVbnln1j4if7PKQGSgxCQQErD_UAtEiADNZ.rlR4vrbmqKwNpau1HaM4ynY77KMiCtxyESIIZFZe
- LkzYI_nhybFC5qRoGa4pZmr3ZwWgheo0xENl0uSNM7WcmJJJFS84nC86YUxVhiynyKZ0jmcQYC5Z
- RYMdFqPDJX9XFhoRJzkQ6qpDASkpg8_Qg7Bwg6R3saHcPl0mnuHODMds1v_iuFk9pF5Lkbj0aPWn
- kLCTv9BBCYPBVidp_REZ7L6qE2chUEAH5HHJxDMiM0iXSI5XmuBlIfMvsCdpPN_2ZpqbZ2LETNzU
- Ixm3510bEigf9Duu3gZHJBtKnIpZDAoavPQmccgnexPb8oT6ibquPww.8U5rzv8_g8Smpu7eKFOp
- ywCzpilPZLcm7Km_mWaqnjCG_R.y1fWjff7xl782FlLka5.iUSpO0aaZs1j6xjXGFfUZWvX20DRt
- AXjsiVXs7Ev_xM14.V.8VxbwmNbH2jWpiTPH_TEI73qcU.Dl8blixt98wfkbDcFn9_bRysl5up4Y
- PHWu1Eyo2Kl3x1uOkmQdoPIBsO2Y7MUB8adKntATuO_3xKJV156LLCLyybfiqxd283BIrw0SZWYw
- 2wLkrr08y1nm_aGz8fO89xWYa2OjXwztFMS814fKUz1Gvz1wom0_hBom7JGYgVjLiSmyegPiNHeA
- wHmkbrw56_u9GwbzOznl8fout4RxETYyHgXQ6o18hQBN4EqBgSI9Ha08EhybK3UNh7DPRuCOB2Pj
- NcBCVNlF5XbTXtdoRDhdWNtur6nvjZRpQ3Z4uG9m3JWN7s7SudDRcXTIed3Kvv7Jkj6qEpdIoNU4
- kAhr7JNh6kqjG9NN5kVFNW1ZrUnWwYzMWowYqwlKbkCBbkpKOmaEadLRzqix9w2h9bv5g7YULu2.
- 9v18fumsidoUhXM56buA_JIj2VRw1SGYD810hAGNnkkkWtFECyRfHOSxQegRiu7cEc92Shp6tkfA
- QLPZQlJPNFgABxTZLoq9L_npZAB6wP_Yf0hwCRz2.5R1lg12QmD7J4aUnTjHLDicTLlvE2GYZckr
- eEZWMnoyEWnp.QCUMnHQJFfdtD16WqKxcLf87VHMLPHS4_KNRHhomwxOGS1VuRY8LXipFqoTQ__A
- hn3KbP5V_abYw96gF.vkvZfX9DxriIw.Vc0tZncLMlJ48i1TpD2K._dg1yNzuI046FfiK4hlrTsK
- rKdQKNu8k9Zde85OEhlxWj.hxlJvuSKSwWUM4cP6F1G4rFbCEyL2Y4U8i3OAXiGnzt0yPygDdmIk
- TCGCjF2neQh12IkLj767Z59Gnw_zNBF._oMgDsYJpW9MfcOIhwkqLCrC17Svg0AbuU5YA90.GgL2
- Kq_QDCH.34Zy7ZPqTbSLr_7yvnufCTIbZYZlTsGMWnbxTnLA611t29dei3j_j749u1J15otj5zpL
- ULxaXDL0ZxokEzCO6HUr0F.muKnWXMsi7Im_DZjx5poyjyxuPvfbf6UDdoTzyic52LfEp0xQW1db
- LKwxXx39nwjBCrwZK0jJQjp4HddVGpzfS_S1hOE28r312XpN_dwQtTJotPxTwVRhePXFl4vrcHhB
- 8RmqOdV.3rdZmojwmPiu.eAaaUc.LrY.o20R.tBTQjjGsjtJrY464mUDhxi1R36v5OCkA9TPlUX.
- AzxT3MUeDKvWdfg.rk6w88fneRxfm2mG.dOt.udgCIt0XI0xAZLP7AfRuovPimuw1YVKpJTDzwb0
- QM9RdOtU.pJYYPn92zAF7C9W5uBdk8jOhgvuMZJak39J_r0r4oPUz8zksA7y9YdhCqsjqjRHW1AF
- 8uAc8t9xrNr1rqJYzn8mRGFCiJHk.qRmrp3uTlp_zxUud_kYHd0Kv9H52aDmbfHklzenNQM_CgSP
- 0m0VZJL4_cZ.MsoYyBVvYkbtDTdUxdFSigucNQOkr2sQv2vJPdoTzxrMf5eigNskO6KYLz6Jy3z0
- kfJS9SK6U3N7MSiz868zIinuq71rQKVHkMs5K70V97wE-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 967549dc-f23a-49d0-b828-58a830707dfd
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 Aug 2024 00:49:19 +0000
-Received: by hermes--production-gq1-5d95dc458-jflr5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 35a934a1749a25fd4473b6654327c16f;
-          Fri, 30 Aug 2024 00:39:07 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	mic@digikod.net
-Subject: [PATCH v2 11/13] Audit: Change context data from secid to lsmblob
-Date: Thu, 29 Aug 2024 17:34:09 -0700
-Message-ID: <20240830003411.16818-12-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240830003411.16818-1-casey@schaufler-ca.com>
-References: <20240830003411.16818-1-casey@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AW8qP50Z";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="zOX0Lq1h"
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U2spMJ011846;
+	Fri, 30 Aug 2024 04:01:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:content-transfer-encoding:content-type:mime-version; s=
+	corp-2023-11-20; bh=Fh3l+ME+2D7vTnslOnVr5R+ASSp1cx2+4oj0ezr+S0o=; b=
+	AW8qP50ZdPrr59k0Awon0f7KVdHmNpQrg7DMAvLeIzrTQQmhWtoWiJJ4AtFPc1aF
+	9La/UHDdTtIfDDKAfdLLVXfpDHJUTlNIu5XPrFdtlgBi1a62bLs4D6z9Wc+D5hjA
+	d5lolj5Rd5iKbpSJXRX/41feo1UFvExpNp7k2A4J4CHPuIZ2Jgy+V3UBkIPacmQM
+	0riDZcYKvhEUEVI9Cuc4i7iEhvw+GtVEfQFZpgAR0ZUnGWruOi1Lh1mHq0D1dmTr
+	Ji8LKK1cg+Jme8F+bYGxb11b+DSnReNo2daOGaWC5lgwAWzW8j6oRl6DAY6KIOkR
+	OIzRrVTXhytj0D4GtzUrcQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41b5q3r1vt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 04:01:53 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47U0LvZl036604;
+	Fri, 30 Aug 2024 04:01:52 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4189jp2tga-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 04:01:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AVg/LzYQS2LiG4JE1LgW87riTPnFevCF/vBEXKvGQBGtEppzcGZis0QsF4+pa8iaax/d+5jFMzst4Vg9OFNBBBkNIY93exbajigYPcRJSLFqQiogBp0UG46/696+NMTV/sF1PtK421N/+71pIfHpDmltceE/HMRyVVgyML22wgI21mRG4NtN9w3sd34ULUqfoflsi38aqKyKEsifJw4Gj/ltElwxWcLlftsDBPSu8qYytURjz+And/HIjxwTEVgQ/H1bOdNghTubexI19/tiJCQBz9w6nZ8hrwuqog5R6bIdzkGfVIz3TBgebECOlKUH0P3pG/KsceBm/g/qv/USyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fh3l+ME+2D7vTnslOnVr5R+ASSp1cx2+4oj0ezr+S0o=;
+ b=VYFAcJ6lY8BddNaoQV+/bchKu/odF0gPZLXn+AILZwx8P1AMnF8AZdwUNrjXWfhWJrAdYjTZRw2hzbIR7bzhD9itm6seN6SaKPDSq9TEjdWoZ0cJi5TAdkGIgI8h+J7RZOff277Tp7nLqdvOkH5AYZgBgcFTWGSB80HxFW/z2LmX80MWco1gJ1RzTKn8QR84GrlCF/cOjM5um2tZop0E/B2PBrysxc4VdJ++Gomtf9Wpjd6Kz0CryivKepa83zB7FEjxwN2z/CU6tgFS8gv1955fbUGS87ExN+QuaxA5bZtViYRYvm6DOkmBCBcXjsrGGLxzAKz8NNFmDfpWrDcYwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fh3l+ME+2D7vTnslOnVr5R+ASSp1cx2+4oj0ezr+S0o=;
+ b=zOX0Lq1hj2KUseFK1BpoKXzRr1RiLEd3Ugr6EWY5trF5Qq/qiNpbTJtTHpoKzdXovIo8ywOhaOLS+QwLs8Bs+bI5w3sJCWt4rx/52vBjFHWA2a1lYe9+w0PwECrz0PASqFsFKL5dOT2LlXglCY+r37SRhpauKg+NCTs/p9eBOHw=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by IA3PR10MB8115.namprd10.prod.outlook.com (2603:10b6:208:506::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.19; Fri, 30 Aug
+ 2024 04:01:45 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7918.019; Fri, 30 Aug 2024
+ 04:01:45 +0000
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Suren Baghdasaryan <surenb@google.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+        sidhartha.kumar@oracle.com, Bert Karwatzki <spasswolf@web.de>,
+        Jiri Olsa <olsajiri@gmail.com>, Kees Cook <kees@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Jeff Xu <jeffxu@chromium.org>,
+        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH v8 17/21] mm/mmap: Use vms accounted pages in mmap_region()
+Date: Fri, 30 Aug 2024 00:00:57 -0400
+Message-ID: <20240830040101.822209-18-Liam.Howlett@oracle.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240830040101.822209-1-Liam.Howlett@oracle.com>
+References: <20240830040101.822209-1-Liam.Howlett@oracle.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: YT4PR01CA0471.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d6::22) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|IA3PR10MB8115:EE_
+X-MS-Office365-Filtering-Correlation-Id: b703611d-698d-4682-b586-08dcc8a876aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MbKYf82IheOWPipB6jwqnALZ9QWjS2XCQoSs+NLxlWTTvQPaRmdPEFHS/96m?=
+ =?us-ascii?Q?mS+0z9DO5OZRVc7w4saf5zbmf0ggKkE+vqgT0rMLmY+UkJbgVPRrBaJA3lCY?=
+ =?us-ascii?Q?zYzibqFUgBljCYkKaB0NseDe0vc9zOPuGPmuafXEakCDJVuQEjW1SZdsgdxc?=
+ =?us-ascii?Q?MHPjrzLbG6PgVGfmrllgyieJ1RiG018Q3UihvJ2jjuTu1L98pw5n+zq3Ng5b?=
+ =?us-ascii?Q?6mo6SHxlpm16/eVVgPh/j3KLIrUgWaYRMliFIYodWvviT9bPsGxpHRe4QhSC?=
+ =?us-ascii?Q?eNmE2Xzj+HZSJsES7pi6vqncv1utS6Uy3NidhjnAWJ5vwTcRNajbEr9WprLW?=
+ =?us-ascii?Q?x+aK4EQhe3mgabnZqf63oABigQKcu7nY6AVys8f9//BjGHoDzXAOX1TwYGRe?=
+ =?us-ascii?Q?JkSCW3qZmeZEzDsNzGgYbapf6z7xp4yanzBX8FE3q7YpJDsnab23Ke+GlHQa?=
+ =?us-ascii?Q?jclX8KAHE1xrtQoh8W//7UfWFuo7Ax8Ih5Zok5Gxn/IXSzSi+nbYefhZeyYk?=
+ =?us-ascii?Q?3+XDO2ktPa+fRtScgM7Lo/ycrj1mSZnS0OEKUV/kW5dlQUzGqfmYWOxGaEFF?=
+ =?us-ascii?Q?uQ6pxOnO25sH3JXI1kZ72lrNbmc3rdDc4q7YDVEgYQSwsd3ta9HtrU0fj4kT?=
+ =?us-ascii?Q?nUNBwwkxifeV1hrvPdPlxVsQblEHn2zUiOBrjlr9dm0fYATDFzEEfsjxkZ3y?=
+ =?us-ascii?Q?n4fiTd6H/JAjm3fIwGhIJuI5eoIYDiD5xhW3esLEWkipfWiAxHEnOh72xf1T?=
+ =?us-ascii?Q?jqgz0KTzAzGaFCRVco9jcdC9Qg1nrwneIEmHkPFKLz7IXS4ov2y2hWEmhkrV?=
+ =?us-ascii?Q?r1tG+IqNXg7HRJJqVGPwzKioB38duFVs1ciM1FQo5lYUGwJjlsbTBMSFNc+Y?=
+ =?us-ascii?Q?VALts2N936db/EesBX2+y9h+NISRm8TN1EGu6pc8+3E2yMibHoQu7ESWYsiX?=
+ =?us-ascii?Q?vlCkc4Rz4CqevHqnLDOLYSufB+9Hl6x4jT0vQnmqkjCAB/QRkw0v91r1fUwK?=
+ =?us-ascii?Q?ajsAsvuH0tecV67RhjvCFYMO1x4ut7FPvKXk3nf5VM/3E/69qFb2Wk5/ndFR?=
+ =?us-ascii?Q?h5wzeS7gKuKOWrHt2lsCUHYfLZQo9LqB2E7DySkFQ30J9vaZZAydoj9vyOEN?=
+ =?us-ascii?Q?p2T8UXcJjZGYzO+j/0i3Fisd3aZpzPv7qkZGrsMJXoMTzs98R0esJUeSbWWl?=
+ =?us-ascii?Q?Di/qSvjA4V/y/8vnTy8WZKlMB+yEoHQvtmezPBlCbiCf5O6Rh3qRuB8B7gxb?=
+ =?us-ascii?Q?iZXAUIGKop8IixPgP81Q2HO9wiXPHeyYVdgKGUiW04r5JAAmXiE9UMlGymXG?=
+ =?us-ascii?Q?HoojjwBbf5odYrga/0QX7xCr75ccFthZzurL/PqVqmxHDQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?H/OP+8isgW2W26K7s+IcK0vFBt9txn7E4pDhvgHYPgzs6qsci+UcrzxO9ZrX?=
+ =?us-ascii?Q?TYz9S4DQLx5R8KSVGAoXTYbAjPrnuEdRihpy+1fboK39wFUIFwwCRM59WYxt?=
+ =?us-ascii?Q?sLTw6j1tkJJEz040YmoLeLfjK+XFN1sVWCESkJNz4KxxAhRXe5gS+P1alP/7?=
+ =?us-ascii?Q?KmqUjZ/BhBN0jEXSV91v+aiS0o56RhExFDAdY2Lx+N3SQsugRJoNi4EBhg/n?=
+ =?us-ascii?Q?f4aOV1ilxSjxz5nD+ijsp44rIRojhDnbCWwj1dqo2ffmuL5MKcQkcBUA9Jbi?=
+ =?us-ascii?Q?HGfBz53j7h+P/pjutWVttbnJHIvVvvfWMWjZ/pNOi3Oo/eZx3hu66pb+0sjZ?=
+ =?us-ascii?Q?RdaarPK87U9An6MR95EL3znuIVfJCtFPIsPHLNE25i01/+5bxqrsmY37403d?=
+ =?us-ascii?Q?zvvTIAv2+oNhmusWwVLy6H8tLXej/ZxoCKXI0T2pZ2G16tLyzCx5nCreo/Ma?=
+ =?us-ascii?Q?/5FEykQoI+qOfZHqeV3jtlGrMbFstd6VMYDjZNNbnvnxGjN/D1LsJv2hyh6w?=
+ =?us-ascii?Q?f7YorU7MDC5e7Gzb7pyRhtNKtoW3WkOWSivy0UbC9tPAd9gGuB/iJoXRgbPr?=
+ =?us-ascii?Q?l0N/OKaWUGM2cjnBnIvzKGud5ptMdw+RVAegjieAWzvdY5ZzJTIZ6TPyF4uf?=
+ =?us-ascii?Q?zKn/QoPvY/ssvQxFv1QQdciOW8kEQ5EcajfnW7bOwxLCvd8wF6Nu6AgnXkrU?=
+ =?us-ascii?Q?rAirKvnlGvHKq2Mb2x0x3KxdfjDO72y5JNsYkoQwyn9Waj6MFz94EDSTVeIe?=
+ =?us-ascii?Q?pEuJrlMojOX7AHupDrCbvVCm7I+EK9FrVeha51s+nNA6FVcZZl/0abkNV4Mh?=
+ =?us-ascii?Q?K/1C3jcUZGSdYC9vZ78jQJk3+0gQwcANsCn0Qvny2/gMLZmrfLfpBI6cVRCL?=
+ =?us-ascii?Q?fwmfpwb64E+p+HJkUShPD7Ao2/hOz6uXZdcO9TUr1xyeEy4NHDqreHtUSeK+?=
+ =?us-ascii?Q?EPRnXKaWjeFmeonmTU+FgytBf6l3HEQfDKpIZ/1L4Htrhh2t6ZSex2Xmc339?=
+ =?us-ascii?Q?w0898xjHjruw1xJIwz66U3lKk6+cQQ2k7Sp+PKzNBVLOKqA1PEfT0Thd3lUn?=
+ =?us-ascii?Q?k3QVHN7wZJxXl0YxmyczZgK91CM2TcAb4CpUQ7IM8O3ADDw7Ljmdgf+VBeoh?=
+ =?us-ascii?Q?kHcXfyTcJtGBom1DUb2S+KnFOGAnijc3lATBVqKX6CCCS4XOUioIOe9dZ1wb?=
+ =?us-ascii?Q?cljXS1qovdrAMABO50YW4NQv2ul4UTd1wIDWmsYDmYE6C4JHnPY2ZzxPG4FK?=
+ =?us-ascii?Q?jGhLs20rbDO2yW6X+/3EbqJeb2dY/nLTN8+R9PNoaHC3ziLaX0eP8CtYoOGg?=
+ =?us-ascii?Q?q/fwiFS2dHHHG5qVFxkfsatOuNUSUPOpPW05m6jncOiQmVPYmBwAA7aPG5o2?=
+ =?us-ascii?Q?1wowx+5xFSAHNKcr1z3kV0y7RRTg67sAWYEF2mTMhGBs4FopBhw6CFq3TYrR?=
+ =?us-ascii?Q?AVStxOBZuezqogfOULebqy1qQ2t/p9Mrti0kyCadzFUbBLwMpRLuFnZNcHfv?=
+ =?us-ascii?Q?i67Zzka79SjGq/CbllsT01oAANmPjLGAakh+XBgwm613XULqQBZHlakZB61f?=
+ =?us-ascii?Q?Plt9KPbsUHarCXo3rrXX0KrPa9meGi1dtG4zEv5ehazl91fGXvX1gyUSPInT?=
+ =?us-ascii?Q?DQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	O5BnPQCHS421i/dEpaqvmRWx7eRO17/7t7QUSgJyV7CgfeyLvpNT93TBtpAU0V2YdmikyvHOuKysjsxtG6Fr3YIAJXHh3naO18sj9ELzmPJocOES0JNdf4fFrejUN7eMk8OTLYMoRcAMSgEAyARmvVhZtnK2kX17okeoYLEtOwpRkL+jFQmj10eAVQs+mTpdVHXybhMmTpjK7QW4nvJ8to1v4Uet8bR/s+AswRT+t7dy5ERL4+RLC2d06tdkTZLYXLgcFaNbh63mk7givJTQG/rfkJ2ZXlNFAonY+SvMTeQhysZHWAIS02LFUZU6tISilzFKWl33Uu2oPIMOaFfz8QQve3J3N0QJCOdSinUqxVXKxNmTW3UjI/UNhf5LvwVMF3COBzQC0jfkhsOVftVmpuJKYmA1AKndxS2jfbocBpTfa2jE5QUGxPu1YQhcHaLMEeHKLdMEtW9P21tNHQ/lRdCOpDJ+jahsar/kaywcc7SB9WAETe8ZuFwIMxvViV5PCUDldrNKzu9e/Nik1D7COUI4Y/gP2i+0yAkg/4eXk/0Aq0MKjZmRKQk08yeDFj/J+IEzFTx8XISnU6ayeUBoef5iYO6jbJqW+vMo/aFFClM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b703611d-698d-4682-b586-08dcc8a876aa
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 04:01:45.1835
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8DSCd3HTkjiHgUd8TIevB3CaQsSSvjkuHDqJJT/P5MHoaYGv9kfvqh6DMqFnDw2mK23C53tyliYZipVgb37dcw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8115
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_02,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 suspectscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408300028
+X-Proofpoint-GUID: FmX4xC3_iodGktVw-_nHx0pwMM3pcAdl
+X-Proofpoint-ORIG-GUID: FmX4xC3_iodGktVw-_nHx0pwMM3pcAdl
 
-Change the LSM data stored in the audit transactions from a secid
-to an LSM blob. This is done in struct audit_context and struct
-audit_aux_data_pids. Several cases of scaffolding can be removed.
+From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Change from nr_pages variable to vms.nr_accounted for the charged pages
+calculation.  This is necessary for a future patch.
+
+This also avoids checking security_vm_enough_memory_mm() if the amount
+of memory won't change.
+
+Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: linux-security-module@vger.kernel.org
+Reviewed-by: Kees Cook <kees@kernel.org>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
 ---
- kernel/audit.h       |  2 +-
- kernel/auditfilter.c |  1 -
- kernel/auditsc.c     | 31 ++++++++++++-------------------
- 3 files changed, 13 insertions(+), 21 deletions(-)
+ mm/mmap.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 6c664aed8f89..b413c0420c6f 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -144,7 +144,7 @@ struct audit_context {
- 	kuid_t		    target_auid;
- 	kuid_t		    target_uid;
- 	unsigned int	    target_sessionid;
--	u32		    target_sid;
-+	struct lsmblob	    target_blob;
- 	char		    target_comm[TASK_COMM_LEN];
- 
- 	struct audit_tree_refs *trees, *first_trees;
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index 06309227a0eb..b3562e6ca081 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -1370,7 +1370,6 @@ int audit_filter(int msgtype, unsigned int listtype)
- 			case AUDIT_SUBJ_SEN:
- 			case AUDIT_SUBJ_CLR:
- 				if (f->lsm_rule) {
--					/* scaffolding */
- 					security_current_getlsmblob_subj(&blob);
- 					result = security_audit_rule_match(
- 						   &blob, f->type, f->op,
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 886564532bbe..bfe2ee3ccbe6 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -100,7 +100,7 @@ struct audit_aux_data_pids {
- 	kuid_t			target_auid[AUDIT_AUX_PIDS];
- 	kuid_t			target_uid[AUDIT_AUX_PIDS];
- 	unsigned int		target_sessionid[AUDIT_AUX_PIDS];
--	u32			target_sid[AUDIT_AUX_PIDS];
-+	struct lsmblob		target_blob[AUDIT_AUX_PIDS];
- 	char 			target_comm[AUDIT_AUX_PIDS][TASK_COMM_LEN];
- 	int			pid_count;
- };
-@@ -1019,7 +1019,7 @@ static void audit_reset_context(struct audit_context *ctx)
- 	ctx->target_pid = 0;
- 	ctx->target_auid = ctx->target_uid = KUIDT_INIT(0);
- 	ctx->target_sessionid = 0;
--	ctx->target_sid = 0;
-+	lsmblob_init(&ctx->target_blob);
- 	ctx->target_comm[0] = '\0';
- 	unroll_tree_refs(ctx, NULL, 0);
- 	WARN_ON(!list_empty(&ctx->killed_trees));
-@@ -1093,8 +1093,9 @@ static inline void audit_free_context(struct audit_context *context)
- }
- 
- static int audit_log_pid_context(struct audit_context *context, pid_t pid,
--				 kuid_t auid, kuid_t uid, unsigned int sessionid,
--				 u32 sid, char *comm)
-+				 kuid_t auid, kuid_t uid,
-+				 unsigned int sessionid, struct lsmblob *blob,
-+				 char *comm)
- {
- 	struct audit_buffer *ab;
- 	char *ctx = NULL;
-@@ -1108,8 +1109,8 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
- 	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
- 			 from_kuid(&init_user_ns, auid),
- 			 from_kuid(&init_user_ns, uid), sessionid);
--	if (sid) {
--		if (security_secid_to_secctx(sid, &ctx, &len)) {
-+	if (lsmblob_is_set(blob)) {
-+		if (security_lsmblob_to_secctx(blob, &ctx, &len)) {
- 			audit_log_format(ab, " obj=(none)");
- 			rc = 1;
- 		} else {
-@@ -1778,7 +1779,7 @@ static void audit_log_exit(void)
- 						  axs->target_auid[i],
- 						  axs->target_uid[i],
- 						  axs->target_sessionid[i],
--						  axs->target_sid[i],
-+						  &axs->target_blob[i],
- 						  axs->target_comm[i]))
- 				call_panic = 1;
+diff --git a/mm/mmap.c b/mm/mmap.c
+index cd09dd164e85..4faadc54e89d 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1414,9 +1414,10 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	 */
+ 	if (accountable_mapping(file, vm_flags)) {
+ 		charged = pglen;
+-		charged -= nr_accounted;
+-		if (security_vm_enough_memory_mm(mm, charged))
++		charged -= vms.nr_accounted;
++		if (charged && security_vm_enough_memory_mm(mm, charged))
+ 			goto abort_munmap;
++
+ 		vms.nr_accounted = 0;
+ 		vm_flags |= VM_ACCOUNT;
  	}
-@@ -1787,7 +1788,7 @@ static void audit_log_exit(void)
- 	    audit_log_pid_context(context, context->target_pid,
- 				  context->target_auid, context->target_uid,
- 				  context->target_sessionid,
--				  context->target_sid, context->target_comm))
-+				  &context->target_blob, context->target_comm))
- 			call_panic = 1;
- 
- 	if (context->pwd.dentry && context->pwd.mnt) {
-@@ -2722,15 +2723,12 @@ int __audit_sockaddr(int len, void *a)
- void __audit_ptrace(struct task_struct *t)
- {
- 	struct audit_context *context = audit_context();
--	struct lsmblob blob;
- 
- 	context->target_pid = task_tgid_nr(t);
- 	context->target_auid = audit_get_loginuid(t);
- 	context->target_uid = task_uid(t);
- 	context->target_sessionid = audit_get_sessionid(t);
--	security_task_getlsmblob_obj(t, &blob);
--	/* scaffolding */
--	context->target_sid = blob.scaffold.secid;
-+	security_task_getlsmblob_obj(t, &context->target_blob);
- 	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
- }
- 
-@@ -2746,7 +2744,6 @@ int audit_signal_info_syscall(struct task_struct *t)
- 	struct audit_aux_data_pids *axp;
- 	struct audit_context *ctx = audit_context();
- 	kuid_t t_uid = task_uid(t);
--	struct lsmblob blob;
- 
- 	if (!audit_signals || audit_dummy_context())
- 		return 0;
-@@ -2758,9 +2755,7 @@ int audit_signal_info_syscall(struct task_struct *t)
- 		ctx->target_auid = audit_get_loginuid(t);
- 		ctx->target_uid = t_uid;
- 		ctx->target_sessionid = audit_get_sessionid(t);
--		security_task_getlsmblob_obj(t, &blob);
--		/* scaffolding */
--		ctx->target_sid = blob.scaffold.secid;
-+		security_task_getlsmblob_obj(t, &ctx->target_blob);
- 		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
- 		return 0;
- 	}
-@@ -2781,9 +2776,7 @@ int audit_signal_info_syscall(struct task_struct *t)
- 	axp->target_auid[axp->pid_count] = audit_get_loginuid(t);
- 	axp->target_uid[axp->pid_count] = t_uid;
- 	axp->target_sessionid[axp->pid_count] = audit_get_sessionid(t);
--	security_task_getlsmblob_obj(t, &blob);
--	/* scaffolding */
--	axp->target_sid[axp->pid_count] = blob.scaffold.secid;
-+	security_task_getlsmblob_obj(t, &axp->target_blob[axp->pid_count]);
- 	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
- 	axp->pid_count++;
- 
 -- 
-2.46.0
+2.43.0
 
