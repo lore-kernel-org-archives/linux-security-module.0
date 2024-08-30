@@ -1,227 +1,206 @@
-Received: from mx-lax3-2.ucr.edu (mx-lax3-2.ucr.edu [169.235.156.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1010A189F5B
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 23:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D1120EB
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Aug 2024 00:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724974133; cv=none; b=fFUYPX7HdG2m1r76D03WRGInY9O+nwd/NzTRLlDnNFD3fcwEiRMyr1RvwnDagk+NoIOI8m3mtzm2NpB5urChhNCBdeVo6O7Ly4Emvbqi4eUwAlHmuq1XQp0RXADWX2ly7ljTq5anH3WKY8rjpWeNFsVZ4yypC5rhUqJ+Hb9CZV4=
+	t=1724978157; cv=none; b=oWnAzxY/yOTpyGD6L/AEXp8cXG87+rnec3SLP0kCvV03pFapd0J1J9QmQch5jM6NIg0nOKTMZ2rt6muAhIvjlXBbzkpb57qGSQBRFDYSgc9nG4M5QFTcrTejqszHy6/o5FWnweLi3ueaKAlbRXOU0MZgX7dydCcha95ZGM2pQUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724974133; c=relaxed/simple;
-	bh=o7TxbGOuYb6+2NV9KDNCzI2PYElkRPUUbRTEqJkS/w4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p4xh0ObvoNLeKhuJ7Xtoazr/czJq34WwzhCNcXknIy3jz8dyo3kHeslbi3/UYF5tRcx6diG/bERlZIKzyWl8vh4+nqTEeTN6PaA4SluVXSB8xTUPf3gO86jTV23jwdMJBZHbT9NXc2ATw8ParbA3oIfo8IRneuCrS3hI+9r0tOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=O6WLoYQ9; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=gMX8FMpF; arc=none smtp.client-ip=169.235.156.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+	s=arc-20240116; t=1724978157; c=relaxed/simple;
+	bh=phU8pKeh6p7o5ScZsi1BEJtdlQy4iq/UIYHsfl6XcXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WLCSRiBRlHA6SUcZmq74aM3b72ZCsOSoTVPFhmjaSCOEFct44yKk3vj2ft5jYBmfjher4yauf0zsvCe4V8sxfg7Yuwvififj0678eYvqObbu23GTeJVxc3HX4t6nwaloB0JAJbHJ7l6oWElBsHZU92vYyoH1cjP/xqhnzsxV+As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ITJEOGTf; arc=none smtp.client-ip=66.163.185.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="O6WLoYQ9";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="gMX8FMpF"
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724974132; x=1756510132;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:references:in-reply-to:
-   from:date:message-id:subject:to:cc:content-type:
-   content-transfer-encoding:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=o7TxbGOuYb6+2NV9KDNCzI2PYElkRPUUbRTEqJkS/w4=;
-  b=O6WLoYQ998REet5Q/HjdrZ5cLK2CRynrbAMDJPvyVLia/WepkmnzSCnv
-   6C1DUiSfIkeRwRdQiEtaRpHEtyRSew+6TCYEgOpZj2aDKY1tMnxHDBL7V
-   LeH6Y+Ayu/GfbhtiuM7+ngQGGvzk09mvwBLarbZymlOWxc+tH9yqN3Y2C
-   pitDagz4TeXLH3bacZMQuv2Zdd3AzWuEo+J4kyA11DXnpdusf7NtjvWSn
-   AEwp8MSUxyfoR039Ln8AjrlgZW2sompZRUJPiJ1Q+o3OBKU2lTSyTJKvI
-   VpkCBIatQrFAVS65Geenks3lD3WupH5zhYSjKzWZade5SaGWO+cEVw22X
-   Q==;
-X-CSE-ConnectionGUID: ZoxfY9JAQdGFOGhypTWvvg==
-X-CSE-MsgGUID: dz2bffwYRACj+0POfH/68A==
-Received: from mail-pj1-f71.google.com ([209.85.216.71])
-  by smtp-lax3-2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 29 Aug 2024 16:28:51 -0700
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d404e24c18so1196828a91.3
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Aug 2024 16:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724974131; x=1725578931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8eXCCEcvkF/OtTcfqtjGA5y/ytVcRP5BmWe5mmszibo=;
-        b=gMX8FMpFGetRD+LatlMP3jP+Zqov62BgnL0ClQMYTOvSx/Kt31zFSJqklW+CSQU1T7
-         76QRwW5Mtwv0qn5aQMkBLEbGrCj7b1aFPfRQQgSAbB3TOpXcJdbrjyTZbEBNlFGf0bhs
-         4fuC1PPl1+IKJwvxMra8YewEOxdpO9vuCsvAs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724974131; x=1725578931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8eXCCEcvkF/OtTcfqtjGA5y/ytVcRP5BmWe5mmszibo=;
-        b=h1VAA+ggn9/02yKh1SRMiAAe3aPuEU39r96iRo3oRBHdDnC/QSjoOaKXArtW62Vcvh
-         /ip/Yd7rUxDQrlNaN1LsSXNFhjzW/Au1tOmrbZJTEawwfAGPWKT8zhp4F81tAQ39u3Zi
-         Fok3WFKkB9vkJFQXPBJsxcy59mqNCYRluR/gdntRudcZKcJNkqbEUvAMjOPn1BCCMDH0
-         kOE1lsM3iGBCMu7b0kABDHqA3RKJmngT5SO2kF18Jx36FucANm5CWMyKIGZG2965ljmB
-         26VJzFGwox0ZfN8nzrsA0+kNg6ZJAmrSrAD2Gm5QorUvB8nKIOJKTK1H/nmnlUdaoc11
-         FC1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUoj2PtI9KBiDr14t/YxDd4K3/pOMMwT3IP6nXiSINRE2j8gepmN6n8q1ypsqiBjAQAly03WEKe5vs9xUNObatTPVqOV00=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx2PXdsYV+CqGABOprTJkI8vHDDOxeESL55b6mMaJrPZsX6CS5
-	7/FD9xPwLA97PNVuesB1F6vrynQKWMz84NsYKhGDzfVpEEr7UXY4Vo4/ecQCZrEiFbI0TZgq0ex
-	aNxJ+wEyQkDa4G+OpaHl5D/9ZJ3fm1mtZmUnp9/5wSeIseaLXxzxxwUY9+i3cmAVs/hvNzf0rcE
-	TkUfbKFbH/8LEKT4kKTCc70aFnb5jMdm0q9sWvRXD/BPYHFX4yng==
-X-Received: by 2002:a17:90b:17d2:b0:2d3:ce96:eb62 with SMTP id 98e67ed59e1d1-2d8564ad328mr4710859a91.38.1724974130739;
-        Thu, 29 Aug 2024 16:28:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6ftCTWqvGu2AgybuH2oVhw2/tz7HkoHLaFXJSqIW4v/qhGsDpQ+9aZhRhxQLQqyKX/2caJqmY3w718JAC2pQ=
-X-Received: by 2002:a17:90b:17d2:b0:2d3:ce96:eb62 with SMTP id
- 98e67ed59e1d1-2d8564ad328mr4710844a91.38.1724974130377; Thu, 29 Aug 2024
- 16:28:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ITJEOGTf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978155; bh=69InFlsfk6vDVq6FRMomS3FCfOYk+0BgDCIOhifz0HE=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=ITJEOGTf3std/VcHSx3djvoqjbiS8hwTfv40sxqi4feACE2OFEIzwU3ZawMuoCuW80aadLqy827uAbsAiaP63L1yyHeRTYoJ9l3uOtieC4dPZWPBGWZ/v5DKpeNUIn3E9hVJX63dVRdRGG4sz657dLKoH150k0YntgvNSOBv8IIGnKYhvbpCSo5HE6jVcYkbnzzf4MgPFkoCm9VIEV4aQM2gDKBFuip1zY6szaBjtYdeZpryh0ZqR/MEgEdz9JGtM34Qs+ICsP4i4X4zDIrdNqbvNtHO9SkYob/IwajFZaj5Cml2THBbVfrJs44EnU65+6DtxRII1ZhczGtSysR0xQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978155; bh=9e133hUSuI5T1nE5JR6lnlZTd8ov0H8v+Z4DGVH6zxa=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=GitzyQzWYTsS3owX8I5hIdJxci+3/BehlHqQg9s2Fymrc6PZismzv/FLlcYU2hoim1cW57IWaHRUc2+rNqNYPFswnu0i8gUvG86mg66ouvzR57Cr4lpeR0+U529ECfpcE3k6p/MmYTg+ufmRbgOeyFmx8de43hcPKR47V2awdxK8j6cvzXjQ+hALgD0gscpydK69eezIJYuz6qTRemxIiZHmupkDDUriOthzhQD5o73wXMKZMHFuIO365ZIi9DzYRK8ECNw3O/fPqLz0a1Vq8i6REhSU6mF9KNwQ9bLMH5boUmITL7OEsWOylLmp80sJvFM57wk51mAL0WlecTMc9Q==
+X-YMail-OSG: Q_ZJ05gVM1lwoXP7hRnqm.uYjVrgJXZMDzgrPRHF7g49LX2rDAH2AtH51NMvvmG
+ JN9upaK_hU2HOyNbT2ep4OnGl2JW.vlmYj5EBRzXBQd2hpnwSPLHdDyZsWW0lODlbBpcLL9L20mT
+ vxaOAKPd7BIEqbe.ULqvbyoxVH8Tm3PbFA7G1VJhnGC64nSzQAN0DjkaTJ4RkxyxjvZf9NEfQAsO
+ lJMT2PNx.q237WGzC0Ylc69l.g7uCoSs0Cw3S_m2TkkiLnI.78Wc4W79N9wBHxFaIK.6MIUNQ1x5
+ oGn8dFgA4VZ0zxroHia7H0Ht3X9E8hX8z3dMhDLdfuGT7UF2yIzVeOZBVPLw3qhdINlzao9ha_ta
+ GcyAJ5uZkOdZKAhd.gzPy2k53eqAkCgvaOMWrcu0g9ujZO5GMgFryWGxsrZRmMBz5Jqu.sQlf134
+ Y9yMTTZrbdcSUiJgVlp8189dzKQ4ExlsqzS4Zju8PT4NC_JwyCpUxv0qlw79qgZ9rGvb5B9MUAVX
+ G2f_wUJNxNLb_Fy8Na1PNRUcodlUenZZejVgMJXMFpUUe7R3xM7JMEUFJ0sImwiFALYdIKVJQxTW
+ 3wY707PkVHMCKSRw3JD7k5EYEG3gjpntikVQUgjp.tyebGXUiLWQJkm6EB_nfjGkGRpGumSLalLT
+ ZefXRWFOZkHf2LG04n9yDmaPxvkqoGsSpNMoUc0rFD62yd0YE3tWa6wGBVUQ7esN6gVGJqz668VX
+ 4lZnTGXyzHoB6zx9RpuPn5RYB_Xy56ADxw5LXB.n3Veq6VbBeiXY09rVLMmvEzKoLzuvz.3By5BL
+ MkFl5APmD2Xnqbo3BTcf_0AJYBUGEp3h5m0xZok4Z4uNe3t.KLCgbyCvnhsPOqZXTwrPpKDYyCMu
+ Tw7X8.IjqtjcuakBlnKRj0FsVkEU_CSumHHyWEPIjOhGRkJU70aRuL7sslZDPLoIBOGet7KNbwfe
+ zeasziTbAE1XgRUccHn22oUZ0BI0cClg6fPm4ul.F1sTr3hh7j2chYgxTBWoV94DfRyTVPmAWZ2W
+ ZBoGawf5_yeP305NJS5mCXemJk5LY4EcFJWk1eV1gp_fUHY4.kHZqurBNCB72vhMCY6k8x3RMR_9
+ HdgA0oa4YUXEFvVP6em30D8FuUSU82XFzJ2d.BAmgwqlXWFvVUKTrpoj7OmO5uRAsqfOeHUWT.SS
+ LmPeQx5EJ3hab1VFlLbhb8ssRQvFtdt7zF7x3lpPAh0jN1jBIZIVCy4YNFL74LE5DHECUWluXeS4
+ QtaZWuYIZx1T9sR00qqPtsEBhiVNCLEGtDNy1gWKgPTUwnkfe94xwImkYyE7ez6eghRFHv_PXRR.
+ tc1Lkgc00QuQJFAFdDpaQGBCOcLCzEu610vDaTvHI8unIZknR3.U2W6hGe4P3WoH5WXDTXdmwcey
+ 9K6i2YI.MxQL6fWexGwyeeWk.HpWBOrnO93WlfqMfwQqvnAPqAUNgqRVm5pORtKEnTmaoOhXfYfh
+ 2csabUxhLMHuFWlzT00WkynGY2WnXRV_fHnrDhdRx9ACuHbKz4iJL94qJl8uYZ2yZv1QM6a4S.dd
+ 6dP7kpPfqPr9yMYw.l8wVYnpM8Acup_Nxy1mkCXJY8qQRfqLDhilQhJtCZVewvIipvRrL8P9o2ek
+ v5tw5PgCrIK1NkiKqw4HFbN1rrHjpjwxUHDczy6bp6GFY19Vk1Sy9D0FLopFdPTAlxdzWYPj6v4o
+ sh2PqAkoXz0YNVbWqBCaM_LlJ4ba08cx4FCWLZyfYzxeLQbBw4Eunc0HRrI7EsKFobEekW8gp0kY
+ Dc1h6.fbn3mkrbe_3LgrNXi3KeNKJStnEaIrvILM4BGV7UsyyDN5Cstf06Ev4yUsowy64HyyX._e
+ RQQCrO5FgOonwaeBOhYV7eE7q9AijHX370SQ7hu3eIxX9crLBZIFUDRrmzwsuEZpHOMjd5UkhSTG
+ Czagrdn5nttZEhyL89T3o1mTM5LW5nMQJ2pqjTKYWUvm_kzzIT9csF9_oUludrAIbCyyMj.fpMKF
+ t4L9VUVBUpVqf6CFdC6YAFhDO3b4nBxBLAecD1cUzk9LFAnCuluJkeppaNyOUamnCwIAVZH2PCyr
+ mr6hfjSlPnItqZ162lD8Xk83TIPeA9rcgpsyA.xlK8R9_ypzB3X1ybsPEQqFwRY4rD62.anN4B45
+ tLF7OSh4HMSWTRwPY6y8OAiuM1oNYNskoIv4XNU4fjMva9Jj8d53Nx5Fa9px1IiNsELKhJJSsjr.
+ EEG.ld8FBGk3hQOG4xLJjcLA4F2uf9JowB.wRJPaeQ560qCrSFYfhmU4-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 014f01e8-783b-452f-95db-6c125a354d78
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 Aug 2024 00:35:55 +0000
+Received: by hermes--production-gq1-5d95dc458-24x88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID dffbd785ee8ecfc4db9f25ae20a43d90;
+          Fri, 30 Aug 2024 00:35:52 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	mic@digikod.net
+Subject: [PATCH v2 04/13] Audit: maintain an lsmblob in audit_context
+Date: Thu, 29 Aug 2024 17:34:02 -0700
+Message-ID: <20240830003411.16818-5-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240830003411.16818-1-casey@schaufler-ca.com>
+References: <20240830003411.16818-1-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com>
- <CALAgD-7JpFBhb1L+NXL9WoQP4hWbmfwsnWmePsER4SCud-BE9A@mail.gmail.com> <3fbe1092-d0be-4e30-96a7-4ec72d65b013@huaweicloud.com>
-In-Reply-To: <3fbe1092-d0be-4e30-96a7-4ec72d65b013@huaweicloud.com>
-From: Xingyu Li <xli399@ucr.edu>
-Date: Thu, 29 Aug 2024 16:28:39 -0700
-Message-ID: <CALAgD-47U+dZuVxoq9pSSpYk=Y6H6yTwmpe6iBmFBk-xCADW_w@mail.gmail.com>
-Subject: Re: WARNING in process_measurement
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Here is the config file:
-https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
+Replace the secid value stored in struct audit_context with a struct
+lsmblob. Change the code that uses this value to accommodate the
+change. security_audit_rule_match() expects a lsmblob, so existing
+scaffolding can be removed. A call to security_secid_to_secctx()
+is changed to security_lsmblob_to_secctx().  The call to
+security_ipc_getsecid() is scaffolded.
 
-On Thu, Aug 29, 2024 at 5:56=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> On 8/29/2024 12:53 PM, Xingyu Li wrote:
-> > The above syzkaller reproducer needs additional support. And here is
-> > the C reproducer:
-> > https://gist.github.com/freexxxyyy/c3d1ccb8104af6b0d51ed50c29b363d3
->
-> Hi Xingyu
->
-> do you have a .config for testing?
->
-> Thanks
->
-> Roberto
->
-> > On Sat, Aug 24, 2024 at 10:23=E2=80=AFPM Xingyu Li <xli399@ucr.edu> wro=
-te:
-> >>
-> >> Hi,
-> >>
-> >> We found a bug in Linux 6.10. This is likely a mutex corruption bug,
-> >> where the mutex's internal state has been compromised, leading to an
-> >> integrity check failure. The bug occurs in
-> >> https://elixir.bootlin.com/linux/v6.10/source/security/integrity/ima/i=
-ma_main.c#L269.
-> >>
-> >> The bug report and syzkaller reproducer are as follows:
-> >>
-> >> Bug report:
-> >>
-> >> DEBUG_LOCKS_WARN_ON(lock->magic !=3D lock)
-> >> WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
-> >> __mutex_lock_common kernel/locking/mutex.c:587 [inline]
-> >> WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
-> >> __mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
-> >> Modules linked in:
-> >> CPU: 0 PID: 8057 Comm: cron Not tainted 6.10.0 #13
-> >> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 0=
-4/01/2014
-> >> RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
-> >> RIP: 0010:__mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
-> >> Code: 04 20 84 c0 0f 85 13 01 00 00 83 3d fc e5 23 04 00 0f 85 e9 f4
-> >> ff ff 48 c7 c7 60 70 4c 8b 48 c7 c6 e0 70 4c 8b e8 83 f4 54 f6 <0f> 0b
-> >> e9 cf f4 ff ff 0f 0b e9 dc f8 ff ff 0f 0b e9 5b f5 ff ff 48
-> >> RSP: 0018:ffffc9000aa77380 EFLAGS: 00010246
-> >> RAX: 26a6b2d2d0cdac00 RBX: 0000000000000000 RCX: ffff8880241e5a00
-> >> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> >> RBP: ffffc9000aa774d0 R08: ffffffff8155a25a R09: 1ffff1100c74519a
-> >> R10: dffffc0000000000 R11: ffffed100c74519b R12: dffffc0000000000
-> >> R13: ffff888020efc330 R14: 0000000000000000 R15: 1ffff9200154eeb8
-> >> FS:  00007f902ffb1840(0000) GS:ffff888063a00000(0000) knlGS:0000000000=
-000000
-> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> CR2: 00007f902fb7e06a CR3: 0000000018c3c000 CR4: 0000000000350ef0
-> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >> Call Trace:
-> >>   <TASK>
-> >>   process_measurement+0x536/0x1ff0 security/integrity/ima/ima_main.c:2=
-69
-> >>   ima_file_check+0xec/0x170 security/integrity/ima/ima_main.c:572
-> >>   security_file_post_open+0x51/0xb0 security/security.c:2982
-> >>   do_open fs/namei.c:3656 [inline]
-> >>   path_openat+0x2c0b/0x3580 fs/namei.c:3813
-> >>   do_filp_open+0x22d/0x480 fs/namei.c:3840
-> >>   do_sys_openat2+0x13a/0x1c0 fs/open.c:1413
-> >>   do_sys_open fs/open.c:1428 [inline]
-> >>   __do_sys_openat fs/open.c:1444 [inline]
-> >>   __se_sys_openat fs/open.c:1439 [inline]
-> >>   __x64_sys_openat+0x243/0x290 fs/open.c:1439
-> >>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >>   do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
-> >>   entry_SYSCALL_64_after_hwframe+0x67/0x6f
-> >> RIP: 0033:0x7f903019a167
-> >> Code: 25 00 00 41 00 3d 00 00 41 00 74 47 64 8b 04 25 18 00 00 00 85
-> >> c0 75 6b 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d
-> >> 00 f0 ff ff 0f 87 95 00 00 00 48 8b 4c 24 28 64 48 2b 0c 25
-> >> RSP: 002b:00007fff194600a0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> >> RAX: ffffffffffffffda RBX: 0000564dd2fb9cf0 RCX: 00007f903019a167
-> >> RDX: 0000000000000000 RSI: 00007f902fb7e103 RDI: 00000000ffffff9c
-> >> RBP: 00007f902fb7e103 R08: 0000000000000008 R09: 0000000000000001
-> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> >> R13: 0000564dd2fb9cf0 R14: 0000000000000001 R15: 0000000000000000
-> >>   </TASK>
-> >>
-> >>
-> >> Syzkaller reproducer:
-> >> # {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
-> >> Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
-> >> NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
-> >> KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
-> >> Wifi:false IEEE802154:true Sysctl:true Swap:false UseTmpDir:true
-> >> HandleSegv:true Trace:false LegacyOptions:{Collide:false Fault:false
-> >> FaultCall:0 FaultNth:0}}
-> >> r0 =3D openat$ptmx(0xffffffffffffff9c, 0x0, 0x141040, 0x0)
-> >> ioctl$TIOCSETD(r0, 0x5423, 0x0)
-> >> mmap$IORING_OFF_CQ_RING(&(0x7f0000ffc000/0x4000)=3Dnil, 0x4000, 0x2,
-> >> 0x20031, 0xffffffffffffffff, 0x8000000)
-> >> mmap$IORING_OFF_SQ_RING(&(0x7f0000ff4000/0xc000)=3Dnil, 0xc000, 0xe,
-> >> 0x12, 0xffffffffffffffff, 0x0)
-> >> openat$sndseq(0xffffffffffffff9c, 0x0, 0x902)
-> >> write$syz_spec_18446744072532934322_80(0xffffffffffffffff,
-> >> &(0x7f0000000000)=3D"2b952480c7ca55097d1707935ba64b20f3026c03d658026b8=
-1bf264340512b3cb4e01afda2de754299ea7a113343ab7b9bda2fc0a2e2cdbfecbca0233a07=
-72b12ebde5d98a1203cb871672dff7e4c86ec1dccef0a76312fbe8d45dc2bd0f8fc2ebeb2a6=
-be6a300916c5281da2c1ef64d66267091b82429976c019da3645557ed1d439c5a637f6bf58c=
-53bc414539dd87c69098d671402586b631f9ac5c2fe9cedc281a6f005b5c4d1dd5ed9be400"=
-,
-> >> 0xb4)
-> >> r1 =3D syz_open_dev$sg(&(0x7f00000003c0), 0x0, 0x8000)
-> >> ioctl$syz_spec_1724254976_2866(r1, 0x1, &(0x7f0000000080)=3D{0x0, 0x2,
-> >> [0x85, 0x8, 0x15, 0xd]})
-> >> ioctl$KDGKBDIACR(0xffffffffffffffff, 0x4bfa, 0x0)
-> >>
-> >>
-> >> --
-> >> Yours sincerely,
-> >> Xingyu
-> >
-> >
-> >
->
+A new function lsmblob_is_set() is introduced to identify whether
+an lsmblob contains a non-zero value.
 
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ include/linux/security.h | 13 +++++++++++++
+ kernel/audit.h           |  3 ++-
+ kernel/auditsc.c         | 19 ++++++++-----------
+ 3 files changed, 23 insertions(+), 12 deletions(-)
 
---=20
-Yours sincerely,
-Xingyu
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 457fafc32fb0..a0b23b6e8734 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -277,6 +277,19 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+ 	return kernel_load_data_str[id];
+ }
+ 
++/**
++ * lsmblob_is_set - report if there is a value in the lsmblob
++ * @blob: Pointer to the exported LSM data
++ *
++ * Returns true if there is a value set, false otherwise
++ */
++static inline bool lsmblob_is_set(struct lsmblob *blob)
++{
++	const struct lsmblob empty = {};
++
++	return !!memcmp(blob, &empty, sizeof(*blob));
++}
++
+ #ifdef CONFIG_SECURITY
+ 
+ int call_blocking_lsm_notifier(enum lsm_event event, void *data);
+diff --git a/kernel/audit.h b/kernel/audit.h
+index a60d2840559e..b1f2de4d4f1e 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/audit.h>
++#include <linux/security.h>
+ #include <linux/skbuff.h>
+ #include <uapi/linux/mqueue.h>
+ #include <linux/tty.h>
+@@ -160,7 +161,7 @@ struct audit_context {
+ 			kuid_t			uid;
+ 			kgid_t			gid;
+ 			umode_t			mode;
+-			u32			osid;
++			struct lsmblob		oblob;
+ 			int			has_perm;
+ 			uid_t			perm_uid;
+ 			gid_t			perm_gid;
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 23adb15cae43..84f6e9356b8f 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 				/* Find ipc objects that match */
+ 				if (!ctx || ctx->type != AUDIT_IPC)
+ 					break;
+-				/* scaffolding */
+-				blob.scaffold.secid = ctx->ipc.osid;
+-				if (security_audit_rule_match(&blob,
++				if (security_audit_rule_match(&ctx->ipc.oblob,
+ 							      f->type, f->op,
+ 							      f->lsm_rule))
+ 					++result;
+@@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 			audit_log_format(ab, " a%d=%lx", i,
+ 				context->socketcall.args[i]);
+ 		break; }
+-	case AUDIT_IPC: {
+-		u32 osid = context->ipc.osid;
+-
++	case AUDIT_IPC:
+ 		audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
+ 				 from_kuid(&init_user_ns, context->ipc.uid),
+ 				 from_kgid(&init_user_ns, context->ipc.gid),
+ 				 context->ipc.mode);
+-		if (osid) {
++		if (lsmblob_is_set(&context->ipc.oblob)) {
+ 			char *ctx = NULL;
+ 			u32 len;
+ 
+-			if (security_secid_to_secctx(osid, &ctx, &len)) {
+-				audit_log_format(ab, " osid=%u", osid);
++			if (security_lsmblob_to_secctx(&context->ipc.oblob,
++						       &ctx, &len)) {
+ 				*call_panic = 1;
+ 			} else {
+ 				audit_log_format(ab, " obj=%s", ctx);
+@@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 				context->ipc.perm_gid,
+ 				context->ipc.perm_mode);
+ 		}
+-		break; }
++		break;
+ 	case AUDIT_MQ_OPEN:
+ 		audit_log_format(ab,
+ 			"oflag=0x%x mode=%#ho mq_flags=0x%lx mq_maxmsg=%ld "
+@@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
+ 	context->ipc.gid = ipcp->gid;
+ 	context->ipc.mode = ipcp->mode;
+ 	context->ipc.has_perm = 0;
+-	security_ipc_getsecid(ipcp, &context->ipc.osid);
++	/* scaffolding */
++	security_ipc_getsecid(ipcp, &context->ipc.oblob.scaffold.secid);
+ 	context->type = AUDIT_IPC;
+ }
+ 
+-- 
+2.46.0
+
