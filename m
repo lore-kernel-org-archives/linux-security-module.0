@@ -1,64 +1,81 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39F0165F0B;
-	Fri, 30 Aug 2024 22:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDFD1388
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Sep 2024 00:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725058186; cv=none; b=oNWRoDn2UtxdhOZxjvKYE4bQn4vQpy5kcxjY5lixcisIOXoolj+WcXrbBighb0Ko6D267O8m/TrZ9ty8pOmDNeXzqyZ42YDpcY3pVsUCpCugkrUNMoq4GELoBaSvJ+cuhYx3UosxKp2h6f75BalJ+A0+qp8w4FVkS15bj+T4zo0=
+	t=1725236595; cv=none; b=AUQAZsmKAfKzeaFz/wHui+7k2ZsLjRzTzZSigyEqMWHJU+aRqSHu3wQyTZ4SlSpIA21s/0mvMs+H5QnLeAHplQgQxH9RtohPrmCfqoARjI/ll/tfO5loRiF1zCw5KSIMiD3ubvRJuy5afhmezILd83nTz9kbWlMj1TZUq1euBOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725058186; c=relaxed/simple;
-	bh=YdoudeZMIVGlTDb8GaVCvxc2lVcjIsy/gQvNRtIy2IE=;
+	s=arc-20240116; t=1725236595; c=relaxed/simple;
+	bh=ftsChIajtnjiEY4W1EokqCIHqjRaowDhfKBGDOQSvrA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JX+NPLeeklQCCQgcsJ6sPARcMy0un1R4he5jB/ebua8+xZqYnS7pLmo4dnzDPfUOOpR6cEKyPSeX2MJjLLmivB23eNbidDGCBi/HfPRVejVqRF1v1kHpvLojpSV/AdowF/EY0z2MbqGDSXdDeQo+mtlPQK51Lb3J29e0irz68G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTj5kP8/; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+pYxd9tKh5okN7tKpdUQbBl64gMDj3nukfyeccK6/yzLoBMj0krWaiEcWfzgErUOriz8WN7ak/GFOTb/mCMKsJVHzkLAJI5wAFuc1fTGo6RFR7dAHf27A86wbf2i/MiHmSzwpITBx8/T/x86jryOn8VRCIb5ZKasWVfnTT0tb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=XLFWQD9Y; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTj5kP8/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725058185; x=1756594185;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YdoudeZMIVGlTDb8GaVCvxc2lVcjIsy/gQvNRtIy2IE=;
-  b=gTj5kP8/FY1x/kzyYK+cqthnoMFNgaUF4CR+j10WUezgmIPY+oZo/KDv
-   /KcrqjS9u0W/LDWzepEIf1TjSU5Tzm7tBDZ9TRnuBqZGrd/hO8sDrqxB5
-   lFNPFdLWmLcA7QBYJYTkrNMc+pp+tfBN6xmpfaOIu2iMA5Ecwa6xowoYx
-   jfizAOGSyPwrDK8DNWhgZJxkgRDbVzfVderQi5x1ULZzNWyIO863+olKF
-   zvzcxVGAySUXFL5KiLNhz/vH1dS+FpXAoGIXYM4V5TYaJQNEHtaJS3YcF
-   lVjjg4ZfPoI6dr6uYrvtF7m1ZEWk+kTpe9fFfiDQ3wrkzrgDtD/Nr+d5s
-   w==;
-X-CSE-ConnectionGUID: nIcBzIAAT92NCGo8B5BC1A==
-X-CSE-MsgGUID: CpnDN6HOQEeD+FJfjtP5mw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="41212547"
-X-IronPort-AV: E=Sophos;i="6.10,190,1719903600"; 
-   d="scan'208";a="41212547"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 15:49:44 -0700
-X-CSE-ConnectionGUID: 7GywkkJLTieA60AVSeBarg==
-X-CSE-MsgGUID: oijJLkmGQAKb44d2pmCD3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,190,1719903600"; 
-   d="scan'208";a="64217870"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 30 Aug 2024 15:49:41 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skAR1-0002Bi-08;
-	Fri, 30 Aug 2024 22:49:39 +0000
-Date: Sat, 31 Aug 2024 06:48:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
-	keescook@chromium.org, john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-	mic@digikod.net
-Subject: Re: [PATCH v2 02/13] LSM: Use lsmblob in security_audit_rule_match
-Message-ID: <202408310649.X413mMQP-lkp@intel.com>
-References: <20240830003411.16818-3-casey@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XLFWQD9Y"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7cb3db0932cso2692360a12.1
+        for <linux-security-module@vger.kernel.org>; Sun, 01 Sep 2024 17:23:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725236592; x=1725841392; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bhqs0bk6d9S5HsDrmArNIV2Xe+dvZuUuEesqnip3xnw=;
+        b=XLFWQD9Y7cVsHRJHpdRI3DQZr6GScA/FBUEVrip+MWhtIyeDOhbUg5sPO92qMAPsCi
+         pqsdTJXRKpD+pKG0fcqDBmkvzPCxfYqTCD0q1+jjEyZ0EDWyqPnvxbxaZL/Fa1A3XKgL
+         T2SpEH2tY01y5C/fXbFsad0OzklXkv9P2tFmmAjh4ZwsqOXt6NV0uVRZnqB/QH9PTSyu
+         snlqxM0Lu8DbGw6xiH+OV3aum0AOeMC05wDGGym8nkEKT/7iNmPSA7ddDOIqkUW9ukEf
+         efCoK1BK4M8QOQyqVwLepdMYue5P49fTza08SL4o7KfteUKAXKnkP2++RyF3c6Nxnnjd
+         IlzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725236592; x=1725841392;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bhqs0bk6d9S5HsDrmArNIV2Xe+dvZuUuEesqnip3xnw=;
+        b=ZzfHIHLuvZlv1zeNLI7OZdbn+JuTSEcYMaHpSmpJaEPioY9eqWj/37LLP1V3KHv/g+
+         jdXiXOwUxP1pBT1sRs3qsXwOO806iaH2m6g8AtJDi7sn7i8hJ9bI2TJ3ALFXZyoUd6no
+         yHY8Ug9J+x11Qb2WUUEh+C07aVvbT7p0xQSD7Kbkre/uFjYNC9x9Z49L0P6taMZYbR11
+         FX6T+XrzHcPxS+f2pcl+nQvD5xF2DZdY6K2iANo+i8Lisrz8011us+aMGkDQ7MdoQN/M
+         ozIFvGmHbg85ZMfBDd7ul6A+Tlfu1KvcdCp+R7gkmG0McZSPyt5SkLR+w1b2IBGYJMhu
+         BhTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcMZp0cFFBmN/tsG7lZGqV5Imo7krHOZ4KBM3cEIjcvrljcl1e8Kafbr9Mf/qu3sHfawAv/Qno/v0xbDagX7wS1YD3XnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOplRgoqtpPM+P9s1U7zO9wK5EEy3pQx/nnYmOaKtBmcWcuWF/
+	9P1xL6JbBElXb4iDkHh1ezXzbo/GaSGYjIZMJ/vqQHMezYpTIcqZuEMmyVkKWYA=
+X-Google-Smtp-Source: AGHT+IFRxrSJ1BBY5OuRyDWH7Zkmz+B6jgDrpNHwq/EefJqvo4wp7Md0fkFcX+xGE4CcKlFaebxTFg==
+X-Received: by 2002:a17:903:22c1:b0:205:874d:6a7d with SMTP id d9443c01a7336-205874d6d4fmr4432265ad.12.1725236591522;
+        Sun, 01 Sep 2024 17:23:11 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205456242fesm27156995ad.53.2024.09.01.17.23.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 17:23:10 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1skuqZ-003S7A-01;
+	Mon, 02 Sep 2024 10:23:07 +1000
+Date: Mon, 2 Sep 2024 10:23:06 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+References: <20240826085347.1152675-2-mhocko@kernel.org>
+ <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+ <ZtBzstXltxowPOhR@dread.disaster.area>
+ <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -67,191 +84,175 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830003411.16818-3-casey@schaufler-ca.com>
+In-Reply-To: <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
 
-Hi Casey,
+On Thu, Aug 29, 2024 at 09:32:52AM -0400, Kent Overstreet wrote:
+> On Thu, Aug 29, 2024 at 11:12:18PM GMT, Dave Chinner wrote:
+> > On Thu, Aug 29, 2024 at 06:02:32AM -0400, Kent Overstreet wrote:
+> > > On Wed, Aug 28, 2024 at 02:09:57PM GMT, Dave Chinner wrote:
+> > > > On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko
+> > > > wrote:
+> > > > > From: Michal Hocko <mhocko@suse.com>
+> > > > > 
+> > > > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to
+> > > > > allocate a new inode to achieve GFP_NOWAIT semantic while
+> > > > > holding locks. If this allocation fails it will drop locks
+> > > > > and use GFP_NOFS allocation context.
+> > > > > 
+> > > > > We would like to drop PF_MEMALLOC_NORECLAIM because it is
+> > > > > really dangerous to use if the caller doesn't control the
+> > > > > full call chain with this flag set. E.g. if any of the
+> > > > > function down the chain needed GFP_NOFAIL request the
+> > > > > PF_MEMALLOC_NORECLAIM would override this and cause
+> > > > > unexpected failure.
+> > > > > 
+> > > > > While this is not the case in this particular case using
+> > > > > the scoped gfp semantic is not really needed bacause we
+> > > > > can easily pus the allocation context down the chain
+> > > > > without too much clutter.
+> > > > > 
+> > > > > Acked-by: Christoph Hellwig <hch@lst.de> Signed-off-by:
+> > > > > Michal Hocko <mhocko@suse.com>
+> > > > 
+> > > > Looks good to me.
+> > > > 
+> > > > Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> > > 
+> > > Reposting what I wrote in the other thread:
+> > 
+> > I've read the thread. I've heard what you have had to say. Like
+> > several other people, I think your position is just not
+> > practical or reasonable.
+> > 
+> > I don't care about the purity or the safety of the API - the
+> > practical result of PF_MEMALLOC_NORECLAIM is that __GFP_NOFAIL
+> > allocation can now fail and that will cause unexpected kernel
+> > crashes.  Keeping existing code and API semantics working
+> > correctly (i.e. regression free) takes precedence over new
+> > functionality or API features that people want to introduce.
+> > 
+> > That's all there is to it. This is not a hill you need to die
+> > on.
+> 
+> And more than that, this is coming from you saying "We didn't have
+> to handle memory allocation failures in IRIX, why can't we be like
+> IRIX?  All those error paths are a pain to test, why can't we get
+> rid of them?"
+>
+You're not listening, Kent. We are not eliding error paths because
+they aren't (or cannot be) tested.
 
-kernel test robot noticed the following build warnings:
+It's a choice between whether a transient error (e.g. ENOMEM) should
+be considered a fatal error or not. The architectural choice that
+was made for XFS back in the 1990s was that the filesystem should
+never fail when transient errors occur. The choice was to wait for
+the transient error to go away and then continue on. The rest of the
+filesystem was build around these fundamental behavioural choices.
 
-[auto build test WARNING on pcmoore-audit/next]
-[also build test WARNING on pcmoore-selinux/next zohar-integrity/next-integrity linus/master v6.11-rc5 next-20240830]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This goes beyond memory allocation - we do it for IO errors, too.
+e.g.  metadata writeback keeps trying to write back the metadata
+repeatedly on -EIO.  On every EIO from a metadata write, we will
+immediately attempt a rewrite without a backoff. If that rewrite
+then fails, wei requeue the write for later resubmission. That means
+we back off and wait for up to 30s before attempting the next
+rewrite. 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Add-the-lsmblob-data-structure/20240830-085050
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git next
-patch link:    https://lore.kernel.org/r/20240830003411.16818-3-casey%40schaufler-ca.com
-patch subject: [PATCH v2 02/13] LSM: Use lsmblob in security_audit_rule_match
-config: i386-randconfig-061-20240830 (https://download.01.org/0day-ci/archive/20240831/202408310649.X413mMQP-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408310649.X413mMQP-lkp@intel.com/reproduce)
+Hence -EIO  on async metadata writeback won't fail/shutdown the
+filesystem until a (configurable) number of repeated failures occurs
+or the filesystem unmounts before the metadata could be written back
+successfully.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408310649.X413mMQP-lkp@intel.com/
+There's good reason for this "wait for transients to resolve" method
+of error handling - go back to the late 1990s and early 2000s and
+high-end multi-path FC SAN based storage was well known to have
+transient path failures that can take minutes to resolve before a
+secondary path takes over. That was the sort of storage environment
+XFS was designed to operate in, and those users expected the
+filesystem to be extremely tolerant of transient failure conditions.
 
-sparse warnings: (new ones prefixed by >>)
->> security/integrity/ima/ima_policy.c:654:53: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] secid @@     got struct lsmblob * @@
-   security/integrity/ima/ima_policy.c:654:53: sparse:     expected unsigned int [usertype] secid
-   security/integrity/ima/ima_policy.c:654:53: sparse:     got struct lsmblob *
-   security/integrity/ima/ima_policy.c:663:53: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] secid @@     got struct lsmblob * @@
-   security/integrity/ima/ima_policy.c:663:53: sparse:     expected unsigned int [usertype] secid
-   security/integrity/ima/ima_policy.c:663:53: sparse:     got struct lsmblob *
-   security/integrity/ima/ima_policy.c: note: in included file:
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   security/integrity/ima/ima_policy.c:1666:52: sparse: sparse: self-comparison always evaluates to false
-   security/integrity/ima/ima_policy.c:1701:55: sparse: sparse: self-comparison always evaluates to false
-   security/integrity/ima/ima_policy.c:1728:55: sparse: sparse: self-comparison always evaluates to false
-   security/integrity/ima/ima_policy.c:1754:55: sparse: sparse: self-comparison always evaluates to false
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+Hence failing an IO and shutting down the filesystem because there
+are transient errors occuring in either the storage or the OS was
+absolutely the wrong thing to be doing. It still is the wrong thing
+to be doing - we want to wait until the transient error has
+progressed to being classified as a permanent error before we take
+drastic action like denying service to the filesystem.
 
-vim +654 security/integrity/ima/ima_policy.c
+Memory allocation failure has always been considered a transient
+error by XFS that the OS will resolve in one way or another in a
+realtively short period of time. If we're prepared to wait minutes
+for IO path failures to resolve, waiting a couple of seconds for
+transient low memory situations to resolve isn't a big deal.
 
-   553	
-   554	/**
-   555	 * ima_match_rules - determine whether an inode matches the policy rule.
-   556	 * @rule: a pointer to a rule
-   557	 * @idmap: idmap of the mount the inode was found from
-   558	 * @inode: a pointer to an inode
-   559	 * @cred: a pointer to a credentials structure for user validation
-   560	 * @secid: the secid of the task to be validated
-   561	 * @func: LIM hook identifier
-   562	 * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-   563	 * @func_data: func specific data, may be NULL
-   564	 *
-   565	 * Returns true on rule match, false on failure.
-   566	 */
-   567	static bool ima_match_rules(struct ima_rule_entry *rule,
-   568				    struct mnt_idmap *idmap,
-   569				    struct inode *inode, const struct cred *cred,
-   570				    u32 secid, enum ima_hooks func, int mask,
-   571				    const char *func_data)
-   572	{
-   573		int i;
-   574		bool result = false;
-   575		struct ima_rule_entry *lsm_rule = rule;
-   576		bool rule_reinitialized = false;
-   577	
-   578		if ((rule->flags & IMA_FUNC) &&
-   579		    (rule->func != func && func != POST_SETATTR))
-   580			return false;
-   581	
-   582		switch (func) {
-   583		case KEY_CHECK:
-   584		case CRITICAL_DATA:
-   585			return ((rule->func == func) &&
-   586				ima_match_rule_data(rule, func_data, cred));
-   587		default:
-   588			break;
-   589		}
-   590	
-   591		if ((rule->flags & IMA_MASK) &&
-   592		    (rule->mask != mask && func != POST_SETATTR))
-   593			return false;
-   594		if ((rule->flags & IMA_INMASK) &&
-   595		    (!(rule->mask & mask) && func != POST_SETATTR))
-   596			return false;
-   597		if ((rule->flags & IMA_FSMAGIC)
-   598		    && rule->fsmagic != inode->i_sb->s_magic)
-   599			return false;
-   600		if ((rule->flags & IMA_FSNAME)
-   601		    && strcmp(rule->fsname, inode->i_sb->s_type->name))
-   602			return false;
-   603		if ((rule->flags & IMA_FSUUID) &&
-   604		    !uuid_equal(&rule->fsuuid, &inode->i_sb->s_uuid))
-   605			return false;
-   606		if ((rule->flags & IMA_UID) && !rule->uid_op(cred->uid, rule->uid))
-   607			return false;
-   608		if (rule->flags & IMA_EUID) {
-   609			if (has_capability_noaudit(current, CAP_SETUID)) {
-   610				if (!rule->uid_op(cred->euid, rule->uid)
-   611				    && !rule->uid_op(cred->suid, rule->uid)
-   612				    && !rule->uid_op(cred->uid, rule->uid))
-   613					return false;
-   614			} else if (!rule->uid_op(cred->euid, rule->uid))
-   615				return false;
-   616		}
-   617		if ((rule->flags & IMA_GID) && !rule->gid_op(cred->gid, rule->gid))
-   618			return false;
-   619		if (rule->flags & IMA_EGID) {
-   620			if (has_capability_noaudit(current, CAP_SETGID)) {
-   621				if (!rule->gid_op(cred->egid, rule->gid)
-   622				    && !rule->gid_op(cred->sgid, rule->gid)
-   623				    && !rule->gid_op(cred->gid, rule->gid))
-   624					return false;
-   625			} else if (!rule->gid_op(cred->egid, rule->gid))
-   626				return false;
-   627		}
-   628		if ((rule->flags & IMA_FOWNER) &&
-   629		    !rule->fowner_op(i_uid_into_vfsuid(idmap, inode),
-   630				     rule->fowner))
-   631			return false;
-   632		if ((rule->flags & IMA_FGROUP) &&
-   633		    !rule->fgroup_op(i_gid_into_vfsgid(idmap, inode),
-   634				     rule->fgroup))
-   635			return false;
-   636		for (i = 0; i < MAX_LSM_RULES; i++) {
-   637			int rc = 0;
-   638			struct lsmblob blob = { };
-   639	
-   640			if (!lsm_rule->lsm[i].rule) {
-   641				if (!lsm_rule->lsm[i].args_p)
-   642					continue;
-   643				else
-   644					return false;
-   645			}
-   646	
-   647	retry:
-   648			switch (i) {
-   649			case LSM_OBJ_USER:
-   650			case LSM_OBJ_ROLE:
-   651			case LSM_OBJ_TYPE:
-   652				/* scaffolding */
-   653				security_inode_getsecid(inode, &blob.scaffold.secid);
- > 654				rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
-   655							   Audit_equal,
-   656							   lsm_rule->lsm[i].rule);
-   657				break;
-   658			case LSM_SUBJ_USER:
-   659			case LSM_SUBJ_ROLE:
-   660			case LSM_SUBJ_TYPE:
-   661				/* scaffolding */
-   662				blob.scaffold.secid = secid;
-   663				rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
-   664							   Audit_equal,
-   665							   lsm_rule->lsm[i].rule);
-   666				break;
-   667			default:
-   668				break;
-   669			}
-   670	
-   671			if (rc == -ESTALE && !rule_reinitialized) {
-   672				lsm_rule = ima_lsm_copy_rule(rule, GFP_ATOMIC);
-   673				if (lsm_rule) {
-   674					rule_reinitialized = true;
-   675					goto retry;
-   676				}
-   677			}
-   678			if (!rc) {
-   679				result = false;
-   680				goto out;
-   681			}
-   682		}
-   683		result = true;
-   684	
-   685	out:
-   686		if (rule_reinitialized) {
-   687			for (i = 0; i < MAX_LSM_RULES; i++)
-   688				ima_filter_rule_free(lsm_rule->lsm[i].rule);
-   689			kfree(lsm_rule);
-   690		}
-   691		return result;
-   692	}
-   693	
+Ranting about how we handle errors without understanding the error
+model we are working within is not productive. bcachefs has a
+different error handling model to almost every other filesystem out
+there, but that doesn't mean every other filesystem must work the
+same way that bcachefs does.
 
+If changing this transient error handling model was as simple as
+detecting an allocation failure and returning -ENOMEM, we would have
+done that 20 years ago. But it isn't - the error handling model is
+"block until transients resolve" so that the error handling paths
+only need to handle fatal errors.
+
+Therein lies the problem - those error handling paths need to be
+substantially changed to be able to handle transient errors such as
+ENOMEM. We'd need to either be able to back out of a dirty
+transaction or restart the transaction in some way rather than
+shutting down the filesystem.
+
+Put simply: reclassifying ENOMEM from a "wait for transient to
+resolve" handler to a "back out and restart" mechanism like bcachefs
+uses requires re-architecting the entire log item architecture for
+metadata modification tracking and journal space management.
+
+Even if I knew how to implement this right now, it would require
+years worth of engineering effort and resources before it would be
+completed and ready for merge. Then it will take years more for all
+the existing kernels to cycle out of production.
+
+Further: this "ENOMEM is transient so retry" model has been used
+without any significant issues in production systems for mission
+critical infrastructure for the past 25+ years. There's a very
+strong "if it ain't broke, don't fix it" argument to be made here.
+The cost-benefit analysis comes out very strongly on the side of
+keeping __GFP_NOFAIL semantics as they currently stand.
+
+> Except that's bullshit; at the very least any dynamically sized
+> allocation _definitely_ has to have an error path that's tested, and if
+> there's questions about the context a code path might run in, that
+> that's another reason.
+
+We know the context we run __GFP_NOFAIL allocations in - transaction
+context absolutely requires a task context because we take sleeping
+locks, submit and wait on IO, do blocking memory allocation, etc. We
+also know the size of the allocations because we've bounds checked
+everything before we do an allocation.
+
+Hence this argument of "__GFP_NOFAIL aboslutely requires error
+checking because an invalid size or wonrg context might be used"
+is completely irrelevant to XFS. If you call into the filesytsem
+from an atomic context, you've lost long before we get to memory
+allocation because filesystems take sleeping locks....
+
+> GFP_NOFAIL is the problem here, and if it's encouraging this brain
+> damaged "why can't we just get rid of error paths?" thinking, then it
+> should be removed.
+>
+> Error paths have to exist, and they have to be tested.
+
+__GFP_NOFAIL is *not the problem*, and we are not "avoiding error
+handling".  Backing off, looping and trying again is a valid
+mechanism for handling transient failure conditions. Having a flag
+that tells the allocator to "backoff, loop and try again" is a
+perfectly good way of providing a generic error handling mechanism.
+
+IOWs, Using __GFP_NOFAIL doesn't mean we are "not handling errors";
+it simply means we have moved the error handling we were doing
+inside the allocator.  And yes, we test the hell out of this error
+handling path....
+
+-Dave.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dave Chinner
+david@fromorbit.com
