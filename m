@@ -1,94 +1,102 @@
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5554712EBEA;
-	Mon,  2 Sep 2024 08:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2235B186E57;
+	Mon,  2 Sep 2024 08:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725267179; cv=none; b=MV0ZGRGLLff79m1X9T5kCIpGCiBbSBV0mB5IaX+4onnV3sl3DQMHq+SPQaokRg3UTIudlHuFdK9IXAsnQMEutfRKTWeBdEsO9e9Ukqlt9Ll+jMovgEaIAKYIcOYNqiCk2wK/i1ctttRpKJN0sgnPvZXcbzFgRrsN4W0O7ZGKMHg=
+	t=1725267529; cv=none; b=hcTZLkGRYcmUkJbw1x6TPwL5rry+i79R4QZeCyGjEPXBAtePAiI7VSpJXUjkOn4ROQhf6BTrL4kXbRqXn+U0TkFm+4DWU3GMzr0OjrHknM4Cq9zuKu0wxop58/lBtgr+m0NTjs7Bd+ClAgMzNdf3jC/want7oAnQMcD1sDs9Hnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725267179; c=relaxed/simple;
-	bh=iQvkUn2Nhr1UXo9usbJRjDLExq1ujEiflVlc38Ctw78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTYfTnMiYbcvQ3jdJdIrZrdmei/4QbN7r1dM+ilbOcMqshii1CkYoZWpJ0nDCG/FmCqc3i3Y638n1tcxad48393JaM5xpFP2U+PFNN/MHKjBVy9fc8EaMMsBP7i/JRozTMVXs/blWEMpeCoKQN7HN1DoDYKyYuFcDeEpBAG7PGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hjuz4cMy; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1725267529; c=relaxed/simple;
+	bh=gdMjarlsxkIjz3GacO7XUTqQrGRcxTtT3SPegpVNcMg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Sy7XfN8ecKj26qBXWQXhEcz5pxi2YHP4MyEmdhehBNlr6gSrCY5fYp1SViFoe5X8TzIdm0ZcltXvz/3fCysCE1oAfRtEycPClUGOwuR2N375pJxoA0g1/NLZ6s9+Qw6Ukz7neiiUyNNYxkz2LpYJMSiqVG1wLdaRNmICIwASMto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=MDe3fjvi; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hjuz4cMy"
-Date: Mon, 2 Sep 2024 04:52:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725267175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d/FrV6PursYjofC+mwM2z5mlo6l3AN755IMJVDkbYFA=;
-	b=hjuz4cMyIyyjAYdtheod8ofxwcBo9WxTFhWMfgcs2kqFegQQ+xz/8VwQ9bAYgTopPnIuwx
-	yrD2CsSuUehbY5mpOe4cqCx+7IHIH95VxkXtjlwWzc2rqVta46V68CYe/3or7Xz4IsToG3
-	1kiqUMmEomibDJqL0MhByGz12PbfyqI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
-References: <20240826085347.1152675-2-mhocko@kernel.org>
- <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
- <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="MDe3fjvi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1725267218;
+	bh=xyAiDIvAC8LrbiIkOc9JTsgcYxtGvhFsoImt2CUMHWo=;
+	h=From:To:Cc:Subject:Date;
+	b=MDe3fjviYVCLiUcQ9mKVnurW6tr5JYmzhHgju/1E5GBqoc0blTHlyudPJP0pHTQqE
+	 aq+lj1YRVVGkRLNs93JTSaBx+UGXZbicWcOeTkos+bR/MT8uANbGYqd8wxqB7vxpR4
+	 d+knpO3Et4DcPFB6lHsnFMLDyau0f3zUHJXIitXQ=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id BD832428; Mon, 02 Sep 2024 16:47:24 +0800
+X-QQ-mid: xmsmtpt1725266844t1yiwz6e7
+Message-ID: <tencent_39FA49154F494DFE0FEC2F20A9A34AA9B308@qq.com>
+X-QQ-XMAILINFO: NhpLzBn2I3XwmRtRQDLpav3czAf1B15RF2AP0KtjFIMLaqOSxwqtGhfKMHR3QP
+	 d7XXIDUS9BpKwgKtlXOw/BrO3UZO3L7uN+fbgBeFOdk/KLeaqRrwBLxi9BCOaX8ps7A5PZYEF1iY
+	 wQ6Ocq1WWiKYVWfPEXBJI7656swXoxA07NdjpsVw1dI+gDwzpBMczQB1zFIFuSQAW5Mretg/6bUC
+	 TlbI3h0iTN7DE5IS8nQkkZXxYDt4hqieOGdorIiwRZenyGG3s7Uy6ab7KbYV6jaZVoB6zUz/PAm7
+	 /TTgTEGQh65po5WlQ5NpakCVxNljXTEQvRwvwhw4tZmNr5GLg2jnwnxOu8jKFDQVWDXulRAvUPZa
+	 KBjE6ctScF2nJyCYEm8A6L7LwP4jgsqqPx6m/hNRabGoT7FoObPdX/OdgJLkYwTkAmFsq8BUVicl
+	 ShRuNLWHazGtJaPUYNzJve1qG4VChmTEJuOQ6L45SdWA3eKEJluW8t0G7HXvULkEESYGSZ7FSPd8
+	 4lBFL2UK4x/GnfQxTSvXooHJHdhz89hbaXXzS6ESps4FjKWv2tqUqGwZhM5jT6U1STWmaqN6nFPu
+	 cTklZs679/ovcnys/rLPqWjRd9TEa2x3IIwqJWKlOIsZDudOCsUMjuLvWlaRZYOpm/vKppIgFHQP
+	 BVl0dOsWmq4al+ZVuNEGtUofRMDZZajTxhaUS6fZzZz712mYT6MmbWkwXTGqW/GZhlKncQa8bZI9
+	 RxHnoUhDWhj0Mq4TW5E4cp1YWXxsLGNMHeysv8jHjncTTK/9RUk1zhx6pVLdG26Q4zS0i7bSUErf
+	 yrIM61UP1LvvRByfWm3mk63GQ6aEvd9P3VIfOA/1vM9nhE2ENf1UnFmmRHsftG0bu8kOxaIx8Bd5
+	 hh0qxmGIBH94329tQcsK+8pjOo3fM4zrfGQHyB0ZtBK7b8hoAssG8l86eJhRZMmeZ5vIyA7m1XR5
+	 ZksvImJZWjjoQiAw0uFPxQJhBHvfzD+VfRU23ET/JBki9vcopPS29x41hkQqGRYvry6uBIjPRUzY
+	 ajxjdGTKWj0RriK6W5lpgdGSazwiG3cy+bAUuc1PnJ0zM7q2DHmDtWHAezAFHzR+v9me4AvA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	pawan.kumar.gupta@linux.intel.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] smackfs: Use rcu_assign_pointer() to ensure safe assignment in smk_set_cipso
+Date: Mon,  2 Sep 2024 08:47:26 +0000
+X-OQ-MSGID: <20240902084726.26179-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtV6OwlFRu4ZEuSG@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> [...]
-> > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
-> > in the case of bugs, because that's going to be an improvement w.r.t.
-> > system robustness, in exactly the same way we don't use BUG_ON() if it's
-> > something that we can't guarantee won't happen in the wild - we WARN()
-> > and try to handle the error as best we can.
-> 
-> We have discussed that in a different email thread. And I have to say
-> that I am not convinced that returning NULL makes a broken code much
-> better. Why? Because we can expect that broken NOFAIL users will not have a
-> error checking path. Even valid NOFAIL users will not have one because
-> they _know_ they do not have a different than retry for ever recovery
-> path. 
+In the `smk_set_cipso` function, the `skp->smk_netlabel.attr.mls.cat`
+field is directly assigned to a new value without using the appropriate
+RCU pointer assignment functions. According to RCU usage rules, this is
+illegal and can lead to unpredictable behavior, including data
+inconsistencies and impossible-to-diagnose memory corruption issues.
 
-You mean where I asked you for a link to the discussion and rationale
-you claimed had happened? Still waiting on that
+This possible bug was identified using a static analysis tool developed
+by myself, specifically designed to detect RCU-related issues.
 
-> That means that an unexpected NULL return either means OOPS or a subtle
-> silent error - e.g. memory corruption. The former is a actually a saner
-> recovery model because the execution is stopped before more harm can be
-> done. I suspect most of those buggy users will simply OOPS but
-> systematically checking for latter is a lot of work and needs to be
-> constantly because code evolves...
-> 
-> I have tried to argue that if allocator cannot or refuse to satisfy
-> GFP_NOFAIL request because it is trying to use unsupported allocation
-> mode or size then we should terminate the allocation context. That would
-> make the API more predictable and therefore safer to use.
+To address this, the assignment is now done using rcu_assign_pointer(),
+which ensures that the pointer assignment is done safely, with the
+necessary memory barriers and synchronization. This change prevents
+potential RCU dereference issues by ensuring that the `cat` field is
+safely updated while still adhering to RCU's requirements.
 
-You're arguing that we treat it like an oops?
+Fixes: 0817534ff9ea ("smackfs: Fix use-after-free in netlbl_catmap_walk()")
+Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+---
+ security/smack/smackfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yeah, enough of this insanity.
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index e22aad7604e8..5dd1e164f9b1 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -932,7 +932,7 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 	}
+ 	if (rc >= 0) {
+ 		old_cat = skp->smk_netlabel.attr.mls.cat;
+-		skp->smk_netlabel.attr.mls.cat = ncats.attr.mls.cat;
++		rcu_assign_pointer(skp->smk_netlabel.attr.mls.cat, ncats.attr.mls.cat);
+ 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
+ 		synchronize_rcu();
+ 		netlbl_catmap_free(old_cat);
+-- 
+2.34.1
+
