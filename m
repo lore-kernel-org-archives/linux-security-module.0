@@ -1,80 +1,80 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D9D19E992;
-	Mon,  2 Sep 2024 14:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00A2154C1D;
+	Mon,  2 Sep 2024 21:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725286061; cv=none; b=TMzMBPhDub67m5ExAFA2I3lOCuoNOjy9XhW6Kat/o87DLAfFxRZyYP9MOFK/H1yRwnevw+8QXF3trYa0S3OYtO66DbQh4gXPfTBt5o6EvYBuCxm2rZVbXwAZe0Y+2pq4tgksazV+BksYecuZ6NxbsZ9xasbqg/O2fmiapX3X/vY=
+	t=1725313973; cv=none; b=oFkVuFUZr+99XdDiOGmnrYwMwuqcNq9cD3B59AgMRKUmDgRZ6Lfd/XB05K4DkPC2eWueR3Gf5gGrNvI8I2cRJRq03eGKJmRjQfIE81+Wenu8eJqGl5udYO38ced2x5G5d5SErdbIfMRTpu6FNXjMEw7P+5/KfzvgMg360dZ+WoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725286061; c=relaxed/simple;
-	bh=+/UPlFMaAq5gLKfLwgisGqB+Y16NZKUz6wSMIpBVEnI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RrOWL7vn4TcJ6vAJ1QjrKDhDC8SwDKh40qnh22cHcxOpByDRp60Z5Smz4J+l2OcTP3CrmMxSXBWIralprZoT0NdaREzfL/n6p8zIUhzCaOCy5UTLOHRplI9OHnB9nByPQO2oR4vK32ddR8SUiCoIHqVYDoNvDknR4REypTWuNiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PX6JQw+N; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+	s=arc-20240116; t=1725313973; c=relaxed/simple;
+	bh=24vqQSqoLckxgOVc8ARaONcxfqOIrm8KRgBa6hQ2Oqo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=TO82/ICMSC2Fy/te6l9xsF08/JMU7vV5XvXmt0jix0avewPNEMp92cef2wpLDMVV7KPk4Zasw3vzjFdtBJJLAQ5UZ8m7xjJz9SbA6CONhamKym0so3idMs7EfDEMo4FrvSEQDY4e5teKdEi0GfnWfUZ52Rsq6MU9U7/eK7Sl2Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xyjS5qj+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PX6JQw+N"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DF6FA418A0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1725286055; bh=QWc1Y13ydYZB7h7+cUcpghnJ2c0RtmcenUjX78aFysM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=PX6JQw+NC0k3lK4CM+m6IAaXsrQb33IN0FRC6zoplOWRFcXR/uraR6FHkZokKoaql
-	 chcVWy5Dvet0nkcqGXdVRdWdQpVMz88ygoJZJvOIkmv7kU5W5YzU5c+5Hixl8JM+EK
-	 QswM3xSZksU5aCvjysMyOALQiChqWui0zDTBuVZJxy/QM/5jT/AHnBDC/x9rI/nIPb
-	 04CmZcX9kuNstEK4rL2IsQonk4rM/qKXWPFiB8m9A+PJcvMOBat/UZw7GA9U/RhodN
-	 PTfZ+au+v1126wrzmke7Ssl/4JTLHoYypq6O63YpDKT6Tk/v+0N+mfCNqGF+uK9a3k
-	 Q2T3PBFHAlYgQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id DF6FA418A0;
-	Mon,  2 Sep 2024 14:07:34 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko <mhocko@suse.com>
-Cc: Dave Chinner <david@fromorbit.com>, Andrew Morton
- <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Yafang Shao
- <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xyjS5qj+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BB1C4CEC2;
+	Mon,  2 Sep 2024 21:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1725313973;
+	bh=24vqQSqoLckxgOVc8ARaONcxfqOIrm8KRgBa6hQ2Oqo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=xyjS5qj+O9H9mLCb46Pxw6v5dZusoW34qbCw/sihCiKqAsUL8CD2fpVpRkZ4B5exf
+	 TIcWChX6RQMCiyuwVSR4QE+JBJo+XmSmQjLte2kb4ldiKto3+o+GhC+dkb5TDCTGXd
+	 zJzlQKETOLTZt7dM7CSNCxppvoXXsQICuD4u/IwE=
+Date: Mon, 2 Sep 2024 14:52:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>, Yafang
+ Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka
+ <vbabka@suse.cz>, Dave Chinner <dchinner@redhat.com>, Christian Brauner
  <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore
  <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
  <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
  linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-In-Reply-To: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
-References: <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
- <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
- <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
-Date: Mon, 02 Sep 2024 08:07:33 -0600
-Message-ID: <8734mitahm.fsf@trenco.lwn.net>
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-Id: <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+In-Reply-To: <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+	<ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Kent Overstreet <kent.overstreet@linux.dev> writes:
+On Mon, 2 Sep 2024 05:53:59 -0400 Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-> You're arguing against basic precepts of kernel programming.
->
-> Get your head examined. And get the fuck out of here with this shit.
+> On Mon, Sep 02, 2024 at 11:51:48AM GMT, Michal Hocko wrote:
+> > The previous version has been posted in [1]. Based on the review feedback
+> > I have sent v2 of patches in the same threat but it seems that the
+> > review has mostly settled on these patches. There is still an open
+> > discussion on whether having a NORECLAIM allocator semantic (compare to
+> > atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
+> > those are not really relevant to this particular patchset as it 1)
+> > doesn't aim to implement either of the two and 2) it aims at spreading
+> > PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
+> > semantic now that it is not widely used and much harder to fix.
+> > 
+> > I have collected Reviewed-bys and reposting here. These patches are
+> > touching bcachefs, VFS and core MM so I am not sure which tree to merge
+> > this through but I guess going through Andrew makes the most sense.
+> > 
+> > Changes since v1;
+> > - compile fixes
+> > - rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
+> >   ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
+> >   by Matthew.
+> 
+> To reiterate:
+> 
 
-Kent, this is not the way to deal with your peers in this community, no
-matter how strongly you disagree with them.  Might I suggest calming
-down a bit, followed by an apology?
+It would be helpful to summarize your concerns.
 
-Thanks,
-
-jon
+What runtime impact do you expect this change will have upon bcachefs?
