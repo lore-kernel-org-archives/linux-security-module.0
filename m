@@ -1,114 +1,119 @@
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1342D187FEF
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Sep 2024 22:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD903207;
+	Tue,  3 Sep 2024 03:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725316365; cv=none; b=IgtjTBlXN/OYxiw05ospJiyvDAmTvIgCBHmNYIAxzc5cjIfHczxkusZ+UTRook8iF4xEvUuK8dPwuHkSj7DwhVwYYq4zbnVgBXduKFIkRNrS3Qn1kSC4yMm6z2iTCkbMjnCymvnSfDdUrpgHgTT5ehKj11NQ98twl83dBqadpdo=
+	t=1725334266; cv=none; b=WELS1zcmXXao0oOI3jFb3eMeyAks83K7j4edej1dUFNpCO35RM4Gszeza6GuAC8llhC/rxtxoY0mqrugphaHY4KpRNc1Ju/+dkKHHUPplcNaR7e4mC8ufGmVMc0AJgMeRycr/p9ycL3MFU3RoOXwUjkpAp4yBILXF7eNo062Ph4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725316365; c=relaxed/simple;
-	bh=yXaIotM8BdESL2nGvdQndlyL1aKaMU+Rp53IfN8oEes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/tJ6pIwbqvzZvsMEln7+fBAqDmKv6VOXOd7JmNvV8NitIas+4lnoOZl3VwdiZ7nH1T2yJ4THQW2r1PkvaL/45rJh31gYU4qiYkkcaddENgIoHw5rwrPanEsQhCfHOBif70vd+WvRureoJnGAXl2olq2FURwDdRNZdEgERs9vsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=umujh2Un; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="umujh2Un"
-Date: Mon, 2 Sep 2024 18:32:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725316359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CChicL5CaDGtmLSJf1vi34yqR67dtLRNpZXAsSTNcoA=;
-	b=umujh2UnaAGmMihjCzRLKqvCZZGmAsBfwXENr0g2sZqZvXzMFKqDXVC1Ve9bQ+0pZkKCnv
-	G0IJqpN17zbRBc90S1MhpC5enVZy8Do2D5jEev27oscgRIne9oKA6WuYDHthrtEWX67Dtk
-	FclhxdraZegGjTP9EWxLPqAW0kENOL0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+	s=arc-20240116; t=1725334266; c=relaxed/simple;
+	bh=jFm7EO7ARbGov5WdE2QDUqYwjdJQGV3ecJbmMgqsloE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ISWIfMCWhv+Gn72n77WvNN7ESxcHiBug3aKyN1BBJ6+XdjJY2h+/HHYgO18IlIEqSUAJBwUUfCSNTW5A1eJxFfm/tQRDM2R3XYhW7zfDHu+ywp9F10MA0NHVf66xbZ64tkF8SaRHrjO88UflGyhQEvSebsbIMhlffy7noDQJVNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WyWNJ16TYzyRMc;
+	Tue,  3 Sep 2024 11:30:24 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id BCE3B1402D0;
+	Tue,  3 Sep 2024 11:31:00 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
+ (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Sep
+ 2024 11:30:58 +0800
+From: Kaixiong Yu <yukaixiong@huawei.com>
+To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
+CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<kees@kernel.org>, <j.granados@samsung.com>, <willy@infradead.org>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
+	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
+	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+Subject: [PATCH v2 -next 00/15] sysctl: move sysctls from vm_table into its own files
+Date: Tue, 3 Sep 2024 11:29:56 +0800
+Message-ID: <20240903033011.2870608-1-yukaixiong@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-On Mon, Sep 02, 2024 at 02:52:52PM GMT, Andrew Morton wrote:
-> On Mon, 2 Sep 2024 05:53:59 -0400 Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> 
-> > On Mon, Sep 02, 2024 at 11:51:48AM GMT, Michal Hocko wrote:
-> > > The previous version has been posted in [1]. Based on the review feedback
-> > > I have sent v2 of patches in the same threat but it seems that the
-> > > review has mostly settled on these patches. There is still an open
-> > > discussion on whether having a NORECLAIM allocator semantic (compare to
-> > > atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
-> > > those are not really relevant to this particular patchset as it 1)
-> > > doesn't aim to implement either of the two and 2) it aims at spreading
-> > > PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
-> > > semantic now that it is not widely used and much harder to fix.
-> > > 
-> > > I have collected Reviewed-bys and reposting here. These patches are
-> > > touching bcachefs, VFS and core MM so I am not sure which tree to merge
-> > > this through but I guess going through Andrew makes the most sense.
-> > > 
-> > > Changes since v1;
-> > > - compile fixes
-> > > - rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
-> > >   ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
-> > >   by Matthew.
-> > 
-> > To reiterate:
-> > 
-> 
-> It would be helpful to summarize your concerns.
-> 
-> What runtime impact do you expect this change will have upon bcachefs?
+This patch series moves sysctls of vm_table in kernel/sysctl.c to
+places where they actually belong, and do some related code clean-ups.
+After this patch series, all sysctls in vm_table have been moved into its
+own files, meanwhile, delete vm_table.
 
-For bcachefs: I try really hard to minimize tail latency and make
-performance robust in extreme scenarios - thrashing. A large part of
-that is that btree locks must be held for no longer than necessary.
+All the modifications of this patch series base on
+linux-next(tags/next-20240902). To test this patch series, the code was
+compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+x86_64 architectures. After this patch series is applied, all files
+under /proc/sys/vm can be read or written normally.
 
-We definitely don't want to recurse into other parts of the kernel,
-taking other locks (i.e. in memory reclaim) while holding btree locks;
-that's a great way to stack up (and potentially multiply) latencies.
+Changes in v2:
+ - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+ - update changelog for patch7/12, suggested by Kees/Paul
+ - fix patch8, sorry for wrong changes and forget to built with NOMMU
+ - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+ - add reviewed-by from Jan Kara, Christian Brauner in patch12
 
-But gfp flags don't work with vmalloc allocations (and that's unlikely
-to change), and we require vmalloc fallbacks for e.g. btree node
-allocation. That's the big reason we want MEMALLOC_PF_NORECLAIM.
+Kaixiong Yu (15):
+  mm: vmstat: move sysctls to its own files
+  mm: filemap: move sysctl to its own file
+  mm: swap: move sysctl to its own file
+  mm: vmscan: move vmscan sysctls to its own file
+  mm: util: move sysctls into it own files
+  mm: mmap: move sysctl into its own file
+  security: min_addr: move sysctl into its own file
+  mm: nommu: move sysctl to its own file
+  fs: fs-writeback: move sysctl to its own file
+  fs: drop_caches: move sysctl to its own file
+  sunrpc: use vfs_pressure_ratio() helper
+  fs: dcache: move the sysctl into its own file
+  x86: vdso: move the sysctl into its own file
+  sh: vdso: move the sysctl into its own file
+  sysctl: remove unneeded include
 
-Besides that, it's just cleaner, memalloc flags are the direction we
-want to be moving in, and it's going to be necessary if we ever want to
-do a malloc() that doesn't require a gfp flags parameter. That would be
-a win for safety and correctness in the kernel, and it's also likely
-required for proper Rust support.
+ arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+ arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+ fs/dcache.c                        |  21 ++-
+ fs/drop_caches.c                   |  23 ++-
+ fs/fs-writeback.c                  |  28 ++--
+ include/linux/dcache.h             |   7 +-
+ include/linux/mm.h                 |  23 ---
+ include/linux/mman.h               |   2 -
+ include/linux/swap.h               |   9 --
+ include/linux/vmstat.h             |  11 --
+ include/linux/writeback.h          |   4 -
+ kernel/sysctl.c                    | 221 -----------------------------
+ mm/filemap.c                       |  18 ++-
+ mm/internal.h                      |  10 ++
+ mm/mmap.c                          |  54 +++++++
+ mm/nommu.c                         |  15 +-
+ mm/swap.c                          |  16 ++-
+ mm/swap.h                          |   1 +
+ mm/util.c                          |  67 +++++++--
+ mm/vmscan.c                        |  23 +++
+ mm/vmstat.c                        |  42 +++++-
+ net/sunrpc/auth.c                  |   2 +-
+ security/min_addr.c                |  11 ++
+ 23 files changed, 328 insertions(+), 310 deletions(-)
 
-And the "GFP_NOFAIL must not fail" argument makes no sense, because a
-failing a GFP_NOFAIL allocation is the only sane thing to do if the
-allocation is buggy (too big, i.e. resulting from an integer overflow
-bug, or wrong context). The alternatives are at best never returning
-(stuck unkillable process), or a scheduling while atomic bug, or Michal
-was even proposing killing the process (handling it like a BUG()!).
+-- 
+2.25.1
 
-But we don't use BUG_ON() for things that we can't prove won't happen in
-the wild if we can write an error path.
-
-That is, PF_MEMALLOC_NORECLAIM lets us turn bugs into runtime errors.
