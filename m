@@ -1,113 +1,156 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E05B50276
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 17:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC55E1E0B80
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 18:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725469278; cv=none; b=PvALpYauNFE/milSnsShxR8AY+S+iBFP5vmptk+Zqqfg+n/q1/CisykLF/5od/MsUGEF/sOe8XPoYGBsQXcjqa3ICsUU47zi14KgbdCmCjgOVGN5rsRXkxBd5AU0nfSzKeOI0yPYhUKPlUfY4ZQTcVCuIsSvbjal7f1g4QUbHis=
+	t=1725472915; cv=none; b=oBvKxWhgLD+LRxDz+9gllzauMRhM7bd33GcAwwS19qlWzFDWngm8HpdA+PFdB1dlCuKglwROJAb2x11tgOx3lX4nHO+XTezW4FiyimVzJFOD4Id5zndXGOX3r+YaZbRLy3AZhtLDlPynLh4atst1z0x9L6vugPV3n8GRWYl1Kpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725469278; c=relaxed/simple;
-	bh=SMwfMxRbhIejqPpvJ6rfUHRCXekvUWgpLlZca+d08ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXvESwIu8lWYJczHZny5sn3SQV3ByyW8FN0gN/1h7ZTYZotKarsVHfqXWd2n9HuhJMH/+zV/mxwbmIjrnM69AysTckj2k2A+YcnyiqD1qDqgBwqh6d7xIebj9nITfPbOqzuE3PYGohb0qFWHp+JpffhphP2g5QawmSpHf0UVJWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dO4blEU0; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1725472915; c=relaxed/simple;
+	bh=kvhqnlfhsbpncUCZEiavCzg2LzA66ExExMNp1OY8eBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sL3N8Zjpn/YOieEIWIpPYor1dkp1ghsQZBjti89i9kv33T+274O6F/7IJY3faUrogkC1qZ5ywRqNkBB5MdVnm0knSroEiOOA9sqrvf6abY2cSkcLWhnnFk29AvVCTxK+me4vCXYVAKYFZODfDYEnMGCAqw1VO8XrOKRW+8Te1kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XbW7O68X; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dO4blEU0"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c263118780so2992923a12.2
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Sep 2024 10:01:16 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XbW7O68X"
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-824ee14f7bfso281872839f.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Sep 2024 11:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725469275; x=1726074075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=igjjJkRDnT4710DOt69t7RwKA+wIuknyStdIEfj6q8s=;
-        b=dO4blEU0jtCIU+AAyn9ZRpBtu2hvJ4YfwLtOaN2XztckU2FAxODQPnONXiEs19lwny
-         RwNQk0L6inXFmtPdersfCGobwWOXi7huET+cotTPvgVkaXBtmmL96103J/8OwK9dDB2/
-         lESdTFn56i67Ghw0BNCNhkzeGt+tKGnSdGygpYPB2E2wo+cEzK/wUttfojFDH1a1G0wM
-         JUj7//Bg6P+Q1bITXCzm1t53lQQSwHY5aFl6qRg3FkQ+9kmCHREgTmVuOQ6CPSOcay9K
-         ovY8ZrUHoHWNFXhhW3g2Njd5iYXpIQieZyBuaT+0Bhx8dLg6+NXrzUCEV5R+rRi3Up4A
-         ZdJw==
+        d=linuxfoundation.org; s=google; t=1725472913; x=1726077713; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DtTeYjj02Mtv2WzzkSyeLasv4f+WjuGZCMl+K7JYzM0=;
+        b=XbW7O68XhAVyoIOcmKTdw5Ilxj7olMPKSD/W+m8mkSQ6eTMdkYM88U5EZfADMX63Kg
+         M6TfB1mLDcmMzE7AeYFnneFWokQozgT/HZ6m2AbGhCcJTyvfJNvNF5SMOaAqY6X1x+xs
+         pyVTLuq7KfkJ3HLxY26RuvZpKJlEBEXgrFYbY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725469275; x=1726074075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=igjjJkRDnT4710DOt69t7RwKA+wIuknyStdIEfj6q8s=;
-        b=bDTVilhZJ3D4ymFxjjV2BM+vHoTVyJyRmLK6RiVFV3VJR2ZxNpGD2JhN+bu4q36qJv
-         /CHKTL437/8tKGUOSKMw57MQxNpISwvCTfHRhQ5YhxDqLKv78v/pdMLLm3COA3ZuIF+j
-         SzLeDtWVF5qrsjBGdyrWudTkdsDkkMU+Myf7nWoOI720ugaY+je79kxYPG6WIMOKT+F3
-         /LmC7UXMHPeaYNu+2EW4LWtY/auMi9q2Sjrbl32kKOjV/pz+c2Lv4qoGW98IzEU0+vCu
-         0g9j7FWg09NV6sqpOV9DoXvpI2MSAHrfe2ts21V1FRJnBJvsuL8gVANg2o0rnO5y/NH9
-         95bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9zTA//XybHYXTglPpquYOjPH1IqRc4+lpm9XSIN5LodawV/sktyr2ITukUu3nN0CWJGUS0AVeVUwvkLIuuVScrSjNC5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylxNlkgDSjuCZMIn3zk9fbCFYhPgnUqheWbk4tjOJcnzJz7bj6
-	FHTvCCCof9YqNqCVj+6b2X7mLL7rXV16Dsmmg+RMRBAy1aDsPwTcTm4Nqy0deQ4=
-X-Google-Smtp-Source: AGHT+IEdhO+6u5bQtS/Pjv4pVjqT1PHlHw58PSqoO2bfvx8uyhINdf+pDMVbe4vM0TqY/tHlEK8Ojw==
-X-Received: by 2002:a17:907:7206:b0:a7a:be06:d8eb with SMTP id a640c23a62f3a-a8a1d4c2635mr725404566b.53.1725469274485;
-        Wed, 04 Sep 2024 10:01:14 -0700 (PDT)
-Received: from localhost (109-81-94-33.rct.o2.cz. [109.81.94.33])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623a6ca1sm14385166b.173.2024.09.04.10.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 10:01:14 -0700 (PDT)
-Date: Wed, 4 Sep 2024 19:01:13 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <ZtiSWUxMQSBzN9cr@tiehlicka>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <20240903051342.GA31046@lst.de>
- <l3dngdjyglhpnlcmjxerpmiyw4euodb6sxsxe3mwtyd2z3uopu@amisj3chjfqe>
+        d=1e100.net; s=20230601; t=1725472913; x=1726077713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DtTeYjj02Mtv2WzzkSyeLasv4f+WjuGZCMl+K7JYzM0=;
+        b=V8hvDCtp3tKovL5p4ztK+PZIxsvatPrryeVcrlEKhxyMIgV/amQRQHsYUxOgkKY1DI
+         FaJ+E0nWu7YFEn1+MiIFeDiI0EoIj1jNP3RE0VhwR+FSPh5ORAtcM5R+sy5MPTiW91NN
+         04hKom90vb701ZDUxyaMz1KPbuBjyv2N/Im/dmPbbPK0DQ87VVudwLS5nkR8jZpcn+Qi
+         ZwQKvPh80ngxSTg05uLZFY/4Suv7HqSGhrpYO7hCWOkNW0cekwS7vMocCZaHF8sgLjXR
+         u07jbAGmhTqepVvEm5qLCD82Hu8DcAm3pjJGOB5yEotx2c6ntazKOw8hXhk0a6EaJseP
+         zOnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLKh2DcJWTmgaTn5F0WXRDKtaNCROmzcmIgvm+mf+oPPAEPAJSUGI7KGtxRcCmHkDLcMcvwUj5uM1kz13wovQA+l1oaxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvJuXjZdCUkaLFsWguFZHv6Ab60f19yqggpkFK3pCl0u4GBzR9
+	4GQk6Kfv7QUMyRoJw/REmuCf15WPwB3mDRYKb+ZmTLSLtD4N1/JSxtqOnPDmshw=
+X-Google-Smtp-Source: AGHT+IE09d+IBeWwgHe5zjgeYzKqlOeVFBKdTyoUXo2CmM5mem85ZvAmg7ax8y1cyKmmP1BgZ4kZOg==
+X-Received: by 2002:a05:6602:60c7:b0:807:f0fb:11a2 with SMTP id ca18e2360f4ac-82a11094588mr2605807839f.13.1725472912591;
+        Wed, 04 Sep 2024 11:01:52 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82a1a49897bsm366616139f.37.2024.09.04.11.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Sep 2024 11:01:52 -0700 (PDT)
+Message-ID: <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+Date: Wed, 4 Sep 2024 12:01:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <l3dngdjyglhpnlcmjxerpmiyw4euodb6sxsxe3mwtyd2z3uopu@amisj3chjfqe>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Michal Hocko <mhocko@suse.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+ "conduct@kernel.org" <conduct@kernel.org>
+References: <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+ <ZtBzstXltxowPOhR@dread.disaster.area>
+ <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
+ <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 04-09-24 12:27:04, Kent Overstreet wrote:
-> On Tue, Sep 03, 2024 at 07:13:42AM GMT, Christoph Hellwig wrote:
-> > On Mon, Sep 02, 2024 at 02:52:52PM -0700, Andrew Morton wrote:
-> > > It would be helpful to summarize your concerns.
-> > 
-> > And that'd better be a really good argument for a change that was
-> > pushed directly to Linus bypassing the maintainer after multiple
-> > reviewers pointed out it was broken.  This series simply undoes the
-> > damage done by that, while also keeping the code dependend on it
-> > working.
+On 9/2/24 03:51, Kent Overstreet wrote:
+> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+>> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+>>> On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+>>>> On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+>>>> [...]
+>>>>> But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+>>>>> in the case of bugs, because that's going to be an improvement w.r.t.
+>>>>> system robustness, in exactly the same way we don't use BUG_ON() if it's
+>>>>> something that we can't guarantee won't happen in the wild - we WARN()
+>>>>> and try to handle the error as best we can.
+>>>>
+>>>> We have discussed that in a different email thread. And I have to say
+>>>> that I am not convinced that returning NULL makes a broken code much
+>>>> better. Why? Because we can expect that broken NOFAIL users will not have a
+>>>> error checking path. Even valid NOFAIL users will not have one because
+>>>> they _know_ they do not have a different than retry for ever recovery
+>>>> path.
+>>>
+>>> You mean where I asked you for a link to the discussion and rationale
+>>> you claimed had happened? Still waiting on that
+>>
+>> I am not your assistent to be tasked and search through lore archives.
+>> Find one if you need that.
+>>
+>> Anyway, if you read the email and even tried to understand what is
+>> written there rather than immediately started shouting a response then
+>> you would have noticed I have put actual arguments here. You are free to
+>> disagree with them and lay down your arguments. You have decided to
+>>
+>> [...]
+>>
+>>> Yeah, enough of this insanity.
+>>
+>> so I do not think you are able to do that. Again...
 > 
-> Well, to be blunt, I thought the "we don't want the allocator to even
-> know if we're in a non-sleepable context" argument was too crazy to have
-> real support, and moving towards PF_MEMALLOC flags is something we've
-> been talking about quite a bit going back years.
+> Michal, if you think crashing processes is an acceptable alternative to
+> error handling _you have no business writing kernel code_.
 > 
-> Little did I know the minefield I was walking into...
+> You have been stridently arguing for one bad idea after another, and
+> it's an insult to those of us who do give a shit about writing reliable
+> software.
+> 
+> You're arguing against basic precepts of kernel programming.
+> 
+> Get your head examined. And get the fuck out of here with this shit.
+> 
 
-There is a lot of historical baggage and several people tried to explain
-that things are quite complex and you cannot simply apply design choices
-same way as if you were developing something from scratch. 
+Kent,
 
-> But the disccussion seems to finally be cooling off and going in a more
-> productive direction.
+Using language like this is clearly unacceptable and violates the
+Code of Conduct. This type of language doesn't promote respectful
+and productive discussions and is detrimental to the health of the
+community.
 
-Reality check: https://lore.kernel.org/all/8734mitahm.fsf@trenco.lwn.net/T/#u
--- 
-Michal Hocko
-SUSE Labs
+You should be well aware that this type of language and personal
+attack is a clear violation of the Linux kernel Contributor Covenant
+Code of Conduct as outlined in the following:
+
+https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+
+Refer to the Code of Conduct and refrain from violating the Code of
+Conduct in the future.
+
+thanks,
+-- Shuah (On behalf of the Code of Conduct Committee)
