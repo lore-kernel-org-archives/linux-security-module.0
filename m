@@ -1,548 +1,132 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03B71465B4;
-	Wed,  4 Sep 2024 07:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B487148857
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 07:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725433818; cv=none; b=cIJxida9MeUAeygry45vgodMmfwD1Ikrl826aE0AdostG1sccujXYS5eOVhZS7gCsc3k01VHLXnTBJ8Ov1QkJDCgvBpH7B/VPnR3o0TrCslHnY2Bn9BMB3ZkFSuzE5w+vPUib5LK7203EwCWoLnbmaOTShe3nY6KYXnzuT4+/sY=
+	t=1725434075; cv=none; b=VdrKAjQaFaCRm4lvQZ2mtRaYVVV7kZ62zWJaXwpisnEepEosNI/y0+o6sbV+3jYBXQ+poL042TyJ6lZRznHxpNLzRK66AzAM/bo1H0zk2GcbcxnyMtqQALw5wngUa9yUleOUi3hnRZ8NWvMfkfc/es9fXUEarYGXLQC3EOC2t2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725433818; c=relaxed/simple;
-	bh=QkfiDhNRI/jOE7+dep8lo0MoPE4+l9UksHSgYqmO3K0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=NPRs/5xYDMLJZuN5DwyPME/0Sc7D/Fu6gOw29cDgkcl0sMXO+8zCLRUjNAL+OTpGj9uZmDwcp17BftqVIAV1tRTpPEOF0utXpTapTWyVNza9asGUJy7iPJO7m5BeTi6HOmMmzfLOQiySD9sTubE2PdfKcv1gQV0BFt+xX0HXG5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav412.sakura.ne.jp (fsav412.sakura.ne.jp [133.242.250.111])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4847A5lO001031;
-	Wed, 4 Sep 2024 16:10:05 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav412.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp);
- Wed, 04 Sep 2024 16:10:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4847A4RD001027
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 4 Sep 2024 16:10:04 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
-Date: Wed, 4 Sep 2024 16:10:05 +0900
+	s=arc-20240116; t=1725434075; c=relaxed/simple;
+	bh=VqLHinL0RjI3e0Z/VURxkK5bglnAwHHouZAHOAzUEGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYQVABvYuZV9ii0wmzieihOoFPe/btBGrPFJSh43VLYpTia1dxJ/w3pXFRZ2g9c0fCX+n442X56S+qq6p1Dooz+fXUjTAmLDYJ09RI/b3kziVOjzbr9uknO7GxZB+KguAO9ZzvRsp9xBkI2H/qEkKU5AfOdL7AQ69XdrsF75RgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V2wFx/yw; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V2wFx/yw"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-374c84dcc64so2180173f8f.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Sep 2024 00:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725434071; x=1726038871; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qnMooA7Lbyg6swfN/5rgVwe/kJNmET/0maFcp2nTGY4=;
+        b=V2wFx/ywOvVoIfkwu6ryrYoEhgoHcFhltvH3WlDTsvPrYDSDj0ler+Uq03b5Gchrrd
+         CVkcpEydUOK9YCjmfC2U46TlNqKkqiqxGBGuF2qv1fx0pR225lqsQDldDuiE1yM0m2/i
+         LSRIo50NLsaeZSv1b7LbxgwwhNdock/OeWEvIbMEiODO5DvYiZnjinMg2DCvUxi+CJUp
+         0Y/0Zg4QASsylzoLiJCAdy4SdcTcdif078/4M+J9qF0C1srVKSveJ818UKmdpqG34lfe
+         CONABmhUzaMyoWj9hUnOMK+rZdC0iBfClSq4tXHya4izJFOWGTHsnR+pwuYtGYK6CLkU
+         3hMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725434071; x=1726038871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qnMooA7Lbyg6swfN/5rgVwe/kJNmET/0maFcp2nTGY4=;
+        b=PJQrdYKXPM9vli2OTvtQF4O/PKOvOWAU98LIoMQHHAU/yVPPyPljrEptnLk3D4MBsE
+         fcuwooBdAZSK2xT9/4qjCg4btdN4zrk+KM3XSWkiAeKmarQunLI6bCV+s/AtcnsOyoSv
+         hCqokTknTjVBOIIo/8/cITrDIIAaNQ2GbDJSV6XhjlMwuJjb+mEOJj76ITIRraUezFhz
+         ZSAE5R1pSy1/otXAqevcvMrAHLf1mAnRphLKR42SlIDahGWaR7B3a3DuqoMBi0OvZx8Q
+         ft7a18dtMn5KJuhUWodAwUuSl+kpIJNttpb5sNRjiVrsCc0+pdsq6d3/x3uNXPfZSjh8
+         5L3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXvTlz+/KV3B6bPKYLiSaCeuFKo3ElpHCnvzpu95vWqCzJ18YMgNTOyQla0q+h2D891aEM9nVXhjpaZNW65O5ycRRMHVMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI81PmtI+Ufn49eOy29daeoyuY8gVK1j8RJ2j7Ce+7N/6oFB9Q
+	MIJmXD9vsUE05/dOZXeJuqLpiSggaB1tdJsgWjR5sDIub0xmhGVEebBNzYnXbzU=
+X-Google-Smtp-Source: AGHT+IF8I6pFlzOU3p9D8agMKGZIZoWQQ9AW1+2AmZCmzaC0dDVMGKQ/M7w2avm8V9SBZGoK10RrWg==
+X-Received: by 2002:a05:6000:124c:b0:374:c29a:a0d6 with SMTP id ffacd0b85a97d-374c29aa194mr9448975f8f.2.1725434071394;
+        Wed, 04 Sep 2024 00:14:31 -0700 (PDT)
+Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3eb4sm774269866b.133.2024.09.04.00.14.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 00:14:31 -0700 (PDT)
+Date: Wed, 4 Sep 2024 09:14:29 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
+	Dave Chinner <dchinner@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtgI1bKhE3imqE5s@tiehlicka>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+ <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: tomoyo-dev-en@lists.osdn.me, tomoyo-users-en@lists.osdn.me
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] LSM: allow loadable kernel module based LSM modules
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
 
-Until 2.6.23, it was officially possible to register/unregister LSM modules
-that are implemented as loadable kernel modules. But from 2.6.24 to 6.11,
-it is not officially possible to do so due to commit 20510f2f4e2d
-("security: Convert LSM into a static interface"). When that commit was
-discussed, effectively SELinux was the only in-tree LSM user, and therefore
-out-of-tree LSM users were not able to express opinions.
+On Tue 03-09-24 19:53:41, Kent Overstreet wrote:
+[...]
+> However, if we agreed that GFP_NOFAIL meant "only fail if it is not
+> possible to satisfy this allocation" (and I have been arguing that that
+> is the only sane meaning) - then that could lead to a lot of error paths
+> getting simpler.
+>
+> Because there are a lot of places where there's essentially no good
+> reason to bubble up an -ENOMEM to userspace; if we're actually out of
+> memory the current allocation is just one out of many and not
+> particularly special, better to let the oom killer handle it...
 
-But that commit missed realities that
+This is exactly GFP_KERNEL semantic for low order allocations or
+kvmalloc for that matter. They simply never fail unless couple of corner
+cases - e.g. the allocating task is an oom victim and all of the oom
+memory reserves have been consumed. This is where we call "not possible
+to allocate".
 
-  how difficult/unrealistic for Linux users who are using prebuilt kernel
-  packages provided by Linux distributors to replace their kernels
+> So the error paths would be more along the lines of "there's a bug, or
+> userspace has requested something crazy, just shut down gracefully".
 
-  how difficult for Linux distributors to allow their users to use in-tree
-  LSM modules which that distributor is not familiar with [1] because Linux
-  distributors are supposed to support kernel packages they built and
-  shipped
+How do you expect that to be done? Who is going to go over all those
+GFP_NOFAIL users? And what kind of guide lines should they follow? It is
+clear that they believe they cannot handle the failure gracefully
+therefore they have requested GFP_NOFAIL. Many of them do not have
+return value to return.
 
-  Linux distributors do not want to enable out-of-tree code due to upstream
-  first policy, while Linux kernel development community can not afford
-  accepting whatever proposed code due to limited resources
+So really what do you expect proper GFP_NOFAIL users to do and what
+should happen to those that are requesting unsupported size or
+allocation mode?
 
-. These realities keep away out-of-tree LSMs (or even in-tree LSMs) which
-are not built into vmlinux, and caused unhappy times for Linux users who
-want to try a new LSM module. An approach that can survive is that LSM
-modules that cannot be built into vmlinux is to provide as a loadable
-kernel module.
+> While we're at it, the definition of what allocation size is "too big"
+> is something we'd want to look at. Right now it's hardcoded to INT_MAX
+> for non GFP_NOFAIL and (I believe) 2 pages for GFP_NOFAL, we might want
+> to consider doing something based on total memory in the machine and
+> have the same limit apply to both...
 
-Therefore, I had been providing a workaround called AKARI that allows Linux
-users to use TOMOYO as a loadable kernel module [2] from 2.6.0 to 6.11. But
-commit 417c5643cd67 ("lsm: replace indirect LSM hook calls with static
-calls") made it difficult to use AKARI due to replacing the linked list
-(which can allow registering more than number of built-in LSM modules) with
-static call slots (which cannot allow registering more than number of
-built-in LSM modules).
-
-I considered trying Kprobes and BPF-LSM for reimplementing TOMOYO, but the
-conclusion is that Kprobes and BPF-LSM are too restricted to reimplement
-TOMOYO.
-
-Paul Moore has commented
-
-  I do not intentionally plan to make life difficult for the out-of-tree
-  LSMs, but if that happens as a result of design decisions intended to
-  benefit in-tree LSMs that is acceptable as far as I am concerned.
-
-at [3]. But the static calls change suddenly jumped in, and that made life
-difficult for the in-tree but not built-in LSMs as a result of design
-decisions intended to benefit in-tree and built-in LSMs.
-
-Now that the static calls change is going to be merged into Linux 6.12,
-I propose this patch for recovering life for "in-tree but not built-in"
-LSMs, by officially allowing loadable kernel module based LSM modules.
-
-I'm not planning to propose a change for allowing unregistration of LSM
-modules after boot, for I agree one of concerns
-
-  the ability to unload a security module is not required by in-tree
-  users and potentially complicates the overall security architecture
-
-in "security: Convert LSM into a static interface" change. But I assert
-that the ability to load a security module (i.e. loadable kernel module
-based LSMs) is inevitable due to unsolvable realities.
-
-The LSM hooks for loadable kernel module based LSMs are enabled only if
-the kernel is booted with 'dynamic_lsm' kernel command line option added
-in order to honer the administrator's decision and avoid overhead when
-the administrator does not plan to use loadable kernel module based LSMs.
-
-Of course, Linux distributors might revert this patch in their kernels if
-their kernels are intended for very specific/dedicated purposes. But what
-is important is that we again officially support LSM modules that are
-implemented as loadable kernel modules in accordance with upstream first
-policy.
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=542986 [1]
-Link: https://tomoyo.sourceforge.net/akari/comparison.html [2]
-Link: https://lkml.kernel.org/r/CAHC9VhSG2UzE9N0-tAJc8B3Mj1PEuJ2b6wso_DUs_Y83yqwhjA@mail.gmail.com [3]
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-I'll start updating security/tomoyo after this change is accepted. For
-those who want to try this change now, an example module is shown below.
------
-#include <linux/lsm_hooks.h>
-
-static void test_bprm_committed_creds(const struct linux_binprm *bprm)
-{
-        pr_info_once("%s() is called\n", __func__);
-}
-
-static int test_file_open(struct file *f)
-{
-        pr_info_once("%s() is called\n", __func__);
-        return 0;
-}
-
-static const struct lsm_id test_lsmid = {
-        .name = "test",
-};
-
-static struct security_dynamic_hook_list test_hooks[] = {
-        LSM_HOOK_INIT(file_open, test_file_open),
-        LSM_HOOK_INIT(bprm_committed_creds, test_bprm_committed_creds),
-};
-
-static int __init test_init(void)
-{
-        return security_add_dynamic_hooks(test_hooks, ARRAY_SIZE(test_hooks),
-                                          &test_lsmid);
-}
-
-module_init(test_init);
-MODULE_LICENSE("GPL");
------
-
- include/linux/lsm_hooks.h |  24 +++++
- security/security.c       | 200 +++++++++++++++++++++++++++++++++++---
- 2 files changed, 210 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 090d1d3e19fed..afe4eeeb7bd52 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -71,6 +71,12 @@ struct lsm_static_calls_table {
- 	#undef LSM_HOOK
- } __packed __randomize_layout;
- 
-+struct security_dynamic_hook_heads {
-+	#define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
-+	#include "lsm_hook_defs.h"
-+	#undef LSM_HOOK
-+} __randomize_layout;
-+
- /**
-  * struct lsm_id - Identify a Linux Security Module.
-  * @lsm: name of the LSM, must be approved by the LSM maintainers
-@@ -98,6 +104,13 @@ struct security_hook_list {
- 	const struct lsm_id *lsmid;
- } __randomize_layout;
- 
-+struct security_dynamic_hook_list {
-+	struct hlist_node		list;
-+	struct hlist_head		*head;
-+	union security_list_options	hook;
-+	const struct lsm_id		*lsmid;
-+} __randomize_layout;
-+
- /*
-  * Security blob size or offset data.
-  */
-@@ -130,14 +143,24 @@ struct lsm_blob_sizes {
-  * care of the common case and reduces the amount of
-  * text involved.
-  */
-+#ifndef MODULE
- #define LSM_HOOK_INIT(NAME, HOOK)			\
- 	{						\
- 		.scalls = static_calls_table.NAME,	\
- 		.hook = { .NAME = HOOK }		\
- 	}
-+#else
-+#define LSM_HOOK_INIT(NAME, HOOK)			\
-+	{						\
-+		.head = &security_hook_heads.NAME,	\
-+		.hook = { .NAME = HOOK }		\
-+	}
-+#endif
- 
- extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 			       const struct lsm_id *lsmid);
-+extern int security_add_dynamic_hooks(struct security_dynamic_hook_list *hooks, int count,
-+				      const struct lsm_id *lsmid);
- 
- #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
- #define LSM_FLAG_EXCLUSIVE	BIT(1)
-@@ -170,6 +193,7 @@ struct lsm_info {
- /* DO NOT tamper with these variables outside of the LSM framework */
- extern char *lsm_names;
- extern struct lsm_static_calls_table static_calls_table __ro_after_init;
-+extern struct security_dynamic_hook_heads security_hook_heads;
- extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
- extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
- 
-diff --git a/security/security.c b/security/security.c
-index 7272bbea05cb8..1b6c64c631ac0 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -130,6 +130,10 @@ static __initdata struct lsm_info *exclusive;
- #undef LSM_HOOK
- #undef DEFINE_LSM_STATIC_CALL
- 
-+struct security_dynamic_hook_heads security_hook_heads;
-+EXPORT_SYMBOL_GPL(security_hook_heads);
-+static DEFINE_STATIC_KEY_FALSE_RO(security_dynamic_hook_key);
-+
- /*
-  * Initialise a table of static calls for each LSM hook.
-  * DEFINE_STATIC_CALL_NULL invocation above generates a key (STATIC_CALL_KEY)
-@@ -644,6 +648,32 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 	}
- }
- 
-+static int __init enable_dynamic_hooks(char *str)
-+{
-+	static_branch_enable(&security_dynamic_hook_key);
-+	pr_info("Dynamic LSM hook enabled.\n");
-+	return 1;
-+}
-+__setup("dynamic_lsm", enable_dynamic_hooks);
-+
-+int security_add_dynamic_hooks(struct security_dynamic_hook_list *hooks, int count,
-+			       const struct lsm_id *lsmid)
-+{
-+	int i;
-+
-+	if (!static_key_enabled(&security_dynamic_hook_key)) {
-+		pr_info("Boot with 'dynamic_lsm' kernel command line option to enable dynamic LSM hook.\n");
-+		return -EINVAL;
-+	}
-+	pr_info("Dynamic LSM hook: adding '%s' module.\n", lsmid->name);
-+	for (i = 0; i < count; i++) {
-+		hooks[i].lsmid = lsmid;
-+		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(security_add_dynamic_hooks);
-+
- int call_blocking_lsm_notifier(enum lsm_event event, void *data)
- {
- 	return blocking_notifier_call_chain(&blocking_lsm_notifier_chain,
-@@ -952,9 +982,15 @@ do {									     \
- 	}								     \
- } while (0);
- 
--#define call_void_hook(HOOK, ...)                                 \
--	do {                                                      \
-+#define call_void_hook(HOOK, ...)					\
-+	do {								\
- 		LSM_LOOP_UNROLL(__CALL_STATIC_VOID, HOOK, __VA_ARGS__); \
-+		if (static_key_enabled(&security_dynamic_hook_key)) { \
-+			struct security_dynamic_hook_list *P;		\
-+									\
-+			hlist_for_each_entry(P, &security_hook_heads.HOOK, list) \
-+				P->hook.HOOK(__VA_ARGS__);		\
-+		}							\
- 	} while (0)
- 
- 
-@@ -973,6 +1009,15 @@ do {									     \
- 	int RC = LSM_RET_DEFAULT(HOOK);					\
- 									\
- 	LSM_LOOP_UNROLL(__CALL_STATIC_INT, RC, HOOK, OUT, __VA_ARGS__);	\
-+	if (static_key_enabled(&security_dynamic_hook_key)) {	\
-+		struct security_dynamic_hook_list *P;			\
-+									\
-+		hlist_for_each_entry(P, &security_hook_heads.HOOK, list) { \
-+			RC = P->hook.HOOK(__VA_ARGS__);			\
-+			if (RC != LSM_RET_DEFAULT(HOOK))		\
-+				goto OUT;				\
-+		}							\
-+	}								\
- OUT:									\
- 	RC;								\
- })
-@@ -1230,9 +1275,21 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 		rc = scall->hl->hook.vm_enough_memory(mm, pages);
- 		if (rc < 0) {
- 			cap_sys_admin = 0;
--			break;
-+			goto done;
- 		}
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
-+			rc = hp->hook.vm_enough_memory(mm, pages);
-+			if (rc <= 0) {
-+				cap_sys_admin = 0;
-+				break;
-+			}
-+		}
-+	}
-+ done:
- 	return __vm_enough_memory(mm, pages, cap_sys_admin);
- }
- 
-@@ -1385,6 +1442,18 @@ int security_fs_context_parse_param(struct fs_context *fc,
- 		else if (trc != -ENOPARAM)
- 			return trc;
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-+				     list) {
-+			trc = hp->hook.fs_context_parse_param(fc, param);
-+			if (trc == 0)
-+				rc = 0;
-+			else if (trc != -ENOPARAM)
-+				return trc;
-+		}
-+	}
- 	return rc;
- }
- 
-@@ -1616,8 +1685,20 @@ int security_sb_set_mnt_opts(struct super_block *sb,
- 		rc = scall->hl->hook.sb_set_mnt_opts(sb, mnt_opts, kern_flags,
- 					      set_kern_flags);
- 		if (rc != LSM_RET_DEFAULT(sb_set_mnt_opts))
--			break;
-+			goto done;
-+	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.sb_set_mnt_opts,
-+				     list) {
-+			rc = hp->hook.sb_set_mnt_opts(sb, mnt_opts, kern_flags,
-+						      set_kern_flags);
-+			if (rc != LSM_RET_DEFAULT(sb_set_mnt_opts))
-+				break;
-+		}
- 	}
-+ done:
- 	return rc;
- }
- EXPORT_SYMBOL(security_sb_set_mnt_opts);
-@@ -1826,17 +1907,28 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- 			return -ENOMEM;
- 	}
- 
-+	/*
-+	 * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
-+	 * means that the LSM is not willing to provide an xattr, not
-+	 * that it wants to signal an error. Thus, continue to invoke
-+	 * the remaining LSMs.
-+	 */
- 	lsm_for_each_hook(scall, inode_init_security) {
- 		ret = scall->hl->hook.inode_init_security(inode, dir, qstr, new_xattrs,
- 						  &xattr_count);
- 		if (ret && ret != -EOPNOTSUPP)
- 			goto out;
--		/*
--		 * As documented in lsm_hooks.h, -EOPNOTSUPP in this context
--		 * means that the LSM is not willing to provide an xattr, not
--		 * that it wants to signal an error. Thus, continue to invoke
--		 * the remaining LSMs.
--		 */
-+	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.inode_init_security,
-+				     list) {
-+			ret = hp->hook.inode_init_security(inode, dir, qstr, new_xattrs,
-+							   &xattr_count);
-+			if (ret && ret != -EOPNOTSUPP)
-+				goto out;
-+		}
- 	}
- 
- 	/* If initxattrs() is NULL, xattr_count is zero, skip the call. */
-@@ -3681,9 +3773,22 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 		if (thisrc != LSM_RET_DEFAULT(task_prctl)) {
- 			rc = thisrc;
- 			if (thisrc != 0)
--				break;
-+				goto done;
- 		}
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
-+			thisrc = hp->hook.task_prctl(option, arg2, arg3, arg4, arg5);
-+			if (thisrc != LSM_RET_DEFAULT(task_prctl)) {
-+				rc = thisrc;
-+				if (thisrc != 0)
-+					break;
-+			}
-+		}
-+	}
-+ done:
- 	return rc;
- }
- 
-@@ -4144,8 +4249,38 @@ int security_getselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
- 		total += entrysize;
- 		count += rc;
- 		if (single)
--			break;
-+			goto done;
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.getselfattr, list) {
-+			if (single && lctx.id != hp->lsmid->id)
-+				continue;
-+			entrysize = left;
-+			if (base)
-+				uctx = (struct lsm_ctx __user *)(base + total);
-+			rc = hp->hook.getselfattr(attr, uctx, &entrysize, flags);
-+			if (rc == -EOPNOTSUPP) {
-+				rc = 0;
-+				continue;
-+			}
-+			if (rc == -E2BIG) {
-+				rc = 0;
-+				left = 0;
-+				toobig = true;
-+			} else if (rc < 0)
-+				return rc;
-+			else
-+				left -= entrysize;
-+
-+			total += entrysize;
-+			count += rc;
-+			if (single)
-+				break;
-+		}
-+	}
-+ done:
- 	if (put_user(total, size))
- 		return -EFAULT;
- 	if (toobig)
-@@ -4202,8 +4337,17 @@ int security_setselfattr(unsigned int attr, struct lsm_ctx __user *uctx,
- 	lsm_for_each_hook(scall, setselfattr)
- 		if ((scall->hl->lsmid->id) == lctx->id) {
- 			rc = scall->hl->hook.setselfattr(attr, lctx, size, flags);
--			break;
-+			goto free_out;
- 		}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.setselfattr, list)
-+			if ((hp->lsmid->id) == lctx->id) {
-+				rc = hp->hook.setselfattr(attr, lctx, size, flags);
-+				break;
-+			}
-+	}
- 
- free_out:
- 	kfree(lctx);
-@@ -4231,6 +4375,15 @@ int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
- 			continue;
- 		return scall->hl->hook.getprocattr(p, name, value);
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+			if (lsmid != 0 && lsmid != hp->lsmid->id)
-+				continue;
-+			return hp->hook.getprocattr(p, name, value);
-+		}
-+	}
- 	return LSM_RET_DEFAULT(getprocattr);
- }
- 
-@@ -4255,6 +4408,15 @@ int security_setprocattr(int lsmid, const char *name, void *value, size_t size)
- 			continue;
- 		return scall->hl->hook.setprocattr(name, value, size);
- 	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+			if (lsmid != 0 && lsmid != hp->lsmid->id)
-+				continue;
-+			return hp->hook.setprocattr(name, value, size);
-+		}
-+	}
- 	return LSM_RET_DEFAULT(setprocattr);
- }
- 
-@@ -5399,8 +5561,18 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 	 */
- 	lsm_for_each_hook(scall, xfrm_state_pol_flow_match) {
- 		rc = scall->hl->hook.xfrm_state_pol_flow_match(x, xp, flic);
--		break;
-+		goto out;
-+	}
-+	if (static_key_enabled(&security_dynamic_hook_key)) {
-+		struct security_dynamic_hook_list *hp;
-+
-+		hlist_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
-+				     list) {
-+			rc = hp->hook.xfrm_state_pol_flow_match(x, xp, flic);
-+			break;
-+		}
- 	}
-+ out:
- 	return rc;
- }
- 
+Yes, we need to define some reasonable maximum supported sizes. For the
+page allocator this has been order > 1 and we considering we have a
+warning about those requests for years without a single report then we
+can assume we do not have such abusers. for kvmalloc to story is
+different. Current INT_MAX is just not any practical limit. Past
+experience says that anything based on the amount of memory just doesn't
+work (e.g. hash table sizes that used to that scaling and there are
+other examples). So we should be practical here and look at existing
+users and see what they really need and put a cap above that.
 -- 
-2.43.5
-
+Michal Hocko
+SUSE Labs
