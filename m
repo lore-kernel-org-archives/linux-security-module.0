@@ -1,101 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A4F8286A;
-	Wed,  4 Sep 2024 19:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDA11F19A
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 20:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725479167; cv=none; b=O4vvtOKLubAqedmbPeVkGQFplzL/dckNx/6VSRGVrnZ1VTs+tib/5q+w3dhJtnphxR+eyp4JDkV6NhccTi7q7TRPWGd93B9OngQGONYogLigdOlU9If6gpDP+w3d/JqfmmAnoxjg0P/HfpVfppsLPItZV6U50d3IiZtH6z9xglM=
+	t=1725480070; cv=none; b=bDGXrkKu6k7vmMv9HQ/xpRlyXLBQsCQJBxbXw/puyyVK9LSWC7EyrFg0i5cmPr0DrM5BOg1v9c15RRn8zTUNJlMTBx1DZsgu4ue3XJx73yd6NI9xgbbi/K0ST8pVNX6fRP6Kr8f7LDxmFguPifUnuPhHfgRYpN/NX6YgmuBD2K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725479167; c=relaxed/simple;
-	bh=QQsVnSzMJu9Xy6LVYw1rcBARePRY6Cy6vZiFgsTr2ig=;
+	s=arc-20240116; t=1725480070; c=relaxed/simple;
+	bh=4ZW9uYBRy1l5v3eg2vwYnWmQtnxuduXzhYgb0NI7pac=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qAZ1YyfUShMppZprvl/zzbmKLWut93j/vczrX/2PHdrkiIu0nC8quTTanK28c/rRade8dox3osmK/Yh5z/Nu4itBMOAZYUJvQPlAKIkk/XXgLCEwgrWCy1hx4hb8VOPTmlMAK5Dcu/2vgQwIIqFYTCCU4gaAFxEAfgRrDEeDjus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWdF2DP7; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=fYavvGsDzaK9gOqpXWj1noO4hoCSMBVSprx99Ufba+7PbxuQUQwwwHWshh0Whn7Dg4qnp41m9gyGNXe5TKpz7RnqMQGdY4qjjZuxKx09z3+EBokXGae+WyzPXboOY+inGMaSCDQCIlgEhFTv6xzVjJIogXH98LxU9jMOpJLBM8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DSUaYCWr; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWdF2DP7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F7FC4CEC2;
-	Wed,  4 Sep 2024 19:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725479167;
-	bh=QQsVnSzMJu9Xy6LVYw1rcBARePRY6Cy6vZiFgsTr2ig=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fWdF2DP79Oz1wDdOdNmJmEFF+B692AQZ4875Bq6z1hg1xwLqlTNY1H+XTrfXMbVpS
-	 j9sAxC7eMnwXTd3wNHvjRWj8E5hmjvAylk5hK4Gv4aeWmNf1meqTnsLuu09jxp5IQ6
-	 7M3ybSubPsXBmhx6wBiBOKJX/1fjvuOvzRpBPtiDQ+i7+l/luSJZ9/Di6SjL1Zxn8C
-	 EUvdYE0SCcmrKuzUMlV6Ukep+/CcDy//Ys7BNiUYeFzQ/QG4XV9j+jFT7/KBZiQtIZ
-	 2KtRy5wbsaVhOufckq7FbWVUG9JdrwzD3kd6eZPTewykaW7TfO2EVgPzqOO3iubl79
-	 1KjRL3qAlm8dg==
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a812b64d1cso399018385a.0;
-        Wed, 04 Sep 2024 12:46:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVB3UGXSEhMSqT2DWBxb1qhZMCyzxfw8d69McAP/6k1yeqm2SgMjBrFk0ygbeQa57Bi01oZ4+1MM3MZ@vger.kernel.org, AJvYcCVYA8bBIX/b8aM0C5JXt1OQUkhV7ek2IBNJJHiURLfxFkOxAtbmZRATEGpPNmhBuXNty5Uf8O0Lz8w=@vger.kernel.org, AJvYcCVrwtas2p0XQycjpkX02h3698vZNYUBbc8nF0D/qTMA54gR7YIX21allI0OwMT3vE6fkpO3abFywrijGJbjNhDQo++kfuCY@vger.kernel.org, AJvYcCXF+uZJHzSsg1v8nb2cxKXz6JxIrPb0a7ZUxek+Ll6EhVA5B74ogDMqOX/KkK+bH5/4QVFk233DNmpDV6fL@vger.kernel.org, AJvYcCXKEQ+E168x9AC2ZeD5b+CaFPY6PJL+M+4tqKpi6vpdCxNVbKtUE6q/vZyVV+wy94/4r099ZRuA2cetp+zn@vger.kernel.org, AJvYcCXs8fhs92FHrLWj6e5iehsAIinKM1h82+Er6ZUJRRI/iVH2GYLztpkR5qi/b3CgD5gADW8GiCKE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL3/S4AXjy+rQ/98UuvpwDDGL92HGRDQ9TTq4GS24F8m4GCSyx
-	bFJscrisnKMEpc2aQA8wVlonTF9ngiA16ihmYXvnr3XQIz91WYb2q1qLuSFAVdCLscXX890nMbS
-	og+IKDo+iQtUpgDgIElt1yb9eUIU=
-X-Google-Smtp-Source: AGHT+IEvCs/22u/q3u8HbVezM75pgSYQ+mtXLN/XwyBj7AvVgPLsxLtOdjUjVijcfKiU4aElyUiOX8rriF8t5qXs5jg=
-X-Received: by 2002:a05:622a:2610:b0:44f:d986:fe4c with SMTP id
- d75a77b69052e-4567f505b0bmr362111191cf.20.1725479166868; Wed, 04 Sep 2024
- 12:46:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DSUaYCWr"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-699ac6dbf24so61725177b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Sep 2024 13:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1725480068; x=1726084868; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bj31Cc7yUKdv/FGIF8ZxPGEVE5FVuiVNrp+0ISWDt4c=;
+        b=DSUaYCWr/prACtzyg/rPSUvm30yKQ0V+ubT7ZcPSXOQZrWHKdL2v6lCjM/hTEPDtE0
+         sqVlA/wLifJgfoU7GeeLALd/fPen2C7kHUFzlntnDXlarJSTTI/UX0v1hEXUIrrcSIfV
+         4c2upEGc4WamL5D1Vt300uOrSwbx8ytzKILJLwR0yIjXCON37wB110LKDv1j2j/JehXn
+         bzAe/gcx6lzajTXH0V24JE5VH6x92U4rberLWfedRvfS9ghSQv0j6VPPrx3LqtEnQooD
+         uFLi2BHXKgpBFmJ8uMgI54nUdksi1sl+l/ZJ6NMD2mHs59cLJo3dzmJW8CRwpeeC1nZb
+         rUXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725480068; x=1726084868;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bj31Cc7yUKdv/FGIF8ZxPGEVE5FVuiVNrp+0ISWDt4c=;
+        b=VfIfUiN0OytWAFJ1fqu0OkTDtZN0Ufex6VjPZcBOtATm8+yf8NsoFVVtlvxVEDrA3H
+         bOrVC9/wezlnwJ0hUSMwv0vYMumJKECBZX4dFFzwbGY2Oqfq3hXPhp3qmGlcSL3Lu5/V
+         dOhP8+njB01m1KmhGx49f4fwB93A01mD5fD3vImCeqKyzr+cQRj073nZpLwopojAbYl7
+         qxSuFqVRVqEivCCl7GORiSj5tPJJqnstod6U0/WwAOT4HnMRkNyxoknx/X1VOv+jTnRV
+         fBDKgOQJL5SD6MbXfop8RG5B53Vgu7FdcN/iI5oTIoupwasNhxRrKYnnr+DW48SbRj+K
+         F1CQ==
+X-Gm-Message-State: AOJu0YzVhyk3E0Jqth69JC3bAPb1R+BqlmIyuj6v/7nyP3oDu/RDejjj
+	OlcKldCl84ko8S44yHA/WPEm1ymLxucdrUWt+sl/3ZLm9kc30YvbIh7l4p6p+iikZQ6P+n/yy3+
+	wTHbYJpbON6J3zjJNi5LKBXhNdkHje4QX6Gbb
+X-Google-Smtp-Source: AGHT+IHwvQ13BznmsQbX7s8QKh0hPJ3ZlsV9dmecF5yPb9RpjrIRg7UHuPNLul3M/O4Vy1wrYN7rj/2T9vkcOmYq8W8=
+X-Received: by 2002:a05:690c:3693:b0:6b1:135:4d84 with SMTP id
+ 00721157ae682-6d40df8a252mr200806537b3.16.1725480068164; Wed, 04 Sep 2024
+ 13:01:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903033011.2870608-1-yukaixiong@huawei.com> <20240903033011.2870608-12-yukaixiong@huawei.com>
-In-Reply-To: <20240903033011.2870608-12-yukaixiong@huawei.com>
-From: Anna Schumaker <anna@kernel.org>
-Date: Wed, 4 Sep 2024 15:45:49 -0400
-X-Gmail-Original-Message-ID: <CAFX2Jf=8cDNmjUBCRE-n6N9khkRRrq0ABtsX4V=j830Mi1spwQ@mail.gmail.com>
-Message-ID: <CAFX2Jf=8cDNmjUBCRE-n6N9khkRRrq0ABtsX4V=j830Mi1spwQ@mail.gmail.com>
-Subject: Re: [PATCH v2 -next 11/15] sunrpc: use vfs_pressure_ratio() helper
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, ysato@users.sourceforge.jp, 
-	dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
-	j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	wangkefeng.wang@huawei.com
+References: <20240830003411.16818-2-casey@schaufler-ca.com>
+ <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com> <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
+In-Reply-To: <b444ffb9-3ea3-4ef4-b53c-954ea66f7037@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 4 Sep 2024 16:00:57 -0400
+Message-ID: <CAHC9VhQ8QDAGc9BsxvPMi6=okwj+euLC+QXL1sgMsr8eHOcx2w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/13] LSM: Add the lsmblob data structure.
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
+	apparmor@lists.ubuntu.com, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 2, 2024 at 11:31=E2=80=AFPM Kaixiong Yu <yukaixiong@huawei.com>=
- wrote:
->
-> Use vfs_pressure_ratio() to simplify code.
->
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> ---
->  net/sunrpc/auth.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> index 04534ea537c8..3d2b51d7e934 100644
-> --- a/net/sunrpc/auth.c
-> +++ b/net/sunrpc/auth.c
-> @@ -489,7 +489,7 @@ static unsigned long
->  rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_contro=
-l *sc)
->
->  {
-> -       return number_cred_unused * sysctl_vfs_cache_pressure / 100;
-> +       return vfs_pressure_ratio(number_cred_unused);
+On Tue, Sep 3, 2024 at 8:53=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> On 9/3/2024 5:18 PM, Paul Moore wrote:
+> > On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Looks fairly straightforward to me.
+...
 
-Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
+> >> +/*
+> >> + * Data exported by the security modules
+> >> + */
+> >> +struct lsmblob {
+> >> +    struct lsmblob_selinux selinux;
+> >> +    struct lsmblob_smack smack;
+> >> +    struct lsmblob_apparmor apparmor;
+> >> +    struct lsmblob_bpf bpf;
+> >> +    struct lsmblob_scaffold scaffold;
+> >> +};
+> >
+> > Warning, top shelf bikeshedding follows ...
+>
+> Not unexpected. :)
+>
+> > I believe that historically when we've talked about the "LSM blob" we'v=
+e
+> > usually been referring to the opaque buffers used to store LSM state th=
+at
+> > we attach to a number of kernel structs using the `void *security` fiel=
+d.
+> >
+> > At least that is what I think of when I read "struct lsmblob", and I'd
+> > like to get ahead of the potential confusion while we still can.
+> >
+> > Casey, I'm sure you're priority is simply getting this merged and you
+> > likely care very little about the name (as long as it isn't too horribl=
+e),
+>
+> I would reject lsmlatefordinner out of hand.
 
->  }
+Fair enough :)
+
+> > but what about "lsm_ref"?  Other ideas are most definitely welcome.
 >
->  static void
-> --
-> 2.25.1
->
+> I'm not a fan of the underscore, and ref seems to imply memory management=
+.
+> How about "struct lsmsecid", which is a nod to the past "u32 secid"?
+> Or, "struct lsmdata", "struct lsmid", "struct lsmattr".
+> I could live with "struct lsmref", I suppose, although it pulls me toward
+> "struct lsmreference", which is a bit long.
+
+For what it's worth, I do agree that "ref" is annoyingly similar to a
+reference counter, I don't love it here, but I'm having a hard time
+coming up with something appropriate.
+
+I also tend to like the underscore, at least in the struct name, as it
+matches well with the "lsm_ctx" struct we have as part of the UAPI.
+When we use the struct name in function names, feel free to drop the
+underscore, for example: "lsm_foo" -> "security_get_lsmfoo()".
+
+My first thought was for something like "lsmid" (ignoring the
+underscore debate), but we already have the LSM_ID_XXX defines which
+are something entirely different and I felt like we would be trading
+one source of confusion for another.  There is a similar problem with
+the LSM_ATTR_XXX defines.
+
+We also already have a "lsm_ctx" struct which sort of rules out
+"lsmctx" for what are hopefully obvious reasons.
+
+I'd also like to avoid anything involving "secid" or "secctx" simply
+because the whole point of this struct is to move past the idea of a
+single integer or string representing all of the LSM properties for an
+entity.
+
+I can understand "lsm_data", but that is more ambiguous than I would like.
+
+What about "lsm_prop" or "lsm_cred"?
+
+--=20
+paul-moore.com
