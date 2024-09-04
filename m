@@ -1,147 +1,162 @@
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549881D6DDB
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Sep 2024 23:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE71065C
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 00:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725407632; cv=none; b=e+A+ZShU52IgulZXGvlw0IOOFD4GbRtKOEeHrfyiFCb40pQVWvRJS6vIi/dyT+pP0kIiPgW1T12KbMty1jO5vWis1QQQtS/ZfjfDPbJjeoAljJ6hCcpjd6UOslcL1s2/pFi6oWpJ3/Fxd0jeiaGp+lWHHOpFqPHkzIR+lwINtk8=
+	t=1725409112; cv=none; b=AlWqcd1gkyoj3z2EIFa39bmWDtF5BHCI1nMsWemVFEeZPputV/gHBWVYFmp6649G7ooW4dC5jrENEfHgOXkL957sPHtN1CSTkKDDSd7tjbbt+0h34ciMWvFyLjWOA46evs2kU4a30zbQWBTh+gMyMPXZ9HWwgotS0RXYWF7X978=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725407632; c=relaxed/simple;
-	bh=X3asc9AUtZ5RGKcxdf+XMkzOIMZf7QXdviF+ggzC3Ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3KVDyP2OtlGeaFWjd+mqDpuMBt8AscxkGh5zoVYUGEK+471MO8XAaXvHwYmIxjUiNuXK5eVTghnAAQS1LAqy8CzrLFaMTKgQrEJ5e6D371PurhmEnJ4ahN4sYV2qzpfGdJ1wkIYTq90fchYVz+3KYy8Ui8OEl+Qa34HmoIN+90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hrUItIpq; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1725409112; c=relaxed/simple;
+	bh=I15BAxDBUTieWy0IZOhhAk7ed0bPxi+spKKsUPhhz08=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=B9EPoX0TnJzIr/bTrpsXAVV31qkzKcjgFfY7k9AjVmEH567gXCFFTyfLTdyADtYxxUSSbopYs1sr3OQ5TpLgszRNt62bvLQPoIzi3MURp+SJD+strJh7/ywL9+hXKtLJb3lIDDhUQcuAtkSmDX9B/Y8FBITwfhsyVP3CjwU99K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CbVC1616; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hrUItIpq"
-Date: Tue, 3 Sep 2024 19:53:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725407627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X6EYjF5RW8jhRsqnvywWRVkgXq/RsPBX3XbDK1ZCeIo=;
-	b=hrUItIpqCMHs0ZwSqX3d6Cog07XIbIbkabXOH6dINQk1DaIRS0cqUjk2LcYTcQ9qhghNMI
-	pfSq8RJ946z7zYHtCAu2ETRyKQcjOivZjXmPIRYpapN7IILKqa6n/qvdTqqPSJUoSU5+m0
-	g2BkWPLHOIAw4m+r2z2gO0We1OQUXPs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CbVC1616"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6c358b725feso18350386d6.1
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Sep 2024 17:18:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1725409109; x=1726013909; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ctskL29EfLAIjmAHt2I735/optYRiZRhKdp9ltI34F8=;
+        b=CbVC1616GTFrLT1zAw2firYrSNh0M0SPwXVNQZ11//LhwuQH9hc9DuBpjDyOVo8CtK
+         hZKHdTRBZhQVrgBRcx5sv/LasrK7PYesidlY1/mLh89QM2PMRO1iUGSIAodiSXYpcJNZ
+         O86Di1daXES5wlfdY3UGDgy3NcslX/61UamGNH7BLuBX0j9mOLk4ZlQa4uY/Aj/4EMEH
+         apZSC78VwGaCQFAt8xpDcoIQXdekTKczxdw1zFNFmKyVAsAdiBcrZJjy+f6FT8Zq3Zpb
+         LVPCPL+dzYjjgHTS0LMt6eez4lDvzLw+wky0g0jD9n0fkakB3iaEFLnetHJdMIuxqu0p
+         uARw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725409109; x=1726013909;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ctskL29EfLAIjmAHt2I735/optYRiZRhKdp9ltI34F8=;
+        b=pkdQxutfxw5jURM/kyZwtNTigKTrLI33PDf2osmrDa6+hjdartClYwDUudR0flcMsY
+         I4vLlSmkvQjLjv2E+c4yn8jG6ZH2akTD5pW1eFyYOGL6BASJirhOk6ELCcP+jHOrpTA4
+         uHsm7abmpa2cFtOnvIIvYXmbpPbDTLMAO7uCe9vbi9J/yYnpZgg4OfzdPU3/M73zfAWJ
+         jOV/p854hR+9PvPaNJfaRUX7LiqqMZvIRsIBjJnabwXkhWUUKiF6lruTcwUc1/UsIGpg
+         CEWMDnM229a0mEeHOR/ZxedEXD4KNgxGiL05mJirjov2CMZ8/Ntxgg3BSrtWBgHNbUfc
+         MdwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcHbhBOK5FlyhsbSJNrOIy9c5kiEDhBftffLQkmJZWdb6wTQaD7qj/BBnAFB+uIQydX+2/vZ4AYIqBKskDUK3ACElJ134=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziSObLVrG/qqbhGhG0fIsOzBiQgOvBC4B/X7DeuSknVQ80FqRP
+	IH4Mg12TIIWnVqkXWvEUw43aI9Q7pVXR4YaXdvJ7zWD6itukkl1Gsi8xoAjEC35dIQuVv54pRFm
+	sjg==
+X-Google-Smtp-Source: AGHT+IFYJX0OQDlnuyOuBDrX8gGL7waDJfZYhEV62tEOWfBsBjGK1AKaf/72ZP06vAhwNwcLxyT9Jg==
+X-Received: by 2002:a05:6214:4a06:b0:6c5:dc7:577c with SMTP id 6a1803df08f44-6c50dc75934mr51075426d6.2.1725409109526;
+        Tue, 03 Sep 2024 17:18:29 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c5122edbfdsm10390956d6.108.2024.09.03.17.18.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2024 17:18:29 -0700 (PDT)
+Date: Tue, 03 Sep 2024 20:18:28 -0400
+Message-ID: <0a6ba6a6dbd423b56801b84b01fa8c41@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, apparmor@lists.ubuntu.com, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 1/13] LSM: Add the lsmblob data structure.
+References: <20240830003411.16818-2-casey@schaufler-ca.com>
+In-Reply-To: <20240830003411.16818-2-casey@schaufler-ca.com>
 
-On Mon, Sep 02, 2024 at 06:32:40PM GMT, Kent Overstreet wrote:
-> On Mon, Sep 02, 2024 at 02:52:52PM GMT, Andrew Morton wrote:
-> > On Mon, 2 Sep 2024 05:53:59 -0400 Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > 
-> > > On Mon, Sep 02, 2024 at 11:51:48AM GMT, Michal Hocko wrote:
-> > > > The previous version has been posted in [1]. Based on the review feedback
-> > > > I have sent v2 of patches in the same threat but it seems that the
-> > > > review has mostly settled on these patches. There is still an open
-> > > > discussion on whether having a NORECLAIM allocator semantic (compare to
-> > > > atomic) is worthwhile or how to deal with broken GFP_NOFAIL users but
-> > > > those are not really relevant to this particular patchset as it 1)
-> > > > doesn't aim to implement either of the two and 2) it aims at spreading
-> > > > PF_MEMALLOC_NORECLAIM use while it doesn't have a properly defined
-> > > > semantic now that it is not widely used and much harder to fix.
-> > > > 
-> > > > I have collected Reviewed-bys and reposting here. These patches are
-> > > > touching bcachefs, VFS and core MM so I am not sure which tree to merge
-> > > > this through but I guess going through Andrew makes the most sense.
-> > > > 
-> > > > Changes since v1;
-> > > > - compile fixes
-> > > > - rather than dropping PF_MEMALLOC_NORECLAIM alone reverted eab0af905bfc
-> > > >   ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN") suggested
-> > > >   by Matthew.
-> > > 
-> > > To reiterate:
-> > > 
-> > 
-> > It would be helpful to summarize your concerns.
-> > 
-> > What runtime impact do you expect this change will have upon bcachefs?
+On Aug 29, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> For bcachefs: I try really hard to minimize tail latency and make
-> performance robust in extreme scenarios - thrashing. A large part of
-> that is that btree locks must be held for no longer than necessary.
+> When more than one security module is exporting data to audit and
+> networking sub-systems a single 32 bit integer is no longer
+> sufficient to represent the data. Add a structure to be used instead.
 > 
-> We definitely don't want to recurse into other parts of the kernel,
-> taking other locks (i.e. in memory reclaim) while holding btree locks;
-> that's a great way to stack up (and potentially multiply) latencies.
+> The lsmblob structure definition is intended to keep the LSM
+> specific information private to the individual security modules.
+> The module specific information is included in a new set of
+> header files under include/lsm. Each security module is allowed
+> to define the information included for its use in the lsmblob.
+> SELinux includes a u32 secid. Smack includes a pointer into its
+> global label list. The conditional compilation based on feature
+> inclusion is contained in the include/lsm files.
 > 
-> But gfp flags don't work with vmalloc allocations (and that's unlikely
-> to change), and we require vmalloc fallbacks for e.g. btree node
-> allocation. That's the big reason we want MEMALLOC_PF_NORECLAIM.
-> 
-> Besides that, it's just cleaner, memalloc flags are the direction we
-> want to be moving in, and it's going to be necessary if we ever want to
-> do a malloc() that doesn't require a gfp flags parameter. That would be
-> a win for safety and correctness in the kernel, and it's also likely
-> required for proper Rust support.
-> 
-> And the "GFP_NOFAIL must not fail" argument makes no sense, because a
-> failing a GFP_NOFAIL allocation is the only sane thing to do if the
-> allocation is buggy (too big, i.e. resulting from an integer overflow
-> bug, or wrong context). The alternatives are at best never returning
-> (stuck unkillable process), or a scheduling while atomic bug, or Michal
-> was even proposing killing the process (handling it like a BUG()!).
-> 
-> But we don't use BUG_ON() for things that we can't prove won't happen in
-> the wild if we can write an error path.
-> 
-> That is, PF_MEMALLOC_NORECLAIM lets us turn bugs into runtime errors.
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: apparmor@lists.ubuntu.com
+> Cc: bpf@vger.kernel.org
+> Cc: selinux@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> ---
+>  include/linux/lsm/apparmor.h | 17 +++++++++++++++++
+>  include/linux/lsm/bpf.h      | 16 ++++++++++++++++
+>  include/linux/lsm/selinux.h  | 16 ++++++++++++++++
+>  include/linux/lsm/smack.h    | 17 +++++++++++++++++
+>  include/linux/security.h     | 20 ++++++++++++++++++++
+>  5 files changed, 86 insertions(+)
+>  create mode 100644 include/linux/lsm/apparmor.h
+>  create mode 100644 include/linux/lsm/bpf.h
+>  create mode 100644 include/linux/lsm/selinux.h
+>  create mode 100644 include/linux/lsm/smack.h
 
-BTW, one of the reasons I've been giving this issue so much attention is
-because of filesystem folks mentioning that they want GFP_NOFAIL
-semantics more widely, and I actually _don't_ think that's a crazy idea,
-provided we go about it the right way.
+...
 
-Not having error paths is right out; many allocations when you start to
-look through more obscure code have sizes that are controlled by
-userspace, so we'd be opening ourselves up to trivially expoitable
-security bugs.
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 1390f1efb4f0..0057a22137e8 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -34,6 +34,10 @@
+>  #include <linux/sockptr.h>
+>  #include <linux/bpf.h>
+>  #include <uapi/linux/lsm.h>
+> +#include <linux/lsm/selinux.h>
+> +#include <linux/lsm/smack.h>
+> +#include <linux/lsm/apparmor.h>
+> +#include <linux/lsm/bpf.h>
+>  
+>  struct linux_binprm;
+>  struct cred;
+> @@ -140,6 +144,22 @@ enum lockdown_reason {
+>  	LOCKDOWN_CONFIDENTIALITY_MAX,
+>  };
+>  
+> +/* scaffolding */
+> +struct lsmblob_scaffold {
+> +	u32 secid;
+> +};
+> +
+> +/*
+> + * Data exported by the security modules
+> + */
+> +struct lsmblob {
+> +	struct lsmblob_selinux selinux;
+> +	struct lsmblob_smack smack;
+> +	struct lsmblob_apparmor apparmor;
+> +	struct lsmblob_bpf bpf;
+> +	struct lsmblob_scaffold scaffold;
+> +};
 
-However, if we agreed that GFP_NOFAIL meant "only fail if it is not
-possible to satisfy this allocation" (and I have been arguing that that
-is the only sane meaning) - then that could lead to a lot of error paths
-getting simpler.
+Warning, top shelf bikeshedding follows ...
 
-Because there are a lot of places where there's essentially no good
-reason to bubble up an -ENOMEM to userspace; if we're actually out of
-memory the current allocation is just one out of many and not
-particularly special, better to let the oom killer handle it...
+I believe that historically when we've talked about the "LSM blob" we've
+usually been referring to the opaque buffers used to store LSM state that
+we attach to a number of kernel structs using the `void *security` field.
 
-So the error paths would be more along the lines of "there's a bug, or
-userspace has requested something crazy, just shut down gracefully".
+At least that is what I think of when I read "struct lsmblob", and I'd
+like to get ahead of the potential confusion while we still can.
 
-While we're at it, the definition of what allocation size is "too big"
-is something we'd want to look at. Right now it's hardcoded to INT_MAX
-for non GFP_NOFAIL and (I believe) 2 pages for GFP_NOFAL, we might want
-to consider doing something based on total memory in the machine and
-have the same limit apply to both...
+Casey, I'm sure you're priority is simply getting this merged and you
+likely care very little about the name (as long as it isn't too horrible),
+but what about "lsm_ref"?  Other ideas are most definitely welcome.
 
+I'm not going to comment on all the other related occurrences in the
+patchset, but all the "XXX_lsmblob_XXX" functions should be adjusted based
+on what we name the struct, e.g. "XXX_lsmref_XXX".
 
+--
+paul-moore.com
