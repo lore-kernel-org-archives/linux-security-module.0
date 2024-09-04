@@ -1,31 +1,31 @@
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF8B1EBFE4;
-	Wed,  4 Sep 2024 12:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABAF1DA105;
+	Wed,  4 Sep 2024 12:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725453966; cv=none; b=fEoOU3h1vHUJekkJ16/PbUfwqyOt+XPTz1yi8TUCf+SqbSWCaTXnjr3mvwzWPuQN0wBBDwr0u/JiL7GEWrfntcIjinAoC/psbZmeqhQ1ayRdFUCrEyaDRbXBJLg5vdJ/nJ0zmd/E/ktz8zHgmo8MkgZQgeGf2TK9tKe17lIXjCQ=
+	t=1725454603; cv=none; b=DuS80Yqu/e7oGeC+kYjlSpR/gtzeNiM6gw3azEihN/FgAhvTxfs0/gfsrFuHb13BJIR+Ud/nNzALUUOxJ5IRMjpwSaV5fuC78vFt3EHU616ANF38gOYm2CpDyc9G5I/Uhqy147UsGC2mQfYNakjknPtfI5iYJelp5Ei3DuWS/BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725453966; c=relaxed/simple;
-	bh=cWolgnJVYu/jZYJy8UBqMypLIpR4FmQEeBseScVKGw0=;
+	s=arc-20240116; t=1725454603; c=relaxed/simple;
+	bh=AEqqzoAnneoSB02PHYheeGp6M47QuXiRUOgCai4++r4=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=jLZqn3nqOfaRHyiW03XVboqt5lmZ0sB7YfPYuMWq5hbZjq84srwtY2+UlfygITpkv8+795ssuxAdaY5MK1IVeFcfAoNELxmVELXfBY7XWYgJT7J4d6umGKxB+qJEWFpOa1WT6URmQDkX4oneHrNlR5pb4GSxBp7FUxinzf1tP+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.191
+	 In-Reply-To:Content-Type; b=d1Pn21ne6LbrxzLCb//sgBlsYcsPv55xGZarTMJMBkcv8ws9LG4tm6NBrpAvgQTLNYJ8ghtthiLHCLv7/ZNGrG57FP8TI61wUTMIHzB+xhhxwoF9FchLs8/nAv5wKLNMzH6tnG1425uwz7WNOq2/3W2Le2C+p0j9naGHUZVBuM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WzMfS2nghz1j83j;
-	Wed,  4 Sep 2024 20:45:36 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WzMt30fpPzyR5c;
+	Wed,  4 Sep 2024 20:55:39 +0800 (CST)
 Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id A05921A016C;
-	Wed,  4 Sep 2024 20:45:56 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id D9AB218024B;
+	Wed,  4 Sep 2024 20:56:36 +0800 (CST)
 Received: from [10.123.123.159] (10.123.123.159) by
  kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 4 Sep 2024 20:45:53 +0800
-Message-ID: <002a2153-a1fd-a8c7-549f-50cd215aeb81@huawei-partners.com>
-Date: Wed, 4 Sep 2024 15:45:49 +0300
+ 15.2.1544.11; Wed, 4 Sep 2024 20:56:33 +0800
+Message-ID: <655fca48-1d87-5ee2-4e8a-a94f34323c73@huawei-partners.com>
+Date: Wed, 4 Sep 2024 15:56:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -33,8 +33,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 12/19] selftests/landlock: Test that kernel space
- sockets are not restricted
+Subject: Re: [RFC PATCH v1 2/4] selftests/landlock: Implement per-syscall
+ microbenchmarks
 Content-Language: ru
 From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
 To: <mic@digikod.net>
@@ -42,78 +42,72 @@ CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
 	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
 	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
 	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-13-ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <20240904104824.1844082-13-ivanov.mikhail1@huawei-partners.com>
+References: <20240816005943.1832694-1-ivanov.mikhail1@huawei-partners.com>
+ <20240816005943.1832694-3-ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20240816005943.1832694-3-ivanov.mikhail1@huawei-partners.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
  kwepemj200016.china.huawei.com (7.202.194.28)
 
-9/4/2024 1:48 PM, Mikhail Ivanov wrote:
-> Add test validating that Landlock provides restriction of user space
-> sockets only.
-> 
-> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> ---
->   .../testing/selftests/landlock/socket_test.c  | 39 ++++++++++++++++++-
->   1 file changed, 38 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
-> index ff5ace711697..23698b8c2f4d 100644
-> --- a/tools/testing/selftests/landlock/socket_test.c
-> +++ b/tools/testing/selftests/landlock/socket_test.c
-> @@ -7,7 +7,7 @@
->   
->   #define _GNU_SOURCE
->   
-> -#include <linux/landlock.h>
-> +#include "landlock.h"
-
-typo, will be fixed
-
->   #include <linux/pfkeyv2.h>
->   #include <linux/kcm.h>
->   #include <linux/can.h>
-> @@ -628,4 +628,41 @@ TEST(unsupported_af_and_prot)
->   	EXPECT_EQ(ESOCKTNOSUPPORT, test_socket(AF_UNIX, SOCK_PACKET, 0));
+8/16/2024 3:59 AM, Mikhail Ivanov wrote:> diff --git 
+a/tools/testing/selftests/landlock/bench/run.sh 
+b/tools/testing/selftests/landlock/bench/run.sh
+> index afbcbb2ba6aa..582313f689ad 100755
+> --- a/tools/testing/selftests/landlock/bench/run.sh
+> +++ b/tools/testing/selftests/landlock/bench/run.sh
+> @@ -237,14 +242,48 @@ print_overhead()
+>   	done < $BASE_TRACE_DUMP
 >   }
 >   
-> +TEST(kernel_socket)
+> +print_overhead_workload()
 > +{
-> +	const struct landlock_ruleset_attr ruleset_attr = {
-> +		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
-> +	};
-> +	struct landlock_socket_attr smc_socket_create = {
-> +		.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
-> +		.family = AF_SMC,
-> +		.type = SOCK_STREAM,
-> +	};
-> +	int ruleset_fd;
+> +	print "\nTracing results\n"
+> +	print "===============\n"
+> +	print "cmd: "
+> +	print "%s " $WORKLOAD
+> +	print "\n"
+> +	print "syscalls: %s\n" $TRACED_SYSCALLS
+> +	print "access: %s\n" $ACCESS
 > +
-> +	/*
-> +	 * Checks that SMC socket is created sucessfuly without
-> +	 * landlock restrictions.
-> +	 */
-> +	ASSERT_EQ(0, test_socket(AF_SMC, SOCK_STREAM, 0));
-> +
-> +	ruleset_fd =
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
-> +				       &smc_socket_create, 0));
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	ASSERT_EQ(0, close(ruleset_fd));
-> +
-> +	/*
-> +	 * During the creation of an SMC socket, an internal service TCP socket
-> +	 * is also created (Cf. smc_create_clcsk).
-> +	 *
-> +	 * Checks that Landlock does not restrict creation of the kernel space
-> +	 * socket.
-> +	 */
-> +	EXPECT_EQ(0, test_socket(AF_SMC, SOCK_STREAM, 0));
+> +	print_overhead
 > +}
 > +
->   TEST_HARNESS_MAIN
+> +print_overhead_microbench()
+> +{
+> +	print "\nTracing results\n"
+> +	print "===============\n"
+> +	print "cmd: Microbenchmarks\n"
+> +	print "syscalls: %s\n" $TRACED_SYSCALLS
+> +
+> +	print_overhead
+> +}
+> +
+> +form_trace_cmd()
+> +{
+> +	trace_cmd=$TRACE_CMD
+> +	trace_cmd+=" -e $1 -D $SANDBOX_DELAY -o $TMP_BUF"
+> +	trace_cmd+=" $TASKSET -c $CPU_AFFINITY"
+> +	trace_cmd+=" $NICE -n -19"
+> +
+> +	echo $trace_cmd
+> +}
+> +
+>   run_traced_workload()
+>   {
+> +	trace_cmd=$(form_trace_cmd $TRACED_SYSCALLS)
+> +
+>   	if [ $1 == 0 ]; then
+>   		output=$BASE_TRACE_DUMP
+> -		sandbox_cmd=
+>   	else
+>   		output=$LL_TRACE_DUMP
+> -		sandbox_cmd="$SANDBOXER_BIN $SANDBOXER_ARGS"
+> +		trace_cmd+="$SANDBOXER_BIN $SANDBOXER_ARGS"
+
+Missing space:
+	trace_cmd+=" $SANDBOXER_BIN $SANDBOXER_ARGS"
+
+>   	fi
+>   
+>   	echo '' > $output
