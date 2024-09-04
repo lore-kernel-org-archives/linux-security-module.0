@@ -1,76 +1,44 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387191527B1
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 22:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCBF14EC6E
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 23:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725489284; cv=none; b=kgPBn3W8JM2qeGZNXKDwoCtqG8b9jszrqT50EWMlNzx6q2L6mSXMqZzqnrMx6d9RFQJ9sKSguhPH4KuQp89K8bHJW4PGzr06eKJd8NG+jaM1A08ZY4ZoOtWb0U1KtULvxWKFByGSsBoI1T6J7XceXc0JwyqnrUNbyBOJPjmyI8k=
+	t=1725491137; cv=none; b=D3k9AgKiT0bRzPAJiO/tyJLgTthSWw3XR03/ognH68lPnigtkW9lMpEL9Q0YmK+v4nSdxVwRYZ+Lf1uJwRS8jdx7sk1jcDJB2GaGnq6PZ0TThrFNu7IYFMbsgMgpCSuHdjgDUeTxeENa8G/PTto2mGbwiPMmSyy6buXI+YmcWrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725489284; c=relaxed/simple;
-	bh=azNdSubL/Np7rjlyzstSXo50QK9v1c6dCaOiUjTAdec=;
+	s=arc-20240116; t=1725491137; c=relaxed/simple;
+	bh=AL7jBf/oj0Cd/KEMZtrNE6Gk35+GwCCya7UV9FRkstA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sLbhy2o9Dapp2wam4B0PzswHFyRRVTiBHsVVgeMANsoV8t35DGb6G1D4IUgTK6IdwkTvOQb2wnkgrTJkjnWdY6L+kdl9zUEn+wFlxbcK6xeOhyq8WG1u7uUwJyAojeKjqaP1506rM4AKwQgxiXzMZJvTkz+yZgWnh7wZdmFiwPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=E7WNbKTs; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=n15CxvIkiSmNQWlb/GeAzinyypJMZkbfURZphMlKp3ZL3vJq3jJuIH1Fc+Jhit00nkdCVf3uGmyMuXJ221Pjgv4yH4OpHfB7W60xiajkmSJKs6ITiCuiOQkd0Z1okUYwNxRSgzX0RhlqcGf0ROo7mCkgRjvcQDVONa3t00VfJik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qldlD+ML; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="E7WNbKTs"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2054e22ce3fso1603865ad.2
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Sep 2024 15:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1725489282; x=1726094082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WyO77SPTX9aXQDMtbIN6DxC5ZyN7lMLaLLUCQ5eXYrk=;
-        b=E7WNbKTs4JxJo1MMAfhzzJrvcBfpWzZkQPIsKx/nbaOW90cPsqOJxCi6ur5obuYqKb
-         pI2JVy18sRsboGfciA1ncu0Zx32TfTuswu1PAJOSgX1pfdn7+6uHqUouQs35btQ1qf5J
-         AmqIer4O8zLHwi6bOjtgK1kR4U2fGY28QzThbrY/rmjLdaaeXN0W5iH0Ls7LgRf9e41V
-         2Ck0l55dFHeNBvCoeZiot1M/90HIL3ki7vgWdqKvFV/PZNJ9edeqrUpvnqhRWYzBzIEA
-         podSwNjgK1uObHw5rUTuDJK5RiTjeTG7Ct3frDGy5+CM9XN5ZzrXKt9owdnEl5H72ub5
-         fZfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725489282; x=1726094082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WyO77SPTX9aXQDMtbIN6DxC5ZyN7lMLaLLUCQ5eXYrk=;
-        b=BRGUqF70YKWGUKyj2iXVlhwPdWf4+uJGAEnm28T9nkaO6ooqsVYF8IO7UPqo4tZGZ0
-         xxG/jrhYP2QxU5oKcJ9mN4faoLTCMMArl5M+K7J46fffNc7UajJEeiBN0NKhQN3F1Rr0
-         PXCLTURPXZRPkhl6yolQcFKnnAW/Jct6NNfxNSKN8a8lpYGzb+T3nYtQhcg/ktPCvaKN
-         01sxezGEV51nJ2Y+RP/nV1jRTns1udKtMy8Ym6tCmFY4TMqtCDyfbJY4VJ8f+292DUM5
-         915h8pDx9KUCudJeM5jf4Ma9Yxm4/ZBJOOQIlcb7hgKr71/s/cB0U4qXiAAVthv5fh9q
-         cxnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhDn9xQpfbuMQh4NFFCtHyL7sG+JiTIskgC2t9+O6oZpG75E39zpWSdkg6k70zohtbG6TlBp+2bkAZ3zu3Iq5KHLJ7pjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJq69uFeUFP/FLN8SqaG4ii+GWUHPJLJRYQcTiiQd5+GpcFURT
-	EWNRoYQXi/HcRtUzSNem8XGlmAqotAhU5BmHqt/gz0MW5Dg/h/OajIWLRDeejAQ=
-X-Google-Smtp-Source: AGHT+IEa7j7zwgb9tFFz5fxY6zFlznbHmhxEaWFrBcv9Z9lGCysxf/bgq/9UC3jOBUkEX0m0MasoXw==
-X-Received: by 2002:a17:902:f682:b0:206:9640:e747 with SMTP id d9443c01a7336-20699b21af3mr79663415ad.43.1725489282411;
-        Wed, 04 Sep 2024 15:34:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea582f4sm18038375ad.233.2024.09.04.15.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Sep 2024 15:34:41 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1slyaF-000tWk-0T;
-	Thu, 05 Sep 2024 08:34:39 +1000
-Date: Thu, 5 Sep 2024 08:34:39 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Michal Hocko <mhocko@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qldlD+ML"
+Date: Wed, 4 Sep 2024 19:05:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725491134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KcVsx2vDwlHG4tKH3VNsA9AGL8ypQbgKqlGsi88qPzs=;
+	b=qldlD+MLY/awoHP6h9eDQb6YaviSGzhThCweSL040WEvRSqzzpwPqgx4HAaievFjLWZKJt
+	nQkeee2r7E5VxY5DhvIDWaXMdorCngIxHzEpFVSmRe+B0DEzFquLXaGVZsRk0xBPM5/Bz8
+	Nd8G9AiWuM4qKc/av28TbAlF1hyYCF0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
+	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <Ztjgf/mzdnhj/szl@dread.disaster.area>
+Message-ID: <hebnghkaytxb5djjsh6w7eddl7czrbnd7duobwisauffs5ax2q@4itp76zkzsf7>
 References: <20240902095203.1559361-1-mhocko@kernel.org>
  <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
  <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
@@ -80,6 +48,7 @@ References: <20240902095203.1559361-1-mhocko@kernel.org>
  <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
  <ZtiOyJ1vjY3OjAUv@tiehlicka>
  <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
+ <Ztjgf/mzdnhj/szl@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -88,88 +57,89 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
+In-Reply-To: <Ztjgf/mzdnhj/szl@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 04, 2024 at 02:03:13PM -0400, Kent Overstreet wrote:
-> On Wed, Sep 04, 2024 at 06:46:00PM GMT, Michal Hocko wrote:
-> > On Wed 04-09-24 12:05:56, Kent Overstreet wrote:
-> > > But it seems to me that the limit should be lower if you're on e.g. a 2
-> > > GB machine (not failing with a warning, just failing immediately rather
-> > > than oom killing a bunch of stuff first) - and it's going to need to be
-> > > raised above INT_MAX as large memory machines keep growing, I keep
-> > > hitting it in bcachefs fsck code.
+On Thu, Sep 05, 2024 at 08:34:39AM GMT, Dave Chinner wrote:
+> I've seen xfs_repair require a couple of TB of RAM to repair
+> metadata heavy filesystems of relatively small size (sub-20TB).
+> Once you get about a few hundred GB of metadata in the filesystem,
+> the fsck cross-reference data set size can easily run into the TBs.
+> 
+> So 256GB might *seem* like a lot of memory, but we were seeing
+> xfs_repair exceed that amount of RAM for metadata heavy filesystems
+> at least a decade ago...
+> 
+> Indeed, we recently heard about a 6TB filesystem with 15 *billion*
+> hardlinks in it.  The cross reference for resolving all those
+> hardlinks would require somewhere in the order of 1.5TB of RAM to
+> hold. The only way to reliably handle random access data sets this
+> large is with pageable memory....
+
+Christ...
+
+This is also where space efficiency of metadata starts to really matter. 
+
+Of course you store full backreferences for every hardlink, which is
+nice in some ways and a pain in others.
+
+> > Another more pressing one is the extents -> backpointers and
+> > backpointers -> extents passes of fsck; we do a linear scan through one
+> > btree checking references to another btree. For the btree we're checking
+> > references to the lookups are random, so we need to cache and pin the
+> > entire btree in ram if possible, or if not whatever will fit and we run
+> > in multiple passes.
 > > 
-> > Do we actual usecase that would require more than couple of MB? The
-> > amount of memory wouldn't play any actual role then.
+> > This is the #1 scalability issue hitting a number of users right now, so
+> > I may need to rewrite it to pull backpointers into an eytzinger array
+> > and do our random lookups for backpointers on that - but that will be
+> > "the biggest vmalloc array we can possible allocate", so the INT_MAX
+> > size limit is clearly an issue there...
 > 
-> Which "amount of memory?" - not parsing that.
+> Given my above comments, I think you are approaching this problem
+> the wrong way. It is known that the data set that can exceed
+> physical kernel memory size, hence it needs to be swappable. That
+> way users can extend the kernel memory capacity via swapfiles when
+> bcachefs.fsck needs more memory than the system has physical RAM.
+
+Well, it depends on the locality of the cross references - I don't think
+we want to go that route here, because if there isn't any locality in
+the cross references we'll just be thrashing; better to run in multiple
+passes, constraining each pass to what _will_ fit in ram...
+
+It would be nice if we had a way to guesstimate locality in extents <->
+backpointers references - if there is locality, then it's better to just
+run in one pass - and we wouldn't bother with building up new tables,
+we'd just rely on the btree node cache.
+
+Perhaps that's what we'll do when online fsck is finished and we're
+optimizing more for "don't disturb the rest of the system too much" than
+"get it done as quick as possible".
+
+I do need to start making use of Darrick's swappable memory code in at
+least one other place though - the bucket tables when we're checking
+basic allocation info. That one just exceeded the INT_MAX limit for a
+user with a 30 TB hard drive, so I switched it to a radix tree for now,
+but it really should be swappable memory.
+
+Fortunately there's more locality in the accesses there.
+
+> Hence Darrick designed and implemented pageable shmem backed memory
+> files (xfiles) to hold these data sets. Hence the size limit of the
+> online repair data set is physical RAM + swap space, same as it is
+> for offline repair. You can find the xfile code in
+> fs/xfs/scrub/xfile.[ch].
 > 
-> For large allocations in bcachefs: in journal replay we read all the
-> keys in the journal, and then we create a big flat array with references
-> to all of those keys to sort and dedup them.
-> 
-> We haven't hit the INT_MAX size limit there yet, but filesystem sizes
-> being what they are, we will soon. I've heard of users with 150 TB
-> filesystems, and once the fsck scalability issues are sorted we'll be
-> aiming for petabytes. Dirty keys in the journal scales more with system
-> memory, but I'm leasing machines right now with a quarter terabyte of
-> ram.
+> Support for large, sortable arrays of fixed size records built on
+> xfiles can be found in xfarray.[ch], and blob storage in
+> xfblob.[ch].
 
-I've seen xfs_repair require a couple of TB of RAM to repair
-metadata heavy filesystems of relatively small size (sub-20TB).
-Once you get about a few hundred GB of metadata in the filesystem,
-the fsck cross-reference data set size can easily run into the TBs.
+*nod*
 
-So 256GB might *seem* like a lot of memory, but we were seeing
-xfs_repair exceed that amount of RAM for metadata heavy filesystems
-at least a decade ago...
+I do wish we had normal virtually mapped swappable memory though - the
+thing I don't like about xfarray is that it requires a radix tree walk
+on every access, and we have _hardware_ that's meant to do that for
+us.
 
-Indeed, we recently heard about a 6TB filesystem with 15 *billion*
-hardlinks in it.  The cross reference for resolving all those
-hardlinks would require somewhere in the order of 1.5TB of RAM to
-hold. The only way to reliably handle random access data sets this
-large is with pageable memory....
-
-> Another more pressing one is the extents -> backpointers and
-> backpointers -> extents passes of fsck; we do a linear scan through one
-> btree checking references to another btree. For the btree we're checking
-> references to the lookups are random, so we need to cache and pin the
-> entire btree in ram if possible, or if not whatever will fit and we run
-> in multiple passes.
-> 
-> This is the #1 scalability issue hitting a number of users right now, so
-> I may need to rewrite it to pull backpointers into an eytzinger array
-> and do our random lookups for backpointers on that - but that will be
-> "the biggest vmalloc array we can possible allocate", so the INT_MAX
-> size limit is clearly an issue there...
-
-Given my above comments, I think you are approaching this problem
-the wrong way. It is known that the data set that can exceed
-physical kernel memory size, hence it needs to be swappable. That
-way users can extend the kernel memory capacity via swapfiles when
-bcachefs.fsck needs more memory than the system has physical RAM.
-
-This is a problem Darrick had to address for the XFS online repair
-code - we've known for a long time that repair needs to hold a data
-set larger than physical memory to complete successfully. Hence for
-online repair we needed a mechanism that provided us with pagable
-kernel memory. vmalloc() is not an option - it has hard size limits
-(both API based and physical capacity based).
-
-Hence Darrick designed and implemented pageable shmem backed memory
-files (xfiles) to hold these data sets. Hence the size limit of the
-online repair data set is physical RAM + swap space, same as it is
-for offline repair. You can find the xfile code in
-fs/xfs/scrub/xfile.[ch].
-
-Support for large, sortable arrays of fixed size records built on
-xfiles can be found in xfarray.[ch], and blob storage in
-xfblob.[ch].
-
-vmalloc() is really not a good solution for holding arbitrary sized
-data sets in kernel memory....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+But if you still care about 32 bit then that does necessitate Darrick's
+approach. I'm willing to consider 32 bit legacy for bcachefs, though.
