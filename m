@@ -1,135 +1,397 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B47A19D082
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Sep 2024 14:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA10919E827;
+	Thu,  5 Sep 2024 15:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545578; cv=none; b=Z9DFPVWDdq/UGBU/1JBazWXxX1SP+UfTP+kCFLj6rR/XHuNQhmSvtd6HAn6F8pNXBaB3uN9XT/y5mTh+tSO/ch9CsTQymEowFYKZ0J8w5UZeMwBpxxdxWAMRTvLKWyXTyAz3AlsEu/H7ySQgG2H18K+ZAHnyU4TXXECTQsR15aI=
+	t=1725548810; cv=none; b=ZA1OKE3h5AZ+FLNgyuL4G09ylTNsfqc+/Mj6EWo06e20fUqczD8fVrTokMTpX6QefXo34nolwJWjvjXi803Jtf5d2AQ9cxNlUL8skEIWXQfAnxY0R+xb9XggZVJTMzbbCR1v9lR+mwdquMeqMO4a3vHHG4xeNNzZffZYQy74VFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545578; c=relaxed/simple;
-	bh=gIpwCb6OV6UwPMTwnRjpauWp1JHz59zzWwEgm74aOlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKP0v7Fe+R/2fj3FHjCGL02015C9OmUkZwbnCaBfqx91X+cMVH9g2Mm+QDLJmlw/hmWQwp+uw7MfYvF7Tl8gWPV9KSG2UoJS8iowSQ8t8DRyC3EIpOF7lDUxBJptE7IPclJD3Z7z6sqvEN56OXwRGpdpBk5s0T+Q7tu/+5/t+qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fzkBDS/8; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fzkBDS/8"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-533521cd1c3so1077118e87.1
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Sep 2024 07:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725545574; x=1726150374; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwYsBihYTyfOkMwcrQ2PgVwPBmg+Ta54Eew3ioB7SiQ=;
-        b=fzkBDS/8pvFq4Xc8f/Fa2RY3BiXmomhg0qoazjTcSjQXm/YO48sC4nMS+/dZJmrFbM
-         Yhd4jGUFonnzfk1cWfmKUILW7d9OwsbSSvnb0AA44rNsdcEAg/IvdfB5zJmR0bS45+Bw
-         27FsoiC9HRTJth/KITNi8Dq9n1kx/ueWUdninPQfhhj00Po/QviTMSO2+o4ttYItdreV
-         uxQjUDzofWmqJ6+hoArSW6TSQZt+XzVBU6maC2kUohbxWsBDX27DbKFIIPMr5kSGmZw7
-         zL18ZVt3lzrXxfmHnnz3V6F8bWLA+/e1MXul+HWl9OlOIXADIdXF4Mxs9JttIKeaWdLK
-         06zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725545574; x=1726150374;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gwYsBihYTyfOkMwcrQ2PgVwPBmg+Ta54Eew3ioB7SiQ=;
-        b=P4536n4BgGeobzRfnGRg2Y8cEoK1ifPIVeYmzSyXXM2uFPJ3vLl4v9eDbY46t/ctml
-         IzHB1OFE1/wUPCHGLFZ9PpT4mAdu6TZKWQBDVLItQO6XFsyx7J65/W/JUaGZp5olo8C2
-         o1O+Zj7hTOpJd/VsN+ZvAkAlApmTH9bRHHldEB/Pn8tA5zD73MCDyFru95EBS7WQhhBJ
-         p3gOeD5rrwSp4ldW0kxgZ9EO8sX8DSSg8eEYQzwwh7t4S1kEvMsTfoUAoxyDdXoO0DUP
-         cUjlspNFyZJJA4ecVrTlB55AZ+EvKOJqCooE8WGFXEHnL5JPlBvKhr9y85GRLGWtEEQf
-         IV1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVPAPmMSXznSUmWFKHrdtWF1M/IH87+QmYTeCufygapIPyB07e6BSGxgwIytrlvt+bpgKiLgsTNTJ8i014Lt5OcokcCpSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFqqw23uNFUDIxLY9DWcNloVzG8xt+rHaNGe/Xm3nYfhwqDvHu
-	ZRbIcoGlGTKBGAOas43Lbe4LFjN3eVoOO2Zh7QXGT+NCDbsVpbtObY38uaSyvwo=
-X-Google-Smtp-Source: AGHT+IGsTyoQo5r21FHK64nbduDdB0RMk5Y4ciVDsCqSQ9O4YP1mPL/j+bbkh4RnUZCAoKKWGupTJg==
-X-Received: by 2002:a05:6512:a8b:b0:536:54ff:51c8 with SMTP id 2adb3069b0e04-53654ff53dbmr1077754e87.17.1725545574270;
-        Thu, 05 Sep 2024 07:12:54 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623c2fa2sm142182366b.183.2024.09.05.07.12.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Sep 2024 07:12:54 -0700 (PDT)
-Date: Thu, 5 Sep 2024 16:12:53 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
-	Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <Ztm8ZY0kXWLFspYJ@tiehlicka>
-References: <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
- <ZtgI1bKhE3imqE5s@tiehlicka>
- <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
- <ZtiOyJ1vjY3OjAUv@tiehlicka>
- <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
- <ZtmVej0fbVxrGPVz@tiehlicka>
- <20240905135326.GU9627@mit.edu>
+	s=arc-20240116; t=1725548810; c=relaxed/simple;
+	bh=HexUfndJtKlTs4DBTxqhlHBf2aCiiqQ0GWD6DRpuHDA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O08yMPE3cgFlmFFj0ViBhd0GrUdFFZf/KWSQAJwwoASinrB66yE/6OTZ5QCaQcwfzXFLQjmSD2aQk21vBb6fZcZ9K4BAiIOi4mv0r1tk5s886kEhummjYJqqUAdPHFQccCuqETMReNoeRrEib+9hkIFZG/TAycHzGhhmXny9J4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4X02JS43mjz9v7Hk;
+	Thu,  5 Sep 2024 22:47:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id C2E43140516;
+	Thu,  5 Sep 2024 23:06:32 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDXZy_myNlmE0tUAA--.16274S2;
+	Thu, 05 Sep 2024 16:06:31 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	corbet@lwn.net,
+	akpm@linux-foundation.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	shuah@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com
+Cc: linux-integrity@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	wufan@linux.microsoft.com,
+	pbrobinson@gmail.com,
+	zbyszek@in.waw.pl,
+	hch@lst.de,
+	mjg59@srcf.ucam.org,
+	pmatilai@redhat.com,
+	jannh@google.com,
+	dhowells@redhat.com,
+	jikos@kernel.org,
+	mkoutny@suse.com,
+	ppavlu@suse.com,
+	petr.vorel@gmail.com,
+	mzerqung@0pointer.de,
+	kgold@linux.ibm.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v5 00/14] integrity: Introduce the Integrity Digest Cache
+Date: Thu,  5 Sep 2024 17:05:29 +0200
+Message-Id: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905135326.GU9627@mit.edu>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwDXZy_myNlmE0tUAA--.16274S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3urykCryDtr47uryDWr15Jwb_yoW8Wr4UXo
+	ZYkwsxXw4kKFy3AF4DCFnrAay7W3sYgw1xAr4vvryUZFyfXFyUGa4DCa1DJFy3Zr48Xr97
+	Za48Z3yUXFWDtwn3n29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYa7kC6x804xWl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK
+	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF
+	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7
+	CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF
+	7I0En4kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+	8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+	xVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI
+	8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnU
+	UI43ZEXa7IU0uMKtUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQARBGbZE3MK1wAAsW
 
-On Thu 05-09-24 09:53:26, Theodore Ts'o wrote:
-> On Thu, Sep 05, 2024 at 01:26:50PM +0200, Michal Hocko wrote:
-> > > > > > This is exactly GFP_KERNEL semantic for low order allocations or
-> > > > > > kvmalloc for that matter. They simply never fail unless couple of corner
-> > > > > > cases - e.g. the allocating task is an oom victim and all of the oom
-> > > > > > memory reserves have been consumed. This is where we call "not possible
-> > > > > > to allocate".
-> > > > > 
-> > > > > Which does beg the question of why GFP_NOFAIL exists.
-> > > > 
-> > > > Exactly for the reason that even rare failure is not acceptable and
-> > > > there is no way to handle it other than keep retrying. Typical code was 
-> > > > 	while (!(ptr = kmalloc()))
-> > > > 		;
-> > > 
-> > > But is it _rare_ failure, or _no_ failure?
-> > >
-> > > You seem to be saying (and I just reviewed the code, it looks like
-> > > you're right) that there is essentially no difference in behaviour
-> > > between GFP_KERNEL and GFP_NOFAIL.
-> 
-> That may be the currrent state of affiars; but is it
-> ****guaranteed**** forever and ever, amen, that GFP_KERNEL will never
-> fail if the amount of memory allocated was lower than a particular
-> multiple of the page size?
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-No, GFP_KERNEL is not guaranteed. Allocator tries as hard as it can to
-satisfy those allocations for order <= PAGE_ALLOC_COSTLY_ORDER.
+Integrity detection and protection has long been a desirable feature, to
+reach a large user base and mitigate the risk of flaws in the software
+and attacks.
 
-GFP_NOFAIL is guaranteed for order <= 1 for page allocator and there is
-no practical limit for vmalloc currently. This is what our documentation
-says
- * The default allocator behavior depends on the request size. We have a concept
- * of so-called costly allocations (with order > %PAGE_ALLOC_COSTLY_ORDER).
- * !costly allocations are too essential to fail so they are implicitly
- * non-failing by default (with some exceptions like OOM victims might fail so
- * the caller still has to check for failures) while costly requests try to be
- * not disruptive and back off even without invoking the OOM killer.
- * The following three modifiers might be used to override some of these
- * implicit rules.
+However, while solutions exist, they struggle to reach a large user base,
+due to requiring higher than desired constraints on performance,
+flexibility and configurability, that only security conscious people are
+willing to accept.
 
-There is no guarantee this will be that way for ever. This is unlikely
-to change though.
+For example, IMA measurement requires the target platform to collect
+integrity measurements, and to protect them with the TPM, which introduces
+a noticeable overhead (up to 10x slower in a microbenchmark) on frequently
+used system calls, like the open().
+
+IMA Appraisal currently requires individual files to be signed and
+verified, and Linux distributions to rebuild all packages to include file
+signatures (this approach has been adopted from Fedora 39+). Like a TPM,
+also signature verification introduces a significant overhead, especially
+if it is used to check the integrity of many files.
+
+This is where the new Integrity Digest Cache comes into play, it offers
+additional support for new and existing integrity solutions, to make
+them faster and easier to deploy.
+
+The Integrity Digest Cache can help IMA to reduce the number of TPM
+operations and to make them happen in a deterministic way. If IMA knows
+that a file comes from a Linux distribution, it can measure files in a
+different way: measure the list of digests coming from the distribution
+(e.g. RPM package headers), and subsequently measure a file if it is not
+found in that list.
+
+The performance improvement comes at the cost of IMA not reporting which
+files from installed packages were accessed, and in which temporal
+sequence. This approach might not be suitable for all use cases.
+
+The Integrity Digest Cache can also help IMA for appraisal. IMA can simply
+lookup the calculated digest of an accessed file in the list of digests
+extracted from package headers, after verifying the header signature. It is
+sufficient to verify only one signature for all files in the package, as
+opposed to verifying a signature for each file.
+
+The same approach can be followed by other LSMs, such as Integrity Policy
+Enforcement (IPE), and BPF LSM.
+
+The Integrity Digest Cache is not tied to a specific package format. While
+it currently supports a TLV-based and the RPM formats, it can be easily
+extended to support more formats, such as DEBs. Focusing on just extracting
+digests keeps these parsers minimal and reasonably simple (e.g. the RPM
+parser has ~220 LOC). Included parsers have been verified for memory safety
+with the Frama-C static analyzer. The parsers with the Frama-C assertions
+are available here:
+
+https://github.com/robertosassu/rpm-formal/
+
+Integrating the Integrity Digest Cache in IMA brings significant
+performance improvements: up to 67% and 79% for measurement respectively in
+sequential and parallel file reads; up to 65% and 43% for appraisal
+respectively in sequential and parallel file reads.
+
+The performance can be further enhanced by using fsverity digests instead
+of conventional file digests, which would make IMA verify only the portion
+of the file to be read. However, at the moment, fsverity digests are not
+included in RPM packages. In this case, once rpm is extended to include
+them, Linux distributions still have to rebuild their packages.
+
+The Integrity Digest Cache can support both digest types, so that the
+functionality is immediately available without waiting for Linux
+distributions to do the transition.
+
+This patch set only includes the patches necessary to extract digests from
+a TLV-based and RPM data formats, and exposes an API for LSMs to query
+them. A separate patch set will be provided to integrate it in IMA.
+
+This patch set and the follow-up IMA integration can be tested by following
+the instructions at:
+
+https://github.com/linux-integrity/digest-cache-tools
+
+This patch set applies on top of:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/log/?h=next-integrity
+
+with commit fa8a4ce432e8 ("ima: fix buffer overrun in
+ima_eventdigest_init_common").
+
+Changelog
+
+v4:
+- Rename digest_cache LSM to Integrity Digest Cache (suggested by Paul
+  Moore)
+- Update documentation
+- Remove forward declaration of struct digest_cache in
+  include/linux/digest_cache.h (suggested by Jarkko)
+- Add DIGEST_CACHE_FREE digest cache event for notification
+- Remove digest_cache_found_t typedef and use uintptr_t instead
+- Add header callback in TLV parser and unexport tlv_parse_hdr() and
+  tlv_parse_data()
+- Plug the Integrity Digest Cache into the 'ima' LSM
+- Switch from constructor to zeroing the object cache
+- Remove notifier and detect digest cache changes by comparing pointers
+- Rename digest_cache_dir_create() to digest_cache_dir_add_entries()
+- Introduce digest_cache_dir_create() to create and initialize a directory
+  digest cache
+- Introduce digest_cache_dir_update_dig_user() to update dig_user with a
+  file digest cache on positive digest lookup
+- Use up to date directory digest cache, to take into account possible
+  inode eviction for the old ones
+- Introduce digest_cache_dir_prefetch() to prefetch digest lists
+- Adjust component name in debug messages (suggested by Jarkko)
+- Add FILE_PREFETCH and FILE_READ digest cache flags, remove RESET_USER
+- Reintroduce spin lock for digest cache verification data (needed for the
+  selftests)
+- Get inode and file descriptor security blob offsets from outside (IMA)
+- Avoid user-after-free in digest_cache_unref() by decrementing the ref.
+  count after printing the debug message
+- Check for digest list lookup loops also for the parent directory
+- Put and clear dig_owner directly in digest_cache_reset_clear_owner()
+- Move digest cache initialization code from digest_cache_create() to
+  digest_cache_init()
+- Hold the digest list path until the digest cache is initialized (to avoid
+  premature inode eviction)
+- Avoid race condition on setting DIR_PREFETCH in the directory digest
+  cache
+- Introduce digest_cache_dir_prefetch() and do it between digest cache
+  creation and initialization (to avoid lock inversion)
+- Avoid unnecessary length check in digest_list_parse_rpm()
+- Declare arrays of strings in tlv parser as static
+- Emit reset for parent directory on directory entry modification
+- Rename digest_cache_reset_owner() to digest_cache_reset_clear_owner()
+  and digest_cache_reset_user() to digest_cache_clear_user()
+- Execute digest_cache_file_release() either if FMODE_WRITE or
+  FMODE_CREATED are set in the file descriptor f_mode
+- Determine in digest_cache_verif_set() which gfp flag to use depending on
+  verifier ID
+- Update selftests
+
+v3:
+- Rewrite documentation, and remove the installation instructions since
+  they are now included in the README of digest-cache-tools
+- Add digest cache event notifier
+- Drop digest_cache_was_reset(), and send instead to asynchronous
+  notifications
+- Fix digest_cache LSM Kconfig style issues (suggested by Randy Dunlap)
+- Propagate digest cache reset to directory entries
+- Destroy per directory entry mutex
+- Introduce RESET_USER bit, to clear the dig_user pointer on
+  set/removexattr
+- Replace 'file content' with 'file data' (suggested by Mimi)
+- Introduce per digest cache mutex and replace verif_data_lock spinlock
+- Track changes of security.digest_list xattr
+- Stop tracking file_open and use file_release instead also for file writes
+- Add error messages in digest_cache_create()
+- Load/unload testing kernel module automatically during execution of test
+- Add tests for digest cache event notifier
+- Add test for ftruncate()
+- Remove DIGEST_CACHE_RESET_PREFETCH_BUF command in test and clear the
+  buffer on read instead
+
+v2:
+- Include the TLV parser in this patch set (from user asymmetric keys and
+  signatures)
+- Move from IMA and make an independent LSM
+- Remove IMA-specific stuff from this patch set
+- Add per algorithm hash table
+- Expect all digest lists to be in the same directory and allow changing
+  the default directory
+- Support digest lookup on directories, when there is no
+  security.digest_list xattr
+- Add seq num to digest list file name, to impose ordering on directory
+  iteration
+- Add a new data type DIGEST_LIST_ENTRY_DATA for the nested data in the
+  tlv digest list format
+- Add the concept of verification data attached to digest caches
+- Add the reset mechanism to track changes on digest lists and directory
+  containing the digest lists
+- Add kernel selftests
+
+v1:
+- Add documentation in Documentation/security/integrity-digest-cache.rst
+- Pass the mask of IMA actions to digest_cache_alloc()
+- Add a reference count to the digest cache
+- Remove the path parameter from digest_cache_get(), and rely on the
+  reference count to avoid the digest cache disappearing while being used
+- Rename the dentry_to_check parameter of digest_cache_get() to dentry
+- Rename digest_cache_get() to digest_cache_new() and add
+  digest_cache_get() to set the digest cache in the iint of the inode for
+  which the digest cache was requested
+- Add dig_owner and dig_user to the iint, to distinguish from which inode
+  the digest cache was created from, and which is using it; consequently it
+  makes the digest cache usable to measure/appraise other digest caches
+  (support not yet enabled)
+- Add dig_owner_mutex and dig_user_mutex to serialize accesses to dig_owner
+  and dig_user until they are initialized
+- Enforce strong synchronization and make the contenders wait until
+  dig_owner and dig_user are assigned to the iint the first time
+- Move checking IMA actions on the digest list earlier, and fail if no
+  action were performed (digest cache not usable)
+- Remove digest_cache_put(), not needed anymore with the introduction of
+  the reference count
+- Fail immediately in digest_cache_lookup() if the digest algorithm is
+  not set in the digest cache
+- Use 64 bit mask for IMA actions on the digest list instead of 8 bit
+- Return NULL in the inline version of digest_cache_get()
+- Use list_add_tail() instead of list_add() in the iterator
+- Copy the digest list path to a separate buffer in digest_cache_iter_dir()
+- Use digest list parsers verified with Frama-C
+- Explicitly disable (for now) the possibility in the IMA policy to use the
+  digest cache to measure/appraise other digest lists
+- Replace exit(<value>) with return <value> in manage_digest_lists.c
+
+Roberto Sassu (14):
+  lib: Add TLV parser
+  integrity: Introduce the Integrity Digest Cache
+  digest_cache: Initialize digest caches
+  digest_cache: Add securityfs interface
+  digest_cache: Add hash tables and operations
+  digest_cache: Populate the digest cache from a digest list
+  digest_cache: Parse tlv digest lists
+  digest_cache: Parse rpm digest lists
+  digest_cache: Add management of verification data
+  digest_cache: Add support for directories
+  digest cache: Prefetch digest lists if requested
+  digest_cache: Reset digest cache on file/directory change
+  selftests/digest_cache: Add selftests for the Integrity Digest Cache
+  docs: Add documentation of the Integrity Digest Cache
+
+ Documentation/security/digest_cache.rst       | 814 ++++++++++++++++++
+ Documentation/security/index.rst              |   1 +
+ MAINTAINERS                                   |  10 +
+ include/linux/digest_cache.h                  |  58 ++
+ include/linux/kernel_read_file.h              |   1 +
+ include/linux/tlv_parser.h                    |  48 ++
+ include/uapi/linux/tlv_digest_list.h          |  72 ++
+ include/uapi/linux/tlv_parser.h               |  62 ++
+ include/uapi/linux/xattr.h                    |   6 +
+ lib/Kconfig                                   |   3 +
+ lib/Makefile                                  |   2 +
+ lib/tlv_parser.c                              | 221 +++++
+ lib/tlv_parser.h                              |  17 +
+ security/integrity/Kconfig                    |   1 +
+ security/integrity/Makefile                   |   1 +
+ security/integrity/digest_cache/Kconfig       |  33 +
+ security/integrity/digest_cache/Makefile      |  11 +
+ security/integrity/digest_cache/dir.c         | 397 +++++++++
+ security/integrity/digest_cache/htable.c      | 254 ++++++
+ security/integrity/digest_cache/internal.h    | 277 ++++++
+ security/integrity/digest_cache/main.c        | 559 ++++++++++++
+ security/integrity/digest_cache/modsig.c      |  66 ++
+ .../integrity/digest_cache/parsers/parsers.h  |  15 +
+ security/integrity/digest_cache/parsers/rpm.c | 220 +++++
+ security/integrity/digest_cache/parsers/tlv.c | 341 ++++++++
+ security/integrity/digest_cache/populate.c    | 157 ++++
+ security/integrity/digest_cache/reset.c       | 227 +++++
+ security/integrity/digest_cache/secfs.c       | 104 +++
+ security/integrity/digest_cache/verif.c       | 131 +++
+ security/integrity/ima/ima.h                  |   1 +
+ security/integrity/ima/ima_fs.c               |   6 +
+ security/integrity/ima/ima_main.c             |  11 +-
+ tools/testing/selftests/Makefile              |   1 +
+ .../testing/selftests/digest_cache/.gitignore |   3 +
+ tools/testing/selftests/digest_cache/Makefile |  24 +
+ .../testing/selftests/digest_cache/all_test.c | 749 ++++++++++++++++
+ tools/testing/selftests/digest_cache/common.c |  78 ++
+ tools/testing/selftests/digest_cache/common.h | 134 +++
+ .../selftests/digest_cache/common_user.c      |  47 +
+ .../selftests/digest_cache/common_user.h      |  17 +
+ tools/testing/selftests/digest_cache/config   |   1 +
+ .../selftests/digest_cache/generators.c       | 248 ++++++
+ .../selftests/digest_cache/generators.h       |  19 +
+ .../selftests/digest_cache/testmod/Makefile   |  16 +
+ .../selftests/digest_cache/testmod/kern.c     | 501 +++++++++++
+ 45 files changed, 5964 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/security/digest_cache.rst
+ create mode 100644 include/linux/digest_cache.h
+ create mode 100644 include/linux/tlv_parser.h
+ create mode 100644 include/uapi/linux/tlv_digest_list.h
+ create mode 100644 include/uapi/linux/tlv_parser.h
+ create mode 100644 lib/tlv_parser.c
+ create mode 100644 lib/tlv_parser.h
+ create mode 100644 security/integrity/digest_cache/Kconfig
+ create mode 100644 security/integrity/digest_cache/Makefile
+ create mode 100644 security/integrity/digest_cache/dir.c
+ create mode 100644 security/integrity/digest_cache/htable.c
+ create mode 100644 security/integrity/digest_cache/internal.h
+ create mode 100644 security/integrity/digest_cache/main.c
+ create mode 100644 security/integrity/digest_cache/modsig.c
+ create mode 100644 security/integrity/digest_cache/parsers/parsers.h
+ create mode 100644 security/integrity/digest_cache/parsers/rpm.c
+ create mode 100644 security/integrity/digest_cache/parsers/tlv.c
+ create mode 100644 security/integrity/digest_cache/populate.c
+ create mode 100644 security/integrity/digest_cache/reset.c
+ create mode 100644 security/integrity/digest_cache/secfs.c
+ create mode 100644 security/integrity/digest_cache/verif.c
+ create mode 100644 tools/testing/selftests/digest_cache/.gitignore
+ create mode 100644 tools/testing/selftests/digest_cache/Makefile
+ create mode 100644 tools/testing/selftests/digest_cache/all_test.c
+ create mode 100644 tools/testing/selftests/digest_cache/common.c
+ create mode 100644 tools/testing/selftests/digest_cache/common.h
+ create mode 100644 tools/testing/selftests/digest_cache/common_user.c
+ create mode 100644 tools/testing/selftests/digest_cache/common_user.h
+ create mode 100644 tools/testing/selftests/digest_cache/config
+ create mode 100644 tools/testing/selftests/digest_cache/generators.c
+ create mode 100644 tools/testing/selftests/digest_cache/generators.h
+ create mode 100644 tools/testing/selftests/digest_cache/testmod/Makefile
+ create mode 100644 tools/testing/selftests/digest_cache/testmod/kern.c
+
 -- 
-Michal Hocko
-SUSE Labs
+2.34.1
+
