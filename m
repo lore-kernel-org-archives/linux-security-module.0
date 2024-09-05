@@ -1,28 +1,28 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144C084A2F;
-	Thu,  5 Sep 2024 15:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2396757FC;
+	Thu,  5 Sep 2024 15:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548869; cv=none; b=NG4sXDtlDL5r/oJnHx7yI2U2dgIdeuqfPFbN0vJ6v4NSzJhX/k8glUC1xJPI1oA3Xl6um2g8GNb7uP1kxXYVMvEfql0m4PPw/M1dCxpJsT7EJFihuKDvNsRlu28YVkIqmxrzD0Lu6XMT3isn6T5JF20pY6FblqXozdJN1qPj0YI=
+	t=1725548892; cv=none; b=UOb8349wYNuJO8jg2jFEgR5/ysqXmJLnEE40dUdxm8UUyGLVfxuQri1mGH/P+U7lAXakjznwS/IZZ2m1bRoGUL1qTU4+5FDEtq6l+gUq8WvY6UrvowhiWxE46Hpo/1CYBb8/6rFV3eAvEPBSt7s2wWNPYHeYksBu56pnOvOl9CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548869; c=relaxed/simple;
-	bh=6lpMHiZwFsdXCLmbmUpkhqTZ3pO3tetjpkHbtTN1dsU=;
+	s=arc-20240116; t=1725548892; c=relaxed/simple;
+	bh=NXEEguL5UsO05tJyT66LvSNP7LHc/mQUR55z6TednnU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uexJh3KOGCUWX11W/XKB3Q0E33o+0GhZSpvvH4sH+Urn6P+PVBybGw3ebMoYGmi2JUx7qp3lBWmRYe4j4PdzOERPB92c+xZeM/Lc2RXltPmq797I/u6eBqIOnq/OccNmXpq7x6yO3yHlGpxonuIE4ZnigulHWSp3GXh5UUJAiDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+	 MIME-Version; b=ER93Hw3CsnwuSmtA0UR1ZgUSpNUxo7PbFbOYbRim2R69m20oRjXmiB11b4EsrBMF7RzqgCJ4Y13e/tGcy/DVe6C892xcLoB+eCbpoK134K6Heck475QKJeMyB64sFcnLmrLGz3/XGdfqXHRmBE5B02Pt64mnJhnCce+lBm7+EF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X02C05qsMz9v7JT;
-	Thu,  5 Sep 2024 22:42:36 +0800 (CST)
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4X02L46fy8z9v7Hv;
+	Thu,  5 Sep 2024 22:48:44 +0800 (CST)
 Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 3916C140516;
-	Thu,  5 Sep 2024 23:07:28 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 31C9D14101D;
+	Thu,  5 Sep 2024 23:07:55 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDXZy_myNlmE0tUAA--.16274S6;
-	Thu, 05 Sep 2024 16:07:27 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwDXZy_myNlmE0tUAA--.16274S8;
+	Thu, 05 Sep 2024 16:07:54 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: zohar@linux.ibm.com,
 	dmitry.kasatkin@gmail.com,
@@ -55,9 +55,9 @@ Cc: linux-integrity@vger.kernel.org,
 	mzerqung@0pointer.de,
 	kgold@linux.ibm.com,
 	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v5 04/14] digest_cache: Add securityfs interface
-Date: Thu,  5 Sep 2024 17:05:33 +0200
-Message-Id: <20240905150543.3766895-5-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v5 06/14] digest_cache: Populate the digest cache from a digest list
+Date: Thu,  5 Sep 2024 17:05:35 +0200
+Message-Id: <20240905150543.3766895-7-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
 References: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
@@ -68,257 +68,382 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwDXZy_myNlmE0tUAA--.16274S6
-X-Coremail-Antispam: 1UD129KBjvJXoW3AryUXw4xXFyfuF4fWFWUtwb_yoW3tF1kpa
-	9Ik3WUKr4xZFy3Cwn7A3W3CF1Fg390gF17Cws8Wry3Aay5uw1qva40yr1UZry5Xr4UZa4I
-	yr4j9r1UZr4qqaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:LxC2BwDXZy_myNlmE0tUAA--.16274S8
+X-Coremail-Antispam: 1UD129KBjvJXoWfGr45Zr4rKw4xKFWDXFyUAwb_yoWkuFy7pa
+	sIk3W5trWrZF1fCw1xAF1akr1fKrWqqF42qws5ur1ayr4UXr1Yy3W0ya4UZry5Gr4Uu3W7
+	tr4Ygryj9r4DXaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPmb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
 	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-	C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-	7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-	kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-	6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GF
-	v_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvE
-	c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-	pf9x07jhXo7UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQARBGbZE3MK2gAAsb
+	14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I
+	80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
+	c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4
+	kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E
+	5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZV
+	WrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY
+	1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67
+	AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZE
+	Xa7IU0M5lUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGbZE-oKmwABsR
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Create the digest_cache directory in <securityfs>/integrity, and add the
-default_path file, to let root change/read the default path (file or
-directory) from where digest lists are looked up.
+Introduce digest_cache_populate() to populate the digest cache from a
+digest list. Call it from digest_cache_init() if the inode is a regular
+file.
 
-An RW semaphore prevents the default path from changing while
-digest_list_new() and read_default_path() are executed, so that those read
-a stable value. Multiple digest_list_new() and read_default_path() calls,
-instead, can be done in parallel, since they are the readers.
+It opens the file and then schedules a work to read the content (with new
+file type READING_DIGEST_LIST). Scheduling a work solves the problem of
+kernel_read_file() returning -EINTR.
 
-Changing the default path does not affect digest caches created with the
-old path.
+Once the work is done, this function calls digest_cache_strip_modsig() to
+strip a module-style appended signature, if present, and finally calls
+digest_cache_parse_digest_list() to parse the data.
+
+The latter function, which at the moment does nothing, will be completed
+with calls to parsing functions selected from the digest list file name.
+It expects digest lists file names to be in the format:
+
+[<seq num>-]<digest list format>-<digest list name>
+
+<seq-num>- is an optional prefix to impose in which order digest lists in
+a directory should be parsed.
+
+Failing to populate a digest cache causes it to be marked as invalid and to
+not be returned by digest_cache_init(). Dig_owner however is kept, to
+avoid an excessive number of retries, which would probably not succeed
+either.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/digest_cache/Kconfig    |   4 +
+ include/linux/kernel_read_file.h           |   1 +
  security/integrity/digest_cache/Makefile   |   2 +-
- security/integrity/digest_cache/internal.h |   4 +
- security/integrity/digest_cache/main.c     |  10 +-
- security/integrity/digest_cache/secfs.c    | 104 +++++++++++++++++++++
- security/integrity/ima/ima_fs.c            |   6 ++
- 6 files changed, 128 insertions(+), 2 deletions(-)
- create mode 100644 security/integrity/digest_cache/secfs.c
+ security/integrity/digest_cache/internal.h |  24 ++++
+ security/integrity/digest_cache/main.c     |  16 +++
+ security/integrity/digest_cache/modsig.c   |  66 ++++++++++
+ security/integrity/digest_cache/populate.c | 142 +++++++++++++++++++++
+ 6 files changed, 250 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/digest_cache/modsig.c
+ create mode 100644 security/integrity/digest_cache/populate.c
 
-diff --git a/security/integrity/digest_cache/Kconfig b/security/integrity/digest_cache/Kconfig
-index 5fbec491237b..6e61089acbe2 100644
---- a/security/integrity/digest_cache/Kconfig
-+++ b/security/integrity/digest_cache/Kconfig
-@@ -15,3 +15,7 @@ config DIGEST_LIST_DEFAULT_PATH
- 	help
- 	  Default path where the Integrity Digest Cache expects to find digest
- 	  lists.
-+
-+	  It can be changed at run-time, by writing the new path to the
-+	  securityfs interface. Digest caches created with the old path are
-+	  not affected by the change.
+diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
+index 90451e2e12bd..85f602e49e2f 100644
+--- a/include/linux/kernel_read_file.h
++++ b/include/linux/kernel_read_file.h
+@@ -14,6 +14,7 @@
+ 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
+ 	id(POLICY, security-policy)		\
+ 	id(X509_CERTIFICATE, x509-certificate)	\
++	id(DIGEST_LIST, digest-list)	\
+ 	id(MAX_ID, )
+ 
+ #define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
 diff --git a/security/integrity/digest_cache/Makefile b/security/integrity/digest_cache/Makefile
-index 6a3f7cc6e106..c351186d4e1e 100644
+index 0092c913979d..1b91f9fba51c 100644
 --- a/security/integrity/digest_cache/Makefile
 +++ b/security/integrity/digest_cache/Makefile
 @@ -4,4 +4,4 @@
  
  obj-$(CONFIG_INTEGRITY_DIGEST_CACHE) += digest_cache.o
  
--digest_cache-y := main.o
-+digest_cache-y := main.o secfs.o
+-digest_cache-y := main.o secfs.o htable.o
++digest_cache-y := main.o secfs.o htable.o populate.o modsig.o
 diff --git a/security/integrity/digest_cache/internal.h b/security/integrity/digest_cache/internal.h
-index 54e118a2ef79..2fcfa9b4cf13 100644
+index f4b146a1bbaf..f8ec51405bae 100644
 --- a/security/integrity/digest_cache/internal.h
 +++ b/security/integrity/digest_cache/internal.h
-@@ -53,6 +53,7 @@ struct digest_cache_security {
+@@ -18,6 +18,23 @@
+ #define INIT_STARTED		1	/* Digest cache init started. */
+ #define INVALID			2	/* Digest cache marked as invalid. */
  
- extern loff_t inode_sec_offset;
- extern char *default_path_str;
-+extern struct rw_semaphore default_path_sem;
++/**
++ * struct read_work - Structure to schedule reading a digest list
++ * @work: Work structure
++ * @file: File descriptor of the digest list to read
++ * @data: Digest list data (updated)
++ * @ret: Return value from kernel_read_file() (updated)
++ *
++ * This structure contains the necessary information to schedule reading a
++ * digest list.
++ */
++struct read_work {
++	struct work_struct work;
++	struct file *file;
++	void *data;
++	int ret;
++};
++
+ /**
+  * struct digest_cache_entry - Entry of a digest cache hash table
+  * @hnext: Pointer to the next element in the collision list
+@@ -143,4 +160,11 @@ int digest_cache_htable_lookup(struct dentry *dentry,
+ 			       enum hash_algo algo);
+ void digest_cache_htable_free(struct digest_cache *digest_cache);
  
- static inline struct digest_cache_security *
- digest_cache_get_security(const struct inode *inode)
-@@ -96,4 +97,7 @@ struct digest_cache *digest_cache_init(struct dentry *dentry,
- int __init digest_cache_do_init(const struct lsm_id *lsm_id,
- 				loff_t inode_offset);
- 
-+/* secfs.c */
-+int __init digest_cache_secfs_init(struct dentry *dir);
++/* populate.c */
++int digest_cache_populate(struct digest_cache *digest_cache,
++			  struct path *digest_list_path);
++
++/* modsig.c */
++size_t digest_cache_strip_modsig(__u8 *data, size_t data_len);
 +
  #endif /* _DIGEST_CACHE_INTERNAL_H */
 diff --git a/security/integrity/digest_cache/main.c b/security/integrity/digest_cache/main.c
-index 188f1dcc880e..0e25f573166a 100644
+index a74fc1183332..6878ebe5b779 100644
 --- a/security/integrity/digest_cache/main.c
 +++ b/security/integrity/digest_cache/main.c
-@@ -20,6 +20,9 @@ loff_t inode_sec_offset;
- 
- char *default_path_str = CONFIG_DIGEST_LIST_DEFAULT_PATH;
- 
-+/* Protects default_path_str. */
-+struct rw_semaphore default_path_sem;
-+
- /**
-  * digest_cache_alloc_init - Allocate and initialize a new digest cache
-  * @path_str: Path string of the digest list
-@@ -305,9 +308,12 @@ struct digest_cache *digest_cache_get(struct dentry *dentry)
- 
- 	/* Serialize accesses to inode for which the digest cache is used. */
- 	mutex_lock(&dig_sec->dig_user_mutex);
--	if (!dig_sec->dig_user)
-+	if (!dig_sec->dig_user) {
-+		down_read(&default_path_sem);
- 		/* Consume extra reference from digest_cache_create(). */
- 		dig_sec->dig_user = digest_cache_new(dentry);
-+		up_read(&default_path_sem);
-+	}
- 
- 	if (dig_sec->dig_user)
- 		/* Increment ref. count for reference returned to the caller. */
-@@ -404,6 +410,8 @@ static struct security_hook_list digest_cache_hooks[] __ro_after_init = {
- int __init digest_cache_do_init(const struct lsm_id *lsm_id,
- 				loff_t inode_offset)
+@@ -258,6 +258,9 @@ static struct digest_cache *digest_cache_new(struct dentry *dentry)
+ struct digest_cache *digest_cache_init(struct dentry *dentry,
+ 				       struct digest_cache *digest_cache)
  {
-+	init_rwsem(&default_path_sem);
++	struct inode *inode;
++	int ret;
 +
- 	inode_sec_offset = inode_offset;
+ 	/* Wait for digest cache initialization. */
+ 	if (test_and_set_bit(INIT_STARTED, &digest_cache->flags)) {
+ 		wait_on_bit(&digest_cache->flags, INIT_IN_PROGRESS,
+@@ -265,6 +268,19 @@ struct digest_cache *digest_cache_init(struct dentry *dentry,
+ 		goto out;
+ 	}
  
- 	digest_cache_cache = kmem_cache_create("digest_cache_cache",
-diff --git a/security/integrity/digest_cache/secfs.c b/security/integrity/digest_cache/secfs.c
++	inode = d_backing_inode(digest_cache->digest_list_path.dentry);
++
++	if (S_ISREG(inode->i_mode)) {
++		ret = digest_cache_populate(digest_cache,
++					    &digest_cache->digest_list_path);
++		if (ret < 0) {
++			pr_debug("Failed to populate digest cache %s ret: %d (keep digest cache)\n",
++				 digest_cache->path_str, ret);
++			/* Prevent usage of partially-populated digest cache. */
++			set_bit(INVALID, &digest_cache->flags);
++		}
++	}
++
+ 	path_put(&digest_cache->digest_list_path);
+ 	/* Notify initialization complete. */
+ 	clear_and_wake_up_bit(INIT_IN_PROGRESS, &digest_cache->flags);
+diff --git a/security/integrity/digest_cache/modsig.c b/security/integrity/digest_cache/modsig.c
 new file mode 100644
-index 000000000000..3267b2a83430
+index 000000000000..fa512c43a556
 --- /dev/null
-+++ b/security/integrity/digest_cache/secfs.c
-@@ -0,0 +1,104 @@
++++ b/security/integrity/digest_cache/modsig.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
++ * Copyright (C) 2019  IBM Corporation
++ * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
++ *
++ * Author: Roberto Sassu <roberto.sassu@huawei.com>
++ *
++ * Strip module-style appended signatures.
++ */
++
++#define pr_fmt(fmt) "digest_cache: "fmt
++#include <linux/module.h>
++#include <linux/module_signature.h>
++
++#include "internal.h"
++
++/**
++ * digest_cache_strip_modsig - Strip module-style appended sig from digest list
++ * @data: Data to parse
++ * @data_len: Length of @data
++ *
++ * This function strips the module-style appended signature from a digest list,
++ * if present.
++ *
++ * Return: Size of stripped data on success, original size otherwise.
++ */
++size_t digest_cache_strip_modsig(__u8 *data, size_t data_len)
++{
++	const size_t marker_len = strlen(MODULE_SIG_STRING);
++	const struct module_signature *sig;
++	size_t parsed_data_len = data_len;
++	size_t sig_len;
++	const void *p;
++
++	/* From ima_modsig.c */
++	if (data_len <= marker_len + sizeof(*sig))
++		return data_len;
++
++	p = data + parsed_data_len - marker_len;
++	if (memcmp(p, MODULE_SIG_STRING, marker_len))
++		return data_len;
++
++	parsed_data_len -= marker_len;
++	sig = (const struct module_signature *)(p - sizeof(*sig));
++
++	/* From module_signature.c */
++	if (be32_to_cpu(sig->sig_len) >= parsed_data_len - sizeof(*sig))
++		return data_len;
++
++	/* Unlike for module signatures, accept all signature types. */
++	if (sig->algo != 0 ||
++	    sig->hash != 0 ||
++	    sig->signer_len != 0 ||
++	    sig->key_id_len != 0 ||
++	    sig->__pad[0] != 0 ||
++	    sig->__pad[1] != 0 ||
++	    sig->__pad[2] != 0) {
++		pr_debug("Signature info has unexpected non-zero params\n");
++		return data_len;
++	}
++
++	sig_len = be32_to_cpu(sig->sig_len);
++	parsed_data_len -= sig_len + sizeof(*sig);
++	return parsed_data_len;
++}
+diff --git a/security/integrity/digest_cache/populate.c b/security/integrity/digest_cache/populate.c
+new file mode 100644
+index 000000000000..c68c76971380
+--- /dev/null
++++ b/security/integrity/digest_cache/populate.c
+@@ -0,0 +1,142 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
 + *
 + * Author: Roberto Sassu <roberto.sassu@huawei.com>
 + *
-+ * Implement the securityfs interface of the Integrity Digest Cache.
++ * Implement the code to populate a digest cache.
 + */
 +
 +#define pr_fmt(fmt) "digest_cache: "fmt
-+#include <linux/security.h>
++#include <linux/init_task.h>
++#include <linux/vmalloc.h>
++#include <linux/kernel_read_file.h>
 +
 +#include "internal.h"
 +
-+static struct dentry *digest_cache_dir;
-+static struct dentry *default_path_dentry;
-+
 +/**
-+ * write_default_path - Write default path
-+ * @file: File descriptor of the securityfs file
-+ * @buf: User space buffer
-+ * @datalen: Amount of data to write
-+ * @ppos: Current position in the file
++ * digest_cache_parse_digest_list - Parse a digest list
++ * @digest_cache: Digest cache
++ * @path_str: Path string of the digest list
++ * @data: Data to parse
++ * @data_len: Length of @data
 + *
-+ * This function sets the new default path where digest lists can be found.
-+ * Can be either a regular file or a directory.
-+ *
-+ * Return: Length of path written on success, a POSIX error code otherwise.
-+ */
-+static ssize_t write_default_path(struct file *file, const char __user *buf,
-+				  size_t datalen, loff_t *ppos)
-+{
-+	char *new_default_path_str;
-+
-+	new_default_path_str = memdup_user_nul(buf, datalen);
-+	if (IS_ERR(new_default_path_str))
-+		return PTR_ERR(new_default_path_str);
-+
-+	down_write(&default_path_sem);
-+	kfree_const(default_path_str);
-+	default_path_str = new_default_path_str;
-+	up_write(&default_path_sem);
-+	return datalen;
-+}
-+
-+/**
-+ * read_default_path - Read default path
-+ * @file: File descriptor of the securityfs file
-+ * @buf: User space buffer
-+ * @datalen: Amount of data to read
-+ * @ppos: Current position in the file
-+ *
-+ * This function returns the current default path where digest lists can be
-+ * found. Can be either a regular file or a directory.
-+ *
-+ * Return: Length of path read on success, a POSIX error code otherwise.
-+ */
-+static ssize_t read_default_path(struct file *file, char __user *buf,
-+				 size_t datalen, loff_t *ppos)
-+{
-+	int ret;
-+
-+	down_read(&default_path_sem);
-+	ret = simple_read_from_buffer(buf, datalen, ppos, default_path_str,
-+				      strlen(default_path_str) + 1);
-+	up_read(&default_path_sem);
-+	return ret;
-+}
-+
-+static const struct file_operations default_path_ops = {
-+	.open = generic_file_open,
-+	.write = write_default_path,
-+	.read = read_default_path,
-+	.llseek = generic_file_llseek,
-+};
-+
-+/**
-+ * digest_cache_secfs_init - Initialize the securityfs interface
-+ * @dir: Directory entry provided by the calling LSM
-+ *
-+ * This function initialize the securityfs interfaces, for configuration
-+ * by user space.
-+ *
-+ * Initialize 'default_path', allowing user space to change the default
-+ * directory where digest lists are searched.
++ * This function selects a parser for a digest list depending on its file name,
++ * and calls the appropriate parsing function. It expects the file name to be
++ * in the format: [<seq num>-]<format>-<digest list name>. <seq num>- is
++ * optional.
 + *
 + * Return: Zero on success, a POSIX error code otherwise.
 + */
-+int __init digest_cache_secfs_init(struct dentry *dir)
++static int digest_cache_parse_digest_list(struct digest_cache *digest_cache,
++					  char *path_str, void *data,
++					  size_t data_len)
 +{
-+	digest_cache_dir = securityfs_create_dir("digest_cache", dir);
-+	if (IS_ERR(digest_cache_dir))
-+		return PTR_ERR(digest_cache_dir);
++	char *filename, *format, *next_sep;
++	int ret = -EINVAL;
 +
-+	default_path_dentry = securityfs_create_file("default_path", 0660,
-+						     digest_cache_dir, NULL,
-+						     &default_path_ops);
-+	if (IS_ERR(default_path_dentry)) {
-+		securityfs_remove(digest_cache_dir);
-+		return PTR_ERR(default_path_dentry);
++	filename = strrchr(path_str, '/');
++	if (!filename)
++		return ret;
++
++	filename++;
++	format = filename;
++
++	/*
++	 * Since we expect that all files start with a digest list format, this
++	 * check is reliable to detect <seq num>.
++	 */
++	if (filename[0] >= '0' && filename[0] <= '9') {
++		format = strchr(filename, '-');
++		if (!format)
++			return ret;
++
++		format++;
 +	}
 +
-+	return 0;
++	next_sep = strchr(format, '-');
++	if (!next_sep)
++		return ret;
++
++	pr_debug("Parsing %s, format: %.*s, size: %ld\n", path_str,
++		 (int)(next_sep - format), format, data_len);
++
++	return ret;
 +}
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index e4a79a9b2d58..be9e374e2cef 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -614,6 +614,12 @@ int __init ima_fs_init(void)
- 		goto out;
- 	}
- 
-+	if (IS_ENABLED(CONFIG_INTEGRITY_DIGEST_CACHE)) {
-+		ret = digest_cache_secfs_init(integrity_dir);
-+		if (ret < 0)
-+			goto out;
++
++/**
++ * digest_cache_read_digest_list - Read a digest list
++ * @work: Work structure
++ *
++ * This function is invoked by schedule_work() to read a digest list.
++ *
++ * It does not return a value, but stores the result in the passed structure.
++ */
++static void digest_cache_read_digest_list(struct work_struct *work)
++{
++	struct read_work *w = container_of(work, struct read_work, work);
++
++	w->ret = kernel_read_file(w->file, 0, &w->data, INT_MAX, NULL,
++				  READING_DIGEST_LIST);
++}
++
++/**
++ * digest_cache_populate - Populate a digest cache from a digest list
++ * @digest_cache: Digest cache
++ * @digest_list_path: Path structure of the digest list
++ *
++ * This function opens the digest list for reading it. Then, it schedules a
++ * work to read the digest list and, once the work is done, it calls
++ * digest_cache_strip_modsig() to strip a module-style appended signature and
++ * digest_cache_parse_digest_list() for extracting and adding digests to the
++ * digest cache.
++ *
++ * Return: Zero on success, a POSIX error code otherwise.
++ */
++int digest_cache_populate(struct digest_cache *digest_cache,
++			  struct path *digest_list_path)
++{
++	struct file *file;
++	void *data;
++	size_t data_len;
++	struct read_work w;
++	int ret;
++
++	file = dentry_open(digest_list_path, O_RDONLY, &init_cred);
++	if (IS_ERR(file)) {
++		pr_debug("Unable to open digest list %s, ret: %ld\n",
++			 digest_cache->path_str, PTR_ERR(file));
++		return PTR_ERR(file);
 +	}
 +
- 	return 0;
- out:
- 	securityfs_remove(ima_policy);
++	w.data = NULL;
++	w.file = file;
++	INIT_WORK_ONSTACK(&w.work, digest_cache_read_digest_list);
++
++	schedule_work(&w.work);
++	flush_work(&w.work);
++	destroy_work_on_stack(&w.work);
++	fput(file);
++
++	ret = w.ret;
++	data = w.data;
++
++	if (ret < 0) {
++		pr_debug("Unable to read digest list %s, ret: %d\n",
++			 digest_cache->path_str, ret);
++		return ret;
++	}
++
++	data_len = digest_cache_strip_modsig(data, ret);
++
++	/* Digest list parsers initialize the hash table and add the digests. */
++	ret = digest_cache_parse_digest_list(digest_cache,
++					     digest_cache->path_str, data,
++					     data_len);
++	if (ret < 0)
++		pr_debug("Error parsing digest list %s, ret: %d\n",
++			 digest_cache->path_str, ret);
++
++	vfree(data);
++	return ret;
++}
 -- 
 2.34.1
 
