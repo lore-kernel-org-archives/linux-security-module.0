@@ -1,28 +1,28 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8033D19EEA6;
-	Thu,  5 Sep 2024 15:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E7B19F466;
+	Thu,  5 Sep 2024 15:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725548813; cv=none; b=fHVNQMGGZBEyoXz2MlFJCBhpoeLpYOfu170mxxgkqiQjE+puBWiRoyC8zaT/AECDerr/geFxwtjwJE/JJVyrcYBul5h3eX44fLO6EwGgZp20+o9XYxQ5inPjQJX9QJ/GoxGGt5H6VclgTNpYCrYWgXn5ltEkoL3zF7C/DqbpdA0=
+	t=1725548849; cv=none; b=h0WgCQd1hixhaIV68bDc7Gmqr2BBhX8q36Mg7BPXXZDxO4i6zTzsfvFtXOam9QmkgZpLMfuhklD9Qf9LGnsaaIUdKP5AUpMJh6CITtDy8ZWcfZzQDzTd5VN4wI6iGCS9CcxSvA6mWKVQdAuP/kllx/e8xJFHRpk6tS4LZGc1S8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725548813; c=relaxed/simple;
-	bh=+FWxbhEgiUhnOqq++AyS0GIUf8o9rWSo10+k/zpDed4=;
+	s=arc-20240116; t=1725548849; c=relaxed/simple;
+	bh=zJ9fGbgpW2uhAFqjSpJm4/ZZVqlljgAr6Gy3scDWJhk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jnIG38dDHzhRLBIHhrd3kXHQuyo4T+Jyojw8FHO8ZVU/PbNCsQFJVZspZXMExJtGbZzSNJ4Oizru5gJvo8TteelMOzHGfe8SUv+zRL7MFqcGWw204/28vBNh+/zgGnVVpFtc+TGdDHL4JGQaib2aiMRp6Hv2Mh9XyDN0LZm9Tyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+	 MIME-Version; b=Rg6pj9mULP0ewTFRLYcRvtEb2ywQMFCS54EZ0X//SyTMgsfRUfXDO3bJwlt0MCuzuyunbP5L/U9n1v0ieMM86CmSDDAv7P42jS79xyUGj/QryODw4FGxxQtzlPDDkOKXqolQLuNLWK7bz4ucqmt7VnbtdBMtRDKLihc2f35GUrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4X02JY3TXCz9v7Hs;
-	Thu,  5 Sep 2024 22:47:25 +0800 (CST)
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X02KJ4jjSz9v7NF;
+	Thu,  5 Sep 2024 22:48:04 +0800 (CST)
 Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 894CC140452;
-	Thu,  5 Sep 2024 23:06:47 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 9161E14061D;
+	Thu,  5 Sep 2024 23:07:14 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDXZy_myNlmE0tUAA--.16274S3;
-	Thu, 05 Sep 2024 16:06:45 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwDXZy_myNlmE0tUAA--.16274S5;
+	Thu, 05 Sep 2024 16:07:13 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: zohar@linux.ibm.com,
 	dmitry.kasatkin@gmail.com,
@@ -55,9 +55,9 @@ Cc: linux-integrity@vger.kernel.org,
 	mzerqung@0pointer.de,
 	kgold@linux.ibm.com,
 	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v5 01/14] lib: Add TLV parser
-Date: Thu,  5 Sep 2024 17:05:30 +0200
-Message-Id: <20240905150543.3766895-2-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v5 03/14] digest_cache: Initialize digest caches
+Date: Thu,  5 Sep 2024 17:05:32 +0200
+Message-Id: <20240905150543.3766895-4-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
 References: <20240905150543.3766895-1-roberto.sassu@huaweicloud.com>
@@ -68,488 +68,176 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwDXZy_myNlmE0tUAA--.16274S3
-X-Coremail-Antispam: 1UD129KBjvAXoW3CF15WF4fur1kWrWkWr4fuFg_yoW8Gw47Co
-	Za9FWUur45Xr17u3W8ZF48Zr1UXry0gr43Aw13GrW3Wa40kF45Kr45tw43G3y3Jws8KFWU
-	t3sxX343Jw4UKr1kn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUO57kC6x804xWl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr
-	4l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
-	AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
-	v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuY
-	vjxUVDDGUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQARBGbZE3MK1wABsX
+X-CM-TRANSID:LxC2BwDXZy_myNlmE0tUAA--.16274S5
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jr13urWrGr1DCw1xXr4rAFb_yoWxJF1kpa
+	9Fk3W5Krs5ZryfCw17A3W2yw4Fqr9YqF47Jws8ur1ayFs3ur1qv3WIyw1UZryUJr4Uua17
+	tr45K3WUCr1UXaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
+	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+	WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
+	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
+	AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+	0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
+	07jSiihUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGbZE-oKmgAAsR
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Add a parser of a generic Type-Length-Value (TLV) format:
+Introduce digest_cache_init() to initialize created digest caches. Since
+initialization happens after releasing both the dig_owner_mutex and
+dig_user_mutex locks (to avoid a lock inversion with VFS locks), any caller
+of digest_cache_get() can potentially be in charge of initializing them.
 
-+-----------------+------------------+-----------------+
-| data type (u64) | num fields (u64) | total len (u64) | # header
-+--------------+--+---------+--------+---------+-------+
-| field1 (u64) | len1 (u64) | value1 (u8 len1) |
-+--------------+------------+------------------+
-|     ...      |    ...     |        ...       |         # data
-+--------------+------------+------------------+
-| fieldN (u64) | lenN (u64) | valueN (u8 lenN) |
-+--------------+------------+------------------+
+Introduce the INIT_STARTED flag, to atomically determine whether the digest
+cache is being initialized and eventually do it if the flag is not yet set.
 
-[same as above, repeated N times]
+Introduce the INIT_IN_PROGRESS flag, for the other callers to wait until
+the caller in charge of the initialization finishes initializing the digest
+cache. Set INIT_IN_PROGRESS in digest_cache_create() and clear it in
+digest_cache_init(). Finally, call clear_and_wake_up_bit() to wake up the
+other callers.
 
-Each adopter can define its own data types and fields. The TLV parser does
-not need to be aware of those, but lets the adopter obtain the data and
-decide how to continue.
+To avoid that the inode the digest cache is created from is evicted or
+is different due to a path rename between creation and initialization, take
+the path at creation time, and use it at initialization time. Since the
+digest cache holds a path reference, the inode cannot be evicted or change.
+However, care must be taken to ensure that digest_cache_init() is always
+executed after digest_cache_create() or, otherwise, the path reference will
+not be released.
 
-After parsing each TLV header, call the header callback function with the
-callback data provided by the adopter. The latter can return 0, to skip
-processing of the TLV data, 1 to process the TLV data, or a negative value
-to stop processing the TLV data.
-
-After processing a TLV data entry, call the data callback function also
-with the callback data provided by the adopter. The latter can decide how
-to interpret the TLV data entry depending on the field ID.
-
-Nesting TLVs is also possible, the data callback function can call
-tlv_parse() to parse the inner structure.
+Finally, introduce the INVALID flag, to let the callers which didn't
+initialize the digest cache know that an error occurred during
+initialization and, consequently, prevent them from using that digest
+cache.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- MAINTAINERS                     |   8 ++
- include/linux/tlv_parser.h      |  48 +++++++
- include/uapi/linux/tlv_parser.h |  62 +++++++++
- lib/Kconfig                     |   3 +
- lib/Makefile                    |   2 +
- lib/tlv_parser.c                | 221 ++++++++++++++++++++++++++++++++
- lib/tlv_parser.h                |  17 +++
- 7 files changed, 361 insertions(+)
- create mode 100644 include/linux/tlv_parser.h
- create mode 100644 include/uapi/linux/tlv_parser.h
- create mode 100644 lib/tlv_parser.c
- create mode 100644 lib/tlv_parser.h
+ security/integrity/digest_cache/internal.h |  9 ++++
+ security/integrity/digest_cache/main.c     | 51 ++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8766f3e5e87e..ba8d5c137bef 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23055,6 +23055,14 @@ W:	http://sourceforge.net/projects/tlan/
- F:	Documentation/networking/device_drivers/ethernet/ti/tlan.rst
- F:	drivers/net/ethernet/ti/tlan.*
+diff --git a/security/integrity/digest_cache/internal.h b/security/integrity/digest_cache/internal.h
+index e8a13afaf2fc..54e118a2ef79 100644
+--- a/security/integrity/digest_cache/internal.h
++++ b/security/integrity/digest_cache/internal.h
+@@ -13,11 +13,17 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/digest_cache.h>
  
-+TLV PARSER
-+M:	Roberto Sassu <roberto.sassu@huawei.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	include/linux/tlv_parser.h
-+F:	include/uapi/linux/tlv_parser.h
-+F:	lib/tlv_parser.*
++/* Digest cache bits in flags. */
++#define INIT_IN_PROGRESS	0	/* Digest cache being initialized. */
++#define INIT_STARTED		1	/* Digest cache init started. */
++#define INVALID			2	/* Digest cache marked as invalid. */
 +
- TMIO/SDHI MMC DRIVER
- M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
- L:	linux-mmc@vger.kernel.org
-diff --git a/include/linux/tlv_parser.h b/include/linux/tlv_parser.h
-new file mode 100644
-index 000000000000..6d9a655d9ec9
---- /dev/null
-+++ b/include/linux/tlv_parser.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Header file of TLV parser.
-+ */
-+
-+#ifndef _LINUX_TLV_PARSER_H
-+#define _LINUX_TLV_PARSER_H
-+
-+#include <uapi/linux/tlv_parser.h>
-+
-+/**
-+ * typedef hdr_callback - Callback after parsing TLV header
-+ * @callback_data: Opaque data to supply to the header callback function
-+ * @data_type: TLV data type
-+ * @num_entries: Number of TLV data entries
-+ * @total_len: Total length of TLV data
-+ *
-+ * This callback is invoked after a TLV header is parsed.
-+ *
-+ * Return: 0 to skip processing, 1 to do processing, a negative value on error.
-+ */
-+typedef int (*hdr_callback)(void *callback_data, __u64 data_type,
-+			    __u64 num_entries, __u64 total_len);
-+
-+/**
-+ * typedef data_callback - Callback after parsing TLV data entry
-+ * @callback_data: Opaque data to supply to the data callback function
-+ * @field: TLV field ID
-+ * @field_data: Data of a TLV data field
-+ * @field_len: Length of @field_data
-+ *
-+ * This callback is invoked after a TLV data entry is parsed.
-+ *
-+ * Return: 0 on success, a negative value on error.
-+ */
-+typedef int (*data_callback)(void *callback_data, __u64 field,
-+			     const __u8 *field_data, __u64 field_len);
-+
-+int tlv_parse(hdr_callback hdr_callback, void *hdr_callback_data,
-+	      data_callback data_callback, void *data_callback_data,
-+	      const __u8 *data, size_t data_len, const char **data_types,
-+	      __u64 num_data_types, const char **fields, __u64 num_fields);
-+
-+#endif /* _LINUX_TLV_PARSER_H */
-diff --git a/include/uapi/linux/tlv_parser.h b/include/uapi/linux/tlv_parser.h
-new file mode 100644
-index 000000000000..fbd4fc403ac7
---- /dev/null
-+++ b/include/uapi/linux/tlv_parser.h
-@@ -0,0 +1,62 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Implement the user space interface for the TLV parser.
-+ */
-+
-+#ifndef _UAPI_LINUX_TLV_PARSER_H
-+#define _UAPI_LINUX_TLV_PARSER_H
-+
-+#include <linux/types.h>
-+
-+/*
-+ * TLV format:
-+ *
-+ * +-----------------+------------------+-----------------+
-+ * | data type (u64) | num fields (u64) | total len (u64) | # header
-+ * +--------------+--+---------+--------+---------+-------+
-+ * | field1 (u64) | len1 (u64) | value1 (u8 len1) |
-+ * +--------------+------------+------------------+
-+ * |     ...      |    ...     |        ...       |         # data
-+ * +--------------+------------+------------------+
-+ * | fieldN (u64) | lenN (u64) | valueN (u8 lenN) |
-+ * +--------------+------------+------------------+
-+ *
-+ * [same as above, repeated N times]
-+ *
-+ */
-+
-+/**
-+ * struct tlv_hdr - Header of TLV format
-+ * @data_type: Type of data to parse
-+ * @num_entries: Number of data entries provided
-+ * @_reserved: Reserved for future use (must be equal to zero)
-+ * @total_len: Total length of the data blob, excluding the header
-+ *
-+ * This structure represents the header of the TLV data format.
-+ */
-+struct tlv_hdr {
-+	__u64 data_type;
-+	__u64 num_entries;
-+	__u64 _reserved;
-+	__u64 total_len;
-+} __attribute__((packed));
-+
-+/**
-+ * struct tlv_data_entry - Data entry of TLV format
-+ * @field: Data field identifier
-+ * @length: Data length
-+ * @data: Data
-+ *
-+ * This structure represents a TLV data entry.
-+ */
-+struct tlv_data_entry {
-+	__u64 field;
-+	__u64 length;
-+	__u8 data[];
-+} __attribute__((packed));
-+
-+#endif /* _UAPI_LINUX_TLV_PARSER_H */
-diff --git a/lib/Kconfig b/lib/Kconfig
-index b38849af6f13..9141dcfc1704 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -777,3 +777,6 @@ config POLYNOMIAL
+ /**
+  * struct digest_cache - Digest cache
+  * @ref_count: Number of references to the digest cache
+  * @path_str: Path of the digest list the digest cache was created from
+  * @flags: Control flags
++ * @digest_list_path: Path structure of the digest list
+  *
+  * This structure represents a cache of digests extracted from a digest list.
+  */
+@@ -25,6 +31,7 @@ struct digest_cache {
+ 	atomic_t ref_count;
+ 	char *path_str;
+ 	unsigned long flags;
++	struct path digest_list_path;
+ };
  
- config FIRMWARE_TABLE
- 	bool
-+
-+config TLV_PARSER
-+	bool
-diff --git a/lib/Makefile b/lib/Makefile
-index 322bb127b4dc..c6c3614c4293 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -392,6 +392,8 @@ obj-$(CONFIG_USERCOPY_KUNIT_TEST) += usercopy_kunit.o
- obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) += devmem_is_allowed.o
+ /**
+@@ -84,6 +91,8 @@ digest_cache_unref(struct digest_cache *digest_cache)
+ struct digest_cache *digest_cache_create(struct dentry *dentry,
+ 					 struct path *digest_list_path,
+ 					 char *path_str, char *filename);
++struct digest_cache *digest_cache_init(struct dentry *dentry,
++				       struct digest_cache *digest_cache);
+ int __init digest_cache_do_init(const struct lsm_id *lsm_id,
+ 				loff_t inode_offset);
  
- obj-$(CONFIG_FIRMWARE_TABLE) += fw_table.o
-+obj-$(CONFIG_TLV_PARSER) += tlv_parser.o
-+CFLAGS_tlv_parser.o += -I lib
+diff --git a/security/integrity/digest_cache/main.c b/security/integrity/digest_cache/main.c
+index 60030df04a4d..188f1dcc880e 100644
+--- a/security/integrity/digest_cache/main.c
++++ b/security/integrity/digest_cache/main.c
+@@ -154,6 +154,14 @@ struct digest_cache *digest_cache_create(struct dentry *dentry,
  
- # FORTIFY_SOURCE compile-time behavior tests
- TEST_FORTIFY_SRCS = $(wildcard $(src)/test_fortify/*-*.c)
-diff --git a/lib/tlv_parser.c b/lib/tlv_parser.c
-new file mode 100644
-index 000000000000..5d54844ab8d7
---- /dev/null
-+++ b/lib/tlv_parser.c
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Implement the TLV parser.
-+ */
+ 	/* Increment ref. count for reference returned to the caller. */
+ 	digest_cache = digest_cache_ref(dig_sec->dig_owner);
 +
-+#define pr_fmt(fmt) "tlv_parser: "fmt
-+#include <tlv_parser.h>
++	/* Make other digest cache requestors wait until creation complete. */
++	set_bit(INIT_IN_PROGRESS, &digest_cache->flags);
 +
++	/* Get the digest list path for initialization. */
++	digest_cache->digest_list_path.dentry = digest_list_path->dentry;
++	digest_cache->digest_list_path.mnt = digest_list_path->mnt;
++	path_get(&digest_cache->digest_list_path);
+ 	mutex_unlock(&dig_sec->dig_owner_mutex);
+ out:
+ 	if (digest_list_path == &file_path)
+@@ -226,6 +234,45 @@ static struct digest_cache *digest_cache_new(struct dentry *dentry)
+ 	return digest_cache;
+ }
+ 
 +/**
-+ * tlv_parse_hdr - Parse TLV header
-+ * @hdr_callback: Callback function to call after parsing header
-+ * @hdr_callback_data: Opaque data to supply to the header callback function
-+ * @data: Data to parse (updated)
-+ * @data_len: Length of @data (updated)
-+ * @parsed_num_entries: Parsed number of data entries (updated)
-+ * @parsed_total_len: Parsed length of TLV data, excluding the header (updated)
-+ * @data_types: Array of data type strings
-+ * @num_data_types: Number of elements of @data_types
++ * digest_cache_init - Initialize a digest cache
++ * @dentry: Dentry of the inode for which the digest cache will be used
++ * @digest_cache: Digest cache to initialize
 + *
-+ * Parse the header of the TLV data format, move the data pointer to the TLV
-+ * data part, decrease the data length by the length of the header, and provide
-+ * the number of entries and the total data length extracted from the header.
++ * This function checks if the INIT_STARTED digest cache flag is set. If it is,
++ * it waits until the caller that saw INIT_STARTED unset completes the
++ * initialization.
 + *
-+ * Before returning, call the header callback to let the callback supplier
-+ * decide whether or not to process the subsequent TLV data.
++ * Otherwise, it sets INIT_STARTED (atomically), performs the initialization,
++ * clears the INIT_IN_PROGRESS digest cache flag, and wakes up the other
++ * callers.
 + *
-+ * Return: 1 to process the data entries, 0 to skip, a negative value on error.
++ * Return: A valid and initialized digest cache.
 + */
-+static int tlv_parse_hdr(hdr_callback hdr_callback, void *hdr_callback_data,
-+			 const __u8 **data, size_t *data_len,
-+			 __u64 *parsed_num_entries, __u64 *parsed_total_len,
-+			 const char **data_types, __u64 num_data_types)
++struct digest_cache *digest_cache_init(struct dentry *dentry,
++				       struct digest_cache *digest_cache)
 +{
-+	__u64 parsed_data_type;
-+	struct tlv_hdr *hdr;
-+
-+	if (*data_len < sizeof(*hdr)) {
-+		pr_debug("Data blob too short, %lu bytes, expected %lu\n",
-+			 *data_len, sizeof(*hdr));
-+		return -EBADMSG;
++	/* Wait for digest cache initialization. */
++	if (test_and_set_bit(INIT_STARTED, &digest_cache->flags)) {
++		wait_on_bit(&digest_cache->flags, INIT_IN_PROGRESS,
++			    TASK_UNINTERRUPTIBLE);
++		goto out;
 +	}
 +
-+	hdr = (struct tlv_hdr *)*data;
-+
-+	*data += sizeof(*hdr);
-+	*data_len -= sizeof(*hdr);
-+
-+	parsed_data_type = __be64_to_cpu(hdr->data_type);
-+	if (parsed_data_type >= num_data_types) {
-+		pr_debug("Invalid data type %llu, max: %llu\n",
-+			 parsed_data_type, num_data_types - 1);
-+		return -EBADMSG;
-+	}
-+
-+	*parsed_num_entries = __be64_to_cpu(hdr->num_entries);
-+
-+	if (hdr->_reserved != 0) {
-+		pr_debug("_reserved must be zero\n");
-+		return -EBADMSG;
-+	}
-+
-+	*parsed_total_len = __be64_to_cpu(hdr->total_len);
-+	if (*parsed_total_len > *data_len) {
-+		pr_debug("Invalid total length %llu, expected: %lu\n",
-+			 *parsed_total_len, *data_len);
-+		return -EBADMSG;
-+	}
-+
-+	pr_debug("Header: type: %s, num entries: %llu, total len: %lld\n",
-+		 data_types[parsed_data_type], *parsed_num_entries,
-+		 *parsed_total_len);
-+
-+	return hdr_callback(hdr_callback_data, parsed_data_type,
-+			    *parsed_num_entries, *parsed_total_len);
-+}
-+
-+/**
-+ * tlv_parse_data - Parse TLV data
-+ * @data_callback: Callback function to call to parse the data entries
-+ * @data_callback_data: Opaque data to supply to the data callback function
-+ * @num_entries: Number of data entries to parse
-+ * @data: Data to parse
-+ * @data_len: Length of @data
-+ * @fields: Array of field strings
-+ * @num_fields: Number of elements of @fields
-+ *
-+ * Parse the data part of the TLV data format and call the supplied callback
-+ * function for each data entry, passing also the opaque data pointer.
-+ *
-+ * The data callback function decides how to process data depending on the
-+ * field.
-+ *
-+ * Return: 0 on success, a negative value on error.
-+ */
-+static int tlv_parse_data(data_callback data_callback, void *data_callback_data,
-+			  __u64 num_entries, const __u8 *data, size_t data_len,
-+			  const char **fields, __u64 num_fields)
-+{
-+	const __u8 *data_ptr = data;
-+	struct tlv_data_entry *entry;
-+	__u64 parsed_field, len, i, max_num_entries;
-+	int ret;
-+
-+	max_num_entries = data_len / sizeof(*entry);
-+
-+	/* Possibly lower limit on num_entries loop. */
-+	if (num_entries > max_num_entries)
-+		return -EBADMSG;
-+
-+	for (i = 0; i < num_entries; i++) {
-+		if (data_len < sizeof(*entry))
-+			return -EBADMSG;
-+
-+		entry = (struct tlv_data_entry *)data_ptr;
-+		data_ptr += sizeof(*entry);
-+		data_len -= sizeof(*entry);
-+
-+		parsed_field = __be64_to_cpu(entry->field);
-+		if (parsed_field >= num_fields) {
-+			pr_debug("Invalid field %llu, max: %llu\n",
-+				 parsed_field, num_fields - 1);
-+			return -EBADMSG;
-+		}
-+
-+		len = __be64_to_cpu(entry->length);
-+
-+		if (data_len < len)
-+			return -EBADMSG;
-+
-+		pr_debug("Data: field: %s, len: %llu\n", fields[parsed_field],
-+			 len);
-+
-+		if (!len)
-+			continue;
-+
-+		ret = data_callback(data_callback_data, parsed_field, data_ptr,
-+				    len);
-+		if (ret < 0) {
-+			pr_debug("Parsing of field %s failed, ret: %d\n",
-+				 fields[parsed_field], ret);
-+			return ret;
-+		}
-+
-+		data_ptr += len;
-+		data_len -= len;
-+	}
-+
-+	if (data_len) {
-+		pr_debug("Excess data: %lu bytes\n", data_len);
-+		return -EBADMSG;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * tlv_parse - Parse data in TLV format
-+ * @hdr_callback: Callback function to call after parsing header
-+ * @hdr_callback_data: Opaque data to supply to the header callback function
-+ * @data_callback: Callback function to call to parse the data entries
-+ * @data_callback_data: Opaque data to supply to the data callback function
-+ * @data: Data to parse
-+ * @data_len: Length of @data
-+ * @data_types: Array of data type strings
-+ * @num_data_types: Number of elements of @data_types
-+ * @fields: Array of field strings
-+ * @num_fields: Number of elements of @fields
-+ *
-+ * Parse data in TLV format and call tlv_parse_data() each time tlv_parse_hdr()
-+ * returns 1.
-+ *
-+ * Return: 0 on success, a negative value on error.
-+ */
-+int tlv_parse(hdr_callback hdr_callback, void *hdr_callback_data,
-+	      data_callback data_callback, void *data_callback_data,
-+	      const __u8 *data, size_t data_len, const char **data_types,
-+	      __u64 num_data_types, const char **fields, __u64 num_fields)
-+{
-+	__u64 parsed_num_entries, parsed_total_len;
-+	const __u8 *data_ptr = data;
-+	int ret = 0;
-+
-+	pr_debug("Start parsing data blob, size: %lu\n", data_len);
-+
-+	while (data_len) {
-+		ret = tlv_parse_hdr(hdr_callback, hdr_callback_data, &data_ptr,
-+				    &data_len, &parsed_num_entries,
-+				    &parsed_total_len, data_types,
-+				    num_data_types);
-+		switch (ret) {
-+		case 0:
-+			/*
-+			 * tlv_parse_hdr() already checked that
-+			 * parsed_total_len <= data_len.
-+			 */
-+			data_ptr += parsed_total_len;
-+			data_len -= parsed_total_len;
-+			continue;
-+		case 1:
-+			break;
-+		default:
-+			goto out;
-+		}
-+
-+		ret = tlv_parse_data(data_callback, data_callback_data,
-+				     parsed_num_entries, data_ptr,
-+				     parsed_total_len, fields, num_fields);
-+		if (ret < 0)
-+			goto out;
-+
-+		data_ptr += parsed_total_len;
-+		data_len -= parsed_total_len;
-+	}
++	path_put(&digest_cache->digest_list_path);
++	/* Notify initialization complete. */
++	clear_and_wake_up_bit(INIT_IN_PROGRESS, &digest_cache->flags);
 +out:
-+	pr_debug("End of parsing data blob, ret: %d\n", ret);
-+	return ret;
++	if (test_bit(INVALID, &digest_cache->flags)) {
++		pr_debug("Digest cache %s is invalid, don't return it\n",
++			 digest_cache->path_str);
++		digest_cache_put(digest_cache);
++		digest_cache = NULL;
++	}
++
++	return digest_cache;
 +}
-diff --git a/lib/tlv_parser.h b/lib/tlv_parser.h
-new file mode 100644
-index 000000000000..8fa8127bd13e
---- /dev/null
-+++ b/lib/tlv_parser.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Header file of TLV parser.
-+ */
 +
-+#ifndef _LIB_TLV_PARSER_H
-+#define _LIB_TLV_PARSER_H
+ /**
+  * digest_cache_get - Get a digest cache for a given inode
+  * @dentry: Dentry of the inode for which the digest cache will be used
+@@ -268,6 +315,10 @@ struct digest_cache *digest_cache_get(struct dentry *dentry)
+ 
+ 	mutex_unlock(&dig_sec->dig_user_mutex);
+ 
++	if (digest_cache)
++		/* This must be always executed, or path ref. is not released.*/
++		digest_cache = digest_cache_init(dentry, digest_cache);
 +
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/tlv_parser.h>
-+
-+#endif /* _LIB_TLV_PARSER_H */
+ 	return digest_cache;
+ }
+ EXPORT_SYMBOL_GPL(digest_cache_get);
 -- 
 2.34.1
 
