@@ -1,44 +1,72 @@
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B4019D063
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Sep 2024 14:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B47A19D082
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Sep 2024 14:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725545125; cv=none; b=VsCWk8DmOoMbJ1JlRY/YrsjyV8YBaJt9jk5vIDyEcjrvkSccZIUZtsR32HbVoBPApeGpsd6F5a7/0+Xctd+UQnwZ5ubCq+nLf2001kOJYzXE7H80uQiNhzEQ48xFE9TIyc3SntW5ThadMBCXTz+uz+hiYPDUR8cNJKovcyMQBbA=
+	t=1725545578; cv=none; b=Z9DFPVWDdq/UGBU/1JBazWXxX1SP+UfTP+kCFLj6rR/XHuNQhmSvtd6HAn6F8pNXBaB3uN9XT/y5mTh+tSO/ch9CsTQymEowFYKZ0J8w5UZeMwBpxxdxWAMRTvLKWyXTyAz3AlsEu/H7ySQgG2H18K+ZAHnyU4TXXECTQsR15aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725545125; c=relaxed/simple;
-	bh=ZVg1DAg6N5h7F/0RkaxUxwzQhYejrBYDgjgdlUgE5mQ=;
+	s=arc-20240116; t=1725545578; c=relaxed/simple;
+	bh=gIpwCb6OV6UwPMTwnRjpauWp1JHz59zzWwEgm74aOlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkxxwIkL8nOfN3PBZF7dEcD0TMXClsGNkg6BmUZQrfM9vXVuKt+QftBXv1X0+g3a89KngGVaOHen4JSrPvrOm9nRwEb1dTIBgMuoso4JoS2CObac0kxVFo2lHtaevggLBk3LGwkNMG2tJ57ru+f0F9Fd/d7PhRHDtPIfTurmDeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hW2nI1Il; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKP0v7Fe+R/2fj3FHjCGL02015C9OmUkZwbnCaBfqx91X+cMVH9g2Mm+QDLJmlw/hmWQwp+uw7MfYvF7Tl8gWPV9KSG2UoJS8iowSQ8t8DRyC3EIpOF7lDUxBJptE7IPclJD3Z7z6sqvEN56OXwRGpdpBk5s0T+Q7tu/+5/t+qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fzkBDS/8; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hW2nI1Il"
-Date: Thu, 5 Sep 2024 10:05:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725545121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MyCjQthpFJhnYK6tEfReEkQ3UbH/LJW1l4f9CWgc5Fc=;
-	b=hW2nI1IlY8C3UAhbNifysoKIq+TJeJoVcizmcoRH4fUejSVQruyq6fk04012lwnxvEmkah
-	i6tgXPD4QgRXHbE89wQ9Oi65yCi54TneuQAxZ2EXNJMLMmiwRCniBHRBc0ZN1fsRO3obE8
-	NS2TA/IPKHrlBcNkankYN8VfXh17UOY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fzkBDS/8"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-533521cd1c3so1077118e87.1
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Sep 2024 07:12:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725545574; x=1726150374; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwYsBihYTyfOkMwcrQ2PgVwPBmg+Ta54Eew3ioB7SiQ=;
+        b=fzkBDS/8pvFq4Xc8f/Fa2RY3BiXmomhg0qoazjTcSjQXm/YO48sC4nMS+/dZJmrFbM
+         Yhd4jGUFonnzfk1cWfmKUILW7d9OwsbSSvnb0AA44rNsdcEAg/IvdfB5zJmR0bS45+Bw
+         27FsoiC9HRTJth/KITNi8Dq9n1kx/ueWUdninPQfhhj00Po/QviTMSO2+o4ttYItdreV
+         uxQjUDzofWmqJ6+hoArSW6TSQZt+XzVBU6maC2kUohbxWsBDX27DbKFIIPMr5kSGmZw7
+         zL18ZVt3lzrXxfmHnnz3V6F8bWLA+/e1MXul+HWl9OlOIXADIdXF4Mxs9JttIKeaWdLK
+         06zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725545574; x=1726150374;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gwYsBihYTyfOkMwcrQ2PgVwPBmg+Ta54Eew3ioB7SiQ=;
+        b=P4536n4BgGeobzRfnGRg2Y8cEoK1ifPIVeYmzSyXXM2uFPJ3vLl4v9eDbY46t/ctml
+         IzHB1OFE1/wUPCHGLFZ9PpT4mAdu6TZKWQBDVLItQO6XFsyx7J65/W/JUaGZp5olo8C2
+         o1O+Zj7hTOpJd/VsN+ZvAkAlApmTH9bRHHldEB/Pn8tA5zD73MCDyFru95EBS7WQhhBJ
+         p3gOeD5rrwSp4ldW0kxgZ9EO8sX8DSSg8eEYQzwwh7t4S1kEvMsTfoUAoxyDdXoO0DUP
+         cUjlspNFyZJJA4ecVrTlB55AZ+EvKOJqCooE8WGFXEHnL5JPlBvKhr9y85GRLGWtEEQf
+         IV1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPAPmMSXznSUmWFKHrdtWF1M/IH87+QmYTeCufygapIPyB07e6BSGxgwIytrlvt+bpgKiLgsTNTJ8i014Lt5OcokcCpSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFqqw23uNFUDIxLY9DWcNloVzG8xt+rHaNGe/Xm3nYfhwqDvHu
+	ZRbIcoGlGTKBGAOas43Lbe4LFjN3eVoOO2Zh7QXGT+NCDbsVpbtObY38uaSyvwo=
+X-Google-Smtp-Source: AGHT+IGsTyoQo5r21FHK64nbduDdB0RMk5Y4ciVDsCqSQ9O4YP1mPL/j+bbkh4RnUZCAoKKWGupTJg==
+X-Received: by 2002:a05:6512:a8b:b0:536:54ff:51c8 with SMTP id 2adb3069b0e04-53654ff53dbmr1077754e87.17.1725545574270;
+        Thu, 05 Sep 2024 07:12:54 -0700 (PDT)
+Received: from localhost ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a623c2fa2sm142182366b.183.2024.09.05.07.12.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 07:12:54 -0700 (PDT)
+Date: Thu, 5 Sep 2024 16:12:53 +0200
+From: Michal Hocko <mhocko@suse.com>
 To: Theodore Ts'o <tytso@mit.edu>
-Cc: Michal Hocko <mhocko@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
+	Dave Chinner <dchinner@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
 	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <4ty2psn26sergqax6yhcs3htt2tsg3wuvrfyvfdvseom22zhqk@yppva6vxpmjz>
+Message-ID: <Ztm8ZY0kXWLFspYJ@tiehlicka>
 References: <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
  <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
  <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
@@ -58,9 +86,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20240905135326.GU9627@mit.edu>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 05, 2024 at 09:53:26AM GMT, Theodore Ts'o wrote:
+On Thu 05-09-24 09:53:26, Theodore Ts'o wrote:
 > On Thu, Sep 05, 2024 at 01:26:50PM +0200, Michal Hocko wrote:
 > > > > > > This is exactly GFP_KERNEL semantic for low order allocations or
 > > > > > > kvmalloc for that matter. They simply never fail unless couple of corner
@@ -84,36 +111,25 @@ On Thu, Sep 05, 2024 at 09:53:26AM GMT, Theodore Ts'o wrote:
 > That may be the currrent state of affiars; but is it
 > ****guaranteed**** forever and ever, amen, that GFP_KERNEL will never
 > fail if the amount of memory allocated was lower than a particular
-> multiple of the page size?  If so, what is that size?  I've checked,
-> and this is not documented in the formal interface.
+> multiple of the page size?
 
-Yeah, and I think we really need to make that happen, in order to head
-off a lot more sillyness in the future.
+No, GFP_KERNEL is not guaranteed. Allocator tries as hard as it can to
+satisfy those allocations for order <= PAGE_ALLOC_COSTLY_ORDER.
 
-We'd also be documenting at the same time _exactly_ when it is required
-to check for errors:
-- small, fixed sized allocation in a known sleepable context, safe to skip
-- anything else, i.e. variable sized allocation or library code that can
-  be called from different contexts: you check for errors (and probably
-  that's just "something crazy has happened, emergency shutdown" for the
-  xfs/ext4 paths
+GFP_NOFAIL is guaranteed for order <= 1 for page allocator and there is
+no practical limit for vmalloc currently. This is what our documentation
+says
+ * The default allocator behavior depends on the request size. We have a concept
+ * of so-called costly allocations (with order > %PAGE_ALLOC_COSTLY_ORDER).
+ * !costly allocations are too essential to fail so they are implicitly
+ * non-failing by default (with some exceptions like OOM victims might fail so
+ * the caller still has to check for failures) while costly requests try to be
+ * not disruptive and back off even without invoking the OOM killer.
+ * The following three modifiers might be used to override some of these
+ * implicit rules.
 
-> > The fundamental difference is that (appart from unsupported allocation
-> > mode/size) the latter never returns NULL and you can rely on that fact.
-> > Our docummentation says:
-> >  * %__GFP_NOFAIL: The VM implementation _must_ retry infinitely: the caller
-> >  * cannot handle allocation failures. The allocation could block
-> >  * indefinitely but will never return with failure. Testing for
-> >  * failure is pointless.
-> 
-> So if the documentation is going to give similar guarantees, as
-> opposed to it being an accident of the current implementation that is
-> subject to change at any time, then sure, we can probably get away
-> with all or most of ext4's uses of __GFP_NOFAIL.  But I don't want to
-> do that and then have a "Lucy and Charlie Brown" moment from the
-> Peanuts comics strip where the football suddenly gets snatched away
-> from us[1] (and many file sytem users will be very, very sad and/or
-> angry).
-
-yeah absolutely, and the "what is a small allocation" limit needs to be
-nailed down as well
+There is no guarantee this will be that way for ever. This is unlikely
+to change though.
+-- 
+Michal Hocko
+SUSE Labs
