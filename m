@@ -1,145 +1,186 @@
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCBF14EC6E
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Sep 2024 23:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA640184;
+	Thu,  5 Sep 2024 00:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725491137; cv=none; b=D3k9AgKiT0bRzPAJiO/tyJLgTthSWw3XR03/ognH68lPnigtkW9lMpEL9Q0YmK+v4nSdxVwRYZ+Lf1uJwRS8jdx7sk1jcDJB2GaGnq6PZ0TThrFNu7IYFMbsgMgpCSuHdjgDUeTxeENa8G/PTto2mGbwiPMmSyy6buXI+YmcWrY=
+	t=1725495262; cv=none; b=XmyZ4QMt9kobtRYZQcpmBBj8GK12qiSmCfxLmrRLhDLproI/bSFY2inpHqzmOoUSNcWAulYdU0mfd/+AYNdZvcxREBhWZF9ZUmbVrbj3AQ07N0Nv1y1+ZvL/eITh0IGolnwUuDXuZ2np5+wr6L+5o5zucwaUW88jnCMnAPuy38U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725491137; c=relaxed/simple;
-	bh=AL7jBf/oj0Cd/KEMZtrNE6Gk35+GwCCya7UV9FRkstA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n15CxvIkiSmNQWlb/GeAzinyypJMZkbfURZphMlKp3ZL3vJq3jJuIH1Fc+Jhit00nkdCVf3uGmyMuXJ221Pjgv4yH4OpHfB7W60xiajkmSJKs6ITiCuiOQkd0Z1okUYwNxRSgzX0RhlqcGf0ROo7mCkgRjvcQDVONa3t00VfJik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qldlD+ML; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1725495262; c=relaxed/simple;
+	bh=qhfENanhYlqO+Tb9devw7AVXsZcEt1vJt7XKABJZUp8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ss7nnGHI57Iwq4Xm+W8MbYiTACFtR4+LxSmRsaur4D9+bOdPCVk9in5+seg7an2YkUOTRcdW2drjXvGY3m5/zK1PMNpHfgYxpVSwLBUKXUxho7U20QV9dfrgcR16TcOpoLSdz60XoI37RnfToOKejKyBNce2LTAliaugrc56HHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXDnBiso; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qldlD+ML"
-Date: Wed, 4 Sep 2024 19:05:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725491134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KcVsx2vDwlHG4tKH3VNsA9AGL8ypQbgKqlGsi88qPzs=;
-	b=qldlD+MLY/awoHP6h9eDQb6YaviSGzhThCweSL040WEvRSqzzpwPqgx4HAaievFjLWZKJt
-	nQkeee2r7E5VxY5DhvIDWaXMdorCngIxHzEpFVSmRe+B0DEzFquLXaGVZsRk0xBPM5/Bz8
-	Nd8G9AiWuM4qKc/av28TbAlF1hyYCF0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <hebnghkaytxb5djjsh6w7eddl7czrbnd7duobwisauffs5ax2q@4itp76zkzsf7>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
- <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
- <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
- <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
- <ZtgI1bKhE3imqE5s@tiehlicka>
- <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
- <ZtiOyJ1vjY3OjAUv@tiehlicka>
- <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
- <Ztjgf/mzdnhj/szl@dread.disaster.area>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXDnBiso"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-714287e4083so151011b3a.2;
+        Wed, 04 Sep 2024 17:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725495260; x=1726100060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oAeF4Hyg0coER913U25Eksuz8dAnYzaOfEwRiEEL0qE=;
+        b=EXDnBisov6kN/SzptQid87BCS3umbIUj2oWEEow3/k57tjNfFR/wH8plWL9Giq18YU
+         8U12T2GuNjw8T6T4pSDoTgRDPiIAl+9B0MhtulItoEmcuM0tUZKukyShDb9cmO6L2Gik
+         olh/OcUe6CeJE8EqzG9a5rUaacpXloWObAj0P6w9l75SoKUzg6JPgHgDAnLdM/ysEZGN
+         jzQ3I6itlgHvYhWcyMNHwvt6M2h3O5TfRcvsGMXutWAMsIR/KMzMYYUbom4xewOImI5b
+         Wxwjo1J6CjGtxIMlEUXN2uka70GeWig+RnpvzNfCJ9I4YNaDFFRWrlcLrmTe12nEhUiG
+         RmgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725495260; x=1726100060;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oAeF4Hyg0coER913U25Eksuz8dAnYzaOfEwRiEEL0qE=;
+        b=IuoDlWRKKYVT88guXagK0b0xUzA8lyynfyIfSFePU9YwAZ8x1sQS4pGvbBTW62JzMo
+         Ma5cWSzAfFp4nn3kKyv6Uy6xX5Vd6NQHpWA9bcwdzCjsjIvUVHPkMfEsoANgmAci48zP
+         fTICSjgZGGyZ4FmxqSuaLcrSTGuY4sFzSieP/6o2K0cRKmtiD7FPBAlsS7Wy4v6BRMz4
+         qPF8xnoXnBiGQmZQpzN5ev1TeJHJKUrQliKUFiYHpX94uEbAnNbxn0FJ6J+s7hdckKXc
+         h6sE8ciOPgolLHbm0WLhWWq936cQh/mSuV8WT9WbFrifvoU9CJRNAwZosw8YR6EO+SN2
+         36fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkKnAt9OFgEZH0P/0eBO5sbsiu6fXbpstjvI1y0hebs6nyc2pfGTpdglsDL+/4svLTyd4DlzSF@vger.kernel.org, AJvYcCX2hMhRiZSVDOuFGkA8lh0gEsPMTqjkmD76xgz+Ig5smL1w9SKATeMM6YBi03J3f4zJA/5igMXCEzyeDp5PQH53cGKfYnqL@vger.kernel.org, AJvYcCXELGEzT4q+gJas9qOjgrk6/HTSxoC5rpGVv6kJ1+3ZaUSbtK/kYBUR75Efb3xkP5ofwLfzfdJMkfxLopc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYHrp1MTY+gUj8YbILOGuE3OXkadd/BGQ90eV2yY2rTmL1AD+c
+	ZVb/loLppBwmgA/8orWUM/pi0c2fi+OcvcOSR4o2cnAHXaBAXmkX
+X-Google-Smtp-Source: AGHT+IHyfjWhUvFw1Huv+dk80Us3saRElnhLngJ5hOHA40vi4UsdUdntl8ZeyERi10edcXy4+Dwz1w==
+X-Received: by 2002:a05:6a00:2d07:b0:717:87d6:fdd2 with SMTP id d2e1a72fcca58-71787d6ffe0mr2767467b3a.4.1725495259874;
+        Wed, 04 Sep 2024 17:14:19 -0700 (PDT)
+Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71778534921sm2159781b3a.76.2024.09.04.17.14.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 17:14:19 -0700 (PDT)
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: outreachy@lists.linux.dev
+Cc: mic@digikod.net,
+	gnoack@google.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com,
+	jannh@google.com,
+	netdev@vger.kernel.org,
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: [PATCH v11 0/8] Landlock: Add abstract UNIX socket restriction
+Date: Wed,  4 Sep 2024 18:13:54 -0600
+Message-Id: <cover.1725494372.git.fahimitahera@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ztjgf/mzdnhj/szl@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 05, 2024 at 08:34:39AM GMT, Dave Chinner wrote:
-> I've seen xfs_repair require a couple of TB of RAM to repair
-> metadata heavy filesystems of relatively small size (sub-20TB).
-> Once you get about a few hundred GB of metadata in the filesystem,
-> the fsck cross-reference data set size can easily run into the TBs.
-> 
-> So 256GB might *seem* like a lot of memory, but we were seeing
-> xfs_repair exceed that amount of RAM for metadata heavy filesystems
-> at least a decade ago...
-> 
-> Indeed, we recently heard about a 6TB filesystem with 15 *billion*
-> hardlinks in it.  The cross reference for resolving all those
-> hardlinks would require somewhere in the order of 1.5TB of RAM to
-> hold. The only way to reliably handle random access data sets this
-> large is with pageable memory....
+This patch series adds scoping mechanism for abstract UNIX sockets.
+Closes: https://github.com/landlock-lsm/linux/issues/7
 
-Christ...
+Problem
+=======
 
-This is also where space efficiency of metadata starts to really matter. 
+Abstract UNIX sockets are used for local inter-process communications
+independent of the filesystem. Currently, a sandboxed process can
+connect to a socket outside of the sandboxed environment, since Landlock
+has no restriction for connecting to an abstract socket address(see more
+details in [1,2]). Access to such sockets for a sandboxed process should
+be scoped the same way ptrace is limited.
 
-Of course you store full backreferences for every hardlink, which is
-nice in some ways and a pain in others.
+[1] https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+[2] https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
 
-> > Another more pressing one is the extents -> backpointers and
-> > backpointers -> extents passes of fsck; we do a linear scan through one
-> > btree checking references to another btree. For the btree we're checking
-> > references to the lookups are random, so we need to cache and pin the
-> > entire btree in ram if possible, or if not whatever will fit and we run
-> > in multiple passes.
-> > 
-> > This is the #1 scalability issue hitting a number of users right now, so
-> > I may need to rewrite it to pull backpointers into an eytzinger array
-> > and do our random lookups for backpointers on that - but that will be
-> > "the biggest vmalloc array we can possible allocate", so the INT_MAX
-> > size limit is clearly an issue there...
-> 
-> Given my above comments, I think you are approaching this problem
-> the wrong way. It is known that the data set that can exceed
-> physical kernel memory size, hence it needs to be swappable. That
-> way users can extend the kernel memory capacity via swapfiles when
-> bcachefs.fsck needs more memory than the system has physical RAM.
+Solution
+========
 
-Well, it depends on the locality of the cross references - I don't think
-we want to go that route here, because if there isn't any locality in
-the cross references we'll just be thrashing; better to run in multiple
-passes, constraining each pass to what _will_ fit in ram...
+To solve this issue, we extend the user space interface by adding a new
+"scoped" field to Landlock ruleset attribute structure. This field can
+contains different rights to restrict different functionalities. For
+abstract UNIX sockets, we introduce
+"LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" field to specify that a ruleset
+will deny any connection from within the sandbox domain to its parent
+(i.e. any parent sandbox or non-sandbox processes).
 
-It would be nice if we had a way to guesstimate locality in extents <->
-backpointers references - if there is locality, then it's better to just
-run in one pass - and we wouldn't bother with building up new tables,
-we'd just rely on the btree node cache.
+Example
+=======
 
-Perhaps that's what we'll do when online fsck is finished and we're
-optimizing more for "don't disturb the rest of the system too much" than
-"get it done as quick as possible".
+Starting a listening socket with socat(1):
+        socat abstract-listen:mysocket -
 
-I do need to start making use of Darrick's swappable memory code in at
-least one other place though - the bucket tables when we're checking
-basic allocation info. That one just exceeded the INT_MAX limit for a
-user with a 30 TB hard drive, so I switched it to a radix tree for now,
-but it really should be swappable memory.
+Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+        LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
 
-Fortunately there's more locality in the accesses there.
+If we try to connect to the listening socket, the connection gets
+refused.
+        socat - abstract-connect:mysocket --> fails
 
-> Hence Darrick designed and implemented pageable shmem backed memory
-> files (xfiles) to hold these data sets. Hence the size limit of the
-> online repair data set is physical RAM + swap space, same as it is
-> for offline repair. You can find the xfile code in
-> fs/xfs/scrub/xfile.[ch].
-> 
-> Support for large, sortable arrays of fixed size records built on
-> xfiles can be found in xfarray.[ch], and blob storage in
-> xfblob.[ch].
 
-*nod*
+Notes of Implementation
+=======================
 
-I do wish we had normal virtually mapped swappable memory though - the
-thing I don't like about xfarray is that it requires a radix tree walk
-on every access, and we have _hardware_ that's meant to do that for
-us.
+* Using the "scoped" field provides enough compatibility and flexibility
+  to extend the scoping mechanism for other IPCs(e.g. signals).
 
-But if you still care about 32 bit then that does necessitate Darrick's
-approach. I'm willing to consider 32 bit legacy for bcachefs, though.
+* To access the domain of a socket, we use its credentials of the file's
+  FD which point to the credentials of the process that created the
+  socket (see more details in [3]). Cases where the process using the
+  socket has a different domain than the process created it are covered
+  in the "outside_socket" test.
+
+[3]https://lore.kernel.org/all/20240611.Pi8Iph7ootae@digikod.net/
+
+Previous Versions
+=================
+v10:https://lore.kernel.org/all/cover.1724125513.git.fahimitahera@gmail.com/
+v9: https://lore.kernel.org/all/cover.1723615689.git.fahimitahera@gmail.com/
+v8: https://lore.kernel.org/all/cover.1722570749.git.fahimitahera@gmail.com/
+v7: https://lore.kernel.org/all/cover.1721269836.git.fahimitahera@gmail.com/
+v6: https://lore.kernel.org/all/Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000/
+and https://lore.kernel.org/all/Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000/
+v5: https://lore.kernel.org/all/ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000/
+v4: https://lore.kernel.org/all/ZnNcE3ph2SWi1qmd@tahera-OptiPlex-5000/
+v3: https://lore.kernel.org/all/ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000/
+v2: https://lore.kernel.org/all/ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000/
+v1: https://lore.kernel.org/all/ZgXN5fi6A1YQKiAQ@tahera-OptiPlex-5000/
+
+Tahera Fahimi (8):
+  Landlock: Add abstract UNIX socket restriction
+  selftests/landlock: Add test for handling unknown scope
+  selftests/landlock: Add abstract UNIX socket restriction tests
+  selftests/landlock: Add tests for UNIX sockets with any address
+    formats
+  selftests/landlock: Test connected vs non-connected datagram UNIX
+    socket
+  selftests/landlock: Restrict inherited datagram UNIX socket to connect
+  sample/landlock: Add support abstract UNIX socket restriction
+  Landlock: Document LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET and ABI
+    version
+
+ Documentation/userspace-api/landlock.rst      |  45 +-
+ include/uapi/linux/landlock.h                 |  28 +
+ samples/landlock/sandboxer.c                  |  61 +-
+ security/landlock/limits.h                    |   3 +
+ security/landlock/ruleset.c                   |   7 +-
+ security/landlock/ruleset.h                   |  24 +-
+ security/landlock/syscalls.c                  |  17 +-
+ security/landlock/task.c                      | 136 +++
+ tools/testing/selftests/landlock/base_test.c  |   2 +-
+ tools/testing/selftests/landlock/common.h     |  38 +
+ tools/testing/selftests/landlock/net_test.c   |  31 +-
+ .../landlock/scoped_abstract_unix_test.c      | 993 ++++++++++++++++++
+ .../selftests/landlock/scoped_base_variants.h | 154 +++
+ .../selftests/landlock/scoped_common.h        |  28 +
+ .../scoped_multiple_domain_variants.h         | 154 +++
+ .../testing/selftests/landlock/scoped_test.c  |  33 +
+ 16 files changed, 1709 insertions(+), 45 deletions(-)
+ create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+ create mode 100644 tools/testing/selftests/landlock/scoped_base_variants.h
+ create mode 100644 tools/testing/selftests/landlock/scoped_common.h
+ create mode 100644 tools/testing/selftests/landlock/scoped_multiple_domain_variants.h
+ create mode 100644 tools/testing/selftests/landlock/scoped_test.c
+
+-- 
+2.34.1
+
