@@ -1,72 +1,80 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6621991B4;
-	Thu,  5 Sep 2024 09:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA1F1991D4
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Sep 2024 11:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725528569; cv=none; b=Q2AZGgJ9BWnvJIpLoYtXXLtkU9UzDONFuKtEoUJi8rxxivd3w5w+haS+S+R6PNN/EH+UOTKWmNLsUXnQgg7clqaPdn/NJ5zw/zR5xW3kk/UxoqSCljI0iN9xlkxabXNnT4WFwprYchZtNO28rP8FMJdD/bSO4svUHRdefEzu6as=
+	t=1725535615; cv=none; b=tAD7lqEbfxMQKUBzUfYtGJ0kLVlirqO2fh8KW4A7bU2YbrEtbuJx5kcnNmIptXEMOLW//okV0C4lrdGDD+AZHTLoh1eKClSNoHFoe/fvFcWdorMSKQhqzvoemVhqpAL5fkBdDhApJuTFYvpGSAKVrhZuqHHLAffZLV0PU/zlAkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725528569; c=relaxed/simple;
-	bh=eREH9W1o7gULhFJHUk1Riw6dl9QsxJdAN7EUozX80D0=;
+	s=arc-20240116; t=1725535615; c=relaxed/simple;
+	bh=uDHN9oD3ymzNoKqucZVNQadRU4ImbE+RLTgFQhaenkc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1eq2Q248ufe78crrYsOoPeTvvs9fHv2z7yxQDRtvoonKMlk9c2ply+G6JFeBZnjJXDXe9D18vmod6pk9OLR7p6xKMTMwV5KCE/5j5iSRLx6cF9SHbAyOcBNZHMXONxOx08KcHuxgBbWe6mhXMMSAFydXFGF6mdiqPKGv24G00M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B/1E0dYn; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVxuffypbR4xngS39g4Y7oWd4ImRtKypx2CvsBanvK6bR+YmXL5xuTYg92hBijs+ubr1gu920nqX1NqwIo8hRRR0YsY21cFxdiOV8dEKLYi4pfeYGIfw7+twxJM6vY+Bc58q16X7w5px/pqvRvNRTOl4Ktc2BySgzUCOgzZJhH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BEu8qjzB; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B/1E0dYn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725528567; x=1757064567;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eREH9W1o7gULhFJHUk1Riw6dl9QsxJdAN7EUozX80D0=;
-  b=B/1E0dYngxfLEtPJIRsQ5L2/NGaDqjy2v9nH5w1SFuPWSY7j2ZaLCNLr
-   6FqEcCH9/O10jPSE7MoL1BKC+iGpZb/oeOhrIIFDK6+1dI80W49Tsm7Be
-   QnL/sC9T7WZnP/P+LzXJoaO4US7toOuFAEO2wSMQUXdOg4qltrH7OaXmS
-   /q96oIjQEiF6FYQQka9yJjArVRd/XD0l3zAQztttRmNL7jY5Ie9tw3mqS
-   drWmCoooY7S06NsBeekS2quQznWbpr1L34zT/eQE37QNOaBsOAm5UnOha
-   4+hILHMNfrmsxI0FN5QOwFG3ARMhSCZXaeJ+6DbkJhZR3s9yjVClEQl/w
-   Q==;
-X-CSE-ConnectionGUID: KVH3ETUpQZa9JMy1Mv5f7Q==
-X-CSE-MsgGUID: prBX62d4TwqClwzRIGjZ2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11185"; a="24391221"
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="24391221"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Sep 2024 02:29:26 -0700
-X-CSE-ConnectionGUID: jnItSODjSG+XVlD9zXpVMQ==
-X-CSE-MsgGUID: mcITcjsVSNGmtXpYuqBsGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,204,1719903600"; 
-   d="scan'208";a="96352852"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 05 Sep 2024 02:29:21 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sm8nn-0009AN-1F;
-	Thu, 05 Sep 2024 09:29:19 +0000
-Date: Thu, 5 Sep 2024 17:28:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Hocko <mhocko@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BEu8qjzB"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53654e2ed93so303555e87.0
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Sep 2024 04:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725535611; x=1726140411; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MT1b/AWbDQ4Zc2FSXLwenhXbbMScTqyTjSATBO5zm2Q=;
+        b=BEu8qjzBcMUR56NsccopP84Ny24P/QojRgTGrRGCOueAi+bw9q1+swNtnNE1g4MOYt
+         cM+xo/+/RpRjGLjkc/L3mnWGAdttToWfGZjfo9J3dVG3QJj7Y2+/oHfL8ifAordAnf28
+         +MwrvqMyAu1t/UKHB7P6rGE7HX0PPetS4N9vczFGrepUi4xw7ozG3trsYs9SSfsD7jJ6
+         sBO9MGmBgHLFIpNGE9t3LbwmHH3Bm33RLg7C4CI1IFYc8KYvBlC4LtPuR0y0cvt5bsr/
+         Rk4AZCzxD/LK7Q6yTOS8GTV92VKWvNE31tfF480i4clqfOHNhZ9U+2t1hPswLN4dWTVF
+         lHcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725535611; x=1726140411;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MT1b/AWbDQ4Zc2FSXLwenhXbbMScTqyTjSATBO5zm2Q=;
+        b=ppTbFMxnnY9ojAfWaPU59kmwG0cuvU1U+2qQyeY9BzmUH+/wlm+PKBJUUVMa+XhfOi
+         Z7hlKQvvyJL01h+wz++HPlpwtGuSEW3N7m8arU6g4Xt8w07GuA/mNBwM5YRBl11alBoy
+         dhdOUJp8M3TlThsTSjG58AGh8pDqhWd0C61tt8gLmL8HPahxZT5eJhNfgZJIjPfaGFeb
+         1E7Lq85Z30jh1eoJtQCPCPx3ucYQxLmnq7ywmJeObKRf0iHaTxo9J0+S/GbobNVUQ5qd
+         WXv9SBfsCQSKuqdt5jFP3QkHS0eQp566Q4ebwltNHJD4lkne8UnUZiRuxSmP/7Uo1bER
+         s58w==
+X-Forwarded-Encrypted: i=1; AJvYcCXrNsOEeVO3pgTrRL0foQO00jIgubh53Orbo3eud71OR4Ny3glb6J57F2Qxj2uqqoddpdutMHXwNoK9boOfEv6b85LTlH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt8gX8aWBAke+Ra+RXuGX4Izqo8rTw1HhuMV4N+cQUtkiVOw1Y
+	6A1k3jrjyYeg9JGsxkz8OVrJ57YLoS5PI6uXgGo3w/7impfH6aRgDydYcXqstHw=
+X-Google-Smtp-Source: AGHT+IEtrnolfEptjFfOHaUd4JcPGLaKbwZaBjtKbHZL9CqfOihD83PJlSp/4jz+xU32g7o2FRHYcQ==
+X-Received: by 2002:a05:6512:230c:b0:530:ad7d:8957 with SMTP id 2adb3069b0e04-53546bb3b33mr14872842e87.49.1725535611082;
+        Thu, 05 Sep 2024 04:26:51 -0700 (PDT)
+Received: from localhost ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a764794c9sm55307966b.1.2024.09.05.04.26.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Sep 2024 04:26:50 -0700 (PDT)
+Date: Thu, 5 Sep 2024 13:26:50 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
-	Vlastimil Babka <vbabka@suse.cz>,
+	jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>,
 	Dave Chinner <dchinner@redhat.com>,
 	Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <202409051713.LFVMScXi-lkp@intel.com>
-References: <20240902095203.1559361-2-mhocko@kernel.org>
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtmVej0fbVxrGPVz@tiehlicka>
+References: <20240902095203.1559361-1-mhocko@kernel.org>
+ <ggrt5bn2lvxnnebqtzivmge3yjh3dnepqopznmjmkrcllb3b35@4vnnapwr36ur>
+ <20240902145252.1d2590dbed417d223b896a00@linux-foundation.org>
+ <yewfyeumr2vj3o6dqcrv6b2giuno66ki7vzib3syitrstjkksk@e2k5rx3xbt67>
+ <qlkjvxqdm72ijaaiauifgsnyzx3mw4edl2hexfabnsdncvpyhd@dvxliffsmkl6>
+ <ZtgI1bKhE3imqE5s@tiehlicka>
+ <xjtcom43unuubdtzj7pudew3m5yk34jdrhim5nynvoalk3bgbu@4aohsslg5c5m>
+ <ZtiOyJ1vjY3OjAUv@tiehlicka>
+ <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -75,84 +83,127 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240902095203.1559361-2-mhocko@kernel.org>
+In-Reply-To: <pmvxqqj5e6a2hdlyscmi36rcuf4kn37ry4ofdsp4aahpw223nk@lskmdcwkjeob>
 
-Hi Michal,
+On Wed 04-09-24 14:03:13, Kent Overstreet wrote:
+> On Wed, Sep 04, 2024 at 06:46:00PM GMT, Michal Hocko wrote:
+> > On Wed 04-09-24 12:05:56, Kent Overstreet wrote:
+> > > On Wed, Sep 04, 2024 at 09:14:29AM GMT, Michal Hocko wrote:
+> > > > On Tue 03-09-24 19:53:41, Kent Overstreet wrote:
+> > > > [...]
+> > > > > However, if we agreed that GFP_NOFAIL meant "only fail if it is not
+> > > > > possible to satisfy this allocation" (and I have been arguing that that
+> > > > > is the only sane meaning) - then that could lead to a lot of error paths
+> > > > > getting simpler.
+> > > > >
+> > > > > Because there are a lot of places where there's essentially no good
+> > > > > reason to bubble up an -ENOMEM to userspace; if we're actually out of
+> > > > > memory the current allocation is just one out of many and not
+> > > > > particularly special, better to let the oom killer handle it...
+> > > > 
+> > > > This is exactly GFP_KERNEL semantic for low order allocations or
+> > > > kvmalloc for that matter. They simply never fail unless couple of corner
+> > > > cases - e.g. the allocating task is an oom victim and all of the oom
+> > > > memory reserves have been consumed. This is where we call "not possible
+> > > > to allocate".
+> > > 
+> > > *nod*
+> > > 
+> > > Which does beg the question of why GFP_NOFAIL exists.
+> > 
+> > Exactly for the reason that even rare failure is not acceptable and
+> > there is no way to handle it other than keep retrying. Typical code was 
+> > 	while (!(ptr = kmalloc()))
+> > 		;
+> 
+> But is it _rare_ failure, or _no_ failure?
+>
+> You seem to be saying (and I just reviewed the code, it looks like
+> you're right) that there is essentially no difference in behaviour
+> between GFP_KERNEL and GFP_NOFAIL.
 
-kernel test robot noticed the following build warnings:
+The fundamental difference is that (appart from unsupported allocation
+mode/size) the latter never returns NULL and you can rely on that fact.
+Our docummentation says:
+ * %__GFP_NOFAIL: The VM implementation _must_ retry infinitely: the caller
+ * cannot handle allocation failures. The allocation could block
+ * indefinitely but will never return with failure. Testing for
+ * failure is pointless.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on tip/sched/core brauner-vfs/vfs.all linus/master v6.11-rc6]
-[cannot apply to next-20240904]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> So given that - why the wart?
+> 
+> I think we might be able to chalk it up to history; I'd have to go
+> spunking through the history (or ask Dave or Ted, maybe they'll chime
+> in), but I suspect GFP_KERNEL didn't provide such strong guarantees when
+> the allocation loops & GFP_NOFAIL were introduced.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Hocko/bcachefs-do-not-use-PF_MEMALLOC_NORECLAIM/20240902-200126
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240902095203.1559361-2-mhocko%40kernel.org
-patch subject: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240905/202409051713.LFVMScXi-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240905/202409051713.LFVMScXi-lkp@intel.com/reproduce)
+Sure, go ahead. If you manage to remove all existing users of
+__GFP_NOFAIL (without replacing them with retry loops in the caller)
+then I would be more than happy to remove __GFP_NOFAIL in the allocator. 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409051713.LFVMScXi-lkp@intel.com/
+[...]
+> > But the point is there are some which _do_ need this. We have discussed
+> > that in other email thread where you have heard why XFS and EXT4 does
+> > that and why they are not going to change that model. 
+> 
+> No, I agree that they need the strong guarantees.
+> 
+> But if there's an actual bug, returning an error is better than killing
+> the task. Killing the task is really bad; these allocations are deep in
+> contexts where locks and refcounts are held, and the system will just
+> grind to a halt.
 
-All warnings (new ones prefixed by >>):
+Not sure what you mean by these allocations but I am not aware that any
+of the existing user would be really buggy. Also as I've said elsewhere,
+there is simply no good way to handle a buggy caller. Killing the buggy
+context has some downsides, returning NULL has others. I have argued
+that the former has better predictable behavior than potentially silent
+failure. We can clearly disagree on this but I also do not see why that
+is relevant to the original discussion because my argument against
+PF_MEMALLOC_NORECLAIM was focused on correct GPF_NOFAIL nested context
+that would get an unexpected failure mode. No matter what kind of
+failure mode that is it would be unexpected for those users.
 
->> fs/inode.c:157: warning: Function parameter or struct member 'gfp' not described in 'inode_init_always_gfp'
->> fs/inode.c:157: warning: expecting prototype for inode_init_always(). Prototype was for inode_init_always_gfp() instead
+> > > But as a matter of policy going forward, yes we should be saying that
+> > > even GFP_NOFAIL allocations should be checking for -ENOMEM.
+> > 
+> > I argue that such NOFAIL semantic has no well defined semantic and legit
+> > users are forced to do
+> > 	while (!(ptr = kmalloc(GFP_NOFAIL))) ;
+> > or
+> > 	BUG_ON(!(ptr = kmalloc(GFP_NOFAIL)));
+> > 
+> > So it has no real reason to exist.
+> 
+> I'm arguing that it does, provided when it returns NULL is defined to
+> be:
+>  - invalid allocation context
+>  - a size that is so big that it will never be possible to satisfy.
 
+Those are not really important situations because you are arguing about
+a buggy code that needs fixing. As said above we can argue how to deal
+with those users to get a predictable behavior but as the matter of
+fact, correct users can expect never seeing the failure so handling
+failure might be a) impossible and b) unfeasible (i.e. you are adding a
+dead code that is never tested).
 
-vim +157 fs/inode.c
+[...]
 
-bd9b51e79cb0b8 Al Viro             2014-11-18  147  
-2cb1599f9b2ecd David Chinner       2008-10-30  148  /**
-6e7c2b4dd36d83 Masahiro Yamada     2017-05-08  149   * inode_init_always - perform inode structure initialisation
-0bc02f3fa433a9 Randy Dunlap        2009-01-06  150   * @sb: superblock inode belongs to
-0bc02f3fa433a9 Randy Dunlap        2009-01-06  151   * @inode: inode to initialise
-2cb1599f9b2ecd David Chinner       2008-10-30  152   *
-2cb1599f9b2ecd David Chinner       2008-10-30  153   * These are initializations that need to be done on every inode
-2cb1599f9b2ecd David Chinner       2008-10-30  154   * allocation as the fields are not initialised by slab allocation.
-2cb1599f9b2ecd David Chinner       2008-10-30  155   */
-6185335c11aac8 Michal Hocko        2024-09-02  156  int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp)
-^1da177e4c3f41 Linus Torvalds      2005-04-16 @157  {
-6e1d5dcc2bbbe7 Alexey Dobriyan     2009-09-21  158  	static const struct inode_operations empty_iops;
-bd9b51e79cb0b8 Al Viro             2014-11-18  159  	static const struct file_operations no_open_fops = {.open = no_open};
-^1da177e4c3f41 Linus Torvalds      2005-04-16  160  	struct address_space *const mapping = &inode->i_data;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  161  
-^1da177e4c3f41 Linus Torvalds      2005-04-16  162  	inode->i_sb = sb;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  163  	inode->i_blkbits = sb->s_blocksize_bits;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  164  	inode->i_flags = 0;
-5a9b911b8a24ed Mateusz Guzik       2024-06-11  165  	inode->i_state = 0;
-8019ad13ef7f64 Peter Zijlstra      2020-03-04  166  	atomic64_set(&inode->i_sequence, 0);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  167  	atomic_set(&inode->i_count, 1);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  168  	inode->i_op = &empty_iops;
-bd9b51e79cb0b8 Al Viro             2014-11-18  169  	inode->i_fop = &no_open_fops;
-edbb35cc6bdfc3 Eric Biggers        2020-10-30  170  	inode->i_ino = 0;
-a78ef704a8dd43 Miklos Szeredi      2011-10-28  171  	inode->__i_nlink = 1;
-3ddcd0569cd68f Linus Torvalds      2011-08-06  172  	inode->i_opflags = 0;
-d0a5b995a30834 Andreas Gruenbacher 2016-09-29  173  	if (sb->s_xattr)
-d0a5b995a30834 Andreas Gruenbacher 2016-09-29  174  		inode->i_opflags |= IOP_XATTR;
-92361636e0153b Eric W. Biederman   2012-02-08  175  	i_uid_write(inode, 0);
-92361636e0153b Eric W. Biederman   2012-02-08  176  	i_gid_write(inode, 0);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  177  	atomic_set(&inode->i_writecount, 0);
-^1da177e4c3f41 Linus Torvalds      2005-04-16  178  	inode->i_size = 0;
-c75b1d9421f80f Jens Axboe          2017-06-27  179  	inode->i_write_hint = WRITE_LIFE_NOT_SET;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  180  	inode->i_blocks = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  181  	inode->i_bytes = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  182  	inode->i_generation = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  183  	inode->i_pipe = NULL;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  184  	inode->i_cdev = NULL;
-61ba64fc076887 Al Viro             2015-05-02  185  	inode->i_link = NULL;
-84e710da2a1dfa Al Viro             2016-04-15  186  	inode->i_dir_seq = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  187  	inode->i_rdev = 0;
-^1da177e4c3f41 Linus Torvalds      2005-04-16  188  	inode->dirtied_when = 0;
-6146f0d5e47ca4 Mimi Zohar          2009-02-04  189  
+> For large allocations in bcachefs: in journal replay we read all the
+> keys in the journal, and then we create a big flat array with references
+> to all of those keys to sort and dedup them.
+> 
+> We haven't hit the INT_MAX size limit there yet, but filesystem sizes
+> being what they are, we will soon. I've heard of users with 150 TB
+> filesystems, and once the fsck scalability issues are sorted we'll be
+> aiming for petabytes. Dirty keys in the journal scales more with system
+> memory, but I'm leasing machines right now with a quarter terabyte of
+> ram.
 
+I thought you were arguing about bcachefs handling failure mode so
+presumably you do not need to use __GFP_NOFAIL for those.
+
+I am sorry but I am getting lost in these arguments.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Michal Hocko
+SUSE Labs
