@@ -1,197 +1,140 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9211D45ED
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Sep 2024 17:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608D01B85DD;
+	Fri,  6 Sep 2024 21:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725644047; cv=none; b=hYTECQ4Dl/+5UBNddYEnX0PCO3chXs+hVYHlqcZkV98cJW8vePpbv4px6h2WGM2ryeUH6VyBlu4NlSylmL14OHX0X5E+4YZUFKFCZGKsGVzY9/rU2lg4atsVOiYix1kl2mFrIZ3THmxOPwuW1aanlqBKCVuKnKr51GHfP5ylMag=
+	t=1725658217; cv=none; b=QnkjYKg0DRHwEX4O8o9cUyGypx2+jdo5ajsHaUecjhF7tQLo0kkawA6aojxkqFTBj5cbCApGJknB9MS8jqPVVya6BSw9nTDH8EAoIrzYWOMqtWwoNY7AxEqV2SrYXBBX33Uh58PtOk8GNpSEAOmCKRd40RL5ysa4o+j5VMDFryE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725644047; c=relaxed/simple;
-	bh=OAMVH4ZWU1MWzw+HOPc6VdDksyXB+pQtfdpUr1JXkGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UTsHM3DktMPHjgrDZ3XJlC0OW9f9RS1Eqb27/cB9okuzX4QxRLUahzU3Qp58CrohqI5BFNNVbxNFZz9L/oBFKEyciEWc1saN6As2aF6UGAcbZv8LQx9QOgivyc0D9BXWuY0jQ/dFxIvbu9Pjvc0QUNPnWrBv9oMmh/AxadsEqsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZQk1P8D7; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1725658217; c=relaxed/simple;
+	bh=y+y0VlIllb5CtOz4Ek+InCMwxUKWOuc56I5A+WE7J8M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OcqE/m67+f/CULrOlQoUgnDrmLpiPhbHSHBL8t7LPZcIlAYO3Ck6aB8yWeKGXoGDp1zUglLWhxlXbLdiEs7PIo1AgZjc2KPU9UHeekUim0etYWZR9qwPNSxFjjINvq6mI0Xm1wfyob6Hw1+VRtghoVWdQCso2/BQlF0OaDnNORo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOyEfkbK; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZQk1P8D7"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6d5a4615a56so21615847b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Sep 2024 10:34:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOyEfkbK"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2059112f0a7so25589535ad.3;
+        Fri, 06 Sep 2024 14:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1725644044; x=1726248844; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCpk4T4clfJIWsoHtcikfAqCr3cHM1ptXe5OQ2eEMkg=;
-        b=ZQk1P8D787E+Nrig2/hI0qnZpz15Il0Dp5umsjxBktvDBQe0R9NLr8pe3LIK1Gol33
-         XlwJnLNf/nZTC8ayeEq2+X/N/gQCFtZKRhBlnUB9+jXSam+aor41voGAmVHGJS16woUB
-         eCdtp+d2CbPk92QXd8h9JZm8veEqePAP8iY/UIBNN77sJotUVeE/Hr8S3I31PWdQBWSg
-         grNGaf+D15G4i6mIREIKgzO0nrG1Xah9Z9n3Nwm9P4w26z5vXiDgZmw6qB5YnXMoluMV
-         FTtye/mfasJODhrNqNzvJLN6dOXokO2K3hS46uHnLBtCPwQ39Nmh11g7B+USbB3Sb48v
-         RQjQ==
+        d=gmail.com; s=20230601; t=1725658215; x=1726263015; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsHQ5h54doNUK/ufVxcrXlo/0lcc6AzIgFEDd9yj2fY=;
+        b=LOyEfkbKKMOtMq4X5HpOq7oRblnV2p0juoW0/CKrG4MUSrHcQObf08KbeH5TpOI2FD
+         lgLO0ZxTUvkmbYTyHVfjJXK2AS4oMG15zpnuNW1IaI81ETAP7hxSWBQTf4tMSIr1+zaA
+         wGyd9D4ihqY08dVBs5A9wHSVpcCbE4Qy9xZkhjtM94hWPNf9zr0M6qACVCgzN8ohKVrU
+         EsFCMzr0tMhwunOTG3o3tHAo+GwWY6Co1qnxt/vuAOzCnyp+k6GoAcTDpkG0NhhjC/Da
+         sguRecby6SR3mInVT78LrEWdMI8LveMlj+lleWG5CDfzmDNi5vpHhKim58fMuJwE7IZM
+         2iqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725644044; x=1726248844;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZCpk4T4clfJIWsoHtcikfAqCr3cHM1ptXe5OQ2eEMkg=;
-        b=iUdxnkoZ+wZh7WnJeiqxu88Tm2r7M0UZdCOpx7aMgEK8mo/oGzG7e/FwPjDT7cKSER
-         QCs3+urfJpgwGvi6tHlvz8YwxsHxHlDG50Lbd4eMboDqvEmNy3gwEP1J0ftvW3WSXGB+
-         rt0aFzJm7s2YcL57WVTy17FnJwxrEO+TKBOFl974CL5rGBKegBPOTr/k3AGaPQ/r6c/M
-         Irry/di2Fptwq6NZgGCMesjxZyPj4dld45HS88vTNacPv+V90sHHfZYdXWYLRvbD6lGY
-         eCO0JKjMnSoHkJ+3BlrV4stoK3iYquS57mTNNzMTh/zqwAUp9vzhE5sDZ9HUo1tEdrUd
-         RpgA==
-X-Gm-Message-State: AOJu0Yz4+kGr+Fnz3OmF64OaoVaZXPP/uWkOMM/iH66RoHr8foEUxNNw
-	QIUUt0qzlOKP63Fl62C76+lhARAIjWDnv2VWWZfklUtcgI97E7uTwksa60sC3Z0oKw0HdHYDEPv
-	JBWPtmX5ORpTwViwXVn7eDnjiXkVrL4kdJRbQ
-X-Google-Smtp-Source: AGHT+IGUz5s8d9N52gYrACCt8rlLghoTmWpsx+29sQve9zGJT/OI4BV/Ik75aP1YaH+GYO91nX0GwRbDA61C6lSkcaY=
-X-Received: by 2002:a05:690c:60c2:b0:664:badf:5a8c with SMTP id
- 00721157ae682-6db44d68cf9mr43944687b3.3.1725644044170; Fri, 06 Sep 2024
- 10:34:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725658215; x=1726263015;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dsHQ5h54doNUK/ufVxcrXlo/0lcc6AzIgFEDd9yj2fY=;
+        b=bbIUShQ9B6R2ACHH1k4d5HRl4lY4FXXPdhCanfY9iKHqJMxHMAGOlDfrcHQuzZPI80
+         m3J5XDRvXYNiifo00xRGBF/J0IkPMiVhVdvV1REjkjR15Rse6kFs56WElzrXh/GT62nr
+         /8UvOOLyqK1/MjiejAao7mosXrggJyOpkNiG8bm4dui6Ms28K/8bHmsOwTvjEoUg7qfR
+         /pYdcEsxZN3Pfswy5nFu+1bBPYDR5r/p34Ul8rXuTMrZglZ6cJj/ymXBFT/eS5qeD0Tp
+         G3PIx2OCHSnB7TmbKSoKd3OBqRcRI+jBI7LXAcvIUaRkVCnKvWOLij8ROz4djmzeoGUY
+         vrqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9kwYhmFBOeKkzWXP6UdrC0yMkUhlrnqLIxwKXfdd/3qfj9nS+Ho7/m6PHHseWbHGpcOaMAnej@vger.kernel.org, AJvYcCVwpGozJ9a1JrxQ7Rz5Y8Nrpynrr3f1ikTjjD24nPbb1DU0HmEgcT8SVLunMXCReGoxAsQYUSrRKM6yINF1/z5AQHJsGNKn@vger.kernel.org, AJvYcCXVVTM5JMLp01EmP+RN001YW4GJdhfuavsMS4KQb+pLbw5YsVj+11b/L6vtYMBgHvLNxAtUD/WgxAqKQK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbF/uJv9PkY9kyIvLtPlvn0jlyQbKsbNLNQ34+SCKGPFzQivd4
+	fgCQlGoe6RfVZQmn0uzXdz85iu3nZjOSvJ4rAfY9Kioj2cHZVpta
+X-Google-Smtp-Source: AGHT+IHlBPJGfsi7DG7bnhqRrXUVLLOWGqvqfg2nr5hiLVWfmhC7Cpgcyq8IeMIPowRRJIv/NNqkCg==
+X-Received: by 2002:a17:903:18f:b0:202:cbf:2d6f with SMTP id d9443c01a7336-2070701f045mr12805625ad.57.1725658215407;
+        Fri, 06 Sep 2024 14:30:15 -0700 (PDT)
+Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-206aea67bd1sm47081065ad.247.2024.09.06.14.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Sep 2024 14:30:14 -0700 (PDT)
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: outreachy@lists.linux.dev
+Cc: mic@digikod.net,
+	gnoack@google.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com,
+	jannh@google.com,
+	netdev@vger.kernel.org,
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: [PATCH v4 0/6] landlock: Signal scoping support
+Date: Fri,  6 Sep 2024 15:30:02 -0600
+Message-Id: <cover.1725657727.git.fahimitahera@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809122007.1220219-3-masahiroy@kernel.org>
- <3447459d08dd7ebb58972129cddf1c44@paul-moore.com> <CAK7LNAS4Q1_4T2vafu6wTYsmFsY1h+TA8irqDAqwfoSyw7X=Rw@mail.gmail.com>
- <CAHC9VhSz+kwYOnkfWPHOmoKCRfOjm3_L5xMLeSGVNxq5g=ikww@mail.gmail.com>
- <CAK7LNARj7mx9ZkucABBKujEmwggqZvn+8PZ1e-_ofaa43pfz0Q@mail.gmail.com>
- <CAHC9VhRhUPTwg2-wsLzGGpbhG_4sH9K5o6Z5D_aLiiO98LgaJQ@mail.gmail.com> <CAK7LNAS2M5XsXJ39RS2yQKRiEwZpA8oYQ8u4LipoL1YMHane8w@mail.gmail.com>
-In-Reply-To: <CAK7LNAS2M5XsXJ39RS2yQKRiEwZpA8oYQ8u4LipoL1YMHane8w@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 6 Sep 2024 13:33:52 -0400
-Message-ID: <CAHC9VhRET4qq9L-VuC28t=Y2YAx=ZBDSqaWCN8v1ApEu0FvQTw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selinux: move genheaders to security/selinux/
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 6, 2024 at 12:38=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Sat, Sep 7, 2024 at 1:23=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
-rote:
-> >
-> > On Fri, Sep 6, 2024 at 12:06=E2=80=AFPM Masahiro Yamada <masahiroy@kern=
-el.org> wrote:
-> > > On Sat, Sep 7, 2024 at 12:37=E2=80=AFAM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > > On Fri, Sep 6, 2024 at 11:19=E2=80=AFAM Masahiro Yamada <masahiroy@=
-kernel.org> wrote:
-> > > > > On Tue, Aug 27, 2024 at 6:22=E2=80=AFAM Paul Moore <paul@paul-moo=
-re.com> wrote:
-> > > > > > On Aug  9, 2024 Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > > > > > >
-> > > > > > > This tool is only used in security/selinux/Makefile.
-> > > > > > >
-> > > > > > > There is no reason to keep it under scripts/.
-> > > > > > >
-> > > > > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > > > > > ---
-> > > > > > >  scripts/remove-stale-files                                 |=
- 3 +++
-> > > > > > >  scripts/selinux/Makefile                                   |=
- 2 +-
-> > > > > > >  scripts/selinux/genheaders/.gitignore                      |=
- 2 --
-> > > > > > >  scripts/selinux/genheaders/Makefile                        |=
- 3 ---
-> > > > > > >  security/selinux/.gitignore                                |=
- 1 +
-> > > > > > >  security/selinux/Makefile                                  |=
- 7 +++++--
-> > > > > > >  .../selinux/genheaders =3D> security/selinux}/genheaders.c  =
- | 0
-> > > > > > >  7 files changed, 10 insertions(+), 8 deletions(-)
-> > > > > > >  delete mode 100644 scripts/selinux/genheaders/.gitignore
-> > > > > > >  delete mode 100644 scripts/selinux/genheaders/Makefile
-> > > > > > >  rename {scripts/selinux/genheaders =3D> security/selinux}/ge=
-nheaders.c (100%)
-> > > > > >
-> > > > > > As long as there is no harm in keeping genheaders under scripts=
-/selinux,
-> > > > > > and based on your cover letter it would appear that there is no=
- problem
-> > > > > > with the current location, I would prefer to keep it where it c=
-urrently
-> > > > > > lives.
-> > > > >
-> > > > > 'make clean' is meant to clean up the tree, but keep
-> > > > > build artifacts necessary for building external modules.
-> > > > >
-> > > > > See the help message:
-> > > > >
-> > > > >   clean           - Remove most generated files but keep the conf=
-ig and
-> > > > >                     enough build support to build external module=
-s
-> > > > >
-> > > > > 'make clean' does not clean up under scripts/
-> > > > > because tools located scripts/ are used in tree-wide
-> > > > > and often used for external modules as well.
-> > > > >
-> > > > > So, scripts/selinux/genheaders/genheaders is left over.
-> > > > >
-> > > > > genheaders is locally used in security/selinux/.
-> > > > >
-> > > > > 'make clean' will properly clean up security/selinux/genheaders.
-> > > >
-> > > > Your last sentence is confusing and doesn't align with the rest of
-> > > > your email, please clarify.
-> > >
-> > > I do not understand what was unclear.
-> >
-> > Near the start of your email you stated: "'make clean' does not clean
-> > up under scripts/".  However you ended your email with "'make clean'
-> > will properly clean up security/selinux/genheaders" which seems
-> > contradictory to your initial statement; I was guessing that you were
-> > implying that moving the genheaders script will allow `make clean` to
-> > work properly, but you explicitly included the old/existing location
-> > of security/selinux/genheaders directory in your comment which didn't
-> > support that guess.
->
->
-> OK, now I understand.
->
->
-> I meant this:
->
->
->   With this patch applied, 'make clean' will properly clean up
->   security/selinux/genheaders.
->
->
->
-> > Your latest reply makes it a bit more clear.
->
->
->
-> So, are you ok with the following commit description,
-> which I proposed in another thread?
->
->
->
-> --------------->8--------------------
-> selinux: move genheaders to security/selinux/
->
-> This tool is only used in security/selinux/Makefile.
->
-> Move it to security/selinux/ so that 'make clean' can clean it up.
->
-> Please note 'make clean' does not visit scripts/ because tools under
-> scripts/ are often used for external module builds. Obviously, genheaders
-> is not the case here.
-> --------------->8--------------------
+This patch series adds scoping mechanism for signals.
+Closes: https://github.com/landlock-lsm/linux/issues/8
 
-Yes, thank you.
+Problem
+=======
 
+A sandboxed process is currently not restricted from sending signals
+(e.g. SIGKILL) to processes outside the sandbox since Landlock has no
+restriction on signals(see more details in [1]).
 
---=20
-paul-moore.com
+A simple way to apply this restriction would be to scope signals the
+same way abstract unix sockets are restricted.
+
+[1]https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+
+Solution
+========
+
+To solve this issue, we extend the "scoped" field in the Landlock
+ruleset attribute structure by introducing "LANDLOCK_SCOPED_SIGNAL"
+field to specify that a ruleset will deny sending any signals from
+within the sandbox domain to its parent(i.e. any parent sandbox or
+non-sandbox processes).
+
+Example
+=======
+
+Create a sansboxed shell and pass the character "s" to LL_SCOPED:
+LL_FD_RO=/ LL_FS_RW=. LL_SCOPED="s" ./sandboxer /bin/bash
+Try to send a signal(like SIGTRAP) to a process ID <PID> through:
+kill -SIGTRAP <PID>
+The sandboxed process should not be able to send the signal.
+
+Previous Versions
+=================
+v3:https://lore.kernel.org/all/cover.1723680305.git.fahimitahera@gmail.com/
+v2:https://lore.kernel.org/all/cover.1722966592.git.fahimitahera@gmail.com/
+v1:https://lore.kernel.org/all/cover.1720203255.git.fahimitahera@gmail.com/
+
+Tahera Fahimi (6):
+  landlock: Add signal scoping control
+  selftest/landlock: Signal restriction tests
+  selftest/landlock: Add signal_scoping_threads test
+  selftest/landlock: Test file_send_sigiotask by sending out-of-bound
+    message
+  sample/landlock: Support sample for signal scoping restriction
+  landlock: Document LANDLOCK_SCOPED_SIGNAL
+
+ Documentation/userspace-api/landlock.rst      |  22 +-
+ include/uapi/linux/landlock.h                 |   3 +
+ samples/landlock/sandboxer.c                  |  17 +-
+ security/landlock/fs.c                        |  17 +
+ security/landlock/fs.h                        |   6 +
+ security/landlock/limits.h                    |   2 +-
+ security/landlock/task.c                      |  59 +++
+ .../selftests/landlock/scoped_signal_test.c   | 371 ++++++++++++++++++
+ .../testing/selftests/landlock/scoped_test.c  |   2 +-
+ 9 files changed, 486 insertions(+), 13 deletions(-)
+ create mode 100644 tools/testing/selftests/landlock/scoped_signal_test.c
+
+-- 
+2.34.1
+
