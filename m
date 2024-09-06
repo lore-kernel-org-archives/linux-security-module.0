@@ -1,99 +1,96 @@
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8886A182B3;
-	Fri,  6 Sep 2024 02:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B714D71E;
+	Fri,  6 Sep 2024 07:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725590117; cv=none; b=mBdT4a9iojyV4aoTMLplwqnCKtk1ohE+R3gTr22gVSqryZQanJNlKo0ZzK6XTT636kY2Psw8N/6xEgptC9ArXrZRJVtM7IKd70kBPMi6lZLFgh6ca+uoMC2mAkVEYfslZzn1S5Bi1GWbRxdc1efuqmVCV4I7x6/TEExVpMnYOR8=
+	t=1725608611; cv=none; b=tfhh+4b/xa2cDpM8b2mm2ebM35v6SV9VTJRUVioDeK/U02zEtNF+j5Wsfwkbkh6NnH8ZCm6CZ2Btchd4TFzVsFUONVrnh8z13/J3RGTbURxgopb2+f19rB2ZOqgio8GJY+kJhiCWGaCjod+XDWJijZiVBRKNB1BxYltCkJxVn00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725590117; c=relaxed/simple;
-	bh=WhQeqFtAGTX6XYbCEXQ9ZmWwEhxISb8ziXHJQ0oDfDI=;
-	h=Subject:References:CC:From:To:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Z23a5oZw5yw94Bs4ksokfXcDl8RFKaRdswhgnULjC7vXUppsggfeIRGO14vda3uV3P0+te43405sNxjH3pFs9N4XEta0zx5FB7V6EmBq8QsvsnuCnMPWq/REn7YUX7NPtXhq6thhzfL8gb278jyWpFMCIIuasifaVUXWfRYTDCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X0KvS2Qykz69Wr;
-	Fri,  6 Sep 2024 10:30:12 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id A052E1800F2;
-	Fri,  6 Sep 2024 10:35:11 +0800 (CST)
-Received: from [10.174.178.75] (10.174.178.75) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 6 Sep 2024 10:35:09 +0800
-Subject: Re: [PATCH v2 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-References: <CGME20240903033105eucas1p2b9d0b874da268fecb49905d90340de09@eucas1p2.samsung.com>
- <20240903033011.2870608-1-yukaixiong@huawei.com>
- <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
-CC: <guohanjun@huawei.com>, <ysato@users.osdn.me>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<kees@kernel.org>, <willy@infradead.org>, <Liam.Howlett@oracle.com>,
-	<vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>,
-	<anna@kernel.org>, <chuck.lever@oracle.com>, <jlayton@kernel.org>,
-	<neilb@suse.de>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <paul@paul-moore.com>,
-	<jmorris@namei.org>, <linux-sh@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-From: yukaixiong <yukaixiong@huawei.com>
-To:
-	<"wangkefeng.wang@huawei.com liushixin2@huawei.com liuyongqiang13@huawei.com tongtiangen@huawei.com sunnanyong@huawei.com mawupeng1@huawei.com zuoze1@huawei.com zhangpeng362@huawei.com tujinjiang@huawei.com yaolulu5"@huawei.com>
-Message-ID: <0a12953b-0d11-00d2-ef0e-454d0e3d98f3@huawei.com>
-Date: Fri, 6 Sep 2024 10:35:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1725608611; c=relaxed/simple;
+	bh=WBVJTznZlKDb3xF3dJ3M+mo4ckM/wsQeUaHfzaeierQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=euS+mrBp86ZWRnR1IQAVXPDthniNAmLS7K9XPqB8+8c32WwcW4y67xEhNso4Z3DmEum5J/8GBCZfN245UC15yfoW+MI/23pc2CPiuGemH8kaRlE/U2aREOC/NpVY+eDMOgEiEN03ZlExApBMjALGT9XjBgpG37yK20YQYtRclac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav120.sakura.ne.jp (fsav120.sakura.ne.jp [27.133.134.247])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4867hGwF087759;
+	Fri, 6 Sep 2024 16:43:16 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav120.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp);
+ Fri, 06 Sep 2024 16:43:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4867hFgV087756
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 6 Sep 2024 16:43:16 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+Date: Fri, 6 Sep 2024 16:43:15 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240903203837.cbzs3ziuh6eq4kvo@joelS2.panther.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
+        tomoyo-users-en@lists.osdn.me,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml100009.china.huawei.com (7.185.36.95) To
- kwepemh100016.china.huawei.com (7.202.181.102)
 
-
-
-On 2024/9/4 4:38, Joel Granados wrote:
-> On Tue, Sep 03, 2024 at 11:29:56AM +0800, Kaixiong Yu wrote:
->> This patch series moves sysctls of vm_table in kernel/sysctl.c to
->> places where they actually belong, and do some related code clean-ups.
->> After this patch series, all sysctls in vm_table have been moved into its
->> own files, meanwhile, delete vm_table.
+On 2024/09/04 23:23, Paul Moore wrote:
+> On Wed, Sep 4, 2024 at 3:10 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
 >>
->> All the modifications of this patch series base on
->> linux-next(tags/next-20240902). To test this patch series, the code was
->> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
->> x86_64 architectures. After this patch series is applied, all files
->> under /proc/sys/vm can be read or written normally.
-> This move make a lot of sense. The question with these multi-subsystem
-> patchsets is how do they go into mainline. For now I have added this to
-> sysctl-testing to see if it needs more work. I can push this through the
-> sysctl subsystem, but you need to get reviewed-by for all of the commits
-> in different subsystems. I'm also fine with this going in through some
-> other subsys if anyone wants to take it?
->
-> Best
->
+>> Until 2.6.23, it was officially possible to register/unregister LSM modules
+>> that are implemented as loadable kernel modules.
+> 
+> ...
+> 
+>> Paul Moore has commented
+>>
+>>   I do not intentionally plan to make life difficult for the out-of-tree
+>>   LSMs, but if that happens as a result of design decisions intended to
+>>   benefit in-tree LSMs that is acceptable as far as I am concerned.
+> 
+> Patches that add complexity to the LSM framework without any benefit
+> to the upstream, in-tree LSMs, or the upstream kernel in general, are
+> not good candidates for inclusion in the upstream kernel.
+> 
 
-Thx，Joel!:-)
+The idea and implementation for using LSM from loadable kernel modules is what
+I demonstrated you in a lightening talk session in LinuxCon North America 2010.
+It is 14 years since we learned my concern, and you had been ignoring my concern
+until now.
 
-Hello，everyone!
+The first solution is "do not use static calls". But you won't agree it. Also,
+I'm not against use of static calls as long as LKM-based LSM is supported.
 
-This patch series has been reviewed by Kees, Jan Kara, Christian 
-Brauner, and acked
-by Anna Schumaker, Paul Moore. As Joel said, this patch series need to 
-get reviewed-by
-for all of the commits in different subsystems. I would appreciate it if 
-you could review
-this patch series as soon as possible !:-)
+The second solution is "export static calls" (and leave how it is used by
+LKM-based LSMs). But some of LSM people do not like solutions that can allow
+LKMs to disable built-in LSMs.
+
+The third solution is "continue using linked list for LKM-based LSMs" which was
+suggested by KP Singh [1]. I'm OK with this solution, though it is unlucky that
+LKM-based LSMs can't be benefited from "static calls".
+
+If you ignore my concern, I have to NACK the static call changes you are
+going to send in the upcoming merge window.
+
+
+
+Link: https://lkml.kernel.org/r/CACYkzJ7ght66802wQFKzokfJKMKDOobYgeaCpu5Gx=iX0EuJVg@mail.gmail.com [1]
+
