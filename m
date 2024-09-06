@@ -1,96 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D691E49B;
-	Fri,  6 Sep 2024 13:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E661CEAC9
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Sep 2024 14:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725630011; cv=none; b=TGLMirorWh2MbrXuw9qZ3vGaxuXS4VOv5JgINk7atQsI43GnKHVv45x1e3GXXGlc8M5SWMNZR6zfe8c4vYw0cBd3mJ9Y+e84WywKzkuC5C3rIxMQTYupIIKJ9m8uKIqhMA7A501IT6sOE0R0lXFmhIOXJqThQUNqnpRqcV5KJ2g=
+	t=1725632683; cv=none; b=FtNJyvuol2G1ZmxWDeCqeI7MalEAkccWREZdyczmBRNJ8Y94O5MBQug7DBuxql9s9F0Llr5TBjkgt+RUZBxjyrj+qSLhRqUmC20p1JPwHTcJS2UucFAmosfsYROO9MH6a8LJzCDggGvedZ+L+/Bzy14+WxnufzN+eTFb1k0/ptU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725630011; c=relaxed/simple;
-	bh=3X47wiK7Z53owlSZ6EkvqXjKfYY8m0qVta1OE1ylsh4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rh2+lP+jBlAVfmszO1kC0j8+P/4C3MinHTLREtAph+HAV6r8vJVI5ixcdMhT7nBollIwkOoaA/InQfh4c0EdO+2AFI1/IsYTKU1jM1rM1owMLuRwVYoSR93je8UaQ69s3Egu9AZtPV6O0z5vV4G2K85gwcE3/iVqacbD4P7upss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtRUpSdV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725632683; c=relaxed/simple;
+	bh=wv6kJxYCqCengvLTHChe0c4KVEVeRveBWFTYnyGvtSU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lF8XICyMbhngqlEMPBPzl2Q4acbZqGb5r2sCGg6uTODUlwziimnyY5N/t//T1jarjo4Fqp8eMcmlytEJgPlmrfLxApSxEzGJBjiT5xRSaLWSVVkTlbCCXtJ4cviWFEmpEf8xaSxTMvkCP+wXJumu1X2+8XKhsL29SX9tdivvYSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Yj6CScOJ; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtRUpSdV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 492EDC4CEC5;
-	Fri,  6 Sep 2024 13:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725630010;
-	bh=3X47wiK7Z53owlSZ6EkvqXjKfYY8m0qVta1OE1ylsh4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=QtRUpSdVRoGcXwVENYf8lux421Hr7+xhFIlobZYRJouGo25hZ7hdqr7xAa1vGV+/4
-	 Q886fRhUxmBvmZ+ZNUJK7LbrTjNeidc/pD022y0BS2q9ztrvZ68nDpTehepSgsLTOM
-	 1GtBGQiWbCb/+1nTSIiDKTqwD3QTofSpk8UAWU4402X2k1qwyZ7/ULPEQ6XJrpn55t
-	 T18yqHQsfbOi/N1iflsKaQwmT4BtQs8iBOGUHMd1yffEtRAFov9d9lbAGHDKx9jy8b
-	 TjxvCWNAOxteukoKwcSEDUV/1lzjhB134nfunlRNotn1oUMWfeDD/Fom3OeSVQGjH2
-	 I2CnDYMfz++MA==
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yj6CScOJ"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6c130ffa0adso19253297b3.3
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Sep 2024 07:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1725632681; x=1726237481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VNbaUU5vwP/wbzjKIGwlz0vt3Em9od+pl2HUlcVAsXU=;
+        b=Yj6CScOJz17tA7YwqspISU2T+w/zx3UzhDhQTd5RTp5Xk/lZC0KGpkIaqJeDJUREUz
+         bMYBhallnnSR61nMBttbYWPfY49hgeoK+k3/teTlY88Bt90G7dyUHZ6UEi6wDawO7hCp
+         XYXxS8rX3QKFZCACHpBNS0QnqHmurPRa3yJkjHIya2B3/Cx17P4hK5oA6I2p3l4zo+9o
+         B3wuyiA7ZxZucGUGd/ze0Lx2gPf8fWaifP49S6ZUQjrChkWaJBDtr6CjtHX3BTd+xvka
+         svBPpnh+38xV2fQs9jWm5OhI+lO4FG+TLk/Fjk6fmQLYp2zDtH+BAmfvruUjCf+BFWct
+         Dt4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725632681; x=1726237481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VNbaUU5vwP/wbzjKIGwlz0vt3Em9od+pl2HUlcVAsXU=;
+        b=UTlWV3D8rNdarPawjThbcnyqy3O6mjC1Op5tutzeCKt38TV/72W4HFJibVR6aACkQr
+         gBkESibPkGmbApq2z+QzuOJmtL/ExEAyYjT0hBoNj9LtMta9WmQ06SXAl3qERVnwBmeK
+         d5z1uP5vkYjInrDjsmfQfJLRldEsmmttVr3XG9v/jvLKulpCSLGtLStoIg9gHzJgny6Z
+         Kx8TVzvgMPXzw4X24IrwyYtdZrl40WTRGZhRjpANgSFHTZjsyjmMMoPj+R6Uq3ZNP3o1
+         5LDRSF2Ts9pJ1bBRsuNaZF/AIAv4HVHVDagw4vnYt+f6gsagJUwcSIis7u++DGWk0cwM
+         H/iQ==
+X-Gm-Message-State: AOJu0Ywf7zapEV7gzzYuHUZnqRj8C4oPjWl53MxiFBaPpIoNVHNmNWcU
+	gtJRiXhMH5e2i5jtSqR0AgwsOTDe2GqGLkvP/ETbkLSngYYq926Ih0JxFGSdH5rtSDVwmJn3U90
+	ME5mFZz63/Frd5AIz2K2J/yxBLwLYkJjBstYxfzB5oIrDkrY=
+X-Google-Smtp-Source: AGHT+IHkwUfgBd2GCUq4Ewk11aR7nvtoUcy0CcLvqAJSfxsI0EpdJKKQsnFEMsEDRxPJNpbCavId6DYQUks2DIdCYS4=
+X-Received: by 2002:a05:690c:4604:b0:6ae:2f25:8bc4 with SMTP id
+ 00721157ae682-6db44f2c242mr27205497b3.16.1725632680764; Fri, 06 Sep 2024
+ 07:24:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com> <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+In-Reply-To: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 6 Sep 2024 10:24:30 -0400
+Message-ID: <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me, 
+	tomoyo-users-en@lists.osdn.me, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 06 Sep 2024 16:40:06 +0300
-Message-Id: <D3Z8S9922SIU.QD22EOW9RGT0@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <wufan@linux.microsoft.com>, <pbrobinson@gmail.com>, <zbyszek@in.waw.pl>,
- <hch@lst.de>, <mjg59@srcf.ucam.org>, <pmatilai@redhat.com>,
- <jannh@google.com>, <dhowells@redhat.com>, <jikos@kernel.org>,
- <mkoutny@suse.com>, <ppavlu@suse.com>, <petr.vorel@gmail.com>,
- <mzerqung@0pointer.de>, <kgold@linux.ibm.com>, "Roberto Sassu"
- <roberto.sassu@huawei.com>
-Subject: Re: [RFC][PATCH v3 01/10] ima: Introduce hook DIGEST_LIST_CHECK
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <corbet@lwn.net>,
- <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
- <eric.snowberg@oracle.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
- <serge@hallyn.com>
-X-Mailer: aerc 0.18.2
-References: <20240905152512.3781098-1-roberto.sassu@huaweicloud.com>
- <20240905152512.3781098-2-roberto.sassu@huaweicloud.com>
- <D3Z3PDARWOV4.1CBB4U4NW846J@kernel.org>
- <81fd98ce8a43c209e909144a13dcdbf3239e15ff.camel@huaweicloud.com>
-In-Reply-To: <81fd98ce8a43c209e909144a13dcdbf3239e15ff.camel@huaweicloud.com>
 
-On Fri Sep 6, 2024 at 2:22 PM EEST, Roberto Sassu wrote:
-> On Fri, 2024-09-06 at 12:41 +0300, Jarkko Sakkinen wrote:
-> > On Thu Sep 5, 2024 at 6:25 PM EEST, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >=20
-> > > Introduce a new hook to check the integrity of digest lists.
-> >=20
-> > "Introduce DIGEST_LIST_CHECK, a new hook..."
-> >=20
-> > >=20
-> > > The new hook is invoked during a kernel read with file type
-> >=20
-> > "with the file type"
-> >=20
-> >=20
-> > > READING_DIGEST LIST, which is done by the Integrity Digest Cache when=
- it is
-> > > populating a digest cache with a digest list.
-> >=20
-> > The patch creates a new struct imap_rule_entry instance when it parses
-> > the corresponding rule, which means that there are couple slices of
-> > information missing here:
-> >=20
-> > 1. The commit message does not tell what the code change effectively
-> >    is. I scavenged this information from [1].
->
-> Sorry, to me it seems a bit redundant to state what a IMA hook is. The
-> new hook will be handled by IMA like the other existing hooks.
+On Fri, Sep 6, 2024 at 3:43=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/09/04 23:23, Paul Moore wrote:
+> > On Wed, Sep 4, 2024 at 3:10=E2=80=AFAM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
 
-I think with documentation (scoping also to commit messages) it is in
-general a good strategy to put it less rather than more. No
-documentation is better than polluted documentation ;-)
+...
 
-Just remarking what might not be obvious with someone who might not
-be obvious, unless being a pro-active contributor.
+> If you ignore my concern, I have to NACK the static call changes you are
+> going to send in the upcoming merge window.
 
-BR, Jarkko
+I'm not ignoring your concern, I've responded to your emails and
+patches on the topic over, and over, and over, and over again by
+trying to explain to you that your goal of supporting out-of-tree LSMs
+regardless of the impact to the upstream LSM effort is not something
+that is acceptable to the upstream LSM effort, or the Linux kernel in
+general.
+
+I've already recorded your NACK on several patches on two of the four
+static call commits, if you like I can add it to the other two please
+let me know and I'll be sure to do that.  I've recorded your NACKs on
+other patches in the past and mentioned those NACKs to Linus when
+sending the pull request, and I will do so again during this upcoming
+merge window.
+
+--=20
+paul-moore.com
