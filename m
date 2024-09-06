@@ -1,89 +1,116 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39934158866;
-	Fri,  6 Sep 2024 10:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6DA1CB153;
+	Fri,  6 Sep 2024 11:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725620140; cv=none; b=GEUiE8fP+WaQNiGyHTJ5WXIDKQh4pKy3FqvM0IgTByCGo9on/htRRRSvftWNDQ+fE0KN7c8iOBXpXtgG8KgBD4lhJt9wdqFgLtudpsNDiZb57Lu2sLLm+CyfWKR3QU1T4+zXrX6kEk7Tw4HaRa/Xv9KruuV2/ff8hZvpSugtjuI=
+	t=1725621784; cv=none; b=RS8bAxFvFQglMHIRS1cGBNehrUU5om2qkaL65vxswNk0kU/Qo1YtHmZuuiVPJtSp0NjjuqJi3DkVoPFHnhZl0HBXfdOxV4KwtlFjEvTpzOeONnfUpyxIhGTGh5y+4XKTIQ0uNVPFV2koNTB5BPfAA1UAmxkg3wk/IS4ewqMdEjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725620140; c=relaxed/simple;
-	bh=f5CVM95HAlNZ0W1E7w+xU0t7ZVGWHVxVJ9L8LEll9Vg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pmyzLeCZ4K6zgU0vqR4UmVxI5yfKy0AZRiYpkCI18kPq+AIDLL6x+XVy8aUvee53rLNpRykQtSaDW5oM6U5ZJUFQizg3ULm5FjDDIj0qjD9ok4aEj8ugCwOZWNlzex2Nn+R0nUPuHSS8IlIKkyJb7Wida9dV8zdu6tQl7MGJXAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav315.sakura.ne.jp (fsav315.sakura.ne.jp [153.120.85.146])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 486AtUFp073718;
-	Fri, 6 Sep 2024 19:55:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav315.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp);
- Fri, 06 Sep 2024 19:55:30 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 486AtUf9073715
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 6 Sep 2024 19:55:30 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <939e984a-8c5d-456d-a986-26e242e45488@I-love.SAKURA.ne.jp>
-Date: Fri, 6 Sep 2024 19:55:30 +0900
+	s=arc-20240116; t=1725621784; c=relaxed/simple;
+	bh=Ru0PkiTN7l9B0N5k+rZTGxobkc7vUO2bGiE/8PtUr+w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=O5DDbO8C6Z9kh+rJvGfU5YCPdRzpn3bxKCIqUdWcrl/jTQKJf0crNlM2iWmkJQPFXUgjcbykJJRS08pGvZZwnecdNmLuPo29ZFJL6iOvNhCJbU1QlEEUM+agvYR2vPP1QRk/6iyxIJr516nXT+YNdylbV7w2oK0TCKG12PLT78Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X0Y9F2kptz9v7JT;
+	Fri,  6 Sep 2024 18:57:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 2AED9140485;
+	Fri,  6 Sep 2024 19:22:46 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAHmC_05dpmZj9iAA--.22221S2;
+	Fri, 06 Sep 2024 12:22:45 +0100 (CET)
+Message-ID: <81fd98ce8a43c209e909144a13dcdbf3239e15ff.camel@huaweicloud.com>
+Subject: Re: [RFC][PATCH v3 01/10] ima: Introduce hook DIGEST_LIST_CHECK
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, corbet@lwn.net,
+ zohar@linux.ibm.com,  dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+ paul@paul-moore.com,  jmorris@namei.org, serge@hallyn.com
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ wufan@linux.microsoft.com, pbrobinson@gmail.com, zbyszek@in.waw.pl,
+ hch@lst.de,  mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
+ dhowells@redhat.com,  jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com,
+ petr.vorel@gmail.com,  mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto
+ Sassu <roberto.sassu@huawei.com>
+Date: Fri, 06 Sep 2024 13:22:24 +0200
+In-Reply-To: <D3Z3PDARWOV4.1CBB4U4NW846J@kernel.org>
+References: <20240905152512.3781098-1-roberto.sassu@huaweicloud.com>
+	 <20240905152512.3781098-2-roberto.sassu@huaweicloud.com>
+	 <D3Z3PDARWOV4.1CBB4U4NW846J@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
-        tomoyo-users-en@lists.osdn.me,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
- <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
- <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwAHmC_05dpmZj9iAA--.22221S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF4xKry5ZryfXrWDWFy8Zrb_yoW8Gr15pF
+	W5t3WfCFsYqryxKFZI93Wjqay0k39Yg3W5Ww1ktw15ArZ8Zr10v3W8tFWq9a17Gr1kt3W7
+	Ars0qryUAw4DAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	4xRDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGbaZPMG4wADsa
 
-On 2024/09/06 16:43, Tetsuo Handa wrote:
-> On 2024/09/04 23:23, Paul Moore wrote:
->> Patches that add complexity to the LSM framework without any benefit
->> to the upstream, in-tree LSMs, or the upstream kernel in general, are
->> not good candidates for inclusion in the upstream kernel.
+On Fri, 2024-09-06 at 12:41 +0300, Jarkko Sakkinen wrote:
+> On Thu Sep 5, 2024 at 6:25 PM EEST, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > Introduce a new hook to check the integrity of digest lists.
+>=20
+> "Introduce DIGEST_LIST_CHECK, a new hook..."
+>=20
+> >=20
+> > The new hook is invoked during a kernel read with file type
+>=20
+> "with the file type"
+>=20
+>=20
+> > READING_DIGEST LIST, which is done by the Integrity Digest Cache when i=
+t is
+> > populating a digest cache with a digest list.
+>=20
+> The patch creates a new struct imap_rule_entry instance when it parses
+> the corresponding rule, which means that there are couple slices of
+> information missing here:
+>=20
+> 1. The commit message does not tell what the code change effectively
+>    is. I scavenged this information from [1].
 
-This patch adds a clear value for Linux users that people get more chances to
-use LSM modules which match their needs.
+Sorry, to me it seems a bit redundant to state what a IMA hook is. The
+new hook will be handled by IMA like the other existing hooks.
 
-Quoting from [1]:
+> 2. The commit message does no effort to connect the dots between the
+>    effective change and the expected goal.
 
-  Regarding CONFIG_MODULES=y,
-  "Vendor-A enables module-A" == "Vendor-A provides support for module-A" and
-  "Vendor-B enables module-B" == "Vendor-B provides support for module-B".
+Sure, will mention the goal better.
 
-  Regarding CONFIG_SECURITY=y (namely in the RH world),
-  "Distributor-A enables LSM-A" == "Distributor-A provides support for LSM-A".
-  However, "Distributor-A does not enable LSM-B" == "Some vendor is impossible to
-  provide support for LSM-B".
+Thanks
 
-  "Distributor-A does not enable module-B" == "Distributor-A is not responsible for
-  providing support for module-B" and "Vendor-B enables LSM-B" == "Vendor-B provides
-  support for LSM-B" are what I expect.
+Roberto
 
-  Current LSM interface does not allow LSM-B to exist in Distributor-A's systems.
-  The "enable" == "support" model should be allowed for LSM interface as well.
-  What a strange asymmetry rule!
-
-Your "any benefit to in-tree LSMs" is completely ignoring Linux users.
-LSM is for all Linux users, LSM is not only for LSM developers.
-
-
-
-Link: https://lkml.kernel.org/r/c2a3279d-451d-23df-0911-e545d21492e6@I-love.SAKURA.ne.jp [1]
+> I'd put a lot of effort to this commit message assuming that the new
+> hook is at the center of the goals of this patch set.
+>=20
+> [1] https://elixir.bootlin.com/linux/v6.10-rc4/source/security/integrity/=
+ima/ima_policy.c#L1404
+>=20
+> BR, Jarkko
 
