@@ -1,35 +1,35 @@
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47F2BE6C;
-	Sat,  7 Sep 2024 10:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6615CD41;
+	Sat,  7 Sep 2024 13:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725704071; cv=none; b=Eyu0PQH7b5W6yOdqmKe0/OcqWzp6XSUPCqBo7NVgrJJZNu05FuDyTxFWe0objLLudVAgHJXtaa7Q5jqb2DfYVwegabhzr5KPWsAjxHB8us4duSFfsKIVw1iuRzUE5tZecLQLTnvorgG2J7z7QJXpbwiE915qODTC+yPVCJwMH/w=
+	t=1725716493; cv=none; b=Mj4fBx9ZHCwgK1d4rFENCEN7eNkKGitTqO7+cJ+WdjKDD1IHmWaMJlIuvpiCLgnWzHmeHpVJN5w6OcOD6TrJwDcFJQrJO9GVIQwYSbaWsmXIMejKwe1iS5wpCt5RXEuRJmSPeZHwTQQwVa6pn+8qU+fg5NvWlATo6iTZC480HYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725704071; c=relaxed/simple;
-	bh=hi2xrJZBDuY0k+Bd7WbG4vjSF/HP4IxQQqOVAY4lq6I=;
+	s=arc-20240116; t=1725716493; c=relaxed/simple;
+	bh=yf1Rs+4BL1IQ6seaJ3Oyl+k9Cvz3jHdjfH6+zgZddDk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r4G5pKNOW3x2xWfpEthIrkCJ5czbGDdW1pYL34J1Lhh20WH9GB0Zfu3T0bn1Ci7tiLUKQQgNn7wmMVIvNfUlgVS/1HsALHTh5LjyVIUWXvgVega6lugxGdeV799jzRyz0w4gHEec+CjGhhMp7GU4o7BZrjQ0hgcqKx414BOh4MI=
+	 In-Reply-To:Content-Type; b=Fwwxm22SpNc3AwSvLvWKUB2pk28bQtJaoTv7NSol0vLJuCPyo5hCC3+0gIA2UrGwtUzthqXMNSx7xj80+YHIKLGdmYnpDrR6oU5qphHrDjcgUy4Hq9H7Jyus97fTGuyKywX6UZUVrXwJBqU86NPPLlunV26fpXc7UXEdsoVqNp0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 487AEGOt021346;
-	Sat, 7 Sep 2024 19:14:16 +0900 (JST)
+Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 487DfOUV089126;
+	Sat, 7 Sep 2024 22:41:24 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
- Sat, 07 Sep 2024 19:14:16 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
+ by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
+ Sat, 07 Sep 2024 22:41:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
 Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
 	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 487AEGYK021343
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 487DfOi0089120
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 7 Sep 2024 19:14:16 +0900 (JST)
+	Sat, 7 Sep 2024 22:41:24 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d1e5b74a-5161-4906-96eb-4987ff440d19@I-love.SAKURA.ne.jp>
-Date: Sat, 7 Sep 2024 19:14:17 +0900
+Message-ID: <efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp>
+Date: Sat, 7 Sep 2024 22:41:19 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,68 +51,109 @@ Content-Language: en-US
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 In-Reply-To: <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 On 2024/09/06 23:24, Paul Moore wrote:
-> On Fri, Sep 6, 2024 at 3:43 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> If you ignore my concern, I have to NACK the static call changes you are
->> going to send in the upcoming merge window.
-> 
-> I'm not ignoring your concern, I've responded to your emails and
-> patches on the topic over, and over, and over, and over again by
-> trying to explain to you that your goal of supporting out-of-tree LSMs
-> regardless of the impact to the upstream LSM effort is not something
-> that is acceptable to the upstream LSM effort, or the Linux kernel in
-> general.
+> I've already recorded your NACK on several patches on two of the four
+> static call commits, if you like I can add it to the other two please
+> let me know and I'll be sure to do that.  I've recorded your NACKs on
+> other patches in the past and mentioned those NACKs to Linus when
+> sending the pull request, and I will do so again during this upcoming
+> merge window.
 
-I want LKM-based LSM support in order to allow one of in-tree LSMs (namely
-TOMOYO) to be delivered to my intended users, for nobody can solve the
-realities that commit 20510f2f4e2d ("security: Convert LSM into a static
-interface") missed:
+Adding Nacked-by: lines is not an indulgence for ignoring my concerns.
+Commit f3b8788cde61 ("LSM: Identify modules by more than name") is an example
+you added Nacked-by: line without adding hints for why I nacked it (e.g.
+links to my posts).
 
-  how difficult/unrealistic for Linux users who are using prebuilt kernel
-  packages provided by Linux distributors to replace their kernels
+  LSM: Identify modules by more than name
 
-  how difficult for Linux distributors to allow their users to use in-tree
-  LSM modules which that distributor is not familiar with [1] because Linux
-  distributors are supposed to support kernel packages they built and
-  shipped
+  Create a struct lsm_id to contain identifying information about Linux
+  Security Modules (LSMs). At inception this contains the name of the
+  module and an identifier associated with the security module.  Change
+  the security_add_hooks() interface to use this structure.  Change the
+  individual modules to maintain their own struct lsm_id and pass it to
+  security_add_hooks().
 
-  Linux distributors do not want to enable out-of-tree code due to upstream
-  first policy, while Linux kernel development community can not afford
-  accepting whatever proposed code due to limited resources
+  The values are for LSM identifiers are defined in a new UAPI
+  header file linux/lsm.h. Each existing LSM has been updated to
+  include it's LSMID in the lsm_id.
 
-One of LSM developers commented me ( Mon, 22 Jul 2024 17:12:05 +0200
-in off-list discusstion) about AKARI
+  The LSM ID values are sequential, with the oldest module
+  LSM_ID_CAPABILITY being the lowest value and the existing modules
+  numbered in the order they were included in the main line kernel.
+  This is an arbitrary convention for assigning the values, but
+  none better presents itself. The value 0 is defined as being invalid.
+  The values 1-99 are reserved for any special case uses which may
+  arise in the future. This may include attributes of the LSM
+  infrastructure itself, possibly related to namespacing or network
+  attribute management. A special range is identified for such attributes
+  to help reduce confusion for developers unfamiliar with LSMs.
 
-  Ofcourse you found a way to hack it. You want me to curl bash pipe
-  your kernel module code that disables certain protections and runs
-  arbitrary hacks on my machine? No thank you!
+  LSM attribute values are defined for the attributes presented by
+  modules that are available today. As with the LSM IDs, The value 0
+  is defined as being invalid. The values 1-99 are reserved for any
+  special case uses which may arise in the future.
 
-  Ofcourse you change the memory mapping of data. You are misleading
-  your users into trusting you and instead of contributing code and
-  working with distros for your use case, you are shipping hacks and
-  making noise without any constructive code contribution or alignment
-  with distros for your use-case (below RHEL won't eneable it even
-  if we had a proper API). 
+How can people (or Linus) find why I nacked it from patch description of that commit?
+The reason is partially explained in commit 063a7ce32ddc ("Merge tag 'lsm-pr-20240105'
+of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm"), but is not accurate.
 
-and this patch is for following that comment. All concerns about updating
-__ro_after_init data is gone if we move to a dual static call and linked
-list based approach. I'm very very very sad that you did not respond to
+  - Add three new syscalls: lsm_list_modules(), lsm_get_self_attr(), and
+    lsm_set_self_attr().
 
-  I think what you can do is send patches for an API for LKM based LSMs
-  and have it merged before my series, I will work with the code I have
-  and make LKM based LSMs work. If this work gets merged, and your
-  use-case is accepted (I think I can speak for at least Kees [if not
-  others] too here) we will help you if you get stuck with MAX_LSM_COUNT
-  or a dual static call and linked list based approach.
+    The first syscall simply lists the LSMs enabled, while the second and
+    third get and set the current process' LSM attributes. Yes, these
+    syscalls may provide similar functionality to what can be found under
+    /proc or /sys, but they were designed to support multiple,
+    simultaneaous (stacked) LSMs from the start as opposed to the current
+    /proc based solutions which were created at a time when only one LSM
+    was allowed to be active at a given time.
 
-in [2], and started saying "No" to this approach after you accepted
-the static call changes. You are ignoring my concern!
+    We have spent considerable time discussing ways to extend the
+    existing /proc interfaces to support multiple, simultaneaous LSMs and
+    even our best ideas have been far too ugly to support as a kernel
+    API; after +20 years in the kernel, I felt the LSM layer had
+    established itself enough to justify a handful of syscalls.
 
+    Support amongst the individual LSM developers has been nearly
+    unanimous, with a single objection coming from Tetsuo (TOMOYO) as he
+    is worried that the LSM_ID_XXX token concept will make it more
+    difficult for out-of-tree LSMs to survive. Several members of the LSM
+    community have demonstrated the ability for out-of-tree LSMs to
+    continue to exist by picking high/unused LSM_ID values as well as
+    pointing out that many kernel APIs rely on integer identifiers, e.g.
+    syscalls (!), but unfortunately Tetsuo's objections remain.
 
+    My personal opinion is that while I have no interest in penalizing
+    out-of-tree LSMs, I'm not going to penalize in-tree development to
+    support out-of-tree development, and I view this as a necessary step
+    forward to support the push for expanded LSM stacking and reduce our
+    reliance on /proc and /sys which has occassionally been problematic
+    for some container users. Finally, we have included the linux-api
+    folks on (all?) recent revisions of the patchset and addressed all of
+    their concerns.
 
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=542986 [1]
-Link: https://lkml.kernel.org/r/CACYkzJ7ght66802wQFKzokfJKMKDOobYgeaCpu5Gx=iX0EuJVg@mail.gmail.com [2]
+I am not against about having LSM ID itself. I am against about the fact
+that out-of-tree LSM modules cannot have stable LSM ID. Commit f3b8788cde61
+wants to assign LSM ID sequentially whereas those who demonstrated me
+suggests assigning LSM ID non-sequentially and pushes the burden of
+managing collision to out-of-tree LSM modules. As a result, out-of-tree
+LSM modules cannot start using userspace tools which rely on LSM ID.
+Rewriting userspace tools when that out-of-tree LSM module succeeded
+becoming in-tree is a penalty, for it breaks existing userspace tools
+and also remains the risk of old LSM ID being reused by unrelated LSM
+module.
+
+The fact that out-of-tree LSM modules cannot have stable LSM ID penalizes
+out-of-tree LSMs due to the risk of collision, and making it difficult for
+Linux users to find LSMs they want because Linux users cannot know what
+LSMs are available in the world. That is not a good usage of identifiers.
+
+I suggested you that the LSM community should allow assigning stable LSM ID
+to any LSM as long as that LSM is available to anybody, and serve as index
+for helping people to find LSMs that match their needs.
+
+Paul, where did you explain above when you sent pull request to Linus?
+Linus, did you understand why I nacked it from that pull request from Paul?
 
