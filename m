@@ -1,159 +1,161 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6615CD41;
-	Sat,  7 Sep 2024 13:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F131F16D332
+	for <linux-security-module@vger.kernel.org>; Sun,  8 Sep 2024 18:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725716493; cv=none; b=Mj4fBx9ZHCwgK1d4rFENCEN7eNkKGitTqO7+cJ+WdjKDD1IHmWaMJlIuvpiCLgnWzHmeHpVJN5w6OcOD6TrJwDcFJQrJO9GVIQwYSbaWsmXIMejKwe1iS5wpCt5RXEuRJmSPeZHwTQQwVa6pn+8qU+fg5NvWlATo6iTZC480HYk=
+	t=1725820216; cv=none; b=hWM4jAUNNsYFJ8WxVzkLAmBeVjgvoMBjnlH1vtfaiLJOhGhE3vk9g9xV1gmlAKXh35NMeLTIs3+3z1sEEr2gwK7fO9OpOu/YZMsVjWaIQM15BqvXw2znasvzs/xpXQGMabQvg9eCUkJVNWTg+50ZkcVy1qH1G6xPkA3aXIWunf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725716493; c=relaxed/simple;
-	bh=yf1Rs+4BL1IQ6seaJ3Oyl+k9Cvz3jHdjfH6+zgZddDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fwwxm22SpNc3AwSvLvWKUB2pk28bQtJaoTv7NSol0vLJuCPyo5hCC3+0gIA2UrGwtUzthqXMNSx7xj80+YHIKLGdmYnpDrR6oU5qphHrDjcgUy4Hq9H7Jyus97fTGuyKywX6UZUVrXwJBqU86NPPLlunV26fpXc7UXEdsoVqNp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 487DfOUV089126;
-	Sat, 7 Sep 2024 22:41:24 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
- Sat, 07 Sep 2024 22:41:24 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 487DfOi0089120
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 7 Sep 2024 22:41:24 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp>
-Date: Sat, 7 Sep 2024 22:41:19 +0900
+	s=arc-20240116; t=1725820216; c=relaxed/simple;
+	bh=gNKnIuGvVMJr191hD6VCownoEv1f54m/1RShTokZqUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJYljIFJyBpvrG1yLLWAeQFY26uAo8QYYfrb7PLmgESW5DzdZQjwAlMhQn8a/iW8XmJCy8khTWF6hkFGgzmmZLlzgLfpg6tJ1EHsUS1WLUfZgAzeuIYj+2E17eAO0PQPa4CTadCU/6kBwNlNTL/SL5NANOUcjODQsIe7wmgYMHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=F2aybbR9; arc=none smtp.client-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="F2aybbR9"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X1yhM005Xzn4P;
+	Sun,  8 Sep 2024 20:11:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1725819074;
+	bh=nXI9xic4x3kUhmU/n/oTnixYiW2o/Ba+mWZgJ65FcYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F2aybbR9SGRO8ntewsvTYFuHGvAUHrhTiLBB/jRK1/tkv4vPCc+/z+dcy1Fzwh98K
+	 h8Ldft3UX4SPDXPe0qt22j+0PNrLPVgH4fvDqcSjzyuzHoDQmAVbGsLM9CpwGZ7gy7
+	 loxmwtN9/Hw7IBhxZB2PN6qlA9udH6kKLaD+ydOU=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X1yhK3qYJzggS;
+	Sun,  8 Sep 2024 20:11:13 +0200 (CEST)
+Date: Sun, 8 Sep 2024 20:11:07 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
+Message-ID: <20240908.jeim4Aif3Fee@digikod.net>
+References: <20240821095609.365176-1-mic@digikod.net>
+ <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me,
-        tomoyo-users-en@lists.osdn.me,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
- <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
- <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
- <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 2024/09/06 23:24, Paul Moore wrote:
-> I've already recorded your NACK on several patches on two of the four
-> static call commits, if you like I can add it to the other two please
-> let me know and I'll be sure to do that.  I've recorded your NACKs on
-> other patches in the past and mentioned those NACKs to Linus when
-> sending the pull request, and I will do so again during this upcoming
-> merge window.
+On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
+> On Wed, Aug 21, 2024 at 5:56 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> > for the related file descriptor.  Before this change, the
+> > file_set_fowner LSM hook was always called, ignoring the VFS logic which
+> > may not actually change the process that handles SIGIO (e.g. TUN, TTY,
+> > dnotify), nor update the related UID/EUID.
+> >
+> > Moreover, because security_file_set_fowner() was called without lock
+> > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
+> > condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
+> > to struct fown_struct's UID/EUID.
+> >
+> > This change makes sure the LSM states are always in sync with the VFS
+> > state by moving the security_file_set_fowner() call close to the
+> > UID/EUID updates and using the same f_owner.lock .
+> >
+> > Rename f_modown() to __f_setown() to simplify code.
+> >
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >
+> > Changes since v2:
+> > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
+> > - Only keep the LSM hook move.
+> >
+> > Changes since v1:
+> > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> > - Add back the file_set_fowner hook (but without user) as
+> >   requested by Paul, but move it for consistency.
+> > ---
+> >  fs/fcntl.c | 14 ++++----------
+> >  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> This looks reasonable to me, and fixes a potential problem with
+> existing LSMs.  Unless I hear any strong objections I'll plan to merge
+> this, and patch 2/2, into the LSM tree tomorrow.
 
-Adding Nacked-by: lines is not an indulgence for ignoring my concerns.
-Commit f3b8788cde61 ("LSM: Identify modules by more than name") is an example
-you added Nacked-by: line without adding hints for why I nacked it (e.g.
-links to my posts).
+I didn't see these patches in -next, did I miss something?
+Landlock will use this hook really soon and it would make it much easier
+if these patches where upstream before.
 
-  LSM: Identify modules by more than name
-
-  Create a struct lsm_id to contain identifying information about Linux
-  Security Modules (LSMs). At inception this contains the name of the
-  module and an identifier associated with the security module.  Change
-  the security_add_hooks() interface to use this structure.  Change the
-  individual modules to maintain their own struct lsm_id and pass it to
-  security_add_hooks().
-
-  The values are for LSM identifiers are defined in a new UAPI
-  header file linux/lsm.h. Each existing LSM has been updated to
-  include it's LSMID in the lsm_id.
-
-  The LSM ID values are sequential, with the oldest module
-  LSM_ID_CAPABILITY being the lowest value and the existing modules
-  numbered in the order they were included in the main line kernel.
-  This is an arbitrary convention for assigning the values, but
-  none better presents itself. The value 0 is defined as being invalid.
-  The values 1-99 are reserved for any special case uses which may
-  arise in the future. This may include attributes of the LSM
-  infrastructure itself, possibly related to namespacing or network
-  attribute management. A special range is identified for such attributes
-  to help reduce confusion for developers unfamiliar with LSMs.
-
-  LSM attribute values are defined for the attributes presented by
-  modules that are available today. As with the LSM IDs, The value 0
-  is defined as being invalid. The values 1-99 are reserved for any
-  special case uses which may arise in the future.
-
-How can people (or Linus) find why I nacked it from patch description of that commit?
-The reason is partially explained in commit 063a7ce32ddc ("Merge tag 'lsm-pr-20240105'
-of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm"), but is not accurate.
-
-  - Add three new syscalls: lsm_list_modules(), lsm_get_self_attr(), and
-    lsm_set_self_attr().
-
-    The first syscall simply lists the LSMs enabled, while the second and
-    third get and set the current process' LSM attributes. Yes, these
-    syscalls may provide similar functionality to what can be found under
-    /proc or /sys, but they were designed to support multiple,
-    simultaneaous (stacked) LSMs from the start as opposed to the current
-    /proc based solutions which were created at a time when only one LSM
-    was allowed to be active at a given time.
-
-    We have spent considerable time discussing ways to extend the
-    existing /proc interfaces to support multiple, simultaneaous LSMs and
-    even our best ideas have been far too ugly to support as a kernel
-    API; after +20 years in the kernel, I felt the LSM layer had
-    established itself enough to justify a handful of syscalls.
-
-    Support amongst the individual LSM developers has been nearly
-    unanimous, with a single objection coming from Tetsuo (TOMOYO) as he
-    is worried that the LSM_ID_XXX token concept will make it more
-    difficult for out-of-tree LSMs to survive. Several members of the LSM
-    community have demonstrated the ability for out-of-tree LSMs to
-    continue to exist by picking high/unused LSM_ID values as well as
-    pointing out that many kernel APIs rely on integer identifiers, e.g.
-    syscalls (!), but unfortunately Tetsuo's objections remain.
-
-    My personal opinion is that while I have no interest in penalizing
-    out-of-tree LSMs, I'm not going to penalize in-tree development to
-    support out-of-tree development, and I view this as a necessary step
-    forward to support the push for expanded LSM stacking and reduce our
-    reliance on /proc and /sys which has occassionally been problematic
-    for some container users. Finally, we have included the linux-api
-    folks on (all?) recent revisions of the patchset and addressed all of
-    their concerns.
-
-I am not against about having LSM ID itself. I am against about the fact
-that out-of-tree LSM modules cannot have stable LSM ID. Commit f3b8788cde61
-wants to assign LSM ID sequentially whereas those who demonstrated me
-suggests assigning LSM ID non-sequentially and pushes the burden of
-managing collision to out-of-tree LSM modules. As a result, out-of-tree
-LSM modules cannot start using userspace tools which rely on LSM ID.
-Rewriting userspace tools when that out-of-tree LSM module succeeded
-becoming in-tree is a penalty, for it breaks existing userspace tools
-and also remains the risk of old LSM ID being reused by unrelated LSM
-module.
-
-The fact that out-of-tree LSM modules cannot have stable LSM ID penalizes
-out-of-tree LSMs due to the risk of collision, and making it difficult for
-Linux users to find LSMs they want because Linux users cannot know what
-LSMs are available in the world. That is not a good usage of identifiers.
-
-I suggested you that the LSM community should allow assigning stable LSM ID
-to any LSM as long as that LSM is available to anybody, and serve as index
-for helping people to find LSMs that match their needs.
-
-Paul, where did you explain above when you sent pull request to Linus?
-Linus, did you understand why I nacked it from that pull request from Paul?
-
+> 
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index 300e5d9ad913..c28dc6c005f1 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
+> >         return error;
+> >  }
+> >
+> > -static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> > -                     int force)
+> > +void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> > +               int force)
+> >  {
+> >         write_lock_irq(&filp->f_owner.lock);
+> >         if (force || !filp->f_owner.pid) {
+> > @@ -98,19 +98,13 @@ static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> >
+> >                 if (pid) {
+> >                         const struct cred *cred = current_cred();
+> > +                       security_file_set_fowner(filp);
+> >                         filp->f_owner.uid = cred->uid;
+> >                         filp->f_owner.euid = cred->euid;
+> >                 }
+> >         }
+> >         write_unlock_irq(&filp->f_owner.lock);
+> >  }
+> > -
+> > -void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> > -               int force)
+> > -{
+> > -       security_file_set_fowner(filp);
+> > -       f_modown(filp, pid, type, force);
+> > -}
+> >  EXPORT_SYMBOL(__f_setown);
+> >
+> >  int f_setown(struct file *filp, int who, int force)
+> > @@ -146,7 +140,7 @@ EXPORT_SYMBOL(f_setown);
+> >
+> >  void f_delown(struct file *filp)
+> >  {
+> > -       f_modown(filp, NULL, PIDTYPE_TGID, 1);
+> > +       __f_setown(filp, NULL, PIDTYPE_TGID, 1);
+> >  }
+> >
+> >  pid_t f_getown(struct file *filp)
+> > --
+> > 2.46.0
+> 
+> -- 
+> paul-moore.com
+> 
