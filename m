@@ -1,185 +1,143 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5898414A0A7
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Sep 2024 10:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FD81B3B06;
+	Mon,  9 Sep 2024 11:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725877988; cv=none; b=QHAQECg2UlYMMiPfThDEjSFeoJwoBGId8cOVnQuU5CFicQs3Z0sQ+Y9EeaBeqDqplptmDaFTJxZWA0V8s8d3Qf1uSgH2K0dhz2+mtlHDglSYTmYp289rITahE4QGWYeoO7Ih6GgPN18RDrDbYbEDNfy/eJRTwmIT5B4RLksNTRI=
+	t=1725881744; cv=none; b=VfQ7qS2pB00j1kKPADdKxlfR+8a1d4Bkjk+nFMoqMAvS1mqDk37iSzxd7jC7sj1sLlGv3WCgF0n1c24eAajLDNo0SAmWvqdDtPi6MsguoXDPK3WgJgJh7ytFvW3kF4Hz+EHmMwfcYjQH2ke235n7a6w87s1rH2sKaoPj1pGn0Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725877988; c=relaxed/simple;
-	bh=hw8yQ0VolwvnBmKSF3LNIg7oRvWDO7NrzgXIKv0VxmU=;
+	s=arc-20240116; t=1725881744; c=relaxed/simple;
+	bh=GVISnP9UsFGbHZp50x0yE7hLzn+QhRqglpi7z7+GiGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJdH7Sfz41+PXG04zSF7HDPUhQyh9C47Y3Ly3j5Ts3FXHHLXLUyk2vC63DDTrcyKucY4Cukf7Yg1EIorTKaUStnjmsNbxTPGqZYOTolM1jUm6WvRbdaMLXyLm1rVE+J7wEQHHAOXIrp07oMO3NJeIQNH25cCzMln+4Yh4/jj5lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0u6d7mzk; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3+1wo4DLbvt1zBa4BPZcZVRjin1hy6IeXutMLpGis8bYsPyrxd/uwa1SE3cP9vFWD+UMrTQvjdVGiXbRTQFtUjINwHVUlEmzzAXxDb06N8d893Mb9j/yv4sn12RlSNCXBXbvHRBwSQubJM9NbsfTS1p+YmzQOnBeh8soMyLRXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ngcmSO97; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a8a+uzad; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ngcmSO97; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a8a+uzad; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0u6d7mzk"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X2NT75smbz105G;
-	Mon,  9 Sep 2024 12:32:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1725877979;
-	bh=USLrcmWGFqTUBjA2tdW0YzQ39cdQX5h4S2o2tNzyS+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0u6d7mzkBO6aFeKEMuu2IYY0PL7osWBo2Z3PHskcQo/HMlMZmWYjCAGLF0I7wVc/j
-	 fdo33Rz5+78d5pFRDkYqx76o5FSEsDIH5jWr7nV4xkkfOnnLBWIemB41drtOyzw6+O
-	 QKHJF0tm4DVWbCLSWKgSOdo55lYImi8mC4rJtsZQ=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X2NT63tfBzxy;
-	Mon,  9 Sep 2024 12:32:58 +0200 (CEST)
-Date: Mon, 9 Sep 2024 12:32:52 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] selftest/landlock: Test file_send_sigiotask by
- sending out-of-bound message
-Message-ID: <20240909.aekeexooNo8i@digikod.net>
-References: <cover.1725657727.git.fahimitahera@gmail.com>
- <50daeed4d4f60d71e9564d0f24004a373fc5f7d5.1725657728.git.fahimitahera@gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ngcmSO97";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a8a+uzad";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ngcmSO97";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a8a+uzad"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B7ABC219A4;
+	Mon,  9 Sep 2024 11:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725881739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
+	b=ngcmSO97UnLy/4Z5EokpKnCNF6cNyvDYZ/JY78r+cRNrQ6/7abY1sRjF/C3/zqYvwdHrcp
+	Yi/KOwoZoCQ3wgVHjdoUkatOvdcgNIbH/KgmaiUq5s+zBWuFoSEYHVBBUgHk/smX1YbzVN
+	8C9w5sciF4wfphyf4GtdK4FbU5T14Bg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725881739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
+	b=a8a+uzadRsQzgg7k4+X1mzHv6UXsgPLlNeO+t9GYimVEQU7r1fV44UuBD08HylWdh6hhqh
+	AAJLnNqzyVGJpYDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ngcmSO97;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=a8a+uzad
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725881739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
+	b=ngcmSO97UnLy/4Z5EokpKnCNF6cNyvDYZ/JY78r+cRNrQ6/7abY1sRjF/C3/zqYvwdHrcp
+	Yi/KOwoZoCQ3wgVHjdoUkatOvdcgNIbH/KgmaiUq5s+zBWuFoSEYHVBBUgHk/smX1YbzVN
+	8C9w5sciF4wfphyf4GtdK4FbU5T14Bg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725881739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ButvdY7F6OPDCmhDFHthu8UyYiCQIjhdHWQ6fSxT09o=;
+	b=a8a+uzadRsQzgg7k4+X1mzHv6UXsgPLlNeO+t9GYimVEQU7r1fV44UuBD08HylWdh6hhqh
+	AAJLnNqzyVGJpYDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC69813312;
+	Mon,  9 Sep 2024 11:35:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ekISKovd3mZJNAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 09 Sep 2024 11:35:39 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5BB49A095F; Mon,  9 Sep 2024 13:35:35 +0200 (CEST)
+Date: Mon, 9 Sep 2024 13:35:35 +0200
+From: Jan Kara <jack@suse.cz>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Amir Goldstein <amir73il@gmail.com>,
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+	selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: linux-next commit 0855feef5235 ("fsnotify: introduce pre-content
+ permission event")
+Message-ID: <20240909113535.vomill5z4v5q47rm@quack3>
+References: <CAHC9VhQvbKsSSfGzUGo3e8ov6p-re_Xn_cEbPK0YJ9VhZXP_Bg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <50daeed4d4f60d71e9564d0f24004a373fc5f7d5.1725657728.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <CAHC9VhQvbKsSSfGzUGo3e8ov6p-re_Xn_cEbPK0YJ9VhZXP_Bg@mail.gmail.com>
+X-Rspamd-Queue-Id: B7ABC219A4
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[toxicpanda.com,gmail.com,suse.cz,vger.kernel.org];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-This test does not cover hook_file_send_sigiotask(): the is_scoped
-variable is never set to true.
+Hi Paul!
 
-On Fri, Sep 06, 2024 at 03:30:06PM -0600, Tahera Fahimi wrote:
-> This patch adds a test to verify handling the signal scoping mechanism
-> in file_send_sigiotask by triggering SIGURG through receiving an
-> out-of-bound message in UNIX sockets.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
-> V4:
-> * Using pipe instead of Poll for synchronization.
-> ---
->  .../selftests/landlock/scoped_signal_test.c   | 99 +++++++++++++++++++
->  1 file changed, 99 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-> index c71fb83b7147..630f3a515731 100644
-> --- a/tools/testing/selftests/landlock/scoped_signal_test.c
-> +++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-> @@ -269,4 +269,103 @@ TEST(signal_scoping_threads)
->  	EXPECT_EQ(0, close(thread_pipe[1]));
->  }
->  
-> +#define SOCKET_PATH "/tmp/unix_sock_test"
+On Fri 06-09-24 10:42:39, Paul Moore wrote:
+> When you are making changes that impact a LSM, or the LSM framework
+> itself, especially if they change the permissions/access-controls in
+> any way, please make sure you CC the relevant mailing lists.  If you
+> are unsure which lists you should CC, please consult MAINTAINERS or
+> use the ./scripts/get_maintainer.pl tool.
 
-We must not create file on absolute paths because concurrent executions
-or previous ones could interfer with the tests.  Why not use an abstract
-unix socket created with set_unix_address()?
+Well, it didn't occur to me you'd be interested in these changes but you're
+right that we've added the new event to a bitmask in
+security/selinux/hooks.c so strictly speaking I should have notified you.
+I'm sorry for the omission.
 
-> +
-> +const short backlog = 10;
-> +
-> +static volatile sig_atomic_t signal_received;
-> +
-> +static void handle_sigurg(int sig)
-> +{
-> +	if (sig == SIGURG)
-> +		signal_received = 1;
-> +	else
-> +		signal_received = -1;
-> +}
-> +
-> +static int setup_signal_handler(int signal)
-> +{
-> +	struct sigaction sa;
-> +
-> +	sa.sa_handler = handle_sigurg;
-> +	sigemptyset(&sa.sa_mask);
-> +	sa.sa_flags = SA_SIGINFO | SA_RESTART;
-> +	return sigaction(SIGURG, &sa, NULL);
-> +}
-> +
-> +/*
-> + * Sending an out of bound message will trigger the SIGURG signal
-> + * through file_send_sigiotask.
-> + */
-> +TEST(test_sigurg_socket)
-> +{
-> +	int sock_fd, recv_sock;
-> +	struct sockaddr_un addr, paddr;
-> +	socklen_t size;
-> +	char oob_buf, buffer;
-> +	int status;
-> +	int pipe_parent[2], pipe_child[2];
-> +	pid_t child;
-> +
-> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> +
-> +	memset(&addr, 0, sizeof(addr));
-> +	addr.sun_family = AF_UNIX;
-> +	snprintf(addr.sun_path, sizeof(addr.sun_path), "%s", SOCKET_PATH);
-> +	unlink(SOCKET_PATH);
-> +	size = sizeof(addr);
-> +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		oob_buf = '.';
-> +
-> +		ASSERT_EQ(0, close(pipe_parent[1]));
-> +		ASSERT_EQ(0, close(pipe_child[0]));
-> +
-> +		sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
-> +		ASSERT_NE(-1, sock_fd);
-> +
-> +		ASSERT_EQ(1, read(pipe_parent[0], &buffer, 1));
-> +		ASSERT_EQ(0, connect(sock_fd, &addr, sizeof(addr)));
-> +
-> +		ASSERT_EQ(1, read(pipe_parent[0], &buffer, 1));
-> +		ASSERT_NE(-1, send(sock_fd, &oob_buf, 1, MSG_OOB));
-> +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> +
-> +		EXPECT_EQ(0, close(sock_fd));
-> +
-> +		_exit(_metadata->exit_code);
-> +		return;
-> +	}
-> +	ASSERT_EQ(0, close(pipe_parent[0]));
-> +	ASSERT_EQ(0, close(pipe_child[1]));
-> +
-> +	sock_fd = socket(AF_UNIX, SOCK_STREAM, 0);
-> +	ASSERT_NE(-1, sock_fd);
-> +	ASSERT_EQ(0, bind(sock_fd, &addr, size));
-> +	ASSERT_EQ(0, listen(sock_fd, backlog));
-> +
-> +	ASSERT_NE(-1, setup_signal_handler(SIGURG));
-> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> +	recv_sock = accept(sock_fd, &paddr, &size);
-> +	ASSERT_NE(-1, recv_sock);
-> +
-> +	create_scoped_domain(_metadata, LANDLOCK_SCOPED_SIGNAL);
-> +
-> +	ASSERT_NE(-1, fcntl(recv_sock, F_SETOWN, getpid()));
-> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> +	ASSERT_EQ(1, read(pipe_child[0], &buffer, 1));
-> +	ASSERT_EQ(1, recv(recv_sock, &oob_buf, 1, MSG_OOB));
-> +
-> +	ASSERT_EQ(1, signal_received);
-> +	EXPECT_EQ(0, close(sock_fd));
-> +	EXPECT_EQ(0, close(recv_sock));
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
-> +}
-> +
->  TEST_HARNESS_MAIN
-> -- 
-> 2.34.1
-> 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
