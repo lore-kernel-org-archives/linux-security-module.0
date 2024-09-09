@@ -1,124 +1,140 @@
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B5C14B06C
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Sep 2024 18:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D810017C9F6
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Sep 2024 20:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725907814; cv=none; b=E0se1d1P/pdyrGkfxmciWZ99kAuzOr0VuQxWg66C7qXlTrZFws+scj8Zt0x0enXRUOPtduL3dgZS6/fuOWNGYiwbbu/ACFcHdhApyk506Gz2XMfXk4o97rg2jAFroODjxwH2rZbxmvAuaafn6RzgENIIBy8F0xvQ7WYXSsWJE6k=
+	t=1725913117; cv=none; b=ZmhCo+erRUij1iP9I1r2d2P/gXT9o4i8MzTLLO0hk6+EauAVF8WCDZj9sT7fumpRFTSGaV+lBKvDfcKHdR0gbISP2vDbdpOGSid7sryVBbbQ17KGK1Eo2sY+i2zvAqHLr0f2HJKiSKzMCanMBvvQ6geh3JbV2NsfSy5nT+Se5Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725907814; c=relaxed/simple;
-	bh=iX6x+X+C2KmnTglmajitY2d8V7n/jwEPwVA+GAC6eiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6RBPnz6VmKZjvB09ZpFrekTm22PMadU/e0DuTHNPAzK29jJOkWphURNhLjmmd4fRbMPmg0iJCsULaXL6CxdDTs5OuWXVZpBL5cfSw6pG6rWqp+qTS/wzYWTKf0lyIza+TwVC4QWAoZFTd05mMZSchTqpYjlSvd3c0Lxzj5t6+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HbiHCzBi; arc=none smtp.client-ip=83.166.143.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1725913117; c=relaxed/simple;
+	bh=13lNPuKmPyITXulsfthCeIKLInyN4P9c0i28FfIVMGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iOdsXEzYN13wBO+tXThMDQLZnATXm9a7yCH4ME4NNEKaihDm+N/wbnMHuBHawZWkVmKBfe5ZIiJpzFUrRWofFz+VR0jAAny6MvrHH/oy3MNsV62WCmwKGCKP1Bjqa02JRVnbuqRkrNkWbcBLViHJGwFtDsqqMtqW2iUO8lkIPzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fwe92i7W; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HbiHCzBi"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X2bMc50Nvzqk1;
-	Mon,  9 Sep 2024 20:43:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1725907436;
-	bh=oxG77P3NVtf5xxUT9J4SD9IVKFdgoO+cgYyab1/OTdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HbiHCzBik6ccWXsmUvJQLIqOCgka7Ec894qPRxXTXCbv1YFhdhXr12RHBDKF+f6Nx
-	 qjo2Nl+av5qGDdDVB0Td1Z5NEODrgaFXQ9TP8xDb0lz0870wJJMMElvhHUrhTCjVbk
-	 XFz3brhGV6mpYyowybeg0Qn7/DYLIeQ0hWHoAY/o=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X2bMb0H3gzvVV;
-	Mon,  9 Sep 2024 20:43:54 +0200 (CEST)
-Date: Mon, 9 Sep 2024 20:43:48 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: Fix file_set_fowner LSM hook inconsistencies
-Message-ID: <20240909.fea6omu9Ohof@digikod.net>
-References: <20240821095609.365176-1-mic@digikod.net>
- <CAHC9VhQ7e50Ya4BNoF-xM2y+MDMW3i_SRPVcZkDZ2vdEMNtk7Q@mail.gmail.com>
- <20240908.jeim4Aif3Fee@digikod.net>
- <CAHC9VhSGTOv9eiYCvbY67PJwtuBKWtv6nBgy_T=SMr-JPBO+SA@mail.gmail.com>
- <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fwe92i7W"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6d5893cd721so42554247b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Sep 2024 13:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1725913115; x=1726517915; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CcszTB3xWQWU9WxKt8ijDXvzGMr0WMOou1WzUjCJso8=;
+        b=fwe92i7WQkR6GwVO/kFbnsKoGr5rtb1p3QW8EwuJB+impu3lb4XWIKJl72Y6QIQFRe
+         r/pQttJ87LG/xGLKeQYzs0gRcF8PbF27n5u/OBSksMnWD6d4t9U8amLKXktHn+nWtKXk
+         22CjS7iJ6eHVrZVTKijeqNJwl4zsNwo1rSBw8abakiGuQWIIVifYftNJsm91XupuHDvj
+         xPEtV26enn8o3RaUKZcIojOHhMRAsjue0+2pLp0dfqqNKOwHG1HfZeMu3gX6X8LcS2Z3
+         HqDRUQ4gCzMt5aIUNWiaY80cajch4EmixAXRmGifoQW5KAWhjdEk03uLbdBuOx54Azna
+         hy+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725913115; x=1726517915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CcszTB3xWQWU9WxKt8ijDXvzGMr0WMOou1WzUjCJso8=;
+        b=FWIBY8eUWDEEq4N/nfIKGsEh0msLjaeGkZ59Dp9iBc/IZcIBEW2OY58VYRdFP/K5ra
+         Q9w/Bc+wqR/Hc7Yc7G4zn7MYj6opsoL6UaGFOqWELD3Ub6STO8GVVEziT0vK+3NCDseR
+         0wH4kdlKOjzMCbnrVekNj07BJKsVbb9OFVMcq7pFHGec1gsmu5By54pJkOCgQkVXljZP
+         2d99sH6AW7SJ2+NlVvHdA8QKzDoIkVLRTJoHBvV38gdFOIGK9hTlXF7er4oVKd77uhAF
+         2LW/LmBnrEXSqqfY/hvuZP0qs/1ADzbxbdLcGqxeQ2wJlNqigWYD7c+Yss5OJnIJVJTM
+         f0Ww==
+X-Gm-Message-State: AOJu0YzmB+d7SD1cNA/mmCDgIQIcgbB7RaepMUqKM0Cb3AocRm7m+9J5
+	pLP0BC9mSkcJ12D0j6rLICrKyB3DDb/hKgsyPlaxxE8IQuvqHLAOmnk8c1gZjR0EdnoMs6s89Ye
+	LMJ7S5PLrEssJrdifWYRg4zuJKNdZv0lFODHo
+X-Google-Smtp-Source: AGHT+IHc4L6JkqeFSBB9BK6rAsGL3YeNds05C7S+maiUQFeSVRh+xQunmNUj1DuCD0ouJglzxHFEDUTi5DIW1HiKjR0=
+X-Received: by 2002:a05:690c:102:b0:6d3:d842:5733 with SMTP id
+ 00721157ae682-6db4516beb6mr137303177b3.35.1725913114540; Mon, 09 Sep 2024
+ 13:18:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTck26ogxtTK-Z_gxhhdfYR4MgHystKdWttjsXcydyB9A@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp>
+ <CAHC9VhT_eBGJq5viU8R_HVWT=BTcxesWAi3nLcMgG8NfswKesA@mail.gmail.com>
+ <d16cd3d1-4b32-487e-b116-419c19941472@I-love.SAKURA.ne.jp>
+ <CAHC9VhRdQAoiKMVVUiDyCbEd4EDL9ppH3V4xRGhoOoFmHFy8nQ@mail.gmail.com> <d1e5b74a-5161-4906-96eb-4987ff440d19@I-love.SAKURA.ne.jp>
+In-Reply-To: <d1e5b74a-5161-4906-96eb-4987ff440d19@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 9 Sep 2024 16:18:23 -0400
+Message-ID: <CAHC9VhRuG5V=ccdH6Ti-2+KhU7brnh+TQ-iqNrpJNY-jJN79Mw@mail.gmail.com>
+Subject: Re: [PATCH] LSM: allow loadable kernel module based LSM modules
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, tomoyo-dev-en@lists.osdn.me, 
+	tomoyo-users-en@lists.osdn.me, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 09, 2024 at 12:44:16PM -0400, Paul Moore wrote:
-> On Mon, Sep 9, 2024 at 12:03 PM Paul Moore <paul@paul-moore.com> wrote:
+On Sat, Sep 7, 2024 at 6:14=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/09/06 23:24, Paul Moore wrote:
+> > On Fri, Sep 6, 2024 at 3:43=E2=80=AFAM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >> If you ignore my concern, I have to NACK the static call changes you a=
+re
+> >> going to send in the upcoming merge window.
 > >
-> > On Sun, Sep 8, 2024 at 2:11 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > >
-> > > On Wed, Aug 21, 2024 at 12:32:17PM -0400, Paul Moore wrote:
-> > > > On Wed, Aug 21, 2024 at 5:56 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > >
-> > > > > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
-> > > > > for the related file descriptor.  Before this change, the
-> > > > > file_set_fowner LSM hook was always called, ignoring the VFS logic which
-> > > > > may not actually change the process that handles SIGIO (e.g. TUN, TTY,
-> > > > > dnotify), nor update the related UID/EUID.
-> > > > >
-> > > > > Moreover, because security_file_set_fowner() was called without lock
-> > > > > (e.g. f_owner.lock), concurrent F_SETOWN commands could result to a race
-> > > > > condition and inconsistent LSM states (e.g. SELinux's fown_sid) compared
-> > > > > to struct fown_struct's UID/EUID.
-> > > > >
-> > > > > This change makes sure the LSM states are always in sync with the VFS
-> > > > > state by moving the security_file_set_fowner() call close to the
-> > > > > UID/EUID updates and using the same f_owner.lock .
-> > > > >
-> > > > > Rename f_modown() to __f_setown() to simplify code.
-> > > > >
-> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > > Cc: James Morris <jmorris@namei.org>
-> > > > > Cc: Jann Horn <jannh@google.com>
-> > > > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> > > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > > > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > > > ---
-> > > > >
-> > > > > Changes since v2:
-> > > > > https://lore.kernel.org/r/20240812174421.1636724-1-mic@digikod.net
-> > > > > - Only keep the LSM hook move.
-> > > > >
-> > > > > Changes since v1:
-> > > > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
-> > > > > - Add back the file_set_fowner hook (but without user) as
-> > > > >   requested by Paul, but move it for consistency.
-> > > > > ---
-> > > > >  fs/fcntl.c | 14 ++++----------
-> > > > >  1 file changed, 4 insertions(+), 10 deletions(-)
-> > > >
-> > > > This looks reasonable to me, and fixes a potential problem with
-> > > > existing LSMs.  Unless I hear any strong objections I'll plan to merge
-> > > > this, and patch 2/2, into the LSM tree tomorrow.
-> > >
-> > > I didn't see these patches in -next, did I miss something?
-> > > Landlock will use this hook really soon and it would make it much easier
-> > > if these patches where upstream before.
-> >
-> > Ah!  My apologies, I'll do that right now and send another update once
-> > it's done.  FWIW, I'm going to tag 1/2 for stable, but since we are at
-> > -rc7 presently I'll just plan to send it during the next merge window.
-> 
-> Merged into lsm/dev, thanks for the nudge :)
+> > I'm not ignoring your concern, I've responded to your emails and
+> > patches on the topic over, and over, and over, and over again by
+> > trying to explain to you that your goal of supporting out-of-tree LSMs
+> > regardless of the impact to the upstream LSM effort is not something
+> > that is acceptable to the upstream LSM effort, or the Linux kernel in
+> > general.
+>
+> I want LKM-based LSM support in order to allow one of in-tree LSMs (namel=
+y
+> TOMOYO) to be delivered to my intended users ...
 
-Thanks!
+As discussed many times already, the solution to in-tree LSMs not
+being enabled is to simply enable them in a kernel for your users.  If
+your users are limited to a specific kernel configuration due to
+distro support issues/contracts, that is a problem you need to address
+with the relevant distribution.  If the distribution is unwilling to
+alter their kernel configuration to suit your needs, or your users,
+that still does not make this an upstream problem, it is a problem
+between you, your users, and the distribution.
+
+> Adding Nacked-by: lines is not an indulgence for ignoring my concerns.
+
+Adding NACKs, just like adding ACKs or any other patch metadata, is my
+responsibility, nothing more, nothing less.
+
+> Commit f3b8788cde61 ("LSM: Identify modules by more than name") is an exa=
+mple
+> you added Nacked-by: line without adding hints for why I nacked it (e.g.
+> links to my posts).
+
+Please see the associated pull request email I sent to Linus where I
+wrote several sentences about your objections:
+
+https://lore.kernel.org/linux-security-module/3f5a7bc467d221543444a268dd1a1=
+fe0@paul-moore.com
+
+"Support amongst the individual LSM developers has been nearly
+unanimous, with a single objection coming from Tetsuo (TOMOYO) as he
+is worried that the LSM_ID_XXX token concept will make it more
+difficult for out-of-tree LSMs to survive.  Several members of the LSM
+ community have demonstrated the ability for out-of-tree LSMs to
+continue to exist by picking high/unused LSM_ID values as well as
+pointing out that many kernel APIs rely on integer identifiers, e.g.
+syscalls (!), but unfortunately Tetsuo's objections remain.  My
+personal opinion is that while I have no interest in penalizing
+out-of-tree LSMs, I'm not going to penalize in-tree development to
+support out-of-tree development, and I view this as a necessary step
+forward to support the push for expanded LSM stacking and reduce our
+reliance on /proc and /sys which has occassionally been problematic
+for some container users."
+
+Unless you present any new ideas in this thread, which I consider
+highly unlikely at this point, this will be my last email to you in
+this thread.  As mentioned previously, if you would like to see your
+NACK recorded in the static call patch, let me know.
+
+--=20
+paul-moore.com
