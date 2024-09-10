@@ -1,159 +1,187 @@
-Received: from mailout1.hostsharing.net (mailout1.hostsharing.net [83.223.95.204])
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A2319413F;
-	Tue, 10 Sep 2024 14:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95A5194088
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2024 15:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979158; cv=none; b=Tz577ucrDh4sfwPGuGac0g+zOTYS2gD4MomNuy5ALSJZVBi8FERMsfc9p2ix/0W5omFbJTwDCz4U+C+Qo0L+toJ5NmGC7+RWdwnZ4mG1jc1dKhEUxRECwbIE/ueu0L4hoq54O9denAdnvD2Gu0RG1N08V2U8Pnne+4hQ/uaIjIA=
+	t=1725980683; cv=none; b=LiQJfDh7JM2uKGC/di/d6gRJAaHJm+De4N6n18dHXI1KxnbCIV+17xgEyLBO3oPijWbLAq/MxW9QWi2XCVyUOdLwLct22Zgtwo9TB/y8mIRwgfOvVUnmY1jHIKQNSo0U9+dgQE+dqHxCwEd7tkZaIMvbP81tQVdaoyDEnxKcLTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979158; c=relaxed/simple;
-	bh=hXjL36ZTUUG010MGGcWtvAiwr3c02h0fr0+QVFB949Q=;
-	h=Message-ID:From:Date:Subject:To:Cc; b=CwuRC+iKyMsyOrruUCi5Q5cat5o86BFp6E9sKaVdCc3CA7/QhCiG+3iTprujPsBVk2Scq7qedECZlvfPAXXHz8y1yU3Zxz/1GEZFha8t7U5XyQ4xJzQHMKIENM6Ex6UreNrMG/ZAgQ68w5M1hxqs5lj6ChtQ3z3yc+tpjHp7HUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=pass smtp.mailfrom=wunner.de; arc=none smtp.client-ip=83.223.95.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wunner.de
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by mailout1.hostsharing.net (Postfix) with ESMTPS id 776D110192657;
-	Tue, 10 Sep 2024 16:30:39 +0200 (CEST)
-Received: from localhost (unknown [89.246.108.87])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by h08.hostsharing.net (Postfix) with ESMTPSA id 4707E60A79C3;
-	Tue, 10 Sep 2024 16:30:39 +0200 (CEST)
-X-Mailbox-Line: From b74f4875ae056ff8aa20b7530fe4f41592581c63 Mon Sep 17 00:00:00 2001
-Message-ID: <cover.1725972333.git.lukas@wunner.de>
-From: Lukas Wunner <lukas@wunner.de>
-Date: Tue, 10 Sep 2024 16:30:10 +0200
-Subject: [PATCH v2 00/19] Migrate to sig_alg and templatize ecdsa
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Eric Biggers <ebiggers@google.com>, Stefan Berger <stefanb@linux.ibm.com>, Vitaly Chikunov <vt@altlinux.org>, Tadeusz Struk <tstruk@gigaio.com>, "Dimitri John Ledkov" <dimitri.ledkov@canonical.com>
-Cc: David Howells <dhowells@redhat.com>, Andrew Zaborowski <andrew.zaborowski@intel.com>, Saulo Alessandre <saulo.alessandre@tse.jus.br>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ignat Korchagin <ignat@cloudflare.com>, Marek Behun <kabel@kernel.org>, Varad Gautam <varadgautam@google.com>, Stephan Mueller <smueller@chronox.de>, Denis Kenzior <denkenz@gmail.com>, linux-crypto@vger.kernel.org, keyrings@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, linux-security-module@vger.kernel.org, Gonglei <arei.gonglei@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio Perez <eperezma@redhat.com>, virtualization@lists.linux.dev, zhenwei pi <pizhenwei@bytedance.com>, lei he <helei.sig11@bytedance.com>, Neal Liu <neal_liu@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, Andrew Jeff
- ery <andrew@codeconstruct.com.au>, linux-aspeed@lists.ozlabs.org, Zhiqi Song <songzhiqi1@huawei.com>, Longfang Liu <liulongfang@huawei.com>, Jia Jie Ho <jiajie.ho@starfivetech.com>, William Qiu <william.qiu@starfivetech.com>
+	s=arc-20240116; t=1725980683; c=relaxed/simple;
+	bh=d0doP1JEFX/C18a6HowMf6zIsMYbUDOyVenZRHR3MV8=;
+	h=Message-ID:Date:MIME-Version:Cc:To:From:Subject:Content-Type; b=STakNfDemQCV2pKrRK18YlCTP74OUXhhOxRq+Nn/G6dslJqmhrhhivdrV9WdLBbgaF3I7T7jzmlTWENakC/+HIv1AVkrz69y2grAEtprNgLJRPO0qgrLAuHtQq7vz7kJK1riVDgYVF0AFerUbksiY10+2LfZJDPFa+eR/i7ggCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=W4vK/zoo; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="W4vK/zoo"
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
+	by cmsmtp with ESMTPS
+	id o2KGs9QR2g2lzo2OUsQFNf; Tue, 10 Sep 2024 15:03:02 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id o2OQsP56wO7Cro2ORs54zv; Tue, 10 Sep 2024 15:03:00 +0000
+X-Authority-Analysis: v=2.4 cv=Pco0hThd c=1 sm=1 tr=0 ts=66e05fa4
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=-pn6D5nKLtMA:10 a=VwQbUJbxAAAA:8
+ a=j3ABsGMAZ6_o1Ezv-SsA:9 a=QEXdDO2ut3YA:10 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:Cc:
+	MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=TJ85ArdoYlxuS6vKFMT9SPvP3V1lonosUWTKH5D5ndM=; b=W4vK/zoopOdslcnBvpuci1/kVl
+	0MDUEEHsAvDha/xHnh0xQLWxcqzY9kgZacJONVCWe/EdYPkcC3tgIFekOskEL6tweWlFWzeLcdKpS
+	DYvU1PQikHq7JsiLcspmMq/QOACdGBJYr/af9UvunMfJzIpl3DCCXBvTPqILIIJw7D86aXfTMshqi
+	JJHGnTP5NcKSomxP0FyPHL1NoNXykWcGcOXBeWXR3dmEWsO0tGYP9M9ZZAlQThZQV2nOjv3l2j8M8
+	kgiclSWljz/5QLZjDh7hAjADU6zRWsrWiMdwVC7T3Cs3pgMgf00phanKzdFggmAvWte72TMATgFR7
+	S8fSQhUA==;
+Received: from [122.165.245.213] (port=57984 helo=[192.168.1.5])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1so2OP-000kTi-00;
+	Tue, 10 Sep 2024 20:32:57 +0530
+Message-ID: <254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com>
+Date: Tue, 10 Sep 2024 20:32:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: parthiban@linumiz.com, dhowells@redhat.com,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+To: david@sigma-star.at
+From: Parthiban <parthiban@linumiz.com>
+Organization: Linumiz
+Subject: Trusted keys: DCP: Unable to handle paging request
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1so2OP-000kTi-00
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:57984
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 2
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfEPmJ3CvBDywGo560dOG0CiBArGt7SkrJ/xJTsgQRE/7aFXDeRXoC7oWe6ZKO1e6MHESf2sdRsbmuzWctQqkn18O1dbgnIKv36YddrDysLowhvc93bsW
+ 094BtzF9EqCNUgkOa0mXQVcwhySyJ6iCefKsTnXYp9t8KTSJQfsvHNrqjcg5mi5lXTiWtFzQ8ZFwndzxDABHssCMX2WNtUhe7Tmt3xlxXLGCx7WkBgnIwe+8
 
-The original impetus of this series is to introduce P1363 signature
-decoding for ecdsa (patch [18/19]), which is needed by the upcoming
-SPDM library (Security Protocol and Data Model) for PCI device
-authentication.
+Dear David,
 
-To facilitate that, move X9.62 signature decoding out of ecdsa.c and
-into a template (patch [15/19]).
+The below commit when using the stack memory for encrypt/decryption, unable to
+add the key using keyctl. IMO the encrypt/decrypt request which is submitted to
+the dcp driver is asynchronous and seal/unseal is returned before the completion.
 
-New in v2:  Move the maximum signature size calculations for ecdsa
-out of software_key_query() and into the X9.62 template so that
-corresponding calculations can be added for P1363 without further
-cluttering up software_key_query() (patch [16/19] - [17/19]).
+crypto_wait_req with aead_request_set_callback will help?
 
-New in v2:  Avoid inefficient copying from kernel buffers to sglists
-in the new templates by introducing a sig_alg backend and migrating
-all algorithms to it, per Herbert's advice (patch [02/19] - [12/19]).
++ keyctl add trusted kmk 'new 32' @u
+[   18.345069] 8<--- cut here ---
+[   18.348199] Unable to handle kernel paging request at virtual address e00125a0 when read
+[   18.356321] [e00125a0] *pgd=00000000
+[   18.359948] Internal error: Oops: 5 [#1] SMP ARM
+[   18.364597] Modules linked in:
+[   18.367688] CPU: 0 UID: 0 PID: 35 Comm: mxs_dcp_chan/ae Not tainted 6.11.0-rc7-00017-gbc83b4d1f086 #20
+[   18.377035] Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+[   18.383235] PC is at page_address+0x8/0xf4
+[   18.387393] LR is at dcp_chan_thread_aes+0x170/0x7e8
+[   18.392412] pc : [<c0281a94>]    lr : [<c06d0dc0>]    psr: 800e0013
+[   18.398703] sp : e0a85f00  ip : 00000100  fp : 00000000
+[   18.403951] r10: c241c640  r9 : e0845db0  r8 : c2715490
+[   18.409201] r7 : e0c2ddbc  r6 : 00000000  r5 : c2715280  r4 : e00125a0
+[   18.415754] r3 : e0c2ddbc  r2 : e00125a2  r1 : c27152ed  r0 : e00125a0
+[   18.422308] Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[   18.429476] Control: 10c5387d  Table: 8270406a  DAC: 00000051
+[   18.435244] Register r0 information: non-paged memory
+[   18.440334] Register r1 information: slab kmalloc-192 start c2715240 pointer offset 173 size 192
+[   18.449206] Register r2 information: non-paged memory
+[   18.454286] Register r3 information: 2-page vmalloc region starting at 0xe0c2c000 allocated at kernel_
+clone+0x9c/0x340
+[   18.465051] Register r4 information: non-paged memory
+[   18.470133] Register r5 information: slab kmalloc-192 start c2715240 pointer offset 64 size 192
+[   18.478906] Register r6 information: NULL pointer
+[   18.483641] Register r7 information: 2-page vmalloc region starting at 0xe0c2c000 allocated at kernel_
+clone+0x9c/0x340
+[   18.494395] Register r8 information: slab kmalloc-192 start c2715480 pointer offset 16 size 192
+[   18.503166] Register r9 information: 2-page vmalloc region starting at 0xe0844000 allocated at kernel_
+clone+0x9c/0x340
+[   18.513918] Register r10 information: slab kmalloc-512 start c241c600 pointer offset 64 size 512
+[   18.522780] Register r11 information: NULL pointer
+[   18.527603] Register r12 information: non-paged memory
+[   18.532773] Process mxs_dcp_chan/ae (pid: 35, stack limit = 0x4cccc1b5)
+[   18.539428] Stack: (0xe0a85f00 to 0xe0a86000)
+[   18.543825] 5f00: 00000000 c2715280 00000000 e0c2ddbc c2715490 c06d0dc0 00000000 00000000
+[   18.552041] 5f20: c22e3480 c0901a08 00000000 c2715490 c0b57a80 00000000 c22e3480 00000000
+[   18.560256] 5f40: c2344040 e0c2ddbc 00000002 124e0e4e c2345040 e0c2ddcc 00000001 c27152c0
+[   18.568469] 5f60: c241c640 c242c080 e0845db0 c2419e80 c22e3480 c06d0c50 00000000 c242c080
+[   18.576680] 5f80: e0845db0 00000000 00000000 c0141fe8 c2419e80 c0141f10 00000000 00000000
+[   18.584890] 5fa0: 00000000 00000000 00000000 c010016c 00000000 00000000 00000000 00000000
+[   18.593101] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[   18.601309] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[   18.609509] Call trace:
+[   18.609537]  page_address from dcp_chan_thread_aes+0x170/0x7e8
+[   18.617988]  dcp_chan_thread_aes from kthread+0xd8/0xf8
+[   18.623280]  kthread from ret_from_fork+0x14/0x28
+[   18.628031] Exception stack(0xe0a85fb0 to 0xe0a85ff8)
+[   18.633115] 5fa0:                                     00000000 00000000 00000000 00000000
+[   18.641326] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[   18.649532] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[   18.656188] Code: e12fff1e e12fff1e e92d41f0 e1a04000 (e5903000)
+[   18.662306] ---[ end trace 0000000000000000 ]---
+[   18.666949] note: mxs_dcp_chan/ae[35] exited with irqs disabled
 
-Clean up various smaller issues that caught my eye in ecdsa
-(patch [01/19] and [14/19]), ecrdsa (patch [19/19]) and
-ASN.1 headers (patch [13/19]).
+git show --stat 0e28bf61a5f9ab30be3f3b4eafb8d097e39446bb 
+commit 0e28bf61a5f9ab30be3f3b4eafb8d097e39446bb
+Author: David Gstir <david@sigma-star.at>
+Date:   Wed Jul 17 13:28:45 2024 +0200
 
-I've also accumulated various cleanups for crypto virtio on my
-development branch but will leave them for another day as this
-series is already nearing the "too big to review" threshold. ;)
+    KEYS: trusted: dcp: fix leak of blob encryption key
+    
+    Trusted keys unseal the key blob on load, but keep the sealed payload in
+    the blob field so that every subsequent read (export) will simply
+    convert this field to hex and send it to userspace.
+    
+    With DCP-based trusted keys, we decrypt the blob encryption key (BEK)
+    in the Kernel due hardware limitations and then decrypt the blob payload.
+    BEK decryption is done in-place which means that the trusted key blob
+    field is modified and it consequently holds the BEK in plain text.
+    Every subsequent read of that key thus send the plain text BEK instead
+    of the encrypted BEK to userspace.
+    
+    This issue only occurs when importing a trusted DCP-based key and
+    then exporting it again. This should rarely happen as the common use cases
+    are to either create a new trusted key and export it, or import a key
+    blob and then just use it without exporting it again.
+    
+    Fix this by performing BEK decryption and encryption in a dedicated
+    buffer. Further always wipe the plain text BEK buffer to prevent leaking
+    the key via uninitialized memory.
+    
+    Cc: stable@vger.kernel.org # v6.10+
+    Fixes: 2e8a0f40a39c ("KEYS: trusted: Introduce NXP DCP-backed trusted keys")
+    Signed-off-by: David Gstir <david@sigma-star.at>
+    Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+    Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-I've run selftests on every single commit, but further testing
-would be appreciated to raise the confidence.
-
-
-Link to v1:
-
-https://lore.kernel.org/all/cover.1722260176.git.lukas@wunner.de/
-
-Changes v1 -> v2:
-
-* [PATCH 13/19] ASN.1: Clean up include statements in public headers
-  * Drop "#include <linux/bug.h>" from <linux/asn1_encoder.h> (Jonathan)
-
-* [PATCH 14/19] crypto: ecdsa - Avoid signed integer overflow on signature
-  decoding
-  * Add code comment explaining why vlen may be larger than bufsize (Stefan)
-
-* [PATCH 15/19] crypto: ecdsa - Move X9.62 signature decoding into template
-  * Drop unnecessary "params", "param_len" and "algo" definitions from
-    ecdsa_nist_p{192,256,384,521}_tv_template[].
-  * Introduce and use struct ecdsa_raw_sig in <crypto/internal/ecc.h>.
-
-* [PATCH 18/19] crypto: ecdsa - Support P1363 signature decoding
-  * Drop unnecessary "params", "param_len" and "algo" definitions from
-    p1363_ecdsa_nist_p256_tv_template[].
-
-
-Lukas Wunner (19):
-  crypto: ecdsa - Drop unused test vector elements
-  crypto: sig - Introduce sig_alg backend
-  crypto: ecdsa - Migrate to sig_alg backend
-  crypto: ecrdsa - Migrate to sig_alg backend
-  crypto: rsa-pkcs1pad - Deduplicate set_{pub,priv}_key callbacks
-  crypto: rsassa-pkcs1 - Migrate to sig_alg backend
-  crypto: rsassa-pkcs1 - Harden digest length verification
-  crypto: rsassa-pkcs1 - Avoid copying hash prefix
-  crypto: virtio - Drop sign/verify operations
-  crypto: drivers - Drop sign/verify operations
-  crypto: akcipher - Drop sign/verify operations
-  crypto: sig - Move crypto_sig_*() API calls to include file
-  ASN.1: Clean up include statements in public headers
-  crypto: ecdsa - Avoid signed integer overflow on signature decoding
-  crypto: ecdsa - Move X9.62 signature decoding into template
-  crypto: sig - Rename crypto_sig_maxsize() to crypto_sig_keysize()
-  crypto: ecdsa - Move X9.62 signature size calculation into template
-  crypto: ecdsa - Support P1363 signature decoding
-  crypto: ecrdsa - Fix signature size calculation
-
- Documentation/crypto/api-akcipher.rst         |   2 +-
- Documentation/crypto/api-sig.rst              |  15 +
- Documentation/crypto/api.rst                  |   1 +
- Documentation/crypto/architecture.rst         |   2 +
- crypto/Kconfig                                |   5 +-
- crypto/Makefile                               |   5 +-
- crypto/akcipher.c                             |  64 +-
- crypto/asymmetric_keys/public_key.c           |  58 +-
- crypto/ecdsa-p1363.c                          | 159 ++++
- crypto/ecdsa-x962.c                           | 237 +++++
- crypto/ecdsa.c                                | 209 ++---
- crypto/ecrdsa.c                               |  64 +-
- crypto/internal.h                             |  19 -
- crypto/rsa-pkcs1pad.c                         | 371 +-------
- crypto/rsa.c                                  |  17 +-
- crypto/rsassa-pkcs1.c                         | 442 +++++++++
- crypto/sig.c                                  | 143 +--
- crypto/testmgr.c                              | 320 +++++--
- crypto/testmgr.h                              | 884 +++++++++++++++---
- drivers/crypto/aspeed/aspeed-acry.c           |   2 -
- drivers/crypto/hisilicon/hpre/hpre_crypto.c   |   2 -
- drivers/crypto/starfive/jh7110-rsa.c          |   2 -
- .../virtio/virtio_crypto_akcipher_algs.c      |  65 +-
- include/crypto/akcipher.h                     |  69 +-
- include/crypto/internal/akcipher.h            |   4 +-
- include/crypto/internal/ecc.h                 |  14 +
- include/crypto/internal/rsa.h                 |  29 +
- include/crypto/internal/sig.h                 |  80 ++
- include/crypto/sig.h                          | 152 ++-
- include/linux/asn1_decoder.h                  |   1 +
- include/linux/asn1_encoder.h                  |   1 -
- include/linux/slab.h                          |   1 +
- include/uapi/linux/cryptouser.h               |   5 +
- include/uapi/linux/virtio_crypto.h            |   1 +
- security/integrity/ima/ima_main.c             |   6 +-
- 35 files changed, 2398 insertions(+), 1053 deletions(-)
- create mode 100644 Documentation/crypto/api-sig.rst
- create mode 100644 crypto/ecdsa-p1363.c
- create mode 100644 crypto/ecdsa-x962.c
- create mode 100644 crypto/rsassa-pkcs1.c
+ security/keys/trusted-keys/trusted_dcp.c | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
 
 -- 
-2.43.0
-
+Thanks,
+Parthiban N
