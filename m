@@ -1,131 +1,159 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.hostsharing.net (mailout1.hostsharing.net [83.223.95.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E34F185B72
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2024 09:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A2319413F;
+	Tue, 10 Sep 2024 14:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962032; cv=none; b=sd4d/TUvd6bFb8yUBu56Zkgawj5iy0z5YFh42fIeVYWj6tgNej0QR1HW8xFShETTd6AE86o/vCt1muL++EZRT8h8BXTiN3dsEREixXsxHDwg7vExspQrU0bsm+84QGQWEFNEXwrSV7eOOn24llERblBOrxVCmzV7UD0AUsLSewQ=
+	t=1725979158; cv=none; b=Tz577ucrDh4sfwPGuGac0g+zOTYS2gD4MomNuy5ALSJZVBi8FERMsfc9p2ix/0W5omFbJTwDCz4U+C+Qo0L+toJ5NmGC7+RWdwnZ4mG1jc1dKhEUxRECwbIE/ueu0L4hoq54O9denAdnvD2Gu0RG1N08V2U8Pnne+4hQ/uaIjIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962032; c=relaxed/simple;
-	bh=P2QgNQVbnWqUf9E81eBquhK8ELfIYoPeyv7XxDqNpwc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GZQnPThFh6LyDrnTrWMELVTF7owO/g3lBihSbDV1K/deYz/s8F+GA7HDfa2gwj0cA6mv50L9CC3TzmBDsV5dwHMvFiQoWQFqQ5Q6Ipm27e5UceT7j2cDnDiUr3lnD/X5jpOeKI0rILlrhKFj2jcWtUW9ktw1wAZpigyXjPzW6JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rkhmPsTl; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkhmPsTl"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d4daca4a4bso124835357b3.0
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Sep 2024 02:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725962029; x=1726566829; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=htdu7gDJb2RXBiSiRNLgmzPRTEXOF0XUOmdJwojMinU=;
-        b=rkhmPsTlPqPell2ceM7Dhm2wExii/M+j4fkYaIMwlM0MbkZ8PnpPE9rk6/3o7O07d6
-         FzpqFsFQDYHC80PCgGzN1Rh19jhrq0cD+Dfl0ypCdp+p6CDgtlJlgFVf9DTWccDIDCUT
-         SrdgdqdIBZRQPeil/UulhB6JW11l24Bm+8lT3jLdvTtOS8YG+09CZc8EK+o6G9Nc0brP
-         aNTp1JGyLArN4nvVuT6XRw16b8ppO3ezgEYd9UYhdm00QEDIxXvnY3hjbRHgwmWy3uR0
-         34Bqv6aRxWtE6xdNdH45CmdGbKb8WC7cgs28Fo2OoTkDoIQz2rfv1dD5cTvO0DjynVgD
-         J9Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725962029; x=1726566829;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=htdu7gDJb2RXBiSiRNLgmzPRTEXOF0XUOmdJwojMinU=;
-        b=RDe6G/gliQkJpcw+2FIjSLMwCMTgvS0ex6evG8LKUqzYRm04ql7xat0p8V7UlKHPhi
-         dpra6FpmmWABgRisxKUMIb1n5ym+zcsJPm4FGWGLusBqHITOfs0sht/UDwKUpARd3w8E
-         +OsDN0mguuJaMgd74UsR/xdQTEw6o46bUruIL+ZVPexmve99hvU9cyzQ41PhVBILHeE6
-         HOK6mWWp/77Xk08w3hPdLEgYRHjral4NnlK8czzNF21gROmg4nAaOjHd07iBaZZyikOs
-         Zx2yPCkf47cC4ew2+PSin51OoasVmXz1m1iQR2hna0W+K1L1srnQzqiCAc2O7aohOSHn
-         7+/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVp0NYLrdnAPa36EXOcrWFa6g4exmNaVIBk+aDqE3Z54vvMxyvBHBwiYfUa5Kr1X3cQ+jjLs1Ul0nA7K0yy88hgsRQ/WBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE4xVFMcz1WuxCzZbUD1uwcYHX1Ar60r6JQ2mSxzV5JyGmy0+t
-	+0SzH+/eqOBqlFGuvkYnoDgA7WU+2v8UHzNUvO28hHxN8mhXODjJgkVsyENJ/1vi4UARwHAt5HT
-	aLQ==
-X-Google-Smtp-Source: AGHT+IEj4kZV9r2+zjVhtoRcCn29CGlTh0LzKssnI32SUN244Iy+MkVQwaT4ckAV6lByV2bDmvtFVDeWTdE=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:690c:4481:b0:6d3:e7e6:8460 with SMTP id
- 00721157ae682-6db9532edadmr1416287b3.1.1725962029627; Tue, 10 Sep 2024
- 02:53:49 -0700 (PDT)
-Date: Tue, 10 Sep 2024 11:53:47 +0200
-In-Reply-To: <20240904104824.1844082-6-ivanov.mikhail1@huawei-partners.com>
+	s=arc-20240116; t=1725979158; c=relaxed/simple;
+	bh=hXjL36ZTUUG010MGGcWtvAiwr3c02h0fr0+QVFB949Q=;
+	h=Message-ID:From:Date:Subject:To:Cc; b=CwuRC+iKyMsyOrruUCi5Q5cat5o86BFp6E9sKaVdCc3CA7/QhCiG+3iTprujPsBVk2Scq7qedECZlvfPAXXHz8y1yU3Zxz/1GEZFha8t7U5XyQ4xJzQHMKIENM6Ex6UreNrMG/ZAgQ68w5M1hxqs5lj6ChtQ3z3yc+tpjHp7HUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=pass smtp.mailfrom=wunner.de; arc=none smtp.client-ip=83.223.95.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wunner.de
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by mailout1.hostsharing.net (Postfix) with ESMTPS id 776D110192657;
+	Tue, 10 Sep 2024 16:30:39 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by h08.hostsharing.net (Postfix) with ESMTPSA id 4707E60A79C3;
+	Tue, 10 Sep 2024 16:30:39 +0200 (CEST)
+X-Mailbox-Line: From b74f4875ae056ff8aa20b7530fe4f41592581c63 Mon Sep 17 00:00:00 2001
+Message-ID: <cover.1725972333.git.lukas@wunner.de>
+From: Lukas Wunner <lukas@wunner.de>
+Date: Tue, 10 Sep 2024 16:30:10 +0200
+Subject: [PATCH v2 00/19] Migrate to sig_alg and templatize ecdsa
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Eric Biggers <ebiggers@google.com>, Stefan Berger <stefanb@linux.ibm.com>, Vitaly Chikunov <vt@altlinux.org>, Tadeusz Struk <tstruk@gigaio.com>, "Dimitri John Ledkov" <dimitri.ledkov@canonical.com>
+Cc: David Howells <dhowells@redhat.com>, Andrew Zaborowski <andrew.zaborowski@intel.com>, Saulo Alessandre <saulo.alessandre@tse.jus.br>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ignat Korchagin <ignat@cloudflare.com>, Marek Behun <kabel@kernel.org>, Varad Gautam <varadgautam@google.com>, Stephan Mueller <smueller@chronox.de>, Denis Kenzior <denkenz@gmail.com>, linux-crypto@vger.kernel.org, keyrings@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, linux-security-module@vger.kernel.org, Gonglei <arei.gonglei@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio Perez <eperezma@redhat.com>, virtualization@lists.linux.dev, zhenwei pi <pizhenwei@bytedance.com>, lei he <helei.sig11@bytedance.com>, Neal Liu <neal_liu@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, Andrew Jeff
+ ery <andrew@codeconstruct.com.au>, linux-aspeed@lists.ozlabs.org, Zhiqi Song <songzhiqi1@huawei.com>, Longfang Liu <liulongfang@huawei.com>, Jia Jie Ho <jiajie.ho@starfivetech.com>, William Qiu <william.qiu@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com> <20240904104824.1844082-6-ivanov.mikhail1@huawei-partners.com>
-Message-ID: <ZuAXK7eoXxPNl9J-@google.com>
-Subject: Re: [RFC PATCH v3 05/19] selftests/landlock: Test adding a rule for
- each unknown access
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 06:48:10PM +0800, Mikhail Ivanov wrote:
-> Add test that validates behaviour of Landlock after rule with
-> unknown access is added.
->=20
-> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> ---
-> Changes since v2:
-> * Replaces EXPECT_EQ with ASSERT_EQ for close().
-> * Refactors commit title.
->=20
-> Changes since v1:
-> * Refactors commit messsage.
-> ---
->  .../testing/selftests/landlock/socket_test.c  | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
->=20
-> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testi=
-ng/selftests/landlock/socket_test.c
-> index cb23efd3ccc9..811bdaa95a7a 100644
-> --- a/tools/testing/selftests/landlock/socket_test.c
-> +++ b/tools/testing/selftests/landlock/socket_test.c
-> @@ -325,4 +325,30 @@ TEST_F(protocol, socket_access_rights)
->  	ASSERT_EQ(0, close(ruleset_fd));
->  }
-> =20
-> +TEST_F(protocol, rule_with_unknown_access)
-> +{
-> +	const struct landlock_ruleset_attr ruleset_attr =3D {
-> +		.handled_access_socket =3D ACCESS_ALL,
-> +	};
-> +	struct landlock_socket_attr protocol =3D {
-> +		.family =3D self->prot.family,
-> +		.type =3D self->prot.type,
-> +	};
-> +	int ruleset_fd;
-> +	__u64 access;
-> +
-> +	ruleset_fd =3D
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	ASSERT_LE(0, ruleset_fd);
-> +
-> +	for (access =3D 1ULL << 63; access !=3D ACCESS_LAST; access >>=3D 1) {
-> +		protocol.allowed_access =3D access;
-> +		EXPECT_EQ(-1,
-> +			  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
-> +					    &protocol, 0));
-> +		EXPECT_EQ(EINVAL, errno);
-> +	}
-> +	ASSERT_EQ(0, close(ruleset_fd));
-> +}
-> +
->  TEST_HARNESS_MAIN
-> --=20
-> 2.34.1
->=20
+The original impetus of this series is to introduce P1363 signature
+decoding for ecdsa (patch [18/19]), which is needed by the upcoming
+SPDM library (Security Protocol and Data Model) for PCI device
+authentication.
 
-Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+To facilitate that, move X9.62 signature decoding out of ecdsa.c and
+into a template (patch [15/19]).
+
+New in v2:  Move the maximum signature size calculations for ecdsa
+out of software_key_query() and into the X9.62 template so that
+corresponding calculations can be added for P1363 without further
+cluttering up software_key_query() (patch [16/19] - [17/19]).
+
+New in v2:  Avoid inefficient copying from kernel buffers to sglists
+in the new templates by introducing a sig_alg backend and migrating
+all algorithms to it, per Herbert's advice (patch [02/19] - [12/19]).
+
+Clean up various smaller issues that caught my eye in ecdsa
+(patch [01/19] and [14/19]), ecrdsa (patch [19/19]) and
+ASN.1 headers (patch [13/19]).
+
+I've also accumulated various cleanups for crypto virtio on my
+development branch but will leave them for another day as this
+series is already nearing the "too big to review" threshold. ;)
+
+I've run selftests on every single commit, but further testing
+would be appreciated to raise the confidence.
+
+
+Link to v1:
+
+https://lore.kernel.org/all/cover.1722260176.git.lukas@wunner.de/
+
+Changes v1 -> v2:
+
+* [PATCH 13/19] ASN.1: Clean up include statements in public headers
+  * Drop "#include <linux/bug.h>" from <linux/asn1_encoder.h> (Jonathan)
+
+* [PATCH 14/19] crypto: ecdsa - Avoid signed integer overflow on signature
+  decoding
+  * Add code comment explaining why vlen may be larger than bufsize (Stefan)
+
+* [PATCH 15/19] crypto: ecdsa - Move X9.62 signature decoding into template
+  * Drop unnecessary "params", "param_len" and "algo" definitions from
+    ecdsa_nist_p{192,256,384,521}_tv_template[].
+  * Introduce and use struct ecdsa_raw_sig in <crypto/internal/ecc.h>.
+
+* [PATCH 18/19] crypto: ecdsa - Support P1363 signature decoding
+  * Drop unnecessary "params", "param_len" and "algo" definitions from
+    p1363_ecdsa_nist_p256_tv_template[].
+
+
+Lukas Wunner (19):
+  crypto: ecdsa - Drop unused test vector elements
+  crypto: sig - Introduce sig_alg backend
+  crypto: ecdsa - Migrate to sig_alg backend
+  crypto: ecrdsa - Migrate to sig_alg backend
+  crypto: rsa-pkcs1pad - Deduplicate set_{pub,priv}_key callbacks
+  crypto: rsassa-pkcs1 - Migrate to sig_alg backend
+  crypto: rsassa-pkcs1 - Harden digest length verification
+  crypto: rsassa-pkcs1 - Avoid copying hash prefix
+  crypto: virtio - Drop sign/verify operations
+  crypto: drivers - Drop sign/verify operations
+  crypto: akcipher - Drop sign/verify operations
+  crypto: sig - Move crypto_sig_*() API calls to include file
+  ASN.1: Clean up include statements in public headers
+  crypto: ecdsa - Avoid signed integer overflow on signature decoding
+  crypto: ecdsa - Move X9.62 signature decoding into template
+  crypto: sig - Rename crypto_sig_maxsize() to crypto_sig_keysize()
+  crypto: ecdsa - Move X9.62 signature size calculation into template
+  crypto: ecdsa - Support P1363 signature decoding
+  crypto: ecrdsa - Fix signature size calculation
+
+ Documentation/crypto/api-akcipher.rst         |   2 +-
+ Documentation/crypto/api-sig.rst              |  15 +
+ Documentation/crypto/api.rst                  |   1 +
+ Documentation/crypto/architecture.rst         |   2 +
+ crypto/Kconfig                                |   5 +-
+ crypto/Makefile                               |   5 +-
+ crypto/akcipher.c                             |  64 +-
+ crypto/asymmetric_keys/public_key.c           |  58 +-
+ crypto/ecdsa-p1363.c                          | 159 ++++
+ crypto/ecdsa-x962.c                           | 237 +++++
+ crypto/ecdsa.c                                | 209 ++---
+ crypto/ecrdsa.c                               |  64 +-
+ crypto/internal.h                             |  19 -
+ crypto/rsa-pkcs1pad.c                         | 371 +-------
+ crypto/rsa.c                                  |  17 +-
+ crypto/rsassa-pkcs1.c                         | 442 +++++++++
+ crypto/sig.c                                  | 143 +--
+ crypto/testmgr.c                              | 320 +++++--
+ crypto/testmgr.h                              | 884 +++++++++++++++---
+ drivers/crypto/aspeed/aspeed-acry.c           |   2 -
+ drivers/crypto/hisilicon/hpre/hpre_crypto.c   |   2 -
+ drivers/crypto/starfive/jh7110-rsa.c          |   2 -
+ .../virtio/virtio_crypto_akcipher_algs.c      |  65 +-
+ include/crypto/akcipher.h                     |  69 +-
+ include/crypto/internal/akcipher.h            |   4 +-
+ include/crypto/internal/ecc.h                 |  14 +
+ include/crypto/internal/rsa.h                 |  29 +
+ include/crypto/internal/sig.h                 |  80 ++
+ include/crypto/sig.h                          | 152 ++-
+ include/linux/asn1_decoder.h                  |   1 +
+ include/linux/asn1_encoder.h                  |   1 -
+ include/linux/slab.h                          |   1 +
+ include/uapi/linux/cryptouser.h               |   5 +
+ include/uapi/linux/virtio_crypto.h            |   1 +
+ security/integrity/ima/ima_main.c             |   6 +-
+ 35 files changed, 2398 insertions(+), 1053 deletions(-)
+ create mode 100644 Documentation/crypto/api-sig.rst
+ create mode 100644 crypto/ecdsa-p1363.c
+ create mode 100644 crypto/ecdsa-x962.c
+ create mode 100644 crypto/rsassa-pkcs1.c
+
+-- 
+2.43.0
+
