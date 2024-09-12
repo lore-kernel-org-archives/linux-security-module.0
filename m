@@ -1,144 +1,134 @@
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2081A7265
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Sep 2024 12:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224B513CFB7
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Sep 2024 20:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145506; cv=none; b=ovhiQjiuF9CAhxbTQIyR7GHMUFEb7Wv6SRYlwzuLmH6T+mkZsWko7+YeWfmwU396Dy3BjtilWlPlcHAX15N5PGJ8YMPLB/6LbIZ93t7i9XrKf987n0wHY0bWbEDLPrERzKzq2ABsdIFM1RUZ/CV3b3ARMmUG3xcj6l9Etb/iIvc=
+	t=1726174790; cv=none; b=H9UX1OyYRc71K8GKAGtLgHFTtzmy/aml56UcvTWvEEhBnjr8gFPJ6lYVWXmQN5CrzzOmHlXyxKGiyMGSqLgn8d1dCdhK5GDdx3IWRH2e4og7kxKgtNH/Mbk/3KDcQYAuSHu1bLaXvV2q9CryLV+owW/uZZ0tg4LEPBzPQePTpNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145506; c=relaxed/simple;
-	bh=+s4cuWV9FCCV9kiSXQStJDVMi0ZGdbkjYyuMGpZLoOo=;
+	s=arc-20240116; t=1726174790; c=relaxed/simple;
+	bh=cAbAdJfAWvXcMGzLQXEJz8mvDAf9C94T25Rumz8sqaY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cr+cWRBhC5hMuhpyh21woS8Wde03ZhPrqoACoYSW5Ixcst8tn3W2ctCr0wZLX1Swy9RlHj2gYUeBSP8rkP6pN51+M81DyQhwnZtmZHTXYDmHpYolUcyvYkoxWc1ddDIHKR8lzwq2lxra36AGKqznqryp45n08TGcDMihBp4EnLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hQ+9/jWR; arc=none smtp.client-ip=83.166.143.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=YRtNxed9q7Svt4xPoFS4zRqB60a2BNIbkyihRQ4OcpnfB3bsx+8BFAj2ho67yWYhZDsxCxJ64PibHxYhli+DQEwNt6GSW1I2XnWIcsPu9CJq3TSj7h6Ojzn4glFFFK55cTSy/KKhjwd+L2gbep7LnnA/Z9im/3dsPV0ljWRXXOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fwSk6H6F; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hQ+9/jWR"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X4HPg4kqyzFTL;
-	Thu, 12 Sep 2024 14:51:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1726145495;
-	bh=MzPZaWCk9rvJ+Krjp/BYLyr4/9IRkRBCVaUs47HsSns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hQ+9/jWRLB6fSjcbjyJ3ZgZVtnDYdvGoFn+QSDDoakC0TJ69jaA4gLd4qOLT/it9C
-	 tiv9FfMHRA9QPK01WiUD8ekW4ySx3aGif2Y7zK/TbJjRC7fp9/IO5IfiBN9QPP/7mI
-	 ilAhkYql4sFyiQK1syEp15heZnGiMbVlmMHAukCY=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X4HPf1L79zPxq;
-	Thu, 12 Sep 2024 14:51:34 +0200 (CEST)
-Date: Thu, 12 Sep 2024 14:51:24 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] landlock: Signal scoping support
-Message-ID: <20240912.eix6ith8Zuxa@digikod.net>
-References: <cover.1725657727.git.fahimitahera@gmail.com>
- <20240911.BieLu8DooJiw@digikod.net>
- <ZuIynFIRt475uBP5@tahera-OptiPlex-5000>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fwSk6H6F"
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-277f19ee2a2so784819fac.1
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Sep 2024 13:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726174788; x=1726779588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8mM5Z0KLUO8efTiZgA6ECQxJ5r+uA/1F2hapQlso44M=;
+        b=fwSk6H6FwFSImla2JI4db2pKAihE3YGTsdT6hM7GiyLo8SRYVdzhLPUrn5lI0G4KXC
+         bKOqdpt9tLhJkQoG9TJfdFqctjoJXVjK+WS4grWX2SGXuPat7AvL/3nTrGb9ZU1e5pTk
+         8wsnnRYD0GJAqvSAq7s0OHt8leWJKpEMZvvtvTBK5bvZmBROM1v0Lzt30OoCjXXDqiCj
+         RuOdhh8EBGO+/mX+EJN8eT99KItxRnyvsgtua7OzQ0XEftb2ryV6PFR9a1oi6UO8TshT
+         H+H2WCqRy/z3JHygHgUcpjaDm3rt7rHd3EMcEeuuVKkk55Vd97MD1X4vqC+qVKehiOC2
+         cHig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726174788; x=1726779588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8mM5Z0KLUO8efTiZgA6ECQxJ5r+uA/1F2hapQlso44M=;
+        b=nxn2o8XowdPb3wJVg5GJh6vDil/SIwRrydyqVmp/FE1r7ofgv42kXb5rCNgleDqeeR
+         2VOvik3v1XXcL3WnDDkZ1ZHG4m9Bd/DDP2HslQSQXi0fNP0mofO5tooqyKjh9iThwlqb
+         n4tLRNOF7WU+eMPE6MQ1ytxbLv7K/EssE9DoW9dokbfpRG4GOv0oCLWfxQyrVCTxO/zC
+         xavjus3rI7/c1eEc59u13klJ2hqyuTz4ZMYZoJrtmjmPPeW+4yyu1eXdKwZ4se4yPJdm
+         cQ2QRXR6kyi6nkcYE78f3d2cF1rp+E6aFqBzTofm+6DSdvXRm6b/ONjI6b52mfKPzA52
+         pmvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAqjcgBDwvvvjOHBOQ6o0rexTEKBMFvE2dDE4Z9uuFhjnIBnCnYDlcf2Lgt078uK87qqtPQ22RKwaNZSJ58XajaE2XDjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcTanIBJn7xADBZneP1Z8CFOqksVWsKh6bJnqOPSWG2Qk/Cjth
+	GRd7AaaY5PcrSR7JkPmd6BVfrjLBgfw+cUD1GfUCEm7x/gkwoxJbNi7WevxsFg==
+X-Google-Smtp-Source: AGHT+IFM1AXJ051IzPPqsl49dRXV3EAPdU7MADRa2Tisd07EWLACnR0AfN41J2K91Abg++8l1F9PzA==
+X-Received: by 2002:a05:6870:610c:b0:27b:6267:61b0 with SMTP id 586e51a60fabf-27c3f603118mr3165118fac.32.1726174787877;
+        Thu, 12 Sep 2024 13:59:47 -0700 (PDT)
+Received: from google.com (30.64.135.34.bc.googleusercontent.com. [34.135.64.30])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-27ba3f3f125sm3276542fac.25.2024.09.12.13.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 13:59:47 -0700 (PDT)
+Date: Thu, 12 Sep 2024 13:59:42 -0700
+From: Justin Stitt <justinstitt@google.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	alx@kernel.org, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>
+Subject: Re: [PATCH v8 2/8] auditsc: Replace memcpy() with strscpy()
+Message-ID: <u42f2oneitzqmzh2tvwokzjxawj6utitu7rongurqeiglkvkvc@ryjktmvutysi>
+References: <20240828030321.20688-1-laoar.shao@gmail.com>
+ <20240828030321.20688-3-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZuIynFIRt475uBP5@tahera-OptiPlex-5000>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20240828030321.20688-3-laoar.shao@gmail.com>
 
-On Wed, Sep 11, 2024 at 06:15:24PM -0600, Tahera Fahimi wrote:
-> On Wed, Sep 11, 2024 at 08:17:04PM +0200, Mickaël Salaün wrote:
-> > We should also have the same tests as for scoped_vs_unscoped variants.
-> Hi, 
-> 
-> Thanks for the review, I will add them soon.
-> > I renamed them from the abstract unix socket patch series, please take a
-> > look:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
-> Wonderful! Thank you :)
-> 
-> > I'll send more reviews tomorrow and I'll fix most of them in my -next
-> > branch (WIP), except for the hook_file_send_sigiotask tests and these
-> > scoped_vs_unscoped variants that you should resolve.
-> I will keep an eye on reviews. What parts of hook_file_send_sigiotask
-> would need changes?
+Hi,
 
-The file_send_sigiotask hook was not fully covered.  It's OK now, I
-reworked this test to fix that with four variants.
+On Wed, Aug 28, 2024 at 11:03:15AM GMT, Yafang Shao wrote:
+> Using strscpy() to read the task comm ensures that the name is
+> always NUL-terminated, regardless of the source string. This approach also
+> facilitates future extensions to the task comm.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Cc: Eric Paris <eparis@redhat.com>
+> ---
+>  kernel/auditsc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 6f0d6fb6523f..e4ef5e57dde9 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2730,7 +2730,7 @@ void __audit_ptrace(struct task_struct *t)
+>  	context->target_uid = task_uid(t);
+>  	context->target_sessionid = audit_get_sessionid(t);
+>  	security_task_getsecid_obj(t, &context->target_sid);
+> -	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
+> +	strscpy(context->target_comm, t->comm);
+>  }
+>  
+>  /**
+> @@ -2757,7 +2757,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+>  		ctx->target_uid = t_uid;
+>  		ctx->target_sessionid = audit_get_sessionid(t);
+>  		security_task_getsecid_obj(t, &ctx->target_sid);
+> -		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
+> +		strscpy(ctx->target_comm, t->comm);
+>  		return 0;
+>  	}
+>  
+> @@ -2778,7 +2778,7 @@ int audit_signal_info_syscall(struct task_struct *t)
+>  	axp->target_uid[axp->pid_count] = t_uid;
+>  	axp->target_sessionid[axp->pid_count] = audit_get_sessionid(t);
+>  	security_task_getsecid_obj(t, &axp->target_sid[axp->pid_count]);
+> -	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
+> +	strscpy(axp->target_comm[axp->pid_count], t->comm);
+>  	axp->pid_count++;
+>  
+>  	return 0;
+> -- 
+> 2.43.5
+> 
 
-You still need to work on the scoped_vs_unscoped tests for signaling
-though.
+Good usage of two-argument strscpy(). This helps towards [1].
 
-> 
-> > On Fri, Sep 06, 2024 at 03:30:02PM -0600, Tahera Fahimi wrote:
-> > > This patch series adds scoping mechanism for signals.
-> > > Closes: https://github.com/landlock-lsm/linux/issues/8
-> > > 
-> > > Problem
-> > > =======
-> > > 
-> > > A sandboxed process is currently not restricted from sending signals
-> > > (e.g. SIGKILL) to processes outside the sandbox since Landlock has no
-> > > restriction on signals(see more details in [1]).
-> > > 
-> > > A simple way to apply this restriction would be to scope signals the
-> > > same way abstract unix sockets are restricted.
-> > > 
-> > > [1]https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
-> > > 
-> > > Solution
-> > > ========
-> > > 
-> > > To solve this issue, we extend the "scoped" field in the Landlock
-> > > ruleset attribute structure by introducing "LANDLOCK_SCOPED_SIGNAL"
-> > > field to specify that a ruleset will deny sending any signals from
-> > > within the sandbox domain to its parent(i.e. any parent sandbox or
-> > > non-sandbox processes).
-> > > 
-> > > Example
-> > > =======
-> > > 
-> > > Create a sansboxed shell and pass the character "s" to LL_SCOPED:
-> > > LL_FD_RO=/ LL_FS_RW=. LL_SCOPED="s" ./sandboxer /bin/bash
-> > > Try to send a signal(like SIGTRAP) to a process ID <PID> through:
-> > > kill -SIGTRAP <PID>
-> > > The sandboxed process should not be able to send the signal.
-> > > 
-> > > Previous Versions
-> > > =================
-> > > v3:https://lore.kernel.org/all/cover.1723680305.git.fahimitahera@gmail.com/
-> > > v2:https://lore.kernel.org/all/cover.1722966592.git.fahimitahera@gmail.com/
-> > > v1:https://lore.kernel.org/all/cover.1720203255.git.fahimitahera@gmail.com/
-> > > 
-> > > Tahera Fahimi (6):
-> > >   landlock: Add signal scoping control
-> > >   selftest/landlock: Signal restriction tests
-> > >   selftest/landlock: Add signal_scoping_threads test
-> > >   selftest/landlock: Test file_send_sigiotask by sending out-of-bound
-> > >     message
-> > >   sample/landlock: Support sample for signal scoping restriction
-> > >   landlock: Document LANDLOCK_SCOPED_SIGNAL
-> > > 
-> > >  Documentation/userspace-api/landlock.rst      |  22 +-
-> > >  include/uapi/linux/landlock.h                 |   3 +
-> > >  samples/landlock/sandboxer.c                  |  17 +-
-> > >  security/landlock/fs.c                        |  17 +
-> > >  security/landlock/fs.h                        |   6 +
-> > >  security/landlock/limits.h                    |   2 +-
-> > >  security/landlock/task.c                      |  59 +++
-> > >  .../selftests/landlock/scoped_signal_test.c   | 371 ++++++++++++++++++
-> > >  .../testing/selftests/landlock/scoped_test.c  |   2 +-
-> > >  9 files changed, 486 insertions(+), 13 deletions(-)
-> > >  create mode 100644 tools/testing/selftests/landlock/scoped_signal_test.c
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
-> 
-> 
+Reviewed-by: Justin Stitt <justinstitt@google.com>
+
+[1]: https://github.com/KSPP/linux/issues/90
+
+Thanks
+Justin
