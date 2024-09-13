@@ -1,86 +1,114 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8065D80B;
-	Fri, 13 Sep 2024 09:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33C91D7E39;
+	Fri, 13 Sep 2024 10:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218047; cv=none; b=PVoK63lrWno2lcu/+Vfg2i/4/WnvxqMhX1ExCa//qkutaUD+uIM1WkkQM2h/KcUc3h9/zNv0GXxf7fBFY+JImmNkI+6s9sCcPNuylaV3yTtQIR2AhtjKIZ3RgGzAHauI3S451aSce+QXdNvRyrQmbo1Qsdml9jugnqI+TOphn00=
+	t=1726224416; cv=none; b=kIGr0MQ5DrCIQArgW+dkJfsyHPwy8dnLzRvdLQu1pQMSb6nMorsTVYGOczSTyPSGJfLTX96DVDqao8KRCmhsY/Nsbdwl4WMb7OIRpnVtQGCTuekcnVAIHD/Y2wZq4QCnX6h4B9g3N5ZPdwhX19GNYpCkaF1lZHncDFUHssrXAfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218047; c=relaxed/simple;
-	bh=9mwIPwycXYHl62D/Pxz4s9W4RXPDCPT8rj1Dc6NWpT4=;
+	s=arc-20240116; t=1726224416; c=relaxed/simple;
+	bh=CQZu3v5gvm75PQs5vyLOAEm7VvML+OftnXxyPMpnbe8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKa//rXlHqXsEeO/mhcdbf0Kg7w6D7tVrl2eTWISgNaUIlzQues5F5ClPW6EopEEkeYtiqbW8TeIhAgxh77m2TwnzFl+SdAFr9kYGRi4ozjWGikEQB+YUewhDkGh3tfgUtNlfm902UkD2mMymrnfG+0JNipM1ZtFUVa0Nu+WezI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=nNSGyQU8; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9eyDn9jPwH2QkvACwOFSUZ3qz/EfikggLI+1edbQSwLm5XykQHd3HYMLJ6B7Yg9xSzh6WHP2PRZAhL4UGGuGXTCOybE1n91APo3ubeMV5Md7+rJ78vEagFMHVEMdLl4qdD1nIp8EPy6mfpegCrI/DQTNV1+br+DT1cZvQBT/XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nwEksSen; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="nNSGyQU8"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=CXayANdcDzJbMK17VtTXzWOx42S2gU6Wscove87433E=; b=nNSGyQU8+aBaLQuObtYnyCHjIe
-	a73fgw1TGGfEOW0tWCrWDpxhe2U6nAsuPzYDXFlFSOAY0X7krSAjLo+1kJzijEeIAQq+yRvekNNhn
-	NBXLLMuA5DC7Uxix6+LwP2pJxTpqp/4Cbe8k0rvP7CFJbG7KLuzoB5S/Lruqu9cn8GZIRascFZ807
-	/rv/SOAi9FZnJeoAg72CMicOXJZQRDVDwmDrRYIju5zHNd7y6jU3V6QlZpvobi6rp9q26JG1ju0U/
-	guMYikBaMF9DLhmXk+prSWGDE3eUBF8JJ2rxx00ogOh+uk2xhb+dGfnxRjEUrWTaCTeOV/FRJ6NC9
-	jZ7M2EOg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sp209-002CSQ-1H;
-	Fri, 13 Sep 2024 17:00:16 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 13 Sep 2024 17:00:15 +0800
-Date: Fri, 13 Sep 2024 17:00:15 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: dhowells@redhat.com, dwmw2@infradead.org, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org, torvalds@linux-foundation.org,
-	roberto.sassu@huawei.com, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <ZuP_H2V60PlrCz4x@gondor.apana.org.au>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
- <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nwEksSen"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X4rb70BmvzDmL;
+	Fri, 13 Sep 2024 12:46:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726224402;
+	bh=G9D1DK7YBO4iWpZr7m77+lcDnYO5RE/cbvabg3+xvwg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nwEksSen0+/SgVAo+wzgbzMqGaKB4flMPYuYmosXhqkd4yQ/nPePQCEDCCWdVwcxD
+	 3nlSY2ez9YAL0Qq5yQwCLiyHSAsu4iUNA3HDyAsch2DtWHhCJcBi7euBHv2IoMbzbh
+	 Ctdnn53zQW9e2OmIPVPi19JkZ8MzNq4XQHf741zQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X4rb54836zgMC;
+	Fri, 13 Sep 2024 12:46:41 +0200 (CEST)
+Date: Fri, 13 Sep 2024 12:46:34 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>, linux-api@vger.kernel.org
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org, Alejandro Colomar <alx@kernel.org>
+Subject: Re: [PATCH v11 1/8] Landlock: Add abstract UNIX socket restriction
+Message-ID: <20240913.nuu9Eevo2Pha@digikod.net>
+References: <cover.1725494372.git.fahimitahera@gmail.com>
+ <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+In-Reply-To: <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, Sep 13, 2024 at 10:30:11AM +0200, Roberto Sassu wrote:
->
-> The second problem is, assuming that the task is verified through other
-> means other than PGP (but again, we are still relying on the public
-> crypto functionality to be performed by the kernel, for this to work),
-> that I didn't get a confirmation that user space can have equivalent
-> isolation guarantees as the kernel:
+On Wed, Sep 04, 2024 at 06:13:55PM -0600, Tahera Fahimi wrote:
+> This patch introduces a new "scoped" attribute to the
+> landlock_ruleset_attr that can specify
+> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope abstract UNIX sockets
+> from connecting to a process outside of the same Landlock domain. It
+> implements two hooks, unix_stream_connect and unix_may_send to enforce
+> this restriction.
 > 
-> https://lore.kernel.org/linux-integrity/eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com/
-> 
-> 
-> Please, keep in mind that I already proposed what you suggested:
-> 
-> https://lore.kernel.org/linux-kernel/20230317145240.363908-1-roberto.sassu@huaweicloud.com/#r
-> 
-> 
-> After discussing with some kernel developers, the outcome was that a
-> better choice would be to put the code in the kernel, if I want
-> reasonable tamperproof guarantees.
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
 
-Where is this discussion? I clicked through the two links above
-and everyone seems to agree that putting it in user-space is a good
-idea.
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 849f5123610b..b9390445d242 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> +static int hook_unix_stream_connect(struct sock *const sock,
+> +				    struct sock *const other,
+> +				    struct sock *const newsk)
+> +{
+> +	const struct landlock_ruleset *const dom =
+> +		landlock_get_current_domain();
+> +
+> +	/* quick return for non-sandboxed processes */
+> +	if (!dom)
+> +		return 0;
+> +
+> +	if (is_abstract_socket(other) && sock_is_scoped(other, dom))
+> +		return -EPERM;
+
+I was wondering if it would make more sense to return -EACCES here.
+EACCES is usually related to file permission, but send(2)/sendto(2)
+don't return EPERM according to man pages.  Well, according to the
+kernel code they can return EPERM so I think we are good with EPERM.
+
+It looks like other LSMs always use EACCES though...
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int hook_unix_may_send(struct socket *const sock,
+> +			      struct socket *const other)
+> +{
+> +	const struct landlock_ruleset *const dom =
+> +		landlock_get_current_domain();
+> +
+> +	if (!dom)
+> +		return 0;
+> +
+> +	if (is_abstract_socket(other->sk)) {
+> +		/*
+> +		 * Checks if this datagram socket was already allowed to
+> +		 * be connected to other.
+> +		 */
+> +		if (unix_peer(sock->sk) == other->sk)
+> +			return 0;
+> +
+> +		if (sock_is_scoped(other->sk, dom))
+> +			return -EPERM;
+
+ditto
