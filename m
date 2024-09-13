@@ -1,131 +1,116 @@
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9574185E68
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 23:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C7826289
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 23:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726269355; cv=none; b=tTvIv9J0R2noMbZDmX889UoYmW7c4WHI0zSJPrhL53LoNMhe+SsgThKdAMu3i+HAJq0N6v1uFg+dXQomOU/c92END2aSdrvQ0A2uIiADKsIEYLG9H9zyBCO5RXFVOW5cUTG6ZtOmiILws2QzKXkFy+abZ1Dynr0WxtkpVM2xT/U=
+	t=1726271329; cv=none; b=ZesZ3MA5ypERzvw3duD/ziri16933p/w6YF3ngnjw3tlmyZcer81rtQ/MIAU+EY6swL73tIwhbUPrSc+otDQfdjWqAy5VZCAeNeRsYlI/IT4PNNdY8B0hNVWnu5OTY+GrcENQYPBYMMzOD1Jn+JNd2RRm5ckxWdHaiM2p355DUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726269355; c=relaxed/simple;
-	bh=WLY/q4OQRCsJGzKS77pkbXdUjmJ8GF0xgDggIBghxfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uhzOisBonFMTbx2I7mdcoanD3mq8tVCnmm13Kx7WMehqhHFz9WtQIBYGA8rQK7RsTLgrjqTcJbEWGS21vWpy2EaMajbyTupzwG6c0xIKCwKBwXnWTVND3kitPry+klK2k0vyQZ2cg/gmonL8/5KFiHJ+yiP/y+8mhvgfOmscamc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=NsJrQh49; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1726271329; c=relaxed/simple;
+	bh=49Bel+kpqO3i3ZolBRVyhjnkdeYzspASkynTKwDo4k0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WEtstaAI1LFEqnW1phZQQ0HNoo/X9nuEN/431XVdxQYn6sfCBJdi78tP37T9lxf4MvyZAOeBHEn1vcP9W5r+bErgYt9BmdxeNFkRHwDNbdpjisqtOaUP945gdtm23ExIiO3P7JK8RxMI5xyAbWYtPi+x/Q01mQ5hktc7kogUuOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ApnkrulE; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NsJrQh49"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726269347; bh=qkpcDaEMn0agB0sKrkgKSKBb2AUW3d0XoN2fWz60v2M=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=NsJrQh49NqvMVHp5FijfDlj/zaKKOtC3SOXdMlpQ7nz04bwpUlKPJJ7UxqKwIEuvbMcapL6RGOjBiWHefl3+npT4wBLjUGbTKgjaeNJeUcesyfcVI8q6zchgtsVw/eWt2X9mLus9X2kouQ78LeRvLLuc5n6wTvXlQQjltFCCCfiqaXJF2xK32FQfV96e5n6haR58NXI66510T0P7g4Gt4CbGOHVjFOaOJxirn4LgyVfYEL5FRzXHMOwBiCSlA8g9RY4jq7V/3eV+KJCdhformkllqG6Uy6ULEpvaJiqSvsv0kT475ab7kBBAT1MSjKd43QkHLEgmR+pXq5O/qrIMPQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726269347; bh=JDOGd9FWQBHD5d9eBJWZIs3ChiFsuOu7Z89JTwuSeps=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=hHu1q1XDkPijAqD6G8aiIW4YXfHppgRHIjDunfGqjN+Y5iCBX+7rew0JV4epr7keKma6FxzLKCHy0g4N7VbTfS04Q8Yw/vQ6b0qTLHM9MLboAgKj0Pyr1OYeyrfDPQtvmEJXt19MYJGNLHHaYY9v1SdUeUvfLQUplzEGYTXav0JYqZxDCHcYwTL6cjqSs2SBHSabvZwHWjjl485uB4ubdUfHzNTMHJCrUoTEDYrR3jHhKHdQtNSV580gChxl3qb3lUubYDhVuNzDVNPo3+AQ8eaEGa5cAuEfkxr6ajmnKkA7ez/2kBT9+Tr/vu9Cofbmxyd/KqHjqAufg48GyOMELA==
-X-YMail-OSG: OpAZDNYVM1m.A9yznG14JY5e5ReNVQLfohi4Yfvq1Hb3I0m1L1_U8y.jg_7Aki3
- 3j5AwYak_wl8bXFfvU_eY.tND1Nzff49mJopPskhO2Oc1V8ph.unE.GFlVv2nu2gLhE9XQ_JwYkY
- WXxF9jRRIeT6SMGnjLoL049hR9pgt.3DK2gzPHDm6mQPjHj3tN.hPzsqlsovPTUzBBfW6ob1CVOI
- hwzzt.xbPY.1cmd_6xCFiPN_BAdd0djuCCrTUbhwSTZ8wh_A1WOgy_2HTH4r9TR8oqHl6A8j.RDe
- JRMylCu78.1RQ4bK9bIdus2PMSH9OZNLHJIIjdk4ajSSBPuijZudCrlKqocuyUzmCHFAo6ywBM6z
- cUBRn_MIyqB.NhzLlOiaA_AjqS3YRWy.ai4C2rZ4zJq162s6TBWt9lMwJEVadCT0u5cBIrwbtlfr
- CdSzKr0iVDknRs._U71iSIG4jcYVxYnzrBNs7b4f79__eX9e.uLQCoScAP_ebGlt5Pc7Dhi3oiss
- feeZbi6eP4SiGghyO0KvXbxi6Q8DXGYk1LTVxz4sE7AW6Gy2pBh9zKWeKokh1DzfSqOQGHfrppus
- 1W5yEI11GOexJ_5zlrn24iW5_KH28fyyGK23ViQqv_2H51Z0ud_ZNPsgYsrmu3uRPnMH_1RpM__4
- cOQnvOdtwvml8xCqLxwWcSNl9k566_ZRFoo7cXClsFDVt1e220Ia3Snveshao.ugtyvJW0KWmnQK
- gYbyegY.gWm2RENFAQ85JavtxpVkzSs3MWqVZ7BtUU1VmYLHVkVlp6WI9C23fsbGLigvUhkM8fCN
- fsJwXr7jbNiAT.w56fF06nGKfisbDOmlU8qVMnnKhO6ZmikvPK3.YGMc24jIO10hSbFH3sfYsnok
- zjB5_N7Jl4i5buw3mFBzBciFa13llS5sMnleiK3mbnjRva.1tfcgIgpWkNyORBccGklPSX25aJlj
- zJJnOjrRosLEJVao58HJRCQJlO9FseKl6DzQLu5FBw8FoS94fP0vmKjCXwCRmwnWzgf1h9ly5z3m
- JzotXfpnknPxJLcSANnLiH8GIH77vUvPy7WBBHat.fjjZ_BFhGP9w8q2_8GoAU_9peX5saNICvG4
- t2JzAIQHBUWKcpGMoUZEiQeRsRi3GtUjkqanF2SAvrwbkKYsnSg4d565v0UrrdcS6d0Ia9_U8QQb
- BcNf_gyLKhcddK4nSx8j4OnGR8b51SClK7JzqR18e5kpWRUNz1ZbcmkaklarAP2EoqoYywRu_klt
- cNLF4vK50QEtP9JfxUZy3S_wQKDmcj7UtH58IrwxeK3H2IKPxgOY_QAlofewPQM3XYb8DpnvtdVl
- K2Fc6lTHcauU5TZJ_KQmK9bE09M2V3sQdmOEvssSe06QsBzSMERbOte4rMfx4K7c1PL2CcWcIlwX
- UJPH4OkWk8eZT8FCaEJNenPn8rUNtQNsL11cwJIlTJ9VFIjH9QOajoRK8aIygzmUIiWmkR3aim76
- aq7RQhv3wDcPjco9JGEwjU7n3vDC7qE4VyHHOaq_CYosC1HDwgD0NCfp4sg0jbwhMMXMnDJasj8M
- iMx30.6tt9M_i1ABEc21fFmL7l11VvlO207n05OmvDSXtGc7yjH5o5Nu5UfWigghHnmby_K4g7B7
- 5fYaqkgBCDY4aIGzPTI9KwJmt8i52D.4t7rKH.3CcKUJjIhSQqkND8govACr8XnRrBJrMSCx1qxK
- tnrydWpM0eCzF3A1jAb_5IwmwklKmWKSfJ8UdenkkvyX0zjBasLXcGuAZpX6N1.Q0wcTNb6k1LBd
- gw9RB4XtpDeUalh4PREKv3AfwNz6m1WHsbJE_u2VOX1.qR0QQZD4qWnXB1BbZZUtPfiOsNzxrdRG
- ZOl1HwyuK4jLc7nbE2NyIfjSvoJqs4ngngqTDMIi9VqTYQWuNDSWOyb4Rg3qhBE03l83AZ0eFhcd
- NknlgvD8EJ5oI5EnNq.AdVl43YnD5SKsuA_RB_QDZCfz14HYxiYpufTkelNvYulCUt.byBp3vLbh
- Nn_v8y0bS.1DNa8b4iqTRaqadu5tD1_j_Rb.O8Ot8NUpWNy2hEkli2vks6MuP74yfDprExpjxZr1
- uBpfR5Hr7d0nTAg5ZhphaSo4pEkrxmq0ZlJi_YfmDF.gBTKgBz3nwKhYyniYEyYGf7OlEpDKyNeu
- A02X0xPrZCbq9vkWgfHdC6wHaUV12F6LVlVNibIkBiaUv7PLyRS3D3GfZZtt7dTLi_682eT7f8WW
- CHts4w2OS4s5KSBmERsA1r26B_bPWtyQosURC0EKGPmXxxw8fiNs7blPTxD2x7o5BTtR37ruGAwx
- 8oJaLVXjeFKX_YJM-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: e273a0d4-66ae-41ca-97fd-098d826e7005
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 13 Sep 2024 23:15:47 +0000
-Received: by hermes--production-gq1-5d95dc458-4tw7n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a0ab4237374df0b7c0c96d77aa7f6d2f;
-          Fri, 13 Sep 2024 23:05:36 +0000 (UTC)
-Message-ID: <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
-Date: Fri, 13 Sep 2024 16:05:35 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ApnkrulE"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d4979b843so358503966b.3
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 16:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726271326; x=1726876126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S0ve5d0fo0bSXY7CWtOFJbRuz/KqSCMjlXl2XbNUxI4=;
+        b=ApnkrulEfYGgg7Ge1VE38ZGYr9tkiYocyLrygWd0HFSri7L25IvWQDuosGTA+wz8Yr
+         b2v4ILgxrEEK04FLrc+gKB2UDMC/h43/K8iZSBQ9t51ZzveUJHeme2+SvXOfceDFW3bC
+         Tb3gsz7B95Oew7YLt+ikaanv5DAFJ7ldaPZoC6ppB0Cv36Y97kdkOc0r4KXnNxAztIYA
+         X23nepBUepa9K0STC52cvHX8j9pKejJ509Qe3jcaJ5q/+PpZJ0o4lp4kh2QlrrmC3vw2
+         hewedJzrvO85gxEhb5HRUp6WyV5NET73ZsculN2E3OKxbO1WTNYDdCx1hCQpL9szd+B2
+         poEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726271326; x=1726876126;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S0ve5d0fo0bSXY7CWtOFJbRuz/KqSCMjlXl2XbNUxI4=;
+        b=NSHfXxgekLwAu8tHpxSkNJsvGEDmJt2VSYmdB+9o00f/9P760iXOv+RDlk1voXTJrq
+         a1OC/SGyAJr6uYqgfJ35AYSLuJConYx6AnEWf1AWjAIhgM35N3t+9O98/SJXYii8zBv2
+         fTgA1Loqoy81DS0dMr0yFbIiV5crmOoHXfQYeO4m4TIA8lew5cqx51Iki+JvOdrU+1s3
+         0/8VilEVFdJyVlOR93+8dBjBy9w3Knea/cpr7Gqfjk2x13ILvzzfqAg60b19Nh3Z3ZmS
+         vSNbhlGv91DxDxNvU3lGoQMtAq5FVqNwd3PeCcaTm+KDCOigj6ewY01FLFW1jmZbDTrs
+         1ksw==
+X-Gm-Message-State: AOJu0Yx47EP74zIR6aXxw4L6J2f3bb4P9OSF77beFZJxRtRNmkSUT+VM
+	QtLMGsSQtI6b8Vqn2aVv8gX4XcH1DAc3qkUodgNJmjHVtIEHTOCVC4VmbV5iOQs=
+X-Google-Smtp-Source: AGHT+IEnumtz2qh9btYA66ZTmQzjruJU2kNJiWWcLiYd3ihdj2B+TRnnLNTdh1YNLV4dC/kYYl2JPA==
+X-Received: by 2002:a17:907:f702:b0:a86:a1cd:5a8c with SMTP id a640c23a62f3a-a902947e862mr718259666b.22.1726271325774;
+        Fri, 13 Sep 2024 16:48:45 -0700 (PDT)
+Received: from localhost ([2001:871:213:da56:8414:8296:c4db:f217])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bc88cf7sm94832a12.90.2024.09.13.16.48.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 16:48:44 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: linux-security-module@vger.kernel.org
+Cc: wufan@linux.microsoft.com,
+	paul@paul-moore.com
+Subject: [PATCH] ipe: allow secondary and platform keyrings to install/update policies
+Date: Sat, 14 Sep 2024 01:48:40 +0200
+Message-Id: <20240913234840.1318655-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
-To: Konstantin Andreev <andreev@swemel.ru>, paul@paul-moore.com
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240910184125.224651-1-casey@schaufler-ca.com>
- <20240910184125.224651-2-casey@schaufler-ca.com>
- <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 9/13/2024 1:49 PM, Konstantin Andreev wrote:
-> Casey Schaufler, 10 Sep 2024:
->> ...
->> The lsm_prop structure definition is intended to keep the LSM
->> specific information private to the individual security modules.
->> ...
->> index 1390f1efb4f0..1027c802cc8c 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -140,6 +144,22 @@ enum lockdown_reason {
->> +
->> +/*
->> + * Data exported by the security modules
->> + */
->> +struct lsm_prop {
->> +    struct lsm_prop_selinux selinux;
->> +    struct lsm_prop_smack smack;
->> +    struct lsm_prop_apparmor apparmor;
->> +    struct lsm_prop_bpf bpf;
->> +    struct lsm_prop_scaffold scaffold;
->> +};
->
-> This design prevents compiling and loading out-of-tree 3rd party LSM,
-> am I right?
+From: Luca Boccassi <bluca@debian.org>
 
-No more so than the existing implementation. An upstream acceptable
-scheme for loading out-of-tree LSMs has much bigger issues to address
-than adding an element to struct lsm_prop.
+The current policy management makes it impossible to use IPE
+in a general purpose distribution. In such cases the users are not
+building the kernel, the distribution is, and access to the private
+key included in the trusted keyring is, for obvious reason, not
+available.
+This means that users have no way to enable IPE, since there will
+be no built-in generic policy, and no access to the key to sign
+updates validated by the trusted keyring.
 
->
-> Out-of-tree LSM's were discussed recently at
->
-> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp/T/
->
-> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp/T/
->
->
-> but it looks like a final decision to ban them is not taken yet.
+Just as we do for dm-verity, kernel modules and more, allow the
+secondary and platform keyrings to also validate policies. This
+allows users enrolling their own keys in UEFI db or MOK to also
+sign policies, and enroll them. This makes it sensible to enable
+IPE in general purpose distributions, as it becomes usable by
+any user wishing to do so. Keys in these keyrings can already
+load kernels and kernel modules, so there is no security
+downgrade.
 
-There has never been (to my knowledge) an effort to "ban" out-of-tree
-LSMs. There has also not been interest in actively supporting them since
-the "L" in LSM changed from "Loadable" to "Linux", with the exception of
-Tetsuo Handa, who has been invited to suggest a viable mechanism. There
-is currently support for BPF based security implementations, which can
-be maintained out-of-tree. We are currently battling with the notion that
-the LSM infrastructure is an attack surface. We really don't want to do
-anything to increase that exposure.
+Signed-off-by: Luca Boccassi <bluca@debian.org>
+---
+ security/ipe/policy.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> -- 
-> Konstantin Andreev
->
+diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+index d8e7db857a2e..cac304dc86c2 100644
+--- a/security/ipe/policy.c
++++ b/security/ipe/policy.c
+@@ -169,9 +169,15 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
+ 			goto err;
+ 		}
+ 
+-		rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len, NULL,
++		rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
++					    VERIFY_USE_SECONDARY_KEYRING,
+ 					    VERIFYING_UNSPECIFIED_SIGNATURE,
+ 					    set_pkcs7_data, new);
++		if (rc == -ENOKEY)
++			rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
++						    VERIFY_USE_PLATFORM_KEYRING,
++						    VERIFYING_UNSPECIFIED_SIGNATURE,
++						    set_pkcs7_data, new);
+ 		if (rc)
+ 			goto err;
+ 	} else {
+-- 
+2.39.2
+
