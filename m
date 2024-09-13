@@ -1,144 +1,195 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB6139FCF
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 15:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C782D2E5;
+	Fri, 13 Sep 2024 16:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241338; cv=none; b=ZZ+dMSqgB82hyAgZd5cmHUFfa2ldRbPqG8cMhVjia+XnFz23zKw5lh0tVguHQRb+jigbEvvSZ6wbpDHTA/aXmRbZ7t9K8ldiLmo7m9UiwwMVa9EwAB9rcCUoET0Qu0VnIMggfc9gTMIQQArUF//RH/vjXkYpeNmFGXF1ZAPKdUY=
+	t=1726244135; cv=none; b=ThMww8o1keB2vUrkOmTJKUof2GFDYnIEPgkw9Q67N88GSzwhxR49ESlLUi77RtVso3ioIDL0pQtdeyYKct7bJx5v4kO+1ItX6LaDiq2oyG9uos0fGwE6lKrMLt3hPiygdithARoSvlumtXJgbb6SlPanodBLrL8aWj7X9yFQHWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241338; c=relaxed/simple;
-	bh=riN9yEBuNtNzONajYBwh6sAZPE4QqYH5QbyiGeLCaDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TruuMmli8qRBS3Kp+Zb1T3ppIzybn+LrM06s7cMqfeeavlRUMFQGFbYILXKPsvZt47BjuqRJwQd41ow+dYlBQUuvPYyN9eKq2eJcpdddSfRbKZjWslAd9ZBmEJJrVhmSE11uwa5Z7P9AVJuwCzCxEIU2W2ZqIuJRZQS2JcUYwk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QCUw7yzR; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QCUw7yzR"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db449f274fso8579067b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 08:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726241336; x=1726846136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lk0Y3JO9bFT2rOSc+FQeYL2Qo4I6uDbO35BsUfq+tVI=;
-        b=QCUw7yzRDYLnhlzJEuusP8SLX9xw3tT0MjQElEQU4Z/aCgzTIxTZQIHqiwOxutOawl
-         qPX7fuuZli/QUpj8d0ccq2k4aRWw9zBJrZw91cXqRh4/sKAIJG7VMS5nLZLB54P4VVup
-         btuMqF/iKzEb1pBSBJZ12l56v4twl5y+VFmPb5dmSB6o2FDaHrxeeBV25oKiX6Vwq62F
-         dkWOqNDDJ+5PjTGfSqIfyxWTE5iZWxQLBLUiQpPZpRDQKu7d5dWVZQgz+y7Q1QKu2zHo
-         tcNpnV0gyWJ9fMLXhObVf2b6o2ygc1j+Gjv1JxcxIFDKFVsX2Sl4lQlHE3nfsOIcHUiW
-         zoDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726241336; x=1726846136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lk0Y3JO9bFT2rOSc+FQeYL2Qo4I6uDbO35BsUfq+tVI=;
-        b=wOr0uDXjEDi4ussHFZp2Jgqci7VzCV9bWDYOIGiriBDQG6jbEAN3Gf43/wvtgc5Zfj
-         vJUACeY4EC2CIOmjWx/gNNwJnObQcXMSRx+ygPc0lOl9x/ygG6QzRBV9/nYe/nn+w3Ls
-         fBO6Nc7QSNIdrXcS9nt1FI3ChFwuYK3Drqc3NQBaVzeAgBpVDUNmVtH427pX4TljZhLW
-         lR8jC1Ergzof8DEo/2aMgtB6O5AS8bEI7VlwuZHWNeBpI24H1bifNDFwuvHimyubszSd
-         XVzf6H8lDLPFNtfbpsNRIHahCL19K7wwd5GeVNOoLqigFEyty47ODjT/F1GiDHgVQw2O
-         18Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHGLYuc3pbP5qs79AXQnwjko8PkEDsnx1K24ju3ZYUB2FUViNBuEabGx0DGM4OlIxAvyq4dz3ZdNBsBTX/quY5sA6reYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYMawI/XhR7tLfgxylZsPV17h6wua5wPOLlpojOuAtSvXhthZs
-	/nNYQroTmvFGvRRqJVp1CGOFMtx3irJEOEc8osnlUUyGT1fB3Upi2o4T0FCnfiECzylmd6niupK
-	Q4tPPLoEhUUZJ862z6JCk2RH006sdnFTMF3wq
-X-Google-Smtp-Source: AGHT+IHkyAZMhhI3xawaismvgjOH5IUCaVGq4I9wy4w7xrhz84JE2lvx2d6PCjxruhRMh0T6OScjZIHtazMnuY9ZfhM=
-X-Received: by 2002:a05:690c:60c2:b0:6ad:bf4f:1bc3 with SMTP id
- 00721157ae682-6dbcc5805a9mr31430017b3.32.1726241335733; Fri, 13 Sep 2024
- 08:28:55 -0700 (PDT)
+	s=arc-20240116; t=1726244135; c=relaxed/simple;
+	bh=/hADo25VOWxE6cDzncVwMHVnQ5/7gnWCFGFlhaWnpOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Fxf8E/5FrhsdDRQM2vxB9xotJITOsdKLxR77QQjtPSJKe37ovVYAH0MyhMhINqlAYTgOtaWrW1rBuHMcl+PPJAYxZgYxd6UchBhoN44H4lfvecoz/GOZbPnZMGnbW40uR2eWZe+zWJih0PinubP5uC0ua25A93FXQkglCiSiJI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X4zr40ryFzmVCX;
+	Sat, 14 Sep 2024 00:13:24 +0800 (CST)
+Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
+	by mail.maildlp.com (Postfix) with ESMTPS id 23B49180106;
+	Sat, 14 Sep 2024 00:15:29 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 14 Sep 2024 00:15:25 +0800
+Message-ID: <2f07d52b-0273-b2d8-450b-db88a7f16042@huawei-partners.com>
+Date: Fri, 13 Sep 2024 19:15:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com> <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
-In-Reply-To: <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 13 Sep 2024 11:28:44 -0400
-Message-ID: <CAHC9VhRz4T+Ad6z1u+b+XJoXi7eORax-5KuAbH=O5BOTQAhA7w@mail.gmail.com>
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 06/19] selftests/landlock: Test adding a rule for
+ unhandled access
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-7-ivanov.mikhail1@huawei-partners.com>
+ <ZuAP8iSv_sjmlYIp@google.com>
+ <fd6ef478-4d0b-03f2-78f6-8bfd0fc3a846@huawei-partners.com>
+ <ZuRUagjolNjXsS3r@google.com>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <ZuRUagjolNjXsS3r@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ kwepemj200016.china.huawei.com (7.202.194.28)
 
-On Fri, Sep 13, 2024 at 8:28=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2024/09/13 10:29, Paul Moore wrote:
-> > Linus,
-> >
-> > We've got a reasonably large pull request for the LSM framework this
-> > time (at least it's large for us), here are the highlights:
-> >
-> > * Move the LSM framework to static calls
-> >
-> > Based on some of our exchanges over the summer, it sounds like you
-> > are already familiar with the effort to convert the LSM callbacks
-> > from function pointers to static calls.  This pull request includes
-> > that work and transitions the vast majority of the LSM callbacks into
-> > static calls.  Those callbacks which haven't been converted were
-> > left as-is due to the general ugliness of the changes required to
-> > support the static call conversion; we can revisit those callbacks
-> > at a future date.
-> >
-> > It is worth mentioning that Tetsuo Handa is opposed to the static call
-> > patches, some even carry his NACK, as they make it more difficult to
-> > dynamically load out-of-tree LSMs, or unsupported LSMs on distro kernel=
-s.
-> > Many of us have tried to explain that out-of-tree LSMs are not a
-> > concern for the upstream LSM framework, or the Linux kernel in general,
-> > and that decisions around what LSMs are enabled in distro kernels is
-> > a distro issue, not an upstream issue, but unfortunately Tetsuo
-> > continues to disregard these arguments.
->
-> No, this is not only a distro issue but also an upstream issue!
-> Because the upstream cannot afford accepting whatever proposed LSMs
-> ( https://lkml.kernel.org/r/8ac2731c-a1db-df7b-3690-dac2b371e431@I-love.S=
-AKURA.ne.jp ).
+On 9/13/2024 6:04 PM, Günther Noack wrote:
+> On Wed, Sep 11, 2024 at 11:19:48AM +0300, Mikhail Ivanov wrote:
+>> On 9/10/2024 12:22 PM, Günther Noack wrote:
+>>> Hi!
+>>>
+>>> On Wed, Sep 04, 2024 at 06:48:11PM +0800, Mikhail Ivanov wrote:
+>>>> Add test that validates behaviour of Landlock after rule with
+>>>> unhandled access is added.
+>>>>
+>>>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+>>>> ---
+>>>> Changes since v2:
+>>>> * Replaces EXPECT_EQ with ASSERT_EQ for close().
+>>>> * Refactors commit title and message.
+>>>>
+>>>> Changes since v1:
+>>>> * Refactors commit message.
+>>>> ---
+>>>>    .../testing/selftests/landlock/socket_test.c  | 33 +++++++++++++++++++
+>>>>    1 file changed, 33 insertions(+)
+>>>>
+>>>> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
+>>>> index 811bdaa95a7a..d2fedfca7193 100644
+>>>> --- a/tools/testing/selftests/landlock/socket_test.c
+>>>> +++ b/tools/testing/selftests/landlock/socket_test.c
+>>>> @@ -351,4 +351,37 @@ TEST_F(protocol, rule_with_unknown_access)
+>>>>    	ASSERT_EQ(0, close(ruleset_fd));
+>>>>    }
+>>>> +TEST_F(protocol, rule_with_unhandled_access)
+>>>> +{
+>>>> +	struct landlock_ruleset_attr ruleset_attr = {
+>>>> +		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
+>>>> +	};
+>>>> +	struct landlock_socket_attr protocol = {
+>>>> +		.family = self->prot.family,
+>>>> +		.type = self->prot.type,
+>>>> +	};
+>>>> +	int ruleset_fd;
+>>>> +	__u64 access;
+>>>> +
+>>>> +	ruleset_fd =
+>>>> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>>>> +	ASSERT_LE(0, ruleset_fd);
+>>>> +
+>>>> +	for (access = 1; access > 0; access <<= 1) {
+>>>> +		int err;
+>>>> +
+>>>> +		protocol.allowed_access = access;
+>>>> +		err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
+>>>> +					&protocol, 0);
+>>>> +		if (access == ruleset_attr.handled_access_socket) {
+>>>> +			EXPECT_EQ(0, err);
+>>>> +		} else {
+>>>> +			EXPECT_EQ(-1, err);
+>>>> +			EXPECT_EQ(EINVAL, errno);
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	ASSERT_EQ(0, close(ruleset_fd));
+>>>> +}
+>>>> +
+>>>
+>>> I should probably have noticed this on the first review round; you are not
+>>> actually exercising any scenario here where a rule with unhandled access is
+>>> added.
+>>>
+>>> To clarify, the notion of an access right being "unhandled" means that the
+>>> access right was not listed at ruleset creation time in the ruleset_attr's
+>>> .handled_access_* field where it would have belonged.  If that is the case,
+>>> adding a ruleset with that access right is going to be denied.
+>>>
+>>> As an example:
+>>> If the ruleset only handles LANDLOCK_ACCESS_FS_WRITE_FILE and nothing else,
+>>> then, if the test tries to insert a rule for LANDLOCK_ACCESS_SOCKET_CREATE,
+>>> that call is supposed to fail -- because the "socket creation" access right is
+>>> not handled.
+>>
+>> This test was added to exercise adding a rule with future possible
+>> "unhandled" access rights of "socket" type, but since this patch
+>> implements only one, this test is really meaningless. Thank you for
+>> this note!
+>>
+>>>
+>>> IMHO the test would become more reasonable if it was more clearly "handling"
+>>> something entirely unrelated at ruleset creation time, e.g. one of the file
+>>> system access rights.  (And we could do the same for the "net" and "fs" tests as
+>>> well.)
+>>>
+>>> Your test is a copy of the same test for the "net" rights, which in turn is a
+>>> copy of teh same test for the "fs" rights.  When the "fs" test was written, the
+>>> "fs" access rights were the only ones that could be used at all to create a
+>>> ruleset, but this is not true any more.
+>>
+>> Good idea! Can I implement such test in the current patchset?
+> 
+> Yes, I think it would be a good idea.
+> 
+> I would, in fact, recommend to turn the rule_with_unhandled_access test into that test.
+> 
+> The test traces its roots clearly to
+> 
+>    TEST_F(mini, rule_with_unhandled_access)  from net_test.c
+> 
+> and to
+> 
+>    TEST_F_FORK(layout1, rule_with_unhandled_access)  from fs_test.c
+> 
+> 
+> and I think all three variants would better be advised to create a ruleset with
+> 
+> struct landlock_ruleset_attr ruleset_attr = {
+> 	.handled_access_something_entirely_different = LANDLOCK_ACCESS_WHATEVER,
+> }
+> 
+> and then check their corresponding fs, net and socket access rights using a
+> landlock_add_rule() call for the access rights that belong to the respective
+> module, so that it exercises the scenario where userspace attempts to use the
+> access right in a rule, but the surrounding ruleset did not restrict the same
+> access right (it was "unhandled").
 
-I find it somewhat amusing that you are complaining about the LSM
-framework not accepting new LSMs in the same pull request where we are
-adding a new LSM (IPE).  As a reminder, we have documented guidelines
-regarding the addition of new LSMs:
+Agreed, thanks for the recommendation!
 
-https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+> 
+> In spirit, it would be nicest if we could create a ruleset where nothing at all
+> is handled, but I believe in that case, the landlock_create_ruleset() call would
+> already fail.
+> 
+> —Günther
+> 
+> P.S.: I am starting to grow a bit uncomfortable with the amount of duplicated
+> test code that we start having across the different types of access rights.  If
+> you see a way to keep this more in check, while still keeping the tests
+> expressive and not over-frameworking them, let's try to move in that direction
+> if we can. :)
 
-... these guidelines were discussed quite a bit on-list some time ago,
-and are essentially the same undocumented guidelines the LSM framework
-has been following for quite some time now (I will admit the doc and
-testing bullet points are likely new).
+Yeah, I really want to see patchset dedicated to tests refactoring. I'll
+try to finish the description of corresponding issue [1] ASAP.
 
-[SIDE NOTE: Eventually this doc will move over into the kernel tree,
-but I still consider it too much of a work-in-progress/draft to merge
-into mainline.  We probably also need to do a bit of tidying up in the
-kernel doc area relating to LSMs.]
-
-> That is, out-of-tree LSMs cannot become in-tree and obtain stable LSM ID =
-...
-
-We've discussed this many times before, obtaining stable magic numbers
-(e.g. syscall numbers, LSM IDs, etc.) isn't possible until the
-associated code appears in a tagged released from Linus' tree.  Of
-course there are workarounds which we've discussed, and Kees even put
-together a toy LSM demonstrating these workarounds.
-
-You've heard my stance on this several times in the past, but I'll
-repeat myself one more time for the sake of the wider audience.  My
-focus is on the upstream Linux kernel and ensuring that the upstream,
-in-tree LSMs have the best framework possible to ensure their proper
-operation and ease of development/maintenance.  While I have no
-intention to negatively impact out-of-tree LSMs, I will not harm the
-upstream code base solely to support out-of-tree LSMs.  Further, if
-improvements to the upstream LSM framework are determined to harm
-out-of-tree LSMs, that shall be no reason to reject the upstream
-improvements.  I believe this policy is not only consistent with that
-of previous LSM maintainers, but of the general Linux kernel as well.
-
---=20
-paul-moore.com
+[1] https://github.com/landlock-lsm/linux/issues/34
