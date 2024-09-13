@@ -1,179 +1,232 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C781BC2A
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 14:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A38482D8
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 15:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238882; cv=none; b=dDhk1HgA3O3S2pPd25t/+5xr6oGP75G0LLa9TkLORFEWrpNmUAZ5YFJ04GwaQ2fK+tcxK0UNFtFT/OO3Vj9VeLLh1n4MYBUFixyoziSoUtpRJpaI9P+L3dYnUli4gAbOaDsuRSEtolw4P4UmEHxJPWEGYcNPGRKrMrXrxOGEEHE=
+	t=1726239855; cv=none; b=PaywhZdQAXzIoDglI0x4MFOr2UyAYLb6FMUpZ1lg0HokqYMbUzD87+g5K1AuEQqNoMNcG7qwtxh4q8ijlEBN5BF6ELpTCGGwm1oCBHyIoxMtokDG5hE+YEfLG8verg436gibt59h0c0e3AfaSbedEiOLddRlXwWQphqOK8IZs64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238882; c=relaxed/simple;
-	bh=CDzCnWJIOxO58o+gnF33MDxrMuwCUyWEFqlaeAG8r/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jqrWpqHukmwpQrf3Mg5sF5oox7BmsJKk1bTIYcA9O50Ae0ZfwyX8/vd4EQ0kAGadzxQfScVGRXMgmkrWI0GNegH5GG4xryGF+hOhf7tN0UvfSXLwU3xGBLESfWeX86QItnLgwcIz/qh2Kc716JQqnQBrkAcqZfEVGfPBIpO9PUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=lhuyG8RQ; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1726239855; c=relaxed/simple;
+	bh=9Jq5heZv6b/G0/qHl7vyQQclyuTLGMSCenWr/F3FZfE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sCZAuKb/lx6R/fgRgosORocoNGWIKMkwXaL3ytrgN1l90Zo26Zyd2S2NVuHqnCzfkHhzsz748jxfMu002Dva1vBZdBSJkp3Y1Q3NVxDpgykIfdpzh25aQ2DQGkjXyXPj86s6rXrztKybQlZFAhd898TTG8M9eW44mcWdgQ2/MME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmxZI3yD; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="lhuyG8RQ"
-From: Konstantin Andreev <andreev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1726238873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4v5ueY6qFnnYS4l3w+3s5oMamcYBPXiRUvZg9TC3CjY=;
-	b=lhuyG8RQNpasJJ58M5/zZKqhwzbf+X2N9tdyviBSTSjjEvuOtrp62CgcaXNH0AbY4/UOcs
-	U27B4QhPDoY4cBP9p9XVmCGfSYW7hv8D7qFbw+LyyFgtzjOJPx58mr7ezZ8+5LOScmHinC
-	1yPXMO+5x1qMOiBG4UkwPZhhFtIzbek=
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH] smack: deduplicate access to string conversion
-Date: Fri, 13 Sep 2024 17:46:59 +0300
-Message-ID: <20240913144727.1839137-1-andreev@swemel.ru>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CmxZI3yD"
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1ce98dcafaso1604257276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 08:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726239853; x=1726844653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kMooRL8xhzsH6xqnm/1sRryKaBRAuskayMhnUalpEU0=;
+        b=CmxZI3yDZgrEGn2hG3MhYemyLPuqSNq0EYjBK35GppBGK8p2OWhfrLdTHrvZkHBUQ3
+         BNVVrgOr6Ue3rAoimRl2RJUiSoOa0gC8VlOaeynfkJfKm/C5ME+CF+DGit6A4rvrCSMv
+         phUZ5LH8Jh+EuRCML6hB+chkmwI+8WWORHayZoMSm4T7Yed0fKXO4L2mLaqNfSf9LLHo
+         9LDWm7sypeCX/UBjlwTB7MFianBkIsVtG8mbPdyL3XoEqI75mZpBcw73qbtwgyR+5H4K
+         PZ1QJu0tQr/mU1A/V3Ufu7XkV53xdhRIqAOcUAqUGTStuTkN7ACkNfpwWv80+fgegyCS
+         ANKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726239853; x=1726844653;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kMooRL8xhzsH6xqnm/1sRryKaBRAuskayMhnUalpEU0=;
+        b=YWfH9hW8vUZLZFcYzdwfqwR/F3x+SI7na47tMZTCuEllFBHSKr3NyshfDlaI9o1Qjb
+         DXW/ZUlbVWJn/sIAOaqsLySGGrqU/Ap+u0wEC75HAOW/nHuL8Dw3srL1bDVwbNdxb48Y
+         f1vzogqTYkvAPkGaWroPh84vIqODjd2GXVIWUfXsfjIiG09OFqaEfvuGvrIApsYmVBDc
+         YJd9QvZPvIaLSlWAvSiSMJqwiyYljgdT59yR8/ZZv2W6db+eUkE7uiyO+GCNvH0Q8kI4
+         1UymysfbAeqoXa8Kkn2C3vqoZi2kWZB400dKp/eCZ67A9POMNLYuZDnqI078+3oM+rSY
+         imZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTGAdbxpTji0kuUxynoJy6njJCsqzl1UH7j6m3qyio88+kyFtXGbUB+Fz4SMAfSnYU+fVW5oCo9rBTmkxCu2CNXmaWLag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz5vvgYq9ulcn5Dy+PII5Oxkg32C0aNQU7DstlpsWI/AKjyLmK
+	JSgTdvJGd9G1d3q0FvjLBcYm23WVJARstUthfI4Wbb4Y40KDcdvVbBLFUnb+2j+8nwFUBmSB0uJ
+	jcw==
+X-Google-Smtp-Source: AGHT+IHPZMCyWHT83M1ghRe6sD+Qw6yM3pzsmUI3KueeQSwZIV+gzAa9f5lmoK6+cuhUcGnAFCxQrkHWJbA=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a25:c586:0:b0:e03:53a4:1a7 with SMTP id
+ 3f1490d57ef6-e1db0122872mr5902276.10.1726239852809; Fri, 13 Sep 2024 08:04:12
+ -0700 (PDT)
+Date: Fri, 13 Sep 2024 17:04:10 +0200
+In-Reply-To: <fd6ef478-4d0b-03f2-78f6-8bfd0fc3a846@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-7-ivanov.mikhail1@huawei-partners.com>
+ <ZuAP8iSv_sjmlYIp@google.com> <fd6ef478-4d0b-03f2-78f6-8bfd0fc3a846@huawei-partners.com>
+Message-ID: <ZuRUagjolNjXsS3r@google.com>
+Subject: Re: [RFC PATCH v3 06/19] selftests/landlock: Test adding a rule for
+ unhandled access
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
----
-Currently, access bitfield is converted to string in 3 different places.
-This patch consolidates conversion in one place.
-The patch is against `next' branch at https://github.com/cschaufler/smack-next
-The patch does not hurt `Smack kernel test suite' https://github.com/smack-team/smack-testsuite.git
+On Wed, Sep 11, 2024 at 11:19:48AM +0300, Mikhail Ivanov wrote:
+> On 9/10/2024 12:22 PM, G=C3=BCnther Noack wrote:
+> > Hi!
+> >=20
+> > On Wed, Sep 04, 2024 at 06:48:11PM +0800, Mikhail Ivanov wrote:
+> > > Add test that validates behaviour of Landlock after rule with
+> > > unhandled access is added.
+> > >=20
+> > > Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> > > ---
+> > > Changes since v2:
+> > > * Replaces EXPECT_EQ with ASSERT_EQ for close().
+> > > * Refactors commit title and message.
+> > >=20
+> > > Changes since v1:
+> > > * Refactors commit message.
+> > > ---
+> > >   .../testing/selftests/landlock/socket_test.c  | 33 ++++++++++++++++=
++++
+> > >   1 file changed, 33 insertions(+)
+> > >=20
+> > > diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/t=
+esting/selftests/landlock/socket_test.c
+> > > index 811bdaa95a7a..d2fedfca7193 100644
+> > > --- a/tools/testing/selftests/landlock/socket_test.c
+> > > +++ b/tools/testing/selftests/landlock/socket_test.c
+> > > @@ -351,4 +351,37 @@ TEST_F(protocol, rule_with_unknown_access)
+> > >   	ASSERT_EQ(0, close(ruleset_fd));
+> > >   }
+> > > +TEST_F(protocol, rule_with_unhandled_access)
+> > > +{
+> > > +	struct landlock_ruleset_attr ruleset_attr =3D {
+> > > +		.handled_access_socket =3D LANDLOCK_ACCESS_SOCKET_CREATE,
+> > > +	};
+> > > +	struct landlock_socket_attr protocol =3D {
+> > > +		.family =3D self->prot.family,
+> > > +		.type =3D self->prot.type,
+> > > +	};
+> > > +	int ruleset_fd;
+> > > +	__u64 access;
+> > > +
+> > > +	ruleset_fd =3D
+> > > +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> > > +	ASSERT_LE(0, ruleset_fd);
+> > > +
+> > > +	for (access =3D 1; access > 0; access <<=3D 1) {
+> > > +		int err;
+> > > +
+> > > +		protocol.allowed_access =3D access;
+> > > +		err =3D landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
+> > > +					&protocol, 0);
+> > > +		if (access =3D=3D ruleset_attr.handled_access_socket) {
+> > > +			EXPECT_EQ(0, err);
+> > > +		} else {
+> > > +			EXPECT_EQ(-1, err);
+> > > +			EXPECT_EQ(EINVAL, errno);
+> > > +		}
+> > > +	}
+> > > +
+> > > +	ASSERT_EQ(0, close(ruleset_fd));
+> > > +}
+> > > +
+> >=20
+> > I should probably have noticed this on the first review round; you are =
+not
+> > actually exercising any scenario here where a rule with unhandled acces=
+s is
+> > added.
+> >=20
+> > To clarify, the notion of an access right being "unhandled" means that =
+the
+> > access right was not listed at ruleset creation time in the ruleset_att=
+r's
+> > .handled_access_* field where it would have belonged.  If that is the c=
+ase,
+> > adding a ruleset with that access right is going to be denied.
+> >=20
+> > As an example:
+> > If the ruleset only handles LANDLOCK_ACCESS_FS_WRITE_FILE and nothing e=
+lse,
+> > then, if the test tries to insert a rule for LANDLOCK_ACCESS_SOCKET_CRE=
+ATE,
+> > that call is supposed to fail -- because the "socket creation" access r=
+ight is
+> > not handled.
+>=20
+> This test was added to exercise adding a rule with future possible
+> "unhandled" access rights of "socket" type, but since this patch
+> implements only one, this test is really meaningless. Thank you for
+> this note!
+>=20
+> >=20
+> > IMHO the test would become more reasonable if it was more clearly "hand=
+ling"
+> > something entirely unrelated at ruleset creation time, e.g. one of the =
+file
+> > system access rights.  (And we could do the same for the "net" and "fs"=
+ tests as
+> > well.)
+> >=20
+> > Your test is a copy of the same test for the "net" rights, which in tur=
+n is a
+> > copy of teh same test for the "fs" rights.  When the "fs" test was writ=
+ten, the
+> > "fs" access rights were the only ones that could be used at all to crea=
+te a
+> > ruleset, but this is not true any more.
+>=20
+> Good idea! Can I implement such test in the current patchset?
 
- security/smack/smack.h        |  1 +
- security/smack/smack_access.c | 10 ++++++++--
- security/smack/smack_lsm.c    | 18 +-----------------
- security/smack/smackfs.c      | 26 +++++---------------------
- 4 files changed, 15 insertions(+), 40 deletions(-)
+Yes, I think it would be a good idea.
 
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 041688e5a77a..9e17e813fd1f 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -280,6 +280,7 @@ int smk_access(struct smack_known *, struct smack_known *,
- int smk_tskacc(struct task_smack *, struct smack_known *,
- 	       u32, struct smk_audit_info *);
- int smk_curacc(struct smack_known *, u32, struct smk_audit_info *);
-+int smack_str_from_perm(char *string, int access);
- struct smack_known *smack_from_secid(const u32);
- char *smk_parse_smack(const char *string, int len);
- int smk_netlbl_mls(int, char *, struct netlbl_lsm_secattr *, int);
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index 585e5e35710b..3727379623e2 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -275,7 +275,6 @@ int smk_curacc(struct smack_known *obj_known,
- 	return smk_tskacc(tsp, obj_known, mode, a);
- }
- 
--#ifdef CONFIG_AUDIT
- /**
-  * smack_str_from_perm : helper to transalate an int to a
-  * readable string
-@@ -283,7 +282,7 @@ int smk_curacc(struct smack_known *obj_known,
-  * @access : the int
-  *
-  */
--static inline void smack_str_from_perm(char *string, int access)
-+int smack_str_from_perm(char *string, int access)
- {
- 	int i = 0;
- 
-@@ -299,8 +298,15 @@ static inline void smack_str_from_perm(char *string, int access)
- 		string[i++] = 't';
- 	if (access & MAY_LOCK)
- 		string[i++] = 'l';
-+	if (access & MAY_BRINGUP)
-+		string[i++] = 'b';
-+	if (i == 0)
-+		string[i++] = '-';
- 	string[i] = '\0';
-+	return i;
- }
-+
-+#ifdef CONFIG_AUDIT
- /**
-  * smack_log_callback - SMACK specific information
-  * will be called by generic audit code
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 4164699cd4f6..e0c2a2c6add3 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -107,23 +107,7 @@ static char *smk_bu_mess[] = {
- 
- static void smk_bu_mode(int mode, char *s)
- {
--	int i = 0;
--
--	if (mode & MAY_READ)
--		s[i++] = 'r';
--	if (mode & MAY_WRITE)
--		s[i++] = 'w';
--	if (mode & MAY_EXEC)
--		s[i++] = 'x';
--	if (mode & MAY_APPEND)
--		s[i++] = 'a';
--	if (mode & MAY_TRANSMUTE)
--		s[i++] = 't';
--	if (mode & MAY_LOCK)
--		s[i++] = 'l';
--	if (i == 0)
--		s[i++] = '-';
--	s[i] = '\0';
-+	smack_str_from_perm(s, mode);
- }
- #endif
- 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 5dd1e164f9b1..cd5327253d1c 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -564,6 +564,7 @@ static void smk_seq_stop(struct seq_file *s, void *v)
- 
- static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
- {
-+	char acc[SMK_NUM_ACCESS_TYPE + 1];
- 	/*
- 	 * Don't show any rules with label names too long for
- 	 * interface file (/smack/load or /smack/load2)
-@@ -577,28 +578,11 @@ static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
- 	if (srp->smk_access == 0)
- 		return;
- 
--	seq_printf(s, "%s %s",
-+	smack_str_from_perm(acc, srp->smk_access);
-+	seq_printf(s, "%s %s %s\n",
- 		   srp->smk_subject->smk_known,
--		   srp->smk_object->smk_known);
--
--	seq_putc(s, ' ');
--
--	if (srp->smk_access & MAY_READ)
--		seq_putc(s, 'r');
--	if (srp->smk_access & MAY_WRITE)
--		seq_putc(s, 'w');
--	if (srp->smk_access & MAY_EXEC)
--		seq_putc(s, 'x');
--	if (srp->smk_access & MAY_APPEND)
--		seq_putc(s, 'a');
--	if (srp->smk_access & MAY_TRANSMUTE)
--		seq_putc(s, 't');
--	if (srp->smk_access & MAY_LOCK)
--		seq_putc(s, 'l');
--	if (srp->smk_access & MAY_BRINGUP)
--		seq_putc(s, 'b');
--
--	seq_putc(s, '\n');
-+		   srp->smk_object->smk_known,
-+		   acc);
- }
- 
- /*
--- 
-2.43.0
+I would, in fact, recommend to turn the rule_with_unhandled_access test int=
+o that test.
 
+The test traces its roots clearly to
+
+  TEST_F(mini, rule_with_unhandled_access)  from net_test.c
+
+and to
+
+  TEST_F_FORK(layout1, rule_with_unhandled_access)  from fs_test.c
+
+
+and I think all three variants would better be advised to create a ruleset =
+with
+
+struct landlock_ruleset_attr ruleset_attr =3D {
+	.handled_access_something_entirely_different =3D LANDLOCK_ACCESS_WHATEVER,
+}
+
+and then check their corresponding fs, net and socket access rights using a
+landlock_add_rule() call for the access rights that belong to the respectiv=
+e
+module, so that it exercises the scenario where userspace attempts to use t=
+he
+access right in a rule, but the surrounding ruleset did not restrict the sa=
+me
+access right (it was "unhandled").
+
+In spirit, it would be nicest if we could create a ruleset where nothing at=
+ all
+is handled, but I believe in that case, the landlock_create_ruleset() call =
+would
+already fail.
+
+=E2=80=94G=C3=BCnther
+
+P.S.: I am starting to grow a bit uncomfortable with the amount of duplicat=
+ed
+test code that we start having across the different types of access rights.=
+  If
+you see a way to keep this more in check, while still keeping the tests
+expressive and not over-frameworking them, let's try to move in that direct=
+ion
+if we can. :)
