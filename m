@@ -1,195 +1,172 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C782D2E5;
-	Fri, 13 Sep 2024 16:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B776F2E2
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 16:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726244135; cv=none; b=ThMww8o1keB2vUrkOmTJKUof2GFDYnIEPgkw9Q67N88GSzwhxR49ESlLUi77RtVso3ioIDL0pQtdeyYKct7bJx5v4kO+1ItX6LaDiq2oyG9uos0fGwE6lKrMLt3hPiygdithARoSvlumtXJgbb6SlPanodBLrL8aWj7X9yFQHWg=
+	t=1726245206; cv=none; b=Z8aKPAJ54rTz2v2gi8lo+Ge3oZrIT5HCe1ssevmWeP6jqcxR+LgU/pzC6Pw4C2MLOjmtQ2iq0sLMcU7bo+AMSGj6uuVHTFQic83UqE/Cj83rLB5ITniiY7X/D2XBRuo0TGYoqIO+sKugvR9DRA2S3Fr6/oYK8LaqRXsVYNn8w7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726244135; c=relaxed/simple;
-	bh=/hADo25VOWxE6cDzncVwMHVnQ5/7gnWCFGFlhaWnpOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Fxf8E/5FrhsdDRQM2vxB9xotJITOsdKLxR77QQjtPSJKe37ovVYAH0MyhMhINqlAYTgOtaWrW1rBuHMcl+PPJAYxZgYxd6UchBhoN44H4lfvecoz/GOZbPnZMGnbW40uR2eWZe+zWJih0PinubP5uC0ua25A93FXQkglCiSiJI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X4zr40ryFzmVCX;
-	Sat, 14 Sep 2024 00:13:24 +0800 (CST)
-Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id 23B49180106;
-	Sat, 14 Sep 2024 00:15:29 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 14 Sep 2024 00:15:25 +0800
-Message-ID: <2f07d52b-0273-b2d8-450b-db88a7f16042@huawei-partners.com>
-Date: Fri, 13 Sep 2024 19:15:20 +0300
+	s=arc-20240116; t=1726245206; c=relaxed/simple;
+	bh=f+359BLhYQ/Pg24mzq1ifHF0ls/rX9zTnkmJM6Jpxkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUZTeZOzlKc+xSILsdVyyF97WT8Lj1w/o0Q2DD+9MjCJFBV/uHPJi4RVfS+K9ixliS57YrF/TsYwfJU18TKMs1+y5Pf8y4+xBfZRgV0D58POto6+qBMxujgk4PgxkR0sWHfOhl3lNrcgPEcwzn6z2v5JFtEfSUs1PwuLYbaRHKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WIY7Z/3I; arc=none smtp.client-ip=84.16.66.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WIY7Z/3I"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X50Gw0wvPz9ZT;
+	Fri, 13 Sep 2024 18:33:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726245192;
+	bh=jL3SgGv5TLclTQUubcFPqq833ZrkKmojbZCL1JIDaHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WIY7Z/3IAa1GQIu+Lv08iD0+3zMhCcwthtjR8rC73MwiT6LKOiStafOZpFbSedAeJ
+	 DVXoy+jV6k49dVfznUPANh0X3SbBACoUO38ERyTmWkEyCKp4PvWuPS33Vu6pklZBuA
+	 HYn/eLOZsxDQPDEcJiB+Ir1yXUiVUDJLEckTDRCo=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X50Gv0fyVzJ4f;
+	Fri, 13 Sep 2024 18:33:11 +0200 (CEST)
+Date: Fri, 13 Sep 2024 18:33:03 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v11 0/8] Landlock: Add abstract UNIX socket restriction
+Message-ID: <20240913.Doof4aiK8soh@digikod.net>
+References: <cover.1725494372.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 06/19] selftests/landlock: Test adding a rule for
- unhandled access
-Content-Language: ru
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
-	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-7-ivanov.mikhail1@huawei-partners.com>
- <ZuAP8iSv_sjmlYIp@google.com>
- <fd6ef478-4d0b-03f2-78f6-8bfd0fc3a846@huawei-partners.com>
- <ZuRUagjolNjXsS3r@google.com>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZuRUagjolNjXsS3r@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- kwepemj200016.china.huawei.com (7.202.194.28)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1725494372.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 9/13/2024 6:04 PM, Günther Noack wrote:
-> On Wed, Sep 11, 2024 at 11:19:48AM +0300, Mikhail Ivanov wrote:
->> On 9/10/2024 12:22 PM, Günther Noack wrote:
->>> Hi!
->>>
->>> On Wed, Sep 04, 2024 at 06:48:11PM +0800, Mikhail Ivanov wrote:
->>>> Add test that validates behaviour of Landlock after rule with
->>>> unhandled access is added.
->>>>
->>>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
->>>> ---
->>>> Changes since v2:
->>>> * Replaces EXPECT_EQ with ASSERT_EQ for close().
->>>> * Refactors commit title and message.
->>>>
->>>> Changes since v1:
->>>> * Refactors commit message.
->>>> ---
->>>>    .../testing/selftests/landlock/socket_test.c  | 33 +++++++++++++++++++
->>>>    1 file changed, 33 insertions(+)
->>>>
->>>> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
->>>> index 811bdaa95a7a..d2fedfca7193 100644
->>>> --- a/tools/testing/selftests/landlock/socket_test.c
->>>> +++ b/tools/testing/selftests/landlock/socket_test.c
->>>> @@ -351,4 +351,37 @@ TEST_F(protocol, rule_with_unknown_access)
->>>>    	ASSERT_EQ(0, close(ruleset_fd));
->>>>    }
->>>> +TEST_F(protocol, rule_with_unhandled_access)
->>>> +{
->>>> +	struct landlock_ruleset_attr ruleset_attr = {
->>>> +		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>> +	};
->>>> +	struct landlock_socket_attr protocol = {
->>>> +		.family = self->prot.family,
->>>> +		.type = self->prot.type,
->>>> +	};
->>>> +	int ruleset_fd;
->>>> +	__u64 access;
->>>> +
->>>> +	ruleset_fd =
->>>> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
->>>> +	ASSERT_LE(0, ruleset_fd);
->>>> +
->>>> +	for (access = 1; access > 0; access <<= 1) {
->>>> +		int err;
->>>> +
->>>> +		protocol.allowed_access = access;
->>>> +		err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
->>>> +					&protocol, 0);
->>>> +		if (access == ruleset_attr.handled_access_socket) {
->>>> +			EXPECT_EQ(0, err);
->>>> +		} else {
->>>> +			EXPECT_EQ(-1, err);
->>>> +			EXPECT_EQ(EINVAL, errno);
->>>> +		}
->>>> +	}
->>>> +
->>>> +	ASSERT_EQ(0, close(ruleset_fd));
->>>> +}
->>>> +
->>>
->>> I should probably have noticed this on the first review round; you are not
->>> actually exercising any scenario here where a rule with unhandled access is
->>> added.
->>>
->>> To clarify, the notion of an access right being "unhandled" means that the
->>> access right was not listed at ruleset creation time in the ruleset_attr's
->>> .handled_access_* field where it would have belonged.  If that is the case,
->>> adding a ruleset with that access right is going to be denied.
->>>
->>> As an example:
->>> If the ruleset only handles LANDLOCK_ACCESS_FS_WRITE_FILE and nothing else,
->>> then, if the test tries to insert a rule for LANDLOCK_ACCESS_SOCKET_CREATE,
->>> that call is supposed to fail -- because the "socket creation" access right is
->>> not handled.
->>
->> This test was added to exercise adding a rule with future possible
->> "unhandled" access rights of "socket" type, but since this patch
->> implements only one, this test is really meaningless. Thank you for
->> this note!
->>
->>>
->>> IMHO the test would become more reasonable if it was more clearly "handling"
->>> something entirely unrelated at ruleset creation time, e.g. one of the file
->>> system access rights.  (And we could do the same for the "net" and "fs" tests as
->>> well.)
->>>
->>> Your test is a copy of the same test for the "net" rights, which in turn is a
->>> copy of teh same test for the "fs" rights.  When the "fs" test was written, the
->>> "fs" access rights were the only ones that could be used at all to create a
->>> ruleset, but this is not true any more.
->>
->> Good idea! Can I implement such test in the current patchset?
-> 
-> Yes, I think it would be a good idea.
-> 
-> I would, in fact, recommend to turn the rule_with_unhandled_access test into that test.
-> 
-> The test traces its roots clearly to
-> 
->    TEST_F(mini, rule_with_unhandled_access)  from net_test.c
-> 
-> and to
-> 
->    TEST_F_FORK(layout1, rule_with_unhandled_access)  from fs_test.c
-> 
-> 
-> and I think all three variants would better be advised to create a ruleset with
-> 
-> struct landlock_ruleset_attr ruleset_attr = {
-> 	.handled_access_something_entirely_different = LANDLOCK_ACCESS_WHATEVER,
-> }
-> 
-> and then check their corresponding fs, net and socket access rights using a
-> landlock_add_rule() call for the access rights that belong to the respective
-> module, so that it exercises the scenario where userspace attempts to use the
-> access right in a rule, but the surrounding ruleset did not restrict the same
-> access right (it was "unhandled").
+I have reworked a bit the patches, including the signal scoping ones,
+and they are here:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
 
-Agreed, thanks for the recommendation!
+This is based on a manual merge of some VFS changes and LSM changes
+required for this patch series:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?h=next&id=24dfe95e493086a99acf7df1ef23d9f21f8cdec7
 
-> 
-> In spirit, it would be nicest if we could create a ruleset where nothing at all
-> is handled, but I believe in that case, the landlock_create_ruleset() call would
-> already fail.
-> 
-> —Günther
-> 
-> P.S.: I am starting to grow a bit uncomfortable with the amount of duplicated
-> test code that we start having across the different types of access rights.  If
-> you see a way to keep this more in check, while still keeping the tests
-> expressive and not over-frameworking them, let's try to move in that direction
-> if we can. :)
+My changes are explained in the "[mic: ...]" part of the commit
+messages. Please send two last patch series, with this changes and reply
+to it with your comments if any.
 
-Yeah, I really want to see patchset dedicated to tests refactoring. I'll
-try to finish the description of corresponding issue [1] ASAP.
-
-[1] https://github.com/landlock-lsm/linux/issues/34
+On Wed, Sep 04, 2024 at 06:13:54PM -0600, Tahera Fahimi wrote:
+> This patch series adds scoping mechanism for abstract UNIX sockets.
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> 
+> Problem
+> =======
+> 
+> Abstract UNIX sockets are used for local inter-process communications
+> independent of the filesystem. Currently, a sandboxed process can
+> connect to a socket outside of the sandboxed environment, since Landlock
+> has no restriction for connecting to an abstract socket address(see more
+> details in [1,2]). Access to such sockets for a sandboxed process should
+> be scoped the same way ptrace is limited.
+> 
+> [1] https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+> [2] https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
+> 
+> Solution
+> ========
+> 
+> To solve this issue, we extend the user space interface by adding a new
+> "scoped" field to Landlock ruleset attribute structure. This field can
+> contains different rights to restrict different functionalities. For
+> abstract UNIX sockets, we introduce
+> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" field to specify that a ruleset
+> will deny any connection from within the sandbox domain to its parent
+> (i.e. any parent sandbox or non-sandbox processes).
+> 
+> Example
+> =======
+> 
+> Starting a listening socket with socat(1):
+>         socat abstract-listen:mysocket -
+> 
+> Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+>         LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
+> 
+> If we try to connect to the listening socket, the connection gets
+> refused.
+>         socat - abstract-connect:mysocket --> fails
+> 
+> 
+> Notes of Implementation
+> =======================
+> 
+> * Using the "scoped" field provides enough compatibility and flexibility
+>   to extend the scoping mechanism for other IPCs(e.g. signals).
+> 
+> * To access the domain of a socket, we use its credentials of the file's
+>   FD which point to the credentials of the process that created the
+>   socket (see more details in [3]). Cases where the process using the
+>   socket has a different domain than the process created it are covered
+>   in the "outside_socket" test.
+> 
+> [3]https://lore.kernel.org/all/20240611.Pi8Iph7ootae@digikod.net/
+> 
+> Previous Versions
+> =================
+> v10:https://lore.kernel.org/all/cover.1724125513.git.fahimitahera@gmail.com/
+> v9: https://lore.kernel.org/all/cover.1723615689.git.fahimitahera@gmail.com/
+> v8: https://lore.kernel.org/all/cover.1722570749.git.fahimitahera@gmail.com/
+> v7: https://lore.kernel.org/all/cover.1721269836.git.fahimitahera@gmail.com/
+> v6: https://lore.kernel.org/all/Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000/
+> and https://lore.kernel.org/all/Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000/
+> v5: https://lore.kernel.org/all/ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000/
+> v4: https://lore.kernel.org/all/ZnNcE3ph2SWi1qmd@tahera-OptiPlex-5000/
+> v3: https://lore.kernel.org/all/ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000/
+> v2: https://lore.kernel.org/all/ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000/
+> v1: https://lore.kernel.org/all/ZgXN5fi6A1YQKiAQ@tahera-OptiPlex-5000/
+> 
+> Tahera Fahimi (8):
+>   Landlock: Add abstract UNIX socket restriction
+>   selftests/landlock: Add test for handling unknown scope
+>   selftests/landlock: Add abstract UNIX socket restriction tests
+>   selftests/landlock: Add tests for UNIX sockets with any address
+>     formats
+>   selftests/landlock: Test connected vs non-connected datagram UNIX
+>     socket
+>   selftests/landlock: Restrict inherited datagram UNIX socket to connect
+>   sample/landlock: Add support abstract UNIX socket restriction
+>   Landlock: Document LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET and ABI
+>     version
+> 
+>  Documentation/userspace-api/landlock.rst      |  45 +-
+>  include/uapi/linux/landlock.h                 |  28 +
+>  samples/landlock/sandboxer.c                  |  61 +-
+>  security/landlock/limits.h                    |   3 +
+>  security/landlock/ruleset.c                   |   7 +-
+>  security/landlock/ruleset.h                   |  24 +-
+>  security/landlock/syscalls.c                  |  17 +-
+>  security/landlock/task.c                      | 136 +++
+>  tools/testing/selftests/landlock/base_test.c  |   2 +-
+>  tools/testing/selftests/landlock/common.h     |  38 +
+>  tools/testing/selftests/landlock/net_test.c   |  31 +-
+>  .../landlock/scoped_abstract_unix_test.c      | 993 ++++++++++++++++++
+>  .../selftests/landlock/scoped_base_variants.h | 154 +++
+>  .../selftests/landlock/scoped_common.h        |  28 +
+>  .../scoped_multiple_domain_variants.h         | 154 +++
+>  .../testing/selftests/landlock/scoped_test.c  |  33 +
+>  16 files changed, 1709 insertions(+), 45 deletions(-)
+>  create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+>  create mode 100644 tools/testing/selftests/landlock/scoped_base_variants.h
+>  create mode 100644 tools/testing/selftests/landlock/scoped_common.h
+>  create mode 100644 tools/testing/selftests/landlock/scoped_multiple_domain_variants.h
+>  create mode 100644 tools/testing/selftests/landlock/scoped_test.c
+> 
+> -- 
+> 2.34.1
+> 
