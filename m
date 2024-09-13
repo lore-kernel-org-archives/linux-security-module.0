@@ -1,199 +1,179 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2854443144;
-	Fri, 13 Sep 2024 13:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C781BC2A
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Sep 2024 14:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234401; cv=none; b=Qx7cQp4EnSPQFaGva+MaYo8cvW52xeLeraEjbo66ZmuJ2MLQHANLUmipL3yfz2gRrQ2rW4SPrn6wknOufHqB18IL9Dd33OqrdQU8681O3iXE5AAM0M9MvBnR9b16vLsMPB7LY+KOertdcJTIpGIOlfJe7P8nBVnAC/uqBYrniok=
+	t=1726238882; cv=none; b=dDhk1HgA3O3S2pPd25t/+5xr6oGP75G0LLa9TkLORFEWrpNmUAZ5YFJ04GwaQ2fK+tcxK0UNFtFT/OO3Vj9VeLLh1n4MYBUFixyoziSoUtpRJpaI9P+L3dYnUli4gAbOaDsuRSEtolw4P4UmEHxJPWEGYcNPGRKrMrXrxOGEEHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234401; c=relaxed/simple;
-	bh=FuLavyQvHtM8WNrI6vKqzszV+dUVTGkQOGNr5SLyZC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRn/Z/lt7KWEr6SfKPCL+2LcLtsj37JBrQXn0uxgxv4oziimxMA2NrQ08xkoKVn3O8NqvJKwxKvBYvVpNekkZQdsgJpddbHBUcfkc/7K9FOmIFLlFak8bpW7yDDyL8kgrKe5D1rfg1GJrVSQ4eGv9+81Vi3RrVNR2ZQWWHIeE3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rHKCAJL8; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1726238882; c=relaxed/simple;
+	bh=CDzCnWJIOxO58o+gnF33MDxrMuwCUyWEFqlaeAG8r/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jqrWpqHukmwpQrf3Mg5sF5oox7BmsJKk1bTIYcA9O50Ae0ZfwyX8/vd4EQ0kAGadzxQfScVGRXMgmkrWI0GNegH5GG4xryGF+hOhf7tN0UvfSXLwU3xGBLESfWeX86QItnLgwcIz/qh2Kc716JQqnQBrkAcqZfEVGfPBIpO9PUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=lhuyG8RQ; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rHKCAJL8"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X4wH83tfjzgWW;
-	Fri, 13 Sep 2024 15:33:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1726234388;
-	bh=MH8HjPJeBlhN/lWhWBgQcXkOURL5N2O7tfwxaECdnFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rHKCAJL8t1bdaLNqjn89ZGONAIOviOasFHZS3MK8w73wdLPvihXWzz/n4NNcCC0ZD
-	 bOe9KY1bV3n04AQIH9Y/TK+opSL9NA/PLQdazDyfx9phHwm962fsuFzk97IPAIJ81o
-	 fCS3LXWubgoWrnYigeSczWA7VS6P8xC3tNYVGw0U=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X4wH64ldfzZ9Z;
-	Fri, 13 Sep 2024 15:33:06 +0200 (CEST)
-Date: Fri, 13 Sep 2024 15:32:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>, linux-api@vger.kernel.org
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v11 1/8] Landlock: Add abstract UNIX socket restriction
-Message-ID: <20240913.AmeeLo0aeheD@digikod.net>
-References: <cover.1725494372.git.fahimitahera@gmail.com>
- <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="lhuyG8RQ"
+From: Konstantin Andreev <andreev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1726238873;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4v5ueY6qFnnYS4l3w+3s5oMamcYBPXiRUvZg9TC3CjY=;
+	b=lhuyG8RQNpasJJ58M5/zZKqhwzbf+X2N9tdyviBSTSjjEvuOtrp62CgcaXNH0AbY4/UOcs
+	U27B4QhPDoY4cBP9p9XVmCGfSYW7hv8D7qFbw+LyyFgtzjOJPx58mr7ezZ8+5LOScmHinC
+	1yPXMO+5x1qMOiBG4UkwPZhhFtIzbek=
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org
+Subject: [PATCH] smack: deduplicate access to string conversion
+Date: Fri, 13 Sep 2024 17:46:59 +0300
+Message-ID: <20240913144727.1839137-1-andreev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Wed, Sep 04, 2024 at 06:13:55PM -0600, Tahera Fahimi wrote:
-> This patch introduces a new "scoped" attribute to the
-> landlock_ruleset_attr that can specify
-> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope abstract UNIX sockets
-> from connecting to a process outside of the same Landlock domain. It
-> implements two hooks, unix_stream_connect and unix_may_send to enforce
-> this restriction.
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
-> ---
-> v11:
-> - For a connected abstract datagram socket, the hook_unix_may_send
->   allows the socket to send a data. (it is treated as a connected stream
->   socket)
-> - Minor comment revision.
-> v10:
-> - Minor code improvement based on reviews on v9.
-> v9:
-> - Editting inline comments.
-> - Major refactoring in domain_is_scoped() and is_abstract_socket
-> v8:
-> - Code refactoring (improve code readability, renaming variable, etc.)
->   based on reviews by Mickaël Salaün on version 7.
-> - Adding warn_on_once to check (impossible) inconsistencies.
-> - Adding inline comments.
-> - Adding check_unix_address_format to check if the scoping socket is an
->   abstract UNIX sockets.
-> v7:
-> - Using socket's file credentials for both connected(STREAM) and
->   non-connected(DGRAM) sockets.
-> - Adding "domain_sock_scope" instead of the domain scoping mechanism
->   used in ptrace ensures that if a server's domain is accessible from
->   the client's domain (where the client is more privileged than the
->   server), the client can connect to the server in all edge cases.
-> - Removing debug codes.
-> v6:
-> - Removing curr_ruleset from landlock_hierarchy, and switching back to
->   use the same domain scoping as ptrace.
-> - code clean up.
-> v5:
-> - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
-> - Adding curr_ruleset to hierarachy_ruleset structure to have access
->   from landlock_hierarchy to its respective landlock_ruleset.
-> - Using curr_ruleset to check if a domain is scoped while walking in the
->   hierarchy of domains.
-> - Modifying inline comments.
-> v4:
-> - Rebased on Günther's Patch:
->   https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
->   so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is
->   removed.
-> - Adding get_scope_accesses function to check all scoped access masks in
->   a ruleset.
-> - Using socket's file credentials instead of credentials stored in
->   peer_cred for datagram sockets. (see discussion in [1])
-> - Modifying inline comments.
-> V3:
-> - Improving commit description.
-> - Introducing "scoped" attribute to landlock_ruleset_attr for IPC
->   scoping purpose, and adding related functions.
-> - Changing structure of ruleset based on "scoped".
-> - Removing rcu lock and using unix_sk lock instead.
-> - Introducing scoping for datagram sockets in unix_may_send.
-> V2:
-> - Removing wrapper functions
-> 
-> [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
-> ---
->  include/uapi/linux/landlock.h                |  28 ++++
->  security/landlock/limits.h                   |   3 +
->  security/landlock/ruleset.c                  |   7 +-
->  security/landlock/ruleset.h                  |  24 +++-
->  security/landlock/syscalls.c                 |  17 ++-
->  security/landlock/task.c                     | 136 +++++++++++++++++++
->  tools/testing/selftests/landlock/base_test.c |   2 +-
->  7 files changed, 208 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 2c8dbc74b955..dfd48d722834 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -44,6 +44,12 @@ struct landlock_ruleset_attr {
->  	 * flags`_).
->  	 */
->  	__u64 handled_access_net;
-> +	/**
-> +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
-> +	 * restricting a Landlock domain from accessing outside
-> +	 * resources(e.g. IPCs).
-> +	 */
-> +	__u64 scoped;
->  };
->  
->  /*
-> @@ -274,4 +280,26 @@ struct landlock_net_port_attr {
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->  /* clang-format on */
-> +
-> +/**
-> + * DOC: scope
-> + *
-> + * Scope flags
-> + * ~~~~~~~~~~~
-> + *
-> + * These flags enable to restrict a sandboxed process from a set of IPC
-> + * actions. Setting a flag for a ruleset will isolate the Landlock domain
-> + * to forbid connections to resources outside the domain.
-> + *
-> + * IPCs with scoped actions:
-> + *
-> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandboxed process
-> + *   from connecting to an abstract unix socket created by a process
-> + *   outside the related Landlock domain (e.g. a parent domain or a
-> + *   non-sandboxed process).
-> + */
-> +/* clang-format off */
-> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
+Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
+---
+Currently, access bitfield is converted to string in 3 different places.
+This patch consolidates conversion in one place.
+The patch is against `next' branch at https://github.com/cschaufler/smack-next
+The patch does not hurt `Smack kernel test suite' https://github.com/smack-team/smack-testsuite.git
 
-Thinking more about it, it makes more sense to rename it to
-LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET (s/SCOPED/SCOPE/) because it
-express a scope (not a "scoped") and it allign with the current
-LANDLOCK_ACCESS_* and other internal variables such as
-LANDLOCK_LAST_SCOPE...
+ security/smack/smack.h        |  1 +
+ security/smack/smack_access.c | 10 ++++++++--
+ security/smack/smack_lsm.c    | 18 +-----------------
+ security/smack/smackfs.c      | 26 +++++---------------------
+ 4 files changed, 15 insertions(+), 40 deletions(-)
 
-However, it still makes sense to keep the "scoped" ruleset's field,
-which is pretty similar to the "handled_*" semantic: it describes what
-will be *scoped* by the ruleset.
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 041688e5a77a..9e17e813fd1f 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -280,6 +280,7 @@ int smk_access(struct smack_known *, struct smack_known *,
+ int smk_tskacc(struct task_smack *, struct smack_known *,
+ 	       u32, struct smk_audit_info *);
+ int smk_curacc(struct smack_known *, u32, struct smk_audit_info *);
++int smack_str_from_perm(char *string, int access);
+ struct smack_known *smack_from_secid(const u32);
+ char *smk_parse_smack(const char *string, int len);
+ int smk_netlbl_mls(int, char *, struct netlbl_lsm_secattr *, int);
+diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+index 585e5e35710b..3727379623e2 100644
+--- a/security/smack/smack_access.c
++++ b/security/smack/smack_access.c
+@@ -275,7 +275,6 @@ int smk_curacc(struct smack_known *obj_known,
+ 	return smk_tskacc(tsp, obj_known, mode, a);
+ }
+ 
+-#ifdef CONFIG_AUDIT
+ /**
+  * smack_str_from_perm : helper to transalate an int to a
+  * readable string
+@@ -283,7 +282,7 @@ int smk_curacc(struct smack_known *obj_known,
+  * @access : the int
+  *
+  */
+-static inline void smack_str_from_perm(char *string, int access)
++int smack_str_from_perm(char *string, int access)
+ {
+ 	int i = 0;
+ 
+@@ -299,8 +298,15 @@ static inline void smack_str_from_perm(char *string, int access)
+ 		string[i++] = 't';
+ 	if (access & MAY_LOCK)
+ 		string[i++] = 'l';
++	if (access & MAY_BRINGUP)
++		string[i++] = 'b';
++	if (i == 0)
++		string[i++] = '-';
+ 	string[i] = '\0';
++	return i;
+ }
++
++#ifdef CONFIG_AUDIT
+ /**
+  * smack_log_callback - SMACK specific information
+  * will be called by generic audit code
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4164699cd4f6..e0c2a2c6add3 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -107,23 +107,7 @@ static char *smk_bu_mess[] = {
+ 
+ static void smk_bu_mode(int mode, char *s)
+ {
+-	int i = 0;
+-
+-	if (mode & MAY_READ)
+-		s[i++] = 'r';
+-	if (mode & MAY_WRITE)
+-		s[i++] = 'w';
+-	if (mode & MAY_EXEC)
+-		s[i++] = 'x';
+-	if (mode & MAY_APPEND)
+-		s[i++] = 'a';
+-	if (mode & MAY_TRANSMUTE)
+-		s[i++] = 't';
+-	if (mode & MAY_LOCK)
+-		s[i++] = 'l';
+-	if (i == 0)
+-		s[i++] = '-';
+-	s[i] = '\0';
++	smack_str_from_perm(s, mode);
+ }
+ #endif
+ 
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 5dd1e164f9b1..cd5327253d1c 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -564,6 +564,7 @@ static void smk_seq_stop(struct seq_file *s, void *v)
+ 
+ static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
+ {
++	char acc[SMK_NUM_ACCESS_TYPE + 1];
+ 	/*
+ 	 * Don't show any rules with label names too long for
+ 	 * interface file (/smack/load or /smack/load2)
+@@ -577,28 +578,11 @@ static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
+ 	if (srp->smk_access == 0)
+ 		return;
+ 
+-	seq_printf(s, "%s %s",
++	smack_str_from_perm(acc, srp->smk_access);
++	seq_printf(s, "%s %s %s\n",
+ 		   srp->smk_subject->smk_known,
+-		   srp->smk_object->smk_known);
+-
+-	seq_putc(s, ' ');
+-
+-	if (srp->smk_access & MAY_READ)
+-		seq_putc(s, 'r');
+-	if (srp->smk_access & MAY_WRITE)
+-		seq_putc(s, 'w');
+-	if (srp->smk_access & MAY_EXEC)
+-		seq_putc(s, 'x');
+-	if (srp->smk_access & MAY_APPEND)
+-		seq_putc(s, 'a');
+-	if (srp->smk_access & MAY_TRANSMUTE)
+-		seq_putc(s, 't');
+-	if (srp->smk_access & MAY_LOCK)
+-		seq_putc(s, 'l');
+-	if (srp->smk_access & MAY_BRINGUP)
+-		seq_putc(s, 'b');
+-
+-	seq_putc(s, '\n');
++		   srp->smk_object->smk_known,
++		   acc);
+ }
+ 
+ /*
+-- 
+2.43.0
 
-> +/* clang-format on*/
-> +
->  #endif /* _UAPI_LINUX_LANDLOCK_H */
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index 4eb643077a2a..eb01d0fb2165 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -26,6 +26,9 @@
->  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
->  
-> +#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
-> +#define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
-> +#define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
->  /* clang-format on */
