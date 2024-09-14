@@ -1,137 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042D41DA5E;
-	Sat, 14 Sep 2024 11:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FB514659B;
+	Sat, 14 Sep 2024 13:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726313603; cv=none; b=dGkjv/k7ENUFTQgLsDI3d2Ko8UW1lg7727auCRuWOe0BAIdEcmfBO1PQPvkmMVS2oE9Ivw5ELA/zQ3flD7X9itJLYky7w+xaODKw1aZW/xrd7VttDXTPHAEatRSs86S2bMf4g2CN/jXiS3l7slNJt7FBx0jrVMd+3f6G7ox30gk=
+	t=1726321235; cv=none; b=ZmwricMWeel6pTnV/YviZlcFqdg6t03Q0ywJHBUsUYm1GU+uYGhyRc9qkBg2lLxLY7YoSaBGXdTNhDQGH9PMwk7N+XX1cHlGD4CuWOSMQbEhPqCe9NeQfLcyxVB55rMGQ+HQSsHYQnJEq7vf2sqtr+P8FjFP+UErH/f2FH5UFKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726313603; c=relaxed/simple;
-	bh=N+eA+vXiE+7USFq4J1f1zDHROoHvcWUvof4TiItgmVI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=NkhUmXbP9+ZQd+E69r2ERPGp03/5aWSfZXl8ocx1FZNt1/auMgauxqODjRzIbRh7Gd/dqk5zDfralvfjgVnprarUsyi3dGpoXvoX7tVioUCW03J6mqz7SNZsjMyNUphiCkl0a8U/RidB7tNxO+lIY+emPYm0w/iG7knbNO432pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixU4HPOP; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixU4HPOP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 250CBC4CEC0;
-	Sat, 14 Sep 2024 11:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726313602;
-	bh=N+eA+vXiE+7USFq4J1f1zDHROoHvcWUvof4TiItgmVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ixU4HPOPRYdIdUtrTaqZboeUpxPXGrvxKq6SxuD1L/VhR4wu3lOWD04s/xwMso11v
-	 KGLUvMaYPt2p+vH0C0zizRDKjHB+uprZhIhyekneTUXKc/xYo6H1q4mDkUql+Umg29
-	 6xNxwAC0hT3GiFJhhSW9AW8JFO0ENfgWxdgNs+ncKWQMSOMGriDPrNTK6hT6LLeO80
-	 1AKc1vdtRG3h032tjEhmBRAQStlzUImJcfsdwWhPsoGiXIHRy6FMGlaXLp8E3FwpuA
-	 r24X9GCLEe96mh4NsSZJU30vZHW7n4JO25E6Fw5G9wp8z222AuS17jNJxTuY5XkcDd
-	 gbTS2kzPrLu5g==
+	s=arc-20240116; t=1726321235; c=relaxed/simple;
+	bh=mn3vPt1oww2MgjPGA+PJ5Bp/OXpKqUfotXZnSaDnPkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wz1/i/Os4V858zjfJKLk1ylv3gDO8JM81l8Bb49pOtcEqDJtqiEM1pgf5XzsJWcaDKvG/Pmb1NkLCrUPdGusXR7TeMI43kTKdx7/UIwtq8HFohlLKEM5u3VBcTq1oxc2ay3XCQoCNBbYUPZ+QdlRBmNlXwL3Pkq08eCnmlfZPJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48EDeAQw041686;
+	Sat, 14 Sep 2024 22:40:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
+ Sat, 14 Sep 2024 22:40:10 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48EDe9ZA041683
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 14 Sep 2024 22:40:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <72759961-1f11-4bad-ad0e-b665b5a86aaa@I-love.SAKURA.ne.jp>
+Date: Sat, 14 Sep 2024 22:40:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
+To: Konstantin Andreev <andreev@swemel.ru>,
+        Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240910184125.224651-1-casey@schaufler-ca.com>
+ <20240910184125.224651-2-casey@schaufler-ca.com>
+ <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
+ <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
+ <8515a57b-4369-4bd9-a43f-b5543295a472@swemel.ru>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <8515a57b-4369-4bd9-a43f-b5543295a472@swemel.ru>
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 14 Sep 2024 14:33:18 +0300
-Message-Id: <D45Z3J2E2MPX.4SDWNGAP3D41@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Chen Ridong" <chenridong@huawei.com>, <dhowells@redhat.com>,
- <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
-Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <chenridong@huaweicloud.com>
-Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
- key_task_permission
-X-Mailer: aerc 0.18.2
-References: <20240913070928.1670785-1-chenridong@huawei.com>
-In-Reply-To: <20240913070928.1670785-1-chenridong@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri Sep 13, 2024 at 10:09 AM EEST, Chen Ridong wrote:
-> We meet the same issue with the LINK, which reads memory out of bounds:
+On 2024/09/14 19:30, Konstantin Andreev wrote:
+> Casey Schaufler, 14 Sep 2024:
+>> On 9/13/2024 1:49 PM, Konstantin Andreev wrote:
+>>> Casey Schaufler, 10 Sep 2024:
+>>>> ...
+>>>> The lsm_prop structure definition is intended to keep the LSM
+>>>> specific information private to the individual security modules.
+>>>> ...
+>>>> index 1390f1efb4f0..1027c802cc8c 100644
+>>>> --- a/include/linux/security.h
+>>>> +++ b/include/linux/security.h
+>>>> @@ -140,6 +144,22 @@ enum lockdown_reason {
+>>>> +
+>>>> +/*
+>>>> + * Data exported by the security modules
+>>>> + */
+>>>> +struct lsm_prop {
+>>>> +    struct lsm_prop_selinux selinux;
+>>>> +    struct lsm_prop_smack smack;
+>>>> +    struct lsm_prop_apparmor apparmor;
+>>>> +    struct lsm_prop_bpf bpf;
+>>>> +    struct lsm_prop_scaffold scaffold;
+>>>> +};
+>>>
+>>> This design prevents compiling and loading out-of-tree 3rd party LSM,
+>>> am I right?
+>>
+>> No more so than the existing implementation. An upstream acceptable
+>> scheme for loading out-of-tree LSMs has much bigger issues to address
+>> than adding an element to struct lsm_prop.
 
-Nit: don't use "we" anywhere".
+What I imagine with "loadable LSMs" is "trivial LSMs which do not depend
+on blobs managed by infrastructure but do depend on hooks being called
+by infrastructure". Some of such LSMs could be implemented using BPF, but
+BPF is too limited to re-implement TOMOYO (or TOMOYO-like LSMs).
 
-Tbh, I really don't understand the sentence above. I don't what
-"the same issue with the LINK" really is.
+TOMOYO is one of trivial LSMs which can easily opt out from "infrastructure
+managed blobs". Also, I don't have a plan to allow "loadable LSMs" to use
+"infrastructure managed blobs" including "struct lsm_prop".
 
-> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36
-> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inlin=
-e]
-> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
-> security/keys/permission.c:54
-> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
->
-> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #=
-15
-> Call Trace:
->  __dump_stack lib/dump_stack.c:82 [inline]
->  dump_stack+0x107/0x167 lib/dump_stack.c:123
->  print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400
->  __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
->  kasan_report+0x3a/0x50 mm/kasan/report.c:585
->  __kuid_val include/linux/uidgid.h:36 [inline]
->  uid_eq include/linux/uidgid.h:63 [inline]
->  key_task_permission+0x394/0x410 security/keys/permission.c:54
->  search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
->  keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
->  search_cred_keyrings_rcu+0x111/0x2e0 security/keys/process_keys.c:459
->  search_process_keyrings_rcu+0x1d/0x310 security/keys/process_keys.c:544
->  lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
->  keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
->  __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
->  __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
->  do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x67/0xd1
->
-> However, we can't reproduce this issue.
+>>
+>>> Out-of-tree LSM's were discussed recently at
+>>>
+>>> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp/T/
+>>> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp/T/
+>>>
+>>> but it looks like a final decision to ban them is not taken yet.
+>>
+>> There has never been (to my knowledge) an effort to "ban" out-of-tree
+>> LSMs. There has also not been interest in actively supporting them since
+>> the "L" in LSM changed from "Loadable" to "Linux", with the exception of
+>> Tetsuo Handa, who has been invited to suggest a viable mechanism. There
+>> is currently support for BPF based security implementations, which can
+>> be maintained out-of-tree. We are currently battling with the notion that
+>> the LSM infrastructure is an attack surface. We really don't want to do
+>> anything to increase that exposure.
+> 
+> Thank you for explaining this. Although the “ban” is a side effect of the
+> other activity, I think the “ban” should be explicitly recognized as ban,
+> rather than evasive “we don’t care”.
 
-"The issue cannot be easily reproduced but by analyzing the code
-it can be broken into following steps:"
+The "we don't care" response is really irritating. But if loadable LSMs were
+banned, LSM will be dead and an alternative to LSM will be crazily pushed.
+No one can enforce "military level security" to averaged Linux users.
+That attempt is a reoccurrence of "Only my version is correct" crap.
 
-> After our analysis, it can make this issue by following steps.
-> 1.As syzkaller reported, the memory is allocated for struct
->   assoc_array_shortcut in the assoc_array_insert_into_terminal_node
->   functions.
-> 2.In the search_nested_keyrings, when we go through the slots in a node,
->   (bellow tag ascend_to_node), and the slot ptr is meta and
->   node->back_pointer !=3D NULL, we will proceed to  descend_to_node.
->   However, there is an exception. If node is the root, and one of the
->   slots points to a shortcut, it will be treated as a keyring.
-> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring function.
->   However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
->   ASSOC_ARRAY_PTR_SUBTYPE_MASK,
-> 4.As mentioned above, If a slot of the root is a shortcut, it may be
->   mistakenly be transferred to a key*, leading to an read out-of-bounds
->   read.
->
-> To fix this issue, one should jump to descend_to_node if the pointer is a
-> shortcut.
->
-> Link: https://syzkaller.appspot.com/bug?id=3D68a5e206c2a8e08d317eb83f0561=
-0c0484ad10b9
-> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->  security/keys/keyring.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index 4448758f643a..7958486ac834 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -772,7 +772,9 @@ static bool search_nested_keyrings(struct key *keyrin=
-g,
->  	for (; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
->  		ptr =3D READ_ONCE(node->slots[slot]);
-> =20
-> -		if (assoc_array_ptr_is_meta(ptr) && node->back_pointer)
-> +		if ((assoc_array_ptr_is_meta(ptr) && node->back_pointer) ||
-> +		    (assoc_array_ptr_is_meta(ptr) &&
-> +		     assoc_array_ptr_is_shortcut(ptr)))
->  			goto descend_to_node;
-> =20
->  		if (!keyring_ptr_is_keyring(ptr))
+Only those who needs "military level security" in LSM will use LSM.
+Those who don't need "military level security" will use a different framework.
 
+> 
+> The reason I think so is that this decision significantly (at times)
+> increases the cost of user (here: system owner) <-> 3rd party LSM developer
+> interaction, and decreases openness of Linux in this particular aspect.
 
-BR, Jarkko
+If loadable LSMs were banned, the value of distribution kernel will be
+significantly lost. The point of loadable kernel module is to share the
+workload.
+
