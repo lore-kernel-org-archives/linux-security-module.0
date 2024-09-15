@@ -1,87 +1,93 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A443EA83;
-	Sun, 15 Sep 2024 08:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08E193429
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 08:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726387703; cv=none; b=tMrWIeIA+t2byC1Zz6i0M9Q6laWV4tOAjYa7pyzT9cXAkW082du56YOqFTQbB8XCvhYC6lxa8ZdrsQVhshMIkL5YWrNluRMRE7wYjtdmGkbWy9hSLcEbbq6aK5fslJXJG9kXck5aYcQrRpdR1vxrPmDnm0hmk70Wub7F2nitN9Q=
+	t=1726389639; cv=none; b=KmZ4qv97cMXMnHp+/4ooZQnW+7oiNnIpiB6LJrF5TJMwV94EM2jxJZJtSgwpH87PB6rHC11ReKnzSuqj7HqRBFVorEWvwkf6uEdVuG/rqP0QOMpNWztJKySPaWd8JxEg4yC17g+mrQFF0t2Z3CH2WLupJrMhc0DKQ0E8siR4Dv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726387703; c=relaxed/simple;
-	bh=r92Bf7xVtngzQHui2J95febW1US8tRSTwQNcYBrkL8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFLp3pQ/4jwjBGRMsLeAa3fpiqFTpfcQiT+t5w0JIb/5qmhXoJQtngl5mjfcPZHhTSVFeQsvcaFo9IPAOsHux6hyIyRzawkIONSFFOtuPir4eQF1tHc91PcVOoRFx8Hd7CxvI3p+I0yQrvHRmqBXUGONq+YDxbNWNxsBYTKWk2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Q56alLRj; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	s=arc-20240116; t=1726389639; c=relaxed/simple;
+	bh=7W4dXzHo6ZsXChruk3vokDJnvUK3D1xdySswkG1oy0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IpbiUK7DF2jemecHhauLb9CRv5r2ScsQK2U6DdwdAEAOQyGVFMno+1tI/tbeoMhutvK1qPn8bwj9gCfM0mchreHHPlIHfBjxaaNIzdn6MsTipmHGATjaJlouF7MGbkN4dL+b+c2pyCBRp+fU4vadWqmQY2TdX+Y5uSD13GlY8XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ftJOO5Q0; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Q56alLRj"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=tmmYr7AUv+WyGTIFQO0zZ+SlHsGUZCWusRU4ymvvKec=; b=Q56alLRjfdJQXvhTz2ZuTxLFO8
-	We8liIyQouHmCyvHCuGoRb7A05ROGYXAryVOwBFAxpNQ0iQGkpG/wwko8gELPjeHr7z6zg20yv1AX
-	vKDiUIMRpTfgJ8uuzzmcH4NnS8/cWz7PAVGgaLru/HJQd9x/Hl9aZHBW7PFymF/nuPdMU1BElNw6y
-	4+HqKlMNnKu8HAZhTti4biUrKiMo7ESvnyNsg08kIIVGtzmHsh03+j4MrDui2fv/KjX3O2BhkBEfd
-	IzYeGm48EnzjqhyAfdlGETMnymHBCkpinpIHiTegHRrbE1V8hSIqb6OhqQed6OyOAgxd7+DB5Yx6I
-	N6dkNamA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1spk8N-002b6A-1N;
-	Sun, 15 Sep 2024 16:07:42 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 15 Sep 2024 16:07:41 +0800
-Date: Sun, 15 Sep 2024 16:07:41 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com,
-	dwmw2@infradead.org, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
-	linux-security-module@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
- <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
- <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ftJOO5Q0"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c413cf5de5so4671586a12.0
+        for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 01:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1726389636; x=1726994436; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDDAsPUl2QeVKALO8ENGYLR9AUDsg9hKmMIPotwlIM8=;
+        b=ftJOO5Q0g5XUFpmgYfjiwTUL78w2p/C5WD8WObSp1qPrbnizvSFMh5tdqorAuqez2G
+         3BeiPYwGZ4xHf0sN5A8PLJOD4scODhyJ97T3yNJqMy/eiZcCNU0U3Bl/CipHlm2eG/sK
+         4KHvw7iiYqlvigL+Vn2kY6B3A5+OdOWNeI+Yc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726389636; x=1726994436;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IDDAsPUl2QeVKALO8ENGYLR9AUDsg9hKmMIPotwlIM8=;
+        b=BkeOTZYGFQMmCtlVb9LT54MWcEMU/Ytt/+nGyu6v4zNmF62cMHSHINdxRD0rmI25Ac
+         fbJEsCg7g7KI98szQ5JZr/6JAE9ZHE/Otz1ijQkDYvIK15RW9u78wexFwzfLKoiE2YqX
+         +YoPd62BJOvDIL4noxIqBmwmH2bLTwTpscTNHVi06OlpFiPK1vREvHqfx1LnX0QadQbW
+         JV2rDp3b0M93DpYqvrcl24eo2AurIGd6xr6Pgl3V8wTNIouBRckjaG1GR7wxLdbrjMWm
+         oOlZYieUJZmFGrFJmEMjFa4gM2W1FjSqGRJ3aQT+gLoZLsYTOCKrY1gz16z/Zebuf72L
+         A/bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaUKPXui8wB24z2ChvcY7Nm9SfKLPX3KBtdMeRG1ya4XD7hDYAv6G2aK4lTEfUcG+ZWIfCCVbHRKCkieaMFcW7sYH0Whw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGC+QWB5JRhn5HOPDs3nPzJHhCel0BqYhr30V7eDGqHG7OasHU
+	RHMnYuSUB7wI4qwB35qC7KfXQcLTI1XDqjpoxKUkjm+OHB2d2IlIfYA29XJc2WopqKo8UQ8N8vq
+	cyb0cUQ==
+X-Google-Smtp-Source: AGHT+IEVpcbzDZRP9jroBbcgW9iiGxGbahGvl5X1nJi0oV7vxbw6WhsLiqGmrI0NJAnlylpomPprrg==
+X-Received: by 2002:a05:6402:5290:b0:5af:30d9:e2b6 with SMTP id 4fb4d7f45d1cf-5c413e4a402mr11075070a12.23.1726389635389;
+        Sun, 15 Sep 2024 01:40:35 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb53117sm1458486a12.31.2024.09.15.01.40.32
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Sep 2024 01:40:34 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so4359558a12.1
+        for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 01:40:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUb/jh1dIixZLxhsgRy4GUrviEiIB96wL0pnCgmoLBZEFKo/puhGRvE5UsS4mkoGfpoD1hUsy0bRVnn418o5kTsfhMx8Rk=@vger.kernel.org
+X-Received: by 2002:a50:9b57:0:b0:5c2:58f7:fe95 with SMTP id
+ 4fb4d7f45d1cf-5c413e5164emr9626495a12.31.1726389632541; Sun, 15 Sep 2024
+ 01:40:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+ <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+In-Reply-To: <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 15 Sep 2024 10:40:15 +0200
+X-Gmail-Original-Message-ID: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
+Message-ID: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com, dwmw2@infradead.org, 
+	davem@davemloft.net, linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
+	linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 15, 2024 at 09:11:04AM +0200, Linus Torvalds wrote:
+On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> wrote:
 >
-> So honestly, just the series adding pgp key verification I have no
-> objection to. The use case where some firmware uses pgp to validate
-> allowed keys in EFI variables etc sounds like a "ok, then we need to
-> parse them".
+> If the aformentioned EFI use-case is bogus, then distro package
+> verification is going to be the only application for PGP keys in
+> the kernel.
 
-The use-case for EFI variables appears to be invalid:
+So I haven't actually seen _that_ series, but as mentioned it does
+smell pretty conceptually broken to me.
 
-https://lore.kernel.org/all/CAMj1kXH8nWtAzX+9xc2tLyy5d0w==JNQCMJBAbL=LdcF+XrYkw@mail.gmail.com/
+But hey, code talks, bullshit walks. People can most certainly try to
+convince me.
 
-> The objections I had were against the whole "start doing policy in
-> kernel", with what sounded like actually parsing and unpacking rpm
-> contents and verifying them with a pgp key. *That* still sounds like a
-> disaster to me, and is the part that made me go "why isn't that done
-> in user space together with then generating the fsverifty
-> information"?
-
-If the aformentioned EFI use-case is bogus, then distro package
-verification is going to be the only application for PGP keys in
-the kernel.  
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+                   Linus
