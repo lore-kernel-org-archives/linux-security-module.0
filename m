@@ -1,119 +1,80 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C907F1C57A9
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 09:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FB2198A03;
+	Sun, 15 Sep 2024 09:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726391674; cv=none; b=G/HiSvbHrT1H/FoSYdkcpOeomAvn6UhXyUKCXwb7e6kRsQ82SMTQXoFHiG3hmnzbY73W5Ev0ZU7TB04O+nKLxXtnvAUQusxblJnzIpjrdMafgz+9QKMWEXVJ3+xc9fqXGJqRDoA8rxgwS5IwAU8HabcHmKBUl1tE1l0JeyyvES8=
+	t=1726391769; cv=none; b=g97WLYl0W5tZFzqbBPYaQXSOdKRugugjTlLUCWcZk8FVTtt8RGC6bMtCmI5eIrZNyckuClrvE7xX++I5jT9eDSvKNl4VXzMwowhFJxfIiaZk2WXvGF9lxDBYQeIkLckzobc2zwZF64W/MIH8pXLmbnw0XbiOZXwfByaH/wMX3gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726391674; c=relaxed/simple;
-	bh=gxlFIuTWsq0Qr40nIziAcZuthi1icltxFBU/0xp0M1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BqMbITqaf+cglenmHoaSJ5116hWyXbHX+HZo8xwyIEJ6U4tF6dL1ijy2IRNf3rRMlqoYgLAUG/8D+9ucdZD1Ce941pxU91E1h1IGU68pg7yIZj2j1KjV1GUWy3NztklA1tK9XfR9EfODR2ZVO5D56Fjkni1TN6TWtvqUg4Jjluk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kx5/Sg1r; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726391769; c=relaxed/simple;
+	bh=ET7pk3ktMsIJXoyB4EtALp5wAErV+ZXY2YQcO9+O2Vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2Ob2g+PnqlESImIhmXJuhTsJDJ2i2q5Mw4FvFRhSjJ+ywkq0zOgM6EknOaC3g60MDos2gk20Ya/DLK0r13IvzSTEq7FzDTv+HXaI8IkPr2NtL5pQr/1ORhh4goIB5wnUngOKkij7CKW10c8MvyFq4NYYyRyGNgz5Z1Psa+n7xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=q/NcMNKM; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kx5/Sg1r"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso3319802276.0
-        for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 02:14:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726391671; x=1726996471; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BFdj5y/sop/rbcS7l4POgR+aZBaaEXxmhVXxcqjxcSs=;
-        b=Kx5/Sg1rgKvDHOD2jPhkkeckM7y3t2X73LrxT48tOYVw/T8jJLOvtJYPPvtcVo62Wl
-         btAM4/0+dQmel6tdQvJhRagn028NjMLFW59VeY+r5GgXcYbQqsvrblqpb1o55zjfoWC9
-         Or5cukNeuh+t6qUql7kxIC8gNmPoO3QcSnIpNJCGtWatTPDDFEPIV+/WH3ywcqhrVOTD
-         YIwkHWHDZI8kD+smk0nw2Wc4eCVijpQjejfljhhplAuJ7IN837FQJT9qpkWGTPmIJLNO
-         tqcdX07yIk7OxS8vrqEneU3U+EbSQfLh4yqFL4NdKgkgYhll8JUZlnn3Fwvrfb/cODAs
-         LWOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726391671; x=1726996471;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BFdj5y/sop/rbcS7l4POgR+aZBaaEXxmhVXxcqjxcSs=;
-        b=pSNrW6/bAZUxHmDRV5XaDmHiWhsBHgINea/ku+WMoHknFw5LikQS/h46670uKIWUyX
-         yQnmuHbxjidZMg7Mds2QkyewMAiyHFNr2wlnF/0q875rvb2xL7hiJowdwpxiAWUXdQVS
-         rPXVQ9K1/cQTdaKo8WV2mrM3koinJgb8uPRu7P8cHoolAf9RwS4bdwU6QhvgpHxP2sLe
-         pZiggYmWi6QJFBjAqrBAt2G8rZz41dWGkS+bv5DpaunrCUqsh+oMTsgyX3m0Nilf/cLf
-         RYwVyZ/JuRmgemcRzTXQtkN7etGVGm2IziP/2jq3b/97NSqW7RvYitJFsZ8gSwvdshv3
-         E84w==
-X-Gm-Message-State: AOJu0YyHXEN3yxHXIjHRk+vwFTA6wMtPfo5fXarao+CoJbkKN7qKNK8Z
-	ILpIYAsB/94wnKRqmsreXwo+PpOGej1TcCaXG5dKLt6qq3pkvNgQC7Y6Kuo8BMquKICHTTqha3e
-	cPT+p/5LB1+Oin6nETCAo3WZ1sLagnwFy
-X-Google-Smtp-Source: AGHT+IEmEojHxoAhnhHpIEqYGq5oWjPYMH8oeJngzSHR6tYyU805zEnSxh9IQlQuQyvxsA+sr7Wv6cxWm2hp3IbW6AM=
-X-Received: by 2002:a05:690c:4783:b0:6d6:7c9a:bf5b with SMTP id
- 00721157ae682-6dbb6b9b18dmr84480137b3.35.1726391671633; Sun, 15 Sep 2024
- 02:14:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="q/NcMNKM"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Yvxu77mKMadwj+nJKyK3lHmuRQEqDZ8tD9FJrJgQs2g=; b=q/NcMNKMSUzk5TbUgKIgE3dBYk
+	4dvuFfvoTSTtN0wRJij2EQKOyYVUQyUXqmA7RKDJxEMYOqNCZ5I8LsyWMBwylQNY9EuYkSAcY0irW
+	z6Z/+kbJWRpWr/1cv9oHyKmONGbEPTe8UZXfa3OBhvLbFxj/1py+iDZn/fvaNj7QmTlfsdBOfDVem
+	s8vnPRlfeqYkhzr1AgxqknfqeM200GQLaQneY9sLHxrciEcPH8KJ3xlI9EVyNEjTOhzVwo/N9F6Yx
+	DFlNRvJ+UFbKSNpEt+HpBiCtp9KtUkXS3iuPPaLBe/HcYlL+/JIp3Y4x8xipVN0MY13Tu01DRqub/
+	/6VwRleg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1splBv-002bhN-1o;
+	Sun, 15 Sep 2024 17:15:26 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 15 Sep 2024 17:15:25 +0800
+Date: Sun, 15 Sep 2024 17:15:25 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com,
+	dwmw2@infradead.org, davem@davemloft.net,
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
+	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
+	linux-security-module@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+Message-ID: <ZualreC25wViRHBq@gondor.apana.org.au>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
+ <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+ <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
+ <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
+ <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913234840.1318655-1-luca.boccassi@gmail.com> <049ea228-dd20-4a15-961f-ae560a7ed715@linux.microsoft.com>
-In-Reply-To: <049ea228-dd20-4a15-961f-ae560a7ed715@linux.microsoft.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Sun, 15 Sep 2024 11:14:20 +0200
-Message-ID: <CAMw=ZnR1_QfZrXqa7eiMXF9Jv4k6ZiZLUUfy9gM2OnGNw67AOg@mail.gmail.com>
-Subject: Re: [PATCH] ipe: allow secondary and platform keyrings to
- install/update policies
-To: Fan Wu <wufan@linux.microsoft.com>
-Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
 
-On Sun, 15 Sept 2024 at 06:27, Fan Wu <wufan@linux.microsoft.com> wrote:
->
->
->
-> On 9/13/2024 4:48 PM, luca.boccassi@gmail.com wrote:
-> > From: Luca Boccassi <bluca@debian.org>
-> >
-> ...
-> >
-> > Signed-off-by: Luca Boccassi <bluca@debian.org>
-> > ---
-> >   security/ipe/policy.c | 8 +++++++-
-> >   1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-> > index d8e7db857a2e..cac304dc86c2 100644
-> > --- a/security/ipe/policy.c
-> > +++ b/security/ipe/policy.c
-> > @@ -169,9 +169,15 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
-> >                       goto err;
-> >               }
-> >
-> > -             rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len, NULL,
-> > +             rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
-> > +                                         VERIFY_USE_SECONDARY_KEYRING,
-> >                                           VERIFYING_UNSPECIFIED_SIGNATURE,
-> >                                           set_pkcs7_data, new);
-> > +             if (rc == -ENOKEY)
-> > +                     rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
-> > +                                                 VERIFY_USE_PLATFORM_KEYRING,
-> > +                                                 VERIFYING_UNSPECIFIED_SIGNATURE,
-> > +                                                 set_pkcs7_data, new);
-> >               if (rc)
-> >                       goto err;
-> >       } else {
->
-> Hi Luca,
->
-> This patch looks good to me. My only thought is, like what we currently
-> have for dm-verity, should we also add two kconfigs to enable to use
-> these two keyrings respectively?
+On Sun, Sep 15, 2024 at 10:40:15AM +0200, Linus Torvalds wrote:
+> 
+> So I haven't actually seen _that_ series, but as mentioned it does
+> smell pretty conceptually broken to me.
+> 
+> But hey, code talks, bullshit walks. People can most certainly try to
+> convince me.
 
-Sure no problem, sent v2 with the added kconfigs.
+Roberto, correct me if I'm wrong but your intended use case is
+the following patch series, right?
 
-Unlike dm-verity the default is "yes" for both though: it's been quite
-a pain to get all distributions to enable the dm-verity kconfigs for
-the keyrings, given they are quite hidden and a niche use case and
-general distro maintainers don't go and look for these options, but
-likewise it made signed dm-verity unusable on general purpose distros
-without them. I'd like to avoid repeating the same plight. This way if
-one doesn't want them they can disable them, but the default if IPE is
-enabled is to use them.
+https://lore.kernel.org/linux-integrity/20240905152512.3781098-1-roberto.sassu@huaweicloud.com/
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
