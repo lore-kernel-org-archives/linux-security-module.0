@@ -1,93 +1,180 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08E193429
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 08:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83D198A03
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 09:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726389639; cv=none; b=KmZ4qv97cMXMnHp+/4ooZQnW+7oiNnIpiB6LJrF5TJMwV94EM2jxJZJtSgwpH87PB6rHC11ReKnzSuqj7HqRBFVorEWvwkf6uEdVuG/rqP0QOMpNWztJKySPaWd8JxEg4yC17g+mrQFF0t2Z3CH2WLupJrMhc0DKQ0E8siR4Dv4=
+	t=1726391490; cv=none; b=Ywr8udDC+qraXyF2mED4DEDFoSJNZfs0+w9PGVqxNvWtRr789GX4az0zv45KoUGy1j/paFhhF3jDjTRuiOlkVmDyorZCv74z3UU2jY8mYI6buQUl39opCtKloETGEWPDWL9RGDmCFNIjbBvhmC+JSKsjlgTlHJJfOdLPhsg4Urc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726389639; c=relaxed/simple;
-	bh=7W4dXzHo6ZsXChruk3vokDJnvUK3D1xdySswkG1oy0o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IpbiUK7DF2jemecHhauLb9CRv5r2ScsQK2U6DdwdAEAOQyGVFMno+1tI/tbeoMhutvK1qPn8bwj9gCfM0mchreHHPlIHfBjxaaNIzdn6MsTipmHGATjaJlouF7MGbkN4dL+b+c2pyCBRp+fU4vadWqmQY2TdX+Y5uSD13GlY8XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ftJOO5Q0; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1726391490; c=relaxed/simple;
+	bh=7MzWydgr8FUMwwcX/KIqLYo19bvtVD6wWq7YCvM3ZOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tKdhzbgUtr+djqgbP6/Rv0a42PO3fUWrjYovgXwK+0EGabasL4OgOQamFo+/8tTLYQmWq1v0HWIp0YeP2ok2muNbdFqoPIgI0sxJbsA7Ccy2Vsp8N4GDDzNUCc9OMoKNl/W9tow8EDs6mWJDI+7qlOkShtl41DBMOCMuYG/limw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZU9Yfim; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ftJOO5Q0"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c413cf5de5so4671586a12.0
-        for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 01:40:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZU9Yfim"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso512267766b.0
+        for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 02:11:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1726389636; x=1726994436; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IDDAsPUl2QeVKALO8ENGYLR9AUDsg9hKmMIPotwlIM8=;
-        b=ftJOO5Q0g5XUFpmgYfjiwTUL78w2p/C5WD8WObSp1qPrbnizvSFMh5tdqorAuqez2G
-         3BeiPYwGZ4xHf0sN5A8PLJOD4scODhyJ97T3yNJqMy/eiZcCNU0U3Bl/CipHlm2eG/sK
-         4KHvw7iiYqlvigL+Vn2kY6B3A5+OdOWNeI+Yc=
+        d=gmail.com; s=20230601; t=1726391486; x=1726996286; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T53DfKpIULc696V+zFqyiFp1LKkmBasfhff9ZWRR4Yk=;
+        b=HZU9YfimB/Z0X1K4Hg7vjpsEEJwOowbYutTdMU0nVPHZVF3YR2kTR0gwjY9NW4Dc5m
+         N1L7o5WVbSdjnf5Kf/0BL/sfcNm53adeE2GrW5PZfvkWuDN08WjEloS6C5RbyDlZTN1d
+         YWW6aHm7WZjB9rpfYGQxnLbyMXtGmCof7PDPjhCodRIBagIa3SA0AJLfFY3zNRZtM5HI
+         q34F3vZTT5rRSZLZNdokQdNIKjJzil/zfvikbbrJDZtbTQHclIVLc8/8/KiYW/p2eRPT
+         BJ1AWxgJ9iWVFVhbweOJbxPoKgmDIN7qqCxHtJdylCFSuGwk9oe1idFlxnHs5uRatcTb
+         W3LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726389636; x=1726994436;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IDDAsPUl2QeVKALO8ENGYLR9AUDsg9hKmMIPotwlIM8=;
-        b=BkeOTZYGFQMmCtlVb9LT54MWcEMU/Ytt/+nGyu6v4zNmF62cMHSHINdxRD0rmI25Ac
-         fbJEsCg7g7KI98szQ5JZr/6JAE9ZHE/Otz1ijQkDYvIK15RW9u78wexFwzfLKoiE2YqX
-         +YoPd62BJOvDIL4noxIqBmwmH2bLTwTpscTNHVi06OlpFiPK1vREvHqfx1LnX0QadQbW
-         JV2rDp3b0M93DpYqvrcl24eo2AurIGd6xr6Pgl3V8wTNIouBRckjaG1GR7wxLdbrjMWm
-         oOlZYieUJZmFGrFJmEMjFa4gM2W1FjSqGRJ3aQT+gLoZLsYTOCKrY1gz16z/Zebuf72L
-         A/bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaUKPXui8wB24z2ChvcY7Nm9SfKLPX3KBtdMeRG1ya4XD7hDYAv6G2aK4lTEfUcG+ZWIfCCVbHRKCkieaMFcW7sYH0Whw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGC+QWB5JRhn5HOPDs3nPzJHhCel0BqYhr30V7eDGqHG7OasHU
-	RHMnYuSUB7wI4qwB35qC7KfXQcLTI1XDqjpoxKUkjm+OHB2d2IlIfYA29XJc2WopqKo8UQ8N8vq
-	cyb0cUQ==
-X-Google-Smtp-Source: AGHT+IEVpcbzDZRP9jroBbcgW9iiGxGbahGvl5X1nJi0oV7vxbw6WhsLiqGmrI0NJAnlylpomPprrg==
-X-Received: by 2002:a05:6402:5290:b0:5af:30d9:e2b6 with SMTP id 4fb4d7f45d1cf-5c413e4a402mr11075070a12.23.1726389635389;
-        Sun, 15 Sep 2024 01:40:35 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb53117sm1458486a12.31.2024.09.15.01.40.32
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Sep 2024 01:40:34 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c255e3c327so4359558a12.1
-        for <linux-security-module@vger.kernel.org>; Sun, 15 Sep 2024 01:40:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUb/jh1dIixZLxhsgRy4GUrviEiIB96wL0pnCgmoLBZEFKo/puhGRvE5UsS4mkoGfpoD1hUsy0bRVnn418o5kTsfhMx8Rk=@vger.kernel.org
-X-Received: by 2002:a50:9b57:0:b0:5c2:58f7:fe95 with SMTP id
- 4fb4d7f45d1cf-5c413e5164emr9626495a12.31.1726389632541; Sun, 15 Sep 2024
- 01:40:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726391486; x=1726996286;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T53DfKpIULc696V+zFqyiFp1LKkmBasfhff9ZWRR4Yk=;
+        b=p8VPfl4wDXAiE6ZMnNjGE3uox0IUekGpHx28slKvKt8HhPe2by70Darq5TAzLSk1yp
+         bdUfgBEqNURaRfxBApjSU/rd1sCpufdRdr+Kgz2j6LwzCaq/uBbSBEOE3py2OMEm5Tof
+         ZLOcyEod/oulh+M2xdNjuJOLv1UEx+W8EuuNQY8Cl9CTKf2cVi03Sql5XmsG/wKHV/jm
+         bVlDkdTXR/jwje9P/6cCdk2JdXnbka+aiUo2nb6s/KOBPfUikC9rphzxc8xLzlKRs2P5
+         TobiR7yUiaQ8gEMqGmm43s7ZkNErZLZVZOC9X1cZnppNRt9yN306sCQZ0GbwHM5o5wuL
+         0JPw==
+X-Gm-Message-State: AOJu0Yx0B+E474Rr1ZwWwjxhwf1I1ZZP88jaQFUR2s2uQ3B6lWq0Z2iZ
+	6n+atl4pzgsPZUUv65WCodAtU1ragyOjU8sb1RaDNhyoDuYRcHZ2PVDcgROb
+X-Google-Smtp-Source: AGHT+IEOC3S993QR/dt+xihab3lEW6d9+/98IWZ8BHnRsCC92InK7CJI8ZRIUxyW7rPvtqt75zeJmA==
+X-Received: by 2002:a17:907:6d24:b0:a86:91a5:4d09 with SMTP id a640c23a62f3a-a902a8bc129mr1319092666b.26.1726391485762;
+        Sun, 15 Sep 2024 02:11:25 -0700 (PDT)
+Received: from localhost ([2001:871:213:da56:8414:8296:c4db:f217])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612df5afsm173530466b.162.2024.09.15.02.11.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Sep 2024 02:11:24 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: linux-security-module@vger.kernel.org
+Cc: wufan@linux.microsoft.com,
+	paul@paul-moore.com
+Subject: [PATCH v2] ipe: allow secondary and platform keyrings to install/update policies
+Date: Sun, 15 Sep 2024 11:11:19 +0200
+Message-Id: <20240915091119.1916049-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20240913234840.1318655-1-luca.boccassi@gmail.com>
+References: <20240913234840.1318655-1-luca.boccassi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
- <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
-In-Reply-To: <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 15 Sep 2024 10:40:15 +0200
-X-Gmail-Original-Message-ID: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
-Message-ID: <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, dhowells@redhat.com, dwmw2@infradead.org, 
-	davem@davemloft.net, linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
-	linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
-	linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> If the aformentioned EFI use-case is bogus, then distro package
-> verification is going to be the only application for PGP keys in
-> the kernel.
+From: Luca Boccassi <bluca@debian.org>
 
-So I haven't actually seen _that_ series, but as mentioned it does
-smell pretty conceptually broken to me.
+The current policy management makes it impossible to use IPE
+in a general purpose distribution. In such cases the users are not
+building the kernel, the distribution is, and access to the private
+key included in the trusted keyring is, for obvious reason, not
+available.
+This means that users have no way to enable IPE, since there will
+be no built-in generic policy, and no access to the key to sign
+updates validated by the trusted keyring.
 
-But hey, code talks, bullshit walks. People can most certainly try to
-convince me.
+Just as we do for dm-verity, kernel modules and more, allow the
+secondary and platform keyrings to also validate policies. This
+allows users enrolling their own keys in UEFI db or MOK to also
+sign policies, and enroll them. This makes it sensible to enable
+IPE in general purpose distributions, as it becomes usable by
+any user wishing to do so. Keys in these keyrings can already
+load kernels and kernel modules, so there is no security
+downgrade.
 
-                   Linus
+Add a kconfig each, like dm-verity does, but default to enabled if
+the dependencies are available.
+
+Signed-off-by: Luca Boccassi <bluca@debian.org>
+---
+v2: add Kconfig entries following the dm-verity model
+    update documentation
+
+ Documentation/admin-guide/LSM/ipe.rst |  5 ++++-
+ security/ipe/Kconfig                  | 19 +++++++++++++++++++
+ security/ipe/policy.c                 | 14 +++++++++++++-
+ 3 files changed, 36 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+index f38e641df0e9..47323494d119 100644
+--- a/Documentation/admin-guide/LSM/ipe.rst
++++ b/Documentation/admin-guide/LSM/ipe.rst
+@@ -223,7 +223,10 @@ are signed through the PKCS#7 message format to enforce some level of
+ authorization of the policies (prohibiting an attacker from gaining
+ unconstrained root, and deploying an "allow all" policy). These
+ policies must be signed by a certificate that chains to the
+-``SYSTEM_TRUSTED_KEYRING``. With openssl, the policy can be signed by::
++``SYSTEM_TRUSTED_KEYRING``, or to the secondary and/or platform keyrings if
++``CONFIG_IPE_POLICY_SIG_SECONDARY_KEYRING`` and/or
++``CONFIG_IPE_POLICY_SIG_PLATFORM_KEYRING`` are enabled, respectively.
++With openssl, the policy can be signed by::
+ 
+    openssl smime -sign \
+       -in "$MY_POLICY" \
+diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
+index 3ab582606ed2..ee6beca5494a 100644
+--- a/security/ipe/Kconfig
++++ b/security/ipe/Kconfig
+@@ -31,6 +31,25 @@ config IPE_BOOT_POLICY
+ 
+ 	  If unsure, leave blank.
+ 
++config IPE_POLICY_SIG_SECONDARY_KEYRING
++        bool "IPE policy update verification with secondary keyring"
++        default y
++        depends on SECONDARY_TRUSTED_KEYRING
++        help
++          Also allow the secondary trusted keyring to verify IPE policy
++		  updates.
++
++          If unsure, answer Y.
++
++config IPE_POLICY_SIG_PLATFORM_KEYRING
++        bool "IPE policy update verification with platform keyring"
++        default y
++        depends on INTEGRITY_PLATFORM_KEYRING
++        help
++          Also allow the platform keyring to verify IPE policy updates.
++
++          If unsure, answer Y.
++
+ menu "IPE Trust Providers"
+ 
+ config IPE_PROP_DM_VERITY
+diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+index d8e7db857a2e..bf5aa97911e1 100644
+--- a/security/ipe/policy.c
++++ b/security/ipe/policy.c
+@@ -169,9 +169,21 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
+ 			goto err;
+ 		}
+ 
+-		rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len, NULL,
++		rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
++#ifdef CONFIG_IPE_POLICY_SIG_SECONDARY_KEYRING
++					    VERIFY_USE_SECONDARY_KEYRING,
++#else
++					    NULL,
++#endif
+ 					    VERIFYING_UNSPECIFIED_SIGNATURE,
+ 					    set_pkcs7_data, new);
++#ifdef CONFIG_IPE_POLICY_SIG_PLATFORM_KEYRING
++		if (rc == -ENOKEY)
++			rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
++						    VERIFY_USE_PLATFORM_KEYRING,
++						    VERIFYING_UNSPECIFIED_SIGNATURE,
++						    set_pkcs7_data, new);
++#endif
+ 		if (rc)
+ 			goto err;
+ 	} else {
+-- 
+2.39.5
+
