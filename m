@@ -1,92 +1,137 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BA01C579C;
-	Sun, 15 Sep 2024 17:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AD61CBEB5;
+	Sun, 15 Sep 2024 18:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726422766; cv=none; b=U8FFd80wS3NQtogFuhcSHQz6n/hPc14HSIUEW7thp8yFVT5+QbA0f3h8dHJip2Alr7sQD597yaZmZ5hmNUZrmf/EhZ5M1xV9GdslNRshp/W6u6iWtLdL362YdPVloaHiJy/QYm4BMxv48lvkigeANPE+G3Cpv9dnd/dRy4A6nTk=
+	t=1726425574; cv=none; b=mXxAmg471PSXHc0eis9i9AgeLZMLwNFHot2Dt2Pe8aepdDStl3WTu9VZKLGyR/SLlFqm8B8bMFZdpleF5N+RxJEZit7qaTI3A/gDmqJOZkl+/IAQztebSm0kNS18XjnmZebRzAHw+7X9xBCw1kmJ0h/RbwzR/sk7Lqi5XicW3IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726422766; c=relaxed/simple;
-	bh=ZZlK3V802zzOLTPZYT2VYgsot0+Pl9FAceSF6jAj7rk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jjyggbLFf/LFHhoECXoWvZPXhgjHSbSUo39mZketjfx2y4Z87xM6BOI5OLGoxPQJ9lNi/jbOrMWKK3F3osxjiBv+JO391rgM5F6YtUNj8gOpvkwBB67VGwm0DSr1idGRC6QonUVGap0B45TGJXromthTSC0n4crkCZBg8dMb8Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X6FNL6612z9v7JY;
-	Mon, 16 Sep 2024 01:27:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 9D6BB140590;
-	Mon, 16 Sep 2024 01:52:28 +0800 (CST)
-Received: from [10.81.201.197] (unknown [10.81.201.197])
-	by APP2 (Coremail) with SMTP id GxC2BwCnVsfQHudm9DD9AA--.26858S2;
-	Sun, 15 Sep 2024 18:52:27 +0100 (CET)
-Message-ID: <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
-Date: Sun, 15 Sep 2024 19:52:13 +0200
+	s=arc-20240116; t=1726425574; c=relaxed/simple;
+	bh=ujI3ob0yLW4HSxrKVQjvMzAe8JcPZ3eIAEBeL/dVX6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPSuCfCDnvF6asJ8iDP1u9qIXwixdpAlhDUjphc8yjRrDIV+RbruBpKy/YP7CxW1jcAUt7QeByAzo/Z0AwRVBAuXZvpWpzzyjXVl4CCSSxglSAyMZGQNN5EtpN5cOIZ3gAgTd3gtgFxnI5u62sJpeIqFQJoh18mPtVLj8wrsvz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BfiZuwXU; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BfiZuwXU"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=l1/sYaWb1avWw0suXdNddcpJnS6z0B2rjO19tHcg/uI=; b=BfiZuwXU2BH++axM4Gw1YN95tR
+	c1O4s11Y39h0Mz3c1+8MmNLDkr7F3WGYsb/1sp3uPpZOmCNYiYjBuZPwhW7FxF0oa/08uglBM1ggJ
+	0NL+hulG2dqPrP4ONB0plbmWRCVbAr//BF+AteapPoy4tugIR5nsfpv0Fh7DbGLbS8YvkUP5hA+t0
+	5ADTWU/Pz+hNJBSnuZsFmxD8sLk47JDCoWuc6d0igsUP0V9VburIFLorPQohHCFH7b2qUUfr/pR1w
+	j97a+22+AQ99ZAZWYVe/FG6lI5a3H+UqGBY28diMxY1P6UoZo0BisMBS96IZcHOh006QcnEchT1Kf
+	wzugQBoQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1spu9J-0000000CjB7-3t5m;
+	Sun, 15 Sep 2024 18:39:05 +0000
+Date: Sun, 15 Sep 2024 19:39:05 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v10 6/8] rust: file: add `FileDescriptorReservation`
+Message-ID: <20240915183905.GI2825852@ZenIV>
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-To: Herbert Xu <herbert@gondor.apana.org.au>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dhowells@redhat.com, dwmw2@infradead.org, davem@davemloft.net,
- linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
- linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
- linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
- <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
- <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com>
- <ZuaVzQqkwwjbUHSh@gondor.apana.org.au>
- <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com>
- <ZualreC25wViRHBq@gondor.apana.org.au> <ZuapXswFUxsFxjgH@gondor.apana.org.au>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <ZuapXswFUxsFxjgH@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwCnVsfQHudm9DD9AA--.26858S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtrWrGF1xCrWrWw17Ar4ktFb_yoW3XrcEkF
-	95Aa48Jws5GF40yanayF4j9rZ3Kr1UAFyFq3Z5XrWfu34fJrsayws3GryrZw1kAFsavrZr
-	Ga4qv3W2q3Z0qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
-	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
-	DUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBGbmQnQGRgABs1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 9/15/2024 11:31 AM, Herbert Xu wrote:
-> On Sun, Sep 15, 2024 at 05:15:25PM +0800, Herbert Xu wrote:
->>
->> Roberto, correct me if I'm wrong but your intended use case is
->> the following patch series, right?
-> 
-> Actually the meat of the changes is in the following series:
-> 
-> https://lore.kernel.org/linux-integrity/20240905150543.3766895-1-roberto.sassu@huaweicloud.com/
+On Sun, Sep 15, 2024 at 02:31:32PM +0000, Alice Ryhl wrote:
 
-Yes, correct. The idea is to verify the authenticity of RPM headers, 
-extract the file digests from them, and use those file digests as 
-reference values for integrity checking of files accessed by user space 
-processes.
+> +impl Drop for FileDescriptorReservation {
+> +    fn drop(&mut self) {
+> +        // SAFETY: By the type invariants of this type, `self.fd` was previously returned by
+> +        // `get_unused_fd_flags`. We have not yet used the fd, so it is still valid, and `current`
+> +        // still refers to the same task, as this type cannot be moved across task boundaries.
+> +        unsafe { bindings::put_unused_fd(self.fd) };
+> +    }
+> +}
 
-If the calculated digest of a file being accessed matches one extracted 
-from the RPM header, access is granted otherwise it is denied.
+FWIW, it's a bit more delicate.  The real rules for API users are
 
-Roberto
+	1) anything you get from get_unused_fd_flags() (well, alloc_fd(),
+internally) must be passed either to put_unused_fd() or fd_install() before
+you return from syscall.  That should be done by the same thread and
+all calls of put_unused_fd() or fd_install() should be paired with
+some get_unused_fd_flags() in that manner (i.e. by the same thread,
+within the same syscall, etc.)
 
+	2) calling thread MUST NOT unshare descriptor table while it has
+any reserved descriptors.  I.e.
+	fd = get_unused_fd();
+	unshare_files();
+	fd_install(fd, file);
+is a bug.  Reservations are discarded by that.  Getting rid of that
+constraint would require tracking the sets of reserved descriptors
+separately for each thread that happens to share the descriptor table.
+Conceptually they *are* per-thread - the same thread that has done
+reservation must either discard it or use it.  However, it's easier to
+keep the "it's reserved by some thread" represented in descriptor table
+itself (bit set in ->open_fds bitmap, file reference in ->fd[] array is
+NULL) than try and keep track of who's reserved what.  The constraint is
+basically "all reservations can stay with the old copy", i.e. "caller has
+no reservations of its own to transfer into the new private copy it gets".
+	It's not particularly onerous[*] and it simplifies things
+quite a bit.  However, if we are documenting thing, it needs to be
+put explicitly.  With respect to Rust, if you do e.g. binfmt-in-rust
+support it will immediately become an issue - begin_new_exec() is calling
+unshare_files(), so the example above can become an issue.
+
+	Internally (in fs/file.c, that is) we have additional safety
+rule - anything that might be given an arbitrary descriptor (e.g.
+do_dup2() destination can come directly from dup2(2) argument,
+file_close_fd_locked() victim can come directly from close(2) one,
+etc.) must leave reserved descriptors alone.  Not an issue API users
+need to watch out for, though.
+
+[*] unsharing the descriptor table is done by
+	+ close_range(2), which has no reason to allocate any descriptors
+and is only called by userland.
+	+ unshare(2), which has no reason to allocate any descriptors
+and is only called by userland.
+	+ a place in early init that call ksys_unshare() while arranging
+the environment for /linuxrc from initrd image to be run.  Again, no
+reserved descriptors there.
+	+ coredumping thread in the beginning of do_coredump().
+The caller is at the point of signal delivery, which means that it had
+already left whatever syscall it might have been in.  Which means
+that all reservations must have been undone by that point.
+	+ execve() at the point of no return (in begin_new_exec()).
+That's the only place where violation of that constraint on some later
+changes is plausible.  That one needs to be watched out for.
