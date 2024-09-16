@@ -1,126 +1,196 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9275C33FD;
-	Mon, 16 Sep 2024 00:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6052F5B;
+	Mon, 16 Sep 2024 04:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726447156; cv=none; b=BVpbgpdu5v/w+EDuAYWtaVo6REgpi77msidA1zeNkPWMMxQ4yewO6R2Ar7q8+E1WccvrLVg+YCvAYk2ErAckr7CB/Z6xpC1/TRC5oTd5hQgG41V/03DR4zgwaNDfq+biwTxGwTzEhNis9wnWLmeqTdBXkjXJPRzGXmUehL1uBqA=
+	t=1726460315; cv=none; b=Oe0YDZl7suUxP+h6suDIYx6dZr3O/Uh1e4CgFsDnIN/56YoESGFwnCDEqFSw58D+6fJLLgCCMXgNzTYtQcPhzPbdED0rqA8yuAhcpahuGZLVhHuZMuRzky4Jo+cdbP5sDPd0lqFdyCr0UxEA+AX3e0EBPX0kws6pqqDQvN1SqMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726447156; c=relaxed/simple;
-	bh=kEeOLLovFT4pOdm53DvzxP4C8corA25kyqKlihlz4AE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=V4egx3I4tNMu+6nsvd/uzta82K7EAxUdCd7UlJfpFNHYr/zVi9TSawYa749gj+98gV38cK+HE6wqzbODR7h2haM5Tnn1VOWm2OUrvbFllJbNRr/ONWeHb5beXTYncGa7Km35ba9Zv1MwXkCEWaLc8mzp7NwDZdNmoXMeiklYd54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48G0chip073317;
-	Mon, 16 Sep 2024 09:38:43 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
- Mon, 16 Sep 2024 09:38:43 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48G0ch68073314
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 16 Sep 2024 09:38:43 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp>
-Date: Mon, 16 Sep 2024 09:38:42 +0900
+	s=arc-20240116; t=1726460315; c=relaxed/simple;
+	bh=DR5eTYXqizS++Oxp4/zCK03oWTy2bGFeXCwR6HkHWFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XneMoVnSzw75NgMyULFQDU2cJA4GVO4o1K5ooB4QN5U+K+b5yn5SScuByqsuIG5PQjOauJthi/RR2SLcDVnbOfpi+DjL4MCqN8K45awbC4tmMdnInFYQ+wMGQKxcCoOIlOIafu+3Ok7eMvqQ52XhK7ZYpsZBdu5m2teUX7zEtQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ae/65gvP; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ae/65gvP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5DbAG9dxofjmc039hnMVqStrVmflynfUIJTlbchod58=; b=Ae/65gvPFWC1d+1iGXrzaTAwXR
+	VLlQV6jCW2IbzqgXcIFV/aELZEZCVw1SMsCm6TD34Oszu3O29hVKobe4cOhBFgZTIANNBzOSnZuM1
+	7ViT56FwjuRuBPvpZgRqQ1zhh0pzOLH2BpSFxRtULTn3m9Y+rryPIy6hdwMn8YAy5T+LX9wDuzsTs
+	COwQc2kaME+xOCZ35YiXMcFmG8ma49eZrmb5j8J9iXaITD1aaPAFDUYKBE1L+/fgbAMGJlqvp2zRd
+	/9kO3jjIFjrWsgaXDnGaee9xhFlvMuS6p7/H08wAHRWUKr/vURGJk8PnY0lITIuVm40W8apxhQn8V
+	4Z3sGCPg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sq3Bt-0000000Cq4Z-455W;
+	Mon, 16 Sep 2024 04:18:22 +0000
+Date: Mon, 16 Sep 2024 05:18:21 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>
+Subject: Re: [PATCH v10 6/8] rust: file: add `FileDescriptorReservation`
+Message-ID: <20240916041821.GN2825852@ZenIV>
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-6-88484f7a3dcf@google.com>
+ <20240915183905.GI2825852@ZenIV>
+ <20240915193443.GK2825852@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Paul Moore <paul@paul-moore.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
- <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240915193443.GK2825852@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2024/09/14 0:28, Paul Moore wrote:
-> I find it somewhat amusing that you are complaining about the LSM
-> framework not accepting new LSMs in the same pull request where we are
-> adding a new LSM (IPE).  As a reminder, we have documented guidelines
-> regarding the addition of new LSMs:
->
-> https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-(...snipped...)
-> While I have no intention to negatively impact out-of-tree LSMs,
+On Sun, Sep 15, 2024 at 08:34:43PM +0100, Al Viro wrote:
 
-What I call "patent examination" is "New LSM Guidelines" section within
-that link. That section includes "here are a list of requirements for
-new LSM submissions:" and "The new LSM must be sufficiently unique", and
-out-of-tree LSMs which cannot satisfy it won't be able to become in-tree.
-If we apply this requirement to userspace program, this requirement means
-you are declaring that "postfix" (or anything except "sendmail") cannot
-become in-tree because "sendmail" is already in-tree. This is a clear
-intention of negatively impact out-of-tree LSMs. People have the right to
-use whatever subsets/alternatives. Even if a new LSM has were completely a
-subset of existing in-tree LSMs, people have the right to use such LSM.
+> FWIW, I toyed with the idea of having reservations kept per-thread;
+> it is possible and it simplifies some things, but I hadn't been able to
+> find a way to do that without buggering syscall latency for open() et.al.
 
-While I consider that some of out-of-tree LSMs being unable to become in-tree
-is inevitable, the requirement that any LSM has to be built-in is a barrier
-for LSMs which cannot be built-in. The "static call" changes in this pull
-request is saying something like "any kernel code has to be built into vmlinux,
-for CONFIG_MODULES=y is harmful", similar to "any software which is not included
-in this distribution must not be run, for software which is not included in
-this distribution is harmful".
+Hmm...  How about the following:
 
-People have the right to install whatever userspace software / kernel modules
-they need. Making it difficult to use userspace software / kernel modules
-which the in-tree and built-in kernel code cannot provide is an abuse of
-dominant position, as well as removing CONFIG_MODULES=y support from the kernel.
+* add an equivalent of array of pairs (fd, file) to task_struct;
+representation could be e.g. (a _VERY_ preliminary variant)
+	unsigned fd_count;
+	int fds[2];
+	struct file *fp[2];
+	void *spillover;
+with 'spillover' being a separately allocated array of pairs to deal with
+the moments when we have more than 2 simultaneously reserved descriptors.
+Initially NULL, allocated the first time we need more than 2.  Always empty
+outside of syscall.
 
-> My focus is on the upstream Linux kernel and ensuring that the upstream,
-> in-tree LSMs have the best framework possible to ensure their proper
-> operation and ease of development/maintenance.  While I have no
-> intention to negatively impact out-of-tree LSMs, I will not harm the
-> upstream code base solely to support out-of-tree LSMs.  Further, if
-> improvements to the upstream LSM framework are determined to harm
-> out-of-tree LSMs, that shall be no reason to reject the upstream
-> improvements.
+* inline primitives:
+	count_reserved_fds()
+	reserved_descriptor(index)
+	reserved_file(index)
 
-I have been asking you for a solution for "in-tree but not built-in" LSM
-(namely TOMOYO). You are refusing to provide a solution for the sake of
-"in-tree and built-in" LSMs. The "static call" changes fails to ensure that
-the upstream, in-tree TOMOYO to have the best framework. The "static call"
-changes makes the upstream, in-tree TOMOYO to have a worse framework than
-now.
+* int reserve_fd(flags)
+	returns -E... or index.
 
-I'm not against "static call" changes itself as long as "in-tree but not
-built-in" LSMs can remain as easily usable as now.
-https://lkml.kernel.org/r/caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp
-is a recovery for avoid having worse framework than now.
+	slot = current->fd_count
+	if (unlikely(slot == 2) && !current->spillover) {
+		allocate spillover
+		if failed
+			return -ENOMEM
+		set current->spillover
+	}
+	if slot is maximal allowed (2 + how much fits into allocated part?)
+		return -E<something>
+	fd = get_unused_fd_flags(flags);
+	if (unlikely(fd < 0))
+		return fd;
+	if (likely(slot < 2)) {
+		current->fds[slot] = fd;
+		current->fp[slot] = NULL;
+	} else {
+		store (fd, NULL) into element #(slot - 2) of current->spillover
+	}
+	current->fd_count = slot + 1;
 
-> We've discussed this many times before, obtaining stable magic numbers
-> (e.g. syscall numbers, LSM IDs, etc.) isn't possible until the
-> associated code appears in a tagged released from Linus' tree. 
+* void install_file(index, file)
+	
+	if (likely(slot < 2))
+		current->fp[slot] = file;
+	else
+		store file to element #(slot - 2) of current->spillover
 
-Think about a hardware device. A stable device ID (e.g. PCI device ID) is
-assigned as soon as a new hardware device is developed; whether a device
-driver for Windows, Linux, MacOS are provided by upstream OS manufactures
-is irrelevant.
+* void __commit_reservations(unsigned count, bool failed)
+	// count == current->fd_count
 
-Stable LSM ID has to be a property of any LSM. Not allowing out-of-tree LSMs
-to have stable LSM ID makes it difficult to use userspace software which
-depends on LSM ID. Again, this is an abuse of dominant position.
+	while (count--) {
+		fd = reserved_descriptor(count);
+		file = reserved_file(count);
+		if (!file)
+			put_unused_fd(fd);
+		else if (!failed)
+			fd_install(fd, file);
+		else {
+			put_unused_fd(fd);
+			fput(file);
+		}
+	}
+	current->fd_count = 0;
 
-> I believe this policy is not only consistent with that
-> of previous LSM maintainers, but of the general Linux kernel as well.
+* static inline void commit_fd_reservations(bool failed)
+	called in syscall glue, right after the syscall returns
+	
+	unsigned slots = current->fd_count;
+	if (unlikely(slots))
+		__commit_reservations(slots, failed);
 
-The Linux kernel is a servant for users and userspace programs.
-Your policy is based on "benefits for in-tree and built-in Linux kernel
-code". Your policy lacks "benefits for users and userspace programs".
 
+Then we can (in addition to the current use of get_unused_fd_flags() et.al. -
+that still works) do e.g. things like
+
+	for (i = 0; i < 69; i++) {
+		index = reserve_fd(FD_CLOEXEC);
+
+		if (unlikely(index < 0))
+			return index;
+
+		file = some_driver_shite(some_shite, i);
+		if (IS_ERR(file))
+			return PTR_ERR(file);
+
+		install_file(index, file); // consumed file
+
+		ioctl_result.some_array[i] = reserved_descriptor(index);
+		....
+	}
+	...
+	if (copy_to_user(arg, &ioctl_result, sizeof(ioctl_result))
+		return -EFAULT;
+	...
+	return 0;
+
+and have it DTRT on all failures, no matter how many files we have added,
+etc. - on syscall return we will either commit all reservations
+(on success) or release all reserved descriptors and drop all files we
+had planned to put into descriptor table.  Getting that right manually
+is doable (drm has some examples), but it's _not_ pleasant.
+
+The win here is in simpler cleanup code.  And it can coexist with the
+current API just fine.  The PITA is in the need to add the call
+of commit_fd_reservations() in syscall exit glue and have that done
+on all architectures ;-/
+
+FWIW, I suspect that it won't be slower than the current API, even
+if used on hot paths.  pipe(2) would be an interesting testcase
+for that - converting it is easy, and there's a plenty of loads
+where latency of pipe(2) would be visible.
+
+Comments?
