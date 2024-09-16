@@ -1,235 +1,149 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2079.outbound.protection.outlook.com [40.107.220.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31713208CA;
-	Mon, 16 Sep 2024 05:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726463438; cv=fail; b=rcjMAE5nI3TE8b1YxHJBy9O8tnP1W2ltLHYNDuUHi/EbGPmWkStB3VGkiPXawq4KZb8BWZtyFINVeOqGlXZdDMfp+3UtYz6x5xykBXuZQbp2zMf5Fy+ZLcJU0d/5MvKBoG3WaJrBr9yJTy0xJLKmiCSzP+DCI8WgFnvi4gOOI8U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726463438; c=relaxed/simple;
-	bh=wvttXrujNLJgzH/rrugvyM3zgnuLWUqavQEIi6zH5Hg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cr3zMpdjU+Mw4GFbhy9EkLOZAseBM72GaGDUPLKO3sC47u8FRurb0ur/lplUjSuae1Wdic7F9Gf8TCQhoiV8QTQHGiiv1hN2pBtfwOuYhli+rRQnYepvATqOy3eHpKhetuveqxTFuiR88VZh4zt9EJfgyvh8GJqMgxpWSNaD36Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=muAX3U3D; arc=fail smtp.client-ip=40.107.220.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09964347B4
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Sep 2024 08:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726474106; cv=none; b=uEotUobmHVxBAEo+NdO4BLqzCyp0zxSKe/LIHIKhCXllTQOCOzDlGUyhFvfpn9umWtIyyeBszartawgCjgHuo/xTPxPqIgVN0vJSjEvrxJd6ehBYS/Emnblt3yMXQY30B2xr/eoi2gkp7TrPgH6eKk/lHXf+9jznPVZj9iTs6Zg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726474106; c=relaxed/simple;
+	bh=xvWOgGhr06YrjQpWY6uecZoD9WlV683oa1tQnmbVya4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ELNvK4JtcrdtA1o3Rp4bqv/QYyJyYMyceBR4rn+NmiR9WclcQli5PI5nnBBNxO8tAZC+UKmmYoGAOho1u9wGfSFLl4bzcHq/w1Q//E+taQvtvu324kFAVY6ne/x/ALq8vv4xD+LMrNfUotVP0n1AmA8KgDqu39QUgyYLdf8U5Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OADd1aFU; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="muAX3U3D"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=okArEj/DZhKLzPQxzvOAE0CS2lg3ObR8D3J/oEf2l8DLd02+elRZoBJCXwIC2P5xcmBxvmJZQg3e05ihF2XQQW3Nq/x1bDsJRXpZHgGCKj6RNxY0l6okDih5+j/MckqA5dRLHdIJ4cLjiT2kVlJmi+APvTChDvnnQFtW40S5slXOOiJyx46K96gaTBnrFDJbbW3zkHgfYbhJAexcZn3QvmECZ/PqfwftjwU6K07L1P0qtlX0NoQ1Hx1rgu/CPl66zP0viggFncsGKyX4xbIO/3hGOdKrPO56PInG2E1Jhi+4iCCwZFr9Cx1kdII9J6W/pNNyzilLeqrUX5vVpJg1Wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QB7BKcbtTTM97yXiOXbhtWdEpIfxhfdw595BbvBII0g=;
- b=NoCB76d9wY9NbQn9Y8TrmMCix9rhK9TFslxpTbo51UAfTW4Y9cKZ2iHIg73gXed5BAH5VREmj34IxSGATUGnzntBugL58xH49lniIDqxQW6KOqgx+pk44+3TPrNvjMzxJpsvQ1UiYiY46YrPvk9Mvp7BylFbzf5kEdacM3z6vmhANUSDfv7bYwQBTr6V4jeAxpEKY/ed0iQ6Uukd9lUO+0z1XzHrZ6gztG/i1wOveW0kRgWRIokRe83WUyRqf69Yv1EF+1sdKgpVYX1kWOb1kRGvliEId5UKC8DnLap26WwVN8XlgeDJAyFVMaSWK6R7VnsbF16YgbbIyhUjQuJ9YA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QB7BKcbtTTM97yXiOXbhtWdEpIfxhfdw595BbvBII0g=;
- b=muAX3U3D1KeYTyVg2hYngVRXNdn4J+POh++7h0IBZro70XEHsCApqaL6bWUVH18eTBKbuHtdj2/TkFhsvBR/vymgsMRlD3R6LgqMiDxYG68I17W14MG1R1PnXhMrdfRmWtsENDuDbjMKbytXxK+3oB26PVi8R+QvTkN/S1QSAYw=
-Received: from SJ0PR13CA0042.namprd13.prod.outlook.com (2603:10b6:a03:2c2::17)
- by CH3PR12MB8753.namprd12.prod.outlook.com (2603:10b6:610:178::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Mon, 16 Sep
- 2024 05:10:31 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:2c2:cafe::a2) by SJ0PR13CA0042.outlook.office365.com
- (2603:10b6:a03:2c2::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18 via Frontend
- Transport; Mon, 16 Sep 2024 05:10:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Mon, 16 Sep 2024 05:10:30 +0000
-Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Sep
- 2024 00:10:25 -0500
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <john.johansen@canonical.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<serge@hallyn.com>, <linux-security-module@vger.kernel.org>,
-	<gautham.shenoy@amd.com>, <Santosh.Shukla@amd.com>, <Ananth.Narayan@amd.com>,
-	<Raghavendra.KodsaraThimmappa@amd.com>, <paulmck@kernel.org>,
-	<boqun.feng@gmail.com>, <vinicius.gomes@intel.com>, <mjguzik@gmail.com>,
-	<dennis@kernel.org>, <tj@kernel.org>, <cl@linux.com>, <linux-mm@kvack.org>,
-	<rcu@vger.kernel.org>
-Subject: [RFC 6/6] apparmor: Switch labels to percpu ref managed mode
-Date: Mon, 16 Sep 2024 10:38:11 +0530
-Message-ID: <20240916050811.473556-7-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240916050811.473556-1-Neeraj.Upadhyay@amd.com>
-References: <20240916050811.473556-1-Neeraj.Upadhyay@amd.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OADd1aFU"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ddce91cab2so5754617b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Sep 2024 01:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726474103; x=1727078903; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x0+8g6W9Xy7DC9ahNTGaEIXFMvMobpS3AWPeOGTLD28=;
+        b=OADd1aFU4Elq4XFQZptzSDBRtYzbXEFCFFO1NXyCTFDxbLe+DfGa18ObwDCj2Pe8ho
+         xFzr6/2rXPfJmBqd5s8eOb9t/woLTw49YouOMtVpmgbP9ypn6daUnpW+s0szQMQQHYuS
+         73g4C6NL4JXGMalnxgDOkc/sbM0pk/svctwkQw7Lst5TB6upct522f+rGT5EEZXbxTRh
+         FgC/U3rDWBw3M8zVq8d5kp1Yg47SsRT8ar0ZA4Zum4Y7jsx5BSjUr7Ndvh+fl66E4Z0i
+         SwjTSMk/sJYt2M++EPgygVXD5X2Q3NzqLoJBCp62F+hO5MMI0+D9Ls6x6pscuAgFNHNd
+         uY0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726474103; x=1727078903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x0+8g6W9Xy7DC9ahNTGaEIXFMvMobpS3AWPeOGTLD28=;
+        b=E19KVblVk+m+CkWBEJ69Jt6UE2H/yhIQKO+pBmQ1IdZUD+jegsbcTDSSA+udc9vsr1
+         ZRQd4EL56v7HxoJ9fS3xcGRm3i46s98gBk9rwytlFnDV50X+U9829oMxc8uiLMATaVdi
+         O+MIqjy+kXA+RN6401P+UXdT0PJsKp+WTZaXr486N77B/Rzx+LyyICZ8lQM3xoOZqs1O
+         hN5pq43eXGQk3Cv3+L2F7ePyCYW5DIONbKlkkCskynC6Scx5rRU1AiGr66j8J82AR4vt
+         Brh9xcyqixm9Jq2Ogq5yWR3r2aTLxUGmBnk0PNGb2b2ouVrD//BCSa4Zfx0YDhMJXqs+
+         yT4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVgQvSonZ9pRnp90Yhjm7Ut4k4W+X3mpm3Y+05im1sDor8Z8Bwj5EzX8HfKVqrikAuCnJQebFaxhiAL+vi3DjPT2eF8Hus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySItDfzIKNHpikEKE0VaRFBxTvM/N3XsVJUUoZ40/blLdB0/uN
+	RB6WoVFiDQaOLVec678POoAe2/021dfXNJIuXppzLifturCKwTqnyJvjOs8DEdAXVQv8sLsDbRv
+	s1nonHLzThhREllNNHgglWVySp+TrO9HndcuakXFfzteI27tfuQ==
+X-Google-Smtp-Source: AGHT+IEtjQWvWBNnu/4Nm2e4jVNcENFMN8zZXbALCj2BpwB1jQ4SS9xrt+8GM3EUi/xA8h9UtzFmswreoUCjhv4fSDY=
+X-Received: by 2002:a05:690c:92:b0:6dd:d5b7:f33e with SMTP id
+ 00721157ae682-6ddd5b7fa95mr5442187b3.33.1726474102738; Mon, 16 Sep 2024
+ 01:08:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|CH3PR12MB8753:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2e608f2a-c7e0-4287-eab7-08dcd60de2df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ePpUjEb07aoMGi8f7wdjJyRx/HnaoTGdc6a7YBhnMBpf5KQKoUZ4nQPHwGw5?=
- =?us-ascii?Q?8Q5GktXq3Eq4c6qA1KxSEiXyk7hfgXsIAkz0KZSVW28NTUAP2l9rkP/HL7dH?=
- =?us-ascii?Q?MoQTzee8q9/5osLbLt875Q3El42vtS487gOrStrabu+QLWInXIM8guwPDu9U?=
- =?us-ascii?Q?7Bzi3ibJQp3uFtsprkkemLsjIyJPua5fciueQ8jZtZa0DbS+aznLjZY8hHBn?=
- =?us-ascii?Q?6B3AW3OGcl4l23AAn3eiXL8rf5VUS1tUJ2ZcZhpLP8NH0M2A+icPlRrI/Zxn?=
- =?us-ascii?Q?zvkeThuB4QsT6CUwoR0coq//579lnXGziVm+VipndwELmE76l6LaYCZ3W+mx?=
- =?us-ascii?Q?DMHomnwAv+fCa2Vr866wfg8ODK3eYDJxSeWkSmMjXzuD/EJTd5ya+yeWowAh?=
- =?us-ascii?Q?gLNEQpcos9Qw5QiXu0fJSIpw8bsSWABpZG07GQSNBH0WPUhCxWOFbUOuZiWT?=
- =?us-ascii?Q?iW2HtAzIJx72pxJ8TFwBWJqdXA8A3/i50wG4XDU+NXIATwMFnZIOf0YMQnLp?=
- =?us-ascii?Q?mDXQO0EQVKDX3J3RftgEqYGbiSLnJeY/nGzHokgCiiPfYCSQXEgMiI6Amhur?=
- =?us-ascii?Q?xKDohECYJbNbDt49bOE0w4n7xvlb+AHJycYO9d7VO4WyZ+YqkZD93zP2M2ud?=
- =?us-ascii?Q?d4FD1b/6gCCoUHU1hgFtwo2stXeMsp1hy+zW1ctZkmPP7pL+h0QDGzUpfmPL?=
- =?us-ascii?Q?LZMVQ/v//LVm5YBEUP0dZ08SaU/Qj++gqBbFzfKMaQC08B+BUjw+ukAevUuy?=
- =?us-ascii?Q?h4Lnd072kemS3xjUdtSS4zKEjI/CbdpEOtB2ruMVB42V9nmn0c1T0lSBK5bO?=
- =?us-ascii?Q?KQ4Aicbo3i0rBbA8m01TlS8cUcdn6cC0dKriUd/GzQqzr0lHrqrpBLCJIRVA?=
- =?us-ascii?Q?NGkVqN1GybYooL8aiYmteqIN47vng+gYeJ01pxWJBpJt5lEQaKmMA5ecM9uS?=
- =?us-ascii?Q?AuYkbacODFg7Zs5a+2vu75wxucM0sHCJgJKNGCw28qhrHE2Ah+ZQDu+zZR9w?=
- =?us-ascii?Q?AQwzCHatLnx/FwC7nkiYdYKsHd191OqxDfq6hE1nCGF9wPJPcQSHhXgDBLcA?=
- =?us-ascii?Q?aZKuXEU/IQRbWGJj6rYoRlOcVFll5qm8yN/dRYcS6BKd8sO6KAJFbIkZXxga?=
- =?us-ascii?Q?CW9eqLr57X6XVOoeNNL0eP9b3m0oREfOwnXRfM6FJqe29M8NGTmTnD3TtNNV?=
- =?us-ascii?Q?EbnMCUps3vy0S0E/1QMiscjBLxGYITixrgiMX1UPymedEg2WvEuNFeyK6kmh?=
- =?us-ascii?Q?z2gsM/41/Zkhi6y3fmTVxwHjZWjy4Nb2AgwFxeNOkJvx0nJSUg0nKKC+0Pli?=
- =?us-ascii?Q?Bw+8gHGdUunhIcCAvsY92V17ZL1bFGr+EMx7W8rKeNA467+vPU0AlF77Chl1?=
- =?us-ascii?Q?jqJgtd1sygA33IvaMn8pXIRi/mw5bA/UBBmqfNgZ7VfAIkC2iUBBd6ewTmAs?=
- =?us-ascii?Q?6jX3rMsYdUUjxC1nEMnNuhWkJd7RV9zt?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2024 05:10:30.7605
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e608f2a-c7e0-4287-eab7-08dcd60de2df
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8753
+References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
+ <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp> <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp>
+In-Reply-To: <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 16 Sep 2024 04:08:11 -0400
+Message-ID: <CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com>
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Nginx performance testing with Apparmor enabled (with Nginx running in
-unconfined profile), on kernel versions 6.1 and 6.5 show significant
-drop in throughput scalability when Nginx workers are scaled to use
-higher number of CPUs across various L3 cache domains.
+On Sun, Sep 15, 2024 at 8:38=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/09/14 0:28, Paul Moore wrote:
+> > I find it somewhat amusing that you are complaining about the LSM
+> > framework not accepting new LSMs in the same pull request where we are
+> > adding a new LSM (IPE).  As a reminder, we have documented guidelines
+> > regarding the addition of new LSMs:
+> >
+> > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+> (...snipped...)
+> > While I have no intention to negatively impact out-of-tree LSMs,
+>
+> What I call "patent examination" is "New LSM Guidelines" section within
+> that link. That section includes "here are a list of requirements for
+> new LSM submissions:" and "The new LSM must be sufficiently unique", and
+> out-of-tree LSMs which cannot satisfy it won't be able to become in-tree.
+> If we apply this requirement to userspace program, this requirement means
+> you are declaring that "postfix" (or anything except "sendmail") cannot
+> become in-tree because "sendmail" is already in-tree. This is a clear
+> intention of negatively impact out-of-tree LSMs. People have the right to
+> use whatever subsets/alternatives. Even if a new LSM has were completely =
+a
+> subset of existing in-tree LSMs, people have the right to use such LSM.
 
-Below is one sample data on the throughput scalability loss, based on
-results on AMD Zen4 system with 96 CPUs with SMT core count 2:
+Comparing userspace applications to kernel code isn't a fair
+comparison as a userspace application can generally be added without
+impacting the other applications on the system.
 
-Config      Cache Domains     apparmor=off        apparmor=on
-                             scaling eff (%)      scaling eff (%)
-8C16T          1                  100%             100%
-16C32T         2                   95%              94%
-24C48T         3                   94%              93%
-48C96T         6                   92%              88%
-96C192T        12                  85%              68%
+> While I consider that some of out-of-tree LSMs being unable to become in-=
+tree
+> is inevitable, the requirement that any LSM has to be built-in is a barri=
+er
+> for LSMs which cannot be built-in.
 
-There is a significant drop in scaling efficiency for 96 cores/192 SMT
-threads.
+Anyone is always free to build their own kernel with whatever code
+changes they like, this is the beauty of the kernel source being
+available and licensed as Open Source.  You are free to build a kernel
+with whatever LSM you like included and enabled.  You have been shown
+examples on how to do this in previous threads.
 
-Perf tool shows most of the contention coming from below places:
-6.56%     nginx  [kernel.vmlinux]      [k] apparmor_current_getsecid_subj
-6.22%     nginx  [kernel.vmlinux]      [k] apparmor_file_open
+> People have the right to install whatever userspace software / kernel mod=
+ules
+> they need.
 
-The majority of the CPU cycles is found to be due to memory contention
-in atomic_fetch_add and atomic_fetch_sub operations from kref_get() and
-kref_put() operations on AppArmor labels.
+Anyone is free to build their own kernel with whatever LSMs they want,
+either in-tree or out-of-tree; the static call changes do not prevent
+that.
 
-A part of the contention was fixed with commit 2516fde1fa00 ("apparmor:
-Optimize retrieving current task secid"). After including this commit, the
-scaling efficiency improved to below:
+> > My focus is on the upstream Linux kernel and ensuring that the upstream=
+,
+> > in-tree LSMs have the best framework possible to ensure their proper
+> > operation and ease of development/maintenance.  While I have no
+> > intention to negatively impact out-of-tree LSMs, I will not harm the
+> > upstream code base solely to support out-of-tree LSMs.  Further, if
+> > improvements to the upstream LSM framework are determined to harm
+> > out-of-tree LSMs, that shall be no reason to reject the upstream
+> > improvements.
+>
+> I have been asking you for a solution for "in-tree but not built-in" LSM
+> (namely TOMOYO). You are refusing to provide a solution for the sake of
+> "in-tree and built-in" LSMs. The "static call" changes fails to ensure th=
+at
+> the upstream, in-tree TOMOYO to have the best framework. The "static call=
+"
+> changes makes the upstream, in-tree TOMOYO to have a worse framework than
+> now.
 
-Config      Cache Domains     apparmor=on        apparmor=on (patched)
-                             scaling eff (%)      scaling eff (%)
-8C16T          1                  100%             100%
-16C32T         2                   97%              93%
-24C48T         3                   94%              92%
-48C96T         6                   88%              88%
-96C192T        12                  65%              79%
+As mentioned so many times before, the "in-tree but not built-in" LSM
+problem is entirely a distribution/binary-kernel problem.  The
+upstream kernel community is not responsible for the choices and
+individual build configurations of the different Linux distros.
+Support for mechanisms which allow for dynamic LSMs in pre-built
+distro kernels is something we could consider, but so far everything
+that has been proposed has had a negative impact on the upstream
+kernel sources and has been rejected as a result.
 
-However, the scaling efficiency impact is still significant even after
-including the commit. Also, the performance impact is even higher for
->192 CPUs. In addition, the memory contention impact would increase
-when there is a high frequency of label update operations and labels
-are marked stale more frequently.
-
-Use the new percpu managed mode for tracking release of all Apparmor
-labels. Using percpu refcount for Apparmor label's refcounting improves
-throughput scalability for Nginx:
-
-Config      Cache Domains     apparmor=on (percpuref)
-                              scaling eff (%)
-8C16T          1                  100%
-16C32T         2                   96%
-24C48T         3                   94%
-48C96T         6                   93%
-96C192T        12                  90%
-
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
-
-The apparmor_file_open() refcount contention has been resolved recently
-with commit f4fee216df7d ("apparmor: try to avoid refing the label in
-apparmor_file_open"). I have posted this series to get feedback on the
-approach to improve refcount scalability within apparmor subsystem.
-
-
- security/apparmor/label.c     | 1 +
- security/apparmor/policy_ns.c | 2 ++
- 2 files changed, 3 insertions(+)
-
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index aa9e6eac3ecc..016a45a180b1 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -710,6 +710,7 @@ static struct aa_label *__label_insert(struct aa_labelset *ls,
- 	rb_link_node(&label->node, parent, new);
- 	rb_insert_color(&label->node, &ls->root);
- 	label->flags |= FLAG_IN_TREE;
-+	percpu_ref_switch_to_managed(&label->count);
- 
- 	return aa_get_label(label);
- }
-diff --git a/security/apparmor/policy_ns.c b/security/apparmor/policy_ns.c
-index 1f02cfe1d974..18eb58b68a60 100644
---- a/security/apparmor/policy_ns.c
-+++ b/security/apparmor/policy_ns.c
-@@ -124,6 +124,7 @@ static struct aa_ns *alloc_ns(const char *prefix, const char *name)
- 		goto fail_unconfined;
- 	/* ns and ns->unconfined share ns->unconfined refcount */
- 	ns->unconfined->ns = ns;
-+	percpu_ref_switch_to_managed(&ns->unconfined->label.count);
- 
- 	atomic_set(&ns->uniq_null, 0);
- 
-@@ -377,6 +378,7 @@ int __init aa_alloc_root_ns(void)
- 	}
- 	kernel_t = &kernel_p->label;
- 	root_ns->unconfined->ns = aa_get_ns(root_ns);
-+	percpu_ref_switch_to_managed(&root_ns->unconfined->label.count);
- 
- 	return 0;
- }
--- 
-2.34.1
-
+--=20
+paul-moore.com
