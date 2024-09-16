@@ -1,53 +1,49 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3992714E2DA;
-	Mon, 16 Sep 2024 11:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F088E154423;
+	Mon, 16 Sep 2024 12:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726484868; cv=none; b=hc2F81Pc0xW8UXNpyawjJzPxGC6b8fG4TatzCC8aF5/OT8WOCByOFcJSXemIvvhP6gZop3HDzp+lvdWYA+rLUh/x6LZHhrvMYB9Yi2INmK1udi63LAhqrg6ACMfB5TMqOWj2ycUxGRw5GtNicGkKnw65bt6prFeptEdDE8N5pZk=
+	t=1726489388; cv=none; b=JSQ4YQ2+1cVXYMaGOZv4oQf2ambndT+E+tfsbXnHy9LMANJJ95FDOuGnxGHewL/h5Ux8Bh+n3pw80WPDN66mOLqARTx/pWHjaP5HB7keflKINShLaZOT3IoNkjsniz+bGbYzSVpCfhH2S/HSgP6Rt8QtbKBE9OccMp95/xSAihU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726484868; c=relaxed/simple;
-	bh=xD2s5On1ZCWWzafhSszKhanrFM8TIDWSq6PdNHlzYy0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nANs7SNLPQr/lvGKp2aRioyHycv1Qaw3ozC4Ycen5TpIBO7VPZVQ6gqJ8IlGzph+uKbjRyK3DJcTZaT9O0mlnJfTMqopEB47ZYPiCtFxjldh25ACiS6jtI1VpKxtxQm5LO8QCNa0DVK2wGNoH6esmjCYrwWZtfzX8avTC9OrCvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AY0jUZP5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726489388; c=relaxed/simple;
+	bh=XhhH5JTAOwmpDbnqPFnomF2y96t11dWpqCZt2RjGRaU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FL3wuAlW/uvX1EpVma1+RfI/ViuM5pKQlLJ6iBD7FZJP9Og6ug/W0pwIcCmsdqRNXcXRQ8B1U8Yf0NN4uaBMcinfpHhhWuK68MCsJRyjCCPiva4V/fdHp4K2KS6pHFwDZFCtpBRFMpTuLtCd5RNhB1OR1fEavwTxQCwU3aKa9oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=bnS+h/EV; arc=none smtp.client-ip=51.83.41.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AY0jUZP5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7251C4CEC4;
-	Mon, 16 Sep 2024 11:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726484868;
-	bh=xD2s5On1ZCWWzafhSszKhanrFM8TIDWSq6PdNHlzYy0=;
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="bnS+h/EV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
+	t=1726489376; bh=XhhH5JTAOwmpDbnqPFnomF2y96t11dWpqCZt2RjGRaU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AY0jUZP5uKNbnY5Z8u9a6VGpH+29Fu+8WquuEtw3+rXhKUC7QWKx2b4USwVrhInDH
-	 m/EbDH33kcy2drqRApYKAZTe7ccQGnXeWmMAsmYA2sMJ4D6o7Wtqb2/Tum+9+s58iF
-	 fhixB1bh2UNfyZ4TaE0F4FJFDBVrWqBkssb0W9jyuMxAskhzveCqLsBT/+tW4qx11E
-	 ZoU8MpjO0zqw7/66DE7H0fvQxemxbwsMzbjiYVXvx3OhMc4STH8fkZme24iBdzH7n1
-	 gQRI4Co0YUDx9z26/Ny/DsuJ1RCDoKrcRQ6s5gQUw9667/G+r5r6YxFFR9zeXC6DfC
-	 uLzUK1ql7nIlQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com,
-	roberto.sassu@huawei.com,
-	mapengyu@gmail.com,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
+	b=bnS+h/EVDMCY4SceoEKBElQ2pd5WEklfXLLUkZtvXtsfLrsCJpLll3VbRw3nr+yTC
+	 4rNRfBOS7XD1stL8B10bk4iGnWp89p0WYmAetEFZyEtlIOXp/PXUgloYhlky7A7bTD
+	 I7xXMfwFIS60xoN6Hz0fx1HCSujwM6R+VQkIPXhwmiltJJeB4V4prmvMdBqPDwcpGu
+	 VemSFlDVH2XRp2lAEbfYyl+lZBGUDzVpz2SZVZpIybuaNkDcDkX38w0QRspqqAEV8Y
+	 f5t9GXZAMmk47QoiRllWvKKFtHlpvWOHxYr5J8+LHiTR5ZHF7A3dWtlMUEObKQhWHH
+	 LLuwCeQEf0hJw==
+Received: from localhost.localdomain (unknown [10.0.1.3])
+	by mx1.buffet.re (Postfix) with ESMTPA id 24B6A1230C2;
+	Mon, 16 Sep 2024 14:22:56 +0200 (CEST)
+From: Matthieu Buffet <matthieu@buffet.re>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v2 6/6] tpm: flush the auth session only when /dev/tpm0 is open
-Date: Mon, 16 Sep 2024 14:07:11 +0300
-Message-ID: <20240916110714.1396407-7-jarkko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240916110714.1396407-1-jarkko@kernel.org>
-References: <20240916110714.1396407-1-jarkko@kernel.org>
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: [RFC PATCH v1 1/7] samples/landlock: Fix port parsing in sandboxer
+Date: Mon, 16 Sep 2024 14:22:24 +0200
+Message-Id: <20240916122230.114800-2-matthieu@buffet.re>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240916122230.114800-1-matthieu@buffet.re>
+References: <20240916122230.114800-1-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,70 +52,63 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of flushing and reloading the auth session for every single
-transaction, keep the session open unless /dev/tpm0 is open. In practice
-this means applying TPM2_SA_CONTINUE_SESSION to the session attributes.
-Flush the session always when /dev/tpm0 is written.
+Unlike LL_FS_RO and LL_FS_RW, LL_TCP_* are currently optional: either
+don't specify them and these access rights won't be in handled_accesses,
+or specify them and only the values passed are allowed.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+If you want to specify that no port can be bind()ed, you would think
+(looking at the code quickly) that setting LL_TCP_BIND="" would do it.
+Due to a quirk in the parsing logic and the use of atoi() returning 0 with
+no error checking for empty strings, you end up allowing bind(0) (which
+means bind to any ephemeral port) without realising it. The same occurred
+when leaving a trailing/leading colon (e.g. "80:").
+
+To reproduce:
+export LL_FS_RO="/" LL_FS_RW="" LL_TCP_BIND=""
+
+---8<----- Before this patch:
+./sandboxer strace -e bind nc -n -vvv -l -p 0
+Executing the sandboxed command...
+bind(3, {sa_family=AF_INET, sin_port=htons(0),
+     sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+Listening on 0.0.0.0 37629
+
+---8<----- Expected:
+./sandboxer strace -e bind nc -n -vvv -l -p 0
+Executing the sandboxed command...
+bind(3, {sa_family=AF_INET, sin_port=htons(0),
+     sin_addr=inet_addr("0.0.0.0")}, 16) = -1 EACCES (Permission denied)
+nc: Permission denied
+
+Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
 ---
- drivers/char/tpm/tpm-chip.c       | 1 +
- drivers/char/tpm/tpm-dev-common.c | 1 +
- drivers/char/tpm/tpm-interface.c  | 1 +
- drivers/char/tpm/tpm2-sessions.c  | 4 ++++
- 4 files changed, 7 insertions(+)
+ samples/landlock/sandboxer.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0ea00e32f575..7a6bb30d1f32 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -680,6 +680,7 @@ void tpm_chip_unregister(struct tpm_chip *chip)
- 	rc = tpm_try_get_ops(chip);
- 	if (!rc) {
- 		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+			tpm2_end_auth_session(chip);
- 			tpm2_flush_context(chip, chip->null_key);
- 			chip->null_key = 0;
- 		}
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 4bc07963e260..c6fdeb4feaef 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -29,6 +29,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index e8223c3e781a..a84ae3a15482 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -168,7 +168,18 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
  
- #ifdef CONFIG_TCG_TPM2_HMAC
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+		tpm2_end_auth_session(chip);
- 		tpm2_flush_context(chip, chip->null_key);
- 		chip->null_key = 0;
- 	}
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index bfa47d48b0f2..2363018fa8fb 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -381,6 +381,7 @@ int tpm_pm_suspend(struct device *dev)
- 	if (!rc) {
- 		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- #ifdef CONFIG_TCG_TPM2_HMAC
-+			tpm2_end_auth_session(chip);
- 			tpm2_flush_context(chip, chip->null_key);
- 			chip->null_key = 0;
- #endif
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index f7746a165695..efe4b0017a83 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -268,6 +268,10 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 	}
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
-+	/* The first write to /dev/tpm{rm0} will flush the session. */
-+	if (!chip->is_open)
-+		attributes |= TPM2_SA_CONTINUE_SESSION;
+ 	env_port_name_next = env_port_name;
+ 	while ((strport = strsep(&env_port_name_next, ENV_DELIMITER))) {
+-		net_port.port = atoi(strport);
++		char *strport_num_end = NULL;
 +
- 	/*
- 	 * The Architecture Guide requires us to strip trailing zeros
- 	 * before computing the HMAC
++		if (strcmp(strport, "") == 0)
++			continue;
++
++		errno = 0;
++		net_port.port = strtol(strport, &strport_num_end, 0);
++		if (errno != 0 || strport_num_end == strport) {
++			fprintf(stderr,
++				"Failed to parse port at \"%s\"\n", strport);
++			goto out_free_name;
++		}
+ 		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
+ 				      &net_port, 0)) {
+ 			fprintf(stderr,
 -- 
-2.46.0
+2.39.5
 
