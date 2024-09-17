@@ -1,137 +1,138 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347E9200A3;
-	Tue, 17 Sep 2024 11:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA5915C14D
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Sep 2024 13:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726572589; cv=none; b=VOCgToaa+ZwUeuPvBkFmOEiPRZQYUT/q1P3TWP5+O5Wfj8OWRGdNF6UBhQ73ooVZnymvlqzOxROGbPbum7QhW/pAEO9SVh2wJWpW5h93HH5lOOpnkjtwlAfkBKzNQ5y0ePHqgnOGif2NI6KgIjxPJNAbZydkiXnQYX0GQYCIFnk=
+	t=1726579115; cv=none; b=DdhF7SVc5fHQlYEbvRU7x6VX5IY7R1s57rq5H4ej4XK5PjVO0dgMUbYQHbuuBinT86FNMEKgaSxRfVCK2NMnmhNwXtE5ZtVMgjVfDWBsdxP0AYdq8GJDiDo+qaWyShi4ljceKA6a/J1mfdcBaO5QEWn0icq6hLXFMcSzHxF29AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726572589; c=relaxed/simple;
-	bh=BSUGbVFzo/XLFC1Eb0wbRRxSENs3PhgBjIFbMO9VrPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5cBAFvqxGf7M1vnhkcXBk02LanXQxNAEHDLEZOg4ZGS9j3XQbM3vsliiwkcAYQ/Bd4ccYKrTKIrkShY8MwSYA2n31p1XMcLxPauN4cIs9LtxTvfzQBREQdm8aCFqWw3DEIf1VLAV7nDG7WiSDhubXsHvCXYDdVDLnde502G4YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48HBRQaS014263;
-	Tue, 17 Sep 2024 06:27:26 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48HBROCL014262;
-	Tue, 17 Sep 2024 06:27:24 -0500
-Date: Tue, 17 Sep 2024 06:27:24 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>, dhowells@redhat.com,
-        dwmw2@infradead.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <20240917112724.GA14167@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com> <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au> <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com> <ZualreC25wViRHBq@gondor.apana.org.au> <ZuapXswFUxsFxjgH@gondor.apana.org.au> <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
+	s=arc-20240116; t=1726579115; c=relaxed/simple;
+	bh=PLZDwvQindRRAHeB5t+ZnYOnq5gFNu+v/Oyb6XAl6nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cGA+bwHT0B+eJpMxw/sS2okY2X2ZJdQloU0ep2fXSBrvaq5Hi/4N9XW+VbJLQoKHZM0Y0MfXa5ZqqQhl9+dfs56gSXW/bt4Sh19G1R5MEqeB2QP92m1+RvzL8ae1NRElfroiZ63NS4UlURP1zM94J0uPSQnDZgjG7Pm5zvlbZOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KYE2Ul8e; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KYE2Ul8e"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6c49c9018ebso49873737b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Sep 2024 06:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726579112; x=1727183912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ik0KS2s0Nmk5lT8nEB/dCiWK+hK/hgiv+ifmVBdzG4=;
+        b=KYE2Ul8e4vMrxhhwwfxSrDQGSZRPxfJzON9CW5ME+DtCdFNk8w+IRmPsuEZrp3Urxo
+         fNSNJtxxsnXcbdubeZo9/He3dd+Wmiud34gwzCGhiZLeuly56iea0YkajSjHCLxLUe6x
+         labaf8UaY0EFPvBEMLK6PFpyymc+Q0EJzSFR0sgeylNbnTc3gfz2Ep13L+nd3B79jaUW
+         gpW7Cxkw5HQmVDD7C/vFM+juSNAtqOpbobiBpxn5ec1S9tqYOGxKil3eiRgGHZ/BjZAG
+         eTKM8RdUW3SSdeDwvx+evkZb6hB9fJ+LS0RRtf90SziLHDEgJ7meDivUCbVum6VFoizb
+         27dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726579112; x=1727183912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0ik0KS2s0Nmk5lT8nEB/dCiWK+hK/hgiv+ifmVBdzG4=;
+        b=e27j1NFo9df+fXDVbaBX/uEQJ3iuu2cMODw/uOC+WQ5+R/4yR1BJicKHlR7MuxgERL
+         HWC4SeSOeQkiY0qDKErV6vnFzPO0Xy/rrmu5ynbL0liZvuLHf9XA2HkhB1rVGUIsISqi
+         OqGIfJ1sxzN7fNbMEuzX6hzjYb61ZR/LkGeRrOWE9KK6Pzaf/H/cFCkfqZmiCLDEegqd
+         GvQ0EVTPfVovqOsGLEkA3b074UgHcNf3H8jnkOsBj08qZjzzf6ns7K29+t9H4/WLKhl1
+         SKwU/+NsSbuy4uAlQhnylPh61/HFvLjGZtyy4Esuz/E/1JxYrJBnrlOFw5gBgoX9qpXW
+         azMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUbl57Y5SX2sy/bWGDuqUXZMQyERl48JoeLdgXUuLACmxD+x17D/DocJJ2nWfmJclspvRguz5/QzXvU2iNjW62L6JMOrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMhMPg9mNB/vKCotTp0XS3dpdWlys5hWc/5/WKFOd+oZz6szUe
+	ESB5x1ml3DUTBorS6vGiVWD+Hm9YKX3pi1U6XsHxsQ9ONqvfaetPtr0+B4jj5pCmtNfXlOHV6g7
+	tFHpYjeT9bZSEpOwqSPhysWFFTpXCrtizVUeV
+X-Google-Smtp-Source: AGHT+IFzy8A2VzLN97EIN8C84hYkL689RhOu4IvKHAq/2Q9MzBc7XO8oVmBIIV4kMcThVv4zW0yrYqT2m+du+VHod0g=
+X-Received: by 2002:a05:690c:6713:b0:6dd:dc67:a03f with SMTP id
+ 00721157ae682-6dddc67a3b0mr40348017b3.16.1726579112435; Tue, 17 Sep 2024
+ 06:18:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 17 Sep 2024 06:27:26 -0500 (CDT)
+MIME-Version: 1.0
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
+ <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com> <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
+In-Reply-To: <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 17 Sep 2024 09:18:21 -0400
+Message-ID: <CAHC9VhQX0k68fwWF08eMCiMsewRRSqN3q=QwirV_0XjoJ4wo5A@mail.gmail.com>
+Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Kees Cook <kees@kernel.org>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 15, 2024 at 07:52:13PM +0200, Roberto Sassu wrote:
-
-Good morning, I hope the day is starting well for everyone.
-
-> On 9/15/2024 11:31 AM, Herbert Xu wrote:
-> >On Sun, Sep 15, 2024 at 05:15:25PM +0800, Herbert Xu wrote:
+On Mon, Sep 16, 2024 at 11:40=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 9/15/2024 2:07 PM, Alice Ryhl wrote:
+> > On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> wr=
+ote:
+> >> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
+> >>> Add an abstraction for viewing the string representation of a securit=
+y
+> >>> context.
+> >> Hm, this may collide with "LSM: Move away from secids" is going to hap=
+pen.
+> >> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-ca.=
+com/
 > >>
-> >>Roberto, correct me if I'm wrong but your intended use case is
-> >>the following patch series, right?
-> >
-> >Actually the meat of the changes is in the following series:
-> >
-> >https://lore.kernel.org/linux-integrity/20240905150543.3766895-1-roberto.sassu@huaweicloud.com/
-
-> Yes, correct. The idea is to verify the authenticity of RPM headers,
-> extract the file digests from them, and use those file digests as
-> reference values for integrity checking of files accessed by user
-> space processes.
+> >> This series is not yet landed, but in the future, the API changes shou=
+ld
+> >> be something like this, though the "lsmblob" name is likely to change =
+to
+> >> "lsmprop"?
+> >> security_cred_getsecid()   -> security_cred_getlsmblob()
+> >> security_secid_to_secctx() -> security_lsmblob_to_secctx()
 >
-> If the calculated digest of a file being accessed matches one
-> extracted from the RPM header, access is granted otherwise it is
-> denied.
+> The referenced patch set does not change security_cred_getsecid()
+> nor remove security_secid_to_secctx(). There remain networking interfaces
+> that are unlikely to ever be allowed to move away from secids. It will
+> be necessary to either retain some of the secid interfaces or introduce
+> scaffolding around the lsm_prop structure ...
 
-Based on the above response and your comment:
+First, thanks for CC'ing the LSM list Alice, I appreciate it.
 
-"The security policy I want to enforce is: all code that the system
-executes has been built by a trusted source (e.g. a Linux
-distribution)."
+As Kees and Casey already pointed out, there are relevant LSM changes
+that are nearing inclusion which might be relevant to the Rust
+abstractions.  I don't think there is going to be anything too
+painful, but I must admit that my Rust knowledge has sadly not
+progressed much beyond the most basic "hello world" example.
 
-From the following URL:
+This brings up the point I really want to discuss: what portions of
+the LSM framework are currently accessible to Rust, and what do we
+(the LSM devs) need to do to preserve the Rust LSM interfaces when the
+LSM framework is modified?  While the LSM framework does not change
+often, we do modify both the LSM hooks (the security_XXX() calls that
+serve as the LSM interface/API) and the LSM callbacks (the individual
+LSM hook implementations) on occasion as they are intentionally not
+part of any sort of stable API.  In a perfect world we/I would have a
+good enough understanding of the Rust kernel abstractions and would
+submit patches to update the Rust code as appropriate, but that isn't
+the current situation and I want to make sure the LSM framework and
+the Rust interfaces don't fall out of sync.  Do you watch the LSM list
+or linux-next for patches that could affect the Rust abstractions?  Is
+there something else you would recommend?
 
-https://lore.kernel.org/linux-integrity/b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com/#t
-
-What you are advocating for then, with this patch series and the
-digest cache series, is a security policy that requires signed code
-execution, correct?
-
-Nothing wrong with that, it is a reasonable security desire, but it
-seems wrong to conflate that with the implementation of the digest
-cache.  There is a great deal of utility in a digest cache but it
-doesn't require the need to parse RPM header information and/or TLV
-sequences in the kernel.
-
-That would only appear to be a requirement if your goal is a signed
-executable policy that is implemented through a packaging medium,
-correct?
-
-To wit:
-
-If I have security infrastructure that gives me confidence in the
-integrity of the files on my media, I can populate a digest cache with
-a simple ASCII list of pathnames fed into the kernel at boot time.
-
-If I don't have confidence in the integrity of the files on my media I
-could append a known good checksum to each pathname with the last
-entry in the list being a PGP signature over the input stream.
-
-I brought the following issue up in the patch series that Herbert
-links to above, but will do so here, since I believe it has relevance
-to this conversation as well.
-
-If the goal is to have the digest cache be relevant from an integrity
-perspective, particularly a signed code policy, you have to physically
-read every file that has a digest value in the RPM digest list.
-Otherwise the scheme is vulnerable to a Time Of Measurement Time Of
-Use (TOMTOU) vulnerability scenario, correct?
-
-This requires that one needs to experience a latency hit at least
-once, presumably at boot when you prime the digest cache, correct?
-
-An alternative approach may be to separate the RPM/TLV parsing code
-from the digest code and implement RPM/Debian/whatever parsing in a
-loadable module that would in turn populate the digest cache.
-
-That may be a more acceptable strategy since it places the potential
-security vulnerabilities of a parser into something that an entity
-that is interested in a signed code policy would consider to be an
-acceptable tradeoff from a security perspective.
-
-> Roberto
-
-Hopefully the above comments and clarifications will be helpful in
-furthering additional discussion.
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+--=20
+paul-moore.com
