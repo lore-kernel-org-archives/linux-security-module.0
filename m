@@ -1,146 +1,137 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BA6165EEF
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Sep 2024 21:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347E9200A3;
+	Tue, 17 Sep 2024 11:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726521314; cv=none; b=lBTEDm4JPU16yuZyHKI4/J1KNMsrLACp9jfaFZ7Td8nE60V3FyKqFiz/EGYF+ZaL8teXkTQz1GXylECWqjNvCru/pf4VZU4uXUmYh4M4ZshHJ7r3rndt5CGxpLHvNBoQOMCqljfFbkoQWRiyOEh5LPzKF/IldlZv5d1KI3ld4BY=
+	t=1726572589; cv=none; b=VOCgToaa+ZwUeuPvBkFmOEiPRZQYUT/q1P3TWP5+O5Wfj8OWRGdNF6UBhQ73ooVZnymvlqzOxROGbPbum7QhW/pAEO9SVh2wJWpW5h93HH5lOOpnkjtwlAfkBKzNQ5y0ePHqgnOGif2NI6KgIjxPJNAbZydkiXnQYX0GQYCIFnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726521314; c=relaxed/simple;
-	bh=jsP4BpefWGxRC1SsETIlVv45lPzMhi8m9W79ZBrx1F0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J21vjfT/E8xTbQ5qr9Oy9/9GRvQoZdmQKEUp0YWw4PjGC/L5jhXhXpXAaSUGrRTRKQ2EvMpW6fhACGs5AFgFk46VQsHZspUYSBuiC+Qg4e2b0cypWA4M65olqCOpnspNJg7lK2/fkKJbJMlZnivVXh5PD2uRcM+X6vSrwJrvQh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jlu1YcLz; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jlu1YcLz"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso8373a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Sep 2024 14:15:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726521310; x=1727126110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9leef1lP79QdzQSlMu20RvsBQRhUgfHGz+v151OddCM=;
-        b=Jlu1YcLzmx45LjdHR6gqD+YPMYTOLGbeoySXwl34ODW2tfzjiu8+RvB2MjdYZW6n6K
-         3azYz/kdJ7LSWtAkef00K+c8ZL08/NAMcLxJxP4hM6/u8DIfuj0mu8tqmf9xDP+AKM3f
-         v4fzrCwFx9nPzTO40ljd1W9ypQjXn44T6yZtZlfiMnEV1tu01TAi2Os3Jd1HonqBG/65
-         ovlKRS6OUNBD/YFKa4og7UYYBrvwOSbE/7g1iFHiruKC5AN2NVNNryKuUGuv5Mz0o+Q+
-         dYX4GMaHBw/728lNDkVesyvH9G9NqWG2L7EiNJl4VDgsQF50yD/m1pFMNaxhSsCo8aqy
-         3J2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726521310; x=1727126110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9leef1lP79QdzQSlMu20RvsBQRhUgfHGz+v151OddCM=;
-        b=V2da47lV3V07Mw7uZvedlqPnI+G8DegcA2JuzqQY+t7TeJ+rWQ1lrHelq9bal4BhaD
-         c4QBxewvp6b6+8/g31RBDjzHzKhkiZQLB+6JzFWo4bkK4tyTZcktzd8qgnA+lrIqoqEZ
-         ISav5vBTvG87Qjy5+UK8yHLV8zwWiFX4zRPY1VyjPJCi/ZWBfOL6J8M/SXeeiKNTeiNP
-         /I8AzU82qBHeTp57q0kds9fwH6lRjkR+gTCde23aFfZ98/yIfs1SM7H646wRqF+PZrQI
-         1eA3RpbPzL4vLwDf7k+b6KMqC5uhTX23FvOm980ugoyMEMW4V3hmTHtbwAG1dLSwmTKU
-         IEXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWivlVyBs6V29xG44kjINnx0CUCULUxXe8gqOljOSZETt9XyYoKxuNw9jOtgTmckIPdI3kyaWimDzMe0fzYJ2lXIFmzrlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFrHfOo5VNVD+uKXs1YvfLvurFGTMweAiFbXlDxk/8CIqZFZ3D
-	RcBMsA3YdG9itNotbFeG8oSWWYm+L9V3WQZWMuoVehvzpRk5b60ZehbItyhHQXFOhobTSp/4h87
-	kBRg38N0kAVNvoo8xYkStcnTlnb4TGj91LiFu
-X-Google-Smtp-Source: AGHT+IF6dyyQJaSHZbZwngVDJVdsJApUMqXalKKi0actzWHOX8EqkqUTgpJ77CsgYsbI+x2vL0Ykn2Y5eGpt5/BHf5s=
-X-Received: by 2002:a05:6402:348c:b0:5c4:2c6f:e265 with SMTP id
- 4fb4d7f45d1cf-5c4478072b6mr15387a12.1.1726521309278; Mon, 16 Sep 2024
- 14:15:09 -0700 (PDT)
+	s=arc-20240116; t=1726572589; c=relaxed/simple;
+	bh=BSUGbVFzo/XLFC1Eb0wbRRxSENs3PhgBjIFbMO9VrPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5cBAFvqxGf7M1vnhkcXBk02LanXQxNAEHDLEZOg4ZGS9j3XQbM3vsliiwkcAYQ/Bd4ccYKrTKIrkShY8MwSYA2n31p1XMcLxPauN4cIs9LtxTvfzQBREQdm8aCFqWw3DEIf1VLAV7nDG7WiSDhubXsHvCXYDdVDLnde502G4YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48HBRQaS014263;
+	Tue, 17 Sep 2024 06:27:26 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48HBROCL014262;
+	Tue, 17 Sep 2024 06:27:24 -0500
+Date: Tue, 17 Sep 2024 06:27:24 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>, dhowells@redhat.com,
+        dwmw2@infradead.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+Message-ID: <20240917112724.GA14167@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com> <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au> <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com> <ZualreC25wViRHBq@gondor.apana.org.au> <ZuapXswFUxsFxjgH@gondor.apana.org.au> <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
- <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
- <2494949.1723751188@warthog.procyon.org.uk> <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
- <CAHC9VhSPcy-xZ=X_CF8PRsAFMSeP8-VppxKr3Sz3EqMWTEs-Cw@mail.gmail.com> <CAHC9VhS5ar0aU8Q6Ky133o=zYMHYRf=wxzTpxP+dtA=qunhcmw@mail.gmail.com>
-In-Reply-To: <CAHC9VhS5ar0aU8Q6Ky133o=zYMHYRf=wxzTpxP+dtA=qunhcmw@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 16 Sep 2024 23:14:30 +0200
-Message-ID: <CAG48ez2hhu8AXgBR=ze9RRLDpB0V1rzUX2Xr2e45giV6ebTxMA@mail.gmail.com>
-Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
- [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
-To: Paul Moore <paul@paul-moore.com>
-Cc: David Howells <dhowells@redhat.com>, Jeffrey Altman <jaltman@auristor.com>, openafs-devel@openafs.org, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	John Johansen <john.johansen@canonical.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2541abb8-68b5-4e6a-b309-a001ecdfbea1@huaweicloud.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 17 Sep 2024 06:27:26 -0500 (CDT)
 
-On Mon, Sep 16, 2024 at 12:46=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> On Tue, Sep 10, 2024 at 4:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Thu, Aug 15, 2024 at 4:00=E2=80=AFPM Jann Horn <jannh@google.com> wr=
-ote:
-> > > On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redha=
-t.com> wrote:
-> > > > Jann Horn <jannh@google.com> wrote:
-> > > >
-> > > > > Rewrite keyctl_session_to_parent() to run task work on the parent
-> > > > > synchronously, so that any errors that happen in the task work ca=
-n be
-> > > > > plumbed back into the syscall return value in the child.
-> > > >
-> > > > The main thing I worry about is if there's a way to deadlock the ch=
-ild and the
-> > > > parent against each other.  vfork() for example.
-> > >
-> > > Yes - I think it would work fine for scenarios like using
-> > > KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
-> > > launched the helper (which I think is the intended usecase?), but
-> > > there could theoretically be constellations where it would cause an
-> > > (interruptible) hang if the parent is stuck in
-> > > uninterruptible/killable sleep.
-> > >
-> > > I think vfork() is rather special in that it does a killable wait for
-> > > the child to exit or execute; and based on my understanding of the
-> > > intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
-> > > KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
-> > > through execve?
+On Sun, Sep 15, 2024 at 07:52:13PM +0200, Roberto Sassu wrote:
+
+Good morning, I hope the day is starting well for everyone.
+
+> On 9/15/2024 11:31 AM, Herbert Xu wrote:
+> >On Sun, Sep 15, 2024 at 05:15:25PM +0800, Herbert Xu wrote:
+> >>
+> >>Roberto, correct me if I'm wrong but your intended use case is
+> >>the following patch series, right?
 > >
-> > Where did we land on all of this?  Unless I missed a thread somewhere,
-> > it looks like the discussion trailed off without any resolution on if
-> > we are okay with a potentially (interruptible) deadlock?
+> >Actually the meat of the changes is in the following series:
+> >
+> >https://lore.kernel.org/linux-integrity/20240905150543.3766895-1-roberto.sassu@huaweicloud.com/
+
+> Yes, correct. The idea is to verify the authenticity of RPM headers,
+> extract the file digests from them, and use those file digests as
+> reference values for integrity checking of files accessed by user
+> space processes.
 >
-> As a potential tweak to this, what if we gave up on the idea of
-> returning the error code so we could avoid the signal deadlock issue?
+> If the calculated digest of a file being accessed matches one
+> extracted from the RPM header, access is granted otherwise it is
+> denied.
 
-I'm still not convinced that there is a real danger of deadlocking
-here if the only way to deadlock involves the parent being in an
-uninterruptible wait. There aren't many places in the kernel that
-involve a parent uninterruptibly waiting for the child without locks
-being involved, especially when the parent is a shell that spawns the
-child with execve, as seems to be the intended use here.
+Based on the above response and your comment:
 
-I really dislike the idea of silently ignoring an error - I kinda feel
-like if we give up on returning an error to the child that issued the
-keyctl, the next-best option is to SIGKILL the parent, so that we can
-say "hey, we technically ensured that all future syscalls in the
-parent will use the new creds, because the parent will no longer do
-_any_ syscalls".
+"The security policy I want to enforce is: all code that the system
+executes has been built by a trusted source (e.g. a Linux
+distribution)."
 
-> I suppose there could be an issue if the parent was
-> expecting/depending on keyring change from the child, but honestly, if
-> the parent is relying on the kernel keyring and spawning a child
-> process without restring the KEYCTL_SESSION_TO_PARENT then the parent
-> really should be doing some sanity checks on the keyring after the
-> child returns anyway.
+From the following URL:
 
+https://lore.kernel.org/linux-integrity/b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com/#t
 
+What you are advocating for then, with this patch series and the
+digest cache series, is a security policy that requires signed code
+execution, correct?
 
-> I'm conflicted on the best way to solve this problem, but I think we
-> need to fix this somehow as I believe the current behavior is broken
-> ...
+Nothing wrong with that, it is a reasonable security desire, but it
+seems wrong to conflate that with the implementation of the digest
+cache.  There is a great deal of utility in a digest cache but it
+doesn't require the need to parse RPM header information and/or TLV
+sequences in the kernel.
+
+That would only appear to be a requirement if your goal is a signed
+executable policy that is implemented through a packaging medium,
+correct?
+
+To wit:
+
+If I have security infrastructure that gives me confidence in the
+integrity of the files on my media, I can populate a digest cache with
+a simple ASCII list of pathnames fed into the kernel at boot time.
+
+If I don't have confidence in the integrity of the files on my media I
+could append a known good checksum to each pathname with the last
+entry in the list being a PGP signature over the input stream.
+
+I brought the following issue up in the patch series that Herbert
+links to above, but will do so here, since I believe it has relevance
+to this conversation as well.
+
+If the goal is to have the digest cache be relevant from an integrity
+perspective, particularly a signed code policy, you have to physically
+read every file that has a digest value in the RPM digest list.
+Otherwise the scheme is vulnerable to a Time Of Measurement Time Of
+Use (TOMTOU) vulnerability scenario, correct?
+
+This requires that one needs to experience a latency hit at least
+once, presumably at boot when you prime the digest cache, correct?
+
+An alternative approach may be to separate the RPM/TLV parsing code
+from the digest code and implement RPM/Debian/whatever parsing in a
+loadable module that would in turn populate the digest cache.
+
+That may be a more acceptable strategy since it places the potential
+security vulnerabilities of a parser into something that an entity
+that is interested in a signed code policy would consider to be an
+acceptable tradeoff from a security perspective.
+
+> Roberto
+
+Hopefully the above comments and clarifications will be helpful in
+furthering additional discussion.
+
+Have a good day.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
