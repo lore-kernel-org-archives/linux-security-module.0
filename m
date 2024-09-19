@@ -1,74 +1,93 @@
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C90828DCC
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 19:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ADD24B29
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 20:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726774625; cv=none; b=tQHkyASIxxgwc5i2jS61n8T1wftGQVqpbkURUvF/GFftdMtjSwvm1HQqP7Yth6DhkCh7BwWL1f1DqpO1gPodWxa4NLIfZ3feAab5+EiEfY3Lm0SN4aE7rbZx3x4Xh2bq4CqGscR6t6SoUDiuP1ak44juGyPJOFGLJ2aBaMb35N8=
+	t=1726778459; cv=none; b=X/Il2kmkWOrv84a2Q35iseaKDoIu74sQU3G2Y9WiLPh+5iIf8rReoCbfuZ4KTPL/2y9Eb5XTM26wlvq57bOUTS/XG8ObmQbBQIOOWrbhUUF0s3N8tj/L69M/QY5/E0gV+tBIdMVVccHlr7oLOixLRh7DLBuUC4YHXPJDSvTgxKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726774625; c=relaxed/simple;
-	bh=h7cJFJvH2bii7WYkqUdFJoFaaZT4B06F01W+siRkutA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=J1TK7mb1dFTvxgst9C2s2oZcpk3JGTnGH/XVCZ1iPIBEVZc1is13UyGws3FiSiu5jxw08paJAOVNt5DYSQxoNHhkwZglOG82PZFv4/qtoUa0fKteHwmzMSKn6qAIrB5BNONhp/boNqyQU+RvQj8oe2/Qqugmhs5k4ZDP3lTBvkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cdb749571so139262739f.1
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 12:37:04 -0700 (PDT)
+	s=arc-20240116; t=1726778459; c=relaxed/simple;
+	bh=LLYF4HCt7wGpOmsf8gBZNr6B3FbRhbhRANn6W9z0PMg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cmPP5VISKw/et2szhw0foqItZfJNgX0OEq8lTwMwt0IR1D+3Na0nMUxigHOadOF1N5nc0CN9oI6EJJWefRiAGfEd/Lsxh2jyMr2P5QkvAa06EVse/JcYxVnEYRAo8nly3Nukoank0TqC0SSis6Uw3J5hhul7CQEllXu2HckEih8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BUNJWpNS; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BUNJWpNS"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6db67400db4so13732727b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 13:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726778457; x=1727383257; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WNSalT2dJe/sVHCZY4JIrPde/S2tv3TfgE18cTWAoX0=;
+        b=BUNJWpNSjhCRP06xzaNajVGU2J0GuJVRWobbkqNpHa+mrHQwBjgbaMoBzbosHfbr+1
+         UAquV3isUU49PH8B/ZRyYJf5SeaJAlzU0VbdeYodVU+Yg0US6FI4UTZ7rNDkOplQpGyF
+         4FNrZCqbvanw6PUJ37OYrtAqdL4qvhyl/mS9/ltou/wK2ATZQ9kC42+1IIi6fJ8E7c/t
+         An/kcu1IvaIEJtuolAzVbxun0iKsqzIDwF44/NfetsFWJXT+waL7UunQMdad41y8N4Gr
+         Zooup+eKwqGGUSukhgC0HQujEzo7t4pSVWs25r4XgmmF5K4rmEEUzjZhsQgs1YOlFegM
+         wlfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726774623; x=1727379423;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0CRNWnXG6C62pd73O5+0DURKFiurkyy58Iv9yEaQuwU=;
-        b=Lt3FXMn41HRsfGRqrkR5TP+HxwbliVlFvit89pdpz//WVfgf2jM621yJghic+d6lV3
-         iDRsIcs4skcLez2HvrYOEM8/JCo2t5j6E8V471jvHsxNsxTxaDwxVFsEkTI8N7/71T3Y
-         ir59SB7Nf14pNFqwOlN0LzFxME6+/g1XFG/PeHNC8XMxGVw3Py/+B//LYeW1czkoC0+f
-         9O/mWysWJGzO/YCoqnsPbxIQUHq9dzqlymgy3ImU7iFUxmMcMFfbysn0Btyp2Yi0eln5
-         fNK+/ar/0W0TfN6bD4WU/KGdu1lXvDwCyF7MPyG7HX7rVUqDUbroafZITa1lkDDp6xco
-         Paaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmUUzx39270KaKaKW8Q6p0udpcrtDbuU+x2PE+NClOq1627xVaD1CG5YtVGZYDalDBAeKSydbJKkeszNBP35thX9m3iUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5JcarrPOMj3uTg5MQQ21sOMs5NO7eJTR38ZY28mtM+3gl5uK4
-	TXYfmU3pMgYnSVliBBMmSxvZ9qLMr9dQ+c53MgGoiFdwUuXMAdvVR4JgomM3iuNNWVP9FnF9x4N
-	Y7zEkTWC+Vb32+jK1uar6hAX+evr0ylFomMvFcI99IfVy9m+3JevebN8=
-X-Google-Smtp-Source: AGHT+IEWigGKNkyjia5d2sn1U9cVlDImOMi4LZBpan1NY7y3ryjmidJ6A3/FBWMdIrvH645kOzaYezjv0UDb5xZ8rJdIberjuPNM
+        d=1e100.net; s=20230601; t=1726778457; x=1727383257;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WNSalT2dJe/sVHCZY4JIrPde/S2tv3TfgE18cTWAoX0=;
+        b=ZVxVSKmgzDoN+vq/SjjCeN7q9npS68gQ5EakJtXmHV9aA1Q7uB7M/hdvV17vkm9jf2
+         QAdXFashfYmADEbhVR8AWFfmf1lNMwx1L+5LM7SjI9bJOss0UHoNdFSImbaO1EvIaE1E
+         8bKOTSyUozm9PRCZr2M/2lQY05iu4TrB0u2WJUOJd7YLCJpRPRLnS3MwsmEAzPDryDd6
+         2luWPb8hPgitS/rsk7wkjfyvCv4rnuN8n6u2eUqWkSB5AsNu1NZ72/fKhrn+x+9KITlG
+         uniE56J675peKj1CTGqQRUo3xlW646It9rrr1Xzogq7Mb5dojHj+YAisodgY8v0I4A5N
+         JDeQ==
+X-Gm-Message-State: AOJu0YxD31lossnXsVd6sZVgZmbge20YAf+I/0QFnlWa2BYKwflnvo4i
+	H0RpLSJJFFrqJ7SxkQ3SO52YW5TqeGR7A4OdN9GzAZBh+fsK2BehAySr4j45qWFQ+O+QQ0EwORt
+	1c7am4I8RgBSNmUqGZUFy4bB742J9N89pcyEZ
+X-Google-Smtp-Source: AGHT+IG3NYcoIMq/6C5DjJRp3iiyYZFZhIAqjCV5eZ6PayC1+cE8btMaITffcm8uxjDoU34IrnAGWilz8n3KhJjjdtY=
+X-Received: by 2002:a05:690c:6189:b0:6d4:b774:e503 with SMTP id
+ 00721157ae682-6dff2b291a6mr1939757b3.41.1726778456834; Thu, 19 Sep 2024
+ 13:40:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a5:b0:3a0:a71b:75e5 with SMTP id
- e9e14a558f8ab-3a0c8c808admr7797375ab.7.1726774623498; Thu, 19 Sep 2024
- 12:37:03 -0700 (PDT)
-Date: Thu, 19 Sep 2024 12:37:03 -0700
-In-Reply-To: <CAHC9VhRpDPTopxgOEbDt1d_XyDVNzaA7++6UojWXidbpBHjeVA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ec7d5f.050a0220.29194.0043.GAE@google.com>
-Subject: Re: [syzbot] [audit?] general protection fault in smack_log_callback
-From: syzbot <syzbot+044fdf24e96093584232@syzkaller.appspotmail.com>
-To: audit@vger.kernel.org, casey@schaufler-ca.com, eparis@redhat.com, 
-	jmorris@namei.org, john.johansen@canonical.com, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20240919155740.29539-2-paul@paul-moore.com> <45b4a802-6f4a-42fb-85f3-ee2b97c64c07@schaufler-ca.com>
+In-Reply-To: <45b4a802-6f4a-42fb-85f3-ee2b97c64c07@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 19 Sep 2024 16:40:46 -0400
+Message-ID: <CAHC9VhQtig43rD=iiPLjrYk=fXEGN-ZuC3=UN63az_FE91YFVw@mail.gmail.com>
+Subject: Re: [PATCH] selinux,smack: properly reference the LSM blob in security_watch_key()
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Sep 19, 2024 at 12:34=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 9/19/2024 8:57 AM, Paul Moore wrote:
+> > Unfortunately when we migrated the lifecycle management of the key LSM
+> > blob to the LSM framework we forgot to convert the security_watch_key()
+> > callbacks for SELinux and Smack.  This patch corrects this by making us=
+e
+> > of the selinux_key() and smack_key() helper functions respectively.
+> >
+> > This patch also removes some input checking in the Smack callback as it
+> > is no longer needed.
+> >
+> > Reported-by: syzbot+044fdf24e96093584232@syzkaller.appspotmail.com
+> > Fixes: 5f8d28f6d7d5 ("lsm: infrastructure management of the key securit=
+y blob")
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thanks for the quick review, it looks like syzbot was happy with the
+patch too so I've merged this into lsm/stable-6.12 and I'll send it up
+to Linus soon.
 
-Reported-by: syzbot+044fdf24e96093584232@syzkaller.appspotmail.com
-Tested-by: syzbot+044fdf24e96093584232@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         2004cef1 Merge tag 'sched-core-2024-09-19' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1784c427980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=38d475ce6711b8b4
-dashboard link: https://syzkaller.appspot.com/bug?extid=044fdf24e96093584232
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=162b369f980000
-
-Note: testing is done by a robot and is best-effort only.
+--=20
+paul-moore.com
