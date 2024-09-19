@@ -1,127 +1,145 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D761990AF
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 07:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C646A190664
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 08:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726732674; cv=none; b=Dhyt2SFp7aseNVIpT4jkLJJ6L5kCQxrY3CaWUKj1idNZ1gO6OX5FCp2GwO3wpOR4nw3d8E0Bl5qwub8Pt2tY+BGDCCijvVKvanFINgbOG743Zlz/G/X9Ys1kdV5u1unOy4lashTJ2mYOrzVTkCiPP2xel2DRrOVNdT2sB3Y9oOs=
+	t=1726733357; cv=none; b=BQfwSZ5VSwmJgpwQJELI8PnN20zZfPeIO+UodLuJhO8bZCQCToyrAaEyAg/fJsCmDHNV5c10zljPgCd/TcDCCZGrwHBNIMjMEW1sW8jFgMK2cm3440NYxv0Jq3g9lIyuaJZyunmYGsuXvrrf9YVzNlO+ZrOtjs1SSd1Fs9yhf9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726732674; c=relaxed/simple;
-	bh=gtvvVhGi2BodgECS9/LLDjF6CRbdY/AYaJaNGE83ygU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bj9PiX+1e/oGH75y64uFS7Ix1/eLErPB+rum5/H5I3LJkhfSr0L7B2zlNTssWl8AP9YwN7XamCVQPDMCaE4BoFq/BOx8v4MNzfAZJfJ6Ql7I56sAOCekYybbiOTKpwiomgXkXrUj6i41y0JRkYDE4RWfkkEUZ7YOH4fGXfFBwGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WcnmV03R; arc=none smtp.client-ip=209.85.219.176
+	s=arc-20240116; t=1726733357; c=relaxed/simple;
+	bh=BB5Go42BHdfU715wfs+bQ6X3J1Ymq9udCXTu9oHL6Dg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dAGUzRG1vJv4s03Jw8PiCykU31aBmhj8jqPL66u8hzJNnP7kveltbnRRS44AIUTdCxAM1hyn5n5fXaM7+s5cqOOz59wiVZoXpm9cZ6rNe18Z1AjNVSLVddcpJlo9N5c03OuA9aIfdewZsmw+jap6bCyYH9aMT09gk8GlFCGL5ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YY2H6xq8; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WcnmV03R"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso662507276.0
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 00:57:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YY2H6xq8"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so64572366b.2
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 01:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726732671; x=1727337471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QmjzfzSOViupOA3GGnp9LMg51SfbNjXhfgtUuukyDgQ=;
-        b=WcnmV03RmcUoCWzRVO6CtrxV4c3AFqHigbNEDOb1q+8CkxiElWzqJHXo00p9Olz8hi
-         5Eke9f8mKzlC4wXrR2IQTgzb0K60OFpxMtBZMtwfcRIYb9XMwF1T1jWZUhbG209pmocp
-         2uj/76oXdjzAhkxm7yPRTs3XrXfA4sk0RtNWifWKfBxPqTtxRDwLHV4J9UfEAvtoyz38
-         CNQyiJ+PiR7Nr/9u0ekCqVm6Jmz/aGSklpBN9TgHhdJkQZu/62hJ1Y06m/rWd+AbAsWn
-         bVAGUvttozw0uv1rYaxHXsjhU/L66DQ/Vbsx0idYYtGh7RNZVY2D6LmQZ/b+um22eE7Z
-         ZQug==
+        d=paul-moore.com; s=google; t=1726733354; x=1727338154; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jAPL0EnLn2sU8hfK5IjCYmts+TpFNl8+U3EIfwL8xNM=;
+        b=YY2H6xq8WjuJ9h9BRmBJk4G6Ocv/t0B8/1m0IIJBxT20QlGh8y1jJGOnImEJsM/Tnj
+         ZVDv4YLCDQglGddzMih+T2+jCWGktdcHys0zgjzSPfEJdxDPPg5+k20ZasIx4Lx8X3Qt
+         PYoKr7+RoPzR6YDOkJY11ERP++4eqMgYotud/UrJOlhpj4GuQsps++coGVbD9JeYfDZb
+         ANM9xnJFcZn502gRxiCT/2xlUzPuNnRJsQTxIVytgmJGNMOEpbrOpNGRqdrBb0XJK5b5
+         0Z7YfTca7rv69Mfvj+62VoamVx40S14qBc/R245Da8V2zMYJ1CXKMzhpZOQBJmxzHfuM
+         /RUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726732671; x=1727337471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QmjzfzSOViupOA3GGnp9LMg51SfbNjXhfgtUuukyDgQ=;
-        b=SN9b1A9ryLKrpXFY4NQlWYR+HTOXTudB7wU/MD+h60X+xDiBQKfgN8zev9HUFH7sfH
-         A4J7d/fkcx8IuAYm0ZcaBNebsM7pDvSKNr5STWF8pmHSiSjWFjnXztzEKPN3QsFAQC4U
-         lZCZpVugdxy56EWvnAFW9PHIbvjHIxRFafog5LaTgIpvbcBdaJrepSzvF8R+r7pNQA4I
-         ryUKywf9g3QfqIYaLfCRf4GUxrC7KDT736K5+4loGE2SKojyNW7Mm6jjMOddNWXsnwtk
-         YX837X0HXTUM4VCI5lht/qt2y4zvtQZeTMTnV9hYIKk9w9NLyW/6x6E5dqZsmJQO+x0c
-         s3eA==
-X-Forwarded-Encrypted: i=1; AJvYcCX98FFKNxTg9aIdsaKt93CZpoRs5vPWmKm9oDs1C/bfnnIY5BF329UilmCjbYrZ0wAd3BBgjA9LgC439pN8yRekDNh12Lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwuooPKehcN2TS0RwHOMBCw4rN5a5bkl1prHTsLEgKqICBg8t3
-	JO/Jwuy2KZkLbTp+ipfl59SBBDLwWdH6oQuyR/qZrj08Dj/i38OLLlnGjoOUgysiSEa8bvUoLuI
-	QPo+mg9Tv4QwX6fqAZBrfua9+ca0Lwd5dFQde
-X-Google-Smtp-Source: AGHT+IG43NCtgaW53OS7+PojKU/GXx7ck7PWExtnRut3+UcuubSUiadyEQxRVw5uBHaVL3DQ+b9ITlAJnOKiIS27EFQ=
-X-Received: by 2002:a05:690c:6808:b0:6db:d5dd:af76 with SMTP id
- 00721157ae682-6dbd5ddb9c2mr210170627b3.32.1726732671638; Thu, 19 Sep 2024
- 00:57:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726733354; x=1727338154;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jAPL0EnLn2sU8hfK5IjCYmts+TpFNl8+U3EIfwL8xNM=;
+        b=fk4c29oLYdS/RU63/DMcPCN2FeYTmrAgcaQ2eWnWZ9peHKAGn/4ljfCXF2kRCCT6pg
+         LQVgqiv3xVr2C67ktJNh+a/Xs4nITUCEgb7iLKmuJ72dn7vTXxASzqn3dNoQKNA1BK1F
+         7jGg5OVOvNoDEcpWMa40pk3LE4u0zAmeNKDnTPwhHmYGHyG8QEZlGNGMd31pIZwadW6c
+         gAi5mtSUDCBjueu7b2rPIS3LBxBZkjUzmiFc+h1hI1hg4P3fAHa9hQ5bclekXQzG5Hp3
+         JC/eGm6tAbBaOZsyx4sghGDni3t5rKmWu3EPTMAeO6fbxjnb5ISoM9DJk2CoLO7WmtrA
+         X5cA==
+X-Gm-Message-State: AOJu0YxUcukM7qlXoa59tePGLBilyNPZ9FKh/6R7MrHouuebVVrdOJwp
+	gbODIjFNjq16FhkzcQpfZDoO5H79c/4IRqbwIQZsUGyl1f3Zb/GqarYgvqOpyHpoqsYHYqCeEX8
+	mbA==
+X-Google-Smtp-Source: AGHT+IEgj4iYIgM8Bt6zG1rzYd8WV58PCBDkNIN0boAWnMtT07/5QKs9wxAFZjzNXqiQDisFfCPmsQ==
+X-Received: by 2002:a17:907:e6e5:b0:a8a:926a:d002 with SMTP id a640c23a62f3a-a90293dfce4mr2370606866b.12.1726733353613;
+        Thu, 19 Sep 2024 01:09:13 -0700 (PDT)
+Received: from localhost ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096aa2sm688094766b.35.2024.09.19.01.09.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 01:09:13 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org,
+	linux-mm@kvack.org,
+	selinux@vger.kernel.org
+Cc: ebpqwerty472123@gmail.com
+Subject: [PATCH] mm: call the security_mmap_file() LSM hook in remap_file_pages()
+Date: Thu, 19 Sep 2024 04:09:06 -0400
+Message-ID: <20240919080905.4506-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com> <20240915-alice-file-v10-4-88484f7a3dcf@google.com>
-In-Reply-To: <20240915-alice-file-v10-4-88484f7a3dcf@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 19 Sep 2024 03:57:40 -0400
-Message-ID: <CAHC9VhR+m5APSjS_CUO7i01RBrLoeuGC6q15cWaCELt-SPgwpw@mail.gmail.com>
-Subject: Re: [PATCH v10 4/8] rust: cred: add Rust abstraction for `struct cred`
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2331; i=paul@paul-moore.com; h=from:subject; bh=HNkO/SgCMlBwb15VU48zTD8lUQTWlQzSQgM5TY2SxcQ=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBm69whUno75Ay2U9SP4lWVTm6XBW4IDMeZcbj9C O1BIZviFyiJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZuvcIQAKCRDqIPLalzeJ c/qRD/44C54e1r4DmgU21y6GHpoQORs2k6kMxd1cIe+LMENx5g3X9LUuUpfwfH8x7b8lMRoAbqp ek3jjOoxN+pDMvWbM6zHUjDUr6agn88BC0s5eF/QSYnIcZmCuRArMR0ilPamxsOmytrZYIx5hFN 3SiXcGpZ/Fhg3Kq0QjK8FCAcXzSh/6M2qJbSSwcGa5cv/JsNQvBnIXP9Mzxz1QGn7paqTLVDwSq JjTuhSRLOq06G9rZncaRPLJExvvGpGrjfcS2yYyHQUPR8fZ3uD7cb8r1e9Y1uZGIXGi63nM+Lvu dmR5yNlFviicKXrxxEZsEdfY4Bby0hcvaMVtzdbrcGjVJWtTHLRfspLxz7JCbI+dvctFoNjGHjK 5NQpnDNB7/hLL+NAKLy0qTMm3QG38C2Lu1YG58mtq6EVXjuPHDxwM1XGDK/o65rnb/bruWKeAko 2wgZuSuYG4XZvKu5MRQ9NMTkRWKa7rw+GQioysQ5NwUnURZFfoKQuCFAfMOdiNO1v742z76Y4h5 6jz3E+xDsA4hh0LYae+TBG794Uw8p8EMniPcGkuFM9BEQ4Gt/ZDXP/kUC9JHvRgUi6GtAiWjLEY oPI5PIR/UNEwTv4VfyuppQrzpr5qkHMEJq2b68tR9lN0La6Qw3aznTKB+Ar9wNYXaVNJtFI9Pe0 fpMobc1Rq4CSybQ==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 15, 2024 at 10:31=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
->
-> Add a wrapper around `struct cred` called `Credential`, and provide
-> functionality to get the `Credential` associated with a `File`.
->
-> Rust Binder must check the credentials of processes when they attempt to
-> perform various operations, and these checks usually take a
-> `&Credential` as parameter. The security_binder_set_context_mgr function
-> would be one example. This patch is necessary to access these security_*
-> methods from Rust.
->
-> This Rust abstraction makes the following assumptions about the C side:
-> * `struct cred` is refcounted with `get_cred`/`put_cred`.
-> * It's okay to transfer a `struct cred` across threads, that is, you do
->   not need to call `put_cred` on the same thread as where you called
->   `get_cred`.
-> * The `euid` field of a `struct cred` never changes after
->   initialization.
-> * The `f_cred` field of a `struct file` never changes after
->   initialization.
->
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Trevor Gross <tmgross@umich.edu>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/bindings/bindings_helper.h |  1 +
->  rust/helpers/cred.c             | 13 +++++++
->  rust/helpers/helpers.c          |  1 +
->  rust/kernel/cred.rs             | 76 +++++++++++++++++++++++++++++++++++=
-++++++
->  rust/kernel/fs/file.rs          | 13 +++++++
->  rust/kernel/lib.rs              |  1 +
->  6 files changed, 105 insertions(+)
+From: Shu Han <ebpqwerty472123@gmail.com>
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+The remap_file_pages syscall handler calls do_mmap() directly, which
+doesn't contain the LSM security check. And if the process has called
+personality(READ_IMPLIES_EXEC) before and remap_file_pages() is called for
+RW pages, this will actually result in remapping the pages to RWX,
+bypassing a W^X policy enforced by SELinux.
 
---=20
-paul-moore.com
+So we should check prot by security_mmap_file LSM hook in the
+remap_file_pages syscall handler before do_mmap() is called. Otherwise, it
+potentially permits an attacker to bypass a W^X policy enforced by
+SELinux.
+
+The bypass is similar to CVE-2016-10044, which bypass the same thing via
+AIO and can be found in [1].
+
+The PoC:
+
+$ cat > test.c
+
+int main(void) {
+	size_t pagesz = sysconf(_SC_PAGE_SIZE);
+	int mfd = syscall(SYS_memfd_create, "test", 0);
+	const char *buf = mmap(NULL, 4 * pagesz, PROT_READ | PROT_WRITE,
+		MAP_SHARED, mfd, 0);
+	unsigned int old = syscall(SYS_personality, 0xffffffff);
+	syscall(SYS_personality, READ_IMPLIES_EXEC | old);
+	syscall(SYS_remap_file_pages, buf, pagesz, 0, 2, 0);
+	syscall(SYS_personality, old);
+	// show the RWX page exists even if W^X policy is enforced
+	int fd = open("/proc/self/maps", O_RDONLY);
+	unsigned char buf2[1024];
+	while (1) {
+		int ret = read(fd, buf2, 1024);
+		if (ret <= 0) break;
+		write(1, buf2, ret);
+	}
+	close(fd);
+}
+
+$ gcc test.c -o test
+$ ./test | grep rwx
+7f1836c34000-7f1836c35000 rwxs 00002000 00:01 2050 /memfd:test (deleted)
+
+Link: https://project-zero.issues.chromium.org/issues/42452389 [1]
+Cc: stable@vger.kernel.org
+Signed-off-by: Shu Han <ebpqwerty472123@gmail.com>
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+[PM: subject line tweaks]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ mm/mmap.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 6ddb278a5ee8..0df568afe99d 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3198,8 +3198,12 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 		flags |= MAP_LOCKED;
+ 
+ 	file = get_file(vma->vm_file);
++	ret = security_mmap_file(vma->vm_file, prot, flags);
++	if (ret)
++		goto out_fput;
+ 	ret = do_mmap(vma->vm_file, start, size,
+ 			prot, flags, 0, pgoff, &populate, NULL);
++out_fput:
+ 	fput(file);
+ out:
+ 	mmap_write_unlock(mm);
+-- 
+2.46.1
+
