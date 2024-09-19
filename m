@@ -1,73 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E70C101C8;
-	Thu, 19 Sep 2024 13:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C251A3BCE;
+	Thu, 19 Sep 2024 15:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726753530; cv=none; b=LkGpmG0dLuBIjaUYwIosShGW5vapFlSxhJb6vh/89CSAanHXjDED8WPpmgmDc6c6WxTlmTjEkZTYlHOsH/VMxjMTdjbZPsHtdP3FQNajI+vDQ4BtRyUvud5d5GiW1R4BgQN0486J8bzJGgkxSvGufNbtnuAgGBiNsnwubLaLCgU=
+	t=1726758615; cv=none; b=gk7wxMI0n55WvIrT+HqAdZ9OpcDbKBTk7kgYqXtgqXejGvGhyusFzFp/4wYaRhc1yVlgXLIXH3y77ig22UQ3khe7oT75pW67DAJpekPt/l+8LV28fZuTSKJWKWduZYms9jm8Nr6vW/kbghEcNeaDUQD/lAeVfCquaqY5mhrx/aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726753530; c=relaxed/simple;
-	bh=FUYBepLdRp0iSBZxVwRXEjHJHigCeMLd0ZMY0ivjTAc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=rXE18V+EXzXagBAIAX6He0g5gj3a3IbAOL+c9u3rSey4mVD4zJeDQsqo84pRI3v8uFjQ12QdhifxUO05mFCamur73IKKKBkS2u8teZQIEMWV61ZNgEHEo0h7artDYdFZdZjgL/idyK4CFynWUpg70HG0yLv4Zv8m1ePy3Kk0D14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeQx8zw7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726758615; c=relaxed/simple;
+	bh=fqC28D/WFTkWkUXkRi3RSK8bJ+CtdTMZcYqv0EghQj8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mrqPnNvaAJp69+IvBAxxMbBcYyhhiw3RE0oWkf9ud3SbV72HHt3bkcqh2wkJyo4wLvk/Eb9pDdFxXNSkXE63cljskJhLGDr58xGIgnkEc/ig/SbZ6KGln5uekQyH/qw/EhUjR+FeJM7syp6wuUh0Qdr7GM4j2OWrIrMkZ9r44KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d77NqEOD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeQx8zw7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5916AC4CEC4;
-	Thu, 19 Sep 2024 13:45:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d77NqEOD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899BAC4CECF;
+	Thu, 19 Sep 2024 15:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726753528;
-	bh=FUYBepLdRp0iSBZxVwRXEjHJHigCeMLd0ZMY0ivjTAc=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=eeQx8zw772AesrOc9kn0TiyBO3HI6qZmGuLzoIhk4QPPWNQ/QOcJXWcquMURaVLRG
-	 pPT2cZIJ1OwwQBRJB35JksgkmCHTBlC51zGdkahT6kyp9yyjgEWR2tQggcx0K+Ex9q
-	 kWuDxMj1c36R76S1oVGvwT1FxqgNoIP7aRgN+s15Cofj0fkR6q0ZdQLPL9E1MpEnKj
-	 0+Vm99bMMWT7cFGLJ5Qd+eZjzV0Vs8i+GwTjGKuHboo7tw7k3CrOGdQWa8udDYwGVK
-	 8GVc6Is9kpz8SBS4Uq9KjE7j27v8muCwD7YmvUXqfxi/HYdS2/Rcb0jIlXm6Y5Ud7I
-	 JSabZ+qBu5iTg==
+	s=k20201202; t=1726758615;
+	bh=fqC28D/WFTkWkUXkRi3RSK8bJ+CtdTMZcYqv0EghQj8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=d77NqEOD8XPCRiePIZSRCa8bu1YVo6Cj4TO+mnSW2k3VzziYAWUywFMPF5JZYTqXa
+	 3CknS2tAJ1wOD/yrnbKPlov/7GI+Nn0hp2T3St/aRTQcAkvvGLHAcLlF43aIT7n0XP
+	 wcp9lxHcAYLJY11HPbIyOhHo8gkuw8Tudr9XEDxwk7AucW6K5OLnnU1a1ZBCLC8nc6
+	 rnafTBMvQ1Qa2Z0dyNcslTa0wixtAs/5V6VI2P7dNDPLXjlx3SGDnR5heuw/WnIsnV
+	 4Ze61/2Dd5uPwW3gLGLacc5DoeLLo3jbnUVF/hjzEpNqSN/5OzXBUJ5yY7nwESHEJ+
+	 Z4FoG3ZX5f8Iw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id A190E3809A81;
+	Thu, 19 Sep 2024 15:10:18 +0000 (UTC)
+Subject: Re: [GIT PULL] Smack patches for 6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <b14d039a-7b06-4552-ae61-fbfb4e912b4d@schaufler-ca.com>
+References: <b14d039a-7b06-4552-ae61-fbfb4e912b4d.ref@schaufler-ca.com> <b14d039a-7b06-4552-ae61-fbfb4e912b4d@schaufler-ca.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <b14d039a-7b06-4552-ae61-fbfb4e912b4d@schaufler-ca.com>
+X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next tags/Smack-for-6.12
+X-PR-Tracked-Commit-Id: 2749749afa071f8a0e405605de9da615e771a7ce
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 509d2cd12a10d057fdf72f565b930f9a81140d59
+Message-Id: <172675861754.1588903.16015187619761400872.pr-tracker-bot@kernel.org>
+Date: Thu, 19 Sep 2024 15:10:17 +0000
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LSM List <linux-security-module@vger.kernel.org>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, GiSeong Ji <jiggyjiggy0323@gmail.com>, Jiawei Ye <jiawei.ye@foxmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 19 Sep 2024 16:45:25 +0300
-Message-Id: <D4AB1EB73L84.2CVJGCDFJSWX0@kernel.org>
-To: "Pengyu Ma" <mapengyu@gmail.com>
-Cc: <linux-integrity@vger.kernel.org>,
- <James.Bottomley@hansenpartnership.com>, <roberto.sassu@huawei.com>, "Mimi
- Zohar" <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/5] Lazy flush for the auth session
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240918203559.192605-1-jarkko@kernel.org>
- <CALSz7m3SXE3v-yB=_E3Xf5zCDv6bAYhjb+KHrnZ6J14ay2q9sw@mail.gmail.com>
-In-Reply-To: <CALSz7m3SXE3v-yB=_E3Xf5zCDv6bAYhjb+KHrnZ6J14ay2q9sw@mail.gmail.com>
 
-On Thu Sep 19, 2024 at 4:12 AM EEST, Pengyu Ma wrote:
-> On Thu, Sep 19, 2024 at 4:36=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.or=
-g> wrote:
-> >
-> > For the sake of:
-> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
-> >
-> > The baseline for the series is v6.11 tag.
->
-> Clean applied on v6.11 upstream kernel.
-> Boot time is 8.7 seconds which is almost good as 7 seconds without TPM2_H=
-MAC.
+The pull request you sent on Fri, 13 Sep 2024 17:16:09 -0700:
 
-Awesome thank you! I think there could be some places where we could
-further make "100 ms here and 50 ms there" time savings. I'll look
-at those when I have some bandwidth but overally I think we are
-now in pretty acceptable measures :-)
+> https://github.com/cschaufler/smack-next tags/Smack-for-6.12
 
-Thanks again for all the effort with testing this!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/509d2cd12a10d057fdf72f565b930f9a81140d59
 
-BR, Jarkko
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
