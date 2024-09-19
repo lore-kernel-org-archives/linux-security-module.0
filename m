@@ -1,61 +1,62 @@
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+Received: from sonic306-26.consmr.mail.ne1.yahoo.com (sonic306-26.consmr.mail.ne1.yahoo.com [66.163.189.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46E73B1B5
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 16:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFA718EB1
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Sep 2024 16:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726763693; cv=none; b=YXS7m2cUKWdTsUk6UTXp8g1JhF3LiraFWRwPfJVGAkmSodFDapvE6tvqK0/0zQtXy/IGd4fIz8VAPNYmKsi63dy7E/+m1DfH1gLtKETQRRuT7HdpnCk6fH4/RviGXp1vt9I55DAVW3tQ2TRpHaIoaoxx2Vu9i7HRlinNRHwr5y0=
+	t=1726764450; cv=none; b=PBjvyWRctNVUpxoKhrxcfpRGhEBA4TD/5NbtgrU2Pyz9towUliCRvBqI5XBUN34ALeOEzHKQlZLtsjWZ4d9pDDsSyw11XPYrOLxQv8eqjzqwRBOtgQYlGnUcNWUuLiaohaaXmL1LL4nKCZFpac+9ORP/L8siWo3XttcOZ49wjYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726763693; c=relaxed/simple;
-	bh=zFqv4WgHRUdEjs8Q5QnfEYHLURJwP1mpKMoQwPZlBms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P8ufZaeznDFxgqnBlyQkLOqSD9sBUxlgmknveJPVTYBr9l139sth1iqBjF4g4UZf53m6P6FrnOASzsK5K+GkX0rqqJdbOcWYGzpGJ/PCBxZlyKYWmfiWdgjCas5hJnYCA223Ct8jJK6EuImB29Kv0s2M98iwxI5M7+BD/ZqmB0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CnHdoxki; arc=none smtp.client-ip=66.163.184.153
+	s=arc-20240116; t=1726764450; c=relaxed/simple;
+	bh=s6dpP8TCSV6IMkh/sXJtSdJX6jRTNUzsaaCEGL9iuoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aK8XS7zjLkF3FZTtIeNqCvbdMu5nNRYrJM80nC4/kQlMPITDMUc489QoCMepOhEqTP2vQXW8pJQ3srgAIYTBIvJK/I4mS/Jtl03jzNB31uk+OfNfa9+hPI47xBoytB6qFY9Mb0/UFS/wCeIVpvxfqFBCclrY1ClGP4bE9jUxLsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=XDCrXam0; arc=none smtp.client-ip=66.163.189.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CnHdoxki"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726763683; bh=aWJ3Rx86nNVzpTXxQhY7S6MpCMjl3ixKOcRPVKn/ZEo=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=CnHdoxkiWmfEUj/pgHRLpQYf5bA5IowHA/zVHCeBo97vgDflfNss9BI7WAITJ9ojWyQf4L9CSoc/7HfR/404hSnBjDgvXQm+FsEvhzzRlARtIbFlrSb33cZSwwqzgtCA0EnGLmYc2ZOcL3rmjakYhqg1g6MOISzmlorFjmQ0osCJvunVyTNLxID/aIruSRdl3p8bruedZ6cHMAowOGQrW9W9gK1JuzQUGgfd7el6SNqkAyT/2L3W2AtSucT7Ustjs9tOzBs1sgFAKm9z8gIcHC8/gT2ETLrMwIv+IQ11f6LkM+/NEij2DkYA3vxjpPWpvSbD465LXjdzjFygPdbMDw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726763683; bh=MwNYhBEh55nNyv9mSYCPTK0fRyZSqHqz/Q0J9T5rJaO=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=d7ILgMfIY130o3sk3pMyRYdOIFStVaNjMBxu6c29CL8oRRKHAuAunDl6BC2yQuaO/JK3Tq3y/dvEtOtt6ZqYuvRgXK1k8SSsEtwIxCK7S6i/tPsrIkB3TWShIvXPH+CyDIgKNK84HHacx1w+rCqWqBng6laorl9P9WQrk/SNLUbsyuHCpM/WYP+vpc0/kWZ/Za+iMYsfvLowIcGwh8VPEbDImyVxCfdeX1/n2URNjeIikVA5fs5PPxfoMCQnP+/9FiPR6ba2//oxmEdqcsLkGLLx1QkVsVRNCHNoxIlS1Pj44VCnQ1Gp4p5AaoZnKqq3z6dYdfiK1/rBCx14hAMiGQ==
-X-YMail-OSG: Qtw02OAVM1l4y_Pp01yFPxKMRJnS1ZJb0ytYes4qJi3dG4_in8KNDp5YunqUkI8
- c0qz1A5uQTu9MPEIzZezK9hdDBVZ.kv5G6XOHxcuMfXhFtn.bWqfj5v3NZ.CzEof7XDg9oWTgVwj
- pwQmN.ReQHs7vjmd5rbwv831q0yR_NVrYA2OR.MG35.vJE_BiIlWJgV4bvpucMyuQh88e6IvhArV
- ELqJZp9RO9XCT_1klSIkgoajE9IdzvhIwHI.tB9qlQ51hxf_.YwKqnrI8Hrvf0hliAWdlOSCPbcw
- dmqbDazenMxE0tgKTxZU8sWDi_iOyGITmhM0TMlDUC79Bh1ahLtCoEh5gC4.0aNAvjSF8sOBLCES
- FaaR86wEQ48phXO2lOOC9wNI5QeGCOyCwqANSFZTUnMW5QmjSBECr6Jn7vH0SUdALSPvTNmZSW2u
- FyekiA17dyjAKHCZgN0s_RaEXr3VZQujintoBXrtfprPA85d2QvUMBeP3STE4JY5VIugn30n1xK9
- kPNiryu1lAIiWPCxkrRDHyJAjNTuA83IhLGRpPRiLZUvC9nT82dCQADet2NzjfrUulbbO3eniCED
- 69BeA_Gph95KkulwC9lNC8ttU6eBKrh79D3vwCt2qnGi5OX6lUokrbU9eYzg_6IJ6i6McJuDcn7o
- Nb8vIKWydMNpr8I03cGaZmHtIjg5vl0ZyztBnuWwznKUdxvTY4o.7gZJUWnTyDFMxVtSWXr0vrky
- MSZbCQWdpUCuZ3fVEVQTbo_ER5oTSdnSf9uM4ztBh7DBLJsmzKWqnP_TchncS7QPGB3Nor8E7ms6
- d97Nky_ermFncCoWH1KzvgF1rpud6XKWXPK60jHknZCJJDlhpL.rSZ.yHTfSh9fueF.vQF9e23EK
- IcVL3ZcjmyHs_7azE.CpB0cMBFyWHdSbAVmdEx_PKZsjeVRlPs3JUBrQg.gU7_by0qqvQAbdiWzC
- 1ie79NfAjF4DTiJoofFq95nJUbZrQvzDPrUPAOX3FrKu88XnG3pF7dqlGbJ61PBmEYIaUEJNhsXV
- ng6oe06OD3gDRyyRwikUJv5oRLz1Coc87ofMWAxwLxiehcGCu1nFTygJ5ljBpddljg8BBrQ0gP2l
- Axufo.aPM1QJrfDNzvePbOjd7UIfSodX0pGIwsLCQ6TYWbVOu97vzxcD0oOE7nQg0NlX9DwuLeQR
- tcNdTGugor3omRcF_R8nYIdDVIDaLbiw7vp279uf6GQaModB6UIPFnIYxeaB2ZQKbO8gvmKeF0_7
- q.mjYPWb2P0lEyqmbEqZ.0ZMR_h0rxXQVrmSpC7JD4ZLGfr9j_PAdz4myLCpRZoTDy8fedZbD55e
- bb4vJzG9zKGI2HimpHJfXDHMMCWNF8e30I8LSgXvsk4g_XwEL8H6a_KzKBWZtluuCNp27qOkTS4H
- KQWHKP9dodOSWQ5OyQ8m11VjhmaisQrw4VgnT3yr5xFTzYLbuYNlMWQcaxrCZ.aPwGJWuAvIvpwo
- OY_SX2sju1tVd71sXw_Dos3g_PRXi5ZOm2sw0z5CysYkPPH2BJcHZakeAepc9cXSH4y.CA.ZVw7j
- 2CplNT7fJKa1CeVumAGDWhktaInWWayHokBshHfXSytSK9ZUPMhbcbpM5ZFTwaKD_BEPMdJJbILP
- t8GsgYyk02hYKXwONvvBJei7cLG6e6F5knSicV08ODj3tMNZSOEdEBUmrtn24VvjW4woesM1zBMm
- oW4WfBDKw63k6rfveLiA7xXyQY8ED0RovAPfRwPyDFUSVjU1PsXhDjXoQ4K7Lirk4jndL1zkBtat
- 7joOGVR0jpFMhVezLAOfe0ENkJrRPLKWrlZJ6BMP0JodSl97MVexOSyTrkW_JahT7eztH2182VDA
- 1AUtrc6MeC_thnMuV2lROLZFwaU.ISPPMzCtzgibzNusKjzG3mbnX2zXlZIjLnw9JkFJwjmc4FnY
- c0ffoI4er37Y2lhCQBIS2fBRK_xK.3vVq4jAu1GNHmzpjg.7r4nH8Cd9obam.nVRxOyAhBgdVCxS
- grwWjA41vQ9c.1PShe_8FdVFntabyBLTwACLj4P0jngzzdlmgyqBhLE1xJjLZ4VeLd_DzvnF0yM4
- _G1fNQWW3KwZxNLYdUP8Yoe4NzVPjSA.Law91Xep12b7RTFR.EVDLz3IdOERZmscPtrnJNyUbyjR
- nguo1M8K8nZ4hQ2BLkRvs01v.gygTIUKqg_FyiJrH6sXO1Fkef44TpWIW72fqZd7cgOZS1.8T1LK
- mJsflUcAdqqmLCbtmkNerlat.JCC.pFK3azqDVxQ-
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="XDCrXam0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726764447; bh=tWBQybOl3FT+mudZjl+fbkJNchg9vZbkctoIw4///uc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=XDCrXam0Ehpgg9ZAKJPAKYUjkpX2uunrr+DmUMB9a4ypY4GofFqKRWl7HbFiQpJyQYTzcj5HTn0+eoUNeL/qzg6Ukqz9y8qx5SVIUVABRMAHG5xc6YKaUCMWvcixZwvbc7cMq+HTXGGD6zU2mNXLXUmWCS8i6V82NvnDH8c15wWkbvX3E4ewKrJnbEB7muTahPcSd5MtPfm539DbdmOBKaSkCHW4diNKRL1GAur0m2xW47otKS7qrkO4dGHvfATnm51jvqrNKFdsOsvrjxg8HIwLBHpsx4J6QGsKRRPJ/l/iwRcnARDbXG7evGezQSNxHd5SHj72Cy6j94XQIrdzbA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726764447; bh=TW83pkhN2HxSMpI0jA663cI/JillypR1rdFDa65jnwA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=L/XDAwT1fB7YZBhthIcAs0AZ8TzjcF5umfVKnDP7FPwJdxhI+jbD0g5C+VJW/YVIy9ixkmPoe3HUhJORW4k2xNzZUaEFFbUtNlxJG+eZpmk+i6Pmp/7k+tZlSOkmN22BQXpXNUU7Lc4vKYQkSiLnCbTCOeWy/aGpdf2pRf69W0o0W+bNQL5B2I7xhXbpOoJgxo+8Da6Gxy4xzDXcvE0b1lVwFBN00PRbgKOhdVyY8sLYcPr7tDys3RI6lp7Z1JlmoZN1URmlShZ2dxItp9Fy50WHxi6BUWwto6jUV9MuE8/2ediaUyl17xntdUVqEvo5loHqGeIfv3xlzCZ08xUMYw==
+X-YMail-OSG: lhgDsYIVM1ldXeGLHXo.hMlxhMWAWE75l0jD_OdxCFnweh4ImU2HnTB60Zo3np6
+ lMF75rzgcRu_2HtWTQu_qXKjrTBj4m9znuw9W7sgJNXyWbQ8IFdH9VgC9v0sEmX2yaMRKVD.WlWp
+ KtE.Fk.0sTSZULG26b167sSVmB_VDPQ_5wW856hqgNxvPAcJ2kD3h1b.7FNemdF01dxon.h8st_y
+ Y4EMZsDwrVHGXXU19RLTTCuyO7THML6.dMXcbvoSawIGx6EiP2BLUaogYkWsAd.qyqrFAFDNEry8
+ kbmywmL6cEJo7ntqx6C0.Fjfn_J12dWxhpKxUqjKs5rN6Grbr3PeOAF.Lp2pJtryFakmLomhslzJ
+ dnyrJTztxyKjRhc6ESecMS074DjjA2VrF7tvHqk9e6Cx8oEVRdPmQ3LY6tMi6cViuCmhjJAefKId
+ o.SvkGRXCIEean7lPmCB1Ls17bfHrgIl4JyeA7aMjBtYUsX8BaIou2hfP52JEpmVtd5Dbjfb56C4
+ ziYanxU38lFoBaymT7pveHuqU8RbjLwjTnKkxmB3zleMTto7knfaPZvMc7EDs9TW9jT4nBhYXKJi
+ 7yna2NKhLlnt9bkb.xGx_fD70M3bZAYIDa9ROu1W1a.KO3Y6W9UWBXL2DqOzOhmlQrv8P_0nqfXQ
+ MeOhxpI5iRzSb_oT3oHqxHgcN6FPJKwFbS5UbqZnwcIky6Wmp3To7yGGts4V2FGKMR6ALk75a0uh
+ LqFBmRxRIQ9f7.u9eEJryPXQi02OTIVg4CzibVEeYVfJok0ezSlcmle4_yoztgJM9Nj4B0J7jiD9
+ JEtiQ8pHSGNhFVTpGp8A7v.squytLRMsW7K1WRrdxdUIxe.y4RZXDGdb2YAycW5IM9205DlfDcjW
+ gjAI8DHBVANfWA31moTm6BeVab7Vhw5jP5kpAK_ux4lag6ix9VYFdF_SIfNQztsq8DY0rg6MsGwz
+ I4R.vjkxLD9iI1zGAj0reVeZjm4cdivYwgo20Obn4zfAnrqZYokGmQjKkKIurDO4fKqQ7q1rz8ZT
+ Fg_6TXzLPFz_qLSB8CCxFhlXjWbD4wxL_6Ut8NwooPB3b449Gfn_ccPSKqxJIyHhHHf.EGTaxzo_
+ H0A9pHvmvvOPKxB.lNNOI8uWC_ybPu_H.bYNsPv4JSSdj2lBxA.fMCesYVNC.ULYznj4GLghU4ok
+ qHATxOcdt0Uxho5GSXzqSArl3mom9bWW7YzLciafizMOffOA9k7bHhN_78IMd_qje8bHNvoLASUK
+ lO2XqHQTtADG.vRGlwpxnIhTEHSKUce34hUJ5aU12FfAbfCM5yaOBlyMy9qnozIL9G.tU.Yxp36w
+ sHJGZ1AI9B6jWSSAM.iOnW9HoOtaZ7UnSl6NNlZXp3iC7yY4ENyIBq5UTXyZ7Nf6nTCW3sIX6DgZ
+ zfaBu2O.hxN6A3JuDj8KhzZOjECECF_ssL_LeHSODGMttlOg4QLt8o2U2GCFdtziZYP1P0jcPbBY
+ 9sQCxPYwgFCkrCwqB67nsq7_D5v2qlwUObCMpW340saHohQ7HX5RImpQbOpFrakQLGa_T9UDHP0V
+ GVebeHqbgh4RW8YDoUqm0avOOnaBHKyuIjx_wcAU6O6ZeY3CT1rUhpfLYbiGxIWzR6XBUDNSsRLF
+ Be1jn6m78kQOELGmnRnuabs8lrnm3wLaxxoCXTHLQ5TlAHhzjs9RoeukaeqwhHZzzYwQrgub4iYY
+ 9_MfRe4iRh7IGt8SjCRMBVrPNt3HcaaoGBSn81olYZ5QiYzb4AVdSoJmYGQraRKleAXUGsvB3_g4
+ kCStkdsWOblkNFW9F_Q32.Z3S.udXAKYhw6vCwFUcOYTCYjGXVwecSzoUSOl6KbQWrEsW1oyqoqb
+ CID5hwO3oS0S0sDj0BZFqdQrIj7gYb4o5vhwc_rNWWt2dofu9l3Jbui5BwD93VVWzA878K3ATdZI
+ Ry6tTHzE3sxY_CL2eIon7vwgaoeb5zbCAzlO7rJjkKRukKjbQ6aTAYYr37sggdCHDY9gvfsWQKqv
+ QWT3xULax4ffxbsvCBeJrn_Wci3QmcL6Mqa7v75s7pyoBkn3_LEudWaSfqDUGMklb3nH3L0NLUbl
+ ESSFOF.yE2g9oQaBZK_X23MmwUNYniyg2GNEC1Ecu77bcIz6PLSE2wJct4NJvLnQRKn0bnGJZ3ne
+ x3b_H.cKUKx6v87y6in0_l9KsvhGQMkfks.ycrDfladTfNOO9sGdCbYPRUuX6lcyK_DTlRU7wwUa
+ 7szHj_v.tZAqFHK_JbMVlmyRRqEvTBWJoi9EH4FgYOrWLjmrmo2KAAh3YUSEMtmv4TSIhsZbT33d
+ gnXAwlyUoXRZeSs97GFVvz6LKqCKIZCY-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 48e6cc76-187b-4598-9e37-a27bc7befb08
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 19 Sep 2024 16:34:43 +0000
-Received: by hermes--production-gq1-5d95dc458-m8nfd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ef3b6a98c6bcfef906696630f893e828;
-          Thu, 19 Sep 2024 16:34:41 +0000 (UTC)
-Message-ID: <45b4a802-6f4a-42fb-85f3-ee2b97c64c07@schaufler-ca.com>
-Date: Thu, 19 Sep 2024 09:34:39 -0700
+X-Sonic-ID: f29536d4-e4d7-45f4-9d3f-96fc955a69a6
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 19 Sep 2024 16:47:27 +0000
+Received: by hermes--production-gq1-5d95dc458-4hqnr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4f620351a53c03e30d3a3c39e442e2df;
+          Thu, 19 Sep 2024 16:37:13 +0000 (UTC)
+Message-ID: <1a38172e-ef03-4a87-9200-cfbe20c3bb77@schaufler-ca.com>
+Date: Thu, 19 Sep 2024 09:37:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -63,81 +64,65 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selinux,smack: properly reference the LSM blob in
- security_watch_key()
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20240919155740.29539-2-paul@paul-moore.com>
+Subject: Re: [syzbot] [audit?] general protection fault in smack_log_callback
+To: Paul Moore <paul@paul-moore.com>,
+ syzbot <syzbot+044fdf24e96093584232@syzkaller.appspotmail.com>
+Cc: audit@vger.kernel.org, eparis@redhat.com, jmorris@namei.org,
+ john.johansen@canonical.com, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, serge@hallyn.com,
+ syzkaller-bugs@googlegroups.com, Casey Schaufler <casey@schaufler-ca.com>
+References: <66ec25cb.050a0220.92ef1.001e.GAE@google.com>
+ <CAHC9VhRpDPTopxgOEbDt1d_XyDVNzaA7++6UojWXidbpBHjeVA@mail.gmail.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240919155740.29539-2-paul@paul-moore.com>
+In-Reply-To: <CAHC9VhRpDPTopxgOEbDt1d_XyDVNzaA7++6UojWXidbpBHjeVA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 9/19/2024 8:57 AM, Paul Moore wrote:
-> Unfortunately when we migrated the lifecycle management of the key LSM
-> blob to the LSM framework we forgot to convert the security_watch_key()
-> callbacks for SELinux and Smack.  This patch corrects this by making use
-> of the selinux_key() and smack_key() helper functions respectively.
->
-> This patch also removes some input checking in the Smack callback as it
-> is no longer needed.
->
-> Reported-by: syzbot+044fdf24e96093584232@syzkaller.appspotmail.com
-> Fixes: 5f8d28f6d7d5 ("lsm: infrastructure management of the key security blob")
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On 9/19/2024 9:05 AM, Paul Moore wrote:
+> On Thu, Sep 19, 2024 at 9:23 AM syzbot
+> <syzbot+044fdf24e96093584232@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    bdf56c7580d2 Merge tag 'slab-for-6.12' of git://git.kernel..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=12584b00580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=4540f5bcdd31e3de
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=044fdf24e96093584232
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155cffc7980000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ad24a9980000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/cec9f3c675f1/disk-bdf56c75.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/21e06ae5b159/vmlinux-bdf56c75.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/1e936c954b8b/bzImage-bdf56c75.xz
+>>
+>> The issue was bisected to:
+>>
+>> commit 5f8d28f6d7d568dbbc8c5bce94894474c07afd4f
+>> Author: Casey Schaufler <casey@schaufler-ca.com>
+>> Date:   Wed Jul 10 21:32:26 2024 +0000
+>>
+>>     lsm: infrastructure management of the key security blob
+>>
+>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1124d69f980000
+>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1324d69f980000
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1524d69f980000
+> I just posted a patch which I believe should fix the problem, but I'd
+> like to get Casey's ACK on it before submitting upstream as it does
+> touch Smack code; lore link below:
 
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Thanks for jumping on this. Your build and test cycle is faster than mine.
 
-> ---
->  security/selinux/hooks.c   |  2 +-
->  security/smack/smack_lsm.c | 13 +++----------
->  2 files changed, 4 insertions(+), 11 deletions(-)
 >
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 81fbfa5b80d4..67baa487cf7a 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -6720,7 +6720,7 @@ static int selinux_key_getsecurity(struct key *key, char **_buffer)
->  #ifdef CONFIG_KEY_NOTIFICATIONS
->  static int selinux_watch_key(struct key *key)
->  {
-> -	struct key_security_struct *ksec = key->security;
-> +	struct key_security_struct *ksec = selinux_key(key);
->  	u32 sid = current_sid();
->  
->  	return avc_has_perm(sid, ksec->sid, SECCLASS_KEY, KEY__VIEW, NULL);
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index da0c2bffbd08..563fb404f659 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4629,16 +4629,9 @@ static int smack_watch_key(struct key *key)
->  {
->  	struct smk_audit_info ad;
->  	struct smack_known *tkp = smk_of_current();
-> +	struct smack_known **blob = smack_key(key);
->  	int rc;
->  
-> -	if (key == NULL)
-> -		return -EINVAL;
-> -	/*
-> -	 * If the key hasn't been initialized give it access so that
-> -	 * it may do so.
-> -	 */
-> -	if (key->security == NULL)
-> -		return 0;
->  	/*
->  	 * This should not occur
->  	 */
-> @@ -4653,8 +4646,8 @@ static int smack_watch_key(struct key *key)
->  	ad.a.u.key_struct.key = key->serial;
->  	ad.a.u.key_struct.key_desc = key->description;
->  #endif
-> -	rc = smk_access(tkp, key->security, MAY_READ, &ad);
-> -	rc = smk_bu_note("key watch", tkp, key->security, MAY_READ, rc);
-> +	rc = smk_access(tkp, *blob, MAY_READ, &ad);
-> +	rc = smk_bu_note("key watch", tkp, *blob, MAY_READ, rc);
->  	return rc;
->  }
->  #endif /* CONFIG_KEY_NOTIFICATIONS */
+> https://lore.kernel.org/linux-security-module/20240919155740.29539-2-paul@paul-moore.com
+>
+> .. in the meantime, I'm attaching the patch here so syzbot can verify
+> that it solves the problem.
+>
+> #syz test
+>
