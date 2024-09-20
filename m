@@ -1,171 +1,366 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D1E1442F4
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 16:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131995D915;
+	Fri, 20 Sep 2024 23:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726851525; cv=none; b=R3SzFzNi/d/sDjFVBbjaIqSOLc6Puf9mo51bifQgbigrHUoyMqK4sjrqCG7NULXmG94DuyRWv4MSQ49X3W9/3Ybom9EJjE49ZA0dNkfMqpkiGQo69OQUpkDG5GAaCus1PgoExo3G4FuBJOmO1aD0X/rdwo0I9zE2bFtQl4xvT5U=
+	t=1726876532; cv=none; b=UA33kXoKajmKcMkpjJhhzA2IRzgNr+5N+e9zOzVsDcK6EAeUJTXxIogVbqXAJZILen9Yww5Zq9PxFKvBbMH/d8nh+3S+2RX4IUlNhwunoXE4rxIUMA2M1k3yxYOIO4fkY2L8t/ZzcILI0PAiO8YVpO8RwYxSoJNzbp/dH+PRM74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726851525; c=relaxed/simple;
-	bh=GkyOJ/OlUlu/timXxU6QtBE6s88mkLrJPU+vCWjLrOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pTN0UF4s6YOmzPrcdQFL97EqS6FO9jk7NZ9ZP6Qr4d2UkgxsDvjnrofKDsP+YVyu5RPv5eF6ma4URdZfEzS9PXUdID3ph/ZOBbyR8BpKMdpvoj3Vrs19IYs5y8qIgFsiBwfzcfuZZ/1eUAhodvY8ErCeeMFz9JnTVkI+oJFyuqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MfOhFd0d; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1726876532; c=relaxed/simple;
+	bh=ijrbY3ZZ7HoBDDhAhtuhLWl0QOxopBz+m40Hi/DkfPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LCwK6bGupEVckzhKaQvQPLz0E8s6bVoQVApf+7ndk+m50XT41XUiDNMp34KUeixetFS1DmqueElXmgSOYv7e908AOZmDd4To78Mbjl0aau/KTb+Qj1BVCjtfyAoorWpRdsXvZLdvIpuCxHajYPYVDBbaZs2xC6R8m9/yVkAoNhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=M10M5avL; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MfOhFd0d"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ddcd0b4c59so21757517b3.3
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 09:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726851522; x=1727456322; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yuengg8SKuG258v3/BqxPdn3H/VM/Idwmrn82JID4+E=;
-        b=MfOhFd0d1bv0ib7LefljJYDljD10bUcDMMfllfrvOKK3hVJaXhlCSoqt6+GXa++idx
-         xtn6dLnDZ3bpS8q1MjHgTogGcwe7wEVDIPEAquZ/JuLB5xBa0rhSd5eDY6iTbFaG9A4K
-         xhXGF0uk8YX5SRM3HEtPQh/gaqjHMoBeYgIE/vCRakncCCumKj9dFuONkmNW+5JX6Ui3
-         HZ6+71uhmRAd5CLH/bN2SFd8fOjNlU/8c64o4oWHJXcbPgt33v8Qivu3tWOMX6oqqaBo
-         2zenAWMhkBytlTo96yH30orYdtBUcssKXtE3Kq8tajsgt/I7l0p+2UEuZHyZIfobgrcs
-         QzHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726851522; x=1727456322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yuengg8SKuG258v3/BqxPdn3H/VM/Idwmrn82JID4+E=;
-        b=J1gvkjjo9W58NxwfSepGfKinV3jl7gp7jImpp0cMN7KJsDQnhwlYva3cWM7CtLWFS4
-         27VEdEDX2n3Lplnm2rlx4OaXt8VjUx6BbZCKWs5lBbnF0yUiSljHn5+MnuGKs7wrLQXP
-         kmyit8CZ2uPi2Xinn6cX9l5+7AhC/LlhjHBXO7a4i2UhJWEBFBQb7WkTlnc/QEnr6mlO
-         +bvKza63oitEhIC0xi4zgl+JdJYpjhmnk68Oyu9Sqj28phJZRsBidGzXaAQatjhUeovW
-         Efy5Qln/3dLdf83N2B2AnJPogyiTUYV0K/a9qgW2kMbecoCQCeQPg4PntDtSJEspCBMg
-         d6Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhmYcpjzkt62zjPtupwBO2uVMWMTTU1fWK4Rvr4+8sxv3+WJ92qsvpE7JcAXCe8sf3oN9aWA5EdUxk/AhI7CHfY+irfNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznZgVCoyK3IeGzzXroQttSPZpIR7htwlxHoH6YvgfUJh0svpYF
-	ROuhUGrrwocSUTxr3QlO7wQa4gOxMZJy6H4LofZC86qndpTrxexeidYDIvo+CczSc86igvjDBHB
-	WAplYOGwbZGuMtqqYMNd/XX744UsRto41z6f9
-X-Google-Smtp-Source: AGHT+IHdzpdMp4IjA99SMzli7V3Y5kLR6/exTEKpjjTukuZMinUsN29sqVguIdeLyOh/J2LJfnpTD8XwjYFIstv3Xpo=
-X-Received: by 2002:a05:690c:67c5:b0:6d5:90f:d497 with SMTP id
- 00721157ae682-6dfeed8a6a2mr36754917b3.19.1726851522519; Fri, 20 Sep 2024
- 09:58:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="M10M5avL"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=RVpptJYwvyg0fb6+nU4iNmMhoQWwZ5J0eYvDJ7HEuD0=; b=M10M5avLZBngZGup
+	5/2gLhZ7FHOuMj1sp8pB8h3R4SkOE4wP5VDi9xpAo9cYgZimDEX0jJVUffjv5EfLL8OUe1RO/rant
+	j3uR3fS3iJD/ELJ8WiPNs1Puy7lU4stGsbgHu2BhFt7QnFvXqyaSY3a23B9fb3/s7Q17CI8QsAHTn
+	d7MGEC/KdKUWfPXJY/0DF3Ox4XaqRFF8upCL8jLhPCHvYaXONuEVfTOXsa8M/mmSoQo5wTRJ75yxR
+	UCFcNiKDXHQ36FOoXxM64LRmQ1fmA6fVK3liqgm7Mb8f2ADXNbopnKG06VVofIBtXRZcqV/n7mRXt
+	wKGEcrHEMCB/kqD39g==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1srnT4-006btn-0i;
+	Fri, 20 Sep 2024 23:55:18 +0000
+From: linux@treblig.org
+To: john.johansen@canonical.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] apparmor: Remove deadcode
+Date: Sat, 21 Sep 2024 00:55:17 +0100
+Message-ID: <20240920235517.615309-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66ed837a.050a0220.29194.0057.GAE@google.com>
-In-Reply-To: <66ed837a.050a0220.29194.0057.GAE@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 20 Sep 2024 12:58:31 -0400
-Message-ID: <CAHC9VhQF743KeHEULgA1hqq9OM3ttMmyhwFdavJLpgHT9j7uGw@mail.gmail.com>
-Subject: Re: [syzbot] [lsm?] KASAN: slab-use-after-free Read in smk_access
-To: syzbot <syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com>
-Cc: casey@schaufler-ca.com, jmorris@namei.org, john.johansen@canonical.com, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 20, 2024 at 10:15=E2=80=AFAM syzbot
-<syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.ker=
-n..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10469d0058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd9ab5893ec519=
-1eb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da95cf48b5daf4bb=
-16c29
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D110e6a77980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10cee20798000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c27c9d8c6782/dis=
-k-a430d95c.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/73c62c975a0c/vmlinu=
-x-a430d95c.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/56164e51e333/b=
-zImage-a430d95c.xz
->
-> The issue was bisected to:
->
-> commit 5f8d28f6d7d568dbbc8c5bce94894474c07afd4f
-> Author: Casey Schaufler <casey@schaufler-ca.com>
-> Date:   Wed Jul 10 21:32:26 2024 +0000
->
->     lsm: infrastructure management of the key security blob
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D10293fc798=
-0000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D12293fc798=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D14293fc798000=
-0
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com
-> Fixes: 5f8d28f6d7d5 ("lsm: infrastructure management of the key security =
-blob")
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: slab-out-of-bounds in smk_access+0xae/0x4e0 security/smack/sm=
-ack_access.c:147
-> Read of size 8 at addr ffff8880202b03c0 by task syz-executor367/5216
->
-> CPU: 0 UID: 60928 PID: 5216 Comm: syz-executor367 Not tainted 6.11.0-syzk=
-aller-02574-ga430d95c5efa #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/06/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:93 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  smk_access+0xae/0x4e0 security/smack/smack_access.c:147
->  smack_watch_key+0x2f4/0x3a0 security/smack/smack_lsm.c:4656
->  security_watch_key+0x86/0x250 security/security.c:4448
->  keyctl_watch_key+0x2b7/0x480 security/keys/keyctl.c:1813
->  __do_sys_keyctl security/keys/keyctl.c:2021 [inline]
->  __se_sys_keyctl+0x106/0xa50 security/keys/keyctl.c:1874
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fbebbbc2fe9
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 1d 00 00 90 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fbebbb74238 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
-> RAX: ffffffffffffffda RBX: 00007fbebbc463e8 RCX: 00007fbebbbc2fe9
-> RDX: 0000000000000004 RSI: 0000000016bf1cf5 RDI: 0000000000000020
-> RBP: 00007fbebbc463e0 R08: 0000000000000000 R09: 00007fbebbb746c0
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00676e697279656b
-> R13: 0000000000000002 R14: 00007ffe798160c0 R15: 00007ffe798161a8
->  </TASK>
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-...
+aa_label_audit, aa_label_find, aa_label_seq_print and aa_update_label_name
+were added by commit
+f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+but never used.
 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
+aa_profile_label_perm was added by commit
+637f688dc3dc ("apparmor: switch from profiles to using labels on contexts")
+but never used.
 
-#syz dup: [syzbot] [audit?] general protection fault in smack_log_callback
+aa_secid_update was added by commit
+c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
+but never used.
 
---=20
-paul-moore.com
+aa_split_fqname has been unused since commit
+3664268f19ea ("apparmor: add namespace lookup fns()")
+
+aa_lookup_profile has been unused since commit
+93c98a484c49 ("apparmor: move exec domain mediation to using labels")
+
+aa_audit_perms_cb was only used by aa_profile_label_perm (see above).
+
+All of these commits are from around 2017.
+
+Remove them.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ security/apparmor/include/label.h  |  4 --
+ security/apparmor/include/lib.h    |  1 -
+ security/apparmor/include/perms.h  |  3 --
+ security/apparmor/include/policy.h |  1 -
+ security/apparmor/include/secid.h  |  1 -
+ security/apparmor/label.c          | 33 ------------
+ security/apparmor/lib.c            | 84 ------------------------------
+ security/apparmor/policy.c         |  5 --
+ security/apparmor/secid.c          | 14 -----
+ 9 files changed, 146 deletions(-)
+
+diff --git a/security/apparmor/include/label.h b/security/apparmor/include/label.h
+index 2a72e6b17d68..83a840d935bc 100644
+--- a/security/apparmor/include/label.h
++++ b/security/apparmor/include/label.h
+@@ -291,8 +291,6 @@ bool aa_label_replace(struct aa_label *old, struct aa_label *new);
+ bool aa_label_make_newest(struct aa_labelset *ls, struct aa_label *old,
+ 			  struct aa_label *new);
+ 
+-struct aa_label *aa_label_find(struct aa_label *l);
+-
+ struct aa_profile *aa_label_next_in_merge(struct label_it *I,
+ 					  struct aa_label *a,
+ 					  struct aa_label *b);
+@@ -320,8 +318,6 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
+ 			 struct aa_label *label, int flags, gfp_t gfp);
+ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
+ 		      gfp_t gfp);
+-void aa_label_audit(struct audit_buffer *ab, struct aa_label *label, gfp_t gfp);
+-void aa_label_seq_print(struct seq_file *f, struct aa_label *label, gfp_t gfp);
+ void aa_label_printk(struct aa_label *label, gfp_t gfp);
+ 
+ struct aa_label *aa_label_strn_parse(struct aa_label *base, const char *str,
+diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
+index d7a894b1031f..f11a0db7f51d 100644
+--- a/security/apparmor/include/lib.h
++++ b/security/apparmor/include/lib.h
+@@ -59,7 +59,6 @@ extern int apparmor_initialized;
+ 
+ /* fn's in lib */
+ const char *skipn_spaces(const char *str, size_t n);
+-char *aa_split_fqname(char *args, char **ns_name);
+ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
+ 			     size_t *ns_len);
+ void aa_info_message(const char *str);
+diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
+index 0f7e913c3fc2..bbaa7d39a39a 100644
+--- a/security/apparmor/include/perms.h
++++ b/security/apparmor/include/perms.h
+@@ -213,9 +213,6 @@ void aa_perms_accum_raw(struct aa_perms *accum, struct aa_perms *addend);
+ void aa_profile_match_label(struct aa_profile *profile,
+ 			    struct aa_ruleset *rules, struct aa_label *label,
+ 			    int type, u32 request, struct aa_perms *perms);
+-int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
+-			  u32 request, int type, u32 *deny,
+-			  struct apparmor_audit_data *ad);
+ int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
+ 		   u32 request, struct apparmor_audit_data *ad,
+ 		   void (*cb)(struct audit_buffer *, void *));
+diff --git a/security/apparmor/include/policy.h b/security/apparmor/include/policy.h
+index 75088cc310b6..757e3c232c57 100644
+--- a/security/apparmor/include/policy.h
++++ b/security/apparmor/include/policy.h
+@@ -264,7 +264,6 @@ void aa_free_profile(struct aa_profile *profile);
+ struct aa_profile *aa_find_child(struct aa_profile *parent, const char *name);
+ struct aa_profile *aa_lookupn_profile(struct aa_ns *ns, const char *hname,
+ 				      size_t n);
+-struct aa_profile *aa_lookup_profile(struct aa_ns *ns, const char *name);
+ struct aa_profile *aa_fqlookupn_profile(struct aa_label *base,
+ 					const char *fqname, size_t n);
+ 
+diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
+index a912a5d5d04f..b49dd0253118 100644
+--- a/security/apparmor/include/secid.h
++++ b/security/apparmor/include/secid.h
+@@ -32,6 +32,5 @@ void apparmor_release_secctx(char *secdata, u32 seclen);
+ 
+ int aa_alloc_secid(struct aa_label *label, gfp_t gfp);
+ void aa_free_secid(u32 secid);
+-void aa_secid_update(u32 secid, struct aa_label *label);
+ 
+ #endif /* __AA_SECID_H */
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index c71e4615dd46..91483ecacc16 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -899,23 +899,6 @@ struct aa_label *aa_vec_find_or_create_label(struct aa_profile **vec, int len,
+ 	return vec_create_and_insert_label(vec, len, gfp);
+ }
+ 
+-/**
+- * aa_label_find - find label @label in label set
+- * @label: label to find (NOT NULL)
+- *
+- * Requires: caller to hold a valid ref on l
+- *
+- * Returns: refcounted @label if @label is in tree
+- *          refcounted label that is equiv to @label in tree
+- *     else NULL if @label or equiv is not in tree
+- */
+-struct aa_label *aa_label_find(struct aa_label *label)
+-{
+-	AA_BUG(!label);
+-
+-	return vec_find(label->vec, label->size);
+-}
+-
+ 
+ /**
+  * aa_label_insert - insert label @label into @ls or return existing label
+@@ -1811,22 +1794,6 @@ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
+ 		pr_info("%s", label->hname);
+ }
+ 
+-void aa_label_audit(struct audit_buffer *ab, struct aa_label *label, gfp_t gfp)
+-{
+-	struct aa_ns *ns = aa_get_current_ns();
+-
+-	aa_label_xaudit(ab, ns, label, FLAG_VIEW_SUBNS, gfp);
+-	aa_put_ns(ns);
+-}
+-
+-void aa_label_seq_print(struct seq_file *f, struct aa_label *label, gfp_t gfp)
+-{
+-	struct aa_ns *ns = aa_get_current_ns();
+-
+-	aa_label_seq_xprint(f, ns, label, FLAG_VIEW_SUBNS, gfp);
+-	aa_put_ns(ns);
+-}
+-
+ void aa_label_printk(struct aa_label *label, gfp_t gfp)
+ {
+ 	struct aa_ns *ns = aa_get_current_ns();
+diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+index cd569fbbfe36..7db62213e352 100644
+--- a/security/apparmor/lib.c
++++ b/security/apparmor/lib.c
+@@ -45,44 +45,6 @@ void aa_free_str_table(struct aa_str_table *t)
+ 	}
+ }
+ 
+-/**
+- * aa_split_fqname - split a fqname into a profile and namespace name
+- * @fqname: a full qualified name in namespace profile format (NOT NULL)
+- * @ns_name: pointer to portion of the string containing the ns name (NOT NULL)
+- *
+- * Returns: profile name or NULL if one is not specified
+- *
+- * Split a namespace name from a profile name (see policy.c for naming
+- * description).  If a portion of the name is missing it returns NULL for
+- * that portion.
+- *
+- * NOTE: may modify the @fqname string.  The pointers returned point
+- *       into the @fqname string.
+- */
+-char *aa_split_fqname(char *fqname, char **ns_name)
+-{
+-	char *name = strim(fqname);
+-
+-	*ns_name = NULL;
+-	if (name[0] == ':') {
+-		char *split = strchr(&name[1], ':');
+-		*ns_name = skip_spaces(&name[1]);
+-		if (split) {
+-			/* overwrite ':' with \0 */
+-			*split++ = 0;
+-			if (strncmp(split, "//", 2) == 0)
+-				split += 2;
+-			name = skip_spaces(split);
+-		} else
+-			/* a ns name without a following profile is allowed */
+-			name = NULL;
+-	}
+-	if (name && *name == 0)
+-		name = NULL;
+-
+-	return name;
+-}
+-
+ /**
+  * skipn_spaces - Removes leading whitespace from @str.
+  * @str: The string to be stripped.
+@@ -275,33 +237,6 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
+ 	audit_log_format(ab, "\"");
+ }
+ 
+-/**
+- * aa_audit_perms_cb - generic callback fn for auditing perms
+- * @ab: audit buffer (NOT NULL)
+- * @va: audit struct to audit values of (NOT NULL)
+- */
+-static void aa_audit_perms_cb(struct audit_buffer *ab, void *va)
+-{
+-	struct common_audit_data *sa = va;
+-	struct apparmor_audit_data *ad = aad(sa);
+-
+-	if (ad->request) {
+-		audit_log_format(ab, " requested_mask=");
+-		aa_audit_perm_mask(ab, ad->request, aa_file_perm_chrs,
+-				   PERMS_CHRS_MASK, aa_file_perm_names,
+-				   PERMS_NAMES_MASK);
+-	}
+-	if (ad->denied) {
+-		audit_log_format(ab, "denied_mask=");
+-		aa_audit_perm_mask(ab, ad->denied, aa_file_perm_chrs,
+-				   PERMS_CHRS_MASK, aa_file_perm_names,
+-				   PERMS_NAMES_MASK);
+-	}
+-	audit_log_format(ab, " peer=");
+-	aa_label_xaudit(ab, labels_ns(ad->subj_label), ad->peer,
+-				      FLAGS_NONE, GFP_ATOMIC);
+-}
+-
+ /**
+  * aa_apply_modes_to_perms - apply namespace and profile flags to perms
+  * @profile: that perms where computed from
+@@ -349,25 +284,6 @@ void aa_profile_match_label(struct aa_profile *profile,
+ }
+ 
+ 
+-/* currently unused */
+-int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
+-			  u32 request, int type, u32 *deny,
+-			  struct apparmor_audit_data *ad)
+-{
+-	struct aa_ruleset *rules = list_first_entry(&profile->rules,
+-						    typeof(*rules), list);
+-	struct aa_perms perms;
+-
+-	ad->peer = &target->label;
+-	ad->request = request;
+-
+-	aa_profile_match_label(profile, rules, &target->label, type, request,
+-			       &perms);
+-	aa_apply_modes_to_perms(profile, &perms);
+-	*deny |= request & perms.deny;
+-	return aa_check_perms(profile, &perms, request, ad, aa_audit_perms_cb);
+-}
+-
+ /**
+  * aa_check_perms - do audit mode selection based on perms set
+  * @profile: profile being checked
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index 14df15e35695..74c854e8889f 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -580,11 +580,6 @@ struct aa_profile *aa_lookupn_profile(struct aa_ns *ns, const char *hname,
+ 	return profile;
+ }
+ 
+-struct aa_profile *aa_lookup_profile(struct aa_ns *ns, const char *hname)
+-{
+-	return aa_lookupn_profile(ns, hname, strlen(hname));
+-}
+-
+ struct aa_profile *aa_fqlookupn_profile(struct aa_label *base,
+ 					const char *fqname, size_t n)
+ {
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index 83d3d1e6d9dc..a52c789d4f18 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -39,20 +39,6 @@ int apparmor_display_secid_mode;
+  * TODO: use secid_update in label replace
+  */
+ 
+-/**
+- * aa_secid_update - update a secid mapping to a new label
+- * @secid: secid to update
+- * @label: label the secid will now map to
+- */
+-void aa_secid_update(u32 secid, struct aa_label *label)
+-{
+-	unsigned long flags;
+-
+-	xa_lock_irqsave(&aa_secids, flags);
+-	__xa_store(&aa_secids, secid, label, 0);
+-	xa_unlock_irqrestore(&aa_secids, flags);
+-}
+-
+ /*
+  * see label for inverse aa_label_to_secid
+  */
+-- 
+2.46.1
+
