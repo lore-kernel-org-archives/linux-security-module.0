@@ -1,112 +1,144 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD6C154425
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 13:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8E114D6EE
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 13:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726837336; cv=none; b=pliQ+F/hp4MjyUXkz9MV76wfyEPLyapu6cLZz0LfeZP2574P4FOOnniTOZr9gNkJ3WJ57aU1gQheAJgfxL/gEhq15+pf7wipw14BpBl1BkLshpmC4u0K0LmLyOtFKU3KK6WLfRhsVyFPx4YmYdq9yC3WoYk97xyqIMlOQe9VA1o=
+	t=1726839534; cv=none; b=gd0vWztqz4RzGexunzRvDSVCQRpSHhCQamIO3toBmPaD2EFGdUL9T3fdhtVVR0/4ZTFNM45Ym21Q9uTYP1Dy1QimeAL20qmOLmYx3OimnK0RBA2c+87ZT7a4h0lYnrFRMSHzsAEmj1pTu09/lW0pPlr7GzIz7KzxLVswnebVWiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726837336; c=relaxed/simple;
-	bh=VNs2/LV5lSJa91PWHSWfZ1yY6E/bluzT/vlfcXMsZMc=;
+	s=arc-20240116; t=1726839534; c=relaxed/simple;
+	bh=8RX0ToiJ3nDIjmLMVMGnIGFYp5BifwqJCCSLaxLJ4Ew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEfW7eHrrMtsL9hdtopQZMwtnRMknBVKASN99i/Y0jH7lYAdy3JH7rKA2CqwLzMd36RDDA5FBAh5ZUcLlvh/sfvlMUs8+CZZLdV2gsKFHdTaIOfcB4ccGRv0vpJBxDbq6jWKIJDNMiCEULMysXWBj/UVhREYO4ZW/ksP/pGjMBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 9112F7E6; Fri, 20 Sep 2024 08:02:05 -0500 (CDT)
-Date: Fri, 20 Sep 2024 08:02:05 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Luca Boccassi <luca.boccassi@gmail.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, wufan@linux.microsoft.com,
-	paul@paul-moore.com
-Subject: Re: [PATCH v2] ipe: allow secondary and platform keyrings to
- install/update policies
-Message-ID: <20240920130205.GB532438@mail.hallyn.com>
-References: <20240913234840.1318655-1-luca.boccassi@gmail.com>
- <20240915091119.1916049-1-luca.boccassi@gmail.com>
- <20240920020217.GA528455@mail.hallyn.com>
- <CAMw=ZnTWHkOnz5ZHg69WAfygkvpiHkSsUyHVu2fbqJ_E9inNUw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ij52CEomy0TQv+kfAJk9T4NSr16TD660T3rVH2Ap8p0AjbnLfmhHlpxb1l+onFmblPTB1+flw8rB8ZNAna/ghuMzTByrfrRxnKntc7CkJHJL7h4J2x3bN8ugK/pp6Oy21JN69Ce9eb2x5UQYdv1asSm5HrlBk4mzBWewvhkaupk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Y/bK/QA1; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Y/bK/QA1"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X9D4H57tXzvw1;
+	Fri, 20 Sep 2024 15:38:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726839519;
+	bh=LiYOG+j3lD+klQhAmAPE7DaKnA63+juYhKoS9N+wwcA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y/bK/QA1tfvQ8qImQihP7H+bSmhQnLcYAG/5pdmnaD/Fwbn+vKthMUIzskH1Amb72
+	 RPzL6K0kXILI7MbC8afrSsWeQodAHF/9ZHS/I+PToI4O55DWTar2RR6uupkgCjZbk5
+	 6JX71N073CaFqQC17FHetaIUqPN8OdOh8KNvEeEc=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X9D4G0ls7zkty;
+	Fri, 20 Sep 2024 15:38:38 +0200 (CEST)
+Date: Fri, 20 Sep 2024 15:38:27 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Subject: Re: [RFC PATCH v1 1/7] samples/landlock: Fix port parsing in
+ sandboxer
+Message-ID: <20240920.ahNgahzoh2ie@digikod.net>
+References: <20240916122230.114800-1-matthieu@buffet.re>
+ <20240916122230.114800-2-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMw=ZnTWHkOnz5ZHg69WAfygkvpiHkSsUyHVu2fbqJ_E9inNUw@mail.gmail.com>
+In-Reply-To: <20240916122230.114800-2-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On Fri, Sep 20, 2024 at 09:54:06AM +0200, Luca Boccassi wrote:
-> On Fri, 20 Sept 2024 at 04:02, Serge E. Hallyn <serge@hallyn.com> wrote:
-> >
-> > On Sun, Sep 15, 2024 at 11:11:19AM +0200, luca.boccassi@gmail.com wrote:
-> > > From: Luca Boccassi <bluca@debian.org>
-> > >
-> > > The current policy management makes it impossible to use IPE
-> > > in a general purpose distribution. In such cases the users are not
-> > > building the kernel, the distribution is, and access to the private
-> > > key included in the trusted keyring is, for obvious reason, not
-> > > available.
-> > > This means that users have no way to enable IPE, since there will
-> > > be no built-in generic policy, and no access to the key to sign
-> > > updates validated by the trusted keyring.
-> > >
-> > > Just as we do for dm-verity, kernel modules and more, allow the
-> > > secondary and platform keyrings to also validate policies. This
-> > > allows users enrolling their own keys in UEFI db or MOK to also
-> > > sign policies, and enroll them. This makes it sensible to enable
-> > > IPE in general purpose distributions, as it becomes usable by
-> > > any user wishing to do so. Keys in these keyrings can already
-> > > load kernels and kernel modules, so there is no security
-> > > downgrade.
-> > >
-> > > Add a kconfig each, like dm-verity does, but default to enabled if
-> > > the dependencies are available.
-> > >
-> > > Signed-off-by: Luca Boccassi <bluca@debian.org>
-> > > ---
-> > > v2: add Kconfig entries following the dm-verity model
-> > >     update documentation
-> > >
-> > >  Documentation/admin-guide/LSM/ipe.rst |  5 ++++-
-> > >  security/ipe/Kconfig                  | 19 +++++++++++++++++++
-> > >  security/ipe/policy.c                 | 14 +++++++++++++-
-> > >  3 files changed, 36 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-> > > index d8e7db857a2e..bf5aa97911e1 100644
-> > > --- a/security/ipe/policy.c
-> > > +++ b/security/ipe/policy.c
-> > > @@ -169,9 +169,21 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
-> > >                       goto err;
-> > >               }
-> > >
-> > > -             rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len, NULL,
-> > > +             rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
-> > > +#ifdef CONFIG_IPE_POLICY_SIG_SECONDARY_KEYRING
-> > > +                                         VERIFY_USE_SECONDARY_KEYRING,
-> > > +#else
-> > > +                                         NULL,
-> > > +#endif
-> > >                                           VERIFYING_UNSPECIFIED_SIGNATURE,
-> > >                                           set_pkcs7_data, new);
-> > > +#ifdef CONFIG_IPE_POLICY_SIG_PLATFORM_KEYRING
-> > > +             if (rc == -ENOKEY)
-> >
-> > If the secondary key *is* there, but returns -EKEYREJECTED,
-> > do you want to fall back to trying the platform keyring, or not?
+Thanks for these patches, they look really good!  I'll review all of
+them soon.
+
+CCing Konstantin and Mikhail who work on network support.
+
+On Mon, Sep 16, 2024 at 02:22:24PM +0200, Matthieu Buffet wrote:
+> Unlike LL_FS_RO and LL_FS_RW, LL_TCP_* are currently optional: either
+> don't specify them and these access rights won't be in handled_accesses,
+> or specify them and only the values passed are allowed.
 > 
-> I like the idea in principle, however for ease of use personally I'd
-> prefer if the behaviour was the same as dm-verity, given the close
-> relationship - maybe we can start with this version, then I can
-> propose the same change in a single series for both components later,
-> so that we either change it in both or neither. Would that work?
+> If you want to specify that no port can be bind()ed, you would think
+> (looking at the code quickly) that setting LL_TCP_BIND="" would do it.
+> Due to a quirk in the parsing logic and the use of atoi() returning 0 with
+> no error checking for empty strings, you end up allowing bind(0) (which
+> means bind to any ephemeral port) without realising it. The same occurred
+> when leaving a trailing/leading colon (e.g. "80:").
 
-Sounds good, thanks.
+Well spotted, thanks for this fix! Can you please send a standalone
+patch series with this patch and the next one?  I'll merge the fixes
+soon and it will shrink the UDP specific series.
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> 
+> To reproduce:
+> export LL_FS_RO="/" LL_FS_RW="" LL_TCP_BIND=""
+> 
+> ---8<----- Before this patch:
+> ./sandboxer strace -e bind nc -n -vvv -l -p 0
+> Executing the sandboxed command...
+> bind(3, {sa_family=AF_INET, sin_port=htons(0),
+>      sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+> Listening on 0.0.0.0 37629
+> 
+> ---8<----- Expected:
 
--serge
+When applying this patch, only the following text gets in the commit
+message.  I guess that's because of the previous "---".
+
+> ./sandboxer strace -e bind nc -n -vvv -l -p 0
+> Executing the sandboxed command...
+> bind(3, {sa_family=AF_INET, sin_port=htons(0),
+>      sin_addr=inet_addr("0.0.0.0")}, 16) = -1 EACCES (Permission denied)
+> nc: Permission denied
+> 
+
+You can add this tag for this fix to be backported:
+
+Fixes: 5e990dcef12e ("samples/landlock: Support TCP restrictions")
+
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  samples/landlock/sandboxer.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index e8223c3e781a..a84ae3a15482 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -168,7 +168,18 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>  
+>  	env_port_name_next = env_port_name;
+>  	while ((strport = strsep(&env_port_name_next, ENV_DELIMITER))) {
+> -		net_port.port = atoi(strport);
+> +		char *strport_num_end = NULL;
+> +
+> +		if (strcmp(strport, "") == 0)
+> +			continue;
+> +
+> +		errno = 0;
+> +		net_port.port = strtol(strport, &strport_num_end, 0);
+
+Using strtol(3) is a good idea, for instance to check overflows.  You
+can talk about that in the commit message.
+
+> +		if (errno != 0 || strport_num_end == strport) {
+
+I was thinking about checking the return value instead of errno, but it
+looks like the strtol() API may set errno while returning an unspecified
+value, so your approach looks good.
+
+> +			fprintf(stderr,
+> +				"Failed to parse port at \"%s\"\n", strport);
+> +			goto out_free_name;
+> +		}
+>  		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
+>  				      &net_port, 0)) {
+>  			fprintf(stderr,
+> -- 
+> 2.39.5
+> 
+> 
